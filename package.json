@@ -29,7 +29,7 @@
     "bun"
   ],
   "workspaces": [
-    "packages/*"
+    "packages/@randsum/*"
   ],
   "repository": {
     "type": "git",
