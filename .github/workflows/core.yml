@@ -1,4 +1,4 @@
-name: CI - Core
+name: CI
 on: [push]
 defaults:
   run:

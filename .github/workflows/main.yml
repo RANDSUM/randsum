@@ -1,4 +1,4 @@
-name: CI - Core
+name: HealthCheck
 on: [push]
 jobs:
   build:
