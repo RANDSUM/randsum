@@ -1,13 +1,13 @@
-import { isValidModifier } from '@randsum/core/src/guards'
+import { isValidModifier } from '../../guards'
 import type {
-  DropOptions,
   GreaterLessOptions,
-  DiceNotation,
-  RollConfig,
+  DropOptions,
   ReplaceOptions,
   RerollOptions,
-  UniqueOptions
-} from '@randsum/core/src/types'
+  UniqueOptions,
+  RollConfig,
+  DiceNotation
+} from '../../types'
 
 function capNotation(cap: GreaterLessOptions) {
   const capList = formatGreaterLess(cap)

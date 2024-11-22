@@ -1,6 +1,5 @@
-import { isDiceNotation } from '@randsum/notation'
 import { CustomD } from './customD'
-import type { CustomDiceNotation, CustomRollConfigArgument } from './types'
+import type { CustomRollConfigArgument } from './types'
 
 export function isCustomRollConfigArgument(
   value: unknown
@@ -11,12 +10,6 @@ export function isCustomRollConfigArgument(
     'faces' in value &&
     Array.isArray(value.faces)
   )
-}
-
-export function isCustomDiceNotation(
-  value: unknown
-): value is CustomDiceNotation {
-  return isDiceNotation(value) && value.toLowerCase().includes('d{')
 }
 
 export function isCustomD(value: unknown): value is CustomD {

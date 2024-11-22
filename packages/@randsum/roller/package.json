@@ -1,6 +1,17 @@
 {
   "name": "@randsum/roller",
   "version": "0.1.0",
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "license": "MIT",
+  "files": [
+    "./dist/index.js",
+    "./dist/index.d.ts"
+  ],
+  "scripts": {
+    "build": "bun run clean && bun run build.ts",
+    "clean": "rm -rf ./dist/"
+  },
   "dependencies": {
     "@randsum/dice": "workspace:*",
     "@randsum/core": "workspace:*",

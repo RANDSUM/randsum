@@ -1,17 +1,11 @@
 import type {
-  CustomDiceNotation,
   CustomRollArgument,
   CustomRollConfig,
   CustomRollParameters
 } from '../types'
-import {
-  isCustomD,
-  isCustomDiceNotation,
-  isCustomRollConfigArgument
-} from '../guards'
+import { isCustomD, isCustomRollConfigArgument } from '../guards'
 import { CustomD } from '../customD'
-import { configToNotation, configToDescription } from '@randsum/core'
-import { customNotationToCustomRollConfig } from './customNotationToRollConfig'
+import { configToDescription } from '@randsum/core'
 
 function argumentToCustomRollConfig(
   argument: CustomRollArgument
@@ -21,8 +15,6 @@ function argumentToCustomRollConfig(
       return { quantity: 1, sides: argument.faces.length, ...argument }
     case isCustomD(argument):
       return argument.toRollConfig()
-    case isCustomDiceNotation(argument):
-      return customNotationToCustomRollConfig(argument)
     default:
       return {
         quantity: 1,
@@ -40,7 +32,6 @@ export function argumentToCustomRollParameters(
     argument,
     config: rollConfig,
     die: isCustomD(argument) ? argument : new CustomD(rollConfig.faces),
-    notation: configToNotation(rollConfig) as CustomDiceNotation,
     description: configToDescription(rollConfig)
   }
 }

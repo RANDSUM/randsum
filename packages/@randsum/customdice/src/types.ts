@@ -10,18 +10,11 @@ export interface CustomRollConfigArgument
   faces: CustomRollConfig['faces']
 }
 
-export type CustomDiceNotation = `${number}${'d' | 'D'}{${string}}`
-
-export type CustomRollArgument =
-  | CustomD
-  | CustomRollConfigArgument
-  | CustomDiceNotation
-  | string[]
+export type CustomRollArgument = CustomD | CustomRollConfigArgument | string[]
 export interface CustomRollParameters {
   argument: CustomRollArgument
   config: CustomRollConfig
   die: CustomD
-  notation: CustomDiceNotation
   description: string[]
 }
 export interface CustomDicePools {

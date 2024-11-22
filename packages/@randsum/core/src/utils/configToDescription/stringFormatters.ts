@@ -109,16 +109,7 @@ function singleReplaceString(replace: ReplaceOptions) {
 }
 
 export function formatCoreDescriptions({ sides, quantity }: RollConfig) {
-  const base = `Roll ${quantity}`
-  const descriptor = (quantity || 1) > 1 ? 'dice' : 'die'
-  if (Array.isArray(sides)) {
-    const formattedSides = `${descriptor} with the following sides: (${sides
-      .map((s) => (s === '' ? ' ' : s))
-      .join(',')})`
-    return `${base} ${formattedSides}`
-  }
-
-  return `${base} ${sides}-sided ${descriptor}`
+  return `Roll ${quantity} ${sides}-sided ${(quantity || 1) > 1 ? 'dice' : 'die'}`
 }
 
 export function formatModifierDescriptions({
