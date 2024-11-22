@@ -15,7 +15,6 @@ export interface CustomRollParameters {
   argument: CustomRollArgument
   config: CustomRollConfig
   die: CustomD
-  description: string[]
 }
 export interface CustomDicePools {
   [key: string]: CustomRollParameters

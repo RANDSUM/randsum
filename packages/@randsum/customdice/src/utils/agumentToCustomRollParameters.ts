@@ -5,7 +5,6 @@ import type {
 } from '../types'
 import { isCustomD, isCustomRollConfigArgument } from '../guards'
 import { CustomD } from '../customD'
-import { configToDescription } from '@randsum/core'
 
 function argumentToCustomRollConfig(
   argument: CustomRollArgument
@@ -31,7 +30,6 @@ export function argumentToCustomRollParameters(
   return {
     argument,
     config: rollConfig,
-    die: isCustomD(argument) ? argument : new CustomD(rollConfig.faces),
-    description: configToDescription(rollConfig)
+    die: isCustomD(argument) ? argument : new CustomD(rollConfig.faces)
   }
 }
