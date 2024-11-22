@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Test and Build - ${{ inputs.package }}
+    name: Test - ${{ inputs.package }}
     defaults:
       run:
         working-directory: packages/@randsum/${{ inputs.package }}
@@ -35,6 +35,3 @@ jobs:
       - name: Test
         run:
           CI=true bun test
-
-      - name: Build
-        run: bun run build
