@@ -74,7 +74,7 @@ function explodeString() {
   return 'Exploding Dice'
 }
 
-function plusString(plus: number) {
+function addString(plus: number) {
   return `Add ${plus}`
 }
 
@@ -129,7 +129,7 @@ export function formatModifierDescriptions({
     rerollString(modifiers.reroll).forEach((str) => modifierStrings.push(str))
   if (modifiers.explode) modifierStrings.push(explodeString())
   if (modifiers.unique) modifierStrings.push(uniqueString(modifiers.unique))
-  if (modifiers.plus) modifierStrings.push(plusString(modifiers.plus))
+  if (modifiers.add) modifierStrings.push(addString(modifiers.add))
   if (modifiers.minus) modifierStrings.push(minusString(modifiers.minus))
 
   return modifierStrings

@@ -13,7 +13,7 @@ export type Modifiers = {
   reroll?: RerollOptions
   unique?: boolean | UniqueOptions
   explode?: boolean
-  plus?: number
+  add?: number
   minus?: number
 }
 

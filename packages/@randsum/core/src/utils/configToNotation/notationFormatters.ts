@@ -72,7 +72,7 @@ function rerollNotation(reroll: RerollOptions) {
 function explodeNotation() {
   return '!'
 }
-function plusNotation(plus: number) {
+function addNotation(plus: number) {
   return `+${plus}`
 }
 
@@ -116,7 +116,7 @@ export function formatModifierNotation({ modifiers }: RollConfig): string {
   if (modifiers.reroll) modifierStrings.push(rerollNotation(modifiers.reroll))
   if (modifiers.explode) modifierStrings.push(explodeNotation())
   if (modifiers.unique) modifierStrings.push(uniqueNotation(modifiers.unique))
-  if (modifiers.plus) modifierStrings.push(plusNotation(modifiers.plus))
+  if (modifiers.add) modifierStrings.push(addNotation(modifiers.add))
   if (modifiers.minus) modifierStrings.push(minusNotation(modifiers.minus))
 
   return modifierStrings.join('')
