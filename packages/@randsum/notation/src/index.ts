@@ -1,11 +1,11 @@
 import { coreNotationPattern } from './patterns'
 import type { DiceNotation, RollConfig } from '@randsum/core'
-import { OptionsModel } from '@randsum/core'
+import { RollConfigModel } from '@randsum/core'
 import { parseCoreNotation, parseModifiers } from './optionsParsers'
-import { isDiceNotationArg } from './guards'
+import { isDiceNotation } from './guards'
 import type { NotationValidationResult } from './types'
 
-function toOptions(notationString: DiceNotation): RollConfig {
+function toRollConfig(notationString: DiceNotation): RollConfig {
   const coreNotationMatch = notationString.match(coreNotationPattern)!.at(0)!
 
   return {
@@ -15,17 +15,22 @@ function toOptions(notationString: DiceNotation): RollConfig {
 }
 
 function validate(notation: DiceNotation | string): NotationValidationResult {
-  const isValid = isDiceNotationArg(notation)
+  if (!isDiceNotation(notation)) {
+    return {
+      valid: false,
+      notation,
+      config: undefined,
+      description: undefined
+    }
+  }
 
-  const rollConfig = isValid ? toOptions(notation) : undefined
+  const config = toRollConfig(notation)
   return {
-    valid: isValid,
-    notation: rollConfig ? OptionsModel.toNotation(rollConfig) : notation,
-    config: rollConfig,
-    description: isValid
-      ? OptionsModel.toDescription(toOptions(notation))
-      : undefined
+    valid: true,
+    config,
+    notation: RollConfigModel.toNotation(config),
+    description: RollConfigModel.toDescription(config)
   }
 }
 
-export default { toOptions, validate }
+export default { validate }

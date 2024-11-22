@@ -1,0 +1,13 @@
+{
+  "name": "@randsum/core",
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "files": [
+    "./dist/index.js",
+    "./dist/index.d.ts"
+  ],
+  "scripts": {
+    "build": "bun run clean && bun run build.ts",
+    "clean": "rm -rf ./dist/"
+  }
+}

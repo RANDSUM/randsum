@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig",
+  "include": [
+    "./src",
+    "src/types.ts",
+    "../notary/src/stringFormatters.ts",
+    "src/models/RollConfigModel/notationFormatters.ts"
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist"
+  }
+}

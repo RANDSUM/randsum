@@ -1,0 +1,58 @@
+{
+  "name": "@randsum/randsum",
+  "private": true,
+  "author": "Alex Jarvis",
+  "icon": "https://raw.githubusercontent.com/RANDSUM/randsum-ts/main/icon.webp",
+  "description": "",
+  "license": "MIT",
+  "keywords": [
+    "dice",
+    "d20",
+    "dice roller",
+    "rpg dice roller",
+    "roll",
+    "d&d",
+    "dnd",
+    "rpg",
+    "ttrpg",
+    "rpgs",
+    "ttrpgs",
+    "tabletop",
+    "dungeons",
+    "dragons",
+    "roleplaying game",
+    "rand",
+    "random",
+    "RNG",
+    "notation",
+    "typescript",
+    "bun"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RANDSUM/randsum-ts.git"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/eslint__js": "^8.42.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "bun-plugin-dts": "^0.3.0",
+    "bun-types": "latest",
+    "eslint": "^9.15.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.15.0"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format:fix": "prettier . --write",
+    "format": "prettier . --check",
+    "ts:check": "tsc --noEmit"
+  },
+  "type": "module"
+}

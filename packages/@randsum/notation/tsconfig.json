@@ -2,7 +2,9 @@
   "extends": "../../../tsconfig",
   "include": [
     "./src",
-    "__tests__"
+    "__tests__",
+    "src/stringFormatters.ts",
+    "../core/src/models/RollConfigModel/notationFormatters.ts"
   ],
   "exclude": [],
   "compilerOptions": {
