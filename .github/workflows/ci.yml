@@ -1,62 +1,23 @@
 name: CI
 on: [push]
 jobs:
-  buildAll:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Use Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - name: core
-        working-directory: packages/@randsum/core
-        run: bun install && bun run build
-
-      - name: notation
-        working-directory: packages/@randsum/notation
-        run: bun install && bun run build
-
-      - name: dice
-        working-directory: packages/@randsum/dice
-        run: bun install && bun run build
-
-      - name: roller
-        working-directory: packages/@randsum/roller
-        run: bun install && bun run build
-
-      - name: customdice
-        working-directory: packages/@randsum/customdice
-        run: bun install && bun run build
-
   core:
-    needs: [buildAll]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: core
   customdice:
-    needs: [buildAll]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: customdice
   dice:
-    needs: [buildAll]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: dice
   notation:
-    needs: [buildAll]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: notation
   roller:
-    needs: [buildAll]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: roller

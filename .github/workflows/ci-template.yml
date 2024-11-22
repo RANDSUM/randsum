@@ -29,8 +29,25 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install deps
-        run: bun install
+      - name: core
+        working-directory: packages/@randsum/core
+        run: bun install && bun run build
+
+      - name: notation
+        working-directory: packages/@randsum/notation
+        run: bun install && bun run build
+
+      - name: dice
+        working-directory: packages/@randsum/dice
+        run: bun install && bun run build
+
+      - name: roller
+        working-directory: packages/@randsum/roller
+        run: bun install && bun run build
+
+      - name: customdice
+        working-directory: packages/@randsum/customdice
+        run: bun install && bun run build
 
       - name: Test
         run:
