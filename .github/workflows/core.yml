@@ -5,7 +5,7 @@ defaults:
     working-directory: packages/@randsum/core
 
 jobs:
-  build:
+  core:
     name: Test and Build - Core
 
     runs-on: ${{ matrix.os }}
