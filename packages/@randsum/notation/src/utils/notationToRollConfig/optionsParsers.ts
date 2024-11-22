@@ -238,31 +238,33 @@ function parseExplodeNotation(
       }
 }
 
-function parseMinusNotation(modifiersString: string): Pick<Modifiers, 'minus'> {
+function parseMinusNotation(
+  modifiersString: string
+): Pick<Modifiers, 'subtract'> {
   const notations = extractMatches(modifiersString, minusPattern)
   if (notations.length === 0) {
     return {}
   }
-  const minus = notations
+  const subtract = notations
     .map((notationString) => Number(notationString.split('-')[1]))
     .reduce((acc, num) => acc - num, 0)
 
   return {
-    minus: Math.abs(minus)
+    subtract: Math.abs(subtract)
   }
 }
 
-function parsePlusNotation(modifiersString: string): Pick<Modifiers, 'plus'> {
+function parsePlusNotation(modifiersString: string): Pick<Modifiers, 'add'> {
   const notations = extractMatches(modifiersString, plusPattern)
   if (notations.length === 0) {
     return {}
   }
-  const plus = notations
+  const add = notations
     .map((notationString) => Number(notationString.split('+')[1]))
     .reduce((acc, num) => acc + num, 0)
 
   return {
-    plus
+    add
   }
 }
 

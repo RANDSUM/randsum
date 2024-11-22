@@ -78,8 +78,8 @@ function addString(plus: number) {
   return `Add ${plus}`
 }
 
-function minusString(minus: number) {
-  return `Subtract ${minus}`
+function minusString(subtract: number) {
+  return `Subtract ${subtract}`
 }
 
 function uniqueString(unique: boolean | UniqueOptions) {
@@ -130,7 +130,7 @@ export function formatModifierDescriptions({
   if (modifiers.explode) modifierStrings.push(explodeString())
   if (modifiers.unique) modifierStrings.push(uniqueString(modifiers.unique))
   if (modifiers.add) modifierStrings.push(addString(modifiers.add))
-  if (modifiers.minus) modifierStrings.push(minusString(modifiers.minus))
+  if (modifiers.subtract) modifierStrings.push(minusString(modifiers.subtract))
 
   return modifierStrings
 }

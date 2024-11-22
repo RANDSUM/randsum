@@ -21,7 +21,7 @@ describe('configToDescription', () => {
         sides: 20,
         modifiers: {
           add: 2,
-          minus: 5,
+          subtract: 5,
           drop: { highest: 1, lowest: 5 },
           replace: { from: 1, to: 20 },
           reroll: { greaterThan: 10, maxReroll: 2 },

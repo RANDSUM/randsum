@@ -78,7 +78,7 @@ describe('argumentToRollParameters', () => {
         sides: 6,
         modifiers: {
           plus: 2,
-          minus: 1,
+          subtract: 1,
           drop: {
             highest: undefined,
             greaterThan: 2,
@@ -292,7 +292,7 @@ describe('argumentToRollParameters', () => {
       })
     })
 
-    describe('given a notation that contains a minus modifier', () => {
+    describe('given a notation that contains a subtract modifier', () => {
       const argument: DiceNotation = `${coreTestString}-2`
 
       test('returns a RollParameter matching the notation', () => {
@@ -302,7 +302,7 @@ describe('argumentToRollParameters', () => {
           argument,
           config: {
             ...coreDicePools,
-            modifiers: { minus: 2 }
+            modifiers: { subtract: 2 }
           },
           die: new D(coreDicePools.sides),
           notation: '4d6-2',
@@ -545,7 +545,7 @@ describe('argumentToRollParameters', () => {
                 unique: { notUnique: [5] },
                 explode: true,
                 plus: 5,
-                minus: 5
+                subtract: 5
               }
             },
             die: new D(20),

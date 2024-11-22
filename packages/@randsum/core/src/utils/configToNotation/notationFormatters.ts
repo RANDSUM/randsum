@@ -76,8 +76,8 @@ function addNotation(plus: number) {
   return `+${plus}`
 }
 
-function minusNotation(minus: number) {
-  return `-${minus}`
+function minusNotation(subtract: number) {
+  return `-${subtract}`
 }
 
 function uniqueNotation(unique: boolean | UniqueOptions) {
@@ -117,7 +117,8 @@ export function formatModifierNotation({ modifiers }: RollConfig): string {
   if (modifiers.explode) modifierStrings.push(explodeNotation())
   if (modifiers.unique) modifierStrings.push(uniqueNotation(modifiers.unique))
   if (modifiers.add) modifierStrings.push(addNotation(modifiers.add))
-  if (modifiers.minus) modifierStrings.push(minusNotation(modifiers.minus))
+  if (modifiers.subtract)
+    modifierStrings.push(minusNotation(modifiers.subtract))
 
   return modifierStrings.join('')
 }

@@ -14,7 +14,7 @@ export type Modifiers = {
   unique?: boolean | UniqueOptions
   explode?: boolean
   add?: number
-  minus?: number
+  subtract?: number
 }
 
 export interface GreaterLessOptions {

@@ -86,11 +86,11 @@ export function applyModifiers(
             bonuses.simpleMathModifier + Number(modifiers.plus)
         }
 
-      case 'minus':
+      case 'subtract':
         return {
           ...bonuses,
           simpleMathModifier:
-            bonuses.simpleMathModifier - Number(modifiers.minus)
+            bonuses.simpleMathModifier - Number(modifiers.subtract)
         }
 
       default:
