@@ -28,7 +28,7 @@ jobs:
         with:
           filters: |
             change:
-              - './**'
+              - 'packages/@randsum/${{ inputs.package }}/**'
 
       - name: Use Bun
         if: steps.changes.outputs.change == 'true'
