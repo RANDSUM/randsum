@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-    name: Test - ${{ inputs.package }}
     defaults:
       run:
         working-directory: packages/@randsum/${{ inputs.package }}
