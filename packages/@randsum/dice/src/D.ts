@@ -8,8 +8,7 @@ export class D {
   toRollConfig(): RollConfig {
     return {
       sides: this.sides,
-      quantity: 1,
-      modifiers: {}
+      quantity: 1
     }
   }
 
