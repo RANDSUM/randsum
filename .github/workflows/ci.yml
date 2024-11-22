@@ -6,18 +6,22 @@ jobs:
     with:
       package: core
   customdice:
+    needs: [core, dice, notation, roller]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: customdice
   dice:
+    needs: [core]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: dice
   notation:
+    needs: [core]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: notation
   roller:
+    needs: [core, dice, notation]
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: roller
