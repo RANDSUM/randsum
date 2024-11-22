@@ -4,4 +4,4 @@ jobs:
   core:
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
-      package: package/@randsum/core
+      package: core

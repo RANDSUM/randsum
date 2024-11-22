@@ -13,7 +13,7 @@ jobs:
     name: Test and Build - ${{ inputs.package }}
     defaults:
       run:
-        working-directory: ${{ inputs.package }}
+        working-directory: packages/@randsum/${{ inputs.package }}
 
     runs-on: ${{ matrix.os }}
     strategy:
