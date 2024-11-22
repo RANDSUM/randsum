@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'bun:test'
-import { default as Notary } from '../src'
 import type { DiceNotation } from '@randsum/core'
+import { validate } from '../src'
 
-describe('Notary.validate', () => {
+describe('validate', () => {
   describe('when the notation is completely invalid', () => {
     const notation = 'invalid-notation'
 
     it('returns an error result', () => {
-      const result = Notary.validate(notation)
+      const result = validate(notation)
 
       expect(result).toEqual({
         valid: false,
@@ -22,7 +22,7 @@ describe('Notary.validate', () => {
     const notation: DiceNotation = '2d5XXddf'
 
     it('returns an error result', () => {
-      const result = Notary.validate(notation)
+      const result = validate(notation)
 
       expect(result).toEqual({
         valid: false,
@@ -44,7 +44,7 @@ describe('Notary.validate', () => {
 
     notations.forEach((notation) => {
       it(`returns an error result for ${notation}`, () => {
-        const result = Notary.validate(notation)
+        const result = validate(notation)
 
         expect(result).toEqual({
           valid: false,
@@ -60,7 +60,7 @@ describe('Notary.validate', () => {
     const notation: DiceNotation = '2d5D'
 
     it('returns an error result', () => {
-      const result = Notary.validate(notation)
+      const result = validate(notation)
 
       expect(result).toEqual({
         valid: false,
@@ -74,7 +74,7 @@ describe('Notary.validate', () => {
   describe('when given a numerical notation', () => {
     it('returns a valid result', () => {
       const notation = '2d6'
-      const result = Notary.validate(notation)
+      const result = validate(notation)
 
       expect(result).toEqual({
         valid: true,
@@ -84,7 +84,7 @@ describe('Notary.validate', () => {
       })
 
       const notation2 = '1D20'
-      const result2 = Notary.validate(notation2)
+      const result2 = validate(notation2)
 
       expect(result2).toEqual({
         valid: true,

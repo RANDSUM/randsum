@@ -1,4 +1,9 @@
 {
   "name": "@randsum/roller",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "dependencies": {
+    "@randsum/dice": "workspace:*",
+    "@randsum/core": "workspace:*",
+    "@randsum/notation": "workspace:*"
+  }
 }

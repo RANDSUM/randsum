@@ -11,5 +11,8 @@
   "scripts": {
     "build": "bun run clean && bun run build.ts",
     "clean": "rm -rf ./dist/"
+  },
+  "dependencies": {
+    "@randsum/core": "workspace:*"
   }
 }
