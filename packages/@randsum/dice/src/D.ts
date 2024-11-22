@@ -1,4 +1,4 @@
-import type { RollConfig } from '@randsum/core'
+import { coreRandom, type RollConfig } from '@randsum/core'
 
 export class D {
   constructor(public sides: number) {
@@ -14,7 +14,7 @@ export class D {
   }
 
   roll(): number {
-    return Math.ceil(Math.random() * this.sides)
+    return coreRandom(this.sides)
   }
 
   rollMultiple(quantity: number): number[] {
