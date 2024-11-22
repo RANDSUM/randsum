@@ -5,3 +5,19 @@ jobs:
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: core
+  customdice:
+    uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
+    with:
+      package: customdice
+  dice:
+    uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
+    with:
+      package: dice
+  notation:
+    uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
+    with:
+      package: notation
+  roller:
+    uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
+    with:
+      package: roller
