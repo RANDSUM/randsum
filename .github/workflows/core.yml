@@ -6,7 +6,7 @@ defaults:
 
 jobs:
   build:
-    name: Typecheck, Lint, Format, Test, Build - Core Package
+    name: Test and Build - Core
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -24,12 +24,6 @@ jobs:
 
       - name: Install deps
         run: bun install
-
-      - name: TypeCheck
-        run: bun ts:check
-
-      - name: Lint
-        run: bun lint && bun format
 
       - name: Test
         run:

@@ -1,9 +1,5 @@
 name: CI - Core
 on: [push]
-defaults:
-  run:
-    working-directory: packages/@randsum/core
-
 jobs:
   build:
     name: Typecheck, Lint, Format
