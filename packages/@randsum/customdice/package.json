@@ -13,9 +13,6 @@
     "clean": "rm -rf ./dist/"
   },
   "dependencies": {
-    "@randsum/core": "workspace:*",
-    "@randsum/dice": "workspace:*",
-    "@randsum/roller": "workspace:*",
-    "@randsum/notation": "workspace:*"
+    "@randsum/dice": "workspace:*"
   }
 }
