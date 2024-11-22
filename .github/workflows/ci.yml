@@ -1,0 +1,7 @@
+name: CI
+on: [push]
+jobs:
+  core:
+    uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
+    with:
+      package: core

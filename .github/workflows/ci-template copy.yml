@@ -1,0 +1,40 @@
+name: CI
+on:
+  workflow_call:
+    inputs:
+      package:
+        description: 'Package to test'
+        required: true
+        type: string
+
+defaults:
+  run:
+    working-directory: packages/@randsum/{{ inputs.package }}
+
+jobs:
+  build:
+    name: Test and Build - {{ inputs.package }}
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Use Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install deps
+        run: bun install
+
+      - name: Test
+        run:
+          CI=true bun test
+
+      - name: Build
+        run: bun run build
