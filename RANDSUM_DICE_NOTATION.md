@@ -143,7 +143,7 @@ roll('6d20-5')
 roll({
   sides: 20,
   quantity: 6,
-  modifiers: { minus: 5 }
+  modifiers: { subtract: 5 }
 })
 ```
 
