@@ -1,4 +1,6 @@
 import { D } from '@randsum/dice'
+import { resultToFaces } from './utils/resultToFaces'
+import type { CustomRollConfig } from './types'
 
 export class CustomD {
   public sides: number
@@ -10,15 +12,21 @@ export class CustomD {
     this.coreDie = new D(this.sides)
   }
 
+  toRollConfig(): CustomRollConfig {
+    return {
+      sides: this.sides,
+      quantity: 1,
+      faces: this.faces
+    }
+  }
+
   roll(): string {
-    return this.resultToFace(this.coreDie.roll())
+    return resultToFaces(this.coreDie.roll(), this.faces)
   }
 
   rollMultiple(quantity: number): string[] {
-    return this.coreDie.rollMultiple(quantity).map(this.resultToFace)
-  }
-
-  private resultToFace(result: number): string {
-    return this.faces[result - 1]
+    return this.coreDie
+      .rollMultiple(quantity)
+      .map((value) => resultToFaces(value, this.faces))
   }
 }
