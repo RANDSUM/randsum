@@ -1,3 +1,3 @@
 export function coreRandom(n: number) {
-  return Math.floor(Math.random() * n)
+  return Math.ceil(Math.random() * n)
 }

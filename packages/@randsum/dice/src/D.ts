@@ -14,7 +14,7 @@ export class D {
   }
 
   roll(): number {
-    return coreRandom(this.sides)
+    return coreRandom(this.sides) + 1
   }
 
   rollMultiple(quantity: number): number[] {
