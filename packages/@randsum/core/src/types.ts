@@ -3,7 +3,7 @@ export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
 export interface RollConfig {
   quantity: number
   sides: number
-  modifiers: Modifiers
+  modifiers?: Modifiers
 }
 
 export type Modifiers = {
