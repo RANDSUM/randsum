@@ -27,42 +27,42 @@ jobs:
         id: changes
         with:
           filters: |
-            change:
+            changesInPackage:
               - 'packages/@randsum/${{ inputs.package }}/**'
 
       - name: Use Bun
-        if: steps.changes.outputs.change == 'true'
+        if: steps.changes.outputs.changesInPackage == 'true'
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
 
       - name: core
-        if: steps.changes.outputs.change == 'true'
+        if: steps.changes.outputs.changesInPackage == 'true'
         working-directory: packages/@randsum/core
         run: bun install && bun run build
 
       - name: notation
-        if: steps.changes.outputs.change == 'true'
+        if: steps.changes.outputs.changesInPackage == 'true'
         working-directory: packages/@randsum/notation
         run: bun install && bun run build
 
       - name: dice
-        if: steps.changes.outputs.change == 'true'
+        if: steps.changes.outputs.changesInPackage == 'true'
         working-directory: packages/@randsum/dice
         run: bun install && bun run build
 
       - name: roller
-        if: steps.changes.outputs.change == 'true'
+        if: steps.changes.outputs.changesInPackage == 'true'
         working-directory: packages/@randsum/roller
         run: bun install && bun run build
 
       - name: customdice
-        if: steps.changes.outputs.change == 'true'
+        if: steps.changes.outputs.changesInPackage == 'true'
         working-directory: packages/@randsum/customdice
         run: bun install && bun run build
 
       - name: Test
-        if: steps.changes.outputs.change == 'true'
+        if: steps.changes.outputs.changesInPackage == 'true'
         run:
           CI=true bun test
