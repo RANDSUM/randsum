@@ -1,6 +1,7 @@
-import { coreNotationPattern } from './patterns'
 import type { DiceNotation, RollConfig } from '@randsum/core'
 import { RollConfigModel } from '@randsum/core'
+
+import { coreNotationPattern } from './patterns'
 import { parseCoreNotation, parseModifiers } from './optionsParsers'
 import { isDiceNotation } from './guards'
 import type { NotationValidationResult } from './types'

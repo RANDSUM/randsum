@@ -2,6 +2,8 @@
   "name": "@randsum/notation",
   "main": "./dist/index.js",
   "source": "./src/index.ts",
+  "version": "0.1.0",
+  "license": "MIT",
   "files": [
     "./dist/index.js",
     "./dist/index.d.ts"
@@ -10,7 +12,7 @@
     "build": "bun run clean && bun run build.ts",
     "clean": "rm -rf ./dist/"
   },
-  "devDependencies": {
+  "dependencies": {
     "@randsum/core": "workspace:../core"
   }
 }

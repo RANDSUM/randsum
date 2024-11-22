@@ -21,10 +21,13 @@
   "files": [],
   "references": [
     {
-      "path": "./packages/@randsum/notary"
+      "path": "./packages/@randsum/notation"
     },
     {
-      "path": "./packages/@randsum/roller"
+      "path": "./packages/@randsum/dice"
+    },
+    {
+      "path": "./packages/@randsum/core"
     },
     {
       "path": "./packages/@randsum/roller"
