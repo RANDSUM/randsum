@@ -1,0 +1,20 @@
+name: CI - Core
+on: [push]
+defaults:
+  run:
+    working-directory: packages/@randsum/core
+
+jobs:
+  build:
+    name: Typecheck, Lint, Format, Test, Build - Core Package
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - uses: ./.github/steps/package-ci
