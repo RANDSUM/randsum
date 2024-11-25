@@ -10,9 +10,27 @@
   ],
   "scripts": {
     "build": "bun run clean && bun run build.ts",
-    "clean": "rm -rf ./dist/"
+    "clean": "rm -rf ./dist/",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format:fix": "prettier . --write",
+    "format": "prettier . --check",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@randsum/dice": "workspace:*"
-  }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/eslint__js": "^8.42.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "bun-plugin-dts": "^0.3.0",
+    "bun-types": "latest",
+    "eslint": "^9.15.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.15.0"
+  },
+  "type": "module"
 }
