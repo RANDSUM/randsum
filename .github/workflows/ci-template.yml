@@ -36,6 +36,7 @@ jobs:
         with:
           bun-version: latest
 
+    # Run the build script to build sibling packages
 
       - name: core
         if: steps.changes.outputs.changesInPackage == 'true'
