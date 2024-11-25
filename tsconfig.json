@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -16,7 +19,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
-    "types": ["bun-types"]
+    "types": [
+      "bun-types"
+    ]
   },
   "files": [],
   "references": [
@@ -30,7 +35,7 @@
       "path": "./packages/@randsum/core"
     },
     {
-      "path": "./packages/@randsum/roller"
+      "path": "./packages/@randsum/tower"
     }
   ]
 }

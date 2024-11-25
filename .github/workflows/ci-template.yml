@@ -53,9 +53,9 @@ jobs:
         working-directory: packages/@randsum/dice
         run: bun install && bun run build
 
-      - name: roller
+      - name: tower
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: packages/@randsum/roller
+        working-directory: packages/@randsum/tower
         run: bun install && bun run build
 
       - name: customdice
