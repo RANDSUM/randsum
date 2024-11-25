@@ -20,4 +20,4 @@ jobs:
   roller:
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
-      package: roller
+      package: tower
