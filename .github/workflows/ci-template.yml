@@ -63,9 +63,11 @@ jobs:
         run: bun install && bun run build
 
       - name: Type Check
+        if: steps.changes.outputs.changesInPackage == 'true'
         run: bun ts:check
 
       - name: Lint & Format
+        if: steps.changes.outputs.changesInPackage == 'true'
         run: bun lint && bun format
 
       - name: Test
