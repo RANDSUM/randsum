@@ -4,7 +4,7 @@
   "author": "Alex Jarvis",
   "icon": "https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp",
   "workspaces": [
-    "packages/@randsum/*"
+    "@randsum/*"
   ],
   "repository": {
     "type": "git",
@@ -21,13 +21,6 @@
     "prettier": "^3.3.3",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.15.0"
-  },
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format:fix": "prettier . --write",
-    "format": "prettier . --check",
-    "ts:check": "tsc --noEmit"
   },
   "type": "module"
 }

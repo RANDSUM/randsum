@@ -12,7 +12,7 @@ jobs:
   test:
     defaults:
       run:
-        working-directory: packages/@randsum/${{ inputs.package }}
+        working-directory: @randsum/${{ inputs.package }}
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -28,7 +28,7 @@ jobs:
         with:
           filters: |
             changesInPackage:
-              - 'packages/@randsum/${{ inputs.package }}/**'
+              - '@randsum/${{ inputs.package }}/**'
 
       - name: Use Bun
         if: steps.changes.outputs.changesInPackage == 'true'
@@ -40,27 +40,27 @@ jobs:
 
       - name: core
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: packages/@randsum/core
+        working-directory: @randsum/core
         run: bun install && bun run build
 
       - name: notation
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: packages/@randsum/notation
+        working-directory: @randsum/notation
         run: bun install && bun run build
 
       - name: dice
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: packages/@randsum/dice
+        working-directory: @randsum/dice
         run: bun install && bun run build
 
       - name: tower
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: packages/@randsum/tower
+        working-directory: @randsum/tower
         run: bun install && bun run build
 
       - name: customdice
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: packages/@randsum/customdice
+        working-directory: @randsum/customdice
         run: bun install && bun run build
 
       - name: Test
