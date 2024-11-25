@@ -1,28 +1,9 @@
 import { D } from '@randsum/dice'
-import { isD, isRollConfigArgument } from '../guards'
+import { isD } from '../guards'
 import type { RollArgument, RollParameters } from '../types'
-import { configToDescription, type RollConfig } from '@randsum/core'
-import {
-  configToNotation,
-  isDiceNotation,
-  notationToRollConfig
-} from '@randsum/notation'
-
-function argumentToRollConfig(argument: RollArgument): RollConfig {
-  switch (true) {
-    case isRollConfigArgument(argument):
-      return { quantity: 1, ...argument }
-    case isD(argument):
-      return argument.toRollConfig()
-    case isDiceNotation(argument):
-      return notationToRollConfig(argument)
-    default:
-      return {
-        quantity: 1,
-        sides: Number(argument)
-      }
-  }
-}
+import { configToDescription } from '@randsum/core'
+import { configToNotation } from '@randsum/notation'
+import { argumentToRollConfig } from './argumentToRollConfig'
 
 export function argumentToRollParameters(
   argument: RollArgument

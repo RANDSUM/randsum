@@ -1,15 +1,10 @@
-import type { DicePools, RollArgument, RollResult } from './types'
-import { randomUUIDv7 as uuid } from 'bun'
+import type { RollArgument, RollResult } from './types'
 import { argumentToRollParameters } from './utils/argumentToRollParameters'
 import { applyModifiers, calculateTotal } from './utils/applyModifiers'
+import { formDicePools } from '@randsum/core'
 
 export function roll(...args: RollArgument[]): RollResult {
-  const rawDicePools: DicePools = {}
-
-  const dicePools = args.reduce(
-    (acc, arg) => ({ ...acc, [uuid()]: argumentToRollParameters(arg) }),
-    rawDicePools
-  )
+  const dicePools = formDicePools(args, argumentToRollParameters)
 
   const rawRolls = Object.fromEntries(
     Object.keys(dicePools).map((key) => {

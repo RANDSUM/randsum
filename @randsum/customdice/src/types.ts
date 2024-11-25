@@ -1,5 +1,6 @@
 import type { RollConfig } from '@randsum/core'
 import type { CustomD } from './customD'
+import type { RollArgument } from '@randsum/tower'
 
 export interface CustomRollConfig extends Omit<RollConfig, 'modifiers'> {
   faces: string[]
@@ -10,7 +11,12 @@ export interface CustomRollConfigArgument
   faces: CustomRollConfig['faces']
 }
 
-export type CustomRollArgument = CustomD | CustomRollConfigArgument | string[]
+export type CustomRollArgument =
+  | CustomD
+  | CustomRollConfigArgument
+  | string[]
+  | RollArgument
+
 export interface CustomRollParameters {
   argument: CustomRollArgument
   config: CustomRollConfig
