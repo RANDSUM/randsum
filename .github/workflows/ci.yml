@@ -1,7 +1,7 @@
 name: CI
 on: [push]
 jobs:
-  example_matrix_strategy:
+  ci:
     uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
     with:
       package: ${{ matrix.package }}
