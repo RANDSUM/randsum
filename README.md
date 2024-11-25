@@ -39,10 +39,12 @@ D20.roll()
 // Roll 4 D20
 D20.rollMany(4)
 
-
-// Lets roll something more complicated...
+// Lets pull out the dice tower for some more complicated rolls
 
 import { roll } from `@randsum/tower`
+
+// Roll 4 D6
+roll({quantity: 4, sides: 6})
 
 // Roll 4 D6, drop the lowest
 roll({ quantity: 4, sides: 6, modifiers: { drop: { lowest: true } } })
@@ -55,6 +57,7 @@ roll('4d6L')
 import { validate } from `@randsum/notation`
 
 const { valid } = validate('4d6L')
+
 ```
 
 Written in 100% Typescript with strong attention paid to return types. You depend on `randsum` to give you what you expect - just not always the roll you want.

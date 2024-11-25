@@ -6,5 +6,5 @@ import {
 import type { DiceNotation } from '../../types'
 
 export function configToNotation(options: RollConfig): DiceNotation {
-  return `${formatCoreNotation(options)}${formatModifierNotation(options)}` as DiceNotation
+  return `${formatCoreNotation(options)}${formatModifierNotation(options)}`
 }

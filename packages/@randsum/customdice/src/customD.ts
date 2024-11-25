@@ -24,9 +24,9 @@ export class CustomD {
     return resultToFaces(this.coreDie.roll(), this.faces)
   }
 
-  rollMultiple(quantity: number): string[] {
+  rollMany(quantity: number): string[] {
     return this.coreDie
-      .rollMultiple(quantity)
+      .rollMany(quantity)
       .map((value) => resultToFaces(value, this.faces))
   }
 }

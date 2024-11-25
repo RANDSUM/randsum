@@ -16,11 +16,11 @@ describe('D', () => {
     expect([1, 2, 3, 4, 5, 6]).toContain(die.roll())
   })
 
-  test('.rollMultiple() returns an array of numbers ', () => {
+  test('.rollMany() returns an array of numbers ', () => {
     const sides = 6
     const die = new D(sides)
     const quantity = 10
-    const rolls = die.rollMultiple(quantity)
+    const rolls = die.rollMany(quantity)
 
     expect(rolls.length).toEqual(quantity)
     rolls.forEach((roll) => expect([1, 2, 3, 4, 5, 6]).toContain(roll))

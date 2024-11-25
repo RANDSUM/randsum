@@ -127,8 +127,5 @@ export function formatCoreNotation({
   quantity = 1,
   sides
 }: RollConfig): DiceNotation {
-  const formattedSides = Array.isArray(sides)
-    ? `{${sides.map((s) => (s === '' ? ' ' : s)).join('')}}`
-    : sides
-  return `${quantity}d${formattedSides}` as DiceNotation
+  return `${quantity}d${sides}`
 }

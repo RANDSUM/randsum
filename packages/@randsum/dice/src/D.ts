@@ -16,7 +16,7 @@ export class D {
     return coreRandom(this.sides)
   }
 
-  rollMultiple(quantity: number): number[] {
+  rollMany(quantity: number): number[] {
     return Array.from({ length: quantity }, () => this.roll())
   }
 }
