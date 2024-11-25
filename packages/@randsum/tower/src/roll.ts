@@ -17,7 +17,7 @@ export function roll(...args: RollArgument[]): RollResult {
         die,
         config: { quantity }
       } = dicePools[key]
-      return [key, die.rollMultiple(quantity || 1)]
+      return [key, die.rollMany(quantity || 1)]
     })
   )
 
