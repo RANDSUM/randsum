@@ -72,7 +72,7 @@ describe('argumentToRollParameters', () => {
       })
     })
 
-    describe.only('complex', () => {
+    describe('complex', () => {
       const argument = {
         quantity: 4,
         sides: 6,
@@ -295,7 +295,7 @@ describe('argumentToRollParameters', () => {
     describe('given a notation that contains a subtract modifier', () => {
       const argument: DiceNotation = `${coreTestString}-2`
 
-      test.only('returns a RollParameter matching the notation', () => {
+      test('returns a RollParameter matching the notation', () => {
         const params = argumentToRollParameters(argument)
 
         expect(params).toMatchObject({
