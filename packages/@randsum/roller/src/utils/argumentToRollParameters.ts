@@ -15,6 +15,8 @@ function argumentToRollConfig(argument: RollArgument): RollConfig {
     case isD(argument):
       return argument.toRollConfig()
     case isDiceNotation(argument):
+      console.log('argument', argument)
+      console.log('return value', notationToRollConfig(argument))
       return notationToRollConfig(argument)
     default:
       return {

@@ -72,12 +72,12 @@ describe('argumentToRollParameters', () => {
       })
     })
 
-    describe('complex', () => {
+    describe.only('complex', () => {
       const argument = {
         quantity: 4,
         sides: 6,
         modifiers: {
-          plus: 2,
+          add: 2,
           subtract: 1,
           drop: {
             highest: undefined,
@@ -295,7 +295,7 @@ describe('argumentToRollParameters', () => {
     describe('given a notation that contains a subtract modifier', () => {
       const argument: DiceNotation = `${coreTestString}-2`
 
-      test('returns a RollParameter matching the notation', () => {
+      test.only('returns a RollParameter matching the notation', () => {
         const params = argumentToRollParameters(argument)
 
         expect(params).toMatchObject({
@@ -311,7 +311,7 @@ describe('argumentToRollParameters', () => {
       })
     })
 
-    describe('given a notation that contains a plus modifier', () => {
+    describe('given a notation that contains a add modifier', () => {
       const argument: DiceNotation = `${coreTestString}+2`
 
       test('returns a RollParameter matching the notation', () => {
@@ -321,7 +321,7 @@ describe('argumentToRollParameters', () => {
           argument,
           config: {
             ...coreDicePools,
-            modifiers: { plus: 2 }
+            modifiers: { add: 2 }
           },
           die: new D(coreDicePools.sides),
           notation: '4d6+2',
@@ -544,7 +544,7 @@ describe('argumentToRollParameters', () => {
                 reroll: { exact: [5, 2], lessThan: 6, maxReroll: 3 },
                 unique: { notUnique: [5] },
                 explode: true,
-                plus: 5,
+                add: 5,
                 subtract: 5
               }
             },

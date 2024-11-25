@@ -79,11 +79,10 @@ export function applyModifiers(
             : bonuses.rolls
         }
 
-      case 'plus':
+      case 'add':
         return {
           ...bonuses,
-          simpleMathModifier:
-            bonuses.simpleMathModifier + Number(modifiers.plus)
+          simpleMathModifier: bonuses.simpleMathModifier + Number(modifiers.add)
         }
 
       case 'subtract':
