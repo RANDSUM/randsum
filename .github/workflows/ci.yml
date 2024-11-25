@@ -2,12 +2,9 @@ name: CI
 on: [push]
 jobs:
   example_matrix_strategy:
+    uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
+    with:
+      package: ${{ matrix.package }}
     strategy:
       matrix:
         package: [core, customdice, dice, notation, tower]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Use Template
-        uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
-        with:
-          package: ${{ matrix.package }}
