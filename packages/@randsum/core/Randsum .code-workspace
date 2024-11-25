@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../customdice"
+		},
+		{
+			"path": "../dice"
+		},
+		{
+			"path": "../notation"
+		},
+		{
+			"path": "../tower"
+		}
+	],
+	"settings": {}
+}
