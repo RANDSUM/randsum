@@ -1,6 +1,9 @@
 {
-  "extends": "../../../tsconfig",
-  "include": ["./src", "__tests__"],
+  "extends": "../../tsconfig",
+  "include": [
+    "./src",
+    "__tests__"
+  ],
   "exclude": [],
   "compilerOptions": {
     "composite": true,
