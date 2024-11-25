@@ -85,8 +85,8 @@ You can use the `modifier` property of `RandsumRollOptions.options` to further m
 roll({
   sides: 20,
   quantity: 4,
-  modifiers: { drop: { highest: true } }, { plus: 2 }
-}) // Roll 4 20 sided die, drop highest, plus 2
+  modifiers: { drop: { highest: true } }, { add: 2 }
+}) // Roll 4 20 sided die, drop highest, add 2
 ```
 
 ### Passing in multiple dice pools
@@ -97,7 +97,7 @@ roll({
 roll(20, '2d4', {
       sides: 20,
       quantity: 4,
-      modifiers: { drop: { highest: true } }, { plus: 2 }
+      modifiers: { drop: { highest: true } }, { add: 2 }
     })
   // Roll 1 d20, 2 d4, and 4 d20 (dropping the highest and adding 2)
 ```

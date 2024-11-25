@@ -95,7 +95,7 @@ Note: When using custom sides with Randsum Dice Notation, we can only mark sides
   - for example, given the custom faces argument `[6, 5, 4, 3, 2, 1]`, `1` would be considered the "highest" number, and `6` the "lowest`, which would be silly!
   - In light of this, modifiers are ignored (if provided in JS) or rejected (in TS) when providing custom sides.
 
-### Plus
+### add
 
 ---
 
@@ -118,11 +118,11 @@ roll('6d20+5')
 roll({
   sides: 20,
   quantity: 6,
-  modifiers: { plus: 5 }
+  modifiers: { add: 5 }
 })
 ```
 
-### Minus
+### subtract
 
 **Key: `-`**
 
