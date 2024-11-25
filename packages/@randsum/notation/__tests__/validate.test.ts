@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import type { DiceNotation } from '@randsum/core'
 import { validate } from '../src'
+import type { DiceNotation } from '../src/types'
 
 describe('validate', () => {
   describe('when the notation is completely invalid', () => {

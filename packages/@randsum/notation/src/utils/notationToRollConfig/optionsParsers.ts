@@ -7,8 +7,8 @@ import {
   replacePattern,
   rerollPattern,
   capPattern,
-  plusPattern,
-  minusPattern
+  addPattern,
+  subtractPattern
 } from './patterns'
 import type {
   RequiredCoreDiceParameters,
@@ -238,10 +238,10 @@ function parseExplodeNotation(
       }
 }
 
-function parseMinusNotation(
+function parsesubtractNotation(
   modifiersString: string
 ): Pick<Modifiers, 'subtract'> {
-  const notations = extractMatches(modifiersString, minusPattern)
+  const notations = extractMatches(modifiersString, subtractPattern)
   if (notations.length === 0) {
     return {}
   }
@@ -254,8 +254,8 @@ function parseMinusNotation(
   }
 }
 
-function parsePlusNotation(modifiersString: string): Pick<Modifiers, 'add'> {
-  const notations = extractMatches(modifiersString, plusPattern)
+function parseaddNotation(modifiersString: string): Pick<Modifiers, 'add'> {
+  const notations = extractMatches(modifiersString, addPattern)
   if (notations.length === 0) {
     return {}
   }
@@ -348,8 +348,8 @@ export function parseModifiers(modifiersString: string): {
       ...parseReplaceNotation(modifiersString),
       ...parseRerollNotation(modifiersString),
       ...parseCapNotation(modifiersString),
-      ...parsePlusNotation(modifiersString),
-      ...parseMinusNotation(modifiersString)
+      ...parseaddNotation(modifiersString),
+      ...parsesubtractNotation(modifiersString)
     }
   }
 }

@@ -74,11 +74,11 @@ function explodeString() {
   return 'Exploding Dice'
 }
 
-function addString(plus: number) {
-  return `Add ${plus}`
+function addString(add: number) {
+  return `Add ${add}`
 }
 
-function minusString(subtract: number) {
+function subtractString(subtract: number) {
   return `Subtract ${subtract}`
 }
 
@@ -130,7 +130,8 @@ export function formatModifierDescriptions({
   if (modifiers.explode) modifierStrings.push(explodeString())
   if (modifiers.unique) modifierStrings.push(uniqueString(modifiers.unique))
   if (modifiers.add) modifierStrings.push(addString(modifiers.add))
-  if (modifiers.subtract) modifierStrings.push(minusString(modifiers.subtract))
+  if (modifiers.subtract)
+    modifierStrings.push(subtractString(modifiers.subtract))
 
   return modifierStrings
 }

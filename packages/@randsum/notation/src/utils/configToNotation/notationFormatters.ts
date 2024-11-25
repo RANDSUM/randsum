@@ -1,13 +1,13 @@
-import { isValidModifier } from '../../guards'
-import type {
-  GreaterLessOptions,
-  DropOptions,
-  ReplaceOptions,
-  RerollOptions,
-  UniqueOptions,
-  RollConfig,
-  DiceNotation
-} from '../../types'
+import {
+  isValidModifier,
+  type DiceNotation,
+  type DropOptions,
+  type GreaterLessOptions,
+  type ReplaceOptions,
+  type RerollOptions,
+  type RollConfig,
+  type UniqueOptions
+} from '@randsum/core'
 
 function capNotation(cap: GreaterLessOptions) {
   const capList = formatGreaterLess(cap)
@@ -72,11 +72,11 @@ function rerollNotation(reroll: RerollOptions) {
 function explodeNotation() {
   return '!'
 }
-function addNotation(plus: number) {
-  return `+${plus}`
+function addNotation(add: number) {
+  return `+${add}`
 }
 
-function minusNotation(subtract: number) {
+function subtractNotation(subtract: number) {
   return `-${subtract}`
 }
 
@@ -118,7 +118,7 @@ export function formatModifierNotation({ modifiers }: RollConfig): string {
   if (modifiers.unique) modifierStrings.push(uniqueNotation(modifiers.unique))
   if (modifiers.add) modifierStrings.push(addNotation(modifiers.add))
   if (modifiers.subtract)
-    modifierStrings.push(minusNotation(modifiers.subtract))
+    modifierStrings.push(subtractNotation(modifiers.subtract))
 
   return modifierStrings.join('')
 }

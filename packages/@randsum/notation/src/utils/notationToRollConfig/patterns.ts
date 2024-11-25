@@ -4,8 +4,8 @@ export const coreNotationPattern = /^\d+[Dd](\d+|{.*})/
 export const dropHighestPattern = /[Hh]\d*/g
 export const dropLowestPattern = /[Ll]\d*/g
 export const uniquePattern = /[Uu]({(\d+,)*(\d+)})?/g
-export const plusPattern = /\+\d+/g
-export const minusPattern = /-\d+/g
+export const addPattern = /\+\d+/g
+export const subtractPattern = /-\d+/g
 export const explodePattern = /!/g
 
 const coreGreaterLessThan = /[<>]?\d+/
@@ -52,8 +52,8 @@ export const completeRollPattern = new RegExp(
     replacePattern.source,
     rerollPattern.source,
     capPattern.source,
-    plusPattern.source,
-    minusPattern.source
+    addPattern.source,
+    subtractPattern.source
   ].join('|'),
   'g'
 )

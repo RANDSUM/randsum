@@ -1,12 +1,9 @@
-import {
-  configToDescription,
-  configToNotation,
-  type DiceNotation
-} from '@randsum/core'
+import { configToDescription } from '@randsum/core'
 
 import { isDiceNotation } from './guards'
-import type { NotationValidationResult } from './types'
+import type { DiceNotation, NotationValidationResult } from './types'
 import { notationToRollConfig } from './utils/notationToRollConfig'
+import { configToNotation } from './utils/configToNotation'
 
 export function validate(
   notation: DiceNotation | string

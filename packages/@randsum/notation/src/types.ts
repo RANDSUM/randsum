@@ -1,4 +1,4 @@
-import { type DiceNotation, type RollConfig } from '@randsum/core'
+import { type RollConfig } from '@randsum/core'
 
 export type NotationValidationResult = {
   valid: boolean
@@ -6,3 +6,5 @@ export type NotationValidationResult = {
   config: RollConfig | undefined
   description: string[] | undefined
 }
+
+export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
