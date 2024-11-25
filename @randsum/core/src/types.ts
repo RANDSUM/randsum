@@ -46,3 +46,12 @@ type CoreRollOptions = Omit<RollConfig, 'modifiers'>
 export type RequiredCoreDiceParameters = {
   [Property in keyof CoreRollOptions]-?: CoreRollOptions[Property]
 }
+
+export type DicePoolLike<R> = {
+  [key: string]: {
+    die: { rollMany: (quantity: number) => R[] }
+    config: { quantity: number }
+  }
+}
+
+export type DicePoolRollReturn<R> = { [key: string]: R[] }
