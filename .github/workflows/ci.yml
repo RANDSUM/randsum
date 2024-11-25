@@ -7,6 +7,7 @@ jobs:
         package: [core, customdice, dice, notation, tower]
     runs-on: ubuntu-latest
     steps:
-      - uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
+      - name: Use Template
+        uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
         with:
           package: ${{ matrix.package }}
