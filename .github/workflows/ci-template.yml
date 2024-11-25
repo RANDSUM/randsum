@@ -36,8 +36,7 @@ jobs:
         with:
           bun-version: latest
 
-    # Run the build script to build sibling packages
-
+      # Run the build script to build sibling packages
       - name: core
         if: steps.changes.outputs.changesInPackage == 'true'
         working-directory: '@randsum/core'
@@ -62,6 +61,12 @@ jobs:
         if: steps.changes.outputs.changesInPackage == 'true'
         working-directory: '@randsum/customdice'
         run: bun install && bun run build
+
+      - name: Type Check
+        run: bun ts:check
+
+      - name: Lint & Format
+        run: bun lint && bun format
 
       - name: Test
         if: steps.changes.outputs.changesInPackage == 'true'
