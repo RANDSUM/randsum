@@ -1,5 +1,5 @@
 {
-  "name": "@randsum/roller",
+  "name": "@randsum/tower",
   "version": "0.1.0",
   "main": "./dist/index.js",
   "source": "./src/index.ts",

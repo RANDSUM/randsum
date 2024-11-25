@@ -2,8 +2,8 @@
 <a href="https://github.com/RANDSUM/randsum-ts" align="center">
   <img width="150" height="150" align="center" src="https://raw.githubusercontent.com/RANDSUM/randsum-ts/main/icon.webp">
 </div>
-<h1 align="center">randsum</h1>
-<h2 align="center">The world's most flexible, powerful, and easy-to-use JS dice-roller.</h2>
+<h1 align="center">@randsum</h1>
+<h2 align="center">A powerful collection of utilities for rolling dice in Javascript</h2>
 <div align="center">
   <a href="https://www.npmjs.com/package/randsum" align="center">
     <img src="https://img.shields.io/npm/v/randsum">
@@ -27,41 +27,34 @@
 
 ## What is this?
 
-It's a dice roller, used for generating rolls that you might use in popular Tabletop Role-playing Games.
+`@randsum` is a powerful collection of dice-rolling utilities:
 
 ```ts
 // Let's Roll!
-import { roll } from 'randsum'
+import { D20 } from `@randsum/dice`
 
 // Roll a single D20
-roll(20)
+D20.roll()
 
 // Roll 4 D20
-roll({ quantity: 4, sides: 20 })
+D20.rollMany(4)
+
+
+// Lets roll something more complicated...
+
+import { roll } from `@randsum/tower`
 
 // Roll 4 D6, drop the lowest
 roll({ quantity: 4, sides: 6, modifiers: { drop: { lowest: true } } })
 
-// Do the same, but with dice notation
+// Lets do the same, but with dice notation
 roll('4d6L')
 
-// Roll 4 Fudge dice
-roll({ quantity: 4, sides: ['+', '+', '-', '-', ' ', ' '] })
+// Maybe we want to validate that notation?
 
-// Roll a single D20
-import { D20 } from 'randsum'
+import { validate } from `@randsum/notation`
 
-D20.roll()
-
-// Make a new 120 sided die and roll it
-import { D } from 'randsum'
-
-const D120 = new D(120)
-D120.roll()
-
-//'heads' or 'tails'?
-const Coin = new D(['heads', 'tails'])
-Coin.roll()
+const { valid } = validate('4d6L')
 ```
 
 Written in 100% Typescript with strong attention paid to return types. You depend on `randsum` to give you what you expect - just not always the roll you want.

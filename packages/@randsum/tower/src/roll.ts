@@ -4,9 +4,11 @@ import { argumentToRollParameters } from './utils/argumentToRollParameters'
 import { applyModifiers, calculateTotal } from './utils/applyModifiers'
 
 export function roll(...args: RollArgument[]): RollResult {
-  const dicePools: DicePools = args.reduce(
+  const rawDicePools: DicePools = {}
+
+  const dicePools = args.reduce(
     (acc, arg) => ({ ...acc, [uuid()]: argumentToRollParameters(arg) }),
-    {}
+    rawDicePools
   )
 
   const rawRolls = Object.fromEntries(
