@@ -1,13 +1,13 @@
 import { argumentToRollConfig, type RollArgument } from '@randsum/tower'
 import { CustomD } from '../customD'
-import { isCustomRollConfigArgument } from '../guards'
+import { isCustomDiceNotation, isCustomRollConfigArgument } from '../guards'
 import type { CustomRollArgument, CustomRollConfig } from '../types'
+import { customNotationToCustomRollConfig } from './customNotationToCustomRollConfig'
+import { facesFromSides } from './facesFromSides'
 
 function baseArgumentToCustomRollConfig(arg: RollArgument): CustomRollConfig {
   const baseRollConfig = argumentToRollConfig(arg)
-  const faces = Array.from({ length: baseRollConfig.sides }, (_, i) =>
-    String(i + 1)
-  )
+  const faces = facesFromSides(baseRollConfig.sides)
   return { ...baseRollConfig, faces }
 }
 
@@ -22,6 +22,8 @@ export function argumentToCustomRollConfig(
     }
     case isCustomRollConfigArgument(arg):
       return { quantity: 1, ...arg, sides: arg.faces.length }
+    case isCustomDiceNotation(arg):
+      return customNotationToCustomRollConfig(arg)
     default: {
       return baseArgumentToCustomRollConfig(arg)
     }

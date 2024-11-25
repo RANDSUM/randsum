@@ -11,9 +11,12 @@ export interface CustomRollConfigArgument
   faces: CustomRollConfig['faces']
 }
 
+export type CustomDiceNotation = `${number}${'d' | 'D'}${string}`
+
 export type CustomRollArgument =
   | CustomD
   | CustomRollConfigArgument
+  | CustomDiceNotation
   | string[]
   | RollArgument
 
@@ -31,4 +34,10 @@ export interface CustomRollResult {
     [key: string]: string[]
   }
   result: string[]
+}
+
+type CustomCoreRollOptions = Omit<CustomRollConfig, 'modifiers'>
+
+export type RequiredCustomCoreDiceParameters = {
+  [Property in keyof CustomCoreRollOptions]-?: CustomCoreRollOptions[Property]
 }

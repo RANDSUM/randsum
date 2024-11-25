@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@randsum/dice": "workspace:*",
-    "@randsum/tower": "workspace:*"
+    "@randsum/tower": "workspace:*",
+    "@randsum/notation": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
