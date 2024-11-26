@@ -12,12 +12,8 @@ jobs:
   test:
     defaults:
       run:
-        working-directory: '@randsum/${{ inputs.package }}'
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+        working-directory: 'packages/@randsum/${{ inputs.package }}'
+    runs-on: [ubuntu-latest]
 
     steps:
       - name: Checkout repo
@@ -28,7 +24,7 @@ jobs:
         with:
           filters: |
             changesInPackage:
-              - '@randsum/${{ inputs.package }}/**'
+              - 'packages/@randsum/${{ inputs.package }}/**'
 
       - name: Use Bun
         if: steps.changes.outputs.changesInPackage == 'true'
@@ -39,27 +35,27 @@ jobs:
       # Run the build script to build sibling packages
       - name: core
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: '@randsum/core'
+        working-directory: 'packages/@randsum/core'
         run: bun install && bun run build
 
       - name: notation
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: '@randsum/notation'
+        working-directory: 'packages/@randsum/notation'
         run: bun install && bun run build
 
       - name: dice
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: '@randsum/dice'
+        working-directory: 'packages/@randsum/dice'
         run: bun install && bun run build
 
       - name: tower
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: '@randsum/tower'
+        working-directory: 'packages/@randsum/tower'
         run: bun install && bun run build
 
       - name: customdice
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: '@randsum/customdice'
+        working-directory: 'packages/@randsum/customdice'
         run: bun install && bun run build
 
       - name: Type Check
