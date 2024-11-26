@@ -4,5 +4,5 @@ export function customConfigToCustomNotation({
   quantity,
   faces
 }: CustomRollConfig): CustomDiceNotation {
-  return `${quantity}d${faces.join('')}`
+  return `${quantity}d{${faces.join('')}}`
 }
