@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig",
+  "include": ["./src", "__tests__"],
+  "exclude": [],
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist"
+  }
+}
