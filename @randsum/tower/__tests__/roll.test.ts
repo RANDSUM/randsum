@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { roll } from '../src'
+import { roll } from '../src/roll'
 import { D } from '@randsum/dice'
 
 const loops = 9999
