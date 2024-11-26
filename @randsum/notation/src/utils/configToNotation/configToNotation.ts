@@ -2,7 +2,7 @@ import type { RollConfig } from '@randsum/core'
 import {
   formatCoreNotation,
   formatModifierNotation
-} from '../configToNotation/notationFormatters'
+} from './notationFormatters'
 import type { DiceNotation } from '../../types'
 
 export function configToNotation(options: RollConfig): DiceNotation {

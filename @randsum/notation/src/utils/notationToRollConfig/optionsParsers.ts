@@ -9,7 +9,7 @@ import {
   capPattern,
   addPattern,
   subtractPattern
-} from './patterns'
+} from '../../patterns'
 import type {
   RequiredCoreDiceParameters,
   DropOptions,

@@ -1,6 +1,7 @@
 import type { RollConfig } from '@randsum/core'
 import type { CustomD } from './customD'
 import type { RollArgument } from '@randsum/tower'
+import type { NotationValidationResult } from '@randsum/notation'
 
 export interface CustomRollConfig extends Omit<RollConfig, 'modifiers'> {
   faces: string[]
@@ -40,4 +41,10 @@ type CustomCoreRollOptions = Omit<CustomRollConfig, 'modifiers'>
 
 export type RequiredCustomCoreDiceParameters = {
   [Property in keyof CustomCoreRollOptions]-?: CustomCoreRollOptions[Property]
+}
+
+export interface CustomNotationValidationResult
+  extends NotationValidationResult {
+  config: CustomRollConfig
+  notation: CustomDiceNotation
 }

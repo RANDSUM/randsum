@@ -3,7 +3,7 @@ import { configToDescription } from '@randsum/core'
 import { isDiceNotation } from './guards'
 import type { DiceNotation, NotationValidationResult } from './types'
 import { notationToRollConfig } from './utils/notationToRollConfig'
-import { configToNotation } from './utils/configToNotation'
+import { configToNotation } from './utils/configToNotation/configToNotation'
 
 export function validate(
   notation: DiceNotation | string
