@@ -1,12 +1,11 @@
-import {
-  isValidModifier,
-  type DiceNotation,
-  type DropOptions,
-  type GreaterLessOptions,
-  type ReplaceOptions,
-  type RerollOptions,
-  type RollConfig,
-  type UniqueOptions
+import type {
+  DiceNotation,
+  DropOptions,
+  GreaterLessOptions,
+  ReplaceOptions,
+  RerollOptions,
+  RollConfig,
+  UniqueOptions
 } from '@randsum/core'
 
 function capNotation(cap: GreaterLessOptions) {
@@ -104,9 +103,7 @@ function singleReplaceNotation(replace: ReplaceOptions) {
   return `${fromValue}=${replace.to}`
 }
 
-export function formatModifierNotation({ modifiers }: RollConfig): string {
-  if (!isValidModifier(modifiers)) return ''
-
+export function formatModifierNotation({ modifiers = {} }: RollConfig): string {
   const modifierStrings = []
 
   if (modifiers.cap) modifierStrings.push(capNotation(modifiers.cap))

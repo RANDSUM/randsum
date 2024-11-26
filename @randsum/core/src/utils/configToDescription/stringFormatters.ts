@@ -1,4 +1,3 @@
-import { isValidModifier } from '@randsum/core/src/guards'
 import type {
   GreaterLessOptions,
   DropOptions,
@@ -113,10 +112,8 @@ export function formatCoreDescriptions({ sides, quantity }: RollConfig) {
 }
 
 export function formatModifierDescriptions({
-  modifiers
+  modifiers = {}
 }: RollConfig): string[] {
-  if (!isValidModifier(modifiers)) return []
-
   const modifierStrings = []
 
   if (modifiers.cap)

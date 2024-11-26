@@ -1,4 +1,4 @@
-import type { CustomDiceNotation, CustomRollConfig } from '../../types'
+import type { CustomDiceNotation, CustomRollConfig } from '../types'
 
 export function customConfigToCustomNotation({
   quantity,

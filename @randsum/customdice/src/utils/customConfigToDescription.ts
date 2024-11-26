@@ -1,7 +1,7 @@
 import { formatCoreDescriptions } from '@randsum/core'
 import type { CustomRollConfig } from '../types'
 
-export function configToDescription({
+export function customConfigToDescriptions({
   quantity,
   faces,
   sides
