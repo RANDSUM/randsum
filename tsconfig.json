@@ -26,16 +26,19 @@
   "files": [],
   "references": [
     {
-      "path": "./@randsum/notation"
+      "path": "./packages/@randsum/core"
     },
     {
-      "path": "./@randsum/dice"
+      "path": "./packages/@randsum/notation"
     },
     {
-      "path": "./@randsum/core"
+      "path": "./packages/@randsum/dice"
     },
     {
-      "path": "./@randsum/tower"
+      "path": "./packages/@randsum/tower"
+    },
+    {
+      "path": "./packages/@randsum/games"
     }
   ]
 }
