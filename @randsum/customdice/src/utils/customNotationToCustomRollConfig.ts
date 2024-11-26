@@ -1,26 +1,9 @@
 import type { DiceNotation } from '@randsum/core'
 import { customCoreNotationPattern } from '../patterns'
-import type {
-  CustomDiceNotation,
-  CustomRollConfig,
-  RequiredCustomCoreDiceParameters
-} from '../types'
+import type { CustomDiceNotation, CustomRollConfig } from '../types'
 import { isDiceNotation } from '@randsum/notation'
 import { argumentToRollConfig } from '@randsum/tower'
 import { facesFromSides } from './facesFromSides'
-
-export function parseCustomCoreNotation(
-  notationString: string
-): RequiredCustomCoreDiceParameters {
-  const [quantity, rawFaces] = notationString.split(/[Dd]/)
-  const faces = rawFaces.replace('{', '').replace('}', '').split('')
-
-  return {
-    quantity: Number(quantity),
-    sides: Number(faces.length),
-    faces
-  }
-}
 
 export function customNotationToCustomRollConfig(
   notationString: CustomDiceNotation | DiceNotation
@@ -38,5 +21,12 @@ export function customNotationToCustomRollConfig(
     .match(customCoreNotationPattern)!
     .at(0)!
 
-  return parseCustomCoreNotation(customCoreNotationMatch)
+  const [quantity, rawFaces] = customCoreNotationMatch.split(/[Dd]/)
+  const faces = rawFaces.replace('{', '').replace('}', '').split('')
+
+  return {
+    quantity: Number(quantity),
+    sides: Number(faces.length),
+    faces
+  }
 }
