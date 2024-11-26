@@ -41,7 +41,7 @@ export function applyModifiers(
           rolls: modifiers.unique
             ? applyUnique(
                 bonuses.rolls,
-                { sides, quantity: quantity || 1, unique: modifiers.unique },
+                { sides, quantity: quantity, unique: modifiers.unique },
                 rollOne
               )
             : bonuses.rolls

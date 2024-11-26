@@ -7,6 +7,6 @@
   "exclude": [],
   "compilerOptions": {
     "composite": true,
-    "outDir": "./dist"
+    "outDir": "q"
   }
 }
