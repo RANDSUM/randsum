@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'bun:test'
 import { notationToRollConfig } from '../src'
+import type { DiceNotation } from '@randsum/core'
 
 describe('notationToRollConfig', () => {
   it('converts the notation to a roll config', () => {
@@ -55,5 +56,32 @@ describe('notationToRollConfig', () => {
         ]
       }
     })
+  })
+
+  const notation3: DiceNotation = `10d20 H2 L V{1=2,>2=6} D{<2,>5,2,4} C{<2,>18} R{5,2}3 U{5}  R{<6} ! +2 -5 +3`
+  const config3 = notationToRollConfig(notation3)
+
+  expect(config3).toEqual({
+    quantity: 10,
+    sides: 20,
+    modifiers: {
+      drop: {
+        highest: 2,
+        lowest: 1,
+        exact: [2, 4],
+        greaterThan: 5,
+        lessThan: 2
+      },
+      replace: [
+        { from: 1, to: 2 },
+        { from: { greaterThan: 2 }, to: 6 }
+      ],
+      cap: { greaterThan: 18, lessThan: 2 },
+      reroll: { exact: [5, 2], lessThan: 6, maxReroll: 3 },
+      unique: { notUnique: [5] },
+      explode: true,
+      add: 5,
+      subtract: 5
+    }
   })
 })
