@@ -10,5 +10,13 @@
     "type": "git",
     "url": "https://github.com/RANDSUM/randsum-ts.git"
   },
+  "scripts": {
+    "refresh:core": "cd @randsum/core && bun install && bun run build",
+    "refresh:dice": "cd @randsum/dice && bun install && bun update && bun run build",
+    "refresh:notation": "cd @randsum/notation && bun install && bun update && bun run build",
+    "refresh:tower"   : "cd @randsum/tower && bun install && bun update && bun run build",
+    "refresh:customdice": "cd @randsum/customdice && bun install && bun update && bun run build",
+    "refresh:all": "bun refresh:core && bun refresh:dice && bun refresh:notation && bun refresh:tower && bun refresh:customdice"
+  },
   "type": "module"
 }
