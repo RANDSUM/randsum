@@ -5,7 +5,7 @@ import type {
   RerollOptions,
   UniqueOptions,
   RollConfig
-} from '../../../src/types'
+} from '../../types'
 
 function formatHumanList(list: (string | number)[]) {
   return list

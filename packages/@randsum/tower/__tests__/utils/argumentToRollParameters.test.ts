@@ -1,7 +1,7 @@
 import { D } from '@randsum/dice'
 import { describe, expect, test } from 'bun:test'
 import { argumentToRollParameters } from '../../src'
-import type { DiceNotation } from '@randsum/core'
+import type { DiceNotation } from '@randsum/notation'
 
 describe('argumentToRollParameters', () => {
   describe('given a number', () => {
