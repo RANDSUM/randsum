@@ -1,5 +1,5 @@
 import {
-  validate as validateCore,
+  validateNotation,
   type NotationValidationResult
 } from '@randsum/notation'
 import { isCustomFacesDiceNotation } from './guards'
@@ -20,5 +20,5 @@ export function validateCustomFacesNotation(
       description: customFacesConfigToDescriptions(config)
     }
   }
-  return validateCore(notation)
+  return validateNotation(notation)
 }

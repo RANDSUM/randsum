@@ -10,3 +10,5 @@ export function configToDescription(options: RollConfig) {
     ...formatModifierDescriptions(options)
   ]
 }
+
+export * from './stringFormatters'
