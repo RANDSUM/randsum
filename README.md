@@ -1,8 +1,8 @@
 <!-- Banner Image -->
 
 <div align="center">
-  <a href="https://github.com/RANDSUM/randsum-ts" align="center">
-    <img width="150" height="150" align="center" src="https://raw.githubusercontent.com/RANDSUM/randsum-ts/main/icon.webp">
+  <a href="https://github.com/RANDSUM/randsum" align="center">
+    <img width="150" height="150" align="center" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
   </a>
 </div>
 
