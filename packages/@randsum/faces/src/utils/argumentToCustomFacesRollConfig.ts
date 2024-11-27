@@ -1,7 +1,7 @@
 import { argumentToRollConfig, type RollArgument } from '@randsum/tower'
 import { CustomFacesD } from '../customFacesD'
 import {
-  isCustomDiceNotation,
+  isCustomFacesDiceNotation,
   isCustomFacesRollConfigArgument
 } from '../guards'
 import type { CustomFacesRollArgument, CustomFacesRollConfig } from '../types'
@@ -27,7 +27,7 @@ export function argumentToCustomFacesRollConfig(
     }
     case isCustomFacesRollConfigArgument(arg):
       return { quantity: 1, ...arg, sides: arg.faces.length }
-    case isCustomDiceNotation(arg):
+    case isCustomFacesDiceNotation(arg):
       return customFacesNotationToCustomFacesRollConfig(arg)
     default: {
       return baseArgumentToCustomFacesRollConfig(arg)

@@ -2,7 +2,7 @@ import {
   validate as validateCore,
   type NotationValidationResult
 } from '@randsum/notation'
-import { isCustomDiceNotation } from './guards'
+import { isCustomFacesDiceNotation } from './guards'
 import type { CustomFacesNotationValidationResult } from './types'
 import { customConfigToCustomFacesNotation } from './utils/customFacesConfigToCustomFacesNotation'
 import { customFacesConfigToDescriptions } from './utils/customFacesConfigToDescription'
@@ -11,7 +11,7 @@ import { customFacesNotationToCustomFacesRollConfig } from './utils/customFacesN
 export function validateCustomFacesNotation(
   notation: string
 ): CustomFacesNotationValidationResult | NotationValidationResult {
-  if (isCustomDiceNotation(notation)) {
+  if (isCustomFacesDiceNotation(notation)) {
     const config = customFacesNotationToCustomFacesRollConfig(notation)
     return {
       valid: true,
