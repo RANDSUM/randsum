@@ -28,30 +28,30 @@ jobs:
           bun-version: latest
 
       # Run the build script to build sibling packages
-      - name: core
-        if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: 'packages/@randsum/core'
-        run: bun install && bun run build
+      # - name: build core
+      #   if: steps.changes.outputs.changesInPackage == 'true'
+      #   working-directory: 'packages/@randsum/core'
+      #   run: bun install && bun run build
 
-      - name: notation
-        if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: 'packages/@randsum/notation'
-        run: bun install && bun run build
+      # - name: build notation
+      #   if: steps.changes.outputs.changesInPackage == 'true'
+      #   working-directory: 'packages/@randsum/notation'
+      #   run: bun install && bun run build
 
-      - name: dice
-        if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: 'packages/@randsum/dice'
-        run: bun install && bun run build
+      # - name: build dice
+      #   if: steps.changes.outputs.changesInPackage == 'true'
+      #   working-directory: 'packages/@randsum/dice'
+      #   run: bun install && bun run build
 
-      - name: tower
-        if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: 'packages/@randsum/tower'
-        run: bun install && bun run build
+      # - name: build tower
+      #   if: steps.changes.outputs.changesInPackage == 'true'
+      #   working-directory: 'packages/@randsum/tower'
+      #   run: bun install && bun run build
 
-      - name: faces
-        if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: 'packages/@randsum/faces'
-        run: bun install && bun run build
+      # - name: build faces
+      #   if: steps.changes.outputs.changesInPackage == 'true'
+      #   working-directory: 'packages/@randsum/faces'
+      #   run: bun install && bun run build
 
       - name: Type Check
         if: steps.changes.outputs.changesInPackage == 'true'
