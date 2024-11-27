@@ -10,7 +10,7 @@ export function isCustomFacesRollConfigArgument(
   return typeof arg === 'object' && !!arg && 'faces' in arg
 }
 
-export function isCustomDiceNotation(
+export function isCustomFacesDiceNotation(
   arg: unknown
 ): arg is CustomFacesDiceNotation {
   const isAString = typeof arg === 'string'
