@@ -27,35 +27,36 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install Dependencies
-        if: steps.changes.outputs.changesInPackage == 'true'
-        run: bun install
-
       # Run the build script to build sibling packages
-      # - name: build core
-      #   if: steps.changes.outputs.changesInPackage == 'true'
-      #   working-directory: 'packages/@randsum/core'
-      #   run: bun install && bun run build
+      - name: build core
+        if: steps.changes.outputs.changesInPackage == 'true'
+        working-directory: 'packages/@randsum/core'
+        run: bun install && bun run build
 
-      # - name: build notation
-      #   if: steps.changes.outputs.changesInPackage == 'true'
-      #   working-directory: 'packages/@randsum/notation'
-      #   run: bun install && bun run build
+      - name: build notation
+        if: steps.changes.outputs.changesInPackage == 'true'
+        working-directory: 'packages/@randsum/notation'
+        run: bun install && bun run build
 
-      # - name: build dice
-      #   if: steps.changes.outputs.changesInPackage == 'true'
-      #   working-directory: 'packages/@randsum/dice'
-      #   run: bun install && bun run build
+      - name: build dice
+        if: steps.changes.outputs.changesInPackage == 'true'
+        working-directory: 'packages/@randsum/dice'
+        run: bun install && bun run build
 
-      # - name: build tower
-      #   if: steps.changes.outputs.changesInPackage == 'true'
-      #   working-directory: 'packages/@randsum/tower'
-      #   run: bun install && bun run build
+      - name: build tower
+        if: steps.changes.outputs.changesInPackage == 'true'
+        working-directory: 'packages/@randsum/tower'
+        run: bun install && bun run build
 
-      # - name: build faces
-      #   if: steps.changes.outputs.changesInPackage == 'true'
-      #   working-directory: 'packages/@randsum/faces'
-      #   run: bun install && bun run build
+      - name: build faces
+        if: steps.changes.outputs.changesInPackage == 'true'
+        working-directory: 'packages/@randsum/faces'
+        run: bun install && bun run build
+
+      - name: build games
+        if: steps.changes.outputs.changesInPackage == 'true'
+        working-directory: 'packages/@randsum/games'
+        run: bun install && bun run build
 
       - name: Type Check
         if: steps.changes.outputs.changesInPackage == 'true'
