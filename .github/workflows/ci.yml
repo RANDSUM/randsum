@@ -2,9 +2,14 @@ name: CI
 on: [push]
 jobs:
   ci:
-    uses: RANDSUM/randsum/.github/workflows/ci-template.yml@main
-    with:
-      package: ${{ matrix.package }}
     strategy:
       matrix:
         package: [core, faces, dice, notation, tower, games]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ${{ matrix.package }}
+        uses: ./.github/workflows/ci-template.yml
