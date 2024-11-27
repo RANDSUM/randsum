@@ -27,6 +27,10 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Install Dependencies
+        if: steps.changes.outputs.changesInPackage == 'true'
+        run: bun install
+
       # Run the build script to build sibling packages
       # - name: build core
       #   if: steps.changes.outputs.changesInPackage == 'true'
