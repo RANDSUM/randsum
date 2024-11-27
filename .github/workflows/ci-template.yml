@@ -53,9 +53,9 @@ jobs:
         working-directory: 'packages/@randsum/tower'
         run: bun install && bun run build
 
-      - name: customdice
+      - name: faces
         if: steps.changes.outputs.changesInPackage == 'true'
-        working-directory: 'packages/@randsum/customdice'
+        working-directory: 'packages/@randsum/faces'
         run: bun install && bun run build
 
       - name: Type Check

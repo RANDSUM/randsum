@@ -7,4 +7,4 @@ jobs:
       package: ${{ matrix.package }}
     strategy:
       matrix:
-        package: [core, customdice, dice, notation, tower, games]
+        package: [core, faces, dice, notation, tower, games]

@@ -101,3 +101,6 @@ export function applyModifiers(
 export function calculateTotal(rolls: number[], bonus = 0): number {
   return rolls.reduce((acc, cur) => (acc as number) + (cur as number), bonus)
 }
+
+export * from './modifierApplicators'
+export * from './types'

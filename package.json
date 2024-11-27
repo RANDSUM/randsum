@@ -16,9 +16,9 @@
     "refresh:dice": "cd packages/@randsum/dice && bun install && bun update && bun run build",
     "refresh:notation": "cd packages/@randsum/notation && bun install && bun update && bun run build",
     "refresh:tower"   : "cd packages/@randsum/tower && bun install && bun update && bun run build",
-    "refresh:customdice": "cd packages/@randsum/customdice && bun install && bun update && bun run build",
+    "refresh:faces": "cd packages/@randsum/faces && bun install && bun update && bun run build",
     "refresh:games": "cd packages/@randsum/games && bun install && bun update && bun run build",
-    "refresh:all": "bun refresh:core && bun refresh:dice && bun refresh:notation && bun refresh:tower && bun refresh:customdice && bun refresh:games"
+    "refresh:all": "bun refresh:core && bun refresh:dice && bun refresh:notation && bun refresh:tower && bun refresh:faces && bun refresh:games"
   },
   "type": "module"
 }

@@ -15,7 +15,9 @@
     "lint:fix": "eslint . --fix",
     "format:fix": "prettier . --write",
     "format": "prettier . --check",
-    "ts:check": "tsc --noEmit"
+    "ts:check": "tsc --noEmit",
+    "prepublish": "bun run build",
+    "postversion": "git push --no-verify && git push --tags --no-verify"
   },
   "dependencies": {
     "@randsum/dice": "workspace:*",
