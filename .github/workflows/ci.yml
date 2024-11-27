@@ -2,6 +2,7 @@ name: CI
 on: [push]
 jobs:
   ci:
+    name: ${{ matrix.package }} CI
     defaults:
       run:
         working-directory: 'packages/@randsum/${{ matrix.package }}'
