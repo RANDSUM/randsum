@@ -23,3 +23,4 @@ function roll(bonus: number): [RootTypes.Hit, RollResult] {
 }
 
 export const Root = { roll, interpretResult }
+export * as RootTypes from './types'

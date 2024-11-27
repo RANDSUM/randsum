@@ -10,3 +10,5 @@ export function notationToRollConfig(notationString: DiceNotation): RollConfig {
     ...parseModifiers(notationString.replace(coreNotationMatch, ''))
   }
 }
+
+export * from './optionsParsers'

@@ -21,3 +21,4 @@ function roll(
 }
 
 export const FifthEd = { roll }
+export * as FifthEdTypes from './types'

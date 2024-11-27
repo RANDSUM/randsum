@@ -1,6 +1,5 @@
 export * from './types'
 export * from './guards'
+export * from './utils'
 
 export { roll } from './roll'
-export { argumentToRollParameters } from './utils/argumentToRollParameters'
-export { argumentToRollConfig } from './utils/argumentToRollConfig'

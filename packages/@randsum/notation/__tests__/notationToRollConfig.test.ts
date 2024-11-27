@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-import { notationToRollConfig } from '../src'
 import type { DiceNotation } from '@randsum/core'
+import { notationToRollConfig } from '../src'
 
 describe('notationToRollConfig', () => {
   it('converts the notation to a roll config', () => {

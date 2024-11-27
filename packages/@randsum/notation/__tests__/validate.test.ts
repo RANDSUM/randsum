@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'bun:test'
-import { validate } from '../src'
+import { validateNotation } from '../src'
+
 import type { DiceNotation } from '../src/types'
 
-describe('validate', () => {
+describe('validateNotation', () => {
   describe('when the notation is completely invalid', () => {
     const notation = 'invalid-notation'
 
     it('returns an error result', () => {
-      const result = validate(notation)
+      const result = validateNotation(notation)
 
       expect(result).toEqual({
         valid: false,
@@ -22,7 +23,7 @@ describe('validate', () => {
     const notation: DiceNotation = '2d5XXddf'
 
     it('returns an error result', () => {
-      const result = validate(notation)
+      const result = validateNotation(notation)
 
       expect(result).toEqual({
         valid: false,
@@ -44,7 +45,7 @@ describe('validate', () => {
 
     notations.forEach((notation) => {
       it(`returns an error result for ${notation}`, () => {
-        const result = validate(notation)
+        const result = validateNotation(notation)
 
         expect(result).toEqual({
           valid: false,
@@ -60,7 +61,7 @@ describe('validate', () => {
     const notation: DiceNotation = '2d5D'
 
     it('returns an error result', () => {
-      const result = validate(notation)
+      const result = validateNotation(notation)
 
       expect(result).toEqual({
         valid: false,
@@ -74,7 +75,7 @@ describe('validate', () => {
   describe('when given a numerical notation', () => {
     it('returns a valid result', () => {
       const notation = '2d6'
-      const result = validate(notation)
+      const result = validateNotation(notation)
 
       expect(result).toEqual({
         valid: true,
@@ -84,7 +85,7 @@ describe('validate', () => {
       })
 
       const notation2 = '1D20'
-      const result2 = validate(notation2)
+      const result2 = validateNotation(notation2)
 
       expect(result2).toEqual({
         valid: true,

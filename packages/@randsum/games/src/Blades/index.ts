@@ -35,3 +35,4 @@ function roll(count: number): [BladesTypes.Hit, RollResult] {
 }
 
 export const Blades = { roll, interpretHit }
+export * as BladesTypes from './types'

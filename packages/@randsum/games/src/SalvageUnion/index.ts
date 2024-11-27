@@ -29,5 +29,5 @@ function roll(
 }
 
 import * as tables from './tables'
-
+export * as SalvageUnionTypes from './types'
 export const SalvageUnion = { interpretHit, roll, tables }
