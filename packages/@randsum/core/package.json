@@ -33,6 +33,7 @@
     "typescript-eslint": "^8.16.0"
   },
   "type": "module",
+  "types": "./dist/index.d.ts",
   "dependencies": {
     "uuid": "^11.0.3"
   }
