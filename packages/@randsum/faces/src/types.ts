@@ -44,7 +44,7 @@ export type RequiredCustomFacesCoreDiceParameters = {
 }
 
 export interface CustomFacesNotationValidationResult
-  extends NotationValidationResult {
+  extends Omit<NotationValidationResult, 'notation'> {
   config: CustomFacesRollConfig
-  notation: CustomFacesDiceNotation
+  notation: CustomFacesDiceNotation | undefined
 }

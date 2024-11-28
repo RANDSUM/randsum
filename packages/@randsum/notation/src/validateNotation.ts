@@ -5,13 +5,16 @@ import type { DiceNotation, NotationValidationResult } from './types'
 import { notationToRollConfig } from './utils/notationToRollConfig'
 import { configToNotation } from './utils/configToNotation'
 
-export function validateNotation(
+function validateNotation(
+  notation: DiceNotation
+): NotationValidationResult<true>
+function validateNotation(
   notation: DiceNotation | string
 ): NotationValidationResult {
   if (!isDiceNotation(notation)) {
     return {
       valid: false,
-      notation,
+      notation: undefined,
       config: undefined,
       description: undefined
     }
@@ -25,3 +28,5 @@ export function validateNotation(
     description: configToDescription(config)
   }
 }
+
+export { validateNotation }

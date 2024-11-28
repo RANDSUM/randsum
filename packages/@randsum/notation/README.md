@@ -11,38 +11,32 @@
 
 ## Introduction
 
-`@randsum/faces` is an extension of `@randsum` utilities to support non-numerical "Custom Faces" dice.
+`@randsum/notation` is a library that helps you define and validate Dice Notation.
 
-For instace, Fudge Dice are six-sided dice with two `+` sides, two `-` sides, and two blank sides.
+For a full understanding of the formatting of our dice notation, check out the [RANDSUM Dice Notation](./reference/RANDSUM_DICE_NOTATION.md)
 
-You can use `@randsum/faces` to simulate this unconvential die in your code.
+## validateNotation
 
-## CustomFacesD
-
-Similar to `D` from `@randsum/dice`, `CustomFacesD` is a class that creates a rollable die.
-
-Unlike `D`, however, `CustomFacesD` takes an array of strings - representing the faces of the dice - and its rolls return strings as well.
+`@randsum/notation` exports a function, `validateNotation`, which will help define whether or not your strings are `RANDSUM`-compatible dice notation.
 
 ```ts
-import {CustomFacesD} from `@randsum/faces`
+import { validateNotation } from '@randsum/notation'
 
-const FudgeDice = new CustomFacesD(['+", "+", "-", "-", " ", " "])
+const result = validateNotation('2D20')
 
-FudgeDice.roll() // a random value from the provided faces
-FudgeDice.rollMany(4) // an Array of strings representing the results of the roll
-FudgeDice.sides // 6
-FudgeDice.faces // the same array passed in to the constructor
+result.valid // true
+result.notation // `2D20` - a parsed and normalized notation of what was passed in
+result.config // { quantity: 2, sides: 20 } - a `RollConfig` object describing this roll
+result.description // An array of human-readable strings describing this roll.
 ```
 
-## Popular Custom Faces Dice
+## isDiceNotation
 
-`@randsum/faces` exports popular non-numerical dice:
+Thanks to string interpolation, we can get within spitting distance of letting the type system leverage our validation for us.
 
-- `export { FudgeDice } from '@randsum/faces'`
+For instance, typescript can identify that `2D20` is `number-D-number`, and can be typed as a `DiceNotation`.
 
-## `customFacesRoll`
-
-## `validateCustomFacesNotation`
+`@randsum/notation` exports the guard `isDiceNotation` to help manually type your strings, if that's the kind of thing you need.
 
 ---
 
