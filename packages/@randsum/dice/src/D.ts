@@ -16,10 +16,7 @@ export class D {
     return coreRandom(this.sides)
   }
 
-  rollMany(quantity: number): number {
-    return Array.from({ length: quantity }, () => this.roll()).reduce(
-      (prev, curr) => prev + curr,
-      0
-    )
+  rollMany(quantity: number): number[] {
+    return Array.from({ length: quantity }, () => this.roll())
   }
 }

@@ -25,7 +25,7 @@ import { D4, D6, D8, D10, D12, D20, D100 } from '@randsum/dice'
 D20.roll // a number between 1-20
 
 // Roll 4 D8
-D8.rollMany(4) // A number between 4 and 32
+D8.rollMany(4) // An array of 4 numbers, each between 1-8
 
 // Inspect sides
 
