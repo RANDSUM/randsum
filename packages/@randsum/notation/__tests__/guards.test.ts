@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { isDiceNotation } from '../src/guards'
+import { isDiceNotation } from '../src'
 
 describe('guards', () => {
   describe('isDiceNotation', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { configToNotation } from '../src/utils/configToNotation/configToNotation'
+import { configToNotation } from '../src'
 
 describe('configToNotation', () => {
   test('returns a string matching the constraints', () => {

@@ -1,4 +1,4 @@
-import { randomUUIDv7 as uuid } from 'bun'
+import { v4 as uuid } from 'uuid'
 
 export function formDicePools<R, A>(
   args: A[],

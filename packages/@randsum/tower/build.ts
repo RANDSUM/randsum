@@ -1,11 +1,19 @@
 import dts from 'bun-plugin-dts'
 
-await Bun.build({
+const results = await Bun.build({
   entrypoints: ['./src/index.ts'],
   outdir: './dist',
-  target: 'node',
-  splitting: true,
   sourcemap: 'inline',
-  packages: 'external',
   plugins: [dts()]
 })
+
+if (results.success == false) {
+  console.error('Build failed')
+  for (const message of results.logs) {
+    console.error(message)
+  }
+} else {
+  console.log('Compiled ' + results.outputs.length + ' javascript files...')
+}
+
+export {}

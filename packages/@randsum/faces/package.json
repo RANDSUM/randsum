@@ -1,0 +1,41 @@
+{
+  "name": "@randsum/faces",
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "version": "0.9.0",
+  "license": "MIT",
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "build": "bun run clean && bun run build.ts",
+    "clean": "rm -rf ./dist/",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format:fix": "prettier . --write",
+    "format": "prettier . --check",
+    "ts:check": "tsc --noEmit",
+    "prepublish": "bun run build",
+    "postversion": "git push --no-verify && git push --tags --no-verify"
+  },
+  "dependencies": {
+    "@randsum/dice": "workspace:*",
+    "@randsum/tower": "workspace:*",
+    "@randsum/notation": "workspace:*"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/bun": "^1.1.14",
+    "@types/eslint__js": "^8.42.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "bun-plugin-dts": "^0.3.0",
+    "bun-types": "latest",
+    "eslint": "^9.15.0",
+    "prettier": "^3.4.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.16.0"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts"
+}
