@@ -1,6 +1,6 @@
 {
   "name": "@randsum/blades",
-  "version": "0.1.15",
+  "version": "0.1.17",
   "description": "Blades in the Dark compatible dice rolling implementation",
   "author": {
     "name": "Alex Jarvis",
