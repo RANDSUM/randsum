@@ -8,6 +8,5 @@ export default defineConfig({
   minify: true,
   splitting: true,
   sourcemap: 'inline',
-  target: 'node',
-  noExternal: ['@randsum/core']
+  target: 'node'
 })
