@@ -9,5 +9,5 @@ export default defineConfig({
   splitting: true,
   sourcemap: 'inline',
   target: 'node',
-  external: ['@randsum/notation', '@randsum/core']
+  noExternal: ['@randsum/notation', '@randsum/core']
 })
