@@ -1,6 +1,6 @@
 {
   "name": "@randsum/core",
-  "version": "0.1.15",
+  "version": "0.1.17",
   "description": "Internal utilities and types for @randsum packages",
   "private": false,
   "author": {
