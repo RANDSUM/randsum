@@ -1,6 +1,6 @@
 {
   "name": "@randsum/dice",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "A flexible, type-safe dice roller",
   "author": {
     "name": "Alex Jarvis",
@@ -27,12 +27,12 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "npx bunup",
+    "build:pkg": "npx bunup",
     "build:command": "npx bunup src/command.ts --format esm,cjs --dts",
-    "build:all": "bun run build && bun run build:command",
+    "build": "bun run build:pkg && bun run build:command",
     "test": "bun test",
-    "prepare": "bun run build:all",
-    "prepack": "bun run build:all"
+    "prepare": "bun run build",
+    "prepack": "bun run build"
   },
   "dependencies": {
     "@randsum/core": "workspace:^",

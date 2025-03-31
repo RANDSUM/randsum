@@ -4,6 +4,7 @@ export default {
   format: ['esm', 'cjs'],
   dts: true,
   minify: true,
+  clean: false,
   splitting: true,
   sourcemap: 'inline',
   target: 'node'
