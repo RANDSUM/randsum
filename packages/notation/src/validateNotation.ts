@@ -1,27 +1,15 @@
 import { optionsConverter } from '@randsum/core'
 import { isDiceNotation } from './isDiceNotation'
-import type {
-  CustomDiceNotation,
-  CustomValidationResult,
-  InvalidValidationResult,
-  NumericDiceNotation,
-  NumericValidationResult,
-  ValidationResult
-} from './types'
+import type { ValidationResult } from './types'
 import { notationToOptions } from './utils/notationToOptions'
 
-export function validateNotation(
-  notation: NumericDiceNotation
-): NumericValidationResult
-export function validateNotation(
-  notation: CustomDiceNotation
-): CustomValidationResult
-export function validateNotation(notation: string): InvalidValidationResult
 export function validateNotation(notation: string): ValidationResult {
   if (!isDiceNotation(notation)) {
     return {
       valid: false,
-      description: []
+      description: [],
+      digested: {},
+      type: 'invalid'
     }
   }
 

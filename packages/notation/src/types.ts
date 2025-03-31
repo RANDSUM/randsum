@@ -11,6 +11,7 @@ import type {
 
 interface BaseValidationResult {
   valid: boolean
+  type: 'numerical' | 'custom' | 'invalid'
   description: string[]
 }
 
@@ -30,6 +31,8 @@ export interface CustomValidationResult extends BaseValidationResult {
 
 export interface InvalidValidationResult extends BaseValidationResult {
   valid: false
+  type: 'invalid'
+  digested: Record<string, never>
 }
 
 export type ValidationResult =

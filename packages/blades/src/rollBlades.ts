@@ -1,4 +1,8 @@
-import { roll, type NumericRollResult } from '@randsum/dice'
+import {
+  roll,
+  type NumericRollOptions,
+  type NumericRollResult
+} from '@randsum/dice'
 import type { BladesResult } from './types'
 
 function interpretHit(sortedRolls: number[], canCrit: boolean): BladesResult {
@@ -18,14 +22,17 @@ function interpretHit(sortedRolls: number[], canCrit: boolean): BladesResult {
   }
 }
 
+function generateOptions(count: number, canCrit: boolean): NumericRollOptions {
+  if (canCrit) {
+    return { sides: 6, quantity: count }
+  }
+  return { sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } }
+}
+
 export function rollBlades(count: number): [BladesResult, NumericRollResult] {
   const canCrit = count > 0
 
-  const options = canCrit
-    ? { sides: 6, quantity: count }
-    : { sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } }
-
-  const rollResult = roll(options)
+  const rollResult = roll(generateOptions(count, canCrit))
   const rolls = rollResult.result.flat().sort((a, b) => a - b)
 
   return [interpretHit(rolls, canCrit), rollResult]

@@ -1,6 +1,6 @@
 {
   "name": "@randsum/blades",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Blades in the Dark compatible dice rolling implementation",
   "author": {
     "name": "Alex Jarvis",
@@ -29,9 +29,6 @@
   "scripts": {
     "build": "npx bunup",
     "test": "bun test",
-    "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage",
-    "ts:check": "tsc --noEmit ----erasableSyntaxOnly",
     "prepare": "bun run build",
     "prepack": "bun run build"
   },
