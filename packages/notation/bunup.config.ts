@@ -1,7 +1,13 @@
 import { defineConfig } from 'bunup'
-import rootConfig from '../bunup.root.config'
 
 export default defineConfig({
-  ...rootConfig,
+  entry: ['src/index.ts'],
+  outDir: 'dist',
+  format: ['esm', 'cjs'],
+  dts: true,
+  minify: true,
+  splitting: true,
+  sourcemap: 'inline',
+  target: 'node',
   external: ['@randsum/core']
 })
