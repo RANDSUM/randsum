@@ -21,6 +21,12 @@ D20.roll() // Returns 1-20
 roll('4d6L') // Roll 4d6, drop lowest
 ```
 
+Or directly from your terminal:
+
+```bash
+npx randsum 2d20    # Roll two twenty-sided dice
+```
+
 ## 📦 Packages
 
 This monorepo contains the following packages:
@@ -123,8 +129,7 @@ bun format
 
 ### Package Scripts
 
-- `build:all`: Build all packages
-- `clean:all`: Clean build artifacts
+- `build`: Build all packages
 - `test`: Run all tests
 - `lint`/`format`: Code quality checks
 

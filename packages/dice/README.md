@@ -29,6 +29,26 @@ yarn add @randsum/dice
 bun add @randsum/dice
 ```
 
+## CLI Usage
+
+Roll dice directly from your terminal:
+
+```bash
+npx randsum 2d20    # Roll two twenty-sided dice
+npx randsum 4d6L    # Roll 4d6, drop lowest
+npx randsum 3d8+2   # Roll three d8s and add 2
+```
+
+Example output:
+
+```
+🎲 Roll Result:
+───────────────
+Total: 24
+Rolls: [14, 10]
+Description: Roll 2d20
+```
+
 ## Usage
 
 ```typescript

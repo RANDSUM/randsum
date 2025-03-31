@@ -1,4 +1,4 @@
-import type { SUTableType } from './types'
+import type { SUTableName, SUTableType } from './types'
 
 export const NPCActionTable: SUTableType = {
   ['Nailed It']: {
@@ -300,13 +300,13 @@ export const MechSalvageTable: SUTableType = {
       'The Mech is unsalvageable: its Chassis, Systems and Modules are all considered destroyed.'
   }
 }
-export const NPCTables = {
+export const NPCTables: Partial<Record<SUTableName, SUTableType>> = {
   ['NPC Action']: NPCActionTable,
   ['Reaction']: NPCReactionTable,
   ['Morale']: NPMoraleTable
 }
 
-export const PCTables = {
+export const PCTables: Partial<Record<SUTableName, SUTableType>> = {
   ['Group Initiative']: GroupInitiativeTable,
   ['Retreat']: RetreatTable,
   ['Critical Damage']: CriticalDamageTable,
@@ -316,13 +316,17 @@ export const PCTables = {
   ['Mech Salvage']: MechSalvageTable
 }
 
-export const RollTables = {
+export const RollTables: {
+  ['Core Mechanic']: SUTableType
+  pc: typeof PCTables
+  npc: typeof NPCTables
+} = {
   ['Core Mechanic']: CoreMechanicTable,
   pc: PCTables,
   npc: NPCTables
 }
 
-export const AllRollTables = {
+export const AllRollTables: Partial<Record<SUTableName, SUTableType>> = {
   ['Core Mechanic']: CoreMechanicTable,
   ...PCTables,
   ...NPCTables

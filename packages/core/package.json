@@ -1,6 +1,6 @@
 {
   "name": "@randsum/core",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Internal utilities and types for @randsum packages",
   "private": false,
   "author": {
@@ -28,10 +28,7 @@
   "type": "module",
   "scripts": {
     "build": "npx bunup",
-    "clean": "rm -rf ./dist/ ./coverage/",
     "test": "bun test",
-    "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage",
     "prepare": "bun run build",
     "prepack": "bun run build"
   },
