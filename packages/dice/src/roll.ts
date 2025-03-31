@@ -2,7 +2,6 @@ import type {
   CustomRollArgument,
   CustomRollResult,
   DicePool,
-  MixedRollResult,
   NumericRollArgument,
   NumericRollResult,
   RollArgument,
@@ -16,9 +15,7 @@ import {
 
 function roll(...args: NumericRollArgument[]): NumericRollResult
 function roll(...args: CustomRollArgument[]): CustomRollResult
-function roll(
-  ...args: (NumericRollArgument | CustomRollArgument)[]
-): MixedRollResult
+function roll(...args: (NumericRollArgument | CustomRollArgument)[]): RollResult
 function roll(...args: RollArgument[]): RollResult {
   const dicePools: DicePool = {
     dicePools: Object.fromEntries(

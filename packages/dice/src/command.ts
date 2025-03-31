@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 
-import { validateNotation } from '@randsum/notation'
+import {
+  validateNotation,
+  type CustomValidationResult,
+  type NumericValidationResult
+} from '@randsum/notation'
 import { roll } from './roll'
+import type { RollResult } from './types'
 
 function main() {
   const args = process.argv.slice(2)
@@ -21,17 +26,42 @@ function main() {
     process.exit(1)
   }
 
-  const result = roll(validated.notation)
-  const description = validated.description.join(', ')
-  const message = `
-🎲 RANDSUM Roll Result:
-───────────────
-Total: ${String(result.total)}
-Rolls: [${result.result.join(', ')}]
-Description: ${description}
-`
+  const message = formatMessage(roll(validated.notation), validated)
   console.log(message)
   process.exit(1)
+}
+
+function formatMessage(
+  result: RollResult,
+  { description, digested }: CustomValidationResult | NumericValidationResult
+) {
+  const hasModifiers = digested.modifiers !== undefined
+  const rollResult = result.result.join(', ')
+  const rawRolls = Object.values(result.rawRolls).flat().join(', ')
+
+  if (hasModifiers) {
+    return messageFrame(
+      String(result.total),
+      `Raw Rolls: [${rawRolls}]\nRolls: [${rollResult}]`,
+      description.join(', ')
+    )
+  }
+
+  return messageFrame(
+    String(result.total),
+    `Rolls: [${result.result.join(', ')}]`,
+    description.join(', ')
+  )
+}
+
+function messageFrame(total: string, inner: string, description: string) {
+  return `
+🎲 RANDSUM Roll Result:
+───────────────
+Total: ${total}
+${inner}
+Description: ${description}
+`
 }
 
 main()
