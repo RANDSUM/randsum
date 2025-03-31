@@ -129,7 +129,7 @@ bun format
 
 ### Package Scripts
 
-- `build`: Build all packages
+- `build:all`: Build all packages
 - `test`: Run all tests
 - `lint`/`format`: Code quality checks
 
