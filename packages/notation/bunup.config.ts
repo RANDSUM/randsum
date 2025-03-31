@@ -1,6 +1,4 @@
-import { defineConfig } from 'bunup'
-
-export default defineConfig({
+export default {
   entry: ['src/index.ts'],
   outDir: 'dist',
   format: ['esm', 'cjs'],
@@ -9,4 +7,4 @@ export default defineConfig({
   splitting: true,
   sourcemap: 'inline',
   target: 'node'
-})
+}
