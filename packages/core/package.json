@@ -49,7 +49,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/bun": "1.2.6",
+    "@types/bun": "1.2.8",
     "bunup": "^0.3.3"
   }
 }
