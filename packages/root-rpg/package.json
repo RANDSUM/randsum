@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/bun": "1.2.6",
-    "bunup": "^0.1.39"
+    "bunup": "^0.3.3"
   },
   "peerDependencies": {
     "typescript": ">=5.0.0"
