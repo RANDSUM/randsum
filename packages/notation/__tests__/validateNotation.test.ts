@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'bun:test'
-import { NumericValidationResult } from '../src/types'
 import { validateNotation } from '../src/validateNotation'
 
 describe(validateNotation, () => {
@@ -11,7 +10,9 @@ describe(validateNotation, () => {
 
       expect(result).toEqual({
         valid: false,
-        description: []
+        description: [],
+        digested: {},
+        type: 'invalid'
       })
     })
   })
@@ -24,8 +25,10 @@ describe(validateNotation, () => {
 
       expect(result).toEqual({
         valid: false,
-        description: []
-      } as unknown as NumericValidationResult)
+        description: [],
+        digested: {},
+        type: 'invalid'
+      })
     })
   })
 
@@ -86,7 +89,9 @@ describe(validateNotation, () => {
 
           expect(result).toEqual({
             valid: false,
-            description: []
+            description: [],
+            digested: {},
+            type: 'invalid'
           })
         })
       })
@@ -100,8 +105,10 @@ describe(validateNotation, () => {
 
         expect(result).toEqual({
           valid: false,
-          description: []
-        } as unknown as NumericValidationResult)
+          description: [],
+          digested: {},
+          type: 'invalid'
+        })
       })
     })
   })
