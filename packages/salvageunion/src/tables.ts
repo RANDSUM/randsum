@@ -326,8 +326,16 @@ export const RollTables: {
   npc: NPCTables
 }
 
-export const AllRollTables: Partial<Record<SUTableName, SUTableType>> = {
+export const AllRollTables: Record<SUTableName, SUTableType> = {
   ['Core Mechanic']: CoreMechanicTable,
-  ...PCTables,
-  ...NPCTables
+  ['NPC Action']: NPCActionTable,
+  ['Reaction']: NPCReactionTable,
+  ['Morale']: NPMoraleTable,
+  ['Group Initiative']: GroupInitiativeTable,
+  ['Retreat']: RetreatTable,
+  ['Critical Damage']: CriticalDamageTable,
+  ['Critical Injury']: CriticalInjuryTable,
+  ['Reactor Overload']: ReactorOverloadTable,
+  ['Area Salvage']: AreaSalvageTable,
+  ['Mech Salvage']: MechSalvageTable
 }
