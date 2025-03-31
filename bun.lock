@@ -53,7 +53,7 @@
       "name": "@randsum/dice",
       "version": "0.1.15",
       "bin": {
-        "randsum": "./src/command.ts",
+        "randsum": "./dist/command.mjs",
       },
       "dependencies": {
         "@randsum/core": "workspace:^",
