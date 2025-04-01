@@ -10,7 +10,11 @@
     "ci": "moon ci",
     "run": "moon run"
   },
+  "trustedDependencies": ["@moonrepo/cli"],
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "devDependencies": {
+    "@moonrepo/cli": "^1.34.0"
+  }
 }

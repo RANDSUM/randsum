@@ -3,6 +3,9 @@
   "workspaces": {
     "": {
       "name": "randsum-monorepo",
+      "devDependencies": {
+        "@moonrepo/cli": "^1.34.0",
+      },
     },
     "packages/5e": {
       "name": "@randsum/5e",
@@ -101,6 +104,9 @@
       },
     },
   },
+  "trustedDependencies": [
+    "@moonrepo/cli",
+  ],
   "packages": {
     "@babel/code-frame": ["@babel/code-frame@7.26.2", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.25.9", "js-tokens": "^4.0.0", "picocolors": "^1.0.0" } }, "sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ=="],
 
@@ -113,6 +119,22 @@
     "@emnapi/wasi-threads": ["@emnapi/wasi-threads@1.0.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-iIBu7mwkq4UQGeMEM8bLwNK962nXdhodeScX4slfQnRhEMMzvYivHhutCIk8uojvmASXXPC2WNEjwxFWk72Oqw=="],
 
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.0", "", {}, "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ=="],
+
+    "@moonrepo/cli": ["@moonrepo/cli@1.34.0", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "@moonrepo/core-linux-arm64-gnu": "1.34.0", "@moonrepo/core-linux-arm64-musl": "1.34.0", "@moonrepo/core-linux-x64-gnu": "1.34.0", "@moonrepo/core-linux-x64-musl": "1.34.0", "@moonrepo/core-macos-arm64": "1.34.0", "@moonrepo/core-macos-x64": "1.34.0", "@moonrepo/core-windows-x64-msvc": "1.34.0" }, "bin": { "moon": "moon.js" } }, "sha512-p0O/8uyKqJle2ofPU813TnzQTxu64aKVNBVHAKNLiIm4xn+BZJ5Ys0gFaXYdULEEGZ/txh99BLJPCcF4lbjByA=="],
+
+    "@moonrepo/core-linux-arm64-gnu": ["@moonrepo/core-linux-arm64-gnu@1.34.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-l6ci/hAGT4F1r6lr7LAvJWKNxAG/hC2rf3Ge36IA/pachV0QHHt9LYoDvT1Q7EiXUIVF6LsTkX8Dv6331JgMuw=="],
+
+    "@moonrepo/core-linux-arm64-musl": ["@moonrepo/core-linux-arm64-musl@1.34.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-NecjCTZkSMQvPZGzXY2ferysTOcNw4fS6474cAqE7CggfuW1SevO9bxmEo1j7rcO/rhBa38CM4HEHJWXsy1lBQ=="],
+
+    "@moonrepo/core-linux-x64-gnu": ["@moonrepo/core-linux-x64-gnu@1.34.0", "", { "os": "linux", "cpu": "x64" }, "sha512-fdrPgflvt77LM1b6DwCXsliARC2AMhz9UB/TXfw+tYeE3AZHglK5QQtzDW+2+eOFiXSp/jyjVG7yu7fMiF7a6Q=="],
+
+    "@moonrepo/core-linux-x64-musl": ["@moonrepo/core-linux-x64-musl@1.34.0", "", { "os": "linux", "cpu": "x64" }, "sha512-LcTJy2ugGEYDemEXZtkeO8miReIyTk5IGQpLRpFUUQ5dtoLKbilmR720/VIk+kUtbPEd0bn7Qpm+hxkSNbnAVQ=="],
+
+    "@moonrepo/core-macos-arm64": ["@moonrepo/core-macos-arm64@1.34.0", "", { "os": "darwin", "cpu": "arm64" }, "sha512-G7L55/17uXM70EuIF0UrkWR1REM3dKbgHqvBIN61VoBWz9haFjZrd7df5LIkPVgRYjrNrQF8DkEoXv1xOz3YfQ=="],
+
+    "@moonrepo/core-macos-x64": ["@moonrepo/core-macos-x64@1.34.0", "", { "os": "darwin", "cpu": "x64" }, "sha512-YAWagkkjM5JEiNg1pn+IbhrCTWAO65cZ6NGzgTND9bfzeaFlKSgcGY/pfCNyrmSzlxxqNm9NKVP3muJTOSiB9Q=="],
+
+    "@moonrepo/core-windows-x64-msvc": ["@moonrepo/core-windows-x64-msvc@1.34.0", "", { "os": "win32", "cpu": "x64" }, "sha512-aMBVAPECOywqQ3cKuMZfzu5YpsrcLyajgxCVPzrtmb37NbW3x5NTDEqu45uB0voExKb22bX/iOHP+WR/JpB9Hw=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@0.2.7", "", { "dependencies": { "@emnapi/core": "^1.3.1", "@emnapi/runtime": "^1.3.1", "@tybys/wasm-util": "^0.9.0" } }, "sha512-5yximcFK5FNompXfJFoWanu5l8v1hNGqNHh9du1xETp9HWk/B/PzvchX55WYOPaIeNglG8++68AAiauBAtbnzw=="],
 
@@ -205,6 +227,8 @@
     "bunup": ["bunup@0.3.3", "", { "dependencies": { "chokidar": "^4.0.3", "load-tsconfig": "^0.2.5", "oxc-transform": "^0.58.1", "rollup": "^4.35.0", "rollup-plugin-dts": "^6.1.1" }, "peerDependencies": { "typescript": ">=4.5.0" }, "optionalPeers": ["typescript"], "bin": { "bunup": "build/cli.mjs" } }, "sha512-3nRT/gszzXB73Gq18TaVPQH+pLPYErWPNmmDpagNA+cvFMaPfRXF6kRja/yvq76/Btx01my8i4pnnPl+o3FI0g=="],
 
     "chokidar": ["chokidar@4.0.3", "", { "dependencies": { "readdirp": "^4.0.1" } }, "sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA=="],
+
+    "detect-libc": ["detect-libc@2.0.3", "", {}, "sha512-bwy0MGW55bG41VqxxypOsdSdGqLwXPI/focwgTYCFMbdUiBAxLg9CFzG08sz2aqzknwiX7Hkl0bQENjg8iLByw=="],
 
     "fsevents": ["fsevents@2.3.3", "", { "os": "darwin" }, "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="],
 

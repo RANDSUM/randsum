@@ -13,7 +13,7 @@ jobs:
     runs-on: '${{ platform }}'
     steps:
       - uses: 'actions/checkout@v4'
-      - uses: 'oven-sh/setup-bun@v1'
+      - uses: 'oven-sh/setup-bun@v2'
       - uses: 'moonrepo/run-report-action@v1'
         with:
           command: 'moon run :build'
@@ -22,7 +22,7 @@ jobs:
     runs-on: '${{ platform }}'
     steps:
       - uses: 'actions/checkout@v4'
-      - uses: 'oven-sh/setup-bun@v1'
+      - uses: 'oven-sh/setup-bun@v2'
       - uses: 'moonrepo/run-report-action@v1'
         with:
           command: 'moon run :test'
