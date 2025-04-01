@@ -1,7 +1,7 @@
 {
   "name": "@randsum/salvageunion",
   "version": "0.1.19",
-  "description": "A flexible, type-safe dice roller for the Salvage Union system",
+  "description": "A flexible, type-safe dice roller for the Salvage Union RPG system",
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
