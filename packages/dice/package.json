@@ -22,14 +22,15 @@
     "dist",
     "src",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "bin"
   ],
   "sideEffects": false,
   "type": "module",
   "scripts": {
     "build:pkg": "npx bunup",
     "build:command": "npx bunup src/command.ts --format esm,cjs --dts",
-    "build": "bun run build:pkg && bun run build:command",
+    "build": "bun run build:pkg && bun run build:command && chmod +x dist/command.mjs",
     "test": "bun test",
     "prepare": "bun run build",
     "prepack": "bun run build"
@@ -75,6 +76,6 @@
     "tabletop"
   ],
   "bin": {
-    "randsum": "./dist/command.mjs"
+    "randsum": "./bin/randsum"
   }
 }
