@@ -50,5 +50,14 @@
     "**/coverage",
     "**/*.test.ts",
     "**/*.spec.ts"
+  ],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/notation" },
+    { "path": "packages/dice" },
+    { "path": "packages/5e" },
+    { "path": "packages/root-rpg" },
+    { "path": "packages/blades" },
+    { "path": "packages/salvageunion" }
   ]
 }

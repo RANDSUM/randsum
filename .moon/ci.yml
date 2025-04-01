@@ -1,0 +1,28 @@
+$schema: 'https://moonrepo.dev/schemas/ci.json'
+
+platform: 'github'
+
+git:
+  defaultBranch: 'main'
+
+matrix:
+  platform: ['ubuntu-latest', 'macos-latest']
+
+jobs:
+  build:
+    runs-on: '${{ platform }}'
+    steps:
+      - uses: 'actions/checkout@v4'
+      - uses: 'oven-sh/setup-bun@v1'
+      - uses: 'moonrepo/run-report-action@v1'
+        with:
+          command: 'moon run :build'
+
+  test:
+    runs-on: '${{ platform }}'
+    steps:
+      - uses: 'actions/checkout@v4'
+      - uses: 'oven-sh/setup-bun@v1'
+      - uses: 'moonrepo/run-report-action@v1'
+        with:
+          command: 'moon run :test'

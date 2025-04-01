@@ -3,7 +3,6 @@ on: [push]
 jobs:
   build:
     name: Build, lint, and test on ${{ matrix.os }}
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -13,6 +12,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Setup Moon
+        uses: moonrepo/setup-moon-action@v1
+
       - name: Use Bun
         uses: oven-sh/setup-bun@v1
         with:
@@ -21,15 +23,12 @@ jobs:
       - name: Install deps
         run: bun install
 
-      - name: Build
-        run: bun run build:all
+      - name: Run Moon CI
+        run: moon ci
 
-      - name: TypeCheck
-        run: bun ts:check
-
-      - name: Lint
-        run: bun lint && bun format
-
-      - name: Test
-        run:
-          bun run test:ci
+      - name: Generate Moon Report
+        uses: moonrepo/run-report-action@v1
+        if: success() || failure()
+        with:
+          access-token: ${{ secrets.ACCESS_TOKEN }}
+          matrix: ${{ toJSON(matrix) }}
