@@ -138,12 +138,33 @@ Moon manages our task pipeline and dependencies. Common tasks include:
 - `:format` - Run Prettier checks
 - `:tsCheck` - Run TypeScript checks
 - `:publish` - Publish packages (CI only)
+- `:lint:fix` - Run ESLint and fix issues
+- `:format:fix` - Run Prettier and fix formatting issues
+- `:ci` - Run all checks (build, test, lint, format, tsCheck)
 
 Each package can be targeted directly with `moon [package]:task`, for example:
 
 ```bash
 bun moon dice:test    # Run tests for @randsum/dice only
 bun moon blades:build # Build @randsum/blades only
+```
+
+### Helper Scripts
+
+This monorepo includes several helper scripts to streamline development:
+
+```bash
+# Create a new package
+./scripts/create-package.sh new-package "Description of the new package"
+
+# Update all packages to use standardized configuration
+./scripts/update-packages.sh
+
+# Release a new version of all packages
+./scripts/release.sh [major|minor|patch]
+
+# Clean all build artifacts
+bun run clean
 ```
 
 ## Further Reading

@@ -1,0 +1,14 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+language: 'typescript'
+dependsOn:
+  - 'dice'
+tags:
+  - 'game'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'dice:build'
+  build:
+    deps:
+      - 'dice:build'

@@ -10,9 +10,12 @@
     "build": "bun moon :build",
     "test": "bun moon :test",
     "lint": "bun moon :lint",
+    "lint:fix": "bun moon :lint:fix",
     "format": "bun moon :format",
+    "format:fix": "bun moon :format:fix",
     "ts:check": "bun moon :tsCheck",
-    "test:ci": "bun run test --coverage"
+    "test:ci": "bun run test --coverage",
+    "clean": "rm -rf packages/*/dist"
   },
   "devDependencies": {
     "@types/bun": "1.2.8",

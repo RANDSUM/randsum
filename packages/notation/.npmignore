@@ -6,3 +6,4 @@ src/
 tsconfig.json
 bunup.config.ts
 bunfig.toml
+.prettierignore

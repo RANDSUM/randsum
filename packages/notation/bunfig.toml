@@ -1,0 +1,13 @@
+[test]
+coverage = false
+coverageReporter = ['text', 'lcov']
+coverageThreshold = { lines = 1.0, functions = 0.0, branches = 0.8, statements = 0.8 }
+coverageDirectory = "coverage"
+coverageIgnorePatterns = [
+  "node_modules/",
+  "dist/",
+  ".*.mjs",
+  "**/*.d.ts",
+  "**/*.test.ts",
+  "**/test/**"
+]
