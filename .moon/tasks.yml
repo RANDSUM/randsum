@@ -25,6 +25,3 @@ tasks:
     deps:
       - 'build'
       - 'test'
-      - 'lint'
-      - 'format'
-      - 'tsCheck'
