@@ -2,13 +2,7 @@
 $schema: 'https://moonrepo.dev/schemas/workspace.json'
 
 projects:
-  core: 'packages/core'
-  dice: 'packages/dice'
-  notation: 'packages/notation'
-  # '5e': 'packages/5e'
-  # 'root-rpg': 'packages/root-rpg'
-  # blades: 'packages/blades'
-  # salvageunion: 'packages/salvageunion'
+  - 'packages/*'
 
 vcs:
   manager: 'git'
