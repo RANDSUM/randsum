@@ -6,7 +6,7 @@ tasks:
     inputs:
       - 'src/**/*'
       - 'bunup.config.ts'
-      - '../../bunup.config.base.ts'
+      - '$PROJECT_ROOT/bunup.config.base.ts'
     outputs:
       - 'dist/**/*'
     options:
@@ -36,15 +36,6 @@ tasks:
     options:
       cache: true
 
-  lint:fix:
-    command: 'eslint . -c ../../eslint.base.config.js --fix'
-    deps:
-      - 'build'
-    inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
-
   format:
     command: 'prettier . --check'
     deps:
@@ -57,17 +48,6 @@ tasks:
       - '**/*.md'
     options:
       cache: true
-
-  format:fix:
-    command: 'prettier . --write'
-    deps:
-      - 'build'
-    inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
-      - '**/*.json'
-      - '**/*.md'
 
   tsCheck:
     command: 'tsc --erasableSyntaxOnly'
