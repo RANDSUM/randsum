@@ -26,7 +26,7 @@ tasks:
       cache: true
 
   lint:
-    command: 'eslint . -c ../../eslint.base.config.js'
+    command: 'eslint . -c ../../configs/eslint.base.config.js'
     deps:
       - 'build'
     inputs:
