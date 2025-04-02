@@ -4,13 +4,8 @@
     "": {
       "name": "randsum-monorepo",
       "devDependencies": {
-        "@eslint/js": "^9.23.0",
-        "@typescript-eslint/eslint-plugin": "^8.29.0",
-        "@typescript-eslint/parser": "^8.29.0",
-        "eslint": "^9.23.0",
-        "prettier": "^3.5.3",
+        "@moonrepo/cli": "^1.34.0",
         "typescript": "^5.8.2",
-        "typescript-eslint": "^8.29.0",
       },
     },
     "packages/5e": {
@@ -20,8 +15,16 @@
         "@randsum/dice": "workspace:^",
       },
       "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@moonrepo/cli": "^1.34.0",
         "@types/bun": "1.2.8",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
         "bunup": "^0.3.3",
+        "eslint": "^9.23.0",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.29.0",
       },
       "peerDependencies": {
         "typescript": ">=5.0.0",
@@ -34,8 +37,16 @@
         "@randsum/dice": "workspace:^",
       },
       "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@moonrepo/cli": "^1.34.0",
         "@types/bun": "1.2.8",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
         "bunup": "^0.3.3",
+        "eslint": "^9.23.0",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.29.0",
       },
       "peerDependencies": {
         "typescript": ">=5.0.0",
@@ -45,8 +56,16 @@
       "name": "@randsum/core",
       "version": "0.1.19",
       "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@moonrepo/cli": "^1.34.0",
         "@types/bun": "1.2.8",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
         "bunup": "^0.3.3",
+        "eslint": "^9.23.0",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.29.0",
       },
     },
     "packages/dice": {
@@ -60,8 +79,16 @@
         "@randsum/notation": "workspace:^",
       },
       "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@moonrepo/cli": "^1.34.0",
         "@types/bun": "1.2.8",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
         "bunup": "^0.3.3",
+        "eslint": "^9.23.0",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.29.0",
       },
       "peerDependencies": {
         "typescript": "^5.8.2",
@@ -74,8 +101,16 @@
         "@randsum/core": "workspace:^",
       },
       "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@moonrepo/cli": "^1.34.0",
         "@types/bun": "1.2.8",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
         "bunup": "^0.3.3",
+        "eslint": "^9.23.0",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.29.0",
       },
       "peerDependencies": {
         "typescript": ">=5.0.0",
@@ -88,8 +123,16 @@
         "@randsum/dice": "workspace:^",
       },
       "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@moonrepo/cli": "^1.34.0",
         "@types/bun": "1.2.8",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
         "bunup": "^0.3.3",
+        "eslint": "^9.23.0",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.29.0",
       },
       "peerDependencies": {
         "typescript": ">=5.0.0",
@@ -102,8 +145,16 @@
         "@randsum/dice": "workspace:^",
       },
       "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@moonrepo/cli": "^1.34.0",
         "@types/bun": "1.2.8",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
         "bunup": "^0.3.3",
+        "eslint": "^9.23.0",
+        "prettier": "^3.5.3",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.29.0",
       },
       "peerDependencies": {
         "typescript": ">=5.0.0",
@@ -148,6 +199,22 @@
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.2", "", {}, "sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ=="],
 
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.0", "", {}, "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ=="],
+
+    "@moonrepo/cli": ["@moonrepo/cli@1.34.0", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "@moonrepo/core-linux-arm64-gnu": "1.34.0", "@moonrepo/core-linux-arm64-musl": "1.34.0", "@moonrepo/core-linux-x64-gnu": "1.34.0", "@moonrepo/core-linux-x64-musl": "1.34.0", "@moonrepo/core-macos-arm64": "1.34.0", "@moonrepo/core-macos-x64": "1.34.0", "@moonrepo/core-windows-x64-msvc": "1.34.0" }, "bin": { "moon": "moon.js" } }, "sha512-p0O/8uyKqJle2ofPU813TnzQTxu64aKVNBVHAKNLiIm4xn+BZJ5Ys0gFaXYdULEEGZ/txh99BLJPCcF4lbjByA=="],
+
+    "@moonrepo/core-linux-arm64-gnu": ["@moonrepo/core-linux-arm64-gnu@1.34.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-l6ci/hAGT4F1r6lr7LAvJWKNxAG/hC2rf3Ge36IA/pachV0QHHt9LYoDvT1Q7EiXUIVF6LsTkX8Dv6331JgMuw=="],
+
+    "@moonrepo/core-linux-arm64-musl": ["@moonrepo/core-linux-arm64-musl@1.34.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-NecjCTZkSMQvPZGzXY2ferysTOcNw4fS6474cAqE7CggfuW1SevO9bxmEo1j7rcO/rhBa38CM4HEHJWXsy1lBQ=="],
+
+    "@moonrepo/core-linux-x64-gnu": ["@moonrepo/core-linux-x64-gnu@1.34.0", "", { "os": "linux", "cpu": "x64" }, "sha512-fdrPgflvt77LM1b6DwCXsliARC2AMhz9UB/TXfw+tYeE3AZHglK5QQtzDW+2+eOFiXSp/jyjVG7yu7fMiF7a6Q=="],
+
+    "@moonrepo/core-linux-x64-musl": ["@moonrepo/core-linux-x64-musl@1.34.0", "", { "os": "linux", "cpu": "x64" }, "sha512-LcTJy2ugGEYDemEXZtkeO8miReIyTk5IGQpLRpFUUQ5dtoLKbilmR720/VIk+kUtbPEd0bn7Qpm+hxkSNbnAVQ=="],
+
+    "@moonrepo/core-macos-arm64": ["@moonrepo/core-macos-arm64@1.34.0", "", { "os": "darwin", "cpu": "arm64" }, "sha512-G7L55/17uXM70EuIF0UrkWR1REM3dKbgHqvBIN61VoBWz9haFjZrd7df5LIkPVgRYjrNrQF8DkEoXv1xOz3YfQ=="],
+
+    "@moonrepo/core-macos-x64": ["@moonrepo/core-macos-x64@1.34.0", "", { "os": "darwin", "cpu": "x64" }, "sha512-YAWagkkjM5JEiNg1pn+IbhrCTWAO65cZ6NGzgTND9bfzeaFlKSgcGY/pfCNyrmSzlxxqNm9NKVP3muJTOSiB9Q=="],
+
+    "@moonrepo/core-windows-x64-msvc": ["@moonrepo/core-windows-x64-msvc@1.34.0", "", { "os": "win32", "cpu": "x64" }, "sha512-aMBVAPECOywqQ3cKuMZfzu5YpsrcLyajgxCVPzrtmb37NbW3x5NTDEqu45uB0voExKb22bX/iOHP+WR/JpB9Hw=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@0.2.7", "", { "dependencies": { "@emnapi/core": "^1.3.1", "@emnapi/runtime": "^1.3.1", "@tybys/wasm-util": "^0.9.0" } }, "sha512-5yximcFK5FNompXfJFoWanu5l8v1hNGqNHh9du1xETp9HWk/B/PzvchX55WYOPaIeNglG8++68AAiauBAtbnzw=="],
 
@@ -296,6 +363,8 @@
     "debug": ["debug@4.4.0", "", { "dependencies": { "ms": "^2.1.3" } }, "sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA=="],
 
     "deep-is": ["deep-is@0.1.4", "", {}, "sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ=="],
+
+    "detect-libc": ["detect-libc@2.0.3", "", {}, "sha512-bwy0MGW55bG41VqxxypOsdSdGqLwXPI/focwgTYCFMbdUiBAxLg9CFzG08sz2aqzknwiX7Hkl0bQENjg8iLByw=="],
 
     "escape-string-regexp": ["escape-string-regexp@4.0.0", "", {}, "sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA=="],
 

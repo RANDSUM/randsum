@@ -3,6 +3,6 @@ $schema: 'https://moonrepo.dev/schemas/project.json'
 id: root-rpg
 language: 'typescript'
 dependsOn:
-  - dice
+  - 'dice'
 tags:
-  - game
+  - 'game'

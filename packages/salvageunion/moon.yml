@@ -3,6 +3,6 @@ $schema: 'https://moonrepo.dev/schemas/project.json'
 id: salvageunion
 language: 'typescript'
 dependsOn:
-  - dice
+  - 'dice'
 tags:
-  - game
+  - 'game'
