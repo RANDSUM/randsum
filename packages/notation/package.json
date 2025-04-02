@@ -27,8 +27,29 @@
   ],
   "sideEffects": false,
   "type": "module",
+  "scripts": {
+    "build": "npx bunup",
+    "test": "bun test",
+    "prepare": "bun run build",
+    "prepack": "bun run build"
+  },
   "dependencies": {
     "@randsum/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/bun": "1.2.8",
+    "bunup": "^0.3.3",
+    "@eslint/js": "^9.23.0",
+    "@moonrepo/cli": "^1.34.0",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
+    "eslint": "^9.23.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.29.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
   },
   "exports": {
     ".": {

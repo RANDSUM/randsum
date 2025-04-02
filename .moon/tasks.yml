@@ -5,20 +5,20 @@ tasks:
     command: 'npx bunup'
 
   test:
-    command: 'bun test'
+   command: 'bun test'
 
   lint:
-    command: 'eslint . -c ../../eslint.base.config.js'
+   command: 'eslint . -c ../../eslint.base.config.js'
 
   format:
-    command: 'prettier . --check'
+   command: 'prettier . --check'
 
   tsCheck:
-    command: 'tsc --erasableSyntaxOnly'
+   command: 'tsc --erasableSyntaxOnly'
 
   publish:
-    command: 'bun publish --no-git-checks'
-    options:
-      runInCI: false
-    deps:
-      - 'build'
+   command: 'bun publish --no-git-checks'
+   options:
+     runInCI: false
+   deps:
+    - 'build'
