@@ -26,10 +26,6 @@
     "LICENSE",
     "README.md"
   ],
-  "scripts": {
-    "build": "npx bunup",
-    "prepare": "bun run build"
-  },
   "dependencies": {
     "@randsum/dice": "workspace:^"
   },

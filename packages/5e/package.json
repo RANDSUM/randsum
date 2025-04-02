@@ -26,10 +26,6 @@
   ],
   "sideEffects": false,
   "type": "module",
-  "scripts": {
-    "build": "npx bunup",
-    "prepare": "bun run build"
-  },
   "dependencies": {
     "@randsum/dice": "workspace:^"
   },
