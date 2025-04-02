@@ -35,7 +35,7 @@ tasks:
       cache: true
 
   format:
-    command: 'prettier . --config ../../.prettierrc --check'
+    command: 'prettier . --config ../../config/.prettierrc --check'
     deps:
       - 'build'
     inputs:
