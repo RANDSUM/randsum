@@ -20,4 +20,4 @@ tasks:
    command: 'prettier . --write'
 
   tsCheck:
-   command: 'tsc --noEmit --erasableSyntaxOnly'
+   command: 'tsc --erasableSyntaxOnly'

@@ -24,11 +24,12 @@ export default [
   {
     ignores: [
       'node_modules',
-      'packages/*/dist',
       'dist',
       'coverage',
       '*.md',
       'docs',
+      'bin',
+      '*.lock',
       'eslint.config.js'
     ]
   },
