@@ -6,7 +6,6 @@ tasks:
     inputs:
       - 'src/**/*'
       - 'bunup.config.ts'
-      - '$PROJECT_ROOT/bunup.config.base.ts'
     outputs:
       - 'dist/**/*'
     options:
@@ -21,7 +20,6 @@ tasks:
       - '__tests__/**/*'
       - '**/*.test.ts'
       - '**/*.spec.ts'
-      - 'bunfig.toml'
     options:
       cache: true
 
@@ -37,7 +35,7 @@ tasks:
       cache: true
 
   format:
-    command: 'prettier . --check'
+    command: 'prettier . --config ../../.prettierrc --check'
     deps:
       - 'build'
     inputs:
@@ -55,7 +53,7 @@ tasks:
       - 'build'
     inputs:
       - 'src/**/*'
-      - 'tsconfig.json'
+      - '$PROJECT_ROOT/tsconfig.json'
     options:
       cache: true
 
