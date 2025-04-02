@@ -6,6 +6,8 @@
     "packages/*"
   ],
   "scripts": {
+    "create-package": "./scripts/create-package.sh",
+    "update-packages": "./scripts/update-packages.sh",
     "ci": "bun moon ci",
     "build": "bun moon :build",
     "test": "bun moon :test",
