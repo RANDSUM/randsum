@@ -19,14 +19,14 @@
     },
     "packages/5e": {
       "name": "@randsum/5e",
-      "version": "0.1.19",
+      "version": "0.1.20",
       "dependencies": {
         "@randsum/dice": "workspace:^",
       },
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "0.1.19",
+      "version": "0.1.20",
       "dependencies": {
         "@randsum/dice": "workspace:^",
       },
@@ -48,11 +48,11 @@
     },
     "packages/core": {
       "name": "@randsum/core",
-      "version": "0.1.19",
+      "version": "0.1.20",
     },
     "packages/dice": {
       "name": "@randsum/dice",
-      "version": "0.1.19",
+      "version": "0.1.20",
       "bin": "./bin/randsum",
       "dependencies": {
         "@randsum/core": "workspace:^",
@@ -61,21 +61,21 @@
     },
     "packages/notation": {
       "name": "@randsum/notation",
-      "version": "0.1.19",
+      "version": "0.1.20",
       "dependencies": {
         "@randsum/core": "workspace:^",
       },
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.1.19",
+      "version": "0.1.20",
       "dependencies": {
         "@randsum/dice": "workspace:^",
       },
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.1.19",
+      "version": "0.1.20",
       "dependencies": {
         "@randsum/dice": "workspace:^",
       },
