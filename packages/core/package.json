@@ -58,7 +58,7 @@
     "semi": false,
     "singleQuote": true,
     "printWidth": 80,
-    "tabwWidth": 2,
+    "tabWidth": 2,
     "useTabs": false,
     "bracketSpacing": true,
     "bracketSameLine": false,
