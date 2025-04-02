@@ -6,6 +6,9 @@ dependsOn:
   - 'core'
 
 tasks:
+  tsCheck:
+    deps:
+      - 'core:build'
   build:
     deps:
       - 'core:build'

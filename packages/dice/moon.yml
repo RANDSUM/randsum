@@ -7,6 +7,10 @@ dependsOn:
   - 'notation'
 
 tasks:
+  tsCheck:
+    deps:
+      - 'core:build'
+      - 'notation:build'
   build:
     deps:
       - 'core:build'
