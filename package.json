@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "bun moon check --all" ,
+    "ci": "bun moon ci" ,
     "build": "bun moon :build",
     "test": "bun moon :test",
     "lint": "bun moon :lint",

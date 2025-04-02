@@ -1,10 +1,7 @@
-export default {
-  entry: ['src/index.ts'],
-  outDir: 'dist',
-  format: ['esm', 'cjs'],
-  dts: true,
-  minify: true,
-  splitting: true,
-  sourcemap: 'inline',
-  target: 'node'
-}
+import { defineConfig, DefineConfigEntry } from 'bunup'
+import baseConfig from '../../bunup.config.base'
+
+export default defineConfig({
+  ...baseConfig,
+  external: ['@randsum/core']
+} as DefineConfigEntry)

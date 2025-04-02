@@ -2,7 +2,7 @@ $schema: 'https://moonrepo.dev/schemas/tasks.json'
 
 tasks:
   build:
-   command: 'npx bunup'
+    command: 'npx bunup'
 
   test:
    command: 'bun test'
