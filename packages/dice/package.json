@@ -13,7 +13,7 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "packages/dice"
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
@@ -35,11 +35,11 @@
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.mjs"
+        "default": "./dist/index.js"
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.cjs"
+        "default": "./dist/index.js"
       }
     },
     "./package.json": "./package.json"

@@ -5,4 +5,4 @@ node_modules
 .*
 bin
 docs
-configs/build/*
+config/build/
