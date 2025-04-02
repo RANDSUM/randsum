@@ -1,0 +1,4 @@
+$schema: 'https://moonrepo.dev/schemas/toolchain.json'
+
+bun:
+  version: 1.2.8

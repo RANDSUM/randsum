@@ -1,0 +1,23 @@
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
+
+tasks:
+  build:
+   command: 'npx bunup'
+
+  test:
+   command: 'bun test'
+
+  lint:
+   command: 'eslint .'
+
+  lintFix:
+   command: 'eslint . --fix'
+
+  format:
+   command: 'prettier . --check'
+
+  formatFix:
+   command: 'prettier . --write'
+
+  tsCheck:
+   command: 'tsc --noEmit --erasableSyntaxOnly'
