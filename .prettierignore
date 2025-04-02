@@ -1,0 +1,8 @@
+dist
+coverage
+node_modules
+*.lock
+.*
+bin
+docs
+configs/build/*

@@ -2,10 +2,9 @@ $schema: 'https://moonrepo.dev/schemas/tasks.json'
 
 tasks:
   build:
-    command: 'npx bunup'
+    command: 'bun run ../../config/build/build.ts'
     inputs:
       - 'src/**/*'
-      - 'bunup.config.ts'
     outputs:
       - 'dist/**/*'
     options:
@@ -35,7 +34,7 @@ tasks:
       cache: true
 
   format:
-    command: 'prettier . --config ../../config/.prettierrc --check'
+    command: 'prettier . --check'
     deps:
       - 'build'
     inputs:
