@@ -8,6 +8,9 @@ tags:
   - 'game'
 
 tasks:
+  tsCheck:
+    deps:
+      - 'dice:build'
   build:
     deps:
       - 'dice:build'

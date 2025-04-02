@@ -56,20 +56,5 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0"
-  },
-  "prettier": {
-    "endOfLine": "auto",
-    "trailingComma": "none",
-    "semi": false,
-    "singleQuote": true,
-    "printWidth": 80,
-    "tabWidth": 2,
-    "useTabs": false,
-    "bracketSpacing": true,
-    "bracketSameLine": false,
-    "arrowParens": "always",
-    "proseWrap": "preserve",
-    "quoteProps": "as-needed",
-    "embeddedLanguageFormatting": "auto"
   }
 }

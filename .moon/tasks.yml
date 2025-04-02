@@ -8,7 +8,7 @@ tasks:
    command: 'bun test'
 
   lint:
-   command: 'eslint .'
+   command: 'eslint . -c ../../eslint.base.config.js'
 
   format:
    command: 'prettier . --check'
