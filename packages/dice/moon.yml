@@ -5,3 +5,9 @@ language: 'typescript'
 dependsOn:
   - 'core'
   - 'notation'
+
+tasks:
+  build:
+    deps:
+      - 'core:build'
+      - 'notation:build'

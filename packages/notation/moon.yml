@@ -4,3 +4,8 @@ id: notation
 language: 'typescript'
 dependsOn:
   - 'core'
+
+tasks:
+  build:
+    deps:
+      - 'core:build'

@@ -6,3 +6,8 @@ dependsOn:
   - 'dice'
 tags:
   - 'game'
+
+tasks:
+  build:
+    deps:
+      - 'dice:build'
