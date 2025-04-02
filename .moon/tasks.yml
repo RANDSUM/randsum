@@ -6,6 +6,8 @@ tasks:
 
   test:
     command: 'bun test'
+    deps:
+      - 'build'
 
   lint:
     command: 'eslint . -c ../../eslint.base.config.js'
@@ -22,3 +24,7 @@ tasks:
       runInCI: false
     deps:
       - 'build'
+      - 'test'
+      - 'lint'
+      - 'format'
+      - 'tsCheck'
