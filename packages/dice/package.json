@@ -28,6 +28,8 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "build": "bun moon dice:build",
+    "test": "bun test",
     "prepare": "bun run build",
     "prepack": "bun run build"
   },
