@@ -1,11 +1,12 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.>
   <h1>randsum</h1>
   <h3>A flexible, type-safe dice rolling ecosystem written in Typescript</h3>
 
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
+[![Built with Moon](https://img.shields.io/badge/Built%20with-Moon-blue?style=flat)](https://moonrepo.dev)
 
 </div>
 
@@ -103,7 +104,7 @@ Internal package containing shared utilities and types. Not intended for direct 
 
 ## 🛠️ Development
 
-This is a monorepo using Bun workspaces. To get started:
+This is a monorepo powered by [Moon](https://moonrepo.dev) and [Bun](https://bun.sh). To get started:
 
 ```bash
 # Clone the repository
@@ -114,24 +115,36 @@ cd randsum
 bun install
 
 # Build all packages
-bun run build:all
+bun moon :build
 
 # Run tests
-bun test
+bun moon :test
 
 # Run type checks
-bun ts:check
+bun moon :tsCheck
 
 # Lint and format
-bun lint
-bun format
+bun moon :lint
+bun moon :format
 ```
 
-### Package Scripts
+### Moon Tasks
 
-- `build:all`: Build all packages
-- `test`: Run all tests
-- `lint`/`format`: Code quality checks
+Moon manages our task pipeline and dependencies. Common tasks include:
+
+- `:build` - Build all packages
+- `:test` - Run all tests
+- `:lint` - Run ESLint checks
+- `:format` - Run Prettier checks
+- `:tsCheck` - Run TypeScript checks
+- `:publish` - Publish packages (CI only)
+
+Each package can be targeted directly with `moon [package]:task`, for example:
+
+```bash
+bun moon dice:test    # Run tests for @randsum/dice only
+bun moon blades:build # Build @randsum/blades only
+```
 
 ## Further Reading
 
@@ -140,6 +153,8 @@ bun format
 - [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`.
 
 - [Contributing](https://github.com/RANDSUM/randsum/blob/main/CONTRIBUTING.md) - help make `randsum` better!
+
+- [Moon Documentation](https://moonrepo.dev/docs) - Learn more about the build system powering this monorepo
 
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 
