@@ -45,9 +45,6 @@
     },
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
     "@types/bun": "1.2.8",
     "bunup": "^0.3.3",

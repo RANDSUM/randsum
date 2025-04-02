@@ -63,9 +63,6 @@
     },
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "engines": {
     "node": ">=18.0.0",
     "bun": ">=1.0.0"
