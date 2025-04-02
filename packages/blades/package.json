@@ -28,9 +28,7 @@
   ],
   "scripts": {
     "build": "npx bunup",
-    "test": "bun test",
-    "prepare": "bun run build",
-    "prepack": "bun run build"
+    "prepare": "bun run build"
   },
   "dependencies": {
     "@randsum/dice": "workspace:^"
