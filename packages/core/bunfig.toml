@@ -6,7 +6,6 @@ coverageDirectory = "coverage"
 coverageIgnorePatterns = [
   "node_modules/",
   "dist/",
-  ".*.mjs",
   "**/*.d.ts",
   "**/*.test.ts",
   "**/test/**"
