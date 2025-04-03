@@ -1,7 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPointStrategy": "packages",
-  "entryPoints": ["packages/*/src"],
+  "entryPoints": ["packages/*"],
   "out": "docs/api",
   "name": "RANDSUM API Documentation",
   "includeVersion": true,

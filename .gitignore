@@ -74,3 +74,5 @@ tsconfig.tsbuildinfo
 # moon
 .moon/cache
 .moon/docker
+
+docs/api
