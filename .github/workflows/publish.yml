@@ -18,4 +18,4 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - run: bun moon :publish
+      - run: bun run moon :publish
