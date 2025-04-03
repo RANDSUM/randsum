@@ -1,6 +1,6 @@
 {
   "name": "@randsum/notation",
-  "version": "0.1.19",
+  "version": "0.1.22",
   "description": "A flexible, type-safe dice notation parser and validator",
   "author": {
     "name": "Alex Jarvis",
@@ -13,8 +13,8 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "packages/notation"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
   "react-native": "./src/index.ts",
@@ -27,40 +27,23 @@
   ],
   "sideEffects": false,
   "type": "module",
-  "scripts": {
-    "build": "npx bunup",
-    "test": "bun test",
-    "prepare": "bun run build",
-    "prepack": "bun run build"
-  },
   "dependencies": {
     "@randsum/core": "workspace:^"
-  },
-  "devDependencies": {
-    "@types/bun": "1.2.8",
-    "bunup": "^0.3.3"
-  },
-  "peerDependencies": {
-    "typescript": ">=5.0.0"
   },
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       }
     },
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "engines": {
-    "node": ">=18.0.0",
     "bun": ">=1.0.0"
   },
   "keywords": [

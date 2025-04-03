@@ -1,5 +1,5 @@
 // --------------------------
-// --- NOTATION & STRINGS ---
+// --- 'notation' & STRINGS ---
 // --------------------------
 
 export type NumericDiceNotation = `${number}${'d' | 'D'}${number}${string}`

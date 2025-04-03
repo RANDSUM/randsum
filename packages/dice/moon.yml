@@ -1,0 +1,17 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+id: dice
+language: 'typescript'
+dependsOn:
+  - 'core'
+  - 'notation'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'core:build'
+      - 'notation:build'
+  build:
+    deps:
+      - 'core:build'
+      - 'notation:build'

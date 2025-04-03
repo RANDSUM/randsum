@@ -8,8 +8,8 @@ This package contains shared utilities and types for the `@randsum` ecosystem. I
 
 Instead of installing this package directly, use one of our public packages which re-export all necessary types and utilities:
 
-- [`@randsum/dice`](https://www.npmjs.com/package/@randsum/dice) - Core dice rolling implementation
-- [`@randsum/notation`](https://www.npmjs.com/package/@randsum/notation) - Dice notation parser
+- [`@randsum/dice`](https://www.npmjs.com/package/@randsum/dice) - 'core' dice rolling implementation
+- [`@randsum/notation`](https://www.npmjs.com/package/@randsum/notation) - 'dice' notation parser
 - [`@randsum/5e`](https://www.npmjs.com/package/@randsum/5e) - 5th Edition compatible dice rolling
 
 ## For Contributors

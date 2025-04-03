@@ -6,126 +6,14 @@ on:
     branches: [main]
 
 env:
-  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
-  setup:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install
-
-  publish-core:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: oven-sh/setup-bun@v1
-      - name: Setup .npmrc
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-          echo "access=public" >> .npmrc
-      - name: Publish core
-        continue-on-error: true
-        run: |
-          if ! bun publish --no-git-checks --cwd packages/core; then
-            echo "::warning::Failed to publish @randsum/core, but continuing with workflow"
-          fi
-
-  publish-notation:
-    needs: publish-core
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: oven-sh/setup-bun@v1
-      - name: Setup .npmrc
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-          echo "access=public" >> .npmrc
-      - name: Wait for core
-        run: |
-          max_attempts=30
-          attempt=1
-          while ! npm view "@randsum/core" version; do
-            if [ $attempt -ge $max_attempts ]; then
-              echo "Max attempts reached waiting for @randsum/core. Continuing anyway..."
-              break
-            fi
-            echo "Waiting for @randsum/core to be published... (Attempt $attempt/$max_attempts)"
-            sleep 10
-            attempt=$((attempt + 1))
-          done
-      - name: Publish notation
-        continue-on-error: true
-        run: |
-          if ! bun publish --no-git-checks --cwd packages/notation; then
-            echo "::warning::Failed to publish @randsum/notation, but continuing with workflow"
-          fi
-
-  publish-dice:
-    needs: [publish-core, publish-notation]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: oven-sh/setup-bun@v1
-      - name: Setup .npmrc
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-          echo "access=public" >> .npmrc
-      - name: Wait for dependencies
-        run: |
-          for dep in core notation; do
-            max_attempts=30
-            attempt=1
-            while ! npm view "@randsum/$dep" version; do
-              if [ $attempt -ge $max_attempts ]; then
-                echo "Max attempts reached waiting for @randsum/$dep. Continuing anyway..."
-                break
-              fi
-              echo "Waiting for @randsum/$dep to be published... (Attempt $attempt/$max_attempts)"
-              sleep 10
-              attempt=$((attempt + 1))
-            done
-          done
-      - name: Publish dice
-        continue-on-error: true
-        run: |
-          if ! bun publish --no-git-checks --cwd packages/dice; then
-            echo "::warning::Failed to publish @randsum/dice, but continuing with workflow"
-          fi
-
-  publish-game-systems:
-    needs: publish-dice
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        name: [5e, root-rpg, blades, salvageunion]
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v3
-      - uses: oven-sh/setup-bun@v1
-      - name: Setup .npmrc
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-          echo "access=public" >> .npmrc
-      - name: Wait for dice
-        run: |
-          max_attempts=30
-          attempt=1
-          while ! npm view "@randsum/dice" version; do
-            if [ $attempt -ge $max_attempts ]; then
-              echo "Max attempts reached waiting for @randsum/dice. Continuing anyway..."
-              break
-            fi
-            echo "Waiting for @randsum/dice to be published... (Attempt $attempt/$max_attempts)"
-            sleep 10
-            attempt=$((attempt + 1))
-          done
-      - name: Publish ${{ matrix.name }}
-        continue-on-error: true
-        run: |
-          if ! bun publish --no-git-checks --cwd packages/${{ matrix.name }}; then
-            echo "::warning::Failed to publish @randsum/${{ matrix.name }}, but continuing with workflow"
-          fi
+        with:
+          fetch-depth: 0
+      - uses: moonrepo/setup-moon-action@v1
+      - run: moon :publish

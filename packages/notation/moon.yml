@@ -1,0 +1,14 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+id: notation
+language: 'typescript'
+dependsOn:
+  - 'core'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'core:build'
+  build:
+    deps:
+      - 'core:build'

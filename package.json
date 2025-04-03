@@ -6,46 +6,30 @@
     "packages/*"
   ],
   "scripts": {
-    "build:core": "bun run --cwd packages/core build",
-    "build:notation": "bun run --cwd packages/notation build",
-    "build:dice": "bun run --cwd packages/dice build",
-    "build:5e": "bun run --cwd packages/5e build",
-    "build:root-rpg": "bun run --cwd packages/root-rpg build",
-    "build:blades": "bun run --cwd packages/blades build",
-    "build:salvageunion": "bun run --cwd packages/salvageunion build",
-    "build:all": "bun run build:core && bun run build:notation && bun run build:dice && bun run build:5e && bun run build:root-rpg && bun run build:blades && bun run build:salvageunion",
-    "test": "bun run build:all && bun test --cwd=packages",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format:fix": "prettier . --write",
-    "format": "prettier . --check",
-    "ts:check": "tsc --noEmit --erasableSyntaxOnly",
-    "dev": "bun run build:watch",
-    "build:watch": "bun run build:all --watch",
-    "test:ci": "bun run test --coverage"
+    "ci": "bun moon ci",
+    "build": "bun moon :build",
+    "test": "bun moon :test",
+    "lint": "bun moon :lint",
+    "lint:fix": "bun moon :lint:fix",
+    "format": "bun moon :format",
+    "format:fix": "bun moon :format:fix",
+    "ts:check": "bun moon :tsCheck",
+    "test:ci": "bun run test --coverage",
+    "clean": "rm -rf packages/*/dist"
   },
+  "trustedDependencies": [
+    "@moonrepo/cli"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.23.0",
-    "@typescript-eslint/eslint-plugin": "^8.28.0",
-    "@typescript-eslint/parser": "^8.28.0",
+    "@moonrepo/cli": "^1.34.1",
+    "@types/bun": "1.2.8",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
+    "bun-plugin-dts": "^0.3.0",
     "eslint": "^9.23.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.28.0"
-  },
-  "prettier": {
-    "endOfLine": "auto",
-    "trailingComma": "none",
-    "semi": false,
-    "singleQuote": true,
-    "printWidth": 80,
-    "tabWidth": 2,
-    "useTabs": false,
-    "bracketSpacing": true,
-    "bracketSameLine": false,
-    "arrowParens": "always",
-    "proseWrap": "preserve",
-    "quoteProps": "as-needed",
-    "embeddedLanguageFormatting": "auto"
+    "typescript-eslint": "^8.29.0"
   }
 }

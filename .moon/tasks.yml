@@ -1,0 +1,77 @@
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
+
+tasks:
+  build:
+    command: 'bun run ../../build.ts'
+    inputs:
+      - 'src/**/*'
+    outputs:
+      - 'dist/**/*'
+    options:
+      cache: true
+
+  test:
+    command: 'bun test'
+    deps:
+      - 'build'
+    inputs:
+      - 'src/**/*'
+      - '__tests__/**/*'
+      - '**/*.test.ts'
+      - '**/*.spec.ts'
+    options:
+      cache: true
+
+  lint:
+    command: 'eslint . -c ../../eslint.base.config.js'
+    deps:
+      - 'build'
+    inputs:
+      - 'src/**/*'
+      - '__tests__/**/*'
+      - '**/*.ts'
+    options:
+      cache: true
+
+  format:
+    command: 'prettier . --check --ignore-path ../../.prettierignore'
+    deps:
+      - 'build'
+    inputs:
+      - 'src/**/*'
+      - '__tests__/**/*'
+      - '**/*.ts'
+      - '**/*.json'
+      - '**/*.md'
+    options:
+      cache: true
+
+  tsCheck:
+    command: 'tsc --erasableSyntaxOnly'
+    deps:
+      - 'build'
+    inputs:
+      - 'src/**/*'
+      - '$PROJECT_ROOT/tsconfig.json'
+    options:
+      cache: true
+
+  publish:
+    command: 'bun publish --no-git-checks'
+    options:
+      runInCI: false
+      allowFailure: true
+    deps:
+      - 'build'
+      - 'test'
+      - 'lint'
+      - 'format'
+      - 'tsCheck'
+
+  ci:
+    deps:
+      - 'build'
+      - 'test'
+      - 'lint'
+      - 'format'
+      - 'tsCheck'
