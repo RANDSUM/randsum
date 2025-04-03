@@ -17,7 +17,7 @@ export function roll5e({
   return roll(rollArg)
 }
 
-function generateQuantity(rollingWith?: AdvantageDisadvantage5e): 2 | 1 {
+function generateQuantity(rollingWith?: AdvantageDisadvantage5e): 1 | 2 {
   switch (rollingWith) {
     case 'Advantage':
     case 'Disadvantage':
