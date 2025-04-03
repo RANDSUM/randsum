@@ -4,8 +4,7 @@
     "packages/*/src/**/*",
     "packages/*/src/**/*.json",
     "packages/*/__tests__/**/*",
-    "*.ts",
-    "packages/*/bunup.config.ts"
+    "*.ts"
   ],
   "exclude": ["node_modules", "packages/*/dist"]
 }

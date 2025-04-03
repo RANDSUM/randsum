@@ -4,6 +4,5 @@ src/
 *.test.ts
 *.spec.ts
 tsconfig.json
-bunup.config.ts
 bunfig.toml
 .prettierignore

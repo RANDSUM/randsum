@@ -1,6 +1,6 @@
 {
   "name": "@randsum/root-rpg",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "A flexible, type-safe dice roller for the Root RPG system",
   "author": {
     "name": "Alex Jarvis",
@@ -14,7 +14,7 @@
     "directory": "packages/root-rpg"
   },
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
   "react-native": "./src/index.ts",
