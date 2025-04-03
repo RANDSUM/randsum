@@ -6,8 +6,6 @@
     "packages/*"
   ],
   "scripts": {
-    "create-package": "./scripts/create-package.sh",
-    "update-packages": "./scripts/update-packages.sh",
     "ci": "bun moon ci",
     "build": "bun moon :build",
     "test": "bun moon :test",
@@ -19,8 +17,12 @@
     "test:ci": "bun run test --coverage",
     "clean": "rm -rf packages/*/dist"
   },
+  "trustedDependencies": [
+    "@moonrepo/cli"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.23.0",
+    "@moonrepo/cli": "^1.34.1",
     "@types/bun": "1.2.8",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
