@@ -16,7 +16,6 @@ describe('ExplodeModifier', () => {
       expect('!{<2}'.match(pattern)).not.toBeNull()
       expect('2d6!'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('1d20'.match(pattern)).toBeNull()
       expect('2d6+1'.match(pattern)).toBeNull()
     })
@@ -29,7 +28,6 @@ describe('ExplodeModifier', () => {
     })
 
     test('extracts complex explode notation but returns simple true', () => {
-      // The implementation only supports basic explode (true), not complex options
       const result = ExplodeModifier.parse('!{6}')
       expect(result).toEqual({ explode: true })
     })
@@ -41,8 +39,7 @@ describe('ExplodeModifier', () => {
   })
 
   describe('apply', () => {
-    // For explode, we need to mock the rollOne function
-    const mockRollOne = (): number => 3 // Always returns 3 for predictable tests
+    const mockRollOne = (): number => 3
 
     test('adds additional rolls for maximum values', () => {
       const modifier = new ExplodeModifier(true)
@@ -56,7 +53,6 @@ describe('ExplodeModifier', () => {
       }
 
       const result = modifier.apply(bonus, params, mockRollOne)
-      // Should add an extra roll for the '6'
       expect(result.rolls).toEqual([6, 4, 3])
     })
 

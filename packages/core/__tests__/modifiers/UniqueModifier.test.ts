@@ -17,7 +17,6 @@ describe('UniqueModifier', () => {
       expect('U{1,2}'.match(pattern)).not.toBeNull()
       expect('2d6U'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('1d20'.match(pattern)).toBeNull()
       expect('2d6+1'.match(pattern)).toBeNull()
     })
@@ -46,8 +45,7 @@ describe('UniqueModifier', () => {
   })
 
   describe('apply', () => {
-    // For unique, we need to mock the rollOne function
-    const mockRollSequence = [4, 5, 6] // Returns these values in sequence
+    const mockRollSequence = [4, 5, 6]
     let rollIndex = 0
     const mockRollOne = (): number => {
       const value = mockRollSequence[rollIndex % mockRollSequence.length]
@@ -56,7 +54,7 @@ describe('UniqueModifier', () => {
     }
 
     beforeEach(() => {
-      rollIndex = 0 // Reset for each test
+      rollIndex = 0
     })
 
     test('ensures all values are unique', () => {
@@ -71,7 +69,6 @@ describe('UniqueModifier', () => {
       }
 
       const result = modifier.apply(bonus, params, mockRollOne)
-      // Should replace the duplicate '1' with a new roll
       expect(result.rolls).toEqual([1, 2, 4])
     })
 
@@ -87,7 +84,6 @@ describe('UniqueModifier', () => {
       }
 
       const result = modifier.apply(bonus, params, mockRollOne)
-      // Should replace the duplicate '2' but leave the duplicate '1'
       expect(result.rolls).toEqual([1, 2, 1, 4])
     })
 
@@ -98,7 +94,7 @@ describe('UniqueModifier', () => {
         simpleMathModifier: 0
       }
       const params: RequiredNumericRollParameters = {
-        sides: 2, // Only 2 sides but 3 rolls
+        sides: 2,
         quantity: 3
       }
 

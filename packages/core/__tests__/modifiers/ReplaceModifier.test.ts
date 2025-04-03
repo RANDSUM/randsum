@@ -14,7 +14,6 @@ describe('ReplaceModifier', () => {
       expect('V{1=2,3=4}'.match(pattern)).not.toBeNull()
       expect('2d20V{1=20}'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('V'.match(pattern)).toBeNull()
       expect('V1=2'.match(pattern)).toBeNull()
       expect('1d20'.match(pattern)).toBeNull()

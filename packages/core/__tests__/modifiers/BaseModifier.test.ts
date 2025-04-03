@@ -4,7 +4,7 @@ import type { NumericRollBonus } from '../../src/types'
 
 class TestModifier extends BaseModifier<number> {
   public static override parse = mock((_modifierString: string) => {
-    return {}
+    return { testOption: 1 }
   })
 
   public apply(bonus: NumericRollBonus): NumericRollBonus {
@@ -20,7 +20,6 @@ class TestModifier extends BaseModifier<number> {
     return 'T'
   }
 
-  // Expose options for testing
   public getOptions(): number | undefined {
     return this.options
   }
@@ -46,11 +45,10 @@ describe('BaseModifier', () => {
     test('has a parse method that can be overridden', () => {
       expect(typeof BaseModifier.parse).toBe('function')
 
-      // Test the overridden method in the concrete class
       const result = TestModifier.parse('test')
       expect(TestModifier.parse).toHaveBeenCalled()
       expect(TestModifier.parse).toHaveBeenCalledWith('test')
-      expect(result).toEqual({})
+      expect(result).toEqual({ testOption: 1 })
     })
   })
 
@@ -74,7 +72,7 @@ describe('BaseModifier', () => {
       }
 
       const result = modifier.apply(bonus)
-      expect(result).toBe(bonus) // Should return the original bonus unchanged
+      expect(result).toBe(bonus)
     })
   })
 })

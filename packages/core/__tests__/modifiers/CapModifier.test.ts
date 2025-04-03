@@ -12,7 +12,6 @@ describe('CapModifier', () => {
       expect('C{>18,<3}'.match(pattern)).not.toBeNull()
       expect('2d20C{>18}'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('C'.match(pattern)).toBeNull()
       expect('C18'.match(pattern)).toBeNull()
       expect('1d20'.match(pattern)).toBeNull()

@@ -16,7 +16,6 @@ describe('RerollModifier', () => {
       expect('R{<3}'.match(pattern)).not.toBeNull()
       expect('2d6R{1}'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('R'.match(pattern)).toBeNull()
       expect('R1'.match(pattern)).toBeNull()
       expect('1d20'.match(pattern)).toBeNull()
@@ -56,8 +55,7 @@ describe('RerollModifier', () => {
   })
 
   describe('apply', () => {
-    // For reroll, we need to mock the rollOne function
-    const mockRollOne = (): number => 4 // Always returns 4 for predictable tests
+    const mockRollOne = (): number => 4
 
     test('rerolls exact values', () => {
       const modifier = new RerollModifier({ exact: [1, 2] })

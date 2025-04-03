@@ -13,7 +13,6 @@ describe('DropModifier', () => {
       expect('h2'.match(pattern)).not.toBeNull()
       expect('2d20H1'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('L'.match(pattern)).toBeNull()
       expect('D{1}'.match(pattern)).toBeNull()
       expect('1d20'.match(pattern)).toBeNull()
@@ -28,7 +27,6 @@ describe('DropModifier', () => {
       expect('l2'.match(pattern)).not.toBeNull()
       expect('2d20L1'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('H'.match(pattern)).toBeNull()
       expect('D{1}'.match(pattern)).toBeNull()
       expect('1d20'.match(pattern)).toBeNull()
@@ -43,7 +41,6 @@ describe('DropModifier', () => {
       expect('D{<3}'.match(pattern)).not.toBeNull()
       expect('D{1,2,3}'.match(pattern)).not.toBeNull()
 
-      // Should not match these
       expect('D'.match(pattern)).toBeNull()
       expect('L'.match(pattern)).toBeNull()
       expect('H'.match(pattern)).toBeNull()
