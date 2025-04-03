@@ -43,7 +43,7 @@ describe('MinusModifier', () => {
     test('subtracts value from simpleMathModifier', () => {
       const modifier = new MinusModifier(5)
       const bonus: NumericRollBonus = {
-        rolls: ['10', '15'],
+        rolls: [10, 15],
         simpleMathModifier: 0
       }
 
@@ -54,7 +54,7 @@ describe('MinusModifier', () => {
     test('subtracts from existing simpleMathModifier', () => {
       const modifier = new MinusModifier(5)
       const bonus: NumericRollBonus = {
-        rolls: ['10', '15'],
+        rolls: [10, 15],
         simpleMathModifier: 3
       }
 
@@ -65,7 +65,7 @@ describe('MinusModifier', () => {
     test('returns original bonus when options is undefined', () => {
       const modifier = new MinusModifier(undefined)
       const bonus: NumericRollBonus = {
-        rolls: ['10', '15'],
+        rolls: [10, 15],
         simpleMathModifier: 0
       }
 

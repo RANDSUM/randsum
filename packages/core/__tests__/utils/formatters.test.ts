@@ -42,9 +42,9 @@ describe('formatters', () => {
       })
 
       test('formats both options', () => {
-        const result = formatters.greaterLess.descriptions({ 
-          greaterThan: 15, 
-          lessThan: 5 
+        const result = formatters.greaterLess.descriptions({
+          greaterThan: 15,
+          lessThan: 5
         })
         expect(result).toEqual(['greater than [15]', 'less than [5]'])
       })
@@ -52,7 +52,7 @@ describe('formatters', () => {
       test('appends to existing list', () => {
         const existingList = ['existing item']
         const result = formatters.greaterLess.descriptions(
-          { greaterThan: 10 }, 
+          { greaterThan: 10 },
           existingList
         )
         expect(result).toEqual(['existing item', 'greater than [10]'])
@@ -71,9 +71,9 @@ describe('formatters', () => {
       })
 
       test('formats both options', () => {
-        const result = formatters.greaterLess.notation({ 
-          greaterThan: 15, 
-          lessThan: 5 
+        const result = formatters.greaterLess.notation({
+          greaterThan: 15,
+          lessThan: 5
         })
         expect(result).toEqual(['>15', '<5'])
       })
@@ -81,7 +81,7 @@ describe('formatters', () => {
       test('appends to existing list', () => {
         const existingList = ['existing item']
         const result = formatters.greaterLess.notation(
-          { lessThan: 3 }, 
+          { lessThan: 3 },
           existingList
         )
         expect(result).toEqual(['existing item', '<3'])

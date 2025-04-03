@@ -43,7 +43,7 @@ describe('PlusModifier', () => {
     test('adds value to simpleMathModifier', () => {
       const modifier = new PlusModifier(5)
       const bonus: NumericRollBonus = {
-        rolls: ['10', '15'],
+        rolls: [10, 15],
         simpleMathModifier: 0
       }
 
@@ -54,7 +54,7 @@ describe('PlusModifier', () => {
     test('adds to existing simpleMathModifier', () => {
       const modifier = new PlusModifier(5)
       const bonus: NumericRollBonus = {
-        rolls: ['10', '15'],
+        rolls: [10, 15],
         simpleMathModifier: 3
       }
 
@@ -65,7 +65,7 @@ describe('PlusModifier', () => {
     test('returns original bonus when options is undefined', () => {
       const modifier = new PlusModifier(undefined)
       const bonus: NumericRollBonus = {
-        rolls: ['10', '15'],
+        rolls: [10, 15],
         simpleMathModifier: 0
       }
 

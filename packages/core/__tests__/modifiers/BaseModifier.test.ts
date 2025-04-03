@@ -4,7 +4,7 @@ import type { NumericRollBonus } from '../../src/types'
 
 class TestModifier extends BaseModifier<number> {
   public static override parse = mock((_modifierString: string) => {
-    return { testOption: 1 }
+    return {}
   })
 
   public apply(bonus: NumericRollBonus): NumericRollBonus {
@@ -48,7 +48,7 @@ describe('BaseModifier', () => {
       const result = TestModifier.parse('test')
       expect(TestModifier.parse).toHaveBeenCalled()
       expect(TestModifier.parse).toHaveBeenCalledWith('test')
-      expect(result).toEqual({ testOption: 1 })
+      expect(result).toEqual({})
     })
   })
 
