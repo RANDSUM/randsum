@@ -4,8 +4,7 @@ async function build() {
   try {
     console.log('🔨 Building package...')
 
-    console.log('📦 Building ESM format...')
-    const esmResult = await Bun.build({
+    const result = await Bun.build({
       entrypoints: ['src/index.ts'],
       outdir: 'dist',
       format: 'esm',
@@ -13,12 +12,12 @@ async function build() {
       minify: true,
       packages: 'external',
       sourcemap: 'inline',
-      naming: 'index.js', // Force all output to be named index.js
+      naming: 'index.js',
       plugins: [dts()]
     })
 
-    if (!esmResult.success) {
-      console.error('❌ ESM build failed:', esmResult.logs)
+    if (!result.success) {
+      console.error('❌ ESM build failed:', result.logs)
       process.exit(1)
     }
 
@@ -29,4 +28,4 @@ async function build() {
   }
 }
 
-build()
+await build()
