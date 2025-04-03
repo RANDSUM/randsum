@@ -1,6 +1,6 @@
 {
   "name": "@randsum/notation",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "A flexible, type-safe dice notation parser and validator",
   "author": {
     "name": "Alex Jarvis",
@@ -28,7 +28,7 @@
   "sideEffects": false,
   "type": "module",
   "dependencies": {
-    "@randsum/core": "workspace:^"
+    "@randsum/core": "workspace:*"
   },
   "exports": {
     ".": {

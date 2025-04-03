@@ -8,18 +8,6 @@ export { PlusModifier } from './modifiers/PlusModifier'
 export { ReplaceModifier } from './modifiers/ReplaceModifier'
 export { RerollModifier } from './modifiers/RerollModifier'
 export { UniqueModifier } from './modifiers/UniqueModifier'
-export {
-  capPattern,
-  dropConstraintsPattern,
-  dropHighestPattern,
-  dropLowestPattern,
-  explodePattern,
-  minusPattern,
-  plusPattern,
-  replacePattern,
-  rerollPattern,
-  uniquePattern
-} from './patterns'
 export type {
   BaseRollOptions,
   ComparisonOptions,

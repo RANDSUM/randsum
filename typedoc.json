@@ -1,0 +1,19 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "packages",
+  "entryPoints": ["packages/*"],
+  "out": "docs/api",
+  "name": "RANDSUM API Documentation",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "excludeInternal": true,
+  "readme": "README.md",
+  "theme": "default",
+  "categorizeByGroup": true,
+  "searchInComments": true,
+  "sort": ["alphabetical"],
+  "gitRevision": "main",
+  "githubPages": true
+}

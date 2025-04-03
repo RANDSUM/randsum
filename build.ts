@@ -1,32 +1,40 @@
 import dts from 'bun-plugin-dts'
 
-async function build() {
+/**
+ * Builds the package
+ * @returns {Promise<void>}
+ */
+async function build(): Promise<void> {
   try {
     console.log('🔨 Building package...')
 
-    console.log('📦 Building ESM format...')
-    const esmResult = await Bun.build({
+    const startTime = performance.now()
+
+    const result = await Bun.build({
       entrypoints: ['src/index.ts'],
       outdir: 'dist',
       format: 'esm',
       target: 'node',
       minify: true,
       packages: 'external',
-      splitting: true,
       sourcemap: 'inline',
+      naming: 'index.js',
       plugins: [dts()]
     })
 
-    if (!esmResult.success) {
-      console.error('❌ ESM build failed:', esmResult.logs)
+    if (!result.success) {
+      console.error('❌ ESM build failed:', result.logs)
       process.exit(1)
     }
 
-    console.log('✅ Build completed successfully!')
+    const endTime = performance.now()
+    const buildTime = ((endTime - startTime) / 1000).toFixed(2)
+
+    console.log(`✅ Build completed successfully in ${buildTime}s!`)
   } catch (error) {
     console.error('❌ Build failed with an error:', error)
     process.exit(1)
   }
 }
 
-build()
+await build()

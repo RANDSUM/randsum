@@ -3,11 +3,11 @@ import {
   DropModifier,
   ExplodeModifier,
   MinusModifier,
-  optionsConverter,
   PlusModifier,
   ReplaceModifier,
   RerollModifier,
-  UniqueModifier
+  UniqueModifier,
+  optionsConverter
 } from '@randsum/core'
 import { coreNotationPattern, isDiceNotation } from '@randsum/notation'
 import { D } from '../D'

@@ -23,7 +23,7 @@ tasks:
       cache: true
 
   lint:
-    command: 'eslint . -c ../../eslint.base.config.js'
+    command: 'eslint . -c ../../eslint.config.js'
     deps:
       - 'build'
     inputs:
@@ -52,7 +52,7 @@ tasks:
       - 'build'
     inputs:
       - 'src/**/*'
-      - '$PROJECT_ROOT/tsconfig.json'
+      - 'tsconfig.json'
     options:
       cache: true
 

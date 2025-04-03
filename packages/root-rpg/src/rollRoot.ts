@@ -1,4 +1,4 @@
-import { roll, type NumericRollResult } from '@randsum/dice'
+import { type NumericRollResult, roll } from '@randsum/dice'
 import type { RootResult } from './types'
 
 function interpretResult(result: number): RootResult {
