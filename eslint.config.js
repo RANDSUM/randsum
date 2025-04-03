@@ -34,6 +34,12 @@ export default [
     ]
   },
   {
+    files: ['src/patterns.ts'],
+    rules: {
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off'
+    }
+  },
+  {
     rules: {
       '@typescript-eslint/no-misused-spread': 'off',
       'no-ternary': 'warn',
