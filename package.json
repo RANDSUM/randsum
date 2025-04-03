@@ -15,8 +15,7 @@
     "format:fix": "bun moon :format:fix",
     "ts:check": "bun moon :tsCheck",
     "test:ci": "bun run test --coverage",
-    "clean": "rm -rf packages/*/dist",
-    "docs:generate": "bun run typedoc --entryPointStrategy packages --out docs/api packages/*/src"
+    "clean": "rm -rf packages/*/dist"
   },
   "trustedDependencies": [
     "@moonrepo/cli"
