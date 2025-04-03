@@ -10,7 +10,6 @@
   "excludeExternals": true,
   "excludeInternal": true,
   "readme": "README.md",
-  "plugin": ["typedoc-plugin-markdown"],
   "theme": "default",
   "categorizeByGroup": true,
   "searchInComments": true,

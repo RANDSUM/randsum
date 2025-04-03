@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RANDSUM - Dice Rolling Library for JavaScript and TypeScript</title>
+    <meta name="description" content="RANDSUM is a comprehensive dice rolling library for JavaScript and TypeScript with support for complex dice notation and various RPG systems.">
+    <meta name="keywords" content="dice, dice roller, RPG, tabletop games, JavaScript, TypeScript, D&D, 5e, ROOT RPG">
+    <meta property="og:title" content="RANDSUM - Dice Rolling Library">
+    <meta property="og:description" content="A comprehensive dice rolling library for JavaScript and TypeScript with support for complex dice notation and various RPG systems.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+    <meta property="og:url" content="https://randsum.github.io/randsum/">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" type="image/webp">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #2980b9;
+            text-decoration: none;
+        }
+        code {
+            background-color: #f8f8f8;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        footer {
+            margin-top: 50px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            color: #7f8c8d;
+        }
+        .made-with {
+            margin-top: 20px;
+            text-align: center;
+        }
+        hr.footer-divider {
+            margin-top: 50px;
+            margin-bottom: 30px;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <img src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="RANDSUM Logo" class="logo">
+        <h1>RANDSUM Documentation</h1>
+    </div>
+
+    <p>Welcome to the official documentation for RANDSUM, a comprehensive dice rolling library for JavaScript and TypeScript.</p>
+
+    <h2>API Documentation</h2>
+
+    <p>Explore the detailed API documentation for all RANDSUM packages:</p>
+
+    <a href="./api/" class="button">View API Documentation</a>
+
+    <h2>Packages</h2>
+
+    <ul>
+        <li><strong>@randsum/core</strong> - Core utilities and types (internal package)</li>
+        <li><strong>@randsum/dice</strong> - Main dice rolling implementation</li>
+        <li><strong>@randsum/notation</strong> - Dice notation parser</li>
+        <li><strong>@randsum/5e</strong> - D&D 5th Edition compatible dice rolling</li>
+        <li><strong>@randsum/root-rpg</strong> - ROOT RPG compatible dice rolling</li>
+    </ul>
+
+    <h2>Getting Started</h2>
+
+    <p>Install the main dice package:</p>
+
+    <pre><code>npm install @randsum/dice
+# or
+yarn add @randsum/dice
+# or
+bun add @randsum/dice</code></pre>
+
+    <p>Basic usage:</p>
+
+    <pre><code>import { D20, roll } from '@randsum/dice';
+
+// Roll a D20
+const result = D20.roll();
+console.log(`You rolled: ${result}`);
+
+// Roll with advantage (2d20, drop lowest)
+const advantageRoll = roll('2d20L');
+console.log(`Advantage roll: ${advantageRoll.total}`);</code></pre>
+
+    <h2>Resources</h2>
+
+    <ul>
+        <li><a href="https://github.com/RANDSUM/randsum">GitHub Repository</a></li>
+        <li><a href="https://www.npmjs.com/package/@randsum/dice">NPM Package</a></li>
+    </ul>
+
+    <hr class="footer-divider">
+
+    <footer>
+        <p>RANDSUM is licensed under the MIT License.</p>
+        <div class="made-with">
+            Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
+        </div>
+    </footer>
+</body>
+</html>
