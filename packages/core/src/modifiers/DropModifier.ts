@@ -8,8 +8,27 @@ import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
+/**
+ * Modifier that removes specific dice from the roll results
+ *
+ * The DropModifier can remove dice based on various criteria:
+ * - Highest N dice
+ * - Lowest N dice
+ * - Dice with specific values
+ * - Dice greater than or less than specific values
+ *
+ * @example
+ * // Drop the highest die and any dice with value 1
+ * const dropMod = new DropModifier({ highest: 1, exact: [1] });
+ */
 export class DropModifier extends BaseModifier<DropOptions> {
-  static parseConstraints = (
+  /**
+   * Parses constraint-based drop notations (e.g., D{>3,<1,2})
+   *
+   * @param notations - Array of notation strings to parse
+   * @returns Object containing parsed drop constraint options
+   */
+  public static parseConstraints = (
     notations: string[]
   ): Pick<ModifierOptions, 'drop'> => {
     if (notations.length === 0) {
@@ -57,7 +76,13 @@ export class DropModifier extends BaseModifier<DropOptions> {
     )
   }
 
-  static parseHigh(notations: string[]): Pick<ModifierOptions, 'drop'> {
+  /**
+   * Parses drop highest notation (e.g., H or H2)
+   *
+   * @param notations - Array of notation strings to parse
+   * @returns Object containing parsed drop highest options
+   */
+  public static parseHigh(notations: string[]): Pick<ModifierOptions, 'drop'> {
     if (notations.length === 0) {
       return {}
     }
@@ -76,7 +101,13 @@ export class DropModifier extends BaseModifier<DropOptions> {
     }
   }
 
-  static parseLow(notations: string[]): Pick<ModifierOptions, 'drop'> {
+  /**
+   * Parses drop lowest notation (e.g., L or L2)
+   *
+   * @param notations - Array of notation strings to parse
+   * @returns Object containing parsed drop lowest options
+   */
+  public static parseLow(notations: string[]): Pick<ModifierOptions, 'drop'> {
     if (notations.length === 0) {
       return { drop: {} }
     }
@@ -98,7 +129,13 @@ export class DropModifier extends BaseModifier<DropOptions> {
     }
   }
 
-  static override parse = (
+  /**
+   * Parses a modifier string to extract all drop options
+   *
+   * @param modifiersString - The string containing modifier notation
+   * @returns Object containing all parsed drop options
+   */
+  public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'drop'> => {
     const dropHighModifiers = DropModifier.parseHigh(
@@ -125,7 +162,13 @@ export class DropModifier extends BaseModifier<DropOptions> {
     return {}
   }
 
-  apply = (bonus: NumericRollBonus): NumericRollBonus => {
+  /**
+   * Applies the drop modifier to a roll result
+   *
+   * @param bonus - The current roll bonuses to modify
+   * @returns Modified roll bonuses with dropped dice removed
+   */
+  public apply = (bonus: NumericRollBonus): NumericRollBonus => {
     if (this.options === undefined) return bonus
     const { highest, lowest, greaterThan, lessThan, exact } = this.options
     const sortedResults = bonus.rolls
@@ -153,7 +196,12 @@ export class DropModifier extends BaseModifier<DropOptions> {
     }
   }
 
-  toDescription(): string[] | undefined {
+  /**
+   * Generates a human-readable description of the drop modifier
+   *
+   * @returns Array of description strings or undefined if no drop options
+   */
+  public toDescription(): string[] | undefined {
     if (this.options === undefined) return undefined
     const dropList = []
 
@@ -181,7 +229,12 @@ export class DropModifier extends BaseModifier<DropOptions> {
     return dropList
   }
 
-  toNotation(): string | undefined {
+  /**
+   * Converts the drop modifier to dice notation format
+   *
+   * @returns Dice notation string or undefined if no drop options
+   */
+  public toNotation(): string | undefined {
     if (this.options === undefined) return undefined
     const dropList: string[] = []
     const greaterLess = formatters.greaterLess.notation(this.options)
@@ -217,6 +270,12 @@ export class DropModifier extends BaseModifier<DropOptions> {
     return finalList.join('')
   }
 
+  /**
+   * Helper method to execute a callback multiple times
+   *
+   * @param iterator - Number of times to execute the callback
+   * @returns Function that takes a callback to execute
+   */
   private times = (iterator: number) => {
     return (callback: (index?: number) => void): void => {
       if (iterator > 0) {

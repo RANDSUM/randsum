@@ -30,7 +30,6 @@ tasks:
       - 'src/**/*'
       - '__tests__/**/*'
       - '**/*.ts'
-      - 'tsconfig.eslint.json'
     options:
       cache: true
 

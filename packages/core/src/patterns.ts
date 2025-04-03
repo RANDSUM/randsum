@@ -18,7 +18,7 @@ const coreGreaterLessThanEquals: RegExp = new RegExp(
   coreGreaterLessThan.source + /=?\d+/.source
 )
 
-function createRepeatedPattern(core: RegExp) {
+function createRepeatedPattern(core: RegExp): RegExp {
   return new RegExp(`{(${core.source},)*(${core.source})}`, 'g')
 }
 

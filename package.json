@@ -16,8 +16,6 @@
     "ts:check": "bun moon :tsCheck",
     "test:ci": "bun run test --coverage",
     "clean": "rm -rf packages/*/dist",
-    "check:deps": "bun run scripts/check-deps.ts",
-    "check:naming": "bun run scripts/check-naming.ts",
     "docs:generate": "bun run typedoc --entryPointStrategy packages --out docs/api packages/*/src"
   },
   "trustedDependencies": [

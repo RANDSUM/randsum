@@ -8,8 +8,24 @@ import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
+/**
+ * Modifier that caps dice roll values at specified thresholds
+ *
+ * The CapModifier ensures dice rolls don't exceed or fall below certain values,
+ * replacing any rolls outside the specified range with the threshold value.
+ *
+ * @example
+ * // Cap rolls greater than 4 and less than 2
+ * const capMod = new CapModifier({ greaterThan: 4, lessThan: 2 });
+ */
 export class CapModifier extends BaseModifier<ComparisonOptions> {
-  static override parse = (
+  /**
+   * Parses a modifier string to extract cap options
+   *
+   * @param modifiersString - The string containing modifier notation
+   * @returns Object containing parsed cap options
+   */
+  public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'cap'> => {
     const notations = extractMatches(modifiersString, capPattern)
@@ -49,7 +65,14 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
     )
   }
 
-  static applySingleCap = (
+  /**
+   * Creates a function that applies capping to a single die roll
+   *
+   * @param param0 - Comparison options with greaterThan and lessThan thresholds
+   * @param value - Optional value to use instead of the threshold
+   * @returns Function that caps a roll value based on the provided thresholds
+   */
+  public static applySingleCap = (
     { greaterThan, lessThan }: ComparisonOptions,
     value?: number
   ): ((roll: number) => number) => {
@@ -64,7 +87,13 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
     }
   }
 
-  apply = (bonus: NumericRollBonus): NumericRollBonus => {
+  /**
+   * Applies the cap modifier to a roll result
+   *
+   * @param bonus - The current roll bonuses to modify
+   * @returns Modified roll bonuses with capped values
+   */
+  public apply = (bonus: NumericRollBonus): NumericRollBonus => {
     if (this.options === undefined) return bonus
     return {
       ...bonus,
@@ -72,14 +101,24 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
     }
   }
 
-  toDescription = (): string[] | undefined => {
+  /**
+   * Generates a human-readable description of the cap modifier
+   *
+   * @returns Array of description strings or undefined if no cap options
+   */
+  public toDescription = (): string[] | undefined => {
     if (this.options === undefined) return undefined
     return formatters.greaterLess
       .descriptions(this.options)
       .map((str) => `No Rolls ${String(str)}`)
   }
 
-  toNotation = (): string | undefined => {
+  /**
+   * Converts the cap modifier to dice notation format
+   *
+   * @returns Dice notation string or undefined if no cap options
+   */
+  public toNotation = (): string | undefined => {
     if (this.options === undefined) return undefined
     const capList = formatters.greaterLess.notation(this.options)
     return `C{${capList.join(',')}}`

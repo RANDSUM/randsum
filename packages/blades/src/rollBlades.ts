@@ -1,7 +1,7 @@
 import {
-  roll,
   type NumericRollOptions,
-  type NumericRollResult
+  type NumericRollResult,
+  roll
 } from '@randsum/dice'
 import type { BladesResult } from './types'
 

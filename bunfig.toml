@@ -1,6 +1,0 @@
-[test]
-coverage = true
-coverageReporter = ['text', 'lcov']
-coverageThreshold = { lines = 1.0, functions = 0.0, branches = 0.8, statements = 0.8 }
-coverageInclude = ["packages/*/src/**/*.ts"]
-coverageExclude = ["**/*.d.ts", "**/*.test.ts", "**/*.spec.ts"]

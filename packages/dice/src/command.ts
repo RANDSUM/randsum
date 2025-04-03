@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 import {
-  validateNotation,
   type CustomValidationResult,
-  type NumericValidationResult
+  type NumericValidationResult,
+  validateNotation
 } from '@randsum/notation'
 import { roll } from './roll'
 import type { RollResult } from './types'
 
-function main() {
+function main(): void {
   const args = process.argv.slice(2)
 
   if (args.length === 0) {
@@ -34,7 +34,7 @@ function main() {
 function formatMessage(
   result: RollResult,
   { description, digested }: CustomValidationResult | NumericValidationResult
-) {
+): string {
   const hasModifiers = digested.modifiers !== undefined
   const rollResult = result.result.join(', ')
   const rawRolls = Object.values(result.rawRolls).flat().join(', ')
@@ -54,7 +54,11 @@ function formatMessage(
   )
 }
 
-function messageFrame(total: string, inner: string, description: string) {
+function messageFrame(
+  total: string,
+  inner: string,
+  description: string
+): string {
   return `
 🎲 RANDSUM Roll Result:
 ───────────────

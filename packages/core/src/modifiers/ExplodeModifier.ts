@@ -7,8 +7,25 @@ import type {
 import { extractMatches } from '../utils/extractMatches'
 import { BaseModifier } from './BaseModifier'
 
+/**
+ * Modifier that adds additional dice when maximum values are rolled
+ *
+ * The ExplodeModifier adds an additional die roll for each die that shows
+ * its maximum value. This is commonly known as "exploding dice" in many
+ * tabletop RPG systems.
+ *
+ * @example
+ * // Create an exploding dice modifier
+ * const explodeMod = new ExplodeModifier(true);
+ */
 export class ExplodeModifier extends BaseModifier<boolean> {
-  static override parse = (
+  /**
+   * Parses a modifier string to extract explode options
+   *
+   * @param modifiersString - The string containing modifier notation
+   * @returns Object containing parsed explode options
+   */
+  public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'explode'> => {
     const notations = extractMatches(modifiersString, explodePattern)
@@ -18,7 +35,15 @@ export class ExplodeModifier extends BaseModifier<boolean> {
     return { explode: true }
   }
 
-  apply = (
+  /**
+   * Applies the explode modifier to a roll result
+   *
+   * @param bonus - The current roll bonuses to modify
+   * @param param1 - Parameters of the roll being modified
+   * @param rollOne - Function to roll a single die
+   * @returns Modified roll bonuses with additional exploded dice
+   */
+  public apply = (
     bonus: NumericRollBonus,
     { sides }: RequiredNumericRollParameters,
     rollOne: () => number
@@ -34,12 +59,22 @@ export class ExplodeModifier extends BaseModifier<boolean> {
     }
   }
 
-  toDescription = (): string[] | undefined => {
+  /**
+   * Generates a human-readable description of the explode modifier
+   *
+   * @returns Array of description strings or undefined if no explode options
+   */
+  public toDescription = (): string[] | undefined => {
     if (this.options === undefined) return undefined
     return ['Exploding Dice']
   }
 
-  toNotation = (): string | undefined => {
+  /**
+   * Converts the explode modifier to dice notation format
+   *
+   * @returns Dice notation string or undefined if no explode options
+   */
+  public toNotation = (): string | undefined => {
     if (this.options === undefined) return undefined
     return '!'
   }

@@ -44,15 +44,10 @@ export default [
         'error',
         {
           selector: 'interface',
-          format: ['PascalCase'],
-          prefix: ['I']
-        },
-        {
-          selector: 'typeAlias',
           format: ['PascalCase']
         },
         {
-          selector: 'enum',
+          selector: 'typeAlias',
           format: ['PascalCase']
         }
       ],

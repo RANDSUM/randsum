@@ -122,7 +122,7 @@ function generateModifiedRolls(
         options: { sides, quantity = 1, modifiers = {} }
       } = params
 
-      const rollOne = () => coreRandom(sides)
+      const rollOne = (): number => coreRandom(sides)
       const modified = Object.keys(modifiers).reduce(
         (bonuses, modifierKey) =>
           applyModifier(
