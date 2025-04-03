@@ -12,8 +12,8 @@ async function build() {
       target: 'node',
       minify: true,
       packages: 'external',
-      splitting: true,
       sourcemap: 'inline',
+      naming: 'index.js', // Force all output to be named index.js
       plugins: [dts()]
     })
 
