@@ -1,11 +1,21 @@
-import { createBuildConfig } from './build.config'
+import dts from 'bun-plugin-dts'
 
 async function build() {
   try {
     console.log('🔨 Building package...')
 
     console.log('📦 Building ESM format...')
-    const esmResult = await Bun.build(createBuildConfig())
+    const esmResult = await Bun.build({
+      entrypoints: ['src/index.ts'],
+      outdir: 'dist',
+      format: 'esm',
+      target: 'node',
+      minify: true,
+      packages: 'external',
+      splitting: true,
+      sourcemap: 'inline',
+      plugins: [dts()]
+    })
 
     if (!esmResult.success) {
       console.error('❌ ESM build failed:', esmResult.logs)
@@ -19,5 +29,4 @@ async function build() {
   }
 }
 
-// Run the build
 build()

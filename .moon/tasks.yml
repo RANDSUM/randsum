@@ -2,7 +2,7 @@ $schema: 'https://moonrepo.dev/schemas/tasks.json'
 
 tasks:
   build:
-    command: 'bun run ../../config/build/build.ts'
+    command: 'bun run ../../build.ts'
     inputs:
       - 'src/**/*'
     outputs:
@@ -34,7 +34,7 @@ tasks:
       cache: true
 
   format:
-    command: 'prettier . --check'
+    command: 'prettier . --check --ignore-path ../../.prettierignore'
     deps:
       - 'build'
     inputs:
