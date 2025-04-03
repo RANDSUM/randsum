@@ -169,24 +169,6 @@ bun moon dice:test    # Run tests for @randsum/dice only
 bun moon blades:build # Build @randsum/blades only
 ```
 
-### Helper Scripts
-
-This monorepo includes several helper scripts to streamline development:
-
-```bash
-# Create a new package
-./scripts/create-package.sh new-package "Description of the new package"
-
-# Update all packages to use standardized configuration
-./scripts/update-packages.sh
-
-# Release a new version of all packages
-./scripts/release.sh [major|minor|patch]
-
-# Clean all build artifacts
-bun run clean
-```
-
 ## Further Reading
 
 - [Getting Started](https://github.com/RANDSUM/randsum/blob/main/GETTING_STARTED.md) - Installation and Documentation for using `randsum`
