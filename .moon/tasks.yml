@@ -60,6 +60,7 @@ tasks:
     command: 'bun publish --no-git-checks'
     options:
       runInCI: false
+      allowFailure: true
     deps:
       - 'build'
       - 'test'
