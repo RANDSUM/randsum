@@ -1,4 +1,3 @@
-import { plusPattern } from '../patterns'
 import type { ModifierOptions, NumericRollBonus } from '../types'
 import { extractMatches } from '../utils/extractMatches'
 import { BaseModifier } from './BaseModifier'
@@ -15,6 +14,16 @@ import { BaseModifier } from './BaseModifier'
  */
 export class PlusModifier extends BaseModifier<number> {
   /**
+   * Pattern to match plus modifier notation
+   *
+   * Matches '+' followed by one or more digits
+   *
+   * @example
+   * // Matches: '+1', '+20', etc.
+   * // In notation: '1d20+5' - Roll 1d20 and add 5
+   */
+  public static readonly pattern: RegExp = /\+\d+/g
+  /**
    * Parses a modifier string to extract plus options
    *
    * @param modifiersString - The string containing modifier notation
@@ -23,7 +32,7 @@ export class PlusModifier extends BaseModifier<number> {
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'plus'> => {
-    const notations = extractMatches(modifiersString, plusPattern)
+    const notations = extractMatches(modifiersString, PlusModifier.pattern)
     if (notations.length === 0) {
       return {}
     }

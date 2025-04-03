@@ -1,8 +1,3 @@
-import {
-  dropConstraintsPattern,
-  dropHighestPattern,
-  dropLowestPattern
-} from '../patterns'
 import type { DropOptions, ModifierOptions, NumericRollBonus } from '../types'
 import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
@@ -22,6 +17,41 @@ import { BaseModifier } from './BaseModifier'
  * const dropMod = new DropModifier({ highest: 1, exact: [1] });
  */
 export class DropModifier extends BaseModifier<DropOptions> {
+  /**
+   * Pattern to match drop highest notation
+   *
+   * Matches 'H' or 'h' optionally followed by a number
+   *
+   * @example
+   * // Matches: 'H', 'h', 'H1', 'h2', etc.
+   * // In notation: '2d20H' - Roll 2d20 and drop the highest
+   */
+  public static readonly highestPattern: RegExp = /[Hh]\d*/g
+
+  /**
+   * Pattern to match drop lowest notation
+   *
+   * Matches 'L' or 'l' optionally followed by a number
+   *
+   * @example
+   * // Matches: 'L', 'l', 'L1', 'l2', etc.
+   * // In notation: '2d20L' - Roll 2d20 and drop the lowest
+   */
+  public static readonly lowestPattern: RegExp = /[Ll]\d*/g
+
+  /**
+   * Pattern to match drop constraints notation
+   *
+   * Matches 'D' or 'd' followed by a list of constraints in curly braces
+   *
+   * @example
+   * // Matches: 'D{1}', 'd{>3}', 'D{<2,4}', etc.
+   * // In notation: '4d6D{1}' - Roll 4d6 and drop any 1s
+   */
+  public static readonly constraintsPattern: RegExp = new RegExp(
+    /[Dd]/.source + /{([<>]?\d+,)*([<>]?\d+)}/.source,
+    'g'
+  )
   /**
    * Parses constraint-based drop notations (e.g., D{>3,<1,2})
    *
@@ -139,13 +169,13 @@ export class DropModifier extends BaseModifier<DropOptions> {
     modifiersString: string
   ): Pick<ModifierOptions, 'drop'> => {
     const dropHighModifiers = DropModifier.parseHigh(
-      extractMatches(modifiersString, dropHighestPattern)
+      extractMatches(modifiersString, DropModifier.highestPattern)
     )
     const dropLowModifiers = DropModifier.parseLow(
-      extractMatches(modifiersString, dropLowestPattern)
+      extractMatches(modifiersString, DropModifier.lowestPattern)
     )
     const dropConstraintsModifiers = DropModifier.parseConstraints(
-      extractMatches(modifiersString, dropConstraintsPattern)
+      extractMatches(modifiersString, DropModifier.constraintsPattern)
     )
 
     const rawDropModifiers = {

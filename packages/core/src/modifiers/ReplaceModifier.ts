@@ -1,4 +1,3 @@
-import { replacePattern } from '../patterns'
 import type {
   ComparisonOptions,
   ModifierOptions,
@@ -28,6 +27,19 @@ export class ReplaceModifier extends BaseModifier<
   ReplaceOptions | ReplaceOptions[]
 > {
   /**
+   * Pattern to match replace modifier notation
+   *
+   * Matches 'V' or 'v' followed by a list of replacement rules in curly braces
+   *
+   * @example
+   * // Matches: 'V{1=2}', 'v{>18=18}', etc.
+   * // In notation: '3d6V{1=2}' - Roll 3d6 and replace all 1s with 2s
+   */
+  public static readonly pattern: RegExp = new RegExp(
+    /[Vv]/.source + /{([<>]?\d+=\d+,)*([<>]?\d+=\d+)}/.source,
+    'g'
+  )
+  /**
    * Parses a modifier string to extract replace options
    *
    * @param modifiersString - The string containing modifier notation
@@ -36,7 +48,7 @@ export class ReplaceModifier extends BaseModifier<
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'replace'> => {
-    const notations = extractMatches(modifiersString, replacePattern)
+    const notations = extractMatches(modifiersString, ReplaceModifier.pattern)
     if (notations.length === 0) {
       return {}
     }

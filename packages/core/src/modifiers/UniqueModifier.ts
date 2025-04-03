@@ -1,4 +1,3 @@
-import { uniquePattern } from '../patterns'
 import type {
   ModifierOptions,
   NumericRollBonus,
@@ -26,6 +25,16 @@ import { BaseModifier } from './BaseModifier'
  */
 export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
   /**
+   * Pattern to match unique dice notation
+   *
+   * Matches 'U' or 'u' optionally followed by a list of numbers in curly braces
+   *
+   * @example
+   * // Matches: 'U', 'u', 'U{1}', 'U{1,2}', etc.
+   * // In notation: '4d6U' - Roll 4d6 with unique values
+   */
+  public static readonly pattern: RegExp = /[Uu]({(\d+,)*(\d+)})?/g
+  /**
    * Parses a modifier string to extract unique options
    *
    * @param modifiersString - The string containing modifier notation
@@ -34,7 +43,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
   public static override parse(
     modifiersString: string
   ): Pick<ModifierOptions, 'unique'> {
-    return extractMatches(modifiersString, uniquePattern).reduce<
+    return extractMatches(modifiersString, UniqueModifier.pattern).reduce<
       Pick<ModifierOptions, 'unique'>
     >((acc, notationString) => {
       if (notationString.toUpperCase() === 'U') {

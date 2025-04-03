@@ -1,4 +1,3 @@
-import { rerollPattern } from '../patterns'
 import type { ModifierOptions, NumericRollBonus, RerollOptions } from '../types'
 import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
@@ -23,6 +22,20 @@ import { BaseModifier } from './BaseModifier'
  */
 export class RerollModifier extends BaseModifier<RerollOptions> {
   /**
+   * Pattern to match reroll notation
+   *
+   * Matches 'R' or 'r' followed by constraints and an optional max reroll count
+   *
+   * @example
+   * // Matches: 'R{1}', 'r{<3}2', etc.
+   * // In notation: '3d6R{1}' - Roll 3d6 and reroll any 1s
+   * // In notation: '3d6R{<3}2' - Roll 3d6 and reroll any values less than 3, up to 2 times
+   */
+  public static readonly pattern: RegExp = new RegExp(
+    `${/[Rr]/.source}${/{([<>]?\d+,)*([<>]?\d+)}/.source}${/\d*/.source}`,
+    'g'
+  )
+  /**
    * Parses a modifier string to extract reroll options
    *
    * @param modifiersString - The string containing modifier notation
@@ -31,7 +44,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
   public static override parse(
     modifiersString: string
   ): Pick<ModifierOptions, 'replace'> {
-    const notations = extractMatches(modifiersString, rerollPattern)
+    const notations = extractMatches(modifiersString, RerollModifier.pattern)
     if (notations.length === 0) {
       return {}
     }

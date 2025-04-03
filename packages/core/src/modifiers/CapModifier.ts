@@ -1,4 +1,3 @@
-import { capPattern } from '../patterns'
 import type {
   ComparisonOptions,
   ModifierOptions,
@@ -20,6 +19,19 @@ import { BaseModifier } from './BaseModifier'
  */
 export class CapModifier extends BaseModifier<ComparisonOptions> {
   /**
+   * Pattern to match cap notation
+   *
+   * Matches 'C' or 'c' followed by a list of constraints in curly braces
+   *
+   * @example
+   * // Matches: 'C{>18}', 'c{<2}', etc.
+   * // In notation: '3d20C{>18}' - Roll 3d20 and cap any values greater than 18 at 18
+   */
+  public static readonly pattern: RegExp = new RegExp(
+    `${/[Cc]/.source}${/{([<>]\d+,)*([<>]\d+)}/.source}`,
+    'g'
+  )
+  /**
    * Parses a modifier string to extract cap options
    *
    * @param modifiersString - The string containing modifier notation
@@ -28,7 +40,7 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'cap'> => {
-    const notations = extractMatches(modifiersString, capPattern)
+    const notations = extractMatches(modifiersString, CapModifier.pattern)
     if (notations.length === 0) {
       return {}
     }

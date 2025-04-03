@@ -1,4 +1,3 @@
-import { explodePattern } from '../patterns'
 import type {
   ModifierOptions,
   NumericRollBonus,
@@ -20,6 +19,16 @@ import { BaseModifier } from './BaseModifier'
  */
 export class ExplodeModifier extends BaseModifier<boolean> {
   /**
+   * Pattern to match exploding dice notation
+   *
+   * Matches '!' character
+   *
+   * @example
+   * // Matches: '!'
+   * // In notation: '3d6!' - Roll 3d6 with exploding dice
+   */
+  public static readonly pattern: RegExp = /!/g
+  /**
    * Parses a modifier string to extract explode options
    *
    * @param modifiersString - The string containing modifier notation
@@ -28,7 +37,7 @@ export class ExplodeModifier extends BaseModifier<boolean> {
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'explode'> => {
-    const notations = extractMatches(modifiersString, explodePattern)
+    const notations = extractMatches(modifiersString, ExplodeModifier.pattern)
     if (notations.length === 0) {
       return {}
     }
