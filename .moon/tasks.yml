@@ -2,7 +2,7 @@ $schema: 'https://moonrepo.dev/schemas/tasks.json'
 
 tasks:
   build:
-    command: 'bun run ../../build.ts'
+    command: 'bunup --entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c'
     inputs:
       - 'src/**/*'
     outputs:

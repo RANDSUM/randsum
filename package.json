@@ -15,7 +15,6 @@
     "format:fix": "bun moon :format:fix",
     "ts:check": "bun moon :tsCheck",
     "test:ci": "bun run test --coverage",
-    "clean": "rm -rf packages/*/dist",
     "docs": "typedoc --entryPointStrategy packages --out docs/api packages/*",
     "docs:serve": "npx serve docs"
   },
@@ -28,9 +27,8 @@
     "@types/bun": "1.2.8",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
-    "bun-plugin-dts": "^0.3.0",
+    "bunup": "^0.3.20",
     "eslint": "^9.23.0",
-    "i": "^0.3.7",
     "npm": "^11.2.0",
     "prettier": "^3.5.3",
     "typedoc": "^0.25.12",
