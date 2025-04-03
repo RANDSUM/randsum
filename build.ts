@@ -20,7 +20,6 @@ async function build(): Promise<void> {
       sourcemap: 'inline',
       naming: 'index.js',
       plugins: [dts()]
-      // Tree shaking is enabled by default in Bun
     })
 
     if (!result.success) {

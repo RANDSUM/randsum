@@ -37,7 +37,6 @@ export default [
     rules: {
       '@typescript-eslint/no-misused-spread': 'off',
       'no-ternary': 'warn',
-
       'func-names': ['error', 'as-needed'],
       'no-restricted-exports': 'error',
       '@typescript-eslint/naming-convention': [
@@ -51,8 +50,6 @@ export default [
           format: ['PascalCase']
         }
       ],
-
-      // Code quality rules
       '@typescript-eslint/explicit-function-return-type': [
         'error',
         {
@@ -82,8 +79,6 @@ export default [
           caughtErrorsIgnorePattern: '^_'
         }
       ],
-
-      // Import rules
       'sort-imports': [
         'error',
         {

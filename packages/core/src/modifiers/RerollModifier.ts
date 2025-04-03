@@ -1,4 +1,9 @@
-import type { ModifierOptions, NumericRollBonus, RerollOptions } from '../types'
+import type {
+  ModifierOptions,
+  NumericRollBonus,
+  RequiredNumericRollParameters,
+  RerollOptions
+} from '../types'
 import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
@@ -43,7 +48,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
    */
   public static override parse(
     modifiersString: string
-  ): Pick<ModifierOptions, 'replace'> {
+  ): Pick<ModifierOptions, 'reroll'> {
     const notations = extractMatches(modifiersString, RerollModifier.pattern)
     if (notations.length === 0) {
       return {}
@@ -96,7 +101,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
         }
       },
       { reroll: {} }
-    ) as Pick<ModifierOptions, 'replace'>
+    ) as Pick<ModifierOptions, 'reroll'>
   }
 
   /**
@@ -109,7 +114,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
    */
   public apply(
     bonus: NumericRollBonus,
-    _params: undefined,
+    _params: undefined | RequiredNumericRollParameters,
     rollOne: () => number
   ): NumericRollBonus {
     if (this.options === undefined) return bonus
