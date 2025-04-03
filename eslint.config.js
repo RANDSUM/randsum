@@ -37,8 +37,68 @@ export default [
     rules: {
       '@typescript-eslint/no-misused-spread': 'off',
       'no-ternary': 'warn',
+
       'func-names': ['error', 'as-needed'],
-      'no-restricted-exports': 'error'
+      'no-restricted-exports': 'error',
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'interface',
+          format: ['PascalCase'],
+          prefix: ['I']
+        },
+        {
+          selector: 'typeAlias',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'enum',
+          format: ['PascalCase']
+        }
+      ],
+
+      // Code quality rules
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true
+        }
+      ],
+      '@typescript-eslint/explicit-member-accessibility': [
+        'error',
+        {
+          accessibility: 'explicit',
+          overrides: {
+            accessors: 'explicit',
+            constructors: 'no-public',
+            methods: 'explicit',
+            properties: 'explicit',
+            parameterProperties: 'explicit'
+          }
+        }
+      ],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ],
+
+      // Import rules
+      'sort-imports': [
+        'error',
+        {
+          ignoreCase: false,
+          ignoreDeclarationSort: true,
+          ignoreMemberSort: false,
+          memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
+          allowSeparatedGroups: true
+        }
+      ]
     }
   }
 ]

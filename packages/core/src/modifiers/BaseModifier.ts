@@ -21,7 +21,7 @@ export abstract class BaseModifier<T = unknown> {
 
   abstract toNotation(): string | undefined
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   static parse(_modifiersString: string): Partial<ModifierOptions> {
     return {}
   }

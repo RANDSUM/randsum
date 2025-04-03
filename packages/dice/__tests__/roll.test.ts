@@ -54,8 +54,8 @@ describe(roll, () => {
     })
   })
 
-  describe('corder cases', () => {
-    test.only('ordered options remain the same', () => {
+  describe('corner cases', () => {
+    test('ordered options remain the same', () => {
       const argsOne = {
         sides: 1,
         quantity: 2,

@@ -27,7 +27,7 @@
   "sideEffects": false,
   "type": "module",
   "dependencies": {
-    "@randsum/dice": "workspace:^"
+    "@randsum/dice": "workspace:*"
   },
   "exports": {
     ".": {

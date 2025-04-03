@@ -30,6 +30,7 @@ tasks:
       - 'src/**/*'
       - '__tests__/**/*'
       - '**/*.ts'
+      - 'tsconfig.eslint.json'
     options:
       cache: true
 
@@ -52,7 +53,7 @@ tasks:
       - 'build'
     inputs:
       - 'src/**/*'
-      - '$PROJECT_ROOT/tsconfig.json'
+      - 'tsconfig.json'
     options:
       cache: true
 

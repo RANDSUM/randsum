@@ -9,8 +9,8 @@ export const D12: BaseD<number> = new D(12)
 export const D20: BaseD<number> = new D(20)
 export const D100: BaseD<number> = new D(100)
 
-export const Coin: BaseD<string[]> = new D(['Heads', 'Tails'])
-export const FudgeDice: BaseD<string[]> = new D(['+', '+', '+', '-', ' ', ' '])
+export const coin: BaseD<string[]> = new D(['Heads', 'Tails'])
+export const fudgeDice: BaseD<string[]> = new D(['+', '+', '+', '-', ' ', ' '])
 
 const alphanumFaces = [
   'A',

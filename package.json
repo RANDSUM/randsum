@@ -15,7 +15,10 @@
     "format:fix": "bun moon :format:fix",
     "ts:check": "bun moon :tsCheck",
     "test:ci": "bun run test --coverage",
-    "clean": "rm -rf packages/*/dist"
+    "clean": "rm -rf packages/*/dist",
+    "check:deps": "bun run scripts/check-deps.ts",
+    "check:naming": "bun run scripts/check-naming.ts",
+    "docs:generate": "bun run typedoc --entryPointStrategy packages --out docs/api packages/*/src"
   },
   "trustedDependencies": [
     "@moonrepo/cli"
@@ -28,8 +31,11 @@
     "@typescript-eslint/parser": "^8.29.0",
     "bun-plugin-dts": "^0.3.0",
     "eslint": "^9.23.0",
+    "husky": "^9.0.11",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.29.0"
+    "typescript-eslint": "^8.29.0",
+    "typedoc": "^0.25.12",
+    "typedoc-plugin-markdown": "^3.17.1"
   }
 }

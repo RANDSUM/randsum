@@ -28,8 +28,8 @@
   "sideEffects": false,
   "type": "module",
   "dependencies": {
-    "@randsum/core": "workspace:^",
-    "@randsum/notation": "workspace:^"
+    "@randsum/core": "workspace:*",
+    "@randsum/notation": "workspace:*"
   },
   "exports": {
     ".": {
