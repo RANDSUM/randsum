@@ -9,22 +9,21 @@ import {
   UniqueModifier
 } from '@randsum/core'
 
-//eslint-disable-next-line @typescript-eslint/no-inferrable-types
-export const coreNotationPattern: RegExp = /^\d+[Dd](\d+|{.*})/
-//eslint-disable-next-line @typescript-eslint/no-inferrable-types
-export const completeRollPattern: RegExp = new RegExp(
+export const coreNotationPattern = /^\d+[Dd](\d+|{.*})/
+
+export const completeRollPattern = new RegExp(
   [
     coreNotationPattern.source,
-    DropModifier.highestPattern,
-    DropModifier.lowestPattern,
-    DropModifier.constraintsPattern,
-    ExplodeModifier.pattern,
-    UniqueModifier.pattern,
-    ReplaceModifier.pattern,
-    RerollModifier.pattern,
-    CapModifier.pattern,
-    PlusModifier.pattern,
-    MinusModifier.pattern
+    (DropModifier.highestPattern as RegExp).source,
+    (DropModifier.lowestPattern as RegExp).source,
+    (DropModifier.constraintsPattern as RegExp).source,
+    (ExplodeModifier.pattern as RegExp).source,
+    (UniqueModifier.pattern as RegExp).source,
+    (ReplaceModifier.pattern as RegExp).source,
+    (RerollModifier.pattern as RegExp).source,
+    (CapModifier.pattern as RegExp).source,
+    (PlusModifier.pattern as RegExp).source,
+    (MinusModifier.pattern as RegExp).source
   ].join('|'),
   'g'
 )
