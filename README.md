@@ -7,6 +7,10 @@
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
 [![Built with Moon](https://img.shields.io/badge/Built%20with-Moon-blue?style=flat)](https://moonrepo.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![NPM Downloads](https://img.shields.io/npm/dm/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/RANDSUM/randsum/commits/main)
+[![Types](https://img.shields.io/badge/Types-included-blue)](https://www.npmjs.com/package/@randsum/dice)
 
 </div>
 
@@ -36,6 +40,8 @@ This monorepo contains the following packages:
 
 [![npm version](https://img.shields.io/npm/v/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/dice)](https://bundlephobia.com/package/@randsum/dice)
+[![Types](https://img.shields.io/npm/types/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
+[![Downloads](https://img.shields.io/npm/dm/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
 
 A Flexible, Type-safe, and Tree-shakeable dice rolling implementation. Where it all started.
 
@@ -47,8 +53,10 @@ npm install @randsum/dice
 
 [![npm version](https://img.shields.io/npm/v/@randsum/notation)](https://www.npmjs.com/package/@randsum/notation)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/notation)](https://bundlephobia.com/package/@randsum/notation)
+[![Types](https://img.shields.io/npm/types/@randsum/notation)](https://www.npmjs.com/package/@randsum/notation)
+[![Downloads](https://img.shields.io/npm/dm/@randsum/notation)](https://www.npmjs.com/package/@randsum/notation)
 
-Dice notation parser and validator, for parsing[Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md).
+Dice notation parser and validator, for parsing [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md).
 
 ```bash
 npm install @randsum/notation
@@ -58,6 +66,8 @@ npm install @randsum/notation
 
 [![npm version](https://img.shields.io/npm/v/@randsum/5e)](https://www.npmjs.com/package/@randsum/5e)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/5e)](https://bundlephobia.com/package/@randsum/5e)
+[![Types](https://img.shields.io/npm/types/@randsum/5e)](https://www.npmjs.com/package/@randsum/5e)
+[![Downloads](https://img.shields.io/npm/dm/@randsum/5e)](https://www.npmjs.com/package/@randsum/5e)
 
 A dice roller compatible with 5th Edition RPG Systems
 
@@ -69,6 +79,8 @@ npm install @randsum/5e
 
 [![npm version](https://img.shields.io/npm/v/@randsum/root-rpg)](https://www.npmjs.com/package/@randsum/root-rpg)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/root-rpg)](https://bundlephobia.com/package/@randsum/root-rpg)
+[![Types](https://img.shields.io/npm/types/@randsum/root-rpg)](https://www.npmjs.com/package/@randsum/root-rpg)
+[![Downloads](https://img.shields.io/npm/dm/@randsum/root-rpg)](https://www.npmjs.com/package/@randsum/root-rpg)
 
 A dice roller for the [Root RPG](https://magpiegames.com/collections/root) system.
 
@@ -80,6 +92,8 @@ npm install @randsum/root-rpg
 
 [![npm version](https://img.shields.io/npm/v/@randsum/blades)](https://www.npmjs.com/package/@randsum/blades)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/blades)](https://bundlephobia.com/package/@randsum/blades)
+[![Types](https://img.shields.io/npm/types/@randsum/blades)](https://www.npmjs.com/package/@randsum/blades)
+[![Downloads](https://img.shields.io/npm/dm/@randsum/blades)](https://www.npmjs.com/package/@randsum/blades)
 
 A dice roller for [Blades in the dark](https://bladesinthedark.com/greetings-scoundrel) (and forged in the dark) RPG systems.
 
@@ -91,6 +105,8 @@ npm install @randsum/blades
 
 [![npm version](https://img.shields.io/npm/v/@randsum/salvageunion)](https://www.npmjs.com/package/@randsum/salvageunion)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/salvageunion)](https://bundlephobia.com/package/@randsum/salvageunion)
+[![Types](https://img.shields.io/npm/types/@randsum/salvageunion)](https://www.npmjs.com/package/@randsum/salvageunion)
+[![Downloads](https://img.shields.io/npm/dm/@randsum/salvageunion)](https://www.npmjs.com/package/@randsum/salvageunion)
 
 A dice roller for the [Salvage Union](https://leyline.press/collections/salvage-union?srsltid=AfmBOopmUVkzzc13P3pZl4Sjiinoyym9Fpa4-h-qCQOkGcBaGGQ7Z3yB) RPG system. Contains all official Salvage Union roll tables, and a contextual roll function for determining success.
 
@@ -99,6 +115,10 @@ npm install @randsum/salvageunion
 ```
 
 ### `@randsum/core`
+
+[![npm version](https://img.shields.io/npm/v/@randsum/core)](https://www.npmjs.com/package/@randsum/core)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/core)](https://bundlephobia.com/package/@randsum/core)
+[![Types](https://img.shields.io/npm/types/@randsum/core)](https://www.npmjs.com/package/@randsum/core)
 
 Internal package containing shared utilities and types. Not intended for direct usage. All types are exported in each subsequent package for ease of use.
 
