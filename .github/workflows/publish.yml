@@ -9,14 +9,36 @@ env:
   NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
-  build:
+  publish:
+    name: Publish to NPM
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: oven-sh/setup-bun@v2
+
+      - name: Setup Moon
+        uses: moonrepo/setup-toolchain@v0
         with:
-          bun-version: latest
-      - run: bun install
-      - run: bun moon :publish
+          auto-install: true
+
+      - name: Restore build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .moon/cache
+            packages/*/dist
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build packages
+        run: bun moon :build:optimized
+
+      - name: Publish to NPM
+        run: bun moon :publish

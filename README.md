@@ -43,7 +43,7 @@ This monorepo contains the following packages:
 [![Types](https://img.shields.io/npm/types/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
 [![Downloads](https://img.shields.io/npm/dm/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
 
-A Flexible, Type-safe, and Tree-shakeable dice rolling implementation. Where it all started.
+A Flexible, Type-safe, and Tree-shakeable dice rolling implementation. Where it all started. Optimized for minimal bundle size.
 
 ```bash
 npm install @randsum/dice
@@ -174,6 +174,8 @@ bun moon blades:build # Build @randsum/blades only
 - [Getting Started](https://github.com/RANDSUM/randsum/blob/main/GETTING_STARTED.md) - Installation and Documentation for using `randsum`
 
 - [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`.
+
+- [Bundle Size Optimization](https://github.com/RANDSUM/randsum/blob/main/packages/dice/BUNDLE_SIZE.md) - Guide to minimizing bundle size when using RANDSUM packages.
 
 - [Contributing](https://github.com/RANDSUM/randsum/blob/main/CONTRIBUTING.md) - help make `randsum` better!
 

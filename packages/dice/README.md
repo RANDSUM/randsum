@@ -18,6 +18,7 @@ A flexible, type-safe dice rolling implementation that supports:
 - 🔒 Full TypeScript support
 - 🎮 Perfect for games, RPGs, and simulations
 - 🪶 Tree-shakeable implementation
+- 📦 Optimized for minimal bundle size
 
 ## Installation
 
@@ -187,6 +188,24 @@ roll('4d6R{<3}') // Reroll values below 3
 ```
 
 See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/RANDSUM_DICE_NOTATION.md) for all supported modifiers.
+
+## Bundle Size Optimization
+
+This package is optimized for minimal bundle size and supports tree-shaking. For the smallest possible bundles, import only what you need:
+
+```typescript
+// ❌ Imports everything
+import * as dice from '@randsum/dice'
+
+// ✅ Only imports what you need
+import { D20, roll } from '@randsum/dice'
+
+// ✅ Best for tree-shaking - direct imports
+import { D20 } from '@randsum/dice/premadeDice'
+import { roll } from '@randsum/dice/roll'
+```
+
+See [Bundle Size Optimization Guide](https://github.com/RANDSUM/randsum/blob/main/packages/dice/BUNDLE_SIZE.md) for more details.
 
 ## Related Packages
 
