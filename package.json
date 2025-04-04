@@ -14,9 +14,7 @@
     "format": "bun moon :format",
     "format:fix": "bun moon :format:fix",
     "ts:check": "bun moon :tsCheck",
-    "test:ci": "bun run test --coverage",
-    "docs": "typedoc --entryPointStrategy packages --out docs/api packages/*",
-    "docs:serve": "npx serve docs"
+    "test:ci": "bun run test --coverage"
   },
   "trustedDependencies": [
     "@moonrepo/cli"
@@ -30,7 +28,6 @@
     "bunup": "^0.3.20",
     "eslint": "^9.23.0",
     "prettier": "^3.5.3",
-    "typedoc": "^0.25.12",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0"
   }

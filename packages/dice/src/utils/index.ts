@@ -1,5 +1,5 @@
 export { calculateTotal } from './calculateTotal'
-export { coreRandom } from './coreRandom'
+export { coreRandom, createSeededRandom } from './coreRandom'
 export { coreSpreadRolls } from './coreSpreadRolls'
 export { generateKey } from './generateKey'
 export { generateNumericalFaces } from './generateNumericalFaces'
