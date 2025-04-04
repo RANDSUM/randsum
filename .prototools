@@ -1,17 +1,2 @@
-# RANDSUM toolchain configuration
-# This file configures the tools used in the RANDSUM project
 
-[bun]
-version = "latest"
-
-[node]
-version = "20.x"
-
-[typescript]
-version = "5.8.2"
-
-[eslint]
-version = "9.23.0"
-
-[prettier]
-version = "3.5.3"
+bun = 'latest'
