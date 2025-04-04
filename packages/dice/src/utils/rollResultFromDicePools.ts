@@ -2,10 +2,8 @@ import {
   CapModifier,
   DropModifier,
   ExplodeModifier,
-  MinusModifier,
   type ModifierOptions,
   type NumericRollBonus,
-  PlusModifier,
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
@@ -59,111 +57,230 @@ function isCustomParameters(
   return Array.isArray(poolParameters.options.sides)
 }
 
+/**
+ * Apply a modifier to the current roll bonuses
+ *
+ * This optimized implementation avoids unnecessary object creation and function calls
+ * by directly applying modifiers based on their type.
+ *
+ * @param key - The modifier key to apply
+ * @param modifiers - All available modifiers
+ * @param currentBonuses - The current roll bonuses to modify
+ * @param rollParams - Parameters for the roll
+ * @returns Modified roll bonuses
+ */
 function applyModifier(
   key: keyof ModifierOptions,
   modifiers: ModifierOptions,
   currentBonuses: NumericRollBonus,
   rollParams: { sides: number; quantity: number; rollOne: () => number }
 ): NumericRollBonus {
-  const modifierMap = {
-    reroll: () =>
-      new RerollModifier(modifiers.reroll).apply(
+  // Early return if the modifier doesn't exist
+  const modifierValue = modifiers[key]
+  if (modifierValue === undefined) {
+    return currentBonuses
+  }
+
+  switch (key) {
+    case 'plus':
+      return {
+        ...currentBonuses,
+        simpleMathModifier: modifierValue as number
+      }
+
+    case 'minus':
+      return {
+        ...currentBonuses,
+        simpleMathModifier: -(modifierValue as number)
+      }
+
+    case 'reroll':
+      return new RerollModifier(modifiers.reroll).apply(
         currentBonuses,
         undefined,
         rollParams.rollOne
-      ),
-    unique: () =>
-      new UniqueModifier(modifiers.unique).apply(
+      )
+
+    case 'unique':
+      return new UniqueModifier(modifiers.unique).apply(
         currentBonuses,
         { sides: rollParams.sides, quantity: rollParams.quantity },
         rollParams.rollOne
-      ),
-    replace: () => new ReplaceModifier(modifiers.replace).apply(currentBonuses),
-    cap: () => new CapModifier(modifiers.cap).apply(currentBonuses),
-    drop: () => new DropModifier(modifiers.drop).apply(currentBonuses),
-    explode: () =>
-      new ExplodeModifier(modifiers.explode).apply(
+      )
+
+    case 'replace':
+      return new ReplaceModifier(modifiers.replace).apply(currentBonuses)
+
+    case 'cap':
+      return new CapModifier(modifiers.cap).apply(currentBonuses)
+
+    case 'drop':
+      return new DropModifier(modifiers.drop).apply(currentBonuses)
+
+    case 'explode':
+      return new ExplodeModifier(modifiers.explode).apply(
         currentBonuses,
         { sides: rollParams.sides, quantity: rollParams.quantity },
         rollParams.rollOne
-      ),
-    plus: () => new PlusModifier(modifiers.plus).apply(currentBonuses),
-    minus: () => new MinusModifier(modifiers.minus).apply(currentBonuses)
-  }
+      )
 
-  const modifier = modifierMap[key]
-  //eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!modifier) {
-    throw new Error(`Unknown modifier: ${key}`)
+    default:
+      throw new Error(`Unknown modifier: ${String(key)}`)
   }
-
-  return modifier()
 }
 
+/**
+ * Generate modified roll results by applying modifiers to raw rolls
+ *
+ * This optimized implementation reduces unnecessary object creation and improves
+ * performance by optimizing the modifier application order and using more efficient
+ * data structures.
+ *
+ * @param dicePools - The dice pools to process
+ * @param rawRolls - The raw roll results
+ * @returns Modified roll results
+ */
 function generateModifiedRolls(
   dicePools: DicePool,
   rawRolls: RollResult['rawRolls']
 ): RollResult['modifiedRolls'] {
-  return Object.fromEntries(
-    Object.entries(dicePools.dicePools).map(([key, params]) => {
-      const rolls = rawRolls[key] ?? []
+  const result: RollResult['modifiedRolls'] = {}
 
-      if (isCustomParameters(params)) {
-        return [
-          key,
-          {
-            total: calculateTotal(rolls),
-            rolls
-          }
-        ]
+  for (const [key, params] of Object.entries(dicePools.dicePools)) {
+    const rolls = rawRolls[key] ?? []
+
+    if (isCustomParameters(params)) {
+      result[key] = {
+        total: calculateTotal(rolls),
+        rolls
       }
+      continue
+    }
 
-      const {
-        options: { sides, quantity = 1, modifiers = {} }
-      } = params
+    const { sides, quantity = 1, modifiers = {} } = params.options
 
-      const rollOne = (): number => coreRandom(sides)
-      const modified = Object.keys(modifiers).reduce(
-        (bonuses, modifierKey) =>
-          applyModifier(
-            modifierKey as keyof ModifierOptions,
-            modifiers,
-            bonuses,
-            { sides, quantity, rollOne }
-          ),
-        {
-          simpleMathModifier: 0,
-          rolls: rolls as number[]
-        }
-      )
+    if (Object.keys(modifiers).length === 0) {
+      result[key] = {
+        total: calculateTotal(rolls),
+        rolls: rolls as number[]
+      }
+      continue
+    }
 
-      return [
-        key,
-        {
-          rolls: modified.rolls,
-          total: calculateTotal(modified.rolls, modified.simpleMathModifier)
-        }
-      ]
-    })
-  )
+    const rollOne = (): number => coreRandom(sides)
+
+    const initialBonuses: NumericRollBonus = {
+      simpleMathModifier: 0,
+      rolls: rolls as number[]
+    }
+
+    let bonuses = initialBonuses
+
+    if (modifiers.reroll) {
+      bonuses = applyModifier('reroll', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    if (modifiers.replace) {
+      bonuses = applyModifier('replace', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    if (modifiers.cap) {
+      bonuses = applyModifier('cap', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    if (modifiers.explode) {
+      bonuses = applyModifier('explode', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    if (modifiers.unique) {
+      bonuses = applyModifier('unique', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    if (modifiers.drop) {
+      bonuses = applyModifier('drop', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    if (modifiers.plus) {
+      bonuses = applyModifier('plus', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    if (modifiers.minus) {
+      bonuses = applyModifier('minus', modifiers, bonuses, {
+        sides,
+        quantity,
+        rollOne
+      })
+    }
+
+    result[key] = {
+      rolls: bonuses.rolls,
+      total: calculateTotal(bonuses.rolls, bonuses.simpleMathModifier)
+    }
+  }
+
+  return result
 }
 
+/**
+ * Generate raw roll results for all dice pools
+ *
+ * This optimized implementation reduces unnecessary object creation and improves
+ * performance by using direct object property assignment instead of creating
+ * intermediate arrays.
+ *
+ * @param dicePools - The dice pools to roll
+ * @returns Raw roll results
+ */
 function generateRawRolls(
   dicePools: DicePool['dicePools']
 ): RollResult['rawRolls'] {
-  return Object.fromEntries(
-    Object.entries(dicePools).map(([key, pool]) => {
-      const { options } = pool
-      const quantity = options.quantity ?? 1
+  // Pre-allocate the result object for better performance
+  const result: RollResult['rawRolls'] = {}
 
-      if (isNumericRollOptions(options)) {
-        return [key, coreSpreadRolls<number>(quantity, options.sides)]
-      }
+  // Process each dice pool
+  for (const [key, pool] of Object.entries(dicePools)) {
+    const { options } = pool
+    const quantity = options.quantity ?? 1
 
-      return [
-        key,
-        coreSpreadRolls(quantity, options.sides.length, options.sides)
-      ]
-    })
-  ) as RollResult['rawRolls']
+    // Generate rolls based on dice type
+    if (isNumericRollOptions(options)) {
+      result[key] = coreSpreadRolls<number>(quantity, options.sides)
+    } else {
+      result[key] = coreSpreadRolls(
+        quantity,
+        options.sides.length,
+        options.sides
+      )
+    }
+  }
+
+  return result
 }
