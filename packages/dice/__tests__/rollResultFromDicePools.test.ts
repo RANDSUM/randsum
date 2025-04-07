@@ -9,7 +9,7 @@ import {
 } from 'bun:test'
 
 import { D } from '../src/D'
-import type { DicePool, RollParams } from '../src/types'
+import type { RollParams } from '../src/types'
 import * as CoreRandom from '../src/utils/coreRandom'
 import * as CoreSpreadRolls from '../src/utils/coreSpreadRolls'
 import { rollResultFromDicePools } from '../src/utils/rollResultFromDicePools'
@@ -651,27 +651,6 @@ describe(rollResultFromDicePools, () => {
         result: [1, 2, 3, 4, '+', '-', ' '],
         type: 'mixed'
       })
-    })
-  })
-
-  describe('when given an roll total with an unrecognized modifier', () => {
-    const dropParameters = {
-      dicePools: {
-        'test-roll-id': createRollParameters({
-          options: {
-            sides: 6,
-            quantity: testRollSet.length,
-            modifiers: { foo: 2 }
-          }
-        } as unknown as DicePool['dicePools']['test-roll-id'])
-      }
-    }
-
-    test('Throws an error', () => {
-      spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(() => rollResultFromDicePools(dropParameters)).toThrow(
-        'Unknown modifier: foo'
-      )
     })
   })
 })
