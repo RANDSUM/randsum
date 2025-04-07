@@ -62,7 +62,6 @@ tasks:
       runInCI: false
       allowFailure: true
     deps:
-      - 'build'
       - 'test'
       - 'lint'
       - 'format'

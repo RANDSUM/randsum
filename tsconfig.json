@@ -6,6 +6,7 @@
     "target": "ESNext",
     "lib": ["ESNext"],
     "moduleDetection": "force",
+    "useDefineForClassFields": true,
 
     // Type Checking
     "strict": true,
