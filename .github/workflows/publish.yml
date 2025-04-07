@@ -38,7 +38,7 @@ jobs:
         run: bun install
 
       - name: Build packages
-        run: bun moon :build:optimized
+        run: bun moon :build
 
       - name: Publish to NPM
         run: bun moon :publish

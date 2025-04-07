@@ -205,8 +205,6 @@ import { D20 } from '@randsum/dice/premadeDice'
 import { roll } from '@randsum/dice/roll'
 ```
 
-See [Bundle Size Optimization Guide](https://github.com/RANDSUM/randsum/blob/main/packages/dice/BUNDLE_SIZE.md) for more details.
-
 ## Related Packages
 
 - [@randsum/notation](https://github.com/RANDSUM/randsum/tree/main/packages/notation): Dice notation parser
