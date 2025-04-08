@@ -67,15 +67,16 @@ export interface CustomRollParams extends BaseRollParams {
 
 export type RollParams = NumericRollParams | CustomRollParams
 
-export interface DicePool {
-  dicePools: Record<string, RollParams>
+export interface DicePool<P extends RollParams = RollParams> {
+  dicePools: Record<string, P>
 }
 
 // -----------------------
 // --- ROLL RESULTS ---
 // -----------------------
 
-interface BaseRollResult {
+interface BaseRollResult<P extends RollParams = RollParams>
+  extends DicePool<P> {
   rawResult: (number | string)[]
   type: 'numerical' | 'custom' | 'mixed'
   rawRolls: Record<string, number[] | string[]>
@@ -87,7 +88,7 @@ interface BaseRollResult {
   total: string | number
 }
 
-export interface NumericRollResult extends BaseRollResult {
+export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
   type: 'numerical'
   rawRolls: Record<string, number[]>
   rawResult: number[]
@@ -96,7 +97,7 @@ export interface NumericRollResult extends BaseRollResult {
   total: number
 }
 
-export interface CustomRollResult extends BaseRollResult {
+export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
   type: 'custom'
   rawRolls: Record<string, string[]>
   rawResult: string[]

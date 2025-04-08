@@ -19,6 +19,9 @@ tasks:
       - 'notation:build'
   build:
     command: 'echo "Nothing to build for randsum-api"'
+    outputs: []
+    options:
+      cache: true
   test:
     deps:
       - 'dice:build'
