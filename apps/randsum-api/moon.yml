@@ -10,11 +10,15 @@ tags:
   - 'api'
 
 tasks:
+  start:
+    command: 'bun run start'
+
   tsCheck:
     deps:
       - 'dice:build'
       - 'notation:build'
   build:
+    command: 'bun install'
     deps:
       - 'dice:build'
       - 'notation:build'

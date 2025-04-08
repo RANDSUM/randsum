@@ -30,9 +30,7 @@
     "@randsum/notation": "workspace:*"
   },
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "start": "bun run dist/index.mjs",
-    "build": "bunup --entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c"
+    "start": "bun src/index.ts"
   },
   "engines": {
     "bun": ">=1.0.0"
