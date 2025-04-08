@@ -13,6 +13,9 @@ Bun.serve({
     '/': handleRootRequest,
     '/roll': handleRollRequest,
     '/health': handleHealthRequest
+  },
+  fetch() {
+    return new Response('Not Found', { status: 404 })
   }
 })
 

@@ -75,7 +75,6 @@ function applyModifier(
   currentBonuses: NumericRollBonus,
   rollParams: { sides: number; quantity: number; rollOne: () => number }
 ): NumericRollBonus {
-  // Early return if the modifier doesn't exist
   const modifierValue = modifiers[key]
   if (modifierValue === undefined) {
     return currentBonuses
@@ -262,15 +261,12 @@ function generateModifiedRolls(
 function generateRawRolls(
   dicePools: DicePool['dicePools']
 ): RollResult['rawRolls'] {
-  // Pre-allocate the result object for better performance
   const result: RollResult['rawRolls'] = {}
 
-  // Process each dice pool
   for (const [key, pool] of Object.entries(dicePools)) {
     const { options } = pool
     const quantity = options.quantity ?? 1
 
-    // Generate rolls based on dice type
     if (isNumericRollOptions(options)) {
       result[key] = coreSpreadRolls<number>(quantity, options.sides)
     } else {
