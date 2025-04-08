@@ -18,10 +18,7 @@ tasks:
       - 'dice:build'
       - 'notation:build'
   build:
-    command: 'bun install'
-    deps:
-      - 'dice:build'
-      - 'notation:build'
+    command: 'echo "Nothing to build for randsum-api"'
   test:
     deps:
       - 'dice:build'
