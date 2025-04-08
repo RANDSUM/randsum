@@ -30,7 +30,7 @@ describe('Roll Endpoint', () => {
     expect(data).toHaveProperty('type')
     expect(data).toHaveProperty('total')
 
-    const poolKey = Object.keys(data.dicePools)[0]
+    const poolKey: keyof typeof data.dicePools = Object.keys(data.dicePools)[0]
     expect(data.dicePools[poolKey].notation).toBe('1d20')
     expect(data.type).toBe('numerical')
   })
@@ -38,13 +38,13 @@ describe('Roll Endpoint', () => {
   it('should handle roll with notation parameter', async () => {
     const request = new Request('http://localhost:3000/roll?notation=2d6')
     const response = handleRollRequest(request)
-    const data = (await response.json()) as RollResponse
+    const data = (await response.json()) as RollResult
 
     expect(response.status).toBe(200)
     expect(data).toHaveProperty('dicePools')
     expect(data).toHaveProperty('result')
 
-    const poolKey = Object.keys(data.dicePools)[0]
+    const poolKey: keyof typeof data.dicePools = Object.keys(data.dicePools)[0]
     expect(data.dicePools[poolKey].notation).toBe('2d6')
     expect(data.dicePools[poolKey].options.quantity).toBe(2)
     expect(data.dicePools[poolKey].options.sides).toBe(6)
@@ -53,12 +53,12 @@ describe('Roll Endpoint', () => {
   it('should handle roll with complex notation', async () => {
     const request = new Request('http://localhost:3000/roll?notation=4d6L')
     const response = handleRollRequest(request)
-    const data = (await response.json()) as RollResponse
+    const data = (await response.json()) as RollResult
 
     expect(response.status).toBe(200)
     expect(data).toHaveProperty('dicePools')
 
-    const poolKey = Object.keys(data.dicePools)[0]
+    const poolKey: keyof typeof data.dicePools = Object.keys(data.dicePools)[0]
     expect(data.dicePools[poolKey].notation).toBe('4d6L')
     expect(data.dicePools[poolKey].options.quantity).toBe(4)
     expect(data.dicePools[poolKey].options.sides).toBe(6)
@@ -78,7 +78,7 @@ describe('Roll Endpoint', () => {
   it('should include roll results in the response', async () => {
     const request = new Request('http://localhost:3000/roll?notation=2d20')
     const response = handleRollRequest(request)
-    const data = (await response.json()) as RollResponse
+    const data = (await response.json()) as RollResult
 
     expect(response.status).toBe(200)
     expect(data).toHaveProperty('rawResult')
@@ -94,16 +94,16 @@ describe('Roll Endpoint', () => {
   it('should include detailed dice information', async () => {
     const request = new Request('http://localhost:3000/roll?notation=1d20')
     const response = handleRollRequest(request)
-    const data = (await response.json()) as RollResponse
+    const data = (await response.json()) as RollResult
 
     expect(response.status).toBe(200)
 
-    const poolKey = Object.keys(data.dicePools)[0]
+    const poolKey: keyof typeof data.dicePools = Object.keys(data.dicePools)[0]
     expect(data.dicePools[poolKey].die).toHaveProperty('sides')
     expect(data.dicePools[poolKey].die).toHaveProperty('faces')
     expect(data.dicePools[poolKey].die).toHaveProperty('type')
     expect(data.dicePools[poolKey].die.sides).toBe(20)
-    expect(data.dicePools[poolKey].die.faces.length).toBe(20)
+    expect((data.dicePools[poolKey].die.faces as number[]).length).toBe(20)
     expect(data.dicePools[poolKey].die.type).toBe('numerical')
   })
 })
