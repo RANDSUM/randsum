@@ -70,7 +70,6 @@ tasks:
 
   ci:
     deps:
-      - 'build'
       - 'test'
       - 'lint'
       - 'format'
