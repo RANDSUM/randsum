@@ -19,9 +19,7 @@ tasks:
       - 'notation:build'
   build:
     command: 'noop'
-    outputs: []
-    options:
-      cache: true
+
   test:
     deps:
       - 'dice:build'
@@ -34,3 +32,10 @@ tasks:
     deps:
       - 'dice:build'
       - 'notation:build'
+
+  ci:
+    deps:
+      - 'test'
+      - 'lint'
+      - 'format'
+      - 'tsCheck'
