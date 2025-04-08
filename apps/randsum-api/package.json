@@ -13,9 +13,9 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "apps/randsum-api"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "source": "./src/index.ts",
   "files": [
     "dist",
@@ -31,8 +31,8 @@
   },
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target node"
+    "start": "bun run dist/index.mjs",
+    "build": "bunup --entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c"
   },
   "engines": {
     "bun": ">=1.0.0"

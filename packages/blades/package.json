@@ -44,5 +44,15 @@
   },
   "engines": {
     "bun": ">=1.0.0"
-  }
+  },
+  "keywords": [
+    "dice",
+    "roller",
+    "rpg",
+    "random",
+    "typescript",
+    "tabletop",
+    "blades",
+    "forged-in-the-dark"
+  ]
 }

@@ -4,11 +4,22 @@ id: notation
 language: 'typescript'
 dependsOn:
   - 'core'
+tags:
+  - 'utility'
 
 tasks:
   tsCheck:
     deps:
       - 'core:build'
   build:
+    deps:
+      - 'core:build'
+  test:
+    deps:
+      - 'core:build'
+  lint:
+    deps:
+      - 'core:build'
+  format:
     deps:
       - 'core:build'

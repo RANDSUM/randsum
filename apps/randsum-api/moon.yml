@@ -8,3 +8,25 @@ dependsOn:
 tags:
   - 'app'
   - 'api'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'dice:build'
+      - 'notation:build'
+  build:
+    deps:
+      - 'dice:build'
+      - 'notation:build'
+  test:
+    deps:
+      - 'dice:build'
+      - 'notation:build'
+  lint:
+    deps:
+      - 'dice:build'
+      - 'notation:build'
+  format:
+    deps:
+      - 'dice:build'
+      - 'notation:build'

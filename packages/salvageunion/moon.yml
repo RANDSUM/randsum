@@ -14,3 +14,12 @@ tasks:
   build:
     deps:
       - 'dice:build'
+  test:
+    deps:
+      - 'dice:build'
+  lint:
+    deps:
+      - 'dice:build'
+  format:
+    deps:
+      - 'dice:build'
