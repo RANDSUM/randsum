@@ -1,0 +1,49 @@
+{
+  "name": "@randsum/api",
+  "version": "0.1.0",
+  "description": "API for RANDSUM dice rolling",
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/RANDSUM/randsum",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "apps/randsum-api"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "dependencies": {
+    "@randsum/dice": "workspace:*",
+    "@randsum/notation": "workspace:*"
+  },
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target node"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "keywords": [
+    "api",
+    "dice",
+    "rpg",
+    "typescript",
+    "dnd",
+    "tabletop",
+    "randsum"
+  ]
+}

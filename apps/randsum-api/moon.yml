@@ -1,0 +1,40 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+id: randsum-api
+language: 'typescript'
+dependsOn:
+  - 'dice'
+  - 'notation'
+tags:
+  - 'app'
+  - 'api'
+
+tasks:
+  dev:
+    command: 'bun run --watch src/index.ts'
+    local: true
+    options:
+      cache: false
+  
+  start:
+    command: 'bun run src/index.ts'
+    local: true
+    options:
+      cache: false
+  
+  build:
+    command: 'bun build src/index.ts --outdir dist --target node'
+    deps:
+      - 'dice:build'
+      - 'notation:build'
+    inputs:
+      - 'src/**/*'
+    outputs:
+      - 'dist/**/*'
+    options:
+      cache: true
+  
+  tsCheck:
+    deps:
+      - 'dice:build'
+      - 'notation:build'
