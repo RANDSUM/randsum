@@ -2,3 +2,16 @@ $schema: 'https://moonrepo.dev/schemas/project.json'
 
 id: core
 language: 'typescript'
+tags:
+  - 'core'
+  - 'utility'
+
+tasks:
+  test:
+    deps: []
+  lint:
+    deps: []
+  format:
+    deps: []
+  build:
+    deps: []

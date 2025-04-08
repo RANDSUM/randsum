@@ -1,7 +1,7 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
   <h1>@randsum/dice</h1>
-  <h3>Core dice rolling implementation for randsum</h3>
+  <h3>Advanced Dice Rolling for JavaScript & TypeScript</h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/dice)](https://bundlephobia.com/package/@randsum/dice)
@@ -11,14 +11,16 @@
 
 </div>
 
-A flexible, type-safe dice rolling implementation that supports:
+A flexible, type-safe dice rolling implementation for tabletop RPGs, game development, and probability simulations that supports:
 
 - 🎲 Standard dice notation (`4d6`, `2d20H`, etc.)
 - 🎯 Complex modifiers (drop lowest, reroll, exploding dice)
-- 🔒 Full TypeScript support
+- 🔒 Full TypeScript support with intelligent type inference
 - 🎮 Perfect for games, RPGs, and simulations
-- 🪶 Tree-shakeable implementation
-- 📦 Optimized for minimal bundle size
+- 🪶 Tree-shakeable implementation for minimal bundle size
+- 📦 Optimized for performance and reliability
+- 🧩 Extensible architecture for custom game systems
+- 🌐 Works in Node.js, browsers, and React Native
 
 ## Installation
 
@@ -42,7 +44,7 @@ npx randsum 3d8+2   # Roll three d8s and add 2
 
 Example output:
 
-```
+```text
 🎲 Roll Result:
 ───────────────
 Total: 24
@@ -205,10 +207,86 @@ import { D20 } from '@randsum/dice/premadeDice'
 import { roll } from '@randsum/dice/roll'
 ```
 
+## Use Cases
+
+### Virtual Tabletop Applications
+
+```typescript
+import { roll } from '@randsum/dice'
+
+// Handle player attack roll
+function handleAttackRoll(characterLevel, strengthModifier, hasAdvantage) {
+  const notation = hasAdvantage ? '2d20H' : '1d20'
+  const attackRoll = roll(
+    `${notation}+${strengthModifier}+${Math.floor(characterLevel / 2)}`
+  )
+  return {
+    total: attackRoll.sum,
+    critical: attackRoll.rolls.includes(20),
+    fumble: attackRoll.rolls.includes(1)
+  }
+}
+```
+
+### Game Development
+
+```typescript
+import { D6, D20 } from '@randsum/dice'
+
+class LootTable {
+  generateLoot(playerLevel) {
+    const rarity = this.determineRarity(playerLevel)
+    return this.rollForItem(rarity)
+  }
+
+  private determineRarity(playerLevel) {
+    const roll = D20.roll()
+    if (roll >= 18 + Math.min(playerLevel, 10)) return 'legendary'
+    if (roll >= 15) return 'rare'
+    if (roll >= 10) return 'uncommon'
+    return 'common'
+  }
+
+  private rollForItem(rarity) {
+    // Implementation details...
+  }
+}
+```
+
+### Probability Simulations
+
+```typescript
+import { roll } from '@randsum/dice'
+
+// Simulate 10,000 character stat rolls
+function simulateStatRolls(iterations = 10000) {
+  const results = []
+  for (let i = 0; i < iterations; i++) {
+    const stats = Array.from({ length: 6 }, () => roll('4d6L').sum)
+    results.push(stats)
+  }
+
+  // Calculate average stat value
+  const allStats = results.flat()
+  const average =
+    allStats.reduce((sum, stat) => sum + stat, 0) / allStats.length
+
+  return {
+    average,
+    min: Math.min(...allStats),
+    max: Math.max(...allStats)
+    // Further analysis...
+  }
+}
+```
+
 ## Related Packages
 
 - [@randsum/notation](https://github.com/RANDSUM/randsum/tree/main/packages/notation): Dice notation parser
 - [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/packages/5e): 5th Edition compatible dice rolling
+- [@randsum/blades](https://github.com/RANDSUM/randsum/tree/main/packages/blades): Blades in the Dark dice system
+- [@randsum/root-rpg](https://github.com/RANDSUM/randsum/tree/main/packages/root-rpg): Root RPG dice system
+- [@randsum/salvageunion](https://github.com/RANDSUM/randsum/tree/main/packages/salvageunion): Salvage Union dice system
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

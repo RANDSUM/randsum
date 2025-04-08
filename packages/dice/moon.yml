@@ -15,3 +15,15 @@ tasks:
     deps:
       - 'core:build'
       - 'notation:build'
+  test:
+    deps:
+      - 'core:build'
+      - 'notation:build'
+  lint:
+    deps:
+      - 'core:build'
+      - 'notation:build'
+  format:
+    deps:
+      - 'core:build'
+      - 'notation:build'

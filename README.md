@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
-  <h1>randsum</h1>
-  <h3>A flexible, type-safe dice rolling ecosystem written in Typescript</h3>
+  <h1>Randsum: Advanced Dice Rolling for JavaScript & TypeScript</h1>
+  <h3>A flexible, type-safe dice rolling ecosystem for tabletop RPGs, game development, and simulations</h3>
 
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
@@ -24,17 +24,26 @@ D20.roll() // Returns 1-20
 
 // Complex dice notation
 roll('4d6L') // Roll 4d6, drop lowest
+
+// D&D 5e character ability score generation
+const abilityScores = Array.from({ length: 6 }, () => roll('4d6L').sum)
+
+// Advantage and disadvantage
+roll('2d20H') // Roll with advantage (2d20, keep highest)
+roll('2d20L') // Roll with disadvantage (2d20, keep lowest)
 ```
 
 Or directly from your terminal:
 
 ```bash
 npx randsum 2d20    # Roll two twenty-sided dice
+npx randsum 4d6L    # Character stat roll (drop lowest)
+npx randsum 2d20H   # Roll with advantage
 ```
 
 ## 📦 Packages
 
-This monorepo contains the following packages:
+This monorepo contains the following packages and applications:
 
 ### [`@randsum/dice`](https://www.npmjs.com/package/@randsum/dice)
 
@@ -122,6 +131,50 @@ npm install @randsum/salvageunion
 
 Internal package containing shared utilities and types. Not intended for direct usage. All types are exported in each subsequent package for ease of use.
 
+### `randsum-api`
+
+A RESTful API for rolling dice using the RANDSUM dice library. Built with Bun for high performance.
+
+#### Features
+
+- Roll dice using standard dice notation via HTTP requests
+- Support for all RANDSUM modifiers (drop, reroll, cap, etc.)
+- Simple, well-documented endpoints
+- JSON responses with detailed roll results
+
+#### Example Usage
+
+```bash
+# Roll two twenty-sided dice
+curl "http://localhost:3000/roll?notation=2d20"
+
+# Roll 4d6, drop lowest (common for D&D character creation)
+curl "http://localhost:3000/roll?notation=4d6L"
+
+# Roll with advantage (2d20, keep highest)
+curl "http://localhost:3000/roll?notation=2d20H"
+```
+
+#### Response Example
+
+```json
+{
+  "result": {
+    "total": 15,
+    "rolls": [7, 8],
+    "rawRolls": { "key": [7, 8] },
+    "modifiedRolls": { "key": { "rolls": [7, 8], "total": 15 } },
+    "rawResult": [7, 8],
+    "result": [7, 8],
+    "type": "numerical"
+  },
+  "params": {
+    "notation": "2d20"
+  },
+  "notation": "2d20"
+}
+```
+
 ## 🛠️ Development
 
 This is a monorepo powered by [Moon](https://moonrepo.dev) and [Bun](https://bun.sh). To get started:
@@ -184,6 +237,28 @@ bun moon blades:build # Build @randsum/blades only
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
+
+## Use Cases
+
+Randsum is perfect for:
+
+- **Virtual Tabletop Applications** - Implement dice rolling for online tabletop RPG platforms
+- **Game Development** - Add dice mechanics to digital games
+- **RPG Character Builders** - Generate character stats and automate dice-based calculations
+- **Discord Bots** - Create dice rolling bots for gaming communities
+- **Probability Simulations** - Run and analyze dice roll statistics
+- **Educational Tools** - Teach probability concepts with interactive dice simulations
+- **Board Game Companions** - Digital companions for physical board games
+
+## Why Choose Randsum?
+
+- **Type Safety** - Full TypeScript support with intelligent type inference
+- **Modular Design** - Use only what you need with tree-shakeable packages
+- **Comprehensive** - Support for multiple game systems out of the box
+- **Extensible** - Easy to extend for custom game systems
+- **Well-Documented** - Clear examples and comprehensive API documentation
+- **Actively Maintained** - Regular updates and responsive maintainers
+- **Performance Focused** - Optimized for speed and minimal bundle size
 
 ## 🤝 Contributing
 

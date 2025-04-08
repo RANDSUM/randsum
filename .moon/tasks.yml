@@ -10,6 +10,7 @@ tasks:
     options:
       cache: true
 
+
   test:
     command: 'bun test'
     deps:
@@ -69,7 +70,6 @@ tasks:
 
   ci:
     deps:
-      - 'build'
       - 'test'
       - 'lint'
       - 'format'
