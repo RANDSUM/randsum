@@ -1,5 +1,5 @@
-import { roll, type DiceNotation } from '@randsum/dice'
-import { validateNotation } from '@randsum/notation'
+import { roll } from '@randsum/dice'
+import { type DiceNotation, validateNotation } from '@randsum/notation'
 import type { RollQueryParams } from '../types'
 
 /**
@@ -17,13 +17,13 @@ export function handleRollRequest(request: Request): Response {
       params[key as keyof RollQueryParams] = value
     }
 
-    const notation = (params.notation as DiceNotation) ?? '1d20'
+    const notation = params.notation ?? '1d20'
     const validationResult = validateNotation(notation)
     if (!validationResult.valid) {
       throw new Error(`Invalid dice notation: ${notation}`)
     }
 
-    return new Response(JSON.stringify(roll(notation)), {
+    return new Response(JSON.stringify(roll(notation as DiceNotation)), {
       status: 200,
       headers: {
         'Content-Type': 'application/json'

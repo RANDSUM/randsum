@@ -10,7 +10,7 @@ describe(validateNotation, () => {
 
       expect(result).toEqual({
         valid: false,
-        description: [],
+        description: ['Invalid Notation'],
         digested: {},
         type: 'invalid'
       })
@@ -25,7 +25,7 @@ describe(validateNotation, () => {
 
       expect(result).toEqual({
         valid: false,
-        description: [],
+        description: ['Invalid Notation'],
         digested: {},
         type: 'invalid'
       })
@@ -67,7 +67,7 @@ describe(validateNotation, () => {
         valid: true,
         notation: '2d{ht}',
         type: 'custom',
-        digested: { sides: ['h', 't'], quantity: 2 },
+        digested: { sides: ['h', 't'], quantity: 2, modifiers: {} },
         description: ['Roll 2 dice with the following sides: (h,t)']
       })
     })
@@ -89,7 +89,7 @@ describe(validateNotation, () => {
 
           expect(result).toEqual({
             valid: false,
-            description: [],
+            description: ['Invalid Notation'],
             digested: {},
             type: 'invalid'
           })
@@ -105,7 +105,22 @@ describe(validateNotation, () => {
 
         expect(result).toEqual({
           valid: false,
-          description: [],
+          description: ['Invalid Notation'],
+          digested: {},
+          type: 'invalid'
+        })
+      })
+    })
+
+    describe('when given custom dice faces with modifiers', () => {
+      const notation = '2d{ht}L'
+
+      it('returns an error result with appropriate message', () => {
+        const result = validateNotation(notation)
+
+        expect(result).toEqual({
+          valid: false,
+          description: ['Custom dice faces cannot be used with modifiers'],
           digested: {},
           type: 'invalid'
         })
