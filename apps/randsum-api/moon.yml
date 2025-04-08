@@ -19,6 +19,9 @@ tasks:
       - 'notation:build'
   build:
     command: 'noop'
+    outputs: []
+    options:
+      cache: true
   test:
     deps:
       - 'dice:build'
