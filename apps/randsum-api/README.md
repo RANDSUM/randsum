@@ -1,6 +1,10 @@
-# RANDSUM API
+<div align="center">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
+  <h1>RANDSUM API</h1>
+  <h3>A high-performance RESTful API for dice rolling</h3>
+</div>
 
-A simple API for rolling dice using the RANDSUM dice library.
+A powerful, flexible API for rolling dice using the RANDSUM dice library. Perfect for integrating dice rolling functionality into web applications, games, virtual tabletops, and more.
 
 ## Features
 
@@ -8,6 +12,10 @@ A simple API for rolling dice using the RANDSUM dice library.
 - Configure rolls with query parameters
 - Support for all RANDSUM modifiers (drop, reroll, cap, etc.)
 - Built with Bun for high performance
+- JSON responses with detailed roll results
+- Simple, well-documented endpoints
+- Cross-origin support for web applications
+- Lightweight and fast
 
 ## Getting Started
 
@@ -56,7 +64,7 @@ Roll dice based on query parameters.
 
 #### Examples
 
-```
+```http
 GET /roll?notation=2d20
 GET /roll?sides=6&quantity=4&drop_lowest=1
 GET /roll?sides=20&quantity=2&plus=5
@@ -86,7 +94,7 @@ GET /roll?sides=20&quantity=2&plus=5
 
 Health check endpoint.
 
-#### Response
+#### Health Response
 
 ```json
 {
@@ -96,7 +104,7 @@ Health check endpoint.
 
 ### `GET /`
 
-API documentation.
+API documentation endpoint. Returns a JSON object with information about all available endpoints, parameters, and examples.
 
 ## Made with
 
