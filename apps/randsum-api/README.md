@@ -106,8 +106,107 @@ Health check endpoint.
 
 API documentation endpoint. Returns a JSON object with information about all available endpoints, parameters, and examples.
 
+## Use Cases
+
+### Web Applications
+
+```javascript
+// React component example
+function DiceRoller() {
+  const [result, setResult] = useState(null)
+  const [notation, setNotation] = useState('2d20')
+
+  const rollDice = async () => {
+    try {
+      const response = await fetch(
+        `https://your-api-url.com/roll?notation=${encodeURIComponent(notation)}`
+      )
+      const data = await response.json()
+      setResult(data)
+    } catch (error) {
+      console.error('Error rolling dice:', error)
+    }
+  }
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={notation}
+        onChange={(e) => setNotation(e.target.value)}
+        placeholder="Enter dice notation (e.g., 2d20)"
+      />
+      <button onClick={rollDice}>Roll</button>
+
+      {result && (
+        <div>
+          <h3>Result: {result.result.total}</h3>
+          <p>Rolls: {result.result.rolls.join(', ')}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+### Game Development
+
+```javascript
+// Game logic example
+class CombatSystem {
+  constructor(apiUrl) {
+    this.apiUrl = apiUrl
+  }
+
+  async attackRoll(attackBonus, hasAdvantage) {
+    const notation = hasAdvantage ? '2d20H' : '1d20'
+    const url = `${this.apiUrl}/roll?notation=${notation}+${attackBonus}`
+
+    const response = await fetch(url)
+    const data = await response.json()
+
+    return {
+      total: data.result.total,
+      critical: data.result.rolls.includes(20),
+      fumble: data.result.rolls.includes(1)
+    }
+  }
+
+  async damageRoll(damageFormula) {
+    const url = `${this.apiUrl}/roll?notation=${encodeURIComponent(damageFormula)}`
+    const response = await fetch(url)
+    const data = await response.json()
+
+    return data.result.total
+  }
+}
+```
+
+## Deployment
+
+The API can be deployed to any platform that supports Bun:
+
+```bash
+# Clone the repository
+git clone https://github.com/RANDSUM/randsum.git
+cd randsum
+
+# Install dependencies
+bun install
+
+# Build the API
+bun moon randsum-api:build
+
+# Start the server
+PORT=8080 bun moon randsum-api:start
+```
+
 ## Made with
 
 - [Bun](https://bun.sh) - JavaScript runtime & toolkit
 - [RANDSUM](https://github.com/RANDSUM/randsum) - Dice rolling library
 - [Moon](https://moonrepo.dev) - Build system
+
+<div align="center">
+Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
+</div>
