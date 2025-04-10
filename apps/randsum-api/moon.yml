@@ -11,7 +11,17 @@ tags:
 
 tasks:
   start:
-    command: 'bun run start'
+    command: 'bun src/index.ts'
+    deps:
+      - 'randsum-api:build'
+
+  build:
+    command: 'echo "No build needed for API"'
+    outputs:
+      - '**'
+    deps:
+      - 'dice:build'
+      - 'notation:build'
 
   tsCheck:
     deps:

@@ -1,29 +1,10 @@
 /**
  * Base die class for creating custom dice
  */
-export { D } from './D'
-
-/**
- * Main function for rolling dice with various options
- */
-export { roll } from './roll'
-
-/**
- * Pre-configured dice ready for use
- *
- * @example
- * import { D20, coin } from '@randsum/dice'
- *
- * // Roll a D20
- * const result = D20.roll()
- *
- * // Flip a coin
- * const coinResult = coin.roll()
- */
-
 export {
   alphaNumDie,
   coin,
+  D,
   D10,
   D100,
   D12,
@@ -32,7 +13,12 @@ export {
   D6,
   D8,
   fudgeDice
-} from './premadeDice'
+} from './D'
+
+/**
+ * Main function for rolling dice with various options
+ */
+export { roll } from './roll'
 
 /**
  * Type exports organized by category for better tree-shaking

@@ -186,6 +186,8 @@ class CombatSystem {
 
 The API can be deployed to any platform that supports Bun:
 
+### Manual Deployment
+
 ```bash
 # Clone the repository
 git clone https://github.com/RANDSUM/randsum.git
@@ -200,6 +202,22 @@ bun moon randsum-api:build
 # Start the server
 PORT=8080 bun moon randsum-api:start
 ```
+
+### Render Deployment
+
+This project includes a `render.yaml` configuration file for easy deployment to Render:
+
+1. Connect your GitHub repository to Render
+2. Create a new Web Service using the Blueprint configuration
+3. Render will automatically detect the configuration and deploy the API
+
+Alternatively, you can deploy manually on Render:
+
+1. Create a new Web Service
+2. Set the build command: `cd apps/randsum-api && bun install && bun run build`
+3. Set the start command: `cd apps/randsum-api && bun run start`
+4. Set the Node.js environment
+5. Deploy
 
 ## Made with
 
