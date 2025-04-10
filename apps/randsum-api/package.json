@@ -30,7 +30,9 @@
     "@randsum/notation": "workspace:*"
   },
   "scripts": {
-    "start": "bun src/index.ts"
+    "start": "bun src/index.ts",
+    "build": "bun moon dice:build notation:build",
+    "deploy": "bun run build && bun run start"
   },
   "engines": {
     "bun": ">=1.0.0"
