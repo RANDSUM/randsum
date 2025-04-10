@@ -17,6 +17,7 @@ tasks:
 
   build:
     command: 'echo "No build needed for API"'
+    outputs:
     deps:
       - 'dice:build'
       - 'notation:build'
