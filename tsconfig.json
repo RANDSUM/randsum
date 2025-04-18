@@ -40,6 +40,9 @@
     "noEmit": false
   },
   "include": [
+    "apps/*/src/**/*",
+    "apps/*/src/**/*.json",
+    "apps/*/src/**/*.d.ts",
     "packages/*/src/**/*",
     "packages/*/src/**/*.json",
     "packages/*/src/**/*.d.ts"
@@ -47,6 +50,7 @@
   "exclude": [
     "node_modules",
     "packages/*/dist",
+    "apps/*/dist",
     "**/coverage",
     "**/*.test.ts",
     "**/*.spec.ts"

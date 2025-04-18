@@ -175,6 +175,42 @@ curl "http://localhost:3000/roll?notation=2d20H"
 }
 ```
 
+### `randsum` (Mobile & Web App)
+
+A cross-platform dice rolling application for iOS, Android, and Web, powered by the RANDSUM dice library.
+
+#### Features
+
+- Roll dice using standard dice notation
+- Support for all RANDSUM modifiers (drop, reroll, cap, etc.)
+- Save favorite dice combinations
+- View detailed roll results and statistics
+- Dark mode support
+- Offline functionality
+- Cross-platform (iOS, Android, Web)
+
+#### Development
+
+```bash
+# Start the development server
+bun moon randsum:start
+
+# Run on iOS
+bun moon randsum:ios
+
+# Run on Android
+bun moon randsum:android
+
+# Run on Web
+bun moon randsum:web
+```
+
+#### Download
+
+- iOS: Coming soon to the App Store
+- Android: Coming soon to Google Play
+- Web: Coming soon
+
 ## 🛠️ Development
 
 This is a monorepo powered by [Moon](https://moonrepo.dev) and [Bun](https://bun.sh). To get started:
