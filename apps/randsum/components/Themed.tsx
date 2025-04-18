@@ -1,45 +1,59 @@
-/**
- * Learn more about Light and Dark modes:
- * https://docs.expo.io/guides/color-schemes/
- */
+import { CustomDarkTheme, CustomLightTheme, useAppTheme } from '@/theme'
+import React, { ComponentProps, ReactNode } from 'react'
+import { useColorScheme } from 'react-native'
+import {
+  Button as PaperButton,
+  Provider as PaperProvider,
+  Surface as PaperSurface
+} from 'react-native-paper'
 
-import { Text as DefaultText, View as DefaultView } from 'react-native';
+interface ThemeProviderProps {
+  children: ReactNode
+}
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from './useColorScheme';
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const colorScheme = useColorScheme() ?? 'light'
 
-type ThemeProps = {
-  lightColor?: string;
-  darkColor?: string;
-};
+  const theme = colorScheme === 'dark' ? CustomDarkTheme : CustomLightTheme
 
-export type TextProps = ThemeProps & DefaultText['props'];
-export type ViewProps = ThemeProps & DefaultView['props'];
+  return <PaperProvider theme={theme}>{children}</PaperProvider>
+}
 
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
-
-  if (colorFromProps) {
-    return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
+export function Button(props: ComponentProps<typeof PaperButton>) {
+  const theme = useAppTheme()
+  const getButtonColor = () => {
+    if (props.mode === 'outlined') {
+      return 'transparent'
+    }
+    return props.mode === 'contained' ? theme.colors.primary : 'transparent'
   }
+
+  const getTextColor = () => {
+    if (props.mode === 'outlined') {
+      return theme.colors.primary
+    }
+    return props.mode === 'contained'
+      ? theme.colors.onPrimary
+      : theme.colors.primary
+  }
+
+  return (
+    <PaperButton
+      buttonColor={getButtonColor()}
+      textColor={getTextColor()}
+      mode={props.mode || 'text'}
+      {...props}
+      style={[{ elevation: 2, borderRadius: 4 }, props.style]}
+    />
+  )
 }
-
-export function Text(props: TextProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-
-  return <DefaultText style={[{ color }, style]} {...otherProps} />;
-}
-
-export function View(props: ViewProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
-
-  return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+export function View(props: React.ComponentProps<typeof PaperSurface>) {
+  const { style, ...otherProps } = props
+  return (
+    <PaperSurface
+      style={[{ backgroundColor: 'transparent' }, style]}
+      elevation={0}
+      {...otherProps}
+    />
+  )
 }

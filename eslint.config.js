@@ -4,7 +4,8 @@ import tseslint from 'typescript-eslint'
 export default [
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.config.recommendedTypeChecked,
+  ...tseslint.configs.strict,
   ...tseslint.configs.stylisticTypeChecked,
 
   {
@@ -42,7 +43,7 @@ export default [
   {
     rules: {
       '@typescript-eslint/no-misused-spread': 'off',
-      'no-ternary': 'warn',
+      'no-ternary': 'off',
       'func-names': ['error', 'as-needed'],
       'no-restricted-exports': 'error',
       '@typescript-eslint/naming-convention': [
@@ -54,13 +55,6 @@ export default [
         {
           selector: 'typeAlias',
           format: ['PascalCase']
-        }
-      ],
-      '@typescript-eslint/explicit-function-return-type': [
-        'error',
-        {
-          allowExpressions: true,
-          allowTypedFunctionExpressions: true
         }
       ],
       '@typescript-eslint/explicit-member-accessibility': [
