@@ -1,45 +1,43 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useColorScheme } from 'react-native';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { CustomLightTheme, CustomDarkTheme } from '@/theme';
+import { CustomDarkTheme, CustomLightTheme } from '@/Theme'
+import React, { createContext, useContext, useState } from 'react'
+import { useColorScheme } from 'react-native'
+import { Provider as PaperProvider } from 'react-native-paper'
 
-type ThemeType = 'light' | 'dark' | 'system';
+type ThemeType = 'light' | 'dark' | 'system'
 
 interface ThemeContextType {
-  theme: ThemeType;
-  toggleTheme: (theme: ThemeType) => void;
-  isDarkMode: boolean;
+  theme: ThemeType
+  toggleTheme: (theme: ThemeType) => void
+  isDarkMode: boolean
 }
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'system',
   toggleTheme: () => {},
-  isDarkMode: false,
-});
+  isDarkMode: false
+})
 
-export const useThemeContext = () => useContext(ThemeContext);
+export const useThemeContext = () => useContext(ThemeContext)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const colorScheme = useColorScheme();
-  const [theme, setTheme] = useState<ThemeType>('system');
-  
+  const colorScheme = useColorScheme()
+  const [theme, setTheme] = useState<ThemeType>('system')
+
   // Determine if we're in dark mode based on theme setting and system preference
-  const isDarkMode = 
-    theme === 'dark' || (theme === 'system' && colorScheme === 'dark');
-  
+  const isDarkMode =
+    theme === 'dark' || (theme === 'system' && colorScheme === 'dark')
+
   // Get the appropriate theme object
-  const paperTheme = isDarkMode ? CustomDarkTheme : CustomLightTheme;
-  
+  const paperTheme = isDarkMode ? CustomDarkTheme : CustomLightTheme
+
   // Function to toggle between themes
   const toggleTheme = (newTheme: ThemeType) => {
-    setTheme(newTheme);
-  };
-  
+    setTheme(newTheme)
+  }
+
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, isDarkMode }}>
-      <PaperProvider theme={paperTheme}>
-        {children}
-      </PaperProvider>
+      <PaperProvider theme={paperTheme}>{children}</PaperProvider>
     </ThemeContext.Provider>
-  );
+  )
 }
