@@ -42,6 +42,18 @@ const colors = {
     light: '#000000',
     dark: '#ffffff'
   },
+  tint: {
+    light: '#2f95dc',
+    dark: '#ffffff'
+  },
+  tabIconDefault: {
+    light: '#cccccc',
+    dark: '#cccccc'
+  },
+  tabIconSelected: {
+    light: '#2f95dc',
+    dark: '#ffffff'
+  },
   dice: {
     d4: '#FF5252', // Red
     d6: '#FFD740', // Amber
@@ -65,6 +77,10 @@ export const CustomLightTheme = {
     background: colors.background.light,
     surface: colors.surface.light,
     text: colors.text.light,
+    // Add additional colors
+    tint: colors.tint.light,
+    tabIconDefault: colors.tabIconDefault.light,
+    tabIconSelected: colors.tabIconSelected.light,
     // Add dice colors
     ...Object.entries(colors.dice).reduce<Record<string, string>>(
       (acc, [key, value]) => {
@@ -88,6 +104,10 @@ export const CustomDarkTheme = {
     background: colors.background.dark,
     surface: colors.surface.dark,
     text: colors.text.dark,
+    // Add additional colors
+    tint: colors.tint.dark,
+    tabIconDefault: colors.tabIconDefault.dark,
+    tabIconSelected: colors.tabIconSelected.dark,
     // Add dice colors (same in both themes)
     ...Object.entries(colors.dice).reduce<Record<string, string>>(
       (acc, [key, value]) => {
