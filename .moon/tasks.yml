@@ -48,7 +48,7 @@ tasks:
       cache: true
 
   tsCheck:
-    command: 'tsc --erasableSyntaxOnly'
+    command: 'tsc --noEmit --erasableSyntaxOnly'
     deps:
       - 'build'
     inputs:
