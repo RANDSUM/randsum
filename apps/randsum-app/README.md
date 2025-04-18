@@ -18,16 +18,16 @@ This app is built with [Expo](https://expo.dev/) and [React Native](https://reac
 
 ```bash
 # Start the development server
-bun moon randsum:start
+bun moon randsum-app:start
 
 # Run on iOS
-bun moon randsum:ios
+bun moon randsum-app:ios
 
 # Run on Android
-bun moon randsum:android
+bun moon randsum-app:android
 
 # Run on Web
-bun moon randsum:web
+bun moon randsum-app:web
 ```
 
 ## Building for Production
@@ -50,7 +50,7 @@ eas build --platform android
 
 ```bash
 # Build for Web
-bun moon randsum:web
+bun moon randsum-app:web
 ```
 
 ## Made with

@@ -175,7 +175,7 @@ curl "http://localhost:3000/roll?notation=2d20H"
 }
 ```
 
-### `randsum` (Mobile & Web App)
+### `randsum-app` (Mobile & Web App)
 
 A cross-platform dice rolling application for iOS, Android, and Web, powered by the RANDSUM dice library.
 
@@ -193,16 +193,16 @@ A cross-platform dice rolling application for iOS, Android, and Web, powered by 
 
 ```bash
 # Start the development server
-bun moon randsum:start
+bun moon randsum-app:start
 
 # Run on iOS
-bun moon randsum:ios
+bun moon randsum-app:ios
 
 # Run on Android
-bun moon randsum:android
+bun moon randsum-app:android
 
 # Run on Web
-bun moon randsum:web
+bun moon randsum-app:web
 ```
 
 #### Download

@@ -20,8 +20,16 @@
         "typescript-eslint": "^8.30.1",
       },
     },
-    "apps/randsum": {
-      "name": "randsum",
+    "apps/randsum-api": {
+      "name": "@randsum/api",
+      "version": "0.1.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:*",
+        "@randsum/notation": "workspace:*",
+      },
+    },
+    "apps/randsum-app": {
+      "name": "randsum-app",
       "version": "1.0.0",
       "dependencies": {
         "@expo/vector-icons": "^14.0.2",
@@ -53,14 +61,6 @@
         "jest-expo": "~52.0.6",
         "react-test-renderer": "18.3.1",
         "typescript": "~5.3.3",
-      },
-    },
-    "apps/randsum-api": {
-      "name": "@randsum/api",
-      "version": "0.1.0",
-      "dependencies": {
-        "@randsum/dice": "workspace:*",
-        "@randsum/notation": "workspace:*",
       },
     },
     "packages/5e": {
@@ -1770,7 +1770,7 @@
 
     "randombytes": ["randombytes@2.1.0", "", { "dependencies": { "safe-buffer": "^5.1.0" } }, "sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ=="],
 
-    "randsum": ["randsum@workspace:apps/randsum"],
+    "randsum-app": ["randsum-app@workspace:apps/randsum-app"],
 
     "range-parser": ["range-parser@1.2.1", "", {}, "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg=="],
 
@@ -2422,7 +2422,7 @@
 
     "prop-types/react-is": ["react-is@16.13.1", "", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 
-    "randsum/typescript": ["typescript@5.3.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw=="],
+    "randsum-app/typescript": ["typescript@5.3.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw=="],
 
     "rc/strip-json-comments": ["strip-json-comments@2.0.1", "", {}, "sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ=="],
 
