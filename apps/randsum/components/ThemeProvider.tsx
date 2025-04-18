@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
-import { CustomDarkTheme, CustomLightTheme } from '@/theme';
+import { CustomLightTheme, CustomDarkTheme } from '@/theme';
 
 type ThemeType = 'light' | 'dark' | 'system';
 

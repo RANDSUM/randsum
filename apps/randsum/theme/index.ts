@@ -2,21 +2,20 @@ import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme
 } from '@react-navigation/native'
-import React from 'react'
-import { useColorScheme } from 'react-native'
 import {
   MD3DarkTheme,
   MD3LightTheme,
-  Provider as PaperProvider,
   adaptNavigationTheme,
   useTheme
 } from 'react-native-paper'
 
+// Adapt navigation themes to work with React Native Paper
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
   reactNavigationDark: NavigationDarkTheme
 })
 
+// Define our custom color palette
 const colors = {
   primary: {
     light: '#6200ee',
@@ -53,6 +52,7 @@ const colors = {
   }
 }
 
+// Create our custom themes
 export const CustomLightTheme = {
   ...MD3LightTheme,
   ...LightTheme,
@@ -66,12 +66,12 @@ export const CustomLightTheme = {
     surface: colors.surface.light,
     text: colors.text.light,
     // Add dice colors
-    ...Object.entries(colors.dice).reduce<Record<string, string>>(
+    ...Object.entries(colors.dice).reduce(
       (acc, [key, value]) => {
         acc[key] = value
         return acc
       },
-      {}
+      {} as Record<string, string>
     )
   }
 }
@@ -89,25 +89,21 @@ export const CustomDarkTheme = {
     surface: colors.surface.dark,
     text: colors.text.dark,
     // Add dice colors (same in both themes)
-    ...Object.entries(colors.dice).reduce<Record<string, string>>(
+    ...Object.entries(colors.dice).reduce(
       (acc, [key, value]) => {
         acc[key] = value
         return acc
       },
-      {}
+      {} as Record<string, string>
     )
   }
 }
 
+// Export a type for our theme
 export type AppTheme = typeof CustomLightTheme
 
-export const useAppTheme = (): AppTheme => useTheme<AppTheme>()
+// Export a hook to use our theme
+export const useAppTheme = () => useTheme<AppTheme>()
 
+// Re-export from react-native-paper
 export { useTheme } from 'react-native-paper'
-
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const colorScheme = useColorScheme()
-  const theme = colorScheme === 'dark' ? CustomDarkTheme : CustomLightTheme
-
-  return <PaperProvider theme={theme}>{children}</PaperProvider>
-}

@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Switch, Text, useTheme } from 'react-native-paper';
 import { useThemeContext } from './ThemeProvider';
 
-interface ThemeToggleProps {
+type ThemeToggleProps = {
   label?: string;
-}
+};
 
 export function ThemeToggle({ label = 'Dark Mode' }: ThemeToggleProps) {
   const { isDarkMode, toggleTheme } = useThemeContext();
@@ -16,7 +16,7 @@ export function ThemeToggle({ label = 'Dark Mode' }: ThemeToggleProps) {
       {label && <Text style={{ color: theme.colors.onSurface }}>{label}</Text>}
       <Switch
         value={isDarkMode}
-        onValueChange={() => { toggleTheme(isDarkMode ? 'light' : 'dark'); }}
+        onValueChange={() => toggleTheme(isDarkMode ? 'light' : 'dark')}
         color={theme.colors.primary}
       />
     </View>

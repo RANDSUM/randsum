@@ -14,39 +14,40 @@ tasks:
   start:
     command: 'expo start'
     platform: 'system'
-    
+
   android:
     command: 'expo start --android'
     platform: 'system'
-    
+
   ios:
     command: 'expo start --ios'
     platform: 'system'
-    
+
   web:
     command: 'expo start --web'
     platform: 'system'
-    
+
   build:
     # No-op build task as requested
     command: 'echo "No build needed for Expo app"'
     outputs:
       - '**'
-    
+
   test:
     command: 'jest --watchAll'
     platform: 'system'
-    
+
   tsCheck:
+    command: 'tsc --noEmit'
     deps:
       - 'dice:build'
       - 'notation:build'
-      
+
   lint:
     deps:
       - 'dice:build'
       - 'notation:build'
-      
+
   format:
     deps:
       - 'dice:build'
