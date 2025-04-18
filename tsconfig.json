@@ -40,6 +40,10 @@
     "noEmit": false
   },
   "include": [
+    "apps/*/app/**/*",
+    "apps/*/app/**/*.json",
+    "apps/**/*",
+    "apps/**/*.json",
     "apps/*/src/**/*",
     "apps/*/src/**/*.json",
     "apps/*/src/**/*.d.ts",
