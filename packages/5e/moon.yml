@@ -10,6 +10,7 @@ tags:
 tasks:
   tsCheck:
     deps:
+      - 'dice:build'
   build:
     deps:
       - 'dice:build'
