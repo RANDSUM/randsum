@@ -42,12 +42,12 @@ jobs:
 
       - name: Publish to NPM
         run: |
-         - bun moon core:publish -u
-         - bun moon notation:publish -u
-         - bun moon dice:publish -u
-         - bun moon 5e:publish -u
-         - bun moon root-rpg:publish -u
-         - bun moon salvageunion:publish -u
-         - bun moon blades:publish -u
+          bun moon core:publish -u
+          bun moon notation:publish -u
+          bun moon dice:publish -u
+          bun moon 5e:publish -u
+          bun moon root-rpg:publish -u
+          bun moon salvageunion:publish -u
+          bun moon blades:publish -u
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
