@@ -11,10 +11,7 @@ tasks:
     deps:
       - 'core:build'
       - 'notation:build'
-  publish:
-    deps:
-      - 'core:publish'
-      - 'notation:publish'
+
   build:
     deps:
       - 'core:build'

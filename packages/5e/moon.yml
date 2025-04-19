@@ -10,9 +10,6 @@ tags:
 tasks:
   tsCheck:
     deps:
-  publish:
-    deps:
-      - 'dice:publish'
   build:
     deps:
       - 'dice:build'

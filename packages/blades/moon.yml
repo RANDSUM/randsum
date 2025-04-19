@@ -11,9 +11,7 @@ tasks:
   tsCheck:
     deps:
       - 'dice:build'
-  publish:
-    deps:
-      - 'dice:publish'
+
   build:
     deps:
       - 'dice:build'

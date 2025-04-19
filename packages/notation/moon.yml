@@ -11,9 +11,7 @@ tasks:
   tsCheck:
     deps:
       - 'core:build'
-  publish:
-    deps:
-      - 'core:publish'
+
   build:
     deps:
       - 'core:build'
