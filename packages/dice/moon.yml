@@ -11,6 +11,7 @@ tasks:
     deps:
       - 'core:build'
       - 'notation:build'
+
   build:
     deps:
       - 'core:build'

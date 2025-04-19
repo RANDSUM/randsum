@@ -67,6 +67,7 @@ tasks:
       - 'lint'
       - 'format'
       - 'tsCheck'
+      - 'build'
 
   ci:
     deps:
