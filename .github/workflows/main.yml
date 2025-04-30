@@ -17,4 +17,4 @@ jobs:
         with:
           bun-version: latest
       - run: bun install
-      - run: bunx moon :ci -u
+      - run: bun moon :ci -u

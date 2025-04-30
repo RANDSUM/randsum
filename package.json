@@ -17,7 +17,7 @@
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
-  "trustedDevDependencies": [
+  "trustedDependencies": [
     "@moonrepo/cli"
   ],
   "devDependencies": {

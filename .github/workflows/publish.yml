@@ -38,16 +38,16 @@ jobs:
         run: bun install
 
       - name: Build packages
-        run: bunx moon :build -u
+        run: bun moon :build -u
 
       - name: Publish to NPM
         run: |
-          bunx moon core:publish -u
-          bunx moon notation:publish -u
-          bunx moon dice:publish -u
-          bunx moon fifth:publish -u
-          bunx moon root-rpg:publish -u
-          bunx moon salvageunion:publish -u
-          bunx moon blades:publish -u
+          bun moon core:publish -u
+          bun moon notation:publish -u
+          bun moon dice:publish -u
+          bun moon fifth:publish -u
+          bun moon root-rpg:publish -u
+          bun moon salvageunion:publish -u
+          bun moon blades:publish -u
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
