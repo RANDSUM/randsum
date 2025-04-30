@@ -1,3 +1,17 @@
 $schema: 'https://moonrepo.dev/schemas/toolchain.json'
 
-bun: {}
+# Bun configuration for the monorepo
+bun:
+  version: 'latest'
+  syncProjectWorkspaceDependencies: true
+  dependencyVersionFormat: 'workspace'
+  inferTasksFromScripts: false
+  installArgs:
+    - '--no-save'
+
+# Node.js configuration
+node:
+  version: 'latest'
+  packageManager: 'bun'
+  addEnginesConstraint: true
+

@@ -1,0 +1,19 @@
+# RANDSUM monorepo toolchain configuration
+# Specifies the tools and versions used in this project
+
+bun = "latest"
+
+moon = "latest"
+
+# Settings for the toolchain
+[settings]
+auto-install = true
+detect-strategy = "prefer-prototools"
+
+# Bun-specific settings
+[tools.bun]
+# No specific settings needed
+
+# Moon-specific settings
+[tools.moon]
+# No specific settings needed

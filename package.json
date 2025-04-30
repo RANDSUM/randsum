@@ -7,29 +7,29 @@
     "apps/*"
   ],
   "scripts": {
-    "ci": "bun moon ci",
-    "build": "bun moon :build",
-    "test": "bun moon :test",
-    "lint": "bun moon :lint",
-    "lint:fix": "bun moon :lint:fix",
-    "format": "bun moon :format",
-    "format:fix": "bun moon :format:fix",
-    "ts:check": "bun moon :tsCheck",
-    "test:ci": "bun run test --coverage"
+    "ci": "bunx moon ci",
+    "build": "bunx moon :build",
+    "test": "bunx moon :test",
+    "lint": "bunx moon :lint",
+    "lint:fix": "bunx moon :lint:fix",
+    "format": "bunx moon :format",
+    "format:fix": "bunx moon :format:fix",
+    "ts:check": "bunx moon :tsCheck",
+    "test:ci": "bunrun test --coverage"
   },
-  "trustedDependencies": [
+  "trustedDevDependencies": [
     "@moonrepo/cli"
   ],
   "devDependencies": {
-    "@eslint/js": "^9.24.0",
-    "@moonrepo/cli": "^1.35.0",
-    "@types/bun": "1.2.10",
-    "@typescript-eslint/eslint-plugin": "^8.30.1",
-    "@typescript-eslint/parser": "^8.30.1",
+    "@eslint/js": "^9.25.1",
+    "@moonrepo/cli": "^1.35.2",
+    "@types/bun": "1.2.9",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
     "bunup": "^0.3.92",
-    "eslint": "^9.24.0",
+    "eslint": "^9.25.1",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.30.1"
+    "typescript-eslint": "^8.31.1"
   }
 }

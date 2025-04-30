@@ -14,15 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: moonrepo/setup-toolchain@v0
         with:
-          bun-version: latest
+          auto-install: true
 
       - name: Restore build cache
         uses: actions/cache@v4
@@ -34,20 +31,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - name: Install dependencies
-        run: bun install
-
       - name: Build packages
-        run: bun moon :build -u
+        run: moon :build -u
 
       - name: Publish to NPM
         run: |
-          bun moon core:publish -u
-          bun moon notation:publish -u
-          bun moon dice:publish -u
-          bun moon fifth:publish -u
-          bun moon root-rpg:publish -u
-          bun moon salvageunion:publish -u
-          bun moon blades:publish -u
+          moon core:publish -u
+          moon notation:publish -u
+          moon dice:publish -u
+          moon fifth:publish -u
+          moon root-rpg:publish -u
+          moon salvageunion:publish -u
+          moon blades:publish -u
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
