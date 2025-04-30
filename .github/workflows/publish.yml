@@ -31,6 +31,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
+      - run: bun install
+
       - name: Build packages
         run: moon :build -u
 
