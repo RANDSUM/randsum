@@ -7,15 +7,15 @@
     "apps/*"
   ],
   "scripts": {
-    "ci": "bun moon ci",
-    "build": "bun moon :build",
-    "test": "bun moon :test",
-    "lint": "bun moon :lint",
-    "lint:fix": "bun moon :lint:fix",
-    "format": "bun moon :format",
-    "format:fix": "bun moon :format:fix",
-    "ts:check": "bun moon :tsCheck",
-    "test:ci": "bun run test --coverage"
+    "ci": "bunx moon ci",
+    "build": "bunx moon :build",
+    "test": "bunx moon :test",
+    "lint": "bunx moon :lint",
+    "lint:fix": "bunx moon :lint:fix",
+    "format": "bunx moon :format",
+    "format:fix": "bunx moon :format:fix",
+    "ts:check": "bunx moon :tsCheck",
+    "test:ci": "bunrun test --coverage"
   },
   "trustedDevDependencies": [
     "@moonrepo/cli"
