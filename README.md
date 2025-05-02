@@ -226,6 +226,8 @@ Randsum is perfect for:
 
 Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
 
+---
+
 ## Why did you make this?
 
 Sometime around 2012, I decided I wanted to learn to program. I had installed ruby on the best laptop six-hundred dollars could buy, set to make a dice roller as an easy first project.
@@ -233,6 +235,12 @@ Sometime around 2012, I decided I wanted to learn to program. I had installed ru
 I spent an easy 30 minutes trying to figure out how to make `rand(n)` return `1...n` instead of `0...(n-1)`.
 
 When I found the answer, I laughed and laughed. I've been chasing that high ever since.
+
+---
+
+## LLM Statement
+
+I love this thing we call programming. It seems as if (biiiiig scare quotes) "AI" is going to be a part of it moving forward. You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work, and programming is my craft. I care deeply about it, and there is no better way for me to understand LLM's and their place in my craft than to use them. There is no better place for me to use and understand them than here. We'll have to see the extent to which I come to regret/resent/respect this decision in the coming years together!
 
 ---
 
