@@ -131,50 +131,6 @@ npm install @randsum/salvageunion
 
 Internal package containing shared utilities and types. Not intended for direct usage. All types are exported in each subsequent package for ease of use.
 
-### `randsum-api`
-
-A RESTful API for rolling dice using the RANDSUM dice library. Built with Bun for high performance.
-
-#### Features
-
-- Roll dice using standard dice notation via HTTP requests
-- Support for all RANDSUM modifiers (drop, reroll, cap, etc.)
-- Simple, well-documented endpoints
-- JSON responses with detailed roll results
-
-#### Example Usage
-
-```bash
-# Roll two twenty-sided dice
-curl "http://localhost:3000/roll?notation=2d20"
-
-# Roll 4d6, drop lowest (common for D&D character creation)
-curl "http://localhost:3000/roll?notation=4d6L"
-
-# Roll with advantage (2d20, keep highest)
-curl "http://localhost:3000/roll?notation=2d20H"
-```
-
-#### Response Example
-
-```json
-{
-  "result": {
-    "total": 15,
-    "rolls": [7, 8],
-    "rawRolls": { "key": [7, 8] },
-    "modifiedRolls": { "key": { "rolls": [7, 8], "total": 15 } },
-    "rawResult": [7, 8],
-    "result": [7, 8],
-    "type": "numerical"
-  },
-  "params": {
-    "notation": "2d20"
-  },
-  "notation": "2d20"
-}
-```
-
 ## 🛠️ Development
 
 This is a monorepo powered by [Moon](https://moonrepo.dev) and [Bun](https://bun.sh). To get started:

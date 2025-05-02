@@ -1,0 +1,9 @@
+- Do not use 'any' as a type
+- do not use 'lets' when assigning variables
+- keep readme files up to date
+- document all public api's with JSDoc
+- explicitly type functions
+- prefer named functions over anonymous functions
+- use anonymous functions when inlining functions
+- use bun for managing dependencies and writing tests.
+

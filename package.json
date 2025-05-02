@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*",
-    "apps/*"
+    "packages/*"
   ],
   "scripts": {
     "ci": "bunx moon ci",
@@ -17,12 +16,12 @@
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
-  "trustedDevDependencies": [
+  "trustedDependencies": [
     "@moonrepo/cli"
   ],
   "devDependencies": {
     "@eslint/js": "^9.25.1",
-    "@moonrepo/cli": "^1.35.2",
+    "@moonrepo/cli": "^1.35.4",
     "@types/bun": "1.2.9",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",

@@ -3,7 +3,6 @@ $schema: 'https://moonrepo.dev/schemas/workspace.json'
 
 projects:
   - 'packages/*'
-  - 'apps/*'
 
 vcs:
   manager: 'git'
