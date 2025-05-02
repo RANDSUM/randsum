@@ -4,24 +4,16 @@
     "": {
       "name": "randsum-monorepo",
       "devDependencies": {
-        "@eslint/js": "^9.24.0",
-        "@moonrepo/cli": "^1.35.0",
+        "@eslint/js": "^9.25.1",
+        "@moonrepo/cli": "^1.35.4",
         "@types/bun": "1.2.9",
-        "@typescript-eslint/eslint-plugin": "^8.30.1",
-        "@typescript-eslint/parser": "^8.30.1",
+        "@typescript-eslint/eslint-plugin": "^8.31.1",
+        "@typescript-eslint/parser": "^8.31.1",
         "bunup": "^0.3.92",
-        "eslint": "^9.24.0",
+        "eslint": "^9.25.1",
         "prettier": "^3.5.3",
         "typescript": "^5.8.3",
-        "typescript-eslint": "^8.30.1",
-      },
-    },
-    "apps/randsum-api": {
-      "name": "@randsum/api",
-      "version": "0.1.0",
-      "dependencies": {
-        "@randsum/dice": "workspace:*",
-        "@randsum/notation": "workspace:*",
+        "typescript-eslint": "^8.31.1",
       },
     },
     "packages/5e": {
@@ -73,6 +65,9 @@
       },
     },
   },
+  "trustedDependencies": [
+    "@moonrepo/cli",
+  ],
   "packages": {
     "@emnapi/core": ["@emnapi/core@1.4.0", "", { "dependencies": { "@emnapi/wasi-threads": "1.0.1", "tslib": "^2.4.0" } }, "sha512-H+N/FqT07NmLmt6OFFtDfwe8PNygprzBikrEMyQfgqSmT0vzE515Pz7R8izwB9q/zsH/MA64AKoul3sA6/CzVg=="],
 
@@ -108,21 +103,21 @@
 
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.0", "", {}, "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ=="],
 
-    "@moonrepo/cli": ["@moonrepo/cli@1.35.2", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "@moonrepo/core-linux-arm64-gnu": "1.35.2", "@moonrepo/core-linux-arm64-musl": "1.35.2", "@moonrepo/core-linux-x64-gnu": "1.35.2", "@moonrepo/core-linux-x64-musl": "1.35.2", "@moonrepo/core-macos-arm64": "1.35.2", "@moonrepo/core-macos-x64": "1.35.2", "@moonrepo/core-windows-x64-msvc": "1.35.2" }, "bin": { "moon": "moon.js" } }, "sha512-JhansKhYfnciXQwYtaDvUTMMEXqHPotNIF6rXaaCi/CBIhQx5nI01M/5aetVRMB0cV9S0VvbG+g9RcbaZtxjmQ=="],
+    "@moonrepo/cli": ["@moonrepo/cli@1.35.4", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "@moonrepo/core-linux-arm64-gnu": "1.35.4", "@moonrepo/core-linux-arm64-musl": "1.35.4", "@moonrepo/core-linux-x64-gnu": "1.35.4", "@moonrepo/core-linux-x64-musl": "1.35.4", "@moonrepo/core-macos-arm64": "1.35.4", "@moonrepo/core-macos-x64": "1.35.4", "@moonrepo/core-windows-x64-msvc": "1.35.4" }, "bin": { "moon": "moon.js" } }, "sha512-LL31ar1UVxYsxePXRyRBKjc6NKJxkeTWhew+BFVO9AYAxuz85wDDqYMJAZQ/iV5CBXgZVorCU40vbhMD408I5Q=="],
 
-    "@moonrepo/core-linux-arm64-gnu": ["@moonrepo/core-linux-arm64-gnu@1.35.2", "", { "os": "linux", "cpu": "arm64" }, "sha512-rDpgZO8AHw5qOj0SsjEOY+Cjg/4lQVEWoM8EQFmNC/aPI9Rh87FG33oeqfWt1MXntnbZwtPzFD1+RC8r9eCkAA=="],
+    "@moonrepo/core-linux-arm64-gnu": ["@moonrepo/core-linux-arm64-gnu@1.35.4", "", { "os": "linux", "cpu": "arm64" }, "sha512-g8qoCyvENF5a6GhYCsPuuF+r7UngHBZxRWAPTwkLUW92CrM7j1LMkEh+qIbjhVC6BwFcrxjh7Zo+pCxh4mQOow=="],
 
-    "@moonrepo/core-linux-arm64-musl": ["@moonrepo/core-linux-arm64-musl@1.35.2", "", { "os": "linux", "cpu": "arm64" }, "sha512-DtlJNvF/HBt1nTu6PdWx5jjs3sMGzQ+cuihOx6fiRe5v45Ak+dFEFEcaevTLHxN41OFUJVSyPwDQuJSxRnpQ+A=="],
+    "@moonrepo/core-linux-arm64-musl": ["@moonrepo/core-linux-arm64-musl@1.35.4", "", { "os": "linux", "cpu": "arm64" }, "sha512-oPuP/SJTGvlvQYBM6u4Lag0C7wRp9uc4J8+bVckRyoystaf3QmUGEVS0GOHrAxpLMZ9yOgOboVmPqjgeFUZaqg=="],
 
-    "@moonrepo/core-linux-x64-gnu": ["@moonrepo/core-linux-x64-gnu@1.35.2", "", { "os": "linux", "cpu": "x64" }, "sha512-kdLtLhSGxUinFn7Dyxd65O9yqImTmQITLkwSua8NPEjCbnkcpwQvChXnvgZVrLKv5FmFy+pad5tvGBdEcWdllA=="],
+    "@moonrepo/core-linux-x64-gnu": ["@moonrepo/core-linux-x64-gnu@1.35.4", "", { "os": "linux", "cpu": "x64" }, "sha512-bPiPO5yS9fYpMd0yD8dG/katbbqp5XxRPcTLgfEjA9zhCU6/fg7xGiQVHCjPUG1UgCmeW8p+NVuqWEZjDKvsMg=="],
 
-    "@moonrepo/core-linux-x64-musl": ["@moonrepo/core-linux-x64-musl@1.35.2", "", { "os": "linux", "cpu": "x64" }, "sha512-5BpldFFY+TYhbx17+0d8Sbn6ThqQ8JToLFGf1knhp3SLon2f1d5QCu5Bi/vWIEePkCA5A+OunjPgDRt+SinkFQ=="],
+    "@moonrepo/core-linux-x64-musl": ["@moonrepo/core-linux-x64-musl@1.35.4", "", { "os": "linux", "cpu": "x64" }, "sha512-VaIhwIXIuaHO7rlTa/IspakzR1TECA1vrnp9KwO7okZ+fVKPKinbGBxVSLmGb/5o5sI5v0I6g0LJ8RA+2QoYow=="],
 
-    "@moonrepo/core-macos-arm64": ["@moonrepo/core-macos-arm64@1.35.2", "", { "os": "darwin", "cpu": "arm64" }, "sha512-MyzjLig5nRaEYwL8Ug1DQ+o/iR/mHlF74MYa3SiDt9xRHmTBZTPbM+psm/B65UFQFfcnzgG+HPFp5qosp2mfsQ=="],
+    "@moonrepo/core-macos-arm64": ["@moonrepo/core-macos-arm64@1.35.4", "", { "os": "darwin", "cpu": "arm64" }, "sha512-DAidD4OSFByM83nNuyOqlFPg4mcPqgpD3aegJjsxZ+OU9xDdwu3u4FyZY0tAJl2SM9lkpZjEeY1B70+kHXU+mw=="],
 
-    "@moonrepo/core-macos-x64": ["@moonrepo/core-macos-x64@1.35.2", "", { "os": "darwin", "cpu": "x64" }, "sha512-a1boF1welf2Op+Gni/0OhqwRuOuyzVIeg7h4TrnPFWnPrydsj9jI40dOBOp0cbd/4BP9Im92DAL1EBHRzi5BYw=="],
+    "@moonrepo/core-macos-x64": ["@moonrepo/core-macos-x64@1.35.4", "", { "os": "darwin", "cpu": "x64" }, "sha512-kDOAHuqgMtwk4F4CiLLvgJaGyCVdey2KT9yclYBb9tFwGtME2jICrk7n4Je2aJlGz/4F56UPHFVrPuwXVkwf1w=="],
 
-    "@moonrepo/core-windows-x64-msvc": ["@moonrepo/core-windows-x64-msvc@1.35.2", "", { "os": "win32", "cpu": "x64" }, "sha512-nOxJjIpHDL3AuPq/+BS4MH9fqAFjF2Bc2I1ebCA82VBW/vFwFs9k9PjSDkDgHB8G6vuqhCBhPG/YL2ry9aYPgg=="],
+    "@moonrepo/core-windows-x64-msvc": ["@moonrepo/core-windows-x64-msvc@1.35.4", "", { "os": "win32", "cpu": "x64" }, "sha512-PseWg5d5QmxWG/IAXMqnEn3GRzlfJ1e/rUu2zFOtVvZ6vmsr9t86Ss4R5mg9ewTAyG9IlH4a2EKxI4+xK0CJVA=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@0.2.8", "", { "dependencies": { "@emnapi/core": "^1.4.0", "@emnapi/runtime": "^1.4.0", "@tybys/wasm-util": "^0.9.0" } }, "sha512-OBlgKdX7gin7OIq4fadsjpg+cp2ZphvAIKucHsNfTdJiqdOmOEwQd/bHi0VwNrcw5xpBJyUw6cK/QilCqy1BSg=="],
 
@@ -201,8 +196,6 @@
     "@oxc-transform/binding-win32-x64-msvc": ["@oxc-transform/binding-win32-x64-msvc@0.58.1", "", { "os": "win32", "cpu": "x64" }, "sha512-612E4VNg9wK5cpGjaHjdW+aD3b1w80lps6rsFEsWejGB5nF5OkXS8uZxS1iQE/16JUoFNUcH+3yyqQP7ljdOuA=="],
 
     "@randsum/5e": ["@randsum/5e@workspace:packages/5e"],
-
-    "@randsum/api": ["@randsum/api@workspace:apps/randsum-api"],
 
     "@randsum/blades": ["@randsum/blades@workspace:packages/blades"],
 
