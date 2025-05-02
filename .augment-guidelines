@@ -1,9 +1,102 @@
-- Do not use 'any' as a type
-- do not use 'lets' when assigning variables
-- keep readme files up to date
-- document all public api's with JSDoc
-- explicitly type functions
-- prefer named functions over anonymous functions
-- use anonymous functions when inlining functions
-- use bun for managing dependencies and writing tests.
+# RANDSUM Development Guidelines
 
+## TypeScript Best Practices
+
+- Do not use 'any' as a type; use proper type definitions or 'unknown' when necessary
+- Do not use 'let' when assigning variables that won't be reassigned; prefer 'const'
+- avoid using 'let' except where it is necessary
+- Explicitly type all function parameters and return types
+- Follow naming conventions: PascalCase for interfaces, types, and classes; camelCase for variables and functions
+- Use type narrowing instead of type assertions when possible
+- Prefer union types over enums
+- do not use enums
+- do not assign visibility of class properties in class constructors
+- do not use namespaces
+- Use readonly modifiers for arrays and properties that shouldn't be mutated
+- Leverage TypeScript's utility types (Partial, Required, Pick, etc.) when appropriate
+- Use discriminated unions for complex state management
+- Prefix unused variables with underscore (e.g., `_unusedVar`)
+- Use explicit member accessibility modifiers (public, private, protected)
+- Enable strict TypeScript checks in all projects
+- Avoid type assertions (`as`) when possible; use type guards instead
+
+## Code Organization
+
+- Keep files focused on a single responsibility
+- Organize code by feature rather than by type
+- Export all public types from the package's index.ts file
+- Use barrel exports (index.ts files) to simplify imports
+- Keep readme files up to date with current API and examples
+- Document all public APIs with JSDoc comments
+- Include examples in documentation for complex functions
+- Prefer named functions over anonymous functions for better stack traces
+- Use anonymous functions only when inlining functions
+- Follow the file structure conventions established in the monorepo
+- Use consistent import ordering (sort imports)
+- Use 2 spaces for indentation
+- Use single quotes for strings
+
+## Monorepo Management
+
+- Use bun for managing dependencies and running tests
+- Use moon for tasks related to managing the monorepo
+- Follow the dependency chain defined in moon.yml files
+- Run the appropriate moon tasks for building, testing, and linting
+- Ensure all packages have consistent versioning
+
+## Testing
+
+- Write unit tests for all public APIs
+- Aim for high test coverage (100% for core functionality)
+- Use bun:test for writing and running tests
+- Test edge cases and error conditions
+- Use descriptive test names that explain the expected behavior
+- Structure tests with describe/test blocks for better organization
+- Mock external dependencies when necessary
+- Follow the test naming pattern: `describe('Component/Function')` and `test('does something specific')`
+- Use `beforeEach` for test setup when appropriate
+- Test both success and failure cases
+- Verify error messages and types for error conditions
+
+## Performance & Bundle Size
+
+- Keep bundle size minimal by avoiding unnecessary dependencies
+- Use tree-shaking friendly patterns (named exports, pure functions)
+- Avoid side effects in modules
+- Consider performance implications when working with large datasets
+- Export individual functions to allow for tree-shaking
+- Follow the guidelines in packages/dice/BUNDLE_SIZE.md
+
+## Package-Specific Guidelines
+
+### Core Package
+
+- Keep the core package minimal and focused on shared utilities
+- Avoid adding game-specific logic to the core package
+
+### Dice Package
+
+- Maintain backward compatibility for public APIs
+- Follow the established patterns for dice rolling implementations
+- Ensure proper error handling for invalid inputs
+
+### Notation Package
+
+- Follow the Randsum Dice Notation specification
+- Ensure parser performance is optimized for common patterns
+- Validate all user input thoroughly
+
+### Game System Packages (5e, Blades, Root-RPG, etc.)
+
+- Implement game-specific logic according to official rules
+- Provide clear documentation for game-specific terminology
+- Include examples that demonstrate common use cases
+
+## Error Handling
+
+- Create custom error classes for specific error conditions
+- Provide descriptive error messages that explain the issue
+- Document error types and when they might be thrown
+- Test error cases to ensure proper error handling
+- Use try/catch blocks appropriately for recoverable errors
+- Validate user input thoroughly before processing
