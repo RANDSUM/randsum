@@ -10,7 +10,6 @@ tasks:
     options:
       cache: true
 
-
   test:
     command: 'bun test'
     deps:
