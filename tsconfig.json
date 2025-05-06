@@ -38,7 +38,5 @@
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true,
     "noEmit": false
-  },
-  "include": ["packages/*"],
-  "exclude": ["node_modules", "packages/*/dist", "**/coverage"]
+  }
 }
