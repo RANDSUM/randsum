@@ -1,24 +1,17 @@
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 
-export default [
+export default tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
-
+  tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
   {
     languageOptions: {
-      parser: tseslint.parser,
       parserOptions: {
-        project: 'tsconfig.eslint.json',
-        tsconfigRootDir: import.meta.dirname,
-        ecmaVersion: 'latest',
-        sourceType: 'module'
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname
       }
-    },
-    plugins: {
-      '@typescript-eslint': tseslint.plugin
     }
   },
   {
@@ -97,4 +90,4 @@ export default [
       ]
     }
   }
-]
+)

@@ -41,14 +41,9 @@
   },
   "include": [
     "packages/*/src/**/*",
+    "packages/*/__tests__/**/*",
     "packages/*/src/**/*.json",
     "packages/*/src/**/*.d.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "packages/*/dist",
-    "**/coverage",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["node_modules", "packages/*/dist", "**/coverage"]
 }
