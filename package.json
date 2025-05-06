@@ -10,9 +10,9 @@
     "build": "bunx moon :build",
     "test": "bunx moon :test",
     "lint": "bunx moon :lint",
-    "lint:fix": "bunx moon :lint:fix",
+    "lint:fix": "bunx moon :lint -- --fix",
     "format": "bunx moon :format",
-    "format:fix": "bunx moon :format:fix",
+    "format:fix": "bunx moon :format",
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
