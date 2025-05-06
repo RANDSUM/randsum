@@ -1,3 +1,9 @@
+/**
+ * @file Modifiers for dice rolls
+ * @module @randsum/core/modifiers
+ */
+
+// Export all modifier classes
 export { BaseModifier } from './BaseModifier'
 export { CapModifier } from './CapModifier'
 export { DropModifier } from './DropModifier'
