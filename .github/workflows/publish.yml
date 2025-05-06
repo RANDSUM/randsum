@@ -38,7 +38,6 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          moon core:publish -u
           moon notation:publish -u
           moon dice:publish -u
           moon fifth:publish -u

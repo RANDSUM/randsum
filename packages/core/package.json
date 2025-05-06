@@ -1,8 +1,8 @@
 {
   "name": "@randsum/core",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "Internal utilities and types for @randsum packages",
-  "private": false,
+  "private": true,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
