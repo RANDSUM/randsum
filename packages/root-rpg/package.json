@@ -1,6 +1,6 @@
 {
   "name": "@randsum/root-rpg",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "description": "A flexible, type-safe dice roller for the Root RPG system",
   "author": {
     "name": "Alex Jarvis",
