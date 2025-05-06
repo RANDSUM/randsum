@@ -14,7 +14,7 @@
     "format": "bunx moon :format",
     "format:fix": "bunx moon :format:fix",
     "ts:check": "bunx moon :tsCheck",
-    "test:ci": "bunrun test --coverage"
+    "test:ci": "bun run test --coverage"
   },
   "trustedDependencies": [
     "@moonrepo/cli"
@@ -30,8 +30,5 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.0"
-  },
-  "engines": {
-    "node": "latest"
   }
 }
