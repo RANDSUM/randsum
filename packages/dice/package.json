@@ -1,6 +1,6 @@
 {
   "name": "@randsum/dice",
-  "version": "0.1.26",
+  "version": "0.1.31",
   "description": "A flexible, type-safe dice roller for tabletop RPGs, game development, and probability simulations",
   "author": {
     "name": "Alex Jarvis",
