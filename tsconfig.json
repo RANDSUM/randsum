@@ -39,12 +39,6 @@
     "verbatimModuleSyntax": true,
     "noEmit": false
   },
-  "include": [
-    "packages/*/src/**/*",
-    "packages/*/src/**/*.json",
-    "packages/*/src/**/*.d.ts",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ],
+  "include": ["packages/*"],
   "exclude": ["node_modules", "packages/*/dist", "**/coverage"]
 }
