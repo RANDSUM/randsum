@@ -38,17 +38,5 @@
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true,
     "noEmit": false
-  },
-  "include": [
-    "packages/*/src/**/*",
-    "packages/*/src/**/*.json",
-    "packages/*/src/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "packages/*/dist",
-    "**/coverage",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  }
 }

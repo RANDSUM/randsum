@@ -10,9 +10,9 @@
     "build": "bunx moon :build",
     "test": "bunx moon :test",
     "lint": "bunx moon :lint",
-    "lint:fix": "bunx moon :lint:fix",
+    "lint:fix": "bunx moon :lint -- --fix",
     "format": "bunx moon :format",
-    "format:fix": "bunx moon :format:fix",
+    "format:fix": "bunx moon :format",
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
@@ -30,5 +30,8 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.0"
+  },
+  "engines": {
+    "node": "latest"
   }
 }
