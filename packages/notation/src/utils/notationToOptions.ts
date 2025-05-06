@@ -13,14 +13,8 @@ import type { DiceNotation, RollOptions } from '../types'
 
 export function notationToOptions(notationString: DiceNotation): RollOptions {
   const coreNotationMatch =
-    (typeof notationString === 'string'
-      ? notationString.match(coreNotationPattern)
-      : null
-    )?.at(0) ?? ''
-  const modifiersString =
-    typeof notationString === 'string'
-      ? notationString.replace(coreNotationMatch, '')
-      : ''
+    notationString.match(coreNotationPattern)?.at(0) ?? ''
+  const modifiersString = notationString.replace(coreNotationMatch, '')
   const [quantity, sides = ''] = coreNotationMatch.split(/[Dd]/)
 
   return {
@@ -43,7 +37,7 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
 
 const formatSides = (sides: string): number | string[] => {
   if (sides.includes('{')) {
-    return sides.replaceAll(/{|}/g, '').split(',')
+    return [...sides.replaceAll(/{|}/g, '')]
   }
   return Number(sides)
 }
