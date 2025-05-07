@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
-  <h1>Randsum: Advanced Dice Rolling for JavaScript & TypeScript</h1>
-  <h3>A flexible, type-safe dice rolling ecosystem for tabletop RPGs, game development, and simulations</h3>
+  <h1>Randsum</h1>
+  <h3>An Ergonomic, flexible, and type-safe dice rolling ecosystem for NPM</h3>
 
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
@@ -184,37 +184,9 @@ bun moon blades:build # Build @randsum/blades only
 
 - [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`.
 
-- [Bundle Size Optimization](https://github.com/RANDSUM/randsum/blob/main/packages/dice/BUNDLE_SIZE.md) - Guide to minimizing bundle size when using RANDSUM packages.
-
-- [Contributing](https://github.com/RANDSUM/randsum/blob/main/CONTRIBUTING.md) - help make `randsum` better!
-
-- [Moon Documentation](https://moonrepo.dev/docs) - Learn more about the build system powering this monorepo
-
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
-
-## Use Cases
-
-Randsum is perfect for:
-
-- **Virtual Tabletop Applications** - Implement dice rolling for online tabletop RPG platforms
-- **Game Development** - Add dice mechanics to digital games
-- **RPG Character Builders** - Generate character stats and automate dice-based calculations
-- **Discord Bots** - Create dice rolling bots for gaming communities
-- **Probability Simulations** - Run and analyze dice roll statistics
-- **Educational Tools** - Teach probability concepts with interactive dice simulations
-- **Board Game Companions** - Digital companions for physical board games
-
-## Why Choose Randsum?
-
-- **Type Safety** - Full TypeScript support with intelligent type inference
-- **Modular Design** - Use only what you need with tree-shakeable packages
-- **Comprehensive** - Support for multiple game systems out of the box
-- **Extensible** - Easy to extend for custom game systems
-- **Well-Documented** - Clear examples and comprehensive API documentation
-- **Actively Maintained** - Regular updates and responsive maintainers
-- **Performance Focused** - Optimized for speed and minimal bundle size
 
 ## 🤝 Contributing
 
