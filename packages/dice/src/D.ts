@@ -68,6 +68,24 @@ export class D<T extends number | string[]> implements BaseD<T> {
   public readonly isCustom: T extends number ? false : true
 
   /**
+   * Type guard to check if this is a numeric die
+   *
+   * @returns True if this is a numeric die, false if it's a custom die
+   */
+  public isNumericDie(): this is D<number> {
+    return this.type === 'numerical'
+  }
+
+  /**
+   * Type guard to check if this is a custom die
+   *
+   * @returns True if this is a custom die, false if it's a numeric die
+   */
+  public isCustomDie(): this is D<string[]> {
+    return this.type === 'custom'
+  }
+
+  /**
    * Creates a new die instance
    *
    * @param arg - For numeric dice, the number of sides (e.g., 6 for a d6).
@@ -83,24 +101,53 @@ export class D<T extends number | string[]> implements BaseD<T> {
         )
       }
       this.sides = arg
-      this.faces = generateNumericalFaces(arg) as T extends number
-        ? number[]
-        : string[]
-      this.type = 'numerical' as T extends number ? 'numerical' : 'custom'
-      this.isCustom = false as T extends number ? false : true
+      // Use type assertion only once with a helper function
+      this.faces = this.initNumericFaces(generateNumericalFaces(arg))
+      this.type = this.initType(true)
+      this.isCustom = this.initIsCustom(true)
     } else {
       if (!arg.length) {
         throw new Error('Custom die must have at least one face')
       }
 
       this.sides = arg.length
-      //eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      this.faces = [...(arg as string[])] as T extends number
-        ? number[]
-        : string[]
-      this.type = 'custom' as T extends number ? 'numerical' : 'custom'
-      this.isCustom = true as T extends number ? false : true
+      // Use type assertion only once with a helper function
+      this.faces = this.initCustomFaces([...arg])
+      this.type = this.initType(false)
+      this.isCustom = this.initIsCustom(false)
     }
+  }
+
+  /**
+   * Helper method to initialize numeric faces with proper typing
+   * @private
+   */
+  private initNumericFaces(faces: number[]): T extends number ? number[] : string[] {
+    return faces as T extends number ? number[] : string[]
+  }
+
+  /**
+   * Helper method to initialize custom faces with proper typing
+   * @private
+   */
+  private initCustomFaces(faces: string[]): T extends number ? number[] : string[] {
+    return faces as T extends number ? number[] : string[]
+  }
+
+  /**
+   * Helper method to initialize the type property with proper typing
+   * @private
+   */
+  private initType(isNumeric: boolean): T extends number ? 'numerical' : 'custom' {
+    return (isNumeric ? 'numerical' : 'custom') as T extends number ? 'numerical' : 'custom'
+  }
+
+  /**
+   * Helper method to initialize the isCustom property with proper typing
+   * @private
+   */
+  private initIsCustom(isNumeric: boolean): T extends number ? false : true {
+    return (!isNumeric) as T extends number ? false : true
   }
 
   /**
@@ -129,13 +176,12 @@ export class D<T extends number | string[]> implements BaseD<T> {
    */
   public roll(quantity = 1): T extends number ? number : string {
     const rolls = this.rollSpread(quantity)
-    if (this.type === 'numerical') {
-      return (rolls as number[]).reduce(
-        (acc, roll) => acc + roll,
-        0
-      ) as T extends number ? number : string
+    if (this.isNumericDie()) {
+      // TypeScript now knows rolls is number[] due to the type guard
+      return rolls.reduce((acc, roll) => acc + roll, 0) as T extends number ? number : string
     }
-    return (rolls as string[]).join(', ') as T extends number ? number : string
+    // TypeScript now knows rolls is string[] due to the type guard
+    return rolls.join(', ') as T extends number ? number : string
   }
 
   /**
@@ -158,11 +204,20 @@ export class D<T extends number | string[]> implements BaseD<T> {
    * const results = colorDie.rollSpread(2); // Returns e.g., ['Red', 'Blue']
    */
   public rollSpread(quantity = 1): T extends number ? number[] : string[] {
-    return coreSpreadRolls<string | number>(
+    // Use a generic helper method to handle the type assertion in one place
+    return this.spreadRollsWithProperType(coreSpreadRolls<string | number>(
       quantity,
       this.sides,
       this.faces
-    ) as T extends number ? number[] : string[]
+    ))
+  }
+
+  /**
+   * Helper method to ensure proper typing for roll spread results
+   * @private
+   */
+  private spreadRollsWithProperType(rolls: (string | number)[]): T extends number ? number[] : string[] {
+    return rolls as T extends number ? number[] : string[]
   }
 
   /**
@@ -189,13 +244,18 @@ export class D<T extends number | string[]> implements BaseD<T> {
     quantity = 1,
     modifiers: ModifierOptions = {}
   ): T extends number ? NumericRollResult : CustomRollResult {
-    return roll({
+    const options = {
       ...this.toOptions,
       quantity,
       modifiers
-    } as NumericRollOptions) as T extends number
-      ? NumericRollResult
-      : CustomRollResult
+    }
+
+    // Use the type guard to determine the correct return type
+    if (this.isNumericDie()) {
+      return roll(options) as NumericRollResult
+    }
+
+    return roll(options) as CustomRollResult
   }
 
   /**
@@ -223,16 +283,19 @@ export class D<T extends number | string[]> implements BaseD<T> {
   public get toOptions(): T extends number
     ? NumericRollOptions
     : CustomRollOptions {
-    if (this.type === 'numerical') {
+    if (this.isNumericDie()) {
+      // TypeScript now knows this is a numeric die due to the type guard
       return {
         quantity: 1,
         sides: this.sides
-      } as T extends number ? NumericRollOptions : CustomRollOptions
+      } as NumericRollOptions as T extends number ? NumericRollOptions : CustomRollOptions
     }
+
+    // TypeScript now knows this is a custom die due to the type guard
     return {
       quantity: 1,
       sides: [...this.faces] as string[]
-    } as T extends number ? NumericRollOptions : CustomRollOptions
+    } as CustomRollOptions as T extends number ? NumericRollOptions : CustomRollOptions
   }
 }
 

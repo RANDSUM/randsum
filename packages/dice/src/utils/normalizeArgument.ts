@@ -7,22 +7,48 @@ import {
   ReplaceModifier,
   RerollModifier,
   UniqueModifier,
-  optionsConverter
+  optionsConverter,
+  type CustomRollOptions,
+  type NumericRollOptions
 } from '@randsum/core'
-import { coreNotationPattern, isDiceNotation } from '@randsum/notation'
+import { coreNotationPattern, isDiceNotation, type CustomDiceNotation, type NumericDiceNotation } from '@randsum/notation'
 import { D } from '../D'
 import { isD } from '../guards/isD'
-import type { RollArgument, RollParams } from '../types'
+import type { BaseD, CustomRollArgument, CustomRollParams, NumericRollArgument, NumericRollParams, RollArgument, RollParams } from '../types'
 
+/**
+ * Normalizes roll arguments into a consistent format
+ *
+ * @param argument - The roll argument to normalize
+ * @returns Normalized roll parameters with appropriate typing
+ */
+export function normalizeArgument(argument: NumericRollArgument): NumericRollParams;
+export function normalizeArgument(argument: CustomRollArgument): CustomRollParams;
+export function normalizeArgument(argument: RollArgument): RollParams;
 export function normalizeArgument(argument: RollArgument): RollParams {
   const options = optionsFromArgument(argument)
+  const die = dieForArgument(argument)
+  const notation = optionsConverter.toNotation(options)
+  const description = optionsConverter.toDescription(options)
+
+  // Use type guards to determine the correct return type
+  if (typeof options.sides === 'number') {
+    return {
+      argument: argument as NumericRollArgument,
+      options: options as NumericRollOptions,
+      die: die as BaseD<number>,
+      notation: notation as NumericDiceNotation,
+      description
+    } as NumericRollParams
+  }
+
   return {
-    argument,
-    options,
-    die: dieForArgument(argument),
-    notation: optionsConverter.toNotation(options),
-    description: optionsConverter.toDescription(options)
-  } as RollParams
+    argument: argument as CustomRollArgument,
+    options: options as CustomRollOptions,
+    die: die as BaseD<string[]>,
+    notation: notation as CustomDiceNotation,
+    description
+  } as CustomRollParams
 }
 
 function optionsFromArgument(argument: RollArgument): RollParams['options'] {

@@ -19,20 +19,39 @@ import { calculateTotal } from './calculateTotal'
 import { coreRandom } from './coreRandom'
 import { coreSpreadRolls } from './coreSpreadRolls'
 
+/**
+ * Processes dice pools and returns roll results
+ *
+ * @param dicePools - The dice pools to process
+ * @returns Roll results with appropriate typing based on the dice pool type
+ */
+export function rollResultFromDicePools(dicePools: DicePool<NumericRollParams>): NumericRollResult;
+export function rollResultFromDicePools(dicePools: DicePool<CustomRollParams>): CustomRollResult;
+export function rollResultFromDicePools(dicePools: DicePool): RollResult;
 export function rollResultFromDicePools(dicePools: DicePool): RollResult {
   const rawRolls = generateRawRolls(dicePools.dicePools)
   const modifiedRolls = generateModifiedRolls(dicePools, rawRolls)
   const modifiedValues = Object.values(modifiedRolls)
+  const type = calculateDicePoolType(dicePools.dicePools)
 
-  return {
+  const result = {
     ...dicePools,
     rawRolls,
     modifiedRolls,
     rawResult: Object.values(rawRolls).flat(),
     result: modifiedValues.map((pool) => pool.rolls).flat(),
-    type: calculateDicePoolType(dicePools.dicePools),
+    type,
     total: calculateTotal(modifiedValues.map((pool) => pool.total))
-  } as RollResult
+  }
+
+  // Return the result with the appropriate type based on the calculated type
+  if (type === 'numerical') {
+    return result as NumericRollResult
+  } else if (type === 'custom') {
+    return result as CustomRollResult
+  }
+
+  return result as MixedRollResult
 }
 
 function calculateDicePoolType(
@@ -82,12 +101,14 @@ function applyModifier(
 
   switch (key) {
     case 'plus':
+      // We know this is a number because it's a plus modifier
       return {
         ...currentBonuses,
         simpleMathModifier: modifierValue as number
       }
 
     case 'minus':
+      // We know this is a number because it's a minus modifier
       return {
         ...currentBonuses,
         simpleMathModifier: -(modifierValue as number)
@@ -159,18 +180,22 @@ function generateModifiedRolls(
     const { sides, quantity = 1, modifiers = {} } = params.options
 
     if (Object.keys(modifiers).length === 0) {
+      // We know these are numeric rolls because we've already checked that the options are numeric
+      const numericRolls = rolls as number[]
       result[key] = {
-        total: calculateTotal(rolls),
-        rolls: rolls as number[]
+        total: calculateTotal(numericRolls),
+        rolls: numericRolls
       }
       continue
     }
 
     const rollOne = (): number => coreRandom(sides)
 
+    // We know these are numeric rolls because we've already checked that the options are numeric
+    const numericRolls = rolls as number[]
     const initialBonuses: NumericRollBonus = {
       simpleMathModifier: 0,
-      rolls: rolls as number[]
+      rolls: numericRolls
     }
 
     let bonuses = initialBonuses
