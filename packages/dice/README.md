@@ -201,10 +201,6 @@ import * as dice from '@randsum/dice'
 
 // ✅ Only imports what you need
 import { D20, roll } from '@randsum/dice'
-
-// ✅ Best for tree-shaking - direct imports
-import { D20 } from '@randsum/dice/premadeDice'
-import { roll } from '@randsum/dice/roll'
 ```
 
 ## Use Cases
