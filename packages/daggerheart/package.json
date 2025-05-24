@@ -1,7 +1,8 @@
 {
   "name": "@randsum/daggerheart",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "A flexible, type-safe dice roller for building Daggerheart-compatible applications",
+  "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
