@@ -3,8 +3,6 @@
   <h1>@randsum/5e</h1>
   <h3>Daggerheart Dice, by @RANDSUM</h3>
 
-
-
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
 </div>

@@ -1,13 +1,23 @@
 import { roll } from '@randsum/dice'
-import type { AdvantageDisadvantageDH, RollArgumentDH, RollResultDH } from './types'
+import type {
+  AdvantageDisadvantageDH,
+  RollArgumentDH,
+  RollResultDH
+} from './types'
 
-export function rollDH({ modifier = 0, rollingWith }: RollArgumentDH): RollResultDH {
+export function rollDH({
+  modifier = 0,
+  rollingWith
+}: RollArgumentDH): RollResultDH {
   const arg = {
     quantity: 2,
     sides: 12,
     modifiers: { plus: modifier }
   }
-  const { result: [hope, fear], total } = roll(arg)
+  const {
+    result: [hope, fear],
+    total
+  } = roll(arg)
   if (!hope || !fear || !total) {
     throw new Error('Failed to roll hope and fear')
   }
@@ -23,7 +33,10 @@ export function rollDH({ modifier = 0, rollingWith }: RollArgumentDH): RollResul
   }
 }
 
-function calculateTotal(total: number, rollingWith: AdvantageDisadvantageDH | undefined): number {
+function calculateTotal(
+  total: number,
+  rollingWith: AdvantageDisadvantageDH | undefined
+): number {
   if (rollingWith === 'Advantage') {
     return total + advantageDie()
   }
@@ -36,6 +49,6 @@ function calculateTotal(total: number, rollingWith: AdvantageDisadvantageDH | un
 function advantageDie(): number {
   return roll({
     quantity: 1,
-    sides: 6,
+    sides: 6
   }).total
 }

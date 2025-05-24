@@ -41,6 +41,6 @@ function generateModifiers(
         drop: { highest: 1 }
       }
     default:
-      return {drop: {}}
+      return { drop: {} }
   }
 }
