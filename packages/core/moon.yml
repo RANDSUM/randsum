@@ -11,7 +11,5 @@ tasks:
     deps: []
   lint:
     deps: []
-  format:
-    deps: []
   build:
     deps: []

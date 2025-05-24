@@ -33,19 +33,6 @@ tasks:
     options:
       cache: true
 
-  format:
-    command: 'prettier . --check --ignore-path ../../.prettierignore'
-    deps:
-      - 'build'
-    inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
-      - '**/*.json'
-      - '**/*.md'
-    options:
-      cache: true
-
   tsCheck:
     command: 'tsc --erasableSyntaxOnly'
     deps:
@@ -64,7 +51,6 @@ tasks:
     deps:
       - 'test'
       - 'lint'
-      - 'format'
       - 'tsCheck'
       - 'build'
 
@@ -72,5 +58,4 @@ tasks:
     deps:
       - 'test'
       - 'lint'
-      - 'format'
       - 'tsCheck'

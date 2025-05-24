@@ -34,10 +34,7 @@ export function rollDH({
   }
 }
 
-function calculateType(
-  hope: number,
-  fear: number,
-): RollResultDHType {
+function calculateType(hope: number, fear: number): RollResultDHType {
   if (hope === fear) {
     return 'critical hope'
   }
@@ -51,10 +48,10 @@ function calculateTotal(
   total: number,
   rollingWith: AdvantageDisadvantageDH | undefined
 ): number {
-  if (rollingWith === 'Advantage') {
-    return total + advantageDie()
-  }
-  if (rollingWith === 'Disadvantage') {
+  if (rollingWith) {
+    if (rollingWith === 'Advantage') {
+      return total + advantageDie()
+    }
     return total - advantageDie()
   }
   return total

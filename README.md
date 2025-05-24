@@ -164,12 +164,10 @@ Moon manages our task pipeline and dependencies. Common tasks include:
 - `:build` - Build all packages
 - `:test` - Run all tests
 - `:lint` - Run ESLint checks
-- `:format` - Run Prettier checks
 - `:tsCheck` - Run TypeScript checks
 - `:publish` - Publish packages (CI only)
 - `:lint:fix` - Run ESLint and fix issues
-- `:format:fix` - Run Prettier and fix formatting issues
-- `:ci` - Run all checks (build, test, lint, format, tsCheck)
+- `:ci` - Run all checks (build, test, lint, tsCheck)
 
 Each package can be targeted directly with `moon [package]:task`, for example:
 

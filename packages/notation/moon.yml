@@ -21,6 +21,3 @@ tasks:
   lint:
     deps:
       - 'core:build'
-  format:
-    deps:
-      - 'core:build'

@@ -24,7 +24,3 @@ tasks:
     deps:
       - 'core:build'
       - 'notation:build'
-  format:
-    deps:
-      - 'core:build'
-      - 'notation:build'

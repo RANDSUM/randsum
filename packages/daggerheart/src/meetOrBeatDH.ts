@@ -8,9 +8,9 @@ export function meetOrBeatDH(
   const result = rollDH(rollArg)
   const core = {
     ...result,
-    success: result.type === 'critical hope' ? true : result.total >= difficultyClass,
+    success:
+      result.type === 'critical hope' ? true : result.total >= difficultyClass,
     target: difficultyClass
-
   }
 
   return {

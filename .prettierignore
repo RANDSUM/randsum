@@ -1,9 +1,0 @@
-packages/*/dist/*
-dist
-coverage
-node_modules
-*.lock
-.*
-bin
-docs
-config/build/

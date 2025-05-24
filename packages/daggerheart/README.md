@@ -69,10 +69,12 @@ function rollDH(args: RollArgumentDH): RollResultDH
 ```
 
 **Parameters:**
+
 - `args.modifier` (optional): Numeric modifier to add to the roll total
 - `args.rollingWith` (optional): 'Advantage' or 'Disadvantage'
 
 **Returns:**
+
 - `type`: 'hope' (Hope > Fear), 'fear' (Fear > Hope), or 'critical hope' (Hope = Fear)
 - `total`: Sum of both dice + modifier ± advantage/disadvantage d6
 - `rolls`: Object containing individual Hope, Fear, and modifier values
@@ -82,14 +84,19 @@ function rollDH(args: RollArgumentDH): RollResultDH
 Checks if a Daggerheart roll meets or exceeds a Difficulty Class.
 
 ```typescript
-function meetOrBeatDH(difficultyClass: number, rollArg: RollArgumentDH): MeetOrBeatResultDH
+function meetOrBeatDH(
+  difficultyClass: number,
+  rollArg: RollArgumentDH
+): MeetOrBeatResultDH
 ```
 
 **Parameters:**
+
 - `difficultyClass`: The target number to meet or exceed
 - `rollArg`: Roll arguments (same as `rollDH`)
 
 **Returns:**
+
 - All properties from `RollResultDH`, plus:
 - `success`: `true` if roll meets/exceeds DC (Critical Hope always succeeds)
 - `target`: The DC that was tested against
