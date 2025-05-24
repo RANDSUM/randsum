@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "ci": "bun run build && bun run --filter='*' test && bun run --filter='*' lint && bun run --filter='*' format && bun run --filter='*' ts:check",
-    "build": "bun run --filter=@randsum/core build && bun run --filter=@randsum/notation build && bun run --filter=@randsum/dice build && bun run --filter='@randsum/5e' build && bun run --filter=@randsum/blades build && bun run --filter=@randsum/root-rpg build && bun run --filter=@randsum/salvageunion build && bun run --filter=@randsum/daggerheart build",
+    "build": "bun run --filter=@randsum/core build && bun run --filter=@randsum/notation build && bun run --filter=@randsum/dice build && bun run --filter='@randsum/5e' build && bun run --filter=@randsum/blades build && bun run --filter=@randsum/root-rpg build && bun run --filter=@randsum/salvageunion build",
     "test": "bun run --filter='*' test",
     "lint": "bun run --filter='*' lint",
     "lint:fix": "bun run --filter='*' lint:fix",

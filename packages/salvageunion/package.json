@@ -29,6 +29,15 @@
   "dependencies": {
     "@randsum/dice": "workspace:*"
   },
+  "scripts": {
+    "build": "bunup --entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c",
+    "test": "bun test",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "lint:fix": "eslint . -c ../../eslint.config.js --fix",
+    "format": "prettier . --check --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
+    "ts:check": "tsc --noEmit"
+  },
   "exports": {
     ".": {
       "import": {

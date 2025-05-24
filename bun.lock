@@ -5,7 +5,6 @@
       "name": "randsum-monorepo",
       "devDependencies": {
         "@eslint/js": "^9.27.0",
-        "@moonrepo/cli": "^1.36.1",
         "@types/bun": "1.2.13",
         "@typescript-eslint/eslint-plugin": "^8.32.1",
         "@typescript-eslint/parser": "^8.32.1",
@@ -65,9 +64,6 @@
       },
     },
   },
-  "trustedDependencies": [
-    "@moonrepo/cli",
-  ],
   "packages": {
     "@clack/core": ["@clack/core@0.4.2", "", { "dependencies": { "picocolors": "^1.0.0", "sisteransi": "^1.0.5" } }, "sha512-NYQfcEy8MWIxrT5Fj8nIVchfRFA26yYKJcvBS7WlUIlw2OmQOY9DhGGXMovyI5J5PpxrCPGkgUi207EBrjpBvg=="],
 
@@ -106,22 +102,6 @@
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.2", "", {}, "sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ=="],
 
     "@isaacs/cliui": ["@isaacs/cliui@8.0.2", "", { "dependencies": { "string-width": "^5.1.2", "string-width-cjs": "npm:string-width@^4.2.0", "strip-ansi": "^7.0.1", "strip-ansi-cjs": "npm:strip-ansi@^6.0.1", "wrap-ansi": "^8.1.0", "wrap-ansi-cjs": "npm:wrap-ansi@^7.0.0" } }, "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA=="],
-
-    "@moonrepo/cli": ["@moonrepo/cli@1.36.1", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "@moonrepo/core-linux-arm64-gnu": "1.36.1", "@moonrepo/core-linux-arm64-musl": "1.36.1", "@moonrepo/core-linux-x64-gnu": "1.36.1", "@moonrepo/core-linux-x64-musl": "1.36.1", "@moonrepo/core-macos-arm64": "1.36.1", "@moonrepo/core-macos-x64": "1.36.1", "@moonrepo/core-windows-x64-msvc": "1.36.1" }, "bin": { "moon": "moon.js" } }, "sha512-XL202GHcriCuEfBYP/xNVX+KwEfvK1aFNeHqma9yLXU4S003etpE6F8HTCttB5hYAacYRfZ3gM00eA44KAw7Rg=="],
-
-    "@moonrepo/core-linux-arm64-gnu": ["@moonrepo/core-linux-arm64-gnu@1.36.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-R4kxh6CentoYB7cxTZaYgw/mqvcB2Oarlt45xZZty0J/XCqSpBxl6J1fWkdoORUt0pUlnqwn5bIhXttJfZWahg=="],
-
-    "@moonrepo/core-linux-arm64-musl": ["@moonrepo/core-linux-arm64-musl@1.36.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-Fw9QuTNWQWMZyW2gWgnm4EiMMPJ1VIZyMxCY7H61O3nLFcSDU8hyjz7SpEp32a/FuwmkfYlzaVsRQCdBTagm7Q=="],
-
-    "@moonrepo/core-linux-x64-gnu": ["@moonrepo/core-linux-x64-gnu@1.36.1", "", { "os": "linux", "cpu": "x64" }, "sha512-jDRWel6I9NDdsTru79uMwunFFoCom5gbWoW5vTk+fkS0szb0TeLo4ydqKZ29bTJs544JRp8mLa80XmjEPvf+Ow=="],
-
-    "@moonrepo/core-linux-x64-musl": ["@moonrepo/core-linux-x64-musl@1.36.1", "", { "os": "linux", "cpu": "x64" }, "sha512-/PEOPEVqy1AzKi+tAIkgYLp0YymU7T03nXbM0bXfmz2+FfnXH4lg3w53CIQRUi/9c1YZqilgXbbHyd2I8FDZCw=="],
-
-    "@moonrepo/core-macos-arm64": ["@moonrepo/core-macos-arm64@1.36.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-SS2ff9OnNMCweCNnPCD8WqPv2MepjM/yrxd0RWgkZ274KVqhh25CC11YQfcWK18fuMamGUO8THFTjARqQUxdOg=="],
-
-    "@moonrepo/core-macos-x64": ["@moonrepo/core-macos-x64@1.36.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-nZ3422eRq5V1rmkgWgpGs0ab//XRCTL2QmfBQNfA5ql782H5aBViZtLqm5dbPzXuycHvVz0jek2W/1EQUuo3hA=="],
-
-    "@moonrepo/core-windows-x64-msvc": ["@moonrepo/core-windows-x64-msvc@1.36.1", "", { "os": "win32", "cpu": "x64" }, "sha512-fasK6SO4Ner2XBRk1idQorgoBp49MuWLQo7qbhRSvh/tuxsp+Br0DeRv5jqB6q0zyigHJR2ExGBrmWhOzsGvBQ=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@0.2.10", "", { "dependencies": { "@emnapi/core": "^1.4.3", "@emnapi/runtime": "^1.4.3", "@tybys/wasm-util": "^0.9.0" } }, "sha512-bCsCyeZEwVErsGmyPNSzwfwFn4OdxBj0mmv6hOFucB/k81Ojdu68RbZdxYsRQUPc9l6SU5F/cG+bXgWs3oUgsQ=="],
 
@@ -294,8 +274,6 @@
     "deep-is": ["deep-is@0.1.4", "", {}, "sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ=="],
 
     "defu": ["defu@6.1.4", "", {}, "sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg=="],
-
-    "detect-libc": ["detect-libc@2.0.3", "", {}, "sha512-bwy0MGW55bG41VqxxypOsdSdGqLwXPI/focwgTYCFMbdUiBAxLg9CFzG08sz2aqzknwiX7Hkl0bQENjg8iLByw=="],
 
     "eastasianwidth": ["eastasianwidth@0.2.0", "", {}, "sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA=="],
 
