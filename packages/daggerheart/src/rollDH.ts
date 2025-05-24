@@ -18,7 +18,7 @@ export function rollDH({
     result: [hope, fear],
     total
   } = roll(arg)
-  if (!hope || !fear || !total) {
+  if (hope === undefined || fear === undefined || total === undefined) {
     throw new Error('Failed to roll hope and fear')
   }
 
