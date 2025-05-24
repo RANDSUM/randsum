@@ -44,7 +44,7 @@ tasks:
       cache: true
 
   publish:
-    command: 'bun publish --no-git-checks'
+    command: 'bun publish --no-git-checks --access=public'
     options:
       runInCI: false
       allowFailure: true
