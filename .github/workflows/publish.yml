@@ -17,22 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: moonrepo/setup-toolchain@v0
-        with:
-          auto-install: true
-
-      - name: Restore build cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .moon/cache
-            packages/*/dist
-          key: ${{ runner.os }}-build-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-build-
-
       - run: bun install
-
       - name: Build packages
         run: moon :build -u
 

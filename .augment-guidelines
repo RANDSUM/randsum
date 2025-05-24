@@ -39,9 +39,6 @@
 ## Monorepo Management
 
 - Use bun for managing dependencies and running tests
-- Use moon for tasks related to managing the monorepo
-- Follow the dependency chain defined in moon.yml files
-- Run the appropriate moon tasks for building, testing, and linting
 - Ensure all packages have consistent versioning
 
 ## Testing
