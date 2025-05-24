@@ -1,16 +1,15 @@
 import {
   type ModifierOptions,
-  type NumericRollOptions,
   type NumericRollResult,
   roll
 } from '@randsum/dice'
-import type { AdvantageDisadvantage5e, RollArgument5e } from './types'
+import type { AdvantageDisadvantageDH, RollArgumentDH } from './types'
 
 export function roll5e({
   modifier,
   rollingWith
-}: RollArgument5e): NumericRollResult {
-  const rollArg: NumericRollOptions = {
+}: RollArgumentDH): NumericRollResult {
+  const rollArg = {
     sides: 20,
     quantity: generateQuantity(rollingWith),
     modifiers: { ...generateModifiers(rollingWith), plus: modifier }
@@ -18,7 +17,7 @@ export function roll5e({
   return roll(rollArg)
 }
 
-function generateQuantity(rollingWith?: AdvantageDisadvantage5e): 1 | 2 {
+function generateQuantity(rollingWith?: AdvantageDisadvantageDH): 1 | 2 {
   switch (rollingWith) {
     case 'Advantage':
     case 'Disadvantage':
@@ -29,7 +28,7 @@ function generateQuantity(rollingWith?: AdvantageDisadvantage5e): 1 | 2 {
 }
 
 function generateModifiers(
-  rollingWith: AdvantageDisadvantage5e | undefined
+  rollingWith: AdvantageDisadvantageDH | undefined
 ): Pick<ModifierOptions, 'drop'> {
   switch (rollingWith) {
     case 'Advantage':
@@ -41,6 +40,6 @@ function generateModifiers(
         drop: { highest: 1 }
       }
     default:
-      return {drop: {}}
+      return {}
   }
 }

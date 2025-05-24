@@ -1,0 +1,25 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+id: daggerheart
+language: 'typescript'
+dependsOn:
+  - 'dice'
+tags:
+  - 'game'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'dice:build'
+  build:
+    deps:
+      - 'dice:build'
+  test:
+    deps:
+      - 'dice:build'
+  lint:
+    deps:
+      - 'dice:build'
+  format:
+    deps:
+      - 'dice:build'

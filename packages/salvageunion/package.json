@@ -27,7 +27,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@randsum/dice": "workspace:*"
+    "@randsum/dice": "workspace:~"
   },
   "exports": {
     ".": {
