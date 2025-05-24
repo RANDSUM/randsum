@@ -1,5 +1,6 @@
 import {
   type ModifierOptions,
+  type NumericRollOptions,
   type NumericRollResult,
   roll
 } from '@randsum/dice'
@@ -9,7 +10,7 @@ export function roll5e({
   modifier,
   rollingWith
 }: RollArgument5e): NumericRollResult {
-  const rollArg = {
+  const rollArg: NumericRollOptions = {
     sides: 20,
     quantity: generateQuantity(rollingWith),
     modifiers: { ...generateModifiers(rollingWith), plus: modifier }
