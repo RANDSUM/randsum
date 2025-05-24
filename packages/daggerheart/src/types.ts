@@ -4,7 +4,7 @@ export interface RollArgumentDH {
   rollingWith?: AdvantageDisadvantageDH
 }
 
-export type RollResultDHType = 'hope' | 'fear'
+export type RollResultDHType = 'hope' | 'fear' | 'critical hope'
 
 export interface RollResultDH {
   type: RollResultDHType
@@ -19,4 +19,5 @@ export interface RollResultDH {
 export interface MeetOrBeatResultDH extends RollResultDH {
   success: boolean
   target: number
+  description: string
 }

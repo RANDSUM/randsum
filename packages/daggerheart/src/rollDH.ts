@@ -2,7 +2,8 @@ import { roll } from '@randsum/dice'
 import type {
   AdvantageDisadvantageDH,
   RollArgumentDH,
-  RollResultDH
+  RollResultDH,
+  RollResultDHType
 } from './types'
 
 export function rollDH({
@@ -18,12 +19,12 @@ export function rollDH({
     result: [hope, fear],
     total
   } = roll(arg)
-  if (hope === undefined || fear === undefined || total === undefined) {
+  if (hope === undefined || fear === undefined) {
     throw new Error('Failed to roll hope and fear')
   }
 
   return {
-    type: hope > fear ? 'hope' : 'fear',
+    type: calculateType(hope, fear),
     total: calculateTotal(total, rollingWith),
     rolls: {
       hope,
@@ -31,6 +32,19 @@ export function rollDH({
       modifier
     }
   }
+}
+
+function calculateType(
+  hope: number,
+  fear: number,
+): RollResultDHType {
+  if (hope === fear) {
+    return 'critical hope'
+  }
+  if (hope > fear) {
+    return 'hope'
+  }
+  return 'fear'
 }
 
 function calculateTotal(
