@@ -20,7 +20,9 @@
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitAny": true,
+    "strictNullChecks": true,
     "composite": true,
+    "outDir": "dist",
     "types": [
       "bun-types" // add Bun global
     ]
