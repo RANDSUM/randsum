@@ -45,5 +45,6 @@ jobs:
           moon root-rpg:publish -u
           moon salvageunion:publish -u
           moon blades:publish -u
+          moon daggerheart:publish -u
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
