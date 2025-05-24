@@ -1,12 +1,12 @@
 export type AdvantageDisadvantageDH = 'Advantage' | 'Disadvantage'
 export interface RollArgumentDH {
-  modifier: number
+  modifier?: number
   rollingWith?: AdvantageDisadvantageDH
 }
 
 export type RollResultDHType = 'hope' | 'fear'
 
-export interface CoreRollResultDH {
+export interface RollResultDH {
   type: RollResultDHType
   total: number
   rolls: {
@@ -16,7 +16,7 @@ export interface CoreRollResultDH {
   }
 }
 
-export interface RollResultDH extends CoreRollResultDH {
+export interface MeetOrBeatResultDH extends RollResultDH {
   success: boolean
   target: number
 }

@@ -1,9 +1,14 @@
-import { roll5e } from './rollDH'
-import type { RollArgument5e } from './types'
+import { rollDH } from './rollDH'
+import type { MeetOrBeatResultDH, RollArgumentDH } from './types'
 
-export function meetOrBeat5e(
+export function meetOrBeatDH(
   difficultyClass: number,
-  rollArg: RollArgument5e
-): boolean {
-  return roll5e(rollArg).total >= difficultyClass
+  rollArg: RollArgumentDH
+): MeetOrBeatResultDH {
+  const result = rollDH(rollArg)
+  return {
+    ...result,
+    success: result.total >= difficultyClass,
+    target: difficultyClass
+  }
 }

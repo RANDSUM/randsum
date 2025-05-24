@@ -1,45 +1,41 @@
-import {
-  type ModifierOptions,
-  type NumericRollResult,
-  roll
-} from '@randsum/dice'
-import type { AdvantageDisadvantageDH, RollArgumentDH } from './types'
+import { roll } from '@randsum/dice'
+import type { AdvantageDisadvantageDH, RollArgumentDH, RollResultDH } from './types'
 
-export function roll5e({
-  modifier,
-  rollingWith
-}: RollArgumentDH): NumericRollResult {
-  const rollArg = {
-    sides: 20,
-    quantity: generateQuantity(rollingWith),
-    modifiers: { ...generateModifiers(rollingWith), plus: modifier }
+export function rollDH({ modifier = 0, rollingWith }: RollArgumentDH): RollResultDH {
+  const arg = {
+    quantity: 2,
+    sides: 12,
+    modifiers: { plus: modifier }
   }
-  return roll(rollArg)
-}
+  const { result: [hope, fear], total } = roll(arg)
+  if (!hope || !fear || !total) {
+    throw new Error('Failed to roll hope and fear')
+  }
 
-function generateQuantity(rollingWith?: AdvantageDisadvantageDH): 1 | 2 {
-  switch (rollingWith) {
-    case 'Advantage':
-    case 'Disadvantage':
-      return 2
-    default:
-      return 1
+  return {
+    type: hope > fear ? 'hope' : 'fear',
+    total: calculateTotal(total, rollingWith),
+    rolls: {
+      hope,
+      fear,
+      modifier
+    }
   }
 }
 
-function generateModifiers(
-  rollingWith: AdvantageDisadvantageDH | undefined
-): Pick<ModifierOptions, 'drop'> {
-  switch (rollingWith) {
-    case 'Advantage':
-      return {
-        drop: { lowest: 1 }
-      }
-    case 'Disadvantage':
-      return {
-        drop: { highest: 1 }
-      }
-    default:
-      return {}
+function calculateTotal(total: number, rollingWith: AdvantageDisadvantageDH | undefined): number {
+  if (rollingWith === 'Advantage') {
+    return total + advantageDie()
   }
+  if (rollingWith === 'Disadvantage') {
+    return total - advantageDie()
+  }
+  return total
+}
+
+function advantageDie(): number {
+  return roll({
+    quantity: 1,
+    sides: 6,
+  }).total
 }

@@ -1,42 +1,31 @@
 {
   "compilerOptions": {
-    // Module Settings
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    // Environment setup & latest features
+    "lib": [
+      "ESNext"
+    ],
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "module": "Preserve",
     "moduleDetection": "force",
-    "useDefineForClassFields": true,
-
-    // Type Checking
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitOverride": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "noPropertyAccessFromIndexSignature": true,
-
-    // Type Declaration Settings
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "stripInternal": true,
-    "isolatedModules": true,
-
-    // Project Structure
-    "composite": true,
-    "rootDir": ".",
-    "baseUrl": ".",
-
-    // Build Settings
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "allowJs": true,
+    // Bundler mode
+    "moduleResolution": "bundler",
     "verbatimModuleSyntax": true,
-    "noEmit": false
+    "noEmit": false,
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "composite": true,
+    "types": [
+      "bun-types" // add Bun global
+    ]
   }
 }
