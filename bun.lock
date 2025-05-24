@@ -6,7 +6,7 @@
       "devDependencies": {
         "@eslint/js": "^9.27.0",
         "@moonrepo/cli": "^1.36.1",
-        "@types/bun": "1.2.13",
+        "@types/bun": "^1.2.14",
         "@typescript-eslint/eslint-plugin": "^8.32.1",
         "@typescript-eslint/parser": "^8.32.1",
         "bunup": "^0.7.6",
@@ -217,7 +217,7 @@
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.9.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw=="],
 
-    "@types/bun": ["@types/bun@1.2.13", "", { "dependencies": { "bun-types": "1.2.13" } }, "sha512-u6vXep/i9VBxoJl3GjZsl/BFIsvML8DfVDO0RYLEwtSZSp981kEO1V5NwRcO1CPJ7AmvpbnDCiMKo3JvbDEjAg=="],
+    "@types/bun": ["@types/bun@1.2.14", "", { "dependencies": { "bun-types": "1.2.14" } }, "sha512-VsFZKs8oKHzI7zwvECiAJ5oSorWndIWEVhfbYqZd4HI/45kzW7PN2Rr5biAzvGvRuNmYLSANY+H59ubHq8xw7Q=="],
 
     "@types/estree": ["@types/estree@1.0.7", "", {}, "sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ=="],
 
@@ -261,7 +261,7 @@
 
     "bun-dts": ["bun-dts@0.1.27", "", { "dependencies": { "coffi": "^0.1.28", "oxc-parser": "^0.68.1", "oxc-resolver": "^8.0.0", "oxc-transform": "^0.67.0", "ts-import-resolver": "^0.1.19" }, "peerDependencies": { "typescript": ">=4.5.0" }, "optionalPeers": ["typescript"] }, "sha512-ophb5WnUa7UdchwYU5y4nQVuT66bEwQFShh0lH+smWRw/z+hO7DffhECiEAW38BaqC008P8sKBUfYBLumuYrkA=="],
 
-    "bun-types": ["bun-types@1.2.13", "", { "dependencies": { "@types/node": "*" } }, "sha512-rRjA1T6n7wto4gxhAO/ErZEtOXyEZEmnIHQfl0Dt1QQSB4QV0iP6BZ9/YB5fZaHFQ2dwHFrmPaRQ9GGMX01k9Q=="],
+    "bun-types": ["bun-types@1.2.14", "", { "dependencies": { "@types/node": "*" } }, "sha512-Kuh4Ub28ucMRWeiUUWMHsT9Wcbr4H3kLIO72RZZElSDxSu7vpetRvxIUDUaW6QtaIeixIpm7OXtNnZPf82EzwA=="],
 
     "bunup": ["bunup@0.7.6", "", { "dependencies": { "@clack/prompts": "^0.10.1", "bun-dts": "^0.1.26", "chokidar": "^4.0.3", "coffi": "^0.1.28", "giget": "^2.0.0", "package-manager-detector": "^1.2.0", "replace-in-file": "^8.3.0", "tinyexec": "^1.0.1" }, "peerDependencies": { "typescript": ">=4.5.0" }, "optionalPeers": ["typescript"], "bin": { "bunup": "bin/bunup.mjs" } }, "sha512-yjcm/vZ+RjuDc5uUOYqiHA/euiuksUMbADlop+PD4Nw23qsN8hdg2l6havmYGvOBU7/bfhc12yRnLwHuMfff3A=="],
 
