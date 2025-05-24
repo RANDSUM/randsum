@@ -23,7 +23,6 @@ function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
     options: {
       sides: 4,
       quantity: 1,
-      ...overrides.options
     },
     ...overrides
   } as RollParams
