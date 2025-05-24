@@ -22,8 +22,7 @@ function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
     description: ['Roll 1d4'],
     options: {
       sides: 4,
-      quantity: 1,
-      ...overrides.options
+      quantity: 1
     },
     ...overrides
   } as RollParams

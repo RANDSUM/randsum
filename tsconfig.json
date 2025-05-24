@@ -1,42 +1,29 @@
 {
   "compilerOptions": {
-    // Module Settings
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "lib": [
+      "ESNext"
+    ],
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "module": "Preserve",
     "moduleDetection": "force",
-    "useDefineForClassFields": true,
-
-    // Type Checking
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "noEmit": false,
     "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
+    "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitOverride": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
     "noPropertyAccessFromIndexSignature": true,
-
-    // Type Declaration Settings
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "stripInternal": true,
-    "isolatedModules": true,
-
-    // Project Structure
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "composite": true,
-    "rootDir": ".",
-    "baseUrl": ".",
-
-    // Build Settings
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": false
+    "types": [
+      "bun-types" // add Bun global
+    ]
   }
 }

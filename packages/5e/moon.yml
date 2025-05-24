@@ -20,6 +20,3 @@ tasks:
   lint:
     deps:
       - 'dice:build'
-  format:
-    deps:
-      - 'dice:build'
