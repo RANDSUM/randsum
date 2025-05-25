@@ -1,7 +1,8 @@
 {
   "name": "@randsum/dice",
-  "version": "0.1.34",
+  "version": "0.1.35",
   "description": "A flexible, type-safe dice roller for tabletop RPGs, game development, and probability simulations",
+  "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
@@ -40,36 +41,6 @@
       "require": {
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
-      }
-    },
-    "./D": {
-      "import": {
-        "types": "./dist/D.d.mts",
-        "default": "./dist/D.mjs"
-      },
-      "require": {
-        "types": "./dist/D.d.cts",
-        "default": "./dist/D.cjs"
-      }
-    },
-    "./roll": {
-      "import": {
-        "types": "./dist/roll.d.mts",
-        "default": "./dist/roll.mjs"
-      },
-      "require": {
-        "types": "./dist/roll.d.cts",
-        "default": "./dist/roll.cjs"
-      }
-    },
-    "./premadeDice": {
-      "import": {
-        "types": "./dist/premadeDice.d.mts",
-        "default": "./dist/premadeDice.mjs"
-      },
-      "require": {
-        "types": "./dist/premadeDice.d.cts",
-        "default": "./dist/premadeDice.cjs"
       }
     },
     "./package.json": "./package.json"

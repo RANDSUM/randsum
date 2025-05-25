@@ -21,32 +21,32 @@
     },
     "packages/5e": {
       "name": "@randsum/5e",
-      "version": "0.1.32",
+      "version": "0.1.35",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "0.1.32",
+      "version": "0.1.35",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },
     },
     "packages/core": {
       "name": "@randsum/core",
-      "version": "0.1.32",
+      "version": "0.1.35",
     },
     "packages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "0.1.32",
+      "version": "0.1.35",
       "dependencies": {
         "@randsum/dice": "workspace:*",
       },
     },
     "packages/dice": {
       "name": "@randsum/dice",
-      "version": "0.1.32",
+      "version": "0.1.35",
       "bin": "./bin/randsum",
       "dependencies": {
         "@randsum/core": "workspace:~",
@@ -55,26 +55,29 @@
     },
     "packages/notation": {
       "name": "@randsum/notation",
-      "version": "0.1.32",
+      "version": "0.1.35",
       "dependencies": {
         "@randsum/core": "workspace:~",
       },
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.1.32",
+      "version": "0.1.35",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.1.32",
+      "version": "0.1.35",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },
     },
   },
+  "trustedDependencies": [
+    "@moonrepo/cli",
+  ],
   "packages": {
     "@clack/core": ["@clack/core@0.4.2", "", { "dependencies": { "picocolors": "^1.0.0", "sisteransi": "^1.0.5" } }, "sha512-NYQfcEy8MWIxrT5Fj8nIVchfRFA26yYKJcvBS7WlUIlw2OmQOY9DhGGXMovyI5J5PpxrCPGkgUi207EBrjpBvg=="],
 
