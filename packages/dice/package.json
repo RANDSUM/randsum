@@ -43,36 +43,6 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./D": {
-      "import": {
-        "types": "./dist/D.d.mts",
-        "default": "./dist/D.mjs"
-      },
-      "require": {
-        "types": "./dist/D.d.cts",
-        "default": "./dist/D.cjs"
-      }
-    },
-    "./roll": {
-      "import": {
-        "types": "./dist/roll.d.mts",
-        "default": "./dist/roll.mjs"
-      },
-      "require": {
-        "types": "./dist/roll.d.cts",
-        "default": "./dist/roll.cjs"
-      }
-    },
-    "./premadeDice": {
-      "import": {
-        "types": "./dist/premadeDice.d.mts",
-        "default": "./dist/premadeDice.mjs"
-      },
-      "require": {
-        "types": "./dist/premadeDice.d.cts",
-        "default": "./dist/premadeDice.cjs"
-      }
-    },
     "./package.json": "./package.json"
   },
   "engines": {

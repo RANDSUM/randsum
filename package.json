@@ -13,6 +13,9 @@
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
+  "trustedDependencies": [
+    "@moonrepo/cli"
+  ],
   "devDependencies": {
     "@randsum/core": "workspace:~",
     "@randsum/dice": "workspace:~",
