@@ -23,11 +23,14 @@ export function rollDH({
     throw new Error('Failed to roll hope and fear')
   }
 
+  const [totalWithAdvantage, advantage] = calculateTotal(total, rollingWith)
+
   return {
     type: calculateType(hope, fear),
-    total: calculateTotal(total, rollingWith),
+    total: totalWithAdvantage,
     rolls: {
       hope,
+      advantage,
       fear,
       modifier
     }
@@ -47,14 +50,15 @@ function calculateType(hope: number, fear: number): RollResultDHType {
 function calculateTotal(
   total: number,
   rollingWith: AdvantageDisadvantageDH | undefined
-): number {
+): [number, number | undefined] {
   if (rollingWith) {
+    const advantage = advantageDie()
     if (rollingWith === 'Advantage') {
-      return total + advantageDie()
+      return [total + advantage, advantage]
     }
-    return total - advantageDie()
+    return [total - advantage, -advantage]
   }
-  return total
+  return [total, undefined]
 }
 
 function advantageDie(): number {

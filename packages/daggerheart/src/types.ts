@@ -13,6 +13,7 @@ export interface RollResultDH {
     hope: number
     fear: number
     modifier: number
+    advantage: number | undefined
   }
 }
 
