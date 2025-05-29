@@ -14,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/salvageunion"
+    "directory": "gamePackages/salvageunion"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

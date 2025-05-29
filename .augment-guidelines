@@ -65,7 +65,6 @@
 - Avoid side effects in modules
 - Consider performance implications when working with large datasets
 - Export individual functions to allow for tree-shaking
-- Follow the guidelines in packages/dice/BUNDLE_SIZE.md
 
 ## Package-Specific Guidelines
 

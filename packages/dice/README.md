@@ -283,10 +283,10 @@ function simulateStatRolls(iterations = 10000) {
 ## Related Packages
 
 - [@randsum/notation](https://github.com/RANDSUM/randsum/tree/main/packages/notation): Dice notation parser
-- [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/packages/5e): 5th Edition compatible dice rolling
-- [@randsum/blades](https://github.com/RANDSUM/randsum/tree/main/packages/blades): Blades in the Dark dice system
-- [@randsum/root-rpg](https://github.com/RANDSUM/randsum/tree/main/packages/root-rpg): Root RPG dice system
-- [@randsum/salvageunion](https://github.com/RANDSUM/randsum/tree/main/packages/salvageunion): Salvage Union dice system
+- [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/gamePackages/5e): 5th Edition compatible dice rolling
+- [@randsum/blades](https://github.com/RANDSUM/randsum/tree/main/gamePackages/blades): Blades in the Dark dice system
+- [@randsum/root-rpg](https://github.com/RANDSUM/randsum/tree/main/gamePackages/root-rpg): Root RPG dice system
+- [@randsum/salvageunion](https://github.com/RANDSUM/randsum/tree/main/gamePackages/salvageunion): Salvage Union dice system
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

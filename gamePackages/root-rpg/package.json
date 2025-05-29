@@ -1,7 +1,7 @@
 {
-  "name": "@randsum/blades",
+  "name": "@randsum/root-rpg",
   "version": "0.1.36",
-  "description": "Blades in the Dark compatible dice rolling implementation",
+  "description": "A flexible, type-safe dice roller for the Root RPG system",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -12,10 +12,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/blades"
+    "directory": "gamePackages/root-rpg"
   },
-  "sideEffects": false,
-  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,6 +25,8 @@
     "LICENSE",
     "README.md"
   ],
+  "sideEffects": false,
+  "type": "module",
   "dependencies": {
     "@randsum/dice": "workspace:~"
   },
@@ -52,8 +52,8 @@
     "rpg",
     "random",
     "typescript",
+    "root",
     "tabletop",
-    "blades",
-    "forged-in-the-dark"
+    "root-rpg"
   ]
 }
