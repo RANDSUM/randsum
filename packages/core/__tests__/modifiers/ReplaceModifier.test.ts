@@ -139,7 +139,6 @@ describe('ReplaceModifier', () => {
       }
 
       const result = modifier.apply(bonus)
-      // Should apply all rules in sequence - first rule replaces 1->5, second rule replaces 1->6 (but 1 is already 5), third rule replaces 2->5
       expect(result.rolls).toEqual([5, 5, 3])
     })
 
@@ -154,7 +153,6 @@ describe('ReplaceModifier', () => {
       }
 
       const result = modifier.apply(bonus)
-      // First rule: 100->1, second rule: 1->100. So [1,6,100] becomes [100,6,1] after first rule, then [100,6,100] after second rule
       expect(result.rolls).toEqual([100, 6, 100])
     })
 
