@@ -188,7 +188,7 @@ notationToOptions('4d6L')
 ## Related Packages
 
 - [@randsum/dice](https://github.com/RANDSUM/randsum/tree/main/packages/dice): Dice rolling implementation
-- [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/packages/5e): 5th Edition compatible dice rolling
+- [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/gamePackages/5e): 5th Edition compatible dice rolling
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

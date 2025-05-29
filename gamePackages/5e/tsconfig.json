@@ -14,7 +14,7 @@
   ],
   "references": [
     {
-      "path": "../dice"
+      "path": "../../packages/dice"
     }
   ]
 }

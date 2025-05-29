@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/5e"
+    "directory": "gamePackages/5e"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
