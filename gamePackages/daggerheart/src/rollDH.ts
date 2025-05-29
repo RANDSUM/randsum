@@ -7,13 +7,6 @@ import type {
 } from './types'
 
 function rollArg({ modifier = 0, amplifyHope = false, amplifyFear = false }: RollArgumentDH): NumericRollOptions[] {
-  if (!amplifyHope && !amplifyFear) {
-    return [{
-      quantity: 2,
-      sides: 12,
-      modifiers: { plus: modifier }
-    }]
-  }
   if (amplifyHope && amplifyFear) {
     return [{
       quantity: 2,
