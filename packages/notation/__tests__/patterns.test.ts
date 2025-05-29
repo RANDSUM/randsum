@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { coreNotationPattern, completeRollPattern } from '../src/patterns'
+import { completeRollPattern, coreNotationPattern } from '../src/patterns'
 
 describe('coreNotationPattern', () => {
   describe('valid core notations', () => {
@@ -150,7 +150,7 @@ describe('completeRollPattern', () => {
       const cleanInput = input.replace(/\s/g, '')
       const matches = cleanInput.match(completeRollPattern)
       expect(matches).toBeTruthy()
-      expect(matches!.length).toBeGreaterThan(0)
+      expect(matches?.length).toBeGreaterThan(0)
       expect(matches).toContain('2d6')
       expect(matches).toContain('+3')
       expect(matches).toContain('L1')
@@ -163,7 +163,7 @@ describe('completeRollPattern', () => {
       const startTime = performance.now()
       const matches = largeInput.match(completeRollPattern)
       const endTime = performance.now()
-      
+
       expect(matches).toBeTruthy()
       expect(endTime - startTime).toBeLessThan(100) // Should complete in under 100ms
     })
@@ -219,7 +219,7 @@ describe('pattern integration', () => {
       const complexNotation = '2d6+3L1'
       const coreMatch = complexNotation.match(coreNotationPattern)?.[0]
       const completeMatches = complexNotation.match(completeRollPattern)
-      
+
       expect(coreMatch).toBe('2d6')
       expect(completeMatches).toContain('2d6')
     })

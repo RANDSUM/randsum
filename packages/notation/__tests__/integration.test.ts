@@ -1,8 +1,9 @@
+import type { DiceNotation } from '@randsum/core'
 import { describe, expect, it } from 'bun:test'
 import { isDiceNotation } from '../src/isDiceNotation'
-import { validateNotation } from '../src/validateNotation'
+import { completeRollPattern, coreNotationPattern } from '../src/patterns'
 import { notationToOptions } from '../src/utils/notationToOptions'
-import { coreNotationPattern, completeRollPattern } from '../src/patterns'
+import { validateNotation } from '../src/validateNotation'
 
 describe('Integration Tests', () => {
   describe('isDiceNotation and validateNotation consistency', () => {
@@ -68,7 +69,7 @@ describe('Integration Tests', () => {
         const corePatternMatch = coreNotationPattern.test(notation)
         const cleanNotation = notation.replace(/\s/g, '')
         const completePatternMatch = cleanNotation.replace(completeRollPattern, '').length === 0
-        
+
         // If isDiceNotation returns true, patterns should support it
         if (isDiceResult) {
           expect(corePatternMatch).toBe(true)
@@ -91,9 +92,9 @@ describe('Integration Tests', () => {
       it(`notationToOptions correctly parses: ${input}`, () => {
         // First verify it's considered valid
         expect(isDiceNotation(input)).toBe(true)
-        
+
         // Then verify parsing
-        const options = notationToOptions(input)
+        const options = notationToOptions(input as DiceNotation)
         expect(options.quantity).toBe(expectedQuantity)
         expect(options.sides).toEqual(expectedSides)
       })
@@ -103,7 +104,7 @@ describe('Integration Tests', () => {
   describe('type definition alignment', () => {
     it('validateNotation returns correct types for numerical dice', () => {
       const result = validateNotation('2d6')
-      
+
       expect(result.valid).toBe(true)
       if (result.valid) {
         expect(result.type).toBe('numerical')
@@ -114,7 +115,7 @@ describe('Integration Tests', () => {
 
     it('validateNotation returns correct types for custom dice', () => {
       const result = validateNotation('2d{abc}')
-      
+
       expect(result.valid).toBe(true)
       if (result.valid) {
         expect(result.type).toBe('custom')
@@ -125,7 +126,7 @@ describe('Integration Tests', () => {
 
     it('validateNotation returns correct types for invalid notation', () => {
       const result = validateNotation('invalid')
-      
+
       expect(result.valid).toBe(false)
       expect(result.type).toBe('invalid')
       expect(result.digested).toEqual({})
@@ -145,16 +146,16 @@ describe('Integration Tests', () => {
         // Step 1: Check if it's valid dice notation
         const isValid = isDiceNotation(notation)
         expect(isValid).toBe(true)
-        
+
         // Step 2: Validate the notation
         const validation = validateNotation(notation)
         expect(validation.valid).toBe(true)
-        
+
         // Step 3: Parse to options
-        const options = notationToOptions(notation)
+        const options = notationToOptions(notation as DiceNotation)
         expect(options.quantity).toBeGreaterThan(0)
         expect(options.sides).toBeDefined()
-        
+
         // Step 4: Verify consistency
         if (validation.valid) {
           expect(validation.digested).toEqual(options)
@@ -190,32 +191,32 @@ describe('Integration Tests', () => {
     it('all functions perform well with repeated calls', () => {
       const notation = '2d6+3'
       const iterations = 1000
-      
+
       const startTime = performance.now()
-      
+
       for (let i = 0; i < iterations; i++) {
         isDiceNotation(notation)
         validateNotation(notation)
         notationToOptions(notation)
       }
-      
+
       const endTime = performance.now()
       const totalTime = endTime - startTime
-      
+
       // Should complete 1000 iterations in reasonable time
       expect(totalTime).toBeLessThan(1000) // Less than 1 second
     })
 
     it('handles large notation strings efficiently', () => {
       const largeNotation = '999999d999999+999999'
-      
+
       const startTime = performance.now()
-      
+
       const isDiceResult = isDiceNotation(largeNotation)
       const validateResult = validateNotation(largeNotation)
-      
+
       const endTime = performance.now()
-      
+
       expect(isDiceResult).toBe(true)
       expect(validateResult.valid).toBe(true)
       expect(endTime - startTime).toBeLessThan(100) // Should be fast
