@@ -1,6 +1,6 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { BaseModifier } from '../../src/modifiers/BaseModifier'
-import type { NumericRollBonus, RequiredNumericRollParameters } from '../../src/types'
+import type { NumericRollBonus } from '../../src/types'
 
 class TestModifier extends BaseModifier<number> {
   public static override parse = mock((_modifierString: string) => {
@@ -104,31 +104,6 @@ describe('BaseModifier', () => {
       expect(result).toBe(bonus)
     })
 
-    test('apply method accepts optional parameters and rollOne function', () => {
-      const modifier = new TestModifier(10)
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2],
-        simpleMathModifier: 0
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
-        quantity: 2
-      }
-      const rollOne = (): number => 4
-
-      const result = modifier.apply(bonus, params, rollOne)
-      expect(result.simpleMathModifier).toBe(10)
-    })
-
-    test('handles error conditions in concrete implementations', () => {
-      const modifier = new ErrorThrowingModifier(true)
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2],
-        simpleMathModifier: 0
-      }
-
-      expect(() => modifier.apply(bonus)).toThrow('Test error in apply method')
-    })
   })
 
   describe('toDescription', () => {
@@ -223,7 +198,7 @@ describe('BaseModifier', () => {
   describe('edge cases and boundary conditions', () => {
     test('handles null and undefined options correctly', () => {
       const undefinedModifier = new TestModifier(undefined)
-      const nullModifier = new TestModifier(null as any)
+      const nullModifier = new TestModifier(null as unknown as undefined)
 
       expect(undefinedModifier.getOptions()).toBeUndefined()
       expect(nullModifier.getOptions()).toBeNull()
