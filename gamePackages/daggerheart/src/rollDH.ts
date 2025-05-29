@@ -1,4 +1,4 @@
-import { roll } from '@randsum/dice'
+import { type NumericRollOptions, roll } from '@randsum/dice'
 import type {
   AdvantageDisadvantageDH,
   RollArgumentDH,
@@ -6,19 +6,55 @@ import type {
   RollResultDHType
 } from './types'
 
-export function rollDH({
-  modifier = 0,
-  rollingWith
-}: RollArgumentDH): RollResultDH {
-  const arg = {
+function rollArg({ modifier = 0, amplifyHope = false, amplifyFear = false }: RollArgumentDH): NumericRollOptions[] {
+  if (amplifyHope && amplifyFear) {
+    return [{
+      quantity: 2,
+      sides: 20,
+      modifiers: { plus: modifier }
+    }]
+  }
+  if (amplifyHope) {
+    return [{
+      quantity: 1,
+      sides: 20,
+      modifiers: { plus: modifier }
+    },
+    {
+      quantity: 1,
+      sides: 12,
+      modifiers: { plus: modifier }
+    }]
+  }
+  if (amplifyFear) {
+    return [{
+      quantity: 1,
+      sides: 12,
+      modifiers: { plus: modifier }
+    },
+    {
+      quantity: 1,
+      sides: 12,
+      modifiers: { plus: modifier }
+    }]
+  }
+  return [{
     quantity: 2,
     sides: 12,
     modifiers: { plus: modifier }
-  }
+  }]
+}
+
+export function rollDH({
+  modifier = 0,
+  rollingWith,
+  amplifyHope = false,
+  amplifyFear = false
+}: RollArgumentDH): RollResultDH {
   const {
     result: [hope, fear],
     total
-  } = roll(arg)
+  } = roll(...rollArg({ modifier, amplifyHope, amplifyFear }))
   if (hope === undefined || fear === undefined) {
     throw new Error('Failed to roll hope and fear')
   }

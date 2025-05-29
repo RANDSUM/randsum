@@ -2,6 +2,8 @@ export type AdvantageDisadvantageDH = 'Advantage' | 'Disadvantage'
 export interface RollArgumentDH {
   modifier?: number
   rollingWith?: AdvantageDisadvantageDH
+  amplifyHope?: boolean
+  amplifyFear?: boolean
 }
 
 export type RollResultDHType = 'hope' | 'fear' | 'critical hope'
