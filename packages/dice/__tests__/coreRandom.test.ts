@@ -72,7 +72,7 @@ describe('coreRandom', () => {
       const expectedCount = iterations / 6
       const tolerance = expectedCount * 0.1 // 10% tolerance
 
-      counts.forEach((count, index) => {
+      counts.forEach((count) => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
         expect(count).toBeLessThan(expectedCount + tolerance)
       })
@@ -91,7 +91,7 @@ describe('coreRandom', () => {
       const expectedCount = iterations / 20
       const tolerance = expectedCount * 0.15 // 15% tolerance for smaller sample per face
 
-      counts.forEach((count, index) => {
+      counts.forEach((count) => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
         expect(count).toBeLessThan(expectedCount + tolerance)
       })
@@ -120,7 +120,7 @@ describe('createSeededRandom', () => {
   describe('basic functionality', () => {
     test('creates a function that returns numbers in range', () => {
       const seededRandom = createSeededRandom(12345)
-      
+
       for (let i = 0; i < 100; i++) {
         const result = seededRandom(6)
         expect(result).toBeGreaterThanOrEqual(0)
@@ -184,7 +184,7 @@ describe('createSeededRandom', () => {
   describe('edge cases and boundary conditions', () => {
     test('handles zero seed', () => {
       const seededRandom = createSeededRandom(0)
-      
+
       for (let i = 0; i < 100; i++) {
         const result = seededRandom(6)
         expect(result).toBeGreaterThanOrEqual(0)
@@ -195,7 +195,7 @@ describe('createSeededRandom', () => {
 
     test('handles negative seed', () => {
       const seededRandom = createSeededRandom(-12345)
-      
+
       for (let i = 0; i < 100; i++) {
         const result = seededRandom(6)
         expect(result).toBeGreaterThanOrEqual(0)
@@ -206,7 +206,7 @@ describe('createSeededRandom', () => {
 
     test('handles large seed values', () => {
       const seededRandom = createSeededRandom(Number.MAX_SAFE_INTEGER)
-      
+
       for (let i = 0; i < 100; i++) {
         const result = seededRandom(6)
         expect(result).toBeGreaterThanOrEqual(0)
@@ -217,7 +217,7 @@ describe('createSeededRandom', () => {
 
     test('handles edge case with max value of 1', () => {
       const seededRandom = createSeededRandom(12345)
-      
+
       for (let i = 0; i < 100; i++) {
         const result = seededRandom(1)
         expect(result).toBe(0)
@@ -235,7 +235,7 @@ describe('createSeededRandom', () => {
     test('produces different values in sequence', () => {
       const seededRandom = createSeededRandom(12345)
       const results = Array.from({ length: 100 }, () => seededRandom(1000))
-      
+
       // Should not have all identical values (extremely unlikely with good RNG)
       const uniqueValues = new Set(results)
       expect(uniqueValues.size).toBeGreaterThan(50) // At least 50% unique values
@@ -243,20 +243,20 @@ describe('createSeededRandom', () => {
 
     test('maintains state between calls', () => {
       const seededRandom = createSeededRandom(98765)
-      
+
       // First sequence
       const firstSequence = Array.from({ length: 10 }, () => seededRandom(100))
-      
+
       // Second sequence should be different (continuing from internal state)
       const secondSequence = Array.from({ length: 10 }, () => seededRandom(100))
-      
+
       expect(firstSequence).not.toEqual(secondSequence)
     })
 
     test('handles potential overflow in xorshift operations', () => {
       // Test with a seed that might cause overflow issues
       const seededRandom = createSeededRandom(2147483647) // Max 32-bit signed integer
-      
+
       for (let i = 0; i < 1000; i++) {
         const result = seededRandom(20)
         expect(result).toBeGreaterThanOrEqual(0)
@@ -281,7 +281,7 @@ describe('createSeededRandom', () => {
       const expectedCount = iterations / 6
       const tolerance = expectedCount * 0.15 // 15% tolerance
 
-      counts.forEach((count, index) => {
+      counts.forEach((count) => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
         expect(count).toBeLessThan(expectedCount + tolerance)
       })
