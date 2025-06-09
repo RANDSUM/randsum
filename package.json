@@ -21,16 +21,16 @@
     "@randsum/core": "workspace:~",
     "@randsum/dice": "workspace:~",
     "@randsum/notation": "workspace:~",
-    "@eslint/js": "^9.27.0",
-    "@moonrepo/cli": "^1.36.2",
+    "@eslint/js": "^9.28.0",
+    "@moonrepo/cli": "^1.37.1",
     "@types/bun": "^1.2.15",
-    "@typescript-eslint/eslint-plugin": "^8.33.0",
-    "@typescript-eslint/parser": "^8.33.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
     "bunup": "^0.7.6",
-    "eslint": "^9.27.0",
+    "eslint": "^9.28.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.33.0"
+    "typescript-eslint": "^8.33.1"
   },
   "engines": {
     "node": "latest"
