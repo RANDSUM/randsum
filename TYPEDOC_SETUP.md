@@ -10,14 +10,21 @@ This configuration resolves the recursive directory creation issue that was caus
 2. **Fixed recursive directory issue** by using a temporary output directory outside the source tree
 3. **Configured comprehensive monorepo support** for all 8 packages
 4. **Added proper exclusion patterns** to prevent problematic file copying
-5. **Integrated with existing build process** using npm scripts
+5. **Implemented dark theme** with custom CSS and JavaScript injection
+6. **Enhanced syntax highlighting** with github-dark theme and language-specific classes
+7. **Organized packages into sections** - "Core Packages" and "Game Systems"
+8. **Added game system links** to external documentation for each RPG system
+9. **Integrated with existing build process** using npm scripts and Bun server
 
 ## Files Created/Modified
 
 ### New Files
-- `typedoc.json` - Main TypeDoc configuration
+- `typedoc.json` - Main TypeDoc configuration with dark theme and enhanced highlighting
 - `.typedocignore` - Additional exclusion patterns
+- `docs/dark-theme.css` - Custom dark theme CSS with enhanced styling
 - `scripts/serve-docs.ts` - Bun-based static file server for documentation
+- `scripts/inject-dark-theme.ts` - Script to inject dark theme JavaScript
+- `scripts/enhance-docs.ts` - Script to organize packages and add game system links
 - `TYPEDOC_SETUP.md` - This documentation
 
 ### Modified Files
