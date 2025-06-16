@@ -26,7 +26,7 @@
     "@types/bun": "^1.2.16",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.34.0",
-    "bunup": "^0.7.6",
+    "bunup": "^0.8.39",
     "eslint": "^9.29.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
