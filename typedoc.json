@@ -2,16 +2,16 @@
   "$schema": "https://typedoc.org/schema.json",
   "name": "RANDSUM API Documentation",
   "entryPoints": [
-    "packages/core/src/index.ts",
-    "packages/dice/src/index.ts",
-    "packages/notation/src/index.ts",
-    "gamePackages/5e/src/index.ts",
-    "gamePackages/blades/src/index.ts",
-    "gamePackages/daggerheart/src/index.ts",
-    "gamePackages/root-rpg/src/index.ts",
-    "gamePackages/salvageunion/src/index.ts"
+    "packages/core",
+    "packages/dice",
+    "packages/notation",
+    "gamePackages/5e",
+    "gamePackages/blades",
+    "gamePackages/daggerheart",
+    "gamePackages/root-rpg",
+    "gamePackages/salvageunion"
   ],
-  "entryPointStrategy": "expand",
+  "entryPointStrategy": "packages",
   "out": "/tmp/typedoc-randsum",
   "tsconfig": "tsconfig.json",
   "readme": "none",
@@ -42,12 +42,9 @@
   "categorizeByGroup": true,
   "defaultCategory": "Other",
   "categoryOrder": [
-    "Core Packages",
-    "Game Systems",
-    "*"
-  ],
-  "groupOrder": [
-    "Core Packages",
+    "Core",
+    "Dice",
+    "Notation",
     "Game Systems",
     "*"
   ],
@@ -91,25 +88,17 @@
     "invalidLink": true,
     "notDocumented": false
   },
-  "cname": "",
+  "cname": false,
   "sourceLinkTemplate": "https://github.com/RANDSUM/randsum/blob/{gitRevision}/{path}#L{line}",
   "gitRevision": "main",
   "gitRemote": "origin",
   "hideGenerator": false,
-  "customCss": "docs/dark-theme.css",
+  "customCss": "",
   "markdownItOptions": {},
   "maxTypeConversionDepth": 10,
   "theme": "default",
-  "lightHighlightTheme": "github-dark",
-  "darkHighlightTheme": "github-dark",
-  "highlightLanguages": [
-    "typescript",
-    "javascript",
-    "json",
-    "bash",
-    "shell",
-    "markdown"
-  ],
+  "lightHighlightTheme": "light-plus",
+  "darkHighlightTheme": "dark-plus",
   "navigationLinks": {
     "GitHub": "https://github.com/RANDSUM/randsum",
     "NPM": "https://www.npmjs.com/org/randsum"
