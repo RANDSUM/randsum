@@ -64,7 +64,7 @@ cd randsum
 bun install
 
 # Build all packages
-bun run build:all
+bun build
 ```
 
 ### Running Tests
@@ -93,13 +93,18 @@ bun lint
 
 This is a monorepo containing several packages:
 
-```
+```text
 packages/
 ├── core/         # Shared utilities and types
 ├── dice/         # Core dice rolling implementation
-├── notation/     # Dice notation parser
-├── 5e/          # D&D 5e compatible dice rolling
-└── root-rpg/    # Root RPG compatible dice rolling
+└── notation/     # Dice notation parser
+
+gamePackages/
+├── 5e/           # D&D 5e compatible dice rolling
+├── blades/       # Blades in the Dark dice rolling
+├── daggerheart/  # Daggerheart dice rolling
+├── root-rpg/     # Root RPG compatible dice rolling
+└── salvageunion/ # Salvage Union dice rolling
 ```
 
 Each package has its own:
@@ -112,11 +117,19 @@ Each package has its own:
 
 ### Package Responsibilities
 
+**Core Packages:**
+
 - `@randsum/core`: Shared types and utilities
 - `@randsum/dice`: Core dice rolling logic
 - `@randsum/notation`: Dice notation parsing
+
+**Game System Packages:**
+
 - `@randsum/5e`: D&D 5e compatible dice rolling
+- `@randsum/blades`: Blades in the Dark dice rolling
+- `@randsum/daggerheart`: Daggerheart dice rolling
 - `@randsum/root-rpg`: Root RPG compatible dice rolling
+- `@randsum/salvageunion`: Salvage Union dice rolling
 
 ## Need Help?
 

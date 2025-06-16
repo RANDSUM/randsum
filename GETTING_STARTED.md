@@ -243,7 +243,7 @@ function rollDamage(weapon: 'dagger' | 'longsword'): number {
 ## Further Reading
 
 - [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) - Complete dice notation reference
-- [Bundle Size Optimization](https://github.com/RANDSUM/randsum/blob/main/packages/dice/BUNDLE_SIZE.md) - Tips for minimizing bundle size
+
 - [API Documentation](https://github.com/RANDSUM/randsum) - Full API documentation
 
 ## Community and Support

@@ -1,7 +1,7 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/5e</h1>
-  <h3>5th Edition compatible dice rolling for randsum</h3>
+  <h3>5th Edition compatible dice rolling for Randsum</h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/5e)](https://www.npmjs.com/package/@randsum/5e)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/5e)](https://bundlephobia.com/package/@randsum/5e)

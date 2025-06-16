@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/notation</h1>
   <h3>Dice notation parser and validator for randsum</h3>
 
@@ -94,47 +94,7 @@ function createAttackRoll(bonus: number): DiceNotation {
   return `1d20+${bonus}` // ✅ Valid DiceNotation
 }
 
-// Regular usage examples
-const result = validateNotation('4d6L')
-if (result.valid) {
-  console.log(result.description) // ["Roll 4 six-sided dice", "Drop lowest roll"]
-}
 
-isDiceNotation('2d20') // true
-isDiceNotation('invalid') // false
-
-const options = notationToOptions('4d6R{<3}')
-console.log(options)
-// {
-//   sides: 6,
-//   quantity: 4,
-//   modifiers: {
-//     reroll: { lessThan: 3 }
-//   }
-// } satisfies Record<string, DiceNotation>
-
-// Function parameters are type-checked
-function rollDice(notation: DiceNotation) {
-  const result = validateNotation(notation)
-  return result
-}
-
-rollDice('2d20') // ✅ Valid
-rollDice('invalid') // ❌ Type error
-
-// Type inference in arrays
-const notations: DiceNotation[] = [
-  '2d20', // ✅ Valid
-  '4d6L', // ✅ Valid
-  '3d8!', // ✅ Valid
-  '2d{HT}' // ✅ Valid
-  // 'invalid'  // ❌ Would cause type error
-]
-
-// Usage with template literals
-function createAttackRoll(bonus: number): DiceNotation {
-  return `1d20+${bonus}` // ✅ Valid DiceNotation
-}
 ```
 
 ## Supported Notation
@@ -153,7 +113,7 @@ function createAttackRoll(bonus: number): DiceNotation {
 - `!`: Exploding dice (e.g., `3d8!`)
 - `U`: Unique results (e.g., `3d6U`)
 
-See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/RANDSUM_DICE_NOTATION.md) for complete documentation.
+See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) for complete documentation.
 
 ## API Reference
 
@@ -189,6 +149,10 @@ notationToOptions('4d6L')
 
 - [@randsum/dice](https://github.com/RANDSUM/randsum/tree/main/packages/dice): Dice rolling implementation
 - [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/gamePackages/5e): 5th Edition compatible dice rolling
+- [@randsum/blades](https://github.com/RANDSUM/randsum/tree/main/gamePackages/blades): Blades in the Dark dice rolling
+- [@randsum/daggerheart](https://github.com/RANDSUM/randsum/tree/main/gamePackages/daggerheart): Daggerheart dice rolling
+- [@randsum/root-rpg](https://github.com/RANDSUM/randsum/tree/main/gamePackages/root-rpg): Root RPG dice rolling
+- [@randsum/salvageunion](https://github.com/RANDSUM/randsum/tree/main/gamePackages/salvageunion): Salvage Union dice rolling
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

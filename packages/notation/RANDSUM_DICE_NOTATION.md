@@ -35,7 +35,7 @@ Roll dice with non-numeric faces:
 
 ```typescript
 // Roll a coin (heads/tails) four times
-import { rollCustomFaces } from 'randsum'
+import { rollCustomFaces } from '@randsum/dice'
 
 rollCustomFaces('4d{HT}')
 rollCustomFaces({
@@ -322,7 +322,7 @@ roll({
 
 - When using notation strings with custom faces, each face must be a single character
 - The options object interface allows for multi-character custom faces
-- See the [Getting Started Guide](GETTING_STARTED.md) for more usage examples
+- See the [Getting Started Guide](../../GETTING_STARTED.md) for more usage examples
 
 ## Attribution
 
