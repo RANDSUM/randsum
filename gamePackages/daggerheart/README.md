@@ -1,7 +1,7 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/daggerheart</h1>
-  <h3>Daggerheart Dice, by @randsum</h3>
+  <h3>Daggerheart dice rolling for Randsum</h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/daggerheart)](https://www.npmjs.com/package/@randsum/daggerheart)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/daggerheart)](https://bundlephobia.com/package/@randsum/daggerheart)

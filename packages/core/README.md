@@ -1,6 +1,11 @@
-# @randsum/core
+<div align="center">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo">
+  <h1>@randsum/core</h1>
+  <h3>Internal shared utilities and types for the Randsum ecosystem</h3>
 
-⚠️ **This is an internal package**
+⚠️ **This is an internal package** ⚠️ ️
+
+</div>
 
 This package contains shared utilities and types for the `@randsum` ecosystem. It is not intended for direct installation or usage.
 

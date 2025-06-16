@@ -189,7 +189,7 @@ roll('3d8!') // Exploding dice
 roll('4d6R{<3}') // Reroll values below 3
 ```
 
-See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/RANDSUM_DICE_NOTATION.md) for all supported modifiers.
+See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) for all supported modifiers.
 
 ## Bundle Size Optimization
 
@@ -285,6 +285,7 @@ function simulateStatRolls(iterations = 10000) {
 - [@randsum/notation](https://github.com/RANDSUM/randsum/tree/main/packages/notation): Dice notation parser
 - [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/gamePackages/5e): 5th Edition compatible dice rolling
 - [@randsum/blades](https://github.com/RANDSUM/randsum/tree/main/gamePackages/blades): Blades in the Dark dice system
+- [@randsum/daggerheart](https://github.com/RANDSUM/randsum/tree/main/gamePackages/daggerheart): Daggerheart dice system
 - [@randsum/root-rpg](https://github.com/RANDSUM/randsum/tree/main/gamePackages/root-rpg): Root RPG dice system
 - [@randsum/salvageunion](https://github.com/RANDSUM/randsum/tree/main/gamePackages/salvageunion): Salvage Union dice system
 

@@ -1,7 +1,7 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/blades</h1>
-  <h3>Blades in the Dark compatible dice rolling for randsum</h3>
+  <h3>Blades in the Dark compatible dice rolling for Randsum</h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/blades)](https://www.npmjs.com/package/@randsum/blades)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/blades)](https://bundlephobia.com/package/@randsum/blades)
@@ -36,7 +36,13 @@ import type { BladesResult } from '@randsum/blades'
 
 // Basic roll with dice pool
 const result = rollBlades(2)
-// Returns the highest die result and determines outcome
+console.log(result) // 'critical' | 'success' | 'partial' | 'failure'
+
+// Different dice pool sizes
+rollBlades(1) // Desperate position
+rollBlades(2) // Risky position
+rollBlades(3) // Controlled position
+rollBlades(4) // Controlled with assistance
 ```
 
 ## API Reference
@@ -48,6 +54,19 @@ Makes a Blades in the Dark roll, returning the result based on the highest die.
 ```typescript
 function rollBlades(dicePool: number): BladesResult
 ```
+
+**Parameters:**
+
+- `dicePool`: Number of d6 dice to roll (typically 1-4)
+
+**Returns:**
+
+- `'critical'`: Rolled 6 on multiple dice (critical success)
+- `'success'`: Highest die was 4-6 (full success)
+- `'partial'`: Highest die was 1-3 (partial success/complication)
+- `'failure'`: No dice rolled (should not occur with valid input)
+
+**Result Interpretation:**
 
 ```typescript
 type BladesResult = 'critical' | 'success' | 'partial' | 'failure'

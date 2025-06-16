@@ -9,4 +9,4 @@
 
 ## Reporting a Vulnerability
 
-If you find a vulneravility, Let me know - either open a PR or email me at alxjrvs [@t] gmail [.] com. I'm always happy to improve this package.
+If you find a vulnerability, let me know - either open a PR or email me at alxjrvs [@t] gmail [.] com. I'm always happy to improve this package.

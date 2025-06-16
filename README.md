@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
   <h1>Randsum</h1>
-  <h3>An Ergonomic, flexible, and type-safe dice rolling ecosystem for NPM</h3>
+  <h3>An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM</h3>
 
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
@@ -108,6 +108,19 @@ A dice roller for [Blades in the dark](https://bladesinthedark.com/greetings-sco
 
 ```bash
 npm install @randsum/blades
+```
+
+### [`@randsum/daggerheart`](https://www.npmjs.com/package/@randsum/daggerheart)
+
+[![npm version](https://img.shields.io/npm/v/@randsum/daggerheart)](https://www.npmjs.com/package/@randsum/daggerheart)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/daggerheart)](https://bundlephobia.com/package/@randsum/daggerheart)
+[![Types](https://img.shields.io/npm/types/@randsum/daggerheart)](https://www.npmjs.com/package/@randsum/daggerheart)
+[![Downloads](https://img.shields.io/npm/dm/@randsum/daggerheart)](https://www.npmjs.com/package/@randsum/daggerheart)
+
+A dice roller for the [Daggerheart](https://daggerheart.com/) RPG system with Hope and Fear dice mechanics.
+
+```bash
+npm install @randsum/daggerheart
 ```
 
 ### [`@randsum/salvageunion`](https://www.npmjs.com/package/@randsum/salvageunion)
