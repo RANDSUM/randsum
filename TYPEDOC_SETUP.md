@@ -17,6 +17,7 @@ This configuration resolves the recursive directory creation issue that was caus
 ### New Files
 - `typedoc.json` - Main TypeDoc configuration
 - `.typedocignore` - Additional exclusion patterns
+- `scripts/serve-docs.ts` - Bun-based static file server for documentation
 - `TYPEDOC_SETUP.md` - This documentation
 
 ### Modified Files
@@ -65,7 +66,7 @@ bun run docs:build
 # Full site build (same as docs:build)
 bun run site:build
 
-# Serve documentation locally
+# Serve documentation locally (using Bun's native server)
 bun run docs:serve
 ```
 
@@ -77,6 +78,23 @@ bun run docs:serve
 4. **Cleanup**: Removes temporary directory
 
 This approach prevents the recursive copying issue by ensuring TypeDoc never encounters its own output directory during generation.
+
+## Bun-Based Documentation Server
+
+The documentation server (`scripts/serve-docs.ts`) is built with Bun's native server capabilities and provides:
+
+- **Fast static file serving** with proper MIME type detection
+- **Clean URL support** (serves `/about` as `/about.html`)
+- **Directory index serving** (automatically serves `index.html` for directories)
+- **Security features** (prevents directory traversal attacks)
+- **Caching headers** for better performance
+- **No external dependencies** - uses only Bun's built-in APIs
+
+### Server Features
+- Serves on port 8000 by default (configurable via `PORT` environment variable)
+- Supports all common web file types (HTML, CSS, JS, images, fonts)
+- Provides helpful console output with direct links to documentation
+- Graceful error handling for missing files
 
 ## Generated Documentation Structure
 
