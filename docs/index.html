@@ -21,6 +21,7 @@
                 </div>
                 <div class="nav-links">
                     <a href="#features" class="nav-link">Features</a>
+                    <a href="#getting-started" class="nav-link">Examples</a>
                     <a href="#packages" class="nav-link">Packages</a>
                     <a href="#demo" class="nav-link">Demo</a>
                     <a href="./api/" class="nav-link">API Docs</a>
@@ -51,6 +52,7 @@
                     <div class="hero-actions">
                         <a href="#getting-started" class="btn btn-primary">Get Started</a>
                         <a href="#demo" class="btn btn-secondary">Try Demo</a>
+                        <a href="#quick-examples" class="btn btn-secondary">Copy Examples</a>
                     </div>
                     <div class="hero-install">
                         <code class="install-command">npm install @randsum/dice</code>
@@ -68,7 +70,17 @@ const result = roll('2d20H')
 console.log(result.total) // 18
 
 // Complex roll with modifiers
-roll('4d6L!+2') // 4d6, drop lowest, explode, +2</code></pre>
+const statRoll = roll('4d6L!+2') // 4d6, drop lowest, explode, +2
+console.log(statRoll.total)</code></pre>
+                                <button class="copy-code-btn" data-copy="import { roll } from '@randsum/dice'
+
+// Roll with advantage
+const result = roll('2d20H')
+console.log(result.total)
+
+// Complex roll with modifiers
+const statRoll = roll('4d6L!+2') // 4d6, drop lowest, explode, +2
+console.log(statRoll.total)">Copy</button>
                             </div>
                         </div>
                     </div>
@@ -126,14 +138,17 @@ roll('4d6L!+2') // 4d6, drop lowest, explode, +2</code></pre>
                             <div class="install-option">
                                 <span class="install-label">npm</span>
                                 <code>npm install @randsum/dice</code>
+                                <button class="copy-btn" data-copy="npm install @randsum/dice">Copy</button>
                             </div>
                             <div class="install-option">
                                 <span class="install-label">yarn</span>
                                 <code>yarn add @randsum/dice</code>
+                                <button class="copy-btn" data-copy="yarn add @randsum/dice">Copy</button>
                             </div>
                             <div class="install-option">
                                 <span class="install-label">bun</span>
                                 <code>bun add @randsum/dice</code>
+                                <button class="copy-btn" data-copy="bun add @randsum/dice">Copy</button>
                             </div>
                         </div>
                     </div>
@@ -152,7 +167,164 @@ const statRoll = roll('4d6L')       // Roll 4d6, drop lowest
 
 // Complex modifiers
 const complexRoll = roll('3d8!R{<3}+5')
-// 3d8, explode on max, reroll less than 3, add 5</code></pre>
+// 3d8, explode on max, reroll less than 3, add 5
+
+console.log('D20:', d20Roll.total)
+console.log('Advantage:', advantageRoll.total)
+console.log('Stat roll:', statRoll.total)
+console.log('Complex:', complexRoll.total)</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll, D20, D6 } from '@randsum/dice'
+
+// Simple rolls
+const d20Roll = D20.roll()
+const d6Roll = roll(6)
+
+// Dice notation
+const advantageRoll = roll('2d20H') // Roll 2d20, keep highest
+const statRoll = roll('4d6L')       // Roll 4d6, drop lowest
+
+// Complex modifiers
+const complexRoll = roll('3d8!R{<3}+5')
+// 3d8, explode on max, reroll less than 3, add 5
+
+console.log('D20:', d20Roll.total)
+console.log('Advantage:', advantageRoll.total)
+console.log('Stat roll:', statRoll.total)
+console.log('Complex:', complexRoll.total)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Examples Section -->
+        <section id="quick-examples" class="quick-examples">
+            <div class="container">
+                <h2 class="section-title">Copy-Paste Examples</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 3rem; font-size: 1.125rem;">
+                    Ready-to-use code snippets you can copy and run immediately
+                </p>
+
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <h3>Basic D&D Rolls</h3>
+                        <div class="code-example">
+                            <pre><code>import { roll } from '@randsum/dice'
+
+// Attack roll with advantage
+const attack = roll('1d20+5', '2d20H+5')
+console.log('Attack:', attack.total)
+
+// Damage roll
+const damage = roll('1d8+3')
+console.log('Damage:', damage.total)
+
+// Ability score generation
+const stats = [
+  roll('4d6L'), roll('4d6L'), roll('4d6L'),
+  roll('4d6L'), roll('4d6L'), roll('4d6L')
+]
+console.log('Stats:', stats.map(s => s.total))</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll } from '@randsum/dice'
+
+// Attack roll with advantage
+const attack = roll('1d20+5', '2d20H+5')
+console.log('Attack:', attack.total)
+
+// Damage roll
+const damage = roll('1d8+3')
+console.log('Damage:', damage.total)
+
+// Ability score generation
+const stats = [
+  roll('4d6L'), roll('4d6L'), roll('4d6L'),
+  roll('4d6L'), roll('4d6L'), roll('4d6L')
+]
+console.log('Stats:', stats.map(s => s.total))">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="example-card">
+                        <h3>Game System Examples</h3>
+                        <div class="code-example">
+                            <pre><code>import { roll5e } from '@randsum/5e'
+import { rollBlades } from '@randsum/blades'
+import { rollDH } from '@randsum/daggerheart'
+
+// D&D 5e skill check with advantage
+const skillCheck = roll5e({
+  modifier: 5,
+  rollingWith: 'Advantage'
+})
+console.log('5e Check:', skillCheck.total)
+
+// Blades in the Dark action roll
+const actionRoll = rollBlades(3) // 3 dice pool
+console.log('Blades Result:', actionRoll.result)
+
+// Daggerheart Hope/Fear roll
+const dhRoll = rollDH({ modifier: 2 })
+console.log('Daggerheart:', dhRoll.total, dhRoll.type)</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll5e } from '@randsum/5e'
+import { rollBlades } from '@randsum/blades'
+import { rollDH } from '@randsum/daggerheart'
+
+// D&D 5e skill check with advantage
+const skillCheck = roll5e({
+  modifier: 5,
+  rollingWith: 'Advantage'
+})
+console.log('5e Check:', skillCheck.total)
+
+// Blades in the Dark action roll
+const actionRoll = rollBlades(3) // 3 dice pool
+console.log('Blades Result:', actionRoll.result)
+
+// Daggerheart Hope/Fear roll
+const dhRoll = rollDH({ modifier: 2 })
+console.log('Daggerheart:', dhRoll.total, dhRoll.type)">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="example-card">
+                        <h3>Advanced Modifiers</h3>
+                        <div class="code-example">
+                            <pre><code>import { roll } from '@randsum/dice'
+
+// Exploding dice (reroll max values)
+const exploding = roll('3d6!')
+console.log('Exploding:', exploding.total)
+
+// Reroll low values
+const reroll = roll('4d6R{<3}')
+console.log('Reroll low:', reroll.total)
+
+// Complex combination
+const complex = roll('2d10!R{<3}+5')
+console.log('Complex:', complex.total)
+
+// Multiple modifiers
+const ultimate = roll('4d8!R{<2}L+3')
+// 4d8, explode on 8, reroll <2, drop lowest, +3
+console.log('Ultimate:', ultimate.total)</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll } from '@randsum/dice'
+
+// Exploding dice (reroll max values)
+const exploding = roll('3d6!')
+console.log('Exploding:', exploding.total)
+
+// Reroll low values
+const reroll = roll('4d6R{<3}')
+console.log('Reroll low:', reroll.total)
+
+// Complex combination
+const complex = roll('2d10!R{<3}+5')
+console.log('Complex:', complex.total)
+
+// Multiple modifiers
+const ultimate = roll('4d8!R{<2}L+3')
+// 4d8, explode on 8, reroll <2, drop lowest, +3
+console.log('Ultimate:', ultimate.total)">Copy</button>
                         </div>
                     </div>
                 </div>

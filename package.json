@@ -13,8 +13,10 @@
     "lint:fix": "bunx moon :lint -- --fix",
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage",
+    "docs:generate": "rm -rf docs/api/generated /tmp/typedoc-randsum && typedoc && cp -r /tmp/typedoc-randsum docs/api/generated && rm -rf /tmp/typedoc-randsum",
     "docs:serve": "cd docs && python -m http.server 8000",
-    "site:build": "bun run build",
+    "docs:build": "bun run build && bun run docs:generate",
+    "site:build": "bun run docs:build",
     "site:dev": "bun run docs:serve"
   },
   "trustedDependencies": [
