@@ -12,7 +12,10 @@
     "lint": "bunx moon :lint",
     "lint:fix": "bunx moon :lint -- --fix",
     "ts:check": "bunx moon :tsCheck",
-    "test:ci": "bunrun test --coverage"
+    "test:ci": "bunrun test --coverage",
+    "docs:serve": "cd docs && python -m http.server 8000",
+    "site:build": "bun run build",
+    "site:dev": "bun run docs:serve"
   },
   "trustedDependencies": [
     "@moonrepo/cli"
