@@ -1,0 +1,52 @@
+# TypeDoc ignore patterns to prevent recursive directory issues
+
+# Output directories
+docs/
+dist/
+coverage/
+
+# Node modules
+node_modules/
+
+# Test files
+**/*.test.ts
+**/*.spec.ts
+**/__tests__/
+**/test/
+**/tests/
+
+# Build artifacts
+*.d.ts.map
+*.js.map
+
+# Development files
+*.log
+.DS_Store
+.env*
+
+# IDE files
+.vscode/
+.idea/
+
+# Lock files
+*.lock
+yarn.lock
+package-lock.json
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Moon build system
+.moon/
+
+# Bun specific
+bun.lockb
+
+# Git directory
+.git/
+
+# TypeDoc temp output
+.typedoc-temp/
+/tmp/typedoc-randsum/

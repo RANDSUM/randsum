@@ -12,7 +12,12 @@
     "lint": "bunx moon :lint",
     "lint:fix": "bunx moon :lint -- --fix",
     "ts:check": "bunx moon :tsCheck",
-    "test:ci": "bunrun test --coverage"
+    "test:ci": "bunrun test --coverage",
+    "docs:generate": "rm -rf docs/api/generated /tmp/typedoc-randsum && typedoc && cp -r /tmp/typedoc-randsum docs/api/generated && rm -rf /tmp/typedoc-randsum && bun run scripts/inject-dark-theme.ts && bun run scripts/enhance-docs.ts",
+    "docs:serve": "bun run scripts/serve-docs.ts",
+    "docs:build": "bun run build && bun run docs:generate",
+    "site:build": "bun run docs:build",
+    "site:dev": "bun run docs:serve"
   },
   "trustedDependencies": [
     "@moonrepo/cli"

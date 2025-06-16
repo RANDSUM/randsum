@@ -1,0 +1,159 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "RANDSUM API Documentation",
+  "entryPoints": [
+    "packages/core/src/index.ts",
+    "packages/dice/src/index.ts",
+    "packages/notation/src/index.ts",
+    "gamePackages/5e/src/index.ts",
+    "gamePackages/blades/src/index.ts",
+    "gamePackages/daggerheart/src/index.ts",
+    "gamePackages/root-rpg/src/index.ts",
+    "gamePackages/salvageunion/src/index.ts"
+  ],
+  "entryPointStrategy": "expand",
+  "out": "/tmp/typedoc-randsum",
+  "tsconfig": "tsconfig.json",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeInternal": true,
+  "excludeExternals": true,
+  "excludeNotDocumented": false,
+  "skipErrorChecking": true,
+  "cleanOutputDir": true,
+  "exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**",
+    "**/docs/**",
+    "docs/**",
+    ".typedoc-temp/**",
+    ".moon/**",
+    "*.lock",
+    "**/.git/**"
+  ],
+  "externalPattern": [
+    "**/node_modules/**"
+  ],
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Core Packages",
+    "Game Systems",
+    "*"
+  ],
+  "groupOrder": [
+    "Core Packages",
+    "Game Systems",
+    "*"
+  ],
+  "sort": [
+    "source-order",
+    "required-first",
+    "kind"
+  ],
+  "kindSortOrder": [
+    "Document",
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "EnumMember",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method",
+    "Parameter",
+    "TypeParameter",
+    "TypeLiteral",
+    "CallSignature",
+    "ConstructorSignature",
+    "IndexSignature",
+    "GetSignature",
+    "SetSignature"
+  ],
+  "searchInComments": true,
+  "searchInDocuments": true,
+  "treatWarningsAsErrors": false,
+  "treatValidationWarningsAsErrors": false,
+  "intentionallyNotExported": [],
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": false
+  },
+  "cname": "",
+  "sourceLinkTemplate": "https://github.com/RANDSUM/randsum/blob/{gitRevision}/{path}#L{line}",
+  "gitRevision": "main",
+  "gitRemote": "origin",
+  "hideGenerator": false,
+  "customCss": "docs/dark-theme.css",
+  "markdownItOptions": {},
+  "maxTypeConversionDepth": 10,
+  "theme": "default",
+  "lightHighlightTheme": "github-dark",
+  "darkHighlightTheme": "github-dark",
+  "highlightLanguages": [
+    "typescript",
+    "javascript",
+    "json",
+    "bash",
+    "shell",
+    "markdown"
+  ],
+  "navigationLinks": {
+    "GitHub": "https://github.com/RANDSUM/randsum",
+    "NPM": "https://www.npmjs.com/org/randsum"
+  },
+  "sidebarLinks": {
+    "Documentation": "https://randsum.github.io/randsum/",
+    "Getting Started": "https://github.com/RANDSUM/randsum#getting-started"
+  },
+  "titleLink": "https://randsum.github.io/randsum/",
+  "includeVersion": true,
+  "disableSources": false,
+  "basePath": ".",
+  "excludeTags": [
+    "@internal",
+    "@alpha"
+  ],
+  "blockTags": [
+    "@deprecated",
+    "@param",
+    "@remarks",
+    "@returns",
+    "@throws",
+    "@alpha",
+    "@beta",
+    "@experimental",
+    "@internal"
+  ],
+  "inlineTags": [
+    "@link",
+    "@inheritDoc",
+    "@label"
+  ],
+  "modifierTags": [
+    "@public",
+    "@private",
+    "@protected",
+    "@readonly",
+    "@override",
+    "@virtual",
+    "@sealed",
+    "@experimental",
+    "@alpha",
+    "@beta",
+    "@internal",
+    "@deprecated"
+  ]
+}

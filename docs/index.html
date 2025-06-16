@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RANDSUM - Ergonomic Dice Rolling for JavaScript & TypeScript</title>
+    <meta name="description" content="A flexible, type-safe dice rolling ecosystem for JavaScript and TypeScript. Perfect for RPGs, games, and simulations.">
+    <link rel="icon" type="image/webp" href="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="RANDSUM Logo" class="nav-logo">
+                    <span class="nav-title">RANDSUM</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#getting-started" class="nav-link">Examples</a>
+                    <a href="#packages" class="nav-link">Packages</a>
+                    <a href="#demo" class="nav-link">Demo</a>
+                    <a href="./api/" class="nav-link">API Docs</a>
+                    <a href="https://github.com/RANDSUM/randsum" class="nav-link nav-link-external">GitHub</a>
+                </div>
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Ergonomic Dice Rolling for
+                        <span class="hero-highlight">JavaScript & TypeScript</span>
+                    </h1>
+                    <p class="hero-description">
+                        A flexible, type-safe dice rolling ecosystem perfect for RPGs, games, and simulations.
+                        Built with TypeScript, designed for developers.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#getting-started" class="btn btn-primary">Get Started</a>
+                        <a href="#demo" class="btn btn-secondary">Try Demo</a>
+                        <a href="#quick-examples" class="btn btn-secondary">Copy Examples</a>
+                    </div>
+                    <div class="hero-install">
+                        <code class="install-command">npm install @randsum/dice</code>
+                        <button class="copy-btn" data-copy="npm install @randsum/dice">Copy</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="dice-showcase">
+                        <div class="dice-example">
+                            <div class="code-block">
+                                <pre><code>import { roll } from '@randsum/dice'
+
+// Roll with advantage
+const result = roll('2d20H')
+console.log(result.total) // 18
+
+// Complex roll with modifiers
+const statRoll = roll('4d6L!+2') // 4d6, drop lowest, explode, +2
+console.log(statRoll.total)</code></pre>
+                                <button class="copy-code-btn" data-copy="import { roll } from '@randsum/dice'
+
+// Roll with advantage
+const result = roll('2d20H')
+console.log(result.total)
+
+// Complex roll with modifiers
+const statRoll = roll('4d6L!+2') // 4d6, drop lowest, explode, +2
+console.log(statRoll.total)">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose RANDSUM?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Type-Safe</h3>
+                        <p>Full TypeScript support with intelligent type inference and comprehensive type definitions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎲</div>
+                        <h3>Flexible Notation</h3>
+                        <p>Supports standard dice notation (4d6L) and complex modifiers for any gaming scenario.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎮</div>
+                        <h3>Game Systems</h3>
+                        <p>Built-in support for D&D 5e, Blades in the Dark, Root RPG, and more game systems.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Lightweight</h3>
+                        <p>Modular architecture allows you to import only what you need. Tree-shakeable and optimized.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔧</div>
+                        <h3>Extensible</h3>
+                        <p>Create custom dice, modifiers, and game systems with the flexible API.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📚</div>
+                        <h3>Well Documented</h3>
+                        <p>Comprehensive documentation, examples, and TypeScript definitions for every function.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Getting Started Section -->
+        <section id="getting-started" class="getting-started">
+            <div class="container">
+                <h2 class="section-title">Getting Started</h2>
+                <div class="getting-started-content">
+                    <div class="install-section">
+                        <h3>Installation</h3>
+                        <div class="install-options">
+                            <div class="install-option">
+                                <span class="install-label">npm</span>
+                                <code>npm install @randsum/dice</code>
+                                <button class="copy-btn" data-copy="npm install @randsum/dice">Copy</button>
+                            </div>
+                            <div class="install-option">
+                                <span class="install-label">yarn</span>
+                                <code>yarn add @randsum/dice</code>
+                                <button class="copy-btn" data-copy="yarn add @randsum/dice">Copy</button>
+                            </div>
+                            <div class="install-option">
+                                <span class="install-label">bun</span>
+                                <code>bun add @randsum/dice</code>
+                                <button class="copy-btn" data-copy="bun add @randsum/dice">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quick-start">
+                        <h3>Quick Start</h3>
+                        <div class="code-example">
+                            <pre><code>import { roll, D20, D6 } from '@randsum/dice'
+
+// Simple rolls
+const d20Roll = D20.roll()
+const d6Roll = roll(6)
+
+// Dice notation
+const advantageRoll = roll('2d20H') // Roll 2d20, keep highest
+const statRoll = roll('4d6L')       // Roll 4d6, drop lowest
+
+// Complex modifiers
+const complexRoll = roll('3d8!R{<3}+5')
+// 3d8, explode on max, reroll less than 3, add 5
+
+console.log('D20:', d20Roll.total)
+console.log('Advantage:', advantageRoll.total)
+console.log('Stat roll:', statRoll.total)
+console.log('Complex:', complexRoll.total)</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll, D20, D6 } from '@randsum/dice'
+
+// Simple rolls
+const d20Roll = D20.roll()
+const d6Roll = roll(6)
+
+// Dice notation
+const advantageRoll = roll('2d20H') // Roll 2d20, keep highest
+const statRoll = roll('4d6L')       // Roll 4d6, drop lowest
+
+// Complex modifiers
+const complexRoll = roll('3d8!R{<3}+5')
+// 3d8, explode on max, reroll less than 3, add 5
+
+console.log('D20:', d20Roll.total)
+console.log('Advantage:', advantageRoll.total)
+console.log('Stat roll:', statRoll.total)
+console.log('Complex:', complexRoll.total)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Examples Section -->
+        <section id="quick-examples" class="quick-examples">
+            <div class="container">
+                <h2 class="section-title">Copy-Paste Examples</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 3rem; font-size: 1.125rem;">
+                    Ready-to-use code snippets you can copy and run immediately
+                </p>
+
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <h3>Basic D&D Rolls</h3>
+                        <div class="code-example">
+                            <pre><code>import { roll } from '@randsum/dice'
+
+// Attack roll with advantage
+const attack = roll('1d20+5', '2d20H+5')
+console.log('Attack:', attack.total)
+
+// Damage roll
+const damage = roll('1d8+3')
+console.log('Damage:', damage.total)
+
+// Ability score generation
+const stats = [
+  roll('4d6L'), roll('4d6L'), roll('4d6L'),
+  roll('4d6L'), roll('4d6L'), roll('4d6L')
+]
+console.log('Stats:', stats.map(s => s.total))</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll } from '@randsum/dice'
+
+// Attack roll with advantage
+const attack = roll('1d20+5', '2d20H+5')
+console.log('Attack:', attack.total)
+
+// Damage roll
+const damage = roll('1d8+3')
+console.log('Damage:', damage.total)
+
+// Ability score generation
+const stats = [
+  roll('4d6L'), roll('4d6L'), roll('4d6L'),
+  roll('4d6L'), roll('4d6L'), roll('4d6L')
+]
+console.log('Stats:', stats.map(s => s.total))">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="example-card">
+                        <h3>Game System Examples</h3>
+                        <div class="code-example">
+                            <pre><code>import { roll5e } from '@randsum/5e'
+import { rollBlades } from '@randsum/blades'
+import { rollDH } from '@randsum/daggerheart'
+
+// D&D 5e skill check with advantage
+const skillCheck = roll5e({
+  modifier: 5,
+  rollingWith: 'Advantage'
+})
+console.log('5e Check:', skillCheck.total)
+
+// Blades in the Dark action roll
+const actionRoll = rollBlades(3) // 3 dice pool
+console.log('Blades Result:', actionRoll.result)
+
+// Daggerheart Hope/Fear roll
+const dhRoll = rollDH({ modifier: 2 })
+console.log('Daggerheart:', dhRoll.total, dhRoll.type)</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll5e } from '@randsum/5e'
+import { rollBlades } from '@randsum/blades'
+import { rollDH } from '@randsum/daggerheart'
+
+// D&D 5e skill check with advantage
+const skillCheck = roll5e({
+  modifier: 5,
+  rollingWith: 'Advantage'
+})
+console.log('5e Check:', skillCheck.total)
+
+// Blades in the Dark action roll
+const actionRoll = rollBlades(3) // 3 dice pool
+console.log('Blades Result:', actionRoll.result)
+
+// Daggerheart Hope/Fear roll
+const dhRoll = rollDH({ modifier: 2 })
+console.log('Daggerheart:', dhRoll.total, dhRoll.type)">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="example-card">
+                        <h3>Advanced Modifiers</h3>
+                        <div class="code-example">
+                            <pre><code>import { roll } from '@randsum/dice'
+
+// Exploding dice (reroll max values)
+const exploding = roll('3d6!')
+console.log('Exploding:', exploding.total)
+
+// Reroll low values
+const reroll = roll('4d6R{<3}')
+console.log('Reroll low:', reroll.total)
+
+// Complex combination
+const complex = roll('2d10!R{<3}+5')
+console.log('Complex:', complex.total)
+
+// Multiple modifiers
+const ultimate = roll('4d8!R{<2}L+3')
+// 4d8, explode on 8, reroll <2, drop lowest, +3
+console.log('Ultimate:', ultimate.total)</code></pre>
+                            <button class="copy-code-btn" data-copy="import { roll } from '@randsum/dice'
+
+// Exploding dice (reroll max values)
+const exploding = roll('3d6!')
+console.log('Exploding:', exploding.total)
+
+// Reroll low values
+const reroll = roll('4d6R{<3}')
+console.log('Reroll low:', reroll.total)
+
+// Complex combination
+const complex = roll('2d10!R{<3}+5')
+console.log('Complex:', complex.total)
+
+// Multiple modifiers
+const ultimate = roll('4d8!R{<2}L+3')
+// 4d8, explode on 8, reroll <2, drop lowest, +3
+console.log('Ultimate:', ultimate.total)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Packages Section -->
+        <section id="packages" class="packages">
+            <div class="container">
+                <h2 class="section-title">Packages</h2>
+                <div class="packages-grid">
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3>@randsum/dice</h3>
+                            <span class="package-badge">Core</span>
+                        </div>
+                        <p>The main dice rolling implementation with support for standard dice notation and complex modifiers.</p>
+                        <div class="package-features">
+                            <span class="feature-tag">Dice Notation</span>
+                            <span class="feature-tag">Modifiers</span>
+                            <span class="feature-tag">Type Safe</span>
+                        </div>
+                        <div class="package-actions">
+                            <a href="./api/modules/_randsum_dice.html" class="btn btn-sm">API Docs</a>
+                            <a href="https://www.npmjs.com/package/@randsum/dice" class="btn btn-sm btn-secondary">NPM</a>
+                        </div>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3>@randsum/notation</h3>
+                            <span class="package-badge">Core</span>
+                        </div>
+                        <p>Dice notation parser and validator for converting strings like "4d6L" into structured options.</p>
+                        <div class="package-features">
+                            <span class="feature-tag">Parser</span>
+                            <span class="feature-tag">Validator</span>
+                            <span class="feature-tag">Type Guards</span>
+                        </div>
+                        <div class="package-actions">
+                            <a href="./api/modules/_randsum_notation.html" class="btn btn-sm">API Docs</a>
+                            <a href="https://www.npmjs.com/package/@randsum/notation" class="btn btn-sm btn-secondary">NPM</a>
+                        </div>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3>@randsum/5e</h3>
+                            <span class="package-badge">Game System</span>
+                        </div>
+                        <p>D&D 5th Edition compatible dice rolling with advantage, disadvantage, and DC checks.</p>
+                        <div class="package-features">
+                            <span class="feature-tag">Advantage</span>
+                            <span class="feature-tag">DC Checks</span>
+                            <span class="feature-tag">5e Rules</span>
+                        </div>
+                        <div class="package-actions">
+                            <a href="./api/modules/_randsum_5e.html" class="btn btn-sm">API Docs</a>
+                            <a href="https://www.npmjs.com/package/@randsum/5e" class="btn btn-sm btn-secondary">NPM</a>
+                        </div>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3>@randsum/blades</h3>
+                            <span class="package-badge">Game System</span>
+                        </div>
+                        <p>Blades in the Dark dice pool mechanics with success/failure interpretation.</p>
+                        <div class="package-features">
+                            <span class="feature-tag">Dice Pools</span>
+                            <span class="feature-tag">Success Levels</span>
+                            <span class="feature-tag">BitD Rules</span>
+                        </div>
+                        <div class="package-actions">
+                            <a href="./api/modules/_randsum_blades.html" class="btn btn-sm">API Docs</a>
+                            <a href="https://www.npmjs.com/package/@randsum/blades" class="btn btn-sm btn-secondary">NPM</a>
+                        </div>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3>@randsum/daggerheart</h3>
+                            <span class="package-badge">Game System</span>
+                        </div>
+                        <p>Daggerheart Hope and Fear dice mechanics with dual d12 rolls.</p>
+                        <div class="package-features">
+                            <span class="feature-tag">Hope & Fear</span>
+                            <span class="feature-tag">Dual Dice</span>
+                            <span class="feature-tag">Critical Hope</span>
+                        </div>
+                        <div class="package-actions">
+                            <a href="./api/modules/_randsum_daggerheart.html" class="btn btn-sm">API Docs</a>
+                            <a href="https://www.npmjs.com/package/@randsum/daggerheart" class="btn btn-sm btn-secondary">NPM</a>
+                        </div>
+                    </div>
+
+                    <div class="package-card">
+                        <div class="package-header">
+                            <h3>@randsum/root-rpg</h3>
+                            <span class="package-badge">Game System</span>
+                        </div>
+                        <p>Root RPG 2d6 system with Strong Hit, Weak Hit, and Miss results.</p>
+                        <div class="package-features">
+                            <span class="feature-tag">2d6 System</span>
+                            <span class="feature-tag">Hit Types</span>
+                            <span class="feature-tag">Root Rules</span>
+                        </div>
+                        <div class="package-actions">
+                            <a href="./api/modules/_randsum_root_rpg.html" class="btn btn-sm">API Docs</a>
+                            <a href="https://www.npmjs.com/package/@randsum/root-rpg" class="btn btn-sm btn-secondary">NPM</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo Section -->
+        <section id="demo" class="demo">
+            <div class="container">
+                <h2 class="section-title">Interactive Demo</h2>
+                <div class="demo-content">
+                    <div class="demo-controls">
+                        <h3>Try RANDSUM</h3>
+                        <p>Enter dice notation or select a preset to see RANDSUM in action:</p>
+
+                        <div class="demo-input-group">
+                            <input type="text" id="diceInput" class="demo-input" placeholder="Enter dice notation (e.g., 4d6L)" value="2d20H">
+                            <button id="rollBtn" class="btn btn-primary">Roll Dice</button>
+                        </div>
+
+                        <div class="demo-presets">
+                            <button class="preset-btn" data-notation="1d20">d20</button>
+                            <button class="preset-btn" data-notation="2d20H">Advantage</button>
+                            <button class="preset-btn" data-notation="2d20L">Disadvantage</button>
+                            <button class="preset-btn" data-notation="4d6L">Stat Roll</button>
+                            <button class="preset-btn" data-notation="3d8!+2">Exploding</button>
+                            <button class="preset-btn" data-notation="5d6R{<3}">Reroll</button>
+                        </div>
+                    </div>
+
+                    <div class="demo-results">
+                        <h3>Results</h3>
+                        <div id="demoOutput" class="demo-output">
+                            <p class="demo-placeholder">Click "Roll Dice" to see results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <img src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="RANDSUM Logo" class="footer-logo">
+                        <span class="footer-title">RANDSUM</span>
+                    </div>
+                    <p class="footer-description">
+                        An ergonomic, flexible, and type-safe dice rolling ecosystem for JavaScript and TypeScript.
+                    </p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul class="footer-links">
+                        <li><a href="./api/">API Reference</a></li>
+                        <li><a href="https://github.com/RANDSUM/randsum/blob/main/GETTING_STARTED.md">Getting Started</a></li>
+                        <li><a href="https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md">Dice Notation</a></li>
+                        <li><a href="https://github.com/RANDSUM/randsum/blob/main/CONTRIBUTING.md">Contributing</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Packages</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://www.npmjs.com/package/@randsum/dice">@randsum/dice</a></li>
+                        <li><a href="https://www.npmjs.com/package/@randsum/notation">@randsum/notation</a></li>
+                        <li><a href="https://www.npmjs.com/package/@randsum/5e">@randsum/5e</a></li>
+                        <li><a href="https://www.npmjs.com/package/@randsum/blades">@randsum/blades</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/RANDSUM/randsum">GitHub</a></li>
+                        <li><a href="https://github.com/RANDSUM/randsum/issues">Issues</a></li>
+                        <li><a href="https://github.com/RANDSUM/randsum/discussions">Discussions</a></li>
+                        <li><a href="https://www.npmjs.com/org/randsum">NPM Org</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 RANDSUM. Licensed under the MIT License.</p>
+                <p>Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/demo.js"></script>
+</body>
+</html>
