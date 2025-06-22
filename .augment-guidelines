@@ -46,6 +46,7 @@
 - Use template literal types for string patterns where appropriate
 - NEVER use `any`
 - NEVER use `as` for type assertions
+- Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
 
 ## Package Organization & Dependencies
 
