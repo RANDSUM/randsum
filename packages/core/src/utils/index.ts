@@ -11,3 +11,9 @@ export { formatters } from './formatters'
 export { InvalidUniqueError } from './invalidUniqueError'
 export { optionsConverter } from './optionsConverter'
 
+// Enhanced error handling system
+export { RandsumError, RandsumErrorCode, type ErrorContext } from './randsumError'
+export { InvalidNotationError } from './invalidNotationError'
+export { ModifierConflictError } from './modifierConflictError'
+export { RollConstraintError } from './rollConstraintError'
+

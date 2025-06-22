@@ -24,5 +24,11 @@ export { formatters } from './utils/formatters'
 export { InvalidUniqueError } from './utils/invalidUniqueError'
 export { optionsConverter } from './utils/optionsConverter'
 
+// Enhanced error handling system
+export { RandsumError, RandsumErrorCode, type ErrorContext } from './utils/randsumError'
+export { InvalidNotationError } from './utils/invalidNotationError'
+export { ModifierConflictError } from './utils/modifierConflictError'
+export { RollConstraintError } from './utils/rollConstraintError'
+
 export type * from './types'
 

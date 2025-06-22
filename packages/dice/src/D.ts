@@ -8,6 +8,7 @@ import type {
   ModifierOptions,
   NumericRollOptions
 } from '@randsum/core'
+import { RandsumError, RandsumErrorCode } from '@randsum/core'
 import { roll } from './roll'
 import type { BaseD, CustomDie, CustomRollResult, NumericDie, NumericRollResult } from './types'
 import { coreSpreadRolls } from './utils/coreSpreadRolls'
@@ -110,7 +111,19 @@ class CustomDieImpl extends DieBase implements CustomDie {
 
   constructor(faces: string[]) {
     if (!faces.length) {
-      throw new Error('Custom die must have at least one face')
+      throw new RandsumError(
+        'Custom die must have at least one face',
+        RandsumErrorCode.INVALID_DIE_CONFIG,
+        {
+          input: faces,
+          expected: 'Array with at least one face value'
+        },
+        [
+          'Provide at least one face value: ["H", "T"] for a coin',
+          'Use standard dice like D6 if you need numbered faces',
+          'Custom faces must be non-empty strings'
+        ]
+      )
     }
     super(faces.length)
     this.faces = [...faces]
