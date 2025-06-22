@@ -76,3 +76,5 @@ tsconfig.tsbuildinfo
 .moon/docker
 
 docs/api
+
+.notes
