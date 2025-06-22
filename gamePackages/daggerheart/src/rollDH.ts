@@ -109,6 +109,14 @@ export function rollDH({
   }
 }
 
+/**
+ * Determines the result type based on hope and fear dice values
+ *
+ * @param hope - Hope die result (1-12 or 1-20)
+ * @param fear - Fear die result (1-12 or 1-20)
+ * @returns Result type based on dice comparison
+ * @internal
+ */
 function calculateType(hope: number, fear: number): RollResultDHType {
   if (hope === fear) {
     return 'critical hope'
@@ -119,6 +127,14 @@ function calculateType(hope: number, fear: number): RollResultDHType {
   return 'fear'
 }
 
+/**
+ * Calculates final total with advantage/disadvantage modifier
+ *
+ * @param total - Base roll total from hope and fear dice
+ * @param rollingWith - Advantage/disadvantage state
+ * @returns Tuple of [final total, advantage modifier value]
+ * @internal
+ */
 function calculateTotal(
   total: number,
   rollingWith: AdvantageDisadvantageDH | undefined
@@ -133,6 +149,12 @@ function calculateTotal(
   return [total, undefined]
 }
 
+/**
+ * Rolls a d6 for advantage/disadvantage calculation
+ *
+ * @returns Random number 1-6 for advantage/disadvantage modifier
+ * @internal
+ */
 function advantageDie(): number {
   return roll({
     quantity: 1,

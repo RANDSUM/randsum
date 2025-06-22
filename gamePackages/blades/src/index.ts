@@ -8,5 +8,5 @@
  */
 
 export { rollBlades } from './rollBlades'
-export type { BladesResult } from './types'
+export type * from './types'
 
