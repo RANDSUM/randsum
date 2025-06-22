@@ -25,7 +25,6 @@ tasks:
   lint:
     command: 'eslint . -c ../../eslint.config.js'
     deps:
-      - 'build'
     inputs:
       - 'src/**/*'
       - '__tests__/**/*'
@@ -36,7 +35,6 @@ tasks:
   tsCheck:
     command: 'tsc --erasableSyntaxOnly'
     deps:
-      - 'build'
     inputs:
       - 'src/**/*'
       - 'tsconfig.json'
