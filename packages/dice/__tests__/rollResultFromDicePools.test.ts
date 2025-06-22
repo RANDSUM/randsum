@@ -16,7 +16,7 @@ import { rollResultFromDicePools } from '../src/utils/rollResultFromDicePools'
 
 function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
   return {
-    die: new D(4),
+    die: D(4),
     argument: 1,
     notation: '1d4',
     description: ['Roll 1d4'],
@@ -376,7 +376,7 @@ describe(rollResultFromDicePools, () => {
               quantity: testRollSet.length,
               modifiers: { reroll: { greaterThan: 3 } }
             },
-            die: new D(4)
+            die: D(4)
           })
         }
       }

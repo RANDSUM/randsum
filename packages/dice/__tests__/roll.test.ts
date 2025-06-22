@@ -10,7 +10,7 @@ describe(roll, () => {
     describe('numerical dice', () => {
       const dummyArray = Array.from(
         { length: loops },
-        () => roll(20, { sides: 20 }, new D(20), '1d20').total
+        () => roll(20, { sides: 20 }, D(20), '1d20').total
       )
 
       test('it never goes outside of the bounds of the roll', () => {
@@ -36,7 +36,7 @@ describe(roll, () => {
       const dummyArray = Array.from(
         { length: loops },
         () =>
-          roll(['h', 't'], { sides: ['h', 't'] }, new D(['h', 't']), '1d{ht}')
+          roll(['h', 't'], { sides: ['h', 't'] }, D(['h', 't']), '1d{ht}')
             .result
       )
 
