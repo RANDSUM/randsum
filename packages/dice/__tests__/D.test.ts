@@ -1,13 +1,15 @@
 import { describe, expect, test } from 'bun:test'
 import { D } from '../src/D'
+import { isD, isNumericDie } from '../src/guards/isD'
 
 describe(D, () => {
   describe('Creating a Numerical Die', () => {
     const sides = 6
-    const die = new D(sides)
+    const die = D(sides)
 
-    test('returns a D instance', () => {
-      expect(die).toBeInstanceOf(D)
+    test('returns a numeric die instance', () => {
+      expect(isD(die)).toBe(true)
+      expect(isNumericDie(die)).toBe(true)
       expect(die.type).toEqual('numerical')
     })
 
@@ -70,10 +72,11 @@ describe(D, () => {
 
   describe('Creating a Die with Custom Sides', () => {
     const sides = ['+', '+', '-', '-']
-    const die = new D(sides)
+    const die = D(sides)
 
-    test('returns a D instance', () => {
-      expect(die).toBeInstanceOf(D)
+    test('returns a custom die instance', () => {
+      expect(isD(die)).toBe(true)
+      expect(isNumericDie(die)).toBe(false)
       expect(die.type).toEqual('custom')
     })
 
@@ -123,7 +126,7 @@ describe(D, () => {
         test('returns a CustomRollResult with multiple rolls', () => {
           const result = die.rollModified(2)
           expect(result.result).toHaveLength(2)
-          result.result.forEach((roll) => {
+          result.result.forEach((roll: string) => {
             expect(sides).toContain(roll)
           })
         })
@@ -134,7 +137,7 @@ describe(D, () => {
           const result = die.rollModified(2, { plus: 2 })
           expect(result.type).toBe('custom')
           expect(result.result).toHaveLength(2)
-          result.result.forEach((roll) => {
+          result.result.forEach((roll: string) => {
             expect(sides).toContain(roll)
           })
         })

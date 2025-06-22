@@ -62,12 +62,12 @@ D20.roll() // Roll a d20
 D6.roll(4) // Roll 4d6
 
 // Create custom dice
-const d12 = new D(12)
+const d12 = D(12)
 d12.roll() // Returns number 1-12
 d12.rollSpread(3) // Returns [n, n, n]
 
 // Create dice with custom faces
-const coin = new D(['heads', 'tails'])
+const coin = D(['heads', 'tails'])
 coin.roll() // Returns "heads" or "tails"
 
 // Using the roll function
@@ -89,11 +89,11 @@ roll('4d6R{<3}') // 4d6, reroll values below 3
 
 ```typescript
 // Create numeric die
-const d20 = new D(20)
+const d20 = D(20)
 d20.roll() // Returns 1-20
 
 // Create custom die
-const colorDie = new D(['red', 'blue', 'green'])
+const colorDie = D(['red', 'blue', 'green'])
 colorDie.roll() // Returns random color
 ```
 
@@ -155,7 +155,7 @@ const numericResult = roll('4d6')
 // }
 
 // Custom Results (type: 'custom')
-const customResult = roll(new D(['critical', 'hit', 'miss']))
+const customResult = roll(D(['critical', 'hit', 'miss']))
 // {
 //   type: 'custom',
 //   result: ['critical'],
@@ -166,7 +166,7 @@ const customResult = roll(new D(['critical', 'hit', 'miss']))
 // Mixed Results (type: 'mixed')
 const mixedResult = roll(
   '2d6', // numeric dice
-  new D(['hit', 'miss']) // custom dice
+  D(['hit', 'miss']) // custom dice
 )
 // {
 //   type: 'mixed',
@@ -176,7 +176,7 @@ const mixedResult = roll(
 // }
 
 // Custom-faced dice
-roll(new D(['critical', 'hit', 'miss']))
+roll(D(['critical', 'hit', 'miss']))
 roll({
   sides: ['heads', 'tails'],
   quantity: 3
