@@ -10,33 +10,72 @@ import type { CustomDiceNotation, NumericDiceNotation } from '@randsum/notation'
 // --- DIE TYPES ---
 // -----------------------
 
-export interface BaseD<T extends number | string[]> {
+/**
+ * Interface for numeric dice (standard numbered dice like d6, d20, etc.)
+ *
+ * Numeric dice have numbered faces from 1 to N and return numeric results.
+ * They support all mathematical modifiers and operations.
+ */
+export interface NumericDie {
+  readonly type: 'numerical'
   readonly sides: number
-  readonly faces: T extends number ? number[] : string[]
-  readonly type: T extends number ? 'numerical' : 'custom'
-  readonly isCustom: T extends number ? false : true
-  roll: (quantity?: number) => T extends number ? number : string
-  rollSpread: (quantity?: number) => T extends number ? number[] : string[]
-  rollModified: (
+  readonly faces: number[]
+  readonly isCustom: false
+  roll(quantity?: number): number
+  rollSpread(quantity?: number): number[]
+  rollModified(
     quantity: number,
     modifiers?: ModifierOptions
-  ) => T extends number ? NumericRollResult : CustomRollResult
-  toOptions: T extends number ? NumericRollOptions : CustomRollOptions
+  ): NumericRollResult
+  readonly toOptions: NumericRollOptions
 }
+
+/**
+ * Interface for custom dice (dice with string faces like coins, fate dice, etc.)
+ *
+ * Custom dice have string faces and return string results.
+ * They have limited modifier support compared to numeric dice.
+ */
+export interface CustomDie {
+  readonly type: 'custom'
+  readonly sides: number
+  readonly faces: string[]
+  readonly isCustom: true
+  roll(quantity?: number): string
+  rollSpread(quantity?: number): string[]
+  rollModified(
+    quantity: number,
+    modifiers?: ModifierOptions
+  ): CustomRollResult
+  readonly toOptions: CustomRollOptions
+}
+
+/**
+ * Union type representing any die (numeric or custom)
+ *
+ * This replaces the complex BaseD<T> conditional type with a simple discriminated union.
+ * Use the `type` property to discriminate between numeric and custom dice.
+ */
+export type BaseD = NumericDie | CustomDie
+
+/**
+ * @deprecated Use BaseD instead. This alias is provided for backward compatibility.
+ */
+export type BaseDLegacy<T extends number | string[]> = T extends number ? NumericDie : CustomDie
 
 // -----------------------
 // --- ROLL ARGUMENTS ---
 // -----------------------
 
 export type NumericRollArgument =
-  | BaseD<number>
+  | NumericDie
   | NumericRollOptions
   | NumericDiceNotation
   | number
   | `${number}`
 
 export type CustomRollArgument =
-  | BaseD<string[]>
+  | CustomDie
   | CustomRollOptions
   | CustomDiceNotation
   | string[]
@@ -54,14 +93,14 @@ interface BaseRollParams {
 export interface NumericRollParams extends BaseRollParams {
   argument: NumericRollArgument
   options: NumericRollOptions
-  die: BaseD<number>
+  die: NumericDie
   notation: NumericDiceNotation
 }
 
 export interface CustomRollParams extends BaseRollParams {
   argument: CustomRollArgument
   options: CustomRollOptions
-  die: BaseD<string[]>
+  die: CustomDie
   notation: CustomDiceNotation
 }
 

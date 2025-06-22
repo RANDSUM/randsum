@@ -1,13 +1,14 @@
 import { describe, expect, test } from 'bun:test'
 import { D } from '../src/D'
+import { isD } from '../src/guards/isD'
 
 describe(D, () => {
   describe('Creating a Numerical Die', () => {
     const sides = 6
-    const die = new D(sides)
+    const die = D(sides)
 
     test('returns a D instance', () => {
-      expect(die).toBeInstanceOf(D)
+      expect(isD(die)).toBe(true)
       expect(die.type).toEqual('numerical')
     })
 
@@ -70,10 +71,10 @@ describe(D, () => {
 
   describe('Creating a Die with Custom Sides', () => {
     const sides = ['+', '+', '-', '-']
-    const die = new D(sides)
+    const die = D(sides)
 
     test('returns a D instance', () => {
-      expect(die).toBeInstanceOf(D)
+      expect(isD(die)).toBe(true)
       expect(die.type).toEqual('custom')
     })
 

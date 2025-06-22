@@ -43,10 +43,18 @@ export { roll } from './roll'
 
 // Core dice types from this package
 export type {
-  BaseD, CustomRollArgument, CustomRollParams,
-  CustomRollResult, DicePool,
-  MixedRollResult, NumericRollArgument, NumericRollParams,
-  NumericRollResult, RollArgument,
+  BaseD,
+  CustomDie,
+  CustomRollArgument,
+  CustomRollParams,
+  CustomRollResult,
+  DicePool,
+  MixedRollResult,
+  NumericDie,
+  NumericRollArgument,
+  NumericRollParams,
+  NumericRollResult,
+  RollArgument,
   RollOptions,
   RollParams,
   RollResult

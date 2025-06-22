@@ -56,7 +56,7 @@ export function normalizeArgument(argument: RollArgument): RollParams {
  * @internal
  */
 function optionsFromArgument(argument: RollArgument): RollParams['options'] {
-  if (argument instanceof D) {
+  if (isD(argument)) {
     return argument.toOptions
   }
 
@@ -114,5 +114,11 @@ function dieForArgument(argument: RollArgument): RollParams['die'] {
     return argument
   }
   const options = optionsFromArgument(argument)
-  return new D(options.sides) as RollParams['die']
+
+  // Handle both numeric and custom dice creation
+  if (typeof options.sides === 'number') {
+    return D(options.sides)
+  } else {
+    return D(options.sides)
+  }
 }
