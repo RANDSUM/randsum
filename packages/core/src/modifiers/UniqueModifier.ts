@@ -59,7 +59,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
 
       return {
         unique: {
-          notUnique: notUnique.map(Number)
+          notUnique: notUnique.map(n => Number(n))
         }
       }
     }, {})
@@ -89,7 +89,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
       bonus.rolls.filter((n) => !notUnique.includes(Number(n)))
     )
 
-    const uniqueRolls = bonus.rolls.map(Number).map((roll, index, array) => {
+    const uniqueRolls = bonus.rolls.map(n => Number(n)).map((roll, index, array) => {
       let newRoll: number
       if (array.indexOf(roll) === index || notUnique.includes(roll)) {
         return roll
@@ -141,7 +141,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
     if (this.options === undefined || typeof this.options === 'boolean') {
       return []
     }
-    return this.options.notUnique.map(Number)
+    return this.options.notUnique.map(n => Number(n))
   }
 
   /**
