@@ -7,7 +7,6 @@
 - Organize packages into three categories:
   - `packages/` - Core packages (core, dice, notation)
   - `gamePackages/` - Game system implementations (5e, blades, root-rpg, etc.)
-  - `internalPackages/` - Internal utilities (currently only core)
 - Each package follows the structure: `src/`, `__tests__/`, `dist/` (generated), `package.json`, `README.md`, `moon.yml`
 - Use workspace dependencies with `workspace:~` syntax for internal package references
 
@@ -145,7 +144,6 @@
 
 ## Modifier System Patterns
 
-- All modifiers extend BaseModifier<T> abstract class
 - Implement static pattern property for regex matching dice notation
 - Implement static parse method to extract options from notation strings
 - Use consistent modifier naming: [Action]Modifier (e.g., DropModifier, ExplodeModifier)
@@ -175,7 +173,7 @@
 - User prefers dark theme for GitHub Pages documentation
 - User prefers separate Core Packages and Game Systems sections in documentation
 - Game Systems documentation should link to respective game system tables
-- User prefers abstracting shared testing patterns into internalPackages/core
+- User prefers abstracting shared testing patterns into packages/core
 - User prefers bun-native solutions over Python for development tasks
 - User prefers package managers over manual package.json editing
 
@@ -187,7 +185,7 @@
 - Do not skip type checking or linting in CI/CD
 - Do not use any or unknown types without justification
 - Do not create deep import paths - use barrel exports
-- Do not duplicate testing utilities - abstract to internalPackages/core
+- Do not duplicate testing utilities - abstract to packages/core
 - Do not use Python tools when bun-native alternatives exist
 
 ## Naming Conventions Summary

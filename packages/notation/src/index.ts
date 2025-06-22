@@ -7,38 +7,14 @@
  * standard dice notation (e.g., "4d6L") and custom dice notation.
  */
 
-// Core validation and parsing functions
 export { isDiceNotation } from './isDiceNotation'
 export { validateNotation } from './validateNotation'
 
-// Regular expression patterns for notation parsing
 export { completeRollPattern, coreNotationPattern } from './patterns'
 
-// Utility functions for notation conversion
 export { notationToOptions } from './utils/notationToOptions'
 
-// Type definitions for validation results
-export type {
-  CustomValidationResult,
-  InvalidValidationResult,
-  NumericValidationResult,
-  ValidationResult
-} from './types'
+export type * from './types'
 
-// Re-exported types from core package for convenience
-export type {
-  BaseRollOptions,
-  ComparisonOptions,
-  CustomDiceNotation,
-  CustomRollOptions,
-  DiceNotation,
-  DropOptions,
-  ModifierOptions,
-  NumericDiceNotation,
-  NumericRollOptions,
-  ReplaceOptions,
-  RerollOptions,
-  RollOptions,
-  UniqueOptions
-} from '@randsum/core'
+export type * from '@randsum/core'
 

@@ -35,42 +35,26 @@ export {
 export { roll } from './roll'
 
 /**
- * Type exports organized by category for better tree-shaking
+ * Core types from @randsum/core package
  *
- * Types are grouped by their purpose to make it easier for bundlers
- * to eliminate unused types and reduce bundle size.
+ * Contains all modifier options, roll configurations, and base interfaces
+ * used throughout the RANDSUM ecosystem.
  */
+export type * from '@randsum/core'
 
-// Core dice types from this package
-export type {
-  BaseD, CustomRollArgument, CustomRollParams,
-  CustomRollResult, DicePool,
-  MixedRollResult, NumericRollArgument, NumericRollParams,
-  NumericRollResult, RollArgument,
-  RollOptions,
-  RollParams,
-  RollResult
-} from './types'
+/**
+ * Notation types from @randsum/notation package
+ *
+ * Contains dice notation string types, validation results, and parsing
+ * utilities for working with dice notation strings.
+ */
+export type * from '@randsum/notation'
 
-export type {
-  BaseRollOptions,
-  ComparisonOptions,
-  CustomRollOptions,
-  DropOptions,
-  ModifierOptions,
-  NumericRollOptions,
-  ReplaceOptions,
-  RerollOptions,
-  UniqueOptions
-} from '@randsum/core'
-
-export type {
-  CustomDiceNotation,
-  CustomValidationResult,
-  DiceNotation,
-  InvalidValidationResult,
-  NumericDiceNotation,
-  NumericValidationResult,
-  ValidationResult
-} from '@randsum/notation'
+/**
+ * Result types from @randsum/dice package
+ *
+ * Contains all roll result interfaces, dice pool types, and argument types
+ * for working with dice rolling results and configurations.
+ */
+export type * from './types'
 
