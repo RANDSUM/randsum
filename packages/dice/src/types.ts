@@ -46,14 +46,8 @@ export interface CustomDie {
 
 /**
  * Union type representing any die (numeric or custom)
- * This replaces the complex conditional BaseD<T> interface
  */
 export type BaseD = NumericDie | CustomDie
-
-/**
- * @deprecated Use NumericDie or CustomDie directly. This type alias is provided for backward compatibility.
- */
-export type BaseDLegacy<T extends number | string[]> = T extends number ? NumericDie : CustomDie
 
 // -----------------------
 // --- ROLL ARGUMENTS ---

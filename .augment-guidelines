@@ -39,7 +39,7 @@
 
 - Use strict TypeScript configuration with all strict checks enabled
 - Prefer interfaces over types for object shapes
-- Use generic types extensively for type safety (e.g., BaseD<T>, BaseModifier<T>)
+- Use discriminated union types extensively for type safety
 - Use union types for game-specific enums (e.g., 'Advantage' | 'Disadvantage')
 - Export types and interfaces alongside implementations
 - Use type guards for runtime type checking (e.g., isNumericRollOptions)
