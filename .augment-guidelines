@@ -79,9 +79,9 @@
 - Use consistent README structure: description, features, installation, usage, API reference
 - Include TypeScript code examples in documentation
 - Use emoji in README headers for visual appeal (🎲, 🎯, 🔒, 🪶)
-- Document complex algorithms and business logic with inline comments
 - Prefer dark themes for documentation sites
 - Use syntax highlighting for code blocks in documentation
+- if creating complex documentation for specific augment tasks, create it in the `.notes/` directory.
 
 ## Dice Rolling & Game System Patterns
 
@@ -215,6 +215,7 @@
 - NEVER use `any` type - use proper TypeScript types
 - NEVER use `as` for type assertions - use type guards instead
 - Always use strict TypeScript configuration with all checks enabled
+- Functional overloads should be used for proper typescript communication, but only where necessary
 - Use readonly properties for immutable data structures
 - Implement proper error boundaries and error handling
 - Use descriptive variable and function names that explain intent
