@@ -1,12 +1,11 @@
+import { RollConstraintError } from '../errors'
 import type {
   ModifierOptions,
   NumericRollBonus,
   RequiredNumericRollParameters,
   UniqueOptions
 } from '../types'
-import { extractMatches } from '../utils/extractMatches'
-import { formatters } from '../utils/formatters'
-import { InvalidUniqueError } from '../utils/invalidUniqueError'
+import { extractMatches, formatters } from '../utils'
 import { BaseModifier } from './BaseModifier'
 
 /**
@@ -72,7 +71,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
    * @param param1 - Parameters of the roll being modified
    * @param rollOne - Function to roll a single die
    * @returns Modified roll bonuses with unique values
-   * @throws {InvalidUniqueError} If there are more rolls than sides on the die
+   * @throws {RollConstraintError} If there are more rolls than sides on the die
    */
   public apply(
     bonus: NumericRollBonus,
@@ -81,7 +80,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
   ): NumericRollBonus {
     if (this.options === undefined) return bonus
     if (quantity > sides) {
-      throw new InvalidUniqueError()
+      throw RollConstraintError.forUniqueRollViolation(sides, quantity)
     }
     const notUnique = this.generateNotUniqueArray()
 

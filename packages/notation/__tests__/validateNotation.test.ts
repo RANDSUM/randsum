@@ -120,7 +120,12 @@ describe(validateNotation, () => {
 
         expect(result).toEqual({
           valid: false,
-          description: ['Custom dice faces cannot be used with modifiers'],
+          description: [
+            "Conflicting modifiers detected: custom_faces, modifiers",
+            "Custom dice faces cannot be used with modifiers",
+            "Use standard dice like \"4d6L\" if you need modifiers",
+            "Use custom dice like \"2d{H,T}\" without additional modifiers"
+          ],
           digested: {},
           type: 'invalid'
         })
