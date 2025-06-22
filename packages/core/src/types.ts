@@ -189,6 +189,26 @@ export interface UniqueOptions {
 }
 
 /**
+ * Union type representing all possible modifier configuration types
+ *
+ * This type constrains the generic parameter T in BaseModifier to ensure
+ * type safety while accommodating all the different option types used by
+ * various modifier implementations.
+ *
+ * @type
+ */
+export type ModifierConfig =
+  | number
+  | boolean
+  | ComparisonOptions
+  | DropOptions
+  | ReplaceOptions
+  | ReplaceOptions[]
+  | RerollOptions
+  | UniqueOptions
+
+
+/**
  * Combined options for all dice roll modifiers
  *
  * This interface aggregates all possible modifier options that can be
