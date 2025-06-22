@@ -2,7 +2,6 @@ import { describe, expect, test } from 'bun:test'
 import type {
   CustomRollOptions,
   NumericRollOptions,
-  RollOptions
 } from '../../src/types'
 import { optionsConverter } from '../../src/utils/optionsConverter'
 
@@ -96,7 +95,7 @@ describe('optionsConverter', () => {
     })
 
     test('uses default quantity of 1 when not specified', () => {
-      const options = { sides: 10 } as RollOptions
+      const options = { sides: 10 }
       expect(optionsConverter.formatCoreNotation(options)).toBe('1d10')
     })
   })
@@ -129,7 +128,7 @@ describe('optionsConverter', () => {
     })
 
     test('uses default quantity of 1 when not specified', () => {
-      const options = { sides: 10 } as NumericRollOptions
+      const options = { sides: 10 }
       const result = optionsConverter.formatCoreDescription(options)
 
       expect(result).toBe('Roll 1 10-sided die')

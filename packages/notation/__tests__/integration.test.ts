@@ -24,7 +24,6 @@ describe('Integration Tests', () => {
         expect(isDiceResult).toBe(shouldBeValid)
         expect(validateResult.valid).toBe(shouldBeValid)
 
-        // If isDiceNotation returns true, validateNotation should not return 'invalid' type
         if (isDiceResult) {
           expect(validateResult.type).not.toBe('invalid')
         } else {
@@ -79,8 +78,15 @@ describe('Integration Tests', () => {
     })
   })
 
+  interface NotationToOptionsTestCase {
+    input: DiceNotation
+    expectedQuantity: number
+    expectedSides: number | string[]
+  }
+
   describe('notationToOptions integration', () => {
-    const validNotations = [
+
+    const validNotations: NotationToOptionsTestCase[] = [
       { input: '1d6', expectedQuantity: 1, expectedSides: 6 },
       { input: '2d20', expectedQuantity: 2, expectedSides: 20 },
       { input: '3d{abc}', expectedQuantity: 3, expectedSides: ['a', 'b', 'c'] },
@@ -90,11 +96,9 @@ describe('Integration Tests', () => {
 
     validNotations.forEach(({ input, expectedQuantity, expectedSides }) => {
       it(`notationToOptions correctly parses: ${input}`, () => {
-        // First verify it's considered valid
         expect(isDiceNotation(input)).toBe(true)
 
-        // Then verify parsing
-        const options = notationToOptions(input as DiceNotation)
+        const options = notationToOptions(input)
         expect(options.quantity).toBe(expectedQuantity)
         expect(options.sides).toEqual(expectedSides)
       })
@@ -134,7 +138,7 @@ describe('Integration Tests', () => {
   })
 
   describe('notation parsing pipeline', () => {
-    const complexNotations = [
+    const complexNotations: DiceNotation[] = [
       '2d6+3',
       '1d20L',
       '3d8H2',
@@ -152,7 +156,7 @@ describe('Integration Tests', () => {
         expect(validation.valid).toBe(true)
 
         // Step 3: Parse to options
-        const options = notationToOptions(notation as DiceNotation)
+        const options = notationToOptions(notation)
         expect(options.quantity).toBeGreaterThan(0)
         expect(options.sides).toBeDefined()
 
