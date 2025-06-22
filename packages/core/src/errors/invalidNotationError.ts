@@ -3,7 +3,7 @@
  * @module @randsum/core/utils/invalidNotationError
  */
 
-import { type ErrorContext, RandsumError, RandsumErrorCode } from './randsumError'
+import { type ErrorContext, RandsumError } from './randsumError'
 
 /**
  * Error thrown when invalid dice notation is provided
@@ -35,9 +35,7 @@ export class InvalidNotationError extends RandsumError {
     reason?: string,
     suggestions?: string[]
   ) {
-    const message = reason
-      ? `Invalid dice notation: ${reason}`
-      : `Invalid dice notation: "${notation}"`
+    const message = `Invalid dice notation: ${reason ?? notation}`
 
     const context: ErrorContext = {
       input: notation,
@@ -47,7 +45,7 @@ export class InvalidNotationError extends RandsumError {
 
     const autoSuggestions = suggestions ?? InvalidNotationError.generateSuggestions(notation)
 
-    super(message, RandsumErrorCode.INVALID_NOTATION, context, autoSuggestions)
+    super(message, 'INVALID_NOTATION', context, autoSuggestions)
     this.name = 'InvalidNotationError'
   }
 

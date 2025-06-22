@@ -3,7 +3,7 @@
  * @module @randsum/core/utils/rollConstraintError
  */
 
-import { type ErrorContext, RandsumError, RandsumErrorCode } from './randsumError'
+import { type ErrorContext, RandsumError } from './randsumError'
 
 /**
  * Error thrown when roll constraints cannot be satisfied
@@ -44,7 +44,7 @@ export class RollConstraintError extends RandsumError {
 
     const autoSuggestions = suggestions ?? RollConstraintError.generateSuggestions(constraint, errorContext)
 
-    super(message, RandsumErrorCode.ROLL_CONSTRAINT, errorContext, autoSuggestions)
+    super(message, 'ROLL_CONSTRAINT', errorContext, autoSuggestions)
     this.name = 'RollConstraintError'
   }
 

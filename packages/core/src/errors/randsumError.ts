@@ -5,21 +5,23 @@
 
 /**
  * Error codes for programmatic error handling
+ *
+ * Using string literal union type instead of enum for better tree-shaking
+ * and simpler JavaScript output following modern TypeScript best practices.
  */
-export enum RandsumErrorCode {
+export type RandsumErrorCode =
   /** Invalid dice notation format */
-  INVALID_NOTATION = 'INVALID_NOTATION',
+  | 'INVALID_NOTATION'
   /** Conflicting modifiers applied to dice */
-  MODIFIER_CONFLICT = 'MODIFIER_CONFLICT',
+  | 'MODIFIER_CONFLICT'
   /** Roll constraint violation (e.g., unique rolls impossible) */
-  ROLL_CONSTRAINT = 'ROLL_CONSTRAINT',
+  | 'ROLL_CONSTRAINT'
   /** Invalid die configuration */
-  INVALID_DIE_CONFIG = 'INVALID_DIE_CONFIG',
+  | 'INVALID_DIE_CONFIG'
   /** Invalid modifier options */
-  INVALID_MODIFIER_OPTIONS = 'INVALID_MODIFIER_OPTIONS',
+  | 'INVALID_MODIFIER_OPTIONS'
   /** Generic validation error */
-  VALIDATION_ERROR = 'VALIDATION_ERROR'
-}
+  | 'VALIDATION_ERROR'
 
 /**
  * Context information for error debugging
@@ -48,7 +50,7 @@ export interface ErrorContext {
  * ```typescript
  * throw new RandsumError(
  *   'Invalid dice notation provided',
- *   RandsumErrorCode.INVALID_NOTATION,
+ *   'INVALID_NOTATION',
  *   { input: '4d6x', expected: 'Valid dice notation like "4d6" or "4d6L"' },
  *   ['Check the dice notation format', 'Use "4d6L" to drop the lowest roll']
  * )

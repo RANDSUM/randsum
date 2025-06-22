@@ -3,7 +3,7 @@
  * @module @randsum/core/utils/modifierConflictError
  */
 
-import { type ErrorContext, RandsumError, RandsumErrorCode } from './randsumError'
+import { type ErrorContext, RandsumError } from './randsumError'
 
 /**
  * Error thrown when conflicting modifiers are applied to dice
@@ -46,7 +46,7 @@ export class ModifierConflictError extends RandsumError {
 
     const autoSuggestions = suggestions ?? ModifierConflictError.generateSuggestions(conflictingModifiers)
 
-    super(message, RandsumErrorCode.MODIFIER_CONFLICT, errorContext, autoSuggestions)
+    super(message, 'MODIFIER_CONFLICT', errorContext, autoSuggestions)
     this.name = 'ModifierConflictError'
   }
 

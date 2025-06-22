@@ -8,7 +8,7 @@ import type {
   ModifierOptions,
   NumericRollOptions
 } from '@randsum/core'
-import { RandsumError, RandsumErrorCode } from '@randsum/core'
+import { RandsumError, } from '@randsum/core'
 import { roll } from './roll'
 import type { BaseD, CustomDie, CustomRollResult, NumericDie, NumericRollResult } from './types'
 import { coreSpreadRolls } from './utils/coreSpreadRolls'
@@ -113,7 +113,7 @@ class CustomDieImpl extends DieBase implements CustomDie {
     if (!faces.length) {
       throw new RandsumError(
         'Custom die must have at least one face',
-        RandsumErrorCode.INVALID_DIE_CONFIG,
+        'INVALID_DIE_CONFIG',
         {
           input: faces,
           expected: 'Array with at least one face value'
