@@ -14,17 +14,7 @@
  * standard gaming dice (D4, D6, D8, D10, D12, D20, D100), and
  * specialized dice like coins and Fudge dice.
  */
-export {
-  D,
-  D10,
-  D100,
-  D12,
-  D20,
-  D4,
-  D6,
-  D8, alphaNumDie,
-  coin, fudgeDice
-} from './D'
+export * from './D'
 
 /**
  * Main dice rolling function
@@ -33,6 +23,14 @@ export {
  * argument types, modifiers, and complex roll configurations.
  */
 export { roll } from './roll'
+
+/**
+ * Type guards for roll result discrimination
+ *
+ * These functions provide runtime type checking for roll results,
+ * enabling type-safe filtering and processing of different result types.
+ */
+export * from './guards/isRollResult'
 
 /**
  * Core types from @randsum/core package
