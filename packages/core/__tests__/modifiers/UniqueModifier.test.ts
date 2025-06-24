@@ -118,4 +118,50 @@ describe('UniqueModifier', () => {
       expect(result).toBe(bonus)
     })
   })
+
+  describe('toDescription', () => {
+    test('returns description for boolean unique modifier', () => {
+      const modifier = new UniqueModifier(true)
+      const result = modifier.toDescription()
+
+      expect(result).toEqual(['No Duplicate Rolls'])
+    })
+
+    test('returns description for unique modifier with notUnique values', () => {
+      const modifier = new UniqueModifier({ notUnique: [1, 6] })
+      const result = modifier.toDescription()
+
+      expect(result).toEqual(['No Duplicates (except [1] and [6])'])
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new UniqueModifier(undefined)
+      const result = modifier.toDescription()
+
+      expect(result).toBeUndefined()
+    })
+  })
+
+  describe('toNotation', () => {
+    test('returns notation for boolean unique modifier', () => {
+      const modifier = new UniqueModifier(true)
+      const result = modifier.toNotation()
+
+      expect(result).toBe('U')
+    })
+
+    test('returns notation for unique modifier with notUnique values', () => {
+      const modifier = new UniqueModifier({ notUnique: [1, 6] })
+      const result = modifier.toNotation()
+
+      expect(result).toBe('U{1,6}')
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new UniqueModifier(undefined)
+      const result = modifier.toNotation()
+
+      expect(result).toBeUndefined()
+    })
+  })
 })

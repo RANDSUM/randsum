@@ -124,6 +124,16 @@ describe('optionsConverter', () => {
       expect(result).toContain('Nui')
     })
 
+    test('handles custom dice with empty string sides', () => {
+      const options: CustomRollOptions = {
+        sides: ['A', '', 'B'],
+        quantity: 1
+      }
+      const result = optionsConverter.formatCoreDescription(options)
+
+      expect(result).toBe('Roll 1 die with the following sides: (A ,B)')
+    })
+
     test('uses default quantity of 1 when not specified', () => {
       const options = { sides: 10 }
       const result = optionsConverter.formatCoreDescription(options)

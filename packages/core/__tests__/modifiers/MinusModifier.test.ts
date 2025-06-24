@@ -73,4 +73,36 @@ describe('MinusModifier', () => {
       expect(result).toBe(bonus)
     })
   })
+
+  describe('toDescription', () => {
+    test('returns description for minus modifier', () => {
+      const modifier = new MinusModifier(3)
+      const result = modifier.toDescription()
+
+      expect(result).toEqual(['Subtract 3'])
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new MinusModifier(undefined)
+      const result = modifier.toDescription()
+
+      expect(result).toBeUndefined()
+    })
+  })
+
+  describe('toNotation', () => {
+    test('returns notation for minus modifier', () => {
+      const modifier = new MinusModifier(5)
+      const result = modifier.toNotation()
+
+      expect(result).toBe('-5')
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new MinusModifier(undefined)
+      const result = modifier.toNotation()
+
+      expect(result).toBeUndefined()
+    })
+  })
 })
