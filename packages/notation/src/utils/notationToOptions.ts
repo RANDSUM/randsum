@@ -75,7 +75,7 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
   return {
     quantity,
     sides,
-    modifiers,
+    modifiers
   }
 }
 

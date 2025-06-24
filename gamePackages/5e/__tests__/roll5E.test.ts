@@ -38,7 +38,8 @@ describe('roll5e', () => {
     test('uses higher roll for total', () => {
       const result = roll5e(args)
       const [roll1, roll2] = result.rawResult
-      const expectedTotal = Math.max(Number(roll1), Number(roll2)) + args.modifier
+      const expectedTotal =
+        Math.max(Number(roll1), Number(roll2)) + args.modifier
       expect(result.total).toBe(expectedTotal)
     })
   })
@@ -57,7 +58,8 @@ describe('roll5e', () => {
     test('uses lower roll for total', () => {
       const result = roll5e(args)
       const [roll1, roll2] = result.rawResult
-      const expectedTotal = Math.min(Number(roll1), Number(roll2)) + args.modifier
+      const expectedTotal =
+        Math.min(Number(roll1), Number(roll2)) + args.modifier
       expect(result.total).toBe(expectedTotal)
     })
   })
