@@ -14,4 +14,3 @@ export { generateKey } from './generateKey'
 export { generateNumericalFaces } from './generateNumericalFaces'
 export { normalizeArgument } from './normalizeArgument'
 export { rollResultFromDicePools } from './rollResultFromDicePools'
-

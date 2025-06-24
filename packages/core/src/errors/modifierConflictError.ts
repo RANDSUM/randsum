@@ -44,7 +44,9 @@ export class ModifierConflictError extends RandsumError {
       ...context
     }
 
-    const autoSuggestions = suggestions ?? ModifierConflictError.generateSuggestions(conflictingModifiers)
+    const autoSuggestions =
+      suggestions ??
+      ModifierConflictError.generateSuggestions(conflictingModifiers)
 
     super(message, 'MODIFIER_CONFLICT', errorContext, autoSuggestions)
     this.name = 'ModifierConflictError'
@@ -59,46 +61,59 @@ export class ModifierConflictError extends RandsumError {
    */
   private static generateSuggestions(conflictingModifiers: string[]): string[] {
     const suggestions: string[] = []
-    const modifiers = new Set(conflictingModifiers.map(m => m.toUpperCase()))
+    const modifiers = new Set(conflictingModifiers.map((m) => m.toUpperCase()))
 
     // High/Low conflicts
     if (modifiers.has('H') && modifiers.has('L')) {
-      suggestions.push("Use either 'H' to keep highest or 'L' to drop lowest, not both")
+      suggestions.push(
+        "Use either 'H' to keep highest or 'L' to drop lowest, not both"
+      )
       suggestions.push("For advantage: '2d20H', for disadvantage: '2d20L'")
     }
 
     // Reroll conflicts with other modifiers
-    if (modifiers.has('R') && (modifiers.has('E') || modifiers.has('EXPLODE'))) {
-      suggestions.push("Reroll and explode modifiers may conflict - choose one approach")
-      suggestions.push("Use 'R' to reroll specific values, or 'E' to explode on maximum")
+    if (
+      modifiers.has('R') &&
+      (modifiers.has('E') || modifiers.has('EXPLODE'))
+    ) {
+      suggestions.push(
+        'Reroll and explode modifiers may conflict - choose one approach'
+      )
+      suggestions.push(
+        "Use 'R' to reroll specific values, or 'E' to explode on maximum"
+      )
     }
 
     // Unique conflicts
     if (modifiers.has('UNIQUE')) {
       if (modifiers.has('R') || modifiers.has('REROLL')) {
-        suggestions.push("Unique rolls cannot use reroll modifiers")
+        suggestions.push('Unique rolls cannot use reroll modifiers')
         suggestions.push("Remove either 'unique' or 'reroll' modifier")
       }
       if (modifiers.has('E') || modifiers.has('EXPLODE')) {
-        suggestions.push("Unique rolls cannot use explode modifiers")
+        suggestions.push('Unique rolls cannot use explode modifiers')
         suggestions.push("Remove either 'unique' or 'explode' modifier")
       }
     }
 
     // Custom dice conflicts
     if (modifiers.has('CUSTOM_FACES')) {
-      const otherModifiers = Array.from(modifiers).filter(m => m !== 'CUSTOM_FACES')
+      const otherModifiers = Array.from(modifiers).filter(
+        (m) => m !== 'CUSTOM_FACES'
+      )
       if (otherModifiers.length > 0) {
-        suggestions.push("Custom dice faces cannot be used with other modifiers")
+        suggestions.push(
+          'Custom dice faces cannot be used with other modifiers'
+        )
         suggestions.push(`Remove modifiers: ${otherModifiers.join(', ')}`)
-        suggestions.push("Use standard numeric dice if you need modifiers")
+        suggestions.push('Use standard numeric dice if you need modifiers')
       }
     }
 
     // General guidance
     if (suggestions.length === 0) {
-      suggestions.push("Check modifier compatibility in the documentation")
-      suggestions.push("Use only one modifier type per roll for best results")
+      suggestions.push('Check modifier compatibility in the documentation')
+      suggestions.push('Use only one modifier type per roll for best results')
     }
 
     return suggestions
@@ -110,12 +125,15 @@ export class ModifierConflictError extends RandsumError {
    * @param notation - The notation that caused the conflict
    * @returns New ModifierConflictError instance
    */
-  public static forCustomDiceWithModifiers(notation: string): ModifierConflictError {
+  public static forCustomDiceWithModifiers(
+    notation: string
+  ): ModifierConflictError {
     return new ModifierConflictError(
       ['custom_faces', 'modifiers'],
       {
         input: notation,
-        expected: 'Custom dice without modifiers, or standard dice with modifiers'
+        expected:
+          'Custom dice without modifiers, or standard dice with modifiers'
       },
       [
         'Custom dice faces cannot be used with modifiers',

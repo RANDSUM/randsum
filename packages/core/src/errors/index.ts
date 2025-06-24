@@ -9,4 +9,3 @@ export type { RandsumErrorCode } from './randsumError'
 export { InvalidNotationError } from './invalidNotationError'
 export { ModifierConflictError } from './modifierConflictError'
 export { RollConstraintError } from './rollConstraintError'
-

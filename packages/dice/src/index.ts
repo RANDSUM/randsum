@@ -55,4 +55,3 @@ export type * from '@randsum/notation'
  * for working with dice rolling results and configurations.
  */
 export type * from './types'
-

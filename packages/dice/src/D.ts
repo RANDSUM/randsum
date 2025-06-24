@@ -8,9 +8,15 @@ import type {
   ModifierOptions,
   NumericRollOptions
 } from '@randsum/core'
-import { RandsumError, } from '@randsum/core'
+import { RandsumError } from '@randsum/core'
 import { roll } from './roll'
-import type { BaseD, CustomDie, CustomRollResult, NumericDie, NumericRollResult } from './types'
+import type {
+  BaseD,
+  CustomDie,
+  CustomRollResult,
+  NumericDie,
+  NumericRollResult
+} from './types'
 import { coreSpreadRolls } from './utils/coreSpreadRolls'
 import { generateNumericalFaces } from './utils/generateNumericalFaces'
 
@@ -30,7 +36,10 @@ abstract class DieBase {
 
   public abstract roll(quantity?: number): number | string
   public abstract rollSpread(quantity?: number): number[] | string[]
-  public abstract rollModified(quantity: number, modifiers?: ModifierOptions): NumericRollResult | CustomRollResult
+  public abstract rollModified(
+    quantity: number,
+    modifiers?: ModifierOptions
+  ): NumericRollResult | CustomRollResult
   public abstract get toOptions(): NumericRollOptions | CustomRollOptions
 }
 

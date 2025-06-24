@@ -36,7 +36,9 @@ import type {
  * const numericResults = results.filter(isNumericResult)
  * // numericResults is now NumericRollResult[]
  */
-export function isNumericResult(result: RollResult): result is NumericRollResult {
+export function isNumericResult(
+  result: RollResult
+): result is NumericRollResult {
   return result.type === 'numerical'
 }
 

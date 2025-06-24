@@ -42,7 +42,9 @@ export class RollConstraintError extends RandsumError {
       ...context
     }
 
-    const autoSuggestions = suggestions ?? RollConstraintError.generateSuggestions(constraint, errorContext)
+    const autoSuggestions =
+      suggestions ??
+      RollConstraintError.generateSuggestions(constraint, errorContext)
 
     super(message, 'ROLL_CONSTRAINT', errorContext, autoSuggestions)
     this.name = 'RollConstraintError'
@@ -56,7 +58,10 @@ export class RollConstraintError extends RandsumError {
    * @returns Array of suggestions
    * @internal
    */
-  private static generateSuggestions(constraint: string, context: ErrorContext): string[] {
+  private static generateSuggestions(
+    constraint: string,
+    context: ErrorContext
+  ): string[] {
     const suggestions: string[] = []
 
     // Unique roll constraints
@@ -65,19 +70,31 @@ export class RollConstraintError extends RandsumError {
       if (details?.['sides'] && details['quantity']) {
         const sides = Number(details['sides'])
         const quantity = Number(details['quantity'])
-        suggestions.push(`Reduce quantity to ${String(sides)} or fewer for unique rolls on a d${String(sides)}`)
+        suggestions.push(
+          `Reduce quantity to ${String(sides)} or fewer for unique rolls on a d${String(sides)}`
+        )
         suggestions.push('Remove the unique modifier to allow duplicate values')
-        suggestions.push(`Use a die with more sides (d${String(quantity)} or higher) for ${String(quantity)} unique rolls`)
+        suggestions.push(
+          `Use a die with more sides (d${String(quantity)} or higher) for ${String(quantity)} unique rolls`
+        )
       } else {
-        suggestions.push('Ensure the number of dice is not greater than the number of sides')
-        suggestions.push('Remove the unique modifier if duplicate values are acceptable')
+        suggestions.push(
+          'Ensure the number of dice is not greater than the number of sides'
+        )
+        suggestions.push(
+          'Remove the unique modifier if duplicate values are acceptable'
+        )
       }
     }
 
     // Drop/Keep constraints
     if (constraint.includes('drop') || constraint.includes('keep')) {
-      suggestions.push('Ensure drop/keep count is less than the total number of dice')
-      suggestions.push('Reduce the drop/keep amount or increase the number of dice')
+      suggestions.push(
+        'Ensure drop/keep count is less than the total number of dice'
+      )
+      suggestions.push(
+        'Reduce the drop/keep amount or increase the number of dice'
+      )
     }
 
     // Negative values
@@ -100,7 +117,9 @@ export class RollConstraintError extends RandsumError {
 
     // General guidance
     if (suggestions.length === 0) {
-      suggestions.push('Check that all roll parameters are valid and achievable')
+      suggestions.push(
+        'Check that all roll parameters are valid and achievable'
+      )
       suggestions.push('Refer to the documentation for parameter limits')
     }
 
@@ -114,7 +133,10 @@ export class RollConstraintError extends RandsumError {
    * @param quantity - Number of dice being rolled
    * @returns New RollConstraintError instance
    */
-  public static forUniqueRollViolation(sides: number, quantity: number): RollConstraintError {
+  public static forUniqueRollViolation(
+    sides: number,
+    quantity: number
+  ): RollConstraintError {
     return new RollConstraintError(
       `Cannot roll ${String(quantity)} unique values on a ${String(sides)}-sided die`,
       {

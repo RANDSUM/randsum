@@ -1,8 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import type {
-  CustomRollOptions,
-  NumericRollOptions,
-} from '../../src/types'
+import type { CustomRollOptions, NumericRollOptions } from '../../src/types'
 import { optionsConverter } from '../../src/utils/optionsConverter'
 
 describe('optionsConverter', () => {

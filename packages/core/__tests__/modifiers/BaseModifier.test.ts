@@ -25,8 +25,6 @@ class TestModifier extends BaseModifier<number> {
   }
 }
 
-
-
 class ErrorThrowingModifier extends BaseModifier<boolean> {
   public apply(): NumericRollBonus {
     throw new Error('Test error in apply method')
@@ -90,7 +88,6 @@ describe('BaseModifier', () => {
       const result = modifier.apply(bonus)
       expect(result).toBe(bonus)
     })
-
   })
 
   describe('toDescription', () => {
@@ -102,7 +99,9 @@ describe('BaseModifier', () => {
 
     test('handles error conditions in concrete implementations', () => {
       const modifier = new ErrorThrowingModifier(true)
-      expect(() => modifier.toDescription()).toThrow('Test error in toDescription method')
+      expect(() => modifier.toDescription()).toThrow(
+        'Test error in toDescription method'
+      )
     })
   })
 
@@ -113,10 +112,11 @@ describe('BaseModifier', () => {
       expect(result).toBe('T')
     })
 
-
     test('handles error conditions in concrete implementations', () => {
       const modifier = new ErrorThrowingModifier(true)
-      expect(() => modifier.toNotation()).toThrow('Test error in toNotation method')
+      expect(() => modifier.toNotation()).toThrow(
+        'Test error in toNotation method'
+      )
     })
   })
 

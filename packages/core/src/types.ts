@@ -207,7 +207,6 @@ export type ModifierConfig =
   | RerollOptions
   | UniqueOptions
 
-
 /**
  * Combined options for all dice roll modifiers
  *

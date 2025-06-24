@@ -8,10 +8,26 @@ import { validateNotation } from '../src/validateNotation'
 describe('Integration Tests', () => {
   describe('isDiceNotation and validateNotation consistency', () => {
     const testCases = [
-      { input: '1d6', shouldBeValid: true, description: 'basic valid notation' },
-      { input: '2d20+3', shouldBeValid: true, description: 'notation with modifier' },
-      { input: '3d{abc}', shouldBeValid: true, description: 'custom dice notation' },
-      { input: 'invalid', shouldBeValid: false, description: 'completely invalid' },
+      {
+        input: '1d6',
+        shouldBeValid: true,
+        description: 'basic valid notation'
+      },
+      {
+        input: '2d20+3',
+        shouldBeValid: true,
+        description: 'notation with modifier'
+      },
+      {
+        input: '3d{abc}',
+        shouldBeValid: true,
+        description: 'custom dice notation'
+      },
+      {
+        input: 'invalid',
+        shouldBeValid: false,
+        description: 'completely invalid'
+      },
       { input: 'd6', shouldBeValid: false, description: 'missing quantity' },
       { input: '2d', shouldBeValid: false, description: 'missing sides' }
     ]
@@ -35,21 +51,27 @@ describe('Integration Tests', () => {
 
   describe('isDiceNotation and validateNotation divergence cases', () => {
     const divergentCases = [
-      { input: '2d{abc}L', isDiceExpected: true, validateExpected: false, description: 'custom dice with modifiers' }
+      {
+        input: '2d{abc}L',
+        isDiceExpected: true,
+        validateExpected: false,
+        description: 'custom dice with modifiers'
+      }
     ]
 
-    divergentCases.forEach(({ input, isDiceExpected, validateExpected, description }) => {
-      it(`${description}: isDiceNotation and validateNotation diverge on "${input}"`, () => {
-        const isDiceResult = isDiceNotation(input)
-        const validateResult = validateNotation(input)
+    divergentCases.forEach(
+      ({ input, isDiceExpected, validateExpected, description }) => {
+        it(`${description}: isDiceNotation and validateNotation diverge on "${input}"`, () => {
+          const isDiceResult = isDiceNotation(input)
+          const validateResult = validateNotation(input)
 
-        expect(isDiceResult).toBe(isDiceExpected)
-        expect(validateResult.valid).toBe(validateExpected)
+          expect(isDiceResult).toBe(isDiceExpected)
+          expect(validateResult.valid).toBe(validateExpected)
 
-        // This demonstrates the difference between pattern matching and business logic
-        expect(isDiceResult).not.toBe(validateResult.valid)
-      })
-    })
+          expect(isDiceResult).not.toBe(validateResult.valid)
+        })
+      }
+    )
   })
 
   describe('pattern matching and function consistency', () => {
@@ -67,7 +89,8 @@ describe('Integration Tests', () => {
         const isDiceResult = isDiceNotation(notation)
         const corePatternMatch = coreNotationPattern.test(notation)
         const cleanNotation = notation.replace(/\s/g, '')
-        const completePatternMatch = cleanNotation.replace(completeRollPattern, '').length === 0
+        const completePatternMatch =
+          cleanNotation.replace(completeRollPattern, '').length === 0
 
         // If isDiceNotation returns true, patterns should support it
         if (isDiceResult) {
@@ -85,7 +108,6 @@ describe('Integration Tests', () => {
   }
 
   describe('notationToOptions integration', () => {
-
     const validNotations: NotationToOptionsTestCase[] = [
       { input: '1d6', expectedQuantity: 1, expectedSides: 6 },
       { input: '2d20', expectedQuantity: 2, expectedSides: 20 },
@@ -169,15 +191,7 @@ describe('Integration Tests', () => {
   })
 
   describe('error handling consistency', () => {
-    const invalidInputs = [
-      null,
-      undefined,
-      123,
-      '',
-      'not-dice',
-      'd6',
-      '2d'
-    ]
+    const invalidInputs = [null, undefined, 123, '', 'not-dice', 'd6', '2d']
 
     invalidInputs.forEach((input) => {
       it(`handles invalid input consistently: ${JSON.stringify(input)}`, () => {

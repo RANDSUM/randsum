@@ -78,8 +78,16 @@ describe(isDiceNotation, () => {
     const caseVariations = [
       { input: '1D6', expected: true, description: 'uppercase D' },
       { input: '2d20', expected: true, description: 'lowercase d' },
-      { input: '3D8', expected: true, description: 'uppercase D with different numbers' },
-      { input: '1d{ABC}', expected: true, description: 'custom dice with uppercase content' }
+      {
+        input: '3D8',
+        expected: true,
+        description: 'uppercase D with different numbers'
+      },
+      {
+        input: '1d{ABC}',
+        expected: true,
+        description: 'custom dice with uppercase content'
+      }
     ]
 
     caseVariations.forEach(({ input, expected, description }) => {
@@ -91,11 +99,31 @@ describe(isDiceNotation, () => {
 
   describe('whitespace handling', () => {
     const whitespaceVariations = [
-      { input: ' 1d6 ', expected: false, description: 'leading and trailing spaces (fails core pattern)' },
-      { input: '1 d 6', expected: false, description: 'spaces around d (breaks pattern)' },
-      { input: '2d6 + 3', expected: true, description: 'spaces around modifier (core pattern matches)' },
-      { input: '\t1d6\n', expected: false, description: 'tabs and newlines (fails core pattern)' },
-      { input: '  2d{abc}  ', expected: false, description: 'spaces with custom dice (fails core pattern)' }
+      {
+        input: ' 1d6 ',
+        expected: false,
+        description: 'leading and trailing spaces (fails core pattern)'
+      },
+      {
+        input: '1 d 6',
+        expected: false,
+        description: 'spaces around d (breaks pattern)'
+      },
+      {
+        input: '2d6 + 3',
+        expected: true,
+        description: 'spaces around modifier (core pattern matches)'
+      },
+      {
+        input: '\t1d6\n',
+        expected: false,
+        description: 'tabs and newlines (fails core pattern)'
+      },
+      {
+        input: '  2d{abc}  ',
+        expected: false,
+        description: 'spaces with custom dice (fails core pattern)'
+      }
     ]
 
     whitespaceVariations.forEach(({ input, expected, description }) => {
@@ -128,18 +156,18 @@ describe(isDiceNotation, () => {
 
   describe('malformed dice notations', () => {
     const malformedNotations = [
-      'd6',      // missing quantity
-      '2d',      // missing sides
-      '2x6',     // wrong separator
-      'dd6',     // double d
-      '2d6d',    // extra d
-      '2d6+',    // incomplete modifier
-      '2d6++3',  // double modifier
-      '2d{',     // incomplete custom dice
-      '2d}',     // malformed custom dice
-      '2d{abc',  // unclosed custom dice
-      '2dabc}',  // malformed custom dice
-      ''         // empty string
+      'd6', // missing quantity
+      '2d', // missing sides
+      '2x6', // wrong separator
+      'dd6', // double d
+      '2d6d', // extra d
+      '2d6+', // incomplete modifier
+      '2d6++3', // double modifier
+      '2d{', // incomplete custom dice
+      '2d}', // malformed custom dice
+      '2d{abc', // unclosed custom dice
+      '2dabc}', // malformed custom dice
+      '' // empty string
     ]
 
     malformedNotations.forEach((input) => {
@@ -170,14 +198,30 @@ describe(isDiceNotation, () => {
 
   describe('edge cases and boundary conditions', () => {
     const edgeCases = [
-      { input: '0d6', expected: true, description: 'zero quantity (valid pattern)' },
-      { input: '1d0', expected: true, description: 'zero sides (valid pattern)' },
+      {
+        input: '0d6',
+        expected: true,
+        description: 'zero quantity (valid pattern)'
+      },
+      {
+        input: '1d0',
+        expected: true,
+        description: 'zero sides (valid pattern)'
+      },
       { input: '-1d6', expected: false, description: 'negative quantity' },
       { input: '1d-6', expected: false, description: 'negative sides' },
       { input: '1.5d6', expected: false, description: 'decimal quantity' },
       { input: '1d6.5', expected: false, description: 'decimal sides' },
-      { input: '999999d999999', expected: true, description: 'very large numbers' },
-      { input: '1d{}', expected: true, description: 'empty custom dice (valid pattern)' },
+      {
+        input: '999999d999999',
+        expected: true,
+        description: 'very large numbers'
+      },
+      {
+        input: '1d{}',
+        expected: true,
+        description: 'empty custom dice (valid pattern)'
+      },
       { input: '1d{ }', expected: true, description: 'custom dice with space' }
     ]
 

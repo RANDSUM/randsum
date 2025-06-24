@@ -117,7 +117,7 @@ export class RandsumError extends Error {
 
     if (this.suggestions.length > 0) {
       result += '\n  Suggestions:'
-      this.suggestions.forEach(suggestion => {
+      this.suggestions.forEach((suggestion) => {
         result += `\n    • ${suggestion}`
       })
     }
@@ -157,7 +157,12 @@ export class RandsumError extends Error {
     context: ErrorContext = {},
     suggestions: string[] = []
   ): RandsumError {
-    const randsumError = new RandsumError(error.message, code, context, suggestions)
+    const randsumError = new RandsumError(
+      error.message,
+      code,
+      context,
+      suggestions
+    )
     randsumError.stack = error.stack
     return randsumError
   }

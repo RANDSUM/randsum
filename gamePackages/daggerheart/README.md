@@ -84,10 +84,7 @@ function rollDH(args: RollArgumentDH): RollResultDH
 Checks if a Daggerheart roll meets or exceeds a Difficulty Class.
 
 ```typescript
-function meetOrBeatDH(
-  difficultyClass: number,
-  rollArg: RollArgumentDH
-): MeetOrBeatResultDH
+function meetOrBeatDH(difficultyClass: number, rollArg: RollArgumentDH): MeetOrBeatResultDH
 ```
 
 **Parameters:**

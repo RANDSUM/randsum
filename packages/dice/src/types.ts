@@ -20,10 +20,7 @@ export interface NumericDie {
   readonly isCustom: false
   roll(quantity?: number): number
   rollSpread(quantity?: number): number[]
-  rollModified(
-    quantity: number,
-    modifiers?: ModifierOptions
-  ): NumericRollResult
+  rollModified(quantity: number, modifiers?: ModifierOptions): NumericRollResult
   toOptions: NumericRollOptions
 }
 
@@ -37,10 +34,7 @@ export interface CustomDie {
   readonly isCustom: true
   roll(quantity?: number): string
   rollSpread(quantity?: number): string[]
-  rollModified(
-    quantity: number,
-    modifiers?: ModifierOptions
-  ): CustomRollResult
+  rollModified(quantity: number, modifiers?: ModifierOptions): CustomRollResult
   toOptions: CustomRollOptions
 }
 

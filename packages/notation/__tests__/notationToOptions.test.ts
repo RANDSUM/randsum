@@ -204,9 +204,6 @@ describe(notationToOptions, () => {
   })
 
   describe('modifier integration', () => {
-    // These tests verify that the modifier parsing integrates correctly
-    // with the core notation parsing
-
     it('correctly separates core notation from modifiers', () => {
       const result = notationToOptions('3d8+5L1')
 
@@ -217,8 +214,6 @@ describe(notationToOptions, () => {
     })
 
     it('handles modifiers with custom dice correctly', () => {
-      // Note: This should not happen in practice as custom dice with modifiers
-      // should be rejected by validation, but the parser should handle it gracefully
       const result = notationToOptions('2d{abc}')
 
       expect(result.quantity).toBe(2)
@@ -241,7 +236,7 @@ describe(notationToOptions, () => {
       const endTime = performance.now()
       const totalTime = endTime - startTime
 
-      expect(totalTime).toBeLessThan(500) // Should be fast
+      expect(totalTime).toBeLessThan(500)
     })
 
     it('handles large notation strings efficiently', () => {

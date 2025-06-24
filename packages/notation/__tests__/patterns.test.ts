@@ -26,15 +26,15 @@ describe('coreNotationPattern', () => {
 
   describe('invalid core notations', () => {
     const invalidCoreNotations = [
-      'd6',        // missing quantity
-      '2d',        // missing sides
-      '2x6',       // wrong separator
-      'dd6',       // double d
-      'abc',       // no dice notation
-      '123',       // just numbers
-      '',          // empty string
-      '1d{',       // incomplete custom dice
-      '1d}'        // malformed custom dice
+      'd6', // missing quantity
+      '2d', // missing sides
+      '2x6', // wrong separator
+      'dd6', // double d
+      'abc', // no dice notation
+      '123', // just numbers
+      '', // empty string
+      '1d{', // incomplete custom dice
+      '1d}' // malformed custom dice
     ]
 
     invalidCoreNotations.forEach((notation) => {
@@ -46,9 +46,9 @@ describe('coreNotationPattern', () => {
 
   describe('edge cases that do match core pattern', () => {
     const edgeCasesThatMatch = [
-      '0d6',       // zero quantity (valid pattern)
-      '1d0',       // zero sides (valid pattern)
-      '2d6d'       // extra d at end (matches 2d6 part)
+      '0d6', // zero quantity (valid pattern)
+      '1d0', // zero sides (valid pattern)
+      '2d6d' // extra d at end (matches 2d6 part)
     ]
 
     edgeCasesThatMatch.forEach((notation) => {
@@ -83,8 +83,16 @@ describe('coreNotationPattern', () => {
       { input: '1d{!@#}', expected: true, description: 'special characters' },
       { input: '1d{αβγ}', expected: true, description: 'unicode characters' },
       { input: '1d{}', expected: true, description: 'empty braces' },
-      { input: '1d{a,b,c}', expected: true, description: 'comma-separated values' },
-      { input: '1d{nested{braces}}', expected: true, description: 'nested braces' }
+      {
+        input: '1d{a,b,c}',
+        expected: true,
+        description: 'comma-separated values'
+      },
+      {
+        input: '1d{nested{braces}}',
+        expected: true,
+        description: 'nested braces'
+      }
     ]
 
     customDiceTests.forEach(({ input, expected, description }) => {
@@ -112,7 +120,10 @@ describe('completeRollPattern', () => {
     completeNotations.forEach((notation) => {
       it(`completely matches notation: ${notation}`, () => {
         const cleanNotation = notation.replace(/\s/g, '')
-        const remainingAfterMatch = cleanNotation.replace(completeRollPattern, '')
+        const remainingAfterMatch = cleanNotation.replace(
+          completeRollPattern,
+          ''
+        )
         expect(remainingAfterMatch.length).toBe(0)
       })
     })
@@ -122,7 +133,10 @@ describe('completeRollPattern', () => {
     const partialNotations = [
       { input: '1d6extra', description: 'extra text after valid notation' },
       { input: 'prefix1d6', description: 'prefix before valid notation' },
-      { input: '1d6+3invalid', description: 'invalid modifier after valid notation' }
+      {
+        input: '1d6+3invalid',
+        description: 'invalid modifier after valid notation'
+      }
     ]
 
     partialNotations.forEach(({ input, description }) => {

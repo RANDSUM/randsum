@@ -20,4 +20,3 @@ export {
 } from './tables'
 
 export type * from './types'
-

@@ -13,43 +13,55 @@ import type {
  * @returns Array of roll options for hope and fear dice
  * @internal
  */
-function rollArg({ modifier = 0, amplifyHope = false, amplifyFear = false }: RollArgumentDH): NumericRollOptions[] {
+function rollArg({
+  modifier = 0,
+  amplifyHope = false,
+  amplifyFear = false
+}: RollArgumentDH): NumericRollOptions[] {
   if (amplifyHope && amplifyFear) {
-    return [{
-      quantity: 2,
-      sides: 20,
-      modifiers: { plus: modifier }
-    }]
+    return [
+      {
+        quantity: 2,
+        sides: 20,
+        modifiers: { plus: modifier }
+      }
+    ]
   }
   if (amplifyHope) {
-    return [{
-      quantity: 1,
-      sides: 20,
-      modifiers: { plus: modifier }
-    },
-    {
-      quantity: 1,
-      sides: 12,
-      modifiers: { plus: modifier }
-    }]
+    return [
+      {
+        quantity: 1,
+        sides: 20,
+        modifiers: { plus: modifier }
+      },
+      {
+        quantity: 1,
+        sides: 12,
+        modifiers: { plus: modifier }
+      }
+    ]
   }
   if (amplifyFear) {
-    return [{
-      quantity: 1,
-      sides: 12,
-      modifiers: { plus: modifier }
-    },
-    {
-      quantity: 1,
-      sides: 12,
-      modifiers: { plus: modifier }
-    }]
+    return [
+      {
+        quantity: 1,
+        sides: 12,
+        modifiers: { plus: modifier }
+      },
+      {
+        quantity: 1,
+        sides: 12,
+        modifiers: { plus: modifier }
+      }
+    ]
   }
-  return [{
-    quantity: 2,
-    sides: 12,
-    modifiers: { plus: modifier }
-  }]
+  return [
+    {
+      quantity: 2,
+      sides: 12,
+      modifiers: { plus: modifier }
+    }
+  ]
 }
 
 /**

@@ -30,11 +30,7 @@ export class InvalidNotationError extends RandsumError {
    * @param reason - Specific reason why the notation is invalid
    * @param suggestions - Array of helpful suggestions (auto-generated if not provided)
    */
-  constructor(
-    notation: string,
-    reason?: string,
-    suggestions?: string[]
-  ) {
+  constructor(notation: string, reason?: string, suggestions?: string[]) {
     const message = `Invalid dice notation: ${reason ?? notation}`
 
     const context: ErrorContext = {
@@ -43,7 +39,8 @@ export class InvalidNotationError extends RandsumError {
       location: 'notation parsing'
     }
 
-    const autoSuggestions = suggestions ?? InvalidNotationError.generateSuggestions(notation)
+    const autoSuggestions =
+      suggestions ?? InvalidNotationError.generateSuggestions(notation)
 
     super(message, 'INVALID_NOTATION', context, autoSuggestions)
     this.name = 'InvalidNotationError'
@@ -61,10 +58,14 @@ export class InvalidNotationError extends RandsumError {
 
     // Common case mistakes
     if (notation.includes('l')) {
-      suggestions.push(`Did you mean '${notation.replace(/l/g, 'L')}' to drop the lowest roll?`)
+      suggestions.push(
+        `Did you mean '${notation.replace(/l/g, 'L')}' to drop the lowest roll?`
+      )
     }
     if (notation.includes('h')) {
-      suggestions.push(`Did you mean '${notation.replace(/h/g, 'H')}' to keep the highest roll?`)
+      suggestions.push(
+        `Did you mean '${notation.replace(/h/g, 'H')}' to keep the highest roll?`
+      )
     }
 
     // Missing 'd' separator
@@ -83,12 +84,16 @@ export class InvalidNotationError extends RandsumError {
 
     // Missing quantity
     if (notation.startsWith('d')) {
-      suggestions.push(`Add a quantity before 'd': '1${notation}' or '2${notation}'`)
+      suggestions.push(
+        `Add a quantity before 'd': '1${notation}' or '2${notation}'`
+      )
     }
 
     // Invalid characters
     if (/[^0-9dDhHlLrReE+\-{},]/.test(notation)) {
-      suggestions.push('Remove invalid characters - only use numbers, d, H, L, R, E, +, -, and {} for custom faces')
+      suggestions.push(
+        'Remove invalid characters - only use numbers, d, H, L, R, E, +, -, and {} for custom faces'
+      )
     }
 
     // General format guidance

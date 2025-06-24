@@ -50,7 +50,21 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
   const quantity = Number(quantityNot)
   const sides = formatSides(sidesNot)
 
+  const modifiers = {
+    ...DropModifier.parse(modifiersString),
+    ...ExplodeModifier.parse(modifiersString),
+    ...UniqueModifier.parse(modifiersString),
+    ...ReplaceModifier.parse(modifiersString),
+    ...RerollModifier.parse(modifiersString),
+    ...CapModifier.parse(modifiersString),
+    ...PlusModifier.parse(modifiersString),
+    ...MinusModifier.parse(modifiersString)
+  }
+
   if (Array.isArray(sides)) {
+    if (Object.keys(modifiers).length > 0) {
+      throw new Error('Custom dice cannot have modifiers')
+    }
     return {
       quantity,
       sides,
@@ -61,16 +75,7 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
   return {
     quantity,
     sides,
-    modifiers: {
-      ...DropModifier.parse(modifiersString),
-      ...ExplodeModifier.parse(modifiersString),
-      ...UniqueModifier.parse(modifiersString),
-      ...ReplaceModifier.parse(modifiersString),
-      ...RerollModifier.parse(modifiersString),
-      ...CapModifier.parse(modifiersString),
-      ...PlusModifier.parse(modifiersString),
-      ...MinusModifier.parse(modifiersString)
-    }
+    modifiers,
   }
 }
 

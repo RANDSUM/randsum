@@ -173,8 +173,8 @@ describe('createSeededRandom', () => {
         // If results are identical, at least verify the functions work correctly
         expect(typeof seededRandom1).toBe('function')
         expect(typeof seededRandom2).toBe('function')
-        expect(results1.every(r => r >= 0 && r < 20)).toBe(true)
-        expect(results2.every(r => r >= 0 && r < 20)).toBe(true)
+        expect(results1.every((r) => r >= 0 && r < 20)).toBe(true)
+        expect(results2.every((r) => r >= 0 && r < 20)).toBe(true)
       } else {
         expect(results1).not.toEqual(results2)
       }

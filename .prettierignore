@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+bun.lock
+
+# Build outputs
+dist/
+build/
+out/
+
+packages/**/dist/*
+gamePackages/**/dist/*
+
+# Coverage reports
+coverage/
+
+# Logs
+*.log
+logs/
+
+# Cache directories
+.cache/
+.moon/cache/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Documentation build outputs
+docs/
+.typedoc/
+
+# Binary files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.webp
+*.svg
+*.woff
+*.woff2
+*.ttf
+*.eot
+
+# Lock files
+*.lock
+yarn.lock
+package-lock.json
+
+# Generated files
+*.d.ts.map
+*.js.map
+
+# Config files that should maintain their formatting
+.prototools
+bunfig.toml
+
+# Markdown files in specific directories (keep formatting as-is)
+**/node_modules/**/*.md
