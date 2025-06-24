@@ -1,6 +1,6 @@
 import { ModifierConflictError, optionsConverter } from '@randsum/core'
 import { isDiceNotation } from './isDiceNotation'
-import type { DiceNotation, RollOptions, ValidationResult } from './types'
+import type { ValidationResult } from './types'
 import { notationToOptions } from './utils/notationToOptions'
 
 /**
