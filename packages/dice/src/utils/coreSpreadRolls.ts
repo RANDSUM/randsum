@@ -12,9 +12,9 @@ import { generateNumericalFaces } from './generateNumericalFaces'
 export function coreSpreadRolls<F extends string | number>(
   quantity: number,
   max: number,
-  faces?: F[]
+  faces?: string[]
 ): F[] {
-  const facesArr = faces ?? (generateNumericalFaces(max) as F[])
+  const facesArr = faces ?? (generateNumericalFaces(max))
 
   const result = new Array<F>(quantity)
 
@@ -22,7 +22,7 @@ export function coreSpreadRolls<F extends string | number>(
     const randomIndex = coreRandom(max)
     const face = facesArr[randomIndex]
     if (face) {
-      result[i] = face
+      result[i] = face as F
     }
   }
 
