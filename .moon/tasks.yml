@@ -52,8 +52,35 @@ tasks:
       - 'tsCheck'
       - 'build'
 
+  format:
+    command: 'prettier --write . --ignore-path ../../.prettierignore  --config ../../.prettierrc'
+    inputs:
+      - 'src/**/*'
+      - '__tests__/**/*'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.json'
+      - '**/*.md'
+      - '.prettierrc'
+    options:
+      cache: true
+
+  formatCheck:
+    command: 'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc'
+    inputs:
+      - 'src/**/*'
+      - '__tests__/**/*'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.json'
+      - '**/*.md'
+      - '.prettierrc'
+    options:
+      cache: true
+
   ci:
     deps:
       - 'tsCheck'
       - 'test'
       - 'lint'
+      - 'formatCheck'

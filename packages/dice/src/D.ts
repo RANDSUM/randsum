@@ -8,8 +8,15 @@ import type {
   ModifierOptions,
   NumericRollOptions
 } from '@randsum/core'
+import { RandsumError } from '@randsum/core'
 import { roll } from './roll'
-import type { BaseD, CustomDie, CustomRollResult, NumericDie, NumericRollResult } from './types'
+import type {
+  BaseD,
+  CustomDie,
+  CustomRollResult,
+  NumericDie,
+  NumericRollResult
+} from './types'
 import { coreSpreadRolls } from './utils/coreSpreadRolls'
 import { generateNumericalFaces } from './utils/generateNumericalFaces'
 
@@ -29,7 +36,10 @@ abstract class DieBase {
 
   public abstract roll(quantity?: number): number | string
   public abstract rollSpread(quantity?: number): number[] | string[]
-  public abstract rollModified(quantity: number, modifiers?: ModifierOptions): NumericRollResult | CustomRollResult
+  public abstract rollModified(
+    quantity: number,
+    modifiers?: ModifierOptions
+  ): NumericRollResult | CustomRollResult
   public abstract get toOptions(): NumericRollOptions | CustomRollOptions
 }
 
@@ -110,7 +120,19 @@ class CustomDieImpl extends DieBase implements CustomDie {
 
   constructor(faces: string[]) {
     if (!faces.length) {
-      throw new Error('Custom die must have at least one face')
+      throw new RandsumError(
+        'Custom die must have at least one face',
+        'INVALID_DIE_CONFIG',
+        {
+          input: faces,
+          expected: 'Array with at least one face value'
+        },
+        [
+          'Provide at least one face value: ["H", "T"] for a coin',
+          'Use standard dice like D6 if you need numbered faces',
+          'Custom faces must be non-empty strings'
+        ]
+      )
     }
     super(faces.length)
     this.faces = [...faces]

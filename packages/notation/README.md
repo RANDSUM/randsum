@@ -93,8 +93,6 @@ const notations: DiceNotation[] = [
 function createAttackRoll(bonus: number): DiceNotation {
   return `1d20+${bonus}` // ✅ Valid DiceNotation
 }
-
-
 ```
 
 ## Supported Notation

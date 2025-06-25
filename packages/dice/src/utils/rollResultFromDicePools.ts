@@ -84,13 +84,13 @@ function applyModifier(
     case 'plus':
       return {
         ...currentBonuses,
-        simpleMathModifier: modifierValue as number
+        simpleMathModifier: Number(modifierValue)
       }
 
     case 'minus':
       return {
         ...currentBonuses,
-        simpleMathModifier: -(modifierValue as number)
+        simpleMathModifier: -Number(modifierValue)
       }
 
     case 'reroll':
@@ -161,7 +161,7 @@ function generateModifiedRolls(
     if (Object.keys(modifiers).length === 0) {
       result[key] = {
         total: calculateTotal(rolls),
-        rolls: rolls as number[]
+        rolls: rolls.map((n) => Number(n))
       }
       continue
     }
@@ -170,7 +170,7 @@ function generateModifiedRolls(
 
     const initialBonuses: NumericRollBonus = {
       simpleMathModifier: 0,
-      rolls: rolls as number[]
+      rolls: rolls.map((n) => Number(n))
     }
 
     let bonuses = initialBonuses

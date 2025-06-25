@@ -217,9 +217,7 @@ import { roll } from '@randsum/dice'
 // Handle player attack roll
 function handleAttackRoll(characterLevel, strengthModifier, hasAdvantage) {
   const notation = hasAdvantage ? '2d20H' : '1d20'
-  const attackRoll = roll(
-    `${notation}+${strengthModifier}+${Math.floor(characterLevel / 2)}`
-  )
+  const attackRoll = roll(`${notation}+${strengthModifier}+${Math.floor(characterLevel / 2)}`)
   return {
     total: attackRoll.sum,
     critical: attackRoll.rolls.includes(20),
@@ -268,8 +266,7 @@ function simulateStatRolls(iterations = 10000) {
 
   // Calculate average stat value
   const allStats = results.flat()
-  const average =
-    allStats.reduce((sum, stat) => sum + stat, 0) / allStats.length
+  const average = allStats.reduce((sum, stat) => sum + stat, 0) / allStats.length
 
   return {
     average,

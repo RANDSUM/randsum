@@ -652,4 +652,39 @@ describe(rollResultFromDicePools, () => {
       })
     })
   })
+
+  describe('edge cases', () => {
+    test('handles zero value modifiers', () => {
+      const parametersWithZeroModifier = {
+        dicePools: {
+          'test-roll-id': createRollParameters({
+            options: {
+              sides: 6,
+              quantity: testRollSet.length,
+              modifiers: { plus: 0 }
+            }
+          })
+        }
+      }
+
+      spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
+
+      const result = rollResultFromDicePools(parametersWithZeroModifier)
+
+      expect(result).toMatchObject({
+        ...parametersWithZeroModifier,
+        rawRolls: coreRawRolls,
+        modifiedRolls: {
+          'test-roll-id': {
+            rolls: testRollSet,
+            total: 10 // 10 + 0 = 10
+          }
+        },
+        total: 10,
+        rawResult: testRollSet,
+        result: testRollSet,
+        type: 'numerical'
+      })
+    })
+  })
 })

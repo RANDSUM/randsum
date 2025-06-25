@@ -19,11 +19,4 @@ export {
   RollTables
 } from './tables'
 
-export type {
-  SUHit,
-  SUTableListing,
-  SUTableName,
-  SUTableResult,
-  SUTableType
-} from './types'
-
+export type * from './types'

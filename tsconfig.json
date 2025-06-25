@@ -23,7 +23,7 @@
     "strictNullChecks": true,
     "composite": true,
     "types": [
-      "bun-types" // add Bun global
+      "bun-types"
     ]
   }
 }

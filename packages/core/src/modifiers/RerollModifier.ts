@@ -101,7 +101,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
         }
       },
       { reroll: {} }
-    ) as Pick<ModifierOptions, 'reroll'>
+    )
   }
 
   /**
@@ -248,7 +248,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
           lessThan,
           exact,
           max
-        } as RerollOptions,
+        },
         rollOne,
         index + 1
       )

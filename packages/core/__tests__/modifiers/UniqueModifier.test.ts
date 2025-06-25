@@ -4,7 +4,7 @@ import type {
   NumericRollBonus,
   RequiredNumericRollParameters
 } from '../../src/types'
-import { InvalidUniqueError } from '../../src/utils/invalidUniqueError'
+import { RandsumError } from '../../src/errors'
 
 describe('UniqueModifier', () => {
   describe('static pattern', () => {
@@ -50,7 +50,7 @@ describe('UniqueModifier', () => {
     const mockRollOne = (): number => {
       const value = mockRollSequence[rollIndex % mockRollSequence.length]
       rollIndex++
-      return value
+      return Number(value)
     }
 
     beforeEach(() => {
@@ -87,7 +87,7 @@ describe('UniqueModifier', () => {
       expect(result.rolls).toEqual([1, 2, 1, 4])
     })
 
-    test('throws InvalidUniqueError when more rolls than sides', () => {
+    test('throws RandsumError when more rolls than sides', () => {
       const modifier = new UniqueModifier(true)
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 3],
@@ -100,7 +100,7 @@ describe('UniqueModifier', () => {
 
       expect(() => {
         modifier.apply(bonus, params, mockRollOne)
-      }).toThrow(InvalidUniqueError)
+      }).toThrow(RandsumError)
     })
 
     test('returns original bonus when options is undefined', () => {
@@ -116,6 +116,52 @@ describe('UniqueModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result).toBe(bonus)
+    })
+  })
+
+  describe('toDescription', () => {
+    test('returns description for boolean unique modifier', () => {
+      const modifier = new UniqueModifier(true)
+      const result = modifier.toDescription()
+
+      expect(result).toEqual(['No Duplicate Rolls'])
+    })
+
+    test('returns description for unique modifier with notUnique values', () => {
+      const modifier = new UniqueModifier({ notUnique: [1, 6] })
+      const result = modifier.toDescription()
+
+      expect(result).toEqual(['No Duplicates (except [1] and [6])'])
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new UniqueModifier(undefined)
+      const result = modifier.toDescription()
+
+      expect(result).toBeUndefined()
+    })
+  })
+
+  describe('toNotation', () => {
+    test('returns notation for boolean unique modifier', () => {
+      const modifier = new UniqueModifier(true)
+      const result = modifier.toNotation()
+
+      expect(result).toBe('U')
+    })
+
+    test('returns notation for unique modifier with notUnique values', () => {
+      const modifier = new UniqueModifier({ notUnique: [1, 6] })
+      const result = modifier.toNotation()
+
+      expect(result).toBe('U{1,6}')
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new UniqueModifier(undefined)
+      const result = modifier.toNotation()
+
+      expect(result).toBeUndefined()
     })
   })
 })

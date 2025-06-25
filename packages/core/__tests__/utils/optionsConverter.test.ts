@@ -1,9 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import type {
-  CustomRollOptions,
-  NumericRollOptions,
-  RollOptions
-} from '../../src/types'
+import type { CustomRollOptions, NumericRollOptions } from '../../src/types'
 import { optionsConverter } from '../../src/utils/optionsConverter'
 
 describe('optionsConverter', () => {
@@ -96,7 +92,7 @@ describe('optionsConverter', () => {
     })
 
     test('uses default quantity of 1 when not specified', () => {
-      const options = { sides: 10 } as RollOptions
+      const options = { sides: 10 }
       expect(optionsConverter.formatCoreNotation(options)).toBe('1d10')
     })
   })
@@ -128,8 +124,18 @@ describe('optionsConverter', () => {
       expect(result).toContain('Nui')
     })
 
+    test('handles custom dice with empty string sides', () => {
+      const options: CustomRollOptions = {
+        sides: ['A', '', 'B'],
+        quantity: 1
+      }
+      const result = optionsConverter.formatCoreDescription(options)
+
+      expect(result).toBe('Roll 1 die with the following sides: (A ,B)')
+    })
+
     test('uses default quantity of 1 when not specified', () => {
-      const options = { sides: 10 } as NumericRollOptions
+      const options = { sides: 10 }
       const result = optionsConverter.formatCoreDescription(options)
 
       expect(result).toBe('Roll 1 10-sided die')

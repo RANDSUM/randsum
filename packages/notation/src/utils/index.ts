@@ -6,5 +6,4 @@
  * strings into structured options objects.
  */
 
-export { notationToOptions } from './notationToOptions';
-
+export { notationToOptions } from './notationToOptions'

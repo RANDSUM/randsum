@@ -7,7 +7,6 @@
 - Organize packages into three categories:
   - `packages/` - Core packages (core, dice, notation)
   - `gamePackages/` - Game system implementations (5e, blades, root-rpg, etc.)
-  - `internalPackages/` - Internal utilities (currently only core)
 - Each package follows the structure: `src/`, `__tests__/`, `dist/` (generated), `package.json`, `README.md`, `moon.yml`
 - Use workspace dependencies with `workspace:~` syntax for internal package references
 
@@ -39,7 +38,7 @@
 
 - Use strict TypeScript configuration with all strict checks enabled
 - Prefer interfaces over types for object shapes
-- Use generic types extensively for type safety (e.g., BaseD<T>, BaseModifier<T>)
+- Use discriminated union types extensively for type safety
 - Use union types for game-specific enums (e.g., 'Advantage' | 'Disadvantage')
 - Export types and interfaces alongside implementations
 - Use type guards for runtime type checking (e.g., isNumericRollOptions)
@@ -47,6 +46,7 @@
 - Use template literal types for string patterns where appropriate
 - NEVER use `any`
 - NEVER use `as` for type assertions
+- Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.
 
 ## Package Organization & Dependencies
 
@@ -79,9 +79,9 @@
 - Use consistent README structure: description, features, installation, usage, API reference
 - Include TypeScript code examples in documentation
 - Use emoji in README headers for visual appeal (🎲, 🎯, 🔒, 🪶)
-- Document complex algorithms and business logic with inline comments
 - Prefer dark themes for documentation sites
 - Use syntax highlighting for code blocks in documentation
+- if creating complex documentation for specific augment tasks, create it in the `.notes/` directory.
 
 ## Dice Rolling & Game System Patterns
 
@@ -145,7 +145,6 @@
 
 ## Modifier System Patterns
 
-- All modifiers extend BaseModifier<T> abstract class
 - Implement static pattern property for regex matching dice notation
 - Implement static parse method to extract options from notation strings
 - Use consistent modifier naming: [Action]Modifier (e.g., DropModifier, ExplodeModifier)
@@ -175,7 +174,7 @@
 - User prefers dark theme for GitHub Pages documentation
 - User prefers separate Core Packages and Game Systems sections in documentation
 - Game Systems documentation should link to respective game system tables
-- User prefers abstracting shared testing patterns into internalPackages/core
+- User prefers abstracting shared testing patterns into packages/core
 - User prefers bun-native solutions over Python for development tasks
 - User prefers package managers over manual package.json editing
 
@@ -187,7 +186,7 @@
 - Do not skip type checking or linting in CI/CD
 - Do not use any or unknown types without justification
 - Do not create deep import paths - use barrel exports
-- Do not duplicate testing utilities - abstract to internalPackages/core
+- Do not duplicate testing utilities - abstract to packages/core
 - Do not use Python tools when bun-native alternatives exist
 
 ## Naming Conventions Summary
@@ -216,6 +215,7 @@
 - NEVER use `any` type - use proper TypeScript types
 - NEVER use `as` for type assertions - use type guards instead
 - Always use strict TypeScript configuration with all checks enabled
+- Functional overloads should be used for proper typescript communication, but only where necessary
 - Use readonly properties for immutable data structures
 - Implement proper error boundaries and error handling
 - Use descriptive variable and function names that explain intent

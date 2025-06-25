@@ -1,4 +1,5 @@
 import type {
+  ModifierConfig,
   ModifierOptions,
   NumericRollBonus,
   RequiredNumericRollParameters
@@ -10,9 +11,9 @@ import type {
  * Modifiers alter the behavior or results of dice rolls
  * and can be applied to both numeric and custom dice.
  *
- * @template T - The type of options this modifier accepts
+ * @template T - The type of options this modifier accepts, constrained to ModifierConfig
  */
-export abstract class BaseModifier<T = unknown> {
+export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
   /**
    * Options for configuring the modifier's behavior
    */

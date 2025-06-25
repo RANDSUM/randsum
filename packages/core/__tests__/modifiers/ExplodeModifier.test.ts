@@ -71,4 +71,36 @@ describe('ExplodeModifier', () => {
       expect(result).toBe(bonus)
     })
   })
+
+  describe('toDescription', () => {
+    test('returns description for explode modifier', () => {
+      const modifier = new ExplodeModifier(true)
+      const result = modifier.toDescription()
+
+      expect(result).toEqual(['Exploding Dice'])
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new ExplodeModifier(undefined)
+      const result = modifier.toDescription()
+
+      expect(result).toBeUndefined()
+    })
+  })
+
+  describe('toNotation', () => {
+    test('returns notation for explode modifier', () => {
+      const modifier = new ExplodeModifier(true)
+      const result = modifier.toNotation()
+
+      expect(result).toBe('!')
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new ExplodeModifier(undefined)
+      const result = modifier.toNotation()
+
+      expect(result).toBeUndefined()
+    })
+  })
 })

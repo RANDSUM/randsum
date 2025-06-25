@@ -14,7 +14,7 @@ export function coreSpreadRolls<F extends string | number>(
   max: number,
   faces?: F[]
 ): F[] {
-  const facesArr = faces ?? (generateNumericalFaces(max) as F[])
+  const facesArr = (faces ?? generateNumericalFaces(max)) as F[]
 
   const result = new Array<F>(quantity)
 

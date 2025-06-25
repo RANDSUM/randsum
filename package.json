@@ -11,6 +11,8 @@
     "test": "bunx moon :test",
     "lint": "bunx moon :lint",
     "lint:fix": "bunx moon :lint -- --fix",
+    "format": "bunx moon :format",
+    "format:check": "bunx moon :formatCheck",
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
@@ -18,16 +20,19 @@
     "@moonrepo/cli"
   ],
   "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@moonrepo/cli": "^1.37.3",
     "@randsum/core": "workspace:~",
     "@randsum/dice": "workspace:~",
     "@randsum/notation": "workspace:~",
-    "@eslint/js": "^9.29.0",
-    "@moonrepo/cli": "^1.37.3",
     "@types/bun": "^1.2.17",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
     "bunup": "^0.7.6",
     "eslint": "^9.29.0",
+    "eslint-config-expo": "^9.2.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.1"

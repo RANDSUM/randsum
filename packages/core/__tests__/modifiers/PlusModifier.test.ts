@@ -73,4 +73,36 @@ describe('PlusModifier', () => {
       expect(result).toBe(bonus)
     })
   })
+
+  describe('toDescription', () => {
+    test('returns description for plus modifier', () => {
+      const modifier = new PlusModifier(3)
+      const result = modifier.toDescription()
+
+      expect(result).toEqual(['Add 3'])
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new PlusModifier(undefined)
+      const result = modifier.toDescription()
+
+      expect(result).toBeUndefined()
+    })
+  })
+
+  describe('toNotation', () => {
+    test('returns notation for plus modifier', () => {
+      const modifier = new PlusModifier(5)
+      const result = modifier.toNotation()
+
+      expect(result).toBe('+5')
+    })
+
+    test('returns undefined when options is undefined', () => {
+      const modifier = new PlusModifier(undefined)
+      const result = modifier.toNotation()
+
+      expect(result).toBeUndefined()
+    })
+  })
 })

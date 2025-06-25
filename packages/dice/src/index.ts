@@ -14,17 +14,7 @@
  * standard gaming dice (D4, D6, D8, D10, D12, D20, D100), and
  * specialized dice like coins and Fudge dice.
  */
-export {
-  D,
-  D10,
-  D100,
-  D12,
-  D20,
-  D4,
-  D6,
-  D8, alphaNumDie,
-  coin, fudgeDice
-} from './D'
+export * from './D'
 
 /**
  * Main dice rolling function
@@ -35,42 +25,33 @@ export {
 export { roll } from './roll'
 
 /**
- * Type exports organized by category for better tree-shaking
+ * Type guards for roll result discrimination
  *
- * Types are grouped by their purpose to make it easier for bundlers
- * to eliminate unused types and reduce bundle size.
+ * These functions provide runtime type checking for roll results,
+ * enabling type-safe filtering and processing of different result types.
  */
+export * from './guards/isRollResult'
 
-// Core dice types from this package
-export type {
-  BaseD, CustomRollArgument, CustomRollParams,
-  CustomRollResult, DicePool,
-  MixedRollResult, NumericRollArgument, NumericRollParams,
-  NumericRollResult, RollArgument,
-  RollOptions,
-  RollParams,
-  RollResult
-} from './types'
+/**
+ * Core types from @randsum/core package
+ *
+ * Contains all modifier options, roll configurations, and base interfaces
+ * used throughout the RANDSUM ecosystem.
+ */
+export type * from '@randsum/core'
 
-export type {
-  BaseRollOptions,
-  ComparisonOptions,
-  CustomRollOptions,
-  DropOptions,
-  ModifierOptions,
-  NumericRollOptions,
-  ReplaceOptions,
-  RerollOptions,
-  UniqueOptions
-} from '@randsum/core'
+/**
+ * Notation types from @randsum/notation package
+ *
+ * Contains dice notation string types, validation results, and parsing
+ * utilities for working with dice notation strings.
+ */
+export type * from '@randsum/notation'
 
-export type {
-  CustomDiceNotation,
-  CustomValidationResult,
-  DiceNotation,
-  InvalidValidationResult,
-  NumericDiceNotation,
-  NumericValidationResult,
-  ValidationResult
-} from '@randsum/notation'
-
+/**
+ * Result types from @randsum/dice package
+ *
+ * Contains all roll result interfaces, dice pool types, and argument types
+ * for working with dice rolling results and configurations.
+ */
+export type * from './types'

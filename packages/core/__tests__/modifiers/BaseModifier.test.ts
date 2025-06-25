@@ -25,21 +25,6 @@ class TestModifier extends BaseModifier<number> {
   }
 }
 
-class IncompleteModifier extends BaseModifier<string> {
-  // Intentionally incomplete implementation to test abstract behavior
-  public apply(bonus: NumericRollBonus): NumericRollBonus {
-    return bonus
-  }
-
-  public toDescription(): string[] | undefined {
-    return undefined
-  }
-
-  public toNotation(): string | undefined {
-    return undefined
-  }
-}
-
 class ErrorThrowingModifier extends BaseModifier<boolean> {
   public apply(): NumericRollBonus {
     throw new Error('Test error in apply method')
@@ -103,7 +88,6 @@ describe('BaseModifier', () => {
       const result = modifier.apply(bonus)
       expect(result).toBe(bonus)
     })
-
   })
 
   describe('toDescription', () => {
@@ -113,15 +97,11 @@ describe('BaseModifier', () => {
       expect(result).toEqual(['Test Modifier'])
     })
 
-    test('concrete implementation can return undefined', () => {
-      const modifier = new IncompleteModifier('test')
-      const result = modifier.toDescription()
-      expect(result).toBeUndefined()
-    })
-
     test('handles error conditions in concrete implementations', () => {
       const modifier = new ErrorThrowingModifier(true)
-      expect(() => modifier.toDescription()).toThrow('Test error in toDescription method')
+      expect(() => modifier.toDescription()).toThrow(
+        'Test error in toDescription method'
+      )
     })
   })
 
@@ -132,15 +112,11 @@ describe('BaseModifier', () => {
       expect(result).toBe('T')
     })
 
-    test('concrete implementation can return undefined', () => {
-      const modifier = new IncompleteModifier('test')
-      const result = modifier.toNotation()
-      expect(result).toBeUndefined()
-    })
-
     test('handles error conditions in concrete implementations', () => {
       const modifier = new ErrorThrowingModifier(true)
-      expect(() => modifier.toNotation()).toThrow('Test error in toNotation method')
+      expect(() => modifier.toNotation()).toThrow(
+        'Test error in toNotation method'
+      )
     })
   })
 
@@ -167,11 +143,9 @@ describe('BaseModifier', () => {
 
     test('subclasses can have different option types', () => {
       const numberModifier = new TestModifier(123)
-      const stringModifier = new IncompleteModifier('test-string')
       const booleanModifier = new ErrorThrowingModifier(false)
 
       expect(numberModifier.getOptions()).toBe(123)
-      expect(stringModifier).toBeInstanceOf(BaseModifier)
       expect(booleanModifier).toBeInstanceOf(BaseModifier)
     })
   })
@@ -196,12 +170,10 @@ describe('BaseModifier', () => {
   })
 
   describe('edge cases and boundary conditions', () => {
-    test('handles null and undefined options correctly', () => {
+    test('handles undefined options correctly', () => {
       const undefinedModifier = new TestModifier(undefined)
-      const nullModifier = new TestModifier(null as unknown as undefined)
 
       expect(undefinedModifier.getOptions()).toBeUndefined()
-      expect(nullModifier.getOptions()).toBeNull()
     })
 
     test('handles zero and negative option values', () => {

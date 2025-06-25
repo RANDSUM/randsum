@@ -20,10 +20,7 @@ export interface NumericDie {
   readonly isCustom: false
   roll(quantity?: number): number
   rollSpread(quantity?: number): number[]
-  rollModified(
-    quantity: number,
-    modifiers?: ModifierOptions
-  ): NumericRollResult
+  rollModified(quantity: number, modifiers?: ModifierOptions): NumericRollResult
   toOptions: NumericRollOptions
 }
 
@@ -37,23 +34,14 @@ export interface CustomDie {
   readonly isCustom: true
   roll(quantity?: number): string
   rollSpread(quantity?: number): string[]
-  rollModified(
-    quantity: number,
-    modifiers?: ModifierOptions
-  ): CustomRollResult
+  rollModified(quantity: number, modifiers?: ModifierOptions): CustomRollResult
   toOptions: CustomRollOptions
 }
 
 /**
  * Union type representing any die (numeric or custom)
- * This replaces the complex conditional BaseD<T> interface
  */
 export type BaseD = NumericDie | CustomDie
-
-/**
- * @deprecated Use NumericDie or CustomDie directly. This type alias is provided for backward compatibility.
- */
-export type BaseDLegacy<T extends number | string[]> = T extends number ? NumericDie : CustomDie
 
 // -----------------------
 // --- ROLL ARGUMENTS ---

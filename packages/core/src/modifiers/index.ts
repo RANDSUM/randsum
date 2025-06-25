@@ -17,4 +17,3 @@ export { PlusModifier } from './PlusModifier'
 export { ReplaceModifier } from './ReplaceModifier'
 export { RerollModifier } from './RerollModifier'
 export { UniqueModifier } from './UniqueModifier'
-

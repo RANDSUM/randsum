@@ -1,7 +1,7 @@
-type BladesCritical = 'critical'
-type BladesSuccess = 'success'
-type BladesPartial = 'partial'
-type BladesFailure = 'failure'
+export type BladesCritical = 'critical'
+export type BladesSuccess = 'success'
+export type BladesPartial = 'partial'
+export type BladesFailure = 'failure'
 
 export type BladesResult =
   | BladesCritical
