@@ -28,7 +28,7 @@
     "@types/bun": "^1.2.17",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
-    "bunup": "^0.7.6",
+    "bunup": "^0.8.48",
     "eslint": "^9.29.0",
     "eslint-config-expo": "^9.2.0",
     "eslint-config-prettier": "^10.1.5",
