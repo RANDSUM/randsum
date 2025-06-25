@@ -69,10 +69,12 @@ export class InvalidNotationError extends RandsumError {
     }
 
     // Missing 'd' separator
-    if (/^\d+\d+/.test(notation)) {
-      const match = /^(\d+)(\d+.*)$/.exec(notation)
-      if (match) {
-        suggestions.push(`Did you mean '${match[1] ?? ''}d${match[2] ?? ''}'?`)
+    if (/^\d{2,}/.test(notation)) {
+      const digits = /^\d+/.exec(notation)?.[0] ?? ''
+      if (digits.length >= 2) {
+        const quantity = digits.slice(0, -1)
+        const remainder = notation.slice(quantity.length)
+        suggestions.push(`Did you mean '${quantity}d${remainder}'?`)
       }
     }
 
