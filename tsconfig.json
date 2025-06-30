@@ -13,6 +13,7 @@
     "noEmit": false,
     "strict": true,
     "skipLibCheck": true,
+    "isolatedDeclarations": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
