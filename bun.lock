@@ -4,8 +4,8 @@
     "": {
       "name": "randsum-monorepo",
       "devDependencies": {
-        "@eslint/js": "^9.30.0",
-        "@moonrepo/cli": "^1.38.0",
+        "@eslint/js": "^9.30.1",
+        "@moonrepo/cli": "^1.38.1",
         "@randsum/core": "workspace:~",
         "@randsum/dice": "workspace:~",
         "@randsum/notation": "workspace:~",
@@ -13,7 +13,7 @@
         "@typescript-eslint/eslint-plugin": "^8.35.1",
         "@typescript-eslint/parser": "^8.35.1",
         "bunup": "^0.8.50",
-        "eslint": "^9.30.0",
+        "eslint": "^9.30.1",
         "eslint-config-prettier": "^10.1.5",
         "eslint-plugin-prettier": "^5.5.1",
         "prettier": "^3.6.2",
@@ -21,59 +21,59 @@
         "typescript-eslint": "^8.35.1",
       },
     },
-    "gamePackages/5e": {
-      "name": "@randsum/5e",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "gamePackages/blades": {
-      "name": "@randsum/blades",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "gamePackages/daggerheart": {
-      "name": "@randsum/daggerheart",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:*",
-      },
-    },
-    "gamePackages/root-rpg": {
-      "name": "@randsum/root-rpg",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "gamePackages/salvageunion": {
-      "name": "@randsum/salvageunion",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "packages/core": {
+    "corePackages/core": {
       "name": "@randsum/core",
-      "version": "0.1.37",
+      "version": "0.2.0",
     },
-    "packages/dice": {
+    "corePackages/dice": {
       "name": "@randsum/dice",
-      "version": "0.1.37",
+      "version": "0.2.0",
       "bin": "./bin/randsum",
       "dependencies": {
         "@randsum/core": "workspace:~",
         "@randsum/notation": "workspace:~",
       },
     },
-    "packages/notation": {
+    "corePackages/notation": {
       "name": "@randsum/notation",
-      "version": "0.1.37",
+      "version": "0.2.0",
       "dependencies": {
         "@randsum/core": "workspace:~",
+      },
+    },
+    "gamePackages/5e": {
+      "name": "@randsum/5e",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
+      },
+    },
+    "gamePackages/blades": {
+      "name": "@randsum/blades",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
+      },
+    },
+    "gamePackages/daggerheart": {
+      "name": "@randsum/daggerheart",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:*",
+      },
+    },
+    "gamePackages/root-rpg": {
+      "name": "@randsum/root-rpg",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
+      },
+    },
+    "gamePackages/salvageunion": {
+      "name": "@randsum/salvageunion",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
       },
     },
   },
@@ -111,7 +111,7 @@
 
     "@eslint/eslintrc": ["@eslint/eslintrc@3.3.1", "", { "dependencies": { "ajv": "^6.12.4", "debug": "^4.3.2", "espree": "^10.0.1", "globals": "^14.0.0", "ignore": "^5.2.0", "import-fresh": "^3.2.1", "js-yaml": "^4.1.0", "minimatch": "^3.1.2", "strip-json-comments": "^3.1.1" } }, "sha512-gtF186CXhIl1p4pJNGZw8Yc6RlshoePRvE0X91oPGb3vZ8pM3qOS9W9NGPat9LziaBV7XrJWGylNQXkGcnM3IQ=="],
 
-    "@eslint/js": ["@eslint/js@9.30.0", "", {}, "sha512-Wzw3wQwPvc9sHM+NjakWTcPx11mbZyiYHuwWa/QfZ7cIRX7WK54PSk7bdyXDaoaopUcMatv1zaQvOAAO8hCdww=="],
+    "@eslint/js": ["@eslint/js@9.30.1", "", {}, "sha512-zXhuECFlyep42KZUhWjfvsmXGX39W8K8LFb8AWXM9gSV9dQB+MrJGLKvW6Zw0Ggnbpw0VHTtrhFXYe3Gym18jg=="],
 
     "@eslint/object-schema": ["@eslint/object-schema@2.1.6", "", {}, "sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA=="],
 
@@ -127,21 +127,21 @@
 
     "@isaacs/cliui": ["@isaacs/cliui@8.0.2", "", { "dependencies": { "string-width": "^5.1.2", "string-width-cjs": "npm:string-width@^4.2.0", "strip-ansi": "^7.0.1", "strip-ansi-cjs": "npm:strip-ansi@^6.0.1", "wrap-ansi": "^8.1.0", "wrap-ansi-cjs": "npm:wrap-ansi@^7.0.0" } }, "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA=="],
 
-    "@moonrepo/cli": ["@moonrepo/cli@1.38.0", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "@moonrepo/core-linux-arm64-gnu": "1.38.0", "@moonrepo/core-linux-arm64-musl": "1.38.0", "@moonrepo/core-linux-x64-gnu": "1.38.0", "@moonrepo/core-linux-x64-musl": "1.38.0", "@moonrepo/core-macos-arm64": "1.38.0", "@moonrepo/core-macos-x64": "1.38.0", "@moonrepo/core-windows-x64-msvc": "1.38.0" }, "bin": { "moon": "moon.js" } }, "sha512-eGafPbCpt8I+Bny6XA00JDdh1Tz5Nblf12BXpc2fC1hjoyk2biNdnTKezTFB4Lsa6yeqi5r9d2WMnAZcZYsqtQ=="],
+    "@moonrepo/cli": ["@moonrepo/cli@1.38.1", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "@moonrepo/core-linux-arm64-gnu": "1.38.1", "@moonrepo/core-linux-arm64-musl": "1.38.1", "@moonrepo/core-linux-x64-gnu": "1.38.1", "@moonrepo/core-linux-x64-musl": "1.38.1", "@moonrepo/core-macos-arm64": "1.38.1", "@moonrepo/core-macos-x64": "1.38.1", "@moonrepo/core-windows-x64-msvc": "1.38.1" }, "bin": { "moon": "moon.js" } }, "sha512-bf7wNgwVgDaZdeSxqAsZEFDWB9J4uUK28aehIo4Pk4Kv2KNk4NtxuGViY6PHFuVzDKSFb8W6JB+trziuSTsznw=="],
 
-    "@moonrepo/core-linux-arm64-gnu": ["@moonrepo/core-linux-arm64-gnu@1.38.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-gFzYGLnjCWyXcOUc+8JXIh46wrWAWlQ4032D/IknHTrcaggZlqZIbnl3/0MI5pSodrtNInEGNBRRIGiqIqi9BA=="],
+    "@moonrepo/core-linux-arm64-gnu": ["@moonrepo/core-linux-arm64-gnu@1.38.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-dWuHZbuvDSUpM9mmtwbN/e3T5RqsOn99q5Ts0IIq8LqTJj9rCcaVY5YYSm4zbpGpzM69vkyGweBxqTWD2Wosgw=="],
 
-    "@moonrepo/core-linux-arm64-musl": ["@moonrepo/core-linux-arm64-musl@1.38.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-wOaWHUU+L8NYlhVdK7x4JLfgsvqKlxrxxq2IQ8A0/cYFeFfHJOEg4fdPeV4mGlVE2DL64DyTBjGfRPLwHqKlMg=="],
+    "@moonrepo/core-linux-arm64-musl": ["@moonrepo/core-linux-arm64-musl@1.38.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-ZI/evG1PXgQfw/pqjb6NyESueegfDp6bgOnWMWWUhrTOq50FYJ+jUt2b80u0q5Trhel/GQIfFHplEwiewvYjDg=="],
 
-    "@moonrepo/core-linux-x64-gnu": ["@moonrepo/core-linux-x64-gnu@1.38.0", "", { "os": "linux", "cpu": "x64" }, "sha512-muYko1i6ZYKM0Llyyx0CjnQWpSpXkTSirHo6u1oPWxOoA6s5i56JYiwcnO8VOENE/S+zH2PLROgnx0Al4B8pAw=="],
+    "@moonrepo/core-linux-x64-gnu": ["@moonrepo/core-linux-x64-gnu@1.38.1", "", { "os": "linux", "cpu": "x64" }, "sha512-EP7sE4xU5udDqm2GOJHIOVnFIbeTSrOmSYqgbFDXjiCJEBzQq8pf4HIWMfrDaj7rbcjog4jKGxwbw2lw2Orhpg=="],
 
-    "@moonrepo/core-linux-x64-musl": ["@moonrepo/core-linux-x64-musl@1.38.0", "", { "os": "linux", "cpu": "x64" }, "sha512-BUOEhgMTmmD36sHqxkK7Hm3WTbvFIQIwzPVnC4bcdtfdNvQACajZUFVh4b3lCoTcR5uXwCMHU31XdmvE61iSSA=="],
+    "@moonrepo/core-linux-x64-musl": ["@moonrepo/core-linux-x64-musl@1.38.1", "", { "os": "linux", "cpu": "x64" }, "sha512-iIGPzKFKfRx3ENJ6O1CncE6Q2vSMTuZ1/AQ67MHyQWybq26uKV3Oh38Cws2ON0T1Va/BLe/hSEx+We/ngyUGzA=="],
 
-    "@moonrepo/core-macos-arm64": ["@moonrepo/core-macos-arm64@1.38.0", "", { "os": "darwin", "cpu": "arm64" }, "sha512-wMhv6aO3CFIXYH4oGLeyVzAOQmpGYPS/LI5fMrkecOpH8TSfyqDxeFIJpkCRRBi8fT50dAXtPYSdNxvcIU4uOA=="],
+    "@moonrepo/core-macos-arm64": ["@moonrepo/core-macos-arm64@1.38.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-E2iwbpHwfjE3z32UsC/wlDWyIVs3Nb1AF0LiE0J20zIXOnCmjYp1wNrvsZDUA1xKr4gayb/OwHjacaT2GVnkrA=="],
 
-    "@moonrepo/core-macos-x64": ["@moonrepo/core-macos-x64@1.38.0", "", { "os": "darwin", "cpu": "x64" }, "sha512-bXh31IWrCMn8J50Am4ca6ZbZiEeayaEtn6Xonwa2POmlW8/UQdzanRZh5m42cxAMVPZ/AEovgFYNj1o5dAPOeA=="],
+    "@moonrepo/core-macos-x64": ["@moonrepo/core-macos-x64@1.38.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-CgTDl+UMT09t/TJkUbMsXqSBUxaJbH3+0IaI1QPhNtgJ0SLnXhyrpyJQv3/f81XDts3l/FHIZqvGIGpef6qReg=="],
 
-    "@moonrepo/core-windows-x64-msvc": ["@moonrepo/core-windows-x64-msvc@1.38.0", "", { "os": "win32", "cpu": "x64" }, "sha512-TMXUvTOdraG58P89aVV0j2n2Wq3DxgAg+WUxqa9kxNobAGzNHrwb5yQGo3wnBuSzDLfvSJ0l6nqneUU3Gx09Og=="],
+    "@moonrepo/core-windows-x64-msvc": ["@moonrepo/core-windows-x64-msvc@1.38.1", "", { "os": "win32", "cpu": "x64" }, "sha512-eOT+y7opZjALDmpG67QwFzIi43l6Kg1CnOu5fjnA0e6toyR8XL+Ga6bWudtAthvyz+eBpM0hQoFJbw5sOOYpzw=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@0.2.11", "", { "dependencies": { "@emnapi/core": "^1.4.3", "@emnapi/runtime": "^1.4.3", "@tybys/wasm-util": "^0.9.0" } }, "sha512-9DPkXtvHydrcOsopiYpUgPHpmj0HWZKMUnL2dZqpvC42lsratuBG06V5ipyno0fUek5VlFsNQ+AcFATSrJXgMA=="],
 
@@ -215,13 +215,13 @@
 
     "@randsum/blades": ["@randsum/blades@workspace:gamePackages/blades"],
 
-    "@randsum/core": ["@randsum/core@workspace:packages/core"],
+    "@randsum/core": ["@randsum/core@workspace:corePackages/core"],
 
     "@randsum/daggerheart": ["@randsum/daggerheart@workspace:gamePackages/daggerheart"],
 
-    "@randsum/dice": ["@randsum/dice@workspace:packages/dice"],
+    "@randsum/dice": ["@randsum/dice@workspace:corePackages/dice"],
 
-    "@randsum/notation": ["@randsum/notation@workspace:packages/notation"],
+    "@randsum/notation": ["@randsum/notation@workspace:corePackages/notation"],
 
     "@randsum/root-rpg": ["@randsum/root-rpg@workspace:gamePackages/root-rpg"],
 
@@ -319,7 +319,7 @@
 
     "escape-string-regexp": ["escape-string-regexp@4.0.0", "", {}, "sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA=="],
 
-    "eslint": ["eslint@9.30.0", "", { "dependencies": { "@eslint-community/eslint-utils": "^4.2.0", "@eslint-community/regexpp": "^4.12.1", "@eslint/config-array": "^0.21.0", "@eslint/config-helpers": "^0.3.0", "@eslint/core": "^0.14.0", "@eslint/eslintrc": "^3.3.1", "@eslint/js": "9.30.0", "@eslint/plugin-kit": "^0.3.1", "@humanfs/node": "^0.16.6", "@humanwhocodes/module-importer": "^1.0.1", "@humanwhocodes/retry": "^0.4.2", "@types/estree": "^1.0.6", "@types/json-schema": "^7.0.15", "ajv": "^6.12.4", "chalk": "^4.0.0", "cross-spawn": "^7.0.6", "debug": "^4.3.2", "escape-string-regexp": "^4.0.0", "eslint-scope": "^8.4.0", "eslint-visitor-keys": "^4.2.1", "espree": "^10.4.0", "esquery": "^1.5.0", "esutils": "^2.0.2", "fast-deep-equal": "^3.1.3", "file-entry-cache": "^8.0.0", "find-up": "^5.0.0", "glob-parent": "^6.0.2", "ignore": "^5.2.0", "imurmurhash": "^0.1.4", "is-glob": "^4.0.0", "json-stable-stringify-without-jsonify": "^1.0.1", "lodash.merge": "^4.6.2", "minimatch": "^3.1.2", "natural-compare": "^1.4.0", "optionator": "^0.9.3" }, "peerDependencies": { "jiti": "*" }, "optionalPeers": ["jiti"], "bin": { "eslint": "bin/eslint.js" } }, "sha512-iN/SiPxmQu6EVkf+m1qpBxzUhE12YqFLOSySuOyVLJLEF9nzTf+h/1AJYc1JWzCnktggeNrjvQGLngDzXirU6g=="],
+    "eslint": ["eslint@9.30.1", "", { "dependencies": { "@eslint-community/eslint-utils": "^4.2.0", "@eslint-community/regexpp": "^4.12.1", "@eslint/config-array": "^0.21.0", "@eslint/config-helpers": "^0.3.0", "@eslint/core": "^0.14.0", "@eslint/eslintrc": "^3.3.1", "@eslint/js": "9.30.1", "@eslint/plugin-kit": "^0.3.1", "@humanfs/node": "^0.16.6", "@humanwhocodes/module-importer": "^1.0.1", "@humanwhocodes/retry": "^0.4.2", "@types/estree": "^1.0.6", "@types/json-schema": "^7.0.15", "ajv": "^6.12.4", "chalk": "^4.0.0", "cross-spawn": "^7.0.6", "debug": "^4.3.2", "escape-string-regexp": "^4.0.0", "eslint-scope": "^8.4.0", "eslint-visitor-keys": "^4.2.1", "espree": "^10.4.0", "esquery": "^1.5.0", "esutils": "^2.0.2", "fast-deep-equal": "^3.1.3", "file-entry-cache": "^8.0.0", "find-up": "^5.0.0", "glob-parent": "^6.0.2", "ignore": "^5.2.0", "imurmurhash": "^0.1.4", "is-glob": "^4.0.0", "json-stable-stringify-without-jsonify": "^1.0.1", "lodash.merge": "^4.6.2", "minimatch": "^3.1.2", "natural-compare": "^1.4.0", "optionator": "^0.9.3" }, "peerDependencies": { "jiti": "*" }, "optionalPeers": ["jiti"], "bin": { "eslint": "bin/eslint.js" } }, "sha512-zmxXPNMOXmwm9E0yQLi5uqXHs7uq2UIiqEKo3Gq+3fwo1XrJ+hijAZImyF7hclW3E6oHz43Yk3RP8at6OTKflQ=="],
 
     "eslint-config-prettier": ["eslint-config-prettier@10.1.5", "", { "peerDependencies": { "eslint": ">=7.0.0" }, "bin": { "eslint-config-prettier": "bin/cli.js" } }, "sha512-zc1UmCpNltmVY34vuLRV61r1K27sWuX39E+uyUnY8xS2Bex88VV9cugG+UZbRSRGtGyFboj+D8JODyme1plMpw=="],
 

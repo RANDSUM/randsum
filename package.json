@@ -2,7 +2,8 @@
   "name": "randsum-monorepo",
   "type": "module",
   "workspaces": [
-    "packages/*",
+    "apps/*",
+    "corePackages/*",
     "gamePackages/*"
   ],
   "scripts": {
@@ -20,8 +21,8 @@
     "@moonrepo/cli"
   ],
   "devDependencies": {
-    "@eslint/js": "^9.30.0",
-    "@moonrepo/cli": "^1.38.0",
+    "@eslint/js": "^9.30.1",
+    "@moonrepo/cli": "^1.38.1",
     "@randsum/core": "workspace:~",
     "@randsum/dice": "workspace:~",
     "@randsum/notation": "workspace:~",
@@ -29,7 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^8.35.1",
     "@typescript-eslint/parser": "^8.35.1",
     "bunup": "^0.8.50",
-    "eslint": "^9.30.0",
+    "eslint": "^9.30.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "prettier": "^3.6.2",

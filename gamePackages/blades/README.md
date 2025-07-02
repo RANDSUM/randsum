@@ -74,7 +74,7 @@ type BladesResult = 'critical' | 'success' | 'partial' | 'failure'
 
 ## Related Packages
 
-- [@randsum/dice](https://github.com/RANDSUM/randsum/tree/main/packages/dice): Core dice rolling implementation
+- [@randsum/dice](https://github.com/RANDSUM/randsum/tree/main/corePackages/dice): Core dice rolling implementation
 - [@randsum/notation](https://github.com/RANDSUM/randsum/tree/main/packages/notation): Dice notation parser
 
 <div align="center">

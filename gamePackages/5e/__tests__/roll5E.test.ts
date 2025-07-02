@@ -8,19 +8,19 @@ describe('roll5e', () => {
 
     test('returns a result within valid range', () => {
       const result = roll5e(args)
-      expect(result.total).toBeGreaterThanOrEqual(6) // 1 + 5
-      expect(result.total).toBeLessThanOrEqual(25) // 20 + 5
+      expect(result.total).toBeGreaterThanOrEqual(6)
+      expect(result.total).toBeLessThanOrEqual(25)
     })
 
     test('applies modifier correctly', () => {
       const result = roll5e(args)
-      const rawRoll = result.rawResult[0]
+      const rawRoll = result.rawResults[0]
       expect(result.total).toBe(Number(rawRoll) + args.modifier)
     })
 
     test('returns single roll result', () => {
       const result = roll5e(args)
-      expect(result.rawResult).toHaveLength(1)
+      expect(result.rawResults).toHaveLength(1)
     })
   })
 
@@ -32,12 +32,12 @@ describe('roll5e', () => {
 
     test('returns two rolls', () => {
       const result = roll5e(args)
-      expect(result.rawResult).toHaveLength(2)
+      expect(result.rawResults).toHaveLength(2)
     })
 
     test('uses higher roll for total', () => {
       const result = roll5e(args)
-      const [roll1, roll2] = result.rawResult
+      const [roll1, roll2] = result.rawResults
       const expectedTotal =
         Math.max(Number(roll1), Number(roll2)) + args.modifier
       expect(result.total).toBe(expectedTotal)
@@ -52,12 +52,12 @@ describe('roll5e', () => {
 
     test('returns two rolls', () => {
       const result = roll5e(args)
-      expect(result.rawResult).toHaveLength(2)
+      expect(result.rawResults).toHaveLength(2)
     })
 
     test('uses lower roll for total', () => {
       const result = roll5e(args)
-      const [roll1, roll2] = result.rawResult
+      const [roll1, roll2] = result.rawResults
       const expectedTotal =
         Math.min(Number(roll1), Number(roll2)) + args.modifier
       expect(result.total).toBe(expectedTotal)
@@ -69,13 +69,13 @@ describe('roll5e', () => {
 
     test('returns a result within valid range', () => {
       const result = roll5e(args)
-      expect(result.total).toBeGreaterThanOrEqual(-2) // 1 - 3
-      expect(result.total).toBeLessThanOrEqual(17) // 20 - 3
+      expect(result.total).toBeGreaterThanOrEqual(-2)
+      expect(result.total).toBeLessThanOrEqual(17)
     })
 
     test('applies negative modifier correctly', () => {
       const result = roll5e(args)
-      const rawRoll = result.rawResult[0]
+      const rawRoll = result.rawResults[0]
       expect(result.total).toBe(Number(rawRoll) + args.modifier)
     })
   })

@@ -13,13 +13,13 @@ describe('meetOrBeat5e', () => {
     })
 
     test('returns false for impossible DC', () => {
-      const impossibleDC = 30 // Max possible roll is 25 (20 + 5)
+      const impossibleDC = 30
       const result = meetOrBeat5e(impossibleDC, args)
       expect(result).toBe(false)
     })
 
     test('returns true for guaranteed DC', () => {
-      const guaranteedDC = 6 // Min possible roll is 6 (1 + 5)
+      const guaranteedDC = 6
       const result = meetOrBeat5e(guaranteedDC, args)
       expect(result).toBe(true)
     })
