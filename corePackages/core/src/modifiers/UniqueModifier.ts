@@ -9,7 +9,7 @@ import { extractMatches, formatters } from '../utils'
 import { BaseModifier } from './BaseModifier'
 
 export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
-  public static readonly pattern: RegExp = /[Uu]({(\d+,)*(\d+)})?/g
+  public static readonly pattern: RegExp = /[Uu]({(?:\d+,)*\d+})?/g
 
   public static override parse(
     modifiersString: string

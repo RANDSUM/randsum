@@ -35,4 +35,21 @@ describe('extractMatches', () => {
 
     expect(extractMatches(input, dicePattern)).toEqual(['3d6L1', '2d8H1'])
   })
+
+  test('throws error for input strings that are too long', () => {
+    const longInput = 'a'.repeat(1001)
+    const pattern = /a/g
+
+    expect(() => extractMatches(longInput, pattern)).toThrow(
+      'Input string too long: 1001 characters exceeds maximum of 1000'
+    )
+  })
+
+  test('accepts input strings at the maximum length', () => {
+    const maxLengthInput = 'a'.repeat(1000)
+    const pattern = /a/g
+
+    expect(() => extractMatches(maxLengthInput, pattern)).not.toThrow()
+    expect(extractMatches(maxLengthInput, pattern)).toHaveLength(1000)
+  })
 })

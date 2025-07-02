@@ -9,7 +9,7 @@ import { BaseModifier } from './BaseModifier'
 
 export class CapModifier extends BaseModifier<ComparisonOptions> {
   public static readonly pattern: RegExp = new RegExp(
-    `${/[Cc]/.source}${/{([<>]\d+,)*([<>]\d+)}/.source}`,
+    `${/[Cc]/.source}${/{(?:[<>]\d+,)*[<>]\d+}/.source}`,
     'g'
   )
 

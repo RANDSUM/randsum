@@ -13,7 +13,7 @@ export class ReplaceModifier extends BaseModifier<
   ReplaceOptions | ReplaceOptions[]
 > {
   public static readonly pattern: RegExp = new RegExp(
-    /[Vv]/.source + /{([<>]?\d+=\d+,)*([<>]?\d+=\d+)}/.source,
+    /[Vv]/.source + /{(?:[<>]?\d+=\d+,)*[<>]?\d+=\d+}/.source,
     'g'
   )
   public static override parse = (

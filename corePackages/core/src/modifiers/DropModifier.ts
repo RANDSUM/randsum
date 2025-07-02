@@ -7,7 +7,7 @@ export class DropModifier extends BaseModifier<DropOptions> {
   public static readonly highestPattern: RegExp = /[Hh]\d*/g
   public static readonly lowestPattern: RegExp = /[Ll]\d*/g
   public static readonly constraintsPattern: RegExp = new RegExp(
-    /[Dd]/.source + /{([<>]?\d+,)*([<>]?\d+)}/.source,
+    /[Dd]/.source + /{(?:[<>]?\d+,)*[<>]?\d+}/.source,
     'g'
   )
   public static parseConstraints = (

@@ -10,7 +10,7 @@ import { BaseModifier } from './BaseModifier'
 
 export class RerollModifier extends BaseModifier<RerollOptions> {
   public static readonly pattern: RegExp = new RegExp(
-    `${/[Rr]/.source}${/{([<>]?\d+,)*([<>]?\d+)}/.source}${/\d*/.source}`,
+    `${/[Rr]/.source}${/{(?:[<>]?\d+,)*[<>]?\d+}/.source}${/\d*/.source}`,
     'g'
   )
 
