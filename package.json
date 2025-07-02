@@ -2,6 +2,7 @@
   "name": "randsum-monorepo",
   "type": "module",
   "workspaces": [
+    "apps/*",
     "corePackages/*",
     "gamePackages/*"
   ],
