@@ -1,0 +1,33 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+id: mcp
+language: 'typescript'
+dependsOn:
+  - 'core'
+  - 'dice'
+  - 'notation'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'core:build'
+      - 'dice:build'
+      - 'notation:build'
+
+  build:
+    deps:
+      - 'core:build'
+      - 'dice:build'
+      - 'notation:build'
+
+  test:
+    deps:
+      - 'core:build'
+      - 'dice:build'
+      - 'notation:build'
+
+  lint:
+    deps:
+      - 'core:build'
+      - 'dice:build'
+      - 'notation:build'
