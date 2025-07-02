@@ -3,61 +3,13 @@ import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
-/**
- * Modifier that removes specific dice from the roll results
- *
- * The DropModifier can remove dice based on various criteria:
- * - Highest N dice
- * - Lowest N dice
- * - Dice with specific values
- * - Dice greater than or less than specific values
- *
- * @example
- * // Drop the highest die and any dice with value 1
- * const dropMod = new DropModifier({ highest: 1, exact: [1] });
- */
 export class DropModifier extends BaseModifier<DropOptions> {
-  /**
-   * Pattern to match drop highest notation
-   *
-   * Matches 'H' or 'h' optionally followed by a number
-   *
-   * @example
-   * // Matches: 'H', 'h', 'H1', 'h2', etc.
-   * // In notation: '2d20H' - Roll 2d20 and drop the highest
-   */
   public static readonly highestPattern: RegExp = /[Hh]\d*/g
-
-  /**
-   * Pattern to match drop lowest notation
-   *
-   * Matches 'L' or 'l' optionally followed by a number
-   *
-   * @example
-   * // Matches: 'L', 'l', 'L1', 'l2', etc.
-   * // In notation: '2d20L' - Roll 2d20 and drop the lowest
-   */
   public static readonly lowestPattern: RegExp = /[Ll]\d*/g
-
-  /**
-   * Pattern to match drop constraints notation
-   *
-   * Matches 'D' or 'd' followed by a list of constraints in curly braces
-   *
-   * @example
-   * // Matches: 'D{1}', 'd{>3}', 'D{<2,4}', etc.
-   * // In notation: '4d6D{1}' - Roll 4d6 and drop any 1s
-   */
   public static readonly constraintsPattern: RegExp = new RegExp(
     /[Dd]/.source + /{([<>]?\d+,)*([<>]?\d+)}/.source,
     'g'
   )
-  /**
-   * Parses constraint-based drop notations (e.g., D{>3,<1,2})
-   *
-   * @param notations - Array of notation strings to parse
-   * @returns Object containing parsed drop constraint options
-   */
   public static parseConstraints = (
     notations: string[]
   ): Pick<ModifierOptions, 'drop'> => {
@@ -106,12 +58,6 @@ export class DropModifier extends BaseModifier<DropOptions> {
     )
   }
 
-  /**
-   * Parses drop highest notation (e.g., H or H2)
-   *
-   * @param notations - Array of notation strings to parse
-   * @returns Object containing parsed drop highest options
-   */
   public static parseHigh(notations: string[]): Pick<ModifierOptions, 'drop'> {
     if (notations.length === 0) {
       return {}

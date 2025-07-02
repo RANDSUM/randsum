@@ -116,22 +116,21 @@ export interface SingleCustomRollResult
   total: string
 }
 
-interface BaseRollResult<P extends RollParams = RollParams> {
-  parameters: P[]
+interface BaseRollResult {
   rolls: (SingleNumericRollResult | SingleCustomRollResult)[]
   rawResults: (string | number)[]
   total: string | number
   type: 'numeric' | 'custom' | 'mixed'
 }
 
-export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
+export interface NumericRollResult extends BaseRollResult {
   type: 'numeric'
   rolls: SingleNumericRollResult[]
   rawResults: number[]
   total: number
 }
 
-export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
+export interface CustomRollResult extends BaseRollResult {
   type: 'custom'
   rolls: SingleCustomRollResult[]
   rawResults: string[]

@@ -25,14 +25,15 @@ import { isNumericRollParams } from '../guards/isNumericRollParams'
 function generateRoll(parameters: RollParams): SingleRollResult {
   const rawRolls = generateRawRolls(parameters)
   const modifiedRolls = generateModifiedRolls(parameters, rawRolls)
+  const rawResult = calculateTotal(rawRolls)
   if (
     rawRolls.every((n) => typeof n === 'number') &&
     modifiedRolls.rolls.every((n) => typeof n === 'number') &&
+    typeof rawResult === 'number' &&
     isNumericRollParams(parameters)
   ) {
     return {
-      parameters,
-      rawResult: calculateTotal(rawRolls),
+      rawResult,
       rawRolls,
       modifiedRolls,
       total: modifiedRolls.total,
@@ -42,11 +43,11 @@ function generateRoll(parameters: RollParams): SingleRollResult {
   if (
     rawRolls.every((n) => typeof n === 'string') &&
     modifiedRolls.rolls.every((n) => typeof n === 'string') &&
+    typeof rawResult === 'string' &&
     isCustomRollParams(parameters)
   ) {
     return {
-      parameters,
-      rawResult: calculateTotal(rawRolls),
+      rawResult,
       rawRolls,
       modifiedRolls,
       total: calculateTotal(modifiedRolls.rolls),

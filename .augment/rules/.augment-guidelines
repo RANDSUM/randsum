@@ -1,15 +1,5 @@
 # RANDSUM Monorepo Guidelines
 
-## Project Architecture & Structure
-
-- This is a TypeScript monorepo using Moon build orchestrator and Bun runtime/package manager
-- Use ESM modules exclusively (`"type": "module"` in package.json)
-- Organize packages into three categories:
-  - `packages/` - Core packages (core, dice, notation)
-  - `gamePackages/` - Game system implementations (5e, blades, root-rpg, etc.)
-- Each package follows the structure: `src/`, `__tests__/`, `dist/` (generated), `package.json`, `README.md`, `moon.yml`
-- Use workspace dependencies with `workspace:~` syntax for internal package references
-
 ## Build System & Tooling
 
 - Use Moon for task orchestration and dependency management
@@ -177,29 +167,6 @@
 - User prefers abstracting shared testing patterns into packages/core
 - User prefers bun-native solutions over Python for development tasks
 - User prefers package managers over manual package.json editing
-
-## Anti-Patterns to Avoid
-
-- Do not manually edit package.json files - use package managers (bun add, bun remove)
-- Do not create circular dependencies between packages
-- Do not use CommonJS modules - stick to ESM
-- Do not skip type checking or linting in CI/CD
-- Do not use any or unknown types without justification
-- Do not create deep import paths - use barrel exports
-- Do not duplicate testing utilities - abstract to packages/core
-- Do not use Python tools when bun-native alternatives exist
-
-## Naming Conventions Summary
-
-- Packages: kebab-case (@randsum/root-rpg)
-- Directories: kebab-case (gamePackages, __tests__)
-- Files: camelCase (.ts), kebab-case (README.md)
-- Classes: PascalCase (BaseModifier)
-- Functions: camelCase with verb prefix (rollBlades, generateQuantity)
-- Variables: camelCase (rollResult, dicePool)
-- Constants: SCREAMING_SNAKE_CASE (CORE_NOTATION_PATTERN)
-- Types/Interfaces: PascalCase with descriptive suffix (RollOptions, NumericRollResult)
-- Enums: PascalCase values ('Advantage', 'Disadvantage')
 
 ## Configuration File Patterns
 
