@@ -3,11 +3,7 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": [
-    "src/**/*",
-    "../core/src/guards/isDiceNotation.ts",
-    "../core/src/patterns.ts"
-  ],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
     {
