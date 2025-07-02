@@ -8,7 +8,7 @@ describe('rollRoot', () => {
       expect(typeof result).toBe('string')
       expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
       expect(details).toHaveProperty('total')
-      expect(details).toHaveProperty('rawResult')
+      expect(details).toHaveProperty('rawResults')
     })
   })
 
@@ -22,7 +22,7 @@ describe('rollRoot', () => {
 
     test('returns two dice results', () => {
       const [, details] = rollRoot(0)
-      expect(details.rawResult).toHaveLength(2)
+      expect(details.rawResults).toHaveLength(2)
     })
   })
 
@@ -30,20 +30,20 @@ describe('rollRoot', () => {
     test('correctly applies positive modifier', () => {
       const bonus = 3
       const [, details] = rollRoot(bonus)
-      const rawTotal = details.rawResult.reduce((sum, roll) => sum + roll, 0)
+      const rawTotal = details.rawResults.reduce((sum, roll) => sum + roll, 0)
       expect(details.total).toBe(rawTotal + bonus)
     })
 
     test('correctly applies negative modifier', () => {
       const bonus = -2
       const [, details] = rollRoot(bonus)
-      const rawTotal = details.rawResult.reduce((sum, roll) => sum + roll, 0)
+      const rawTotal = details.rawResults.reduce((sum, roll) => sum + roll, 0)
       expect(details.total).toBe(rawTotal + bonus)
     })
 
     test('handles zero modifier', () => {
       const [, details] = rollRoot(0)
-      const rawTotal = details.rawResult.reduce((sum, roll) => sum + roll, 0)
+      const rawTotal = details.rawResults.reduce((sum, roll) => sum + roll, 0)
       expect(details.total).toBe(rawTotal)
     })
   })

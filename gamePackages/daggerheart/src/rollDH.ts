@@ -100,7 +100,7 @@ export function rollDH({
   amplifyFear = false
 }: RollArgumentDH): RollResultDH {
   const {
-    result: [hope, fear],
+    rawResults: [hope, fear],
     total
   } = roll(...rollArg({ modifier, amplifyHope, amplifyFear }))
   if (hope === undefined || fear === undefined) {

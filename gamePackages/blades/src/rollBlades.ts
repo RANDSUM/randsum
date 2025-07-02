@@ -78,7 +78,7 @@ export function rollBlades(count: number): [BladesResult, NumericRollResult] {
   const canCrit = count > 0
 
   const rollResult = roll(generateOptions(count, canCrit))
-  const rolls = rollResult.result.flat().sort((a, b) => a - b)
+  const rolls = rollResult.rawResults.flat().sort((a, b) => a - b)
 
   return [interpretHit(rolls, canCrit), rollResult]
 }

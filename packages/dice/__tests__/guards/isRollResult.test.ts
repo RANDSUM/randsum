@@ -191,7 +191,8 @@ describe('Roll Result Type Guards', () => {
       numericResults.forEach((result) => {
         // Can safely perform numeric operations
         const average =
-          result.rawResults.reduce((a, b) => a + b, 0) / result.rawResults.length
+          result.rawResults.reduce((a, b) => a + b, 0) /
+          result.rawResults.length
         expect(typeof average).toBe('number')
       })
 

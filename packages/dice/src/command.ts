@@ -36,8 +36,10 @@ function formatMessage(
   { description, digested }: CustomValidationResult | NumericValidationResult
 ): string {
   const hasModifiers = digested.modifiers !== undefined
-  const rollResult = result.result.join(', ')
-  const rawRolls = Object.values(result.rawRolls).flat().join(', ')
+  const rollResult = result.rawResults.join(', ')
+  const rawRolls = Object.values(result.rolls.map((roll) => roll.rawRolls))
+    .flat()
+    .join(', ')
 
   if (hasModifiers) {
     return messageFrame(
@@ -49,7 +51,7 @@ function formatMessage(
 
   return messageFrame(
     String(result.total),
-    `Rolls: [${result.result.join(', ')}]`,
+    `Rolls: [${result.rawResults.join(', ')}]`,
     description.join(', ')
   )
 }
