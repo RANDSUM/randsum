@@ -25,12 +25,14 @@ D20.roll() // Returns 1-20
 // Complex dice notation
 roll('4d6L') // Roll 4d6, drop lowest
 
-// D&D 5e character ability score generation
-const abilityScores = Array.from({ length: 6 }, () => roll('4d6L').sum)
-
 // Advantage and disadvantage
 roll('2d20H') // Roll with advantage (2d20, keep highest)
 roll('2d20L') // Roll with disadvantage (2d20, keep lowest)
+
+roll('4d6L!R{<3}'} // Roll 4d6, drop lowest, reroll below 3)
+
+// Custom dice
+roll('2d{HT}') // Roll 2 coins (heads/tails)
 ```
 
 Or directly from your terminal:
