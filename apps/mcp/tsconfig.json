@@ -10,15 +10,8 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "__tests__"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "__tests__"],
   "references": [
     {
       "path": "../../corePackages/core"
