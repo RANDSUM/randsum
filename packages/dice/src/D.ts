@@ -89,11 +89,8 @@ class NumericDieImpl extends DieBase implements NumericDie {
     quantity = 1,
     modifiers: ModifierOptions = {}
   ): NumericRollResult {
-    return roll({
-      ...this.toOptions,
-      quantity,
-      modifiers
-    } as NumericRollOptions)
+    const options = { ...this.toOptions, quantity, modifiers }
+    return roll(options)
   }
 
   /**

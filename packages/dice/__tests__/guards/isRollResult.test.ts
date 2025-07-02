@@ -15,8 +15,8 @@ describe('Roll Result Type Guards', () => {
       // Type assertion to verify TypeScript narrowing works
       if (isNumericResult(result)) {
         expect(typeof result.total).toBe('number')
-        expect(Array.isArray(result.results)).toBe(true)
-        expect(result.results.every((r) => typeof r === 'number')).toBe(true)
+        expect(Array.isArray(result.rawResults)).toBe(true)
+        expect(result.rawResults.every((r) => typeof r === 'number')).toBe(true)
       }
     })
 
@@ -58,8 +58,8 @@ describe('Roll Result Type Guards', () => {
       // Type assertion to verify TypeScript narrowing works
       if (isCustomResult(result)) {
         expect(typeof result.total).toBe('string')
-        expect(Array.isArray(result.results)).toBe(true)
-        expect(result.results.every((r) => typeof r === 'string')).toBe(true)
+        expect(Array.isArray(result.rawResults)).toBe(true)
+        expect(result.rawResults.every((r) => typeof r === 'string')).toBe(true)
       }
     })
 
@@ -102,13 +102,11 @@ describe('Roll Result Type Guards', () => {
       const result = roll('2d6', D(['hit', 'miss']))
       expect(isMixedResult(result)).toBe(true)
 
-      // Type assertion to verify TypeScript narrowing works
       if (isMixedResult(result)) {
         expect(typeof result.total).toBe('string') // Mixed results always have string totals
-        expect(Array.isArray(result.result)).toBe(true)
-        // Mixed results should contain both numbers and strings
-        const hasNumbers = result.result.some((r) => typeof r === 'number')
-        const hasStrings = result.result.some((r) => typeof r === 'string')
+        expect(Array.isArray(result.rawResults)).toBe(true)
+        const hasNumbers = result.rawResults.some((r) => typeof r === 'number')
+        const hasStrings = result.rawResults.some((r) => typeof r === 'string')
         expect(hasNumbers || hasStrings).toBe(true) // At least one type should be present
       }
     })
@@ -148,8 +146,8 @@ describe('Roll Result Type Guards', () => {
       if (isNumericResult(result)) {
         // These should compile without type errors
         const total: number = result.total
-        const rolls: number[] = result.results
-        const firstRoll: number = result.results[0] ?? 0
+        const rolls: number[] = result.rawResults
+        const firstRoll: number = result.rawResults[0] ?? 0
 
         expect(typeof total).toBe('number')
         expect(Array.isArray(rolls)).toBe(true)
@@ -193,7 +191,7 @@ describe('Roll Result Type Guards', () => {
       numericResults.forEach((result) => {
         // Can safely perform numeric operations
         const average =
-          result.results.reduce((a, b) => a + b, 0) / result.results.length
+          result.rawResults.reduce((a, b) => a + b, 0) / result.rawResults.length
         expect(typeof average).toBe('number')
       })
 
@@ -201,7 +199,7 @@ describe('Roll Result Type Guards', () => {
       const customResults = results.filter(isCustomResult)
       customResults.forEach((result) => {
         // Can safely perform string operations
-        const combined = result.results.join(', ')
+        const combined = result.rawResults.join(', ')
         expect(typeof combined).toBe('string')
       })
 

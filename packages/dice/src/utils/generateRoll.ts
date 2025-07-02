@@ -35,7 +35,7 @@ function generateRoll(parameters: RollParams): SingleRollResult {
       rawResult: calculateTotal(rawRolls),
       rawRolls,
       modifiedRolls,
-      total: calculateTotal(modifiedRolls.rolls),
+      total: modifiedRolls.total,
       type: 'numeric'
     } as SingleNumericRollResult
   }

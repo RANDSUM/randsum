@@ -71,14 +71,12 @@ function roll(...args: (NumericRollArgument | CustomRollArgument)[]): RollResult
 function roll(...args: RollArgument[]): RollResult {
   const parameters = args.map((arg) => normalizeArgument(arg))
   const rolls = parameters.map((param) => generateRoll(param))
-  const results = rolls.map((roll) => roll.total)
-  const total = calculateTotal(results)
 
   return {
     parameters,
     rolls,
-    results,
-    total,
+    rawResults: rolls.map((roll) => roll.rawRolls).flat(),
+    total: calculateTotal(rolls.map((roll) => roll.total)),
     type: calculateRollType(rolls)
   } as RollResult
 }

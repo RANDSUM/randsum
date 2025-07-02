@@ -119,7 +119,7 @@ export interface SingleCustomRollResult
 interface BaseRollResult<P extends RollParams = RollParams> {
   parameters: P[]
   rolls: (SingleNumericRollResult | SingleCustomRollResult)[]
-  results: (string | number)[]
+  rawResults: (string | number)[]
   total: string | number
   type: 'numeric' | 'custom' | 'mixed'
 }
@@ -127,21 +127,21 @@ interface BaseRollResult<P extends RollParams = RollParams> {
 export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
   type: 'numeric'
   rolls: SingleNumericRollResult[]
-  results: number[]
+  rawResults: number[]
   total: number
 }
 
 export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
   type: 'custom'
   rolls: SingleCustomRollResult[]
-  results: string[]
+  rawResults: string[]
   total: string
 }
 
 export interface MixedRollResult extends BaseRollResult {
   type: 'mixed'
   rolls: (SingleNumericRollResult | SingleCustomRollResult)[]
-  result: (string | number)[]
+  rawResults: (string | number)[]
   total: string
 }
 
