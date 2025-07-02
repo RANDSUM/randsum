@@ -12,7 +12,6 @@ describe('Roll Result Type Guards', () => {
       const result = roll('4d6')
       expect(isNumericResult(result)).toBe(true)
 
-      // Type assertion to verify TypeScript narrowing works
       if (isNumericResult(result)) {
         expect(typeof result.total).toBe('number')
         expect(Array.isArray(result.rawResults)).toBe(true)
@@ -42,7 +41,6 @@ describe('Roll Result Type Guards', () => {
       const numericResults = results.filter(isNumericResult)
       expect(numericResults).toHaveLength(2)
 
-      // Verify all filtered results are numeric
       numericResults.forEach((result) => {
         expect(result.type).toBe('numeric')
         expect(typeof result.total).toBe('number')
@@ -55,7 +53,6 @@ describe('Roll Result Type Guards', () => {
       const result = roll(D(['critical', 'hit', 'miss']))
       expect(isCustomResult(result)).toBe(true)
 
-      // Type assertion to verify TypeScript narrowing works
       if (isCustomResult(result)) {
         expect(typeof result.total).toBe('string')
         expect(Array.isArray(result.rawResults)).toBe(true)
@@ -89,7 +86,6 @@ describe('Roll Result Type Guards', () => {
       const customResults = results.filter(isCustomResult)
       expect(customResults).toHaveLength(2)
 
-      // Verify all filtered results are custom
       customResults.forEach((result) => {
         expect(result.type).toBe('custom')
         expect(typeof result.total).toBe('string')
@@ -103,11 +99,11 @@ describe('Roll Result Type Guards', () => {
       expect(isMixedResult(result)).toBe(true)
 
       if (isMixedResult(result)) {
-        expect(typeof result.total).toBe('string') // Mixed results always have string totals
+        expect(typeof result.total).toBe('string')
         expect(Array.isArray(result.rawResults)).toBe(true)
         const hasNumbers = result.rawResults.some((r) => typeof r === 'number')
         const hasStrings = result.rawResults.some((r) => typeof r === 'string')
-        expect(hasNumbers || hasStrings).toBe(true) // At least one type should be present
+        expect(hasNumbers || hasStrings).toBe(true)
       }
     })
 
@@ -131,7 +127,6 @@ describe('Roll Result Type Guards', () => {
       const mixedResults = results.filter(isMixedResult)
       expect(mixedResults).toHaveLength(1)
 
-      // Verify all filtered results are mixed
       mixedResults.forEach((result) => {
         expect(result.type).toBe('mixed')
         expect(typeof result.total).toBe('string')
@@ -144,7 +139,6 @@ describe('Roll Result Type Guards', () => {
       const result = roll('4d6')
 
       if (isNumericResult(result)) {
-        // These should compile without type errors
         const total: number = result.total
         const rolls: number[] = result.rawResults
         const firstRoll: number = result.rawResults[0] ?? 0
@@ -173,7 +167,6 @@ describe('Roll Result Type Guards', () => {
           expect(result.type).toBe('mixed')
           expect(typeof result.total).toBe('string')
         } else {
-          // This should never happen with proper discriminated union
           throw new Error('Unknown result type')
         }
       })
@@ -186,28 +179,22 @@ describe('Roll Result Type Guards', () => {
         roll('1d20', D(['advantage']))
       ]
 
-      // Process numeric results
       const numericResults = results.filter(isNumericResult)
       numericResults.forEach((result) => {
-        // Can safely perform numeric operations
         const average =
           result.rawResults.reduce((a, b) => a + b, 0) /
           result.rawResults.length
         expect(typeof average).toBe('number')
       })
 
-      // Process custom results
       const customResults = results.filter(isCustomResult)
       customResults.forEach((result) => {
-        // Can safely perform string operations
         const combined = result.rawResults.join(', ')
         expect(typeof combined).toBe('string')
       })
 
-      // Process mixed results
       const mixedResults = results.filter(isMixedResult)
       mixedResults.forEach((result) => {
-        // Can safely handle mixed content
         const description = `Mixed result: ${result.total}`
         expect(typeof description).toBe('string')
       })

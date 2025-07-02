@@ -528,7 +528,7 @@ describe(generateRoll, () => {
         modifiedRolls: {
           'test-roll-id': {
             rolls: testRollSet,
-            total: 10 // 10 + 0 = 10
+            total: 10
           }
         },
         total: 10,

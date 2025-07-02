@@ -6,13 +6,6 @@ import type {
 
 import type { CustomDiceNotation, NumericDiceNotation } from '@randsum/notation'
 
-// -----------------------
-// --- DIE TYPES ---
-// -----------------------
-
-/**
- * Interface for numeric dice (standard numbered dice like d6, d20, etc.)
- */
 export interface NumericDie {
   readonly type: 'numeric'
   readonly sides: number
@@ -24,9 +17,6 @@ export interface NumericDie {
   toOptions: NumericRollOptions
 }
 
-/**
- * Interface for custom dice (dice with string faces like coins, color dice, etc.)
- */
 export interface CustomDie {
   readonly type: 'custom'
   readonly sides: number
@@ -38,14 +28,7 @@ export interface CustomDie {
   toOptions: CustomRollOptions
 }
 
-/**
- * Union type representing any die (numeric or custom)
- */
 export type BaseD = NumericDie | CustomDie
-
-// -----------------------
-// --- ROLL ARGUMENTS ---
-// -----------------------
 
 export type NumericRollArgument =
   | NumericDie
@@ -61,10 +44,6 @@ export type CustomRollArgument =
   | string[]
 
 export type RollArgument = NumericRollArgument | CustomRollArgument
-
-// -----------------------
-// --- ROLL PARAMETERS ---
-// -----------------------
 
 interface BaseRollParams<A extends RollArgument = RollArgument> {
   description: string[]
@@ -84,10 +63,6 @@ export interface CustomRollParams extends BaseRollParams<CustomRollArgument> {
 }
 
 export type RollParams = NumericRollParams | CustomRollParams
-
-// -----------------------
-// --- ROLL RESULTS ---
-// -----------------------
 
 export interface BaseSingleRollResult<P extends RollParams = RollParams> {
   parameters: P

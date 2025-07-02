@@ -5,10 +5,6 @@ import type {
   NumericRollOptions
 } from '@randsum/core'
 
-// -----------------------
-// --- VALIDATION ---
-// -----------------------
-
 interface BaseValidationResult {
   valid: boolean
   type: 'numeric' | 'custom' | 'invalid'

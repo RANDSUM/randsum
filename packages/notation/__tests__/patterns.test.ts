@@ -26,15 +26,15 @@ describe('coreNotationPattern', () => {
 
   describe('invalid core notations', () => {
     const invalidCoreNotations = [
-      'd6', // missing quantity
-      '2d', // missing sides
-      '2x6', // wrong separator
-      'dd6', // double d
-      'abc', // no dice notation
-      '123', // just numbers
-      '', // empty string
-      '1d{', // incomplete custom dice
-      '1d}' // malformed custom dice
+      'd6',
+      '2d',
+      '2x6',
+      'dd6',
+      'abc',
+      '123',
+      '',
+      '1d{',
+      '1d}'
     ]
 
     invalidCoreNotations.forEach((notation) => {
@@ -45,11 +45,7 @@ describe('coreNotationPattern', () => {
   })
 
   describe('edge cases that do match core pattern', () => {
-    const edgeCasesThatMatch = [
-      '0d6', // zero quantity (valid pattern)
-      '1d0', // zero sides (valid pattern)
-      '2d6d' // extra d at end (matches 2d6 part)
-    ]
+    const edgeCasesThatMatch = ['0d6', '1d0', '2d6d']
 
     edgeCasesThatMatch.forEach((notation) => {
       it(`matches edge case: "${notation}"`, () => {
@@ -64,7 +60,7 @@ describe('coreNotationPattern', () => {
     })
 
     it('does not match in the middle of string without anchor', () => {
-      const pattern = /\d+[Dd](\d+|{.*})/ // without ^ anchor
+      const pattern = /\d+[Dd](\d+|{.*})/
       expect(pattern.test('roll 1d6 please')).toBe(true)
       expect(coreNotationPattern.test('roll 1d6 please')).toBe(false)
     })
@@ -155,8 +151,6 @@ describe('completeRollPattern', () => {
       expect(matches).toBeTruthy()
       expect(matches).toContain('1d6')
       expect(matches).toContain('+2')
-      // Note: '2d8' won't match because it's not at the start of the string
-      // The pattern is designed to match individual components, not parse complex expressions
     })
 
     it('handles complex notation components', () => {
@@ -179,17 +173,17 @@ describe('completeRollPattern', () => {
       const endTime = performance.now()
 
       expect(matches).toBeTruthy()
-      expect(endTime - startTime).toBeLessThan(100) // Should complete in under 100ms
+      expect(endTime - startTime).toBeLessThan(100)
     })
 
     it('handles complex patterns without catastrophic backtracking', () => {
-      const complexInput = '1d6' + 'b'.repeat(100) // Pattern at start
+      const complexInput = '1d6' + 'b'.repeat(100)
       const startTime = performance.now()
       const result = completeRollPattern.test(complexInput)
       const endTime = performance.now()
 
       expect(result).toBe(true)
-      expect(endTime - startTime).toBeLessThan(50) // Should complete quickly
+      expect(endTime - startTime).toBeLessThan(50)
     })
   })
 })
@@ -197,9 +191,9 @@ describe('completeRollPattern', () => {
 describe('pattern integration', () => {
   describe('core and complete pattern consistency', () => {
     const testNotations = [
-      { notation: '1d6', shouldMatch: false }, // Pattern implementation quirk
+      { notation: '1d6', shouldMatch: false },
       { notation: '3d{abc}', shouldMatch: true },
-      { notation: '10d10', shouldMatch: false } // This fails due to pattern implementation details
+      { notation: '10d10', shouldMatch: false }
     ]
 
     testNotations.forEach(({ notation, shouldMatch }) => {
@@ -207,23 +201,20 @@ describe('pattern integration', () => {
         const coreMatches = coreNotationPattern.test(notation)
         const completeMatches = completeRollPattern.test(notation)
 
-        expect(coreMatches).toBe(true) // All should match core pattern
-        expect(completeMatches).toBe(shouldMatch) // But complete pattern behavior varies
+        expect(coreMatches).toBe(true)
+        expect(completeMatches).toBe(shouldMatch)
       })
     })
   })
 
   describe('pattern behavior differences', () => {
     it('explains why some core matches may not match complete pattern', () => {
-      // The complete pattern is anchored differently and may not match
-      // all strings that the core pattern matches, especially when
-      // the core pattern is not at the start of the string
       const testCase = '2d20'
       const coreMatches = coreNotationPattern.test(testCase)
       const completeMatches = completeRollPattern.test(testCase)
 
       expect(coreMatches).toBe(true)
-      // Complete pattern behavior may vary based on implementation
+
       expect(typeof completeMatches).toBe('boolean')
     })
   })

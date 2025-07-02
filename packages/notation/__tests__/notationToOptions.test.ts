@@ -163,7 +163,6 @@ describe(notationToOptions, () => {
     })
 
     it('handles notation with whitespace (after cleaning)', () => {
-      // Note: whitespace should be cleaned before calling this function
       const result = notationToOptions('2d6')
 
       expect(result.quantity).toBe(2)

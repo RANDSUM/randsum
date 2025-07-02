@@ -67,8 +67,6 @@ describe(isDiceNotation, () => {
 
     customDiceWithModifiers.forEach((notation) => {
       it(`returns true for pattern-valid custom dice with modifiers: ${notation}`, () => {
-        // Note: isDiceNotation only checks pattern matching, not business rules
-        // validateNotation will reject these due to business logic
         expect(isDiceNotation(notation)).toBe(true)
       })
     })
@@ -156,18 +154,18 @@ describe(isDiceNotation, () => {
 
   describe('malformed dice notations', () => {
     const malformedNotations = [
-      'd6', // missing quantity
-      '2d', // missing sides
-      '2x6', // wrong separator
-      'dd6', // double d
-      '2d6d', // extra d
-      '2d6+', // incomplete modifier
-      '2d6++3', // double modifier
-      '2d{', // incomplete custom dice
-      '2d}', // malformed custom dice
-      '2d{abc', // unclosed custom dice
-      '2dabc}', // malformed custom dice
-      '' // empty string
+      'd6',
+      '2d',
+      '2x6',
+      'dd6',
+      '2d6d',
+      '2d6+',
+      '2d6++3',
+      '2d{',
+      '2d}',
+      '2d{abc',
+      '2dabc}',
+      ''
     ]
 
     malformedNotations.forEach((input) => {

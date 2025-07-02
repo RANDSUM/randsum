@@ -37,13 +37,11 @@ describe('coreRandom', () => {
 
   describe('boundary conditions', () => {
     test('handles negative max values', () => {
-      // Negative values should still work with the bitwise OR operation
       const result = coreRandom(-5)
       expect(Number.isInteger(result)).toBe(true)
     })
 
     test('handles fractional max values', () => {
-      // Fractional values should be truncated by bitwise OR
       for (let i = 0; i < 100; i++) {
         const result = coreRandom(6.7)
         expect(result).toBeGreaterThanOrEqual(0)
@@ -68,9 +66,8 @@ describe('coreRandom', () => {
         counts[result]++
       }
 
-      // Each face should appear roughly 1/6 of the time (within reasonable variance)
       const expectedCount = iterations / 6
-      const tolerance = expectedCount * 0.1 // 10% tolerance
+      const tolerance = expectedCount * 0.1
 
       counts.forEach((count) => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
@@ -87,9 +84,8 @@ describe('coreRandom', () => {
         counts[result]++
       }
 
-      // Each face should appear roughly 1/20 of the time (within reasonable variance)
       const expectedCount = iterations / 20
-      const tolerance = expectedCount * 0.15 // 15% tolerance for smaller sample per face
+      const tolerance = expectedCount * 0.15
 
       counts.forEach((count) => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
@@ -110,7 +106,6 @@ describe('coreRandom', () => {
       const endTime = performance.now()
       const duration = endTime - startTime
 
-      // Should complete 100k calls in less than 100ms
       expect(duration).toBeLessThan(100)
     })
   })
@@ -147,30 +142,17 @@ describe('createSeededRandom', () => {
       const results1 = Array.from({ length: 100 }, () => seededRandom1(20))
       const results2 = Array.from({ length: 100 }, () => seededRandom2(20))
 
-      // Results should be different (extremely unlikely to be identical)
       expect(results1).not.toEqual(results2)
     })
 
     test('uses current timestamp as default seed', () => {
-      // Add a small delay to ensure different timestamps
       const seededRandom1 = createSeededRandom()
-
-      // Wait a bit to ensure different timestamp
-      const start = Date.now()
-      while (Date.now() - start < 2) {
-        // Small busy wait to ensure different timestamp
-      }
-
       const seededRandom2 = createSeededRandom()
 
-      // Different instances should produce different sequences
       const results1 = Array.from({ length: 10 }, () => seededRandom1(20))
       const results2 = Array.from({ length: 10 }, () => seededRandom2(20))
 
-      // Very unlikely to be identical with timestamp-based seeds
-      // If they are the same, it's likely due to same timestamp, so we'll check that they're functions at least
       if (JSON.stringify(results1) === JSON.stringify(results2)) {
-        // If results are identical, at least verify the functions work correctly
         expect(typeof seededRandom1).toBe('function')
         expect(typeof seededRandom2).toBe('function')
         expect(results1.every((r) => r >= 0 && r < 20)).toBe(true)
@@ -236,26 +218,22 @@ describe('createSeededRandom', () => {
       const seededRandom = createSeededRandom(12345)
       const results = Array.from({ length: 100 }, () => seededRandom(1000))
 
-      // Should not have all identical values (extremely unlikely with good RNG)
       const uniqueValues = new Set(results)
-      expect(uniqueValues.size).toBeGreaterThan(50) // At least 50% unique values
+      expect(uniqueValues.size).toBeGreaterThan(50)
     })
 
     test('maintains state between calls', () => {
       const seededRandom = createSeededRandom(98765)
 
-      // First sequence
       const firstSequence = Array.from({ length: 10 }, () => seededRandom(100))
 
-      // Second sequence should be different (continuing from internal state)
       const secondSequence = Array.from({ length: 10 }, () => seededRandom(100))
 
       expect(firstSequence).not.toEqual(secondSequence)
     })
 
     test('handles potential overflow in xorshift operations', () => {
-      // Test with a seed that might cause overflow issues
-      const seededRandom = createSeededRandom(2147483647) // Max 32-bit signed integer
+      const seededRandom = createSeededRandom(2147483647)
 
       for (let i = 0; i < 1000; i++) {
         const result = seededRandom(20)
@@ -277,9 +255,8 @@ describe('createSeededRandom', () => {
         counts[result]++
       }
 
-      // Each face should appear roughly 1/6 of the time (within reasonable variance)
       const expectedCount = iterations / 6
-      const tolerance = expectedCount * 0.15 // 15% tolerance
+      const tolerance = expectedCount * 0.15
 
       counts.forEach((count) => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
@@ -301,7 +278,6 @@ describe('createSeededRandom', () => {
       const endTime = performance.now()
       const duration = endTime - startTime
 
-      // Should complete 100k calls in less than 200ms (allowing for more overhead than coreRandom)
       expect(duration).toBeLessThan(200)
     })
   })

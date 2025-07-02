@@ -92,7 +92,6 @@ describe('Integration Tests', () => {
         const completePatternMatch =
           cleanNotation.replace(completeRollPattern, '').length === 0
 
-        // If isDiceNotation returns true, patterns should support it
         if (isDiceResult) {
           expect(corePatternMatch).toBe(true)
           expect(completePatternMatch).toBe(true)
@@ -169,20 +168,16 @@ describe('Integration Tests', () => {
 
     complexNotations.forEach((notation) => {
       it(`complete pipeline works for: ${notation}`, () => {
-        // Step 1: Check if it's valid dice notation
         const isValid = isDiceNotation(notation)
         expect(isValid).toBe(true)
 
-        // Step 2: Validate the notation
         const validation = validateNotation(notation)
         expect(validation.valid).toBe(true)
 
-        // Step 3: Parse to options
         const options = notationToOptions(notation)
         expect(options.quantity).toBeGreaterThan(0)
         expect(options.sides).toBeDefined()
 
-        // Step 4: Verify consistency
         if (validation.valid) {
           expect(validation.digested).toEqual(options)
         }
@@ -221,8 +216,7 @@ describe('Integration Tests', () => {
       const endTime = performance.now()
       const totalTime = endTime - startTime
 
-      // Should complete 1000 iterations in reasonable time
-      expect(totalTime).toBeLessThan(1000) // Less than 1 second
+      expect(totalTime).toBeLessThan(1000)
     })
 
     it('handles large notation strings efficiently', () => {
@@ -237,7 +231,7 @@ describe('Integration Tests', () => {
 
       expect(isDiceResult).toBe(true)
       expect(validateResult.valid).toBe(true)
-      expect(endTime - startTime).toBeLessThan(100) // Should be fast
+      expect(endTime - startTime).toBeLessThan(100)
     })
   })
 })
