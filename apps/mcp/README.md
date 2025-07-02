@@ -56,10 +56,10 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 
 ```typescript
 // Roll basic dice
-roll("2d20+5")
+roll('2d20+5')
 
 // Validate notation
-validateNotation("4d6L")
+validateNotation('4d6L')
 ```
 
 ## 🔗 Related Packages
