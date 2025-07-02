@@ -17,10 +17,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: moonrepo/setup-toolchain@v0
+      - uses: oven-sh/setup-bun@v2
         with:
-          auto-install: true
-
+          bun-version: latest
       - name: Restore build cache
         uses: actions/cache@v4
         with:
@@ -36,16 +35,16 @@ jobs:
       - run: bun install
 
       - name: Build packages
-        run: moon :build -u
+        run: bun run moon :build -u
 
       - name: Publish to NPM
         run: |
-          moon notation:publish -u
-          moon dice:publish -u
-          moon fifth:publish -u
-          moon root-rpg:publish -u
-          moon salvageunion:publish -u
-          moon blades:publish -u
-          moon daggerheart:publish -u
+          bun run moon notation:publish -u
+          bun run moon dice:publish -u
+          bun run moon fifth:publish -u
+          bun run moon root-rpg:publish -u
+          bun run moon salvageunion:publish -u
+          bun run moon blades:publish -u
+          bun run moon daggerheart:publish -u
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
