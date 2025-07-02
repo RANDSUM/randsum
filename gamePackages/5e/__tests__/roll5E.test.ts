@@ -8,8 +8,8 @@ describe('roll5e', () => {
 
     test('returns a result within valid range', () => {
       const result = roll5e(args)
-      expect(result.total).toBeGreaterThanOrEqual(6) // 1 + 5
-      expect(result.total).toBeLessThanOrEqual(25) // 20 + 5
+      expect(result.total).toBeGreaterThanOrEqual(6)
+      expect(result.total).toBeLessThanOrEqual(25)
     })
 
     test('applies modifier correctly', () => {
@@ -69,8 +69,8 @@ describe('roll5e', () => {
 
     test('returns a result within valid range', () => {
       const result = roll5e(args)
-      expect(result.total).toBeGreaterThanOrEqual(-2) // 1 - 3
-      expect(result.total).toBeLessThanOrEqual(17) // 20 - 3
+      expect(result.total).toBeGreaterThanOrEqual(-2)
+      expect(result.total).toBeLessThanOrEqual(17)
     })
 
     test('applies negative modifier correctly', () => {

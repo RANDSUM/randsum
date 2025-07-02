@@ -16,8 +16,8 @@ describe('rollRoot', () => {
     test('returns result within valid range (2d6 + modifier)', () => {
       const bonus = 2
       const [, details] = rollRoot(bonus)
-      expect(details.total).toBeGreaterThanOrEqual(2 + bonus) // min: 1 + 1 + 2
-      expect(details.total).toBeLessThanOrEqual(12 + bonus) // max: 6 + 6 + 2
+      expect(details.total).toBeGreaterThanOrEqual(2 + bonus)
+      expect(details.total).toBeLessThanOrEqual(12 + bonus)
     })
 
     test('returns two dice results', () => {
@@ -82,7 +82,7 @@ describe('rollRoot', () => {
       const bonus = -1000
       const [result, details] = rollRoot(bonus)
       expect(result).toBe('Miss')
-      expect(details.total).toBeLessThan(-980) // 2d6 max (12) - 1000
+      expect(details.total).toBeLessThan(-980)
     })
   })
 })
