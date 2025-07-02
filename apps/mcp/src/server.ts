@@ -4,7 +4,7 @@ export function createServer(): Server {
   return new Server(
     {
       name: 'randsum-mcp-server',
-      version: '0.2.1'
+      version: '0.2.2'
     },
     {
       capabilities: {
