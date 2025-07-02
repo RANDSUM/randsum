@@ -46,5 +46,6 @@ jobs:
           bun run moon salvageunion:publish -u
           bun run moon blades:publish -u
           bun run moon daggerheart:publish -u
+          bun run moon mcp:publish -u
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
