@@ -4,11 +4,11 @@ import type {
   NumericRollArgument,
   NumericRollResult,
   RollArgument,
-  RollResult,
-  SingleRollResult
+  RollResult
 } from './types'
 import { calculateTotal, normalizeArgument } from './utils'
 import { generateRoll } from './utils/generateRoll'
+import { rollType } from './utils/rollType'
 
 function roll(...args: NumericRollArgument[]): NumericRollResult
 function roll(...args: CustomRollArgument[]): CustomRollResult
@@ -22,20 +22,8 @@ function roll(...args: RollArgument[]): RollResult {
     rolls,
     rawResults: rolls.map((roll) => roll.rawRolls).flat(),
     total: calculateTotal(rolls.map((roll) => roll.total)),
-    type: calculateRollType(rolls)
+    type: rollType(rolls)
   } as RollResult
-}
-
-function calculateRollType(rolls: SingleRollResult[]): RollResult['type'] {
-  if (rolls.every((roll) => roll.type === 'numeric')) {
-    return 'numeric'
-  }
-
-  if (rolls.every((roll) => roll.type === 'custom')) {
-    return 'custom'
-  }
-
-  return 'mixed'
 }
 
 export { roll }
