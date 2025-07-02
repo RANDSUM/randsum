@@ -1,7 +1,10 @@
 import type { DiceNotation } from '@randsum/core'
 import { describe, expect, it } from 'bun:test'
-import { isDiceNotation } from '../src/isDiceNotation'
-import { completeRollPattern, coreNotationPattern } from '../src/patterns'
+import {
+  completeRollPattern,
+  coreNotationPattern,
+  isDiceNotation
+} from '@randsum/core'
 import { notationToOptions } from '../src/utils/notationToOptions'
 import { validateNotation } from '../src/validateNotation'
 

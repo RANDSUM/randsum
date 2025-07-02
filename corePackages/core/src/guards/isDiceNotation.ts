@@ -1,5 +1,5 @@
-import { completeRollPattern, coreNotationPattern } from './patterns'
-import type { DiceNotation } from './types'
+import { completeRollPattern, coreNotationPattern } from '../patterns'
+import type { DiceNotation } from '../types'
 
 export function isDiceNotation(argument: unknown): argument is DiceNotation {
   const notAString = typeof argument !== 'string'

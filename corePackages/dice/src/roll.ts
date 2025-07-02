@@ -18,7 +18,6 @@ function roll(...args: RollArgument[]): RollResult {
   const rolls = parameters.map((param) => generateRoll(param))
 
   return {
-    parameters,
     rolls,
     rawResults: rolls.map((roll) => roll.rawRolls).flat(),
     total: calculateTotal(rolls.map((roll) => roll.total)),

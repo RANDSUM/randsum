@@ -33,6 +33,7 @@ function generateRoll(parameters: RollParams): SingleRollResult {
     isNumericRollParams(parameters)
   ) {
     return {
+      parameters,
       rawResult,
       rawRolls,
       modifiedRolls,
@@ -47,6 +48,7 @@ function generateRoll(parameters: RollParams): SingleRollResult {
     isCustomRollParams(parameters)
   ) {
     return {
+      parameters,
       rawResult,
       rawRolls,
       modifiedRolls,

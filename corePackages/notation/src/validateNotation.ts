@@ -1,5 +1,8 @@
-import { ModifierConflictError, optionsConverter } from '@randsum/core'
-import { isDiceNotation } from './isDiceNotation'
+import {
+  ModifierConflictError,
+  isDiceNotation,
+  optionsConverter
+} from '@randsum/core'
 import type { ValidationResult } from './types'
 import { notationToOptions } from './utils/notationToOptions'
 

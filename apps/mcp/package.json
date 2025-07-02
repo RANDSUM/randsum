@@ -1,6 +1,6 @@
 {
   "name": "@randsum/mcp",
-  "version": "0.2.2",
+  "version": "0.2.7",
   "description": "Model Context Protocol server for RANDSUM dice rolling and game mechanics",
   "private": false,
   "author": {
@@ -14,47 +14,20 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "apps/mcp"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "source": "./src/index.ts",
   "files": [
     "dist",
     "src",
     "LICENSE",
-    "README.md",
-    "bin"
+    "README.md"
   ],
-  "sideEffects": false,
   "type": "module",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.13.3",
     "@randsum/core": "workspace:~",
     "@randsum/dice": "workspace:~",
     "@randsum/notation": "workspace:~",
-    "@types/express": "^5.0.3",
-    "express": "^5.1.0",
-    "zod": "^3.22.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0"
-  },
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./package.json": "./package.json"
-  },
-  "engines": {
-    "bun": ">=1.0.0",
-    "node": ">=18.0.0"
+    "commander": "^12.1.0",
+    "zod": "^3.25.67"
   },
   "keywords": [
     "mcp",
@@ -75,10 +48,6 @@
     "ai-tools"
   ],
   "bin": {
-    "randsum-mcp": "./bin/randsum-mcp"
-  },
-  "scripts": {
-    "start": "node ./dist/index.js",
-    "clean": "rm -rf dist"
+    "randsum-mcp": "dist/index.js"
   }
 }

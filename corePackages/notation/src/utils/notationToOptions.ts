@@ -6,9 +6,9 @@ import {
   PlusModifier,
   ReplaceModifier,
   RerollModifier,
-  UniqueModifier
+  UniqueModifier,
+  coreNotationPattern
 } from '@randsum/core'
-import { coreNotationPattern } from '../patterns'
 import type { DiceNotation, RollOptions } from '../types'
 
 export function notationToOptions(notationString: DiceNotation): RollOptions {

@@ -1,6 +1,6 @@
 {
   "name": "@randsum/notation",
-  "version": "0.2.2",
+  "version": "0.2.7",
   "description": "A flexible, type-safe dice notation parser and validator for tabletop RPGs, board games, and game development",
   "private": false,
   "author": {

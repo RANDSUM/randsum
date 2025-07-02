@@ -42,23 +42,27 @@ bun add @randsum/mcp
 
 ## ⚙️ Configuration
 
-### Claude Desktop
+### MCP Client Configuration
 
-Add the following to your Claude Desktop MCP configuration file:
+Add the RANDSUM MCP server to your MCP client configuration. Below are copy-pastable JSON examples for different transport modes.
 
-**Location:**
+**Configuration File Locations:**
 
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Claude Desktop**:
+  - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+  - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Other MCP Clients**: Refer to your client's documentation for configuration file location
 
-**Configuration:**
+### STDIO Transport (Default)
+
+Standard input/output transport - recommended for most use cases:
 
 ```json
 {
   "mcpServers": {
     "randsum": {
       "command": "npx",
-      "args": ["@randsum/mcp"],
+      "args": ["-y", "@randsum/mcp@latest"],
       "env": {
         "NODE_ENV": "production"
       }
@@ -67,18 +71,65 @@ Add the following to your Claude Desktop MCP configuration file:
 }
 ```
 
-### HTTP Mode (Advanced)
+### SSE Transport (Server-Sent Events)
 
-For remote access or debugging, you can run the server in HTTP mode:
+For web-based clients or when you need persistent connections:
+
+```json
+{
+  "mcpServers": {
+    "randsum-sse": {
+      "command": "npx",
+      "args": ["-y", "@randsum/mcp@latest", "--transport", "sse", "--port", "3001"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
+```
+
+### HTTP Transport
+
+For REST API access or debugging purposes:
 
 ```json
 {
   "mcpServers": {
     "randsum-http": {
       "command": "npx",
-      "args": ["@randsum/mcp", "--transport", "http", "--port", "3000"],
+      "args": ["-y", "@randsum/mcp@latest", "--transport", "http", "--port", "3000"],
       "env": {
         "NODE_ENV": "production"
+      }
+    }
+  }
+}
+```
+
+### Advanced Configuration Options
+
+You can customize the server with additional options:
+
+```json
+{
+  "mcpServers": {
+    "randsum-custom": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@randsum/mcp@latest",
+        "--transport",
+        "http",
+        "--port",
+        "8080",
+        "--host",
+        "0.0.0.0",
+        "--verbose"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "debug"
       }
     }
   }
@@ -90,14 +141,14 @@ For remote access or debugging, you can run the server in HTTP mode:
 ### Command Line Options
 
 ```bash
-randsum-mcp [options]
+npx -y @randsum/mcp@latest [options]
 
 Options:
-  --transport <stdio|http>  Transport type (default: stdio)
-  --port <number>          HTTP port (default: 3000)
-  --host <string>          HTTP host (default: localhost)
-  --verbose                Enable verbose logging
-  --help                   Show help message
+  --transport <stdio|sse|http>  Transport type (default: stdio)
+  --port <number>               Port for SSE/HTTP transports (default: 3000)
+  --host <string>               Host for SSE/HTTP transports (default: localhost)
+  --verbose                     Enable verbose logging
+  --help                        Show help message
 ```
 
 ### Available Tools
@@ -173,11 +224,12 @@ Ask your MCP client to:
 2. Check the MCP client logs for connection errors
 3. Test the server manually: `npx @randsum/mcp --help`
 
-### HTTP Mode Issues
+### SSE/HTTP Mode Issues
 
 1. Ensure the specified port is available
 2. Check firewall settings if accessing remotely
 3. Use `--verbose` flag for detailed logging
+4. For SSE mode, ensure your client supports Server-Sent Events
 
 ## 🆘 Support
 
