@@ -13,8 +13,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: moonrepo/setup-toolchain@v0.4.1
+      - uses: oven-sh/setup-bun@v2
         with:
-          auto-install: true
-      - run: bun install
-      - run: moon ci
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+      - run: bun run moon ci
