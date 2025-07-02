@@ -47,6 +47,7 @@ bun add @randsum/mcp
 Add the following to your Claude Desktop MCP configuration file:
 
 **Location:**
+
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
@@ -104,18 +105,21 @@ Options:
 Once configured, the following tools will be available in your MCP client:
 
 #### 1. **roll**
+
 - **Description**: Roll dice using RANDSUM notation (e.g., "2d20+5", "4d6L")
 - **Parameters**:
   - `notation` (string, required): Dice notation string (e.g., "2d20+5", "4d6L", "3d8!")
 - **Returns**: Detailed roll results including total, individual dice results, and roll breakdown
 
 #### 2. **validate-notation**
+
 - **Description**: Validate dice notation and get helpful feedback
 - **Parameters**:
   - `notation` (string, required): Dice notation string to validate
 - **Returns**: Validation status with detailed feedback and error descriptions
 
 #### 3. **game-roll**
+
 - **Description**: Roll dice using game-specific mechanics (5e, Blades, Daggerheart, Salvage Union)
 - **Parameters**:
   - `game` (string, required): Game system - one of: `5e`, `blades`, `daggerheart`, `salvageunion`
@@ -129,6 +133,7 @@ Once configured, the following tools will be available in your MCP client:
 ### Available Resources
 
 #### **dice-notation-docs**
+
 - **URI**: `randsum://dice-notation-docs`
 - **Type**: `text/markdown`
 - **Description**: Complete reference for RANDSUM dice notation syntax and modifiers
@@ -143,6 +148,7 @@ Once configured, the following tools will be available in your MCP client:
 ### Basic Dice Rolling
 
 Ask your MCP client to:
+
 - "Roll 2d6+3"
 - "Roll 4d6 drop lowest"
 - "Roll 1d20 with advantage"
@@ -176,6 +182,7 @@ Ask your MCP client to:
 ## 🆘 Support
 
 For issues and questions:
+
 - GitHub: https://github.com/RANDSUM/randsum
 - Documentation: https://randsum.org
 
