@@ -15,8 +15,8 @@ describe('Roll Result Type Guards', () => {
       // Type assertion to verify TypeScript narrowing works
       if (isNumericResult(result)) {
         expect(typeof result.total).toBe('number')
-        expect(Array.isArray(result.result)).toBe(true)
-        expect(result.result.every((r) => typeof r === 'number')).toBe(true)
+        expect(Array.isArray(result.results)).toBe(true)
+        expect(result.results.every((r) => typeof r === 'number')).toBe(true)
       }
     })
 
@@ -58,8 +58,8 @@ describe('Roll Result Type Guards', () => {
       // Type assertion to verify TypeScript narrowing works
       if (isCustomResult(result)) {
         expect(typeof result.total).toBe('string')
-        expect(Array.isArray(result.result)).toBe(true)
-        expect(result.result.every((r) => typeof r === 'string')).toBe(true)
+        expect(Array.isArray(result.results)).toBe(true)
+        expect(result.results.every((r) => typeof r === 'string')).toBe(true)
       }
     })
 
@@ -148,8 +148,8 @@ describe('Roll Result Type Guards', () => {
       if (isNumericResult(result)) {
         // These should compile without type errors
         const total: number = result.total
-        const rolls: number[] = result.result
-        const firstRoll: number = result.result[0] ?? 0
+        const rolls: number[] = result.results
+        const firstRoll: number = result.results[0] ?? 0
 
         expect(typeof total).toBe('number')
         expect(Array.isArray(rolls)).toBe(true)
@@ -193,7 +193,7 @@ describe('Roll Result Type Guards', () => {
       numericResults.forEach((result) => {
         // Can safely perform numeric operations
         const average =
-          result.result.reduce((a, b) => a + b, 0) / result.result.length
+          result.results.reduce((a, b) => a + b, 0) / result.results.length
         expect(typeof average).toBe('number')
       })
 
@@ -201,7 +201,7 @@ describe('Roll Result Type Guards', () => {
       const customResults = results.filter(isCustomResult)
       customResults.forEach((result) => {
         // Can safely perform string operations
-        const combined = result.result.join(', ')
+        const combined = result.results.join(', ')
         expect(typeof combined).toBe('string')
       })
 

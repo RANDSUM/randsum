@@ -37,7 +37,7 @@ describe(roll, () => {
         { length: loops },
         () =>
           roll(['h', 't'], { sides: ['h', 't'] }, D(['h', 't']), '1d{ht}')
-            .result
+            .results
       )
 
       test('it never goes outside of the bounds of the roll', () => {
