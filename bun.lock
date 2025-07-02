@@ -21,59 +21,59 @@
         "typescript-eslint": "^8.35.1",
       },
     },
-    "gamePackages/5e": {
-      "name": "@randsum/5e",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "gamePackages/blades": {
-      "name": "@randsum/blades",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "gamePackages/daggerheart": {
-      "name": "@randsum/daggerheart",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:*",
-      },
-    },
-    "gamePackages/root-rpg": {
-      "name": "@randsum/root-rpg",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "gamePackages/salvageunion": {
-      "name": "@randsum/salvageunion",
-      "version": "0.1.37",
-      "dependencies": {
-        "@randsum/dice": "workspace:~",
-      },
-    },
-    "packages/core": {
+    "corePackages/core": {
       "name": "@randsum/core",
-      "version": "0.1.37",
+      "version": "0.2.0",
     },
-    "packages/dice": {
+    "corePackages/dice": {
       "name": "@randsum/dice",
-      "version": "0.1.37",
+      "version": "0.2.0",
       "bin": "./bin/randsum",
       "dependencies": {
         "@randsum/core": "workspace:~",
         "@randsum/notation": "workspace:~",
       },
     },
-    "packages/notation": {
+    "corePackages/notation": {
       "name": "@randsum/notation",
-      "version": "0.1.37",
+      "version": "0.2.0",
       "dependencies": {
         "@randsum/core": "workspace:~",
+      },
+    },
+    "gamePackages/5e": {
+      "name": "@randsum/5e",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
+      },
+    },
+    "gamePackages/blades": {
+      "name": "@randsum/blades",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
+      },
+    },
+    "gamePackages/daggerheart": {
+      "name": "@randsum/daggerheart",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:*",
+      },
+    },
+    "gamePackages/root-rpg": {
+      "name": "@randsum/root-rpg",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
+      },
+    },
+    "gamePackages/salvageunion": {
+      "name": "@randsum/salvageunion",
+      "version": "0.2.0",
+      "dependencies": {
+        "@randsum/dice": "workspace:~",
       },
     },
   },
@@ -215,13 +215,13 @@
 
     "@randsum/blades": ["@randsum/blades@workspace:gamePackages/blades"],
 
-    "@randsum/core": ["@randsum/core@workspace:packages/core"],
+    "@randsum/core": ["@randsum/core@workspace:corePackages/core"],
 
     "@randsum/daggerheart": ["@randsum/daggerheart@workspace:gamePackages/daggerheart"],
 
-    "@randsum/dice": ["@randsum/dice@workspace:packages/dice"],
+    "@randsum/dice": ["@randsum/dice@workspace:corePackages/dice"],
 
-    "@randsum/notation": ["@randsum/notation@workspace:packages/notation"],
+    "@randsum/notation": ["@randsum/notation@workspace:corePackages/notation"],
 
     "@randsum/root-rpg": ["@randsum/root-rpg@workspace:gamePackages/root-rpg"],
 
