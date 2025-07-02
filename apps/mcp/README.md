@@ -117,10 +117,14 @@ You can customize the server with additional options:
     "randsum-custom": {
       "command": "npx",
       "args": [
-        "-y", "@randsum/mcp@latest",
-        "--transport", "http",
-        "--port", "8080",
-        "--host", "0.0.0.0",
+        "-y",
+        "@randsum/mcp@latest",
+        "--transport",
+        "http",
+        "--port",
+        "8080",
+        "--host",
+        "0.0.0.0",
         "--verbose"
       ],
       "env": {

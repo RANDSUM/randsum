@@ -16,24 +16,6 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
 import { Command } from 'commander'
 
-// MCP Tool Response Interfaces
-interface McpTextContent {
-  type: 'text'
-  text: string
-}
-
-interface McpToolResponse {
-  content: McpTextContent[]
-}
-
-interface RollToolResponse extends McpToolResponse {
-  content: [McpTextContent]
-}
-
-interface ValidateNotationToolResponse extends McpToolResponse {
-  content: [McpTextContent]
-}
-
 const program = new Command()
   .option('--transport <type>', 'transport type', 'stdio')
   .option('--port <number>', 'port for HTTP/SSE transport', '3000')
