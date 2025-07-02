@@ -8,8 +8,13 @@ export function createServer(): Server {
     },
     {
       capabilities: {
-        tools: {},
-        resources: {}
+        tools: {
+          listChanged: true
+        },
+        resources: {
+          subscribe: true,
+          listChanged: true
+        }
       }
     }
   )

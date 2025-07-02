@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "randsum": {
+      "command": "npx",
+      "args": ["@randsum/mcp"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

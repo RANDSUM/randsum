@@ -16,9 +16,21 @@
 - **Documentation Resources**: Access to complete dice notation reference
 - **Type Safety**: Full TypeScript support with intelligent type inference
 
-## 🚀 Quick Start
+## 🚀 Installation
 
-### Installation
+### Via npm (Recommended)
+
+```bash
+npm install -g @randsum/mcp
+```
+
+### Via npx (No Installation Required)
+
+```bash
+npx @randsum/mcp --help
+```
+
+### Local Development
 
 ```bash
 npm install @randsum/mcp
@@ -28,39 +40,144 @@ yarn add @randsum/mcp
 bun add @randsum/mcp
 ```
 
-### Usage with Claude Desktop
+## ⚙️ Configuration
 
-Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+### Claude Desktop
+
+Add the following to your Claude Desktop MCP configuration file:
+
+**Location:**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+**Configuration:**
 
 ```json
 {
   "mcpServers": {
     "randsum": {
-      "command": "node",
-      "args": ["/path/to/node_modules/@randsum/mcp/dist/index.js"]
+      "command": "npx",
+      "args": ["@randsum/mcp"],
+      "env": {
+        "NODE_ENV": "production"
+      }
     }
   }
 }
 ```
 
+### HTTP Mode (Advanced)
+
+For remote access or debugging, you can run the server in HTTP mode:
+
+```json
+{
+  "mcpServers": {
+    "randsum-http": {
+      "command": "npx",
+      "args": ["@randsum/mcp", "--transport", "http", "--port", "3000"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
+```
+
+## 🎮 Usage
+
+### Command Line Options
+
+```bash
+randsum-mcp [options]
+
+Options:
+  --transport <stdio|http>  Transport type (default: stdio)
+  --port <number>          HTTP port (default: 3000)
+  --host <string>          HTTP host (default: localhost)
+  --verbose                Enable verbose logging
+  --help                   Show help message
+```
+
 ### Available Tools
 
-- **roll**: Generate dice rolls using RANDSUM notation
-- **validate-notation**: Validate dice notation and get helpful feedback
+Once configured, the following tools will be available in your MCP client:
+
+#### 1. **roll**
+- **Description**: Roll dice using RANDSUM notation (e.g., "2d20+5", "4d6L")
+- **Parameters**:
+  - `notation` (string, required): Dice notation string (e.g., "2d20+5", "4d6L", "3d8!")
+- **Returns**: Detailed roll results including total, individual dice results, and roll breakdown
+
+#### 2. **validate-notation**
+- **Description**: Validate dice notation and get helpful feedback
+- **Parameters**:
+  - `notation` (string, required): Dice notation string to validate
+- **Returns**: Validation status with detailed feedback and error descriptions
+
+#### 3. **game-roll**
+- **Description**: Roll dice using game-specific mechanics (5e, Blades, Daggerheart, Salvage Union)
+- **Parameters**:
+  - `game` (string, required): Game system - one of: `5e`, `blades`, `daggerheart`, `salvageunion`
+  - `modifier` (number, optional): Modifier to add to the roll (for 5e and Daggerheart)
+  - `rollingWith` (string, optional): `Advantage` or `Disadvantage` (5e and Daggerheart)
+  - `dicePool` (number, optional): Number of dice in pool 1-10 (for Blades in the Dark)
+  - `tableName` (string, optional): Table name for Salvage Union rolls (e.g., "Core Mechanic", "Critical Damage")
+  - `dc` (number, optional): Difficulty Class 1-30 (for 5e and Daggerheart)
+- **Returns**: Game-specific roll results with appropriate formatting and success/failure indicators
 
 ### Available Resources
 
-- **dice-notation-docs**: Complete RANDSUM dice notation reference
+#### **dice-notation-docs**
+- **URI**: `randsum://dice-notation-docs`
+- **Type**: `text/markdown`
+- **Description**: Complete reference for RANDSUM dice notation syntax and modifiers
+- **Content**: Comprehensive documentation covering:
+  - Basic syntax (`NdS`, `NdS+X`, `NdS-X`)
+  - Modifiers (`L` drop lowest, `H` keep highest, `R{<N}` reroll, `!` exploding, `U` unique)
+  - Examples and usage patterns
+  - Custom dice notation (`2d{HT}`, `3d{ABC}`)
 
 ## 📖 Examples
 
-```typescript
-// Roll basic dice
-roll('2d20+5')
+### Basic Dice Rolling
 
-// Validate notation
-validateNotation('4d6L')
-```
+Ask your MCP client to:
+- "Roll 2d6+3"
+- "Roll 4d6 drop lowest"
+- "Roll 1d20 with advantage"
+
+### Advanced Rolling
+
+- "Roll 3d6 exploding on 6"
+- "Roll 2d10 + 1d6 fire damage"
+- "Validate the notation '2d6+1d4'"
+
+## 🔧 Troubleshooting
+
+### Server Won't Start
+
+1. Ensure Node.js 18+ is installed
+2. Check that the package is properly installed
+3. Verify MCP configuration syntax
+
+### Tools Not Available
+
+1. Restart your MCP client after configuration changes
+2. Check the MCP client logs for connection errors
+3. Test the server manually: `npx @randsum/mcp --help`
+
+### HTTP Mode Issues
+
+1. Ensure the specified port is available
+2. Check firewall settings if accessing remotely
+3. Use `--verbose` flag for detailed logging
+
+## 🆘 Support
+
+For issues and questions:
+- GitHub: https://github.com/RANDSUM/randsum
+- Documentation: https://randsum.org
 
 ## 🔗 Related Packages
 
