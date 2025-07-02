@@ -161,7 +161,6 @@ describe('ModifierConflictError', () => {
     test('handles multiple conflict types', () => {
       const error = new ModifierConflictError(['H', 'L', 'UNIQUE', 'R'])
 
-      // Should include suggestions for both H/L and UNIQUE/R conflicts
       expect(error.suggestions.length).toBeGreaterThan(2)
       expect(error.suggestions.some((s) => s.includes('highest or'))).toBe(true)
       expect(error.suggestions.some((s) => s.includes('Unique rolls'))).toBe(

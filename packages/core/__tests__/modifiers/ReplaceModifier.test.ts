@@ -130,8 +130,8 @@ describe('ReplaceModifier', () => {
     test('handles replacement with duplicate values', () => {
       const modifier = new ReplaceModifier([
         { from: 1, to: 5 },
-        { from: 1, to: 6 }, // Duplicate from value
-        { from: 2, to: 5 } // Duplicate to value
+        { from: 1, to: 6 },
+        { from: 2, to: 5 }
       ])
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 3],
@@ -144,8 +144,8 @@ describe('ReplaceModifier', () => {
 
     test('handles replacement with out-of-range values', () => {
       const modifier = new ReplaceModifier([
-        { from: 100, to: 1 }, // from value not in typical dice range
-        { from: 1, to: 100 } // to value outside typical dice range
+        { from: 100, to: 1 },
+        { from: 1, to: 100 }
       ])
       const bonus: NumericRollBonus = {
         rolls: [1, 6, 100],
@@ -183,10 +183,8 @@ describe('ReplaceModifier', () => {
       const result = modifier.apply(bonus)
       const endTime = performance.now()
 
-      // Should complete within reasonable time (less than 100ms)
       expect(endTime - startTime).toBeLessThan(100)
 
-      // Verify correctness
       const expectedRolls = largeRolls.map((roll) => (roll === 1 ? 21 : roll))
       expect(result.rolls).toEqual(expectedRolls)
     })

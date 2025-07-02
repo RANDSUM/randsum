@@ -164,7 +164,6 @@ describe('RollConstraintError', () => {
       const constraint = 'Cannot drop unique values with negative count'
       const error = new RollConstraintError(constraint)
 
-      // Should include suggestions for unique, drop, and negative constraints
       expect(error.suggestions.length).toBeGreaterThan(3)
       expect(error.suggestions.some((s) => s.includes('unique'))).toBe(true)
       expect(error.suggestions.some((s) => s.includes('drop'))).toBe(true)

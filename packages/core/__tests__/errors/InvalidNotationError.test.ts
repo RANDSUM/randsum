@@ -158,7 +158,6 @@ describe('InvalidNotationError', () => {
     test('handles multiple suggestion categories', () => {
       const error = new InvalidNotationError('d6lx@')
 
-      // Should include suggestions for missing quantity, lowercase l, X modifier, and invalid characters
       expect(error.suggestions.length).toBeGreaterThan(3)
       expect(error.suggestions.some((s) => s.includes('quantity'))).toBe(true)
       expect(error.suggestions.some((s) => s.includes('L'))).toBe(true)
@@ -179,7 +178,6 @@ describe('InvalidNotationError', () => {
     test('handles notation with only valid characters but wrong format', () => {
       const error = new InvalidNotationError('6d4d2')
 
-      // Should provide general guidance since no specific patterns match
       expect(error.suggestions).toContain(
         'Use format: <quantity>d<sides><modifiers>'
       )
@@ -192,7 +190,7 @@ describe('InvalidNotationError', () => {
 
       expect(error instanceof Error).toBe(true)
       expect(error instanceof RandsumError).toBe(true)
-      // Use name property instead of constructor.name due to potential minification
+
       expect(error.name).toBe('InvalidNotationError')
     })
 

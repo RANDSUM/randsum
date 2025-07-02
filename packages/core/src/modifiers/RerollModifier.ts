@@ -8,44 +8,12 @@ import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
-/**
- * Modifier that rerolls dice matching specific criteria
- *
- * The RerollModifier allows rerolling dice that match certain conditions:
- * - Exact values
- * - Values greater than a threshold
- * - Values less than a threshold
- *
- * It can also limit the number of rerolls with a max parameter.
- *
- * @example
- * // Reroll any 1s
- * const rerollMod = new RerollModifier({ exact: [1] });
- *
- * // Reroll any value less than 3, up to 2 times
- * const rerollLowMod = new RerollModifier({ lessThan: 3, max: 2 });
- */
 export class RerollModifier extends BaseModifier<RerollOptions> {
-  /**
-   * Pattern to match reroll notation
-   *
-   * Matches 'R' or 'r' followed by constraints and an optional max reroll count
-   *
-   * @example
-   * // Matches: 'R{1}', 'r{<3}2', etc.
-   * // In notation: '3d6R{1}' - Roll 3d6 and reroll any 1s
-   * // In notation: '3d6R{<3}2' - Roll 3d6 and reroll any values less than 3, up to 2 times
-   */
   public static readonly pattern: RegExp = new RegExp(
     `${/[Rr]/.source}${/{([<>]?\d+,)*([<>]?\d+)}/.source}${/\d*/.source}`,
     'g'
   )
-  /**
-   * Parses a modifier string to extract reroll options
-   *
-   * @param modifiersString - The string containing modifier notation
-   * @returns Object containing parsed reroll options
-   */
+
   public static override parse(
     modifiersString: string
   ): Pick<ModifierOptions, 'reroll'> {
@@ -104,14 +72,6 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
     )
   }
 
-  /**
-   * Applies the reroll modifier to a roll result
-   *
-   * @param bonus - The current roll bonuses to modify
-   * @param _params - Unused parameter
-   * @param rollOne - Function to roll a single die
-   * @returns Modified roll bonuses with rerolled values
-   */
   public apply(
     bonus: NumericRollBonus,
     _params: undefined | RequiredNumericRollParameters,
@@ -128,11 +88,6 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
     }
   }
 
-  /**
-   * Generates a human-readable description of the reroll modifier
-   *
-   * @returns Array of description strings or undefined if no reroll options
-   */
   public toDescription(): string[] | undefined {
     if (this.options === undefined) return undefined
     const rerollList: string[] = []
@@ -162,11 +117,6 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
     return [coreString]
   }
 
-  /**
-   * Converts the reroll modifier to dice notation format
-   *
-   * @returns Dice notation string or undefined if no reroll options
-   */
   public toNotation(): string | undefined {
     if (this.options === undefined) return undefined
     const rerollList = []
@@ -185,13 +135,6 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
     return `R{${rerollList.join(',')}}${String(this.maxNotation(this.options.max))}`
   }
 
-  /**
-   * Checks if a roll value matches any of the exact values to reroll
-   *
-   * @param exact - Array of exact values to check against
-   * @param roll - The roll value to check
-   * @returns True if the roll should be rerolled
-   */
   private extractExactValue(
     exact: number[] | undefined,
     roll: number
@@ -202,27 +145,11 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
     return exact.includes(roll)
   }
 
-  /**
-   * Formats the max reroll count for notation
-   *
-   * @param max - Maximum number of rerolls
-   * @returns Formatted string for max rerolls
-   */
   private maxNotation(max: number | undefined): string {
     if (max === undefined) return ''
     return String(max)
   }
 
-  /**
-   * Recursively rerolls a die until it no longer matches reroll criteria
-   * or reaches the maximum number of rerolls
-   *
-   * @param roll - The current roll value
-   * @param param1 - Reroll options with criteria
-   * @param rollOne - Function to roll a single die
-   * @param index - Current reroll count
-   * @returns Final roll value after rerolls
-   */
   private rerollRoll(
     roll: number,
     { greaterThan, lessThan, exact, max }: RerollOptions,

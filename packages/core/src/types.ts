@@ -1,16 +1,8 @@
-// --------------------------
-// --- 'NOTATION' & STRINGS ---
-// --------------------------
-
 export type NumericDiceNotation = `${number}${'d' | 'D'}${number}${string}`
 
 export type CustomDiceNotation = `${number}${'d' | 'D'}{${string}}`
 
 export type DiceNotation = NumericDiceNotation | CustomDiceNotation
-
-// -----------------------
-// --- MODIFIER OPTIONS ---
-// -----------------------
 
 export interface ComparisonOptions {
   greaterThan?: number
@@ -60,19 +52,11 @@ export interface ModifierOptions {
   minus?: number
 }
 
-// -----------------------
-// --- ROLL BONUSES ---
-// -----------------------
-
 export interface NumericRollBonus {
   rolls: number[]
 
   simpleMathModifier: number
 }
-
-// -----------------------
-// --- ROLL OPTIONS ---
-// -----------------------
 
 export interface BaseRollOptions {
   quantity?: number
@@ -90,10 +74,6 @@ export interface CustomRollOptions extends BaseRollOptions {
 }
 
 export type RollOptions = NumericRollOptions | CustomRollOptions
-
-// -----------------------
-// --  ROLL PARAMETERS ---
-// -----------------------
 
 export type RequiredNumericRollParameters = Required<
   Omit<NumericRollOptions, 'modifiers'>

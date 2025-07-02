@@ -131,7 +131,6 @@ describe('BaseModifier', () => {
       expect(TestModifier.parse).toBeDefined()
       expect(typeof TestModifier.parse).toBe('function')
 
-      // Test that the overridden method is called
       TestModifier.parse('test-string')
       expect(TestModifier.parse).toHaveBeenCalledWith('test-string')
     })
@@ -154,7 +153,6 @@ describe('BaseModifier', () => {
     test('all required abstract methods are implemented in concrete classes', () => {
       const modifier = new TestModifier(1)
 
-      // Verify all abstract methods are implemented and callable
       expect(typeof modifier.apply).toBe('function')
       expect(typeof modifier.toDescription).toBe('function')
       expect(typeof modifier.toNotation).toBe('function')

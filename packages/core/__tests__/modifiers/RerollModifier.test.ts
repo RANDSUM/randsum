@@ -121,7 +121,7 @@ describe('RerollModifier', () => {
       let rollCount = 0
       const mockRollOneWithLimit = (): number => {
         rollCount++
-        return 1 // Always return a value that would trigger reroll
+        return 1
       }
 
       const modifier = new RerollModifier({ exact: [1], max: 2 })
@@ -136,19 +136,18 @@ describe('RerollModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOneWithLimit)
 
-      // Should stop rerolling after max attempts
       expect(rollCount).toBe(2)
-      expect(result.rolls).toEqual([1]) // Should return the last rolled value
+      expect(result.rolls).toEqual([1])
     })
 
     test('prevents infinite rerolls with 99 reroll safety limit', () => {
       let rollCount = 0
       const mockRollOneInfinite = (): number => {
         rollCount++
-        return 1 // Always return a value that would trigger reroll
+        return 1
       }
 
-      const modifier = new RerollModifier({ exact: [1] }) // No max specified
+      const modifier = new RerollModifier({ exact: [1] })
       const bonus: NumericRollBonus = {
         rolls: [1],
         simpleMathModifier: 0
@@ -160,7 +159,6 @@ describe('RerollModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOneInfinite)
 
-      // Should stop at 99 rerolls to prevent infinite loops
       expect(rollCount).toBe(99)
       expect(result.rolls).toEqual([1])
     })
@@ -181,7 +179,7 @@ describe('RerollModifier', () => {
       }
 
       const result = modifier.apply(bonus, params, mockRollOne)
-      // Should reroll: 1 (exact), 2 (lessThan 3), 6 (exact), 19 (greaterThan 18), 20 (greaterThan 18)
+
       expect(result.rolls).toEqual([4, 4, 4, 10, 4, 4])
     })
 
@@ -189,7 +187,7 @@ describe('RerollModifier', () => {
       let rollCount = 0
       const mockRollOnePerformance = (): number => {
         rollCount++
-        return rollCount <= 50 ? 1 : 5 // Reroll 50 times then return valid value
+        return rollCount <= 50 ? 1 : 5
       }
 
       const modifier = new RerollModifier({ exact: [1] })
@@ -206,7 +204,6 @@ describe('RerollModifier', () => {
       const result = modifier.apply(bonus, params, mockRollOnePerformance)
       const endTime = performance.now()
 
-      // Should complete within reasonable time
       expect(endTime - startTime).toBeLessThan(100)
       expect(result.rolls).toEqual([5, 5, 5])
     })
@@ -218,7 +215,6 @@ describe('RerollModifier', () => {
         simpleMathModifier: 0
       }
 
-      // Test that undefined options are handled correctly in apply method
       const result = modifier.apply(bonus, undefined, mockRollOne)
       expect(result).toBe(bonus)
     })
