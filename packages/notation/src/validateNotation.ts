@@ -17,13 +17,13 @@ import { notationToOptions } from './utils/notationToOptions'
  *   - `valid`: Whether the notation is valid
  *   - `description`: Human-readable description of the roll
  *   - `digested`: Parsed options object (if valid)
- *   - `type`: Type of dice ('numerical', 'custom', or 'invalid')
+ *   - `type`: Type of dice ('numeric', 'custom', or 'invalid')
  *   - `notation`: Normalized notation string (if valid)
  *
  * @example
  * // Valid numeric notation
  * validateNotation('4d6L')
- * // Returns: { valid: true, type: 'numerical', description: [...], ... }
+ * // Returns: { valid: true, type: 'numeric', description: [...], ... }
  *
  * @example
  * // Valid custom notation
@@ -74,12 +74,12 @@ export function validateNotation(notation: string): ValidationResult {
  * Determines the type of die based on its sides configuration
  *
  * @param sides - Either a number (for standard dice) or array of strings (for custom faces)
- * @returns 'custom' for custom dice faces, 'numerical' for standard numbered dice
+ * @returns 'custom' for custom dice faces, 'numeric' for standard numbered dice
  * @internal
  */
-function calculateDieType(sides: number | string[]): 'custom' | 'numerical' {
+function calculateDieType(sides: number | string[]): 'custom' | 'numeric' {
   if (Array.isArray(sides)) {
     return 'custom'
   }
-  return 'numerical'
+  return 'numeric'
 }

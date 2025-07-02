@@ -10,7 +10,5 @@
 export { calculateTotal } from './calculateTotal'
 export { coreRandom, createSeededRandom } from './coreRandom'
 export { coreSpreadRolls } from './coreSpreadRolls'
-export { generateKey } from './generateKey'
-export { generateNumericalFaces } from './generateNumericalFaces'
+export { generateNumericFaces } from './generateNumericFaces'
 export { normalizeArgument } from './normalizeArgument'
-export { rollResultFromDicePools } from './rollResultFromDicePools'

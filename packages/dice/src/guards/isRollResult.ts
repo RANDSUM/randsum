@@ -39,7 +39,7 @@ import type {
 export function isNumericResult(
   result: RollResult
 ): result is NumericRollResult {
-  return result.type === 'numerical'
+  return result.type === 'numeric'
 }
 
 /**

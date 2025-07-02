@@ -3,7 +3,7 @@ import { notationToOptions } from '../src/utils/notationToOptions'
 
 describe(notationToOptions, () => {
   describe('basic notation parsing', () => {
-    it('parses simple numerical notation', () => {
+    it('parses simple numeric notation', () => {
       const result = notationToOptions('2d6')
 
       expect(result).toEqual({
@@ -182,7 +182,7 @@ describe(notationToOptions, () => {
       expect(typeof result.modifiers).toBe('object')
     })
 
-    it('returns number for numerical sides', () => {
+    it('returns number for numeric sides', () => {
       const result = notationToOptions('2d20')
 
       expect(typeof result.sides).toBe('number')

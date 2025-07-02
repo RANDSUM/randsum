@@ -23,7 +23,7 @@ describe('Roll Result Type Guards', () => {
     test('should return true for single numeric die results', () => {
       const result = roll(20)
       expect(isNumericResult(result)).toBe(true)
-      expect(result.type).toBe('numerical')
+      expect(result.type).toBe('numeric')
     })
 
     test('should return false for custom roll results', () => {
@@ -44,7 +44,7 @@ describe('Roll Result Type Guards', () => {
 
       // Verify all filtered results are numeric
       numericResults.forEach((result) => {
-        expect(result.type).toBe('numerical')
+        expect(result.type).toBe('numeric')
         expect(typeof result.total).toBe('number')
       })
     })
@@ -166,7 +166,7 @@ describe('Roll Result Type Guards', () => {
 
       results.forEach((result) => {
         if (isNumericResult(result)) {
-          expect(result.type).toBe('numerical')
+          expect(result.type).toBe('numeric')
           expect(typeof result.total).toBe('number')
         } else if (isCustomResult(result)) {
           expect(result.type).toBe('custom')

@@ -7,7 +7,7 @@ const loops = 9999
 
 describe(roll, () => {
   describe('Stress Test', () => {
-    describe('numerical dice', () => {
+    describe('numeric dice', () => {
       const dummyArray = Array.from(
         { length: loops },
         () => roll(20, { sides: 20 }, D(20), '1d20').total
@@ -21,7 +21,7 @@ describe(roll, () => {
       })
     })
 
-    describe('numerical dice simple', () => {
+    describe('numeric dice simple', () => {
       const dummyArray = Array.from({ length: loops }, () => roll(20).total)
 
       test('it never goes outside of the bounds of the roll', () => {

@@ -128,12 +128,12 @@ describe('Integration Tests', () => {
   })
 
   describe('type definition alignment', () => {
-    it('validateNotation returns correct types for numerical dice', () => {
+    it('validateNotation returns correct types for numeric dice', () => {
       const result = validateNotation('2d6')
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.type).toBe('numerical')
+        expect(result.type).toBe('numeric')
         expect(typeof result.digested.sides).toBe('number')
         expect(result.notation).toBe('2d6')
       }

@@ -24,7 +24,7 @@
  *
  * @internal
  */
-export function calculateTotal(
+function calculateTotal(
   rolls: (string | number)[],
   bonus: string | number = 0
 ): string | number {
@@ -34,3 +34,5 @@ export function calculateTotal(
 
   return rolls.flat().join(', ')
 }
+
+export { calculateTotal }

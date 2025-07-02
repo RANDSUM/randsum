@@ -18,7 +18,7 @@ import type {
   NumericRollResult
 } from './types'
 import { coreSpreadRolls } from './utils/coreSpreadRolls'
-import { generateNumericalFaces } from './utils/generateNumericalFaces'
+import { generateNumericFaces } from './utils/generateNumericFaces'
 
 /**
  * Abstract base class for all dice implementations
@@ -26,7 +26,7 @@ import { generateNumericalFaces } from './utils/generateNumericalFaces'
  */
 abstract class DieBase {
   public readonly sides: number
-  public abstract readonly type: 'numerical' | 'custom'
+  public abstract readonly type: 'numeric' | 'custom'
   public abstract readonly faces: number[] | string[]
   public abstract readonly isCustom: boolean
 
@@ -48,13 +48,13 @@ abstract class DieBase {
  * @internal
  */
 class NumericDieImpl extends DieBase implements NumericDie {
-  public readonly type = 'numerical' as const
+  public readonly type = 'numeric' as const
   public readonly faces: number[]
   public readonly isCustom = false as const
 
   constructor(sides: number) {
     super(sides)
-    this.faces = generateNumericalFaces(sides)
+    this.faces = generateNumericFaces(sides)
   }
 
   /**

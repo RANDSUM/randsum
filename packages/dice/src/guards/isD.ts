@@ -33,7 +33,7 @@ export function isD(arg: unknown): arg is BaseD {
     'rollSpread' in arg &&
     'rollModified' in arg &&
     'toOptions' in arg &&
-    (arg.type === 'numerical' || arg.type === 'custom')
+    (arg.type === 'numeric' || arg.type === 'custom')
   )
 }
 
@@ -44,7 +44,7 @@ export function isD(arg: unknown): arg is BaseD {
  * @returns `true` if the die is numeric, `false` otherwise
  */
 export function isNumericDie(die: BaseD): die is import('../types').NumericDie {
-  return die.type === 'numerical'
+  return die.type === 'numeric'
 }
 
 /**

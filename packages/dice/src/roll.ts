@@ -6,17 +6,14 @@
 import type {
   CustomRollArgument,
   CustomRollResult,
-  DicePool,
   NumericRollArgument,
   NumericRollResult,
   RollArgument,
   RollResult
 } from './types'
-import {
-  generateKey,
-  normalizeArgument,
-  rollResultFromDicePools
-} from './utils'
+import { calculateTotal, normalizeArgument } from './utils'
+import { calculateRollType } from './utils/calculateRolltype'
+import { generateRoll } from './utils/generateRoll'
 
 /**
  * Rolls dice with various options and modifiers
@@ -72,13 +69,18 @@ function roll(...args: NumericRollArgument[]): NumericRollResult
 function roll(...args: CustomRollArgument[]): CustomRollResult
 function roll(...args: (NumericRollArgument | CustomRollArgument)[]): RollResult
 function roll(...args: RollArgument[]): RollResult {
-  const dicePools: DicePool = {
-    dicePools: Object.fromEntries(
-      args.map((arg) => [generateKey(), normalizeArgument(arg)])
-    )
-  }
+  const parameters = args.map((arg) => normalizeArgument(arg))
+  const rolls = parameters.map((param) => generateRoll(param))
+  const results = rolls.map((roll) => roll.total)
+  const total = calculateTotal(results)
 
-  return rollResultFromDicePools(dicePools)
+  return {
+    parameters,
+    rolls,
+    results,
+    total,
+    type: calculateRollType(rolls)
+  } as RollResult
 }
 
 export { roll }

@@ -3,14 +3,14 @@ import { D } from '../src/D'
 import { isD, isNumericDie } from '../src/guards/isD'
 
 describe(D, () => {
-  describe('Creating a Numerical Die', () => {
+  describe('Creating a numeric Die', () => {
     const sides = 6
     const die = D(sides)
 
     test('returns a numeric die instance', () => {
       expect(isD(die)).toBe(true)
       expect(isNumericDie(die)).toBe(true)
-      expect(die.type).toEqual('numerical')
+      expect(die.type).toEqual('numeric')
     })
 
     test('D.sides returns the number given as sides', () => {
@@ -28,7 +28,7 @@ describe(D, () => {
         })
       })
 
-      describe('with a numerical argument', () => {
+      describe('with a numeric argument', () => {
         test('.returns a number that is a conceivable result of multiple die rolls', () => {
           expect([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).toContain(die.roll(2))
         })
@@ -42,7 +42,7 @@ describe(D, () => {
         })
       })
 
-      describe('with a numerical argument', () => {
+      describe('with a numeric argument', () => {
         test('.returns a number that is a conceivable result of multiple die rolls', () => {
           expect([1, 2, 3, 4, 5, 6]).toContain(die.rollSpread(2)[0])
           expect([1, 2, 3, 4, 5, 6]).toContain(die.rollSpread(2)[1])
@@ -95,7 +95,7 @@ describe(D, () => {
         })
       })
 
-      describe('with a numerical argument', () => {
+      describe('with a numeric argument', () => {
         test('.returns a result that is a conceivable result of multiple die rolls', () => {
           const result = die.roll(2)
           const resultArr = result.split(', ')
@@ -113,7 +113,7 @@ describe(D, () => {
         })
       })
 
-      describe('with a numerical argument', () => {
+      describe('with a numeric argument', () => {
         test('.returns an array of values found in the constructor', () => {
           expect(sides).toContain(die.rollSpread(2)[0])
           expect(sides).toContain(die.rollSpread(2)[1])

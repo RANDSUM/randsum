@@ -14,7 +14,7 @@ import type { CustomDiceNotation, NumericDiceNotation } from '@randsum/notation'
  * Interface for numeric dice (standard numbered dice like d6, d20, etc.)
  */
 export interface NumericDie {
-  readonly type: 'numerical'
+  readonly type: 'numeric'
   readonly sides: number
   readonly faces: number[]
   readonly isCustom: false
@@ -66,19 +66,18 @@ export type RollArgument = NumericRollArgument | CustomRollArgument
 // --- ROLL PARAMETERS ---
 // -----------------------
 
-interface BaseRollParams {
+interface BaseRollParams<A extends RollArgument = RollArgument> {
   description: string[]
+  argument: A
 }
 
-export interface NumericRollParams extends BaseRollParams {
-  argument: NumericRollArgument
+export interface NumericRollParams extends BaseRollParams<NumericRollArgument> {
   options: NumericRollOptions
   die: NumericDie
   notation: NumericDiceNotation
 }
 
-export interface CustomRollParams extends BaseRollParams {
-  argument: CustomRollArgument
+export interface CustomRollParams extends BaseRollParams<CustomRollArgument> {
   options: CustomRollOptions
   die: CustomDie
   notation: CustomDiceNotation
@@ -86,56 +85,67 @@ export interface CustomRollParams extends BaseRollParams {
 
 export type RollParams = NumericRollParams | CustomRollParams
 
-export interface DicePool<P extends RollParams = RollParams> {
-  dicePools: Record<string, P>
-}
-
 // -----------------------
 // --- ROLL RESULTS ---
 // -----------------------
 
-interface BaseRollResult<P extends RollParams = RollParams>
-  extends DicePool<P> {
-  rawResult: (number | string)[]
-  type: 'numerical' | 'custom' | 'mixed'
-  rawRolls: Record<string, number[] | string[]>
-  modifiedRolls: Record<
-    string,
-    { rolls: string[] | number[]; total: string | number }
-  >
-  result: (string | number)[]
+export interface BaseSingleRollResult<P extends RollParams = RollParams> {
+  parameters: P
+  rawResult: number | string
+  type: 'numeric' | 'custom'
+  rawRolls: number[] | string[]
+  modifiedRolls: { rolls: string[] | number[]; total: string | number }
   total: string | number
 }
 
+export interface SingleNumericRollResult
+  extends BaseSingleRollResult<NumericRollParams> {
+  type: 'numeric'
+  rawResult: number
+  rawRolls: number[]
+  modifiedRolls: { rolls: number[]; total: number }
+  total: number
+}
+
+export interface SingleCustomRollResult
+  extends BaseSingleRollResult<CustomRollParams> {
+  type: 'custom'
+  rawResult: string
+  rawRolls: string[]
+  modifiedRolls: { rolls: string[]; total: string }
+  total: string
+}
+
+interface BaseRollResult<P extends RollParams = RollParams> {
+  parameters: P[]
+  rolls: (SingleNumericRollResult | SingleCustomRollResult)[]
+  results: (string | number)[]
+  total: string | number
+  type: 'numeric' | 'custom' | 'mixed'
+}
+
 export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
-  type: 'numerical'
-  rawRolls: Record<string, number[]>
-  rawResult: number[]
-  modifiedRolls: Record<string, { rolls: number[]; total: number }>
-  result: number[]
+  type: 'numeric'
+  rolls: SingleNumericRollResult[]
+  results: number[]
   total: number
 }
 
 export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
   type: 'custom'
-  rawRolls: Record<string, string[]>
-  rawResult: string[]
-  modifiedRolls: Record<string, { rolls: string[]; total: string }>
-  result: string[]
+  rolls: SingleCustomRollResult[]
+  results: string[]
   total: string
 }
 
 export interface MixedRollResult extends BaseRollResult {
   type: 'mixed'
-  rawRolls: Record<string, number[] | string[]>
-  modifiedRolls: Record<
-    string,
-    { rolls: string[] | number[]; total: string | number }
-  >
+  rolls: (SingleNumericRollResult | SingleCustomRollResult)[]
   result: (string | number)[]
   total: string
 }
 
+export type SingleRollResult = SingleNumericRollResult | SingleCustomRollResult
 export type RollResult = NumericRollResult | CustomRollResult | MixedRollResult
 
 export type {

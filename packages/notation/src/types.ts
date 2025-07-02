@@ -11,13 +11,13 @@ import type {
 
 interface BaseValidationResult {
   valid: boolean
-  type: 'numerical' | 'custom' | 'invalid'
+  type: 'numeric' | 'custom' | 'invalid'
   description: string[]
 }
 
 export interface NumericValidationResult extends BaseValidationResult {
   valid: true
-  type: 'numerical'
+  type: 'numeric'
   digested: NumericRollOptions
   notation: NumericDiceNotation
 }

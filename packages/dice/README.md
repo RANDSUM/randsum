@@ -145,10 +145,10 @@ roll(
 
 // Different Result Types Examples:
 
-// Numeric Results (type: 'numerical')
+// Numeric Results (type: 'numeric')
 const numericResult = roll('4d6')
 // {
-//   type: 'numerical',
+//   type: 'numeric',
 //   result: [3, 4, 5, 2],
 //   total: 14, // number
 //   ...

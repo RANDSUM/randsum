@@ -32,7 +32,7 @@ describe(validateNotation, () => {
     })
   })
 
-  describe('when given a numerical notation', () => {
+  describe('when given a numeric notation', () => {
     it('returns a valid result', () => {
       const notation = '2d6'
       const result = validateNotation(notation)
@@ -40,7 +40,7 @@ describe(validateNotation, () => {
       expect(result).toEqual({
         valid: true,
         notation: '2d6',
-        type: 'numerical',
+        type: 'numeric',
         digested: { sides: 6, quantity: 2, modifiers: {} },
         description: ['Roll 2 6-sided dice']
       })
@@ -51,7 +51,7 @@ describe(validateNotation, () => {
       expect(result2).toEqual({
         valid: true,
         notation: '1d20',
-        type: 'numerical',
+        type: 'numeric',
         digested: { sides: 20, quantity: 1, modifiers: {} },
         description: ['Roll 1 20-sided die']
       })
