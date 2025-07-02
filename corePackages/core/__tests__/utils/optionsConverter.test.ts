@@ -32,6 +32,16 @@ describe('optionsConverter', () => {
       expect(result).toContain('2d20')
       expect(result).toMatch(/[Ll]/)
     })
+
+    test('handles large negative plus modifiers', () => {
+      const options: NumericRollOptions = {
+        sides: 20,
+        quantity: 2,
+        modifiers: { plus: -3 }
+      }
+      const result = optionsConverter.toNotation(options)
+      expect(result).toContain('2d20-3')
+    })
   })
 
   describe('toDescription', () => {

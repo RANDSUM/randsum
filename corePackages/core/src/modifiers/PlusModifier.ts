@@ -36,6 +36,7 @@ export class PlusModifier extends BaseModifier<number> {
 
   public toNotation = (): string | undefined => {
     if (!this.options) return undefined
+    if (this.options < 0) return `-${String(Math.abs(this.options))}`
     return `+${String(this.options)}`
   }
 }

@@ -2,13 +2,14 @@ $schema: 'https://moonrepo.dev/schemas/tasks.json'
 
 tasks:
   build:
-    command: 'bunup --entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline'
+    command: 'bunup'
+    args: '--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline'
     inputs:
       - 'src/**/*'
     outputs:
       - 'dist/**/*'
     options:
-      cache: true
+      cache: false
 
   test:
     command: 'bun test'
@@ -20,7 +21,7 @@ tasks:
       - '**/*.test.ts'
       - '**/*.spec.ts'
     options:
-      cache: true
+      cache: false
 
   lint:
     command: 'eslint . -c ../../eslint.config.js'
@@ -30,7 +31,7 @@ tasks:
       - '__tests__/**/*'
       - '**/*.ts'
     options:
-      cache: true
+      cache: false
 
   tsCheck:
     command: 'tsc --erasableSyntaxOnly'
@@ -39,7 +40,7 @@ tasks:
       - 'src/**/*'
       - 'tsconfig.json'
     options:
-      cache: true
+      cache: false
 
   publish:
     command: 'bun publish --no-git-checks --access=public'
@@ -63,7 +64,7 @@ tasks:
       - '**/*.md'
       - '.prettierrc'
     options:
-      cache: true
+      cache: false
 
   formatCheck:
     command: 'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc'
@@ -76,7 +77,7 @@ tasks:
       - '**/*.md'
       - '.prettierrc'
     options:
-      cache: true
+      cache: false
 
   ci:
     deps:

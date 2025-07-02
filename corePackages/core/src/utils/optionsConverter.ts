@@ -1,3 +1,4 @@
+import { isDiceNotation } from '../guards'
 import { CapModifier } from '../modifiers/CapModifier'
 import { DropModifier } from '../modifiers/DropModifier'
 import { ExplodeModifier } from '../modifiers/ExplodeModifier'
@@ -12,7 +13,11 @@ export const optionsConverter = {
   toNotation(options: RollOptions): DiceNotation {
     const coreNotation = this.formatCoreNotation(options)
     const modifierNotation = this.formatModifierNotation(options.modifiers)
-    return `${coreNotation}${modifierNotation}` as DiceNotation
+    const proposed = `${coreNotation}${modifierNotation}`
+    if (!isDiceNotation(proposed)) {
+      throw new Error(`Invalid notation generated: ${proposed}`)
+    }
+    return proposed
   },
 
   toDescription(options: RollOptions): string[] {

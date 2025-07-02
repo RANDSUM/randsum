@@ -7,7 +7,7 @@ import {
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
-} from '@randsum/core'
+} from './modifiers'
 
 // eslint-disable-next-line @typescript-eslint/no-inferrable-types
 export const coreNotationPattern: RegExp = /^\d+[Dd](\d+|{.*})/

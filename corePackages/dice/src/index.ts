@@ -2,7 +2,9 @@ export * from './D'
 
 export { roll } from './roll'
 
-export * from './guards/isRollResult'
+export * from '@randsum/core'
+
+export * from './guards'
 
 export type * from '@randsum/core'
 

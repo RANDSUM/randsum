@@ -1,26 +1,15 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "outDir": "./dist",
     "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "composite": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "__tests__"],
-  "references": [
-    {
-      "path": "../../corePackages/core"
-    },
-    {
-      "path": "../../corePackages/dice"
-    },
-    {
-      "path": "../../corePackages/notation"
-    }
-  ]
+  "exclude": ["node_modules"]
 }

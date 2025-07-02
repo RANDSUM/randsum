@@ -7,9 +7,10 @@ import {
   ReplaceModifier,
   RerollModifier,
   UniqueModifier,
+  coreNotationPattern,
+  isDiceNotation,
   optionsConverter
 } from '@randsum/core'
-import { coreNotationPattern, isDiceNotation } from '@randsum/notation'
 import { D } from '../D'
 import { isD } from '../guards/isD'
 import type { RollArgument, RollParams } from '../types'

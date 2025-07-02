@@ -15,10 +15,20 @@ tasks:
       - 'notation:build'
 
   build:
+    command: 'tsc && chmod 755 dist/index.js'
+    args: []
+    inputs:
+      - 'src/**/*'
+    outputs:
+      - 'dist/**/*'
     deps:
       - 'core:build'
       - 'dice:build'
       - 'notation:build'
+    options:
+      cache: true
+      mergeArgs: 'replace'
+      mergeEnv: 'replace'
 
   test:
     deps:
@@ -31,3 +41,9 @@ tasks:
       - 'core:build'
       - 'dice:build'
       - 'notation:build'
+  start:
+    command: 'node dist/index.js --transport http'
+    deps:
+      - 'build'
+    options:
+      cache: false
