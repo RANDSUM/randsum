@@ -26,7 +26,7 @@ jobs:
         with:
           path: |
             .moon/cache
-            packages/*/dist
+            corePackages/*/dist
             gamePackages/*/dist
           key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |

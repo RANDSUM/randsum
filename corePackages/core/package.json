@@ -10,7 +10,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/core"
+    "directory": "corePackages/core"
   },
   "license": "MIT",
   "main": "./dist/index.cjs",

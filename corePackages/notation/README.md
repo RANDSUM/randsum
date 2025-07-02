@@ -145,7 +145,7 @@ notationToOptions('4d6L')
 
 ## Related Packages
 
-- [@randsum/dice](https://github.com/RANDSUM/randsum/tree/main/packages/dice): Dice rolling implementation
+- [@randsum/dice](https://github.com/RANDSUM/randsum/tree/main/corePackages/dice): Dice rolling implementation
 - [@randsum/5e](https://github.com/RANDSUM/randsum/tree/main/gamePackages/5e): 5th Edition compatible dice rolling
 - [@randsum/blades](https://github.com/RANDSUM/randsum/tree/main/gamePackages/blades): Blades in the Dark dice rolling
 - [@randsum/daggerheart](https://github.com/RANDSUM/randsum/tree/main/gamePackages/daggerheart): Daggerheart dice rolling

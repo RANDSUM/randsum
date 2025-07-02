@@ -94,7 +94,7 @@ bun lint
 This is a monorepo containing several packages:
 
 ```text
-packages/
+corePackages/
 ├── core/         # Shared utilities and types
 ├── dice/         # Core dice rolling implementation
 └── notation/     # Dice notation parser

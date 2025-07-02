@@ -7,7 +7,7 @@ dist/
 build/
 out/
 
-packages/**/dist/*
+corePackages/**/dist/*
 gamePackages/**/dist/*
 
 # Coverage reports
