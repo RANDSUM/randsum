@@ -50,6 +50,57 @@ const CLI_PORT = (() => {
 // Store SSE transports by session ID
 const sseTransports: Record<string, SSEServerTransport> = {}
 
+// RANDSUM dice notation documentation URL
+const NOTATION_DOCS_URL =
+  'https://raw.githubusercontent.com/RANDSUM/randsum/main/corePackages/notation/RANDSUM_DICE_NOTATION.md'
+
+// Function to fetch the RANDSUM dice notation documentation
+async function fetchNotationDocs(): Promise<string> {
+  try {
+    const response = await fetch(NOTATION_DOCS_URL)
+    if (!response.ok) {
+      throw new Error(`HTTP ${String(response.status)}: ${response.statusText}`)
+    }
+    return await response.text()
+  } catch (error) {
+    // Fallback content if fetch fails
+    return `# RANDSUM Dice Notation
+
+## Overview
+Dice notation is a compact way to represent dice rolls and their modifications.
+
+## Basic Syntax
+- \`2d6\` - Roll two six-sided dice
+- \`4d6L\` - Roll four six-sided dice, drop the lowest
+- \`2d20H\` - Roll two twenty-sided dice, keep the highest (advantage)
+- \`3d6!\` - Roll three six-sided dice with exploding on maximum
+
+## Modifiers
+- \`L\` - Drop lowest die
+- \`H\` - Drop highest die
+- \`!\` - Exploding dice (reroll on maximum)
+- \`R{<N}\` - Reroll dice under N
+- \`U\` - Unique results only
+- \`C{>N}\` - Cap results over N
+- \`V{<N=X}\` - Replace values less than N with X
+- \`V{>N=X}\` - Replace values greater than N with X
+- \`V{N=X}\` - Replace values equal to N with X
+- \`V{N}\` - Remove values equal to N
+- \`V{<N}\` - Remove values less than N
+- \`V{>N}\` - Remove values greater than N
+- \`V{<N=X,>N=Y}\` - Replace values less than N with X and greater than N with Y
+- \`V{<N=X,>N=Y,N=Z}\` - Replace values less than N with X, greater than N with Y, and equal to N with Z
+- \`+X\` - Add X to total
+- \`-X\` - Subtract X from total
+
+## Error Loading Documentation
+Could not fetch the complete documentation from GitHub.
+For the full reference, visit: ${NOTATION_DOCS_URL}
+
+Error: ${error instanceof Error ? error.message : String(error)}`
+  }
+}
+
 // Enhanced Zod schemas for MCP tool parameters
 const diceNotationSchema = z
   .string()
@@ -145,15 +196,32 @@ function createServerInstance(): McpServer {
       version: '0.2.6'
     },
     {
-      instructions:
-        'Use this server to roll dice using RANDSUM notation and validate dice notation syntax.'
+      instructions: `RANDSUM MCP Server - Advanced Dice Rolling and Game Mechanics
+
+This server provides comprehensive dice rolling capabilities using RANDSUM's powerful notation system.
+
+🎲 CORE CAPABILITIES:
+• Roll dice with standard notation (2d6, 4d20+5, etc.)
+• Advanced modifiers: drop lowest/highest (L/H), reroll (R), exploding (!), unique (U)
+• Complex conditions: cap values (C), replace values (V), conditional drops/rerolls
+• Custom-faced dice with arbitrary symbols
+• Detailed roll breakdowns with individual die results
+
+🔧 AVAILABLE TOOLS:
+• roll - Execute dice rolls with full RANDSUM notation support
+• validate-notation - Validate and explain dice notation syntax
+
+📖 NOTATION REFERENCE:
+For complete notation documentation, see: ${NOTATION_DOCS_URL.replace('raw.githubusercontent.com', 'github.com').replace('/main/', '/blob/main/')}
+
+Examples: 4d6L (ability scores), 2d20H (advantage), 3d6! (exploding), 4d20R{<5} (reroll under 5)`
     }
   )
 
   // Register RANDSUM tools
   server.tool(
     'roll',
-    'Roll dice using RANDSUM notation (e.g., "2d20+5", "4d6L")',
+    'Roll dice using RANDSUM notation with advanced modifiers. Supports: basic rolls (2d6+3), drop lowest/highest (4d6L, 2d20H), rerolls (4d6R{<3}), exploding dice (3d6!), unique results (4d20U), capping values (4d20C{>18}), custom faces (2d{HT}), and complex combinations (4d6LR{<2}+5). Returns detailed breakdown including individual die results, modifiers applied, and final total.',
     rollToolSchema.shape,
     ({ notation }) => {
       try {
@@ -181,7 +249,7 @@ function createServerInstance(): McpServer {
 
   server.tool(
     'validate-notation',
-    'Validate dice notation and get helpful feedback',
+    'Validate RANDSUM dice notation syntax and receive detailed feedback. Checks for proper format, valid modifiers, logical combinations, and provides helpful error messages with suggestions for corrections. Useful for learning notation syntax or debugging complex roll expressions before execution.',
     validateNotationToolSchema.shape,
     ({ notation }) => {
       try {
@@ -203,6 +271,24 @@ function createServerInstance(): McpServer {
             }
           ]
         }
+      }
+    }
+  )
+
+  // Register RANDSUM resources
+  server.resource(
+    'dice-notation-docs',
+    'randsum://dice-notation-docs',
+    async () => {
+      const docs = await fetchNotationDocs()
+      return {
+        contents: [
+          {
+            uri: 'randsum://dice-notation-docs',
+            text: docs,
+            mimeType: 'text/markdown'
+          }
+        ]
       }
     }
   )
