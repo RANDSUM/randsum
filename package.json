@@ -17,7 +17,7 @@
     "test:ci": "bunrun test --coverage",
     "changeset": "bunx changeset",
     "changeset:version": "bunx changeset version",
-    "changeset:publish": "bunx changeset publish",
+    "changeset:publish": "bun moon :build && bunx changeset publish",
     "changeset:status": "bunx changeset status"
   },
   "trustedDependencies": [

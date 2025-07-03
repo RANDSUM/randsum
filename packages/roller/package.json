@@ -1,6 +1,6 @@
 {
   "name": "@randsum/roller",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "A flexible, type-safe dice roller for tabletop RPGs, game development, and probability simulations",
   "private": false,
   "author": {
