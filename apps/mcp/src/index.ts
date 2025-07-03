@@ -50,57 +50,6 @@ const CLI_PORT = (() => {
 // Store SSE transports by session ID
 const sseTransports: Record<string, SSEServerTransport> = {}
 
-// RANDSUM dice notation documentation URL
-const NOTATION_DOCS_URL =
-  'https://raw.githubusercontent.com/RANDSUM/randsum/main/corePackages/notation/RANDSUM_DICE_NOTATION.md'
-
-// Function to fetch the RANDSUM dice notation documentation
-async function fetchNotationDocs(): Promise<string> {
-  try {
-    const response = await fetch(NOTATION_DOCS_URL)
-    if (!response.ok) {
-      throw new Error(`HTTP ${String(response.status)}: ${response.statusText}`)
-    }
-    return await response.text()
-  } catch (error) {
-    // Fallback content if fetch fails
-    return `# RANDSUM Dice Notation
-
-## Overview
-Dice notation is a compact way to represent dice rolls and their modifications.
-
-## Basic Syntax
-- \`2d6\` - Roll two six-sided dice
-- \`4d6L\` - Roll four six-sided dice, drop the lowest
-- \`2d20H\` - Roll two twenty-sided dice, keep the highest (advantage)
-- \`3d6!\` - Roll three six-sided dice with exploding on maximum
-
-## Modifiers
-- \`L\` - Drop lowest die
-- \`H\` - Drop highest die
-- \`!\` - Exploding dice (reroll on maximum)
-- \`R{<N}\` - Reroll dice under N
-- \`U\` - Unique results only
-- \`C{>N}\` - Cap results over N
-- \`V{<N=X}\` - Replace values less than N with X
-- \`V{>N=X}\` - Replace values greater than N with X
-- \`V{N=X}\` - Replace values equal to N with X
-- \`V{N}\` - Remove values equal to N
-- \`V{<N}\` - Remove values less than N
-- \`V{>N}\` - Remove values greater than N
-- \`V{<N=X,>N=Y}\` - Replace values less than N with X and greater than N with Y
-- \`V{<N=X,>N=Y,N=Z}\` - Replace values less than N with X, greater than N with Y, and equal to N with Z
-- \`+X\` - Add X to total
-- \`-X\` - Subtract X from total
-
-## Error Loading Documentation
-Could not fetch the complete documentation from GitHub.
-For the full reference, visit: ${NOTATION_DOCS_URL}
-
-Error: ${error instanceof Error ? error.message : String(error)}`
-  }
-}
-
 // Enhanced Zod schemas for MCP tool parameters
 const diceNotationSchema = z
   .string()
@@ -112,16 +61,54 @@ const diceNotationSchema = z
 // Roll tool parameter schema
 const rollToolSchema = z.object({
   notation: diceNotationSchema.describe(
-    'Dice notation string (e.g., "2d20+5", "4d6L", "3d8!")'
+    `RANDSUM dice notation string following pattern: {quantity}d{sides}{modifiers}
+
+BASIC EXAMPLES:
+• "2d6" - Roll 2 six-sided dice
+• "1d20+5" - Roll 1d20, add 5
+• "4d6L" - Roll 4d6, drop lowest (D&D ability score)
+• "2d20H" - Roll 2d20, keep highest (advantage)
+• "3d6!" - Roll 3d6 with exploding dice
+• "4d6R{1}" - Roll 4d6, reroll any 1s
+• "4d20U" - Roll 4d20 with unique results
+• "4d20C{>18}" - Roll 4d20, cap results above 18
+• "2d{HT}" - Roll 2 custom dice with H/T faces
+
+COMPLEX COMBINATIONS:
+• "4d6LR{1}+3" - Drop lowest, reroll 1s, add 3
+• "4d6LHR{1,6}C{<2,>5}U!+10-3" - All modifiers combined
+
+GAMING PATTERNS:
+• D&D Ability: "4d6L"
+• D&D Advantage: "2d20H"
+• D&D Damage: "1d8+3"
+• Skill Check: "1d20+7"
+• Custom Narrative: "3d{⚔️🛡️🏹}"`
   )
 })
 
 // Validate notation tool parameter schema
 const validateNotationToolSchema = z.object({
-  notation: z
-    .string()
-    .min(1, 'Notation string cannot be empty')
-    .describe('Dice notation string to validate')
+  notation: z.string().min(1, 'Notation string cannot be empty')
+    .describe(`Dice notation string to validate and parse. Can be any potential RANDSUM notation.
+
+VALIDATION EXAMPLES:
+• "4d6L" - Valid drop lowest syntax
+• "2d20H" - Valid advantage mechanics
+• "3d6!" - Valid exploding dice
+• "4d6R{1,2}" - Valid reroll syntax
+• "2d{HT}L" - Invalid (custom faces + modifiers)
+• "4d6R{<=3}" - Invalid (unsupported operator)
+• "1d4+1d6" - Invalid (multiple expressions)
+
+USE CASES:
+• Validate user input before rolling
+• Learn notation syntax and structure
+• Debug complex modifier combinations
+• Understand parsing behavior
+• Catch common notation errors
+
+RETURNS: For valid notation, shows parsed structure with quantity, sides, and modifiers. For invalid notation, provides specific error with correction guidance.`)
 })
 
 // Roll result formatting utilities
@@ -196,32 +183,171 @@ function createServerInstance(): McpServer {
       version: '0.2.6'
     },
     {
-      instructions: `RANDSUM MCP Server - Advanced Dice Rolling and Game Mechanics
+      instructions: `🎲 RANDSUM MCP Server - Advanced Dice Rolling & Game Mechanics Engine
 
-This server provides comprehensive dice rolling capabilities using RANDSUM's powerful notation system.
+COMPREHENSIVE DICE ROLLING SYSTEM with sophisticated modifiers for tabletop gaming, probability simulation, and randomization tasks.
 
-🎲 CORE CAPABILITIES:
-• Roll dice with standard notation (2d6, 4d20+5, etc.)
-• Advanced modifiers: drop lowest/highest (L/H), reroll (R), exploding (!), unique (U)
-• Complex conditions: cap values (C), replace values (V), conditional drops/rerolls
-• Custom-faced dice with arbitrary symbols
-• Detailed roll breakdowns with individual die results
+🚀 CORE CAPABILITIES:
+• Execute dice rolls with advanced RANDSUM notation system
+• Support for standard polyhedral dice (d4, d6, d8, d10, d12, d20, d100, etc.)
+• Custom-faced dice with arbitrary symbols, text, or emojis
+• Complex modifier combinations for sophisticated game mechanics
+• Detailed roll breakdowns with individual die results and modifier applications
+• Real-time notation validation with comprehensive error feedback
 
 🔧 AVAILABLE TOOLS:
-• roll - Execute dice rolls with full RANDSUM notation support
-• validate-notation - Validate and explain dice notation syntax
 
-📖 NOTATION REFERENCE:
-For complete notation documentation, see: ${NOTATION_DOCS_URL.replace('raw.githubusercontent.com', 'github.com').replace('/main/', '/blob/main/')}
+🎯 roll - Advanced Dice Rolling Engine
+• Execute sophisticated dice rolls with full modifier support
+• Returns detailed breakdowns: total, raw results, modified results, subtotals
+• Supports numeric dice (standard gaming) and custom faces (narrative/symbolic)
+• Handles complex modifier combinations for advanced game mechanics
 
-Examples: 4d6L (ability scores), 2d20H (advantage), 3d6! (exploding), 4d20R{<5} (reroll under 5)`
+🔍 validate-notation - Syntax Validator & Parser
+• Validate dice notation before execution to prevent errors
+• Detailed parsing feedback showing notation interpretation
+• Comprehensive error messages with correction guidance
+• Essential for learning syntax and debugging complex expressions
+
+📚 COMPREHENSIVE MODIFIER SYSTEM:
+
+DROP MODIFIERS (L/H): Remove extreme results
+• 4d6L - Drop lowest (D&D ability scores)
+• 2d20H - Drop highest (disadvantage mechanics)
+• 4d6LH - Drop both extremes (middle values)
+
+REROLL MODIFIERS (R): Conditional rerolling
+• 4d6R{1} - Reroll 1s (avoid failures)
+• 4d6R{<3} - Reroll below threshold
+• 4d6R{1,2,6} - Reroll specific values
+
+EXPLODING DICE (!): Cascade rolling
+• 3d6! - Reroll and add on maximum (critical hits)
+• Open-ended results for dramatic outcomes
+
+UNIQUE RESULTS (U): No duplicates
+• 4d20U - All different results (card draws, selections)
+
+CAPPING (C): Range enforcement
+• 4d20C{>18} - Cap maximum values
+• 4d6C{<2,>5} - Enforce result ranges
+
+ARITHMETIC (+/-): Fixed adjustments
+• 2d6+3 - Add modifiers (damage + ability)
+• 1d20-2 - Apply penalties
+
+CUSTOM FACES: Non-numeric dice
+• 2d{HT} - Coin flips
+• 3d{⚔️🛡️🏹} - Symbol dice
+• 4d{NSEW} - Directional results
+⚠️ Cannot combine with other modifiers
+
+🎮 GAMING APPLICATIONS:
+• D&D/Pathfinder: Ability scores, attacks, damage, saves
+• Narrative Games: Story prompts, oracle dice, complications
+• Probability: Statistical analysis, random sampling
+• Custom Systems: Unique mechanics, symbol resolution
+
+� LLM INTEGRATION BEST PRACTICES:
+• Always validate complex notation before rolling
+• Use for character creation, combat resolution, skill challenges
+• Combine modifiers for sophisticated game mechanics
+• Custom faces perfect for narrative and symbolic outcomes
+
+📖 COMPLETE REFERENCE:
+Access via dice-notation-docs resource for comprehensive syntax guide
+
+🔥 QUICK EXAMPLES:
+• 4d6L - D&D ability score (drop lowest)
+• 2d20H - Advantage roll (keep highest)
+• 3d6! - Exploding damage dice
+• 4d6R{1}+3 - Reroll 1s, add modifier
+• 2d{🎭🗡️🏰} - Narrative story elements`
     }
   )
 
   // Register RANDSUM tools
   server.tool(
     'roll',
-    'Roll dice using RANDSUM notation with advanced modifiers. Supports: basic rolls (2d6+3), drop lowest/highest (4d6L, 2d20H), rerolls (4d6R{<3}), exploding dice (3d6!), unique results (4d20U), capping values (4d20C{>18}), custom faces (2d{HT}), and complex combinations (4d6LR{<2}+5). Returns detailed breakdown including individual die results, modifiers applied, and final total.',
+    `🎲 RANDSUM Advanced Dice Rolling Engine
+
+COMPREHENSIVE DICE ROLLING with sophisticated modifier support for tabletop gaming, probability simulation, and randomization tasks.
+
+📋 CORE FUNCTIONALITY:
+• Execute dice rolls using advanced RANDSUM notation
+• Returns detailed breakdowns with individual die results, modifier applications, and final totals
+• Supports both numeric dice (standard polyhedral) and custom-faced dice with arbitrary symbols
+• Handles complex modifier combinations for sophisticated game mechanics
+
+🔧 SUPPORTED NOTATION PATTERNS:
+
+BASIC DICE:
+• 2d6, 1d20, 4d8, 100d1 - Standard polyhedral dice
+• 0d6, 2d0 - Edge cases (valid but produce no/zero results)
+
+DROP MODIFIERS (L/H) - Remove extreme results:
+• 4d6L - Roll 4d6, drop lowest (D&D ability scores)
+• 4d6L2 - Roll 4d6, drop 2 lowest
+• 2d20H - Roll 2d20, drop highest (disadvantage)
+• 4d6LH - Drop both lowest and highest (middle values only)
+
+REROLL MODIFIERS (R) - Conditional rerolling:
+• 4d6R{1} - Reroll any 1s (avoid critical failures)
+• 4d6R{1,2} - Reroll 1s and 2s (higher minimum)
+• 4d6R{<3} - Reroll results below 3
+• 4d6R{>4} - Reroll results above 4
+• 4d6R{<2,>5} - Reroll results outside 2-5 range
+
+EXPLODING DICE (!) - Cascade rolling:
+• 3d6! - Roll 3d6, reroll and add on 6s (critical hits)
+• 2d10! - Roll 2d10, reroll and add on 10s (open-ended results)
+
+UNIQUE RESULTS (U) - No duplicates:
+• 4d20U - Roll 4d20 with all different results (card draws)
+• 5d6U - Roll 5d6 ensuring no duplicates (lottery systems)
+
+CAPPING MODIFIERS (C) - Range enforcement:
+• 4d20C{>18} - No results above 18 (cap maximum)
+• 4d20C{<3} - No results below 3 (cap minimum)
+• 4d6C{<2,>5} - Results must be 2-5 only (bounded results)
+
+ARITHMETIC MODIFIERS (+/-) - Fixed adjustments:
+• 2d6+3 - Roll 2d6, add 3 (damage + modifier)
+• 1d20+5 - Roll 1d20, add 5 (skill check with bonus)
+• 2d6+10-3 - Multiple operations (net +7)
+
+CUSTOM DICE FACES - Non-numeric results:
+• 2d{HT} - Coin flips (Heads/Tails)
+• 3d{⚔️🛡️🏹} - Combat symbols
+• 4d{NSEW} - Directional results
+• 2d{red,blue,green} - Each character becomes a face
+⚠️ LIMITATION: Custom faces CANNOT combine with other modifiers
+
+COMPLEX COMBINATIONS:
+• 4d6LR{1}!+3 - Drop lowest, reroll 1s, exploding, +3
+• 4d6LHR{1,6}C{<2,>5}U!+10-3 - All modifiers combined
+
+🎮 COMMON GAMING PATTERNS:
+• D&D Ability Scores: 4d6L
+• D&D Advantage: 2d20H
+• D&D Disadvantage: 2d20L
+• Damage + Modifier: 1d8+3
+• Critical Hit: 2d8+3
+• Skill Check: 1d20+{modifier}
+
+🚫 UNSUPPORTED FEATURES:
+• Multiplication/Division: 2d6*2, 2d6/2
+• Compound operators: <=, >=
+• Multiple expressions: 1d4+1d6+2d8
+• Keep highest/lowest notation (use drop instead)
+
+💡 LLM USAGE TIPS:
+• Always validate complex notation with validate-notation tool first
+• Use for character creation, combat resolution, skill challenges, random generation
+• Custom faces perfect for narrative outcomes and symbol systems
+• Combine modifiers for sophisticated game mechanics
+
+RETURNS: Detailed breakdown with total, raw results, modified results (if different), and subtotal for each roll group.`,
     rollToolSchema.shape,
     ({ notation }) => {
       try {
@@ -249,7 +375,98 @@ Examples: 4d6L (ability scores), 2d20H (advantage), 3d6! (exploding), 4d20R{<5} 
 
   server.tool(
     'validate-notation',
-    'Validate RANDSUM dice notation syntax and receive detailed feedback. Checks for proper format, valid modifiers, logical combinations, and provides helpful error messages with suggestions for corrections. Useful for learning notation syntax or debugging complex roll expressions before execution.',
+    `🔍 RANDSUM Notation Syntax Validator & Parser
+
+COMPREHENSIVE VALIDATION ENGINE for dice notation syntax with detailed parsing feedback and error guidance.
+
+📋 CORE FUNCTIONALITY:
+• Validate dice notation syntax before execution
+• Provide detailed parsing breakdown showing how notation will be interpreted
+• Generate specific error messages with correction guidance
+• Essential for learning notation syntax and debugging complex expressions
+
+🎯 WHEN TO USE:
+• Before executing complex modifier combinations
+• When processing user-provided notation input
+• For learning and understanding notation syntax
+• When debugging unexpected roll behavior
+• Before building complex dice expressions
+
+🔧 VALIDATION FEATURES:
+
+SYNTAX CHECKING:
+• Verifies proper dice notation format (NdS pattern)
+• Validates modifier syntax and combinations
+• Checks for conflicting modifiers (e.g., custom faces + modifiers)
+• Ensures logical parameter values
+
+DETAILED PARSING:
+• Shows parsed structure: quantity, sides, modifiers
+• Breaks down modifier parameters and conditions
+• Explains how each component will be processed
+• Displays final notation interpretation
+
+ERROR GUIDANCE:
+• Specific error messages for common mistakes
+• Suggestions for correcting invalid notation
+• Explains why certain combinations are invalid
+• Provides alternative notation patterns
+
+📊 RETURN FORMATS:
+
+VALID NOTATION:
+✅ Valid Dice Notation (numeric/custom):
+• Notation: [input notation]
+• Description: [human-readable explanation]
+• Parsed Details: [JSON structure showing components]
+
+INVALID NOTATION:
+❌ Invalid Dice Notation
+• Error: [specific error description]
+• Common causes and solutions
+
+🎮 COMMON VALIDATION SCENARIOS:
+
+LEARNING PATTERNS:
+• validate-notation("4d6L") → Understand drop lowest syntax
+• validate-notation("2d20H") → Learn advantage mechanics
+• validate-notation("3d6!") → Explore exploding dice
+
+DEBUGGING COMPLEX NOTATION:
+• validate-notation("4d6LR{1}!+3") → Verify modifier combination
+• validate-notation("4d6C{<2,>5}") → Check capping syntax
+• validate-notation("2d{HT}L") → Catch invalid custom+modifier combo
+
+ERROR PREVENTION:
+• validate-notation("4d6R{<=3}") → Identify unsupported operators
+• validate-notation("1d4+1d6") → Catch multiple expression errors
+• validate-notation("2d6*2") → Find unsupported arithmetic
+
+💡 LLM INTEGRATION PATTERNS:
+
+VALIDATION-FIRST WORKFLOW:
+1. validate-notation(user_input) → Check syntax
+2. If valid → roll(user_input) → Execute roll
+3. If invalid → Provide corrected notation
+
+LEARNING ASSISTANCE:
+1. validate-notation(complex_notation) → Show parsing
+2. Explain each modifier component
+3. Suggest simpler alternatives if needed
+
+BATCH VALIDATION:
+• Validate multiple notation patterns for comparison
+• Build complex expressions step by step
+• Verify each modifier addition before combining
+
+🚨 COMMON ERROR PATTERNS TO CATCH:
+• Custom faces + modifiers: "3d{abc}L" → Invalid
+• Compound operators: "4d6R{<=3}" → Use "<4" instead
+• Multiple expressions: "1d4+1d6" → Single expression only
+• Unsupported arithmetic: "2d6*2" → Use multiple rolls
+• Invalid conditions: "4d6C{3,4,5}" → Use range conditions
+
+RETURNS: For valid notation, returns parsed structure with quantity, sides, and modifier details. For invalid notation, returns specific error message with correction guidance.`,
     validateNotationToolSchema.shape,
     ({ notation }) => {
       try {
@@ -271,24 +488,6 @@ Examples: 4d6L (ability scores), 2d20H (advantage), 3d6! (exploding), 4d20R{<5} 
             }
           ]
         }
-      }
-    }
-  )
-
-  // Register RANDSUM resources
-  server.resource(
-    'dice-notation-docs',
-    'randsum://dice-notation-docs',
-    async () => {
-      const docs = await fetchNotationDocs()
-      return {
-        contents: [
-          {
-            uri: 'randsum://dice-notation-docs',
-            text: docs,
-            mimeType: 'text/markdown'
-          }
-        ]
       }
     }
   )

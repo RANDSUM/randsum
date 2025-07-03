@@ -157,47 +157,36 @@ Options:
 
 Once configured, the following tools will be available in your MCP client:
 
-#### 1. **roll** - Advanced Dice Rolling
+#### 1. **roll** - Advanced Dice Rolling Engine
 
-- **Description**: Execute dice rolls using RANDSUM's comprehensive notation system
+- **Description**: Execute sophisticated dice rolls using RANDSUM's comprehensive notation system with detailed breakdowns
 - **Parameters**:
-  - `notation` (string, required): Dice notation string supporting:
-    - Basic rolls: `2d6`, `4d20+5`, `3d8-2`
-    - Drop modifiers: `4d6L` (drop lowest), `2d20H` (drop highest)
-    - Reroll conditions: `4d6R{<3}` (reroll under 3), `6d6R{1,2}` (reroll 1s and 2s)
-    - Exploding dice: `3d6!` (explode on max), `4d10!{>8}` (explode on 9-10)
-    - Unique results: `4d20U` (all unique), `5d6U{1,6}` (unique except 1s and 6s)
-    - Value capping: `4d20C{>18}` (cap over 18), `6d6C{<2}` (cap under 2)
-    - Custom faces: `2d{HT}` (heads/tails), `4d{ABCD}` (custom symbols)
-    - Complex combinations: `4d6LR{<2}+5` (drop lowest, reroll under 2, add 5)
+  - `notation` (string, required): RANDSUM dice notation string supporting:
+    - **Basic rolls**: `2d6`, `1d20+5`, `4d8-2`
+    - **Drop modifiers**: `4d6L` (drop lowest), `2d20H` (drop highest), `4d6LH` (drop both extremes)
+    - **Reroll conditions**: `4d6R{1}` (reroll 1s), `4d6R{<3}` (reroll under 3), `4d6R{1,2,6}` (reroll specific values)
+    - **Exploding dice**: `3d6!` (explode on maximum), `2d10!` (cascade rolling)
+    - **Unique results**: `4d20U` (all different results), `5d6U` (no duplicates)
+    - **Value capping**: `4d20C{>18}` (cap maximum), `4d6C{<2,>5}` (enforce ranges)
+    - **Custom faces**: `2d{HT}` (coin flips), `3d{⚔️🛡️🏹}` (symbol dice), `4d{NSEW}` (directions)
+    - **Complex combinations**: `4d6LR{1}!+3` (drop lowest, reroll 1s, exploding, add 3)
 - **Returns**: Comprehensive roll breakdown including:
-  - Final total and roll type
-  - Individual die results (raw and modified)
-  - Applied modifiers and their effects
-  - Detailed step-by-step calculation
+  - Final total and roll type classification
+  - Raw die results before modifier application
+  - Modified results after all modifiers applied
+  - Detailed subtotals for each roll group
+  - Step-by-step modifier application explanation
 
-#### 2. **validate-notation** - Syntax Validation
+#### 2. **validate-notation** - Syntax Validator & Parser
 
-- **Description**: Validate RANDSUM dice notation and receive detailed feedback
+- **Description**: Validate RANDSUM dice notation syntax with comprehensive error feedback and parsing details
 - **Parameters**:
-  - `notation` (string, required): Any dice notation string to validate
-- **Returns**: Validation results including:
-  - Syntax correctness (valid/invalid)
-  - Detailed error messages with specific issues
-  - Suggestions for corrections
-  - Examples of proper usage
-
-#### 3. **game-roll**
-
-- **Description**: Roll dice using game-specific mechanics (5e, Blades, Daggerheart, Salvage Union)
-- **Parameters**:
-  - `game` (string, required): Game system - one of: `5e`, `blades`, `daggerheart`, `salvageunion`
-  - `modifier` (number, optional): Modifier to add to the roll (for 5e and Daggerheart)
-  - `rollingWith` (string, optional): `Advantage` or `Disadvantage` (5e and Daggerheart)
-  - `dicePool` (number, optional): Number of dice in pool 1-10 (for Blades in the Dark)
-  - `tableName` (string, optional): Table name for Salvage Union rolls (e.g., "Core Mechanic", "Critical Damage")
-  - `dc` (number, optional): Difficulty Class 1-30 (for 5e and Daggerheart)
-- **Returns**: Game-specific roll results with appropriate formatting and success/failure indicators
+  - `notation` (string, required): Any potential RANDSUM dice notation string to validate
+- **Returns**: Detailed validation results including:
+  - **Valid notation**: Parsed structure showing quantity, sides, and modifiers
+  - **Invalid notation**: Specific error messages with correction guidance
+  - **Learning aid**: Explanation of how notation will be interpreted
+  - **Error prevention**: Common mistakes and suggested alternatives
 
 ### Available Resources
 
@@ -205,15 +194,17 @@ Once configured, the following tools will be available in your MCP client:
 
 - **URI**: `randsum://dice-notation-docs`
 - **Type**: `text/markdown`
-- **Description**: Complete reference for RANDSUM dice notation syntax and modifiers
-- **Source**: Fetched live from [GitHub](https://github.com/RANDSUM/randsum/blob/main/corePackages/notation/RANDSUM_DICE_NOTATION.md)
-- **Content**: Comprehensive documentation covering:
-  - Basic syntax (`NdS`, `NdS+X`, `NdS-X`)
+- **Description**: Comprehensive reference for RANDSUM dice notation syntax and modifiers
+- **Source**: Battle-tested documentation with verified examples from systematic testing
+- **Content**: Complete documentation covering:
+  - Basic syntax (`NdS`, `NdS+X`, `NdS-X`) with edge cases
   - Advanced modifiers (`L` drop lowest, `H` keep highest, `R{<N}` reroll, `!` exploding, `U` unique)
-  - Complex conditions (`C{>N}` capping, `V{<N=X}` value replacement)
-  - Custom dice notation (`2d{HT}`, `3d{ABC}`)
-  - Modifier combinations and examples
-  - TypeScript API usage patterns
+  - Complex conditions (`C{>N}` capping with range enforcement)
+  - Custom dice notation (`2d{HT}`, `3d{⚔️🛡️🏹}`) with limitations
+  - Modifier combinations and advanced examples
+  - Gaming applications (D&D, Pathfinder, narrative games)
+  - Error patterns and troubleshooting guidance
+  - LLM integration best practices and usage patterns
 
 > **Note**: The documentation is fetched live from the RANDSUM repository, ensuring you always have access to the most up-to-date notation reference.
 
