@@ -106,8 +106,6 @@ bun moon blades:build   # Build @randsum/blades only
 4. Push to your branch
 5. Open a Pull Request
 
-Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
-
 ---
 
 ## Why did you make this?
