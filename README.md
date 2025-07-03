@@ -8,16 +8,16 @@
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
 [![Built with Moon](https://img.shields.io/badge/Built%20with-Moon-blue?style=flat)](https://moonrepo.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![NPM Downloads](https://img.shields.io/npm/dm/@randsum/dice)](https://www.npmjs.com/package/@randsum/dice)
+[![NPM Downloads](https://img.shields.io/npm/dm/@randsum/roller)](https://www.npmjs.com/package/@randsum/roller)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/RANDSUM/randsum/commits/main)
-[![Types](https://img.shields.io/badge/Types-included-blue)](https://www.npmjs.com/package/@randsum/dice)
+[![Types](https://img.shields.io/badge/Types-included-blue)](https://www.npmjs.com/package/@randsum/roller)
 
 </div>
 
 ## 🚀 Quick Example
 
 ```typescript
-import { D20, roll } from '@randsum/dice'
+import { D20, roll } from '@randsum/roller'
 
 // Simple d20 roll
 D20.roll() // Returns 1-20
@@ -84,15 +84,15 @@ Moon manages our task pipeline and dependencies. Common tasks include:
 Each package can be targeted directly with `moon [package]:task`, for example:
 
 ```bash
-bun moon dice:test    # Run tests for @randsum/dice only
-bun moon blades:build # Build @randsum/blades only
+bun moon roller:test    # Run tests for @randsum/roller only
+bun moon blades:build   # Build @randsum/blades only
 ```
 
 ## Further Reading
 
 - [Getting Started](https://github.com/RANDSUM/randsum/blob/main/GETTING_STARTED.md) - Installation and Documentation for using `randsum`
 
-- [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`.
+- [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`.
 
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 

@@ -189,7 +189,7 @@ roll('3d8!') // Exploding dice
 roll('4d6R{<3}') // Reroll values below 3
 ```
 
-See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md) for all supported modifiers.
+See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) for all supported modifiers.
 
 ## Bundle Size Optimization
 

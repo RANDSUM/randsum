@@ -1,7 +1,7 @@
 {
-  "name": "@randsum/5e",
+  "name": "@randsum/fifth",
   "version": "0.2.9",
-  "description": "A flexible, type-safe dice roller for building 5e-compatible applications",
+  "description": "A flexible, type-safe dice roller for building 5E-compatible applications",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/5e"
+    "directory": "packages/fifth"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
