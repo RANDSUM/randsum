@@ -1,4 +1,4 @@
-export { isD } from './isD'
-export { isNumericResult, isCustomResult, isMixedResult } from './isRollResult'
-export { isDiceNotation } from './isDiceNotation'
-export { isNumericRollOptions } from './isNumericRollOptions'
+export * from './isD'
+export * from './isRollResult'
+export * from './isDiceNotation'
+export * from './isNumericRollOptions'

@@ -1,18 +1,18 @@
 import type { DiceNotation, RollOptions, ValidationResult } from './types'
-import { isDiceNotation } from './lib/guards'
-import { OptionsConverter } from './lib/utils'
-import { ModifierConflictError } from './lib/errors'
 import {
   CapModifier,
   DropModifier,
   ExplodeModifier,
   MinusModifier,
+  ModifierConflictError,
+  OptionsConverter,
   PlusModifier,
   ReplaceModifier,
   RerollModifier,
-  UniqueModifier
-} from './lib/modifiers'
-import { coreNotationPattern } from './lib/patterns'
+  UniqueModifier,
+  coreNotationPattern,
+  isDiceNotation
+} from './lib'
 
 export function validateNotation(notation: string): ValidationResult {
   if (!isDiceNotation(notation)) {

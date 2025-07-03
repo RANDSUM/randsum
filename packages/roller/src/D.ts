@@ -9,9 +9,7 @@ import type {
   NumericRollOptions,
   NumericRollResult
 } from './types'
-import { coreSpreadRolls } from './lib/utils/coreSpreadRolls'
-import { generateNumericFaces } from './lib/utils/generateNumericFaces'
-import { RandsumError } from './lib/errors'
+import { RandsumError, coreSpreadRolls, generateNumericFaces } from './lib'
 
 abstract class DieBase {
   public readonly sides: number
