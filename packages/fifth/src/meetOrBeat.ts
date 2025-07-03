@@ -1,9 +1,9 @@
 import { roll } from './roll'
-import type { RollArgument5e } from './types'
+import type { RollArgument } from './types'
 
-export function meetOrBeat5e(
+export function meetOrBeat(
   difficultyClass: number,
-  rollArg: RollArgument5e
+  rollArg: RollArgument
 ): boolean {
   return roll(rollArg).total >= difficultyClass
 }

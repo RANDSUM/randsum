@@ -1,42 +1,42 @@
 import { describe, expect, test } from 'bun:test'
-import { roll5e } from '../src/roll'
-import type { RollArgument5e } from '../src/types'
+import { roll } from '../src/roll'
+import type { RollArgument } from '../src/types'
 
-describe('roll5e', () => {
+describe('roll', () => {
   describe('basic roll', () => {
-    const args: RollArgument5e = { modifier: 5 }
+    const args: RollArgument = { modifier: 5 }
 
     test('returns a result within valid range', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       expect(result.total).toBeGreaterThanOrEqual(6)
       expect(result.total).toBeLessThanOrEqual(25)
     })
 
     test('applies modifier correctly', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       const rawRoll = result.rawResults[0]
       expect(result.total).toBe(Number(rawRoll) + args.modifier)
     })
 
     test('returns single roll result', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       expect(result.rawResults).toHaveLength(1)
     })
   })
 
   describe('with advantage', () => {
-    const args: RollArgument5e = {
+    const args: RollArgument = {
       modifier: 5,
       rollingWith: 'Advantage'
     }
 
     test('returns two rolls', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       expect(result.rawResults).toHaveLength(2)
     })
 
     test('uses higher roll for total', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       const [roll1, roll2] = result.rawResults
       const expectedTotal =
         Math.max(Number(roll1), Number(roll2)) + args.modifier
@@ -45,18 +45,18 @@ describe('roll5e', () => {
   })
 
   describe('with disadvantage', () => {
-    const args: RollArgument5e = {
+    const args: RollArgument = {
       modifier: 5,
       rollingWith: 'Disadvantage'
     }
 
     test('returns two rolls', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       expect(result.rawResults).toHaveLength(2)
     })
 
     test('uses lower roll for total', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       const [roll1, roll2] = result.rawResults
       const expectedTotal =
         Math.min(Number(roll1), Number(roll2)) + args.modifier
@@ -65,16 +65,16 @@ describe('roll5e', () => {
   })
 
   describe('with negative modifier', () => {
-    const args: RollArgument5e = { modifier: -3 }
+    const args: RollArgument = { modifier: -3 }
 
     test('returns a result within valid range', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       expect(result.total).toBeGreaterThanOrEqual(-2)
       expect(result.total).toBeLessThanOrEqual(17)
     })
 
     test('applies negative modifier correctly', () => {
-      const result = roll5e(args)
+      const result = roll(args)
       const rawRoll = result.rawResults[0]
       expect(result.total).toBe(Number(rawRoll) + args.modifier)
     })
