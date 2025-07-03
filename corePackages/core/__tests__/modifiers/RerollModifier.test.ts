@@ -71,6 +71,14 @@ describe('RerollModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([4, 3, 4])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'reroll',
+        options: { exact: [1, 2] },
+        added: [4, 4],
+        removed: [1, 2]
+      })
     })
 
     test('returns original bonus when options is undefined', () => {
@@ -103,6 +111,14 @@ describe('RerollModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([15, 4, 4, 10])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'reroll',
+        options: { greaterThan: 18 },
+        added: [4, 4],
+        removed: [19, 20]
+      })
     })
 
     test('rerolls values less than threshold', () => {
@@ -119,6 +135,14 @@ describe('RerollModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([4, 4, 3, 4])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'reroll',
+        options: { lessThan: 3 },
+        added: [4, 4],
+        removed: [1, 2]
+      })
     })
 
     test('enforces maximum reroll limits', () => {
@@ -143,6 +167,14 @@ describe('RerollModifier', () => {
 
       expect(rollCount).toBe(2)
       expect(result.rolls).toEqual([1])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'reroll',
+        options: { exact: [1], max: 2 },
+        added: [],
+        removed: []
+      })
     })
 
     test('prevents infinite rerolls with 99 reroll safety limit', () => {
@@ -167,6 +199,14 @@ describe('RerollModifier', () => {
 
       expect(rollCount).toBe(99)
       expect(result.rolls).toEqual([1])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'reroll',
+        options: { exact: [1] },
+        added: [],
+        removed: []
+      })
     })
 
     test('handles complex reroll conditions', () => {
@@ -188,6 +228,14 @@ describe('RerollModifier', () => {
       const result = modifier.apply(bonus, params, mockRollOne)
 
       expect(result.rolls).toEqual([4, 4, 4, 10, 4, 4])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'reroll',
+        options: { exact: [1, 6], lessThan: 3, greaterThan: 18 },
+        added: [4, 4, 4, 4, 4],
+        removed: [1, 2, 6, 19, 20]
+      })
     })
 
     test('performance with high reroll counts', () => {
@@ -214,6 +262,14 @@ describe('RerollModifier', () => {
 
       expect(endTime - startTime).toBeLessThan(100)
       expect(result.rolls).toEqual([5, 5, 5])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'reroll',
+        options: { exact: [1] },
+        added: [5, 5, 5],
+        removed: [1, 1, 1]
+      })
     })
 
     test('handles undefined options in nested calls', () => {

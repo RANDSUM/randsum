@@ -23,7 +23,7 @@
     },
     "apps/mcp": {
       "name": "@randsum/mcp",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "bin": {
         "randsum-mcp": "dist/index.js",
       },
@@ -38,11 +38,11 @@
     },
     "corePackages/core": {
       "name": "@randsum/core",
-      "version": "0.2.8",
+      "version": "0.2.9",
     },
     "corePackages/dice": {
       "name": "@randsum/dice",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "bin": "./bin/randsum",
       "dependencies": {
         "@randsum/core": "workspace:~",
@@ -51,42 +51,42 @@
     },
     "corePackages/notation": {
       "name": "@randsum/notation",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "dependencies": {
         "@randsum/core": "workspace:~",
       },
     },
     "gamePackages/5e": {
       "name": "@randsum/5e",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },
     },
     "gamePackages/blades": {
       "name": "@randsum/blades",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },
     },
     "gamePackages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "dependencies": {
         "@randsum/dice": "workspace:*",
       },
     },
     "gamePackages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },
     },
     "gamePackages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "dependencies": {
         "@randsum/dice": "workspace:~",
       },

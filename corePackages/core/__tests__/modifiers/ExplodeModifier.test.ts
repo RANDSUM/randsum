@@ -55,6 +55,14 @@ describe('ExplodeModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([6, 4, 3])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'explode',
+        options: true,
+        added: [3],
+        removed: []
+      })
     })
 
     test('returns original bonus when options is undefined', () => {

@@ -26,7 +26,7 @@ export class MinusModifier extends BaseModifier<number> {
 
     const logs = [
       ...bonus.logs,
-      this.toModifierLog('minus', [], [this.options])
+      this.toModifierLog('minus', [], [-this.options])
     ]
 
     return {

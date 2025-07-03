@@ -65,6 +65,14 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 3, 10])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: { from: 1, to: 10 },
+        added: [10, 10],
+        removed: [1, 1]
+      })
     })
 
     test('replaces values greater than limit', () => {
@@ -80,6 +88,14 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 15, 15])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: { from: { greaterThan: 15 }, to: 15 },
+        added: [15, 15],
+        removed: [16, 20]
+      })
     })
 
     test('replaces values less than limit', () => {
@@ -92,6 +108,14 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 10, 15])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: { from: { lessThan: 10 }, to: 10 },
+        added: [10],
+        removed: [5]
+      })
     })
 
     test('handles array of replace rules', () => {
@@ -107,6 +131,17 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([2, 10, 19])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: [
+          { from: 1, to: 2 },
+          { from: 20, to: 19 }
+        ],
+        added: [2, 19],
+        removed: [1, 20]
+      })
     })
 
     test('returns original bonus when options is undefined', () => {
@@ -131,6 +166,14 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([1, 2, 3])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: [],
+        added: [],
+        removed: []
+      })
     })
 
     test('handles replacement with duplicate values', () => {
@@ -147,6 +190,18 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 5, 3])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: [
+          { from: 1, to: 5 },
+          { from: 1, to: 6 },
+          { from: 2, to: 5 }
+        ],
+        added: [5, 5],
+        removed: [1, 2]
+      })
     })
 
     test('handles replacement with out-of-range values', () => {
@@ -162,6 +217,17 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([100, 6, 100])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: [
+          { from: 100, to: 1 },
+          { from: 1, to: 100 }
+        ],
+        added: [100],
+        removed: [1]
+      })
     })
 
     test('handles complex nested replacement rules', () => {
@@ -178,6 +244,18 @@ describe('ReplaceModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([3, 11, 18, 15, 3])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'replace',
+        options: [
+          { from: { greaterThan: 18 }, to: 18 },
+          { from: { lessThan: 3 }, to: 3 },
+          { from: 10, to: 11 }
+        ],
+        added: [3, 3, 11, 18],
+        removed: [1, 10, 20, 2]
+      })
     })
 
     test('performance with large datasets', () => {

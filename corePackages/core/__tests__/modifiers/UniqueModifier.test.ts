@@ -71,6 +71,14 @@ describe('UniqueModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([1, 2, 4])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'unique',
+        options: true,
+        added: [4],
+        removed: [1]
+      })
     })
 
     test('allows specified values to be duplicated', () => {
@@ -87,6 +95,14 @@ describe('UniqueModifier', () => {
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([1, 2, 1, 4])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'unique',
+        options: { notUnique: [1] },
+        added: [4],
+        removed: [2]
+      })
     })
 
     test('throws RandsumError when more rolls than sides', () => {

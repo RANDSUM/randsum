@@ -56,6 +56,14 @@ describe('CapModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 15])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'cap',
+        options: { greaterThan: 15 },
+        added: [15],
+        removed: [20]
+      })
     })
 
     test('caps values less than specified limit', () => {
@@ -68,6 +76,14 @@ describe('CapModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([15, 20])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'cap',
+        options: { lessThan: 15 },
+        added: [15],
+        removed: [10]
+      })
     })
 
     test('caps values with both limits', () => {
@@ -80,6 +96,14 @@ describe('CapModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 10, 18])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'cap',
+        options: { greaterThan: 18, lessThan: 5 },
+        added: [5, 18],
+        removed: [3, 20]
+      })
     })
 
     test('returns original bonus when options is undefined', () => {

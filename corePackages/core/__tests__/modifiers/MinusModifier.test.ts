@@ -50,6 +50,14 @@ describe('MinusModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.simpleMathModifier).toBe(-5)
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'minus',
+        options: 5,
+        added: [-5],
+        removed: []
+      })
     })
 
     test('subtracts from existing simpleMathModifier', () => {
@@ -62,6 +70,14 @@ describe('MinusModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.simpleMathModifier).toBe(-5)
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'minus',
+        options: 5,
+        added: [-5],
+        removed: []
+      })
     })
 
     test('returns original bonus when options is undefined', () => {

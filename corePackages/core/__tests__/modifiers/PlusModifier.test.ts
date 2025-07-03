@@ -50,6 +50,14 @@ describe('PlusModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.simpleMathModifier).toBe(5)
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'plus',
+        options: 5,
+        added: [5],
+        removed: []
+      })
     })
 
     test('adds to existing simpleMathModifier', () => {
@@ -62,6 +70,14 @@ describe('PlusModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.simpleMathModifier).toBe(5)
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'plus',
+        options: 5,
+        added: [5],
+        removed: []
+      })
     })
 
     test('returns original bonus when options is undefined', () => {

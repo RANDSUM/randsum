@@ -96,6 +96,14 @@ describe('DropModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 15])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'drop',
+        options: { lowest: 1 },
+        added: [],
+        removed: [5]
+      })
     })
 
     test('drops highest values', () => {
@@ -108,6 +116,14 @@ describe('DropModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 10])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'drop',
+        options: { highest: 1 },
+        added: [],
+        removed: [15]
+      })
     })
 
     test('drops exact values', () => {
@@ -120,6 +136,14 @@ describe('DropModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 15])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'drop',
+        options: { exact: [10] },
+        added: [],
+        removed: [10]
+      })
     })
 
     test('drops values greater than limit', () => {
@@ -132,6 +156,14 @@ describe('DropModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 10])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'drop',
+        options: { greaterThan: 10 },
+        added: [],
+        removed: [15]
+      })
     })
 
     test('drops values less than limit', () => {
@@ -144,6 +176,14 @@ describe('DropModifier', () => {
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 15])
+
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]).toMatchObject({
+        modifier: 'drop',
+        options: { lessThan: 10 },
+        added: [],
+        removed: [5]
+      })
     })
 
     test('returns original bonus when options is undefined', () => {
