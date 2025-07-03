@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { D } from '../src/D'
+import { D } from '../src/Dice'
 import { isD, isNumericDie } from '../src/lib'
 
 describe(D, () => {

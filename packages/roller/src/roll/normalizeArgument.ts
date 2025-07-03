@@ -1,4 +1,4 @@
-import { D } from '../D'
+import { D } from '../Dice'
 import { isDiceNotation } from '../lib'
 import {
   CapModifier,

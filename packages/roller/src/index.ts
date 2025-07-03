@@ -1,4 +1,4 @@
-export * from './D'
+export * from './Dice'
 export * from './roll'
 export * from './validateNotation'
 export * from './lib'

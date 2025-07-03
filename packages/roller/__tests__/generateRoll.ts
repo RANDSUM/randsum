@@ -8,7 +8,7 @@ import {
   test
 } from 'bun:test'
 
-import { D } from '../src/D'
+import { D } from '../src/Dice'
 import type { RollParams } from '../src/types'
 import * as CoreRandom from '../src/lib'
 import * as CoreSpreadRolls from '../src/lib'

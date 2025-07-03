@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { D } from '../src/D'
+import { D } from '../src/Dice'
 import { normalizeArgument } from '../src/roll/normalizeArgument'
 
 describe(normalizeArgument, () => {
