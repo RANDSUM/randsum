@@ -1,4 +1,4 @@
-import type { NumericRollOptions, roll } from '@randsum/roller'
+import { type NumericRollOptions, roll } from '@randsum/roller'
 import type {
   AdvantageDisadvantageDH,
   RollArgumentDH,

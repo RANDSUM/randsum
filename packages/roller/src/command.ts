@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import {
-  type CustomValidationResult,
-  type NumericValidationResult,
-  validateNotation
-} from '@randsum/roller'
 import { roll } from './roll'
-import type { RollResult } from './types'
+import type {
+  CustomValidationResult,
+  NumericValidationResult,
+  RollResult
+} from './types'
+import { validateNotation } from './validateNotation'
 
 function main(): void {
   const args = process.argv.slice(2)

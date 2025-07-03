@@ -25,7 +25,8 @@ export default tseslint.config(
       'docs',
       'bin',
       '*.lock',
-      'eslint.config.js'
+      'eslint.config.js',
+      '**/.bunup-dts-*'
     ]
   },
   {

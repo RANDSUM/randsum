@@ -1,4 +1,4 @@
-import type { RollResult, RollPoolResult } from '../types'
+import type { RollPoolResult, RollResult } from '../types'
 
 export function rollType(rolls: RollPoolResult[]): RollResult['type'] {
   if (rolls.every((roll) => roll.type === 'numeric')) {
