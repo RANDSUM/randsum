@@ -25,13 +25,8 @@ tasks:
       mergeEnv: 'replace'
 
   test:
-    command: 'echo "No tests for MCP"'
     deps:
       - 'roller:build'
-    options:
-      cache: false
-      mergeArgs: 'replace'
-      mergeEnv: 'replace'
 
   lint:
     deps:

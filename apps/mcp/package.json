@@ -1,6 +1,6 @@
 {
   "name": "@randsum/mcp",
-  "version": "0.3.6",
+  "version": "0.3.8",
   "description": "Model Context Protocol server for RANDSUM dice rolling and game mechanics",
   "private": false,
   "author": {
@@ -22,7 +22,7 @@
   ],
   "type": "module",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.13.3",
+    "@modelcontextprotocol/sdk": "^1.14.0",
     "@randsum/roller": "workspace:~",
     "commander": "^12.1.0",
     "zod": "^3.25.71"
