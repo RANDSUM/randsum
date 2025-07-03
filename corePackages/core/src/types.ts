@@ -52,10 +52,16 @@ export interface ModifierOptions {
   minus?: number
 }
 
+export interface ModifierLog {
+  pattern: string
+  added: number[]
+  removed: number[]
+}
+
 export interface NumericRollBonus {
   rolls: number[]
-
   simpleMathModifier: number
+  logs: ModifierLog[]
 }
 
 export interface BaseRollOptions {

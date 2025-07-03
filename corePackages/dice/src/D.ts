@@ -12,8 +12,8 @@ import type {
   NumericDie,
   NumericRollResult
 } from './types'
-import { coreSpreadRolls } from './utils/coreSpreadRolls'
-import { generateNumericFaces } from './utils/generateNumericFaces'
+import { coreSpreadRolls } from './lib/coreSpreadRolls'
+import { generateNumericFaces } from './lib/generateNumericFaces'
 
 abstract class DieBase {
   public readonly sides: number

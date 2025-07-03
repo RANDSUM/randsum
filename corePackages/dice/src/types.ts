@@ -1,5 +1,6 @@
 import type {
   CustomRollOptions,
+  ModifierLog,
   ModifierOptions,
   NumericRollOptions
 } from '@randsum/core'
@@ -67,6 +68,7 @@ export type RollParams = NumericRollParams | CustomRollParams
 interface ModifiedRolls<T extends RollParams = RollParams> {
   rolls: T['options'] extends CustomRollOptions ? string[] : number[]
   total: T['options'] extends CustomRollOptions ? string : number
+  logs: ModifierLog[]
 }
 
 export interface BaseRollPoolResult<P extends RollParams = RollParams> {
