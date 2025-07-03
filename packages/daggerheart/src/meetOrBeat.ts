@@ -1,11 +1,11 @@
-import { rollDH } from './rollDH'
+import { roll } from './roll'
 import type { MeetOrBeatResultDH, RollArgumentDH } from './types'
 
-export function meetOrBeatDH(
+export function meetOrBeat(
   difficultyClass: number,
   rollArg: RollArgumentDH
 ): MeetOrBeatResultDH {
-  const result = rollDH(rollArg)
+  const result = roll(rollArg)
   const core = {
     ...result,
     success:

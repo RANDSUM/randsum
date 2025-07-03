@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { roll5e } from '../src/roll5e'
+import { roll5e } from '../src/roll'
 import type { RollArgument5e } from '../src/types'
 
 describe('roll5e', () => {

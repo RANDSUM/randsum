@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { meetOrBeat5e } from '../src/meetOrBeat5e'
+import { meetOrBeat5e } from '../src/meetOrBeat'
 import type { RollArgument5e } from '../src/types'
 
 describe('meetOrBeat5e', () => {

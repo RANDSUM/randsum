@@ -34,21 +34,21 @@
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "0.3.6",
+      "version": "0.4.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "0.3.6",
+      "version": "0.4.0",
       "dependencies": {
         "@randsum/roller": "workspace:*",
       },
     },
     "packages/fifth": {
       "name": "@randsum/fifth",
-      "version": "0.3.6",
+      "version": "0.4.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },

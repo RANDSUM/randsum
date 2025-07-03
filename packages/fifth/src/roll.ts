@@ -2,11 +2,11 @@ import {
   type ModifierOptions,
   type NumericRollOptions,
   type NumericRollResult,
-  roll
+  roll as coreRoll
 } from '@randsum/roller'
 import type { AdvantageDisadvantage5e, RollArgument5e } from './types'
 
-export function roll5e({
+export function roll({
   modifier,
   rollingWith
 }: RollArgument5e): NumericRollResult {
@@ -15,7 +15,7 @@ export function roll5e({
     quantity: generateQuantity(rollingWith),
     modifiers: { ...generateModifiers(rollingWith), plus: modifier }
   }
-  return roll(rollArg)
+  return coreRoll(rollArg)
 }
 
 function generateQuantity(rollingWith?: AdvantageDisadvantage5e): 1 | 2 {
