@@ -10,4 +10,4 @@ type: "always_apply"
 - All packages must have these Moon tasks: build, test, lint, tsCheck, publish, ci
 - Game packages depend on dice package: include `dependsOn: ['dice']` in moon.yml
 - Use consistent task dependencies: test/lint/tsCheck depend on build
-- Enable caching for all tasks with `options: { cache: true }`
+- Enable caching for all tasks with `options: { cache: false }`

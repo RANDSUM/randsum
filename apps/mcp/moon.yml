@@ -26,7 +26,7 @@ tasks:
       - 'dice:build'
       - 'notation:build'
     options:
-      cache: true
+      cache: false
       mergeArgs: 'replace'
       mergeEnv: 'replace'
 
