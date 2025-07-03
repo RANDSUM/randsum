@@ -74,7 +74,6 @@ type RootMiss = 'Miss'
 ## Related Packages
 
 - [@randsum/roller](https://github.com/RANDSUM/randsum/tree/main/packages/roller): Core dice rolling implementation
-- [@randsum/notation](https://github.com/RANDSUM/randsum/tree/main/packages/notation): Dice notation parser
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
