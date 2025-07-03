@@ -1,10 +1,10 @@
-import { isCustomRollParams } from '../../guards/isCustomRollParams'
 import type {
   NumericRollBonus,
   NumericRollOptions,
   RollParams,
   RollPoolResult
 } from '../../../types'
+import { isCustomRollParams } from '../../guards/isCustomRollParams'
 import { calculateTotal } from '../calculateTotal'
 import { coreRandom } from '../coreRandom'
 import { applyModifier } from './applyModifier'
