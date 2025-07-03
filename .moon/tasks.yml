@@ -42,6 +42,30 @@ tasks:
     options:
       cache: false
 
+  version:
+    command: 'bun pm version'
+    options:
+      runInCI: false
+      allowFailure: true
+
+  patch:
+    command: 'bun pm version patch'
+    options:
+      runInCI: false
+      allowFailure: true
+
+  minor:
+    command: 'bun pm version minor'
+    options:
+      runInCI: false
+      allowFailure: true
+
+  major:
+    command: 'bun pm version major'
+    options:
+      runInCI: false
+      allowFailure: true
+
   publish:
     command: 'bun publish --no-git-checks --access=public'
     options:
