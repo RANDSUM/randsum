@@ -10,9 +10,9 @@ import {
 
 import { D } from '../src/D'
 import type { RollParams } from '../src/types'
-import * as CoreRandom from '../src/lib/coreRandom'
-import * as CoreSpreadRolls from '../src/lib/coreSpreadRolls'
-import { generateRoll } from '../src/lib/generateRoll'
+import * as CoreRandom from '../src/lib'
+import * as CoreSpreadRolls from '../src/lib'
+import { generateRoll } from '../src/lib'
 
 function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
   return {

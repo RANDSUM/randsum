@@ -1,0 +1,8 @@
+export { calculateTotal } from './calculateTotal'
+export { coreRandom, createSeededRandom } from './coreRandom'
+export { coreSpreadRolls } from './coreSpreadRolls'
+export { generateNumericFaces } from './generateNumericFaces'
+export { normalizeArgument } from './normalizeArgument'
+export { generateRoll } from './generateRoll'
+export { rollType } from './rollType'
+export { OptionsConverter } from './optionsConverter'

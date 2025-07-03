@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { D } from '../src/D'
-import { isD, isNumericDie } from '../src/guards/isD'
+import { isD, isNumericDie } from '../src/lib/guards/isD'
 
 describe(D, () => {
   describe('Creating a numeric Die', () => {

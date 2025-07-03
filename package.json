@@ -14,11 +14,7 @@
     "format": "bunx moon :format",
     "format:check": "bunx moon :formatCheck",
     "ts:check": "bunx moon :tsCheck",
-    "test:ci": "bunrun test --coverage",
-    "changeset": "bunx changeset",
-    "changeset:version": "bunx changeset version",
-    "changeset:publish": "bunx changeset publish",
-    "changeset:status": "bunx changeset status"
+    "test:ci": "bunrun test --coverage"
   },
   "trustedDependencies": [
     "@moonrepo/cli"

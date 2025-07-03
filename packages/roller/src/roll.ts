@@ -9,10 +9,10 @@ import type {
 import {
   calculateTotal,
   generateRoll,
+  isRollResult,
   normalizeArgument,
   rollType
 } from './lib'
-import { isRollResult } from './guards/isRollResult'
 
 function roll(...args: NumericRollArgument[]): NumericRollResult
 function roll(...args: CustomRollArgument[]): CustomRollResult
