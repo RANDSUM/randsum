@@ -188,12 +188,12 @@ describe('RandsumError', () => {
     })
 
     test('serializes complete error', () => {
-      const context = {
+      const context = createErrorContext({
         input: '4d6x',
         expected: 'Valid notation',
         location: 'parsing',
         details: { custom: 'data' }
-      }
+      })
       const suggestions = ['Fix this', 'Try that']
       const error = new RandsumError(
         'Complete JSON',
@@ -268,7 +268,10 @@ describe('RandsumError', () => {
 
     test('accepts context and suggestions', () => {
       const originalError = new Error('Context test')
-      const context = { input: 'test', location: 'conversion' }
+      const context = createErrorContext({
+        input: 'test',
+        location: 'conversion'
+      })
       const suggestions = ['Suggestion 1', 'Suggestion 2']
       const randsumError = RandsumError.fromError(
         originalError,
@@ -352,11 +355,11 @@ describe('RandsumError', () => {
       const errorWithUndefined = new RandsumError(
         'Undefined test',
         'VALIDATION_ERROR',
-        {
+        createErrorContext({
           input: undefined,
           expected: undefined,
           location: 'test'
-        }
+        })
       )
       const resultWithUndefined = errorWithUndefined.toString()
 
@@ -367,10 +370,14 @@ describe('RandsumError', () => {
 
     test('handles object input in context', () => {
       const objectInput = { notation: '4d6', invalid: true }
-      const error = new RandsumError('Object test', 'VALIDATION_ERROR', {
-        input: objectInput,
-        location: 'test'
-      })
+      const error = new RandsumError(
+        'Object test',
+        'VALIDATION_ERROR',
+        createErrorContext({
+          input: objectInput,
+          location: 'test'
+        })
+      )
       const result = error.toString()
 
       expect(result).toContain('Input: {"notation":"4d6","invalid":true}')

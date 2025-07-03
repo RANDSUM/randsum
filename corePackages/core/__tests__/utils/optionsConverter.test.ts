@@ -1,44 +1,42 @@
 import { describe, expect, test } from 'bun:test'
-import type { CustomRollOptions, NumericRollOptions } from '../../src/types'
 import { optionsConverter } from '../../src/utils/optionsConverter'
+import {
+  createCustomRollOptions,
+  createNumericRollOptions
+} from '../support/fixtures'
 
 describe('optionsConverter', () => {
   describe('toNotation', () => {
     test('converts basic numeric options to notation', () => {
-      const options: NumericRollOptions = { sides: 20, quantity: 1 }
+      const options = createNumericRollOptions()
       expect(optionsConverter.toNotation(options)).toBe('1d20')
     })
 
     test('converts numeric options with quantity to notation', () => {
-      const options: NumericRollOptions = { sides: 6, quantity: 3 }
+      const options = createNumericRollOptions({ sides: 6, quantity: 3 })
       expect(optionsConverter.toNotation(options)).toBe('3d6')
     })
 
     test('converts custom options to notation', () => {
-      const options: CustomRollOptions = {
-        sides: ['Heads', 'Tails'],
-        quantity: 1
-      }
+      const options = createCustomRollOptions()
       expect(optionsConverter.toNotation(options)).toBe('1d{HeadsTails}')
     })
 
     test('handles options with drop modifier', () => {
-      const options: NumericRollOptions = {
-        sides: 20,
+      const options = createNumericRollOptions({
         quantity: 2,
         modifiers: { drop: { lowest: 1 } }
-      }
+      })
       const result = optionsConverter.toNotation(options)
       expect(result).toContain('2d20')
       expect(result).toMatch(/[Ll]/)
     })
 
     test('handles large negative plus modifiers', () => {
-      const options: NumericRollOptions = {
-        sides: 20,
+      const options = createNumericRollOptions({
         quantity: 2,
         modifiers: { plus: -3 }
-      }
+      })
       const result = optionsConverter.toNotation(options)
       expect(result).toContain('2d20-3')
     })
@@ -46,24 +44,21 @@ describe('optionsConverter', () => {
 
   describe('toDescription', () => {
     test('generates description for basic numeric options', () => {
-      const options: NumericRollOptions = { sides: 20, quantity: 1 }
+      const options = createNumericRollOptions()
       const description = optionsConverter.toDescription(options)
 
       expect(description).toContain('Roll 1 20-sided die')
     })
 
     test('generates description for multiple dice', () => {
-      const options: NumericRollOptions = { sides: 6, quantity: 3 }
+      const options = createNumericRollOptions({ sides: 6, quantity: 3 })
       const description = optionsConverter.toDescription(options)
 
       expect(description).toContain('Roll 3 6-sided dice')
     })
 
     test('generates description for custom dice', () => {
-      const options: CustomRollOptions = {
-        sides: ['Heads', 'Tails'],
-        quantity: 1
-      }
+      const options = createCustomRollOptions()
       const description = optionsConverter.toDescription(options)
 
       expect(description[0]).toContain('Roll 1 die with the following sides')
@@ -72,11 +67,10 @@ describe('optionsConverter', () => {
     })
 
     test('includes modifier descriptions', () => {
-      const options: NumericRollOptions = {
-        sides: 20,
+      const options = createNumericRollOptions({
         quantity: 2,
         modifiers: { drop: { lowest: 1 } }
-      }
+      })
       const description = optionsConverter.toDescription(options)
 
       expect(description.length).toBeGreaterThan(1)
@@ -87,15 +81,12 @@ describe('optionsConverter', () => {
 
   describe('formatCoreNotation', () => {
     test('formats numeric dice notation', () => {
-      const options: NumericRollOptions = { sides: 20, quantity: 1 }
+      const options = createNumericRollOptions()
       expect(optionsConverter.formatCoreNotation(options)).toBe('1d20')
     })
 
     test('formats custom dice notation', () => {
-      const options: CustomRollOptions = {
-        sides: ['Heads', 'Tails'],
-        quantity: 1
-      }
+      const options = createCustomRollOptions()
       expect(optionsConverter.formatCoreNotation(options)).toBe(
         '1d{HeadsTails}'
       )
@@ -109,24 +100,23 @@ describe('optionsConverter', () => {
 
   describe('formatCoreDescription', () => {
     test('formats description for single numeric die', () => {
-      const options: NumericRollOptions = { sides: 20, quantity: 1 }
+      const options = createNumericRollOptions()
       const result = optionsConverter.formatCoreDescription(options)
 
       expect(result).toBe('Roll 1 20-sided die')
     })
 
     test('formats description for multiple numeric dice', () => {
-      const options: NumericRollOptions = { sides: 6, quantity: 3 }
+      const options = createNumericRollOptions({ sides: 6, quantity: 3 })
       const result = optionsConverter.formatCoreDescription(options)
 
       expect(result).toBe('Roll 3 6-sided dice')
     })
 
     test('formats description for custom dice', () => {
-      const options: CustomRollOptions = {
-        sides: ['Metru', 'Nui'],
-        quantity: 1
-      }
+      const options = createCustomRollOptions({
+        sides: ['Metru', 'Nui']
+      })
       const result = optionsConverter.formatCoreDescription(options)
 
       expect(result).toContain('Roll 1 die with the following sides')
@@ -135,10 +125,9 @@ describe('optionsConverter', () => {
     })
 
     test('handles custom dice with empty string sides', () => {
-      const options: CustomRollOptions = {
-        sides: ['A', '', 'B'],
-        quantity: 1
-      }
+      const options = createCustomRollOptions({
+        sides: ['A', '', 'B']
+      })
       const result = optionsConverter.formatCoreDescription(options)
 
       expect(result).toBe('Roll 1 die with the following sides: (A ,B)')

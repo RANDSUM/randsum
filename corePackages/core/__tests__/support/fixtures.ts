@@ -1,4 +1,5 @@
 import type {
+  CustomRollOptions,
   ErrorContext,
   NumericRollBonus,
   NumericRollOptions,
@@ -21,6 +22,16 @@ export function createNumericRollOptions(
 ): NumericRollOptions {
   return {
     sides: 20,
+    quantity: 1,
+    ...overrides
+  }
+}
+
+export function createCustomRollOptions(
+  overrides: Partial<CustomRollOptions> = {}
+): CustomRollOptions {
+  return {
+    sides: ['Heads', 'Tails'],
     quantity: 1,
     ...overrides
   }
