@@ -1,4 +1,5 @@
 import type {
+  ModifierLog,
   ModifierOptions,
   NumericRollBonus,
   RequiredNumericRollParameters,
@@ -77,14 +78,24 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
     _params: undefined | RequiredNumericRollParameters,
     rollOne: () => number
   ): NumericRollBonus {
-    if (this.options === undefined) return bonus
+    const options = this.options
+    if (options === undefined) return bonus
+
+    const initialRolls = [...bonus.rolls]
+
+    const rolls = [...initialRolls].map((roll) =>
+      this.rerollRoll(roll, options, rollOne)
+    )
+
+    const logs: ModifierLog[] = [
+      ...bonus.logs,
+      this.toModifierLog('reroll', initialRolls, rolls)
+    ]
 
     return {
       ...bonus,
-      rolls: [...bonus.rolls].map((roll) => {
-        if (this.options === undefined) return roll
-        return this.rerollRoll(roll, this.options, rollOne)
-      })
+      rolls,
+      logs
     }
   }
 

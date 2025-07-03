@@ -23,6 +23,14 @@ class TestModifier extends BaseModifier<number> {
   public getOptions(): number | undefined {
     return this.options
   }
+
+  public testToModifierLog(
+    modifier: string,
+    initialRolls: number[],
+    newRolls: number[]
+  ): import('../../src/types').ModifierLog {
+    return this.toModifierLog(modifier, initialRolls, newRolls)
+  }
 }
 
 class ErrorThrowingModifier extends BaseModifier<boolean> {
@@ -71,7 +79,8 @@ describe('BaseModifier', () => {
       const modifier = new TestModifier(5)
       const bonus: NumericRollBonus = {
         rolls: [1, 2],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -82,7 +91,8 @@ describe('BaseModifier', () => {
       const modifier = new TestModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [1, 2],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -192,6 +202,73 @@ describe('BaseModifier', () => {
       expect(BaseModifier.parse('   ')).toEqual({})
       expect(BaseModifier.parse('invalid-notation')).toEqual({})
       expect(BaseModifier.parse('123!@#$%')).toEqual({})
+    })
+  })
+
+  describe('toModifierLog', () => {
+    test('handles simple addition and removal', () => {
+      const modifier = new TestModifier(1)
+      const result = modifier.testToModifierLog('test', [1, 2, 3], [1, 2, 4])
+
+      expect(result.added).toEqual([4])
+      expect(result.removed).toEqual([3])
+      expect(result.modifier).toBe('test')
+    })
+
+    test('handles duplicate values correctly - example case', () => {
+      const modifier = new TestModifier(1)
+      const initialRolls = [4, 4, 4, 4, 4]
+      const newRolls = [4, 2, 4, 4, 4]
+
+      const result = modifier.testToModifierLog('test', initialRolls, newRolls)
+
+      expect(result.added).toEqual([2])
+      expect(result.removed).toEqual([4])
+      expect(result.modifier).toBe('test')
+    })
+
+    test('handles multiple duplicates', () => {
+      const modifier = new TestModifier(1)
+      const initialRolls = [1, 1, 2, 2, 3]
+      const newRolls = [1, 2, 2, 2, 4, 4]
+
+      const result = modifier.testToModifierLog('test', initialRolls, newRolls)
+
+      expect(result.added).toEqual([2, 4, 4])
+      expect(result.removed).toEqual([1, 3])
+      expect(result.modifier).toBe('test')
+    })
+
+    test('handles no changes', () => {
+      const modifier = new TestModifier(1)
+      const rolls = [1, 2, 3, 3, 4]
+
+      const result = modifier.testToModifierLog('test', rolls, rolls)
+
+      expect(result.added).toEqual([])
+      expect(result.removed).toEqual([])
+      expect(result.modifier).toBe('test')
+    })
+
+    test('handles complete replacement', () => {
+      const modifier = new TestModifier(1)
+      const result = modifier.testToModifierLog('test', [1, 2, 3], [4, 5, 6])
+
+      expect(result.added).toEqual([4, 5, 6])
+      expect(result.removed).toEqual([1, 2, 3])
+      expect(result.modifier).toBe('test')
+    })
+
+    test('handles empty arrays', () => {
+      const modifier = new TestModifier(1)
+
+      const addResult = modifier.testToModifierLog('test', [], [1, 2, 3])
+      expect(addResult.added).toEqual([1, 2, 3])
+      expect(addResult.removed).toEqual([])
+
+      const removeResult = modifier.testToModifierLog('test', [1, 2, 3], [])
+      expect(removeResult.added).toEqual([])
+      expect(removeResult.removed).toEqual([1, 2, 3])
     })
   })
 })

@@ -53,7 +53,8 @@ export interface ModifierOptions {
 }
 
 export interface ModifierLog {
-  pattern: string
+  modifier: string
+  options: ModifierConfig | undefined
   added: number[]
   removed: number[]
 }
