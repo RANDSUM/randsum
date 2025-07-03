@@ -1,8 +1,8 @@
 import { D20 } from '@randsum/roller'
 import { AllRollTables } from './tables'
-import type { SUHit, SUTableName, SUTableResult } from './types'
+import type { Hit, TableName, TableResult } from './types'
 
-function interpretHit(result: number): SUHit {
+function interpretHit(result: number): Hit {
   switch (true) {
     case result === 20:
       return 'Nailed It'
@@ -17,9 +17,9 @@ function interpretHit(result: number): SUHit {
   }
 }
 
-export function rollSU(
-  tableName: SUTableName = 'Core Mechanic'
-): [SUTableResult, number] {
+export function roll(
+  tableName: TableName = 'Core Mechanic'
+): [TableResult, number] {
   const total = D20.roll()
   const hit = interpretHit(total)
   const table = AllRollTables[tableName]

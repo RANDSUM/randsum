@@ -1,11 +1,11 @@
-export type SUHit =
+export type Hit =
   | 'Nailed It'
   | 'Success'
   | 'Tough Choice'
   | 'Failure'
   | 'Cascade Failure'
 
-export type SUTableName =
+export type TableName =
   | 'NPC Action'
   | 'Reaction'
   | 'Morale'
@@ -18,16 +18,16 @@ export type SUTableName =
   | 'Area Salvage'
   | 'Mech Salvage'
 
-export interface SUTableListing {
+export interface TableListing {
   label: string
   description: string
 }
 
-export type SUTableResult = {
-  hit: SUHit
-  tableName: SUTableName
-  table: SUTableType
-  roll: number
-} & SUTableListing
+export type TableType = Record<Hit, TableListing>
 
-export type SUTableType = Record<SUHit, SUTableListing>
+export type TableResult = {
+  hit: Hit
+  tableName: TableName
+  table: TableType
+  roll: number
+} & TableListing
