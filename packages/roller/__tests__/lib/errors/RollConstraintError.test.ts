@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { RollConstraintError } from '../../../src/lib/errors/rollConstraintError'
-import { RandsumError } from '../../../src/lib/errors/randsumError'
+import { RandsumError, RollConstraintError } from '../../../src/lib'
 
 describe('RollConstraintError', () => {
   describe('constructor', () => {

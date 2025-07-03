@@ -3,10 +3,10 @@ import type {
   NumericRollPoolResult,
   RollParams,
   RollPoolResult
-} from '../../../types'
-import { isCustomRollParams } from '../../guards/isCustomRollParams'
-import { isNumericRollParams } from '../../guards/isNumericRollParams'
-import { calculateTotal } from '../calculateTotal'
+} from '../../types'
+import { isCustomRollParams } from '../../lib/guards/isCustomRollParams'
+import { isNumericRollParams } from '../../lib/guards/isNumericRollParams'
+import { calculateTotal } from '../utils/calculateTotal'
 import { generateModifiedRolls } from './generateModifiedRolls'
 import { generateRawRolls } from './generateRawRolls'
 

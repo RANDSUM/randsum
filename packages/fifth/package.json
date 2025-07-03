@@ -1,6 +1,6 @@
 {
   "name": "@randsum/fifth",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "A flexible, type-safe dice roller for building 5E-compatible applications",
   "private": false,
   "author": {

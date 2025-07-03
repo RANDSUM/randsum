@@ -5,14 +5,11 @@ import type {
   NumericRollResult,
   RollArgument,
   RollResult
-} from './types'
-import {
-  calculateTotal,
-  generateRoll,
-  isRollResult,
-  normalizeArgument,
-  rollType
-} from './lib'
+} from '../types'
+import { isRollResult } from '../lib'
+import { normalizeArgument } from './normalizeArgument'
+import { generateRoll } from './generateRoll'
+import { calculateTotal, rollType } from './utils'
 
 function roll(...args: NumericRollArgument[]): NumericRollResult
 function roll(...args: CustomRollArgument[]): CustomRollResult

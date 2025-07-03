@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { UniqueModifier } from '../../../src/lib/modifiers/UniqueModifier'
-import { RandsumError } from '../../../src/lib/errors'
+import { UniqueModifier } from '../../../src/lib'
+import { RandsumError } from '../../../src/lib'
 import {
   createMockRollOne,
   createNumericRollBonus,

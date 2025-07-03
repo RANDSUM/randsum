@@ -1,6 +1,5 @@
-import type { RollParams, RollPoolResult } from '../../../types'
-import { isNumericRollOptions } from '../../guards'
-import { coreSpreadRolls } from '../coreSpreadRolls'
+import type { RollParams, RollPoolResult } from '../../types'
+import { coreSpreadRolls, isNumericRollOptions } from '../../lib/'
 
 export function generateRawRolls({
   options

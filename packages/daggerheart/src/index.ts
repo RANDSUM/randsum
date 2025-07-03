@@ -1,3 +1,3 @@
-export { meetOrBeatDH } from './meetOrBeatDH'
-export { rollDH } from './rollDH'
+export * from './meetOrBeatDH'
+export * from './rollDH'
 export type * from './types'

@@ -1,19 +1,19 @@
-import { D } from '../../D'
-import { isDiceNotation } from '../guards'
-import { isD } from '../guards/isD'
+import { D } from '../Dice'
+import { isDiceNotation } from '../lib'
 import {
   CapModifier,
   DropModifier,
   ExplodeModifier,
   MinusModifier,
+  OptionsConverter,
   PlusModifier,
   ReplaceModifier,
   RerollModifier,
-  UniqueModifier
-} from '../modifiers'
-import { coreNotationPattern } from '../patterns'
-import type { RollArgument, RollParams } from '../../types'
-import { OptionsConverter } from './optionsConverter'
+  UniqueModifier,
+  coreNotationPattern,
+  isD
+} from '../lib'
+import type { RollArgument, RollParams } from '../types'
 
 export function normalizeArgument(argument: RollArgument): RollParams {
   const options = optionsFromArgument(argument)

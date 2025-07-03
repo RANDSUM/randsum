@@ -1,2 +1,2 @@
-export { coreNotationPattern } from './coreNotationPattern'
-export { completeRollPattern } from './completeRollPattern'
+export * from './coreNotationPattern'
+export * from './completeRollPattern'

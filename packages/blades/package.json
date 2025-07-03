@@ -1,6 +1,6 @@
 {
   "name": "@randsum/blades",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Blades in the Dark compatible dice rolling implementation",
   "private": false,
   "author": {
