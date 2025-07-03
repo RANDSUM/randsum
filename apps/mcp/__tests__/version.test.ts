@@ -4,6 +4,6 @@ import { config } from '../src'
 
 describe('MCP Server Version Consistency', () => {
   test('MCP server version should match package.json version', () => {
-    expect(packageJson.version).toBe(config.version)
+    expect(packageJson.version).toEqual(config.version)
   })
 })
