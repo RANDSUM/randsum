@@ -4,9 +4,9 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod'
 import {
-  DiceNotation,
-  RollResult,
-  ValidationResult,
+  type DiceNotation,
+  type RollResult,
+  type ValidationResult,
   isDiceNotation,
   roll,
   validateNotation
@@ -164,15 +164,14 @@ function formatValidationResult(result: ValidationResult): string {
 
   return [header, separator, ...details].join('\n')
 }
+export const config = {
+  version: '0.3.8',
+  name: 'RANDSUM'
+}
 
 function createServerInstance(): McpServer {
-  const server = new McpServer(
-    {
-      name: 'RANDSUM',
-      version: '0.2.9'
-    },
-    {
-      instructions: `🎲 RANDSUM MCP Server - Advanced Dice Rolling & Game Mechanics Engine
+  const server = new McpServer(config, {
+    instructions: `🎲 RANDSUM MCP Server - Advanced Dice Rolling & Game Mechanics Engine
 
 COMPREHENSIVE DICE ROLLING SYSTEM with sophisticated modifiers for tabletop gaming, probability simulation, and randomization tasks.
 
@@ -252,8 +251,7 @@ Access via dice-notation-docs resource for comprehensive syntax guide
 • 3d6! - Exploding damage dice
 • 4d6R{1}+3 - Reroll 1s, add modifier
 • 2d{🎭🗡️🏰} - Narrative story elements`
-    }
-  )
+  })
 
   server.tool(
     'roll',
