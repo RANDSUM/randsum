@@ -3,16 +3,11 @@ $schema: 'https://moonrepo.dev/schemas/project.json'
 id: mcp
 language: 'typescript'
 dependsOn:
-  - 'core'
-  - 'dice'
-  - 'notation'
+  - 'roller'
 
 tasks:
   tsCheck:
     deps:
-      - 'core:build'
-      - 'dice:build'
-      - 'notation:build'
 
   build:
     command: 'tsc && chmod 755 dist/index.js'
@@ -22,9 +17,8 @@ tasks:
     outputs:
       - 'dist/**/*'
     deps:
-      - 'core:build'
-      - 'dice:build'
-      - 'notation:build'
+      - 'roller:build'
+
     options:
       cache: false
       mergeArgs: 'replace'
@@ -32,15 +26,12 @@ tasks:
 
   test:
     deps:
-      - 'core:build'
-      - 'dice:build'
-      - 'notation:build'
+      - 'roller:build'
 
   lint:
     deps:
-      - 'core:build'
-      - 'dice:build'
-      - 'notation:build'
+      - 'roller:build'
+
   start:
     command: 'node dist/index.js --transport http'
     deps:

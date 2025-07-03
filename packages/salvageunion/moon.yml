@@ -1,0 +1,22 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+id: salvageunion
+language: 'typescript'
+dependsOn:
+  - 'roller'
+tags:
+  - 'game'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'roller:build'
+  build:
+    deps:
+      - 'roller:build'
+  test:
+    deps:
+      - 'roller:build'
+  lint:
+    deps:
+      - 'roller:build'

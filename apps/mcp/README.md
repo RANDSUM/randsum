@@ -212,7 +212,7 @@ Once configured, the following tools will be available in your MCP client:
 
 The RANDSUM MCP server supports the full RANDSUM dice notation system. For complete documentation of all available syntax and modifiers, see:
 
-**🔗 [RANDSUM Dice Notation Documentation](https://github.com/RANDSUM/randsum/blob/main/corePackages/notation/RANDSUM_DICE_NOTATION.md)**
+**🔗 [RANDSUM Dice Notation Documentation](https://github.com/RANDSUM/randsum/blob/main/packages/notation/RANDSUM_DICE_NOTATION.md)**
 
 ### Quick Reference
 
@@ -280,8 +280,7 @@ For issues and questions:
 
 ## 🔗 Related Packages
 
-- [@randsum/dice](https://github.com/RANDSUM/randsum/tree/main/corePackages/dice): Core dice rolling
-- [@randsum/notation](https://github.com/RANDSUM/randsum/tree/main/corePackages/notation): Dice notation parser
+- [@randsum/roller](https://github.com/RANDSUM/randsum/tree/main/packages/roller): Core dice rolling
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

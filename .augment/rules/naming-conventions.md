@@ -5,7 +5,7 @@ type: "always_apply"
 ## Naming Conventions Summary
 
 - Packages: kebab-case (@randsum/root-rpg)
-- Directories: kebab-case (gamePackages, __tests__)
+- Directories: kebab-case (packages, __tests__)
 - Files: camelCase (.ts), kebab-case (README.md)
 - Classes: PascalCase (BaseModifier)
 - Functions: camelCase with verb prefix (rollBlades, generateQuantity)

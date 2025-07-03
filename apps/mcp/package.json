@@ -23,11 +23,9 @@
   "type": "module",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.3",
-    "@randsum/core": "workspace:~",
-    "@randsum/dice": "workspace:~",
-    "@randsum/notation": "workspace:~",
+    "@randsum/roller": "workspace:~",
     "commander": "^12.1.0",
-    "zod": "^3.25.67"
+    "zod": "^3.25.71"
   },
   "keywords": [
     "mcp",

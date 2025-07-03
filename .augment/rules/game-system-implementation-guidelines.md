@@ -4,7 +4,7 @@ type: "always_apply"
 
 ## Game System Implementation Guidelines
 
-- Each game system should have its own package in gamePackages/
+- Each game system should have its own package in packages/
 - Implement core rolling mechanics specific to that game system
 - Include relevant tables and reference data as needed
 - Use TypeScript for type safety of game-specific data structures

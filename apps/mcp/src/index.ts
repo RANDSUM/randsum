@@ -3,14 +3,14 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod'
-import { roll } from '@randsum/dice'
-import type { RollResult } from '@randsum/dice'
 import {
-  type DiceNotation,
+  DiceNotation,
+  RollResult,
+  ValidationResult,
   isDiceNotation,
+  roll,
   validateNotation
-} from '@randsum/notation'
-import type { ValidationResult } from '@randsum/notation'
+} from '@randsum/roller'
 import { createServer } from 'http'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
@@ -35,22 +35,18 @@ if (!allowedTransports.includes(cliOptions.transport)) {
   process.exit(1)
 }
 
-// Transport configuration
 const TRANSPORT_TYPE = (cliOptions.transport || 'stdio') as
   | 'stdio'
   | 'http'
   | 'sse'
 
-// HTTP/SSE port configuration
 const CLI_PORT = (() => {
   const parsed = parseInt(cliOptions.port, 10)
   return isNaN(parsed) ? undefined : parsed
 })()
 
-// Store SSE transports by session ID
 const sseTransports: Record<string, SSEServerTransport> = {}
 
-// Enhanced Zod schemas for MCP tool parameters
 const diceNotationSchema = z
   .string()
   .min(1, 'Dice notation cannot be empty')
@@ -58,7 +54,6 @@ const diceNotationSchema = z
     message: 'Invalid dice notation. Use formats like "2d20+5", "4d6L", "3d8!"'
   })
 
-// Roll tool parameter schema
 const rollToolSchema = z.object({
   notation: diceNotationSchema.describe(
     `RANDSUM dice notation string following pattern: {quantity}d{sides}{modifiers}
@@ -87,7 +82,6 @@ GAMING PATTERNS:
   )
 })
 
-// Validate notation tool parameter schema
 const validateNotationToolSchema = z.object({
   notation: z.string().min(1, 'Notation string cannot be empty')
     .describe(`Dice notation string to validate and parse. Can be any potential RANDSUM notation.
@@ -111,16 +105,13 @@ USE CASES:
 RETURNS: For valid notation, shows parsed structure with quantity, sides, and modifiers. For invalid notation, provides specific error with correction guidance.`)
 })
 
-// Roll result formatting utilities
 function formatRollResult(result: RollResult): string {
   const { type, total, rolls, rawResults } = result
 
-  // Create header with total and type
   const header = `🎲 RANDSUM Roll Result (${type}):`
   const separator = '─'.repeat(30)
   const totalLine = `Total: ${String(total)}`
 
-  // Format individual roll details
   const rollDetails = rolls
     .map((roll, index) => {
       const { parameters, rawRolls, modifiedRolls } = roll
@@ -141,7 +132,6 @@ function formatRollResult(result: RollResult): string {
     })
     .join('\n\n')
 
-  // Format raw results summary
   const rawResultsLine = `Raw Results: [${rawResults.join(', ')}]`
 
   return [
@@ -175,7 +165,6 @@ function formatValidationResult(result: ValidationResult): string {
   return [header, separator, ...details].join('\n')
 }
 
-// Function to create a new server instance with all tools registered
 function createServerInstance(): McpServer {
   const server = new McpServer(
     {
@@ -266,7 +255,6 @@ Access via dice-notation-docs resource for comprehensive syntax guide
     }
   )
 
-  // Register RANDSUM tools
   server.tool(
     'roll',
     `🎲 RANDSUM Advanced Dice Rolling Engine

@@ -6,9 +6,6 @@
       "devDependencies": {
         "@eslint/js": "^9.30.1",
         "@moonrepo/cli": "^1.38.2",
-        "@randsum/core": "workspace:~",
-        "@randsum/dice": "workspace:~",
-        "@randsum/notation": "workspace:~",
         "@types/bun": "^1.2.17",
         "@typescript-eslint/eslint-plugin": "^8.35.1",
         "@typescript-eslint/parser": "^8.35.1",
@@ -29,66 +26,49 @@
       },
       "dependencies": {
         "@modelcontextprotocol/sdk": "^1.13.3",
-        "@randsum/core": "workspace:~",
-        "@randsum/dice": "workspace:~",
-        "@randsum/notation": "workspace:~",
+        "@randsum/roller": "workspace:~",
         "commander": "^12.1.0",
-        "zod": "^3.25.67",
+        "zod": "^3.25.71",
       },
     },
-    "corePackages/core": {
-      "name": "@randsum/core",
-      "version": "0.2.9",
-    },
-    "corePackages/dice": {
-      "name": "@randsum/dice",
-      "version": "0.2.9",
-      "bin": "./bin/randsum",
-      "dependencies": {
-        "@randsum/core": "workspace:~",
-        "@randsum/notation": "workspace:~",
-      },
-    },
-    "corePackages/notation": {
-      "name": "@randsum/notation",
-      "version": "0.2.9",
-      "dependencies": {
-        "@randsum/core": "workspace:~",
-      },
-    },
-    "gamePackages/5e": {
+    "packages/5e": {
       "name": "@randsum/5e",
       "version": "0.2.9",
       "dependencies": {
-        "@randsum/dice": "workspace:~",
+        "@randsum/roller": "workspace:~",
       },
     },
-    "gamePackages/blades": {
+    "packages/blades": {
       "name": "@randsum/blades",
       "version": "0.2.9",
       "dependencies": {
-        "@randsum/dice": "workspace:~",
+        "@randsum/roller": "workspace:~",
       },
     },
-    "gamePackages/daggerheart": {
+    "packages/daggerheart": {
       "name": "@randsum/daggerheart",
       "version": "0.2.9",
       "dependencies": {
-        "@randsum/dice": "workspace:*",
+        "@randsum/roller": "workspace:*",
       },
     },
-    "gamePackages/root-rpg": {
+    "packages/roller": {
+      "name": "@randsum/roller",
+      "version": "0.2.9",
+      "bin": "./bin/randsum",
+    },
+    "packages/root-rpg": {
       "name": "@randsum/root-rpg",
       "version": "0.2.9",
       "dependencies": {
-        "@randsum/dice": "workspace:~",
+        "@randsum/roller": "workspace:~",
       },
     },
-    "gamePackages/salvageunion": {
+    "packages/salvageunion": {
       "name": "@randsum/salvageunion",
       "version": "0.2.9",
       "dependencies": {
-        "@randsum/dice": "workspace:~",
+        "@randsum/roller": "workspace:~",
       },
     },
   },
@@ -218,23 +198,19 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.7", "", {}, "sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg=="],
 
-    "@randsum/5e": ["@randsum/5e@workspace:gamePackages/5e"],
+    "@randsum/5e": ["@randsum/5e@workspace:packages/5e"],
 
-    "@randsum/blades": ["@randsum/blades@workspace:gamePackages/blades"],
+    "@randsum/blades": ["@randsum/blades@workspace:packages/blades"],
 
-    "@randsum/core": ["@randsum/core@workspace:corePackages/core"],
-
-    "@randsum/daggerheart": ["@randsum/daggerheart@workspace:gamePackages/daggerheart"],
-
-    "@randsum/dice": ["@randsum/dice@workspace:corePackages/dice"],
+    "@randsum/daggerheart": ["@randsum/daggerheart@workspace:packages/daggerheart"],
 
     "@randsum/mcp": ["@randsum/mcp@workspace:apps/mcp"],
 
-    "@randsum/notation": ["@randsum/notation@workspace:corePackages/notation"],
+    "@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
 
-    "@randsum/root-rpg": ["@randsum/root-rpg@workspace:gamePackages/root-rpg"],
+    "@randsum/root-rpg": ["@randsum/root-rpg@workspace:packages/root-rpg"],
 
-    "@randsum/salvageunion": ["@randsum/salvageunion@workspace:gamePackages/salvageunion"],
+    "@randsum/salvageunion": ["@randsum/salvageunion@workspace:packages/salvageunion"],
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.9.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw=="],
 
@@ -696,7 +672,7 @@
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
 
-    "zod": ["zod@3.25.69", "", {}, "sha512-cjUx+boz8dfYGssYKLGNTF5VUF6NETpcZCDTN3knhUUXQTAAvErzRhV3pgeCZm2YsL4HOwtEHPonlsshPu2I0A=="],
+    "zod": ["zod@3.25.71", "", {}, "sha512-BsBc/NPk7h8WsUWYWYL+BajcJPY8YhjelaWu2NMLuzgraKAz4Lb4/6K11g9jpuDetjMiqhZ6YaexFLOC0Ogi3Q=="],
 
     "zod-to-json-schema": ["zod-to-json-schema@3.24.6", "", { "peerDependencies": { "zod": "^3.24.1" } }, "sha512-h/z3PKvcTcTetyjl1fkj79MHNEjm+HpD6NXheWjzOekY7kV+lwDYnHw+ivHkijnCSMz1yJaWBD9vu/Fcmk+vEg=="],
 
