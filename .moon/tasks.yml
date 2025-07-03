@@ -43,7 +43,7 @@ tasks:
       cache: false
 
   publish:
-    command: 'bunx changeset publish'
+    command: 'bun publish --no-git-checks --access=public'
     options:
       runInCI: false
       allowFailure: true
