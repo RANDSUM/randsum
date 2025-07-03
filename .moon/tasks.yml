@@ -33,6 +33,39 @@ tasks:
     options:
       cache: false
 
+  format:
+    command: 'prettier --write . --ignore-path ../../.prettierignore  --config ../../.prettierrc'
+    inputs:
+      - 'src/**/*'
+      - '__tests__/**/*'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.json'
+      - '**/*.md'
+      - '.prettierrc'
+    options:
+      cache: false
+
+  formatCheck:
+    command: 'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc'
+    inputs:
+      - 'src/**/*'
+      - '__tests__/**/*'
+      - '**/*.ts'
+      - '**/*.js'
+      - '**/*.json'
+      - '**/*.md'
+      - '.prettierrc'
+    options:
+      cache: false
+
+  ci:
+    deps:
+      - 'tsCheck'
+      - 'test'
+      - 'lint'
+      - 'formatCheck'
+
   tsCheck:
     command: 'tsc --erasableSyntaxOnly'
     deps:
@@ -76,36 +109,3 @@ tasks:
       - 'lint'
       - 'tsCheck'
       - 'build'
-
-  format:
-    command: 'prettier --write . --ignore-path ../../.prettierignore  --config ../../.prettierrc'
-    inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
-      - '**/*.js'
-      - '**/*.json'
-      - '**/*.md'
-      - '.prettierrc'
-    options:
-      cache: false
-
-  formatCheck:
-    command: 'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc'
-    inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
-      - '**/*.js'
-      - '**/*.json'
-      - '**/*.md'
-      - '.prettierrc'
-    options:
-      cache: false
-
-  ci:
-    deps:
-      - 'tsCheck'
-      - 'test'
-      - 'lint'
-      - 'formatCheck'
