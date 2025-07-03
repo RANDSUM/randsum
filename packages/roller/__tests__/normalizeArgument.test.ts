@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { D } from '../src/D'
-import { normalizeArgument } from '../src/lib/normalizeArgument'
+import { normalizeArgument } from '../src/lib/utils/normalizeArgument'
 
 describe(normalizeArgument, () => {
   describe('given a number', () => {

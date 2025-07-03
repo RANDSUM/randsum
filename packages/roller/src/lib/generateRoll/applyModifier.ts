@@ -5,7 +5,7 @@ import {
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
-} from '../../modifiers'
+} from '../modifiers'
 import type { ModifierOptions, NumericRollBonus } from '../../types'
 
 export function applyModifier(

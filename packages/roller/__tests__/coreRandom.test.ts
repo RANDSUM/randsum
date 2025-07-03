@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { coreRandom, createSeededRandom } from '../src/lib/coreRandom'
+import { coreRandom, createSeededRandom } from '../src/lib/utils/coreRandom'
 
 describe('coreRandom', () => {
   describe('basic functionality', () => {

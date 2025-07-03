@@ -1,8 +1,18 @@
-import type { ValidationResult } from './types'
-import { isDiceNotation } from './guards'
-import { notationToOptions } from './utils/notationToOptions'
-import { optionsConverter } from './utils/optionsConverter'
-import { ModifierConflictError } from './errors'
+import type { DiceNotation, RollOptions, ValidationResult } from './types'
+import { isDiceNotation } from './lib/guards'
+import { OptionsConverter } from './lib/utils'
+import { ModifierConflictError } from './lib/errors'
+import {
+  CapModifier,
+  DropModifier,
+  ExplodeModifier,
+  MinusModifier,
+  PlusModifier,
+  ReplaceModifier,
+  RerollModifier,
+  UniqueModifier
+} from './lib/modifiers'
+import { coreNotationPattern } from './lib/patterns'
 
 export function validateNotation(notation: string): ValidationResult {
   if (!isDiceNotation(notation)) {
@@ -16,12 +26,13 @@ export function validateNotation(notation: string): ValidationResult {
 
   try {
     const digested = notationToOptions(notation)
+    const converter = new OptionsConverter(digested)
     return {
       valid: true,
       digested,
-      notation: optionsConverter.toNotation(digested),
+      notation: converter.toNotation,
       type: calculateDieType(digested.sides),
-      description: optionsConverter.toDescription(digested)
+      description: converter.toDescription
     } as ValidationResult
   } catch {
     const error = ModifierConflictError.forCustomDiceWithModifiers(notation)
@@ -39,4 +50,49 @@ function calculateDieType(sides: number | string[]): 'custom' | 'numeric' {
     return 'custom'
   }
   return 'numeric'
+}
+
+export function notationToOptions(notationString: DiceNotation): RollOptions {
+  const coreNotationMatch =
+    notationString.match(coreNotationPattern)?.at(0) ?? ''
+  const modifiersString = notationString.replace(coreNotationMatch, '')
+  const [quantityNot, sidesNot = ''] = coreNotationMatch.split(/[Dd]/)
+
+  const quantity = Number(quantityNot)
+  const sides = formatSides(sidesNot)
+
+  const modifiers = {
+    ...DropModifier.parse(modifiersString),
+    ...ExplodeModifier.parse(modifiersString),
+    ...UniqueModifier.parse(modifiersString),
+    ...ReplaceModifier.parse(modifiersString),
+    ...RerollModifier.parse(modifiersString),
+    ...CapModifier.parse(modifiersString),
+    ...PlusModifier.parse(modifiersString),
+    ...MinusModifier.parse(modifiersString)
+  }
+
+  if (Array.isArray(sides)) {
+    if (Object.keys(modifiers).length > 0) {
+      throw new Error('Custom dice cannot have modifiers')
+    }
+    return {
+      quantity,
+      sides,
+      modifiers: {}
+    }
+  }
+
+  return {
+    quantity,
+    sides,
+    modifiers
+  }
+}
+
+const formatSides = (sides: string): number | string[] => {
+  if (sides.includes('{')) {
+    return [...sides.replaceAll(/{|}/g, '')]
+  }
+  return Number(sides)
 }

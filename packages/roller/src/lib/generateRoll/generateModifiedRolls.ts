@@ -1,12 +1,12 @@
-import { isCustomRollParams } from '../../guards/isCustomRollParams'
+import { isCustomRollParams } from '../guards/isCustomRollParams'
 import type {
   NumericRollBonus,
   NumericRollOptions,
   RollParams,
   RollPoolResult
 } from '../../types'
-import { calculateTotal } from '../calculateTotal'
-import { coreRandom } from '../coreRandom'
+import { calculateTotal } from '../utils/calculateTotal'
+import { coreRandom } from '../utils/coreRandom'
 import { applyModifier } from './applyModifier'
 
 export function generateModifiedRolls(

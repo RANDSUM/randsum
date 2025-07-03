@@ -4,9 +4,9 @@ import type {
   RollParams,
   RollPoolResult
 } from '../../types'
-import { isCustomRollParams } from '../../guards/isCustomRollParams'
-import { calculateTotal } from '../calculateTotal'
-import { isNumericRollParams } from '../../guards/isNumericRollParams'
+import { isCustomRollParams } from '../guards/isCustomRollParams'
+import { calculateTotal } from '../utils/calculateTotal'
+import { isNumericRollParams } from '../guards/isNumericRollParams'
 import { generateModifiedRolls } from './generateModifiedRolls'
 import { generateRawRolls } from './generateRawRolls'
 
