@@ -8,6 +8,7 @@ dependsOn:
 tasks:
   tsCheck:
     deps:
+      - 'roller:build'
 
   build:
     command: 'tsc && chmod 755 dist/index.js'
