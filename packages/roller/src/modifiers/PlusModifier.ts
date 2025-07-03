@@ -1,5 +1,4 @@
 import type { ModifierOptions, NumericRollBonus } from '../types'
-import { extractMatches } from '../utils/extractMatches'
 import { BaseModifier } from './BaseModifier'
 
 export class PlusModifier extends BaseModifier<number> {
@@ -8,7 +7,7 @@ export class PlusModifier extends BaseModifier<number> {
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'plus'> => {
-    const notations = extractMatches(modifiersString, PlusModifier.pattern)
+    const notations = this.extractMatches(modifiersString, PlusModifier.pattern)
     if (notations.length === 0) {
       return {}
     }

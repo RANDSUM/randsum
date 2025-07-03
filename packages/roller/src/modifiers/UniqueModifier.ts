@@ -5,7 +5,7 @@ import type {
   RequiredNumericRollParameters,
   UniqueOptions
 } from '../types'
-import { extractMatches, formatters } from '../utils'
+import { formatters } from '../utils'
 import { BaseModifier } from './BaseModifier'
 
 export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
@@ -14,7 +14,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
   public static override parse(
     modifiersString: string
   ): Pick<ModifierOptions, 'unique'> {
-    return extractMatches(modifiersString, UniqueModifier.pattern).reduce<
+    return this.extractMatches(modifiersString, UniqueModifier.pattern).reduce<
       Pick<ModifierOptions, 'unique'>
     >((acc, notationString) => {
       if (notationString.toUpperCase() === 'U') {

@@ -5,7 +5,6 @@ import type {
   RequiredNumericRollParameters,
   RerollOptions
 } from '../types'
-import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
@@ -18,7 +17,10 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
   public static override parse(
     modifiersString: string
   ): Pick<ModifierOptions, 'reroll'> {
-    const notations = extractMatches(modifiersString, RerollModifier.pattern)
+    const notations = this.extractMatches(
+      modifiersString,
+      RerollModifier.pattern
+    )
     if (notations.length === 0) {
       return {}
     }

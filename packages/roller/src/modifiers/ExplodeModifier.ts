@@ -3,7 +3,6 @@ import type {
   NumericRollBonus,
   RequiredNumericRollParameters
 } from '../types'
-import { extractMatches } from '../utils/extractMatches'
 import { BaseModifier } from './BaseModifier'
 
 export class ExplodeModifier extends BaseModifier<boolean> {
@@ -12,7 +11,10 @@ export class ExplodeModifier extends BaseModifier<boolean> {
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'explode'> => {
-    const notations = extractMatches(modifiersString, ExplodeModifier.pattern)
+    const notations = this.extractMatches(
+      modifiersString,
+      ExplodeModifier.pattern
+    )
     if (notations.length === 0) {
       return {}
     }

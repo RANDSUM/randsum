@@ -4,7 +4,6 @@ import type {
   NumericRollBonus,
   ReplaceOptions
 } from '../types'
-import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 import { CapModifier } from './CapModifier'
@@ -19,7 +18,10 @@ export class ReplaceModifier extends BaseModifier<
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'replace'> => {
-    const notations = extractMatches(modifiersString, ReplaceModifier.pattern)
+    const notations = this.extractMatches(
+      modifiersString,
+      ReplaceModifier.pattern
+    )
     if (notations.length === 0) {
       return {}
     }

@@ -1,5 +1,4 @@
 import type { DropOptions, ModifierOptions, NumericRollBonus } from '../types'
-import { extractMatches } from '../utils/extractMatches'
 import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
@@ -103,13 +102,13 @@ export class DropModifier extends BaseModifier<DropOptions> {
     modifiersString: string
   ): Pick<ModifierOptions, 'drop'> => {
     const dropHighModifiers = DropModifier.parseHigh(
-      extractMatches(modifiersString, DropModifier.highestPattern)
+      this.extractMatches(modifiersString, DropModifier.highestPattern)
     )
     const dropLowModifiers = DropModifier.parseLow(
-      extractMatches(modifiersString, DropModifier.lowestPattern)
+      this.extractMatches(modifiersString, DropModifier.lowestPattern)
     )
     const dropConstraintsModifiers = DropModifier.parseConstraints(
-      extractMatches(modifiersString, DropModifier.constraintsPattern)
+      this.extractMatches(modifiersString, DropModifier.constraintsPattern)
     )
 
     const rawDropModifiers = {
