@@ -1,5 +1,4 @@
 import type { DropOptions, ModifierOptions, NumericRollBonus } from '../types'
-import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
 export class DropModifier extends BaseModifier<DropOptions> {
@@ -9,9 +8,9 @@ export class DropModifier extends BaseModifier<DropOptions> {
     /[Dd]/.source + /{(?:[<>]?\d+,)*[<>]?\d+}/.source,
     'g'
   )
-  public static parseConstraints = (
+  public static parseConstraints(
     notations: string[]
-  ): Pick<ModifierOptions, 'drop'> => {
+  ): Pick<ModifierOptions, 'drop'> {
     if (notations.length === 0) {
       return {}
     }
@@ -176,13 +175,13 @@ export class DropModifier extends BaseModifier<DropOptions> {
       dropList.push(`Drop lowest`)
 
     if (this.options.exact) {
-      const exact = formatters.humanList(this.options.exact)
+      const exact = this.formatHumanList(this.options.exact)
       dropList.push(`Drop ${String(exact)}`)
     }
 
-    formatters.greaterLess
-      .descriptions(this.options)
-      .forEach((str) => dropList.push(`Drop ${String(str)}`))
+    this.formatGreaterLessDescription(this.options).forEach((str) =>
+      dropList.push(`Drop ${String(str)}`)
+    )
 
     return dropList
   }
@@ -190,7 +189,7 @@ export class DropModifier extends BaseModifier<DropOptions> {
   public toNotation(): string | undefined {
     if (this.options === undefined) return undefined
     const dropList: string[] = []
-    const greaterLess = formatters.greaterLess.notation(this.options)
+    const greaterLess = this.formatGreaterLessNotation(this.options)
     greaterLess.forEach((str) => dropList.push(str))
     if (this.options.exact) {
       this.options.exact.forEach((roll) => {

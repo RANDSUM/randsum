@@ -5,7 +5,6 @@ import type {
   RequiredNumericRollParameters,
   RerollOptions
 } from '../types'
-import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
 export class RerollModifier extends BaseModifier<RerollOptions> {
@@ -110,11 +109,11 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
         rerollList.push(String(roll))
       })
     }
-    const greaterLess = formatters.greaterLess
-      .descriptions(this.options)
-      .join(' and ')
+    const greaterLess = this.formatGreaterLessDescription(this.options).join(
+      ' and '
+    )
 
-    const exactList = formatters.humanList(rerollList)
+    const exactList = this.formatHumanList(rerollList)
 
     const exactString = [exactList, greaterLess]
       .filter((i) => i !== '')
@@ -139,7 +138,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
         rerollList.push(String(roll))
       })
     }
-    const greaterLess = formatters.greaterLess.notation(this.options)
+    const greaterLess = this.formatGreaterLessNotation(this.options)
     if (greaterLess.length > 0) {
       rerollList.push(greaterLess.join(','))
     }

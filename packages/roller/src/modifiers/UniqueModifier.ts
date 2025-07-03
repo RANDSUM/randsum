@@ -5,7 +5,6 @@ import type {
   RequiredNumericRollParameters,
   UniqueOptions
 } from '../types'
-import { formatters } from '../utils'
 import { BaseModifier } from './BaseModifier'
 
 export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
@@ -95,9 +94,5 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
       return []
     }
     return this.options.notUnique.map(Number)
-  }
-
-  private formatHumanList(list: number[]): string {
-    return formatters.humanList(list)
   }
 }

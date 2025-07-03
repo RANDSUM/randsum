@@ -4,7 +4,7 @@ import type {
   NumericRollBonus,
   ReplaceOptions
 } from '../types'
-import { formatters } from '../utils/formatters'
+
 import { BaseModifier } from './BaseModifier'
 import { CapModifier } from './CapModifier'
 
@@ -111,7 +111,7 @@ export class ReplaceModifier extends BaseModifier<
 
   private extractFromValue = (from: number | ComparisonOptions): string => {
     if (typeof from === 'number') return `[${String(from)}]`
-    return formatters.greaterLess.descriptions(from).join(' and ')
+    return this.formatGreaterLessDescription(from).join(' and ')
   }
 
   private replaceArgs = (
@@ -130,6 +130,6 @@ export class ReplaceModifier extends BaseModifier<
     from: number | ComparisonOptions
   ): string | number => {
     if (typeof from === 'number') return from
-    return formatters.greaterLess.notation(from).join(',')
+    return this.formatGreaterLessNotation(from).join(',')
   }
 }

@@ -3,7 +3,6 @@ import type {
   ModifierOptions,
   NumericRollBonus
 } from '../types'
-import { formatters } from '../utils/formatters'
 import { BaseModifier } from './BaseModifier'
 
 export class CapModifier extends BaseModifier<ComparisonOptions> {
@@ -78,16 +77,16 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
     }
   }
 
-  public toDescription = (): string[] | undefined => {
+  public toDescription(): string[] | undefined {
     if (this.options === undefined) return undefined
-    return formatters.greaterLess
-      .descriptions(this.options)
-      .map((str) => `No Rolls ${String(str)}`)
+    return this.formatGreaterLessDescription(this.options).map(
+      (str) => `No Rolls ${String(str)}`
+    )
   }
 
   public toNotation = (): string | undefined => {
     if (this.options === undefined) return undefined
-    const capList = formatters.greaterLess.notation(this.options)
+    const capList = this.formatGreaterLessNotation(this.options)
     return `C{${capList.join(',')}}`
   }
 }
