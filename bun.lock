@@ -31,13 +31,6 @@
         "zod": "^3.25.71",
       },
     },
-    "packages/5e": {
-      "name": "@randsum/5e",
-      "version": "0.2.9",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
     "packages/blades": {
       "name": "@randsum/blades",
       "version": "0.2.9",
@@ -50,6 +43,13 @@
       "version": "0.2.9",
       "dependencies": {
         "@randsum/roller": "workspace:*",
+      },
+    },
+    "packages/fifth": {
+      "name": "@randsum/fifth",
+      "version": "0.2.9",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
       },
     },
     "packages/roller": {
@@ -198,11 +198,11 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.7", "", {}, "sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg=="],
 
-    "@randsum/5e": ["@randsum/5e@workspace:packages/5e"],
-
     "@randsum/blades": ["@randsum/blades@workspace:packages/blades"],
 
     "@randsum/daggerheart": ["@randsum/daggerheart@workspace:packages/daggerheart"],
+
+    "@randsum/fifth": ["@randsum/fifth@workspace:packages/fifth"],
 
     "@randsum/mcp": ["@randsum/mcp@workspace:apps/mcp"],
 
