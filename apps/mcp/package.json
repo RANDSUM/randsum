@@ -1,6 +1,6 @@
 {
   "name": "@randsum/mcp",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Model Context Protocol server for RANDSUM dice rolling and game mechanics",
   "private": false,
   "author": {

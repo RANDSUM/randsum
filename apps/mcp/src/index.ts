@@ -180,7 +180,7 @@ function createServerInstance(): McpServer {
   const server = new McpServer(
     {
       name: 'RANDSUM',
-      version: '0.2.6'
+      version: '0.2.9'
     },
     {
       instructions: `🎲 RANDSUM MCP Server - Advanced Dice Rolling & Game Mechanics Engine
