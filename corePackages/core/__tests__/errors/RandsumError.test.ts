@@ -4,6 +4,7 @@ import {
   RandsumError,
   type RandsumErrorCode
 } from '../../src/errors/randsumError'
+import { createErrorContext } from '../support/fixtures'
 
 describe('RandsumError', () => {
   describe('constructor', () => {
@@ -21,12 +22,12 @@ describe('RandsumError', () => {
     })
 
     test('creates error with full parameters', () => {
-      const context = {
+      const context = createErrorContext({
         input: '4d6x',
         expected: 'Valid notation',
         location: 'test location',
         details: { custom: 'data' }
-      }
+      })
       const suggestions = ['Try this', 'Or that']
       const error = new RandsumError(
         'Full error',
@@ -59,9 +60,13 @@ describe('RandsumError', () => {
     })
 
     test('includes input when provided', () => {
-      const error = new RandsumError('Error with input', 'INVALID_NOTATION', {
-        input: '4d6x'
-      })
+      const error = new RandsumError(
+        'Error with input',
+        'INVALID_NOTATION',
+        createErrorContext({
+          input: '4d6x'
+        })
+      )
       const result = error.toString()
 
       expect(result).toContain(
@@ -74,9 +79,9 @@ describe('RandsumError', () => {
       const error = new RandsumError(
         'Error with expected',
         'VALIDATION_ERROR',
-        {
+        createErrorContext({
           expected: 'Valid format'
-        }
+        })
       )
       const result = error.toString()
 
@@ -87,9 +92,9 @@ describe('RandsumError', () => {
       const error = new RandsumError(
         'Error with location',
         'VALIDATION_ERROR',
-        {
+        createErrorContext({
           location: 'dice parsing'
-        }
+        })
       )
       const result = error.toString()
 
@@ -114,11 +119,11 @@ describe('RandsumError', () => {
       const error = new RandsumError(
         'Complete error',
         'INVALID_NOTATION',
-        {
+        createErrorContext({
           input: '4d6x',
           expected: 'Valid notation',
           location: 'notation parsing'
-        },
+        }),
         ['Use 4d6E instead', 'Check documentation']
       )
       const result = error.toString()
@@ -135,10 +140,14 @@ describe('RandsumError', () => {
     })
 
     test('handles undefined input correctly', () => {
-      const error = new RandsumError('Test', 'VALIDATION_ERROR', {
-        input: undefined,
-        expected: 'Something'
-      })
+      const error = new RandsumError(
+        'Test',
+        'VALIDATION_ERROR',
+        createErrorContext({
+          input: undefined,
+          expected: 'Something'
+        })
+      )
       const result = error.toString()
 
       expect(result).not.toContain('Input:')
@@ -147,9 +156,13 @@ describe('RandsumError', () => {
 
     test('handles complex input objects', () => {
       const complexInput = { notation: '4d6', modifiers: ['H', 'L'] }
-      const error = new RandsumError('Complex input', 'VALIDATION_ERROR', {
-        input: complexInput
-      })
+      const error = new RandsumError(
+        'Complex input',
+        'VALIDATION_ERROR',
+        createErrorContext({
+          input: complexInput
+        })
+      )
       const result = error.toString()
 
       expect(result).toContain(

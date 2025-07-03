@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { RerollModifier } from '../../src/modifiers/RerollModifier'
-import type {
-  NumericRollBonus,
-  RequiredNumericRollParameters
-} from '../../src/types'
+import {
+  createMockRollOne,
+  createNumericRollBonus,
+  createRequiredNumericRollParameters
+} from '../support/fixtures'
 
 describe('RerollModifier', () => {
   describe('static pattern', () => {
@@ -55,19 +56,16 @@ describe('RerollModifier', () => {
   })
 
   describe('apply', () => {
-    const mockRollOne = (): number => 4
+    const mockRollOne = createMockRollOne()
 
     test('rerolls exact values', () => {
       const modifier = new RerollModifier({ exact: [1, 2] })
-      const bonus: NumericRollBonus = {
-        rolls: [1, 3, 2],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1, 3, 2]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 3
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([4, 3, 4])
@@ -83,15 +81,12 @@ describe('RerollModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new RerollModifier(undefined)
-      const bonus: NumericRollBonus = {
-        rolls: [1, 3, 5],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1, 3, 5]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 3
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result).toBe(bonus)
@@ -99,15 +94,13 @@ describe('RerollModifier', () => {
 
     test('rerolls values greater than threshold', () => {
       const modifier = new RerollModifier({ greaterThan: 18 })
-      const bonus: NumericRollBonus = {
-        rolls: [15, 19, 20, 10],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
+      const bonus = createNumericRollBonus({
+        rolls: [15, 19, 20, 10]
+      })
+      const params = createRequiredNumericRollParameters({
         sides: 20,
         quantity: 4
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([15, 4, 4, 10])
@@ -123,15 +116,12 @@ describe('RerollModifier', () => {
 
     test('rerolls values less than threshold', () => {
       const modifier = new RerollModifier({ lessThan: 3 })
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2, 3, 4],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1, 2, 3, 4]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 4
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([4, 4, 3, 4])
@@ -153,15 +143,12 @@ describe('RerollModifier', () => {
       }
 
       const modifier = new RerollModifier({ exact: [1], max: 2 })
-      const bonus: NumericRollBonus = {
-        rolls: [1],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 1
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOneWithLimit)
 
@@ -185,15 +172,12 @@ describe('RerollModifier', () => {
       }
 
       const modifier = new RerollModifier({ exact: [1] })
-      const bonus: NumericRollBonus = {
-        rolls: [1],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 1
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOneInfinite)
 
@@ -215,15 +199,13 @@ describe('RerollModifier', () => {
         lessThan: 3,
         greaterThan: 18
       })
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2, 6, 10, 19, 20],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
+      const bonus = createNumericRollBonus({
+        rolls: [1, 2, 6, 10, 19, 20]
+      })
+      const params = createRequiredNumericRollParameters({
         sides: 20,
         quantity: 6
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOne)
 
@@ -246,15 +228,12 @@ describe('RerollModifier', () => {
       }
 
       const modifier = new RerollModifier({ exact: [1] })
-      const bonus: NumericRollBonus = {
-        rolls: [1, 1, 1],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1, 1, 1]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 3
-      }
+      })
 
       const startTime = performance.now()
       const result = modifier.apply(bonus, params, mockRollOnePerformance)
@@ -274,11 +253,9 @@ describe('RerollModifier', () => {
 
     test('handles undefined options in nested calls', () => {
       const modifier = new RerollModifier(undefined)
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2, 3],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus({
+        rolls: [1, 2, 3]
+      })
 
       const result = modifier.apply(bonus, undefined, mockRollOne)
       expect(result).toBe(bonus)

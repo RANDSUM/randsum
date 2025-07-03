@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import { UniqueModifier } from '../../src/modifiers/UniqueModifier'
-import type {
-  NumericRollBonus,
-  RequiredNumericRollParameters
-} from '../../src/types'
 import { RandsumError } from '../../src/errors'
+import {
+  createMockRollOne,
+  createNumericRollBonus,
+  createRequiredNumericRollParameters
+} from '../support/fixtures'
 
 describe('UniqueModifier', () => {
   describe('static pattern', () => {
@@ -45,31 +46,16 @@ describe('UniqueModifier', () => {
   })
 
   describe('apply', () => {
-    const mockRollSequence = [4, 5, 6]
-    let rollIndex = 0
-    const mockRollOne = (): number => {
-      const value = mockRollSequence[rollIndex % mockRollSequence.length]
-      rollIndex++
-      return Number(value)
-    }
-
-    beforeEach(() => {
-      rollIndex = 0
-    })
-
     test('ensures all values are unique', () => {
       const modifier = new UniqueModifier(true)
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2, 1],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1, 2, 1]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 3
-      }
+      })
 
-      const result = modifier.apply(bonus, params, mockRollOne)
+      const result = modifier.apply(bonus, params, createMockRollOne())
       expect(result.rolls).toEqual([1, 2, 4])
 
       expect(result.logs).toHaveLength(1)
@@ -83,17 +69,14 @@ describe('UniqueModifier', () => {
 
     test('allows specified values to be duplicated', () => {
       const modifier = new UniqueModifier({ notUnique: [1] })
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2, 1, 2],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1, 2, 1, 2]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 4
-      }
+      })
 
-      const result = modifier.apply(bonus, params, mockRollOne)
+      const result = modifier.apply(bonus, params, createMockRollOne())
       expect(result.rolls).toEqual([1, 2, 1, 4])
 
       expect(result.logs).toHaveLength(1)
@@ -107,34 +90,29 @@ describe('UniqueModifier', () => {
 
     test('throws RandsumError when more rolls than sides', () => {
       const modifier = new UniqueModifier(true)
-      const bonus: NumericRollBonus = {
-        rolls: [1, 2, 3],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
+      const bonus = createNumericRollBonus({
+        rolls: [1, 2, 3]
+      })
+      const params = createRequiredNumericRollParameters({
         sides: 2,
         quantity: 3
-      }
+      })
 
       expect(() => {
-        modifier.apply(bonus, params, mockRollOne)
+        modifier.apply(bonus, params, createMockRollOne())
       }).toThrow(RandsumError)
     })
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new UniqueModifier(undefined)
-      const bonus: NumericRollBonus = {
-        rolls: [1, 1, 2],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [1, 1, 2]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 3
-      }
+      })
 
-      const result = modifier.apply(bonus, params, mockRollOne)
+      const result = modifier.apply(bonus, params, createMockRollOne())
       expect(result).toBe(bonus)
     })
   })

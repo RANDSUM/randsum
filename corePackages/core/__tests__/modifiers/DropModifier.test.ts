@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { DropModifier } from '../../src/modifiers/DropModifier'
-import type { NumericRollBonus } from '../../src/types'
+import { createNumericRollBonus } from '../support/fixtures'
 
 describe('DropModifier', () => {
   describe('static patterns', () => {
@@ -88,11 +88,7 @@ describe('DropModifier', () => {
   describe('apply', () => {
     test('drops lowest values', () => {
       const modifier = new DropModifier({ lowest: 1 })
-      const bonus: NumericRollBonus = {
-        rolls: [5, 10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus()
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 15])
@@ -108,11 +104,7 @@ describe('DropModifier', () => {
 
     test('drops highest values', () => {
       const modifier = new DropModifier({ highest: 1 })
-      const bonus: NumericRollBonus = {
-        rolls: [5, 10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus()
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 10])
@@ -128,11 +120,7 @@ describe('DropModifier', () => {
 
     test('drops exact values', () => {
       const modifier = new DropModifier({ exact: [10] })
-      const bonus: NumericRollBonus = {
-        rolls: [5, 10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus()
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 15])
@@ -148,11 +136,7 @@ describe('DropModifier', () => {
 
     test('drops values greater than limit', () => {
       const modifier = new DropModifier({ greaterThan: 10 })
-      const bonus: NumericRollBonus = {
-        rolls: [5, 10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus()
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 10])
@@ -168,11 +152,7 @@ describe('DropModifier', () => {
 
     test('drops values less than limit', () => {
       const modifier = new DropModifier({ lessThan: 10 })
-      const bonus: NumericRollBonus = {
-        rolls: [5, 10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus()
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 15])
@@ -188,11 +168,7 @@ describe('DropModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new DropModifier(undefined)
-      const bonus: NumericRollBonus = {
-        rolls: [5, 10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus()
 
       const result = modifier.apply(bonus)
       expect(result).toBe(bonus)

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { CapModifier } from '../../src/modifiers/CapModifier'
-import type { NumericRollBonus } from '../../src/types'
+import { createNumericRollBonus } from '../support/fixtures'
 
 describe('CapModifier', () => {
   describe('static pattern', () => {
@@ -48,11 +48,9 @@ describe('CapModifier', () => {
   describe('apply', () => {
     test('caps values greater than specified limit', () => {
       const modifier = new CapModifier({ greaterThan: 15 })
-      const bonus: NumericRollBonus = {
-        rolls: [10, 20],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus({
+        rolls: [10, 20]
+      })
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([10, 15])
@@ -68,11 +66,9 @@ describe('CapModifier', () => {
 
     test('caps values less than specified limit', () => {
       const modifier = new CapModifier({ lessThan: 15 })
-      const bonus: NumericRollBonus = {
-        rolls: [10, 20],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus({
+        rolls: [10, 20]
+      })
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([15, 20])
@@ -88,11 +84,9 @@ describe('CapModifier', () => {
 
     test('caps values with both limits', () => {
       const modifier = new CapModifier({ greaterThan: 18, lessThan: 5 })
-      const bonus: NumericRollBonus = {
-        rolls: [3, 10, 20],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus({
+        rolls: [3, 10, 20]
+      })
 
       const result = modifier.apply(bonus)
       expect(result.rolls).toEqual([5, 10, 18])
@@ -108,11 +102,9 @@ describe('CapModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new CapModifier(undefined)
-      const bonus: NumericRollBonus = {
-        rolls: [10, 20],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus({
+        rolls: [10, 20]
+      })
 
       const result = modifier.apply(bonus)
       expect(result).toBe(bonus)

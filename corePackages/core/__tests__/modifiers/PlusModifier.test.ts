@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { PlusModifier } from '../../src/modifiers/PlusModifier'
-import type { NumericRollBonus } from '../../src/types'
+import { createNumericRollBonus } from '../support/fixtures'
 
 describe('PlusModifier', () => {
   describe('static pattern', () => {
@@ -42,11 +42,9 @@ describe('PlusModifier', () => {
   describe('apply', () => {
     test('adds value to simpleMathModifier', () => {
       const modifier = new PlusModifier(5)
-      const bonus: NumericRollBonus = {
-        rolls: [10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus({
+        rolls: [10, 15]
+      })
 
       const result = modifier.apply(bonus)
       expect(result.simpleMathModifier).toBe(5)
@@ -62,11 +60,10 @@ describe('PlusModifier', () => {
 
     test('adds to existing simpleMathModifier', () => {
       const modifier = new PlusModifier(5)
-      const bonus: NumericRollBonus = {
+      const bonus = createNumericRollBonus({
         rolls: [10, 15],
-        simpleMathModifier: 3,
-        logs: []
-      }
+        simpleMathModifier: 3
+      })
 
       const result = modifier.apply(bonus)
       expect(result.simpleMathModifier).toBe(5)
@@ -82,11 +79,9 @@ describe('PlusModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new PlusModifier(undefined)
-      const bonus: NumericRollBonus = {
-        rolls: [10, 15],
-        simpleMathModifier: 0,
-        logs: []
-      }
+      const bonus = createNumericRollBonus({
+        rolls: [10, 15]
+      })
 
       const result = modifier.apply(bonus)
       expect(result).toBe(bonus)

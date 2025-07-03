@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { ExplodeModifier } from '../../src/modifiers/ExplodeModifier'
-import type {
-  NumericRollBonus,
-  RequiredNumericRollParameters
-} from '../../src/types'
+import {
+  createMockRollOne,
+  createNumericRollBonus,
+  createRequiredNumericRollParameters
+} from '../support/fixtures'
 
 describe('ExplodeModifier', () => {
   describe('static pattern', () => {
@@ -39,19 +40,16 @@ describe('ExplodeModifier', () => {
   })
 
   describe('apply', () => {
-    const mockRollOne = (): number => 3
+    const mockRollOne = createMockRollOne(3)
 
     test('adds additional rolls for maximum values', () => {
       const modifier = new ExplodeModifier(true)
-      const bonus: NumericRollBonus = {
-        rolls: [6, 4],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [6, 4]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 2
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result.rolls).toEqual([6, 4, 3])
@@ -67,15 +65,12 @@ describe('ExplodeModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new ExplodeModifier(undefined)
-      const bonus: NumericRollBonus = {
-        rolls: [5, 6],
-        simpleMathModifier: 0,
-        logs: []
-      }
-      const params: RequiredNumericRollParameters = {
-        sides: 6,
+      const bonus = createNumericRollBonus({
+        rolls: [5, 6]
+      })
+      const params = createRequiredNumericRollParameters({
         quantity: 2
-      }
+      })
 
       const result = modifier.apply(bonus, params, mockRollOne)
       expect(result).toBe(bonus)
