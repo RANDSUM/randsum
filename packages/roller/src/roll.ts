@@ -11,7 +11,7 @@ import {
   generateRoll,
   normalizeArgument,
   rollType
-} from './lib/utils'
+} from './lib'
 import { isRollResult } from './lib/guards/isRollResult'
 
 function roll(...args: NumericRollArgument[]): NumericRollResult
