@@ -13,6 +13,7 @@
     "lint:fix": "bunx moon :lint -- --fix",
     "format": "bunx moon :format",
     "format:check": "bunx moon :formatCheck",
+    "style:fix": "bunx moon :lint && bunx moon :format",
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
