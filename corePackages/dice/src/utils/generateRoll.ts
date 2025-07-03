@@ -2,9 +2,9 @@ import { isNumericRollOptions } from '@randsum/core'
 import type {
   NumericRollOptions,
   RollParams,
-  SingleCustomRollResult,
-  SingleNumericRollResult,
-  SingleRollResult
+  CustomRollPoolResult,
+  NumericRollPoolResult,
+  RollPoolResult
 } from '../types'
 import {
   CapModifier,
@@ -22,7 +22,7 @@ import { calculateTotal } from './calculateTotal'
 import { coreRandom } from './coreRandom'
 import { isNumericRollParams } from '../guards/isNumericRollParams'
 
-function generateRoll(parameters: RollParams): SingleRollResult {
+function generateRoll(parameters: RollParams): RollPoolResult {
   const rawRolls = generateRawRolls(parameters)
   const modifiedRolls = generateModifiedRolls(parameters, rawRolls)
   const rawResult = calculateTotal(rawRolls)
@@ -39,7 +39,7 @@ function generateRoll(parameters: RollParams): SingleRollResult {
       modifiedRolls,
       total: modifiedRolls.total,
       type: 'numeric'
-    } as SingleNumericRollResult
+    } as NumericRollPoolResult
   }
   if (
     rawRolls.every((n) => typeof n === 'string') &&
@@ -54,14 +54,14 @@ function generateRoll(parameters: RollParams): SingleRollResult {
       modifiedRolls,
       total: calculateTotal(modifiedRolls.rolls),
       type: 'custom'
-    } as SingleCustomRollResult
+    } as CustomRollPoolResult
   }
   throw new Error('Mixed rolls are not supported yet')
 }
 
 function generateRawRolls({
   options
-}: RollParams): SingleRollResult['rawRolls'] {
+}: RollParams): RollPoolResult['rawRolls'] {
   const quantity = options.quantity ?? 1
 
   if (isNumericRollOptions(options)) {
@@ -75,8 +75,8 @@ export { generateRoll }
 
 function generateModifiedRolls(
   parameters: RollParams,
-  rolls: SingleRollResult['rawRolls']
-): SingleRollResult['modifiedRolls'] {
+  rolls: RollPoolResult['rawRolls']
+): RollPoolResult['modifiedRolls'] {
   if (
     isCustomRollParams(parameters) &&
     rolls.every((n) => typeof n === 'string')
@@ -84,7 +84,7 @@ function generateModifiedRolls(
     return {
       total: calculateTotal(rolls),
       rolls
-    } as SingleCustomRollResult['modifiedRolls']
+    } as CustomRollPoolResult['modifiedRolls']
   }
 
   if (!rolls.every((n) => typeof n === 'number')) {
@@ -101,7 +101,7 @@ function generateModifiedRolls(
     return {
       total: calculateTotal(rolls),
       rolls: rolls.map((n) => Number(n))
-    } as SingleNumericRollResult['modifiedRolls']
+    } as NumericRollPoolResult['modifiedRolls']
   }
 
   const rollOne = (): number => coreRandom(sides)
@@ -180,7 +180,7 @@ function generateModifiedRolls(
   return {
     rolls: bonuses.rolls,
     total: calculateTotal(bonuses.rolls, bonuses.simpleMathModifier)
-  } as SingleNumericRollResult['modifiedRolls']
+  } as NumericRollPoolResult['modifiedRolls']
 }
 
 function applyModifier(
