@@ -34,40 +34,40 @@
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "0.3.1",
+      "version": "0.3.5",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "0.3.1",
+      "version": "0.3.5",
       "dependencies": {
         "@randsum/roller": "workspace:*",
       },
     },
     "packages/fifth": {
       "name": "@randsum/fifth",
-      "version": "0.3.2",
+      "version": "0.3.5",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "0.2.10",
+      "version": "0.2.11",
       "bin": "./bin/randsum",
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.3.1",
+      "version": "0.3.5",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.3.1",
+      "version": "0.3.5",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
