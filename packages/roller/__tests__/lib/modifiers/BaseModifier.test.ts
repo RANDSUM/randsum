@@ -1,5 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
-import { BaseModifier } from '../../../src/lib/modifiers/BaseModifier'
+import { BaseModifier } from '../../../src/lib'
 import type { NumericRollBonus } from '../../../src/types'
 
 class TestModifier extends BaseModifier<number> {

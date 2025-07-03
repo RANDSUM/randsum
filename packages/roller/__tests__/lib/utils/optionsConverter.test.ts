@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { OptionsConverter } from '../../../src/lib/utils/optionsConverter'
+import { OptionsConverter } from '../../../src/lib'
 import {
   createCustomRollOptions,
   createNumericRollOptions

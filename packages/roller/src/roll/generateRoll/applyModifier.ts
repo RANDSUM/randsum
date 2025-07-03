@@ -1,4 +1,4 @@
-import type { ModifierOptions, NumericRollBonus } from '../../../types'
+import type { ModifierOptions, NumericRollBonus } from '../../types'
 import {
   CapModifier,
   DropModifier,
@@ -6,7 +6,7 @@ import {
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
-} from '../../modifiers'
+} from '../../lib'
 
 export function applyModifier(
   key: keyof ModifierOptions,

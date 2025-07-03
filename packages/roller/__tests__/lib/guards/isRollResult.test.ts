@@ -4,7 +4,7 @@ import {
   isCustomResult,
   isMixedResult,
   isNumericResult
-} from '../../../src/lib/guards/isRollResult'
+} from '../../../src/lib'
 
 describe('Roll Result Type Guards', () => {
   describe('isNumericResult', () => {

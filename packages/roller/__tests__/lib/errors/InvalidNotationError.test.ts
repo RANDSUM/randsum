@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { InvalidNotationError } from '../../../src/lib/errors/invalidNotationError'
-import { RandsumError } from '../../../src/lib/errors/randsumError'
+import { InvalidNotationError, RandsumError } from '../../../src/lib'
 
 describe('InvalidNotationError', () => {
   describe('constructor', () => {

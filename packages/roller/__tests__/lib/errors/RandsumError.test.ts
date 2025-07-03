@@ -3,7 +3,7 @@ import {
   type ErrorContext,
   RandsumError,
   type RandsumErrorCode
-} from '../../../src/lib/errors/randsumError'
+} from '../../../src/lib'
 import { createErrorContext } from '../../support/fixtures'
 
 describe('RandsumError', () => {

@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { ModifierConflictError } from '../../../src/lib/errors/modifierConflictError'
-import { RandsumError } from '../../../src/lib/errors/randsumError'
+import { ModifierConflictError, RandsumError } from '../../../src/lib'
 
 describe('ModifierConflictError', () => {
   describe('constructor', () => {
