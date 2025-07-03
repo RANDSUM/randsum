@@ -44,7 +44,8 @@ describe('MinusModifier', () => {
       const modifier = new MinusModifier(5)
       const bonus: NumericRollBonus = {
         rolls: [10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -55,7 +56,8 @@ describe('MinusModifier', () => {
       const modifier = new MinusModifier(5)
       const bonus: NumericRollBonus = {
         rolls: [10, 15],
-        simpleMathModifier: 3
+        simpleMathModifier: 3,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -66,7 +68,8 @@ describe('MinusModifier', () => {
       const modifier = new MinusModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)

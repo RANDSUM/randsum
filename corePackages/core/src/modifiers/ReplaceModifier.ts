@@ -59,7 +59,7 @@ export class ReplaceModifier extends BaseModifier<
     return { replace }
   }
 
-  public apply = (bonus: NumericRollBonus): NumericRollBonus => {
+  public apply(bonus: NumericRollBonus): NumericRollBonus {
     if (this.options === undefined) return bonus
     let replaceRolls = bonus.rolls
     const parameters = [this.options].flat()
@@ -76,9 +76,15 @@ export class ReplaceModifier extends BaseModifier<
       })
     })
 
+    const logs = [
+      ...bonus.logs,
+      this.toModifierLog('replace', bonus.rolls, replaceRolls)
+    ]
+
     return {
       ...bonus,
-      rolls: replaceRolls
+      rolls: replaceRolls,
+      logs
     }
   }
 

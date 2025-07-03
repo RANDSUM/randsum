@@ -62,9 +62,15 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
       return newRoll
     })
 
+    const logs = [
+      ...bonus.logs,
+      this.toModifierLog('unique', bonus.rolls, uniqueRolls)
+    ]
+
     return {
       ...bonus,
-      rolls: uniqueRolls
+      rolls: uniqueRolls,
+      logs
     }
   }
 

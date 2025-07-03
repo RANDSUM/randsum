@@ -50,7 +50,8 @@ describe('CapModifier', () => {
       const modifier = new CapModifier({ greaterThan: 15 })
       const bonus: NumericRollBonus = {
         rolls: [10, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -61,7 +62,8 @@ describe('CapModifier', () => {
       const modifier = new CapModifier({ lessThan: 15 })
       const bonus: NumericRollBonus = {
         rolls: [10, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -72,7 +74,8 @@ describe('CapModifier', () => {
       const modifier = new CapModifier({ greaterThan: 18, lessThan: 5 })
       const bonus: NumericRollBonus = {
         rolls: [3, 10, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -83,7 +86,8 @@ describe('CapModifier', () => {
       const modifier = new CapModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [10, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)

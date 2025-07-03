@@ -59,7 +59,8 @@ describe('ReplaceModifier', () => {
       const modifier = new ReplaceModifier({ from: 1, to: 10 })
       const bonus: NumericRollBonus = {
         rolls: [1, 3, 1],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -73,7 +74,8 @@ describe('ReplaceModifier', () => {
       })
       const bonus: NumericRollBonus = {
         rolls: [10, 16, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -84,7 +86,8 @@ describe('ReplaceModifier', () => {
       const modifier = new ReplaceModifier({ from: { lessThan: 10 }, to: 10 })
       const bonus: NumericRollBonus = {
         rolls: [5, 10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -98,7 +101,8 @@ describe('ReplaceModifier', () => {
       ])
       const bonus: NumericRollBonus = {
         rolls: [1, 10, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -109,7 +113,8 @@ describe('ReplaceModifier', () => {
       const modifier = new ReplaceModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [1, 10, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -120,7 +125,8 @@ describe('ReplaceModifier', () => {
       const modifier = new ReplaceModifier([])
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 3],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -135,7 +141,8 @@ describe('ReplaceModifier', () => {
       ])
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 3],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -149,7 +156,8 @@ describe('ReplaceModifier', () => {
       ])
       const bonus: NumericRollBonus = {
         rolls: [1, 6, 100],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -164,7 +172,8 @@ describe('ReplaceModifier', () => {
       ])
       const bonus: NumericRollBonus = {
         rolls: [1, 10, 20, 15, 2],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -176,7 +185,8 @@ describe('ReplaceModifier', () => {
       const modifier = new ReplaceModifier({ from: 1, to: 21 })
       const bonus: NumericRollBonus = {
         rolls: largeRolls,
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const startTime = performance.now()

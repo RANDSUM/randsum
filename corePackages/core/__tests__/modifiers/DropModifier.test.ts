@@ -90,7 +90,8 @@ describe('DropModifier', () => {
       const modifier = new DropModifier({ lowest: 1 })
       const bonus: NumericRollBonus = {
         rolls: [5, 10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -101,7 +102,8 @@ describe('DropModifier', () => {
       const modifier = new DropModifier({ highest: 1 })
       const bonus: NumericRollBonus = {
         rolls: [5, 10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -112,7 +114,8 @@ describe('DropModifier', () => {
       const modifier = new DropModifier({ exact: [10] })
       const bonus: NumericRollBonus = {
         rolls: [5, 10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -123,7 +126,8 @@ describe('DropModifier', () => {
       const modifier = new DropModifier({ greaterThan: 10 })
       const bonus: NumericRollBonus = {
         rolls: [5, 10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -134,7 +138,8 @@ describe('DropModifier', () => {
       const modifier = new DropModifier({ lessThan: 10 })
       const bonus: NumericRollBonus = {
         rolls: [5, 10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)
@@ -145,7 +150,8 @@ describe('DropModifier', () => {
       const modifier = new DropModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [5, 10, 15],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus)

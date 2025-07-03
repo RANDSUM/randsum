@@ -19,19 +19,25 @@ export class ExplodeModifier extends BaseModifier<boolean> {
     return { explode: true }
   }
 
-  public apply = (
+  public apply(
     bonus: NumericRollBonus,
     { sides }: RequiredNumericRollParameters,
     rollOne: () => number
-  ): NumericRollBonus => {
+  ): NumericRollBonus {
     if (this.options === undefined) return bonus
     const explodeCount = bonus.rolls.filter((roll) => roll === sides).length
     const explodeResults = Array.from({ length: explodeCount }, rollOne)
     const explodedRolls = [...bonus.rolls, ...explodeResults]
 
+    const logs = [
+      ...bonus.logs,
+      this.toModifierLog('explode', bonus.rolls, explodedRolls)
+    ]
+
     return {
       ...bonus,
-      rolls: explodedRolls
+      rolls: explodedRolls,
+      logs
     }
   }
 

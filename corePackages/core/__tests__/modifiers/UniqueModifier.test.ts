@@ -61,7 +61,8 @@ describe('UniqueModifier', () => {
       const modifier = new UniqueModifier(true)
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 1],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -76,7 +77,8 @@ describe('UniqueModifier', () => {
       const modifier = new UniqueModifier({ notUnique: [1] })
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 1, 2],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -91,7 +93,8 @@ describe('UniqueModifier', () => {
       const modifier = new UniqueModifier(true)
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 3],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 2,
@@ -107,7 +110,8 @@ describe('UniqueModifier', () => {
       const modifier = new UniqueModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [1, 1, 2],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,

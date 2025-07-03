@@ -61,7 +61,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier({ exact: [1, 2] })
       const bonus: NumericRollBonus = {
         rolls: [1, 3, 2],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -76,7 +77,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [1, 3, 5],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -91,7 +93,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier({ greaterThan: 18 })
       const bonus: NumericRollBonus = {
         rolls: [15, 19, 20, 10],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 20,
@@ -106,7 +109,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier({ lessThan: 3 })
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 3, 4],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -127,7 +131,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier({ exact: [1], max: 2 })
       const bonus: NumericRollBonus = {
         rolls: [1],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -150,7 +155,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier({ exact: [1] })
       const bonus: NumericRollBonus = {
         rolls: [1],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -171,7 +177,8 @@ describe('RerollModifier', () => {
       })
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 6, 10, 19, 20],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 20,
@@ -193,7 +200,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier({ exact: [1] })
       const bonus: NumericRollBonus = {
         rolls: [1, 1, 1],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -212,7 +220,8 @@ describe('RerollModifier', () => {
       const modifier = new RerollModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [1, 2, 3],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
 
       const result = modifier.apply(bonus, undefined, mockRollOne)

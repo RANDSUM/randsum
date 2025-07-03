@@ -126,7 +126,7 @@ export class DropModifier extends BaseModifier<DropOptions> {
     return {}
   }
 
-  public apply = (bonus: NumericRollBonus): NumericRollBonus => {
+  public apply(bonus: NumericRollBonus): NumericRollBonus {
     if (this.options === undefined) return bonus
     const { highest, lowest, greaterThan, lessThan, exact } = this.options
     const sortedResults = bonus.rolls
@@ -148,9 +148,15 @@ export class DropModifier extends BaseModifier<DropOptions> {
       this.times(lowest)(() => sortedResults.shift())
     }
 
+    const logs = [
+      ...bonus.logs,
+      this.toModifierLog('drop', bonus.rolls, sortedResults)
+    ]
+
     return {
       ...bonus,
-      rolls: sortedResults
+      rolls: sortedResults,
+      logs
     }
   }
 

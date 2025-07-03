@@ -45,7 +45,8 @@ describe('ExplodeModifier', () => {
       const modifier = new ExplodeModifier(true)
       const bonus: NumericRollBonus = {
         rolls: [6, 4],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,
@@ -60,7 +61,8 @@ describe('ExplodeModifier', () => {
       const modifier = new ExplodeModifier(undefined)
       const bonus: NumericRollBonus = {
         rolls: [5, 6],
-        simpleMathModifier: 0
+        simpleMathModifier: 0,
+        logs: []
       }
       const params: RequiredNumericRollParameters = {
         sides: 6,

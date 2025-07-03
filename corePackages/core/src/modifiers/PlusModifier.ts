@@ -21,11 +21,13 @@ export class PlusModifier extends BaseModifier<number> {
     }
   }
 
-  public apply = (bonus: NumericRollBonus): NumericRollBonus => {
+  public apply(bonus: NumericRollBonus): NumericRollBonus {
     if (!this.options) return bonus
+    const logs = [...bonus.logs, this.toModifierLog('plus', [], [this.options])]
     return {
       ...bonus,
-      simpleMathModifier: this.options
+      simpleMathModifier: this.options,
+      logs
     }
   }
 
