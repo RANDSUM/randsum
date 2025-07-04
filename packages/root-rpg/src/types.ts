@@ -1,5 +1,5 @@
-export type RootStrongHit = 'Strong Hit'
-export type RootWeakHit = 'Weak Hit'
-export type RootMiss = 'Miss'
+export type StrongHit = 'Strong Hit'
+export type WeakHit = 'Weak Hit'
+export type Miss = 'Miss'
 
-export type RootResult = RootStrongHit | RootWeakHit | RootMiss
+export type Result = StrongHit | WeakHit | Miss
