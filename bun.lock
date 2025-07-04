@@ -34,7 +34,7 @@
     },
     "apps/robo": {
       "name": "randsum-discord",
-      "version": "0.2.0",
+      "version": "1.0.0",
       "dependencies": {
         "@discord/embedded-app-sdk": "^1.9.0",
         "robo.js": "^0.10.30",
