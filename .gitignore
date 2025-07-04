@@ -79,3 +79,4 @@ tsconfig.tsbuildinfo
 docs/api
 
 .notes
+apps/robo/.robo/*
