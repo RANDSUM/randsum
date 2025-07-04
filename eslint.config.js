@@ -26,7 +26,8 @@ export default tseslint.config(
       'bin',
       '*.lock',
       'eslint.config.js',
-      '**/.bunup-dts-*'
+      '**/.bunup-dts-*',
+      '.robo'
     ]
   },
   {
