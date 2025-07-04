@@ -36,12 +36,12 @@
       "name": "randsum-discord",
       "version": "1.0.0",
       "dependencies": {
-        "@randsum/blades": "workspace:~",
-        "@randsum/daggerheart": "workspace:~",
-        "@randsum/fifth": "workspace:~",
-        "@randsum/roller": "workspace:~",
-        "@randsum/salvageunion": "workspace:~",
-        "discord.js": "^14.19.3",
+        "@randsum/blades": "^0.4",
+        "@randsum/daggerheart": "^0.4",
+        "@randsum/fifth": "^0.4",
+        "@randsum/roller": "^0.2",
+        "@randsum/salvageunion": "^0.4",
+        "discord.js": "^14.21.0",
         "robo.js": "^0.10.30",
       },
     },
@@ -80,7 +80,7 @@
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.3.8",
+      "version": "0.4.2",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
