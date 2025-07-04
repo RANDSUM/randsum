@@ -165,7 +165,7 @@ function formatValidationResult(result: ValidationResult): string {
   return [header, separator, ...details].join('\n')
 }
 export const config = {
-  version: '0.3.9',
+  version: '0.3.10',
   name: 'RANDSUM'
 }
 
