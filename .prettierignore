@@ -70,3 +70,5 @@ bunfig.toml
 
 # Markdown files in specific directories (keep formatting as-is)
 **/node_modules/**/*.md
+
+.robo/**
