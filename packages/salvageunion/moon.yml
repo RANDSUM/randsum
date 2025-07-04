@@ -17,7 +17,6 @@ tasks:
   test:
     deps:
       - 'roller:build'
-
   lint:
     deps:
       - 'roller:build'

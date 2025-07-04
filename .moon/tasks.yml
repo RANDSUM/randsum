@@ -74,6 +74,8 @@ tasks:
       - 'tsconfig.json'
     options:
       cache: false
+      runInCI: true
+      allowFailure: false
 
   version:
     command: 'bun pm version'
