@@ -1,7 +1,7 @@
-import { type NumericRollResult, roll } from '@randsum/roller'
-import type { RootResult } from './types'
+import { type NumericRollResult, roll as coreRoll } from '@randsum/roller'
+import type { Result } from './types'
 
-function interpretResult(result: number): RootResult {
+function interpretResult(result: number): Result {
   switch (true) {
     case result >= 10:
       return 'Strong Hit'
@@ -12,14 +12,14 @@ function interpretResult(result: number): RootResult {
   }
 }
 
-export function rollRoot(bonus: number): [RootResult, NumericRollResult] {
+export function roll(bonus: number): [Result, NumericRollResult] {
   const args = {
     quantity: 2,
     sides: 6,
     modifiers: { plus: bonus }
   }
 
-  const result = roll(args)
+  const result = coreRoll(args)
 
   return [interpretResult(result.total), result]
 }
