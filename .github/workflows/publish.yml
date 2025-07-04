@@ -39,12 +39,6 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          bun run moon roller:publish -u
-          bun run moon fifth:publish -u
-          bun run moon root-rpg:publish -u
-          bun run moon salvageunion:publish -u
-          bun run moon blades:publish -u
-          bun run moon daggerheart:publish -u
-          bun run moon mcp:publish -u
+          bun run moon :publish -u
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
