@@ -1,0 +1,35 @@
+{
+  "name": "randsum-discord",
+  "description": "A Discord Bot for Rolling Dice",
+  "version": "0.2.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "activity",
+    "api",
+    "discord",
+    "embed",
+    "embedded app",
+    "http",
+    "robo",
+    "robo.js",
+    "sdk",
+    "server",
+    "typescript",
+    "vite",
+    "web"
+  ],
+  "scripts": {
+    "build": "robox build",
+    "deploy": "robox deploy",
+    "dev": "robox dev --tunnel",
+    "invite": "robox invite",
+    "start": "robox start",
+    "sage:doctor": "sage doctor",
+    "sage:upgrade": "sage upgrade"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^1.9.0",
+    "robo.js": "^0.10.30"
+  }
+}
