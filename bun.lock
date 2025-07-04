@@ -60,7 +60,7 @@
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.3.8",
+      "version": "0.4.2",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
