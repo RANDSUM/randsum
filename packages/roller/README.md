@@ -79,9 +79,9 @@ roll('4d6R{<3}') // 4d6, reroll values below 3
 ## Available Dice
 
 - `D4`, `D6`, `D8`, `D10`, `D12`, `D20`, `D100`: Standard numeric dice
-- `Coin`: Two-sided die with 'heads' and 'tails'
-- `FudgeDice`: Fate/Fudge dice with +, -, and blank faces
-- `AlphaNumDie`: Custom die with alphanumeric faces
+- `coin`: Two-sided die with 'Heads' and 'Tails'
+- `fudgeDice`: Fate/Fudge dice with +, -, and blank faces
+- `alphaNumDie`: Custom die with alphanumeric faces
 
 ## API Reference
 

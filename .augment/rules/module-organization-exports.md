@@ -9,4 +9,4 @@ type: "always_apply"
 - Re-export all necessary types from dependencies to avoid deep imports
 - Use consistent export patterns: export classes/functions directly, export types separately
 - Organize utility functions in utils/ subdirectories with their own index.ts
-- Use descriptive file names that match their primary export (e.g., roll5e.ts exports roll5e)
+- Use descriptive file names that match their primary export (e.g., roll.ts exports roll)

@@ -1,16 +1,16 @@
-import { type NumericRollOptions, roll } from '@randsum/roller'
+import { type NumericRollOptions, roll as coreRoll } from '@randsum/roller'
 import type {
-  AdvantageDisadvantageDH,
-  RollArgumentDH,
-  RollResultDH,
-  RollResultDHType
+  AdvantageDisadvantage,
+  RollArgument,
+  RollResult,
+  RollResultType
 } from './types'
 
 function rollArg({
   modifier = 0,
   amplifyHope = false,
   amplifyFear = false
-}: RollArgumentDH): NumericRollOptions[] {
+}: RollArgument): NumericRollOptions[] {
   if (amplifyHope && amplifyFear) {
     return [
       {
@@ -57,16 +57,16 @@ function rollArg({
   ]
 }
 
-export function rollDH({
+export function roll({
   modifier = 0,
   rollingWith,
   amplifyHope = false,
   amplifyFear = false
-}: RollArgumentDH): RollResultDH {
+}: RollArgument): RollResult {
   const {
     rawResults: [hope, fear],
     total
-  } = roll(...rollArg({ modifier, amplifyHope, amplifyFear }))
+  } = coreRoll(...rollArg({ modifier, amplifyHope, amplifyFear }))
   if (hope === undefined || fear === undefined) {
     throw new Error('Failed to roll hope and fear')
   }
@@ -85,7 +85,7 @@ export function rollDH({
   }
 }
 
-function calculateType(hope: number, fear: number): RollResultDHType {
+function calculateType(hope: number, fear: number): RollResultType {
   if (hope === fear) {
     return 'critical hope'
   }
@@ -97,7 +97,7 @@ function calculateType(hope: number, fear: number): RollResultDHType {
 
 function calculateTotal(
   total: number,
-  rollingWith: AdvantageDisadvantageDH | undefined
+  rollingWith: AdvantageDisadvantage | undefined
 ): [number, number | undefined] {
   if (rollingWith) {
     const advantage = advantageDie()
@@ -110,7 +110,7 @@ function calculateTotal(
 }
 
 function advantageDie(): number {
-  return roll({
+  return coreRoll({
     quantity: 1,
     sides: 6
   }).total

@@ -1,7 +1,7 @@
 import {
   type NumericRollOptions,
   type NumericRollResult,
-  roll
+  roll as coreRoll
 } from '@randsum/roller'
 import type { BladesResult } from './types'
 
@@ -29,10 +29,10 @@ function generateOptions(count: number, canCrit: boolean): NumericRollOptions {
   return { sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } }
 }
 
-export function rollBlades(count: number): [BladesResult, NumericRollResult] {
+export function roll(count: number): [BladesResult, NumericRollResult] {
   const canCrit = count > 0
 
-  const rollResult = roll(generateOptions(count, canCrit))
+  const rollResult = coreRoll(generateOptions(count, canCrit))
   const rolls = rollResult.rawResults.flat().sort((a, b) => a - b)
 
   return [interpretHit(rolls, canCrit), rollResult]

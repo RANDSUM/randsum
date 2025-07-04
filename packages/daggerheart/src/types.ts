@@ -1,15 +1,15 @@
-export type AdvantageDisadvantageDH = 'Advantage' | 'Disadvantage'
-export interface RollArgumentDH {
+export type AdvantageDisadvantage = 'Advantage' | 'Disadvantage'
+export interface RollArgument {
   modifier?: number
-  rollingWith?: AdvantageDisadvantageDH
+  rollingWith?: AdvantageDisadvantage
   amplifyHope?: boolean
   amplifyFear?: boolean
 }
 
-export type RollResultDHType = 'hope' | 'fear' | 'critical hope'
+export type RollResultType = 'hope' | 'fear' | 'critical hope'
 
-export interface RollResultDH {
-  type: RollResultDHType
+export interface RollResult {
+  type: RollResultType
   total: number
   rolls: {
     hope: number
@@ -19,7 +19,7 @@ export interface RollResultDH {
   }
 }
 
-export interface MeetOrBeatResultDH extends RollResultDH {
+export interface MeetOrBeatResult extends RollResult {
   success: boolean
   target: number
   description: string

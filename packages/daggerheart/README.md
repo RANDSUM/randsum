@@ -26,33 +26,33 @@ bun add @randsum/daggerheart
 ## Usage
 
 ```typescript
-import { rollDH, meetOrBeatDH } from '@randsum/daggerheart'
-import type { RollArgumentDH } from '@randsum/daggerheart'
+import { roll, meetOrBeat } from '@randsum/daggerheart'
+import type { RollArgument } from '@randsum/daggerheart'
 
 // Basic Hope and Fear roll
-const result = rollDH({ modifier: 2 })
+const result = roll({ modifier: 2 })
 // result.type: 'hope' | 'fear' | 'critical hope'
 // result.total: number (sum of both dice + modifier)
 // result.rolls: { hope: number, fear: number, modifier: number }
 
 // Roll with Advantage (adds d6 to total)
-rollDH({
+roll({
   modifier: 3,
   rollingWith: 'Advantage'
 })
 
 // Roll with Disadvantage (subtracts d6 from total)
-rollDH({
+roll({
   modifier: -1,
   rollingWith: 'Disadvantage'
 })
 
 // Check if roll meets or beats Difficulty Class
-const rollArgs: RollArgumentDH = {
+const rollArgs: RollArgument = {
   modifier: 4,
   rollingWith: 'Advantage'
 }
-const result = meetOrBeatDH(12, rollArgs)
+const result = meetOrBeat(12, rollArgs)
 // result.success: boolean
 // result.description: string (formatted result description)
 // result.target: number (the DC that was tested against)
@@ -60,12 +60,12 @@ const result = meetOrBeatDH(12, rollArgs)
 
 ## API Reference
 
-### `rollDH`
+### `roll`
 
 Makes a Hope and Fear roll following Daggerheart rules.
 
 ```typescript
-function rollDH(args: RollArgumentDH): RollResultDH
+function roll(args: RollArgument): RollResult
 ```
 
 **Parameters:**
@@ -79,12 +79,12 @@ function rollDH(args: RollArgumentDH): RollResultDH
 - `total`: Sum of both dice + modifier ± advantage/disadvantage d6
 - `rolls`: Object containing individual Hope, Fear, and modifier values
 
-### `meetOrBeatDH`
+### `meetOrBeat`
 
 Checks if a Daggerheart roll meets or exceeds a Difficulty Class.
 
 ```typescript
-function meetOrBeatDH(difficultyClass: number, rollArg: RollArgumentDH): MeetOrBeatResultDH
+function meetOrBeat(difficultyClass: number, rollArg: RollArgument): MeetOrBeatResult
 ```
 
 **Parameters:**

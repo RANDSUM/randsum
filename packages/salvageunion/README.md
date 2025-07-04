@@ -32,42 +32,45 @@ bun add @randsum/salvageunion
 ## Usage
 
 ```typescript
-import { rollSU } from '@randsum/salvageunion'
+import { roll } from '@randsum/salvageunion'
 import type { Hit, TableResult } from '@randsum/salvageunion'
 
-// Basic roll with modifier
-const result = rollSU('Core Mechanic', 2)
+// Basic roll with default table
+const [result, rollValue] = roll()
 // Returns table result with hit type and details
 
+// Roll with specific table
+const [result, rollValue] = roll('Morale')
+
 // Type-safe result handling
-const { hit } = rollSU('Morale', -1)
+const [{ hit }] = roll('Core Mechanic')
 switch (hit) {
   case 'Nailed It':
-    // 20 or higher
+    // 20
     break
   case 'Success':
-    // 15-19
+    // 11-19
     break
   case 'Tough Choice':
-    // 10-14
+    // 6-10
     break
   case 'Failure':
-    // 5-9
+    // 2-5
     break
   case 'Cascade Failure':
-    // 4 or lower
+    // 1
     break
 }
 ```
 
 ## API Reference
 
-### `rollSU`
+### `roll`
 
-Makes a 2d10 roll following Salvage Union rules, returning both the interpreted result and table details.
+Makes a d20 roll following Salvage Union rules, returning both the interpreted result and roll value.
 
 ```typescript
-function rollSU(tableName: TableName, modifier: number): TableResult
+function roll(tableName?: TableName): [TableResult, number]
 ```
 
 ### Roll Tables

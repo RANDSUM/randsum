@@ -1,11 +1,11 @@
-import { rollDH } from './rollDH'
-import type { MeetOrBeatResultDH, RollArgumentDH } from './types'
+import { roll } from './roll'
+import type { MeetOrBeatResult, RollArgument } from './types'
 
-export function meetOrBeatDH(
+export function meetOrBeat(
   difficultyClass: number,
-  rollArg: RollArgumentDH
-): MeetOrBeatResultDH {
-  const result = rollDH(rollArg)
+  rollArg: RollArgument
+): MeetOrBeatResult {
+  const result = roll(rollArg)
   const core = {
     ...result,
     success:
@@ -22,7 +22,7 @@ export function meetOrBeatDH(
 function formatDescription({
   type,
   success
-}: Omit<MeetOrBeatResultDH, 'description'>): string {
+}: Omit<MeetOrBeatResult, 'description'>): string {
   if (type === 'critical hope') {
     return 'Critical Success (With Hope)'
   }

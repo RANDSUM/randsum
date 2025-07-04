@@ -16,13 +16,8 @@ tasks:
     deps:
       - 'roller:build'
   test:
-    command: 'echo "No tests for Blades"'
     deps:
       - 'roller:build'
-    options:
-      cache: false
-      mergeArgs: 'replace'
-      mergeEnv: 'replace'
 
   lint:
     deps:

@@ -1,6 +1,6 @@
-import type { SUTableName, SUTableType } from './types'
+import type { TableName, TableType } from './types'
 
-export const NPCActionTable: SUTableType = {
+export const NPCActionTable: TableType = {
   ['Nailed It']: {
     label: 'Nailed It',
     description:
@@ -28,7 +28,7 @@ export const NPCActionTable: SUTableType = {
   }
 }
 
-export const NPCReactionTable: SUTableType = {
+export const NPCReactionTable: TableType = {
   ['Nailed It']: {
     label: 'Actively Friendly and Helpful',
     description:
@@ -56,7 +56,7 @@ export const NPCReactionTable: SUTableType = {
   }
 }
 
-export const NPMoraleTable: SUTableType = {
+export const NPMoraleTable: TableType = {
   ['Nailed It']: {
     label: 'Fight to the Death',
     description:
@@ -82,7 +82,7 @@ export const NPMoraleTable: SUTableType = {
   }
 }
 
-export const CoreMechanicTable: SUTableType = {
+export const CoreMechanicTable: TableType = {
   ['Nailed It']: {
     label: 'Nailed It',
     description:
@@ -110,7 +110,7 @@ export const CoreMechanicTable: SUTableType = {
   }
 }
 
-export const GroupInitiativeTable: SUTableType = {
+export const GroupInitiativeTable: TableType = {
   ['Nailed It']: {
     label: 'You shot first',
     description:
@@ -138,7 +138,7 @@ export const GroupInitiativeTable: SUTableType = {
   }
 }
 
-export const RetreatTable: SUTableType = {
+export const RetreatTable: TableType = {
   ['Nailed It']: {
     label: 'Perfect Escape',
     description:
@@ -166,7 +166,7 @@ export const RetreatTable: SUTableType = {
   }
 }
 
-export const CriticalDamageTable: SUTableType = {
+export const CriticalDamageTable: TableType = {
   ['Nailed It']: {
     label: 'Miraculous Survival',
     description:
@@ -194,7 +194,7 @@ export const CriticalDamageTable: SUTableType = {
   }
 }
 
-export const CriticalInjuryTable: SUTableType = {
+export const CriticalInjuryTable: TableType = {
   ['Nailed It']: {
     label: 'Miraculous Survival',
     description:
@@ -221,7 +221,7 @@ export const CriticalInjuryTable: SUTableType = {
   }
 }
 
-export const ReactorOverloadTable: SUTableType = {
+export const ReactorOverloadTable: TableType = {
   ['Nailed It']: {
     label: 'Reactor Overdrive',
     description:
@@ -249,7 +249,7 @@ export const ReactorOverloadTable: SUTableType = {
   }
 }
 
-export const AreaSalvageTable: SUTableType = {
+export const AreaSalvageTable: TableType = {
   ['Nailed It']: {
     label: 'Jackpot!',
     description:
@@ -273,7 +273,7 @@ export const AreaSalvageTable: SUTableType = {
   }
 }
 
-export const MechSalvageTable: SUTableType = {
+export const MechSalvageTable: TableType = {
   ['Nailed It']: {
     label: "Lion's Share",
     description:
@@ -300,13 +300,13 @@ export const MechSalvageTable: SUTableType = {
       'The Mech is unsalvageable: its Chassis, Systems and Modules are all considered destroyed.'
   }
 }
-export const NPCTables: Partial<Record<SUTableName, SUTableType>> = {
+export const NPCTables: Partial<Record<TableName, TableType>> = {
   ['NPC Action']: NPCActionTable,
   ['Reaction']: NPCReactionTable,
   ['Morale']: NPMoraleTable
 }
 
-export const PCTables: Partial<Record<SUTableName, SUTableType>> = {
+export const PCTables: Partial<Record<TableName, TableType>> = {
   ['Group Initiative']: GroupInitiativeTable,
   ['Retreat']: RetreatTable,
   ['Critical Damage']: CriticalDamageTable,
@@ -317,7 +317,7 @@ export const PCTables: Partial<Record<SUTableName, SUTableType>> = {
 }
 
 export const RollTables: {
-  ['Core Mechanic']: SUTableType
+  ['Core Mechanic']: TableType
   pc: typeof PCTables
   npc: typeof NPCTables
 } = {
@@ -326,7 +326,7 @@ export const RollTables: {
   npc: NPCTables
 }
 
-export const AllRollTables: Record<SUTableName, SUTableType> = {
+export const AllRollTables: Record<TableName, TableType> = {
   ['Core Mechanic']: CoreMechanicTable,
   ['NPC Action']: NPCActionTable,
   ['Reaction']: NPCReactionTable,
