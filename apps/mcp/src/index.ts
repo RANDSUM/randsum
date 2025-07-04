@@ -15,6 +15,9 @@ import { createServer } from 'http'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
 import { Command } from 'commander'
+import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 
 const program = new Command()
   .option('--transport <type>', 'transport type', 'stdio')
@@ -164,8 +167,26 @@ function formatValidationResult(result: ValidationResult): string {
 
   return [header, separator, ...details].join('\n')
 }
+
+// Read version from package.json at runtime
+function getPackageVersion(): string {
+  try {
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = dirname(__filename)
+    // In built form, we're in dist/ and package.json is in parent directory
+    const packageJsonPath = join(__dirname, '..', 'package.json')
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
+      version: string
+    }
+    return packageJson.version
+  } catch (error) {
+    console.error('Failed to read package version:', error)
+    return '0.0.0' // Fallback version
+  }
+}
+
 export const config = {
-  version: '0.3.9',
+  version: getPackageVersion(),
   name: 'RANDSUM'
 }
 
