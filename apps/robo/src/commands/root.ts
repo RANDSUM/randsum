@@ -10,7 +10,7 @@ import { Result, roll } from '@randsum/root-rpg'
 import { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 
 export const config: CommandConfig = {
-  description: "The woodland isn't gonna clear itself, vagbond",
+  description: "The woodland isn't gonna clear itself, vagabond",
   options: [
     {
       name: 'modifier',
