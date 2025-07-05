@@ -31,11 +31,18 @@ tasks:
       - 'salvageunion:build'
     options:
       cache: false
+      runInCI: true
       mergeArgs: 'replace'
       mergeEnv: 'replace'
 
   test:
     command: 'echo "No Tests"'
+    deps: []
+    options:
+      cache: false
+      runInCI: true
+      mergeArgs: 'replace'
+      mergeEnv: 'replace'
 
   dev:
     command: 'robox dev'
