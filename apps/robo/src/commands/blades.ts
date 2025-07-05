@@ -133,7 +133,7 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     })
     .addFields({
       name: 'Total',
-      value: `** ${String(result.total)} **`,
+      value: `**${String(result.total)}**`,
       inline: true
     })
     .setColor(getColor(hit))
