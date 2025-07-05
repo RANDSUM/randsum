@@ -1,4 +1,9 @@
-import { APIEmbed, ChatInputCommandInteraction, Colors, EmbedBuilder } from 'discord.js'
+import {
+  APIEmbed,
+  ChatInputCommandInteraction,
+  Colors,
+  EmbedBuilder
+} from 'discord.js'
 import { embedFooterDetails } from '../core/constants'
 
 import { Result, roll } from '@randsum/root-rpg'
@@ -42,7 +47,10 @@ const getExplanation = (modifier: number, username: string): string[] => {
 const getSuccessString = (type: Result): string[] => {
   switch (type) {
     case 'Strong Hit':
-      return ['__**Strong Hit**__', "*You'll get almost all you wanted, or some additional benefit.*"]
+      return [
+        '__**Strong Hit**__',
+        "*You'll get almost all you wanted, or some additional benefit.*"
+      ]
     case 'Weak Hit':
       return [
         '__**Weak Hit**__',
@@ -57,7 +65,8 @@ const getSuccessString = (type: Result): string[] => {
 }
 
 const getThumbnail = (total: number): string => {
-  const root = 'https://raw.githubusercontent.com/RANDSUM/DiscordBot/main/supabase/functions/_shared/assets/root/'
+  const root =
+    'https://raw.githubusercontent.com/RANDSUM/DiscordBot/main/supabase/functions/_shared/assets/root/'
 
   if (total < -4) {
     return `${root}bigmiss.png`
@@ -70,7 +79,10 @@ const getThumbnail = (total: number): string => {
 
 export function handleroll(modifierArg: string, memberNick = 'User'): APIEmbed {
   const modifier = Number(modifierArg)
-  const [explanationName, explanationValue] = getExplanation(modifier, memberNick)
+  const [explanationName, explanationValue] = getExplanation(
+    modifier,
+    memberNick
+  )
 
   const [hit, result] = roll(modifier)
   const [successTitle, successValue] = getSuccessString(hit)
@@ -93,6 +105,11 @@ export function handleroll(modifierArg: string, memberNick = 'User'): APIEmbed {
     .toJSON()
 }
 
-export default async (interaction: ChatInputCommandInteraction, { modifier }: CommandOptions<typeof config>): Promise<CommandResult> => {
-  await interaction.reply({ embeds: [handleroll(String(modifier), interaction.user.displayName)] })
+export default async (
+  interaction: ChatInputCommandInteraction,
+  { modifier }: CommandOptions<typeof config>
+): Promise<CommandResult> => {
+  await interaction.reply({
+    embeds: [handleroll(String(modifier), interaction.user.displayName)]
+  })
 }

@@ -38,21 +38,27 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   const dicePoolDescriptions = result.rolls[0].parameters.description
 
   const rawResults = JSON.stringify(result.rawResults)
-  const results = JSON.stringify(result.rolls.map((roll) => roll.modifiedRolls.rolls).flat())
+  const results = JSON.stringify(
+    result.rolls.map((roll) => roll.modifiedRolls.rolls).flat()
+  )
 
   const noChanges = rawResults === results
 
   const rollFields = noChanges
     ? [{ name: 'Rolls', value: results, inline: true }]
     : [
-      { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
-      {
-        name: 'Rolls (after modifiers)',
-        value: results,
-        inline: true
-      }
-    ]
-  const fields = [{ name: 'Value', value: total }, ...rollFields, { name: 'Notation', value: notationArg }]
+        { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
+        {
+          name: 'Rolls (after modifiers)',
+          value: results,
+          inline: true
+        }
+      ]
+  const fields = [
+    { name: 'Value', value: total },
+    ...rollFields,
+    { name: 'Notation', value: notationArg }
+  ]
   return new EmbedBuilder()
     .setTitle(`You rolled a ${total}`)
     .setDescription(dicePoolDescriptions.join(', '))
@@ -61,6 +67,9 @@ const buildEmbed = (notationArg: string): APIEmbed => {
     .toJSON()
 }
 
-export default async (interaction: ChatInputCommandInteraction, { notation }: CommandOptions<typeof config>): Promise<CommandResult> => {
+export default async (
+  interaction: ChatInputCommandInteraction,
+  { notation }: CommandOptions<typeof config>
+): Promise<CommandResult> => {
   await interaction.reply({ embeds: [buildEmbed(String(notation))] })
 }

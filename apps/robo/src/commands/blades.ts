@@ -1,10 +1,13 @@
 import { BladesResult, roll } from '@randsum/blades'
 import { NumericRollResult } from '@randsum/roller'
-import { APIEmbed, ChatInputCommandInteraction, Colors, EmbedBuilder } from 'discord.js'
+import {
+  APIEmbed,
+  ChatInputCommandInteraction,
+  Colors,
+  EmbedBuilder
+} from 'discord.js'
 import { CommandOptions, CommandResult, createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
-
-
 
 export const config = createCommandConfig({
   description: 'Crew up.  Get in. Get out. Get Paid',
@@ -35,11 +38,15 @@ const getColor = (type: BladesResult): number => {
 
 const getExplanation = (quantity: number, username: string): string[] => {
   const isZero = quantity === 0
-  return [`${username} rolled ${String(isZero ? 2 : quantity)} D6`, `and took the ${isZero ? 'lowest' : 'highest'} result`]
+  return [
+    `${username} rolled ${String(isZero ? 2 : quantity)} D6`,
+    `and took the ${isZero ? 'lowest' : 'highest'} result`
+  ]
 }
 
 const getThumbnail = (total: number, type: BladesResult): string => {
-  const root = 'https://raw.githubusercontent.com/RANDSUM/DiscordBot/main/supabase/functions/_shared/assets/d6/'
+  const root =
+    'https://raw.githubusercontent.com/RANDSUM/DiscordBot/main/supabase/functions/_shared/assets/d6/'
   switch (total) {
     case 1:
       return `${root}one.png`
@@ -60,13 +67,18 @@ const getThumbnail = (total: number, type: BladesResult): string => {
   throw new Error('Invalid total')
 }
 
-const parseRolls = (result: NumericRollResult, bladesSuccess: BladesResult): string => {
+const parseRolls = (
+  result: NumericRollResult,
+  bladesSuccess: BladesResult
+): string => {
   return result.rawResults
     .flat()
     .map((roll, index, array) => {
       const isCritical = bladesSuccess === 'critical'
       const firstInstaceOfRoll = array.indexOf(roll) === index
-      return roll === result.total && (isCritical || firstInstaceOfRoll) ? `**${String(roll)}**` : `~~${String(roll)}~~`
+      return roll === result.total && (isCritical || firstInstaceOfRoll)
+        ? `**${String(roll)}**`
+        : `~~${String(roll)}~~`
     })
     .join(', ')
 }
@@ -97,7 +109,10 @@ const getSuccessString = (type: BladesResult): string[] => {
 
 function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
   const quantity = diceArg === 0 ? 0 : diceArg || 1
-  const [explanationTitle, explanationValue] = getExplanation(quantity, memberNick || 'User')
+  const [explanationTitle, explanationValue] = getExplanation(
+    quantity,
+    memberNick || 'User'
+  )
 
   const [hit, result] = roll(quantity)
   const [successTitle, successValue] = getSuccessString(hit)
@@ -126,6 +141,11 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     .toJSON()
 }
 
-export default async (interaction: ChatInputCommandInteraction, { dice }: CommandOptions<typeof config>): Promise<CommandResult> => {
-  await interaction.reply({ embeds: [buildEmbed(dice, interaction.user.displayName)] })
+export default async (
+  interaction: ChatInputCommandInteraction,
+  { dice }: CommandOptions<typeof config>
+): Promise<CommandResult> => {
+  await interaction.reply({
+    embeds: [buildEmbed(dice, interaction.user.displayName)]
+  })
 }

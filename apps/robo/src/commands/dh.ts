@@ -1,5 +1,10 @@
 import { AdvantageDisadvantage, roll } from '@randsum/daggerheart'
-import { APIEmbed, ChatInputCommandInteraction, Colors, EmbedBuilder } from 'discord.js'
+import {
+  APIEmbed,
+  ChatInputCommandInteraction,
+  Colors,
+  EmbedBuilder
+} from 'discord.js'
 import { CommandOptions, CommandResult, createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 
@@ -16,13 +21,20 @@ export const config = createCommandConfig({
       name: 'advdis',
       description: 'Roll with advantage or disadvantage',
       type: 'string',
-      required: false,
+      required: false
     }
   ]
 })
 
-const buildEmbed = (rollModifier: number, rollingWith: AdvantageDisadvantage | undefined): APIEmbed => {
-  const { total, type, rolls: { hope, fear, modifier, advantage } } = roll({ modifier: rollModifier, rollingWith })
+const buildEmbed = (
+  rollModifier: number,
+  rollingWith: AdvantageDisadvantage | undefined
+): APIEmbed => {
+  const {
+    total,
+    type,
+    rolls: { hope, fear, modifier, advantage }
+  } = roll({ modifier: rollModifier, rollingWith })
 
   const hopeFearFields = [
     { name: 'Hope', value: hope.toString(), inline: true },
@@ -32,8 +44,12 @@ const buildEmbed = (rollModifier: number, rollingWith: AdvantageDisadvantage | u
   const fields = [
     ...hopeFearFields,
     { name: 'Modifier', value: modifier.toString() },
-    advantage && rollingWith && { name: `Rolled with ${rollingWith}`, value: advantage.toString() }
-  ].filter(r => !!r)
+    advantage &&
+      rollingWith && {
+        name: `Rolled with ${rollingWith}`,
+        value: advantage.toString()
+      }
+  ].filter((r) => !!r)
   return new EmbedBuilder()
     .setTitle(`You rolled a ${String(total)} with ${type}`)
     .setFields(fields)
@@ -53,6 +69,13 @@ function getColor(type: 'hope' | 'fear' | 'critical hope'): number {
   }
 }
 
-export default async (interaction: ChatInputCommandInteraction, { modifier, advdis }: CommandOptions<typeof config>): Promise<CommandResult> => {
-  await interaction.reply({ embeds: [buildEmbed(Number(modifier), advdis as AdvantageDisadvantage | undefined)] })
+export default async (
+  interaction: ChatInputCommandInteraction,
+  { modifier, advdis }: CommandOptions<typeof config>
+): Promise<CommandResult> => {
+  await interaction.reply({
+    embeds: [
+      buildEmbed(Number(modifier), advdis as AdvantageDisadvantage | undefined)
+    ]
+  })
 }
