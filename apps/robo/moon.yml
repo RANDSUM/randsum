@@ -1,0 +1,45 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+id: robo
+language: 'typescript'
+dependsOn:
+  - 'roller'
+  - 'blades'
+  - 'daggerheart'
+  - 'fifth'
+  - 'root-rpg'
+  - 'salvageunion'
+
+tasks:
+  tsCheck:
+    deps:
+      - 'roller:build'
+      - 'blades:build'
+      - 'daggerheart:build'
+      - 'fifth:build'
+      - 'root-rpg:build'
+      - 'salvageunion:build'
+
+  build:
+    command: 'robox build'
+    deps:
+      - 'roller:build'
+      - 'blades:build'
+      - 'daggerheart:build'
+      - 'fifth:build'
+      - 'root-rpg:build'
+      - 'salvageunion:build'
+    options:
+      cache: false
+      mergeArgs: 'replace'
+      mergeEnv: 'replace'
+
+  test:
+    command: 'echo "No Tests"'
+
+  dev:
+    command: 'robox dev'
+    deps:
+      - 'build'
+    options:
+      cache: false
