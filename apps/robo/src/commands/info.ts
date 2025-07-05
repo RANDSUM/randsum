@@ -27,17 +27,20 @@ const fields = [
   },
   {
     name: '/root <modifier>',
-    value: 'Make a roll in the Root RPG system. Roll 2d6 and add the <modifier> value.',
+    value:
+      'Make a roll in the Root RPG system. Roll 2d6 and add the <modifier> value.',
     inline: true
   },
   {
     name: '/su <table name>',
-    value: 'Make a roll in the Salvage Union RPG system. Roll 1d20 and compare it to the provided <table>.',
+    value:
+      'Make a roll in the Salvage Union RPG system. Roll 1d20 and compare it to the provided <table>.',
     inline: true
   },
   {
     name: '/dh <modifier>',
-    value: 'Make a roll in the Daggerheart RPG system. Roll 1d12 and add the <modifier> value.',
+    value:
+      'Make a roll in the Daggerheart RPG system. Roll 1d12 and add the <modifier> value.',
     inline: true
   }
 ]
@@ -55,6 +58,8 @@ const getInfoEmbed = new EmbedBuilder()
   .setFooter(embedFooterDetails)
   .toJSON()
 
-export default async (interaction: ChatInputCommandInteraction): Promise<CommandResult> => {
+export default async (
+  interaction: ChatInputCommandInteraction
+): Promise<CommandResult> => {
   await interaction.reply({ embeds: [getInfoEmbed] })
 }

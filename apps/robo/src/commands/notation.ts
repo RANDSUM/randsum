@@ -24,21 +24,26 @@ const notationReference = [
   {
     label: 'Drop Specific',
     notation: 'D{N, <N, >N}',
-    description: 'Drops rolls greater than, less than, or equal to the values of N.',
+    description:
+      'Drops rolls greater than, less than, or equal to the values of N.',
     example: '4d6D{<2, >5, 3}',
-    exampleDescription: 'Roll 4d6 and drop any values lower than [2], greater than [5], or equal to [3].'
+    exampleDescription:
+      'Roll 4d6 and drop any values lower than [2], greater than [5], or equal to [3].'
   },
   {
     label: 'Cap',
     notation: 'C{<N, >N}',
-    description: 'Reduce all values above or below a certain value to that value',
+    description:
+      'Reduce all values above or below a certain value to that value',
     example: '4d6C{<2, >5}',
-    exampleDescription: 'Roll 4d6 and cap any values lower than [2] to [2], and greater than [5] to [5].'
+    exampleDescription:
+      'Roll 4d6 and cap any values lower than [2] to [2], and greater than [5] to [5].'
   },
   {
     label: 'Reroll',
     notation: 'R{N, <N, >N}F',
-    description: 'Reroll resuls equal to, less than, or greater than the values of N (a maximum of F times).',
+    description:
+      'Reroll resuls equal to, less than, or greater than the values of N (a maximum of F times).',
     example: '4d6R{<2, >5, 3}2',
     exampleDescription:
       'Roll 4d6 and reroll and results less than [2], greater than [5], or equal to [3], up to [2] times.'
@@ -46,7 +51,8 @@ const notationReference = [
   {
     label: 'Replace',
     notation: 'V{N=R}',
-    description: 'Replace rolls fitting the initial criteria with the second result',
+    description:
+      'Replace rolls fitting the initial criteria with the second result',
     example: '4d6V{<2=6, >5=1}',
     exampleDescription:
       'Roll 4d6 and replace anything less than [2] with a [6], and anything greater than a [5] with a [1].'
@@ -54,16 +60,20 @@ const notationReference = [
   {
     label: 'Unique',
     notation: 'U{N}',
-    description: 'Enforce uniqueness of individual die rolls. Optionally can ignore values of [N].',
+    description:
+      'Enforce uniqueness of individual die rolls. Optionally can ignore values of [N].',
     example: '4d6U{3}',
-    exampleDescription: 'Roll 4d6 and re-roll any duplicates (except for reuslts of [3])'
+    exampleDescription:
+      'Roll 4d6 and re-roll any duplicates (except for reuslts of [3])'
   },
   {
     label: 'Explode',
     notation: '!',
-    description: 'Roll an additional die whenever you roll the max value of one of these dice.',
+    description:
+      'Roll an additional die whenever you roll the max value of one of these dice.',
     example: '4d6!',
-    exampleDescription: 'Roll 4d6 and Roll an additional die any time you roll a [6].'
+    exampleDescription:
+      'Roll 4d6 and Roll an additional die any time you roll a [6].'
   },
   {
     label: 'Plus',
@@ -97,6 +107,8 @@ const baseEmbed = new EmbedBuilder()
   .setFooter(embedFooterDetails)
   .toJSON()
 
-export default async (interaction: ChatInputCommandInteraction): Promise<CommandResult> => {
+export default async (
+  interaction: ChatInputCommandInteraction
+): Promise<CommandResult> => {
   await interaction.reply({ embeds: [baseEmbed] })
 }

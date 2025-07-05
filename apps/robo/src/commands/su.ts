@@ -1,4 +1,9 @@
-import { APIEmbed, ChatInputCommandInteraction, Colors, EmbedBuilder } from 'discord.js'
+import {
+  APIEmbed,
+  ChatInputCommandInteraction,
+  Colors,
+  EmbedBuilder
+} from 'discord.js'
 import { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 import { AllRollTables, Hit, TableName, roll } from '@randsum/salvageunion'
 import { embedFooterDetails } from '../core/constants'
@@ -9,7 +14,8 @@ const suChoices = Object.keys(AllRollTables).map((table) => ({
 }))
 
 export const config: CommandConfig = {
-  description: 'The Salvage Union is here to help you with your salvaging needs',
+  description:
+    'The Salvage Union is here to help you with your salvaging needs',
   options: [
     {
       name: 'table',
@@ -47,7 +53,10 @@ export function buildEmbed(table: TableName): APIEmbed {
     .toJSON()
 }
 
-export default async (interaction: ChatInputCommandInteraction, { table }: CommandOptions<typeof config>): Promise<CommandResult> => {
+export default async (
+  interaction: ChatInputCommandInteraction,
+  { table }: CommandOptions<typeof config>
+): Promise<CommandResult> => {
   const tableName: TableName = (table ?? 'Core Mechanic') as TableName
 
   await interaction.reply({ embeds: [buildEmbed(tableName)] })
