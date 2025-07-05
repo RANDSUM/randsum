@@ -20,6 +20,16 @@ tasks:
       - 'root-rpg:build'
       - 'salvageunion:build'
 
+  publish:
+    command: 'robox deploy'
+    deps:
+      - 'build'
+    options:
+      runInCI: false
+      cache: false
+      mergeArgs: 'replace'
+      mergeEnv: 'replace'
+
   build:
     command: 'robox build'
     deps:
