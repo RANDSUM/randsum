@@ -1,5 +1,66 @@
 @import "tailwindcss";
 
+/* Tailwind v4 Custom Colors */
+@theme {
+  --color-randsum-50: #f8fafc;
+  --color-randsum-100: #f1f5f9;
+  --color-randsum-200: #e2e8f0;
+  --color-randsum-300: #cbd5e1;
+  --color-randsum-400: #94a3b8;
+  --color-randsum-500: #64748b;
+  --color-randsum-600: #475569;
+  --color-randsum-700: #334155;
+  --color-randsum-800: #1e293b;
+  --color-randsum-900: #0f172a;
+  --color-randsum-950: #020617;
+
+  --color-silver-50: #ffffff;
+  --color-silver-100: #f8f9fa;
+  --color-silver-200: #e9ecef;
+  --color-silver-300: #dee2e6;
+  --color-silver-400: #ced4da;
+  --color-silver-500: #adb5bd;
+  --color-silver-600: #6c757d;
+  --color-silver-700: #495057;
+  --color-silver-800: #343a40;
+  --color-silver-900: #212529;
+
+  --color-games-blades-50: #fef2f2;
+  --color-games-blades-500: #ef4444;
+  --color-games-blades-600: #dc2626;
+  --color-games-blades-700: #b91c1c;
+
+  --color-games-daggerheart-50: #faf5ff;
+  --color-games-daggerheart-500: #a855f7;
+  --color-games-daggerheart-600: #9333ea;
+  --color-games-daggerheart-700: #7c3aed;
+
+  --color-games-fifth-50: #f0fdf4;
+  --color-games-fifth-500: #22c55e;
+  --color-games-fifth-600: #16a34a;
+  --color-games-fifth-700: #15803d;
+
+  --color-games-root-rpg-50: #fff7ed;
+  --color-games-root-rpg-500: #f97316;
+  --color-games-root-rpg-600: #ea580c;
+  --color-games-root-rpg-700: #c2410c;
+
+  --color-games-salvageunion-50: #fefce8;
+  --color-games-salvageunion-500: #eab308;
+  --color-games-salvageunion-600: #ca8a04;
+  --color-games-salvageunion-700: #a16207;
+
+  --color-apps-mcp-50: #ecfeff;
+  --color-apps-mcp-500: #06b6d4;
+  --color-apps-mcp-600: #0891b2;
+  --color-apps-mcp-700: #0e7490;
+
+  --color-apps-robo-50: #eef2ff;
+  --color-apps-robo-500: #6366f1;
+  --color-apps-robo-600: #4f46e5;
+  --color-apps-robo-700: #4338ca;
+}
+
 /* Custom global styles */
 html {
   font-family: 'Inter', system-ui, sans-serif;
@@ -33,7 +94,7 @@ html.dark {
 
 /* Focus styles */
 *:focus {
-  outline: 2px solid theme('colors.silver.400');
+  outline: 2px solid #ced4da;
   outline-offset: 2px;
 }
 
