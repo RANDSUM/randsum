@@ -37,7 +37,7 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   const total = `**${String(result.total)}**`
   const dicePoolDescriptions = result.rolls[0].parameters.description
 
-  const rawResults = JSON.stringify(result.rawResults)
+  const rawResults = JSON.stringify(result.rawRolls)
   const results = JSON.stringify(
     result.rolls.map((roll) => roll.modifiedRolls.rolls).flat()
   )
@@ -47,13 +47,13 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   const rollFields = noChanges
     ? [{ name: 'Rolls', value: results, inline: true }]
     : [
-        { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
-        {
-          name: 'Rolls (after modifiers)',
-          value: results,
-          inline: true
-        }
-      ]
+      { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
+      {
+        name: 'Rolls (after modifiers)',
+        value: results,
+        inline: true
+      }
+    ]
   const fields = [
     { name: 'Value', value: total },
     ...rollFields,

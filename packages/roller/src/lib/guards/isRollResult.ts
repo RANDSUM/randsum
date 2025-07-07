@@ -19,7 +19,7 @@ export function isRollResult(result: unknown): result is RollResult {
     typeof result === 'object' &&
     result !== null &&
     'type' in result &&
-    'rolls' in result &&
+    'rawResult' in result &&
     'rawRolls' in result &&
     'total' in result
   )

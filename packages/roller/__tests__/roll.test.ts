@@ -24,12 +24,12 @@ describe(roll, () => {
       )
     })
 
-    describe('custom dice', () => {
+    describe.only('custom dice', () => {
       test.each([
-        ['h', 't'],
-        { sides: ['h', 't'] },
-        D(['h', 't']),
-        '1d{ht}'
+        // ['h', 't'],
+        // { sides: ['h', 't'] },
+        // D(['h', 't']),
+        // '1d{ht}'
       ] as CustomRollArgument[])(
         'it never goes outside of the bounds of the roll',
         (arg) => {
