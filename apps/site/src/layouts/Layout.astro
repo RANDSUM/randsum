@@ -2,18 +2,23 @@
 import '../styles/global.css'
 import Sidebar from '../components/Sidebar.astro'
 import { mainNavigation } from '../config/navigation'
-import type { NavigationItem } from '../components/Sidebar.astro'
+import type {
+  NavigationItem,
+  SidebarContent
+} from '../components/Sidebar.astro'
 
 export interface Props {
   title: string
   description?: string
   additionalNavigationItems?: NavigationItem[]
+  sidebarContent?: SidebarContent
 }
 
 const {
   title,
   description = 'An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM',
-  additionalNavigationItems = []
+  additionalNavigationItems = [],
+  sidebarContent
 } = Astro.props
 ---
 
@@ -39,8 +44,9 @@ const {
     <div class="min-h-screen flex">
       <!-- Sidebar -->
       <Sidebar
-        navigationItems={mainNavigation}
-        additionalItems={additionalNavigationItems}
+        navigationItems={sidebarContent ? undefined : mainNavigation}
+        additionalItems={sidebarContent ? undefined : additionalNavigationItems}
+        sidebarContent={sidebarContent}
       />
 
       <!-- Mobile menu button -->
