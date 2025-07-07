@@ -4,10 +4,7 @@ export interface Props {
   background?: 'dark' | 'darker'
 }
 
-const { 
-  class: className = '', 
-  background = 'dark' 
-} = Astro.props
+const { class: className = '', background = 'dark' } = Astro.props
 
 const backgroundClasses = {
   dark: 'bg-randsum-900',

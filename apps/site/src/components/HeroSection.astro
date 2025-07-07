@@ -43,15 +43,15 @@ const {
       <h1
         class="text-4xl lg:text-6xl xl:text-7xl font-bold text-silver-50 mb-6 leading-tight"
       >
-        {Astro.slots.has('title') ? (
-          <slot name="title" />
-        ) : (
-          <span
-            class="bg-gradient-to-r from-silver-50 via-silver-200 to-silver-50 bg-clip-text text-transparent"
-          >
-            {title}
-          </span>
-        )}
+        {
+          Astro.slots.has('title') ? (
+            <slot name="title" />
+          ) : (
+            <span class="bg-gradient-to-r from-silver-50 via-silver-200 to-silver-50 bg-clip-text text-transparent">
+              {title}
+            </span>
+          )
+        }
       </h1>
 
       {
