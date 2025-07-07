@@ -38,71 +38,58 @@ const {
       >
         <div class="flex-1 flex flex-col min-h-0">
           <!-- Logo -->
-          <div class="flex items-center h-16 flex-shrink-0 px-4 bg-randsum-950">
+          <a
+            href="/"
+            class="flex items-center h-16 flex-shrink-0 px-4 bg-randsum-950 hover:bg-randsum-900 transition-colors"
+          >
             <img class="h-8 w-auto" src="/icon.webp" alt="RANDSUM" />
             <span class="ml-3 text-xl font-bold text-silver-50">RANDSUM</span>
-          </div>
+          </a>
 
           <!-- Navigation -->
           <nav class="flex-1 px-4 py-6 space-y-1">
+            <!-- Core Package -->
             <a
-              href="/"
-              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-200 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+              href="/roller"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
             >
-              <svg
-                class="mr-3 h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
-                ></path>
-              </svg>
-              Home
+              <div class="font-black text-base">@randsum/roller</div>
+            </a>
+
+            <!-- Game Packages -->
+            <a
+              href="/blades"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <div class="font-black text-base">@randsum/blades</div>
             </a>
 
             <a
-              href="/packages"
-              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+              href="/daggerheart"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
             >
-              <svg
-                class="mr-3 h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                ></path>
-              </svg>
-              Packages
+              <div class="font-black text-base">@randsum/daggerheart</div>
             </a>
 
             <a
-              href="/apps"
-              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+              href="/fifth"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
             >
-              <svg
-                class="mr-3 h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
-                ></path>
-              </svg>
-              Apps
+              <div class="font-black text-base">@randsum/fifth</div>
+            </a>
+
+            <a
+              href="/root-rpg"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <div class="font-black text-base">@randsum/root-rpg</div>
+            </a>
+
+            <a
+              href="/salvageunion"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <div class="font-black text-base">@randsum/salvageunion</div>
             </a>
 
             <a
@@ -202,10 +189,13 @@ const {
         class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-randsum-950 border-b border-randsum-800"
       >
         <div class="flex items-center justify-between h-16 px-4">
-          <div class="flex items-center">
+          <a
+            href="/"
+            class="flex items-center hover:opacity-80 transition-opacity"
+          >
             <img class="h-8 w-auto" src="/icon.webp" alt="RANDSUM" />
             <span class="ml-3 text-xl font-bold text-silver-50">RANDSUM</span>
-          </div>
+          </a>
           <button
             id="mobile-menu-button"
             class="text-silver-400 hover:text-silver-200 focus:outline-none focus:text-silver-200 transition-colors"
@@ -236,29 +226,74 @@ const {
         <div
           class="fixed top-0 left-0 bottom-0 w-64 bg-randsum-900 border-r border-randsum-800"
         >
-          <div
-            class="flex items-center h-16 px-4 bg-randsum-950 border-b border-randsum-800"
+          <a
+            href="/"
+            class="flex items-center h-16 px-4 bg-randsum-950 border-b border-randsum-800 hover:bg-randsum-900 transition-colors"
           >
             <img class="h-8 w-auto" src="/icon.webp" alt="RANDSUM" />
             <span class="ml-3 text-xl font-bold text-silver-50">RANDSUM</span>
-          </div>
+          </a>
           <nav class="px-4 py-6 space-y-1">
-            <!-- Same navigation links as desktop -->
+            <!-- Package and App navigation links -->
+            <!-- Core Package -->
             <a
-              href="/"
-              class="block px-3 py-2 text-sm font-medium rounded-md text-silver-200 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
-              >Home</a
+              href="/roller"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
             >
+              <div class="font-black text-base">@randsum/roller</div>
+            </a>
+
+            <!-- Game Packages -->
             <a
-              href="/packages"
-              class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
-              >Packages</a
+              href="/blades"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
             >
+              <div class="font-black text-base">@randsum/blades</div>
+              <div class="text-xs text-silver-400 mt-1">
+                Dice mechanics for Blades in the Dark RPG
+              </div>
+            </a>
+
             <a
-              href="/apps"
-              class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
-              >Apps</a
+              href="/daggerheart"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
             >
+              <div class="font-black text-base">@randsum/daggerheart</div>
+              <div class="text-xs text-silver-400 mt-1">
+                Dice mechanics for Daggerheart RPG
+              </div>
+            </a>
+
+            <a
+              href="/fifth"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <div class="font-black text-base">@randsum/fifth</div>
+              <div class="text-xs text-silver-400 mt-1">
+                Dice mechanics for D&D 5th Edition
+              </div>
+            </a>
+
+            <a
+              href="/root-rpg"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <div class="font-black text-base">@randsum/root-rpg</div>
+              <div class="text-xs text-silver-400 mt-1">
+                Dice mechanics for Root RPG
+              </div>
+            </a>
+
+            <a
+              href="/salvageunion"
+              class="block px-3 py-2 text-sm rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <div class="font-black text-base">@randsum/salvageunion</div>
+              <div class="text-xs text-silver-400 mt-1">
+                Dice mechanics for Salvage Union RPG
+              </div>
+            </a>
+
             <a
               href="/docs"
               class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
