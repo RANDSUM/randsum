@@ -1,6 +1,10 @@
 import type {
+  CustomRollParams,
+  CustomRollResult,
   NumericRollBonus,
   NumericRollOptions,
+  NumericRollParams,
+  NumericRollResult,
   RollParams,
   RollResult
 } from '../../types'
@@ -8,6 +12,20 @@ import { coreRandom, isCustomRollParams } from '../../lib'
 import { calculateTotal } from '../utils/calculateTotal'
 import { applyModifier } from './applyModifier'
 
+export function generateHistory(
+  parameters: CustomRollParams,
+  rolls: CustomRollResult['history']['initialRolls']
+): CustomRollResult['history']
+export function generateHistory(
+  parameters: NumericRollParams,
+  rolls: NumericRollResult['history']['initialRolls']
+): NumericRollResult['history']
+export function generateHistory(
+  parameters: NumericRollParams | CustomRollParams,
+  rolls:
+    | NumericRollResult['history']['initialRolls']
+    | CustomRollResult['history']['initialRolls']
+): NumericRollResult['history'] | CustomRollResult['history']
 export function generateHistory(
   parameters: RollParams,
   rolls: RollResult['history']['initialRolls']
@@ -17,7 +35,7 @@ export function generateHistory(
     rolls.every((n) => typeof n === 'string')
   ) {
     return {
-      total: calculateTotal(rolls) as string,
+      total: calculateTotal(rolls),
       modifiedRolls: rolls,
       initialRolls: rolls,
       logs: []
@@ -36,7 +54,7 @@ export function generateHistory(
 
   if (Object.keys(modifiers).length === 0) {
     return {
-      total: calculateTotal(rolls) as number,
+      total: calculateTotal(rolls),
       initialRolls: rolls,
       modifiedRolls: rolls.map((n) => Number(n)),
       logs: []
@@ -120,7 +138,7 @@ export function generateHistory(
   return {
     modifiedRolls: bonuses.rolls,
     initialRolls: rolls,
-    total: calculateTotal(bonuses.rolls, bonuses.simpleMathModifier) as number,
+    total: calculateTotal(bonuses.rolls, bonuses.simpleMathModifier),
     logs: bonuses.logs
   }
 }

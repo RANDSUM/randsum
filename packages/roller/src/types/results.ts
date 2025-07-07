@@ -6,10 +6,10 @@ import type {
 import type { ModifierLog } from './modifiers'
 import type { CustomRollOptions } from './options'
 
-export interface RollHistory<T extends RollParams = RollParams> {
-  modifiedRolls: T['options'] extends CustomRollOptions ? string[] : number[]
-  total: T['options'] extends CustomRollOptions ? string : number
-  initialRolls: T['options'] extends CustomRollOptions ? string[] : number[]
+export interface RollHistory<P extends RollParams = RollParams> {
+  modifiedRolls: P['options'] extends CustomRollOptions ? string[] : number[]
+  total: P['options'] extends CustomRollOptions ? string : number
+  initialRolls: P['options'] extends CustomRollOptions ? string[] : number[]
   logs: ModifierLog[]
 }
 

@@ -4,13 +4,11 @@ import type {
   RollResult
 } from '../../types'
 
-export function isNumericResult(
-  result: RollResult
-): result is NumericRollResult {
+export function isNumericResult(result: unknown): result is NumericRollResult {
   return isRollResult(result) && result.type === 'numeric'
 }
 
-export function isCustomResult(result: RollResult): result is CustomRollResult {
+export function isCustomResult(result: unknown): result is CustomRollResult {
   return isRollResult(result) && result.type === 'custom'
 }
 
