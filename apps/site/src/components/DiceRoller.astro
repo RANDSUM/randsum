@@ -1,0 +1,135 @@
+---
+export interface Props {
+  notation?: string;
+  label?: string;
+  className?: string;
+}
+
+const { notation = '2d6', label = 'Roll Dice', className = '' } = Astro.props;
+---
+
+<div class={`dice-roller ${className}`}>
+  <div class="dice-roller-input">
+    <label for="notation" class="block text-sm font-medium text-gray-300 mb-2">
+      Dice Notation:
+    </label>
+    <input
+      type="text"
+      id="notation"
+      value={notation}
+      class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+      placeholder="e.g., 2d6+3, 4d6L, 1d20"
+    />
+  </div>
+  
+  <button
+    type="button"
+    class="btn btn-primary mt-4 w-full"
+    onclick="rollDice()"
+  >
+    {label}
+  </button>
+  
+  <div id="dice-result" class="mt-4 p-4 bg-gray-900 border border-gray-800 rounded-lg hidden">
+    <div class="text-lg font-semibold text-white mb-2">Result:</div>
+    <div id="dice-total" class="text-2xl font-bold text-brand-400 mb-2"></div>
+    <div id="dice-breakdown" class="text-sm text-gray-300"></div>
+    <div id="dice-individual" class="text-xs text-gray-400 mt-2"></div>
+  </div>
+  
+  <div id="dice-error" class="mt-4 p-4 bg-red-900 border border-red-800 rounded-lg text-red-200 hidden">
+    <div class="font-semibold mb-1">Invalid Notation:</div>
+    <div id="error-message" class="text-sm"></div>
+  </div>
+</div>
+
+<script>
+  // Simple dice rolling simulation for demo purposes
+  function rollDice() {
+    const input = document.getElementById('notation') as HTMLInputElement;
+    const notation = input.value.trim();
+    
+    const resultDiv = document.getElementById('dice-result');
+    const errorDiv = document.getElementById('dice-error');
+    const totalDiv = document.getElementById('dice-total');
+    const breakdownDiv = document.getElementById('dice-breakdown');
+    const individualDiv = document.getElementById('dice-individual');
+    const errorMessageDiv = document.getElementById('error-message');
+    
+    // Hide previous results
+    resultDiv?.classList.add('hidden');
+    errorDiv?.classList.add('hidden');
+    
+    try {
+      // Simple validation and simulation
+      const result = simulateRoll(notation);
+      
+      if (totalDiv) totalDiv.textContent = result.total.toString();
+      if (breakdownDiv) breakdownDiv.textContent = result.breakdown;
+      if (individualDiv) individualDiv.textContent = `Individual dice: [${result.dice.join(', ')}]`;
+      
+      resultDiv?.classList.remove('hidden');
+    } catch (error) {
+      if (errorMessageDiv) errorMessageDiv.textContent = error.message;
+      errorDiv?.classList.remove('hidden');
+    }
+  }
+  
+  function simulateRoll(notation: string) {
+    // Basic notation parsing for demo
+    const match = notation.match(/^(\d+)d(\d+)([+\-]\d+)?$/);
+    if (!match) {
+      throw new Error('Invalid notation. Use format like "2d6", "1d20+5", etc.');
+    }
+    
+    const [, numDice, sides, modifier] = match;
+    const diceCount = parseInt(numDice);
+    const diceSides = parseInt(sides);
+    const mod = modifier ? parseInt(modifier) : 0;
+    
+    if (diceCount > 20) {
+      throw new Error('Maximum 20 dice allowed in demo');
+    }
+    
+    if (diceSides < 2 || diceSides > 100) {
+      throw new Error('Dice sides must be between 2 and 100');
+    }
+    
+    // Roll the dice
+    const dice: number[] = [];
+    let total = 0;
+    
+    for (let i = 0; i < diceCount; i++) {
+      const roll = Math.floor(Math.random() * diceSides) + 1;
+      dice.push(roll);
+      total += roll;
+    }
+    
+    total += mod;
+    
+    const breakdown = modifier 
+      ? `${notation}: [${dice.join(', ')}] ${modifier} = ${total}`
+      : `${notation}: [${dice.join(', ')}] = ${total}`;
+    
+    return {
+      total,
+      dice,
+      breakdown,
+      notation
+    };
+  }
+  
+  // Allow Enter key to trigger roll
+  document.getElementById('notation')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      rollDice();
+    }
+  });
+</script>
+
+<style>
+  .dice-roller {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+export interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '' } = Astro.props;
+
+const navigation = [
+  {
+    title: 'Getting Started',
+    items: [
+      { title: 'Installation', href: '/docs/installation' },
+      { title: 'Quick Start', href: '/docs/quick-start' },
+      { title: 'Basic Usage', href: '/docs/basic-usage' },
+    ]
+  },
+  {
+    title: 'Core Package',
+    items: [
+      { title: '@randsum/roller', href: '/packages/roller' },
+      { title: 'Dice Notation', href: '/docs/dice-notation' },
+      { title: 'API Reference', href: '/docs/api' },
+    ]
+  },
+  {
+    title: 'Game Systems',
+    items: [
+      { title: 'Blades in the Dark', href: '/packages/blades' },
+      { title: 'Daggerheart', href: '/packages/daggerheart' },
+      { title: 'D&D 5th Edition', href: '/packages/fifth' },
+      { title: 'Root RPG', href: '/packages/root-rpg' },
+      { title: 'Salvage Union', href: '/packages/salvageunion' },
+    ]
+  },
+  {
+    title: 'Applications',
+    items: [
+      { title: 'MCP Server', href: '/apps/mcp' },
+      { title: 'Discord Bot', href: '/apps/robo' },
+    ]
+  },
+  {
+    title: 'Examples',
+    items: [
+      { title: 'Basic Examples', href: '/examples/basic' },
+      { title: 'Advanced Usage', href: '/examples/advanced' },
+      { title: 'Game Integration', href: '/examples/game-integration' },
+    ]
+  }
+];
+
+function isActive(href: string, currentPath: string): boolean {
+  return currentPath === href || currentPath.startsWith(href + '/');
+}
+---
+
+<aside class="w-64 bg-gray-900 border-r border-gray-800 h-full overflow-y-auto">
+  <div class="p-6">
+    <nav class="space-y-6">
+      {navigation.map((section) => (
+        <div>
+          <h3 class="font-semibold text-white text-sm uppercase tracking-wider mb-3">
+            {section.title}
+          </h3>
+          <ul class="space-y-1">
+            {section.items.map((item) => (
+              <li>
+                <a 
+                  href={item.href}
+                  class={`nav-link block ${isActive(item.href, currentPath) ? 'active' : ''}`}
+                >
+                  {item.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+</aside>

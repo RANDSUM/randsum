@@ -1,0 +1,79 @@
+---
+import { getCollection } from 'astro:content';
+import DocumentationLayout from '../../layouts/DocumentationLayout.astro';
+
+export async function getStaticPaths() {
+  const packages = await getCollection('packages');
+  return packages.map((pkg) => ({
+    params: { slug: pkg.slug },
+    props: { pkg },
+  }));
+}
+
+const { pkg } = Astro.props;
+const { Content } = await pkg.render();
+---
+
+<DocumentationLayout 
+  title={`${pkg.data.title} - RANDSUM`}
+  description={pkg.data.description}
+>
+  <!-- Package Header -->
+  <div class="mb-8 pb-6 border-b border-gray-800">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+      <h1 class="text-3xl font-bold text-white">{pkg.data.title}</h1>
+      <div class="flex gap-2">
+        <span class="badge badge-primary">v{pkg.data.version}</span>
+        <span class="badge badge-secondary">{pkg.data.category}</span>
+      </div>
+    </div>
+    
+    <p class="text-lg text-gray-300 mb-6">{pkg.data.description}</p>
+    
+    <div class="flex flex-wrap gap-3">
+      <a 
+        href={`https://www.npmjs.com/package/${pkg.data.npmPackage}`}
+        class="btn btn-primary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Install from npm
+      </a>
+      <a 
+        href={`https://github.com/RANDSUM/randsum/tree/main/${pkg.data.githubPath}`}
+        class="btn btn-secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        View Source
+      </a>
+      {pkg.data.tags && pkg.data.tags.length > 0 && (
+        <div class="flex gap-1 items-center ml-auto">
+          {pkg.data.tags.map((tag) => (
+            <span class="badge badge-secondary text-xs">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Package Content -->
+  <div class="prose prose-invert max-w-none">
+    <Content />
+  </div>
+
+  <!-- Related Links -->
+  <div class="mt-12 pt-8 border-t border-gray-800">
+    <h2 class="text-xl font-semibold text-white mb-4">Related</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <a href="/docs/installation" class="card hover:border-gray-700">
+        <h3 class="card-title text-base">Installation Guide</h3>
+        <p class="card-description text-sm">Get this package installed in your project</p>
+      </a>
+      <a href="/examples" class="card hover:border-gray-700">
+        <h3 class="card-title text-base">Examples</h3>
+        <p class="card-description text-sm">See this package in action</p>
+      </a>
+    </div>
+  </div>
+</DocumentationLayout>

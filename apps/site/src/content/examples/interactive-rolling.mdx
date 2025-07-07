@@ -1,0 +1,166 @@
+---
+title: "Interactive Dice Rolling"
+description: "Try RANDSUM dice rolling with an interactive demo"
+package: "@randsum/roller"
+difficulty: "beginner"
+tags: ["interactive", "demo", "tutorial"]
+category: "basic"
+estimatedTime: 10
+hasLiveDemo: true
+---
+
+import DiceRoller from '../../components/DiceRoller.astro';
+
+# Interactive Dice Rolling
+
+Experience RANDSUM dice rolling with this interactive demo. Try different notation patterns and see the results in real-time.
+
+## Try It Yourself
+
+<DiceRoller notation="2d6+3" label="Roll 2d6+3" />
+
+## Common Patterns to Try
+
+Here are some popular dice notation patterns you can test:
+
+### Basic Rolls
+- `1d20` - Single twenty-sided die
+- `2d6` - Two six-sided dice
+- `3d8+2` - Three eight-sided dice plus 2
+
+### D&D Style Rolls
+- `4d6L` - Roll 4d6, drop lowest (ability scores)
+- `2d20H` - Roll 2d20, keep highest (advantage)
+- `2d20L` - Roll 2d20, keep lowest (disadvantage)
+
+### Advanced Modifiers
+- `3d6!` - Exploding dice (reroll and add on 6s)
+- `4d6R{1}` - Reroll any 1s
+- `5d20U` - All dice must be unique
+
+## Understanding the Results
+
+When you roll dice, RANDSUM provides detailed information:
+
+```typescript
+interface RollResult {
+  total: number;        // Final calculated total
+  dice: number[];       // Individual die results
+  notation: string;     // Original notation
+  breakdown: string;    // Human-readable explanation
+}
+```
+
+### Example Result
+
+For a roll of `2d6+3`:
+
+```json
+{
+  "total": 11,
+  "dice": [4, 4],
+  "notation": "2d6+3",
+  "breakdown": "2d6+3: [4, 4] + 3 = 11"
+}
+```
+
+## Code Implementation
+
+Here's how you would implement this in your own application:
+
+```typescript
+import { roll } from '@randsum/roller';
+
+// Basic usage
+const result = roll('2d6+3');
+console.log(result.total);    // 5-15
+console.log(result.dice);     // [1-6, 1-6]
+console.log(result.breakdown); // "2d6+3: [3, 4] + 3 = 10"
+
+// Error handling
+try {
+  const result = roll(userInput);
+  displayResult(result);
+} catch (error) {
+  displayError(error.message);
+}
+```
+
+## Advanced Features
+
+### Validation Before Rolling
+
+Always validate user input before rolling:
+
+```typescript
+import { validateNotation } from '@randsum/roller';
+
+function safeRoll(notation: string) {
+  if (validateNotation(notation)) {
+    return roll(notation);
+  } else {
+    throw new Error('Invalid dice notation');
+  }
+}
+```
+
+### Batch Rolling
+
+Roll multiple dice expressions at once:
+
+```typescript
+const rolls = [
+  roll('1d20+5'),  // Attack roll
+  roll('1d8+3'),   // Damage roll
+  roll('1d4')      // Bonus damage
+];
+
+const totalDamage = rolls[1].total + rolls[2].total;
+```
+
+## Game Integration Examples
+
+### D&D 5e Character Creation
+
+```typescript
+// Generate ability scores
+const abilities = [
+  'Strength', 'Dexterity', 'Constitution',
+  'Intelligence', 'Wisdom', 'Charisma'
+].map(ability => ({
+  name: ability,
+  score: roll('4d6L').total
+}));
+```
+
+### Combat Resolution
+
+```typescript
+function attackRoll(bonus: number, advantage: boolean = false) {
+  const notation = advantage ? `2d20H+${bonus}` : `1d20+${bonus}`;
+  return roll(notation);
+}
+
+function damageRoll(weapon: string, critical: boolean = false) {
+  const dice = critical ? '2d8+3' : '1d8+3'; // Longsword example
+  return roll(dice);
+}
+```
+
+## Next Steps
+
+- Explore [Advanced Modifiers](/examples/advanced-modifiers)
+- Learn about [Game System Integration](/examples/game-systems)
+- Check out the [Complete API Reference](/docs/api)
+
+## Try More Examples
+
+Experiment with these advanced patterns:
+
+<DiceRoller notation="4d6L" label="Roll Ability Score (4d6L)" />
+
+<DiceRoller notation="1d20+5" label="Roll Attack (1d20+5)" />
+
+<DiceRoller notation="3d6!" label="Roll Exploding Dice (3d6!)" />
+
+Happy rolling! 🎲

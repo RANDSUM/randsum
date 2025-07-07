@@ -1,0 +1,129 @@
+---
+import DocumentationLayout from '../layouts/DocumentationLayout.astro';
+
+const title = "RANDSUM - Advanced Dice Rolling for Developers";
+const description = "Comprehensive dice rolling library with advanced notation support for tabletop gaming, probability simulation, and randomization tasks.";
+---
+
+<DocumentationLayout title={title} description={description}>
+  <div class="space-y-12">
+    <!-- Hero Section -->
+    <section class="text-center py-8">
+      <h1 class="text-4xl font-bold mb-6 text-white">
+        Advanced Dice Rolling for Developers
+      </h1>
+      <p class="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        Comprehensive dice rolling library with sophisticated notation support for tabletop gaming, probability simulation, and randomization tasks.
+      </p>
+    </section>
+
+    <!-- Quick Start -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-6 text-white">Quick Start</h2>
+      <div class="code-block">
+        <pre><code class="text-green-400">npm install @randsum/roller</code></pre>
+      </div>
+    </section>
+
+    <!-- Core Package -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-6 text-white">Core Package</h2>
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">@randsum/roller</h3>
+          <span class="badge badge-primary">Core</span>
+        </div>
+        <p class="card-description mb-4">Core dice rolling engine with advanced notation support</p>
+        <a href="/packages/roller" class="nav-link inline-flex">Learn more →</a>
+      </div>
+    </section>
+
+    <!-- Game System Packages -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-6 text-white">Game System Packages</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">@randsum/blades</h3>
+            <span class="badge badge-secondary">Game System</span>
+          </div>
+          <p class="card-description mb-4">Blades in the Dark dice mechanics</p>
+          <a href="/packages/blades" class="nav-link inline-flex">Learn more →</a>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">@randsum/daggerheart</h3>
+            <span class="badge badge-secondary">Game System</span>
+          </div>
+          <p class="card-description mb-4">Daggerheart RPG system implementation</p>
+          <a href="/packages/daggerheart" class="nav-link inline-flex">Learn more →</a>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">@randsum/fifth</h3>
+            <span class="badge badge-secondary">Game System</span>
+          </div>
+          <p class="card-description mb-4">D&D 5th Edition dice mechanics</p>
+          <a href="/packages/fifth" class="nav-link inline-flex">Learn more →</a>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">@randsum/root-rpg</h3>
+            <span class="badge badge-secondary">Game System</span>
+          </div>
+          <p class="card-description mb-4">Root RPG system implementation</p>
+          <a href="/packages/root-rpg" class="nav-link inline-flex">Learn more →</a>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">@randsum/salvageunion</h3>
+            <span class="badge badge-secondary">Game System</span>
+          </div>
+          <p class="card-description mb-4">Salvage Union RPG system implementation</p>
+          <a href="/packages/salvageunion" class="nav-link inline-flex">Learn more →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Applications -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-6 text-white">Applications</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">MCP Server</h3>
+            <span class="badge badge-accent">Application</span>
+          </div>
+          <p class="card-description mb-4">Model Context Protocol server for AI integration</p>
+          <a href="/apps/mcp" class="nav-link inline-flex">Learn more →</a>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Discord Bot</h3>
+            <span class="badge badge-accent">Application</span>
+          </div>
+          <p class="card-description mb-4">Discord bot for dice rolling in servers</p>
+          <a href="/apps/robo" class="nav-link inline-flex">Learn more →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Get Started -->
+    <section class="text-center py-8">
+      <h2 class="text-2xl font-semibold mb-6 text-white">Get Started</h2>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="/docs/installation" class="btn btn-primary">
+          Installation Guide
+        </a>
+        <a href="/docs/api" class="btn btn-secondary">
+          API Reference
+        </a>
+      </div>
+    </section>
+  </div>
+</DocumentationLayout>

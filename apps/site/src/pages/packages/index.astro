@@ -1,0 +1,146 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const packages = await getCollection('packages');
+const sortedPackages = packages.sort((a, b) => (a.data.order || 999) - (b.data.order || 999));
+
+const corePackages = sortedPackages.filter(pkg => pkg.data.category === 'core');
+const gameSystemPackages = sortedPackages.filter(pkg => pkg.data.category === 'game-system');
+const applicationPackages = sortedPackages.filter(pkg => pkg.data.category === 'application');
+---
+
+<BaseLayout 
+  title="Packages - RANDSUM"
+  description="Complete list of RANDSUM packages for dice rolling and game systems"
+>
+  <div class="container py-8">
+    <header class="mb-12">
+      <h1 class="text-4xl font-bold text-white mb-4">Packages</h1>
+      <p class="text-xl text-gray-300 max-w-2xl">
+        RANDSUM is built as a collection of focused packages. Choose the ones you need for your project.
+      </p>
+    </header>
+
+    <!-- Core Packages -->
+    {corePackages.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-white mb-6">Core Packages</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          {corePackages.map((pkg) => (
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">{pkg.data.title}</h3>
+                <div class="flex gap-2 mt-2">
+                  <span class="badge badge-primary">v{pkg.data.version}</span>
+                  <span class="badge badge-secondary">{pkg.data.category}</span>
+                </div>
+              </div>
+              <p class="card-description mb-4">{pkg.data.description}</p>
+              <div class="flex gap-3">
+                <a href={`/packages/${pkg.slug}`} class="btn btn-primary">
+                  Documentation
+                </a>
+                <a 
+                  href={`https://www.npmjs.com/package/${pkg.data.npmPackage}`}
+                  class="btn btn-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  npm
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Game System Packages -->
+    {gameSystemPackages.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-white mb-6">Game Systems</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {gameSystemPackages.map((pkg) => (
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">{pkg.data.title}</h3>
+                <div class="flex gap-2 mt-2">
+                  <span class="badge badge-primary">v{pkg.data.version}</span>
+                </div>
+              </div>
+              <p class="card-description mb-4">{pkg.data.description}</p>
+              <div class="flex gap-3">
+                <a href={`/packages/${pkg.slug}`} class="btn btn-primary">
+                  Documentation
+                </a>
+                <a 
+                  href={`https://www.npmjs.com/package/${pkg.data.npmPackage}`}
+                  class="btn btn-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  npm
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Application Packages -->
+    {applicationPackages.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-white mb-6">Applications</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          {applicationPackages.map((pkg) => (
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">{pkg.data.title}</h3>
+                <div class="flex gap-2 mt-2">
+                  <span class="badge badge-primary">v{pkg.data.version}</span>
+                  <span class="badge badge-secondary">{pkg.data.category}</span>
+                </div>
+              </div>
+              <p class="card-description mb-4">{pkg.data.description}</p>
+              <div class="flex gap-3">
+                <a href={`/packages/${pkg.slug}`} class="btn btn-primary">
+                  Documentation
+                </a>
+                <a 
+                  href={`https://www.npmjs.com/package/${pkg.data.npmPackage}`}
+                  class="btn btn-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  npm
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Installation Guide -->
+    <section class="bg-gray-900 rounded-lg p-8 border border-gray-800">
+      <h2 class="text-2xl font-semibold text-white mb-4">Quick Installation</h2>
+      <p class="text-gray-300 mb-6">
+        Get started quickly with the core package, or install specific game system packages as needed.
+      </p>
+      
+      <div class="code-block mb-4">
+        <pre><code class="text-green-400"># Install the core package
+npm install @randsum/roller
+
+# Or install a game system package
+npm install @randsum/blades</code></pre>
+      </div>
+      
+      <a href="/docs/installation" class="btn btn-primary">
+        Full Installation Guide
+      </a>
+    </section>
+  </div>
+</BaseLayout>

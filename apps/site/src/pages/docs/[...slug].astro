@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import DocumentationLayout from '../../layouts/DocumentationLayout.astro';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  return docs.map((doc) => ({
+    params: { slug: doc.slug },
+    props: { doc },
+  }));
+}
+
+const { doc } = Astro.props;
+const { Content } = await doc.render();
+
+// Get related docs for navigation
+const allDocs = await getCollection('docs');
+const sortedDocs = allDocs.sort((a, b) => (a.data.order || 999) - (b.data.order || 999));
+const currentIndex = sortedDocs.findIndex(d => d.slug === doc.slug);
+const prevDoc = currentIndex > 0 ? sortedDocs[currentIndex - 1] : null;
+const nextDoc = currentIndex < sortedDocs.length - 1 ? sortedDocs[currentIndex + 1] : null;
+---
+
+<DocumentationLayout 
+  title={`${doc.data.title} - RANDSUM`}
+  description={doc.data.description}
+>
+  <!-- Document Header -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 text-sm text-gray-400 mb-2">
+      <a href="/docs" class="hover:text-gray-300">Documentation</a>
+      <span>/</span>
+      <span class="text-gray-300">{doc.data.title}</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold text-white mb-4">{doc.data.title}</h1>
+    
+    {doc.data.description && (
+      <p class="text-lg text-gray-300 mb-6">{doc.data.description}</p>
+    )}
+    
+    {doc.data.tags && doc.data.tags.length > 0 && (
+      <div class="flex gap-2">
+        {doc.data.tags.map((tag) => (
+          <span class="badge badge-secondary">{tag}</span>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <!-- Document Content -->
+  <div class="prose prose-invert max-w-none">
+    <Content />
+  </div>
+
+  <!-- Navigation -->
+  <div class="mt-12 pt-8 border-t border-gray-800">
+    <div class="flex flex-col sm:flex-row justify-between gap-4">
+      {prevDoc && (
+        <a href={`/docs/${prevDoc.slug}`} class="card flex-1 hover:border-gray-700">
+          <div class="text-sm text-gray-400 mb-1">← Previous</div>
+          <div class="card-title text-base">{prevDoc.data.title}</div>
+          <div class="card-description text-sm">{prevDoc.data.description}</div>
+        </a>
+      )}
+      
+      {nextDoc && (
+        <a href={`/docs/${nextDoc.slug}`} class="card flex-1 hover:border-gray-700 text-right">
+          <div class="text-sm text-gray-400 mb-1">Next →</div>
+          <div class="card-title text-base">{nextDoc.data.title}</div>
+          <div class="card-description text-sm">{nextDoc.data.description}</div>
+        </a>
+      )}
+    </div>
+  </div>
+
+  <!-- Help Section -->
+  <div class="mt-8 bg-gray-900 rounded-lg p-6 border border-gray-800">
+    <h3 class="text-lg font-semibold text-white mb-3">Need Help?</h3>
+    <p class="text-gray-300 mb-4">
+      Can't find what you're looking for? Check out these resources:
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a 
+        href="https://github.com/RANDSUM/randsum/issues"
+        class="btn btn-secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Report Issue
+      </a>
+      <a href="/examples" class="btn btn-ghost">
+        View Examples
+      </a>
+      <a href="/docs/api" class="btn btn-ghost">
+        API Reference
+      </a>
+    </div>
+  </div>
+</DocumentationLayout>

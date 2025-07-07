@@ -22,7 +22,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.11.0"
+    "@astrojs/mdx": "^4.3.0",
+    "astro": "^5.11.0",
+    "rehype-pretty-code": "^0.14.1",
+    "shiki": "^3.7.0"
   },
   "keywords": [
     "randsum",
