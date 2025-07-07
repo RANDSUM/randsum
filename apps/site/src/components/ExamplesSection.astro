@@ -1,8 +1,10 @@
 ---
+import SectionContainer from './ui/SectionContainer.astro'
 import MainContent from './MainContent.astro'
+import PrimaryButton from './ui/PrimaryButton.astro'
 ---
 
-<section class="py-20 lg:py-32 bg-randsum-950">
+<SectionContainer background="bg-randsum-950">
   <MainContent>
     <div class="text-center mb-16">
       <h2 class="text-3xl lg:text-5xl font-bold text-silver-50 mb-6">
@@ -144,16 +146,13 @@ import MainContent from './MainContent.astro'
             <span class="text-games-fifth-500">npm install</span> <span class="text-silver-300">@randsum/roller</span>
           </code>
         </div>
-        <a
-          href="/docs"
-          class="inline-flex items-center px-6 py-3 bg-silver-50 hover:bg-silver-200 text-randsum-900 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
-        >
+        <PrimaryButton href="/docs">
           Get Started
           <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
-        </a>
+        </PrimaryButton>
       </div>
     </div>
   </MainContent>
-</section>
+</SectionContainer>

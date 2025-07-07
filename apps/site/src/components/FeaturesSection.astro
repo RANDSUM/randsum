@@ -1,8 +1,10 @@
 ---
+import SectionContainer from './ui/SectionContainer.astro'
 import MainContent from './MainContent.astro'
+import CodeBlock from './ui/CodeBlock.astro'
 ---
 
-<section class="py-20 lg:py-32 bg-randsum-900/30">
+<SectionContainer background="bg-randsum-900/30">
   <MainContent>
     <div class="text-center mb-16">
       <h2 class="text-3xl lg:text-5xl font-bold text-silver-50 mb-6">
@@ -25,13 +27,11 @@ import MainContent from './MainContent.astro'
         <p class="text-silver-300 mb-6">
           Comprehensive support for complex dice expressions including drop/keep, rerolls, exploding dice, and custom modifiers.
         </p>
-        <div class="bg-randsum-950 rounded-md p-4">
-          <code class="text-sm font-mono text-silver-200">
-            <span class="text-games-blades-500">4d6L</span> <span class="text-silver-400">// Drop lowest</span><br>
-            <span class="text-games-daggerheart-500">3d6!</span> <span class="text-silver-400">// Exploding dice</span><br>
-            <span class="text-games-fifth-500">4d6R&#123;1&#125;</span> <span class="text-silver-400">// Reroll 1s</span>
-          </code>
-        </div>
+        <CodeBlock background="darker">
+          <span class="text-games-blades-500">4d6L</span> <span class="text-silver-400">// Drop lowest</span><br>
+          <span class="text-games-daggerheart-500">3d6!</span> <span class="text-silver-400">// Exploding dice</span><br>
+          <span class="text-games-fifth-500">4d6R&#123;1&#125;</span> <span class="text-silver-400">// Reroll 1s</span>
+        </CodeBlock>
       </div>
 
       <!-- Type Safety -->
@@ -45,13 +45,11 @@ import MainContent from './MainContent.astro'
         <p class="text-silver-300 mb-6">
           Built with TypeScript from the ground up. Get full IntelliSense support and catch errors at compile time.
         </p>
-        <div class="bg-randsum-950 rounded-md p-4">
-          <code class="text-sm font-mono text-silver-200">
-            <span class="text-games-daggerheart-500">const</span> <span class="text-silver-300">result</span><span class="text-silver-400">:</span> <span class="text-games-fifth-500">DiceResult</span><br>
-            <span class="text-silver-300">result.total</span> <span class="text-silver-400">// number</span><br>
-            <span class="text-silver-300">result.rolls</span> <span class="text-silver-400">// number[]</span>
-          </code>
-        </div>
+        <CodeBlock background="darker">
+          <span class="text-games-daggerheart-500">const</span> <span class="text-silver-300">result</span><span class="text-silver-400">:</span> <span class="text-games-fifth-500">DiceResult</span><br>
+          <span class="text-silver-300">result.total</span> <span class="text-silver-400">// number</span><br>
+          <span class="text-silver-300">result.rolls</span> <span class="text-silver-400">// number[]</span>
+        </CodeBlock>
       </div>
 
       <!-- Multiple Systems -->
@@ -65,13 +63,11 @@ import MainContent from './MainContent.astro'
         <p class="text-silver-300 mb-6">
           Dedicated packages for popular RPG systems including D&D 5e, Blades in the Dark, Daggerheart, and more.
         </p>
-        <div class="bg-randsum-950 rounded-md p-4">
-          <code class="text-sm font-mono text-silver-200">
-            <span class="text-games-blades-500">@randsum/blades</span><br>
-            <span class="text-games-daggerheart-500">@randsum/daggerheart</span><br>
-            <span class="text-games-fifth-500">@randsum/fifth</span>
-          </code>
-        </div>
+        <CodeBlock background="darker">
+          <span class="text-games-blades-500">@randsum/blades</span><br>
+          <span class="text-games-daggerheart-500">@randsum/daggerheart</span><br>
+          <span class="text-games-fifth-500">@randsum/fifth</span>
+        </CodeBlock>
       </div>
     </div>
 
@@ -118,4 +114,4 @@ import MainContent from './MainContent.astro'
       </div>
     </div>
   </MainContent>
-</section>
+</SectionContainer>

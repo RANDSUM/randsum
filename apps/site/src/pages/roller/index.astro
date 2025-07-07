@@ -1,5 +1,7 @@
 ---
 import RollerLayout from '../../layouts/RollerLayout.astro'
+import SharedHeroSection from '../../components/ui/HeroSection.astro'
+import CompactButton from '../../components/ui/CompactButton.astro'
 ---
 
 <RollerLayout
@@ -7,46 +9,20 @@ import RollerLayout from '../../layouts/RollerLayout.astro'
   description="The core RANDSUM dice rolling engine with powerful notation support and advanced modifiers"
 >
   <!-- Hero Section -->
-  <div
-    class="relative overflow-hidden bg-gradient-to-br from-randsum-950 via-randsum-900 to-randsum-800"
+  <SharedHeroSection
+    title="@randsum/roller"
+    description="The core RANDSUM dice rolling engine. Advanced notation support, powerful modifiers, and lightning-fast performance for all your tabletop gaming needs."
+    class="overflow-hidden"
   >
-    <div
-      class="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"
-    >
+    <div slot="cta" class="mt-10 flex items-center justify-center gap-x-6">
+      <CompactButton href="/roller/docs" variant="primary">
+        Get Started
+      </CompactButton>
+      <CompactButton href="/roller/examples" variant="secondary">
+        View Examples <span aria-hidden="true">→</span>
+      </CompactButton>
     </div>
-    <div class="relative mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
-      <div class="mx-auto max-w-2xl text-center">
-        <h1
-          class="text-4xl font-bold tracking-tight text-silver-50 sm:text-6xl"
-        >
-          <span
-            class="bg-gradient-to-r from-silver-300 to-silver-100 bg-clip-text text-transparent"
-          >
-            @randsum/roller
-          </span>
-        </h1>
-        <p class="mt-6 text-lg leading-8 text-silver-300">
-          The core RANDSUM dice rolling engine. Advanced notation support,
-          powerful modifiers, and lightning-fast performance for all your
-          tabletop gaming needs.
-        </p>
-        <div class="mt-10 flex items-center justify-center gap-x-6">
-          <a
-            href="/roller/docs"
-            class="rounded-md bg-silver-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-silver-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-silver-600 transition-colors"
-          >
-            Get Started
-          </a>
-          <a
-            href="/roller/examples"
-            class="text-sm font-semibold leading-6 text-silver-300 hover:text-silver-50 transition-colors"
-          >
-            View Examples <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+  </SharedHeroSection>
 
   <!-- Features Section -->
   <div class="py-24 sm:py-32">
@@ -244,20 +220,17 @@ roll('3d6!')     // Exploding dice</code></pre>
           @randsum/roller
         </p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
-          <a
-            href="/roller/docs"
-            class="rounded-md bg-silver-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-silver-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-silver-600 transition-colors"
-          >
+          <CompactButton href="/roller/docs" variant="primary">
             Read the Docs
-          </a>
-          <a
+          </CompactButton>
+          <CompactButton
             href="https://github.com/RANDSUM/randsum/tree/main/packages/roller"
-            class="text-sm font-semibold leading-6 text-silver-300 hover:text-silver-50 transition-colors"
+            variant="secondary"
             target="_blank"
             rel="noopener noreferrer"
           >
             View on GitHub <span aria-hidden="true">→</span>
-          </a>
+          </CompactButton>
         </div>
       </div>
     </div>
