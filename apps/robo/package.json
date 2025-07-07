@@ -32,7 +32,7 @@
 		"upgrade": "sage upgrade"
 	},
 	"dependencies": {
-		"@discord/embedded-app-sdk": "^1.9.0",
+		"@discord/embedded-app-sdk": "^2.0.0",
 		"@robojs/patch": "^0.2.1",
 		"robo.js": "^0.10.30",
 		"discord.js": "^14.21.0",
