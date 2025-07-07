@@ -8,7 +8,7 @@ describe('roll', () => {
       expect(typeof result).toBe('string')
       expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
       expect(details).toHaveProperty('total')
-      expect(details).toHaveProperty('rawResults')
+      expect(details).toHaveProperty('rawRolls')
     })
   })
 

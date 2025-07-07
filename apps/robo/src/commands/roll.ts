@@ -39,18 +39,17 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   const rawResults = JSON.stringify(result.rawRolls)
   const results = JSON.stringify(result.modifiedRolls.rolls)
 
-  const noChanges = rawResults === results
+  const simpleField = [{ name: 'Rolls', value: results, inline: true }]
+  const complexField = [
+    { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
+    {
+      name: 'Rolls (after modifiers)',
+      value: results,
+      inline: true
+    }
+  ]
+  const rollFields = rawResults === results ? simpleField : complexField
 
-  const rollFields = noChanges
-    ? [{ name: 'Rolls', value: results, inline: true }]
-    : [
-      { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
-      {
-        name: 'Rolls (after modifiers)',
-        value: results,
-        inline: true
-      }
-    ]
   const fields = [
     { name: 'Value', value: total },
     ...rollFields,
