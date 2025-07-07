@@ -1,5 +1,6 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from 'astro/config'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,9 +11,12 @@ export default defineConfig({
     assets: 'assets'
   },
   vite: {
+    plugins: [tailwindcss()],
     define: {
       __SITE_TITLE__: JSON.stringify('RANDSUM - Advanced Dice Rolling'),
-      __SITE_DESCRIPTION__: JSON.stringify('Professional dice rolling packages for tabletop gaming, with advanced notation support and comprehensive game system integrations.')
+      __SITE_DESCRIPTION__: JSON.stringify(
+        'Professional dice rolling packages for tabletop gaming, with advanced notation support and comprehensive game system integrations.'
+      )
     }
   }
-});
+})
