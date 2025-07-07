@@ -35,12 +35,10 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   const result = roll(digested)
 
   const total = `**${String(result.total)}**`
-  const dicePoolDescriptions = result.rolls[0].parameters.description
+  const dicePoolDescriptions = result.parameters.description
 
   const rawResults = JSON.stringify(result.rawRolls)
-  const results = JSON.stringify(
-    result.rolls.map((roll) => roll.modifiedRolls.rolls).flat()
-  )
+  const results = JSON.stringify(result.modifiedRolls.rolls)
 
   const noChanges = rawResults === results
 

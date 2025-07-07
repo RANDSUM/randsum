@@ -1,4 +1,4 @@
-import { type NumericRollOptions, roll as coreRoll } from '@randsum/roller'
+import { roll as coreRoll } from '@randsum/roller'
 import type {
   AdvantageDisadvantage,
   RollArgument,
@@ -6,70 +6,25 @@ import type {
   RollResultType
 } from './types'
 
-function rollArg({
-  modifier = 0,
-  amplifyHope = false,
-  amplifyFear = false
-}: RollArgument): NumericRollOptions[] {
-  if (amplifyHope && amplifyFear) {
-    return [
-      {
-        quantity: 2,
-        sides: 20,
-        modifiers: { plus: modifier }
-      }
-    ]
-  }
-  if (amplifyHope) {
-    return [
-      {
-        quantity: 1,
-        sides: 20,
-        modifiers: { plus: modifier }
-      },
-      {
-        quantity: 1,
-        sides: 12,
-        modifiers: { plus: modifier }
-      }
-    ]
-  }
-  if (amplifyFear) {
-    return [
-      {
-        quantity: 1,
-        sides: 12,
-        modifiers: { plus: modifier }
-      },
-      {
-        quantity: 1,
-        sides: 12,
-        modifiers: { plus: modifier }
-      }
-    ]
-  }
-  return [
-    {
-      quantity: 2,
-      sides: 12,
-      modifiers: { plus: modifier }
-    }
-  ]
-}
-
 export function roll({
   modifier = 0,
   rollingWith,
   amplifyHope = false,
   amplifyFear = false
 }: RollArgument): RollResult {
-  const {
-    rawResults: [hope, fear],
-    total
-  } = coreRoll(...rollArg({ modifier, amplifyHope, amplifyFear }))
-  if (hope === undefined || fear === undefined) {
-    throw new Error('Failed to roll hope and fear')
-  }
+  const hopeResult = coreRoll({
+    quantity: 1,
+    sides: amplifyHope ? 20 : 12,
+    modifiers: { plus: modifier }
+  })
+  const fearResult = coreRoll({
+    quantity: 1,
+    sides: amplifyFear ? 20 : 12,
+    modifiers: { plus: modifier }
+  })
+  const hope = hopeResult.total
+  const fear = fearResult.total
+  const total = hope + fear
 
   const [totalWithAdvantage, advantage] = calculateTotal(total, rollingWith)
 

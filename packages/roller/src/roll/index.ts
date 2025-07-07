@@ -12,6 +12,7 @@ import { generateRoll } from './generateRoll'
 
 function roll(arg: NumericRollArgument): NumericRollResult
 function roll(arg: CustomRollArgument): CustomRollResult
+function roll(arg: RollArgument): RollResult
 function roll(arg: RollArgument): RollResult {
   const parameter = normalizeArgument(arg)
   const result = generateRoll(parameter)

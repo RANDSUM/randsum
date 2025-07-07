@@ -109,33 +109,27 @@ RETURNS: For valid notation, shows parsed structure with quantity, sides, and mo
 })
 
 function formatRollResult(result: RollResult): string {
-  const { type, total, rolls, rawResults } = result
+  const { type, total, rawRolls, parameters, modifiedRolls } = result
 
   const header = `🎲 RANDSUM Roll Result (${type}):`
   const separator = '─'.repeat(30)
   const totalLine = `Total: ${String(total)}`
 
-  const rollDetails = rolls
-    .map((roll, index) => {
-      const { parameters, rawRolls, modifiedRolls } = roll
-      const notation = parameters.notation
-      const rawRollsStr = rawRolls.join(', ')
-      const modifiedRollsStr = modifiedRolls.rolls.join(', ')
+  const notation = parameters.notation
+  const rawRollsStr = rawRolls.join(', ')
+  const modifiedRollsStr = modifiedRolls.rolls.join(', ')
 
-      let rollInfo = `Roll ${(index + 1).toString()}: ${notation}`
-      rollInfo += `\n  Raw: [${rawRollsStr}]`
+  let rollInfo = `Roll: ${notation}`
+  rollInfo += `\n  Raw: [${rawRollsStr}]`
 
-      // Show modified rolls if different from raw
-      if (rawRollsStr !== modifiedRollsStr) {
-        rollInfo += `\n  Modified: [${modifiedRollsStr}]`
-      }
+  // Show modified rolls if different from raw
+  if (rawRollsStr !== modifiedRollsStr) {
+    rollInfo += `\n  Modified: [${modifiedRollsStr}]`
+  }
 
-      rollInfo += `\n  Subtotal: ${String(roll.total)}`
-      return rollInfo
-    })
-    .join('\n\n')
+  rollInfo += `\n  Total: ${String(total)}`
 
-  const rawResultsLine = `Raw Results: [${rawResults.join(', ')}]`
+  const rawResultsLine = `Raw Results: [${rawRolls.join(', ')}]`
 
   return [
     header,
@@ -144,7 +138,7 @@ function formatRollResult(result: RollResult): string {
     rawResultsLine,
     '',
     'Roll Details:',
-    rollDetails
+    rollInfo
   ].join('\n')
 }
 
