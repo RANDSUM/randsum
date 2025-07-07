@@ -21,6 +21,7 @@ export function generateRoll(parameters: RollParams): RollResult {
     return {
       parameters,
       history,
+      rolls: history.modifiedRolls,
       total: history.total,
       type: 'numeric'
     } as NumericRollResult
@@ -33,6 +34,7 @@ export function generateRoll(parameters: RollParams): RollResult {
     return {
       parameters,
       history,
+      rolls: history.modifiedRolls,
       total: calculateTotal(history.modifiedRolls),
       type: 'custom'
     } as CustomRollResult

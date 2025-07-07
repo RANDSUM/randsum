@@ -16,18 +16,21 @@ export interface RollHistory<T extends RollParams = RollParams> {
 export interface BaseRollResult<P extends RollParams = RollParams> {
   parameters: P
   type: 'numeric' | 'custom'
+  rolls: RollHistory<P>['modifiedRolls']
   history: RollHistory<P>
   total: string | number
 }
 
 export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
   type: 'numeric'
+  rolls: number[]
   history: RollHistory<NumericRollParams>
   total: number
 }
 
 export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
   type: 'custom'
+  rolls: string[]
   history: RollHistory<CustomRollParams>
   total: string
 }
