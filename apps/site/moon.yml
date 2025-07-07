@@ -80,7 +80,7 @@ tasks:
     options:
       cache: false
       persistent: true
-      runInCI: true
+      runInCI: false
       mergeArgs: 'replace'
       mergeEnv: 'replace'
 
