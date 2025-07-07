@@ -25,40 +25,30 @@
   --color-silver-800: #343a40;
   --color-silver-900: #212529;
 
-  --color-games-blades-50: #fef2f2;
-  --color-games-blades-500: #ef4444;
-  --color-games-blades-600: #dc2626;
-  --color-games-blades-700: #b91c1c;
+  --color-games-fifth-50: #fef2f2;
+  --color-games-fifth-500: #ef4444;
+  --color-games-fifth-600: #dc2626;
+  --color-games-fifth-700: #b91c1c;
 
   --color-games-daggerheart-50: #faf5ff;
   --color-games-daggerheart-500: #a855f7;
   --color-games-daggerheart-600: #9333ea;
   --color-games-daggerheart-700: #7c3aed;
 
-  --color-games-fifth-50: #f0fdf4;
-  --color-games-fifth-500: #22c55e;
-  --color-games-fifth-600: #16a34a;
-  --color-games-fifth-700: #15803d;
+  --color-games-root-rpg-50: #f0fdf4;
+  --color-games-root-rpg-500: #22c55e;
+  --color-games-root-rpg-600: #16a34a;
+  --color-games-root-rpg-700: #15803d;
 
-  --color-games-root-rpg-50: #fff7ed;
-  --color-games-root-rpg-500: #f97316;
-  --color-games-root-rpg-600: #ea580c;
-  --color-games-root-rpg-700: #c2410c;
+  --color-games-blades-50: #fff7ed;
+  --color-games-blades-500: #f97316;
+  --color-games-blades-600: #ea580c;
+  --color-games-blades-700: #c2410c;
 
-  --color-games-salvageunion-50: #fefce8;
-  --color-games-salvageunion-500: #eab308;
-  --color-games-salvageunion-600: #ca8a04;
-  --color-games-salvageunion-700: #a16207;
-
-  --color-apps-mcp-50: #ecfeff;
-  --color-apps-mcp-500: #06b6d4;
-  --color-apps-mcp-600: #0891b2;
-  --color-apps-mcp-700: #0e7490;
-
-  --color-apps-robo-50: #eef2ff;
-  --color-apps-robo-500: #6366f1;
-  --color-apps-robo-600: #4f46e5;
-  --color-apps-robo-700: #4338ca;
+  --color-games-salvageunion-50: #f0f9ff;
+  --color-games-salvageunion-500: #87b5d3;
+  --color-games-salvageunion-600: #6ba3c7;
+  --color-games-salvageunion-700: #5691bb;
 }
 
 /* Custom global styles */
