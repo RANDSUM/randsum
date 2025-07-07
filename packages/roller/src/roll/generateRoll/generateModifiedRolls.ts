@@ -2,7 +2,7 @@ import type {
   NumericRollBonus,
   NumericRollOptions,
   RollParams,
-  RollPoolResult
+  RollResult
 } from '../../types'
 import { coreRandom, isCustomRollParams } from '../../lib'
 import { calculateTotal } from '../utils/calculateTotal'
@@ -10,8 +10,8 @@ import { applyModifier } from './applyModifier'
 
 export function generateModifiedRolls(
   parameters: RollParams,
-  rolls: RollPoolResult['rawRolls']
-): RollPoolResult['modifiedRolls'] {
+  rolls: RollResult['rawRolls']
+): RollResult['modifiedRolls'] {
   if (
     isCustomRollParams(parameters) &&
     rolls.every((n) => typeof n === 'string')

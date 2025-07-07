@@ -12,7 +12,7 @@ interface ModifiedRolls<T extends RollParams = RollParams> {
   logs: ModifierLog[]
 }
 
-export interface BaseRollPoolResult<P extends RollParams = RollParams> {
+export interface BaseRollResult<P extends RollParams = RollParams> {
   parameters: P
   rawResult: number | string
   type: 'numeric' | 'custom'
@@ -21,8 +21,7 @@ export interface BaseRollPoolResult<P extends RollParams = RollParams> {
   total: string | number
 }
 
-export interface NumericRollPoolResult
-  extends BaseRollPoolResult<NumericRollParams> {
+export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
   type: 'numeric'
   rawResult: number
   rawRolls: number[]
@@ -30,8 +29,7 @@ export interface NumericRollPoolResult
   total: number
 }
 
-export interface CustomRollPoolResult
-  extends BaseRollPoolResult<CustomRollParams> {
+export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
   type: 'custom'
   rawResult: string
   rawRolls: string[]
@@ -39,34 +37,4 @@ export interface CustomRollPoolResult
   total: string
 }
 
-interface BaseRollResult {
-  rolls: (NumericRollPoolResult | CustomRollPoolResult)[]
-  rawResults: (string | number)[]
-  total: string | number
-  type: 'numeric' | 'custom' | 'mixed'
-}
-
-export interface NumericRollResult extends BaseRollResult {
-  type: 'numeric'
-  rolls: NumericRollPoolResult[]
-  rawResults: number[]
-  total: number
-}
-
-export interface CustomRollResult extends BaseRollResult {
-  type: 'custom'
-  rolls: CustomRollPoolResult[]
-  rawResults: string[]
-  total: string
-}
-
-export interface MixedRollResult extends BaseRollResult {
-  type: 'mixed'
-  rolls: (NumericRollPoolResult | CustomRollPoolResult)[]
-  rawResults: (string | number)[]
-  total: string
-}
-
-export type RollPoolResult = NumericRollPoolResult | CustomRollPoolResult
-
-export type RollResult = NumericRollResult | CustomRollResult | MixedRollResult
+export type RollResult = NumericRollResult | CustomRollResult

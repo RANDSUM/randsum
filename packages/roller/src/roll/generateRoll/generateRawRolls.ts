@@ -1,9 +1,9 @@
-import type { RollParams, RollPoolResult } from '../../types'
+import type { RollParams, RollResult } from '../../types'
 import { coreSpreadRolls, isNumericRollOptions } from '../../lib/'
 
 export function generateRawRolls({
   options
-}: RollParams): RollPoolResult['rawRolls'] {
+}: RollParams): RollResult['rawRolls'] {
   const quantity = options.quantity ?? 1
 
   if (isNumericRollOptions(options)) {
