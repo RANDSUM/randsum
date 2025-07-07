@@ -13,17 +13,13 @@ import { generateRawRolls } from './generateRawRolls'
 export function generateRoll(parameters: RollParams): RollResult {
   const rawRolls = generateRawRolls(parameters)
   const modifiedRolls = generateModifiedRolls(parameters, rawRolls)
-  const rawResult = calculateTotal(rawRolls)
   if (
     rawRolls.every((n) => typeof n === 'number') &&
     modifiedRolls.rolls.every((n) => typeof n === 'number') &&
-    typeof rawResult === 'number' &&
     isNumericRollParams(parameters)
   ) {
     return {
       parameters,
-      rawResult,
-      rawRolls,
       modifiedRolls,
       total: modifiedRolls.total,
       type: 'numeric'
@@ -32,13 +28,10 @@ export function generateRoll(parameters: RollParams): RollResult {
   if (
     rawRolls.every((n) => typeof n === 'string') &&
     modifiedRolls.rolls.every((n) => typeof n === 'string') &&
-    typeof rawResult === 'string' &&
     isCustomRollParams(parameters)
   ) {
     return {
       parameters,
-      rawResult,
-      rawRolls,
       modifiedRolls,
       total: calculateTotal(modifiedRolls.rolls),
       type: 'custom'

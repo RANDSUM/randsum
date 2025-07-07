@@ -14,13 +14,13 @@ describe('roll', () => {
 
     test('applies modifier correctly', () => {
       const result = roll(args)
-      const rawRoll = result.rawRolls[0]
+      const rawRoll = result.modifiedRolls.rawRolls[0]
       expect(result.total).toBe(Number(rawRoll) + args.modifier)
     })
 
     test('returns single roll result', () => {
       const result = roll(args)
-      expect(result.rawRolls).toHaveLength(1)
+      expect(result.modifiedRolls.rawRolls).toHaveLength(1)
     })
   })
 
@@ -32,12 +32,12 @@ describe('roll', () => {
 
     test('returns two rolls', () => {
       const result = roll(args)
-      expect(result.rawRolls).toHaveLength(2)
+      expect(result.modifiedRolls.rawRolls).toHaveLength(2)
     })
 
     test('uses higher roll for total', () => {
       const result = roll(args)
-      const [roll1, roll2] = result.rawRolls
+      const [roll1, roll2] = result.modifiedRolls.rawRolls
       const expectedTotal =
         Math.max(Number(roll1), Number(roll2)) + args.modifier
       expect(result.total).toBe(expectedTotal)
@@ -52,12 +52,12 @@ describe('roll', () => {
 
     test('returns two rolls', () => {
       const result = roll(args)
-      expect(result.rawRolls).toHaveLength(2)
+      expect(result.modifiedRolls.rawRolls).toHaveLength(2)
     })
 
     test('uses lower roll for total', () => {
       const result = roll(args)
-      const [roll1, roll2] = result.rawRolls
+      const [roll1, roll2] = result.modifiedRolls.rawRolls
       const expectedTotal =
         Math.min(Number(roll1), Number(roll2)) + args.modifier
       expect(result.total).toBe(expectedTotal)
@@ -75,7 +75,7 @@ describe('roll', () => {
 
     test('applies negative modifier correctly', () => {
       const result = roll(args)
-      const rawRoll = result.rawRolls[0]
+      const rawRoll = result.modifiedRolls.rawRolls[0]
       expect(result.total).toBe(Number(rawRoll) + args.modifier)
     })
   })

@@ -19,6 +19,7 @@ export function generateModifiedRolls(
     return {
       total: calculateTotal(rolls) as string,
       rolls,
+      rawRolls: rolls,
       logs: []
     }
   }
@@ -36,6 +37,7 @@ export function generateModifiedRolls(
   if (Object.keys(modifiers).length === 0) {
     return {
       total: calculateTotal(rolls) as number,
+      rawRolls: rolls,
       rolls: rolls.map((n) => Number(n)),
       logs: []
     }
@@ -117,6 +119,7 @@ export function generateModifiedRolls(
 
   return {
     rolls: bonuses.rolls,
+    rawRolls: rolls,
     total: calculateTotal(bonuses.rolls, bonuses.simpleMathModifier) as number,
     logs: bonuses.logs
   }
