@@ -77,14 +77,19 @@ describe(generateRoll, () => {
         parameters: uniqueParameters,
         rawRolls,
         modifiedRolls: {
-          'test-roll-id': {
-            rolls: [1, 200, 2, 3],
-            total: 206
-          }
+          rolls: [1, 200, 2, 3],
+          total: 206,
+          logs: [
+            {
+              added: [200],
+              modifier: 'unique',
+              options: true,
+              removed: [1]
+            }
+          ]
         },
         total: 206,
-        result: [1, 200, 2, 3],
-        rawResult: [1, 1, 2, 3],
+        rawResult: 7,
         type: 'numeric'
       })
     })
@@ -99,24 +104,26 @@ describe(generateRoll, () => {
       })
 
       test('it disregards any numbers in that array and makes the rest unique', () => {
-        const rawRolls = {
-          'test-roll-id': uniqueRolls
-        }
-
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           uniqueRolls
         )
         expect(generateRoll(notUniqueParameters)).toMatchObject({
           parameters: notUniqueParameters,
-          rawRolls,
           modifiedRolls: {
-            rolls: [1, 1, 2, 3],
+            rolls: uniqueRolls,
             total: 7,
-            log: []
+            logs: [
+              {
+                added: [],
+                modifier: 'unique',
+                options: { notUnique: [1] },
+                removed: []
+              }
+            ]
           },
           total: 7,
-          result: [1, 1, 2, 3],
-          rawResult: uniqueRolls,
+          rawResult: 7,
+          rawRolls: uniqueRolls,
           type: 'numeric'
         })
       })
@@ -154,9 +161,6 @@ describe(generateRoll, () => {
     })
 
     test('it returns the expected result as a string', () => {
-      const rawRolls = {
-        'test-roll-id': customSidesRoll
-      }
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
         customSidesRoll
       )
