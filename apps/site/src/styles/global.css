@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+/* Custom global styles */
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  @apply bg-randsum-950 text-silver-50;
+}
+
+/* Ensure dark mode is applied */
+html.dark {
+  color-scheme: dark;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-randsum-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-randsum-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-randsum-600;
+}
+
+/* Focus styles */
+*:focus {
+  outline: 2px solid theme('colors.silver.400');
+  outline-offset: 2px;
+}
+
+/* Code block styling */
+code {
+  @apply font-mono text-sm;
+}
+
+pre {
+  @apply overflow-x-auto;
+}
+
+/* Link hover effects */
+a {
+  @apply transition-colors duration-200;
+}
+
+/* Button focus and hover states */
+button:focus,
+a:focus {
+  @apply outline-none ring-2 ring-silver-400 ring-offset-2 ring-offset-randsum-950;
+}

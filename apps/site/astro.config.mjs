@@ -1,51 +1,28 @@
-// @ts-check
 import { defineConfig } from 'astro/config'
-import tailwindcss from '@tailwindcss/vite'
 import mdx from '@astrojs/mdx'
-import rehypePrettyCode from 'rehype-pretty-code'
+import { URL, fileURLToPath } from 'node:url'
 
-// https://astro.build/config
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineConfig({
   site: 'https://randsum.github.io',
-  base: '/randsum',
+  // base: '/randsum', // Temporarily disabled for development
   output: 'static',
-  build: {
-    assets: 'assets'
-  },
-  integrations: [
-    mdx({
-      syntaxHighlight: false, // We'll use rehype-pretty-code instead
-      rehypePlugins: [
-        [
-          rehypePrettyCode,
-          {
-            theme: {
-              dark: 'github-dark',
-              light: 'github-light'
-            },
-            keepBackground: false,
-            defaultLang: 'typescript',
-            transformers: [
-              {
-                name: 'add-copy-button',
-                code(node) {
-                  // Add data attribute for copy functionality
-                  node.properties['data-code-block'] = true
-                }
-              }
-            ]
-          }
-        ]
-      ]
-    })
-  ],
+  integrations: [mdx()],
   vite: {
-    plugins: [tailwindcss()],
-    define: {
-      __SITE_TITLE__: JSON.stringify('RANDSUM - Advanced Dice Rolling'),
-      __SITE_DESCRIPTION__: JSON.stringify(
-        'Professional dice rolling packages for tabletop gaming, with advanced notation support and comprehensive game system integrations.'
-      )
-    }
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        '@components': fileURLToPath(
+          new URL('./src/components', import.meta.url)
+        ),
+        '@layouts': fileURLToPath(new URL('./src/layouts', import.meta.url)),
+        '@pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
+        '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
+        '@assets': fileURLToPath(new URL('./src/assets', import.meta.url))
+      }
+    },
+
+    plugins: [tailwindcss()]
   }
 })

@@ -1,0 +1,283 @@
+---
+import MainContent from './MainContent.astro'
+---
+
+<section class="py-20 lg:py-32 bg-randsum-900/20">
+  <MainContent>
+    <div class="text-center mb-16">
+      <h2 class="text-3xl lg:text-5xl font-bold text-silver-50 mb-6">
+        Choose Your System
+      </h2>
+      <p class="text-xl text-silver-300 max-w-3xl mx-auto">
+        Dedicated packages for popular RPG systems, each with specialized utilities and type-safe APIs
+      </p>
+    </div>
+
+    <!-- Core Package -->
+    <div class="mb-16">
+      <div class="bg-gradient-to-r from-randsum-800/50 to-randsum-700/50 backdrop-blur-sm border border-randsum-600 rounded-xl p-8 max-w-4xl mx-auto">
+        <div class="flex items-center justify-center mb-6">
+          <div class="w-16 h-16 bg-randsum-600/30 rounded-xl flex items-center justify-center mr-4">
+            <svg class="w-8 h-8 text-randsum-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-silver-50">@randsum/roller</h3>
+            <p class="text-randsum-300">Core dice rolling engine</p>
+          </div>
+        </div>
+        <p class="text-silver-300 text-center mb-6">
+          The foundation of the RANDSUM ecosystem. Universal dice notation parser with advanced modifiers,
+          perfect for any tabletop game or custom application.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a
+            href="/packages/roller"
+            class="inline-flex items-center px-4 py-2 bg-randsum-600 hover:bg-randsum-500 text-silver-50 font-medium rounded-lg transition-colors"
+          >
+            Documentation
+          </a>
+          <a
+            href="https://www.npmjs.com/package/@randsum/roller"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center px-4 py-2 bg-transparent border border-randsum-500 hover:border-randsum-400 text-randsum-300 hover:text-randsum-200 font-medium rounded-lg transition-colors"
+          >
+            npm Package
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RPG System Packages -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Blades in the Dark -->
+      <div class="bg-games-blades-900/20 backdrop-blur-sm border border-games-blades-700/50 rounded-xl p-8 hover:border-games-blades-600 transition-all duration-300 group">
+        <div class="flex items-center justify-center w-16 h-16 bg-games-blades-600/20 rounded-xl mb-6 group-hover:bg-games-blades-600/30 transition-colors">
+          <svg class="w-8 h-8 text-games-blades-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-silver-50 mb-3">@randsum/blades</h3>
+        <p class="text-silver-300 mb-6">
+          Action rolls, resistance rolls, and fortune rolls for Blades in the Dark.
+          Includes position/effect tracking and stress mechanics.
+        </p>
+        <div class="bg-randsum-950 rounded-lg p-4 mb-6">
+          <code class="text-sm font-mono text-silver-200">
+            <span class="text-games-blades-500">bladesRoll</span><span class="text-silver-300">(</span><span class="text-silver-400">4</span><span class="text-silver-300">)</span><br>
+            <span class="text-silver-400">// → &#123; result: 'success', dice: [6,5,3,2] &#125;</span>
+          </code>
+        </div>
+        <div class="flex gap-3">
+          <a
+            href="/packages/blades"
+            class="flex-1 text-center px-4 py-2 bg-games-blades-600 hover:bg-games-blades-500 text-silver-50 font-medium rounded-lg transition-colors"
+          >
+            Docs
+          </a>
+          <a
+            href="https://www.npmjs.com/package/@randsum/blades"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 text-center px-4 py-2 bg-transparent border border-games-blades-600 hover:border-games-blades-500 text-games-blades-400 hover:text-games-blades-300 font-medium rounded-lg transition-colors"
+          >
+            npm
+          </a>
+        </div>
+      </div>
+
+      <!-- Daggerheart -->
+      <div class="bg-games-daggerheart-900/20 backdrop-blur-sm border border-games-daggerheart-700/50 rounded-xl p-8 hover:border-games-daggerheart-600 transition-all duration-300 group">
+        <div class="flex items-center justify-center w-16 h-16 bg-games-daggerheart-600/20 rounded-xl mb-6 group-hover:bg-games-daggerheart-600/30 transition-colors">
+          <svg class="w-8 h-8 text-games-daggerheart-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-silver-50 mb-3">@randsum/daggerheart</h3>
+        <p class="text-silver-300 mb-6">
+          2d12 action rolls with hope and fear mechanics.
+          Includes duality dice, damage rolls, and stress tracking.
+        </p>
+        <div class="bg-randsum-950 rounded-lg p-4 mb-6">
+          <code class="text-sm font-mono text-silver-200">
+            <span class="text-games-daggerheart-500">daggerheartRoll</span><span class="text-silver-300">()</span><br>
+            <span class="text-silver-400">// → &#123; total: 15, hope: true, fear: false &#125;</span>
+          </code>
+        </div>
+        <div class="flex gap-3">
+          <a
+            href="/packages/daggerheart"
+            class="flex-1 text-center px-4 py-2 bg-games-daggerheart-600 hover:bg-games-daggerheart-500 text-silver-50 font-medium rounded-lg transition-colors"
+          >
+            Docs
+          </a>
+          <a
+            href="https://www.npmjs.com/package/@randsum/daggerheart"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 text-center px-4 py-2 bg-transparent border border-games-daggerheart-600 hover:border-games-daggerheart-500 text-games-daggerheart-400 hover:text-games-daggerheart-300 font-medium rounded-lg transition-colors"
+          >
+            npm
+          </a>
+        </div>
+      </div>
+
+      <!-- D&D 5th Edition -->
+      <div class="bg-games-fifth-900/20 backdrop-blur-sm border border-games-fifth-700/50 rounded-xl p-8 hover:border-games-fifth-600 transition-all duration-300 group">
+        <div class="flex items-center justify-center w-16 h-16 bg-games-fifth-600/20 rounded-xl mb-6 group-hover:bg-games-fifth-600/30 transition-colors">
+          <svg class="w-8 h-8 text-games-fifth-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-silver-50 mb-3">@randsum/fifth</h3>
+        <p class="text-silver-300 mb-6">
+          Complete D&D 5e utilities including ability scores, advantage/disadvantage,
+          saving throws, and damage calculations.
+        </p>
+        <div class="bg-randsum-950 rounded-lg p-4 mb-6">
+          <code class="text-sm font-mono text-silver-200">
+            <span class="text-games-fifth-500">d20</span><span class="text-silver-300">.</span><span class="text-games-fifth-500">advantage</span><span class="text-silver-300">()</span><br>
+            <span class="text-silver-400">// → &#123; result: 18, rolls: [18, 12] &#125;</span>
+          </code>
+        </div>
+        <div class="flex gap-3">
+          <a
+            href="/packages/fifth"
+            class="flex-1 text-center px-4 py-2 bg-games-fifth-600 hover:bg-games-fifth-500 text-silver-50 font-medium rounded-lg transition-colors"
+          >
+            Docs
+          </a>
+          <a
+            href="https://www.npmjs.com/package/@randsum/fifth"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 text-center px-4 py-2 bg-transparent border border-games-fifth-600 hover:border-games-fifth-500 text-games-fifth-400 hover:text-games-fifth-300 font-medium rounded-lg transition-colors"
+          >
+            npm
+          </a>
+        </div>
+      </div>
+
+      <!-- Root RPG -->
+      <div class="bg-games-root-rpg-900/20 backdrop-blur-sm border border-games-root-rpg-700/50 rounded-xl p-8 hover:border-games-root-rpg-600 transition-all duration-300 group">
+        <div class="flex items-center justify-center w-16 h-16 bg-games-root-rpg-600/20 rounded-xl mb-6 group-hover:bg-games-root-rpg-600/30 transition-colors">
+          <svg class="w-8 h-8 text-games-root-rpg-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-silver-50 mb-3">@randsum/root-rpg</h3>
+        <p class="text-silver-300 mb-6">
+          2d6 moves and faction rolls for Root: The Tabletop Roleplaying Game.
+          Includes clearing generation and faction mechanics.
+        </p>
+        <div class="bg-randsum-950 rounded-lg p-4 mb-6">
+          <code class="text-sm font-mono text-silver-200">
+            <span class="text-games-root-rpg-500">rootMove</span><span class="text-silver-300">(</span><span class="text-silver-400">2</span><span class="text-silver-300">)</span><br>
+            <span class="text-silver-400">// → &#123; result: 'mixed', total: 8 &#125;</span>
+          </code>
+        </div>
+        <div class="flex gap-3">
+          <a
+            href="/packages/root-rpg"
+            class="flex-1 text-center px-4 py-2 bg-games-root-rpg-600 hover:bg-games-root-rpg-500 text-silver-50 font-medium rounded-lg transition-colors"
+          >
+            Docs
+          </a>
+          <a
+            href="https://www.npmjs.com/package/@randsum/root-rpg"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 text-center px-4 py-2 bg-transparent border border-games-root-rpg-600 hover:border-games-root-rpg-500 text-games-root-rpg-400 hover:text-games-root-rpg-300 font-medium rounded-lg transition-colors"
+          >
+            npm
+          </a>
+        </div>
+      </div>
+
+      <!-- Salvage Union -->
+      <div class="bg-games-salvageunion-900/20 backdrop-blur-sm border border-games-salvageunion-700/50 rounded-xl p-8 hover:border-games-salvageunion-600 transition-all duration-300 group">
+        <div class="flex items-center justify-center w-16 h-16 bg-games-salvageunion-600/20 rounded-xl mb-6 group-hover:bg-games-salvageunion-600/30 transition-colors">
+          <svg class="w-8 h-8 text-games-salvageunion-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-silver-50 mb-3">@randsum/salvageunion</h3>
+        <p class="text-silver-300 mb-6">
+          2d20 system mechanics for Salvage Union.
+          Includes mech combat, heat tracking, and salvage operations.
+        </p>
+        <div class="bg-randsum-950 rounded-lg p-4 mb-6">
+          <code class="text-sm font-mono text-silver-200">
+            <span class="text-games-salvageunion-500">salvageRoll</span><span class="text-silver-300">(</span><span class="text-silver-400">15</span><span class="text-silver-300">)</span><br>
+            <span class="text-silver-400">// → &#123; success: true, heat: 2 &#125;</span>
+          </code>
+        </div>
+        <div class="flex gap-3">
+          <a
+            href="/packages/salvageunion"
+            class="flex-1 text-center px-4 py-2 bg-games-salvageunion-600 hover:bg-games-salvageunion-500 text-silver-50 font-medium rounded-lg transition-colors"
+          >
+            Docs
+          </a>
+          <a
+            href="https://www.npmjs.com/package/@randsum/salvageunion"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 text-center px-4 py-2 bg-transparent border border-games-salvageunion-600 hover:border-games-salvageunion-500 text-games-salvageunion-400 hover:text-games-salvageunion-300 font-medium rounded-lg transition-colors"
+          >
+            npm
+          </a>
+        </div>
+      </div>
+
+      <!-- More Coming Soon -->
+      <div class="bg-silver-900/10 backdrop-blur-sm border border-silver-700/30 rounded-xl p-8 flex flex-col items-center justify-center text-center">
+        <div class="w-16 h-16 bg-silver-600/10 rounded-xl flex items-center justify-center mb-6">
+          <svg class="w-8 h-8 text-silver-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-silver-400 mb-3">More Systems</h3>
+        <p class="text-silver-500 mb-6">
+          Additional RPG systems are in development.
+          Request your favorite system on GitHub!
+        </p>
+        <a
+          href="https://github.com/RANDSUM/randsum/issues/new"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center px-4 py-2 bg-transparent border border-silver-600 hover:border-silver-500 text-silver-400 hover:text-silver-300 font-medium rounded-lg transition-colors"
+        >
+          Request System
+        </a>
+      </div>
+    </div>
+
+    <!-- Installation Guide -->
+    <div class="mt-16 text-center">
+      <div class="bg-randsum-900/30 backdrop-blur-sm border border-randsum-700 rounded-xl p-8 max-w-3xl mx-auto">
+        <h3 class="text-2xl font-bold text-silver-50 mb-6">Quick Installation</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <div class="text-sm text-silver-400 mb-2">Install core package</div>
+            <div class="bg-randsum-950 rounded-lg p-4">
+              <code class="text-silver-200 font-mono">
+                <span class="text-games-fifth-500">npm install</span> <span class="text-silver-300">@randsum/roller</span>
+              </code>
+            </div>
+          </div>
+          <div>
+            <div class="text-sm text-silver-400 mb-2">Install system package</div>
+            <div class="bg-randsum-950 rounded-lg p-4">
+              <code class="text-silver-200 font-mono">
+                <span class="text-games-fifth-500">npm install</span> <span class="text-silver-300">@randsum/fifth</span>
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </MainContent>
+</section>

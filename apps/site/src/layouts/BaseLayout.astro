@@ -1,0 +1,192 @@
+---
+import './src/styles/global.css'
+
+export interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description = 'An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM' } = Astro.props
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-randsum-950 text-silver-50 font-sans antialiased">
+    <div class="min-h-screen flex">
+      <!-- Sidebar -->
+      <aside class="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-randsum-900 border-r border-randsum-800">
+        <div class="flex-1 flex flex-col min-h-0">
+          <!-- Logo -->
+          <div class="flex items-center h-16 flex-shrink-0 px-4 bg-randsum-950">
+            <img class="h-8 w-auto" src="/icon.webp" alt="RANDSUM" />
+            <span class="ml-3 text-xl font-bold text-silver-50">RANDSUM</span>
+          </div>
+
+          <!-- Navigation -->
+          <nav class="flex-1 px-4 py-6 space-y-1">
+            <a
+              href="/"
+              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-200 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+              </svg>
+              Home
+            </a>
+
+            <a
+              href="/packages"
+              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+              Packages
+            </a>
+
+            <a
+              href="/apps"
+              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+              Apps
+            </a>
+
+            <a
+              href="/docs"
+              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Documentation
+            </a>
+
+            <a
+              href="/examples"
+              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+              Examples
+            </a>
+
+            <a
+              href="/blog"
+              class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors"
+            >
+              <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              Blog
+            </a>
+          </nav>
+
+          <!-- Footer Links -->
+          <div class="flex-shrink-0 px-4 py-4 border-t border-randsum-800">
+            <div class="flex items-center space-x-4">
+              <a
+                href="https://github.com/RANDSUM/randsum"
+                class="text-silver-400 hover:text-silver-200 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </a>
+              <a
+                href="https://discord.gg/randsum"
+                class="text-silver-400 hover:text-silver-200 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Mobile menu button -->
+      <div class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-randsum-950 border-b border-randsum-800">
+        <div class="flex items-center justify-between h-16 px-4">
+          <div class="flex items-center">
+            <img class="h-8 w-auto" src="/icon.webp" alt="RANDSUM" />
+            <span class="ml-3 text-xl font-bold text-silver-50">RANDSUM</span>
+          </div>
+          <button
+            id="mobile-menu-button"
+            class="text-silver-400 hover:text-silver-200 focus:outline-none focus:text-silver-200 transition-colors"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="lg:hidden fixed inset-0 z-40 hidden">
+        <div class="fixed inset-0 bg-randsum-950 bg-opacity-75" id="mobile-menu-overlay"></div>
+        <div class="fixed top-0 left-0 bottom-0 w-64 bg-randsum-900 border-r border-randsum-800">
+          <div class="flex items-center h-16 px-4 bg-randsum-950 border-b border-randsum-800">
+            <img class="h-8 w-auto" src="/icon.webp" alt="RANDSUM" />
+            <span class="ml-3 text-xl font-bold text-silver-50">RANDSUM</span>
+          </div>
+          <nav class="px-4 py-6 space-y-1">
+            <!-- Same navigation links as desktop -->
+            <a href="/" class="block px-3 py-2 text-sm font-medium rounded-md text-silver-200 hover:text-silver-50 hover:bg-randsum-800 transition-colors">Home</a>
+            <a href="/packages" class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors">Packages</a>
+            <a href="/apps" class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors">Apps</a>
+            <a href="/docs" class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors">Documentation</a>
+            <a href="/examples" class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors">Examples</a>
+            <a href="/blog" class="block px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 hover:bg-randsum-800 transition-colors">Blog</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <main class="flex-1 lg:pl-64">
+        <div class="pt-16 lg:pt-0">
+          <slot />
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Mobile menu toggle
+      const mobileMenuButton = document.getElementById('mobile-menu-button')
+      const mobileMenu = document.getElementById('mobile-menu')
+      const mobileMenuOverlay = document.getElementById('mobile-menu-overlay')
+
+      function toggleMobileMenu() {
+        mobileMenu?.classList.toggle('hidden')
+      }
+
+      mobileMenuButton?.addEventListener('click', toggleMobileMenu)
+      mobileMenuOverlay?.addEventListener('click', toggleMobileMenu)
+    </script>
+  </body>
+</html>
