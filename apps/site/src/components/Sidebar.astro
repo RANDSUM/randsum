@@ -15,6 +15,9 @@ export interface Props {
 }
 
 const { navigationItems, additionalItems = [] } = Astro.props
+
+// Detect if we're on a roller page
+const isRollerPage = Astro.url.pathname.startsWith('/roller')
 ---
 
 <!-- Desktop Sidebar -->
@@ -36,55 +39,56 @@ const { navigationItems, additionalItems = [] } = Astro.props
       <!-- Main Navigation Items -->
       {
         navigationItems.map((item) => (
-          <a
-            href={item.href}
-            class={`block px-3 py-2 text-sm rounded-md transition-colors ${
-              item.hoverColor ?? 'hover:bg-randsum-800'
-            }`}
-            target={item.external ? '_blank' : undefined}
-            rel={item.external ? 'noopener noreferrer' : undefined}
-          >
-            <div class="text-base">
-              {item.prefix && (
-                <span class="text-silver-50 font-normal">{item.prefix}</span>
-              )}
-              <span class={`font-normal ${item.color ?? 'text-silver-50'}`}>
-                {item.label}
-              </span>
-            </div>
-          </a>
-        ))
-      }
-
-      <!-- Additional Items (if provided) -->
-      {
-        additionalItems.length > 0 && (
           <>
-            <div class="pt-4 border-t border-randsum-700 mt-4" />
-            {additionalItems.map((item) => (
-              <a
-                href={item.href}
-                class={`group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 transition-colors ${
-                  item.hoverColor ?? 'hover:bg-randsum-800'
-                }`}
-                target={item.external ? '_blank' : undefined}
-                rel={item.external ? 'noopener noreferrer' : undefined}
-              >
-                {item.icon && (
-                  <svg
-                    class="mr-3 h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <Fragment set:html={item.icon} />
-                  </svg>
+            <a
+              href={item.href}
+              class={`block px-3 py-2 text-sm rounded-md transition-colors ${
+                item.hoverColor ?? 'hover:bg-randsum-800'
+              }`}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noopener noreferrer' : undefined}
+            >
+              <div class="text-base">
+                {item.prefix && (
+                  <span class="text-silver-50 font-normal">{item.prefix}</span>
                 )}
-                {item.label}
-              </a>
-            ))}
+                <span class={`font-normal ${item.color ?? 'text-silver-50'}`}>
+                  {item.label}
+                </span>
+              </div>
+            </a>
+
+            {/* Show roller sub-menu when on roller pages and this is the roller item */}
+            {isRollerPage &&
+              item.href === '/roller' &&
+              additionalItems.length > 0 && (
+                <div class="ml-6 mt-1 space-y-1">
+                  {additionalItems.map((subItem) => (
+                    <a
+                      href={subItem.href}
+                      class={`group flex items-center px-3 py-2 text-sm font-medium rounded-md text-silver-300 hover:text-silver-50 transition-colors ${
+                        subItem.hoverColor ?? 'hover:bg-randsum-800'
+                      }`}
+                      target={subItem.external ? '_blank' : undefined}
+                      rel={subItem.external ? 'noopener noreferrer' : undefined}
+                    >
+                      {subItem.icon && (
+                        <svg
+                          class="mr-3 h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <Fragment set:html={subItem.icon} />
+                        </svg>
+                      )}
+                      {subItem.label}
+                    </a>
+                  ))}
+                </div>
+              )}
           </>
-        )
+        ))
       }
 
       <!-- Footer Items -->

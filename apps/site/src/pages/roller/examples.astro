@@ -40,15 +40,15 @@ import RollerLayout from '../../layouts/RollerLayout.astro'
             <pre
               class="text-silver-100 overflow-x-auto"><code>// Advantage: roll 2d20, keep highest
 const advantage = roll('2d20H')
-console.log(`Advantage roll: ${advantage.total}`)
+console.log(`Advantage roll: $&#123;advantage.total&#125;`)
 
 // Disadvantage: roll 2d20, keep lowest
 const disadvantage = roll('2d20L')
-console.log(`Disadvantage roll: ${disadvantage.total}`)
+console.log(`Disadvantage roll: $&#123;disadvantage.total&#125;`)
 
 // With modifier
 const skillCheck = roll('2d20H+5')
-console.log(`Skill check with advantage: ${skillCheck.total}`)</code></pre>
+console.log(`Skill check with advantage: $&#123;skillCheck.total&#125;`)</code></pre>
           </div>
           <p class="text-silver-300 text-sm">
             D&D's advantage and disadvantage mechanics using drop modifiers.
@@ -63,15 +63,15 @@ console.log(`Skill check with advantage: ${skillCheck.total}`)</code></pre>
             <pre
               class="text-silver-100 overflow-x-auto"><code>// Basic weapon damage
 const longsword = roll('1d8+3')
-console.log(`Longsword damage: ${longsword.total}`)
+console.log(`Longsword damage: $&#123;longsword.total&#125;`)
 
 // Critical hit (double dice)
 const criticalHit = roll('2d8+3')
-console.log(`Critical hit damage: ${criticalHit.total}`)
+console.log(`Critical hit damage: $&#123;criticalHit.total&#125;`)
 
 // Sneak attack damage
 const sneakAttack = roll('1d8+3+4d6')
-console.log(`Sneak attack damage: ${sneakAttack.total}`)</code></pre>
+console.log(`Sneak attack damage: $&#123;sneakAttack.total&#125;`)</code></pre>
           </div>
           <p class="text-silver-300 text-sm">
             Common damage calculations for D&D weapons and abilities.
@@ -92,17 +92,17 @@ console.log(`Sneak attack damage: ${sneakAttack.total}`)</code></pre>
           </h3>
           <div class="bg-randsum-900 rounded-lg p-4 mb-4">
             <pre
-              class="text-silver-100 overflow-x-auto"><code>import { rollCustomFaces } from '@randsum/roller'
+              class="text-silver-100 overflow-x-auto"><code>import &#123; rollCustomFaces &#125; from '@randsum/roller'
 
 // Fate dice: +, +, blank, blank, -, -
 const fateDice = rollCustomFaces('4d&#123;++--  &#125;')
-console.log(`Fate roll: ${fateDice.results.join(' ')}`)
+console.log(`Fate roll: $&#123;fateDice.results.join(' ')&#125;`)
 
 // Count the results
-const plus = fateDice.results.filter(r => r === '+').length
-const minus = fateDice.results.filter(r => r === '-').length
+const plus = fateDice.results.filter(r =&gt; r === '+').length
+const minus = fateDice.results.filter(r =&gt; r === '-').length
 const total = plus - minus
-console.log(`Net result: ${total > 0 ? '+' : ''}${total}`)</code></pre>
+console.log(`Net result: $&#123;total &gt; 0 ? '+' : ''&#125;$&#123;total&#125;`)</code></pre>
           </div>
           <p class="text-silver-300 text-sm">
             Fate/Fudge dice for narrative gaming systems.
@@ -117,11 +117,11 @@ console.log(`Net result: ${total > 0 ? '+' : ''}${total}`)</code></pre>
             <pre
               class="text-silver-100 overflow-x-auto"><code>// Random direction generator
 const direction = rollCustomFaces('1d&#123;NSEW&#125;')
-console.log(`Go ${direction.results[0]}`)
+console.log(`Go $&#123;direction.results[0]&#125;`)
 
 // Compass directions (8-way)
 const compass = rollCustomFaces('1d&#123;N,NE,E,SE,S,SW,W,NW&#125;')
-console.log(`Head ${compass.results[0]}`)</code></pre>
+console.log(`Head $&#123;compass.results[0]&#125;`)</code></pre>
           </div>
           <p class="text-silver-300 text-sm">
             Custom dice for generating random directions in exploration games.
@@ -144,12 +144,12 @@ console.log(`Head ${compass.results[0]}`)</code></pre>
             <pre
               class="text-silver-100 overflow-x-auto"><code>// Exploding damage for critical hits
 const explosiveDamage = roll('2d6!')
-console.log(`Explosive damage: ${explosiveDamage.total}`)
-console.log(`Dice rolled: ${explosiveDamage.dice.join(', ')}`)
+console.log(`Explosive damage: $&#123;explosiveDamage.total&#125;`)
+console.log(`Dice rolled: $&#123;explosiveDamage.dice.join(', ')&#125;`)
 
 // Savage Worlds-style exploding dice
 const savageRoll = roll('1d8!')
-console.log(`Savage Worlds roll: ${savageRoll.total}`)</code></pre>
+console.log(`Savage Worlds roll: $&#123;savageRoll.total&#125;`)</code></pre>
           </div>
           <p class="text-silver-300 text-sm">
             Exploding dice mechanics for systems like Savage Worlds.
@@ -164,15 +164,15 @@ console.log(`Savage Worlds roll: ${savageRoll.total}`)</code></pre>
             <pre
               class="text-silver-100 overflow-x-auto"><code>// Reroll 1s (avoid critical failures)
 const reliableRoll = roll('4d6R&#123;1&#125;')
-console.log(`Reliable roll: ${reliableRoll.total}`)
+console.log(`Reliable roll: $&#123;reliableRoll.total&#125;`)
 
 // Reroll low results (minimum viable)
 const minViable = roll('4d6R&#123;&lt;3&#125;')
-console.log(`Minimum viable: ${minViable.total}`)
+console.log(`Minimum viable: $&#123;minViable.total&#125;`)
 
 // Limited rerolls (max 3 attempts)
 const limitedReroll = roll('1d20R&#123;&lt;10&#125;3')
-console.log(`Limited reroll: ${limitedReroll.total}`)</code></pre>
+console.log(`Limited reroll: $&#123;limitedReroll.total&#125;`)</code></pre>
           </div>
           <p class="text-silver-300 text-sm">
             Various reroll mechanics for different game systems.
