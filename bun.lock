@@ -37,12 +37,6 @@
       "version": "0.5.0",
       "dependencies": {
         "@discord/embedded-app-sdk": "^1.9.0",
-        "@randsum/blades": "^0.4.3",
-        "@randsum/daggerheart": "^0.4.3",
-        "@randsum/fifth": "^0.4.3",
-        "@randsum/roller": "^0.2.17",
-        "@randsum/root-rpg": "^0.4.3",
-        "@randsum/salvageunion": "^0.4.3",
         "@robojs/patch": "^0.2.1",
         "discord.js": "^14.21.0",
         "extensionless": "^1.9.9",
@@ -969,18 +963,6 @@
     "nypm/tinyexec": ["tinyexec@0.3.2", "", {}, "sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA=="],
 
     "p-locate/p-limit": ["p-limit@3.1.0", "", { "dependencies": { "yocto-queue": "^0.1.0" } }, "sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ=="],
-
-    "randsum-discord/@randsum/blades": ["@randsum/blades@0.4.3", "", { "dependencies": { "@randsum/roller": "~0.2.17" } }, "sha512-zZbDSHc+7wu8n/9VaeizW4ch3ZPMammlxr8nWuiiphRiGBqsKKAYIhSZ9XZvuj9IFmBNFgRHJKeY8dSw3XBYkw=="],
-
-    "randsum-discord/@randsum/daggerheart": ["@randsum/daggerheart@0.4.3", "", { "dependencies": { "@randsum/roller": "0.2.17" } }, "sha512-+7T9FV0BHWBjdQNSpL5wREYKxZpkrW03DSLk6ctaPq6+JhEm7UesYIacxOzLfW3wMbOcaHoLJoGm0kZH5M8sLQ=="],
-
-    "randsum-discord/@randsum/fifth": ["@randsum/fifth@0.4.3", "", { "dependencies": { "@randsum/roller": "~0.2.17" } }, "sha512-bCamLS6F0lGySQrB/pvgTO5UuuyRpIboWb7tqjXVhCh0kjcewacovu+mnpAHzeZKOqkBvVhe0LtVx7lqvB1QbA=="],
-
-    "randsum-discord/@randsum/roller": ["@randsum/roller@0.2.17", "", { "bin": { "@randsum/roller": "bin/randsum" } }, "sha512-3nVXA998upkGy3r8+0nKBvGUDN3eBf80YSbDXV8e52ydVCohd2AQ+VFyR4AzT2XbVzvjeqB5vinqUyGgvXM2ow=="],
-
-    "randsum-discord/@randsum/root-rpg": ["@randsum/root-rpg@0.4.3", "", { "dependencies": { "@randsum/roller": "~0.2.17" } }, "sha512-G6KD3T7oZRjySYfGxy/yPS9l61jEBv4VrSY+Mxk82/lV3CjaCloZyqrUVDFrHDv4sTClLE92zWmFXz/9aLIYgg=="],
-
-    "randsum-discord/@randsum/salvageunion": ["@randsum/salvageunion@0.4.3", "", { "dependencies": { "@randsum/roller": "~0.2.17" } }, "sha512-ULM+Q1NDUfgjk827Y7iCWG7Z05eCeIIGvh3o29//mhGUBaoiNnSZYNhG5gbQpbMjeRYly3MoXJkU4ip+oV/Liw=="],
 
     "raw-body/iconv-lite": ["iconv-lite@0.6.3", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw=="],
 

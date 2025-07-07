@@ -1,30 +1,45 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"lib": [
-			"esnext"
-		],
-		"baseUrl": ".",
-		"paths": {
-			"~/*": [
-				"src/*"
-			]
-		},
-		"allowJs": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"forceConsistentCasingInFileNames": true,
-		"esModuleInterop": true,
-		"module": "esnext",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"incremental": true
-	},
-	"include": [
-		"**/*.ts"
-	],
-	"exclude": [
-		"node_modules"
-	]
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "esnext"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@randsum/roller": [
+        "../packages/roller"
+      ],
+      "@randsum/blades": [
+        "../packages/blades"
+      ],
+      "@randsum/daggerheart": [
+        "../packages/daggerheart"
+      ],
+      "@randsum/fifth": [
+        "../packages/fifth"
+      ],
+      "@randsum/root-rpg": [
+        "../packages/root-rpg"
+      ],
+      "@randsum/salvageunion": [
+        "../packages/salvageunion"
+      ]
+    },
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
 }
