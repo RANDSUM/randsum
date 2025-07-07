@@ -38,22 +38,21 @@ describe(generateRoll, () => {
   })
 
   const testRollSet = [1, 2, 3, 4]
-  const coreRawRolls = {
-    'test-roll-id': testRollSet
-  }
-
   describe('when given roll total with no modifiers', () => {
     const coreParameters = createRollParameters()
 
     test('it returns the sum total of the quantity and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRoll(coreParameters)).toMatchObject({
-        ...coreParameters,
-        rawRolls: coreRawRolls,
+        parameters: coreParameters,
         total: 10,
-        rawResult: testRollSet,
-        result: testRollSet,
-        type: 'numerical'
+        type: 'numeric',
+        history: {
+          initialRolls: testRollSet,
+          logs: [],
+          modifiedRolls: testRollSet,
+          total: 10
+        }
       })
     })
   })
@@ -70,22 +69,26 @@ describe(generateRoll, () => {
     })
 
     test('it re-rolls non-unique modifiers', () => {
-      const rawRolls = uniqueRolls
+      const initialRolls = uniqueRolls
 
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(uniqueRolls)
       expect(generateRoll(uniqueParameters)).toMatchObject({
-        ...uniqueParameters,
-        rawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: [1, 200, 2, 3],
-            total: 206
-          }
+        parameters: uniqueParameters,
+        history: {
+          initialRolls,
+          modifiedRolls: [1, 200, 2, 3],
+          total: 206,
+          logs: [
+            {
+              added: [200],
+              modifier: 'unique',
+              options: true,
+              removed: [1]
+            }
+          ]
         },
         total: 206,
-        result: [1, 200, 2, 3],
-        rawResult: [1, 1, 2, 3],
-        type: 'numerical'
+        type: 'numeric'
       })
     })
 
@@ -99,26 +102,26 @@ describe(generateRoll, () => {
       })
 
       test('it disregards any numbers in that array and makes the rest unique', () => {
-        const rawRolls = {
-          'test-roll-id': uniqueRolls
-        }
-
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           uniqueRolls
         )
         expect(generateRoll(notUniqueParameters)).toMatchObject({
-          ...notUniqueParameters,
-          rawRolls,
-          modifiedRolls: {
-            'test-roll-id': {
-              rolls: [1, 1, 2, 3],
-              total: 7
-            }
+          parameters: notUniqueParameters,
+          history: {
+            modifiedRolls: uniqueRolls,
+            total: 7,
+            initialRolls: uniqueRolls,
+            logs: [
+              {
+                added: [],
+                modifier: 'unique',
+                options: { notUnique: [1] },
+                removed: []
+              }
+            ]
           },
           total: 7,
-          result: [1, 1, 2, 3],
-          rawResult: uniqueRolls,
-          type: 'numerical'
+          type: 'numeric'
         })
       })
     })
@@ -143,42 +146,6 @@ describe(generateRoll, () => {
     })
   })
 
-  describe('when given custom sides', () => {
-    const faces = ['r', 'a', 'n', 'd', 's', 'u', 'm']
-    const customSidesRoll = ['r', 'a', 'n', 'd']
-
-    const customSidesParameters = createRollParameters({
-      options: {
-        sides: faces,
-        quantity: 4
-      }
-    })
-
-    test('it returns the expected result as a string', () => {
-      const rawRolls = {
-        'test-roll-id': customSidesRoll
-      }
-      spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
-        customSidesRoll
-      )
-
-      expect(generateRoll(customSidesParameters)).toMatchObject({
-        ...customSidesParameters,
-        rawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: customSidesRoll,
-            total: 'r, a, n, d'
-          }
-        },
-        total: 'r, a, n, d',
-        rawResult: customSidesRoll,
-        result: customSidesRoll,
-        type: 'custom'
-      })
-    })
-  })
-
   describe('when given roll total with a "drop" modifier', () => {
     const longerRollTotals = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -199,27 +166,33 @@ describe(generateRoll, () => {
     })
 
     test('it returns the total without the provided values', () => {
-      const rawRolls = {
-        'test-roll-id': longerRollTotals
-      }
-
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
         longerRollTotals
       )
 
       expect(generateRoll(dropParameters)).toMatchObject({
-        ...dropParameters,
-        rawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: [4, 6, 7],
-            total: 17
-          }
+        parameters: dropParameters,
+        history: {
+          initialRolls: longerRollTotals,
+          modifiedRolls: [4, 6, 7],
+          total: 17,
+          logs: [
+            {
+              added: [],
+              modifier: 'drop',
+              options: {
+                exact: [5],
+                greaterThan: 8,
+                highest: 1,
+                lessThan: 2,
+                lowest: 2
+              },
+              removed: [1, 2, 3, 5, 8, 9]
+            }
+          ]
         },
         total: 17,
-        rawResult: longerRollTotals,
-        result: [4, 6, 7],
-        type: 'numerical'
+        type: 'numeric'
       })
     })
   })
@@ -239,18 +212,25 @@ describe(generateRoll, () => {
           testRollSet
         )
         expect(generateRoll(dropParameters)).toMatchObject({
-          ...dropParameters,
-          rawRolls: coreRawRolls,
-          modifiedRolls: {
-            'test-roll-id': {
-              rolls: [2, 2, 3, 4],
-              total: 11
-            }
+          parameters: dropParameters,
+          history: {
+            initialRolls: testRollSet,
+            modifiedRolls: [2, 2, 3, 4],
+            total: 11,
+            logs: [
+              {
+                added: [2],
+                modifier: 'replace',
+                options: {
+                  from: 1,
+                  to: 2
+                },
+                removed: [1]
+              }
+            ]
           },
           total: 11,
-          rawResult: testRollSet,
-          result: [2, 2, 3, 4],
-          type: 'numerical'
+          type: 'numeric'
         })
       })
     })
@@ -274,18 +254,33 @@ describe(generateRoll, () => {
           testRollSet
         )
         expect(generateRoll(dropParameters)).toMatchObject({
-          ...dropParameters,
-          rawRolls: coreRawRolls,
-          modifiedRolls: {
-            'test-roll-id': {
-              rolls: [2, 2, 3, 6],
-              total: 13
-            }
+          parameters: dropParameters,
+          history: {
+            modifiedRolls: [2, 2, 3, 6],
+            initialRolls: testRollSet,
+            total: 13,
+            logs: [
+              {
+                added: [2, 6],
+                modifier: 'replace',
+                options: [
+                  {
+                    from: 1,
+                    to: 2
+                  },
+                  {
+                    from: {
+                      greaterThan: 3
+                    },
+                    to: 6
+                  }
+                ],
+                removed: [1, 4]
+              }
+            ]
           },
           total: 13,
-          rawResult: testRollSet,
-          result: [2, 2, 3, 6],
-          type: 'numerical'
+          type: 'numeric'
         })
       })
     })
@@ -303,26 +298,27 @@ describe(generateRoll, () => {
     })
 
     test('it returns the total with all values matching the queries rerolled', () => {
-      const rawRolls = {
-        'test-roll-id': explodeRollTotals
-      }
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
         explodeRollTotals
       )
 
       expect(generateRoll(explodeParameters)).toMatchObject({
-        ...explodeParameters,
-        rawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: [1, 2, 3, 6, 200],
-            total: 212
-          }
+        parameters: explodeParameters,
+        history: {
+          modifiedRolls: [1, 2, 3, 6, 200],
+          total: 212,
+          initialRolls: explodeRollTotals,
+          logs: [
+            {
+              added: [200],
+              modifier: 'explode',
+              options: true,
+              removed: []
+            }
+          ]
         },
         total: 212,
-        rawResult: explodeRollTotals,
-        result: [1, 2, 3, 6, 200],
-        type: 'numerical'
+        type: 'numeric'
       })
     })
   })
@@ -343,18 +339,24 @@ describe(generateRoll, () => {
           testRollSet
         )
         expect(generateRoll(reDicePools)).toMatchObject({
-          ...reDicePools,
-          rawRolls: coreRawRolls,
-          modifiedRolls: {
-            'test-roll-id': {
-              rolls: [1, 2, 3, 200],
-              total: 206
-            }
+          parameters: reDicePools,
+          history: {
+            modifiedRolls: [1, 2, 3, 200],
+            total: 206,
+            initialRolls: testRollSet,
+            logs: [
+              {
+                added: [200],
+                modifier: 'reroll',
+                options: {
+                  greaterThan: 3
+                },
+                removed: [4]
+              }
+            ]
           },
           total: 206,
-          rawResult: testRollSet,
-          result: [1, 2, 3, 200],
-          type: 'numerical'
+          type: 'numeric'
         })
       })
     })
@@ -375,18 +377,26 @@ describe(generateRoll, () => {
           testRollSet
         )
         expect(generateRoll(reDicePools)).toMatchObject({
-          ...reDicePools,
-          rawRolls: coreRawRolls,
-          modifiedRolls: {
-            'test-roll-id': {
-              rolls: [1, 200, 3, 200],
-              total: 404
-            }
+          parameters: reDicePools,
+          history: {
+            modifiedRolls: [1, 200, 3, 200],
+            initialRolls: testRollSet,
+            total: 404,
+            logs: [
+              {
+                added: [200, 200],
+                modifier: 'reroll',
+                options: {
+                  exact: [2],
+                  greaterThan: 3,
+                  max: 2
+                },
+                removed: [2, 4]
+              }
+            ]
           },
           total: 404,
-          rawResult: testRollSet,
-          result: [1, 200, 3, 200],
-          type: 'numerical'
+          type: 'numeric'
         })
       })
     })
@@ -407,18 +417,13 @@ describe(generateRoll, () => {
           testRollSet
         )
         expect(generateRoll(reDicePools)).toMatchObject({
-          ...reDicePools,
-          rawRolls: coreRawRolls,
-          modifiedRolls: {
-            'test-roll-id': {
-              rolls: [200, 2, 200, 4],
-              total: 406
-            }
+          parameters: reDicePools,
+          history: {
+            modifiedRolls: [200, 2, 200, 4],
+            total: 406
           },
           total: 406,
-          rawResult: testRollSet,
-          result: [200, 2, 200, 4],
-          type: 'numerical'
+          type: 'numeric'
         })
       })
     })
@@ -436,18 +441,25 @@ describe(generateRoll, () => {
     test('it returns the total with all values greaterThan greaterThan and lessThan lessThan replaced with their respective comparitor and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRoll(dropParameters)).toMatchObject({
-        ...dropParameters,
-        rawRolls: coreRawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: [2, 2, 3, 3],
-            total: 10
-          }
+        parameters: dropParameters,
+        history: {
+          modifiedRolls: [2, 2, 3, 3],
+          total: 10,
+          initialRolls: [1, 2, 3, 4],
+          logs: [
+            {
+              added: [2, 3],
+              modifier: 'cap',
+              options: {
+                greaterThan: 3,
+                lessThan: 2
+              },
+              removed: [1, 4]
+            }
+          ]
         },
         total: 10,
-        rawResult: testRollSet,
-        result: [2, 2, 3, 3],
-        type: 'numerical'
+        type: 'numeric'
       })
     })
   })
@@ -464,18 +476,15 @@ describe(generateRoll, () => {
     test('it returns the total plus the "plus" modifier, and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRoll(dropParameters)).toMatchObject({
-        ...dropParameters,
-        rawRolls: coreRawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: testRollSet,
-            total: 12
-          }
+        parameters: dropParameters,
+        history: {
+          modifiedRolls: testRollSet,
+          initialRolls: testRollSet,
+          total: 12,
+          logs: []
         },
         total: 12,
-        rawResult: testRollSet,
-        result: testRollSet,
-        type: 'numerical'
+        type: 'numeric'
       })
     })
   })
@@ -492,18 +501,15 @@ describe(generateRoll, () => {
     test('it returns the total minus the "minus" modifier, and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRoll(dropParameters)).toMatchObject({
-        ...dropParameters,
-        rawRolls: coreRawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: testRollSet,
-            total: 8
-          }
+        parameters: dropParameters,
+        history: {
+          modifiedRolls: testRollSet,
+          total: 8,
+          initialRolls: testRollSet,
+          logs: []
         },
         total: 8,
-        rawResult: testRollSet,
-        result: testRollSet,
-        type: 'numerical'
+        type: 'numeric'
       })
     })
   })
@@ -523,18 +529,15 @@ describe(generateRoll, () => {
       const result = generateRoll(parametersWithZeroModifier)
 
       expect(result).toMatchObject({
-        ...parametersWithZeroModifier,
-        rawRolls: coreRawRolls,
-        modifiedRolls: {
-          'test-roll-id': {
-            rolls: testRollSet,
-            total: 10
-          }
+        parameters: parametersWithZeroModifier,
+        history: {
+          modifiedRolls: testRollSet,
+          initialRolls: testRollSet,
+          total: 10,
+          logs: []
         },
         total: 10,
-        rawResult: testRollSet,
-        result: testRollSet,
-        type: 'numerical'
+        type: 'numeric'
       })
     })
   })

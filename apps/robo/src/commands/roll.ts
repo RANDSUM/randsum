@@ -35,25 +35,21 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   const result = roll(digested)
 
   const total = `**${String(result.total)}**`
-  const dicePoolDescriptions = result.rolls[0].parameters.description
 
-  const rawResults = JSON.stringify(result.rawResults)
-  const results = JSON.stringify(
-    result.rolls.map((roll) => roll.modifiedRolls.rolls).flat()
-  )
+  const rawResults = JSON.stringify(result.history.initialRolls)
+  const results = JSON.stringify(result.history.modifiedRolls)
 
-  const noChanges = rawResults === results
+  const simpleField = [{ name: 'Rolls', value: results, inline: true }]
+  const complexField = [
+    { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
+    {
+      name: 'Rolls (after modifiers)',
+      value: results,
+      inline: true
+    }
+  ]
+  const rollFields = rawResults === results ? simpleField : complexField
 
-  const rollFields = noChanges
-    ? [{ name: 'Rolls', value: results, inline: true }]
-    : [
-        { name: 'Rolls (before modifiers)', value: rawResults, inline: true },
-        {
-          name: 'Rolls (after modifiers)',
-          value: results,
-          inline: true
-        }
-      ]
   const fields = [
     { name: 'Value', value: total },
     ...rollFields,
@@ -61,7 +57,7 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   ]
   return new EmbedBuilder()
     .setTitle(`You rolled a ${total}`)
-    .setDescription(dicePoolDescriptions.join(', '))
+    .setDescription(result.parameters.description.join(', '))
     .setFields(fields)
     .setFooter(embedFooterDetails)
     .toJSON()

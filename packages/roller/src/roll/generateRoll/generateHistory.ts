@@ -2,23 +2,24 @@ import type {
   NumericRollBonus,
   NumericRollOptions,
   RollParams,
-  RollPoolResult
+  RollResult
 } from '../../types'
 import { coreRandom, isCustomRollParams } from '../../lib'
 import { calculateTotal } from '../utils/calculateTotal'
 import { applyModifier } from './applyModifier'
 
-export function generateModifiedRolls(
+export function generateHistory(
   parameters: RollParams,
-  rolls: RollPoolResult['rawRolls']
-): RollPoolResult['modifiedRolls'] {
+  rolls: RollResult['history']['initialRolls']
+): RollResult['history'] {
   if (
     isCustomRollParams(parameters) &&
     rolls.every((n) => typeof n === 'string')
   ) {
     return {
       total: calculateTotal(rolls) as string,
-      rolls,
+      modifiedRolls: rolls,
+      initialRolls: rolls,
       logs: []
     }
   }
@@ -36,7 +37,8 @@ export function generateModifiedRolls(
   if (Object.keys(modifiers).length === 0) {
     return {
       total: calculateTotal(rolls) as number,
-      rolls: rolls.map((n) => Number(n)),
+      initialRolls: rolls,
+      modifiedRolls: rolls.map((n) => Number(n)),
       logs: []
     }
   }
@@ -116,7 +118,8 @@ export function generateModifiedRolls(
   }
 
   return {
-    rolls: bonuses.rolls,
+    modifiedRolls: bonuses.rolls,
+    initialRolls: rolls,
     total: calculateTotal(bonuses.rolls, bonuses.simpleMathModifier) as number,
     logs: bonuses.logs
   }

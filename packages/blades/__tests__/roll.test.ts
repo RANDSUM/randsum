@@ -8,7 +8,6 @@ describe('roll', () => {
       expect(typeof result).toBe('string')
       expect(['critical', 'success', 'partial', 'failure']).toContain(result)
       expect(details).toHaveProperty('total')
-      expect(details).toHaveProperty('rawResults')
     })
   })
 
@@ -16,7 +15,7 @@ describe('roll', () => {
     test('handles single die (desperate position)', () => {
       const [result, details] = roll(1)
       expect(['success', 'partial', 'failure']).toContain(result)
-      expect(details.rawResults).toHaveLength(1)
+      expect(details.history.initialRolls).toHaveLength(1)
       expect(details.total).toBeGreaterThanOrEqual(1)
       expect(details.total).toBeLessThanOrEqual(6)
     })
@@ -24,7 +23,7 @@ describe('roll', () => {
     test('handles two dice (risky position)', () => {
       const [result, details] = roll(2)
       expect(['critical', 'success', 'partial', 'failure']).toContain(result)
-      expect(details.rawResults).toHaveLength(2)
+      expect(details.history.initialRolls).toHaveLength(2)
       expect(details.total).toBeGreaterThanOrEqual(2)
       expect(details.total).toBeLessThanOrEqual(12)
     })
@@ -32,7 +31,7 @@ describe('roll', () => {
     test('handles three dice (controlled position)', () => {
       const [result, details] = roll(3)
       expect(['critical', 'success', 'partial', 'failure']).toContain(result)
-      expect(details.rawResults).toHaveLength(3)
+      expect(details.history.initialRolls).toHaveLength(3)
       expect(details.total).toBeGreaterThanOrEqual(3)
       expect(details.total).toBeLessThanOrEqual(18)
     })
@@ -46,7 +45,7 @@ describe('roll', () => {
 
       results.forEach(([result, details]) => {
         expect(['critical', 'success', 'partial', 'failure']).toContain(result)
-        expect(details.rawResults).toHaveLength(2)
+        expect(details.history.initialRolls).toHaveLength(2)
         expect(details.total).toBeGreaterThanOrEqual(2)
         expect(details.total).toBeLessThanOrEqual(12)
       })

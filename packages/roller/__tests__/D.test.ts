@@ -54,7 +54,7 @@ describe(D, () => {
       describe('with quantity argument', () => {
         test('returns a NumericRollResult with multiple rolls', () => {
           const result = die.rollModified(2)
-          expect(result.rawResults).toHaveLength(2)
+          expect(result.history.initialRolls).toHaveLength(2)
           expect(result.total).toBeGreaterThan(1)
           expect(result.total).toBeLessThanOrEqual(12)
         })
@@ -125,8 +125,8 @@ describe(D, () => {
       describe('with quantity argument', () => {
         test('returns a CustomRollResult with multiple rolls', () => {
           const result = die.rollModified(2)
-          expect(result.rawResults).toHaveLength(2)
-          result.rawResults.forEach((roll: string) => {
+          expect(result.history.initialRolls).toHaveLength(2)
+          result.history.initialRolls.forEach((roll: string) => {
             expect(sides).toContain(roll)
           })
         })
@@ -136,8 +136,8 @@ describe(D, () => {
         test('returns a CustomRollResult ignoring numeric modifiers', () => {
           const result = die.rollModified(2, { plus: 2 })
           expect(result.type).toBe('custom')
-          expect(result.rawResults).toHaveLength(2)
-          result.rawResults.forEach((roll: string) => {
+          expect(result.history.initialRolls).toHaveLength(2)
+          result.history.initialRolls.forEach((roll: string) => {
             expect(sides).toContain(roll)
           })
         })

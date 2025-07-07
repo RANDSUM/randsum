@@ -9,21 +9,13 @@ import type {
 import { isRollResult } from '../lib'
 import { normalizeArgument } from './normalizeArgument'
 import { generateRoll } from './generateRoll'
-import { calculateTotal, rollType } from './utils'
 
-function roll(...args: NumericRollArgument[]): NumericRollResult
-function roll(...args: CustomRollArgument[]): CustomRollResult
-function roll(...args: (NumericRollArgument | CustomRollArgument)[]): RollResult
-function roll(...args: RollArgument[]): RollResult {
-  const parameters = args.map((arg) => normalizeArgument(arg))
-  const rolls = parameters.map((param) => generateRoll(param))
-
-  const result = {
-    rolls,
-    rawResults: rolls.map((roll) => roll.rawRolls).flat(),
-    total: calculateTotal(rolls.map((roll) => roll.total)),
-    type: rollType(rolls)
-  }
+function roll(arg: NumericRollArgument): NumericRollResult
+function roll(arg: CustomRollArgument): CustomRollResult
+function roll(arg: RollArgument): RollResult
+function roll(arg: RollArgument): RollResult {
+  const parameter = normalizeArgument(arg)
+  const result = generateRoll(parameter)
 
   if (isRollResult(result)) {
     return result

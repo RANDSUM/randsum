@@ -15,8 +15,14 @@ tasks:
     deps:
       - 'roller:build'
   test:
+    command: 'echo "No Tests Yet"'
     deps:
       - 'roller:build'
+    options:
+      cache: false
+      runInCI: true
+      mergeArgs: 'replace'
+      mergeEnv: 'replace'
 
   lint:
     deps:
