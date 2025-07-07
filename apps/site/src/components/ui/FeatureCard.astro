@@ -6,11 +6,11 @@ export interface Props {
   class?: string
 }
 
-const { 
-  title, 
-  description, 
+const {
+  title,
+  description,
   iconColor = 'silver-600',
-  class: className = '' 
+  class: className = ''
 } = Astro.props
 ---
 
@@ -25,9 +25,7 @@ const {
     </div>
     {title}
   </dt>
-  <dd
-    class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300"
-  >
+  <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300">
     <p class="flex-auto">
       {description}
     </p>
