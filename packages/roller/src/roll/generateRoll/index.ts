@@ -34,8 +34,8 @@ export function generateRoll(parameters: RollParams): RollResult {
     return {
       parameters,
       history,
-      rolls: history.modifiedRolls,
-      total: calculateTotal(history.modifiedRolls),
+      rolls: history.initialRolls,
+      total: calculateTotal(history.initialRolls),
       type: 'custom'
     } as CustomRollResult
   }

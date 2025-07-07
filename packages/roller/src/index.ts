@@ -1,6 +1,6 @@
 export * from './Dice'
 export * from './roll'
 export * from './validateNotation'
-export * from './meetOrBeat'
 export * from './lib'
+export * from './meetOrBeat'
 export type * from './types'
