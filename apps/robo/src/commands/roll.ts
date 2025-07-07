@@ -35,7 +35,6 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   const result = roll(digested)
 
   const total = `**${String(result.total)}**`
-  const dicePoolDescriptions = result.parameters.description
 
   const rawResults = JSON.stringify(result.rawRolls)
   const results = JSON.stringify(result.modifiedRolls.rolls)
@@ -59,7 +58,7 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   ]
   return new EmbedBuilder()
     .setTitle(`You rolled a ${total}`)
-    .setDescription(dicePoolDescriptions.join(', '))
+    .setDescription(result.parameters.description.join(', '))
     .setFields(fields)
     .setFooter(embedFooterDetails)
     .toJSON()
