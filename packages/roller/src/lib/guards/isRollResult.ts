@@ -18,7 +18,7 @@ export function isRollResult(result: unknown): result is RollResult {
   return (
     typeof result === 'object' &&
     result !== null &&
-    'modifiedRolls' in result &&
+    'history' in result &&
     'type' in result &&
     'total' in result
   )

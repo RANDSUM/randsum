@@ -9,9 +9,9 @@ describe('Roll Result Type Guards', () => {
 
       if (isNumericResult(result)) {
         expect(typeof result.total).toBe('number')
-        expect(Array.isArray(result.modifiedRolls.rawRolls)).toBe(true)
+        expect(Array.isArray(result.history.initialRolls)).toBe(true)
         expect(
-          result.modifiedRolls.rawRolls.every((r) => typeof r === 'number')
+          result.history.initialRolls.every((r) => typeof r === 'number')
         ).toBe(true)
       }
     })
@@ -47,9 +47,9 @@ describe('Roll Result Type Guards', () => {
 
       if (isCustomResult(result)) {
         expect(typeof result.total).toBe('string')
-        expect(Array.isArray(result.modifiedRolls.rawRolls)).toBe(true)
+        expect(Array.isArray(result.history.initialRolls)).toBe(true)
         expect(
-          result.modifiedRolls.rawRolls.every((r) => typeof r === 'string')
+          result.history.initialRolls.every((r) => typeof r === 'string')
         ).toBe(true)
       }
     })
@@ -88,8 +88,8 @@ describe('Roll Result Type Guards', () => {
 
       if (isNumericResult(result)) {
         const total: number = result.total
-        const rolls: number[] = result.modifiedRolls.rawRolls
-        const firstRoll: number = result.modifiedRolls.rawRolls[0] ?? 0
+        const rolls: number[] = result.history.initialRolls
+        const firstRoll: number = result.history.initialRolls[0] ?? 0
 
         expect(typeof total).toBe('number')
         expect(Array.isArray(rolls)).toBe(true)
@@ -119,14 +119,14 @@ describe('Roll Result Type Guards', () => {
       const numericResults = results.filter(isNumericResult)
       numericResults.forEach((result) => {
         const average =
-          result.modifiedRolls.rawRolls.reduce((a, b) => a + b, 0) /
-          result.modifiedRolls.rawRolls.length
+          result.history.initialRolls.reduce((a, b) => a + b, 0) /
+          result.history.initialRolls.length
         expect(typeof average).toBe('number')
       })
 
       const customResults = results.filter(isCustomResult)
       customResults.forEach((result) => {
-        const combined = result.modifiedRolls.rawRolls.join(', ')
+        const combined = result.history.initialRolls.join(', ')
         expect(typeof combined).toBe('string')
       })
     })

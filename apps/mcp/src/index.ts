@@ -109,15 +109,20 @@ RETURNS: For valid notation, shows parsed structure with quantity, sides, and mo
 })
 
 function formatRollResult(result: RollResult): string {
-  const { type, total, rawRolls, parameters, modifiedRolls } = result
+  const {
+    type,
+    total,
+    parameters,
+    history: { initialRolls, modifiedRolls }
+  } = result
 
   const header = `🎲 RANDSUM Roll Result (${type}):`
   const separator = '─'.repeat(30)
   const totalLine = `Total: ${String(total)}`
 
   const notation = parameters.notation
-  const rawRollsStr = rawRolls.join(', ')
-  const modifiedRollsStr = modifiedRolls.rolls.join(', ')
+  const rawRollsStr = initialRolls.join(', ')
+  const modifiedRollsStr = modifiedRolls.join(', ')
 
   let rollInfo = `Roll: ${notation}`
   rollInfo += `\n  Raw: [${rawRollsStr}]`
@@ -129,7 +134,7 @@ function formatRollResult(result: RollResult): string {
 
   rollInfo += `\n  Total: ${String(total)}`
 
-  const rawResultsLine = `Raw Results: [${rawRolls.join(', ')}]`
+  const rawResultsLine = `Raw Results: [${initialRolls.join(', ')}]`
 
   return [
     header,

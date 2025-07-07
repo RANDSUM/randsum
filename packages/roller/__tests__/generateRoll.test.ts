@@ -47,10 +47,10 @@ describe(generateRoll, () => {
         parameters: coreParameters,
         total: 10,
         type: 'numeric',
-        modifiedRolls: {
-          rawRolls: testRollSet,
+        history: {
+          initialRolls: testRollSet,
           logs: [],
-          rolls: testRollSet,
+          modifiedRolls: testRollSet,
           total: 10
         }
       })
@@ -69,14 +69,14 @@ describe(generateRoll, () => {
     })
 
     test('it re-rolls non-unique modifiers', () => {
-      const rawRolls = uniqueRolls
+      const initialRolls = uniqueRolls
 
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(uniqueRolls)
       expect(generateRoll(uniqueParameters)).toMatchObject({
         parameters: uniqueParameters,
-        modifiedRolls: {
-          rawRolls,
-          rolls: [1, 200, 2, 3],
+        history: {
+          initialRolls,
+          modifiedRolls: [1, 200, 2, 3],
           total: 206,
           logs: [
             {
@@ -107,10 +107,10 @@ describe(generateRoll, () => {
         )
         expect(generateRoll(notUniqueParameters)).toMatchObject({
           parameters: notUniqueParameters,
-          modifiedRolls: {
-            rolls: uniqueRolls,
+          history: {
+            modifiedRolls: uniqueRolls,
             total: 7,
-            rawRolls: uniqueRolls,
+            initialRolls: uniqueRolls,
             logs: [
               {
                 added: [],
@@ -172,9 +172,9 @@ describe(generateRoll, () => {
 
       expect(generateRoll(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifiedRolls: {
-          rawRolls: longerRollTotals,
-          rolls: [4, 6, 7],
+        history: {
+          initialRolls: longerRollTotals,
+          modifiedRolls: [4, 6, 7],
           total: 17,
           logs: [
             {
@@ -213,9 +213,9 @@ describe(generateRoll, () => {
         )
         expect(generateRoll(dropParameters)).toMatchObject({
           parameters: dropParameters,
-          modifiedRolls: {
-            rawRolls: testRollSet,
-            rolls: [2, 2, 3, 4],
+          history: {
+            initialRolls: testRollSet,
+            modifiedRolls: [2, 2, 3, 4],
             total: 11,
             logs: [
               {
@@ -255,9 +255,9 @@ describe(generateRoll, () => {
         )
         expect(generateRoll(dropParameters)).toMatchObject({
           parameters: dropParameters,
-          modifiedRolls: {
-            rolls: [2, 2, 3, 6],
-            rawRolls: testRollSet,
+          history: {
+            modifiedRolls: [2, 2, 3, 6],
+            initialRolls: testRollSet,
             total: 13,
             logs: [
               {
@@ -304,10 +304,10 @@ describe(generateRoll, () => {
 
       expect(generateRoll(explodeParameters)).toMatchObject({
         parameters: explodeParameters,
-        modifiedRolls: {
-          rolls: [1, 2, 3, 6, 200],
+        history: {
+          modifiedRolls: [1, 2, 3, 6, 200],
           total: 212,
-          rawRolls: explodeRollTotals,
+          initialRolls: explodeRollTotals,
           logs: [
             {
               added: [200],
@@ -340,10 +340,10 @@ describe(generateRoll, () => {
         )
         expect(generateRoll(reDicePools)).toMatchObject({
           parameters: reDicePools,
-          modifiedRolls: {
-            rolls: [1, 2, 3, 200],
+          history: {
+            modifiedRolls: [1, 2, 3, 200],
             total: 206,
-            rawRolls: testRollSet,
+            initialRolls: testRollSet,
             logs: [
               {
                 added: [200],
@@ -378,9 +378,9 @@ describe(generateRoll, () => {
         )
         expect(generateRoll(reDicePools)).toMatchObject({
           parameters: reDicePools,
-          modifiedRolls: {
-            rolls: [1, 200, 3, 200],
-            rawRolls: testRollSet,
+          history: {
+            modifiedRolls: [1, 200, 3, 200],
+            initialRolls: testRollSet,
             total: 404,
             logs: [
               {
@@ -418,8 +418,8 @@ describe(generateRoll, () => {
         )
         expect(generateRoll(reDicePools)).toMatchObject({
           parameters: reDicePools,
-          modifiedRolls: {
-            rolls: [200, 2, 200, 4],
+          history: {
+            modifiedRolls: [200, 2, 200, 4],
             total: 406
           },
           total: 406,
@@ -442,10 +442,10 @@ describe(generateRoll, () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRoll(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifiedRolls: {
-          rolls: [2, 2, 3, 3],
+        history: {
+          modifiedRolls: [2, 2, 3, 3],
           total: 10,
-          rawRolls: [1, 2, 3, 4],
+          initialRolls: [1, 2, 3, 4],
           logs: [
             {
               added: [2, 3],
@@ -477,9 +477,9 @@ describe(generateRoll, () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRoll(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifiedRolls: {
-          rolls: testRollSet,
-          rawRolls: testRollSet,
+        history: {
+          modifiedRolls: testRollSet,
+          initialRolls: testRollSet,
           total: 12,
           logs: []
         },
@@ -502,10 +502,10 @@ describe(generateRoll, () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRoll(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifiedRolls: {
-          rolls: testRollSet,
+        history: {
+          modifiedRolls: testRollSet,
           total: 8,
-          rawRolls: testRollSet,
+          initialRolls: testRollSet,
           logs: []
         },
         total: 8,
@@ -530,9 +530,9 @@ describe(generateRoll, () => {
 
       expect(result).toMatchObject({
         parameters: parametersWithZeroModifier,
-        modifiedRolls: {
-          rolls: testRollSet,
-          rawRolls: testRollSet,
+        history: {
+          modifiedRolls: testRollSet,
+          initialRolls: testRollSet,
           total: 10,
           logs: []
         },

@@ -7,33 +7,33 @@ import type {
 import { isCustomRollParams } from '../../lib/guards/isCustomRollParams'
 import { isNumericRollParams } from '../../lib/guards/isNumericRollParams'
 import { calculateTotal } from '../utils/calculateTotal'
-import { generateModifiedRolls } from './generateModifiedRolls'
-import { generateRawRolls } from './generateRawRolls'
+import { generateHistory } from './generateHistory'
+import { generateInitialRolls } from './generateInitialRolls'
 
 export function generateRoll(parameters: RollParams): RollResult {
-  const rawRolls = generateRawRolls(parameters)
-  const modifiedRolls = generateModifiedRolls(parameters, rawRolls)
+  const initialRolls = generateInitialRolls(parameters)
+  const history = generateHistory(parameters, initialRolls)
   if (
-    rawRolls.every((n) => typeof n === 'number') &&
-    modifiedRolls.rolls.every((n) => typeof n === 'number') &&
+    initialRolls.every((n) => typeof n === 'number') &&
+    history.initialRolls.every((n) => typeof n === 'number') &&
     isNumericRollParams(parameters)
   ) {
     return {
       parameters,
-      modifiedRolls,
-      total: modifiedRolls.total,
+      history,
+      total: history.total,
       type: 'numeric'
     } as NumericRollResult
   }
   if (
-    rawRolls.every((n) => typeof n === 'string') &&
-    modifiedRolls.rolls.every((n) => typeof n === 'string') &&
+    initialRolls.every((n) => typeof n === 'string') &&
+    history.initialRolls.every((n) => typeof n === 'string') &&
     isCustomRollParams(parameters)
   ) {
     return {
       parameters,
-      modifiedRolls,
-      total: calculateTotal(modifiedRolls.rolls),
+      history,
+      total: calculateTotal(history.modifiedRolls),
       type: 'custom'
     } as CustomRollResult
   }

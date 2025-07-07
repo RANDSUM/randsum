@@ -71,7 +71,7 @@ const parseRolls = (
   result: NumericRollResult,
   bladesSuccess: BladesResult
 ): string => {
-  return result.modifiedRolls.rawRolls
+  return result.history.initialRolls
     .flat()
     .map((roll, index, array) => {
       const isCritical = bladesSuccess === 'critical'

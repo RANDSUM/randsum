@@ -98,7 +98,7 @@ export function handleroll(modifierArg: string, memberNick = 'User'): APIEmbed {
     .addFields({ name: explanationName, value: explanationValue })
     .addFields({
       name: 'Rolls',
-      value: `[${parseRolls(result.modifiedRolls.rawRolls)}] + **${String(modifier)}** = __**${String(result.total)}**__`,
+      value: `[${parseRolls(result.history.initialRolls)}] + **${String(modifier)}** = __**${String(result.total)}**__`,
       inline: true
     })
     .setFooter(embedFooterDetails)

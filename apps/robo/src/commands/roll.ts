@@ -36,8 +36,8 @@ const buildEmbed = (notationArg: string): APIEmbed => {
 
   const total = `**${String(result.total)}**`
 
-  const rawResults = JSON.stringify(result.modifiedRolls.rawRolls)
-  const results = JSON.stringify(result.modifiedRolls.rolls)
+  const rawResults = JSON.stringify(result.history.initialRolls)
+  const results = JSON.stringify(result.history.modifiedRolls)
 
   const simpleField = [{ name: 'Rolls', value: results, inline: true }]
   const complexField = [

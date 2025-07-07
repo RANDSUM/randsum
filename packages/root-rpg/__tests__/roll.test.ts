@@ -21,7 +21,7 @@ describe('roll', () => {
 
     test('returns two dice results', () => {
       const [, details] = roll(0)
-      expect(details.modifiedRolls.rawRolls).toHaveLength(2)
+      expect(details.history.initialRolls).toHaveLength(2)
     })
   })
 
@@ -29,7 +29,7 @@ describe('roll', () => {
     test('correctly applies positive modifier', () => {
       const bonus = 3
       const [, details] = roll(bonus)
-      const rawTotal = details.modifiedRolls.rawRolls.reduce(
+      const rawTotal = details.history.initialRolls.reduce(
         (sum, roll) => sum + roll,
         0
       )
@@ -39,7 +39,7 @@ describe('roll', () => {
     test('correctly applies negative modifier', () => {
       const bonus = -2
       const [, details] = roll(bonus)
-      const rawTotal = details.modifiedRolls.rawRolls.reduce(
+      const rawTotal = details.history.initialRolls.reduce(
         (sum, roll) => sum + roll,
         0
       )
@@ -48,7 +48,7 @@ describe('roll', () => {
 
     test('handles zero modifier', () => {
       const [, details] = roll(0)
-      const rawTotal = details.modifiedRolls.rawRolls.reduce(
+      const rawTotal = details.history.initialRolls.reduce(
         (sum, roll) => sum + roll,
         0
       )
