@@ -1,0 +1,95 @@
+---
+import DocumentationLayout from './DocumentationLayout.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  packageName: string;
+  version?: string;
+  npmUrl?: string;
+  githubUrl?: string;
+  badges?: Array<{
+    label: string;
+    value: string;
+    color?: string;
+    url?: string;
+  }>;
+}
+
+const { 
+  title, 
+  description, 
+  packageName, 
+  version,
+  npmUrl,
+  githubUrl,
+  badges = []
+} = Astro.props;
+
+const defaultBadges = [
+  ...(version ? [{ label: 'Version', value: version, color: 'blue', url: npmUrl }] : []),
+  { label: 'License', value: 'MIT', color: 'green' },
+  { label: 'TypeScript', value: 'Included', color: 'blue' },
+];
+
+const allBadges = [...defaultBadges, ...badges];
+---
+
+<DocumentationLayout title={title} description={description}>
+  <div class="prose max-w-none">
+    <!-- Package Header -->
+    <div class="not-prose mb-8 border-b border-gray-800 pb-8">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h1 class="text-4xl font-bold text-white mb-2">{packageName}</h1>
+          <p class="text-xl text-gray-300 leading-relaxed">{description}</p>
+        </div>
+        
+        <div class="flex gap-2 ml-4">
+          {npmUrl && (
+            <a 
+              href={npmUrl}
+              class="btn btn-primary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Install
+            </a>
+          )}
+          {githubUrl && (
+            <a 
+              href={githubUrl}
+              class="btn btn-secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          )}
+        </div>
+      </div>
+      
+      <!-- Badges -->
+      {allBadges.length > 0 && (
+        <div class="flex flex-wrap gap-2">
+          {allBadges.map((badge) => (
+            badge.url ? (
+              <a href={badge.url} target="_blank" rel="noopener noreferrer">
+                <span class={`badge ${badge.color === 'blue' ? 'badge-primary' : 'badge-secondary'}`}>
+                  {badge.label}: {badge.value}
+                </span>
+              </a>
+            ) : (
+              <span class={`badge ${badge.color === 'blue' ? 'badge-primary' : 'badge-secondary'}`}>
+                {badge.label}: {badge.value}
+              </span>
+            )
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Package Content -->
+    <slot />
+  </div>
+</DocumentationLayout>
