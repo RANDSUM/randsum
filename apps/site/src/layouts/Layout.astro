@@ -2,15 +2,18 @@
 import '../styles/global.css'
 import Sidebar from '../components/Sidebar.astro'
 import { mainNavigation } from '../config/navigation'
+import type { NavigationItem } from '../components/Sidebar.astro'
 
 export interface Props {
   title: string
   description?: string
+  additionalNavigationItems?: NavigationItem[]
 }
 
 const {
   title,
-  description = 'An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM'
+  description = 'An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM',
+  additionalNavigationItems = []
 } = Astro.props
 ---
 
@@ -20,7 +23,7 @@ const {
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/webp" href="/icon.webp" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
@@ -35,7 +38,10 @@ const {
   <body class="bg-randsum-950 text-silver-50 font-sans antialiased">
     <div class="min-h-screen flex">
       <!-- Sidebar -->
-      <Sidebar navigationItems={mainNavigation} />
+      <Sidebar 
+        navigationItems={mainNavigation} 
+        additionalItems={additionalNavigationItems}
+      />
 
       <!-- Mobile menu button -->
       <div class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-randsum-950">
@@ -68,7 +74,9 @@ const {
       </div>
 
       <!-- Main content -->
-      <main class="flex-1 lg:pl-64">
+      <main
+        class="flex-1 lg:pl-64 bg-gradient-to-br from-randsum-950 via-randsum-900 to-randsum-800"
+      >
         <div class="pt-16 lg:pt-0">
           <slot />
         </div>
@@ -76,17 +84,45 @@ const {
     </div>
 
     <script>
-      // Mobile menu toggle
-      const mobileMenuButton = document.getElementById('mobile-menu-button')
-      const mobileMenu = document.getElementById('mobile-menu')
-      const mobileMenuOverlay = document.getElementById('mobile-menu-overlay')
+      // Mobile menu toggle functionality
+      document.addEventListener('DOMContentLoaded', function () {
+        const mobileMenuButton = document.getElementById('mobile-menu-button')
+        const mobileMenu = document.getElementById('mobile-menu')
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay')
 
-      function toggleMobileMenu() {
-        mobileMenu?.classList.toggle('hidden')
-      }
+        function toggleMobileMenu() {
+          if (mobileMenu) {
+            mobileMenu.classList.toggle('hidden')
+          }
+        }
 
-      mobileMenuButton?.addEventListener('click', toggleMobileMenu)
-      mobileMenuOverlay?.addEventListener('click', toggleMobileMenu)
+        function closeMobileMenu() {
+          if (mobileMenu) {
+            mobileMenu.classList.add('hidden')
+          }
+        }
+
+        if (mobileMenuButton) {
+          mobileMenuButton.addEventListener('click', toggleMobileMenu)
+        }
+
+        if (mobileMenuOverlay) {
+          mobileMenuOverlay.addEventListener('click', closeMobileMenu)
+        }
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = document.querySelectorAll('#mobile-menu a')
+        mobileMenuLinks.forEach((link) => {
+          link.addEventListener('click', closeMobileMenu)
+        })
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            closeMobileMenu()
+          }
+        })
+      })
     </script>
   </body>
 </html>

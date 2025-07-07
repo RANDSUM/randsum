@@ -1,10 +1,12 @@
 ---
-import RollerLayout from '../../layouts/RollerLayout.astro'
+import Layout from '../../layouts/Layout.astro'
+import { rollerAdditionalNavigation } from '../../config/navigation'
 ---
 
-<RollerLayout
+<Layout
   title="Documentation - @randsum/roller"
   description="Complete documentation for the @randsum/roller dice rolling engine"
+  additionalNavigationItems={rollerAdditionalNavigation}
 >
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Header -->
@@ -193,4 +195,4 @@ roll('4d6R&#123;1&#125;') // Reroll 1s</code></pre>
       </a>
     </div>
   </div>
-</RollerLayout>
+</Layout>

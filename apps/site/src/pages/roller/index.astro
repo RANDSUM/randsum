@@ -1,15 +1,17 @@
 ---
-import RollerLayout from '../../layouts/RollerLayout.astro'
-import SharedHeroSection from '../../components/ui/HeroSection.astro'
+import Layout from '../../layouts/Layout.astro'
+import { rollerAdditionalNavigation } from '../../config/navigation'
+import HeroSection from '../../components/HeroSection.astro'
 import CompactButton from '../../components/ui/CompactButton.astro'
 ---
 
-<RollerLayout
+<Layout
   title="@randsum/roller - Advanced Dice Rolling Engine"
   description="The core RANDSUM dice rolling engine with powerful notation support and advanced modifiers"
+  additionalNavigationItems={rollerAdditionalNavigation}
 >
   <!-- Hero Section -->
-  <SharedHeroSection
+  <HeroSection
     title="@randsum/roller"
     description="The core RANDSUM dice rolling engine. Advanced notation support, powerful modifiers, and lightning-fast performance for all your tabletop gaming needs."
     class="overflow-hidden"
@@ -22,7 +24,7 @@ import CompactButton from '../../components/ui/CompactButton.astro'
         View Examples <span aria-hidden="true">→</span>
       </CompactButton>
     </div>
-  </SharedHeroSection>
+  </HeroSection>
 
   <!-- Features Section -->
   <div class="py-24 sm:py-32">
@@ -235,4 +237,4 @@ roll('3d6!')     // Exploding dice</code></pre>
       </div>
     </div>
   </div>
-</RollerLayout>
+</Layout>

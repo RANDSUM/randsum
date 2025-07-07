@@ -58,7 +58,6 @@ const isRollerPage = Astro.url.pathname.startsWith('/roller')
               </div>
             </a>
 
-            {/* Show roller sub-menu when on roller pages and this is the roller item */}
             {isRollerPage &&
               item.href === '/roller' &&
               additionalItems.length > 0 && (

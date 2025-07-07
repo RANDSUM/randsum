@@ -1,10 +1,12 @@
 ---
-import RollerLayout from '../../layouts/RollerLayout.astro'
+import Layout from '../../layouts/Layout.astro'
+import { rollerAdditionalNavigation } from '../../config/navigation'
 ---
 
-<RollerLayout
+<Layout
   title="Examples - @randsum/roller"
   description="Practical examples and use cases for the @randsum/roller dice rolling engine"
+  additionalNavigationItems={rollerAdditionalNavigation}
 >
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Header -->
@@ -224,4 +226,4 @@ console.log(`Limited reroll: $&#123;limitedReroll.total&#125;`)</code></pre>
       </a>
     </div>
   </div>
-</RollerLayout>
+</Layout>
