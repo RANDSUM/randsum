@@ -14,6 +14,9 @@ export default tseslint.config(
         projectService: true,
         tsconfigRootDir: import.meta.dirname
       }
+    },
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error'
     }
   },
   {
@@ -27,14 +30,26 @@ export default tseslint.config(
       '*.lock',
       'eslint.config.js',
       '**/.bunup-dts-*',
-      '.robo'
+      '.robo',
+      '**/*.d.ts',
+      '**/tsconfig.tsbuildinfo',
+      '**/.moon/cache/**',
+      '**/bun.lockb'
     ]
   },
   {
     rules: {
+      // TypeScript-specific rules
       '@typescript-eslint/no-misused-spread': 'off',
-      'func-names': ['error', 'as-needed'],
-      'no-restricted-exports': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ],
       '@typescript-eslint/naming-convention': [
         'error',
         {
@@ -44,13 +59,22 @@ export default tseslint.config(
         {
           selector: 'typeAlias',
           format: ['PascalCase']
+        },
+        {
+          selector: 'enum',
+          format: ['PascalCase']
+        },
+        {
+          selector: 'enumMember',
+          format: ['UPPER_CASE']
         }
       ],
       '@typescript-eslint/explicit-function-return-type': [
         'error',
         {
           allowExpressions: true,
-          allowTypedFunctionExpressions: true
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true
         }
       ],
       '@typescript-eslint/explicit-member-accessibility': [
@@ -66,15 +90,30 @@ export default tseslint.config(
           }
         }
       ],
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': [
+      '@typescript-eslint/prefer-readonly': 'error',
+      '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+      '@typescript-eslint/consistent-type-imports': [
         'error',
         {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_'
+          prefer: 'type-imports',
+          fixStyle: 'separate-type-imports'
         }
       ],
+      '@typescript-eslint/consistent-type-exports': 'error',
+
+      // Code quality and best practices
+      'func-names': ['error', 'as-needed'],
+      'no-restricted-exports': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'error',
+      'no-alert': 'error',
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'object-shorthand': 'error',
+      'prefer-template': 'error',
+      'prefer-arrow-callback': 'error',
+
+      // Import/export organization
       'sort-imports': [
         'error',
         {
@@ -84,7 +123,17 @@ export default tseslint.config(
           memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
           allowSeparatedGroups: true
         }
-      ]
+      ],
+
+      // Security rules
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error',
+
+      // Performance rules
+      'no-await-in-loop': 'warn',
+      'prefer-object-spread': 'error'
     }
   }
 )

@@ -105,16 +105,21 @@ export class ReplaceModifier extends BaseModifier<
     return `V{${args.join(',')}}`
   }
 
-  private singleReplaceDescription = ({ from, to }: ReplaceOptions): string => {
+  private readonly singleReplaceDescription = ({
+    from,
+    to
+  }: ReplaceOptions): string => {
     return `Replace ${String(this.extractFromValue(from))} with [${String(to)}]`
   }
 
-  private extractFromValue = (from: number | ComparisonOptions): string => {
+  private readonly extractFromValue = (
+    from: number | ComparisonOptions
+  ): string => {
     if (typeof from === 'number') return `[${String(from)}]`
     return this.formatGreaterLessDescription(from).join(' and ')
   }
 
-  private replaceArgs = (
+  private readonly replaceArgs = (
     replace: ReplaceOptions | ReplaceOptions[]
   ): string[] => {
     if (Array.isArray(replace))
@@ -122,11 +127,13 @@ export class ReplaceModifier extends BaseModifier<
     return [this.singleReplaceNotation(replace)]
   }
 
-  private singleReplaceNotation = (replace: ReplaceOptions): string => {
+  private readonly singleReplaceNotation = (
+    replace: ReplaceOptions
+  ): string => {
     return `${String(this.fromValueNotation(replace.from))}=${String(replace.to)}`
   }
 
-  private fromValueNotation = (
+  private readonly fromValueNotation = (
     from: number | ComparisonOptions
   ): string | number => {
     if (typeof from === 'number') return from

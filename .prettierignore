@@ -1,18 +1,21 @@
 # Dependencies
 node_modules/
 bun.lock
+bun.lockb
 
 # Build outputs
 dist/
 build/
 out/
+.robo/
 
+# Monorepo build outputs
 packages/**/dist/*
 apps/**/dist/*
-packages/**/dist/*
 
 # Coverage reports
 coverage/
+.nyc_output/
 
 # Logs
 *.log
@@ -21,6 +24,8 @@ logs/
 # Cache directories
 .cache/
 .moon/cache/
+.moon/docker/
+**/.bunup-dts-*
 
 # IDE and editor files
 .vscode/
@@ -63,14 +68,17 @@ package-lock.json
 # Generated files
 *.d.ts.map
 *.js.map
+*.tsbuildinfo
+tsconfig.tsbuildinfo
 
 # Config files that should maintain their formatting
 .prototools
 bunfig.toml
 
+# Framework-specific
 apps/site/.astro/*
+apps/robo/.robo/**
 
 # Markdown files in specific directories (keep formatting as-is)
 **/node_modules/**/*.md
-
-apps/robo/.robo/**
+CHANGELOG.md

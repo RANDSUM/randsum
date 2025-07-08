@@ -1,11 +1,8 @@
-import {
-  APIEmbed,
-  ChatInputCommandInteraction,
-  Colors,
-  EmbedBuilder
-} from 'discord.js'
-import { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
-import { AllRollTables, Hit, TableName, roll } from '@randsum/salvageunion'
+import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
+import { Colors, EmbedBuilder } from 'discord.js'
+import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
+import type { Hit, TableName } from '@randsum/salvageunion'
+import { AllRollTables, roll } from '@randsum/salvageunion'
 import { embedFooterDetails } from '../core/constants'
 
 const suChoices = Object.keys(AllRollTables).map((table) => ({

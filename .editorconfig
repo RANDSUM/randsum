@@ -15,8 +15,11 @@ indent_size = 2
 # Character set
 charset = utf-8
 
-# Max line length
+# Max line length (aligned with Prettier)
 max_line_length = 80
+
+# Ensure consistent formatting
+quote_type = single
 
 # Specific settings for markdown files
 [*.md]
@@ -34,31 +37,53 @@ indent_brace_style = K&R
 # JSON files
 [*.{json,jsonc}]
 insert_final_newline = false
+quote_type = double
 
 # YAML files
 [*.{yml,yaml}]
 indent_size = 2
+quote_type = double
 
 # Shell scripts
-[*.sh]
+[*.{sh,bash,zsh}]
 end_of_line = lf
+indent_size = 2
 
 # Windows-specific files
 [*.{cmd,bat,ps1}]
 end_of_line = crlf
+indent_size = 4
 
 # Git files
 [.git*]
 indent_style = tab
 
 # Package files
-[{package.json,package-lock.json,pnpm-lock.yaml,bun.lockb}]
+[{package.json,package-lock.json,pnpm-lock.yaml,bun.lockb,yarn.lock}]
 indent_size = 2
+quote_type = double
 
 # Configuration files
-[*.{toml,ini}]
+[*.{toml,ini,env}]
 indent_size = 2
 
 # Documentation
 [*.{md,mdx,txt}]
+indent_size = 2
+max_line_length = 100
+
+# CSS/SCSS files
+[*.{css,scss,sass,less}]
+indent_size = 2
+
+# HTML/Template files
+[*.{html,htm,astro,vue,svelte}]
+indent_size = 2
+
+# Docker files
+[{Dockerfile,*.dockerfile}]
+indent_size = 4
+
+# Ignore files
+[*.{ignore,gitignore}]
 indent_size = 2

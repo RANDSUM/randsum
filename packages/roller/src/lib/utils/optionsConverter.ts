@@ -12,7 +12,7 @@ import {
 import type { DiceNotation, RollOptions } from '../../types'
 
 export class OptionsConverter {
-  private options: RollOptions
+  private readonly options: RollOptions
 
   constructor(options: RollOptions) {
     this.options = options

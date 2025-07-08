@@ -8,7 +8,7 @@ import type {
 } from '../../types'
 
 export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
-  protected options: T | undefined
+  protected readonly options: T | undefined
 
   constructor(options: T | undefined) {
     this.options = options

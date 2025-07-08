@@ -26,8 +26,8 @@ bun add @randsum/daggerheart
 ## Usage
 
 ```typescript
-import { roll, meetOrBeat } from '@randsum/daggerheart'
-import type { RollArgument } from '@randsum/daggerheart'
+import { roll, meetOrBeat } from "@randsum/daggerheart"
+import type { RollArgument } from "@randsum/daggerheart"
 
 // Basic Hope and Fear roll
 const result = roll({ modifier: 2 })
@@ -38,19 +38,19 @@ const result = roll({ modifier: 2 })
 // Roll with Advantage (adds d6 to total)
 roll({
   modifier: 3,
-  rollingWith: 'Advantage'
+  rollingWith: "Advantage"
 })
 
 // Roll with Disadvantage (subtracts d6 from total)
 roll({
   modifier: -1,
-  rollingWith: 'Disadvantage'
+  rollingWith: "Disadvantage"
 })
 
 // Check if roll meets or beats Difficulty Class
 const rollArgs: RollArgument = {
   modifier: 4,
-  rollingWith: 'Advantage'
+  rollingWith: "Advantage"
 }
 const result = meetOrBeat(12, rollArgs)
 // result.success: boolean
@@ -104,14 +104,14 @@ function meetOrBeat(difficultyClass: number, rollArg: RollArgument): MeetOrBeatR
 ## Type Definitions
 
 ```typescript
-type AdvantageDisadvantageDH = 'Advantage' | 'Disadvantage'
+type AdvantageDisadvantageDH = "Advantage" | "Disadvantage"
 
 interface RollArgumentDH {
   modifier?: number
   rollingWith?: AdvantageDisadvantageDH
 }
 
-type RollResultDHType = 'hope' | 'fear' | 'critical hope'
+type RollResultDHType = "hope" | "fear" | "critical hope"
 
 interface RollResultDH {
   type: RollResultDHType

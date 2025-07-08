@@ -1,29 +1,29 @@
-$schema: 'https://moonrepo.dev/schemas/project.json'
+$schema: "https://moonrepo.dev/schemas/project.json"
 
 id: daggerheart
-language: 'typescript'
+language: "typescript"
 dependsOn:
-  - 'roller'
+  - "roller"
 tags:
-  - 'game'
+  - "game"
 
 tasks:
   tsCheck:
     deps:
-      - 'roller:build'
+      - "roller:build"
   build:
     deps:
-      - 'roller:build'
+      - "roller:build"
   test:
     command: 'echo "No Tests Yet"'
     deps:
-      - 'roller:build'
+      - "roller:build"
     options:
       cache: false
       runInCI: true
-      mergeArgs: 'replace'
-      mergeEnv: 'replace'
+      mergeArgs: "replace"
+      mergeEnv: "replace"
 
   lint:
     deps:
-      - 'roller:build'
+      - "roller:build"

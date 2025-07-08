@@ -207,7 +207,7 @@ describe('InvalidNotationError', () => {
 
   describe('edge cases', () => {
     test('handles very long notation strings', () => {
-      const longNotation = 'a'.repeat(1000) + 'd6'
+      const longNotation = `${'a'.repeat(1000)}d6`
       const error = new InvalidNotationError(longNotation)
 
       expect(error.context.input).toBe(longNotation)

@@ -55,7 +55,7 @@ Description: Roll 2d20
 ## Usage
 
 ```typescript
-import { D, D20, D6, roll } from '@randsum/roller'
+import { D, D20, D6, roll } from "@randsum/roller"
 
 // Using premade dice
 D20.roll() // Roll a d20
@@ -67,13 +67,13 @@ d12.roll() // Returns number 1-12
 d12.rollSpread(3) // Returns [n, n, n]
 
 // Create dice with custom faces
-const coin = D(['heads', 'tails'])
+const coin = D(["heads", "tails"])
 coin.roll() // Returns "heads" or "tails"
 
 // Using the roll function
-roll('4d6L') // 4d6, drop lowest
-roll('2d20H') // 2d20, keep highest
-roll('4d6R{<3}') // 4d6, reroll values below 3
+roll("4d6L") // 4d6, drop lowest
+roll("2d20H") // 2d20, keep highest
+roll("4d6R{<3}") // 4d6, reroll values below 3
 ```
 
 ## Available Dice
@@ -93,7 +93,7 @@ const d20 = D(20)
 d20.roll() // Returns 1-20
 
 // Create custom die
-const colorDie = D(['red', 'blue', 'green'])
+const colorDie = D(["red", "blue", "green"])
 colorDie.roll() // Returns random color
 ```
 
@@ -102,7 +102,7 @@ colorDie.roll() // Returns random color
 ```typescript
 // Basic rolls
 roll(20) // Roll 1d20
-roll('4d6') // Roll 4d6
+roll("4d6") // Roll 4d6
 
 // Using RollOptions object
 roll({
@@ -115,7 +115,7 @@ roll({
 })
 
 // Multiple dice in one roll
-roll('2d20', '4d6', '1d8') // Roll them all at once
+roll("2d20", "4d6", "1d8") // Roll them all at once
 roll(D20, D6, D8) // Using predefined dice
 roll(
   {
@@ -130,7 +130,7 @@ roll(
 
 // Mix and match different argument types
 roll(
-  '2d20H', // Notation string, with modifiers
+  "2d20H", // Notation string, with modifiers
   D6, // Die instance
   {
     // Options object
@@ -146,7 +146,7 @@ roll(
 // Different Result Types Examples:
 
 // Numeric Results (type: 'numeric')
-const numericResult = roll('4d6')
+const numericResult = roll("4d6")
 // {
 //   type: 'numeric',
 //   result: [3, 4, 5, 2],
@@ -155,7 +155,7 @@ const numericResult = roll('4d6')
 // }
 
 // Custom Results (type: 'custom')
-const customResult = roll(D(['critical', 'hit', 'miss']))
+const customResult = roll(D(["critical", "hit", "miss"]))
 // {
 //   type: 'custom',
 //   result: ['critical'],
@@ -165,8 +165,8 @@ const customResult = roll(D(['critical', 'hit', 'miss']))
 
 // Mixed Results (type: 'mixed')
 const mixedResult = roll(
-  '2d6', // numeric dice
-  D(['hit', 'miss']) // custom dice
+  "2d6", // numeric dice
+  D(["hit", "miss"]) // custom dice
 )
 // {
 //   type: 'mixed',
@@ -176,17 +176,17 @@ const mixedResult = roll(
 // }
 
 // Custom-faced dice
-roll(D(['critical', 'hit', 'miss']))
+roll(D(["critical", "hit", "miss"]))
 roll({
-  sides: ['heads', 'tails'],
+  sides: ["heads", "tails"],
   quantity: 3
 })
 
 // With modifiers
-roll('4d6L') // Drop lowest
-roll('2d20H') // Keep highest
-roll('3d8!') // Exploding dice
-roll('4d6R{<3}') // Reroll values below 3
+roll("4d6L") // Drop lowest
+roll("2d20H") // Keep highest
+roll("3d8!") // Exploding dice
+roll("4d6R{<3}") // Reroll values below 3
 ```
 
 See [Dice Notation Reference](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) for all supported modifiers.
@@ -197,14 +197,14 @@ This package is optimized for minimal bundle size and supports tree-shaking. For
 
 ```typescript
 // ❌ Imports everything
-import * as dice from '@randsum/roller'
+import * as dice from "@randsum/roller"
 
 // ✅ Only imports what you need
-import { D20, roll } from '@randsum/roller'
+import { D20, roll } from "@randsum/roller"
 
 // ✅ Best for tree-shaking - direct imports
-import { D20 } from '@randsum/roller/premadeDice'
-import { roll } from '@randsum/roller/roll'
+import { D20 } from "@randsum/roller/premadeDice"
+import { roll } from "@randsum/roller/roll"
 ```
 
 ## Use Cases
@@ -212,11 +212,11 @@ import { roll } from '@randsum/roller/roll'
 ### Virtual Tabletop Applications
 
 ```typescript
-import { roll } from '@randsum/roller'
+import { roll } from "@randsum/roller"
 
 // Handle player attack roll
 function handleAttackRoll(characterLevel, strengthModifier, hasAdvantage) {
-  const notation = hasAdvantage ? '2d20H' : '1d20'
+  const notation = hasAdvantage ? "2d20H" : "1d20"
   const attackRoll = roll(`${notation}+${strengthModifier}+${Math.floor(characterLevel / 2)}`)
   return {
     total: attackRoll.sum,
@@ -229,7 +229,7 @@ function handleAttackRoll(characterLevel, strengthModifier, hasAdvantage) {
 ### Game Development
 
 ```typescript
-import { D6, D20 } from '@randsum/roller'
+import { D6, D20 } from "@randsum/roller"
 
 class LootTable {
   generateLoot(playerLevel) {
@@ -239,10 +239,10 @@ class LootTable {
 
   private determineRarity(playerLevel) {
     const roll = D20.roll()
-    if (roll >= 18 + Math.min(playerLevel, 10)) return 'legendary'
-    if (roll >= 15) return 'rare'
-    if (roll >= 10) return 'uncommon'
-    return 'common'
+    if (roll >= 18 + Math.min(playerLevel, 10)) return "legendary"
+    if (roll >= 15) return "rare"
+    if (roll >= 10) return "uncommon"
+    return "common"
   }
 
   private rollForItem(rarity) {
@@ -254,13 +254,13 @@ class LootTable {
 ### Probability Simulations
 
 ```typescript
-import { roll } from '@randsum/roller'
+import { roll } from "@randsum/roller"
 
 // Simulate 10,000 character stat rolls
 function simulateStatRolls(iterations = 10000) {
   const results = []
   for (let i = 0; i < iterations; i++) {
-    const stats = Array.from({ length: 6 }, () => roll('4d6L').sum)
+    const stats = Array.from({ length: 6 }, () => roll("4d6L").sum)
     results.push(stats)
   }
 

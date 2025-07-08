@@ -73,7 +73,7 @@ Try editing the `main` file to get started! (`Activity.tsx` if you're using Reac
 The React template makes it easy to authenticate your activity with Discord. The `<DiscordProvider>` components in `App.tsx` accepts `authenticate` and `scope` props.
 
 ```tsx
-<DiscordContextProvider authenticate scope={['identify', 'guilds']}>
+<DiscordContextProvider authenticate scope={["identify", "guilds"]}>
   <Activity />
 </DiscordContextProvider>
 ```
@@ -90,7 +90,7 @@ Everything Robo is file-based, so you can create new routes by making new files 
 
 ```js
 export default () => {
-  return { status: 'ok' }
+  return { status: "ok" }
 }
 ```
 

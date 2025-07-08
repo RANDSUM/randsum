@@ -31,8 +31,8 @@ bun add @randsum/root-rpg
 ## Usage
 
 ```typescript
-import { rollRoot } from '@randsum/root-rpg'
-import type { RootResult } from '@randsum/root-rpg'
+import { rollRoot } from "@randsum/root-rpg"
+import type { RootResult } from "@randsum/root-rpg"
 
 // Basic roll with modifier
 const [outcome, details] = rollRoot(2)
@@ -42,13 +42,13 @@ const [outcome, details] = rollRoot(2)
 // Type-safe result handling
 const [result] = rollRoot(0)
 switch (result) {
-  case 'Strong Hit':
+  case "Strong Hit":
     // 10 or higher
     break
-  case 'Weak Hit':
+  case "Weak Hit":
     // 7-9
     break
-  case 'Miss':
+  case "Miss":
     // 6 or lower
     break
 }
@@ -66,9 +66,9 @@ function rollRoot(bonus: number): [RootResult, NumericRollResult]
 
 ```typescript
 type RootResult = RootStrongHit | RootWeakHit | RootMiss
-type RootStrongHit = 'Strong Hit'
-type RootWeakHit = 'Weak Hit'
-type RootMiss = 'Miss'
+type RootStrongHit = "Strong Hit"
+type RootWeakHit = "Weak Hit"
+type RootMiss = "Miss"
 ```
 
 ## Related Packages

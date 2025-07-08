@@ -32,32 +32,32 @@ bun add @randsum/salvageunion
 ## Usage
 
 ```typescript
-import { roll } from '@randsum/salvageunion'
-import type { Hit, TableResult } from '@randsum/salvageunion'
+import { roll } from "@randsum/salvageunion"
+import type { Hit, TableResult } from "@randsum/salvageunion"
 
 // Basic roll with default table
 const [result, rollValue] = roll()
 // Returns table result with hit type and details
 
 // Roll with specific table
-const [result, rollValue] = roll('Morale')
+const [result, rollValue] = roll("Morale")
 
 // Type-safe result handling
-const [{ hit }] = roll('Core Mechanic')
+const [{ hit }] = roll("Core Mechanic")
 switch (hit) {
-  case 'Nailed It':
+  case "Nailed It":
     // 20
     break
-  case 'Success':
+  case "Success":
     // 11-19
     break
-  case 'Tough Choice':
+  case "Tough Choice":
     // 6-10
     break
-  case 'Failure':
+  case "Failure":
     // 2-5
     break
-  case 'Cascade Failure':
+  case "Cascade Failure":
     // 1
     break
 }

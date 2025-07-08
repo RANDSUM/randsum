@@ -65,7 +65,7 @@ describe(roll, () => {
       })
     })
 
-    describe.only('custom dice', () => {
+    describe('custom dice', () => {
       describe('array args', () => {
         const arg = ['h', 't']
         test('it never goes outside of the bounds of the roll', () => {
