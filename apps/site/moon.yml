@@ -154,10 +154,12 @@ tasks:
       - 'formatCheck'
       - 'build'
 
-  deploy:
-    command: 'echo "Deploy will be handled by GitHub Actions"'
+  publish:
+    command: 'echo "Publish will be handled by GitHub Actions"'
     deps:
       - 'build'
     options:
       runInCI: false
       cache: false
+      mergeArgs: 'replace'
+      mergeEnv: 'replace'
