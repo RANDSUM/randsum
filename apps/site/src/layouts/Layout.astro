@@ -2,10 +2,18 @@
 import '../styles/global.css'
 import Sidebar from '../components/Sidebar.astro'
 import { mainNavigation } from '../config/navigation'
-import type {
-  NavigationItem,
-  SidebarContent
-} from '../components/Sidebar.astro'
+import type { NavigationItem } from '../components/Sidebar.astro'
+
+export interface SidebarLink {
+  href: string
+  text: string
+  sublinks?: SidebarLink[]
+}
+
+export interface SidebarContent {
+  title: string
+  links: SidebarLink[]
+}
 
 export interface Props {
   title: string
@@ -14,12 +22,13 @@ export interface Props {
   sidebarContent?: SidebarContent
 }
 
-const {
-  title,
-  description = 'An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM',
-  additionalNavigationItems = [],
-  sidebarContent
-} = Astro.props
+const title = Astro.props.title
+const description =
+  Astro.props.description ??
+  'An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM'
+const additionalNavigationItems = Astro.props.additionalNavigationItems ?? []
+
+const sidebarContent = Astro.props.sidebarContent
 ---
 
 <!doctype html>
@@ -32,7 +41,6 @@ const {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -42,7 +50,6 @@ const {
   </head>
   <body class="bg-randsum-950 text-silver-50 font-sans antialiased">
     <div class="min-h-screen flex">
-      <!-- Sidebar -->
       <Sidebar
         navigationItems={sidebarContent ? undefined : mainNavigation}
         additionalItems={sidebarContent ? undefined : additionalNavigationItems}
