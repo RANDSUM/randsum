@@ -7,18 +7,18 @@ dependsOn:
 tags:
   - "game"
 
+# All tasks now inherit from shared configuration
+# Only roller dependency needed since all tasks depend on roller:build
 tasks:
   tsCheck:
     deps:
       - "roller:build"
-
   build:
     deps:
       - "roller:build"
   test:
     deps:
       - "roller:build"
-
   lint:
     deps:
       - "roller:build"

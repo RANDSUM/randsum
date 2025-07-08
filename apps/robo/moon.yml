@@ -9,7 +9,10 @@ dependsOn:
   - "fifth"
   - "root-rpg"
   - "salvageunion"
+tags:
+  - "app"
 
+# Optimized app configuration with improved caching and dependencies
 tasks:
   tsCheck:
     deps:
@@ -27,11 +30,15 @@ tasks:
     options:
       runInCI: false
       cache: false
-      mergeArgs: "replace"
-      mergeEnv: "replace"
 
   build:
     command: "bun run robox build"
+    inputs:
+      - "src/**/*"
+      - "config/**/*"
+      - "package.json"
+    outputs:
+      - "dist/**/*"
     deps:
       - "roller:build"
       - "blades:build"
@@ -40,20 +47,18 @@ tasks:
       - "root-rpg:build"
       - "salvageunion:build"
     options:
-      cache: false
+      cache: true
+      cacheLifetime: "1 hour"
       runInCI: false
       allowFailure: false
       mergeArgs: "replace"
       mergeEnv: "replace"
 
   test:
-    command: 'echo "No Tests"'
-    deps:
+    command: 'echo "No tests implemented"'
     options:
       cache: false
       runInCI: false
-      mergeArgs: "replace"
-      mergeEnv: "replace"
 
   dev:
     command: "bun run robox dev"
@@ -61,6 +66,7 @@ tasks:
       - "build"
     options:
       cache: false
+
   ci:
     deps:
       - "build"
@@ -68,5 +74,3 @@ tasks:
       cache: false
       runInCI: false
       allowFailure: true
-      mergeArgs: "replace"
-      mergeEnv: "replace"
