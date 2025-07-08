@@ -46,10 +46,11 @@ export class CustomDie extends DieBase implements CustomDieInterface {
     quantity = 1,
     _modifiers: ModifierOptions = {}
   ): CustomRollResult {
-    return roll({
+    const options: CustomRollOptions = {
       ...this.toOptions,
       quantity
-    })
+    }
+    return roll(options)
   }
 
   public get toOptions(): CustomRollOptions {

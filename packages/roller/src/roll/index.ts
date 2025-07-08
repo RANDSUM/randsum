@@ -1,6 +1,8 @@
 import type {
   CustomRollArgument,
   CustomRollResult,
+  NumericRollArgument,
+  NumericRollResult,
   RollArgument,
   RollResult
 } from '../types'
@@ -13,6 +15,7 @@ import {
 import { normalizeArgument } from './normalizeArgument'
 import { generateRoll } from './generateRoll'
 
+function roll(arg: NumericRollArgument): NumericRollResult
 function roll(arg: CustomRollArgument): CustomRollResult
 function roll(arg: RollArgument): RollResult
 function roll(arg: RollArgument): RollResult {
