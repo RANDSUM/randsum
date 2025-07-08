@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   site: 'https://randsum.github.io',
-  // base: '/randsum', // Temporarily disabled for development
+  base: '/randsum',
   output: 'static',
   integrations: [mdx()],
   vite: {
