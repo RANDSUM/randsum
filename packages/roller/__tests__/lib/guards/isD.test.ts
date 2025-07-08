@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { D, isD, isNumericDie, isCustomDie } from '../../../src'
+import { D, isCustomDie, isD, isNumericDie } from '../../../src'
 
 describe('Die Interface Type Guards', () => {
   describe('isD', () => {
@@ -64,7 +64,7 @@ describe('Die Interface Type Guards', () => {
         isCustom: false,
         roll: () => 1,
         rollSpread: () => [1],
-        rollModified: () => ({}) as any,
+        rollModified: () => ({}) as unknown,
         toOptions: {}
       }
       expect(isD(wrongType)).toBe(false)
@@ -77,7 +77,7 @@ describe('Die Interface Type Guards', () => {
       expect(dice).toHaveLength(2)
 
       dice.forEach((die) => {
-        expect(die.type === 'numeric' || die.type === 'custom').toBe(true)
+        expect(['numeric', 'custom'].includes(die.type)).toBe(true)
         expect(typeof die.sides).toBe('number')
         expect(Array.isArray(die.faces)).toBe(true)
       })
