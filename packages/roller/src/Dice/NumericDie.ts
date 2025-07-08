@@ -2,13 +2,13 @@ import { coreSpreadRolls, generateNumericFaces } from '../lib'
 import { roll } from '../roll'
 import type {
   ModifierOptions,
-  NumericDie,
+  NumericDieInterface,
   NumericRollOptions,
   NumericRollResult
 } from '../types'
 import { DieBase } from './DieBase'
 
-export class NumericDieImpl extends DieBase implements NumericDie {
+export class NumericDie extends DieBase implements NumericDieInterface {
   public readonly type = 'numeric' as const
   public readonly faces: number[]
   public readonly isCustom = false as const

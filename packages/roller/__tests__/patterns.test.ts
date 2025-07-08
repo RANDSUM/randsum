@@ -177,7 +177,7 @@ describe('completeRollPattern', () => {
     })
 
     it('handles complex patterns without catastrophic backtracking', () => {
-      const complexInput = '1d6' + 'b'.repeat(100)
+      const complexInput = `1d6${'b'.repeat(100)}`
       const startTime = performance.now()
       const result = completeRollPattern.test(complexInput)
       const endTime = performance.now()

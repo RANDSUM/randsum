@@ -13,16 +13,38 @@
   "embeddedLanguageFormatting": "auto",
   "overrides": [
     {
-      "files": "*.json",
+      "files": ["*.json", "*.jsonc"],
+      "options": {
+        "singleQuote": false,
+        "trailingComma": "none"
+      }
+    },
+    {
+      "files": ["*.md", "*.mdx"],
+      "options": {
+        "printWidth": 100,
+        "proseWrap": "preserve",
+        "singleQuote": false
+      }
+    },
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": {
+        "singleQuote": false,
+        "bracketSpacing": false
+      }
+    },
+    {
+      "files": ["*.toml"],
       "options": {
         "singleQuote": false
       }
     },
     {
-      "files": "*.md",
+      "files": ["package.json"],
       "options": {
-        "printWidth": 100,
-        "proseWrap": "preserve"
+        "singleQuote": false,
+        "printWidth": 120
       }
     }
   ]

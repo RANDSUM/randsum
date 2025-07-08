@@ -31,8 +31,8 @@ bun add @randsum/blades
 ## Usage
 
 ```typescript
-import { roll } from '@randsum/blades'
-import type { BladesResult } from '@randsum/blades'
+import { roll } from "@randsum/blades"
+import type { BladesResult } from "@randsum/blades"
 
 // Basic roll with dice pool
 const [result, rollDetails] = roll(2)
@@ -69,7 +69,7 @@ function roll(dicePool: number): [BladesResult, NumericRollResult]
 **Result Interpretation:**
 
 ```typescript
-type BladesResult = 'critical' | 'success' | 'partial' | 'failure'
+type BladesResult = "critical" | "success" | "partial" | "failure"
 ```
 
 ## Related Packages

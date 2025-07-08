@@ -32,8 +32,8 @@ bun add @randsum/fifth
 ## Usage
 
 ```typescript
-import { roll, meetOrBeat } from '@randsum/fifth'
-import type { RollArgument } from '@randsum/fifth'
+import { roll, meetOrBeat } from "@randsum/fifth"
+import type { RollArgument } from "@randsum/fifth"
 
 // Basic roll with modifier
 roll({ modifier: 5 })
@@ -41,19 +41,19 @@ roll({ modifier: 5 })
 // Roll with advantage
 roll({
   modifier: 5,
-  rollingWith: 'Advantage'
+  rollingWith: "Advantage"
 })
 
 // Roll with disadvantage
 roll({
   modifier: -2,
-  rollingWith: 'Disadvantage'
+  rollingWith: "Disadvantage"
 })
 
 // Check if roll meets or beats DC
 const rollArg: RollArgument = {
   modifier: 5,
-  rollingWith: 'Advantage'
+  rollingWith: "Advantage"
 }
 meetOrBeat(15, rollArg) // Returns true if roll meets or exceeds DC 15
 ```
@@ -67,7 +67,7 @@ Makes a d20 roll following 5th Edition rules.
 ```typescript
 const result = roll({
   modifier: 5, // the result of your bonuses after all bonuses are applied
-  rollingWith: 'Advantage' // Optional
+  rollingWith: "Advantage" // Optional
 })
 // Returns a roll result with total and details
 ```
@@ -79,7 +79,7 @@ Checks if a roll meets or exceeds a Difficulty Class (DC).
 ```typescript
 const success = meetOrBeat(15, {
   modifier: 5,
-  rollingWith: 'Advantage'
+  rollingWith: "Advantage"
 })
 // Returns true if roll + modifier meets or exceeds 15
 ```

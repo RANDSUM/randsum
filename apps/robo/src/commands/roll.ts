@@ -1,6 +1,8 @@
 import { roll, validateNotation } from '@randsum/roller'
-import { APIEmbed, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js'
-import { CommandOptions, CommandResult, createCommandConfig } from 'robo.js'
+import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
+import { EmbedBuilder } from 'discord.js'
+import type { CommandOptions, CommandResult } from 'robo.js'
+import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 
 export const config = createCommandConfig({

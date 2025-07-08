@@ -131,33 +131,39 @@ export class DropModifier extends BaseModifier<DropOptions> {
   public apply(bonus: NumericRollBonus): NumericRollBonus {
     if (this.options === undefined) return bonus
     const { highest, lowest, greaterThan, lessThan, exact } = this.options
-    const sortedResults = bonus.rolls
-      .filter(
-        (roll) =>
-          !(
-            (greaterThan !== undefined && roll > greaterThan) ||
-            (lessThan !== undefined && roll < lessThan) ||
-            exact?.map((number) => number).includes(roll) === true
-          )
-      )
+
+    const exactSet = exact ? new Set(exact) : null
+
+    const filteredAndSorted = bonus.rolls
+      .filter((roll) => {
+        if (greaterThan !== undefined && roll > greaterThan) return false
+        if (lessThan !== undefined && roll < lessThan) return false
+        if (exactSet?.has(roll)) return false
+        return true
+      })
       .sort((a, b) => a - b)
 
-    if (highest !== undefined) {
-      this.times(highest)(() => sortedResults.pop())
-    }
+    let startIndex = 0
+    let endIndex = filteredAndSorted.length
 
     if (lowest !== undefined) {
-      this.times(lowest)(() => sortedResults.shift())
+      startIndex = Math.min(lowest, filteredAndSorted.length)
     }
+
+    if (highest !== undefined) {
+      endIndex = Math.max(0, filteredAndSorted.length - highest)
+    }
+
+    const finalResults = filteredAndSorted.slice(startIndex, endIndex)
 
     const logs = [
       ...bonus.logs,
-      this.toModifierLog('drop', bonus.rolls, sortedResults)
+      this.toModifierLog('drop', bonus.rolls, finalResults)
     ]
 
     return {
       ...bonus,
-      rolls: sortedResults,
+      rolls: finalResults,
       logs
     }
   }
@@ -224,14 +230,5 @@ export class DropModifier extends BaseModifier<DropOptions> {
     }
 
     return finalList.join('')
-  }
-
-  private times = (iterator: number) => {
-    return (callback: (index?: number) => void): void => {
-      if (iterator > 0) {
-        callback(iterator)
-        this.times(iterator - 1)(callback)
-      }
-    }
   }
 }

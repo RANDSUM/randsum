@@ -15,6 +15,8 @@ export interface RollHistory<P extends RollParams = RollParams> {
 
 export interface BaseRollResult<P extends RollParams = RollParams> {
   parameters: P
+  description: P['description']
+  die: P['die']
   type: 'numeric' | 'custom'
   rolls: RollHistory<P>['modifiedRolls']
   history: RollHistory<P>

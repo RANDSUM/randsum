@@ -1,12 +1,10 @@
-import { BladesResult, roll } from '@randsum/blades'
-import { NumericRollResult } from '@randsum/roller'
-import {
-  APIEmbed,
-  ChatInputCommandInteraction,
-  Colors,
-  EmbedBuilder
-} from 'discord.js'
-import { CommandOptions, CommandResult, createCommandConfig } from 'robo.js'
+import type { BladesResult } from '@randsum/blades'
+import { roll } from '@randsum/blades'
+import type { NumericRollResult } from '@randsum/roller'
+import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
+import { Colors, EmbedBuilder } from 'discord.js'
+import type { CommandOptions, CommandResult } from 'robo.js'
+import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 
 export const config = createCommandConfig({

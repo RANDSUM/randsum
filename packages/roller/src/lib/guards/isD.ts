@@ -1,4 +1,8 @@
-import type { BaseD } from '../../types'
+import type {
+  BaseD,
+  CustomDieInterface,
+  NumericDieInterface
+} from '../../types'
 
 export function isD(arg: unknown): arg is BaseD {
   return (
@@ -16,14 +20,10 @@ export function isD(arg: unknown): arg is BaseD {
   )
 }
 
-export function isNumericDie(
-  die: BaseD
-): die is import('../../types').NumericDie {
+export function isNumericDie(die: BaseD): die is NumericDieInterface {
   return die.type === 'numeric'
 }
 
-export function isCustomDie(
-  die: BaseD
-): die is import('../../types').CustomDie {
+export function isCustomDie(die: BaseD): die is CustomDieInterface {
   return die.type === 'custom'
 }

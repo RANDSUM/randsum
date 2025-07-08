@@ -39,6 +39,46 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./premade": {
+      "import": {
+        "types": "./dist/Dice/premade.d.ts",
+        "default": "./dist/Dice/premade.js"
+      },
+      "require": {
+        "types": "./dist/Dice/premade.d.cts",
+        "default": "./dist/Dice/premade.cjs"
+      }
+    },
+    "./utils": {
+      "import": {
+        "types": "./dist/lib/utils/index.d.ts",
+        "default": "./dist/lib/utils/index.js"
+      },
+      "require": {
+        "types": "./dist/lib/utils/index.d.cts",
+        "default": "./dist/lib/utils/index.cjs"
+      }
+    },
+    "./modifiers": {
+      "import": {
+        "types": "./dist/lib/modifiers/index.d.ts",
+        "default": "./dist/lib/modifiers/index.js"
+      },
+      "require": {
+        "types": "./dist/lib/modifiers/index.d.cts",
+        "default": "./dist/lib/modifiers/index.cjs"
+      }
+    },
+    "./guards": {
+      "import": {
+        "types": "./dist/lib/guards/index.d.ts",
+        "default": "./dist/lib/guards/index.js"
+      },
+      "require": {
+        "types": "./dist/lib/guards/index.d.cts",
+        "default": "./dist/lib/guards/index.cjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "engines": {

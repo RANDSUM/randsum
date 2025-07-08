@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type {
   CustomRollParams,
   CustomRollResult,
+  ModifierOptions,
   NumericRollBonus,
   NumericRollOptions,
   NumericRollParams,
@@ -52,7 +54,17 @@ export function generateHistory(
     modifiers = {}
   } = parameters.options as NumericRollOptions
 
-  if (Object.keys(modifiers).length === 0) {
+  const hasModifiers =
+    modifiers.reroll ||
+    modifiers.replace ||
+    modifiers.cap ||
+    modifiers.explode ||
+    modifiers.unique ||
+    modifiers.drop ||
+    modifiers.plus ||
+    modifiers.minus
+
+  if (!hasModifiers) {
     return {
       total: calculateTotal(rolls),
       initialRolls: rolls,
@@ -63,76 +75,32 @@ export function generateHistory(
 
   const rollOne = (): number => coreRandom(sides)
 
-  const initialBonuses: NumericRollBonus = {
+  const rollParams = { sides, quantity, rollOne }
+
+  const bonuses: NumericRollBonus = {
     simpleMathModifier: 0,
     rolls: rolls.map((n) => Number(n)),
     logs: []
   }
 
-  let bonuses = initialBonuses
+  const modifierOrder: (keyof ModifierOptions)[] = [
+    'reroll',
+    'replace',
+    'cap',
+    'explode',
+    'unique',
+    'drop',
+    'plus',
+    'minus'
+  ]
 
-  if (modifiers.reroll) {
-    bonuses = applyModifier('reroll', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
-  }
-
-  if (modifiers.replace) {
-    bonuses = applyModifier('replace', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
-  }
-
-  if (modifiers.cap) {
-    bonuses = applyModifier('cap', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
-  }
-
-  if (modifiers.explode) {
-    bonuses = applyModifier('explode', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
-  }
-
-  if (modifiers.unique) {
-    bonuses = applyModifier('unique', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
-  }
-
-  if (modifiers.drop) {
-    bonuses = applyModifier('drop', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
-  }
-
-  if (modifiers.plus) {
-    bonuses = applyModifier('plus', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
-  }
-
-  if (modifiers.minus) {
-    bonuses = applyModifier('minus', modifiers, bonuses, {
-      sides,
-      quantity,
-      rollOne
-    })
+  for (const modifierKey of modifierOrder) {
+    if (modifiers[modifierKey]) {
+      const result = applyModifier(modifierKey, modifiers, bonuses, rollParams)
+      bonuses.rolls = result.rolls
+      bonuses.simpleMathModifier = result.simpleMathModifier
+      bonuses.logs = result.logs
+    }
   }
 
   return {

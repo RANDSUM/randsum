@@ -1,13 +1,10 @@
-import {
-  APIEmbed,
-  ChatInputCommandInteraction,
-  Colors,
-  EmbedBuilder
-} from 'discord.js'
+import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
+import { Colors, EmbedBuilder } from 'discord.js'
 import { embedFooterDetails } from '../core/constants'
 
-import { Result, roll } from '@randsum/root-rpg'
-import { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
+import type { Result } from '@randsum/root-rpg'
+import { roll } from '@randsum/root-rpg'
+import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 
 export const config: CommandConfig = {
   description: "The woodland isn't gonna clear itself, vagabond",

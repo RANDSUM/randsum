@@ -1,23 +1,23 @@
 import { D } from '.'
-import type { CustomDie, NumericDie } from '../types'
+import type { CustomDieInterface, NumericDieInterface } from '../types'
 
-export const D4: NumericDie = D(4)
+export const D4: NumericDieInterface = D(4)
 
-export const D6: NumericDie = D(6)
+export const D6: NumericDieInterface = D(6)
 
-export const D8: NumericDie = D(8)
+export const D8: NumericDieInterface = D(8)
 
-export const D10: NumericDie = D(10)
+export const D10: NumericDieInterface = D(10)
 
-export const D12: NumericDie = D(12)
+export const D12: NumericDieInterface = D(12)
 
-export const D20: NumericDie = D(20)
+export const D20: NumericDieInterface = D(20)
 
-export const D100: NumericDie = D(100)
+export const D100: NumericDieInterface = D(100)
 
-export const coin: CustomDie = D(['Heads', 'Tails'])
+export const coin: CustomDieInterface = D(['Heads', 'Tails'])
 
-export const fudgeDice: CustomDie = D(['+', '+', '+', '-', ' ', ' '])
+export const fudgeDice: CustomDieInterface = D(['+', '+', '+', '-', ' ', ' '])
 
 const alphanumFaces = [
   'A',
@@ -84,4 +84,4 @@ const alphanumFaces = [
   '9'
 ]
 
-export const alphaNumDie: CustomDie = D(alphanumFaces)
+export const alphaNumDie: CustomDieInterface = D(alphanumFaces)

@@ -32,7 +32,7 @@ export class MinusModifier extends BaseModifier<number> {
     ]
 
     return {
-      ...bonus,
+      rolls: bonus.rolls,
       simpleMathModifier: -this.options,
       logs
     }

@@ -18,17 +18,15 @@ export function generateRoll(
     : 'custom'
   const rollResult = {
     parameters,
+    die: parameters.die,
+    description: parameters.description,
     history,
     rolls: history.modifiedRolls,
     total: history.total,
     type
   }
 
-  if (isNumericResult(rollResult)) {
-    return rollResult
-  }
-
-  if (isCustomResult(rollResult)) {
+  if (isNumericResult(rollResult) || isCustomResult(rollResult)) {
     return rollResult
   }
 

@@ -1,22 +1,22 @@
-$schema: 'https://moonrepo.dev/schemas/project.json'
+$schema: "https://moonrepo.dev/schemas/project.json"
 
 id: root-rpg
-language: 'typescript'
+language: "typescript"
 dependsOn:
-  - 'roller'
+  - "roller"
 tags:
-  - 'game'
+  - "game"
 
 tasks:
   tsCheck:
     deps:
-      - 'roller:build'
+      - "roller:build"
   build:
     deps:
-      - 'roller:build'
+      - "roller:build"
   test:
     deps:
-      - 'roller:build'
+      - "roller:build"
   lint:
     deps:
-      - 'roller:build'
+      - "roller:build"

@@ -71,8 +71,8 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
     const rolls = bonus.rolls.map(CapModifier.applySingleCap(this.options))
     const logs = [...bonus.logs, this.toModifierLog('cap', bonus.rolls, rolls)]
     return {
-      ...bonus,
       rolls,
+      simpleMathModifier: bonus.simpleMathModifier,
       logs
     }
   }

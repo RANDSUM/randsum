@@ -3,7 +3,7 @@ import type { CustomRollOptions, NumericRollOptions } from './options'
 import type { CustomRollResult, NumericRollResult } from './results'
 import type { CustomDiceNotation, NumericDiceNotation } from './notation'
 
-export interface NumericDie {
+export interface NumericDieInterface {
   readonly type: 'numeric'
   readonly sides: number
   readonly faces: number[]
@@ -14,7 +14,7 @@ export interface NumericDie {
   toOptions: NumericRollOptions
 }
 
-export interface CustomDie {
+export interface CustomDieInterface {
   readonly type: 'custom'
   readonly sides: number
   readonly faces: string[]
@@ -25,17 +25,17 @@ export interface CustomDie {
   toOptions: CustomRollOptions
 }
 
-export type BaseD = NumericDie | CustomDie
+export type BaseD = NumericDieInterface | CustomDieInterface
 
 export type NumericRollArgument =
-  | NumericDie
+  | NumericDieInterface
   | NumericRollOptions
   | NumericDiceNotation
   | number
   | `${number}`
 
 export type CustomRollArgument =
-  | CustomDie
+  | CustomDieInterface
   | CustomRollOptions
   | CustomDiceNotation
   | string[]

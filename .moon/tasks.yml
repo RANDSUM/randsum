@@ -1,113 +1,113 @@
-$schema: 'https://moonrepo.dev/schemas/tasks.json'
+$schema: "https://moonrepo.dev/schemas/tasks.json"
 
 tasks:
   build:
-    command: 'bunup'
-    args: '--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline'
+    command: "bunup"
+    args: "--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline"
     inputs:
-      - 'src/**/*'
+      - "src/**/*"
     outputs:
-      - 'dist/**/*'
+      - "dist/**/*"
     options:
       cache: false
 
   test:
-    command: 'bun test'
+    command: "bun test"
     deps:
-      - 'build'
+      - "build"
     inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.test.ts'
-      - '**/*.spec.ts'
+      - "src/**/*"
+      - "__tests__/**/*"
+      - "**/*.test.ts"
+      - "**/*.spec.ts"
     options:
       cache: false
 
   lint:
-    command: 'eslint . -c ../../eslint.config.js'
+    command: "eslint . -c ../../eslint.config.js"
     deps:
     inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
+      - "src/**/*"
+      - "__tests__/**/*"
+      - "**/*.ts"
     options:
       cache: false
 
   format:
-    command: 'prettier --write . --ignore-path ../../.prettierignore  --config ../../.prettierrc'
+    command: "prettier --write . --ignore-path ../../.prettierignore  --config ../../.prettierrc"
     inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
-      - '**/*.js'
-      - '**/*.json'
-      - '**/*.md'
-      - '.prettierrc'
+      - "src/**/*"
+      - "__tests__/**/*"
+      - "**/*.ts"
+      - "**/*.js"
+      - "**/*.json"
+      - "**/*.md"
+      - ".prettierrc"
     options:
       cache: false
 
   formatCheck:
-    command: 'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc'
+    command: "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc"
     inputs:
-      - 'src/**/*'
-      - '__tests__/**/*'
-      - '**/*.ts'
-      - '**/*.js'
-      - '**/*.json'
-      - '**/*.md'
-      - '.prettierrc'
+      - "src/**/*"
+      - "__tests__/**/*"
+      - "**/*.ts"
+      - "**/*.js"
+      - "**/*.json"
+      - "**/*.md"
+      - ".prettierrc"
     options:
       cache: false
 
   ci:
     deps:
-      - 'tsCheck'
-      - 'test'
-      - 'lint'
-      - 'formatCheck'
+      - "tsCheck"
+      - "test"
+      - "lint"
+      - "formatCheck"
 
   tsCheck:
-    command: 'tsc --erasableSyntaxOnly'
+    command: "tsc --erasableSyntaxOnly"
     deps:
     inputs:
-      - 'src/**/*'
-      - 'tsconfig.json'
+      - "src/**/*"
+      - "tsconfig.json"
     options:
       cache: false
       runInCI: true
       allowFailure: false
 
   version:
-    command: 'bun pm version'
+    command: "bun pm version"
     options:
       runInCI: false
       allowFailure: true
 
   patch:
-    command: 'bun pm version patch'
+    command: "bun pm version patch"
     options:
       runInCI: false
       allowFailure: true
 
   minor:
-    command: 'bun pm version minor'
+    command: "bun pm version minor"
     options:
       runInCI: false
       allowFailure: true
 
   major:
-    command: 'bun pm version major'
+    command: "bun pm version major"
     options:
       runInCI: false
       allowFailure: true
 
   publish:
-    command: 'bun publish --no-git-checks --access=public'
+    command: "bun publish --no-git-checks --access=public"
     options:
       runInCI: false
       allowFailure: true
     deps:
-      - 'test'
-      - 'lint'
-      - 'tsCheck'
-      - 'build'
+      - "test"
+      - "lint"
+      - "tsCheck"
+      - "build"

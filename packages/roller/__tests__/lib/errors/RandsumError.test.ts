@@ -207,8 +207,8 @@ describe('RandsumError', () => {
         name: 'RandsumError',
         message: 'Complete JSON',
         code: 'INVALID_NOTATION',
-        context: context,
-        suggestions: suggestions,
+        context,
+        suggestions,
         timestamp: error.timestamp.toISOString(),
         stack: error.stack
       })

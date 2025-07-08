@@ -1,11 +1,9 @@
-import { AdvantageDisadvantage, RollResult, roll } from '@randsum/daggerheart'
-import {
-  APIEmbed,
-  ChatInputCommandInteraction,
-  Colors,
-  EmbedBuilder
-} from 'discord.js'
-import { CommandOptions, CommandResult, createCommandConfig } from 'robo.js'
+import type { AdvantageDisadvantage, RollResult } from '@randsum/daggerheart'
+import { roll } from '@randsum/daggerheart'
+import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
+import { Colors, EmbedBuilder } from 'discord.js'
+import type { CommandOptions, CommandResult } from 'robo.js'
+import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 
 export const config = createCommandConfig({
