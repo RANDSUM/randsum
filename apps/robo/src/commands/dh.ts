@@ -45,10 +45,10 @@ const buildEmbed = (
     ...hopeFearFields,
     { name: 'Modifier', value: modifier.toString() },
     advantage &&
-      rollingWith && {
-        name: `Rolled with ${rollingWith}`,
-        value: advantage.toString()
-      }
+    rollingWith && {
+      name: `Rolled with ${rollingWith}`,
+      value: advantage.toString()
+    }
   ].filter((r) => !!r)
   return new EmbedBuilder()
     .setTitle(`You rolled a ${String(total)} with ${type}`)
