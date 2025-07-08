@@ -1,0 +1,17 @@
+---
+export interface Props {
+  class?: string
+  background?: 'dark' | 'darker'
+}
+
+const { class: className = '', background = 'dark' } = Astro.props
+
+const backgroundClasses = {
+  dark: 'bg-randsum-900',
+  darker: 'bg-randsum-950'
+}
+---
+
+<div class={`${backgroundClasses[background]} rounded-lg p-4 ${className}`}>
+  <pre class="text-silver-100 overflow-x-auto"><code><slot /></code></pre>
+</div>

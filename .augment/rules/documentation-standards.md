@@ -1,15 +1,39 @@
 ---
-type: "always_apply"
+type: "agent_requested"
+description: "Documentation standards for RANDSUM packages"
 ---
 
-## Documentation Standards
+# Documentation Standards
 
-- Use JSDoc comments for all public APIs with @param, @returns, @example tags
-- Include @file and @module tags at the top of each file
-- Write comprehensive README.md for each package with installation, usage, and API reference
-- Use consistent README structure: description, features, installation, usage, API reference
-- Include TypeScript code examples in documentation
-- Use emoji in README headers for visual appeal (🎲, 🎯, 🔒, 🪶)
-- Prefer dark themes for documentation sites
-- Use syntax highlighting for code blocks in documentation
-- if creating complex documentation for specific augment tasks, create it in the `.notes/` directory.
+## README Structure
+
+Each package needs README.md with:
+
+- Package name and description
+- Installation instructions (bun/npm)
+- Quick start TypeScript example
+- API reference with parameters and return types
+- Related packages links
+
+## Code Comments
+
+**Use comments for:**
+
+- Complex business logic
+- Non-obvious algorithms
+- Workarounds or temporary solutions
+
+**Avoid comments for:**
+
+- Self-explanatory code
+- What TypeScript types already explain
+
+## JSDoc Usage
+
+Minimal JSDoc only for:
+
+- Public API functions needing context
+- `@example` for usage clarification
+- `@throws` for error conditions
+
+Avoid redundant `@param` and `@returns` - TypeScript types are sufficient.

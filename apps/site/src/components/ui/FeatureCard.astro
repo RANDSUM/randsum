@@ -1,0 +1,34 @@
+---
+export interface Props {
+  title: string
+  description: string
+  iconColor?: string
+  class?: string
+}
+
+const {
+  title,
+  description,
+  iconColor = 'silver-600',
+  class: className = ''
+} = Astro.props
+---
+
+<div class={`flex flex-col ${className}`}>
+  <dt
+    class="flex items-center gap-x-3 text-base font-semibold leading-7 text-silver-50"
+  >
+    <div
+      class={`h-10 w-10 flex items-center justify-center rounded-lg bg-${iconColor}`}
+    >
+      <slot name="icon" />
+    </div>
+    {title}
+  </dt>
+  <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300">
+    <p class="flex-auto">
+      {description}
+    </p>
+    <slot name="examples" />
+  </dd>
+</div>

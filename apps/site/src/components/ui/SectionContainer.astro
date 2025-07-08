@@ -1,0 +1,22 @@
+---
+export interface Props {
+  class?: string
+  background?: string
+  spacing?: 'normal' | 'large'
+}
+
+const {
+  class: className = '',
+  background = '',
+  spacing = 'normal'
+} = Astro.props
+
+const spacingClasses = {
+  normal: 'py-20 lg:py-32',
+  large: 'py-24 sm:py-32'
+}
+---
+
+<section class={`${spacingClasses[spacing]} ${background} ${className}`}>
+  <slot />
+</section>

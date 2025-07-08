@@ -1,0 +1,496 @@
+---
+import Layout from '../layouts/Layout.astro'
+import SectionContainer from '../components/ui/SectionContainer.astro'
+import MainContent from '../components/MainContent.astro'
+import CodeBlock from '../components/ui/CodeBlock.astro'
+import SecondaryButton from '../components/ui/SecondaryButton.astro'
+
+// Create sidebar content for the Layout component with nested structure
+const sidebarContent = {
+  title: 'Table of Contents',
+  links: [
+    { href: '#overview', text: 'Overview' },
+    { href: '#basic-syntax', text: 'Basic Syntax' },
+    { href: '#standard-rolls', text: 'Standard Rolls' },
+    { href: '#custom-faces', text: 'Custom-Faced Dice' },
+    {
+      href: '#modifiers',
+      text: 'Modifiers',
+      sublinks: [
+        { href: '#arithmetic', text: 'Arithmetic (+/-)' },
+        { href: '#drop-modifiers', text: 'Drop Modifiers (L/H)' },
+        { href: '#reroll-modifiers', text: 'Reroll Modifiers (R)' },
+        { href: '#exploding-dice', text: 'Exploding Dice (!)' },
+        { href: '#unique-results', text: 'Unique Results (U)' },
+        { href: '#capping-modifiers', text: 'Capping Modifiers (C)' },
+        { href: '#replace-modifiers', text: 'Replace Modifiers (V)' }
+      ]
+    },
+    { href: '#complex-combinations', text: 'Complex Combinations' },
+    { href: '#gaming-applications', text: 'Gaming Applications' },
+    { href: '#common-examples', text: 'Common Examples' }
+  ]
+}
+---
+
+<script>
+  // Smooth scrolling for anchor links
+  document.addEventListener('DOMContentLoaded', function () {
+    const links = document.querySelectorAll('a[href^="#"]')
+    links.forEach((link) => {
+      link.addEventListener('click', function (e: Event) {
+        e.preventDefault()
+        const target = e.target as HTMLAnchorElement
+        const targetId = target.getAttribute('href')?.substring(1)
+        const targetElement = targetId
+          ? document.getElementById(targetId)
+          : null
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      })
+    })
+  })
+</script>
+
+<Layout
+  title="Dice Notation - RANDSUM"
+  description="Complete guide to RANDSUM dice notation syntax and modifiers"
+  sidebarContent={sidebarContent}
+>
+  <SectionContainer>
+    <MainContent class="max-w-4xl">
+      <!-- Header -->
+      <div class="mb-12">
+        <h1 class="text-4xl font-bold text-silver-50 mb-4">
+          RANDSUM Dice Notation
+        </h1>
+        <p class="text-xl text-silver-300 leading-relaxed">
+          A comprehensive guide to RANDSUM's powerful dice notation syntax and
+          modifiers
+        </p>
+      </div>
+
+      <!-- Overview -->
+      <section id="overview" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">Overview</h2>
+        <div class="prose prose-invert max-w-none">
+          <p class="text-silver-300 leading-relaxed mb-4">
+            Dice notation is a compact way to represent dice rolls and their
+            modifications. For example, <code
+              class="bg-randsum-800 px-2 py-1 rounded text-silver-100"
+              >4d20+2</code
+            >
+            means "roll four twenty-sided dice, then add two".
+          </p>
+          <p class="text-silver-300 leading-relaxed mb-4">
+            RANDSUM extends standard dice notation with powerful modifiers like
+            dropping lowest rolls, rerolling specific values, ensuring unique
+            results, and much more. This makes it perfect for tabletop RPGs,
+            board games, and any application requiring sophisticated dice
+            mechanics.
+          </p>
+          <p class="text-silver-300 leading-relaxed">
+            The notation system is inspired by <a
+              href="https://sophiehoulden.com/dice/documentation/notation.html"
+              class="text-silver-100 hover:text-silver-50 underline"
+              target="_blank"
+              rel="noopener">Sophie's Dice</a
+            >
+            and extends traditional dice notation with modern gaming needs in mind.
+          </p>
+        </div>
+      </section>
+
+      <!-- Basic Syntax -->
+      <section id="basic-syntax" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">Basic Syntax</h2>
+        <div class="bg-randsum-800 p-4 rounded-lg mb-6">
+          <p class="text-silver-300">
+            All notation in RANDSUM is case-insensitive (<code
+              class="text-silver-100">2d8</code
+            > = <code class="text-silver-100">2D8</code>).
+          </p>
+        </div>
+      </section>
+
+      <!-- Standard Rolls -->
+      <section id="standard-rolls" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">Standard Rolls</h2>
+        <p class="text-silver-300 mb-4">
+          The basic format is <code
+            class="bg-randsum-800 px-2 py-1 rounded text-silver-100">NdS</code
+          >
+          where N is the number of dice and S is the number of sides.
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // Roll one d20 roll(20) // number argument roll('1d20') // notation
+          string roll(&#123; sides: 20, quantity: 1 &#125;) // Roll four d6
+          roll('4d6') roll(&#123; sides: 6, quantity: 4 &#125;)
+        </CodeBlock>
+      </section>
+
+      <!-- Custom-Faced Dice -->
+      <section id="custom-faces" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">
+          Custom-Faced Dice
+        </h2>
+        <p class="text-silver-300 mb-4">
+          Roll dice with non-numeric faces using the <code
+            class="bg-randsum-800 px-2 py-1 rounded text-silver-100"
+            >d&#123;faces&#125;</code
+          > syntax:
+        </p>
+        <CodeBlock background="darker" class="mb-4">
+          // Roll a coin (heads/tails) four times import &#123; rollCustomFaces
+          &#125; from '@randsum/roller' rollCustomFaces('4d&#123;HT&#125;')
+          rollCustomFaces(&#123; sides: ['H', 'T'], quantity: 4 &#125;) // Roll
+          Fudge/Fate dice rollCustomFaces('4d&#123;++-- &#125;') // Plus, minus,
+          blank faces rollCustomFaces(&#123; sides: ['+', '+', '-', '-', ' ', '
+          '], quantity: 4 &#125;)
+        </CodeBlock>
+        <div class="bg-amber-900/20 border border-amber-600/30 rounded-lg p-4">
+          <p class="text-amber-200">
+            <strong>Note:</strong> Custom-faced dice cannot be combined with modifiers
+            and always return a total of 0. Each face must be a single character
+            in notation strings.
+          </p>
+        </div>
+      </section>
+
+      <!-- Modifiers -->
+      <section id="modifiers" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">Modifiers</h2>
+        <p class="text-silver-300 mb-6">
+          RANDSUM supports powerful modifiers that can be combined to create
+          sophisticated dice mechanics. Modifiers are applied in a specific
+          order and can be chained together for complex behaviors.
+        </p>
+      </section>
+
+      <!-- Arithmetic Modifiers -->
+      <section id="arithmetic" class="mb-8 scroll-mt-8 ml-6">
+        <h3 class="text-xl font-bold text-silver-50 mb-4">
+          Arithmetic Modifiers (+/-)
+        </h3>
+        <p class="text-silver-300 mb-4">
+          Add or subtract fixed values from the total result:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          roll('4d6+2') // Add 2 to total roll(&#123; sides: 6, quantity: 4,
+          modifiers: &#123; plus: 2 &#125; &#125;) roll('4d6-1') // Subtract 1
+          from total roll(&#123; sides: 6, quantity: 4, modifiers: &#123; minus:
+          1 &#125; &#125;) // Multiple operations roll('2d6+10-3') // Net +7
+        </CodeBlock>
+      </section>
+
+      <!-- Drop Modifiers -->
+      <section id="drop-modifiers" class="mb-8 scroll-mt-8 ml-6">
+        <h3 class="text-xl font-bold text-silver-50 mb-4">
+          Drop Modifiers (L/H)
+        </h3>
+        <p class="text-silver-300 mb-4">
+          Remove extreme results from your dice pool. Perfect for D&D ability
+          scores and advantage/disadvantage mechanics:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // Drop lowest roll('4d6L') // Drop 1 lowest (D&D ability scores)
+          roll('4d6L2') // Drop 2 lowest roll(&#123; sides: 6, quantity: 4,
+          modifiers: &#123; drop: &#123; lowest: 1 &#125; &#125; &#125;) // Drop
+          highest roll('4d6H') // Drop 1 highest roll('2d20H') // D&D
+          disadvantage (drop highest) roll(&#123; sides: 20, quantity: 2,
+          modifiers: &#123; drop: &#123; highest: 1 &#125; &#125; &#125;) //
+          Drop by value roll('4d20D&#123;&gt;17&#125;') // Drop rolls over 17
+          roll('4d20D&#123;&lt;5&#125;') // Drop rolls under 5
+          roll('4d20D&#123;8,12&#125;') // Drop 8s and 12s
+        </CodeBlock>
+        <div class="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4">
+          <p class="text-blue-200">
+            <strong>Gaming Tip:</strong> Use <code class="text-blue-100"
+              >4d6L</code
+            > for D&D ability scores,
+            <code class="text-blue-100">2d20H</code> for advantage, and <code
+              class="text-blue-100">2d20L</code
+            > for disadvantage.
+          </p>
+        </div>
+      </section>
+
+      <!-- Reroll Modifiers -->
+      <section id="reroll-modifiers" class="mb-8 scroll-mt-8 ml-6">
+        <h3 class="text-xl font-bold text-silver-50 mb-4">
+          Reroll Modifiers (R)
+        </h3>
+        <p class="text-silver-300 mb-4">
+          Reroll dice that meet certain conditions. Great for avoiding critical
+          failures or ensuring minimum values:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // Reroll specific values roll('4d6R&#123;1&#125;') // Reroll any 1s
+          (avoid critical failures) roll('4d6R&#123;1,2&#125;') // Reroll 1s and
+          2s roll(&#123; sides: 6, quantity: 4, modifiers: &#123; reroll: &#123;
+          exact: [1] &#125; &#125; &#125;) // Reroll by condition
+          roll('4d6R&#123;&lt;3&#125;') // Reroll results below 3
+          roll('4d6R&#123;&gt;4&#125;') // Reroll results above 4
+          roll('4d6R&#123;&lt;2,&gt;5&#125;') // Reroll results outside 2-5
+          range // Limit reroll attempts roll('4d20R&#123;&lt;5&#125;3') //
+          Reroll under 5, max 3 attempts roll(&#123; sides: 20, quantity: 4,
+          modifiers: &#123; reroll: &#123; lessThan: 5, max: 3 &#125; &#125;
+          &#125;)
+        </CodeBlock>
+      </section>
+
+      <!-- Exploding Dice -->
+      <section id="exploding-dice" class="mb-8 scroll-mt-8 ml-6">
+        <h3 class="text-xl font-bold text-silver-50 mb-4">
+          Exploding Dice (!)
+        </h3>
+        <p class="text-silver-300 mb-4">
+          Roll additional dice when maximum values are rolled. Perfect for
+          critical hits and open-ended results:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // Basic exploding dice roll('3d6!') // Roll extra d6 for each 6
+          rolled roll('2d10!') // Roll extra d10 for each 10 rolled roll(&#123;
+          sides: 6, quantity: 3, modifiers: &#123; explode: true &#125; &#125;)
+          // Common gaming applications roll('1d8!') // Exploding damage die
+          roll('4d6!') // Exploding ability score roll
+        </CodeBlock>
+        <div class="bg-red-900/20 border border-red-600/30 rounded-lg p-4">
+          <p class="text-red-200">
+            <strong>Critical Hits:</strong> Exploding dice are perfect for dramatic
+            moments. Each maximum roll adds another die to keep the excitement going!
+          </p>
+        </div>
+      </section>
+
+      <!-- Unique Results -->
+      <section id="unique-results" class="mb-8 scroll-mt-8 ml-6">
+        <h3 class="text-xl font-bold text-silver-50 mb-4">
+          Unique Results (U)
+        </h3>
+        <p class="text-silver-300 mb-4">
+          Ensure all dice show different values. Great for card-like mechanics
+          and lottery systems:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // All results must be unique roll('4d20U') // All different results
+          (like drawing cards) roll('5d6U') // All different results (if
+          possible) roll(&#123; sides: 20, quantity: 4, modifiers: &#123;
+          unique: true &#125; &#125;) // Allow specific duplicates
+          roll('4d20U&#123;5,10&#125;') // Unique except 5s and 10s can repeat
+          roll(&#123; sides: 20, quantity: 4, modifiers: &#123; unique: &#123;
+          notUnique: [5, 10] &#125; &#125; &#125;)
+        </CodeBlock>
+      </section>
+
+      <!-- Capping Modifiers -->
+      <section id="capping-modifiers" class="mb-8 scroll-mt-8 ml-6">
+        <h3 class="text-xl font-bold text-silver-50 mb-4">
+          Capping Modifiers (C)
+        </h3>
+        <p class="text-silver-300 mb-4">
+          Limit roll values to specific ranges. Useful for bounded results and
+          game balance:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // Cap maximum values roll('4d20C&#123;&gt;18&#125;') // Cap rolls
+          over 18 to 18 roll(&#123; sides: 20, quantity: 4, modifiers: &#123;
+          cap: &#123; greaterThan: 18 &#125; &#125; &#125;) // Cap minimum
+          values roll('4d20C&#123;&lt;3&#125;') // Cap rolls under 3 to 3
+          roll(&#123; sides: 20, quantity: 4, modifiers: &#123; cap: &#123;
+          lessThan: 3 &#125; &#125; &#125;) // Cap both extremes
+          roll('4d20C&#123;&lt;2,&gt;19&#125;') // Cap rolls under 2 to 2 and
+          over 19 to 19 roll(&#123; sides: 20, quantity: 4, modifiers: &#123;
+          cap: &#123; greaterThan: 19, lessThan: 2 &#125; &#125; &#125;)
+        </CodeBlock>
+      </section>
+
+      <!-- Replace Modifiers -->
+      <section id="replace-modifiers" class="mb-8 scroll-mt-8 ml-6">
+        <h3 class="text-xl font-bold text-silver-50 mb-4">
+          Replace Modifiers (V)
+        </h3>
+        <p class="text-silver-300 mb-4">
+          Replace specific results with new values. Great for custom game
+          mechanics:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // Replace specific values roll('4d20V&#123;8=12&#125;') // Replace 8s
+          with 12s roll('4d20V&#123;&gt;17=20&#125;') // Replace results over 17
+          with 20 roll('4d20V&#123;&lt;5=1&#125;') // Replace results under 5
+          with 1
+        </CodeBlock>
+      </section>
+
+      <!-- Complex Combinations -->
+      <section id="complex-combinations" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">
+          Complex Combinations
+        </h2>
+        <p class="text-silver-300 mb-4">
+          Combine multiple modifiers for sophisticated dice mechanics:
+        </p>
+        <CodeBlock background="darker" class="mb-6">
+          // Multiple modifiers roll('4d6L+2') // Drop lowest, add 2
+          roll('2d20H!+1') // Drop highest, explode, add 1
+          roll('4d6R&#123;&lt;3&#125;L') // Reroll under 3, then drop lowest
+          roll('4d6LR&#123;1&#125;!+3') // Drop lowest, reroll 1s, exploding, +3
+          // Complex D&D mechanics roll('4d6LR&#123;1&#125;') // Ability scores:
+          drop lowest, reroll 1s roll('2d20HC&#123;&gt;20&#125;+5') // Advantage
+          with nat 20 cap, +5 modifier
+        </CodeBlock>
+        <div
+          class="bg-purple-900/20 border border-purple-600/30 rounded-lg p-4"
+        >
+          <p class="text-purple-200">
+            <strong>Order Matters:</strong> Modifiers are applied in a specific order.
+            Generally: Rerolls → Drops → Caps → Exploding → Arithmetic
+          </p>
+        </div>
+      </section>
+
+      <!-- Gaming Applications -->
+      <section id="gaming-applications" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">
+          Gaming Applications
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-silver-50 mb-3">
+              D&D 5th Edition
+            </h3>
+            <ul class="space-y-2 text-silver-300 text-sm">
+              <li>
+                <code class="text-silver-100">4d6L</code> - Ability scores
+              </li>
+              <li>
+                <code class="text-silver-100">2d20H</code> - Advantage
+              </li>
+              <li>
+                <code class="text-silver-100">2d20L</code> - Disadvantage
+              </li>
+              <li>
+                <code class="text-silver-100">1d20+5</code> - Skill check
+              </li>
+              <li>
+                <code class="text-silver-100">2d8+3</code> - Critical hit damage
+              </li>
+            </ul>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-silver-50 mb-3">
+              Pathfinder
+            </h3>
+            <ul class="space-y-2 text-silver-300 text-sm">
+              <li>
+                <code class="text-silver-100">4d6L</code> - Ability scores
+              </li>
+              <li>
+                <code class="text-silver-100">1d20!</code> - Exploding crits
+              </li>
+              <li>
+                <code class="text-silver-100">3d6R&#123;1&#125;</code> - Reroll 1s
+              </li>
+            </ul>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-silver-50 mb-3">
+              Savage Worlds
+            </h3>
+            <ul class="space-y-2 text-silver-300 text-sm">
+              <li>
+                <code class="text-silver-100">1d6!</code> - Exploding dice
+              </li>
+              <li><code class="text-silver-100">1d8!</code> - Trait die</li>
+              <li>
+                <code class="text-silver-100">1d6!+1d6!</code> - Wild die
+              </li>
+            </ul>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-silver-50 mb-3">
+              Custom Games
+            </h3>
+            <ul class="space-y-2 text-silver-300 text-sm">
+              <li>
+                <code class="text-silver-100">5d6U</code> - Unique results
+              </li>
+              <li>
+                <code class="text-silver-100">3d&#123;ABC&#125;</code> - Custom faces
+              </li>
+              <li>
+                <code class="text-silver-100">4d10C&#123;&gt;8&#125;</code> - Capped
+                results
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Common Examples -->
+      <section id="common-examples" class="mb-12 scroll-mt-8">
+        <h2 class="text-2xl font-bold text-silver-50 mb-6">Common Examples</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-silver-50 mb-3">
+              D&D Ability Scores
+            </h4>
+            <code class="text-silver-100">4d6L</code>
+            <p class="text-silver-300 text-sm mt-2">Roll 4d6, drop lowest</p>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-silver-50 mb-3">
+              D&D Advantage
+            </h4>
+            <code class="text-silver-100">2d20H</code>
+            <p class="text-silver-300 text-sm mt-2">Roll 2d20, keep highest</p>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-silver-50 mb-3">
+              Damage + Modifier
+            </h4>
+            <code class="text-silver-100">1d8+3</code>
+            <p class="text-silver-300 text-sm mt-2">Roll 1d8, add 3</p>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-silver-50 mb-3">
+              Exploding Damage
+            </h4>
+            <code class="text-silver-100">2d6!</code>
+            <p class="text-silver-300 text-sm mt-2">Roll 2d6, explode on 6s</p>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-silver-50 mb-3">
+              Reliable Rolls
+            </h4>
+            <code class="text-silver-100">4d6R&#123;1,2&#125;</code>
+            <p class="text-silver-300 text-sm mt-2">Reroll 1s and 2s</p>
+          </div>
+          <div class="bg-randsum-800 rounded-lg p-6">
+            <h4 class="text-lg font-semibold text-silver-50 mb-3">
+              Coin Flips
+            </h4>
+            <code class="text-silver-100">4d&#123;HT&#125;</code>
+            <p class="text-silver-300 text-sm mt-2">Roll 4 coins</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation -->
+      <div
+        class="flex justify-between items-center pt-8 border-t border-randsum-700"
+      >
+        <SecondaryButton href="/" class="flex items-center">
+          ← Back to Home
+        </SecondaryButton>
+        <SecondaryButton href="/roller" class="flex items-center">
+          Explore Roller Package →
+        </SecondaryButton>
+      </div>
+    </MainContent>
+  </SectionContainer>
+</Layout>

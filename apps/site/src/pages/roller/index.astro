@@ -1,0 +1,240 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { rollerAdditionalNavigation } from '../../config/navigation'
+import HeroSection from '../../components/HeroSection.astro'
+import CompactButton from '../../components/ui/CompactButton.astro'
+---
+
+<Layout
+  title="@randsum/roller - Advanced Dice Rolling Engine"
+  description="The core RANDSUM dice rolling engine with powerful notation support and advanced modifiers"
+  additionalNavigationItems={rollerAdditionalNavigation}
+>
+  <!-- Hero Section -->
+  <HeroSection
+    title="@randsum/roller"
+    description="The core RANDSUM dice rolling engine. Advanced notation support, powerful modifiers, and lightning-fast performance for all your tabletop gaming needs."
+    class="overflow-hidden"
+  >
+    <div slot="cta" class="mt-10 flex items-center justify-center gap-x-6">
+      <CompactButton href="/roller/docs" variant="primary">
+        Get Started
+      </CompactButton>
+      <CompactButton href="/roller/examples" variant="secondary">
+        View Examples <span aria-hidden="true">→</span>
+      </CompactButton>
+    </div>
+  </HeroSection>
+
+  <!-- Features Section -->
+  <div class="py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-silver-50 sm:text-4xl"
+        >
+          Powerful Dice Rolling Features
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-silver-300">
+          Everything you need for advanced dice mechanics in tabletop gaming
+        </p>
+      </div>
+      <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+        <dl
+          class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3"
+        >
+          <!-- Advanced Notation -->
+          <div class="flex flex-col">
+            <dt
+              class="flex items-center gap-x-3 text-base font-semibold leading-7 text-silver-50"
+            >
+              <div
+                class="h-10 w-10 flex items-center justify-center rounded-lg bg-silver-600"
+              >
+                <svg
+                  class="h-6 w-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
+                  ></path>
+                </svg>
+              </div>
+              Advanced Notation
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300"
+            >
+              <p class="flex-auto">
+                Comprehensive dice notation with modifiers like drop lowest,
+                rerolls, exploding dice, and more.
+              </p>
+              <p class="mt-6">
+                <code class="bg-randsum-800 px-2 py-1 rounded text-silver-100"
+                  >4d6L</code
+                >,
+                <code class="bg-randsum-800 px-2 py-1 rounded text-silver-100"
+                  >2d20H</code
+                >,
+                <code class="bg-randsum-800 px-2 py-1 rounded text-silver-100"
+                  >3d6!</code
+                >
+              </p>
+            </dd>
+          </div>
+
+          <!-- Custom Faces -->
+          <div class="flex flex-col">
+            <dt
+              class="flex items-center gap-x-3 text-base font-semibold leading-7 text-silver-50"
+            >
+              <div
+                class="h-10 w-10 flex items-center justify-center rounded-lg bg-silver-600"
+              >
+                <svg
+                  class="h-6 w-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"
+                  ></path>
+                </svg>
+              </div>
+              Custom Faces
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300"
+            >
+              <p class="flex-auto">
+                Roll dice with custom faces for narrative outcomes, symbols, or
+                specialized game mechanics.
+              </p>
+              <p class="mt-6">
+                <code class="bg-randsum-800 px-2 py-1 rounded text-silver-100"
+                  >4d&#123;HT&#125;</code
+                >,
+                <code class="bg-randsum-800 px-2 py-1 rounded text-silver-100"
+                  >3d&#123;⚔️🛡️🏹&#125;</code
+                >
+              </p>
+            </dd>
+          </div>
+
+          <!-- TypeScript Support -->
+          <div class="flex flex-col">
+            <dt
+              class="flex items-center gap-x-3 text-base font-semibold leading-7 text-silver-50"
+            >
+              <div
+                class="h-10 w-10 flex items-center justify-center rounded-lg bg-silver-600"
+              >
+                <svg
+                  class="h-6 w-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+              TypeScript Ready
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300"
+            >
+              <p class="flex-auto">
+                Full TypeScript support with comprehensive type definitions and
+                excellent IDE integration.
+              </p>
+              <p class="mt-6">
+                <span class="text-silver-400"
+                  >Built with type safety in mind</span
+                >
+              </p>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Start Section -->
+  <div class="bg-randsum-900/50 py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-silver-50 sm:text-4xl"
+        >
+          Quick Start
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-silver-300">
+          Get rolling in seconds with simple installation and intuitive API
+        </p>
+      </div>
+      <div class="mx-auto mt-16 max-w-2xl">
+        <div class="bg-randsum-950 rounded-lg p-6">
+          <pre
+            class="text-silver-100 overflow-x-auto"><code># Install the package
+npm install @randsum/roller
+
+# Start rolling
+import &#123; roll &#125; from '@randsum/roller'
+
+// Basic rolls
+roll('1d20')     // Roll a d20
+roll('4d6+2')    // Roll 4d6, add 2
+
+// Advanced modifiers
+roll('4d6L')     // Roll 4d6, drop lowest
+roll('2d20H')    // Roll 2d20, keep highest
+roll('3d6!')     // Exploding dice</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-silver-50 sm:text-4xl"
+        >
+          Ready to roll?
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-silver-300">
+          Explore the documentation and examples to get the most out of
+          @randsum/roller
+        </p>
+        <div class="mt-10 flex items-center justify-center gap-x-6">
+          <CompactButton href="/roller/docs" variant="primary">
+            Read the Docs
+          </CompactButton>
+          <CompactButton
+            href="https://github.com/RANDSUM/randsum/tree/main/packages/roller"
+            variant="secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on GitHub <span aria-hidden="true">→</span>
+          </CompactButton>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

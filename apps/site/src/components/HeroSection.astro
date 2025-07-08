@@ -1,0 +1,77 @@
+---
+import MainContent from './MainContent.astro'
+
+export interface Props {
+  title?: string
+  subtitle?: string
+  description?: string
+  showLogo?: boolean
+  class?: string
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  showLogo = false,
+  class: className = ''
+} = Astro.props
+---
+
+<section class={`relative h-screen flex items-center ${className}`}>
+  {
+    showLogo && (
+      <div class="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+    )
+  }
+
+  <MainContent class="relative">
+    <div class="text-center">
+      {
+        showLogo && (
+          <div class="flex justify-center mb-8">
+            <img
+              src="/icon.webp"
+              alt="RANDSUM Logo"
+              class="h-24 w-24 lg:h-32 lg:w-32 animate-bounce-subtle"
+            />
+          </div>
+        )
+      }
+
+      <!-- Main heading -->
+      <h1
+        class="text-4xl lg:text-6xl xl:text-7xl font-bold text-silver-50 mb-6 leading-tight"
+      >
+        {
+          Astro.slots.has('title') ? (
+            <slot name="title" />
+          ) : (
+            <span class="bg-gradient-to-r from-silver-50 via-silver-200 to-silver-50 bg-clip-text text-transparent">
+              {title}
+            </span>
+          )
+        }
+      </h1>
+
+      {
+        subtitle && (
+          <p class="text-xl lg:text-2xl text-silver-200 mb-8 max-w-4xl mx-auto leading-relaxed">
+            {subtitle}
+          </p>
+        )
+      }
+
+      {
+        description && (
+          <p class="text-lg text-silver-300 mb-12 max-w-3xl mx-auto">
+            {description}
+          </p>
+        )
+      }
+
+      <!-- CTA Buttons Slot -->
+      <slot name="cta" />
+    </div>
+  </MainContent>
+</section>

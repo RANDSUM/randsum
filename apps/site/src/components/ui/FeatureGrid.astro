@@ -1,0 +1,39 @@
+---
+import MainContent from '../MainContent.astro'
+
+export interface Props {
+  title: string
+  subtitle?: string
+  class?: string
+  columns?: 2 | 3
+}
+
+const { title, subtitle, class: className = '', columns = 3 } = Astro.props
+
+const gridClasses = {
+  2: 'lg:grid-cols-2',
+  3: 'lg:grid-cols-3'
+}
+---
+
+<MainContent>
+  <div class="mx-auto max-w-2xl text-center">
+    <h2 class="text-3xl font-bold tracking-tight text-silver-50 sm:text-4xl">
+      {title}
+    </h2>
+    {
+      subtitle && (
+        <p class="mt-6 text-lg leading-8 text-silver-300">{subtitle}</p>
+      )
+    }
+  </div>
+  <div
+    class={`mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none ${className}`}
+  >
+    <dl
+      class={`grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none ${gridClasses[columns]}`}
+    >
+      <slot />
+    </dl>
+  </div>
+</MainContent>

@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/randsum/icon.webp" alt="Randsum Logo">
   <h1>@randsum/fifth</h1>
   <h3>5th Edition compatible dice rolling for Randsum</h3>
 

@@ -1,0 +1,229 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { rollerAdditionalNavigation } from '../../config/navigation'
+---
+
+<Layout
+  title="Examples - @randsum/roller"
+  description="Practical examples and use cases for the @randsum/roller dice rolling engine"
+  additionalNavigationItems={rollerAdditionalNavigation}
+>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-12">
+      <h1 class="text-4xl font-bold text-silver-50 mb-4">
+        @randsum/roller Examples
+      </h1>
+      <p class="text-xl text-silver-300 leading-relaxed">
+        Practical examples and common use cases for dice rolling in tabletop
+        games
+      </p>
+    </div>
+
+    <!-- D&D Examples -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-silver-50 mb-6">D&D 5e Examples</h2>
+      <div class="space-y-6">
+        <div class="bg-randsum-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-silver-50 mb-3">
+            Ability Score Generation
+          </h3>
+          <p class="text-silver-300 text-sm">
+            Standard method for generating D&D ability scores by rolling 4d6 and
+            dropping the lowest die.
+          </p>
+        </div>
+
+        <div class="bg-randsum-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-silver-50 mb-3">
+            Advantage & Disadvantage
+          </h3>
+          <div class="bg-randsum-900 rounded-lg p-4 mb-4">
+            <pre
+              class="text-silver-100 overflow-x-auto"><code>// Advantage: roll 2d20, keep highest
+const advantage = roll('2d20H')
+console.log(`Advantage roll: $&#123;advantage.total&#125;`)
+
+// Disadvantage: roll 2d20, keep lowest
+const disadvantage = roll('2d20L')
+console.log(`Disadvantage roll: $&#123;disadvantage.total&#125;`)
+
+// With modifier
+const skillCheck = roll('2d20H+5')
+console.log(`Skill check with advantage: $&#123;skillCheck.total&#125;`)</code></pre>
+          </div>
+          <p class="text-silver-300 text-sm">
+            D&D's advantage and disadvantage mechanics using drop modifiers.
+          </p>
+        </div>
+
+        <div class="bg-randsum-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-silver-50 mb-3">
+            Damage Rolls
+          </h3>
+          <div class="bg-randsum-900 rounded-lg p-4 mb-4">
+            <pre
+              class="text-silver-100 overflow-x-auto"><code>// Basic weapon damage
+const longsword = roll('1d8+3')
+console.log(`Longsword damage: $&#123;longsword.total&#125;`)
+
+// Critical hit (double dice)
+const criticalHit = roll('2d8+3')
+console.log(`Critical hit damage: $&#123;criticalHit.total&#125;`)
+
+// Sneak attack damage
+const sneakAttack = roll('1d8+3+4d6')
+console.log(`Sneak attack damage: $&#123;sneakAttack.total&#125;`)</code></pre>
+          </div>
+          <p class="text-silver-300 text-sm">
+            Common damage calculations for D&D weapons and abilities.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Custom Dice Examples -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-silver-50 mb-6">
+        Custom Dice Examples
+      </h2>
+      <div class="space-y-6">
+        <div class="bg-randsum-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-silver-50 mb-3">
+            Fate/Fudge Dice
+          </h3>
+          <div class="bg-randsum-900 rounded-lg p-4 mb-4">
+            <pre
+              class="text-silver-100 overflow-x-auto"><code>import &#123; rollCustomFaces &#125; from '@randsum/roller'
+
+// Fate dice: +, +, blank, blank, -, -
+const fateDice = rollCustomFaces('4d&#123;++--  &#125;')
+console.log(`Fate roll: $&#123;fateDice.results.join(' ')&#125;`)
+
+// Count the results
+const plus = fateDice.results.filter(r =&gt; r === '+').length
+const minus = fateDice.results.filter(r =&gt; r === '-').length
+const total = plus - minus
+console.log(`Net result: $&#123;total &gt; 0 ? '+' : ''&#125;$&#123;total&#125;`)</code></pre>
+          </div>
+          <p class="text-silver-300 text-sm">
+            Fate/Fudge dice for narrative gaming systems.
+          </p>
+        </div>
+
+        <div class="bg-randsum-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-silver-50 mb-3">
+            Direction Dice
+          </h3>
+          <div class="bg-randsum-900 rounded-lg p-4 mb-4">
+            <pre
+              class="text-silver-100 overflow-x-auto"><code>// Random direction generator
+const direction = rollCustomFaces('1d&#123;NSEW&#125;')
+console.log(`Go $&#123;direction.results[0]&#125;`)
+
+// Compass directions (8-way)
+const compass = rollCustomFaces('1d&#123;N,NE,E,SE,S,SW,W,NW&#125;')
+console.log(`Head $&#123;compass.results[0]&#125;`)</code></pre>
+          </div>
+          <p class="text-silver-300 text-sm">
+            Custom dice for generating random directions in exploration games.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced Examples -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-silver-50 mb-6">
+        Advanced Techniques
+      </h2>
+      <div class="space-y-6">
+        <div class="bg-randsum-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-silver-50 mb-3">
+            Exploding Dice
+          </h3>
+          <div class="bg-randsum-900 rounded-lg p-4 mb-4">
+            <pre
+              class="text-silver-100 overflow-x-auto"><code>// Exploding damage for critical hits
+const explosiveDamage = roll('2d6!')
+console.log(`Explosive damage: $&#123;explosiveDamage.total&#125;`)
+console.log(`Dice rolled: $&#123;explosiveDamage.dice.join(', ')&#125;`)
+
+// Savage Worlds-style exploding dice
+const savageRoll = roll('1d8!')
+console.log(`Savage Worlds roll: $&#123;savageRoll.total&#125;`)</code></pre>
+          </div>
+          <p class="text-silver-300 text-sm">
+            Exploding dice mechanics for systems like Savage Worlds.
+          </p>
+        </div>
+
+        <div class="bg-randsum-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-silver-50 mb-3">
+            Reroll Mechanics
+          </h3>
+          <div class="bg-randsum-900 rounded-lg p-4 mb-4">
+            <pre
+              class="text-silver-100 overflow-x-auto"><code>// Reroll 1s (avoid critical failures)
+const reliableRoll = roll('4d6R&#123;1&#125;')
+console.log(`Reliable roll: $&#123;reliableRoll.total&#125;`)
+
+// Reroll low results (minimum viable)
+const minViable = roll('4d6R&#123;&lt;3&#125;')
+console.log(`Minimum viable: $&#123;minViable.total&#125;`)
+
+// Limited rerolls (max 3 attempts)
+const limitedReroll = roll('1d20R&#123;&lt;10&#125;3')
+console.log(`Limited reroll: $&#123;limitedReroll.total&#125;`)</code></pre>
+          </div>
+          <p class="text-silver-300 text-sm">
+            Various reroll mechanics for different game systems.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Coming Soon -->
+    <div class="bg-blue-900/20 border border-blue-600/30 rounded-lg p-8 mb-12">
+      <div class="flex items-center mb-4">
+        <svg
+          class="h-8 w-8 text-blue-400 mr-3"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-blue-200">
+          More Examples Coming Soon
+        </h2>
+      </div>
+      <p class="text-blue-200 leading-relaxed">
+        We're adding more examples covering different game systems, advanced
+        techniques, and integration patterns. Check back soon for updates!
+      </p>
+    </div>
+
+    <!-- Navigation -->
+    <div
+      class="flex justify-between items-center pt-8 border-t border-randsum-700"
+    >
+      <a
+        href="/roller/docs"
+        class="text-silver-300 hover:text-silver-50 transition-colors flex items-center"
+      >
+        ← Documentation
+      </a>
+      <a
+        href="/dice-notation"
+        class="text-silver-300 hover:text-silver-50 transition-colors flex items-center"
+      >
+        Dice Notation Guide →
+      </a>
+    </div>
+  </div>
+</Layout>

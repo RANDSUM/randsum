@@ -1,0 +1,264 @@
+---
+import SectionContainer from './ui/SectionContainer.astro'
+import MainContent from './MainContent.astro'
+import PrimaryButton from './ui/PrimaryButton.astro'
+---
+
+<SectionContainer>
+  <MainContent>
+    <div class="text-center mb-16">
+      <h2 class="text-3xl lg:text-5xl font-bold text-silver-50 mb-6">
+        See RANDSUM in Action
+      </h2>
+      <p class="text-xl text-silver-300 max-w-3xl mx-auto">
+        From simple d20 rolls to complex dice expressions, RANDSUM handles it
+        all with elegant syntax
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+      <!-- Basic Examples -->
+      <div class="border border-randsum-700 rounded-xl p-8">
+        <h3
+          class="text-2xl font-semibold text-silver-50 mb-6 flex items-center"
+        >
+          <svg
+            class="mr-3 h-6 w-6 text-games-fifth-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          Basic Rolls
+        </h3>
+
+        <div class="space-y-4">
+          <div class="bg-randsum-950 rounded-lg p-4">
+            <div class="text-sm text-silver-400 mb-2">Simple d20 roll</div>
+            <code class="text-silver-200 font-mono">
+              <span class="text-games-fifth-500">roll</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-blades-500">'1d20'</span><span
+                class="text-silver-300">)</span
+              >
+            </code>
+            <div class="text-xs text-silver-500 mt-2">→ Returns 1-20</div>
+          </div>
+
+          <div class="bg-randsum-950 rounded-lg p-4">
+            <div class="text-sm text-silver-400 mb-2">Multiple dice</div>
+            <code class="text-silver-200 font-mono">
+              <span class="text-games-fifth-500">roll</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-blades-500">'3d6'</span><span
+                class="text-silver-300">)</span
+              >
+            </code>
+            <div class="text-xs text-silver-500 mt-2">→ Returns 3-18</div>
+          </div>
+
+          <div class="bg-randsum-950 rounded-lg p-4">
+            <div class="text-sm text-silver-400 mb-2">With modifier</div>
+            <code class="text-silver-200 font-mono">
+              <span class="text-games-fifth-500">roll</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-blades-500">'1d20+5'</span><span
+                class="text-silver-300">)</span
+              >
+            </code>
+            <div class="text-xs text-silver-500 mt-2">→ Returns 6-25</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Examples -->
+      <div class="border border-randsum-700 rounded-xl p-8">
+        <h3
+          class="text-2xl font-semibold text-silver-50 mb-6 flex items-center"
+        >
+          <svg
+            class="mr-3 h-6 w-6 text-games-daggerheart-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+            ></path>
+          </svg>
+          Advanced Notation
+        </h3>
+
+        <div class="space-y-4">
+          <div class="bg-randsum-950 rounded-lg p-4">
+            <div class="text-sm text-silver-400 mb-2">
+              Drop lowest (D&D ability scores)
+            </div>
+            <code class="text-silver-200 font-mono">
+              <span class="text-games-fifth-500">roll</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-blades-500">'4d6L'</span><span
+                class="text-silver-300">)</span
+              >
+            </code>
+            <div class="text-xs text-silver-500 mt-2">
+              → Roll 4d6, drop lowest
+            </div>
+          </div>
+
+          <div class="bg-randsum-950 rounded-lg p-4">
+            <div class="text-sm text-silver-400 mb-2">
+              Advantage/Disadvantage
+            </div>
+            <code class="text-silver-200 font-mono">
+              <span class="text-games-fifth-500">roll</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-blades-500">'2d20H'</span><span
+                class="text-silver-300">)</span
+              >
+              <span class="text-silver-400">// Advantage</span><br />
+              <span class="text-games-fifth-500">roll</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-blades-500">'2d20L'</span><span
+                class="text-silver-300">)</span
+              >
+              <span class="text-silver-400">// Disadvantage</span>
+            </code>
+            <div class="text-xs text-silver-500 mt-2">
+              → Keep highest/lowest
+            </div>
+          </div>
+
+          <div class="bg-randsum-950 rounded-lg p-4">
+            <div class="text-sm text-silver-400 mb-2">Exploding dice</div>
+            <code class="text-silver-200 font-mono">
+              <span class="text-games-fifth-500">roll</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-blades-500">'3d6!'</span><span
+                class="text-silver-300">)</span
+              >
+            </code>
+            <div class="text-xs text-silver-500 mt-2">
+              → Reroll and add on 6s
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complex Examples -->
+    <div class="border border-randsum-700 rounded-xl p-8 mb-16">
+      <h3 class="text-2xl font-semibold text-silver-50 mb-6 flex items-center">
+        <svg
+          class="mr-3 h-6 w-6 text-games-blades-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+          ></path>
+        </svg>
+        Complex Expressions
+      </h3>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-randsum-950 rounded-lg p-6">
+          <div class="text-sm text-silver-400 mb-3">Reroll low values</div>
+          <code class="text-silver-200 font-mono text-lg">
+            <span class="text-games-fifth-500">roll</span><span
+              class="text-silver-300">(</span
+            ><span class="text-games-blades-500">'4d6R&#123;&lt;3&#125;'</span
+            ><span class="text-silver-300">)</span>
+          </code>
+          <div class="text-sm text-silver-500 mt-3">
+            Reroll any dice showing less than 3
+          </div>
+        </div>
+
+        <div class="rounded-lg p-6">
+          <div class="text-sm text-silver-400 mb-3">Custom dice faces</div>
+          <code class="text-silver-200 font-mono text-lg">
+            <span class="text-games-fifth-500">roll</span><span
+              class="text-silver-300">(</span
+            ><span class="text-games-blades-500">'2d&#123;HT&#125;'</span><span
+              class="text-silver-300">)</span
+            >
+          </code>
+          <div class="text-sm text-silver-500 mt-3">
+            Coin flips (Heads/Tails)
+          </div>
+        </div>
+
+        <div class="rounded-lg p-6">
+          <div class="text-sm text-silver-400 mb-3">Multiple modifiers</div>
+          <code class="text-silver-200 font-mono text-lg">
+            <span class="text-games-fifth-500">roll</span><span
+              class="text-silver-300">(</span
+            ><span class="text-games-blades-500">'4d6LR&#123;1&#125;!+3'</span
+            ><span class="text-silver-300">)</span>
+          </code>
+          <div class="text-sm text-silver-500 mt-3">
+            Drop lowest, reroll 1s, exploding, +3
+          </div>
+        </div>
+
+        <div class="rounded-lg p-6">
+          <div class="text-sm text-silver-400 mb-3">Unique results</div>
+          <code class="text-silver-200 font-mono text-lg">
+            <span class="text-games-fifth-500">roll</span><span
+              class="text-silver-300">(</span
+            ><span class="text-games-blades-500">'5d20U'</span><span
+              class="text-silver-300">)</span
+            >
+          </code>
+          <div class="text-sm text-silver-500 mt-3">
+            All dice show different values
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Try it out CTA -->
+    <div class="text-center">
+      <div class="border border-randsum-700 rounded-xl p-8 max-w-2xl mx-auto">
+        <h3 class="text-2xl font-bold text-silver-50 mb-4">Ready to Roll?</h3>
+        <p class="text-silver-200 mb-6">
+          Start using RANDSUM in your project today with a simple npm install
+        </p>
+        <div class="bg-randsum-950 rounded-lg p-4 mb-6">
+          <code class="text-silver-200 font-mono">
+            <span class="text-games-fifth-500">npm install</span>
+            <span class="text-silver-300">@randsum/roller</span>
+          </code>
+        </div>
+        <PrimaryButton href="/docs">
+          Get Started
+          <svg
+            class="ml-2 h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path>
+          </svg>
+        </PrimaryButton>
+      </div>
+    </div>
+  </MainContent>
+</SectionContainer>

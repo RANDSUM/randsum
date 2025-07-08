@@ -1,0 +1,182 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { fifthAdditionalNavigation } from '../../config/navigation'
+import HeroSection from '../../components/HeroSection.astro'
+import CompactButton from '../../components/ui/CompactButton.astro'
+---
+
+<Layout
+  title="@randsum/fifth - D&D 5th Edition Dice Rolling"
+  description="Specialized dice rolling utilities for D&D 5th Edition with advantage, disadvantage, and spell mechanics"
+  additionalNavigationItems={fifthAdditionalNavigation}
+>
+  <!-- Hero Section -->
+  <HeroSection
+    description="Specialized dice rolling utilities for D&D 5th Edition with advantage, disadvantage, ability scores, and spell mechanics."
+    class="overflow-hidden"
+  >
+    <span slot="title">
+      <span class="text-silver-50">@randsum/</span><span
+        class="text-games-fifth-500">fifth</span
+      >
+    </span>
+    <div slot="cta" class="flex flex-col sm:flex-row gap-4 justify-center">
+      <CompactButton href="/fifth/docs" variant="primary">
+        View Documentation <span aria-hidden="true">→</span>
+      </CompactButton>
+      <CompactButton href="/fifth/examples" variant="secondary">
+        View Examples <span aria-hidden="true">→</span>
+      </CompactButton>
+    </div>
+  </HeroSection>
+
+  <!-- Features Section -->
+  <div class="py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-silver-50 sm:text-4xl"
+        >
+          D&D 5th Edition Mechanics
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-silver-300">
+          Built specifically for D&D 5e's core mechanics including
+          advantage/disadvantage, ability scores, and spell damage.
+        </p>
+      </div>
+      <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+        <dl
+          class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3"
+        >
+          <div class="flex flex-col">
+            <dt
+              class="flex items-center gap-x-3 text-base font-semibold leading-7 text-silver-50"
+            >
+              <div class="h-5 w-5 flex-none rounded-full bg-games-fifth-500">
+              </div>
+              Advantage & Disadvantage
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300"
+            >
+              <p class="flex-auto">
+                Roll with advantage (2d20, keep highest) or disadvantage (2d20,
+                keep lowest) automatically.
+              </p>
+            </dd>
+          </div>
+          <div class="flex flex-col">
+            <dt
+              class="flex items-center gap-x-3 text-base font-semibold leading-7 text-silver-50"
+            >
+              <div class="h-5 w-5 flex-none rounded-full bg-games-fifth-500">
+              </div>
+              Ability Scores
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300"
+            >
+              <p class="flex-auto">
+                Generate ability scores using 4d6 drop lowest, point buy, or
+                standard array methods.
+              </p>
+            </dd>
+          </div>
+          <div class="flex flex-col">
+            <dt
+              class="flex items-center gap-x-3 text-base font-semibold leading-7 text-silver-50"
+            >
+              <div class="h-5 w-5 flex-none rounded-full bg-games-fifth-500">
+              </div>
+              Spell Damage
+            </dt>
+            <dd
+              class="mt-4 flex flex-auto flex-col text-base leading-7 text-silver-300"
+            >
+              <p class="flex-auto">
+                Calculate spell damage with automatic upcast scaling and
+                critical hit doubling.
+              </p>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- Code Example Section -->
+  <div class="py-24 sm:py-32 bg-randsum-950/50">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-silver-50 sm:text-4xl"
+        >
+          Simple & Powerful
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-silver-300">
+          Get started with D&D 5e dice rolling in just a few lines of code.
+        </p>
+      </div>
+      <div class="mx-auto mt-16 max-w-4xl">
+        <div
+          class="bg-randsum-900/50 backdrop-blur-sm border border-randsum-700 rounded-lg p-6"
+        >
+          <div class="text-sm text-silver-400 mb-3">Example Usage:</div>
+          <div class="bg-randsum-950 rounded-md p-4">
+            <code class="text-sm font-mono text-silver-200">
+              <span class="text-games-blades-500">import</span>
+              <span class="text-silver-300"
+                >&#123; advantage, abilityScore, spellDamage &#125;</span
+              >
+              <span class="text-games-blades-500">from</span>
+              <span class="text-games-fifth-500">'@randsum/fifth'</span><br
+              /><br />
+              <span class="text-silver-400">// Roll with advantage</span><br />
+              <span class="text-games-daggerheart-500">advantage</span><span
+                class="text-silver-300">(</span
+              ><span class="text-games-fifth-500">5</span><span
+                class="text-silver-300">)</span
+              ><br />
+              <span class="text-silver-400"
+                >// &#123; result: 18, dice: [13, 18], modifier: 5 &#125;</span
+              ><br /><br />
+              <span class="text-silver-400">// Generate ability score</span><br
+              />
+              <span class="text-games-daggerheart-500">abilityScore</span><span
+                class="text-silver-300">()</span
+              ><br />
+              <span class="text-silver-400"
+                >// &#123; score: 15, dice: [6, 4, 5, 3] &#125;</span
+              >
+            </code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Getting Started Section -->
+  <div class="py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2
+          class="text-3xl font-bold tracking-tight text-silver-50 sm:text-4xl"
+        >
+          Ready to Get Started?
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-silver-300">
+          Install @randsum/fifth and start rolling dice for your D&D 5e
+          campaigns.
+        </p>
+        <div class="mt-10 flex items-center justify-center gap-x-6">
+          <CompactButton href="/fifth/docs" variant="primary">
+            Read the Docs
+          </CompactButton>
+          <CompactButton href="/fifth/examples" variant="secondary">
+            View Examples
+          </CompactButton>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

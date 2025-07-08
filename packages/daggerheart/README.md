@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/icon.webp" alt="Randsum Logo">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/randsum/icon.webp" alt="Randsum Logo">
   <h1>@randsum/daggerheart</h1>
   <h3>Daggerheart dice rolling for Randsum</h3>
 

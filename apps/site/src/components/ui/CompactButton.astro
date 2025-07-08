@@ -1,0 +1,36 @@
+---
+export interface Props {
+  href: string
+  variant?: 'primary' | 'secondary'
+  class?: string
+  target?: string
+  rel?: string
+}
+
+const {
+  href,
+  variant = 'primary',
+  class: className = '',
+  target,
+  rel
+} = Astro.props
+
+const baseClasses =
+  'rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
+
+const variantClasses = {
+  primary:
+    'bg-silver-600 text-white hover:bg-silver-500 focus-visible:outline-silver-600',
+  secondary:
+    'text-sm font-semibold leading-6 text-silver-300 hover:text-silver-50'
+}
+---
+
+<a
+  href={href}
+  class={`${baseClasses} ${variantClasses[variant]} ${className}`}
+  target={target}
+  rel={rel}
+>
+  <slot />
+</a>

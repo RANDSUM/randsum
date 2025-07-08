@@ -1,0 +1,19 @@
+---
+export interface Props {
+  href: string
+  class?: string
+  target?: string
+  rel?: string
+}
+
+const { href, class: className = '', target, rel } = Astro.props
+---
+
+<a
+  href={href}
+  class={`inline-flex items-center px-8 py-4 bg-randsum-600 hover:bg-randsum-500 text-silver-50 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-glow ${className}`}
+  target={target}
+  rel={rel}
+>
+  <slot />
+</a>

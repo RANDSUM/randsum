@@ -1,0 +1,233 @@
+---
+import SectionContainer from './ui/SectionContainer.astro'
+import MainContent from './MainContent.astro'
+import CodeBlock from './ui/CodeBlock.astro'
+---
+
+<SectionContainer>
+  <MainContent>
+    <div class="text-center mb-16">
+      <h2 class="text-3xl lg:text-5xl font-bold text-silver-50 mb-6">
+        Powerful Features for Modern Gaming
+      </h2>
+      <p class="text-xl text-silver-300 max-w-3xl mx-auto">
+        Built for developers who need reliable, type-safe dice rolling with
+        advanced notation support
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
+      <!-- Advanced Dice Notation -->
+      <div
+        class="border border-randsum-700 rounded-xl p-8 hover:border-randsum-600 transition-all duration-300 group"
+      >
+        <div
+          class="flex items-center justify-center w-16 h-16 bg-games-blades-600/20 rounded-lg mb-6 group-hover:bg-games-blades-600/30 transition-colors"
+        >
+          <svg
+            class="w-8 h-8 text-games-blades-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-silver-50 mb-4">
+          Advanced Dice Notation
+        </h3>
+        <p class="text-silver-300 mb-6">
+          Comprehensive support for complex dice expressions including
+          drop/keep, rerolls, exploding dice, and custom modifiers.
+        </p>
+        <CodeBlock background="darker">
+          <span class="text-games-blades-500">4d6L</span>
+          <span class="text-silver-400">// Drop lowest</span><br />
+          <span class="text-games-daggerheart-500">3d6!</span>
+          <span class="text-silver-400">// Exploding dice</span><br />
+          <span class="text-games-fifth-500">4d6R&#123;1&#125;</span>
+          <span class="text-silver-400">// Reroll 1s</span>
+        </CodeBlock>
+      </div>
+
+      <!-- Type Safety -->
+      <div
+        class="border border-randsum-700 rounded-xl p-8 hover:border-randsum-600 transition-all duration-300 group"
+      >
+        <div
+          class="flex items-center justify-center w-16 h-16 bg-games-daggerheart-600/20 rounded-lg mb-6 group-hover:bg-games-daggerheart-600/30 transition-colors"
+        >
+          <svg
+            class="w-8 h-8 text-games-daggerheart-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-silver-50 mb-4">
+          100% Type Safe
+        </h3>
+        <p class="text-silver-300 mb-6">
+          Built with TypeScript from the ground up. Get full IntelliSense
+          support and catch errors at compile time.
+        </p>
+        <CodeBlock background="darker">
+          <span class="text-games-daggerheart-500">const</span>
+          <span class="text-silver-300">result</span><span
+            class="text-silver-400">:</span
+          >
+          <span class="text-games-fifth-500">DiceResult</span><br />
+          <span class="text-silver-300">result.total</span>
+          <span class="text-silver-400">// number</span><br />
+          <span class="text-silver-300">result.rolls</span>
+          <span class="text-silver-400">// number[]</span>
+        </CodeBlock>
+      </div>
+
+      <!-- Multiple Systems -->
+      <div
+        class="border border-randsum-700 rounded-xl p-8 hover:border-randsum-600 transition-all duration-300 group"
+      >
+        <div
+          class="flex items-center justify-center w-16 h-16 bg-games-fifth-600/20 rounded-lg mb-6 group-hover:bg-games-fifth-600/30 transition-colors"
+        >
+          <svg
+            class="w-8 h-8 text-games-fifth-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-silver-50 mb-4">
+          Multi-System Support
+        </h3>
+        <p class="text-silver-300 mb-6">
+          Dedicated packages for popular RPG systems including D&D 5e, Blades in
+          the Dark, Daggerheart, and more.
+        </p>
+        <CodeBlock background="darker">
+          <span class="text-games-blades-500">@randsum/blades</span><br />
+          <span class="text-games-daggerheart-500">@randsum/daggerheart</span
+          ><br />
+          <span class="text-games-fifth-500">@randsum/fifth</span>
+        </CodeBlock>
+      </div>
+    </div>
+
+    <!-- Additional Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="text-center p-6 rounded-lg border border-randsum-700/50">
+        <div
+          class="w-12 h-12 bg-games-root-rpg-600/20 rounded-lg flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            class="w-6 h-6 text-games-root-rpg-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <h4 class="font-semibold text-silver-50 mb-2">Lightning Fast</h4>
+        <p class="text-sm text-silver-400">
+          Optimized for performance with minimal overhead
+        </p>
+      </div>
+
+      <div class="text-center p-6 rounded-lg border border-randsum-700/50">
+        <div
+          class="w-12 h-12 bg-games-salvageunion-600/20 rounded-lg flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            class="w-6 h-6 text-games-salvageunion-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            ></path>
+          </svg>
+        </div>
+        <h4 class="font-semibold text-silver-50 mb-2">Developer Friendly</h4>
+        <p class="text-sm text-silver-400">
+          Intuitive APIs with excellent documentation
+        </p>
+      </div>
+
+      <div class="text-center p-6 rounded-lg border border-randsum-700/50">
+        <div
+          class="w-12 h-12 bg-apps-mcp-600/20 rounded-lg flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            class="w-6 h-6 text-apps-mcp-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+            ></path>
+          </svg>
+        </div>
+        <h4 class="font-semibold text-silver-50 mb-2">Extensible</h4>
+        <p class="text-sm text-silver-400">
+          Easy to extend with custom dice and modifiers
+        </p>
+      </div>
+
+      <div class="text-center p-6 rounded-lg border border-randsum-700/50">
+        <div
+          class="w-12 h-12 bg-apps-robo-600/20 rounded-lg flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            class="w-6 h-6 text-apps-robo-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+            ></path>
+          </svg>
+        </div>
+        <h4 class="font-semibold text-silver-50 mb-2">Cross Platform</h4>
+        <p class="text-sm text-silver-400">
+          Works in Node.js, browsers, and edge environments
+        </p>
+      </div>
+    </div>
+  </MainContent>
+</SectionContainer>
