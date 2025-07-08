@@ -37,6 +37,12 @@
       "version": "0.5.0",
       "dependencies": {
         "@discord/embedded-app-sdk": "^1.9.0",
+        "@randsum/blades": "latest",
+        "@randsum/daggerheart": "latest",
+        "@randsum/fifth": "latest",
+        "@randsum/roller": "latest",
+        "@randsum/root-rpg": "latest",
+        "@randsum/salvageunion": "latest",
         "@robojs/patch": "^0.2.1",
         "discord.js": "^14.21.0",
         "extensionless": "^1.9.9",
@@ -1820,6 +1826,18 @@
 
     "prompts/kleur": ["kleur@3.0.3", "", {}, "sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w=="],
 
+    "randsum-discord/@randsum/blades": ["@randsum/blades@0.6.0", "", { "dependencies": { "@randsum/roller": "~0.4.0" } }, "sha512-TQXe+KfdpjNg9NVc12Rt/Q3LPwGMxiN65bHEstDA+dMUy5byKd2wIVXuc/L8i/VqCOU3x2WyPJnMk4lSpKlBgA=="],
+
+    "randsum-discord/@randsum/daggerheart": ["@randsum/daggerheart@0.6.0", "", { "dependencies": { "@randsum/roller": "0.4.0" } }, "sha512-2L2Jg7aeeZtZJNNkLTxiFtxPcmN8tpIJNll6Z7zqHAkLmJ1+G12p+ok+pVR3DwzMXKKXyC/BEjsq7ct3o3Q13A=="],
+
+    "randsum-discord/@randsum/fifth": ["@randsum/fifth@0.6.0", "", { "dependencies": { "@randsum/roller": "~0.4.0" } }, "sha512-xXrqfkjwTiB8qNRclflH74Ryrawmp7chZZELBVf08csl/+yG1x4sd9802UK7QBx8VAsVx7yWBmo6eY/e2/8mCA=="],
+
+    "randsum-discord/@randsum/roller": ["@randsum/roller@0.4.0", "", { "bin": { "@randsum/roller": "bin/randsum" } }, "sha512-jd2ExhJJue11v1I2uLc/WjeRFF4oEPwIWA4Gk3YwrM0/LISoBJQR2zXhoeCOjwBggpd0YtZOOCjJfupAXJCiEQ=="],
+
+    "randsum-discord/@randsum/root-rpg": ["@randsum/root-rpg@0.6.0", "", { "dependencies": { "@randsum/roller": "~0.4.0" } }, "sha512-jkYHXaufO366x3dQviKoWHXH9TEnHED25LYVQp4CKla7ty8iuxbBKU81PIzAoS7huRb/uT4ikMXvmYFSvk7/5w=="],
+
+    "randsum-discord/@randsum/salvageunion": ["@randsum/salvageunion@0.6.0", "", { "dependencies": { "@randsum/roller": "~0.4.0" } }, "sha512-0riVfekm0WTlZ4UjHOm0jCZ1yafgGRAzGiadnPrE4yJR98dqhlmRKXyNK3nYZzL20QWp3oe4FumNjFHRgOKmSw=="],
+
     "raw-body/iconv-lite": ["iconv-lite@0.6.3", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw=="],
 
     "read-yaml-file/js-yaml": ["js-yaml@3.14.1", "", { "dependencies": { "argparse": "^1.0.7", "esprima": "^4.0.0" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g=="],
@@ -1859,6 +1877,16 @@
     "glob/minimatch/brace-expansion": ["brace-expansion@2.0.2", "", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ=="],
 
     "p-locate/p-limit/yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
+
+    "randsum-discord/@randsum/blades/@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
+
+    "randsum-discord/@randsum/daggerheart/@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
+
+    "randsum-discord/@randsum/fifth/@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
+
+    "randsum-discord/@randsum/root-rpg/@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
+
+    "randsum-discord/@randsum/salvageunion/@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
 
     "read-yaml-file/js-yaml/argparse": ["argparse@1.0.10", "", { "dependencies": { "sprintf-js": "~1.0.2" } }, "sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg=="],
 

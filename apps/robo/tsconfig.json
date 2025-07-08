@@ -5,26 +5,6 @@
       "esnext"
     ],
     "baseUrl": ".",
-    "paths": {
-      "@randsum/roller": [
-        "../packages/roller"
-      ],
-      "@randsum/blades": [
-        "../packages/blades"
-      ],
-      "@randsum/daggerheart": [
-        "../packages/daggerheart"
-      ],
-      "@randsum/fifth": [
-        "../packages/fifth"
-      ],
-      "@randsum/root-rpg": [
-        "../packages/root-rpg"
-      ],
-      "@randsum/salvageunion": [
-        "../packages/salvageunion"
-      ]
-    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

@@ -32,6 +32,12 @@
 		"upgrade": "sage upgrade"
 	},
 	"dependencies": {
+    "@randsum/daggerheart": "latest",
+    "@randsum/roller": "latest",
+    "@randsum/blades": "latest",
+    "@randsum/fifth": "latest",
+    "@randsum/root-rpg": "latest",
+    "@randsum/salvageunion": "latest",
 		"@discord/embedded-app-sdk": "^1.9.0",
 		"@robojs/patch": "^0.2.1",
 		"robo.js": "^0.10.30",
