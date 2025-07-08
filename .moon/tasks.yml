@@ -36,7 +36,6 @@ tasks:
       - "src/**/*"
       - "__tests__/**/*"
       - "**/*.ts"
-      - "eslint.config.js"
       - ".eslintrc.*"
     options:
       cache: true
@@ -51,8 +50,6 @@ tasks:
       - "**/*.js"
       - "**/*.json"
       - "**/*.md"
-      - ".prettierrc"
-      - ".prettierignore"
     options:
       cache: true
       cacheLifetime: "12 hours"
