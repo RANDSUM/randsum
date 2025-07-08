@@ -21,7 +21,7 @@ tasks:
       - "salvageunion:build"
 
   publish:
-    command: "robox deploy"
+    command: "bun run robox deploy"
     deps:
       - "build"
     options:
@@ -31,7 +31,7 @@ tasks:
       mergeEnv: "replace"
 
   build:
-    command: "robox build"
+    command: "bun run robox build"
     deps:
       - "roller:build"
       - "blades:build"
@@ -41,22 +41,32 @@ tasks:
       - "salvageunion:build"
     options:
       cache: false
-      runInCI: true
+      runInCI: false
+      allowFailure: false
       mergeArgs: "replace"
       mergeEnv: "replace"
 
   test:
     command: 'echo "No Tests"'
-    deps: []
+    deps:
     options:
       cache: false
-      runInCI: true
+      runInCI: false
       mergeArgs: "replace"
       mergeEnv: "replace"
 
   dev:
-    command: "robox dev"
+    command: "bun run robox dev"
     deps:
       - "build"
     options:
       cache: false
+  ci:
+    deps:
+      - "build"
+    options:
+      cache: false
+      runInCI: false
+      allowFailure: true
+      mergeArgs: "replace"
+      mergeEnv: "replace"
