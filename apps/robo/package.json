@@ -1,5 +1,5 @@
 {
-  "name": "randsum-discord",
+  "name": "@randsum/robo",
   "description": "A Discord Bot and Activity for Rolling Dice",
   "version": "0.5.0",
   "type": "module",
