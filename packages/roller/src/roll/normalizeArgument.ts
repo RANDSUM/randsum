@@ -18,10 +18,11 @@ import type { RollArgument, RollParams } from '../types'
 export function normalizeArgument(argument: RollArgument): RollParams {
   const options = optionsFromArgument(argument)
   const converter = new OptionsConverter(options)
+  const die = dieForArgument(argument)
   return {
     argument,
     options,
-    die: dieForArgument(argument),
+    die,
     notation: converter.toNotation,
     description: converter.toDescription
   } as RollParams

@@ -1,14 +1,14 @@
-import type { BaseD, CustomDie, NumericDie } from '../types'
-import { CustomDieImpl } from './CustomDieImpl'
-import { NumericDieImpl } from './NumericDieImpl'
+import type { BaseD } from '../types'
+import { CustomDie } from './CustomDie'
+import { NumericDie } from './NumericDie'
 
 function D(sides: number): NumericDie
 function D(faces: string[]): CustomDie
 function D(arg: number | string[]): BaseD {
   if (typeof arg === 'number') {
-    return new NumericDieImpl(arg)
+    return new NumericDie(arg)
   } else {
-    return new CustomDieImpl(arg)
+    return new CustomDie(arg)
   }
 }
 

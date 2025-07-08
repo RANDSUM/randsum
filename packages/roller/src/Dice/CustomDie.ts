@@ -1,14 +1,14 @@
 import { RandsumError, coreSpreadRolls } from '../lib'
 import { roll } from '../roll'
 import type {
-  CustomDie,
+  CustomDieInterface,
   CustomRollOptions,
   CustomRollResult,
   ModifierOptions
 } from '../types'
 import { DieBase } from './DieBase'
 
-export class CustomDieImpl extends DieBase implements CustomDie {
+export class CustomDie extends DieBase implements CustomDieInterface {
   public readonly type = 'custom' as const
   public readonly faces: string[]
   public readonly isCustom = true as const
