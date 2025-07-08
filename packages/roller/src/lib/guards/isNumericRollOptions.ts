@@ -1,7 +1,8 @@
 import type { NumericRollOptions, RollOptions } from '../../types'
+import { isD } from './isD'
 
 export function isNumericRollOptions(
-  options: RollOptions
+  options: unknown
 ): options is NumericRollOptions {
-  return typeof options.sides === 'number'
+  return !isD(options) && typeof (options as RollOptions).sides === 'number'
 }

@@ -1,7 +1,7 @@
 import type { NumericRollParams, RollParams } from '../../types'
 
 export function isNumericRollParams(
-  poolParameters: RollParams
+  poolParameters: unknown
 ): poolParameters is NumericRollParams {
-  return !Array.isArray(poolParameters.options.sides)
+  return !Array.isArray((poolParameters as RollParams).options.sides)
 }

@@ -1,5 +1,5 @@
 import { D } from '../Dice'
-import { isDiceNotation } from '../lib'
+import { isCustomRollParams, isDiceNotation, isNumericRollParams } from '../lib'
 import {
   CapModifier,
   DropModifier,
@@ -19,13 +19,18 @@ export function normalizeArgument(argument: RollArgument): RollParams {
   const options = optionsFromArgument(argument)
   const converter = new OptionsConverter(options)
   const die = dieForArgument(argument)
-  return {
+  const params = {
     argument,
     options,
     die,
     notation: converter.toNotation,
     description: converter.toDescription
-  } as RollParams
+  }
+  if (isNumericRollParams(params) || isCustomRollParams(params)) {
+    return params
+  }
+
+  throw new Error('Failed to normalize argument. Please try again.')
 }
 
 function optionsFromArgument(argument: RollArgument): RollParams['options'] {
