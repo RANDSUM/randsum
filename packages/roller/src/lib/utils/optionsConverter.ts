@@ -19,9 +19,7 @@ export class OptionsConverter {
   }
 
   public get toNotation(): DiceNotation {
-    const coreNotation = this.coreNotation
-    const modifierNotation = this.modifierNotation
-    const proposed = `${coreNotation}${modifierNotation}`
+    const proposed = `${this.coreNotation}${this.modifierNotation}`
     if (!isDiceNotation(proposed)) {
       throw new Error(`Invalid notation generated: ${proposed}`)
     }
