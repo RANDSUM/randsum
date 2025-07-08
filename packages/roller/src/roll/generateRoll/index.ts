@@ -26,11 +26,7 @@ export function generateRoll(
     type
   }
 
-  if (isNumericResult(rollResult)) {
-    return rollResult
-  }
-
-  if (isCustomResult(rollResult)) {
+  if (isNumericResult(rollResult) || isCustomResult(rollResult)) {
     return rollResult
   }
 
