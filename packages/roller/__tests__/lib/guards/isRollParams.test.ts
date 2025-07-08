@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { D, isCustomRollParams, isNumericRollParams } from '../../../src'
-import { normalizeArgument } from '../../../src/roll/normalizeArgument'
+import { argToParameter } from '../../../src/roll/argToParameter'
 import {
   createCustomRollOptions,
   createNumericRollOptions
@@ -9,7 +9,7 @@ import {
 describe('Roll Params Type Guards', () => {
   describe('isNumericRollParams', () => {
     test('should return true for numeric roll params', () => {
-      const params = normalizeArgument('4d6')
+      const params = argToParameter('4d6')
       expect(isNumericRollParams(params)).toBe(true)
 
       if (isNumericRollParams(params)) {
@@ -22,7 +22,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for numeric params with modifiers', () => {
-      const params = normalizeArgument('4d6L+2')
+      const params = argToParameter('4d6L+2')
       expect(isNumericRollParams(params)).toBe(true)
 
       if (isNumericRollParams(params)) {
@@ -33,7 +33,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for numeric params from die objects', () => {
-      const params = normalizeArgument(D(20))
+      const params = argToParameter(D(20))
       expect(isNumericRollParams(params)).toBe(true)
 
       if (isNumericRollParams(params)) {
@@ -45,7 +45,7 @@ describe('Roll Params Type Guards', () => {
 
     test('should return true for numeric params from options', () => {
       const options = createNumericRollOptions({ sides: 8, quantity: 3 })
-      const params = normalizeArgument(options)
+      const params = argToParameter(options)
       expect(isNumericRollParams(params)).toBe(true)
 
       if (isNumericRollParams(params)) {
@@ -56,7 +56,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for numeric params from plain numbers', () => {
-      const params = normalizeArgument(6)
+      const params = argToParameter(6)
       expect(isNumericRollParams(params)).toBe(true)
 
       if (isNumericRollParams(params)) {
@@ -67,7 +67,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for complex numeric notation', () => {
-      const params = normalizeArgument('4d6LR{1}!+3')
+      const params = argToParameter('4d6LR{1}!+3')
       expect(isNumericRollParams(params)).toBe(true)
 
       if (isNumericRollParams(params)) {
@@ -78,17 +78,17 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return false for custom roll params', () => {
-      const params = normalizeArgument(['heads', 'tails'])
+      const params = argToParameter(['heads', 'tails'])
       expect(isNumericRollParams(params)).toBe(false)
     })
 
     test('should return false for custom dice notation params', () => {
-      const params = normalizeArgument('2d{HT}')
+      const params = argToParameter('2d{HT}')
       expect(isNumericRollParams(params)).toBe(false)
     })
 
     test('should return false for custom die object params', () => {
-      const params = normalizeArgument(D(['red', 'blue', 'green']))
+      const params = argToParameter(D(['red', 'blue', 'green']))
       expect(isNumericRollParams(params)).toBe(false)
     })
 
@@ -103,10 +103,10 @@ describe('Roll Params Type Guards', () => {
 
     test('should work with array filtering', () => {
       const params = [
-        normalizeArgument('4d6'),
-        normalizeArgument(['heads', 'tails']),
-        normalizeArgument(D(20)),
-        normalizeArgument('2d{HT}'),
+        argToParameter('4d6'),
+        argToParameter(['heads', 'tails']),
+        argToParameter(D(20)),
+        argToParameter('2d{HT}'),
         '4d6', // not params
         null
       ]
@@ -123,7 +123,7 @@ describe('Roll Params Type Guards', () => {
 
   describe('isCustomRollParams', () => {
     test('should return true for custom roll params from string arrays', () => {
-      const params = normalizeArgument(['heads', 'tails'])
+      const params = argToParameter(['heads', 'tails'])
       expect(isCustomRollParams(params)).toBe(true)
 
       if (isCustomRollParams(params)) {
@@ -136,7 +136,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for custom dice notation params', () => {
-      const params = normalizeArgument('2d{HT}')
+      const params = argToParameter('2d{HT}')
       expect(isCustomRollParams(params)).toBe(true)
 
       if (isCustomRollParams(params)) {
@@ -147,7 +147,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for custom die object params', () => {
-      const params = normalizeArgument(D(['red', 'blue', 'green']))
+      const params = argToParameter(D(['red', 'blue', 'green']))
       expect(isCustomRollParams(params)).toBe(true)
 
       if (isCustomRollParams(params)) {
@@ -163,7 +163,7 @@ describe('Roll Params Type Guards', () => {
         sides: ['critical', 'hit', 'miss'],
         quantity: 2
       })
-      const params = normalizeArgument(options)
+      const params = argToParameter(options)
       expect(isCustomRollParams(params)).toBe(true)
 
       if (isCustomRollParams(params)) {
@@ -175,7 +175,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for emoji face params', () => {
-      const params = normalizeArgument(['⚔️', '🛡️', '🏹'])
+      const params = argToParameter(['⚔️', '🛡️', '🏹'])
       expect(isCustomRollParams(params)).toBe(true)
 
       if (isCustomRollParams(params)) {
@@ -186,7 +186,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return true for complex custom notation params', () => {
-      const params = normalizeArgument('3d{abc}')
+      const params = argToParameter('3d{abc}')
       expect(isCustomRollParams(params)).toBe(true)
 
       if (isCustomRollParams(params)) {
@@ -197,23 +197,23 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should return false for numeric roll params', () => {
-      const params = normalizeArgument('4d6')
+      const params = argToParameter('4d6')
       expect(isCustomRollParams(params)).toBe(false)
     })
 
     test('should return false for numeric die object params', () => {
-      const params = normalizeArgument(D(20))
+      const params = argToParameter(D(20))
       expect(isCustomRollParams(params)).toBe(false)
     })
 
     test('should return false for numeric options params', () => {
       const options = createNumericRollOptions({ sides: 6, quantity: 4 })
-      const params = normalizeArgument(options)
+      const params = argToParameter(options)
       expect(isCustomRollParams(params)).toBe(false)
     })
 
     test('should return false for plain number params', () => {
-      const params = normalizeArgument(6)
+      const params = argToParameter(6)
       expect(isCustomRollParams(params)).toBe(false)
     })
 
@@ -228,10 +228,10 @@ describe('Roll Params Type Guards', () => {
 
     test('should work with array filtering', () => {
       const params = [
-        normalizeArgument(['heads', 'tails']),
-        normalizeArgument('4d6'),
-        normalizeArgument('2d{HT}'),
-        normalizeArgument(D(20)),
+        argToParameter(['heads', 'tails']),
+        argToParameter('4d6'),
+        argToParameter('2d{HT}'),
+        argToParameter(D(20)),
         '2d{HT}', // not params
         null
       ]
@@ -249,12 +249,12 @@ describe('Roll Params Type Guards', () => {
   describe('Mutual exclusivity', () => {
     test('should be mutually exclusive for valid params', () => {
       const validParams = [
-        normalizeArgument('4d6'),
-        normalizeArgument(['heads', 'tails']),
-        normalizeArgument(D(20)),
-        normalizeArgument('2d{HT}'),
-        normalizeArgument(createNumericRollOptions()),
-        normalizeArgument(createCustomRollOptions())
+        argToParameter('4d6'),
+        argToParameter(['heads', 'tails']),
+        argToParameter(D(20)),
+        argToParameter('2d{HT}'),
+        argToParameter(createNumericRollOptions()),
+        argToParameter(createCustomRollOptions())
       ]
 
       validParams.forEach((param) => {
@@ -287,7 +287,7 @@ describe('Roll Params Type Guards', () => {
 
   describe('Type narrowing', () => {
     test('should provide proper TypeScript type narrowing for numeric params', () => {
-      const params: unknown = normalizeArgument('4d6+2')
+      const params: unknown = argToParameter('4d6+2')
 
       if (isNumericRollParams(params)) {
         // TypeScript should know this is NumericRollParams
@@ -301,7 +301,7 @@ describe('Roll Params Type Guards', () => {
     })
 
     test('should provide proper TypeScript type narrowing for custom params', () => {
-      const params: unknown = normalizeArgument(['heads', 'tails'])
+      const params: unknown = argToParameter(['heads', 'tails'])
 
       if (isCustomRollParams(params)) {
         // TypeScript should know this is CustomRollParams
@@ -316,10 +316,10 @@ describe('Roll Params Type Guards', () => {
 
     test('should enable type-safe params processing', () => {
       const params = [
-        normalizeArgument('4d6'),
-        normalizeArgument(['heads', 'tails']),
-        normalizeArgument(D(20)),
-        normalizeArgument('2d{HT}')
+        argToParameter('4d6'),
+        argToParameter(['heads', 'tails']),
+        argToParameter(D(20)),
+        argToParameter('2d{HT}')
       ]
 
       const numericParams: unknown[] = []

@@ -12,15 +12,15 @@ import {
   isNumericResult,
   isNumericRollArgument
 } from '../lib'
-import { normalizeArgument } from './normalizeArgument'
-import { generateRoll } from './generateRoll'
+import { argToParameter } from './argToParameter'
+import { generateRollResult } from './generateRollResult'
 
 function roll(arg: NumericRollArgument): NumericRollResult
 function roll(arg: CustomRollArgument): CustomRollResult
 function roll(arg: RollArgument): RollResult
 function roll(arg: RollArgument): RollResult {
-  const parameter = normalizeArgument(arg)
-  const result = generateRoll(parameter)
+  const parameter = argToParameter(arg)
+  const result = generateRollResult(parameter)
 
   if (isNumericRollArgument(arg)) {
     if (!isNumericResult(result)) {

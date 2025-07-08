@@ -10,8 +10,7 @@ import {
 } from '../modifiers'
 import { coreNotationPattern } from './coreNotationPattern'
 
-// eslint-disable-next-line @typescript-eslint/no-inferrable-types
-export const completeRollPattern: RegExp = new RegExp(
+export const completeRollPattern = new RegExp(
   [
     coreNotationPattern.source,
     DropModifier.highestPattern.source,

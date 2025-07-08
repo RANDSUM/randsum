@@ -1,39 +1,21 @@
-import { D } from '../Dice'
-import { isCustomRollParams, isDiceNotation, isNumericRollParams } from '../lib'
 import {
   CapModifier,
   DropModifier,
   ExplodeModifier,
   MinusModifier,
-  OptionsConverter,
   PlusModifier,
   ReplaceModifier,
   RerollModifier,
   UniqueModifier,
   coreNotationPattern,
-  isD
-} from '../lib'
-import type { RollArgument, RollParams } from '../types'
+  isD,
+  isDiceNotation
+} from '../../lib'
+import type { RollArgument, RollParams } from '../../types'
 
-export function normalizeArgument(argument: RollArgument): RollParams {
-  const options = optionsFromArgument(argument)
-  const converter = new OptionsConverter(options)
-  const die = dieForArgument(argument)
-  const params = {
-    argument,
-    options,
-    die,
-    notation: converter.toNotation,
-    description: converter.toDescription
-  }
-  if (isNumericRollParams(params) || isCustomRollParams(params)) {
-    return params
-  }
-
-  throw new Error('Failed to normalize argument. Please try again.')
-}
-
-function optionsFromArgument(argument: RollArgument): RollParams['options'] {
+export function optionsFromArgument(
+  argument: RollArgument
+): RollParams['options'] {
   if (isD(argument)) {
     return argument.toOptions
   }
@@ -78,15 +60,4 @@ function optionsFromArgument(argument: RollArgument): RollParams['options'] {
     return { quantity: 1, sides: Number(argument) }
   }
   return argument
-}
-
-function dieForArgument(argument: RollArgument): RollParams['die'] {
-  if (isD(argument)) {
-    return argument
-  }
-  const options = optionsFromArgument(argument)
-  if (Array.isArray(options.sides)) {
-    return D(options.sides)
-  }
-  return D(options.sides)
 }

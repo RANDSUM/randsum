@@ -12,7 +12,7 @@ import { D } from '../src/Dice'
 import type { RollParams } from '../src/types'
 import * as CoreRandom from '../src/lib'
 import * as CoreSpreadRolls from '../src/lib'
-import { generateRoll } from '../src/roll/generateRoll'
+import { generateRollResult } from '../src/roll/generateRollResult'
 
 function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
   return {
@@ -28,7 +28,7 @@ function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
   } as RollParams
 }
 
-describe(generateRoll, () => {
+describe(generateRollResult, () => {
   beforeAll(() => {
     spyOn(CoreRandom, 'coreRandom').mockReturnValue(200)
   })
@@ -43,7 +43,7 @@ describe(generateRoll, () => {
 
     test('it returns the sum total of the quantity and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRoll(coreParameters)).toMatchObject({
+      expect(generateRollResult(coreParameters)).toMatchObject({
         parameters: coreParameters,
         total: 10,
         type: 'numeric',
@@ -72,7 +72,7 @@ describe(generateRoll, () => {
       const initialRolls = uniqueRolls
 
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(uniqueRolls)
-      expect(generateRoll(uniqueParameters)).toMatchObject({
+      expect(generateRollResult(uniqueParameters)).toMatchObject({
         parameters: uniqueParameters,
         history: {
           initialRolls,
@@ -105,7 +105,7 @@ describe(generateRoll, () => {
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           uniqueRolls
         )
-        expect(generateRoll(notUniqueParameters)).toMatchObject({
+        expect(generateRollResult(notUniqueParameters)).toMatchObject({
           parameters: notUniqueParameters,
           history: {
             modifiedRolls: uniqueRolls,
@@ -141,7 +141,7 @@ describe(generateRoll, () => {
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           overflowRollTotals
         )
-        expect(() => generateRoll(overflowParameters)).toThrow()
+        expect(() => generateRollResult(overflowParameters)).toThrow()
       })
     })
   })
@@ -170,7 +170,7 @@ describe(generateRoll, () => {
         longerRollTotals
       )
 
-      expect(generateRoll(dropParameters)).toMatchObject({
+      expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
         history: {
           initialRolls: longerRollTotals,
@@ -211,7 +211,7 @@ describe(generateRoll, () => {
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           testRollSet
         )
-        expect(generateRoll(dropParameters)).toMatchObject({
+        expect(generateRollResult(dropParameters)).toMatchObject({
           parameters: dropParameters,
           history: {
             initialRolls: testRollSet,
@@ -253,7 +253,7 @@ describe(generateRoll, () => {
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           testRollSet
         )
-        expect(generateRoll(dropParameters)).toMatchObject({
+        expect(generateRollResult(dropParameters)).toMatchObject({
           parameters: dropParameters,
           history: {
             modifiedRolls: [2, 2, 3, 6],
@@ -302,7 +302,7 @@ describe(generateRoll, () => {
         explodeRollTotals
       )
 
-      expect(generateRoll(explodeParameters)).toMatchObject({
+      expect(generateRollResult(explodeParameters)).toMatchObject({
         parameters: explodeParameters,
         history: {
           modifiedRolls: [1, 2, 3, 6, 200],
@@ -338,7 +338,7 @@ describe(generateRoll, () => {
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           testRollSet
         )
-        expect(generateRoll(reDicePools)).toMatchObject({
+        expect(generateRollResult(reDicePools)).toMatchObject({
           parameters: reDicePools,
           history: {
             modifiedRolls: [1, 2, 3, 200],
@@ -376,7 +376,7 @@ describe(generateRoll, () => {
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           testRollSet
         )
-        expect(generateRoll(reDicePools)).toMatchObject({
+        expect(generateRollResult(reDicePools)).toMatchObject({
           parameters: reDicePools,
           history: {
             modifiedRolls: [1, 200, 3, 200],
@@ -416,7 +416,7 @@ describe(generateRoll, () => {
         spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(
           testRollSet
         )
-        expect(generateRoll(reDicePools)).toMatchObject({
+        expect(generateRollResult(reDicePools)).toMatchObject({
           parameters: reDicePools,
           history: {
             modifiedRolls: [200, 2, 200, 4],
@@ -440,7 +440,7 @@ describe(generateRoll, () => {
 
     test('it returns the total with all values greaterThan greaterThan and lessThan lessThan replaced with their respective comparitor and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRoll(dropParameters)).toMatchObject({
+      expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
         history: {
           modifiedRolls: [2, 2, 3, 3],
@@ -475,7 +475,7 @@ describe(generateRoll, () => {
 
     test('it returns the total plus the "plus" modifier, and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRoll(dropParameters)).toMatchObject({
+      expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
         history: {
           modifiedRolls: testRollSet,
@@ -500,7 +500,7 @@ describe(generateRoll, () => {
 
     test('it returns the total minus the "minus" modifier, and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRoll(dropParameters)).toMatchObject({
+      expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
         history: {
           modifiedRolls: testRollSet,
@@ -526,7 +526,7 @@ describe(generateRoll, () => {
 
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
 
-      const result = generateRoll(parametersWithZeroModifier)
+      const result = generateRollResult(parametersWithZeroModifier)
 
       expect(result).toMatchObject({
         parameters: parametersWithZeroModifier,

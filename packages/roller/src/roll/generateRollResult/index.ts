@@ -8,7 +8,7 @@ import type {
 import { generateHistory } from './generateHistory'
 import { generateInitialRolls } from './generateInitialRolls'
 
-export function generateRoll(
+export function generateRollResult(
   parameters: CustomRollParams | NumericRollParams
 ): NumericRollResult | CustomRollResult {
   const initialRolls = generateInitialRolls(parameters)
