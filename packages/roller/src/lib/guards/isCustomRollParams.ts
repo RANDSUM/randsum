@@ -1,7 +1,13 @@
 import type { CustomRollParams, RollParams } from '../../types'
 
 export function isCustomRollParams(
-  poolParameters: RollParams
+  poolParameters: unknown
 ): poolParameters is CustomRollParams {
-  return Array.isArray(poolParameters.options.sides)
+  return (
+    typeof poolParameters === 'object' &&
+    poolParameters !== null &&
+    'options' in poolParameters &&
+    typeof (poolParameters as RollParams).options === 'object' &&
+    Array.isArray((poolParameters as RollParams).options.sides)
+  )
 }

@@ -1,4 +1,10 @@
-import { ModifierConflictError, OptionsConverter, isDiceNotation } from '../lib'
+import {
+  ModifierConflictError,
+  OptionsConverter,
+  isCustomValidationResult,
+  isDiceNotation,
+  isNumericValidationResult
+} from '../lib'
 import type { ValidationResult } from '../types'
 import { calculateDieType } from './calculateDieType'
 import { notationToOptions } from './notationToOptions'
@@ -16,13 +22,26 @@ export function validateNotation(notation: string): ValidationResult {
   try {
     const digested = notationToOptions(notation)
     const converter = new OptionsConverter(digested)
-    return {
+    const proposed = {
       valid: true,
       digested,
       notation: converter.toNotation,
       type: calculateDieType(digested.sides),
       description: converter.toDescription
-    } as ValidationResult
+    }
+    if (
+      isNumericValidationResult(proposed) ||
+      isCustomValidationResult(proposed)
+    ) {
+      return proposed
+    }
+
+    return {
+      valid: false,
+      description: ['Failed to validate notation. Please try again.'],
+      digested: {},
+      type: 'invalid'
+    }
   } catch {
     const error = ModifierConflictError.forCustomDiceWithModifiers(notation)
     return {

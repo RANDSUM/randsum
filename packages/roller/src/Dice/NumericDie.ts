@@ -31,7 +31,11 @@ export class NumericDie extends DieBase implements NumericDieInterface {
     quantity = 1,
     modifiers: ModifierOptions = {}
   ): NumericRollResult {
-    const options = { ...this.toOptions, quantity, modifiers }
+    const options: NumericRollOptions = {
+      ...this.toOptions,
+      quantity,
+      modifiers
+    }
     return roll(options)
   }
 

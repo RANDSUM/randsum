@@ -44,13 +44,13 @@ export class CustomDie extends DieBase implements CustomDieInterface {
 
   public rollModified(
     quantity = 1,
-    modifiers: ModifierOptions = {}
+    _modifiers: ModifierOptions = {}
   ): CustomRollResult {
-    return roll({
+    const options: CustomRollOptions = {
       ...this.toOptions,
-      quantity,
-      modifiers
-    } as CustomRollOptions)
+      quantity
+    }
+    return roll(options)
   }
 
   public get toOptions(): CustomRollOptions {
