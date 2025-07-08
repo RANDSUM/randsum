@@ -17,6 +17,9 @@
     "ts:check": "bunx moon :tsCheck",
     "test:ci": "bunrun test --coverage"
   },
+  "trustedDependencies": [
+    "@moonrepo/cli"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "@moonrepo/cli": "^1.38.4",
