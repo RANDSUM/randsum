@@ -1,9 +1,10 @@
 import { roll } from './roll'
-import type { NumericRollArgument } from './types'
+import type { NumericRollArgument, NumericRollResult } from './types'
 
 export function meetOrBeat(
   total: number,
   rollArg: NumericRollArgument = { sides: 20 }
-): boolean {
-  return roll(rollArg).total >= total
+): [boolean, NumericRollResult] {
+  const result = roll(rollArg)
+  return [result.total >= total, result]
 }
