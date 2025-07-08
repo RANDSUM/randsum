@@ -20,18 +20,6 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Restore build cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .moon/cache
-            apps/*/dist
-            packages/*/dist
-            packages/*/dist
-          key: ${{ runner.os }}-build-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-build-
-
       - run: bun install
 
       - name: Build packages

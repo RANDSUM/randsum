@@ -76,7 +76,6 @@ tsconfig.tsbuildinfo
 bunfig.toml
 
 # Framework-specific
-apps/site/.astro/*
 apps/robo/.robo/**
 
 # Markdown files in specific directories (keep formatting as-is)
