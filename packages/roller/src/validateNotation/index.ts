@@ -36,7 +36,12 @@ export function validateNotation(notation: string): ValidationResult {
       return proposed
     }
 
-    throw new Error('Failed to validate notation. Please try again.')
+    return {
+      valid: false,
+      description: ['Failed to validate notation. Please try again.'],
+      digested: {},
+      type: 'invalid'
+    }
   } catch {
     const error = ModifierConflictError.forCustomDiceWithModifiers(notation)
     return {
