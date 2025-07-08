@@ -7,7 +7,9 @@ export {
   RandsumError,
   InvalidNotationError,
   ModifierConflictError,
-  RollConstraintError
+  RollConstraintError,
+  type ErrorContext,
+  type RandsumErrorCode
 } from './lib/errors'
 export * from './lib/guards'
 
