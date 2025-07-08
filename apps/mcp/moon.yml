@@ -4,7 +4,10 @@ id: mcp
 language: "typescript"
 dependsOn:
   - "roller"
+tags:
+  - "app"
 
+# Optimized app configuration with improved caching
 tasks:
   tsCheck:
     deps:
@@ -12,9 +15,9 @@ tasks:
 
   build:
     command: "tsc && chmod 755 dist/index.js"
-    args: []
     inputs:
       - "src/**/*"
+      - "tsconfig.json"
     outputs:
       - "dist/**/*"
     deps:

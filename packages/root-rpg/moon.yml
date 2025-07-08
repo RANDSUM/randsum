@@ -7,6 +7,7 @@ dependsOn:
 tags:
   - "game"
 
+# All tasks inherit from shared configuration
 tasks:
   tsCheck:
     deps:

@@ -6,10 +6,13 @@ tasks:
     args: "--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline"
     inputs:
       - "src/**/*"
+      - "package.json"
+      - "tsconfig.json"
     outputs:
       - "dist/**/*"
     options:
-      cache: false
+      cache: true
+      cacheLifetime: "24 hours"
 
   test:
     command: "bun test"
@@ -20,21 +23,27 @@ tasks:
       - "__tests__/**/*"
       - "**/*.test.ts"
       - "**/*.spec.ts"
+      - "package.json"
+      - "bunfig.toml"
     options:
-      cache: false
+      cache: true
+      cacheLifetime: "1 hour"
 
+  # Lint with selective caching and improved inputs
   lint:
     command: "eslint . -c ../../eslint.config.js"
-    deps:
     inputs:
       - "src/**/*"
       - "__tests__/**/*"
       - "**/*.ts"
+      - "eslint.config.js"
+      - ".eslintrc.*"
     options:
-      cache: false
+      cache: true
+      cacheLifetime: "6 hours"
 
   format:
-    command: "prettier --write . --ignore-path ../../.prettierignore  --config ../../.prettierrc"
+    command: "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc"
     inputs:
       - "src/**/*"
       - "__tests__/**/*"
@@ -43,8 +52,10 @@ tasks:
       - "**/*.json"
       - "**/*.md"
       - ".prettierrc"
+      - ".prettierignore"
     options:
-      cache: false
+      cache: true
+      cacheLifetime: "12 hours"
 
   formatCheck:
     command: "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc"
@@ -56,8 +67,10 @@ tasks:
       - "**/*.json"
       - "**/*.md"
       - ".prettierrc"
+      - ".prettierignore"
     options:
-      cache: false
+      cache: true
+      cacheLifetime: "12 hours"
 
   ci:
     deps:
@@ -65,47 +78,57 @@ tasks:
       - "test"
       - "lint"
       - "formatCheck"
+    options:
+      cache: false # CI should always run fresh
+      runDepsInParallel: true
 
   tsCheck:
-    command: "tsc --erasableSyntaxOnly"
-    deps:
+    command: "tsc --noEmit"
     inputs:
       - "src/**/*"
       - "tsconfig.json"
     options:
-      cache: false
+      cache: true
+      cacheLifetime: "2 hours"
       runInCI: true
       allowFailure: false
 
+  # Version management tasks (keep existing configuration)
   version:
     command: "bun pm version"
     options:
       runInCI: false
       allowFailure: true
+      cache: false
 
   patch:
     command: "bun pm version patch"
     options:
       runInCI: false
       allowFailure: true
+      cache: false
 
   minor:
     command: "bun pm version minor"
     options:
       runInCI: false
       allowFailure: true
+      cache: false
 
   major:
     command: "bun pm version major"
     options:
       runInCI: false
       allowFailure: true
+      cache: false
 
+  # Publishing task with comprehensive dependencies
   publish:
     command: "bun publish --no-git-checks --access=public"
     options:
       runInCI: false
       allowFailure: true
+      cache: false
     deps:
       - "test"
       - "lint"

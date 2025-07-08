@@ -7,6 +7,7 @@ dependsOn:
 tags:
   - "game"
 
+# Inherits shared task configuration with custom test override
 tasks:
   tsCheck:
     deps:
@@ -15,15 +16,12 @@ tasks:
     deps:
       - "roller:build"
   test:
-    command: 'echo "No Tests Yet"'
+    command: 'echo "No tests implemented yet"'
     deps:
       - "roller:build"
     options:
       cache: false
       runInCI: true
-      mergeArgs: "replace"
-      mergeEnv: "replace"
-
   lint:
     deps:
       - "roller:build"
