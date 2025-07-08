@@ -84,8 +84,8 @@ export class ReplaceModifier extends BaseModifier<
     ]
 
     return {
-      ...bonus,
       rolls: replaceRolls,
+      simpleMathModifier: bonus.simpleMathModifier,
       logs
     }
   }

@@ -22,14 +22,16 @@ export function applyModifier(
   switch (key) {
     case 'plus':
       return {
-        ...currentBonuses,
-        simpleMathModifier: Number(modifierValue)
+        rolls: currentBonuses.rolls,
+        simpleMathModifier: Number(modifierValue),
+        logs: currentBonuses.logs
       }
 
     case 'minus':
       return {
-        ...currentBonuses,
-        simpleMathModifier: -Number(modifierValue)
+        rolls: currentBonuses.rolls,
+        simpleMathModifier: -Number(modifierValue),
+        logs: currentBonuses.logs
       }
 
     case 'reroll':

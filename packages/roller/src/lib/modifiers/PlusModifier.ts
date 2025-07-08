@@ -24,7 +24,7 @@ export class PlusModifier extends BaseModifier<number> {
     if (!this.options) return bonus
     const logs = [...bonus.logs, this.toModifierLog('plus', [], [this.options])]
     return {
-      ...bonus,
+      rolls: bonus.rolls,
       simpleMathModifier: this.options,
       logs
     }

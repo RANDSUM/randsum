@@ -37,8 +37,8 @@ export class ExplodeModifier extends BaseModifier<boolean> {
     ]
 
     return {
-      ...bonus,
       rolls: explodedRolls,
+      simpleMathModifier: bonus.simpleMathModifier,
       logs
     }
   }
