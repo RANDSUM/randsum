@@ -1,7 +1,7 @@
 {
   "name": "@randsum/robo",
   "description": "A Discord Bot and Activity for Rolling Dice",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "private": true,
   "keywords": [
