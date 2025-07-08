@@ -18,6 +18,8 @@ export function generateRoll(
     : 'custom'
   const rollResult = {
     parameters,
+    die: parameters.die,
+    description: parameters.description,
     history,
     rolls: history.modifiedRolls,
     total: history.total,
