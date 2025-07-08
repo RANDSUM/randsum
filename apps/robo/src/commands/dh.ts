@@ -1,4 +1,4 @@
-import { AdvantageDisadvantage, roll } from '@randsum/daggerheart'
+import { AdvantageDisadvantage, RollResult, roll } from '@randsum/daggerheart'
 import {
   APIEmbed,
   ChatInputCommandInteraction,
@@ -30,32 +30,33 @@ const buildEmbed = (
   rollModifier: number,
   rollingWith: AdvantageDisadvantage | undefined
 ): APIEmbed => {
-  const {
-    total,
-    type,
-    rolls: { hope, fear, modifier, advantage }
-  } = roll({ modifier: rollModifier, rollingWith })
+  const { total, type, rolls } = roll({ modifier: rollModifier, rollingWith })
 
-  const hopeFearFields = [
-    { name: 'Hope', value: hope.toString(), inline: true },
-    { name: 'Fear', value: fear.toString(), inline: true }
-  ].sort((a, b) => Number(a.value) - Number(b.value))
-
-  const fields = [
-    ...hopeFearFields,
-    { name: 'Modifier', value: modifier.toString() },
-    advantage &&
-      rollingWith && {
-        name: `Rolled with ${rollingWith}`,
-        value: advantage.toString()
-      }
-  ].filter((r) => !!r)
   return new EmbedBuilder()
     .setTitle(`You rolled a ${String(total)} with ${type}`)
-    .setFields(fields)
+    .setFields(fields(rolls, rollingWith))
     .setColor(getColor(type))
     .setFooter(embedFooterDetails)
     .toJSON()
+}
+
+function fields(
+  { hope, fear, modifier, advantage }: RollResult['rolls'],
+  rollingWith: AdvantageDisadvantage | undefined
+): { name: string; value: string; inline?: boolean | undefined }[] {
+  return [
+    ...[
+      { name: 'Hope', value: hope.toString(), inline: true },
+      { name: 'Fear', value: fear.toString(), inline: true }
+    ].sort((a, b) => Number(a.value) - Number(b.value)),
+    { name: 'Modifier', value: modifier.toString() },
+    advantage && rollingWith
+      ? {
+          name: `Rolled with ${rollingWith}`,
+          value: String(advantage)
+        }
+      : undefined
+  ].filter((r) => !!r)
 }
 
 function getColor(type: 'hope' | 'fear' | 'critical hope'): number {

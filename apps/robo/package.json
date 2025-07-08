@@ -1,51 +1,57 @@
 {
-	"name": "randsum-discord",
-	"description": "A Discord Bot and Activity for Rolling Dice",
-	"version": "0.5.0",
-	"type": "module",
-	"private": true,
-	"keywords": [
-		"activity",
-		"api",
-		"discord",
-		"embed",
-		"embedded app",
-		"http",
-		"robo",
-		"robo.js",
-		"sdk",
-		"server",
-		"typescript",
-		"vite",
-		"web"
-	],
-	"scripts": {
-		"build": "robox build",
-		"deploy": "robox deploy",
-		"dev": "robox dev",
-		"doctor": "sage doctor",
-		"invite": "robox invite",
-		"lint": "npm run lint:eslint && npm run lint:style",
-		"lint:eslint": "eslint -c config/eslint.ts .",
-		"lint:style": "prettier --write .",
-		"start": "robox start",
-		"upgrade": "sage upgrade"
-	},
-	"dependencies": {
-		"@discord/embedded-app-sdk": "^1.9.0",
-		"@robojs/patch": "^0.2.1",
-		"robo.js": "^0.10.30",
-		"discord.js": "^14.21.0",
-		"extensionless": "^1.9.9"
-	},
-	"devDependencies": {
-		"@eslint/js": "^9.30.1",
-		"@swc/core": "^1.12.9",
-		"@types/node": "^24.0.10",
-		"eslint": "^9.30.1",
-		"globals": "^16.3.0",
-		"prettier": "^3.6.2",
-		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.35.1"
-	}
+  "name": "randsum-discord",
+  "description": "A Discord Bot and Activity for Rolling Dice",
+  "version": "0.5.0",
+  "type": "module",
+  "private": true,
+  "keywords": [
+    "activity",
+    "api",
+    "discord",
+    "embed",
+    "embedded app",
+    "http",
+    "robo",
+    "robo.js",
+    "sdk",
+    "server",
+    "typescript",
+    "vite",
+    "web"
+  ],
+  "scripts": {
+    "build": "robox build",
+    "deploy": "robox deploy",
+    "dev": "robox dev",
+    "doctor": "sage doctor",
+    "invite": "robox invite",
+    "lint": "npm run lint:eslint && npm run lint:style",
+    "lint:eslint": "eslint -c config/eslint.ts .",
+    "lint:style": "prettier --write .",
+    "start": "robox start",
+    "upgrade": "sage upgrade"
+  },
+  "dependencies": {
+    "@randsum/daggerheart": "latest",
+    "@randsum/roller": "latest",
+    "@randsum/blades": "latest",
+    "@randsum/fifth": "latest",
+    "@randsum/root-rpg": "latest",
+    "@randsum/salvageunion": "latest",
+    "@discord/embedded-app-sdk": "^1.9.0",
+    "@robojs/patch": "^0.2.1",
+    "robo.js": "^0.10.30",
+    "discord.js": "^14.21.0",
+    "extensionless": "^1.9.9"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@swc/core": "^1.12.9",
+    "@types/node": "^24.0.10",
+    "eslint": "^9.30.1",
+    "globals": "^16.3.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.1"
+  }
 }
