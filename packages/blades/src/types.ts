@@ -1,3 +1,5 @@
+import type { NumericRollResult } from '@randsum/roller'
+
 export type BladesCritical = 'critical'
 export type BladesSuccess = 'success'
 export type BladesPartial = 'partial'
@@ -8,3 +10,10 @@ export type BladesResult =
   | BladesSuccess
   | BladesPartial
   | BladesFailure
+
+export interface BladesRollResult {
+  outcome: BladesResult
+  roll: number
+  rolls: number[]
+  result: NumericRollResult
+}
