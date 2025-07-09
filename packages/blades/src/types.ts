@@ -13,7 +13,5 @@ export type BladesResult =
 
 export interface BladesRollResult {
   outcome: BladesResult
-  roll: number
-  rolls: number[]
   result: NumericRollResult
 }
