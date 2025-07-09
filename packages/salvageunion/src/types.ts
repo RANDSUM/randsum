@@ -1,11 +1,11 @@
-export type Hit =
+export type SalvageUnionHit =
   | 'Nailed It'
   | 'Success'
   | 'Tough Choice'
   | 'Failure'
   | 'Cascade Failure'
 
-export type TableName =
+export type SalvageUnionTableName =
   | 'NPC Action'
   | 'Reaction'
   | 'Morale'
@@ -18,16 +18,19 @@ export type TableName =
   | 'Area Salvage'
   | 'Mech Salvage'
 
-export interface TableListing {
+export interface SalvageUnionTableListing {
   label: string
   description: string
 }
 
-export type TableType = Record<Hit, TableListing>
+export type SalvageUnionTableType = Record<
+  SalvageUnionHit,
+  SalvageUnionTableListing
+>
 
-export type TableResult = {
-  hit: Hit
-  tableName: TableName
-  table: TableType
+export type SalvageUnionTableResult = {
+  hit: SalvageUnionHit
+  tableName: SalvageUnionTableName
+  table: SalvageUnionTableType
   roll: number
-} & TableListing
+} & SalvageUnionTableListing
