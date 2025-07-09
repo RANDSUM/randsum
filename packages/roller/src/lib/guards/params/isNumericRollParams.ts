@@ -1,4 +1,4 @@
-import type { NumericRollParams, RollParams } from '../../types'
+import type { NumericRollParams, RollParams } from '../../../types'
 
 export function isNumericRollParams(
   poolParameters: unknown

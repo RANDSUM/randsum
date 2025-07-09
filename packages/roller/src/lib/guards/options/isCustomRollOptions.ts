@@ -1,5 +1,5 @@
-import type { CustomRollOptions, RollOptions } from '../../types'
-import { isD } from './isD'
+import type { CustomRollOptions, RollOptions } from '../../../types'
+import { isD } from '../isD'
 
 export function isCustomRollOptions(
   options: unknown

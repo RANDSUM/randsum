@@ -1,4 +1,4 @@
-import type { InvalidValidationResult } from '../../types'
+import type { InvalidValidationResult } from '../../../types'
 
 export function isInvalidValidationResult(
   result: unknown

@@ -1,4 +1,4 @@
-import type { CustomValidationResult } from '../../types'
+import type { CustomValidationResult } from '../../../types'
 
 export function isCustomValidationResult(
   result: unknown
