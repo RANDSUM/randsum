@@ -38,3 +38,9 @@ export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
 }
 
 export type RollResult = NumericRollResult | CustomRollResult
+
+export interface MeetOrBeatResult {
+  success: boolean
+  target: number
+  result: NumericRollResult
+}

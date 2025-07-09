@@ -1,5 +1,8 @@
-export type AdvantageDisadvantage = 'Advantage' | 'Disadvantage'
-export interface RollArgument {
+export interface FifthAdvantageDisadvantage {
+  advantage?: boolean
+  disadvantage?: boolean
+}
+export interface FifthRollArgument {
   modifier: number
-  rollingWith?: AdvantageDisadvantage
+  rollingWith?: FifthAdvantageDisadvantage
 }
