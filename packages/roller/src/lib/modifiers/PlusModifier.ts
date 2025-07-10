@@ -1,4 +1,4 @@
-import type { ModifierOptions, NumericRollBonus } from '../../types'
+import type { ModifierOptions, RollBonus } from '../../types'
 import { BaseModifier } from './BaseModifier'
 
 export class PlusModifier extends BaseModifier<number> {
@@ -20,7 +20,7 @@ export class PlusModifier extends BaseModifier<number> {
     }
   }
 
-  public apply(bonus: NumericRollBonus): NumericRollBonus {
+  public apply(bonus: RollBonus): RollBonus {
     if (!this.options) return bonus
     const logs = [...bonus.logs, this.toModifierLog('plus', [], [this.options])]
     return {

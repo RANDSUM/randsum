@@ -1,7 +1,7 @@
 import type {
   ModifierOptions,
-  NumericRollBonus,
-  RequiredNumericRollParameters
+  RollBonus,
+  RequiredRollParameters
 } from '../../types'
 import { BaseModifier } from './BaseModifier'
 
@@ -22,10 +22,10 @@ export class ExplodeModifier extends BaseModifier<boolean> {
   }
 
   public apply(
-    bonus: NumericRollBonus,
-    { sides }: RequiredNumericRollParameters,
+    bonus: RollBonus,
+    { sides }: RequiredRollParameters,
     rollOne: () => number
-  ): NumericRollBonus {
+  ): RollBonus {
     if (this.options === undefined) return bonus
     const explodeCount = bonus.rolls.filter((roll) => roll === sides).length
     const explodeResults = Array.from({ length: explodeCount }, rollOne)

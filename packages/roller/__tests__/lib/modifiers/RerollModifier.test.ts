@@ -2,8 +2,8 @@ import { describe, expect, test } from 'bun:test'
 import { RerollModifier } from '../../../src/lib'
 import {
   createMockRollOne,
-  createNumericRollBonus,
-  createRequiredNumericRollParameters
+  createRollBonus,
+  createRequiredRollParameters
 } from '../../support/fixtures'
 
 describe('RerollModifier', () => {
@@ -60,10 +60,10 @@ describe('RerollModifier', () => {
 
     test('rerolls exact values', () => {
       const modifier = new RerollModifier({ exact: [1, 2] })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 3, 2]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 3
       })
 
@@ -81,10 +81,10 @@ describe('RerollModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new RerollModifier(undefined)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 3, 5]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 3
       })
 
@@ -94,10 +94,10 @@ describe('RerollModifier', () => {
 
     test('rerolls values greater than threshold', () => {
       const modifier = new RerollModifier({ greaterThan: 18 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [15, 19, 20, 10]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         sides: 20,
         quantity: 4
       })
@@ -116,10 +116,10 @@ describe('RerollModifier', () => {
 
     test('rerolls values less than threshold', () => {
       const modifier = new RerollModifier({ lessThan: 3 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 3, 4]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 4
       })
 
@@ -143,10 +143,10 @@ describe('RerollModifier', () => {
       }
 
       const modifier = new RerollModifier({ exact: [1], max: 2 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 1
       })
 
@@ -172,10 +172,10 @@ describe('RerollModifier', () => {
       }
 
       const modifier = new RerollModifier({ exact: [1] })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 1
       })
 
@@ -199,10 +199,10 @@ describe('RerollModifier', () => {
         lessThan: 3,
         greaterThan: 18
       })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 6, 10, 19, 20]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         sides: 20,
         quantity: 6
       })
@@ -228,10 +228,10 @@ describe('RerollModifier', () => {
       }
 
       const modifier = new RerollModifier({ exact: [1] })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 1, 1]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 3
       })
 
@@ -253,7 +253,7 @@ describe('RerollModifier', () => {
 
     test('handles undefined options in nested calls', () => {
       const modifier = new RerollModifier(undefined)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 3]
       })
 

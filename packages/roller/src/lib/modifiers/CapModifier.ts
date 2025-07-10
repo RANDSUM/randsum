@@ -1,8 +1,4 @@
-import type {
-  ComparisonOptions,
-  ModifierOptions,
-  NumericRollBonus
-} from '../../types'
+import type { ComparisonOptions, ModifierOptions, RollBonus } from '../../types'
 import { BaseModifier } from './BaseModifier'
 
 export class CapModifier extends BaseModifier<ComparisonOptions> {
@@ -66,7 +62,7 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
     }
   }
 
-  public apply(bonus: NumericRollBonus): NumericRollBonus {
+  public apply(bonus: RollBonus): RollBonus {
     if (this.options === undefined) return bonus
     const rolls = bonus.rolls.map(CapModifier.applySingleCap(this.options))
     const logs = [...bonus.logs, this.toModifierLog('cap', bonus.rolls, rolls)]

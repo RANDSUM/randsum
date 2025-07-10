@@ -8,7 +8,6 @@ import {
   test
 } from 'bun:test'
 
-import { D } from '../src/Dice'
 import type { RollParams } from '../src/types'
 import * as CoreRandom from '../src/lib'
 import * as CoreSpreadRolls from '../src/lib'
@@ -16,7 +15,6 @@ import { generateRollResult } from '../src/roll/generateRollResult'
 
 function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
   return {
-    die: D(4),
     argument: 1,
     notation: '1d4',
     description: ['Roll 1d4'],
@@ -46,7 +44,6 @@ describe(generateRollResult, () => {
       expect(generateRollResult(coreParameters)).toMatchObject({
         parameters: coreParameters,
         total: 10,
-        type: 'numeric',
         history: {
           initialRolls: testRollSet,
           logs: [],
@@ -87,8 +84,8 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 206,
-        type: 'numeric'
+        rolls: [1, 1, 2, 3],
+        total: 206
       })
     })
 
@@ -107,6 +104,7 @@ describe(generateRollResult, () => {
         )
         expect(generateRollResult(notUniqueParameters)).toMatchObject({
           parameters: notUniqueParameters,
+          description: ['Roll 1d4'],
           history: {
             modifiedRolls: uniqueRolls,
             total: 7,
@@ -120,8 +118,8 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 7,
-          type: 'numeric'
+          rolls: uniqueRolls,
+          total: 7
         })
       })
     })
@@ -172,6 +170,7 @@ describe(generateRollResult, () => {
 
       expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
+        description: ['Roll 1d4'],
         history: {
           initialRolls: longerRollTotals,
           modifiedRolls: [4, 6, 7],
@@ -191,8 +190,8 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 17,
-        type: 'numeric'
+        rolls: [4, 6, 7],
+        total: 17
       })
     })
   })
@@ -213,6 +212,7 @@ describe(generateRollResult, () => {
         )
         expect(generateRollResult(dropParameters)).toMatchObject({
           parameters: dropParameters,
+          description: ['Roll 1d4'],
           history: {
             initialRolls: testRollSet,
             modifiedRolls: [2, 2, 3, 4],
@@ -229,8 +229,8 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 11,
-          type: 'numeric'
+          rolls: [2, 2, 3, 4],
+          total: 11
         })
       })
     })
@@ -255,6 +255,7 @@ describe(generateRollResult, () => {
         )
         expect(generateRollResult(dropParameters)).toMatchObject({
           parameters: dropParameters,
+          description: ['Roll 1d4'],
           history: {
             modifiedRolls: [2, 2, 3, 6],
             initialRolls: testRollSet,
@@ -279,8 +280,8 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 13,
-          type: 'numeric'
+          rolls: [2, 2, 3, 6],
+          total: 13
         })
       })
     })
@@ -304,6 +305,7 @@ describe(generateRollResult, () => {
 
       expect(generateRollResult(explodeParameters)).toMatchObject({
         parameters: explodeParameters,
+        description: ['Roll 1d4'],
         history: {
           modifiedRolls: [1, 2, 3, 6, 200],
           total: 212,
@@ -317,8 +319,8 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 212,
-        type: 'numeric'
+        rolls: [1, 2, 3, 6, 200],
+        total: 212
       })
     })
   })
@@ -330,8 +332,7 @@ describe(generateRollResult, () => {
           sides: 6,
           quantity: testRollSet.length,
           modifiers: { reroll: { greaterThan: 3 } }
-        },
-        die: D(4)
+        }
       })
 
       test('it stops at 99 rerolls and returns the total with all values matching the queries rerolled', () => {
@@ -340,6 +341,7 @@ describe(generateRollResult, () => {
         )
         expect(generateRollResult(reDicePools)).toMatchObject({
           parameters: reDicePools,
+          description: ['Roll 1d4'],
           history: {
             modifiedRolls: [1, 2, 3, 200],
             total: 206,
@@ -355,8 +357,8 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 206,
-          type: 'numeric'
+          rolls: [1, 2, 3, 200],
+          total: 206
         })
       })
     })
@@ -378,6 +380,7 @@ describe(generateRollResult, () => {
         )
         expect(generateRollResult(reDicePools)).toMatchObject({
           parameters: reDicePools,
+          description: ['Roll 1d4'],
           history: {
             modifiedRolls: [1, 200, 3, 200],
             initialRolls: testRollSet,
@@ -395,8 +398,8 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 404,
-          type: 'numeric'
+          rolls: [1, 200, 3, 200],
+          total: 404
         })
       })
     })
@@ -418,12 +421,26 @@ describe(generateRollResult, () => {
         )
         expect(generateRollResult(reDicePools)).toMatchObject({
           parameters: reDicePools,
+          description: ['Roll 1d4'],
           history: {
+            initialRolls: [1, 2, 3, 4],
+            logs: [
+              {
+                added: [200, 200],
+                modifier: 'reroll',
+                options: {
+                  exact: [3],
+                  lessThan: 2,
+                  max: 2
+                },
+                removed: [1, 3]
+              }
+            ],
             modifiedRolls: [200, 2, 200, 4],
             total: 406
           },
-          total: 406,
-          type: 'numeric'
+          rolls: [200, 2, 200, 4],
+          total: 406
         })
       })
     })
@@ -442,6 +459,7 @@ describe(generateRollResult, () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
+        description: ['Roll 1d4'],
         history: {
           modifiedRolls: [2, 2, 3, 3],
           total: 10,
@@ -458,8 +476,8 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 10,
-        type: 'numeric'
+        rolls: [2, 2, 3, 3],
+        total: 10
       })
     })
   })
@@ -477,6 +495,7 @@ describe(generateRollResult, () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
+        description: ['Roll 1d4'],
         history: {
           modifiedRolls: testRollSet,
           initialRolls: testRollSet,
@@ -484,7 +503,7 @@ describe(generateRollResult, () => {
           logs: []
         },
         total: 12,
-        type: 'numeric'
+        rolls: [1, 2, 3, 4]
       })
     })
   })
@@ -502,14 +521,15 @@ describe(generateRollResult, () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(generateRollResult(dropParameters)).toMatchObject({
         parameters: dropParameters,
+        description: ['Roll 1d4'],
         history: {
           modifiedRolls: testRollSet,
           total: 8,
           initialRolls: testRollSet,
           logs: []
         },
-        total: 8,
-        type: 'numeric'
+        rolls: [1, 2, 3, 4],
+        total: 8
       })
     })
   })
@@ -530,14 +550,15 @@ describe(generateRollResult, () => {
 
       expect(result).toMatchObject({
         parameters: parametersWithZeroModifier,
+        description: ['Roll 1d4'],
         history: {
           modifiedRolls: testRollSet,
           initialRolls: testRollSet,
           total: 10,
           logs: []
         },
-        total: 10,
-        type: 'numeric'
+        rolls: [1, 2, 3, 4],
+        total: 10
       })
     })
   })

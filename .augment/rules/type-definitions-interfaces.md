@@ -12,18 +12,18 @@ description: "TypeScript type definitions and interfaces"
 Use discriminated unions with `type` field for result types:
 
 ```typescript
-interface NumericResult {
-  type: 'numeric'
+interface Result {
+  type: ""
   total: number
   rawResults: number[]
 }
 
 interface CustomResult {
-  type: 'custom'
+  type: "custom"
   results: string[]
 }
 
-type RollResult = NumericResult | CustomResult
+type RollResult = Result | CustomResult
 ```
 
 ### Option Objects

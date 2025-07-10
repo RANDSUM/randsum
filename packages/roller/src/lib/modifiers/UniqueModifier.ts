@@ -1,8 +1,8 @@
 import { RollConstraintError } from '../errors'
 import type {
   ModifierOptions,
-  NumericRollBonus,
-  RequiredNumericRollParameters,
+  RollBonus,
+  RequiredRollParameters,
   UniqueOptions
 } from '../../types'
 import { BaseModifier } from './BaseModifier'
@@ -36,10 +36,10 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
   }
 
   public apply(
-    bonus: NumericRollBonus,
-    { sides, quantity }: RequiredNumericRollParameters,
+    bonus: RollBonus,
+    { sides, quantity }: RequiredRollParameters,
     rollOne: () => number
-  ): NumericRollBonus {
+  ): RollBonus {
     if (this.options === undefined) return bonus
     if (quantity > sides) {
       throw RollConstraintError.forUniqueRollViolation(sides, quantity)

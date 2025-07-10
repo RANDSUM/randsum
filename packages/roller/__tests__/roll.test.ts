@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { D } from '../src/Dice'
 
 import { roll } from '../src/roll'
 
@@ -7,114 +6,35 @@ const loops = 9999
 
 describe(roll, () => {
   describe('Stress Test', () => {
-    describe('numeric dice', () => {
-      describe('numeric args', () => {
-        const arg = 20
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(individualRoll).toBeLessThanOrEqual(20)
-            expect(individualRoll).toBeGreaterThan(0)
-          })
-        })
-      })
-
-      describe('object args', () => {
-        const arg = { sides: 20 }
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(individualRoll).toBeLessThanOrEqual(20)
-            expect(individualRoll).toBeGreaterThan(0)
-          })
-        })
-      })
-
-      describe('die args', () => {
-        const arg = D(20)
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(individualRoll).toBeLessThanOrEqual(20)
-            expect(individualRoll).toBeGreaterThan(0)
-          })
-        })
-      })
-
-      describe('notation args', () => {
-        const arg = '1d20'
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(individualRoll).toBeLessThanOrEqual(20)
-            expect(individualRoll).toBeGreaterThan(0)
-          })
+    describe(' args', () => {
+      const arg = 20
+      test('it never goes outside of the bounds of the roll', () => {
+        const dummyArray = Array.from({ length: loops }, () => roll(arg).total)
+        dummyArray.forEach((individualRoll) => {
+          expect(individualRoll).toBeLessThanOrEqual(20)
+          expect(individualRoll).toBeGreaterThan(0)
         })
       })
     })
 
-    describe('custom dice', () => {
-      describe('array args', () => {
-        const arg = ['h', 't']
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(['h', 't']).toContain(individualRoll)
-          })
+    describe('object args', () => {
+      const arg = { sides: 20 }
+      test('it never goes outside of the bounds of the roll', () => {
+        const dummyArray = Array.from({ length: loops }, () => roll(arg).total)
+        dummyArray.forEach((individualRoll) => {
+          expect(individualRoll).toBeLessThanOrEqual(20)
+          expect(individualRoll).toBeGreaterThan(0)
         })
       })
+    })
 
-      describe('object args', () => {
-        const arg = { sides: ['h', 't'] }
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(['h', 't']).toContain(individualRoll)
-          })
-        })
-      })
-
-      describe('die args', () => {
-        const arg = D(['h', 't'])
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(['h', 't']).toContain(individualRoll)
-          })
-        })
-      })
-
-      describe('notation args', () => {
-        const arg = '1d{ht}'
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from(
-            { length: loops },
-            () => roll(arg).total
-          )
-          dummyArray.forEach((individualRoll) => {
-            expect(['h', 't']).toContain(individualRoll)
-          })
+    describe('notation args', () => {
+      const arg = '1d20'
+      test('it never goes outside of the bounds of the roll', () => {
+        const dummyArray = Array.from({ length: loops }, () => roll(arg).total)
+        dummyArray.forEach((individualRoll) => {
+          expect(individualRoll).toBeLessThanOrEqual(20)
+          expect(individualRoll).toBeGreaterThan(0)
         })
       })
     })

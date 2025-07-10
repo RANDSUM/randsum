@@ -10,13 +10,13 @@ description: "Core architecture principles for RANDSUM dice system"
 - **Separation of Concerns**: Core rolling → Modifier application → Result formatting
 - **Type Safety**: All operations must be type-safe with proper interfaces
 - **Immutable Data**: Never mutate input data, always return new objects
-- **Discriminated Unions**: Use `type` field for result types (numeric/custom/mixed)
+- **Discriminated Unions**: Use `type` field for result types (/custom/mixed)
 
 ## Key Components
 
-- **Die Classes**: NumericDie and CustomDie extending base Die class
+- **Die Classes**: Die and CustomDie extending base Die class
 - **Modifier System**: Common interface with `apply()` method returning `{rolls, logs}`
-- **Result Types**: NumericRollResult, CustomRollResult with discriminated unions
+- **Result Types**: RollResult, CustomRollResult with discriminated unions
 - **Random Generation**: Centralized `coreRandom()` function
 
 ## Modifier Requirements

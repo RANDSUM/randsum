@@ -31,7 +31,7 @@ roll({
 
 ### Custom-Faced Dice
 
-Roll dice with non-numeric faces:
+Roll dice with non- faces:
 
 ```typescript
 // Roll a coin (heads/tails) four times

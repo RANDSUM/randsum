@@ -66,7 +66,7 @@ export class ModifierConflictError extends RandsumError {
           'Custom dice faces cannot be used with other modifiers'
         )
         suggestions.push(`Remove modifiers: ${otherModifiers.join(', ')}`)
-        suggestions.push('Use standard numeric dice if you need modifiers')
+        suggestions.push('Use standard  dice if you need modifiers')
       }
     }
 

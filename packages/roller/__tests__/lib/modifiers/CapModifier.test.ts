@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { CapModifier } from '../../../src/lib'
-import { createNumericRollBonus } from '../../support/fixtures'
+import { createRollBonus } from '../../support/fixtures'
 
 describe('CapModifier', () => {
   describe('static pattern', () => {
@@ -48,7 +48,7 @@ describe('CapModifier', () => {
   describe('apply', () => {
     test('caps values greater than specified limit', () => {
       const modifier = new CapModifier({ greaterThan: 15 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [10, 20]
       })
 
@@ -66,7 +66,7 @@ describe('CapModifier', () => {
 
     test('caps values less than specified limit', () => {
       const modifier = new CapModifier({ lessThan: 15 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [10, 20]
       })
 
@@ -84,7 +84,7 @@ describe('CapModifier', () => {
 
     test('caps values with both limits', () => {
       const modifier = new CapModifier({ greaterThan: 18, lessThan: 5 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [3, 10, 20]
       })
 
@@ -102,7 +102,7 @@ describe('CapModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new CapModifier(undefined)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [10, 20]
       })
 

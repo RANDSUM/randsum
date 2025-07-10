@@ -2,8 +2,8 @@ import { describe, expect, test } from 'bun:test'
 import { ExplodeModifier } from '../../../src/lib'
 import {
   createMockRollOne,
-  createNumericRollBonus,
-  createRequiredNumericRollParameters
+  createRollBonus,
+  createRequiredRollParameters
 } from '../../support/fixtures'
 
 describe('ExplodeModifier', () => {
@@ -44,10 +44,10 @@ describe('ExplodeModifier', () => {
 
     test('adds additional rolls for maximum values', () => {
       const modifier = new ExplodeModifier(true)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [6, 4]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 2
       })
 
@@ -65,10 +65,10 @@ describe('ExplodeModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new ExplodeModifier(undefined)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [5, 6]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 2
       })
 

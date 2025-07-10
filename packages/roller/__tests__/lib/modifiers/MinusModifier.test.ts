@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { MinusModifier } from '../../../src/lib'
-import { createNumericRollBonus } from '../../support/fixtures'
+import { createRollBonus } from '../../support/fixtures'
 
 describe('MinusModifier', () => {
   describe('static pattern', () => {
@@ -42,7 +42,7 @@ describe('MinusModifier', () => {
   describe('apply', () => {
     test('subtracts value from simpleMathModifier', () => {
       const modifier = new MinusModifier(5)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [10, 15]
       })
 
@@ -60,7 +60,7 @@ describe('MinusModifier', () => {
 
     test('subtracts from existing simpleMathModifier', () => {
       const modifier = new MinusModifier(5)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [10, 15],
         simpleMathModifier: 3
       })
@@ -79,7 +79,7 @@ describe('MinusModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new MinusModifier(undefined)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [10, 15]
       })
 

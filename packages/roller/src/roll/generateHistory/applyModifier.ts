@@ -1,4 +1,4 @@
-import type { ModifierOptions, NumericRollBonus } from '../../types'
+import type { ModifierOptions, RollBonus } from '../../types'
 import {
   CapModifier,
   DropModifier,
@@ -11,9 +11,9 @@ import {
 export function applyModifier(
   key: keyof ModifierOptions,
   modifiers: ModifierOptions,
-  currentBonuses: NumericRollBonus,
+  currentBonuses: RollBonus,
   rollParams: { sides: number; quantity: number; rollOne: () => number }
-): NumericRollBonus {
+): RollBonus {
   const modifierValue = modifiers[key]
   if (modifierValue === undefined) {
     return currentBonuses

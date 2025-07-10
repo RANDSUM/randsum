@@ -1,7 +1,7 @@
 import type {
   ComparisonOptions,
   ModifierOptions,
-  NumericRollBonus,
+  RollBonus,
   ReplaceOptions
 } from '../../types'
 
@@ -61,7 +61,7 @@ export class ReplaceModifier extends BaseModifier<
     return { replace }
   }
 
-  public apply(bonus: NumericRollBonus): NumericRollBonus {
+  public apply(bonus: RollBonus): RollBonus {
     if (this.options === undefined) return bonus
     let replaceRolls = bonus.rolls
     const parameters = [this.options].flat()

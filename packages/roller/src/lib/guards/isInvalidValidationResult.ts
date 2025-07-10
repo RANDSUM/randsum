@@ -1,4 +1,4 @@
-import type { InvalidValidationResult } from '../../../types'
+import type { InvalidValidationResult } from '../../types'
 
 export function isInvalidValidationResult(
   result: unknown
@@ -7,9 +7,7 @@ export function isInvalidValidationResult(
     typeof result === 'object' &&
     result !== null &&
     'valid' in result &&
-    'type' in result &&
     'description' in result &&
-    !result.valid &&
-    result.type === 'invalid'
+    !result.valid
   )
 }

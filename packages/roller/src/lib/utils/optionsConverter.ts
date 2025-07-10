@@ -69,21 +69,6 @@ export class OptionsConverter {
       descriptor = 'dice'
     }
 
-    if (Array.isArray(sides)) {
-      let formattedSides = ''
-      for (const s of sides) {
-        if (s === '') {
-          formattedSides += ' '
-        } else {
-          if (formattedSides.length > 0) {
-            formattedSides += ','
-          }
-          formattedSides += s
-        }
-      }
-      return `${base} ${descriptor} with the following sides: (${formattedSides})`
-    }
-
     return `${base} ${String(sides)}-sided ${descriptor}`
   }
 

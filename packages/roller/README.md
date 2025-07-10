@@ -78,17 +78,17 @@ roll("4d6R{<3}") // 4d6, reroll values below 3
 
 ## Available Dice
 
-- `D4`, `D6`, `D8`, `D10`, `D12`, `D20`, `D100`: Standard numeric dice
+- `D4`, `D6`, `D8`, `D10`, `D12`, `D20`, `D100`: Standard dice
 - `coin`: Two-sided die with 'Heads' and 'Tails'
 - `fudgeDice`: Fate/Fudge dice with +, -, and blank faces
-- `alphaNumDie`: Custom die with alphanumeric faces
+- `alphaNumDie`: Custom die with alpha faces
 
 ## API Reference
 
 ### `D` Class
 
 ```typescript
-// Create numeric die
+// Create  die
 const d20 = D(20)
 d20.roll() // Returns 1-20
 
@@ -145,10 +145,10 @@ roll(
 
 // Different Result Types Examples:
 
-// Numeric Results (type: 'numeric')
-const numericResult = roll("4d6")
+//  Results (type: '')
+const Result = roll("4d6")
 // {
-//   type: 'numeric',
+//   type: '',
 //   result: [3, 4, 5, 2],
 //   total: 14, // number
 //   ...
@@ -165,7 +165,7 @@ const customResult = roll(D(["critical", "hit", "miss"]))
 
 // Mixed Results (type: 'mixed')
 const mixedResult = roll(
-  "2d6", // numeric dice
+  "2d6", //  dice
   D(["hit", "miss"]) // custom dice
 )
 // {

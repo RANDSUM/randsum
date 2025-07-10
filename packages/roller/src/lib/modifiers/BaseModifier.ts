@@ -3,8 +3,8 @@ import type {
   ModifierConfig,
   ModifierLog,
   ModifierOptions,
-  NumericRollBonus,
-  RequiredNumericRollParameters
+  RollBonus,
+  RequiredRollParameters
 } from '../../types'
 
 export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
@@ -15,10 +15,10 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
   }
 
   public abstract apply(
-    bonuses: NumericRollBonus,
-    parameters?: RequiredNumericRollParameters,
+    bonuses: RollBonus,
+    parameters?: RequiredRollParameters,
     rollOne?: () => number
-  ): NumericRollBonus
+  ): RollBonus
 
   public abstract toDescription(): string[] | undefined
 

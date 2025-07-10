@@ -10,7 +10,6 @@ import {
   coreNotationPattern
 } from '../lib'
 import type { DiceNotation, RollOptions } from '../types'
-import { formatSides } from './formatSides'
 
 export function notationToOptions(notationString: DiceNotation): RollOptions {
   const coreNotationMatch =
@@ -18,34 +17,18 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
   const modifiersString = notationString.replace(coreNotationMatch, '')
   const [quantityNot, sidesNot = ''] = coreNotationMatch.split(/[Dd]/)
 
-  const quantity = Number(quantityNot)
-  const sides = formatSides(sidesNot)
-
-  const modifiers = {
-    ...DropModifier.parse(modifiersString),
-    ...ExplodeModifier.parse(modifiersString),
-    ...UniqueModifier.parse(modifiersString),
-    ...ReplaceModifier.parse(modifiersString),
-    ...RerollModifier.parse(modifiersString),
-    ...CapModifier.parse(modifiersString),
-    ...PlusModifier.parse(modifiersString),
-    ...MinusModifier.parse(modifiersString)
-  }
-
-  if (Array.isArray(sides)) {
-    if (Object.keys(modifiers).length > 0) {
-      throw new Error('Custom dice cannot have modifiers')
-    }
-    return {
-      quantity,
-      sides,
-      modifiers: {}
-    }
-  }
-
   return {
-    quantity,
-    sides,
-    modifiers
+    quantity: Number(quantityNot),
+    sides: Number(sidesNot),
+    modifiers: {
+      ...DropModifier.parse(modifiersString),
+      ...ExplodeModifier.parse(modifiersString),
+      ...UniqueModifier.parse(modifiersString),
+      ...ReplaceModifier.parse(modifiersString),
+      ...RerollModifier.parse(modifiersString),
+      ...CapModifier.parse(modifiersString),
+      ...PlusModifier.parse(modifiersString),
+      ...MinusModifier.parse(modifiersString)
+    }
   }
 }

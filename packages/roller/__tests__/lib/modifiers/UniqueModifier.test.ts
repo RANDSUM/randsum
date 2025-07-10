@@ -3,8 +3,8 @@ import { UniqueModifier } from '../../../src/lib'
 import { RandsumError } from '../../../src/lib'
 import {
   createMockRollOne,
-  createNumericRollBonus,
-  createRequiredNumericRollParameters
+  createRollBonus,
+  createRequiredRollParameters
 } from '../../support/fixtures'
 
 describe('UniqueModifier', () => {
@@ -48,10 +48,10 @@ describe('UniqueModifier', () => {
   describe('apply', () => {
     test('ensures all values are unique', () => {
       const modifier = new UniqueModifier(true)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 1]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 3
       })
 
@@ -69,10 +69,10 @@ describe('UniqueModifier', () => {
 
     test('allows specified values to be duplicated', () => {
       const modifier = new UniqueModifier({ notUnique: [1] })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 1, 2]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 4
       })
 
@@ -90,10 +90,10 @@ describe('UniqueModifier', () => {
 
     test('throws RandsumError when more rolls than sides', () => {
       const modifier = new UniqueModifier(true)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 3]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         sides: 2,
         quantity: 3
       })
@@ -105,10 +105,10 @@ describe('UniqueModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new UniqueModifier(undefined)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 1, 2]
       })
-      const params = createRequiredNumericRollParameters({
+      const params = createRequiredRollParameters({
         quantity: 3
       })
 

@@ -1,8 +1,4 @@
-import type {
-  DropOptions,
-  ModifierOptions,
-  NumericRollBonus
-} from '../../types'
+import type { DropOptions, ModifierOptions, RollBonus } from '../../types'
 import { BaseModifier } from './BaseModifier'
 
 export class DropModifier extends BaseModifier<DropOptions> {
@@ -128,7 +124,7 @@ export class DropModifier extends BaseModifier<DropOptions> {
     return {}
   }
 
-  public apply(bonus: NumericRollBonus): NumericRollBonus {
+  public apply(bonus: RollBonus): RollBonus {
     if (this.options === undefined) return bonus
     const { highest, lowest, greaterThan, lessThan, exact } = this.options
 

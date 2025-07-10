@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { ReplaceModifier } from '../../../src/lib'
-import { createNumericRollBonus } from '../../support/fixtures'
+import { createRollBonus } from '../../support/fixtures'
 
 describe('ReplaceModifier', () => {
   describe('static pattern', () => {
@@ -57,7 +57,7 @@ describe('ReplaceModifier', () => {
   describe('apply', () => {
     test('replaces exact values', () => {
       const modifier = new ReplaceModifier({ from: 1, to: 10 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 3, 1]
       })
 
@@ -78,7 +78,7 @@ describe('ReplaceModifier', () => {
         from: { greaterThan: 15 },
         to: 15
       })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [10, 16, 20]
       })
 
@@ -96,7 +96,7 @@ describe('ReplaceModifier', () => {
 
     test('replaces values less than limit', () => {
       const modifier = new ReplaceModifier({ from: { lessThan: 10 }, to: 10 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [5, 10, 15]
       })
 
@@ -117,7 +117,7 @@ describe('ReplaceModifier', () => {
         { from: 1, to: 2 },
         { from: 20, to: 19 }
       ])
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 10, 20]
       })
 
@@ -138,7 +138,7 @@ describe('ReplaceModifier', () => {
 
     test('returns original bonus when options is undefined', () => {
       const modifier = new ReplaceModifier(undefined)
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 10, 20]
       })
 
@@ -148,7 +148,7 @@ describe('ReplaceModifier', () => {
 
     test('handles replacement with empty arrays', () => {
       const modifier = new ReplaceModifier([])
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 3]
       })
 
@@ -170,7 +170,7 @@ describe('ReplaceModifier', () => {
         { from: 1, to: 6 },
         { from: 2, to: 5 }
       ])
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 2, 3]
       })
 
@@ -195,7 +195,7 @@ describe('ReplaceModifier', () => {
         { from: 100, to: 1 },
         { from: 1, to: 100 }
       ])
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 6, 100]
       })
 
@@ -220,7 +220,7 @@ describe('ReplaceModifier', () => {
         { from: { lessThan: 3 }, to: 3 },
         { from: 10, to: 11 }
       ])
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: [1, 10, 20, 15, 2]
       })
 
@@ -243,7 +243,7 @@ describe('ReplaceModifier', () => {
     test('performance with large datasets', () => {
       const largeRolls = Array.from({ length: 1000 }, (_, i) => (i % 20) + 1)
       const modifier = new ReplaceModifier({ from: 1, to: 21 })
-      const bonus = createNumericRollBonus({
+      const bonus = createRollBonus({
         rolls: largeRolls
       })
 

@@ -1,8 +1,8 @@
 import type {
   ModifierLog,
   ModifierOptions,
-  NumericRollBonus,
-  RequiredNumericRollParameters,
+  RollBonus,
+  RequiredRollParameters,
   RerollOptions
 } from '../../types'
 import { BaseModifier } from './BaseModifier'
@@ -75,10 +75,10 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
   }
 
   public apply(
-    bonus: NumericRollBonus,
-    _params: undefined | RequiredNumericRollParameters,
+    bonus: RollBonus,
+    _params: undefined | RequiredRollParameters,
     rollOne: () => number
-  ): NumericRollBonus {
+  ): RollBonus {
     const options = this.options
     if (options === undefined) return bonus
 

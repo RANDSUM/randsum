@@ -37,7 +37,7 @@ import type { RootResult } from "@randsum/root-rpg"
 // Basic roll with modifier
 const [outcome, details] = rollRootRpg(2)
 // outcome: 'Strong Hit' | 'Weak Hit' | 'Miss'
-// details: Contains the numeric roll result
+// details: Contains the  roll result
 
 // Type-safe result handling
 const [result] = rollRootRpg(0)
@@ -58,10 +58,10 @@ switch (result) {
 
 ### `rollRootRpg`
 
-Makes a 2d6 roll following Root RPG rules, returning both the interpreted result and the numeric details.
+Makes a 2d6 roll following Root RPG rules, returning both the interpreted result and the details.
 
 ```typescript
-function rollRootRpg(bonus: number): [RootResult, NumericRollResult]
+function rollRootRpg(bonus: number): [RootResult, RollResult]
 ```
 
 ```typescript

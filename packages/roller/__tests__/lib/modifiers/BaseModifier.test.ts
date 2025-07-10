@@ -1,13 +1,13 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { BaseModifier } from '../../../src/lib'
-import type { ModifierLog, NumericRollBonus } from '../../../src/types'
+import type { ModifierLog, RollBonus } from '../../../src/types'
 
 class TestModifier extends BaseModifier<number> {
   public static override parse = mock((_modifierString: string) => {
     return {}
   })
 
-  public apply(bonus: NumericRollBonus): NumericRollBonus {
+  public apply(bonus: RollBonus): RollBonus {
     if (!this.options) return bonus
     return { ...bonus, simpleMathModifier: this.options }
   }
@@ -34,7 +34,7 @@ class TestModifier extends BaseModifier<number> {
 }
 
 class ErrorThrowingModifier extends BaseModifier<boolean> {
-  public apply(): NumericRollBonus {
+  public apply(): RollBonus {
     throw new Error('Test error in apply method')
   }
 
@@ -77,7 +77,7 @@ describe('BaseModifier', () => {
   describe('apply', () => {
     test('concrete implementation can apply modifications', () => {
       const modifier = new TestModifier(5)
-      const bonus: NumericRollBonus = {
+      const bonus: RollBonus = {
         rolls: [1, 2],
         simpleMathModifier: 0,
         logs: []
@@ -89,7 +89,7 @@ describe('BaseModifier', () => {
 
     test('concrete implementation handles undefined options', () => {
       const modifier = new TestModifier(undefined)
-      const bonus: NumericRollBonus = {
+      const bonus: RollBonus = {
         rolls: [1, 2],
         simpleMathModifier: 0,
         logs: []

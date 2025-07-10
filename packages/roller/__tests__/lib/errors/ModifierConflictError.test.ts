@@ -142,7 +142,7 @@ describe('ModifierConflictError', () => {
       )
       expect(error.suggestions).toContain('Remove modifiers: H, L')
       expect(error.suggestions).toContain(
-        'Use standard numeric dice if you need modifiers'
+        'Use standard  dice if you need modifiers'
       )
     })
 

@@ -1,58 +1,19 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type {
-  CustomRollParams,
-  CustomRollResult,
   ModifierOptions,
-  NumericRollBonus,
-  NumericRollOptions,
-  NumericRollParams,
-  NumericRollResult,
+  RollBonus,
   RollParams,
   RollResult
 } from '../../types'
-import { coreRandom, isCustomRollParams } from '../../lib'
+import { coreRandom } from '../../lib'
 import { calculateTotal } from '../utils/calculateTotal'
 import { applyModifier } from './applyModifier'
 
 export function generateHistory(
-  parameters: CustomRollParams,
-  rolls: CustomRollResult['history']['initialRolls']
-): CustomRollResult['history']
-export function generateHistory(
-  parameters: NumericRollParams,
-  rolls: NumericRollResult['history']['initialRolls']
-): NumericRollResult['history']
-export function generateHistory(
-  parameters: NumericRollParams | CustomRollParams,
-  rolls:
-    | NumericRollResult['history']['initialRolls']
-    | CustomRollResult['history']['initialRolls']
-): NumericRollResult['history'] | CustomRollResult['history']
-export function generateHistory(
   parameters: RollParams,
   rolls: RollResult['history']['initialRolls']
 ): RollResult['history'] {
-  if (
-    isCustomRollParams(parameters) &&
-    rolls.every((n) => typeof n === 'string')
-  ) {
-    return {
-      total: calculateTotal(rolls),
-      modifiedRolls: rolls,
-      initialRolls: rolls,
-      logs: []
-    }
-  }
-
-  if (!rolls.every((n) => typeof n === 'number')) {
-    throw new Error('Mixed rolls are not supported yet')
-  }
-
-  const {
-    sides,
-    quantity = 1,
-    modifiers = {}
-  } = parameters.options as NumericRollOptions
+  const { sides, quantity = 1, modifiers = {} } = parameters.options
 
   const hasModifiers =
     modifiers.reroll ||
@@ -77,7 +38,7 @@ export function generateHistory(
 
   const rollParams = { sides, quantity, rollOne }
 
-  const bonuses: NumericRollBonus = {
+  const bonuses: RollBonus = {
     simpleMathModifier: 0,
     rolls: rolls.map((n) => Number(n)),
     logs: []

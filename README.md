@@ -120,7 +120,7 @@ When I found the answer, I laughed and laughed. I've been chasing that high ever
 
 ## LLM Statement
 
-I love this thing we call programming. It seems as if (biiiiig scare quotes) "AI" might be a part of it moving forward. You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work. I care deeply about it, and there is no better way for me to understand this weird new tool and their place in my craft than to use them here. Is this profane? I don't know. We'll have to see the extent to which I come to regret/resent/respect this decision in the coming years together. 
+I love this thing we call programming. It seems as if (biiiiig scare quotes) "AI" might be a part of it moving forward. You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work. I care deeply about it, and there is no better way for me to understand this weird new tool and their place in my craft than to use them here. Is this profane? I don't know. We'll have to see the extent to which I come to regret/resent/respect this decision in the coming years together.
 
 Check the git history of this paragraph for a makeshift changelog of my evolving feelings on the subject.
 
