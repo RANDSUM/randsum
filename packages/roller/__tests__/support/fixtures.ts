@@ -1,6 +1,5 @@
 import type {
   CustomRollOptions,
-  ErrorContext,
   NumericRollBonus,
   NumericRollOptions,
   RequiredNumericRollParameters
@@ -43,17 +42,6 @@ export function createRequiredNumericRollParameters(
   return {
     sides: 6,
     quantity: 1,
-    ...overrides
-  }
-}
-
-export function createErrorContext(
-  overrides: Partial<ErrorContext> = {}
-): ErrorContext {
-  return {
-    input: 'test-input',
-    expected: 'test-expected',
-    location: 'test-location',
     ...overrides
   }
 }

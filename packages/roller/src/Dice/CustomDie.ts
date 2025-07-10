@@ -1,4 +1,4 @@
-import { RandsumError, coreSpreadRolls } from '../lib'
+import { coreSpreadRolls } from '../lib'
 import { roll } from '../roll'
 import type {
   CustomDieInterface,
@@ -15,19 +15,7 @@ export class CustomDie extends DieBase implements CustomDieInterface {
 
   constructor(faces: string[]) {
     if (!faces.length) {
-      throw new RandsumError(
-        'Custom die must have at least one face',
-        'INVALID_DIE_CONFIG',
-        {
-          input: faces,
-          expected: 'Array with at least one face value'
-        },
-        [
-          'Provide at least one face value: ["H", "T"] for a coin',
-          'Use standard dice like D6 if you need numbered faces',
-          'Custom faces must be non-empty strings'
-        ]
-      )
+      throw new Error('Custom die must have at least one face')
     }
     super(faces.length)
     this.faces = [...faces]

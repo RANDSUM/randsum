@@ -41,7 +41,9 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
   ): NumericRollBonus {
     if (this.options === undefined) return bonus
     if (quantity > sides) {
-      throw Error('Cannot have more rolls than sides when unique is enabled')
+      throw new Error(
+        'Cannot have more rolls than sides when unique is enabled'
+      )
     }
     const notUnique = this.generateNotUniqueArray()
 
