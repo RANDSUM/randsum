@@ -1,8 +1,11 @@
-import type { ModifierOptions, NumericRollBonus } from '../../types'
-import { BaseModifier } from './BaseModifier'
+import type { ModifierOptions } from '../../types'
+import { ArithmeticModifier } from './ArithmeticModifier'
 
-export class MinusModifier extends BaseModifier<number> {
+export class MinusModifier extends ArithmeticModifier {
   public static readonly pattern: RegExp = /-\d+/g
+  protected readonly operator = '-' as const
+  protected readonly operatorName = 'minus' as const
+  protected readonly actionVerb = 'Subtract' as const
 
   public static override parse = (
     modifiersString: string
@@ -21,30 +24,5 @@ export class MinusModifier extends BaseModifier<number> {
     return {
       minus: Math.abs(minus)
     }
-  }
-
-  public apply(bonus: NumericRollBonus): NumericRollBonus {
-    if (!this.options) return bonus
-
-    const logs = [
-      ...bonus.logs,
-      this.toModifierLog('minus', [], [-this.options])
-    ]
-
-    return {
-      rolls: bonus.rolls,
-      simpleMathModifier: -this.options,
-      logs
-    }
-  }
-
-  public toDescription = (): string[] | undefined => {
-    if (!this.options) return undefined
-    return [`Subtract ${String(this.options)}`]
-  }
-
-  public toNotation = (): string | undefined => {
-    if (!this.options) return undefined
-    return `-${String(this.options)}`
   }
 }
