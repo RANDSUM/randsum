@@ -1,7 +1,7 @@
 {
   "name": "@randsum/robo",
   "description": "A Discord Bot and Activity for Rolling Dice",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "private": true,
   "keywords": [
@@ -32,12 +32,6 @@
     "upgrade": "sage upgrade"
   },
   "dependencies": {
-    "@randsum/daggerheart": "latest",
-    "@randsum/roller": "latest",
-    "@randsum/blades": "latest",
-    "@randsum/fifth": "latest",
-    "@randsum/root-rpg": "latest",
-    "@randsum/salvageunion": "latest",
     "@discord/embedded-app-sdk": "^1.9.0",
     "@robojs/patch": "^0.2.1",
     "robo.js": "^0.10.30",

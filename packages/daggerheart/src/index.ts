@@ -1,3 +1,3 @@
-export * from './meetOrBeat'
-export * from './roll'
+export * from './meetOrBeatDaggerheart'
+export * from './rollDaggerheart'
 export type * from './types'

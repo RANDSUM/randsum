@@ -1,8 +1,11 @@
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
 import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
-import type { Hit, TableName } from '@randsum/salvageunion'
-import { AllRollTables, roll } from '@randsum/salvageunion'
+import type {
+  SalvageUnionHit,
+  SalvageUnionTableName
+} from '@randsum/salvageunion'
+import { AllRollTables, rollTable } from '@randsum/salvageunion'
 import { embedFooterDetails } from '../core/constants'
 
 const suChoices = Object.keys(AllRollTables).map((table) => ({
@@ -23,7 +26,7 @@ export const config: CommandConfig = {
   ]
 }
 
-function getColor(type: Hit): number {
+function getColor(type: SalvageUnionHit): number {
   switch (type) {
     case 'Nailed It':
       return Colors.Green
@@ -38,8 +41,8 @@ function getColor(type: Hit): number {
   }
 }
 
-export function buildEmbed(table: TableName): APIEmbed {
-  const [{ label, description, hit }, total] = roll(table)
+export function buildEmbed(table: SalvageUnionTableName): APIEmbed {
+  const { hit, label, description, roll: total } = rollTable(table)
 
   return new EmbedBuilder()
     .setTitle(`${String(total)} - __**${label}**__`)
@@ -54,7 +57,8 @@ export default async (
   interaction: ChatInputCommandInteraction,
   { table }: CommandOptions<typeof config>
 ): Promise<CommandResult> => {
-  const tableName: TableName = (table ?? 'Core Mechanic') as TableName
+  const tableName: SalvageUnionTableName = (table ??
+    'Core Mechanic') as SalvageUnionTableName
 
   await interaction.reply({ embeds: [buildEmbed(tableName)] })
 }

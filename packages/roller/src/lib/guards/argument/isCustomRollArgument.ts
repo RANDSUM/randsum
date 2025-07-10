@@ -1,7 +1,7 @@
-import type { CustomRollArgument } from '../../types'
-import { isCustomDiceNotation } from './isCustomDiceNotation'
-import { isCustomRollOptions } from './isCustomRollOptions'
-import { isD } from './isD'
+import type { CustomRollArgument } from '../../../types'
+import { isCustomDiceNotation } from '../notation/isCustomDiceNotation'
+import { isCustomRollOptions } from '../options/isCustomRollOptions'
+import { isD } from '../isD'
 
 export function isCustomRollArgument(
   argument: unknown

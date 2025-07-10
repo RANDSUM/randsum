@@ -1,7 +1,7 @@
-import type { NumericRollArgument } from '../../types'
-import { isD } from './isD'
-import { isNumericDiceNotation } from './isNumericDiceNotation'
-import { isNumericRollOptions } from './isNumericRollOptions'
+import type { NumericRollArgument } from '../../../types'
+import { isD } from '../isD'
+import { isNumericDiceNotation } from '../notation/isNumericDiceNotation'
+import { isNumericRollOptions } from '../options/isNumericRollOptions'
 
 export function isNumericRollArgument(
   argument: unknown

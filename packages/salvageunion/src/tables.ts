@@ -1,6 +1,6 @@
-import type { TableName, TableType } from './types'
+import type { SalvageUnionTableName, SalvageUnionTableType } from './types'
 
-export const NPCActionTable: TableType = {
+export const NPCActionTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Nailed It',
     description:
@@ -28,7 +28,7 @@ export const NPCActionTable: TableType = {
   }
 }
 
-export const NPCReactionTable: TableType = {
+export const NPCReactionTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Actively Friendly and Helpful',
     description:
@@ -56,7 +56,7 @@ export const NPCReactionTable: TableType = {
   }
 }
 
-export const NPMoraleTable: TableType = {
+export const NPMoraleTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Fight to the Death',
     description:
@@ -82,7 +82,7 @@ export const NPMoraleTable: TableType = {
   }
 }
 
-export const CoreMechanicTable: TableType = {
+export const CoreMechanicTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Nailed It',
     description:
@@ -110,7 +110,7 @@ export const CoreMechanicTable: TableType = {
   }
 }
 
-export const GroupInitiativeTable: TableType = {
+export const GroupInitiativeTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'You shot first',
     description:
@@ -138,7 +138,7 @@ export const GroupInitiativeTable: TableType = {
   }
 }
 
-export const RetreatTable: TableType = {
+export const RetreatTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Perfect Escape',
     description:
@@ -166,7 +166,7 @@ export const RetreatTable: TableType = {
   }
 }
 
-export const CriticalDamageTable: TableType = {
+export const CriticalDamageTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Miraculous Survival',
     description:
@@ -194,7 +194,7 @@ export const CriticalDamageTable: TableType = {
   }
 }
 
-export const CriticalInjuryTable: TableType = {
+export const CriticalInjuryTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Miraculous Survival',
     description:
@@ -221,7 +221,7 @@ export const CriticalInjuryTable: TableType = {
   }
 }
 
-export const ReactorOverloadTable: TableType = {
+export const ReactorOverloadTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Reactor Overdrive',
     description:
@@ -249,7 +249,7 @@ export const ReactorOverloadTable: TableType = {
   }
 }
 
-export const AreaSalvageTable: TableType = {
+export const AreaSalvageTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: 'Jackpot!',
     description:
@@ -273,7 +273,7 @@ export const AreaSalvageTable: TableType = {
   }
 }
 
-export const MechSalvageTable: TableType = {
+export const MechSalvageTable: SalvageUnionTableType = {
   ['Nailed It']: {
     label: "Lion's Share",
     description:
@@ -300,13 +300,17 @@ export const MechSalvageTable: TableType = {
       'The Mech is unsalvageable: its Chassis, Systems and Modules are all considered destroyed.'
   }
 }
-export const NPCTables: Partial<Record<TableName, TableType>> = {
+export const NPCTables: Partial<
+  Record<SalvageUnionTableName, SalvageUnionTableType>
+> = {
   ['NPC Action']: NPCActionTable,
   ['Reaction']: NPCReactionTable,
   ['Morale']: NPMoraleTable
 }
 
-export const PCTables: Partial<Record<TableName, TableType>> = {
+export const PCTables: Partial<
+  Record<SalvageUnionTableName, SalvageUnionTableType>
+> = {
   ['Group Initiative']: GroupInitiativeTable,
   ['Retreat']: RetreatTable,
   ['Critical Damage']: CriticalDamageTable,
@@ -317,7 +321,7 @@ export const PCTables: Partial<Record<TableName, TableType>> = {
 }
 
 export const RollTables: {
-  ['Core Mechanic']: TableType
+  ['Core Mechanic']: SalvageUnionTableType
   pc: typeof PCTables
   npc: typeof NPCTables
 } = {
@@ -326,7 +330,10 @@ export const RollTables: {
   npc: NPCTables
 }
 
-export const AllRollTables: Record<TableName, TableType> = {
+export const AllRollTables: Record<
+  SalvageUnionTableName,
+  SalvageUnionTableType
+> = {
   ['Core Mechanic']: CoreMechanicTable,
   ['NPC Action']: NPCActionTable,
   ['Reaction']: NPCReactionTable,

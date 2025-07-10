@@ -1,4 +1,4 @@
-import type { CustomRollParams, RollParams } from '../../types'
+import type { CustomRollParams, RollParams } from '../../../types'
 
 export function isCustomRollParams(
   poolParameters: unknown

@@ -1,5 +1,13 @@
-export type StrongHit = 'Strong Hit'
-export type WeakHit = 'Weak Hit'
-export type Miss = 'Miss'
+import type { NumericRollResult } from '@randsum/roller'
 
-export type Result = StrongHit | WeakHit | Miss
+export type RootRpgStrongHit = 'Strong Hit'
+export type RootRpgWeakHit = 'Weak Hit'
+export type RootRpgMiss = 'Miss'
+
+export type RootRpgResult = RootRpgStrongHit | RootRpgWeakHit | RootRpgMiss
+
+export interface RootRpgRollResult {
+  outcome: RootRpgResult
+  roll: number
+  result: NumericRollResult
+}

@@ -1,5 +1,5 @@
-import type { NumericRollOptions, RollOptions } from '../../types'
-import { isD } from './isD'
+import type { NumericRollOptions, RollOptions } from '../../../types'
+import { isD } from '../isD'
 
 export function isNumericRollOptions(
   options: unknown
