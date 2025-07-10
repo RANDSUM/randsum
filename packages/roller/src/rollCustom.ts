@@ -1,15 +1,17 @@
 import { roll } from './roll'
 import type { CustomRollArgument, CustomRollResult } from './types'
 
-export function rollCustom<T>(arg: CustomRollArgument<T>): CustomRollResult<T> {
+export function rollCustom<T>(
+  faces: CustomRollArgument<T>
+): CustomRollResult<T> {
   const baseResult = roll({
-    sides: arg.length,
+    sides: faces.length,
     quantity: 1
   })
 
-  const result = arg[baseResult.total - 1]
+  const result = faces[baseResult.total - 1]
 
-  if (!result) {
+  if (result === undefined) {
     throw new Error('Failed to properly roll.')
   }
 
