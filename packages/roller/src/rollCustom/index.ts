@@ -1,11 +1,11 @@
 import { roll } from '../roll'
 import type { CustomRollArgument, CustomRollResult } from '../types'
-import { argToOptions } from './argToOptions'
+import { argToOption } from './argToOption'
 
 export default function rollCustom<T>(
   arg: CustomRollArgument<T>
 ): CustomRollResult<T> {
-  const { faces, quantity } = argToOptions(arg)
+  const { faces, quantity } = argToOption(arg)
 
   const result = roll({
     sides: faces.length,

@@ -1,10 +1,10 @@
 import type { CustomRollArgument, CustomRollOptions } from '../types'
 
-export function argToOptions<T>(
+export function argToOption<T>(
   arg: CustomRollArgument<T>
 ): CustomRollOptions<T> {
   if (Array.isArray(arg)) {
-    return { faces: arg, quantity: 1 }
+    return { faces: arg }
   }
-  return { quantity: 1, ...arg }
+  return { ...arg }
 }
