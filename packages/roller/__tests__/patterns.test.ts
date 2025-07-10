@@ -10,10 +10,6 @@ describe('coreNotationPattern', () => {
       '100d100',
       '1D6',
       '2D20',
-      '1d{abc}',
-      '2d{ht}',
-      '3d{123}',
-      '1d{!@#$%^&*()}',
       '999d999'
     ]
 
@@ -60,7 +56,7 @@ describe('coreNotationPattern', () => {
     })
 
     it('does not match in the middle of string without anchor', () => {
-      const pattern = /\d+[Dd](\d+|{.*})/
+      const pattern = /\d+[Dd]\d+/
       expect(pattern.test('roll 1d6 please')).toBe(true)
       expect(coreNotationPattern.test('roll 1d6 please')).toBe(false)
     })
@@ -81,9 +77,7 @@ describe('completeRollPattern', () => {
       '3d6H2',
       '2d6-1',
       '4d6L1',
-      '1d20+5-2',
-      '2d{abc}',
-      '1d{ht}'
+      '1d20+5-2'
     ]
 
     completeNotations.forEach((notation) => {
@@ -157,49 +151,6 @@ describe('completeRollPattern', () => {
 
       expect(result).toBe(true)
       expect(endTime - startTime).toBeLessThan(50)
-    })
-  })
-})
-
-describe('pattern integration', () => {
-  describe('core and complete pattern consistency', () => {
-    const testNotations = [
-      { notation: '1d6', shouldMatch: false },
-      { notation: '3d{abc}', shouldMatch: true },
-      { notation: '10d10', shouldMatch: false }
-    ]
-
-    testNotations.forEach(({ notation, shouldMatch }) => {
-      it(`core and complete pattern behavior for: ${notation}`, () => {
-        const coreMatches = coreNotationPattern.test(notation)
-        const completeMatches = completeRollPattern.test(notation)
-
-        expect(coreMatches).toBe(true)
-        expect(completeMatches).toBe(shouldMatch)
-      })
-    })
-  })
-
-  describe('pattern behavior differences', () => {
-    it('explains why some core matches may not match complete pattern', () => {
-      const testCase = '2d20'
-      const coreMatches = coreNotationPattern.test(testCase)
-      const completeMatches = completeRollPattern.test(testCase)
-
-      expect(coreMatches).toBe(true)
-
-      expect(typeof completeMatches).toBe('boolean')
-    })
-  })
-
-  describe('pattern extraction consistency', () => {
-    it('extracts the same core notation from complex strings', () => {
-      const complexNotation = '2d6+3L1'
-      const coreMatch = complexNotation.match(coreNotationPattern)?.[0]
-      const completeMatches = complexNotation.match(completeRollPattern)
-
-      expect(coreMatch).toBe('2d6')
-      expect(completeMatches).toContain('2d6')
     })
   })
 })

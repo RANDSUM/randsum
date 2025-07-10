@@ -32,11 +32,6 @@ export class OptionsConverter {
 
   private get coreNotation(): string {
     const { quantity = 1, sides } = this.options
-
-    if (Array.isArray(sides)) {
-      return `${String(quantity)}d{${sides.join('')}}`
-    }
-
     return `${String(quantity)}d${String(sides)}`
   }
 

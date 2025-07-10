@@ -258,7 +258,7 @@ Access via dice-notation-docs resource for comprehensive syntax guide
 • 2d20H - Advantage roll (keep highest)
 • 3d6! - Exploding damage dice
 • 4d6R{1}+3 - Reroll 1s, add modifier
-• 2d{🎭🗡️🏰} - Narrative story elements`
+• 1d100+10 - Percentile roll with modifier`
   })
 
   server.tool(
