@@ -2,8 +2,8 @@ import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
 import { embedFooterDetails } from '../core/constants'
 
-import type { Result } from '@randsum/root-rpg'
-import { roll } from '@randsum/root-rpg'
+import type { RootRpgResult } from '@randsum/root-rpg'
+import { rollRoot } from '@randsum/root-rpg'
 import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 
 export const config: CommandConfig = {
@@ -19,7 +19,7 @@ export const config: CommandConfig = {
   ]
 }
 
-const getColor = (type: Result): number => {
+const getColor = (type: RootRpgResult): number => {
   switch (type) {
     case 'Strong Hit':
       return Colors.Green
@@ -41,7 +41,7 @@ const getExplanation = (modifier: number, username: string): string[] => {
   return [`${username} rolled 2d6`, `and added ${String(modifier)}`]
 }
 
-const getSuccessString = (type: Result): string[] => {
+const getSuccessString = (type: RootRpgResult): string[] => {
   switch (type) {
     case 'Strong Hit':
       return [
@@ -81,7 +81,7 @@ export function handleroll(modifierArg: string, memberNick = 'User'): APIEmbed {
     memberNick
   )
 
-  const [hit, result] = roll(modifier)
+  const { outcome: hit, result } = rollRoot(modifier)
   const [successTitle, successValue] = getSuccessString(hit)
   const color = getColor(hit)
   const thumbnail = getThumbnail(result.total)

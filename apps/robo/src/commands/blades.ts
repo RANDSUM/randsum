@@ -112,7 +112,7 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     memberNick || 'User'
   )
 
-  const [hit, result] = roll(quantity)
+  const { outcome: hit, result } = roll(quantity)
   const [successTitle, successValue] = getSuccessString(hit)
 
   return new EmbedBuilder()
