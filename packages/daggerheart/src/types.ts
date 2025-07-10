@@ -1,15 +1,15 @@
-export type DHAdvantageDisadvantage = 'Advantage' | 'Disadvantage'
-export interface DHRollArgument {
+export type DaggerheartAdvantageDisadvantage = 'Advantage' | 'Disadvantage'
+export interface DaggerheartRollArgument {
   modifier?: number
-  rollingWith?: DHAdvantageDisadvantage
+  rollingWith?: DaggerheartAdvantageDisadvantage
   amplifyHope?: boolean
   amplifyFear?: boolean
 }
 
-export type DHRollResultType = 'hope' | 'fear' | 'critical hope'
+export type DaggerheartRollResultType = 'hope' | 'fear' | 'critical hope'
 
-export interface DHRollResult {
-  type: DHRollResultType
+export interface DaggerheartRollResult {
+  type: DaggerheartRollResultType
   total: number
   rolls: {
     hope: number
@@ -19,7 +19,7 @@ export interface DHRollResult {
   }
 }
 
-export interface DHMeetOrBeatResult extends DHRollResult {
+export interface DaggerheartMeetOrBeatResult extends DaggerheartRollResult {
   success: boolean
   target: number
   description: string

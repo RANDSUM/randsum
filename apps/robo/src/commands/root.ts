@@ -3,7 +3,7 @@ import { Colors, EmbedBuilder } from 'discord.js'
 import { embedFooterDetails } from '../core/constants'
 
 import type { RootRpgResult } from '@randsum/root-rpg'
-import { rollRoot } from '@randsum/root-rpg'
+import { rollRootRpg } from '@randsum/root-rpg'
 import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 
 export const config: CommandConfig = {
@@ -81,7 +81,7 @@ export function handleroll(modifierArg: string, memberNick = 'User'): APIEmbed {
     memberNick
   )
 
-  const { outcome: hit, result } = rollRoot(modifier)
+  const { outcome: hit, result } = rollRootRpg(modifier)
   const [successTitle, successValue] = getSuccessString(hit)
   const color = getColor(hit)
   const thumbnail = getThumbnail(result.total)

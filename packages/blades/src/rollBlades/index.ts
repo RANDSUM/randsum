@@ -3,7 +3,7 @@ import type { BladesRollResult } from '../types'
 import { generateOptions } from './generateOptions'
 import { interpretHit } from './interpretHit'
 
-export function roll(count: number): BladesRollResult {
+export function rollBlades(count: number): BladesRollResult {
   const canCrit = count > 0
 
   const result = coreRoll(generateOptions(count, canCrit))

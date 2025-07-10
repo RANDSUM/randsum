@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
-import { roll } from '../src/roll'
+import { rollBlades } from '../src/rollBlades'
 
 describe('roll', () => {
   describe('return type', () => {
     test('returns a tuple of [BladesResult, NumericRollResult]', () => {
-      const { outcome, result } = roll(2)
+      const { outcome, result } = rollBlades(2)
       expect(typeof outcome).toBe('string')
       expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
       expect(result).toHaveProperty('total')
@@ -13,7 +13,7 @@ describe('roll', () => {
 
   describe('dice pool sizes', () => {
     test('handles single die (desperate position)', () => {
-      const { outcome, result } = roll(1)
+      const { outcome, result } = rollBlades(1)
       expect(['success', 'partial', 'failure']).toContain(outcome)
       expect(result.history.initialRolls).toHaveLength(1)
       expect(result.total).toBeGreaterThanOrEqual(1)
@@ -21,7 +21,7 @@ describe('roll', () => {
     })
 
     test('handles two dice (risky position)', () => {
-      const { outcome, result } = roll(2)
+      const { outcome, result } = rollBlades(2)
       expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
       expect(result.history.initialRolls).toHaveLength(2)
       expect(result.total).toBeGreaterThanOrEqual(2)
@@ -29,7 +29,7 @@ describe('roll', () => {
     })
 
     test('handles three dice (controlled position)', () => {
-      const { outcome, result } = roll(3)
+      const { outcome, result } = rollBlades(3)
       expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
       expect(result.history.initialRolls).toHaveLength(3)
       expect(result.total).toBeGreaterThanOrEqual(3)
@@ -41,7 +41,7 @@ describe('roll', () => {
     const loops = 100
 
     test('returns consistent results across multiple rolls', () => {
-      const results = Array.from({ length: loops }, () => roll(2))
+      const results = Array.from({ length: loops }, () => rollBlades(2))
 
       results.forEach(({ outcome, result }) => {
         expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)

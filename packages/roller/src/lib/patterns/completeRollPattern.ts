@@ -10,7 +10,7 @@ import {
 } from '../modifiers'
 import { coreNotationPattern } from './coreNotationPattern'
 
-export const completeRollPattern = new RegExp(
+export const completeRollPattern: RegExp = new RegExp(
   [
     coreNotationPattern.source,
     DropModifier.highestPattern.source,
@@ -25,4 +25,4 @@ export const completeRollPattern = new RegExp(
     MinusModifier.pattern.source
   ].join('|'),
   'g'
-)
+) satisfies RegExp

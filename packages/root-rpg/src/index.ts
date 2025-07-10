@@ -1,2 +1,2 @@
-export * from './rollRoot'
+export * from './rollRootRpg'
 export type * from './types'

@@ -1,5 +1,5 @@
 import type { BladesResult } from '@randsum/blades'
-import { roll } from '@randsum/blades'
+import { rollBlades } from '@randsum/blades'
 import type { NumericRollResult } from '@randsum/roller'
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
@@ -112,7 +112,7 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     memberNick || 'User'
   )
 
-  const { outcome: hit, result } = roll(quantity)
+  const { outcome: hit, result } = rollBlades(quantity)
   const [successTitle, successValue] = getSuccessString(hit)
 
   return new EmbedBuilder()

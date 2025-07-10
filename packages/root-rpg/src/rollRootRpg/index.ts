@@ -2,7 +2,7 @@ import { roll as coreRoll } from '@randsum/roller'
 import type { RootRpgRollResult } from '../types'
 import { interpretResult } from './interpretResult'
 
-export function rollRoot(bonus: number): RootRpgRollResult {
+export function rollRootRpg(bonus: number): RootRpgRollResult {
   const args = {
     quantity: 2,
     sides: 6,

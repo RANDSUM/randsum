@@ -1,26 +1,26 @@
 import { describe, expect, test } from 'bun:test'
-import { rollRoot } from '../src/rollRoot'
+import { rollRootRpg } from '../src/rollRootRpg'
 
-describe(rollRoot, () => {
+describe(rollRootRpg, () => {
   describe('return type', () => {
     test('returns a tuple of [RootResult, NumericRollResult]', () => {
-      const { outcome, result } = rollRoot(0)
+      const { outcome, result } = rollRootRpg(0)
       expect(typeof outcome).toBe('string')
       expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(outcome)
       expect(result).toHaveProperty('total')
     })
   })
 
-  describe('rollRoot ranges', () => {
+  describe('rollRootRpg ranges', () => {
     test('returns outcome within valid range (2d6 + modifier)', () => {
       const bonus = 2
-      const { result } = rollRoot(bonus)
+      const { result } = rollRootRpg(bonus)
       expect(result.total).toBeGreaterThanOrEqual(2 + bonus)
       expect(result.total).toBeLessThanOrEqual(12 + bonus)
     })
 
     test('returns two dice results', () => {
-      const { result } = rollRoot(0)
+      const { result } = rollRootRpg(0)
       expect(result.history.initialRolls).toHaveLength(2)
     })
   })
@@ -28,9 +28,9 @@ describe(rollRoot, () => {
   describe('modifiers', () => {
     test('correctly applies positive modifier', () => {
       const bonus = 3
-      const { result } = rollRoot(bonus)
+      const { result } = rollRootRpg(bonus)
       const rawTotal = result.history.initialRolls.reduce(
-        (sum, rollRoot) => sum + rollRoot,
+        (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
       expect(result.total).toBe(rawTotal + bonus)
@@ -38,18 +38,18 @@ describe(rollRoot, () => {
 
     test('correctly applies negative modifier', () => {
       const bonus = -2
-      const { result } = rollRoot(bonus)
+      const { result } = rollRootRpg(bonus)
       const rawTotal = result.history.initialRolls.reduce(
-        (sum, rollRoot) => sum + rollRoot,
+        (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
       expect(result.total).toBe(rawTotal + bonus)
     })
 
     test('handles zero modifier', () => {
-      const { result } = rollRoot(0)
+      const { result } = rollRootRpg(0)
       const rawTotal = result.history.initialRolls.reduce(
-        (sum, rollRoot) => sum + rollRoot,
+        (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
       expect(result.total).toBe(rawTotal)
@@ -59,7 +59,7 @@ describe(rollRoot, () => {
   const loops = 9999
   describe('outcome interpretation', () => {
     test('returns Proper results', () => {
-      const dummyArray = Array.from({ length: loops }, () => rollRoot(0))
+      const dummyArray = Array.from({ length: loops }, () => rollRootRpg(0))
 
       dummyArray.forEach(({ outcome, result }) => {
         if (outcome === 'Strong Hit') {
@@ -81,14 +81,14 @@ describe(rollRoot, () => {
   describe('edge cases', () => {
     test('handles extremely large positive modifiers', () => {
       const bonus = 1000
-      const { outcome, result } = rollRoot(bonus)
+      const { outcome, result } = rollRootRpg(bonus)
       expect(outcome).toBe('Strong Hit')
       expect(result.total).toBeGreaterThan(1000)
     })
 
     test('handles extremely large negative modifiers', () => {
       const bonus = -1000
-      const { outcome, result } = rollRoot(bonus)
+      const { outcome, result } = rollRootRpg(bonus)
       expect(outcome).toBe('Miss')
       expect(result.total).toBeLessThan(-980)
     })

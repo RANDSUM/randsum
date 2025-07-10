@@ -1,9 +1,9 @@
-import type { DHAdvantageDisadvantage } from '../types'
+import type { DaggerheartAdvantageDisadvantage } from '../types'
 import { advantageDie } from './advantageDie'
 
 export function calculateTotal(
   total: number,
-  rollingWith: DHAdvantageDisadvantage | undefined
+  rollingWith: DaggerheartAdvantageDisadvantage | undefined
 ): [number, number | undefined] {
   if (rollingWith) {
     const advantage = advantageDie()

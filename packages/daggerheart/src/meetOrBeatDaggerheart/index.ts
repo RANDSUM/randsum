@@ -1,12 +1,15 @@
-import { rollHopeFear } from '../rollHopeFear'
-import type { DHMeetOrBeatResult, DHRollArgument } from '../types'
+import { rollDaggerheart } from '../rollDaggerheart'
+import type {
+  DaggerheartMeetOrBeatResult,
+  DaggerheartRollArgument
+} from '../types'
 import { formatDescription } from './formatDescription'
 
-export function meetOrBeat(
+export function meetOrBeatDaggerheart(
   difficultyClass: number,
-  rollArg: DHRollArgument
-): DHMeetOrBeatResult {
-  const result = rollHopeFear(rollArg)
+  rollArg: DaggerheartRollArgument
+): DaggerheartMeetOrBeatResult {
+  const result = rollDaggerheart(rollArg)
   const core = {
     ...result,
     success:

@@ -1,8 +1,8 @@
 import type {
-  DHAdvantageDisadvantage,
-  DHRollResult
+  DaggerheartAdvantageDisadvantage,
+  DaggerheartRollResult
 } from '@randsum/daggerheart'
-import { rollHopeFear } from '@randsum/daggerheart'
+import { rollDaggerheart } from '@randsum/daggerheart'
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
 import type { CommandOptions, CommandResult } from 'robo.js'
@@ -29,9 +29,9 @@ export const config = createCommandConfig({
 
 const buildEmbed = (
   rollModifier: number,
-  rollingWith: DHAdvantageDisadvantage | undefined
+  rollingWith: DaggerheartAdvantageDisadvantage | undefined
 ): APIEmbed => {
-  const { total, type, rolls } = rollHopeFear({
+  const { total, type, rolls } = rollDaggerheart({
     modifier: rollModifier,
     rollingWith
   })
@@ -45,8 +45,8 @@ const buildEmbed = (
 }
 
 function fields(
-  { hope, fear, modifier, advantage }: DHRollResult['rolls'],
-  rollingWith: DHAdvantageDisadvantage | undefined
+  { hope, fear, modifier, advantage }: DaggerheartRollResult['rolls'],
+  rollingWith: DaggerheartAdvantageDisadvantage | undefined
 ): { name: string; value: string; inline?: boolean | undefined }[] {
   return [
     ...[
@@ -82,7 +82,7 @@ export default async (
     embeds: [
       buildEmbed(
         Number(modifier),
-        advdis as DHAdvantageDisadvantage | undefined
+        advdis as DaggerheartAdvantageDisadvantage | undefined
       )
     ]
   })

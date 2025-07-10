@@ -1,2 +1,2 @@
-export * from './roll'
+export * from './rollBlades'
 export type * from './types'

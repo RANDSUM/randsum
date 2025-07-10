@@ -31,16 +31,16 @@ bun add @randsum/root-rpg
 ## Usage
 
 ```typescript
-import { rollRoot } from "@randsum/root-rpg"
+import { rollRootRpg } from "@randsum/root-rpg"
 import type { RootResult } from "@randsum/root-rpg"
 
 // Basic roll with modifier
-const [outcome, details] = rollRoot(2)
+const [outcome, details] = rollRootRpg(2)
 // outcome: 'Strong Hit' | 'Weak Hit' | 'Miss'
 // details: Contains the numeric roll result
 
 // Type-safe result handling
-const [result] = rollRoot(0)
+const [result] = rollRootRpg(0)
 switch (result) {
   case "Strong Hit":
     // 10 or higher
@@ -56,12 +56,12 @@ switch (result) {
 
 ## API Reference
 
-### `rollRoot`
+### `rollRootRpg`
 
 Makes a 2d6 roll following Root RPG rules, returning both the interpreted result and the numeric details.
 
 ```typescript
-function rollRoot(bonus: number): [RootResult, NumericRollResult]
+function rollRootRpg(bonus: number): [RootResult, NumericRollResult]
 ```
 
 ```typescript
