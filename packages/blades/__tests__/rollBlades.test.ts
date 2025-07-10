@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { rollBlades } from '../src/rollBlades'
 
-describe('roll', () => {
+describe(rollBlades, () => {
   describe('return type', () => {
-    test('returns a tuple of [BladesResult, NumericRollResult]', () => {
+    test('returns a tuple of [BladesResult, RollResult]', () => {
       const { outcome, result } = rollBlades(2)
       expect(typeof outcome).toBe('string')
       expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)

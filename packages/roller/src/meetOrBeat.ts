@@ -1,9 +1,9 @@
 import { roll } from './roll'
-import type { MeetOrBeatResult, NumericRollArgument } from './types'
+import type { MeetOrBeatResult, RollArgument } from './types'
 
 export function meetOrBeat(
   target: number,
-  rollArg: NumericRollArgument = { sides: 20 }
+  rollArg: RollArgument = { sides: 20 }
 ): MeetOrBeatResult {
   const result = roll(rollArg)
   return {

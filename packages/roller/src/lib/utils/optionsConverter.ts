@@ -32,11 +32,6 @@ export class OptionsConverter {
 
   private get coreNotation(): string {
     const { quantity = 1, sides } = this.options
-
-    if (Array.isArray(sides)) {
-      return `${String(quantity)}d{${sides.join('')}}`
-    }
-
     return `${String(quantity)}d${String(sides)}`
   }
 
@@ -67,21 +62,6 @@ export class OptionsConverter {
     let descriptor = 'die'
     if (quantity > 1) {
       descriptor = 'dice'
-    }
-
-    if (Array.isArray(sides)) {
-      let formattedSides = ''
-      for (const s of sides) {
-        if (s === '') {
-          formattedSides += ' '
-        } else {
-          if (formattedSides.length > 0) {
-            formattedSides += ','
-          }
-          formattedSides += s
-        }
-      }
-      return `${base} ${descriptor} with the following sides: (${formattedSides})`
     }
 
     return `${base} ${String(sides)}-sided ${descriptor}`

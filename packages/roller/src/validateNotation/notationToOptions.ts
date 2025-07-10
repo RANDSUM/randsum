@@ -32,17 +32,6 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
     ...MinusModifier.parse(modifiersString)
   }
 
-  if (Array.isArray(sides)) {
-    if (Object.keys(modifiers).length > 0) {
-      throw new Error('Custom dice cannot have modifiers')
-    }
-    return {
-      quantity,
-      sides,
-      modifiers: {}
-    }
-  }
-
   return {
     quantity,
     sides,

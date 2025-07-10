@@ -1,5 +1,0 @@
-export * from './D'
-export * from './premade'
-export * from './DieBase'
-export * from './CustomDie'
-export * from './NumericDie'

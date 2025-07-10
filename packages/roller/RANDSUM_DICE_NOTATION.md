@@ -29,30 +29,6 @@ roll({
 })
 ```
 
-### Custom-Faced Dice
-
-Roll dice with non-numeric faces:
-
-```typescript
-// Roll a coin (heads/tails) four times
-import { rollCustomFaces } from "@randsum/dice"
-
-rollCustomFaces("4d{HT}")
-rollCustomFaces({
-  sides: ["H", "T"],
-  quantity: 4
-})
-
-// Roll Fudge/Fate dice
-rollCustomFaces("4d{++--  }") // Plus, minus, blank faces
-rollCustomFaces({
-  sides: ["+", "+", "-", "-", " ", " "],
-  quantity: 4
-})
-```
-
-Note: Custom-faced dice ignore modifiers and always return a total of 0.
-
 ## Modifiers
 
 ### Basic Arithmetic
@@ -320,8 +296,6 @@ roll({
 
 ## Notes
 
-- When using notation strings with custom faces, each face must be a single character
-- The options object interface allows for multi-character custom faces
 - See the [Getting Started Guide](../../GETTING_STARTED.md) for more usage examples
 
 ## Attribution

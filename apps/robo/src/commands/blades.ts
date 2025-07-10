@@ -1,6 +1,6 @@
 import type { BladesResult } from '@randsum/blades'
 import { rollBlades } from '@randsum/blades'
-import type { NumericRollResult } from '@randsum/roller'
+import type { RollResult } from '@randsum/roller'
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
 import type { CommandOptions, CommandResult } from 'robo.js'
@@ -66,7 +66,7 @@ const getThumbnail = (total: number, type: BladesResult): string => {
 }
 
 const parseRolls = (
-  result: NumericRollResult,
+  result: RollResult,
   bladesSuccess: BladesResult
 ): string => {
   return result.history.initialRolls

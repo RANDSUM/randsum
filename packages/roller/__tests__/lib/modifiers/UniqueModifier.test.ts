@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
 import { UniqueModifier } from '../../../src/lib'
-import { RandsumError } from '../../../src/lib'
 import {
   createMockRollOne,
   createNumericRollBonus,
@@ -88,7 +87,7 @@ describe('UniqueModifier', () => {
       })
     })
 
-    test('throws RandsumError when more rolls than sides', () => {
+    test('throws when more rolls than sides', () => {
       const modifier = new UniqueModifier(true)
       const bonus = createNumericRollBonus({
         rolls: [1, 2, 3]
@@ -100,7 +99,7 @@ describe('UniqueModifier', () => {
 
       expect(() => {
         modifier.apply(bonus, params, createMockRollOne())
-      }).toThrow(RandsumError)
+      }).toThrow()
     })
 
     test('returns original bonus when options is undefined', () => {

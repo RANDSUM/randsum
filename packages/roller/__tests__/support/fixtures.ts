@@ -1,9 +1,7 @@
 import type {
-  CustomRollOptions,
-  ErrorContext,
   NumericRollBonus,
-  NumericRollOptions,
-  RequiredNumericRollParameters
+  RequiredNumericRollParameters,
+  RollOptions
 } from '../../src'
 
 export function createNumericRollBonus(
@@ -17,21 +15,11 @@ export function createNumericRollBonus(
   }
 }
 
-export function createNumericRollOptions(
-  overrides: Partial<NumericRollOptions> = {}
-): NumericRollOptions {
+export function createRollOptions(
+  overrides: Partial<RollOptions> = {}
+): RollOptions {
   return {
     sides: 20,
-    quantity: 1,
-    ...overrides
-  }
-}
-
-export function createCustomRollOptions(
-  overrides: Partial<CustomRollOptions> = {}
-): CustomRollOptions {
-  return {
-    sides: ['Heads', 'Tails'],
     quantity: 1,
     ...overrides
   }
@@ -43,17 +31,6 @@ export function createRequiredNumericRollParameters(
   return {
     sides: 6,
     quantity: 1,
-    ...overrides
-  }
-}
-
-export function createErrorContext(
-  overrides: Partial<ErrorContext> = {}
-): ErrorContext {
-  return {
-    input: 'test-input',
-    expected: 'test-expected',
-    location: 'test-location',
     ...overrides
   }
 }

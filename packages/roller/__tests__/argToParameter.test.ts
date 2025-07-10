@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
 
-import { D } from '../src/Dice'
 import { argToParameter } from '../src/roll/argToParameter'
 
 describe(argToParameter, () => {
@@ -13,25 +12,8 @@ describe(argToParameter, () => {
       expect(params).toMatchObject({
         argument,
         options: { quantity: 1, sides: argument },
-        die: D(argument),
         notation: '1d2',
         description: ['Roll 1 2-sided die']
-      })
-    })
-  })
-
-  describe('given custom sides', () => {
-    const argument = ['h', 't']
-
-    test('returns a RollParameter matching the argument', () => {
-      const params = argToParameter(argument)
-
-      expect(params).toMatchObject({
-        argument,
-        options: { quantity: 1, sides: argument },
-        die: D(argument),
-        notation: '1d{ht}',
-        description: ['Roll 1 die with the following sides: (h,t)']
       })
     })
   })
@@ -49,7 +31,7 @@ describe(argToParameter, () => {
         expect(params).toMatchObject({
           argument,
           options: argument,
-          die: D(argument.sides),
+
           notation: '4d6',
           description: ['Roll 4 6-sided dice']
         })
@@ -76,7 +58,7 @@ describe(argToParameter, () => {
         expect(params).toMatchObject({
           argument,
           options: argument,
-          die: D(argument.sides),
+
           notation: '4d6V{>5=1}R{2,1,4}3U',
           description: [
             'Roll 4 6-sided dice',
@@ -84,25 +66,6 @@ describe(argToParameter, () => {
             'Reroll [2] [1] and [4] (up to 3 times)',
             'No Duplicate Rolls'
           ]
-        })
-      })
-    })
-
-    describe('custom sides', () => {
-      const argument = {
-        quantity: 4,
-        sides: ['r', 'a', 'n', 'd', 's', 'u', 'm']
-      }
-
-      test('returns a RollParameter matching the argument', () => {
-        const params = argToParameter(argument)
-
-        expect(params).toMatchObject({
-          argument,
-          options: argument,
-          die: D(argument.sides),
-          notation: '4d{randsum}',
-          description: ['Roll 4 dice with the following sides: (r,a,n,d,s,u,m)']
         })
       })
     })
@@ -135,7 +98,7 @@ describe(argToParameter, () => {
         expect(params).toMatchObject({
           argument,
           options: argument,
-          die: D(argument.sides),
+
           notation: '4d6C{>2,<1}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1',
           description: [
             'Roll 4 6-sided dice',
@@ -156,46 +119,6 @@ describe(argToParameter, () => {
     })
   })
 
-  describe('Given a Die object', () => {
-    describe('simple', () => {
-      const argument = D(6)
-
-      test('returns a RollParameter matching the argument', () => {
-        const params = argToParameter(argument)
-
-        expect(params).toMatchObject({
-          argument,
-          options: {
-            sides: argument.sides,
-            quantity: 1
-          },
-          die: argument,
-          notation: '1d6',
-          description: ['Roll 1 6-sided die']
-        })
-      })
-    })
-
-    describe('custom sides', () => {
-      const argument = D(['r', 'a', 'n', 'd', 's', 'u', 'm'])
-
-      test('returns a RollParameter matching the argument', () => {
-        const params = argToParameter(argument)
-
-        expect(params).toMatchObject({
-          argument,
-          options: {
-            sides: argument.faces,
-            quantity: 1
-          },
-          die: argument,
-          notation: '1d{randsum}',
-          description: ['Roll 1 die with the following sides: (r,a,n,d,s,u,m)']
-        })
-      })
-    })
-  })
-
   describe('given DiceNotation', () => {
     const coreTestString = '4d6'
     const coreDicePools = { sides: 6, quantity: 4 }
@@ -209,28 +132,8 @@ describe(argToParameter, () => {
         expect(params).toMatchObject({
           argument,
           options: coreDicePools,
-          die: D(coreDicePools.sides),
           notation: '4d6',
           description: ['Roll 4 6-sided dice']
-        })
-      })
-    })
-
-    describe('given a notation that uses custom faces', () => {
-      describe('with a simple notation', () => {
-        const argument = '4d{++--  }'
-        const customSides = ['+', '+', '-', '-', ' ', ' ']
-
-        test('returns a RollParameter matching the notation', () => {
-          const params = argToParameter(argument)
-
-          expect(params).toMatchObject({
-            argument,
-            options: { quantity: 4, sides: customSides },
-            die: D(customSides),
-            notation: '4d{++--  }',
-            description: ['Roll 4 dice with the following sides: (+,+,-,-, , )']
-          })
         })
       })
     })
@@ -248,7 +151,6 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { drop: { highest: 1 } }
             },
-            die: D(coreDicePools.sides),
             notation: '4d6H',
             description: ['Roll 4 6-sided dice', 'Drop highest']
           })
@@ -267,7 +169,7 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { drop: { highest: 2 } }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6H2',
             description: ['Roll 4 6-sided dice', 'Drop highest 2']
           })
@@ -288,7 +190,7 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { drop: { lowest: 1 } }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6L',
             description: ['Roll 4 6-sided dice', 'Drop lowest']
           })
@@ -307,7 +209,7 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { drop: { lowest: 2 } }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6L2',
             description: ['Roll 4 6-sided dice', 'Drop lowest 2']
           })
@@ -329,7 +231,7 @@ describe(argToParameter, () => {
               drop: { greaterThan: 5, lessThan: 2, exact: [2, 4] }
             }
           },
-          die: D(coreDicePools.sides),
+
           notation: '4d6D{>5,<2,2,4}',
           description: [
             'Roll 4 6-sided dice',
@@ -353,7 +255,6 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { cap: { lessThan: 2, greaterThan: 5 } }
           },
-          die: D(coreDicePools.sides),
 
           notation: '4d6C{>5,<2}',
           description: [
@@ -377,7 +278,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { minus: 2 }
           },
-          die: D(coreDicePools.sides),
+
           notation: '4d6-2',
           description: ['Roll 4 6-sided dice', 'Subtract 2']
         })
@@ -396,7 +297,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { plus: 2 }
           },
-          die: D(coreDicePools.sides),
+
           notation: '4d6+2',
           description: ['Roll 4 6-sided dice', 'Add 2']
         })
@@ -421,7 +322,7 @@ describe(argToParameter, () => {
               }
             }
           },
-          die: D(coreDicePools.sides),
+
           notation: '4d6R{5,>2,<6}',
           description: [
             'Roll 4 6-sided dice',
@@ -448,7 +349,7 @@ describe(argToParameter, () => {
                 }
               }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6R{5,20,>2,<6}3',
             description: [
               'Roll 4 6-sided dice',
@@ -472,7 +373,7 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { unique: { notUnique: [5, 6] } }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6U{5,6}',
             description: [
               'Roll 4 6-sided dice',
@@ -494,7 +395,7 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { unique: { notUnique: [5, 6] } }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6U{5,6}',
             description: [
               'Roll 4 6-sided dice',
@@ -516,7 +417,7 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { unique: true }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6U',
             description: ['Roll 4 6-sided dice', 'No Duplicate Rolls']
           })
@@ -536,7 +437,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { explode: true }
           },
-          die: D(coreDicePools.sides),
+
           notation: '4d6!',
           description: ['Roll 4 6-sided dice', 'Exploding Dice']
         })
@@ -561,7 +462,6 @@ describe(argToParameter, () => {
                 ]
               }
             },
-            die: D(coreDicePools.sides),
 
             notation: '4d6V{1=2,>2=6}',
             description: [
@@ -585,7 +485,6 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { replace: [{ from: { lessThan: 2 }, to: 6 }] }
             },
-            die: D(coreDicePools.sides),
 
             notation: '4d6V{<2=6}',
             description: [
@@ -609,7 +508,7 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { explode: true, drop: { highest: 1 } }
             },
-            die: D(coreDicePools.sides),
+
             notation: '4d6H!',
             description: [
               'Roll 4 6-sided dice',
@@ -627,7 +526,6 @@ describe(argToParameter, () => {
               ...coreDicePools,
               modifiers: { drop: { highest: 1 }, explode: true }
             },
-            die: D(coreDicePools.sides),
 
             notation: '4d6H!',
             description: [
@@ -635,18 +533,6 @@ describe(argToParameter, () => {
               'Drop highest',
               'Exploding Dice'
             ]
-          })
-        })
-      })
-
-      describe('like blank custom dice', () => {
-        test('returns a RollParameter matching the notation', () => {
-          expect(argToParameter('4d{  }')).toMatchObject({
-            argument: '4d{  }',
-            options: { quantity: 4, sides: [' ', ' '] },
-            die: D([' ', ' ']),
-            notation: '4d{  }',
-            description: ['Roll 4 dice with the following sides: ( , )']
           })
         })
       })
@@ -682,7 +568,6 @@ describe(argToParameter, () => {
                 minus: 5
               }
             },
-            die: D(20),
             notation:
               '10d20C{>18,<2}H2LD{>5,<2,2,4}V{1=2,>2=6}R{5,2,<6}3!U{5}+5-5',
             description: [

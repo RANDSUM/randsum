@@ -8,7 +8,6 @@ import {
   RerollModifier,
   UniqueModifier,
   coreNotationPattern,
-  isD,
   isDiceNotation
 } from '../../lib'
 import type { RollArgument, RollParams } from '../../types'
@@ -16,23 +15,11 @@ import type { RollArgument, RollParams } from '../../types'
 export function optionsFromArgument(
   argument: RollArgument
 ): RollParams['options'] {
-  if (isD(argument)) {
-    return argument.toOptions
-  }
-
   if (isDiceNotation(argument)) {
     const coreNotationMatch = argument.match(coreNotationPattern) ?? ''
-
     const coreMatch = coreNotationMatch[0]
     const modifiersString = argument.replace(coreMatch, '')
     const [quantity, sides = ''] = coreMatch.split(/[Dd]/)
-
-    if (sides.includes('{')) {
-      return {
-        quantity: Number(quantity),
-        sides: [...sides.replaceAll(/{|}/g, '')]
-      }
-    }
 
     return {
       quantity: Number(quantity),
@@ -50,10 +37,6 @@ export function optionsFromArgument(
         }
       }
     }
-  }
-
-  if (Array.isArray(argument)) {
-    return { quantity: 1, sides: argument.map(String) }
   }
 
   if (typeof argument === 'string' || typeof argument === 'number') {

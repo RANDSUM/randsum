@@ -21,6 +21,7 @@ export type SalvageUnionTableName =
 export interface SalvageUnionTableListing {
   label: string
   description: string
+  hit: SalvageUnionHit
 }
 
 export type SalvageUnionTableType = Record<

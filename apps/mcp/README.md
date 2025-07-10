@@ -168,7 +168,6 @@ Once configured, the following tools will be available in your MCP client:
     - **Exploding dice**: `3d6!` (explode on maximum), `2d10!` (cascade rolling)
     - **Unique results**: `4d20U` (all different results), `5d6U` (no duplicates)
     - **Value capping**: `4d20C{>18}` (cap maximum), `4d6C{<2,>5}` (enforce ranges)
-    - **Custom faces**: `2d{HT}` (coin flips), `3d{⚔️🛡️🏹}` (symbol dice), `4d{NSEW}` (directions)
     - **Complex combinations**: `4d6LR{1}!+3` (drop lowest, reroll 1s, exploding, add 3)
 - **Returns**: Comprehensive roll breakdown including:
   - Final total and roll type classification
@@ -200,7 +199,6 @@ Once configured, the following tools will be available in your MCP client:
   - Basic syntax (`NdS`, `NdS+X`, `NdS-X`) with edge cases
   - Advanced modifiers (`L` drop lowest, `H` keep highest, `R{<N}` reroll, `!` exploding, `U` unique)
   - Complex conditions (`C{>N}` capping with range enforcement)
-  - Custom dice notation (`2d{HT}`, `3d{⚔️🛡️🏹}`) with limitations
   - Modifier combinations and advanced examples
   - Gaming applications (D&D, Pathfinder, narrative games)
   - Error patterns and troubleshooting guidance
@@ -226,7 +224,6 @@ The RANDSUM MCP server supports the full RANDSUM dice notation system. For compl
 | `NdSR{<N}` | Reroll condition         | `4d6R{<3}` (reroll under 3)       |
 | `NdSU`     | Unique results           | `4d20U` (all results unique)      |
 | `NdSC{>N}` | Cap values               | `4d20C{>18}` (cap over 18)        |
-| `Nd{XYZ}`  | Custom faces             | `2d{HT}` (heads/tails coin)       |
 
 ### Complex Examples
 
