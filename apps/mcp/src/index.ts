@@ -70,7 +70,6 @@ BASIC EXAMPLES:
 • "4d6R{1}" - Roll 4d6, reroll any 1s
 • "4d20U" - Roll 4d20 with unique results
 • "4d20C{>18}" - Roll 4d20, cap results above 18
-• "2d{HT}" - Roll 2 custom dice with H/T faces
 
 COMPLEX COMBINATIONS:
 • "4d6LR{1}+3" - Drop lowest, reroll 1s, add 3
@@ -80,8 +79,7 @@ GAMING PATTERNS:
 • D&D Ability: "4d6L"
 • D&D Advantage: "2d20H"
 • D&D Damage: "1d8+3"
-• Skill Check: "1d20+7"
-• Custom Narrative: "3d{⚔️🛡️🏹}"`
+• Skill Check: "1d20+7"`
   )
 })
 
@@ -94,7 +92,6 @@ VALIDATION EXAMPLES:
 • "2d20H" - Valid advantage mechanics
 • "3d6!" - Valid exploding dice
 • "4d6R{1,2}" - Valid reroll syntax
-• "2d{HT}L" - Invalid (custom faces + modifiers)
 • "4d6R{<=3}" - Invalid (unsupported operator)
 • "1d4+1d6" - Invalid (multiple expressions)
 
@@ -110,13 +107,12 @@ RETURNS: For valid notation, shows parsed structure with quantity, sides, and mo
 
 function formatRollResult(result: RollResult): string {
   const {
-    type,
     total,
     parameters,
     history: { initialRolls, modifiedRolls }
   } = result
 
-  const header = `🎲 RANDSUM Roll Result (${type}):`
+  const header = `🎲 RANDSUM Roll Result:`
   const separator = '─'.repeat(30)
   const totalLine = `Total: ${String(total)}`
 
@@ -152,8 +148,8 @@ function formatValidationResult(result: ValidationResult): string {
     return `❌ Invalid Dice Notation\n\nError: ${result.description.join(', ')}`
   }
 
-  const { type, notation, description, digested } = result
-  const header = `✅ Valid Dice Notation (${type}):`
+  const { notation, description, digested } = result
+  const header = `✅ Valid Dice Notation:`
   const separator = '─'.repeat(25)
 
   const details = [
@@ -198,7 +194,6 @@ COMPREHENSIVE DICE ROLLING SYSTEM with sophisticated modifiers for tabletop gami
 🚀 CORE CAPABILITIES:
 • Execute dice rolls with advanced RANDSUM notation system
 • Support for standard polyhedral dice (d4, d6, d8, d10, d12, d20, d100, etc.)
-• Custom-faced dice with arbitrary symbols, text, or emojis
 • Complex modifier combinations for sophisticated game mechanics
 • Detailed roll breakdowns with individual die results and modifier applications
 • Real-time notation validation with comprehensive error feedback
@@ -208,7 +203,7 @@ COMPREHENSIVE DICE ROLLING SYSTEM with sophisticated modifiers for tabletop gami
 🎯 roll - Advanced Dice Rolling Engine
 • Execute sophisticated dice rolls with full modifier support
 • Returns detailed breakdowns: total, raw results, modified results, subtotals
-• Supports numeric dice (standard gaming) and custom faces (narrative/symbolic)
+• Supports numeric dice (standard gaming)
 • Handles complex modifier combinations for advanced game mechanics
 
 🔍 validate-notation - Syntax Validator & Parser
@@ -244,12 +239,6 @@ ARITHMETIC (+/-): Fixed adjustments
 • 2d6+3 - Add modifiers (damage + ability)
 • 1d20-2 - Apply penalties
 
-CUSTOM FACES: Non-numeric dice
-• 2d{HT} - Coin flips
-• 3d{⚔️🛡️🏹} - Symbol dice
-• 4d{NSEW} - Directional results
-⚠️ Cannot combine with other modifiers
-
 🎮 GAMING APPLICATIONS:
 • D&D/Pathfinder: Ability scores, attacks, damage, saves
 • Narrative Games: Story prompts, oracle dice, complications
@@ -260,7 +249,6 @@ CUSTOM FACES: Non-numeric dice
 • Always validate complex notation before rolling
 • Use for character creation, combat resolution, skill challenges
 • Combine modifiers for sophisticated game mechanics
-• Custom faces perfect for narrative and symbolic outcomes
 
 📖 COMPLETE REFERENCE:
 Access via dice-notation-docs resource for comprehensive syntax guide
@@ -282,7 +270,7 @@ COMPREHENSIVE DICE ROLLING with sophisticated modifier support for tabletop gami
 📋 CORE FUNCTIONALITY:
 • Execute dice rolls using advanced RANDSUM notation
 • Returns detailed breakdowns with individual die results, modifier applications, and final totals
-• Supports both numeric dice (standard polyhedral) and custom-faced dice with arbitrary symbols
+• Supports both numeric dice (standard polyhedral)
 • Handles complex modifier combinations for sophisticated game mechanics
 
 🔧 SUPPORTED NOTATION PATTERNS:
@@ -322,13 +310,6 @@ ARITHMETIC MODIFIERS (+/-) - Fixed adjustments:
 • 1d20+5 - Roll 1d20, add 5 (skill check with bonus)
 • 2d6+10-3 - Multiple operations (net +7)
 
-CUSTOM DICE FACES - Non-numeric results:
-• 2d{HT} - Coin flips (Heads/Tails)
-• 3d{⚔️🛡️🏹} - Combat symbols
-• 4d{NSEW} - Directional results
-• 2d{red,blue,green} - Each character becomes a face
-⚠️ LIMITATION: Custom faces CANNOT combine with other modifiers
-
 COMPLEX COMBINATIONS:
 • 4d6LR{1}!+3 - Drop lowest, reroll 1s, exploding, +3
 • 4d6LHR{1,6}C{<2,>5}U!+10-3 - All modifiers combined
@@ -350,7 +331,6 @@ COMPLEX COMBINATIONS:
 💡 LLM USAGE TIPS:
 • Always validate complex notation with validate-notation tool first
 • Use for character creation, combat resolution, skill challenges, random generation
-• Custom faces perfect for narrative outcomes and symbol systems
 • Combine modifiers for sophisticated game mechanics
 
 RETURNS: Detailed breakdown with total, raw results, modified results (if different), and subtotal for each roll group.`,
@@ -403,7 +383,6 @@ COMPREHENSIVE VALIDATION ENGINE for dice notation syntax with detailed parsing f
 SYNTAX CHECKING:
 • Verifies proper dice notation format (NdS pattern)
 • Validates modifier syntax and combinations
-• Checks for conflicting modifiers (e.g., custom faces + modifiers)
 • Ensures logical parameter values
 
 DETAILED PARSING:
@@ -421,7 +400,7 @@ ERROR GUIDANCE:
 📊 RETURN FORMATS:
 
 VALID NOTATION:
-✅ Valid Dice Notation (numeric/custom):
+✅ Valid Dice Notation (numeric):
 • Notation: [input notation]
 • Description: [human-readable explanation]
 • Parsed Details: [JSON structure showing components]
@@ -441,7 +420,6 @@ LEARNING PATTERNS:
 DEBUGGING COMPLEX NOTATION:
 • validate-notation("4d6LR{1}!+3") → Verify modifier combination
 • validate-notation("4d6C{<2,>5}") → Check capping syntax
-• validate-notation("2d{HT}L") → Catch invalid custom+modifier combo
 
 ERROR PREVENTION:
 • validate-notation("4d6R{<=3}") → Identify unsupported operators
@@ -466,7 +444,6 @@ BATCH VALIDATION:
 • Verify each modifier addition before combining
 
 🚨 COMMON ERROR PATTERNS TO CATCH:
-• Custom faces + modifiers: "3d{abc}L" → Invalid
 • Compound operators: "4d6R{<=3}" → Use "<4" instead
 • Multiple expressions: "1d4+1d6" → Single expression only
 • Unsupported arithmetic: "2d6*2" → Use multiple rolls

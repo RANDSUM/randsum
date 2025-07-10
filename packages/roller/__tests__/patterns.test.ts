@@ -70,33 +70,6 @@ describe('coreNotationPattern', () => {
       expect(match?.[0]).toBe('2d6')
     })
   })
-
-  describe('custom dice pattern matching', () => {
-    const customDiceTests = [
-      { input: '1d{a}', expected: true, description: 'single character' },
-      { input: '1d{abc}', expected: true, description: 'multiple characters' },
-      { input: '1d{123}', expected: true, description: 'numbers in braces' },
-      { input: '1d{!@#}', expected: true, description: 'special characters' },
-      { input: '1d{αβγ}', expected: true, description: 'unicode characters' },
-      { input: '1d{}', expected: true, description: 'empty braces' },
-      {
-        input: '1d{a,b,c}',
-        expected: true,
-        description: 'comma-separated values'
-      },
-      {
-        input: '1d{nested{braces}}',
-        expected: true,
-        description: 'nested braces'
-      }
-    ]
-
-    customDiceTests.forEach(({ input, expected, description }) => {
-      it(`handles custom dice ${description}: ${input}`, () => {
-        expect(coreNotationPattern.test(input)).toBe(expected)
-      })
-    })
-  })
 })
 
 describe('completeRollPattern', () => {
