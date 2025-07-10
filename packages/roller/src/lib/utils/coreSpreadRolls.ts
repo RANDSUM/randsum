@@ -1,8 +1,7 @@
 import { coreRandom } from './coreRandom'
-import { generateNumericFaces } from './generateNumericFaces'
 
 export function coreSpreadRolls(quantity: number, max: number): number[] {
-  const faces = generateNumericFaces(max)
+  const faces = Array.from({ length: max }, (_, index) => index + 1)
   const result = new Array<number>(quantity)
 
   for (let i = 0; i < quantity; i++) {

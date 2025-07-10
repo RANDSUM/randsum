@@ -126,7 +126,6 @@ MODIFIERS:
 COMPLEX EXAMPLES:
   4d6LR{1}!+3    Drop lowest, reroll 1s, exploding, add 3
   2d20H+5        Advantage with +5 modifier
-  4d6L+2         D&D ability score with racial bonus
 
 OPTIONS:
   -h, --help     Show this help message
