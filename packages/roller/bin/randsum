@@ -10,12 +10,6 @@ if (args.includes('--help') || args.includes('-h')) {
   process.exit(0)
 }
 
-// Handle version flag
-if (args.includes('--version') || args.includes('-v')) {
-  console.log('RANDSUM Roller CLI v1.0.0')
-  process.exit(0)
-}
-
 if (args.length === 0) {
   console.error('❌ Error: Please provide dice notation')
   console.error('\nUsage: randsum <dice-notation>')
