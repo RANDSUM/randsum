@@ -13,13 +13,12 @@ Use discriminated unions with `type` field for result types:
 
 ```typescript
 interface NumericResult {
-  type: 'numeric'
   total: number
   rawResults: number[]
 }
 
 interface CustomResult {
-  type: 'custom'
+  type: "custom"
   results: string[]
 }
 

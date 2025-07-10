@@ -85,7 +85,6 @@ export type RequiredNumericRollParameters = Required<
 >
 
 export interface NumericDieInterface {
-  readonly type: 'numeric'
   readonly sides: number
   readonly faces: number[]
   readonly isCustom: false
@@ -96,7 +95,6 @@ export interface NumericDieInterface {
 }
 
 export interface CustomDieInterface {
-  readonly type: 'custom'
   readonly sides: number
   readonly faces: string[]
   readonly isCustom: true
@@ -133,22 +131,18 @@ export interface RollHistory<P extends RollParams = RollParams> {
 export interface BaseRollResult<P extends RollParams = RollParams> {
   parameters: P
   description: P['description']
-  die: P['die']
-  type: 'numeric' | 'custom'
   rolls: RollHistory<P>['modifiedRolls']
   history: RollHistory<P>
   total: string | number
 }
 
 export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
-  type: 'numeric'
   rolls: number[]
   history: RollHistory<NumericRollParams>
   total: number
 }
 
 export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
-  type: 'custom'
   rolls: string[]
   history: RollHistory<CustomRollParams>
   total: string
@@ -169,13 +163,11 @@ interface BaseRollParams<A extends RollArgument = RollArgument> {
 
 export interface NumericRollParams extends BaseRollParams<NumericRollArgument> {
   options: NumericRollOptions
-  die: NumericDieInterface
   notation: NumericDiceNotation
 }
 
 export interface CustomRollParams extends BaseRollParams<CustomRollArgument> {
   options: CustomRollOptions
-  die: CustomDieInterface
   notation: CustomDiceNotation
 }
 
@@ -183,27 +175,23 @@ export type RollParams = NumericRollParams | CustomRollParams
 
 interface BaseValidationResult {
   valid: boolean
-  type: 'numeric' | 'custom' | 'invalid'
   description: string[]
 }
 
 export interface NumericValidationResult extends BaseValidationResult {
   valid: true
-  type: 'numeric'
   digested: NumericRollOptions
   notation: NumericDiceNotation
 }
 
 export interface CustomValidationResult extends BaseValidationResult {
   valid: true
-  type: 'custom'
   digested: CustomRollOptions
   notation: CustomDiceNotation
 }
 
 export interface InvalidValidationResult extends BaseValidationResult {
   valid: false
-  type: 'invalid'
   digested: Record<string, never>
 }
 

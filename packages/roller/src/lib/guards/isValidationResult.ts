@@ -1,4 +1,4 @@
-import type { NumericValidationResult } from '../../../types'
+import type { NumericValidationResult } from '../../types'
 
 export function isNumericValidationResult(
   result: unknown

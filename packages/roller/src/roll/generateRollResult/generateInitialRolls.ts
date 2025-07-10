@@ -3,7 +3,7 @@ import type {
   NumericRollParams,
   RollHistory
 } from '../../types'
-import { coreSpreadRolls, isNumericRollOptions } from '../../lib'
+import { coreSpreadRolls, isRollOptions } from '../../lib'
 
 function generateInitialRolls(
   params: CustomRollParams
@@ -23,7 +23,7 @@ function generateInitialRolls({
   | RollHistory<NumericRollParams>['initialRolls'] {
   const quantity = options.quantity ?? 1
 
-  if (isNumericRollOptions(options)) {
+  if (isRollOptions(options)) {
     return coreSpreadRolls<number>(quantity, options.sides)
   } else {
     return coreSpreadRolls(quantity, options.sides.length, options.sides)

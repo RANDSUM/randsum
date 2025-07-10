@@ -5,7 +5,6 @@ import {
   isNumericValidationResult
 } from '../lib'
 import type { ValidationResult } from '../types'
-import { calculateDieType } from './calculateDieType'
 import { notationToOptions } from './notationToOptions'
 
 export function validateNotation(notation: string): ValidationResult {
@@ -13,8 +12,7 @@ export function validateNotation(notation: string): ValidationResult {
     return {
       valid: false,
       description: ['Invalid Notation'],
-      digested: {},
-      type: 'invalid'
+      digested: {}
     }
   }
 
@@ -24,7 +22,6 @@ export function validateNotation(notation: string): ValidationResult {
     valid: true,
     digested,
     notation: converter.toNotation,
-    type: calculateDieType(digested.sides),
     description: converter.toDescription
   }
   if (
@@ -37,7 +34,6 @@ export function validateNotation(notation: string): ValidationResult {
   return {
     valid: false,
     description: ['Failed to validate notation. Please try again.'],
-    digested: {},
-    type: 'invalid'
+    digested: {}
   }
 }
