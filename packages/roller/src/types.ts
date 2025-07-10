@@ -1,8 +1,4 @@
-export type NumericDiceNotation = `${number}${'d' | 'D'}${number}${string}`
-
-export type CustomDiceNotation = `${number}${'d' | 'D'}{${string}}`
-
-export type DiceNotation = NumericDiceNotation | CustomDiceNotation
+export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
 
 export interface ComparisonOptions {
   greaterThan?: number
@@ -67,127 +63,54 @@ export interface BaseRollOptions {
   quantity?: number
 }
 
-export interface NumericRollOptions extends BaseRollOptions {
+export interface RollOptions {
+  quantity?: number
   sides: number
   modifiers?: ModifierOptions
 }
 
-export interface CustomRollOptions extends BaseRollOptions {
-  quantity?: number
-  sides: string[]
-  modifiers?: Record<string, never>
-}
-
-export type RollOptions = NumericRollOptions | CustomRollOptions
-
 export type RequiredNumericRollParameters = Required<
-  Omit<NumericRollOptions, 'modifiers'>
+  Omit<RollOptions, 'modifiers'>
 >
 
-export interface NumericDieInterface {
-  readonly sides: number
-  readonly faces: number[]
-  readonly isCustom: false
-  roll(quantity?: number): number
-  rollSpread(quantity?: number): number[]
-  rollModified(quantity: number, modifiers?: ModifierOptions): NumericRollResult
-  toOptions: NumericRollOptions
-}
+export type RollArgument = RollOptions | DiceNotation | number | `${number}`
 
-export interface CustomDieInterface {
-  readonly sides: number
-  readonly faces: string[]
-  readonly isCustom: true
-  roll(quantity?: number): string
-  rollSpread(quantity?: number): string[]
-  rollModified(quantity: number, modifiers?: ModifierOptions): CustomRollResult
-  toOptions: CustomRollOptions
-}
-
-export type BaseD = NumericDieInterface | CustomDieInterface
-
-export type NumericRollArgument =
-  | NumericDieInterface
-  | NumericRollOptions
-  | NumericDiceNotation
-  | number
-  | `${number}`
-
-export type CustomRollArgument =
-  | CustomDieInterface
-  | CustomRollOptions
-  | CustomDiceNotation
-  | string[]
-
-export type RollArgument = NumericRollArgument | CustomRollArgument
-
-export interface RollHistory<P extends RollParams = RollParams> {
-  modifiedRolls: P['options'] extends CustomRollOptions ? string[] : number[]
-  total: P['options'] extends CustomRollOptions ? string : number
-  initialRolls: P['options'] extends CustomRollOptions ? string[] : number[]
+export interface RollHistory {
+  modifiedRolls: number[]
+  total: number
+  initialRolls: number[]
   logs: ModifierLog[]
 }
 
-export interface BaseRollResult<P extends RollParams = RollParams> {
-  parameters: P
-  description: P['description']
-  rolls: RollHistory<P>['modifiedRolls']
-  history: RollHistory<P>
-  total: string | number
-}
-
-export interface NumericRollResult extends BaseRollResult<NumericRollParams> {
-  rolls: number[]
-  history: RollHistory<NumericRollParams>
+export interface RollResult {
+  parameters: RollParams
+  description: RollParams['description']
+  rolls: RollHistory['modifiedRolls']
+  history: RollHistory
   total: number
 }
-
-export interface CustomRollResult extends BaseRollResult<CustomRollParams> {
-  rolls: string[]
-  history: RollHistory<CustomRollParams>
-  total: string
-}
-
-export type RollResult = NumericRollResult | CustomRollResult
-
 export interface MeetOrBeatResult {
   success: boolean
   target: number
-  result: NumericRollResult
+  result: RollResult
 }
 
-interface BaseRollParams<A extends RollArgument = RollArgument> {
+export interface RollParams {
   description: string[]
-  argument: A
+  argument: RollArgument
+  options: RollOptions
+  notation: DiceNotation
 }
-
-export interface NumericRollParams extends BaseRollParams<NumericRollArgument> {
-  options: NumericRollOptions
-  notation: NumericDiceNotation
-}
-
-export interface CustomRollParams extends BaseRollParams<CustomRollArgument> {
-  options: CustomRollOptions
-  notation: CustomDiceNotation
-}
-
-export type RollParams = NumericRollParams | CustomRollParams
 
 interface BaseValidationResult {
   valid: boolean
   description: string[]
 }
 
-export interface NumericValidationResult extends BaseValidationResult {
+export interface ValidValidationResult extends BaseValidationResult {
   valid: true
-  digested: NumericRollOptions
-  notation: NumericDiceNotation
-}
-
-export interface CustomValidationResult extends BaseValidationResult {
-  valid: true
-  digested: CustomRollOptions
-  notation: CustomDiceNotation
+  digested: RollOptions
+  notation: DiceNotation
 }
 
 export interface InvalidValidationResult extends BaseValidationResult {
@@ -195,7 +118,4 @@ export interface InvalidValidationResult extends BaseValidationResult {
   digested: Record<string, never>
 }
 
-export type ValidationResult =
-  | NumericValidationResult
-  | CustomValidationResult
-  | InvalidValidationResult
+export type ValidationResult = ValidValidationResult | InvalidValidationResult

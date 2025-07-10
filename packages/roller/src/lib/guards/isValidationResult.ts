@@ -1,8 +1,8 @@
-import type { NumericValidationResult } from '../../types'
+import type { ValidationResult } from '../../types'
 
-export function isNumericValidationResult(
+export function isValidationResult(
   result: unknown
-): result is NumericValidationResult {
+): result is ValidationResult {
   return !!(
     typeof result === 'object' &&
     result !== null &&

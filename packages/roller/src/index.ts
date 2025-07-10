@@ -1,4 +1,3 @@
-export * from './Dice'
 export * from './roll'
 export * from './validateNotation'
 export * from './meetOrBeat'

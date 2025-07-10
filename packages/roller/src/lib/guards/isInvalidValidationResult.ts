@@ -1,6 +1,6 @@
 import type { InvalidValidationResult } from '../../types'
 
-export function isValidationResult(
+export function isInvalidValidationResult(
   result: unknown
 ): result is InvalidValidationResult {
   return (

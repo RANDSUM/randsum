@@ -1,10 +1,8 @@
-import type { NumericRollArgument } from '../../types'
+import type { RollArgument } from '../../types'
 import { isDiceNotation } from './isDiceNotation'
 import { isRollOptions } from './isRollOptions'
 
-export function isNumericRollArgument(
-  argument: unknown
-): argument is NumericRollArgument {
+export function isRollArgument(argument: unknown): argument is RollArgument {
   return (
     isDiceNotation(argument) ||
     isRollOptions(argument) ||

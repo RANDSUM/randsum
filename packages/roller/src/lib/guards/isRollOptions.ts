@@ -1,6 +1,6 @@
-import type { NumericRollOptions, RollOptions } from '../../types'
+import type { RollOptions } from '../../types'
 
-export function isRollOptions(options: unknown): options is NumericRollOptions {
+export function isRollOptions(options: unknown): options is RollOptions {
   return (
     typeof options === 'object' &&
     options !== null &&

@@ -21,13 +21,6 @@ export function optionsFromArgument(
     const modifiersString = argument.replace(coreMatch, '')
     const [quantity, sides = ''] = coreMatch.split(/[Dd]/)
 
-    if (sides.includes('{')) {
-      return {
-        quantity: Number(quantity),
-        sides: [...sides.replaceAll(/{|}/g, '')]
-      }
-    }
-
     return {
       quantity: Number(quantity),
       sides: Number(sides),

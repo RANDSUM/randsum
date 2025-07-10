@@ -1,9 +1,6 @@
-import type { NumericRollOptions } from '@randsum/roller'
+import type { RollOptions } from '@randsum/roller'
 
-export function generateOptions(
-  count: number,
-  canCrit: boolean
-): NumericRollOptions {
+export function generateOptions(count: number, canCrit: boolean): RollOptions {
   if (canCrit) {
     return { sides: 6, quantity: count }
   }

@@ -1,8 +1,8 @@
-import type { NumericRollParams, RollParams } from '../../types'
+import type { RollParams } from '../../types'
 
 export function isRollParams(
   poolParameters: unknown
-): poolParameters is NumericRollParams {
+): poolParameters is RollParams {
   return (
     typeof poolParameters === 'object' &&
     poolParameters !== null &&

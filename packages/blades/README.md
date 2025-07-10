@@ -52,7 +52,7 @@ roll(4) // Controlled with assistance
 Makes a Blades in the Dark roll, returning the result based on the highest die.
 
 ```typescript
-function roll(dicePool: number): [BladesResult, NumericRollResult]
+function roll(dicePool: number): [BladesResult, RollResult]
 ```
 
 **Parameters:**

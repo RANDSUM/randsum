@@ -1,14 +1,10 @@
 import { coreRandom } from './coreRandom'
 import { generateNumericFaces } from './generateNumericFaces'
 
-export function coreSpreadRolls<F extends string | number>(
-  quantity: number,
-  max: number,
-  faces?: F[]
-): F[] {
-  const facesArr = (faces ?? generateNumericFaces(max)) as F[]
+export function coreSpreadRolls(quantity: number, max: number): number[] {
+  const facesArr = generateNumericFaces(max)
 
-  const result = new Array<F>(quantity)
+  const result = new Array<number>(quantity)
 
   for (let i = 0; i < quantity; i++) {
     const randomIndex = coreRandom(max)

@@ -3,7 +3,7 @@ import { rollRootRpg } from '../src/rollRootRpg'
 
 describe(rollRootRpg, () => {
   describe('return type', () => {
-    test('returns a tuple of [RootResult, NumericRollResult]', () => {
+    test('returns a tuple of [RootResult, RollResult]', () => {
       const { outcome, result } = rollRootRpg(0)
       expect(typeof outcome).toBe('string')
       expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(outcome)
