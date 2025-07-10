@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { rollBlades } from '../src/rollBlades'
 
-describe('roll', () => {
+describe(rollBlades, () => {
   describe('return type', () => {
     test('returns a tuple of [BladesResult, NumericRollResult]', () => {
       const { outcome, result } = rollBlades(2)
