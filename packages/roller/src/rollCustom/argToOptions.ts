@@ -1,6 +1,6 @@
 import type { CustomRollArgument, CustomRollOptions } from '../types'
 
-export function argToOption<T>(
+export function argToOptions<T>(
   arg: CustomRollArgument<T>
 ): CustomRollOptions<T> {
   if (Array.isArray(arg)) {
