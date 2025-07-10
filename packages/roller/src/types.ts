@@ -119,3 +119,14 @@ export interface InvalidValidationResult extends BaseValidationResult {
 }
 
 export type ValidationResult = ValidValidationResult | InvalidValidationResult
+
+export interface CustomRollOptions<T> extends Pick<RollOptions, 'quantity'> {
+  faces: T[]
+}
+
+export type CustomRollArgument<T> = CustomRollOptions<T> | T[]
+
+export interface CustomRollResult<T> {
+  result: RollResult
+  rolls: T[]
+}
