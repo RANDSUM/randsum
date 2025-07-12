@@ -1,12 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { isValidationResult } from '../../../src/lib/guards/isValidationResult'
 import type {
-  ValidationResult,
-  ValidValidationResult,
-  InvalidValidationResult
+  InvalidValidationResult,
+  ValidValidationResult
 } from '../../../src/types'
 
-// Helper function to create a valid ValidValidationResult for testing
 function createValidValidationResult(
   overrides: Partial<ValidValidationResult> = {}
 ): ValidValidationResult {
@@ -19,7 +17,6 @@ function createValidValidationResult(
   }
 }
 
-// Helper function to create a valid InvalidValidationResult for testing
 function createInvalidValidationResult(
   overrides: Partial<InvalidValidationResult> = {}
 ): InvalidValidationResult {
@@ -109,8 +106,16 @@ describe('isValidationResult', () => {
     })
 
     test('returns false for functions', () => {
-      expect(isValidationResult(() => {})).toBe(false)
-      expect(isValidationResult(function () {})).toBe(false)
+      expect(
+        isValidationResult(() => {
+          // noop
+        })
+      ).toBe(false)
+      expect(
+        isValidationResult(() => {
+          // noop
+        })
+      ).toBe(false)
     })
   })
 

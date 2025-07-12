@@ -108,8 +108,16 @@ describe('isDiceNotation', () => {
     })
 
     test('returns false for functions', () => {
-      expect(isDiceNotation(() => {})).toBe(false)
-      expect(isDiceNotation(function () {})).toBe(false)
+      expect(
+        isDiceNotation(() => {
+          // noop
+        })
+      ).toBe(false)
+      expect(
+        isDiceNotation(() => {
+          // noop
+        })
+      ).toBe(false)
     })
   })
 

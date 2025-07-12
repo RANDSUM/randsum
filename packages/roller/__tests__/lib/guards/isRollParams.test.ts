@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { isRollParams } from '../../../src/lib/guards/isRollParams'
-import type { RollParams, RollOptions } from '../../../src/types'
+import type { RollOptions, RollParams } from '../../../src/types'
 
 // Helper function to create a valid RollParams for testing
 function createRollParams(overrides: Partial<RollParams> = {}): RollParams {
@@ -112,8 +112,16 @@ describe('isRollParams', () => {
     })
 
     test('returns false for functions', () => {
-      expect(isRollParams(() => {})).toBe(false)
-      expect(isRollParams(function () {})).toBe(false)
+      expect(
+        isRollParams(() => {
+          // noop
+        })
+      ).toBe(false)
+      expect(
+        isRollParams(() => {
+          // noop
+        })
+      ).toBe(false)
     })
   })
 

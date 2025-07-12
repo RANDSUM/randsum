@@ -120,8 +120,16 @@ describe('isRollOptions', () => {
     })
 
     test('returns false for functions', () => {
-      expect(isRollOptions(() => {})).toBe(false)
-      expect(isRollOptions(function() {})).toBe(false)
+      expect(
+        isRollOptions(() => {
+          // noop
+        })
+      ).toBe(false)
+      expect(
+        isRollOptions(() => {
+          // noop
+        })
+      ).toBe(false)
     })
   })
 
