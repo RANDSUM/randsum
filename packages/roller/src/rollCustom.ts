@@ -12,7 +12,8 @@ export function rollCustom<T>(
     throw new Error('Failed to properly roll.')
   }
 
-  const result = faces[baseResult.total - 1]
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const result = faces[baseResult.total - 1]!
 
   return {
     baseResult,
