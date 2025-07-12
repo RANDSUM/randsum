@@ -7,7 +7,7 @@ import { formatDescription } from './formatDescription'
 
 export function meetOrBeatDaggerheart(
   difficultyClass: number,
-  rollArg: DaggerheartRollArgument
+  rollArg: DaggerheartRollArgument = {}
 ): DaggerheartMeetOrBeatResult {
   const result = rollDaggerheart(rollArg)
   const core = {
