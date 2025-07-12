@@ -1,402 +1,266 @@
 import { describe, expect, test } from 'bun:test'
-import {
-  isCustomValidationResult,
-  isInvalidValidationResult,
-  isNumericValidationResult,
-  validateNotation
-} from '../../../src'
+import { isValidationResult } from '../../../src/lib/guards/isValidationResult'
+import type {
+  InvalidValidationResult,
+  ValidValidationResult
+} from '../../../src/types'
 
-describe('Validation Result Type Guards', () => {
-  describe('isNumericValidationResult', () => {
-    test('should return true for valid numeric validation results', () => {
-      const result = validateNotation('4d6')
-      expect(isNumericValidationResult(result)).toBe(true)
+function createValidValidationResult(
+  overrides: Partial<ValidValidationResult> = {}
+): ValidValidationResult {
+  return {
+    valid: true,
+    description: ['Roll 1d6'],
+    digested: { sides: 6, quantity: 1 },
+    notation: '1d6',
+    ...overrides
+  }
+}
 
-      if (isNumericValidationResult(result)) {
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('numeric')
-        expect(typeof result.digested.sides).toBe('number')
-        expect(typeof result.notation).toBe('string')
-        expect(Array.isArray(result.description)).toBe(true)
-      }
+function createInvalidValidationResult(
+  overrides: Partial<InvalidValidationResult> = {}
+): InvalidValidationResult {
+  return {
+    valid: false,
+    description: ['Invalid notation'],
+    digested: {},
+    ...overrides
+  }
+}
+
+describe('isValidationResult', () => {
+  describe('valid ValidationResult objects', () => {
+    test('returns true for a complete ValidValidationResult', () => {
+      const validResult = createValidValidationResult()
+      expect(isValidationResult(validResult)).toBe(true)
     })
 
-    test('should return true for numeric validation with modifiers', () => {
-      const result = validateNotation('4d6L+2')
-      expect(isNumericValidationResult(result)).toBe(true)
-
-      if (isNumericValidationResult(result)) {
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('numeric')
-        expect(typeof result.digested.sides).toBe('number')
-        expect(result.digested.modifiers).toBeDefined()
-      }
+    test('returns true for a complete InvalidValidationResult', () => {
+      const invalidResult = createInvalidValidationResult()
+      expect(isValidationResult(invalidResult)).toBe(true)
     })
 
-    test('should return true for complex numeric notation', () => {
-      const result = validateNotation('2d20H')
-      expect(isNumericValidationResult(result)).toBe(true)
-
-      if (isNumericValidationResult(result)) {
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('numeric')
-        expect(result.digested.sides).toBe(20)
-        expect(result.digested.quantity).toBe(2)
-      }
-    })
-
-    test('should return true for various numeric dice', () => {
-      const notations = ['1d4', '2d6', '1d8', '1d10', '1d12', '1d20', '1d100']
-
-      notations.forEach((notation) => {
-        const result = validateNotation(notation)
-        expect(isNumericValidationResult(result)).toBe(true)
-
-        if (isNumericValidationResult(result)) {
-          expect(result.type).toBe('numeric')
-          expect(typeof result.digested.sides).toBe('number')
-        }
+    test('returns true for ValidValidationResult with complex digested options', () => {
+      const complexResult = createValidValidationResult({
+        digested: {
+          sides: 20,
+          quantity: 4,
+          modifiers: {
+            drop: { lowest: 1 },
+            plus: 3
+          }
+        },
+        notation: '4d20L+3',
+        description: ['Roll 4d20, drop lowest, add 3']
       })
+      expect(isValidationResult(complexResult)).toBe(true)
     })
 
-    test('should return false for custom validation results', () => {
-      const result = validateNotation('2d{HT}')
-      expect(isNumericValidationResult(result)).toBe(false)
-    })
-
-    test('should return false for invalid validation results', () => {
-      const result = validateNotation('invalid')
-      expect(isNumericValidationResult(result)).toBe(false)
-    })
-
-    test('should return false for non-validation objects', () => {
-      expect(isNumericValidationResult(null)).toBe(false)
-      expect(isNumericValidationResult(undefined)).toBe(false)
-      expect(isNumericValidationResult({})).toBe(false)
-      expect(isNumericValidationResult([])).toBe(false)
-      expect(isNumericValidationResult('4d6')).toBe(false)
-      expect(isNumericValidationResult(true)).toBe(false)
-    })
-
-    test('should return false for objects missing required properties', () => {
-      const incomplete = {
-        valid: true,
-        type: 'numeric'
-        // missing description, digested, notation
-      }
-      expect(isNumericValidationResult(incomplete)).toBe(false)
-    })
-
-    test('should work with array filtering', () => {
-      const results = [
-        validateNotation('4d6'),
-        validateNotation('2d{HT}'),
-        validateNotation('invalid'),
-        validateNotation('2d20+5'),
-        null
-      ]
-
-      const numericResults = results.filter(isNumericValidationResult)
-      expect(numericResults).toHaveLength(2)
-
-      numericResults.forEach((result) => {
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('numeric')
+    test('returns true for InvalidValidationResult with detailed description', () => {
+      const detailedInvalid = createInvalidValidationResult({
+        description: [
+          'Invalid notation: missing dice specification',
+          'Expected format: NdS'
+        ]
       })
+      expect(isValidationResult(detailedInvalid)).toBe(true)
+    })
+
+    test('returns true for ValidationResult with empty description array', () => {
+      const emptyDescription = createValidValidationResult({
+        description: []
+      })
+      expect(isValidationResult(emptyDescription)).toBe(true)
     })
   })
 
-  describe('isCustomValidationResult', () => {
-    test('should return true for valid custom validation results', () => {
-      const result = validateNotation('2d{HT}')
-      expect(isCustomValidationResult(result)).toBe(true)
-
-      if (isCustomValidationResult(result)) {
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('custom')
-        expect(Array.isArray(result.digested.sides)).toBe(true)
-        expect(typeof result.notation).toBe('string')
-        expect(Array.isArray(result.description)).toBe(true)
-      }
+  describe('invalid primitive values', () => {
+    test('returns false for null', () => {
+      expect(isValidationResult(null)).toBe(false)
     })
 
-    test('should return true for various custom dice notation', () => {
-      const notations = [
-        '2d{HT}',
-        '3d{abc}',
-        '4d{red,blue,green,yellow}',
-        '1d{critical,hit,miss}',
-        '2d{⚔️🛡️🏹}'
-      ]
-
-      notations.forEach((notation) => {
-        const result = validateNotation(notation)
-        expect(isCustomValidationResult(result)).toBe(true)
-
-        if (isCustomValidationResult(result)) {
-          expect(result.type).toBe('custom')
-          expect(Array.isArray(result.digested.sides)).toBe(true)
-          expect(
-            result.digested.sides.every((face) => typeof face === 'string')
-          ).toBe(true)
-        }
-      })
+    test('returns false for undefined', () => {
+      expect(isValidationResult(undefined)).toBe(false)
     })
 
-    test('should return true for coin flip notation', () => {
-      const result = validateNotation('2d{HT}')
-      expect(isCustomValidationResult(result)).toBe(true)
-
-      if (isCustomValidationResult(result)) {
-        expect(result.digested.sides).toEqual(['H', 'T'])
-        expect(result.digested.quantity).toBe(2)
-      }
+    test('returns false for numbers', () => {
+      expect(isValidationResult(42)).toBe(false)
+      expect(isValidationResult(0)).toBe(false)
+      expect(isValidationResult(-1)).toBe(false)
     })
 
-    test('should return false for numeric validation results', () => {
-      const result = validateNotation('4d6')
-      expect(isCustomValidationResult(result)).toBe(false)
+    test('returns false for strings', () => {
+      expect(isValidationResult('')).toBe(false)
+      expect(isValidationResult('valid')).toBe(false)
+      expect(isValidationResult('{"valid": true}')).toBe(false)
     })
 
-    test('should return false for invalid validation results', () => {
-      const result = validateNotation('invalid')
-      expect(isCustomValidationResult(result)).toBe(false)
+    test('returns false for booleans', () => {
+      expect(isValidationResult(true)).toBe(false)
+      expect(isValidationResult(false)).toBe(false)
     })
 
-    test('should return false for non-validation objects', () => {
-      expect(isCustomValidationResult(null)).toBe(false)
-      expect(isCustomValidationResult(undefined)).toBe(false)
-      expect(isCustomValidationResult({})).toBe(false)
-      expect(isCustomValidationResult([])).toBe(false)
-      expect(isCustomValidationResult('2d{HT}')).toBe(false)
-      expect(isCustomValidationResult(true)).toBe(false)
+    test('returns false for arrays', () => {
+      expect(isValidationResult([])).toBe(false)
+      expect(isValidationResult([1, 2, 3])).toBe(false)
     })
 
-    test('should return false for objects missing required properties', () => {
-      const incomplete = {
-        valid: true,
-        type: 'custom'
-        // missing description, digested, notation
-      }
-      expect(isCustomValidationResult(incomplete)).toBe(false)
-    })
-
-    test('should work with array filtering', () => {
-      const results = [
-        validateNotation('2d{HT}'),
-        validateNotation('4d6'),
-        validateNotation('invalid'),
-        validateNotation('3d{abc}'),
-        null
-      ]
-
-      const customResults = results.filter(isCustomValidationResult)
-      expect(customResults).toHaveLength(2)
-
-      customResults.forEach((result) => {
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('custom')
-      })
+    test('returns false for functions', () => {
+      expect(
+        isValidationResult(() => {
+          // noop
+        })
+      ).toBe(false)
+      expect(
+        isValidationResult(() => {
+          // noop
+        })
+      ).toBe(false)
     })
   })
 
-  describe('isInvalidValidationResult', () => {
-    test('should return true for invalid validation results', () => {
-      const result = validateNotation('invalid')
-      expect(isInvalidValidationResult(result)).toBe(true)
+  describe('objects missing required properties', () => {
+    test('returns false for empty object', () => {
+      expect(isValidationResult({})).toBe(false)
+    })
 
-      if (isInvalidValidationResult(result)) {
-        expect(result.valid).toBe(false)
-        expect(result.type).toBe('invalid')
-        expect(Array.isArray(result.description)).toBe(true)
-        expect(typeof result.digested).toBe('object')
+    test('returns false when missing valid property', () => {
+      const missingValid = {
+        description: ['Test'],
+        digested: { sides: 6 },
+        notation: '1d6'
       }
+      expect(isValidationResult(missingValid)).toBe(false)
     })
 
-    test('should return true for various invalid notations', () => {
-      const invalidNotations = [
-        'invalid',
-        '',
-        'd6',
-        '4d',
-        '4x6',
-        'hello world',
-        '4d6X',
-        '4d6R',
-        '2d{',
-        '2d}'
-      ]
-
-      invalidNotations.forEach((notation) => {
-        const result = validateNotation(notation)
-        expect(isInvalidValidationResult(result)).toBe(true)
-
-        if (isInvalidValidationResult(result)) {
-          expect(result.valid).toBe(false)
-          expect(result.type).toBe('invalid')
-          expect(result.description.length).toBeGreaterThan(0)
-        }
-      })
+    test('returns false when missing description property', () => {
+      const missingDescription = {
+        valid: true,
+        digested: { sides: 6 },
+        notation: '1d6'
+      }
+      expect(isValidationResult(missingDescription)).toBe(false)
     })
 
-    test('should return false for valid numeric validation results', () => {
-      const result = validateNotation('4d6')
-      expect(isInvalidValidationResult(result)).toBe(false)
+    test('returns false when missing digested property', () => {
+      const missingDigested = {
+        valid: true,
+        description: ['Test'],
+        notation: '1d6'
+      }
+      expect(isValidationResult(missingDigested)).toBe(false)
     })
 
-    test('should return false for valid custom validation results', () => {
-      const result = validateNotation('2d{HT}')
-      expect(isInvalidValidationResult(result)).toBe(false)
+    test('returns false when ValidValidationResult missing notation property', () => {
+      const missingNotation = {
+        valid: true,
+        description: ['Test'],
+        digested: { sides: 6 }
+      }
+      expect(isValidationResult(missingNotation)).toBe(false)
+    })
+  })
+
+  describe('objects with properties of wrong types', () => {
+    test('returns false when valid is not a boolean', () => {
+      const wrongValidType = {
+        valid: 'true',
+        description: ['Test'],
+        digested: { sides: 6 },
+        notation: '1d6'
+      }
+      expect(isValidationResult(wrongValidType)).toBe(false)
     })
 
-    test('should return false for non-validation objects', () => {
-      expect(isInvalidValidationResult(null)).toBe(false)
-      expect(isInvalidValidationResult(undefined)).toBe(false)
-      expect(isInvalidValidationResult({})).toBe(false)
-      expect(isInvalidValidationResult([])).toBe(false)
-      expect(isInvalidValidationResult('invalid')).toBe(false)
-      expect(isInvalidValidationResult(true)).toBe(false)
+    test('returns false when description is not an array', () => {
+      const wrongDescriptionType = {
+        valid: true,
+        description: 'not an array',
+        digested: { sides: 6 },
+        notation: '1d6'
+      }
+      expect(isValidationResult(wrongDescriptionType)).toBe(false)
     })
 
-    test('should return false for objects missing required properties', () => {
-      const incomplete = {
+    test('returns false when digested is not an object', () => {
+      const wrongDigestedType = {
+        valid: true,
+        description: ['Test'],
+        digested: 'not an object',
+        notation: '1d6'
+      }
+      expect(isValidationResult(wrongDigestedType)).toBe(false)
+    })
+
+    test('returns false when digested is null', () => {
+      const nullDigested = {
+        valid: true,
+        description: ['Test'],
+        digested: null,
+        notation: '1d6'
+      }
+      expect(isValidationResult(nullDigested)).toBe(false)
+    })
+
+    test('returns false when notation is not a string (for valid results)', () => {
+      const wrongNotationType = {
+        valid: true,
+        description: ['Test'],
+        digested: { sides: 6 },
+        notation: 123
+      }
+      expect(isValidationResult(wrongNotationType)).toBe(false)
+    })
+  })
+
+  describe('edge cases and boundary conditions', () => {
+    test('returns true for ValidationResult with extra properties', () => {
+      const resultWithExtraProps = {
+        ...createValidValidationResult(),
+        extraProperty: 'should not affect validation',
+        anotherExtra: 42
+      }
+      expect(isValidationResult(resultWithExtraProps)).toBe(true)
+    })
+
+    test('returns false for objects with only some required properties', () => {
+      const partialObject = {
+        valid: true,
+        description: ['Test']
+        // Missing digested and notation
+      }
+      expect(isValidationResult(partialObject)).toBe(false)
+    })
+
+    test('returns false for Date objects', () => {
+      expect(isValidationResult(new Date())).toBe(false)
+    })
+
+    test('returns false for RegExp objects', () => {
+      expect(isValidationResult(/test/)).toBe(false)
+    })
+
+    test('returns false for Error objects', () => {
+      expect(isValidationResult(new Error('test'))).toBe(false)
+    })
+
+    test('returns true for InvalidValidationResult without notation', () => {
+      const invalidWithoutNotation = {
         valid: false,
-        type: 'invalid'
-        // missing description, digested
+        description: ['Invalid'],
+        digested: {}
       }
-      expect(isInvalidValidationResult(incomplete)).toBe(false)
+      expect(isValidationResult(invalidWithoutNotation)).toBe(true)
     })
 
-    test('should work with array filtering', () => {
-      const results = [
-        validateNotation('4d6'),
-        validateNotation('invalid'),
-        validateNotation('2d{HT}'),
-        validateNotation('hello'),
-        validateNotation('d6'),
-        null
-      ]
-
-      const invalidResults = results.filter(isInvalidValidationResult)
-      expect(invalidResults).toHaveLength(3)
-
-      invalidResults.forEach((result) => {
-        expect(result.valid).toBe(false)
-        expect(result.type).toBe('invalid')
-      })
-    })
-  })
-
-  describe('Mutual exclusivity', () => {
-    test('should be mutually exclusive for validation results', () => {
-      const notations = [
-        '4d6',
-        '2d{HT}',
-        'invalid',
-        '4d6L+2',
-        '3d{abc}',
-        'hello',
-        '2d20H',
-        'd6'
-      ]
-
-      notations.forEach((notation) => {
-        const result = validateNotation(notation)
-
-        const isNumeric = isNumericValidationResult(result)
-        const isCustom = isCustomValidationResult(result)
-        const isInvalid = isInvalidValidationResult(result)
-
-        // Should be exactly one of the three, never multiple or none
-        const trueCount = [isNumeric, isCustom, isInvalid].filter(
-          Boolean
-        ).length
-        expect(trueCount).toBe(1)
-      })
-    })
-
-    test('should all return false for non-validation objects', () => {
-      const invalidInputs = [
-        null,
-        undefined,
-        {},
-        [],
-        '4d6',
-        true,
-        42,
-        { valid: true }, // incomplete
-        { type: 'numeric' } // incomplete
-      ]
-
-      invalidInputs.forEach((input) => {
-        expect(isNumericValidationResult(input)).toBe(false)
-        expect(isCustomValidationResult(input)).toBe(false)
-        expect(isInvalidValidationResult(input)).toBe(false)
-      })
-    })
-  })
-
-  describe('Type narrowing', () => {
-    test('should provide proper TypeScript type narrowing for numeric results', () => {
-      const result: unknown = validateNotation('4d6+2')
-
-      if (isNumericValidationResult(result)) {
-        // TypeScript should know this is NumericValidationResult
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('numeric')
-        expect(typeof result.digested.sides).toBe('number')
-        expect(typeof result.notation).toBe('string')
+    test('returns true for InvalidValidationResult with notation (extra property)', () => {
+      const invalidWithNotation = {
+        valid: false,
+        description: ['Invalid'],
+        digested: {},
+        notation: 'some notation'
       }
-    })
-
-    test('should provide proper TypeScript type narrowing for custom results', () => {
-      const result: unknown = validateNotation('2d{HT}')
-
-      if (isCustomValidationResult(result)) {
-        // TypeScript should know this is CustomValidationResult
-        expect(result.valid).toBe(true)
-        expect(result.type).toBe('custom')
-        expect(Array.isArray(result.digested.sides)).toBe(true)
-        expect(typeof result.notation).toBe('string')
-      }
-    })
-
-    test('should provide proper TypeScript type narrowing for invalid results', () => {
-      const result: unknown = validateNotation('invalid')
-
-      if (isInvalidValidationResult(result)) {
-        // TypeScript should know this is InvalidValidationResult
-        expect(result.valid).toBe(false)
-        expect(result.type).toBe('invalid')
-        expect(Array.isArray(result.description)).toBe(true)
-      }
-    })
-
-    test('should enable type-safe validation result processing', () => {
-      const notations = ['4d6', '2d{HT}', 'invalid', '2d20+5']
-
-      const numericResults: unknown[] = []
-      const customResults: unknown[] = []
-      const invalidResults: unknown[] = []
-
-      notations.forEach((notation) => {
-        const result = validateNotation(notation)
-
-        if (isNumericValidationResult(result)) {
-          numericResults.push(result)
-          expect(typeof result.digested.sides).toBe('number')
-        } else if (isCustomValidationResult(result)) {
-          customResults.push(result)
-          expect(Array.isArray(result.digested.sides)).toBe(true)
-        } else if (isInvalidValidationResult(result)) {
-          invalidResults.push(result)
-          expect(result.valid).toBe(false)
-        }
-      })
-
-      expect(numericResults).toHaveLength(2)
-      expect(customResults).toHaveLength(1)
-      expect(invalidResults).toHaveLength(1)
+      expect(isValidationResult(invalidWithNotation)).toBe(true)
     })
   })
 })

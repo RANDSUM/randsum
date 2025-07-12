@@ -1,6 +1,3 @@
-export function formatSides(sides: string): number | string[] {
-  if (sides.includes('{')) {
-    return [...sides.replaceAll(/{|}/g, '')]
-  }
+export function formatSides(sides: string): number {
   return Number(sides)
 }

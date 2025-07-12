@@ -1,33 +1,10 @@
-import type {
-  CustomRollParams,
-  NumericRollParams,
-  RollHistory
-} from '../../types'
-import { coreSpreadRolls, isNumericRollOptions } from '../../lib'
+import type { RollHistory, RollParams } from '../../types'
+import { coreSpreadRolls } from '../../lib'
 
-function generateInitialRolls(
-  params: CustomRollParams
-): RollHistory<CustomRollParams>['initialRolls']
-function generateInitialRolls(
-  params: NumericRollParams
-): RollHistory<NumericRollParams>['initialRolls']
-function generateInitialRolls({
+export function generateInitialRolls({
   options
-}: CustomRollParams | NumericRollParams):
-  | RollHistory<CustomRollParams>['initialRolls']
-  | RollHistory<NumericRollParams>['initialRolls']
-function generateInitialRolls({
-  options
-}: CustomRollParams | NumericRollParams):
-  | RollHistory<CustomRollParams>['initialRolls']
-  | RollHistory<NumericRollParams>['initialRolls'] {
+}: RollParams): RollHistory['initialRolls'] {
   const quantity = options.quantity ?? 1
 
-  if (isNumericRollOptions(options)) {
-    return coreSpreadRolls<number>(quantity, options.sides)
-  } else {
-    return coreSpreadRolls(quantity, options.sides.length, options.sides)
-  }
+  return coreSpreadRolls(quantity, options.sides)
 }
-
-export { generateInitialRolls }

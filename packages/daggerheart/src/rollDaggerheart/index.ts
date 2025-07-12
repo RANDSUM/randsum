@@ -8,7 +8,7 @@ export function rollDaggerheart({
   rollingWith,
   amplifyHope = false,
   amplifyFear = false
-}: DaggerheartRollArgument): DaggerheartRollResult {
+}: DaggerheartRollArgument = {}): DaggerheartRollResult {
   const hopeResult = coreRoll({
     quantity: 1,
     sides: amplifyHope ? 20 : 12,

@@ -1,134 +1,383 @@
 import { describe, expect, test } from 'bun:test'
-import { D, isCustomResult, isNumericResult, roll } from '../../../src'
+import { isRollResult } from '../../../src/lib/guards/isRollResult'
+import type { RollHistory, RollParams, RollResult } from '../../../src/types'
 
-describe('Roll Result Type Guards', () => {
-  describe('isNumericResult', () => {
-    test('should return true for numeric roll results', () => {
-      const result = roll('4d6')
-      expect(isNumericResult(result)).toBe(true)
+// Helper function to create a valid RollResult for testing
+function createValidRollResult(
+  overrides: Partial<RollResult> = {}
+): RollResult {
+  const defaultHistory: RollHistory = {
+    modifiedRolls: [1, 2, 3],
+    total: 6,
+    initialRolls: [1, 2, 3],
+    logs: []
+  }
 
-      if (isNumericResult(result)) {
-        expect(typeof result.total).toBe('number')
-        expect(Array.isArray(result.history.initialRolls)).toBe(true)
-        expect(
-          result.history.initialRolls.every((r) => typeof r === 'number')
-        ).toBe(true)
-      }
+  const defaultParams: RollParams = {
+    description: ['Roll 3d6'],
+    argument: '3d6',
+    options: { sides: 6, quantity: 3 },
+    notation: '3d6'
+  }
+
+  return {
+    parameters: defaultParams,
+    description: defaultParams.description,
+    rolls: defaultHistory.modifiedRolls,
+    history: defaultHistory,
+    total: 6,
+    ...overrides
+  }
+}
+
+// Helper function to create a minimal valid RollResult
+function createMinimalValidRollResult(): RollResult {
+  return createValidRollResult({
+    parameters: {
+      description: ['Test'],
+      argument: 1,
+      options: { sides: 6 },
+      notation: '1d6'
+    },
+    description: ['Test'],
+    rolls: [1],
+    history: {
+      modifiedRolls: [1],
+      total: 1,
+      initialRolls: [1],
+      logs: []
+    },
+    total: 1
+  })
+}
+
+describe('isRollResult', () => {
+  describe('valid RollResult objects', () => {
+    test('returns true for a complete valid RollResult', () => {
+      const validResult = createValidRollResult()
+      expect(isRollResult(validResult)).toBe(true)
     })
 
-    test('should return true for single numeric die results', () => {
-      const result = roll(20)
-      expect(isNumericResult(result)).toBe(true)
-      expect(result.type).toBe('numeric')
+    test('returns true for a minimal valid RollResult', () => {
+      const minimalResult = createMinimalValidRollResult()
+      expect(isRollResult(minimalResult)).toBe(true)
     })
 
-    test('should return false for custom roll results', () => {
-      const result = roll(D(['heads', 'tails']))
-      expect(isNumericResult(result)).toBe(false)
-    })
-
-    test('should work with array filtering', () => {
-      const results = [roll('4d6'), roll(D(['heads', 'tails'])), roll('2d20')]
-
-      const numericResults = results.filter(isNumericResult)
-      expect(numericResults).toHaveLength(2)
-
-      numericResults.forEach((result) => {
-        expect(result.type).toBe('numeric')
-        expect(typeof result.total).toBe('number')
+    test('returns true for RollResult with complex history', () => {
+      const complexResult = createValidRollResult({
+        history: {
+          modifiedRolls: [2, 4, 6, 8],
+          total: 20,
+          initialRolls: [1, 3, 5, 7],
+          logs: [
+            {
+              modifier: 'plus',
+              options: 1,
+              added: [1, 1, 1, 1],
+              removed: []
+            }
+          ]
+        },
+        rolls: [2, 4, 6, 8],
+        total: 20
       })
+      expect(isRollResult(complexResult)).toBe(true)
+    })
+
+    test('returns true for RollResult with empty arrays', () => {
+      const emptyArraysResult = createValidRollResult({
+        rolls: [],
+        history: {
+          modifiedRolls: [],
+          total: 0,
+          initialRolls: [],
+          logs: []
+        },
+        total: 0
+      })
+      expect(isRollResult(emptyArraysResult)).toBe(true)
     })
   })
 
-  describe('isCustomResult', () => {
-    test('should return true for custom roll results', () => {
-      const result = roll(D(['critical', 'hit', 'miss']))
-      expect(isCustomResult(result)).toBe(true)
-
-      if (isCustomResult(result)) {
-        expect(typeof result.total).toBe('string')
-        expect(Array.isArray(result.history.initialRolls)).toBe(true)
-        expect(
-          result.history.initialRolls.every((r) => typeof r === 'string')
-        ).toBe(true)
-      }
+  describe('invalid primitive values', () => {
+    test('returns false for null', () => {
+      expect(isRollResult(null)).toBe(false)
     })
 
-    test('should return true for coin flip results', () => {
-      const result = roll(D(['heads', 'tails']))
-      expect(isCustomResult(result)).toBe(true)
-      expect(result.type).toBe('custom')
+    test('returns false for undefined', () => {
+      expect(isRollResult(undefined)).toBe(false)
     })
 
-    test('should return false for numeric roll results', () => {
-      const result = roll('4d6')
-      expect(isCustomResult(result)).toBe(false)
+    test('returns false for numbers', () => {
+      expect(isRollResult(42)).toBe(false)
+      expect(isRollResult(0)).toBe(false)
+      expect(isRollResult(-1)).toBe(false)
+      expect(isRollResult(NaN)).toBe(false)
+      expect(isRollResult(Infinity)).toBe(false)
     })
 
-    test('should work with array filtering', () => {
-      const results = [
-        roll('4d6'),
-        roll(D(['heads', 'tails'])),
-        roll(D(['red', 'blue', 'green']))
-      ]
+    test('returns false for strings', () => {
+      expect(isRollResult('')).toBe(false)
+      expect(isRollResult('test')).toBe(false)
+      expect(isRollResult('{"total": 5}')).toBe(false)
+    })
 
-      const customResults = results.filter(isCustomResult)
-      expect(customResults).toHaveLength(2)
+    test('returns false for booleans', () => {
+      expect(isRollResult(true)).toBe(false)
+      expect(isRollResult(false)).toBe(false)
+    })
 
-      customResults.forEach((result) => {
-        expect(result.type).toBe('custom')
-        expect(typeof result.total).toBe('string')
-      })
+    test('returns false for arrays', () => {
+      expect(isRollResult([])).toBe(false)
+      expect(isRollResult([1, 2, 3])).toBe(false)
+      expect(isRollResult(['parameters', 'history', 'total'])).toBe(false)
+    })
+
+    test('returns false for functions', () => {
+      expect(
+        isRollResult(() => {
+          // noop
+        })
+      ).toBe(false)
+      expect(
+        isRollResult(() => {
+          // noop
+        })
+      ).toBe(false)
     })
   })
 
-  describe('Type narrowing and discrimination', () => {
-    test('should provide proper TypeScript type narrowing', () => {
-      const result = roll('4d6')
-
-      if (isNumericResult(result)) {
-        const total: number = result.total
-        const rolls: number[] = result.history.initialRolls
-        const firstRoll: number = result.history.initialRolls[0] ?? 0
-
-        expect(typeof total).toBe('number')
-        expect(Array.isArray(rolls)).toBe(true)
-        expect(typeof firstRoll).toBe('number')
-      }
+  describe('objects missing required properties', () => {
+    test('returns false for empty object', () => {
+      expect(isRollResult({})).toBe(false)
     })
 
-    test('should handle all result types in switch-like logic', () => {
-      const results = [roll('4d6'), roll(D(['heads', 'tails']))]
+    test('returns false when missing parameters property', () => {
+      const missingParameters = {
+        description: ['Test'],
+        rolls: [1],
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] },
+        total: 1
+      }
+      expect(isRollResult(missingParameters)).toBe(false)
+    })
 
-      results.forEach((result) => {
-        if (isNumericResult(result)) {
-          expect(result.type).toBe('numeric')
-          expect(typeof result.total).toBe('number')
-        } else if (isCustomResult(result)) {
-          expect(result.type).toBe('custom')
-          expect(typeof result.total).toBe('string')
-        } else {
-          throw new Error('Unknown result type')
+    test('returns false when missing description property', () => {
+      const missingDescription = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        rolls: [1],
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] },
+        total: 1
+      }
+      expect(isRollResult(missingDescription)).toBe(false)
+    })
+
+    test('returns false when missing rolls property', () => {
+      const missingRolls = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        description: ['Test'],
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] },
+        total: 1
+      }
+      expect(isRollResult(missingRolls)).toBe(false)
+    })
+
+    test('returns false when missing history property', () => {
+      const missingHistory = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        description: ['Test'],
+        rolls: [1],
+        total: 1
+      }
+      expect(isRollResult(missingHistory)).toBe(false)
+    })
+
+    test('returns false when missing total property', () => {
+      const missingTotal = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        description: ['Test'],
+        rolls: [1],
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] }
+      }
+      expect(isRollResult(missingTotal)).toBe(false)
+    })
+
+    test('returns false when missing multiple properties', () => {
+      const missingMultiple = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        total: 1
+      }
+      expect(isRollResult(missingMultiple)).toBe(false)
+    })
+  })
+
+  describe('objects with properties of wrong types', () => {
+    test('returns false when parameters is not an object', () => {
+      const wrongParametersType = {
+        parameters: 'not an object',
+        description: ['Test'],
+        rolls: [1],
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] },
+        total: 1
+      }
+      expect(isRollResult(wrongParametersType)).toBe(false)
+    })
+
+    test('returns false when description is not an array', () => {
+      const wrongDescriptionType = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        description: 'not an array',
+        rolls: [1],
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] },
+        total: 1
+      }
+      expect(isRollResult(wrongDescriptionType)).toBe(false)
+    })
+
+    test('returns false when rolls is not an array', () => {
+      const wrongRollsType = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        description: ['Test'],
+        rolls: 'not an array',
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] },
+        total: 1
+      }
+      expect(isRollResult(wrongRollsType)).toBe(false)
+    })
+
+    test('returns false when history is not an object', () => {
+      const wrongHistoryType = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        description: ['Test'],
+        rolls: [1],
+        history: 'not an object',
+        total: 1
+      }
+      expect(isRollResult(wrongHistoryType)).toBe(false)
+    })
+
+    test('returns false when total is not a number', () => {
+      const wrongTotalType = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        description: ['Test'],
+        rolls: [1],
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] },
+        total: 'not a number'
+      }
+      expect(isRollResult(wrongTotalType)).toBe(false)
+    })
+  })
+
+  describe('edge cases and boundary conditions', () => {
+    test('returns true for RollResult with extra properties', () => {
+      const resultWithExtraProps = {
+        ...createValidRollResult(),
+        extraProperty: 'should not affect validation',
+        anotherExtra: 42
+      }
+      expect(isRollResult(resultWithExtraProps)).toBe(true)
+    })
+
+    test('returns false for objects with only some required properties', () => {
+      const partialObject = {
+        parameters: {
+          description: ['Test'],
+          argument: 1,
+          options: { sides: 6 },
+          notation: '1d6'
+        },
+        history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] }
+        // Missing description, rolls, and total
+      }
+      expect(isRollResult(partialObject)).toBe(false)
+    })
+
+    test('returns false for nested objects that look like RollResult', () => {
+      const nestedFakeResult = {
+        nested: {
+          parameters: {
+            description: ['Test'],
+            argument: 1,
+            options: { sides: 6 },
+            notation: '1d6'
+          },
+          description: ['Test'],
+          rolls: [1],
+          history: {
+            modifiedRolls: [1],
+            total: 1,
+            initialRolls: [1],
+            logs: []
+          },
+          total: 1
         }
-      })
+      }
+      expect(isRollResult(nestedFakeResult)).toBe(false)
     })
 
-    test('should enable type-safe result processing', () => {
-      const results = [roll('4d6'), roll(D(['critical', 'hit', 'miss']))]
+    test('returns false for Date objects', () => {
+      expect(isRollResult(new Date())).toBe(false)
+    })
 
-      const numericResults = results.filter(isNumericResult)
-      numericResults.forEach((result) => {
-        const average =
-          result.history.initialRolls.reduce((a, b) => a + b, 0) /
-          result.history.initialRolls.length
-        expect(typeof average).toBe('number')
-      })
+    test('returns false for RegExp objects', () => {
+      expect(isRollResult(/test/)).toBe(false)
+    })
 
-      const customResults = results.filter(isCustomResult)
-      customResults.forEach((result) => {
-        const combined = result.history.initialRolls.join(', ')
-        expect(typeof combined).toBe('string')
-      })
+    test('returns false for Error objects', () => {
+      expect(isRollResult(new Error('test'))).toBe(false)
+    })
+
+    test('returns false for Map objects', () => {
+      expect(isRollResult(new Map())).toBe(false)
+    })
+
+    test('returns false for Set objects', () => {
+      expect(isRollResult(new Set())).toBe(false)
     })
   })
 })

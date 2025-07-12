@@ -8,7 +8,6 @@ import {
   test
 } from 'bun:test'
 
-import { D } from '../src/Dice'
 import type { RollParams } from '../src/types'
 import * as CoreRandom from '../src/lib'
 import * as CoreSpreadRolls from '../src/lib'
@@ -16,7 +15,6 @@ import { generateRollResult } from '../src/roll/generateRollResult'
 
 function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
   return {
-    die: D(4),
     argument: 1,
     notation: '1d4',
     description: ['Roll 1d4'],
@@ -46,7 +44,6 @@ describe(generateRollResult, () => {
       expect(generateRollResult(coreParameters)).toMatchObject({
         parameters: coreParameters,
         total: 10,
-        type: 'numeric',
         history: {
           initialRolls: testRollSet,
           logs: [],
@@ -87,8 +84,7 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 206,
-        type: 'numeric'
+        total: 206
       })
     })
 
@@ -120,8 +116,7 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 7,
-          type: 'numeric'
+          total: 7
         })
       })
     })
@@ -191,8 +186,7 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 17,
-        type: 'numeric'
+        total: 17
       })
     })
   })
@@ -229,8 +223,7 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 11,
-          type: 'numeric'
+          total: 11
         })
       })
     })
@@ -279,8 +272,7 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 13,
-          type: 'numeric'
+          total: 13
         })
       })
     })
@@ -317,8 +309,7 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 212,
-        type: 'numeric'
+        total: 212
       })
     })
   })
@@ -330,8 +321,7 @@ describe(generateRollResult, () => {
           sides: 6,
           quantity: testRollSet.length,
           modifiers: { reroll: { greaterThan: 3 } }
-        },
-        die: D(4)
+        }
       })
 
       test('it stops at 99 rerolls and returns the total with all values matching the queries rerolled', () => {
@@ -355,8 +345,7 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 206,
-          type: 'numeric'
+          total: 206
         })
       })
     })
@@ -395,8 +384,7 @@ describe(generateRollResult, () => {
               }
             ]
           },
-          total: 404,
-          type: 'numeric'
+          total: 404
         })
       })
     })
@@ -422,8 +410,7 @@ describe(generateRollResult, () => {
             modifiedRolls: [200, 2, 200, 4],
             total: 406
           },
-          total: 406,
-          type: 'numeric'
+          total: 406
         })
       })
     })
@@ -458,8 +445,7 @@ describe(generateRollResult, () => {
             }
           ]
         },
-        total: 10,
-        type: 'numeric'
+        total: 10
       })
     })
   })
@@ -483,8 +469,7 @@ describe(generateRollResult, () => {
           total: 12,
           logs: []
         },
-        total: 12,
-        type: 'numeric'
+        total: 12
       })
     })
   })
@@ -508,8 +493,7 @@ describe(generateRollResult, () => {
           initialRolls: testRollSet,
           logs: []
         },
-        total: 8,
-        type: 'numeric'
+        total: 8
       })
     })
   })
@@ -536,8 +520,7 @@ describe(generateRollResult, () => {
           total: 10,
           logs: []
         },
-        total: 10,
-        type: 'numeric'
+        total: 10
       })
     })
   })

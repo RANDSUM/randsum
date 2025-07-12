@@ -1,5 +1,4 @@
 export * from './utils'
-export * from './errors'
 export * from './guards'
 export * from './modifiers'
 export * from './patterns'

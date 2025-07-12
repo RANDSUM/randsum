@@ -7,7 +7,6 @@ dependsOn:
 tags:
   - "game"
 
-# Inherits shared task configuration with custom test override
 tasks:
   tsCheck:
     deps:

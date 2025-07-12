@@ -17,22 +17,19 @@
 ## 🚀 Quick Example
 
 ```typescript
-import { D20, roll } from '@randsum/roller'
+import { D20, roll } from "@randsum/roller"
 
 // Simple d20 roll
 D20.roll() // Returns 1-20
 
 // Complex dice notation
-roll('4d6L') // Roll 4d6, drop lowest
+roll("4d6L") // Roll 4d6, drop lowest
 
 // Advantage and disadvantage
-roll('2d20H') // Roll with advantage (2d20, keep highest)
-roll('2d20L') // Roll with disadvantage (2d20, keep lowest)
+roll("2d20H") // Roll with advantage (2d20, keep highest)
+roll("2d20L") // Roll with disadvantage (2d20, keep lowest)
 
-roll('4d6L!R{<3}'} // Roll 4d6, drop lowest, reroll below 3)
-
-// Custom dice
-roll('2d{HT}') // Roll 2 coins (heads/tails)
+roll("4d6L!R{<3}") // Roll 4d6, drop lowest, reroll below 3
 ```
 
 Or directly from your terminal:
@@ -120,7 +117,7 @@ When I found the answer, I laughed and laughed. I've been chasing that high ever
 
 ## LLM Statement
 
-I love this thing we call programming. It seems as if (biiiiig scare quotes) "AI" might be a part of it moving forward. You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work. I care deeply about it, and there is no better way for me to understand this weird new tool and their place in my craft than to use them here. Is this profane? I don't know. We'll have to see the extent to which I come to regret/resent/respect this decision in the coming years together. 
+I love this thing we call programming. It seems as if (biiiiig scare quotes) "AI" might be a part of it moving forward. You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work. I care deeply about it, and there is no better way for me to understand this weird new tool and their place in my craft than to use them here. Is this profane? I don't know. We'll have to see the extent to which I come to regret/resent/respect this decision in the coming years together.
 
 Check the git history of this paragraph for a makeshift changelog of my evolving feelings on the subject.
 

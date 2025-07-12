@@ -1,344 +1,283 @@
 import { describe, expect, test } from 'bun:test'
-import { D, isCustomRollParams, isNumericRollParams } from '../../../src'
-import { argToParameter } from '../../../src/roll/argToParameter'
-import {
-  createCustomRollOptions,
-  createNumericRollOptions
-} from '../../support/fixtures'
+import { isRollParams } from '../../../src/lib/guards/isRollParams'
+import type { RollOptions, RollParams } from '../../../src/types'
 
-describe('Roll Params Type Guards', () => {
-  describe('isNumericRollParams', () => {
-    test('should return true for numeric roll params', () => {
-      const params = argToParameter('4d6')
-      expect(isNumericRollParams(params)).toBe(true)
+// Helper function to create a valid RollParams for testing
+function createRollParams(overrides: Partial<RollParams> = {}): RollParams {
+  return {
+    description: ['Roll 1d6'],
+    argument: '1d6',
+    options: { sides: 6, quantity: 1 },
+    notation: '1d6',
+    ...overrides
+  }
+}
 
-      if (isNumericRollParams(params)) {
-        expect(typeof params.options.sides).toBe('number')
-        expect(params.die.type).toBe('numeric')
-        expect(params.die.isCustom).toBe(false)
-        expect(typeof params.notation).toBe('string')
-        expect(Array.isArray(params.description)).toBe(true)
-      }
+describe('isRollParams', () => {
+  describe('valid RollParams objects', () => {
+    test('returns true for complete RollParams with string argument', () => {
+      const validParams = createRollParams()
+      expect(isRollParams(validParams)).toBe(true)
     })
 
-    test('should return true for numeric params with modifiers', () => {
-      const params = argToParameter('4d6L+2')
-      expect(isNumericRollParams(params)).toBe(true)
-
-      if (isNumericRollParams(params)) {
-        expect(typeof params.options.sides).toBe('number')
-        expect(params.options.modifiers).toBeDefined()
-        expect(params.die.type).toBe('numeric')
-      }
-    })
-
-    test('should return true for numeric params from die objects', () => {
-      const params = argToParameter(D(20))
-      expect(isNumericRollParams(params)).toBe(true)
-
-      if (isNumericRollParams(params)) {
-        expect(params.options.sides).toBe(20)
-        expect(params.die.type).toBe('numeric')
-        expect(params.die.sides).toBe(20)
-      }
-    })
-
-    test('should return true for numeric params from options', () => {
-      const options = createNumericRollOptions({ sides: 8, quantity: 3 })
-      const params = argToParameter(options)
-      expect(isNumericRollParams(params)).toBe(true)
-
-      if (isNumericRollParams(params)) {
-        expect(params.options.sides).toBe(8)
-        expect(params.options.quantity).toBe(3)
-        expect(params.die.type).toBe('numeric')
-      }
-    })
-
-    test('should return true for numeric params from plain numbers', () => {
-      const params = argToParameter(6)
-      expect(isNumericRollParams(params)).toBe(true)
-
-      if (isNumericRollParams(params)) {
-        expect(params.options.sides).toBe(6)
-        expect(params.die.type).toBe('numeric')
-        expect(params.die.sides).toBe(6)
-      }
-    })
-
-    test('should return true for complex numeric notation', () => {
-      const params = argToParameter('4d6LR{1}!+3')
-      expect(isNumericRollParams(params)).toBe(true)
-
-      if (isNumericRollParams(params)) {
-        expect(typeof params.options.sides).toBe('number')
-        expect(params.options.modifiers).toBeDefined()
-        expect(params.die.type).toBe('numeric')
-      }
-    })
-
-    test('should return false for custom roll params', () => {
-      const params = argToParameter(['heads', 'tails'])
-      expect(isNumericRollParams(params)).toBe(false)
-    })
-
-    test('should return false for custom dice notation params', () => {
-      const params = argToParameter('2d{HT}')
-      expect(isNumericRollParams(params)).toBe(false)
-    })
-
-    test('should return false for custom die object params', () => {
-      const params = argToParameter(D(['red', 'blue', 'green']))
-      expect(isNumericRollParams(params)).toBe(false)
-    })
-
-    test('should return false for invalid inputs', () => {
-      expect(isNumericRollParams(null)).toBe(false)
-      expect(isNumericRollParams(undefined)).toBe(false)
-      expect(isNumericRollParams({})).toBe(false)
-      expect(isNumericRollParams([])).toBe(false)
-      expect(isNumericRollParams('4d6')).toBe(false) // string, not params
-      expect(isNumericRollParams(20)).toBe(false) // number, not params
-    })
-
-    test('should work with array filtering', () => {
-      const params = [
-        argToParameter('4d6'),
-        argToParameter(['heads', 'tails']),
-        argToParameter(D(20)),
-        argToParameter('2d{HT}'),
-        '4d6', // not params
-        null
-      ]
-
-      const numericParams = params.filter(isNumericRollParams)
-      expect(numericParams).toHaveLength(2)
-
-      numericParams.forEach((param) => {
-        expect(typeof param.options.sides).toBe('number')
-        expect(param.die.type).toBe('numeric')
+    test('returns true for RollParams with number argument', () => {
+      const numberArgument = createRollParams({
+        argument: 20,
+        notation: '1d20',
+        options: { sides: 20, quantity: 1 }
       })
+      expect(isRollParams(numberArgument)).toBe(true)
+    })
+
+    test('returns true for RollParams with RollOptions argument', () => {
+      const optionsArgument: RollOptions = { sides: 8, quantity: 2 }
+      const rollOptionsArgument = createRollParams({
+        argument: optionsArgument,
+        notation: '2d8',
+        options: optionsArgument
+      })
+      expect(isRollParams(rollOptionsArgument)).toBe(true)
+    })
+
+    test('returns true for RollParams with complex options', () => {
+      const complexParams = createRollParams({
+        description: ['Roll 4d6, drop lowest, add 3'],
+        argument: '4d6L+3',
+        options: {
+          sides: 6,
+          quantity: 4,
+          modifiers: {
+            drop: { lowest: 1 },
+            plus: 3
+          }
+        },
+        notation: '4d6L+3'
+      })
+      expect(isRollParams(complexParams)).toBe(true)
+    })
+
+    test('returns true for RollParams with empty description array', () => {
+      const emptyDescription = createRollParams({
+        description: []
+      })
+      expect(isRollParams(emptyDescription)).toBe(true)
+    })
+
+    test('returns true for RollParams with multiple description entries', () => {
+      const multipleDescriptions = createRollParams({
+        description: ['Roll 2d10', 'Add modifier', 'Check for critical']
+      })
+      expect(isRollParams(multipleDescriptions)).toBe(true)
+    })
+
+    test('returns true for RollParams with extra properties', () => {
+      const extraProps = {
+        ...createRollParams(),
+        extraProperty: 'should not affect validation',
+        anotherExtra: 42
+      }
+      expect(isRollParams(extraProps)).toBe(true)
     })
   })
 
-  describe('isCustomRollParams', () => {
-    test('should return true for custom roll params from string arrays', () => {
-      const params = argToParameter(['heads', 'tails'])
-      expect(isCustomRollParams(params)).toBe(true)
-
-      if (isCustomRollParams(params)) {
-        expect(Array.isArray(params.options.sides)).toBe(true)
-        expect(params.die.type).toBe('custom')
-        expect(params.die.isCustom).toBe(true)
-        expect(typeof params.notation).toBe('string')
-        expect(Array.isArray(params.description)).toBe(true)
-      }
+  describe('invalid primitive values', () => {
+    test('returns false for null', () => {
+      expect(isRollParams(null)).toBe(false)
     })
 
-    test('should return true for custom dice notation params', () => {
-      const params = argToParameter('2d{HT}')
-      expect(isCustomRollParams(params)).toBe(true)
-
-      if (isCustomRollParams(params)) {
-        expect(Array.isArray(params.options.sides)).toBe(true)
-        expect(params.options.sides).toEqual(['H', 'T'])
-        expect(params.die.type).toBe('custom')
-      }
+    test('returns false for undefined', () => {
+      expect(isRollParams(undefined)).toBe(false)
     })
 
-    test('should return true for custom die object params', () => {
-      const params = argToParameter(D(['red', 'blue', 'green']))
-      expect(isCustomRollParams(params)).toBe(true)
-
-      if (isCustomRollParams(params)) {
-        expect(Array.isArray(params.options.sides)).toBe(true)
-        expect(params.options.sides).toEqual(['red', 'blue', 'green'])
-        expect(params.die.type).toBe('custom')
-        expect(params.die.sides).toBe(3)
-      }
+    test('returns false for numbers', () => {
+      expect(isRollParams(42)).toBe(false)
+      expect(isRollParams(0)).toBe(false)
+      expect(isRollParams(-1)).toBe(false)
     })
 
-    test('should return true for custom options params', () => {
-      const options = createCustomRollOptions({
-        sides: ['critical', 'hit', 'miss'],
-        quantity: 2
-      })
-      const params = argToParameter(options)
-      expect(isCustomRollParams(params)).toBe(true)
-
-      if (isCustomRollParams(params)) {
-        expect(Array.isArray(params.options.sides)).toBe(true)
-        expect(params.options.sides).toEqual(['critical', 'hit', 'miss'])
-        expect(params.options.quantity).toBe(2)
-        expect(params.die.type).toBe('custom')
-      }
+    test('returns false for strings', () => {
+      expect(isRollParams('')).toBe(false)
+      expect(isRollParams('1d6')).toBe(false)
+      expect(isRollParams('{"description": ["test"]}')).toBe(false)
     })
 
-    test('should return true for emoji face params', () => {
-      const params = argToParameter(['⚔️', '🛡️', '🏹'])
-      expect(isCustomRollParams(params)).toBe(true)
-
-      if (isCustomRollParams(params)) {
-        expect(Array.isArray(params.options.sides)).toBe(true)
-        expect(params.options.sides).toEqual(['⚔️', '🛡️', '🏹'])
-        expect(params.die.type).toBe('custom')
-      }
+    test('returns false for booleans', () => {
+      expect(isRollParams(true)).toBe(false)
+      expect(isRollParams(false)).toBe(false)
     })
 
-    test('should return true for complex custom notation params', () => {
-      const params = argToParameter('3d{abc}')
-      expect(isCustomRollParams(params)).toBe(true)
-
-      if (isCustomRollParams(params)) {
-        expect(Array.isArray(params.options.sides)).toBe(true)
-        expect(params.options.sides).toEqual(['a', 'b', 'c'])
-        expect(params.die.type).toBe('custom')
-      }
+    test('returns false for arrays', () => {
+      expect(isRollParams([])).toBe(false)
+      expect(isRollParams([1, 2, 3])).toBe(false)
     })
 
-    test('should return false for numeric roll params', () => {
-      const params = argToParameter('4d6')
-      expect(isCustomRollParams(params)).toBe(false)
-    })
-
-    test('should return false for numeric die object params', () => {
-      const params = argToParameter(D(20))
-      expect(isCustomRollParams(params)).toBe(false)
-    })
-
-    test('should return false for numeric options params', () => {
-      const options = createNumericRollOptions({ sides: 6, quantity: 4 })
-      const params = argToParameter(options)
-      expect(isCustomRollParams(params)).toBe(false)
-    })
-
-    test('should return false for plain number params', () => {
-      const params = argToParameter(6)
-      expect(isCustomRollParams(params)).toBe(false)
-    })
-
-    test('should return false for invalid inputs', () => {
-      expect(isCustomRollParams(null)).toBe(false)
-      expect(isCustomRollParams(undefined)).toBe(false)
-      expect(isCustomRollParams({})).toBe(false)
-      expect(isCustomRollParams([])).toBe(false)
-      expect(isCustomRollParams('2d{HT}')).toBe(false) // string, not params
-      expect(isCustomRollParams(['heads', 'tails'])).toBe(false) // array, not params
-    })
-
-    test('should work with array filtering', () => {
-      const params = [
-        argToParameter(['heads', 'tails']),
-        argToParameter('4d6'),
-        argToParameter('2d{HT}'),
-        argToParameter(D(20)),
-        '2d{HT}', // not params
-        null
-      ]
-
-      const customParams = params.filter(isCustomRollParams)
-      expect(customParams).toHaveLength(2)
-
-      customParams.forEach((param) => {
-        expect(Array.isArray(param.options.sides)).toBe(true)
-        expect(param.die.type).toBe('custom')
-      })
+    test('returns false for functions', () => {
+      expect(
+        isRollParams(() => {
+          // noop
+        })
+      ).toBe(false)
+      expect(
+        isRollParams(() => {
+          // noop
+        })
+      ).toBe(false)
     })
   })
 
-  describe('Mutual exclusivity', () => {
-    test('should be mutually exclusive for valid params', () => {
-      const validParams = [
-        argToParameter('4d6'),
-        argToParameter(['heads', 'tails']),
-        argToParameter(D(20)),
-        argToParameter('2d{HT}'),
-        argToParameter(createNumericRollOptions()),
-        argToParameter(createCustomRollOptions())
-      ]
-
-      validParams.forEach((param) => {
-        const isCustom = isCustomRollParams(param)
-        const isNumeric = isNumericRollParams(param)
-
-        // Should be exactly one or the other, never both or neither
-        expect(isCustom !== isNumeric).toBe(true)
-      })
+  describe('objects missing required properties', () => {
+    test('returns false for empty object', () => {
+      expect(isRollParams({})).toBe(false)
     })
 
-    test('should both return false for invalid params', () => {
-      const invalidInputs = [
-        null,
-        undefined,
-        {},
-        [],
-        '4d6', // string, not params
-        20, // number, not params
-        ['heads', 'tails'], // array, not params
-        true
-      ]
+    test('returns false when missing description property', () => {
+      const missingDescription = {
+        argument: '1d6',
+        options: { sides: 6, quantity: 1 },
+        notation: '1d6'
+      }
+      expect(isRollParams(missingDescription)).toBe(false)
+    })
 
-      invalidInputs.forEach((input) => {
-        expect(isCustomRollParams(input)).toBe(false)
-        expect(isNumericRollParams(input)).toBe(false)
-      })
+    test('returns false when missing argument property', () => {
+      const missingArgument = {
+        description: ['Roll 1d6'],
+        options: { sides: 6, quantity: 1 },
+        notation: '1d6'
+      }
+      expect(isRollParams(missingArgument)).toBe(false)
+    })
+
+    test('returns false when missing options property', () => {
+      const missingOptions = {
+        description: ['Roll 1d6'],
+        argument: '1d6',
+        notation: '1d6'
+      }
+      expect(isRollParams(missingOptions)).toBe(false)
+    })
+
+    test('returns false when missing notation property', () => {
+      const missingNotation = {
+        description: ['Roll 1d6'],
+        argument: '1d6',
+        options: { sides: 6, quantity: 1 }
+      }
+      expect(isRollParams(missingNotation)).toBe(false)
     })
   })
 
-  describe('Type narrowing', () => {
-    test('should provide proper TypeScript type narrowing for numeric params', () => {
-      const params: unknown = argToParameter('4d6+2')
-
-      if (isNumericRollParams(params)) {
-        // TypeScript should know this is NumericRollParams
-        const sides: number = params.options.sides
-        const die = params.die
-        const notation: string = params.notation
-        expect(typeof sides).toBe('number')
-        expect(die.type).toBe('numeric')
-        expect(typeof notation).toBe('string')
+  describe('objects with properties of wrong types', () => {
+    test('returns false when description is not an array', () => {
+      const wrongDescriptionType = {
+        description: 'not an array',
+        argument: '1d6',
+        options: { sides: 6, quantity: 1 },
+        notation: '1d6'
       }
+      expect(isRollParams(wrongDescriptionType)).toBe(false)
     })
 
-    test('should provide proper TypeScript type narrowing for custom params', () => {
-      const params: unknown = argToParameter(['heads', 'tails'])
-
-      if (isCustomRollParams(params)) {
-        // TypeScript should know this is CustomRollParams
-        const sides: string[] = params.options.sides
-        const die = params.die
-        const notation: string = params.notation
-        expect(Array.isArray(sides)).toBe(true)
-        expect(die.type).toBe('custom')
-        expect(typeof notation).toBe('string')
+    test('returns false when argument is null', () => {
+      const nullArgument = {
+        description: ['Roll 1d6'],
+        argument: null,
+        options: { sides: 6, quantity: 1 },
+        notation: '1d6'
       }
+      expect(isRollParams(nullArgument)).toBe(false)
     })
 
-    test('should enable type-safe params processing', () => {
-      const params = [
-        argToParameter('4d6'),
-        argToParameter(['heads', 'tails']),
-        argToParameter(D(20)),
-        argToParameter('2d{HT}')
-      ]
+    test('returns false when argument is undefined', () => {
+      const undefinedArgument = {
+        description: ['Roll 1d6'],
+        argument: undefined,
+        options: { sides: 6, quantity: 1 },
+        notation: '1d6'
+      }
+      expect(isRollParams(undefinedArgument)).toBe(false)
+    })
 
-      const numericParams: unknown[] = []
-      const customParams: unknown[] = []
+    test('returns false when options is not a valid RollOptions', () => {
+      const invalidOptions = {
+        description: ['Roll 1d6'],
+        argument: '1d6',
+        options: { notSides: 6 }, // Missing required 'sides' property
+        notation: '1d6'
+      }
+      expect(isRollParams(invalidOptions)).toBe(false)
+    })
 
-      params.forEach((param) => {
-        if (isNumericRollParams(param)) {
-          numericParams.push(param)
-          expect(typeof param.options.sides).toBe('number')
-          expect(param.die.type).toBe('numeric')
-        } else if (isCustomRollParams(param)) {
-          customParams.push(param)
-          expect(Array.isArray(param.options.sides)).toBe(true)
-          expect(param.die.type).toBe('custom')
+    test('returns false when notation is not a string', () => {
+      const wrongNotationType = {
+        description: ['Roll 1d6'],
+        argument: '1d6',
+        options: { sides: 6, quantity: 1 },
+        notation: 123
+      }
+      expect(isRollParams(wrongNotationType)).toBe(false)
+    })
+  })
+
+  describe('edge cases and boundary conditions', () => {
+    test('returns false for objects with only some required properties', () => {
+      const partialObject = {
+        description: ['Roll 1d6'],
+        argument: '1d6'
+        // Missing options and notation
+      }
+      expect(isRollParams(partialObject)).toBe(false)
+    })
+
+    test('returns false for Date objects', () => {
+      expect(isRollParams(new Date())).toBe(false)
+    })
+
+    test('returns false for RegExp objects', () => {
+      expect(isRollParams(/test/)).toBe(false)
+    })
+
+    test('returns false for Error objects', () => {
+      expect(isRollParams(new Error('test'))).toBe(false)
+    })
+
+    test('returns false for Map objects', () => {
+      expect(isRollParams(new Map())).toBe(false)
+    })
+
+    test('returns false for Set objects', () => {
+      expect(isRollParams(new Set())).toBe(false)
+    })
+
+    test('returns true for RollParams with template literal argument', () => {
+      const templateLiteralArg = createRollParams({
+        argument: '6' as `${number}`,
+        notation: '1d6',
+        options: { sides: 6, quantity: 1 }
+      })
+      expect(isRollParams(templateLiteralArg)).toBe(true)
+    })
+
+    test('returns false when options has invalid structure', () => {
+      const invalidOptionsStructure = {
+        description: ['Roll 1d6'],
+        argument: '1d6',
+        options: { sides: 'six' }, // sides should be number
+        notation: '1d6'
+      }
+      expect(isRollParams(invalidOptionsStructure)).toBe(false)
+    })
+
+    test('returns false for nested objects that look like RollParams', () => {
+      const nestedFakeParams = {
+        nested: {
+          description: ['Roll 1d6'],
+          argument: '1d6',
+          options: { sides: 6, quantity: 1 },
+          notation: '1d6'
         }
-      })
-
-      expect(numericParams).toHaveLength(2)
-      expect(customParams).toHaveLength(2)
+      }
+      expect(isRollParams(nestedFakeParams)).toBe(false)
     })
   })
 })

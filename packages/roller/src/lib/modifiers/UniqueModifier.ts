@@ -1,4 +1,3 @@
-import { RollConstraintError } from '../errors'
 import type {
   ModifierOptions,
   NumericRollBonus,
@@ -42,7 +41,9 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
   ): NumericRollBonus {
     if (this.options === undefined) return bonus
     if (quantity > sides) {
-      throw RollConstraintError.forUniqueRollViolation(sides, quantity)
+      throw new Error(
+        'Cannot have more rolls than sides when unique is enabled'
+      )
     }
     const notUnique = this.generateNotUniqueArray()
 
