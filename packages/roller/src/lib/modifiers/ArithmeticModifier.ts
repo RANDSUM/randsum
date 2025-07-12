@@ -43,6 +43,7 @@ export abstract class ArithmeticModifier extends BaseModifier<number> {
   }
 
   public toNotation = (): string | undefined => {
+    if (this.options === 0) return '+0'
     if (!this.options) return undefined
     if (this.operator === '+' && this.options < 0) {
       return `-${String(Math.abs(this.options))}`
