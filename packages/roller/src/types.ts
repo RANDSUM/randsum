@@ -95,6 +95,12 @@ export interface MeetOrBeatResult {
   result: RollResult
 }
 
+// Shared base interfaces for game packages
+export interface BaseGameRollResult<TOutcome = string> {
+  outcome: TOutcome
+  result: RollResult
+}
+
 export interface RollParams {
   description: string[]
   argument: RollArgument

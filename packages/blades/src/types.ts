@@ -1,4 +1,4 @@
-import type { RollResult } from '@randsum/roller'
+import type { BaseGameRollResult } from '@randsum/roller'
 
 export type BladesCritical = 'critical'
 export type BladesSuccess = 'success'
@@ -11,7 +11,4 @@ export type BladesResult =
   | BladesPartial
   | BladesFailure
 
-export interface BladesRollResult {
-  outcome: BladesResult
-  result: RollResult
-}
+export type BladesRollResult = BaseGameRollResult<BladesResult>
