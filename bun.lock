@@ -63,7 +63,7 @@
       "name": "@randsum/daggerheart",
       "version": "0.10.0",
       "dependencies": {
-        "@randsum/roller": "workspace:*",
+        "@randsum/roller": "workspace:~",
       },
     },
     "packages/fifth": {
