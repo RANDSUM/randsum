@@ -32,6 +32,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "prettier": "^3.6.2",
+    "typedoc": "^0.28.7",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.36.0"
   },
