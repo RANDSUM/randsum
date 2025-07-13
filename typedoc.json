@@ -1,0 +1,73 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "RANDSUM",
+  "entryPoints": [
+    "packages/roller",
+    "packages/blades",
+    "packages/daggerheart",
+    "packages/fifth",
+    "packages/root-rpg",
+    "packages/salvageunion"
+  ],
+  "entryPointStrategy": "packages",
+  "out": "docs",
+  "theme": "default",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "README.md",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "hideGenerator": false,
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "EnumMember",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method",
+    "Parameter",
+    "TypeParameter",
+    "TypeLiteral",
+    "CallSignature",
+    "ConstructorSignature",
+    "IndexSignature",
+    "GetSignature",
+    "SetSignature"
+  ],
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Functions",
+    "Classes",
+    "Interfaces",
+    "Type Aliases",
+    "Variables",
+    "Other"
+  ],
+  "searchInComments": true,
+  "searchInDocuments": true,
+  "cleanOutputDir": true,
+  "titleLink": "https://github.com/RANDSUM/randsum",
+  "navigationLinks": {
+    "GitHub": "https://github.com/RANDSUM/randsum",
+    "NPM": "https://www.npmjs.com/org/randsum"
+  },
+  "sidebarLinks": {
+    "Home": "https://randsum.github.io",
+    "Dice Notation": "https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md"
+  },
+  "hostedBaseUrl": "https://randsum.github.io/randsum/",
+  "gitRevision": "main",
+  "gitRemote": "origin"
+}

@@ -42,6 +42,7 @@ export default tseslint.config(
       // TypeScript-specific rules
       '@typescript-eslint/no-misused-spread': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

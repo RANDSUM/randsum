@@ -77,7 +77,8 @@ tsconfig.tsbuildinfo
 .moon/cache
 .moon/docker
 
-docs/api
+# TypeDoc generated documentation
+docs/
 
 .notes
 apps/robo/.robo/*

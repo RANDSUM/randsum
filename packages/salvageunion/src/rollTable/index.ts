@@ -2,6 +2,33 @@ import { AllRollTables, customTableFaces } from '../tables'
 import type { SalvageUnionTableName, SalvageUnionTableResult } from '../types'
 import { rollCustom } from '@randsum/roller'
 
+/**
+ * Roll on a Salvage Union table to determine outcome.
+ *
+ * @param tableName - Name of the table to roll on (defaults to 'Core Mechanic')
+ * @returns Table result with hit type, label, description, and roll value
+ *
+ * @throws {Error} When tableName is not a valid Salvage Union table
+ *
+ * @example
+ * ```typescript
+ * // Roll on default Core Mechanic table
+ * const coreRoll = rollTable()
+ *
+ * // Roll on specific table
+ * const moraleRoll = rollTable('Morale')
+ * const damageRoll = rollTable('Critical Damage')
+ *
+ * // Check the result
+ * switch (result.hit) {
+ *   case 'Nailed It':       // 20
+ *   case 'Success':         // 11-19
+ *   case 'Tough Choice':    // 6-10
+ *   case 'Failure':         // 2-5
+ *   case 'Cascade Failure': // 1
+ * }
+ * ```
+ */
 export function rollTable(
   tableName: SalvageUnionTableName = 'Core Mechanic'
 ): SalvageUnionTableResult {

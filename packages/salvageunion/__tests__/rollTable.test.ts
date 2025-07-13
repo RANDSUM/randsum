@@ -83,4 +83,40 @@ describe(rollTable, () => {
       ]).toContain(result.hit)
     })
   })
+
+  describe('input validation', () => {
+    test('throws error for invalid table name', () => {
+      expect(() => rollTable('Invalid Table' as any)).toThrow(
+        'Invalid Salvage Union table name: "Invalid Table". Available tables:'
+      )
+    })
+
+    test('throws error for non-existent table', () => {
+      expect(() => rollTable('Nonexistent' as any)).toThrow(
+        'Invalid Salvage Union table name: "Nonexistent"'
+      )
+    })
+
+    test('handles all valid table names', () => {
+      const validTables = [
+        'Core Mechanic',
+        'NPC Action',
+        'Reaction',
+        'Morale',
+        'Group Initiative',
+        'Retreat',
+        'Critical Damage',
+        'Critical Injury',
+        'Reactor Overload',
+        'Area Salvage',
+        'Mech Salvage'
+      ]
+
+      validTables.forEach((tableName) => {
+        expect(() => rollTable(tableName as any)).not.toThrow()
+        const result = rollTable(tableName as any)
+        expect(result.tableName).toBe(tableName)
+      })
+    })
+  })
 })

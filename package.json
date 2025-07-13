@@ -15,7 +15,9 @@
     "format:check": "bunx moon :formatCheck",
     "style:fix": "bunx moon :lint && bunx moon :format",
     "ts:check": "bunx moon :tsCheck",
-    "test:ci": "bunrun test --coverage"
+    "test:ci": "bunrun test --coverage",
+    "docs": "typedoc",
+    "docs:serve": "bunx serve docs"
   },
   "trustedDependencies": [
     "@moonrepo/cli"

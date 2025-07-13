@@ -119,6 +119,22 @@ tasks:
       allowFailure: true
       cache: false
 
+  # Documentation generation task
+  docs:
+    command: "typedoc"
+    inputs:
+      - "packages/*/src/**/*"
+      - "typedoc.json"
+      - "README.md"
+    outputs:
+      - "docs/**/*"
+    options:
+      cache: true
+      cacheLifetime: "6 hours"
+      runInCI: false
+    deps:
+      - "build"
+
   # Publishing task with comprehensive dependencies
   publish:
     command: "bun publish --no-git-checks --access=public"
