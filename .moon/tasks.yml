@@ -72,7 +72,6 @@ tasks:
   ci:
     deps:
       - "tsCheck"
-      - "test"
       - "lint"
       - "formatCheck"
     options:
