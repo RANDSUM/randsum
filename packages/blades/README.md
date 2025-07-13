@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/main/randsum/icon.webp" alt="Randsum Logo">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/blades</h1>
   <h3>Blades in the Dark compatible dice rolling for Randsum</h3>
 
