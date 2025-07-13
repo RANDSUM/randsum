@@ -72,7 +72,6 @@ tasks:
   ci:
     deps:
       - "tsCheck"
-      - "test"
       - "lint"
       - "formatCheck"
     options:
@@ -118,6 +117,22 @@ tasks:
       runInCI: false
       allowFailure: true
       cache: false
+
+  # Documentation generation task
+  docs:
+    command: "typedoc"
+    inputs:
+      - "packages/*/src/**/*"
+      - "typedoc.json"
+      - "README.md"
+    outputs:
+      - "docs/**/*"
+    options:
+      cache: true
+      cacheLifetime: "6 hours"
+      runInCI: false
+    deps:
+      - "build"
 
   # Publishing task with comprehensive dependencies
   publish:

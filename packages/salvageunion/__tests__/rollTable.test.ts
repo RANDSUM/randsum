@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { rollTable } from '../src/rollTable'
-import type { SalvageUnionHit } from '../src/types'
+import type { SalvageUnionHit, SalvageUnionTableName } from '../src/types'
 
 describe(rollTable, () => {
   describe('return type', () => {
@@ -81,6 +81,44 @@ describe(rollTable, () => {
         'Failure',
         'Cascade Failure'
       ]).toContain(result.hit)
+    })
+  })
+
+  describe('input validation', () => {
+    test('throws error for invalid table name', () => {
+      expect(() => rollTable('Invalid Table' as SalvageUnionTableName)).toThrow(
+        'Invalid Salvage Union table name: "Invalid Table". Available tables:'
+      )
+    })
+
+    test('throws error for non-existent table', () => {
+      expect(() => rollTable('Nonexistent' as SalvageUnionTableName)).toThrow(
+        'Invalid Salvage Union table name: "Nonexistent"'
+      )
+    })
+
+    test('handles all valid table names', () => {
+      const validTables = [
+        'Core Mechanic',
+        'NPC Action',
+        'Reaction',
+        'Morale',
+        'Group Initiative',
+        'Retreat',
+        'Critical Damage',
+        'Critical Injury',
+        'Reactor Overload',
+        'Area Salvage',
+        'Mech Salvage'
+      ]
+
+      validTables.forEach((tableName) => {
+        expect(() =>
+          rollTable(tableName as SalvageUnionTableName)
+        ).not.toThrow()
+        const result = rollTable(tableName as SalvageUnionTableName)
+        expect(result.tableName).toBe(tableName)
+      })
     })
   })
 })
