@@ -70,7 +70,6 @@ describe('Salvageunion Tables', () => {
 
       expectedHits.forEach((hit) => {
         expect(NPCActionTable).toHaveProperty(hit)
-        // eslint-disable-next-line security/detect-object-injection
         expect(NPCActionTable[hit].hit).toBe(hit)
       })
     })
@@ -107,7 +106,6 @@ describe('Salvageunion Tables', () => {
 
       expectedHits.forEach((hit) => {
         expect(NPCReactionTable).toHaveProperty(hit)
-        // eslint-disable-next-line security/detect-object-injection
         expect(NPCReactionTable[hit].hit).toBe(hit)
       })
     })
@@ -141,7 +139,6 @@ describe('Salvageunion Tables', () => {
 
         expectedHits.forEach((hit) => {
           expect(table).toHaveProperty(hit)
-          // eslint-disable-next-line security/detect-object-injection
           expect(table[hit].hit).toBe(hit)
         })
       })
@@ -173,7 +170,6 @@ describe('Salvageunion Tables', () => {
 
         expectedHits.forEach((hit) => {
           expect(table).toHaveProperty(hit)
-          // eslint-disable-next-line security/detect-object-injection
           expect(table[hit].hit).toBe(hit)
         })
       })
@@ -258,7 +254,6 @@ describe('Salvageunion Tables', () => {
       allTables.forEach((table) => {
         expectedHits.forEach((hit) => {
           expect(table).toHaveProperty(hit)
-          // eslint-disable-next-line security/detect-object-injection
           expect(table[hit].hit).toBe(hit)
         })
       })

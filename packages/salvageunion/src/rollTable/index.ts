@@ -32,7 +32,7 @@ import { rollCustom } from '@randsum/roller'
 export function rollTable(
   tableName: SalvageUnionTableName = 'Core Mechanic'
 ): SalvageUnionTableResult {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, security/detect-object-injection
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (tableName && !AllRollTables[tableName]) {
     const availableTables = Object.keys(AllRollTables).join(', ')
     throw new Error(
@@ -40,10 +40,8 @@ export function rollTable(
     )
   }
 
-  // eslint-disable-next-line security/detect-object-injection
   const table = AllRollTables[tableName]
 
-  // eslint-disable-next-line security/detect-object-injection
   const faces = customTableFaces.map((face) => table[face])
 
   const rollResult = rollCustom(faces)

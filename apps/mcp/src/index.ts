@@ -578,17 +578,16 @@ function runSseTransport(port: number): void {
 
       const server = createServerInstance()
       const transport = new SSEServerTransport('/sse', res)
-      // eslint-disable-next-line security/detect-object-injection
       sseTransports[sessionId] = transport
 
       server.connect(transport).catch((error: unknown) => {
         console.error('SSE transport error:', error)
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete, security/detect-object-injection
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete sseTransports[sessionId]
       })
 
       req.on('close', () => {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete, security/detect-object-injection
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete sseTransports[sessionId]
       })
     } else {
