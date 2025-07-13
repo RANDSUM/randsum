@@ -18,4 +18,9 @@ jobs:
           bun-version: latest
 
       - run: bun install --frozen-lockfile
+
+      - name: Security audit
+        run: bun audit --audit-level high
+        continue-on-error: false
+
       - run: bun run moon ci

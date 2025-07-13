@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { rollTable } from '../src/rollTable'
-import type { SalvageUnionHit } from '../src/types'
+import type { SalvageUnionHit, SalvageUnionTableName } from '../src/types'
 
 describe(rollTable, () => {
   describe('return type', () => {
@@ -86,13 +86,13 @@ describe(rollTable, () => {
 
   describe('input validation', () => {
     test('throws error for invalid table name', () => {
-      expect(() => rollTable('Invalid Table' as any)).toThrow(
+      expect(() => rollTable('Invalid Table' as SalvageUnionTableName)).toThrow(
         'Invalid Salvage Union table name: "Invalid Table". Available tables:'
       )
     })
 
     test('throws error for non-existent table', () => {
-      expect(() => rollTable('Nonexistent' as any)).toThrow(
+      expect(() => rollTable('Nonexistent' as SalvageUnionTableName)).toThrow(
         'Invalid Salvage Union table name: "Nonexistent"'
       )
     })
@@ -113,8 +113,10 @@ describe(rollTable, () => {
       ]
 
       validTables.forEach((tableName) => {
-        expect(() => rollTable(tableName as any)).not.toThrow()
-        const result = rollTable(tableName as any)
+        expect(() =>
+          rollTable(tableName as SalvageUnionTableName)
+        ).not.toThrow()
+        const result = rollTable(tableName as SalvageUnionTableName)
         expect(result.tableName).toBe(tableName)
       })
     })
