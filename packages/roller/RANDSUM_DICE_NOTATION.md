@@ -294,10 +294,6 @@ roll({
 })
 ```
 
-## Notes
-
-- See the [Getting Started Guide](../../GETTING_STARTED.md) for more usage examples
-
 ## Attribution
 
 The extended notation syntax was inspired by [Sophie's Dice](https://sophiehoulden.com/dice/documentation/notation.html#keep).
