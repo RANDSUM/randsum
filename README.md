@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
   <h1>Randsum</h1>
-  <h3>An ergonomic, flexible, and type-safe dice rolling ecosystem for NPM</h3>
+  <h3>A comprehensive dice rolling monorepo ecosystem for rolling dice and playing games.</h3>
 
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
@@ -13,6 +13,26 @@
 [![Types](https://img.shields.io/badge/Types-included-blue)](https://www.npmjs.com/package/@randsum/roller)
 
 </div>
+
+## 📦 Monorepo Structure
+
+This repository contains multiple packages and applications for dice rolling and tabletop RPG mechanics:
+
+### Core Packages
+
+- **[@randsum/roller](packages/roller)** - Core dice rolling engine with advanced notation support
+- **[@randsum/blades](packages/blades)** - Blades in the Dark system mechanics
+- **[@randsum/daggerheart](packages/daggerheart)** - Daggerheart RPG system support
+- **[@randsum/fifth](packages/fifth)** - D&D 5th Edition mechanics
+- **[@randsum/root-rpg](packages/root-rpg)** - Root RPG system implementation
+- **[@randsum/salvageunion](packages/salvageunion)** - Salvage Union mechanics
+
+### Applications
+
+- **[@randsum/mcp](apps/mcp)** - Model Context Protocol server for AI integration
+- **[Discord Bot](apps/robo)** - Interactive Discord bot for dice rolling
+
+All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.
 
 ## 🚀 Quick Example
 
@@ -42,7 +62,9 @@ npx randsum 2d20H   # Roll with advantage
 
 ## 🛠️ Development
 
-This is a monorepo powered by [Moon](https://moonrepo.dev) and [Bun](https://bun.sh). To get started:
+This monorepo uses [Moon](https://moonrepo.dev) for task orchestration and [Bun](https://bun.sh) for package management and execution.
+
+### Getting Started
 
 ```bash
 # Clone the repository
@@ -66,33 +88,44 @@ bun moon :lint
 bun moon :format
 ```
 
-### Moon Tasks
+### Monorepo Workflow
 
-Moon manages our task pipeline and dependencies. Common tasks include:
+Moon orchestrates tasks across all packages with intelligent dependency management:
 
-- `:build` - Build all packages
-- `:test` - Run all tests
-- `:lint` - Run ESLint checks
-- `:tsCheck` - Run TypeScript checks
-- `:publish` - Publish packages (CI only)
-- `:lint:fix` - Run ESLint and fix issues
-- `:ci` - Run all checks (build, test, lint, tsCheck)
+**Global Tasks** (run across all packages):
 
-Each package can be targeted directly with `moon [package]:task`, for example:
+- `:build` - Build all packages in dependency order
+- `:test` - Run all tests with proper dependencies
+- `:lint` - Run ESLint checks across the monorepo
+- `:tsCheck` - Run TypeScript checks for all packages
+- `:ci` - Complete CI pipeline (build, test, lint, tsCheck)
+- `:lint:fix` - Run ESLint and automatically fix issues
+- `:format` - Format code using Prettier
+
+**Package-Specific Tasks**:
 
 ```bash
-bun moon roller:test    # Run tests for @randsum/roller only
-bun moon blades:build   # Build @randsum/blades only
+bun moon roller:test      # Run tests for @randsum/roller only
+bun moon blades:build     # Build @randsum/blades only
+bun moon mcp:tsCheck      # Type check the MCP server
 ```
 
-## Further Reading
+Moon automatically handles inter-package dependencies, ensuring packages are built in the correct order.
 
-- [Getting Started](https://github.com/RANDSUM/randsum/blob/main/GETTING_STARTED.md) - Installation and Documentation for using `randsum`
+## 📚 Documentation
 
-- [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`.
+### Package Documentation
 
+Each package includes comprehensive documentation:
+
+- **API Reference**: Generated TypeDoc documentation for all packages
+- **README Files**: Individual package documentation in each `packages/*/README.md`
+- **Examples**: Usage examples and integration guides
+
+### Key Resources
+
+- [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
-
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
 
 ## 🤝 Contributing
