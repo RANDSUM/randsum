@@ -23,6 +23,26 @@ yarn add @randsum/daggerheart
 bun add @randsum/daggerheart
 ```
 
+## API Reference
+
+### `rollDaggerheart`
+
+Rolls a pair of Duality Dice for Daggerheart, returning the result type and total.
+
+```typescript
+function rollDaggerheart(options: DaggerheartRollArgument): DaggerheartRollResult
+```
+
+**Parameters:**
+
+- `options`: Configuration for the roll
+  - `modifier`: Number to add to both dice (default: 0)
+  - `rollingWith`: Roll with advantage or disadvantage
+  - `amplifyHope`: Use d20 instead of d12 for Hope die (default: false)
+  - `amplifyFear`: Use d20 instead of d12 for Fear die (default: false)
+
+We also export the `roll` and `meetOrBeat` functions from `@randsum/roller` for your convenience.
+
 ## Related Packages
 
 - [@randsum/roller](https://github.com/RANDSUM/randsum/tree/main/packages/roller): Core dice rolling implementation

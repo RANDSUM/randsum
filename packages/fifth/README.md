@@ -60,29 +60,19 @@ meetOrBeat(15, rollArg) // Returns true if roll meets or exceeds DC 15
 
 ## API Reference
 
-### `roll`
+### `d20Roll`
 
 Makes a d20 roll following 5th Edition rules.
 
 ```typescript
-const result = roll({
+const result = d20Roll({
   modifier: 5, // the result of your bonuses after all bonuses are applied
   rollingWith: "Advantage" // Optional
 })
 // Returns a roll result with total and details
 ```
 
-### `meetOrBeat`
-
-Checks if a roll meets or exceeds a Difficulty Class (DC).
-
-```typescript
-const success = meetOrBeat(15, {
-  modifier: 5,
-  rollingWith: "Advantage"
-})
-// Returns true if roll + modifier meets or exceeds 15
-```
+We also export the `roll` and `meetOrBeat` functions from `@randsum/roller` for your convenience.
 
 ## Related Packages
 
