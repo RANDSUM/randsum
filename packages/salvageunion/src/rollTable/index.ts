@@ -21,6 +21,8 @@ export function rollTable(
 
   return {
     details: rollResult,
+    label: rollResult.result.label,
+    description: rollResult.result.description,
     result: rollResult.result.hit,
     table,
     tableName,

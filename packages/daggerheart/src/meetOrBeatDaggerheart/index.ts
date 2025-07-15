@@ -10,10 +10,12 @@ export function meetOrBeatDaggerheart(
   rollArg: DaggerheartRollArgument = {}
 ): DaggerheartMeetOrBeatResult {
   const result = rollDaggerheart(rollArg)
-  const core = {
-    ...result,
+  const core: Omit<DaggerheartMeetOrBeatResult, 'description'> = {
+    result: result.details,
     success:
-      result.type === 'critical hope' ? true : result.total >= difficultyClass,
+      result.details.type === 'critical hope'
+        ? true
+        : result.details.total >= difficultyClass,
     target: difficultyClass
   }
 

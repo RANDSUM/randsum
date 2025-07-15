@@ -36,6 +36,8 @@ export interface SalvageUnionTableResult
     SalvageUnionHit,
     CustomRollResult<SalvageUnionTableListing>
   > {
+  label: SalvageUnionTableListing['label']
+  description: SalvageUnionTableListing['description']
   tableName: SalvageUnionTableName
   table: SalvageUnionTableType
   roll: number
