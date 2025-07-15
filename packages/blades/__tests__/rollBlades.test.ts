@@ -6,7 +6,6 @@ describe(rollBlades, () => {
     test('returns BaseGameRollResult with details and details properties', () => {
       const rollResult = rollBlades(2)
       expect(rollResult).toHaveProperty('details')
-      expect(rollResult).toHaveProperty('details')
       expect(typeof rollResult.result).toBe('string')
       expect(['critical', 'success', 'partial', 'failure']).toContain(
         rollResult.result
@@ -44,10 +43,10 @@ describe(rollBlades, () => {
   describe('result interpretation', () => {
     const loops = 100
 
-    test('returns consistent detailss across multiple rolls', () => {
-      const detailss = Array.from({ length: loops }, () => rollBlades(2))
+    test('returns consistent details across multiple rolls', () => {
+      const details = Array.from({ length: loops }, () => rollBlades(2))
 
-      detailss.forEach(({ result, details }) => {
+      details.forEach(({ result, details }) => {
         expect(['critical', 'success', 'partial', 'failure']).toContain(result)
         expect(details.history.initialRolls).toHaveLength(2)
         expect(details.total).toBeGreaterThanOrEqual(2)
