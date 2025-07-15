@@ -10,17 +10,17 @@ describe('meetOrBeatDaggerheart', () => {
     test('returns DaggerheartMeetOrBeatResult with correct structure', () => {
       const result = meetOrBeatDaggerheart(10)
 
-      expect(result).toHaveProperty('type')
-      expect(result).toHaveProperty('total')
-      expect(result).toHaveProperty('rolls')
+      expect(result.result).toHaveProperty('type')
+      expect(result.result).toHaveProperty('total')
+      expect(result.result).toHaveProperty('rolls')
       expect(result).toHaveProperty('success')
       expect(result).toHaveProperty('target')
       expect(result).toHaveProperty('description')
 
-      expect(result.rolls).toHaveProperty('hope')
-      expect(result.rolls).toHaveProperty('fear')
-      expect(result.rolls).toHaveProperty('modifier')
-      expect(result.rolls).toHaveProperty('advantage')
+      expect(result.result.rolls).toHaveProperty('hope')
+      expect(result.result.rolls).toHaveProperty('fear')
+      expect(result.result.rolls).toHaveProperty('modifier')
+      expect(result.result.rolls).toHaveProperty('advantage')
     })
 
     test('includes target difficulty class in result', () => {
@@ -50,7 +50,7 @@ describe('meetOrBeatDaggerheart', () => {
       const result = meetOrBeatDaggerheart(5, { modifier: 20 })
 
       expect(result.success).toBe(true)
-      expect(result.total).toBeGreaterThanOrEqual(result.target)
+      expect(result.result.total).toBeGreaterThanOrEqual(result.target)
     })
 
     test('returns false when total is below difficulty class', () => {
@@ -63,8 +63,8 @@ describe('meetOrBeatDaggerheart', () => {
 
         if (!result.success) {
           foundFailure = true
-          expect(result.total).toBeLessThan(result.target)
-          expect(result.type).not.toBe('critical hope') // Non-critical should fail
+          expect(result.result.total).toBeLessThan(result.target)
+          expect(result.result.type).not.toBe('critical hope') // Non-critical should fail
           break
         }
       }
@@ -80,7 +80,7 @@ describe('meetOrBeatDaggerheart', () => {
       while (!foundCriticalHope) {
         const result = meetOrBeatDaggerheart(100) // Very high DC
 
-        if (result.type === 'critical hope') {
+        if (result.result.type === 'critical hope') {
           foundCriticalHope = true
           expect(result.success).toBe(true)
           // Even if total is less than target, critical hope succeeds
@@ -95,8 +95,8 @@ describe('meetOrBeatDaggerheart', () => {
       for (let i = 0; i < 20; i++) {
         const result = meetOrBeatDaggerheart(15, { modifier: 5 })
 
-        if (result.type !== 'critical hope') {
-          const expectedSuccess = result.total >= result.target
+        if (result.result.type !== 'critical hope') {
+          const expectedSuccess = result.result.total >= result.target
           expect(result.success).toBe(expectedSuccess)
         }
       }
@@ -145,23 +145,23 @@ describe('meetOrBeatDaggerheart', () => {
       const modifier = 8
       const result = meetOrBeatDaggerheart(10, { modifier })
 
-      expect(result.rolls.modifier).toBe(modifier)
-      expect(result.total).toBeGreaterThanOrEqual(2 + modifier) // Min roll + modifier
+      expect(result.result.rolls.modifier).toBe(modifier)
+      expect(result.result.total).toBeGreaterThanOrEqual(2 + modifier) // Min roll + modifier
     })
 
     test('handles advantage rolling', () => {
       const result = meetOrBeatDaggerheart(15, { rollingWith: 'Advantage' })
 
-      if (result.rolls.advantage !== undefined) {
-        expect(typeof result.rolls.advantage).toBe('number')
+      if (result.result.rolls.advantage !== undefined) {
+        expect(typeof result.result.rolls.advantage).toBe('number')
       }
     })
 
     test('handles disadvantage rolling', () => {
       const result = meetOrBeatDaggerheart(15, { rollingWith: 'Disadvantage' })
 
-      if (result.rolls.advantage !== undefined) {
-        expect(typeof result.rolls.advantage).toBe('number')
+      if (result.result.rolls.advantage !== undefined) {
+        expect(typeof result.result.rolls.advantage).toBe('number')
       }
     })
 
@@ -169,16 +169,16 @@ describe('meetOrBeatDaggerheart', () => {
       const result = meetOrBeatDaggerheart(15, { amplifyHope: true })
 
       // Hope die should potentially roll higher than 12
-      expect(result.rolls.hope).toBeGreaterThanOrEqual(1)
-      expect(result.rolls.hope).toBeLessThanOrEqual(20)
+      expect(result.result.rolls.hope).toBeGreaterThanOrEqual(1)
+      expect(result.result.rolls.hope).toBeLessThanOrEqual(20)
     })
 
     test('handles amplify fear', () => {
       const result = meetOrBeatDaggerheart(15, { amplifyFear: true })
 
       // Fear die should potentially roll higher than 12
-      expect(result.rolls.fear).toBeGreaterThanOrEqual(1)
-      expect(result.rolls.fear).toBeLessThanOrEqual(20)
+      expect(result.result.rolls.fear).toBeGreaterThanOrEqual(1)
+      expect(result.result.rolls.fear).toBeLessThanOrEqual(20)
     })
 
     test('handles complex roll arguments', () => {
@@ -189,10 +189,10 @@ describe('meetOrBeatDaggerheart', () => {
         amplifyFear: false
       })
 
-      expect(result.rolls.modifier).toBe(3)
-      expect(typeof result.rolls.advantage).toBe('number')
-      expect(result.rolls.hope).toBeLessThanOrEqual(20 + 3) // Amplified + modifier
-      expect(result.rolls.fear).toBeLessThanOrEqual(12 + 3) // Not amplified + modifier
+      expect(result.result.rolls.modifier).toBe(3)
+      expect(typeof result.result.rolls.advantage).toBe('number')
+      expect(result.result.rolls.hope).toBeLessThanOrEqual(20 + 3) // Amplified + modifier
+      expect(result.result.rolls.fear).toBeLessThanOrEqual(12 + 3) // Not amplified + modifier
     })
   })
 
@@ -211,11 +211,11 @@ describe('meetOrBeatDaggerheart', () => {
         const result = meetOrBeatDaggerheart(12)
 
         // Check that description contains relevant keywords based on type
-        if (result.type === 'critical hope') {
+        if (result.result.type === 'critical hope') {
           expect(result.description).toContain('Critical')
           expect(result.description).toContain('Hope')
         } else {
-          expect(result.description).toContain(result.type)
+          expect(result.description).toContain(result.result.type)
         }
       }
     })
@@ -238,9 +238,12 @@ describe('meetOrBeatDaggerheart', () => {
       for (let i = 0; i < 100; i++) {
         const result = meetOrBeatDaggerheart(15)
 
-        if (result.type === 'critical hope' && !criticalDescription) {
+        if (result.result.type === 'critical hope' && !criticalDescription) {
           criticalDescription = result.description
-        } else if (result.type !== 'critical hope' && !regularDescription) {
+        } else if (
+          result.result.type !== 'critical hope' &&
+          !regularDescription
+        ) {
           regularDescription = result.description
         }
 
@@ -256,8 +259,8 @@ describe('meetOrBeatDaggerheart', () => {
     test('handles empty roll argument', () => {
       const result = meetOrBeatDaggerheart(10)
 
-      expect(result.rolls.modifier).toBe(0)
-      expect(result.rolls.advantage).toBeUndefined()
+      expect(result.result.rolls.modifier).toBe(0)
+      expect(result.result.rolls.advantage).toBeUndefined()
       expect(result.target).toBe(10)
     })
 
@@ -266,7 +269,7 @@ describe('meetOrBeatDaggerheart', () => {
 
       expect(result.target).toBe(1000)
       expect(result.success).toBe(
-        result.type === 'critical hope' || result.total >= 1000
+        result.result.type === 'critical hope' || result.result.total >= 1000
       )
     })
 
@@ -285,8 +288,8 @@ describe('meetOrBeatDaggerheart', () => {
         amplifyFear: undefined
       })
 
-      expect(result.rolls.modifier).toBe(0)
-      expect(result.rolls.advantage).toBeUndefined()
+      expect(result.result.rolls.modifier).toBe(0)
+      expect(result.result.rolls.advantage).toBeUndefined()
     })
   })
 
@@ -295,9 +298,9 @@ describe('meetOrBeatDaggerheart', () => {
       const result: DaggerheartMeetOrBeatResult = meetOrBeatDaggerheart(15)
 
       // Inherits from DaggerheartRollResult
-      expect(typeof result.type).toBe('string')
-      expect(typeof result.total).toBe('number')
-      expect(typeof result.rolls).toBe('object')
+      expect(typeof result.result.type).toBe('string')
+      expect(typeof result.result.total).toBe('number')
+      expect(typeof result.result.rolls).toBe('object')
 
       // Additional properties
       expect(typeof result.success).toBe('boolean')
@@ -330,15 +333,15 @@ describe('meetOrBeatDaggerheart', () => {
       const result = meetOrBeatDaggerheart(12, { modifier: 3 })
 
       // Should have same structure as rollDaggerheart result
-      expect(result).toHaveProperty('type')
-      expect(result).toHaveProperty('total')
-      expect(result).toHaveProperty('rolls')
-      expect(result.rolls).toHaveProperty('hope')
-      expect(result.rolls).toHaveProperty('fear')
-      expect(result.rolls).toHaveProperty('modifier')
-      expect(result.rolls).toHaveProperty('advantage')
+      expect(result.result).toHaveProperty('type')
+      expect(result.result).toHaveProperty('total')
+      expect(result.result).toHaveProperty('rolls')
+      expect(result.result.rolls).toHaveProperty('hope')
+      expect(result.result.rolls).toHaveProperty('fear')
+      expect(result.result.rolls).toHaveProperty('modifier')
+      expect(result.result.rolls).toHaveProperty('advantage')
 
-      expect(result.rolls.modifier).toBe(3)
+      expect(result.result.rolls.modifier).toBe(3)
     })
 
     test('maintains roll result integrity', () => {
@@ -351,9 +354,9 @@ describe('meetOrBeatDaggerheart', () => {
       const result = meetOrBeatDaggerheart(15, rollArg)
 
       // Verify the roll was made with the correct parameters
-      expect(result.rolls.modifier).toBe(5)
-      expect(typeof result.rolls.advantage).toBe('number')
-      expect(result.rolls.hope).toBeLessThanOrEqual(25) // Amplified d20 + modifier
+      expect(result.result.rolls.modifier).toBe(5)
+      expect(typeof result.result.rolls.advantage).toBe('number')
+      expect(result.result.rolls.hope).toBeLessThanOrEqual(25) // Amplified d20 + modifier
     })
   })
 
@@ -363,7 +366,7 @@ describe('meetOrBeatDaggerheart', () => {
         meetOrBeatDaggerheart(12)
       )
 
-      const uniqueTotals = new Set(results.map((r) => r.total))
+      const uniqueTotals = new Set(results.map((r) => r.result.total))
       const successCount = results.filter((r) => r.success).length
 
       expect(uniqueTotals.size).toBeGreaterThan(1)

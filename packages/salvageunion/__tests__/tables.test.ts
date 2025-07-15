@@ -35,11 +35,9 @@ describe('Salvageunion Tables', () => {
         expect(typeof table).toBe('object')
         expect(table).not.toBeNull()
 
-        // Each table should have entries
         const entries = Object.keys(table)
         expect(entries.length).toBeGreaterThan(0)
 
-        // Each entry should have the correct structure
         entries.forEach((key) => {
           const entry = table[key as SalvageUnionHit]
           expect(entry).toHaveProperty('label')
@@ -188,7 +186,6 @@ describe('Salvageunion Tables', () => {
         expect(entry.description.length).toBeGreaterThan(10)
       })
 
-      // Should contain mech-related terminology
       const allDescriptions = Object.values(CriticalDamageTable)
         .map((entry) => entry.description)
         .join(' ')
@@ -203,7 +200,6 @@ describe('Salvageunion Tables', () => {
         expect(entry.description.length).toBeGreaterThan(10)
       })
 
-      // Should contain pilot-related terminology
       const allDescriptions = Object.values(CriticalInjuryTable)
         .map((entry) => entry.description)
         .join(' ')
@@ -218,7 +214,6 @@ describe('Salvageunion Tables', () => {
         expect(entry.description.length).toBeGreaterThan(10)
       })
 
-      // Should contain reactor-related terminology
       const allDescriptions = Object.values(ReactorOverloadTable)
         .map((entry) => entry.description)
         .join(' ')
@@ -335,8 +330,6 @@ describe('Salvageunion Tables', () => {
     })
 
     test('tables can be used with rollTable function', () => {
-      // This test verifies the tables have the correct structure
-      // for use with the rollTable function
       const testTable = NPCActionTable
 
       expect(typeof testTable).toBe('object')

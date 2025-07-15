@@ -38,7 +38,7 @@ const getExplanation = (quantity: number, username: string): string[] => {
   const isZero = quantity === 0
   return [
     `${username} rolled ${String(isZero ? 2 : quantity)} D6`,
-    `and took the ${isZero ? 'lowest' : 'highest'} result`
+    `and took the ${isZero ? 'lowest' : 'highest'} details`
   ]
 }
 
@@ -66,15 +66,15 @@ const getThumbnail = (total: number, type: BladesResult): string => {
 }
 
 const parseRolls = (
-  result: RollResult,
+  details: RollResult,
   bladesSuccess: BladesResult
 ): string => {
-  return result.history.initialRolls
+  return details.history.initialRolls
     .flat()
     .map((roll, index, array) => {
       const isCritical = bladesSuccess === 'critical'
       const firstInstaceOfRoll = array.indexOf(roll) === index
-      return roll === result.total && (isCritical || firstInstaceOfRoll)
+      return roll === details.total && (isCritical || firstInstaceOfRoll)
         ? `**${String(roll)}**`
         : `~~${String(roll)}~~`
     })
@@ -112,13 +112,13 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     memberNick || 'User'
   )
 
-  const { outcome: hit, result } = rollBlades(quantity)
+  const { result: hit, details } = rollBlades(quantity)
   const [successTitle, successValue] = getSuccessString(hit)
 
   return new EmbedBuilder()
     .setTitle(successTitle)
     .setDescription(successValue)
-    .setThumbnail(getThumbnail(result.total, hit))
+    .setThumbnail(getThumbnail(details.total, hit))
     .addFields({ name: '\u200B', value: '\u200B' })
     .addFields({
       name: explanationTitle,
@@ -126,12 +126,12 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     })
     .addFields({
       name: 'Rolls',
-      value: `[${parseRolls(result, hit)}]`,
+      value: `[${parseRolls(details, hit)}]`,
       inline: true
     })
     .addFields({
       name: 'Total',
-      value: `**${String(result.total)}**`,
+      value: `**${String(details.total)}**`,
       inline: true
     })
     .setColor(getColor(hit))

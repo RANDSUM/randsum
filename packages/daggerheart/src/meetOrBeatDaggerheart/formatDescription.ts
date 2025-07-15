@@ -1,7 +1,7 @@
 import type { DaggerheartMeetOrBeatResult } from '../types'
 
 export function formatDescription({
-  type,
+  result: { type },
   success
 }: Omit<DaggerheartMeetOrBeatResult, 'description'>): string {
   if (type === 'critical hope') {

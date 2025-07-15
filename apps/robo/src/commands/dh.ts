@@ -31,7 +31,9 @@ const buildEmbed = (
   rollModifier: number,
   rollingWith: DaggerheartAdvantageDisadvantage | undefined
 ): APIEmbed => {
-  const { total, type, rolls } = rollDaggerheart({
+  const {
+    details: { total, type, rolls }
+  } = rollDaggerheart({
     modifier: rollModifier,
     rollingWith
   })

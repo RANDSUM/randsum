@@ -213,7 +213,7 @@ describe('isRollArgument', () => {
     test('returns true for objects with extra properties (still valid RollOptions)', () => {
       const mixedObject = {
         sides: 6,
-        notation: '1d6' // Extra property doesn't invalidate RollOptions
+        notation: '1d6'
       }
       expect(isRollArgument(mixedObject)).toBe(true)
     })

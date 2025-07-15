@@ -3,51 +3,55 @@ import { rollBlades } from '../src/rollBlades'
 
 describe(rollBlades, () => {
   describe('return type', () => {
-    test('returns a tuple of [BladesResult, RollResult]', () => {
-      const { outcome, result } = rollBlades(2)
-      expect(typeof outcome).toBe('string')
-      expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
-      expect(result).toHaveProperty('total')
+    test('returns BaseGameRollResult with details and details properties', () => {
+      const rollResult = rollBlades(2)
+      expect(rollResult).toHaveProperty('details')
+      expect(rollResult).toHaveProperty('details')
+      expect(typeof rollResult.result).toBe('string')
+      expect(['critical', 'success', 'partial', 'failure']).toContain(
+        rollResult.result
+      )
+      expect(rollResult.details).toHaveProperty('total')
     })
   })
 
   describe('dice pool sizes', () => {
     test('handles single die (desperate position)', () => {
-      const { outcome, result } = rollBlades(1)
-      expect(['success', 'partial', 'failure']).toContain(outcome)
-      expect(result.history.initialRolls).toHaveLength(1)
-      expect(result.total).toBeGreaterThanOrEqual(1)
-      expect(result.total).toBeLessThanOrEqual(6)
+      const { result, details } = rollBlades(1)
+      expect(['success', 'partial', 'failure']).toContain(result)
+      expect(details.history.initialRolls).toHaveLength(1)
+      expect(details.total).toBeGreaterThanOrEqual(1)
+      expect(details.total).toBeLessThanOrEqual(6)
     })
 
     test('handles two dice (risky position)', () => {
-      const { outcome, result } = rollBlades(2)
-      expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
-      expect(result.history.initialRolls).toHaveLength(2)
-      expect(result.total).toBeGreaterThanOrEqual(2)
-      expect(result.total).toBeLessThanOrEqual(12)
+      const { result, details } = rollBlades(2)
+      expect(['critical', 'success', 'partial', 'failure']).toContain(result)
+      expect(details.history.initialRolls).toHaveLength(2)
+      expect(details.total).toBeGreaterThanOrEqual(2)
+      expect(details.total).toBeLessThanOrEqual(12)
     })
 
     test('handles three dice (controlled position)', () => {
-      const { outcome, result } = rollBlades(3)
-      expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
-      expect(result.history.initialRolls).toHaveLength(3)
-      expect(result.total).toBeGreaterThanOrEqual(3)
-      expect(result.total).toBeLessThanOrEqual(18)
+      const { result, details } = rollBlades(3)
+      expect(['critical', 'success', 'partial', 'failure']).toContain(result)
+      expect(details.history.initialRolls).toHaveLength(3)
+      expect(details.total).toBeGreaterThanOrEqual(3)
+      expect(details.total).toBeLessThanOrEqual(18)
     })
   })
 
-  describe('outcome interpretation', () => {
+  describe('result interpretation', () => {
     const loops = 100
 
-    test('returns consistent results across multiple rolls', () => {
-      const results = Array.from({ length: loops }, () => rollBlades(2))
+    test('returns consistent detailss across multiple rolls', () => {
+      const detailss = Array.from({ length: loops }, () => rollBlades(2))
 
-      results.forEach(({ outcome, result }) => {
-        expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
-        expect(result.history.initialRolls).toHaveLength(2)
-        expect(result.total).toBeGreaterThanOrEqual(2)
-        expect(result.total).toBeLessThanOrEqual(12)
+      detailss.forEach(({ result, details }) => {
+        expect(['critical', 'success', 'partial', 'failure']).toContain(result)
+        expect(details.history.initialRolls).toHaveLength(2)
+        expect(details.total).toBeGreaterThanOrEqual(2)
+        expect(details.total).toBeLessThanOrEqual(12)
       })
     })
   })
@@ -72,15 +76,15 @@ describe(rollBlades, () => {
     })
 
     test('handles zero dice pool', () => {
-      const { outcome, result } = rollBlades(0)
-      expect(['success', 'partial', 'failure']).toContain(outcome)
-      expect(result.history.initialRolls).toHaveLength(2) // Uses 2d6 drop highest for 0 dice
+      const { result, details } = rollBlades(0)
+      expect(['success', 'partial', 'failure']).toContain(result)
+      expect(details.history.initialRolls).toHaveLength(2) // Uses 2d6 drop highest for 0 dice
     })
 
     test('handles maximum recommended dice pool', () => {
-      const { outcome, result } = rollBlades(10)
-      expect(['critical', 'success', 'partial', 'failure']).toContain(outcome)
-      expect(result.history.initialRolls).toHaveLength(10)
+      const { result, details } = rollBlades(10)
+      expect(['critical', 'success', 'partial', 'failure']).toContain(result)
+      expect(details.history.initialRolls).toHaveLength(10)
     })
 
     test('handles boundary values correctly', () => {

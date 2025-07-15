@@ -2,7 +2,6 @@ import { describe, expect, test } from 'bun:test'
 import { isRollResult } from '../../../src/lib/guards/isRollResult'
 import type { RollHistory, RollParams, RollResult } from '../../../src/types'
 
-// Helper function to create a valid RollResult for testing
 function createValidRollResult(
   overrides: Partial<RollResult> = {}
 ): RollResult {
@@ -30,7 +29,6 @@ function createValidRollResult(
   }
 }
 
-// Helper function to create a minimal valid RollResult
 function createMinimalValidRollResult(): RollResult {
   return createValidRollResult({
     parameters: {
@@ -332,7 +330,6 @@ describe('isRollResult', () => {
           notation: '1d6'
         },
         history: { modifiedRolls: [1], total: 1, initialRolls: [1], logs: [] }
-        // Missing description, rolls, and total
       }
       expect(isRollResult(partialObject)).toBe(false)
     })

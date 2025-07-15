@@ -202,7 +202,7 @@ describe('isRollParams', () => {
       const invalidOptions = {
         description: ['Roll 1d6'],
         argument: '1d6',
-        options: { notSides: 6 }, // Missing required 'sides' property
+        options: { notSides: 6 },
         notation: '1d6'
       }
       expect(isRollParams(invalidOptions)).toBe(false)
@@ -224,7 +224,6 @@ describe('isRollParams', () => {
       const partialObject = {
         description: ['Roll 1d6'],
         argument: '1d6'
-        // Missing options and notation
       }
       expect(isRollParams(partialObject)).toBe(false)
     })
@@ -262,7 +261,7 @@ describe('isRollParams', () => {
       const invalidOptionsStructure = {
         description: ['Roll 1d6'],
         argument: '1d6',
-        options: { sides: 'six' }, // sides should be number
+        options: { sides: 'six' },
         notation: '1d6'
       }
       expect(isRollParams(invalidOptionsStructure)).toBe(false)

@@ -19,7 +19,8 @@ export interface DaggerheartRollResult {
   }
 }
 
-export interface DaggerheartMeetOrBeatResult extends DaggerheartRollResult {
+export interface DaggerheartMeetOrBeatResult {
+  result: DaggerheartRollResult
   success: boolean
   target: number
   description: string

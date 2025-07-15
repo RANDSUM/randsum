@@ -42,7 +42,7 @@ function getColor(type: SalvageUnionHit): number {
 }
 
 export function buildEmbed(table: SalvageUnionTableName): APIEmbed {
-  const { hit, label, description, roll: total } = rollTable(table)
+  const { result: hit, label, description, roll: total } = rollTable(table)
 
   return new EmbedBuilder()
     .setTitle(`${String(total)} - __**${label}**__`)
