@@ -6,20 +6,20 @@ describe(d20Roll, () => {
     const args: FifthRollArgument = { modifier: 5 }
 
     test('returns a result within valid range', () => {
-      const result = d20Roll(args)
-      expect(result.total).toBeGreaterThanOrEqual(6)
-      expect(result.total).toBeLessThanOrEqual(25)
+      const rollResult = d20Roll(args)
+      expect(rollResult.details.total).toBeGreaterThanOrEqual(6)
+      expect(rollResult.details.total).toBeLessThanOrEqual(25)
     })
 
     test('applies modifier correctly', () => {
-      const result = d20Roll(args)
-      const rawRoll = result.history.initialRolls[0]
-      expect(result.total).toBe(Number(rawRoll) + args.modifier)
+      const rollResult = d20Roll(args)
+      const rawRoll = rollResult.details.history.initialRolls[0]
+      expect(rollResult.details.total).toBe(Number(rawRoll) + args.modifier)
     })
 
     test('returns single roll result', () => {
-      const result = d20Roll(args)
-      expect(result.history.initialRolls).toHaveLength(1)
+      const rollResult = d20Roll(args)
+      expect(rollResult.details.history.initialRolls).toHaveLength(1)
     })
   })
 
@@ -31,15 +31,15 @@ describe(d20Roll, () => {
 
     test('returns two rolls', () => {
       const result = d20Roll(args)
-      expect(result.history.initialRolls).toHaveLength(2)
+      expect(result.details.history.initialRolls).toHaveLength(2)
     })
 
     test('uses higher roll for total', () => {
       const result = d20Roll(args)
-      const [roll1, roll2] = result.history.initialRolls
+      const [roll1, roll2] = result.details.history.initialRolls
       const expectedTotal =
         Math.max(Number(roll1), Number(roll2)) + args.modifier
-      expect(result.total).toBe(expectedTotal)
+      expect(result.details.total).toBe(expectedTotal)
     })
   })
 
@@ -51,15 +51,15 @@ describe(d20Roll, () => {
 
     test('returns two rolls', () => {
       const result = d20Roll(args)
-      expect(result.history.initialRolls).toHaveLength(2)
+      expect(result.details.history.initialRolls).toHaveLength(2)
     })
 
     test('uses lower roll for total', () => {
       const result = d20Roll(args)
-      const [roll1, roll2] = result.history.initialRolls
+      const [roll1, roll2] = result.details.history.initialRolls
       const expectedTotal =
         Math.min(Number(roll1), Number(roll2)) + args.modifier
-      expect(result.total).toBe(expectedTotal)
+      expect(result.details.total).toBe(expectedTotal)
     })
   })
 
@@ -71,13 +71,13 @@ describe(d20Roll, () => {
 
     test('returns single roll result', () => {
       const result = d20Roll(args)
-      expect(result.history.initialRolls).toHaveLength(1)
+      expect(result.details.history.initialRolls).toHaveLength(1)
     })
 
     test('applies modifier correctly', () => {
       const result = d20Roll(args)
-      const rawRoll = result.history.initialRolls[0]
-      expect(result.total).toBe(Number(rawRoll) + args.modifier)
+      const rawRoll = result.details.history.initialRolls[0]
+      expect(result.details.total).toBe(Number(rawRoll) + args.modifier)
     })
   })
 
@@ -86,14 +86,14 @@ describe(d20Roll, () => {
 
     test('returns a result within valid range', () => {
       const result = d20Roll(args)
-      expect(result.total).toBeGreaterThanOrEqual(-2)
-      expect(result.total).toBeLessThanOrEqual(17)
+      expect(result.details.total).toBeGreaterThanOrEqual(-2)
+      expect(result.details.total).toBeLessThanOrEqual(17)
     })
 
     test('applies negative modifier correctly', () => {
       const result = d20Roll(args)
-      const rawRoll = result.history.initialRolls[0]
-      expect(result.total).toBe(Number(rawRoll) + args.modifier)
+      const rawRoll = result.details.history.initialRolls[0]
+      expect(result.details.total).toBe(Number(rawRoll) + args.modifier)
     })
   })
 })

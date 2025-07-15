@@ -4,14 +4,12 @@ import type { SalvageUnionHit, SalvageUnionTableName } from '../src/types'
 
 describe(rollTable, () => {
   describe('return type', () => {
-    test('returns a tuple of [TableResult, number]', () => {
+    test('returns a game result', () => {
       const result = rollTable()
 
       expect(typeof result).toBe('object')
-      expect(result).toHaveProperty('hit')
-      expect(result).toHaveProperty('table')
-      expect(result).toHaveProperty('tableName')
-      expect(result).toHaveProperty('roll')
+      expect(result).toHaveProperty('result')
+      expect(result).toHaveProperty('details')
     })
   })
 
@@ -33,7 +31,7 @@ describe(rollTable, () => {
       ]
 
       const result = rollTable()
-      expect(validHits).toContain(result.hit)
+      expect(validHits).toContain(result.result)
     })
   })
 
@@ -50,7 +48,7 @@ describe(rollTable, () => {
           'Tough Choice',
           'Failure',
           'Cascade Failure'
-        ]).toContain(result.hit)
+        ]).toContain(result.result)
       })
     })
   })
@@ -66,7 +64,7 @@ describe(rollTable, () => {
         'Tough Choice',
         'Failure',
         'Cascade Failure'
-      ]).toContain(result.hit)
+      ]).toContain(result.result)
     })
 
     test('handles Critical Damage table', () => {
@@ -80,7 +78,7 @@ describe(rollTable, () => {
         'Tough Choice',
         'Failure',
         'Cascade Failure'
-      ]).toContain(result.hit)
+      ]).toContain(result.result)
     })
   })
 
@@ -117,7 +115,7 @@ describe(rollTable, () => {
           rollTable(tableName as SalvageUnionTableName)
         ).not.toThrow()
         const result = rollTable(tableName as SalvageUnionTableName)
-        expect(result.tableName).toBe(tableName)
+        expect(result.tableName).toBe(tableName as SalvageUnionTableName)
       })
     })
   })
