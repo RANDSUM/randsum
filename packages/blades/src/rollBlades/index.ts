@@ -48,13 +48,13 @@ export function rollBlades(count: number): BladesRollResult {
 
   const canCrit = count > 0
 
-  const result = coreRoll(generateOptions(count, canCrit))
-  const rolls = result.history.initialRolls.flat().sort((a, b) => a - b)
+  const details = coreRoll(generateOptions(count, canCrit))
+  const rolls = details.history.initialRolls.flat().sort((a, b) => a - b)
 
-  const outcome = interpretHit(rolls, canCrit)
+  const result = interpretHit(rolls, canCrit)
 
   return {
-    outcome,
-    result
+    result,
+    details
   }
 }

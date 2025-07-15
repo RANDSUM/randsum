@@ -25,8 +25,8 @@
     "@eslint/js": "^9.31.0",
     "@moonrepo/cli": "^1.38.5",
     "@types/bun": "^1.2.18",
-    "@typescript-eslint/eslint-plugin": "^8.36.0",
-    "@typescript-eslint/parser": "^8.36.0",
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
     "bunup": "^0.8.60",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
@@ -35,7 +35,7 @@
     "typedoc": "^0.28.7",
     "typedoc-plugin-markdown": "^4.7.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.36.0"
+    "typescript-eslint": "^8.37.0"
   },
   "engines": {
     "node": "latest"

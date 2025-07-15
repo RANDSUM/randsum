@@ -1,3 +1,5 @@
+import type { BaseGameRollResult, CustomRollResult } from '@randsum/roller'
+
 export type SalvageUnionHit =
   | 'Nailed It'
   | 'Success'
@@ -29,9 +31,12 @@ export type SalvageUnionTableType = Record<
   SalvageUnionTableListing
 >
 
-export type SalvageUnionTableResult = {
-  hit: SalvageUnionHit
+export interface SalvageUnionTableResult
+  extends BaseGameRollResult<
+    SalvageUnionHit,
+    CustomRollResult<SalvageUnionTableListing>
+  > {
   tableName: SalvageUnionTableName
   table: SalvageUnionTableType
   roll: number
-} & SalvageUnionTableListing
+}

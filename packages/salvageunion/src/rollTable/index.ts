@@ -47,7 +47,8 @@ export function rollTable(
   const rollResult = rollCustom(faces)
 
   return {
-    ...rollResult.result,
+    details: rollResult,
+    result: rollResult.result.hit,
     table,
     tableName,
     roll: rollResult.baseResult.total
