@@ -130,7 +130,6 @@ describe(rollRootRpg, () => {
     })
 
     test('handles boundary values correctly', () => {
-      // Test just inside the valid range
       expect(() => rollRootRpg(21)).toThrow(
         'Root RPG bonus is outside reasonable range'
       )
@@ -138,7 +137,6 @@ describe(rollRootRpg, () => {
         'Root RPG bonus is outside reasonable range'
       )
 
-      // Test exactly at the boundaries (should work)
       expect(() => rollRootRpg(20)).not.toThrow()
       expect(() => rollRootRpg(-20)).not.toThrow()
     })
