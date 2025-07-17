@@ -14,17 +14,15 @@ export function rollDaggerheart({
 > {
   const hopeResult = coreRoll({
     quantity: 1,
-    sides: amplifyHope ? 20 : 12,
-    modifiers: { plus: modifier }
+    sides: amplifyHope ? 20 : 12
   })
   const fearResult = coreRoll({
     quantity: 1,
-    sides: amplifyFear ? 20 : 12,
-    modifiers: { plus: modifier }
+    sides: amplifyFear ? 20 : 12
   })
   const hope = hopeResult.total
   const fear = fearResult.total
-  const total = hope + fear
+  const total = hope + fear + modifier
 
   const [totalWithAdvantage, advantage] = calculateTotal(total, rollingWith)
 
