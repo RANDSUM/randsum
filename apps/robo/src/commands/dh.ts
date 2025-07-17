@@ -1,6 +1,7 @@
 import type {
   DaggerheartAdvantageDisadvantage,
-  DaggerheartRollResult
+  DaggerheartRollResult,
+  DaggerheartRollResultType
 } from '@randsum/daggerheart'
 import { rollDaggerheart } from '@randsum/daggerheart'
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
@@ -65,7 +66,7 @@ function fields(
   ].filter((r) => !!r)
 }
 
-function getColor(type: 'hope' | 'fear' | 'critical hope'): number {
+function getColor(type: DaggerheartRollResultType): number {
   switch (type) {
     case 'hope':
       return Colors.White
