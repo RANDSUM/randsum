@@ -56,7 +56,7 @@ function fields(
       { name: 'Hope', value: hope.toString(), inline: true },
       { name: 'Fear', value: fear.toString(), inline: true }
     ].sort((a, b) => Number(a.value) - Number(b.value)),
-    { name: 'Modifier', value: modifier.toString() },
+    { name: 'Modifier', value: String(modifier) },
     advantage && rollingWith
       ? {
           name: `Rolled with ${rollingWith}`,
@@ -69,9 +69,9 @@ function fields(
 function getColor(type: DaggerheartRollResultType): number {
   switch (type) {
     case 'hope':
-      return Colors.White
+      return Colors.Yellow
     case 'fear':
-      return Colors.NotQuiteBlack
+      return Colors.Purple
     case 'critical hope':
       return Colors.Gold
   }
