@@ -7,7 +7,7 @@ describe('rollDaggerheart', () => {
     test('returns DaggerheartRollResult with correct structure', () => {
       const result = rollDaggerheart({})
 
-      expect(result.baseResult).toHaveProperty('type')
+      expect(result).toHaveProperty('type')
       expect(result.baseResult).toHaveProperty('total')
       expect(result.baseResult).toHaveProperty('rolls')
       expect(result.baseResult.rolls).toHaveProperty('hope')
@@ -21,7 +21,7 @@ describe('rollDaggerheart', () => {
 
       for (let i = 0; i < 20; i++) {
         const result = rollDaggerheart({})
-        expect(validTypes).toContain(result.baseResult.type)
+        expect(validTypes).toContain(result.type)
       }
     })
 
@@ -194,7 +194,7 @@ describe('rollDaggerheart', () => {
 
       for (let i = 0; i < 100; i++) {
         const result = rollDaggerheart({})
-        resultTypes.add(result.baseResult.type)
+        resultTypes.add(result.type)
       }
 
       expect(resultTypes.has('hope') || resultTypes.has('fear')).toBe(true)
@@ -207,7 +207,7 @@ describe('rollDaggerheart', () => {
 
       expect(result.baseResult.rolls.modifier).toBe(0)
       expect(result.baseResult.rolls.advantage).toBeUndefined()
-      expect(typeof result.baseResult.type).toBe('string')
+      expect(typeof result.type).toBe('string')
       expect(typeof result.baseResult.total).toBe('number')
     })
 
@@ -238,7 +238,7 @@ describe('rollDaggerheart', () => {
     test('returns proper DaggerheartRollResult structure', () => {
       const result = rollDaggerheart({})
 
-      expect(typeof result.baseResult.type).toBe('string')
+      expect(typeof result.type).toBe('string')
       expect(typeof result.baseResult.total).toBe('number')
       expect(typeof result.baseResult.rolls).toBe('object')
       expect(typeof result.baseResult.rolls.hope).toBe('number')
