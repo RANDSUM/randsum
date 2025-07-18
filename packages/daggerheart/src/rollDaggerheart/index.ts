@@ -28,7 +28,7 @@ export function rollDaggerheart({
 
   return {
     result: totalWithAdvantage,
-    details: {
+    baseResult: {
       type: calculateType(hope, fear),
       total: totalWithAdvantage,
       rolls: {
