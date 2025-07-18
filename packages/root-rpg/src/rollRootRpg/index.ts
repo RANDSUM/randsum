@@ -21,11 +21,12 @@ export function rollRootRpg(bonus: number): RootRpgRollResult {
     modifiers: { plus: bonus }
   }
 
-  const details = coreRoll(args)
+  const baseResult = coreRoll(args)
+  const roll = baseResult.total
 
   return {
-    result: interpretResult(details.total),
-    roll: details.total,
-    details
+    result: interpretResult(roll),
+    roll,
+    baseResult
   }
 }

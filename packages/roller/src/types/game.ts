@@ -5,5 +5,5 @@ export interface BaseGameRollResult<
   TRollResult = RollResult
 > {
   result: TOutcome
-  details: TRollResult
+  baseResult: TRollResult
 }

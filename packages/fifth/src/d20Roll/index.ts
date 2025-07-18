@@ -16,9 +16,9 @@ export function d20Roll({
     quantity: generateQuantity(rollingWith),
     modifiers: { ...generateModifiers(rollingWith), plus: modifier }
   }
-  const details = coreRoll(rollArg)
+  const baseResult = coreRoll(rollArg)
   return {
-    result: details.total,
-    details
+    result: baseResult.total,
+    baseResult
   }
 }
