@@ -11,7 +11,8 @@ describe(argToParameter, () => {
 
       expect(params).toMatchObject({
         argument,
-        options: { quantity: 1, sides: argument },
+        quantity: 1,
+        sides: argument,
         notation: '1d2',
         description: ['Roll 1 2-sided die']
       })
@@ -30,8 +31,7 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: argument,
-
+          ...argument,
           notation: '4d6',
           description: ['Roll 4 6-sided dice']
         })
@@ -57,8 +57,7 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: argument,
-
+          ...argument,
           notation: '4d6V{>5=1}R{2,1,4}3U',
           description: [
             'Roll 4 6-sided dice',
@@ -97,8 +96,7 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: argument,
-
+          ...argument,
           notation: '4d6C{>2,<1}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1',
           description: [
             'Roll 4 6-sided dice',
@@ -131,7 +129,7 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: coreDicePools,
+          ...coreDicePools,
           notation: '4d6',
           description: ['Roll 4 6-sided dice']
         })
@@ -147,10 +145,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { drop: { highest: 1 } }
-            },
+            ...coreDicePools,
+            modifiers: { drop: { highest: 1 } },
             notation: '4d6H',
             description: ['Roll 4 6-sided dice', 'Drop highest']
           })
@@ -165,11 +161,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { drop: { highest: 2 } }
-            },
-
+            ...coreDicePools,
+            modifiers: { drop: { highest: 2 } },
             notation: '4d6H2',
             description: ['Roll 4 6-sided dice', 'Drop highest 2']
           })
@@ -186,11 +179,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { drop: { lowest: 1 } }
-            },
-
+            ...coreDicePools,
+            modifiers: { drop: { lowest: 1 } },
             notation: '4d6L',
             description: ['Roll 4 6-sided dice', 'Drop lowest']
           })
@@ -205,11 +195,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { drop: { lowest: 2 } }
-            },
-
+            ...coreDicePools,
+            modifiers: { drop: { lowest: 2 } },
             notation: '4d6L2',
             description: ['Roll 4 6-sided dice', 'Drop lowest 2']
           })
@@ -225,13 +212,10 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: {
-            ...coreDicePools,
-            modifiers: {
-              drop: { greaterThan: 5, lessThan: 2, exact: [2, 4] }
-            }
+          ...coreDicePools,
+          modifiers: {
+            drop: { greaterThan: 5, lessThan: 2, exact: [2, 4] }
           },
-
           notation: '4d6D{>5,<2,2,4}',
           description: [
             'Roll 4 6-sided dice',
@@ -251,11 +235,8 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: {
-            ...coreDicePools,
-            modifiers: { cap: { lessThan: 2, greaterThan: 5 } }
-          },
-
+          ...coreDicePools,
+          modifiers: { cap: { lessThan: 2, greaterThan: 5 } },
           notation: '4d6C{>5,<2}',
           description: [
             'Roll 4 6-sided dice',
@@ -274,11 +255,8 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: {
-            ...coreDicePools,
-            modifiers: { minus: 2 }
-          },
-
+          ...coreDicePools,
+          modifiers: { minus: 2 },
           notation: '4d6-2',
           description: ['Roll 4 6-sided dice', 'Subtract 2']
         })
@@ -293,11 +271,8 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: {
-            ...coreDicePools,
-            modifiers: { plus: 2 }
-          },
-
+          ...coreDicePools,
+          modifiers: { plus: 2 },
           notation: '4d6+2',
           description: ['Roll 4 6-sided dice', 'Add 2']
         })
@@ -312,17 +287,14 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: {
-            ...coreDicePools,
-            modifiers: {
-              reroll: {
-                exact: [5],
-                lessThan: 6,
-                greaterThan: 2
-              }
+          ...coreDicePools,
+          modifiers: {
+            reroll: {
+              exact: [5],
+              lessThan: 6,
+              greaterThan: 2
             }
           },
-
           notation: '4d6R{5,>2,<6}',
           description: [
             'Roll 4 6-sided dice',
@@ -338,18 +310,15 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: {
-                reroll: {
-                  exact: [5, 20],
-                  lessThan: 6,
-                  greaterThan: 2,
-                  max: 3
-                }
+            ...coreDicePools,
+            modifiers: {
+              reroll: {
+                exact: [5, 20],
+                lessThan: 6,
+                greaterThan: 2,
+                max: 3
               }
             },
-
             notation: '4d6R{5,20,>2,<6}3',
             description: [
               'Roll 4 6-sided dice',
@@ -369,11 +338,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { unique: { notUnique: [5, 6] } }
-            },
-
+            ...coreDicePools,
+            modifiers: { unique: { notUnique: [5, 6] } },
             notation: '4d6U{5,6}',
             description: [
               'Roll 4 6-sided dice',
@@ -391,11 +357,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { unique: { notUnique: [5, 6] } }
-            },
-
+            ...coreDicePools,
+            modifiers: { unique: { notUnique: [5, 6] } },
             notation: '4d6U{5,6}',
             description: [
               'Roll 4 6-sided dice',
@@ -413,11 +376,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { unique: true }
-            },
-
+            ...coreDicePools,
+            modifiers: { unique: true },
             notation: '4d6U',
             description: ['Roll 4 6-sided dice', 'No Duplicate Rolls']
           })
@@ -433,11 +393,8 @@ describe(argToParameter, () => {
 
         expect(params).toMatchObject({
           argument,
-          options: {
-            ...coreDicePools,
-            modifiers: { explode: true }
-          },
-
+          ...coreDicePools,
+          modifiers: { explode: true },
           notation: '4d6!',
           description: ['Roll 4 6-sided dice', 'Exploding Dice']
         })
@@ -453,16 +410,13 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: {
-                replace: [
-                  { from: 1, to: 2 },
-                  { from: { greaterThan: 2 }, to: 6 }
-                ]
-              }
+            ...coreDicePools,
+            modifiers: {
+              replace: [
+                { from: 1, to: 2 },
+                { from: { greaterThan: 2 }, to: 6 }
+              ]
             },
-
             notation: '4d6V{1=2,>2=6}',
             description: [
               'Roll 4 6-sided dice',
@@ -481,11 +435,8 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              ...coreDicePools,
-              modifiers: { replace: [{ from: { lessThan: 2 }, to: 6 }] }
-            },
-
+            ...coreDicePools,
+            modifiers: { replace: [{ from: { lessThan: 2 }, to: 6 }] },
             notation: '4d6V{<2=6}',
             description: [
               'Roll 4 6-sided dice',
@@ -504,11 +455,8 @@ describe(argToParameter, () => {
 
           expect(explodeParams).toMatchObject({
             argument: explodeFirstString,
-            options: {
-              ...coreDicePools,
-              modifiers: { explode: true, drop: { highest: 1 } }
-            },
-
+            ...coreDicePools,
+            modifiers: { explode: true, drop: { highest: 1 } },
             notation: '4d6H!',
             description: [
               'Roll 4 6-sided dice',
@@ -522,11 +470,8 @@ describe(argToParameter, () => {
 
           expect(dropFirstParams).toMatchObject({
             argument: dropFirstString,
-            options: {
-              ...coreDicePools,
-              modifiers: { drop: { highest: 1 }, explode: true }
-            },
-
+            ...coreDicePools,
+            modifiers: { drop: { highest: 1 }, explode: true },
             notation: '4d6H!',
             description: [
               'Roll 4 6-sided dice',
@@ -545,28 +490,26 @@ describe(argToParameter, () => {
 
           expect(params).toMatchObject({
             argument,
-            options: {
-              quantity: 10,
-              sides: 20,
-              modifiers: {
-                drop: {
-                  highest: 2,
-                  lowest: 1,
-                  exact: [2, 4],
-                  greaterThan: 5,
-                  lessThan: 2
-                },
-                replace: [
-                  { from: 1, to: 2 },
-                  { from: { greaterThan: 2 }, to: 6 }
-                ],
-                cap: { greaterThan: 18, lessThan: 2 },
-                reroll: { exact: [5, 2], lessThan: 6, max: 3 },
-                unique: { notUnique: [5] },
-                explode: true,
-                plus: 5,
-                minus: 5
-              }
+            quantity: 10,
+            sides: 20,
+            modifiers: {
+              drop: {
+                highest: 2,
+                lowest: 1,
+                exact: [2, 4],
+                greaterThan: 5,
+                lessThan: 2
+              },
+              replace: [
+                { from: 1, to: 2 },
+                { from: { greaterThan: 2 }, to: 6 }
+              ],
+              cap: { greaterThan: 18, lessThan: 2 },
+              reroll: { exact: [5, 2], lessThan: 6, max: 3 },
+              unique: { notUnique: [5] },
+              explode: true,
+              plus: 5,
+              minus: 5
             },
             notation:
               '10d20C{>18,<2}H2LD{>5,<2,2,4}V{1=2,>2=6}R{5,2,<6}3!U{5}+5-5',

@@ -1,9 +1,7 @@
 import { roll } from './roll'
-import type { CustomRollArgument, CustomRollResult } from './types'
+import type { CustomRollResult } from './types'
 
-export function rollCustom<T>(
-  faces: CustomRollArgument<T>
-): CustomRollResult<T> {
+export function rollCustom<T>(faces: T[]): CustomRollResult<T> {
   const baseResult = roll({
     sides: faces.length,
     quantity: 1
@@ -12,8 +10,7 @@ export function rollCustom<T>(
     throw new Error('Failed to properly roll.')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const result = faces[baseResult.total - 1]!
+  const result = faces[baseResult.total - 1] as T
 
   return {
     baseResult,

@@ -8,7 +8,7 @@ describe(meetOrBeat, () => {
       const { success, target, result } = meetOrBeat(total, '1d1')
       expect(success).toBe(false)
       expect(target).toBe(total)
-      expect(result.parameters.notation).toBe('1d1')
+      expect(result.rolls[0]?.parameters.notation).toBe('1d1')
     })
 
     test('returns true when roll meets total', () => {

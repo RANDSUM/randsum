@@ -23,11 +23,11 @@
   ],
   "devDependencies": {
     "@eslint/js": "^9.31.0",
-    "@moonrepo/cli": "^1.38.5",
+    "@moonrepo/cli": "^1.38.6",
     "@types/bun": "^1.2.18",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
-    "bunup": "^0.8.60",
+    "bunup": "^0.8.61",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
