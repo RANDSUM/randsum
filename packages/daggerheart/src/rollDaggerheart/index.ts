@@ -10,25 +10,26 @@ export function rollDaggerheart({
   amplifyFear = false
 }: DaggerheartRollArgument = {}): DaggerheartGameResult {
   const hopeResult = coreRoll({
-    quantity: 1,
     sides: amplifyHope ? 20 : 12
   })
   const fearResult = coreRoll({
-    quantity: 1,
     sides: amplifyFear ? 20 : 12
   })
   const hope = hopeResult.total
   const fear = fearResult.total
-  const total = hope + fear + modifier
-
-  const [totalWithAdvantage, advantage] = calculateTotal(total, rollingWith)
+  const [result, advantage] = calculateTotal(
+    hope + fear + modifier,
+    rollingWith
+  )
 
   return {
-    result: totalWithAdvantage,
+    result,
     type: calculateType(hope, fear),
     baseResult: {
-      total: totalWithAdvantage,
+      total: result,
       rolls: {
+        amplifyHope,
+        amplifyFear,
         hope,
         advantage,
         fear,

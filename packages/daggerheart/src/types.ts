@@ -17,6 +17,8 @@ export interface DaggerheartRollResult {
     fear: number
     modifier: number
     advantage: number | undefined
+    amplifyHope: boolean
+    amplifyFear: boolean
   }
 }
 

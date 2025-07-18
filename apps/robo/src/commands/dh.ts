@@ -20,9 +20,25 @@ export const config = createCommandConfig({
       required: false
     },
     {
-      name: 'advdis',
+      name: 'rollingwith',
       description: 'Roll with advantage or disadvantage',
       type: 'string',
+      required: false,
+      choices: [
+        { name: 'Advantage', value: 'Advantage' },
+        { name: 'Disadvantage', value: 'Disadvantage' }
+      ]
+    },
+    {
+      name: 'amplifyhope',
+      description: 'Use d20 instead of d12 for Hope die',
+      type: 'boolean',
+      required: false
+    },
+    {
+      name: 'amplifyfear',
+      description: 'Use d20 instead of d12 for Fear die',
+      type: 'boolean',
       required: false
     }
   ]
@@ -30,7 +46,9 @@ export const config = createCommandConfig({
 
 const buildEmbed = (
   rollModifier: number,
-  rollingWith: DaggerheartAdvantageDisadvantage | undefined
+  rollingWith: DaggerheartAdvantageDisadvantage | undefined = undefined,
+  amplifyHope: boolean,
+  amplifyFear: boolean
 ): APIEmbed => {
   const {
     type,
@@ -38,7 +56,9 @@ const buildEmbed = (
     baseResult: { rolls }
   } = rollDaggerheart({
     modifier: rollModifier,
-    rollingWith
+    rollingWith,
+    amplifyHope,
+    amplifyFear
   })
 
   return new EmbedBuilder()
@@ -50,8 +70,15 @@ const buildEmbed = (
 }
 
 function fields(
-  { hope, fear, modifier, advantage }: DaggerheartRollResult['rolls'],
-  rollingWith: DaggerheartAdvantageDisadvantage | undefined
+  {
+    hope,
+    fear,
+    modifier = 0,
+    advantage,
+    amplifyHope,
+    amplifyFear
+  }: DaggerheartRollResult['rolls'],
+  rollingwith: DaggerheartAdvantageDisadvantage | undefined
 ): { name: string; value: string; inline?: boolean | undefined }[] {
   return [
     ...[
@@ -59,11 +86,17 @@ function fields(
       { name: 'Fear', value: fear.toString(), inline: true }
     ].sort((a, b) => Number(a.value) - Number(b.value)),
     { name: 'Modifier', value: String(modifier) },
-    advantage && rollingWith
+    advantage && rollingwith
       ? {
-          name: `Rolled with ${rollingWith}`,
+          name: `Rolled with ${rollingwith}`,
           value: String(advantage)
         }
+      : undefined,
+    amplifyHope
+      ? { name: 'Amplified Hope', value: 'Hope rolled with d20 instead of d12' }
+      : undefined,
+    amplifyFear
+      ? { name: 'Amplified Fear', value: 'Fear rolled with d20 instead of d12' }
       : undefined
   ].filter((r) => !!r)
 }
@@ -81,13 +114,22 @@ function getColor(type: DaggerheartRollResultType): number {
 
 export default async (
   interaction: ChatInputCommandInteraction,
-  { modifier, advdis }: CommandOptions<typeof config>
+  {
+    modifier,
+    rollingwith,
+    amplifyhope,
+    amplifyfear
+  }: CommandOptions<typeof config>
 ): Promise<CommandResult> => {
   await interaction.reply({
     embeds: [
       buildEmbed(
-        Number(modifier),
-        advdis as DaggerheartAdvantageDisadvantage | undefined
+        modifier ? Number(modifier) : 0,
+        rollingwith
+          ? (rollingwith as DaggerheartAdvantageDisadvantage)
+          : undefined,
+        amplifyhope ? Boolean(amplifyhope) : false,
+        amplifyfear ? Boolean(amplifyfear) : false
       )
     ]
   })
