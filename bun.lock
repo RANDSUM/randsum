@@ -22,7 +22,7 @@
     },
     "apps/mcp": {
       "name": "@randsum/mcp",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "bin": {
         "randsum-mcp": "dist/index.js",
       },
@@ -35,7 +35,7 @@
     },
     "apps/robo": {
       "name": "@randsum/robo",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "dependencies": {
         "@discord/embedded-app-sdk": "^1.9.0",
         "@randsum/blades": "^0.10.0",
@@ -62,40 +62,40 @@
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/fifth": {
       "name": "@randsum/fifth",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "bin": "./bin/randsum",
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.16.0",
+      "version": "0.17.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },

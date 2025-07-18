@@ -1,4 +1,3 @@
-export * from './isRollResult'
 export * from './isDiceNotation'
 export * from './isRollOptions'
 export * from './isRollParams'
