@@ -1,14 +1,14 @@
+import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
+import { Colors, EmbedBuilder } from 'discord.js'
+import type { CommandOptions, CommandResult } from 'robo.js'
+import { createCommandConfig } from 'robo.js'
+import { embedFooterDetails } from '../core/constants'
 import type {
   DaggerheartAdvantageDisadvantage,
   DaggerheartRollResult,
   DaggerheartRollResultType
 } from '@randsum/daggerheart'
 import { rollDaggerheart } from '@randsum/daggerheart'
-import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
-import { Colors, EmbedBuilder } from 'discord.js'
-import type { CommandOptions, CommandResult } from 'robo.js'
-import { createCommandConfig } from 'robo.js'
-import { embedFooterDetails } from '../core/constants'
 
 export const config = createCommandConfig({
   description: 'What moves you - Hope, or Fear?',

@@ -32,12 +32,12 @@
     "upgrade": "sage upgrade"
   },
   "dependencies": {
-    "@randsum/roller": "^0.18.0",
-    "@randsum/blades": "^0.18.0",
-    "@randsum/daggerheart": "^0.18.0",
-    "@randsum/fifth": "^0.18.0",
-    "@randsum/root-rpg": "^0.18.0",
-    "@randsum/salvageunion": "^0.18.0",
+    "@randsum/roller": "^0.21.0",
+    "@randsum/blades": "^0.21.0",
+    "@randsum/daggerheart": "^0.21.0",
+    "@randsum/fifth": "^0.21.0",
+    "@randsum/root-rpg": "^0.21.0",
+    "@randsum/salvageunion": "^0.21.0",
     "@discord/embedded-app-sdk": "^1.9.0",
     "@robojs/patch": "^0.2.1",
     "robo.js": "^0.10.30",
