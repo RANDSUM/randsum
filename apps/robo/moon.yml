@@ -27,6 +27,12 @@ tasks:
     command: "bun run robox deploy"
     deps:
       - "build"
+      - "roller:publish"
+      - "blades:publish"
+      - "daggerheart:publish"
+      - "fifth:publish"
+      - "root-rpg:publish"
+      - "salvageunion:publish"
     options:
       runInCI: false
       cache: false
