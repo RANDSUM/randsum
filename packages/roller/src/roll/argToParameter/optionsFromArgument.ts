@@ -10,11 +10,9 @@ import {
   coreNotationPattern,
   isDiceNotation
 } from '../../lib'
-import type { RollArgument, RollParams } from '../../types'
+import type { RollArgument, RollOptions } from '../../types'
 
-export function optionsFromArgument(
-  argument: RollArgument
-): RollParams['options'] {
+export function optionsFromArgument(argument: RollArgument): RollOptions {
   if (isDiceNotation(argument)) {
     const coreNotationMatch = argument.match(coreNotationPattern) ?? ''
     const coreMatch = coreNotationMatch[0]

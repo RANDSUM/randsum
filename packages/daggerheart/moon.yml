@@ -14,13 +14,6 @@ tasks:
   build:
     deps:
       - "roller:build"
-  test:
-    command: 'echo "No tests implemented yet"'
-    deps:
-      - "roller:build"
-    options:
-      cache: false
-      runInCI: true
   lint:
     deps:
       - "roller:build"

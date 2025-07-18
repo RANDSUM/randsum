@@ -1,6 +1,5 @@
 export * from './roll'
 export * from './rollCustom'
 export * from './validateNotation'
-export * from './meetOrBeat'
 export * from './lib/guards'
 export type * from './types'

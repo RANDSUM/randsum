@@ -38,8 +38,10 @@ const buildEmbed = (notationArg: string): APIEmbed => {
 
   const total = `**${String(result.total)}**`
 
-  const rawResults = JSON.stringify(result.history.initialRolls)
-  const results = JSON.stringify(result.history.modifiedRolls)
+  const rawResults = JSON.stringify(
+    result.rolls[0]?.modifierHistory.initialRolls
+  )
+  const results = JSON.stringify(result.rolls[0]?.modifierHistory.modifiedRolls)
 
   const simpleField = [{ name: 'Rolls', value: results, inline: true }]
   const complexField = [
@@ -59,7 +61,7 @@ const buildEmbed = (notationArg: string): APIEmbed => {
   ]
   return new EmbedBuilder()
     .setTitle(`You rolled a ${total}`)
-    .setDescription(result.parameters.description.join(', '))
+    .setDescription(result.rolls[0]?.parameters.description.join(', '))
     .setFields(fields)
     .setFooter(embedFooterDetails)
     .toJSON()

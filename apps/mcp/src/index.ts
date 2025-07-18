@@ -108,8 +108,12 @@ RETURNS: For valid notation, shows parsed structure with quantity, sides, and mo
 function formatRollResult(result: RollResult): string {
   const {
     total,
-    parameters,
-    history: { initialRolls, modifiedRolls }
+    rolls: [
+      {
+        parameters,
+        modifierHistory: { modifiedRolls, initialRolls }
+      }
+    ]
   } = result
 
   const header = `🎲 RANDSUM Roll Result:`
@@ -123,7 +127,6 @@ function formatRollResult(result: RollResult): string {
   let rollInfo = `Roll: ${notation}`
   rollInfo += `\n  Raw: [${rawRollsStr}]`
 
-  // Show modified rolls if different from raw
   if (rawRollsStr !== modifiedRollsStr) {
     rollInfo += `\n  Modified: [${modifiedRollsStr}]`
   }

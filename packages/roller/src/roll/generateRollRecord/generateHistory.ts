@@ -3,18 +3,16 @@ import type {
   ModifierOptions,
   NumericRollBonus,
   RollParams,
-  RollResult
+  RollRecord
 } from '../../types'
 import { coreRandom } from '../../lib'
 import { calculateTotal } from '../utils/calculateTotal'
 import { applyModifier } from './applyModifier'
 
 export function generateHistory(
-  parameters: RollParams,
-  rolls: RollResult['history']['initialRolls']
-): RollResult['history'] {
-  const { sides, quantity = 1, modifiers = {} } = parameters.options
-
+  { sides, quantity = 1, modifiers = {} }: RollParams,
+  rolls: RollRecord['modifierHistory']['initialRolls']
+): RollRecord['modifierHistory'] {
   const hasModifiers =
     modifiers.reroll ||
     modifiers.replace ||

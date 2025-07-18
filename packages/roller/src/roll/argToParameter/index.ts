@@ -6,8 +6,8 @@ export function argToParameter(argument: RollArgument): RollParams {
   const options = optionsFromArgument(argument)
   const converter = new OptionsConverter(options)
   return {
+    ...options,
     argument,
-    options,
     notation: converter.toNotation,
     description: converter.toDescription
   }

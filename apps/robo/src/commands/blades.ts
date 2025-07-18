@@ -1,11 +1,11 @@
-import type { BladesResult } from '@randsum/blades'
-import { rollBlades } from '@randsum/blades'
-import type { RollResult } from '@randsum/roller'
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
 import type { CommandOptions, CommandResult } from 'robo.js'
 import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
+import type { BladesResult } from '@randsum/blades'
+import { rollBlades } from '@randsum/blades'
+import type { RollResult } from '@randsum/roller'
 
 export const config = createCommandConfig({
   description: 'Crew up.  Get in. Get out. Get Paid',
@@ -38,7 +38,7 @@ const getExplanation = (quantity: number, username: string): string[] => {
   const isZero = quantity === 0
   return [
     `${username} rolled ${String(isZero ? 2 : quantity)} D6`,
-    `and took the ${isZero ? 'lowest' : 'highest'} details`
+    `and took the ${isZero ? 'lowest' : 'highest'} baseResult`
   ]
 }
 
@@ -66,15 +66,15 @@ const getThumbnail = (total: number, type: BladesResult): string => {
 }
 
 const parseRolls = (
-  details: RollResult,
+  baseResult: RollResult,
   bladesSuccess: BladesResult
 ): string => {
-  return details.history.initialRolls
+  return baseResult.rolls[0]?.modifierHistory.initialRolls
     .flat()
     .map((roll, index, array) => {
       const isCritical = bladesSuccess === 'critical'
       const firstInstaceOfRoll = array.indexOf(roll) === index
-      return roll === details.total && (isCritical || firstInstaceOfRoll)
+      return roll === baseResult.total && (isCritical || firstInstaceOfRoll)
         ? `**${String(roll)}**`
         : `~~${String(roll)}~~`
     })
@@ -112,13 +112,13 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     memberNick || 'User'
   )
 
-  const { result: hit, details } = rollBlades(quantity)
-  const [successTitle, successValue] = getSuccessString(hit)
+  const { result, baseResult } = rollBlades(quantity)
+  const [successTitle, successValue] = getSuccessString(result)
 
   return new EmbedBuilder()
     .setTitle(successTitle)
     .setDescription(successValue)
-    .setThumbnail(getThumbnail(details.total, hit))
+    .setThumbnail(getThumbnail(baseResult.total, result))
     .addFields({ name: '\u200B', value: '\u200B' })
     .addFields({
       name: explanationTitle,
@@ -126,15 +126,15 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
     })
     .addFields({
       name: 'Rolls',
-      value: `[${parseRolls(details, hit)}]`,
+      value: `[${parseRolls(baseResult, result)}]`,
       inline: true
     })
     .addFields({
       name: 'Total',
-      value: `**${String(details.total)}**`,
+      value: `**${String(baseResult.total)}**`,
       inline: true
     })
-    .setColor(getColor(hit))
+    .setColor(getColor(result))
     .setFooter(embedFooterDetails)
     .toJSON()
 }
