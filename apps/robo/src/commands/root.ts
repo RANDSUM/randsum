@@ -81,10 +81,10 @@ export function handleroll(modifierArg: string, memberNick = 'User'): APIEmbed {
     memberNick
   )
 
-  const { result: hit, details } = rollRootRpg(modifier)
-  const [successTitle, successValue] = getSuccessString(hit)
-  const color = getColor(hit)
-  const thumbnail = getThumbnail(details.total)
+  const { result, baseResult } = rollRootRpg(modifier)
+  const [successTitle, successValue] = getSuccessString(result)
+  const color = getColor(result)
+  const thumbnail = getThumbnail(baseResult.total)
 
   return new EmbedBuilder()
     .setColor(color)
@@ -95,7 +95,7 @@ export function handleroll(modifierArg: string, memberNick = 'User'): APIEmbed {
     .addFields({ name: explanationName, value: explanationValue })
     .addFields({
       name: 'Rolls',
-      value: `[${parseRolls(details.history.initialRolls)}] + **${String(modifier)}** = __**${String(details.total)}**__`,
+      value: `[${parseRolls(baseResult.rolls[0]?.modifierHistory.initialRolls)}] + **${String(modifier)}** = __**${String(baseResult.total)}**__`,
       inline: true
     })
     .setFooter(embedFooterDetails)

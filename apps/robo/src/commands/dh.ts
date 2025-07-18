@@ -33,7 +33,7 @@ const buildEmbed = (
   rollingWith: DaggerheartAdvantageDisadvantage | undefined
 ): APIEmbed => {
   const {
-    details: { total, type, rolls }
+    baseResult: { total, type, rolls }
   } = rollDaggerheart({
     modifier: rollModifier,
     rollingWith
