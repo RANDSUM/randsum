@@ -38,12 +38,12 @@
       "version": "0.18.0",
       "dependencies": {
         "@discord/embedded-app-sdk": "^1.9.0",
-        "@randsum/blades": "^0.10.0",
-        "@randsum/daggerheart": "^0.10.0",
-        "@randsum/fifth": "^0.10.0",
-        "@randsum/roller": "^0.10.0",
-        "@randsum/root-rpg": "^0.10.0",
-        "@randsum/salvageunion": "^0.10.0",
+        "@randsum/blades": "^0.18.0",
+        "@randsum/daggerheart": "^0.18.0",
+        "@randsum/fifth": "^0.18.0",
+        "@randsum/roller": "^0.18.0",
+        "@randsum/root-rpg": "^0.18.0",
+        "@randsum/salvageunion": "^0.18.0",
         "@robojs/patch": "^0.2.1",
         "discord.js": "^14.21.0",
         "extensionless": "^1.9.9",
@@ -988,18 +988,6 @@
     "@isaacs/cliui/strip-ansi": ["strip-ansi@7.1.0", "", { "dependencies": { "ansi-regex": "^6.0.1" } }, "sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ=="],
 
     "@isaacs/cliui/wrap-ansi": ["wrap-ansi@8.1.0", "", { "dependencies": { "ansi-styles": "^6.1.0", "string-width": "^5.0.1", "strip-ansi": "^7.0.1" } }, "sha512-si7QWI6zUMq56bESFvagtmzMdGOtoxfR+Sez11Mobfc7tm+VkUckk9bW2UeffTGVUbOksxmSw0AA2gs8g71NCQ=="],
-
-    "@randsum/robo/@randsum/blades": ["@randsum/blades@0.10.0", "", { "dependencies": { "@randsum/roller": "~0.10.0" } }, "sha512-z5HIX93lYzkVovEr5yL/2zgCKMf78vPTlK2j8lIoLxAdZuXS/JjpNYbI8B2p52PC/TrkqnsWoisMdIOH4HDVbA=="],
-
-    "@randsum/robo/@randsum/daggerheart": ["@randsum/daggerheart@0.10.0", "", { "dependencies": { "@randsum/roller": "0.10.0" } }, "sha512-HIvavOwTKQ5EEI17zC01qhnTkOr2+8kjFSiw+ohC9QvNBRFUsk5l8UZxCR1NTGljsFMuXbKLUKYkDBnwJVK0KA=="],
-
-    "@randsum/robo/@randsum/fifth": ["@randsum/fifth@0.10.0", "", { "dependencies": { "@randsum/roller": "~0.10.0" } }, "sha512-sXg4Xi2FvldZZdxSFHA8JgYm5QA3LJTD0z1ET5h648iHYnYIEjDrC9H4NZjv1hi0muaYlH0gPtpXk6AgZP83cg=="],
-
-    "@randsum/robo/@randsum/roller": ["@randsum/roller@0.10.0", "", { "bin": { "@randsum/roller": "bin/randsum" } }, "sha512-1a4io5bQkq8Y4392LEdRwoJxJW5eSSEELLkNQZchz4k7TL3VICk46MBCR4aC23dXeL3UWho87qObX1U6mhjg2Q=="],
-
-    "@randsum/robo/@randsum/root-rpg": ["@randsum/root-rpg@0.10.0", "", { "dependencies": { "@randsum/roller": "~0.10.0" } }, "sha512-LCXudAn2dDx/9OFFM3fuxU1bdfcafTv5tIGMEvVbFqiUo4TGyLfV/zNHzfyYZE5V/0j0wWSfiVr580vMN9wI9w=="],
-
-    "@randsum/robo/@randsum/salvageunion": ["@randsum/salvageunion@0.10.0", "", { "dependencies": { "@randsum/roller": "~0.10.0" } }, "sha512-MD9JHYqgo+cN7eKCIYhktLOKVT3aFhdzfB3mptQ4mOX+cBQAvyIFJ21zcCBfQcKklexxVt5w0hos3Ow6epukeQ=="],
 
     "@typescript-eslint/typescript-estree/minimatch": ["minimatch@9.0.5", "", { "dependencies": { "brace-expansion": "^2.0.1" } }, "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow=="],
 
