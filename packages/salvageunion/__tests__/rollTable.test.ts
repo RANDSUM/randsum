@@ -9,7 +9,7 @@ describe(rollTable, () => {
 
       expect(typeof result).toBe('object')
       expect(result).toHaveProperty('result')
-      expect(result).toHaveProperty('details')
+      expect(result).toHaveProperty('baseResult')
     })
   })
 
