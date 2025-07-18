@@ -17,15 +17,15 @@ export function rollTable(
 
   const faces = customTableFaces.map((face) => table[face])
 
-  const rollResult = rollCustom(faces)
+  const baseResult = rollCustom(faces)
 
   return {
-    details: rollResult,
-    label: rollResult.result.label,
-    description: rollResult.result.description,
-    result: rollResult.result.hit,
+    baseResult,
+    label: baseResult.result.label,
+    description: baseResult.result.description,
+    result: baseResult.result.hit,
     table,
     tableName,
-    roll: rollResult.baseResult.total
+    roll: baseResult.baseResult.total
   }
 }
