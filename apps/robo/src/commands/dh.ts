@@ -33,14 +33,16 @@ const buildEmbed = (
   rollingWith: DaggerheartAdvantageDisadvantage | undefined
 ): APIEmbed => {
   const {
-    baseResult: { total, type, rolls }
+    type,
+    result,
+    baseResult: { rolls }
   } = rollDaggerheart({
     modifier: rollModifier,
     rollingWith
   })
 
   return new EmbedBuilder()
-    .setTitle(`You rolled a ${String(total)} with ${type}`)
+    .setTitle(`You rolled a ${String(result)} with ${type}`)
     .setFields(fields(rolls, rollingWith))
     .setColor(getColor(type))
     .setFooter(embedFooterDetails)
