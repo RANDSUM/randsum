@@ -20,7 +20,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "composite": true,
-    "types": ["bun-types"]
+    "composite": true
   }
 }
