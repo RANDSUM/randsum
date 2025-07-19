@@ -53,6 +53,15 @@ describe(roll, () => {
             expect(total).toBeGreaterThan(0)
           })
         })
+
+        const negArg = '-1d20'
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(negArg))
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeGreaterThanOrEqual(-20)
+            expect(total).toBeLessThan(0)
+          })
+        })
       })
 
       describe('notation args with whitespace', () => {

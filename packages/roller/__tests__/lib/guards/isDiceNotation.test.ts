@@ -210,10 +210,5 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('1.5d6')).toBe(false)
       expect(isDiceNotation('2d6.5')).toBe(false)
     })
-
-    test('returns false for notation with negative numbers', () => {
-      expect(isDiceNotation('-1d6')).toBe(false)
-      expect(isDiceNotation('1d-6')).toBe(false)
-    })
   })
 })
