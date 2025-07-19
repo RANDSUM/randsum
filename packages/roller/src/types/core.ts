@@ -14,7 +14,7 @@ export interface RollOptions {
 }
 
 export type RequiredNumericRollParameters = Required<
-  Omit<RollOptions, 'modifiers' | 'subtract'>
+  Pick<RollOptions, 'quantity' | 'sides'>
 >
 
 export type RollArgument = RollOptions | DiceNotation | number | `${number}`
