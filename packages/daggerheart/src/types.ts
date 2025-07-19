@@ -1,4 +1,4 @@
-import type { CustomRollResult } from '@randsum/roller'
+import type { RollResult } from '@randsum/roller'
 
 export type DaggerheartAdvantageDisadvantage = 'Advantage' | 'Disadvantage'
 export interface DaggerheartRollArgument {
@@ -23,4 +23,4 @@ export interface DaggerheartRollResult {
   }
 }
 
-export type DaggerheartGameResult = CustomRollResult<DaggerheartRollResult>
+export type DaggerheartGameResult = RollResult<DaggerheartRollResult>

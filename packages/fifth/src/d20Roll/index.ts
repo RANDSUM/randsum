@@ -1,6 +1,6 @@
 import {
-  type CustomRollResult,
   type RollOptions,
+  type RollResult,
   roll as coreRoll
 } from '@randsum/roller'
 import type { FifthRollArgument } from '../types'
@@ -10,7 +10,7 @@ import { generateModifiers } from './generateModifiers'
 export function d20Roll({
   rollingWith,
   modifier = 0
-}: FifthRollArgument): CustomRollResult<number> {
+}: FifthRollArgument): RollResult<number> {
   const rollArg: RollOptions = {
     sides: 20,
     quantity: generateQuantity(rollingWith),

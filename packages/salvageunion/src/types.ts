@@ -1,4 +1,4 @@
-import type { CustomRollResult } from '@randsum/roller'
+import type { RollResult } from '@randsum/roller'
 
 export type SalvageUnionHit =
   | 'Nailed It'
@@ -31,7 +31,7 @@ export type SalvageUnionTableType = Record<
   SalvageUnionTableListing
 >
 
-export type SalvageUnionTableResult = CustomRollResult<
+export type SalvageUnionTableResult = RollResult<
   {
     hit: SalvageUnionHit
     label: SalvageUnionTableListing['label']
@@ -40,5 +40,5 @@ export type SalvageUnionTableResult = CustomRollResult<
     table: SalvageUnionTableType
     roll: number
   },
-  CustomRollResult<SalvageUnionTableListing>
+  RollResult<SalvageUnionTableListing>
 >
