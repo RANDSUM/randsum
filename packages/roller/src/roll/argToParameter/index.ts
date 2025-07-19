@@ -8,7 +8,7 @@ export function argToParameter(argument: RollArgument): RollParams[] {
   return [
     {
       ...options,
-      arithmetic: options.arthmetic ?? 'add',
+      arithmetic: options.arithmetic ?? 'add',
       argument,
       notation: converter.toNotation,
       description: converter.toDescription

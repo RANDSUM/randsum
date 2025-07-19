@@ -29,12 +29,13 @@ describe(roll, () => {
         })
       })
 
-      describe('multiple object args with subtract modifiers', () => {
-        const argOne = { sides: 1, subtract: false }
-        const argTwo = { sides: 100, subtract: true }
+      describe('multiple object args with arithmetic modifiers', () => {
         test('it never goes outside of the bounds of the roll', () => {
           const dummyArray = Array.from({ length: loops }, () =>
-            roll(argOne, argTwo)
+            roll(
+              { sides: 1, arithmetic: 'add' },
+              { sides: 100, arithmetic: 'subtract' }
+            )
           )
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(0)
