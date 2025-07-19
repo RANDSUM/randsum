@@ -10,6 +10,10 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('100d100')).toBe(true)
     })
 
+    test('returns true for multi-dice notation', () => {
+      expect(isDiceNotation('1d6+1d8+1d10')).toBe(true)
+    })
+
     test('returns true for uppercase D notation', () => {
       expect(isDiceNotation('1D6')).toBe(true)
       expect(isDiceNotation('2D8')).toBe(true)
