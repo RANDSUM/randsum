@@ -5,7 +5,7 @@ language: "typescript"
 dependsOn:
   - "roller"
 tags:
-  - "app"
+  - "package"
 
 # Optimized app configuration with improved caching
 tasks:
