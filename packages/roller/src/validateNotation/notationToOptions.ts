@@ -13,13 +13,15 @@ import type { DiceNotation, RollOptions } from '../types'
 import { formatSides } from './formatSides'
 
 export function notationToOptions(notationString: DiceNotation): RollOptions {
+  const trimmedNotationString = notationString.trim()
   const coreNotationMatch =
-    notationString.match(coreNotationPattern)?.at(0) ?? ''
-  const modifiersString = notationString.replace(coreNotationMatch, '')
+    trimmedNotationString.match(coreNotationPattern)?.at(0) ?? ''
+  const modifiersString = trimmedNotationString.replace(coreNotationMatch, '')
   const [quantityNot, sidesNot = ''] = coreNotationMatch.split(/[Dd]/)
 
-  const quantity = Number(quantityNot)
+  const quantity = Math.abs(Number(quantityNot))
   const sides = formatSides(sidesNot)
+  const arithmetic = Number(quantityNot) < 0 ? 'subtract' : 'add'
 
   const modifiers = {
     ...DropModifier.parse(modifiersString),
@@ -34,6 +36,7 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
 
   return {
     quantity,
+    arithmetic,
     sides,
     modifiers
   }
