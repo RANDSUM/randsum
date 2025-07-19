@@ -20,9 +20,12 @@ export function optionsFromArgument(argument: RollArgument): RollOptions {
     const modifiersString = trimmed.replace(coreMatch, '')
     const [quantity, sides = ''] = coreMatch.split(/[Dd]/)
 
+    const arithmetic = Number(quantity) < 0 ? 'subtract' : 'add'
+
     return {
-      quantity: Number(quantity),
+      quantity: Math.abs(Number(quantity)),
       sides: Number(sides),
+      arithmetic,
       ...{
         modifiers: {
           ...DropModifier.parse(modifiersString),
