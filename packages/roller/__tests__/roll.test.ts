@@ -40,6 +40,22 @@ describe(roll, () => {
         })
       })
 
+      describe('multi-notation args', () => {
+        const arg = '1d20+1d20+1d20'
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          dummyArray.forEach(({ total, rolls }) => {
+            expect(total).toBeLessThanOrEqual(60)
+            expect(total).toBeGreaterThanOrEqual(3)
+            expect(rolls).toHaveLength(3)
+            rolls.forEach((roll) => {
+              expect(roll.total).toBeLessThanOrEqual(20)
+              expect(roll.total).toBeGreaterThanOrEqual(1)
+            })
+          })
+        })
+      })
+
       describe('mixed args', () => {
         const argOne = 20
         const argTwo = { sides: 20 }
