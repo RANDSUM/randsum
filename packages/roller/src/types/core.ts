@@ -8,7 +8,7 @@ export interface BaseRollOptions {
 
 export interface RollOptions {
   quantity?: number
-  arthmetic?: 'add' | 'subtract'
+  arithmetic?: 'add' | 'subtract'
   sides: number
   modifiers?: ModifierOptions
 }

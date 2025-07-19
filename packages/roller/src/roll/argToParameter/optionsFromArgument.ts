@@ -14,9 +14,10 @@ import type { RollArgument, RollOptions } from '../../types'
 
 export function optionsFromArgument(argument: RollArgument): RollOptions {
   if (isDiceNotation(argument)) {
-    const coreNotationMatch = argument.match(coreNotationPattern) ?? ''
+    const trimmed = argument.trim()
+    const coreNotationMatch = trimmed.match(coreNotationPattern) ?? ''
     const coreMatch = coreNotationMatch[0]
-    const modifiersString = argument.replace(coreMatch, '')
+    const modifiersString = trimmed.replace(coreMatch, '')
     const [quantity, sides = ''] = coreMatch.split(/[Dd]/)
 
     return {
