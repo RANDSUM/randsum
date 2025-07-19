@@ -13,7 +13,7 @@ export function rollCustom<T>(faces: T[]): CustomRollResult<T> {
   const result = faces[baseResult.total - 1] as T
 
   return {
-    baseResult,
+    rolls: [baseResult],
     result
   }
 }
