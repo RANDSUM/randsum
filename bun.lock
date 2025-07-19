@@ -4,46 +4,46 @@
     "": {
       "name": "randsum-monorepo",
       "devDependencies": {
-        "@eslint/js": "^9.31.0",
-        "@moonrepo/cli": "^1.38.6",
-        "@types/bun": "^1.2.18",
-        "@typescript-eslint/eslint-plugin": "^8.37.0",
-        "@typescript-eslint/parser": "^8.37.0",
-        "bunup": "^0.8.61",
-        "eslint": "^9.31.0",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.3",
-        "prettier": "^3.6.2",
-        "typedoc": "^0.28.7",
-        "typedoc-plugin-markdown": "^4.7.0",
-        "typescript": "^5.8.3",
-        "typescript-eslint": "^8.37.0",
+        "@eslint/js": "9.31.0",
+        "@moonrepo/cli": "1.38.6",
+        "@types/bun": "1.2.19",
+        "@typescript-eslint/eslint-plugin": "8.37.0",
+        "@typescript-eslint/parser": "8.37.0",
+        "bunup": "0.8.61",
+        "eslint": "9.31.0",
+        "eslint-config-prettier": "10.1.8",
+        "eslint-plugin-prettier": "5.5.3",
+        "prettier": "3.6.2",
+        "typedoc": "0.28.7",
+        "typedoc-plugin-markdown": "4.7.1",
+        "typescript": "5.8.3",
+        "typescript-eslint": "8.37.0",
       },
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "0.22.0",
+      "version": "0.23.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "0.22.0",
+      "version": "0.23.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/fifth": {
       "name": "@randsum/fifth",
-      "version": "0.22.0",
+      "version": "0.23.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/mcp": {
       "name": "@randsum/mcp",
-      "version": "0.22.0",
+      "version": "0.23.0",
       "bin": {
         "randsum-mcp": "dist/index.js",
       },
@@ -56,19 +56,19 @@
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "0.22.0",
+      "version": "0.23.0",
       "bin": "./bin/randsum",
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.22.0",
+      "version": "0.23.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.22.0",
+      "version": "0.23.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
@@ -228,7 +228,7 @@
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.9.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw=="],
 
-    "@types/bun": ["@types/bun@1.2.18", "", { "dependencies": { "bun-types": "1.2.18" } }, "sha512-Xf6RaWVheyemaThV0kUfaAUvCNokFr+bH8Jxp+tTZfx7dAPA8z9ePnP9S9+Vspzuxxx9JRAXhnyccRj3GyCMdQ=="],
+    "@types/bun": ["@types/bun@1.2.19", "", { "dependencies": { "bun-types": "1.2.19" } }, "sha512-d9ZCmrH3CJ2uYKXQIUuZ/pUnTqIvLDS0SK7pFmbx8ma+ziH/FRMoAq5bYpRG7y+w1gl+HgyNZbtqgMq4W4e2Lg=="],
 
     "@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
 
@@ -284,7 +284,7 @@
 
     "braces": ["braces@3.0.3", "", { "dependencies": { "fill-range": "^7.1.1" } }, "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA=="],
 
-    "bun-types": ["bun-types@1.2.18", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-04+Eha5NP7Z0A9YgDAzMk5PHR16ZuLVa83b26kH5+cp1qZW4F6FmAURngE7INf4tKOvCE69vYvDEwoNl1tGiWw=="],
+    "bun-types": ["bun-types@1.2.19", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-uAOTaZSPuYsWIXRpj7o56Let0g/wjihKCkeRqUBhlLVM/Bt+Fj9xTo+LhC1OV1XDaGkz4hNC80et5xgy+9KTHQ=="],
 
     "bunup": ["bunup@0.8.61", "", { "dependencies": { "@clack/prompts": "^0.10.1", "chokidar": "^4.0.3", "coffi": "^0.1.31", "giget": "^2.0.0", "picocolors": "^1.1.1", "replace-in-file": "^8.3.0", "tinyexec": "^1.0.1", "typeroll": "^0.6.17" }, "peerDependencies": { "lightningcss": ">=1.17.0", "typescript": ">=4.5.0" }, "optionalPeers": ["lightningcss", "typescript"], "bin": { "bunup": "dist/cli/index.js" } }, "sha512-rXAR6ilWqY0bYUn1p6/RtcOnuWaqP3R9lAu5Z8HV6pEj9R1xeTQwSM5tS0oW/ZdPMDdA6LQijIL1Z+gWIrpc/g=="],
 
@@ -700,7 +700,7 @@
 
     "typedoc": ["typedoc@0.28.7", "", { "dependencies": { "@gerrit0/mini-shiki": "^3.7.0", "lunr": "^2.3.9", "markdown-it": "^14.1.0", "minimatch": "^9.0.5", "yaml": "^2.8.0" }, "peerDependencies": { "typescript": "5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x" }, "bin": { "typedoc": "bin/typedoc" } }, "sha512-lpz0Oxl6aidFkmS90VQDQjk/Qf2iw0IUvFqirdONBdj7jPSN9mGXhy66BcGNDxx5ZMyKKiBVAREvPEzT6Uxipw=="],
 
-    "typedoc-plugin-markdown": ["typedoc-plugin-markdown@4.7.0", "", { "peerDependencies": { "typedoc": "0.28.x" } }, "sha512-PitbnAps2vpcqK2gargKoiFXLWFttvwUbyns/E6zGIFG5Gz8ZQJGttHnYR9csOlcSjB/uyjd8tnoayrtsXG17w=="],
+    "typedoc-plugin-markdown": ["typedoc-plugin-markdown@4.7.1", "", { "peerDependencies": { "typedoc": "0.28.x" } }, "sha512-HN/fHLm2S6MD4HX8txfB4eWvVBzX/mEYy5U5s1KTAdh3E5uX5/lilswqTzZlPTT6fNZInAboAdFGpbAuBKnE4A=="],
 
     "typeroll": ["typeroll@0.6.17", "", { "dependencies": { "@babel/parser": "^7.27.5", "@babel/types": "^7.27.3", "coffi": "^0.1.31", "oxc-resolver": "^8.0.0", "oxc-transform": "^0.67.0", "picocolors": "^1.1.1", "std-env": "^3.9.0", "ts-import-resolver": "^0.1.22" }, "peerDependencies": { "typescript": ">=4.5.0" }, "optionalPeers": ["typescript"] }, "sha512-wsO94zOBBSj+X+R971ugA6bksy/Rh6D6CmIuyLPAyIF4dQ6R9AhUJogNgDCVbF68jSqktQZeRLyjEHpTnPJSFA=="],
 
