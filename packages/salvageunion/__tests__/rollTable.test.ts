@@ -3,19 +3,9 @@ import { rollTable } from '../src/rollTable'
 import type { SalvageUnionHit, SalvageUnionTableName } from '../src/types'
 
 describe(rollTable, () => {
-  describe('return type', () => {
-    test('returns a game result', () => {
-      const result = rollTable()
-
-      expect(typeof result).toBe('object')
-      expect(result).toHaveProperty('result')
-      expect(result).toHaveProperty('baseResult')
-    })
-  })
-
   describe('default Core Mechanic table', () => {
     test('uses Core Mechanic table by default', () => {
-      const result = rollTable()
+      const { result } = rollTable()
 
       expect(result.tableName).toBe('Core Mechanic')
       expect(result.table).toBeDefined()
@@ -31,7 +21,7 @@ describe(rollTable, () => {
       ]
 
       const result = rollTable()
-      expect(validHits).toContain(result.result)
+      expect(validHits).toContain(result.result.hit)
     })
   })
 
@@ -40,7 +30,7 @@ describe(rollTable, () => {
       const loops = 50
       const results = Array.from({ length: loops }, () => rollTable())
 
-      results.forEach((result) => {
+      results.forEach(({ result }) => {
         expect(result.tableName).toBe('Core Mechanic')
         expect([
           'Nailed It',
@@ -48,14 +38,14 @@ describe(rollTable, () => {
           'Tough Choice',
           'Failure',
           'Cascade Failure'
-        ]).toContain(result.result)
+        ]).toContain(result.hit)
       })
     })
   })
 
   describe('different table names', () => {
     test('handles NPC Action table', () => {
-      const result = rollTable('NPC Action')
+      const { result } = rollTable('NPC Action')
       expect(result.tableName).toBe('NPC Action')
       expect(result.table).toBeDefined()
       expect([
@@ -64,11 +54,11 @@ describe(rollTable, () => {
         'Tough Choice',
         'Failure',
         'Cascade Failure'
-      ]).toContain(result.result)
+      ]).toContain(result.hit)
     })
 
     test('handles Critical Damage table', () => {
-      const result = rollTable('Critical Damage')
+      const { result } = rollTable('Critical Damage')
 
       expect(result.tableName).toBe('Critical Damage')
       expect(result.table).toBeDefined()
@@ -78,7 +68,7 @@ describe(rollTable, () => {
         'Tough Choice',
         'Failure',
         'Cascade Failure'
-      ]).toContain(result.result)
+      ]).toContain(result.hit)
     })
   })
 
@@ -114,7 +104,7 @@ describe(rollTable, () => {
         expect(() =>
           rollTable(tableName as SalvageUnionTableName)
         ).not.toThrow()
-        const result = rollTable(tableName as SalvageUnionTableName)
+        const { result } = rollTable(tableName as SalvageUnionTableName)
         expect(result.tableName).toBe(tableName as SalvageUnionTableName)
       })
     })

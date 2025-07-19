@@ -1,5 +1,5 @@
 import type { RollResult } from './roll'
-export interface CustomRollResult<TOutcome = string, TRollResult = RollResult> {
-  result: TOutcome
+export interface CustomRollResult<TResult = string, TRollResult = RollResult> {
+  result: TResult
   rolls: TRollResult[]
 }

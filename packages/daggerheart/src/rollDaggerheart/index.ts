@@ -23,11 +23,11 @@ export function rollDaggerheart({
   )
 
   return {
-    result,
-    type: calculateType(hope, fear),
-    baseResult: {
+    rolls: [hopeResult, fearResult],
+    result: {
       total: result,
-      rolls: {
+      type: calculateType(hope, fear),
+      details: {
         amplifyHope,
         amplifyFear,
         hope,
