@@ -448,6 +448,29 @@ describe(argToParameter, () => {
     })
 
     describe('With a corner case dice notation', () => {
+      describe('like a conjoined dice notation', () => {
+        const argument = '1d6+1d12'
+
+        test('it produces proper organized parameters', () => {
+          const [params1, params2] = argToParameter(argument)
+
+          expect(params1).toMatchObject({
+            argument,
+            quantity: 1,
+            sides: 6,
+            notation: '1d6',
+            description: ['Roll 1 6-sided die']
+          })
+
+          expect(params2).toMatchObject({
+            argument,
+            quantity: 1,
+            sides: 12,
+            notation: '1d12',
+            description: ['Roll 1 12-sided die']
+          })
+        })
+      })
       describe('like an ordered dice notation', () => {
         test('it produces proper organized parameters', () => {
           const explodeFirstString = '4d6!H'
