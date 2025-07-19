@@ -19,7 +19,7 @@ export class OptionsConverter {
   }
 
   public get toNotation(): DiceNotation {
-    const proposed = `${this.coreNotation}${this.modifierNotation}`
+    const proposed = `${this.arithmeticNotation}${this.coreNotation}${this.modifierNotation}`
     if (!isDiceNotation(proposed)) {
       throw new Error(`Invalid notation generated: ${proposed}`)
     }
@@ -27,12 +27,23 @@ export class OptionsConverter {
   }
 
   public get toDescription(): string[] {
-    return [this.coreDescription, ...this.modifierDescription]
+    return [
+      this.coreDescription,
+      ...this.modifierDescription,
+      this.arithmeticDescription
+    ]
   }
 
   private get coreNotation(): string {
     const { quantity = 1, sides } = this.options
     return `${String(quantity)}d${String(sides)}`
+  }
+
+  private get arithmeticNotation(): string {
+    const { arithmetic } = this.options
+    if (arithmetic === 'add') return '+'
+    if (arithmetic === 'subtract') return '-'
+    return ''
   }
 
   private get modifierNotation(): string {
@@ -86,5 +97,12 @@ export class OptionsConverter {
       .flat()
       .filter((desc): desc is string => typeof desc === 'string')
       .filter((desc) => desc.length > 0)
+  }
+
+  private get arithmeticDescription(): string {
+    const { arithmetic } = this.options
+    if (arithmetic === 'add') return 'And Subtract the result'
+    if (arithmetic === 'subtract') return 'And Add the result'
+    throw new Error(`Unknown arithmetic: ${String(arithmetic)}`)
   }
 }
