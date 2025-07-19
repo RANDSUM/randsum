@@ -29,6 +29,20 @@ describe(roll, () => {
         })
       })
 
+      describe('multiple object args with subtract modifiers', () => {
+        const argOne = { sides: 1, subtract: false }
+        const argTwo = { sides: 100, subtract: true }
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () =>
+            roll(argOne, argTwo)
+          )
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeLessThanOrEqual(0)
+            expect(total).toBeGreaterThan(-100)
+          })
+        })
+      })
+
       describe('notation args', () => {
         const arg = '1d20'
         test('it never goes outside of the bounds of the roll', () => {
@@ -36,6 +50,28 @@ describe(roll, () => {
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(20)
             expect(total).toBeGreaterThan(0)
+          })
+        })
+      })
+
+      describe('notation args with whitespace', () => {
+        const arg = '  1d20  '
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeLessThanOrEqual(20)
+            expect(total).toBeGreaterThan(0)
+          })
+        })
+      })
+
+      describe('multi-notation with subtraction', () => {
+        const arg = '1d1-1d100'
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeLessThanOrEqual(0)
+            expect(total).toBeGreaterThan(-100)
           })
         })
       })
