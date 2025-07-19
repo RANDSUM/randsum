@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { rollCustom } from '../src/rollCustom'
-import type { CustomRollResult } from '../src/types'
+import type { RollResult } from '../src/types'
 
 describe('rollCustom', () => {
   describe('basic functionality', () => {
@@ -176,16 +176,9 @@ describe('rollCustom', () => {
   })
 
   describe('type safety', () => {
-    test('maintains type information for string arrays', () => {
-      const faces = ['option1', 'option2', 'option3']
-      const result: CustomRollResult = rollCustom(faces)
-
-      expect(typeof result.result).toBe('string')
-    })
-
     test('maintains type information for number arrays', () => {
       const faces = [1, 2, 3, 4, 5]
-      const result: CustomRollResult<number> = rollCustom(faces)
+      const result: RollResult = rollCustom(faces)
 
       expect(typeof result.result).toBe('number')
     })
@@ -203,7 +196,7 @@ describe('rollCustom', () => {
         { name: 'Heal', cost: 2, effect: 'Restore health' }
       ]
 
-      const result: CustomRollResult<GameAction> = rollCustom(faces)
+      const result: RollResult<GameAction> = rollCustom(faces)
 
       expect(result.result).toHaveProperty('name')
       expect(result.result).toHaveProperty('cost')

@@ -10,7 +10,7 @@ import { generateModifiers } from './generateModifiers'
 export function d20Roll({
   rollingWith,
   modifier = 0
-}: FifthRollArgument): RollResult<number> {
+}: FifthRollArgument): RollResult {
   const rollArg: RollOptions = {
     sides: 20,
     quantity: generateQuantity(rollingWith),
