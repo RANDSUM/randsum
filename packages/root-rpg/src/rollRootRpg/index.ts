@@ -24,10 +24,10 @@ export function rollRootRpg(bonus: number): RootRpgRollResult {
   const baseResult = coreRoll(args)
 
   return {
+    ...baseResult,
     result: {
       hit: interpretResult(baseResult.total),
       total: baseResult.total
-    },
-    rolls: [baseResult]
+    }
   }
 }
