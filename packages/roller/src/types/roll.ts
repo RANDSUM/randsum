@@ -22,7 +22,11 @@ export interface RollRecord {
   total: number
 }
 
-export interface RollResult {
-  rolls: RollRecord[]
+export interface RollResult<TResult = number, TRollRecord = RollerRollResult> {
+  rolls: TRollRecord[]
+  result: TResult
+}
+
+export interface RollerRollResult extends RollResult<number, RollRecord> {
   total: number
 }
