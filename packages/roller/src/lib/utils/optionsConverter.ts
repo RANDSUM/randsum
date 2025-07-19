@@ -31,7 +31,7 @@ export class OptionsConverter {
       this.coreDescription,
       ...this.modifierDescription,
       this.arithmeticDescription
-    ]
+    ].filter((r) => !!r)
   }
 
   private get coreNotation(): string {
@@ -41,7 +41,6 @@ export class OptionsConverter {
 
   private get arithmeticNotation(): string {
     const { arithmetic } = this.options
-    if (arithmetic === 'add') return '+'
     if (arithmetic === 'subtract') return '-'
     return ''
   }
@@ -101,8 +100,7 @@ export class OptionsConverter {
 
   private get arithmeticDescription(): string {
     const { arithmetic } = this.options
-    if (arithmetic === 'add') return 'And Subtract the result'
-    if (arithmetic === 'subtract') return 'And Add the result'
-    throw new Error(`Unknown arithmetic: ${String(arithmetic)}`)
+    if (arithmetic === 'subtract') return 'and Subtract the result'
+    return ''
   }
 }
