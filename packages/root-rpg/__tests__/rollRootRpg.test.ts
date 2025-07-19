@@ -2,29 +2,18 @@ import { describe, expect, test } from 'bun:test'
 import { rollRootRpg } from '../src/rollRootRpg'
 
 describe(rollRootRpg, () => {
-  describe('return type', () => {
-    test('returns BaseGameRollResult with baseResult and baseResult properties', () => {
-      const rollResult = rollRootRpg(0)
-      expect(rollResult).toHaveProperty('baseResult')
-      expect(rollResult).toHaveProperty('baseResult')
-      expect(typeof rollResult.result).toBe('string')
-      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(rollResult.result)
-      expect(rollResult.baseResult).toHaveProperty('total')
-    })
-  })
-
   describe('rollRootRpg ranges', () => {
     test('returns result within valid range (2d6 + modifier)', () => {
       const bonus = 2
       const rollResult = rollRootRpg(bonus)
-      expect(rollResult.baseResult.total).toBeGreaterThanOrEqual(2 + bonus)
-      expect(rollResult.baseResult.total).toBeLessThanOrEqual(12 + bonus)
+      expect(rollResult.result.total).toBeGreaterThanOrEqual(2 + bonus)
+      expect(rollResult.result.total).toBeLessThanOrEqual(12 + bonus)
     })
 
     test('returns two dice results', () => {
       const rollResult = rollRootRpg(0)
       expect(
-        rollResult.baseResult.rolls[0]?.modifierHistory.initialRolls
+        rollResult.rolls[0]?.rolls[0]?.modifierHistory.initialRolls
       ).toHaveLength(2)
     })
   })
@@ -32,31 +21,31 @@ describe(rollRootRpg, () => {
   describe('modifiers', () => {
     test('correctly applies positive modifier', () => {
       const bonus = 3
-      const { baseResult } = rollRootRpg(bonus)
-      const rawTotal = baseResult.rolls[0]?.modifierHistory.initialRolls.reduce(
+      const { rolls } = rollRootRpg(bonus)
+      const rawTotal = rolls[0]?.rolls[0]?.modifierHistory.initialRolls.reduce(
         (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
-      expect(baseResult.total).toBe(Number(rawTotal) + bonus)
+      expect(rolls[0]?.total).toBe(Number(rawTotal) + bonus)
     })
 
     test('correctly applies negative modifier', () => {
       const bonus = -2
-      const { baseResult } = rollRootRpg(bonus)
-      const rawTotal = baseResult.rolls[0]?.modifierHistory.initialRolls.reduce(
+      const { rolls } = rollRootRpg(bonus)
+      const rawTotal = rolls[0]?.rolls[0]?.modifierHistory.initialRolls.reduce(
         (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
-      expect(baseResult.total).toBe(Number(rawTotal) + bonus)
+      expect(rolls[0]?.total).toBe(Number(rawTotal) + bonus)
     })
 
     test('handles zero modifier', () => {
-      const { baseResult } = rollRootRpg(0)
-      const rawTotal = baseResult.rolls[0]?.modifierHistory.initialRolls.reduce(
+      const { rolls } = rollRootRpg(0)
+      const rawTotal = rolls[0]?.rolls[0]?.modifierHistory.initialRolls.reduce(
         (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
-      expect(baseResult.total).toBe(Number(rawTotal))
+      expect(rolls[0]?.total).toBe(Number(rawTotal))
     })
   })
 
@@ -65,19 +54,19 @@ describe(rollRootRpg, () => {
     test('returns Proper results', () => {
       const dummyArray = Array.from({ length: loops }, () => rollRootRpg(0))
 
-      dummyArray.forEach((rollResult) => {
-        if (rollResult.result === 'Strong Hit') {
-          expect(rollResult.baseResult.total).toBeGreaterThanOrEqual(10)
+      dummyArray.forEach(({ result }) => {
+        if (result.hit === 'Strong Hit') {
+          expect(result.total).toBeGreaterThanOrEqual(10)
           return
         }
 
-        if (rollResult.result === 'Weak Hit') {
-          expect(rollResult.baseResult.total).toBeGreaterThanOrEqual(7)
-          expect(rollResult.baseResult.total).toBeLessThanOrEqual(9)
+        if (result.hit === 'Weak Hit') {
+          expect(result.total).toBeGreaterThanOrEqual(7)
+          expect(result.total).toBeLessThanOrEqual(9)
           return
         }
 
-        expect(rollResult.baseResult.total).toBeLessThanOrEqual(6)
+        expect(result.total).toBeLessThanOrEqual(6)
       })
     })
   })
@@ -99,18 +88,18 @@ describe(rollRootRpg, () => {
 
     test('handles maximum valid positive modifier', () => {
       const bonus = 20
-      const { result, baseResult } = rollRootRpg(bonus)
-      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
-      expect(baseResult.total).toBeGreaterThanOrEqual(22) // 2d6 minimum (2) + 20
-      expect(baseResult.total).toBeLessThanOrEqual(32) // 2d6 maximum (12) + 20
+      const { result } = rollRootRpg(bonus)
+      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result.hit)
+      expect(result.total).toBeGreaterThanOrEqual(22) // 2d6 minimum (2) + 20
+      expect(result.total).toBeLessThanOrEqual(32) // 2d6 maximum (12) + 20
     })
 
     test('handles maximum valid negative modifier', () => {
       const bonus = -20
-      const { result, baseResult } = rollRootRpg(bonus)
-      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
-      expect(baseResult.total).toBeGreaterThanOrEqual(-18) // 2d6 minimum (2) - 20
-      expect(baseResult.total).toBeLessThanOrEqual(-8) // 2d6 maximum (12) - 20
+      const { result } = rollRootRpg(bonus)
+      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result.hit)
+      expect(result.total).toBeGreaterThanOrEqual(-18) // 2d6 minimum (2) - 20
+      expect(result.total).toBeLessThanOrEqual(-8) // 2d6 maximum (12) - 20
     })
 
     test('throws error for NaN modifier', () => {

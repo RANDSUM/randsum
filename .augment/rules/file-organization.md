@@ -9,9 +9,6 @@ description: "File Organization Rules"
 
 This project follows a strict monorepo pattern with clear separation of concerns:
 
-- **`apps/`** - Application packages (deployable applications)
-  - Each app is a standalone application with its own deployment target
-  - Examples: MCP server, Discord bot, web applications
 - **`packages/`** - Library packages (reusable code)
   - Core functionality that can be shared across apps
   - Each package should have a focused, single responsibility
@@ -20,7 +17,7 @@ This project follows a strict monorepo pattern with clear separation of concerns
 ## Workspace Configuration
 
 - Use Bun workspaces defined in root `package.json`
-- Each package/app has its own `package.json` with proper metadata
+- Each package has its own `package.json` with proper metadata
 - Workspace dependencies use `workspace:~` protocol for internal packages
 - All packages follow consistent naming: `@randsum/package-name`
 
@@ -37,19 +34,6 @@ packages/package-name/
 ├── tsconfig.json  # TypeScript configuration
 ├── moon.yml       # Moon task configuration
 └── README.md      # Package documentation
-```
-
-### App Structure
-
-```
-apps/app-name/
-├── src/           # Source code
-├── config/        # Configuration files (if needed)
-├── dist/          # Build output (generated)
-├── package.json   # App configuration
-├── tsconfig.json  # TypeScript configuration
-├── moon.yml       # Moon task configuration
-└── README.md      # App documentation
 ```
 
 ## File Naming Conventions

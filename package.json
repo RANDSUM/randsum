@@ -2,7 +2,6 @@
   "name": "randsum-monorepo",
   "type": "module",
   "workspaces": [
-    "apps/*",
     "packages/*"
   ],
   "scripts": {
@@ -29,8 +28,8 @@
     "@typescript-eslint/parser": "^8.37.0",
     "bunup": "^0.8.61",
     "eslint": "^9.31.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
     "prettier": "^3.6.2",
     "typedoc": "^0.28.7",
     "typedoc-plugin-markdown": "^4.7.0",

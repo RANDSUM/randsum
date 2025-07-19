@@ -3,9 +3,9 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod'
+import type { RollerRollResult } from '@randsum/roller'
 import {
   type DiceNotation,
-  type RollResult,
   type ValidationResult,
   isDiceNotation,
   roll,
@@ -105,7 +105,7 @@ USE CASES:
 RETURNS: For valid notation, shows parsed structure with quantity, sides, and modifiers. For invalid notation, provides specific error with correction guidance.`)
 })
 
-function formatRollResult(result: RollResult): string {
+function formatRollResult(result: RollerRollResult): string {
   const {
     total,
     rolls: [

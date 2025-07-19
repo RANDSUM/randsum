@@ -82,4 +82,3 @@ tsconfig.tsbuildinfo
 docs/
 
 .notes
-apps/robo/.robo/*

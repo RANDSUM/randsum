@@ -7,15 +7,15 @@ describe(d20Roll, () => {
 
     test('returns a result within valid range', () => {
       const rollResult = d20Roll(args)
-      expect(rollResult.baseResult.rolls[0]?.total).toBeGreaterThanOrEqual(6)
-      expect(rollResult.baseResult.rolls[0]?.total).toBeLessThanOrEqual(25)
+      expect(rollResult.result).toBeGreaterThanOrEqual(6)
+      expect(rollResult.result).toBeLessThanOrEqual(25)
     })
 
     test('applies modifier correctly', () => {
       const rollResult = d20Roll(args)
       const rawRoll =
-        rollResult.baseResult.rolls[0]?.modifierHistory.initialRolls[0]
-      expect(rollResult.baseResult.rolls[0]?.total).toBe(
+        rollResult.rolls[0]?.rolls[0]?.modifierHistory.initialRolls[0]
+      expect(rollResult.rolls[0]?.rolls[0]?.total).toBe(
         Number(rawRoll) + args.modifier
       )
     })
@@ -23,7 +23,7 @@ describe(d20Roll, () => {
     test('returns single roll result', () => {
       const rollResult = d20Roll(args)
       expect(
-        rollResult.baseResult.rolls[0]?.modifierHistory.initialRolls
+        rollResult.rolls[0]?.rolls[0]?.modifierHistory.initialRolls
       ).toHaveLength(1)
     })
   })
@@ -37,17 +37,17 @@ describe(d20Roll, () => {
     test('returns two rolls', () => {
       const result = d20Roll(args)
       expect(
-        result.baseResult.rolls[0]?.modifierHistory.initialRolls
+        result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls
       ).toHaveLength(2)
     })
 
     test('uses higher roll for total', () => {
       const result = d20Roll(args)
       const rolls =
-        result.baseResult.rolls[0]?.modifierHistory.initialRolls ?? []
+        result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls ?? []
       const expectedTotal =
         Math.max(Number(rolls[0]), Number(rolls[1])) + args.modifier
-      expect(result.baseResult.rolls[0]?.total).toBe(expectedTotal)
+      expect(result.rolls[0]?.rolls[0]?.total).toBe(expectedTotal)
     })
   })
 
@@ -60,17 +60,17 @@ describe(d20Roll, () => {
     test('returns two rolls', () => {
       const result = d20Roll(args)
       expect(
-        result.baseResult.rolls[0]?.modifierHistory.initialRolls
+        result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls
       ).toHaveLength(2)
     })
 
     test('uses lower roll for total', () => {
       const result = d20Roll(args)
       const rolls =
-        result.baseResult.rolls[0]?.modifierHistory.initialRolls ?? []
+        result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls ?? []
       const expectedTotal =
         Math.min(Number(rolls[0]), Number(rolls[1])) + args.modifier
-      expect(result.baseResult.rolls[0]?.total).toBe(expectedTotal)
+      expect(result.rolls[0]?.rolls[0]?.total).toBe(expectedTotal)
     })
   })
 
@@ -83,15 +83,14 @@ describe(d20Roll, () => {
     test('returns single roll result', () => {
       const result = d20Roll(args)
       expect(
-        result.baseResult.rolls[0]?.modifierHistory.initialRolls
+        result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls
       ).toHaveLength(1)
     })
 
     test('applies modifier correctly', () => {
       const result = d20Roll(args)
-      const rawRoll =
-        result.baseResult.rolls[0]?.modifierHistory.initialRolls[0]
-      expect(result.baseResult.rolls[0]?.total).toBe(
+      const rawRoll = result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls[0]
+      expect(result.rolls[0]?.rolls[0]?.total).toBe(
         Number(rawRoll) + args.modifier
       )
     })
@@ -102,15 +101,14 @@ describe(d20Roll, () => {
 
     test('returns a result within valid range', () => {
       const result = d20Roll(args)
-      expect(result.baseResult.rolls[0]?.total).toBeGreaterThanOrEqual(-2)
-      expect(result.baseResult.rolls[0]?.total).toBeLessThanOrEqual(17)
+      expect(result.rolls[0]?.rolls[0]?.total).toBeGreaterThanOrEqual(-2)
+      expect(result.rolls[0]?.rolls[0]?.total).toBeLessThanOrEqual(17)
     })
 
     test('applies negative modifier correctly', () => {
       const result = d20Roll(args)
-      const rawRoll =
-        result.baseResult.rolls[0]?.modifierHistory.initialRolls[0]
-      expect(result.baseResult.rolls[0]?.total).toBe(
+      const rawRoll = result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls[0]
+      expect(result.rolls[0]?.rolls[0]?.total).toBe(
         Number(rawRoll) + args.modifier
       )
     })
