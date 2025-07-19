@@ -9,6 +9,8 @@ export interface ModifierHistory {
 }
 
 export interface RollParams extends RollOptions {
+  arithmetic: 'add' | 'subtract'
+  key?: string
   argument: RollArgument
   description: string[]
   notation: DiceNotation
@@ -19,14 +21,15 @@ export interface RollRecord {
   parameters: RollParams
   rolls: number[]
   modifierHistory: ModifierHistory
+  appliedTotal: number
   total: number
 }
 
-export interface RollResult<TResult = number, TRollRecord = RollerRollResult> {
+export interface RollResult<TResult = number, TRollRecord = RollRecord> {
   rolls: TRollRecord[]
   result: TResult
 }
 
-export interface RollerRollResult extends RollResult<number, RollRecord> {
+export interface RollerRollResult extends RollResult {
   total: number
 }

@@ -28,7 +28,7 @@ export function rollBlades(count: number): BladesRollResult {
   const result = interpretHit(rolls, canCrit)
 
   return {
-    result,
-    rolls: [baseResult]
+    ...baseResult,
+    result
   }
 }

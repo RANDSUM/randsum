@@ -16,6 +16,19 @@ describe('validateNotation', () => {
       }
     })
 
+    test('validates basic negative dice notation', () => {
+      const result = validateNotation('-1d6')
+
+      expect(result.valid).toBe(true)
+      if (result.valid) {
+        expect(result.digested).toHaveProperty('sides', 6)
+        expect(result.digested).toHaveProperty('quantity', 1)
+        expect(result.notation).toBe('-1d6')
+        expect(result.description).toContain('Roll 1 6-sided die')
+        expect(result.description).toContain('and Subtract the result')
+      }
+    })
+
     test('validates multiple dice notation', () => {
       const result = validateNotation('4d6')
 

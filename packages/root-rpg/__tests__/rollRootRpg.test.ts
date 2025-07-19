@@ -12,9 +12,7 @@ describe(rollRootRpg, () => {
 
     test('returns two dice results', () => {
       const rollResult = rollRootRpg(0)
-      expect(
-        rollResult.rolls[0]?.rolls[0]?.modifierHistory.initialRolls
-      ).toHaveLength(2)
+      expect(rollResult.rolls[0]?.modifierHistory.initialRolls).toHaveLength(2)
     })
   })
 
@@ -22,7 +20,7 @@ describe(rollRootRpg, () => {
     test('correctly applies positive modifier', () => {
       const bonus = 3
       const { rolls } = rollRootRpg(bonus)
-      const rawTotal = rolls[0]?.rolls[0]?.modifierHistory.initialRolls.reduce(
+      const rawTotal = rolls[0]?.modifierHistory.initialRolls.reduce(
         (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
@@ -32,7 +30,7 @@ describe(rollRootRpg, () => {
     test('correctly applies negative modifier', () => {
       const bonus = -2
       const { rolls } = rollRootRpg(bonus)
-      const rawTotal = rolls[0]?.rolls[0]?.modifierHistory.initialRolls.reduce(
+      const rawTotal = rolls[0]?.modifierHistory.initialRolls.reduce(
         (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )
@@ -41,7 +39,7 @@ describe(rollRootRpg, () => {
 
     test('handles zero modifier', () => {
       const { rolls } = rollRootRpg(0)
-      const rawTotal = rolls[0]?.rolls[0]?.modifierHistory.initialRolls.reduce(
+      const rawTotal = rolls[0]?.modifierHistory.initialRolls.reduce(
         (sum, rollRootRpg) => sum + rollRootRpg,
         0
       )

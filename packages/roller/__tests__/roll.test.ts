@@ -29,6 +29,21 @@ describe(roll, () => {
         })
       })
 
+      describe('multiple object args with arithmetic modifiers', () => {
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () =>
+            roll(
+              { sides: 1, arithmetic: 'add' },
+              { sides: 100, arithmetic: 'subtract' }
+            )
+          )
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeLessThanOrEqual(0)
+            expect(total).toBeGreaterThan(-100)
+          })
+        })
+      })
+
       describe('notation args', () => {
         const arg = '1d20'
         test('it never goes outside of the bounds of the roll', () => {
@@ -36,6 +51,46 @@ describe(roll, () => {
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(20)
             expect(total).toBeGreaterThan(0)
+          })
+        })
+
+        const negArg = '-1d20'
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(negArg))
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeGreaterThanOrEqual(-20)
+            expect(total).toBeLessThan(0)
+          })
+        })
+      })
+
+      describe('notation args with whitespace', () => {
+        const arg = '  1d20  '
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeLessThanOrEqual(20)
+            expect(total).toBeGreaterThan(0)
+          })
+        })
+      })
+
+      describe('mixed args', () => {
+        const argOne = 20
+        const argTwo = { sides: 20 }
+        const argThree = '1d20'
+        test('it never goes outside of the bounds of the roll', () => {
+          const dummyArray = Array.from({ length: loops }, () =>
+            roll(argOne, argTwo, argThree)
+          )
+          dummyArray.forEach(({ total, rolls }) => {
+            expect(total).toBeLessThanOrEqual(60)
+            expect(total).toBeGreaterThanOrEqual(3)
+            expect(rolls).toHaveLength(3)
+            rolls.forEach((roll) => {
+              expect(roll.total).toBeLessThanOrEqual(20)
+              expect(roll.total).toBeGreaterThanOrEqual(1)
+            })
           })
         })
       })

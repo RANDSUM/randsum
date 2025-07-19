@@ -1,1 +1,1 @@
-export const coreNotationPattern: RegExp = /^\d+[Dd]\d+/ satisfies RegExp
+export const coreNotationPattern: RegExp = /^[+-]?\d+[Dd]\d+/ satisfies RegExp

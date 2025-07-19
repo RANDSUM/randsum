@@ -31,14 +31,11 @@ export type SalvageUnionTableType = Record<
   SalvageUnionTableListing
 >
 
-export type SalvageUnionTableResult = RollResult<
-  {
-    hit: SalvageUnionHit
-    label: SalvageUnionTableListing['label']
-    description: SalvageUnionTableListing['description']
-    tableName: SalvageUnionTableName
-    table: SalvageUnionTableType
-    roll: number
-  },
-  RollResult<SalvageUnionTableListing>
->
+export type SalvageUnionTableResult = RollResult<{
+  hit: SalvageUnionHit
+  label: SalvageUnionTableListing['label']
+  description: SalvageUnionTableListing['description']
+  tableName: SalvageUnionTableName
+  table: SalvageUnionTableType
+  roll: number
+}>

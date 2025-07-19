@@ -27,9 +27,9 @@ describe('rollCustom', () => {
       const faces = ['a', 'b', 'c', 'd', 'e', 'f']
       const result = rollCustom(faces)
 
-      expect(result.rolls[0]?.rolls[0]?.parameters.sides).toBe(6)
-      expect(result.rolls[0]?.rolls[0]?.parameters.quantity).toBe(1)
-      expect(result.rolls[0]?.rolls[0]?.rolls).toHaveLength(1)
+      expect(result.rolls[0]?.parameters.sides).toBe(6)
+      expect(result.rolls[0]?.parameters.quantity).toBe(1)
+      expect(result.rolls[0]?.rolls).toHaveLength(1)
     })
   })
 
@@ -96,7 +96,7 @@ describe('rollCustom', () => {
 
       expect(result.result).toBe('only-option')
       expect(result.rolls[0]?.total).toBe(1)
-      expect(result.rolls[0]?.rolls[0]?.parameters.sides).toBe(1)
+      expect(result.rolls[0]?.parameters.sides).toBe(1)
     })
 
     test('works with many faces', () => {
@@ -104,7 +104,7 @@ describe('rollCustom', () => {
       const result = rollCustom(faces)
 
       expect(faces).toContain(result.result)
-      expect(result.rolls[0]?.rolls[0]?.parameters.sides).toBe(100)
+      expect(result.rolls[0]?.parameters.sides).toBe(100)
       expect(result.rolls[0]?.total).toBeGreaterThanOrEqual(1)
       expect(result.rolls[0]?.total).toBeLessThanOrEqual(100)
     })
@@ -114,7 +114,7 @@ describe('rollCustom', () => {
       const result = rollCustom(faces)
 
       expect(['same', 'different']).toContain(result.result)
-      expect(result.rolls[0]?.rolls[0]?.parameters.sides).toBe(4)
+      expect(result.rolls[0]?.parameters.sides).toBe(4)
     })
 
     test('works with empty string faces', () => {
@@ -211,22 +211,14 @@ describe('rollCustom', () => {
       const faces = ['a', 'b', 'c']
       const result = rollCustom(faces)
 
-      expect(result.rolls[0]?.rolls[0]?.modifierHistory).toHaveProperty(
-        'modifiedRolls'
-      )
-      expect(result.rolls[0]?.rolls[0]?.modifierHistory).toHaveProperty('total')
-      expect(result.rolls[0]?.rolls[0]?.modifierHistory).toHaveProperty(
-        'initialRolls'
-      )
-      expect(result.rolls[0]?.rolls[0]?.modifierHistory).toHaveProperty('logs')
+      expect(result.rolls[0]?.modifierHistory).toHaveProperty('modifiedRolls')
+      expect(result.rolls[0]?.modifierHistory).toHaveProperty('total')
+      expect(result.rolls[0]?.modifierHistory).toHaveProperty('initialRolls')
+      expect(result.rolls[0]?.modifierHistory).toHaveProperty('logs')
 
-      expect(
-        result.rolls[0]?.rolls[0]?.modifierHistory.modifiedRolls
-      ).toHaveLength(1)
-      expect(
-        result.rolls[0]?.rolls[0]?.modifierHistory.initialRolls
-      ).toHaveLength(1)
-      expect(result.rolls[0]?.rolls[0]?.modifierHistory.total).toBe(
+      expect(result.rolls[0]?.modifierHistory.modifiedRolls).toHaveLength(1)
+      expect(result.rolls[0]?.modifierHistory.initialRolls).toHaveLength(1)
+      expect(result.rolls[0]?.modifierHistory.total).toBe(
         Number(result.rolls[0]?.total)
       )
     })

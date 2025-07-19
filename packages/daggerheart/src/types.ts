@@ -10,16 +10,19 @@ export interface DaggerheartRollArgument {
 
 export type DaggerheartRollResultType = 'hope' | 'fear' | 'critical hope'
 
+export interface DaggerheartRollRecord {
+  roll: number
+  amplified?: boolean
+}
+
 export interface DaggerheartRollResult {
   total: number
   type: DaggerheartRollResultType
   details: {
-    hope: number
-    fear: number
+    hope: DaggerheartRollRecord
+    fear: DaggerheartRollRecord
     modifier: number
-    advantage: number | undefined
-    amplifyHope: boolean
-    amplifyFear: boolean
+    advantage: DaggerheartRollRecord | undefined
   }
 }
 

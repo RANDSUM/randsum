@@ -136,6 +136,22 @@ describe(argToParameter, () => {
       })
     })
 
+    describe('given a basic negative notation', () => {
+      const argument = `-${coreTestString}`
+
+      test('returns a RollParameter matching the notation', () => {
+        const [params] = argToParameter(argument)
+
+        expect(params).toMatchObject({
+          argument,
+          ...coreDicePools,
+          arithmetic: 'subtract',
+          notation: '-4d6',
+          description: ['Roll 4 6-sided dice', 'and Subtract the result']
+        })
+      })
+    })
+
     describe('given a notation that contains a drop highest modifier', () => {
       describe('with a simple notation', () => {
         const argument = `${coreTestString}H`

@@ -13,6 +13,10 @@ export function generateRollRecord(parameters: RollParams): RollRecord {
     description: parameters.description,
     modifierHistory,
     rolls: modifierHistory.modifiedRolls,
+    appliedTotal:
+      parameters.arithmetic === 'subtract'
+        ? -modifierHistory.total
+        : modifierHistory.total,
     total: modifierHistory.total
   }
 }

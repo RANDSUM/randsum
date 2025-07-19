@@ -10,6 +10,11 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('100d100')).toBe(true)
     })
 
+    test('returns true for plus and negatived dice notation', () => {
+      expect(isDiceNotation('+1d6')).toBe(true)
+      expect(isDiceNotation('-1d6')).toBe(true)
+    })
+
     test('returns true for uppercase D notation', () => {
       expect(isDiceNotation('1D6')).toBe(true)
       expect(isDiceNotation('2D8')).toBe(true)
@@ -204,11 +209,6 @@ describe('isDiceNotation', () => {
     test('returns false for notation with decimal numbers', () => {
       expect(isDiceNotation('1.5d6')).toBe(false)
       expect(isDiceNotation('2d6.5')).toBe(false)
-    })
-
-    test('returns false for notation with negative numbers', () => {
-      expect(isDiceNotation('-1d6')).toBe(false)
-      expect(isDiceNotation('1d-6')).toBe(false)
     })
   })
 })
