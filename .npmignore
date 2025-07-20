@@ -1,4 +1,3 @@
-# Development and test files
 __tests__/
 coverage/
 src/
@@ -7,7 +6,6 @@ src/
 examples/
 docs/
 
-# Configuration files
 tsconfig.json
 bunfig.toml
 moon.yml
@@ -15,20 +13,17 @@ moon.yml
 .eslintrc.*
 .eslintignore
 
-# Development assets
 *.md.backup
 *.tmp
 .notes
 .vscode/
 .idea/
 
-# Build artifacts that shouldn't be published
 *.tsbuildinfo
 *.log
 .cache/
 .bunup-dts-*
 
-# OS and editor files
 .DS_Store
 Thumbs.db
 *.swp

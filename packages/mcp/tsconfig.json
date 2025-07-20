@@ -13,8 +13,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "preserveConstEnums": false,
-
-    // Declaration optimization settings
     "declaration": true,
     "declarationMap": false,
     "stripInternal": true,
