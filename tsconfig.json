@@ -20,6 +20,15 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "composite": true
+    "composite": true,
+    "removeComments": true,
+    "importsNotUsedAsValues": "remove",
+
+    // Declaration optimization settings
+    "declaration": true,
+    "declarationMap": false,
+    "stripInternal": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedSideEffectImports": true
   }
 }
