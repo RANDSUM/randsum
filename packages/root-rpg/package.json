@@ -1,6 +1,6 @@
 {
   "name": "@randsum/root-rpg",
-  "version": "0.24.1",
+  "version": "0.24.2",
   "description": "A flexible, type-safe dice roller for the Root RPG system",
   "private": false,
   "author": {
