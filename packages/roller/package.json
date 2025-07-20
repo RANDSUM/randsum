@@ -1,6 +1,6 @@
 {
   "name": "@randsum/roller",
-  "version": "0.24.2",
+  "version": "0.24.3",
   "description": "A flexible, type-safe dice roller for tabletop RPGs, game development, and probability simulations",
   "private": false,
   "author": {
@@ -21,6 +21,7 @@
   "react-native": "./src/index.ts",
   "files": [
     "dist",
+    "src",
     "LICENSE",
     "README.md",
     "bin"
