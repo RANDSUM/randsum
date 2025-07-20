@@ -14,9 +14,9 @@ export function isValidationResult(
     typeof obj['valid'] === 'boolean' &&
     'description' in obj &&
     Array.isArray(obj['description']) &&
-    'digested' in obj &&
-    typeof obj['digested'] === 'object' &&
-    obj['digested'] !== null &&
+    'options' in obj &&
+    typeof obj['options'] === 'object' &&
+    obj['options'] !== null &&
     (obj['valid']
       ? 'notation' in obj && typeof obj['notation'] === 'string'
       : true)

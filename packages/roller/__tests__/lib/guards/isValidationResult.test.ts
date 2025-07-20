@@ -11,7 +11,7 @@ function createValidValidationResult(
   return {
     valid: true,
     description: ['Roll 1d6'],
-    digested: { sides: 6, quantity: 1 },
+    options: { sides: 6, quantity: 1 },
     notation: '1d6',
     ...overrides
   }
@@ -23,7 +23,7 @@ function createInvalidValidationResult(
   return {
     valid: false,
     description: ['Invalid notation'],
-    digested: {},
+    options: {},
     ...overrides
   }
 }
@@ -40,9 +40,9 @@ describe('isValidationResult', () => {
       expect(isValidationResult(invalidResult)).toBe(true)
     })
 
-    test('returns true for ValidValidationResult with complex digested options', () => {
+    test('returns true for ValidValidationResult with complex options options', () => {
       const complexResult = createValidValidationResult({
-        digested: {
+        options: {
           sides: 20,
           quantity: 4,
           modifiers: {
@@ -127,7 +127,7 @@ describe('isValidationResult', () => {
     test('returns false when missing valid property', () => {
       const missingValid = {
         description: ['Test'],
-        digested: { sides: 6 },
+        options: { sides: 6 },
         notation: '1d6'
       }
       expect(isValidationResult(missingValid)).toBe(false)
@@ -136,13 +136,13 @@ describe('isValidationResult', () => {
     test('returns false when missing description property', () => {
       const missingDescription = {
         valid: true,
-        digested: { sides: 6 },
+        options: { sides: 6 },
         notation: '1d6'
       }
       expect(isValidationResult(missingDescription)).toBe(false)
     })
 
-    test('returns false when missing digested property', () => {
+    test('returns false when missing options property', () => {
       const missingDigested = {
         valid: true,
         description: ['Test'],
@@ -155,7 +155,7 @@ describe('isValidationResult', () => {
       const missingNotation = {
         valid: true,
         description: ['Test'],
-        digested: { sides: 6 }
+        options: { sides: 6 }
       }
       expect(isValidationResult(missingNotation)).toBe(false)
     })
@@ -166,7 +166,7 @@ describe('isValidationResult', () => {
       const wrongValidType = {
         valid: 'true',
         description: ['Test'],
-        digested: { sides: 6 },
+        options: { sides: 6 },
         notation: '1d6'
       }
       expect(isValidationResult(wrongValidType)).toBe(false)
@@ -176,27 +176,27 @@ describe('isValidationResult', () => {
       const wrongDescriptionType = {
         valid: true,
         description: 'not an array',
-        digested: { sides: 6 },
+        options: { sides: 6 },
         notation: '1d6'
       }
       expect(isValidationResult(wrongDescriptionType)).toBe(false)
     })
 
-    test('returns false when digested is not an object', () => {
+    test('returns false when options is not an object', () => {
       const wrongDigestedType = {
         valid: true,
         description: ['Test'],
-        digested: 'not an object',
+        options: 'not an object',
         notation: '1d6'
       }
       expect(isValidationResult(wrongDigestedType)).toBe(false)
     })
 
-    test('returns false when digested is null', () => {
+    test('returns false when options is null', () => {
       const nullDigested = {
         valid: true,
         description: ['Test'],
-        digested: null,
+        options: null,
         notation: '1d6'
       }
       expect(isValidationResult(nullDigested)).toBe(false)
@@ -206,7 +206,7 @@ describe('isValidationResult', () => {
       const wrongNotationType = {
         valid: true,
         description: ['Test'],
-        digested: { sides: 6 },
+        options: { sides: 6 },
         notation: 123
       }
       expect(isValidationResult(wrongNotationType)).toBe(false)
@@ -227,7 +227,7 @@ describe('isValidationResult', () => {
       const partialObject = {
         valid: true,
         description: ['Test']
-        // Missing digested and notation
+        // Missing options and notation
       }
       expect(isValidationResult(partialObject)).toBe(false)
     })
@@ -248,7 +248,7 @@ describe('isValidationResult', () => {
       const invalidWithoutNotation = {
         valid: false,
         description: ['Invalid'],
-        digested: {}
+        options: {}
       }
       expect(isValidationResult(invalidWithoutNotation)).toBe(true)
     })
@@ -257,7 +257,7 @@ describe('isValidationResult', () => {
       const invalidWithNotation = {
         valid: false,
         description: ['Invalid'],
-        digested: {},
+        options: {},
         notation: 'some notation'
       }
       expect(isValidationResult(invalidWithNotation)).toBe(true)

@@ -151,7 +151,7 @@ function formatValidationResult(result: ValidationResult): string {
     return `❌ Invalid Dice Notation\n\nError: ${result.description.join(', ')}`
   }
 
-  const { notation, description, digested } = result
+  const { notation, description, options } = result
   const header = `✅ Valid Dice Notation:`
   const separator = '─'.repeat(25)
 
@@ -160,7 +160,7 @@ function formatValidationResult(result: ValidationResult): string {
     `Description: ${description.join(', ')}`,
     '',
     'Parsed Details:',
-    JSON.stringify(digested, null, 2)
+    JSON.stringify(options, null, 2)
   ]
 
   return [header, separator, ...details].join('\n')

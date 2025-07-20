@@ -50,8 +50,8 @@ try {
   process.exit(1)
 }
 
-function formatMessage(result, { description, digested }) {
-  const hasModifiers = digested.modifiers !== undefined
+function formatMessage(result, { description, options }) {
+  const hasModifiers = options.modifiers !== undefined
   const rollResult = result.rolls.join(', ')
   const rawRolls = result.history.initialRolls.join(', ')
 
