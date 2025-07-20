@@ -6,8 +6,6 @@ tasks:
     args: "--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline"
     inputs:
       - "src/**/*"
-      - "!src/**/*.test.ts"
-      - "!src/**/*.spec.ts"
       - "package.json"
       - "tsconfig.json"
     outputs:
