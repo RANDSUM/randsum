@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
 import { isRollOptions } from '../../../src/lib/guards/isRollOptions'
-import type { RollOptions } from '../../../src/types'
 import { createRollOptions } from '../../support/fixtures'
 
 describe('isRollOptions', () => {
