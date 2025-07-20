@@ -10,19 +10,11 @@ export class MinusModifier extends ArithmeticModifier {
   public static override parse = (
     modifiersString: string
   ): Pick<ModifierOptions, 'minus'> => {
-    const notations = this.extractMatches(
+    const minus = this.parseArithmetic(
       modifiersString,
-      MinusModifier.pattern
+      MinusModifier.pattern,
+      '-'
     )
-    if (notations.length === 0) {
-      return {}
-    }
-    const minus = notations
-      .map((notationString) => Number(notationString.split('-')[1]))
-      .reduce((acc, num) => acc - num, 0)
-
-    return {
-      minus: Math.abs(minus)
-    }
+    return minus === 0 ? {} : { minus }
   }
 }
