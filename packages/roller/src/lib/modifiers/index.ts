@@ -1,9 +1,15 @@
+// Base modifier
 export * from './BaseModifier'
-export * from './CapModifier'
-export * from './DropModifier'
-export * from './ExplodeModifier'
-export * from './MinusModifier'
-export * from './PlusModifier'
-export * from './ReplaceModifier'
-export * from './RerollModifier'
-export * from './UniqueModifier'
+
+export * from './arithmetic'
+export * from './dice'
+export * from './constraints'
+
+export { CapModifier } from './CapModifier'
+export { DropModifier } from './DropModifier'
+export { ExplodeModifier } from './ExplodeModifier'
+export { MinusModifier } from './MinusModifier'
+export { PlusModifier } from './PlusModifier'
+export { ReplaceModifier } from './ReplaceModifier'
+export { RerollModifier } from './RerollModifier'
+export { UniqueModifier } from './UniqueModifier'

@@ -78,10 +78,13 @@ export const AllRollTables: Record<
 
 export {
   NPCTables,
-  PCTables,
   NPCActionTable,
   NPCReactionTable,
-  NPMoraleTable,
+  NPMoraleTable
+} from './npcTables'
+
+export {
+  PCTables,
   GroupInitiativeTable,
   RetreatTable,
   CriticalDamageTable,
@@ -89,4 +92,4 @@ export {
   ReactorOverloadTable,
   AreaSalvageTable,
   MechSalvageTable
-}
+} from './pcTables'
