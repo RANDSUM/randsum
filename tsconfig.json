@@ -23,8 +23,6 @@
     "composite": true,
     "removeComments": true,
     "importsNotUsedAsValues": "remove",
-
-    // Declaration optimization settings
     "declaration": true,
     "declarationMap": false,
     "stripInternal": true,
