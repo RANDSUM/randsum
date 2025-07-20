@@ -3,7 +3,7 @@ $schema: "https://moonrepo.dev/schemas/tasks.json"
 tasks:
   build:
     command: "bunup"
-    args: "--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline "
+    args: "--entry src/index.ts --format esm,cjs -m -s -t node -c --sm external"
     inputs:
       - "src/**/*"
       - "package.json"
@@ -29,7 +29,6 @@ tasks:
       cache: true
       cacheLifetime: "1 hour"
 
-  # Lint with selective caching and improved inputs
   lint:
     command: "eslint . -c ../../eslint.config.js"
     inputs:
@@ -119,22 +118,6 @@ tasks:
       runInCI: false
       allowFailure: true
       cache: false
-
-  # Documentation generation task
-  docs:
-    command: "typedoc"
-    inputs:
-      - "packages/*/src/**/*"
-      - "typedoc.json"
-      - "README.md"
-    outputs:
-      - "docs/**/*"
-    options:
-      cache: true
-      cacheLifetime: "6 hours"
-      runInCI: false
-    deps:
-      - "build"
 
   publish:
     command: "bun publish --no-git-checks --access=public"
