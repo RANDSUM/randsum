@@ -23,7 +23,8 @@ coverage = false
 timeout = 30000
 
 [build]
-# Default build optimizations
-minify = false
-sourcemap = true
+# Default build optimizations for production bundles
+minify = true
+sourcemap = "external"
 target = "node"
+splitting = true

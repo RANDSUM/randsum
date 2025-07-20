@@ -20,6 +20,8 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "composite": true
+    "composite": true,
+    "removeComments": true,
+    "importsNotUsedAsValues": "remove"
   }
 }
