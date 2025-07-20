@@ -3,7 +3,7 @@ $schema: "https://moonrepo.dev/schemas/tasks.json"
 tasks:
   build:
     command: "bunup"
-    args: "--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline"
+    args: "--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline "
     inputs:
       - "src/**/*"
       - "package.json"
