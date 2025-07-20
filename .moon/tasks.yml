@@ -82,7 +82,7 @@ tasks:
       runInCI: true
 
   tsCheck:
-    command: "tsc --build --verbose"
+    command: "tsc --noEmit"
     inputs:
       - "src/**/*"
       - "tsconfig.json"
