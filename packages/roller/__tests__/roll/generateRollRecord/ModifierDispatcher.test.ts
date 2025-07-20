@@ -110,15 +110,12 @@ describe('ModifierDispatcher', () => {
         mockContext
       )
 
-      // Should not modify the original rolls
       expect(plusResult.rolls).toBe(baseBonuses.rolls)
       expect(minusResult.rolls).toBe(baseBonuses.rolls)
 
-      // Should not add logs (maintaining backward compatibility)
       expect(plusResult.logs).toBe(baseBonuses.logs)
       expect(minusResult.logs).toBe(baseBonuses.logs)
 
-      // Should set the correct math modifier
       expect(plusResult.simpleMathModifier).toBe(10)
       expect(minusResult.simpleMathModifier).toBe(-5)
     })
@@ -137,11 +134,9 @@ describe('ModifierDispatcher', () => {
         mockContext
       )
 
-      // These should generate logs as they use the proper modifier classes
       expect(dropResult.logs).toHaveLength(1)
       expect(capResult.logs).toHaveLength(1)
 
-      // Should have proper modifier names in logs
       expect(dropResult.logs[0]?.modifier).toBe('drop')
       expect(capResult.logs[0]?.modifier).toBe('cap')
     })
@@ -149,10 +144,6 @@ describe('ModifierDispatcher', () => {
 
   describe('extensibility', () => {
     test('demonstrates that the system is extensible', () => {
-      // The dispatcher pattern makes it easy to add new modifiers
-      // without modifying the core dispatch logic
-
-      // All current modifiers should be handled
       const modifierKeys: (keyof ModifierOptions)[] = [
         'plus',
         'minus',
@@ -166,7 +157,6 @@ describe('ModifierDispatcher', () => {
 
       modifierKeys.forEach((key) => {
         expect(() => {
-          // This should not throw for any registered modifier
           ModifierDispatcher.dispatch(key, {}, baseBonuses, mockContext)
         }).not.toThrow(/Unknown modifier/)
       })

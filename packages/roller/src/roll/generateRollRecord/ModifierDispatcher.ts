@@ -17,9 +17,6 @@ export interface ModifierContext {
   rollOne: () => number
 }
 
-/**
- * Interface for modifier handlers
- */
 export interface ModifierHandler {
   apply(
     modifierValue: unknown,
@@ -28,9 +25,6 @@ export interface ModifierHandler {
   ): NumericRollBonus
 }
 
-/**
- * Handler for plus modifier - maintains original behavior without logs
- */
 class PlusModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: unknown,
@@ -45,9 +39,6 @@ class PlusModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Handler for minus modifier - maintains original behavior without logs
- */
 class MinusModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: unknown,
@@ -62,9 +53,6 @@ class MinusModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Handler for reroll modifier
- */
 class RerollModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: undefined,
@@ -79,9 +67,6 @@ class RerollModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Handler for unique modifier
- */
 class UniqueModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: undefined,
@@ -96,9 +81,6 @@ class UniqueModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Handler for replace modifier
- */
 class ReplaceModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: undefined,
@@ -109,9 +91,6 @@ class ReplaceModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Handler for cap modifier
- */
 class CapModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: undefined,
@@ -122,9 +101,6 @@ class CapModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Handler for drop modifier
- */
 class DropModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: undefined,
@@ -135,9 +111,6 @@ class DropModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Handler for explode modifier
- */
 class ExplodeModifierHandler implements ModifierHandler {
   public apply(
     modifierValue: undefined,
@@ -152,9 +125,6 @@ class ExplodeModifierHandler implements ModifierHandler {
   }
 }
 
-/**
- * Polymorphic dispatcher for modifier application
- */
 class ModifierDispatcherClass {
   private readonly handlers = new Map<keyof ModifierOptions, ModifierHandler>()
 
