@@ -1,8 +1,10 @@
 export { rollTable } from './rollTable'
 
-export { AllRollTables, NPCTables, PCTables, RollTables } from './tables'
-
-export type {
+export {
+  AllRollTables,
+  NPCTables,
+  PCTables,
+  RollTables,
   NPCActionTable,
   NPCReactionTable,
   NPMoraleTable,
