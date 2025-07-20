@@ -1,15 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { isRollOptions } from '../../../src/lib/guards/isRollOptions'
 import type { RollOptions } from '../../../src/types'
-
-// Helper function to create a valid RollOptions for testing
-function createRollOptions(overrides: Partial<RollOptions> = {}): RollOptions {
-  return {
-    sides: 6,
-    quantity: 1,
-    ...overrides
-  }
-}
+import { createRollOptions } from '../../support/fixtures'
 
 describe('isRollOptions', () => {
   describe('valid RollOptions objects', () => {

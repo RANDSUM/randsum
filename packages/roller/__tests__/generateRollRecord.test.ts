@@ -8,21 +8,10 @@ import {
   test
 } from 'bun:test'
 
-import type { RollParams } from '../src/types'
 import * as CoreRandom from '../src/lib'
 import * as CoreSpreadRolls from '../src/lib'
 import { generateRollRecord } from '../src/roll/generateRollRecord'
-
-function createRollParameters(overrides: Partial<RollParams> = {}): RollParams {
-  return {
-    argument: 1,
-    notation: '1d4',
-    description: ['Roll 1d4'],
-    sides: 4,
-    quantity: 1,
-    ...overrides
-  } as RollParams
-}
+import { createRollParams } from './support/fixtures'
 
 describe(generateRollRecord, () => {
   beforeAll(() => {
@@ -35,7 +24,12 @@ describe(generateRollRecord, () => {
 
   const testRollSet = [1, 2, 3, 4]
   describe('when given roll total with no modifiers', () => {
-    const coreParameters = createRollParameters()
+    const coreParameters = createRollParams({
+      notation: '1d4',
+      description: ['Roll 1d4'],
+      sides: 4,
+      quantity: 1
+    })
 
     test('it returns the sum total of the quantity and the roll total', () => {
       spyOn(CoreSpreadRolls, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
@@ -55,7 +49,7 @@ describe(generateRollRecord, () => {
   describe('when given roll total with a "unique" modifier', () => {
     const uniqueRolls = [1, 1, 2, 3]
 
-    const uniqueParameters = createRollParameters({
+    const uniqueParameters = createRollParams({
       sides: 4,
       quantity: uniqueRolls.length,
       modifiers: { unique: true }
@@ -85,7 +79,7 @@ describe(generateRollRecord, () => {
     })
 
     describe('when given a "notUnique" array', () => {
-      const notUniqueParameters = createRollParameters({
+      const notUniqueParameters = createRollParams({
         sides: 4,
         quantity: uniqueRolls.length,
         modifiers: { unique: { notUnique: [1] } }
@@ -118,7 +112,7 @@ describe(generateRollRecord, () => {
     describe('and the # of quantity is greater than the sides of the die', () => {
       const overflowRollTotals = [1, 1, 1, 2, 3, 4, 3, 3]
 
-      const overflowParameters = createRollParameters({
+      const overflowParameters = createRollParams({
         sides: 6,
         quantity: overflowRollTotals.length,
         modifiers: { unique: true }
@@ -136,7 +130,7 @@ describe(generateRollRecord, () => {
   describe('when given roll total with a "drop" modifier', () => {
     const longerRollTotals = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-    const dropParameters = createRollParameters({
+    const dropParameters = createRollParams({
       sides: 10,
       quantity: longerRollTotals.length,
       modifiers: {
@@ -183,7 +177,7 @@ describe(generateRollRecord, () => {
 
   describe('when given roll total with a "replace" modifier', () => {
     describe('that is a single replace modifier', () => {
-      const dropParameters = createRollParameters({
+      const dropParameters = createRollParams({
         sides: 10,
         quantity: testRollSet.length,
         modifiers: { replace: { from: 1, to: 2 } }
@@ -217,7 +211,7 @@ describe(generateRollRecord, () => {
     })
 
     describe('that is an array of replace modifiers', () => {
-      const dropParameters = createRollParameters({
+      const dropParameters = createRollParams({
         sides: 10,
         quantity: testRollSet.length,
         modifiers: {
@@ -267,7 +261,7 @@ describe(generateRollRecord, () => {
   describe('when given roll total with an "explode" modifier', () => {
     const explodeRollTotals = [1, 2, 3, 6]
 
-    const explodeParameters = createRollParameters({
+    const explodeParameters = createRollParams({
       sides: 6,
       quantity: explodeRollTotals.length,
       modifiers: { explode: true }
@@ -300,7 +294,7 @@ describe(generateRollRecord, () => {
 
   describe('when given roll total with a "reroll" modifier', () => {
     describe('when given an impossible roll', () => {
-      const reDicePools = createRollParameters({
+      const reDicePools = createRollParams({
         sides: 6,
         quantity: testRollSet.length,
         modifiers: { reroll: { greaterThan: 3 } }
@@ -333,7 +327,7 @@ describe(generateRollRecord, () => {
     })
 
     describe('that is a single reroll modifier in an array', () => {
-      const reDicePools = createRollParameters({
+      const reDicePools = createRollParams({
         sides: 6,
         quantity: testRollSet.length,
         modifiers: {
@@ -370,7 +364,7 @@ describe(generateRollRecord, () => {
     })
 
     describe('that is an array of reroll modifiers', () => {
-      const reDicePools = createRollParameters({
+      const reDicePools = createRollParams({
         sides: 6,
         quantity: testRollSet.length,
         modifiers: {
@@ -395,7 +389,7 @@ describe(generateRollRecord, () => {
   })
 
   describe('when given roll total with a "cap" modifier', () => {
-    const dropParameters = createRollParameters({
+    const dropParameters = createRollParams({
       sides: 6,
       quantity: testRollSet.length,
       modifiers: { cap: { greaterThan: 3, lessThan: 2 } }
@@ -427,7 +421,7 @@ describe(generateRollRecord, () => {
   })
 
   describe('when given roll total with a "plus" modifier', () => {
-    const dropParameters = createRollParameters({
+    const dropParameters = createRollParams({
       sides: 6,
       quantity: testRollSet.length,
       modifiers: { plus: 2 }
@@ -449,7 +443,7 @@ describe(generateRollRecord, () => {
   })
 
   describe('when given roll total with a "minus" modifier', () => {
-    const dropParameters = createRollParameters({
+    const dropParameters = createRollParams({
       sides: 6,
       quantity: testRollSet.length,
       modifiers: { minus: 2 }
@@ -472,7 +466,7 @@ describe(generateRollRecord, () => {
 
   describe('edge cases', () => {
     test('handles zero value modifiers', () => {
-      const parametersWithZeroModifier = createRollParameters({
+      const parametersWithZeroModifier = createRollParams({
         sides: 6,
         quantity: testRollSet.length,
         modifiers: { plus: 0 }
