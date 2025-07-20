@@ -23,7 +23,39 @@ coverage = false
 timeout = 30000
 
 [build]
-# Default build optimizations
-minify = false
-sourcemap = true
+# Default build optimizations for production bundles
+minify = true
+sourcemap = "external"
 target = "node"
+splitting = true
+
+# Exclude development files from builds
+exclude = [
+  "**/*.test.ts",
+  "**/*.spec.ts",
+  "__tests__/**/*",
+  "examples/**/*",
+  "docs/**/*",
+  "coverage/**/*",
+  "*.md",
+  "*.yml",
+  "*.toml"
+]
+
+# Asset optimization settings
+[build.optimization]
+# Enable tree-shaking for better dead code elimination
+treeShaking = true
+# Optimize imports and exports
+optimizeImports = true
+# Compress string literals and data structures
+compressData = true
+
+# TypeScript declaration optimization
+[build.typescript]
+# Use optimized declaration files
+useOptimizedDeclarations = true
+# Strip internal types from declarations
+stripInternal = true
+# Generate minimal declaration maps
+declarationMap = false
