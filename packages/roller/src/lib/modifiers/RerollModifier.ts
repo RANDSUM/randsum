@@ -182,12 +182,7 @@ export class RerollModifier extends BaseModifier<RerollOptions> {
     ) {
       return this.rerollRoll(
         rollOne(),
-        {
-          greaterThan,
-          lessThan,
-          exact,
-          max
-        },
+        { greaterThan, lessThan, exact, max },
         rollOne,
         index + 1
       )
