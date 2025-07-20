@@ -24,6 +24,18 @@ timeout = 30000
 
 [build]
 # Default build optimizations
-minify = false
+minify = true
 sourcemap = true
 target = "node"
+
+exclude = [
+  "**/*.test.ts",
+  "**/*.spec.ts",
+  "__tests__/**/*",
+  "examples/**/*",
+  "docs/**/*",
+  "coverage/**/*",
+  "*.md",
+  "*.yml",
+  "*.toml"
+]
