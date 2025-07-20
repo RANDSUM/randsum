@@ -33,3 +33,7 @@ moon.yml
 Thumbs.db
 *.swp
 *.swo
+
+# Root RPG specific exclusions
+examples/**/*
+docs/**/*

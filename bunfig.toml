@@ -28,3 +28,16 @@ minify = true
 sourcemap = "external"
 target = "node"
 splitting = true
+
+# Exclude development files from builds
+exclude = [
+  "**/*.test.ts",
+  "**/*.spec.ts",
+  "__tests__/**/*",
+  "examples/**/*",
+  "docs/**/*",
+  "coverage/**/*",
+  "*.md",
+  "*.yml",
+  "*.toml"
+]

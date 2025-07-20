@@ -33,3 +33,8 @@ moon.yml
 Thumbs.db
 *.swp
 *.swo
+
+# MCP specific exclusions
+docs/**/*
+httpServer.ts
+diceTools.ts
