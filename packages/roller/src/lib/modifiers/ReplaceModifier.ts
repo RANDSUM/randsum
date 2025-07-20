@@ -11,9 +11,8 @@ import { CapModifier } from './CapModifier'
 export class ReplaceModifier extends BaseModifier<
   ReplaceOptions | ReplaceOptions[]
 > {
-  public static readonly pattern: RegExp = new RegExp(
-    /[Vv]/.source + /{(?:[<>]?\d+=\d+,)*[<>]?\d+=\d+}/.source,
-    'g'
+  public static readonly pattern: RegExp = this.createBracedReplacementPattern(
+    /[Vv]/.source
   )
   public static override parse = (
     modifiersString: string

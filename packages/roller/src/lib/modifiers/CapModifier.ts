@@ -6,9 +6,10 @@ import type {
 import { BaseModifier } from './BaseModifier'
 
 export class CapModifier extends BaseModifier<ComparisonOptions> {
-  public static readonly pattern: RegExp = new RegExp(
-    `${/[Cc]/.source}${/{(?:[<>]\d+,)*[<>]\d+}/.source}`,
-    'g'
+  public static readonly pattern: RegExp = this.createBracedComparisonPattern(
+    /[Cc]/.source,
+    '',
+    true
   )
 
   public static override parse(

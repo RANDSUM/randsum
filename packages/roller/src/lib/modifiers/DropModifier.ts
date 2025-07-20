@@ -8,10 +8,8 @@ import { BaseModifier } from './BaseModifier'
 export class DropModifier extends BaseModifier<DropOptions> {
   public static readonly highestPattern: RegExp = /[Hh]\d*/g
   public static readonly lowestPattern: RegExp = /[Ll]\d*/g
-  public static readonly constraintsPattern: RegExp = new RegExp(
-    /[Dd]/.source + /{(?:[<>]?\d+,)*[<>]?\d+}/.source,
-    'g'
-  )
+  public static readonly constraintsPattern: RegExp =
+    this.createBracedComparisonPattern(/[Dd]/.source)
   public static parseConstraints(
     notations: string[]
   ): Pick<ModifierOptions, 'drop'> {

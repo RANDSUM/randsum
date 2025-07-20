@@ -8,9 +8,9 @@ import type {
 import { BaseModifier } from './BaseModifier'
 
 export class RerollModifier extends BaseModifier<RerollOptions> {
-  public static readonly pattern: RegExp = new RegExp(
-    `${/[Rr]/.source}${/{(?:[<>]?\d+,)*[<>]?\d+}/.source}${/\d*/.source}`,
-    'g'
+  public static readonly pattern: RegExp = this.createBracedComparisonPattern(
+    /[Rr]/.source,
+    /\d*/.source
   )
 
   public static override parse(
