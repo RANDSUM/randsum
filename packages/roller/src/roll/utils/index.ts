@@ -1,2 +1,2 @@
-export * from './calculateTotal'
-export * from './calculateResultTotal'
+export { calculateTotal } from './calculateTotal'
+export { calculateResultTotal } from './calculateResultTotal'

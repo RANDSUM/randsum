@@ -22,28 +22,28 @@
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/fifth": {
       "name": "@randsum/fifth",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/mcp": {
       "name": "@randsum/mcp",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "bin": {
         "randsum-mcp": "dist/index.js",
       },
@@ -56,19 +56,19 @@
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "bin": "./bin/randsum",
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },

@@ -1,2 +1,2 @@
-export * from './rollBlades'
+export { rollBlades } from './rollBlades'
 export type * from './types'

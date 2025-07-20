@@ -1,6 +1,6 @@
 {
   "name": "@randsum/root-rpg",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "description": "A flexible, type-safe dice roller for the Root RPG system",
   "private": false,
   "author": {
@@ -21,7 +21,6 @@
   "react-native": "./src/index.ts",
   "files": [
     "dist",
-    "src",
     "LICENSE",
     "README.md"
   ],

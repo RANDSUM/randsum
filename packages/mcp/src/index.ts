@@ -183,7 +183,7 @@ function getPackageVersion(): string {
   }
 }
 
-export const config = {
+export const config: { version: string; name: string } = {
   version: getPackageVersion(),
   name: 'RANDSUM'
 }

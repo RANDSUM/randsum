@@ -23,7 +23,29 @@ coverage = false
 timeout = 30000
 
 [build]
-# Default build optimizations
-minify = false
-sourcemap = true
+minify = true
+sourcemap = "external"
 target = "node"
+splitting = true
+
+exclude = [
+  "**/*.test.ts",
+  "**/*.spec.ts",
+  "__tests__/**/*",
+  "examples/**/*",
+  "docs/**/*",
+  "coverage/**/*",
+  "*.md",
+  "*.yml",
+  "*.toml"
+]
+
+[build.optimization]
+treeShaking = true
+optimizeImports = true
+compressData = true
+
+[build.typescript]
+useOptimizedDeclarations = true
+stripInternal = true
+declarationMap = false

@@ -1,4 +1,4 @@
-export * from './isDiceNotation'
-export * from './isRollOptions'
-export * from './isValidationResult'
-export * from './isRollArgument'
+export { isDiceNotation } from './isDiceNotation'
+export { isRollOptions } from './isRollOptions'
+export { isValidationResult } from './isValidationResult'
+export { isRollArgument } from './isRollArgument'

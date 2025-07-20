@@ -1,6 +1,8 @@
-import { AllRollTables, customTableFaces } from '../tables'
+import { AllRollTables } from '../tables'
+
 import type { SalvageUnionTableName, SalvageUnionTableResult } from '../types'
 import { rollCustom } from '@randsum/roller'
+import { customTableFaces } from './customTableFaces'
 
 export function rollTable(
   tableName: SalvageUnionTableName = 'Core Mechanic'

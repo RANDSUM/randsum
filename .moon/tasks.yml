@@ -3,9 +3,11 @@ $schema: "https://moonrepo.dev/schemas/tasks.json"
 tasks:
   build:
     command: "bunup"
-    args: "--entry src/index.ts -o dist --format esm,cjs -m -d -s -t node -c --sm inline"
+    args: "--entry src/index.ts -o dist --format esm,cjs -m -mi -ms -mw -d -s -t node -c --sm external"
     inputs:
       - "src/**/*"
+      - "!src/**/*.test.ts"
+      - "!src/**/*.spec.ts"
       - "package.json"
       - "tsconfig.json"
     outputs:
@@ -82,7 +84,7 @@ tasks:
       runInCI: true
 
   tsCheck:
-    command: "tsc --build --verbose"
+    command: "tsc --noEmit"
     inputs:
       - "src/**/*"
       - "tsconfig.json"
@@ -92,7 +94,6 @@ tasks:
       runInCI: true
       allowFailure: false
 
-  # Version management tasks (keep existing configuration)
   version:
     command: "bun pm version"
     options:
