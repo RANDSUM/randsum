@@ -6,9 +6,9 @@ import {
   PlusModifier,
   ReplaceModifier,
   RerollModifier,
-  UniqueModifier,
-  coreNotationPattern
-} from '../lib'
+  UniqueModifier
+} from '../lib/modifiers'
+import { coreNotationPattern } from '../lib/patterns'
 import type { DiceNotation, RollOptions } from '../types'
 import { formatSides } from './formatSides'
 

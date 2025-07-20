@@ -8,8 +8,8 @@ import {
   test
 } from 'bun:test'
 
-import * as CoreRandom from '../src/lib'
-import * as CoreSpreadRolls from '../src/lib'
+import * as CoreRandom from '../src/lib/utils'
+import * as CoreSpreadRolls from '../src/lib/utils'
 import { generateRollRecord } from '../src/roll/generateRollRecord'
 import { createRollParams } from './support/fixtures'
 

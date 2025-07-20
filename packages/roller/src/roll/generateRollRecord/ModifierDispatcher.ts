@@ -6,7 +6,7 @@ import {
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
-} from '../../lib'
+} from '../../lib/modifiers'
 
 /**
  * Context for modifier application

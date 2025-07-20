@@ -1,4 +1,4 @@
-import { OptionsConverter } from '../../lib'
+import { OptionsConverter } from '../../lib/utils'
 import type { RollArgument, RollParams } from '../../types'
 import { optionsFromArgument } from './optionsFromArgument'
 

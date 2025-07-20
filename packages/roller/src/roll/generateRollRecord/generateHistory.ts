@@ -5,7 +5,7 @@ import type {
   RollParams,
   RollRecord
 } from '../../types'
-import { coreRandom } from '../../lib'
+import { coreRandom } from '../../lib/utils'
 import { calculateTotal } from '../utils/calculateTotal'
 import { applyModifier } from './applyModifier'
 

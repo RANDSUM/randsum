@@ -1,4 +1,4 @@
-import { coreSpreadRolls } from '../../lib'
+import { coreSpreadRolls } from '../../lib/utils'
 import type { RollParams, RollRecord } from '../../types'
 import { generateHistory } from './generateHistory'
 
