@@ -1,4 +1,12 @@
-import type { ModifierOptions, NumericRollBonus } from '../../types'
+import type {
+  ComparisonOptions,
+  DropOptions,
+  ModifierOptions,
+  NumericRollBonus,
+  ReplaceOptions,
+  RerollOptions,
+  UniqueOptions
+} from '../../types'
 import {
   CapModifier,
   DropModifier,
@@ -55,7 +63,7 @@ class MinusModifierHandler implements ModifierHandler {
 
 class RerollModifierHandler implements ModifierHandler {
   public apply(
-    modifierValue: undefined,
+    modifierValue: RerollOptions | undefined,
     currentBonuses: NumericRollBonus,
     context: ModifierContext
   ): NumericRollBonus {
@@ -69,7 +77,7 @@ class RerollModifierHandler implements ModifierHandler {
 
 class UniqueModifierHandler implements ModifierHandler {
   public apply(
-    modifierValue: undefined,
+    modifierValue: boolean | UniqueOptions | undefined,
     currentBonuses: NumericRollBonus,
     context: ModifierContext
   ): NumericRollBonus {
@@ -83,7 +91,7 @@ class UniqueModifierHandler implements ModifierHandler {
 
 class ReplaceModifierHandler implements ModifierHandler {
   public apply(
-    modifierValue: undefined,
+    modifierValue: ReplaceOptions | ReplaceOptions[] | undefined,
     currentBonuses: NumericRollBonus,
     _context: ModifierContext
   ): NumericRollBonus {
@@ -93,7 +101,7 @@ class ReplaceModifierHandler implements ModifierHandler {
 
 class CapModifierHandler implements ModifierHandler {
   public apply(
-    modifierValue: undefined,
+    modifierValue: ComparisonOptions | undefined,
     currentBonuses: NumericRollBonus,
     _context: ModifierContext
   ): NumericRollBonus {
@@ -103,7 +111,7 @@ class CapModifierHandler implements ModifierHandler {
 
 class DropModifierHandler implements ModifierHandler {
   public apply(
-    modifierValue: undefined,
+    modifierValue: DropOptions | undefined,
     currentBonuses: NumericRollBonus,
     _context: ModifierContext
   ): NumericRollBonus {
@@ -113,7 +121,7 @@ class DropModifierHandler implements ModifierHandler {
 
 class ExplodeModifierHandler implements ModifierHandler {
   public apply(
-    modifierValue: undefined,
+    modifierValue: boolean | undefined,
     currentBonuses: NumericRollBonus,
     context: ModifierContext
   ): NumericRollBonus {
