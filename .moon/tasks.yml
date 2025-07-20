@@ -77,7 +77,7 @@ tasks:
       - "lint"
       - "formatCheck"
     options:
-      cache: false # CI should always run fresh
+      cache: false
       runDepsInParallel: true
       runInCI: true
 
@@ -92,7 +92,6 @@ tasks:
       runInCI: true
       allowFailure: false
 
-  # Version management tasks (keep existing configuration)
   version:
     command: "bun pm version"
     options:
@@ -137,7 +136,6 @@ tasks:
     deps:
       - "build"
 
-  # Publishing task with comprehensive dependencies
   publish:
     command: "bun publish --no-git-checks --access=public"
     options:
