@@ -7,15 +7,15 @@ export function validateNotation(notation: string): ValidationResult {
     return {
       valid: false,
       description: ['Invalid Notation'],
-      digested: {}
+      options: {}
     }
   }
 
-  const digested = notationToOptions(notation)
-  const converter = new OptionsConverter(digested)
+  const options = notationToOptions(notation)
+  const converter = new OptionsConverter(options)
   return {
     valid: true,
-    digested,
+    options,
     notation: converter.toNotation,
     description: converter.toDescription
   }

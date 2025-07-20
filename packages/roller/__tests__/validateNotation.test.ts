@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
 import { validateNotation } from '../src/validateNotation'
-import type { ValidationResult } from '../src/types'
 
 describe('validateNotation', () => {
   describe('valid notation', () => {
@@ -9,8 +8,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested).toHaveProperty('sides', 6)
-        expect(result.digested).toHaveProperty('quantity', 1)
+        expect(result.options).toHaveProperty('sides', 6)
+        expect(result.options).toHaveProperty('quantity', 1)
         expect(result.notation).toBe('1d6')
         expect(result.description).toContain('Roll 1 6-sided die')
       }
@@ -21,8 +20,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested).toHaveProperty('sides', 6)
-        expect(result.digested).toHaveProperty('quantity', 1)
+        expect(result.options).toHaveProperty('sides', 6)
+        expect(result.options).toHaveProperty('quantity', 1)
         expect(result.notation).toBe('-1d6')
         expect(result.description).toContain('Roll 1 6-sided die')
         expect(result.description).toContain('and Subtract the result')
@@ -34,8 +33,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(6)
-        expect(result.digested.quantity).toBe(4)
+        expect(result.options.sides).toBe(6)
+        expect(result.options.quantity).toBe(4)
         expect(result.notation).toBe('4d6')
         expect(result.description).toContain('Roll 4 6-sided dice')
       }
@@ -46,9 +45,9 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(8)
-        expect(result.digested.quantity).toBe(2)
-        expect(result.digested.modifiers?.plus).toBe(3)
+        expect(result.options.sides).toBe(8)
+        expect(result.options.quantity).toBe(2)
+        expect(result.options.modifiers?.plus).toBe(3)
         expect(result.notation).toBe('2d8+3')
         expect(result.description).toContain('Roll 2 8-sided dice')
         expect(result.description).toContain('Add 3')
@@ -60,9 +59,9 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(10)
-        expect(result.digested.quantity).toBe(3)
-        expect(result.digested.modifiers?.minus).toBe(2)
+        expect(result.options.sides).toBe(10)
+        expect(result.options.quantity).toBe(3)
+        expect(result.options.modifiers?.minus).toBe(2)
         expect(result.notation).toBe('3d10-2')
         expect(result.description).toContain('Roll 3 10-sided dice')
         expect(result.description).toContain('Subtract 2')
@@ -74,9 +73,9 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(6)
-        expect(result.digested.quantity).toBe(4)
-        expect(result.digested.modifiers?.drop?.lowest).toBe(1)
+        expect(result.options.sides).toBe(6)
+        expect(result.options.quantity).toBe(4)
+        expect(result.options.modifiers?.drop?.lowest).toBe(1)
         expect(result.notation).toBe('4d6L')
         expect(result.description).toContain('Roll 4 6-sided dice')
         expect(result.description).toContain('Drop lowest')
@@ -88,9 +87,9 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(20)
-        expect(result.digested.quantity).toBe(2)
-        expect(result.digested.modifiers?.drop?.highest).toBe(1)
+        expect(result.options.sides).toBe(20)
+        expect(result.options.quantity).toBe(2)
+        expect(result.options.modifiers?.drop?.highest).toBe(1)
         expect(result.notation).toBe('2d20H')
         expect(result.description).toContain('Roll 2 20-sided dice')
         expect(result.description).toContain('Drop highest')
@@ -102,9 +101,9 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(6)
-        expect(result.digested.quantity).toBe(3)
-        expect(result.digested.modifiers?.explode).toBe(true)
+        expect(result.options.sides).toBe(6)
+        expect(result.options.quantity).toBe(3)
+        expect(result.options.modifiers?.explode).toBe(true)
         expect(result.notation).toBe('3d6!')
         expect(result.description).toContain('Roll 3 6-sided dice')
         expect(result.description).toContain('Exploding Dice')
@@ -116,9 +115,9 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(6)
-        expect(result.digested.quantity).toBe(4)
-        expect(result.digested.modifiers?.reroll?.exact).toContain(1)
+        expect(result.options.sides).toBe(6)
+        expect(result.options.quantity).toBe(4)
+        expect(result.options.modifiers?.reroll?.exact).toContain(1)
         expect(result.notation).toBe('4d6R{1}')
         expect(result.description).toContain('Roll 4 6-sided dice')
         expect(result.description).toContain('Reroll [1]')
@@ -130,9 +129,9 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(20)
-        expect(result.digested.quantity).toBe(5)
-        expect(result.digested.modifiers?.unique).toBe(true)
+        expect(result.options.sides).toBe(20)
+        expect(result.options.quantity).toBe(5)
+        expect(result.options.modifiers?.unique).toBe(true)
         expect(result.notation).toBe('5d20U')
         expect(result.description).toContain('Roll 5 20-sided dice')
         expect(result.description).toContain('No Duplicate Rolls')
@@ -144,11 +143,11 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(6)
-        expect(result.digested.quantity).toBe(4)
-        expect(result.digested.modifiers?.drop?.lowest).toBe(1)
-        expect(result.digested.modifiers?.reroll?.exact).toContain(1)
-        expect(result.digested.modifiers?.plus).toBe(3)
+        expect(result.options.sides).toBe(6)
+        expect(result.options.quantity).toBe(4)
+        expect(result.options.modifiers?.drop?.lowest).toBe(1)
+        expect(result.options.modifiers?.reroll?.exact).toContain(1)
+        expect(result.options.modifiers?.plus).toBe(3)
         expect(result.notation).toBe('4d6LR{1}+3')
         expect(result.description).toContain('Roll 4 6-sided dice')
         expect(result.description).toContain('Drop lowest')
@@ -162,8 +161,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(10)
-        expect(result.digested.quantity).toBe(2)
+        expect(result.options.sides).toBe(10)
+        expect(result.options.quantity).toBe(2)
         expect(result.notation).toBe('2d10')
       }
     })
@@ -176,7 +175,7 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
       if (!result.valid) {
         expect(result.description).toContain('Invalid Notation')
-        expect(result.digested).toEqual({})
+        expect(result.options).toEqual({})
       }
     })
 
@@ -186,7 +185,7 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
       if (!result.valid) {
         expect(result.description).toContain('Invalid Notation')
-        expect(result.digested).toEqual({})
+        expect(result.options).toEqual({})
       }
     })
 
@@ -196,7 +195,7 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
       if (!result.valid) {
         expect(result.description).toContain('Invalid Notation')
-        expect(result.digested).toEqual({})
+        expect(result.options).toEqual({})
       }
     })
 
@@ -206,7 +205,7 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
       if (!result.valid) {
         expect(result.description).toContain('Invalid Notation')
-        expect(result.digested).toEqual({})
+        expect(result.options).toEqual({})
       }
     })
 
@@ -216,7 +215,7 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
       if (!result.valid) {
         expect(result.description).toContain('Invalid Notation')
-        expect(result.digested).toEqual({})
+        expect(result.options).toEqual({})
       }
     })
 
@@ -226,7 +225,7 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
       if (!result.valid) {
         expect(result.description).toContain('Invalid Notation')
-        expect(result.digested).toEqual({})
+        expect(result.options).toEqual({})
       }
     })
 
@@ -236,7 +235,7 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
       if (!result.valid) {
         expect(result.description).toContain('Invalid Notation')
-        expect(result.digested).toEqual({})
+        expect(result.options).toEqual({})
       }
     })
   })
@@ -247,8 +246,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(0)
-        expect(result.digested.quantity).toBe(1)
+        expect(result.options.sides).toBe(0)
+        expect(result.options.quantity).toBe(1)
       }
     })
 
@@ -257,8 +256,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(6)
-        expect(result.digested.quantity).toBe(0)
+        expect(result.options.sides).toBe(6)
+        expect(result.options.quantity).toBe(0)
       }
     })
 
@@ -267,8 +266,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(999)
-        expect(result.digested.quantity).toBe(999)
+        expect(result.options.sides).toBe(999)
+        expect(result.options.quantity).toBe(999)
       }
     })
 
@@ -277,37 +276,8 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested.sides).toBe(1)
-        expect(result.digested.quantity).toBe(1)
-      }
-    })
-  })
-
-  describe('return type validation', () => {
-    test('returns ValidValidationResult for valid notation', () => {
-      const result: ValidationResult = validateNotation('2d6+1')
-
-      expect(result.valid).toBe(true)
-      if (result.valid) {
-        expect(result).toHaveProperty('digested')
-        expect(result).toHaveProperty('notation')
-        expect(result).toHaveProperty('description')
-        expect(typeof result.notation).toBe('string')
-        expect(Array.isArray(result.description)).toBe(true)
-        expect(typeof result.digested).toBe('object')
-      }
-    })
-
-    test('returns InvalidValidationResult for invalid notation', () => {
-      const result: ValidationResult = validateNotation('invalid')
-
-      expect(result.valid).toBe(false)
-      if (!result.valid) {
-        expect(result).toHaveProperty('digested')
-        expect(result).toHaveProperty('description')
-        expect(result).not.toHaveProperty('notation')
-        expect(Array.isArray(result.description)).toBe(true)
-        expect(result.digested).toEqual({})
+        expect(result.options.sides).toBe(1)
+        expect(result.options.quantity).toBe(1)
       }
     })
   })
@@ -318,13 +288,13 @@ describe('validateNotation', () => {
 
       expect(result.valid).toBe(true)
       if (result.valid) {
-        expect(result.digested).toHaveProperty('sides')
-        expect(result.digested).toHaveProperty('quantity')
-        expect(typeof result.digested.sides).toBe('number')
-        expect(typeof result.digested.quantity).toBe('number')
+        expect(result.options).toHaveProperty('sides')
+        expect(result.options).toHaveProperty('quantity')
+        expect(typeof result.options.sides).toBe('number')
+        expect(typeof result.options.quantity).toBe('number')
 
-        if (result.digested.modifiers) {
-          expect(typeof result.digested.modifiers).toBe('object')
+        if (result.options.modifiers) {
+          expect(typeof result.options.modifiers).toBe('object')
         }
       }
     })

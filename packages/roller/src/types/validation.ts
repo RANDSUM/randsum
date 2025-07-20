@@ -7,13 +7,13 @@ interface BaseValidationResult {
 
 export interface ValidValidationResult extends BaseValidationResult {
   valid: true
-  digested: RollOptions
+  options: RollOptions
   notation: DiceNotation
 }
 
 export interface InvalidValidationResult extends BaseValidationResult {
   valid: false
-  digested: Record<string, never>
+  options: Record<string, never>
 }
 
 export type ValidationResult = ValidValidationResult | InvalidValidationResult
