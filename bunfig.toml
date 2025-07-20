@@ -50,3 +50,12 @@ treeShaking = true
 optimizeImports = true
 # Compress string literals and data structures
 compressData = true
+
+# TypeScript declaration optimization
+[build.typescript]
+# Use optimized declaration files
+useOptimizedDeclarations = true
+# Strip internal types from declarations
+stripInternal = true
+# Generate minimal declaration maps
+declarationMap = false
