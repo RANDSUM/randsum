@@ -43,6 +43,24 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
     return [...notationString.matchAll(pattern)].map((matches) => matches[0])
   }
 
+  protected static createBracedComparisonPattern(
+    prefix: string,
+    suffix = '',
+    requireOperator = false
+  ): RegExp {
+    const operatorPattern = requireOperator ? '[<>]' : '[<>]?'
+    const bracedContent = `{(?:${operatorPattern}\\d+,)*${operatorPattern}\\d+}`
+    return new RegExp(`${prefix}${bracedContent}${suffix}`, 'g')
+  }
+
+  protected static createBracedReplacementPattern(
+    prefix: string,
+    suffix = ''
+  ): RegExp {
+    const bracedContent = '{(?:[<>]?\\d+=\\d+,)*[<>]?\\d+=\\d+}'
+    return new RegExp(`${prefix}${bracedContent}${suffix}`, 'g')
+  }
+
   protected toModifierLog(
     modifier: string,
     initialRolls: number[],

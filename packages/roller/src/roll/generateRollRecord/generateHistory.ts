@@ -5,7 +5,7 @@ import type {
   RollParams,
   RollRecord
 } from '../../types'
-import { coreRandom } from '../../lib'
+import { coreRandom } from '../../lib/utils'
 import { calculateTotal } from '../utils/calculateTotal'
 import { applyModifier } from './applyModifier'
 
@@ -24,10 +24,15 @@ export function generateHistory(
     modifiers.minus
 
   if (!hasModifiers) {
+    const modifiedRolls = new Array<number>(rolls.length)
+    for (let i = 0; i < rolls.length; i++) {
+      modifiedRolls[i] = Number(rolls[i])
+    }
+
     return {
       total: calculateTotal(rolls),
       initialRolls: rolls,
-      modifiedRolls: rolls.map((n) => Number(n)),
+      modifiedRolls,
       logs: []
     }
   }
@@ -36,9 +41,14 @@ export function generateHistory(
 
   const rollParams = { sides, quantity, rollOne }
 
+  const initialRollsAsNumbers = new Array<number>(rolls.length)
+  for (let i = 0; i < rolls.length; i++) {
+    initialRollsAsNumbers[i] = Number(rolls[i])
+  }
+
   const bonuses: NumericRollBonus = {
     simpleMathModifier: 0,
-    rolls: rolls.map((n) => Number(n)),
+    rolls: initialRollsAsNumbers,
     logs: []
   }
 

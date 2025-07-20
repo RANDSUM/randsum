@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { completeRollPattern, coreNotationPattern } from '../src/lib'
+import { completeRollPattern, coreNotationPattern } from '../src/lib/patterns'
 
 describe('coreNotationPattern', () => {
   describe('valid core notations', () => {

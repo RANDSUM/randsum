@@ -15,9 +15,7 @@ export class PlusModifier extends ArithmeticModifier {
       PlusModifier.pattern,
       '+'
     )
-    if (plus === 0) {
-      return {}
-    }
-    return { plus }
+
+    return plus === 0 ? {} : { plus }
   }
 }

@@ -1,5 +1,4 @@
 export * from './isDiceNotation'
 export * from './isRollOptions'
-export * from './isRollParams'
 export * from './isValidationResult'
 export * from './isRollArgument'

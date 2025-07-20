@@ -71,15 +71,18 @@ tasks:
 
   ci:
     deps:
+      - "build"
+      - "test"
       - "tsCheck"
       - "lint"
       - "formatCheck"
     options:
       cache: false # CI should always run fresh
       runDepsInParallel: true
+      runInCI: true
 
   tsCheck:
-    command: "tsc --noEmit"
+    command: "tsc --build --verbose"
     inputs:
       - "src/**/*"
       - "tsconfig.json"

@@ -1,7 +1,8 @@
 import type {
   NumericRollBonus,
   RequiredNumericRollParameters,
-  RollOptions
+  RollOptions,
+  RollParams
 } from '../../src'
 
 export function createNumericRollBonus(
@@ -31,6 +32,20 @@ export function createRequiredNumericRollParameters(
   return {
     sides: 6,
     quantity: 1,
+    ...overrides
+  }
+}
+
+export function createRollParams(
+  overrides: Partial<RollParams> = {}
+): RollParams {
+  return {
+    sides: 6,
+    quantity: 1,
+    description: ['Roll 1d6'],
+    argument: '1d6',
+    arithmetic: 'add',
+    notation: '1d6',
     ...overrides
   }
 }

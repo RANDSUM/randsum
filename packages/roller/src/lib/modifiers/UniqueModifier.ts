@@ -47,20 +47,26 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
     }
     const notUnique = this.generateNotUniqueArray()
 
-    const filteredArray = new Set(
-      bonus.rolls.filter((n) => !notUnique.includes(Number(n)))
-    )
+    const notUniqueSet = new Set(notUnique)
+    const seenValues = new Set<number>()
+    const uniqueRolls = new Array<number>(bonus.rolls.length)
 
-    const uniqueRolls = bonus.rolls.map(Number).map((roll, index, array) => {
-      let newRoll: number
-      if (array.indexOf(roll) === index || notUnique.includes(roll)) {
-        return roll
+    for (let i = 0; i < bonus.rolls.length; i++) {
+      const roll = Number(bonus.rolls[i])
+
+      if (notUniqueSet.has(roll) || !seenValues.has(roll)) {
+        uniqueRolls[i] = roll
+        seenValues.add(roll)
+      } else {
+        let newRoll: number
+        do {
+          newRoll = rollOne()
+        } while (seenValues.has(newRoll) && !notUniqueSet.has(newRoll))
+
+        uniqueRolls[i] = newRoll
+        seenValues.add(newRoll)
       }
-      do {
-        newRoll = rollOne()
-      } while (filteredArray.has(newRoll))
-      return newRoll
-    })
+    }
 
     const logs = [
       ...bonus.logs,

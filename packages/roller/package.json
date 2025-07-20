@@ -1,6 +1,6 @@
 {
   "name": "@randsum/roller",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "A flexible, type-safe dice roller for tabletop RPGs, game development, and probability simulations",
   "private": false,
   "author": {
@@ -37,36 +37,6 @@
       "require": {
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
-      }
-    },
-    "./utils": {
-      "import": {
-        "types": "./dist/lib/utils/index.d.ts",
-        "default": "./dist/lib/utils/index.js"
-      },
-      "require": {
-        "types": "./dist/lib/utils/index.d.cts",
-        "default": "./dist/lib/utils/index.cjs"
-      }
-    },
-    "./modifiers": {
-      "import": {
-        "types": "./dist/lib/modifiers/index.d.ts",
-        "default": "./dist/lib/modifiers/index.js"
-      },
-      "require": {
-        "types": "./dist/lib/modifiers/index.d.cts",
-        "default": "./dist/lib/modifiers/index.cjs"
-      }
-    },
-    "./guards": {
-      "import": {
-        "types": "./dist/lib/guards/index.d.ts",
-        "default": "./dist/lib/guards/index.js"
-      },
-      "require": {
-        "types": "./dist/lib/guards/index.d.cts",
-        "default": "./dist/lib/guards/index.cjs"
       }
     },
     "./package.json": "./package.json"

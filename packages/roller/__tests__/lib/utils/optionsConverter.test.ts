@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { OptionsConverter } from '../../../src/lib'
+import { OptionsConverter } from '../../../src/lib/utils'
 import { createRollOptions } from '../../support/fixtures'
 
 describe('OptionsConverter', () => {

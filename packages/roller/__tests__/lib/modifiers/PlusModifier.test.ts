@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { PlusModifier } from '../../../src/lib'
+import { PlusModifier } from '../../../src/lib/modifiers'
 import { createNumericRollBonus } from '../../support/fixtures'
 
 describe('PlusModifier', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { ExplodeModifier } from '../../../src/lib'
+import { ExplodeModifier } from '../../../src/lib/modifiers'
 import {
   createMockRollOne,
   createNumericRollBonus,

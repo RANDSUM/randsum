@@ -73,6 +73,11 @@ benchmark/
 .parcel-cache/
 
 tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# TypeScript project references artifacts
+packages/*/dist/
+packages/*/lib/
 
 # moon
 .moon/cache

@@ -2,10 +2,6 @@ import type { ModifierOptions } from './modifiers'
 
 export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
 
-export interface BaseRollOptions {
-  quantity?: number
-}
-
 export interface RollOptions {
   quantity?: number
   arithmetic?: 'add' | 'subtract'

@@ -1,4 +1,5 @@
-import { OptionsConverter, isDiceNotation } from '../lib'
+import { OptionsConverter } from '../lib/utils'
+import { isDiceNotation } from '../lib/guards'
 import type { ValidationResult } from '../types'
 import { notationToOptions } from './notationToOptions'
 

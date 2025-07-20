@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { RerollModifier } from '../../../src/lib'
+import { RerollModifier } from '../../../src/lib/modifiers'
 import {
   createMockRollOne,
   createNumericRollBonus,

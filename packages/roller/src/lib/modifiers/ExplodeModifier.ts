@@ -27,9 +27,27 @@ export class ExplodeModifier extends BaseModifier<boolean> {
     rollOne: () => number
   ): NumericRollBonus {
     if (this.options === undefined) return bonus
-    const explodeCount = bonus.rolls.filter((roll) => roll === sides).length
-    const explodeResults = Array.from({ length: explodeCount }, rollOne)
-    const explodedRolls = [...bonus.rolls, ...explodeResults]
+
+    let explodeCount = 0
+    for (const roll of bonus.rolls) {
+      if (roll === sides) {
+        explodeCount++
+      }
+    }
+
+    if (explodeCount === 0) {
+      return bonus
+    }
+
+    const explodedRolls = new Array<number>(bonus.rolls.length + explodeCount)
+
+    for (let i = 0; i < bonus.rolls.length; i++) {
+      explodedRolls[i] = Number(bonus.rolls[i])
+    }
+
+    for (let i = 0; i < explodeCount; i++) {
+      explodedRolls[bonus.rolls.length + i] = rollOne()
+    }
 
     const logs = [
       ...bonus.logs,
