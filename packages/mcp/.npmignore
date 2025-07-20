@@ -28,3 +28,7 @@ moon.yml
 Thumbs.db
 *.swp
 *.swo
+
+docs/**/*
+httpServer.ts
+diceTools.ts
