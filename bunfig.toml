@@ -41,3 +41,12 @@ exclude = [
   "*.yml",
   "*.toml"
 ]
+
+# Asset optimization settings
+[build.optimization]
+# Enable tree-shaking for better dead code elimination
+treeShaking = true
+# Optimize imports and exports
+optimizeImports = true
+# Compress string literals and data structures
+compressData = true
