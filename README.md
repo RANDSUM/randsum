@@ -37,10 +37,12 @@ All packages are built with TypeScript, thoroughly tested, and published to NPM 
 ## 🚀 Quick Example
 
 ```typescript
-import { D20, roll } from "@randsum/roller"
+import { roll } from "@randsum/roller"
 
 // Simple d20 roll
-D20.roll() // Returns 1-20
+roll(20) // Returns 1-20
+// or
+roll("1d20") // Returns 1-20
 
 // Complex dice notation
 roll("4d6L") // Roll 4d6, drop lowest

@@ -32,7 +32,7 @@ bun add @randsum/fifth
 ## Usage
 
 ```typescript
-import { roll, meetOrBeat } from "@randsum/fifth"
+import { roll } from "@randsum/fifth"
 import type { RollArgument } from "@randsum/fifth"
 
 // Basic roll with modifier
@@ -55,7 +55,8 @@ const rollArg: RollArgument = {
   modifier: 5,
   rollingWith: "Advantage"
 }
-meetOrBeat(15, rollArg) // Returns true if roll meets or exceeds DC 15
+const result = roll(rollArg)
+const success = result.total >= 15 // Check if roll meets or exceeds DC 15
 ```
 
 ## API Reference
@@ -72,7 +73,7 @@ const result = d20Roll({
 // Returns a roll result with total and details
 ```
 
-We also export the `roll` and `meetOrBeat` functions from `@randsum/roller` for your convenience.
+We also export the `roll` function from `@randsum/roller` for your convenience.
 
 ## Related Packages
 

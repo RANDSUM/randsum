@@ -41,7 +41,7 @@ function rollDaggerheart(options: DaggerheartRollArgument): DaggerheartRollResul
   - `amplifyHope`: Use d20 instead of d12 for Hope die (default: false)
   - `amplifyFear`: Use d20 instead of d12 for Fear die (default: false)
 
-We also export the `roll` and `meetOrBeat` functions from `@randsum/roller` for your convenience.
+We also export the `roll` function from `@randsum/roller` for your convenience.
 
 ## Related Packages
 
