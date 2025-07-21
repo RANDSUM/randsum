@@ -4,7 +4,6 @@ export { rollCustom } from './rollCustom'
 export { validateNotation } from './validateNotation'
 export { isDiceNotation } from './isDiceNotation'
 
-// Type exports - specific exports for better tree-shaking
 export type {
   ComparisonOptions,
   DiceNotation,

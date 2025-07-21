@@ -1,4 +1,3 @@
-// Core types - specific exports for better tree-shaking
 export type {
   DiceNotation,
   RollArgument,
@@ -6,7 +5,6 @@ export type {
   RequiredNumericRollParameters
 } from './core'
 
-// Modifier types
 export type {
   ComparisonOptions,
   DropOptions,
@@ -19,7 +17,6 @@ export type {
   UniqueOptions
 } from './modifiers'
 
-// Roll result types
 export type {
   ModifierHistory,
   RollParams,
@@ -28,7 +25,6 @@ export type {
   RollerRollResult
 } from './roll'
 
-// Validation types
 export type {
   InvalidValidationResult,
   ValidValidationResult,

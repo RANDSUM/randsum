@@ -1,4 +1,3 @@
-// Base modifier - specific exports for better tree-shaking
 export { BaseModifier } from './BaseModifier'
 
 export { ArithmeticModifier } from './ArithmeticModifier'
