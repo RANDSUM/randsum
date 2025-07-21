@@ -26,7 +26,7 @@
     "@types/bun": "1.2.19",
     "@typescript-eslint/eslint-plugin": "8.37.0",
     "@typescript-eslint/parser": "8.37.0",
-    "bunup": "0.8.61",
+    "bunup": "0.8.64",
     "eslint": "9.31.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.3",
