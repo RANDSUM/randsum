@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { notationToOptions } from '../../src/validateNotation/notationToOptions'
+import { notationToOptions } from '../../src/lib/utils/notationToOptions'
 import type { DiceNotation, RollOptions } from '../../src/types'
 
 describe('notationToOptions', () => {

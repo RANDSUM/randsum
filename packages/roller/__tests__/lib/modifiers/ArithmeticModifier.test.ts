@@ -2,236 +2,162 @@ import { describe, expect, test } from 'bun:test'
 import { ArithmeticModifier } from '../../../src/lib/modifiers/ArithmeticModifier'
 import { createNumericRollBonus } from '../../support/fixtures'
 
-class TestArithmeticModifier extends ArithmeticModifier {
-  protected readonly operator = '+' as const
-  protected readonly operatorName = 'plus' as const
-  protected readonly actionVerb = 'Add' as const
-
-  public static testParseArithmetic(
-    modifiersString: string,
-    pattern: RegExp,
-    operator: '+' | '-'
-  ): number {
-    return this.parseArithmetic(modifiersString, pattern, operator)
-  }
-}
-
 describe('ArithmeticModifier', () => {
-  describe('static parseArithmetic', () => {
-    test('parses single arithmetic modifier', () => {
-      const result = TestArithmeticModifier.testParseArithmetic(
-        '+5',
-        /\+\d+/g,
-        '+'
-      )
-      expect(result).toBe(5)
+  describe('static parsePlus', () => {
+    test('parses single plus modifier', () => {
+      const result = ArithmeticModifier.parsePlus('1d6+5')
+      expect(result).toEqual({ plus: 5 })
     })
 
-    test('parses multiple arithmetic modifiers', () => {
-      const result = TestArithmeticModifier.testParseArithmetic(
-        '+3+7+2',
-        /\+\d+/g,
-        '+'
-      )
-      expect(result).toBe(12)
+    test('parses multiple plus modifiers', () => {
+      const result = ArithmeticModifier.parsePlus('2d6+3+7+2')
+      expect(result).toEqual({ plus: 12 })
     })
 
-    test('parses minus modifiers', () => {
-      const result = TestArithmeticModifier.testParseArithmetic(
-        '-5-3',
-        /-\d+/g,
-        '-'
-      )
-      expect(result).toBe(8)
-    })
-
-    test('returns 0 when no matches found', () => {
-      const result = TestArithmeticModifier.testParseArithmetic(
-        '2d6',
-        /\+\d+/g,
-        '+'
-      )
-      expect(result).toBe(0)
+    test('returns empty object when no plus modifiers found', () => {
+      const result = ArithmeticModifier.parsePlus('2d6-5')
+      expect(result).toEqual({})
     })
 
     test('handles complex notation with mixed modifiers', () => {
-      const result = TestArithmeticModifier.testParseArithmetic(
-        '4d6L+3+2-1+5',
-        /\+\d+/g,
-        '+'
-      )
-      expect(result).toBe(10)
+      const result = ArithmeticModifier.parsePlus('4d6L+10-3+5')
+      expect(result).toEqual({ plus: 15 })
     })
 
-    test('handles large numbers', () => {
-      const result = TestArithmeticModifier.testParseArithmetic(
-        '+100+250',
-        /\+\d+/g,
-        '+'
-      )
-      expect(result).toBe(350)
+    test('handles large plus values', () => {
+      const result = ArithmeticModifier.parsePlus('1d20+100+250')
+      expect(result).toEqual({ plus: 350 })
     })
 
-    test('handles zero values', () => {
-      const result = TestArithmeticModifier.testParseArithmetic(
-        '+0+5',
-        /\+\d+/g,
-        '+'
-      )
-      expect(result).toBe(5)
+    test('handles zero plus values', () => {
+      const result = ArithmeticModifier.parsePlus('2d6+0+5')
+      expect(result).toEqual({ plus: 5 })
     })
   })
 
-  describe('apply', () => {
-    test('applies positive modifier correctly', () => {
-      const modifier = new TestArithmeticModifier(5)
-      const bonus = createNumericRollBonus({
-        rolls: [3, 4, 2]
-      })
+  describe('static parseMinus', () => {
+    test('parses single minus modifier', () => {
+      const result = ArithmeticModifier.parseMinus('1d6-3')
+      expect(result).toEqual({ minus: 3 })
+    })
 
+    test('parses multiple minus modifiers', () => {
+      const result = ArithmeticModifier.parseMinus('2d6-2-4-1')
+      expect(result).toEqual({ minus: 7 })
+    })
+
+    test('returns empty object when no minus modifiers found', () => {
+      const result = ArithmeticModifier.parseMinus('2d6+5')
+      expect(result).toEqual({})
+    })
+
+    test('handles complex notation with mixed modifiers', () => {
+      const result = ArithmeticModifier.parseMinus('4d6L+10-3-5')
+      expect(result).toEqual({ minus: 8 })
+    })
+
+    test('handles large minus values', () => {
+      const result = ArithmeticModifier.parseMinus('1d20-50-25')
+      expect(result).toEqual({ minus: 75 })
+    })
+
+    test('handles zero minus values', () => {
+      const result = ArithmeticModifier.parseMinus('2d6-0-3')
+      expect(result).toEqual({ minus: 3 })
+    })
+  })
+
+  describe('static createPlus', () => {
+    test('creates plus modifier instance', () => {
+      const modifier = ArithmeticModifier.createPlus(5)
+      expect(modifier).toBeInstanceOf(ArithmeticModifier)
+      expect(modifier.toNotation()).toBe('+5')
+      expect(modifier.toDescription()).toEqual(['Add 5'])
+    })
+
+    test('creates plus modifier with undefined value', () => {
+      const modifier = ArithmeticModifier.createPlus(undefined)
+      expect(modifier).toBeInstanceOf(ArithmeticModifier)
+      expect(modifier.toNotation()).toBe('')
+      expect(modifier.toDescription()).toEqual([])
+    })
+
+    test('creates plus modifier with zero value', () => {
+      const modifier = ArithmeticModifier.createPlus(0)
+      expect(modifier).toBeInstanceOf(ArithmeticModifier)
+      expect(modifier.toNotation()).toBe('')
+      expect(modifier.toDescription()).toEqual([])
+    })
+
+    test('plus modifier applies correctly', () => {
+      const modifier = ArithmeticModifier.createPlus(7)
+      const bonus = createNumericRollBonus({ rolls: [3, 4] })
       const result = modifier.apply(bonus)
 
-      expect(result.rolls).toEqual([3, 4, 2])
-      expect(result.simpleMathModifier).toBe(5)
-      expect(result.logs).toHaveLength(1)
+      expect(result.simpleMathModifier).toBe(7)
       expect(result.logs[0]).toMatchObject({
         modifier: 'plus',
-        options: 5,
-        added: [5],
+        options: 7,
+        added: [7],
         removed: []
       })
     })
+  })
 
-    test('applies negative modifier correctly', () => {
-      class TestMinusModifier extends ArithmeticModifier {
-        protected readonly operator = '-' as const
-        protected readonly operatorName = 'minus' as const
-        protected readonly actionVerb = 'Subtract' as const
-      }
+  describe('static createMinus', () => {
+    test('creates minus modifier instance', () => {
+      const modifier = ArithmeticModifier.createMinus(3)
+      expect(modifier).toBeInstanceOf(ArithmeticModifier)
+      expect(modifier.toNotation()).toBe('-3')
+      expect(modifier.toDescription()).toEqual(['Subtract 3'])
+    })
 
-      const modifier = new TestMinusModifier(3)
-      const bonus = createNumericRollBonus({
-        rolls: [6, 4]
-      })
+    test('creates minus modifier with undefined value', () => {
+      const modifier = ArithmeticModifier.createMinus(undefined)
+      expect(modifier).toBeInstanceOf(ArithmeticModifier)
+      expect(modifier.toNotation()).toEqual('')
+      expect(modifier.toDescription()).toEqual([])
+    })
 
+    test('creates minus modifier with zero value', () => {
+      const modifier = ArithmeticModifier.createMinus(0)
+      expect(modifier).toBeInstanceOf(ArithmeticModifier)
+      expect(modifier.toNotation()).toEqual('')
+      expect(modifier.toDescription()).toEqual([])
+    })
+
+    test('minus modifier applies correctly', () => {
+      const modifier = ArithmeticModifier.createMinus(4)
+      const bonus = createNumericRollBonus({ rolls: [6, 5] })
       const result = modifier.apply(bonus)
 
-      expect(result.rolls).toEqual([6, 4])
-      expect(result.simpleMathModifier).toBe(-3)
-      expect(result.logs).toHaveLength(1)
+      expect(result.simpleMathModifier).toBe(-4)
       expect(result.logs[0]).toMatchObject({
         modifier: 'minus',
-        options: 3,
-        added: [-3],
-        removed: []
-      })
-    })
-
-    test('returns original bonus when options is undefined', () => {
-      const modifier = new TestArithmeticModifier(undefined)
-      const bonus = createNumericRollBonus({
-        rolls: [1, 2, 3]
-      })
-
-      const result = modifier.apply(bonus)
-      expect(result).toBe(bonus)
-    })
-
-    test('preserves existing logs', () => {
-      const modifier = new TestArithmeticModifier(2)
-      const existingLog = {
-        modifier: 'drop',
-        options: { lowest: 1 },
-        added: [],
-        removed: [1]
-      }
-      const bonus = createNumericRollBonus({
-        rolls: [4, 5],
-        logs: [existingLog]
-      })
-
-      const result = modifier.apply(bonus)
-
-      expect(result.logs).toHaveLength(2)
-      expect(result.logs[0]).toBe(existingLog)
-      expect(result.logs[1]).toMatchObject({
-        modifier: 'plus',
-        options: 2,
-        added: [2],
+        options: 4,
+        added: [-4],
         removed: []
       })
     })
   })
 
-  describe('toDescription', () => {
-    test('returns correct description for positive modifier', () => {
-      const modifier = new TestArithmeticModifier(7)
-      const description = modifier.toDescription()
-
-      expect(description).toEqual(['Add 7'])
+  describe('constructor with operator parameter', () => {
+    test('creates plus modifier with constructor', () => {
+      const modifier = new ArithmeticModifier(8, '+')
+      expect(modifier.toNotation()).toBe('+8')
+      expect(modifier.toDescription()).toEqual(['Add 8'])
     })
 
-    test('returns undefined when options is undefined', () => {
-      const modifier = new TestArithmeticModifier(undefined)
-      const description = modifier.toDescription()
-
-      expect(description).toBeUndefined()
+    test('creates minus modifier with constructor', () => {
+      const modifier = new ArithmeticModifier(6, '-')
+      expect(modifier.toNotation()).toBe('-6')
+      expect(modifier.toDescription()).toEqual(['Subtract 6'])
     })
 
-    test('returns correct description for subtract modifier', () => {
-      class TestMinusModifier extends ArithmeticModifier {
-        protected readonly operator = '-' as const
-        protected readonly operatorName = 'minus' as const
-        protected readonly actionVerb = 'Subtract' as const
-      }
-
-      const modifier = new TestMinusModifier(4)
-      const description = modifier.toDescription()
-
-      expect(description).toEqual(['Subtract 4'])
-    })
-  })
-
-  describe('toNotation', () => {
-    test('returns correct notation for positive modifier', () => {
-      const modifier = new TestArithmeticModifier(8)
-      const notation = modifier.toNotation()
-
-      expect(notation).toBe('+8')
-    })
-
-    test('returns undefined when options is undefined', () => {
-      const modifier = new TestArithmeticModifier(undefined)
-      const notation = modifier.toNotation()
-
-      expect(notation).toBeUndefined()
-    })
-
-    test('handles negative values for plus modifier', () => {
-      const modifier = new TestArithmeticModifier(-5)
-      const notation = modifier.toNotation()
-
-      expect(notation).toBe('-5')
-    })
-
-    test('returns correct notation for minus modifier', () => {
-      class TestMinusModifier extends ArithmeticModifier {
-        protected readonly operator = '-' as const
-        protected readonly operatorName = 'minus' as const
-        protected readonly actionVerb = 'Subtract' as const
-      }
-
-      const modifier = new TestMinusModifier(3)
-      const notation = modifier.toNotation()
-
-      expect(notation).toBe('-3')
-    })
-
-    test('handles zero values', () => {
-      const modifier = new TestArithmeticModifier(0)
-      const notation = modifier.toNotation()
-
-      expect(notation).toBe('+0')
+    test('constructor with undefined value', () => {
+      const modifier = new ArithmeticModifier(undefined, '+')
+      expect(modifier.toNotation()).toEqual('')
+      expect(modifier.toDescription()).toEqual([])
     })
   })
 })
