@@ -273,7 +273,7 @@ Ask your MCP client to:
 For issues and questions:
 
 - GitHub: https://github.com/RANDSUM/randsum
-- Documentation: https://randsum.org
+- Documentation: https://github.com/RANDSUM/randsum/blob/main/README.md
 
 ## 🔗 Related Packages
 
