@@ -4,6 +4,7 @@ import type { ModifierLog } from './modifiers'
 export interface RollParams extends RollOptions {
   quantity: number
   sides: number
+  faces?: string[]
   arithmetic: 'add' | 'subtract'
   key?: string
   argument: RollArgument

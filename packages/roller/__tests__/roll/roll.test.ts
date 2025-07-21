@@ -77,8 +77,7 @@ describe(roll, () => {
 
       describe('with custom faces', () => {
         const arg = {
-          sides: 20,
-          faces: ['a', 'b', 'c', 'd', 'e', 'f'],
+          sides: ['a', 'b', 'c', 'd', 'e', 'f'],
           quantity: 2
         }
 
@@ -93,8 +92,8 @@ describe(roll, () => {
         test('returns a results array of the custom faces', () => {
           const dummyArray = Array.from({ length: loops }, () => roll(arg))
           dummyArray.forEach(({ result }) => {
-            expect(arg.faces).toContain(result[0])
-            expect(arg.faces).toContain(result[1])
+            expect(arg.sides).toContain(result[0])
+            expect(arg.sides).toContain(result[1])
           })
         })
       })

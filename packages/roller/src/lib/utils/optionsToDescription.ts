@@ -1,13 +1,10 @@
 import type { RollOptions } from '../../types'
 import { ModifierProcessor } from './modifierProcessor'
+import { optionsToSidesFaces } from './optionsToSidesFaces'
 
-export function optionsToDescription({
-  modifiers,
-  quantity,
-  sides,
-  faces = [],
-  arithmetic
-}: RollOptions): string[] {
+export function optionsToDescription(options: RollOptions): string[] {
+  const { modifiers, quantity = 1, arithmetic } = options
+  const { sides, faces = [] } = optionsToSidesFaces(options)
   const descriptor = quantity === 1 ? 'die' : 'dice'
   const coreDescription = `Roll ${String(quantity)} ${String(sides)}-sided ${descriptor}`
   const customCoreDescription = `Roll ${String(quantity)} Dice with the following sides: ${faces.join(', ')}`

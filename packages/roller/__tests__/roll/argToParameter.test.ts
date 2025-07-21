@@ -588,8 +588,7 @@ describe(argToParameter, () => {
 
   describe('given custom faces', () => {
     const argument = {
-      quantity: 1,
-      faces: ['a', 'b', 'c', 'd', 'e', 'f']
+      sides: ['a', 'b', 'c', 'd', 'e', 'f']
     }
 
     test('returns a RollParameter matching the argument', () => {
