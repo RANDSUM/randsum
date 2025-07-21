@@ -1,13 +1,5 @@
 import type { RollOptions } from '../../types'
-import {
-  ArithmeticModifier,
-  CapModifier,
-  DropModifier,
-  ExplodeModifier,
-  ReplaceModifier,
-  RerollModifier,
-  UniqueModifier
-} from '../modifiers'
+import { ModifierProcessor } from './modifierProcessor'
 
 export function optionsToDescription({
   modifiers,
@@ -17,21 +9,7 @@ export function optionsToDescription({
 }: RollOptions): string[] {
   const descriptor = quantity === 1 ? 'die' : 'dice'
   const coreDescription = `Roll ${String(quantity)} ${String(sides)}-sided ${descriptor}`
-  const modifierDescription = modifiers
-    ? [
-        new CapModifier(modifiers.cap).toDescription(),
-        new DropModifier(modifiers.drop).toDescription(),
-        new ReplaceModifier(modifiers.replace).toDescription(),
-        new RerollModifier(modifiers.reroll).toDescription(),
-        new ExplodeModifier(modifiers.explode).toDescription(),
-        new UniqueModifier(modifiers.unique).toDescription(),
-        ArithmeticModifier.createPlus(modifiers.plus).toDescription(),
-        ArithmeticModifier.createMinus(modifiers.minus).toDescription()
-      ]
-        .flat()
-        .filter((desc): desc is string => typeof desc === 'string')
-        .filter((desc) => desc.length > 0)
-    : []
+  const modifierDescription = ModifierProcessor.processDescriptions(modifiers)
   const arithmeticDescription =
     arithmetic === 'subtract' ? 'and Subtract the result' : ''
 

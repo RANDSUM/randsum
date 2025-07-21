@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { coreSpreadRolls } from '../../../src/lib/utils/coreSpreadRolls'
+import { coreSpreadRolls } from '../../../src/lib/utils'
 
 describe('coreSpreadRolls', () => {
   describe('basic functionality', () => {

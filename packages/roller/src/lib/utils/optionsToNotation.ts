@@ -1,14 +1,6 @@
 import { isDiceNotation } from '../../isDiceNotation'
 import type { DiceNotation, RollOptions } from '../../types'
-import {
-  ArithmeticModifier,
-  CapModifier,
-  DropModifier,
-  ExplodeModifier,
-  ReplaceModifier,
-  RerollModifier,
-  UniqueModifier
-} from '../modifiers'
+import { ModifierProcessor } from './modifierProcessor'
 
 export function optionsToNotation({
   modifiers,
@@ -18,20 +10,7 @@ export function optionsToNotation({
 }: RollOptions): DiceNotation {
   const coreNotation = `${quantity}d${sides}`
   const arithmeticNotation = arithmetic === 'subtract' ? '-' : ''
-  const modifierNotation = modifiers
-    ? [
-        new CapModifier(modifiers.cap).toNotation(),
-        new DropModifier(modifiers.drop).toNotation(),
-        new ReplaceModifier(modifiers.replace).toNotation(),
-        new RerollModifier(modifiers.reroll).toNotation(),
-        new ExplodeModifier(modifiers.explode).toNotation(),
-        new UniqueModifier(modifiers.unique).toNotation(),
-        ArithmeticModifier.createPlus(modifiers.plus).toNotation(),
-        ArithmeticModifier.createMinus(modifiers.minus).toNotation()
-      ]
-        .filter((notation): notation is string => typeof notation === 'string')
-        .join('')
-    : []
+  const modifierNotation = ModifierProcessor.processNotations(modifiers)
 
   const proposed = `${arithmeticNotation}${coreNotation}${modifierNotation}`
 
