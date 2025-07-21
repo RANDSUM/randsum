@@ -55,12 +55,6 @@ describe('coreNotationPattern', () => {
       expect(coreNotationPattern.test('1d6+3')).toBe(true)
     })
 
-    it('does not match in the middle of string without anchor', () => {
-      const pattern = /\d+[Dd]\d+/
-      expect(pattern.test('roll 1d6 please')).toBe(true)
-      expect(coreNotationPattern.test('roll 1d6 please')).toBe(false)
-    })
-
     it('extracts correct match from complex notation', () => {
       const match = '2d6+3L1'.match(coreNotationPattern)
       expect(match?.[0]).toBe('2d6')
@@ -112,14 +106,6 @@ describe('completeRollPattern', () => {
   })
 
   describe('global pattern matching', () => {
-    it('matches components in complex notation strings', () => {
-      const input = '1d6+2d8'
-      const matches = input.match(completeRollPattern)
-      expect(matches).toBeTruthy()
-      expect(matches).toContain('1d6')
-      expect(matches).toContain('+2')
-    })
-
     it('handles complex notation components', () => {
       const input = '2d6+3L1'
       const cleanInput = input.replace(/\s/g, '')

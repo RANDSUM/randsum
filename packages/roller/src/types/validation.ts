@@ -2,15 +2,15 @@ import type { DiceNotation, RollOptions } from './core'
 
 export interface ValidValidationResult {
   valid: true
-  description: string[]
-  options: RollOptions
-  notation: DiceNotation
+  argument: DiceNotation
+  description: string[][]
+  options: RollOptions[]
+  notation: DiceNotation[]
 }
 
 export interface InvalidValidationResult {
   valid: false
-  description: string[]
-  options: Record<string, never>
+  argument: string
 }
 
 export type ValidationResult = ValidValidationResult | InvalidValidationResult

@@ -10,16 +10,16 @@ export function validateNotation(notation: string): ValidationResult {
   if (!isDiceNotation(notation)) {
     return {
       valid: false,
-      description: ['Invalid Notation'],
-      options: {}
+      argument: notation
     }
   }
 
   const options = notationToOptions(notation)
   return {
     valid: true,
+    argument: notation,
     options,
-    notation: optionsToNotation(options),
-    description: optionsToDescription(options)
+    notation: options.map((o) => optionsToNotation(o)),
+    description: options.map((o) => optionsToDescription(o))
   }
 }
