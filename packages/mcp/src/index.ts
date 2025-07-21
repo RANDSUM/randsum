@@ -148,7 +148,7 @@ function formatRollResult(result: RollerRollResult): string {
 
 function formatValidationResult(result: ValidationResult): string {
   if (!result.valid) {
-    return `❌ Invalid Dice Notation\n\nError: ${result.description.join(', ')}`
+    return `❌ Invalid Dice Notation`
   }
 
   const { notation, description, options } = result

@@ -3,14 +3,12 @@ import type { RollArgument, RollParams } from '../../types'
 import { optionsFromArgument } from './optionsFromArgument'
 
 export function argToParameter(argument: RollArgument): RollParams[] {
-  const options = optionsFromArgument(argument)
-  return [
-    {
-      ...options,
-      arithmetic: options.arithmetic ?? 'add',
-      argument,
-      notation: optionsToNotation(options),
-      description: optionsToDescription(options)
-    }
-  ]
+  const allOptions = optionsFromArgument(argument)
+  return allOptions.map((options) => ({
+    ...options,
+    arithmetic: options.arithmetic ?? 'add',
+    argument,
+    notation: optionsToNotation(options),
+    description: optionsToDescription(options)
+  }))
 }

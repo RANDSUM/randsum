@@ -2,8 +2,8 @@ import type { ModifierOptions, NumericRollBonus } from '../../types'
 import { BaseModifier } from './BaseModifier'
 
 export class ArithmeticModifier extends BaseModifier<number> {
-  public static readonly plusPattern: RegExp = /\+\d+/g
-  public static readonly minusPattern: RegExp = /-\d+/g
+  public static readonly plusPattern: RegExp = /\+\d+(?![dD])/g
+  public static readonly minusPattern: RegExp = /-\d+(?![dD])/g
 
   protected readonly operator: '+' | '-'
   protected readonly operatorName: 'plus' | 'minus'

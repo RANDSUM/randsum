@@ -99,14 +99,15 @@ describe(roll, () => {
         const argOne = 20
         const argTwo = { sides: 20 }
         const argThree = '1d20'
+        const argFour = '1d20+1d20'
         test('it never goes outside of the bounds of the roll', () => {
           const dummyArray = Array.from({ length: loops }, () =>
-            roll(argOne, argTwo, argThree)
+            roll(argOne, argTwo, argThree, argFour)
           )
           dummyArray.forEach(({ total, rolls }) => {
-            expect(total).toBeLessThanOrEqual(60)
-            expect(total).toBeGreaterThanOrEqual(3)
-            expect(rolls).toHaveLength(3)
+            expect(total).toBeLessThanOrEqual(100)
+            expect(total).toBeGreaterThanOrEqual(5)
+            expect(rolls).toHaveLength(5)
             rolls.forEach((roll) => {
               expect(roll.total).toBeLessThanOrEqual(20)
               expect(roll.total).toBeGreaterThanOrEqual(1)

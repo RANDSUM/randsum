@@ -551,4 +551,39 @@ describe(argToParameter, () => {
       })
     })
   })
+
+  describe('given Single-String Multi Dice Notation', () => {
+    const argument = '1d20+2d6-1d8'
+
+    test('returns a RollParameter matching the notation', () => {
+      const params = argToParameter(argument)
+
+      expect(params).toMatchObject([
+        {
+          argument,
+          quantity: 1,
+          sides: 20,
+          notation: '1d20',
+          description: ['Roll 1 20-sided die'],
+          arithmetic: 'add'
+        },
+        {
+          argument,
+          quantity: 2,
+          sides: 6,
+          notation: '2d6',
+          description: ['Roll 2 6-sided dice'],
+          arithmetic: 'add'
+        },
+        {
+          argument,
+          quantity: 1,
+          sides: 8,
+          notation: '-1d8',
+          description: ['Roll 1 8-sided die', 'and Subtract the result'],
+          arithmetic: 'subtract'
+        }
+      ])
+    })
+  })
 })

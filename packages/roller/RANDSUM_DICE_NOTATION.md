@@ -299,7 +299,8 @@ roll({
 You can roll multiple dice sides in a single by passing multiple arguments:
 
 ```typescript
-roll("1d20", "2d6", "10d8+2") // Roll 1d20, 2d6, and 10d8 + 2.
+roll("1d20", "-2d6", "10d8+2") // Roll 1d20, 2d6, and 10d8 + 2.
+roll("1d20-2d6+10d8+2") // Same as above, but in a single string
 roll(
   {
     sides: 20
@@ -307,10 +308,12 @@ roll(
   {
     sides: 6,
     quantity: 2
+    arithmetic: "subtract"
   },
   {
     sides: 8,
     quantity: 10
+    modifiers: { plus: 2 }
   }
 )
 ```

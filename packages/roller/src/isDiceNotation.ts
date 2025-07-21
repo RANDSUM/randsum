@@ -8,5 +8,6 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   if (!basicTest) return false
 
   const cleanArg = trimmedArg.replace(/\s/g, '').replace(' ', '')
-  return cleanArg.replace(completeRollPattern, '').length === 0
+  const remaining = cleanArg.replaceAll(completeRollPattern, '')
+  return remaining.length === 0
 }
