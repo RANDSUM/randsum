@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import type {
-  ModifierOptions,
-  NumericRollBonus,
-  RollParams,
-  RollRecord
-} from '../../types'
 import { coreRandom } from '../../lib/utils'
+import type { ModifierOptions, NumericRollBonus } from '../../types/modifiers'
+import type { RollParams, RollRecord } from '../../types/roll'
 import { applyModifier } from './applyModifier'
 
 export function generateHistory<T>(

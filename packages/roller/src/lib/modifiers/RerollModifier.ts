@@ -1,10 +1,10 @@
+import type { RequiredNumericRollParameters } from '../../types/core'
 import type {
   ModifierLog,
   ModifierOptions,
   NumericRollBonus,
-  RequiredNumericRollParameters,
   RerollOptions
-} from '../../types'
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class RerollModifier extends BaseModifier<RerollOptions> {

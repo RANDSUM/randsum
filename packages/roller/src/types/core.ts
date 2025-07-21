@@ -9,7 +9,10 @@ export interface RollOptions<T = string> {
   modifiers?: ModifierOptions
 }
 
-export interface RequiredNumericRollParameters {
+export type RequiredNumericRollParameters = Pick<
+  RollOptions,
+  'quantity' | 'sides'
+> & {
   quantity: number
   sides: number
 }

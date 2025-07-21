@@ -1,4 +1,4 @@
-import type { RollOptions } from '../../types'
+import type { RollOptions } from '../../types/core'
 import { ModifierProcessor } from './modifierProcessor'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
 

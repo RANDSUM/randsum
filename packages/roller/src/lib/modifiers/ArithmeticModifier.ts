@@ -1,4 +1,4 @@
-import type { ModifierOptions, NumericRollBonus } from '../../types'
+import type { ModifierOptions, NumericRollBonus } from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class ArithmeticModifier extends BaseModifier<number> {

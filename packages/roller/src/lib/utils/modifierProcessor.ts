@@ -1,4 +1,4 @@
-import type { ModifierOptions } from '../../types'
+import type { ModifierOptions } from '../../types/modifiers'
 import type { BaseModifier } from '../modifiers'
 import {
   ArithmeticModifier,

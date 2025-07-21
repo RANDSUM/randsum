@@ -2,7 +2,7 @@ import type {
   ComparisonOptions,
   ModifierOptions,
   NumericRollBonus
-} from '../../types'
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class CapModifier extends BaseModifier<ComparisonOptions> {
@@ -22,7 +22,7 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
     return notations.reduce<Pick<ModifierOptions, 'cap'>>(
       (acc, notationString = '') => {
         const capString = (notationString.split(/[Cc]/)[1] ?? '')
-          .replaceAll(/{|}/g, '')
+          .replace(/[{}]/g, '')
           .split(',')
 
         const capOptions = capString.reduce<ComparisonOptions>(
@@ -30,12 +30,12 @@ export class CapModifier extends BaseModifier<ComparisonOptions> {
             if (note.includes('<')) {
               return {
                 ...innerAcc,
-                lessThan: Number(note.replaceAll('<', ''))
+                lessThan: Number(note.replace(/</g, ''))
               }
             }
             return {
               ...innerAcc,
-              greaterThan: Number(note.replaceAll('>', ''))
+              greaterThan: Number(note.replace(/>/g, ''))
             }
           },
           {}

@@ -1,8 +1,5 @@
-import type {
-  ModifierOptions,
-  NumericRollBonus,
-  RequiredNumericRollParameters
-} from '../../types'
+import type { RequiredNumericRollParameters } from '../../types/core'
+import type { ModifierOptions, NumericRollBonus } from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class ExplodeModifier extends BaseModifier<boolean> {

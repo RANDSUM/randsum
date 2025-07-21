@@ -3,8 +3,7 @@ import type {
   ModifierOptions,
   NumericRollBonus,
   ReplaceOptions
-} from '../../types'
-
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 import { CapModifier } from './CapModifier'
 
@@ -27,8 +26,7 @@ export class ReplaceModifier extends BaseModifier<
     const replace = notations
       .map((notationString) => {
         const replaceOptions = (notationString.split(/[Vv]/)[1] ?? '')
-          .replaceAll('{', '')
-          .replaceAll('}', '')
+          .replace(/[{}]/g, '')
           .split(',')
           .map((replacement) => {
             const [noteFrom = '', noteTo] = replacement.split('=')
@@ -37,13 +35,13 @@ export class ReplaceModifier extends BaseModifier<
             if (noteFrom.includes('>')) {
               return {
                 ...coreReplacement,
-                from: { greaterThan: Number(noteFrom.replaceAll('>', '')) }
+                from: { greaterThan: Number(noteFrom.replace(/>/g, '')) }
               }
             }
             if (noteFrom.includes('<')) {
               return {
                 ...coreReplacement,
-                from: { lessThan: Number(noteFrom.replaceAll('<', '')) }
+                from: { lessThan: Number(noteFrom.replace(/</g, '')) }
               }
             }
             return { ...coreReplacement, from: Number(noteFrom) }

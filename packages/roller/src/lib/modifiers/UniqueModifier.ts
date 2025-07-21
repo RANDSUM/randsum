@@ -1,9 +1,9 @@
+import type { RequiredNumericRollParameters } from '../../types/core'
 import type {
   ModifierOptions,
   NumericRollBonus,
-  RequiredNumericRollParameters,
   UniqueOptions
-} from '../../types'
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
@@ -22,7 +22,9 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
         return { unique: true }
       }
       const notUnique = notationString
-        .replaceAll(/[Uu]{/g, '')
+        .replaceAll('U', '')
+        .replaceAll('u', '')
+        .replaceAll('{', '')
         .replaceAll('}', '')
         .split(',')
 

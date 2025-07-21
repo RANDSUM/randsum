@@ -1,5 +1,4 @@
 export { BaseModifier } from './BaseModifier'
-
 export { ArithmeticModifier } from './ArithmeticModifier'
 export { CapModifier } from './CapModifier'
 export { DropModifier } from './DropModifier'

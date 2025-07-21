@@ -1,11 +1,10 @@
 import type { DiceNotation, RollArgument, RollOptions } from './core'
-import type { ModifierLog } from './modifiers'
+import type { NumericRollBonus } from './modifiers'
 
-export interface RollParams<T = string> extends RollOptions<T> {
-  quantity: number
+export interface RollParams<T = string>
+  extends Required<Omit<RollOptions<T>, 'sides'>> {
   sides: number
   faces?: T[]
-  arithmetic: 'add' | 'subtract'
   key?: string
   argument: RollArgument<T>
   description: string[]
@@ -17,10 +16,10 @@ export interface RollRecord<T = string> {
   parameters: RollParams<T>
   rolls: number[]
   modifierHistory: {
+    logs: NumericRollBonus['logs']
     modifiedRolls: number[]
     total: number
     initialRolls: number[]
-    logs: ModifierLog[]
   }
   appliedTotal: number
   customResults?: T[]
