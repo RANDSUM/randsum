@@ -9,8 +9,9 @@ export interface RollOptions {
   modifiers?: ModifierOptions
 }
 
-export type RequiredNumericRollParameters = Required<
-  Pick<RollOptions, 'quantity' | 'sides'>
->
+export interface RequiredNumericRollParameters {
+  quantity: number
+  sides: number
+}
 
 export type RollArgument = RollOptions | DiceNotation | number | `${number}`
