@@ -29,8 +29,7 @@ This repository contains multiple packages and applications for dice rolling and
 
 ### Applications
 
-- **[@randsum/mcp](apps/mcp)** - Model Context Protocol server for AI integration
-- **[Discord Bot](apps/robo)** - Interactive Discord bot for dice rolling
+- **[@randsum/mcp](packages/mcp)** - Model Context Protocol server for AI integration
 
 All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.
 
