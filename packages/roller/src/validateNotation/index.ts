@@ -1,7 +1,10 @@
-import { OptionsConverter } from '../lib/utils'
 import { isDiceNotation } from '../isDiceNotation'
 import type { ValidationResult } from '../types'
-import { notationToOptions } from './notationToOptions'
+import {
+  notationToOptions,
+  optionsToDescription,
+  optionsToNotation
+} from '../lib/utils'
 
 export function validateNotation(notation: string): ValidationResult {
   if (!isDiceNotation(notation)) {
@@ -13,11 +16,10 @@ export function validateNotation(notation: string): ValidationResult {
   }
 
   const options = notationToOptions(notation)
-  const converter = new OptionsConverter(options)
   return {
     valid: true,
     options,
-    notation: converter.toNotation,
-    description: converter.toDescription
+    notation: optionsToNotation(options),
+    description: optionsToDescription(options)
   }
 }
