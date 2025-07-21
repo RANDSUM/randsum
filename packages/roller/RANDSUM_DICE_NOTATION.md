@@ -294,6 +294,46 @@ roll({
 })
 ```
 
+## Multiple Dice Sides in a Single Roll
+
+You can roll multiple dice sides in a single by passing multiple arguments:
+
+```typescript
+roll("1d20", "2d6", "10d8+2") // Roll 1d20, 2d6, and 10d8 + 2.
+roll(
+  {
+    sides: 20
+  },
+  {
+    sides: 6,
+    quantity: 2
+  },
+  {
+    sides: 8,
+    quantity: 10
+  }
+)
+```
+
+## Adding or Subtracting Rolls from the Total
+
+You can add or subtract rolls from the total by using the `arithmetic` option, or by adding a `+` or `-` to the notation:
+
+```typescript
+roll("2d12-1d6") // Roll 2d12, add them, then subtract 1d6
+roll(
+  {
+    sides: 12,
+    quantity: 2
+  },
+  {
+    sides: 6,
+    quantity: 1,
+    arithmetic: "subtract"
+  }
+)
+```
+
 ## Attribution
 
 The extended notation syntax was inspired by [Sophie's Dice](https://sophiehoulden.com/dice/documentation/notation.html#keep).
