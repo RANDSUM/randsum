@@ -66,6 +66,33 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
     initialRolls: number[],
     newRolls: number[]
   ): ModifierLog {
+    if (initialRolls === newRolls) {
+      return {
+        modifier,
+        options: this.options,
+        added: [],
+        removed: []
+      }
+    }
+
+    if (initialRolls.length === 0) {
+      return {
+        modifier,
+        options: this.options,
+        added: [...newRolls],
+        removed: []
+      }
+    }
+
+    if (newRolls.length === 0) {
+      return {
+        modifier,
+        options: this.options,
+        added: [],
+        removed: [...initialRolls]
+      }
+    }
+
     const initialFreq = new Map<number, number>()
     const newFreq = new Map<number, number>()
 
