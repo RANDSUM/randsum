@@ -1,6 +1,6 @@
 import { describe, expect, mock, test } from 'bun:test'
 import { BaseModifier } from '../../../src/lib/modifiers'
-import type { ModifierLog, NumericRollBonus } from '../../../dist'
+import type { NumericRollBonus } from '../../../src/types/modifiers'
 
 class TestModifier extends BaseModifier<number> {
   public static override parse = mock((_modifierString: string) => {
