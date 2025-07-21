@@ -6,7 +6,6 @@ import type {
   RollRecord
 } from '../../types'
 import { coreRandom } from '../../lib/utils'
-import { calculateTotal } from '../utils/calculateTotal'
 import { applyModifier } from './applyModifier'
 
 export function generateHistory(
@@ -30,7 +29,7 @@ export function generateHistory(
     }
 
     return {
-      total: calculateTotal(rolls),
+      total: rolls.reduce((acc, cur) => Number(acc) + cur, 0),
       initialRolls: rolls,
       modifiedRolls,
       logs: []
@@ -75,7 +74,10 @@ export function generateHistory(
   return {
     modifiedRolls: bonuses.rolls,
     initialRolls: rolls,
-    total: calculateTotal(bonuses.rolls, bonuses.simpleMathModifier),
+    total: bonuses.rolls.reduce(
+      (acc, cur) => Number(acc) + cur,
+      bonuses.simpleMathModifier
+    ),
     logs: bonuses.logs
   }
 }
