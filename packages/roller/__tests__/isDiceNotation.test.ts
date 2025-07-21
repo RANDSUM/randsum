@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { isDiceNotation } from '../../../src/lib/guards/isDiceNotation'
+import { isDiceNotation } from '../src/isDiceNotation'
 
 describe('isDiceNotation', () => {
   describe('valid dice notation strings', () => {
