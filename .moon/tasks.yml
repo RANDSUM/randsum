@@ -86,6 +86,7 @@ tasks:
       - "tsconfig.json"
     options:
       allowFailure: true
+      runInCI: false
 
   tsCheck:
     command: "tsc --noEmit"
