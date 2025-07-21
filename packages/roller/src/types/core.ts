@@ -5,6 +5,7 @@ export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
 export interface RollOptions {
   quantity?: number
   arithmetic?: 'add' | 'subtract'
+  faces?: string[]
   sides: number
   modifiers?: ModifierOptions
 }

@@ -6,6 +6,7 @@ export function argToParameter(argument: RollArgument): RollParams[] {
   const allOptions = optionsFromArgument(argument)
   return allOptions.map((options) => ({
     ...options,
+    quantity: options.quantity ?? 1,
     arithmetic: options.arithmetic ?? 'add',
     argument,
     notation: optionsToNotation(options),

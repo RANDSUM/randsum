@@ -5,10 +5,10 @@ describe(d20Roll, () => {
   describe('basic roll', () => {
     const args: FifthRollArgument = { modifier: 5 }
 
-    test('returns a result within valid range', () => {
+    test('returns a total within valid range', () => {
       const rollResult = d20Roll(args)
-      expect(rollResult.result).toBeGreaterThanOrEqual(6)
-      expect(rollResult.result).toBeLessThanOrEqual(25)
+      expect(rollResult.total).toBeGreaterThanOrEqual(6)
+      expect(rollResult.total).toBeLessThanOrEqual(25)
     })
 
     test('applies modifier correctly', () => {

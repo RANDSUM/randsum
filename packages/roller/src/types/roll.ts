@@ -2,6 +2,7 @@ import type { DiceNotation, RollArgument, RollOptions } from './core'
 import type { ModifierLog } from './modifiers'
 
 export interface RollParams extends RollOptions {
+  quantity: number
   arithmetic: 'add' | 'subtract'
   key?: string
   argument: RollArgument
@@ -20,6 +21,7 @@ export interface RollRecord {
     logs: ModifierLog[]
   }
   appliedTotal: number
+  customResults?: string[]
   total: number
 }
 
@@ -28,6 +30,6 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
   result: TResult
 }
 
-export interface RollerRollResult extends RollResult {
+export interface RollerRollResult extends RollResult<string[]> {
   total: number
 }

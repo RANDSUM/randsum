@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { argToParameter } from '../src/roll/argToParameter'
+import { argToParameter } from '../../src/roll/argToParameter'
 
 describe(argToParameter, () => {
   describe('given a number', () => {
@@ -77,7 +77,6 @@ describe(argToParameter, () => {
           plus: 2,
           minus: 1,
           drop: {
-            highest: undefined,
             greaterThan: 2,
             lessThan: 6,
             lowest: 1,

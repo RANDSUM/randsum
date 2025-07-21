@@ -8,9 +8,9 @@ import {
   test
 } from 'bun:test'
 
-import * as RandomUtils from '../src/lib/utils/randomUtils'
-import { generateRollRecord } from '../src/roll/generateRollRecord'
-import { createRollParams } from './support/fixtures'
+import * as RandomUtils from '../../src/lib/utils/randomUtils'
+import { generateRollRecord } from '../../src/roll/generateRollRecord'
+import { createRollParams } from '../support/fixtures'
 
 describe(generateRollRecord, () => {
   beforeAll(() => {
