@@ -20,12 +20,11 @@ export function rollTable(
 
   const {
     rolls,
-    result: [result]
+    result: [result],
+    total
   } = roll({ sides: faces })
 
-  const mainRoll = rolls[0]
-
-  if (!result || !mainRoll) {
+  if (!result) {
     throw new Error('Failed to properly roll.')
   }
 
@@ -35,7 +34,7 @@ export function rollTable(
       ...result,
       table,
       tableName,
-      roll: mainRoll.total
+      roll: total
     }
   }
 }
