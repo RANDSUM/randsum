@@ -18,7 +18,6 @@ export type {
 } from './modifiers'
 
 export type {
-  ModifierHistory,
   RollParams,
   RollRecord,
   RollResult,

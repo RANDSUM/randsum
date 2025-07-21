@@ -80,6 +80,13 @@ tasks:
       runDepsInParallel: true
       runInCI: true
 
+  unused:
+    command: "bunx ts-unused-exports ./tsconfig.json"
+    inputs:
+      - "tsconfig.json"
+    options:
+      allowFailure: true
+
   tsCheck:
     command: "tsc --noEmit"
     inputs:

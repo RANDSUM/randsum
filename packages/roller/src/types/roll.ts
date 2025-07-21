@@ -1,13 +1,6 @@
 import type { DiceNotation, RollArgument, RollOptions } from './core'
 import type { ModifierLog } from './modifiers'
 
-export interface ModifierHistory {
-  modifiedRolls: number[]
-  total: number
-  initialRolls: number[]
-  logs: ModifierLog[]
-}
-
 export interface RollParams extends RollOptions {
   arithmetic: 'add' | 'subtract'
   key?: string
@@ -20,7 +13,12 @@ export interface RollRecord {
   description: RollParams['description']
   parameters: RollParams
   rolls: number[]
-  modifierHistory: ModifierHistory
+  modifierHistory: {
+    modifiedRolls: number[]
+    total: number
+    initialRolls: number[]
+    logs: ModifierLog[]
+  }
   appliedTotal: number
   total: number
 }
