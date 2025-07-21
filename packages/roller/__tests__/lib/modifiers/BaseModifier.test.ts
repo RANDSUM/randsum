@@ -28,7 +28,7 @@ class TestModifier extends BaseModifier<number> {
     modifier: string,
     initialRolls: number[],
     newRolls: number[]
-  ): ModifierLog {
+  ): { added: number[]; removed: number[]; modifier: string } {
     return this.toModifierLog(modifier, initialRolls, newRolls)
   }
 }
