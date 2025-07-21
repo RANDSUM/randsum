@@ -1,18 +1,15 @@
 import type { DiceNotation, RollOptions } from './core'
 
-interface BaseValidationResult {
-  valid: boolean
-  description: string[]
-}
-
-export interface ValidValidationResult extends BaseValidationResult {
+export interface ValidValidationResult {
   valid: true
+  description: string[]
   options: RollOptions
   notation: DiceNotation
 }
 
-export interface InvalidValidationResult extends BaseValidationResult {
+export interface InvalidValidationResult {
   valid: false
+  description: string[]
   options: Record<string, never>
 }
 
