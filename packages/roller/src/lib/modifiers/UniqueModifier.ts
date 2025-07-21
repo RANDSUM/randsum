@@ -21,10 +21,7 @@ export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {
         }
         return { unique: true }
       }
-      const notUnique = notationString
-        .replaceAll(/[Uu]{/g, '')
-        .replaceAll('}', '')
-        .split(',')
+      const notUnique = notationString.replace(/[Uu{}]/g, '').split(',')
 
       return {
         unique: {

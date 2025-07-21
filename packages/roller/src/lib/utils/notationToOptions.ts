@@ -10,11 +10,13 @@ import {
 import { coreNotationPattern } from '../patterns'
 import type { DiceNotation, RollOptions } from '../../types'
 
+const globalCoreNotationPattern = new RegExp(coreNotationPattern.source, 'g')
+
 export function notationToOptions<T = string>(
   notationString: DiceNotation
 ): RollOptions<T>[] {
   const coreMatches = Array.from(
-    notationString.matchAll(new RegExp(coreNotationPattern.source, 'g'))
+    notationString.matchAll(globalCoreNotationPattern)
   )
 
   if (coreMatches.length <= 1) {

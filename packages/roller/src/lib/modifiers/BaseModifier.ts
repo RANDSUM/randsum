@@ -32,14 +32,6 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
     notationString: string,
     pattern: RegExp
   ): string[] {
-    const MAX_INPUT_LENGTH = 1000
-
-    if (notationString.length > MAX_INPUT_LENGTH) {
-      throw new Error(
-        `Input string too long: ${notationString.length} characters exceeds maximum of ${MAX_INPUT_LENGTH}`
-      )
-    }
-
     return Array.from(notationString.matchAll(pattern), (match) => match[0])
   }
 
