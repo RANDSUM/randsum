@@ -36,11 +36,11 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
 
     if (notationString.length > MAX_INPUT_LENGTH) {
       throw new Error(
-        `Input string too long: ${String(notationString.length)} characters exceeds maximum of ${String(MAX_INPUT_LENGTH)}`
+        `Input string too long: ${notationString.length} characters exceeds maximum of ${MAX_INPUT_LENGTH}`
       )
     }
 
-    return [...notationString.matchAll(pattern)].map((matches) => matches[0])
+    return Array.from(notationString.matchAll(pattern), (match) => match[0])
   }
 
   protected static createBracedComparisonPattern(
@@ -48,8 +48,11 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
     suffix = '',
     requireOperator = false
   ): RegExp {
-    const operatorPattern = requireOperator ? '[<>]' : '[<>]?'
-    const bracedContent = `{(?:${operatorPattern}\\d+,)*${operatorPattern}\\d+}`
+    const operator = requireOperator ? '[<>]' : '[<>]?'
+    const numberWithOperator = `${operator}\\d+`
+    const commaSeparatedList = `(?:${numberWithOperator},)*${numberWithOperator}`
+    const bracedContent = `{${commaSeparatedList}}`
+
     return new RegExp(`${prefix}${bracedContent}${suffix}`, 'g')
   }
 
@@ -57,7 +60,10 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
     prefix: string,
     suffix = ''
   ): RegExp {
-    const bracedContent = '{(?:[<>]?\\d+=\\d+,)*[<>]?\\d+=\\d+}'
+    const replacementPair = '[<>]?\\d+=\\d+'
+    const commaSeparatedPairs = `(?:${replacementPair},)*${replacementPair}`
+    const bracedContent = `{${commaSeparatedPairs}}`
+
     return new RegExp(`${prefix}${bracedContent}${suffix}`, 'g')
   }
 
@@ -66,31 +72,19 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
     initialRolls: number[],
     newRolls: number[]
   ): ModifierLog {
+    const baseLog = { modifier, options: this.options }
+
+    // Handle simple cases first
     if (initialRolls === newRolls) {
-      return {
-        modifier,
-        options: this.options,
-        added: [],
-        removed: []
-      }
+      return { ...baseLog, added: [], removed: [] }
     }
 
     if (initialRolls.length === 0) {
-      return {
-        modifier,
-        options: this.options,
-        added: [...newRolls],
-        removed: []
-      }
+      return { ...baseLog, added: [...newRolls], removed: [] }
     }
 
     if (newRolls.length === 0) {
-      return {
-        modifier,
-        options: this.options,
-        added: [],
-        removed: [...initialRolls]
-      }
+      return { ...baseLog, added: [], removed: [...initialRolls] }
     }
 
     const initialFreq = new Map<number, number>()
@@ -125,46 +119,54 @@ export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
       }
     }
 
-    return {
-      modifier,
-      options: this.options,
-      added,
-      removed
-    }
+    return { ...baseLog, added, removed }
   }
 
   protected formatHumanList(list: (number | string)[]): string {
-    return list
-      .map((num, index, list) => {
-        if (list.length === 1) return `[${String(num)}]`
-        if (index === list.length - 1) return `and [${String(num)}]`
-        return `[${String(num)}] `
-      })
-      .join('')
+    if (list.length === 0) return ''
+    if (list.length === 1) return `[${String(list[0])}]`
+
+    const formattedItems = list.map((item) => `[${String(item)}]`)
+    const lastItem = formattedItems.pop()
+
+    return `${formattedItems.join(' ')} and ${lastItem}`
   }
 
   protected formatGreaterLessNotation(
     options: ComparisonOptions,
     list: string[] = []
   ): string[] {
-    if (options.greaterThan) {
-      list.push(`>${String(options.greaterThan)}`)
-    }
-    if (options.lessThan) {
-      list.push(`<${String(options.lessThan)}`)
-    }
-    return list
+    return this.formatGreaterLessComparison(
+      options,
+      (value) => `>${String(value)}`,
+      (value) => `<${String(value)}`,
+      list
+    )
   }
 
   protected formatGreaterLessDescription(
     options: ComparisonOptions,
     list: string[] = []
   ): string[] {
+    return this.formatGreaterLessComparison(
+      options,
+      (value) => `greater than [${String(value)}]`,
+      (value) => `less than [${String(value)}]`,
+      list
+    )
+  }
+
+  private formatGreaterLessComparison(
+    options: ComparisonOptions,
+    greaterThanFormatter: (value: number) => string,
+    lessThanFormatter: (value: number) => string,
+    list: string[] = []
+  ): string[] {
     if (options.greaterThan) {
-      list.push(`greater than [${String(options.greaterThan)}]`)
+      list.push(greaterThanFormatter(options.greaterThan))
     }
     if (options.lessThan) {
-      list.push(`less than [${String(options.lessThan)}]`)
+      list.push(lessThanFormatter(options.lessThan))
     }
     return list
   }

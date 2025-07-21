@@ -7,8 +7,8 @@ export function roll(...args: RollArgument[]): RollerRollResult {
   const rolls = parameters.map((parameter) => generateRollRecord(parameter))
   const total = rolls.reduce((acc, cur) => {
     const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
-    const total = cur.total * factor
-    return acc + total
+    const t = cur.total * factor
+    return acc + t
   }, 0)
 
   return {
