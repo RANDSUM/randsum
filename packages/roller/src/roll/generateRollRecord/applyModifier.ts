@@ -16,7 +16,7 @@ import {
   UniqueModifier
 } from '../../lib/modifiers'
 
-export interface ModifierContext {
+interface ModifierContext {
   sides: number
   quantity: number
   rollOne: () => number
