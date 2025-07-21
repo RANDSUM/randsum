@@ -33,7 +33,7 @@ function listOfNotations(
   for (const [i, currentMatch] of coreMatches.entries()) {
     const nextMatch = coreMatches[i + 1]
 
-    if (currentMatch?.index === undefined) continue
+    if (currentMatch.index === undefined) continue
 
     let startPos: number
 
