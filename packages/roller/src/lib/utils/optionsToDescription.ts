@@ -1,10 +1,9 @@
 import type { RollOptions } from '../../types'
 import {
+  ArithmeticModifier,
   CapModifier,
   DropModifier,
   ExplodeModifier,
-  MinusModifier,
-  PlusModifier,
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
@@ -26,8 +25,8 @@ export function optionsToDescription({
         new RerollModifier(modifiers.reroll).toDescription(),
         new ExplodeModifier(modifiers.explode).toDescription(),
         new UniqueModifier(modifiers.unique).toDescription(),
-        new PlusModifier(modifiers.plus).toDescription(),
-        new MinusModifier(modifiers.minus).toDescription()
+        ArithmeticModifier.createPlus(modifiers.plus).toDescription(),
+        ArithmeticModifier.createMinus(modifiers.minus).toDescription()
       ]
         .flat()
         .filter((desc): desc is string => typeof desc === 'string')

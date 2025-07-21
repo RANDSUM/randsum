@@ -1,9 +1,8 @@
 import {
+  ArithmeticModifier,
   CapModifier,
   DropModifier,
   ExplodeModifier,
-  MinusModifier,
-  PlusModifier,
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
@@ -21,8 +20,8 @@ export const completeRollPattern: RegExp = new RegExp(
     ReplaceModifier.pattern.source,
     RerollModifier.pattern.source,
     CapModifier.pattern.source,
-    PlusModifier.pattern.source,
-    MinusModifier.pattern.source
+    ArithmeticModifier.plusPattern.source,
+    ArithmeticModifier.minusPattern.source
   ].join('|'),
   'g'
 ) satisfies RegExp

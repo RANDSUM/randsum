@@ -1,9 +1,8 @@
 import {
+  ArithmeticModifier,
   CapModifier,
   DropModifier,
   ExplodeModifier,
-  MinusModifier,
-  PlusModifier,
   ReplaceModifier,
   RerollModifier,
   UniqueModifier
@@ -29,8 +28,8 @@ export function notationToOptions(notationString: DiceNotation): RollOptions {
       ...ReplaceModifier.parse(modifiersString),
       ...RerollModifier.parse(modifiersString),
       ...CapModifier.parse(modifiersString),
-      ...PlusModifier.parse(modifiersString),
-      ...MinusModifier.parse(modifiersString)
+      ...ArithmeticModifier.parsePlus(modifiersString),
+      ...ArithmeticModifier.parseMinus(modifiersString)
     }
   }
 }
