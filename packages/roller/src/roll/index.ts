@@ -2,7 +2,9 @@ import type { RollArgument, RollerRollResult } from '../types'
 import { argToParameter } from './argToParameter'
 import { generateRollRecord } from './generateRollRecord'
 
-export function roll(...args: RollArgument[]): RollerRollResult {
+export function roll<T = string>(
+  ...args: RollArgument<T>[]
+): RollerRollResult<T> {
   const parameters = args.flatMap((arg) => argToParameter(arg))
   const rolls = parameters.map((parameter) => generateRollRecord(parameter))
   const total = rolls.reduce((acc, cur) => {
@@ -11,9 +13,13 @@ export function roll(...args: RollArgument[]): RollerRollResult {
     return acc + t
   }, 0)
 
+  const isCustom = rolls.every((roll) => roll.customResults)
+
   return {
     rolls,
-    result: total,
+    result: rolls.flatMap((roll) =>
+      isCustom ? (roll.customResults ?? []) : (roll.rolls.map(String) as T)
+    ),
     total
   }
 }

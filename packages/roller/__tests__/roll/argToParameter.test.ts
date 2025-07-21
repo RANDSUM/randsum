@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { argToParameter } from '../src/roll/argToParameter'
+import { argToParameter } from '../../src/roll/argToParameter'
 
 describe(argToParameter, () => {
   describe('given a number', () => {
@@ -77,7 +77,6 @@ describe(argToParameter, () => {
           plus: 2,
           minus: 1,
           drop: {
-            highest: undefined,
             greaterThan: 2,
             lessThan: 6,
             lowest: 1,
@@ -584,6 +583,25 @@ describe(argToParameter, () => {
           arithmetic: 'subtract'
         }
       ])
+    })
+  })
+
+  describe('given custom faces', () => {
+    const argument = {
+      sides: ['a', 'b', 'c', 'd', 'e', 'f']
+    }
+
+    test('returns a RollParameter matching the argument', () => {
+      const [params] = argToParameter(argument)
+
+      expect(params).toMatchObject({
+        argument,
+        quantity: 1,
+        sides: 6,
+        notation: '1d6',
+        faces: ['a', 'b', 'c', 'd', 'e', 'f'],
+        description: ['Roll 1 Dice with the following sides: a, b, c, d, e, f']
+      })
     })
   })
 })

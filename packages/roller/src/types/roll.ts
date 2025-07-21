@@ -1,17 +1,20 @@
 import type { DiceNotation, RollArgument, RollOptions } from './core'
 import type { ModifierLog } from './modifiers'
 
-export interface RollParams extends RollOptions {
+export interface RollParams<T = string> extends RollOptions<T> {
+  quantity: number
+  sides: number
+  faces?: T[]
   arithmetic: 'add' | 'subtract'
   key?: string
-  argument: RollArgument
+  argument: RollArgument<T>
   description: string[]
   notation: DiceNotation
 }
 
-export interface RollRecord {
-  description: RollParams['description']
-  parameters: RollParams
+export interface RollRecord<T = string> {
+  description: RollParams<T>['description']
+  parameters: RollParams<T>
   rolls: number[]
   modifierHistory: {
     modifiedRolls: number[]
@@ -20,6 +23,7 @@ export interface RollRecord {
     logs: ModifierLog[]
   }
   appliedTotal: number
+  customResults?: T[]
   total: number
 }
 
@@ -28,6 +32,7 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
   result: TResult
 }
 
-export interface RollerRollResult extends RollResult {
+export interface RollerRollResult<T = string>
+  extends RollResult<T[], RollRecord<T>> {
   total: number
 }

@@ -2,13 +2,16 @@ import { isDiceNotation } from '../../isDiceNotation'
 import type { RollArgument, RollOptions } from '../../types'
 import { notationToOptions } from '../../lib/utils/notationToOptions'
 
-export function optionsFromArgument(argument: RollArgument): RollOptions[] {
+export function optionsFromArgument<T>(
+  argument: RollArgument<T>
+): RollOptions<T>[] {
   if (isDiceNotation(argument)) {
-    return [...notationToOptions(argument)]
+    return [...notationToOptions<T>(argument)]
   }
 
   if (typeof argument === 'string' || typeof argument === 'number') {
     return [{ quantity: 1, sides: Number(argument) }]
   }
+
   return [argument]
 }

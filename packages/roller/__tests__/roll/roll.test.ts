@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 
-import { roll } from '../src/roll'
+import { roll } from '../../src/roll'
 
 const loops = 9999
 
@@ -75,22 +75,25 @@ describe(roll, () => {
         })
       })
 
-      describe('mixed args', () => {
-        const argOne = 20
-        const argTwo = { sides: 20 }
-        const argThree = '1d20'
-        test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () =>
-            roll(argOne, argTwo, argThree)
-          )
-          dummyArray.forEach(({ total, rolls }) => {
-            expect(total).toBeLessThanOrEqual(60)
-            expect(total).toBeGreaterThanOrEqual(3)
-            expect(rolls).toHaveLength(3)
-            rolls.forEach((roll) => {
-              expect(roll.total).toBeLessThanOrEqual(20)
-              expect(roll.total).toBeGreaterThanOrEqual(1)
-            })
+      describe('with custom faces', () => {
+        const arg = {
+          sides: ['a', 'b', 'c', 'd', 'e', 'f'],
+          quantity: 2
+        }
+
+        test('never goes outside of the bounds of the roll (counting sides of faces, ignoring sides)', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          dummyArray.forEach(({ total }) => {
+            expect(total).toBeLessThanOrEqual(12)
+            expect(total).toBeGreaterThan(1)
+          })
+        })
+
+        test('returns a results array of the custom faces', () => {
+          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          dummyArray.forEach(({ result }) => {
+            expect(arg.sides).toContain(result[0])
+            expect(arg.sides).toContain(result[1])
           })
         })
       })

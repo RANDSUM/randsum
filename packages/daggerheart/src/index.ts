@@ -1,4 +1,4 @@
-export { roll, rollCustom, validateNotation } from '@randsum/roller'
+export { roll, validateNotation } from '@randsum/roller'
 export type {
   RollArgument,
   RollerRollResult,

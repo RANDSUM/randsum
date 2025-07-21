@@ -10,7 +10,9 @@ import {
 import { coreNotationPattern } from '../patterns'
 import type { DiceNotation, RollOptions } from '../../types'
 
-export function notationToOptions(notationString: DiceNotation): RollOptions[] {
+export function notationToOptions<T = string>(
+  notationString: DiceNotation
+): RollOptions<T>[] {
   const coreMatches = Array.from(
     notationString.matchAll(new RegExp(coreNotationPattern.source, 'g'))
   )
@@ -20,7 +22,7 @@ export function notationToOptions(notationString: DiceNotation): RollOptions[] {
   }
 
   return listOfNotations(notationString, coreMatches).map(
-    singleNotationToOptions
+    singleNotationToOptions<T>
   )
 }
 
@@ -64,7 +66,7 @@ function listOfNotations(
   return completeExpressions
 }
 
-function singleNotationToOptions(notationString: string): RollOptions {
+function singleNotationToOptions<T>(notationString: string): RollOptions<T> {
   const trimmedNotationString = notationString.trim()
   const coreNotationMatch =
     trimmedNotationString.match(coreNotationPattern)?.at(0) ?? ''
