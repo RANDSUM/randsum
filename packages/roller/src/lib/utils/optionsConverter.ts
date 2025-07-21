@@ -1,4 +1,4 @@
-import { isDiceNotation } from '../guards'
+import { isDiceNotation } from '../../isDiceNotation'
 import {
   CapModifier,
   DropModifier,

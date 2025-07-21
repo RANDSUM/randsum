@@ -1,4 +1,4 @@
-import { isDiceNotation } from '../../lib/guards'
+import { isDiceNotation } from '../../isDiceNotation'
 import type { RollArgument, RollOptions } from '../../types'
 import { notationToOptions } from '../../validateNotation/notationToOptions'
 
