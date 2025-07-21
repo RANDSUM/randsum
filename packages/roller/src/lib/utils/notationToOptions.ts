@@ -40,7 +40,6 @@ function listOfNotations(
     if (i === 0) {
       startPos = 0
     } else {
-      // Look for arithmetic operator before this dice expression
       const prevMatch = coreMatches[i - 1]
       const prevEndPos = prevMatch
         ? Number(prevMatch.index) + prevMatch[0].length
