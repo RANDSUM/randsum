@@ -4,24 +4,33 @@ export { validateNotation } from './validateNotation'
 export { isDiceNotation } from './isDiceNotation'
 
 export type {
-  ComparisonOptions,
   DiceNotation,
+  RollArgument,
+  RollOptions,
+  RequiredNumericRollParameters
+} from './types/core'
+
+export type {
+  ComparisonOptions,
   DropOptions,
-  InvalidValidationResult,
   ModifierConfig,
   ModifierLog,
   ModifierOptions,
   NumericRollBonus,
   ReplaceOptions,
   RerollOptions,
-  RequiredNumericRollParameters,
-  RollArgument,
-  RollOptions,
+  UniqueOptions
+} from './types/modifiers'
+
+export type {
   RollParams,
   RollRecord,
   RollResult,
-  RollerRollResult,
-  UniqueOptions,
+  RollerRollResult
+} from './types/roll'
+
+export type {
+  InvalidValidationResult,
   ValidValidationResult,
   ValidationResult
-} from './types'
+} from './types/validation'

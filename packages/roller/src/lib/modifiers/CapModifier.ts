@@ -2,7 +2,7 @@ import type {
   ComparisonOptions,
   ModifierOptions,
   NumericRollBonus
-} from '../../types'
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class CapModifier extends BaseModifier<ComparisonOptions> {

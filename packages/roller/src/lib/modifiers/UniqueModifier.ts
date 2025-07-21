@@ -1,9 +1,9 @@
+import type { RequiredNumericRollParameters } from '../../types/core'
 import type {
   ModifierOptions,
   NumericRollBonus,
-  RequiredNumericRollParameters,
   UniqueOptions
-} from '../../types'
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class UniqueModifier extends BaseModifier<boolean | UniqueOptions> {

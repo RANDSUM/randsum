@@ -1,12 +1,3 @@
-import type {
-  ComparisonOptions,
-  DropOptions,
-  ModifierOptions,
-  NumericRollBonus,
-  ReplaceOptions,
-  RerollOptions,
-  UniqueOptions
-} from '../../types'
 import {
   CapModifier,
   DropModifier,
@@ -15,6 +6,15 @@ import {
   RerollModifier,
   UniqueModifier
 } from '../../lib/modifiers'
+import type {
+  ComparisonOptions,
+  DropOptions,
+  ModifierOptions,
+  NumericRollBonus,
+  ReplaceOptions,
+  RerollOptions,
+  UniqueOptions
+} from '../../types/modifiers'
 
 interface ModifierContext {
   sides: number

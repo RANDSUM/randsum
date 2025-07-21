@@ -2,7 +2,7 @@ import type {
   DropOptions,
   ModifierOptions,
   NumericRollBonus
-} from '../../types'
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 
 export class DropModifier extends BaseModifier<DropOptions> {

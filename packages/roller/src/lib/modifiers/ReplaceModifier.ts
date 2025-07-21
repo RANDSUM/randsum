@@ -3,8 +3,7 @@ import type {
   ModifierOptions,
   NumericRollBonus,
   ReplaceOptions
-} from '../../types'
-
+} from '../../types/modifiers'
 import { BaseModifier } from './BaseModifier'
 import { CapModifier } from './CapModifier'
 

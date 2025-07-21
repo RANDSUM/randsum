@@ -1,3 +1,4 @@
+import type { DiceNotation, RollOptions } from '../../types/core'
 import {
   ArithmeticModifier,
   CapModifier,
@@ -8,7 +9,6 @@ import {
   UniqueModifier
 } from '../modifiers'
 import { coreNotationPattern } from '../patterns'
-import type { DiceNotation, RollOptions } from '../../types'
 
 const globalCoreNotationPattern = new RegExp(coreNotationPattern.source, 'g')
 

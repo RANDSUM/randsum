@@ -1,5 +1,5 @@
 import { coreSpreadRolls } from '../../lib/utils'
-import type { RollParams, RollRecord } from '../../types'
+import type { RollParams, RollRecord } from '../../types/roll'
 import { generateHistory } from './generateHistory'
 
 export function generateRollRecord<T>(

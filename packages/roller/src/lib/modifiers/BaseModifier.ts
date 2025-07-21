@@ -1,11 +1,11 @@
+import type { RequiredNumericRollParameters } from '../../types/core'
 import type {
   ComparisonOptions,
   ModifierConfig,
   ModifierLog,
   ModifierOptions,
-  NumericRollBonus,
-  RequiredNumericRollParameters
-} from '../../types'
+  NumericRollBonus
+} from '../../types/modifiers'
 
 export abstract class BaseModifier<T extends ModifierConfig = ModifierConfig> {
   protected readonly options: T | undefined

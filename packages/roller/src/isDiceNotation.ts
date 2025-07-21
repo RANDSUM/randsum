@@ -1,5 +1,5 @@
 import { completeRollPattern, coreNotationPattern } from './lib/patterns'
-import type { DiceNotation } from './types'
+import type { DiceNotation } from './types/core'
 
 export function isDiceNotation(argument: unknown): argument is DiceNotation {
   if (typeof argument !== 'string') return false
