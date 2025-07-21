@@ -24,6 +24,7 @@ export function rollTable(
   } = roll({ sides: faces })
 
   const mainRoll = rolls[0]
+
   if (!result || !mainRoll) {
     throw new Error('Failed to properly roll.')
   }
