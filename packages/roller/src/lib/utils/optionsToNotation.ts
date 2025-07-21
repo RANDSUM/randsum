@@ -3,7 +3,7 @@ import type { DiceNotation, RollOptions } from '../../types'
 import { ModifierProcessor } from './modifierProcessor'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
 
-export function optionsToNotation(options: RollOptions): DiceNotation {
+export function optionsToNotation<T>(options: RollOptions<T>): DiceNotation {
   const { modifiers, quantity = 1, arithmetic } = options
   const { sides } = optionsToSidesFaces(options)
   const coreNotation = `${quantity}d${sides}`

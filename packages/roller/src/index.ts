@@ -1,6 +1,5 @@
 // Core functions - specific exports for better tree-shaking
 export { roll } from './roll'
-export { rollCustom } from './rollCustom'
 export { validateNotation } from './validateNotation'
 export { isDiceNotation } from './isDiceNotation'
 

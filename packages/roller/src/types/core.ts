@@ -2,10 +2,10 @@ import type { ModifierOptions } from './modifiers'
 
 export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
 
-export interface RollOptions {
+export interface RollOptions<T = string> {
   quantity?: number
   arithmetic?: 'add' | 'subtract'
-  sides: number | string[]
+  sides: number | T[]
   modifiers?: ModifierOptions
 }
 
@@ -14,4 +14,8 @@ export interface RequiredNumericRollParameters {
   sides: number
 }
 
-export type RollArgument = RollOptions | DiceNotation | number | `${number}`
+export type RollArgument<T = string> =
+  | RollOptions<T>
+  | DiceNotation
+  | number
+  | `${number}`

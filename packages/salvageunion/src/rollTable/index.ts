@@ -1,7 +1,7 @@
 import { AllRollTables } from '../tables'
 
 import type { SalvageUnionTableName, SalvageUnionTableResult } from '../types'
-import { rollCustom } from '@randsum/roller'
+import { roll } from '@randsum/roller'
 import { customTableFaces } from './customTableFaces'
 
 export function rollTable(
@@ -18,17 +18,23 @@ export function rollTable(
   const table = AllRollTables[tableName]
   const faces = customTableFaces.map((face) => table[face])
 
-  const { rolls, result } = rollCustom(faces)
+  const {
+    rolls,
+    result: [result]
+  } = roll({ sides: faces })
+
+  const mainRoll = rolls[0]
+  if (!result || !mainRoll) {
+    throw new Error('Failed to properly roll.')
+  }
 
   return {
     rolls,
     result: {
-      hit: result.hit,
-      label: result.label,
-      description: result.description,
+      ...result,
       table,
       tableName,
-      roll: rolls[0]?.total ?? 0
+      roll: mainRoll.total
     }
   }
 }

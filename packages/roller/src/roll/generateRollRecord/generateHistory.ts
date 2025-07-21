@@ -8,10 +8,10 @@ import type {
 import { coreRandom } from '../../lib/utils'
 import { applyModifier } from './applyModifier'
 
-export function generateHistory(
-  { sides, quantity = 1, modifiers = {} }: RollParams,
-  rolls: RollRecord['modifierHistory']['initialRolls']
-): RollRecord['modifierHistory'] {
+export function generateHistory<T>(
+  { sides, quantity = 1, modifiers = {} }: RollParams<T>,
+  rolls: RollRecord<T>['modifierHistory']['initialRolls']
+): RollRecord<T>['modifierHistory'] {
   const hasModifiers =
     modifiers.reroll ||
     modifiers.replace ||

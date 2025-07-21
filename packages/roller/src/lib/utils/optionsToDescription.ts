@@ -2,7 +2,7 @@ import type { RollOptions } from '../../types'
 import { ModifierProcessor } from './modifierProcessor'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
 
-export function optionsToDescription(options: RollOptions): string[] {
+export function optionsToDescription<T>(options: RollOptions<T>): string[] {
   const { modifiers, quantity = 1, arithmetic } = options
   const { sides, faces = [] } = optionsToSidesFaces(options)
   const descriptor = quantity === 1 ? 'die' : 'dice'
