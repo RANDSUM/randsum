@@ -1,3 +1,3 @@
-export * from './coreRandom'
-export * from './coreSpreadRolls'
-export * from './optionsConverter'
+export { coreRandom } from './coreRandom'
+export { coreSpreadRolls } from './coreSpreadRolls'
+export { OptionsConverter } from './optionsConverter'
