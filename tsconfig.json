@@ -5,10 +5,8 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
-    "jsx": "react-jsx",
     "allowJs": false,
     "moduleResolution": "bundler",
-    "verbatimModuleSyntax": true,
     "noEmit": false,
     "strict": true,
     "skipLibCheck": true,
@@ -22,6 +20,12 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "composite": true
+    "composite": true,
+    "exactOptionalPropertyTypes": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   }
 }
