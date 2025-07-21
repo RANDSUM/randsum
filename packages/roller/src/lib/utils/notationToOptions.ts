@@ -30,8 +30,7 @@ function listOfNotations(
 ): string[] {
   const completeExpressions: string[] = []
 
-  for (let i = 0; i < coreMatches.length; i++) {
-    const currentMatch = coreMatches[i]
+  for (const [i, currentMatch] of coreMatches.entries()) {
     const nextMatch = coreMatches[i + 1]
 
     if (currentMatch?.index === undefined) continue
