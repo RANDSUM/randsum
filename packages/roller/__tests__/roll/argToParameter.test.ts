@@ -585,4 +585,24 @@ describe(argToParameter, () => {
       ])
     })
   })
+
+  describe('given custom faces', () => {
+    const argument = {
+      quantity: 1,
+      faces: ['a', 'b', 'c', 'd', 'e', 'f']
+    }
+
+    test('returns a RollParameter matching the argument', () => {
+      const [params] = argToParameter(argument)
+
+      expect(params).toMatchObject({
+        argument,
+        quantity: 1,
+        sides: 6,
+        notation: '1d6',
+        faces: ['a', 'b', 'c', 'd', 'e', 'f'],
+        description: ['Roll 1 Dice with the following sides: a, b, c, d, e, f']
+      })
+    })
+  })
 })

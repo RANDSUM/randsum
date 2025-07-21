@@ -5,7 +5,7 @@ import { ModifierProcessor } from './modifierProcessor'
 export function optionsToNotation({
   modifiers,
   quantity = 1,
-  sides,
+  sides = 20,
   arithmetic
 }: RollOptions): DiceNotation {
   const coreNotation = `${quantity}d${sides}`

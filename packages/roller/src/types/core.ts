@@ -6,7 +6,7 @@ export interface RollOptions {
   quantity?: number
   arithmetic?: 'add' | 'subtract'
   faces?: string[]
-  sides: number
+  sides?: number
   modifiers?: ModifierOptions
 }
 

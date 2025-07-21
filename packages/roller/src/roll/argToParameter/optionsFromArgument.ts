@@ -11,10 +11,5 @@ export function optionsFromArgument(argument: RollArgument): RollOptions[] {
     return [{ quantity: 1, sides: Number(argument) }]
   }
 
-  return [
-    {
-      ...argument,
-      sides: argument.faces ? argument.faces.length : argument.sides
-    }
-  ]
+  return [argument]
 }
