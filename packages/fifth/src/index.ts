@@ -6,4 +6,4 @@ export type {
 } from '@randsum/roller'
 
 export { actionRoll } from './actionRoll'
-export type * from './types'
+export type { FifthRollArgument, FifthAdvantageDisadvantage } from './types'

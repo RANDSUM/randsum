@@ -1,5 +1,3 @@
-import type { RollRecord, RollResult } from '@randsum/roller'
-
 export type SalvageUnionHit =
   | 'Nailed It'
   | 'Success'
@@ -38,8 +36,3 @@ export interface SalvageUnionRollRecord {
   table: SalvageUnionTableType
   roll: number
 }
-
-export type SalvageUnionTableResult = RollResult<
-  SalvageUnionRollRecord,
-  RollRecord<SalvageUnionTableListing>
->

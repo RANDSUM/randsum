@@ -1,2 +1,2 @@
 export { rollRootRpg } from './rollRootRpg'
-export type * from './types'
+export type { RootRpgRollResult, RootRpgResult } from './types'

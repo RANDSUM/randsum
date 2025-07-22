@@ -1,7 +1,7 @@
 import type { RollResult } from '@randsum/roller'
 import { rollWrapper } from '@randsum/roller'
 import { interpretHit } from './interpretHit'
-import type { BladesResult } from './types'
+import type { BladesResult } from '../types'
 
 const rollBlades: (arg: number) => RollResult<BladesResult> = rollWrapper({
   validateInput: (count: number) => {
@@ -20,6 +20,7 @@ const rollBlades: (arg: number) => RollResult<BladesResult> = rollWrapper({
         `Blades dice pool is unusually large (${count}). Maximum recommended is 10.`
       )
     }
+    return count
   },
   toArg: (count: number) => {
     const canCrit = count > 0

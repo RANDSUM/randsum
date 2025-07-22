@@ -1,5 +1,5 @@
 import type { RollerRollResult } from '@randsum/roller'
-import type { BladesResult } from './types'
+import type { BladesResult } from '../types'
 
 export function interpretHit(
   { rolls }: RollerRollResult,
