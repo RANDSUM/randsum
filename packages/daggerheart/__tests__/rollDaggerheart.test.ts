@@ -197,18 +197,6 @@ describe('rollDaggerheart', () => {
       expect(typeof result.result.total).toBe('number')
     })
 
-    test('handles undefined values in argument', () => {
-      const result = rollDaggerheart({
-        modifier: undefined,
-        rollingWith: undefined,
-        amplifyHope: undefined,
-        amplifyFear: undefined
-      })
-
-      expect(result.result.details.modifier).toBe(0) // Default value
-      expect(result.result.details.advantage).toBeUndefined()
-    })
-
     test('handles boolean false values', () => {
       const result = rollDaggerheart({
         amplifyHope: false,

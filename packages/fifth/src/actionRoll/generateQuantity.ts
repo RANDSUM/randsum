@@ -3,7 +3,7 @@ import type { FifthAdvantageDisadvantage } from '../types'
 export function generateQuantity({
   advantage,
   disadvantage
-}: FifthAdvantageDisadvantage = {}): 1 | 2 {
+}: FifthAdvantageDisadvantage = {}): number {
   if ((advantage && disadvantage) || (!advantage && !disadvantage)) {
     return 1
   }

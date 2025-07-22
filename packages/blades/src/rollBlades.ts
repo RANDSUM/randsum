@@ -4,7 +4,7 @@ import { interpretHit } from './interpretHit'
 import type { BladesResult } from './types'
 
 const rollBlades: (arg: number) => RollResult<BladesResult> = rollWrapper({
-  toArg: (count: number) => {
+  validateInput: (count: number) => {
     if (!Number.isInteger(count)) {
       throw new Error(`Blades dice pool must be an integer, received: ${count}`)
     }
@@ -20,12 +20,20 @@ const rollBlades: (arg: number) => RollResult<BladesResult> = rollWrapper({
         `Blades dice pool is unusually large (${count}). Maximum recommended is 10.`
       )
     }
-
+  },
+  toArg: (count: number) => {
     const canCrit = count > 0
-    if (canCrit) {
-      return { sides: 6, quantity: count }
-    }
-    return { sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } }
+    return [
+      {
+        sides: 6,
+        quantity: canCrit ? count : 2,
+        ...(canCrit
+          ? {}
+          : {
+              modifiers: { drop: { highest: 1 } }
+            })
+      }
+    ]
   },
   toResult: (rollResult) => ({
     ...rollResult,

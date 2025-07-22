@@ -1,5 +1,3 @@
-import type { RollResult } from '@randsum/roller'
-
 export type DaggerheartAdvantageDisadvantage = 'Advantage' | 'Disadvantage'
 export interface DaggerheartRollArgument {
   modifier?: number
@@ -25,5 +23,3 @@ export interface DaggerheartRollResult {
     advantage: DaggerheartRollRecord | undefined
   }
 }
-
-export type DaggerheartGameResult = RollResult<DaggerheartRollResult>
