@@ -17,6 +17,7 @@ const rollRootRpg: (arg: number) => RollResult<RootRpgRollResult> = rollWrapper(
           `Root RPG bonus is outside reasonable range (-20 to +20), received: ${bonus}`
         )
       }
+      return bonus
     },
     toArg: (bonus: number) => [
       {

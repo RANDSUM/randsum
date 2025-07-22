@@ -20,6 +20,7 @@ const rollBlades: (arg: number) => RollResult<BladesResult> = rollWrapper({
         `Blades dice pool is unusually large (${count}). Maximum recommended is 10.`
       )
     }
+    return count
   },
   toArg: (count: number) => {
     const canCrit = count > 0

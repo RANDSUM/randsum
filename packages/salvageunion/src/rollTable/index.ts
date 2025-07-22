@@ -20,6 +20,7 @@ const rollTable: (
           `Invalid Salvage Union table name: "${tableName}". Available tables: ${availableTables}`
         )
       }
+      return tableName
     },
     toArg: (tableName: SalvageUnionTableName = 'Core Mechanic') => [
       {
