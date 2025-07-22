@@ -26,14 +26,28 @@ const rollTable: (
         sides: customTableFaces.map((face) => AllRollTables[tableName][face])
       }
     ],
-    toResult: (
-      { rolls, result: [result], total },
-      tableName = 'Core Mechanic'
-    ) => {
+    validateResult: ({
+      rolls,
+      result: [result],
+      total
+    }): {
+      rolls: RollRecord<SalvageUnionTableListing>[]
+      result: SalvageUnionTableListing
+      total: number
+    } => {
       if (!result) {
         throw new Error('Failed to properly roll.')
       }
-
+      return {
+        rolls,
+        result,
+        total
+      }
+    },
+    toValidatedResult: (
+      { rolls, result, total },
+      tableName = 'Core Mechanic'
+    ) => {
       return {
         rolls,
         result: {

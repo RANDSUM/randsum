@@ -1,6 +1,6 @@
 {
   "name": "@randsum/salvageunion",
-  "version": "0.26.2",
+  "version": "0.26.4",
   "description": "A flexible, type-safe dice roller for the Salvage Union system",
   "private": false,
   "author": {
