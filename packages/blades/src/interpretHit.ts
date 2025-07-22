@@ -2,7 +2,7 @@ import type { RollerRollResult } from '@randsum/roller'
 import type { BladesResult } from './types'
 
 export function interpretHit({ rolls, total }: RollerRollResult): BladesResult {
-  const sortedRolls = rolls.map(Number)
+  const sortedRolls = rolls.flatMap((roll) => roll.rolls)
   const canCrit = total > 1
   const sixes = sortedRolls.filter((r) => r === 6).length
   if (sixes >= 2 && canCrit) {
