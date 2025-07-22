@@ -2,23 +2,40 @@ import { roll } from './roll'
 import type { RollArgument } from './types/core'
 import type { RollerRollResult } from './types/roll'
 
-interface WrapperConfig<T, U, V> {
+type BaseWrapperConfig<T, U, V, W> = {
   validateInput?: (arg: U) => void
   toArg: (arg: U) => RollArgument<T>[]
-  toResult?: (rollResult: RollerRollResult<T>, arg: U) => V
-}
+} & (
+  | {
+      validateResult: (rollResult: RollerRollResult<T>, arg: U) => W
+      toValidatedResult: (validatedResult: W, arg: U) => V
+      toResult?: undefined
+    }
+  | {
+      toResult?: (rollResult: RollerRollResult<T>, arg: U) => V
+      validateResult?: undefined
+      toValidatedResult?: undefined
+    }
+)
 
 export function rollWrapper<
   T = string,
   U = RollArgument<T>,
-  V = RollerRollResult<T>
+  V = RollerRollResult<T>,
+  W = unknown
 >({
   toArg,
-  toResult = (rollResult) => rollResult as V,
-  validateInput
-}: WrapperConfig<T, U, V>): (arg: U) => V {
+  toResult,
+  validateInput,
+  validateResult,
+  toValidatedResult
+}: BaseWrapperConfig<T, U, V, W>): (arg: U) => V {
   return (arg) => {
     if (validateInput) validateInput(arg)
-    return toResult(roll(...toArg(arg)), arg)
+    const result = roll(...toArg(arg))
+    if (validateResult) {
+      return toValidatedResult(validateResult(result, arg), arg)
+    }
+    return toResult ? toResult(result, arg) : (result as V)
   }
 }

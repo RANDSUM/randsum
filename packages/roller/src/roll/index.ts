@@ -15,12 +15,13 @@ export function roll<T = string>(
   }, 0)
 
   const isCustom = rolls.every((roll) => roll.customResults)
+  const result = rolls.flatMap((roll) =>
+    isCustom ? (roll.customResults ?? []) : (roll.rolls.map(String) as T)
+  )
 
   return {
     rolls,
-    result: rolls.flatMap((roll) =>
-      isCustom ? (roll.customResults ?? []) : (roll.rolls.map(String) as T)
-    ),
+    result,
     total
   }
 }
