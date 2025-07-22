@@ -4,7 +4,7 @@ import type { RollerRollResult } from './types/roll'
 
 interface WrapperConfig<T, U, V> {
   validateInput?: (arg: U) => void
-  toArg?: (arg: U) => RollArgument<T>[]
+  toArg: (arg: U) => RollArgument<T>[]
   toResult?: (rollResult: RollerRollResult<T>, arg: U) => V
 }
 
@@ -13,7 +13,7 @@ export function rollWrapper<
   U = RollArgument<T>,
   V = RollerRollResult<T>
 >({
-  toArg = () => [],
+  toArg,
   toResult = (rollResult) => rollResult as V,
   validateInput
 }: WrapperConfig<T, U, V>): (arg: U) => V {
