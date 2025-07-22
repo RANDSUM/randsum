@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { rollBlades } from '../src/rollBlades'
 
-describe(rollBlades, () => {
+describe('rollBlades', () => {
   describe('dice pool sizes', () => {
     test('handles single die (desperate position)', () => {
       const { result, rolls } = rollBlades(1)

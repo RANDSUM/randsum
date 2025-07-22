@@ -5,5 +5,5 @@ export type {
   ValidationResult
 } from '@randsum/roller'
 
-export * from './d20Roll'
+export { actionRoll } from './actionRoll'
 export type * from './types'

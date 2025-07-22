@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { rollRootRpg } from '../src/rollRootRpg'
 
-describe(rollRootRpg, () => {
+describe('rollRootRpg', () => {
   describe('rollRootRpg ranges', () => {
     test('returns result within valid range (2d6 + modifier)', () => {
       const bonus = 2

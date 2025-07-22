@@ -10,7 +10,7 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('100d100')).toBe(true)
     })
 
-    test.only('returns true for multi dice notation', () => {
+    test('returns true for multi dice notation', () => {
       expect(isDiceNotation('1d20+2d6-1d8')).toBe(true)
     })
 

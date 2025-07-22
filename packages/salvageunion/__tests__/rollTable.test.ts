@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { rollTable } from '../src/rollTable'
 import type { SalvageUnionHit, SalvageUnionTableName } from '../src/types'
 
-describe(rollTable, () => {
+describe('rollTable', () => {
   describe('default Core Mechanic table', () => {
     test('uses Core Mechanic table by default', () => {
       const { result } = rollTable()
