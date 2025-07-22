@@ -1,9 +1,12 @@
+import type { RollerRollResult } from '@randsum/roller'
 import type { BladesResult } from '../types'
 
-export function interpretHit(
-  sortedRolls: number[],
-  canCrit: boolean
-): BladesResult {
+export function interpretHit({
+  rolls,
+  total
+}: RollerRollResult<number>): BladesResult {
+  const sortedRolls = rolls.map(Number)
+  const canCrit = total > 1
   const sixes = sortedRolls.filter((r) => r === 6).length
   if (sixes >= 2 && canCrit) {
     return 'critical'

@@ -1,5 +1,5 @@
-import type { RollResult } from '@randsum/roller'
+import type { RollRecord, RollResult } from '@randsum/roller'
 
 export type BladesResult = 'critical' | 'success' | 'partial' | 'failure'
 
-export type BladesRollResult = RollResult<BladesResult>
+export type BladesRollResult = RollResult<BladesResult, RollRecord<number>>
