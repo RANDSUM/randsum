@@ -35,9 +35,9 @@ const rollBlades: (arg: number) => RollResult<BladesResult> = rollWrapper({
       }
     ]
   },
-  toResult: (rollResult) => ({
+  toResult: (rollResult, count) => ({
     ...rollResult,
-    result: interpretHit(rollResult)
+    result: interpretHit(rollResult, count > 0)
   })
 })
 
