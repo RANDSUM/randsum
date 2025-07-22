@@ -1,5 +1,4 @@
 export { roll } from './roll'
-export { rollWrapper } from './rollWrapper'
 export { validateNotation } from './validateNotation'
 export { isDiceNotation } from './isDiceNotation'
 
