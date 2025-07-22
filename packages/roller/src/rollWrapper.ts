@@ -2,9 +2,9 @@ import { roll } from './roll'
 import type { RollArgument } from './types/core'
 import type { RollerRollResult } from './types/roll'
 
-type BaseWrapperConfig<X, T, U, V, W> = (
+type BaseWrapperConfig<T, U, V, W, X> = (
   | {
-      validateInput?: undefined
+      validateInput?: never
       toArg: (arg: U) => RollArgument<T>[]
     }
   | {
@@ -16,28 +16,28 @@ type BaseWrapperConfig<X, T, U, V, W> = (
     | {
         validateResult: (rollResult: RollerRollResult<T>, arg: U) => W
         toValidatedResult: (validatedResult: W, arg: U) => V
-        toResult?: undefined
+        toResult?: never
       }
     | {
         toResult?: (rollResult: RollerRollResult<T>, arg: U) => V
-        validateResult?: undefined
-        toValidatedResult?: undefined
+        validateResult?: never
+        toValidatedResult?: never
       }
   )
 
 export function rollWrapper<
-  X = unknown,
   T = string,
   U = RollArgument<T>,
   V = RollerRollResult<T>,
-  W = unknown
+  W = unknown,
+  X = unknown
 >({
   toArg,
   toResult,
   validateInput,
   validateResult,
   toValidatedResult
-}: BaseWrapperConfig<X, T, U, V, W>): (arg: U) => V {
+}: BaseWrapperConfig<T, U, V, W, X>): (arg: U) => V {
   return (arg) => {
     const usableArg = validateInput ? toArg(validateInput(arg)) : toArg(arg)
     const result = roll(...usableArg)
