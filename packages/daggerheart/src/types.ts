@@ -8,7 +8,7 @@ export interface DaggerheartRollArgument {
 
 export type DaggerheartRollResultType = 'hope' | 'fear' | 'critical hope'
 
-export interface DaggerheartRollRecord {
+interface DaggerheartRollRecord {
   roll: number
   amplified?: boolean
 }

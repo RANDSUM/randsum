@@ -1,7 +1,7 @@
 import type { RollResult } from '@randsum/roller'
 import { rollWrapper } from '@randsum/roller'
 import { interpretHit } from './interpretHit'
-import type { BladesResult } from './types'
+import type { BladesResult } from '../types'
 
 const rollBlades: (arg: number) => RollResult<BladesResult> = rollWrapper({
   validateInput: (count: number) => {

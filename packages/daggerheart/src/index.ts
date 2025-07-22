@@ -5,5 +5,10 @@ export type {
   ValidationResult
 } from '@randsum/roller'
 
-export * from './rollDaggerheart'
-export type * from './types'
+export { rollDaggerheart } from './rollDaggerheart'
+export type {
+  DaggerheartRollArgument,
+  DaggerheartRollResult,
+  DaggerheartRollResultType,
+  DaggerheartAdvantageDisadvantage
+} from './types'

@@ -18,4 +18,10 @@ export {
   CoreMechanicTable
 } from './tables'
 
-export type * from './types'
+export type {
+  SalvageUnionHit,
+  SalvageUnionTableName,
+  SalvageUnionTableListing,
+  SalvageUnionTableType,
+  SalvageUnionRollRecord
+} from './types'
