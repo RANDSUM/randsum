@@ -1,7 +1,7 @@
-import { isDiceNotation } from '../isDiceNotation'
-import type { ValidationResult } from '../types/validation'
-import { optionsToDescription, optionsToNotation } from '../lib/transformers'
-import { notationToOptions } from '../lib/notation'
+import { isDiceNotation } from './isDiceNotation'
+import type { ValidationResult } from './types/validation'
+import { optionsToDescription, optionsToNotation } from './lib/transformers'
+import { notationToOptions } from './lib/notation'
 
 export function validateNotation(notation: string): ValidationResult {
   if (!isDiceNotation(notation)) {
