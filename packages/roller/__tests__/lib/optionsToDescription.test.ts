@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { createRollOptions } from '../../support/fixtures'
-import { optionsToDescription } from '../../../src/lib/utils'
+import { createRollOptions } from '../support/fixtures'
+import { optionsToDescription } from '../../src/lib/transformers'
 
 describe(optionsToDescription, () => {
   test('generates description for basic numeric options', () => {

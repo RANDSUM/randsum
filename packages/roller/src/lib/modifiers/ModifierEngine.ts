@@ -12,7 +12,7 @@ import {
   formatComparisonDescription,
   formatComparisonNotation,
   formatHumanList
-} from '../utils'
+} from '../comparison'
 import { createModifierLog, mergeLogs } from './logging'
 import {
   applyCapping,

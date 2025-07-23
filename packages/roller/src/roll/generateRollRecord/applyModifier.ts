@@ -1,4 +1,4 @@
-import { ModifierEngine } from '../../lib/modifiers/ModifierEngine'
+import { ModifierEngine } from '../../lib/modifiers'
 import type { ModifierOptions, NumericRollBonus } from '../../types/modifiers'
 
 interface ModifierContext {

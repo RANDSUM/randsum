@@ -8,7 +8,7 @@ import {
   test
 } from 'bun:test'
 
-import * as RandomUtils from '../../src/lib/utils/randomUtils'
+import * as RandomUtils from '../../src/lib/random'
 import { generateRollRecord } from '../../src/roll/generateRollRecord'
 import { createRollParams } from '../support/fixtures'
 

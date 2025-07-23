@@ -6,7 +6,7 @@ import type {
   RerollOptions,
   UniqueOptions
 } from '../../types/modifiers'
-import { applyCap, matchesComparison } from '../utils/comparisonUtils'
+import { applyCap, matchesComparison } from '../comparison'
 
 export function applyCapping(
   rolls: number[],

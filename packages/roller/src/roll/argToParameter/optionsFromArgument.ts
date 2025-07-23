@@ -1,5 +1,5 @@
 import { isDiceNotation } from '../../isDiceNotation'
-import { notationToOptions } from '../../lib/utils'
+import { notationToOptions } from '../../lib/notation'
 import type { RollArgument, RollOptions } from '../../types/core'
 
 export function optionsFromArgument<T>(

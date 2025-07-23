@@ -2,7 +2,7 @@ import {
   optionsToDescription,
   optionsToNotation,
   optionsToSidesFaces
-} from '../../lib/utils'
+} from '../../lib/transformers'
 import type { RollArgument } from '../../types/core'
 import type { RollParams } from '../../types/roll'
 import { optionsFromArgument } from './optionsFromArgument'

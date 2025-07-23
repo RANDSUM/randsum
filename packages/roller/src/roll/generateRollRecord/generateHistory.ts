@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import { coreRandom } from '../../lib/utils'
+import { coreRandom } from '../../lib/random'
 import type { ModifierOptions, NumericRollBonus } from '../../types/modifiers'
 import type { RollParams, RollRecord } from '../../types/roll'
 import { applyModifier } from './applyModifier'

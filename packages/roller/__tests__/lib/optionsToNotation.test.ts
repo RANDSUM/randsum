@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { optionsToNotation } from '../../../src/lib/utils'
-import { createRollOptions } from '../../support/fixtures'
+import { optionsToNotation } from '../../src/lib/transformers'
+import { createRollOptions } from '../support/fixtures'
 
 describe(optionsToNotation, () => {
   test('converts basic numeric options to notation', () => {
