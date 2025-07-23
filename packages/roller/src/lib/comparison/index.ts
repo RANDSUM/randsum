@@ -1,8 +1,6 @@
-export {
-  matchesComparison,
-  applyCap,
-  formatComparisonDescription,
-  formatComparisonNotation,
-  formatHumanList,
-  parseComparisonNotation
-} from './comparisonUtils'
+export { matchesComparison } from './matchesComparison'
+export { applyCap } from './applyCap'
+export { formatComparisonDescription } from './formatComparisonDescription'
+export { formatComparisonNotation } from './formatComparisonNotation'
+export { formatHumanList } from './formatHumanList'
+export { parseComparisonNotation } from './parseComparisonNotation'
