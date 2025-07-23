@@ -1,6 +1,6 @@
 export interface ComparisonOptions {
-  greaterThan?: number | undefined
-  lessThan?: number | undefined
+  greaterThan?: number
+  lessThan?: number
 }
 
 export interface DropOptions extends ComparisonOptions {
@@ -10,8 +10,8 @@ export interface DropOptions extends ComparisonOptions {
 }
 
 export interface RerollOptions extends ComparisonOptions {
-  exact?: number[] | undefined
-  max?: number | undefined
+  exact?: number[]
+  max?: number
 }
 
 export interface ReplaceOptions {

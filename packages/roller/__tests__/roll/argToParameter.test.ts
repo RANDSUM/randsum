@@ -82,7 +82,7 @@ describe(argToParameter, () => {
             lowest: 1,
             exact: [2, 3]
           },
-          reroll: { exact: undefined },
+          reroll: { exact: [] },
           cap: { greaterThan: 2, lessThan: 1 },
           replace: { from: 6, to: 1 },
           unique: { notUnique: [1, 2] },

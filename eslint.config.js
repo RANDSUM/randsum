@@ -39,7 +39,6 @@ export default tseslint.config(
   },
   {
     rules: {
-      // TypeScript-specific rules
       '@typescript-eslint/no-misused-spread': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/restrict-template-expressions': 'off',

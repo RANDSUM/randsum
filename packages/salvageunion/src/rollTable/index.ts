@@ -19,14 +19,13 @@ export function rollTable(
     )
   }
 
-  const arg = {
-    sides: customTableFaces.map((face) => AllRollTables[tableName][face])
-  }
   const {
     rolls,
     result: [result],
     total
-  } = roll(arg)
+  } = roll({
+    sides: customTableFaces.map((face) => AllRollTables[tableName][face])
+  })
 
   if (!result) {
     throw new Error('Failed to properly roll.')

@@ -1,14 +1,6 @@
 import type { DiceNotation, RollOptions } from '../../types/core'
-import {
-  ArithmeticModifier,
-  CapModifier,
-  DropModifier,
-  ExplodeModifier,
-  ReplaceModifier,
-  RerollModifier,
-  UniqueModifier
-} from '../modifiers'
 import { coreNotationPattern } from '../patterns'
+import { parseModifiers } from '../modifiers/parsing'
 
 const globalCoreNotationPattern = new RegExp(coreNotationPattern.source, 'g')
 
@@ -88,15 +80,6 @@ function singleNotationToOptions<T>(notationString: string): RollOptions<T> {
 
   return {
     ...core,
-    modifiers: {
-      ...DropModifier.parse(modifiersString),
-      ...ExplodeModifier.parse(modifiersString),
-      ...UniqueModifier.parse(modifiersString),
-      ...ReplaceModifier.parse(modifiersString),
-      ...RerollModifier.parse(modifiersString),
-      ...CapModifier.parse(modifiersString),
-      ...ArithmeticModifier.parsePlus(modifiersString),
-      ...ArithmeticModifier.parseMinus(modifiersString)
-    }
+    modifiers: parseModifiers(modifiersString)
   }
 }

@@ -1,26 +1,29 @@
-import {
-  ArithmeticModifier,
-  CapModifier,
-  DropModifier,
-  ExplodeModifier,
-  ReplaceModifier,
-  RerollModifier,
-  UniqueModifier
-} from '../modifiers'
 import { coreNotationPattern } from './coreNotationPattern'
+import {
+  capPattern,
+  dropConstraintsPattern,
+  dropHighestPattern,
+  dropLowestPattern,
+  explodePattern,
+  minusPattern,
+  plusPattern,
+  replacePattern,
+  rerollPattern,
+  uniquePattern
+} from './modifierPatterns'
 
 const completeRollPatternSource = [
   coreNotationPattern.source,
-  DropModifier.highestPattern.source,
-  DropModifier.lowestPattern.source,
-  DropModifier.constraintsPattern.source,
-  ExplodeModifier.pattern.source,
-  UniqueModifier.pattern.source,
-  ReplaceModifier.pattern.source,
-  RerollModifier.pattern.source,
-  CapModifier.pattern.source,
-  ArithmeticModifier.plusPattern.source,
-  ArithmeticModifier.minusPattern.source
+  dropHighestPattern.source,
+  dropLowestPattern.source,
+  dropConstraintsPattern.source,
+  explodePattern.source,
+  uniquePattern.source,
+  replacePattern.source,
+  rerollPattern.source,
+  capPattern.source,
+  plusPattern.source,
+  minusPattern.source
 ].join('|')
 
 export const completeRollPattern: RegExp = new RegExp(

@@ -1,5 +1,13 @@
 export { coreRandom, coreSpreadRolls } from './randomUtils'
-export { notationToOptions } from './notationToOptions'
-export { optionsToDescription } from './optionsToDescription'
-export { optionsToNotation } from './optionsToNotation'
-export { optionsToSidesFaces } from './optionsToSidesFaces'
+export {
+  optionsToDescription,
+  optionsToNotation,
+  optionsToSidesFaces
+} from './optionsTransformers'
+export {
+  matchesComparison,
+  formatComparisonDescription,
+  formatComparisonNotation,
+  formatHumanList
+} from './comparisonUtils'
+export { notationToOptions } from './notationTransformer'

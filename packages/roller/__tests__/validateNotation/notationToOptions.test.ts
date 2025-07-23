@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { notationToOptions } from '../../src/lib/utils/notationToOptions'
+import { notationToOptions } from '../../src/lib/utils/notationTransformer'
 
 describe('notationToOptions', () => {
   describe('basic dice notation', () => {
