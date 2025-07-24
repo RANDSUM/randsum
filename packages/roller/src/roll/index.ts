@@ -1,5 +1,4 @@
-import type { RollArgument } from '../types/core'
-import type { RollerRollResult } from '../types/roll'
+import type { RollArgument, RollerRollResult } from '../types'
 import { argToParameter } from './argToParameter'
 import { generateRollRecord } from './generateRollRecord'
 

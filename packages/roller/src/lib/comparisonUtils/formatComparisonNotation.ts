@@ -1,4 +1,4 @@
-import type { ComparisonOptions } from '../../types/modifiers'
+import type { ComparisonOptions } from '../../types'
 
 export function formatComparisonNotation({
   greaterThan,

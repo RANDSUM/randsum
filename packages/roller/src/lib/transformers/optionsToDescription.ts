@@ -1,5 +1,5 @@
-import type { RollOptions } from '../../types/core'
-import { ModifierProcessor } from '../modifiers/processor'
+import type { RollOptions } from '../../types'
+import { processModifierDescriptions } from '../modifiers'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
 
 export function optionsToDescription<T>(options: RollOptions<T>): string[] {
@@ -8,7 +8,7 @@ export function optionsToDescription<T>(options: RollOptions<T>): string[] {
   const descriptor = quantity === 1 ? 'die' : 'dice'
   const coreDescription = `Roll ${quantity} ${sides}-sided ${descriptor}`
   const customCoreDescription = `Roll ${quantity} Dice with the following sides: ${faces.join(', ')}`
-  const modifierDescription = ModifierProcessor.processDescriptions(modifiers)
+  const modifierDescription = processModifierDescriptions(modifiers)
   const arithmeticDescription = arithmetic === 'subtract' ? 'and Subtract the result' : ''
 
   return [

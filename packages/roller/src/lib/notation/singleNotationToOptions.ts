@@ -1,4 +1,4 @@
-import type { RollOptions } from '../../types/core'
+import type { RollOptions } from '../../types'
 import { coreNotationPattern } from '../patterns'
 import { parseModifiers } from '../modifiers'
 

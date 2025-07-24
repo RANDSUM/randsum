@@ -1,4 +1,4 @@
-import type { ComparisonOptions } from '../../types/modifiers'
+import type { ComparisonOptions } from '../../types'
 import { formatHumanList } from './formatHumanList'
 
 export function formatComparisonDescription({

@@ -1,4 +1,4 @@
-import type { DiceNotation, RollOptions } from '../../types/core'
+import type { DiceNotation, RollOptions } from '../../types'
 import { coreNotationPattern } from '../patterns'
 import { listOfNotations } from './listOfNotations'
 import { singleNotationToOptions } from './singleNotationToOptions'

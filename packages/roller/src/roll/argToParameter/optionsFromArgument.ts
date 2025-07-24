@@ -1,6 +1,6 @@
 import { isDiceNotation } from '../../isDiceNotation'
 import { notationToOptions } from '../../lib/notation'
-import type { RollArgument, RollOptions } from '../../types/core'
+import type { RollArgument, RollOptions } from '../../types'
 
 export function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
   if (isDiceNotation(argument)) {

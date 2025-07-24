@@ -1,4 +1,4 @@
-import type { RollOptions } from '../../types/core'
+import type { RollOptions } from '../../types'
 
 export function optionsToSidesFaces<T>({ sides }: RollOptions<T>): {
   sides: number

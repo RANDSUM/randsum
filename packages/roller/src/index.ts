@@ -6,10 +6,7 @@ export type {
   DiceNotation,
   RollArgument,
   RollOptions,
-  RequiredNumericRollParameters
-} from './types/core'
-
-export type {
+  RequiredNumericRollParameters,
   ComparisonOptions,
   DropOptions,
   ModifierConfig,
@@ -18,13 +15,12 @@ export type {
   NumericRollBonus,
   ReplaceOptions,
   RerollOptions,
-  UniqueOptions
-} from './types/modifiers'
-
-export type { RollParams, RollRecord, RollResult, RollerRollResult } from './types/roll'
-
-export type {
+  UniqueOptions,
+  RollParams,
+  RollRecord,
+  RollResult,
+  RollerRollResult,
   InvalidValidationResult,
   ValidValidationResult,
   ValidationResult
-} from './types/validation'
+} from './types'

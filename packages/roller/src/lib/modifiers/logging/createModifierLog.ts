@@ -1,4 +1,5 @@
-import type { ModifierConfig, ModifierLog } from '../../types/modifiers'
+import type { ModifierConfig, ModifierLog } from '../../../types'
+import { createFrequencyMap } from './createFrequencyMap'
 
 export function createModifierLog(
   modifier: string,
@@ -47,30 +48,4 @@ export function createModifierLog(
   }
 
   return { ...baseLog, added, removed }
-}
-
-function createFrequencyMap(values: number[]): Map<number, number> {
-  const freq = new Map<number, number>()
-
-  for (const value of values) {
-    freq.set(value, (freq.get(value) ?? 0) + 1)
-  }
-
-  return freq
-}
-
-export function createArithmeticLog(
-  modifier: string,
-  options: ModifierConfig | undefined
-): ModifierLog {
-  return {
-    modifier,
-    options,
-    added: [],
-    removed: []
-  }
-}
-
-export function mergeLogs(existingLogs: ModifierLog[], newLog: ModifierLog): ModifierLog[] {
-  return [...existingLogs, newLog]
 }

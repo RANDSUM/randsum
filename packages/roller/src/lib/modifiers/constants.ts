@@ -1,4 +1,4 @@
-import type { ModifierOptions } from '../../types/modifiers'
+import type { ModifierOptions } from '../../types'
 
 export const MODIFIER_ORDER: (keyof ModifierOptions)[] = [
   'cap',

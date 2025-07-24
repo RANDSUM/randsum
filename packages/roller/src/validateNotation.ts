@@ -1,5 +1,5 @@
 import { isDiceNotation } from './isDiceNotation'
-import type { ValidationResult } from './types/validation'
+import type { ValidationResult } from './types'
 import { optionsToDescription, optionsToNotation } from './lib/transformers'
 import { notationToOptions } from './lib/notation'
 

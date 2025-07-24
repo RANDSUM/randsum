@@ -1,8 +1,7 @@
 import { coreRandom } from '../../lib/random'
-import { MODIFIER_ORDER } from '../../lib/modifiers/ModifierEngine'
-import type { NumericRollBonus } from '../../types/modifiers'
-import type { RollParams, RollRecord } from '../../types/roll'
-import { applyModifier } from './applyModifier'
+import { MODIFIER_ORDER } from '../../lib/modifiers/constants'
+import type { NumericRollBonus, RollParams, RollRecord } from '../../types'
+import { applyModifiers } from '../../lib/modifiers'
 
 export function generateHistory<T>(
   { sides, quantity = 1, modifiers = {} }: RollParams<T>,
@@ -23,7 +22,7 @@ export function generateHistory<T>(
 
   const rollOne = (): number => coreRandom(sides)
 
-  const rollParams = { sides, quantity, rollOne }
+  const rollParams = { sides, quantity }
 
   const initialRollsAsNumbers = Array.from(rolls, roll => Number(roll))
 
@@ -35,7 +34,14 @@ export function generateHistory<T>(
 
   for (const modifierKey of MODIFIER_ORDER) {
     if (modifiers[modifierKey]) {
-      const result = applyModifier(modifierKey, modifiers, bonuses, rollParams)
+      const result = applyModifiers(
+        modifierKey,
+        modifiers[modifierKey],
+        bonuses,
+        rollParams,
+        rollOne
+      )
+
       bonuses.rolls = result.rolls
       bonuses.simpleMathModifier = result.simpleMathModifier
       bonuses.logs = result.logs

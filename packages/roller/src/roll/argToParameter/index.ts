@@ -3,8 +3,7 @@ import {
   optionsToNotation,
   optionsToSidesFaces
 } from '../../lib/transformers'
-import type { RollArgument } from '../../types/core'
-import type { RollParams } from '../../types/roll'
+import type { RollArgument, RollParams } from '../../types'
 import { optionsFromArgument } from './optionsFromArgument'
 
 export function argToParameter<T>(argument: RollArgument<T>): RollParams<T>[] {
