@@ -225,7 +225,7 @@ describe('rollDaggerheart', () => {
         }
       ]
 
-      validArgs.forEach((arg) => {
+      validArgs.forEach(arg => {
         expect(() => rollDaggerheart(arg)).not.toThrow()
       })
     })
@@ -235,14 +235,14 @@ describe('rollDaggerheart', () => {
     test('produces different results across multiple calls', () => {
       const results = Array.from({ length: 10 }, () => rollDaggerheart({}))
 
-      const uniqueTotals = new Set(results.map((r) => r.result.total))
+      const uniqueTotals = new Set(results.map(r => r.result.total))
       expect(uniqueTotals.size).toBeGreaterThan(1)
     })
 
     test('produces reasonable distribution of results', () => {
       const results = Array.from({ length: 100 }, () => rollDaggerheart({}))
 
-      const totals = results.map((r) => r.result.total)
+      const totals = results.map(r => r.result.total)
       const minTotal = Math.min(...totals)
       const maxTotal = Math.max(...totals)
 

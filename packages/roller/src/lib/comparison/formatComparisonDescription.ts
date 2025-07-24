@@ -9,8 +9,7 @@ export function formatComparisonDescription({
   const descriptions: string[] = []
 
   if (exact && exact.length > 0) descriptions.push(formatHumanList(exact))
-  if (greaterThan !== undefined)
-    descriptions.push(`greater than [${greaterThan}]`)
+  if (greaterThan !== undefined) descriptions.push(`greater than [${greaterThan}]`)
   if (lessThan !== undefined) descriptions.push(`less than [${lessThan}]`)
 
   return descriptions

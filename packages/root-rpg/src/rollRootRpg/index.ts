@@ -5,15 +5,11 @@ import { interpretResult } from './interpretResult'
 
 export function rollRootRpg(bonus: number): RollResult<RootRpgRollResult> {
   if (!Number.isFinite(bonus)) {
-    throw new Error(
-      `Root RPG bonus must be a finite number, received: ${bonus}`
-    )
+    throw new Error(`Root RPG bonus must be a finite number, received: ${bonus}`)
   }
 
   if (bonus < -20 || bonus > 20) {
-    throw new Error(
-      `Root RPG bonus is outside reasonable range (-20 to +20), received: ${bonus}`
-    )
+    throw new Error(`Root RPG bonus is outside reasonable range (-20 to +20), received: ${bonus}`)
   }
 
   const rollResult = roll({

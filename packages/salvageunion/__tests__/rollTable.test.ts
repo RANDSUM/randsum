@@ -32,13 +32,9 @@ describe('rollTable', () => {
 
       results.forEach(({ result }) => {
         expect(result.tableName).toBe('Core Mechanic')
-        expect([
-          'Nailed It',
-          'Success',
-          'Tough Choice',
-          'Failure',
-          'Cascade Failure'
-        ]).toContain(result.hit)
+        expect(['Nailed It', 'Success', 'Tough Choice', 'Failure', 'Cascade Failure']).toContain(
+          result.hit
+        )
       })
     })
   })
@@ -48,13 +44,9 @@ describe('rollTable', () => {
       const { result } = rollTable('NPC Action')
       expect(result.tableName).toBe('NPC Action')
       expect(result.table).toBeDefined()
-      expect([
-        'Nailed It',
-        'Success',
-        'Tough Choice',
-        'Failure',
-        'Cascade Failure'
-      ]).toContain(result.hit)
+      expect(['Nailed It', 'Success', 'Tough Choice', 'Failure', 'Cascade Failure']).toContain(
+        result.hit
+      )
     })
 
     test('handles Critical Damage table', () => {
@@ -62,13 +54,9 @@ describe('rollTable', () => {
 
       expect(result.tableName).toBe('Critical Damage')
       expect(result.table).toBeDefined()
-      expect([
-        'Nailed It',
-        'Success',
-        'Tough Choice',
-        'Failure',
-        'Cascade Failure'
-      ]).toContain(result.hit)
+      expect(['Nailed It', 'Success', 'Tough Choice', 'Failure', 'Cascade Failure']).toContain(
+        result.hit
+      )
     })
   })
 
@@ -100,10 +88,8 @@ describe('rollTable', () => {
         'Mech Salvage'
       ]
 
-      validTables.forEach((tableName) => {
-        expect(() =>
-          rollTable(tableName as SalvageUnionTableName)
-        ).not.toThrow()
+      validTables.forEach(tableName => {
+        expect(() => rollTable(tableName as SalvageUnionTableName)).not.toThrow()
         const { result } = rollTable(tableName as SalvageUnionTableName)
         expect(result.tableName).toBe(tableName as SalvageUnionTableName)
       })

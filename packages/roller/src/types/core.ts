@@ -9,16 +9,9 @@ export interface RollOptions<T = string> {
   modifiers?: ModifierOptions
 }
 
-export type RequiredNumericRollParameters = Pick<
-  RollOptions,
-  'quantity' | 'sides'
-> & {
+export type RequiredNumericRollParameters = Pick<RollOptions, 'quantity' | 'sides'> & {
   quantity: number
   sides: number
 }
 
-export type RollArgument<T = string> =
-  | RollOptions<T>
-  | DiceNotation
-  | number
-  | `${number}`
+export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number | `${number}`

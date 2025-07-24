@@ -70,10 +70,7 @@ export function generateHistory<T>(
   return {
     modifiedRolls: bonuses.rolls,
     initialRolls: rolls,
-    total: bonuses.rolls.reduce(
-      (acc, cur) => Number(acc) + cur,
-      bonuses.simpleMathModifier
-    ),
+    total: bonuses.rolls.reduce((acc, cur) => Number(acc) + cur, bonuses.simpleMathModifier),
     logs: bonuses.logs
   }
 }

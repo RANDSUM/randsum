@@ -47,7 +47,7 @@ function parseDropModifiers(notation: string): Pick<ModifierOptions, 'drop'> {
   if (constraintsMatch) {
     const constraints = constraintsMatch[1]
     if (constraints) {
-      const parts = constraints.split(',').map((s) => s.trim())
+      const parts = constraints.split(',').map(s => s.trim())
 
       for (const part of parts) {
         if (part.startsWith('>')) {
@@ -65,15 +65,11 @@ function parseDropModifiers(notation: string): Pick<ModifierOptions, 'drop'> {
   return Object.keys(drop).length > 0 ? { drop } : {}
 }
 
-function parseExplodeModifier(
-  notation: string
-): Pick<ModifierOptions, 'explode'> {
+function parseExplodeModifier(notation: string): Pick<ModifierOptions, 'explode'> {
   return explodePattern.test(notation) ? { explode: true } : {}
 }
 
-function parseUniqueModifier(
-  notation: string
-): Pick<ModifierOptions, 'unique'> {
+function parseUniqueModifier(notation: string): Pick<ModifierOptions, 'unique'> {
   const match = notation.match(uniquePattern)
   if (!match) return {}
 
@@ -81,21 +77,19 @@ function parseUniqueModifier(
     return { unique: true }
   }
 
-  const notUnique = match[2].split(',').map((s) => Number(s.trim()))
+  const notUnique = match[2].split(',').map(s => Number(s.trim()))
   return { unique: { notUnique } }
 }
 
-function parseReplaceModifier(
-  notation: string
-): Pick<ModifierOptions, 'replace'> {
+function parseReplaceModifier(notation: string): Pick<ModifierOptions, 'replace'> {
   const match = notation.match(replacePattern)
   if (!match) return {}
 
   const content = match[1]
   if (!content) return {}
-  const parts = content.split(',').map((s) => s.trim())
+  const parts = content.split(',').map(s => s.trim())
 
-  const replacements = parts.map((part) => {
+  const replacements = parts.map(part => {
     const [fromPart, toPart] = part.split('=')
     if (!fromPart || !toPart) return { from: 0, to: 0 }
 
@@ -114,12 +108,8 @@ function parseReplaceModifier(
   return { replace: replacements }
 }
 
-function parseRerollModifier(
-  notation: string
-): Pick<ModifierOptions, 'reroll'> {
-  const matches = Array.from(
-    notation.matchAll(new RegExp(rerollPattern.source, 'g'))
-  )
+function parseRerollModifier(notation: string): Pick<ModifierOptions, 'reroll'> {
+  const matches = Array.from(notation.matchAll(new RegExp(rerollPattern.source, 'g')))
   if (matches.length === 0) return {}
 
   const reroll: {
@@ -138,7 +128,7 @@ function parseRerollModifier(
     }
 
     if (conditions) {
-      const parts = conditions.split(',').map((s) => s.trim())
+      const parts = conditions.split(',').map(s => s.trim())
 
       for (const part of parts) {
         if (part.startsWith('>')) {
@@ -167,7 +157,7 @@ function parseCapModifier(notation: string): Pick<ModifierOptions, 'cap'> {
   const conditions = match[1]
   if (!conditions) return {}
 
-  const parts = conditions.split(',').map((s) => s.trim())
+  const parts = conditions.split(',').map(s => s.trim())
 
   for (const part of parts) {
     if (part.startsWith('>')) {
@@ -180,22 +170,16 @@ function parseCapModifier(notation: string): Pick<ModifierOptions, 'cap'> {
   return { cap }
 }
 
-function parseArithmeticModifiers(
-  notation: string
-): Pick<ModifierOptions, 'plus' | 'minus'> {
+function parseArithmeticModifiers(notation: string): Pick<ModifierOptions, 'plus' | 'minus'> {
   const result: { plus?: number; minus?: number } = {}
 
-  const plusMatches = Array.from(
-    notation.matchAll(new RegExp(plusPattern.source, 'g'))
-  )
+  const plusMatches = Array.from(notation.matchAll(new RegExp(plusPattern.source, 'g')))
   if (plusMatches.length > 0) {
     const total = plusMatches.reduce((sum, match) => sum + Number(match[1]), 0)
     result.plus = total
   }
 
-  const minusMatches = Array.from(
-    notation.matchAll(new RegExp(minusPattern.source, 'g'))
-  )
+  const minusMatches = Array.from(notation.matchAll(new RegExp(minusPattern.source, 'g')))
   if (minusMatches.length > 0) {
     const total = minusMatches.reduce((sum, match) => sum + Number(match[1]), 0)
     result.minus = total

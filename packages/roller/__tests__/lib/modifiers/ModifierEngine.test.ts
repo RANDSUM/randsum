@@ -60,11 +60,7 @@ describe('ModifierEngine', () => {
 
       test('caps values with both limits', () => {
         const bonus = createBasicBonus([1, 6, 3, 4])
-        const result = ModifierEngine.apply(
-          'cap',
-          { greaterThan: 5, lessThan: 2 },
-          bonus
-        )
+        const result = ModifierEngine.apply('cap', { greaterThan: 5, lessThan: 2 }, bonus)
 
         expect(result.rolls).toEqual([2, 5, 3, 4])
       })
@@ -163,13 +159,7 @@ describe('ModifierEngine', () => {
       test('adds additional rolls for maximum values', () => {
         const bonus = createBasicBonus([6, 3, 6, 4])
         const fixedRollOne = (): number => 2
-        const result = ModifierEngine.apply(
-          'explode',
-          true,
-          bonus,
-          mockContext,
-          fixedRollOne
-        )
+        const result = ModifierEngine.apply('explode', true, bonus, mockContext, fixedRollOne)
 
         expect(result.rolls).toEqual([6, 3, 6, 4, 2, 2]) // Two 6s exploded
         expect(result.logs).toHaveLength(1)
@@ -192,13 +182,7 @@ describe('ModifierEngine', () => {
           rollCount++
           return rollCount === 1 ? 2 : 5 // First call returns 2, then 5
         }
-        const result = ModifierEngine.apply(
-          'unique',
-          true,
-          bonus,
-          mockContext,
-          uniqueRollOne
-        )
+        const result = ModifierEngine.apply('unique', true, bonus, mockContext, uniqueRollOne)
 
         expect(result.rolls).toEqual([1, 3, 2, 4])
         expect(result.logs).toHaveLength(1)
@@ -228,11 +212,7 @@ describe('ModifierEngine', () => {
     describe('replace modifier', () => {
       test('replaces exact values', () => {
         const bonus = createBasicBonus([1, 6, 1, 4])
-        const result = ModifierEngine.apply(
-          'replace',
-          { from: 1, to: 5 },
-          bonus
-        )
+        const result = ModifierEngine.apply('replace', { from: 1, to: 5 }, bonus)
 
         expect(result.rolls).toEqual([5, 6, 5, 4])
         expect(result.logs).toHaveLength(1)
@@ -255,11 +235,7 @@ describe('ModifierEngine', () => {
 
       test('replaces values based on comparison', () => {
         const bonus = createBasicBonus([1, 6, 3, 4])
-        const result = ModifierEngine.apply(
-          'replace',
-          { from: { greaterThan: 5 }, to: 5 },
-          bonus
-        )
+        const result = ModifierEngine.apply('replace', { from: { greaterThan: 5 }, to: 5 }, bonus)
 
         expect(result.rolls).toEqual([1, 5, 3, 4])
       })

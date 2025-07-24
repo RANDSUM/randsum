@@ -23,5 +23,4 @@ const customTableFaceIndex: Record<number, SalvageUnionHit> = {
   20: 'Nailed It'
 }
 
-export const customTableFaces: SalvageUnionHit[] =
-  Object.values(customTableFaceIndex)
+export const customTableFaces: SalvageUnionHit[] = Object.values(customTableFaceIndex)

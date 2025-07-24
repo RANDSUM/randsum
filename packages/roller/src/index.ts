@@ -21,12 +21,7 @@ export type {
   UniqueOptions
 } from './types/modifiers'
 
-export type {
-  RollParams,
-  RollRecord,
-  RollResult,
-  RollerRollResult
-} from './types/roll'
+export type { RollParams, RollRecord, RollResult, RollerRollResult } from './types/roll'
 
 export type {
   InvalidValidationResult,

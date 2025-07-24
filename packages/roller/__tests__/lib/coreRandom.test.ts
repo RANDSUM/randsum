@@ -69,7 +69,7 @@ describe('coreRandom', () => {
       const expectedCount = iterations / 6
       const tolerance = expectedCount * 0.1
 
-      counts.forEach((count) => {
+      counts.forEach(count => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
         expect(count).toBeLessThan(expectedCount + tolerance)
       })
@@ -87,7 +87,7 @@ describe('coreRandom', () => {
       const expectedCount = iterations / 20
       const tolerance = expectedCount * 0.15
 
-      counts.forEach((count) => {
+      counts.forEach(count => {
         expect(count).toBeGreaterThan(expectedCount - tolerance)
         expect(count).toBeLessThan(expectedCount + tolerance)
       })

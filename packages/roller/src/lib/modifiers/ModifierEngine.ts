@@ -66,50 +66,27 @@ export class ModifierEngine {
         break
 
       case 'reroll':
-        if (!rollOne)
-          throw new Error('rollOne function required for reroll modifier')
-        newRolls = applyRerolling(
-          bonus.rolls,
-          options as RerollOptions,
-          rollOne
-        )
-        log = createModifierLog(
-          'reroll',
-          options || undefined,
-          initialRolls,
-          newRolls
-        )
+        if (!rollOne) throw new Error('rollOne function required for reroll modifier')
+        newRolls = applyRerolling(bonus.rolls, options as RerollOptions, rollOne)
+        log = createModifierLog('reroll', options || undefined, initialRolls, newRolls)
         break
 
       case 'explode':
         if (!rollOne || !context)
           throw new Error('rollOne and context required for explode modifier')
         newRolls = applyExploding(bonus.rolls, context, rollOne)
-        log = createModifierLog(
-          'explode',
-          options || undefined,
-          initialRolls,
-          newRolls
-        )
+        log = createModifierLog('explode', options || undefined, initialRolls, newRolls)
         break
 
       case 'unique':
         if (!rollOne || !context)
           throw new Error('rollOne and context required for unique modifier')
-        newRolls = applyUnique(
-          bonus.rolls,
-          options as boolean | UniqueOptions,
-          context,
-          rollOne
-        )
+        newRolls = applyUnique(bonus.rolls, options as boolean | UniqueOptions, context, rollOne)
         log = createModifierLog('unique', options, initialRolls, newRolls)
         break
 
       case 'replace':
-        newRolls = applyReplacing(
-          bonus.rolls,
-          options as ReplaceOptions | ReplaceOptions[]
-        )
+        newRolls = applyReplacing(bonus.rolls, options as ReplaceOptions | ReplaceOptions[])
         log = createModifierLog('replace', options, initialRolls, newRolls)
         break
 
@@ -139,7 +116,7 @@ export class ModifierEngine {
 
       case 'cap':
         return formatComparisonDescription(options as ComparisonOptions).map(
-          (str) => `No Rolls ${str}`
+          str => `No Rolls ${str}`
         )
 
       case 'drop':
@@ -155,14 +132,10 @@ export class ModifierEngine {
         if (typeof options === 'boolean') {
           return ['No Duplicate Rolls']
         }
-        return [
-          `No Duplicates (except ${formatHumanList((options as UniqueOptions).notUnique)})`
-        ]
+        return [`No Duplicates (except ${formatHumanList((options as UniqueOptions).notUnique)})`]
 
       case 'replace':
-        return ModifierEngine.formatReplaceDescription(
-          options as ReplaceOptions | ReplaceOptions[]
-        )
+        return ModifierEngine.formatReplaceDescription(options as ReplaceOptions | ReplaceOptions[])
 
       default:
         return undefined
@@ -206,9 +179,7 @@ export class ModifierEngine {
         return `U{${(options as UniqueOptions).notUnique.join(',')}}`
 
       case 'replace':
-        return ModifierEngine.formatReplaceNotation(
-          options as ReplaceOptions | ReplaceOptions[]
-        )
+        return ModifierEngine.formatReplaceNotation(options as ReplaceOptions | ReplaceOptions[])
 
       default:
         return undefined
@@ -273,7 +244,7 @@ export class ModifierEngine {
     }
 
     if (options.exact) {
-      options.exact.forEach((roll) => dropList.push(String(roll)))
+      options.exact.forEach(roll => dropList.push(String(roll)))
     }
 
     if (dropList.length > 0) {
@@ -287,7 +258,7 @@ export class ModifierEngine {
     const rerollList: string[] = []
 
     if (options.exact) {
-      options.exact.forEach((roll) => rerollList.push(String(roll)))
+      options.exact.forEach(roll => rerollList.push(String(roll)))
     }
 
     const greaterLessList: string[] = []
@@ -301,22 +272,17 @@ export class ModifierEngine {
     const exactList = formatHumanList(rerollList.map(Number))
     const greaterLess = greaterLessList.join(' and ')
 
-    const exactString = [exactList, greaterLess]
-      .filter((i) => i !== '')
-      .join(', ')
+    const exactString = [exactList, greaterLess].filter(i => i !== '').join(', ')
 
     if (exactString === '') return []
 
     const coreString = `Reroll ${exactString}`
-    const maxText =
-      options.max !== undefined ? ` (up to ${options.max} times)` : ''
+    const maxText = options.max !== undefined ? ` (up to ${options.max} times)` : ''
 
     return [`${coreString}${maxText}`]
   }
 
-  private static formatRerollNotation(
-    options: RerollOptions
-  ): string | undefined {
+  private static formatRerollNotation(options: RerollOptions): string | undefined {
     const parts = formatComparisonNotation(options)
     if (parts.length === 0) return undefined
 
@@ -324,9 +290,7 @@ export class ModifierEngine {
     return `R{${parts.join(',')}}${maxSuffix}`
   }
 
-  private static formatReplaceDescription(
-    options: ReplaceOptions | ReplaceOptions[]
-  ): string[] {
+  private static formatReplaceDescription(options: ReplaceOptions | ReplaceOptions[]): string[] {
     const rules = Array.isArray(options) ? options : [options]
     return rules.map(({ from, to }) => {
       if (typeof from === 'object') {
@@ -344,7 +308,7 @@ export class ModifierEngine {
     const notations = rules.map(({ from, to }) => {
       if (typeof from === 'object') {
         const comparisons = formatComparisonNotation(from)
-        return comparisons.map((comp) => `${comp}=${to}`).join(',')
+        return comparisons.map(comp => `${comp}=${to}`).join(',')
       }
       return `${from}=${to}`
     })

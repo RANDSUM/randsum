@@ -10,7 +10,7 @@ describe('coreSpreadRolls', () => {
 
     test('returns values within correct range for d6', () => {
       const result = coreSpreadRolls(100, 6)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBeGreaterThanOrEqual(1)
         expect(roll).toBeLessThanOrEqual(6)
       })
@@ -18,7 +18,7 @@ describe('coreSpreadRolls', () => {
 
     test('returns values within correct range for d20', () => {
       const result = coreSpreadRolls(50, 20)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBeGreaterThanOrEqual(1)
         expect(roll).toBeLessThanOrEqual(20)
       })
@@ -26,7 +26,7 @@ describe('coreSpreadRolls', () => {
 
     test('returns values within correct range for d100', () => {
       const result = coreSpreadRolls(25, 100)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBeGreaterThanOrEqual(1)
         expect(roll).toBeLessThanOrEqual(100)
       })
@@ -50,7 +50,7 @@ describe('coreSpreadRolls', () => {
     test('handles max value of 1 (coin flip)', () => {
       const result = coreSpreadRolls(10, 1)
       expect(result).toHaveLength(10)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBe(1)
       })
     })
@@ -58,7 +58,7 @@ describe('coreSpreadRolls', () => {
     test('handles max value of 2', () => {
       const result = coreSpreadRolls(20, 2)
       expect(result).toHaveLength(20)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBeGreaterThanOrEqual(1)
         expect(roll).toBeLessThanOrEqual(2)
       })
@@ -67,7 +67,7 @@ describe('coreSpreadRolls', () => {
     test('handles large quantity', () => {
       const result = coreSpreadRolls(1000, 6)
       expect(result).toHaveLength(1000)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBeGreaterThanOrEqual(1)
         expect(roll).toBeLessThanOrEqual(6)
       })
@@ -76,7 +76,7 @@ describe('coreSpreadRolls', () => {
     test('handles large max value', () => {
       const result = coreSpreadRolls(10, 1000)
       expect(result).toHaveLength(10)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBeGreaterThanOrEqual(1)
         expect(roll).toBeLessThanOrEqual(1000)
       })
@@ -86,7 +86,7 @@ describe('coreSpreadRolls', () => {
   describe('boundary conditions', () => {
     test('handles fractional max values by flooring', () => {
       const result = coreSpreadRolls(10, 6.9)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBeGreaterThanOrEqual(1)
         expect(roll).toBeLessThanOrEqual(7) // 6.9 + 1
       })
@@ -100,7 +100,7 @@ describe('coreSpreadRolls', () => {
     test('handles zero max value', () => {
       const result = coreSpreadRolls(5, 0)
       expect(result).toHaveLength(5)
-      result.forEach((roll) => {
+      result.forEach(roll => {
         expect(roll).toBe(1) // 0 + 1 = 1
       })
     })

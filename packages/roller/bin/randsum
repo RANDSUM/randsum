@@ -40,12 +40,8 @@ try {
   console.log(message)
   process.exit(0)
 } catch (error) {
-  console.error(
-    `❌ Error: ${error instanceof Error ? error.message : String(error)}`
-  )
-  console.error(
-    '\nIf this error persists, please check your dice notation format.'
-  )
+  console.error(`❌ Error: ${error instanceof Error ? error.message : String(error)}`)
+  console.error('\nIf this error persists, please check your dice notation format.')
   console.error('For help: randsum --help')
   process.exit(1)
 }

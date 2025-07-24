@@ -6,7 +6,7 @@ export function parseComparisonNotation(
   const content = bracedString.replace(/[{}]/g, '')
   const parts = content
     .split(',')
-    .map((s) => s.trim())
+    .map(s => s.trim())
     .filter(Boolean)
 
   const result: ComparisonOptions & { exact?: number[] } = {}

@@ -1,7 +1,4 @@
-export function listOfNotations(
-  notationString: string,
-  coreMatches: RegExpMatchArray[]
-): string[] {
+export function listOfNotations(notationString: string, coreMatches: RegExpMatchArray[]): string[] {
   const completeExpressions: string[] = []
 
   for (const [i, currentMatch] of coreMatches.entries()) {
@@ -15,9 +12,7 @@ export function listOfNotations(
       startPos = 0
     } else {
       const prevMatch = coreMatches[i - 1]
-      const prevEndPos = prevMatch
-        ? Number(prevMatch.index) + prevMatch[0].length
-        : 0
+      const prevEndPos = prevMatch ? Number(prevMatch.index) + prevMatch[0].length : 0
       const textBetween = notationString.slice(prevEndPos, currentMatch.index)
       const arithmeticMatch = /([+-])/.exec(textBetween)
 

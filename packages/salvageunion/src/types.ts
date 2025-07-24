@@ -24,10 +24,7 @@ export interface SalvageUnionTableListing {
   hit: SalvageUnionHit
 }
 
-export type SalvageUnionTableType = Record<
-  SalvageUnionHit,
-  SalvageUnionTableListing
->
+export type SalvageUnionTableType = Record<SalvageUnionHit, SalvageUnionTableListing>
 export interface SalvageUnionRollRecord {
   hit: SalvageUnionHit
   label: SalvageUnionTableListing['label']

@@ -15,11 +15,5 @@ export function applyModifier(
 ): NumericRollBonus {
   const modifierValue = modifiers[key]
 
-  return ModifierEngine.apply(
-    key,
-    modifierValue,
-    currentBonuses,
-    { sides, quantity },
-    rollOne
-  )
+  return ModifierEngine.apply(key, modifierValue, currentBonuses, { sides, quantity }, rollOne)
 }

@@ -37,8 +37,7 @@ describe('actionRoll', () => {
     test('uses higher roll for total', () => {
       const result = actionRoll(args)
       const rolls = result.rolls[0]?.modifierHistory.initialRolls ?? []
-      const expectedTotal =
-        Math.max(Number(rolls[0]), Number(rolls[1])) + args.modifier
+      const expectedTotal = Math.max(Number(rolls[0]), Number(rolls[1])) + args.modifier
       expect(result.rolls[0]?.total).toBe(expectedTotal)
     })
   })
@@ -57,8 +56,7 @@ describe('actionRoll', () => {
     test('uses lower roll for total', () => {
       const result = actionRoll(args)
       const rolls = result.rolls[0]?.modifierHistory.initialRolls ?? []
-      const expectedTotal =
-        Math.min(Number(rolls[0]), Number(rolls[1])) + args.modifier
+      const expectedTotal = Math.min(Number(rolls[0]), Number(rolls[1])) + args.modifier
       expect(result.rolls[0]?.total).toBe(expectedTotal)
     })
   })

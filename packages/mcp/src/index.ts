@@ -38,10 +38,7 @@ if (!allowedTransports.includes(cliOptions.transport)) {
   process.exit(1)
 }
 
-const TRANSPORT_TYPE = (cliOptions.transport || 'stdio') as
-  | 'stdio'
-  | 'http'
-  | 'sse'
+const TRANSPORT_TYPE = (cliOptions.transport || 'stdio') as 'stdio' | 'http' | 'sse'
 
 const CLI_PORT = (() => {
   const parsed = parseInt(cliOptions.port, 10)
@@ -135,15 +132,7 @@ function formatRollResult(result: RollerRollResult): string {
 
   const rawResultsLine = `Raw Results: [${initialRolls.join(', ')}]`
 
-  return [
-    header,
-    separator,
-    totalLine,
-    rawResultsLine,
-    '',
-    'Roll Details:',
-    rollInfo
-  ].join('\n')
+  return [header, separator, totalLine, rawResultsLine, '', 'Roll Details:', rollInfo].join('\n')
 }
 
 function formatValidationResult(result: ValidationResult): string {
@@ -549,9 +538,7 @@ function runHttpTransport(port: number): void {
   })
 
   httpServer.listen(port, () => {
-    console.error(
-      `RANDSUM MCP server running on http://localhost:${port.toString()}`
-    )
+    console.error(`RANDSUM MCP server running on http://localhost:${port.toString()}`)
   })
 }
 
@@ -600,9 +587,7 @@ function runSseTransport(port: number): void {
   })
 
   httpServer.listen(port, () => {
-    console.error(
-      `RANDSUM MCP server (SSE) running on http://localhost:${String(port)}`
-    )
+    console.error(`RANDSUM MCP server (SSE) running on http://localhost:${String(port)}`)
   })
 }
 

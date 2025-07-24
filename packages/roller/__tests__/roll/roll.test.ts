@@ -32,10 +32,7 @@ describe(roll, () => {
       describe('multiple object args with arithmetic modifiers', () => {
         test('it never goes outside of the bounds of the roll', () => {
           const dummyArray = Array.from({ length: loops }, () =>
-            roll(
-              { sides: 1, arithmetic: 'add' },
-              { sides: 100, arithmetic: 'subtract' }
-            )
+            roll({ sides: 1, arithmetic: 'add' }, { sides: 100, arithmetic: 'subtract' })
           )
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(0)
@@ -111,7 +108,7 @@ describe(roll, () => {
             expect(total).toBeLessThanOrEqual(100)
             expect(total).toBeGreaterThanOrEqual(5)
             expect(rolls).toHaveLength(5)
-            rolls.forEach((roll) => {
+            rolls.forEach(roll => {
               expect(roll.total).toBeLessThanOrEqual(20)
               expect(roll.total).toBeGreaterThanOrEqual(1)
             })

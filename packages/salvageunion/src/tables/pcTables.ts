@@ -146,14 +146,12 @@ export const ReactorOverloadTable: SalvageUnionTableType = {
   },
   ['Tough Choice']: {
     label: 'Module Overload',
-    description:
-      'One of your Mech’s Modules chosen at random or by the Mediator is destroyed.',
+    description: 'One of your Mech’s Modules chosen at random or by the Mediator is destroyed.',
     hit: 'Tough Choice'
   },
   ['Failure']: {
     label: 'System Overload',
-    description:
-      'One of your Mech’s Systems chosen at random or by the Mediator is destroyed.',
+    description: 'One of your Mech’s Systems chosen at random or by the Mediator is destroyed.',
     hit: 'Failure'
   },
   ['Cascade Failure']: {
@@ -226,9 +224,7 @@ export const MechSalvageTable: SalvageUnionTableType = {
   }
 }
 
-export const PCTables: Partial<
-  Record<SalvageUnionTableName, SalvageUnionTableType>
-> = {
+export const PCTables: Partial<Record<SalvageUnionTableName, SalvageUnionTableType>> = {
   ['Group Initiative']: GroupInitiativeTable,
   ['Retreat']: RetreatTable,
   ['Critical Damage']: CriticalDamageTable,

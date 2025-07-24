@@ -16,7 +16,7 @@ export function validateNotation(notation: string): ValidationResult {
     valid: true,
     argument: notation,
     options,
-    notation: options.map((o) => optionsToNotation(o)),
-    description: options.map((o) => optionsToDescription(o))
+    notation: options.map(o => optionsToNotation(o)),
+    description: options.map(o => optionsToDescription(o))
   }
 }

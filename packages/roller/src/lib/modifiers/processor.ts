@@ -21,10 +21,10 @@ export class ModifierProcessor {
     ]
 
     return modifierTypes
-      .map((type) => ModifierEngine.toDescription(type, this.modifiers[type]))
+      .map(type => ModifierEngine.toDescription(type, this.modifiers[type]))
       .flat()
       .filter((desc): desc is string => typeof desc === 'string')
-      .filter((desc) => desc.length > 0)
+      .filter(desc => desc.length > 0)
   }
 
   public toNotations(): string {
@@ -40,7 +40,7 @@ export class ModifierProcessor {
     ]
 
     return modifierTypes
-      .map((type) => ModifierEngine.toNotation(type, this.modifiers[type]))
+      .map(type => ModifierEngine.toNotation(type, this.modifiers[type]))
       .filter((notation): notation is string => typeof notation === 'string')
       .join('')
   }

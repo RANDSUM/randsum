@@ -1,8 +1,7 @@
 import type { DiceNotation, RollArgument, RollOptions } from './core'
 import type { NumericRollBonus } from './modifiers'
 
-export interface RollParams<T = string>
-  extends Required<Omit<RollOptions<T>, 'sides'>> {
+export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 'sides'>> {
   sides: number
   faces?: T[]
   key?: string
@@ -31,7 +30,6 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
   result: TResult
 }
 
-export interface RollerRollResult<T = string>
-  extends RollResult<T[], RollRecord<T>> {
+export interface RollerRollResult<T = string> extends RollResult<T[], RollRecord<T>> {
   total: number
 }

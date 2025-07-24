@@ -71,9 +71,6 @@ export function createArithmeticLog(
   }
 }
 
-export function mergeLogs(
-  existingLogs: ModifierLog[],
-  newLog: ModifierLog
-): ModifierLog[] {
+export function mergeLogs(existingLogs: ModifierLog[], newLog: ModifierLog): ModifierLog[] {
   return [...existingLogs, newLog]
 }

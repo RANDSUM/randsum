@@ -97,9 +97,7 @@ export const NPMoraleTable: SalvageUnionTableType = {
   }
 }
 
-export const NPCTables: Partial<
-  Record<SalvageUnionTableName, SalvageUnionTableType>
-> = {
+export const NPCTables: Partial<Record<SalvageUnionTableName, SalvageUnionTableType>> = {
   ['NPC Action']: NPCActionTable,
   ['Reaction']: NPCReactionTable,
   ['Morale']: NPMoraleTable

@@ -24,7 +24,7 @@ export function rollTable(
     result: [result],
     total
   } = roll({
-    sides: customTableFaces.map((face) => AllRollTables[tableName][face])
+    sides: customTableFaces.map(face => AllRollTables[tableName][face])
   })
 
   if (!result) {

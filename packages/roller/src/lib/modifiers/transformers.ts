@@ -8,18 +8,15 @@ import type {
 } from '../../types/modifiers'
 import { applyCap, matchesComparison } from '../comparison'
 
-export function applyCapping(
-  rolls: number[],
-  options: ComparisonOptions
-): number[] {
-  return rolls.map((roll) => applyCap(roll, options))
+export function applyCapping(rolls: number[], options: ComparisonOptions): number[] {
+  return rolls.map(roll => applyCap(roll, options))
 }
 
 export function applyDropping(rolls: number[], options: DropOptions): number[] {
   const { highest, lowest, greaterThan, lessThan, exact } = options
 
   const exactSet = exact ? new Set(exact) : null
-  let result = rolls.filter((roll) => {
+  let result = rolls.filter(roll => {
     if (greaterThan !== undefined && roll > greaterThan) return false
     if (lessThan !== undefined && roll < lessThan) return false
     if (exactSet?.has(roll)) return false
@@ -42,11 +39,7 @@ export function applyDropping(rolls: number[], options: DropOptions): number[] {
     }
 
     if (highest !== undefined) {
-      for (
-        let i = indexedRolls.length - 1;
-        i >= Math.max(0, indexedRolls.length - highest);
-        i--
-      ) {
+      for (let i = indexedRolls.length - 1; i >= Math.max(0, indexedRolls.length - highest); i--) {
         const roll = indexedRolls[i]
         if (roll) {
           indicesToDrop.add(roll.index)
@@ -72,7 +65,7 @@ export function applyRerolling(
   const { max } = options
   let globalRerollCount = 0
 
-  return rolls.map((roll) => {
+  return rolls.map(roll => {
     if (max !== undefined && globalRerollCount >= max) {
       return roll // Don't reroll if we've hit the global limit
     }
@@ -179,7 +172,7 @@ export function applyReplacing(
   let result = [...rolls]
 
   for (const { from, to } of replaceRules) {
-    result = result.map((roll) => {
+    result = result.map(roll => {
       if (typeof from === 'object') {
         // Comparison-based replacement
         return applyCap(roll, from, to)
