@@ -11,7 +11,7 @@ export function applyModifier(
   key: keyof ModifierOptions,
   modifiers: ModifierOptions,
   currentBonuses: NumericRollBonus,
-  context: ModifierContext
+  { sides, quantity, rollOne }: ModifierContext
 ): NumericRollBonus {
   const modifierValue = modifiers[key]
 
@@ -19,7 +19,7 @@ export function applyModifier(
     key,
     modifierValue,
     currentBonuses,
-    { sides: context.sides, quantity: context.quantity },
-    context.rollOne
+    { sides, quantity },
+    rollOne
   )
 }

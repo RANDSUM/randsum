@@ -104,10 +104,9 @@ function rerollSingle(
 
 export function applyExploding(
   rolls: number[],
-  context: RequiredNumericRollParameters,
+  { sides }: RequiredNumericRollParameters,
   rollOne: () => number
 ): number[] {
-  const { sides } = context
   let explodeCount = 0
 
   for (const roll of rolls) {
@@ -131,11 +130,9 @@ export function applyExploding(
 export function applyUnique(
   rolls: number[],
   options: boolean | UniqueOptions,
-  context: RequiredNumericRollParameters,
+  { sides }: RequiredNumericRollParameters,
   rollOne: () => number
 ): number[] {
-  const { sides } = context
-
   if (rolls.length > sides) {
     throw new Error('Cannot have more rolls than sides when unique is enabled')
   }

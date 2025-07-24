@@ -5,9 +5,9 @@ import { generateHistory } from './generateHistory'
 export function generateRollRecord<T>(
   parameters: RollParams<T>
 ): RollRecord<T> {
-  const { sides, quantity = 1, faces } = parameters
+  const { sides, quantity = 1, faces, arithmetic, description } = parameters
   const initialRolls = coreSpreadRolls(quantity, sides)
-  const isNegative = parameters.arithmetic === 'subtract'
+  const isNegative = arithmetic === 'subtract'
   const customResults = faces
     ? { customResults: initialRolls.map((roll) => faces[roll - 1] as T) }
     : {}
@@ -16,7 +16,7 @@ export function generateRollRecord<T>(
   return {
     ...customResults,
     parameters,
-    description: parameters.description,
+    description,
     modifierHistory,
     rolls: modifierHistory.modifiedRolls,
     appliedTotal: isNegative ? -modifierHistory.total : modifierHistory.total,

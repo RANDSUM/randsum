@@ -1,11 +1,11 @@
 import type { RollOptions } from '../../types/core'
 
-export function optionsToSidesFaces<T>(options: RollOptions<T>): {
+export function optionsToSidesFaces<T>({ sides }: RollOptions<T>): {
   sides: number
   faces?: T[]
 } {
-  if (Array.isArray(options.sides)) {
-    return { sides: options.sides.length, faces: options.sides }
+  if (Array.isArray(sides)) {
+    return { sides: sides.length, faces: sides }
   }
-  return { sides: options.sides }
+  return { sides }
 }
