@@ -5,12 +5,12 @@ import { roll, validateNotation } from '@randsum/roller'
 const args = process.argv.slice(2)
 
 if (args.includes('--help') || args.includes('-h')) {
-  showHelp()
+  await showHelp()
   process.exit(0)
 }
 
 if (args.length === 0) {
-  console.error('❌ Error: Please provide dice notation')
+  console.error('ERROR: Please provide dice notation')
   console.error('\nUsage: randsum <dice-notation>')
   console.error('Examples:')
   console.error('  randsum "2d6"        # Roll 2 six-sided dice')
@@ -25,12 +25,12 @@ try {
   const validated = validateNotation(notation)
 
   if (!validated.valid) {
-    console.error(`❌ Invalid dice notation: "${notation}"`)
+    console.error(`ERROR: Invalid dice notation: "${notation}"`)
     console.error('\nValid formats include:')
-    console.error('  • Basic: 2d6, 1d20, 3d8')
-    console.error('  • With modifiers: 4d6L, 2d20H, 3d6!')
-    console.error('  • With arithmetic: 1d20+5, 2d6-1')
-    console.error('  • Complex: 4d6LR{1}+3')
+    console.error('  - Basic: 2d6, 1d20, 3d8')
+    console.error('  - With modifiers: 4d6L, 2d20H, 3d6!')
+    console.error('  - With arithmetic: 1d20+5, 2d6-1')
+    console.error('  - Complex: 4d6LR{1}+3')
     console.error('\nFor detailed help: randsum --help')
     process.exit(1)
   }
@@ -40,7 +40,7 @@ try {
   console.log(message)
   process.exit(0)
 } catch (error) {
-  console.error(`❌ Error: ${error instanceof Error ? error.message : String(error)}`)
+  console.error(`ERROR: ${error instanceof Error ? error.message : error}`)
   console.error('\nIf this error persists, please check your dice notation format.')
   console.error('For help: randsum --help')
   process.exit(1)
@@ -53,79 +53,74 @@ function formatMessage(result, { description, options }) {
 
   if (hasModifiers) {
     return messageFrame(
-      String(result.total),
+      result.total,
       `Raw Rolls: [${rawRolls}]\nRolls: [${rollResult}]`,
       description.join(', ')
     )
   }
 
-  return messageFrame(
-    String(result.total),
-    `Rolls: [${result.rolls.join(', ')}]`,
-    description.join(', ')
-  )
+  return messageFrame(result.total, `Rolls: [${result.rolls.join(', ')}]`, description.join(', '))
 }
 
 function messageFrame(total, inner, description) {
   return `
-🎲 RANDSUM Roll Result:
-───────────────
+RANDSUM Roll Result:
+-------------------
 Total: ${total}
 ${inner}
 Description: ${description}
 `
 }
 
-function showHelp() {
-  console.log(`
-🎲 RANDSUM Roller CLI - Advanced Dice Rolling Engine
+async function showHelp() {
+  try {
+    const fs = await import('fs')
+    const path = await import('path')
+    const { fileURLToPath } = await import('url')
+
+    const scriptDir = path.dirname(fileURLToPath(import.meta.url))
+    const helpPath = path.join(scriptDir, 'help.json')
+    const helpData = JSON.parse(fs.readFileSync(helpPath, 'utf8'))
+
+    let output = `\n${helpData.title}\n\nUSAGE:\n  ${helpData.usage}\n\n`
+
+    for (const section of helpData.sections) {
+      output += `${section.title}:\n`
+
+      if (section.items) {
+        for (const item of section.items) {
+          output += `  ${item}\n`
+        }
+      }
+
+      if (section.subsections) {
+        for (const subsection of section.subsections) {
+          output += `  ${subsection.title}:\n`
+          for (const item of subsection.items) {
+            output += `    ${item}\n`
+          }
+          output += '\n'
+        }
+      }
+
+      output += '\n'
+    }
+
+    output += `${helpData.footer}\n`
+    console.log(output)
+  } catch (error) {
+    console.log(`
+RANDSUM Roller CLI
 
 USAGE:
   randsum <dice-notation>
 
-BASIC DICE NOTATION:
-  2d6          Roll 2 six-sided dice
-  1d20         Roll 1 twenty-sided dice
-  4d8          Roll 4 eight-sided dice
-  100d1        Roll 100 one-sided dice (always 1)
+Examples:
+  randsum "2d6"     # Roll 2 six-sided dice
+  randsum "1d20+5"  # Roll 1d20, add 5
+  randsum "4d6L"    # Roll 4d6, drop lowest
 
-MODIFIERS:
-  Drop Modifiers:
-    4d6L       Drop lowest die (D&D ability scores)
-    4d6L2      Drop 2 lowest dice
-    2d20H      Drop highest die (disadvantage)
-    4d6LH      Drop both lowest and highest
-
-  Reroll Modifiers:
-    4d6R{1}    Reroll any 1s
-    4d6R{1,2}  Reroll 1s and 2s
-    4d6R{<3}   Reroll results below 3
-    4d6R{>4}   Reroll results above 4
-
-  Exploding Dice:
-    3d6!       Reroll and add on max result (6s)
-    2d10!      Reroll and add on max result (10s)
-
-  Unique Results:
-    4d20U      All dice must show different results
-
-  Capping Results:
-    4d20C{>18} Cap results above 18
-    4d20C{<3}  Cap results below 3
-
-  Arithmetic:
-    2d6+3      Add 3 to total
-    1d20+5     Add 5 to total
-    2d6-1      Subtract 1 from total
-
-COMPLEX EXAMPLES:
-  4d6LR{1}!+3    Drop lowest, reroll 1s, exploding, add 3
-  2d20H+5        Advantage with +5 modifier
-
-OPTIONS:
-  -h, --help     Show this help message
-  -v, --version  Show version information
-
-For more information, visit: https://github.com/RANDSUM/randsum
+For detailed help, ensure help.json is available.
 `)
+  }
 }

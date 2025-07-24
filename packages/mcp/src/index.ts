@@ -115,7 +115,7 @@ function formatRollResult(result: RollerRollResult): string {
 
   const header = `🎲 RANDSUM Roll Result:`
   const separator = '─'.repeat(30)
-  const totalLine = `Total: ${String(total)}`
+  const totalLine = `Total: ${total}`
 
   const notation = parameters.notation
   const rawRollsStr = initialRolls.join(', ')
@@ -128,7 +128,7 @@ function formatRollResult(result: RollerRollResult): string {
     rollInfo += `\n  Modified: [${modifiedRollsStr}]`
   }
 
-  rollInfo += `\n  Total: ${String(total)}`
+  rollInfo += `\n  Total: ${total}`
 
   const rawResultsLine = `Raw Results: [${initialRolls.join(', ')}]`
 
@@ -343,7 +343,7 @@ RETURNS: Detailed breakdown with total, raw results, modified results (if differ
           content: [
             {
               type: 'text',
-              text: `❌ Error rolling dice: ${error instanceof Error ? error.message : String(error)}`
+              text: `❌ Error rolling dice: ${error instanceof Error ? error.message : error}`
             }
           ]
         }
@@ -459,7 +459,7 @@ RETURNS: For valid notation, returns parsed structure with quantity, sides, and 
           content: [
             {
               type: 'text',
-              text: `❌ Error validating notation: ${error instanceof Error ? error.message : String(error)}`
+              text: `❌ Error validating notation: ${error instanceof Error ? error.message : error}`
             }
           ]
         }
@@ -538,7 +538,7 @@ function runHttpTransport(port: number): void {
   })
 
   httpServer.listen(port, () => {
-    console.error(`RANDSUM MCP server running on http://localhost:${port.toString()}`)
+    console.error(`RANDSUM MCP server running on http://localhost:${port}`)
   })
 }
 
@@ -557,7 +557,7 @@ function runSseTransport(port: number): void {
     }
 
     if (req.url?.startsWith('/sse')) {
-      const url = new URL(req.url, `http://${String(req.headers.host)}`)
+      const url = new URL(req.url, `http://${req.headers.host}`)
       const sessionId = url.searchParams.get('sessionId')
 
       if (!sessionId) {
@@ -587,7 +587,7 @@ function runSseTransport(port: number): void {
   })
 
   httpServer.listen(port, () => {
-    console.error(`RANDSUM MCP server (SSE) running on http://localhost:${String(port)}`)
+    console.error(`RANDSUM MCP server (SSE) running on http://localhost:${port}`)
   })
 }
 

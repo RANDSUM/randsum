@@ -1,5 +1,5 @@
 import type { ModifierOptions } from '../../types/modifiers'
-import { ModifierEngine } from './ModifierEngine'
+import { MODIFIER_ORDER, ModifierEngine } from './ModifierEngine'
 
 export class ModifierProcessor {
   private readonly modifiers: ModifierOptions
@@ -9,38 +9,14 @@ export class ModifierProcessor {
   }
 
   public toDescriptions(): string[] {
-    const modifierTypes: (keyof ModifierOptions)[] = [
-      'cap',
-      'drop',
-      'replace',
-      'reroll',
-      'explode',
-      'unique',
-      'plus',
-      'minus'
-    ]
-
-    return modifierTypes
-      .map(type => ModifierEngine.toDescription(type, this.modifiers[type]))
+    return MODIFIER_ORDER.map(type => ModifierEngine.toDescription(type, this.modifiers[type]))
       .flat()
       .filter((desc): desc is string => typeof desc === 'string')
       .filter(desc => desc.length > 0)
   }
 
   public toNotations(): string {
-    const modifierTypes: (keyof ModifierOptions)[] = [
-      'cap',
-      'drop',
-      'replace',
-      'reroll',
-      'explode',
-      'unique',
-      'plus',
-      'minus'
-    ]
-
-    return modifierTypes
-      .map(type => ModifierEngine.toNotation(type, this.modifiers[type]))
+    return MODIFIER_ORDER.map(type => ModifierEngine.toNotation(type, this.modifiers[type]))
       .filter((notation): notation is string => typeof notation === 'string')
       .join('')
   }

@@ -58,7 +58,7 @@ describe('coreRandom', () => {
 
   describe('distribution validation', () => {
     test('produces reasonably uniform distribution for d6', () => {
-      const counts = new Array(6).fill(0)
+      const counts = Array(6).fill(0)
       const iterations = 10000
 
       for (let i = 0; i < iterations; i++) {
@@ -76,7 +76,7 @@ describe('coreRandom', () => {
     })
 
     test('produces reasonably uniform distribution for d20', () => {
-      const counts = new Array(20).fill(0)
+      const counts = Array(20).fill(0)
       const iterations = 20000
 
       for (let i = 0; i < iterations; i++) {

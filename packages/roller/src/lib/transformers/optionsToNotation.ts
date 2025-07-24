@@ -6,11 +6,9 @@ import { optionsToSidesFaces } from './optionsToSidesFaces'
 export function optionsToNotation<T>(options: RollOptions<T>): DiceNotation {
   const { modifiers, quantity = 1, arithmetic } = options
   const { sides } = optionsToSidesFaces(options)
-  const coreNotation = `${quantity}d${sides}`
-  const arithmeticNotation = arithmetic === 'subtract' ? '-' : ''
-  const modifierNotation = ModifierProcessor.processNotations(modifiers)
-
-  const proposed = `${arithmeticNotation}${coreNotation}${modifierNotation}`
+  const arithmeticPrefix = arithmetic === 'subtract' ? '-' : ''
+  const modifierSuffix = ModifierProcessor.processNotations(modifiers)
+  const proposed = `${arithmeticPrefix}${quantity}d${sides}${modifierSuffix}`
 
   if (!isDiceNotation(proposed)) {
     throw new Error(`Invalid notation generated: ${proposed}`)

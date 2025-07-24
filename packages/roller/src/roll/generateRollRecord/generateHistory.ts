@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import { coreRandom } from '../../lib/random'
-import type { ModifierOptions, NumericRollBonus } from '../../types/modifiers'
+import { MODIFIER_ORDER } from '../../lib/modifiers/ModifierEngine'
+import type { NumericRollBonus } from '../../types/modifiers'
 import type { RollParams, RollRecord } from '../../types/roll'
 import { applyModifier } from './applyModifier'
 
@@ -8,21 +8,10 @@ export function generateHistory<T>(
   { sides, quantity = 1, modifiers = {} }: RollParams<T>,
   rolls: RollRecord<T>['modifierHistory']['initialRolls']
 ): RollRecord<T>['modifierHistory'] {
-  const hasModifiers =
-    modifiers.reroll ||
-    modifiers.replace ||
-    modifiers.cap ||
-    modifiers.explode ||
-    modifiers.unique ||
-    modifiers.drop ||
-    modifiers.plus ||
-    modifiers.minus
+  const hasModifiers = MODIFIER_ORDER.some(key => modifiers[key] !== undefined)
 
   if (!hasModifiers) {
-    const modifiedRolls = new Array<number>(rolls.length)
-    for (let i = 0; i < rolls.length; i++) {
-      modifiedRolls[i] = Number(rolls[i])
-    }
+    const modifiedRolls = Array.from(rolls, roll => Number(roll))
 
     return {
       total: rolls.reduce((acc, cur) => Number(acc) + cur, 0),
@@ -36,10 +25,7 @@ export function generateHistory<T>(
 
   const rollParams = { sides, quantity, rollOne }
 
-  const initialRollsAsNumbers = new Array<number>(rolls.length)
-  for (let i = 0; i < rolls.length; i++) {
-    initialRollsAsNumbers[i] = Number(rolls[i])
-  }
+  const initialRollsAsNumbers = Array.from(rolls, roll => Number(roll))
 
   const bonuses: NumericRollBonus = {
     simpleMathModifier: 0,
@@ -47,18 +33,7 @@ export function generateHistory<T>(
     logs: []
   }
 
-  const modifierOrder: (keyof ModifierOptions)[] = [
-    'reroll',
-    'replace',
-    'cap',
-    'explode',
-    'unique',
-    'drop',
-    'plus',
-    'minus'
-  ]
-
-  for (const modifierKey of modifierOrder) {
+  for (const modifierKey of MODIFIER_ORDER) {
     if (modifiers[modifierKey]) {
       const result = applyModifier(modifierKey, modifiers, bonuses, rollParams)
       bonuses.rolls = result.rolls
