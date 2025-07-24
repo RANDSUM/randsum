@@ -7,7 +7,7 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   const basicTest = !!coreNotationPattern.test(trimmedArg)
   if (!basicTest) return false
 
-  const cleanArg = trimmedArg.replace(/\s/g, '').replace(' ', '')
+  const cleanArg = trimmedArg.replace(/\s/g, '')
   const remaining = cleanArg.replaceAll(completeRollPattern, '')
   return remaining.length === 0
 }
