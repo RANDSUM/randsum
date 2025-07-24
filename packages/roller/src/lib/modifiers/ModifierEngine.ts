@@ -238,23 +238,28 @@ export class ModifierEngine {
   private static formatDropDescription(options: DropOptions): string[] {
     const descriptions: string[] = []
 
-    if (options.highest && options.highest > 1) {
-      descriptions.push(`Drop highest ${options.highest}`)
-    } else if (options.highest && options.highest <= 1) {
-      descriptions.push('Drop highest')
+    if (options.highest) {
+      if (options.highest > 1) {
+        descriptions.push(`Drop highest ${options.highest}`)
+      }
+      if (options.highest && options.highest <= 1) {
+        descriptions.push('Drop highest')
+      }
     }
 
-    if (options.lowest && options.lowest > 1) {
-      descriptions.push(`Drop lowest ${options.lowest}`)
-    } else if (options.lowest && options.lowest <= 1) {
-      descriptions.push('Drop lowest')
+    if (options.lowest) {
+      if (options.lowest > 1) {
+        descriptions.push(`Drop lowest ${options.lowest}`)
+      }
+      if (options.lowest && options.lowest <= 1) {
+        descriptions.push('Drop lowest')
+      }
     }
 
     if (options.exact) {
       descriptions.push(`Drop ${formatHumanList(options.exact)}`)
     }
 
-    // Format comparison values separately (not using formatComparisonDescription to avoid duplicating exact values)
     if (options.greaterThan !== undefined) {
       descriptions.push(`Drop greater than [${options.greaterThan}]`)
     }
@@ -277,7 +282,6 @@ export class ModifierEngine {
       parts.push(options.lowest === 1 ? 'L' : `L${options.lowest}`)
     }
 
-    // Build drop constraint list in the same order as original: greaterThan/lessThan first, then exact
     const dropList: string[] = []
 
     if (options.greaterThan !== undefined) {
@@ -302,12 +306,10 @@ export class ModifierEngine {
   private static formatRerollDescription(options: RerollOptions): string[] {
     const rerollList: string[] = []
 
-    // Format exact values
     if (options.exact) {
       options.exact.forEach((roll) => rerollList.push(String(roll)))
     }
 
-    // Format comparison values
     const greaterLessList: string[] = []
     if (options.greaterThan !== undefined) {
       greaterLessList.push(`greater than [${options.greaterThan}]`)
