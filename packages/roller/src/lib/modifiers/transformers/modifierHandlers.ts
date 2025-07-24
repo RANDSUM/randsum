@@ -6,7 +6,7 @@ import type {
   RerollOptions,
   UniqueOptions
 } from '../../../types'
-import { createModifierLog, mergeLogs } from '../logging'
+
 import { applyCapping } from './applyCapping'
 import { applyDropping } from './applyDropping'
 import { applyExploding } from './applyExploding'
@@ -14,6 +14,8 @@ import { applyReplacing } from './applyReplacing'
 import { applyRerolling } from './applyRerolling'
 import { applyUnique } from './applyUnique'
 import type { ModifierHandler } from '../types'
+import { createModifierLog } from '../logging/createModifierLog'
+import { mergeLogs } from '../logging/mergeLogs'
 
 export const MODIFIER_HANDLERS: ReadonlyMap<keyof ModifierOptions, ModifierHandler> = new Map<
   keyof ModifierOptions,
