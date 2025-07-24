@@ -1,14 +1,6 @@
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  mock,
-  spyOn,
-  test
-} from 'bun:test'
+import { afterAll, beforeAll, describe, expect, mock, spyOn, test } from 'bun:test'
 
-import * as RandomUtils from '../../src/lib/utils/randomUtils'
+import * as RandomUtils from '../../src/lib/random'
 import { generateRollRecord } from '../../src/roll/generateRollRecord'
 import { createRollParams } from '../support/fixtures'
 
@@ -116,9 +108,7 @@ describe(generateRollRecord, () => {
       })
 
       test('it throws an error', () => {
-        spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(
-          overflowRollTotals
-        )
+        spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(overflowRollTotals)
         expect(() => generateRollRecord(overflowParameters)).toThrow()
       })
     })
@@ -142,9 +132,7 @@ describe(generateRollRecord, () => {
     })
 
     test('it returns the total without the provided values', () => {
-      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(
-        longerRollTotals
-      )
+      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(longerRollTotals)
 
       expect(generateRollRecord(dropParameters)).toMatchObject({
         parameters: dropParameters,
@@ -261,9 +249,7 @@ describe(generateRollRecord, () => {
     })
 
     test('it returns the total with all values matching the queries rerolled', () => {
-      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(
-        explodeRollTotals
-      )
+      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(explodeRollTotals)
 
       expect(generateRollRecord(explodeParameters)).toMatchObject({
         parameters: explodeParameters,

@@ -25,21 +25,15 @@ export function rollDaggerheart({
   }
 
   const rollResult = roll(
-    ...[
-      hopeRollOptions,
-      fearRollOptions,
-      rollingWith ? advDisadvantageOptions : undefined
-    ].filter((a) => !!a)
+    ...[hopeRollOptions, fearRollOptions, rollingWith ? advDisadvantageOptions : undefined].filter(
+      a => !!a
+    )
   )
 
-  const hopeRoll = rollResult.rolls.find(
-    (roll) => roll.parameters.key === 'hope'
-  )
-  const fearRoll = rollResult.rolls.find(
-    (roll) => roll.parameters.key === 'fear'
-  )
+  const hopeRoll = rollResult.rolls.find(roll => roll.parameters.key === 'hope')
+  const fearRoll = rollResult.rolls.find(roll => roll.parameters.key === 'fear')
   const advDisadvantageRoll = rollResult.rolls.find(
-    (roll) => rollingWith && roll.parameters.key === rollingWith
+    roll => rollingWith && roll.parameters.key === rollingWith
   )
 
   if (!hopeRoll || !fearRoll) {

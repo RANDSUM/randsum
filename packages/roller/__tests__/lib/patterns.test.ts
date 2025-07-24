@@ -1,22 +1,11 @@
 import { describe, expect, it } from 'bun:test'
-import {
-  completeRollPattern,
-  coreNotationPattern
-} from '../../src/lib/patterns'
+import { completeRollPattern, coreNotationPattern } from '../../src/lib/patterns'
 
 describe('coreNotationPattern', () => {
   describe('valid core notations', () => {
-    const validCoreNotations = [
-      '1d6',
-      '2d20',
-      '10d10',
-      '100d100',
-      '1D6',
-      '2D20',
-      '999d999'
-    ]
+    const validCoreNotations = ['1d6', '2d20', '10d10', '100d100', '1D6', '2D20', '999d999']
 
-    validCoreNotations.forEach((notation) => {
+    validCoreNotations.forEach(notation => {
       it(`matches valid core notation: ${notation}`, () => {
         expect(coreNotationPattern.test(notation)).toBe(true)
       })
@@ -24,19 +13,9 @@ describe('coreNotationPattern', () => {
   })
 
   describe('invalid core notations', () => {
-    const invalidCoreNotations = [
-      'd6',
-      '2d',
-      '2x6',
-      'dd6',
-      'abc',
-      '123',
-      '',
-      '1d{',
-      '1d}'
-    ]
+    const invalidCoreNotations = ['d6', '2d', '2x6', 'dd6', 'abc', '123', '', '1d{', '1d}']
 
-    invalidCoreNotations.forEach((notation) => {
+    invalidCoreNotations.forEach(notation => {
       it(`does not match invalid core notation: "${notation}"`, () => {
         expect(coreNotationPattern.test(notation)).toBe(false)
       })
@@ -46,7 +25,7 @@ describe('coreNotationPattern', () => {
   describe('edge cases that do match core pattern', () => {
     const edgeCasesThatMatch = ['0d6', '1d0', '2d6d']
 
-    edgeCasesThatMatch.forEach((notation) => {
+    edgeCasesThatMatch.forEach(notation => {
       it(`matches edge case: "${notation}"`, () => {
         expect(coreNotationPattern.test(notation)).toBe(true)
       })
@@ -67,23 +46,12 @@ describe('coreNotationPattern', () => {
 
 describe('completeRollPattern', () => {
   describe('complete notation matching', () => {
-    const completeNotations = [
-      '1d6',
-      '2d6+3',
-      '1d20L',
-      '3d6H2',
-      '2d6-1',
-      '4d6L1',
-      '1d20+5-2'
-    ]
+    const completeNotations = ['1d6', '2d6+3', '1d20L', '3d6H2', '2d6-1', '4d6L1', '1d20+5-2']
 
-    completeNotations.forEach((notation) => {
+    completeNotations.forEach(notation => {
       it(`completely matches notation: ${notation}`, () => {
         const cleanNotation = notation.replace(/\s/g, '')
-        const remainingAfterMatch = cleanNotation.replace(
-          completeRollPattern,
-          ''
-        )
+        const remainingAfterMatch = cleanNotation.replace(completeRollPattern, '')
         expect(remainingAfterMatch.length).toBe(0)
       })
     })

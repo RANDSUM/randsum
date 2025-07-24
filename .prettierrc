@@ -7,8 +7,8 @@
   "trailingComma": "none",
   "bracketSpacing": true,
   "bracketSameLine": false,
-  "arrowParens": "always",
-  "printWidth": 80,
+  "arrowParens": "avoid",
+  "printWidth": 100,
   "endOfLine": "lf",
   "embeddedLanguageFormatting": "auto",
   "overrides": [

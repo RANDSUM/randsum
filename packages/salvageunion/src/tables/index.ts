@@ -1,10 +1,5 @@
 import type { SalvageUnionTableName, SalvageUnionTableType } from '../types'
-import {
-  NPCActionTable,
-  NPCReactionTable,
-  NPCTables,
-  NPMoraleTable
-} from './npcTables'
+import { NPCActionTable, NPCReactionTable, NPCTables, NPMoraleTable } from './npcTables'
 import {
   AreaSalvageTable,
   CriticalDamageTable,
@@ -59,10 +54,7 @@ export const RollTables: {
   npc: NPCTables
 }
 
-export const AllRollTables: Record<
-  SalvageUnionTableName,
-  SalvageUnionTableType
-> = {
+export const AllRollTables: Record<SalvageUnionTableName, SalvageUnionTableType> = {
   ['Core Mechanic']: CoreMechanicTable,
   ['NPC Action']: NPCActionTable,
   ['Reaction']: NPCReactionTable,
@@ -76,12 +68,7 @@ export const AllRollTables: Record<
   ['Mech Salvage']: MechSalvageTable
 }
 
-export {
-  NPCTables,
-  NPCActionTable,
-  NPCReactionTable,
-  NPMoraleTable
-} from './npcTables'
+export { NPCTables, NPCActionTable, NPCReactionTable, NPMoraleTable } from './npcTables'
 
 export {
   PCTables,

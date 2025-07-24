@@ -1,0 +1,6 @@
+export { matchesComparison } from './matchesComparison'
+export { formatComparisonDescription } from './formatComparisonDescription'
+export { formatComparisonNotation } from './formatComparisonNotation'
+export { formatHumanList } from './formatHumanList'
+export { parseComparisonNotation } from './parseComparisonNotation'
+export { applyCap } from '../modifiers/transformers/applyCap'

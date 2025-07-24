@@ -39,7 +39,6 @@ export default tseslint.config(
   },
   {
     rules: {
-      // TypeScript-specific rules
       '@typescript-eslint/no-misused-spread': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/restrict-template-expressions': 'off',
@@ -111,10 +110,7 @@ export default tseslint.config(
       'prefer-const': 'error',
       'no-var': 'error',
       'object-shorthand': 'error',
-      'prefer-template': 'error',
       'prefer-arrow-callback': 'error',
-
-      // Import/export organization
       'sort-imports': [
         'error',
         {
@@ -125,14 +121,10 @@ export default tseslint.config(
           allowSeparatedGroups: true
         }
       ],
-
-      // Security rules
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-script-url': 'error',
-
-      // Performance rules
       'no-await-in-loop': 'warn',
       'prefer-object-spread': 'error'
     }

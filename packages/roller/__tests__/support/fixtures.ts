@@ -16,9 +16,7 @@ export function createNumericRollBonus(
   }
 }
 
-export function createRollOptions(
-  overrides: Partial<RollOptions> = {}
-): RollOptions {
+export function createRollOptions(overrides: Partial<RollOptions> = {}): RollOptions {
   return {
     sides: 20,
     quantity: 1,
@@ -36,9 +34,7 @@ export function createRequiredNumericRollParameters(
   }
 }
 
-export function createRollParams(
-  overrides: Partial<RollParams> = {}
-): RollParams {
+export function createRollParams(overrides: Partial<RollParams> = {}): RollParams {
   return {
     sides: 6,
     quantity: 1,
@@ -46,6 +42,7 @@ export function createRollParams(
     argument: '1d6',
     arithmetic: 'add',
     notation: '1d6',
+    modifiers: {},
     ...overrides
   }
 }

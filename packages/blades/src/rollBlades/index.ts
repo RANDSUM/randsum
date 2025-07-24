@@ -17,9 +17,7 @@ export function rollBlades(count: number): {
   }
 
   if (count > 10) {
-    throw new Error(
-      `Blades dice pool is unusually large (${count}). Maximum recommended is 10.`
-    )
+    throw new Error(`Blades dice pool is unusually large (${count}). Maximum recommended is 10.`)
   }
   const canCrit = count > 0
   const rollResult = roll({

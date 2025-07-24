@@ -82,7 +82,7 @@ describe(argToParameter, () => {
             lowest: 1,
             exact: [2, 3]
           },
-          reroll: { exact: undefined },
+          reroll: { exact: [] },
           cap: { greaterThan: 2, lessThan: 1 },
           replace: { from: 6, to: 1 },
           unique: { notUnique: [1, 2] },
@@ -311,10 +311,7 @@ describe(argToParameter, () => {
             }
           },
           notation: '4d6R{5,>2,<6}',
-          description: [
-            'Roll 4 6-sided dice',
-            'Reroll [5], greater than [2] and less than [6]'
-          ]
+          description: ['Roll 4 6-sided dice', 'Reroll [5], greater than [2] and less than [6]']
         })
       })
       describe('with a max modifier', () => {
@@ -356,10 +353,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { unique: { notUnique: [5, 6] } },
             notation: '4d6U{5,6}',
-            description: [
-              'Roll 4 6-sided dice',
-              'No Duplicates (except [5] and [6])'
-            ]
+            description: ['Roll 4 6-sided dice', 'No Duplicates (except [5] and [6])']
           })
         })
       })
@@ -375,10 +369,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { unique: { notUnique: [5, 6] } },
             notation: '4d6U{5,6}',
-            description: [
-              'Roll 4 6-sided dice',
-              'No Duplicates (except [5] and [6])'
-            ]
+            description: ['Roll 4 6-sided dice', 'No Duplicates (except [5] and [6])']
           })
         })
       })
@@ -453,10 +444,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { replace: [{ from: { lessThan: 2 }, to: 6 }] },
             notation: '4d6V{<2=6}',
-            description: [
-              'Roll 4 6-sided dice',
-              'Replace less than [2] with [6]'
-            ]
+            description: ['Roll 4 6-sided dice', 'Replace less than [2] with [6]']
           })
         })
       })
@@ -473,11 +461,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { explode: true, drop: { highest: 1 } },
             notation: '4d6H!',
-            description: [
-              'Roll 4 6-sided dice',
-              'Drop highest',
-              'Exploding Dice'
-            ]
+            description: ['Roll 4 6-sided dice', 'Drop highest', 'Exploding Dice']
           })
 
           const dropFirstString = '4d6H!'
@@ -488,11 +472,7 @@ describe(argToParameter, () => {
             ...coreDicePools,
             modifiers: { drop: { highest: 1 }, explode: true },
             notation: '4d6H!',
-            description: [
-              'Roll 4 6-sided dice',
-              'Drop highest',
-              'Exploding Dice'
-            ]
+            description: ['Roll 4 6-sided dice', 'Drop highest', 'Exploding Dice']
           })
         })
       })
@@ -526,8 +506,7 @@ describe(argToParameter, () => {
               plus: 5,
               minus: 5
             },
-            notation:
-              '10d20C{>18,<2}H2LD{>5,<2,2,4}V{1=2,>2=6}R{5,2,<6}3!U{5}+5-5',
+            notation: '10d20C{>18,<2}H2LD{>5,<2,2,4}V{1=2,>2=6}R{5,2,<6}3!U{5}+5-5',
             description: [
               'Roll 10 20-sided dice',
               'No Rolls greater than [18]',

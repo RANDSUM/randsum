@@ -45,15 +45,11 @@ describe('rollBlades', () => {
 
   describe('input validation', () => {
     test('throws error for non-integer dice pool', () => {
-      expect(() => rollBlades(2.5)).toThrow(
-        'Blades dice pool must be an integer, received: 2.5'
-      )
+      expect(() => rollBlades(2.5)).toThrow('Blades dice pool must be an integer, received: 2.5')
     })
 
     test('throws error for negative dice pool', () => {
-      expect(() => rollBlades(-1)).toThrow(
-        'Blades dice pool must be non-negative, received: -1'
-      )
+      expect(() => rollBlades(-1)).toThrow('Blades dice pool must be non-negative, received: -1')
     })
 
     test('throws error for excessively large dice pool', () => {
