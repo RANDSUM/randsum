@@ -57,22 +57,12 @@ export class ModifierEngine {
 
       case 'cap':
         newRolls = applyCapping(bonus.rolls, options as ComparisonOptions)
-        log = createModifierLog(
-          'cap',
-          options || undefined,
-          initialRolls,
-          newRolls
-        )
+        log = createModifierLog('cap', options, initialRolls, newRolls)
         break
 
       case 'drop':
         newRolls = applyDropping(bonus.rolls, options as DropOptions)
-        log = createModifierLog(
-          'drop',
-          options || undefined,
-          initialRolls,
-          newRolls
-        )
+        log = createModifierLog('drop', options, initialRolls, newRolls)
         break
 
       case 'reroll':
@@ -112,12 +102,7 @@ export class ModifierEngine {
           context,
           rollOne
         )
-        log = createModifierLog(
-          'unique',
-          options || undefined,
-          initialRolls,
-          newRolls
-        )
+        log = createModifierLog('unique', options, initialRolls, newRolls)
         break
 
       case 'replace':
@@ -125,12 +110,7 @@ export class ModifierEngine {
           bonus.rolls,
           options as ReplaceOptions | ReplaceOptions[]
         )
-        log = createModifierLog(
-          'replace',
-          options || undefined,
-          initialRolls,
-          newRolls
-        )
+        log = createModifierLog('replace', options, initialRolls, newRolls)
         break
 
       default:
