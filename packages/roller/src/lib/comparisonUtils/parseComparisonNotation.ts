@@ -4,7 +4,7 @@ import { REGEX_PATTERNS } from '../constants'
 export function parseComparisonNotation(
   bracedString: string
 ): ComparisonOptions & { exact?: number[] } {
-  const content = bracedString.replace(REGEX_PATTERNS.BRACE_CLEANUP, '')
+  const content = bracedString.replace(REGEX_PATTERNS['BRACE_CLEANUP'] as RegExp, '')
   const parts = content
     .split(',')
     .map(s => s.trim())
