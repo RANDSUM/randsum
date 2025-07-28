@@ -13,5 +13,6 @@ export function formatReplaceNotation(
     return `${from}=${to}`
   })
 
-  return notations.length ? `V{${notations.join(',')}}` : undefined
+  const content = notations.length ? notations.join(',') : undefined
+  return content ? `V{${content}}` : undefined
 }

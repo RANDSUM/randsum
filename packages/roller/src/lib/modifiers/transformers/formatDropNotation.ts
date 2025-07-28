@@ -1,4 +1,5 @@
 import type { DropOptions } from '../../../types'
+import { MAGIC_NUMBERS } from '../../constants'
 
 export function formatDropNotation({
   highest,
@@ -10,11 +11,11 @@ export function formatDropNotation({
   const parts: string[] = []
 
   if (highest) {
-    parts.push(highest === 1 ? 'H' : `H${highest}`)
+    parts.push(highest === MAGIC_NUMBERS.DEFAULT_DROP_COUNT ? 'H' : `H${highest}`)
   }
 
   if (lowest) {
-    parts.push(lowest === 1 ? 'L' : `L${lowest}`)
+    parts.push(lowest === MAGIC_NUMBERS.DEFAULT_DROP_COUNT ? 'L' : `L${lowest}`)
   }
 
   const dropList: string[] = []
@@ -28,7 +29,7 @@ export function formatDropNotation({
   }
 
   if (exact) {
-    exact.forEach(roll => dropList.push(`${roll}`))
+    dropList.push(...exact.map(String))
   }
 
   if (dropList.length > 0) {

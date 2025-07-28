@@ -1,9 +1,10 @@
 import type { ComparisonOptions } from '../../types'
+import { REGEX_PATTERNS } from '../constants'
 
 export function parseComparisonNotation(
   bracedString: string
 ): ComparisonOptions & { exact?: number[] } {
-  const content = bracedString.replace(/[{}]/g, '')
+  const content = bracedString.replace(REGEX_PATTERNS.BRACE_CLEANUP, '')
   const parts = content
     .split(',')
     .map(s => s.trim())

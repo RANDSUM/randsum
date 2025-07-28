@@ -1,15 +1,12 @@
 import type { ComparisonOptions } from '../../types'
+import { formatComparison } from './formatComparisonDescription'
 
-export function formatComparisonNotation({
-  greaterThan,
-  lessThan,
-  exact
-}: ComparisonOptions & { exact?: number[] }): string[] {
-  const notations: string[] = []
-
-  if (exact?.length) notations.push(...exact.map(String))
-  if (greaterThan !== undefined) notations.push(`>${greaterThan}`)
-  if (lessThan !== undefined) notations.push(`<${lessThan}`)
-
-  return notations
+export function formatComparisonNotation(
+  options: ComparisonOptions & { exact?: number[] }
+): string[] {
+  return formatComparison(options, {
+    exact: values => values.map(String).join(','),
+    greaterThan: value => `>${value}`,
+    lessThan: value => `<${value}`
+  }).flatMap(result => result.split(','))
 }

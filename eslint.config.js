@@ -39,6 +39,7 @@ export default tseslint.config(
   },
   {
     rules: {
+      '@typescript-eslint/no-unnecessary-type-parameters': 'off',
       '@typescript-eslint/no-misused-spread': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/restrict-template-expressions': 'off',

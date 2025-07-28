@@ -1,5 +1,5 @@
 import type { RerollOptions } from '../../../types'
-import { formatHumanList } from '../../comparisonUtils'
+import { formatComparisonDescription } from '../../comparisonUtils'
 
 export function formatRerollDescription({
   exact,
@@ -7,26 +7,15 @@ export function formatRerollDescription({
   lessThan,
   max
 }: RerollOptions): string[] {
-  const rerollList: string[] = []
+  const comparisonOptions: { exact?: number[]; greaterThan?: number; lessThan?: number } = {}
+  if (exact !== undefined) comparisonOptions.exact = exact
+  if (greaterThan !== undefined) comparisonOptions.greaterThan = greaterThan
+  if (lessThan !== undefined) comparisonOptions.lessThan = lessThan
 
-  if (exact) {
-    exact.forEach(roll => rerollList.push(`${roll}`))
-  }
+  const conditions = formatComparisonDescription(comparisonOptions)
+  if (!conditions.length) return []
 
-  const greaterLessList: string[] = []
-  if (greaterThan !== undefined) {
-    greaterLessList.push(`greater than [${greaterThan}]`)
-  }
-  if (lessThan !== undefined) {
-    greaterLessList.push(`less than [${lessThan}]`)
-  }
-
-  const exactList = formatHumanList(rerollList.map(Number))
-  const greaterLess = greaterLessList.join(' and ')
-
-  const conditions = [exactList, greaterLess].filter(Boolean).join(', ')
-  if (!conditions) return []
-
+  const conditionText = conditions.join(', ')
   const maxText = max !== undefined ? ` (up to ${max} times)` : ''
-  return [`Reroll ${conditions}${maxText}`]
+  return [`Reroll ${conditionText}${maxText}`]
 }

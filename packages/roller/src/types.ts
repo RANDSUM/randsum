@@ -23,14 +23,16 @@ export interface ComparisonOptions {
   lessThan?: number
 }
 
-export interface DropOptions extends ComparisonOptions {
-  highest?: number
-  lowest?: number
+export interface ExactComparisonOptions extends ComparisonOptions {
   exact?: number[]
 }
 
-export interface RerollOptions extends ComparisonOptions {
-  exact?: number[]
+export interface DropOptions extends ExactComparisonOptions {
+  highest?: number
+  lowest?: number
+}
+
+export interface RerollOptions extends ExactComparisonOptions {
   max?: number
 }
 

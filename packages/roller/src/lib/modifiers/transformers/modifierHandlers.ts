@@ -1,11 +1,4 @@
-import type {
-  ComparisonOptions,
-  DropOptions,
-  ModifierOptions,
-  ReplaceOptions,
-  RerollOptions,
-  UniqueOptions
-} from '../../../types'
+import type { ModifierOptions, RequiredNumericRollParameters, UniqueOptions } from '../../../types'
 
 import { applyCapping } from './applyCapping'
 import { applyDropping } from './applyDropping'
@@ -16,74 +9,76 @@ import { applyUnique } from './applyUnique'
 import type { ModifierHandler } from '../types'
 import { createModifierLog } from '../logging/createModifierLog'
 import { mergeLogs } from '../logging/mergeLogs'
+import { ERROR_MESSAGES } from '../../constants'
+
+function createRollModifierHandler<T>(
+  modifierName: keyof ModifierOptions,
+  applyFunction: (
+    rolls: number[],
+    options: T,
+    rollOne?: () => number,
+    context?: RequiredNumericRollParameters
+  ) => number[]
+): ModifierHandler {
+  return (bonus, options, rollOne, context) => {
+    const initialRolls = [...bonus.rolls]
+    const newRolls = applyFunction(bonus.rolls, options as T, rollOne, context)
+    const log = createModifierLog(modifierName, options, initialRolls, newRolls)
+    return {
+      rolls: newRolls,
+      simpleMathModifier: bonus.simpleMathModifier,
+      logs: mergeLogs(bonus.logs, log)
+    }
+  }
+}
+
+function createRollModifierHandlerWithRollOne<T>(
+  modifierName: keyof ModifierOptions,
+  applyFunction: (
+    rolls: number[],
+    options: T,
+    rollOne: () => number,
+    context?: RequiredNumericRollParameters
+  ) => number[]
+): ModifierHandler {
+  return (bonus, options, rollOne, context) => {
+    if (!rollOne) throw new Error(ERROR_MESSAGES.ROLL_ONE_REQUIRED(modifierName))
+    const initialRolls = [...bonus.rolls]
+    const newRolls = applyFunction(bonus.rolls, options as T, rollOne, context)
+    const log = createModifierLog(modifierName, options, initialRolls, newRolls)
+    return {
+      rolls: newRolls,
+      simpleMathModifier: bonus.simpleMathModifier,
+      logs: mergeLogs(bonus.logs, log)
+    }
+  }
+}
+
+// Helper for simple math modifiers
+function createMathModifierHandler(multiplier: number): ModifierHandler {
+  return (bonus, options) => ({
+    rolls: bonus.rolls,
+    simpleMathModifier: Number(options) * multiplier,
+    logs: bonus.logs
+  })
+}
 
 export const MODIFIER_HANDLERS: ReadonlyMap<keyof ModifierOptions, ModifierHandler> = new Map<
   keyof ModifierOptions,
   ModifierHandler
 >([
-  [
-    'plus',
-    (bonus, options) => ({
-      rolls: bonus.rolls,
-      simpleMathModifier: Number(options),
-      logs: bonus.logs
-    })
-  ],
-  [
-    'minus',
-    (bonus, options) => ({
-      rolls: bonus.rolls,
-      simpleMathModifier: -Number(options),
-      logs: bonus.logs
-    })
-  ],
-  [
-    'cap',
-    (bonus, options) => {
-      const initialRolls = [...bonus.rolls]
-      const newRolls = applyCapping(bonus.rolls, options as ComparisonOptions)
-      const log = createModifierLog('cap', options as ComparisonOptions, initialRolls, newRolls)
-      return {
-        rolls: newRolls,
-        simpleMathModifier: bonus.simpleMathModifier,
-        logs: mergeLogs(bonus.logs, log)
-      }
-    }
-  ],
-  [
-    'drop',
-    (bonus, options) => {
-      const initialRolls = [...bonus.rolls]
-      const newRolls = applyDropping(bonus.rolls, options as DropOptions)
-      const log = createModifierLog('drop', options as DropOptions, initialRolls, newRolls)
-      return {
-        rolls: newRolls,
-        simpleMathModifier: bonus.simpleMathModifier,
-        logs: mergeLogs(bonus.logs, log)
-      }
-    }
-  ],
-  [
-    'reroll',
-    (bonus, options, rollOne) => {
-      if (!rollOne) throw new Error('rollOne function required for reroll modifier')
-      const initialRolls = [...bonus.rolls]
-      const newRolls = applyRerolling(bonus.rolls, options as RerollOptions, rollOne)
-      const log = createModifierLog('reroll', options as RerollOptions, initialRolls, newRolls)
-      return {
-        rolls: newRolls,
-        simpleMathModifier: bonus.simpleMathModifier,
-        logs: mergeLogs(bonus.logs, log)
-      }
-    }
-  ],
+  ['plus', createMathModifierHandler(1)],
+  ['minus', createMathModifierHandler(-1)],
+  ['cap', createRollModifierHandler('cap', applyCapping)],
+  ['drop', createRollModifierHandler('drop', applyDropping)],
+  ['reroll', createRollModifierHandlerWithRollOne('reroll', applyRerolling)],
   [
     'explode',
     (bonus, options, rollOne, context) => {
-      if (!rollOne || !context) throw new Error('rollOne and context required for explode modifier')
+      if (!rollOne || !context) throw new Error(ERROR_MESSAGES.ROLL_ONE_CONTEXT_REQUIRED('explode'))
       const initialRolls = [...bonus.rolls]
       const newRolls = applyExploding(bonus.rolls, context, rollOne)
-      const log = createModifierLog('explode', options as boolean, initialRolls, newRolls)
+      const log = createModifierLog('explode', options, initialRolls, newRolls)
       return {
         rolls: newRolls,
         simpleMathModifier: bonus.simpleMathModifier,
@@ -94,7 +89,7 @@ export const MODIFIER_HANDLERS: ReadonlyMap<keyof ModifierOptions, ModifierHandl
   [
     'unique',
     (bonus, options, rollOne, context) => {
-      if (!rollOne || !context) throw new Error('rollOne and context required for unique modifier')
+      if (!rollOne || !context) throw new Error(ERROR_MESSAGES.ROLL_ONE_CONTEXT_REQUIRED('unique'))
       const initialRolls = [...bonus.rolls]
       const newRolls = applyUnique(
         bonus.rolls,
@@ -102,12 +97,7 @@ export const MODIFIER_HANDLERS: ReadonlyMap<keyof ModifierOptions, ModifierHandl
         context,
         rollOne
       )
-      const log = createModifierLog(
-        'unique',
-        options as boolean | UniqueOptions,
-        initialRolls,
-        newRolls
-      )
+      const log = createModifierLog('unique', options, initialRolls, newRolls)
       return {
         rolls: newRolls,
         simpleMathModifier: bonus.simpleMathModifier,
@@ -115,22 +105,5 @@ export const MODIFIER_HANDLERS: ReadonlyMap<keyof ModifierOptions, ModifierHandl
       }
     }
   ],
-  [
-    'replace',
-    (bonus, options) => {
-      const initialRolls = [...bonus.rolls]
-      const newRolls = applyReplacing(bonus.rolls, options as ReplaceOptions | ReplaceOptions[])
-      const log = createModifierLog(
-        'replace',
-        options as ReplaceOptions | ReplaceOptions[],
-        initialRolls,
-        newRolls
-      )
-      return {
-        rolls: newRolls,
-        simpleMathModifier: bonus.simpleMathModifier,
-        logs: mergeLogs(bonus.logs, log)
-      }
-    }
-  ]
+  ['replace', createRollModifierHandler('replace', applyReplacing)]
 ])

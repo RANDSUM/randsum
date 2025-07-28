@@ -1,6 +1,6 @@
 import type { ModifierOptions } from '../../types'
 
-export const MODIFIER_ORDER: (keyof ModifierOptions)[] = [
+export const MODIFIER_KEYS: (keyof ModifierOptions)[] = [
   'cap',
   'drop',
   'replace',
@@ -9,4 +9,6 @@ export const MODIFIER_ORDER: (keyof ModifierOptions)[] = [
   'unique',
   'plus',
   'minus'
-]
+] as const
+
+export const MODIFIER_ORDER: (keyof ModifierOptions)[] = MODIFIER_KEYS

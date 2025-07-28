@@ -311,7 +311,7 @@ describe(argToParameter, () => {
             }
           },
           notation: '4d6R{5,>2,<6}',
-          description: ['Roll 4 6-sided dice', 'Reroll [5], greater than [2] and less than [6]']
+          description: ['Roll 4 6-sided dice', 'Reroll [5], greater than [2], less than [6]']
         })
       })
       describe('with a max modifier', () => {
@@ -334,7 +334,7 @@ describe(argToParameter, () => {
             notation: '4d6R{5,20,>2,<6}3',
             description: [
               'Roll 4 6-sided dice',
-              'Reroll [5] and [20], greater than [2] and less than [6] (up to 3 times)'
+              'Reroll [5] and [20], greater than [2], less than [6] (up to 3 times)'
             ]
           })
         })
