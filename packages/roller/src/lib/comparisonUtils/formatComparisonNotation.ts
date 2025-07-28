@@ -5,8 +5,8 @@ export function formatComparisonNotation(
   options: ComparisonOptions & { exact?: number[] }
 ): string[] {
   return formatComparison(options, {
-    exact: values => values.map(String).join(','),
+    exact: values => values.map(String),
     greaterThan: value => `>${value}`,
     lessThan: value => `<${value}`
-  }).flatMap(result => result.split(','))
+  }).flatMap(result => result)
 }
