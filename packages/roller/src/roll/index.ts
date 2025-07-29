@@ -3,7 +3,7 @@ import { argToParameter } from './argToParameter'
 import { generateRollRecord } from './generateRollRecord'
 
 export function roll<T = string>(...args: RollArgument<T>[]): RollerRollResult<T> {
-  const parameters = args.flatMap(arg => argToParameter(arg))
+  const parameters = args.flatMap((arg, index) => argToParameter(arg, index + 1))
   const rolls = parameters.map(parameter => generateRollRecord(parameter))
   const total = rolls.reduce((acc, cur) => {
     const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1

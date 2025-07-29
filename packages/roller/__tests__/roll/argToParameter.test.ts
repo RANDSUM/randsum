@@ -7,7 +7,7 @@ describe(argToParameter, () => {
     const argument = 2
 
     test('returns a RollParameter matching the argument', () => {
-      const [params] = argToParameter(argument)
+      const [params] = argToParameter(argument, 1)
 
       expect(params).toMatchObject({
         argument,
@@ -27,7 +27,7 @@ describe(argToParameter, () => {
       }
 
       test('returns a RollParameter matching the argument', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -53,7 +53,7 @@ describe(argToParameter, () => {
       }
 
       test('returns a RollParameter matching the argument', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -91,7 +91,7 @@ describe(argToParameter, () => {
       }
 
       test('returns a RollParameter matching the argument', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -124,7 +124,7 @@ describe(argToParameter, () => {
       const argument = coreTestString
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -139,7 +139,7 @@ describe(argToParameter, () => {
       const argument = `-${coreTestString}`
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -156,7 +156,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}H`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -172,7 +172,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}H2`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -190,7 +190,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}L`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -206,7 +206,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}L2`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -223,7 +223,7 @@ describe(argToParameter, () => {
       const argument = `${coreTestString}D{<2,>5,2,4}`
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -246,7 +246,7 @@ describe(argToParameter, () => {
       const argument = `${coreTestString}C{<2,>5}`
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -266,7 +266,7 @@ describe(argToParameter, () => {
       const argument = `${coreTestString}-2`
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -282,7 +282,7 @@ describe(argToParameter, () => {
       const argument = `${coreTestString}+2`
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -298,7 +298,7 @@ describe(argToParameter, () => {
       const argument = `${coreTestString}R{5,<6,>2}`
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -318,7 +318,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}R{5,20,<6,>2}3`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -346,7 +346,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}U{5,6}`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -362,7 +362,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}U{5,6}U`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -378,7 +378,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}U`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -395,7 +395,7 @@ describe(argToParameter, () => {
       const argument = `${coreTestString}!`
 
       test('returns a RollParameter matching the notation', () => {
-        const [params] = argToParameter(argument)
+        const [params] = argToParameter(argument, 1)
 
         expect(params).toMatchObject({
           argument,
@@ -412,7 +412,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}V{1=2,>2=6}`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -437,7 +437,7 @@ describe(argToParameter, () => {
         const argument = `${coreTestString}V{<2=6}`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
@@ -454,7 +454,7 @@ describe(argToParameter, () => {
       describe('like an ordered dice notation', () => {
         test('it produces proper organized parameters', () => {
           const explodeFirstString = '4d6!H'
-          const [explodeParams] = argToParameter(explodeFirstString)
+          const [explodeParams] = argToParameter(explodeFirstString, 1)
 
           expect(explodeParams).toMatchObject({
             argument: explodeFirstString,
@@ -465,7 +465,7 @@ describe(argToParameter, () => {
           })
 
           const dropFirstString = '4d6H!'
-          const [dropFirstParams] = argToParameter(dropFirstString)
+          const [dropFirstParams] = argToParameter(dropFirstString, 1)
 
           expect(dropFirstParams).toMatchObject({
             argument: dropFirstString,
@@ -481,12 +481,13 @@ describe(argToParameter, () => {
         const argument = `10d20 H2 L V{1=2,>2=6} D{<2,>5,2,4} C{<2,>18} R{5,2}3 U{5}  R{<6} ! +2 -5 +3`
 
         test('returns a RollParameter matching the notation', () => {
-          const [params] = argToParameter(argument)
+          const [params] = argToParameter(argument, 1)
 
           expect(params).toMatchObject({
             argument,
             quantity: 10,
             sides: 20,
+            key: 'Roll 1',
             modifiers: {
               drop: {
                 highest: 2,
@@ -534,7 +535,7 @@ describe(argToParameter, () => {
     const argument = '1d20+2d6-1d8'
 
     test('returns a RollParameter matching the notation', () => {
-      const params = argToParameter(argument)
+      const params = argToParameter(argument, 1)
 
       expect(params).toMatchObject([
         {
@@ -571,7 +572,7 @@ describe(argToParameter, () => {
     }
 
     test('returns a RollParameter matching the argument', () => {
-      const [params] = argToParameter(argument)
+      const [params] = argToParameter(argument, 1)
 
       expect(params).toMatchObject({
         argument,
