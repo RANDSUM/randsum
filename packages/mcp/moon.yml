@@ -14,10 +14,11 @@ tasks:
       - "roller:build"
 
   build:
-    command: "tsc && chmod 755 dist/index.js"
+    command: "./scripts/build.sh"
     inputs:
       - "src/**/*"
       - "tsconfig.json"
+      - "scripts/build.sh"
     outputs:
       - "dist/**/*"
     deps:
@@ -26,6 +27,7 @@ tasks:
       cache: false
       mergeArgs: "replace"
       mergeEnv: "replace"
+      runInCI: true
 
   test:
     deps:
