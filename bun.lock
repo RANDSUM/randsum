@@ -55,7 +55,7 @@
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "0.26.10",
+      "version": "0.26.11",
       "bin": "./bin/randsum",
     },
     "packages/root-rpg": {
