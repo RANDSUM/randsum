@@ -9,6 +9,7 @@ export interface RollOptions<T = string> {
   arithmetic?: 'add' | 'subtract'
   sides: number | T[]
   modifiers?: ModifierOptions
+  key?: string | undefined
 }
 
 export type RequiredNumericRollParameters = Pick<RollOptions, 'quantity' | 'sides'> & {
@@ -80,7 +81,6 @@ export interface NumericRollBonus {
 export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 'sides'>> {
   sides: number
   faces?: T[]
-  key?: string
   argument: RollArgument<T>
   description: string[]
   notation: DiceNotation

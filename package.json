@@ -19,19 +19,19 @@
     "@moonrepo/cli"
   ],
   "devDependencies": {
-    "@eslint/js": "9.31.0",
-    "@moonrepo/cli": "1.38.6",
+    "@eslint/js": "9.32.0",
+    "@moonrepo/cli": "1.39.3",
     "@types/bun": "1.2.19",
-    "@typescript-eslint/eslint-plugin": "8.37.0",
-    "@typescript-eslint/parser": "8.37.0",
-    "bunup": "0.8.61",
-    "eslint": "9.31.0",
+    "@typescript-eslint/eslint-plugin": "8.38.0",
+    "@typescript-eslint/parser": "8.38.0",
+    "bunup": "0.9.0",
+    "eslint": "9.32.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.3",
     "prettier": "3.6.2",
     "typescript": "5.8.3",
     "ts-unused-exports": "11.0.1",
-    "typescript-eslint": "8.37.0"
+    "typescript-eslint": "8.38.0"
   },
   "engines": {
     "node": ">=18.0.0",
