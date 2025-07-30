@@ -1,6 +1,6 @@
 export { roll } from './roll'
 export { validateNotation } from './validateNotation'
-export { optionsToNotation } from './lib/transformers'
+export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from './lib/transformers'
 export { isDiceNotation } from './isDiceNotation'
 
 export type {
