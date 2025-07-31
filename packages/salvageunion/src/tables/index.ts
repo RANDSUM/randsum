@@ -83,7 +83,7 @@ export const AllRollTables: Record<
   ['Reactor Overload']: ReactorOverloadTable,
   ['Area Salvage']: AreaSalvageTable,
   ['Mech Salvage']: MechSalvageTable,
-  ['Crawler Deterioration']: CrawlerDeteroriationTable,
+  ['Crawler Deterioration']: CrawlerDeteriorationTable,
   ['Crawler Damage']: CrawlerDamageTable,
   ['Crawler Destruction']: CrawlerDestructionTable,
   ['Keepsake']: KeepsakeTable,
