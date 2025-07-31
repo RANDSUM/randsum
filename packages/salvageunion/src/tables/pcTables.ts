@@ -20,7 +20,7 @@ export const GroupInitiativeTable: SalvageUnionTableType = mechanicTableFactory(
   failure: {
     label: 'Fumble',
     description:
-      'One NPC chosen by the Mediator acts first. Play then passes to the player group and one Pilot chosen by the players acts.'
+      'One NPC chosen by the players acts first. Play then passes to the player group and one Pilot chosen by the players acts.'
   },
   cascadeFailure: {
     label: 'Ambush',
