@@ -18,7 +18,7 @@ import {
   AreaSalvageTable,
   CrawlerDamageTable,
   CrawlerDestructionTable,
-  CrawlerDeteroriationTable,
+  CrawlerDeteriorationTable,
   CriticalDamageTable,
   CriticalInjuryTable,
   GroupInitiativeTable,

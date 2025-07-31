@@ -190,7 +190,7 @@ export const MechSalvageTable: SalvageUnionTableType = mechanicTableFactory({
   }
 })
 
-export const CrawlerDeteroriationTable: SalvageUnionTableType = mechanicTableFactory({
+export const CrawlerDeteriorationTable: SalvageUnionTableType = mechanicTableFactory({
   nailedIt: {
     description: 'Your Union Crawler chugs along for now.'
   },
@@ -264,7 +264,7 @@ export const PCTables: Partial<Record<SalvageUnionTableName, SalvageUnionTableTy
   ['Reactor Overload']: ReactorOverloadTable,
   ['Area Salvage']: AreaSalvageTable,
   ['Mech Salvage']: MechSalvageTable,
-  ['Crawler Deterioration']: CrawlerDeteroriationTable,
+  ['Crawler Deterioration']: CrawlerDeteriorationTable,
   ['Crawler Damage']: CrawlerDamageTable,
   ['Crawler Destruction']: CrawlerDestructionTable
 }
