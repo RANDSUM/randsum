@@ -39,10 +39,10 @@ export interface SalvageUnionTableListing {
 export type SalvageUnionTableType = Record<SalvageUnionHit, SalvageUnionTableListing>
 export type SalvageUnionNumericTable = Record<number, string>
 export interface SalvageUnionRollRecord {
-  hit: SalvageUnionHit
+  hit: string
   label: SalvageUnionTableListing['label']
   description: SalvageUnionTableListing['description']
   tableName: SalvageUnionTableName
-  table: SalvageUnionTableType
+  table: SalvageUnionTableType | SalvageUnionNumericTable
   roll: number
 }
