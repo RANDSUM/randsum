@@ -108,7 +108,7 @@ export {
   ReactorOverloadTable,
   AreaSalvageTable,
   MechSalvageTable,
-  CrawlerDeteroriationTable,
+  CrawlerDeteriorationTable,
   CrawlerDamageTable,
   CrawlerDestructionTable
 } from './pcTables'
