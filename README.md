@@ -151,9 +151,15 @@ When I found the answer, I laughed and laughed. I've been chasing that high ever
 
 ## LLM Statement
 
-I love this thing we call programming. It seems as if (biiiiig scare quotes) "AI" might be a part of it moving forward. You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work. I care deeply about it, and there is no better way for me to understand this weird new tool and their place in my craft than to use them here. Is this profane? I don't know. We'll have to see the extent to which I come to regret/resent/respect this decision in the coming years together.
+I have used LLM ("AI") tools while making this library. Unless I am mis-remembering, it was entirly Claude Sonnet, used through the tool Augment Code.
 
-Check the git history of this paragraph for a makeshift changelog of my evolving feelings on the subject.
+I love this thing we call programming. It seems as if this tech might be a part of it moving forward.
+
+You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work.
+
+Is the use of this profane? Is my work perma-tainted? I don't know. The type-ahead suggests I say "I am not ashamed", and so I remain comforted that it is not yet able to accurately imitate my mind.
+
+Check the git history of this paragraph (and README, where it used to live.) for a makeshift changelog of my evolving feelings on the subject.
 
 ---
 
