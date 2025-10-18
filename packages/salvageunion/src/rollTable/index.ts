@@ -1,67 +1,48 @@
-import { AllRollTables } from '../tables'
+import type { System, Table } from 'salvageunion-reference'
+import { SalvageUnionReference, resultForTable } from 'salvageunion-reference'
 import type {
-  SalvageUnionNumericTable,
   SalvageUnionRollRecord,
   SalvageUnionTableListing,
-  SalvageUnionTableName,
-  SalvageUnionTableType
+  SalvageUnionTableName
 } from '../types'
-import type { RollRecord, RollResult, RollerRollResult } from '@randsum/roller'
+import type { RollRecord, RollResult } from '@randsum/roller'
 import { roll } from '@randsum/roller'
-import { customTableFaces } from './customTableFaces'
+
+function tableDataForTable(
+  tableName: SalvageUnionTableName
+): Table['rollTable'] | System['rollTable'] {
+  const table =
+    tableName === 'Mechapult'
+      ? SalvageUnionReference.Systems.findByName(tableName)
+      : SalvageUnionReference.Tables.findByName(tableName)
+
+  if (!table) {
+    throw new Error(`Invalid Salvage Union table name: "${tableName}"`)
+  }
+
+  return table.rollTable
+}
 
 export function rollTable(
   tableName: SalvageUnionTableName = 'Core Mechanic'
 ): RollResult<SalvageUnionRollRecord, RollRecord<SalvageUnionTableListing | string>> {
-  if (!(AllRollTables[tableName] as undefined | SalvageUnionTableType)) {
-    const availableTables = Object.keys(AllRollTables).join(', ')
-    throw new Error(
-      `Invalid Salvage Union table name: "${tableName}". Available tables: ${availableTables}`
-    )
-  }
+  const { total, rolls } = roll({
+    sides: 20
+  })
 
-  const {
-    rolls,
-    result: [result],
-    total
-  } = generateRoll(tableName)
+  const tableData = tableDataForTable(tableName)
+  const result = resultForTable(tableData, total)
 
-  if (!result) {
-    throw new Error('Failed to properly roll.')
-  }
-  const label = typeof result === 'string' ? result : result.label
-  const description = typeof result === 'string' ? '' : result.description
-  const hit = typeof result === 'string' ? result : result.hit
+  const label = typeof result === 'string' ? result : result.result
+  const description = typeof result === 'string' ? '' : result.result
   return {
     rolls,
     result: {
-      hit,
       label,
       description,
-      table: AllRollTables[tableName],
+      table: tableData,
       tableName,
       roll: total
     }
   }
-}
-
-function generateRoll(
-  tableName: SalvageUnionTableName
-): RollerRollResult<SalvageUnionTableListing | string> {
-  const table = AllRollTables[tableName]
-  const sides = isNumericTable(table)
-    ? Object.values(table as SalvageUnionNumericTable)
-    : customTableFaces.map(face => table[face])
-
-  return roll({
-    sides
-  })
-}
-
-function isNumericTable(
-  table: SalvageUnionTableType | SalvageUnionNumericTable
-): table is SalvageUnionNumericTable {
-  return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].every(
-    key => key in table
-  )
 }

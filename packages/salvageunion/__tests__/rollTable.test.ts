@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { rollTable } from '../src/rollTable'
-import type { SalvageUnionHit, SalvageUnionTableName } from '../src/types'
+import type { SalvageUnionTableName } from '../src/types'
 
 describe('rollTable', () => {
   describe('default Core Mechanic table', () => {
@@ -9,19 +9,6 @@ describe('rollTable', () => {
 
       expect(result.tableName).toBe('Core Mechanic')
       expect(result.table).toBeDefined()
-    })
-
-    test('returns valid hit types', () => {
-      const validHits: SalvageUnionHit[] = [
-        'Nailed It',
-        'Success',
-        'Tough Choice',
-        'Failure',
-        'Cascade Failure'
-      ]
-
-      const result = rollTable()
-      expect(validHits).toContain(result.result.hit)
     })
   })
 
@@ -32,9 +19,6 @@ describe('rollTable', () => {
 
       results.forEach(({ result }) => {
         expect(result.tableName).toBe('Core Mechanic')
-        expect(['Nailed It', 'Success', 'Tough Choice', 'Failure', 'Cascade Failure']).toContain(
-          result.hit
-        )
       })
     })
   })
@@ -44,9 +28,8 @@ describe('rollTable', () => {
       const { result } = rollTable('NPC Action')
       expect(result.tableName).toBe('NPC Action')
       expect(result.table).toBeDefined()
-      expect(['Nailed It', 'Success', 'Tough Choice', 'Failure', 'Cascade Failure']).toContain(
-        result.hit
-      )
+      expect(result.label).toBeDefined()
+      expect(result.description).toBeDefined()
     })
 
     test('handles Critical Damage table', () => {
@@ -54,16 +37,15 @@ describe('rollTable', () => {
 
       expect(result.tableName).toBe('Critical Damage')
       expect(result.table).toBeDefined()
-      expect(['Nailed It', 'Success', 'Tough Choice', 'Failure', 'Cascade Failure']).toContain(
-        result.hit
-      )
+      expect(result.label).toBeDefined()
+      expect(result.description).toBeDefined()
     })
   })
 
   describe('input validation', () => {
     test('throws error for invalid table name', () => {
       expect(() => rollTable('Invalid Table' as SalvageUnionTableName)).toThrow(
-        'Invalid Salvage Union table name: "Invalid Table". Available tables:'
+        'Invalid Salvage Union table name: "Invalid Table"'
       )
     })
 
@@ -77,7 +59,6 @@ describe('rollTable', () => {
       const validTables = [
         'Core Mechanic',
         'NPC Action',
-        'Reaction',
         'Morale',
         'Group Initiative',
         'Retreat',
@@ -85,7 +66,20 @@ describe('rollTable', () => {
         'Critical Injury',
         'Reactor Overload',
         'Area Salvage',
-        'Mech Salvage'
+        'Mech Salvage',
+        'Crawler Deterioration',
+        'Crawler Damage',
+        'Crawler Destruction',
+        'Keepsake',
+        'Motto',
+        'Pilot Appearance',
+        'AI Personality',
+        'Quirks',
+        'Mech Appearance',
+        'Mech Pattern Names',
+        'Crawler Name',
+        'Reaction Roll',
+        'Mechapult'
       ]
 
       validTables.forEach(tableName => {
