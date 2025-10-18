@@ -1,13 +1,8 @@
-export type SalvageUnionHit =
-  | 'Nailed It'
-  | 'Success'
-  | 'Tough Choice'
-  | 'Failure'
-  | 'Cascade Failure'
+import type { System, Table } from 'salvageunion-reference'
 
 export type SalvageUnionTableName =
   | 'NPC Action'
-  | 'Reaction'
+  | 'Reaction Roll'
   | 'Morale'
   | 'Core Mechanic'
   | 'Group Initiative'
@@ -33,16 +28,12 @@ export type SalvageUnionTableName =
 export interface SalvageUnionTableListing {
   label: string
   description: string
-  hit: SalvageUnionHit
 }
 
-export type SalvageUnionTableType = Record<SalvageUnionHit, SalvageUnionTableListing>
-export type SalvageUnionNumericTable = Record<number, string>
 export interface SalvageUnionRollRecord {
-  hit: string
-  label: SalvageUnionTableListing['label']
-  description: SalvageUnionTableListing['description']
+  label: string
+  description: string
   tableName: SalvageUnionTableName
-  table: SalvageUnionTableType | SalvageUnionNumericTable
+  table: Table['rollTable'] | System['rollTable']
   roll: number
 }
