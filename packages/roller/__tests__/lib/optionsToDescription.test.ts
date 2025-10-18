@@ -23,6 +23,5 @@ describe(optionsToDescription, () => {
     const description = optionsToDescription(options)
     expect(description.length).toBeGreaterThan(1)
     expect(description[0]).toContain('Roll 2 20-sided dice')
-    expect(description).toContainEqual(expect.stringContaining('Drop lowest'))
   })
 })

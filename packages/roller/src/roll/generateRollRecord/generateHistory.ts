@@ -10,10 +10,10 @@ export function generateHistory<T>(
   const hasModifiers = MODIFIER_ORDER.some(key => modifiers[key] !== undefined)
 
   if (!hasModifiers) {
-    const modifiedRolls = Array.from(rolls, roll => Number(roll))
+    const modifiedRolls = Array.from(rolls, roll => roll)
 
     return {
-      total: rolls.reduce((acc, cur) => Number(acc) + cur, 0),
+      total: rolls.reduce((acc, cur) => acc + cur, 0),
       initialRolls: rolls,
       modifiedRolls,
       logs: []
@@ -24,7 +24,7 @@ export function generateHistory<T>(
 
   const rollParams = { sides, quantity }
 
-  const initialRollsAsNumbers = Array.from(rolls, roll => Number(roll))
+  const initialRollsAsNumbers = Array.from(rolls, roll => roll)
 
   const bonuses: NumericRollBonus = {
     simpleMathModifier: 0,
@@ -51,7 +51,7 @@ export function generateHistory<T>(
   return {
     modifiedRolls: bonuses.rolls,
     initialRolls: rolls,
-    total: bonuses.rolls.reduce((acc, cur) => Number(acc) + cur, bonuses.simpleMathModifier),
+    total: bonuses.rolls.reduce((acc, cur) => acc + cur, bonuses.simpleMathModifier),
     logs: bonuses.logs
   }
 }
