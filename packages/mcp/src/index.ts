@@ -103,15 +103,15 @@ RETURNS: For valid notation, shows parsed structure with quantity, sides, and mo
 })
 
 function formatRollResult(result: RollerRollResult): string {
+  const { total, rolls } = result
+  const firstRoll = rolls[0]
+  if (!firstRoll) {
+    throw new Error('No roll data available')
+  }
   const {
-    total,
-    rolls: [
-      {
-        parameters,
-        modifierHistory: { modifiedRolls, initialRolls }
-      }
-    ]
-  } = result
+    parameters,
+    modifierHistory: { modifiedRolls, initialRolls }
+  } = firstRoll
 
   const header = `🎲 RANDSUM Roll Result:`
   const separator = '─'.repeat(30)
