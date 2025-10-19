@@ -83,9 +83,9 @@ describe('rollTable', () => {
       ]
 
       validTables.forEach(tableName => {
-        expect(() => rollTable(tableName as SalvageUnionTableName)).not.toThrow()
-        const { result } = rollTable(tableName as SalvageUnionTableName)
-        expect(result.tableName).toBe(tableName as SalvageUnionTableName)
+        expect(() => rollTable(tableName)).not.toThrow()
+        const { result } = rollTable(tableName)
+        expect(result.tableName).toBe(tableName)
       })
     })
   })

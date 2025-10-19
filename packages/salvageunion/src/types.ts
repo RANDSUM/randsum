@@ -1,6 +1,6 @@
 import type { System, Table } from 'salvageunion-reference'
 
-export const SALVAGE_UNION_TABLE_NAMES = [
+export const SALVAGE_UNION_TABLE_NAMES: readonly string[] = [
   'NPC Action',
   'Reaction Roll',
   'Morale',
