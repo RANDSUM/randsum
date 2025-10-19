@@ -1,6 +1,8 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, spyOn, test } from 'bun:test'
 import { rollTable } from '../src/rollTable'
 import type { SalvageUnionTableName } from '../src/types'
+import * as roller from '@randsum/roller'
+import type { RollerRollResult } from '@randsum/roller'
 
 describe('rollTable', () => {
   describe('default Core Mechanic table', () => {
@@ -87,6 +89,104 @@ describe('rollTable', () => {
         const { result } = rollTable(tableName)
         expect(result.tableName).toBe(tableName)
       })
+    })
+  })
+
+  describe('mocked roll results', () => {
+    test('returns correct label and description for Core Mechanic table with roll of 10', () => {
+      const mockRollResult = {
+        total: 10,
+        rolls: [
+          {
+            description: ['1d20'],
+            parameters: {
+              quantity: 1,
+              sides: 20,
+              arithmetic: 'add' as const,
+              modifiers: {},
+              key: 'Roll 1',
+              argument: { sides: 20 },
+              notation: '1d20' as const,
+              description: ['1d20'],
+              faces: undefined
+            },
+            rolls: [10],
+            modifierHistory: {
+              logs: [],
+              modifiedRolls: [10],
+              total: 10,
+              initialRolls: [10]
+            },
+            appliedTotal: 10,
+            total: 10
+          }
+        ],
+        result: ['10']
+      }
+
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(
+        mockRollResult as unknown as RollerRollResult
+      )
+
+      const { result } = rollTable('Core Mechanic')
+
+      expect(result.tableName).toBe('Core Mechanic')
+      expect(result.roll).toBe(10)
+      expect(result.label).toBe('Tough Choice')
+      expect(result.description).toBe(
+        'You succeed in your action, but at a cost. The Mediator gives you a Tough Choice with some kind of Setback attached. When attacking, you hit, but must make a Tough Choice.'
+      )
+      expect(rollSpy).toHaveBeenCalledTimes(1)
+      expect(rollSpy).toHaveBeenCalledWith({ sides: 20 })
+
+      rollSpy.mockRestore()
+    })
+
+    test('returns correct label and description for Quirks table with roll of 15', () => {
+      const mockRollResult = {
+        total: 15,
+        rolls: [
+          {
+            description: ['1d20'],
+            parameters: {
+              quantity: 1,
+              sides: 20,
+              arithmetic: 'add' as const,
+              modifiers: {},
+              key: 'Roll 1',
+              argument: { sides: 20 },
+              notation: '1d20' as const,
+              description: ['1d20'],
+              faces: undefined
+            },
+            rolls: [15],
+            modifierHistory: {
+              logs: [],
+              modifiedRolls: [15],
+              total: 15,
+              initialRolls: [15]
+            },
+            appliedTotal: 15,
+            total: 15
+          }
+        ],
+        result: ['15']
+      }
+
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(
+        mockRollResult as unknown as RollerRollResult
+      )
+
+      const { result } = rollTable('Quirks')
+
+      expect(result.tableName).toBe('Quirks')
+      expect(result.roll).toBe(15)
+      expect(result.label).toBe('Small organic growths')
+      expect(result.description).toBe('')
+      expect(rollSpy).toHaveBeenCalledTimes(1)
+      expect(rollSpy).toHaveBeenCalledWith({ sides: 20 })
+
+      rollSpy.mockRestore()
     })
   })
 })
