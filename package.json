@@ -39,6 +39,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "salvageunion-reference": "1.0.9"
+    "salvageunion-reference": "1.11.0"
   }
 }
