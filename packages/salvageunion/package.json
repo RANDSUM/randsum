@@ -1,6 +1,6 @@
 {
   "name": "@randsum/salvageunion",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "description": "A flexible, type-safe dice roller for the Salvage Union system",
   "private": false,
   "author": {
@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "@randsum/roller": "workspace:~",
-    "salvageunion-reference": "1.0.8"
+    "salvageunion-reference": "1.0.9"
   },
   "exports": {
     ".": {
