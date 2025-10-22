@@ -4,7 +4,7 @@
     "": {
       "name": "randsum-monorepo",
       "dependencies": {
-        "salvageunion-reference": "1.0.9",
+        "salvageunion-reference": "1.18.0",
       },
       "devDependencies": {
         "@eslint/js": "9.38.0",
@@ -70,10 +70,10 @@
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.32.0",
+      "version": "0.33.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
-        "salvageunion-reference": "1.0.9",
+        "salvageunion-reference": "1.18.0",
       },
     },
   },
@@ -635,7 +635,7 @@
 
     "safer-buffer": ["safer-buffer@2.1.2", "", {}, "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="],
 
-    "salvageunion-reference": ["salvageunion-reference@1.0.9", "", {}, "sha512-4d0IDtPGOSDiXhifgjRWKgF9EfzjPr3omElRkd1JsUjrqy9EXRdgCVtozQO2c3IczbVf97IGkXbrvrdlYBr4qw=="],
+    "salvageunion-reference": ["salvageunion-reference@1.18.0", "", {}, "sha512-pyrg5CRnDEcLQvDrJV58KB1cOL4Vh+T2gv2nhkCwD7/aEYHbXQdzZDMOIOZT3d+5BncdtfqwM4fCvhS6I1QkOg=="],
 
     "semver": ["semver@7.7.2", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA=="],
 
