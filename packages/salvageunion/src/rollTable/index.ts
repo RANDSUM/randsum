@@ -29,14 +29,16 @@ export function rollTable(
   })
 
   const tableData = tableDataForTable(tableName)
+  const { result, key } = resultForTable(tableData, total)
 
-  const [label, ...rest] = resultForTable(tableData, total).result.split(':')
+  const [label, ...rest] = result.split(':')
 
   const description = rest.join(':').trim()
 
   return {
     rolls,
     result: {
+      key,
       label: String(label).trim(),
       description,
       table: tableData,

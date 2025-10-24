@@ -35,6 +35,7 @@ export interface SalvageUnionTableListing {
 
 export interface SalvageUnionRollRecord {
   label: string
+  key: string
   description: string
   tableName: SalvageUnionTableName
   table: RollTable['table'] | System['table']
