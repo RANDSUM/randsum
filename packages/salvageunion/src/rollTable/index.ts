@@ -1,4 +1,4 @@
-import type { RollTable, System } from 'salvageunion-reference'
+import type { SURefMetaTable } from 'salvageunion-reference'
 import { SalvageUnionReference, resultForTable } from 'salvageunion-reference'
 import type {
   SalvageUnionRollRecord,
@@ -8,11 +8,11 @@ import type {
 import type { RollRecord, RollResult } from '@randsum/roller'
 import { roll } from '@randsum/roller'
 
-function tableDataForTable(tableName: SalvageUnionTableName): RollTable['table'] | System['table'] {
+function tableDataForTable(tableName: SalvageUnionTableName): SURefMetaTable {
   const table =
     tableName === 'Mechapult'
-      ? SalvageUnionReference.Systems.findByName(tableName)
-      : SalvageUnionReference.RollTables.findByName(tableName)
+      ? SalvageUnionReference.Systems.find(sys => sys.name === tableName)
+      : SalvageUnionReference.RollTables.find(t => t.name === tableName)
 
   if (!table) {
     throw new Error(`Invalid Salvage Union table name: "${tableName}"`)
