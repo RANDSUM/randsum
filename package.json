@@ -6,7 +6,7 @@
     "@types/bun": "1.3.1",
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
-    "bunup": "0.15.7",
+    "bunup": "0.15.10",
     "eslint": "9.38.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
@@ -39,6 +39,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "salvageunion-reference": "1.21.0"
+    "salvageunion-reference": "1.30.6"
   }
 }
