@@ -1,4 +1,4 @@
-import type { RollTable, System } from 'salvageunion-reference'
+import type { SURefMetaTable } from 'salvageunion-reference'
 
 export const SALVAGE_UNION_TABLE_NAMES: readonly string[] = [
   'NPC Action',
@@ -38,6 +38,6 @@ export interface SalvageUnionRollRecord {
   key: string
   description: string
   tableName: SalvageUnionTableName
-  table: RollTable['table'] | System['table']
+  table: SURefMetaTable
   roll: number
 }
