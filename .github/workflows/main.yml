@@ -23,4 +23,4 @@ jobs:
         run: bun audit --audit-level high
         continue-on-error: false
 
-      - run: bun run moon ci
+      - run: bun run ci

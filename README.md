@@ -6,7 +6,6 @@
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
-[![Built with Moon](https://img.shields.io/badge/Built%20with-Moon-blue?style=flat)](https://moonrepo.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![NPM Downloads](https://img.shields.io/npm/dm/@randsum/roller)](https://www.npmjs.com/package/@randsum/roller)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/RANDSUM/randsum/commits/main)
@@ -63,7 +62,7 @@ npx randsum 2d20H   # Roll with advantage
 
 ## 🛠️ Development
 
-This monorepo uses [Moon](https://moonrepo.dev) for task orchestration and [Bun](https://bun.sh) for package management and execution.
+This monorepo uses [Bun](https://bun.sh) for package management, building, and task execution.
 
 ### Getting Started
 
@@ -75,43 +74,43 @@ cd randsum
 # Install dependencies for all packages
 bun install
 
-# Build all packages
-bun moon :build
+# Build all packages (roller is built first, then others)
+bun run build
 
 # Run tests
-bun moon :test
+bun run test
 
 # Run type checks
-bun moon :tsCheck
+bun run ts:check
 
 # Lint and format
-bun moon :lint
-bun moon :format
+bun run lint
+bun run format
 ```
 
 ### Monorepo Workflow
 
-Moon orchestrates tasks across all packages with intelligent dependency management:
+Bun's workspace features handle tasks across all packages with automatic dependency management:
 
 **Global Tasks** (run across all packages):
 
-- `:build` - Build all packages in dependency order
-- `:test` - Run all tests with proper dependencies
-- `:lint` - Run ESLint checks across the monorepo
-- `:tsCheck` - Run TypeScript checks for all packages
-- `:ci` - Complete CI pipeline (build, test, lint, tsCheck)
-- `:lint:fix` - Run ESLint and automatically fix issues
-- `:format` - Format code using Prettier
+- `bun run build` - Build all packages in dependency order (roller first, then others)
+- `bun run test` - Run all tests
+- `bun run lint` - Run ESLint checks across the monorepo
+- `bun run ts:check` - Run TypeScript checks for all packages
+- `bun run ci` - Complete CI pipeline (build, test, lint, tsCheck, format check)
+- `bun run lint:fix` - Run ESLint and automatically fix issues
+- `bun run format` - Format code using Prettier
 
 **Package-Specific Tasks**:
 
 ```bash
-bun moon roller:test      # Run tests for @randsum/roller only
-bun moon blades:build     # Build @randsum/blades only
-bun moon mcp:tsCheck      # Type check the MCP server
+bun run --filter @randsum/roller test      # Run tests for @randsum/roller only
+bun run --filter @randsum/blades build     # Build @randsum/blades only
+bun run --filter @randsum/mcp ts:check      # Type check the MCP server
 ```
 
-Moon automatically handles inter-package dependencies, ensuring packages are built in the correct order.
+Bun automatically handles inter-package dependencies through workspace linking, ensuring packages are built in the correct order.
 
 ## 📚 Documentation
 

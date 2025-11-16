@@ -33,7 +33,6 @@ export default tseslint.config(
       '.robo',
       '**/*.d.ts',
       '**/tsconfig.tsbuildinfo',
-      '**/.moon/cache/**',
       '**/bun.lockb'
     ]
   },
