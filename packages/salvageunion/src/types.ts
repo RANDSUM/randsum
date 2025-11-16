@@ -18,7 +18,7 @@ export const SALVAGE_UNION_TABLE_NAMES: readonly string[] = [
   'Keepsake',
   'Motto',
   'Pilot Appearance',
-  'AI Personality',
+  'A.I. Personality',
   'Quirks',
   'Mech Appearance',
   'Mech Pattern Names',

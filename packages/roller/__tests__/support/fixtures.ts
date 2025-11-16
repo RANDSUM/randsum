@@ -35,7 +35,12 @@ export function createRequiredNumericRollParameters(
 }
 
 export function createRollParams(overrides: Partial<RollParams> = {}): RollParams {
-  return {
+  // Filter out undefined values to satisfy exactOptionalPropertyTypes
+  const cleanOverrides = Object.fromEntries(
+    Object.entries(overrides).filter(([, value]) => value !== undefined)
+  ) as Partial<RollParams>
+
+  const params: RollParams = {
     sides: 6,
     quantity: 1,
     description: ['Roll 1d6'],
@@ -43,8 +48,10 @@ export function createRollParams(overrides: Partial<RollParams> = {}): RollParam
     arithmetic: 'add',
     notation: '1d6',
     modifiers: {},
-    ...overrides
+    key: 'Roll 1',
+    ...cleanOverrides
   }
+  return params
 }
 
 export function createMockRollOne(returnValue = 4): () => number {

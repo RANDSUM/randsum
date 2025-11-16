@@ -89,8 +89,14 @@ describe(roll, () => {
         test('returns a results array of the custom faces', () => {
           const dummyArray = Array.from({ length: loops }, () => roll(arg))
           dummyArray.forEach(({ result }) => {
-            expect(arg.sides).toContain(result[0])
-            expect(arg.sides).toContain(result[1])
+            expect(result[0]).toBeDefined()
+            expect(result[1]).toBeDefined()
+            if (result[0] !== undefined) {
+              expect(arg.sides).toContain(result[0])
+            }
+            if (result[1] !== undefined) {
+              expect(arg.sides).toContain(result[1])
+            }
           })
         })
       })
