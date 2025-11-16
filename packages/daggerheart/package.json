@@ -57,5 +57,13 @@
     "daggerheart",
     "Dungeons",
     "Dragons"
-  ]
+  ],
+  "scripts": {
+    "build": "bunup --entry src/index.ts --format esm,cjs --minify --sourcemap external --target node --clean && tsc --emitDeclarationOnly",
+    "test": "bun test",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "ts:check": "tsc --noEmit"
+  }
 }

@@ -2,40 +2,6 @@
 # Use isolated linker for better dependency isolation and security
 linker = 'isolated'
 
-# Performance optimizations
-cache = true
-exact = false
-production = false
-
-# Registry configuration for better performance
-registry = "https://registry.npmjs.org/"
-
-# Optimize install behavior
-frozenLockfile = false
-dryRun = false
-
-# Security and integrity
-verify = true
-
 [test]
-# Default test configuration for packages without specific bunfig
-coverage = false
+# Default test timeout
 timeout = 30000
-
-[build]
-# Default build optimizations
-minify = true
-sourcemap = true
-target = "node"
-
-exclude = [
-  "**/*.test.ts",
-  "**/*.spec.ts",
-  "__tests__/**/*",
-  "examples/**/*",
-  "docs/**/*",
-  "coverage/**/*",
-  "*.md",
-  "*.yml",
-  "*.toml"
-]
