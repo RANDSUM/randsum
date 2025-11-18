@@ -1,27 +1,26 @@
 export { roll } from './roll'
 export { validateNotation } from './validateNotation'
-export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from './lib/transformers'
 export { isDiceNotation } from './isDiceNotation'
 
 export type {
-  DiceNotation,
-  RollArgument,
+  Arithmetic,
+  ComparisonCondition,
+  ReplaceFrom,
+  ReplaceRule,
+  DropModifier,
+  CapModifier,
+  RerollModifier,
+  UniqueModifier,
+  ReplaceModifier,
+  Modifiers,
   RollOptions,
-  RequiredNumericRollParameters,
-  ComparisonOptions,
-  DropOptions,
-  ModifierConfig,
-  ModifierLog,
-  ModifierOptions,
-  NumericRollBonus,
-  ReplaceOptions,
-  RerollOptions,
-  UniqueOptions,
   RollParams,
+  RollArgument,
+  ModifierLog,
+  NumericRollBonus,
+  RequiredNumericRollParameters,
   RollRecord,
-  RollResult,
   RollerRollResult,
-  InvalidValidationResult,
-  ValidValidationResult,
   ValidationResult
 } from './types'
+
