@@ -1,27 +1,13 @@
+export * from './types'
+export { coreRandom, coreSpreadRolls } from './lib/random'
+export { coreNotationPattern, completeRollPattern } from './lib/patterns'
+export { notationToOptions } from './lib/notation'
+export { optionsToNotation, optionsToDescription } from './lib/transformers'
+export { applyModifiers, modifierToDescription, modifierToNotation } from './lib/modifiers'
+export { argToParameter } from './roll/argToParameter'
+export { generateRollRecord } from './roll/generateRollRecord'
 export { roll } from './roll'
-export { validateNotation } from './validateNotation'
-export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from './lib/transformers'
 export { isDiceNotation } from './isDiceNotation'
+export { validateNotation } from './validateNotation'
 
-export type {
-  DiceNotation,
-  RollArgument,
-  RollOptions,
-  RequiredNumericRollParameters,
-  ComparisonOptions,
-  DropOptions,
-  ModifierConfig,
-  ModifierLog,
-  ModifierOptions,
-  NumericRollBonus,
-  ReplaceOptions,
-  RerollOptions,
-  UniqueOptions,
-  RollParams,
-  RollRecord,
-  RollResult,
-  RollerRollResult,
-  InvalidValidationResult,
-  ValidValidationResult,
-  ValidationResult
-} from './types'
+

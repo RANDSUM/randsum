@@ -1,22 +1,38 @@
-import { isDiceNotation } from './isDiceNotation'
-import type { ValidationResult } from './types'
-import { optionsToDescription, optionsToNotation } from './lib/transformers'
+import type { RollOptions } from './types'
 import { notationToOptions } from './lib/notation'
+import { optionsToDescription, optionsToNotation } from './lib/transformers'
+import { isDiceNotation } from './isDiceNotation'
 
-export function validateNotation(notation: string): ValidationResult {
-  if (!isDiceNotation(notation)) {
-    return {
-      valid: false,
-      argument: notation
-    }
+export interface ValidNotationResult {
+  valid: true
+  options: RollOptions[]
+  notation: string[]
+  description: string[]
+}
+
+export interface InvalidNotationResult {
+  valid: false
+}
+
+export type ValidateNotationResult = ValidNotationResult | InvalidNotationResult
+
+export function validateNotation(input: string): ValidateNotationResult {
+  if (!isDiceNotation(input)) {
+    return { valid: false }
   }
 
-  const options = notationToOptions(notation)
+  const options = notationToOptions(input)
+  if (!options.length) return { valid: false }
+
+  const notation = options.map(optionsToNotation)
+  const description = options.map(opt => optionsToDescription(opt).join(' '))
+
   return {
     valid: true,
-    argument: notation,
     options,
-    notation: options.map(o => optionsToNotation(o)),
-    description: options.map(o => optionsToDescription(o))
+    notation,
+    description
   }
 }
+
+

@@ -1,23 +1,75 @@
-import { coreSpreadRolls } from '../../lib/random'
-import type { RollParams, RollRecord } from '../../types'
-import { generateHistory } from './generateHistory'
+import type {
+  ModifierHistory,
+  NumericRollBonus,
+  RollRecord,
+  RollParams
+} from '../../types'
+import { coreRandom, coreSpreadRolls } from '../../lib/random'
+import { applyModifiers } from '../../lib/modifiers'
 
-export function generateRollRecord<T>(parameters: RollParams<T>): RollRecord<T> {
-  const { sides, quantity = 1, faces, arithmetic, description } = parameters
-  const initialRolls = coreSpreadRolls(quantity, sides)
-  const isNegative = arithmetic === 'subtract'
-  const customResults = faces
-    ? { customResults: initialRolls.map(roll => faces[roll - 1] as T) }
-    : {}
-  const modifierHistory = generateHistory(parameters, initialRolls)
-
+function baseBonus(rolls: number[]): NumericRollBonus {
   return {
-    ...customResults,
-    parameters,
-    description,
-    modifierHistory,
-    rolls: modifierHistory.modifiedRolls,
-    appliedTotal: isNegative ? -modifierHistory.total : modifierHistory.total,
-    total: modifierHistory.total
+    rolls,
+    simpleMathModifier: 0,
+    logs: []
   }
 }
+
+export function generateRollRecord(parameters: RollParams): RollRecord {
+  const initialRolls = coreSpreadRolls(parameters.quantity, parameters.sides)
+  let bonus = baseBonus(initialRolls)
+
+  const ctx = {
+    sides: parameters.sides,
+    quantity: parameters.quantity,
+    modifiers: parameters.modifiers
+  }
+
+  const rollOne = (): number => coreRandom(parameters.sides)
+
+  if (parameters.modifiers) {
+    const mods = parameters.modifiers
+    if (mods.cap) {
+      bonus = applyModifiers('cap', mods.cap, bonus, ctx, rollOne)
+    }
+    if (mods.drop) {
+      bonus = applyModifiers('drop', mods.drop, bonus, ctx, rollOne)
+    }
+    if (mods.replace) {
+      bonus = applyModifiers('replace', mods.replace, bonus, ctx, rollOne)
+    }
+    if (mods.explode) {
+      bonus = applyModifiers('explode', mods.explode, bonus, ctx, rollOne)
+    }
+    if (mods.unique !== undefined) {
+      bonus = applyModifiers('unique', mods.unique, bonus, ctx, rollOne)
+    }
+    if (mods.reroll) {
+      bonus = applyModifiers('reroll', mods.reroll, bonus, ctx, rollOne)
+    }
+    if (mods.plus !== undefined) {
+      bonus = applyModifiers('plus', mods.plus, bonus, ctx, rollOne)
+    }
+    if (mods.minus !== undefined) {
+      bonus = applyModifiers('minus', mods.minus, bonus, ctx, rollOne)
+    }
+  }
+
+  const rollTotal = bonus.rolls.reduce((sum, v) => sum + v, 0)
+  const total = rollTotal + bonus.simpleMathModifier
+
+  const modifierHistory: ModifierHistory = {
+    initialRolls,
+    modifiedRolls: bonus.rolls,
+    total,
+    logs: bonus.logs
+  }
+
+  return {
+    parameters,
+    modifierHistory,
+    total
+  }
+}
+
+

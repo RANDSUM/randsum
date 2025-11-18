@@ -1,75 +1,91 @@
-// ============================================================================
-// Core Types
-// ============================================================================
+export type RollArithmetic = 'add' | 'subtract'
 
-export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
-
-export interface RollOptions<T = string> {
-  quantity?: number
-  arithmetic?: 'add' | 'subtract'
-  sides: number | T[]
-  modifiers?: ModifierOptions
-  key?: string | undefined
-}
-
-export type RequiredNumericRollParameters = Pick<RollOptions, 'quantity' | 'sides'> & {
-  quantity: number
-  sides: number
-}
-
-export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number | `${number}`
-
-export interface ComparisonOptions {
+export interface CapModifierOptions {
   greaterThan?: number
   lessThan?: number
 }
 
-export interface DropOptions extends ComparisonOptions {
+export interface DropModifierOptions {
   highest?: number
   lowest?: number
   exact?: number[]
+  greaterThan?: number
+  lessThan?: number
 }
 
-export interface RerollOptions extends ComparisonOptions {
+export interface RerollModifierOptions {
   exact?: number[]
+  greaterThan?: number
+  lessThan?: number
   max?: number
 }
 
-export interface ReplaceOptions {
-  from: number | ComparisonOptions
+export type UniqueModifierOptions = true | { notUnique: number[] }
+
+export interface ReplaceComparison {
+  greaterThan?: number
+  lessThan?: number
+}
+
+export interface ReplaceRule {
+  from: number | ReplaceComparison
   to: number
 }
 
-export interface UniqueOptions {
-  notUnique: number[]
-}
+export type ReplaceModifierOptions = ReplaceRule | ReplaceRule[]
 
-export type ModifierConfig =
-  | number
-  | boolean
-  | ComparisonOptions
-  | DropOptions
-  | ReplaceOptions
-  | ReplaceOptions[]
-  | RerollOptions
-  | UniqueOptions
-
-export interface ModifierOptions {
-  cap?: ComparisonOptions
-  drop?: DropOptions
-  replace?: ReplaceOptions | ReplaceOptions[]
-  reroll?: RerollOptions
-  unique?: boolean | UniqueOptions
-  explode?: boolean
+export interface Modifiers {
   plus?: number
   minus?: number
+  drop?: DropModifierOptions
+  cap?: CapModifierOptions
+  reroll?: RerollModifierOptions
+  unique?: UniqueModifierOptions
+  explode?: boolean
+  replace?: ReplaceModifierOptions
+}
+
+export interface RollOptions {
+  sides: number | string[]
+  quantity?: number
+  modifiers?: Modifiers
+  arithmetic?: RollArithmetic
+}
+
+export interface RollParams extends RequiredNumericRollParameters {
+  /**
+   * Original argument that produced this parameter (number, string, or RollOptions)
+   */
+  argument: unknown
+  /**
+   * Canonical dice notation string for this parameter, e.g. `4d6L+2`
+   */
+  notation: string
+  /**
+   * Human readable description of the roll and its modifiers
+   */
+  description: string[]
+  /**
+   * A stable key used by consumers (the tests expect `Roll 1`, `Roll 2`, etc.)
+   */
+  key: string
+  /**
+   * For custom-face dice, this is the list of faces used to translate numeric rolls.
+   */
+  faces?: string[]
+}
+
+export interface RequiredNumericRollParameters {
+  sides: number
+  quantity: number
+  modifiers?: Modifiers
 }
 
 export interface ModifierLog {
-  modifier: string
-  options: ModifierConfig | undefined
-  added: number[]
+  modifier: 'plus' | 'minus' | 'cap' | 'drop' | 'reroll' | 'explode' | 'unique' | 'replace'
+  options: unknown
   removed: number[]
+  added: number[]
 }
 
 export interface NumericRollBonus {
@@ -78,49 +94,17 @@ export interface NumericRollBonus {
   logs: ModifierLog[]
 }
 
-export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 'sides'>> {
-  sides: number
-  faces?: T[]
-  argument: RollArgument<T>
-  description: string[]
-  notation: DiceNotation
+export interface ModifierHistory {
+  initialRolls: number[]
+  modifiedRolls: number[]
+  total: number
+  logs: ModifierLog[]
 }
 
-export interface RollRecord<T = string> {
-  description: RollParams<T>['description']
-  parameters: RollParams<T>
-  rolls: number[]
-  modifierHistory: {
-    logs: NumericRollBonus['logs']
-    modifiedRolls: number[]
-    total: number
-    initialRolls: number[]
-  }
-  appliedTotal: number
-  customResults?: T[]
+export interface RollRecord {
+  parameters: RollParams
+  modifierHistory: ModifierHistory
   total: number
 }
 
-export interface RollResult<TResult = number, TRollRecord = RollRecord> {
-  rolls: TRollRecord[]
-  result: TResult
-}
 
-export interface RollerRollResult<T = string> extends RollResult<T[], RollRecord<T>> {
-  total: number
-}
-
-export interface ValidValidationResult {
-  valid: true
-  argument: DiceNotation
-  description: string[][]
-  options: RollOptions[]
-  notation: DiceNotation[]
-}
-
-export interface InvalidValidationResult {
-  valid: false
-  argument: string
-}
-
-export type ValidationResult = ValidValidationResult | InvalidValidationResult
