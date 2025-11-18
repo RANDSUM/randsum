@@ -1,23 +1,45 @@
-import type { RollArgument, RollerRollResult } from '../types'
-import { argToParameter } from './argToParameter'
-import { generateRollRecord } from './generateRollRecord'
+import { RollArgument, RollResult, RollOption, IndividualRoll } from '../types';
+import { generateRollRecord } from './generateRollRecord';
+import { argToParameter } from './argToParameter';
 
-export function roll<T = string>(...args: RollArgument<T>[]): RollerRollResult<T> {
-  const parameters = args.flatMap((arg, index) => argToParameter(arg, index + 1))
-  const rolls = parameters.map(parameter => generateRollRecord(parameter))
-  const total = rolls.reduce((acc, cur) => {
-    const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
-    return acc + cur.total * factor
-  }, 0)
+export const roll = (...args: RollArgument[]): RollResult => {
+  const options: RollOption[] = [];
+  
+  args.forEach(arg => {
+    options.push(...argToParameter(arg));
+  });
 
-  const isCustom = rolls.every(roll => roll.customResults)
-  const result = rolls.flatMap(roll =>
-    isCustom ? (roll.customResults ?? []) : (roll.rolls.map(String) as T)
-  )
+  let grandTotal = 0;
+  const rollLogs: IndividualRoll[] = [];
+  const allResults: any[] = [];
+
+  options.forEach(option => {
+    const record = generateRollRecord(option);
+    
+    let optionTotal = record.total;
+    if (option.arithmetic === 'subtract') {
+      grandTotal -= optionTotal;
+    } else {
+      grandTotal += optionTotal;
+    }
+
+    rollLogs.push(record);
+    
+    if (Array.isArray(option.sides)) {
+      const faces = option.sides;
+      record.rolls.forEach(val => {
+         if (val >= 1 && val <= faces.length) {
+            allResults.push(faces[val - 1]);
+         } else {
+            allResults.push(undefined); 
+         }
+      });
+    }
+  });
 
   return {
-    rolls,
-    result,
-    total
-  }
-}
+    total: grandTotal,
+    rolls: rollLogs,
+    result: allResults
+  };
+};

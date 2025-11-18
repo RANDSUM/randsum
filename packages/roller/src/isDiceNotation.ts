@@ -1,13 +1,33 @@
-import { completeRollPattern, coreNotationPattern } from './lib/patterns'
-import type { DiceNotation } from './types'
+export const isDiceNotation = (argument: unknown): boolean => {
+  if (typeof argument !== 'string') return false;
+  if (argument.trim() === '') return false;
 
-export function isDiceNotation(argument: unknown): argument is DiceNotation {
-  if (typeof argument !== 'string') return false
-  const trimmedArg = argument.trim()
-  const basicTest = coreNotationPattern.test(trimmedArg)
-  if (!basicTest) return false
+  // Pattern breakdown:
+  // ^\s* - Start of string, optional whitespace
+  // (
+  //   [+-]?\s* - Optional sign and whitespace
+  //   \d+ - Quantity (Required)
+  //   [dD] - Separator
+  //   \d+ - Sides (Required)
+  //   (?:
+  //     [LH] - Drop (Lowest/Highest)
+  //     | ! - Explode
+  //     | [RCUV]\{[^}]+\} - Reroll, Cap, Unique, Value (Replace) with arguments
+  //     | [+-]\d+(?![dD]) - Arithmetic modifier, ensuring it's not the start of another dice term
+  //   )*
+  //   \s* - Optional whitespace
+  // )+
+  // $ - End of string
 
-  const cleanArg = trimmedArg.replace(/\s/g, '')
-  const remaining = cleanArg.replaceAll(completeRollPattern, '')
-  return remaining.length === 0
-}
+  // We also need to handle the case where sides is 0, or quantity is 0, or sides is 1.
+  // The regex \d+ covers all digits.
+  
+  // Wait, the regex for modifiers need to be careful.
+  // 4d6L is valid. 4d6L2 is valid. 
+  // So [LH](\d+)?
+  
+  const pattern = /^\s*(?:[+-]?\s*\d+[dD]\d+(?:\s*(?:[LH](?:\d+)?|!|U(?:\{[^}]+\})?|[RCV]\{[^}]+\}|[+-]\s*\d+(?![dD])))*\s*)+$/;
+
+  return pattern.test(argument);
+};
+
