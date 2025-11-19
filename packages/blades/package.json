@@ -62,6 +62,6 @@
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "ts:check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   }
 }

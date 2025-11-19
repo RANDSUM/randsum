@@ -81,7 +81,7 @@ bun run build
 bun run test
 
 # Run type checks
-bun run ts:check
+bun run typecheck
 
 # Lint and format
 bun run lint
@@ -97,9 +97,9 @@ Bun's workspace features handle tasks across all packages with automatic depende
 - `bun run build` - Build all packages in dependency order (roller first, then others)
 - `bun run test` - Run all tests
 - `bun run lint` - Run ESLint checks across the monorepo
-- `bun run ts:check` - Run TypeScript checks for all packages
-- `bun run ci` - Complete CI pipeline (build, test, lint, tsCheck, format check)
-- `bun run lint:fix` - Run ESLint and automatically fix issues
+- `bun run typecheck` - Run TypeScript checks for all packages
+- `bun run check:all` - Complete CI pipeline (lint, format check, typecheck, test)
+- `bun run fix:all` - Run ESLint with auto-fix and format code
 - `bun run format` - Format code using Prettier
 
 **Package-Specific Tasks**:
@@ -107,7 +107,7 @@ Bun's workspace features handle tasks across all packages with automatic depende
 ```bash
 bun run --filter @randsum/roller test      # Run tests for @randsum/roller only
 bun run --filter @randsum/blades build     # Build @randsum/blades only
-bun run --filter @randsum/mcp ts:check      # Type check the MCP server
+bun run --filter @randsum/mcp typecheck    # Type check the MCP server
 ```
 
 Bun automatically handles inter-package dependencies through workspace linking, ensuring packages are built in the correct order.

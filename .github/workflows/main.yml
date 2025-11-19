@@ -23,4 +23,8 @@ jobs:
         run: bun audit --audit-level high
         continue-on-error: false
 
-      - run: bun run ci
+      - name: Build packages
+        run: bun run build
+
+      - name: Run checks
+        run: bun run check:all
