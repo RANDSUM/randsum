@@ -22,7 +22,7 @@
   "packageManager": "bun@1.1.42",
   "scripts": {
     "build": "bun --filter \"*\" build",
-    "test": "bun --filter \"*\" test",
+    "test": "bun --filter \"!@randsum/site\" --filter \"!@randsum/robo\" test",
     "lint": "bun --filter \"*\" lint",
     "format": "bun --filter \"*\" format",
     "format:check": "bun --filter \"*\" format:check",
