@@ -11,6 +11,7 @@
   "printWidth": 100,
   "endOfLine": "lf",
   "embeddedLanguageFormatting": "auto",
+  "plugins": ["prettier-plugin-astro"],
   "overrides": [
     {
       "files": ["*.json", "*.jsonc"],
@@ -45,6 +46,12 @@
       "options": {
         "singleQuote": false,
         "printWidth": 120
+      }
+    },
+    {
+      "files": ["*.astro"],
+      "options": {
+        "parser": "astro"
       }
     }
   ]

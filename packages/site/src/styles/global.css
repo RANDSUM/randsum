@@ -1,0 +1,24 @@
+@import './theme.css';
+@import './kirby.css';
+
+/* Global styles */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: var(--border-width-thick) solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Selection styles */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}

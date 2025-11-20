@@ -1,0 +1,92 @@
+---
+interface Props {
+  items: Array<{ label: string; href: string }>
+}
+
+const { items } = Astro.props
+
+if (items.length === 0) {
+  return null
+}
+
+// Structured data for breadcrumbs
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    item: `https://randsum.github.io${item.href}`
+  }))
+}
+---
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <ol class="breadcrumb-list">
+    {
+      items.map((item, index) => (
+        <li class="breadcrumb-item">
+          {index < items.length - 1 ? (
+            <>
+              <a href={item.href} class="breadcrumb-link">
+                {item.label}
+              </a>
+              <span class="breadcrumb-separator" aria-hidden="true">
+                /
+              </span>
+            </>
+          ) : (
+            <span class="breadcrumb-current" aria-current="page">
+              {item.label}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: var(--spacing-xs);
+    align-items: center;
+  }
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-sm);
+  }
+
+  .breadcrumb-link {
+    color: var(--color-text-alt);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+
+  .breadcrumb-separator {
+    margin: 0 var(--spacing-xs);
+    color: var(--color-text-light);
+  }
+
+  .breadcrumb-current {
+    color: var(--color-text);
+    font-weight: var(--font-weight-bold);
+  }
+</style>

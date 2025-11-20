@@ -1,0 +1,298 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PackageCard from '../components/PackageCard.astro'
+import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
+---
+
+<BaseLayout
+  title="RANDSUM"
+  description="A comprehensive dice rolling monorepo ecosystem for rolling dice and playing games. TypeScript packages for D&D 5e, Blades in the Dark, Daggerheart, Root RPG, Salvage Union, and more."
+  keywords={[
+    'RANDSUM',
+    'dice rolling library',
+    'TypeScript dice',
+    'tabletop RPG tools',
+    'npm dice packages'
+  ]}
+>
+  <div class="homepage">
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-title-container">
+            <img src="/randsum-logo.png" alt="RANDSUM" class="hero-logo" />
+            <h1>RANDSUM</h1>
+          </div>
+          <p class="hero-subtitle">
+            A flexible, type-safe dice rolling ecosystem written in TypeScript
+          </p>
+          <p class="hero-description">
+            RANDSUM provides a comprehensive collection of packages for rolling dice, implementing
+            tabletop RPG mechanics, and building dice-based applications. Built with TypeScript,
+            thoroughly tested, and published to NPM with full type definitions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="core-packages">
+      <div class="container">
+        <h2>Core Package</h2>
+        <div class="packages-grid">
+          {
+            corePackages.map(pkg => {
+              return <PackageCard package={pkg} />
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="game-packages">
+      <div class="container">
+        <h2>Game Packages</h2>
+        <p class="section-description">Specialized mechanics for popular tabletop RPG systems</p>
+        <div class="packages-grid packages-grid-3">
+          {
+            gamePackages.map(pkg => {
+              return <PackageCard package={pkg} />
+            })
+          }
+        </div>
+        <div class="section-footer">
+          <a href="/games/" class="kirby-button kirby-button-primary"> View All Game Packages </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-packages">
+      <div class="container">
+        <h2>Tools & Integrations</h2>
+        <div class="packages-grid">
+          {
+            toolPackages.map(pkg => {
+              return <PackageCard package={pkg} />
+            })
+          }
+        </div>
+        <div class="section-footer">
+          <a href="/tools/" class="kirby-button kirby-button-primary">
+            View All Tools & Integrations
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick-start">
+      <div class="container">
+        <div class="quick-start-box">
+          <h2>Quick Start</h2>
+          <pre><code>{`npm install @randsum/roller
+# or
+bun add @randsum/roller`}</code></pre>
+          <pre><code>{`import { roll } from '@randsum/roller';
+
+// Simple roll
+roll(20); // Returns 1-20
+
+// With notation
+roll('4d6L'); // Roll 4d6, drop lowest
+roll('2d20H'); // Roll with advantage`}</code></pre>
+          <p>Or use directly from your terminal:</p>
+          <pre><code>{`npx randsum 2d20    # Roll two twenty-sided dice
+npx randsum 4d6L    # Character stat roll (drop lowest)
+npx randsum 2d20H   # Roll with advantage`}</code></pre>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .homepage {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: var(--border-width-thick) solid var(--color-border);
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+  }
+
+  .hero-logo {
+    height: 120px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .hero-title-container h1 {
+    font-size: 4rem;
+    margin: 0;
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text-alt);
+  }
+
+  .hero-description {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-alt);
+  }
+
+  .core-packages,
+  .game-packages,
+  .tool-packages {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .core-packages h2,
+  .game-packages h2,
+  .tool-packages h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .section-description {
+    text-align: center;
+    color: var(--color-text-alt);
+    margin-bottom: var(--spacing-xl);
+    font-size: 1.125rem;
+  }
+
+  .packages-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* When there's only one item, make it full width */
+  .packages-grid:has(> :only-child) {
+    grid-template-columns: 1fr;
+  }
+
+  /* Ensure the only child takes full width */
+  .packages-grid:has(> :only-child) > * {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .packages-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Make lone items grow to fill the row */
+  .packages-grid > :nth-child(odd):last-child,
+  .packages-grid > :only-child {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Make last item in game packages grow if it's alone on the row (odd total count) */
+  .packages-grid-3 > :last-child:nth-child(odd),
+  .packages-grid-3 > :nth-child(odd):last-child {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Ensure the last odd child in game packages takes full width */
+  .packages-grid-3:has(> :last-child:nth-child(odd)) > :last-child {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .section-footer {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+  }
+
+  .quick-start {
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-2xl);
+    border-top: var(--border-width-thick) solid var(--color-border);
+  }
+
+  .quick-start-box {
+    border: var(--border-width-thick) solid var(--color-border);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-kirby);
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: var(--color-bg);
+    position: relative;
+  }
+
+  .quick-start-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+    background-size: 14px 14px;
+    background-position: 0 0;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  .quick-start-box > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .quick-start-box h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .quick-start-box pre {
+    margin: var(--spacing-lg) 0;
+  }
+
+  .quick-start-box p {
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+    font-weight: var(--font-weight-bold);
+  }
+
+  @media (max-width: 768px) {
+    .hero-title-container h1 {
+      font-size: 2.5rem;
+    }
+
+    .packages-grid-3 {
+      grid-template-columns: 1fr;
+    }
+
+    .packages-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .packages-grid > :nth-child(odd):last-child,
+    .packages-grid-3 > :nth-child(odd):last-child {
+      grid-column: 1;
+    }
+  }
+</style>

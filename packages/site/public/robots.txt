@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://randsum.github.io/sitemap-index.xml
+Sitemap: https://randsum.github.io/sitemap-0.xml
+

@@ -1,0 +1,81 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('salvageunion')
+if (!pkg) {
+  throw new Error('Package not found')
+}
+---
+
+<DocsLayout package={pkg} title="Documentation">
+  <section class="installation">
+    <h2>Installation</h2>
+    <div class="install-box">
+      <pre><code>npm install @randsum/salvageunion
+# or
+bun add @randsum/salvageunion</code></pre>
+    </div>
+  </section>
+
+  <section class="examples">
+    <h2>Examples</h2>
+    {
+      pkg.examples.map(example => {
+        return <CodeExample code={example.code} language={example.language} title={example.title} />
+      })
+    }
+  </section>
+
+  <section class="documentation">
+    <h2>About Salvage Union</h2>
+    <p>
+      The <code>@randsum/salvageunion</code> package provides mechanics for
+      <a
+        href="https://www.kickstarter.com/projects/ledergames/salvage-union"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Salvage Union
+      </a>, a post-apocalyptic mech-based tabletop RPG.
+    </p>
+    <p>
+      This package implements the core dice mechanics for Salvage Union, supporting mech combat,
+      salvage operations, and the unique systems of this post-apocalyptic RPG.
+    </p>
+    <p>
+      For more information, see the
+      <a
+        href={`https://github.com/RANDSUM/randsum/tree/main/packages/${pkg.name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        package source code
+      </a>.
+    </p>
+  </section>
+</DocsLayout>
+
+<style>
+  .installation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .install-box {
+    margin-top: var(--spacing-md);
+  }
+
+  .examples {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation p {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+  }
+</style>

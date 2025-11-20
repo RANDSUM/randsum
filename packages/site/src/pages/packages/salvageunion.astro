@@ -1,0 +1,40 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('salvageunion')!
+---
+
+<DocsLayout title={pkg.displayName} description={pkg.description} package={pkg}>
+  <section>
+    <h2>Overview</h2>
+    <p>
+      <strong>@randsum/salvageunion</strong> provides mechanics for Salvage Union, a mech-based tabletop
+      RPG. This package includes mech combat rolls, salvage mechanics, and all the core systems needed
+      to run Salvage Union games.
+    </p>
+  </section>
+
+  <section>
+    <h2>Installation</h2>
+    <CodeExample
+      code={pkg.examples.find(e => e.title === 'Installation')?.code || ''}
+      language="bash"
+      title="Installation"
+    />
+  </section>
+
+  <section>
+    <h2>Examples</h2>
+    {
+      pkg.examples
+        .filter(e => e.title !== 'Installation')
+        .map(example => {
+          return (
+            <CodeExample code={example.code} language={example.language} title={example.title} />
+          )
+        })
+    }
+  </section>
+</DocsLayout>

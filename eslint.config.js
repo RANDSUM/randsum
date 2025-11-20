@@ -33,7 +33,9 @@ export default tseslint.config(
       '.robo',
       '**/*.d.ts',
       '**/tsconfig.tsbuildinfo',
-      '**/bun.lockb'
+      '**/bun.lockb',
+      'packages/site/.astro/**',
+      '**/.astro/**'
     ]
   },
   {

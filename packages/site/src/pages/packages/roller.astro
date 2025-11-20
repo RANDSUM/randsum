@@ -1,0 +1,89 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('roller')!
+---
+
+<DocsLayout title={pkg.displayName} description={pkg.description} package={pkg}>
+  <section>
+    <h2>Overview</h2>
+    <p>
+      <strong>@randsum/roller</strong> is the core dice rolling engine that powers the entire RANDSUM
+      ecosystem. It provides advanced dice notation support, allowing you to express complex rolling
+      mechanics in a concise, readable format.
+    </p>
+    <p>
+      Whether you're building a simple dice roller or implementing complex tabletop RPG mechanics,
+      Roller provides the foundation you need with full TypeScript support and comprehensive type
+      safety.
+    </p>
+  </section>
+
+  <section>
+    <h2>Features</h2>
+    <ul>
+      {
+        pkg.features?.map(feature => (
+          <li>
+            <strong>{feature}</strong>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section>
+    <h2>Installation</h2>
+    <CodeExample
+      code={pkg.examples.find(e => e.title === 'Installation')?.code || ''}
+      language="bash"
+      title="Installation"
+    />
+  </section>
+
+  <section>
+    <h2>Examples</h2>
+    {
+      pkg.examples
+        .filter(e => e.title !== 'Installation')
+        .map(example => {
+          return (
+            <CodeExample code={example.code} language={example.language} title={example.title} />
+          )
+        })
+    }
+  </section>
+
+  <section>
+    <h2>Dice Notation</h2>
+    <p>Roller supports a wide variety of dice notation patterns:</p>
+    <ul>
+      <li><code>1d20</code> - Roll a single 20-sided die</li>
+      <li><code>4d6L</code> - Roll 4d6, drop the lowest (D&D ability scores)</li>
+      <li><code>2d20H</code> - Roll 2d20, keep highest (advantage)</li>
+      <li><code>2d20L</code> - Roll 2d20, keep lowest (disadvantage)</li>
+      <li><code>4d6R&#123;1&#125;</code> - Roll 4d6, reroll any 1s</li>
+      <li><code>3d6!</code> - Roll 3d6 with exploding dice (reroll and add on max)</li>
+      <li>
+        <code>4d6L!R&#123;&lt;3&#125;</code> - Complex: 4d6, drop lowest, reroll below 3, exploding
+      </li>
+    </ul>
+    <p>
+      For more information on dice notation, see the <a
+        href="https://github.com/RANDSUM/randsum"
+        target="_blank"
+        rel="noopener noreferrer">RANDSUM documentation</a
+      >.
+    </p>
+  </section>
+
+  <section>
+    <h2>TypeScript Support</h2>
+    <p>
+      Roller is built with TypeScript and provides full type definitions. All functions are fully
+      typed, providing excellent IDE support and compile-time safety.
+    </p>
+  </section>
+</DocsLayout>

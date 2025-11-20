@@ -1,0 +1,39 @@
+{
+  "name": "@randsum/site",
+  "version": "0.0.1",
+  "description": "RANDSUM documentation and marketing website built with Astro",
+  "private": true,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/RANDSUM/randsum",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/site"
+  },
+  "type": "module",
+  "dependencies": {
+    "@astrojs/netlify": "6.6.2",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.6.0",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^5.15.9",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "shiki": "^3.15.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "typecheck": "tsc --noEmit"
+  }
+}

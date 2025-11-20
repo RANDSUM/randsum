@@ -1,0 +1,77 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('fifth')
+if (!pkg) {
+  throw new Error('Package not found')
+}
+---
+
+<DocsLayout package={pkg} title="Documentation">
+  <section class="installation">
+    <h2>Installation</h2>
+    <div class="install-box">
+      <pre><code>npm install @randsum/fifth
+# or
+bun add @randsum/fifth</code></pre>
+    </div>
+  </section>
+
+  <section class="examples">
+    <h2>Examples</h2>
+    {
+      pkg.examples.map(example => {
+        return <CodeExample code={example.code} language={example.language} title={example.title} />
+      })
+    }
+  </section>
+
+  <section class="documentation">
+    <h2>About D&D 5th Edition</h2>
+    <p>
+      The <code>@randsum/fifth</code> package provides comprehensive mechanics for
+      <a href="https://www.dndbeyond.com/" target="_blank" rel="noopener noreferrer">
+        Dungeons & Dragons 5th Edition
+      </a>, the world's most popular tabletop RPG.
+    </p>
+    <p>
+      This package implements ability checks, saving throws, attack rolls, damage rolls, and other
+      core D&D 5e mechanics, including support for advantage, disadvantage, and various modifiers.
+    </p>
+    <p>
+      For more information, see the
+      <a
+        href={`https://github.com/RANDSUM/randsum/tree/main/packages/${pkg.name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        package source code
+      </a>.
+    </p>
+  </section>
+</DocsLayout>
+
+<style>
+  .installation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .install-box {
+    margin-top: var(--spacing-md);
+  }
+
+  .examples {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation p {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+  }
+</style>

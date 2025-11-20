@@ -1,0 +1,339 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import Navigation from '../components/Navigation.astro'
+import type { PackageInfo } from '../utils/packageData'
+import { allPackages } from '../utils/packageData'
+
+interface Props {
+  title: string
+  description?: string
+  package: PackageInfo
+}
+
+const { title, description, package: pkg } = Astro.props
+const packageColor = pkg.color || 'var(--color-border)'
+const fullTitle = `${title} | RANDSUM`
+
+// Get related packages for sidebar
+const relatedPackages = allPackages.filter(p => p.category === pkg.category && p.id !== pkg.id)
+
+// Package-specific keywords
+const packageKeywords = [
+  pkg.npmPackage,
+  pkg.displayName,
+  ...(pkg.category === 'game' ? [pkg.displayName + ' RPG', 'tabletop RPG'] : []),
+  'TypeScript',
+  'npm package',
+  'dice rolling'
+]
+
+// Structured data for npm package
+const packageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: pkg.displayName,
+  applicationCategory: pkg.category === 'game' ? 'GameApplication' : 'DeveloperApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD'
+  },
+  description: description || pkg.description,
+  url: `https://randsum.github.io/packages/${pkg.id}/`,
+  codeRepository: `https://github.com/RANDSUM/randsum/tree/main/packages/${pkg.name}`,
+  softwareVersion: 'latest',
+  keywords: packageKeywords.join(', ')
+}
+---
+
+<BaseLayout title={title} description={description || pkg.description} keywords={packageKeywords}>
+  <script type="application/ld+json" set:html={JSON.stringify(packageSchema)} />
+  <div class="docs-layout">
+    <div class="container">
+      <div class="docs-content">
+        <aside class="docs-sidebar">
+          <nav class="sidebar-nav">
+            <h3 class="sidebar-title">Packages</h3>
+            <ul class="sidebar-links">
+              <li>
+                <a
+                  href="/packages/roller/"
+                  class={pkg.id === 'roller' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
+                >
+                  Roller
+                </a>
+              </li>
+            </ul>
+
+            <h3 class="sidebar-title">Game Packages</h3>
+            <ul class="sidebar-links">
+              <li>
+                <a
+                  href="/packages/blades/"
+                  class={pkg.id === 'blades' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
+                >
+                  Blades
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/packages/daggerheart/"
+                  class={pkg.id === 'daggerheart'
+                    ? 'sidebar-link sidebar-link-active'
+                    : 'sidebar-link'}
+                >
+                  Daggerheart
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/packages/fifth/"
+                  class={pkg.id === 'fifth' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
+                >
+                  D&D 5th Edition
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/packages/root-rpg/"
+                  class={pkg.id === 'root-rpg'
+                    ? 'sidebar-link sidebar-link-active'
+                    : 'sidebar-link'}
+                >
+                  Root RPG
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/packages/salvageunion/"
+                  class={pkg.id === 'salvageunion'
+                    ? 'sidebar-link sidebar-link-active'
+                    : 'sidebar-link'}
+                >
+                  Salvage Union
+                </a>
+              </li>
+            </ul>
+
+            <h3 class="sidebar-title">Tools</h3>
+            <ul class="sidebar-links">
+              <li>
+                <a
+                  href="/packages/mcp/"
+                  class={pkg.id === 'mcp' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
+                >
+                  MCP Server
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/packages/robo/"
+                  class={pkg.id === 'robo' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
+                >
+                  Discord Bot
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="docs-main" itemscope itemtype="https://schema.org/SoftwareApplication">
+          <header class="docs-header">
+            <div class="docs-header-content">
+              <div class="docs-header-text">
+                <h1 class="docs-title" itemprop="name">{pkg.displayName}</h1>
+                <p class="docs-package-name" itemprop="applicationCategory">{pkg.npmPackage}</p>
+                <p class="docs-description" itemprop="description">{pkg.description}</p>
+              </div>
+              <slot name="header-action" />
+            </div>
+            <meta itemprop="url" content={`https://randsum.github.io/packages/${pkg.id}/`} />
+            <meta itemprop="softwareVersion" content="latest" />
+          </header>
+          <div class="docs-header-border" style={`border-color: ${packageColor}`}></div>
+
+          <div class="docs-body" style={`--package-color: ${packageColor}`}>
+            <slot />
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .docs-layout {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .docs-content {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: var(--spacing-2xl);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .docs-sidebar {
+    position: sticky;
+    top: calc(var(--spacing-xl) + 80px);
+    align-self: start;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  .sidebar-nav {
+    border: var(--border-width-thick) solid var(--color-border);
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg);
+    box-shadow: var(--shadow-kirby);
+    position: relative;
+  }
+
+  .sidebar-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+    background-size: 12px 12px;
+    background-position: 0 0;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .sidebar-nav > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .sidebar-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-black);
+    margin: 0 0 var(--spacing-md) 0;
+    padding-bottom: var(--spacing-xs);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .sidebar-links {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-xl) 0;
+  }
+
+  .sidebar-links:last-child {
+    margin-bottom: 0;
+  }
+
+  .sidebar-link {
+    display: block;
+    padding: var(--spacing-sm) 0;
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: var(--font-weight-medium);
+    border-bottom: var(--border-width) solid transparent;
+    transition: border-color var(--transition-fast);
+  }
+
+  .sidebar-link:hover,
+  .sidebar-link-active {
+    border-bottom-color: var(--color-border);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .docs-main {
+    max-width: 900px;
+  }
+
+  .docs-header {
+    padding-bottom: var(--spacing-lg);
+    margin-bottom: 0;
+  }
+
+  .docs-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+  }
+
+  .docs-header-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .docs-header-border {
+    border-bottom: var(--border-width-thick) solid;
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .docs-title {
+    font-size: var(--font-size-5xl);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .docs-package-name {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-lg);
+    color: var(--color-text-alt);
+    margin: 0 0 var(--spacing-md) 0;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .docs-description {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-alt);
+    margin: 0;
+  }
+
+  .docs-body {
+    line-height: var(--line-height-relaxed);
+  }
+
+  .docs-body :global(h2) {
+    margin-top: var(--spacing-2xl);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: var(--border-width-thick) solid var(--package-color, var(--color-border));
+  }
+
+  .docs-body :global(h3) {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .docs-body :global(p) {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .docs-body :global(ul),
+  .docs-body :global(ol) {
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-xl);
+  }
+
+  .docs-body :global(li) {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  @media (max-width: 1024px) {
+    .docs-content {
+      grid-template-columns: 1fr;
+    }
+
+    .docs-sidebar {
+      position: static;
+      max-height: none;
+    }
+
+    .sidebar-nav {
+      margin-bottom: var(--spacing-xl);
+    }
+  }
+</style>

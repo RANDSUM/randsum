@@ -1,0 +1,67 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('mcp')!
+---
+
+<DocsLayout title={pkg.displayName} description={pkg.description} package={pkg}>
+  <section>
+    <h2>Overview</h2>
+    <p>
+      <strong>@randsum/mcp</strong> is a Model Context Protocol (MCP) server that enables AI assistants
+      and LLMs to interact with the RANDSUM dice rolling ecosystem. This package allows AI tools to roll
+      dice, use game-specific mechanics, and integrate RANDSUM functionality into AI-powered applications.
+    </p>
+  </section>
+
+  <section>
+    <h2>Installation</h2>
+    <CodeExample
+      code={pkg.examples.find(e => e.title === 'Installation')?.code || ''}
+      language="bash"
+      title="Installation"
+    />
+  </section>
+
+  <section>
+    <h2>Examples</h2>
+    {
+      pkg.examples
+        .filter(e => e.title !== 'Installation')
+        .map(example => {
+          return (
+            <CodeExample code={example.code} language={example.language} title={example.title} />
+          )
+        })
+    }
+  </section>
+
+  <section>
+    <h2>MCP Integration</h2>
+    <p>
+      The MCP server exposes RANDSUM functionality through the Model Context Protocol, enabling:
+    </p>
+    <ul>
+      <li><strong>Dice Rolling:</strong> Execute dice notation through MCP tools</li>
+      <li><strong>Game Mechanics:</strong> Access game-specific packages (D&D, Blades, etc.)</li>
+      <li><strong>Type Safety:</strong> Full TypeScript support with proper type definitions</li>
+      <li><strong>Extensibility:</strong> Easy to add new packages and functionality</li>
+    </ul>
+    <p>
+      This makes RANDSUM accessible to AI assistants, enabling them to help with dice rolling,
+      character creation, and game mechanics.
+    </p>
+  </section>
+
+  <section>
+    <h2>Use Cases</h2>
+    <ul>
+      <li>AI-powered tabletop RPG assistants</li>
+      <li>Character creation tools</li>
+      <li>Game master assistants</li>
+      <li>Dice rolling utilities in AI chat interfaces</li>
+    </ul>
+  </section>
+</DocsLayout>

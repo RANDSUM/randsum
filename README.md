@@ -30,6 +30,7 @@ This repository contains multiple packages and applications for dice rolling and
 
 - **[@randsum/mcp](packages/mcp)** - Model Context Protocol server for AI integration
 - **[@randsum/robo](packages/robo)** - Discord bot with dice rolling capabilities using Robo.js
+- **[@randsum/site](packages/site)** - Documentation and marketing website built with Astro
 
 All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.
 
@@ -111,6 +112,14 @@ bun run --filter @randsum/blades build     # Build @randsum/blades only
 bun run --filter @randsum/mcp typecheck    # Type check the MCP server
 ```
 
+**Site-Specific Tasks**:
+
+```bash
+bun run site:build    # Build the documentation site
+bun run site:dev       # Start the development server
+bun run site:preview   # Preview the production build locally
+```
+
 Bun automatically handles inter-package dependencies through workspace linking, ensuring packages are built in the correct order.
 
 ## 📚 Documentation
@@ -128,6 +137,16 @@ Each package includes comprehensive documentation:
 - [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
+
+### Website Deployment
+
+The documentation site (`@randsum/site`) is automatically deployed to:
+
+- **Netlify**: Configured via `packages/site/netlify.toml` and deployed on push to main
+- **GitHub Pages (Repository)**: Deployed to the `gh-pages` branch via GitHub Actions
+- **GitHub Pages (Organization)**: Deployed to `randsum.github.io` repository via GitHub Actions
+
+All deployments are triggered automatically on push to the `main` branch. The site build is included in the CI pipeline via `check:all`.
 
 ## 🤝 Contributing
 

@@ -1,0 +1,81 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('daggerheart')
+if (!pkg) {
+  throw new Error('Package not found')
+}
+---
+
+<DocsLayout package={pkg} title="Documentation">
+  <section class="installation">
+    <h2>Installation</h2>
+    <div class="install-box">
+      <pre><code>npm install @randsum/daggerheart
+# or
+bun add @randsum/daggerheart</code></pre>
+    </div>
+  </section>
+
+  <section class="examples">
+    <h2>Examples</h2>
+    {
+      pkg.examples.map(example => {
+        return <CodeExample code={example.code} language={example.language} title={example.title} />
+      })
+    }
+  </section>
+
+  <section class="documentation">
+    <h2>About Daggerheart</h2>
+    <p>
+      The <code>@randsum/daggerheart</code> package provides mechanics for
+      <a
+        href="https://www.darringtonpress.com/daggerheart"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Daggerheart
+      </a>, a fantasy tabletop RPG featuring hope and fear dice mechanics.
+    </p>
+    <p>
+      This package implements the unique hope and fear dice system, where players roll both hope
+      dice (d12) and fear dice (d12), creating dynamic and dramatic outcomes.
+    </p>
+    <p>
+      For more information, see the
+      <a
+        href={`https://github.com/RANDSUM/randsum/tree/main/packages/${pkg.name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        package source code
+      </a>.
+    </p>
+  </section>
+</DocsLayout>
+
+<style>
+  .installation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .install-box {
+    margin-top: var(--spacing-md);
+  }
+
+  .examples {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation p {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+  }
+</style>
