@@ -366,9 +366,9 @@ bun add @randsum/mcp`,
       },
       {
         title: 'Installation',
-        code: `# Clone the repository
-git clone https://github.com/RANDSUM/robo.git
-cd robo
+        code: `# Clone the monorepo
+git clone https://github.com/RANDSUM/randsum.git
+cd randsum/packages/robo
 
 # Install dependencies
 bun install
