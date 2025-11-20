@@ -1,43 +1,43 @@
-# Astro Starter Kit: Minimal
+# @randsum/site
 
-```sh
-bun create astro@latest -- --template minimal
+RANDSUM documentation and marketing website built with Astro.
+
+## Overview
+
+This package provides the official documentation and marketing website for the RANDSUM dice rolling system. It's built with Astro for optimal performance and includes documentation for all RANDSUM packages and game-specific implementations.
+
+## Features
+
+- Documentation for all RANDSUM packages
+- Game-specific dice rolling guides
+- Interactive examples and demos
+- Responsive design with modern UI
+- SEO optimized with sitemap generation
+
+## Installation
+
+This package is part of the RANDSUM monorepo and uses Bun workspace dependencies.
+
+## Development
+
+```bash
+# Install dependencies (from monorepo root)
+bun install
+
+# Run development server
+bun run --filter @randsum/site dev
+
+# Build for production
+bun run --filter @randsum/site build
+
+# Preview production build
+bun run --filter @randsum/site preview
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Deployment
 
-## 🚀 Project Structure
+The site is configured to deploy to Netlify. The build output is in the `dist/` directory.
 
-Inside of your Astro project, you'll see the following folders and files:
+## License
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command               | Action                                           |
-| :-------------------- | :----------------------------------------------- |
-| `bun install`         | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+MIT

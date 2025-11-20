@@ -8,7 +8,8 @@ import netlify from '@astrojs/netlify'
 // https://astro.build/config
 export default defineConfig({
   base: '/',
-  site: 'https://randsum.github.io',
+  // Use Netlify's URL environment variable, fallback for local dev
+  site: process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://randsum-site.netlify.app',
   integrations: [
     react(),
     sitemap({
