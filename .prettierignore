@@ -76,6 +76,7 @@ bunfig.toml
 
 # Framework-specific
 *.astro
+**/.netlify/**
 
 # Markdown files in specific directories (keep formatting as-is)
 **/node_modules/**/*.md
