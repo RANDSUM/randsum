@@ -50,6 +50,7 @@
     "deploy": "robox deploy",
     "doctor": "sage doctor",
     "invite": "robox invite",
+    "update": "sage upgrade",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

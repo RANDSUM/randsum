@@ -33,6 +33,7 @@
     "robo:build": "bun --filter @randsum/robo build",
     "robo:doctor": "bun --filter @randsum/robo doctor",
     "robo:deploy": "bun --filter @randsum/robo deploy",
+    "robo:update": "bun --filter @randsum/robo update",
     "version": "bun pm version",
     "version:patch": "bun pm version patch",
     "version:minor": "bun pm version minor",
