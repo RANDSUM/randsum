@@ -13,7 +13,7 @@ interface Props {
 const {
   title,
   description = 'A flexible, type-safe dice rolling ecosystem written in TypeScript',
-  image = 'https://randsum.github.io/favicon.svg',
+  image = 'https://randsum-site.netlify.app/favicon.ico',
   type = 'website',
   keywords = []
 } = Astro.props
@@ -43,7 +43,7 @@ const organizationSchema = {
   '@type': 'Organization',
   name: 'RANDSUM',
   url: siteUrl,
-  logo: `${siteUrl}/favicon.svg`,
+  logo: `${siteUrl}/favicon.ico`,
   description: 'A comprehensive dice rolling monorepo ecosystem for rolling dice and playing games',
   sameAs: ['https://github.com/RANDSUM', 'https://github.com/RANDSUM/randsum']
 }
@@ -109,8 +109,7 @@ const softwareSchema = {
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.ico" />
 
     <!-- Additional Resources -->
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
