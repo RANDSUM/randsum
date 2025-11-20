@@ -95,7 +95,7 @@ const baseEmbed = new EmbedBuilder()
   .setTitle('RANDSUM.io')
   .setDescription(
     [
-      'For more information, check out the [Randsum Dice Notation](https://github.com/RANDSUM/randsum-ts/blob/main/RANDSUM_DICE_NOTATION.md).'
+      'For more information, check out the [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/RANDSUM_DICE_NOTATION.md).'
     ].join('\n\n')
   )
   .addFields(fields)
