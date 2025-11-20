@@ -1,0 +1,187 @@
+:root {
+  /* Color Palette - Bold Kirby-inspired colors from provided palette */
+  /* Using vibrant colors: Row 1 colors for primary/accent, Row 3 for backgrounds */
+  --color-primary: #dc2626; /* bright red from palette - Row 1, Column 6 */
+  --color-secondary: #fef9e7; /* pale yellow/cream - Row 3, Column 6 */
+  --color-accent: #ffd700; /* bright yellow - Row 1, Column 3 */
+
+  /* Game Package Colors - KEEP THESE THE SAME */
+  --color-fifth: #dc2626; /* red */
+  --color-salvageunion: #60a5fa; /* lightblue */
+  --color-daggerheart: #9333ea; /* purple */
+  --color-root-rpg: #22c55e; /* green */
+  --color-blades: #f97316; /* orange */
+
+  /* Text Colors - High contrast for readability */
+  --color-text: #000000;
+  --color-text-alt: #1a1a1a;
+  --color-text-light: #4a4a4a;
+  --color-text-inverse: #ffffff;
+
+  /* Background Colors - Bold Kirby palette */
+  --color-bg: #ffffff; /* white base */
+  --color-bg-alt: #fef9e7; /* pale yellow/cream - Row 3, Column 6 */
+  --color-bg-dark: #1a1a1a; /* dark for contrast */
+
+  /* Accent Backgrounds - Bold Kirby colors */
+  --color-bg-accent-1: #87ceeb; /* light sky blue - Row 1, Column 2 */
+  --color-bg-accent-2: #ffd700; /* bright yellow - Row 1, Column 3 */
+  --color-bg-accent-3: #ff6b35; /* vibrant orange - Row 1, Column 6 variant */
+
+  /* Border Colors */
+  --color-border: #000000;
+  --color-border-light: #999999;
+  --color-border-accent: #dc2626; /* bright red for emphasis */
+
+  /* Border Widths - Bold Kirby style */
+  --border-width: 2px;
+  --border-width-thick: 4px;
+  --border-width-extra-thick: 6px;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Typography */
+  --font-family:
+    'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-family-mono:
+    'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Fira Mono', 'Droid Sans Mono',
+    'Source Code Pro', monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Shadows - Bold, geometric */
+  --shadow-kirby: 4px 4px 0 0 var(--color-border);
+  --shadow-kirby-lg: 6px 6px 0 0 var(--color-border);
+  --shadow-kirby-thick: 8px 8px 0 0 var(--color-border);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Layout */
+  --container-max-width: 1200px;
+  --container-padding: var(--spacing-lg);
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* Kirby Dots Pattern - Halftone style dots */
+.kirby-dots {
+  position: relative;
+}
+
+.kirby-dots::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+  background-size: 12px 12px;
+  background-position: 0 0;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.kirby-dots-dense {
+  position: relative;
+}
+
+.kirby-dots-dense::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+  background-size: 8px 8px;
+  background-position: 0 0;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.kirby-dots-accent {
+  position: relative;
+}
+
+.kirby-dots-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, var(--color-border-accent) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  background-position: 0 0;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure content is above dots */
+.kirby-dots > *,
+.kirby-dots-dense > *,
+.kirby-dots-accent > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark mode support (optional, for future) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1a1a1a;
+    --color-bg-alt: #2a2a2a;
+    --color-text: #ffffff;
+    --color-text-alt: #e0e0e0;
+    --color-text-light: #b0b0b0;
+    --color-border: #ffffff;
+    --color-border-light: #666666;
+  }
+
+  .kirby-dots::before,
+  .kirby-dots-dense::before {
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+  }
+
+  .kirby-dots-accent::before {
+    background-image: radial-gradient(circle, var(--color-border-accent) 1.5px, transparent 1.5px);
+  }
+}

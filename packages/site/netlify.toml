@@ -1,0 +1,11 @@
+[build]
+  # Build command runs from root (base directory)
+  # Package directory should be set to "packages/site" in Netlify UI
+  command = "bun run site:build"
+  publish = "packages/site/dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+

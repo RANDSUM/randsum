@@ -1,0 +1,40 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('blades')!
+---
+
+<DocsLayout title={pkg.displayName} description={pkg.description} package={pkg}>
+  <section>
+    <h2>Overview</h2>
+    <p>
+      <strong>@randsum/blades</strong> provides comprehensive support for Blades in the Dark system mechanics.
+      This package includes action rolls, position and effect tracking, stress management, and all the
+      core mechanics needed to run Blades in the Dark games.
+    </p>
+  </section>
+
+  <section>
+    <h2>Installation</h2>
+    <CodeExample
+      code={pkg.examples.find(e => e.title === 'Installation')?.code || ''}
+      language="bash"
+      title="Installation"
+    />
+  </section>
+
+  <section>
+    <h2>Examples</h2>
+    {
+      pkg.examples
+        .filter(e => e.title !== 'Installation')
+        .map(example => {
+          return (
+            <CodeExample code={example.code} language={example.language} title={example.title} />
+          )
+        })
+    }
+  </section>
+</DocsLayout>

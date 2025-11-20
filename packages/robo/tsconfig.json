@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "noEmit": true,
+    "baseUrl": "."
+  },
+  "include": ["**/*.ts", "config/**/*.mjs"],
+  "exclude": ["node_modules", ".robo", "dist", "**/*.test.ts", "**/*.spec.ts"]
+}

@@ -1,0 +1,66 @@
+---
+interface Props {
+  code: string
+  language: 'typescript' | 'bash' | 'javascript' | 'json'
+  title?: string
+}
+
+const { code, language, title } = Astro.props
+---
+
+<div class="code-example">
+  {title && <h4 class="code-example-title">{title}</h4>}
+  <div class="code-example-content">
+    <pre class={`language-${language}`}><code class={`language-${language}`}>{code}</code></pre>
+  </div>
+</div>
+
+<style>
+  .code-example {
+    margin: var(--spacing-lg) 0;
+  }
+
+  .code-example-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .code-example-content {
+    border: var(--border-width-thick) solid var(--color-border);
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg-alt);
+    overflow-x: auto;
+    box-shadow: var(--shadow-kirby);
+  }
+
+  .code-example-content :global(pre) {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .code-example-content :global(pre) {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .code-example-content :global(code) {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text);
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PackageCard from '../../components/PackageCard.astro'
+import { toolPackages } from '../../utils/packageData'
+---
+
+<BaseLayout
+  title="Tools & Integrations"
+  description="Integrations and tools for using RANDSUM in your applications"
+>
+  <div class="tools-page">
+    <section class="tools-header">
+      <div class="container">
+        <h1>Tools & Integrations</h1>
+        <p class="tools-description">
+          RANDSUM provides powerful integrations and tools to bring dice rolling capabilities to
+          your applications, AI assistants, and chat platforms. Each tool is designed to make
+          RANDSUM accessible wherever you need it.
+        </p>
+      </div>
+    </section>
+
+    <section class="tools-grid-section">
+      <div class="container">
+        <div class="packages-grid">
+          {
+            toolPackages.map(pkg => {
+              return <PackageCard package={pkg} />
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="tools-info">
+      <div class="container">
+        <div class="info-box">
+          <h2>About Tools & Integrations</h2>
+          <p>
+            RANDSUM tools and integrations extend the core dice rolling engine to new platforms and
+            use cases. All tools are built on top of <strong>@randsum/roller</strong> and support the
+            full range of RANDSUM game packages. Whether you're building AI assistants, chat bots, or
+            command-line tools, RANDSUM integrations make it easy to add dice rolling capabilities.
+          </p>
+          <ul>
+            <li>Built on @randsum/roller</li>
+            <li>Support for all game packages</li>
+            <li>Type-safe and well-documented</li>
+            <li>Open source and extensible</li>
+          </ul>
+          <p>
+            Explore the tools above to find the integration that fits your needs, or build your own
+            using the RANDSUM core packages.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .tools-page {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .tools-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: var(--border-width-thick) solid var(--color-border);
+  }
+
+  .tools-header h1 {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .tools-description {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-alt);
+  }
+
+  .tools-grid-section {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+  }
+
+  /* Make lone items grow to fill the row */
+  .packages-grid > :nth-child(odd):last-child {
+    grid-column: 1 / -1;
+  }
+
+  .tools-info {
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-2xl);
+    border-top: var(--border-width-thick) solid var(--color-border);
+  }
+
+  .info-box {
+    max-width: 900px;
+    margin: 0 auto;
+    border: var(--border-width) solid var(--color-border);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-kirby);
+  }
+
+  .info-box h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .info-box ul {
+    margin: var(--spacing-md) 0;
+  }
+
+  .info-box li {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  @media (max-width: 768px) {
+    .packages-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .packages-grid > :nth-child(odd):last-child {
+      grid-column: 1;
+    }
+  }
+</style>

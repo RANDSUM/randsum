@@ -1,0 +1,75 @@
+{
+  "name": "@randsum/robo",
+  "version": "0.27.0",
+  "description": "Discord bot with dice rolling capabilities using Robo.js",
+  "private": true,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/RANDSUM/randsum",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/robo"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^2.4.0",
+    "@randsum/blades": "workspace:~",
+    "@randsum/daggerheart": "workspace:~",
+    "@randsum/fifth": "workspace:~",
+    "@randsum/roller": "workspace:~",
+    "@randsum/root-rpg": "workspace:~",
+    "@randsum/salvageunion": "workspace:~",
+    "@robojs/patch": "^0.2.1",
+    "discord.js": "^14.23.2",
+    "extensionless": "^2.0.2",
+    "robo.js": "^0.10.31"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@swc/core": "^1.13.5",
+    "@types/node": "^24.8.1",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
+    "jiti": "^2.6.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.1"
+  },
+  "scripts": {
+    "build": "robox build",
+    "dev": "robox dev",
+    "start": "robox start",
+    "deploy": "robox deploy",
+    "doctor": "sage doctor",
+    "invite": "robox invite",
+    "update": "sage upgrade",
+    "test": "bun test",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "robo",
+    "robojs",
+    "dice",
+    "roller",
+    "rpg",
+    "random",
+    "typescript",
+    "tabletop",
+    "colyseus",
+    "discord-activities"
+  ]
+}

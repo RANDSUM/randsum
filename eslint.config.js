@@ -33,7 +33,10 @@ export default tseslint.config(
       '.robo',
       '**/*.d.ts',
       '**/tsconfig.tsbuildinfo',
-      '**/bun.lockb'
+      '**/bun.lockb',
+      'packages/site/.astro/**',
+      '**/.astro/**',
+      '**/.netlify/**'
     ]
   },
   {
@@ -126,6 +129,23 @@ export default tseslint.config(
       'no-script-url': 'error',
       'no-await-in-loop': 'warn',
       'prefer-object-spread': 'error'
+    }
+  },
+  {
+    // Override for .mjs files (Node.js config files)
+    files: ['**/*.mjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        console: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly'
+      }
     }
   }
 )

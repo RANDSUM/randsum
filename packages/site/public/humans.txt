@@ -1,0 +1,16 @@
+/* TEAM */
+Organization: RANDSUM
+GitHub: https://github.com/RANDSUM
+Repository: https://github.com/RANDSUM/randsum
+
+/* THANKS */
+Astro: https://astro.build
+Bun: https://bun.sh
+TypeScript: https://www.typescriptlang.org
+
+/* SITE */
+Last update: 2025/01/27
+Standards: HTML5, CSS3, TypeScript
+Components: Astro, React
+Software: RANDSUM Dice Rolling Ecosystem
+

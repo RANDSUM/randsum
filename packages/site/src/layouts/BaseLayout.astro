@@ -1,0 +1,193 @@
+---
+import Navigation from '../components/Navigation.astro'
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description?: string
+  image?: string
+  type?: string
+  keywords?: string[]
+}
+
+const {
+  title,
+  description = 'A flexible, type-safe dice rolling ecosystem written in TypeScript',
+  image = 'https://randsum-site.netlify.app/favicon.ico',
+  type = 'website',
+  keywords = []
+} = Astro.props
+
+const fullTitle = title === 'RANDSUM' ? 'RANDSUM' : `${title} | RANDSUM`
+const siteUrl = 'https://randsum.github.io'
+const canonicalURL = new URL(Astro.url.pathname, siteUrl)
+const defaultKeywords = [
+  'dice rolling',
+  'tabletop RPG',
+  'TypeScript',
+  'dice notation',
+  'D&D',
+  'Blades in the Dark',
+  'Daggerheart',
+  'Root RPG',
+  'Salvage Union',
+  'game mechanics',
+  'npm package',
+  'open source'
+]
+const allKeywords = [...defaultKeywords, ...keywords].join(', ')
+
+// Structured data for organization
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'RANDSUM',
+  url: siteUrl,
+  logo: `${siteUrl}/favicon.ico`,
+  description: 'A comprehensive dice rolling monorepo ecosystem for rolling dice and playing games',
+  sameAs: ['https://github.com/RANDSUM', 'https://github.com/RANDSUM/randsum']
+}
+
+// Structured data for software
+const softwareSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'RANDSUM',
+  applicationCategory: 'GameApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD'
+  },
+  description: description,
+  url: siteUrl
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta Tags -->
+    <title>{fullTitle}</title>
+    <meta name="title" content={fullTitle} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={allKeywords} />
+    <meta name="author" content="RANDSUM" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:site_name" content="RANDSUM" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:creator" content="@RANDSUM" />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.ico" />
+
+    <!-- Additional Resources -->
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+    <!-- Generator -->
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#000000" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+  </head>
+  <body>
+    <Navigation />
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p class="footer-text">
+          Made with 👹 by <a
+            href="https://github.com/RANDSUM"
+            target="_blank"
+            rel="noopener noreferrer">RANDSUM</a
+          >
+        </p>
+        <p class="footer-text">
+          <a href="https://github.com/RANDSUM/randsum" target="_blank" rel="noopener noreferrer"
+            >View on GitHub</a
+          >
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  main {
+    min-height: calc(100vh - 200px);
+  }
+
+  .site-footer {
+    border-top: var(--border-width-thick) solid var(--color-border);
+    padding: var(--spacing-xl) 0;
+    margin-top: var(--spacing-3xl);
+    background-color: var(--color-bg-alt);
+    position: relative;
+  }
+
+  .site-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: 0 0;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  .site-footer > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-text {
+    text-align: center;
+    margin: var(--spacing-sm) 0;
+    color: var(--color-text-alt);
+  }
+
+  .footer-text a {
+    color: var(--color-text);
+    font-weight: var(--font-weight-bold);
+  }
+</style>

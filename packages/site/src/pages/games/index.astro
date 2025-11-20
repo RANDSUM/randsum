@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PackageCard from '../../components/PackageCard.astro'
+import { gamePackages } from '../../utils/packageData'
+---
+
+<BaseLayout
+  title="Game Packages"
+  description="Specialized mechanics for popular tabletop RPG systems"
+>
+  <div class="games-page">
+    <section class="games-header">
+      <div class="container">
+        <h1>Game Packages</h1>
+        <p class="games-description">
+          RANDSUM provides specialized packages for popular tabletop RPG systems. Each package
+          implements the core mechanics of its respective game, allowing you to build digital tools,
+          character creators, and game assistants.
+        </p>
+      </div>
+    </section>
+
+    <section class="games-grid-section">
+      <div class="container">
+        <div class="packages-grid packages-grid-3">
+          {
+            gamePackages.map(pkg => {
+              return <PackageCard package={pkg} />
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="games-info">
+      <div class="container">
+        <div class="info-box">
+          <h2>About Game Packages</h2>
+          <p>
+            Each game package is built on top of <strong>@randsum/roller</strong>, providing
+            game-specific mechanics while maintaining consistency across the ecosystem. All packages
+            are:
+          </p>
+          <ul>
+            <li>Fully typed with TypeScript</li>
+            <li>Thoroughly tested</li>
+            <li>Published to NPM</li>
+            <li>Open source and extensible</li>
+          </ul>
+          <p>
+            Whether you're building a character creator, a game master tool, or a full digital
+            tabletop experience, RANDSUM game packages provide the foundation you need.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .games-page {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .games-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: var(--border-width-thick) solid var(--color-border);
+  }
+
+  .games-header h1 {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .games-description {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-alt);
+  }
+
+  .games-grid-section {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+  }
+
+  .packages-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Make lone items grow to fill the row */
+  .packages-grid > :nth-child(odd):last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Make last item in game packages grow if it's alone on the row (odd total count) */
+  .packages-grid-3 > :last-child:nth-child(odd),
+  .packages-grid-3 > :nth-child(odd):last-child {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Ensure the last odd child in game packages takes full width */
+  .packages-grid-3:has(> :last-child:nth-child(odd)) > :last-child {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .games-info {
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-2xl);
+    border-top: var(--border-width-thick) solid var(--color-border);
+  }
+
+  .info-box {
+    max-width: 900px;
+    margin: 0 auto;
+    border: var(--border-width) solid var(--color-border);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-kirby);
+  }
+
+  .info-box h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .info-box ul {
+    margin: var(--spacing-md) 0;
+  }
+
+  .info-box li {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  @media (max-width: 768px) {
+    .packages-grid-3 {
+      grid-template-columns: 1fr;
+    }
+
+    .packages-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .packages-grid > :nth-child(odd):last-child {
+      grid-column: 1;
+    }
+
+    .packages-grid-3 > :nth-child(odd):last-child {
+      grid-column: 1;
+    }
+  }
+</style>
