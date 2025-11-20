@@ -27,7 +27,7 @@ const buildEmbed = (notationArg: string): APIEmbed => {
       .addFields({
         name: 'Learn More',
         value:
-          'See the [Dice Notation Guide](https://github.com/RANDSUM/randsum-ts/blob/main/RANDSUM_DICE_NOTATION.md) for more information.'
+          'See the [Dice Notation Guide](https://github.com/RANDSUM/randsum/blob/main/RANDSUM_DICE_NOTATION.md) for more information.'
       })
       .setFooter(embedFooterDetails)
       .toJSON()
