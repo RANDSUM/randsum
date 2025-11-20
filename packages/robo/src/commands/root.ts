@@ -85,15 +85,20 @@ export function handleroll(modifierArg: string | undefined, memberNick = 'User')
   } = rollRootRpg(modifier)
   const [successTitle, successValue] = getSuccessString(result.hit)
   const color = getColor(result.hit)
+
+  if (!record) {
+    throw new Error('Roll record is missing')
+  }
+
   const thumbnail = getThumbnail(record.total)
 
   return new EmbedBuilder()
     .setColor(color)
-    .setTitle(successTitle)
-    .setDescription(successValue)
+    .setTitle(successTitle ?? null)
+    .setDescription(successValue ?? null)
     .setThumbnail(thumbnail)
     .addFields({ name: '\u200B', value: '\u200B' })
-    .addFields({ name: explanationName, value: explanationValue })
+    .addFields({ name: explanationName ?? '', value: explanationValue ?? '' })
     .addFields({
       name: 'Rolls',
       value: `[${parseRolls(record.modifierHistory.initialRolls)}] + **${String(modifier)}** = __**${String(record.total)}**__`,

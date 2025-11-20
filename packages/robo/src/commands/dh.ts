@@ -1,6 +1,6 @@
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
-import type { CommandOptions, CommandResult } from 'robo.js'
+import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 import type {
@@ -10,7 +10,7 @@ import type {
 } from '@randsum/daggerheart'
 import { rollDaggerheart } from '@randsum/daggerheart'
 
-export const config = createCommandConfig({
+export const config: CommandConfig = createCommandConfig({
   description: 'What moves you - Hope, or Fear?',
   options: [
     {
@@ -52,7 +52,7 @@ const buildEmbed = (
 ): APIEmbed => {
   const { result } = rollDaggerheart({
     modifier: rollModifier,
-    rollingWith,
+    ...(rollingWith !== undefined ? { rollingWith } : {}),
     amplifyHope,
     amplifyFear
   })
@@ -75,7 +75,7 @@ function fields(
     }
   }: DaggerheartRollResult,
   rollingwith: DaggerheartAdvantageDisadvantage | undefined
-): { name: string; value: string; inline?: boolean | undefined }[] {
+): { name: string; value: string; inline?: boolean }[] {
   return [
     ...[
       { name: 'Hope', value: hopeRoll.toString(), inline: true },
@@ -94,7 +94,7 @@ function fields(
     amplifyFear
       ? { name: 'Amplified Fear', value: 'Fear rolled with d20 instead of d12' }
       : undefined
-  ].filter(r => !!r)
+  ].filter((r): r is { name: string; value: string; inline?: boolean } => r !== undefined)
 }
 
 function getColor(type: DaggerheartRollResultType): number {

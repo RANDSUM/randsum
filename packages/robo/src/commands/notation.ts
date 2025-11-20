@@ -1,10 +1,10 @@
 import type { ChatInputCommandInteraction } from 'discord.js'
 import { EmbedBuilder } from 'discord.js'
-import type { CommandResult } from 'robo.js'
+import type { CommandConfig, CommandResult } from 'robo.js'
 import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 
-export const config = createCommandConfig({
+export const config: CommandConfig = createCommandConfig({
   description: 'Randsum Dice Notation Reference'
 })
 

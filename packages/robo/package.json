@@ -15,6 +15,7 @@
     "directory": "packages/robo"
   },
   "type": "module",
+  "sideEffects": false,
   "engines": {
     "node": ">=18.0.0",
     "bun": ">=1.0.0"

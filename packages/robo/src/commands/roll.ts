@@ -1,11 +1,11 @@
 import { roll, validateNotation } from '@randsum/roller'
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { EmbedBuilder } from 'discord.js'
-import type { CommandOptions, CommandResult } from 'robo.js'
+import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 
-export const config = createCommandConfig({
+export const config: CommandConfig = createCommandConfig({
   description: 'Test your luck with a roll of the dice',
   options: [
     {
@@ -56,9 +56,10 @@ const buildEmbed = (notationArg: string): APIEmbed => {
     ...rollFields,
     { name: 'Notation', value: notationArg }
   ]
+  const firstRoll = result.rolls[0]
   return new EmbedBuilder()
     .setTitle(`You rolled a ${total}`)
-    .setDescription(result.rolls[0]?.parameters.description.join(', '))
+    .setDescription(firstRoll?.parameters.description.join(', ') ?? null)
     .setFields(fields)
     .setFooter(embedFooterDetails)
     .toJSON()
@@ -69,5 +70,8 @@ export default async (
   { notation }: CommandOptions<typeof config>
 ): Promise<CommandResult> => {
   await interaction.deferReply()
+  if (!notation || typeof notation !== 'string') {
+    throw new Error('Notation is required and must be a string')
+  }
   await interaction.editReply({ embeds: [buildEmbed(notation)] })
 }

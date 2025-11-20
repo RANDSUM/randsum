@@ -1,13 +1,13 @@
 import type { APIEmbed, ChatInputCommandInteraction } from 'discord.js'
 import { Colors, EmbedBuilder } from 'discord.js'
-import type { CommandOptions, CommandResult } from 'robo.js'
+import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 import { createCommandConfig } from 'robo.js'
 import { embedFooterDetails } from '../core/constants'
 import type { BladesResult } from '@randsum/blades'
 import { rollBlades } from '@randsum/blades'
 import type { RollRecord } from '@randsum/roller'
 
-export const config = createCommandConfig({
+export const config: CommandConfig = createCommandConfig({
   description: 'Crew up.  Get in. Get out. Get Paid',
   options: [
     {
@@ -112,14 +112,18 @@ function buildEmbed(diceArg: number, memberNick: string): APIEmbed {
   } = rollBlades(quantity)
   const [successTitle, successValue] = getSuccessString(result)
 
+  if (!record) {
+    throw new Error('Roll record is missing')
+  }
+
   return new EmbedBuilder()
-    .setTitle(successTitle)
-    .setDescription(successValue)
+    .setTitle(successTitle ?? null)
+    .setDescription(successValue ?? null)
     .setThumbnail(getThumbnail(record.total, result))
     .addFields({ name: '\u200B', value: '\u200B' })
     .addFields({
-      name: explanationTitle,
-      value: explanationValue
+      name: explanationTitle ?? '',
+      value: explanationValue ?? ''
     })
     .addFields({
       name: 'Rolls',
@@ -141,7 +145,11 @@ export default async (
   { dice }: CommandOptions<typeof config>
 ): Promise<CommandResult> => {
   await interaction.deferReply()
+  const diceValue = typeof dice === 'number' ? dice : Number(dice)
+  if (typeof diceValue !== 'number' || Number.isNaN(diceValue)) {
+    throw new Error('Dice value must be a number')
+  }
   await interaction.editReply({
-    embeds: [buildEmbed(dice, interaction.user.displayName)]
+    embeds: [buildEmbed(diceValue, interaction.user.displayName)]
   })
 }
