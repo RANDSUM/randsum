@@ -352,7 +352,7 @@ bun add @randsum/mcp`,
   {
     id: 'robo',
     name: 'robo',
-    displayName: 'Robo Discord Bot',
+    displayName: 'Discord Dice Roller',
     description:
       'A Discord bot and activity for rolling dice in chat. Supports all RANDSUM game packages with beautiful embeds and detailed roll results.',
     npmPackage: '@randsum/robo',
