@@ -3,7 +3,7 @@
   /* Using vibrant colors: Row 1 colors for primary/accent, Row 3 for backgrounds */
   --color-primary: #dc2626; /* bright red from palette - Row 1, Column 6 */
   --color-secondary: #fef9e7; /* pale yellow/cream - Row 3, Column 6 */
-  --color-accent: #ffd700; /* bright yellow - Row 1, Column 3 */
+  --color-accent: #1a1a1a; /* dark background */
 
   /* Game Package Colors - KEEP THESE THE SAME */
   --color-fifth: #dc2626; /* red */

@@ -114,15 +114,15 @@ a:hover {
 }
 
 .kirby-button-accent {
-  background-color: var(--color-accent);
-  color: var(--color-text);
-  border-color: var(--color-accent);
+  background-color: var(--color-accent) !important;
+  color: var(--color-text-inverse) !important;
+  border-color: var(--color-accent) !important;
 }
 
 .kirby-button-accent:hover {
-  background-color: var(--color-accent);
-  color: var(--color-text);
-  border-color: var(--color-accent);
+  background-color: var(--color-accent) !important;
+  color: var(--color-text-inverse) !important;
+  border-color: var(--color-accent) !important;
 }
 
 /* Bold containers */

@@ -59,9 +59,6 @@ import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
             })
           }
         </div>
-        <div class="section-footer">
-          <a href="/games/" class="kirby-button kirby-button-primary"> View All Game Packages </a>
-        </div>
       </div>
     </section>
 
@@ -74,11 +71,6 @@ import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
               return <PackageCard package={pkg} />
             })
           }
-        </div>
-        <div class="section-footer">
-          <a href="/tools/" class="kirby-button kirby-button-primary">
-            View All Tools & Integrations
-          </a>
         </div>
       </div>
     </section>
@@ -228,6 +220,24 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
     margin-top: var(--spacing-xl);
   }
 
+  .homepage .section-footer :global(a.kirby-button.kirby-button-accent) {
+    background-color: var(--color-bg-dark) !important;
+    color: var(--color-text-inverse) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .homepage .section-footer :global(a.kirby-button.kirby-button-accent:hover) {
+    background-color: var(--color-bg-dark) !important;
+    color: var(--color-text-inverse) !important;
+    border-color: var(--color-border) !important;
+  }
+
+  .homepage .section-footer :global(a.kirby-button.kirby-button-accent:active) {
+    background-color: var(--color-bg-dark) !important;
+    color: var(--color-text-inverse) !important;
+    border-color: var(--color-border) !important;
+  }
+
   .quick-start {
     margin-top: var(--spacing-2xl);
     padding-top: var(--spacing-2xl);
@@ -240,7 +250,7 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
     box-shadow: var(--shadow-kirby);
     max-width: 900px;
     margin: 0 auto;
-    background-color: var(--color-bg);
+    background-color: var(--color-bg-dark);
     position: relative;
   }
 
@@ -266,15 +276,21 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
   .quick-start-box h2 {
     text-align: center;
     margin-bottom: var(--spacing-lg);
+    color: var(--color-text-inverse);
   }
 
   .quick-start-box pre {
     margin: var(--spacing-lg) 0;
   }
 
+  .quick-start-box pre code {
+    color: var(--color-text);
+  }
+
   .quick-start-box p {
     margin: var(--spacing-lg) 0 var(--spacing-md) 0;
     font-weight: var(--font-weight-bold);
+    color: var(--color-text-inverse);
   }
 
   @media (max-width: 768px) {
