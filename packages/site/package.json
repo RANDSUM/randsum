@@ -37,7 +37,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
+    "lint": "eslint . -c ../../eslint.config.js --ignore-pattern 'templates/**'",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit"

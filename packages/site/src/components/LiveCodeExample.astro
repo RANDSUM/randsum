@@ -1,0 +1,74 @@
+---
+interface Props {
+  title?: string
+  packageName: string
+  initialCode: string
+  height?: string
+  stackblitzId?: string
+}
+
+const { title, packageName, initialCode, height = '600px', stackblitzId } = Astro.props
+
+// Create embed URL - use StackBlitz project ID if provided
+// Otherwise, we'll need to create the project first and get an ID
+let embedUrl: string
+if (stackblitzId) {
+  embedUrl = `https://stackblitz.com/edit/${stackblitzId}?embed=1&file=index.ts&hideExplorer=1&hideNavigation=1&theme=light&ctl=1`
+} else {
+  // Fallback: use a generic node template
+  // In production, we should create StackBlitz projects and use their IDs
+  embedUrl = `https://stackblitz.com/fork/node?embed=1&file=index.ts&hideExplorer=1&hideNavigation=1&theme=light&ctl=1&view=editor`
+}
+---
+
+<div class="live-code-example">
+  {title && <h4 class="live-code-example-title">{title}</h4>}
+  <div class="live-code-example-content">
+    <iframe
+      class="live-code-example-iframe"
+      title={title || `Live code example for ${packageName}`}
+      src={embedUrl}
+      style={`height: ${height};`}
+      allow="clipboard-write"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+      loading="lazy"
+    />
+  </div>
+</div>
+
+<style>
+  .live-code-example {
+    margin: var(--spacing-lg) 0;
+  }
+
+  .live-code-example-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .live-code-example-content {
+    border: var(--border-width-thick) solid var(--color-border);
+    padding: 0;
+    background-color: var(--color-bg-alt);
+    overflow: hidden;
+    box-shadow: var(--shadow-kirby);
+    position: relative;
+  }
+
+  .live-code-example-iframe {
+    width: 100%;
+    border: none;
+    display: block;
+    min-height: 400px;
+  }
+
+  @media (max-width: 768px) {
+    .live-code-example-iframe {
+      min-height: 500px;
+    }
+  }
+</style>
+

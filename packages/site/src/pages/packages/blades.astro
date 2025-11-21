@@ -1,9 +1,12 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro'
 import CodeExample from '../../components/CodeExample.astro'
+import LiveCodeExample from '../../components/LiveCodeExample.astro'
 import { getPackageById } from '../../utils/packageData'
+import { getTemplateCode } from '../../utils/templateLoader'
 
 const pkg = getPackageById('blades')!
+const templateCode = getTemplateCode('blades')
 ---
 
 <DocsLayout title={pkg.displayName} description={pkg.description} package={pkg}>
@@ -32,7 +35,16 @@ const pkg = getPackageById('blades')!
         .filter(e => e.title !== 'Installation')
         .map(example => {
           return (
-            <CodeExample code={example.code} language={example.language} title={example.title} />
+            <>
+              <CodeExample code={example.code} language={example.language} title={example.title} />
+              {example.hasLiveExample && (
+                <LiveCodeExample
+                  packageName={pkg.id}
+                  initialCode={templateCode}
+                  title={`Try it Live: ${example.title}`}
+                />
+              )}
+            </>
           )
         })
     }

@@ -14,6 +14,8 @@ export interface CodeExample {
   title: string
   code: string
   language: 'typescript' | 'bash' | 'json'
+  hasLiveExample?: boolean
+  stackblitzId?: string
 }
 
 export const corePackages: PackageInfo[] = [
@@ -42,7 +44,8 @@ export const corePackages: PackageInfo[] = [
 roll(20); // Returns 1-20
 // or
 roll('1d20'); // Returns 1-20`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Character Stat Roll',
@@ -50,7 +53,8 @@ roll('1d20'); // Returns 1-20`,
 
 // Roll 4d6, drop lowest (D&D ability scores)
 roll('4d6L');`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Advantage and Disadvantage',
@@ -61,7 +65,8 @@ roll('2d20H');
 
 // Roll with disadvantage (2d20, keep lowest)
 roll('2d20L');`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Complex Notation',
@@ -69,7 +74,8 @@ roll('2d20L');`,
 
 // Roll 4d6, drop lowest, reroll below 3
 roll('4d6L!R{<3}');`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Installation',
@@ -101,7 +107,8 @@ import type { BladesRollResult } from "@randsum/blades"
 // Basic roll with dice pool
 const { outcome, result } = rollBlades(2)
 console.log(outcome) // 'critical' | 'success' | 'partial' | 'failure'`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Different Dice Pool Sizes',
@@ -111,7 +118,8 @@ rollBlades(1) // Desperate position
 rollBlades(2) // Risky position
 rollBlades(3) // Controlled position
 rollBlades(4) // Controlled with assistance`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Installation',
@@ -149,7 +157,8 @@ roll({
   modifier: -2,
   rollingWith: "Disadvantage"
 })`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Installation',
@@ -177,7 +186,8 @@ import type { RollArgument } from "@randsum/fifth"
 
 // Basic roll with modifier
 roll({ modifier: 5 })`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Roll with Advantage',
@@ -188,7 +198,8 @@ roll({
   modifier: 5,
   rollingWith: "Advantage"
 })`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Roll with Disadvantage',
@@ -199,7 +210,8 @@ roll({
   modifier: -2,
   rollingWith: "Disadvantage"
 })`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Installation',
@@ -229,7 +241,8 @@ import type { RootRpgRollResult } from "@randsum/root-rpg"
 const { outcome, roll, result } = rollRootRpg(2)
 // outcome: 'Strong Hit' | 'Weak Hit' | 'Miss'
 // roll: numeric total, result: detailed roll information`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Type-Safe Result Handling',
@@ -247,7 +260,8 @@ switch (outcome) {
     // 6 or lower
     break
 }`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Installation',
@@ -275,7 +289,8 @@ import type { SalvageUnionTableResult } from "@randsum/salvageunion"
 // Basic roll with default table
 const result = rollTable()
 // Returns table result with hit type, label, description, and roll value`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Roll with Specific Table',
@@ -283,7 +298,8 @@ const result = rollTable()
 
 // Roll with specific table
 const result = rollTable("Morale")`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Type-Safe Result Handling',
@@ -301,7 +317,8 @@ switch (hit) {
     // 6-10
     break
 }`,
-        language: 'typescript'
+        language: 'typescript',
+        hasLiveExample: true
       },
       {
         title: 'Installation',

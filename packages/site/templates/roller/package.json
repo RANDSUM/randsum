@@ -1,0 +1,15 @@
+{
+  "name": "randsum-roller-example",
+  "version": "1.0.0",
+  "description": "Live code example for @randsum/roller",
+  "type": "module",
+  "scripts": {
+    "start": "node --loader ts-node/esm index.ts"
+  },
+  "dependencies": {
+    "@randsum/roller": "latest",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
