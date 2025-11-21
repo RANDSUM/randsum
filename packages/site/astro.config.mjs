@@ -9,7 +9,7 @@ import netlify from '@astrojs/netlify'
 export default defineConfig({
   base: '/',
   // Use Netlify's URL environment variable, fallback for local dev
-  site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum-site.netlify.app',
+  site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
   integrations: [
     react(),
     sitemap({
