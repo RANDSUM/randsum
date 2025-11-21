@@ -13,13 +13,13 @@ interface Props {
 const {
   title,
   description = 'A flexible, type-safe dice rolling ecosystem written in TypeScript',
-  image = 'https://randsum-site.netlify.app/favicon.ico',
+  image = 'https://randsum.dev/favicon.ico',
   type = 'website',
   keywords = []
 } = Astro.props
 
 const fullTitle = title === 'RANDSUM' ? 'RANDSUM' : `${title} | RANDSUM`
-const siteUrl = 'https://randsum.github.io'
+const siteUrl = 'https://randsum.dev'
 const canonicalURL = new URL(Astro.url.pathname, siteUrl)
 const defaultKeywords = [
   'dice rolling',

@@ -40,7 +40,7 @@ const packageSchema = {
     priceCurrency: 'USD'
   },
   description: description || pkg.description,
-  url: `https://randsum.github.io/packages/${pkg.id}/`,
+  url: `https://randsum.dev/packages/${pkg.id}/`,
   codeRepository: `https://github.com/RANDSUM/randsum/tree/main/packages/${pkg.name}`,
   softwareVersion: 'latest',
   keywords: packageKeywords.join(', ')
@@ -148,7 +148,7 @@ const packageSchema = {
               </div>
               <slot name="header-action" />
             </div>
-            <meta itemprop="url" content={`https://randsum.github.io/packages/${pkg.id}/`} />
+            <meta itemprop="url" content={`https://randsum.dev/packages/${pkg.id}/`} />
             <meta itemprop="softwareVersion" content="latest" />
           </header>
           <div class="docs-header-border" style={`border-color: ${packageColor}`}></div>
