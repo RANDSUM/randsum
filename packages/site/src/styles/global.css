@@ -22,3 +22,17 @@ body {
   background-color: var(--color-accent);
   color: var(--color-text-inverse);
 }
+
+/* Homepage button overrides - dark buttons */
+.homepage .section-footer a.kirby-button.kirby-button-accent {
+  background-color: var(--color-bg-dark) !important;
+  color: var(--color-text-inverse) !important;
+  border-color: var(--color-border) !important;
+}
+
+.homepage .section-footer a.kirby-button.kirby-button-accent:hover,
+.homepage .section-footer a.kirby-button.kirby-button-accent:active {
+  background-color: var(--color-bg-dark) !important;
+  color: var(--color-text-inverse) !important;
+  border-color: var(--color-border) !important;
+}

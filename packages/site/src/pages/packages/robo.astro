@@ -249,7 +249,7 @@ const pkg = getPackageById('robo')!
     margin: var(--spacing-lg) 0;
     border: var(--border-width-thick) solid var(--color-border);
     padding: var(--spacing-md);
-    background-color: var(--color-bg-alt);
+    background-color: var(--color-bg-dark);
     box-shadow: var(--shadow-kirby);
   }
 
@@ -263,7 +263,7 @@ const pkg = getPackageById('robo')!
   .image-caption {
     margin-top: var(--spacing-sm);
     font-size: var(--font-size-sm);
-    color: var(--color-text-alt);
+    color: var(--color-text-inverse);
     font-style: italic;
     text-align: center;
   }
@@ -313,7 +313,7 @@ const pkg = getPackageById('robo')!
 
   .install-options {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: var(--spacing-xl);
     margin-top: var(--spacing-lg);
     align-items: start;
@@ -322,7 +322,7 @@ const pkg = getPackageById('robo')!
   .install-option {
     padding: var(--spacing-lg);
     border: var(--border-width-thick) solid var(--color-border);
-    background-color: var(--color-bg-alt);
+    background-color: var(--color-bg-dark);
     box-shadow: var(--shadow-kirby);
     display: flex;
     flex-direction: column;
@@ -332,10 +332,17 @@ const pkg = getPackageById('robo')!
     margin-top: 0;
     margin-bottom: var(--spacing-md);
     font-size: var(--font-size-xl);
+    color: var(--color-text-inverse);
   }
 
   .install-option p {
     margin-bottom: var(--spacing-md);
+    color: var(--color-text-inverse);
+  }
+
+  .install-option a {
+    color: var(--color-text-inverse);
+    border-bottom-color: var(--color-text-inverse);
   }
 
   @media (max-width: 1024px) {
