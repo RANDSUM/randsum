@@ -3,7 +3,6 @@ import { Colors, EmbedBuilder } from 'discord.js'
 import type { CommandConfig, CommandOptions, CommandResult } from 'robo.js'
 import { SALVAGE_UNION_TABLE_NAMES, rollTable } from '@randsum/salvageunion'
 import type { SalvageUnionTableName } from '@randsum/salvageunion'
-import { embedFooterDetails } from '../core/constants'
 
 const suChoices = SALVAGE_UNION_TABLE_NAMES.map(table => ({
   name: table,
@@ -66,7 +65,9 @@ export function buildEmbed(table: SalvageUnionTableName): APIEmbed {
       { name: 'Table', value: table, inline: true },
       { name: 'Roll', value: String(total), inline: true }
     ])
-    .setFooter(embedFooterDetails)
+    .setFooter({
+      text: 'Rolled with 👹 by RANDSUM.dev • Join the union - SalvageUnion.io'
+    })
 
   if (description !== '') {
     embed.setDescription(description)

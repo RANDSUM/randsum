@@ -92,7 +92,7 @@ const fields = notationReference.map(ref => ({
 }))
 
 const baseEmbed = new EmbedBuilder()
-  .setTitle('RANDSUM.io')
+  .setTitle('RANDSUM.dev')
   .setDescription(
     [
       'For more information, check out the [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/RANDSUM_DICE_NOTATION.md).'
