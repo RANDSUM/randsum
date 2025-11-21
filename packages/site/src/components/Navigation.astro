@@ -64,6 +64,15 @@ const isHome = currentPath === '/'
     position: sticky;
     top: 0;
     z-index: var(--z-sticky);
+    border-bottom: var(--border-width) solid var(--color-border);
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .navigation {
+      background-color: rgba(15, 23, 42, 0.95);
+    }
   }
 
   .nav-content {
@@ -77,15 +86,16 @@ const isHome = currentPath === '/'
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-black);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
     text-decoration: none;
     color: var(--color-text);
-    border-bottom: var(--border-width-thick) solid transparent;
+    border-bottom: var(--border-width) solid transparent;
+    transition: border-color var(--transition-fast);
   }
 
   .nav-logo:hover {
-    border-bottom-color: var(--color-border);
+    border-bottom-color: var(--color-primary);
   }
 
   .nav-logo-image {
@@ -108,17 +118,23 @@ const isHome = currentPath === '/'
   }
 
   .nav-link {
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-medium);
     text-decoration: none;
-    color: var(--color-text);
+    color: var(--color-text-alt);
     padding: var(--spacing-xs) var(--spacing-sm);
     border-bottom: var(--border-width) solid transparent;
-    transition: border-color var(--transition-fast);
+    transition: border-color var(--transition-fast), color var(--transition-fast);
   }
 
-  .nav-link:hover,
+  .nav-link:hover {
+    color: var(--color-text);
+    border-bottom-color: var(--color-primary);
+  }
+  
   .nav-link-active {
-    border-bottom-color: var(--color-border);
+    color: var(--color-text);
+    border-bottom-color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
   }
 
   .nav-discord-button {

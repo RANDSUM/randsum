@@ -22,18 +22,20 @@ const { code, language, title } = Astro.props
 
   .code-example-title {
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-semibold);
     margin-bottom: var(--spacing-sm);
     padding-bottom: var(--spacing-xs);
     border-bottom: var(--border-width) solid var(--color-border);
+    color: var(--color-text);
   }
 
   .code-example-content {
-    border: var(--border-width-thick) solid var(--color-border);
+    border: var(--border-width) solid var(--color-border);
     padding: var(--spacing-lg);
-    background-color: var(--color-bg-alt);
+    background-color: var(--color-bg-code);
     overflow-x: auto;
-    box-shadow: var(--shadow-kirby);
+    box-shadow: var(--shadow-sm);
+    border-radius: 6px;
   }
 
   .code-example-content :global(pre) {
@@ -61,6 +63,6 @@ const { code, language, title } = Astro.props
     font-family: var(--font-family-mono);
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
-    color: var(--color-text);
+    color: #e2e8f0; /* light text for dark code background */
   }
 </style>

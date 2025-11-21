@@ -154,25 +154,11 @@ const softwareSchema = {
   }
 
   .site-footer {
-    border-top: var(--border-width-thick) solid var(--color-border);
-    padding: var(--spacing-xl) 0;
+    border-top: var(--border-width) solid var(--color-border);
+    padding: var(--spacing-2xl) 0;
     margin-top: var(--spacing-3xl);
     background-color: var(--color-bg-dark);
     position: relative;
-  }
-
-  .site-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
-    background-size: 16px 16px;
-    background-position: 0 0;
-    opacity: 0.08;
-    pointer-events: none;
   }
 
   .site-footer > * {
@@ -184,10 +170,17 @@ const softwareSchema = {
     text-align: center;
     margin: var(--spacing-sm) 0;
     color: var(--color-text-inverse);
+    font-size: var(--font-size-sm);
   }
 
   .footer-text a {
     color: var(--color-text-inverse);
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-medium);
+    opacity: 0.9;
+  }
+  
+  .footer-text a:hover {
+    opacity: 1;
+    border-bottom-color: var(--color-text-inverse);
   }
 </style>

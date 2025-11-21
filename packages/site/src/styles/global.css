@@ -23,16 +23,16 @@ body {
   color: var(--color-text-inverse);
 }
 
-/* Homepage button overrides - dark buttons */
+/* Homepage button overrides - professional styling */
 .homepage .section-footer a.kirby-button.kirby-button-accent {
-  background-color: var(--color-bg-dark) !important;
+  background-color: var(--color-accent) !important;
   color: var(--color-text-inverse) !important;
-  border-color: var(--color-border) !important;
+  border-color: var(--color-accent) !important;
 }
 
 .homepage .section-footer a.kirby-button.kirby-button-accent:hover,
 .homepage .section-footer a.kirby-button.kirby-button-accent:active {
-  background-color: var(--color-bg-dark) !important;
+  background-color: #1e293b !important;
   color: var(--color-text-inverse) !important;
-  border-color: var(--color-border) !important;
+  border-color: #1e293b !important;
 }

@@ -1,42 +1,43 @@
 :root {
-  /* Color Palette - Bold Kirby-inspired colors from provided palette */
-  /* Using vibrant colors: Row 1 colors for primary/accent, Row 3 for backgrounds */
-  --color-primary: #dc2626; /* bright red from palette - Row 1, Column 6 */
-  --color-secondary: #fef9e7; /* pale yellow/cream - Row 3, Column 6 */
-  --color-accent: #1a1a1a; /* dark background */
+  /* Color Palette - Professional, developer-friendly colors */
+  --color-primary: #2563eb; /* professional blue */
+  --color-primary-dark: #1e40af; /* darker blue for hover */
+  --color-secondary: #f8fafc; /* subtle gray background */
+  --color-accent: #0f172a; /* dark slate for text/accents */
 
-  /* Game Package Colors - KEEP THESE THE SAME */
-  --color-fifth: #dc2626; /* red */
-  --color-salvageunion: #60a5fa; /* lightblue */
-  --color-daggerheart: #9333ea; /* purple */
-  --color-root-rpg: #22c55e; /* green */
-  --color-blades: #f97316; /* orange */
+  /* Game Package Colors - Maintained but slightly muted */
+  --color-fifth: #ef4444; /* red */
+  --color-salvageunion: #3b82f6; /* blue */
+  --color-daggerheart: #8b5cf6; /* purple */
+  --color-root-rpg: #10b981; /* green */
+  --color-blades: #f59e0b; /* orange */
 
-  /* Text Colors - High contrast for readability */
-  --color-text: #000000;
-  --color-text-alt: #1a1a1a;
-  --color-text-light: #4a4a4a;
+  /* Text Colors - Professional contrast */
+  --color-text: #0f172a; /* slate-900 */
+  --color-text-alt: #334155; /* slate-700 */
+  --color-text-light: #64748b; /* slate-500 */
   --color-text-inverse: #ffffff;
 
-  /* Background Colors - Bold Kirby palette */
+  /* Background Colors - Clean and professional */
   --color-bg: #ffffff; /* white base */
-  --color-bg-alt: #fef9e7; /* pale yellow/cream - Row 3, Column 6 */
-  --color-bg-dark: #1a1a1a; /* dark for contrast */
+  --color-bg-alt: #f8fafc; /* slate-50 */
+  --color-bg-dark: #0f172a; /* slate-900 */
+  --color-bg-code: #1e293b; /* slate-800 for code blocks */
 
-  /* Accent Backgrounds - Bold Kirby colors */
-  --color-bg-accent-1: #87ceeb; /* light sky blue - Row 1, Column 2 */
-  --color-bg-accent-2: #ffd700; /* bright yellow - Row 1, Column 3 */
-  --color-bg-accent-3: #ff6b35; /* vibrant orange - Row 1, Column 6 variant */
+  /* Accent Backgrounds - Subtle and professional */
+  --color-bg-accent-1: #eff6ff; /* blue-50 */
+  --color-bg-accent-2: #fef3c7; /* amber-50 */
+  --color-bg-accent-3: #f0fdf4; /* green-50 */
 
-  /* Border Colors */
-  --color-border: #000000;
-  --color-border-light: #999999;
-  --color-border-accent: #dc2626; /* bright red for emphasis */
+  /* Border Colors - Softer, more professional */
+  --color-border: #e2e8f0; /* slate-200 */
+  --color-border-light: #cbd5e1; /* slate-300 */
+  --color-border-accent: #3b82f6; /* blue-500 for emphasis */
 
-  /* Border Widths - Bold Kirby style */
-  --border-width: 2px;
-  --border-width-thick: 4px;
-  --border-width-extra-thick: 6px;
+  /* Border Widths - More subtle */
+  --border-width: 1px;
+  --border-width-thick: 2px;
+  --border-width-extra-thick: 3px;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -49,7 +50,7 @@
 
   /* Typography */
   --font-family:
-    'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-family-mono:
     'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Fira Mono', 'Droid Sans Mono',
@@ -67,6 +68,7 @@
 
   --font-weight-normal: 400;
   --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-black: 900;
 
@@ -74,10 +76,16 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* Shadows - Bold, geometric */
-  --shadow-kirby: 4px 4px 0 0 var(--color-border);
-  --shadow-kirby-lg: 6px 6px 0 0 var(--color-border);
-  --shadow-kirby-thick: 8px 8px 0 0 var(--color-border);
+  /* Shadows - Subtle and professional */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Legacy support */
+  --shadow-kirby: var(--shadow-sm);
+  --shadow-kirby-lg: var(--shadow-md);
+  --shadow-kirby-thick: var(--shadow-lg);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -98,7 +106,7 @@
   --z-tooltip: 1070;
 }
 
-/* Kirby Dots Pattern - Halftone style dots */
+/* Subtle pattern backgrounds - optional, minimal */
 .kirby-dots {
   position: relative;
 }
@@ -110,10 +118,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
-  background-size: 12px 12px;
+  background-image: radial-gradient(circle, var(--color-border-light) 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
   background-position: 0 0;
-  opacity: 0.1;
+  opacity: 0.03;
   pointer-events: none;
   z-index: 0;
 }
@@ -129,10 +137,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
-  background-size: 8px 8px;
+  background-image: radial-gradient(circle, var(--color-border-light) 0.5px, transparent 0.5px);
+  background-size: 16px 16px;
   background-position: 0 0;
-  opacity: 0.15;
+  opacity: 0.04;
   pointer-events: none;
   z-index: 0;
 }
@@ -148,10 +156,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(circle, var(--color-border-accent) 1.5px, transparent 1.5px);
-  background-size: 16px 16px;
+  background-image: radial-gradient(circle, var(--color-border-accent) 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
   background-position: 0 0;
-  opacity: 0.08;
+  opacity: 0.02;
   pointer-events: none;
   z-index: 0;
 }
@@ -164,24 +172,28 @@
   z-index: 1;
 }
 
-/* Dark mode support (optional, for future) */
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #1a1a1a;
-    --color-bg-alt: #2a2a2a;
-    --color-text: #ffffff;
-    --color-text-alt: #e0e0e0;
-    --color-text-light: #b0b0b0;
-    --color-border: #ffffff;
-    --color-border-light: #666666;
+    --color-bg: #0f172a; /* slate-900 */
+    --color-bg-alt: #1e293b; /* slate-800 */
+    --color-bg-dark: #020617; /* slate-950 */
+    --color-bg-code: #0f172a; /* slate-900 */
+    --color-text: #f1f5f9; /* slate-100 */
+    --color-text-alt: #cbd5e1; /* slate-300 */
+    --color-text-light: #94a3b8; /* slate-400 */
+    --color-border: #334155; /* slate-700 */
+    --color-border-light: #475569; /* slate-600 */
+    --color-primary: #60a5fa; /* blue-400 for dark mode */
+    --color-primary-dark: #3b82f6; /* blue-500 */
   }
 
   .kirby-dots::before,
   .kirby-dots-dense::before {
-    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+    background-image: radial-gradient(circle, var(--color-border) 0.5px, transparent 0.5px);
   }
 
   .kirby-dots-accent::before {
-    background-image: radial-gradient(circle, var(--color-border-accent) 1.5px, transparent 1.5px);
+    background-image: radial-gradient(circle, var(--color-border-accent) 0.5px, transparent 0.5px);
   }
 }

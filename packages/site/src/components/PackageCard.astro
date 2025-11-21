@@ -32,12 +32,12 @@ const packageColor = pkg.color || 'var(--color-border)'
 <style>
   .package-card {
     display: block;
-    border: var(--border-width-thick) solid var(--color-border);
-    padding: var(--spacing-lg);
+    border: var(--border-width) solid var(--color-border);
+    padding: var(--spacing-xl);
     background-color: var(--color-bg);
-    box-shadow: var(--shadow-kirby);
+    box-shadow: var(--shadow-sm);
     transition:
-      transform var(--transition-fast),
+      border-color var(--transition-fast),
       box-shadow var(--transition-fast);
     text-decoration: none;
     color: inherit;
@@ -45,21 +45,7 @@ const packageColor = pkg.color || 'var(--color-border)'
     display: flex;
     flex-direction: column;
     position: relative;
-  }
-
-  .package-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
-    background-size: 12px 12px;
-    background-position: 0 0;
-    opacity: 0.04;
-    pointer-events: none;
-    z-index: 0;
+    border-radius: 8px;
   }
 
   .package-card > * {
@@ -68,12 +54,12 @@ const packageColor = pkg.color || 'var(--color-border)'
   }
 
   .package-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: var(--shadow-kirby-lg);
+    border-color: var(--color-border-accent);
+    box-shadow: var(--shadow-md);
   }
 
   .package-card-header {
-    border-bottom: var(--border-width-thick) solid;
+    border-bottom: var(--border-width) solid;
     padding-bottom: var(--spacing-md);
     margin-bottom: var(--spacing-md);
     display: flex;
@@ -86,7 +72,7 @@ const packageColor = pkg.color || 'var(--color-border)'
   .package-card-title {
     font-size: var(--font-size-2xl);
     margin: 0;
-    font-weight: var(--font-weight-black);
+    font-weight: var(--font-weight-bold);
   }
 
   .package-card-badge {
@@ -95,7 +81,9 @@ const packageColor = pkg.color || 'var(--color-border)'
     padding: var(--spacing-xs) var(--spacing-sm);
     background-color: var(--color-bg-alt);
     border: var(--border-width) solid var(--color-border);
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-medium);
+    border-radius: 4px;
+    color: var(--color-text-alt);
   }
 
   .package-card-description {
@@ -134,8 +122,12 @@ const packageColor = pkg.color || 'var(--color-border)'
   }
 
   .package-card-link {
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
     text-decoration: none;
+  }
+  
+  .package-card:hover .package-card-link {
+    color: var(--color-primary-dark);
   }
 </style>

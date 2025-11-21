@@ -107,9 +107,9 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
 
   .hero {
     text-align: center;
-    margin-bottom: var(--spacing-2xl);
-    padding-bottom: var(--spacing-xl);
-    border-bottom: var(--border-width-thick) solid var(--color-border);
+    margin-bottom: var(--spacing-3xl);
+    padding-bottom: var(--spacing-2xl);
+    border-bottom: var(--border-width) solid var(--color-border);
   }
 
   .hero-content {
@@ -138,16 +138,18 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
   }
 
   .hero-subtitle {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-md);
     color: var(--color-text-alt);
   }
 
   .hero-description {
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
     line-height: var(--line-height-relaxed);
-    color: var(--color-text-alt);
+    color: var(--color-text-light);
+    max-width: 700px;
+    margin: 0 auto;
   }
 
   .core-packages,
@@ -239,33 +241,20 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
   }
 
   .quick-start {
-    margin-top: var(--spacing-2xl);
+    margin-top: var(--spacing-3xl);
     padding-top: var(--spacing-2xl);
-    border-top: var(--border-width-thick) solid var(--color-border);
+    border-top: var(--border-width) solid var(--color-border);
   }
 
   .quick-start-box {
-    border: var(--border-width-thick) solid var(--color-border);
-    padding: var(--spacing-xl);
-    box-shadow: var(--shadow-kirby);
+    border: var(--border-width) solid var(--color-border);
+    padding: var(--spacing-2xl);
+    box-shadow: var(--shadow-md);
     max-width: 900px;
     margin: 0 auto;
-    background-color: var(--color-bg-dark);
+    background-color: var(--color-bg-alt);
     position: relative;
-  }
-
-  .quick-start-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
-    background-size: 14px 14px;
-    background-position: 0 0;
-    opacity: 0.05;
-    pointer-events: none;
+    border-radius: 8px;
   }
 
   .quick-start-box > * {
@@ -275,22 +264,24 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
 
   .quick-start-box h2 {
     text-align: center;
-    margin-bottom: var(--spacing-lg);
-    color: var(--color-text-inverse);
+    margin-bottom: var(--spacing-xl);
+    color: var(--color-text);
+    font-size: var(--font-size-3xl);
   }
 
   .quick-start-box pre {
     margin: var(--spacing-lg) 0;
+    background-color: var(--color-bg-code);
   }
 
   .quick-start-box pre code {
-    color: var(--color-text);
+    color: #e2e8f0;
   }
 
   .quick-start-box p {
     margin: var(--spacing-lg) 0 var(--spacing-md) 0;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-inverse);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-alt);
   }
 
   @media (max-width: 768px) {
