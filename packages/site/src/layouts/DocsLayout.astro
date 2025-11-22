@@ -12,6 +12,7 @@ interface Props {
 
 const { title, description, package: pkg } = Astro.props
 const packageColor = pkg.color || 'var(--color-border)'
+const isGradient = packageColor.includes('gradient')
 const fullTitle = `${title} | RANDSUM`
 
 // Get related packages for sidebar
@@ -51,89 +52,82 @@ const packageSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(packageSchema)} />
   <div class="docs-layout">
     <div class="container">
-      <div class="docs-content">
+      <div class="docs-content" style={`--current-package-color: ${packageColor}; --current-is-gradient: ${isGradient ? '1' : '0'}`}>
         <aside class="docs-sidebar">
           <nav class="sidebar-nav">
             <h3 class="sidebar-title">Packages</h3>
             <ul class="sidebar-links">
-              <li>
-                <a
-                  href="/packages/roller/"
-                  class={pkg.id === 'roller' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
-                >
-                  Roller
-                </a>
-              </li>
+              {
+                allPackages
+                  .filter(p => p.category === 'core')
+                  .map(p => {
+                    const linkPkg = allPackages.find(pkg => pkg.id === p.id)
+                    const linkColor = linkPkg?.color || 'var(--color-border)'
+                    const linkIsGradient = linkColor.includes('gradient')
+                    const isActive = pkg.id === p.id
+                    return (
+                      <li>
+                        <a
+                          href={`/packages/${p.id}/`}
+                          class={`sidebar-link ${isActive ? 'sidebar-link-active' : ''} ${linkIsGradient ? 'sidebar-link-gradient' : ''}`}
+                          style={linkIsGradient ? `--link-gradient: ${linkColor};` : `--link-color: ${linkColor};`}
+                        >
+                          {p.displayName}
+                        </a>
+                      </li>
+                    )
+                  })
+              }
             </ul>
 
             <h3 class="sidebar-title">Game Packages</h3>
             <ul class="sidebar-links">
-              <li>
-                <a
-                  href="/packages/blades/"
-                  class={pkg.id === 'blades' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
-                >
-                  Blades
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/packages/daggerheart/"
-                  class={pkg.id === 'daggerheart'
-                    ? 'sidebar-link sidebar-link-active'
-                    : 'sidebar-link'}
-                >
-                  Daggerheart
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/packages/fifth/"
-                  class={pkg.id === 'fifth' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
-                >
-                  D&D 5th Edition
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/packages/root-rpg/"
-                  class={pkg.id === 'root-rpg'
-                    ? 'sidebar-link sidebar-link-active'
-                    : 'sidebar-link'}
-                >
-                  Root RPG
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/packages/salvageunion/"
-                  class={pkg.id === 'salvageunion'
-                    ? 'sidebar-link sidebar-link-active'
-                    : 'sidebar-link'}
-                >
-                  Salvage Union
-                </a>
-              </li>
+              {
+                allPackages
+                  .filter(p => p.category === 'game')
+                  .map(p => {
+                    const linkPkg = allPackages.find(pkg => pkg.id === p.id)
+                    const linkColor = linkPkg?.color || 'var(--color-border)'
+                    const linkIsGradient = linkColor.includes('gradient')
+                    const isActive = pkg.id === p.id
+                    return (
+                      <li>
+                        <a
+                          href={`/packages/${p.id}/`}
+                          class={`sidebar-link ${isActive ? 'sidebar-link-active' : ''} ${linkIsGradient ? 'sidebar-link-gradient' : ''}`}
+                          style={linkIsGradient ? `--link-gradient: ${linkColor};` : `--link-color: ${linkColor};`}
+                        >
+                          {p.displayName}
+                        </a>
+                      </li>
+                    )
+                  })
+              }
             </ul>
 
             <h3 class="sidebar-title">Tools</h3>
             <ul class="sidebar-links">
-              <li>
-                <a
-                  href="/packages/mcp/"
-                  class={pkg.id === 'mcp' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
-                >
-                  MCP Server
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/packages/robo/"
-                  class={pkg.id === 'robo' ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
-                >
-                  Discord Bot
-                </a>
-              </li>
+              {
+                allPackages
+                  .filter(p => p.category === 'tool')
+                  .map(p => {
+                    const linkPkg = allPackages.find(pkg => pkg.id === p.id)
+                    const linkColor = linkPkg?.color || 'var(--color-border)'
+                    const linkIsGradient = linkColor.includes('gradient')
+                    const isActive = pkg.id === p.id
+                    return (
+                      <li>
+                        <a
+                          href={`/packages/${p.id}/`}
+                          class={`sidebar-link ${isActive ? 'sidebar-link-active' : ''} ${linkIsGradient ? 'sidebar-link-gradient' : ''}`}
+                          style={linkIsGradient ? `--link-gradient: ${linkColor};` : `--link-color: ${linkColor};`}
+                        >
+                          {p.displayName}
+                        </a>
+                      </li>
+                    )
+                  })
+              }
             </ul>
           </nav>
         </aside>
@@ -151,9 +145,15 @@ const packageSchema = {
             <meta itemprop="url" content={`https://randsum.dev/packages/${pkg.id}/`} />
             <meta itemprop="softwareVersion" content="latest" />
           </header>
-          <div class="docs-header-border" style={`border-color: ${packageColor}`}></div>
+          <div
+            class={`docs-header-border ${isGradient ? 'docs-header-border-gradient' : ''}`}
+            style={isGradient ? `--border-gradient: ${packageColor};` : `border-color: ${packageColor}`}
+          ></div>
 
-          <div class="docs-body" style={`--package-color: ${packageColor}`}>
+          <div
+            class={`docs-body ${isGradient ? 'docs-body-gradient' : ''}`}
+            style={`--package-color: ${packageColor}; --package-is-gradient: ${isGradient ? '1' : '0'}`}
+          >
             <slot />
           </div>
         </article>
@@ -236,13 +236,44 @@ const packageSchema = {
     color: var(--color-text);
     font-weight: var(--font-weight-medium);
     border-bottom: var(--border-width) solid transparent;
-    transition: border-color var(--transition-fast);
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+    position: relative;
   }
 
-  .sidebar-link:hover,
-  .sidebar-link-active {
-    border-bottom-color: var(--color-border);
+  .sidebar-link:hover {
     font-weight: var(--font-weight-bold);
+    color: var(--link-color, var(--color-text));
+    border-bottom-color: var(--link-color, var(--color-border));
+  }
+
+  .sidebar-link-active {
+    font-weight: var(--font-weight-bold);
+    color: var(--current-package-color, var(--color-text));
+    border-bottom-color: var(--current-package-color, var(--color-border));
+  }
+
+  /* Apply gradient border and text for gradient colors on hover */
+  .sidebar-link-gradient:hover {
+    border-bottom: var(--border-width) solid transparent;
+    border-image: var(--link-gradient);
+    border-image-slice: 1;
+    background: var(--link-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Apply gradient border and text for active gradient links */
+  .sidebar-link-gradient.sidebar-link-active {
+    border-bottom: var(--border-width) solid transparent;
+    border-image: var(--current-package-color);
+    border-image-slice: 1;
+    background: var(--current-package-color);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .docs-main {
@@ -272,9 +303,30 @@ const packageSchema = {
     margin-bottom: var(--spacing-2xl);
   }
 
+  .docs-header-border-gradient {
+    border-bottom: var(--border-width-thick) solid transparent;
+    border-image: var(--border-gradient);
+    border-image-slice: 1;
+  }
+
   .docs-title {
     font-size: var(--font-size-5xl);
     margin-bottom: var(--spacing-sm);
+    transition: color var(--transition-fast);
+    cursor: default;
+  }
+
+  .docs-title:hover {
+    color: var(--package-color, var(--color-text));
+  }
+
+  /* For gradient colors, we can't use color directly, so use a background gradient with text clipping */
+  .docs-body-gradient .docs-title:hover {
+    background: var(--package-color);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .docs-package-name {
@@ -283,6 +335,21 @@ const packageSchema = {
     color: var(--color-text-alt);
     margin: 0 0 var(--spacing-md) 0;
     font-weight: var(--font-weight-bold);
+    transition: color var(--transition-fast);
+    cursor: default;
+  }
+
+  .docs-package-name:hover {
+    color: var(--package-color, var(--color-text-alt));
+  }
+
+  /* For gradient colors, use background gradient with text clipping */
+  .docs-body-gradient .docs-package-name:hover {
+    background: var(--package-color);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .docs-description {
@@ -301,6 +368,12 @@ const packageSchema = {
     margin-bottom: var(--spacing-lg);
     padding-bottom: var(--spacing-sm);
     border-bottom: var(--border-width-thick) solid var(--package-color, var(--color-border));
+  }
+
+  .docs-body-gradient :global(h2) {
+    border-bottom: var(--border-width-thick) solid transparent;
+    border-image: var(--package-color);
+    border-image-slice: 1;
   }
 
   .docs-body :global(h3) {

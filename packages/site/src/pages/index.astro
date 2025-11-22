@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import PackageCard from '../components/PackageCard.astro'
+import CodeExample from '../components/CodeExample.astro'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 ---
 
@@ -79,21 +80,30 @@ import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
       <div class="container">
         <div class="quick-start-box">
           <h2>Quick Start</h2>
-          <pre><code>{`npm install @randsum/roller
+          <CodeExample
+            code={`npm install @randsum/roller
 # or
-bun add @randsum/roller`}</code></pre>
-          <pre><code>{`import { roll } from '@randsum/roller';
+bun add @randsum/roller`}
+            language="bash"
+          />
+          <CodeExample
+            code={`import { roll } from '@randsum/roller';
 
 // Simple roll
 roll(20); // Returns 1-20
 
 // With notation
 roll('4d6L'); // Roll 4d6, drop lowest
-roll('2d20H'); // Roll with advantage`}</code></pre>
+roll('2d20H'); // Roll with advantage`}
+            language="typescript"
+          />
           <p>Or use directly from your terminal:</p>
-          <pre><code>{`npx randsum 2d20    # Roll two twenty-sided dice
+          <CodeExample
+            code={`npx randsum 2d20    # Roll two twenty-sided dice
 npx randsum 4d6L    # Character stat roll (drop lowest)
-npx randsum 2d20H   # Roll with advantage`}</code></pre>
+npx randsum 2d20H   # Roll with advantage`}
+            language="bash"
+          />
         </div>
       </div>
     </section>
@@ -267,15 +277,6 @@ npx randsum 2d20H   # Roll with advantage`}</code></pre>
     margin-bottom: var(--spacing-xl);
     color: var(--color-text);
     font-size: var(--font-size-3xl);
-  }
-
-  .quick-start-box pre {
-    margin: var(--spacing-lg) 0;
-    background-color: var(--color-bg-code);
-  }
-
-  .quick-start-box pre code {
-    color: #e2e8f0;
   }
 
   .quick-start-box p {

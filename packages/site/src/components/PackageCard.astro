@@ -7,9 +7,14 @@ interface Props {
 
 const { package: pkg } = Astro.props
 const packageColor = pkg.color || 'var(--color-border)'
+const isGradient = packageColor.includes('gradient')
 ---
 
-<a href={`/packages/${pkg.id}/`} class="package-card">
+<a
+  href={`/packages/${pkg.id}/`}
+  class={`package-card ${isGradient ? 'package-card-gradient' : ''}`}
+  style={isGradient ? `--package-gradient: ${packageColor};` : `--package-color: ${packageColor};`}
+>
   <div class="package-card-header" style={`border-color: ${packageColor}`}>
     <h3 class="package-card-title">{pkg.displayName}</h3>
     <span class="package-card-badge">{pkg.npmPackage}</span>
@@ -54,7 +59,15 @@ const packageColor = pkg.color || 'var(--color-border)'
   }
 
   .package-card:hover {
-    border-color: var(--color-border-accent);
+    border-color: var(--package-color, var(--color-border-accent));
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Apply gradient border for gradient colors on hover */
+  .package-card-gradient:hover {
+    border: var(--border-width) solid transparent;
+    border-image: var(--package-gradient);
+    border-image-slice: 1;
     box-shadow: var(--shadow-md);
   }
 

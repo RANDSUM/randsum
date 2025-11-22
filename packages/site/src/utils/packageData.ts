@@ -25,7 +25,7 @@ export const corePackages: PackageInfo[] = [
       'Core dice rolling engine with advanced notation support. The foundation of the RANDSUM ecosystem.',
     npmPackage: '@randsum/roller',
     category: 'core',
-    color: undefined,
+    color: 'linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
     features: [
       'Advanced dice notation (4d6L, 2d20H, etc.)',
       'Reroll modifiers',

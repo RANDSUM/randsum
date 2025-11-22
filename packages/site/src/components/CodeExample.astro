@@ -1,4 +1,6 @@
 ---
+import { codeToHtml } from 'shiki'
+
 interface Props {
   code: string
   language: 'typescript' | 'bash' | 'javascript' | 'json'
@@ -6,12 +8,28 @@ interface Props {
 }
 
 const { code, language, title } = Astro.props
+
+// Map language aliases to Shiki language IDs
+const languageMap: Record<string, string> = {
+  bash: 'shell',
+  typescript: 'typescript',
+  javascript: 'javascript',
+  json: 'json',
+}
+
+const shikiLanguage = languageMap[language] || language
+
+// Generate highlighted code HTML
+const highlightedCode = await codeToHtml(code, {
+  lang: shikiLanguage,
+  theme: 'github-dark',
+})
 ---
 
 <div class="code-example">
   {title && <h4 class="code-example-title">{title}</h4>}
   <div class="code-example-content">
-    <pre class={`language-${language}`}><code class={`language-${language}`}>{code}</code></pre>
+    <Fragment set:html={highlightedCode} />
   </div>
 </div>
 
@@ -43,26 +61,25 @@ const { code, language, title } = Astro.props
     padding: 0;
     border: none;
     box-shadow: none;
-    background: transparent;
+    background: transparent !important;
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    overflow-x: auto;
   }
 
-  .code-example-content :global(pre) {
-    margin: 0;
+  .code-example-content :global(pre code) {
+    display: block;
     padding: 0;
-    border: none;
-    box-shadow: none;
-    background: transparent;
+    background: transparent !important;
     font-family: var(--font-family-mono);
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
-    white-space: pre-wrap;
-    word-wrap: break-word;
   }
 
-  .code-example-content :global(code) {
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-relaxed);
-    color: #e2e8f0; /* light text for dark code background */
+  /* Ensure Shiki's inline styles work properly */
+  .code-example-content :global(.shiki) {
+    background: transparent !important;
+    padding: 0;
   }
 </style>
