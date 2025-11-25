@@ -31,14 +31,22 @@ export function rollTable(
     throw new Error(`Failed to get result from table: "${tableName}"`)
   }
 
+  // After success check, TypeScript should narrow but we need to help it
+  // Access properties directly from tableResult which is now known to be success case
   const { result, key } = tableResult
+
+  // Some tables have both label and value (e.g., Core Mechanic)
+  // Others only have value (e.g., Quirks) - value becomes the label
+  const resultTyped = result as { label?: string; value?: string }
+  const label = resultTyped.label ?? resultTyped.value ?? ''
+  const description = resultTyped.label ? (resultTyped.value ?? '') : ''
 
   return {
     rolls,
     result: {
       key,
-      label: result.label ?? '',
-      description: result.value,
+      label,
+      description,
       table: tableData,
       tableName,
       roll: total

@@ -1,6 +1,6 @@
 {
   "name": "@randsum/salvageunion",
-  "version": "0.41.0",
+  "version": "0.42.0",
   "description": "A flexible, type-safe dice roller for the Salvage Union system",
   "private": false,
   "author": {
@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "@randsum/roller": "workspace:~",
-    "salvageunion-reference": "2.3.4"
+    "salvageunion-reference": "2.3.5"
   },
   "exports": {
     ".": {
@@ -58,6 +58,7 @@
   ],
   "scripts": {
     "build": "bunup --entry src/index.ts --format esm,cjs --minify --sourcemap external --target node --clean && tsc --emitDeclarationOnly",
+    "prepublishOnly": "bun run build",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
