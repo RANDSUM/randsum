@@ -5,7 +5,7 @@
     "": {
       "name": "randsum-monorepo",
       "dependencies": {
-        "salvageunion-reference": "2.3.2",
+        "salvageunion-reference": "2.3.3",
       },
       "devDependencies": {
         "@eslint/js": "9.39.1",
@@ -71,10 +71,10 @@
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.38.0",
+      "version": "0.39.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
-        "salvageunion-reference": "^2.0.0",
+        "salvageunion-reference": "latest",
       },
     },
     "packages/site": {
@@ -1792,7 +1792,7 @@
 
     "safer-buffer": ["safer-buffer@2.1.2", "", {}, "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="],
 
-    "salvageunion-reference": ["salvageunion-reference@2.3.2", "", {}, "sha512-2R5azlc+ZX9WSHcSnCWFjsNs3LXRwDhI14fzhqxoA3aGFzLOqRfeBD5TJazEW0GRVtoyJ69xEOw9alSfmMIn2w=="],
+    "salvageunion-reference": ["salvageunion-reference@2.3.3", "", {}, "sha512-LmzgB+rX1a4HfyBC7AsumJQXk5RXSA1VexEA4SmWMBcUo/xGvPJ3sEEd3A0Fz7jP+UUMwnuq0i8wZ7sf7uXu8w=="],
 
     "sass-formatter": ["sass-formatter@0.7.9", "", { "dependencies": { "suf-log": "^2.5.3" } }, "sha512-CWZ8XiSim+fJVG0cFLStwDvft1VI7uvXdCNJYXhDvowiv+DsbD1nXLiQ4zrE5UBvj5DWZJ93cwN0NX5PMsr1Pw=="],
 
