@@ -30,7 +30,6 @@ export default tseslint.config(
       '*.lock',
       'eslint.config.js',
       '**/.bunup-dts-*',
-      '.robo',
       '**/*.d.ts',
       '**/tsconfig.tsbuildinfo',
       '**/bun.lockb',
