@@ -34,8 +34,8 @@ export function rollTable(
     rolls,
     result: {
       key,
-      label: label as string,
-      description: value as string,
+      label: label ?? '',
+      description: value,
       table: tableData,
       tableName,
       roll: total
