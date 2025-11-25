@@ -71,7 +71,7 @@
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "0.37.0",
+      "version": "0.38.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
         "salvageunion-reference": "^2.0.0",
