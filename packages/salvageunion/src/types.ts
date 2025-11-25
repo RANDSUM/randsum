@@ -1,30 +1,9 @@
-import type { SURefMetaTable } from 'salvageunion-reference'
+import type { SURefObjectTable } from 'salvageunion-reference'
+import { SalvageUnionReference } from 'salvageunion-reference'
 
-export const SALVAGE_UNION_TABLE_NAMES: readonly string[] = [
-  'NPC Action',
-  'Reaction Roll',
-  'Morale',
-  'Core Mechanic',
-  'Group Initiative',
-  'Retreat',
-  'Critical Damage',
-  'Critical Injury',
-  'Reactor Overload',
-  'Area Salvage',
-  'Mech Salvage',
-  'Crawler Deterioration',
-  'Crawler Damage',
-  'Crawler Destruction',
-  'Keepsake',
-  'Motto',
-  'Pilot Appearance',
-  'A.I. Personality',
-  'Quirks',
-  'Mech Appearance',
-  'Mech Pattern Names',
-  'Crawler Name',
-  'Mechapult'
-] as const
+// Extract table names from RollTables
+export const SALVAGE_UNION_TABLE_NAMES: readonly string[] =
+  SalvageUnionReference.RollTables.all().map(t => t.name) as readonly string[]
 
 export type SalvageUnionTableName = (typeof SALVAGE_UNION_TABLE_NAMES)[number]
 
@@ -38,6 +17,6 @@ export interface SalvageUnionRollRecord {
   key: string
   description: string
   tableName: SalvageUnionTableName
-  table: SURefMetaTable
+  table: SURefObjectTable
   roll: number
 }
