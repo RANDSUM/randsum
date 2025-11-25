@@ -43,5 +43,6 @@
   ],
   "dependencies": {
     "salvageunion-reference": "2.3.2"
-  }
+  },
+  "version": "0.1.0"
 }
