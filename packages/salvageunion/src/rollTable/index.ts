@@ -25,17 +25,20 @@ export function rollTable(
   })
 
   const tableData = tableDataForTable(tableName)
-  const {
-    result: { label, value },
-    key
-  } = resultForTable(tableData, total)
+  const tableResult = resultForTable(tableData, total)
+
+  if (!tableResult.success) {
+    throw new Error(`Failed to get result from table: "${tableName}"`)
+  }
+
+  const { result, key } = tableResult
 
   return {
     rolls,
     result: {
       key,
-      label: label ?? '',
-      description: value,
+      label: result.label ?? '',
+      description: result.value,
       table: tableData,
       tableName,
       roll: total
