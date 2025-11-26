@@ -29,7 +29,7 @@ This repository contains multiple packages and applications for dice rolling and
 ### Applications
 
 - **[@randsum/mcp](packages/mcp)** - Model Context Protocol server for AI integration
-- **[@randsum/robo](packages/robo)** - Discord bot with dice rolling capabilities using Robo.js
+- **[@randsum/robo](https://github.com/RANDSUM/robo)** - Discord bot with dice rolling capabilities using Robo.js (standalone repository)
 - **[@randsum/site](packages/site)** - Documentation and marketing website built with Astro
 
 All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.

@@ -1,4 +1,4 @@
-import type { SURefMetaTable } from 'salvageunion-reference'
+import type { SURefObjectTable } from 'salvageunion-reference'
 import { SalvageUnionReference, resultForTable } from 'salvageunion-reference'
 import type {
   SalvageUnionRollRecord,
@@ -8,15 +8,7 @@ import type {
 import type { RollRecord, RollResult } from '@randsum/roller'
 import { roll } from '@randsum/roller'
 
-function tableDataForTable(tableName: SalvageUnionTableName): SURefMetaTable {
-  if (tableName === 'Mechapult') {
-    const system = SalvageUnionReference.Systems.find(sys => sys.name === tableName)
-    if (!system || !system.actions[0]?.table) {
-      throw new Error(`Invalid Salvage Union table name: "${tableName}"`)
-    }
-    return system.actions[0].table
-  }
-
+function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {
   const rollTable = SalvageUnionReference.RollTables.find(t => t.name === tableName)
   if (!rollTable?.table) {
     throw new Error(`Invalid Salvage Union table name: "${tableName}"`)
@@ -33,17 +25,27 @@ export function rollTable(
   })
 
   const tableData = tableDataForTable(tableName)
-  const { result, key } = resultForTable(tableData, total)
+  const tableResult = resultForTable(tableData, total)
 
-  const [label, ...rest] = result.split(':')
+  if (!tableResult.success) {
+    throw new Error(`Failed to get result from table: "${tableName}"`)
+  }
 
-  const description = rest.join(':').trim()
+  // After success check, TypeScript should narrow but we need to help it
+  // Access properties directly from tableResult which is now known to be success case
+  const { result, key } = tableResult
+
+  // Some tables have both label and value (e.g., Core Mechanic)
+  // Others only have value (e.g., Quirks) - value becomes the label
+  const resultTyped = result as { label?: string; value?: string }
+  const label = resultTyped.label ?? resultTyped.value ?? ''
+  const description = resultTyped.label ? (resultTyped.value ?? '') : ''
 
   return {
     rolls,
     result: {
       key,
-      label: String(label).trim(),
+      label,
       description,
       table: tableData,
       tableName,
