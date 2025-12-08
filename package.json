@@ -13,7 +13,7 @@
     "prettier-plugin-astro": "0.14.1",
     "ts-unused-exports": "11.0.1",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.48.1"
+    "typescript-eslint": "8.49.0"
   },
   "engines": {
     "node": ">=18.0.0",
