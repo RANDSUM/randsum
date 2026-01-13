@@ -64,9 +64,7 @@
     "randsum"
   ],
   "bin": "./bin/randsum",
-  "dependencies": {
-    "@randsum/shared": "workspace:~"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@randsum/test-utils": "workspace:~",
     "fast-check": "catalog:"

@@ -2,7 +2,7 @@ import { isDiceNotation } from './isDiceNotation'
 import type { ValidValidationResult, ValidationError, ValidationResult } from './types'
 import { optionsToDescription, optionsToNotation } from './lib/transformers'
 import { notationToOptions } from './lib/notation'
-import { error, success } from '@randsum/shared'
+import { error, success } from './shared'
 
 /**
  * Validates dice notation and returns parsed information.

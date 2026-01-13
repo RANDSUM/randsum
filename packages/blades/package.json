@@ -27,8 +27,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@randsum/roller": "workspace:~",
-    "@randsum/shared": "workspace:~"
+    "@randsum/roller": "workspace:~"
   },
   "exports": {
     ".": {

@@ -1,6 +1,5 @@
-import type { RollRecord } from '@randsum/roller'
+import type { RollRecord, GameRollResult } from '@randsum/roller'
 import { roll } from '@randsum/roller'
-import type { GameRollResult } from '@randsum/shared'
 import type { DaggerheartRollArgument, DaggerheartRollResult } from '../types'
 import { calculateType } from './calculateType'
 

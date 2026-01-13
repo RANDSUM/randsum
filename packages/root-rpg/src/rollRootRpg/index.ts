@@ -1,7 +1,5 @@
-import type { RollRecord } from '@randsum/roller'
-import { roll } from '@randsum/roller'
-import type { GameRollResult } from '@randsum/shared'
-import { validateFinite, validateRange } from '@randsum/shared'
+import type { RollRecord, GameRollResult } from '@randsum/roller'
+import { roll, validateFinite, validateRange } from '@randsum/roller'
 import type { RootRpgRollResult } from '../types'
 import { interpretResult } from './interpretResult'
 

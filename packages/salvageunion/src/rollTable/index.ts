@@ -5,9 +5,8 @@ import type {
   SalvageUnionTableListing,
   SalvageUnionTableName
 } from '../types'
-import type { RollRecord } from '@randsum/roller'
+import type { RollRecord, GameRollResult } from '@randsum/roller'
 import { roll } from '@randsum/roller'
-import type { GameRollResult } from '@randsum/shared'
 
 function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {
   const rollTable = SalvageUnionReference.RollTables.find(t => t.name === tableName)

@@ -28,7 +28,6 @@
   ],
   "dependencies": {
     "@randsum/roller": "workspace:~",
-    "@randsum/shared": "workspace:~",
     "salvageunion-reference": "2.3.5"
   },
   "exports": {

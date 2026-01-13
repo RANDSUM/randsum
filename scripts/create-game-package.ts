@@ -66,8 +66,7 @@ const packageJson = {
   'react-native': './src/index.ts',
   files: ['dist', 'src', 'LICENSE', 'README.md'],
   dependencies: {
-    '@randsum/roller': 'workspace:~',
-    '@randsum/shared': 'workspace:~'
+    '@randsum/roller': 'workspace:~'
   },
   exports: {
     '.': {
@@ -130,9 +129,8 @@ export interface ${pascalName}RollResult {
 writeFileSync(join(packageDir, 'src', 'types.ts'), typesTs)
 
 // src/roll${pascalName}/index.ts
-const rollIndexTs = `import type { RollRecord } from '@randsum/roller'
+const rollIndexTs = `import type { RollRecord, GameRollResult } from '@randsum/roller'
 import { roll } from '@randsum/roller'
-import type { GameRollResult } from '@randsum/shared'
 import type { ${pascalName}RollArgument, ${pascalName}RollResult } from '../types'
 
 export function roll${pascalName}(

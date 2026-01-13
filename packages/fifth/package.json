@@ -27,8 +27,7 @@
   "sideEffects": false,
   "type": "module",
   "dependencies": {
-    "@randsum/roller": "workspace:~",
-    "@randsum/shared": "workspace:~"
+    "@randsum/roller": "workspace:~"
   },
   "devDependencies": {
     "@randsum/test-utils": "workspace:~"

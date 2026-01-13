@@ -2,7 +2,7 @@
 // Error Types
 // ============================================================================
 
-import { RandsumError } from '@randsum/shared'
+import { RandsumError } from './shared'
 
 export class NotationParseError extends RandsumError {
   constructor(notation: string, reason: string) {

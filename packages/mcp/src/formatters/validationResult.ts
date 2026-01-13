@@ -1,5 +1,5 @@
 import type { ValidationResult } from '@randsum/roller'
-import { isError } from '@randsum/shared'
+import { isError } from '@randsum/roller'
 
 export function formatValidationResult(result: ValidationResult): string {
   if (isError(result)) {

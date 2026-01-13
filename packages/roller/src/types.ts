@@ -134,8 +134,8 @@ export interface ValidationError {
   argument: string
 }
 
-// Validation result using Result pattern from @randsum/shared
-import type { Result } from '@randsum/shared'
+// Validation result using Result pattern
+import type { Result } from './shared'
 export type ValidationResult = Result<ValidValidationResult, ValidationError>
 
 // ============================================================================

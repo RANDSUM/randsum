@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import { roll, validateNotation } from '@randsum/roller'
-import { isSuccess } from '@randsum/shared'
+import { roll, validateNotation, isSuccess } from '@randsum/roller'
 
 const args = process.argv.slice(2)
 

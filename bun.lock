@@ -111,7 +111,7 @@
         "shiki": "^3.15.0",
       },
     },
-    "packages/test-utils": {
+    "test-utils": {
       "name": "@randsum/test-utils",
       "version": "0.1.0",
       "dependencies": {
@@ -639,7 +639,7 @@
 
     "@randsum/site": ["@randsum/site@workspace:packages/site"],
 
-    "@randsum/test-utils": ["@randsum/test-utils@workspace:packages/test-utils"],
+    "@randsum/test-utils": ["@randsum/test-utils@workspace:test-utils"],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.27", "", {}, "sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA=="],
 
