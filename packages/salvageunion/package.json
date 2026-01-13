@@ -19,7 +19,6 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "source": "./src/index.ts",
   "react-native": "./src/index.ts",
   "files": [
     "dist",
@@ -29,6 +28,7 @@
   ],
   "dependencies": {
     "@randsum/roller": "workspace:~",
+    "@randsum/shared": "workspace:~",
     "salvageunion-reference": "2.3.5"
   },
   "exports": {
@@ -45,7 +45,8 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
   },
   "keywords": [
     "dice",
@@ -57,7 +58,7 @@
     "salvage-union"
   ],
   "scripts": {
-    "build": "bunup --entry src/index.ts --format esm,cjs --minify --sourcemap external --target node --clean && tsc --emitDeclarationOnly",
+    "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "prepublishOnly": "bun run build",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",

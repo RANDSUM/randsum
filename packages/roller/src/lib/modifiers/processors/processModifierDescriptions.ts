@@ -1,6 +1,6 @@
 import type { ModifierOptions } from '../../../types'
 import { MODIFIER_ORDER } from '../constants'
-import { modifierToDescription } from '../modifierToDescription'
+import { modifierToDescription } from '../format'
 
 export function processModifierDescriptions(modifiers: ModifierOptions | undefined): string[] {
   if (!modifiers) return []

@@ -11,18 +11,21 @@ Daggerheart uses hope and fear dice mechanics with advantage/disadvantage.
 Rolls a Daggerheart action roll.
 
 **Parameters:**
+
 - `rollingWith`: `'Advantage' | 'Disadvantage' | undefined`
 - `amplifyHope`: `boolean` - Use d20 instead of d12 for hope
 - `amplifyFear`: `boolean` - Use d20 instead of d12 for fear
 - `modifier`: `number` - Additional modifier to total
 
 **Returns:**
+
 - `result`: `DaggerheartRollResult` - Game-specific result
 - `rolls`: Array of `RollRecord` from core roller
 
 ## Result Structure
 
 `DaggerheartRollResult` includes:
+
 - `total`: Final roll total (includes modifier)
 - `type`: Success type calculated from hope/fear comparison
 - `details`:
@@ -47,10 +50,11 @@ export type {
   DaggerheartRollResult,
   DaggerheartRollResultType,
   DaggerheartAdvantageDisadvantage
-} from './types'
+} from "./types"
 ```
 
 Also re-exports core types from `@randsum/roller`:
+
 - `roll`, `validateNotation`
 - `RollArgument`, `RollerRollResult`, `ValidationResult`
 

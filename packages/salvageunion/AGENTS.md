@@ -11,15 +11,18 @@ Salvage Union uses table-based mechanics with d20 rolls.
 Rolls on a Salvage Union table.
 
 **Parameters:**
+
 - `tableName`: Optional table name (defaults to `'Core Mechanic'`)
 
 **Returns:**
+
 - `result`: `SalvageUnionRollRecord` - Table result with metadata
 - `rolls`: Array of `RollRecord` from core roller
 
 ## Result Structure
 
 `SalvageUnionRollRecord` includes:
+
 - `key`: Table result key
 - `label`: Result label
 - `description`: Result description (if available)
@@ -30,6 +33,7 @@ Rolls on a Salvage Union table.
 ## External Dependency
 
 Uses `salvageunion-reference` package:
+
 - `SalvageUnionReference.RollTables` - Available tables
 - `resultForTable(tableData, roll)` - Lookup function
 
@@ -48,7 +52,7 @@ export type {
   SalvageUnionRollRecord,
   SalvageUnionTableListing,
   SalvageUnionTableName
-} from './types'
+} from "./types"
 ```
 
 ## Testing
@@ -56,6 +60,7 @@ export type {
 Test file: `__tests__/rollTable.test.ts`
 
 Tests cover:
+
 - Different table types
 - Invalid table names
 - Result structure validation

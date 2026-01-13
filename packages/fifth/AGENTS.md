@@ -11,10 +11,12 @@ Dungeons & Dragons 5th Edition d20 system with advantage/disadvantage.
 Rolls a D&D 5e action roll (attack, skill check, save).
 
 **Parameters:**
+
 - `rollingWith`: `'Advantage' | 'Disadvantage' | undefined`
 - `modifier`: `number` - Ability/skill modifier
 
 **Returns:**
+
 - Standard `RollerRollResult` from core roller
 - Total includes modifier
 
@@ -32,13 +34,11 @@ Rolls a D&D 5e action roll (attack, skill check, save).
 ## Type Exports
 
 ```typescript
-export type {
-  FifthRollArgument,
-  FifthAdvantageDisadvantage
-} from './types'
+export type { FifthRollArgument, FifthAdvantageDisadvantage } from "./types"
 ```
 
 Also re-exports core types from `@randsum/roller`:
+
 - `roll`, `validateNotation`
 - `RollArgument`, `RollerRollResult`, `ValidationResult`
 
@@ -47,6 +47,7 @@ Also re-exports core types from `@randsum/roller`:
 Test file: `__tests__/actionRoll.test.ts`
 
 Tests cover:
+
 - Advantage rolls (2d20 drop lowest)
 - Disadvantage rolls (2d20 drop highest)
 - Normal rolls (1d20)

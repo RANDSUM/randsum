@@ -124,9 +124,7 @@ describe('rollTable', () => {
         result: ['10']
       }
 
-      const rollSpy = spyOn(roller, 'roll').mockReturnValue(
-        mockRollResult as unknown as RollerRollResult
-      )
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult as RollerRollResult)
 
       const { result } = rollTable('Core Mechanic')
 
@@ -173,9 +171,7 @@ describe('rollTable', () => {
         result: ['15']
       }
 
-      const rollSpy = spyOn(roller, 'roll').mockReturnValue(
-        mockRollResult as unknown as RollerRollResult
-      )
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult as RollerRollResult)
 
       const { result } = rollTable('Quirks')
 

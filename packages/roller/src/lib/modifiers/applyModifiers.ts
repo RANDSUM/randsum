@@ -1,4 +1,5 @@
 import type { ModifierOptions, NumericRollBonus, RequiredNumericRollParameters } from '../../types'
+import { ModifierError } from '../../errors'
 import { MODIFIER_HANDLERS } from './transformers/modifierHandlers'
 
 export function applyModifiers(
@@ -14,7 +15,7 @@ export function applyModifiers(
 
   const handler = MODIFIER_HANDLERS.get(type)
   if (!handler) {
-    throw new Error(`Unknown modifier type: ${type}`)
+    throw new ModifierError(type, `Unknown modifier type: ${type}`)
   }
 
   return handler(bonus, options, rollOne, context)

@@ -5,8 +5,9 @@ import type {
   SalvageUnionTableListing,
   SalvageUnionTableName
 } from '../types'
-import type { RollRecord, RollResult } from '@randsum/roller'
+import type { RollRecord } from '@randsum/roller'
 import { roll } from '@randsum/roller'
+import type { GameRollResult } from '@randsum/shared'
 
 function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {
   const rollTable = SalvageUnionReference.RollTables.find(t => t.name === tableName)
@@ -19,7 +20,11 @@ function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {
 
 export function rollTable(
   tableName: SalvageUnionTableName = 'Core Mechanic'
-): RollResult<SalvageUnionRollRecord, RollRecord<SalvageUnionTableListing | string>> {
+): GameRollResult<
+  SalvageUnionRollRecord,
+  undefined,
+  RollRecord<SalvageUnionTableListing | string>
+> {
   const { total, rolls } = roll({
     sides: 20
   })
@@ -43,6 +48,7 @@ export function rollTable(
 
   return {
     rolls,
+    total,
     result: {
       key,
       label,

@@ -9,6 +9,7 @@ The core package provides the `roll()` function and dice notation parsing. All o
 ### `roll(...args: RollArgument[]): RollerRollResult`
 
 Main entry point for rolling dice. Accepts:
+
 - Number: `roll(20)` - Roll 1d20
 - String notation: `roll("4d6L")` - Parse notation
 - Options object: `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`
@@ -27,6 +28,7 @@ Type guard to check if string is valid dice notation.
 See `RANDSUM_DICE_NOTATION.md` in this package for complete syntax.
 
 Key patterns:
+
 - `NdS` - Basic roll (N dice, S sides)
 - `NdS+X` - Add modifier
 - `NdSL` - Drop lowest
@@ -41,6 +43,7 @@ Key patterns:
 Modifiers are applied in order: reroll → explode → replace → drop → cap → arithmetic
 
 Modifier options are defined in `ModifierOptions` type:
+
 - `reroll`: Conditional rerolling
 - `explode`: Cascade rolling on max
 - `replace`: Replace values
@@ -52,6 +55,7 @@ Modifier options are defined in `ModifierOptions` type:
 ## Type Exports
 
 All types are exported with `export type`:
+
 - `RollArgument<T>` - Input type
 - `RollerRollResult<T>` - Return type
 - `RollOptions<T>` - Configuration options

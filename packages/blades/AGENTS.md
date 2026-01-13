@@ -11,9 +11,11 @@ Forged in the Dark system. Dice pool mechanics with position/effect.
 Rolls a Blades in the Dark action roll.
 
 **Parameters:**
+
 - `count`: Number of dice in pool (typically 0-4, max 10)
 
 **Returns:**
+
 - `result`: `BladesResult` - Outcome type
 - `total`: Sum of dice
 - `rolls`: Array of `RollRecord` from core roller
@@ -21,6 +23,7 @@ Rolls a Blades in the Dark action roll.
 ## Result Interpretation
 
 `BladesResult` type:
+
 - `"critical"` - Multiple 6s (critical success)
 - `"success"` - Highest die is 4-6 (full success)
 - `"partial"` - Highest die is 1-3 (partial success/complication)
@@ -36,7 +39,7 @@ Rolls a Blades in the Dark action roll.
 ## Type Exports
 
 ```typescript
-export type { BladesResult } from './types'
+export type { BladesResult } from "./types"
 ```
 
 Game-specific types only, core types imported from `@randsum/roller` as needed.
@@ -46,6 +49,7 @@ Game-specific types only, core types imported from `@randsum/roller` as needed.
 Test file: `__tests__/rollBlades.test.ts`
 
 Tests cover:
+
 - Different dice pool sizes (0-10)
 - Result interpretation
 - Input validation (non-integer, negative, too large)

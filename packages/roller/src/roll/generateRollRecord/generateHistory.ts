@@ -1,3 +1,4 @@
+import type { RandomFn } from '../../lib/random'
 import { coreRandom } from '../../lib/random'
 import { MODIFIER_ORDER } from '../../lib/modifiers/constants'
 import type { NumericRollBonus, RollParams, RollRecord } from '../../types'
@@ -5,7 +6,8 @@ import { applyModifiers } from '../../lib/modifiers'
 
 export function generateHistory<T>(
   { sides, quantity = 1, modifiers = {} }: RollParams<T>,
-  rolls: RollRecord<T>['modifierHistory']['initialRolls']
+  rolls: RollRecord<T>['modifierHistory']['initialRolls'],
+  rng?: RandomFn
 ): RollRecord<T>['modifierHistory'] {
   const hasModifiers = MODIFIER_ORDER.some(key => modifiers[key] !== undefined)
 
@@ -18,7 +20,7 @@ export function generateHistory<T>(
     }
   }
 
-  const rollOne = (): number => coreRandom(sides)
+  const rollOne = (): number => coreRandom(sides, rng)
 
   const rollParams = { sides, quantity }
 

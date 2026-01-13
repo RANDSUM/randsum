@@ -1,5 +1,6 @@
-import type { RollRecord, RollResult } from '@randsum/roller'
+import type { RollRecord } from '@randsum/roller'
 import { roll } from '@randsum/roller'
+import type { GameRollResult } from '@randsum/shared'
 import type { DaggerheartRollArgument, DaggerheartRollResult } from '../types'
 import { calculateType } from './calculateType'
 
@@ -8,7 +9,11 @@ export function rollDaggerheart({
   amplifyHope = false,
   amplifyFear = false,
   modifier = 0
-}: DaggerheartRollArgument): RollResult<DaggerheartRollResult> {
+}: DaggerheartRollArgument): GameRollResult<
+  DaggerheartRollResult['type'],
+  DaggerheartRollResult['details'],
+  RollRecord
+> {
   const isAdvantage = rollingWith === 'Advantage'
   const hopeRollOptions = {
     sides: amplifyHope ? 20 : 12,
@@ -46,18 +51,19 @@ export function rollDaggerheart({
       }
     : undefined
 
+  const resultType = calculateType(hopeRoll.total, fearRoll.total)
+  const details = {
+    hope: digestHopeFearTotal(hopeRoll),
+    fear: digestHopeFearTotal(fearRoll),
+    advantage,
+    modifier
+  }
+
   return {
-    ...rollResult,
-    result: {
-      total: rollResult.total + modifier,
-      type: calculateType(hopeRoll.total, fearRoll.total),
-      details: {
-        hope: digestHopeFearTotal(hopeRoll),
-        fear: digestHopeFearTotal(fearRoll),
-        advantage,
-        modifier
-      }
-    }
+    rolls: rollResult.rolls,
+    total: rollResult.total + modifier,
+    result: resultType,
+    details
   }
 }
 

@@ -11,21 +11,25 @@ Root RPG uses 2d6 + bonus mechanic with success thresholds.
 Rolls a Root RPG action roll.
 
 **Parameters:**
+
 - `bonus`: Number from -20 to +20 (validated)
 
 **Returns:**
+
 - `result`: `RootRpgRollResult` - Game-specific result
 - `rolls`: Array of `RollRecord` from core roller
 
 ## Result Structure
 
 `RootRpgRollResult` includes:
+
 - `hit`: `boolean` - Whether roll succeeded
 - `total`: Final roll total (2d6 + bonus)
 
 ## Success Threshold
 
 Hit interpretation in `interpretResult()`:
+
 - Total determines success/failure based on Root RPG mechanics
 - Bonus added to 2d6 roll result
 
@@ -39,7 +43,7 @@ Hit interpretation in `interpretResult()`:
 ## Type Exports
 
 ```typescript
-export type { RootRpgRollResult } from './types'
+export type { RootRpgRollResult } from "./types"
 ```
 
 ## Testing
@@ -47,6 +51,7 @@ export type { RootRpgRollResult } from './types'
 Test file: `__tests__/rollRootRpg.test.ts`
 
 Tests cover:
+
 - Valid bonus ranges
 - Invalid input validation
 - Hit result interpretation

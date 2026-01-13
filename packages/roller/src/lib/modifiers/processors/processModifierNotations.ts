@@ -1,6 +1,6 @@
 import type { ModifierOptions } from '../../../types'
 import { MODIFIER_ORDER } from '../constants'
-import { modifierToNotation } from '../modifierToNotation'
+import { modifierToNotation } from '../format'
 
 export function processModifierNotations(modifiers: ModifierOptions | undefined): string {
   if (!modifiers) return ''

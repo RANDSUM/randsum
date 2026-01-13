@@ -28,6 +28,7 @@ src/pages/
 ## React Integration
 
 Uses `@astrojs/react` for React components:
+
 - Components can use React
 - Prefer Astro components when possible
 - React for interactive features
@@ -41,6 +42,7 @@ Uses `@astrojs/react` for React components:
 ## Package Data
 
 Package metadata defined in `src/utils/packageData.ts`:
+
 - `corePackages` - Core packages array
 - `gamePackages` - Game system packages
 - `toolPackages` - Tool packages
@@ -48,6 +50,7 @@ Package metadata defined in `src/utils/packageData.ts`:
 ## Styling
 
 CSS files in `src/styles/`:
+
 - Uses CSS custom properties for theming
 - Responsive design patterns
 - Consistent spacing via CSS variables

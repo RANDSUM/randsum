@@ -1,11 +1,15 @@
 export { roll } from './roll'
 export { validateNotation } from './validateNotation'
 export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from './lib/transformers'
-export { isDiceNotation } from './isDiceNotation'
+export { isDiceNotation, notation } from './isDiceNotation'
+export type { RandomFn } from './lib/random'
+export { RandsumError } from '@randsum/shared'
+export { NotationParseError, ModifierError, ValidationErrorClass, RollError } from './errors'
 
 export type {
   DiceNotation,
   RollArgument,
+  RollConfig,
   RollOptions,
   RequiredNumericRollParameters,
   ComparisonOptions,
@@ -23,5 +27,6 @@ export type {
   RollerRollResult,
   InvalidValidationResult,
   ValidValidationResult,
-  ValidationResult
+  ValidationResult,
+  ValidationError
 } from './types'

@@ -7,6 +7,7 @@ MCP server exposing RANDSUM dice rolling capabilities to AI agents (Claude, Chat
 ## MCP SDK Patterns
 
 Uses `@modelcontextprotocol/sdk`:
+
 - `McpServer` - Main server class
 - `StdioServerTransport` - Default transport (stdin/stdout)
 - `StreamableHTTPServerTransport` - HTTP transport
@@ -15,11 +16,13 @@ Uses `@modelcontextprotocol/sdk`:
 ## Tool Registration
 
 Tools are registered with `server.tool()`:
+
 ```typescript
 server.tool('tool-name', 'description', schema.shape, async handler)
 ```
 
 Tools use Zod schemas for validation. Schemas should:
+
 - Use `.describe()` for parameter documentation
 - Include examples in descriptions
 - Validate input types strictly
@@ -27,6 +30,7 @@ Tools use Zod schemas for validation. Schemas should:
 ## Transport Modes
 
 Three transport modes supported (via CLI flag `--transport`):
+
 - `stdio` (default) - Standard input/output
 - `http` - HTTP server (port 3000 default)
 - `sse` - Server-Sent Events (port 3000 default)
@@ -44,6 +48,7 @@ Three transport modes supported (via CLI flag `--transport`):
 ## Server Instructions
 
 Server instructions are defined in `createServerInstance()`. They provide:
+
 - Overview of capabilities
 - Tool descriptions
 - Notation examples
@@ -54,6 +59,7 @@ See `docs/server-instructions.md` for the full instruction text.
 ## Version Management
 
 Version is read from `package.json` at runtime via `getPackageVersion()`:
+
 - In development: reads from source `package.json`
 - In production: reads from built `dist/../package.json`
 

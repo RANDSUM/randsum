@@ -1,16 +1,15 @@
-import type { RollResult } from '@randsum/roller'
+import type { RollRecord } from '@randsum/roller'
 import { roll } from '@randsum/roller'
+import type { GameRollResult } from '@randsum/shared'
+import { validateFinite, validateRange } from '@randsum/shared'
 import type { RootRpgRollResult } from '../types'
 import { interpretResult } from './interpretResult'
 
-export function rollRootRpg(bonus: number): RollResult<RootRpgRollResult> {
-  if (!Number.isFinite(bonus)) {
-    throw new Error(`Root RPG bonus must be a finite number, received: ${bonus}`)
-  }
-
-  if (bonus < -20 || bonus > 20) {
-    throw new Error(`Root RPG bonus is outside reasonable range (-20 to +20), received: ${bonus}`)
-  }
+export function rollRootRpg(
+  bonus: number
+): GameRollResult<RootRpgRollResult['hit'], undefined, RollRecord> {
+  validateFinite(bonus, 'Root RPG bonus')
+  validateRange(bonus, -20, 20, 'Root RPG bonus')
 
   const rollResult = roll({
     quantity: 2,
@@ -19,10 +18,8 @@ export function rollRootRpg(bonus: number): RollResult<RootRpgRollResult> {
   })
 
   return {
-    ...rollResult,
-    result: {
-      hit: interpretResult(rollResult.total),
-      total: rollResult.total
-    }
+    rolls: rollResult.rolls,
+    total: rollResult.total,
+    result: interpretResult(rollResult.total)
   }
 }

@@ -1,0 +1,59 @@
+{
+  "name": "@randsum/test-utils",
+  "version": "0.1.0",
+  "description": "Shared test utilities for RANDSUM packages",
+  "private": true,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/RANDSUM/randsum",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/test-utils"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@randsum/roller": "workspace:~"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:"
+  },
+  "scripts": {
+    "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
+    "test": "bun test",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "typecheck": "tsc --noEmit"
+  }
+}

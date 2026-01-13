@@ -24,6 +24,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.14.0",
     "@randsum/roller": "workspace:~",
+    "@randsum/shared": "workspace:~",
     "commander": "^12.1.0",
     "zod": "^3.25.71"
   },
@@ -49,7 +50,7 @@
     "randsum-mcp": "dist/index.js"
   },
   "scripts": {
-    "build": "bunup --entry src/index.ts --format esm --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
+    "build": "bunup --entry src/index.ts --format esm --dts --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

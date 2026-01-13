@@ -94,4 +94,38 @@ describe('actionRoll', () => {
       expect(result.rolls[0]?.total).toBe(Number(rawRoll) + args.modifier)
     })
   })
+
+  describe('input validation', () => {
+    test('throws error for NaN modifier', () => {
+      expect(() => actionRoll({ modifier: NaN })).toThrow(
+        '5E modifier must be a finite number, received: NaN'
+      )
+    })
+
+    test('throws error for Infinity modifier', () => {
+      expect(() => actionRoll({ modifier: Infinity })).toThrow(
+        '5E modifier must be a finite number, received: Infinity'
+      )
+    })
+
+    test('throws error for modifier too high', () => {
+      expect(() => actionRoll({ modifier: 31 })).toThrow(
+        '5E modifier must be between -30 and 30, received: 31'
+      )
+    })
+
+    test('throws error for modifier too low', () => {
+      expect(() => actionRoll({ modifier: -31 })).toThrow(
+        '5E modifier must be between -30 and 30, received: -31'
+      )
+    })
+
+    test('allows maximum valid modifier', () => {
+      expect(() => actionRoll({ modifier: 30 })).not.toThrow()
+    })
+
+    test('allows minimum valid modifier', () => {
+      expect(() => actionRoll({ modifier: -30 })).not.toThrow()
+    })
+  })
 })

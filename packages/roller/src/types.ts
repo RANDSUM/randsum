@@ -2,7 +2,12 @@
 // Core Types
 // ============================================================================
 
-export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
+// Branded type for validated dice notation
+declare const __brand: unique symbol
+export type DiceNotation = string & { [__brand]: 'DiceNotation' }
+
+// Legacy template literal type (kept for backward compatibility in some contexts)
+export type DiceNotationTemplate = `${number}${'d' | 'D'}${number}${string}`
 
 export interface RollOptions<T = string> {
   quantity?: number
@@ -123,4 +128,22 @@ export interface InvalidValidationResult {
   argument: string
 }
 
-export type ValidationResult = ValidValidationResult | InvalidValidationResult
+// Validation error type
+export interface ValidationError {
+  message: string
+  argument: string
+}
+
+// Validation result using Result pattern from @randsum/shared
+import type { Result } from '@randsum/shared'
+export type ValidationResult = Result<ValidValidationResult, ValidationError>
+
+// ============================================================================
+// Roll Configuration
+// ============================================================================
+
+import type { RandomFn } from './lib/random'
+
+export interface RollConfig {
+  randomFn?: RandomFn
+}
