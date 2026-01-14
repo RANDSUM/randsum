@@ -16,3 +16,5 @@ pre-push:
   commands:
     test:
       run: bun test
+    exports:
+      run: bun run check:exports
