@@ -29,9 +29,7 @@
   "dependencies": {
     "@randsum/roller": "workspace:~"
   },
-  "devDependencies": {
-    "@randsum/test-utils": "workspace:~"
-  },
+  "devDependencies": {},
   "exports": {
     ".": {
       "import": {

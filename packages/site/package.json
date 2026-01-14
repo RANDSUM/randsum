@@ -18,13 +18,8 @@
   "type": "module",
   "dependencies": {
     "@astrojs/netlify": "6.6.2",
-    "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
-    "@types/react": "^19.2.6",
-    "@types/react-dom": "^19.2.3",
     "astro": "^5.15.9",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "shiki": "^3.15.0"
   },
   "engines": {

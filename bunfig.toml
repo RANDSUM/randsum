@@ -5,3 +5,9 @@ linker = 'isolated'
 [test]
 # Default test timeout
 timeout = 30000
+# Enable coverage collection
+coverage = true
+# Coverage reporters
+coverageReporter = ["text", "lcov"]
+# Coverage output directory
+coverageDir = "./coverage"

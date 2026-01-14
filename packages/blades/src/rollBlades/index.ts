@@ -1,5 +1,11 @@
-import type { GameRollResult, RollRecord } from '@randsum/roller'
-import { roll, validateInteger, validateNonNegative } from '@randsum/roller'
+import {
+  type GameRollResult,
+  type RollRecord,
+  type RollerRollResult,
+  createGameRoll,
+  validateInteger,
+  validateNonNegative
+} from '@randsum/roller'
 import { interpretHit } from './interpretHit'
 import type { BladesResult } from '../types'
 
@@ -23,25 +29,32 @@ import type { BladesResult } from '../types'
  *
  * @throws Error if count is not an integer, negative, or unusually large (>10)
  */
-export function rollBlades(count: number): GameRollResult<BladesResult, undefined, RollRecord> {
-  validateInteger(count, 'Blades dice pool')
-  validateNonNegative(count, 'Blades dice pool')
-
-  if (count > 10) {
-    throw new Error(`Blades dice pool is unusually large (${count}). Maximum recommended is 10.`)
-  }
-  const canCrit = count > 0
-  const rollResult = roll({
-    sides: 6,
-    quantity: canCrit ? count : 2,
-    ...(canCrit
-      ? {}
-      : {
-          modifiers: { drop: { highest: 1 } }
-        })
+export const rollBlades: (count: number) => GameRollResult<BladesResult, undefined, RollRecord> =
+  createGameRoll<number, BladesResult>({
+    validate: (count: number) => {
+      validateInteger(count, 'Blades dice pool')
+      validateNonNegative(count, 'Blades dice pool')
+      if (count > 10) {
+        throw new Error(
+          `Blades dice pool is unusually large (${count}). Maximum recommended is 10.`
+        )
+      }
+    },
+    toRollOptions: (count: number) => {
+      const canCrit = count > 0
+      return {
+        sides: 6,
+        quantity: canCrit ? count : 2,
+        ...(canCrit ? {} : { modifiers: { drop: { highest: 1 } } })
+      }
+    },
+    interpretResult: (
+      count: number,
+      _total: number,
+      _rolls: RollRecord[],
+      fullResult: RollerRollResult
+    ): BladesResult => {
+      const canCrit = count > 0
+      return interpretHit(fullResult, canCrit)
+    }
   })
-  return {
-    ...rollResult,
-    result: interpretHit(rollResult, canCrit)
-  }
-}

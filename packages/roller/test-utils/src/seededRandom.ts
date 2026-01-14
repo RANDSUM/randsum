@@ -1,4 +1,4 @@
-import type { RandomFn } from '@randsum/roller'
+import type { RandomFn } from '../../src/lib/random'
 
 /**
  * Creates a deterministic random number generator from a seed.

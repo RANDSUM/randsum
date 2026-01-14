@@ -1,5 +1,7 @@
-import { completeRollPattern, coreNotationPattern } from './lib/patterns'
+import { coreNotationPattern, createCompleteRollPattern } from './lib/patterns'
 import type { DiceNotation } from './types'
+import type { Result } from './lib/result'
+import { error, success } from './lib/result'
 import { NotationParseError } from './errors'
 
 /**
@@ -22,7 +24,7 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   if (!basicTest) return false
 
   const cleanArg = trimmedArg.replace(/\s/g, '')
-  const remaining = cleanArg.replaceAll(completeRollPattern, '')
+  const remaining = cleanArg.replaceAll(createCompleteRollPattern(), '')
   return remaining.length === 0
 }
 
@@ -39,4 +41,30 @@ export function notation(input: string): DiceNotation {
     throw new NotationParseError(input, 'String does not match dice notation pattern')
   }
   return input
+}
+
+/**
+ * Safe version of notation() that returns a Result type instead of throwing.
+ *
+ * Use this when you want to validate notation without try/catch blocks.
+ *
+ * @param input - String to validate and convert to DiceNotation
+ * @returns Result containing either the DiceNotation or an error
+ *
+ * @example
+ * ```ts
+ * const result = tryNotation("4d6L")
+ * if (isSuccess(result)) {
+ *   // result.data is typed as DiceNotation
+ *   roll(result.data)
+ * } else {
+ *   console.error(result.error.message)
+ * }
+ * ```
+ */
+export function tryNotation(input: string): Result<DiceNotation, NotationParseError> {
+  if (!isDiceNotation(input)) {
+    return error(new NotationParseError(input, 'String does not match dice notation pattern'))
+  }
+  return success(input)
 }

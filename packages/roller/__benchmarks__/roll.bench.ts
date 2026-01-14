@@ -19,4 +19,17 @@ group('validateNotation()', () => {
   bench('complex notation', () => validateNotation('4d6L+2d8H!+5'))
 })
 
-await run()
+const isCI = process.argv.includes('--json')
+
+if (isCI) {
+  const results = await run({ silent: true, json: true })
+  const benchmarks = results.benchmarks.map((b: { name: string; time: number }) => ({
+    name: b.name,
+    unit: 'ns',
+    value: b.time
+  }))
+  // eslint-disable-next-line no-console
+  console.log(JSON.stringify(benchmarks, null, 2))
+} else {
+  await run()
+}

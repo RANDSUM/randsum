@@ -1,5 +1,6 @@
-import type { RollConfig, RollRecord, RollerRollResult } from '@randsum/roller'
-import { notation, roll } from '@randsum/roller'
+import type { RollConfig, RollRecord, RollerRollResult } from '../../src/types'
+import { notation } from '../../src/isDiceNotation'
+import { roll } from '../../src/roll'
 import { createSeededRandom } from './seededRandom'
 
 /**

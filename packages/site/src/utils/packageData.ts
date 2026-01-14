@@ -350,6 +350,38 @@ bun add @randsum/mcp`,
     ]
   },
   {
+    id: 'skill',
+    name: 'skill',
+    displayName: 'AI Skill',
+    description:
+      'AI skill documentation for integrating RANDSUM dice rolling capabilities into AI assistants and LLMs.',
+    npmPackage: '@randsum/skill',
+    category: 'tool',
+    color: '#8b5cf6', // Purple
+    examples: [
+      {
+        title: 'MCP Server Setup',
+        code: `{
+  "mcpServers": {
+    "randsum": {
+      "command": "npx",
+      "args": ["-y", "@randsum/mcp@latest"]
+    }
+  }
+}`,
+        language: 'json'
+      },
+      {
+        title: 'Installation',
+        code: `# Use MCP server for AI integration
+npm install -g @randsum/mcp
+# or
+npx @randsum/mcp@latest`,
+        language: 'bash'
+      }
+    ]
+  },
+  {
     id: 'robo',
     name: 'robo',
     displayName: 'Discord Dice Roller',

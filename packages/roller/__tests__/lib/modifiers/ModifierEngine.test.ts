@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { modifierToDescription, modifierToNotation } from '../../../src/lib/modifiers'
+import { modifierToDescription, modifierToNotation } from '../../../src/lib/modifiers/format'
 import type { NumericRollBonus } from '../../../src/types'
 import { applyModifiers } from '../../../src/lib/modifiers/applyModifiers'
 

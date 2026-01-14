@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { validateNotation } from '../src/validateNotation'
-import { isSuccess } from '../src/shared'
+import { isSuccess } from '../src/lib/result'
 
 describe('validateNotation', () => {
   describe('valid notation', () => {

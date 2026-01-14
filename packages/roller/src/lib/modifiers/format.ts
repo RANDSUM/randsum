@@ -11,7 +11,7 @@ import {
   formatComparisonNotation,
   formatHumanList
 } from '../comparisonUtils'
-import type { DescriptionHandler, NotationHandler } from './types'
+import { MODIFIER_ORDER } from './constants'
 
 // Description formatting functions
 export function formatDropDescription({
@@ -157,86 +157,179 @@ export function formatRerollNotation(options: RerollOptions): string | undefined
   return `R{${parts.join(',')}}${maxSuffix}`
 }
 
-// Description handlers map
-export const DESCRIPTION_HANDLERS: ReadonlyMap<keyof ModifierOptions, DescriptionHandler> = new Map<
-  keyof ModifierOptions,
-  DescriptionHandler
->([
-  ['plus', options => [`Add ${options as number}`]],
-  ['minus', options => [`Subtract ${options as number}`]],
-  [
-    'cap',
-    options =>
-      formatComparisonDescription(options as ComparisonOptions).map(str => `No Rolls ${str}`)
-  ],
-  ['drop', options => formatDropDescription(options as DropOptions)],
-  ['reroll', options => formatRerollDescription(options as RerollOptions)],
-  ['explode', () => ['Exploding Dice']],
-  [
-    'unique',
-    options => {
-      if (typeof options === 'boolean') {
-        return ['No Duplicate Rolls']
-      }
-      return [`No Duplicates (except ${formatHumanList((options as UniqueOptions).notUnique)})`]
-    }
-  ],
-  ['replace', options => formatReplaceDescription(options as ReplaceOptions | ReplaceOptions[])]
-])
+// Individual description handler functions
+function handlePlusDescription(options: number): string[] {
+  return [`Add ${options}`]
+}
 
-// Notation handlers map
-export const NOTATION_HANDLERS: ReadonlyMap<keyof ModifierOptions, NotationHandler> = new Map<
-  keyof ModifierOptions,
-  NotationHandler
->([
-  [
-    'plus',
-    options => {
-      const numOptions = options as number
-      if (numOptions < 0) {
-        return `-${Math.abs(numOptions)}`
-      }
-      return `+${numOptions}`
-    }
-  ],
-  ['minus', options => `-${options as number}`],
-  [
-    'cap',
-    options => {
-      const capList = formatComparisonNotation(options as ComparisonOptions)
-      return capList.length ? `C{${capList.join(',')}}` : undefined
-    }
-  ],
-  ['drop', options => formatDropNotation(options as DropOptions)],
-  ['reroll', options => formatRerollNotation(options as RerollOptions)],
-  ['explode', () => '!'],
-  [
-    'unique',
-    options => {
-      if (typeof options === 'boolean') return 'U'
-      return `U{${(options as UniqueOptions).notUnique.join(',')}}`
-    }
-  ],
-  ['replace', options => formatReplaceNotation(options as ReplaceOptions | ReplaceOptions[])]
-])
+function handleMinusDescription(options: number): string[] {
+  return [`Subtract ${options}`]
+}
 
-// Convenience functions
+function handleCapDescription(options: ComparisonOptions): string[] {
+  return formatComparisonDescription(options).map(str => `No Rolls ${str}`)
+}
+
+function handleDropDescription(options: DropOptions): string[] {
+  return formatDropDescription(options)
+}
+
+function handleRerollDescription(options: RerollOptions): string[] {
+  return formatRerollDescription(options)
+}
+
+function handleExplodeDescription(): string[] {
+  return ['Exploding Dice']
+}
+
+function handleUniqueDescription(options: boolean | UniqueOptions): string[] {
+  if (typeof options === 'boolean') {
+    return ['No Duplicate Rolls']
+  }
+  return [`No Duplicates (except ${formatHumanList(options.notUnique)})`]
+}
+
+function handleReplaceDescription(options: ReplaceOptions | ReplaceOptions[]): string[] {
+  return formatReplaceDescription(options)
+}
+
+// Individual notation handler functions
+function handlePlusNotation(options: number): string | undefined {
+  if (options < 0) {
+    return `-${Math.abs(options)}`
+  }
+  return `+${options}`
+}
+
+function handleMinusNotation(options: number): string | undefined {
+  return `-${options}`
+}
+
+function handleCapNotation(options: ComparisonOptions): string | undefined {
+  const capList = formatComparisonNotation(options)
+  return capList.length ? `C{${capList.join(',')}}` : undefined
+}
+
+function handleDropNotation(options: DropOptions): string | undefined {
+  return formatDropNotation(options)
+}
+
+function handleRerollNotation(options: RerollOptions): string | undefined {
+  return formatRerollNotation(options)
+}
+
+function handleExplodeNotation(): string | undefined {
+  return '!'
+}
+
+function handleUniqueNotation(options: boolean | UniqueOptions): string | undefined {
+  if (typeof options === 'boolean') return 'U'
+  return `U{${options.notUnique.join(',')}}`
+}
+
+function handleReplaceNotation(options: ReplaceOptions | ReplaceOptions[]): string | undefined {
+  return formatReplaceNotation(options)
+}
+
+/**
+ * Converts a modifier to its human-readable description.
+ * Uses switch-based dispatch for type safety.
+ */
 export function modifierToDescription(
   type: keyof ModifierOptions,
   options: ModifierOptions[keyof ModifierOptions]
 ): string[] | undefined {
   if (options === undefined) return undefined
 
-  const handler = DESCRIPTION_HANDLERS.get(type)
-  return handler ? handler(options) : undefined
+  switch (type) {
+    case 'plus':
+      // Safe: when type === 'plus', options is guaranteed to be number
+      return handlePlusDescription(options as number)
+    case 'minus':
+      // Safe: when type === 'minus', options is guaranteed to be number
+      return handleMinusDescription(options as number)
+    case 'cap':
+      // Safe: when type === 'cap', options is guaranteed to be ComparisonOptions
+      return handleCapDescription(options as ComparisonOptions)
+    case 'drop':
+      // Safe: when type === 'drop', options is guaranteed to be DropOptions
+      return handleDropDescription(options as DropOptions)
+    case 'reroll':
+      // Safe: when type === 'reroll', options is guaranteed to be RerollOptions
+      return handleRerollDescription(options as RerollOptions)
+    case 'explode':
+      // Safe: when type === 'explode', options is guaranteed to be boolean
+      return handleExplodeDescription()
+    case 'unique':
+      // Safe: when type === 'unique', options is guaranteed to be boolean | UniqueOptions
+      return handleUniqueDescription(options as boolean | UniqueOptions)
+    case 'replace':
+      // Safe: when type === 'replace', options is guaranteed to be ReplaceOptions | ReplaceOptions[]
+      return handleReplaceDescription(options as ReplaceOptions | ReplaceOptions[])
+    default: {
+      // Exhaustiveness check - TypeScript will error if a modifier type is missing
+      const _exhaustive: never = type
+      throw new Error(`Unknown modifier type: ${String(_exhaustive)}`)
+    }
+  }
 }
 
+/**
+ * Converts a modifier to its notation string.
+ * Uses switch-based dispatch for type safety.
+ */
 export function modifierToNotation(
   type: keyof ModifierOptions,
   options: ModifierOptions[keyof ModifierOptions]
 ): string | undefined {
   if (options === undefined) return undefined
 
-  const handler = NOTATION_HANDLERS.get(type)
-  return handler ? handler(options) : undefined
+  switch (type) {
+    case 'plus':
+      // Safe: when type === 'plus', options is guaranteed to be number
+      return handlePlusNotation(options as number)
+    case 'minus':
+      // Safe: when type === 'minus', options is guaranteed to be number
+      return handleMinusNotation(options as number)
+    case 'cap':
+      // Safe: when type === 'cap', options is guaranteed to be ComparisonOptions
+      return handleCapNotation(options as ComparisonOptions)
+    case 'drop':
+      // Safe: when type === 'drop', options is guaranteed to be DropOptions
+      return handleDropNotation(options as DropOptions)
+    case 'reroll':
+      // Safe: when type === 'reroll', options is guaranteed to be RerollOptions
+      return handleRerollNotation(options as RerollOptions)
+    case 'explode':
+      // Safe: when type === 'explode', options is guaranteed to be boolean
+      return handleExplodeNotation()
+    case 'unique':
+      // Safe: when type === 'unique', options is guaranteed to be boolean | UniqueOptions
+      return handleUniqueNotation(options as boolean | UniqueOptions)
+    case 'replace':
+      // Safe: when type === 'replace', options is guaranteed to be ReplaceOptions | ReplaceOptions[]
+      return handleReplaceNotation(options as ReplaceOptions | ReplaceOptions[])
+    default: {
+      // Exhaustiveness check - TypeScript will error if a modifier type is missing
+      const _exhaustive: never = type
+      throw new Error(`Unknown modifier type: ${String(_exhaustive)}`)
+    }
+  }
+}
+
+export function processModifierDescriptions(modifiers: ModifierOptions | undefined): string[] {
+  if (!modifiers) return []
+
+  return MODIFIER_ORDER.map(type => modifierToDescription(type, modifiers[type]))
+    .flat()
+    .filter((desc): desc is string => typeof desc === 'string')
+    .filter(desc => desc.length > 0)
+}
+
+export function processModifierNotations(modifiers: ModifierOptions | undefined): string {
+  if (!modifiers) return ''
+
+  return MODIFIER_ORDER.map(type => modifierToNotation(type, modifiers[type]))
+    .filter((notation): notation is string => typeof notation === 'string')
+    .join('')
 }

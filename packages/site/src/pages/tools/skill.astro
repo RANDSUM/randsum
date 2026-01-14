@@ -1,0 +1,388 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('skill')!
+const skillMarkdownUrl = '/RANDSUM_SKILL.md'
+const githubRawUrl = 'https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/RANDSUM_SKILL.md'
+---
+
+<DocsLayout title={pkg.displayName} description={pkg.description} package={pkg}>
+  <section>
+    <h2>Overview</h2>
+    <p>
+      The <strong>RANDSUM Dice Rolling Skill</strong> enables AI assistants to help users with dice
+      rolls, probability calculations, and game-specific mechanics for systems like D&D 5E, Blades
+      in the Dark, Daggerheart, Root RPG, and Salvage Union.
+    </p>
+  </section>
+
+  <section class="download-section">
+    <h2>Download Skill</h2>
+    <p>
+      Download the skill as a standalone markdown file to add to your AI assistant's context or knowledge base.
+    </p>
+    <div class="download-buttons">
+      <a href={skillMarkdownUrl} download="RANDSUM_SKILL.md" class="download-button primary">
+        📥 Download Markdown
+      </a>
+      <a href={githubRawUrl} target="_blank" rel="noopener noreferrer" class="download-button secondary">
+        🐙 View on GitHub
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>When to Use This Skill</h2>
+    <p>Activate this skill when users:</p>
+    <ul>
+      <li>Ask to roll dice (e.g., "roll 2d6", "roll for damage")</li>
+      <li>Need D&D 5E mechanics (advantage, disadvantage, ability scores)</li>
+      <li>Want game-specific rolls (Blades in the Dark, Daggerheart, Root RPG, Salvage Union)</li>
+      <li>Need probability simulations or random number generation</li>
+      <li>Ask about dice notation syntax</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>RANDSUM Dice Notation</h2>
+    <p>RANDSUM uses an extended dice notation system. All notation is case-insensitive.</p>
+    <p><strong>Basic Syntax</strong>: <code>NdS</code> where N = quantity, S = sides</p>
+
+    <h3>Basic Rolls</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Notation</th>
+          <th>Description</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>2d6</code></td>
+          <td>Roll 2 six-sided dice</td>
+          <td>Standard damage roll</td>
+        </tr>
+        <tr>
+          <td><code>1d20+5</code></td>
+          <td>Roll d20, add 5</td>
+          <td>Attack roll with modifier</td>
+        </tr>
+        <tr>
+          <td><code>4d6L</code></td>
+          <td>Roll 4d6, drop lowest</td>
+          <td>D&D ability score generation</td>
+        </tr>
+        <tr>
+          <td><code>2d20H</code></td>
+          <td>Roll 2d20, drop highest</td>
+          <td>Disadvantage (keep lowest)</td>
+        </tr>
+        <tr>
+          <td><code>2d20L</code></td>
+          <td>Roll 2d20, drop lowest</td>
+          <td>Advantage (keep highest)</td>
+        </tr>
+        <tr>
+          <td><code>3d6!</code></td>
+          <td>Exploding dice</td>
+          <td>Reroll and add on max result</td>
+        </tr>
+        <tr>
+          <td><code>4d6R{'{'}1{'}'}</code></td>
+          <td>Reroll 1s</td>
+          <td>Avoid minimum results</td>
+        </tr>
+        <tr>
+          <td><code>4d20U</code></td>
+          <td>Unique results only</td>
+          <td>No duplicate values</td>
+        </tr>
+        <tr>
+          <td><code>4d20C{'{'}&gt;18{'}'}</code></td>
+          <td>Cap values over 18 to 18</td>
+          <td>Limit maximum results</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Modifier Reference</h3>
+
+    <h4>Drop Modifiers (L/H)</h4>
+    <ul>
+      <li><code>4d6L</code> - Drop lowest result</li>
+      <li><code>4d6L2</code> - Drop 2 lowest results</li>
+      <li><code>4d6H</code> - Drop highest result</li>
+      <li><code>4d6H2</code> - Drop 2 highest results</li>
+      <li><code>4d6LH</code> - Drop both extremes</li>
+    </ul>
+
+    <h4>Reroll Modifiers (R)</h4>
+    <ul>
+      <li><code>4d6R{1}</code> - Reroll 1s</li>
+      <li><code>4d6R{'{'}&lt;3{'}'}</code> - Reroll results under 3</li>
+      <li><code>4d6R{'{'}1,2{'}'}</code> - Reroll 1s and 2s</li>
+      <li><code>4d6R{'{'}&lt;3{'}'}3</code> - Reroll under 3, max 3 attempts</li>
+    </ul>
+
+    <h4>Exploding Dice (!)</h4>
+    <ul>
+      <li><code>3d6!</code> - Roll extra die on maximum result</li>
+    </ul>
+
+    <h4>Unique Results (U)</h4>
+    <ul>
+      <li><code>4d20U</code> - All results must be unique</li>
+      <li><code>4d20U{'{'}5,10{'}'}</code> - Unique except 5s and 10s can repeat</li>
+    </ul>
+
+    <h4>Capping (C)</h4>
+    <ul>
+      <li><code>4d20C{'{'}&gt;18{'}'}</code> - Cap maximum at 18</li>
+      <li><code>4d6C{'{'}&lt;2{'}'}</code> - Cap minimum at 2</li>
+      <li><code>4d20C{'{'}&lt;2,&gt;19{'}'}</code> - Cap both extremes</li>
+    </ul>
+
+    <h4>Arithmetic (+/-)</h4>
+    <ul>
+      <li><code>2d6+3</code> - Add 3 to total</li>
+      <li><code>1d20-2</code> - Subtract 2 from total</li>
+    </ul>
+
+    <h4>Combining Modifiers</h4>
+    <ul>
+      <li><code>4d6LR{'{'}1{'}'}+2</code> - Reroll 1s, drop lowest, add 2</li>
+    </ul>
+
+    <h3>Multiple Dice Groups</h3>
+    <p>Roll multiple dice types together:</p>
+    <ul>
+      <li><code>1d20+2d6+3</code> - Attack roll plus damage</li>
+      <li><code>2d12-1d6</code> - Roll 2d12, subtract 1d6</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Game System Support</h2>
+
+    <h3>D&D 5th Edition (@randsum/fifth)</h3>
+    <p>Common patterns:</p>
+    <ul>
+      <li><strong>Advantage</strong>: <code>2d20L</code> (roll 2, drop lowest = keep highest)</li>
+      <li><strong>Disadvantage</strong>: <code>2d20H</code> (roll 2, drop highest = keep lowest)</li>
+      <li><strong>Ability Scores</strong>: <code>4d6L</code> (roll 4d6, drop lowest)</li>
+      <li><strong>Attack + Damage</strong>: <code>1d20+5</code> then <code>2d6+3</code></li>
+    </ul>
+
+    <h3>Blades in the Dark (@randsum/blades)</h3>
+    <p>Action rolls use d6 dice pools:</p>
+    <ul>
+      <li>Roll pool of d6s based on action rating</li>
+      <li>Keep highest result for outcome</li>
+      <li>6 = success, 4-5 = partial, 1-3 = failure</li>
+      <li>Multiple 6s = critical success</li>
+    </ul>
+
+    <h3>Daggerheart (@randsum/daggerheart)</h3>
+    <p>Uses Hope/Fear dice:</p>
+    <ul>
+      <li>Roll 2d12 (one Hope, one Fear)</li>
+      <li>Higher die determines narrative outcome</li>
+      <li>Sum determines mechanical success</li>
+    </ul>
+
+    <h3>Root RPG (@randsum/root-rpg)</h3>
+    <p>Uses 2d6 + stat:</p>
+    <ul>
+      <li>10+ = strong hit</li>
+      <li>7-9 = weak hit</li>
+      <li>6- = miss</li>
+    </ul>
+
+    <h3>Salvage Union (@randsum/salvageunion)</h3>
+    <p>d20 roll-under system:</p>
+    <ul>
+      <li>Roll d20, compare to target number</li>
+      <li>Lower is better</li>
+      <li>1 = critical success, 20 = critical failure</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Implementation Options</h2>
+
+    <h3>Option 1: MCP Server (Recommended for AI Agents)</h3>
+    <p>Install and configure the RANDSUM MCP server for direct tool access:</p>
+    <CodeExample
+      code={`{
+  "mcpServers": {
+    "randsum": {
+      "command": "npx",
+      "args": ["-y", "@randsum/mcp@latest"]
+    }
+  }
+}`}
+      language="json"
+      title="MCP Client Configuration"
+    />
+    <p>Available MCP tools:</p>
+    <ul>
+      <li><code>roll</code> - Execute dice rolls with full notation support</li>
+      <li><code>validate-notation</code> - Validate and explain notation syntax</li>
+    </ul>
+
+    <h3>Option 2: CLI</h3>
+    <CodeExample code={`npx @randsum/roller "4d6L"`} language="bash" title="CLI Usage" />
+
+    <h3>Option 3: Programmatic (TypeScript/JavaScript)</h3>
+    <CodeExample
+      code={`import { roll } from "@randsum/roller"
+
+// Basic roll
+const result = roll("2d6+3")
+console.log(result.total) // Sum of dice + modifiers
+
+// Access detailed results
+console.log(result.rolls) // Original rolls
+console.log(result.result) // After modifiers applied`}
+      language="typescript"
+      title="Programmatic Usage"
+    />
+  </section>
+
+  <section>
+    <h2>Best Practices</h2>
+    <ol>
+      <li><strong>Always explain rolls</strong>: When rolling dice, explain what the notation means</li>
+      <li>
+        <strong>Show intermediate results</strong>: Display raw rolls before modifiers
+      </li>
+      <li>
+        <strong>Match the game system</strong>: Use appropriate mechanics for the user's game
+      </li>
+      <li><strong>Validate first</strong>: For complex notation, validate before rolling</li>
+      <li>
+        <strong>Provide context</strong>: Explain what success/failure means in the game context
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Example Interactions</h2>
+
+    <h3>Example 1: D&D Ability Score</h3>
+    <p><strong>User</strong>: "Roll for my D&D character's strength score"</p>
+    <p><strong>Response</strong>: Rolling <code>4d6L</code> (4d6, drop lowest) for ability score generation...</p>
+    <ul>
+      <li>Raw rolls: [4, 3, 5, 2]</li>
+      <li>Dropped: 2 (lowest)</li>
+      <li>Total: 12 (4 + 3 + 5)</li>
+    </ul>
+
+    <h3>Example 2: Attack with Advantage</h3>
+    <p><strong>User</strong>: "I attack with advantage and my +7 modifier"</p>
+    <p>
+      <strong>Response</strong>: Rolling <code>2d20L+7</code> (advantage = roll 2d20, keep highest)...
+    </p>
+    <ul>
+      <li>Raw rolls: [14, 8]</li>
+      <li>Kept: 14 (dropped 8)</li>
+      <li>Total: 21 (14 + 7)</li>
+    </ul>
+
+    <h3>Example 3: Blades Action</h3>
+    <p><strong>User</strong>: "Roll a Blades action with 3 dice"</p>
+    <p><strong>Response</strong>: Rolling <code>3d6</code> for Blades in the Dark action...</p>
+    <ul>
+      <li>Results: [4, 6, 2]</li>
+      <li>Highest: 6 = Full Success!</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Additional Resources</h2>
+    <ul>
+      <li>
+        <a href="/packages/roller/">Complete RANDSUM notation reference</a>
+      </li>
+      <li>
+        <a href="/games/">Game-specific mechanics documentation</a>
+      </li>
+      <li>
+        <a href="/tools/mcp/">MCP Server documentation</a>
+      </li>
+    </ul>
+  </section>
+</DocsLayout>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--spacing-lg) 0;
+  }
+
+  table th,
+  table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: var(--border-width) solid var(--color-border);
+    text-align: left;
+  }
+
+  table th {
+    background-color: var(--color-bg-alt);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  table code {
+    font-size: var(--font-size-sm);
+  }
+
+  .download-section {
+    background-color: var(--color-bg-alt);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .download-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-md);
+  }
+
+  .download-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: var(--font-weight-semibold);
+    transition: all 0.2s ease;
+  }
+
+  .download-button.primary {
+    background-color: var(--color-primary);
+    color: white;
+  }
+
+  .download-button.primary:hover {
+    background-color: var(--color-primary-dark, #6d28d9);
+    transform: translateY(-2px);
+  }
+
+  .download-button.secondary {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    border: var(--border-width) solid var(--color-border);
+  }
+
+  .download-button.secondary:hover {
+    background-color: var(--color-bg-alt);
+    transform: translateY(-2px);
+  }
+</style>

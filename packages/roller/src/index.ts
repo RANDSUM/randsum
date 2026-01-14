@@ -1,25 +1,25 @@
-export { roll } from './roll'
+export { roll, tryRoll } from './roll'
 export { validateNotation } from './validateNotation'
 export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from './lib/transformers'
-export { isDiceNotation, notation } from './isDiceNotation'
+export { isDiceNotation, notation, tryNotation } from './isDiceNotation'
 export type { RandomFn } from './lib/random'
 export { NotationParseError, ModifierError, ValidationErrorClass, RollError } from './errors'
+export { createGameRoll, createMultiRollGameRoll } from './lib/gameRoll'
+export type { GameRollConfig, MultiRollGameConfig } from './lib/gameRoll'
 
 // Shared utilities (previously @randsum/shared)
+export { RandsumError } from './errors'
 export {
-  RandsumError,
   validateInteger,
   validateRange,
   validateNonNegative,
   validateFinite,
   validateGreaterThan,
-  validateLessThan,
-  isSuccess,
-  isError,
-  success,
-  error
-} from './shared'
-export type { GameRollResult, Result, SuccessResult, ErrorResult } from './shared'
+  validateLessThan
+} from './lib/validation'
+export { isSuccess, isError, success, error } from './lib/result'
+export type { GameRollResult } from './types'
+export type { Result, SuccessResult, ErrorResult } from './lib/result'
 
 export type {
   DiceNotation,

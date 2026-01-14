@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
-import { createSeededRandom } from '@randsum/test-utils'
+import { createSeededRandom } from '../../test-utils/src/seededRandom'
 
 const loops = 9999
 

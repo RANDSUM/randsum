@@ -51,7 +51,7 @@ describe('notation property tests', () => {
   test('random strings are not valid notation', () => {
     fc.assert(
       fc.property(
-        fc.string().filter(s => !s.includes('d') || !/\d/.test(s)),
+        fc.string().filter(s => !s.toLowerCase().includes('d') || !/\d/.test(s)),
         randomStr => {
           return !isDiceNotation(randomStr)
         }

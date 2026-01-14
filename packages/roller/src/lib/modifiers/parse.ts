@@ -12,6 +12,18 @@ import {
   uniquePattern
 } from '../patterns/modifierPatterns'
 
+export function parseModifiers(notation: string): ModifierOptions {
+  return {
+    ...parseDropModifiers(notation),
+    ...parseExplodeModifier(notation),
+    ...parseUniqueModifier(notation),
+    ...parseReplaceModifier(notation),
+    ...parseRerollModifier(notation),
+    ...parseCapModifier(notation),
+    ...parseArithmeticModifiers(notation)
+  }
+}
+
 export function parseArithmeticModifiers(
   notation: string
 ): Pick<ModifierOptions, 'plus' | 'minus'> {

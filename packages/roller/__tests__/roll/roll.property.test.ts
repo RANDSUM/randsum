@@ -2,7 +2,7 @@ import { describe, test } from 'bun:test'
 import fc from 'fast-check'
 
 import { roll } from '../../src/roll'
-import { createSeededRandom } from '../../../../test-utils/src/seededRandom'
+import { createSeededRandom } from '../../test-utils/src/seededRandom'
 
 describe('roll property-based tests', () => {
   test('results always within bounds for numeric dice', () => {

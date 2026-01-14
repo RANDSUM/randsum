@@ -1,4 +1,4 @@
-import type { RollerRollResult } from '@randsum/roller'
+import type { RollerRollResult } from '../../src/types'
 
 /**
  * Asserts that a roll result's total is within the expected range.

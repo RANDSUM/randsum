@@ -1,5 +1,5 @@
 export { coreNotationPattern } from './coreNotationPattern'
-export { completeRollPattern } from './completeRollPattern'
+export { completeRollPattern, createCompleteRollPattern } from './completeRollPattern'
 export {
   dropHighestPattern,
   dropLowestPattern,

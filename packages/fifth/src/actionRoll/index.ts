@@ -1,5 +1,5 @@
+import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
 import type { GameRollResult, RollRecord } from '@randsum/roller'
-import { roll, validateFinite, validateRange } from '@randsum/roller'
 import type { FifthRollArgument, FifthRollResult } from '../types'
 import { generateQuantity } from './generateQuantity'
 import { generateModifiers } from './generateModifiers'
@@ -31,21 +31,20 @@ import { generateModifiers } from './generateModifiers'
  *
  * @throws Error if modifier is not a finite number or outside reasonable range (-30 to +30)
  */
-export function actionRoll(
+export const actionRoll: (
   arg: FifthRollArgument
-): GameRollResult<FifthRollResult, undefined, RollRecord> {
-  validateFinite(arg.modifier, '5E modifier')
-  validateRange(arg.modifier, -30, 30, '5E modifier')
-
-  const rollResult = roll({
+) => GameRollResult<FifthRollResult, undefined, RollRecord> = createGameRoll<
+  FifthRollArgument,
+  FifthRollResult
+>({
+  validate: (arg: FifthRollArgument) => {
+    validateFinite(arg.modifier, '5E modifier')
+    validateRange(arg.modifier, -30, 30, '5E modifier')
+  },
+  toRollOptions: (arg: FifthRollArgument) => ({
     sides: 20,
     quantity: generateQuantity(arg.rollingWith),
     modifiers: { ...generateModifiers(arg.rollingWith), plus: arg.modifier }
-  })
-
-  return {
-    rolls: rollResult.rolls,
-    total: rollResult.total,
-    result: rollResult.total
-  }
-}
+  }),
+  interpretResult: (_input: FifthRollArgument, total: number) => total
+})
