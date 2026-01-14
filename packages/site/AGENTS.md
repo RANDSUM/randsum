@@ -64,4 +64,3 @@ bun run preview    # Preview production build
 ```
 
 Deploys automatically to Netlify on push to main branch.
-

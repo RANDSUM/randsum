@@ -8,6 +8,7 @@
 [![Types](https://img.shields.io/npm/types/@randsum/root-rpg)](https://www.npmjs.com/package/@randsum/root-rpg)
 [![License](https://img.shields.io/npm/l/@randsum/root-rpg)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/npm/dm/@randsum/root-rpg)](https://www.npmjs.com/package/@randsum/root-rpg)
+[![codecov](https://codecov.io/gh/RANDSUM/randsum/branch/main/graph/badge.svg)](https://codecov.io/gh/RANDSUM/randsum)
 
 </div>
 

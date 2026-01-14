@@ -53,4 +53,3 @@ Tests cover:
 - Different dice pool sizes (0-10)
 - Result interpretation
 - Input validation (non-integer, negative, too large)
-

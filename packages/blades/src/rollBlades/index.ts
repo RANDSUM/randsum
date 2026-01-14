@@ -1,4 +1,4 @@
-import type { RollRecord, GameRollResult } from '@randsum/roller'
+import type { GameRollResult, RollRecord } from '@randsum/roller'
 import { roll, validateInteger, validateNonNegative } from '@randsum/roller'
 import { interpretHit } from './interpretHit'
 import type { BladesResult } from '../types'

@@ -24,4 +24,3 @@ export const commonRollOptions = {
   advantage: { sides: 20, quantity: 2, modifiers: { drop: { highest: 1 } } },
   disadvantage: { sides: 20, quantity: 2, modifiers: { drop: { lowest: 1 } } }
 } as const
-

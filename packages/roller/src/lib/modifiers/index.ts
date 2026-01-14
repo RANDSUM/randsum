@@ -35,10 +35,5 @@ export {
   formatRerollNotation,
   NOTATION_HANDLERS
 } from './transformers'
-export {
-  createFrequencyMap,
-  createArithmeticLog,
-  createModifierLog,
-  mergeLogs
-} from './logging'
+export { createFrequencyMap, createArithmeticLog, createModifierLog, mergeLogs } from './logging'
 export { MODIFIER_HANDLERS } from './transformers/modifierHandlers'

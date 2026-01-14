@@ -74,4 +74,3 @@ export function createModifierLog(
 export function mergeLogs(existingLogs: ModifierLog[], newLog: ModifierLog): ModifierLog[] {
   return [...existingLogs, newLog]
 }
-

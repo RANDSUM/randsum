@@ -8,6 +8,7 @@
 [![Types](https://img.shields.io/npm/types/@randsum/salvageunion)](https://www.npmjs.com/package/@randsum/salvageunion)
 [![License](https://img.shields.io/npm/l/@randsum/salvageunion)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/npm/dm/@randsum/salvageunion)](https://www.npmjs.com/package/@randsum/salvageunion)
+[![codecov](https://codecov.io/gh/RANDSUM/randsum/branch/main/graph/badge.svg)](https://codecov.io/gh/RANDSUM/randsum)
 
 </div>
 

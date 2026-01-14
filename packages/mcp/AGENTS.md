@@ -70,4 +70,3 @@ npx @randsum/mcp                    # stdio transport (default)
 npx @randsum/mcp --transport http   # HTTP transport
 npx @randsum/mcp --transport sse --port 3001  # SSE on custom port
 ```
-

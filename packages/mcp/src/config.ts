@@ -22,4 +22,3 @@ export const config: { version: string; name: string } = {
   version: getPackageVersion(),
   name: 'RANDSUM'
 }
-

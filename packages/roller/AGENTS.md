@@ -71,4 +71,3 @@ All types are exported with `export type`:
 - `lib/random/` - Random number generation
 - `lib/patterns/` - Regex patterns for parsing
 - `lib/transformers/` - Options ↔ notation conversion
-

@@ -1,0 +1,46 @@
+{
+  "name": "@randsum/skill",
+  "version": "1.0.0",
+  "description": "Agent Skill for RANDSUM dice rolling and tabletop RPG mechanics",
+  "private": false,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/RANDSUM/randsum",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/skill"
+  },
+  "type": "module",
+  "files": [
+    "SKILL.md",
+    "references",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "agent-skill",
+    "ai",
+    "llm",
+    "dice",
+    "roller",
+    "rpg",
+    "tabletop",
+    "ttrpg",
+    "randsum",
+    "mcp"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "lint": "echo 'No linting needed for skill package'",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "typecheck": "echo 'No TypeScript in skill package'"
+  }
+}

@@ -5,7 +5,7 @@ import type {
   SalvageUnionTableListing,
   SalvageUnionTableName
 } from '../types'
-import type { RollRecord, GameRollResult } from '@randsum/roller'
+import type { GameRollResult, RollRecord } from '@randsum/roller'
 import { roll } from '@randsum/roller'
 
 function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {

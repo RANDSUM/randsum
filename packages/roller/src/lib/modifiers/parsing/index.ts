@@ -5,5 +5,3 @@ export { parseExplodeModifier } from './parseExplodeModifier'
 export { parseReplaceModifier } from './parseReplaceModifier'
 export { parseRerollModifier } from './parseRerollModifier'
 export { parseUniqueModifier } from './parseUniqueModifier'
-
-

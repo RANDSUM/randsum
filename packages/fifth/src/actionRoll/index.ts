@@ -1,4 +1,4 @@
-import type { RollRecord, GameRollResult } from '@randsum/roller'
+import type { GameRollResult, RollRecord } from '@randsum/roller'
 import { roll, validateFinite, validateRange } from '@randsum/roller'
 import type { FifthRollArgument, FifthRollResult } from '../types'
 import { generateQuantity } from './generateQuantity'

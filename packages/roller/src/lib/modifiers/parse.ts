@@ -177,4 +177,3 @@ export function parseUniqueModifier(notation: string): Pick<ModifierOptions, 'un
   const notUnique = match[2].split(',').map(s => Number(s.trim()))
   return { unique: { notUnique } }
 }
-

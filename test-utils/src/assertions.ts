@@ -31,4 +31,3 @@ export function expectAllRollsInRange(result: RollerRollResult, min: number, max
     }
   }
 }
-

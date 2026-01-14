@@ -5,4 +5,3 @@ export async function runStdioTransport(server: McpServer): Promise<void> {
   const transport = new StdioServerTransport()
   await server.connect(transport)
 }
-

@@ -29,4 +29,3 @@ expectRollInRange(result, 3, 18)
 // Common fixtures
 const advantageRoll = roll(commonNotations.advantage)
 ```
-

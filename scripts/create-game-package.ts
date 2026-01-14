@@ -2,9 +2,9 @@
 
 /**
  * Game Package Generator
- * 
+ *
  * Usage: bun scripts/create-game-package.ts <game-name>
- * 
+ *
  * Creates a new game package with the standard RANDSUM structure.
  */
 
@@ -86,11 +86,13 @@ const packageJson = {
   },
   keywords: ['dice', 'roller', 'rpg', 'random', 'typescript', 'tabletop', packageName],
   scripts: {
-    build: 'bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean',
+    build:
+      'bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean',
     test: 'bun test',
     lint: 'eslint . -c ../../eslint.config.js',
     format: 'prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc',
-    'format:check': 'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc',
+    'format:check':
+      'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc',
     typecheck: 'tsc --noEmit'
   }
 }
@@ -229,5 +231,3 @@ console.log(`  1. Update src/types.ts with your game-specific types`)
 console.log(`  2. Implement roll${pascalName} in src/roll${pascalName}/index.ts`)
 console.log(`  3. Add tests in __tests__/${packageName}.test.ts`)
 console.log(`  4. Run 'bun install' to install dependencies`)
-
-

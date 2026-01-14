@@ -57,4 +57,3 @@ Also re-exports core types from `@randsum/roller`:
 
 - `roll`, `validateNotation`
 - `RollArgument`, `RollerRollResult`, `ValidationResult`
-

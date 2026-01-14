@@ -55,4 +55,3 @@ Tests cover:
 - Valid bonus ranges
 - Invalid input validation
 - Hit result interpretation
-

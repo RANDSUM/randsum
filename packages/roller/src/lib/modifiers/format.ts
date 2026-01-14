@@ -240,4 +240,3 @@ export function modifierToNotation(
   const handler = NOTATION_HANDLERS.get(type)
   return handler ? handler(options) : undefined
 }
-

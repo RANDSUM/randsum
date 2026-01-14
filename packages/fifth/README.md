@@ -8,6 +8,7 @@
 [![Types](https://img.shields.io/npm/types/@randsum/fifth)](https://www.npmjs.com/package/@randsum/fifth)
 [![License](https://img.shields.io/npm/l/@randsum/fifth)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/npm/dm/@randsum/fifth)](https://www.npmjs.com/package/@randsum/fifth)
+[![codecov](https://codecov.io/gh/RANDSUM/randsum/branch/main/graph/badge.svg)](https://codecov.io/gh/RANDSUM/randsum)
 
 </div>
 

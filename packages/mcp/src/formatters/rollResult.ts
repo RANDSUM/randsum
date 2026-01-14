@@ -32,4 +32,3 @@ export function formatRollResult(result: RollerRollResult): string {
 
   return [header, separator, totalLine, rawResultsLine, '', 'Roll Details:', rollInfo].join('\n')
 }
-

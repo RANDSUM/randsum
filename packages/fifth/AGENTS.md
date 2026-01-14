@@ -52,4 +52,3 @@ Tests cover:
 - Disadvantage rolls (2d20 drop highest)
 - Normal rolls (1d20)
 - Modifier application
-

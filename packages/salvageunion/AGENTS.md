@@ -64,4 +64,3 @@ Tests cover:
 - Different table types
 - Invalid table names
 - Result structure validation
-

@@ -2,6 +2,7 @@ import { describe, test } from 'bun:test'
 import fc from 'fast-check'
 
 import { roll } from '../../src/roll'
+import { createSeededRandom } from '../../../../test-utils/src/seededRandom'
 
 describe('roll property-based tests', () => {
   test('results always within bounds for numeric dice', () => {
@@ -52,6 +53,40 @@ describe('roll property-based tests', () => {
             }
           }
           return true
+        }
+      )
+    )
+  })
+
+  test('drop lowest never increases total vs without modifier', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 2, max: 20 }),
+        fc.integer({ min: 2, max: 10 }),
+        fc.integer({ min: 42, max: 9999 }),
+        (sides, quantity, seed) => {
+          const seeded = createSeededRandom(seed)
+          const withDrop = roll(
+            { sides, quantity, modifiers: { drop: { lowest: 1 } } },
+            { randomFn: seeded }
+          )
+          const seeded2 = createSeededRandom(seed)
+          const without = roll({ sides, quantity }, { randomFn: seeded2 })
+          return withDrop.total <= without.total
+        }
+      )
+    )
+  })
+
+  test('unique modifier produces no duplicates when possible', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 10, max: 100 }),
+        fc.integer({ min: 2, max: 8 }),
+        (sides, quantity) => {
+          const result = roll({ sides, quantity, modifiers: { unique: true } })
+          const rolls = result.rolls[0]?.rolls ?? []
+          return new Set(rolls).size === rolls.length
         }
       )
     )

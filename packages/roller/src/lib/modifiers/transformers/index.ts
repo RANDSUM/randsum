@@ -10,5 +10,3 @@ export { formatReplaceNotation } from './formatReplaceNotation'
 export { formatRerollNotation } from './formatRerollNotation'
 export { MODIFIER_HANDLERS } from './modifierHandlers'
 export { NOTATION_HANDLERS } from './notationHandlers'
-
-
