@@ -46,10 +46,40 @@ export function generateHistory<T>(
     }
   }
 
+  // Check if success counting is enabled
+  const successCountOptions = modifiers.countSuccesses
+  let total: number
+
+  if (successCountOptions) {
+    // Count successes instead of summing
+    const successes = bonuses.rolls.filter(roll => roll >= successCountOptions.threshold).length
+    const botchThreshold = successCountOptions.botchThreshold
+    const botches =
+      botchThreshold !== undefined ? bonuses.rolls.filter(roll => roll <= botchThreshold).length : 0
+    // For now, just return success count (could subtract botches in the future)
+    total = successes - botches
+  } else {
+    // Normal sum calculation with multipliers
+    // Order: (dice sum × multiply) ± plus/minus) × multiplyTotal
+    const diceSum = bonuses.rolls.reduce((acc, cur) => acc + cur, 0)
+
+    // Apply pre-arithmetic multiply (*N)
+    const multipliedSum = modifiers.multiply !== undefined ? diceSum * modifiers.multiply : diceSum
+
+    // Apply arithmetic modifiers (+/-)
+    const afterArithmetic = multipliedSum + bonuses.simpleMathModifier
+
+    // Apply total multiply (**N)
+    total =
+      modifiers.multiplyTotal !== undefined
+        ? afterArithmetic * modifiers.multiplyTotal
+        : afterArithmetic
+  }
+
   return {
     modifiedRolls: bonuses.rolls,
     initialRolls: rolls,
-    total: bonuses.rolls.reduce((acc, cur) => acc + cur, bonuses.simpleMathModifier),
+    total,
     logs: bonuses.logs
   }
 }

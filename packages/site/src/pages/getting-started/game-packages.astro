@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+---
+
+<BaseLayout
+  title="Game Packages - Getting Started"
+  description="Learn how to use RANDSUM game packages for D&D, Blades in the Dark, and other tabletop RPGs."
+  keywords={['game packages', 'D&D', 'Blades in the Dark', 'tutorial', 'RANDSUM']}
+>
+  <div class="game-packages-guide-page">
+    <section class="guide-header">
+      <div class="container">
+        <nav class="breadcrumbs">
+          <a href="/">Home</a> / <a href="/getting-started">Getting Started</a> / Game Packages
+        </nav>
+        <h1>Game Packages</h1>
+        <p class="guide-description">
+          RANDSUM includes specialized packages for popular tabletop RPG systems. Learn how to use
+          them in your games.
+        </p>
+      </div>
+    </section>
+
+    <section class="guide-content">
+      <div class="container">
+        <div class="guide-section">
+          <h2>D&D 5th Edition</h2>
+          <p>
+            The <code>@randsum/fifth</code> package provides D&D 5e mechanics including advantage,
+            disadvantage, and ability checks.
+          </p>
+
+          <CodeExample
+            code={`import { actionRoll } from '@randsum/fifth'
+
+// Basic attack roll with modifier
+const attack = actionRoll({ modifier: 5 })
+
+// With advantage
+const advantageAttack = actionRoll({
+  modifier: 5,
+  rollingWith: 'Advantage'
+})
+
+// With disadvantage
+const disadvantageAttack = actionRoll({
+  modifier: -2,
+  rollingWith: 'Disadvantage'
+})`}
+            language="typescript"
+            title="D&D 5e Examples"
+          />
+
+          <p><a href="/packages/fifth">Read the full D&D 5e documentation</a></p>
+        </div>
+
+        <div class="guide-section">
+          <h2>Blades in the Dark</h2>
+          <p>
+            The <code>@randsum/blades</code> package provides Blades in the Dark action roll mechanics.
+          </p>
+
+          <CodeExample
+            code={`import { rollBlades } from '@randsum/blades'
+
+// Roll with dice pool
+const result = rollBlades(3)
+// result.result: 'critical' | 'success' | 'partial' | 'failure'
+
+// Desperate position (0 dice)
+const desperate = rollBlades(0)`}
+            language="typescript"
+            title="Blades Examples"
+          />
+
+          <p><a href="/packages/blades">Read the full Blades documentation</a></p>
+        </div>
+
+        <div class="guide-section">
+          <h2>Powered by the Apocalypse</h2>
+          <p>
+            The <code>@randsum/pbta</code> package provides generic PbtA mechanics for any PbtA game.
+          </p>
+
+          <CodeExample
+            code={`import { rollPbtA } from '@randsum/pbta'
+
+// Basic PbtA roll
+const result = rollPbtA({ stat: 2 })
+// result.result: 'strong_hit' | 'weak_hit' | 'miss'
+
+// With bonuses
+const bonusRoll = rollPbtA({
+  stat: 1,
+  forward: 1,  // One-time bonus
+  ongoing: 0   // Persistent bonus
+})
+
+// With advantage
+const advantageRoll = rollPbtA({
+  stat: 2,
+  advantage: true
+})`}
+            language="typescript"
+            title="PbtA Examples"
+          />
+
+          <p><a href="/packages/pbta">Read the full PbtA documentation</a></p>
+        </div>
+
+        <div class="guide-section">
+          <h2>Other Game Systems</h2>
+          <p>RANDSUM also supports:</p>
+          <ul>
+            <li>
+              <strong>Daggerheart</strong> - <a href="/packages/daggerheart">@randsum/daggerheart</a>
+            </li>
+            <li>
+              <strong>Root RPG</strong> - <a href="/packages/root-rpg">@randsum/root-rpg</a>
+            </li>
+            <li>
+              <strong>Salvage Union</strong> - <a href="/packages/salvageunion">@randsum/salvageunion</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="guide-section">
+          <h2>Installation</h2>
+          <p>Install game packages individually:</p>
+
+          <CodeExample
+            code={`# D&D 5e
+npm install @randsum/fifth
+
+# Blades in the Dark
+npm install @randsum/blades
+
+# Powered by the Apocalypse
+npm install @randsum/pbta`}
+            language="bash"
+            title="Installing Game Packages"
+          />
+
+          <p>
+            All game packages depend on <code>@randsum/roller</code>, which will be installed
+            automatically.
+          </p>
+        </div>
+
+        <div class="guide-section">
+          <h2>Next Steps</h2>
+          <ul class="next-steps-list">
+            <li><a href="/getting-started/mcp">Learn about MCP integration</a></li>
+            <li><a href="/packages">Browse all packages</a></li>
+            <li><a href="/games">See game-specific guides</a></li>
+            <li><a href="https://github.com/RANDSUM/randsum">View on GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .game-packages-guide-page {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .guide-header {
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .breadcrumbs {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-alt);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-text-alt);
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .guide-header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .guide-description {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-alt);
+    max-width: 700px;
+  }
+
+  .guide-content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .guide-section {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .guide-section h2 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .guide-section p {
+    margin-bottom: var(--spacing-md);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .guide-section ul {
+    margin-left: var(--spacing-xl);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .guide-section ul li {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .guide-section ul li a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .guide-section ul li a:hover {
+    text-decoration: underline;
+  }
+
+  .next-steps-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .next-steps-list li {
+    padding: var(--spacing-sm) 0;
+  }
+
+  .next-steps-list li a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .next-steps-list li a:hover {
+    text-decoration: underline;
+  }
+</style>

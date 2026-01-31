@@ -9,7 +9,7 @@ type ZodRawShape = Record<string, z.ZodTypeAny>
 /**
  * Type for tool handler return value
  */
-interface ToolResponse {
+export interface ToolResponse {
   content: { type: 'text'; text: string }[]
 }
 
@@ -22,7 +22,9 @@ interface TypedMcpServer extends Omit<McpServer, 'tool'> {
     name: string,
     description: string,
     paramsSchema: TParams,
-    handler: (args: { [K in keyof TParams]: z.infer<TParams[K]> }) => ToolResponse
+    handler: (args: { [K in keyof TParams]: z.infer<TParams[K]> }) =>
+      | ToolResponse
+      | Promise<ToolResponse>
   ): void
 }
 
@@ -36,7 +38,7 @@ interface TypedMcpServer extends Omit<McpServer, 'tool'> {
  * @param name - Tool name
  * @param description - Tool description
  * @param schemaShape - Zod schema shape object
- * @param handler - Tool handler function
+ * @param handler - Tool handler function (can be sync or async)
  */
 export function registerTool<TParams extends ZodRawShape>(
   server: McpServer,
@@ -45,7 +47,7 @@ export function registerTool<TParams extends ZodRawShape>(
   schemaShape: TParams,
   handler: (args: {
     [K in keyof TParams]: z.infer<TParams[K]>
-  }) => ToolResponse
+  }) => ToolResponse | Promise<ToolResponse>
 ): void {
   // Cast server to our typed interface which properly types the tool method
   // This avoids both 'any' and 'unknown' by using a specific interface

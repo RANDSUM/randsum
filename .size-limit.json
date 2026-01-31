@@ -1,8 +1,0 @@
-[
-  { "path": "packages/roller/dist/index.js", "limit": "5 KB" },
-  { "path": "packages/blades/dist/index.js", "limit": "5 KB" },
-  { "path": "packages/fifth/dist/index.js", "limit": "5 KB" },
-  { "path": "packages/daggerheart/dist/index.js", "limit": "5 KB" },
-  { "path": "packages/root-rpg/dist/index.js", "limit": "5 KB" },
-  { "path": "packages/salvageunion/dist/index.js", "limit": "170 KB" }
-]

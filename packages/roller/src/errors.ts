@@ -17,9 +17,15 @@ export class RandsumError extends Error {
 }
 
 export class NotationParseError extends RandsumError {
-  constructor(notation: string, reason: string) {
-    super(`Invalid notation "${notation}": ${reason}`, 'INVALID_NOTATION')
+  public readonly suggestion: string | undefined
+
+  constructor(notation: string, reason: string, suggestion?: string) {
+    const message = suggestion
+      ? `Invalid notation "${notation}": ${reason}. Did you mean "${suggestion}"?`
+      : `Invalid notation "${notation}": ${reason}`
+    super(message, 'INVALID_NOTATION')
     this.name = 'NotationParseError'
+    this.suggestion = suggestion
   }
 }
 

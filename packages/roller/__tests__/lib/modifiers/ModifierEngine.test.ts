@@ -98,6 +98,58 @@ describe('applyModifiers', () => {
     })
   })
 
+  describe('keep modifier', () => {
+    test('keeps highest values', () => {
+      const bonus = createBasicBonus([1, 6, 3, 4])
+      const result = applyModifiers('keep', { highest: 2 }, bonus)
+
+      expect(result.rolls).toEqual([4, 6])
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]?.modifier).toBe('keep')
+    })
+
+    test('keeps lowest values', () => {
+      const bonus = createBasicBonus([1, 6, 3, 4])
+      const result = applyModifiers('keep', { lowest: 2 }, bonus)
+
+      expect(result.rolls).toEqual([1, 3])
+    })
+
+    test('keeps highest 1 by default', () => {
+      const bonus = createBasicBonus([1, 6, 3, 4])
+      const result = applyModifiers('keep', { highest: 1 }, bonus)
+
+      expect(result.rolls).toEqual([6])
+    })
+
+    test('keeps lowest 1 by default', () => {
+      const bonus = createBasicBonus([1, 6, 3, 4])
+      const result = applyModifiers('keep', { lowest: 1 }, bonus)
+
+      expect(result.rolls).toEqual([1])
+    })
+
+    test('keep highest 3 from 4 is equivalent to drop lowest 1', () => {
+      const bonus1 = createBasicBonus([1, 6, 3, 4])
+      const bonus2 = createBasicBonus([1, 6, 3, 4])
+
+      const keepResult = applyModifiers('keep', { highest: 3 }, bonus1)
+      const dropResult = applyModifiers('drop', { lowest: 1 }, bonus2)
+
+      expect(keepResult.rolls.sort()).toEqual(dropResult.rolls.sort())
+    })
+
+    test('keep lowest 2 from 4 is equivalent to drop highest 2', () => {
+      const bonus1 = createBasicBonus([1, 6, 3, 4])
+      const bonus2 = createBasicBonus([1, 6, 3, 4])
+
+      const keepResult = applyModifiers('keep', { lowest: 2 }, bonus1)
+      const dropResult = applyModifiers('drop', { highest: 2 }, bonus2)
+
+      expect(keepResult.rolls.sort()).toEqual(dropResult.rolls.sort())
+    })
+  })
+
   describe('reroll modifier', () => {
     test('rerolls exact values', () => {
       const bonus = createBasicBonus([1, 6, 1, 4])
@@ -191,6 +243,117 @@ describe('applyModifiers', () => {
     })
   })
 
+  describe('compound modifier', () => {
+    test('adds rerolled value to triggering die', () => {
+      const bonus = createBasicBonus([6, 3, 4])
+      const fixedRollOne = (): number => 3
+      const result = applyModifiers('compound', true, bonus, mockContext, fixedRollOne)
+
+      // The 6 compounds to 6 + 3 = 9
+      expect(result.rolls).toEqual([9, 3, 4])
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]?.modifier).toBe('compound')
+    })
+
+    test('compounds multiple times with depth', () => {
+      const bonus = createBasicBonus([6, 4])
+      let callCount = 0
+      const sequenceRollOne = (): number => {
+        callCount++
+        return callCount === 1 ? 6 : 2 // First roll is 6 (compounds again), second is 2
+      }
+      const result = applyModifiers('compound', 5, bonus, mockContext, sequenceRollOne)
+
+      // The 6 compounds: 6 + 6 + 2 = 14
+      expect(result.rolls).toEqual([14, 4])
+    })
+
+    test('respects max depth limit', () => {
+      const bonus = createBasicBonus([6])
+      const alwaysMaxRoll = (): number => 6
+      const result = applyModifiers('compound', 2, bonus, mockContext, alwaysMaxRoll)
+
+      // Depth 2: 6 + 6 + 6 = 18 (stops after 2 compounds)
+      expect(result.rolls).toEqual([18])
+    })
+
+    test('does not compound non-max values', () => {
+      const bonus = createBasicBonus([5, 3, 4])
+      const fixedRollOne = (): number => 6
+      const result = applyModifiers('compound', true, bonus, mockContext, fixedRollOne)
+
+      // No dice show max (6), so no compounding
+      expect(result.rolls).toEqual([5, 3, 4])
+    })
+
+    test('throws error when context or rollOne is missing', () => {
+      const bonus = createBasicBonus([6, 3, 4])
+      expect(() => {
+        applyModifiers('compound', true, bonus)
+      }).toThrow('rollOne and context required for compound modifier')
+    })
+  })
+
+  describe('penetrate modifier', () => {
+    test('adds rerolled value minus 1 to triggering die', () => {
+      const bonus = createBasicBonus([6, 3, 4])
+      const fixedRollOne = (): number => 4
+      const result = applyModifiers('penetrate', true, bonus, mockContext, fixedRollOne)
+
+      // The 6 penetrates: 6 + (4 - 1) = 9
+      expect(result.rolls).toEqual([9, 3, 4])
+      expect(result.logs).toHaveLength(1)
+      expect(result.logs[0]?.modifier).toBe('penetrate')
+    })
+
+    test('penetrates multiple times with depth', () => {
+      const bonus = createBasicBonus([6, 4])
+      let callCount = 0
+      const sequenceRollOne = (): number => {
+        callCount++
+        return callCount === 1 ? 6 : 3 // First roll is 6 (penetrates again), second is 3
+      }
+      const result = applyModifiers('penetrate', 5, bonus, mockContext, sequenceRollOne)
+
+      // The 6 penetrates: 6 + (6 - 1) + (3 - 1) = 6 + 5 + 2 = 13
+      expect(result.rolls).toEqual([13, 4])
+    })
+
+    test('respects max depth limit', () => {
+      const bonus = createBasicBonus([6])
+      const alwaysMaxRoll = (): number => 6
+      const result = applyModifiers('penetrate', 2, bonus, mockContext, alwaysMaxRoll)
+
+      // Depth 2: 6 + (6-1) + (6-1) = 6 + 5 + 5 = 16
+      expect(result.rolls).toEqual([16])
+    })
+
+    test('does not penetrate non-max values', () => {
+      const bonus = createBasicBonus([5, 3, 4])
+      const fixedRollOne = (): number => 6
+      const result = applyModifiers('penetrate', true, bonus, mockContext, fixedRollOne)
+
+      // No dice show max (6), so no penetrating
+      expect(result.rolls).toEqual([5, 3, 4])
+    })
+
+    test('minimum penetrated value is 1', () => {
+      const bonus = createBasicBonus([6])
+      const rollsOne = (): number => 1
+      const result = applyModifiers('penetrate', true, bonus, mockContext, rollsOne)
+
+      // The 6 penetrates: 6 + max(1, 1 - 1) = 6 + 1 = 7 (not 6 + 0)
+      expect(result.rolls).toEqual([7])
+    })
+
+    test('throws error when context or rollOne is missing', () => {
+      const bonus = createBasicBonus([6, 3, 4])
+      expect(() => {
+        applyModifiers('penetrate', true, bonus)
+      }).toThrow('rollOne and context required for penetrate modifier')
+    })
+  })
+
   describe('replace modifier', () => {
     test('replaces exact values', () => {
       const bonus = createBasicBonus([1, 6, 1, 4])
@@ -243,6 +406,26 @@ describe('modifiersToDescription', () => {
     expect(result).toEqual(['Drop lowest'])
   })
 
+  test('generates description for keep highest modifier', () => {
+    const result = modifierToDescription('keep', { highest: 3 })
+    expect(result).toEqual(['Keep highest 3'])
+  })
+
+  test('generates description for keep highest 1 modifier', () => {
+    const result = modifierToDescription('keep', { highest: 1 })
+    expect(result).toEqual(['Keep highest'])
+  })
+
+  test('generates description for keep lowest modifier', () => {
+    const result = modifierToDescription('keep', { lowest: 2 })
+    expect(result).toEqual(['Keep lowest 2'])
+  })
+
+  test('generates description for keep lowest 1 modifier', () => {
+    const result = modifierToDescription('keep', { lowest: 1 })
+    expect(result).toEqual(['Keep lowest'])
+  })
+
   test('generates description for reroll modifier', () => {
     const result = modifierToDescription('reroll', { exact: [1, 2] })
     expect(result).toEqual(['Reroll [1] and [2]'])
@@ -266,6 +449,30 @@ describe('modifiersToDescription', () => {
   test('returns undefined for undefined options', () => {
     const result = modifierToDescription('plus', undefined)
     expect(result).toBeUndefined()
+  })
+
+  test('generates description for compound modifier', () => {
+    expect(modifierToDescription('compound', true)).toEqual(['Compounding Dice'])
+  })
+
+  test('generates description for compound modifier with depth', () => {
+    expect(modifierToDescription('compound', 3)).toEqual(['Compounding Dice (max 3 times)'])
+  })
+
+  test('generates description for compound modifier unlimited', () => {
+    expect(modifierToDescription('compound', 0)).toEqual(['Compounding Dice (unlimited)'])
+  })
+
+  test('generates description for penetrate modifier', () => {
+    expect(modifierToDescription('penetrate', true)).toEqual(['Penetrating Dice'])
+  })
+
+  test('generates description for penetrate modifier with depth', () => {
+    expect(modifierToDescription('penetrate', 3)).toEqual(['Penetrating Dice (max 3 times)'])
+  })
+
+  test('generates description for penetrate modifier unlimited', () => {
+    expect(modifierToDescription('penetrate', 0)).toEqual(['Penetrating Dice (unlimited)'])
   })
 })
 
@@ -295,6 +502,26 @@ describe('modifierToNotation method', () => {
     expect(result).toBe('L')
   })
 
+  test('generates notation for keep highest modifier', () => {
+    const result = modifierToNotation('keep', { highest: 3 })
+    expect(result).toBe('K3')
+  })
+
+  test('generates notation for keep highest 1 modifier', () => {
+    const result = modifierToNotation('keep', { highest: 1 })
+    expect(result).toBe('K')
+  })
+
+  test('generates notation for keep lowest modifier', () => {
+    const result = modifierToNotation('keep', { lowest: 2 })
+    expect(result).toBe('kl2')
+  })
+
+  test('generates notation for keep lowest 1 modifier', () => {
+    const result = modifierToNotation('keep', { lowest: 1 })
+    expect(result).toBe('kl')
+  })
+
   test('generates notation for reroll modifier', () => {
     const result = modifierToNotation('reroll', { exact: [1, 2] })
     expect(result).toBe('R{1,2}')
@@ -318,5 +545,35 @@ describe('modifierToNotation method', () => {
   test('returns undefined for undefined options', () => {
     const result = modifierToNotation('plus', undefined)
     expect(result).toBeUndefined()
+  })
+
+  test('generates notation for compound modifier', () => {
+    const result = modifierToNotation('compound', true)
+    expect(result).toBe('!!')
+  })
+
+  test('generates notation for compound modifier with depth', () => {
+    const result = modifierToNotation('compound', 3)
+    expect(result).toBe('!!3')
+  })
+
+  test('generates notation for compound modifier unlimited', () => {
+    const result = modifierToNotation('compound', 0)
+    expect(result).toBe('!!0')
+  })
+
+  test('generates notation for penetrate modifier', () => {
+    const result = modifierToNotation('penetrate', true)
+    expect(result).toBe('!p')
+  })
+
+  test('generates notation for penetrate modifier with depth', () => {
+    const result = modifierToNotation('penetrate', 3)
+    expect(result).toBe('!p3')
+  })
+
+  test('generates notation for penetrate modifier unlimited', () => {
+    const result = modifierToNotation('penetrate', 0)
+    expect(result).toBe('!p0')
   })
 })

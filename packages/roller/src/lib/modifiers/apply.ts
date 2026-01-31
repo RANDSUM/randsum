@@ -1,9 +1,11 @@
 import type {
   ComparisonOptions,
   DropOptions,
+  KeepOptions,
   ReplaceOptions,
   RequiredNumericRollParameters,
   RerollOptions,
+  SuccessCountOptions,
   UniqueOptions
 } from '../../types'
 import { matchesComparison } from '../comparisonUtils'
@@ -75,29 +77,41 @@ export function applyDropping(rolls: number[], options: DropOptions): number[] {
   return result
 }
 
+export function applyKeeping(rolls: number[], options: KeepOptions): number[] {
+  // Convert keep to drop internally
+  const { highest, lowest } = options
+  const quantity = rolls.length
+
+  if (highest !== undefined) {
+    // Keep N highest = drop (quantity - N) lowest
+    return applyDropping(rolls, { lowest: quantity - highest })
+  }
+  if (lowest !== undefined) {
+    // Keep N lowest = drop (quantity - N) highest
+    return applyDropping(rolls, { highest: quantity - lowest })
+  }
+  return rolls
+}
+
 export function applyExploding(
   rolls: number[],
   { sides }: RequiredNumericRollParameters,
-  rollOne: () => number
+  rollOne: () => number,
+  maxDepth = 1
 ): number[] {
-  let explodeCount = 0
+  const result = [...rolls]
+  let explosions = rolls.filter(r => r === sides)
+  let depth = 0
+  const effectiveMaxDepth = maxDepth === 0 ? 100 : maxDepth // 0 = unlimited (capped at 100 for safety)
 
-  for (const roll of rolls) {
-    if (roll === sides) {
-      explodeCount++
-    }
+  while (explosions.length > 0 && depth < effectiveMaxDepth) {
+    const newRolls = explosions.map(() => rollOne())
+    result.push(...newRolls)
+    explosions = newRolls.filter(r => r === sides)
+    depth++
   }
 
-  if (explodeCount === 0) {
-    return rolls
-  }
-
-  const explodedRolls = [...rolls]
-  for (let i = 0; i < explodeCount; i++) {
-    explodedRolls.push(rollOne())
-  }
-
-  return explodedRolls
+  return result
 }
 
 export function applyRerolling(
@@ -202,4 +216,73 @@ export function applyUnique(
   }
 
   return uniqueRolls
+}
+
+export function applySuccessCounting(rolls: number[], _options: SuccessCountOptions): number[] {
+  // Success counting doesn't modify the rolls themselves,
+  // but we need to return something. The actual counting
+  // happens in the result calculation.
+  // For now, return rolls unchanged - the count will be in the total
+  return rolls
+}
+
+/**
+ * Compounding exploding: when a die shows max value, add the rerolled value to that die
+ * instead of creating a new die.
+ */
+export function applyCompounding(
+  rolls: number[],
+  { sides }: RequiredNumericRollParameters,
+  rollOne: () => number,
+  maxDepth = 1
+): number[] {
+  const effectiveMaxDepth = maxDepth === 0 ? 100 : maxDepth // 0 = unlimited (capped at 100 for safety)
+
+  return rolls.map(roll => {
+    if (roll !== sides) return roll
+
+    let compoundValue = roll
+    let compoundDepth = 0
+
+    while (compoundDepth < effectiveMaxDepth) {
+      const newRoll = rollOne()
+      compoundValue += newRoll
+      compoundDepth++
+      if (newRoll !== sides) break
+    }
+
+    return compoundValue
+  })
+}
+
+/**
+ * Penetrating exploding: like compound, but subtract 1 from each subsequent roll.
+ * This is the Hackmaster-style penetration dice mechanic.
+ */
+export function applyPenetrating(
+  rolls: number[],
+  { sides }: RequiredNumericRollParameters,
+  rollOne: () => number,
+  maxDepth = 1
+): number[] {
+  const effectiveMaxDepth = maxDepth === 0 ? 100 : maxDepth // 0 = unlimited (capped at 100 for safety)
+
+  return rolls.map(roll => {
+    if (roll !== sides) return roll
+
+    let penetrateValue = roll
+    let penetrateDepth = 0
+
+    while (penetrateDepth < effectiveMaxDepth) {
+      const newRoll = rollOne()
+      // Subtract 1 from the roll (minimum 1)
+      const adjustedRoll = Math.max(1, newRoll - 1)
+      penetrateValue += adjustedRoll
+      penetrateDepth++
+      // Continue penetrating if we rolled max (before adjustment)
+      if (newRoll !== sides) break
+    }
+
+    return penetrateValue
+  })
 }

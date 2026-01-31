@@ -1,6 +1,18 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { config } from './config.js'
-import { registerRollTool, registerValidateTool } from './tools/index.js'
+import {
+  registerAnalyzeTool,
+  registerBatchRollTool,
+  registerCompareTool,
+  registerCountSuccessesTool,
+  registerGameRollTool,
+  registerPresetTool,
+  registerRollTool,
+  registerTryRollTool,
+  registerValidateTool
+} from './tools/index.js'
+import { registerResources } from './resources/index.js'
+import { registerPrompts } from './prompts/index.js'
 
 const SERVER_INSTRUCTIONS = `🎲 RANDSUM MCP Server - Advanced Dice Rolling & Game Mechanics Engine
 
@@ -26,6 +38,54 @@ COMPREHENSIVE DICE ROLLING SYSTEM with sophisticated modifiers for tabletop gami
 • Detailed parsing feedback showing notation interpretation
 • Comprehensive error messages with correction guidance
 • Essential for learning syntax and debugging complex expressions
+
+🛡️ try-roll - Safe Dice Rolling (No Exceptions)
+• Roll dice without throwing exceptions
+• Returns Result object with success/error status
+• Useful for error handling without try/catch blocks
+• Supports both text and JSON output formats
+
+📊 analyze - Probability Analysis
+• Analyze probability distribution of dice notation
+• Returns statistics: min, max, mean, median, mode, standard deviation
+• Provides probability distribution for each possible result
+• Uses Monte Carlo simulation for complex modifiers
+
+🎮 game-roll - Unified Game-Specific Rolls
+• Roll dice for any supported game system
+• Supports: blades, fifth, pbta, daggerheart, root-rpg, salvageunion
+• Accepts game-specific arguments as JSON
+• Returns game-specific result with details
+
+🔄 batch-roll - Multiple Rolls at Once
+• Roll dice multiple times in a single call
+• Useful for generating ability scores, initiative, etc.
+• Returns individual results plus statistics (sum, average, min, max)
+• Supports optional labels for each batch
+
+⚖️ compare - Compare Notation Probabilities
+• Compare probability distributions of two dice notations
+• Shows statistics for both notations side-by-side
+• Calculates mean differences and range overlap
+• Useful for comparing different roll options
+
+🎯 count-successes - Dice Pool Success Counting
+• Count successes instead of summing dice
+• Supports success threshold (rolls >= threshold)
+• Optional botch threshold (rolls <= threshold)
+• Useful for World of Darkness, Shadowrun, and similar systems
+
+🎲 preset - Pre-configured Roll Presets
+• Roll dice using common preset configurations
+• Presets: dnd-ability-score, dnd-advantage, dnd-disadvantage, fate-dice, shadowrun-pool
+• Supports parameterized presets (e.g., shadowrun-pool with dice count)
+• Quick access to common roll patterns
+
+💬 PROMPTS:
+• dnd-ability-scores - Generate D&D 5e ability scores
+• blades-action - Roll Blades in the Dark action
+• combat-round - Roll initiative and attacks
+• pbta-roll - Roll Powered by the Apocalypse move
 
 📚 COMPREHENSIVE MODIFIER SYSTEM:
 
@@ -81,7 +141,16 @@ export function createServerInstance(): McpServer {
   })
 
   registerRollTool(server)
+  registerTryRollTool(server)
   registerValidateTool(server)
+  registerAnalyzeTool(server)
+  registerGameRollTool(server)
+  registerBatchRollTool(server)
+  registerCompareTool(server)
+  registerCountSuccessesTool(server)
+  registerPresetTool(server)
+  registerPrompts(server)
+  registerResources(server)
 
   return server
 }

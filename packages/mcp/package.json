@@ -23,7 +23,13 @@
   "type": "module",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.14.0",
+    "@randsum/blades": "workspace:~",
+    "@randsum/daggerheart": "workspace:~",
+    "@randsum/fifth": "workspace:~",
+    "@randsum/pbta": "workspace:~",
     "@randsum/roller": "workspace:~",
+    "@randsum/root-rpg": "workspace:~",
+    "@randsum/salvageunion": "workspace:~",
     "commander": "^12.1.0",
     "zod": "^3.25.71"
   },

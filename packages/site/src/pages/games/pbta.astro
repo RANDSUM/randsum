@@ -1,0 +1,103 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('pbta')
+if (!pkg) {
+  throw new Error('Package not found')
+}
+---
+
+<DocsLayout package={pkg} title="Documentation">
+  <section class="installation">
+    <h2>Installation</h2>
+    <div class="install-box">
+      <CodeExample
+        code={`npm install @randsum/pbta
+# or
+bun add @randsum/pbta`}
+        language="bash"
+      />
+    </div>
+  </section>
+
+  <section class="examples">
+    <h2>Examples</h2>
+    {
+      pkg.examples.map(example => {
+        return <CodeExample code={example.code} language={example.language} title={example.title} />
+      })
+    }
+  </section>
+
+  <section class="documentation">
+    <h2>About Powered by the Apocalypse</h2>
+    <p>
+      The <code>@randsum/pbta</code> package provides generic mechanics for
+      <a
+        href="https://apocalypse-world.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Powered by the Apocalypse
+      </a>{' '}
+      (PbtA) games, a family of tabletop RPGs that share core mechanics.
+    </p>
+    <p>
+      Standard PbtA roll mechanics:
+    </p>
+    <ul>
+      <li>Roll 2d6 + stat modifier</li>
+      <li>10+ = strong hit (complete success)</li>
+      <li>7-9 = weak hit (partial success, success with cost)</li>
+      <li>6- = miss (failure)</li>
+    </ul>
+    <p>
+      This package supports advantage/disadvantage (roll 3d6, keep 2), and bonuses (forward/ongoing).
+    </p>
+    <p>
+      For more information, see the
+      <a
+        href={`https://github.com/RANDSUM/randsum/tree/main/packages/${pkg.name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        package source code
+      </a>.
+    </p>
+  </section>
+</DocsLayout>
+
+<style>
+  .installation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .install-box {
+    margin-top: var(--spacing-md);
+  }
+
+  .examples {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .documentation p {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+  }
+
+  .documentation ul {
+    margin-left: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+  }
+
+  .documentation li {
+    margin-bottom: var(--spacing-sm);
+  }
+</style>

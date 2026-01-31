@@ -1,0 +1,40 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import { getPackageById } from '../../utils/packageData'
+
+const pkg = getPackageById('pbta')!
+---
+
+<DocsLayout title={pkg.displayName} description={pkg.description} package={pkg}>
+  <section>
+    <h2>Overview</h2>
+    <p>
+      <strong>@randsum/pbta</strong> provides generic support for Powered by the Apocalypse (PbtA) game
+      mechanics. This package works for any PbtA game including Dungeon World, Monster of the Week,
+      Apocalypse World, Masks, and many others.
+    </p>
+  </section>
+
+  <section>
+    <h2>Installation</h2>
+    <CodeExample
+      code={pkg.examples.find(e => e.title === 'Installation')?.code || ''}
+      language="bash"
+      title="Installation"
+    />
+  </section>
+
+  <section>
+    <h2>Examples</h2>
+    {
+      pkg.examples
+        .filter(e => e.title !== 'Installation')
+        .map(example => {
+          return (
+            <CodeExample code={example.code} language={example.language} title={example.title} />
+          )
+        })
+    }
+  </section>
+</DocsLayout>

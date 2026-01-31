@@ -311,6 +311,57 @@ bun add @randsum/salvageunion`,
         language: 'bash'
       }
     ]
+  },
+  {
+    id: 'pbta',
+    name: 'pbta',
+    displayName: 'Powered by the Apocalypse',
+    description:
+      'Generic PbtA mechanics for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.',
+    npmPackage: '@randsum/pbta',
+    category: 'game',
+    color: '#14b8a6', // teal
+    examples: [
+      {
+        title: 'Basic Roll',
+        code: `import { rollPbtA } from "@randsum/pbta"
+
+// Basic roll with stat modifier
+const result = rollPbtA({ stat: 2 })
+// result.result: 'strong_hit' | 'weak_hit' | 'miss'`,
+        language: 'typescript'
+      },
+      {
+        title: 'With Bonuses',
+        code: `import { rollPbtA } from "@randsum/pbta"
+
+// With forward and ongoing bonuses
+const result = rollPbtA({
+  stat: 1,
+  forward: 1,  // One-time bonus
+  ongoing: 0   // Persistent bonus
+})`,
+        language: 'typescript'
+      },
+      {
+        title: 'With Advantage',
+        code: `import { rollPbtA } from "@randsum/pbta"
+
+// Roll with advantage (3d6, keep 2 highest)
+const result = rollPbtA({
+  stat: 2,
+  advantage: true
+})`,
+        language: 'typescript'
+      },
+      {
+        title: 'Installation',
+        code: `npm install @randsum/pbta
+# or
+bun add @randsum/pbta`,
+        language: 'bash'
+      }
+    ]
   }
 ]
 

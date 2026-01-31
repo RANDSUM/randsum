@@ -1,14 +1,21 @@
 import { coreNotationPattern } from './coreNotationPattern'
 import {
   capPattern,
+  compoundPattern,
   dropConstraintsPattern,
   dropHighestPattern,
   dropLowestPattern,
   explodePattern,
+  keepHighestPattern,
+  keepLowestPattern,
   minusPattern,
+  multiplyPattern,
+  multiplyTotalPattern,
+  penetratePattern,
   plusPattern,
   replacePattern,
   rerollPattern,
+  successPattern,
   uniquePattern
 } from './modifierPatterns'
 
@@ -17,11 +24,20 @@ const completeRollPatternSource = [
   dropHighestPattern.source,
   dropLowestPattern.source,
   dropConstraintsPattern.source,
+  keepHighestPattern.source,
+  keepLowestPattern.source,
+  // Note: compoundPattern (!!N) and penetratePattern (!pN) must come before explodePattern (!N)
+  compoundPattern.source,
+  penetratePattern.source,
   explodePattern.source,
   uniquePattern.source,
   replacePattern.source,
   rerollPattern.source,
   capPattern.source,
+  successPattern.source,
+  // Note: multiplyTotalPattern (**N) must come before multiplyPattern (*N)
+  multiplyTotalPattern.source,
+  multiplyPattern.source,
   plusPattern.source,
   minusPattern.source
 ].join('|')

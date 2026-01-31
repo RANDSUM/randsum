@@ -1,0 +1,73 @@
+# Modifier System Patterns
+
+## Modifier Application Order
+
+Modifiers are applied in strict order:
+1. **reroll** - Conditional rerolling
+2. **explode** - Cascade rolling on max
+3. **replace** - Value replacement
+4. **drop** - Remove dice from pool
+5. **cap** - Enforce value ranges
+6. **arithmetic** (plus/minus) - Fixed adjustments
+
+This order is critical - changing it will break existing notation.
+
+## Modifier Handler Pattern
+
+Each modifier has a handler function in `packages/roller/src/lib/modifiers/handlers.ts`:
+
+```typescript
+function handleModifierName(
+  bonus: NumericRollBonus,
+  options: ModifierOptionsType,
+  ctx: ModifierContext
+): NumericRollBonus {
+  const initialRolls = [...bonus.rolls]
+  const newRolls = applyModifierFunction(bonus.rolls, options, ctx)
+  const log = createModifierLog('modifierName', options, initialRolls, newRolls)
+  return {
+    rolls: newRolls,
+    simpleMathModifier: bonus.simpleMathModifier,
+    logs: mergeLogs(bonus.logs, log)
+  }
+}
+```
+
+## Adding a New Modifier
+
+1. **Add type to `ModifierOptions`** in `packages/roller/src/types.ts`
+2. **Add regex pattern** in `packages/roller/src/lib/patterns/modifierPatterns.ts`
+3. **Implement handler** in `packages/roller/src/lib/modifiers/handlers.ts`
+4. **Add to switch statement** in `applyModifierHandler()`
+5. **Add to apply order** in `packages/roller/src/lib/modifiers/applyModifiers.ts`
+6. **Update notation docs** in `packages/roller/RANDSUM_DICE_NOTATION.md`
+7. **Add tests** covering edge cases
+
+## Modifier Context
+
+Some modifiers require `ModifierContext`:
+- `reroll`, `explode`, `unique` need `rollOne` function and `context` (sides/quantity)
+- `cap`, `drop`, `replace` only need the options
+
+## Regex Patterns
+
+Patterns are case-insensitive and defined in `modifierPatterns.ts`:
+- Drop: `/[Ll](\d+)?/` or `/[Hh](\d+)?/` or `/[Dd]\{([^}]{1,50})\}/`
+- Reroll: `/[Rr]\{([^}]{1,50})\}(\d+)?/`
+- Explode: `/!/`
+- Unique: `/[Uu](\{([^}]{1,50})\})?/`
+- Replace: `/[Vv]\{([^}]{1,50})\}/`
+- Cap: `/[Cc]\{([^}]{1,50})\}/`
+- Plus: `/\+(\d+)/`
+- Minus: `/-(\d+)/`
+
+## Error Handling
+
+Modifier errors are wrapped in `ModifierError`:
+```typescript
+try {
+  return applyModifierHandler(type, options, bonus, ctx)
+} catch (error) {
+  throw new ModifierError(type, error.message)
+}
+```

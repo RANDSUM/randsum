@@ -17,9 +17,13 @@ export {
   validateGreaterThan,
   validateLessThan
 } from './lib/validation'
+export { validateRollOptions } from './lib/optionsValidation'
 export { isSuccess, isError, success, error } from './lib/result'
 export type { GameRollResult } from './types'
 export type { Result, SuccessResult, ErrorResult } from './lib/result'
+export { analyze } from './lib/probability'
+export type { ProbabilityAnalysis } from './lib/probability'
+export { PRESETS, resolvePreset, resolvePresetParam } from './presets'
 
 export type {
   DiceNotation,
@@ -29,12 +33,14 @@ export type {
   RequiredNumericRollParameters,
   ComparisonOptions,
   DropOptions,
+  KeepOptions,
   ModifierConfig,
   ModifierLog,
   ModifierOptions,
   NumericRollBonus,
   ReplaceOptions,
   RerollOptions,
+  SuccessCountOptions,
   UniqueOptions,
   RollParams,
   RollRecord,

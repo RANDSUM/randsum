@@ -246,6 +246,86 @@ describe('notationToOptions', () => {
     })
   })
 
+  describe('compounding dice', () => {
+    test('parses basic compounding dice', () => {
+      const [result] = notationToOptions('3d6!!')
+
+      expect(result?.quantity).toBe(3)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.compound).toBe(true)
+      expect(result?.modifiers?.explode).toBeUndefined()
+    })
+
+    test('parses compounding dice with depth', () => {
+      const [result] = notationToOptions('2d8!!3')
+
+      expect(result?.quantity).toBe(2)
+      expect(result?.sides).toBe(8)
+      expect(result?.modifiers?.compound).toBe(3)
+    })
+
+    test('parses compounding dice with unlimited depth', () => {
+      const [result] = notationToOptions('1d6!!0')
+
+      expect(result?.quantity).toBe(1)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.compound).toBe(0)
+    })
+
+    test('parses compounding dice with other modifiers', () => {
+      const [result] = notationToOptions('2d6!!+3')
+
+      expect(result?.quantity).toBe(2)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.compound).toBe(true)
+      expect(result?.modifiers?.plus).toBe(3)
+    })
+  })
+
+  describe('penetrating dice', () => {
+    test('parses basic penetrating dice', () => {
+      const [result] = notationToOptions('3d6!p')
+
+      expect(result?.quantity).toBe(3)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.penetrate).toBe(true)
+      expect(result?.modifiers?.explode).toBeUndefined()
+    })
+
+    test('parses penetrating dice with depth', () => {
+      const [result] = notationToOptions('2d8!p3')
+
+      expect(result?.quantity).toBe(2)
+      expect(result?.sides).toBe(8)
+      expect(result?.modifiers?.penetrate).toBe(3)
+    })
+
+    test('parses penetrating dice with unlimited depth', () => {
+      const [result] = notationToOptions('1d6!p0')
+
+      expect(result?.quantity).toBe(1)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.penetrate).toBe(0)
+    })
+
+    test('parses penetrating dice case insensitive', () => {
+      const [result] = notationToOptions('2d6!P')
+
+      expect(result?.quantity).toBe(2)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.penetrate).toBe(true)
+    })
+
+    test('parses penetrating dice with other modifiers', () => {
+      const [result] = notationToOptions('2d6!p+3')
+
+      expect(result?.quantity).toBe(2)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.penetrate).toBe(true)
+      expect(result?.modifiers?.plus).toBe(3)
+    })
+  })
+
   describe('complex combinations', () => {
     test('parses multiple modifiers together', () => {
       const [result] = notationToOptions('4d6LR{1}!+3')
@@ -272,6 +352,57 @@ describe('notationToOptions', () => {
       expect(result?.modifiers?.cap?.greaterThan).toBe(7)
       expect(result?.modifiers?.plus).toBe(5)
       expect(result?.modifiers?.minus).toBe(2)
+    })
+  })
+
+  describe('keep modifiers', () => {
+    test('parses keep highest', () => {
+      const [result] = notationToOptions('4d6K')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.keep?.highest).toBe(1)
+    })
+
+    test('parses keep highest with count', () => {
+      const [result] = notationToOptions('4d6K3')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.keep?.highest).toBe(3)
+    })
+
+    test('parses keep lowest', () => {
+      const [result] = notationToOptions('4d6kl')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.keep?.lowest).toBe(1)
+    })
+
+    test('parses keep lowest with count', () => {
+      const [result] = notationToOptions('4d6kl2')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.keep?.lowest).toBe(2)
+    })
+
+    test('parses uppercase KL for keep lowest', () => {
+      const [result] = notationToOptions('4d6KL2')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.keep?.lowest).toBe(2)
+    })
+
+    test('parses keep with other modifiers', () => {
+      const [result] = notationToOptions('4d6K3+2')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.keep?.highest).toBe(3)
+      expect(result?.modifiers?.plus).toBe(2)
     })
   })
 

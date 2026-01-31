@@ -16,6 +16,14 @@ const isHome = currentPath === '/'
         </li>
         <li>
           <a
+            href="/getting-started/"
+            class={currentPath.includes('/getting-started') ? 'nav-link nav-link-active' : 'nav-link'}
+          >
+            Getting Started
+          </a>
+        </li>
+        <li>
+          <a
             href="/packages/roller/"
             class={currentPath.includes('/packages/roller')
               ? 'nav-link nav-link-active'
@@ -38,6 +46,14 @@ const isHome = currentPath === '/'
             class={currentPath.includes('/tools') ? 'nav-link nav-link-active' : 'nav-link'}
           >
             Tools
+          </a>
+        </li>
+        <li>
+          <a
+            href="/playground/"
+            class={currentPath.includes('/playground') ? 'nav-link nav-link-active' : 'nav-link'}
+          >
+            Playground
           </a>
         </li>
       </ul>

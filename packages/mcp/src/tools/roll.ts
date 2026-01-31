@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { isDiceNotation, roll } from '@randsum/roller'
-import { formatRollResult } from '../formatters/index.js'
+import { formatRollResult, formatRollResultJson } from '../formatters/index.js'
 import { registerTool } from './helpers.js'
 
 function getToolDescription(filename: string): string {
@@ -15,7 +15,11 @@ function getToolDescription(filename: string): string {
 }
 
 const rollToolSchemaShape = {
-  notation: z.string().min(1, 'Dice notation cannot be empty')
+  notation: z.string().min(1, 'Dice notation cannot be empty'),
+  format: z
+    .enum(['text', 'json'])
+    .default('text')
+    .describe('Output format: "text" for human-readable, "json" for structured data')
 }
 
 export function registerRollTool(server: McpServer): void {
@@ -26,7 +30,7 @@ export function registerRollTool(server: McpServer): void {
     'roll',
     description,
     rollToolSchemaShape,
-    ({ notation }: { notation: string }) => {
+    ({ notation, format = 'text' }: { notation: string; format?: 'text' | 'json' }) => {
       try {
         if (!isDiceNotation(notation)) {
           return {
@@ -39,6 +43,18 @@ export function registerRollTool(server: McpServer): void {
           }
         }
         const result = roll(notation)
+
+        if (format === 'json') {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: formatRollResultJson(result)
+              }
+            ]
+          }
+        }
+
         return {
           content: [
             {

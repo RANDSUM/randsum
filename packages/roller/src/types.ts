@@ -129,6 +129,28 @@ export interface DropOptions extends ComparisonOptions {
 }
 
 /**
+ * Options for the keep modifier.
+ *
+ * Specifies which dice to keep from the roll result.
+ * This is the complement to drop - keeping N highest is equivalent to dropping (quantity - N) lowest.
+ *
+ * @example
+ * ```ts
+ * // Keep 3 highest from 4d6 (equivalent to drop lowest)
+ * { highest: 3 }
+ *
+ * // Keep 2 lowest
+ * { lowest: 2 }
+ * ```
+ */
+export interface KeepOptions {
+  /** Number of highest dice to keep */
+  highest?: number
+  /** Number of lowest dice to keep */
+  lowest?: number
+}
+
+/**
  * Options for the reroll modifier.
  *
  * Specifies conditions for rerolling dice.
@@ -194,10 +216,12 @@ export type ModifierConfig =
   | boolean
   | ComparisonOptions
   | DropOptions
+  | KeepOptions
   | ReplaceOptions
   | ReplaceOptions[]
   | RerollOptions
   | UniqueOptions
+  | SuccessCountOptions
 
 /**
  * All available dice roll modifiers.
@@ -213,23 +237,68 @@ export type ModifierConfig =
  * }
  * ```
  */
+/**
+ * Options for success counting (dice pool systems like World of Darkness, Shadowrun).
+ *
+ * Counts how many dice meet a threshold, rather than summing their values.
+ *
+ * @example
+ * ```ts
+ * // World of Darkness: count successes >= 8
+ * { threshold: 8 }
+ *
+ * // Shadowrun: count successes >= 5
+ * { threshold: 5 }
+ * ```
+ */
+export interface SuccessCountOptions {
+  /** Threshold for counting successes (rolls >= this value) */
+  threshold: number
+  /** Optional: threshold for counting botches/failures (rolls <= this value) */
+  botchThreshold?: number
+}
+
 export interface ModifierOptions {
   /** Cap roll values to a range */
   cap?: ComparisonOptions
   /** Drop dice from the result */
   drop?: DropOptions
+  /** Keep dice from the result (complement to drop) */
+  keep?: KeepOptions
   /** Replace specific values */
   replace?: ReplaceOptions | ReplaceOptions[]
   /** Reroll dice matching conditions */
   reroll?: RerollOptions
   /** Ensure unique values (true or options) */
   unique?: boolean | UniqueOptions
-  /** Exploding dice: reroll and add on max value */
-  explode?: boolean
+  /**
+   * Exploding dice: reroll and add on max value.
+   * - true: explode once per die (backward compatible)
+   * - number: max explosion depth (0 = unlimited, capped at 100 for safety)
+   */
+  explode?: boolean | number
+  /**
+   * Compounding exploding: add to triggering die instead of creating new dice.
+   * - true: compound once per die (backward compatible)
+   * - number: max compound depth (0 = unlimited, capped at 100 for safety)
+   */
+  compound?: boolean | number
+  /**
+   * Penetrating exploding: subtract 1 from each subsequent explosion.
+   * - true: penetrate once per die (backward compatible)
+   * - number: max penetrate depth (0 = unlimited, capped at 100 for safety)
+   */
+  penetrate?: boolean | number
+  /** Count successes instead of summing (for dice pool systems) */
+  countSuccesses?: SuccessCountOptions
+  /** Multiply dice result (before +/- arithmetic) */
+  multiply?: number
   /** Add a fixed value to the total */
   plus?: number
   /** Subtract a fixed value from the total */
   minus?: number
+  /** Multiply final total (after all other modifiers) */
+  multiplyTotal?: number
 }
 
 /**

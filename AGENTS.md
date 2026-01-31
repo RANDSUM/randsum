@@ -5,9 +5,11 @@
 This is a Bun workspace monorepo containing dice rolling packages for tabletop RPGs.
 
 **Core Package:**
+
 - `@randsum/roller` - Core dice rolling engine with advanced notation support
 
 **Game Packages** (all depend on `@randsum/roller`):
+
 - `@randsum/blades` - Blades in the Dark system mechanics
 - `@randsum/daggerheart` - Daggerheart RPG system support
 - `@randsum/fifth` - D&D 5th Edition mechanics
@@ -15,6 +17,7 @@ This is a Bun workspace monorepo containing dice rolling packages for tabletop R
 - `@randsum/salvageunion` - Salvage Union mechanics
 
 **Tools & Applications:**
+
 - `@randsum/mcp` - Model Context Protocol server for AI integration
 - `@randsum/site` - Documentation and marketing website (Astro)
 
@@ -42,17 +45,21 @@ bun run check:all    # Full CI pipeline (lint, format, typecheck, test, site bui
 ## Package Patterns
 
 ### Build Output
+
 All packages produce ESM + CJS dual packages:
+
 - `dist/index.js` (ESM)
 - `dist/index.cjs` (CommonJS)
 - `dist/index.d.ts` and `dist/index.d.cts` (type definitions)
 
 ### Dependencies
+
 - Internal dependencies use `workspace:~` version specifier
 - Game packages depend on `@randsum/roller`
 - All packages specify `engines.node` and `engines.bun` requirements
 
 ### Testing
+
 - Use `bun:test` (describe, expect, test)
 - Test files in `__tests__/` directories
 - Stress tests use 9999 iterations
@@ -63,6 +70,7 @@ All packages produce ESM + CJS dual packages:
 Complete reference: `packages/roller/RANDSUM_DICE_NOTATION.md`
 
 Quick examples:
+
 - `roll("2d6")` - Roll 2 six-sided dice
 - `roll("4d6L")` - Roll 4d6, drop lowest (D&D ability scores)
 - `roll("2d20H")` - Roll 2d20, keep highest (advantage)
@@ -70,7 +78,7 @@ Quick examples:
 
 ## File Structure
 
-```
+```text
 packages/
   {package-name}/
     src/
@@ -83,5 +91,146 @@ packages/
     tsconfig.json        # Extends ../../tsconfig.packages.json
 ```
 
+## Common Development Tasks
 
+### Adding a New Game System Package
 
+1. **Copy template**: Use `packages/salvageunion/` as the simplest template
+
+   ```bash
+   cp -r packages/salvageunion packages/{new-game}
+   ```
+
+2. **Update package.json**:
+   - Change `name` to `@randsum/{new-game}`
+   - Update `description` and `keywords`
+   - Ensure `@randsum/roller` is in dependencies with `workspace:~`
+
+3. **Implement roll function**:
+   - Import `roll` from `@randsum/roller` in `src/roll{GameName}/index.ts`
+   - Create wrapper that interprets results for the game system
+   - Return `GameRollResult<TResult, TDetails, RollRecord>` interface
+   - See `packages/blades/src/rollBlades/index.ts` for example
+
+4. **Export from index.ts**:
+
+   ```typescript
+   export { rollGameName } from './rollGameName'
+   export type { GameNameResult } from './types'
+   ```
+
+5. **Add tests** in `__tests__/` following existing patterns:
+   - Use `bun:test` imports
+   - Test boundary conditions
+   - Use 9999 iterations for stress tests
+
+6. **Add AGENTS.md** documenting game-specific mechanics and usage
+
+7. **Update root AGENTS.md** to list the new package in the "Game Packages" section
+
+### Adding a New Modifier to @randsum/roller
+
+1. **Define type** in `packages/roller/src/types.ts`:
+   - Add to `ModifierOptions` interface
+   - Create specific options type if needed (e.g., `DropOptions`, `RerollOptions`)
+
+2. **Add regex pattern** in `packages/roller/src/lib/patterns/modifierPatterns.ts`:
+   - Pattern should be case-insensitive
+   - Capture groups for parameters
+   - See existing patterns for reference
+
+3. **Implement handler** in `packages/roller/src/lib/modifiers/handlers.ts`:
+   - Create `handle{ModifierName}` function
+   - Use `createModifierLog` for history tracking
+   - Return `NumericRollBonus` with updated rolls and logs
+
+4. **Add to switch statement** in `applyModifierHandler()`:
+   - Add case for new modifier type
+   - Type assertions are safe due to literal type matching
+
+5. **Add to apply order** in `packages/roller/src/lib/modifiers/applyModifiers.ts`:
+   - Order: reroll → explode → replace → drop → cap → arithmetic
+   - Ensure new modifier is in correct position
+
+6. **Update notation parsing** in `packages/roller/src/lib/notation/`:
+   - Add pattern matching in `singleNotationToOptions.ts`
+   - Update `optionsToNotation.ts` for round-trip conversion
+
+7. **Update documentation**:
+   - Add syntax to `packages/roller/RANDSUM_DICE_NOTATION.md`
+   - Include examples and use cases
+
+8. **Add tests**:
+   - Test basic functionality
+   - Test edge cases (boundary conditions)
+   - Test modifier combinations
+   - Test notation parsing and round-trip conversion
+
+### Debugging a Failing Roll
+
+1. **Validate notation first**:
+
+   ```typescript
+   import { validateNotation } from '@randsum/roller'
+   const validation = validateNotation(notation)
+   if (!validation.valid) {
+     console.error('Invalid notation:', validation.error)
+   }
+   ```
+
+2. **Check modifier application order**:
+   - Verify modifiers are applied in correct sequence
+   - Order: reroll → explode → replace → drop → cap → arithmetic
+   - Check `result.rolls[0].modifierHistory.logs` for application sequence
+
+3. **Inspect intermediate state**:
+
+   ```typescript
+   const result = roll(notation)
+   console.log('Raw rolls:', result.rolls[0].rolls)
+   console.log('After modifiers:', result.rolls[0].modifierHistory.modifiedRolls)
+   console.log('Modifier logs:', result.rolls[0].modifierHistory.logs)
+   ```
+
+4. **Check for modifier conflicts**:
+   - Ensure drop modifiers don't remove all dice
+   - Verify unique modifier has enough sides for quantity
+   - Check cap ranges are valid5. **Use seeded random for reproducibility**:   ```typescript
+   import { createSeededRandom } from '@randsum/roller/test-utils'
+   const seeded = createSeededRandom(42)
+   const result = roll(notation, { randomFn: seeded })
+   ```
+
+### Adding an MCP Tool
+
+1. **Create tool file** in `packages/mcp/src/tools/{tool-name}.ts`:
+   - Import `McpServer` type and `registerTool` helper
+   - Define Zod schema for parameters
+   - Implement handler function
+   - Use `formatRollResult` or similar formatters for output
+
+2. **Register tool** in `packages/mcp/src/tools/index.ts`:
+
+   ```typescript
+   export { register{ToolName}Tool } from './{tool-name}.js'
+   ```
+
+3. **Add to server** in `packages/mcp/src/server.ts`:   ```typescript
+   import { register{ToolName}Tool } from './tools/index.js'
+   // In createServerInstance():
+   register{ToolName}Tool(server)
+   ```
+
+4. **Add tool documentation** in `packages/mcp/docs/tools/{tool-name}.md`:
+   - Description of tool purpose
+   - Parameter documentation
+   - Example usage
+   - Return value format
+
+5. **Update server instructions** in `packages/mcp/src/server.ts`:
+   - Add tool to SERVER_INSTRUCTIONS constant
+   - Include in "AVAILABLE TOOLS" section6. **Test the tool**:
+
+   - Test with valid inputs
+   - Test error handling
+   - Verify output format matches expected structure

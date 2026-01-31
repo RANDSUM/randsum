@@ -3,6 +3,7 @@ import type { DiceNotation } from './types'
 import type { Result } from './lib/result'
 import { error, success } from './lib/result'
 import { NotationParseError } from './errors'
+import { suggestNotationFix } from './lib/notation/suggestions'
 
 /**
  * Type guard that checks if a value is valid dice notation.
@@ -38,7 +39,8 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
  */
 export function notation(input: string): DiceNotation {
   if (!isDiceNotation(input)) {
-    throw new NotationParseError(input, 'String does not match dice notation pattern')
+    const suggestion = suggestNotationFix(input)
+    throw new NotationParseError(input, 'String does not match dice notation pattern', suggestion)
   }
   return input
 }
@@ -64,7 +66,10 @@ export function notation(input: string): DiceNotation {
  */
 export function tryNotation(input: string): Result<DiceNotation, NotationParseError> {
   if (!isDiceNotation(input)) {
-    return error(new NotationParseError(input, 'String does not match dice notation pattern'))
+    const suggestion = suggestNotationFix(input)
+    return error(
+      new NotationParseError(input, 'String does not match dice notation pattern', suggestion)
+    )
   }
   return success(input)
 }

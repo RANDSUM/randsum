@@ -1,5 +1,30 @@
 import type { RollerRollResult } from '@randsum/roller'
 
+export function formatRollResultJson(result: RollerRollResult): string {
+  return JSON.stringify(
+    {
+      total: result.total,
+      rolls: result.rolls.map(roll => ({
+        notation: roll.parameters.notation,
+        description: roll.description,
+        rawRolls: roll.rolls,
+        modifiedRolls: roll.modifierHistory.modifiedRolls,
+        initialRolls: roll.modifierHistory.initialRolls,
+        total: roll.total,
+        appliedTotal: roll.appliedTotal,
+        modifierHistory: {
+          logs: roll.modifierHistory.logs,
+          total: roll.modifierHistory.total
+        },
+        customResults: roll.customResults
+      })),
+      result: result.result
+    },
+    null,
+    2
+  )
+}
+
 export function formatRollResult(result: RollerRollResult): string {
   const { total, rolls } = result
   const firstRoll = rolls[0]

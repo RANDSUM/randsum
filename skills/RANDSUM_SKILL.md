@@ -14,6 +14,8 @@ Activate this skill when users:
 
 ## RANDSUM Dice Notation
 
+> **Reference**: For complete notation documentation, see [docs/NOTATION.md](../docs/NOTATION.md).
+
 RANDSUM uses an extended dice notation system. All notation is case-insensitive.
 
 **Basic Syntax**: `NdS` where N = quantity, S = sides
@@ -25,8 +27,10 @@ RANDSUM uses an extended dice notation system. All notation is case-insensitive.
 | `2d6` | Roll 2 six-sided dice | Standard damage roll |
 | `1d20+5` | Roll d20, add 5 | Attack roll with modifier |
 | `4d6L` | Roll 4d6, drop lowest | D&D ability score generation |
+| `4d6K3` | Roll 4d6, keep highest 3 | D&D ability score (alternative) |
 | `2d20H` | Roll 2d20, drop highest | Disadvantage (keep lowest) |
 | `2d20L` | Roll 2d20, drop lowest | Advantage (keep highest) |
+| `2d20K` | Roll 2d20, keep highest | Advantage (alternative syntax) |
 | `3d6!` | Exploding dice | Reroll and add on max result |
 | `4d6R{1}` | Reroll 1s | Avoid minimum results |
 | `4d20U` | Unique results only | No duplicate values |
@@ -41,6 +45,15 @@ RANDSUM uses an extended dice notation system. All notation is case-insensitive.
 - `4d6H` - Drop highest result
 - `4d6H2` - Drop 2 highest results
 - `4d6LH` - Drop both extremes
+
+#### Keep Modifiers (K/kl)
+
+- `4d6K3` - Keep highest 3 (equivalent to `4d6L`)
+- `4d6K` - Keep highest 1
+- `4d6kl2` - Keep lowest 2
+- `4d6kl` - Keep lowest 1
+
+**Note**: Keep is the complement to Drop. `4d6K3` = `4d6L` (keep 3 highest = drop 1 lowest).
 
 #### Reroll Modifiers (R)
 

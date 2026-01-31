@@ -2,11 +2,18 @@
 
 ## Game System
 
-Root RPG uses 2d6 + bonus mechanic with success thresholds.
+Root RPG is a tabletop RPG set in the world of Root board game. It uses a 2d6 + bonus mechanic with success thresholds similar to Powered by the Apocalypse games.
+
+## Core Mechanics
+
+- Roll 2d6 + stat modifier
+- 10+ = strong hit (complete success)
+- 7-9 = weak hit (partial success, success with cost)
+- 6- = miss (failure)
 
 ## API
 
-### `rollRootRpg(bonus: number): RollResult<RootRpgRollResult>`
+### `rollRootRpg(bonus: number): GameRollResult<RootRpgRollResult, undefined, RollRecord>`
 
 Rolls a Root RPG action roll.
 
@@ -17,28 +24,56 @@ Rolls a Root RPG action roll.
 **Returns:**
 
 - `result`: `RootRpgRollResult` - Game-specific result
+- `total`: Final roll total (2d6 + bonus)
 - `rolls`: Array of `RollRecord` from core roller
 
 ## Result Structure
 
 `RootRpgRollResult` includes:
 
-- `hit`: `boolean` - Whether roll succeeded
+- `hit`: `'Strong Hit' | 'Weak Hit' | 'Miss'` - Roll outcome
 - `total`: Final roll total (2d6 + bonus)
 
-## Success Threshold
+## Result Interpretation
 
-Hit interpretation in `interpretResult()`:
+Outcome thresholds:
 
-- Total determines success/failure based on Root RPG mechanics
-- Bonus added to 2d6 roll result
+- **10+** - Strong Hit (complete success)
+- **7-9** - Weak Hit (partial success, success with cost)
+- **6-** - Miss (failure)
+
+## Usage
+
+```typescript
+import { rollRootRpg } from "@randsum/root-rpg"
+
+// Basic roll with stat bonus
+const result = rollRootRpg(2)
+// result.result.hit: 'Strong Hit' | 'Weak Hit' | 'Miss'
+
+// Type-safe result handling
+const { hit, total } = result.result
+switch (hit) {
+  case "Strong Hit":
+    // Complete success
+    break
+  case "Weak Hit":
+    // Partial success with cost
+    break
+  case "Miss":
+    // Failure
+    break
+}
+```
 
 ## Implementation Details
 
+- Uses `createGameRoll` factory from `@randsum/roller`
 - Always rolls 2d6
 - Bonus validated to be finite and in range -20 to +20
 - Uses `modifiers.plus` to add bonus
-- Result interpretation via `interpretResult()`
+- Result interpretation via `interpretResult()` using thresholds
+- Similar to PbtA mechanics but specific to Root RPG
 
 ## Type Exports
 
@@ -46,12 +81,15 @@ Hit interpretation in `interpretResult()`:
 export type { RootRpgRollResult } from "./types"
 ```
 
+Game-specific types only, core types imported from `@randsum/roller` as needed.
+
 ## Testing
 
 Test file: `__tests__/rollRootRpg.test.ts`
 
 Tests cover:
 
-- Valid bonus ranges
-- Invalid input validation
-- Hit result interpretation
+- Valid bonus ranges (-20 to +20)
+- Invalid input validation (non-finite, out of range)
+- Hit result interpretation (Strong Hit, Weak Hit, Miss)
+- Edge cases (boundary values)

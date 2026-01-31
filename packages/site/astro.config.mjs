@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config'
 
 import sitemap from '@astrojs/sitemap'
 import netlify from '@astrojs/netlify'
+import react from '@astrojs/react'
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,6 +11,7 @@ export default defineConfig({
   // Use Netlify's URL environment variable, fallback for local dev
   site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
   integrations: [
+    react(),
     sitemap({
       changefreq: 'weekly',
       priority: 0.7,
