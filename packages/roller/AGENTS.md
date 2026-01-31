@@ -8,12 +8,19 @@ The core package provides the `roll()` function and dice notation parsing. All o
 
 ### `roll(...args: RollArgument[]): RollerRollResult`
 
-Main entry point for rolling dice. Accepts:
+Main entry point for rolling dice. Accepts number, notation string, options object, or multiple arguments (optionally followed by `RollConfig` for `randomFn`):
 
-- Number: `roll(20)` - Roll 1d20
-- String notation: `roll("4d6L")` - Parse notation
-- Options object: `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`
-- Multiple arguments: `roll("1d20", "2d6", "+5")` - Combine rolls
+- **Number**: `roll(20)` - Roll 1d20 (quantity 1, sides = number)
+- **Notation**: `roll("4d6L")` - Parse notation string
+- **Options object**: `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })` - Same as 4d6L
+- **Multiple arguments**: `roll("1d20", "2d6", "+5")` - Combine rolls into one total
+
+```typescript
+roll(20) // 1d20
+roll("2d6+3") // 2d6 with +3
+roll({ sides: 6, quantity: 2, modifiers: { plus: 3 } }) // same
+roll("1d20", "2d6") // attack + damage, combined total
+```
 
 ### `validateNotation(notation: string): ValidationResult`
 

@@ -39,17 +39,23 @@ All packages are built with TypeScript, thoroughly tested, and published to NPM 
 ```typescript
 import { roll } from "@randsum/roller"
 
-// Simple d20 roll
-roll(20) // Returns 1-20
-// or
-roll("1d20") // Returns 1-20
+// Argument types: number, notation string, or options object
+roll(20) // Number: 1d20 (returns 1-20)
+roll("1d20") // Notation: same as above
+roll({ sides: 20, quantity: 1 }) // Object: same as above
 
 // Complex dice notation
 roll("4d6L") // Roll 4d6, drop lowest
 
+// Options object (equivalent to 4d6L)
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
+
 // Advantage and disadvantage
 roll("2d20H") // Roll with advantage (2d20, keep highest)
 roll("2d20L") // Roll with disadvantage (2d20, keep lowest)
+
+// Multiple arguments: combine rolls
+roll("1d20+5", "2d6+3") // Attack roll + damage roll
 
 roll("4d6L!R{<3}") // Roll 4d6, drop lowest, reroll below 3
 ```

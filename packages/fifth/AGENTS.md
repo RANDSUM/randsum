@@ -65,8 +65,9 @@ actionRoll({ modifier: -1, rollingWith: "Disadvantage" }) // Disadvantage on sav
 ```typescript
 import { roll } from "@randsum/roller"
 
-// Roll 4d6, drop lowest for each ability score
+// Roll 4d6, drop lowest for each ability score (notation or options object)
 roll("4d6L")
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // same as 4d6L
 ```
 
 ### Attack Rolls

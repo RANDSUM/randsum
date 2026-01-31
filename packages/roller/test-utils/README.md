@@ -19,6 +19,7 @@ This package is part of the RANDSUM monorepo and is not published separately.
 import { createSeededRandom, expectRollInRange, commonNotations } from "@randsum/test-utils"
 import { roll } from "@randsum/roller"
 
+// roll() accepts number, notation string, options object, or multiple arguments
 // Deterministic testing
 const seeded = createSeededRandom(42)
 const result = roll("4d6L", { randomFn: seeded })

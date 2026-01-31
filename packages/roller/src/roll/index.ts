@@ -1,6 +1,6 @@
 import type { RollArgument, RollConfig, RollerRollResult } from '../types'
-import type { Result } from '../lib/result'
-import { error, success } from '../lib/result'
+import type { Result } from '../lib/utils'
+import { error, success } from '../lib/utils'
 import { RollError } from '../errors'
 import { argToParameter } from './argToParameter'
 import { generateRollRecord } from './generateRollRecord'
@@ -29,10 +29,20 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  *               optionally followed by a RollConfig object
  * @returns Roll result containing individual rolls, total, and result array
  *
- * @example Basic roll
+ * @example Number (1 die, sides = number)
+ * ```ts
+ * const result = roll(20) // 1d20
+ * ```
+ *
+ * @example Notation string
  * ```ts
  * const result = roll("2d6")
  * console.log(result.total) // Sum of 2d6
+ * ```
+ *
+ * @example Options object
+ * ```ts
+ * const result = roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // same as 4d6L
  * ```
  *
  * @example D&D ability score

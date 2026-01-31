@@ -69,12 +69,26 @@ All packages produce ESM + CJS dual packages:
 
 Complete reference: `packages/roller/RANDSUM_DICE_NOTATION.md`
 
-Quick examples:
+`roll()` accepts a number (sides for 1 die), a notation string, an options object, or multiple arguments:
 
-- `roll("2d6")` - Roll 2 six-sided dice
+- `roll(20)` - Number: roll 1d20
+- `roll("2d6")` - Notation: roll 2 six-sided dice
+- `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })` - Object: same as 4d6L
+- `roll("1d20", "2d6", "+5")` - Multiple: combine rolls (attack + damage + modifier)
 - `roll("4d6L")` - Roll 4d6, drop lowest (D&D ability scores)
 - `roll("2d20H")` - Roll 2d20, keep highest (advantage)
 - `roll("1d20+5")` - Roll 1d20, add 5
+
+## Development Guidelines
+
+Detailed development documentation is in the [AGENTS/](AGENTS/) directory:
+
+- [Scripts Reference](AGENTS/scripts.md) - All available development commands and workflows
+- [Game Package Patterns](AGENTS/game-packages.md) - Creating and structuring game packages
+- [Modifier System Patterns](AGENTS/modifiers.md) - Adding and implementing modifiers in @randsum/roller
+- [Testing Patterns](AGENTS/testing.md) - Test structure, stress testing, and assertions
+
+Run `bun run help` for a quick command reference.
 
 ## File Structure
 

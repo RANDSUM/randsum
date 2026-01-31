@@ -408,7 +408,14 @@ describe(generateRollRecord, () => {
           modifiedRolls: testRollSet,
           initialRolls: testRollSet,
           total: 12,
-          logs: []
+          logs: [
+            {
+              added: [],
+              modifier: 'plus',
+              options: 2,
+              removed: []
+            }
+          ]
         },
         total: 12
       })
@@ -430,7 +437,14 @@ describe(generateRollRecord, () => {
           modifiedRolls: testRollSet,
           total: 8,
           initialRolls: testRollSet,
-          logs: []
+          logs: [
+            {
+              added: [],
+              modifier: 'minus',
+              options: 2,
+              removed: []
+            }
+          ]
         },
         total: 8
       })
@@ -455,7 +469,14 @@ describe(generateRollRecord, () => {
           modifiedRolls: testRollSet,
           initialRolls: testRollSet,
           total: 10,
-          logs: []
+          logs: [
+            {
+              added: [],
+              modifier: 'plus',
+              options: 0,
+              removed: []
+            }
+          ]
         },
         total: 10
       })

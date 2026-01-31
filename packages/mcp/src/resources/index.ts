@@ -6,12 +6,21 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+const monorepoRoot = join(__dirname, '..', '..', '..', '..')
+
 /**
  * Reads a file from the roller package.
  */
 function readRollerFile(relativePath: string): string {
-  const monorepoRoot = join(__dirname, '..', '..', '..', '..')
   const filePath = join(monorepoRoot, 'packages', 'roller', relativePath)
+  return readFileSync(filePath, 'utf8')
+}
+
+/**
+ * Reads a file from the monorepo root.
+ */
+function readRepoFile(relativePath: string): string {
+  const filePath = join(monorepoRoot, relativePath)
   return readFileSync(filePath, 'utf8')
 }
 
@@ -19,6 +28,29 @@ function readRollerFile(relativePath: string): string {
  * Registers all MCP resources for documentation access.
  */
 export function registerResources(server: McpServer): void {
+  // Dice rolling skill (agentskills.io format)
+  server.resource(
+    'dice-rolling-skill',
+    'dice://skill/dice-rolling',
+    {
+      title: 'RANDSUM Dice Rolling Skill',
+      description: 'RANDSUM dice rolling skill for AI agents (agentskills.io format)',
+      mimeType: 'text/markdown'
+    },
+    () => {
+      const content = readRepoFile('skills/dice-rolling/SKILL.md')
+      return {
+        contents: [
+          {
+            uri: 'dice://skill/dice-rolling',
+            mimeType: 'text/markdown',
+            text: content
+          }
+        ]
+      }
+    }
+  )
+
   // Dice notation documentation
   server.resource(
     'dice-notation-docs',

@@ -1,6 +1,6 @@
-import { validateGreaterThan, validateInteger } from './validation'
+import { validateGreaterThan, validateInteger } from './utils'
 import type { RollOptions } from '../types'
-import { validateModifierOptions } from './modifiers/validateModifiers'
+import { validateModifiersFromRegistry } from './modifiers'
 
 /**
  * Validates roll options for correctness.
@@ -35,9 +35,10 @@ export function validateRollOptions<T>(options: RollOptions<T>): void {
     validateInteger(options.quantity, 'quantity')
   }
 
-  // Validate modifier sanity
+  // Validate modifier sanity using registry-based validation
   if (options.modifiers) {
-    // Cast to base RollOptions since validateModifierOptions only needs sides and quantity
-    validateModifierOptions(options.modifiers, options as RollOptions)
+    const sides = typeof options.sides === 'number' ? options.sides : options.sides.length
+    const quantity = options.quantity ?? 1
+    validateModifiersFromRegistry(options.modifiers, { sides, quantity })
   }
 }

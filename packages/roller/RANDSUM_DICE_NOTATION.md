@@ -6,6 +6,8 @@ Dice notation is a compact way to represent dice rolls and their modifications. 
 
 Randsum extends standard dice notation with powerful modifiers like dropping lowest rolls, rerolling specific values, and ensuring unique results.
 
+The core `roll()` function accepts several argument types: a **number** (sides for a single die, e.g. `roll(20)` for 1d20), a **notation string** (e.g. `roll("4d6L")`), an **options object** (e.g. `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`), or **multiple arguments** combined into one total (e.g. `roll("1d20", "2d6", "+5")`).
+
 ## Basic Syntax
 
 All notation in randsum is case-insensitive (`2d8` = `2D8`).

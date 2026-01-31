@@ -1,7 +1,7 @@
 import { coreNotationPattern, createCompleteRollPattern } from './lib/patterns'
 import type { DiceNotation } from './types'
-import type { Result } from './lib/result'
-import { error, success } from './lib/result'
+import type { Result } from './lib/utils'
+import { error, success } from './lib/utils'
 import { NotationParseError } from './errors'
 import { suggestNotationFix } from './lib/notation/suggestions'
 

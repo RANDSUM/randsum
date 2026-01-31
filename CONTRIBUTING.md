@@ -215,24 +215,40 @@ Before submitting a PR, ensure:
 
 ## Adding a New Game Package
 
-If you want to add support for a new tabletop RPG:
+Use the generator script to scaffold a new game package:
 
-1. **Create package structure**
-   ```bash
-   mkdir -p packages/{game-name}/src
-   ```
+```bash
+bun run create:game <game-name>
+```
 
-2. **Create `package.json`** following the pattern from existing game packages
+This creates a complete package structure with all required files:
 
-3. **Implement the roll function** using `createGameRoll` or `createMultiRollGameRoll`
+```
+packages/{game-name}/
+  src/
+    index.ts              # Main exports
+    types.ts              # Game-specific types (customize this)
+    roll{GameName}/
+      index.ts            # Roll implementation (customize this)
+  __tests__/
+    {game-name}.test.ts   # Initial test file
+  AGENTS.md
+  LICENSE
+  README.md
+  package.json
+  tsconfig.json
+```
 
-4. **Add tests** in `__tests__/` directory
+After generation:
 
-5. **Add documentation** in `README.md`
+1. **Edit `src/types.ts`** with your game-specific types
+2. **Implement `src/roll{GameName}/index.ts`** with your game logic
+3. **Add tests** in `__tests__/` directory
+4. **Run `bun install`** to link workspace dependencies
+5. **Update root `AGENTS.md`** to list the new package
+6. **Add to site documentation** in `packages/site/` (optional)
 
-6. **Update root `package.json`** if needed
-
-7. **Add to site documentation** in `packages/site/`
+For detailed patterns, see [AGENTS/game-packages.md](AGENTS/game-packages.md).
 
 ## Common Tasks
 
