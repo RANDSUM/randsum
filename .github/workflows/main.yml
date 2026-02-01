@@ -47,4 +47,4 @@ jobs:
         run: bun run size
 
       - name: Run checks
-        run: bun run lint && bun run format:check && bun run typecheck && bun run site:build
+        run: bun run --bun --filter "*" --concurrency 2 lint && bun run format:check && bun run typecheck && bun run site:build
