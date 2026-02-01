@@ -8,11 +8,13 @@ describe('config', () => {
       const readFileSyncSpy = spyOn(fs, 'readFileSync').mockImplementation(() => {
         throw new Error('File not found')
       })
+      const consoleErrorSpy = spyOn(console, 'error').mockImplementation(() => undefined)
 
       const version = getPackageVersion()
 
       expect(version).toBe('0.0.0')
       readFileSyncSpy.mockRestore()
+      consoleErrorSpy.mockRestore()
     })
   })
 
