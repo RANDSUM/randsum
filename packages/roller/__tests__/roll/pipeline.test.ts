@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, mock, spyOn, test } from 'bun:test'
 
 import * as RandomUtils from '../../src/lib/random'
-import { generateRollRecord } from '../../src/roll/generateRollRecord'
+import { executeRollPipeline } from '../../src/roll/pipeline'
 import { createRollParams } from '../support/fixtures'
 
-describe(generateRollRecord, () => {
+describe(executeRollPipeline, () => {
   beforeAll(() => {
     spyOn(RandomUtils, 'coreRandom').mockReturnValue(200)
   })
@@ -24,7 +24,7 @@ describe(generateRollRecord, () => {
 
     test('it returns the sum total of the quantity and the roll total', () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRollRecord(coreParameters)).toMatchObject({
+      expect(executeRollPipeline(coreParameters)).toMatchObject({
         parameters: coreParameters,
         total: 10,
         modifierHistory: {
@@ -50,7 +50,7 @@ describe(generateRollRecord, () => {
       const initialRolls = uniqueRolls
 
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(uniqueRolls)
-      expect(generateRollRecord(uniqueParameters)).toMatchObject({
+      expect(executeRollPipeline(uniqueParameters)).toMatchObject({
         parameters: uniqueParameters,
         modifierHistory: {
           initialRolls,
@@ -78,7 +78,7 @@ describe(generateRollRecord, () => {
 
       test('it disregards any numbers in that array and makes the rest unique', () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(uniqueRolls)
-        expect(generateRollRecord(notUniqueParameters)).toMatchObject({
+        expect(executeRollPipeline(notUniqueParameters)).toMatchObject({
           parameters: notUniqueParameters,
           modifierHistory: {
             modifiedRolls: uniqueRolls,
@@ -109,7 +109,7 @@ describe(generateRollRecord, () => {
 
       test('it throws an error', () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(overflowRollTotals)
-        expect(() => generateRollRecord(overflowParameters)).toThrow()
+        expect(() => executeRollPipeline(overflowParameters)).toThrow()
       })
     })
   })
@@ -134,7 +134,7 @@ describe(generateRollRecord, () => {
     test('it returns the total without the provided values', () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(longerRollTotals)
 
-      expect(generateRollRecord(dropParameters)).toMatchObject({
+      expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
         modifierHistory: {
           initialRolls: longerRollTotals,
@@ -170,7 +170,7 @@ describe(generateRollRecord, () => {
 
       test('it returns the total with all values replaced according to the provided rules', () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-        expect(generateRollRecord(dropParameters)).toMatchObject({
+        expect(executeRollPipeline(dropParameters)).toMatchObject({
           parameters: dropParameters,
           modifierHistory: {
             initialRolls: testRollSet,
@@ -207,7 +207,7 @@ describe(generateRollRecord, () => {
 
       test('it returns the total with all values replaced according to the provided rules', () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-        expect(generateRollRecord(dropParameters)).toMatchObject({
+        expect(executeRollPipeline(dropParameters)).toMatchObject({
           parameters: dropParameters,
           modifierHistory: {
             modifiedRolls: [2, 2, 3, 6],
@@ -251,7 +251,7 @@ describe(generateRollRecord, () => {
     test('it returns the total with all values matching the queries rerolled', () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(explodeRollTotals)
 
-      expect(generateRollRecord(explodeParameters)).toMatchObject({
+      expect(executeRollPipeline(explodeParameters)).toMatchObject({
         parameters: explodeParameters,
         modifierHistory: {
           modifiedRolls: [1, 2, 3, 6, 200],
@@ -281,7 +281,7 @@ describe(generateRollRecord, () => {
 
       test('it stops at 99 rerolls and returns the total with all values matching the queries rerolled', () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-        expect(generateRollRecord(reDicePools)).toMatchObject({
+        expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
           modifierHistory: {
             modifiedRolls: [1, 2, 3, 200],
@@ -314,7 +314,7 @@ describe(generateRollRecord, () => {
 
       test('it returns the total with all values matching the queries rerolled', () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-        expect(generateRollRecord(reDicePools)).toMatchObject({
+        expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
           modifierHistory: {
             modifiedRolls: [1, 200, 3, 200],
@@ -349,7 +349,7 @@ describe(generateRollRecord, () => {
 
       test('it returns the total with all values matching the queries rerolled', () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-        expect(generateRollRecord(reDicePools)).toMatchObject({
+        expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
           modifierHistory: {
             modifiedRolls: [200, 2, 200, 4],
@@ -370,7 +370,7 @@ describe(generateRollRecord, () => {
 
     test('it returns the total with all values greaterThan greaterThan and lessThan lessThan replaced with their respective comparitor and the roll total', () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRollRecord(dropParameters)).toMatchObject({
+      expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
         modifierHistory: {
           modifiedRolls: [2, 2, 3, 3],
@@ -402,7 +402,7 @@ describe(generateRollRecord, () => {
 
     test('it returns the total plus the "plus" modifier, and the roll total', () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRollRecord(dropParameters)).toMatchObject({
+      expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
         modifierHistory: {
           modifiedRolls: testRollSet,
@@ -431,7 +431,7 @@ describe(generateRollRecord, () => {
 
     test('it returns the total minus the "minus" modifier, and the roll total', () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
-      expect(generateRollRecord(dropParameters)).toMatchObject({
+      expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
         modifierHistory: {
           modifiedRolls: testRollSet,
@@ -461,7 +461,7 @@ describe(generateRollRecord, () => {
 
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
 
-      const result = generateRollRecord(parametersWithZeroModifier)
+      const result = executeRollPipeline(parametersWithZeroModifier)
 
       expect(result).toMatchObject({
         parameters: parametersWithZeroModifier,

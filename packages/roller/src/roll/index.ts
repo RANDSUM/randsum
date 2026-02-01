@@ -1,9 +1,7 @@
 import type { RollArgument, RollConfig, RollerRollResult } from '../types'
-import type { Result } from '../lib/utils'
-import { error, success } from '../lib/utils'
-import { RollError } from '../errors'
-import { argToParameter } from './argToParameter'
-import { generateRollRecord } from './generateRollRecord'
+import { RandsumError, RollError } from '../errors'
+import { parseArguments } from './parseArguments'
+import { executeRollPipeline } from './pipeline'
 
 /**
  * Type guard to check if an argument is a RollConfig object.
@@ -25,9 +23,17 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * Accepts multiple roll arguments and an optional configuration object. Each argument
  * can be a dice notation string, a number (sides), or a roll options object.
  *
+ * Never throws - errors are returned in the result's `error` property.
+ *
+ * @typeParam T - Type for custom dice faces. Defaults to `string`.
+ *   - For standard numeric dice (notation strings or numbers), `result` contains
+ *     string representations of the roll values (e.g., `["5", "3", "6"]`).
+ *   - For custom faces (options with `sides: T[]`), `result` contains the actual
+ *     face values of type T.
+ *
  * @param args - One or more roll arguments (notation strings, numbers, or options objects),
  *               optionally followed by a RollConfig object
- * @returns Roll result containing individual rolls, total, and result array
+ * @returns Roll result containing individual rolls, total, result array, and error (if any)
  *
  * @example Number (1 die, sides = number)
  * ```ts
@@ -38,6 +44,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * ```ts
  * const result = roll("2d6")
  * console.log(result.total) // Sum of 2d6
+ * console.log(result.result) // ["3", "5"] - string representations
  * ```
  *
  * @example Options object
@@ -45,9 +52,10 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * const result = roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // same as 4d6L
  * ```
  *
- * @example D&D ability score
+ * @example Custom faces (Fate dice)
  * ```ts
- * const result = roll("4d6L") // 4d6 drop lowest
+ * const result = roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })
+ * console.log(result.result) // ["+", "-", " ", "+"] - actual face values
  * ```
  *
  * @example With custom RNG
@@ -61,86 +69,58 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * const result = roll("1d20+5", "2d6+3")
  * // Returns combined total of both rolls
  * ```
+ *
+ * @example Error handling
+ * ```ts
+ * const result = roll("invalid notation")
+ * if (result.error) {
+ *   console.error(result.error.message)
+ * }
+ * ```
  */
 export function roll<T = string>(...args: RollArgument<T>[]): RollerRollResult<T>
 export function roll<T = string>(...args: [...RollArgument<T>[], RollConfig]): RollerRollResult<T>
 export function roll<T = string>(
   ...args: RollArgument<T>[] | [...RollArgument<T>[], RollConfig]
 ): RollerRollResult<T> {
-  // Extract config if last arg is RollConfig (has randomFn but not sides/quantity)
-  const lastArg = args[args.length - 1]
-  let config: RollConfig | undefined
-  let rollArgs: RollArgument<T>[]
-
-  if (lastArg !== undefined && isRollConfig(lastArg)) {
-    config = lastArg
-    // After the type guard, we know the slice contains only RollArgument<T>
-    const sliced = args.slice(0, -1)
-    rollArgs = sliced as RollArgument<T>[]
-  } else {
-    // All args are roll arguments
-    rollArgs = args as RollArgument<T>[]
-  }
-
-  const parameters = rollArgs.flatMap((arg, index) => argToParameter(arg, index + 1))
-  const rolls = parameters.map(parameter => generateRollRecord(parameter, config?.randomFn))
-  const total = rolls.reduce((acc, cur) => {
-    const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
-    return acc + cur.total * factor
-  }, 0)
-
-  const isCustom = rolls.every(roll => roll.customResults)
-  const result = rolls.flatMap(roll => {
-    if (isCustom && roll.customResults) {
-      return roll.customResults
-    }
-    // For numeric rolls, convert to string array and then to T
-    // This is safe because T defaults to string
-    return roll.rolls.map(String) as T[]
-  })
-
-  return {
-    rolls,
-    result,
-    total
-  }
-}
-
-/**
- * Safe version of roll() that returns a Result type instead of throwing.
- *
- * Use this when you want to handle errors without try/catch blocks.
- *
- * @param args - One or more roll arguments (notation strings, numbers, or options objects),
- *               optionally followed by a RollConfig object
- * @returns Result containing either the roll result or an error
- *
- * @example
- * ```ts
- * const result = tryRoll("4d6L")
- * if (isSuccess(result)) {
- *   console.log(result.data.total)
- * } else {
- *   console.error(result.error.message)
- * }
- * ```
- */
-export function tryRoll<T = string>(
-  ...args: RollArgument<T>[]
-): Result<RollerRollResult<T>, RollError>
-export function tryRoll<T = string>(
-  ...args: [...RollArgument<T>[], RollConfig]
-): Result<RollerRollResult<T>, RollError>
-export function tryRoll<T = string>(
-  ...args: RollArgument<T>[] | [...RollArgument<T>[], RollConfig]
-): Result<RollerRollResult<T>, RollError> {
   try {
-    const result = roll<T>(...(args as RollArgument<T>[]))
-    return success(result)
-  } catch (e) {
-    if (e instanceof RollError) {
-      return error(e)
+    const lastArg = args[args.length - 1]
+    const hasConfig = lastArg !== undefined && isRollConfig(lastArg)
+    const config: RollConfig | undefined = hasConfig ? lastArg : undefined
+
+    const rollArgs = (hasConfig ? args.slice(0, -1) : args) as RollArgument<T>[]
+
+    const parameters = rollArgs.flatMap((arg, index) => parseArguments(arg, index + 1))
+    const rolls = parameters.map(parameter => executeRollPipeline(parameter, config?.randomFn))
+    const total = rolls.reduce((acc, cur) => {
+      const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
+      return acc + cur.total * factor
+    }, 0)
+
+    const result = rolls.flatMap<T>(r => {
+      if (r.customResults) {
+        return r.customResults
+      }
+      return r.rolls.map(n => String(n) as T)
+    })
+
+    return {
+      rolls,
+      result,
+      total,
+      error: null
     }
-    return error(new RollError(e instanceof Error ? e.message : String(e)))
+  } catch (e) {
+    const error =
+      e instanceof RandsumError ? e : new RollError(e instanceof Error ? e.message : String(e))
+
+    const emptyResult: T[] = []
+
+    return {
+      rolls: [],
+      result: emptyResult,
+      total: 0,
+      error
+    }
   }
 }

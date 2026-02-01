@@ -11,7 +11,11 @@ function getToolDescription(filename: string): string {
   const __filename = fileURLToPath(import.meta.url)
   const __dirname = dirname(__filename)
   const docPath = join(__dirname, '..', '..', 'docs', 'tools', filename)
-  return readFileSync(docPath, 'utf8')
+  try {
+    return readFileSync(docPath, 'utf8')
+  } catch {
+    return 'Validate dice notation syntax without rolling. Returns parsed structure or detailed error message with suggestions.'
+  }
 }
 
 const validateNotationToolSchemaShape = {

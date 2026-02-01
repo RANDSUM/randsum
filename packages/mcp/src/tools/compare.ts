@@ -13,7 +13,6 @@ function getToolDescription(filename: string): string {
   try {
     return readFileSync(docPath, 'utf8')
   } catch {
-    // Return default description if file doesn't exist
     return 'Compare probability distributions of two dice notations. Useful for comparing different roll options.'
   }
 }

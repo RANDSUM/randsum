@@ -1,4 +1,6 @@
 import type { DiceNotation, RollOptions } from './types'
+import { ValidationError } from './errors'
+import { notation } from './isDiceNotation'
 
 /**
  * Fate dice preset configuration
@@ -13,17 +15,14 @@ const fateDicePreset: RollOptions = {
  *
  * Presets can be resolved using `resolvePreset()` to get either
  * a DiceNotation string or RollOptions object.
+ *
+ * Note: DiceNotation strings are validated at module load time via notation().
  */
 export const PRESETS: Record<string, DiceNotation | RollOptions> = {
-  // D&D 5th Edition
-  'dnd-ability-score': '4d6L' as DiceNotation,
-  'dnd-advantage': '2d20L' as DiceNotation,
-  'dnd-disadvantage': '2d20H' as DiceNotation,
-
-  // Fate/Fudge dice (4dF)
+  'dnd-ability-score': notation('4d6L'),
+  'dnd-advantage': notation('2d20L'),
+  'dnd-disadvantage': notation('2d20H'),
   'fate-dice': fateDicePreset
-  // Shadowrun style (parameterized)
-  // Use resolvePreset() for parameterized presets
 }
 
 /**
@@ -49,7 +48,7 @@ export const PRESETS: Record<string, DiceNotation | RollOptions> = {
 export function resolvePreset(name: string): DiceNotation | RollOptions {
   const preset = PRESETS[name]
   if (preset === undefined) {
-    throw new Error(
+    throw new ValidationError(
       `Unknown preset: "${name}". Available presets: ${Object.keys(PRESETS).join(', ')}`
     )
   }
@@ -79,13 +78,12 @@ export function resolvePresetParam(
       const diceArg = args['dice']
       const dice = typeof diceArg === 'number' ? diceArg : Number(diceArg)
       if (!Number.isInteger(dice) || dice < 1 || dice > 100) {
-        throw new Error(`Invalid dice count for shadowrun-pool: ${dice}. Must be 1-100.`)
+        throw new ValidationError(`Invalid dice count for shadowrun-pool: ${dice}. Must be 1-100.`)
       }
-      return `${dice}d6` as DiceNotation
+      return notation(`${dice}d6`)
     }
 
     default:
-      // Try non-parameterized resolve first
       return resolvePreset(name)
   }
 }

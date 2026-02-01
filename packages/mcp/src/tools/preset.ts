@@ -14,7 +14,6 @@ function getToolDescription(filename: string): string {
   try {
     return readFileSync(docPath, 'utf8')
   } catch {
-    // Return default description if file doesn't exist
     return 'Roll dice using a preset configuration. Supports common roll patterns like D&D ability scores, advantage, Fate dice, etc.'
   }
 }
@@ -40,14 +39,10 @@ export function registerPresetTool(server: McpServer): void {
     ({ preset, args }: { preset: string; args: Record<string, unknown> | undefined }) => {
       const resolvedArgs = args ?? {}
       try {
-        let presetValue
-
-        // Check if preset is parameterized
-        if (preset === 'shadowrun-pool') {
-          presetValue = resolvePresetParam(preset, resolvedArgs)
-        } else {
-          presetValue = resolvePreset(preset)
-        }
+        const presetValue =
+          preset === 'shadowrun-pool'
+            ? resolvePresetParam(preset, resolvedArgs)
+            : resolvePreset(preset)
 
         const result = roll(presetValue)
 

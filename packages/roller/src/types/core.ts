@@ -1,7 +1,3 @@
-// ============================================================================
-// Core Types - Fundamental dice rolling types
-// ============================================================================
-
 import type { ModifierOptions } from './modifiers'
 
 /**
@@ -78,7 +74,21 @@ export type RequiredNumericRollParameters = Pick<RollOptions, 'quantity' | 'side
  */
 export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number | `${number}`
 
-import type { RandomFn } from '../lib/random'
+/**
+ * Type for custom random number generators.
+ * Must return a number in the range [0, 1).
+ *
+ * @example
+ * ```ts
+ * // Custom RNG using crypto
+ * const cryptoRandom: RandomFn = () =>
+ *   crypto.getRandomValues(new Uint32Array(1))[0] / 2**32
+ *
+ * // Seeded RNG for reproducibility
+ * const seededRandom: RandomFn = createSeededRandom(42)
+ * ```
+ */
+export type RandomFn = () => number
 
 /**
  * Configuration options for roll execution.

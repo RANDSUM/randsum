@@ -1,4 +1,4 @@
-import { formatComparisonDescription, formatComparisonNotation } from '../../comparisonUtils'
+import { formatComparisonDescription, formatComparisonNotation } from '../../comparison'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
@@ -31,14 +31,11 @@ export const replaceModifier: TypedModifierDefinition<'replace'> = defineModifie
       const [fromPart, toPart] = part.split('=')
       if (!fromPart || !toPart) return { from: 0, to: 0 }
 
-      let from: number | { greaterThan: number } | { lessThan: number }
-      if (fromPart.startsWith('>')) {
-        from = { greaterThan: Number(fromPart.slice(1)) }
-      } else if (fromPart.startsWith('<')) {
-        from = { lessThan: Number(fromPart.slice(1)) }
-      } else {
-        from = Number(fromPart)
-      }
+      const from: number | { greaterThan: number } | { lessThan: number } = fromPart.startsWith('>')
+        ? { greaterThan: Number(fromPart.slice(1)) }
+        : fromPart.startsWith('<')
+          ? { lessThan: Number(fromPart.slice(1)) }
+          : Number(fromPart)
 
       return { from, to: Number(toPart) }
     })
@@ -72,25 +69,21 @@ export const replaceModifier: TypedModifierDefinition<'replace'> = defineModifie
 
   apply: (rolls, options) => {
     const replaceRules = Array.isArray(options) ? options : [options]
-    let result = [...rolls]
 
-    for (const { from, to } of replaceRules) {
-      result = result.map(roll => {
+    const applyRule = (currentRolls: number[], rule: (typeof replaceRules)[number]): number[] => {
+      const { from, to } = rule
+      return currentRolls.map(roll => {
         if (typeof from === 'object') {
-          // Comparison-based replacement
-          if ('greaterThan' in from && roll > from.greaterThan) {
-            return to
-          }
-          if ('lessThan' in from && roll < from.lessThan) {
-            return to
-          }
+          const { greaterThan, lessThan } = from
+          if (greaterThan !== undefined && roll > greaterThan) return to
+          if (lessThan !== undefined && roll < lessThan) return to
           return roll
-        } else {
-          // Exact value replacement
-          return roll === from ? to : roll
         }
+        return roll === from ? to : roll
       })
     }
+
+    const result = replaceRules.reduce((currentRolls, rule) => applyRule(currentRolls, rule), rolls)
 
     return { rolls: result }
   }

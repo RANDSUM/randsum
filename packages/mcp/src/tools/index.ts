@@ -1,5 +1,4 @@
 export { registerRollTool } from './roll.js'
-export { registerTryRollTool } from './try-roll.js'
 export { registerValidateTool } from './validate.js'
 export { registerAnalyzeTool } from './analyze.js'
 export { registerGameRollTool } from './game-roll.js'

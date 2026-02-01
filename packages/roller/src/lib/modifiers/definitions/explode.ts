@@ -1,4 +1,5 @@
 import type { TypedModifierDefinition } from '../schema'
+import { assertRequiredContext } from '../schema'
 import { defineModifier } from '../registry'
 
 const explodePattern = /(?<!!)!(?!!)/
@@ -18,7 +19,6 @@ export const explodeModifier: TypedModifierDefinition<'explode'> = defineModifie
   requiresRollFn: true,
   requiresParameters: true,
 
-  // Match ! but not !! or !p
   pattern: /(?<!!)!(?!!|p)/,
 
   parse: notation => {
@@ -38,20 +38,9 @@ export const explodeModifier: TypedModifierDefinition<'explode'> = defineModifie
   },
 
   apply: (rolls, _options, ctx) => {
-    // These are guaranteed by requires* flags
-    const rollOne = ctx.rollOne as () => number
-    const { sides } = ctx.parameters as { sides: number }
+    const { rollOne, parameters } = assertRequiredContext(ctx)
+    const explosions = rolls.filter(roll => roll === parameters.sides).map(() => rollOne())
 
-    const result = [...rolls]
-    // Count original rolls to check against (avoid infinite loop from pushes)
-    const originalCount = result.length
-    for (let i = 0; i < originalCount; i++) {
-      if (result[i] === sides) {
-        const newRoll = rollOne()
-        result.push(newRoll)
-      }
-    }
-
-    return { rolls: result }
+    return { rolls: [...rolls, ...explosions] }
   }
 })

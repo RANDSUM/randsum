@@ -1,5 +1,5 @@
 import type { ComparisonOptions } from '../../types'
-import { formatHumanList } from './formatHumanList'
+import { formatHumanList } from '../utils'
 
 export function formatComparisonDescription({
   greaterThan,

@@ -1,7 +1,6 @@
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
-// Pre-arithmetic multiply: *N (but not **)
 const multiplyPattern = /(?<!\*)\*(?!\*)(\d+)/
 
 /**
@@ -34,7 +33,6 @@ export const multiplyModifier: TypedModifierDefinition<'multiply'> = defineModif
   },
 
   apply: (rolls, options) => {
-    // Multiply the total by the multiplier
     return {
       rolls,
       transformTotal: total => total * options

@@ -33,7 +33,6 @@ interface PromptGetResponse {
   }[]
 }
 
-// Extended server interface that includes prompt handlers
 interface McpServerWithPrompts extends McpServer {
   setRequestHandler(method: 'prompts/list', handler: () => PromptListResponse): void
   setRequestHandler(
@@ -47,7 +46,7 @@ interface McpServerWithPrompts extends McpServer {
  */
 export function registerPrompts(server: McpServer): void {
   const promptServer = server as McpServerWithPrompts
-  // D&D Ability Scores prompt
+
   promptServer.setRequestHandler('prompts/list', () => {
     return {
       prompts: [

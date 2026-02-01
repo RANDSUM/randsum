@@ -29,7 +29,6 @@
   "dependencies": {
     "@randsum/roller": "workspace:~"
   },
-  "devDependencies": {},
   "exports": {
     ".": {
       "import": {

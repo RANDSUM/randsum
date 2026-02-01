@@ -3,7 +3,7 @@ import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { isDiceNotation, roll } from '@randsum/roller'
+import { type DiceNotation, roll } from '@randsum/roller'
 import { formatRollResult, formatRollResultJson } from '../formatters/index.js'
 import { registerTool } from './helpers.js'
 
@@ -11,7 +11,11 @@ function getToolDescription(filename: string): string {
   const __filename = fileURLToPath(import.meta.url)
   const __dirname = dirname(__filename)
   const docPath = join(__dirname, '..', '..', 'docs', 'tools', filename)
-  return readFileSync(docPath, 'utf8')
+  try {
+    return readFileSync(docPath, 'utf8')
+  } catch {
+    return 'Roll dice using RANDSUM notation. Supports standard dice (2d6), modifiers (4d6L for drop lowest), exploding dice (3d6!), and arithmetic (+5).'
+  }
 }
 
 const rollToolSchemaShape = {
@@ -31,25 +35,25 @@ export function registerRollTool(server: McpServer): void {
     description,
     rollToolSchemaShape,
     ({ notation, format = 'text' }: { notation: string; format?: 'text' | 'json' }) => {
-      try {
-        if (!isDiceNotation(notation)) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: `❌ Invalid dice notation: "${notation}". Use formats like "2d20+5", "4d6L", "3d8!"`
-              }
-            ]
-          }
-        }
-        const result = roll(notation)
+      const result = roll(notation as DiceNotation)
+
+      if (result.error !== null) {
+        const errorMessage: string = result.error.message
 
         if (format === 'json') {
           return {
             content: [
               {
                 type: 'text',
-                text: formatRollResultJson(result)
+                text: JSON.stringify(
+                  {
+                    success: false,
+                    error: errorMessage,
+                    notation
+                  },
+                  null,
+                  2
+                )
               }
             ]
           }
@@ -59,25 +63,30 @@ export function registerRollTool(server: McpServer): void {
           content: [
             {
               type: 'text',
-              text: formatRollResult(result)
+              text: `❌ Error rolling dice: ${errorMessage}\nNotation: "${notation}"`
             }
           ]
         }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : typeof error === 'string'
-              ? error
-              : 'An unknown error occurred'
+      }
+
+      if (format === 'json') {
         return {
           content: [
             {
               type: 'text',
-              text: `❌ Error rolling dice: ${errorMessage}`
+              text: formatRollResultJson(result)
             }
           ]
         }
+      }
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: formatRollResult(result)
+          }
+        ]
       }
     }
   )

@@ -11,10 +11,6 @@ import type {
   UniqueOptions
 } from '../../types'
 
-// ============================================================================
-// Modifier Definition Schema
-// ============================================================================
-
 /**
  * Context passed to modifier handlers that may need dice rolling or roll info.
  */
@@ -23,6 +19,88 @@ export interface ModifierContext {
   rollOne?: () => number
   /** Roll parameters (sides, quantity) */
   parameters?: RequiredNumericRollParameters
+}
+
+/**
+ * Context with required rollOne function.
+ * Use this type when a modifier has `requiresRollFn: true`.
+ */
+export interface ContextWithRollFn extends ModifierContext {
+  rollOne: () => number
+}
+
+/**
+ * Context with required parameters.
+ * Use this type when a modifier has `requiresParameters: true`.
+ */
+export interface ContextWithParameters extends ModifierContext {
+  parameters: RequiredNumericRollParameters
+}
+
+/**
+ * Context with both required rollOne and parameters.
+ * Use this type when a modifier has both `requiresRollFn: true` and `requiresParameters: true`.
+ */
+export interface RequiredModifierContext extends ModifierContext {
+  rollOne: () => number
+  parameters: RequiredNumericRollParameters
+}
+
+/**
+ * Asserts that the context has the required rollOne function.
+ * Use when the modifier definition has `requiresRollFn: true`.
+ *
+ * This function performs both compile-time type narrowing and runtime validation.
+ * If rollOne is missing, it indicates a bug in the modifier system (the registry
+ * should have validated requirements before calling the modifier's apply function).
+ *
+ * @param ctx - The modifier context
+ * @returns Context with rollOne guaranteed to exist
+ * @throws Error if rollOne is not defined (indicates internal bug)
+ */
+export function assertRollFn(ctx: ModifierContext): ContextWithRollFn {
+  if (ctx.rollOne === undefined) {
+    throw new Error('Internal error: rollOne function required but not provided')
+  }
+  return ctx as ContextWithRollFn
+}
+
+/**
+ * Asserts that the context has the required parameters.
+ * Use when the modifier definition has `requiresParameters: true`.
+ *
+ * This function performs both compile-time type narrowing and runtime validation.
+ * If parameters is missing, it indicates a bug in the modifier system.
+ *
+ * @param ctx - The modifier context
+ * @returns Context with parameters guaranteed to exist
+ * @throws Error if parameters is not defined (indicates internal bug)
+ */
+export function assertParameters(ctx: ModifierContext): ContextWithParameters {
+  if (ctx.parameters === undefined) {
+    throw new Error('Internal error: parameters required but not provided')
+  }
+  return ctx as ContextWithParameters
+}
+
+/**
+ * Asserts that the context has both required rollOne and parameters.
+ * Use when the modifier definition has both requirements.
+ *
+ * This function performs both compile-time type narrowing and runtime validation.
+ *
+ * @param ctx - The modifier context
+ * @returns Context with both rollOne and parameters guaranteed to exist
+ * @throws Error if either requirement is not defined (indicates internal bug)
+ */
+export function assertRequiredContext(ctx: ModifierContext): RequiredModifierContext {
+  if (ctx.rollOne === undefined) {
+    throw new Error('Internal error: rollOne function required but not provided')
+  }
+  if (ctx.parameters === undefined) {
+    throw new Error('Internal error: parameters required but not provided')
+  }
+  return ctx as RequiredModifierContext
 }
 
 /**
@@ -129,10 +207,6 @@ export interface ModifierDefinition<TOptions = unknown> {
   requiresParameters?: boolean
 }
 
-// ============================================================================
-// Type mappings for each modifier
-// ============================================================================
-
 /**
  * Maps modifier names to their option types.
  * Used for type-safe modifier definitions.
@@ -160,10 +234,6 @@ export interface ModifierOptionTypes {
 export type TypedModifierDefinition<K extends keyof ModifierOptions> = ModifierDefinition<
   ModifierOptionTypes[K]
 >
-
-// ============================================================================
-// Registry Types
-// ============================================================================
 
 /**
  * The modifier registry - maps modifier names to their definitions.

@@ -1,17 +1,12 @@
-// ============================================================================
-// Types Index - Re-exports all types for backward compatibility
-// ============================================================================
-
-// Core types
 export type {
   DiceNotation,
+  RandomFn,
   RollOptions,
   RequiredNumericRollParameters,
   RollArgument,
   RollConfig
 } from './core'
 
-// Modifier types
 export type {
   ComparisonOptions,
   DropOptions,
@@ -26,16 +21,13 @@ export type {
   NumericRollBonus
 } from './modifiers'
 
-// Result types
 export type { RollParams, RollRecord, RollResult, RollerRollResult } from './results'
 
-// Validation types
 export type {
   ValidValidationResult,
   InvalidValidationResult,
-  ValidationError,
+  ValidationErrorInfo,
   ValidationResult
 } from './validation'
 
-// Game types
 export type { GameRollResult } from './game'

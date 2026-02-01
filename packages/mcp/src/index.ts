@@ -15,15 +15,22 @@ const cliOptions = program.opts<{
   port: string
 }>()
 
-const allowedTransports = ['stdio', 'http', 'sse']
-if (!allowedTransports.includes(cliOptions.transport)) {
+type TransportType = 'stdio' | 'http' | 'sse'
+const allowedTransports: readonly TransportType[] = ['stdio', 'http', 'sse']
+
+function isValidTransport(value: string): value is TransportType {
+  return (allowedTransports as readonly string[]).includes(value)
+}
+
+const transportInput = cliOptions.transport || 'stdio'
+if (!isValidTransport(transportInput)) {
   console.error(
     `Invalid --transport value: '${cliOptions.transport}'. Must be one of: stdio, http, sse.`
   )
   process.exit(1)
 }
 
-const TRANSPORT_TYPE = (cliOptions.transport || 'stdio') as 'stdio' | 'http' | 'sse'
+const TRANSPORT_TYPE: TransportType = transportInput
 
 const CLI_PORT = (() => {
   const parsed = parseInt(cliOptions.port, 10)
@@ -56,8 +63,10 @@ async function main(): Promise<void> {
         runSseTransport(server, ssePort)
         break
       }
-      default:
-        throw new Error(`Unsupported transport: ${TRANSPORT_TYPE as string}`)
+      default: {
+        const _exhaustiveCheck: never = TRANSPORT_TYPE
+        throw new Error(`Unsupported transport: ${_exhaustiveCheck}`)
+      }
     }
   } catch (error) {
     const errorMessage =

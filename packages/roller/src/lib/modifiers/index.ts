@@ -1,11 +1,5 @@
-// ============================================================================
-// Modifier Registry API
-// ============================================================================
-
-// Import definitions to register all modifiers with the registry
 import './definitions'
 
-// Export registry functions
 export {
   defineModifier,
   getModifier,
@@ -23,7 +17,6 @@ export {
   validateModifiersFromRegistry
 } from './registry'
 
-// Export schema types
 export type {
   ModifierDefinition,
   ModifierContext,
@@ -32,5 +25,10 @@ export type {
   ModifierRegistry,
   RegistryProcessResult,
   TypedModifierDefinition,
-  TotalTransformer
+  TotalTransformer,
+  ContextWithRollFn,
+  ContextWithParameters,
+  RequiredModifierContext
 } from './schema'
+
+export { assertRollFn, assertParameters, assertRequiredContext } from './schema'

@@ -1,8 +1,3 @@
-// ============================================================================
-// Validation Types - Types for notation validation results
-// ============================================================================
-
-import type { Result } from '../lib/utils'
 import type { DiceNotation, RollOptions } from './core'
 
 /**
@@ -21,6 +16,8 @@ export interface ValidValidationResult {
   options: RollOptions[]
   /** Notation strings for each roll */
   notation: DiceNotation[]
+  /** No error on success */
+  error: null
 }
 
 /**
@@ -33,12 +30,16 @@ export interface InvalidValidationResult {
   valid: false
   /** Original input string */
   argument: string
+  /** Error information */
+  error: ValidationErrorInfo
 }
 
 /**
  * Error information from validation.
+ * Note: This is different from the ValidationError class in errors.ts.
+ * This is a plain object describing what went wrong during validation.
  */
-export interface ValidationError {
+export interface ValidationErrorInfo {
   /** Description of what's wrong */
   message: string
   /** The input that failed validation */
@@ -46,8 +47,9 @@ export interface ValidationError {
 }
 
 /**
- * Result of notation validation using Result pattern.
+ * Result of notation validation.
  *
- * Either a successful ValidValidationResult or a ValidationError.
+ * Either a ValidValidationResult (valid: true, error: null) or
+ * InvalidValidationResult (valid: false, error: ValidationErrorInfo).
  */
-export type ValidationResult = Result<ValidValidationResult, ValidationError>
+export type ValidationResult = ValidValidationResult | InvalidValidationResult

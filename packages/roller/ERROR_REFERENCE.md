@@ -47,18 +47,17 @@ notation("") // Throws NotationParseError
    ```typescript
    import { validateNotation } from "@randsum/roller"
    const result = validateNotation("d6")
-   if (!result.success) {
+   if (!result.valid) {
      console.error(result.error.message) // "Invalid dice notation: \"d6\""
    }
    ```
 
-2. Use `tryNotation()` for safe parsing:
+2. Use `isDiceNotation()` type guard for type-safe validation:
 
    ```typescript
-   import { tryNotation } from "@randsum/roller"
-   const result = tryNotation("d6")
-   if (!result.success) {
-     // Handle error without throwing
+   import { isDiceNotation, roll } from "@randsum/roller"
+   if (isDiceNotation("2d6")) {
+     roll("2d6") // TypeScript knows this is valid
    }
    ```
 
@@ -116,36 +115,40 @@ roll("4d6D{>6}") // Drop values > 6 on d6 (impossible)
 4. Use `validateNotation()` to catch syntax errors before rolling:
    ```typescript
    const validation = validateNotation("4d6L2")
-   if (validation.success) {
+   if (validation.valid) {
      const result = roll("4d6L2")
    }
    ```
 
 ---
 
-## ValidationErrorClass (VALIDATION_ERROR)
+## ValidationError (VALIDATION_ERROR)
 
 **Error Code**: `VALIDATION_ERROR`
 
-**When it occurs**: Thrown when input validation fails during notation validation.
+**When it occurs**: Thrown when input validation fails during notation validation or options validation.
 
 **Common causes**:
 
 - Invalid notation string passed to `validateNotation()`
 - Notation doesn't match expected pattern
+- Invalid options passed to `roll()` (non-integer sides, negative quantity, etc.)
 - Parsing fails during validation
 
 **Example that triggers it**:
 
 ```typescript
-import { validateNotation } from "@randsum/roller"
+import { validateNotation, roll } from "@randsum/roller"
 
 // ❌ Invalid notation
 const result = validateNotation("invalid")
-if (!result.success) {
-  // result.error is ValidationError with message
+if (!result.valid) {
+  // result.error is ValidationErrorInfo with message
   console.error(result.error.message) // "Invalid dice notation: \"invalid\""
 }
+
+// ❌ Invalid options
+roll({ sides: 0, quantity: 1 }) // throws ValidationError
 ```
 
 **How to fix**:
@@ -154,12 +157,12 @@ if (!result.success) {
 
    ```typescript
    const validation = validateNotation(notation)
-   if (!validation.success) {
+   if (!validation.valid) {
      // Handle error - don't proceed with roll
      return
    }
    // Safe to use notation
-   const result = roll(validation.data.argument)
+   const result = roll(validation.argument)
    ```
 
 2. Use `isDiceNotation()` type guard:
@@ -230,7 +233,7 @@ try {
 
    ```typescript
    const validation = validateNotation(notation)
-   if (!validation.success) {
+   if (!validation.valid) {
      // Handle validation error (doesn't throw)
      return
    }
@@ -267,18 +270,16 @@ import { validateNotation, roll } from "@randsum/roller"
 
 function safeRoll(notation: string) {
   const validation = validateNotation(notation)
-  if (!validation.success) {
+  if (!validation.valid) {
     return { error: validation.error.message }
   }
 
-  try {
-    const result = roll(notation)
-    return { success: true, result }
-  } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : "Unknown error"
-    }
+  const result = roll(notation)
+  if (result.error) {
+    return { error: result.error.message }
   }
+
+  return { success: true, result }
 }
 ```
 
@@ -297,27 +298,39 @@ if (isDiceNotation(input)) {
 
 ### 3. Check Error Codes
 
-Use error codes for programmatic error handling:
+Use the exported `ERROR_CODES` constant for type-safe error handling:
 
 ```typescript
+import { roll, RandsumError, ERROR_CODES } from "@randsum/roller"
+
 try {
   roll(notation)
 } catch (error) {
   if (error instanceof RandsumError) {
     switch (error.code) {
-      case "INVALID_NOTATION":
+      case ERROR_CODES.INVALID_NOTATION:
         // Handle notation error
         break
-      case "MODIFIER_ERROR":
+      case ERROR_CODES.MODIFIER_ERROR:
         // Handle modifier error
         break
-      case "ROLL_ERROR":
+      case ERROR_CODES.VALIDATION_ERROR:
+        // Handle validation error
+        break
+      case ERROR_CODES.ROLL_ERROR:
         // Handle roll error
         break
     }
   }
 }
 ```
+
+The `ERROR_CODES` constant provides:
+
+- `INVALID_NOTATION` - Invalid dice notation syntax
+- `MODIFIER_ERROR` - Error applying a modifier
+- `VALIDATION_ERROR` - Input validation failed
+- `ROLL_ERROR` - General roll execution error
 
 ### 4. Provide User-Friendly Messages
 
@@ -342,7 +355,7 @@ function getUserFriendlyError(error: Error): string {
 ### For Invalid Notation
 
 1. Validate with `validateNotation()` first
-2. Use `tryNotation()` for non-throwing validation
+2. Use `isDiceNotation()` type guard for type-safe checks
 3. Provide syntax suggestions based on common patterns
 
 ### For Modifier Errors

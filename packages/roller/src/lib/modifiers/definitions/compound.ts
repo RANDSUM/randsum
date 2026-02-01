@@ -1,5 +1,7 @@
 import type { TypedModifierDefinition } from '../schema'
+import { assertRequiredContext } from '../schema'
 import { defineModifier } from '../registry'
+import { ExplosionStrategies, applyAccumulatingExplosion, resolveExplosionDepth } from './explosion'
 
 const compoundPattern = /!!(\d+)?/
 
@@ -24,7 +26,6 @@ export const compoundModifier: TypedModifierDefinition<'compound'> = defineModif
     const match = compoundPattern.exec(notation)
     if (!match) return {}
 
-    // No depth specified means true (default), 0 means unlimited
     const depth = match[1]
     if (depth === undefined) {
       return { compound: true }
@@ -46,29 +47,15 @@ export const compoundModifier: TypedModifierDefinition<'compound'> = defineModif
   },
 
   apply: (rolls, options, ctx) => {
-    // These are guaranteed by requires* flags
-    const rollOne = ctx.rollOne as () => number
-    const { sides } = ctx.parameters as { sides: number }
+    const { rollOne, parameters } = assertRequiredContext(ctx)
+    const { sides } = parameters
+    const maxDepth = resolveExplosionDepth(options)
 
-    // Determine max depth: true = infinite, 0 = infinite, number = limit
-    const maxDepth = options === true ? 1000 : options === 0 ? 1000 : (options as number)
-
-    const result = rolls.map(roll => {
-      if (roll !== sides) return roll
-
-      let total = roll
-      let depth = 0
-
-      while (depth < maxDepth) {
-        const newRoll = rollOne()
-        total += newRoll
-        depth++
-
-        if (newRoll !== sides) break
-      }
-
-      return total
-    })
+    const result = rolls.map(roll =>
+      roll === sides
+        ? applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, ExplosionStrategies.compound)
+        : roll
+    )
 
     return { rolls: result }
   }

@@ -56,15 +56,9 @@ export function createModifierLog(
     const diff = newCount - initialCount
 
     if (diff > 0) {
-      // More of this value in new array - it was added
-      for (let i = 0; i < diff; i++) {
-        added.push(value)
-      }
+      added.push(...Array.from({ length: diff }, () => value))
     } else if (diff < 0) {
-      // Fewer of this value in new array - it was removed
-      for (let i = 0; i < Math.abs(diff); i++) {
-        removed.push(value)
-      }
+      removed.push(...Array.from({ length: Math.abs(diff) }, () => value))
     }
   }
 

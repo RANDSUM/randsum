@@ -10,25 +10,25 @@ import type {
 import { ModifierError } from '../../errors'
 import { createModifierLog, mergeLogs } from './log'
 
-// ============================================================================
-// Registry Instance
-// ============================================================================
-
 /**
  * Global modifier registry.
- * Populated by calling registerModifier() for each modifier definition.
+ * Populated by calling defineModifier() for each modifier definition.
+ *
+ * INITIALIZATION: Modifiers register themselves when their definition files
+ * are imported. The `definitions/index.ts` file imports all modifiers,
+ * and this is imported by the main package entry point.
+ *
+ * When importing from `@randsum/roller`, all modifiers are automatically
+ * registered before any exports are available. This happens because:
+ * 1. Package entry point imports from internal modules
+ * 2. Internal modules import from `lib/modifiers/definitions/index.ts`
+ * 3. That file imports each modifier definition
+ * 4. Each definition calls defineModifier() on load
+ *
+ * For advanced use cases where you import directly from internal paths,
+ * ensure you also import `lib/modifiers/definitions` to trigger registration.
  */
 const registry: ModifierRegistry = new Map()
-
-/**
- * Cached modifier order (derived from priorities).
- * Regenerated when modifiers are registered.
- */
-let cachedOrder: (keyof ModifierOptions)[] | null = null
-
-// ============================================================================
-// Registration
-// ============================================================================
 
 /**
  * Define and register a modifier.
@@ -55,17 +55,22 @@ export function defineModifier<K extends keyof ModifierOptions>(
   definition: ModifierDefinition<ModifierOptionTypes[K]> & { name: K }
 ): ModifierDefinition<ModifierOptionTypes[K]> {
   registry.set(definition.name, definition as ModifierDefinition)
-  cachedOrder = null // Invalidate cache
   return definition
 }
 
 /**
  * Get a modifier definition by name.
+ *
+ * Note: The return type uses a type assertion internally because the registry
+ * stores ModifierDefinition<unknown>. This is type-safe because defineModifier()
+ * ensures each name maps to its correct option type, and we retrieve by the same name.
  */
 export function getModifier<K extends keyof ModifierOptions>(
   name: K
 ): ModifierDefinition<ModifierOptionTypes[K]> | undefined {
-  return registry.get(name) as ModifierDefinition<ModifierOptionTypes[K]> | undefined
+  const definition = registry.get(name)
+  if (definition === undefined) return undefined
+  return definition as ModifierDefinition<ModifierOptionTypes[K]>
 }
 
 /**
@@ -82,19 +87,42 @@ export function getAllModifiers(): ModifierDefinition[] {
   return Array.from(registry.values())
 }
 
-// ============================================================================
-// Derived Data
-// ============================================================================
+/**
+ * Check if modifiers have been registered.
+ *
+ * This is useful for debugging and verifying the registry state.
+ * Under normal usage through the package entry point, modifiers
+ * are always registered automatically.
+ *
+ * @returns true if at least one modifier is registered
+ */
+export function hasRegisteredModifiers(): boolean {
+  return registry.size > 0
+}
+
+/**
+ * Get the count of registered modifiers.
+ * Useful for debugging and testing.
+ */
+export function getRegisteredModifierCount(): number {
+  return registry.size
+}
+
+/**
+ * Clear the registry (for testing purposes only).
+ * @internal
+ */
+export function clearRegistry(): void {
+  registry.clear()
+}
 
 /**
  * Get modifier execution order (sorted by priority).
- * Cached for performance.
  */
 export function getModifierOrder(): (keyof ModifierOptions)[] {
-  cachedOrder ??= Array.from(registry.entries())
+  return Array.from(registry.entries())
     .sort(([, a], [, b]) => a.priority - b.priority)
     .map(([name]) => name)
-  return cachedOrder
 }
 
 /**
@@ -109,10 +137,6 @@ export function buildCombinedPattern(): RegExp {
   return new RegExp(sources.join('|'), 'g')
 }
 
-// ============================================================================
-// Registry-Based Operations
-// ============================================================================
-
 /**
  * Parse notation string into ModifierOptions using registry.
  */
@@ -120,9 +144,7 @@ export function parseModifiersFromRegistry(notation: string): ModifierOptions {
   const result: ModifierOptions = {}
 
   for (const modifier of registry.values()) {
-    // Check if the pattern matches at all before calling parse
     if (modifier.pattern.test(notation)) {
-      // Reset lastIndex for patterns that might have 'g' flag effects
       modifier.pattern.lastIndex = 0
       Object.assign(result, modifier.parse(notation))
     }
@@ -149,7 +171,6 @@ export function applyModifierFromRegistry(
     throw new ModifierError(name, `Unknown modifier type: ${name}`)
   }
 
-  // Validate requirements
   if (modifier.requiresRollFn && ctx.rollOne === undefined) {
     throw new ModifierError(name, `rollOne function required for ${name} modifier`)
   }
@@ -163,7 +184,6 @@ export function applyModifierFromRegistry(
     const result = modifier.apply(rolls, options, ctx)
     const log = createModifierLog(name, options, initialRolls, result.rolls)
 
-    // Only include transformTotal if it exists
     if (result.transformTotal) {
       return {
         rolls: result.rolls,
@@ -193,25 +213,27 @@ export function applyAllModifiersFromRegistry(
   ctx: ModifierContext
 ): RegistryProcessResult {
   const order = getModifierOrder()
-  let rolls = [...initialRolls]
-  let logs: ModifierLog[] = []
-  const totalTransformers: TotalTransformer[] = []
-
-  for (const name of order) {
-    const options = modifiers[name]
-    if (options !== undefined) {
-      const result = applyModifierFromRegistry(name, options, rolls, ctx)
-      rolls = result.rolls
-      if (result.log) {
-        logs = mergeLogs(logs, result.log)
-      }
-      if (result.transformTotal) {
-        totalTransformers.push(result.transformTotal)
-      }
-    }
+  const initialState: RegistryProcessResult = {
+    rolls: [...initialRolls],
+    logs: [],
+    totalTransformers: []
   }
 
-  return { rolls, logs, totalTransformers }
+  return order.reduce((state, name) => {
+    const options = modifiers[name]
+    if (options === undefined) {
+      return state
+    }
+
+    const result = applyModifierFromRegistry(name, options, state.rolls, ctx)
+    return {
+      rolls: result.rolls,
+      logs: result.log ? mergeLogs(state.logs, result.log) : state.logs,
+      totalTransformers: result.transformTotal
+        ? [...state.totalTransformers, result.transformTotal]
+        : state.totalTransformers
+    }
+  }, initialState)
 }
 
 /**

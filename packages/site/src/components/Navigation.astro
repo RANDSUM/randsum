@@ -24,6 +24,14 @@ const isHome = currentPath === '/'
         </li>
         <li>
           <a
+            href="/docs/"
+            class={currentPath.includes('/docs') ? 'nav-link nav-link-active' : 'nav-link'}
+          >
+            Docs
+          </a>
+        </li>
+        <li>
+          <a
             href="/packages/roller/"
             class={currentPath.includes('/packages/roller')
               ? 'nav-link nav-link-active'

@@ -1,10 +1,3 @@
-// ============================================================================
-// Utils - Generic utility functions
-// ============================================================================
-
-export { isSuccess, isError, success, error } from './result'
-export type { Result, SuccessResult, ErrorResult } from './result'
-
 export {
   validateInteger,
   validateRange,
@@ -13,3 +6,7 @@ export {
   validateGreaterThan,
   validateLessThan
 } from './validation'
+
+export { formatHumanList } from './formatHumanList'
+
+export { MAX_REROLL_ATTEMPTS, DEFAULT_EXPLOSION_DEPTH, DEFAULT_EXPLODE_DEPTH } from '../constants'

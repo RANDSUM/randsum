@@ -47,17 +47,26 @@ Key patterns:
 
 ## Modifier System
 
-Modifiers are applied in order: reroll → explode → replace → drop → cap → arithmetic
+Modifiers are applied in priority order (lower number = earlier execution):
 
-Modifier options are defined in `ModifierOptions` type:
+| Priority | Modifier       | Description                        |
+| -------- | -------------- | ---------------------------------- |
+| 10       | cap            | Limit roll values to a range       |
+| 20       | drop           | Remove dice from pool              |
+| 21       | keep           | Keep dice in pool                  |
+| 30       | replace        | Replace specific values            |
+| 40       | reroll         | Reroll dice matching conditions    |
+| 50       | explode        | Roll additional dice on max        |
+| 51       | compound       | Add explosion to existing die      |
+| 52       | penetrate      | Add explosion minus 1 to die       |
+| 60       | unique         | Ensure no duplicate values         |
+| 85       | multiply       | Multiply dice sum (pre-arithmetic) |
+| 90       | plus           | Add to total                       |
+| 91       | minus          | Subtract from total                |
+| 95       | countSuccesses | Count dice meeting threshold       |
+| 100      | multiplyTotal  | Multiply entire final total        |
 
-- `reroll`: Conditional rerolling
-- `explode`: Cascade rolling on max
-- `replace`: Replace values
-- `drop`: Remove dice from pool
-- `cap`: Enforce value ranges
-- `unique`: Ensure no duplicates
-- `plus/minus`: Arithmetic adjustments
+Modifier options are defined in `ModifierOptions` type. See `RANDSUM_DICE_NOTATION.md` for full syntax reference.
 
 ## Type Exports
 

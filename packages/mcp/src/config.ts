@@ -6,7 +6,6 @@ function getPackageVersion(): string {
   try {
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)
-    // In built form, we're in dist/ and package.json is in parent directory
     const packageJsonPath = join(__dirname, '..', 'package.json')
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
       version: string

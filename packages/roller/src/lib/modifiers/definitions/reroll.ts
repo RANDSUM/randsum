@@ -2,12 +2,14 @@ import type { RerollOptions } from '../../../types'
 import { ModifierError } from '../../../errors'
 import {
   formatComparisonNotation,
-  formatHumanList,
   hasConditions,
   matchesComparison,
   parseComparisonNotation
-} from '../../comparisonUtils'
+} from '../../comparison'
+import { formatHumanList } from '../../utils'
+import { MAX_REROLL_ATTEMPTS } from '../../constants'
 import type { TypedModifierDefinition } from '../schema'
+import { assertRollFn } from '../schema'
 import { defineModifier } from '../registry'
 
 const rerollPattern = /[Rr]\{([^}]{1,50})\}(\d+)?/g
@@ -89,22 +91,24 @@ export const rerollModifier: TypedModifierDefinition<'reroll'> = defineModifier<
   },
 
   apply: (rolls, options, ctx) => {
-    // rollOne is guaranteed by requiresRollFn: true
-    const rollOne = ctx.rollOne as () => number
+    const { rollOne } = assertRollFn(ctx)
     const { max } = options
-    let globalRerollCount = 0
 
-    const result = rolls.map(roll => {
-      if (max !== undefined && globalRerollCount >= max) {
-        return roll // Don't reroll if we've hit the global limit
-      }
+    const { result } = rolls.reduce<{ result: number[]; rerollCount: number }>(
+      (acc, roll) => {
+        if (max !== undefined && acc.rerollCount >= max) {
+          return { result: [...acc.result, roll], rerollCount: acc.rerollCount }
+        }
 
-      const newRoll = rerollSingle(roll, options, rollOne)
-      if (newRoll !== roll) {
-        globalRerollCount++
-      }
-      return newRoll
-    })
+        const newRoll = rerollSingle(roll, options, rollOne)
+        const didReroll = newRoll !== roll
+        return {
+          result: [...acc.result, newRoll],
+          rerollCount: didReroll ? acc.rerollCount + 1 : acc.rerollCount
+        }
+      },
+      { result: [], rerollCount: 0 }
+    )
 
     return { rolls: result }
   },
@@ -132,7 +136,7 @@ function rerollSingle(
   rollOne: () => number,
   attempt = 0
 ): number {
-  if (attempt >= 99) {
+  if (attempt >= MAX_REROLL_ATTEMPTS) {
     return roll // Safety limit
   }
 

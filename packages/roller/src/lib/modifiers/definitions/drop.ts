@@ -1,10 +1,10 @@
 import type { DropOptions } from '../../../types'
 import { ModifierError } from '../../../errors'
-import { formatHumanList, hasConditions, parseComparisonNotation } from '../../comparisonUtils'
+import { hasConditions, parseComparisonNotation } from '../../comparison'
+import { formatHumanList } from '../../utils'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
-// Patterns for drop modifiers
 const dropHighestPattern = /[Hh](\d+)?/g
 const dropLowestPattern = /[Ll](\d+)?/g
 const dropConstraintsPattern = /[Dd]\{([^}]{1,50})\}/
@@ -27,13 +27,11 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
   name: 'drop',
   priority: 20,
 
-  // Combined pattern matches H, L, or D{...}
   pattern: /([Hh](\d+)?|[Ll](\d+)?|[Dd]\{([^}]{1,50})\})/,
 
   parse: notation => {
     const drop: DropOptions = {}
 
-    // Find all H (drop highest) occurrences
     const highestMatches = Array.from(notation.matchAll(dropHighestPattern))
     if (highestMatches.length > 0) {
       drop.highest = highestMatches.reduce((sum, match) => {
@@ -41,7 +39,6 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
       }, 0)
     }
 
-    // Find all L (drop lowest) occurrences
     const lowestMatches = Array.from(notation.matchAll(dropLowestPattern))
     if (lowestMatches.length > 0) {
       drop.lowest = lowestMatches.reduce((sum, match) => {
@@ -49,7 +46,6 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
       }, 0)
     }
 
-    // Check for D{...} constraints - use shared parser
     const constraintsMatch = dropConstraintsPattern.exec(notation)
     if (constraintsMatch?.[1]) {
       const parsed = parseComparisonNotation(constraintsMatch[1])
@@ -127,46 +123,39 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
     const { highest, lowest, greaterThan, lessThan, exact } = options
 
     const exactSet = exact ? new Set(exact) : null
-    let result = rolls.filter(roll => {
+    const filteredByConditions = rolls.filter(roll => {
       if (greaterThan !== undefined && roll > greaterThan) return false
       if (lessThan !== undefined && roll < lessThan) return false
       if (exactSet?.has(roll)) return false
       return true
     })
 
-    if (highest !== undefined || lowest !== undefined) {
-      const indexedRolls = result.map((roll, index) => ({ roll, index }))
-      indexedRolls.sort((a, b) => a.roll - b.roll)
+    if (highest === undefined && lowest === undefined) {
+      return { rolls: filteredByConditions }
+    }
 
-      const indicesToDrop = new Set<number>()
+    const indexedRolls = filteredByConditions.map((roll, index) => ({ roll, index }))
+    indexedRolls.sort((a, b) => a.roll - b.roll)
 
-      if (lowest !== undefined) {
-        for (let i = 0; i < Math.min(lowest, indexedRolls.length); i++) {
-          const roll = indexedRolls[i]
-          if (roll) {
-            indicesToDrop.add(roll.index)
-          }
-        }
-      }
+    const lowestIndices =
+      lowest !== undefined
+        ? new Set(
+            indexedRolls.slice(0, Math.min(lowest, indexedRolls.length)).map(item => item.index)
+          )
+        : new Set<number>()
 
-      if (highest !== undefined) {
-        for (
-          let i = indexedRolls.length - 1;
-          i >= Math.max(0, indexedRolls.length - highest);
-          i--
-        ) {
-          const roll = indexedRolls[i]
-          if (roll) {
-            indicesToDrop.add(roll.index)
-          }
-        }
-      }
+    const highestIndices =
+      highest !== undefined
+        ? new Set(
+            indexedRolls.slice(Math.max(0, indexedRolls.length - highest)).map(item => item.index)
+          )
+        : new Set<number>()
 
-      result = result.filter((_, index) => !indicesToDrop.has(index))
+    const indicesToDrop = new Set([...lowestIndices, ...highestIndices])
+    const result = filteredByConditions.filter((_, index) => !indicesToDrop.has(index))
 
-      if (lowest !== undefined && highest === undefined) {
-        result.sort((a, b) => a - b)
-      }
+    if (lowest !== undefined && highest === undefined) {
+      return { rolls: result.toSorted((a, b) => a - b) }
     }
 
     return { rolls: result }

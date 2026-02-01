@@ -21,9 +21,7 @@ export const rollDaggerheart: (
     DaggerheartRollResult['type'],
     DaggerheartRollResult['details']
   >({
-    validate: (_arg: DaggerheartRollArgument) => {
-      // No validation needed - all fields are optional with defaults
-    },
+    validate: () => undefined,
     toRollOptions: (arg: DaggerheartRollArgument) => {
       const isAdvantage = arg.rollingWith === 'Advantage'
       const hopeRollOptions = {

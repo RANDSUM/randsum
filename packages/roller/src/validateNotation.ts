@@ -1,8 +1,7 @@
 import { isDiceNotation } from './isDiceNotation'
-import type { ValidValidationResult, ValidationError, ValidationResult } from './types'
+import type { InvalidValidationResult, ValidValidationResult, ValidationResult } from './types'
 import { optionsToDescription, optionsToNotation } from './lib/transformers'
 import { notationToOptions } from './lib/notation'
-import { error, success } from './lib/utils'
 
 /**
  * Validates dice notation and returns parsed information.
@@ -11,13 +10,13 @@ import { error, success } from './lib/utils'
  * information about the parsed structure if valid.
  *
  * @param notation - String to validate as dice notation
- * @returns Result type with success flag, data on success, or error on failure
+ * @returns ValidationResult with valid flag and error (if invalid)
  *
  * @example
  * ```ts
  * const result = validateNotation("4d6L")
- * if (result.success) {
- *   console.log(result.data.options) // Parsed roll options
+ * if (result.valid) {
+ *   console.log(result.options) // Parsed roll options
  * } else {
  *   console.error(result.error.message)
  * }
@@ -25,20 +24,25 @@ import { error, success } from './lib/utils'
  */
 export function validateNotation(notation: string): ValidationResult {
   if (!isDiceNotation(notation)) {
-    const validationError: ValidationError = {
-      message: `Invalid dice notation: "${notation}"`,
-      argument: notation
+    const result: InvalidValidationResult = {
+      valid: false,
+      argument: notation,
+      error: {
+        message: `Invalid dice notation: "${notation}"`,
+        argument: notation
+      }
     }
-    return error(validationError)
+    return result
   }
 
   const options = notationToOptions(notation)
-  const data: ValidValidationResult = {
+  const result: ValidValidationResult = {
     valid: true,
     argument: notation,
     options,
     notation: options.map(o => optionsToNotation(o)),
-    description: options.map(o => optionsToDescription(o))
+    description: options.map(o => optionsToDescription(o)),
+    error: null
   }
-  return success(data)
+  return result
 }

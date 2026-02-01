@@ -1,5 +1,3 @@
-// Validation utilities for RANDSUM packages
-
 /**
  * Asserts that a value is an integer.
  *

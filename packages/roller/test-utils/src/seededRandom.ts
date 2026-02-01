@@ -21,11 +21,11 @@ import type { RandomFn } from '../../src/lib/random'
  * ```
  */
 export function createSeededRandom(seed: number): RandomFn {
-  let currentSeed = seed
+  const state = { seed }
 
   return (): number => {
     // LCG parameters (same as used in many standard libraries)
-    currentSeed = (currentSeed * 1664525 + 1013904223) % 2 ** 32
-    return currentSeed / 2 ** 32
+    state.seed = (state.seed * 1664525 + 1013904223) % 2 ** 32
+    return state.seed / 2 ** 32
   }
 }

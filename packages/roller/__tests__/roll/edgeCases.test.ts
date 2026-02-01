@@ -1,83 +1,83 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
-import { ModifierError } from '../../src/errors'
+import { ModifierError, RollError, ValidationError } from '../../src/errors'
 
 describe('edge cases', () => {
   describe('validation errors', () => {
-    test('zero quantity throws validation error', () => {
-      expect(() => roll({ sides: 6, quantity: 0 })).toThrow()
+    test('zero quantity returns validation error', () => {
+      const result = roll({ sides: 6, quantity: 0 })
+      expect(result.error).toBeInstanceOf(RollError)
     })
 
-    test('negative quantity throws validation error', () => {
-      expect(() => roll({ sides: 6, quantity: -1 })).toThrow()
+    test('negative quantity returns validation error', () => {
+      const result = roll({ sides: 6, quantity: -1 })
+      expect(result.error).toBeInstanceOf(RollError)
     })
 
-    test('zero sides throws validation error', () => {
-      expect(() => roll({ sides: 0, quantity: 1 })).toThrow()
+    test('zero sides returns validation error', () => {
+      const result = roll({ sides: 0, quantity: 1 })
+      expect(result.error).toBeInstanceOf(RollError)
     })
 
-    test('negative sides throws validation error', () => {
-      expect(() => roll({ sides: -5, quantity: 1 })).toThrow()
+    test('negative sides returns validation error', () => {
+      const result = roll({ sides: -5, quantity: 1 })
+      expect(result.error).toBeInstanceOf(RollError)
     })
 
-    test('non-integer quantity throws validation error', () => {
-      expect(() => roll({ sides: 6, quantity: 0.5 })).toThrow()
+    test('non-integer quantity returns validation error', () => {
+      const result = roll({ sides: 6, quantity: 0.5 })
+      expect(result.error).toBeInstanceOf(RollError)
     })
 
-    test('non-integer sides throws validation error', () => {
-      expect(() => roll({ sides: 6.5, quantity: 1 })).toThrow()
+    test('non-integer sides returns validation error', () => {
+      const result = roll({ sides: 6.5, quantity: 1 })
+      expect(result.error).toBeInstanceOf(RollError)
     })
 
-    test('empty sides array throws validation error', () => {
-      expect(() => roll({ sides: [], quantity: 1 })).toThrow()
+    test('empty sides array returns validation error', () => {
+      const result = roll({ sides: [], quantity: 1 })
+      expect(result.error).toBeInstanceOf(ValidationError)
     })
   })
 
   describe('modifier edge cases', () => {
-    test('drop all dice throws validation error', () => {
-      expect(() => roll({ sides: 6, quantity: 2, modifiers: { drop: { lowest: 2 } } })).toThrow(
-        ModifierError
-      )
+    test('drop all dice returns modifier error', () => {
+      const result = roll({ sides: 6, quantity: 2, modifiers: { drop: { lowest: 2 } } })
+      expect(result.error).toBeInstanceOf(ModifierError)
     })
 
-    test('drop more than available throws validation error', () => {
-      expect(() =>
-        roll({ sides: 6, quantity: 3, modifiers: { drop: { lowest: 2, highest: 2 } } })
-      ).toThrow(ModifierError)
+    test('drop more than available returns modifier error', () => {
+      const result = roll({ sides: 6, quantity: 3, modifiers: { drop: { lowest: 2, highest: 2 } } })
+      expect(result.error).toBeInstanceOf(ModifierError)
     })
 
-    test('unique with quantity > sides throws', () => {
-      expect(() => roll({ sides: 4, quantity: 5, modifiers: { unique: true } })).toThrow(
-        ModifierError
-      )
+    test('unique with quantity > sides returns error', () => {
+      const result = roll({ sides: 4, quantity: 5, modifiers: { unique: true } })
+      expect(result.error).toBeInstanceOf(ModifierError)
     })
 
-    test('keep more than available throws validation error', () => {
-      expect(() => roll({ sides: 6, quantity: 3, modifiers: { keep: { highest: 5 } } })).toThrow(
-        ModifierError
-      )
+    test('keep more than available returns modifier error', () => {
+      const result = roll({ sides: 6, quantity: 3, modifiers: { keep: { highest: 5 } } })
+      expect(result.error).toBeInstanceOf(ModifierError)
     })
 
-    test('keep zero throws validation error', () => {
-      expect(() => roll({ sides: 6, quantity: 3, modifiers: { keep: { highest: 0 } } })).toThrow(
-        ModifierError
-      )
+    test('keep zero returns modifier error', () => {
+      const result = roll({ sides: 6, quantity: 3, modifiers: { keep: { highest: 0 } } })
+      expect(result.error).toBeInstanceOf(ModifierError)
     })
 
-    test('reroll value outside range throws validation error', () => {
-      expect(() => roll({ sides: 6, quantity: 3, modifiers: { reroll: { exact: [10] } } })).toThrow(
-        ModifierError
-      )
+    test('reroll value outside range returns modifier error', () => {
+      const result = roll({ sides: 6, quantity: 3, modifiers: { reroll: { exact: [10] } } })
+      expect(result.error).toBeInstanceOf(ModifierError)
     })
 
-    test('cap with invalid range throws validation error', () => {
-      expect(() =>
-        roll({
-          sides: 20,
-          quantity: 1,
-          modifiers: { cap: { lessThan: 10, greaterThan: 5 } }
-        })
-      ).toThrow(ModifierError)
+    test('cap with invalid range returns modifier error', () => {
+      const result = roll({
+        sides: 20,
+        quantity: 1,
+        modifiers: { cap: { lessThan: 10, greaterThan: 5 } }
+      })
+      expect(result.error).toBeInstanceOf(ModifierError)
     })
   })
 

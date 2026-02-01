@@ -39,54 +39,37 @@ export interface ProbabilityAnalysis {
  * ```
  */
 export function analyze(notation: DiceNotation, samples = 10000): ProbabilityAnalysis {
-  // For now, use Monte Carlo simulation
-  // In the future, could add analytical calculation for simple cases
-  const results: number[] = []
+  const results = Array.from({ length: samples }, () => roll(notation).total)
 
-  for (let i = 0; i < samples; i++) {
-    const result = roll(notation)
-    results.push(result.total)
-  }
+  const sortedResults = results.toSorted((a, b) => a - b)
+  const min = sortedResults[0] ?? 0
+  const max = sortedResults[sortedResults.length - 1] ?? 0
 
-  // Calculate statistics
-  results.sort((a, b) => a - b)
-  const min = results[0] ?? 0
-  const max = results[results.length - 1] ?? 0
-
-  // Mean
   const sum = results.reduce((acc, val) => acc + val, 0)
   const mean = sum / results.length
 
-  // Median
-  const mid = Math.floor(results.length / 2)
+  const mid = Math.floor(sortedResults.length / 2)
   const median =
-    results.length % 2 === 0
-      ? ((results[mid - 1] ?? 0) + (results[mid] ?? 0)) / 2
-      : (results[mid] ?? 0)
+    sortedResults.length % 2 === 0
+      ? ((sortedResults[mid - 1] ?? 0) + (sortedResults[mid] ?? 0)) / 2
+      : (sortedResults[mid] ?? 0)
 
-  // Standard deviation
   const variance = results.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / results.length
   const standardDeviation = Math.sqrt(variance)
 
-  // Mode (most frequent value)
-  const frequency = new Map<number, number>()
-  for (const value of results) {
-    frequency.set(value, (frequency.get(value) ?? 0) + 1)
-  }
-  let maxFreq = 0
-  let mode = min
-  for (const [value, freq] of frequency.entries()) {
-    if (freq > maxFreq) {
-      maxFreq = freq
-      mode = value
-    }
-  }
+  const frequency = results.reduce(
+    (acc, value) => acc.set(value, (acc.get(value) ?? 0) + 1),
+    new Map<number, number>()
+  )
 
-  // Distribution (probability for each value)
-  const distribution = new Map<number, number>()
-  for (const [value, freq] of frequency.entries()) {
-    distribution.set(value, freq / results.length)
-  }
+  const mode = Array.from(frequency.entries()).reduce(
+    (best, [value, freq]) => (freq > best.freq ? { value, freq } : best),
+    { value: min, freq: 0 }
+  ).value
+
+  const distribution = new Map(
+    Array.from(frequency.entries()).map(([value, freq]) => [value, freq / results.length])
+  )
 
   return {
     min,

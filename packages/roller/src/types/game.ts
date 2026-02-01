@@ -1,7 +1,3 @@
-// ============================================================================
-// Game Types - Types for game-specific roll functions
-// ============================================================================
-
 /**
  * Generic interface for game-specific roll results.
  * Game packages should implement this interface for their roll functions.

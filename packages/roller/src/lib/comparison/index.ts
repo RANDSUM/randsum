@@ -1,6 +1,5 @@
 export { matchesComparison } from './matchesComparison'
 export { formatComparisonDescription } from './formatComparisonDescription'
 export { formatComparisonNotation } from './formatComparisonNotation'
-export { formatHumanList } from './formatHumanList'
 export { parseComparisonNotation, hasConditions } from './parseComparisonNotation'
 export type { ExtendedComparisonOptions } from './parseComparisonNotation'

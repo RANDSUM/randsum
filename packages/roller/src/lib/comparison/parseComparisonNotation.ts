@@ -32,7 +32,6 @@ export interface ExtendedComparisonOptions extends ComparisonOptions {
  * ```
  */
 export function parseComparisonNotation(conditionString: string): ExtendedComparisonOptions {
-  // Strip braces if present
   const content = conditionString.replace(/[{}]/g, '')
   const parts = content
     .split(',')

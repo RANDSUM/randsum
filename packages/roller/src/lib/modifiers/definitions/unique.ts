@@ -1,6 +1,8 @@
 import { ModifierError } from '../../../errors'
-import { formatHumanList } from '../../comparisonUtils'
+import { MAX_REROLL_ATTEMPTS } from '../../constants'
+import { formatHumanList } from '../../utils'
 import type { TypedModifierDefinition } from '../schema'
+import { assertRequiredContext } from '../schema'
 import { defineModifier } from '../registry'
 
 const uniquePattern = /[Uu](?:\{([^}]{1,50})\})?/
@@ -25,12 +27,10 @@ export const uniqueModifier: TypedModifierDefinition<'unique'> = defineModifier<
     const match = uniquePattern.exec(notation)
     if (!match) return {}
 
-    // No braces = simple unique
     if (!match[1]) {
       return { unique: true }
     }
 
-    // Parse exceptions
     const exceptions = match[1]
       .split(',')
       .map(s => Number(s.trim()))
@@ -56,52 +56,46 @@ export const uniqueModifier: TypedModifierDefinition<'unique'> = defineModifier<
   },
 
   apply: (rolls, options, ctx) => {
-    // These are guaranteed by requires* flags
-    const rollOne = ctx.rollOne as () => number
-    const { sides, quantity } = ctx.parameters as { sides: number; quantity: number }
+    const { rollOne, parameters } = assertRequiredContext(ctx)
+    const { sides, quantity } = parameters
 
-    // Check feasibility
     if (quantity > sides) {
       throw new ModifierError('unique', 'Cannot have more rolls than sides when unique is enabled')
     }
 
     const exceptions = new Set(typeof options === 'object' ? options.notUnique : [])
 
-    const result = [...rolls]
-    const seen = new Set<number>()
-    const MAX_ATTEMPTS = 99
-
-    for (let i = 0; i < result.length; i++) {
-      const value = result[i]
-      if (value === undefined) continue
-
-      // If it's an exception, we don't need it to be unique
-      if (exceptions.has(value)) {
-        continue
+    const rerollUntilUnique = (value: number, seen: Set<number>): number => {
+      const findUnique = (current: number, attempts: number): number => {
+        if (attempts >= MAX_REROLL_ATTEMPTS) return current
+        if (!seen.has(current) && !exceptions.has(current)) return current
+        return findUnique(rollOne(), attempts + 1)
       }
+      return findUnique(value, 0)
+    }
 
-      // If we've seen this value, reroll it
-      if (seen.has(value)) {
-        let attempts = 0
-        let newValue = value
-
-        while ((seen.has(newValue) || exceptions.has(newValue)) && attempts < MAX_ATTEMPTS) {
-          newValue = rollOne()
-          attempts++
+    const { result } = rolls.reduce<{ result: number[]; seen: Set<number> }>(
+      (acc, value) => {
+        if (exceptions.has(value)) {
+          return { result: [...acc.result, value], seen: acc.seen }
         }
 
-        result[i] = newValue
-        seen.add(newValue)
-      } else {
-        seen.add(value)
-      }
-    }
+        if (acc.seen.has(value)) {
+          const newValue = rerollUntilUnique(value, acc.seen)
+          const newSeen = new Set(acc.seen).add(newValue)
+          return { result: [...acc.result, newValue], seen: newSeen }
+        }
+
+        const newSeen = new Set(acc.seen).add(value)
+        return { result: [...acc.result, value], seen: newSeen }
+      },
+      { result: [], seen: new Set<number>() }
+    )
 
     return { rolls: result }
   },
 
   validate: (options, { sides, quantity }) => {
-    // Calculate how many unique values are needed
     const exceptionCount = typeof options === 'object' ? options.notUnique.length : 0
     const neededUnique = quantity - exceptionCount
 

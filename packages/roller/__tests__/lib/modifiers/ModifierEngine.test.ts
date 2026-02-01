@@ -186,10 +186,10 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('enforces maximum reroll limits', () => {
-      let callCount = 0
+      const counter = { value: 0 }
       const limitedRollOne = (): number => {
-        callCount++
-        return callCount <= 2 ? 1 : 5 // First 2 calls return 1, then 5
+        counter.value++
+        return counter.value <= 2 ? 1 : 5 // First 2 calls return 1, then 5
       }
       const ctx: ModifierContext = {
         rollOne: limitedRollOne,
@@ -229,10 +229,10 @@ describe('applyModifierFromRegistry', () => {
 
   describe('unique modifier', () => {
     test('ensures all values are unique', () => {
-      let rollCount = 0
+      const counter = { value: 0 }
       const uniqueRollOne = (): number => {
-        rollCount++
-        return rollCount === 1 ? 2 : 5 // First call returns 2, then 5
+        counter.value++
+        return counter.value === 1 ? 2 : 5 // First call returns 2, then 5
       }
       const ctx: ModifierContext = { rollOne: uniqueRollOne, parameters: { sides: 6, quantity: 4 } }
       const result = applyModifierFromRegistry('unique', true, [1, 3, 1, 4], ctx)
@@ -269,10 +269,10 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('compounds multiple times with depth', () => {
-      let callCount = 0
+      const counter = { value: 0 }
       const sequenceRollOne = (): number => {
-        callCount++
-        return callCount === 1 ? 6 : 2 // First roll is 6 (compounds again), second is 2
+        counter.value++
+        return counter.value === 1 ? 6 : 2 // First roll is 6 (compounds again), second is 2
       }
       const ctx: ModifierContext = {
         rollOne: sequenceRollOne,
@@ -323,10 +323,10 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('penetrates multiple times with depth', () => {
-      let callCount = 0
+      const counter = { value: 0 }
       const sequenceRollOne = (): number => {
-        callCount++
-        return callCount === 1 ? 6 : 3 // First roll is 6 (penetrates again), second is 3
+        counter.value++
+        return counter.value === 1 ? 6 : 3 // First roll is 6 (penetrates again), second is 3
       }
       const ctx: ModifierContext = {
         rollOne: sequenceRollOne,

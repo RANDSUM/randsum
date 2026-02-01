@@ -4,19 +4,19 @@ import { coreRandom } from '../../src/lib/random'
 describe('coreRandom', () => {
   describe('basic functionality', () => {
     test('returns a number within the specified range', () => {
-      for (let i = 0; i < 100; i++) {
+      Array.from({ length: 100 }).forEach(() => {
         const result = coreRandom(6)
         expect(result).toBeGreaterThanOrEqual(0)
         expect(result).toBeLessThan(6)
         expect(Number.isInteger(result)).toBe(true)
-      }
+      })
     })
 
     test('handles edge case with max value of 1', () => {
-      for (let i = 0; i < 100; i++) {
+      Array.from({ length: 100 }).forEach(() => {
         const result = coreRandom(1)
         expect(result).toBe(0)
-      }
+      })
     })
 
     test('handles edge case with max value of 0', () => {
@@ -26,12 +26,12 @@ describe('coreRandom', () => {
 
     test('handles large max values', () => {
       const largeMax = 1000000
-      for (let i = 0; i < 100; i++) {
+      Array.from({ length: 100 }).forEach(() => {
         const result = coreRandom(largeMax)
         expect(result).toBeGreaterThanOrEqual(0)
         expect(result).toBeLessThan(largeMax)
         expect(Number.isInteger(result)).toBe(true)
-      }
+      })
     })
   })
 
@@ -42,12 +42,12 @@ describe('coreRandom', () => {
     })
 
     test('handles fractional max values', () => {
-      for (let i = 0; i < 100; i++) {
+      Array.from({ length: 100 }).forEach(() => {
         const result = coreRandom(6.7)
         expect(result).toBeGreaterThanOrEqual(0)
         expect(result).toBeLessThan(6.7)
         expect(Number.isInteger(result)).toBe(true)
-      }
+      })
     })
 
     test('handles very small positive max values', () => {
@@ -58,13 +58,14 @@ describe('coreRandom', () => {
 
   describe('distribution validation', () => {
     test('produces reasonably uniform distribution for d6', () => {
-      const counts = Array(6).fill(0)
       const iterations = 10000
-
-      for (let i = 0; i < iterations; i++) {
-        const result = coreRandom(6)
-        counts[result]++
-      }
+      const counts = Array.from({ length: iterations }, () => coreRandom(6)).reduce<number[]>(
+        (acc, result) => {
+          acc[result]++
+          return acc
+        },
+        Array(6).fill(0)
+      )
 
       const expectedCount = iterations / 6
       const tolerance = expectedCount * 0.1
@@ -76,13 +77,14 @@ describe('coreRandom', () => {
     })
 
     test('produces reasonably uniform distribution for d20', () => {
-      const counts = Array(20).fill(0)
       const iterations = 20000
-
-      for (let i = 0; i < iterations; i++) {
-        const result = coreRandom(20)
-        counts[result]++
-      }
+      const counts = Array.from({ length: iterations }, () => coreRandom(20)).reduce<number[]>(
+        (acc, result) => {
+          acc[result]++
+          return acc
+        },
+        Array(20).fill(0)
+      )
 
       const expectedCount = iterations / 20
       const tolerance = expectedCount * 0.15
@@ -99,9 +101,7 @@ describe('coreRandom', () => {
       const iterations = 100000
       const startTime = performance.now()
 
-      for (let i = 0; i < iterations; i++) {
-        coreRandom(20)
-      }
+      Array.from({ length: iterations }).forEach(() => coreRandom(20))
 
       const endTime = performance.now()
       const duration = endTime - startTime

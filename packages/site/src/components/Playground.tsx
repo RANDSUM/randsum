@@ -3,7 +3,6 @@ import {
   type DiceNotation,
   type RollerRollResult,
   type ValidValidationResult,
-  isSuccess,
   roll,
   validateNotation
 } from '@randsum/roller'
@@ -41,8 +40,8 @@ export default function Playground(): React.JSX.Element {
     }
 
     const result = validateNotation(input)
-    if (isSuccess(result)) {
-      setValidation(result.data)
+    if (result.valid) {
+      setValidation(result)
       setValidationError(null)
     } else {
       setValidation(null)
@@ -62,9 +61,11 @@ export default function Playground(): React.JSX.Element {
 
     // Add a tiny delay for visual feedback
     setTimeout(() => {
-      try {
-        // Cast to DiceNotation - validation was already done
-        const result = roll(notation as DiceNotation)
+      // Cast to DiceNotation - validation was already done
+      const result = roll(notation as DiceNotation)
+      if (result.error) {
+        setValidationError(result.error.message)
+      } else {
         const entry: RollHistoryEntry = {
           id: Date.now(),
           notation,
@@ -72,11 +73,8 @@ export default function Playground(): React.JSX.Element {
           timestamp: new Date()
         }
         setRollHistory(prev => [entry, ...prev].slice(0, 20)) // Keep last 20 rolls
-      } catch (err) {
-        setValidationError(err instanceof Error ? err.message : 'Roll failed')
-      } finally {
-        setIsRolling(false)
       }
+      setIsRolling(false)
     }, 100)
   }, [notation, validationError])
 

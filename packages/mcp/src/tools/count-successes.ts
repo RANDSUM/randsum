@@ -13,7 +13,6 @@ function getToolDescription(filename: string): string {
   try {
     return readFileSync(docPath, 'utf8')
   } catch {
-    // Return default description if file doesn't exist
     return 'Roll dice and count successes instead of summing. Useful for dice pool systems like World of Darkness, Shadowrun, etc.'
   }
 }
@@ -51,7 +50,6 @@ export function registerCountSuccessesTool(server: McpServer): void {
       botchThreshold: number | undefined
     }) => {
       try {
-        // Parse notation to get sides and quantity
         if (!isDiceNotation(notation)) {
           return {
             content: [
@@ -63,7 +61,6 @@ export function registerCountSuccessesTool(server: McpServer): void {
           }
         }
 
-        // Extract quantity and sides from notation (simplified - assumes format like "8d10")
         const match = /^(\d+)d(\d+)/i.exec(notation)
         if (!match) {
           return {
@@ -79,7 +76,6 @@ export function registerCountSuccessesTool(server: McpServer): void {
         const quantity = Number.parseInt(match[1] ?? '0', 10)
         const sides = Number.parseInt(match[2] ?? '0', 10)
 
-        // Validate threshold is within dice range
         if (threshold > sides) {
           return {
             content: [
@@ -102,7 +98,6 @@ export function registerCountSuccessesTool(server: McpServer): void {
           }
         }
 
-        // Roll with success counting
         const result = roll({
           sides,
           quantity,

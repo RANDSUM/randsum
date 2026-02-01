@@ -14,8 +14,18 @@ export interface ToolResponse {
 }
 
 /**
- * Interface that extends McpServer with a properly typed tool method
- * This allows us to call server.tool without type assertions
+ * Interface that extends McpServer with a properly typed tool method.
+ *
+ * The MCP SDK's McpServer.tool() method has complex generic types that cause
+ * TypeScript's "excessively deep type instantiation" error when used with
+ * Zod schemas directly. This interface provides a simplified but correct
+ * type signature that matches the runtime behavior.
+ *
+ * The type assertion from McpServer to TypedMcpServer in registerTool() is
+ * UNAVOIDABLE due to this external SDK limitation. It is safe because:
+ * 1. TypedMcpServer's tool signature matches McpServer's runtime behavior
+ * 2. We only add constraints, not remove them
+ * 3. The handler types ensure type-safe tool implementations
  */
 interface TypedMcpServer extends Omit<McpServer, 'tool'> {
   tool<TParams extends ZodRawShape>(
@@ -49,8 +59,6 @@ export function registerTool<TParams extends ZodRawShape>(
     [K in keyof TParams]: z.infer<TParams[K]>
   }) => ToolResponse | Promise<ToolResponse>
 ): void {
-  // Cast server to our typed interface which properly types the tool method
-  // This avoids both 'any' and 'unknown' by using a specific interface
   const typedServer = server as TypedMcpServer
   typedServer.tool(name, description, schemaShape, handler)
 }

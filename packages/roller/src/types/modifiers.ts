@@ -1,7 +1,3 @@
-// ============================================================================
-// Modifier Types - Types for dice roll modifiers
-// ============================================================================
-
 /**
  * Options for comparison-based operations (greater/less than).
  *

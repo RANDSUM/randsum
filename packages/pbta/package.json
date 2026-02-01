@@ -1,6 +1,6 @@
 {
   "name": "@randsum/pbta",
-  "version": "0.1.0",
+  "version": "0.27.0",
   "description": "A flexible, type-safe dice roller for Powered by the Apocalypse games",
   "private": false,
   "author": {
@@ -60,7 +60,6 @@
   ],
   "scripts": {
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
-    "prepublishOnly": "bun run build",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

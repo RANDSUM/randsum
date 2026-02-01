@@ -101,13 +101,8 @@ export default tseslint.config(
         }
       ],
       '@typescript-eslint/consistent-type-exports': 'error',
-      '@typescript-eslint/consistent-type-assertions': [
-        'error',
-        {
-          assertionStyle: 'as',
-          objectLiteralTypeAssertions: 'never'
-        }
-      ],
+      // Note: consistent-type-assertions intentionally omitted - policy is to prefer type guards
+      // The dangerous `as unknown as T` pattern is banned by no-restricted-syntax below
 
       // Code quality and best practices
       'func-names': ['error', 'as-needed'],
@@ -140,6 +135,10 @@ export default tseslint.config(
         {
           selector: 'TSAsExpression > TSUnknownKeyword',
           message: 'Avoid `as unknown as T` pattern. Use type guards instead.'
+        },
+        {
+          selector: 'VariableDeclaration[kind="let"]',
+          message: 'Use `const` instead of `let`. Prefer immutable bindings.'
         }
       ]
     }

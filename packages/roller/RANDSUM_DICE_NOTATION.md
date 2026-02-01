@@ -421,6 +421,42 @@ roll({
 
 **Use cases:** Critical hits that double or triple base damage before modifiers. Or systems where dice are multiplied before bonuses are added.
 
+### Count Successes (S{...})
+
+Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
+
+```typescript
+roll("5d10S{7}") // Count how many dice rolled >= 7
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countSuccesses: { threshold: 7 }
+  }
+})
+
+// With botch threshold (successes - botches)
+roll("5d10S{7,1}") // Count successes >= 7, subtract botches <= 1
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countSuccesses: {
+      threshold: 7,
+      botchThreshold: 1
+    }
+  }
+})
+```
+
+**How it works:** Instead of summing dice values, the total becomes a count of dice that meet or exceed the threshold. If a botch threshold is specified, dice at or below that value are counted as botches and subtracted from the success count.
+
+**Example:** `5d10S{7}` rolls [8, 3, 10, 6, 9]. Successes >= 7: [8, 10, 9] = 3 successes.
+
+**Example with botch:** `5d10S{7,1}` rolls [8, 1, 10, 1, 9]. Successes >= 7: 3, Botches <= 1: 2. Result = 3 - 2 = 1.
+
+**Use cases:** World of Darkness, Shadowrun, and other dice pool systems where you count successes rather than sum values.
+
 ### Total Multiplier (\*\*)
 
 Multiply the entire final total after all other modifiers:
@@ -467,16 +503,34 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 
 **Modifier Application Order:**
 
-1. Cap
-2. Drop / Keep
-3. Replace
-4. Reroll
-5. Explode / Compound / Penetrate
-6. Unique
-7. Success Count
-8. Pre-Arithmetic Multiply (`*`)
-9. Plus / Minus
-10. Total Multiply (`**`)
+| Priority | Modifier        | Notation  | Description                        |
+| -------- | --------------- | --------- | ---------------------------------- |
+| 10       | Cap             | `C{...}`  | Limit roll values to a range       |
+| 20       | Drop            | `H`, `L`  | Remove dice from pool              |
+| 21       | Keep            | `K`, `kl` | Keep dice in pool                  |
+| 30       | Replace         | `V{...}`  | Replace specific values            |
+| 40       | Reroll          | `R{...}`  | Reroll dice matching conditions    |
+| 50       | Explode         | `!`       | Roll additional dice on max        |
+| 51       | Compound        | `!!`      | Add explosion to existing die      |
+| 52       | Penetrate       | `!p`      | Add explosion minus 1 to die       |
+| 60       | Unique          | `U`       | Ensure no duplicate values         |
+| 85       | Multiply        | `*N`      | Multiply dice sum (pre-arithmetic) |
+| 90       | Plus            | `+N`      | Add to total                       |
+| 91       | Minus           | `-N`      | Subtract from total                |
+| 95       | Count Successes | `S{...}`  | Count dice meeting threshold       |
+| 100      | Total Multiply  | `**N`     | Multiply entire final total        |
+
+Lower priority numbers execute first. This order ensures predictable behavior:
+
+- Dice values are capped/constrained first
+- Pool size is adjusted (drop/keep)
+- Values are replaced or rerolled
+- Explosive mechanics add dice (explode adds new dice, compound/penetrate modify existing)
+- Uniqueness is enforced
+- Dice sum is multiplied (pre-arithmetic)
+- Arithmetic modifiers (+/-) apply
+- Successes are counted (if using dice pool systems)
+- Final total is multiplied (if using total multiplier)
 
 ```typescript
 roll("4d6L+2") // Drop lowest, add 2
@@ -690,7 +744,3 @@ These limits prevent infinite loops and ensure performance remains predictable.
 ## Attribution
 
 The extended notation syntax was inspired by [Sophie's Dice](https://sophiehoulden.com/dice/documentation/notation.html#keep).
-
----
-
-> **Note**: This documentation has been consolidated. The canonical source of truth is now [docs/NOTATION.md](../../docs/NOTATION.md). This file is kept for backward compatibility and package-specific reference.

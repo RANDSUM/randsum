@@ -7,10 +7,10 @@ describe('rollDaggerheart', () => {
     test('returns valid roll types', () => {
       const validTypes = ['hope', 'fear', 'critical hope']
 
-      for (let i = 0; i < 20; i++) {
+      Array.from({ length: 20 }).forEach(() => {
         const result = rollDaggerheart({})
         expect(validTypes).toContain(result.result)
-      }
+      })
     })
 
     test('total is sum of hope and fear dice', () => {
@@ -23,14 +23,14 @@ describe('rollDaggerheart', () => {
     })
 
     test('rolls are within expected ranges for standard dice', () => {
-      for (let i = 0; i < 50; i++) {
+      Array.from({ length: 50 }).forEach(() => {
         const result = rollDaggerheart({})
 
         expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
         expect(result.details?.hope.roll).toBeLessThanOrEqual(12)
         expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
         expect(result.details?.fear.roll).toBeLessThanOrEqual(12)
-      }
+      })
     })
   })
 
@@ -125,27 +125,27 @@ describe('rollDaggerheart', () => {
 
   describe('amplify options', () => {
     test('amplifyHope uses d20 instead of d12', () => {
-      for (let i = 0; i < 20; i++) {
-        const result = rollDaggerheart({ amplifyHope: true })
+      const results = Array.from({ length: 20 }, () => rollDaggerheart({ amplifyHope: true }))
+      results.forEach(result => {
         const hopeRoll = result.details?.hope.roll
-
         if (hopeRoll !== undefined && hopeRoll > 12) {
           expect(hopeRoll).toBeLessThanOrEqual(20)
-          break
         }
-      }
+      })
+      // At least verify we ran the test (d20 might not roll > 12 in 20 tries)
+      expect(results.length).toBe(20)
     })
 
     test('amplifyFear uses d20 instead of d12', () => {
-      for (let i = 0; i < 20; i++) {
-        const result = rollDaggerheart({ amplifyFear: true })
+      const results = Array.from({ length: 20 }, () => rollDaggerheart({ amplifyFear: true }))
+      results.forEach(result => {
         const fearRoll = result.details?.fear.roll
-
         if (fearRoll !== undefined && fearRoll > 12) {
           expect(fearRoll).toBeLessThanOrEqual(20)
-          break
         }
-      }
+      })
+      // At least verify we ran the test (d20 might not roll > 12 in 20 tries)
+      expect(results.length).toBe(20)
     })
 
     test('both amplify options can be used together', () => {
@@ -177,12 +177,10 @@ describe('rollDaggerheart', () => {
 
   describe('roll result types', () => {
     test('generates hope, fear, and critical hope results', () => {
-      const resultTypes = new Set<string>()
-
-      for (let i = 0; i < 100; i++) {
-        const result = rollDaggerheart({})
-        resultTypes.add(result.result)
-      }
+      const resultTypes = Array.from({ length: 100 }, () => rollDaggerheart({}).result).reduce(
+        (types, result) => types.add(result),
+        new Set<string>()
+      )
 
       expect(resultTypes.has('hope') || resultTypes.has('fear')).toBe(true)
     })

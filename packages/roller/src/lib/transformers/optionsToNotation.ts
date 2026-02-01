@@ -2,6 +2,7 @@ import { isDiceNotation } from '../../isDiceNotation'
 import type { DiceNotation, RollOptions } from '../../types'
 import { processModifierNotationsFromRegistry } from '../modifiers'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
+import { NotationParseError } from '../../errors'
 
 /**
  * Converts roll options to RANDSUM dice notation string.
@@ -33,7 +34,7 @@ export function optionsToNotation<T>(options: RollOptions<T>): DiceNotation {
   const proposed = `${arithmeticPrefix}${quantity}d${sides}${modifierSuffix}`
 
   if (!isDiceNotation(proposed)) {
-    throw new Error(`Invalid notation generated: ${proposed}`)
+    throw new NotationParseError(proposed, 'Generated notation is invalid')
   }
   return proposed
 }

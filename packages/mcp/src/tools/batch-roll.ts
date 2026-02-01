@@ -13,7 +13,6 @@ function getToolDescription(filename: string): string {
   try {
     return readFileSync(docPath, 'utf8')
   } catch {
-    // Return default description if file doesn't exist
     return 'Roll dice multiple times in a batch. Useful for generating multiple ability scores, initiative rolls, etc.'
   }
 }
@@ -67,19 +66,16 @@ export function registerBatchRollTool(server: McpServer): void {
           }
         }
 
-        const results: { index: number; total: number; rolls: number[] }[] = []
-        const allTotals: number[] = []
-
-        for (let i = 0; i < count; i++) {
+        const results = Array.from({ length: count }, (_, i) => {
           const result = roll(notation)
           const firstRoll = result.rolls[0]
-          results.push({
+          return {
             index: i + 1,
             total: result.total,
             rolls: firstRoll?.modifierHistory.modifiedRolls ?? []
-          })
-          allTotals.push(result.total)
-        }
+          }
+        })
+        const allTotals = results.map(r => r.total)
 
         const batchLabel = label ? `${label} ` : ''
         const header = `🎲 Batch Roll: ${batchLabel}${notation} (${count} times)`

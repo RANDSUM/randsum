@@ -10,39 +10,36 @@ describe('rollPbtA', () => {
   test('strong hit on 10+', () => {
     // With stat 4, we need at least 6 on 2d6 to hit 10+
     // This is probabilistic, so we test multiple times
-    let strongHits = 0
-    for (let i = 0; i < 100; i++) {
-      const result = rollPbtA({ stat: 4 })
+    const strongHits = Array.from({ length: 100 }, () => rollPbtA({ stat: 4 })).filter(result => {
       if (result.total >= 10) {
         expect(result.result).toBe('strong_hit')
-        strongHits++
+        return true
       }
-    }
+      return false
+    }).length
     // Should get at least some strong hits with stat 4
     expect(strongHits).toBeGreaterThan(0)
   })
 
   test('weak hit on 7-9', () => {
-    let weakHits = 0
-    for (let i = 0; i < 100; i++) {
-      const result = rollPbtA({ stat: 0 })
+    const weakHits = Array.from({ length: 100 }, () => rollPbtA({ stat: 0 })).filter(result => {
       if (result.total >= 7 && result.total <= 9) {
         expect(result.result).toBe('weak_hit')
-        weakHits++
+        return true
       }
-    }
+      return false
+    }).length
     expect(weakHits).toBeGreaterThan(0)
   })
 
   test('miss on 6-', () => {
-    let misses = 0
-    for (let i = 0; i < 100; i++) {
-      const result = rollPbtA({ stat: -3 })
+    const misses = Array.from({ length: 100 }, () => rollPbtA({ stat: -3 })).filter(result => {
       if (result.total <= 6) {
         expect(result.result).toBe('miss')
-        misses++
+        return true
       }
-    }
+      return false
+    }).length
     expect(misses).toBeGreaterThan(0)
   })
 

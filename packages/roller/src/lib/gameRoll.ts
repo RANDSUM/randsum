@@ -126,7 +126,6 @@ export function createMultiRollGameRoll<TInput, TResult, TDetails = undefined>(
     const options = config.toRollOptions(input)
     const rollResult = roll(...options)
 
-    // Build a map of rolls by key for easy lookup
     const rollsByKey = new Map<string, RollRecord>()
     for (const rollRecord of rollResult.rolls) {
       if (rollRecord.parameters.key !== undefined) {
@@ -134,13 +133,18 @@ export function createMultiRollGameRoll<TInput, TResult, TDetails = undefined>(
       }
     }
 
-    const { result, details, total } = config.interpretResult(input, rollResult, rollsByKey)
+    const interpreted = config.interpretResult(input, rollResult, rollsByKey)
 
-    return {
+    const gameResult: GameRollResult<TResult, TDetails, RollRecord> = {
       rolls: rollResult.rolls,
-      total: total ?? rollResult.total,
-      result,
-      details: details as TDetails
+      total: interpreted.total ?? rollResult.total,
+      result: interpreted.result
     }
+
+    if (interpreted.details !== undefined) {
+      gameResult.details = interpreted.details
+    }
+
+    return gameResult
   }
 }

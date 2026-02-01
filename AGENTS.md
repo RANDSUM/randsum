@@ -162,9 +162,9 @@ packages/
    - Add case for new modifier type
    - Type assertions are safe due to literal type matching
 
-5. **Add to apply order** in `packages/roller/src/lib/modifiers/applyModifiers.ts`:
-   - Order: reroll → explode → replace → drop → cap → arithmetic
-   - Ensure new modifier is in correct position
+5. **Add to apply order** via the modifier's `priority` field:
+   - Order: cap (10) → drop (20) → keep (21) → replace (30) → reroll (40) → explode (50) → compound (51) → penetrate (52) → unique (60) → multiply (85) → plus (90) → minus (91) → countSuccesses (95) → multiplyTotal (100)
+   - Lower numbers execute first
 
 6. **Update notation parsing** in `packages/roller/src/lib/notation/`:
    - Add pattern matching in `singleNotationToOptions.ts`
@@ -194,7 +194,7 @@ packages/
 
 2. **Check modifier application order**:
    - Verify modifiers are applied in correct sequence
-   - Order: reroll → explode → replace → drop → cap → arithmetic
+   - Order: cap → drop → keep → replace → reroll → explode → compound → penetrate → unique → multiply → plus → minus → countSuccesses → multiplyTotal
    - Check `result.rolls[0].modifierHistory.logs` for application sequence
 
 3. **Inspect intermediate state**:

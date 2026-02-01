@@ -27,7 +27,6 @@ import type { PbtAOutcome, PbtARollArgument, PbtARollDetails } from '../types'
 export function rollPbtA(
   arg: PbtARollArgument
 ): GameRollResult<PbtAOutcome, PbtARollDetails, RollRecord> {
-  // Validate input
   validateRange(arg.stat, -3, 5, 'PbtA stat')
   if (arg.forward !== undefined) {
     validateRange(arg.forward, -5, 5, 'forward bonus')
@@ -36,7 +35,6 @@ export function rollPbtA(
     validateRange(arg.ongoing, -5, 5, 'ongoing bonus')
   }
 
-  // Convert to roll options
   const modifier = arg.stat + (arg.forward ?? 0) + (arg.ongoing ?? 0)
   const rollResult = roll({
     quantity: arg.advantage || arg.disadvantage ? 3 : 2,
@@ -48,11 +46,9 @@ export function rollPbtA(
         : { plus: modifier }
   })
 
-  // Interpret result
   const result: PbtAOutcome =
     rollResult.total >= 10 ? 'strong_hit' : rollResult.total >= 7 ? 'weak_hit' : 'miss'
 
-  // Calculate dice total (before modifiers)
   const diceTotal = rollResult.total - arg.stat - (arg.forward ?? 0) - (arg.ongoing ?? 0)
 
   const details: PbtARollDetails = {

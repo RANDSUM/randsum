@@ -13,7 +13,6 @@ function getToolDescription(filename: string): string {
   try {
     return readFileSync(docPath, 'utf8')
   } catch {
-    // Return default description if file doesn't exist
     return 'Analyze the probability distribution of a dice notation. Returns statistics including min, max, mean, median, mode, standard deviation, and probability distribution.'
   }
 }
@@ -52,7 +51,6 @@ export function registerAnalyzeTool(server: McpServer): void {
 
         const analysis = analyze(notation, samples)
 
-        // Format distribution map for display
         const distributionEntries = Array.from(analysis.distribution.entries())
           .sort(([a], [b]) => a - b)
           .map(([value, probability]) => `  ${value}: ${(probability * 100).toFixed(2)}%`)

@@ -1,12 +1,11 @@
 import type { ValidationResult } from '@randsum/roller'
-import { isError } from '@randsum/roller'
 
 export function formatValidationResult(result: ValidationResult): string {
-  if (isError(result)) {
+  if (result.error) {
     return `❌ Invalid Dice Notation: ${result.error.message}`
   }
 
-  const { notation, description, options } = result.data
+  const { notation, description, options } = result
   const header = `✅ Valid Dice Notation:`
   const separator = '─'.repeat(25)
 

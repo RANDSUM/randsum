@@ -56,7 +56,6 @@ export const countSuccessesModifier: TypedModifierDefinition<'countSuccesses'> =
     },
 
     apply: (rolls, options) => {
-      // Count successes replaces the normal sum with a count
       return {
         rolls,
         transformTotal: (_total, currentRolls) => {

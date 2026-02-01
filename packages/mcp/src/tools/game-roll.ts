@@ -5,7 +5,14 @@ import { dirname, join } from 'path'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { registerTool } from './helpers.js'
 
-// Generic result type that covers all game roll results
+/**
+ * Generic result type that covers all game roll results.
+ *
+ * Each game package returns a specific GameRollResult<TResult, TDetails, TRollRecord>,
+ * but for MCP tool formatting we only need these common properties. The type assertions
+ * to GameRollResult in the switch statement are safe because all game packages conform
+ * to this interface (they all extend the base GameRollResult from @randsum/roller).
+ */
 interface GameRollResult {
   total: number
   result: unknown
@@ -25,7 +32,6 @@ function getToolDescription(filename: string): string {
   try {
     return readFileSync(docPath, 'utf8')
   } catch {
-    // Return default description if file doesn't exist
     return 'Roll dice for a specific game system. Supports all RANDSUM game packages.'
   }
 }
@@ -46,35 +52,28 @@ export function registerGameRollTool(server: McpServer): void {
     description,
     gameRollToolSchemaShape,
     async ({ game, args }: { game: string; args: Record<string, unknown> }) => {
-      try {
-        let result: GameRollResult
-
+      const executeGameRoll = async (): Promise<GameRollResult | null> => {
         switch (game) {
           case 'blades': {
             const { rollBlades } = await import('@randsum/blades')
             const countArg = args['count']
             const count = typeof countArg === 'number' ? countArg : Number(countArg)
-
-            result = rollBlades(count) as GameRollResult
-            break
+            return rollBlades(count) as GameRollResult
           }
 
           case 'fifth': {
             const { actionRoll } = await import('@randsum/fifth')
-
-            result = actionRoll(
+            return actionRoll(
               args as {
                 modifier: number
                 rollingWith?: { advantage?: boolean; disadvantage?: boolean }
               }
             ) as GameRollResult
-            break
           }
 
           case 'pbta': {
             const { rollPbtA } = await import('@randsum/pbta')
-
-            result = rollPbtA(
+            return rollPbtA(
               args as {
                 stat: number
                 forward?: number
@@ -83,13 +82,11 @@ export function registerGameRollTool(server: McpServer): void {
                 disadvantage?: boolean
               }
             ) as GameRollResult
-            break
           }
 
           case 'daggerheart': {
             const { rollDaggerheart } = await import('@randsum/daggerheart')
-
-            result = rollDaggerheart(
+            return rollDaggerheart(
               args as {
                 rollingWith?: 'Advantage' | 'Disadvantage'
                 amplifyHope?: boolean
@@ -97,40 +94,41 @@ export function registerGameRollTool(server: McpServer): void {
                 modifier?: number
               }
             ) as GameRollResult
-            break
           }
 
           case 'root-rpg': {
             const { rollRootRpg } = await import('@randsum/root-rpg')
             const bonusArg = args['bonus']
             const bonus = typeof bonusArg === 'number' ? bonusArg : Number(bonusArg)
-
-            result = rollRootRpg(bonus) as GameRollResult
-            break
+            return rollRootRpg(bonus) as GameRollResult
           }
 
           case 'salvageunion': {
             const { rollTable } = await import('@randsum/salvageunion')
             const tableNameArg = args['tableName']
             const tableName = typeof tableNameArg === 'string' ? tableNameArg : undefined
-
-            result = rollTable(tableName) as GameRollResult
-            break
+            return rollTable(tableName) as GameRollResult
           }
 
-          default: {
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: `❌ Unknown game system: "${game}". Supported games: blades, fifth, pbta, daggerheart, root-rpg, salvageunion`
-                }
-              ]
-            }
+          default:
+            return null
+        }
+      }
+
+      try {
+        const result = await executeGameRoll()
+
+        if (result === null) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `❌ Unknown game system: "${game}". Supported games: blades, fifth, pbta, daggerheart, root-rpg, salvageunion`
+              }
+            ]
           }
         }
 
-        // Format result for display
         const output = `🎮 ${game.toUpperCase()} Roll Result
 
 Total: ${result.total}

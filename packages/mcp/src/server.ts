@@ -8,7 +8,6 @@ import {
   registerGameRollTool,
   registerPresetTool,
   registerRollTool,
-  registerTryRollTool,
   registerValidateTool
 } from './tools/index.js'
 import { registerResources } from './resources/index.js'
@@ -38,12 +37,6 @@ COMPREHENSIVE DICE ROLLING SYSTEM with sophisticated modifiers for tabletop gami
 • Detailed parsing feedback showing notation interpretation
 • Comprehensive error messages with correction guidance
 • Essential for learning syntax and debugging complex expressions
-
-🛡️ try-roll - Safe Dice Rolling (No Exceptions)
-• Roll dice without throwing exceptions
-• Returns Result object with success/error status
-• Useful for error handling without try/catch blocks
-• Supports both text and JSON output formats
 
 📊 analyze - Probability Analysis
 • Analyze probability distribution of dice notation
@@ -141,7 +134,6 @@ export function createServerInstance(): McpServer {
   })
 
   registerRollTool(server)
-  registerTryRollTool(server)
   registerValidateTool(server)
   registerAnalyzeTool(server)
   registerGameRollTool(server)

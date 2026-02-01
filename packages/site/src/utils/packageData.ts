@@ -320,7 +320,7 @@ bun add @randsum/salvageunion`,
       'Generic PbtA mechanics for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.',
     npmPackage: '@randsum/pbta',
     category: 'game',
-    color: '#14b8a6', // teal
+    color: '#6b7280', // grey
     examples: [
       {
         title: 'Basic Roll',

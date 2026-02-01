@@ -1,7 +1,6 @@
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
-// Total multiply: **N (double asterisk)
 const multiplyTotalPattern = /\*\*(\d+)/
 
 /**
@@ -35,7 +34,6 @@ export const multiplyTotalModifier: TypedModifierDefinition<'multiplyTotal'> =
     },
 
     apply: (rolls, options) => {
-      // Multiply the final total (runs last due to high priority)
       return {
         rolls,
         transformTotal: total => total * options

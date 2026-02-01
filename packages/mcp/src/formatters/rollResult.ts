@@ -44,14 +44,9 @@ export function formatRollResult(result: RollerRollResult): string {
   const rawRollsStr = initialRolls.join(', ')
   const modifiedRollsStr = modifiedRolls.join(', ')
 
-  let rollInfo = `Roll: ${notation}`
-  rollInfo += `\n  Raw: [${rawRollsStr}]`
+  const modifiedLine = rawRollsStr !== modifiedRollsStr ? `\n  Modified: [${modifiedRollsStr}]` : ''
 
-  if (rawRollsStr !== modifiedRollsStr) {
-    rollInfo += `\n  Modified: [${modifiedRollsStr}]`
-  }
-
-  rollInfo += `\n  Total: ${total}`
+  const rollInfo = `Roll: ${notation}\n  Raw: [${rawRollsStr}]${modifiedLine}\n  Total: ${total}`
 
   const rawResultsLine = `Raw Results: [${initialRolls.join(', ')}]`
 

@@ -9,7 +9,7 @@
     "packages/salvageunion/src/index.ts",
     "packages/pbta/src/index.ts"
   ],
-  "entryPointStrategy": "packages",
+  "entryPointStrategy": "expand",
   "out": "docs/api",
   "excludePrivate": true,
   "excludeProtected": true,
@@ -17,5 +17,10 @@
   "readme": "packages/roller/README.md",
   "name": "RANDSUM API Documentation",
   "includeVersion": true,
-  "gitRevision": "main"
+  "gitRevision": "main",
+  "navigationLinks": {
+    "RANDSUM Home": "https://randsum.dev",
+    "Docs": "https://randsum.dev/docs/",
+    "GitHub": "https://github.com/RANDSUM/randsum"
+  }
 }

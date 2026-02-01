@@ -7,6 +7,7 @@ import {
 } from '../lib/modifiers'
 import type { RegistryProcessResult } from '../lib/modifiers/schema'
 import type { ModifierLog, RollParams, RollRecord } from '../types'
+import { RollError } from '../errors'
 
 /**
  * RollPipeline encapsulates the execution of a single dice roll.
@@ -32,8 +33,6 @@ import type { ModifierLog, RollParams, RollRecord } from '../types'
 export class RollPipeline<T = string> {
   private readonly params: RollParams<T>
   private readonly rng: RandomFn
-
-  // Mutable state through the pipeline
   private initialRolls: number[] = []
   private modifierResult: RegistryProcessResult | null = null
 
@@ -60,7 +59,6 @@ export class RollPipeline<T = string> {
     const hasModifiers = modifierOrder.some(key => modifiers[key] !== undefined)
 
     if (!hasModifiers) {
-      // No modifiers - create empty result
       this.modifierResult = {
         rolls: this.initialRolls,
         logs: [],
@@ -69,7 +67,6 @@ export class RollPipeline<T = string> {
       return this
     }
 
-    // Create context for modifiers that need additional info
     const rollOne = (): number => coreRandom(sides, this.rng)
     const ctx: ModifierContext = {
       rollOne,
@@ -85,21 +82,16 @@ export class RollPipeline<T = string> {
    */
   private calculateTotal(): number {
     if (this.modifierResult === null) {
-      throw new Error('Must call applyModifiers() before calculating total')
+      throw new RollError('Must call applyModifiers() before calculating total')
     }
 
     const result = this.modifierResult
     const rolls = result.rolls
     const transformers = result.totalTransformers
 
-    let total = rolls.reduce((acc, cur) => acc + cur, 0)
+    const baseTotal = rolls.reduce((acc, cur) => acc + cur, 0)
 
-    // Apply all total transformers in order
-    transformers.forEach(fn => {
-      total = fn(total, rolls)
-    })
-
-    return total
+    return transformers.reduce((total, fn) => fn(total, rolls), baseTotal)
   }
 
   /**
@@ -107,19 +99,18 @@ export class RollPipeline<T = string> {
    */
   public build(): RollRecord<T> {
     if (this.initialRolls.length === 0) {
-      throw new Error('Must call generateInitialRolls() before building')
+      throw new RollError('Must call generateInitialRolls() before building')
     }
     if (!this.modifierResult) {
-      throw new Error('Must call applyModifiers() before building')
+      throw new RollError('Must call applyModifiers() before building')
     }
 
     const { faces, arithmetic, description } = this.params
     const total = this.calculateTotal()
     const isNegative = arithmetic === 'subtract'
 
-    // Build custom results for non-numeric dice
     const customResults = faces
-      ? { customResults: this.initialRolls.map(roll => faces[roll - 1] as T) }
+      ? { customResults: this.initialRolls.map<T>(roll => faces[roll - 1] as T) }
       : {}
 
     return {
@@ -144,10 +135,6 @@ export class RollPipeline<T = string> {
   public execute(): RollRecord<T> {
     return this.generateInitialRolls().applyModifiers().build()
   }
-
-  // ============================================================================
-  // Getters for intermediate state (useful for testing/debugging)
-  // ============================================================================
 
   /** Get the initial rolls before modifiers */
   public getInitialRolls(): readonly number[] {

@@ -4,7 +4,7 @@ import {
   formatComparisonDescription,
   formatComparisonNotation,
   parseComparisonNotation
-} from '../../comparisonUtils'
+} from '../../comparison'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
@@ -32,7 +32,6 @@ export const capModifier: TypedModifierDefinition<'cap'> = defineModifier<'cap'>
     const parsed = parseComparisonNotation(match[1])
     const cap: ComparisonOptions = {}
 
-    // Cap only uses greaterThan/lessThan, not exact values
     if (parsed.greaterThan !== undefined) cap.greaterThan = parsed.greaterThan
     if (parsed.lessThan !== undefined) cap.lessThan = parsed.lessThan
 
@@ -51,17 +50,9 @@ export const capModifier: TypedModifierDefinition<'cap'> = defineModifier<'cap'>
   apply: (rolls, options) => {
     const { greaterThan, lessThan } = options
     const newRolls = rolls.map(roll => {
-      let result = roll
-
-      if (greaterThan !== undefined && result > greaterThan) {
-        result = greaterThan
-      }
-
-      if (lessThan !== undefined && result < lessThan) {
-        result = lessThan
-      }
-
-      return result
+      const cappedHigh = greaterThan !== undefined && roll > greaterThan ? greaterThan : roll
+      const cappedBoth = lessThan !== undefined && cappedHigh < lessThan ? lessThan : cappedHigh
+      return cappedBoth
     })
 
     return { rolls: newRolls }

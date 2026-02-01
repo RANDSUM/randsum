@@ -3,7 +3,6 @@ import { ModifierError } from '../../../errors'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
-// Patterns for keep modifiers
 const keepHighestPattern = /[Kk](?![Ll])(\d+)?/
 const keepLowestPattern = /[Kk][Ll](\d+)?/i
 
@@ -28,14 +27,12 @@ export const keepModifier: TypedModifierDefinition<'keep'> = defineModifier<'kee
   parse: notation => {
     const keep: KeepOptions = {}
 
-    // Check for KL (keep lowest) first since K alone means keep highest
     const lowestMatch = keepLowestPattern.exec(notation)
     if (lowestMatch) {
       keep.lowest = lowestMatch[1] ? Number(lowestMatch[1]) : 1
       return { keep }
     }
 
-    // Check for K (keep highest)
     const highestMatch = keepHighestPattern.exec(notation)
     if (highestMatch) {
       keep.highest = highestMatch[1] ? Number(highestMatch[1]) : 1
@@ -76,11 +73,9 @@ export const keepModifier: TypedModifierDefinition<'keep'> = defineModifier<'kee
   },
 
   apply: (rolls, options) => {
-    // Keep is implemented as the complement of drop
     const { highest, lowest } = options
     const quantity = rolls.length
 
-    // Keep N highest = drop (quantity - N) lowest
     if (highest !== undefined) {
       const toDrop = quantity - highest
       if (toDrop <= 0) return { rolls }
@@ -88,16 +83,11 @@ export const keepModifier: TypedModifierDefinition<'keep'> = defineModifier<'kee
       const indexedRolls = rolls.map((roll, index) => ({ roll, index }))
       indexedRolls.sort((a, b) => a.roll - b.roll)
 
-      const indicesToDrop = new Set<number>()
-      for (let i = 0; i < toDrop; i++) {
-        const roll = indexedRolls[i]
-        if (roll) indicesToDrop.add(roll.index)
-      }
+      const indicesToDrop = new Set(indexedRolls.slice(0, toDrop).map(item => item.index))
 
       return { rolls: rolls.filter((_, index) => !indicesToDrop.has(index)) }
     }
 
-    // Keep N lowest = drop (quantity - N) highest
     if (lowest !== undefined) {
       const toDrop = quantity - lowest
       if (toDrop <= 0) return { rolls }
@@ -105,11 +95,9 @@ export const keepModifier: TypedModifierDefinition<'keep'> = defineModifier<'kee
       const indexedRolls = rolls.map((roll, index) => ({ roll, index }))
       indexedRolls.sort((a, b) => a.roll - b.roll)
 
-      const indicesToDrop = new Set<number>()
-      for (let i = indexedRolls.length - 1; i >= indexedRolls.length - toDrop; i--) {
-        const roll = indexedRolls[i]
-        if (roll) indicesToDrop.add(roll.index)
-      }
+      const indicesToDrop = new Set(
+        indexedRolls.slice(indexedRolls.length - toDrop).map(item => item.index)
+      )
 
       return { rolls: rolls.filter((_, index) => !indicesToDrop.has(index)) }
     }

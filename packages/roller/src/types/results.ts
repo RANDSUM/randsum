@@ -1,9 +1,6 @@
-// ============================================================================
-// Result Types - Types for roll results and records
-// ============================================================================
-
 import type { DiceNotation, RollArgument, RollOptions } from './core'
 import type { NumericRollBonus } from './modifiers'
+import type { RandsumError } from '../errors'
 
 /**
  * Fully resolved parameters for a single roll.
@@ -76,18 +73,31 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
  * Result from the roll() function.
  *
  * Contains all roll records, individual results, and the combined total.
+ * Includes error reporting for error handling without try/catch.
  *
  * @template T - Type for custom dice faces
  *
- * @example
+ * @example Success case
  * ```ts
- * const result: RollerRollResult = roll("4d6L")
- * console.log(result.total)   // Sum of kept dice
- * console.log(result.result)  // Array of individual die values
- * console.log(result.rolls)   // Full roll records with history
+ * const result = roll("4d6L")
+ * if (!result.error) {
+ *   console.log(result.total)   // Sum of kept dice
+ *   console.log(result.result)  // Array of individual die values
+ *   console.log(result.rolls)   // Full roll records with history
+ * }
+ * ```
+ *
+ * @example Error handling
+ * ```ts
+ * const result = roll("invalid")
+ * if (result.error) {
+ *   console.error(result.error.message)
+ * }
  * ```
  */
 export interface RollerRollResult<T = string> extends RollResult<T[], RollRecord<T>> {
   /** Combined total of all rolls */
   total: number
+  /** Error if the roll failed, null on success */
+  error: RandsumError | null
 }
