@@ -1,5 +1,6 @@
 {
   "$schema": "https://typedoc.org/schema.json",
+  "tsconfig": "./tsconfig.typedoc.json",
   "entryPoints": [
     "packages/roller/src/index.ts",
     "packages/blades/src/index.ts",
@@ -11,6 +12,13 @@
   ],
   "entryPointStrategy": "expand",
   "out": "docs/api",
+  "exclude": [
+    "**/__tests__/**",
+    "**/__benchmarks__/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.bench.ts"
+  ],
   "excludePrivate": true,
   "excludeProtected": true,
   "excludeInternal": true,
