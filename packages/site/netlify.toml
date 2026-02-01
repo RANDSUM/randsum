@@ -1,7 +1,7 @@
 [build]
   # Build command runs from root (base directory)
-  # Generates API docs then builds the site
-  command = "bun run docs:site && bun run site:build"
+  # Builds packages first (for workspace resolution), generates API docs, then builds the site
+  command = "bun run build && bun run docs:site && bun run site:build"
   publish = "packages/site/dist"
 
 # Redirect 404s to the 404 page
@@ -9,4 +9,3 @@
   from = "/*"
   to = "/404"
   status = 404
-
