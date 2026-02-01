@@ -42,11 +42,13 @@ packages/
   blades/          # Blades in the Dark mechanics
   daggerheart/     # Daggerheart RPG support
   fifth/           # D&D 5th Edition mechanics
-  root-rpg/         # Root RPG implementation
+  root-rpg/        # Root RPG implementation
   salvageunion/    # Salvage Union mechanics
+  pbta/            # Powered by the Apocalypse mechanics
   mcp/             # Model Context Protocol server
+apps/
+  discord-bot/     # Discord bot (discord.js + Bun)
   site/            # Documentation website (Astro)
-  test-utils/      # Shared test utilities
 ```
 
 ### Package Patterns
@@ -246,7 +248,7 @@ After generation:
 3. **Add tests** in `__tests__/` directory
 4. **Run `bun install`** to link workspace dependencies
 5. **Update root `AGENTS.md`** to list the new package
-6. **Add to site documentation** in `packages/site/` (optional)
+6. **Add to site documentation** in `apps/site/` (optional)
 
 For detailed patterns, see [AGENTS/game-packages.md](AGENTS/game-packages.md).
 

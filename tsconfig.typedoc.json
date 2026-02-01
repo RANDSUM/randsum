@@ -9,7 +9,7 @@
     "**/*.spec.ts",
     "**/*.bench.ts",
     "**/test-utils/**",
-    "packages/site/**",
+    "apps/**",
     "scripts/**"
   ]
 }
