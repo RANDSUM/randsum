@@ -1,6 +1,8 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, spyOn, test } from 'bun:test'
 import { rollDaggerheart } from '../src/rollDaggerheart'
 import type { DaggerheartRollArgument } from '../src/types'
+import * as roller from '@randsum/roller'
+import type { RollerRollResult } from '@randsum/roller'
 
 describe('rollDaggerheart', () => {
   describe('basic functionality', () => {
@@ -247,6 +249,46 @@ describe('rollDaggerheart', () => {
 
       expect(minTotal).toBeGreaterThanOrEqual(2)
       expect(maxTotal).toBeLessThanOrEqual(24)
+    })
+  })
+
+  describe('error handling', () => {
+    test('throws when hope or fear rolls are missing from result', () => {
+      const mockRollResult: RollerRollResult = {
+        total: 10,
+        rolls: [
+          {
+            description: ['1d12'],
+            parameters: {
+              quantity: 1,
+              sides: 12,
+              arithmetic: 'add' as const,
+              modifiers: {},
+              key: 'wrong-key',
+              argument: { sides: 12 },
+              notation: '1d12' as const,
+              description: ['1d12'],
+              faces: undefined
+            },
+            rolls: [5],
+            modifierHistory: {
+              logs: [],
+              modifiedRolls: [5],
+              total: 5,
+              initialRolls: [5]
+            },
+            appliedTotal: 5,
+            total: 5
+          }
+        ],
+        result: ['5']
+      }
+
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult)
+
+      expect(() => rollDaggerheart({})).toThrow('Failed to properly roll.')
+
+      rollSpy.mockRestore()
     })
   })
 })

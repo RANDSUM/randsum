@@ -1,17 +1,32 @@
-export { capModifier } from './cap'
-export { dropModifier } from './drop'
-export { keepModifier } from './keep'
-export { replaceModifier } from './replace'
-export { rerollModifier } from './reroll'
-export { explodeModifier } from './explode'
-export { compoundModifier } from './compound'
-export { penetrateModifier } from './penetrate'
-export { uniqueModifier } from './unique'
-export { countSuccessesModifier } from './countSuccesses'
-export { multiplyModifier } from './multiply'
-export { plusModifier } from './plus'
-export { minusModifier } from './minus'
-export { multiplyTotalModifier } from './multiplyTotal'
+import { capModifier } from './cap'
+import { dropModifier } from './drop'
+import { keepModifier } from './keep'
+import { replaceModifier } from './replace'
+import { rerollModifier } from './reroll'
+import { explodeModifier } from './explode'
+import { compoundModifier } from './compound'
+import { penetrateModifier } from './penetrate'
+import { uniqueModifier } from './unique'
+import { countSuccessesModifier } from './countSuccesses'
+import { multiplyModifier } from './multiply'
+import { plusModifier } from './plus'
+import { minusModifier } from './minus'
+import { multiplyTotalModifier } from './multiplyTotal'
+
+export { capModifier }
+export { dropModifier }
+export { keepModifier }
+export { replaceModifier }
+export { rerollModifier }
+export { explodeModifier }
+export { compoundModifier }
+export { penetrateModifier }
+export { uniqueModifier }
+export { countSuccessesModifier }
+export { multiplyModifier }
+export { plusModifier }
+export { minusModifier }
+export { multiplyTotalModifier }
 
 export {
   defineModifier,

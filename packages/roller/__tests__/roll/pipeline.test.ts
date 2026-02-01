@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, mock, spyOn, test } from 'bun:test'
 
 import * as RandomUtils from '../../src/lib/random'
-import { executeRollPipeline } from '../../src/roll/pipeline'
+import { RollPipeline, executeRollPipeline } from '../../src/roll/pipeline'
 import { createRollParams } from '../support/fixtures'
 
 describe(executeRollPipeline, () => {
@@ -480,6 +480,75 @@ describe(executeRollPipeline, () => {
         },
         total: 10
       })
+    })
+  })
+})
+
+describe('RollPipeline class methods', () => {
+  describe('getInitialRolls', () => {
+    test('returns empty array before generateInitialRolls is called', () => {
+      const params = createRollParams({ sides: 6, quantity: 4 })
+      const pipeline = new RollPipeline(params)
+
+      expect(pipeline.getInitialRolls()).toEqual([])
+    })
+
+    test('returns initial rolls after generateInitialRolls is called', () => {
+      const params = createRollParams({ sides: 6, quantity: 4 })
+      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
+
+      const pipeline = new RollPipeline(params)
+      pipeline.generateInitialRolls()
+
+      expect(pipeline.getInitialRolls()).toEqual([1, 2, 3, 4])
+    })
+  })
+
+  describe('getModifiedRolls', () => {
+    test('returns empty array before applyModifiers is called', () => {
+      const params = createRollParams({ sides: 6, quantity: 4 })
+      const pipeline = new RollPipeline(params)
+
+      expect(pipeline.getModifiedRolls()).toEqual([])
+    })
+
+    test('returns modified rolls after applyModifiers is called', () => {
+      const params = createRollParams({
+        sides: 6,
+        quantity: 4,
+        modifiers: { drop: { lowest: 1 } }
+      })
+      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
+
+      const pipeline = new RollPipeline(params)
+      pipeline.generateInitialRolls().applyModifiers()
+
+      expect(pipeline.getModifiedRolls()).toEqual([2, 3, 4])
+    })
+  })
+
+  describe('getModifierLogs', () => {
+    test('returns empty array before applyModifiers is called', () => {
+      const params = createRollParams({ sides: 6, quantity: 4 })
+      const pipeline = new RollPipeline(params)
+
+      expect(pipeline.getModifierLogs()).toEqual([])
+    })
+
+    test('returns logs after applyModifiers is called', () => {
+      const params = createRollParams({
+        sides: 6,
+        quantity: 4,
+        modifiers: { plus: 5 }
+      })
+      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
+
+      const pipeline = new RollPipeline(params)
+      pipeline.generateInitialRolls().applyModifiers()
+
+      const logs = pipeline.getModifierLogs()
+      expect(logs.length).toBe(1)
+      expect(logs[0]?.modifier).toBe('plus')
     })
   })
 })

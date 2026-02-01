@@ -117,6 +117,16 @@ export function clearRegistry(): void {
 }
 
 /**
+ * Re-register default modifiers (for testing restore after clearRegistry).
+ * @internal
+ */
+export function registerDefaultModifiers(definitions: ModifierDefinition[]): void {
+  for (const def of definitions) {
+    registry.set(def.name, def)
+  }
+}
+
+/**
  * Get modifier execution order (sorted by priority).
  */
 export function getModifierOrder(): (keyof ModifierOptions)[] {

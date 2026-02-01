@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
-function getPackageVersion(): string {
+export function getPackageVersion(): string {
   try {
     const __filename = fileURLToPath(import.meta.url)
     const __dirname = dirname(__filename)

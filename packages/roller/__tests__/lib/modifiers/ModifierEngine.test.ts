@@ -3,6 +3,7 @@ import {
   type ModifierContext,
   applyAllModifiersFromRegistry,
   applyModifierFromRegistry,
+  getModifier,
   modifierToDescriptionFromRegistry,
   modifierToNotationFromRegistry,
   parseModifiersFromRegistry,
@@ -163,6 +164,24 @@ describe('applyModifierFromRegistry', () => {
       )
 
       expect(keepResult.rolls.sort()).toEqual(dropResult.rolls.sort())
+    })
+
+    test('returns unchanged rolls when keeping more than available (highest)', () => {
+      const result = applyModifierFromRegistry('keep', { highest: 10 }, [1, 2, 3], mockContext)
+
+      expect(result.rolls).toEqual([1, 2, 3])
+    })
+
+    test('returns unchanged rolls when keeping more than available (lowest)', () => {
+      const result = applyModifierFromRegistry('keep', { lowest: 10 }, [1, 2, 3], mockContext)
+
+      expect(result.rolls).toEqual([1, 2, 3])
+    })
+
+    test('returns unchanged rolls when neither highest nor lowest specified', () => {
+      const result = applyModifierFromRegistry('keep', {}, [1, 2, 3, 4], mockContext)
+
+      expect(result.rolls).toEqual([1, 2, 3, 4])
     })
   })
 
@@ -572,9 +591,24 @@ describe('modifierToNotationFromRegistry', () => {
     expect(result).toBe('!')
   })
 
+  test('returns undefined for explode modifier when false', () => {
+    const result = modifierToNotationFromRegistry('explode', false)
+    expect(result).toBeUndefined()
+  })
+
   test('generates notation for unique modifier', () => {
     const result = modifierToNotationFromRegistry('unique', true)
     expect(result).toBe('U')
+  })
+
+  test('generates notation for unique modifier with notUnique array', () => {
+    const result = modifierToNotationFromRegistry('unique', { notUnique: [1, 6] })
+    expect(result).toBe('U{1,6}')
+  })
+
+  test('returns undefined for unique modifier when false', () => {
+    const result = modifierToNotationFromRegistry('unique', false)
+    expect(result).toBeUndefined()
   })
 
   test('generates notation for replace modifier', () => {
@@ -638,6 +672,89 @@ describe('modifierToNotationFromRegistry', () => {
       botchThreshold: 1
     })
     expect(result).toBe('S{7,1}')
+  })
+})
+
+describe('modifierToDescriptionFromRegistry', () => {
+  test('generates description for explode modifier', () => {
+    const result = modifierToDescriptionFromRegistry('explode', true)
+    expect(result).toContain('Exploding Dice')
+  })
+
+  test('returns empty array for explode when false', () => {
+    const result = modifierToDescriptionFromRegistry('explode', false)
+    expect(result).toEqual([])
+  })
+
+  test('generates description for unique modifier', () => {
+    const result = modifierToDescriptionFromRegistry('unique', true)
+    expect(result).toContain('No Duplicate Rolls')
+  })
+
+  test('generates description for unique with notUnique array', () => {
+    const result = modifierToDescriptionFromRegistry('unique', { notUnique: [1] })
+    expect(result[0]).toContain('No Duplicates')
+    expect(result[0]).toContain('except')
+  })
+
+  test('generates description for drop lowest', () => {
+    const result = modifierToDescriptionFromRegistry('drop', { lowest: 1 })
+    expect(result[0]).toContain('Drop')
+    expect(result[0]).toContain('lowest')
+  })
+
+  test('returns undefined result for undefined options', () => {
+    const result = modifierToDescriptionFromRegistry('plus', undefined)
+    expect(result).toBeUndefined()
+  })
+
+  test('returns empty array for unique when false', () => {
+    const result = modifierToDescriptionFromRegistry('unique', false)
+    expect(result).toEqual([])
+  })
+})
+
+describe('direct modifier definition edge cases', () => {
+  describe('explode modifier', () => {
+    test('parse returns empty object when notation does not match', () => {
+      const explode = getModifier('explode')
+      expect(explode).toBeDefined()
+      expect(explode?.parse('x')).toEqual({})
+    })
+
+    test('toDescription returns empty array for falsy options', () => {
+      const explode = getModifier('explode')
+      expect(explode).toBeDefined()
+      expect(explode?.toDescription(false)).toEqual([])
+    })
+  })
+
+  describe('keep modifier', () => {
+    test('parse returns empty object when notation does not match', () => {
+      const keep = getModifier('keep')
+      expect(keep).toBeDefined()
+      expect(keep?.parse('xyz')).toEqual({})
+    })
+
+    test('toNotation returns undefined for empty options', () => {
+      const keep = getModifier('keep')
+      expect(keep).toBeDefined()
+      expect(keep?.toNotation({})).toBeUndefined()
+    })
+
+    test('toDescription returns empty array for empty options', () => {
+      const keep = getModifier('keep')
+      expect(keep).toBeDefined()
+      expect(keep?.toDescription({})).toEqual([])
+    })
+
+    test('apply returns unchanged rolls when neither highest nor lowest specified', () => {
+      const keep = getModifier('keep')
+      expect(keep).toBeDefined()
+      if (!keep) return
+      const result = keep.apply([1, 2, 3, 4], {}, mockContext)
+      expect(result.rolls).toEqual([1, 2, 3, 4])
+    })
   })
 })
 
@@ -952,6 +1069,36 @@ describe('validateModifiersFromRegistry', () => {
   test('validates unique modifier - passes when quantity less than sides', () => {
     expect(() => {
       validateModifiersFromRegistry({ unique: true }, { sides: 6, quantity: 4 })
+    }).not.toThrow()
+  })
+
+  test('validates keep modifier - throws when keeping more highest than available', () => {
+    expect(() => {
+      validateModifiersFromRegistry({ keep: { highest: 5 } }, { sides: 6, quantity: 4 })
+    }).toThrow('Cannot keep 5 highest dice from a pool of 4')
+  })
+
+  test('validates keep modifier - throws when keeping less than 1 highest', () => {
+    expect(() => {
+      validateModifiersFromRegistry({ keep: { highest: 0 } }, { sides: 6, quantity: 4 })
+    }).toThrow('Cannot keep 0 highest dice from a pool of 4')
+  })
+
+  test('validates keep modifier - throws when keeping more lowest than available', () => {
+    expect(() => {
+      validateModifiersFromRegistry({ keep: { lowest: 5 } }, { sides: 6, quantity: 4 })
+    }).toThrow('Cannot keep 5 lowest dice from a pool of 4')
+  })
+
+  test('validates keep modifier - throws when keeping less than 1 lowest', () => {
+    expect(() => {
+      validateModifiersFromRegistry({ keep: { lowest: 0 } }, { sides: 6, quantity: 4 })
+    }).toThrow('Cannot keep 0 lowest dice from a pool of 4')
+  })
+
+  test('validates keep modifier - passes for valid keep count', () => {
+    expect(() => {
+      validateModifiersFromRegistry({ keep: { highest: 3 } }, { sides: 6, quantity: 4 })
     }).not.toThrow()
   })
 
