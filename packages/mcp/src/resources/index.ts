@@ -28,7 +28,7 @@ function readRepoFile(relativePath: string): string {
  * Registers all MCP resources for documentation access.
  */
 export function registerResources(server: McpServer): void {
-  server.resource(
+  server.registerResource(
     'dice-rolling-skill',
     'dice://skill/dice-rolling',
     {
@@ -50,7 +50,7 @@ export function registerResources(server: McpServer): void {
     }
   )
 
-  server.resource(
+  server.registerResource(
     'dice-notation-docs',
     'dice://notation/full',
     {
@@ -72,7 +72,7 @@ export function registerResources(server: McpServer): void {
     }
   )
 
-  server.resource(
+  server.registerResource(
     'error-reference',
     'dice://errors/reference',
     {
@@ -94,7 +94,7 @@ export function registerResources(server: McpServer): void {
     }
   )
 
-  server.resource(
+  server.registerResource(
     'game-systems',
     'dice://games/systems',
     {

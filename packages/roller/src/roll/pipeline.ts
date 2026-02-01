@@ -45,7 +45,7 @@ export class RollPipeline<T = string> {
    * Generate the initial dice rolls before any modifiers are applied.
    */
   public generateInitialRolls(): this {
-    const { sides, quantity = 1 } = this.params
+    const { sides, quantity } = this.params
     this.initialRolls = coreSpreadRolls(quantity, sides, this.rng)
     return this
   }
@@ -54,7 +54,7 @@ export class RollPipeline<T = string> {
    * Apply all modifiers to the rolls in priority order.
    */
   public applyModifiers(): this {
-    const { sides, quantity = 1, modifiers = {} } = this.params
+    const { sides, quantity, modifiers } = this.params
     const modifierOrder = getModifierOrder()
     const hasModifiers = modifierOrder.some(key => modifiers[key] !== undefined)
 

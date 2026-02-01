@@ -17,7 +17,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@astrojs/netlify": "6.6.2",
+    "@astrojs/netlify": "6.6.4",
     "@astrojs/react": "^4.3.1",
     "@astrojs/sitemap": "^3.6.0",
     "@randsum/roller": "workspace:~",

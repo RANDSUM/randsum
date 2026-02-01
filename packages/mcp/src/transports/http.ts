@@ -1,5 +1,6 @@
 import { createServer } from 'http'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 
 export function runHttpTransport(server: McpServer, port: number): void {
@@ -19,7 +20,9 @@ export function runHttpTransport(server: McpServer, port: number): void {
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => Math.random().toString(36).substring(2, 15)
     })
-    server.connect(transport).catch((error: unknown) => {
+    // Required for Transport interface compatibility with exactOptionalPropertyTypes
+    transport.onclose = () => undefined
+    server.connect(transport as Transport).catch((error: unknown) => {
       const errorMessage =
         error instanceof Error
           ? error.message

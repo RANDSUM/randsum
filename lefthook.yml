@@ -18,3 +18,5 @@ pre-push:
       run: bun test
     exports:
       run: bun run check:exports
+    security:
+      run: bun audit --audit-level high

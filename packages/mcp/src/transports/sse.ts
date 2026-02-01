@@ -1,8 +1,7 @@
 import { createServer } from 'http'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
-
-const sseTransports: Record<string, SSEServerTransport> = {}
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 
 export function runSseTransport(server: McpServer, port: number): void {
   const httpServer = createServer()
@@ -18,39 +17,24 @@ export function runSseTransport(server: McpServer, port: number): void {
       return
     }
 
-    if (req.url?.startsWith('/sse')) {
-      const url = new URL(req.url, `http://${req.headers.host}`)
-      const sessionId = url.searchParams.get('sessionId')
-
-      if (!sessionId) {
-        res.writeHead(400)
-        res.end('Missing sessionId parameter')
-        return
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => Math.random().toString(36).substring(2, 15)
+    })
+    // Required for Transport interface compatibility with exactOptionalPropertyTypes
+    transport.onclose = () => undefined
+    server.connect(transport as Transport).catch((error: unknown) => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Transport connection error'
+      console.error('SSE transport error:', errorMessage)
+      if (!res.headersSent) {
+        res.writeHead(500)
+        res.end('Internal Server Error')
       }
-
-      const transport = new SSEServerTransport('/sse', res)
-      sseTransports[sessionId] = transport
-
-      server.connect(transport).catch((error: unknown) => {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : typeof error === 'string'
-              ? error
-              : 'Transport connection error'
-        console.error('SSE transport error:', errorMessage)
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete sseTransports[sessionId]
-      })
-
-      req.on('close', () => {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete sseTransports[sessionId]
-      })
-    } else {
-      res.writeHead(404)
-      res.end('Not Found')
-    }
+    })
   })
 
   httpServer.listen(port, () => {

@@ -22,7 +22,7 @@
   ],
   "type": "module",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.14.0",
+    "@modelcontextprotocol/sdk": "^1.25.0",
     "@randsum/blades": "workspace:~",
     "@randsum/daggerheart": "workspace:~",
     "@randsum/fifth": "workspace:~",
