@@ -1,7 +1,34 @@
-export { modifierToDescription } from './modifierToDescription'
-export { modifierToNotation } from './modifierToNotation'
-export { applyModifiers } from './applyModifiers'
-export { MODIFIER_ORDER } from './constants'
-export { parseModifiers } from './parseModifiers'
-export { processModifierDescriptions } from './processors/processModifierDescriptions'
-export { processModifierNotations } from './processors/processModifierNotations'
+import './definitions'
+
+export {
+  defineModifier,
+  getModifier,
+  hasModifier,
+  getAllModifiers,
+  getModifierOrder,
+  buildCombinedPattern,
+  parseModifiersFromRegistry,
+  applyModifierFromRegistry,
+  applyAllModifiersFromRegistry,
+  modifierToNotationFromRegistry,
+  modifierToDescriptionFromRegistry,
+  processModifierNotationsFromRegistry,
+  processModifierDescriptionsFromRegistry,
+  validateModifiersFromRegistry
+} from './registry'
+
+export type {
+  ModifierDefinition,
+  ModifierContext,
+  ModifierApplyResult,
+  ModifierOptionTypes,
+  ModifierRegistry,
+  RegistryProcessResult,
+  TypedModifierDefinition,
+  TotalTransformer,
+  ContextWithRollFn,
+  ContextWithParameters,
+  RequiredModifierContext
+} from './schema'
+
+export { assertRollFn, assertParameters, assertRequiredContext } from './schema'

@@ -1,37 +1,38 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, spyOn, test } from 'bun:test'
 import { rollDaggerheart } from '../src/rollDaggerheart'
 import type { DaggerheartRollArgument } from '../src/types'
+import * as roller from '@randsum/roller'
+import type { RollerRollResult } from '@randsum/roller'
 
 describe('rollDaggerheart', () => {
   describe('basic functionality', () => {
     test('returns valid roll types', () => {
       const validTypes = ['hope', 'fear', 'critical hope']
 
-      for (let i = 0; i < 20; i++) {
+      Array.from({ length: 20 }).forEach(() => {
         const result = rollDaggerheart({})
-        expect(validTypes).toContain(result.result.type)
-      }
+        expect(validTypes).toContain(result.result)
+      })
     })
 
     test('total is sum of hope and fear dice', () => {
       const result = rollDaggerheart({})
+      const { details } = result
 
-      if (result.result.details.advantage === undefined) {
-        expect(result.result.total).toBe(
-          result.result.details.hope.roll + result.result.details.fear.roll
-        )
+      if (details?.advantage === undefined && details !== undefined) {
+        expect(result.total).toBe(details.hope.roll + details.fear.roll)
       }
     })
 
     test('rolls are within expected ranges for standard dice', () => {
-      for (let i = 0; i < 50; i++) {
+      Array.from({ length: 50 }).forEach(() => {
         const result = rollDaggerheart({})
 
-        expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-        expect(result.result.details.hope.roll).toBeLessThanOrEqual(12)
-        expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
-        expect(result.result.details.fear.roll).toBeLessThanOrEqual(12)
-      }
+        expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+        expect(result.details?.hope.roll).toBeLessThanOrEqual(12)
+        expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
+        expect(result.details?.fear.roll).toBeLessThanOrEqual(12)
+      })
     })
   })
 
@@ -40,46 +41,46 @@ describe('rollDaggerheart', () => {
       const modifier = 5
       const result = rollDaggerheart({ modifier })
 
-      expect(result.result.details.modifier).toBe(modifier)
-      expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.modifier).toBe(modifier)
+      expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
     })
 
     test('applies negative modifier correctly', () => {
       const modifier = -2
       const result = rollDaggerheart({ modifier })
 
-      expect(result.result.details.modifier).toBe(modifier)
-      expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.modifier).toBe(modifier)
+      expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
     })
 
     test('handles zero modifier', () => {
       const result = rollDaggerheart({ modifier: 0 })
 
-      expect(result.result.details.modifier).toBe(0)
-      expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.hope.roll).toBeLessThanOrEqual(12)
-      expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.fear.roll).toBeLessThanOrEqual(12)
+      expect(result.details?.modifier).toBe(0)
+      expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.hope.roll).toBeLessThanOrEqual(12)
+      expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.fear.roll).toBeLessThanOrEqual(12)
     })
 
     test('handles large positive modifier', () => {
       const modifier = 20
       const result = rollDaggerheart({ modifier })
 
-      expect(result.result.details.modifier).toBe(modifier)
-      expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.modifier).toBe(modifier)
+      expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
     })
 
     test('handles large negative modifier', () => {
       const modifier = -10
       const result = rollDaggerheart({ modifier })
 
-      expect(result.result.details.modifier).toBe(modifier)
-      expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.modifier).toBe(modifier)
+      expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
     })
   })
 
@@ -87,26 +88,26 @@ describe('rollDaggerheart', () => {
     test('handles advantage rolling', () => {
       const result = rollDaggerheart({ rollingWith: 'Advantage' })
 
-      if (result.result.details.advantage?.roll !== undefined) {
-        expect(typeof result.result.details.advantage.roll).toBe('number')
-        expect(result.result.details.advantage.roll).toBeGreaterThanOrEqual(1)
-        expect(result.result.details.advantage.roll).toBeLessThanOrEqual(6)
+      if (result.details?.advantage?.roll !== undefined) {
+        expect(typeof result.details.advantage.roll).toBe('number')
+        expect(result.details.advantage.roll).toBeGreaterThanOrEqual(1)
+        expect(result.details.advantage.roll).toBeLessThanOrEqual(6)
       }
     })
 
     test('handles disadvantage rolling', () => {
       const result = rollDaggerheart({ rollingWith: 'Disadvantage' })
 
-      if (result.result.details.advantage !== undefined) {
-        expect(result.result.details.advantage.roll).toBeGreaterThanOrEqual(-6)
-        expect(result.result.details.advantage.roll).toBeLessThanOrEqual(-1)
+      if (result.details?.advantage !== undefined) {
+        expect(result.details.advantage.roll).toBeGreaterThanOrEqual(-6)
+        expect(result.details.advantage.roll).toBeLessThanOrEqual(-1)
       }
     })
 
     test('advantage undefined when not rolling with advantage/disadvantage', () => {
       const result = rollDaggerheart({})
 
-      expect(result.result.details.advantage).toBeUndefined()
+      expect(result.details?.advantage).toBeUndefined()
     })
 
     test('advantage with modifier applies correctly', () => {
@@ -116,35 +117,37 @@ describe('rollDaggerheart', () => {
         rollingWith: 'Advantage'
       })
 
-      expect(result.result.details.modifier).toBe(modifier)
-      if (result.result.details.advantage !== undefined) {
-        expect(result.result.details.advantage.roll).toBeGreaterThanOrEqual(1)
-        expect(result.result.details.advantage.roll).toBeLessThanOrEqual(6)
+      expect(result.details?.modifier).toBe(modifier)
+      if (result.details?.advantage !== undefined) {
+        expect(result.details.advantage.roll).toBeGreaterThanOrEqual(1)
+        expect(result.details.advantage.roll).toBeLessThanOrEqual(6)
       }
     })
   })
 
   describe('amplify options', () => {
     test('amplifyHope uses d20 instead of d12', () => {
-      for (let i = 0; i < 20; i++) {
-        const result = rollDaggerheart({ amplifyHope: true })
-
-        if (result.result.details.hope.roll > 12) {
-          expect(result.result.details.hope.roll).toBeLessThanOrEqual(20)
-          break
+      const results = Array.from({ length: 20 }, () => rollDaggerheart({ amplifyHope: true }))
+      results.forEach(result => {
+        const hopeRoll = result.details?.hope.roll
+        if (hopeRoll !== undefined && hopeRoll > 12) {
+          expect(hopeRoll).toBeLessThanOrEqual(20)
         }
-      }
+      })
+      // At least verify we ran the test (d20 might not roll > 12 in 20 tries)
+      expect(results.length).toBe(20)
     })
 
     test('amplifyFear uses d20 instead of d12', () => {
-      for (let i = 0; i < 20; i++) {
-        const result = rollDaggerheart({ amplifyFear: true })
-
-        if (result.result.details.fear.roll > 12) {
-          expect(result.result.details.fear.roll).toBeLessThanOrEqual(20)
-          break
+      const results = Array.from({ length: 20 }, () => rollDaggerheart({ amplifyFear: true }))
+      results.forEach(result => {
+        const fearRoll = result.details?.fear.roll
+        if (fearRoll !== undefined && fearRoll > 12) {
+          expect(fearRoll).toBeLessThanOrEqual(20)
         }
-      }
+      })
+      // At least verify we ran the test (d20 might not roll > 12 in 20 tries)
+      expect(results.length).toBe(20)
     })
 
     test('both amplify options can be used together', () => {
@@ -153,10 +156,10 @@ describe('rollDaggerheart', () => {
         amplifyFear: true
       })
 
-      expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.hope.roll).toBeLessThanOrEqual(20)
-      expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.fear.roll).toBeLessThanOrEqual(20)
+      expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.hope.roll).toBeLessThanOrEqual(20)
+      expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.fear.roll).toBeLessThanOrEqual(20)
     })
 
     test('amplify with modifier and advantage works together', () => {
@@ -167,21 +170,19 @@ describe('rollDaggerheart', () => {
         amplifyFear: true
       })
 
-      expect(result.result.details.modifier).toBe(2)
-      expect(result.result.details.hope.roll).toBeGreaterThanOrEqual(1)
-      expect(result.result.details.fear.roll).toBeGreaterThanOrEqual(1)
-      expect(typeof result.result.details.advantage?.roll).toBe('number')
+      expect(result.details?.modifier).toBe(2)
+      expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
+      expect(typeof result.details?.advantage?.roll).toBe('number')
     })
   })
 
   describe('roll result types', () => {
     test('generates hope, fear, and critical hope results', () => {
-      const resultTypes = new Set<string>()
-
-      for (let i = 0; i < 100; i++) {
-        const result = rollDaggerheart({})
-        resultTypes.add(result.result.type)
-      }
+      const resultTypes = Array.from({ length: 100 }, () => rollDaggerheart({}).result).reduce(
+        (types, result) => types.add(result),
+        new Set<string>()
+      )
 
       expect(resultTypes.has('hope') || resultTypes.has('fear')).toBe(true)
     })
@@ -191,10 +192,10 @@ describe('rollDaggerheart', () => {
     test('handles empty argument object', () => {
       const result = rollDaggerheart({})
 
-      expect(result.result.details.modifier).toBe(0)
-      expect(result.result.details.advantage).toBeUndefined()
-      expect(typeof result.result.type).toBe('string')
-      expect(typeof result.result.total).toBe('number')
+      expect(result.details?.modifier).toBe(0)
+      expect(result.details?.advantage).toBeUndefined()
+      expect(typeof result.result).toBe('string')
+      expect(typeof result.total).toBe('number')
     })
 
     test('handles boolean false values', () => {
@@ -203,8 +204,8 @@ describe('rollDaggerheart', () => {
         amplifyFear: false
       })
 
-      expect(result.result.details.hope.roll).toBeLessThanOrEqual(12)
-      expect(result.result.details.fear.roll).toBeLessThanOrEqual(12)
+      expect(result.details?.hope.roll).toBeLessThanOrEqual(12)
+      expect(result.details?.fear.roll).toBeLessThanOrEqual(12)
     })
   })
 
@@ -235,19 +236,59 @@ describe('rollDaggerheart', () => {
     test('produces different results across multiple calls', () => {
       const results = Array.from({ length: 10 }, () => rollDaggerheart({}))
 
-      const uniqueTotals = new Set(results.map(r => r.result.total))
+      const uniqueTotals = new Set(results.map(r => r.total))
       expect(uniqueTotals.size).toBeGreaterThan(1)
     })
 
     test('produces reasonable distribution of results', () => {
       const results = Array.from({ length: 100 }, () => rollDaggerheart({}))
 
-      const totals = results.map(r => r.result.total)
+      const totals = results.map(r => r.total)
       const minTotal = Math.min(...totals)
       const maxTotal = Math.max(...totals)
 
       expect(minTotal).toBeGreaterThanOrEqual(2)
       expect(maxTotal).toBeLessThanOrEqual(24)
+    })
+  })
+
+  describe('error handling', () => {
+    test('throws when hope or fear rolls are missing from result', () => {
+      const mockRollResult: RollerRollResult = {
+        total: 10,
+        rolls: [
+          {
+            description: ['1d12'],
+            parameters: {
+              quantity: 1,
+              sides: 12,
+              arithmetic: 'add' as const,
+              modifiers: {},
+              key: 'wrong-key',
+              argument: { sides: 12 },
+              notation: '1d12' as const,
+              description: ['1d12'],
+              faces: undefined
+            },
+            rolls: [5],
+            modifierHistory: {
+              logs: [],
+              modifiedRolls: [5],
+              total: 5,
+              initialRolls: [5]
+            },
+            appliedTotal: 5,
+            total: 5
+          }
+        ],
+        result: ['5']
+      }
+
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult)
+
+      expect(() => rollDaggerheart({})).toThrow('Failed to properly roll.')
+
+      rollSpy.mockRestore()
     })
   })
 })

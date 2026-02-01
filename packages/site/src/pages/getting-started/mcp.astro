@@ -1,0 +1,307 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+---
+
+<BaseLayout
+  title="MCP Integration - Getting Started"
+  description="Learn how to integrate RANDSUM with AI agents using the Model Context Protocol server."
+  keywords={['MCP', 'Model Context Protocol', 'AI integration', 'Claude', 'tutorial']}
+>
+  <div class="mcp-guide-page">
+    <section class="guide-header">
+      <div class="container">
+        <nav class="breadcrumbs">
+          <a href="/">Home</a> / <a href="/getting-started">Getting Started</a> / MCP Integration
+        </nav>
+        <h1>MCP Integration</h1>
+        <p class="guide-description">
+          Integrate RANDSUM with AI agents like Claude and ChatGPT using the Model Context Protocol (MCP) server.
+        </p>
+      </div>
+    </section>
+
+    <section class="guide-content">
+      <div class="container">
+        <div class="guide-section">
+          <h2>What is MCP?</h2>
+          <p>
+            The Model Context Protocol (MCP) is a standardized way for AI agents to interact with
+            tools and services. RANDSUM provides an MCP server that exposes dice rolling capabilities
+            to AI agents.
+          </p>
+        </div>
+
+        <div class="guide-section">
+          <h2>Installation</h2>
+          <p>Install the MCP server globally or use it via npx:</p>
+
+          <CodeExample
+            code={`# Install globally
+npm install -g @randsum/mcp
+
+# Or use via npx (no installation needed)
+npx @randsum/mcp`}
+            language="bash"
+            title="Installing MCP Server"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Configuration</h2>
+          <p>Add the RANDSUM MCP server to your MCP client configuration:</p>
+
+          <CodeExample
+            code={`{
+  "mcpServers": {
+    "randsum": {
+      "command": "npx",
+      "args": ["-y", "@randsum/mcp@latest"]
+    }
+  }
+}`}
+            language="json"
+            title="Claude Desktop Configuration"
+          />
+
+          <p class="note">
+            <strong>Configuration Location:</strong> Claude Desktop configuration is typically located at:
+            <br />
+            <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> (macOS)
+            <br />
+            <code>%APPDATA%\\Claude\\claude_desktop_config.json</code> (Windows)
+          </p>
+        </div>
+
+        <div class="guide-section">
+          <h2>Available Tools</h2>
+          <p>The RANDSUM MCP server provides the following tools:</p>
+
+          <ul class="tools-list">
+            <li>
+              <strong>roll</strong> - Execute dice rolls with full notation support
+            </li>
+            <li>
+              <strong>try-roll</strong> - Safe rolling without exceptions (returns Result type)
+            </li>
+            <li>
+              <strong>validate-notation</strong> - Validate and parse dice notation
+            </li>
+            <li>
+              <strong>analyze</strong> - Probability analysis of dice notation
+            </li>
+            <li>
+              <strong>game-roll</strong> - Roll dice for specific game systems
+            </li>
+            <li>
+              <strong>batch-roll</strong> - Roll multiple times in a batch
+            </li>
+            <li>
+              <strong>compare</strong> - Compare probability distributions
+            </li>
+            <li>
+              <strong>count-successes</strong> - Dice pool success counting
+            </li>
+            <li>
+              <strong>preset</strong> - Roll using preset configurations
+            </li>
+          </ul>
+        </div>
+
+        <div class="guide-section">
+          <h2>Example Usage</h2>
+          <p>Once configured, you can ask AI agents to roll dice:</p>
+
+          <CodeExample
+            code={`User: "Roll 4d6 drop lowest for a D&D ability score"
+AI: [Uses roll tool] "I rolled 4d6L: [4, 5, 3, 6]. 
+    Dropped 3 (lowest). Total: 15 (4+5+6)."
+
+User: "What's the probability distribution of 4d6L?"
+AI: [Uses analyze tool] "4d6L has a mean of ~12.24..."`}
+            language="text"
+            title="AI Agent Interaction"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Available Prompts</h2>
+          <p>The MCP server also provides prompts for common scenarios:</p>
+
+          <ul class="prompts-list">
+            <li><strong>dnd-ability-scores</strong> - Generate D&D 5e ability scores</li>
+            <li><strong>blades-action</strong> - Roll Blades in the Dark action</li>
+            <li><strong>combat-round</strong> - Roll initiative and attacks</li>
+            <li><strong>pbta-roll</strong> - Roll Powered by the Apocalypse move</li>
+          </ul>
+        </div>
+
+        <div class="guide-section">
+          <h2>Transport Modes</h2>
+          <p>The MCP server supports multiple transport modes:</p>
+
+          <CodeExample
+            code={`# STDIO (default)
+npx @randsum/mcp
+
+# HTTP
+npx @randsum/mcp --transport http
+
+# Server-Sent Events
+npx @randsum/mcp --transport sse --port 3001`}
+            language="bash"
+            title="Transport Modes"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Resources</h2>
+          <p>The MCP server also provides documentation resources:</p>
+
+          <ul>
+            <li><strong>dice-notation-docs</strong> - Complete notation reference</li>
+            <li><strong>error-reference</strong> - Error types and recovery</li>
+            <li><strong>game-systems</strong> - Supported game systems overview</li>
+          </ul>
+        </div>
+
+        <div class="guide-section">
+          <h2>Next Steps</h2>
+          <ul class="next-steps-list">
+            <li><a href="/packages/mcp">Read the full MCP documentation</a></li>
+            <li><a href="/tools">Explore other tools and integrations</a></li>
+            <li>
+              <a href="https://github.com/RANDSUM/randsum/tree/main/packages/mcp">View MCP package on GitHub</a>
+            </li>
+            <li>
+              <a href="https://modelcontextprotocol.io">Learn more about MCP</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .mcp-guide-page {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .guide-header {
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .breadcrumbs {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-alt);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-text-alt);
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .guide-header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .guide-description {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-alt);
+    max-width: 700px;
+  }
+
+  .guide-content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .guide-section {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .guide-section h2 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .guide-section p {
+    margin-bottom: var(--spacing-md);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .note {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--color-bg-alt);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 4px;
+    font-size: var(--font-size-sm);
+  }
+
+  .note code {
+    font-family: var(--font-family-mono);
+    background: var(--color-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .tools-list,
+  .prompts-list {
+    margin-left: var(--spacing-xl);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .tools-list li,
+  .prompts-list li {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .guide-section ul {
+    margin-left: var(--spacing-xl);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .guide-section ul li {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .guide-section ul li a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .guide-section ul li a:hover {
+    text-decoration: underline;
+  }
+
+  .next-steps-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .next-steps-list li {
+    padding: var(--spacing-sm) 0;
+  }
+
+  .next-steps-list li a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .next-steps-list li a:hover {
+    text-decoration: underline;
+  }
+</style>

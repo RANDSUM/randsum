@@ -1,34 +1,34 @@
-export function listOfNotations(notationString: string, coreMatches: RegExpMatchArray[]): string[] {
-  const completeExpressions: string[] = []
+function calculateStartPos(
+  notationString: string,
+  currentMatch: RegExpMatchArray,
+  prevMatch: RegExpMatchArray | undefined,
+  index: number
+): number {
+  if (index === 0) return 0
+  if (currentMatch.index === undefined) return 0
 
-  for (const [i, currentMatch] of coreMatches.entries()) {
-    const nextMatch = coreMatches[i + 1]
+  const prevEndPos = prevMatch ? Number(prevMatch.index) + prevMatch[0].length : 0
+  const textBetween = notationString.slice(prevEndPos, currentMatch.index)
+  const arithmeticMatch = /([+-])/.exec(textBetween)
 
-    if (currentMatch.index === undefined) continue
-
-    let startPos: number
-
-    if (i === 0) {
-      startPos = 0
-    } else {
-      const prevMatch = coreMatches[i - 1]
-      const prevEndPos = prevMatch ? Number(prevMatch.index) + prevMatch[0].length : 0
-      const textBetween = notationString.slice(prevEndPos, currentMatch.index)
-      const arithmeticMatch = /([+-])/.exec(textBetween)
-
-      if (arithmeticMatch?.[1]) {
-        startPos = prevEndPos + textBetween.indexOf(arithmeticMatch[1])
-      } else {
-        startPos = currentMatch.index
-      }
-    }
-
-    const endPos = nextMatch?.index ?? notationString.length
-
-    const expression = notationString.slice(startPos, endPos).trim()
-    if (expression) {
-      completeExpressions.push(expression)
-    }
+  if (arithmeticMatch?.[1]) {
+    return prevEndPos + textBetween.indexOf(arithmeticMatch[1])
   }
-  return completeExpressions
+  return currentMatch.index
+}
+
+export function listOfNotations(notationString: string, coreMatches: RegExpMatchArray[]): string[] {
+  return coreMatches
+    .map((currentMatch, i) => {
+      if (currentMatch.index === undefined) return null
+
+      const prevMatch = coreMatches[i - 1]
+      const nextMatch = coreMatches[i + 1]
+
+      const startPos = calculateStartPos(notationString, currentMatch, prevMatch, i)
+      const endPos = nextMatch?.index ?? notationString.length
+
+      return notationString.slice(startPos, endPos).trim()
+    })
+    .filter((expression): expression is string => expression !== null && expression.length > 0)
 }

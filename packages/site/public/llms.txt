@@ -1,0 +1,50 @@
+# RANDSUM - Universal Dice Rolling Library
+
+> Dice notation and rolling for tabletop RPGs. Works with D&D 5E, Blades in the Dark, PbtA, Daggerheart, Root RPG, Salvage Union, and more.
+
+## Packages
+
+- @randsum/roller - Core dice engine
+- @randsum/mcp - AI agent integration (MCP server)
+- @randsum/fifth - D&D 5th Edition
+- @randsum/blades - Blades in the Dark
+- @randsum/pbta - Powered by the Apocalypse
+- @randsum/daggerheart - Daggerheart RPG
+- @randsum/root-rpg - Root RPG
+- @randsum/salvageunion - Salvage Union
+
+## Quick Start
+
+npm install @randsum/roller
+
+roll("4d6L")   // D&D ability score (4d6, drop lowest)
+roll("2d20L+5") // Advantage attack roll
+roll("2d6+3")   // PbtA / 2d6 + stat
+
+## Documentation
+
+- Skill (agentskills.io): https://randsum.dev/skills/dice-rolling/SKILL.md
+- Notation reference: https://randsum.dev/packages/roller/
+- MCP docs: https://randsum.dev/tools/mcp/
+
+## MCP Integration
+
+Configure your AI agent to use RANDSUM via MCP:
+
+{
+  "mcpServers": {
+    "randsum": {
+      "command": "npx",
+      "args": ["-y", "@randsum/mcp@latest"]
+    }
+  }
+}
+
+Available tools: roll, validate-notation, try-roll, analyze, game-roll, batch-roll, compare, count-successes, preset.
+
+## Links
+
+- Documentation: https://randsum.dev/
+- GitHub: https://github.com/RANDSUM/randsum
+- Notation reference: https://randsum.dev/packages/roller/
+- MCP docs: https://randsum.dev/tools/mcp/

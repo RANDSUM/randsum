@@ -35,7 +35,8 @@ export default tseslint.config(
       '**/bun.lockb',
       'packages/site/.astro/**',
       '**/.astro/**',
-      '**/.netlify/**'
+      '**/.netlify/**',
+      '**/public/**'
     ]
   },
   {
@@ -101,6 +102,8 @@ export default tseslint.config(
         }
       ],
       '@typescript-eslint/consistent-type-exports': 'error',
+      // Note: consistent-type-assertions intentionally omitted - policy is to prefer type guards
+      // The dangerous `as unknown as T` pattern is banned by no-restricted-syntax below
 
       // Code quality and best practices
       'func-names': ['error', 'as-needed'],
@@ -127,7 +130,18 @@ export default tseslint.config(
       'no-new-func': 'error',
       'no-script-url': 'error',
       'no-await-in-loop': 'warn',
-      'prefer-object-spread': 'error'
+      'prefer-object-spread': 'error',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'TSAsExpression > TSUnknownKeyword',
+          message: 'Avoid `as unknown as T` pattern. Use type guards instead.'
+        },
+        {
+          selector: 'VariableDeclaration[kind="let"]',
+          message: 'Use `const` instead of `let`. Prefer immutable bindings.'
+        }
+      ]
     }
   },
   {
@@ -145,6 +159,18 @@ export default tseslint.config(
         require: 'readonly',
         exports: 'readonly'
       }
+    }
+  },
+  {
+    // Override for test files and test-utils package
+    // ESLint's type-aware rules can't resolve types from workspace packages properly
+    files: ['**/__tests__/**/*.ts', '**/test-utils/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off'
     }
   }
 )

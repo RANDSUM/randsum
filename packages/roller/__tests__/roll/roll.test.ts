@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
+import { createSeededRandom } from '../../test-utils/src/seededRandom'
 
 const loops = 9999
 
@@ -15,6 +16,14 @@ describe(roll, () => {
             expect(total).toBeLessThanOrEqual(20)
             expect(total).toBeGreaterThan(0)
           })
+        })
+
+        test('deterministic roll with seeded random', () => {
+          const seeded = createSeededRandom(42)
+          const result1 = roll(arg, { randomFn: seeded })
+          const seeded2 = createSeededRandom(42)
+          const result2 = roll(arg, { randomFn: seeded2 })
+          expect(result1.total).toBe(result2.total)
         })
       })
 

@@ -6,8 +6,8 @@ describe('rollRootRpg', () => {
     test('returns result within valid range (2d6 + modifier)', () => {
       const bonus = 2
       const rollResult = rollRootRpg(bonus)
-      expect(rollResult.result.total).toBeGreaterThanOrEqual(2 + bonus)
-      expect(rollResult.result.total).toBeLessThanOrEqual(12 + bonus)
+      expect(rollResult.total).toBeGreaterThanOrEqual(2 + bonus)
+      expect(rollResult.total).toBeLessThanOrEqual(12 + bonus)
     })
 
     test('returns two dice results', () => {
@@ -52,19 +52,19 @@ describe('rollRootRpg', () => {
     test('returns Proper results', () => {
       const dummyArray = Array.from({ length: loops }, () => rollRootRpg(0))
 
-      dummyArray.forEach(({ result }) => {
-        if (result.hit === 'Strong Hit') {
-          expect(result.total).toBeGreaterThanOrEqual(10)
+      dummyArray.forEach(({ result, total }) => {
+        if (result === 'Strong Hit') {
+          expect(total).toBeGreaterThanOrEqual(10)
           return
         }
 
-        if (result.hit === 'Weak Hit') {
-          expect(result.total).toBeGreaterThanOrEqual(7)
-          expect(result.total).toBeLessThanOrEqual(9)
+        if (result === 'Weak Hit') {
+          expect(total).toBeGreaterThanOrEqual(7)
+          expect(total).toBeLessThanOrEqual(9)
           return
         }
 
-        expect(result.total).toBeLessThanOrEqual(6)
+        expect(total).toBeLessThanOrEqual(6)
       })
     })
   })
@@ -73,31 +73,31 @@ describe('rollRootRpg', () => {
     test('throws error for extremely large positive modifiers', () => {
       const bonus = 1000
       expect(() => rollRootRpg(bonus)).toThrow(
-        'Root RPG bonus is outside reasonable range (-20 to +20), received: 1000'
+        'Root RPG bonus must be between -20 and 20, received: 1000'
       )
     })
 
     test('throws error for extremely large negative modifiers', () => {
       const bonus = -1000
       expect(() => rollRootRpg(bonus)).toThrow(
-        'Root RPG bonus is outside reasonable range (-20 to +20), received: -1000'
+        'Root RPG bonus must be between -20 and 20, received: -1000'
       )
     })
 
     test('handles maximum valid positive modifier', () => {
       const bonus = 20
-      const { result } = rollRootRpg(bonus)
-      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result.hit)
-      expect(result.total).toBeGreaterThanOrEqual(22) // 2d6 minimum (2) + 20
-      expect(result.total).toBeLessThanOrEqual(32) // 2d6 maximum (12) + 20
+      const { result, total } = rollRootRpg(bonus)
+      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
+      expect(total).toBeGreaterThanOrEqual(22) // 2d6 minimum (2) + 20
+      expect(total).toBeLessThanOrEqual(32) // 2d6 maximum (12) + 20
     })
 
     test('handles maximum valid negative modifier', () => {
       const bonus = -20
-      const { result } = rollRootRpg(bonus)
-      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result.hit)
-      expect(result.total).toBeGreaterThanOrEqual(-18) // 2d6 minimum (2) - 20
-      expect(result.total).toBeLessThanOrEqual(-8) // 2d6 maximum (12) - 20
+      const { result, total } = rollRootRpg(bonus)
+      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
+      expect(total).toBeGreaterThanOrEqual(-18) // 2d6 minimum (2) - 20
+      expect(total).toBeLessThanOrEqual(-8) // 2d6 maximum (12) - 20
     })
 
     test('throws error for NaN modifier', () => {
@@ -119,8 +119,8 @@ describe('rollRootRpg', () => {
     })
 
     test('handles boundary values correctly', () => {
-      expect(() => rollRootRpg(21)).toThrow('Root RPG bonus is outside reasonable range')
-      expect(() => rollRootRpg(-21)).toThrow('Root RPG bonus is outside reasonable range')
+      expect(() => rollRootRpg(21)).toThrow('Root RPG bonus must be between -20 and 20')
+      expect(() => rollRootRpg(-21)).toThrow('Root RPG bonus must be between -20 and 20')
 
       expect(() => rollRootRpg(20)).not.toThrow()
       expect(() => rollRootRpg(-20)).not.toThrow()

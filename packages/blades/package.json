@@ -19,7 +19,6 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "source": "./src/index.ts",
   "react-native": "./src/index.ts",
   "files": [
     "dist",
@@ -44,7 +43,8 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.3.8",
+    "node": ">=18.0.0"
   },
   "keywords": [
     "dice",
@@ -57,7 +57,7 @@
     "forged-in-the-dark"
   ],
   "scripts": {
-    "build": "bunup --entry src/index.ts --format esm,cjs --minify --sourcemap external --target node --clean && tsc --emitDeclarationOnly",
+    "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

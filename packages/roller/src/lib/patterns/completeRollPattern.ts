@@ -1,32 +1,19 @@
 import { coreNotationPattern } from './coreNotationPattern'
-import {
-  capPattern,
-  dropConstraintsPattern,
-  dropHighestPattern,
-  dropLowestPattern,
-  explodePattern,
-  minusPattern,
-  plusPattern,
-  replacePattern,
-  rerollPattern,
-  uniquePattern
-} from './modifierPatterns'
+import { buildCombinedPattern } from '../modifiers'
 
-const completeRollPatternSource = [
-  coreNotationPattern.source,
-  dropHighestPattern.source,
-  dropLowestPattern.source,
-  dropConstraintsPattern.source,
-  explodePattern.source,
-  uniquePattern.source,
-  replacePattern.source,
-  rerollPattern.source,
-  capPattern.source,
-  plusPattern.source,
-  minusPattern.source
-].join('|')
+/**
+ * Build the complete roll pattern source from core notation + all registered modifiers.
+ */
+function buildCompletePatternSource(): string {
+  const modifierPattern = buildCombinedPattern()
+  return [coreNotationPattern.source, modifierPattern.source].join('|')
+}
 
-export const completeRollPattern: RegExp = new RegExp(
-  completeRollPatternSource,
-  'g'
-) satisfies RegExp
+/**
+ * Factory function to get the global RegExp for complete roll pattern.
+ * Returns a fresh pattern each time to avoid stateful regex issues.
+ */
+export function createCompleteRollPattern(): RegExp {
+  const source = buildCompletePatternSource()
+  return new RegExp(source, 'g')
+}

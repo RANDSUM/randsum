@@ -110,9 +110,7 @@ describe('coreSpreadRolls', () => {
     test('performs efficiently with many calls', () => {
       const startTime = performance.now()
 
-      for (let i = 0; i < 100; i++) {
-        coreSpreadRolls(10, 20)
-      }
+      Array.from({ length: 100 }).forEach(() => coreSpreadRolls(10, 20))
 
       const endTime = performance.now()
       const duration = endTime - startTime

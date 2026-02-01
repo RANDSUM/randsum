@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { completeRollPattern, coreNotationPattern } from '../../src/lib/patterns'
+import { coreNotationPattern, createCompleteRollPattern } from '../../src/lib/patterns'
 
 describe('coreNotationPattern', () => {
   describe('valid core notations', () => {
@@ -44,20 +44,20 @@ describe('coreNotationPattern', () => {
   })
 })
 
-describe('completeRollPattern', () => {
-  describe('complete notation matching', () => {
+describe('createCompleteRollPattern', () => {
+  describe('complete notation matching (using global pattern)', () => {
     const completeNotations = ['1d6', '2d6+3', '1d20L', '3d6H2', '2d6-1', '4d6L1', '1d20+5-2']
 
     completeNotations.forEach(notation => {
       it(`completely matches notation: ${notation}`, () => {
         const cleanNotation = notation.replace(/\s/g, '')
-        const remainingAfterMatch = cleanNotation.replace(completeRollPattern, '')
+        const remainingAfterMatch = cleanNotation.replaceAll(createCompleteRollPattern(), '')
         expect(remainingAfterMatch.length).toBe(0)
       })
     })
   })
 
-  describe('partial notation matching', () => {
+  describe('partial notation matching (using global pattern)', () => {
     const partialNotations = [
       { input: '1d6extra', description: 'extra text after valid notation' },
       { input: 'prefix1d6', description: 'prefix before valid notation' },
@@ -70,7 +70,7 @@ describe('completeRollPattern', () => {
     partialNotations.forEach(({ input, description }) => {
       it(`leaves remainder for ${description}: ${input}`, () => {
         const cleanInput = input.replace(/\s/g, '')
-        const remainingAfterMatch = cleanInput.replace(completeRollPattern, '')
+        const remainingAfterMatch = cleanInput.replaceAll(createCompleteRollPattern(), '')
         expect(remainingAfterMatch.length).toBeGreaterThan(0)
       })
     })
@@ -80,12 +80,26 @@ describe('completeRollPattern', () => {
     it('handles complex notation components', () => {
       const input = '2d6+3L1'
       const cleanInput = input.replace(/\s/g, '')
-      const matches = cleanInput.match(completeRollPattern)
+      const matches = Array.from(cleanInput.matchAll(createCompleteRollPattern()))
       expect(matches).toBeTruthy()
-      expect(matches?.length).toBeGreaterThan(0)
-      expect(matches).toContain('2d6')
-      expect(matches).toContain('+3')
-      expect(matches).toContain('L1')
+      expect(matches.length).toBeGreaterThan(0)
+      const matchedStrings = matches.map(m => m[0])
+      expect(matchedStrings).toContain('2d6')
+      expect(matchedStrings).toContain('+3')
+      expect(matchedStrings).toContain('L1')
+    })
+  })
+
+  describe('pattern (single match)', () => {
+    it('matches first component only', () => {
+      const result = createCompleteRollPattern().test('2d6+3L1')
+      expect(result).toBe(true)
+    })
+
+    it('can be used safely in loops without state issues', () => {
+      const notations = ['1d6', '2d20', '4d6L']
+      const results = notations.map(n => createCompleteRollPattern().test(n))
+      expect(results).toEqual([true, true, true])
     })
   })
 
@@ -93,7 +107,7 @@ describe('completeRollPattern', () => {
     it('handles large input strings efficiently', () => {
       const largeInput = '1d6'.repeat(1000)
       const startTime = performance.now()
-      const matches = largeInput.match(completeRollPattern)
+      const matches = Array.from(largeInput.matchAll(createCompleteRollPattern()))
       const endTime = performance.now()
 
       expect(matches).toBeTruthy()
@@ -103,7 +117,7 @@ describe('completeRollPattern', () => {
     it('handles complex patterns without catastrophic backtracking', () => {
       const complexInput = `1d6${'b'.repeat(100)}`
       const startTime = performance.now()
-      const result = completeRollPattern.test(complexInput)
+      const result = createCompleteRollPattern().test(complexInput)
       const endTime = performance.now()
 
       expect(result).toBe(true)

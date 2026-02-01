@@ -1,0 +1,248 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+---
+
+<BaseLayout
+  title="Dice Notation - Getting Started"
+  description="Learn RANDSUM dice notation from basics to advanced modifiers. Complete guide with examples."
+  keywords={['dice notation', 'tutorial', 'guide', 'modifiers', 'RANDSUM']}
+>
+  <div class="notation-guide-page">
+    <section class="guide-header">
+      <div class="container">
+        <nav class="breadcrumbs">
+          <a href="/">Home</a> / <a href="/getting-started">Getting Started</a> / Dice Notation
+        </nav>
+        <h1>Dice Notation</h1>
+        <p class="guide-description">
+          Learn how to write dice notation expressions in RANDSUM. From basic rolls to complex modifiers.
+        </p>
+      </div>
+    </section>
+
+    <section class="guide-content">
+      <div class="container">
+        <div class="guide-section">
+          <h2>Basic Syntax</h2>
+          <p>RANDSUM uses the standard dice notation format: <code>NdS</code> where N is quantity and S is sides.</p>
+
+          <CodeExample
+            code={`import { roll } from '@randsum/roller'
+
+// Roll 1d20
+roll('1d20')
+
+// Roll 2d6
+roll('2d6')
+
+// Roll 4d8
+roll('4d8')`}
+            language="typescript"
+            title="Basic Rolls"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Drop Modifiers</h2>
+          <p>Drop lowest or highest dice from your roll:</p>
+
+          <CodeExample
+            code={`// D&D ability score: 4d6, drop lowest
+roll('4d6L')
+
+// Drop highest (disadvantage)
+roll('4d6H')
+
+// Drop 2 lowest
+roll('4d6L2')`}
+            language="typescript"
+            title="Drop Modifiers"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Advantage and Disadvantage</h2>
+          <p>Common D&D patterns using drop modifiers:</p>
+
+          <CodeExample
+            code={`// Advantage: roll 2d20, keep highest
+roll('2d20L')
+
+// Disadvantage: roll 2d20, keep lowest
+roll('2d20H')`}
+            language="typescript"
+            title="Advantage/Disadvantage"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Arithmetic Modifiers</h2>
+          <p>Add or subtract from your roll total:</p>
+
+          <CodeExample
+            code={`// Add modifier
+roll('1d20+5')
+
+// Subtract modifier
+roll('2d6-1')
+
+// Multiple operations
+roll('1d20+3-1')`}
+            language="typescript"
+            title="Arithmetic"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Reroll Modifiers</h2>
+          <p>Reroll dice matching certain conditions:</p>
+
+          <CodeExample
+            code={`// Reroll 1s
+roll('4d6R{1}')
+
+// Reroll results below 3
+roll('4d6R{<3}')
+
+// Reroll specific values
+roll('4d20R{1,20}')`}
+            language="typescript"
+            title="Reroll Modifiers"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Exploding Dice</h2>
+          <p>Roll extra dice on maximum results:</p>
+
+          <CodeExample
+            code={`// Exploding d6
+roll('3d6!')
+
+// Each 6 rolls another die`}
+            language="typescript"
+            title="Exploding Dice"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Combining Modifiers</h2>
+          <p>You can chain multiple modifiers together:</p>
+
+          <CodeExample
+            code={`// Reroll 1s, then drop lowest, then add 2
+roll('4d6R{1}L+2')
+
+// Exploding dice with drop
+roll('3d6!L')`}
+            language="typescript"
+            title="Combining Modifiers"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Multiple Dice Groups</h2>
+          <p>Roll different dice types in a single expression:</p>
+
+          <CodeExample
+            code={`// Attack roll + damage
+roll('1d20+5', '2d6+3')
+
+// Or in a single string
+roll('1d20+2d6+5')`}
+            language="typescript"
+            title="Multiple Groups"
+          />
+        </div>
+
+        <div class="guide-section">
+          <h2>Next Steps</h2>
+          <ul class="next-steps-list">
+            <li><a href="/getting-started/game-packages">Learn about game packages</a></li>
+            <li><a href="/packages/roller">Read full notation documentation</a></li>
+            <li><a href="https://github.com/RANDSUM/randsum">View on GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .notation-guide-page {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .guide-header {
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .breadcrumbs {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-alt);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-text-alt);
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .guide-header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .guide-description {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-alt);
+    max-width: 700px;
+  }
+
+  .guide-content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .guide-section {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .guide-section h2 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .guide-section p {
+    margin-bottom: var(--spacing-md);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .next-steps-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .next-steps-list li {
+    padding: var(--spacing-sm) 0;
+  }
+
+  .next-steps-list li a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .next-steps-list li a:hover {
+    text-decoration: underline;
+  }
+</style>

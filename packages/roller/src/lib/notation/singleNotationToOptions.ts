@@ -1,6 +1,6 @@
 import type { RollOptions } from '../../types'
 import { coreNotationPattern } from '../patterns'
-import { parseModifiers } from '../modifiers'
+import { parseModifiersFromRegistry } from '../modifiers'
 
 export function singleNotationToOptions<T>(notationString: string): RollOptions<T> {
   const trimmedNotationString = notationString.trim()
@@ -20,6 +20,6 @@ export function singleNotationToOptions<T>(notationString: string): RollOptions<
 
   return {
     ...core,
-    modifiers: parseModifiers(modifiersString)
+    modifiers: parseModifiersFromRegistry(modifiersString)
   }
 }

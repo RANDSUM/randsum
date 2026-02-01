@@ -16,29 +16,68 @@ const isHome = currentPath === '/'
         </li>
         <li>
           <a
-            href="/packages/roller/"
-            class={currentPath.includes('/packages/roller')
-              ? 'nav-link nav-link-active'
-              : 'nav-link'}
+            href="/getting-started/"
+            class={currentPath.includes('/getting-started') ? 'nav-link nav-link-active' : 'nav-link'}
           >
-            Roller
+            Getting Started
           </a>
         </li>
         <li>
           <a
-            href="/games/"
-            class={currentPath.includes('/games') ? 'nav-link nav-link-active' : 'nav-link'}
+            href="/docs/"
+            class={currentPath.includes('/docs') ? 'nav-link nav-link-active' : 'nav-link'}
           >
-            Games
+            Docs
           </a>
         </li>
-        <li>
-          <a
-            href="/tools/"
-            class={currentPath.includes('/tools') ? 'nav-link nav-link-active' : 'nav-link'}
+        <li class="nav-dropdown">
+          <button
+            class={currentPath.includes('/packages/') || currentPath.includes('/tools/')
+              ? 'nav-link nav-link-active nav-dropdown-toggle'
+              : 'nav-link nav-dropdown-toggle'}
           >
-            Tools
-          </a>
+            Code
+            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+              <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <ul class="nav-dropdown-menu">
+            <li class="dropdown-section-title">Core</li>
+            <li>
+              <a href="/packages/roller/" class="dropdown-link">Roller</a>
+            </li>
+            <li class="dropdown-divider"></li>
+            <li class="dropdown-section-title">Games</li>
+            <li>
+              <a href="/packages/fifth/" class="dropdown-link">5th Edition</a>
+            </li>
+            <li>
+              <a href="/packages/blades/" class="dropdown-link">Blades in the Dark</a>
+            </li>
+            <li>
+              <a href="/packages/daggerheart/" class="dropdown-link">Daggerheart</a>
+            </li>
+            <li>
+              <a href="/packages/pbta/" class="dropdown-link">Powered by the Apocalypse</a>
+            </li>
+            <li>
+              <a href="/packages/root-rpg/" class="dropdown-link">Root RPG</a>
+            </li>
+            <li>
+              <a href="/packages/salvageunion/" class="dropdown-link">Salvage Union</a>
+            </li>
+            <li class="dropdown-divider"></li>
+            <li class="dropdown-section-title">Tools</li>
+            <li>
+              <a href="/packages/mcp/" class="dropdown-link">MCP Server</a>
+            </li>
+            <li>
+              <a href="/tools/skill/" class="dropdown-link">AI Skill</a>
+            </li>
+            <li>
+              <a href="/packages/robo/" class="dropdown-link">Discord Bot</a>
+            </li>
+          </ul>
         </li>
       </ul>
       <a
@@ -124,17 +163,99 @@ const isHome = currentPath === '/'
     padding: var(--spacing-xs) var(--spacing-sm);
     border-bottom: var(--border-width) solid transparent;
     transition: border-color var(--transition-fast), color var(--transition-fast);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-family: inherit;
   }
 
   .nav-link:hover {
     color: var(--color-text);
     border-bottom-color: var(--color-primary);
   }
-  
+
   .nav-link-active {
     color: var(--color-text);
     border-bottom-color: var(--color-primary);
     font-weight: var(--font-weight-semibold);
+  }
+
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .nav-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dropdown-arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  .nav-dropdown:hover .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  .nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: var(--spacing-sm);
+    background-color: var(--color-bg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    min-width: 220px;
+    padding: var(--spacing-sm) 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-fast), visibility var(--transition-fast);
+    list-style: none;
+    z-index: var(--z-dropdown);
+  }
+
+  .nav-dropdown:hover .nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .dropdown-section-title {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: var(--spacing-xs);
+  }
+
+  .dropdown-section-title:first-child {
+    margin-top: 0;
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: var(--spacing-sm) 0;
+  }
+
+  .dropdown-link {
+    display: block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .dropdown-link:hover {
+    background-color: var(--color-bg-alt);
+    color: var(--color-primary);
   }
 
   .nav-discord-button {
@@ -183,6 +304,23 @@ const isHome = currentPath === '/'
       flex-wrap: wrap;
       justify-content: center;
       gap: var(--spacing-md);
+    }
+
+    .nav-dropdown-menu {
+      position: static;
+      transform: none;
+      box-shadow: none;
+      border: none;
+      padding: var(--spacing-xs) var(--spacing-md);
+      background-color: var(--color-bg-alt);
+      border-radius: 6px;
+      margin-top: var(--spacing-xs);
+    }
+
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
     }
 
     .nav-discord-button {

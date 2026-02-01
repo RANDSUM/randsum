@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { roll, validateNotation } from '@randsum/roller'
+import { roll, validateNotation, isSuccess } from '@randsum/roller'
+import { createSeededRandom } from '../test-utils/src/seededRandom'
 
 const args = process.argv.slice(2)
 
@@ -9,23 +10,62 @@ if (args.includes('--help') || args.includes('-h')) {
   process.exit(0)
 }
 
+if (args.includes('--completions')) {
+  await showCompletions(args[1] || 'bash')
+  process.exit(0)
+}
+
 if (args.length === 0) {
   console.error('ERROR: Please provide dice notation')
-  console.error('\nUsage: randsum <dice-notation>')
+  console.error('\nUsage: randsum <dice-notation> [options]')
   console.error('Examples:')
   console.error('  randsum "2d6"        # Roll 2 six-sided dice')
   console.error('  randsum "4d6L"       # Roll 4d6, drop lowest')
   console.error('  randsum "1d20+5"     # Roll 1d20, add 5')
+  console.error('\nOptions:')
+  console.error('  --verbose, -v        Show detailed breakdown')
+  console.error('  --repeat N           Roll N times')
+  console.error('  --json               Output as JSON')
+  console.error('  --seed N             Use seeded random (for reproducibility)')
   console.error('\nFor more help: randsum --help')
   process.exit(1)
 }
 
+// Parse flags
+const verbose = args.includes('--verbose') || args.includes('-v')
+const json = args.includes('--json')
+const repeatIndex = args.findIndex(arg => arg === '--repeat')
+const seedIndex = args.findIndex(arg => arg === '--seed')
+const repeat = repeatIndex !== -1 && args[repeatIndex + 1] ? Number(args[repeatIndex + 1]) : 1
+const seed = seedIndex !== -1 && args[seedIndex + 1] ? Number(args[seedIndex + 1]) : undefined
+
+// Get notation (first argument that's not a flag or flag value)
+const flagIndices = new Set()
+if (repeatIndex !== -1) {
+  flagIndices.add(repeatIndex)
+  flagIndices.add(repeatIndex + 1)
+}
+if (seedIndex !== -1) {
+  flagIndices.add(seedIndex)
+  flagIndices.add(seedIndex + 1)
+}
+if (args.includes('--verbose')) flagIndices.add(args.indexOf('--verbose'))
+if (args.includes('-v')) flagIndices.add(args.indexOf('-v'))
+if (args.includes('--json')) flagIndices.add(args.indexOf('--json'))
+
+const notation = args.find((arg, index) => !flagIndices.has(index)) ?? args[0] ?? ''
+
+if (!notation) {
+  console.error('ERROR: Please provide dice notation')
+  process.exit(1)
+}
+
 try {
-  const notation = args[0] ?? ''
   const validated = validateNotation(notation)
 
-  if (!validated.valid) {
+  if (!isSuccess(validated)) {
     console.error(`ERROR: Invalid dice notation: "${notation}"`)
+    console.error(`  ${validated.error.message}`)
     console.error('\nValid formats include:')
     console.error('  - Basic: 2d6, 1d20, 3d8')
     console.error('  - With modifiers: 4d6L, 2d20H, 3d6!')
@@ -35,9 +75,30 @@ try {
     process.exit(1)
   }
 
-  const result = roll(validated.notation)
-  const message = formatMessage(result, validated)
-  console.log(message)
+  const randomFn = seed !== undefined ? createSeededRandom(seed) : undefined
+  const results = []
+
+  for (let i = 0; i < repeat; i++) {
+    const result = roll(validated.data.notation, randomFn ? { randomFn } : undefined)
+    results.push(result)
+
+    if (json) {
+      // JSON output will be printed at the end
+      continue
+    }
+
+    if (repeat > 1) {
+      console.log(`\nRoll ${i + 1}/${repeat}:`)
+    }
+
+    const message = formatMessage(result, validated.data, verbose)
+    console.log(message)
+  }
+
+  if (json) {
+    console.log(JSON.stringify(repeat === 1 ? results[0] : results, null, 2))
+  }
+
   process.exit(0)
 } catch (error) {
   console.error(`ERROR: ${error instanceof Error ? error.message : error}`)
@@ -46,12 +107,39 @@ try {
   process.exit(1)
 }
 
-function formatMessage(result, { description, options }) {
+function formatMessage(result, { description, options }, verbose = false) {
+  if (verbose) {
+    const rollRecord = result.rolls[0]
+    if (!rollRecord) {
+      return messageFrame(result.total, 'No roll data available', description.join(', '))
+    }
+
+    const rawRolls = rollRecord.modifierHistory.initialRolls.join(', ')
+    const modifiedRolls = rollRecord.modifierHistory.modifiedRolls.join(', ')
+    const logs = rollRecord.modifierHistory.logs
+      .map(
+        log =>
+          `  ${log.modifier}: ${log.removed.length > 0 ? `removed [${log.removed.join(', ')}]` : ''} ${log.added.length > 0 ? `added [${log.added.join(', ')}]` : ''}`
+      )
+      .join('\n')
+
+    let inner = `Raw rolls: [${rawRolls}]\n`
+    if (rawRolls !== modifiedRolls) {
+      inner += `After modifiers: [${modifiedRolls}]\n`
+    }
+    if (logs) {
+      inner += `Modifier history:\n${logs}\n`
+    }
+    inner += `Final rolls: [${result.rolls.map(r => r.rolls.join(', ')).join(' | ')}]`
+
+    return messageFrame(result.total, inner, description.join(', '))
+  }
+
   const hasModifiers = options.modifiers !== undefined
-  const rollResult = result.rolls.join(', ')
-  const rawRolls = result.history.initialRolls.join(', ')
+  const rollResult = result.rolls[0]?.rolls.join(', ') ?? ''
 
   if (hasModifiers) {
+    const rawRolls = result.rolls[0]?.modifierHistory.initialRolls.join(', ') ?? ''
     return messageFrame(
       result.total,
       `Raw Rolls: [${rawRolls}]\nRolls: [${rollResult}]`,
@@ -59,7 +147,7 @@ function formatMessage(result, { description, options }) {
     )
   }
 
-  return messageFrame(result.total, `Rolls: [${result.rolls.join(', ')}]`, description.join(', '))
+  return messageFrame(result.total, `Rolls: [${rollResult}]`, description.join(', '))
 }
 
 function messageFrame(total, inner, description) {
@@ -70,6 +158,30 @@ Total: ${total}
 ${inner}
 Description: ${description}
 `
+}
+
+async function showCompletions(shell) {
+  try {
+    const fs = await import('fs')
+    const path = await import('path')
+    const { fileURLToPath } = await import('url')
+
+    const scriptDir = path.dirname(fileURLToPath(import.meta.url))
+    const completionPath = path.join(scriptDir, 'completions', `${shell}.sh`)
+
+    if (fs.existsSync(completionPath)) {
+      console.log(fs.readFileSync(completionPath, 'utf8'))
+    } else {
+      console.error(`ERROR: No completion script found for shell: ${shell}`)
+      console.error('Available shells: bash, zsh')
+      process.exit(1)
+    }
+  } catch (error) {
+    console.error(
+      `ERROR: Failed to load completions: ${error instanceof Error ? error.message : error}`
+    )
+    process.exit(1)
+  }
 }
 
 async function showHelp() {

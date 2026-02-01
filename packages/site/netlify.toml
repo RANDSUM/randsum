@@ -1,11 +1,11 @@
 [build]
   # Build command runs from root (base directory)
-  # Package directory should be set to "packages/site" in Netlify UI
-  command = "bun run site:build"
+  # Builds packages first (for workspace resolution), generates API docs, then builds the site
+  command = "bun run build && bun run docs:site && bun run site:build"
   publish = "packages/site/dist"
 
+# Redirect 404s to the 404 page
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
-
+  to = "/404"
+  status = 404

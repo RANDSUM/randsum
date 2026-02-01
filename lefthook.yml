@@ -1,0 +1,22 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{ts,tsx,js,mjs}"
+      run: bun run lint --fix
+      stage_fixed: true
+    format:
+      glob: "*.{ts,tsx,js,json,md,astro,css}"
+      run: bun run format
+      stage_fixed: true
+    typecheck:
+      run: bun run typecheck
+
+pre-push:
+  commands:
+    test:
+      run: bun test
+    exports:
+      run: bun run check:exports
+    security:
+      run: bun audit --audit-level high

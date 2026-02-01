@@ -5,8 +5,32 @@ import type {
   SalvageUnionTableListing,
   SalvageUnionTableName
 } from '../types'
-import type { RollRecord, RollResult } from '@randsum/roller'
+import type { GameRollResult, RollRecord } from '@randsum/roller'
 import { roll } from '@randsum/roller'
+
+/**
+ * NOTE: This package does not use the createGameRoll factory pattern because:
+ *
+ * 1. External library dependency: The implementation requires integration with
+ *    the `salvageunion-reference` library for table lookups, which doesn't fit
+ *    the standard factory pattern focused on dice mechanics.
+ *
+ * 2. Table lookup pattern: The roll result is used as a lookup key for table
+ *    resolution rather than being the primary game mechanic itself. The actual
+ *    game logic is in the table lookup, not the dice roll.
+ *
+ * 3. Custom result structure: The result includes table-specific metadata
+ *    (table data, table name, key, label, description) that extends beyond
+ *    standard game roll interpretation.
+ *
+ * 4. Table processing logic: The implementation includes complex table result
+ *    processing (label/value extraction, success checking) that is specific to
+ *    the Salvage Union table system.
+ *
+ * This is more accurately a table lookup utility than a dice rolling mechanic,
+ * and would benefit from a specialized table-based factory if such a pattern
+ * emerges in other packages.
+ */
 
 function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {
   const rollTable = SalvageUnionReference.RollTables.find(t => t.name === tableName)
@@ -19,7 +43,11 @@ function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {
 
 export function rollTable(
   tableName: SalvageUnionTableName = 'Core Mechanic'
-): RollResult<SalvageUnionRollRecord, RollRecord<SalvageUnionTableListing | string>> {
+): GameRollResult<
+  SalvageUnionRollRecord,
+  undefined,
+  RollRecord<SalvageUnionTableListing | string>
+> {
   const { total, rolls } = roll({
     sides: 20
   })
@@ -31,18 +59,14 @@ export function rollTable(
     throw new Error(`Failed to get result from table: "${tableName}"`)
   }
 
-  // After success check, TypeScript should narrow but we need to help it
-  // Access properties directly from tableResult which is now known to be success case
   const { result, key } = tableResult
-
-  // Some tables have both label and value (e.g., Core Mechanic)
-  // Others only have value (e.g., Quirks) - value becomes the label
   const resultTyped = result as { label?: string; value?: string }
   const label = resultTyped.label ?? resultTyped.value ?? ''
   const description = resultTyped.label ? (resultTyped.value ?? '') : ''
 
   return {
     rolls,
+    total,
     result: {
       key,
       label,

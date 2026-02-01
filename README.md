@@ -39,17 +39,23 @@ All packages are built with TypeScript, thoroughly tested, and published to NPM 
 ```typescript
 import { roll } from "@randsum/roller"
 
-// Simple d20 roll
-roll(20) // Returns 1-20
-// or
-roll("1d20") // Returns 1-20
+// Argument types: number, notation string, or options object
+roll(20) // Number: 1d20 (returns 1-20)
+roll("1d20") // Notation: same as above
+roll({ sides: 20, quantity: 1 }) // Object: same as above
 
 // Complex dice notation
 roll("4d6L") // Roll 4d6, drop lowest
 
+// Options object (equivalent to 4d6L)
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
+
 // Advantage and disadvantage
 roll("2d20H") // Roll with advantage (2d20, keep highest)
 roll("2d20L") // Roll with disadvantage (2d20, keep lowest)
+
+// Multiple arguments: combine rolls
+roll("1d20+5", "2d6+3") // Attack roll + damage roll
 
 roll("4d6L!R{<3}") // Roll 4d6, drop lowest, reroll below 3
 ```
@@ -148,14 +154,6 @@ The documentation site (`@randsum/site`) is automatically deployed to:
 
 All deployments are triggered automatically on push to the `main` branch. The site build is included in the CI pipeline via `check:all`.
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to your branch
-5. Open a Pull Request
-
 ---
 
 ## Why did you make this?
@@ -170,15 +168,15 @@ When I found the answer, I laughed and laughed. I've been chasing that high ever
 
 ## LLM Statement
 
-I have used LLM ("AI") tools while making this library. Unless I am mis-remembering, it was entirly Claude Sonnet, used through the tool Augment Code.
-
-I love this thing we call programming. It seems as if this tech might be a part of it moving forward.
+I have used LLM ("AI") tools while making this library. I've used a collection of different tools or models - I prefer the Claude collection of models, though I've played with a lot of it. I spent a lot of time with Augment, then Cursor, now I dance between Claude and Cursor and staring in the mirror.
 
 You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work.
 
-Is the use of this profane? Is my work perma-tainted? I don't know. The type-ahead suggests I say "I am not ashamed", and so I remain comforted that it is not yet able to accurately imitate my mind.
+Is the use of this profane? Is my work perma-tainted? I don't know. The type-ahead (powered by LLM's) suggests I say "I am not ashamed", and so I remain comforted that it is not yet able to accurately imitate my mind.
 
-Check the git history of this paragraph (and README, where it used to live.) for a makeshift changelog of my evolving feelings on the subject.
+> You can be grateful for the efficiency and still mourn what it cost. You can use the tools every day and still feel the weight of what they’ve changed about your craft, your career, your sense of what it means to be good at this.The code was never the point, maybe. But for a lot of us, it felt like it was. And that feeling doesn’t just disappear because the tools got better.
+
+- Dave Kiss, [Stop Calling it Vibe Coding](https://davekiss.com/blog/agentic-coding/)
 
 ---
 

@@ -22,8 +22,14 @@
   ],
   "type": "module",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.14.0",
+    "@modelcontextprotocol/sdk": "^1.25.0",
+    "@randsum/blades": "workspace:~",
+    "@randsum/daggerheart": "workspace:~",
+    "@randsum/fifth": "workspace:~",
+    "@randsum/pbta": "workspace:~",
     "@randsum/roller": "workspace:~",
+    "@randsum/root-rpg": "workspace:~",
+    "@randsum/salvageunion": "workspace:~",
     "commander": "^12.1.0",
     "zod": "^3.25.71"
   },
@@ -49,7 +55,7 @@
     "randsum-mcp": "dist/index.js"
   },
   "scripts": {
-    "build": "bunup --entry src/index.ts --format esm --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
+    "build": "bunup --entry src/index.ts --format esm --dts --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

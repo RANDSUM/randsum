@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+---
+
+<BaseLayout
+  title="Getting Started"
+  description="Learn how to use RANDSUM for dice rolling and tabletop RPG mechanics. Step-by-step guide from basics to advanced usage."
+  keywords={['getting started', 'tutorial', 'guide', 'RANDSUM', 'dice rolling']}
+>
+  <div class="getting-started-page">
+    <section class="hero">
+      <div class="container">
+        <h1>Getting Started with RANDSUM</h1>
+        <p class="hero-description">
+          Welcome to RANDSUM! This guide will walk you through the basics of using RANDSUM for dice
+          rolling and tabletop RPG mechanics.
+        </p>
+      </div>
+    </section>
+
+    <section class="learning-path">
+      <div class="container">
+        <h2>Learning Path</h2>
+        <div class="path-steps">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3><a href="/getting-started/notation">Dice Notation</a></h3>
+              <p>Learn the basics of RANDSUM dice notation and how to write roll expressions.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3><a href="/getting-started/game-packages">Game Packages</a></h3>
+              <p>Explore game-specific packages for D&D, Blades in the Dark, and more.</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3><a href="/getting-started/mcp">MCP Integration</a></h3>
+              <p>Integrate RANDSUM with AI agents using the Model Context Protocol server.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick-start">
+      <div class="container">
+        <h2>Quick Start</h2>
+        <div class="quick-start-content">
+          <p>Install the core roller package:</p>
+          <CodeExample
+            code={`npm install @randsum/roller
+# or
+bun add @randsum/roller`}
+            language="bash"
+          />
+
+          <p>Then use it in your code:</p>
+          <CodeExample
+            code={`import { roll } from '@randsum/roller'
+
+// Simple roll
+const result = roll('2d6')
+console.log(result.total) // Sum of 2d6
+
+// D&D ability score
+const abilityScore = roll('4d6L') // 4d6, drop lowest
+
+// With advantage
+const attack = roll('2d20L+5') // Advantage + modifier`}
+            language="typescript"
+          />
+
+          <p>Or use it from the command line:</p>
+          <CodeExample
+            code={`npx randsum 2d6
+npx randsum 4d6L
+npx randsum 1d20+5`}
+            language="bash"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="next-steps">
+      <div class="container">
+        <h2>Next Steps</h2>
+        <ul class="next-steps-list">
+          <li><a href="/getting-started/notation">Learn dice notation</a></li>
+          <li><a href="/packages/roller">Read the roller package docs</a></li>
+          <li><a href="https://github.com/RANDSUM/randsum">Explore on GitHub</a></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .getting-started-page {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: var(--spacing-3xl);
+    padding-bottom: var(--spacing-2xl);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .hero h1 {
+    font-size: var(--font-size-4xl);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .hero-description {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-alt);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .learning-path {
+    margin-bottom: var(--spacing-3xl);
+  }
+
+  .learning-path h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .path-steps {
+    display: grid;
+    gap: var(--spacing-xl);
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .step-card {
+    display: flex;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    background: var(--color-bg-alt);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .step-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    border-radius: 50%;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .step-content h3 {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .step-content h3 a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .step-content h3 a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .step-content p {
+    color: var(--color-text-alt);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .quick-start {
+    margin-bottom: var(--spacing-3xl);
+    padding: var(--spacing-2xl);
+    background: var(--color-bg-alt);
+    border-radius: 8px;
+  }
+
+  .quick-start h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .quick-start-content p {
+    margin: var(--spacing-lg) 0 var(--spacing-sm) 0;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-alt);
+  }
+
+  .next-steps {
+    margin-top: var(--spacing-3xl);
+    padding-top: var(--spacing-2xl);
+    border-top: var(--border-width) solid var(--color-border);
+  }
+
+  .next-steps h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .next-steps-list {
+    max-width: 600px;
+    margin: 0 auto;
+    list-style: none;
+    padding: 0;
+  }
+
+  .next-steps-list li {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    background: var(--color-bg-alt);
+    border-radius: 6px;
+    border-left: 4px solid var(--color-primary);
+  }
+
+  .next-steps-list li a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .next-steps-list li a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .step-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .step-number {
+      align-self: center;
+    }
+  }
+</style>

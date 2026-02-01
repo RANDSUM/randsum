@@ -3,6 +3,7 @@ import { rollTable } from '../src/rollTable'
 import type { SalvageUnionTableName } from '../src/types'
 import * as roller from '@randsum/roller'
 import type { RollerRollResult } from '@randsum/roller'
+import * as suRef from 'salvageunion-reference'
 
 describe('rollTable', () => {
   describe('default Core Mechanic table', () => {
@@ -124,9 +125,7 @@ describe('rollTable', () => {
         result: ['10']
       }
 
-      const rollSpy = spyOn(roller, 'roll').mockReturnValue(
-        mockRollResult as unknown as RollerRollResult
-      )
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult as RollerRollResult)
 
       const { result } = rollTable('Core Mechanic')
 
@@ -173,9 +172,7 @@ describe('rollTable', () => {
         result: ['15']
       }
 
-      const rollSpy = spyOn(roller, 'roll').mockReturnValue(
-        mockRollResult as unknown as RollerRollResult
-      )
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult as RollerRollResult)
 
       const { result } = rollTable('Quirks')
 
@@ -187,6 +184,52 @@ describe('rollTable', () => {
       expect(rollSpy).toHaveBeenCalledWith({ sides: 20 })
 
       rollSpy.mockRestore()
+    })
+
+    test('throws error when table result fails', () => {
+      const mockRollResult = {
+        total: 10,
+        rolls: [
+          {
+            description: ['1d20'],
+            parameters: {
+              quantity: 1,
+              sides: 20,
+              arithmetic: 'add' as const,
+              modifiers: {},
+              key: 'Roll 1',
+              argument: { sides: 20 },
+              notation: '1d20' as const,
+              description: ['1d20'],
+              faces: undefined
+            },
+            rolls: [10],
+            modifierHistory: {
+              logs: [],
+              modifiedRolls: [10],
+              total: 10,
+              initialRolls: [10]
+            },
+            appliedTotal: 10,
+            total: 10
+          }
+        ],
+        result: ['10']
+      }
+
+      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult as RollerRollResult)
+      const resultSpy = spyOn(suRef, 'resultForTable').mockReturnValue({
+        success: false,
+        result: null,
+        key: ''
+      })
+
+      expect(() => rollTable('Core Mechanic')).toThrow(
+        'Failed to get result from table: "Core Mechanic"'
+      )
+
+      rollSpy.mockRestore()
+      resultSpy.mockRestore()
     })
   })
 })

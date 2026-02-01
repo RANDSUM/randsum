@@ -1,36 +1,60 @@
-import type { RollRecord } from '@randsum/roller'
-import { roll } from '@randsum/roller'
+import {
+  type GameRollResult,
+  type RollRecord,
+  type RollerRollResult,
+  createGameRoll,
+  validateInteger,
+  validateNonNegative
+} from '@randsum/roller'
 import { interpretHit } from './interpretHit'
 import type { BladesResult } from '../types'
 
-export function rollBlades(count: number): {
-  result: BladesResult
-  total: number
-  rolls: RollRecord[]
-} {
-  if (!Number.isInteger(count)) {
-    throw new Error(`Blades dice pool must be an integer, received: ${count}`)
-  }
-
-  if (count < 0) {
-    throw new Error(`Blades dice pool must be non-negative, received: ${count}`)
-  }
-
-  if (count > 10) {
-    throw new Error(`Blades dice pool is unusually large (${count}). Maximum recommended is 10.`)
-  }
-  const canCrit = count > 0
-  const rollResult = roll({
-    sides: 6,
-    quantity: canCrit ? count : 2,
-    ...(canCrit
-      ? {}
-      : {
-          modifiers: { drop: { highest: 1 } }
-        })
+/**
+ * Rolls dice for Blades in the Dark.
+ *
+ * Rolls a pool of d6s and interprets the result according to Blades mechanics:
+ * - 6: Critical success
+ * - 4-5: Success
+ * - 1-3: Failure
+ * - If pool is 0, rolls 2d6 and drops the highest (desperate action)
+ *
+ * @param count - Number of dice in the pool (0-10 recommended)
+ * @returns Game roll result with Blades-specific interpretation
+ *
+ * @example
+ * ```ts
+ * const result = rollBlades(3) // Roll 3d6
+ * console.log(result.result) // "critical", "success", or "failure"
+ * ```
+ *
+ * @throws Error if count is not an integer, negative, or unusually large (>10)
+ */
+export const rollBlades: (count: number) => GameRollResult<BladesResult, undefined, RollRecord> =
+  createGameRoll<number, BladesResult>({
+    validate: (count: number) => {
+      validateInteger(count, 'Blades dice pool')
+      validateNonNegative(count, 'Blades dice pool')
+      if (count > 10) {
+        throw new Error(
+          `Blades dice pool is unusually large (${count}). Maximum recommended is 10.`
+        )
+      }
+    },
+    toRollOptions: (count: number) => {
+      const canCrit = count > 0
+      return {
+        sides: 6,
+        quantity: canCrit ? count : 2,
+        ...(canCrit ? {} : { modifiers: { drop: { highest: 1 } } })
+      }
+    },
+    interpretResult: (
+      count: number,
+      _total: number,
+      _rolls: RollRecord[],
+      fullResult: RollerRollResult
+    ): BladesResult => {
+      const canCrit = count > 0
+      return interpretHit(fullResult, canCrit)
+    }
   })
-  return {
-    ...rollResult,
-    result: interpretHit(rollResult, canCrit)
-  }
-}
