@@ -85,5 +85,9 @@ packages/*/lib/
 
 # TypeDoc generated documentation
 docs/
+packages/site/public/api/
+
+# Claude local settings
+.claude/*.local.json
 
 .notes
