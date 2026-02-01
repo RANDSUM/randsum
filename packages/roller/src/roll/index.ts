@@ -43,8 +43,8 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * @example Notation string
  * ```ts
  * const result = roll("2d6")
- * console.log(result.total) // Sum of 2d6
- * console.log(result.result) // ["3", "5"] - string representations
+ * result.total // => Sum of 2d6
+ * result.result // => ["3", "5"] - string representations
  * ```
  *
  * @example Options object
@@ -55,7 +55,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * @example Custom faces (Fate dice)
  * ```ts
  * const result = roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })
- * console.log(result.result) // ["+", "-", " ", "+"] - actual face values
+ * result.result // => ["+", "-", " ", "+"] - actual face values
  * ```
  *
  * @example With custom RNG
@@ -74,7 +74,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * ```ts
  * const result = roll("invalid notation")
  * if (result.error) {
- *   console.error(result.error.message)
+ *   result.error.message // => "Invalid dice notation: ..."
  * }
  * ```
  */

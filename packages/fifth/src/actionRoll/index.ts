@@ -17,7 +17,7 @@ import { generateModifiers } from './generateModifiers'
  * ```ts
  * const result = actionRoll({ modifier: 5 })
  * // Rolls 1d20 + 5
- * console.log(result.total) // e.g., 18
+ * result.total // => e.g., 18
  * ```
  *
  * @example With advantage

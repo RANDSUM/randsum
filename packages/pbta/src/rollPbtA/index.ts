@@ -19,7 +19,7 @@ import type { PbtAOutcome, PbtARollArgument, PbtARollDetails } from '../types'
  * @example
  * ```ts
  * const result = rollPbtA({ stat: 2, forward: 1 })
- * console.log(result.result) // "strong_hit", "weak_hit", or "miss"
+ * result.result // => "strong_hit", "weak_hit", or "miss"
  * ```
  *
  * @throws Error if stat is outside valid range (-3 to 5) or bonuses are invalid

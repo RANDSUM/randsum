@@ -24,7 +24,7 @@ import type { BladesResult } from '../types'
  * @example
  * ```ts
  * const result = rollBlades(3) // Roll 3d6
- * console.log(result.result) // "critical", "success", or "failure"
+ * result.result // => "critical", "success", "partial", or "failure"
  * ```
  *
  * @throws Error if count is not an integer, negative, or unusually large (>10)

@@ -81,9 +81,9 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
  * ```ts
  * const result = roll("4d6L")
  * if (!result.error) {
- *   console.log(result.total)   // Sum of kept dice
- *   console.log(result.result)  // Array of individual die values
- *   console.log(result.rolls)   // Full roll records with history
+ *   result.total   // => Sum of kept dice
+ *   result.result  // => Array of individual die values
+ *   result.rolls   // => Full roll records with history
  * }
  * ```
  *
@@ -91,7 +91,7 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
  * ```ts
  * const result = roll("invalid")
  * if (result.error) {
- *   console.error(result.error.message)
+ *   result.error.message // => "Invalid dice notation: ..."
  * }
  * ```
  */

@@ -34,8 +34,8 @@ export interface ProbabilityAnalysis {
  * @example
  * ```ts
  * const analysis = analyze("4d6L")
- * console.log(analysis.mean) // ~12.24
- * console.log(analysis.distribution.get(18)) // Probability of rolling 18
+ * analysis.mean // => ~12.24
+ * analysis.distribution.get(18) // => Probability of rolling 18
  * ```
  */
 export function analyze(notation: DiceNotation, samples = 10000): ProbabilityAnalysis {

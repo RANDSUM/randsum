@@ -16,9 +16,9 @@ import { notationToOptions } from './lib/notation'
  * ```ts
  * const result = validateNotation("4d6L")
  * if (result.valid) {
- *   console.log(result.options) // Parsed roll options
+ *   result.options // => Parsed roll options
  * } else {
- *   console.error(result.error.message)
+ *   result.error.message // => "Invalid dice notation: ..."
  * }
  * ```
  */
