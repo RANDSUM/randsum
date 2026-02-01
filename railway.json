@@ -2,10 +2,10 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd ../.. && bun install && cd apps/discord-bot && bun run build"
+    "buildCommand": "bun install && bun run --filter @randsum/discord-bot build"
   },
   "deploy": {
-    "startCommand": "bun run start",
+    "startCommand": "node apps/discord-bot/dist/index.js",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
