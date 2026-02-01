@@ -1,0 +1,13 @@
+services:
+  - type: worker
+    name: randsum-discord-bot
+    runtime: node
+    buildCommand: bun install && bun run --filter @randsum/discord-bot build
+    startCommand: node apps/discord-bot/dist/index.js
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: DISCORD_CLIENT_ID
+        sync: false
+      - key: DISCORD_GUILD_ID
+        sync: false
