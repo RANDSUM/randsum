@@ -232,7 +232,6 @@ This monorepo takes advantage of Bun 1.3+ features:
 [test]
 timeout = 30000              # 30s timeout
 coverage = true              # Enable coverage
-retry = 2                    # Retry flaky tests (Bun 1.3.3+)
 concurrentTestGlob = "..."   # Parallel tests (Bun 1.3+)
 ```
 
