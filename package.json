@@ -62,7 +62,7 @@
     }
   ],
   "scripts": {
-    "prepare": "lefthook install",
+    "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
     "create:game": "bun scripts/create-game-package.ts",
     "build": "bun run --bun --filter \"*\" build",
