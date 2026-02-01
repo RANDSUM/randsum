@@ -28,9 +28,9 @@ This repository contains multiple packages and applications for dice rolling and
 
 ### Applications
 
+- **[@randsum/discord-bot](apps/discord-bot)** - Discord bot with dice rolling capabilities using discord.js and Bun
+- **[@randsum/site](apps/site)** - Documentation and marketing website built with Astro
 - **[@randsum/mcp](packages/mcp)** - Model Context Protocol server for AI integration
-- **[@randsum/robo](https://github.com/RANDSUM/robo)** - Discord bot with dice rolling capabilities using Robo.js (standalone repository)
-- **[@randsum/site](packages/site)** - Documentation and marketing website built with Astro
 
 All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.
 
@@ -148,7 +148,7 @@ Each package includes comprehensive documentation:
 
 The documentation site (`@randsum/site`) is automatically deployed to:
 
-- **Netlify**: Configured via `packages/site/netlify.toml` and deployed on push to main
+- **Netlify**: Configured via `apps/site/netlify.toml` and deployed on push to main
 - **GitHub Pages (Repository)**: Deployed to the `gh-pages` branch via GitHub Actions
 - **GitHub Pages (Organization)**: Deployed to `randsum.github.io` repository via GitHub Actions
 

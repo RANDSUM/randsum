@@ -1,0 +1,54 @@
+{
+  "name": "@randsum/discord-bot",
+  "version": "0.27.0",
+  "description": "Discord bot for rolling dice using RANDSUM game mechanics",
+  "private": true,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/RANDSUM/randsum",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "apps/discord-bot"
+  },
+  "type": "module",
+  "dependencies": {
+    "@randsum/blades": "workspace:~",
+    "@randsum/daggerheart": "workspace:~",
+    "@randsum/fifth": "workspace:~",
+    "@randsum/pbta": "workspace:~",
+    "@randsum/roller": "workspace:~",
+    "@randsum/root-rpg": "workspace:~",
+    "@randsum/salvageunion": "workspace:~",
+    "discord.js": "^14.17.3"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord-bot",
+    "dice",
+    "roller",
+    "rpg",
+    "tabletop",
+    "ttrpg",
+    "randsum"
+  ],
+  "engines": {
+    "bun": ">=1.3.8",
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "bunup --entry src/index.ts --format esm --dts --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
+    "dev": "bun run src/index.ts",
+    "start": "node dist/index.js",
+    "deploy-commands": "bun run src/deploy-commands.ts",
+    "test": "bun test",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "typecheck": "tsc --noEmit"
+  }
+}

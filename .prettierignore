@@ -7,7 +7,6 @@ bun.lockb
 dist/
 build/
 out/
-.robo/
 
 # Monorepo build outputs
 packages/**/dist/*

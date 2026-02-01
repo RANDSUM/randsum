@@ -75,7 +75,7 @@
     "size": "size-limit",
     "size:check": "size-limit --json",
     "docs": "typedoc",
-    "docs:site": "typedoc --out packages/site/public/api",
+    "docs:site": "typedoc --out apps/site/public/api",
     "check:exports": "ts-unused-exports tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
     "bench": "bun run packages/roller/__benchmarks__/roll.bench.ts",
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
@@ -87,6 +87,13 @@
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun --filter @randsum/site dev",
+    "discord:dev": "cd apps/discord-bot && bun run dev",
+    "discord:deploy": "cd apps/discord-bot && bun run deploy-commands",
+    "discord:start": "cd apps/discord-bot && bun run start",
+    "discord:build": "bun --filter @randsum/discord-bot build",
+    "discord:lint": "bun --filter @randsum/discord-bot lint",
+    "discord:format": "bun --filter @randsum/discord-bot format",
+    "discord:typecheck": "bun --filter @randsum/discord-bot typecheck",
     "version": "bun pm version",
     "version:patch": "bun pm version patch",
     "version:minor": "bun pm version minor",
@@ -95,7 +102,8 @@
   },
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "overrides": {
     "qs": "6.14.1",

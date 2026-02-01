@@ -73,7 +73,7 @@ bun run --filter @randsum/mcp typecheck    # Typecheck single package
 | Script       | Purpose          | URL                       |
 | ------------ | ---------------- | ------------------------- |
 | `site:dev`   | Astro dev server | `http://localhost:4321`   |
-| `site:build` | Production build | `packages/site/dist/`     |
+| `site:build` | Production build | `apps/site/dist/`         |
 
 ### Release Management
 
@@ -157,7 +157,7 @@ bun run size:check  # JSON for CI comparison
 
 ```bash
 bun run site:dev    # Start dev server at localhost:4321
-# Make changes to packages/site/
+# Make changes to apps/site/
 bun run site:build  # Verify production build works
 ```
 
