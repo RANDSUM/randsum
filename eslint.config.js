@@ -35,7 +35,8 @@ export default tseslint.config(
       '**/bun.lockb',
       'packages/site/.astro/**',
       '**/.astro/**',
-      '**/.netlify/**'
+      '**/.netlify/**',
+      '**/public/**'
     ]
   },
   {
