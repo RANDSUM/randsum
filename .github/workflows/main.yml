@@ -46,5 +46,16 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: bun run size
 
-      - name: Run checks
-        run: bun run --bun --filter "*" --concurrency 2 lint && bun run format:check && bun run typecheck && bun run site:build
+      - name: Lint
+        run: bun run --smol lint
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Format check
+        run: bun run format:check
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Build site
+        run: bun run site:build
