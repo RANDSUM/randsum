@@ -12,6 +12,8 @@ coverage = true
 coverageReporter = ["text", "lcov"]
 # Coverage output directory
 coverageDir = "./coverage"
+# Exclude build output and test utilities from coverage
+coveragePathIgnorePatterns = ["**/dist/**", "**/node_modules/**", "**/test-utils/**"]
 
 # Retry flaky tests up to 2 times (Bun 1.3.3+)
 retry = 2

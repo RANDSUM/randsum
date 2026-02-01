@@ -77,7 +77,7 @@
     "size:check": "size-limit --json",
     "docs": "typedoc",
     "docs:site": "typedoc --out packages/site/public/api",
-    "check:exports": "ts-unused-exports tsconfig.json --ignoreFiles='**/__tests__/**' --ignoreFiles='**/test-utils/**'",
+    "check:exports": "ts-unused-exports tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]'",
     "bench": "bun run packages/roller/__benchmarks__/roll.bench.ts",
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
