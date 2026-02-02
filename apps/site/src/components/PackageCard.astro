@@ -9,10 +9,11 @@ interface Props {
 const { package: pkg } = Astro.props
 const packageColor = pkg.color || 'var(--color-border)'
 const isGradient = packageColor.includes('gradient')
+const packageUrl = pkg.id === 'skill' ? `/tools/${pkg.id}/` : `/packages/${pkg.id}/`
 ---
 
 <a
-  href={`/packages/${pkg.id}/`}
+  href={packageUrl}
   class={`package-card ${isGradient ? 'package-card-gradient' : ''}`}
   style={isGradient ? `--package-gradient: ${packageColor};` : `--package-color: ${packageColor};`}
 >
