@@ -168,11 +168,11 @@ When I found the answer, I laughed and laughed. I've been chasing that high ever
 
 ## LLM Statement
 
-I have used LLM ("AI") tools while making this library. I've used a collection of different tools or models - I prefer the Claude collection of models, though I've played with a lot of it. I spent a lot of time with Augment, then Cursor, now I dance between Claude and Cursor and staring in the mirror.
-
-You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work.
+Though this project predates the existence of Large learning machines by a clean decade, since their popularization I have used LLM (so-called "AI") tools while making this library. I've used a collection of different tools or models - I prefer the Claude collection of models, though I've played with a lot of it. I spent a lot of time with Augment, then Cursor, now I dance between Claude and Cursor and staring in the mirror wondering what happened.
 
 Is the use of this profane? Is my work perma-tainted? I don't know. The type-ahead (powered by LLM's) suggests I say "I am not ashamed", and so I remain comforted that it is not yet able to accurately imitate my mind.
+
+You will find the extent of my comfort with these tools in this project, for it is the closest thing I have on this earth to a life's work, with programming ("what the machines do for me") is the closest thing I have to a craft. One grandfather was an engineer, the other a bricklayer. In my career thus far, I have been blessed to be some combination of both.
 
 > You can be grateful for the efficiency and still mourn what it cost. You can use the tools every day and still feel the weight of what they’ve changed about your craft, your career, your sense of what it means to be good at this.The code was never the point, maybe. But for a lot of us, it felt like it was. And that feeling doesn’t just disappear because the tools got better.
 
