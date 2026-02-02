@@ -1,0 +1,99 @@
+---
+interface Props {
+  package: string
+  showPackageName?: boolean
+}
+
+const { package: packageName, showPackageName = true } = Astro.props
+---
+
+<span class="npm-version" data-npm-package={packageName}>
+  {showPackageName && <span class="npm-package-name">{packageName}</span>}
+  <span class="npm-version-badge" data-version-target>...</span>
+</span>
+
+<script>
+  const versionCache: Record<string, string> = {}
+
+  async function fetchNpmVersion(packageName: string): Promise<string> {
+    if (versionCache[packageName]) {
+      return versionCache[packageName]
+    }
+
+    try {
+      const response = await fetch(
+        `https://registry.npmjs.org/${packageName}/latest`
+      )
+      if (!response.ok) {
+        throw new Error('Package not found')
+      }
+      const data = await response.json()
+      versionCache[packageName] = data.version
+      return data.version
+    } catch {
+      return ''
+    }
+  }
+
+  function initVersionBadges() {
+    const badges = document.querySelectorAll('[data-npm-package]')
+    badges.forEach(async (badge) => {
+      const packageName = badge.getAttribute('data-npm-package')
+      if (!packageName) return
+
+      const target = badge.querySelector('[data-version-target]')
+      if (!target) return
+
+      const version = await fetchNpmVersion(packageName)
+      if (version) {
+        target.textContent = `v${version}`
+      } else {
+        target.textContent = ''
+      }
+    })
+  }
+
+  // Run on initial load
+  initVersionBadges()
+
+  // Run on Astro page navigation
+  document.addEventListener('astro:page-load', initVersionBadges)
+</script>
+
+<style>
+  .npm-version {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+  }
+
+  .npm-package-name {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--color-bg-alt);
+    border: var(--border-width) solid var(--color-border);
+    font-weight: var(--font-weight-medium);
+    border-radius: 4px 0 0 4px;
+    color: var(--color-text-alt);
+  }
+
+  .npm-version-badge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: var(--font-weight-bold);
+    border-radius: 0 4px 4px 0;
+    min-width: 3em;
+    text-align: center;
+  }
+
+  .npm-version:has(.npm-package-name:empty) .npm-version-badge,
+  .npm-version:not(:has(.npm-package-name)) .npm-version-badge {
+    border-radius: 4px;
+  }
+
+  .npm-version-badge:empty {
+    display: none;
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import type { PackageInfo } from '../utils/packageData'
+import NpmVersion from './NpmVersion.astro'
 
 interface Props {
   package: PackageInfo
@@ -17,7 +18,7 @@ const isGradient = packageColor.includes('gradient')
 >
   <div class="package-card-header" style={`border-color: ${packageColor}`}>
     <h3 class="package-card-title">{pkg.displayName}</h3>
-    <span class="package-card-badge">{pkg.npmPackage}</span>
+    <NpmVersion package={pkg.npmPackage} />
   </div>
   <p class="package-card-description">{pkg.description}</p>
   {
@@ -88,16 +89,6 @@ const isGradient = packageColor.includes('gradient')
     font-weight: var(--font-weight-bold);
   }
 
-  .package-card-badge {
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-xs);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    background-color: var(--color-bg-alt);
-    border: var(--border-width) solid var(--color-border);
-    font-weight: var(--font-weight-medium);
-    border-radius: 4px;
-    color: var(--color-text-alt);
-  }
 
   .package-card-description {
     flex-grow: 1;

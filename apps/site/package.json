@@ -1,6 +1,6 @@
 {
   "name": "@randsum/site",
-  "version": "0.27.0",
+  "version": "1.0.0",
   "description": "RANDSUM documentation and marketing website built with Astro",
   "private": true,
   "sideEffects": false,

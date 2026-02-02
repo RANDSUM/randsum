@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro'
 import Navigation from '../components/Navigation.astro'
+import NpmVersion from '../components/NpmVersion.astro'
 import type { PackageInfo } from '../utils/packageData'
 import { allPackages } from '../utils/packageData'
 
@@ -137,7 +138,9 @@ const packageSchema = {
             <div class="docs-header-content">
               <div class="docs-header-text">
                 <h1 class="docs-title" itemprop="name">{pkg.displayName}</h1>
-                <p class="docs-package-name" itemprop="applicationCategory">{pkg.npmPackage}</p>
+                <div class="docs-package-info">
+                  <NpmVersion package={pkg.npmPackage} />
+                </div>
                 <p class="docs-description" itemprop="description">{pkg.description}</p>
               </div>
               <slot name="header-action" />
@@ -329,27 +332,20 @@ const packageSchema = {
     color: transparent;
   }
 
-  .docs-package-name {
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-lg);
-    color: var(--color-text-alt);
+  .docs-package-info {
     margin: 0 0 var(--spacing-md) 0;
-    font-weight: var(--font-weight-bold);
-    transition: color var(--transition-fast);
-    cursor: default;
   }
 
-  .docs-package-name:hover {
-    color: var(--package-color, var(--color-text-alt));
+  .docs-package-info :global(.npm-version) {
+    font-size: var(--font-size-sm);
   }
 
-  /* For gradient colors, use background gradient with text clipping */
-  .docs-body-gradient .docs-package-name:hover {
-    background: var(--package-color);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+  .docs-package-info :global(.npm-package-name) {
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .docs-package-info :global(.npm-version-badge) {
+    padding: var(--spacing-xs) var(--spacing-md);
   }
 
   .docs-description {

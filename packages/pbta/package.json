@@ -1,6 +1,6 @@
 {
   "name": "@randsum/pbta",
-  "version": "0.27.0",
+  "version": "1.0.0",
   "description": "A flexible, type-safe dice roller for Powered by the Apocalypse games",
   "private": false,
   "author": {
