@@ -98,7 +98,7 @@
     "version:patch": "bun pm version patch",
     "version:minor": "bun pm version minor",
     "version:major": "bun pm version major",
-    "publish": "bun run build && bun run test && bun run lint && bun run typecheck && bun --filter \"*\" publish --access=public --no-git-checks"
+    "publish": "bun run build && bun run test && bun run lint && bun run typecheck && npm publish --workspaces --access=public"
   },
   "type": "module",
   "workspaces": [
