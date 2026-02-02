@@ -1,42 +1,32 @@
 # @randsum/site
 
-RANDSUM documentation and marketing website built with Astro.
+RANDSUM documentation website built with Astro.
 
-## Overview
-
-This package provides the official documentation and marketing website for the RANDSUM dice rolling system. It's built with Astro for optimal performance and includes documentation for all RANDSUM packages and game-specific implementations.
-
-## Features
-
-- Documentation for all RANDSUM packages
-- Game-specific dice rolling guides
-- Interactive examples and demos
-- Responsive design with modern UI
-- SEO optimized with sitemap generation
-
-## Installation
-
-This package is part of the RANDSUM monorepo and uses Bun workspace dependencies.
+**Live: [randsum.dev](https://randsum.dev)**
 
 ## Development
 
 ```bash
-# Install dependencies (from monorepo root)
+# From monorepo root
 bun install
+bun run site:dev      # Start dev server
+bun run site:build    # Build for production
+```
 
-# Run development server
-bun run --filter @randsum/site dev
+## Structure
 
-# Build for production
-bun run --filter @randsum/site build
-
-# Preview production build
-bun run --filter @randsum/site preview
+```text
+src/
+  pages/        # Route pages
+  components/   # React/Astro components
+  layouts/      # Page layouts
+public/
+  api/          # Generated TypeDoc API docs (via `bun run docs:site`)
 ```
 
 ## Deployment
 
-The site is configured to deploy to Netlify. The build output is in the `dist/` directory.
+Deployed automatically to Netlify on push to `main`.
 
 ## License
 

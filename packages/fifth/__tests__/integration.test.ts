@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
-import { actionRoll } from '../src'
+import { roll } from '../src'
 import type { FifthRollArgument } from '../src'
 
-describe('actionRoll integration with roller', () => {
+describe('roll integration with roller', () => {
   test('uses roller with correct parameters for basic roll', () => {
-    const result = actionRoll({ modifier: 5 })
+    const result = roll({ modifier: 5 })
 
     // Verify it returns a valid result
     expect(result.total).toBeGreaterThanOrEqual(6)
@@ -19,7 +19,7 @@ describe('actionRoll integration with roller', () => {
       rollingWith: { advantage: true }
     }
 
-    const result = actionRoll(args)
+    const result = roll(args)
 
     // Verify advantage mechanics
     expect(result.rolls[0]?.modifierHistory.initialRolls).toHaveLength(2)
@@ -34,7 +34,7 @@ describe('actionRoll integration with roller', () => {
       rollingWith: { disadvantage: true }
     }
 
-    const result = actionRoll(args)
+    const result = roll(args)
 
     // Verify disadvantage mechanics
     expect(result.rolls[0]?.modifierHistory.initialRolls).toHaveLength(2)

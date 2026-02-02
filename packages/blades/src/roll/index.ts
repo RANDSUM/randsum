@@ -23,13 +23,13 @@ import type { BladesResult } from '../types'
  *
  * @example
  * ```ts
- * const result = rollBlades(3) // Roll 3d6
+ * const result = roll(3) // Roll 3d6
  * result.result // => "critical", "success", "partial", or "failure"
  * ```
  *
  * @throws Error if count is not an integer, negative, or unusually large (>10)
  */
-export const rollBlades: (count: number) => GameRollResult<BladesResult, undefined, RollRecord> =
+export const roll: (count: number) => GameRollResult<BladesResult, undefined, RollRecord> =
   createGameRoll<number, BladesResult>({
     validate: (count: number) => {
       validateInteger(count, 'Blades dice pool')

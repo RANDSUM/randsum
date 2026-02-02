@@ -35,29 +35,29 @@ window.translations = {
 }
 ;('use strict')
 ;(() => {
-  const Ke = Object.create
-  const he = Object.defineProperty
-  const Ge = Object.getOwnPropertyDescriptor
-  const Ze = Object.getOwnPropertyNames
-  const Xe = Object.getPrototypeOf,
+  var Ke = Object.create
+  var he = Object.defineProperty
+  var Ge = Object.getOwnPropertyDescriptor
+  var Ze = Object.getOwnPropertyNames
+  var Xe = Object.getPrototypeOf,
     Ye = Object.prototype.hasOwnProperty
-  const et = (t, e) => () => (e || t((e = { exports: {} }).exports, e), e.exports)
-  const tt = (t, e, n, r) => {
+  var et = (t, e) => () => (e || t((e = { exports: {} }).exports, e), e.exports)
+  var tt = (t, e, n, r) => {
     if ((e && typeof e == 'object') || typeof e == 'function')
-      for (const i of Ze(e))
+      for (let i of Ze(e))
         !Ye.call(t, i) &&
           i !== n &&
           he(t, i, { get: () => e[i], enumerable: !(r = Ge(e, i)) || r.enumerable })
     return t
   }
-  const nt = (t, e, n) => (
+  var nt = (t, e, n) => (
     (n = t != null ? Ke(Xe(t)) : {}),
-    tt(e || !t?.__esModule ? he(n, 'default', { value: t, enumerable: !0 }) : n, t)
+    tt(e || !t || !t.__esModule ? he(n, 'default', { value: t, enumerable: !0 }) : n, t)
   )
-  const ye = et((me, ge) => {
+  var ye = et((me, ge) => {
     ;(function () {
-      const t = function (e) {
-        const n = new t.Builder()
+      var t = function (e) {
+        var n = new t.Builder()
         return (
           n.pipeline.add(t.trimmer, t.stopWordFilter, t.stemmer),
           n.searchPipeline.add(t.stemmer),
@@ -78,7 +78,7 @@ window.translations = {
         (t.utils.clone = function (e) {
           if (e == null) return e
           for (var n = Object.create(null), r = Object.keys(e), i = 0; i < r.length; i++) {
-            const s = r[i],
+            var s = r[i],
               o = e[s]
             if (Array.isArray(o)) {
               n[s] = o.slice()
@@ -97,9 +97,9 @@ window.translations = {
         }),
         (t.FieldRef.joiner = '/'),
         (t.FieldRef.fromString = function (e) {
-          const n = e.indexOf(t.FieldRef.joiner)
+          var n = e.indexOf(t.FieldRef.joiner)
           if (n === -1) throw 'malformed field ref string'
-          const r = e.slice(0, n),
+          var r = e.slice(0, n),
             i = e.slice(n + 1)
           return new t.FieldRef(i, r, e)
         }),
@@ -113,28 +113,28 @@ window.translations = {
       ;((t.Set = function (e) {
         if (((this.elements = Object.create(null)), e)) {
           this.length = e.length
-          for (let n = 0; n < this.length; n++) this.elements[e[n]] = !0
+          for (var n = 0; n < this.length; n++) this.elements[e[n]] = !0
         } else this.length = 0
       }),
         (t.Set.complete = {
-          intersect(e) {
+          intersect: function (e) {
             return e
           },
-          union() {
+          union: function () {
             return this
           },
-          contains() {
+          contains: function () {
             return !0
           }
         }),
         (t.Set.empty = {
-          intersect() {
+          intersect: function () {
             return this
           },
-          union(e) {
+          union: function (e) {
             return e
           },
-          contains() {
+          contains: function () {
             return !1
           }
         }),
@@ -142,7 +142,7 @@ window.translations = {
           return !!this.elements[e]
         }),
         (t.Set.prototype.intersect = function (e) {
-          let n,
+          var n,
             r,
             i,
             s = []
@@ -150,8 +150,8 @@ window.translations = {
           if (e === t.Set.empty) return e
           ;(this.length < e.length ? ((n = this), (r = e)) : ((n = e), (r = this)),
             (i = Object.keys(n.elements)))
-          for (let o = 0; o < i.length; o++) {
-            const a = i[o]
+          for (var o = 0; o < i.length; o++) {
+            var a = i[o]
             a in r.elements && s.push(a)
           }
           return new t.Set(s)
@@ -164,9 +164,9 @@ window.translations = {
               : new t.Set(Object.keys(this.elements).concat(Object.keys(e.elements)))
         }),
         (t.idf = function (e, n) {
-          let r = 0
-          for (const i in e) i != '_index' && (r += Object.keys(e[i]).length)
-          const s = (n - r + 0.5) / (r + 0.5)
+          var r = 0
+          for (var i in e) i != '_index' && (r += Object.keys(e[i]).length)
+          var s = (n - r + 0.5) / (r + 0.5)
           return Math.log(1 + Math.abs(s))
         }),
         (t.Token = function (e, n) {
@@ -191,15 +191,15 @@ window.translations = {
       ;((t.tokenizer = function (e, n) {
         if (e == null || e == null) return []
         if (Array.isArray(e))
-          return e.map(f => {
+          return e.map(function (f) {
             return new t.Token(t.utils.asString(f).toLowerCase(), t.utils.clone(n))
           })
         for (var r = e.toString().toLowerCase(), i = r.length, s = [], o = 0, a = 0; o <= i; o++) {
-          const c = r.charAt(o),
+          var c = r.charAt(o),
             l = o - a
           if (c.match(t.tokenizer.separator) || o == i) {
             if (l > 0) {
-              const d = t.utils.clone(n) || {}
+              var d = t.utils.clone(n) || {}
               ;((d.position = [a, l]), (d.index = s.length), s.push(new t.Token(r.slice(a, o), d)))
             }
             a = o + 1
@@ -219,7 +219,7 @@ window.translations = {
             (t.Pipeline.registeredFunctions[e.label] = e))
         }),
         (t.Pipeline.warnIfFunctionNotRegistered = function (e) {
-          const n = e.label && e.label in this.registeredFunctions
+          var n = e.label && e.label in this.registeredFunctions
           n ||
             t.utils.warn(
               `Function is not registered with pipeline. This may cause problems when serialising the index.
@@ -228,10 +228,10 @@ window.translations = {
             )
         }),
         (t.Pipeline.load = function (e) {
-          const n = new t.Pipeline()
+          var n = new t.Pipeline()
           return (
-            e.forEach(r => {
-              const i = t.Pipeline.registeredFunctions[r]
+            e.forEach(function (r) {
+              var i = t.Pipeline.registeredFunctions[r]
               if (i) n.add(i)
               else throw new Error('Cannot load unregistered function: ' + r)
             }),
@@ -239,33 +239,33 @@ window.translations = {
           )
         }),
         (t.Pipeline.prototype.add = function () {
-          const e = Array.prototype.slice.call(arguments)
+          var e = Array.prototype.slice.call(arguments)
           e.forEach(function (n) {
             ;(t.Pipeline.warnIfFunctionNotRegistered(n), this._stack.push(n))
           }, this)
         }),
         (t.Pipeline.prototype.after = function (e, n) {
           t.Pipeline.warnIfFunctionNotRegistered(n)
-          let r = this._stack.indexOf(e)
+          var r = this._stack.indexOf(e)
           if (r == -1) throw new Error('Cannot find existingFn')
           ;((r = r + 1), this._stack.splice(r, 0, n))
         }),
         (t.Pipeline.prototype.before = function (e, n) {
           t.Pipeline.warnIfFunctionNotRegistered(n)
-          const r = this._stack.indexOf(e)
+          var r = this._stack.indexOf(e)
           if (r == -1) throw new Error('Cannot find existingFn')
           this._stack.splice(r, 0, n)
         }),
         (t.Pipeline.prototype.remove = function (e) {
-          const n = this._stack.indexOf(e)
+          var n = this._stack.indexOf(e)
           n != -1 && this._stack.splice(n, 1)
         }),
         (t.Pipeline.prototype.run = function (e) {
-          for (let n = this._stack.length, r = 0; r < n; r++) {
+          for (var n = this._stack.length, r = 0; r < n; r++) {
             for (var i = this._stack[r], s = [], o = 0; o < e.length; o++) {
-              const a = i(e[o], o, e)
+              var a = i(e[o], o, e)
               if (!(a == null || a === ''))
-                if (Array.isArray(a)) for (let c = 0; c < a.length; c++) s.push(a[c])
+                if (Array.isArray(a)) for (var c = 0; c < a.length; c++) s.push(a[c])
                 else s.push(a)
             }
             e = s
@@ -273,8 +273,8 @@ window.translations = {
           return e
         }),
         (t.Pipeline.prototype.runString = function (e, n) {
-          const r = new t.Token(e, n)
-          return this.run([r]).map(i => {
+          var r = new t.Token(e, n)
+          return this.run([r]).map(function (i) {
             return i.toString()
           })
         }),
@@ -282,7 +282,7 @@ window.translations = {
           this._stack = []
         }),
         (t.Pipeline.prototype.toJSON = function () {
-          return this._stack.map(e => {
+          return this._stack.map(function (e) {
             return (t.Pipeline.warnIfFunctionNotRegistered(e), e.label)
           })
         }))
@@ -304,13 +304,13 @@ window.translations = {
           if (o < e) return (s + 1) * 2
         }),
         (t.Vector.prototype.insert = function (e, n) {
-          this.upsert(e, n, () => {
+          this.upsert(e, n, function () {
             throw 'duplicate index'
           })
         }),
         (t.Vector.prototype.upsert = function (e, n, r) {
           this._magnitude = 0
-          const i = this.positionForIndex(e)
+          var i = this.positionForIndex(e)
           this.elements[i] == e
             ? (this.elements[i + 1] = r(this.elements[i + 1], n))
             : this.elements.splice(i, 0, e, n)
@@ -318,7 +318,7 @@ window.translations = {
         (t.Vector.prototype.magnitude = function () {
           if (this._magnitude) return this._magnitude
           for (var e = 0, n = this.elements.length, r = 1; r < n; r += 2) {
-            const i = this.elements[r]
+            var i = this.elements[r]
             e += i * i
           }
           return (this._magnitude = Math.sqrt(e))
@@ -361,7 +361,7 @@ window.translations = {
           return this.elements
         }))
       ;((t.stemmer = (function () {
-        const e = {
+        var e = {
             ational: 'ate',
             tional: 'tion',
             enci: 'ence',
@@ -415,7 +415,7 @@ window.translations = {
           U = /ll$/,
           J = new RegExp('^' + s + i + '[^aeiouwxy]$'),
           V = function (u) {
-            let y, P, k, h, E, Q, H
+            var y, P, k, h, E, Q, H
             if (u.length < 3) return u
             if (
               ((k = u.substr(0, 1)),
@@ -485,7 +485,7 @@ window.translations = {
       })()),
         t.Pipeline.registerFunction(t.stemmer, 'stemmer'))
       ;((t.generateStopWordFilter = function (e) {
-        const n = e.reduce((r, i) => {
+        var n = e.reduce(function (r, i) {
           return ((r[i] = i), r)
         }, {})
         return function (r) {
@@ -615,7 +615,7 @@ window.translations = {
         ])),
         t.Pipeline.registerFunction(t.stopWordFilter, 'stopWordFilter'))
       ;((t.trimmer = function (e) {
-        return e.update(n => {
+        return e.update(function (n) {
           return n.replace(/^\W+/, '').replace(/\W+$/, '')
         })
       }),
@@ -638,7 +638,7 @@ window.translations = {
         }),
         (t.TokenSet.fromFuzzyString = function (e, n) {
           for (var r = new t.TokenSet(), i = [{ node: r, editsRemaining: n, str: e }]; i.length; ) {
-            const s = i.pop()
+            var s = i.pop()
             if (s.str.length > 0) {
               var o = s.str.charAt(0),
                 a
@@ -694,11 +694,11 @@ window.translations = {
         }),
         (t.TokenSet.fromString = function (e) {
           for (var n = new t.TokenSet(), r = n, i = 0, s = e.length; i < s; i++) {
-            const o = e[i],
+            var o = e[i],
               a = i == s - 1
             if (o == '*') ((n.edges[o] = n), (n.final = a))
             else {
-              const c = new t.TokenSet()
+              var c = new t.TokenSet()
               ;((c.final = a), (n.edges[o] = c), (n = c))
             }
           }
@@ -706,12 +706,12 @@ window.translations = {
         }),
         (t.TokenSet.prototype.toArray = function () {
           for (var e = [], n = [{ prefix: '', node: this }]; n.length; ) {
-            const r = n.pop(),
+            var r = n.pop(),
               i = Object.keys(r.node.edges),
               s = i.length
             r.node.final && (r.prefix.charAt(0), e.push(r.prefix))
-            for (let o = 0; o < s; o++) {
-              const a = i[o]
+            for (var o = 0; o < s; o++) {
+              var a = i[o]
               n.push({ prefix: r.prefix.concat(a), node: r.node.edges[a] })
             }
           }
@@ -724,7 +724,7 @@ window.translations = {
             i < r;
             i++
           ) {
-            const s = n[i],
+            var s = n[i],
               o = this.edges[s]
             e = e + s + o.id
           }
@@ -737,7 +737,7 @@ window.translations = {
           ) {
             r = i.pop()
             for (
-              let s = Object.keys(r.qNode.edges),
+              var s = Object.keys(r.qNode.edges),
                 o = s.length,
                 a = Object.keys(r.node.edges),
                 c = a.length,
@@ -745,10 +745,10 @@ window.translations = {
               l < o;
               l++
             )
-              for (let d = s[l], f = 0; f < c; f++) {
-                const p = a[f]
+              for (var d = s[l], f = 0; f < c; f++) {
+                var p = a[f]
                 if (p == d || d == '*') {
-                  let v = r.node.edges[p],
+                  var v = r.node.edges[p],
                     x = r.qNode.edges[d],
                     w = v.final && x.final,
                     m = void 0
@@ -768,7 +768,7 @@ window.translations = {
             (this.minimizedNodes = {}))
         }),
         (t.TokenSet.Builder.prototype.insert = function (e) {
-          let n,
+          var n,
             r = 0
           if (e < this.previousWord) throw new Error('Out of order word insertion')
           for (
@@ -782,7 +782,7 @@ window.translations = {
               ? (n = this.root)
               : (n = this.uncheckedNodes[this.uncheckedNodes.length - 1].child))
           for (var i = r; i < e.length; i++) {
-            const s = new t.TokenSet(),
+            var s = new t.TokenSet(),
               o = e[i]
             ;((n.edges[o] = s), this.uncheckedNodes.push({ parent: n, char: o, child: s }), (n = s))
           }
@@ -792,8 +792,8 @@ window.translations = {
           this.minimize(0)
         }),
         (t.TokenSet.Builder.prototype.minimize = function (e) {
-          for (let n = this.uncheckedNodes.length - 1; n >= e; n--) {
-            const r = this.uncheckedNodes[n],
+          for (var n = this.uncheckedNodes.length - 1; n >= e; n--) {
+            var r = this.uncheckedNodes[n],
               i = r.child.toString()
             ;(i in this.minimizedNodes
               ? (r.parent.edges[r.char] = this.minimizedNodes[i])
@@ -809,8 +809,8 @@ window.translations = {
           (this.pipeline = e.pipeline))
       }),
         (t.Index.prototype.search = function (e) {
-          return this.query(n => {
-            const r = new t.QueryParser(e, n)
+          return this.query(function (n) {
+            var r = new t.QueryParser(e, n)
             r.parse()
           })
         }),
@@ -829,16 +829,16 @@ window.translations = {
             i[this.fields[c]] = new t.Vector()
           e.call(n, n)
           for (var c = 0; c < n.clauses.length; c++) {
-            let l = n.clauses[c],
+            var l = n.clauses[c],
               d = null,
               f = t.Set.empty
             l.usePipeline
               ? (d = this.pipeline.runString(l.term, { fields: l.fields }))
               : (d = [l.term])
-            for (let p = 0; p < d.length; p++) {
-              const v = d[p]
+            for (var p = 0; p < d.length; p++) {
+              var v = d[p]
               l.term = v
-              const x = t.TokenSet.fromClause(l),
+              var x = t.TokenSet.fromClause(l),
                 w = this.tokenSet.intersect(x).toArray()
               if (w.length === 0 && l.presence === t.Query.presence.REQUIRED) {
                 for (var m = 0; m < l.fields.length; m++) {
@@ -847,7 +847,7 @@ window.translations = {
                 }
                 break
               }
-              for (let T = 0; T < w.length; T++)
+              for (var T = 0; T < w.length; T++)
                 for (
                   var L = w[T], C = this.invertedIndex[L], O = C._index, m = 0;
                   m < l.fields.length;
@@ -867,12 +867,12 @@ window.translations = {
                     continue
                   }
                   if (
-                    (i[g].upsert(O, l.boost, (Ue, Je) => {
+                    (i[g].upsert(O, l.boost, function (Ue, Je) {
                       return Ue + Je
                     }),
                     !s[q])
                   ) {
-                    for (let B = 0; B < N.length; B++) {
+                    for (var B = 0; B < N.length; B++) {
                       var z = N[B],
                         _ = new t.FieldRef(z, g),
                         U = j[z],
@@ -893,7 +893,7 @@ window.translations = {
             var g = this.fields[c]
             ;(o[g] && (V = V.intersect(o[g])), a[g] && (A = A.union(a[g])))
           }
-          let u = Object.keys(r),
+          var u = Object.keys(r),
             y = [],
             P = Object.create(null)
           if (n.isNegated()) {
@@ -913,17 +913,17 @@ window.translations = {
                 H
               if ((H = P[h]) !== void 0) ((H.score += Q), H.matchData.combine(r[k]))
               else {
-                const b = { ref: h, score: Q, matchData: r[k] }
+                var b = { ref: h, score: Q, matchData: r[k] }
                 ;((P[h] = b), y.push(b))
               }
             }
           }
-          return y.sort((We, ze) => {
+          return y.sort(function (We, ze) {
             return ze.score - We.score
           })
         }),
         (t.Index.prototype.toJSON = function () {
-          const e = Object.keys(this.invertedIndex)
+          var e = Object.keys(this.invertedIndex)
               .sort()
               .map(function (r) {
                 return [r, this.invertedIndex[r]]
@@ -940,7 +940,7 @@ window.translations = {
           }
         }),
         (t.Index.load = function (e) {
-          const n = {},
+          var n = {},
             r = {},
             i = e.fieldVectors,
             s = Object.create(null),
@@ -1007,11 +1007,11 @@ window.translations = {
           this._k1 = e
         }),
         (t.Builder.prototype.add = function (e, n) {
-          const r = e[this._ref],
+          var r = e[this._ref],
             i = Object.keys(this._fields)
           ;((this._documents[r] = n || {}), (this.documentCount += 1))
-          for (let s = 0; s < i.length; s++) {
-            const o = i[s],
+          for (var s = 0; s < i.length; s++) {
+            var o = i[s],
               a = this._fields[o].extractor,
               c = a ? a(e) : e[o],
               l = this.tokenizer(c, { fields: [o] }),
@@ -1021,18 +1021,18 @@ window.translations = {
             ;((this.fieldTermFrequencies[f] = p),
               (this.fieldLengths[f] = 0),
               (this.fieldLengths[f] += d.length))
-            for (let v = 0; v < d.length; v++) {
-              const x = d[v]
+            for (var v = 0; v < d.length; v++) {
+              var x = d[v]
               if ((p[x] == null && (p[x] = 0), (p[x] += 1), this.invertedIndex[x] == null)) {
-                const w = Object.create(null)
+                var w = Object.create(null)
                 ;((w._index = this.termIndex), (this.termIndex += 1))
-                for (let m = 0; m < i.length; m++) w[i[m]] = Object.create(null)
+                for (var m = 0; m < i.length; m++) w[i[m]] = Object.create(null)
                 this.invertedIndex[x] = w
               }
               this.invertedIndex[x][o][r] == null &&
                 (this.invertedIndex[x][o][r] = Object.create(null))
-              for (let g = 0; g < this.metadataWhitelist.length; g++) {
-                const T = this.metadataWhitelist[g],
+              for (var g = 0; g < this.metadataWhitelist.length; g++) {
+                var T = this.metadataWhitelist[g],
                   L = x.metadata[T]
                 ;(this.invertedIndex[x][o][r][T] == null && (this.invertedIndex[x][o][r][T] = []),
                   this.invertedIndex[x][o][r][T].push(L))
@@ -1046,12 +1046,12 @@ window.translations = {
             s < n;
             s++
           ) {
-            const o = t.FieldRef.fromString(e[s]),
+            var o = t.FieldRef.fromString(e[s]),
               a = o.fieldName
             ;(i[a] || (i[a] = 0), (i[a] += 1), r[a] || (r[a] = 0), (r[a] += this.fieldLengths[o]))
           }
           for (var c = Object.keys(this._fields), s = 0; s < c.length; s++) {
-            const l = c[s]
+            var l = c[s]
             r[l] = r[l] / i[l]
           }
           this.averageFieldLength = r
@@ -1119,28 +1119,28 @@ window.translations = {
           )
         }),
         (t.Builder.prototype.use = function (e) {
-          const n = Array.prototype.slice.call(arguments, 1)
+          var n = Array.prototype.slice.call(arguments, 1)
           ;(n.unshift(this), e.apply(this, n))
         }),
         (t.MatchData = function (e, n, r) {
           for (var i = Object.create(null), s = Object.keys(r || {}), o = 0; o < s.length; o++) {
-            const a = s[o]
+            var a = s[o]
             i[a] = r[a].slice()
           }
           ;((this.metadata = Object.create(null)),
             e !== void 0 && ((this.metadata[e] = Object.create(null)), (this.metadata[e][n] = i)))
         }),
         (t.MatchData.prototype.combine = function (e) {
-          for (let n = Object.keys(e.metadata), r = 0; r < n.length; r++) {
-            const i = n[r],
+          for (var n = Object.keys(e.metadata), r = 0; r < n.length; r++) {
+            var i = n[r],
               s = Object.keys(e.metadata[i])
             this.metadata[i] == null && (this.metadata[i] = Object.create(null))
-            for (let o = 0; o < s.length; o++) {
-              const a = s[o],
+            for (var o = 0; o < s.length; o++) {
+              var a = s[o],
                 c = Object.keys(e.metadata[i][a])
               this.metadata[i][a] == null && (this.metadata[i][a] = Object.create(null))
-              for (let l = 0; l < c.length; l++) {
-                const d = c[l]
+              for (var l = 0; l < c.length; l++) {
+                var d = c[l]
                 this.metadata[i][a][d] == null
                   ? (this.metadata[i][a][d] = e.metadata[i][a][d])
                   : (this.metadata[i][a][d] = this.metadata[i][a][d].concat(e.metadata[i][a][d]))
@@ -1157,8 +1157,8 @@ window.translations = {
             this.metadata[e][n] = r
             return
           }
-          for (let i = Object.keys(r), s = 0; s < i.length; s++) {
-            const o = i[s]
+          for (var i = Object.keys(r), s = 0; s < i.length; s++) {
+            var o = i[s]
             o in this.metadata[e][n]
               ? (this.metadata[e][n][o] = this.metadata[e][n][o].concat(r[o]))
               : (this.metadata[e][n][o] = r[o])
@@ -1190,7 +1190,7 @@ window.translations = {
           )
         }),
         (t.Query.prototype.isNegated = function () {
-          for (let e = 0; e < this.clauses.length; e++)
+          for (var e = 0; e < this.clauses.length; e++)
             if (this.clauses[e].presence != t.Query.presence.PROHIBITED) return !1
           return !0
         }),
@@ -1202,7 +1202,7 @@ window.translations = {
               }, this),
               this
             )
-          const r = n || {}
+          var r = n || {}
           return ((r.term = e.toString()), this.clause(r), this)
         }),
         (t.QueryParseError = function (e, n, r) {
@@ -1218,7 +1218,7 @@ window.translations = {
             (this.escapeCharPositions = []))
         }),
         (t.QueryLexer.prototype.run = function () {
-          for (let e = t.QueryLexer.lexText; e; ) e = e(this)
+          for (var e = t.QueryLexer.lexText; e; ) e = e(this)
         }),
         (t.QueryLexer.prototype.sliceString = function () {
           for (
@@ -1247,7 +1247,7 @@ window.translations = {
         }),
         (t.QueryLexer.prototype.next = function () {
           if (this.pos >= this.length) return t.QueryLexer.EOS
-          const e = this.str.charAt(this.pos)
+          var e = this.str.charAt(this.pos)
           return ((this.pos += 1), e)
         }),
         (t.QueryLexer.prototype.width = function () {
@@ -1260,7 +1260,7 @@ window.translations = {
           this.pos -= 1
         }),
         (t.QueryLexer.prototype.acceptDigitRun = function () {
-          let e, n
+          var e, n
           do ((e = this.next()), (n = e.charCodeAt(0)))
           while (n > 47 && n < 58)
           e != t.QueryLexer.EOS && this.backup()
@@ -1298,7 +1298,7 @@ window.translations = {
         (t.QueryLexer.termSeparator = t.tokenizer.separator),
         (t.QueryLexer.lexText = function (e) {
           for (;;) {
-            const n = e.next()
+            var n = e.next()
             if (n == t.QueryLexer.EOS) return t.QueryLexer.lexEOS
             if (n.charCodeAt(0) == 92) {
               e.escapeCharacter()
@@ -1326,22 +1326,22 @@ window.translations = {
         }),
         (t.QueryParser.prototype.parse = function () {
           ;(this.lexer.run(), (this.lexemes = this.lexer.lexemes))
-          for (let e = t.QueryParser.parseClause; e; ) e = e(this)
+          for (var e = t.QueryParser.parseClause; e; ) e = e(this)
           return this.query
         }),
         (t.QueryParser.prototype.peekLexeme = function () {
           return this.lexemes[this.lexemeIdx]
         }),
         (t.QueryParser.prototype.consumeLexeme = function () {
-          const e = this.peekLexeme()
+          var e = this.peekLexeme()
           return ((this.lexemeIdx += 1), e)
         }),
         (t.QueryParser.prototype.nextClause = function () {
-          const e = this.currentClause
+          var e = this.currentClause
           ;(this.query.clause(e), (this.currentClause = {}))
         }),
         (t.QueryParser.parseClause = function (e) {
-          const n = e.peekLexeme()
+          var n = e.peekLexeme()
           if (n != null)
             switch (n.type) {
               case t.QueryLexer.PRESENCE:
@@ -1359,7 +1359,7 @@ window.translations = {
             }
         }),
         (t.QueryParser.parsePresence = function (e) {
-          const n = e.consumeLexeme()
+          var n = e.consumeLexeme()
           if (n != null) {
             switch (n.str) {
               case '-':
@@ -1372,7 +1372,7 @@ window.translations = {
                 var r = "unrecognised presence operator'" + n.str + "'"
                 throw new t.QueryParseError(r, n.start, n.end)
             }
-            const i = e.peekLexeme()
+            var i = e.peekLexeme()
             if (i == null) {
               var r = 'expecting term or field, found nothing'
               throw new t.QueryParseError(r, n.start, n.end)
@@ -1389,11 +1389,11 @@ window.translations = {
           }
         }),
         (t.QueryParser.parseField = function (e) {
-          const n = e.consumeLexeme()
+          var n = e.consumeLexeme()
           if (n != null) {
             if (e.query.allFields.indexOf(n.str) == -1) {
               var r = e.query.allFields
-                  .map(o => {
+                  .map(function (o) {
                     return "'" + o + "'"
                   })
                   .join(', '),
@@ -1401,7 +1401,7 @@ window.translations = {
               throw new t.QueryParseError(i, n.start, n.end)
             }
             e.currentClause.fields = [n.str]
-            const s = e.peekLexeme()
+            var s = e.peekLexeme()
             if (s == null) {
               var i = 'expecting term, found nothing'
               throw new t.QueryParseError(i, n.start, n.end)
@@ -1416,11 +1416,11 @@ window.translations = {
           }
         }),
         (t.QueryParser.parseTerm = function (e) {
-          const n = e.consumeLexeme()
+          var n = e.consumeLexeme()
           if (n != null) {
             ;((e.currentClause.term = n.str.toLowerCase()),
               n.str.indexOf('*') != -1 && (e.currentClause.usePipeline = !1))
-            const r = e.peekLexeme()
+            var r = e.peekLexeme()
             if (r == null) {
               e.nextClause()
               return
@@ -1443,15 +1443,15 @@ window.translations = {
           }
         }),
         (t.QueryParser.parseEditDistance = function (e) {
-          const n = e.consumeLexeme()
+          var n = e.consumeLexeme()
           if (n != null) {
-            const r = parseInt(n.str, 10)
+            var r = parseInt(n.str, 10)
             if (isNaN(r)) {
               var i = 'edit distance must be numeric'
               throw new t.QueryParseError(i, n.start, n.end)
             }
             e.currentClause.editDistance = r
-            const s = e.peekLexeme()
+            var s = e.peekLexeme()
             if (s == null) {
               e.nextClause()
               return
@@ -1474,15 +1474,15 @@ window.translations = {
           }
         }),
         (t.QueryParser.parseBoost = function (e) {
-          const n = e.consumeLexeme()
+          var n = e.consumeLexeme()
           if (n != null) {
-            const r = parseInt(n.str, 10)
+            var r = parseInt(n.str, 10)
             if (isNaN(r)) {
               var i = 'boost must be numeric'
               throw new t.QueryParseError(i, n.start, n.end)
             }
             e.currentClause.boost = r
-            const s = e.peekLexeme()
+            var s = e.peekLexeme()
             if (s == null) {
               e.nextClause()
               return
@@ -1510,12 +1510,12 @@ window.translations = {
             : typeof me == 'object'
               ? (ge.exports = n())
               : (e.lunr = n())
-        })(this, () => {
+        })(this, function () {
           return t
         }))
     })()
   })
-  let M,
+  var M,
     G = {
       getItem() {
         return null
@@ -1528,7 +1528,7 @@ window.translations = {
   } catch {
     ;((K = G), (M = G))
   }
-  const S = {
+  var S = {
     getItem: t => M.getItem(t),
     setItem: (t, e) => M.setItem(t, e),
     disableWritingLocalStorage() {
@@ -1586,19 +1586,17 @@ window.translations = {
     kind_4194304: 'Reference',
     kind_8388608: 'Document'
   }
-  const pe = []
+  var pe = []
   function X(t, e) {
     pe.push({ selector: e, constructor: t })
   }
-  const Z = class {
+  var Z = class {
     alwaysVisibleMember = null
     constructor() {
       ;(this.createComponents(document.body),
         this.ensureFocusedElementVisible(),
         this.listenForCodeCopies(),
-        window.addEventListener('hashchange', () => {
-          this.ensureFocusedElementVisible()
-        }),
+        window.addEventListener('hashchange', () => this.ensureFocusedElementVisible()),
         document.body.style.display ||
           (this.ensureFocusedElementVisible(), this.updateIndexVisibility(), this.scrollToHash()))
     }
@@ -1622,7 +1620,7 @@ window.translations = {
     }
     scrollToHash() {
       if (location.hash) {
-        const e = document.getElementById(location.hash.substring(1))
+        let e = document.getElementById(location.hash.substring(1))
         if (!e) return
         e.scrollIntoView({ behavior: 'instant', block: 'start' })
       }
@@ -1633,18 +1631,18 @@ window.translations = {
       for (; n && !n.classList.contains('.tsd-navigation'); )
         (n instanceof HTMLDetailsElement && (n.open = !0), (n = n.parentElement))
       if (e && !rt(e)) {
-        const r = e.getBoundingClientRect().top - document.documentElement.clientHeight / 4
+        let r = e.getBoundingClientRect().top - document.documentElement.clientHeight / 4
         ;((document.querySelector('.site-menu').scrollTop = r),
           (document.querySelector('.col-sidebar').scrollTop = r))
       }
     }
     updateIndexVisibility() {
-      const e = document.querySelector('.tsd-index-content'),
+      let e = document.querySelector('.tsd-index-content'),
         n = e?.open
       ;(e && (e.open = !0),
         document.querySelectorAll('.tsd-index-section').forEach(r => {
           r.style.display = 'block'
-          const i = Array.from(r.querySelectorAll('.tsd-index-link')).every(
+          let i = Array.from(r.querySelectorAll('.tsd-index-link')).every(
             s => s.offsetParent == null
           )
           r.style.display = i ? 'none' : 'block'
@@ -1660,7 +1658,7 @@ window.translations = {
         !location.hash)
       )
         return
-      const e = document.getElementById(location.hash.substring(1))
+      let e = document.getElementById(location.hash.substring(1))
       if (!e) return
       let n = e.parentElement
       for (; n && n.tagName !== 'SECTION'; ) n = n.parentElement
@@ -1671,7 +1669,7 @@ window.translations = {
         (i instanceof HTMLDetailsElement && (i.open = !0), (i = i.parentElement))
       if (n.offsetParent == null) {
         ;((this.alwaysVisibleMember = n), n.classList.add('always-visible'))
-        const s = document.createElement('p')
+        let s = document.createElement('p')
         ;(s.classList.add('warning'),
           (s.textContent = window.translations.normally_hidden),
           n.prepend(s))
@@ -1698,27 +1696,27 @@ window.translations = {
     }
   }
   function rt(t) {
-    const e = t.getBoundingClientRect(),
+    let e = t.getBoundingClientRect(),
       n = Math.max(document.documentElement.clientHeight, window.innerHeight)
     return !(e.bottom < 0 || e.top - n >= 0)
   }
-  const fe = (t, e = 100) => {
+  var fe = (t, e = 100) => {
     let n
     return () => {
       ;(clearTimeout(n), (n = setTimeout(() => t(), e)))
     }
   }
-  const Ie = nt(ye(), 1)
+  var Ie = nt(ye(), 1)
   async function R(t) {
-    const e = Uint8Array.from(atob(t), s => s.charCodeAt(0)),
+    let e = Uint8Array.from(atob(t), s => s.charCodeAt(0)),
       r = new Blob([e]).stream().pipeThrough(new DecompressionStream('deflate')),
       i = await new Response(r).text()
     return JSON.parse(i)
   }
-  const Y = 'closing',
+  var Y = 'closing',
     ae = 'tsd-overlay'
   function it() {
-    const t = Math.abs(window.innerWidth - document.documentElement.clientWidth)
+    let t = Math.abs(window.innerWidth - document.documentElement.clientWidth)
     ;((document.body.style.overflow = 'hidden'), (document.body.style.paddingRight = `${t}px`))
   }
   function st() {
@@ -1744,28 +1742,28 @@ window.translations = {
   }
   function Ee(t) {
     if (t.open) return
-    const e = document.createElement('div')
+    let e = document.createElement('div')
     ;((e.id = ae), document.body.appendChild(e), t.showModal(), it())
   }
   function ve(t) {
     if (!t.open) return
     ;(document.getElementById(ae)?.classList.add(Y), t.classList.add(Y))
   }
-  const I = class {
+  var I = class {
     el
     app
     constructor(e) {
       ;((this.el = e.el), (this.app = e.app))
     }
   }
-  const be = document.head.appendChild(document.createElement('style'))
+  var be = document.head.appendChild(document.createElement('style'))
   be.dataset.for = 'filters'
-  const le = {}
+  var le = {}
   function we(t) {
-    for (const e of t.split(/\s+/)) if (le.hasOwnProperty(e) && !le[e]) return !0
+    for (let e of t.split(/\s+/)) if (le.hasOwnProperty(e) && !le[e]) return !0
     return !1
   }
-  const ee = class extends I {
+  var ee = class extends I {
     key
     value
     constructor(e) {
@@ -1781,7 +1779,7 @@ window.translations = {
         this.app.updateIndexVisibility())
     }
     fromLocalStorage() {
-      const e = S.getItem(this.key)
+      let e = S.getItem(this.key)
       return e ? e === 'true' : this.el.checked
     }
     setLocalStorage(e) {
@@ -1795,24 +1793,24 @@ window.translations = {
         this.app.updateIndexVisibility())
     }
   }
-  let Le = 0
+  var Le = 0
   async function Se(t, e) {
     if (!window.searchData) return
-    const n = await R(window.searchData)
+    let n = await R(window.searchData)
     ;((t.data = n), (t.index = Ie.Index.load(n.index)), (e.innerHTML = ''))
   }
   function _e() {
-    const t = document.getElementById('tsd-search-trigger'),
+    let t = document.getElementById('tsd-search-trigger'),
       e = document.getElementById('tsd-search'),
       n = document.getElementById('tsd-search-input'),
       r = document.getElementById('tsd-search-results'),
       i = document.getElementById('tsd-search-script'),
       s = document.getElementById('tsd-search-status')
     if (!(t && e && n && r && i && s)) throw new Error('Search controls missing')
-    const o = { base: document.documentElement.dataset.base }
+    let o = { base: document.documentElement.dataset.base }
     ;(o.base.endsWith('/') || (o.base += '/'),
       i.addEventListener('error', () => {
-        const a = window.translations.search_index_not_available
+        let a = window.translations.search_index_not_available
         Pe(s, a)
       }),
       i.addEventListener('load', () => {
@@ -1822,7 +1820,7 @@ window.translations = {
       ot({ trigger: t, searchEl: e, results: r, field: n, status: s }, o))
   }
   function ot(t, e) {
-    const { field: n, results: r, searchEl: i, status: s, trigger: o } = t
+    let { field: n, results: r, searchEl: i, status: s, trigger: o } = t
     xe(i, { closeOnClick: !0 })
     function a() {
       ;(Ee(i), n.setSelectionRange(0, n.value.length))
@@ -1836,7 +1834,7 @@ window.translations = {
       ),
       n.addEventListener('keydown', l => {
         if (r.childElementCount === 0 || l.ctrlKey || l.metaKey || l.altKey) return
-        const d = n.getAttribute('aria-activedescendant'),
+        let d = n.getAttribute('aria-activedescendant'),
           f = d ? document.getElementById(d) : null
         if (f) {
           let p = !1,
@@ -1876,7 +1874,7 @@ window.translations = {
       n.addEventListener('click', c),
       document.body.addEventListener('keydown', l => {
         if (l.altKey || l.metaKey || l.shiftKey) return
-        const d = l.ctrlKey && l.key === 'k',
+        let d = l.ctrlKey && l.key === 'k',
           f = !l.ctrlKey && !ut() && l.key === '/'
         ;(d || f) && (l.preventDefault(), a())
       }))
@@ -1887,17 +1885,17 @@ window.translations = {
     let i = e.value.trim(),
       s
     if (i) {
-      const a = i
+      let a = i
         .split(' ')
         .map(c => (c.length ? `*${c}*` : ''))
         .join(' ')
       s = r.index.search(a).filter(({ ref: c }) => {
-        const l = r.data.rows[Number(c)].classes
+        let l = r.data.rows[Number(c)].classes
         return !l || !we(l)
       })
     } else s = []
     if (s.length === 0 && i) {
-      const a = window.translations.search_no_results_found_for_0.replace(
+      let a = window.translations.search_no_results_found_for_0.replace(
         '{0}',
         ` "<strong>${te(i)}</strong>" `
       )
@@ -1913,7 +1911,7 @@ window.translations = {
         (c.score *= d))
     }
     s.sort((a, c) => c.score - a.score)
-    const o = Math.min(10, s.length)
+    let o = Math.min(10, s.length)
     for (let a = 0; a < o; a++) {
       let c = r.data.rows[Number(s[a].ref)],
         d = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="tsd-kind-icon" aria-label="${window.translations[`kind_${c.kind}`].replaceAll('"', '&quot;')}"><use href="#icon-${c.icon || c.kind}"></use></svg>`,
@@ -1922,12 +1920,12 @@ window.translations = {
         c.parent &&
           (f = `<span class="parent">
                 ${Ce(c.parent, i)}.</span>${f}`))
-      const p = document.createElement('li')
+      let p = document.createElement('li')
       ;((p.id = `tsd-search:${Le}-${a}`),
         (p.role = 'option'),
         (p.ariaSelected = 'false'),
         (p.classList.value = c.classes ?? ''))
-      const v = document.createElement('a')
+      let v = document.createElement('a')
       ;((v.tabIndex = -1),
         (v.href = r.base + c.url),
         (v.innerHTML = d + `<span class="text">${f}</span>`),
@@ -1943,7 +1941,7 @@ window.translations = {
         : (i = n?.previousElementSibling || t.lastElementChild),
       i !== n)
     ) {
-      if (i?.role !== 'option') {
+      if (!i || i.role !== 'option') {
         console.error('Option missing')
         return
       }
@@ -1954,7 +1952,7 @@ window.translations = {
     }
   }
   function ke(t) {
-    const e = t.getAttribute('aria-activedescendant')
+    let e = t.getAttribute('aria-activedescendant')
     ;((e ? document.getElementById(e) : null)?.setAttribute('aria-selected', 'false'),
       t.setAttribute('aria-activedescendant', ''))
   }
@@ -1971,23 +1969,23 @@ window.translations = {
         (o = n.indexOf(r, s)))
     return (i.push(te(t.substring(s))), i.join(''))
   }
-  const lt = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' }
+  var lt = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' }
   function te(t) {
     return t.replace(/[&<>"'"]/g, e => lt[e])
   }
   function Pe(t, e) {
     t.innerHTML = e ? `<div>${e}</div>` : ''
   }
-  const ct = ['button', 'checkbox', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit']
+  var ct = ['button', 'checkbox', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit']
   function ut() {
-    const t = document.activeElement
+    let t = document.activeElement
     return t
       ? t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SEARCH'
         ? !0
         : t.tagName === 'INPUT' && !ct.includes(t.type)
       : !1
   }
-  let D = 'mousedown',
+  var D = 'mousedown',
     Me = 'mousemove',
     $ = 'mouseup',
     ne = { x: 0, y: 0 },
@@ -2002,12 +2000,12 @@ window.translations = {
     ((dt = !0), (D = 'touchstart'), (Me = 'touchmove'), ($ = 'touchend'))
   document.addEventListener(D, t => {
     ;((ce = !0), (F = !1))
-    const e = D == 'touchstart' ? t.targetTouches[0] : t
+    let e = D == 'touchstart' ? t.targetTouches[0] : t
     ;((ne.y = e.pageY || 0), (ne.x = e.pageX || 0))
   })
   document.addEventListener(Me, t => {
     if (ce && !F) {
-      const e = D == 'touchstart' ? t.targetTouches[0] : t,
+      let e = D == 'touchstart' ? t.targetTouches[0] : t,
         n = ne.x - (e.pageX || 0),
         r = ne.y - (e.pageY || 0)
       F = Math.sqrt(n * n + r * r) > 10
@@ -2019,33 +2017,25 @@ window.translations = {
   document.addEventListener('click', t => {
     Qe && (t.preventDefault(), t.stopImmediatePropagation(), (Qe = !1))
   })
-  const re = class extends I {
+  var re = class extends I {
     active
     className
     constructor(e) {
       ;(super(e),
         (this.className = this.el.dataset.toggle || ''),
-        this.el.addEventListener($, n => {
-          this.onPointerUp(n)
-        }),
+        this.el.addEventListener($, n => this.onPointerUp(n)),
         this.el.addEventListener('click', n => n.preventDefault()),
-        document.addEventListener(D, n => {
-          this.onDocumentPointerDown(n)
-        }),
-        document.addEventListener($, n => {
-          this.onDocumentPointerUp(n)
-        }))
+        document.addEventListener(D, n => this.onDocumentPointerDown(n)),
+        document.addEventListener($, n => this.onDocumentPointerUp(n)))
     }
     setActive(e) {
       if (this.active == e) return
       ;((this.active = e),
         document.documentElement.classList.toggle('has-' + this.className, e),
         this.el.classList.toggle('active', e))
-      const n = (this.active ? 'to-has-' : 'from-has-') + this.className
+      let n = (this.active ? 'to-has-' : 'from-has-') + this.className
       ;(document.documentElement.classList.add(n),
-        setTimeout(() => {
-          document.documentElement.classList.remove(n)
-        }, 500))
+        setTimeout(() => document.documentElement.classList.remove(n), 500))
     }
     onPointerUp(e) {
       F || (this.setActive(!0), e.preventDefault())
@@ -2058,19 +2048,16 @@ window.translations = {
     }
     onDocumentPointerUp(e) {
       if (!F && this.active && e.target.closest('.col-sidebar')) {
-        const n = e.target.closest('a')
+        let n = e.target.closest('a')
         if (n) {
           let r = window.location.href
-          ;(r.includes('#') && (r = r.substring(0, r.indexOf('#'))),
-            n.href.substring(0, r.length) == r &&
-              setTimeout(() => {
-                this.setActive(!1)
-              }, 250))
+          ;(r.indexOf('#') != -1 && (r = r.substring(0, r.indexOf('#'))),
+            n.href.substring(0, r.length) == r && setTimeout(() => this.setActive(!1), 250))
         }
       }
     }
   }
-  const ue = new Map(),
+  var ue = new Map(),
     de = class {
       open
       accordions = []
@@ -2086,23 +2073,24 @@ window.translations = {
           }))
       }
       toggle(e) {
-        for (const n of this.accordions) n.open = e
+        for (let n of this.accordions) n.open = e
         S.setItem(this.key, e.toString())
       }
     },
     ie = class extends I {
       constructor(e) {
         super(e)
-        const n = this.el.querySelector('summary'),
+        let n = this.el.querySelector('summary'),
           r = n.querySelector('a')
-        r?.addEventListener('click', () => {
-          location.assign(r.href)
-        })
+        r &&
+          r.addEventListener('click', () => {
+            location.assign(r.href)
+          })
         let i = `tsd-accordion-${n.dataset.key ?? n.textContent.trim().replace(/\s+/g, '-').toLowerCase()}`,
           s
         if (ue.has(i)) s = ue.get(i)
         else {
-          const o = S.getItem(i),
+          let o = S.getItem(i),
             a = o ? o === 'true' : this.el.open
           ;((s = new de(i, a)), ue.set(i, s))
         }
@@ -2110,7 +2098,7 @@ window.translations = {
       }
     }
   function He(t) {
-    const e = S.getItem('tsd-theme') || 'os'
+    let e = S.getItem('tsd-theme') || 'os'
     ;((t.value = e),
       Ae(e),
       t.addEventListener('change', () => {
@@ -2120,43 +2108,43 @@ window.translations = {
   function Ae(t) {
     document.documentElement.dataset.theme = t
   }
-  let se
+  var se
   function Ne() {
-    const t = document.getElementById('tsd-nav-script')
+    let t = document.getElementById('tsd-nav-script')
     t && (t.addEventListener('load', Re), Re())
   }
   async function Re() {
-    const t = document.getElementById('tsd-nav-container')
+    let t = document.getElementById('tsd-nav-container')
     if (!t || !window.navigationData) return
-    const e = await R(window.navigationData)
+    let e = await R(window.navigationData)
     ;((se = document.documentElement.dataset.base),
       se.endsWith('/') || (se += '/'),
       (t.innerHTML = ''))
-    for (const n of e) Be(n, t, [])
+    for (let n of e) Be(n, t, [])
     ;(window.app.createComponents(t), window.app.showPage(), window.app.ensureActivePageVisible())
   }
   function Be(t, e, n) {
-    const r = e.appendChild(document.createElement('li'))
+    let r = e.appendChild(document.createElement('li'))
     if (t.children) {
-      const i = [...n, t.text],
+      let i = [...n, t.text],
         s = r.appendChild(document.createElement('details'))
       s.className = t.class ? `${t.class} tsd-accordion` : 'tsd-accordion'
-      const o = s.appendChild(document.createElement('summary'))
+      let o = s.appendChild(document.createElement('summary'))
       ;((o.className = 'tsd-accordion-summary'),
         (o.dataset.key = i.join('$')),
         (o.innerHTML =
           '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>'),
         De(t, o))
-      const a = s.appendChild(document.createElement('div'))
+      let a = s.appendChild(document.createElement('div'))
       a.className = 'tsd-accordion-details'
-      const c = a.appendChild(document.createElement('ul'))
+      let c = a.appendChild(document.createElement('ul'))
       c.className = 'tsd-nested-navigation'
-      for (const l of t.children) Be(l, c, i)
+      for (let l of t.children) Be(l, c, i)
     } else De(t, r, t.class)
   }
   function De(t, e, n) {
     if (t.path) {
-      const r = e.appendChild(document.createElement('a'))
+      let r = e.appendChild(document.createElement('a'))
       if (
         ((r.href = se + t.path),
         n && (r.className = n),
@@ -2165,25 +2153,25 @@ window.translations = {
           (r.classList.add('current'), (r.ariaCurrent = 'page')),
         t.kind)
       ) {
-        const i = window.translations[`kind_${t.kind}`].replaceAll('"', '&quot;')
+        let i = window.translations[`kind_${t.kind}`].replaceAll('"', '&quot;')
         r.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="tsd-kind-icon" aria-label="${i}"><use href="#icon-${t.icon || t.kind}"></use></svg>`
       }
       r.appendChild(Fe(t.text, document.createElement('span')))
     } else {
-      const r = e.appendChild(document.createElement('span')),
+      let r = e.appendChild(document.createElement('span')),
         i = window.translations.folder.replaceAll('"', '&quot;')
       ;((r.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="tsd-kind-icon" aria-label="${i}"><use href="#icon-folder"></use></svg>`),
         r.appendChild(Fe(t.text, document.createElement('span'))))
     }
   }
   function Fe(t, e) {
-    const n = t.split(/(?<=[^A-Z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[_-])(?=[^_-])/)
+    let n = t.split(/(?<=[^A-Z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|(?<=[_-])(?=[^_-])/)
     for (let r = 0; r < n.length; ++r)
       (r !== 0 && e.appendChild(document.createElement('wbr')),
         e.appendChild(document.createTextNode(n[r])))
     return e
   }
-  let oe = document.documentElement.dataset.base
+  var oe = document.documentElement.dataset.base
   oe.endsWith('/') || (oe += '/')
   function $e() {
     document.querySelector('.tsd-full-hierarchy')
@@ -2196,23 +2184,23 @@ window.translations = {
       for (; i.parentElement && i.parentElement.tagName != 'LI'; ) i = i.parentElement
       i.dataset.dropdown && (i.dataset.dropdown = String(i.dataset.dropdown !== 'true'))
     })
-    const t = new Map(),
+    let t = new Map(),
       e = new Set()
-    for (const r of document.querySelectorAll('.tsd-full-hierarchy [data-refl]')) {
-      const i = r.querySelector('ul')
+    for (let r of document.querySelectorAll('.tsd-full-hierarchy [data-refl]')) {
+      let i = r.querySelector('ul')
       t.has(r.dataset.refl) ? e.add(r.dataset.refl) : i && t.set(r.dataset.refl, i)
     }
-    for (const r of e) n(r)
+    for (let r of e) n(r)
     function n(r) {
-      const i = t.get(r).cloneNode(!0)
+      let i = t.get(r).cloneNode(!0)
       ;(i.querySelectorAll('[id]').forEach(s => {
         s.removeAttribute('id')
       }),
         i.querySelectorAll('[data-dropdown]').forEach(s => {
           s.dataset.dropdown = 'false'
         }))
-      for (const s of document.querySelectorAll(`[data-refl="${r}"]`)) {
-        const o = gt(),
+      for (let s of document.querySelectorAll(`[data-refl="${r}"]`)) {
+        let o = gt(),
           a = s.querySelector('ul')
         ;(s.insertBefore(o, a),
           (o.dataset.dropdown = String(!!a)),
@@ -2221,13 +2209,13 @@ window.translations = {
     }
   }
   function pt() {
-    const t = document.getElementById('tsd-hierarchy-script')
+    let t = document.getElementById('tsd-hierarchy-script')
     t && (t.addEventListener('load', Ve), Ve())
   }
   async function Ve() {
-    const t = document.querySelector('.tsd-panel.tsd-hierarchy:has(h4 a)')
+    let t = document.querySelector('.tsd-panel.tsd-hierarchy:has(h4 a)')
     if (!t || !window.hierarchyData) return
-    const e = +t.dataset.refl,
+    let e = +t.dataset.refl,
       n = await R(window.hierarchyData),
       r = t.querySelector('ul'),
       i = document.createElement('ul')
@@ -2237,7 +2225,7 @@ window.translations = {
       r.querySelectorAll('li').length == i.querySelectorAll('li').length)
     )
       return
-    const s = document.createElement('span')
+    let s = document.createElement('span')
     ;(s.classList.add('tsd-hierarchy-toggle'),
       (s.textContent = window.translations.hierarchy_expand),
       t.querySelector('h4 a')?.insertAdjacentElement('afterend', s),
@@ -2253,36 +2241,36 @@ window.translations = {
       }))
   }
   function ft(t, e, n) {
-    const r = e.roots.filter(i => mt(e, i, n))
-    for (const i of r) t.appendChild(je(e, i, n))
+    let r = e.roots.filter(i => mt(e, i, n))
+    for (let i of r) t.appendChild(je(e, i, n))
   }
   function je(t, e, n, r = new Set()) {
     if (r.has(e)) return
     r.add(e)
-    const i = t.reflections[e],
+    let i = t.reflections[e],
       s = document.createElement('li')
     if ((s.classList.add('tsd-hierarchy-item'), e === n)) {
-      const o = s.appendChild(document.createElement('span'))
+      let o = s.appendChild(document.createElement('span'))
       ;((o.textContent = i.name), o.classList.add('tsd-hierarchy-target'))
     } else {
-      for (const a of i.uniqueNameParents || []) {
-        const c = t.reflections[a],
+      for (let a of i.uniqueNameParents || []) {
+        let c = t.reflections[a],
           l = s.appendChild(document.createElement('a'))
         ;((l.textContent = c.name),
           (l.href = oe + c.url),
           (l.className = c.class + ' tsd-signature-type'),
           s.append(document.createTextNode('.')))
       }
-      const o = s.appendChild(document.createElement('a'))
+      let o = s.appendChild(document.createElement('a'))
       ;((o.textContent = t.reflections[e].name),
         (o.href = oe + i.url),
         (o.className = i.class + ' tsd-signature-type'))
     }
     if (i.children) {
-      const o = s.appendChild(document.createElement('ul'))
+      let o = s.appendChild(document.createElement('ul'))
       o.classList.add('tsd-hierarchy')
-      for (const a of i.children) {
-        const c = je(t, a, n, r)
+      for (let a of i.children) {
+        let c = je(t, a, n, r)
         c && o.appendChild(c)
       }
     }
@@ -2290,13 +2278,13 @@ window.translations = {
   }
   function mt(t, e, n) {
     if (e === n) return !0
-    const r = new Set(),
+    let r = new Set(),
       i = [t.reflections[e]]
     for (; i.length; ) {
-      const s = i.pop()
+      let s = i.pop()
       if (!r.has(s)) {
         r.add(s)
-        for (const o of s.children || []) {
+        for (let o of s.children || []) {
           if (o === n) return !0
           i.push(t.reflections[o])
         }
@@ -2305,7 +2293,7 @@ window.translations = {
     return !1
   }
   function gt() {
-    const t = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    let t = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     return (
       t.setAttribute('width', '20'),
       t.setAttribute('height', '20'),
@@ -2318,9 +2306,9 @@ window.translations = {
   X(re, 'a[data-toggle]')
   X(ie, '.tsd-accordion')
   X(ee, '.tsd-filter-item input[type=checkbox]')
-  const qe = document.getElementById('tsd-theme')
+  var qe = document.getElementById('tsd-theme')
   qe && He(qe)
-  const yt = new Z()
+  var yt = new Z()
   Object.defineProperty(window, 'app', { value: yt })
   _e()
   Ne()

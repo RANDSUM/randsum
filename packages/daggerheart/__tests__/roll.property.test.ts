@@ -1,12 +1,12 @@
 import { describe, test } from 'bun:test'
 import fc from 'fast-check'
-import { rollDaggerheart } from '../src/rollDaggerheart'
+import { roll } from '../src/roll'
 
-describe('rollDaggerheart property-based tests', () => {
+describe('roll property-based tests', () => {
   test('result is always a valid Daggerheart outcome', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { result } = rollDaggerheart({ modifier })
+        const { result } = roll({ modifier })
         return ['hope', 'fear', 'critical hope'].includes(result)
       })
     )
@@ -15,7 +15,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('hope and fear rolls are within d12 bounds without amplify', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier })
+        const { details } = roll({ modifier })
         if (!details) return false
         return (
           details.hope.roll >= 1 &&
@@ -30,7 +30,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('amplifyHope allows rolls up to 20', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier, amplifyHope: true })
+        const { details } = roll({ modifier, amplifyHope: true })
         if (!details) return false
         // Hope can be 1-20, fear stays 1-12
         return (
@@ -48,7 +48,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('amplifyFear allows rolls up to 20', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier, amplifyFear: true })
+        const { details } = roll({ modifier, amplifyFear: true })
         if (!details) return false
         // Fear can be 1-20, hope stays 1-12
         return (
@@ -66,7 +66,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('both amplify options work together', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier, amplifyHope: true, amplifyFear: true })
+        const { details } = roll({ modifier, amplifyHope: true, amplifyFear: true })
         if (!details) return false
         return (
           details.hope.roll >= 1 &&
@@ -83,7 +83,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('modifier is correctly reflected in details', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier })
+        const { details } = roll({ modifier })
         return details?.modifier === modifier
       })
     )
@@ -92,7 +92,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('advantage adds d6 to total', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier, rollingWith: 'Advantage' })
+        const { details } = roll({ modifier, rollingWith: 'Advantage' })
         if (!details?.advantage) return false
         // Advantage roll should be 1-6
         return details.advantage.roll >= 1 && details.advantage.roll <= 6
@@ -103,7 +103,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('disadvantage subtracts d6 from total', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier, rollingWith: 'Disadvantage' })
+        const { details } = roll({ modifier, rollingWith: 'Disadvantage' })
         if (!details?.advantage) return false
         // Disadvantage roll should be -6 to -1
         return details.advantage.roll >= -6 && details.advantage.roll <= -1
@@ -114,7 +114,7 @@ describe('rollDaggerheart property-based tests', () => {
   test('no advantage when not specified', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
-        const { details } = rollDaggerheart({ modifier })
+        const { details } = roll({ modifier })
         return details?.advantage === undefined
       })
     )

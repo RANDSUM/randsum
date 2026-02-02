@@ -33,18 +33,18 @@ bun add @randsum/salvageunion
 ## Usage
 
 ```typescript
-import { rollTable } from "@randsum/salvageunion"
+import { roll } from "@randsum/salvageunion"
 import type { SalvageUnionTableResult } from "@randsum/salvageunion"
 
 // Basic roll with default table
-const result = rollTable()
+const result = roll()
 // Returns table result with hit type, label, description, and roll value
 
 // Roll with specific table
-const result = rollTable("Morale")
+const result = roll("Morale")
 
 // Type-safe result handling
-const { hit, label, description, roll } = rollTable("Core Mechanic")
+const { hit, label, description, roll } = roll("Core Mechanic")
 switch (hit) {
   case "Nailed It":
     // 20
@@ -66,12 +66,12 @@ switch (hit) {
 
 ## API Reference
 
-### `rollTable`
+### `roll`
 
 Makes a d20 roll following Salvage Union rules, returning a table result object with hit type, label, description, and roll value.
 
 ```typescript
-function rollTable(tableName?: SalvageUnionTableName): SalvageUnionTableResult
+function roll(tableName?: SalvageUnionTableName): SalvageUnionTableResult
 ```
 
 ### Roll Tables

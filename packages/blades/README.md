@@ -32,18 +32,18 @@ bun add @randsum/blades
 ## Usage
 
 ```typescript
-import { rollBlades } from "@randsum/blades"
+import { roll } from "@randsum/blades"
 import type { BladesRollResult } from "@randsum/blades"
 
 // Basic roll with dice pool
-const { outcome, result } = rollBlades(2)
+const { outcome, result } = roll(2)
 console.log(outcome) // 'critical' | 'success' | 'partial' | 'failure'
 
 // Different dice pool sizes
-rollBlades(1) // Desperate position
-rollBlades(2) // Risky position
-rollBlades(3) // Controlled position
-rollBlades(4) // Controlled with assistance
+roll(1) // Desperate position
+roll(2) // Risky position
+roll(3) // Controlled position
+roll(4) // Controlled with assistance
 ```
 
 ## API Reference
@@ -53,7 +53,7 @@ rollBlades(4) // Controlled with assistance
 Makes a Blades in the Dark roll, returning the result based on the highest die.
 
 ```typescript
-function rollBlades(dicePool: number): BladesRollResult
+function roll(dicePool: number): BladesRollResult
 ```
 
 **Parameters:**

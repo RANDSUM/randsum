@@ -34,27 +34,27 @@ bun add @randsum/pbta
 ## Usage
 
 ```typescript
-import { rollPbtA } from "@randsum/pbta"
+import { roll } from "@randsum/pbta"
 
 // Basic roll
-const result = rollPbtA({ stat: 2 })
+const result = roll({ stat: 2 })
 // result.result: 'strong_hit' | 'weak_hit' | 'miss'
 
 // With bonuses
-const result = rollPbtA({
+const result = roll({
   stat: 1,
   forward: 1, // One-time bonus
   ongoing: 0 // Persistent bonus
 })
 
 // With advantage (roll 3d6, keep 2 highest)
-const result = rollPbtA({
+const result = roll({
   stat: 2,
   advantage: true
 })
 
 // With disadvantage (roll 3d6, keep 2 lowest)
-const result = rollPbtA({
+const result = roll({
   stat: 2,
   disadvantage: true
 })
@@ -62,12 +62,12 @@ const result = rollPbtA({
 
 ## API Reference
 
-### `rollPbtA`
+### `roll`
 
 Makes a PbtA roll following standard mechanics.
 
 ```typescript
-function rollPbtA(arg: PbtARollArgument): GameRollResult<PbtAOutcome, PbtARollDetails, RollRecord>
+function roll(arg: PbtARollArgument): GameRollResult<PbtAOutcome, PbtARollDetails, RollRecord>
 ```
 
 **Parameters:**

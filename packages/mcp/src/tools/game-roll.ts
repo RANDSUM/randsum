@@ -55,15 +55,15 @@ export function registerGameRollTool(server: McpServer): void {
       const executeGameRoll = async (): Promise<GameRollResult | null> => {
         switch (game) {
           case 'blades': {
-            const { rollBlades } = await import('@randsum/blades')
+            const { roll } = await import('@randsum/blades')
             const countArg = args['count']
             const count = typeof countArg === 'number' ? countArg : Number(countArg)
-            return rollBlades(count) as GameRollResult
+            return roll(count) as GameRollResult
           }
 
           case 'fifth': {
-            const { actionRoll } = await import('@randsum/fifth')
-            return actionRoll(
+            const { roll } = await import('@randsum/fifth')
+            return roll(
               args as {
                 modifier: number
                 rollingWith?: { advantage?: boolean; disadvantage?: boolean }
@@ -72,8 +72,8 @@ export function registerGameRollTool(server: McpServer): void {
           }
 
           case 'pbta': {
-            const { rollPbtA } = await import('@randsum/pbta')
-            return rollPbtA(
+            const { roll } = await import('@randsum/pbta')
+            return roll(
               args as {
                 stat: number
                 forward?: number
@@ -85,8 +85,8 @@ export function registerGameRollTool(server: McpServer): void {
           }
 
           case 'daggerheart': {
-            const { rollDaggerheart } = await import('@randsum/daggerheart')
-            return rollDaggerheart(
+            const { roll } = await import('@randsum/daggerheart')
+            return roll(
               args as {
                 rollingWith?: 'Advantage' | 'Disadvantage'
                 amplifyHope?: boolean
@@ -97,17 +97,17 @@ export function registerGameRollTool(server: McpServer): void {
           }
 
           case 'root-rpg': {
-            const { rollRootRpg } = await import('@randsum/root-rpg')
+            const { roll } = await import('@randsum/root-rpg')
             const bonusArg = args['bonus']
             const bonus = typeof bonusArg === 'number' ? bonusArg : Number(bonusArg)
-            return rollRootRpg(bonus) as GameRollResult
+            return roll(bonus) as GameRollResult
           }
 
           case 'salvageunion': {
-            const { rollTable } = await import('@randsum/salvageunion')
+            const { roll } = await import('@randsum/salvageunion')
             const tableNameArg = args['tableName']
             const tableName = typeof tableNameArg === 'string' ? tableNameArg : undefined
-            return rollTable(tableName) as GameRollResult
+            return roll(tableName) as GameRollResult
           }
 
           default:

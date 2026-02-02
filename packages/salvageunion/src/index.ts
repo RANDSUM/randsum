@@ -1,4 +1,4 @@
-export { rollTable } from './rollTable'
+export { roll } from './roll'
 
 export { SALVAGE_UNION_TABLE_NAMES } from './types'
 

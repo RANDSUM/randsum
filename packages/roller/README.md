@@ -12,43 +12,105 @@
 
 </div>
 
-A flexible, type-safe dice rolling implementation for tabletop RPGs, game development, and probability simulations that supports:
-
-- 🎲 Standard dice notation (`4d6`, `2d20H`, etc.)
-- 🎯 Complex modifiers (drop lowest, reroll, exploding dice)
-- 🔒 Full TypeScript support with intelligent type inference
-- 🎮 Perfect for games, RPGs, and simulations
-- 🪶 Tree-shakeable implementation for minimal bundle size
-- 📦 Optimized for performance and reliability
-- 🧩 Extensible architecture for custom game systems
-- 🌐 Works in Node.js, browsers, and React Native
+A flexible, type-safe dice rolling implementation for tabletop RPGs, game development, and probability simulations.
 
 ## Installation
 
 ```bash
 npm install @randsum/roller
 # or
-yarn add @randsum/roller
-# or
 bun add @randsum/roller
 ```
 
-## CLI Usage
+## Usage
 
-Roll dice directly from your terminal:
+```typescript
+import { roll } from "@randsum/roller"
+
+// Three ways to roll: number, notation string, or options object
+roll(20) // Roll 1d20
+roll("4d6L") // Roll 4d6, drop lowest
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
+
+// Complex modifiers
+roll("2d20H") // Advantage (keep highest)
+roll("4d6!R{<3}") // Exploding dice, reroll below 3
+roll("1d20+5", "2d6+3") // Multiple rolls combined
+```
+
+## CLI
 
 ```bash
-npx randsum 2d20    # Roll two twenty-sided dice
+npx randsum 2d20    # Roll two d20s
 npx randsum 4d6L    # Roll 4d6, drop lowest
-npx randsum 3d8+2   # Roll three d8s and add 2
+npx randsum 3d8+2   # Roll 3d8 and add 2
 ```
 
-Example output:
+## API
 
-```text
-🎲 Roll Result:
-───────────────
-Total: 24
-Rolls: [14, 10]
-Description: Roll 2d20
+### `roll(...args)`
+
+The main function accepts numbers, notation strings, or options objects.
+
+```typescript
+const result = roll("2d6+3")
+
+result.total // Final total after all modifiers
+result.rolls // Array of individual roll results
+result.description // Human-readable description
 ```
+
+### Notation Reference
+
+| Notation   | Description                |
+| ---------- | -------------------------- |
+| `4d6`      | Roll 4 six-sided dice      |
+| `4d6+2`    | Add 2 to total             |
+| `4d6L`     | Drop lowest                |
+| `4d6H`     | Drop highest               |
+| `2d20H`    | Keep highest (advantage)   |
+| `2d20L`    | Keep lowest (disadvantage) |
+| `4d6!`     | Exploding dice             |
+| `4d6R{<3}` | Reroll values below 3      |
+| `4d6U`     | Unique rolls only          |
+
+See [RANDSUM_DICE_NOTATION.md](./RANDSUM_DICE_NOTATION.md) for the complete notation guide.
+
+### Other Exports
+
+```typescript
+import {
+  // Validation
+  validateNotation,
+  isDiceNotation,
+  validateRollOptions,
+
+  // Conversion utilities
+  optionsToNotation,
+  optionsToDescription,
+
+  // Probability analysis
+  analyze,
+
+  // Game system helpers
+  createGameRoll,
+  createMultiRollGameRoll,
+
+  // Error types
+  RandsumError,
+  NotationParseError,
+  ValidationError
+} from "@randsum/roller"
+```
+
+## Related Packages
+
+- [@randsum/blades](../blades) - Blades in the Dark
+- [@randsum/daggerheart](../daggerheart) - Daggerheart
+- [@randsum/fifth](../fifth) - D&D 5th Edition
+- [@randsum/root-rpg](../root-rpg) - Root RPG
+- [@randsum/salvageunion](../salvageunion) - Salvage Union
+
+<div align="center">
+Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
+</div>

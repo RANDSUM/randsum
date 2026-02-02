@@ -1,12 +1,12 @@
 import { describe, test } from 'bun:test'
 import fc from 'fast-check'
-import { actionRoll } from '../src'
+import { roll } from '../src'
 
-describe('actionRoll property-based tests', () => {
+describe('roll property-based tests', () => {
   test('total is within valid d20+modifier range', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = actionRoll({ modifier })
+        const { rolls } = roll({ modifier })
         const total = rolls[0]?.total ?? 0
         return total >= 1 + modifier && total <= 20 + modifier
       })
@@ -16,7 +16,7 @@ describe('actionRoll property-based tests', () => {
   test('modifier is correctly applied to roll', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = actionRoll({ modifier })
+        const { rolls } = roll({ modifier })
         const rawRoll = rolls[0]?.modifierHistory.initialRolls[0] ?? 0
         const total = rolls[0]?.total ?? 0
         return total === rawRoll + modifier
@@ -27,7 +27,7 @@ describe('actionRoll property-based tests', () => {
   test('advantage rolls 2d20 and keeps highest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = actionRoll({ modifier, rollingWith: { advantage: true } })
+        const { rolls } = roll({ modifier, rollingWith: { advantage: true } })
         const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
         return initialRolls.length === 2
       })
@@ -37,7 +37,7 @@ describe('actionRoll property-based tests', () => {
   test('disadvantage rolls 2d20 and keeps lowest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = actionRoll({ modifier, rollingWith: { disadvantage: true } })
+        const { rolls } = roll({ modifier, rollingWith: { disadvantage: true } })
         const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
         return initialRolls.length === 2
       })
@@ -47,7 +47,7 @@ describe('actionRoll property-based tests', () => {
   test('both advantage and disadvantage cancel out to normal roll', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = actionRoll({
+        const { rolls } = roll({
           modifier,
           rollingWith: { advantage: true, disadvantage: true }
         })
@@ -64,7 +64,7 @@ describe('actionRoll property-based tests', () => {
         fc.boolean(),
         fc.boolean(),
         (modifier, advantage, disadvantage) => {
-          const { rolls } = actionRoll({
+          const { rolls } = roll({
             modifier,
             rollingWith: { advantage, disadvantage }
           })
@@ -80,10 +80,10 @@ describe('actionRoll property-based tests', () => {
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
         // Roll many times to verify advantage >= disadvantage on average
         const advantageResults = Array.from({ length: 50 }, () =>
-          actionRoll({ modifier, rollingWith: { advantage: true } })
+          roll({ modifier, rollingWith: { advantage: true } })
         )
         const disadvantageResults = Array.from({ length: 50 }, () =>
-          actionRoll({ modifier, rollingWith: { disadvantage: true } })
+          roll({ modifier, rollingWith: { disadvantage: true } })
         )
 
         const avgAdvantage =

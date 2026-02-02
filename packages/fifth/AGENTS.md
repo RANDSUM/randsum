@@ -14,7 +14,7 @@ Dungeons & Dragons 5th Edition uses a d20 system with ability modifiers, advanta
 
 ## API
 
-### `actionRoll(arg: FifthRollArgument): GameRollResult<number, undefined, RollRecord>`
+### `roll(arg: FifthRollArgument): GameRollResult<number, undefined, RollRecord>`
 
 Rolls a D&D 5e action roll (attack, skill check, saving throw).
 
@@ -32,30 +32,30 @@ Rolls a D&D 5e action roll (attack, skill check, saving throw).
 ## Usage
 
 ```typescript
-import { actionRoll } from "@randsum/fifth"
+import { roll } from "@randsum/fifth"
 
 // Basic roll with modifier
-const result = actionRoll({ modifier: 5 })
+const result = roll({ modifier: 5 })
 // result.result: 6-25 (1-20 + 5)
 
 // With advantage
-const result = actionRoll({
+const result = roll({
   modifier: 3,
   rollingWith: "Advantage"
 })
 // Rolls 2d20, drops lowest, adds 3
 
 // With disadvantage
-const result = actionRoll({
+const result = roll({
   modifier: -2,
   rollingWith: "Disadvantage"
 })
 // Rolls 2d20, drops highest, subtracts 2
 
 // Common patterns
-actionRoll({ modifier: 5 }) // Normal attack roll
-actionRoll({ modifier: 2, rollingWith: "Advantage" }) // Advantage on skill check
-actionRoll({ modifier: -1, rollingWith: "Disadvantage" }) // Disadvantage on save
+roll({ modifier: 5 }) // Normal attack roll
+roll({ modifier: 2, rollingWith: "Advantage" }) // Advantage on skill check
+roll({ modifier: -1, rollingWith: "Disadvantage" }) // Disadvantage on save
 ```
 
 ## Common Patterns
@@ -74,20 +74,20 @@ roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // same as 4
 
 ```typescript
 // Normal attack with +5 to hit
-actionRoll({ modifier: 5 })
+roll({ modifier: 5 })
 
 // Attack with advantage
-actionRoll({ modifier: 5, rollingWith: "Advantage" })
+roll({ modifier: 5, rollingWith: "Advantage" })
 ```
 
 ### Skill Checks
 
 ```typescript
 // Perception check with +3 Wisdom modifier
-actionRoll({ modifier: 3 })
+roll({ modifier: 3 })
 
 // Stealth check with disadvantage
-actionRoll({ modifier: 2, rollingWith: "Disadvantage" })
+roll({ modifier: 2, rollingWith: "Disadvantage" })
 ```
 
 ## Implementation Details
@@ -116,7 +116,7 @@ Also re-exports core types from `@randsum/roller`:
 
 ## Testing
 
-Test file: `__tests__/actionRoll.test.ts`
+Test files: `__tests__/roll.test.ts`, `__tests__/roll.property.test.ts`
 
 Tests cover:
 

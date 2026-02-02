@@ -6,7 +6,7 @@ import type {
   SalvageUnionTableName
 } from '../types'
 import type { GameRollResult, RollRecord } from '@randsum/roller'
-import { roll } from '@randsum/roller'
+import { roll as coreRoll } from '@randsum/roller'
 
 /**
  * NOTE: This package does not use the createGameRoll factory pattern because:
@@ -41,14 +41,14 @@ function tableDataForTable(tableName: SalvageUnionTableName): SURefObjectTable {
   return rollTable.table
 }
 
-export function rollTable(
+export function roll(
   tableName: SalvageUnionTableName = 'Core Mechanic'
 ): GameRollResult<
   SalvageUnionRollRecord,
   undefined,
   RollRecord<SalvageUnionTableListing | string>
 > {
-  const { total, rolls } = roll({
+  const { total, rolls } = coreRoll({
     sides: 20
   })
 

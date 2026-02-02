@@ -13,7 +13,7 @@ function digestHopeFearTotal(roll: RollRecord): {
   }
 }
 
-export const rollDaggerheart: (
+export const roll: (
   arg: DaggerheartRollArgument
 ) => GameRollResult<DaggerheartRollResult['type'], DaggerheartRollResult['details'], RollRecord> =
   createMultiRollGameRoll<

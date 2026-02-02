@@ -6,7 +6,7 @@ Forged in the Dark system. Dice pool mechanics with position/effect.
 
 ## API
 
-### `rollBlades(count: number): BladesRollResult`
+### `roll(count: number): BladesRollResult`
 
 Rolls a Blades in the Dark action roll.
 
@@ -46,7 +46,7 @@ Game-specific types only, core types imported from `@randsum/roller` as needed.
 
 ## Testing
 
-Test file: `__tests__/rollBlades.test.ts`
+Test file: `__tests__/roll.test.ts`
 
 Tests cover:
 

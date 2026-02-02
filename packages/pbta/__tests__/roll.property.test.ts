@@ -1,12 +1,12 @@
 import { describe, test } from 'bun:test'
 import fc from 'fast-check'
-import { rollPbtA } from '../src/rollPbtA'
+import { roll } from '../src/roll'
 
-describe('rollPbtA property-based tests', () => {
+describe('roll property-based tests', () => {
   test('result matches total threshold', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), stat => {
-        const { result, total } = rollPbtA({ stat })
+        const { result, total } = roll({ stat })
 
         if (total >= 10) return result === 'strong_hit'
         if (total >= 7) return result === 'weak_hit'
@@ -18,7 +18,7 @@ describe('rollPbtA property-based tests', () => {
   test('total is within valid 2d6+stat range', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), stat => {
-        const { total } = rollPbtA({ stat })
+        const { total } = roll({ stat })
         return total >= 2 + stat && total <= 12 + stat
       })
     )
@@ -30,7 +30,7 @@ describe('rollPbtA property-based tests', () => {
         fc.integer({ min: -3, max: 5 }),
         fc.integer({ min: -5, max: 5 }),
         (stat, forward) => {
-          const { total, details } = rollPbtA({ stat, forward })
+          const { total, details } = roll({ stat, forward })
           const expectedMin = 2 + stat + forward
           const expectedMax = 12 + stat + forward
           return total >= expectedMin && total <= expectedMax && details.forward === forward
@@ -45,7 +45,7 @@ describe('rollPbtA property-based tests', () => {
         fc.integer({ min: -3, max: 5 }),
         fc.integer({ min: -5, max: 5 }),
         (stat, ongoing) => {
-          const { total, details } = rollPbtA({ stat, ongoing })
+          const { total, details } = roll({ stat, ongoing })
           const expectedMin = 2 + stat + ongoing
           const expectedMax = 12 + stat + ongoing
           return total >= expectedMin && total <= expectedMax && details.ongoing === ongoing
@@ -61,7 +61,7 @@ describe('rollPbtA property-based tests', () => {
         fc.integer({ min: -5, max: 5 }),
         fc.integer({ min: -5, max: 5 }),
         (stat, forward, ongoing) => {
-          const { total } = rollPbtA({ stat, forward, ongoing })
+          const { total } = roll({ stat, forward, ongoing })
           const totalModifier = stat + forward + ongoing
           return total >= 2 + totalModifier && total <= 12 + totalModifier
         }
@@ -72,7 +72,7 @@ describe('rollPbtA property-based tests', () => {
   test('advantage rolls 3d6 and keeps 2 highest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), stat => {
-        const { rolls } = rollPbtA({ stat, advantage: true })
+        const { rolls } = roll({ stat, advantage: true })
         // After dropping lowest, should have 2 dice in result
         return rolls[0]?.rolls.length === 2
       })
@@ -82,7 +82,7 @@ describe('rollPbtA property-based tests', () => {
   test('disadvantage rolls 3d6 and keeps 2 lowest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), stat => {
-        const { rolls } = rollPbtA({ stat, disadvantage: true })
+        const { rolls } = roll({ stat, disadvantage: true })
         // After dropping highest, should have 2 dice in result
         return rolls[0]?.rolls.length === 2
       })
@@ -96,7 +96,7 @@ describe('rollPbtA property-based tests', () => {
         fc.integer({ min: -5, max: 5 }),
         fc.integer({ min: -5, max: 5 }),
         (stat, forward, ongoing) => {
-          const { details } = rollPbtA({ stat, forward, ongoing })
+          const { details } = roll({ stat, forward, ongoing })
           return details.stat === stat && details.forward === forward && details.ongoing === ongoing
         }
       )

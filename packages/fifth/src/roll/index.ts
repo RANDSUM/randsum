@@ -15,14 +15,14 @@ import { generateModifiers } from './generateModifiers'
  *
  * @example Basic roll
  * ```ts
- * const result = actionRoll({ modifier: 5 })
+ * const result = roll({ modifier: 5 })
  * // Rolls 1d20 + 5
  * result.total // => e.g., 18
  * ```
  *
  * @example With advantage
  * ```ts
- * const result = actionRoll({
+ * const result = roll({
  *   modifier: 3,
  *   rollingWith: { advantage: true }
  * })
@@ -31,7 +31,7 @@ import { generateModifiers } from './generateModifiers'
  *
  * @throws Error if modifier is not a finite number or outside reasonable range (-30 to +30)
  */
-export const actionRoll: (
+export const roll: (
   arg: FifthRollArgument
 ) => GameRollResult<FifthRollResult, undefined, RollRecord> = createGameRoll<
   FifthRollArgument,

@@ -1,4 +1,4 @@
-import { roll, validateRange } from '@randsum/roller'
+import { roll as coreRoll, validateRange } from '@randsum/roller'
 import type { GameRollResult, RollRecord } from '@randsum/roller'
 import type { PbtAOutcome, PbtARollArgument, PbtARollDetails } from '../types'
 
@@ -18,13 +18,13 @@ import type { PbtAOutcome, PbtARollArgument, PbtARollDetails } from '../types'
  *
  * @example
  * ```ts
- * const result = rollPbtA({ stat: 2, forward: 1 })
+ * const result = roll({ stat: 2, forward: 1 })
  * result.result // => "strong_hit", "weak_hit", or "miss"
  * ```
  *
  * @throws Error if stat is outside valid range (-3 to 5) or bonuses are invalid
  */
-export function rollPbtA(
+export function roll(
   arg: PbtARollArgument
 ): GameRollResult<PbtAOutcome, PbtARollDetails, RollRecord> {
   validateRange(arg.stat, -3, 5, 'PbtA stat')
@@ -36,7 +36,7 @@ export function rollPbtA(
   }
 
   const modifier = arg.stat + (arg.forward ?? 0) + (arg.ongoing ?? 0)
-  const rollResult = roll({
+  const rollResult = coreRoll({
     quantity: arg.advantage || arg.disadvantage ? 3 : 2,
     sides: 6,
     modifiers: arg.advantage

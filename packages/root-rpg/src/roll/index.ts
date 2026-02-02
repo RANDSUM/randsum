@@ -3,7 +3,7 @@ import type { GameRollResult, RollRecord } from '@randsum/roller'
 import type { RootRpgRollResult } from '../types'
 import { interpretResult } from './interpretResult'
 
-export const rollRootRpg: (
+export const roll: (
   bonus: number
 ) => GameRollResult<RootRpgRollResult['hit'], undefined, RollRecord> = createGameRoll<
   number,

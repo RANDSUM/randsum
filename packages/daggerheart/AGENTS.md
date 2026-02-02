@@ -15,7 +15,7 @@ Daggerheart is a fantasy tabletop RPG that uses unique hope and fear dice mechan
 
 ## API
 
-### `rollDaggerheart(arg: DaggerheartRollArgument): GameRollResult<DaggerheartRollResultType, DaggerheartRollDetails, RollRecord>`
+### `roll(arg: DaggerheartRollArgument): GameRollResult<DaggerheartRollResultType, DaggerheartRollDetails, RollRecord>`
 
 Rolls a Daggerheart action roll.
 
@@ -58,25 +58,25 @@ Mechanical success is determined by the total (sum of all dice + modifier).
 ## Usage
 
 ```typescript
-import { rollDaggerheart } from "@randsum/daggerheart"
+import { roll } from "@randsum/daggerheart"
 
 // Basic roll
-const result = rollDaggerheart({ modifier: 3 })
+const result = roll({ modifier: 3 })
 
 // With advantage
-const result = rollDaggerheart({
+const result = roll({
   rollingWith: "Advantage",
   modifier: 5
 })
 
 // With amplified hope
-const result = rollDaggerheart({
+const result = roll({
   amplifyHope: true,
   modifier: 2
 })
 
 // Full options
-const result = rollDaggerheart({
+const result = roll({
   rollingWith: "Disadvantage",
   amplifyHope: true,
   amplifyFear: true,
@@ -116,7 +116,7 @@ Also re-exports core types from `@randsum/roller`:
 
 ## Testing
 
-Test file: `__tests__/rollDaggerheart.test.ts`
+Test file: `__tests__/roll.test.ts`
 
 Tests cover:
 

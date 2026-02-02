@@ -124,7 +124,7 @@ packages/
    - Import `roll` from `@randsum/roller` in `src/roll{GameName}/index.ts`
    - Create wrapper that interprets results for the game system
    - Return `GameRollResult<TResult, TDetails, RollRecord>` interface
-   - See `packages/blades/src/rollBlades/index.ts` for example
+   - See `packages/blades/src/roll/index.ts` for example
 
 4. **Export from index.ts**:
 

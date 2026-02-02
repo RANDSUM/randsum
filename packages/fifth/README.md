@@ -12,20 +12,12 @@
 
 </div>
 
-A type-safe implementation of 5th Edition dice rolling mechanics that supports:
-
-- 🎲 Standard d20 rolls with advantage/disadvantage
-- 🎯 Automatic handling of modifiers
-- 🔒 Full TypeScript support
-- 🎮 Perfect for 5e compatible applications
-- 🪶 Tree-shakeable implementation
+A type-safe implementation of 5th Edition d20 mechanics with advantage/disadvantage.
 
 ## Installation
 
 ```bash
 npm install @randsum/fifth
-# or
-yarn add @randsum/fifth
 # or
 bun add @randsum/fifth
 ```
@@ -34,10 +26,9 @@ bun add @randsum/fifth
 
 ```typescript
 import { roll } from "@randsum/fifth"
-import type { RollArgument } from "@randsum/fifth"
 
 // Basic roll with modifier
-roll({ modifier: 5 })
+const result = roll({ modifier: 5 })
 
 // Roll with advantage
 roll({
@@ -51,34 +42,40 @@ roll({
   rollingWith: "Disadvantage"
 })
 
-// Check if roll meets or beats DC
-const rollArg: RollArgument = {
-  modifier: 5,
-  rollingWith: "Advantage"
-}
-const result = roll(rollArg)
-const success = result.total >= 15 // Check if roll meets or exceeds DC 15
+// Check against DC
+const { total } = roll({ modifier: 5 })
+const success = total >= 15 // DC 15 check
 ```
 
 ## API Reference
 
-### `d20Roll`
-
-Makes a d20 roll following 5th Edition rules.
+### `roll(options)`
 
 ```typescript
-const result = d20Roll({
-  modifier: 5, // the result of your bonuses after all bonuses are applied
-  rollingWith: "Advantage" // Optional
-})
-// Returns a roll result with total and details
+function roll(options: FifthRollArgument): FifthRollResult
 ```
 
-We also export the `roll` function from `@randsum/roller` for your convenience.
+**Options:**
+
+| Parameter     | Type                            | Description                       |
+| ------------- | ------------------------------- | --------------------------------- |
+| `modifier`    | `number`                        | Bonus/penalty to add to roll      |
+| `rollingWith` | `'Advantage' \| 'Disadvantage'` | Roll 2d20 and keep highest/lowest |
+
+**Returns:**
+
+```typescript
+interface FifthRollResult {
+  total: number
+  result: "natural_20" | "natural_1" | "standard"
+  details: { modifier: number }
+  rolls: RollRecord[]
+}
+```
 
 ## Related Packages
 
-- [@randsum/roller](https://github.com/RANDSUM/randsum/tree/main/packages/roller): Core dice rolling implementation
+- [@randsum/roller](https://github.com/RANDSUM/randsum/tree/main/packages/roller) - Core dice rolling
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

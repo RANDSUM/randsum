@@ -1,4 +1,4 @@
-export { rollDaggerheart } from './rollDaggerheart'
+export { roll } from './roll'
 export type {
   DaggerheartRollArgument,
   DaggerheartRollResult,

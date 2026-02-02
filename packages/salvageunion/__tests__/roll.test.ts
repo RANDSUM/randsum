@@ -1,14 +1,14 @@
 import { describe, expect, spyOn, test } from 'bun:test'
-import { rollTable } from '../src/rollTable'
+import { roll } from '../src/roll'
 import type { SalvageUnionTableName } from '../src/types'
 import * as roller from '@randsum/roller'
 import type { RollerRollResult } from '@randsum/roller'
 import * as suRef from 'salvageunion-reference'
 
-describe('rollTable', () => {
+describe('roll', () => {
   describe('default Core Mechanic table', () => {
     test('uses Core Mechanic table by default', () => {
-      const { result } = rollTable()
+      const { result } = roll()
 
       expect(result.tableName).toBe('Core Mechanic')
       expect(result.table).toBeDefined()
@@ -18,7 +18,7 @@ describe('rollTable', () => {
   describe('roll value interpretation', () => {
     test('returns consistent results across multiple rolls', () => {
       const loops = 50
-      const results = Array.from({ length: loops }, () => rollTable())
+      const results = Array.from({ length: loops }, () => roll())
 
       results.forEach(({ result }) => {
         expect(result.tableName).toBe('Core Mechanic')
@@ -28,7 +28,7 @@ describe('rollTable', () => {
 
   describe('different table names', () => {
     test('handles NPC Action table', () => {
-      const { result } = rollTable('NPC Action')
+      const { result } = roll('NPC Action')
       expect(result.tableName).toBe('NPC Action')
       expect(result.table).toBeDefined()
       expect(result.label).toBeDefined()
@@ -36,7 +36,7 @@ describe('rollTable', () => {
     })
 
     test('handles Critical Damage table', () => {
-      const { result } = rollTable('Critical Damage')
+      const { result } = roll('Critical Damage')
 
       expect(result.tableName).toBe('Critical Damage')
       expect(result.table).toBeDefined()
@@ -47,13 +47,13 @@ describe('rollTable', () => {
 
   describe('input validation', () => {
     test('throws error for invalid table name', () => {
-      expect(() => rollTable('Invalid Table' as SalvageUnionTableName)).toThrow(
+      expect(() => roll('Invalid Table' as SalvageUnionTableName)).toThrow(
         'Invalid Salvage Union table name: "Invalid Table"'
       )
     })
 
     test('throws error for non-existent table', () => {
-      expect(() => rollTable('Nonexistent' as SalvageUnionTableName)).toThrow(
+      expect(() => roll('Nonexistent' as SalvageUnionTableName)).toThrow(
         'Invalid Salvage Union table name: "Nonexistent"'
       )
     })
@@ -86,8 +86,8 @@ describe('rollTable', () => {
       ]
 
       validTables.forEach(tableName => {
-        expect(() => rollTable(tableName)).not.toThrow()
-        const { result } = rollTable(tableName)
+        expect(() => roll(tableName)).not.toThrow()
+        const { result } = roll(tableName)
         expect(result.tableName).toBe(tableName)
       })
     })
@@ -127,7 +127,7 @@ describe('rollTable', () => {
 
       const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult as RollerRollResult)
 
-      const { result } = rollTable('Core Mechanic')
+      const { result } = roll('Core Mechanic')
 
       expect(result.tableName).toBe('Core Mechanic')
       expect(result.roll).toBe(10)
@@ -174,7 +174,7 @@ describe('rollTable', () => {
 
       const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult as RollerRollResult)
 
-      const { result } = rollTable('Quirks')
+      const { result } = roll('Quirks')
 
       expect(result.tableName).toBe('Quirks')
       expect(result.roll).toBe(15)
@@ -224,7 +224,7 @@ describe('rollTable', () => {
         key: ''
       })
 
-      expect(() => rollTable('Core Mechanic')).toThrow(
+      expect(() => roll('Core Mechanic')).toThrow(
         'Failed to get result from table: "Core Mechanic"'
       )
 

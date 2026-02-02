@@ -95,22 +95,22 @@ export const gamePackages: PackageInfo[] = [
     examples: [
       {
         title: 'Basic Roll',
-        code: `import { rollBlades } from "@randsum/blades"
+        code: `import { roll } from "@randsum/blades"
 import type { BladesRollResult } from "@randsum/blades"
 
 // Basic roll with dice pool
-const { outcome, result } = rollBlades(2)
+const { outcome, result } = roll(2)
 console.log(outcome) // 'critical' | 'success' | 'partial' | 'failure'`,
         language: 'typescript'
       },
       {
         title: 'Different Dice Pool Sizes',
-        code: `import { rollBlades } from "@randsum/blades"
+        code: `import { roll } from "@randsum/blades"
 
-rollBlades(1) // Desperate position
-rollBlades(2) // Risky position
-rollBlades(3) // Controlled position
-rollBlades(4) // Controlled with assistance`,
+roll(1) // Desperate position
+roll(2) // Risky position
+roll(3) // Controlled position
+roll(4) // Controlled with assistance`,
         language: 'typescript'
       },
       {
@@ -222,20 +222,20 @@ bun add @randsum/fifth`,
     examples: [
       {
         title: 'Basic Roll',
-        code: `import { rollRootRpg } from "@randsum/root-rpg"
+        code: `import { roll } from "@randsum/root-rpg"
 import type { RootRpgRollResult } from "@randsum/root-rpg"
 
 // Basic roll with modifier
-const { outcome, roll, result } = rollRootRpg(2)
+const { outcome, roll, result } = roll(2)
 // outcome: 'Strong Hit' | 'Weak Hit' | 'Miss'
 // roll: numeric total, result: detailed roll information`,
         language: 'typescript'
       },
       {
         title: 'Type-Safe Result Handling',
-        code: `import { rollRootRpg } from "@randsum/root-rpg"
+        code: `import { roll } from "@randsum/root-rpg"
 
-const { outcome } = rollRootRpg(0)
+const { outcome } = roll(0)
 switch (outcome) {
   case "Strong Hit":
     // 10 or higher
@@ -269,27 +269,27 @@ bun add @randsum/root-rpg`,
     examples: [
       {
         title: 'Basic Roll',
-        code: `import { rollTable } from "@randsum/salvageunion"
+        code: `import { roll } from "@randsum/salvageunion"
 import type { SalvageUnionTableResult } from "@randsum/salvageunion"
 
 // Basic roll with default table
-const result = rollTable()
+const result = roll()
 // Returns table result with hit type, label, description, and roll value`,
         language: 'typescript'
       },
       {
         title: 'Roll with Specific Table',
-        code: `import { rollTable } from "@randsum/salvageunion"
+        code: `import { roll } from "@randsum/salvageunion"
 
 // Roll with specific table
-const result = rollTable("Morale")`,
+const result = roll("Morale")`,
         language: 'typescript'
       },
       {
         title: 'Type-Safe Result Handling',
-        code: `import { rollTable } from "@randsum/salvageunion"
+        code: `import { roll } from "@randsum/salvageunion"
 
-const { hit, label, description, roll } = rollTable("Core Mechanic")
+const { hit, label, description, roll } = roll("Core Mechanic")
 switch (hit) {
   case "Nailed It":
     // 20
@@ -324,19 +324,19 @@ bun add @randsum/salvageunion`,
     examples: [
       {
         title: 'Basic Roll',
-        code: `import { rollPbtA } from "@randsum/pbta"
+        code: `import { roll } from "@randsum/pbta"
 
 // Basic roll with stat modifier
-const result = rollPbtA({ stat: 2 })
+const result = roll({ stat: 2 })
 // result.result: 'strong_hit' | 'weak_hit' | 'miss'`,
         language: 'typescript'
       },
       {
         title: 'With Bonuses',
-        code: `import { rollPbtA } from "@randsum/pbta"
+        code: `import { roll } from "@randsum/pbta"
 
 // With forward and ongoing bonuses
-const result = rollPbtA({
+const result = roll({
   stat: 1,
   forward: 1,  // One-time bonus
   ongoing: 0   // Persistent bonus
@@ -345,10 +345,10 @@ const result = rollPbtA({
       },
       {
         title: 'With Advantage',
-        code: `import { rollPbtA } from "@randsum/pbta"
+        code: `import { roll } from "@randsum/pbta"
 
 // Roll with advantage (3d6, keep 2 highest)
-const result = rollPbtA({
+const result = roll({
   stat: 2,
   advantage: true
 })`,

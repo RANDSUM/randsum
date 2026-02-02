@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { SALVAGE_UNION_TABLE_NAMES, rollTable } from '@randsum/salvageunion'
+import { SALVAGE_UNION_TABLE_NAMES, roll } from '@randsum/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
 import type { Command } from '../types.js'
 
@@ -51,7 +51,7 @@ export const suCommand: Command = {
 
     await interaction.deferReply()
 
-    const rollResult = rollTable(tableName)
+    const rollResult = roll(tableName)
     const color = getColor(rollResult.result.roll)
 
     const embed = new EmbedBuilder()

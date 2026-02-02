@@ -32,19 +32,19 @@ import CodeExample from '../../components/CodeExample.astro'
           </p>
 
           <CodeExample
-            code={`import { actionRoll } from '@randsum/fifth'
+            code={`import { roll } from '@randsum/fifth'
 
 // Basic attack roll with modifier
-const attack = actionRoll({ modifier: 5 })
+const attack = roll({ modifier: 5 })
 
 // With advantage
-const advantageAttack = actionRoll({
+const advantageAttack = roll({
   modifier: 5,
   rollingWith: 'Advantage'
 })
 
 // With disadvantage
-const disadvantageAttack = actionRoll({
+const disadvantageAttack = roll({
   modifier: -2,
   rollingWith: 'Disadvantage'
 })`}
@@ -62,14 +62,14 @@ const disadvantageAttack = actionRoll({
           </p>
 
           <CodeExample
-            code={`import { rollBlades } from '@randsum/blades'
+            code={`import { roll } from '@randsum/blades'
 
 // Roll with dice pool
-const result = rollBlades(3)
+const result = roll(3)
 // result.result: 'critical' | 'success' | 'partial' | 'failure'
 
 // Desperate position (0 dice)
-const desperate = rollBlades(0)`}
+const desperate = roll(0)`}
             language="typescript"
             title="Blades Examples"
           />
@@ -84,21 +84,21 @@ const desperate = rollBlades(0)`}
           </p>
 
           <CodeExample
-            code={`import { rollPbtA } from '@randsum/pbta'
+            code={`import { roll } from '@randsum/pbta'
 
 // Basic PbtA roll
-const result = rollPbtA({ stat: 2 })
+const result = roll({ stat: 2 })
 // result.result: 'strong_hit' | 'weak_hit' | 'miss'
 
 // With bonuses
-const bonusRoll = rollPbtA({
+const bonusRoll = roll({
   stat: 1,
   forward: 1,  // One-time bonus
   ongoing: 0   // Persistent bonus
 })
 
 // With advantage
-const advantageRoll = rollPbtA({
+const advantageRoll = roll({
   stat: 2,
   advantage: true
 })`}

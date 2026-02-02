@@ -13,7 +13,7 @@ Root RPG is a tabletop RPG set in the world of Root board game. It uses a 2d6 + 
 
 ## API
 
-### `rollRootRpg(bonus: number): GameRollResult<RootRpgRollResult, undefined, RollRecord>`
+### `roll(bonus: number): GameRollResult<RootRpgRollResult, undefined, RollRecord>`
 
 Rolls a Root RPG action roll.
 
@@ -45,10 +45,10 @@ Outcome thresholds:
 ## Usage
 
 ```typescript
-import { rollRootRpg } from "@randsum/root-rpg"
+import { roll } from "@randsum/root-rpg"
 
 // Basic roll with stat bonus
-const result = rollRootRpg(2)
+const result = roll(2)
 // result.result.hit: 'Strong Hit' | 'Weak Hit' | 'Miss'
 
 // Type-safe result handling
@@ -85,7 +85,7 @@ Game-specific types only, core types imported from `@randsum/roller` as needed.
 
 ## Testing
 
-Test file: `__tests__/rollRootRpg.test.ts`
+Test file: `__tests__/roll.test.ts`
 
 Tests cover:
 

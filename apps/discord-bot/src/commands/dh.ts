@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { rollDaggerheart } from '@randsum/daggerheart'
+import { roll } from '@randsum/daggerheart'
 import { embedFooterDetails } from '../utils/constants.js'
 import type { Command } from '../types.js'
 
@@ -44,7 +44,7 @@ export const dhCommand: Command = {
 
     await interaction.deferReply()
 
-    const result = rollDaggerheart({
+    const result = roll({
       modifier,
       ...(rollingWith ? { rollingWith } : {}),
       amplifyHope,

@@ -13,7 +13,7 @@ Salvage Union is a mech-based tabletop RPG that uses table-based mechanics with 
 
 ## API
 
-### `rollTable(tableName?: SalvageUnionTableName): GameRollResult<SalvageUnionRollRecord, undefined, RollRecord>`
+### `roll(tableName?: SalvageUnionTableName): GameRollResult<SalvageUnionRollRecord, undefined, RollRecord>`
 
 Rolls on a Salvage Union table.
 
@@ -50,13 +50,13 @@ Result quality is determined by the roll value:
 ## Usage
 
 ```typescript
-import { rollTable } from "@randsum/salvageunion"
+import { roll } from "@randsum/salvageunion"
 
 // Basic roll with default table (Core Mechanic)
-const result = rollTable()
+const result = roll()
 
 // Roll specific table
-const result = rollTable("Morale")
+const result = roll("Morale")
 
 // Access result details
 const { label, description, roll } = result.result
@@ -107,7 +107,7 @@ Game-specific types only, core types imported from `@randsum/roller` as needed.
 
 ## Testing
 
-Test file: `__tests__/rollTable.test.ts`
+Test file: `__tests__/roll.test.ts`
 
 Tests cover:
 

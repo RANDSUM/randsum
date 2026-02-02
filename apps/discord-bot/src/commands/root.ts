@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { rollRootRpg } from '@randsum/root-rpg'
+import { roll } from '@randsum/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
 import type { Command } from '../types.js'
 
@@ -28,7 +28,7 @@ export const rootCommand: Command = {
 
     await interaction.deferReply()
 
-    const result = rollRootRpg(modifier)
+    const result = roll(modifier)
 
     // Get initial dice rolls
     const initialRolls = result.rolls[0]?.modifierHistory.initialRolls ?? []

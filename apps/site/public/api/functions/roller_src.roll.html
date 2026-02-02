@@ -194,7 +194,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-6">20</span><span class="hl-1">) </span><span class="hl-3">// 1d20</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-6">20</span><span class="hl-1">) </span><span class="hl-3">// 1d20</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -207,7 +207,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;2d6&quot;</span><span class="hl-1">)</span><br/><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">total</span><span class="hl-1">) </span><span class="hl-3">// Sum of 2d6</span><br/><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">result</span><span class="hl-1">) </span><span class="hl-3">// [&quot;3&quot;, &quot;5&quot;] - string representations</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;2d6&quot;</span><span class="hl-1">)</span><br/><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">total</span><span class="hl-1"> </span><span class="hl-3">// =&gt; Sum of 2d6</span><br/><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">result</span><span class="hl-1"> </span><span class="hl-3">// =&gt; [&quot;3&quot;, &quot;5&quot;] - string representations</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -220,7 +220,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-7">sides:</span><span class="hl-1"> </span><span class="hl-6">6</span><span class="hl-1">, </span><span class="hl-7">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1">, </span><span class="hl-7">modifiers:</span><span class="hl-1"> { </span><span class="hl-7">drop:</span><span class="hl-1"> { </span><span class="hl-7">lowest:</span><span class="hl-1"> </span><span class="hl-6">1</span><span class="hl-1"> } } }) </span><span class="hl-3">// same as 4d6L</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-5">sides:</span><span class="hl-1"> </span><span class="hl-6">6</span><span class="hl-1">, </span><span class="hl-5">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1">, </span><span class="hl-5">modifiers:</span><span class="hl-1"> { </span><span class="hl-5">drop:</span><span class="hl-1"> { </span><span class="hl-5">lowest:</span><span class="hl-1"> </span><span class="hl-6">1</span><span class="hl-1"> } } }) </span><span class="hl-3">// same as 4d6L</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -233,7 +233,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-7">sides:</span><span class="hl-1"> [</span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">], </span><span class="hl-7">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1"> })</span><br/><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">result</span><span class="hl-1">) </span><span class="hl-3">// [&quot;+&quot;, &quot;-&quot;, &quot; &quot;, &quot;+&quot;] - actual face values</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-5">sides:</span><span class="hl-1"> [</span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">], </span><span class="hl-5">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1"> })</span><br/><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">result</span><span class="hl-1"> </span><span class="hl-3">// =&gt; [&quot;+&quot;, &quot;-&quot;, &quot; &quot;, &quot;+&quot;] - actual face values</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -246,7 +246,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">seeded</span><span class="hl-1"> = </span><span class="hl-0">createSeededRandom</span><span class="hl-1">(</span><span class="hl-6">42</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20&quot;</span><span class="hl-1">, { </span><span class="hl-7">randomFn:</span><span class="hl-1"> </span><span class="hl-7">seeded</span><span class="hl-1"> })</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">seeded</span><span class="hl-1"> = </span><span class="hl-0">createSeededRandom</span><span class="hl-1">(</span><span class="hl-6">42</span><span class="hl-1">)</span><br/><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20&quot;</span><span class="hl-1">, { </span><span class="hl-5">randomFn:</span><span class="hl-1"> </span><span class="hl-5">seeded</span><span class="hl-1"> })</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -259,7 +259,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20+5&quot;</span><span class="hl-1">, </span><span class="hl-2">&quot;2d6+3&quot;</span><span class="hl-1">)</span><br/><span class="hl-3">// Returns combined total of both rolls</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20+5&quot;</span><span class="hl-1">, </span><span class="hl-2">&quot;2d6+3&quot;</span><span class="hl-1">)</span><br/><span class="hl-3">// Returns combined total of both rolls</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -272,7 +272,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;invalid notation&quot;</span><span class="hl-1">)</span><br/><span class="hl-8">if</span><span class="hl-1"> (</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">error</span><span class="hl-1">.</span><span class="hl-7">message</span><span class="hl-1">)</span><br/><span class="hl-1">}</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;invalid notation&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">if</span><span class="hl-1"> (</span><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1"> </span><span class="hl-3">// =&gt; &quot;Invalid dice notation: ...&quot;</span><br/><span class="hl-1">}</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                 </div>
@@ -427,7 +427,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-6">20</span><span class="hl-1">) </span><span class="hl-3">// 1d20</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-6">20</span><span class="hl-1">) </span><span class="hl-3">// 1d20</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -440,7 +440,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;2d6&quot;</span><span class="hl-1">)</span><br/><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">total</span><span class="hl-1">) </span><span class="hl-3">// Sum of 2d6</span><br/><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">result</span><span class="hl-1">) </span><span class="hl-3">// [&quot;3&quot;, &quot;5&quot;] - string representations</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;2d6&quot;</span><span class="hl-1">)</span><br/><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">total</span><span class="hl-1"> </span><span class="hl-3">// =&gt; Sum of 2d6</span><br/><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">result</span><span class="hl-1"> </span><span class="hl-3">// =&gt; [&quot;3&quot;, &quot;5&quot;] - string representations</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -453,7 +453,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-7">sides:</span><span class="hl-1"> </span><span class="hl-6">6</span><span class="hl-1">, </span><span class="hl-7">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1">, </span><span class="hl-7">modifiers:</span><span class="hl-1"> { </span><span class="hl-7">drop:</span><span class="hl-1"> { </span><span class="hl-7">lowest:</span><span class="hl-1"> </span><span class="hl-6">1</span><span class="hl-1"> } } }) </span><span class="hl-3">// same as 4d6L</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-5">sides:</span><span class="hl-1"> </span><span class="hl-6">6</span><span class="hl-1">, </span><span class="hl-5">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1">, </span><span class="hl-5">modifiers:</span><span class="hl-1"> { </span><span class="hl-5">drop:</span><span class="hl-1"> { </span><span class="hl-5">lowest:</span><span class="hl-1"> </span><span class="hl-6">1</span><span class="hl-1"> } } }) </span><span class="hl-3">// same as 4d6L</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -466,7 +466,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-7">sides:</span><span class="hl-1"> [</span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">], </span><span class="hl-7">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1"> })</span><br/><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">result</span><span class="hl-1">) </span><span class="hl-3">// [&quot;+&quot;, &quot;-&quot;, &quot; &quot;, &quot;+&quot;] - actual face values</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">({ </span><span class="hl-5">sides:</span><span class="hl-1"> [</span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;+&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39; &#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;-&#39;</span><span class="hl-1">], </span><span class="hl-5">quantity:</span><span class="hl-1"> </span><span class="hl-6">4</span><span class="hl-1"> })</span><br/><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">result</span><span class="hl-1"> </span><span class="hl-3">// =&gt; [&quot;+&quot;, &quot;-&quot;, &quot; &quot;, &quot;+&quot;] - actual face values</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -479,7 +479,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">seeded</span><span class="hl-1"> = </span><span class="hl-0">createSeededRandom</span><span class="hl-1">(</span><span class="hl-6">42</span><span class="hl-1">)</span><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20&quot;</span><span class="hl-1">, { </span><span class="hl-7">randomFn:</span><span class="hl-1"> </span><span class="hl-7">seeded</span><span class="hl-1"> })</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">seeded</span><span class="hl-1"> = </span><span class="hl-0">createSeededRandom</span><span class="hl-1">(</span><span class="hl-6">42</span><span class="hl-1">)</span><br/><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20&quot;</span><span class="hl-1">, { </span><span class="hl-5">randomFn:</span><span class="hl-1"> </span><span class="hl-5">seeded</span><span class="hl-1"> })</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -492,7 +492,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20+5&quot;</span><span class="hl-1">, </span><span class="hl-2">&quot;2d6+3&quot;</span><span class="hl-1">)</span><br/><span class="hl-3">// Returns combined total of both rolls</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;1d20+5&quot;</span><span class="hl-1">, </span><span class="hl-2">&quot;2d6+3&quot;</span><span class="hl-1">)</span><br/><span class="hl-3">// Returns combined total of both rolls</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                   <div class="tsd-tag-example">
@@ -505,7 +505,7 @@
                           <use href="../assets/icons.svg#icon-anchor"></use></svg
                       ></a>
                     </h4>
-                    <pre><code class="ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;invalid notation&quot;</span><span class="hl-1">)</span><br/><span class="hl-8">if</span><span class="hl-1"> (</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-7">console</span><span class="hl-1">.</span><span class="hl-0">error</span><span class="hl-1">(</span><span class="hl-7">result</span><span class="hl-1">.</span><span class="hl-7">error</span><span class="hl-1">.</span><span class="hl-7">message</span><span class="hl-1">)</span><br/><span class="hl-1">}</span>
+                    <pre><code class="ts"><span class="hl-7">const</span><span class="hl-1"> </span><span class="hl-8">result</span><span class="hl-1"> = </span><span class="hl-0">roll</span><span class="hl-1">(</span><span class="hl-2">&quot;invalid notation&quot;</span><span class="hl-1">)</span><br/><span class="hl-4">if</span><span class="hl-1"> (</span><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">error</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-5">result</span><span class="hl-1">.</span><span class="hl-5">error</span><span class="hl-1">.</span><span class="hl-5">message</span><span class="hl-1"> </span><span class="hl-3">// =&gt; &quot;Invalid dice notation: ...&quot;</span><br/><span class="hl-1">}</span>
 </code><button type="button">Copy</button></pre>
                   </div>
                 </div>

@@ -3,7 +3,7 @@
  *
  * @example
  * ```ts
- * const result = rollPbtA({
+ * const result = roll({
  *   stat: 2,
  *   forward: 1,
  *   ongoing: 0
