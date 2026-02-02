@@ -5,8 +5,12 @@ on:
     types: [completed]
     branches: [main]
 
-env:
-  NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   publish:
@@ -19,14 +23,24 @@ jobs:
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: "1.3.8"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
       - run: bun install --frozen-lockfile
 
       - name: Build packages
         run: bun run build
 
-      - name: Publish to NPM
-        run: bun run publish
+      - name: Configure npm authentication
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to NPM
+        run: npm publish --workspaces --access=public
