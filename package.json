@@ -19,7 +19,7 @@
     "ts-unused-exports": "11.0.1",
     "typedoc": "0.28.16",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.54.0"
+    "typescript-eslint": "8.55.0"
   },
   "engines": {
     "node": ">=18.0.0",
