@@ -1,9 +1,29 @@
 import { Box, Text, render } from 'ink'
+import { useState } from 'react'
+import type { RollArgument } from '@randsum/roller'
+import { roll } from '@randsum/roller'
 import { RollHistory } from './components/RollHistory'
+import { NotationInput } from './components/NotationInput'
 import { useRollHistory } from './hooks/useRollHistory'
 
 function App(): React.JSX.Element {
-  const { history } = useRollHistory()
+  const { history, addRoll } = useRollHistory()
+  const [input, setInput] = useState('')
+  const [error, setError] = useState('')
+
+  const handleSubmit = (value: string): void => {
+    const trimmed = value.trim()
+    if (trimmed === '') return
+
+    const result = roll(trimmed as RollArgument)
+    if (result.error) {
+      setError(result.error.message)
+    } else {
+      setError('')
+      addRoll(trimmed, result)
+    }
+    setInput('')
+  }
 
   return (
     <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
@@ -17,14 +37,9 @@ function App(): React.JSX.Element {
         <RollHistory history={history} />
       </Box>
 
-      {/* Dice toolbar placeholder - Task 5/6 */}
+      {/* Dice toolbar — Task 6 */}
 
-      <Box borderStyle="single" borderColor="gray" paddingX={1} flexDirection="column">
-        <Box>
-          <Text color="green">{'> '}</Text>
-          <Text> </Text>
-        </Box>
-      </Box>
+      <NotationInput value={input} error={error} onChange={setInput} onSubmit={handleSubmit} />
     </Box>
   )
 }
