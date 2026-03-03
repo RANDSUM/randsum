@@ -15,9 +15,7 @@ export function RollHistory({ history }: RollHistoryProps): React.JSX.Element {
   if (history.length === 0) {
     return (
       <Box flexDirection="column" paddingX={1}>
-        <Text dimColor italic>
-          No rolls yet.
-        </Text>
+        <Text dimColor>Type notation and press Enter to roll, or use the dice buttons below.</Text>
       </Box>
     )
   }
