@@ -24,7 +24,6 @@
     "LICENSE",
     "README.md"
   ],
-  "sideEffects": false,
   "type": "module",
   "dependencies": {
     "@randsum/roller": "workspace:~"
