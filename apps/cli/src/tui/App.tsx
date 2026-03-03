@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Box, Text, render, useInput, useStdout } from 'ink'
 import { useState } from 'react'
 import type { RollArgument } from '@randsum/roller'
@@ -114,4 +115,9 @@ export function launchTui(): void {
     process.exit(1)
   }
   render(<App />)
+=======
+export function launchTui(): void {
+  // eslint-disable-next-line no-console
+  console.log('TUI mode coming soon — use notation args for now')
+>>>>>>> 9e6c481d (feat(cli): implement simple mode with arg parsing and roll execution)
 }
