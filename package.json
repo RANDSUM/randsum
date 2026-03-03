@@ -104,7 +104,6 @@
     "apps/*"
   ],
   "overrides": {
-    "ajv": "8.18.0",
     "lodash": "4.17.23",
     "markdown-it": "14.1.1",
     "mdast-util-to-hast": "13.2.1",
