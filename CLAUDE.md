@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** (each wraps roller with game-specific interpretation):
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
 
-**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private)
+**Tools**: `@randsum/mcp` (MCP server for AI integration), `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
