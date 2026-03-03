@@ -213,30 +213,12 @@ const githubRawUrl = 'https://raw.githubusercontent.com/RANDSUM/randsum/main/ski
   <section>
     <h2>Implementation Options</h2>
 
-    <h3>Option 1: MCP Server (Recommended for AI Agents)</h3>
-    <p>Install and configure the RANDSUM MCP server for direct tool access:</p>
-    <CodeExample
-      code={`{
-  "mcpServers": {
-    "randsum": {
-      "command": "npx",
-      "args": ["-y", "@randsum/mcp@latest"]
-    }
-  }
-}`}
-      language="json"
-      title="MCP Client Configuration"
-    />
-    <p>Available MCP tools:</p>
-    <ul>
-      <li><code>roll</code> - Execute dice rolls with full notation support</li>
-      <li><code>validate-notation</code> - Validate and explain notation syntax</li>
-    </ul>
+    <h3>Option 1: CLI</h3>
+    <CodeExample code={`npx randsum 4d6L        # Quick roll
+npx randsum 2d20H       # Roll with advantage
+npx randsum -i           # Interactive TUI mode`} language="bash" title="CLI Usage" />
 
-    <h3>Option 2: CLI</h3>
-    <CodeExample code={`npx @randsum/roller "4d6L"`} language="bash" title="CLI Usage" />
-
-    <h3>Option 3: Programmatic (TypeScript/JavaScript)</h3>
+    <h3>Option 2: Programmatic (TypeScript/JavaScript)</h3>
     <CodeExample
       code={`import { roll } from "@randsum/roller"
 

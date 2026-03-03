@@ -81,8 +81,6 @@
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
-    "mcp:compile": "bun build --compile packages/mcp/src/index.ts --outfile dist/randsum-mcp",
-    "mcp:compile:all": "bun run mcp:compile && bun build --compile --target=bun-linux-x64 packages/mcp/src/index.ts --outfile dist/randsum-mcp-linux && bun build --compile --target=bun-windows-x64 packages/mcp/src/index.ts --outfile dist/randsum-mcp.exe",
     "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run site:build",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",

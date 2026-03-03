@@ -18,7 +18,6 @@ This is a Bun workspace monorepo containing dice rolling packages for tabletop R
 
 **Tools & Applications:**
 
-- `@randsum/mcp` - Model Context Protocol server for AI integration
 - `@randsum/site` - Documentation and marketing website (Astro)
 
 ## Development Commands

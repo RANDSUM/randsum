@@ -30,8 +30,6 @@ This repository contains multiple packages and applications for dice rolling and
 
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot with dice rolling capabilities using discord.js and Bun
 - **[@randsum/site](apps/site)** - Documentation and marketing website built with Astro
-- **[@randsum/mcp](packages/mcp)** - Model Context Protocol server for AI integration
-
 All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.
 
 ## 🚀 Quick Example
@@ -115,7 +113,6 @@ Bun's workspace features handle tasks across all packages with automatic depende
 ```bash
 bun run --filter @randsum/roller test      # Run tests for @randsum/roller only
 bun run --filter @randsum/blades build     # Build @randsum/blades only
-bun run --filter @randsum/mcp typecheck    # Type check the MCP server
 ```
 
 **Site-Specific Tasks**:

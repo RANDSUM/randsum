@@ -367,40 +367,6 @@ bun add @randsum/pbta`,
 
 export const toolPackages: PackageInfo[] = [
   {
-    id: 'mcp',
-    name: 'mcp',
-    displayName: 'MCP Server',
-    description:
-      'Model Context Protocol server for AI integration. Enables LLMs to roll dice and interact with RANDSUM packages.',
-    npmPackage: '@randsum/mcp',
-    category: 'tool',
-    color: '#FFD700', // Gold
-    examples: [
-      {
-        title: 'MCP Client Configuration',
-        code: `{
-  "mcpServers": {
-    "randsum": {
-      "command": "npx",
-      "args": ["-y", "@randsum/mcp@latest"],
-      "env": {
-        "NODE_ENV": "production"
-      }
-    }
-  }
-}`,
-        language: 'json'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/mcp
-# or
-bun add @randsum/mcp`,
-        language: 'bash'
-      }
-    ]
-  },
-  {
     id: 'skill',
     name: 'skill',
     displayName: 'AI Skill',
@@ -411,24 +377,19 @@ bun add @randsum/mcp`,
     color: '#8b5cf6', // Purple
     examples: [
       {
-        title: 'MCP Server Setup',
-        code: `{
-  "mcpServers": {
-    "randsum": {
-      "command": "npx",
-      "args": ["-y", "@randsum/mcp@latest"]
-    }
-  }
-}`,
-        language: 'json'
+        title: 'CLI Usage',
+        code: `npx randsum 4d6L        # Roll 4d6, drop lowest
+npx randsum 2d20H       # Roll with advantage
+npx randsum -i           # Interactive TUI mode`,
+        language: 'bash'
       },
       {
-        title: 'Installation',
-        code: `# Use MCP server for AI integration
-npm install -g @randsum/mcp
-# or
-npx @randsum/mcp@latest`,
-        language: 'bash'
+        title: 'Programmatic Usage',
+        code: `import { roll } from "@randsum/roller"
+
+const result = roll("4d6L")
+console.log(result.total)`,
+        language: 'typescript'
       }
     ]
   },

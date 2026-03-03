@@ -19,7 +19,7 @@ bun run build        # Build all packages
 ```bash
 bun run --filter @randsum/roller test      # Test single package
 bun run --filter @randsum/fifth build      # Build single package
-bun run --filter @randsum/mcp typecheck    # Typecheck single package
+bun run --filter @randsum/blades typecheck  # Typecheck single package
 ```
 
 ## Script Categories
@@ -89,13 +89,6 @@ bun run --filter @randsum/mcp typecheck    # Typecheck single package
 | Script               | Purpose                   | Example                          |
 | -------------------- | ------------------------- | -------------------------------- |
 | `create:game <name>` | Scaffold new game package | `bun run create:game mothership` |
-
-### MCP Server Distribution (Bun 1.3+)
-
-| Script            | Purpose                           | Output                                    |
-| ----------------- | --------------------------------- | ----------------------------------------- |
-| `mcp:compile`     | Build standalone MCP binary       | `dist/randsum-mcp` (current OS)           |
-| `mcp:compile:all` | Build MCP for all platforms       | Linux, Windows, and current OS binaries   |
 
 ## Pre-commit Hooks (Lefthook)
 
@@ -169,16 +162,6 @@ bun run profile      # Generate Chrome DevTools profile
 
 bun run profile:md   # Generate Markdown profile
 # Analyze in terminal or share with LLM for insights
-```
-
-### Building Standalone MCP Server
-
-```bash
-bun run mcp:compile      # Build for current OS
-./dist/randsum-mcp       # Run without Bun installed
-
-bun run mcp:compile:all  # Build for all platforms
-# Creates: dist/randsum-mcp, dist/randsum-mcp-linux, dist/randsum-mcp.exe
 ```
 
 ## Script Implementation Details
@@ -262,16 +245,6 @@ test('time-dependent logic', () => {
 })
 ```
 
-### Standalone Executables
-
-The MCP server can be compiled to a standalone binary:
-
-```bash
-bun run mcp:compile     # Current OS
-bun run mcp:compile:all # Cross-platform (Linux, Windows)
-```
-
-This creates executables that run without Bun installed.
 
 ### CPU Profiling
 
