@@ -1,33 +1,33 @@
 {
   "name": "randsum-monorepo",
   "devDependencies": {
-    "@eslint/js": "9.39.2",
+    "@eslint/js": "10.0.1",
     "@size-limit/preset-small-lib": "12.0.0",
-    "@types/bun": "1.3.8",
-    "@typescript-eslint/eslint-plugin": "8.54.0",
-    "@typescript-eslint/parser": "8.54.0",
-    "bunup": "0.16.22",
-    "eslint": "9.39.2",
+    "@types/bun": "1.3.10",
+    "@typescript-eslint/eslint-plugin": "8.56.1",
+    "@typescript-eslint/parser": "8.56.1",
+    "bunup": "0.16.31",
+    "eslint": "10.0.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
     "fast-check": "4.5.3",
-    "lefthook": "2.0.16",
+    "lefthook": "2.1.2",
     "mitata": "1.0.34",
     "prettier": "3.8.1",
     "prettier-plugin-astro": "0.14.1",
     "size-limit": "12.0.0",
     "ts-unused-exports": "11.0.1",
-    "typedoc": "0.28.16",
+    "typedoc": "0.28.17",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.54.0"
+    "typescript-eslint": "8.56.1"
   },
   "engines": {
     "node": ">=18.0.0",
-    "bun": ">=1.3.8"
+    "bun": ">=1.3.10"
   },
   "catalog": {
     "fast-check": "4.5.3",
-    "@types/bun": "1.3.8",
+    "@types/bun": "1.3.10",
     "mitata": "1.0.34",
     "typescript": "5.9.3"
   },
@@ -65,13 +65,13 @@
     "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
     "create:game": "bun scripts/create-game-package.ts",
-    "build": "bun run --bun --filter \"*\" build",
+    "build": "bun run --filter \"*\" build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
-    "lint": "bun run --bun --filter \"*\" lint",
-    "format": "bun run --bun --filter \"*\" format",
-    "format:check": "bun run --bun --filter \"*\" format:check",
-    "typecheck": "bun run --bun --filter \"*\" typecheck",
+    "lint": "bun run --filter \"*\" lint",
+    "format": "bun run --filter \"*\" format",
+    "format:check": "bun run --filter \"*\" format:check",
+    "typecheck": "bun run --filter \"*\" typecheck",
     "size": "size-limit",
     "size:check": "size-limit --json",
     "docs": "typedoc",
@@ -81,8 +81,6 @@
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
-    "mcp:compile": "bun build --compile packages/mcp/src/index.ts --outfile dist/randsum-mcp",
-    "mcp:compile:all": "bun run mcp:compile && bun build --compile --target=bun-linux-x64 packages/mcp/src/index.ts --outfile dist/randsum-mcp-linux && bun build --compile --target=bun-windows-x64 packages/mcp/src/index.ts --outfile dist/randsum-mcp.exe",
     "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run site:build",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
@@ -106,11 +104,9 @@
     "apps/*"
   ],
   "overrides": {
-    "qs": "6.14.1",
-    "h3": "1.15.5",
-    "tar": "7.5.7",
-    "node-forge": "1.3.3",
-    "jws": "3.2.3",
-    "devalue": "5.6.2"
+    "lodash": "4.17.23",
+    "markdown-it": "14.1.1",
+    "mdast-util-to-hast": "13.2.1",
+    "undici": "6.23.0"
   }
 }

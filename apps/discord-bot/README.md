@@ -15,7 +15,7 @@ Discord bot for rolling dice using RANDSUM game mechanics. Built with discord.js
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.3.8 or higher
+- [Bun](https://bun.sh) 1.3.10 or higher
 - A Discord account and server for testing
 - A Discord application/bot (create at [Discord Developer Portal](https://discord.com/developers/applications))
 

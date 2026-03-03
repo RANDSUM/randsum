@@ -82,7 +82,7 @@ const packageJson = {
     './package.json': './package.json'
   },
   engines: {
-    bun: '>=1.3.8',
+    bun: '>=1.3.10',
     node: '>=18.0.0'
   },
   keywords: ['dice', 'roller', 'rpg', 'random', 'typescript', 'tabletop', packageName],

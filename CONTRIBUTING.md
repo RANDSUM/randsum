@@ -45,7 +45,6 @@ packages/
   root-rpg/        # Root RPG implementation
   salvageunion/    # Salvage Union mechanics
   pbta/            # Powered by the Apocalypse mechanics
-  mcp/             # Model Context Protocol server
 apps/
   discord-bot/     # Discord bot (discord.js + Bun)
   site/            # Documentation website (Astro)
