@@ -1,11 +1,9 @@
 import { Box, Text } from 'ink'
 import TextInput from 'ink-text-input'
-import { useValidation } from '../hooks/useValidation'
 
 interface NotationInputProps {
   readonly value: string
   readonly error: string
-  readonly active: boolean
   readonly onChange: (value: string) => void
   readonly onSubmit: (value: string) => void
 }
@@ -14,23 +12,15 @@ export function NotationInput({
   value,
   error,
   onChange,
-  onSubmit,
-  active
+  onSubmit
 }: NotationInputProps): React.JSX.Element {
-  const { validationError } = useValidation(value)
-  const displayError = error !== '' ? error : validationError
-  const isInvalid = displayError !== ''
-
-  const borderColor = isInvalid ? 'red' : active ? 'green' : 'gray'
-  const promptColor = isInvalid ? 'red' : 'green'
-
   return (
-    <Box borderStyle="single" borderColor={borderColor} paddingX={1} flexDirection="column">
+    <Box borderStyle="single" borderColor="gray" paddingX={1} flexDirection="column">
+      {error !== '' && <Text color="red">{error}</Text>}
       <Box>
-        <Text color={promptColor}>{'> '}</Text>
-        <TextInput value={value} onChange={onChange} onSubmit={onSubmit} focus={active} />
+        <Text color="green">{'> '}</Text>
+        <TextInput value={value} onChange={onChange} onSubmit={onSubmit} />
       </Box>
-      {displayError !== '' && <Text color="red">{displayError}</Text>}
     </Box>
   )
 }
