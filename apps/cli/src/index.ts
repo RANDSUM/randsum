@@ -59,7 +59,8 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
     } else if (arg === '-r' || arg === '--repeat') {
       flags.repeat = Number(args[i + 1]) || 1
     } else if (arg === '-s' || arg === '--seed') {
-      flags.seed = Number(args[i + 1])
+      const seedValue = Number(args[i + 1])
+      flags.seed = Number.isNaN(seedValue) ? undefined : seedValue
     } else if (arg === '-i' || arg === '--interactive') {
       flags.interactive = true
     } else if (arg === '-h' || arg === '--help') {

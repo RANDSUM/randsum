@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import type { RollArgument, RollConfig } from '@randsum/roller'
-=======
-import type { DiceNotation, RollConfig } from '@randsum/roller'
->>>>>>> 9e6c481d (feat(cli): implement simple mode with arg parsing and roll execution)
 import { roll } from '@randsum/roller'
 import { formatCompact, formatJson, formatVerbose } from '../shared/format'
 
@@ -33,11 +29,7 @@ export function runSimple(options: SimpleOptions): string {
 
   const lines: string[] = []
 
-<<<<<<< HEAD
   const notations = options.notations as readonly RollArgument[]
-=======
-  const notations = options.notations as readonly DiceNotation[]
->>>>>>> 9e6c481d (feat(cli): implement simple mode with arg parsing and roll execution)
 
   for (const _i of Array.from({ length: options.repeat })) {
     const result = config ? roll(...notations, config) : roll(...notations)
