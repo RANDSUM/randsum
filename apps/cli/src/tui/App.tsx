@@ -5,7 +5,9 @@ import { roll } from '@randsum/roller'
 import { RollHistory } from './components/RollHistory'
 import { NotationInput } from './components/NotationInput'
 import { DiceToolbar } from './components/DiceToolbar'
+import { NotationReference } from './components/NotationReference'
 import { useRollHistory } from './hooks/useRollHistory'
+import { incrementDiceQuantity } from './helpers/incrementDiceQuantity'
 
 type FocusZone = 'input' | 'toolbar'
 
@@ -36,7 +38,8 @@ function App(): React.JSX.Element {
   }
 
   const handleDiceSelect = (notation: string): void => {
-    setInput(prev => prev + notation)
+    const sides = Number(notation.replace(/\D/g, ''))
+    setInput(prev => incrementDiceQuantity(prev, sides))
     setFocus('input')
   }
 
@@ -48,12 +51,32 @@ function App(): React.JSX.Element {
         </Text>
       </Box>
 
-      <Box flexDirection="column" flexGrow={1}>
-        <RollHistory history={history} />
-      </Box>
+      <Box>
+        {/* Left column: history, description, toolbar */}
+        <Box flexDirection="column" flexGrow={1}>
+          <Box flexDirection="column" flexGrow={1}>
+            <RollHistory history={history} />
+          </Box>
 
-      <Box borderStyle="single" borderColor={focus === 'toolbar' ? 'cyan' : 'gray'}>
-        <DiceToolbar active={focus === 'toolbar'} onSelect={handleDiceSelect} />
+          <Box marginY={1}>
+            <Text dimColor>{'─'.repeat(30)}</Text>
+          </Box>
+
+          <Box paddingX={1}>
+            <Text dimColor>Type notation and press Enter to roll, or use the dice buttons.</Text>
+          </Box>
+
+          <Box marginY={1}>
+            <Text dimColor>{'─'.repeat(30)}</Text>
+          </Box>
+
+          <Box borderStyle="single" borderColor={focus === 'toolbar' ? 'cyan' : 'gray'}>
+            <DiceToolbar active={focus === 'toolbar'} onSelect={handleDiceSelect} />
+          </Box>
+        </Box>
+
+        {/* Right column: notation reference */}
+        <NotationReference />
       </Box>
 
       <NotationInput
