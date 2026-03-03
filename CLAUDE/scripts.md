@@ -201,7 +201,7 @@ packages/{game-name}/
 
 ## Environment Requirements
 
-- **Bun**: >= 1.3.10 (primary runtime)
+- **Bun**: >= 1.3.8 (primary runtime)
 - **Node.js**: >= 18.0.0 (for compatibility)
 
 All scripts use Bun for execution. The monorepo uses Bun workspaces for dependency management.

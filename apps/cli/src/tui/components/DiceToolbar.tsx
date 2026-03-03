@@ -34,14 +34,16 @@ export function DiceToolbar({ active, onSelect }: DiceToolbarProps): React.JSX.E
       {DICE.map((die, i) => {
         const isSelected = active && i === selectedIndex
         return (
-          <Text
+          <Box
             key={die}
-            bold={isSelected}
-            color={isSelected ? 'cyan' : 'white'}
-            inverse={isSelected}
+            borderStyle="round"
+            borderColor={isSelected ? 'cyan' : 'gray'}
+            paddingX={1}
           >
-            {` d${die} `}
-          </Text>
+            <Text bold={isSelected} color={isSelected ? 'cyan' : 'white'}>
+              d{die}
+            </Text>
+          </Box>
         )
       })}
     </Box>
