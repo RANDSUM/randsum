@@ -23,7 +23,7 @@
     "@randsum/roller": "workspace:~",
     "@randsum/root-rpg": "workspace:~",
     "@randsum/salvageunion": "workspace:~",
-    "discord.js": "^14.17.3"
+    "discord.js": "^14.25.1"
   },
   "keywords": [
     "discord",
