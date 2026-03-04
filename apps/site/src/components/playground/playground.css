@@ -1,0 +1,479 @@
+/* Dice Playground - uses Starlight CSS vars */
+
+.playground-container {
+  font-family: var(--sl-font);
+  color: var(--sl-color-white);
+  max-width: 100%;
+}
+
+/* Mode toggle */
+.playground-mode-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.playground-mode-btn {
+  padding: 0.5rem 1.25rem;
+  background: transparent;
+  color: var(--sl-color-gray-2);
+  border: none;
+  cursor: pointer;
+  font-family: var(--sl-font);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.playground-mode-btn:hover {
+  background: var(--sl-color-gray-5);
+  color: var(--sl-color-white);
+}
+
+.playground-mode-btn.active {
+  background: var(--sl-color-accent);
+  color: #fff;
+}
+
+/* Notation mode layout */
+.playground-notation-mode {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .playground-notation-mode {
+    grid-template-columns: 1fr 280px;
+  }
+}
+
+.playground-notation-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Notation input */
+.playground-notation-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playground-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.playground-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  border: 2px solid var(--sl-color-gray-4);
+  border-radius: 8px;
+  font-family: var(--sl-font-mono);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.playground-input::placeholder {
+  color: var(--sl-color-gray-3);
+}
+
+.playground-input:focus {
+  border-color: var(--sl-color-accent);
+}
+
+.playground-roll-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--sl-color-accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--sl-font);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
+  white-space: nowrap;
+}
+
+.playground-roll-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.playground-roll-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.playground-validation-error {
+  color: #ef4444;
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+/* Dice toolbar */
+.playground-dice-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.playground-dice-btn {
+  padding: 0.5rem 0.75rem;
+  background: var(--sl-color-gray-5);
+  color: var(--sl-color-gray-1);
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 6px;
+  font-family: var(--sl-font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.playground-dice-btn:hover {
+  background: var(--sl-color-accent-low);
+  border-color: var(--sl-color-accent);
+  color: var(--sl-color-accent-high);
+}
+
+/* Roll history */
+.playground-history {
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--sl-color-gray-6);
+}
+
+.playground-history-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.playground-history-empty p {
+  color: var(--sl-color-gray-3);
+  font-size: 0.875rem;
+  text-align: center;
+  margin: 0;
+}
+
+.playground-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.playground-history-header h3 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-1);
+}
+
+.playground-clear-btn {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  color: var(--sl-color-gray-3);
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: var(--sl-font);
+}
+
+.playground-clear-btn:hover {
+  color: var(--sl-color-white);
+  border-color: var(--sl-color-gray-3);
+}
+
+.playground-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.playground-history-entry {
+  padding: 0.75rem;
+  background: var(--sl-color-gray-5);
+  border-radius: 6px;
+  border-left: 3px solid var(--sl-color-accent);
+}
+
+.playground-history-notation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.playground-history-notation code {
+  font-family: var(--sl-font-mono);
+  font-size: 0.875rem;
+  color: var(--sl-color-accent-high);
+}
+
+.playground-history-total {
+  font-family: var(--sl-font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--sl-color-white);
+}
+
+.playground-history-rolls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.playground-history-pool {
+  font-family: var(--sl-font-mono);
+  font-size: 0.75rem;
+  color: var(--sl-color-gray-2);
+}
+
+.playground-history-desc {
+  font-size: 0.75rem;
+  color: var(--sl-color-gray-3);
+}
+
+/* Notation reference */
+.playground-reference {
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 8px;
+  background: var(--sl-color-gray-6);
+  overflow: hidden;
+}
+
+.playground-reference-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  color: var(--sl-color-gray-1);
+  border: none;
+  cursor: pointer;
+  font-family: var(--sl-font);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .playground-reference-toggle {
+    display: none;
+  }
+}
+
+.playground-reference-desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .playground-reference-desktop {
+    display: block;
+    padding: 0.75rem;
+  }
+}
+
+.playground-reference-mobile {
+  padding: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .playground-reference-mobile {
+    display: none;
+  }
+}
+
+.playground-reference-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playground-reference-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+}
+
+.playground-reference-row:last-child {
+  border-bottom: none;
+}
+
+.playground-reference-syntax {
+  font-family: var(--sl-font-mono);
+  font-size: 0.75rem;
+  color: var(--sl-color-accent-high);
+  white-space: nowrap;
+  min-width: 60px;
+}
+
+.playground-reference-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.playground-reference-desc {
+  font-size: 0.75rem;
+  color: var(--sl-color-gray-2);
+}
+
+.playground-reference-example {
+  font-family: var(--sl-font-mono);
+  font-size: 0.6875rem;
+  color: var(--sl-color-gray-3);
+}
+
+/* Game mode panel */
+.playground-game-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.playground-game-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.playground-game-selector label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-2);
+}
+
+.playground-select {
+  padding: 0.625rem 0.75rem;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 6px;
+  font-family: var(--sl-font);
+  font-size: 0.875rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.playground-select:focus {
+  border-color: var(--sl-color-accent);
+}
+
+.playground-game-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.playground-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.playground-field label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--sl-color-gray-2);
+}
+
+.playground-field-checkbox {
+  flex-direction: row;
+  align-items: center;
+}
+
+.playground-field-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.playground-number-input {
+  padding: 0.5rem 0.75rem;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 6px;
+  font-family: var(--sl-font-mono);
+  font-size: 0.875rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.playground-number-input:focus {
+  border-color: var(--sl-color-accent);
+}
+
+.playground-game-roll-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--sl-color-accent);
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-family: var(--sl-font);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
+}
+
+.playground-game-roll-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.playground-game-roll-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.playground-game-result {
+  padding: 0.75rem 1rem;
+  background: var(--sl-color-gray-5);
+  border-left: 3px solid var(--sl-color-accent);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.9375rem;
+}
+
+.playground-game-result strong {
+  color: var(--sl-color-gray-1);
+}
+
+/* Game mode layout */
+.playground-game-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
