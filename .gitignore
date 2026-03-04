@@ -84,7 +84,7 @@ packages/*/lib/
 .moon/docker
 
 # TypeDoc generated documentation
-docs/
+/docs/
 packages/site/public/api/
 
 # Claude local settings

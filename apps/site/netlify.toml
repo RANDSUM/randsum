@@ -4,6 +4,69 @@
   command = "bun run build && bun run docs:site && bun run site:build"
   publish = "apps/site/dist"
 
+[dev]
+  command = "astro dev"
+  targetPort = 4321
+  port = 8888
+
+# Old package URLs → new game/tool pages
+[[redirects]]
+  from = "/packages/fifth/"
+  to = "/games/fifth/"
+  status = 301
+
+[[redirects]]
+  from = "/packages/blades/"
+  to = "/games/blades/"
+  status = 301
+
+[[redirects]]
+  from = "/packages/daggerheart/"
+  to = "/games/daggerheart/"
+  status = 301
+
+[[redirects]]
+  from = "/packages/pbta/"
+  to = "/games/pbta/"
+  status = 301
+
+[[redirects]]
+  from = "/packages/root-rpg/"
+  to = "/games/root-rpg/"
+  status = 301
+
+[[redirects]]
+  from = "/packages/salvageunion/"
+  to = "/games/salvageunion/"
+  status = 301
+
+[[redirects]]
+  from = "/packages/discord-bot/"
+  to = "/tools/discord-bot/"
+  status = 301
+
+# Old docs URLs → new reference pages
+[[redirects]]
+  from = "/docs/notation/"
+  to = "/reference/dice-notation/"
+  status = 301
+
+[[redirects]]
+  from = "/docs/errors/"
+  to = "/reference/modifiers/"
+  status = 301
+
+# Old getting-started URLs → new locations
+[[redirects]]
+  from = "/getting-started/notation/"
+  to = "/getting-started/quick-start/"
+  status = 301
+
+[[redirects]]
+  from = "/getting-started/game-packages/"
+  to = "/games/overview/"
+  status = 301
+
 # Redirect 404s to the 404 page
 [[redirects]]
   from = "/*"

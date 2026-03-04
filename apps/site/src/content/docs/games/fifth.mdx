@@ -1,0 +1,121 @@
+---
+title: D&D 5th Edition
+description: Dungeons & Dragons 5th Edition dice mechanics with RANDSUM
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+The `@randsum/fifth` package provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
+
+## Overview
+
+- Rolls 1d20 (normal) or 2d20 (advantage/disadvantage)
+- Applies an ability/skill modifier to the total
+- Returns a numeric result (d20 roll + modifier)
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    ```bash
+    bun add @randsum/fifth
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @randsum/fifth
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```typescript title="Basic Roll"
+import { roll } from '@randsum/fifth'
+
+// Basic roll with modifier
+const result = roll({ modifier: 5 })
+// result.result: 6-25 (d20 + 5)
+```
+
+```typescript title="Advantage"
+import { roll } from '@randsum/fifth'
+
+// Roll with advantage (2d20, keep highest, + modifier)
+const result = roll({
+  modifier: 5,
+  rollingWith: 'Advantage'
+})
+```
+
+```typescript title="Disadvantage"
+import { roll } from '@randsum/fifth'
+
+// Roll with disadvantage (2d20, keep lowest, + modifier)
+const result = roll({
+  modifier: -2,
+  rollingWith: 'Disadvantage'
+})
+```
+
+## API reference
+
+### `roll(arg: FifthRollArgument)`
+
+**Input:**
+
+| Property | Type | Description |
+|---|---|---|
+| `modifier` | `number` | Ability/skill modifier (-30 to +30) |
+| `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Optional advantage or disadvantage |
+
+**Returns:** `GameRollResult` with:
+
+| Property | Type | Description |
+|---|---|---|
+| `result` | `number` | Final total (d20 + modifier) |
+| `total` | `number` | Same as result |
+| `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+
+## Result interpretation
+
+- **Normal roll**: 1d20 + modifier
+- **Advantage**: Roll 2d20, drop lowest, + modifier (equivalent to `2d20L+modifier`)
+- **Disadvantage**: Roll 2d20, drop highest, + modifier (equivalent to `2d20H+modifier`)
+
+The modifier is validated to be a finite number in the range -30 to +30.
+
+## Common patterns
+
+```typescript
+// Attack roll with +5 to hit
+roll({ modifier: 5 })
+
+// Attack with advantage
+roll({ modifier: 5, rollingWith: 'Advantage' })
+
+// Saving throw with -1 penalty and disadvantage
+roll({ modifier: -1, rollingWith: 'Disadvantage' })
+
+// Perception check with +3 Wisdom
+roll({ modifier: 3 })
+```
+
+:::tip
+For D&D ability score generation (4d6 drop lowest), use the core roller directly: `roll('4d6L')` from `@randsum/roller`.
+:::
+
+## Type exports
+
+```typescript
+import type {
+  FifthRollArgument,
+  FifthAdvantageDisadvantage,
+  FifthRollResult
+} from '@randsum/fifth'
+```
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/fifth)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/fifth)

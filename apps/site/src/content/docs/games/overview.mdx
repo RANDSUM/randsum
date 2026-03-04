@@ -1,0 +1,98 @@
+---
+title: Games Overview
+description: Game-specific packages for popular tabletop RPG systems
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+RANDSUM includes specialized packages for popular tabletop RPG systems. Each game package wraps the core `@randsum/roller` engine with game-specific validation, roll configuration, and result interpretation.
+
+## Available game packages
+
+<CardGrid>
+  <Card title="D&D 5th Edition" icon="seti:favicon">
+    `@randsum/fifth` -- Ability checks, saving throws, attack rolls with advantage/disadvantage.
+
+    [View documentation](/games/fifth/)
+  </Card>
+  <Card title="Blades in the Dark" icon="seti:favicon">
+    `@randsum/blades` -- Dice pool action rolls with critical, success, partial, and failure outcomes.
+
+    [View documentation](/games/blades/)
+  </Card>
+  <Card title="Powered by the Apocalypse" icon="seti:favicon">
+    `@randsum/pbta` -- 2d6+stat rolls for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
+
+    [View documentation](/games/pbta/)
+  </Card>
+  <Card title="Daggerheart" icon="seti:favicon">
+    `@randsum/daggerheart` -- Hope and fear dice mechanics with amplification and advantage.
+
+    [View documentation](/games/daggerheart/)
+  </Card>
+  <Card title="Root RPG" icon="seti:favicon">
+    `@randsum/root-rpg` -- 2d6+bonus with Strong Hit, Weak Hit, and Miss outcomes.
+
+    [View documentation](/games/root-rpg/)
+  </Card>
+  <Card title="Salvage Union" icon="seti:favicon">
+    `@randsum/salvageunion` -- D20 table-based rolls for mech combat and salvage operations.
+
+    [View documentation](/games/salvageunion/)
+  </Card>
+</CardGrid>
+
+## How game packages work
+
+Every game package follows the same pattern using the `createGameRoll` factory from `@randsum/roller`:
+
+1. **Validate** -- Check the input arguments (e.g., modifier range, dice pool size)
+2. **Convert** -- Transform game-specific input into standard `RollOptions`
+3. **Roll** -- Execute the roll using the core roller engine
+4. **Interpret** -- Transform the raw result into a game-specific outcome
+
+```typescript
+// Each game package exports a `roll()` function with game-specific types
+import { roll } from '@randsum/fifth'
+
+const result = roll({ modifier: 5, rollingWith: 'Advantage' })
+// result.result is the game-specific outcome (number for D&D 5e)
+// result.total is the final total
+// result.rolls contains the raw dice data
+```
+
+## Common patterns
+
+All game packages share these characteristics:
+
+- Export a single `roll()` function as the main API
+- Accept game-specific input types (not raw notation strings)
+- Return a `GameRollResult` with both raw and interpreted results
+- Validate input and return errors rather than throwing
+- Depend only on `@randsum/roller` (never on each other)
+- Ship under 7KB bundled
+
+## Installation
+
+Install game packages individually. Each one pulls in `@randsum/roller` automatically.
+
+```bash
+# Pick the games you need
+bun add @randsum/fifth
+bun add @randsum/blades
+bun add @randsum/pbta
+bun add @randsum/daggerheart
+bun add @randsum/root-rpg
+bun add @randsum/salvageunion
+```
+
+## Quick comparison
+
+| Package | Dice | Input | Outcomes |
+|---|---|---|---|
+| `@randsum/fifth` | 1d20 or 2d20 | modifier + rollingWith | Numeric total |
+| `@randsum/blades` | Nd6 pool | count (number) | critical, success, partial, failure |
+| `@randsum/pbta` | 2d6 | stat + forward + ongoing + advantage | strong_hit, weak_hit, miss |
+| `@randsum/daggerheart` | 2d12 + d6 | modifier + rollingWith + amplify | Hope/Fear outcome + total |
+| `@randsum/root-rpg` | 2d6 | bonus (number) | Strong Hit, Weak Hit, Miss |
+| `@randsum/salvageunion` | 1d20 | tableName (string) | Table result with label + description |

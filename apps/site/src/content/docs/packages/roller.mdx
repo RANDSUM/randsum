@@ -1,0 +1,182 @@
+---
+title: '@randsum/roller'
+description: The core dice rolling engine that powers the RANDSUM ecosystem
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+`@randsum/roller` is the core dice rolling engine that powers the entire RANDSUM ecosystem. It provides advanced dice notation support, allowing you to express complex rolling mechanics in a concise, readable format.
+
+Whether you are building a simple dice roller or implementing complex tabletop RPG mechanics, Roller provides the foundation you need with full TypeScript support and zero runtime dependencies.
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    ```bash
+    bun add @randsum/roller
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @randsum/roller
+    ```
+  </TabItem>
+</Tabs>
+
+## Features
+
+- Advanced dice notation (`4d6L`, `2d20H`, etc.)
+- Reroll modifiers
+- Exploding dice (standard, compounding, penetrating)
+- Drop/keep modifiers
+- Cap, replace, and unique modifiers
+- Count successes (dice pool systems)
+- Pre-arithmetic and total multipliers
+- Full TypeScript support with branded types
+- Zero runtime dependencies
+
+## Basic usage
+
+```typescript title="Basic Roll"
+import { roll } from '@randsum/roller'
+
+// Simple d20 roll
+roll(20) // Returns 1-20
+// or
+roll('1d20') // Returns 1-20
+```
+
+```typescript title="Character Stat Roll"
+import { roll } from '@randsum/roller'
+
+// Roll 4d6, drop lowest (D&D ability scores)
+roll('4d6L')
+```
+
+```typescript title="Advantage and Disadvantage"
+import { roll } from '@randsum/roller'
+
+// Roll with advantage (2d20, keep highest)
+roll('2d20H')
+
+// Roll with disadvantage (2d20, keep lowest)
+roll('2d20L')
+```
+
+```typescript title="Complex Notation"
+import { roll } from '@randsum/roller'
+
+// Roll 4d6, drop lowest, reroll below 3, exploding
+roll('4d6L!R{<3}')
+```
+
+## Argument types
+
+The `roll()` function accepts several input types:
+
+```typescript
+// Number: roll 1 die with N sides
+roll(20)
+
+// Notation string: parse dice notation
+roll('4d6L')
+
+// Options object: full control
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { drop: { lowest: 1 } }
+})
+
+// Multiple arguments: combined total
+roll('1d20', '2d6', '+5')
+```
+
+## Dice notation
+
+Roller supports a comprehensive notation syntax:
+
+| Pattern | Description | Example |
+|---|---|---|
+| `NdS` | Roll N dice with S sides | `4d6` |
+| `+X` / `-X` | Add/subtract from total | `1d20+5` |
+| `L` / `H` | Drop lowest/highest | `4d6L` |
+| `K` / `kl` | Keep highest/lowest | `4d6K3` |
+| R&#123;...&#125; | Reroll conditions | `4d6R...` |
+| `!` | Exploding dice | `3d6!` |
+| `!!` | Compounding exploding | `3d6!!` |
+| `!p` | Penetrating exploding | `3d6!p` |
+| `U` | Unique results | `4d20U` |
+| C&#123;...&#125; | Cap values | `4d20C...` |
+| V&#123;...&#125; | Replace values | `4d20V...` |
+| S&#123;...&#125; | Count successes | `5d10S...` |
+| `*N` | Pre-arithmetic multiply | `2d6*2` |
+| `**N` | Total multiply | `2d6+3**2` |
+
+For the full notation reference, see [Dice Notation](/reference/dice-notation/).
+
+## Result object
+
+```typescript
+const result = roll('4d6L+2')
+
+result.total  // Final total after all modifiers
+result.rolls  // Array of RollRecord objects
+```
+
+:::note
+`roll()` never throws. If input is invalid, an error is returned in the result: check `result.error` before using `result.total`.
+:::
+
+## Validation utilities
+
+```typescript
+import { isDiceNotation, validateNotation } from '@randsum/roller'
+
+// Type guard
+if (isDiceNotation(userInput)) {
+  roll(userInput) // userInput is typed as DiceNotation
+}
+
+// Full validation
+const validation = validateNotation('4d6L')
+```
+
+## Custom random function
+
+Override `Math.random` for reproducible results or cryptographic randomness:
+
+```typescript
+import { roll } from '@randsum/roller'
+
+const cryptoRandom = () =>
+  crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+
+roll('2d6', { randomFn: cryptoRandom })
+```
+
+## TypeScript types
+
+All types are exported for use in your applications:
+
+```typescript
+import type {
+  RollArgument,
+  RollerRollResult,
+  RollOptions,
+  ModifierOptions,
+  DiceNotation,
+  ValidationResult,
+  RollConfig,
+  RandomFn
+} from '@randsum/roller'
+```
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/roller)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/roller)
+- [Dice Notation Reference](/reference/dice-notation/)
+- [Roll Options Reference](/reference/roll-options/)
+- [Modifiers Reference](/reference/modifiers/)

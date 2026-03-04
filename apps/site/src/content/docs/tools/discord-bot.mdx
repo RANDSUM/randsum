@@ -1,0 +1,123 @@
+---
+title: Discord Bot
+description: Roll dice directly in Discord with the RANDSUM bot
+---
+
+The **RANDSUM Discord Bot** brings dice rolling directly into your Discord server. Built with [discord.js](https://discord.js.org) and Bun, it provides detailed roll breakdowns and full support for all RANDSUM game packages.
+
+## Add to your server
+
+The easiest way to get started is to add the bot to your Discord server with one click:
+
+[Add RANDSUM to Discord](https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands)
+
+No setup required -- it works immediately after adding.
+
+## Commands
+
+### `/roll`
+
+The core dice rolling command. Supports the full RANDSUM dice notation with detailed breakdowns showing individual die results, modifiers, and final totals.
+
+```bash
+/roll notation:4d6L+2
+/roll notation:2d20H
+/roll notation:3d8+5
+```
+
+### `/blades`
+
+Roll Blades in the Dark action rolls. Takes the number of dice in your pool and returns the outcome (critical, success, partial, or failure) with color-coded embeds.
+
+```bash
+/blades dice:3
+/blades dice:2
+/blades dice:0   # Desperate position (rolls 2d6, takes lowest)
+```
+
+### `/dh`
+
+Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantage/disadvantage, and amplification of hope or fear dice.
+
+```bash
+/dh modifier:5 rollingWith:Advantage
+/dh modifier:3 rollingWith:Disadvantage
+/dh amplifyHope:true amplifyFear:false
+/dh modifier:2
+```
+
+### `/root`
+
+Roll Root RPG mechanics. Rolls 2d6 with an optional modifier and returns the outcome (Strong Hit, Weak Hit, or Miss).
+
+```bash
+/root modifier:2
+/root modifier:-1
+/root   # No modifier
+```
+
+### `/su`
+
+Roll on Salvage Union tables. Supports all Salvage Union tables including Core Mechanic, Morale, and others.
+
+```bash
+/su table:Core Mechanic
+/su table:Morale
+/su   # Uses default table
+```
+
+### `/notation`
+
+Display a reference guide for RANDSUM dice notation. Shows all available modifiers, syntax, and examples.
+
+```bash
+/notation
+```
+
+## Supported game packages
+
+All RANDSUM game packages are fully supported:
+
+- **@randsum/blades** -- Blades in the Dark action rolls
+- **@randsum/daggerheart** -- Daggerheart hope and fear dice
+- **@randsum/fifth** -- D&D 5th Edition rolls
+- **@randsum/root-rpg** -- Root RPG mechanics
+- **@randsum/salvageunion** -- Salvage Union table rolls
+
+Each game package has a dedicated command with game-specific results, color-coded embeds, and detailed breakdowns.
+
+## Features
+
+- **Detailed breakdowns** -- Shows individual die results, modifiers, and step-by-step calculations
+- **Full notation support** -- All RANDSUM dice notation features (drop, reroll, explode, etc.)
+- **Game-specific commands** -- Dedicated commands for each supported RPG system
+- **Color-coded embeds** -- Results are visually distinct by outcome type
+
+## Self-hosted installation
+
+If you prefer to run the bot yourself:
+
+```bash
+# From the monorepo root
+cd apps/discord-bot
+
+# Install dependencies
+bun install
+
+# Set up environment variables
+cp .env.example .env
+
+# Deploy commands
+bun run deploy-commands
+
+# Run the bot
+bun run dev
+```
+
+For detailed setup instructions, see the [Discord Bot source on GitHub](https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot).
+
+## Links
+
+- [Add to Discord](https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot)
+- [discord.js documentation](https://discord.js.org)

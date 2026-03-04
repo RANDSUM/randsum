@@ -1,306 +1,613 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
-import PackageCard from '../components/PackageCard.astro'
-import CodeExample from '../components/CodeExample.astro'
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { Image } from 'astro:assets'
+import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
+
+const gameColorMap: Record<string, string> = {
+  fifth: 'var(--game-fifth)',
+  blades: 'var(--game-blades)',
+  daggerheart: 'var(--game-daggerheart)',
+  'root-rpg': 'var(--game-root-rpg)',
+  salvageunion: 'var(--game-salvageunion)',
+  pbta: 'var(--game-pbta)'
+}
+
+function getCardHref(pkg: { id: string; category: string }): string {
+  if (pkg.category === 'core') return `/packages/${pkg.id}/`
+  if (pkg.category === 'game') return `/games/${pkg.id}/`
+  return `/tools/${pkg.id}/`
+}
+
+function getAccentColor(pkg: { id: string; color?: string }): string {
+  return gameColorMap[pkg.id] ?? pkg.color ?? 'var(--sl-color-accent)'
+}
 ---
 
-<BaseLayout
-  title="RANDSUM"
-  description="A comprehensive dice rolling monorepo ecosystem for rolling dice and playing games. TypeScript packages for D&D 5e, Blades in the Dark, Daggerheart, Root RPG, Salvage Union, and more."
-  keywords={[
-    'RANDSUM',
-    'dice rolling library',
-    'TypeScript dice',
-    'tabletop RPG tools',
-    'npm dice packages'
-  ]}
+<StarlightPage
+  frontmatter={{
+    title: 'RANDSUM',
+    description: 'A flexible, type-safe dice rolling ecosystem for tabletop RPGs',
+    template: 'splash'
+  }}
+  hasSidebar={false}
 >
-  <div class="homepage">
+  <div class="landing">
+    <!-- Hero -->
     <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <div class="hero-title-container">
-            <img src="/randsum-logo.png" alt="RANDSUM" class="hero-logo" />
-            <h1>RANDSUM</h1>
+      <div class="hero-inner">
+        <Image src={logo} alt="RANDSUM logo" class="hero-logo" width={160} height={160} />
+        <h1 class="hero-title">RANDSUM</h1>
+        <p class="hero-tagline">A flexible, type-safe dice rolling ecosystem</p>
+        <p class="hero-subtitle">
+          TypeScript packages for rolling dice and implementing tabletop RPG mechanics.
+          Built for D&D 5e, Blades in the Dark, Daggerheart, Root RPG, Salvage Union, PbtA, and more.
+        </p>
+        <div class="hero-actions">
+          <a href="/getting-started/introduction/" class="btn btn-primary">Get Started</a>
+          <a
+            href="https://github.com/RANDSUM/randsum"
+            class="btn btn-outline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >GitHub</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Code Example -->
+    <section class="code-example">
+      <div class="section-inner">
+        <h2 class="section-heading">Roll dice in seconds</h2>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">TypeScript</span>
           </div>
-          <p class="hero-subtitle">
-            A flexible, type-safe dice rolling ecosystem written in TypeScript
-          </p>
-          <p class="hero-description">
-            RANDSUM provides a comprehensive collection of packages for rolling dice, implementing
-            tabletop RPG mechanics, and building dice-based applications. Built with TypeScript,
-            thoroughly tested, and published to NPM with full type definitions.
-          </p>
+          <pre><code><span class="kw">import</span> {'{'} roll {'}'} <span class="kw">from</span> <span class="str">'@randsum/roller'</span>
+
+<span class="kw">const</span> result = <span class="fn">roll</span>(<span class="str">'4d6L'</span>)    <span class="cm">// Roll 4d6, drop lowest</span>
+console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</span></code></pre>
+        </div>
+        <p class="code-caption">
+          Install with <code>bun add @randsum/roller</code> or <code>npm install @randsum/roller</code>
+        </p>
+      </div>
+    </section>
+
+    <!-- Core Package -->
+    <section class="packages-section">
+      <div class="section-inner">
+        <h2 class="section-heading">Core Package</h2>
+        <p class="section-desc">The foundation of the RANDSUM ecosystem</p>
+        <div class="card-grid card-grid-single">
+          {corePackages.map((pkg) => (
+            <a
+              href={getCardHref(pkg)}
+              class="pkg-card"
+              style={`--card-accent: ${getAccentColor(pkg)}`}
+            >
+              <div class="pkg-card-header">
+                <h3 class="pkg-card-name">{pkg.displayName}</h3>
+                <code class="pkg-card-npm">{pkg.npmPackage}</code>
+              </div>
+              <p class="pkg-card-desc">{pkg.description}</p>
+              {pkg.features && pkg.features.length > 0 && (
+                <ul class="pkg-card-features">
+                  {pkg.features.slice(0, 4).map((f) => (
+                    <li>{f}</li>
+                  ))}
+                </ul>
+              )}
+              <span class="pkg-card-link">View docs &rarr;</span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
 
-    <section class="core-packages">
-      <div class="container">
-        <h2>Core Package</h2>
-        <div class="packages-grid">
-          {
-            corePackages.map(pkg => {
-              return <PackageCard package={pkg} />
-            })
-          }
+    <!-- Game Packages -->
+    <section class="packages-section">
+      <div class="section-inner">
+        <h2 class="section-heading">Game Packages</h2>
+        <p class="section-desc">Specialized mechanics for popular tabletop RPG systems</p>
+        <div class="card-grid card-grid-games">
+          {gamePackages.map((pkg) => (
+            <a
+              href={getCardHref(pkg)}
+              class="pkg-card"
+              style={`--card-accent: ${getAccentColor(pkg)}`}
+            >
+              <div class="pkg-card-header">
+                <h3 class="pkg-card-name">{pkg.displayName}</h3>
+                <code class="pkg-card-npm">{pkg.npmPackage}</code>
+              </div>
+              <p class="pkg-card-desc">{pkg.description}</p>
+              <span class="pkg-card-link">View docs &rarr;</span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
 
-    <section class="game-packages">
-      <div class="container">
-        <h2>Game Packages</h2>
-        <p class="section-description">Specialized mechanics for popular tabletop RPG systems</p>
-        <div class="packages-grid packages-grid-3">
-          {
-            gamePackages.map(pkg => {
-              return <PackageCard package={pkg} />
-            })
-          }
+    <!-- Tool Packages -->
+    <section class="packages-section">
+      <div class="section-inner">
+        <h2 class="section-heading">Tools & Integrations</h2>
+        <p class="section-desc">Extend RANDSUM into your workflow</p>
+        <div class="card-grid card-grid-tools">
+          {toolPackages.map((pkg) => (
+            <a
+              href={getCardHref(pkg)}
+              class="pkg-card"
+              style={`--card-accent: ${getAccentColor(pkg)}`}
+            >
+              <div class="pkg-card-header">
+                <h3 class="pkg-card-name">{pkg.displayName}</h3>
+                <code class="pkg-card-npm">{pkg.npmPackage}</code>
+              </div>
+              <p class="pkg-card-desc">{pkg.description}</p>
+              <span class="pkg-card-link">View docs &rarr;</span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
 
-    <section class="tool-packages">
-      <div class="container">
-        <h2>Tools & Integrations</h2>
-        <div class="packages-grid">
-          {
-            toolPackages.map(pkg => {
-              return <PackageCard package={pkg} />
-            })
-          }
+    <!-- Footer Links -->
+    <footer class="landing-footer">
+      <div class="section-inner">
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Documentation</h4>
+            <ul>
+              <li><a href="/getting-started/introduction/">Introduction</a></li>
+              <li><a href="/getting-started/installation/">Installation</a></li>
+              <li><a href="/getting-started/quick-start/">Quick Start</a></li>
+              <li><a href="/reference/dice-notation/">Dice Notation</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Packages</h4>
+            <ul>
+              <li><a href="/packages/overview/">Overview</a></li>
+              <li><a href="/packages/roller/">@randsum/roller</a></li>
+              <li><a href="/games/overview/">Game Packages</a></li>
+              <li><a href="/tools/skill/">LLM Skill</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Community</h4>
+            <ul>
+              <li>
+                <a href="https://github.com/RANDSUM/randsum" target="_blank" rel="noopener noreferrer">
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a href="https://www.npmjs.com/org/randsum" target="_blank" rel="noopener noreferrer">
+                  npm
+                </a>
+              </li>
+              <li>
+                <a href="https://discord.gg/randsum" target="_blank" rel="noopener noreferrer">
+                  Discord
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </section>
-
-    <section class="quick-start">
-      <div class="container">
-        <div class="quick-start-box">
-          <h2>Quick Start</h2>
-          <CodeExample
-            code={`npm install @randsum/roller
-# or
-bun add @randsum/roller`}
-            language="bash"
-          />
-          <CodeExample
-            code={`import { roll } from '@randsum/roller';
-
-// Simple roll
-roll(20); // Returns 1-20
-
-// With notation
-roll('4d6L'); // Roll 4d6, drop lowest
-roll('2d20H'); // Roll with advantage`}
-            language="typescript"
-          />
-          <p>Or use directly from your terminal:</p>
-          <CodeExample
-            code={`npx randsum 2d20    # Roll two twenty-sided dice
-npx randsum 4d6L    # Character stat roll (drop lowest)
-npx randsum 2d20H   # Roll with advantage`}
-            language="bash"
-          />
-        </div>
-      </div>
-    </section>
+    </footer>
   </div>
-</BaseLayout>
+</StarlightPage>
 
 <style>
-  .homepage {
-    padding: var(--spacing-xl) 0;
+  /* ===== Layout ===== */
+  .landing {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
+  .section-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .section-heading {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    text-align: center;
+    color: var(--sl-color-gray-2);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  /* ===== Hero ===== */
   .hero {
     text-align: center;
-    margin-bottom: var(--spacing-3xl);
-    padding-bottom: var(--spacing-2xl);
-    border-bottom: var(--border-width) solid var(--color-border);
+    padding: 2rem 1.5rem 3rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
-  .hero-content {
-    max-width: 800px;
+  .hero-inner {
+    max-width: 48rem;
     margin: 0 auto;
-  }
-
-  .hero-title-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-md);
-    flex-wrap: wrap;
   }
 
   .hero-logo {
-    height: 120px;
-    width: auto;
-    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 120px;
+    height: auto;
+    margin-bottom: 1.5rem;
   }
 
-  .hero-title-container h1 {
-    font-size: 4rem;
-    margin: 0;
+  .hero-title {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 1rem;
+    background: linear-gradient(
+      135deg,
+      var(--sl-color-accent-high),
+      var(--sl-color-accent),
+      var(--sl-color-accent-high)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-tagline {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+    margin: 0 0 1rem;
   }
 
   .hero-subtitle {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-semibold);
-    margin-bottom: var(--spacing-md);
-    color: var(--color-text-alt);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--sl-color-gray-2);
+    max-width: 40rem;
+    margin: 0 auto 2rem;
   }
 
-  .hero-description {
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-relaxed);
-    color: var(--color-text-light);
-    max-width: 700px;
-    margin: 0 auto;
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
-  .core-packages,
-  .game-packages,
-  .tool-packages {
-    margin-bottom: var(--spacing-2xl);
+  /* ===== Buttons ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.65rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
   }
 
-  .core-packages h2,
-  .game-packages h2,
-  .tool-packages h2 {
+  .btn-primary {
+    background: var(--sl-color-accent);
+    color: var(--sl-color-black);
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.15);
+  }
+
+  .btn-secondary {
+    background: var(--sl-color-gray-5);
+    color: var(--sl-color-white);
+    border-color: var(--sl-color-gray-4);
+  }
+
+  .btn-secondary:hover {
+    background: var(--sl-color-gray-4);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--sl-color-gray-1);
+    border-color: var(--sl-color-gray-4);
+  }
+
+  .btn-outline:hover {
+    background: var(--sl-color-gray-5);
+    border-color: var(--sl-color-gray-3);
+  }
+
+  /* ===== Code Example ===== */
+  .code-example {
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .code-block {
+    max-width: 36rem;
+    margin: 1.5rem auto 0;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--sl-color-gray-6);
+  }
+
+  .code-header {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    font-size: 0.8rem;
+    color: var(--sl-color-gray-3);
+    font-family: var(--sl-font-mono);
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-family: var(--sl-font-mono);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .code-block code {
+    font-family: inherit;
+    background: none;
+    padding: 0;
+  }
+
+  /* Syntax highlighting tokens */
+  .kw { color: var(--sl-color-accent); }
+  .str { color: #a5d6a7; }
+  .fn { color: #90caf9; }
+  .cm { color: var(--sl-color-gray-3); }
+
+  :root[data-theme='light'] .str { color: #2e7d32; }
+  :root[data-theme='light'] .fn { color: #1565c0; }
+
+  .code-caption {
     text-align: center;
-    margin-bottom: var(--spacing-lg);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--sl-color-gray-2);
   }
 
-  .section-description {
-    text-align: center;
-    color: var(--color-text-alt);
-    margin-bottom: var(--spacing-xl);
-    font-size: 1.125rem;
+  .code-caption code {
+    font-family: var(--sl-font-mono);
+    font-size: 0.85rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    background: var(--sl-color-gray-5);
   }
 
-  .packages-grid {
+  /* ===== Package Cards ===== */
+  .packages-section {
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .packages-section:last-of-type {
+    border-bottom: none;
+  }
+
+  .card-grid {
     display: grid;
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-xl);
-    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
-  /* When there's only one item, make it full width */
-  .packages-grid:has(> :only-child) {
+  .card-grid-single {
     grid-template-columns: 1fr;
-  }
-
-  /* Ensure the only child takes full width */
-  .packages-grid:has(> :only-child) > * {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .packages-grid-3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* Make lone items grow to fill the row */
-  .packages-grid > :nth-child(odd):last-child,
-  .packages-grid > :only-child {
-    grid-column: 1 / -1;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* Make last item in game packages grow if it's alone on the row (odd total count) */
-  .packages-grid-3 > :last-child:nth-child(odd),
-  .packages-grid-3 > :nth-child(odd):last-child {
-    grid-column: 1 / -1;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* Ensure the last odd child in game packages takes full width */
-  .packages-grid-3:has(> :last-child:nth-child(odd)) > :last-child {
-    grid-column: 1 / -1;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .section-footer {
-    text-align: center;
-    margin-top: var(--spacing-xl);
-  }
-
-  .homepage .section-footer :global(a.kirby-button.kirby-button-accent) {
-    background-color: var(--color-bg-dark) !important;
-    color: var(--color-text-inverse) !important;
-    border-color: var(--color-border) !important;
-  }
-
-  .homepage .section-footer :global(a.kirby-button.kirby-button-accent:hover) {
-    background-color: var(--color-bg-dark) !important;
-    color: var(--color-text-inverse) !important;
-    border-color: var(--color-border) !important;
-  }
-
-  .homepage .section-footer :global(a.kirby-button.kirby-button-accent:active) {
-    background-color: var(--color-bg-dark) !important;
-    color: var(--color-text-inverse) !important;
-    border-color: var(--color-border) !important;
-  }
-
-  .quick-start {
-    margin-top: var(--spacing-3xl);
-    padding-top: var(--spacing-2xl);
-    border-top: var(--border-width) solid var(--color-border);
-  }
-
-  .quick-start-box {
-    border: var(--border-width) solid var(--color-border);
-    padding: var(--spacing-2xl);
-    box-shadow: var(--shadow-md);
-    max-width: 900px;
+    max-width: 48rem;
     margin: 0 auto;
-    background-color: var(--color-bg-alt);
+  }
+
+  .card-grid-games {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .card-grid-tools {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .pkg-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-gray-6);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    border-top: 3px solid var(--card-accent, var(--sl-color-gray-4));
+  }
+
+  .pkg-card:hover {
+    border-color: var(--card-accent, var(--sl-color-gray-3));
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 0 1px var(--card-accent);
+  }
+
+  .pkg-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .pkg-card-name {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .pkg-card-npm {
+    font-family: var(--sl-font-mono);
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-3);
+    background: var(--sl-color-gray-5);
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  .pkg-card-desc {
+    flex-grow: 1;
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+  }
+
+  .pkg-card-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+  }
+
+  .pkg-card-features li {
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-2);
+    padding: 0.2rem 0;
+    padding-left: 1.2rem;
     position: relative;
-    border-radius: 8px;
   }
 
-  .quick-start-box > * {
-    position: relative;
-    z-index: 1;
+  .pkg-card-features li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    color: var(--card-accent, var(--sl-color-gray-3));
+    font-weight: 700;
   }
 
-  .quick-start-box h2 {
-    text-align: center;
-    margin-bottom: var(--spacing-xl);
-    color: var(--color-text);
-    font-size: var(--font-size-3xl);
+  .pkg-card-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--sl-color-accent);
+    margin-top: auto;
   }
 
-  .quick-start-box p {
-    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-alt);
+  .pkg-card:hover .pkg-card-link {
+    color: var(--sl-color-accent-high);
   }
 
+  /* ===== Footer ===== */
+  .landing-footer {
+    padding: 3rem 0 2rem;
+    border-top: 1px solid var(--sl-color-gray-5);
+  }
+
+  .footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .footer-col h4 {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.75rem;
+    color: var(--sl-color-white);
+  }
+
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-col li {
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-col a {
+    font-size: 0.9rem;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .footer-col a:hover {
+    color: var(--sl-color-accent-high);
+  }
+
+  /* ===== Responsive ===== */
   @media (max-width: 768px) {
-    .hero-title-container h1 {
+    .hero {
+      padding: 3rem 1rem 2rem;
+    }
+
+    .hero-title {
       font-size: 2.5rem;
     }
 
-    .packages-grid-3 {
+    .hero-tagline {
+      font-size: 1.15rem;
+    }
+
+    .hero-subtitle {
+      font-size: 0.95rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 16rem;
+      justify-content: center;
+    }
+
+    .section-heading {
+      font-size: 1.6rem;
+    }
+
+    .card-grid-games {
       grid-template-columns: 1fr;
     }
 
-    .packages-grid {
+    .card-grid-tools {
       grid-template-columns: 1fr;
     }
 
-    .packages-grid > :nth-child(odd):last-child,
-    .packages-grid-3 > :nth-child(odd):last-child {
-      grid-column: 1;
+    .footer-links {
+      grid-template-columns: 1fr;
+      text-align: center;
     }
   }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .card-grid-games {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
 </style>

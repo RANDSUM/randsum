@@ -1,0 +1,137 @@
+---
+title: Quick Start
+description: Get rolling dice in minutes with RANDSUM
+---
+
+This guide walks you through the basics of using `@randsum/roller` to roll dice in your application.
+
+## Your first roll
+
+```typescript
+import { roll } from '@randsum/roller'
+
+// Roll a single d20
+const result = roll(20)
+console.log(result.total) // 1-20
+```
+
+The `roll()` function accepts several argument types. A plain number means "roll one die with that many sides."
+
+## Notation strings
+
+RANDSUM supports standard dice notation. The format is `NdS` where **N** is the number of dice and **S** is the number of sides.
+
+```typescript
+import { roll } from '@randsum/roller'
+
+// Roll 2d6
+roll('2d6')
+
+// Roll 4d8
+roll('4d8')
+
+// Roll 1d20
+roll('1d20')
+```
+
+## Drop modifiers
+
+Drop the lowest or highest dice from a roll:
+
+```typescript
+// D&D ability score: 4d6, drop lowest
+roll('4d6L')
+
+// Advantage: 2d20, keep highest (drop lowest)
+roll('2d20L')
+
+// Disadvantage: 2d20, keep lowest (drop highest)
+roll('2d20H')
+
+// Drop 2 lowest
+roll('4d6L2')
+```
+
+## Arithmetic modifiers
+
+Add or subtract from the roll total:
+
+```typescript
+// Attack roll with +5 modifier
+roll('1d20+5')
+
+// Damage with -1 penalty
+roll('2d6-1')
+```
+
+## Reroll and explode
+
+```typescript
+// Reroll any 1s
+roll('4d6R{1}')
+
+// Reroll results below 3
+roll('4d6R{<3}')
+
+// Exploding dice (reroll and add on max)
+roll('3d6!')
+```
+
+## Combining modifiers
+
+Chain multiple modifiers together:
+
+```typescript
+// Reroll 1s, drop lowest, add 2
+roll('4d6R{1}L+2')
+
+// Exploding dice with drop
+roll('3d6!L')
+```
+
+## Using the options object
+
+Every notation string has an equivalent options object form:
+
+```typescript
+// These are equivalent:
+roll('4d6L')
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { drop: { lowest: 1 } }
+})
+```
+
+The options object gives you full programmatic control when notation strings are not flexible enough.
+
+## Reading the result
+
+The `roll()` function returns a result object with useful properties:
+
+```typescript
+const result = roll('4d6L+2')
+
+result.total       // Final total after all modifiers
+result.rolls       // Array of individual roll records
+```
+
+:::note
+`roll()` never throws. If there is an error (e.g., invalid notation), it is returned in the result object rather than thrown as an exception.
+:::
+
+## Multiple dice groups
+
+Roll different dice types in a single expression:
+
+```typescript
+// Attack + damage in one call
+roll('1d20+5', '2d6+3')
+```
+
+## Next steps
+
+- **[Dice Notation Reference](/reference/dice-notation/)** -- Full syntax for all notation features
+- **[Roll Options](/reference/roll-options/)** -- Options object API reference
+- **[Modifiers](/reference/modifiers/)** -- Complete modifier system documentation
+- **[Game Packages](/games/overview/)** -- Use game-specific packages for D&D, Blades, PbtA, and more
