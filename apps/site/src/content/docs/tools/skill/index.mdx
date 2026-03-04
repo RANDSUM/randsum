@@ -1,0 +1,86 @@
+---
+title: LLM Skill
+description: Use RANDSUM dice rolling in AI assistants and LLM agents
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+RANDSUM provides a **dice rolling skill** for LLM agents -- a structured prompt and reference that teaches AI assistants how to roll dice using RANDSUM notation for any tabletop RPG system.
+
+## What is an LLM skill?
+
+An LLM skill is a markdown document that gives an AI assistant specialized knowledge. When an agent loads the RANDSUM dice rolling skill, it learns:
+
+- **RANDSUM dice notation** -- a compact syntax for any roll (`4d6L`, `2d20H+5`, `3d6!`)
+- **Game system mechanics** -- how to interpret rolls for D&D, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union
+- **Best practices** -- when to validate, how to explain results, matching the right system
+
+The skill works with any LLM that supports tool use or structured prompts -- Claude, ChatGPT, or custom agents.
+
+## Quick Setup
+
+The skill file lives at [`skills/dice-rolling/SKILL.md`](https://github.com/RANDSUM/randsum/blob/main/skills/dice-rolling/SKILL.md) in the RANDSUM repository. Copy the skill file into your agent's skill or prompt directory, or reference it by URL.
+
+<Tabs>
+<TabItem label="Claude Code">
+
+Place the skill file in your project's `.claude/skills/` directory, or reference it in your agent configuration:
+
+```bash
+# Download the skill
+curl -o .claude/skills/dice-rolling/SKILL.md \
+  https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/dice-rolling/SKILL.md
+```
+
+</TabItem>
+<TabItem label="Custom Agent">
+
+Load the skill content as part of your agent's system prompt or tool definitions:
+
+```typescript
+import { readFileSync } from 'fs'
+
+const skillContent = readFileSync('skills/dice-rolling/SKILL.md', 'utf-8')
+// Include skillContent in your agent's system prompt
+```
+
+</TabItem>
+<TabItem label="Direct Prompt">
+
+You can also paste the skill content directly into any LLM conversation. The skill is self-contained and includes notation reference, game system support, and usage examples.
+
+</TabItem>
+</Tabs>
+
+The skill includes:
+
+- Quick notation reference table
+- Game system summaries with mechanics
+- Implementation options (CLI, programmatic)
+- Example interactions showing expected agent behavior
+
+See the full [Skill Definition](/tools/skill/dice-rolling/) for the complete file.
+
+## Reference Documentation
+
+- [**Dice Notation Reference**](/tools/skill/notation/) -- Complete syntax for all RANDSUM notation features
+- [**Game Systems Reference**](/tools/skill/game-systems/) -- Mechanics and roll patterns for each supported RPG
+- [**Skill Definition**](/tools/skill/dice-rolling/) -- The full skill file for LLM agents
+
+## Programmatic Usage
+
+If you're building a custom agent, you can also use `@randsum/roller` directly:
+
+```bash
+bun add @randsum/roller
+```
+
+```typescript
+import { roll } from '@randsum/roller'
+
+const result = roll('4d6L')
+console.log(result.total)  // Sum after dropping lowest
+console.log(result.rolls)  // Individual die results
+```
+
+See the [roller documentation](/packages/roller/) for the full API.

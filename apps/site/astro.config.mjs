@@ -6,6 +6,8 @@ import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
 
 // https://astro.build/config
+const isDev = process.argv.includes('dev')
+
 export default defineConfig({
   base: '/',
   site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
@@ -71,7 +73,18 @@ export default defineConfig({
         },
         {
           label: 'Tools',
-          items: [{ label: 'Discord Bot', slug: 'tools/discord-bot' }]
+          items: [
+            { label: 'Discord Bot', slug: 'tools/discord-bot' },
+            {
+              label: 'LLM Skill',
+              items: [
+                { label: 'Overview', slug: 'tools/skill' },
+                { label: 'Skill Definition', slug: 'tools/skill/dice-rolling' },
+                { label: 'Notation Reference', slug: 'tools/skill/notation' },
+                { label: 'Game Systems', slug: 'tools/skill/game-systems' }
+              ]
+            }
+          ]
         },
         {
           label: 'Interactive',
@@ -82,5 +95,5 @@ export default defineConfig({
     react()
   ],
   output: 'static',
-  adapter: netlify()
+  adapter: isDev ? undefined : netlify()
 })
