@@ -51,7 +51,7 @@ Success type is determined by comparing Hope and Fear die values:
 
 - Hope > Fear: Positive narrative outcome
 - Fear > Hope: Negative narrative outcome
-- Hope === Fear: Balanced outcome
+- Hope === Fear: Critical Hope
 
 Mechanical success is determined by the total (sum of all dice + modifier).
 

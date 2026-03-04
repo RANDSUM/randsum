@@ -74,3 +74,9 @@ h6 {
   font-family: var(--sl-font-heading);
   letter-spacing: -0.02em;
 }
+
+/* ===== Splash page overrides ===== */
+/* Hide Starlight's auto-generated title and its content-panel wrapper */
+.content-panel:has(#_top) {
+  display: none !important;
+}

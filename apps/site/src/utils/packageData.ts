@@ -186,7 +186,7 @@ roll({ modifier: 5 })`,
 // Roll with advantage
 roll({
   modifier: 5,
-  rollingWith: "Advantage"
+  rollingWith: { advantage: true }
 })`,
         language: 'typescript'
       },
@@ -197,7 +197,7 @@ roll({
 // Roll with disadvantage
 roll({
   modifier: -2,
-  rollingWith: "Disadvantage"
+  rollingWith: { disadvantage: true }
 })`,
         language: 'typescript'
       },
@@ -366,33 +366,6 @@ bun add @randsum/pbta`,
 ]
 
 export const toolPackages: PackageInfo[] = [
-  {
-    id: 'skill',
-    name: 'skill',
-    displayName: 'AI Skill',
-    description:
-      'AI skill documentation for integrating RANDSUM dice rolling capabilities into AI assistants and LLMs.',
-    npmPackage: '@randsum/skill',
-    category: 'tool',
-    color: '#8b5cf6', // Purple
-    examples: [
-      {
-        title: 'CLI Usage',
-        code: `npx randsum 4d6L        # Roll 4d6, drop lowest
-npx randsum 2d20H       # Roll with advantage
-npx randsum -i           # Interactive TUI mode`,
-        language: 'bash'
-      },
-      {
-        title: 'Programmatic Usage',
-        code: `import { roll } from "@randsum/roller"
-
-const result = roll("4d6L")
-console.log(result.total)`,
-        language: 'typescript'
-      }
-    ]
-  },
   {
     id: 'discord-bot',
     name: 'discord-bot',

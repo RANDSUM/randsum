@@ -105,7 +105,7 @@ const { hope, fear, advantage, modifier } = details
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `DaggerheartRollResultType` | Hope/Fear/Balanced outcome |
+| `result` | `DaggerheartRollResultType` | Hope/Fear/Critical Hope outcome |
 | `total` | `number` | Sum of all dice + modifier |
 | `details` | `DaggerheartRollDetails` | Detailed breakdown |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
@@ -118,7 +118,7 @@ The result type is determined by comparing the Hope and Fear die values:
 |---|---|
 | Hope > Fear | Hope (positive narrative outcome) |
 | Fear > Hope | Fear (negative narrative outcome) |
-| Hope === Fear | Balanced outcome |
+| Hope === Fear | Critical Hope |
 
 The total (sum of all dice + modifier) determines mechanical success or failure.
 

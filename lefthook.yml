@@ -1,6 +1,8 @@
 pre-commit:
   parallel: true
   commands:
+    install:
+      run: bun install --frozen-lockfile
     lint:
       glob: "*.{ts,tsx,js,mjs}"
       run: bun run lint --fix

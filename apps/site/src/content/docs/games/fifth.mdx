@@ -44,7 +44,7 @@ import { roll } from '@randsum/fifth'
 // Roll with advantage (2d20, keep highest, + modifier)
 const result = roll({
   modifier: 5,
-  rollingWith: 'Advantage'
+  rollingWith: { advantage: true }
 })
 ```
 
@@ -54,7 +54,7 @@ import { roll } from '@randsum/fifth'
 // Roll with disadvantage (2d20, keep lowest, + modifier)
 const result = roll({
   modifier: -2,
-  rollingWith: 'Disadvantage'
+  rollingWith: { disadvantage: true }
 })
 ```
 
@@ -67,7 +67,7 @@ const result = roll({
 | Property | Type | Description |
 |---|---|---|
 | `modifier` | `number` | Ability/skill modifier (-30 to +30) |
-| `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Optional advantage or disadvantage |
+| `rollingWith` | `FifthAdvantageDisadvantage \| undefined` | Optional `{ advantage: true }` or `{ disadvantage: true }` |
 
 **Returns:** `GameRollResult` with:
 
@@ -80,8 +80,8 @@ const result = roll({
 ## Result interpretation
 
 - **Normal roll**: 1d20 + modifier
-- **Advantage**: Roll 2d20, drop lowest, + modifier (equivalent to `2d20L+modifier`)
-- **Disadvantage**: Roll 2d20, drop highest, + modifier (equivalent to `2d20H+modifier`)
+- **Advantage** (`{ advantage: true }`): Roll 2d20, drop lowest, + modifier (equivalent to `2d20L+modifier`)
+- **Disadvantage** (`{ disadvantage: true }`): Roll 2d20, drop highest, + modifier (equivalent to `2d20H+modifier`)
 
 The modifier is validated to be a finite number in the range -30 to +30.
 
@@ -92,10 +92,10 @@ The modifier is validated to be a finite number in the range -30 to +30.
 roll({ modifier: 5 })
 
 // Attack with advantage
-roll({ modifier: 5, rollingWith: 'Advantage' })
+roll({ modifier: 5, rollingWith: { advantage: true } })
 
 // Saving throw with -1 penalty and disadvantage
-roll({ modifier: -1, rollingWith: 'Disadvantage' })
+roll({ modifier: -1, rollingWith: { disadvantage: true } })
 
 // Perception check with +3 Wisdom
 roll({ modifier: 3 })

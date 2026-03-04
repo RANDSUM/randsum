@@ -31,6 +31,10 @@ export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 's
  * @template T - Type for custom dice faces
  */
 export interface RollRecord<T = string> {
+  /** Original input argument */
+  argument: RollParams<T>['argument']
+  /** Dice notation string */
+  notation: RollParams<T>['notation']
   /** Human-readable description */
   description: RollParams<T>['description']
   /** Full roll parameters */

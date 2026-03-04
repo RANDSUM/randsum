@@ -409,7 +409,7 @@ roll("4d6*3") // Multiply dice sum by 3
 roll({
   sides: 6,
   quantity: 4,
-  modifiers: { multiply: 2 }
+  modifiers: { multiply: 3 }
 })
 ```
 

@@ -23,7 +23,7 @@ describe('packageData', () => {
     test('returns correct package for each category', () => {
       expect(getPackageById('roller')).toBe(corePackages[0])
       expect(getPackageById('blades')).toBeDefined()
-      expect(getPackageById('skill')).toBeDefined()
+      expect(getPackageById('discord-bot')).toBeDefined()
     })
   })
 

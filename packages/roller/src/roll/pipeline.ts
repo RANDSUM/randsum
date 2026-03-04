@@ -105,7 +105,7 @@ export class RollPipeline<T = string> {
       throw new RollError('Must call applyModifiers() before building')
     }
 
-    const { faces, arithmetic, description } = this.params
+    const { faces, arithmetic, description, argument, notation } = this.params
     const total = this.calculateTotal()
     const isNegative = arithmetic === 'subtract'
 
@@ -116,6 +116,8 @@ export class RollPipeline<T = string> {
     return {
       ...customResults,
       parameters: this.params,
+      argument,
+      notation,
       description,
       modifierHistory: {
         logs: this.modifierResult.logs,

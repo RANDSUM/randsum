@@ -20,7 +20,7 @@ Rolls a D&D 5e action roll (attack, skill check, saving throw).
 
 **Parameters:**
 
-- `rollingWith`: `'Advantage' | 'Disadvantage' | undefined` - Optional advantage/disadvantage
+- `rollingWith`: `FifthAdvantageDisadvantage | undefined` - Optional `{ advantage: true }` or `{ disadvantage: true }`
 - `modifier`: `number` - Ability/skill modifier (validated: -30 to +30)
 
 **Returns:**
@@ -41,21 +41,21 @@ const result = roll({ modifier: 5 })
 // With advantage
 const result = roll({
   modifier: 3,
-  rollingWith: "Advantage"
+  rollingWith: { advantage: true }
 })
 // Rolls 2d20, drops lowest, adds 3
 
 // With disadvantage
 const result = roll({
   modifier: -2,
-  rollingWith: "Disadvantage"
+  rollingWith: { disadvantage: true }
 })
 // Rolls 2d20, drops highest, subtracts 2
 
 // Common patterns
 roll({ modifier: 5 }) // Normal attack roll
-roll({ modifier: 2, rollingWith: "Advantage" }) // Advantage on skill check
-roll({ modifier: -1, rollingWith: "Disadvantage" }) // Disadvantage on save
+roll({ modifier: 2, rollingWith: { advantage: true } }) // Advantage on skill check
+roll({ modifier: -1, rollingWith: { disadvantage: true } }) // Disadvantage on save
 ```
 
 ## Common Patterns
@@ -77,7 +77,7 @@ roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // same as 4
 roll({ modifier: 5 })
 
 // Attack with advantage
-roll({ modifier: 5, rollingWith: "Advantage" })
+roll({ modifier: 5, rollingWith: { advantage: true } })
 ```
 
 ### Skill Checks
@@ -87,7 +87,7 @@ roll({ modifier: 5, rollingWith: "Advantage" })
 roll({ modifier: 3 })
 
 // Stealth check with disadvantage
-roll({ modifier: 2, rollingWith: "Disadvantage" })
+roll({ modifier: 2, rollingWith: { disadvantage: true } })
 ```
 
 ## Implementation Details
