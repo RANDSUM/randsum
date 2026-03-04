@@ -109,11 +109,6 @@ export type {
 } from "./types"
 ```
 
-Also re-exports core types from `@randsum/roller`:
-
-- `roll`, `validateNotation`
-- `RollArgument`, `RollerRollResult`, `ValidationResult`
-
 ## Testing
 
 Test file: `__tests__/roll.test.ts`

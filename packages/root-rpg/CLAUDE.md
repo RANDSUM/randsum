@@ -13,7 +13,7 @@ Root RPG is a tabletop RPG set in the world of Root board game. It uses a 2d6 + 
 
 ## API
 
-### `roll(bonus: number): GameRollResult<RootRpgRollResult, undefined, RollRecord>`
+### `roll(bonus: number): GameRollResult<RootRpgResult, undefined, RollRecord>`
 
 Rolls a Root RPG action roll.
 
@@ -23,16 +23,9 @@ Rolls a Root RPG action roll.
 
 **Returns:**
 
-- `result`: `RootRpgRollResult` - Game-specific result
+- `result`: `RootRpgResult` - `'Strong Hit' | 'Weak Hit' | 'Miss'`
 - `total`: Final roll total (2d6 + bonus)
 - `rolls`: Array of `RollRecord` from core roller
-
-## Result Structure
-
-`RootRpgRollResult` includes:
-
-- `hit`: `'Strong Hit' | 'Weak Hit' | 'Miss'` - Roll outcome
-- `total`: Final roll total (2d6 + bonus)
 
 ## Result Interpretation
 
@@ -49,11 +42,10 @@ import { roll } from "@randsum/root-rpg"
 
 // Basic roll with stat bonus
 const result = roll(2)
-// result.result.hit: 'Strong Hit' | 'Weak Hit' | 'Miss'
+// result.result: 'Strong Hit' | 'Weak Hit' | 'Miss'
 
 // Type-safe result handling
-const { hit, total } = result.result
-switch (hit) {
+switch (result.result) {
   case "Strong Hit":
     // Complete success
     break
@@ -78,7 +70,7 @@ switch (hit) {
 ## Type Exports
 
 ```typescript
-export type { RootRpgRollResult } from "./types"
+export type { RootRpgResult } from "./types"
 ```
 
 Game-specific types only, core types imported from `@randsum/roller` as needed.

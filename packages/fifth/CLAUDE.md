@@ -109,11 +109,6 @@ roll({ modifier: 2, rollingWith: "Disadvantage" })
 export type { FifthRollArgument, FifthAdvantageDisadvantage, FifthRollResult } from "./types"
 ```
 
-Also re-exports core types from `@randsum/roller`:
-
-- `roll`, `validateNotation`
-- `RollArgument`, `RollerRollResult`, `ValidationResult`
-
 ## Testing
 
 Test files: `__tests__/roll.test.ts`, `__tests__/roll.property.test.ts`
