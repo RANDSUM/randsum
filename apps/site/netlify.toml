@@ -4,6 +4,11 @@
   command = "bun run build && bun run docs:site && bun run site:build"
   publish = "apps/site/dist"
 
+[dev]
+  command = "astro dev"
+  targetPort = 4321
+  port = 8888
+
 # Old package URLs → new game/tool pages
 [[redirects]]
   from = "/packages/fifth/"
