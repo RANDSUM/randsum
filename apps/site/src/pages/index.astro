@@ -45,7 +45,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         </p>
         <div class="hero-actions">
           <a href="/getting-started/introduction/" class="btn btn-primary">Get Started</a>
-          <a href="/interactive/playground/" class="btn btn-secondary">Try Playground</a>
           <a
             href="https://github.com/RANDSUM/randsum"
             class="btn btn-outline"
@@ -173,7 +172,7 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
               <li><a href="/packages/overview/">Overview</a></li>
               <li><a href="/packages/roller/">@randsum/roller</a></li>
               <li><a href="/games/overview/">Game Packages</a></li>
-              <li><a href="/interactive/playground/">Playground</a></li>
+              <li><a href="/tools/skill/">LLM Skill</a></li>
             </ul>
           </div>
           <div class="footer-col">
@@ -233,7 +232,7 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
   /* ===== Hero ===== */
   .hero {
     text-align: center;
-    padding: 4rem 1.5rem 3rem;
+    padding: 2rem 1.5rem 3rem;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
@@ -243,6 +242,9 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
   }
 
   .hero-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     width: 120px;
     height: auto;
     margin-bottom: 1.5rem;

@@ -85,10 +85,6 @@ export default defineConfig({
               ]
             }
           ]
-        },
-        {
-          label: 'Interactive',
-          items: [{ label: 'Dice Playground', slug: 'interactive/playground' }]
         }
       ]
     }),
