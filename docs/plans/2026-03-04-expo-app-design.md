@@ -5,7 +5,7 @@
 
 ## Overview
 
-A mobile-first (iOS + Android) dice roller companion app built with Expo. Lets users roll
+A mobile-first (iOS + Android + Web) dice roller companion app built with Expo. Lets users roll
 arbitrarily complex dice via a notation-based interface with visual controls, save rolls for
 quick re-rolling, and browse a persistent roll history. Uses `@randsum/roller` as its sole dice
 engine. No game-specific logic.
@@ -19,7 +19,7 @@ engine. No game-specific logic.
 | Framework      | Expo SDK 54 (managed workflow)              |
 | Routing        | Expo Router (file-based)                    |
 | Styling        | Tamagui (token-based theming, dark-first)   |
-| Storage        | `react-native-mmkv`                         |
+| Storage        | `@react-native-async-storage/async-storage` |
 | Animation      | Reanimated 3                                |
 | Dice engine    | `@randsum/roller` via `workspace:~`         |
 | Package manager| bun (workspace member, EAS-compatible)      |
@@ -30,6 +30,7 @@ engine. No game-specific logic.
 - Added to root bun workspace (`apps/*` already covered)
 - `@randsum/roller` referenced as `workspace:~` — same pattern as all other packages
 - EAS Build detects bun via lockfile; managed workflow means no Expo module build issues
+- Web is a first-class target alongside iOS and Android; Expo Router and Tamagui both support web natively; AsyncStorage works on all three platforms without shims
 
 ### File Structure
 
@@ -142,9 +143,11 @@ type SavedRoll = {
 }
 ```
 
-**MMKV keys:**
-- `roll_history` → `RollRecord[]` (newest first, max 100 entries)
-- `saved_rolls` → `SavedRoll[]`
+**AsyncStorage keys:**
+- `roll_history` → `RollRecord[]` (newest first, max 100 entries, JSON-serialised)
+- `saved_rolls` → `SavedRoll[]` (JSON-serialised)
+
+AsyncStorage works across iOS, Android, and Web with no platform shims required.
 
 ## Data Flow
 
@@ -180,7 +183,7 @@ Load Saved Roll (from sheet)
 - `roll()` never throws — errors returned in `result.error`, shown inline in modal
 - ROLL button disabled when `isValid === false`
 - Notation input: validates every keystroke, error message below description area
-- MMKV failures: default to empty arrays, no crash
+- AsyncStorage failures: default to empty arrays, no crash
 
 ## Testing
 
