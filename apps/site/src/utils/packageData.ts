@@ -223,7 +223,7 @@ bun add @randsum/fifth`,
       {
         title: 'Basic Roll',
         code: `import { roll } from "@randsum/root-rpg"
-import type { RootRpgRollResult } from "@randsum/root-rpg"
+import type { RootRpgResult } from "@randsum/root-rpg"
 
 // Basic roll with modifier
 const { outcome, roll, result } = roll(2)
