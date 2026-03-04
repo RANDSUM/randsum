@@ -1,0 +1,34 @@
+---
+title: Game Comparison
+description: Compare all RANDSUM game packages side by side
+---
+
+import { GameComparison } from '../../../components/GameComparison'
+
+RANDSUM supports six tabletop RPG systems, each with its own dice mechanics and outcome types. Use the comparison below to find the right package for your game.
+
+Every game package wraps the core `@randsum/roller` engine, so they all share the same reliable dice rolling foundation. The difference is in how each package validates input, configures the roll, and interprets the result.
+
+<GameComparison client:visible />
+
+## Choosing a package
+
+- **Building a D&D character sheet?** Use `@randsum/fifth` for d20-based rolls with advantage/disadvantage.
+- **Running a Blades in the Dark campaign?** Use `@randsum/blades` for dice pool resolution with four outcome tiers.
+- **Playing a PbtA game?** Use `@randsum/pbta` for the universal 2d6+stat engine that works across the entire Powered by the Apocalypse family.
+- **Exploring Daggerheart?** Use `@randsum/daggerheart` for hope/fear dual-die mechanics.
+- **Adventuring in the Woodland?** Use `@randsum/root-rpg` for Root's 2d6+bonus system.
+- **Piloting mechs?** Use `@randsum/salvageunion` for d20 table-based resolution.
+
+## Installation
+
+Install only what you need. Each package pulls in `@randsum/roller` automatically.
+
+```bash
+bun add @randsum/fifth          # D&D 5e
+bun add @randsum/blades         # Blades in the Dark
+bun add @randsum/pbta           # Powered by the Apocalypse
+bun add @randsum/daggerheart    # Daggerheart
+bun add @randsum/root-rpg       # Root RPG
+bun add @randsum/salvageunion   # Salvage Union
+```
