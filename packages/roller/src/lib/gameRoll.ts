@@ -6,8 +6,9 @@ import { roll } from '../roll'
  *
  * @template TInput - Type of the input argument
  * @template TResult - Type of the game-specific result
+ * @template TDetails - Type of additional details (defaults to undefined)
  */
-export interface GameRollConfig<TInput, TResult> {
+export interface GameRollConfig<TInput, TResult, TDetails = undefined> {
   /** Validation function that throws if input is invalid */
   validate: (input: TInput) => void
   /** Converts input to RollOptions or array of RollOptions */
@@ -19,6 +20,13 @@ export interface GameRollConfig<TInput, TResult> {
     rolls: RollRecord[],
     fullResult: RollerRollResult
   ) => TResult
+  /** Optional callback to compute additional details about the roll */
+  computeDetails?: (
+    input: TInput,
+    total: number,
+    rolls: RollRecord[],
+    fullResult: RollerRollResult
+  ) => TDetails
 }
 
 /**
@@ -44,18 +52,27 @@ export interface GameRollConfig<TInput, TResult> {
  * })
  * ```
  */
-export function createGameRoll<TInput, TResult>(
-  config: GameRollConfig<TInput, TResult>
-): (input: TInput) => GameRollResult<TResult, undefined, RollRecord> {
+export function createGameRoll<TInput, TResult, TDetails = undefined>(
+  config: GameRollConfig<TInput, TResult, TDetails>
+): (input: TInput) => GameRollResult<TResult, TDetails, RollRecord> {
   return (input: TInput) => {
     config.validate(input)
     const options = config.toRollOptions(input)
     const rollResult = Array.isArray(options) ? roll(...options) : roll(options)
-    return {
+    const gameResult: GameRollResult<TResult, TDetails, RollRecord> = {
       rolls: rollResult.rolls,
       total: rollResult.total,
       result: config.interpretResult(input, rollResult.total, rollResult.rolls, rollResult)
     }
+    if (config.computeDetails) {
+      gameResult.details = config.computeDetails(
+        input,
+        rollResult.total,
+        rollResult.rolls,
+        rollResult
+      )
+    }
+    return gameResult
   }
 }
 

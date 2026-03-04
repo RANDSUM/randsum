@@ -119,6 +119,38 @@ describe('createGameRoll', () => {
       expect(hardResult.result).toBe('failure')
     })
   })
+
+  describe('with details', () => {
+    test('returns details when computeDetails is provided', () => {
+      const rollWithDetails = createGameRoll<
+        { modifier: number },
+        string,
+        { appliedModifier: number }
+      >({
+        validate: () => undefined,
+        toRollOptions: () => ({ sides: 6, quantity: 2 }),
+        interpretResult: (_input, total) => (total >= 7 ? 'hit' : 'miss'),
+        computeDetails: (input, _total, _rolls, _fullResult) => ({
+          appliedModifier: input.modifier
+        })
+      })
+
+      const result = rollWithDetails({ modifier: 3 })
+      expect(result.details).toBeDefined()
+      expect(result.details?.appliedModifier).toBe(3)
+    })
+
+    test('returns undefined details when computeDetails is not provided', () => {
+      const rollWithoutDetails = createGameRoll<{ modifier: number }, string>({
+        validate: () => undefined,
+        toRollOptions: () => ({ sides: 6, quantity: 2 }),
+        interpretResult: (_input, total) => (total >= 7 ? 'hit' : 'miss')
+      })
+
+      const result = rollWithoutDetails({ modifier: 3 })
+      expect(result.details).toBeUndefined()
+    })
+  })
 })
 
 describe('createMultiRollGameRoll', () => {
