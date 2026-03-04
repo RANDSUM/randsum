@@ -91,3 +91,6 @@ packages/site/public/api/
 .claude/*.local.json
 
 .notes
+
+# Git worktrees
+.worktrees
