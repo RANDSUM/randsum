@@ -1,6 +1,139 @@
 ---
 title: Salvage Union
-description: Salvage Union dice rolling with RANDSUM
+description: Salvage Union table-based dice mechanics with RANDSUM
 ---
 
-Coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+The `@randsum/salvageunion` package provides mechanics for [Salvage Union](https://leyline.press/pages/salvage-union), a post-apocalyptic mech-based tabletop RPG that uses table-based d20 mechanics.
+
+## Overview
+
+- Rolls 1d20 against reference tables
+- Results are looked up from game tables with labels and descriptions
+- Supports multiple tables (Core Mechanic, Morale, and more)
+- Returns structured result data including hit type, label, and description
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    ```bash
+    bun add @randsum/salvageunion
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @randsum/salvageunion
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```typescript title="Basic Roll"
+import { roll } from '@randsum/salvageunion'
+
+// Roll with default table (Core Mechanic)
+const result = roll()
+```
+
+```typescript title="Specific Table"
+import { roll } from '@randsum/salvageunion'
+
+// Roll on a specific table
+const result = roll('Morale')
+```
+
+```typescript title="Result Handling"
+import { roll } from '@randsum/salvageunion'
+
+const { result } = roll()
+const { label, description, roll: rollValue } = result
+
+console.log(`${rollValue} - ${label}`)
+// e.g., "16 - Success"
+console.log(description)
+// e.g., "You have achieved your goal without any compromises."
+```
+
+```typescript title="Type-Safe Result Handling"
+import { roll } from '@randsum/salvageunion'
+
+const { result } = roll('Core Mechanic')
+
+// Access structured result data
+switch (result.key) {
+  case 'nailed_it':
+    // Roll of 20 - exceptional success
+    break
+  case 'success':
+    // Roll of 11-19 - standard success
+    break
+  case 'tough_choice':
+    // Roll of 6-10 - success with complications
+    break
+}
+```
+
+## API reference
+
+### `roll(tableName?: SalvageUnionTableName)`
+
+**Input:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `tableName` | `SalvageUnionTableName` | Table to roll on (defaults to `'Core Mechanic'`) |
+
+**Returns:** `GameRollResult` with:
+
+| Property | Type | Description |
+|---|---|---|
+| `result` | `SalvageUnionRollRecord` | Table result with metadata |
+| `total` | `number` | D20 roll result (1-20) |
+| `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+
+### Result structure
+
+The `SalvageUnionRollRecord` includes:
+
+| Property | Type | Description |
+|---|---|---|
+| `key` | `string` | Internal result identifier |
+| `label` | `string` | Human-readable result label |
+| `description` | `string` | Detailed result description |
+| `table` | `object` | Full table data |
+| `tableName` | `string` | Name of the table rolled |
+| `roll` | `number` | D20 roll result (1-20) |
+
+## Core Mechanic table
+
+The default Core Mechanic table uses these result tiers:
+
+| Roll | Result |
+|---|---|
+| 20 | Nailed It -- exceptional success |
+| 11-19 | Success -- goal achieved without compromise |
+| 6-10 | Tough Choice -- success with complications |
+| 2-5 | Failure |
+| 1 | Cascade Failure -- critical failure |
+
+:::note
+Other tables in Salvage Union have different result tiers and descriptions. The package includes all official tables from the Salvage Union reference.
+:::
+
+## Type exports
+
+```typescript
+import type {
+  SalvageUnionRollRecord,
+  SalvageUnionTableListing,
+  SalvageUnionTableName
+} from '@randsum/salvageunion'
+```
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/salvageunion)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/salvageunion)

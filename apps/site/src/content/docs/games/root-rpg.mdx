@@ -1,6 +1,104 @@
 ---
 title: Root RPG
-description: Root RPG dice rolling with RANDSUM
+description: Root RPG dice mechanics with RANDSUM
 ---
 
-Coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+The `@randsum/root-rpg` package provides mechanics for [Root RPG](https://magpiegames.com/pages/root-rpg), a tabletop roleplaying game set in the world of the Root board game. It uses a 2d6 + bonus system with success thresholds similar to Powered by the Apocalypse games.
+
+## Overview
+
+- Rolls 2d6 + stat bonus
+- 10+ = Strong Hit (complete success)
+- 7-9 = Weak Hit (partial success, success with cost)
+- 6- = Miss (failure)
+- Simple API: pass a single bonus number
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    ```bash
+    bun add @randsum/root-rpg
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @randsum/root-rpg
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```typescript title="Basic Roll"
+import { roll } from '@randsum/root-rpg'
+
+// Roll with a stat bonus
+const { result, total } = roll(2)
+// result: 'Strong Hit' | 'Weak Hit' | 'Miss'
+```
+
+```typescript title="Result Handling"
+import { roll } from '@randsum/root-rpg'
+
+const { result } = roll(0)
+
+switch (result) {
+  case 'Strong Hit':
+    // 10+ total: complete success
+    break
+  case 'Weak Hit':
+    // 7-9 total: partial success with cost
+    break
+  case 'Miss':
+    // 6- total: failure
+    break
+}
+```
+
+```typescript title="Different Bonuses"
+import { roll } from '@randsum/root-rpg'
+
+roll(2)   // Strong stat
+roll(0)   // No bonus
+roll(-1)  // Penalty
+```
+
+## API reference
+
+### `roll(bonus: number)`
+
+**Input:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `bonus` | `number` | Stat modifier (-20 to +20) |
+
+**Returns:** `GameRollResult` with:
+
+| Property | Type | Description |
+|---|---|---|
+| `result` | `RootRpgResult` | `'Strong Hit' \| 'Weak Hit' \| 'Miss'` |
+| `total` | `number` | Sum of 2d6 + bonus |
+| `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+
+## Result interpretation
+
+| Outcome | Total | Description |
+|---|---|---|
+| `Strong Hit` | 10+ | Complete success -- you achieve your goal |
+| `Weak Hit` | 7-9 | Partial success -- you do it, but with a cost or complication |
+| `Miss` | 6- | Failure -- things go badly |
+
+## Type exports
+
+```typescript
+import type { RootRpgResult } from '@randsum/root-rpg'
+```
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/root-rpg)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/root-rpg)

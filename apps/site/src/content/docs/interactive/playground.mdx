@@ -1,6 +1,27 @@
 ---
 title: Dice Playground
-description: Try RANDSUM dice rolling interactively
+description: Try RANDSUM dice rolling interactively in your browser
 ---
 
-Coming soon.
+:::caution[Work in progress]
+The interactive dice playground is under construction. It will allow you to try RANDSUM dice notation and see results in real time directly in your browser.
+:::
+
+In the meantime, you can try RANDSUM locally:
+
+```bash
+bun add @randsum/roller
+```
+
+```typescript
+import { roll } from '@randsum/roller'
+
+// Try these examples
+roll('2d6')        // Basic roll
+roll('4d6L')       // D&D ability score
+roll('2d20H+5')    // Advantage + modifier
+roll('3d6!')       // Exploding dice
+roll('5d10S{7}')   // Count successes
+```
+
+Or use the [Discord Bot](/tools/discord-bot/) to roll dice in chat.

@@ -1,6 +1,62 @@
 ---
 title: Introduction
-description: An introduction to the RANDSUM dice rolling ecosystem
+description: Welcome to RANDSUM - a modular TypeScript dice rolling ecosystem for tabletop RPGs
 ---
 
-Coming soon.
+RANDSUM is a modular TypeScript dice rolling ecosystem built for tabletop RPGs. Whether you are building a simple dice roller, a full virtual tabletop, or integrating dice mechanics into a Discord bot, RANDSUM provides the foundation you need.
+
+## Why RANDSUM?
+
+- **Zero dependencies** -- the core roller has no runtime dependencies
+- **Full TypeScript support** -- strict types, branded notation strings, and exhaustive result types
+- **Never throws** -- errors are returned in the result, not thrown as exceptions
+- **Modular architecture** -- install only the packages you need
+- **Game-specific packages** -- first-class support for D&D 5e, Blades in the Dark, PbtA, and more
+
+## How it works
+
+At its simplest, RANDSUM lets you roll dice with a single function call:
+
+```typescript
+import { roll } from '@randsum/roller'
+
+// Roll a d20
+const result = roll(20)
+console.log(result.total) // 1-20
+
+// Roll 4d6, drop the lowest
+const abilityScore = roll('4d6L')
+
+// Roll with advantage
+const attack = roll('2d20H+5')
+```
+
+The `roll()` function accepts numbers, notation strings, or options objects -- and you can mix and match them freely.
+
+## The ecosystem
+
+RANDSUM is organized as a monorepo with several packages:
+
+| Package | Description |
+|---|---|
+| `@randsum/roller` | Core dice engine -- notation parsing, modifiers, roll execution |
+| `@randsum/fifth` | D&D 5th Edition mechanics |
+| `@randsum/blades` | Blades in the Dark action rolls |
+| `@randsum/pbta` | Powered by the Apocalypse (2d6+stat) |
+| `@randsum/daggerheart` | Daggerheart hope/fear dice |
+| `@randsum/root-rpg` | Root RPG mechanics |
+| `@randsum/salvageunion` | Salvage Union table rolls |
+
+Every game package depends only on `@randsum/roller` -- they never depend on each other.
+
+## Learning path
+
+1. **[Installation](/getting-started/installation/)** -- Get RANDSUM installed in your project
+2. **[Quick Start](/getting-started/quick-start/)** -- Learn the basics with hands-on examples
+3. **[Dice Notation](/reference/dice-notation/)** -- Master the full notation syntax
+4. **[Game Packages](/games/overview/)** -- Explore game-specific integrations
+
+## Links
+
+- [GitHub Repository](https://github.com/RANDSUM/randsum)
+- [npm: @randsum/roller](https://www.npmjs.com/package/@randsum/roller)

@@ -1,6 +1,113 @@
 ---
 title: Blades in the Dark
-description: Blades in the Dark dice rolling with RANDSUM
+description: Blades in the Dark dice pool mechanics with RANDSUM
 ---
 
-Coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+The `@randsum/blades` package provides mechanics for [Blades in the Dark](https://www.evilhat.com/home/blades-in-the-dark/), a tabletop RPG about a crew of daring scoundrels seeking their fortunes on the haunted streets of an industrial-fantasy city.
+
+## Overview
+
+- Rolls a dice pool of d6s (0-10 dice)
+- 0 dice pool: rolls 2d6 and keeps the lowest (desperate position)
+- Determines outcome from the highest die in the pool
+- Returns one of four outcomes: critical, success, partial, or failure
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    ```bash
+    bun add @randsum/blades
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @randsum/blades
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```typescript title="Basic Roll"
+import { roll } from '@randsum/blades'
+
+// Roll with a dice pool of 3
+const { result } = roll(3)
+console.log(result) // 'critical' | 'success' | 'partial' | 'failure'
+```
+
+```typescript title="Different Pool Sizes"
+import { roll } from '@randsum/blades'
+
+roll(0)  // Desperate: rolls 2d6, keeps lowest
+roll(1)  // One die
+roll(2)  // Two dice
+roll(3)  // Three dice
+roll(4)  // Four dice (e.g., with assistance)
+```
+
+```typescript title="Result Handling"
+import { roll } from '@randsum/blades'
+
+const { result } = roll(2)
+
+switch (result) {
+  case 'critical':
+    // Multiple 6s - exceptional outcome
+    break
+  case 'success':
+    // Highest die is 6 - full success
+    break
+  case 'partial':
+    // Highest die is 4-5 - success with complication
+    break
+  case 'failure':
+    // Highest die is 1-3 - things go badly
+    break
+}
+```
+
+## API reference
+
+### `roll(count: number)`
+
+**Input:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `count` | `number` | Number of dice in the pool (0-10) |
+
+**Returns:** `GameRollResult` with:
+
+| Property | Type | Description |
+|---|---|---|
+| `result` | `BladesResult` | `'critical' \| 'success' \| 'partial' \| 'failure'` |
+| `total` | `number` | Sum of all dice |
+| `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+
+## Result interpretation
+
+| Outcome | Condition | Description |
+|---|---|---|
+| `critical` | Multiple 6s | Critical success -- exceptional outcome |
+| `success` | Highest die is 6 | Full success -- you do it |
+| `partial` | Highest die is 4-5 | Partial success -- you do it, but with a complication |
+| `failure` | Highest die is 1-3 | Bad outcome -- things go wrong |
+
+### Zero dice pool
+
+When the dice pool is 0 (desperate position), the system rolls 2d6 and drops the highest, keeping only the lowest die. This makes failure much more likely.
+
+## Type exports
+
+```typescript
+import type { BladesResult } from '@randsum/blades'
+```
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/blades)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/blades)

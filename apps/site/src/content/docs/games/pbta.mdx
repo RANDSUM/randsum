@@ -1,6 +1,134 @@
 ---
 title: Powered by the Apocalypse
-description: PbtA dice rolling with RANDSUM
+description: PbtA dice mechanics for Dungeon World, Monster of the Week, Apocalypse World, and more
 ---
 
-Coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+The `@randsum/pbta` package provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
+
+## Overview
+
+- Rolls 2d6 + stat modifier
+- 10+ = strong hit (complete success)
+- 7-9 = weak hit (partial success, success with cost)
+- 6- = miss (failure)
+- Supports advantage (3d6, keep 2 highest) and disadvantage (3d6, keep 2 lowest)
+- Supports forward and ongoing bonuses
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    ```bash
+    bun add @randsum/pbta
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash
+    npm install @randsum/pbta
+    ```
+  </TabItem>
+</Tabs>
+
+## Usage
+
+```typescript title="Basic Roll"
+import { roll } from '@randsum/pbta'
+
+// Roll 2d6 + stat modifier
+const result = roll({ stat: 2 })
+// result.result: 'strong_hit' | 'weak_hit' | 'miss'
+```
+
+```typescript title="With Bonuses"
+import { roll } from '@randsum/pbta'
+
+// With forward and ongoing bonuses
+const result = roll({
+  stat: 1,
+  forward: 1,  // One-time bonus
+  ongoing: 0   // Persistent bonus
+})
+```
+
+```typescript title="Advantage and Disadvantage"
+import { roll } from '@randsum/pbta'
+
+// Roll with advantage (3d6, keep 2 highest)
+const result = roll({
+  stat: 2,
+  advantage: true
+})
+
+// Roll with disadvantage (3d6, keep 2 lowest)
+const result = roll({
+  stat: 2,
+  disadvantage: true
+})
+```
+
+```typescript title="Result Handling"
+import { roll } from '@randsum/pbta'
+
+const { result, total } = roll({ stat: 2 })
+
+switch (result) {
+  case 'strong_hit':
+    // 10+ total: complete success
+    break
+  case 'weak_hit':
+    // 7-9 total: success with cost
+    break
+  case 'miss':
+    // 6- total: failure
+    break
+}
+```
+
+## API reference
+
+### `roll(arg: PbtaRollArgument)`
+
+**Input:**
+
+| Property | Type | Description |
+|---|---|---|
+| `stat` | `number` | Stat modifier (-3 to 5) |
+| `forward` | `number` | One-time bonus (-5 to 5) |
+| `ongoing` | `number` | Persistent bonus (-5 to 5) |
+| `advantage` | `boolean` | Roll 3d6, keep 2 highest |
+| `disadvantage` | `boolean` | Roll 3d6, keep 2 lowest |
+
+**Returns:** `GameRollResult` with:
+
+| Property | Type | Description |
+|---|---|---|
+| `result` | `PbtaResult` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
+| `total` | `number` | Sum of 2d6 + all modifiers |
+| `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+
+## Result interpretation
+
+| Outcome | Total | Description |
+|---|---|---|
+| `strong_hit` | 10+ | Complete success |
+| `weak_hit` | 7-9 | Partial success, success with cost |
+| `miss` | 6- | Failure |
+
+## Compatible games
+
+This package works with any PbtA game, including:
+
+- **Apocalypse World** -- The original PbtA game
+- **Dungeon World** -- Fantasy dungeon crawling
+- **Monster of the Week** -- Urban fantasy monster hunting
+- **Masks** -- Teen superheroes
+- **The Sprawl** -- Cyberpunk missions
+- **Urban Shadows** -- Urban supernatural politics
+- And many more
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/pbta)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/pbta)
