@@ -65,6 +65,7 @@
     "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
     "create:game": "bun scripts/create-game-package.ts",
+    "dev": "bun run --filter '*' dev",
     "build": "bun run --filter \"*\" build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",

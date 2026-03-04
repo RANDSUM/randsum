@@ -58,6 +58,7 @@
     "Dragons"
   ],
   "scripts": {
+    "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
