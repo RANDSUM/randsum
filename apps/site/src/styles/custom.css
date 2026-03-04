@@ -1,1 +1,76 @@
-/* Custom Starlight theme overrides */
+/* Custom Starlight theme - dark-first Zed/Shadcn inspired */
+
+/* Google Fonts: Inter (body) + JetBrains Mono (headings/code) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ===== Dark mode (default in Starlight) ===== */
+:root {
+  /* Accent - blue-500 (#3b82f6) based */
+  --sl-color-accent-low: #1e3a5f;
+  --sl-color-accent: #3b82f6;
+  --sl-color-accent-high: #93c5fd;
+
+  /* Slate gray scale (dark mode: gray-1 = lightest, gray-6 = darkest) */
+  --sl-color-white: #f8fafc; /* slate-50 */
+  --sl-color-gray-1: #e2e8f0; /* slate-200 */
+  --sl-color-gray-2: #94a3b8; /* slate-400 */
+  --sl-color-gray-3: #64748b; /* slate-500 */
+  --sl-color-gray-4: #475569; /* slate-600 */
+  --sl-color-gray-5: #1e293b; /* slate-800 */
+  --sl-color-gray-6: #0f172a; /* slate-900 */
+  --sl-color-black: #020617; /* slate-950 */
+
+  /* Fonts */
+  --sl-font: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Game package colors */
+  --game-fifth: #ef4444; /* red-500 */
+  --game-salvageunion: #3b82f6; /* blue-500 */
+  --game-daggerheart: #8b5cf6; /* violet-500 */
+  --game-root-rpg: #10b981; /* emerald-500 */
+  --game-blades: #f59e0b; /* amber-500 */
+  --game-pbta: #6b7280; /* gray-500 */
+}
+
+/* ===== Light mode ===== */
+:root[data-theme='light'] {
+  /* Accent - blue-500 based, adjusted for light backgrounds */
+  --sl-color-accent-low: #dbeafe; /* blue-100 */
+  --sl-color-accent: #2563eb; /* blue-600 */
+  --sl-color-accent-high: #1e40af; /* blue-800 */
+
+  /* Slate gray scale (light mode: gray-1 = darkest, gray-6 = lightest) */
+  --sl-color-white: #0f172a; /* slate-900 */
+  --sl-color-gray-1: #1e293b; /* slate-800 */
+  --sl-color-gray-2: #334155; /* slate-700 */
+  --sl-color-gray-3: #64748b; /* slate-500 */
+  --sl-color-gray-4: #94a3b8; /* slate-400 */
+  --sl-color-gray-5: #e2e8f0; /* slate-200 */
+  --sl-color-gray-6: #f1f5f9; /* slate-100 */
+  --sl-color-gray-7: #f8fafc; /* slate-50 */
+  --sl-color-black: #ffffff;
+
+  /* Game package colors - slightly deeper for light backgrounds */
+  --game-fifth: #dc2626; /* red-600 */
+  --game-salvageunion: #2563eb; /* blue-600 */
+  --game-daggerheart: #7c3aed; /* violet-600 */
+  --game-root-rpg: #059669; /* emerald-600 */
+  --game-blades: #d97706; /* amber-600 */
+  --game-pbta: #4b5563; /* gray-600 */
+}
+
+/* ===== Heading typography ===== */
+:root {
+  --sl-font-heading: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--sl-font-heading);
+  letter-spacing: -0.02em;
+}
