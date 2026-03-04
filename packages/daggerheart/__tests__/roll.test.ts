@@ -252,6 +252,23 @@ describe('roll', () => {
     })
   })
 
+  describe('input validation', () => {
+    test('throws on non-finite modifier', () => {
+      expect(() => roll({ modifier: Infinity })).toThrow()
+      expect(() => roll({ modifier: NaN })).toThrow()
+    })
+
+    test('throws on unreasonable modifier', () => {
+      expect(() => roll({ modifier: 100 })).toThrow()
+      expect(() => roll({ modifier: -100 })).toThrow()
+    })
+
+    test('throws on invalid rollingWith value', () => {
+      // @ts-expect-error -- testing runtime validation
+      expect(() => roll({ rollingWith: 'invalid' })).toThrow()
+    })
+  })
+
   describe('error handling', () => {
     test('throws when hope or fear rolls are missing from result', () => {
       const mockRollResult: RollerRollResult = {

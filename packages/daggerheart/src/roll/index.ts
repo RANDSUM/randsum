@@ -1,5 +1,5 @@
 import type { GameRollResult, RollRecord, RollerRollResult } from '@randsum/roller'
-import { createMultiRollGameRoll } from '@randsum/roller'
+import { createMultiRollGameRoll, validateFinite, validateRange } from '@randsum/roller'
 import type { DaggerheartRollArgument, DaggerheartRollResult } from '../types'
 import { calculateType } from './calculateType'
 
@@ -21,7 +21,23 @@ export const roll: (
     DaggerheartRollResult['type'],
     DaggerheartRollResult['details']
   >({
-    validate: () => undefined,
+    validate: (arg: DaggerheartRollArgument) => {
+      if (arg.modifier !== undefined) {
+        validateFinite(arg.modifier, 'Daggerheart modifier')
+        validateRange(arg.modifier, -30, 30, 'Daggerheart modifier')
+      }
+      // Widen type to defend against untyped JS callers
+      const rollingWith: string | undefined = arg.rollingWith
+      if (
+        rollingWith !== undefined &&
+        rollingWith !== 'Advantage' &&
+        rollingWith !== 'Disadvantage'
+      ) {
+        throw new Error(
+          `Invalid rollingWith value: ${rollingWith}. Must be 'Advantage' or 'Disadvantage'.`
+        )
+      }
+    },
     toRollOptions: (arg: DaggerheartRollArgument) => {
       const isAdvantage = arg.rollingWith === 'Advantage'
       const hopeRollOptions = {
