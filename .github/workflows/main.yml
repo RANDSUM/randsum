@@ -67,6 +67,10 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
 
+      - name: Build packages
+        if: runner.os != 'Linux'
+        run: bun run build
+
       - name: Run tests (no coverage)
         if: runner.os != 'Linux'
         run: bun test
