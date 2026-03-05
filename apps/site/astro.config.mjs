@@ -32,7 +32,8 @@ export default defineConfig({
           items: [
             { label: 'Introduction', slug: 'getting-started/introduction' },
             { label: 'Installation', slug: 'getting-started/installation' },
-            { label: 'Quick Start', slug: 'getting-started/quick-start' }
+            { label: 'Quick Start', slug: 'getting-started/quick-start' },
+            { label: 'FAQ', slug: 'getting-started/faq' }
           ]
         },
         {
@@ -44,7 +45,16 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Packages',
+          label: 'Guides',
+          items: [
+            { label: 'Error Handling', slug: 'guides/error-handling' },
+            { label: 'Recipes', slug: 'guides/recipes' },
+            { label: 'Custom Game Packages', slug: 'guides/custom-game-packages' },
+            { label: 'Testing', slug: 'guides/testing' }
+          ]
+        },
+        {
+          label: 'Core',
           items: [
             { label: 'Overview', slug: 'packages/overview' },
             { label: '@randsum/roller', slug: 'packages/roller' }
@@ -58,28 +68,23 @@ export default defineConfig({
             { label: 'Blades in the Dark', slug: 'games/blades' },
             { label: 'Daggerheart', slug: 'games/daggerheart' },
             { label: 'D&D 5e', slug: 'games/fifth' },
-            {
-              label: 'Powered by the Apocalypse',
-              slug: 'games/pbta'
-            },
+            { label: 'Powered by the Apocalypse', slug: 'games/pbta' },
             { label: 'Root RPG', slug: 'games/root-rpg' },
             { label: 'Salvage Union', slug: 'games/salvageunion' }
           ]
         },
         {
-          label: 'Tools',
+          label: 'LLM Skill',
           items: [
-            { label: 'Discord Bot', slug: 'tools/discord-bot' },
-            {
-              label: 'LLM Skill',
-              items: [
-                { label: 'Overview', slug: 'tools/skill' },
-                { label: 'Skill Definition', slug: 'tools/skill/dice-rolling' },
-                { label: 'Notation Reference', slug: 'tools/skill/notation' },
-                { label: 'Game Systems', slug: 'tools/skill/game-systems' }
-              ]
-            }
+            { label: 'Overview', slug: 'tools/skill' },
+            { label: 'Skill Definition', slug: 'tools/skill/dice-rolling' },
+            { label: 'Notation Reference', slug: 'tools/skill/notation' },
+            { label: 'Game Systems', slug: 'tools/skill/game-systems' }
           ]
+        },
+        {
+          label: 'Tools',
+          items: [{ label: 'Discord Bot', slug: 'tools/discord-bot' }]
         }
       ]
     }),
