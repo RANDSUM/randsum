@@ -84,7 +84,7 @@ const fate = roll({
   sides: ['+', '+', ' ', ' ', '-', '-'],
   quantity: 4
 })
-console.log(fate.result) // e.g. ['+', '-', ' ', '+']
+console.log(fate.rolls[0].customResults) // Array of '+', ' ', or '-'
 ```
 
 ## Rolling and filtering results
