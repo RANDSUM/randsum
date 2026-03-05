@@ -13,7 +13,7 @@ RANDSUM uses a **never-throw** design. The `roll()` function never raises an exc
 
 ## The `result.error` pattern
 
-When `roll()` encounters an error, it returns an object with an `error` property instead of a `total`. Check for `result.error` before using `result.total`:
+When `roll()` encounters an error, it returns an object where `result.error` is set and `result.total` is `0`. Check for `result.error` before using `result.total`:
 
 ```typescript
 import { roll } from '@randsum/roller'
