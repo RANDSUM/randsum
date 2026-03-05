@@ -31,6 +31,10 @@
   --game-root-rpg: #10b981; /* emerald-500 */
   --game-blades: #f59e0b; /* amber-500 */
   --game-pbta: #6b7280; /* gray-500 */
+
+  /* Tool package colors */
+  --tool-roller: #eab308; /* gold-500 */
+  --tool-skill: #06b6d4; /* cyan-500 */
 }
 
 /* ===== Light mode ===== */
