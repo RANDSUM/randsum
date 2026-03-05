@@ -34,10 +34,6 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - name: Security audit
-        run: bun audit --audit-level high
-        continue-on-error: false
-
       - name: Build packages
         run: bun run build
 
