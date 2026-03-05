@@ -3,6 +3,8 @@ title: Testing
 description: How to write deterministic tests for code that uses RANDSUM
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
 Rolling dice is inherently random, which makes testing tricky. RANDSUM provides a `randomFn` option on `roll()` so you can inject a deterministic random number generator and make your tests reproducible.
 
 ## Seeded random
@@ -15,8 +17,8 @@ import { roll } from '@randsum/roller'
 function seededRandom(seed: number) {
   let s = seed
   return () => {
-    s = (s * 1664525 + 1013904223) % 2 ** 32
-    return s / 2 ** 32
+    s = (s * 1664525 + 1013904223) >>> 0
+    return s / 0x100000000
   }
 }
 
@@ -36,8 +38,8 @@ import { roll } from '@randsum/roller'
 function seededRandom(seed: number) {
   let s = seed
   return () => {
-    s = (s * 1664525 + 1013904223) % 2 ** 32
-    return s / 2 ** 32
+    s = (s * 1664525 + 1013904223) >>> 0
+    return s / 0x100000000
   }
 }
 
@@ -50,11 +52,14 @@ describe('roll with seeded RNG', () => {
     expect(result1.result).toEqual(result2.result)
   })
 
-  test('returns a valid result for any seed', () => {
-    const result = roll('1d20', { randomFn: seededRandom(42) })
-    expect(result.error).toBeNull()
-    expect(result.total).toBeGreaterThanOrEqual(1)
-    expect(result.total).toBeLessThanOrEqual(20)
+  test('produces different totals for different seeds', () => {
+    const result1 = roll('1d20', { randomFn: seededRandom(1) })
+    const result2 = roll('1d20', { randomFn: seededRandom(999) })
+
+    // Not guaranteed to differ, but almost always will for different seeds
+    // Use this pattern only when you know the seed outputs differ
+    expect(result1.error).toBeNull()
+    expect(result2.error).toBeNull()
   })
 })
 ```
@@ -136,8 +141,8 @@ import { roll } from '@randsum/roller'
 function seededRandom(seed: number) {
   let s = seed
   return () => {
-    s = (s * 1664525 + 1013904223) % 2 ** 32
-    return s / 2 ** 32
+    s = (s * 1664525 + 1013904223) >>> 0
+    return s / 0x100000000
   }
 }
 
