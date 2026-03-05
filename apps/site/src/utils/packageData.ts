@@ -25,7 +25,7 @@ export const corePackages: PackageInfo[] = [
       'Core dice rolling engine with advanced notation support. The foundation of the RANDSUM ecosystem.',
     npmPackage: '@randsum/roller',
     category: 'core',
-    color: '#f59e0b', // amber — distinct from all game/tool packages
+    color: '#eab308', // gold-500 — distinct from all game colors; was amber (#f59e0b, collided with Blades)
     features: [
       'Advanced dice notation (4d6L, 2d20H, etc.)',
       'Reroll modifiers',
@@ -374,7 +374,7 @@ export const toolPackages: PackageInfo[] = [
       'A structured prompt file that teaches AI assistants RANDSUM dice notation and game system mechanics. Compatible with Claude, ChatGPT, and any LLM that supports tool use or custom prompts.',
     npmPackage: 'skills/dice-rolling/SKILL.md',
     category: 'tool',
-    color: '#6366f1', // indigo
+    color: '#06b6d4', // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
     examples: [
       {
         title: 'Claude Code Setup',
