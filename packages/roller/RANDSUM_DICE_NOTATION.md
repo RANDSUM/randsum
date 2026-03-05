@@ -702,24 +702,15 @@ roll({
 
 You can roll multiple dice sides in a single by passing multiple arguments:
 
+| Form                 | Description                                     |
+| -------------------- | ----------------------------------------------- |
+| `roll("NdS", "NdS")` | Roll multiple dice groups, sum totals           |
+| `roll("-NdS")`       | Negative prefix subtracts this group from total |
+| `roll("NdS-NdS")`    | Inline subtraction in a single notation string  |
+
 ```typescript
-roll("1d20", "-2d6", "10d8+2") // Roll 1d20, 2d6, and 10d8 + 2.
-roll("1d20-2d6+10d8+2") // Same as above, but in a single string
-roll(
-  {
-    sides: 20
-  },
-  {
-    sides: 6,
-    quantity: 2
-    arithmetic: "subtract"
-  },
-  {
-    sides: 8,
-    quantity: 10
-    modifiers: { plus: 2 }
-  }
-)
+roll("1d20", "-2d6", "10d8+2") // Roll 1d20, subtract 2d6, roll 10d8+2
+roll("1d20-2d6+10d8+2") // Same as a single notation string
 ```
 
 ## Adding or Subtracting Rolls from the Total
