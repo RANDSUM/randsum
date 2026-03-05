@@ -1,0 +1,190 @@
+---
+title: Testing
+description: How to write deterministic tests for code that uses RANDSUM
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+Rolling dice is inherently random, which makes testing tricky. RANDSUM provides a `randomFn` option on `roll()` so you can inject a deterministic random number generator and make your tests reproducible.
+
+## Seeded random
+
+The `roll()` function accepts an optional `RollConfig` object as its last argument. Pass a `randomFn` to replace the built-in RNG:
+
+```typescript
+import { roll } from '@randsum/roller'
+
+function seededRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0
+    return s / 0x100000000
+  }
+}
+
+const rng = seededRandom(42)
+const result = roll('2d6', { randomFn: rng })
+// result.total is the same value every time this test runs
+```
+
+The `randomFn` must return a number in `[0, 1)` — the same contract as `Math.random()`. The LCG above (linear congruential generator) is simple and sufficient for tests.
+
+## Example: unit test with a known seed
+
+```typescript
+import { describe, expect, test } from 'bun:test'
+import { roll } from '@randsum/roller'
+
+function seededRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0
+    return s / 0x100000000
+  }
+}
+
+describe('roll with seeded RNG', () => {
+  test('produces the same total for the same seed', () => {
+    const result1 = roll('2d6', { randomFn: seededRandom(42) })
+    const result2 = roll('2d6', { randomFn: seededRandom(42) })
+
+    expect(result1.total).toBe(result2.total)
+    expect(result1.result).toEqual(result2.result)
+  })
+
+  test('produces different totals for different seeds', () => {
+    const result1 = roll('1d20', { randomFn: seededRandom(1) })
+    const result2 = roll('1d20', { randomFn: seededRandom(999) })
+
+    // Not guaranteed to differ, but almost always will for different seeds
+    // Use this pattern only when you know the seed outputs differ
+    expect(result1.error).toBeNull()
+    expect(result2.error).toBeNull()
+  })
+})
+```
+
+## Property-based tests with fast-check
+
+Property-based testing runs your assertions against many randomly generated inputs rather than a single fixed example. Instead of checking "does `roll('2d6')` return 7?", you check "does `roll({ sides: S, quantity: Q })` always return a total between `Q` and `Q * S`?"
+
+`fast-check` is already included as a workspace dev dependency — no installation needed.
+
+```typescript
+import { describe, test } from 'bun:test'
+import fc from 'fast-check'
+import { roll } from '@randsum/roller'
+
+describe('roll property-based tests', () => {
+  test('total is always within the valid range for any sides and quantity', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 100 }), // sides
+        fc.integer({ min: 1, max: 20 }),  // quantity
+        (sides, quantity) => {
+          const result = roll({ sides, quantity })
+          return result.total >= quantity && result.total <= quantity * sides
+        }
+      )
+    )
+  })
+
+  test('result array length equals quantity', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 20 }), // sides
+        fc.integer({ min: 1, max: 10 }), // quantity
+        (sides, quantity) => {
+          const result = roll({ sides, quantity })
+          return result.result.length === quantity
+        }
+      )
+    )
+  })
+})
+```
+
+`fc.assert` throws if any generated input falsifies the property, and prints a minimal failing example to help you diagnose the issue.
+
+## Stress tests
+
+For boundary validation, a tight loop is often clearer than a property test:
+
+```typescript
+import { describe, expect, test } from 'bun:test'
+import { roll } from '@randsum/roller'
+
+describe('2d6 stress test', () => {
+  test('total is always between 2 and 12 across 9999 rolls', () => {
+    for (let i = 0; i < 9999; i++) {
+      const { total } = roll('2d6')
+      expect(total).toBeGreaterThanOrEqual(2)
+      expect(total).toBeLessThanOrEqual(12)
+    }
+  })
+})
+```
+
+This is especially useful for modifiers like `drop` or `reroll` where the valid output range is non-obvious.
+
+## Testing game packages
+
+Game package roll functions (for example, `roll` from `@randsum/fifth` or `@randsum/blades`) are created with `createGameRoll` and only accept their game-specific input type. They do not expose a `randomFn` parameter.
+
+To test game packages deterministically, test the underlying `roll()` from `@randsum/roller` with a seeded RNG to verify the dice math, and test the game package's interpretation logic separately with known totals.
+
+```typescript
+import { describe, expect, test } from 'bun:test'
+import { roll } from '@randsum/roller'
+
+// Verify the dice configuration a game package would use
+function seededRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0
+    return s / 0x100000000
+  }
+}
+
+describe('5e-style advantage roll (deterministic)', () => {
+  test('2d20 drop lowest produces a value from 1 to 20', () => {
+    const result = roll(
+      { sides: 20, quantity: 2, modifiers: { drop: { lowest: 1 } } },
+      { randomFn: seededRandom(42) }
+    )
+    expect(result.total).toBeGreaterThanOrEqual(1)
+    expect(result.total).toBeLessThanOrEqual(20)
+    expect(result.error).toBeNull()
+  })
+})
+```
+
+## Testing error paths
+
+`roll()` never throws. When given invalid input, it returns a result with a non-null `error` property.
+
+```typescript
+import { describe, expect, test } from 'bun:test'
+import { roll } from '@randsum/roller'
+
+describe('error handling', () => {
+  test('returns an error for invalid notation', () => {
+    const result = roll('not-valid-notation')
+    expect(result.error).not.toBeNull()
+    expect(result.total).toBe(0)
+    expect(result.rolls).toHaveLength(0)
+  })
+
+  test('returns an error for zero sides', () => {
+    const result = roll({ sides: 0, quantity: 1 })
+    expect(result.error).not.toBeNull()
+  })
+
+  test('returns null error for valid input', () => {
+    const result = roll('2d6')
+    expect(result.error).toBeNull()
+  })
+})
+```
+
+Always check `result.error` before using `result.total` in application code — the same pattern applies in tests.
