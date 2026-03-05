@@ -8,8 +8,6 @@ description: Common questions about RANDSUM
 RANDSUM follows a never-throw design — errors are returned as values rather than raised as exceptions. This makes error handling explicit and composable without try/catch blocks.
 
 ```typescript
-import { roll } from '@randsum/roller'
-
 const result = roll('invalid notation')
 
 if (result.error) {
@@ -40,14 +38,12 @@ console.log(result.result) // 'critical' | 'success' | 'partial' | 'failure'
 Every `roll()` result includes a `rolls` array of `RollRecord` objects — one per dice group. Each record contains the individual die values before and after modifiers.
 
 ```typescript
-import { roll } from '@randsum/roller'
-
 const result = roll('4d6L')
 
 // Access all roll records
 result.rolls.forEach(record => {
-  console.log(record.modifierHistory.modifiedRolls)  // die values after modifiers
-  console.log(record.rolls)                          // die values before modifiers
+  console.log(record.result)         // Individual die values after modifiers
+  console.log(record.initialRolls)   // Individual die values before modifiers
 })
 ```
 
@@ -71,21 +67,14 @@ The reroll modifier has a built-in attempt limit (`MAX_REROLL_ATTEMPTS = 99`). I
 
 ## Can I seed the random number generator?
 
-Yes — pass a `randomFn` in the `RollConfig` argument. Any function that returns a number in `[0, 1)` works. Here is a simple seeded random function you can use:
+Yes — pass a `randomFn` in the `RollConfig` argument. RANDSUM exports `createSeededRandom` for deterministic testing:
 
 ```typescript
 import { roll } from '@randsum/roller'
+import { createSeededRandom } from '@randsum/roller'
 
-// Simple seeded random (linear congruential generator)
-function seededRandom(seed: number) {
-  let s = seed
-  return () => {
-    s = (s * 1664525 + 1013904223) >>> 0
-    return s / 0x100000000
-  }
-}
-
-const result = roll('4d6L', { randomFn: seededRandom(42) })
+const seeded = createSeededRandom(42)
+const result = roll('4d6L', { randomFn: seeded })
 // Same result every time with seed 42
 ```
 
