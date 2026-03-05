@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
   <h1>@randsum/roller</h1>
-  <h3>Advanced Dice Rolling for JavaScript & TypeScript</h3>
+  <h3>A zero-dependency dice engine with expressive notation</h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/roller)](https://www.npmjs.com/package/@randsum/roller)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/roller)](https://bundlephobia.com/package/@randsum/roller)
@@ -12,7 +12,7 @@
 
 </div>
 
-A flexible, type-safe dice rolling implementation for tabletop RPGs, game development, and probability simulations.
+A zero-dependency dice engine with expressive notation for TypeScript and JavaScript.
 
 ## Installation
 

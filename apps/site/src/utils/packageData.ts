@@ -25,7 +25,7 @@ export const corePackages: PackageInfo[] = [
       'Core dice rolling engine with advanced notation support. The foundation of the RANDSUM ecosystem.',
     npmPackage: '@randsum/roller',
     category: 'core',
-    color: 'linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
+    color: '#f59e0b', // amber — distinct from all game/tool packages
     features: [
       'Advanced dice notation (4d6L, 2d20H, etc.)',
       'Reroll modifiers',
@@ -366,6 +366,25 @@ bun add @randsum/pbta`,
 ]
 
 export const toolPackages: PackageInfo[] = [
+  {
+    id: 'skill',
+    name: 'skill',
+    displayName: 'LLM Skill',
+    description:
+      'A structured prompt file that teaches AI assistants RANDSUM dice notation and game system mechanics. Compatible with Claude, ChatGPT, and any LLM that supports tool use or custom prompts.',
+    npmPackage: 'skills/dice-rolling/SKILL.md',
+    category: 'tool',
+    color: '#6366f1', // indigo
+    examples: [
+      {
+        title: 'Claude Code Setup',
+        code: `# Download the skill into your project
+curl -o .claude/skills/dice-rolling/SKILL.md \\
+  https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/dice-rolling/SKILL.md`,
+        language: 'bash'
+      }
+    ]
+  },
   {
     id: 'discord-bot',
     name: 'discord-bot',

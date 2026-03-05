@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/root-rpg</h1>
-  <h3>Root RPG compatible dice rolling for Randsum</h3>
+  <h3>Root RPG dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/root-rpg)](https://www.npmjs.com/package/@randsum/root-rpg)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/root-rpg)](https://bundlephobia.com/package/@randsum/root-rpg)
@@ -12,12 +12,7 @@
 
 </div>
 
-A small collection of utilities for [Root RPG](https://magpiegames.com/collections/root)!
-
-- 🎲 Standard Root RPG (2d6+N) rolls
-- 🎯 Automatic handling of modifiers
-- 🔒 Full TypeScript support
-- 🪶 smol (not larger than a wolf)
+Type-safe [Root RPG](https://magpiegames.com/collections/root) 2d6+bonus mechanics, built on [@RANDSUM](https://github.com/RANDSUM/randsum).
 
 ## Installation
 

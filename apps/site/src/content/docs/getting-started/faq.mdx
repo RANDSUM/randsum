@@ -1,0 +1,105 @@
+---
+title: FAQ
+description: Common questions about RANDSUM
+---
+
+## Why doesn't `roll()` throw?
+
+RANDSUM follows a never-throw design — errors are returned as values rather than raised as exceptions. This makes error handling explicit and composable without try/catch blocks.
+
+```typescript
+import { roll } from '@randsum/roller'
+
+const result = roll('invalid notation')
+
+if (result.error) {
+  // Handle the error — result.total is undefined here
+  console.error(result.error.message)
+  return
+}
+
+// Safe to use result.total here
+console.log(result.total)
+```
+
+See [Error Handling](/guides/error-handling/) for the full pattern.
+
+## How do I roll a 0-dice Blades pool?
+
+Pass `0` to `roll()` from `@randsum/blades`. A 0-dice pool represents a **desperate position** in Blades in the Dark — the system rolls 2d6 and keeps the lowest die.
+
+```typescript
+import { roll } from '@randsum/blades'
+
+const result = roll(0) // Rolls 2d6, keeps lowest
+console.log(result.result) // 'critical' | 'success' | 'partial' | 'failure'
+```
+
+## How do I access individual die results?
+
+Every `roll()` result includes a `rolls` array of `RollRecord` objects — one per dice group. Each record contains the individual die values before and after modifiers.
+
+```typescript
+import { roll } from '@randsum/roller'
+
+const result = roll('4d6L')
+
+// Access all roll records
+result.rolls.forEach(record => {
+  console.log(record.modifierHistory.modifiedRolls)  // die values after modifiers
+  console.log(record.rolls)                          // die values before modifiers
+})
+```
+
+## Can I use RANDSUM in the browser?
+
+Yes. `@randsum/roller` has zero runtime dependencies and uses only standard JavaScript — no Node.js built-ins. It works in any environment that runs modern JS: browsers, Deno, Bun, Edge functions, and Node.js 18+.
+
+## What runtimes are supported?
+
+| Runtime | Supported |
+|---|---|
+| Node.js 18+ | Yes |
+| Bun 1.0+ | Yes |
+| Deno | Yes |
+| Browser (ESM) | Yes |
+| Edge functions (Cloudflare, Vercel) | Yes |
+
+## How does `reroll` prevent infinite loops?
+
+The reroll modifier has a built-in attempt limit (`MAX_REROLL_ATTEMPTS = 99`). If the reroll condition can never be satisfied (e.g., rerolling all results on a d1), RANDSUM stops after the limit and returns the last rolled value. It will never hang.
+
+## Can I seed the random number generator?
+
+Yes — pass a `randomFn` in the `RollConfig` argument. Any function that returns a number in `[0, 1)` works. Here is a simple seeded random function you can use:
+
+```typescript
+import { roll } from '@randsum/roller'
+
+// Simple seeded random (linear congruential generator)
+function seededRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0
+    return s / 0x100000000
+  }
+}
+
+const result = roll('4d6L', { randomFn: seededRandom(42) })
+// Same result every time with seed 42
+```
+
+See [Testing](/guides/testing/) for more patterns.
+
+## Do the game packages work together?
+
+No — and by design. Game packages depend only on `@randsum/roller`. They never depend on each other. Install only the packages your application needs.
+
+## What's the difference between `drop` and `keep`?
+
+Both select a subset of dice — they approach it from opposite directions:
+
+- `drop: { lowest: 1 }` — removes 1 die, keeps the rest
+- `keep: { highest: 3 }` — keeps 3 dice, removes the rest
+
+On a `4d6` roll, `4d6L` (drop lowest 1) and `keep: { highest: 3 }` produce identical results.
