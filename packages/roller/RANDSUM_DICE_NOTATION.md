@@ -6,7 +6,7 @@ Dice notation is a compact way to represent dice rolls and their modifications. 
 
 Randsum extends standard dice notation with powerful modifiers like dropping lowest rolls, rerolling specific values, and ensuring unique results.
 
-The core `roll()` function accepts several argument types: a **number** (sides for a single die, e.g. `roll(20)` for 1d20), a **notation string** (e.g. `roll("4d6L")`), an **options object** (e.g. `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`), or **multiple arguments** combined into one total (e.g. `roll("1d20", "2d6", "+5")`).
+The core `roll()` function accepts several argument types: a **number** (sides for a single die, e.g. `roll(20)` for 1d20), a **notation string** (e.g. `roll("4d6L")`), an **options object** (e.g. `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`), or **multiple arguments** combined into one total (e.g. `roll("1d20", "2d6")`).
 
 ## Basic Syntax
 
@@ -292,20 +292,6 @@ roll({
   sides: 20,
   quantity: 4,
   modifiers: { explode: true }
-})
-
-roll("3d6!5") // Explode with max depth of 5
-roll({
-  sides: 6,
-  quantity: 3,
-  modifiers: { explode: 5 }
-})
-
-roll("3d6!0") // Explode unlimited (capped at 100 for safety)
-roll({
-  sides: 6,
-  quantity: 3,
-  modifiers: { explode: 0 }
 })
 ```
 
@@ -728,8 +714,8 @@ roll("3d6!pL+1") // Penetrate explode, drop lowest, add 1
 
 All explosive modifiers (explode, compound, penetrate) have built-in depth limits:
 
-- **Explicit depth**: `!N`, `!!N`, `!pN` - Limited to N depth
-- **Unlimited (0)**: `!0`, `!!0`, `!p0` - Capped at 100 for safety
+- **Explicit depth**: `!!N`, `!pN` - Limited to N depth
+- **Unlimited (0)**: `!!0`, `!p0` - Capped at 100 for safety
 - **Default**: `!`, `!!`, `!p` - Limited to 1 explosion per die
 
 These limits prevent infinite loops and ensure performance remains predictable.
