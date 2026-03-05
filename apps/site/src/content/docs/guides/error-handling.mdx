@@ -13,7 +13,7 @@ RANDSUM uses a **never-throw** design. The `roll()` function never raises an exc
 
 ## The `result.error` pattern
 
-When `roll()` encounters an error, it returns an object where `result.error` is set and `result.total` is `0`. Check for `result.error` before using `result.total`:
+When `roll()` encounters an error, it returns an object with an `error` property instead of a `total`. Check for `result.error` before using `result.total`:
 
 ```typescript
 import { roll } from '@randsum/roller'
@@ -21,7 +21,7 @@ import { roll } from '@randsum/roller'
 const result = roll(userInput)
 
 if (result.error) {
-  // result.total is 0 — do not use it
+  // result.total is undefined — do not use it
   console.error(result.error.message)
   return
 }
@@ -74,23 +74,38 @@ if (!validation.valid) {
 }
 ```
 
-## Checking the error value
+## Game package errors
 
-`result.error` is typed as `RandsumError | null`. On success it is `null`; on error it is a `RandsumError`. `result.total` is always a `number` — on error its value is `0`.
+Game packages (like `@randsum/blades`, `@randsum/fifth`) follow the same pattern. Their `roll()` functions also return errors as values:
+
+```typescript
+import { roll } from '@randsum/fifth'
+
+const result = roll({ modifier: 999 }) // modifier out of range
+
+if (result.error) {
+  console.error(result.error.message) // 'modifier must be between -30 and 30'
+}
+```
+
+## TypeScript narrowing
+
+After a `result.error` check, TypeScript automatically narrows the result type:
 
 ```typescript
 import { roll } from '@randsum/roller'
 
 const result = roll('2d6')
 
-if (result.error !== null) {
-  // result.error is RandsumError — inspect result.error.message
-  // result.total is 0 — do not use it for game logic
+// Before check: result.total is number | undefined
+result.total // number | undefined
+
+if (result.error) {
+  result.total // undefined (TypeScript knows)
   return
 }
 
-// result.error is null — safe to use result.total
-console.log(result.total)
+result.total // number (TypeScript knows this is safe)
 ```
 
 ## Production checklist
