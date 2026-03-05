@@ -1,6 +1,6 @@
 {
   "name": "@randsum/cli",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "description": "Dice rolling CLI and interactive TUI powered by RANDSUM",
   "private": false,
   "author": {
@@ -39,7 +39,7 @@
     "dice-roller"
   ],
   "dependencies": {
-    "@randsum/roller": "workspace:~",
+    "@randsum/roller": "^1.1.0",
     "ink": "^5.2.0",
     "ink-text-input": "^6.0.0",
     "react": "^18.3.1"
@@ -48,7 +48,7 @@
     "@types/react": "^18.3.18"
   },
   "scripts": {
-    "build": "bunup --entry src/index.ts --format esm --dts --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
+    "build": "bunup && chmod +x dist/index.js",
     "dev": "bun run src/index.ts",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",

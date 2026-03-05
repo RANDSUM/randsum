@@ -6,13 +6,19 @@ Dice notation is a compact way to represent dice rolls and their modifications. 
 
 Randsum extends standard dice notation with powerful modifiers like dropping lowest rolls, rerolling specific values, and ensuring unique results.
 
-The core `roll()` function accepts several argument types: a **number** (sides for a single die, e.g. `roll(20)` for 1d20), a **notation string** (e.g. `roll("4d6L")`), an **options object** (e.g. `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`), or **multiple arguments** combined into one total (e.g. `roll("1d20", "2d6", "+5")`).
+The core `roll()` function accepts several argument types: a **number** (sides for a single die, e.g. `roll(20)` for 1d20), a **notation string** (e.g. `roll("4d6L")`), an **options object** (e.g. `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`), or **multiple arguments** combined into one total (e.g. `roll("1d20", "2d6")`).
 
 ## Basic Syntax
 
 All notation in randsum is case-insensitive (`2d8` = `2D8`).
 
 ### Standard Rolls
+
+| Notation | Description              |
+| -------- | ------------------------ |
+| `NdS`    | Roll N dice with S sides |
+| `1d20`   | Roll one d20             |
+| `4d6`    | Roll four d6             |
 
 ```typescript
 // Roll one d20
@@ -35,6 +41,11 @@ roll({
 
 ### Basic Arithmetic
 
+| Notation | Description           |
+| -------- | --------------------- |
+| `+N`     | Add N to total        |
+| `-N`     | Subtract N from total |
+
 ```typescript
 roll("4d6+2") // Add 2 to total
 roll({
@@ -54,6 +65,12 @@ roll({
 ### Cap Modifiers
 
 Limit roll values to specific ranges:
+
+| Notation   | Description                       |
+| ---------- | --------------------------------- |
+| `C{>N}`    | Cap rolls over N down to N        |
+| `C{<N}`    | Cap rolls under N up to N         |
+| `C{<N,>M}` | Cap both ends: floor N, ceiling M |
 
 ```typescript
 roll("4d20C{>18}") // Cap rolls over 18 to 18
@@ -91,6 +108,17 @@ roll({
 
 Drop specific dice from the results:
 
+| Notation     | Description                 |
+| ------------ | --------------------------- |
+| `L`          | Drop lowest 1               |
+| `LN`         | Drop lowest N               |
+| `H`          | Drop highest 1              |
+| `HN`         | Drop highest N              |
+| `LH`         | Drop lowest 1 and highest 1 |
+| `D{>N}`      | Drop all rolls over N       |
+| `D{<N}`      | Drop all rolls under N      |
+| `D{X,Y,...}` | Drop exact values           |
+
 ```typescript
 roll("4d6L") // Drop lowest
 roll({
@@ -120,6 +148,8 @@ roll({
   modifiers: { drop: { highest: 2 } }
 })
 
+roll("4d6LH") // Drop both lowest and highest
+
 // Drop by value
 roll("4d20D{>17}") // Drop rolls over 17
 roll({
@@ -143,9 +173,18 @@ roll({
 })
 ```
 
+**Note:** `L` and `H` can be combined in one notation string. `4d6LH` drops the lowest die and the highest die, leaving 2 of the original 4.
+
 ### Reroll Modifiers
 
 Reroll dice matching certain conditions:
+
+| Notation | Description                         |
+| -------- | ----------------------------------- |
+| `R{>N}`  | Reroll results over N               |
+| `R{<N}`  | Reroll results under N              |
+| `R{X,Y}` | Reroll exact values X and Y         |
+| `R{<N}M` | Reroll under N, max M total rerolls |
 
 ```typescript
 roll("4d20R{>17}") // Reroll results over 17
@@ -182,9 +221,18 @@ roll({
 })
 ```
 
+**Note:** The max count in `R{<N}M` caps the total number of rerolls across the entire dice pool, not per die.
+
 ### Replace Modifiers
 
 Replace specific results with new values:
+
+| Notation     | Description                                    |
+| ------------ | ---------------------------------------------- |
+| `V{X=Y}`     | Replace value X with Y                         |
+| `V{>N=Y}`    | Replace results over N with Y                  |
+| `V{<N=Y}`    | Replace results under N with Y                 |
+| `V{X=Y,A=B}` | Replace X with Y and A with B (multiple rules) |
 
 ```typescript
 roll("4d20V{8=12}") // Replace 8s with 12s
@@ -222,11 +270,20 @@ roll({
     }
   }
 })
+
+roll("4d20V{1=6,2=5}") // Replace 1s with 6s and 2s with 5s
 ```
+
+**Note:** Multiple replacement rules can be specified in a single `V{}` block by comma-separating them. Rules are applied in order.
 
 ### Unique Results
 
 Force unique rolls within a pool:
+
+| Notation | Description                             |
+| -------- | --------------------------------------- |
+| `U`      | All results must be unique              |
+| `U{X,Y}` | Unique except values X and Y may repeat |
 
 ```typescript
 roll("4d20U") // All results must be unique
@@ -249,6 +306,13 @@ roll({
 ### Keep Modifiers
 
 Keep specific dice from the result (complement to drop):
+
+| Notation | Description    |
+| -------- | -------------- |
+| `K`      | Keep highest 1 |
+| `KN`     | Keep highest N |
+| `kl`     | Keep lowest 1  |
+| `klN`    | Keep lowest N  |
 
 ```typescript
 roll("4d6K3") // Keep highest 3
@@ -286,26 +350,16 @@ roll({
 
 Roll additional dice on maximum results:
 
+| Notation | Description                       |
+| -------- | --------------------------------- |
+| `!`      | Explode once per die on max value |
+
 ```typescript
 roll("4d20!") // Roll an extra d20 for each 20 rolled
 roll({
   sides: 20,
   quantity: 4,
   modifiers: { explode: true }
-})
-
-roll("3d6!5") // Explode with max depth of 5
-roll({
-  sides: 6,
-  quantity: 3,
-  modifiers: { explode: 5 }
-})
-
-roll("3d6!0") // Explode unlimited (capped at 100 for safety)
-roll({
-  sides: 6,
-  quantity: 3,
-  modifiers: { explode: 0 }
 })
 ```
 
@@ -316,6 +370,12 @@ roll({
 ### Compounding Exploding (!!)
 
 Exploding dice that add to the triggering die instead of creating new dice:
+
+| Notation | Description                            |
+| -------- | -------------------------------------- |
+| `!!`     | Compound once per die on max value     |
+| `!!N`    | Compound with max depth N              |
+| `!!0`    | Compound unlimited (capped internally) |
 
 ```typescript
 roll("3d6!!") // Compound explode: add to die instead of new dice
@@ -354,6 +414,12 @@ roll({
 ### Penetrating Exploding (!p)
 
 Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style):
+
+| Notation | Description                             |
+| -------- | --------------------------------------- |
+| `!p`     | Penetrate once per die on max value     |
+| `!pN`    | Penetrate with max depth N              |
+| `!p0`    | Penetrate unlimited (capped internally) |
 
 ```typescript
 roll("3d6!p") // Penetrate explode: subtract 1 from subsequent rolls
@@ -394,6 +460,10 @@ roll({
 
 Multiply the dice sum before adding/subtracting arithmetic modifiers:
 
+| Notation | Description                                    |
+| -------- | ---------------------------------------------- |
+| `*N`     | Multiply dice sum by N (before +/- arithmetic) |
+
 ```typescript
 roll("2d6*2+3") // (dice sum * 2) + 3
 roll({
@@ -424,6 +494,11 @@ roll({
 ### Count Successes (S{...})
 
 Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
+
+| Notation | Description                                 |
+| -------- | ------------------------------------------- |
+| `S{N}`   | Count dice that rolled >= N                 |
+| `S{N,B}` | Count successes >= N, subtract botches <= B |
 
 ```typescript
 roll("5d10S{7}") // Count how many dice rolled >= 7
@@ -460,6 +535,10 @@ roll({
 ### Total Multiplier (\*\*)
 
 Multiply the entire final total after all other modifiers:
+
+| Notation | Description                                                  |
+| -------- | ------------------------------------------------------------ |
+| `**N`    | Multiply entire final total by N (after all other modifiers) |
 
 ```typescript
 roll("2d6+3**2") // (dice + 3) * 2
@@ -623,24 +702,15 @@ roll({
 
 You can roll multiple dice sides in a single by passing multiple arguments:
 
+| Form                 | Description                                     |
+| -------------------- | ----------------------------------------------- |
+| `roll("NdS", "NdS")` | Roll multiple dice groups, sum totals           |
+| `roll("-NdS")`       | Negative prefix subtracts this group from total |
+| `roll("NdS-NdS")`    | Inline subtraction in a single notation string  |
+
 ```typescript
-roll("1d20", "-2d6", "10d8+2") // Roll 1d20, 2d6, and 10d8 + 2.
-roll("1d20-2d6+10d8+2") // Same as above, but in a single string
-roll(
-  {
-    sides: 20
-  },
-  {
-    sides: 6,
-    quantity: 2
-    arithmetic: "subtract"
-  },
-  {
-    sides: 8,
-    quantity: 10
-    modifiers: { plus: 2 }
-  }
-)
+roll("1d20", "-2d6", "10d8+2") // Roll 1d20, subtract 2d6, roll 10d8+2
+roll("1d20-2d6+10d8+2") // Same as a single notation string
 ```
 
 ## Adding or Subtracting Rolls from the Total
@@ -728,8 +798,8 @@ roll("3d6!pL+1") // Penetrate explode, drop lowest, add 1
 
 All explosive modifiers (explode, compound, penetrate) have built-in depth limits:
 
-- **Explicit depth**: `!N`, `!!N`, `!pN` - Limited to N depth
-- **Unlimited (0)**: `!0`, `!!0`, `!p0` - Capped at 100 for safety
+- **Explicit depth**: `!!N`, `!pN` - Limited to N depth
+- **Unlimited (0)**: `!!0`, `!p0` - Capped at 100 for safety
 - **Default**: `!`, `!!`, `!p` - Limited to 1 explosion per die
 
 These limits prevent infinite loops and ensure performance remains predictable.

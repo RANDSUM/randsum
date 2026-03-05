@@ -102,12 +102,18 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/cli",
+    "apps/discord-bot",
+    "apps/site"
   ],
   "overrides": {
     "lodash": "4.17.23",
     "markdown-it": "14.1.1",
     "mdast-util-to-hast": "13.2.1",
     "undici": "6.23.0"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "6.6.4",
+    "astro": "5.18.0"
   }
 }
