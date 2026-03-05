@@ -48,7 +48,7 @@
     "@types/react": "^18.3.18"
   },
   "scripts": {
-    "build": "bunup --entry src/index.ts --format esm --dts --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
+    "build": "bunup && chmod +x dist/index.js",
     "dev": "bun run src/index.ts",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
