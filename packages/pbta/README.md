@@ -26,8 +26,6 @@ Works with any PbtA game including Dungeon World, Monster of the Week, Apocalyps
 ```bash
 npm install @randsum/pbta
 # or
-yarn add @randsum/pbta
-# or
 bun add @randsum/pbta
 ```
 

@@ -24,8 +24,6 @@ A small collection of utilities for [Root RPG](https://magpiegames.com/collectio
 ```bash
 npm install @randsum/root-rpg
 # or
-yarn add @randsum/root-rpg
-# or
 bun add @randsum/root-rpg
 ```
 
@@ -33,16 +31,15 @@ bun add @randsum/root-rpg
 
 ```typescript
 import { roll } from "@randsum/root-rpg"
-import type { RootRpgRollResult } from "@randsum/root-rpg"
+import type { RootRpgResult } from "@randsum/root-rpg"
 
-// Basic roll with modifier
-const { outcome, roll, result } = roll(2)
-// outcome: 'Strong Hit' | 'Weak Hit' | 'Miss'
-// roll: numeric total, result: detailed roll information
+// Basic roll with bonus
+const { result, total } = roll(2)
+// result: 'Strong Hit' | 'Weak Hit' | 'Miss'
+// total: numeric total (2d6 + bonus)
 
 // Type-safe result handling
-const { outcome } = roll(0)
-switch (outcome) {
+switch (result) {
   case "Strong Hit":
     // 10 or higher
     break
@@ -66,10 +63,7 @@ function roll(bonus: number): RootRpgRollResult
 ```
 
 ```typescript
-type RootResult = RootStrongHit | RootWeakHit | RootMiss
-type RootStrongHit = "Strong Hit"
-type RootWeakHit = "Weak Hit"
-type RootMiss = "Miss"
+type RootRpgResult = "Strong Hit" | "Weak Hit" | "Miss"
 ```
 
 ## Related Packages

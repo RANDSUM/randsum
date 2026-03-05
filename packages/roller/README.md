@@ -56,8 +56,9 @@ The main function accepts numbers, notation strings, or options objects.
 const result = roll("2d6+3")
 
 result.total // Final total after all modifiers
-result.rolls // Array of individual roll results
-result.description // Human-readable description
+result.result // Array of individual die values
+result.rolls // Full roll records with modifier history
+result.error // null on success, RandsumError on failure
 ```
 
 ### Notation Reference
