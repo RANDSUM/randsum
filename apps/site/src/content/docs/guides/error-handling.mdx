@@ -21,7 +21,7 @@ import { roll } from '@randsum/roller'
 const result = roll(userInput)
 
 if (result.error) {
-  // result.total is undefined — do not use it
+  // result.total is 0 — do not use it
   console.error(result.error.message)
   return
 }
@@ -74,38 +74,23 @@ if (!validation.valid) {
 }
 ```
 
-## Game package errors
+## Checking the error value
 
-Game packages (like `@randsum/blades`, `@randsum/fifth`) follow the same pattern. Their `roll()` functions also return errors as values:
-
-```typescript
-import { roll } from '@randsum/fifth'
-
-const result = roll({ modifier: 999 }) // modifier out of range
-
-if (result.error) {
-  console.error(result.error.message) // 'modifier must be between -30 and 30'
-}
-```
-
-## TypeScript narrowing
-
-After a `result.error` check, TypeScript automatically narrows the result type:
+`result.error` is typed as `RandsumError | null`. On success it is `null`; on error it is a `RandsumError`. `result.total` is always a `number` — on error its value is `0`.
 
 ```typescript
 import { roll } from '@randsum/roller'
 
 const result = roll('2d6')
 
-// Before check: result.total is number | undefined
-result.total // number | undefined
-
-if (result.error) {
-  result.total // undefined (TypeScript knows)
+if (result.error !== null) {
+  // result.error is RandsumError — inspect result.error.message
+  // result.total is 0 — do not use it for game logic
   return
 }
 
-result.total // number (TypeScript knows this is safe)
+// result.error is null — safe to use result.total
+console.log(result.total)
 ```
 
 ## Production checklist
