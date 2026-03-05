@@ -14,7 +14,7 @@
 
 A type-safe implementation of [Salvage Union](https://www.geargrindergames.com/salvage-union) dice rolling mechanics that supports:
 
-- 🎲 Standard 2d10 rolls with modifiers
+- 🎲 Standard 1d20 rolls against result tables
 - 🎯 Automatic outcome determination
 - 📊 Built-in roll tables
 - 🔒 Full TypeScript support
@@ -25,8 +25,6 @@ A type-safe implementation of [Salvage Union](https://www.geargrindergames.com/s
 ```bash
 npm install @randsum/salvageunion
 # or
-yarn add @randsum/salvageunion
-# or
 bun add @randsum/salvageunion
 ```
 
@@ -34,34 +32,22 @@ bun add @randsum/salvageunion
 
 ```typescript
 import { roll } from "@randsum/salvageunion"
-import type { SalvageUnionTableResult } from "@randsum/salvageunion"
+import type { SalvageUnionRollRecord } from "@randsum/salvageunion"
 
-// Basic roll with default table
-const result = roll()
-// Returns table result with hit type, label, description, and roll value
+// Basic roll with default table (Core Mechanic)
+const { result } = roll()
+// result.label: human-readable outcome label
+// result.description: outcome description
+// result.roll: d20 value (1-20)
 
 // Roll with specific table
-const result = roll("Morale")
+const { result: moraleResult } = roll("Morale")
 
 // Type-safe result handling
-const { hit, label, description, roll } = roll("Core Mechanic")
-switch (hit) {
-  case "Nailed It":
-    // 20
-    break
-  case "Success":
-    // 11-19
-    break
-  case "Tough Choice":
-    // 6-10
-    break
-  case "Failure":
-    // 2-5
-    break
-  case "Cascade Failure":
-    // 1
-    break
-}
+const { result: coreResult } = roll("Core Mechanic")
+console.log(coreResult.label) // e.g. "Nailed It"
+console.log(coreResult.description) // e.g. outcome details
+console.log(coreResult.roll) // d20 result (1-20)
 ```
 
 ## API Reference
@@ -71,7 +57,11 @@ switch (hit) {
 Makes a d20 roll following Salvage Union rules, returning a table result object with hit type, label, description, and roll value.
 
 ```typescript
-function roll(tableName?: SalvageUnionTableName): SalvageUnionTableResult
+function roll(tableName?: SalvageUnionTableName): {
+  total: number
+  result: SalvageUnionRollRecord
+  rolls: RollRecord[]
+}
 ```
 
 ### Roll Tables

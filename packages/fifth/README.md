@@ -33,13 +33,13 @@ const result = roll({ modifier: 5 })
 // Roll with advantage
 roll({
   modifier: 5,
-  rollingWith: "Advantage"
+  rollingWith: { advantage: true }
 })
 
 // Roll with disadvantage
 roll({
   modifier: -2,
-  rollingWith: "Disadvantage"
+  rollingWith: { disadvantage: true }
 })
 
 // Check against DC
@@ -57,19 +57,18 @@ function roll(options: FifthRollArgument): FifthRollResult
 
 **Options:**
 
-| Parameter     | Type                            | Description                       |
-| ------------- | ------------------------------- | --------------------------------- |
-| `modifier`    | `number`                        | Bonus/penalty to add to roll      |
-| `rollingWith` | `'Advantage' \| 'Disadvantage'` | Roll 2d20 and keep highest/lowest |
+| Parameter     | Type                                              | Description                       |
+| ------------- | ------------------------------------------------- | --------------------------------- |
+| `modifier`    | `number`                                          | Bonus/penalty to add to roll      |
+| `rollingWith` | `{ advantage?: boolean; disadvantage?: boolean }` | Roll 2d20 and keep highest/lowest |
 
 **Returns:**
 
 ```typescript
 interface FifthRollResult {
-  total: number
-  result: "natural_20" | "natural_1" | "standard"
-  details: { modifier: number }
-  rolls: RollRecord[]
+  total: number // Final total (d20 result + modifier)
+  result: number // Same as total
+  rolls: RollRecord[] // Full roll records
 }
 ```
 

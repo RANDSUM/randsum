@@ -24,8 +24,6 @@ A utility for rolling dice in [Forged in the Dark](https://bladesinthedark.com/)
 ```bash
 npm install @randsum/blades
 # or
-yarn add @randsum/blades
-# or
 bun add @randsum/blades
 ```
 
@@ -33,17 +31,17 @@ bun add @randsum/blades
 
 ```typescript
 import { roll } from "@randsum/blades"
-import type { BladesRollResult } from "@randsum/blades"
+import type { BladesResult } from "@randsum/blades"
 
 // Basic roll with dice pool
-const { outcome, result } = roll(2)
-console.log(outcome) // 'critical' | 'success' | 'partial' | 'failure'
+const { result } = roll(2)
+console.log(result) // 'critical' | 'success' | 'partial' | 'failure'
 
 // Different dice pool sizes
-roll(1) // Desperate position
-roll(2) // Risky position
-roll(3) // Controlled position
-roll(4) // Controlled with assistance
+roll(0) // Zero-dice roll (2d6, drop highest — desperate action)
+roll(1) // Single die
+roll(2) // Two-dice pool
+roll(3) // Three-dice pool
 ```
 
 ## API Reference
@@ -62,10 +60,10 @@ function roll(dicePool: number): BladesRollResult
 
 **Returns:**
 
-- `'critical'`: Rolled 6 on multiple dice (critical success)
-- `'success'`: Highest die was 4-6 (full success)
-- `'partial'`: Highest die was 1-3 (partial success/complication)
-- `'failure'`: No dice rolled (should not occur with valid input)
+- `'critical'`: Two or more dice showing 6 (only possible with dice pool > 0)
+- `'success'`: Highest die is 6
+- `'partial'`: Highest die is 4–5
+- `'failure'`: Highest die is 1–3
 
 **Result Interpretation:**
 
