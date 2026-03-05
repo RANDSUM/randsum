@@ -58,6 +58,10 @@
   --game-root-rpg: #059669; /* emerald-600 */
   --game-blades: #d97706; /* amber-600 */
   --game-pbta: #4b5563; /* gray-600 */
+
+  /* Tool package colors */
+  --tool-roller: #ca8a04; /* gold-600 for light bg */
+  --tool-skill: #0891b2; /* cyan-600 for light bg */
 }
 
 /* ===== Heading typography ===== */
