@@ -460,6 +460,10 @@ roll({
 
 Multiply the dice sum before adding/subtracting arithmetic modifiers:
 
+| Notation | Description                                    |
+| -------- | ---------------------------------------------- |
+| `*N`     | Multiply dice sum by N (before +/- arithmetic) |
+
 ```typescript
 roll("2d6*2+3") // (dice sum * 2) + 3
 roll({
@@ -490,6 +494,11 @@ roll({
 ### Count Successes (S{...})
 
 Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
+
+| Notation | Description                                 |
+| -------- | ------------------------------------------- |
+| `S{N}`   | Count dice that rolled >= N                 |
+| `S{N,B}` | Count successes >= N, subtract botches <= B |
 
 ```typescript
 roll("5d10S{7}") // Count how many dice rolled >= 7
@@ -526,6 +535,10 @@ roll({
 ### Total Multiplier (\*\*)
 
 Multiply the entire final total after all other modifiers:
+
+| Notation | Description                                                  |
+| -------- | ------------------------------------------------------------ |
+| `**N`    | Multiply entire final total by N (after all other modifiers) |
 
 ```typescript
 roll("2d6+3**2") // (dice + 3) * 2
