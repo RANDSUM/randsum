@@ -31,6 +31,10 @@
   --game-root-rpg: #10b981; /* emerald-500 */
   --game-blades: #f59e0b; /* amber-500 */
   --game-pbta: #6b7280; /* gray-500 */
+
+  /* Tool package colors */
+  --tool-roller: #eab308; /* gold-500 */
+  --tool-skill: #06b6d4; /* cyan-500 */
 }
 
 /* ===== Light mode ===== */
@@ -58,6 +62,10 @@
   --game-root-rpg: #059669; /* emerald-600 */
   --game-blades: #d97706; /* amber-600 */
   --game-pbta: #4b5563; /* gray-600 */
+
+  /* Tool package colors */
+  --tool-roller: #ca8a04; /* gold-600 for light bg */
+  --tool-skill: #0891b2; /* cyan-600 for light bg */
 }
 
 /* ===== Heading typography ===== */
