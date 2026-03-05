@@ -1,0 +1,115 @@
+---
+title: Error Handling
+description: How to handle errors with RANDSUM's never-throw design
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+RANDSUM uses a **never-throw** design. The `roll()` function never raises an exception — errors are returned as values in the result object.
+
+<Aside type="tip">
+  This design means you never need try/catch around `roll()` calls. Error handling is always explicit.
+</Aside>
+
+## The `result.error` pattern
+
+When `roll()` encounters an error, it returns an object with an `error` property instead of a `total`. Check for `result.error` before using `result.total`:
+
+```typescript
+import { roll } from '@randsum/roller'
+
+const result = roll(userInput)
+
+if (result.error) {
+  // result.total is undefined — do not use it
+  console.error(result.error.message)
+  return
+}
+
+// TypeScript narrows the type here — result.total is number
+console.log(result.total)
+```
+
+## When errors occur
+
+`roll()` returns an error when:
+
+- The notation string is syntactically invalid (`'4dX'`, `'not dice'`)
+- The options object has invalid values (e.g., `sides: 0`, `quantity: -1`)
+- A modifier receives an out-of-range argument
+
+Valid-but-unusual inputs (like `roll(1)` for a single-sided die) are not errors.
+
+## Validating before rolling
+
+If you want to check notation before passing it to `roll()`, use `validateNotation()` or the `isDiceNotation()` type guard:
+
+### `isDiceNotation` — type guard
+
+```typescript
+import { isDiceNotation, roll } from '@randsum/roller'
+
+function rollUserInput(input: string) {
+  if (!isDiceNotation(input)) {
+    return { error: 'Not valid dice notation' }
+  }
+
+  // input is now typed as DiceNotation
+  return roll(input)
+}
+```
+
+### `validateNotation` — parsed result
+
+```typescript
+import { validateNotation } from '@randsum/roller'
+
+const validation = validateNotation('4d6L')
+
+if (!validation.valid) {
+  console.error(validation.error.message)
+} else {
+  // validation.options contains the structured roll options
+  console.log(validation.options)
+}
+```
+
+## Game package errors
+
+Game packages (like `@randsum/blades`, `@randsum/fifth`) follow the same pattern. Their `roll()` functions also return errors as values:
+
+```typescript
+import { roll } from '@randsum/fifth'
+
+const result = roll({ modifier: 999 }) // modifier out of range
+
+if (result.error) {
+  console.error(result.error.message) // 'modifier must be between -30 and 30'
+}
+```
+
+## TypeScript narrowing
+
+After a `result.error` check, TypeScript automatically narrows the result type:
+
+```typescript
+import { roll } from '@randsum/roller'
+
+const result = roll('2d6')
+
+// Before check: result.total is number | undefined
+result.total // number | undefined
+
+if (result.error) {
+  result.total // undefined (TypeScript knows)
+  return
+}
+
+result.total // number (TypeScript knows this is safe)
+```
+
+## Production checklist
+
+- Always check `result.error` when rolling user-provided input (form fields, chat commands, API parameters)
+- Internal rolls with hardcoded notation can skip the check — `roll('2d6')` will never produce an error
+- Use `isDiceNotation()` to validate strings at system boundaries (user input, external APIs)
