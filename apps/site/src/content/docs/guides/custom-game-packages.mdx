@@ -53,9 +53,26 @@ validate: (input) => {
 }
 ```
 
+`validateGreaterThan` and `validateLessThan` take `(value, threshold, name)`:
+
+```typescript
+// validateGreaterThan and validateLessThan take (value, threshold, name)
+validateGreaterThan(input.count, 0, 'count')  // must be > 0
+validateLessThan(input.count, 100, 'count')   // must be < 100
+```
+
 <Aside type="caution">
   Validation errors throw directly. Wrap the call in a try/catch if you need to handle them gracefully rather than letting them propagate.
 </Aside>
+
+```typescript
+// Wrap in try/catch to handle validation errors gracefully
+try {
+  const result = rollPbta({ stat: 999 })
+} catch (err) {
+  if (err instanceof Error) console.error(err.message)
+}
+```
 
 ### `toRollOptions`
 
@@ -126,7 +143,7 @@ Use the optional `computeDetails` hook to attach structured metadata to the resu
 ```typescript
 type PbtaDetails = {
   diceValues: number[]
-  wasModified: boolean
+  statBonus: number
 }
 
 const rollPbta = createGameRoll<PbtaStat, PbtaOutcome, PbtaDetails>({
@@ -144,9 +161,9 @@ const rollPbta = createGameRoll<PbtaStat, PbtaOutcome, PbtaDetails>({
     if (total >= 7)  return 'weak_hit'
     return 'miss'
   },
-  computeDetails: (_input, total, rolls) => ({
+  computeDetails: (input, _total, rolls) => ({
     diceValues: rolls.flatMap(r => r.rolls),
-    wasModified: rolls.some(r => r.total !== r.rolls.reduce((a, b) => a + b, 0))
+    statBonus: input
   })
 })
 
