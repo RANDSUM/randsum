@@ -14,6 +14,12 @@ All notation in randsum is case-insensitive (`2d8` = `2D8`).
 
 ### Standard Rolls
 
+| Notation | Description              |
+| -------- | ------------------------ |
+| `NdS`    | Roll N dice with S sides |
+| `1d20`   | Roll one d20             |
+| `4d6`    | Roll four d6             |
+
 ```typescript
 // Roll one d20
 roll(20) // number argument
@@ -35,6 +41,11 @@ roll({
 
 ### Basic Arithmetic
 
+| Notation | Description           |
+| -------- | --------------------- |
+| `+N`     | Add N to total        |
+| `-N`     | Subtract N from total |
+
 ```typescript
 roll("4d6+2") // Add 2 to total
 roll({
@@ -54,6 +65,12 @@ roll({
 ### Cap Modifiers
 
 Limit roll values to specific ranges:
+
+| Notation   | Description                       |
+| ---------- | --------------------------------- |
+| `C{>N}`    | Cap rolls over N down to N        |
+| `C{<N}`    | Cap rolls under N up to N         |
+| `C{<N,>M}` | Cap both ends: floor N, ceiling M |
 
 ```typescript
 roll("4d20C{>18}") // Cap rolls over 18 to 18
