@@ -108,6 +108,17 @@ roll({
 
 Drop specific dice from the results:
 
+| Notation     | Description                 |
+| ------------ | --------------------------- |
+| `L`          | Drop lowest 1               |
+| `LN`         | Drop lowest N               |
+| `H`          | Drop highest 1              |
+| `HN`         | Drop highest N              |
+| `LH`         | Drop lowest 1 and highest 1 |
+| `D{>N}`      | Drop all rolls over N       |
+| `D{<N}`      | Drop all rolls under N      |
+| `D{X,Y,...}` | Drop exact values           |
+
 ```typescript
 roll("4d6L") // Drop lowest
 roll({
@@ -137,6 +148,8 @@ roll({
   modifiers: { drop: { highest: 2 } }
 })
 
+roll("4d6LH") // Drop both lowest and highest
+
 // Drop by value
 roll("4d20D{>17}") // Drop rolls over 17
 roll({
@@ -159,6 +172,8 @@ roll({
   modifiers: { drop: { exact: [8, 12] } }
 })
 ```
+
+**Note:** `L` and `H` can be combined in one notation string. `4d6LH` drops the lowest die and the highest die, leaving 2 of the original 4.
 
 ### Reroll Modifiers
 
