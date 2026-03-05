@@ -280,6 +280,11 @@ roll("4d20V{1=6,2=5}") // Replace 1s with 6s and 2s with 5s
 
 Force unique rolls within a pool:
 
+| Notation | Description                             |
+| -------- | --------------------------------------- |
+| `U`      | All results must be unique              |
+| `U{X,Y}` | Unique except values X and Y may repeat |
+
 ```typescript
 roll("4d20U") // All results must be unique
 roll({
@@ -345,6 +350,10 @@ roll({
 
 Roll additional dice on maximum results:
 
+| Notation | Description                       |
+| -------- | --------------------------------- |
+| `!`      | Explode once per die on max value |
+
 ```typescript
 roll("4d20!") // Roll an extra d20 for each 20 rolled
 roll({
@@ -361,6 +370,12 @@ roll({
 ### Compounding Exploding (!!)
 
 Exploding dice that add to the triggering die instead of creating new dice:
+
+| Notation | Description                            |
+| -------- | -------------------------------------- |
+| `!!`     | Compound once per die on max value     |
+| `!!N`    | Compound with max depth N              |
+| `!!0`    | Compound unlimited (capped internally) |
 
 ```typescript
 roll("3d6!!") // Compound explode: add to die instead of new dice
@@ -399,6 +414,12 @@ roll({
 ### Penetrating Exploding (!p)
 
 Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style):
+
+| Notation | Description                             |
+| -------- | --------------------------------------- |
+| `!p`     | Penetrate once per die on max value     |
+| `!pN`    | Penetrate with max depth N              |
+| `!p0`    | Penetrate unlimited (capped internally) |
 
 ```typescript
 roll("3d6!p") // Penetrate explode: subtract 1 from subsequent rolls
