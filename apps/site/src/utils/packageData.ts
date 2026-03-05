@@ -25,7 +25,7 @@ export const corePackages: PackageInfo[] = [
       'Core dice rolling engine with advanced notation support. The foundation of the RANDSUM ecosystem.',
     npmPackage: '@randsum/roller',
     category: 'core',
-    color: '#eab308', // gold-500 — distinct from all game colors; was amber (#f59e0b, collided with Blades)
+    color: '#f8fafc', // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
     features: [
       'Advanced dice notation (4d6L, 2d20H, etc.)',
       'Reroll modifiers',
