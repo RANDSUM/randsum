@@ -179,6 +179,13 @@ roll({
 
 Reroll dice matching certain conditions:
 
+| Notation | Description                         |
+| -------- | ----------------------------------- |
+| `R{>N}`  | Reroll results over N               |
+| `R{<N}`  | Reroll results under N              |
+| `R{X,Y}` | Reroll exact values X and Y         |
+| `R{<N}M` | Reroll under N, max M total rerolls |
+
 ```typescript
 roll("4d20R{>17}") // Reroll results over 17
 roll({
@@ -213,6 +220,8 @@ roll({
   }
 })
 ```
+
+**Note:** The max count in `R{<N}M` caps the total number of rerolls across the entire dice pool, not per die.
 
 ### Replace Modifiers
 
@@ -281,6 +290,13 @@ roll({
 ### Keep Modifiers
 
 Keep specific dice from the result (complement to drop):
+
+| Notation | Description    |
+| -------- | -------------- |
+| `K`      | Keep highest 1 |
+| `KN`     | Keep highest N |
+| `kl`     | Keep lowest 1  |
+| `klN`    | Keep lowest N  |
 
 ```typescript
 roll("4d6K3") // Keep highest 3
