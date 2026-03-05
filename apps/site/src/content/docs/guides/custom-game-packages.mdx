@@ -1,0 +1,205 @@
+---
+title: Custom Game Packages
+description: Build your own game package using the createGameRoll factory
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+## When to use this
+
+Use `createGameRoll` when you need to:
+
+- Map game-specific input (stat blocks, roll modes) to dice roll parameters
+- Interpret a numeric total into a game outcome (`'hit' | 'miss'`, `'strong_hit' | 'weak_hit'`, etc.)
+- Return a fully typed result that your application or library can consume without casting
+
+## `createGameRoll`
+
+`createGameRoll` is a factory that wires together three hooks — validate, convert, interpret — and returns a ready-to-call roll function.
+
+```typescript
+import { createGameRoll } from '@randsum/roller'
+
+const myRoll = createGameRoll<TInput, TResult, TDetails>({
+  validate: (input) => { /* throw if invalid */ },
+  toRollOptions: (input) => ({ sides: 6, quantity: 2 }),
+  interpretResult: (input, total, rolls, fullResult) => { /* return TResult */ }
+})
+```
+
+### `validate`
+
+Called first with the raw input. Throw here if the input is invalid — the error will propagate to the caller as a thrown exception.
+
+`@randsum/roller` exports these validation helpers:
+
+```typescript
+import {
+  validateFinite,      // value is a finite number
+  validateInteger,     // value is an integer
+  validateRange,       // value is within min/max bounds
+  validateNonNegative, // value >= 0
+  validateGreaterThan, // value > threshold
+  validateLessThan     // value < threshold
+} from '@randsum/roller'
+```
+
+Each helper takes the value, a label string, and (for range helpers) bounds:
+
+```typescript
+validate: (input) => {
+  validateFinite(input.modifier, 'modifier')
+  validateRange(input.modifier, -10, 10, 'modifier')
+}
+```
+
+<Aside type="caution">
+  Validation errors throw directly. Wrap the call in a try/catch if you need to handle them gracefully rather than letting them propagate.
+</Aside>
+
+### `toRollOptions`
+
+Converts validated input into a `RollOptions` object (or an array of them for multi-pool rolls). This is where you express game mechanics as dice parameters.
+
+```typescript
+toRollOptions: (input) => ({
+  sides: 20,
+  quantity: input.advantage ? 2 : 1,
+  modifiers: {
+    drop: input.advantage ? { lowest: 1 } : undefined,
+    plus: input.modifier
+  }
+})
+```
+
+### `interpretResult`
+
+Receives the resolved total, the individual roll records, and the full `RollerRollResult`. Return your game-specific `TResult` here.
+
+```typescript
+interpretResult: (input, total, rolls, fullResult) => {
+  if (total >= 10) return 'strong_hit'
+  if (total >= 7)  return 'weak_hit'
+  return 'miss'
+}
+```
+
+## Minimal example: a 2d6+stat system
+
+A PbtA-style roll that maps 2d6 + stat to a three-outcome result:
+
+```typescript
+import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
+import type { GameRollResult, RollRecord } from '@randsum/roller'
+
+type PbtaStat = number
+type PbtaOutcome = 'strong_hit' | 'weak_hit' | 'miss'
+
+const rollPbta = createGameRoll<PbtaStat, PbtaOutcome>({
+  validate: (stat) => {
+    validateFinite(stat, 'stat')
+    validateRange(stat, -3, 3, 'stat')
+  },
+  toRollOptions: (stat) => ({
+    quantity: 2,
+    sides: 6,
+    modifiers: { plus: stat }
+  }),
+  interpretResult: (_input, total) => {
+    if (total >= 10) return 'strong_hit'
+    if (total >= 7)  return 'weak_hit'
+    return 'miss'
+  }
+})
+
+// Usage
+const result = rollPbta(2)
+// result.result => 'strong_hit' | 'weak_hit' | 'miss'
+// result.total  => 2d6 + 2
+// result.rolls  => RollRecord[]
+```
+
+## Adding details (`computeDetails`)
+
+Use the optional `computeDetails` hook to attach structured metadata to the result. Pass `TDetails` as the third generic argument.
+
+```typescript
+type PbtaDetails = {
+  diceValues: number[]
+  wasModified: boolean
+}
+
+const rollPbta = createGameRoll<PbtaStat, PbtaOutcome, PbtaDetails>({
+  validate: (stat) => {
+    validateFinite(stat, 'stat')
+    validateRange(stat, -3, 3, 'stat')
+  },
+  toRollOptions: (stat) => ({
+    quantity: 2,
+    sides: 6,
+    modifiers: { plus: stat }
+  }),
+  interpretResult: (_input, total) => {
+    if (total >= 10) return 'strong_hit'
+    if (total >= 7)  return 'weak_hit'
+    return 'miss'
+  },
+  computeDetails: (_input, total, rolls) => ({
+    diceValues: rolls.flatMap(r => r.rolls),
+    wasModified: rolls.some(r => r.total !== r.rolls.reduce((a, b) => a + b, 0))
+  })
+})
+
+// result.details => PbtaDetails
+```
+
+## `createMultiRollGameRoll`
+
+Use `createMultiRollGameRoll` when your game requires multiple distinct, named dice rolls — for example, a Hope die and a Fear die that are compared against each other.
+
+Each entry in `toRollOptions` takes a `key` string. After rolling, `interpretResult` receives a `Map<string, RollRecord>` keyed by those strings.
+
+```typescript
+import { createMultiRollGameRoll, validateFinite, validateRange } from '@randsum/roller'
+import type { RollRecord, RollerRollResult } from '@randsum/roller'
+
+type DualDiceInput = { modifier: number }
+type DualDiceResult = 'dominant_a' | 'dominant_b' | 'tied'
+
+const rollDual = createMultiRollGameRoll<DualDiceInput, DualDiceResult>({
+  validate: (input) => {
+    validateFinite(input.modifier, 'modifier')
+    validateRange(input.modifier, -10, 10, 'modifier')
+  },
+  toRollOptions: (_input) => [
+    { sides: 12, key: 'a' },
+    { sides: 12, key: 'b' }
+  ],
+  interpretResult: (input, rollResult, rollsByKey) => {
+    const rollA = rollsByKey.get('a')
+    const rollB = rollsByKey.get('b')
+
+    if (!rollA || !rollB) throw new Error('Missing expected dice')
+
+    let result: DualDiceResult
+    if (rollA.total > rollB.total)      result = 'dominant_a'
+    else if (rollB.total > rollA.total) result = 'dominant_b'
+    else                                result = 'tied'
+
+    return { result, total: rollResult.total + input.modifier }
+  }
+})
+
+// Usage
+const result = rollDual({ modifier: 2 })
+// result.result => 'dominant_a' | 'dominant_b' | 'tied'
+// result.total  => sum of both dice + 2
+```
+
+<Aside>
+  In `createMultiRollGameRoll`, `interpretResult` returns an object `{ result, details?, total? }` rather than returning the result value directly. The optional `total` overrides the summed total from the roll engine; the optional `details` is attached to the final `GameRollResult`.
+</Aside>
+
+## Bundle size note
+
+Keep your custom package under 7 KB (gzipped) — the same limit enforced for all official `@randsum` game packages.
