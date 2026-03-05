@@ -86,10 +86,6 @@
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun --filter @randsum/site dev",
-    "app:start": "cd apps/app && bunx expo start",
-    "app:web": "cd apps/app && bunx expo start --web",
-    "app:ios": "cd apps/app && bunx expo start --ios",
-    "app:android": "cd apps/app && bunx expo start --android",
     "discord:dev": "cd apps/discord-bot && bun run dev",
     "discord:deploy": "cd apps/discord-bot && bun run deploy-commands",
     "discord:start": "cd apps/discord-bot && bun run start",
@@ -115,5 +111,9 @@
     "markdown-it": "14.1.1",
     "mdast-util-to-hast": "13.2.1",
     "undici": "6.23.0"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "6.6.4",
+    "astro": "5.18.0"
   }
 }
