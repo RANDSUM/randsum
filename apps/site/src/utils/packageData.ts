@@ -25,7 +25,7 @@ export const corePackages: PackageInfo[] = [
       'Core dice rolling engine with advanced notation support. The foundation of the RANDSUM ecosystem.',
     npmPackage: '@randsum/roller',
     category: 'core',
-    color: '#eab308', // gold-500 — distinct from all game colors; was amber (#f59e0b, collided with Blades)
+    color: 'var(--sl-color-white)', // white — neutral, foundational; adapts to dark/light mode
     features: [
       'Advanced dice notation (4d6L, 2d20H, etc.)',
       'Reroll modifiers',
@@ -91,7 +91,7 @@ export const gamePackages: PackageInfo[] = [
       'Blades in the Dark system mechanics including action rolls, position, effect, and stress tracking.',
     npmPackage: '@randsum/blades',
     category: 'game',
-    color: '#f97316', // orange
+    color: '#f59e0b', // amber-500 — matches --game-blades
     examples: [
       {
         title: 'Basic Roll',
@@ -129,7 +129,7 @@ bun add @randsum/blades`,
     description: 'Daggerheart RPG system support with hope and fear dice mechanics.',
     npmPackage: '@randsum/daggerheart',
     category: 'game',
-    color: '#9333ea', // purple
+    color: '#8b5cf6', // violet-500 — matches --game-daggerheart
     examples: [
       {
         title: 'Basic Usage',
@@ -168,7 +168,7 @@ bun add @randsum/daggerheart`,
       'Dungeons & Dragons 5th Edition mechanics including ability checks, saving throws, and combat rolls.',
     npmPackage: '@randsum/fifth',
     category: 'game',
-    color: '#dc2626', // red
+    color: '#ef4444', // red-500 — matches --game-fifth
     examples: [
       {
         title: 'Basic Roll',
@@ -218,7 +218,7 @@ bun add @randsum/fifth`,
       'Root RPG system implementation with reputation, relationships, and advancement mechanics.',
     npmPackage: '@randsum/root-rpg',
     category: 'game',
-    color: '#22c55e', // green
+    color: '#10b981', // emerald-500 — matches --game-root-rpg
     examples: [
       {
         title: 'Basic Roll',
@@ -265,7 +265,7 @@ bun add @randsum/root-rpg`,
     description: 'Salvage Union mechanics for mech-based tabletop RPG gameplay.',
     npmPackage: '@randsum/salvageunion',
     category: 'game',
-    color: '#60a5fa', // lightblue
+    color: '#3b82f6', // blue-500 — matches --game-salvageunion
     examples: [
       {
         title: 'Basic Roll',

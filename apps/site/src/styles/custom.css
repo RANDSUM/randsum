@@ -33,7 +33,7 @@
   --game-pbta: #6b7280; /* gray-500 */
 
   /* Tool package colors */
-  --tool-roller: #eab308; /* gold-500 */
+  --tool-roller: #f8fafc; /* white (slate-50) */
   --tool-skill: #06b6d4; /* cyan-500 */
 }
 
@@ -64,7 +64,7 @@
   --game-pbta: #4b5563; /* gray-600 */
 
   /* Tool package colors */
-  --tool-roller: #ca8a04; /* gold-600 for light bg */
+  --tool-roller: #1e293b; /* slate-800 — dark on light bg to preserve contrast */
   --tool-skill: #0891b2; /* cyan-600 for light bg */
 }
 
