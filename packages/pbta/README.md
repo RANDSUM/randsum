@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/pbta</h1>
-  <h3>Powered by the Apocalypse dice rolling for Randsum</h3>
+  <h3>Powered by the Apocalypse dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/pbta)](https://www.npmjs.com/package/@randsum/pbta)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/pbta)](https://bundlephobia.com/package/@randsum/pbta)
@@ -11,15 +11,7 @@
 
 </div>
 
-A type-safe implementation of [Powered by the Apocalypse](https://apocalypse-world.com/) dice rolling mechanics that supports:
-
-- 🎲 Standard 2d6 + stat rolls
-- 🎯 Automatic outcome determination (strong hit, weak hit, miss)
-- ⚡ Advantage/disadvantage mechanics
-- 🔒 Full TypeScript support
-- 🪶 Tree-shakeable implementation
-
-Works with any PbtA game including Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
+Type-safe [Powered by the Apocalypse](https://apocalypse-world.com/) 2d6+stat mechanics, built on [@RANDSUM](https://github.com/RANDSUM/randsum). Compatible with Dungeon World, Monster of the Week, Apocalypse World, Masks, and other PbtA games.
 
 ## Installation
 

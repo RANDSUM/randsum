@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/salvageunion</h1>
-  <h3>Salvage Union compatible dice rolling for Randsum</h3>
+  <h3>Salvage Union dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/salvageunion)](https://www.npmjs.com/package/@randsum/salvageunion)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/salvageunion)](https://bundlephobia.com/package/@randsum/salvageunion)
@@ -12,13 +12,7 @@
 
 </div>
 
-A type-safe implementation of [Salvage Union](https://www.geargrindergames.com/salvage-union) dice rolling mechanics that supports:
-
-- 🎲 Standard 1d20 rolls against result tables
-- 🎯 Automatic outcome determination
-- 📊 Built-in roll tables
-- 🔒 Full TypeScript support
-- 🪶 Tree-shakeable implementation
+Type-safe [Salvage Union](https://leyline.press/collections/salvage-union) d20 table-based mechanics, built on [@RANDSUM](https://github.com/RANDSUM/randsum).
 
 ## Installation
 

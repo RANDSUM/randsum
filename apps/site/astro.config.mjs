@@ -23,11 +23,6 @@ export default defineConfig({
           icon: 'github',
           label: 'GitHub',
           href: 'https://github.com/RANDSUM/randsum'
-        },
-        {
-          icon: 'discord',
-          label: 'Discord',
-          href: 'https://discord.gg/randsum'
         }
       ],
       customCss: ['./src/styles/custom.css'],

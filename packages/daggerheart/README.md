@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/daggerheart</h1>
-  <h3>Daggerheart dice rolling for Randsum</h3>
+  <h3>Daggerheart Duality Dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/daggerheart)](https://www.npmjs.com/package/@randsum/daggerheart)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/daggerheart)](https://bundlephobia.com/package/@randsum/daggerheart)
@@ -12,7 +12,7 @@
 
 </div>
 
-A type-safe implementation of [Daggerheart](https://daggerheart.com/) Duality Dice mechanics.
+Type-safe [Daggerheart](https://daggerheart.com/) Duality Dice mechanics, built on [@RANDSUM](https://github.com/RANDSUM/randsum).
 
 ## Installation
 

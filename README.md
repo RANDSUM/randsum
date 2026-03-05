@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
   <h1>Randsum</h1>
-  <h3>A comprehensive dice rolling monorepo ecosystem for rolling dice and playing games.</h3>
+  <h3>A zero-dependency dice engine with expressive notation, built for developers who take their dice seriously.</h3>
 
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)

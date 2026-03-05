@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/blades</h1>
-  <h3>Blades in the Dark compatible dice rolling for Randsum</h3>
+  <h3>Blades in the Dark dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/blades)](https://www.npmjs.com/package/@randsum/blades)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/blades)](https://bundlephobia.com/package/@randsum/blades)
@@ -12,12 +12,7 @@
 
 </div>
 
-A utility for rolling dice in [Forged in the Dark](https://bladesinthedark.com/) systems!
-
-- 🎲 Standard Blades in the Dark position and effect rolls
-- 🎯 Automatic handling of dice pools
-- 🔒 Full TypeScript support
-- 🪶 Lightweight implementation
+Type-safe [Blades in the Dark](https://bladesinthedark.com/) action roll mechanics, built on [@RANDSUM](https://github.com/RANDSUM/randsum).
 
 ## Installation
 

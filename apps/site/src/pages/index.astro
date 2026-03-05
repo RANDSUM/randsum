@@ -27,7 +27,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 <StarlightPage
   frontmatter={{
     title: 'RANDSUM',
-    description: 'A flexible, type-safe dice rolling ecosystem for tabletop RPGs',
+    description: 'A zero-dependency dice engine with expressive notation, built for developers who take their dice seriously.',
     template: 'splash'
   }}
   hasSidebar={false}
@@ -36,12 +36,15 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     <!-- Hero -->
     <section class="hero">
       <div class="hero-inner">
-        <Image src={logo} alt="RANDSUM logo" class="hero-logo" width={160} height={160} />
-        <h1 class="hero-title">RANDSUM</h1>
-        <p class="hero-tagline">A flexible, type-safe dice rolling ecosystem</p>
+        <div class="hero-lockup">
+          <div class="hero-logo-wrap">
+            <Image src={logo} alt="RANDSUM logo" class="hero-logo" width={160} height={160} />
+          </div>
+          <h1 class="hero-title">RANDSUM</h1>
+        </div>
+        <p class="hero-tagline">A zero-dependency dice engine with expressive notation</p>
         <p class="hero-subtitle">
-          TypeScript packages for rolling dice and implementing tabletop RPG mechanics.
-          Built for D&D 5e, Blades in the Dark, Daggerheart, Root RPG, Salvage Union, PbtA, and more.
+          Built for developers who take their dice seriously.
         </p>
         <div class="hero-actions">
           <a href="/getting-started/introduction/" class="btn btn-primary">Get Started</a>
@@ -188,11 +191,6 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
                   npm
                 </a>
               </li>
-              <li>
-                <a href="https://discord.gg/randsum" target="_blank" rel="noopener noreferrer">
-                  Discord
-                </a>
-              </li>
             </ul>
           </div>
         </div>
@@ -218,21 +216,21 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
     font-family: var(--sl-font-heading, var(--sl-font));
     font-size: 2rem;
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     letter-spacing: -0.02em;
   }
 
   .section-desc {
     text-align: center;
     color: var(--sl-color-gray-2);
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     font-size: 1.1rem;
   }
 
   /* ===== Hero ===== */
   .hero {
     text-align: center;
-    padding: 2rem 1.5rem 3rem;
+    padding: 5rem 1.5rem 6rem;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
@@ -241,13 +239,49 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
     margin: 0 auto;
   }
 
+  .hero-lockup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-logo-wrap {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    animation: levitate 3s ease-in-out infinite;
+  }
+
+  .hero-logo-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 20px;
+    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.6) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(6px);
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes levitate {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 1; transform: translateX(-50%) scaleX(1); }
+    50% { opacity: 0.4; transform: translateX(-50%) scaleX(0.7); }
+  }
+
   .hero-logo {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
     width: 120px;
     height: auto;
-    margin-bottom: 1.5rem;
   }
 
   .hero-title {
@@ -255,7 +289,7 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
     font-size: 3.5rem;
     font-weight: 700;
     letter-spacing: -0.03em;
-    margin: 0 0 1rem;
+    margin: 0;
     background: linear-gradient(
       135deg,
       var(--sl-color-accent-high),
@@ -334,7 +368,7 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
 
   /* ===== Code Example ===== */
   .code-example {
-    padding: 3rem 0;
+    padding: 5rem 0;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
@@ -396,7 +430,7 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
 
   /* ===== Package Cards ===== */
   .packages-section {
-    padding: 3rem 0;
+    padding: 5rem 0;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
@@ -560,7 +594,12 @@ console.<span class="fn">log</span>(result.total)      <span class="cm">// 14</s
   /* ===== Responsive ===== */
   @media (max-width: 768px) {
     .hero {
-      padding: 3rem 1rem 2rem;
+      padding: 3.5rem 1rem 4rem;
+    }
+
+    .hero-lockup {
+      flex-direction: column;
+      gap: 0.75rem;
     }
 
     .hero-title {
