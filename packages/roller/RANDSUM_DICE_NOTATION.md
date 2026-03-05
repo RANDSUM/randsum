@@ -227,6 +227,13 @@ roll({
 
 Replace specific results with new values:
 
+| Notation     | Description                                    |
+| ------------ | ---------------------------------------------- |
+| `V{X=Y}`     | Replace value X with Y                         |
+| `V{>N=Y}`    | Replace results over N with Y                  |
+| `V{<N=Y}`    | Replace results under N with Y                 |
+| `V{X=Y,A=B}` | Replace X with Y and A with B (multiple rules) |
+
 ```typescript
 roll("4d20V{8=12}") // Replace 8s with 12s
 roll({
@@ -263,7 +270,11 @@ roll({
     }
   }
 })
+
+roll("4d20V{1=6,2=5}") // Replace 1s with 6s and 2s with 5s
 ```
+
+**Note:** Multiple replacement rules can be specified in a single `V{}` block by comma-separating them. Rules are applied in order.
 
 ### Unique Results
 
