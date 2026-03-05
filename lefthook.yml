@@ -21,4 +21,4 @@ pre-push:
     exports:
       run: bun run check:exports
     skill-verify:
-      run: npx skills-ref skills/dice-rolling/SKILL.md
+      run: npx skills-ref validate skills/dice-rolling/SKILL.md
