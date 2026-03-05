@@ -20,6 +20,20 @@ Activate this skill when users:
 - Need probability simulations or random number generation
 - Ask about dice notation syntax or modifiers
 
+## Installation
+
+Copy the `dice-rolling/` skill folder into your agent's skills directory:
+
+| Agent | Project scope | Global scope |
+| ----- | ------------- | ------------ |
+| **Claude Code** | `.claude/skills/dice-rolling/` | `~/.claude/skills/dice-rolling/` |
+| **Cursor** | `.cursor/skills/dice-rolling/` | `~/.cursor/skills/dice-rolling/` |
+| **Other agents** | `.<agent>/skills/dice-rolling/` | `~/.<agent>/skills/dice-rolling/` |
+
+Most skills-compatible agents discover skills automatically once placed in the correct directory. Restart your agent or reload the session after installing.
+
+> If your agent supports plugins or a marketplace, search for **RANDSUM** to install this skill without manually copying files.
+
 ## Notation Overview
 
 All notation is case-insensitive. Basic syntax is `NdS` (N dice, S sides).
@@ -132,26 +146,23 @@ See [references/GAME_SYSTEMS.md](references/GAME_SYSTEMS.md) for detailed mechan
 
 ## CLI (`@randsum/cli`)
 
-```bash
-# Install globally
-npm install -g @randsum/cli
-# or run directly
-npx randsum 4d6L
-bunx randsum 4d6L
-```
+Pass notation as arguments for a quick roll. Running with no arguments launches the interactive TUI.
 
 ```bash
-randsum 4d6L          # Drop lowest — D&D ability score
-randsum 2d20H         # Disadvantage (drop highest)
-randsum 1d20+5        # Attack roll with modifier
-randsum 3d6!          # Exploding dice
-randsum               # Launch interactive TUI
-randsum -i            # Explicit interactive flag
+# Quick roll — pass notation as arguments
+npx @randsum/cli 4d6L        # Drop lowest — D&D ability score
+npx @randsum/cli 2d20H       # Disadvantage (drop highest)
+npx @randsum/cli 1d20+5      # Attack roll with modifier
+npx @randsum/cli 3d6!        # Exploding dice
+
+# No arguments → interactive TUI
+npx @randsum/cli
+npx @randsum/cli -i          # Explicit interactive flag
 
 # Output options
-randsum 4d6L --verbose   # Detailed breakdown
-randsum 4d6L --json      # JSON output
-randsum 4d6L --seed 42   # Reproducible roll
+npx @randsum/cli 4d6L --verbose   # Detailed roll breakdown
+npx @randsum/cli 4d6L --json      # JSON output
+npx @randsum/cli 4d6L --seed 42   # Reproducible roll (seeded RNG)
 ```
 
 ## Programmatic (`@randsum/roller`)
