@@ -9,6 +9,19 @@ interface Props {
 
 const theme = {
   ...sandpackDark,
+  colors: {
+    ...sandpackDark.colors,
+    surface1: '#0f172a',
+    surface2: '#1e293b',
+    surface3: '#334155',
+    accent: '#3b82f6',
+    base: '#e2e8f0',
+    clickable: '#94a3b8',
+    hover: '#e2e8f0',
+    disabled: '#475569',
+    error: '#f87171',
+    errorSurface: '#1e293b'
+  },
   font: {
     ...sandpackDark.font,
     mono: "'JetBrains Mono', ui-monospace, SFMono-Regular, monospace",
@@ -21,7 +34,7 @@ export function SandpackRepl({ code, readonly = false }: Props): React.JSX.Eleme
 
   return (
     <Sandpack
-      template="vanilla-ts"
+      template="node"
       theme={theme}
       files={{ '/index.ts': code }}
       customSetup={{ dependencies }}
