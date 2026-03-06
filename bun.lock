@@ -74,6 +74,7 @@
         "@randsum/roller": "workspace:~",
         "@randsum/root-rpg": "workspace:~",
         "@randsum/salvageunion": "workspace:~",
+        "@stackblitz/sdk": "latest",
         "@types/react": "^19.1.8",
         "@types/react-dom": "^19.1.6",
         "astro": "^5.18.0",
@@ -748,6 +749,8 @@
     "@size-limit/preset-small-lib": ["@size-limit/preset-small-lib@12.0.0", "", { "dependencies": { "@size-limit/esbuild": "12.0.0", "@size-limit/file": "12.0.0", "size-limit": "12.0.0" } }, "sha512-HHHVQjZmj+8vg7qsHs1dd3Hmn8ygUsE5O2CfxnbCbHOGyUw7VodZGERh/+5ogVrF2DYza/DIo2PnCJZZETdTRA=="],
 
     "@so-ric/colorspace": ["@so-ric/colorspace@1.1.6", "", { "dependencies": { "color": "^5.0.2", "text-hex": "1.0.x" } }, "sha512-/KiKkpHNOBgkFJwu9sh48LkHSMYGyuTcSFK/qMBdnOAlrRJzRSXAOFB5qwzaVQuDl8wAvHVMkaASQDReTahxuw=="],
+
+    "@stackblitz/sdk": ["@stackblitz/sdk@1.11.0", "", {}, "sha512-DFQGANNkEZRzFk1/rDP6TcFdM82ycHE+zfl9C/M/jXlH68jiqHWHFMQURLELoD8koxvu/eW5uhg94NSAZlYrUQ=="],
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.10.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg=="],
 
