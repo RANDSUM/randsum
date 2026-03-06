@@ -52,9 +52,9 @@ Remove dice from the result pool.
 | `L2` | Drop lowest 2 |
 | `H` | Drop highest 1 |
 | `H2` | Drop highest 2 |
-| D&#123;>N&#125; | Drop rolls over N |
-| D&#123;&lt;N&#125; | Drop rolls under N |
-| D&#123;X,Y&#125; | Drop exact values X and Y |
+| `D{>N}` | Drop rolls over N |
+| `D{<N}` | Drop rolls under N |
+| `D{X,Y}` | Drop exact values X and Y |
 
 ```typescript
 // D&D ability score: 4d6 drop lowest
@@ -104,9 +104,9 @@ Limit roll values to a specific range.
 
 | Notation | Description |
 |---|---|
-| C&#123;>N&#125; | Cap rolls over N to N |
-| C&#123;&lt;N&#125; | Cap rolls under N to N |
-| C&#123;&lt;N,>M&#125; | Cap both ends |
+| `C{>N}` | Cap rolls over N to N |
+| `C{<N}` | Cap rolls under N to N |
+| `C{<N,>M}` | Cap both ends |
 
 ```typescript
 roll('4d20C{>18}')     // Cap rolls over 18 to 18
@@ -120,10 +120,10 @@ Reroll dice matching certain conditions.
 
 | Notation | Description |
 |---|---|
-| R&#123;>N&#125; | Reroll results over N |
-| R&#123;&lt;N&#125; | Reroll results under N |
-| R&#123;X,Y&#125; | Reroll exact values X, Y |
-| R&#123;&lt;N&#125;M | Reroll under N, max M attempts |
+| `R{>N}` | Reroll results over N |
+| `R{<N}` | Reroll results under N |
+| `R{X,Y}` | Reroll exact values X, Y |
+| `R{<N}M` | Reroll under N, max M attempts |
 
 ```typescript
 roll('4d20R{>17}')   // Reroll results over 17
@@ -138,9 +138,9 @@ Replace specific results with new values.
 
 | Notation | Description |
 |---|---|
-| V&#123;X=Y&#125; | Replace Xs with Y |
-| V&#123;>N=Y&#125; | Replace results over N with Y |
-| V&#123;&lt;N=Y&#125; | Replace results under N with Y |
+| `V{X=Y}` | Replace Xs with Y |
+| `V{>N=Y}` | Replace results over N with Y |
+| `V{<N=Y}` | Replace results under N with Y |
 
 ```typescript
 roll('4d20V{8=12}')   // Replace 8s with 12s
@@ -155,7 +155,7 @@ Force all dice in a pool to show different values.
 | Notation | Description |
 |---|---|
 | `U` | All results must be unique |
-| U&#123;X,Y&#125; | Unique except X and Y can repeat |
+| `U{X,Y}` | Unique except X and Y can repeat |
 
 ```typescript
 roll('4d20U')       // All results must be unique
@@ -241,15 +241,15 @@ Count dice meeting a threshold instead of summing values. Used in dice pool syst
 
 | Notation | Description |
 |---|---|
-| S&#123;N&#125; | Count dice >= N |
-| S&#123;N,B&#125; | Count successes >= N, subtract botches &lt;= B |
+| `S{N}` | Count dice >= N |
+| `S{N,B}` | Count successes >= N, subtract botches <= B |
 
 ```typescript
 roll('5d10S{7}')    // Count how many dice rolled >= 7
 roll('5d10S{7,1}')  // Count successes >= 7, subtract botches <= 1
 ```
 
-**Example:** `5d10S&#123;7&#125;` rolls `[8, 3, 10, 6, 9]`. Successes >= 7: `[8, 10, 9]` = 3 successes.
+**Example:** `5d10S{7}` rolls `[8, 3, 10, 6, 9]`. Successes >= 7: `[8, 10, 9]` = 3 successes.
 
 ## Total multiplier
 
@@ -274,11 +274,11 @@ Modifiers can be chained together. They are applied in a fixed priority order:
 
 | Priority | Modifier | Notation | Description |
 |---|---|---|---|
-| 10 | Cap | C&#123;...&#125; | Limit roll values to a range |
+| 10 | Cap | `C{...}` | Limit roll values to a range |
 | 20 | Drop | `H`, `L` | Remove dice from pool |
 | 21 | Keep | `K`, `kl` | Keep dice in pool |
-| 30 | Replace | V&#123;...&#125; | Replace specific values |
-| 40 | Reroll | R&#123;...&#125; | Reroll dice matching conditions |
+| 30 | Replace | `V{...}` | Replace specific values |
+| 40 | Reroll | `R{...}` | Reroll dice matching conditions |
 | 50 | Explode | `!` | Roll additional dice on max |
 | 51 | Compound | `!!` | Add explosion to existing die |
 | 52 | Penetrate | `!p` | Add explosion minus 1 to die |
@@ -286,7 +286,7 @@ Modifiers can be chained together. They are applied in a fixed priority order:
 | 85 | Multiply | `*N` | Multiply dice sum (pre-arithmetic) |
 | 90 | Plus | `+N` | Add to total |
 | 91 | Minus | `-N` | Subtract from total |
-| 95 | Count Successes | S&#123;...&#125; | Count dice meeting threshold |
+| 95 | Count Successes | `S{...}` | Count dice meeting threshold |
 | 100 | Total Multiply | `**N` | Multiply entire final total |
 
 ```typescript
