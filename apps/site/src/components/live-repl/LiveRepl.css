@@ -1,0 +1,109 @@
+.live-repl {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  font-family: var(--sl-font-mono);
+  margin: 1rem 0;
+  background: var(--sl-color-gray-6);
+}
+
+.live-repl-editor {
+  position: relative;
+}
+
+.live-repl-buttons {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+/* High specificity to override Starlight's button resets in markdown content */
+.live-repl .live-repl-btn {
+  font-size: 0.75rem;
+  font-family: var(--sl-font-mono);
+  height: 1.75rem;
+  padding: 0 0.6rem;
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.live-repl .live-repl-btn-run {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-black);
+  border-color: var(--sl-color-accent);
+}
+
+.live-repl .live-repl-btn-run:hover:not(:disabled) {
+  filter: brightness(1.15);
+}
+
+.live-repl .live-repl-btn-run:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.live-repl .live-repl-btn-copy {
+  background: transparent;
+  color: var(--sl-color-gray-3);
+  border-color: var(--sl-color-gray-4);
+}
+
+.live-repl .live-repl-btn-copy:hover {
+  color: var(--sl-color-white);
+  border-color: var(--sl-color-gray-3);
+}
+
+.live-repl .live-repl-btn-clear {
+  background: transparent;
+  color: var(--sl-color-gray-3);
+  border-color: var(--sl-color-gray-4);
+}
+
+.live-repl .live-repl-btn-clear:hover {
+  color: var(--sl-color-white);
+  border-color: var(--sl-color-gray-3);
+}
+
+.live-repl-output {
+  border-top: 1px solid var(--sl-color-gray-5);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-family: var(--sl-font-mono);
+  line-height: 1.6;
+  min-height: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.live-repl-output-empty {
+  opacity: 0.4;
+}
+
+.live-repl-output-prefix {
+  color: var(--sl-color-gray-3);
+  user-select: none;
+}
+
+.live-repl-output-log {
+  color: var(--sl-color-white);
+}
+
+.live-repl-output-result {
+  color: var(--sl-color-accent-high);
+}
+
+.live-repl-output-error {
+  color: #f97583;
+}
