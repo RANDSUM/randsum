@@ -1,5 +1,6 @@
 ---
 import { Code } from '@astrojs/starlight/components'
+import { SandpackRepl } from './SandpackRepl'
 
 interface Props {
   code: string
@@ -7,7 +8,14 @@ interface Props {
   readonly?: boolean
 }
 
-const { code, lang = 'typescript' } = Astro.props
+const { code, lang = 'typescript', readonly = false } = Astro.props
+const isTypeScript = lang === 'typescript'
 ---
 
-<Code code={code} lang={lang} />
+<div class="live-repl-wrapper">
+  {isTypeScript ? (
+    <SandpackRepl code={code} readonly={readonly} client:visible />
+  ) : (
+    <Code code={code} lang={lang} />
+  )}
+</div>
