@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { isDiceNotation, roll } from '@randsum/roller'
 import { formatBreakdown } from './helpers/formatBreakdown'
 import type { RollBreakdown } from './helpers/formatBreakdown'
@@ -14,6 +14,12 @@ export function RollerPlayground(): React.JSX.Element {
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [showTooltip, setShowTooltip] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
 
   const isValid = notation.length > 0 && isDiceNotation(notation)
 
@@ -68,6 +74,9 @@ export function RollerPlayground(): React.JSX.Element {
           className="roller-playground-btn"
           onClick={handleRoll}
           disabled={!isValid || state.status === 'rolling'}
+          aria-label={
+            state.status === 'rolling' ? 'Rolling' : state.status === 'result' ? 'Reroll' : 'Roll'
+          }
         >
           {state.status === 'rolling' ? (
             <span className="roller-playground-spinner" aria-hidden="true" />
