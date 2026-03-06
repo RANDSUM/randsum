@@ -1,41 +1,56 @@
 .live-repl {
-  border: 1px solid var(--sl-color-gray-5);
+  position: relative;
   border-radius: 0.5rem;
   overflow: hidden;
-  font-family: var(--sl-font-mono);
   margin: 1rem 0;
   background: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-gray-5);
 }
 
-.live-repl-editor {
+.live-repl-code {
   position: relative;
+}
+
+/* Suppress Monaco's internal border and outline */
+.live-repl .monaco-editor,
+.live-repl .monaco-editor .overflow-guard {
+  border: none !important;
+  outline: none !important;
 }
 
 .live-repl-buttons {
   position: absolute;
-  top: 0.5rem;
-  right: 0.75rem;
+  top: 0.4rem;
+  right: 0.4rem;
   z-index: 10;
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 0.4rem;
+  gap: 0.3rem;
   align-items: center;
 }
 
 /* High specificity to override Starlight's button resets in markdown content */
 .live-repl .live-repl-btn {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-family: var(--sl-font-mono);
-  height: 1.75rem;
-  padding: 0 0.6rem;
-  border-radius: 0.25rem;
-  border: 1px solid transparent;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  border-radius: 0.2rem;
+  border: 1px solid var(--sl-color-gray-4);
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
+  opacity: 0.85;
+}
+
+.live-repl .live-repl-btn:hover:not(:disabled) {
+  opacity: 1;
+  border-color: var(--sl-color-gray-3);
+  color: var(--sl-color-white);
 }
 
 .live-repl .live-repl-btn-run {
@@ -46,33 +61,17 @@
 
 .live-repl .live-repl-btn-run:hover:not(:disabled) {
   filter: brightness(1.15);
+  color: var(--sl-color-black);
 }
 
 .live-repl .live-repl-btn-run:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-.live-repl .live-repl-btn-copy {
-  background: transparent;
-  color: var(--sl-color-gray-3);
-  border-color: var(--sl-color-gray-4);
-}
-
-.live-repl .live-repl-btn-copy:hover {
-  color: var(--sl-color-white);
-  border-color: var(--sl-color-gray-3);
-}
-
 .live-repl .live-repl-btn-clear {
-  background: transparent;
-  color: var(--sl-color-gray-3);
-  border-color: var(--sl-color-gray-4);
-}
-
-.live-repl .live-repl-btn-clear:hover {
-  color: var(--sl-color-white);
-  border-color: var(--sl-color-gray-3);
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-gray-2);
 }
 
 .live-repl-output {

@@ -10,11 +10,13 @@ import './LiveRepl.css'
 interface LiveReplProps {
   readonly code: string
   readonly lang?: string
+  readonly readonly?: boolean
 }
 
 export function LiveRepl({
   code: initialCode,
-  lang = 'typescript'
+  lang = 'typescript',
+  readonly = false
 }: LiveReplProps): React.JSX.Element {
   const [code, setCode] = useState(initialCode)
   const [isDark, setIsDark] = useState(true)
@@ -23,7 +25,6 @@ export function LiveRepl({
   const codeRef = useRef(code)
   const { state, run, clear } = useRepl()
 
-  // Keep refs in sync so Monaco's onMount closure sees latest values
   useEffect(() => {
     runRef.current = run
   }, [run])
@@ -49,7 +50,6 @@ export function LiveRepl({
 
   const handleMount = useCallback(
     (ed: editor.IStandaloneCodeEditor, monacoInstance: typeof Monaco) => {
-      // Auto-resize to content
       const updateHeight = (): void => {
         const height = ed.getContentHeight()
         setEditorHeight(height)
@@ -58,12 +58,13 @@ export function LiveRepl({
       updateHeight()
       ed.onDidContentSizeChange(updateHeight)
 
-      // Cmd+Enter / Ctrl+Enter to run
-      ed.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.Enter, () => {
-        runRef.current?.(codeRef.current)
-      })
+      if (!readonly) {
+        ed.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.Enter, () => {
+          runRef.current?.(codeRef.current)
+        })
+      }
     },
-    []
+    [readonly]
   )
 
   const handleRun = useCallback(() => {
@@ -79,33 +80,41 @@ export function LiveRepl({
 
   return (
     <div className="live-repl">
-      <div className="live-repl-editor" style={{ height: editorHeight }}>
+      <div className="live-repl-code">
         <div className="live-repl-buttons">
           <button type="button" className="live-repl-btn live-repl-btn-copy" onClick={handleCopy}>
             Copy
           </button>
-          {!hasResult ? (
-            <button
-              type="button"
-              className="live-repl-btn live-repl-btn-run"
-              onClick={handleRun}
-              disabled={isRunning}
-            >
-              {isRunning ? '...' : '▶ Run'}
-            </button>
-          ) : (
+          {!readonly && (
             <>
-              <button
-                type="button"
-                className="live-repl-btn live-repl-btn-run"
-                onClick={handleRun}
-                disabled={isRunning}
-              >
-                {isRunning ? '...' : '↻ Re-run'}
-              </button>
-              <button type="button" className="live-repl-btn live-repl-btn-clear" onClick={clear}>
-                ✕ Clear
-              </button>
+              {!hasResult ? (
+                <button
+                  type="button"
+                  className="live-repl-btn live-repl-btn-run"
+                  onClick={handleRun}
+                  disabled={isRunning}
+                >
+                  {isRunning ? '...' : '▶ Run'}
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="live-repl-btn live-repl-btn-run"
+                    onClick={handleRun}
+                    disabled={isRunning}
+                  >
+                    {isRunning ? '...' : '↻ Re-run'}
+                  </button>
+                  <button
+                    type="button"
+                    className="live-repl-btn live-repl-btn-clear"
+                    onClick={clear}
+                  >
+                    ✕
+                  </button>
+                </>
+              )}
             </>
           )}
         </div>
@@ -114,22 +123,34 @@ export function LiveRepl({
           language={lang}
           value={code}
           onChange={v => {
-            setCode(v ?? '')
+            if (!readonly) setCode(v ?? '')
           }}
           theme={isDark ? 'vs-dark' : 'vs'}
           onMount={handleMount}
           options={{
+            readOnly: readonly,
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
             fontSize: 14,
             lineNumbers: 'off',
             folding: false,
             wordWrap: 'on',
-            padding: { top: 12, bottom: 12 }
+            padding: { top: 14, bottom: 14 },
+            overviewRulerLanes: 0,
+            overviewRulerBorder: false,
+            hideCursorInOverviewRuler: true,
+            scrollbar: {
+              vertical: 'hidden',
+              horizontal: 'hidden',
+              handleMouseWheel: false
+            },
+            renderValidationDecorations: 'off',
+            lineDecorationsWidth: 0,
+            glyphMargin: false
           }}
         />
       </div>
-      <OutputPane state={state} />
+      {!readonly && <OutputPane state={state} />}
     </div>
   )
 }

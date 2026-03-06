@@ -4,9 +4,10 @@ import { LiveRepl } from './LiveRepl'
 interface Props {
   code: string
   lang?: string
+  readonly?: boolean
 }
 
-const { code, lang } = Astro.props
+const { code, lang, readonly } = Astro.props
 ---
 
-<LiveRepl code={code} lang={lang} client:only="react" />
+<LiveRepl code={code} lang={lang} readonly={readonly} client:only="react" />
