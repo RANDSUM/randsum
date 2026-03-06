@@ -206,7 +206,7 @@
   font-weight: 700;
   font-size: 0.9rem;
   color: var(--sl-color-accent-high);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.1rem;
 }
 
 .roller-tooltip-desc {
@@ -218,14 +218,15 @@
 .roller-tooltip-divider {
   height: 1px;
   background: var(--sl-color-gray-5);
-  margin: 0.4rem 0;
+  margin: 0.2rem 0;
 }
 
 .roller-tooltip-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: 0.15rem 0;
+  padding: 0.2rem 0;
 }
 
 .roller-tooltip-row ~ .roller-tooltip-row,
@@ -273,8 +274,9 @@
 
 .roller-tooltip-total {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: 0.15rem 0;
+  padding: 0.2rem 0;
   font-weight: 700;
 }

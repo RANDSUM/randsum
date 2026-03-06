@@ -182,7 +182,7 @@ function computeSteps(record: RollRecord): readonly TooltipStep[] {
   const steps: TooltipStep[] = []
   const current: number[] = [...record.modifierHistory.initialRolls]
 
-  steps.push({ kind: 'rolls', label: 'Rolled', unchanged: current, removed: [], added: [] })
+  steps.push({ kind: 'rolls', label: 'Rolled', unchanged: [...current], removed: [], added: [] })
 
   const modifierSteps: TooltipStep[] = []
 
