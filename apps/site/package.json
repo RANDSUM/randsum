@@ -20,8 +20,6 @@
     "@astrojs/netlify": "^6.6.4",
     "@astrojs/react": "^4.4.2",
     "@astrojs/starlight": "^0.34.0",
-    "@codesandbox/sandpack-react": "2.20.0",
-    "@codesandbox/sandpack-themes": "2.0.21",
     "@randsum/blades": "workspace:~",
     "@randsum/daggerheart": "workspace:~",
     "@randsum/fifth": "workspace:~",

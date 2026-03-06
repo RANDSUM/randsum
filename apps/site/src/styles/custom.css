@@ -87,21 +87,3 @@ h6 {
 .content-panel:has(#_top) {
   display: none !important;
 }
-
-/* ===== LiveRepl wrapper — consistent outer style for all code blocks ===== */
-.live-repl-wrapper {
-  margin: 1rem 0;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-/* Match static Code block border-radius to Sandpack's rounded corners */
-.live-repl-wrapper .expressive-code {
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-/* Remove default margin on expressive-code inside wrapper (already handled above) */
-.live-repl-wrapper .expressive-code pre {
-  margin: 0;
-}
