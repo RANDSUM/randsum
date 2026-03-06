@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { runSimple } from './simple/run'
-
-const VERSION = '0.1.0'
+import { version as VERSION } from '../package.json'
 
 const HELP = `Usage: randsum [notation...] [flags]
 
