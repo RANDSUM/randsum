@@ -31,7 +31,8 @@
     "@types/react-dom": "^19.1.6",
     "astro": "^5.18.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-syntax-highlighter": "16.1.1"
   },
   "engines": {
     "node": ">=18.0.0",
@@ -47,5 +48,8 @@
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/react-syntax-highlighter": "15.5.13"
   }
 }
