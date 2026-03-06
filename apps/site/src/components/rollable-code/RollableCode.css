@@ -1,0 +1,98 @@
+.rollable-code {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--sl-color-gray-6);
+  font-family: var(--sl-font-mono);
+  margin: 1rem 0;
+}
+
+.rollable-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-gray-6);
+}
+
+.rollable-code-lang {
+  font-size: 0.75rem;
+  color: var(--sl-color-gray-3);
+  font-family: var(--sl-font-mono);
+}
+
+.rollable-code-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.rollable-btn {
+  font-size: 0.75rem;
+  font-family: var(--sl-font-mono);
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rollable-btn-run {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-black);
+  border-color: var(--sl-color-accent);
+}
+
+.rollable-btn-run:hover {
+  filter: brightness(1.15);
+}
+
+.rollable-btn-reroll {
+  background: transparent;
+  color: var(--sl-color-accent);
+  border-color: var(--sl-color-accent);
+}
+
+.rollable-btn-reroll:hover {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-black);
+}
+
+.rollable-btn-clear {
+  background: transparent;
+  color: var(--sl-color-gray-3);
+  border-color: var(--sl-color-gray-4);
+}
+
+.rollable-btn-clear:hover {
+  color: var(--sl-color-white);
+  border-color: var(--sl-color-gray-3);
+}
+
+.rollable-code-body {
+  overflow-x: auto;
+}
+
+.rollable-live-comment {
+  padding: 0 1.5rem 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  font-family: var(--sl-font-mono);
+}
+
+.rollable-comment-prefix {
+  color: var(--sl-color-gray-3);
+}
+
+.rollable-comment-sep {
+  color: var(--sl-color-gray-3);
+}
+
+.rollable-dice-kept {
+  color: var(--sl-color-accent-high);
+}
+
+.rollable-dice-dropped {
+  color: var(--sl-color-gray-3);
+  text-decoration: line-through;
+}
