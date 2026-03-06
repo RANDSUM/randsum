@@ -3,7 +3,8 @@ title: Modifiers
 description: Complete reference for the RANDSUM modifier system
 ---
 
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '../../../components/playground/RollerPlayground'
 
 Modifiers transform dice results after rolling. They can drop dice, reroll values, cap ranges, make dice explode, and more. Modifiers are applied in a fixed priority order to ensure consistent, predictable results.
 
@@ -32,7 +33,7 @@ This means dice values are capped/constrained first, then pool size is adjusted 
 
 ## ModifierOptions interface
 
-<LiveRepl readonly code={`interface ModifierOptions {
+<CodeExample readonly code={`interface ModifierOptions {
   cap?: ComparisonOptions
   drop?: DropOptions
   keep?: KeepOptions
@@ -55,7 +56,7 @@ Limit roll values to a specific range. Values outside the range are clamped to t
 
 **Options key:** `cap`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('4d20C{>18}') // caps at 18
 roll('4d20C{<3}')      // Cap under 3 to 3
@@ -78,9 +79,11 @@ roll({
   }
 })`} />
 
+<RollerPlayground defaultNotation="4d20C{>18}" client:only="react" />
+
 **ComparisonOptions:**
 
-<LiveRepl readonly code={`interface ComparisonOptions {
+<CodeExample readonly code={`interface ComparisonOptions {
   greaterThan?: number
   lessThan?: number
 }`} />
@@ -91,7 +94,7 @@ Remove dice from the result pool.
 
 **Options key:** `drop`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('4d6L') // 3-18
 roll('4d6L2')   // Drop lowest 2
@@ -120,9 +123,11 @@ roll({
   }
 })`} />
 
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
 **DropOptions:**
 
-<LiveRepl readonly code={`interface DropOptions extends ComparisonOptions {
+<CodeExample readonly code={`interface DropOptions extends ComparisonOptions {
   highest?: number
   lowest?: number
   exact?: number[]
@@ -134,7 +139,7 @@ Keep specific dice from the result (complement of drop).
 
 **Options key:** `keep`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('4d6K3') // 3-18
 roll('4d6K')   // Keep highest 1
@@ -152,9 +157,11 @@ roll({
   }
 })`} />
 
+<RollerPlayground defaultNotation="4d6K3" client:only="react" />
+
 **KeepOptions:**
 
-<LiveRepl readonly code={`interface KeepOptions {
+<CodeExample readonly code={`interface KeepOptions {
   highest?: number
   lowest?: number
 }`} />
@@ -169,7 +176,7 @@ Replace specific results with new values.
 
 **Options key:** `replace`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Replace exact values
 roll('4d20V{8=12}')    // Replace 8s with 12s
@@ -195,9 +202,11 @@ roll({
   }
 })`} />
 
+<RollerPlayground defaultNotation="4d20V{8=12}" client:only="react" />
+
 **ReplaceOptions:**
 
-<LiveRepl readonly code={`interface ReplaceOptions {
+<CodeExample readonly code={`interface ReplaceOptions {
   from: number | ComparisonOptions
   to: number
 }`} />
@@ -210,7 +219,7 @@ Reroll dice matching certain conditions.
 
 **Options key:** `reroll`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('4d20R{<5}') // 4-20
 roll('4d20R{>17}')    // Reroll results over 17
@@ -230,9 +239,11 @@ roll({
   }
 })`} />
 
+<RollerPlayground defaultNotation="4d20R{<5}" client:only="react" />
+
 **RerollOptions:**
 
-<LiveRepl readonly code={`interface RerollOptions extends ComparisonOptions {
+<CodeExample readonly code={`interface RerollOptions extends ComparisonOptions {
   exact?: number[]
   max?: number
 }`} />
@@ -243,7 +254,7 @@ Roll additional dice when a die shows its maximum value.
 
 **Options key:** `explode`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('4d20!') // 4+
 roll('3d6!5')   // Max depth of 5
@@ -262,6 +273,8 @@ roll({
   modifiers: { explode: 5 }     // Max depth 5
 })`} />
 
+<RollerPlayground defaultNotation="4d20!" client:only="react" />
+
 When a die shows its maximum value, a new die is rolled and added as a separate result. Each new maximum continues the chain.
 
 ## Compound
@@ -270,7 +283,7 @@ Compounding exploding dice add to the triggering die instead of creating new dic
 
 **Options key:** `compound`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('3d6!!')    // Compound once
 roll('3d6!!5')   // Max depth 5
@@ -283,6 +296,8 @@ roll({
   modifiers: { compound: true }
 })`} />
 
+<RollerPlayground defaultNotation="3d6!!" client:only="react" />
+
 Unlike regular exploding, compound does not create new dice -- it modifies the existing die value.
 
 ## Penetrate
@@ -291,7 +306,7 @@ Penetrating exploding dice subtract 1 from each subsequent explosion (Hackmaster
 
 **Options key:** `penetrate`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('3d6!p')    // Penetrate once
 roll('3d6!p5')   // Max depth 5
@@ -304,6 +319,8 @@ roll({
   modifiers: { penetrate: true }
 })`} />
 
+<RollerPlayground defaultNotation="3d6!p" client:only="react" />
+
 Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
 
 ## Unique
@@ -312,7 +329,7 @@ Force all dice in a pool to show different values.
 
 **Options key:** `unique`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('4d20U') // 4-80
 roll('4d20U{5,10}')  // Unique except 5s and 10s
@@ -332,9 +349,11 @@ roll({
   }
 })`} />
 
+<RollerPlayground defaultNotation="4d20U" client:only="react" />
+
 **UniqueOptions:**
 
-<LiveRepl readonly code={`interface UniqueOptions {
+<CodeExample readonly code={`interface UniqueOptions {
   notUnique: number[]
 }`} />
 
@@ -344,7 +363,7 @@ Multiply the dice sum before +/- arithmetic.
 
 **Options key:** `multiply`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('2d6*2+3')  // (dice sum * 2) + 3
 
@@ -355,21 +374,19 @@ roll({
   modifiers: { multiply: 2, plus: 3 }
 })`} />
 
+<RollerPlayground defaultNotation="2d6*2+3" client:only="react" />
+
 ## Plus / Minus
 
 Add or subtract a fixed value from the total.
 
 **Options keys:** `plus`, `minus`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<RollerPlayground defaultNotation="4d6+5" client:only="react" />
 
-roll('4d6+5') // 9-29`} />
+<RollerPlayground defaultNotation="2d8-2" client:only="react" />
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-roll('2d8-2') // 0-14`} />
-
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Options object
 roll({
@@ -384,7 +401,7 @@ Count dice meeting a threshold instead of summing. Used in dice pool systems (Wo
 
 **Options key:** `countSuccesses`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('5d10S{7}') // 0-5
 roll('5d10S{7,1}')  // Successes >= 7, minus botches <= 1
@@ -398,9 +415,11 @@ roll({
   }
 })`} />
 
+<RollerPlayground defaultNotation="5d10S{7}" client:only="react" />
+
 **SuccessCountOptions:**
 
-<LiveRepl readonly code={`interface SuccessCountOptions {
+<CodeExample readonly code={`interface SuccessCountOptions {
   threshold: number
   botchThreshold?: number
 }`} />
@@ -411,7 +430,7 @@ Multiply the entire final total after all other modifiers.
 
 **Options key:** `multiplyTotal`
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 roll('2d6+3**2')     // (dice + 3) * 2
 roll('4d6L+2**3')    // ((drop lowest) + 2) * 3
@@ -422,6 +441,8 @@ roll({
   quantity: 2,
   modifiers: { plus: 3, multiplyTotal: 2 }
 })`} />
+
+<RollerPlayground defaultNotation="2d6+3**2" client:only="react" />
 
 ## Complete order of operations
 
@@ -440,7 +461,4 @@ The full calculation order is:
 11. Count successes if applicable (S&#123;...&#125;)
 12. Apply total multiply (`**`)
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// Full example: ((sum of kept dice) * 2) + 3) * 2
-roll('4d6K3!*2+3**2')`} />
+<RollerPlayground defaultNotation="4d6K3!*2+3**2" client:only="react" />

@@ -4,7 +4,8 @@ description: How to handle errors with RANDSUM's never-throw design
 ---
 
 import { Aside } from '@astrojs/starlight/components'
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '../../../components/playground/RollerPlayground'
 
 RANDSUM uses a **never-throw** design. The `roll()` function never raises an exception — errors are returned as values in the result object.
 
@@ -16,7 +17,7 @@ RANDSUM uses a **never-throw** design. The `roll()` function never raises an exc
 
 When `roll()` encounters an error, it returns an object where `result.error` is set and `result.total` is `0`. Check for `result.error` before using `result.total`:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('not-valid-notation')
 
@@ -44,7 +45,7 @@ If you want to check notation before passing it to `roll()`, use `validateNotati
 
 ### `isDiceNotation` — type guard
 
-<LiveRepl code={`import { isDiceNotation, roll } from '@randsum/roller'
+<CodeExample code={`import { isDiceNotation, roll } from '@randsum/roller'
 
 function rollUserInput(input) {
   if (!isDiceNotation(input)) {
@@ -58,9 +59,11 @@ function rollUserInput(input) {
 console.log(rollUserInput('4d6L'))
 console.log(rollUserInput('not-dice'))`} />
 
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
 ### `validateNotation` — parsed result
 
-<LiveRepl code={`import { validateNotation } from '@randsum/roller'
+<CodeExample code={`import { validateNotation } from '@randsum/roller'
 
 const validation = validateNotation('4d6L')
 
@@ -71,11 +74,13 @@ if (!validation.valid) {
   console.log(validation.options)
 }`} />
 
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
 ## Checking the error value
 
 `result.error` is typed as `RandsumError | null`. On success it is `null`; on error it is a `RandsumError`. `result.total` is always a `number` — on error its value is `0`.
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('2d6')
 
@@ -87,6 +92,8 @@ if (result.error !== null) {
   // result.error is null — safe to use result.total
   console.log(result.total)
 }`} />
+
+<RollerPlayground defaultNotation="2d6" client:only="react" />
 
 ## Production checklist
 
