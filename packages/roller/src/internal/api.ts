@@ -31,3 +31,12 @@ export { analyze } from '../lib/probability'
 export { PRESETS, resolvePreset, resolvePresetParam } from '../presets'
 
 export { createGameRoll, createMultiRollGameRoll } from '../lib/gameRoll'
+
+export {
+  matchesComparison,
+  formatComparisonDescription,
+  formatComparisonNotation,
+  parseComparisonNotation,
+  hasConditions
+} from '../lib/comparison'
+export type { ExtendedComparisonOptions } from '../lib/comparison'
