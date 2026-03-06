@@ -20,6 +20,7 @@
     "@astrojs/netlify": "^6.6.4",
     "@astrojs/react": "^4.4.2",
     "@astrojs/starlight": "^0.34.0",
+    "@monaco-editor/react": "4.7.0",
     "@randsum/blades": "workspace:~",
     "@randsum/daggerheart": "workspace:~",
     "@randsum/fifth": "workspace:~",
@@ -32,7 +33,8 @@
     "astro": "^5.18.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-syntax-highlighter": "16.1.1"
+    "react-syntax-highlighter": "16.1.1",
+    "sucrase": "3.35.1"
   },
   "engines": {
     "node": ">=18.0.0",
