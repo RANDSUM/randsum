@@ -30,8 +30,7 @@ The `randomFn` must return a number in `[0, 1)` — the same contract as `Math.r
 
 ## Example: unit test with a known seed
 
-```typescript
-import { describe, expect, test } from 'bun:test'
+<LiveRepl readonly code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 function seededRandom(seed: number) {
@@ -57,8 +56,7 @@ describe('roll with seeded RNG', () => {
     expect(result.total).toBeGreaterThanOrEqual(1)
     expect(result.total).toBeLessThanOrEqual(20)
   })
-})
-```
+})`} />
 
 ## Property-based tests with fast-check
 
@@ -66,8 +64,7 @@ Property-based testing runs your assertions against many randomly generated inpu
 
 `fast-check` is already included as a workspace dev dependency — no installation needed.
 
-```typescript
-import { describe, test } from 'bun:test'
+<LiveRepl readonly code={`import { describe, test } from 'bun:test'
 import fc from 'fast-check'
 import { roll } from '@randsum/roller'
 
@@ -97,8 +94,7 @@ describe('roll property-based tests', () => {
       )
     )
   })
-})
-```
+})`} />
 
 `fc.assert` throws if any generated input falsifies the property, and prints a minimal failing example to help you diagnose the issue.
 
@@ -106,8 +102,7 @@ describe('roll property-based tests', () => {
 
 For boundary validation, a tight loop is often clearer than a property test:
 
-```typescript
-import { describe, expect, test } from 'bun:test'
+<LiveRepl readonly code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 describe('2d6 stress test', () => {
@@ -118,8 +113,7 @@ describe('2d6 stress test', () => {
       expect(total).toBeLessThanOrEqual(12)
     }
   })
-})
-```
+})`} />
 
 This is especially useful for modifiers like `drop` or `reroll` where the valid output range is non-obvious.
 
@@ -129,8 +123,7 @@ Game package roll functions (for example, `roll` from `@randsum/fifth` or `@rand
 
 To test game packages deterministically, test the underlying `roll()` from `@randsum/roller` with a seeded RNG to verify the dice math, and test the game package's interpretation logic separately with known totals.
 
-```typescript
-import { describe, expect, test } from 'bun:test'
+<LiveRepl readonly code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 // Verify the dice configuration a game package would use
@@ -152,15 +145,13 @@ describe('5e-style advantage roll (deterministic)', () => {
     expect(result.total).toBeLessThanOrEqual(20)
     expect(result.error).toBeNull()
   })
-})
-```
+})`} />
 
 ## Testing error paths
 
 `roll()` never throws. When given invalid input, it returns a result with a non-null `error` property.
 
-```typescript
-import { describe, expect, test } from 'bun:test'
+<LiveRepl readonly code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 describe('error handling', () => {
@@ -180,7 +171,6 @@ describe('error handling', () => {
     const result = roll('2d6')
     expect(result.error).toBeNull()
   })
-})
-```
+})`} />
 
 Always check `result.error` before using `result.total` in application code — the same pattern applies in tests.

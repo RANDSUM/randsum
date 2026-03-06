@@ -1,5 +1,5 @@
 ---
-import { LiveRepl } from './LiveRepl'
+import { Code } from '@astrojs/starlight/components'
 
 interface Props {
   code: string
@@ -7,7 +7,7 @@ interface Props {
   readonly?: boolean
 }
 
-const { code, lang, readonly } = Astro.props
+const { code, lang = 'typescript' } = Astro.props
 ---
 
-<LiveRepl code={code} lang={lang} readonly={readonly} client:only="react" />
+<Code code={code} lang={lang} />

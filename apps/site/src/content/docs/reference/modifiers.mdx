@@ -32,8 +32,7 @@ This means dice values are capped/constrained first, then pool size is adjusted 
 
 ## ModifierOptions interface
 
-```typescript
-interface ModifierOptions {
+<LiveRepl readonly code={`interface ModifierOptions {
   cap?: ComparisonOptions
   drop?: DropOptions
   keep?: KeepOptions
@@ -48,8 +47,7 @@ interface ModifierOptions {
   plus?: number
   minus?: number
   multiplyTotal?: number
-}
-```
+}`} />
 
 ## Cap
 
@@ -82,12 +80,10 @@ roll({
 
 **ComparisonOptions:**
 
-```typescript
-interface ComparisonOptions {
+<LiveRepl readonly code={`interface ComparisonOptions {
   greaterThan?: number
   lessThan?: number
-}
-```
+}`} />
 
 ## Drop
 
@@ -126,13 +122,11 @@ roll({
 
 **DropOptions:**
 
-```typescript
-interface DropOptions extends ComparisonOptions {
+<LiveRepl readonly code={`interface DropOptions extends ComparisonOptions {
   highest?: number
   lowest?: number
   exact?: number[]
-}
-```
+}`} />
 
 ## Keep
 
@@ -160,12 +154,10 @@ roll({
 
 **KeepOptions:**
 
-```typescript
-interface KeepOptions {
+<LiveRepl readonly code={`interface KeepOptions {
   highest?: number
   lowest?: number
-}
-```
+}`} />
 
 :::note
 Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L`.
@@ -205,12 +197,10 @@ roll({
 
 **ReplaceOptions:**
 
-```typescript
-interface ReplaceOptions {
+<LiveRepl readonly code={`interface ReplaceOptions {
   from: number | ComparisonOptions
   to: number
-}
-```
+}`} />
 
 You can pass an array of `ReplaceOptions` to perform multiple replacements.
 
@@ -242,12 +232,10 @@ roll({
 
 **RerollOptions:**
 
-```typescript
-interface RerollOptions extends ComparisonOptions {
+<LiveRepl readonly code={`interface RerollOptions extends ComparisonOptions {
   exact?: number[]
   max?: number
-}
-```
+}`} />
 
 ## Explode
 
@@ -346,11 +334,9 @@ roll({
 
 **UniqueOptions:**
 
-```typescript
-interface UniqueOptions {
+<LiveRepl readonly code={`interface UniqueOptions {
   notUnique: number[]
-}
-```
+}`} />
 
 ## Pre-arithmetic multiply
 
@@ -414,12 +400,10 @@ roll({
 
 **SuccessCountOptions:**
 
-```typescript
-interface SuccessCountOptions {
+<LiveRepl readonly code={`interface SuccessCountOptions {
   threshold: number
   botchThreshold?: number
-}
-```
+}`} />
 
 ## Total multiply
 

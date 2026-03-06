@@ -32,16 +32,14 @@ Called first with the raw input. Throw here if the input is invalid — the erro
 
 `@randsum/roller` exports these validation helpers:
 
-```typescript
-import {
+<LiveRepl readonly code={`import {
   validateFinite,      // value is a finite number
   validateInteger,     // value is an integer
   validateRange,       // value is within min/max bounds
   validateNonNegative, // value >= 0
   validateGreaterThan, // value > threshold
   validateLessThan     // value < threshold
-} from '@randsum/roller'
-```
+} from '@randsum/roller'`} />
 
 Each helper takes the value, a label string, and (for range helpers) bounds:
 
