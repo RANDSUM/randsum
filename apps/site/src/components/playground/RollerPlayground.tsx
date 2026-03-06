@@ -18,15 +18,21 @@ export function RollerPlayground(): React.JSX.Element {
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [showTooltip, setShowTooltip] = useState(false)
   const [showInputTooltip, setShowInputTooltip] = useState(false)
+  const [showBtnTooltip, setShowBtnTooltip] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const [chipDir, setChipDir] = useState<'above' | 'below'>('above')
   const [inputDir, setInputDir] = useState<'above' | 'below'>('above')
+  const [btnDir, setBtnDir] = useState<'above' | 'below'>('above')
   const chipRef = useRef<HTMLDivElement>(null)
   const inputWrapRef = useRef<HTMLDivElement>(null)
+  const btnRef = useRef<HTMLButtonElement>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
     }
   }, [])
 
@@ -55,19 +61,31 @@ export function RollerPlayground(): React.JSX.Element {
     <div className="roller-playground">
       <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
         <button
+          ref={btnRef}
           className="roller-playground-btn"
           onClick={handleRoll}
           disabled={!isValid || state.status === 'rolling'}
-          aria-label={
-            state.status === 'rolling' ? 'Rolling' : state.status === 'result' ? 'Reroll' : 'Roll'
-          }
+          aria-label={state.status === 'rolling' ? 'Rolling' : 'Roll'}
+          onMouseEnter={() => {
+            if (btnRef.current) setBtnDir(tooltipDir(btnRef.current))
+            setShowBtnTooltip(true)
+          }}
+          onMouseLeave={() => {
+            setShowBtnTooltip(false)
+          }}
         >
           {state.status === 'rolling' ? (
             <span className="roller-playground-spinner" aria-hidden="true" />
-          ) : state.status === 'result' ? (
-            'Reroll'
           ) : (
             'Roll'
+          )}
+          {showBtnTooltip && isValid && (
+            <div
+              className={`roller-playground-tooltip roller-playground-tooltip--${btnDir}`}
+              role="tooltip"
+            >
+              <NotationTooltip notation={notation} />
+            </div>
           )}
         </button>
         <div className="roller-playground-input-wrap" ref={inputWrapRef}>
@@ -96,23 +114,7 @@ export function RollerPlayground(): React.JSX.Element {
               className={`roller-playground-tooltip roller-playground-tooltip--${inputDir}`}
               role="tooltip"
             >
-              <div className="roller-tooltip-inner">
-                {notation.length === 0 ? (
-                  <span className="roller-tooltip-hint">Try: 4d6L, 1d20+5, 2d8!</span>
-                ) : isValid ? (
-                  (() => {
-                    const result = validateNotation(notation)
-                    const lines = result.valid ? result.description.flat() : []
-                    return lines.length > 0 ? (
-                      <span className="roller-tooltip-valid">{lines.join(', ')}</span>
-                    ) : (
-                      <span className="roller-tooltip-valid">{notation}</span>
-                    )
-                  })()
-                ) : (
-                  <span className="roller-tooltip-invalid">Invalid notation</span>
-                )}
-              </div>
+              <NotationTooltip notation={notation} showHint />
             </div>
           )}
         </div>
@@ -120,7 +122,7 @@ export function RollerPlayground(): React.JSX.Element {
         {state.status === 'result' && (
           <div
             ref={chipRef}
-            className="roller-playground-chip"
+            className={`roller-playground-chip${copied ? ' roller-playground-chip--copied' : ''}`}
             onMouseEnter={() => {
               if (chipRef.current) setChipDir(tooltipDir(chipRef.current))
               setShowTooltip(true)
@@ -128,14 +130,30 @@ export function RollerPlayground(): React.JSX.Element {
             onMouseLeave={() => {
               setShowTooltip(false)
             }}
+            onClick={() => {
+              void navigator.clipboard.writeText(String(state.total))
+              setCopied(true)
+              if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+              copyTimerRef.current = setTimeout(() => {
+                setCopied(false)
+              }, 1200)
+            }}
+            role="button"
+            aria-label={`Copy result ${state.total}`}
           >
-            <span className="roller-playground-chip-value">{state.total}</span>
+            <span className="roller-playground-chip-value">{copied ? '✓' : state.total}</span>
             {showTooltip && (
               <div
                 className={`roller-playground-tooltip roller-playground-tooltip--${chipDir}`}
                 role="tooltip"
               >
-                <RollTooltip record={state.record} />
+                {copied ? (
+                  <div className="roller-tooltip-inner">
+                    <span className="roller-tooltip-valid">Result copied</span>
+                  </div>
+                ) : (
+                  <RollTooltip record={state.record} />
+                )}
               </div>
             )}
           </div>
@@ -157,6 +175,37 @@ type TooltipStep =
   | { kind: 'arithmetic'; label: string; display: string }
   | { kind: 'finalRolls'; rolls: readonly number[]; arithmeticDelta: number }
   | { kind: 'total'; value: number }
+
+function NotationTooltip({
+  notation,
+  showHint = false
+}: {
+  readonly notation: string
+  readonly showHint?: boolean
+}): React.JSX.Element {
+  if (notation.length === 0 && showHint) {
+    return (
+      <div className="roller-tooltip-inner">
+        <span className="roller-tooltip-hint">Try: 4d6L, 1d20+5, 2d8!</span>
+      </div>
+    )
+  }
+  const isValid = notation.length > 0 && isDiceNotation(notation)
+  if (!isValid) {
+    return (
+      <div className="roller-tooltip-inner">
+        <span className="roller-tooltip-invalid">Invalid notation</span>
+      </div>
+    )
+  }
+  const result = validateNotation(notation)
+  const lines = result.valid ? result.description.flat() : []
+  return (
+    <div className="roller-tooltip-inner">
+      <span className="roller-tooltip-valid">{lines.length > 0 ? lines.join(', ') : notation}</span>
+    </div>
+  )
+}
 
 const ARITHMETIC_MODIFIERS: Partial<Record<string, { label: string; sign: string }>> = {
   plus: { label: 'Add', sign: '+' },
