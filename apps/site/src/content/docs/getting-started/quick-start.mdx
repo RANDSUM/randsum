@@ -3,17 +3,20 @@ title: Quick Start
 description: Learn the basics of rolling dice with @randsum/roller
 ---
 
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '../../../components/playground/RollerPlayground'
 
 This guide walks you through the basics of using `@randsum/roller` to roll dice in your application.
 
 ## Your first roll
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Roll a single d20
 const result = roll(20)
 console.log(result.total) // 1-20`} />
+
+<RollerPlayground defaultNotation="1d20" client:only="react" />
 
 The \`roll()\` function accepts several argument types. A plain number means "roll one die with that many sides."
 
@@ -21,81 +24,46 @@ The \`roll()\` function accepts several argument types. A plain number means "ro
 
 RANDSUM supports standard dice notation. The format is \`NdS\` where **N** is the number of dice and **S** is the number of sides.
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// Roll 2d6
-roll('2d6')
-
-// Roll 4d8
-roll('4d8')
-
-// Roll 1d20
-roll('1d20')`} />
+<RollerPlayground defaultNotation="2d6" client:only="react" />
+<RollerPlayground defaultNotation="4d8" client:only="react" />
+<RollerPlayground defaultNotation="1d20" client:only="react" />
 
 ## Drop modifiers
 
 Drop the lowest or highest dice from a roll:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// D&D ability score: 4d6, drop lowest
-roll('4d6L')
-
-// Advantage: 2d20, keep highest (drop lowest)
-roll('2d20L')
-
-// Disadvantage: 2d20, keep lowest (drop highest)
-roll('2d20H')
-
-// Drop 2 lowest
-roll('4d6L2')`} />
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+<RollerPlayground defaultNotation="2d20L" client:only="react" />
+<RollerPlayground defaultNotation="2d20H" client:only="react" />
+<RollerPlayground defaultNotation="4d6L2" client:only="react" />
 
 ## Arithmetic modifiers
 
 Add or subtract from the roll total:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<RollerPlayground defaultNotation="1d20+5" client:only="react" />
 
-// Attack roll with +5 modifier
-roll('1d20+5') // 6-25`} />
-
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// Damage with -1 penalty
-roll('2d6-1') // 1-11`} />
+<RollerPlayground defaultNotation="2d6-1" client:only="react" />
 
 ## Reroll and explode
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<RollerPlayground defaultNotation="4d6R{1}" client:only="react" />
 
-// Reroll any 1s
-roll('4d6R{1}') // 4-24`} />
-
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// Reroll results below 3
-roll('4d6R{<3}')
-
-// Exploding dice (reroll and add on max)
-roll('3d6!')`} />
+<RollerPlayground defaultNotation="4d6R{<3}" client:only="react" />
+<RollerPlayground defaultNotation="3d6!" client:only="react" />
 
 ## Combining modifiers
 
 Chain multiple modifiers together:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// Reroll 1s, drop lowest, add 2
-roll('4d6R{1}L+2')
-
-// Exploding dice with drop
-roll('3d6!L')`} />
+<RollerPlayground defaultNotation="4d6R{1}L+2" client:only="react" />
+<RollerPlayground defaultNotation="3d6!L" client:only="react" />
 
 ## Using the options object
 
 Every notation string has an equivalent options object form:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // These are equivalent:
 roll('4d6L')
@@ -105,18 +73,22 @@ roll({
   modifiers: { drop: { lowest: 1 } }
 })`} />
 
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
 The options object gives you full programmatic control when notation strings are not flexible enough.
 
 ## Reading the result
 
 The \`roll()\` function returns a result object with useful properties:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('4d6L+2')
 
 console.log(result.total)  // Final total after all modifiers
 console.log(result.rolls)  // Array of individual roll records`} />
+
+<RollerPlayground defaultNotation="4d6L+2" client:only="react" />
 
 :::note
 \`roll()\` never throws. If there is an error (e.g., invalid notation), it is returned in the result object rather than thrown as an exception.
@@ -126,7 +98,7 @@ console.log(result.rolls)  // Array of individual roll records`} />
 
 Roll different dice types in a single expression:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Attack + damage in one call
 roll('1d20+5', '2d6+3')`} />

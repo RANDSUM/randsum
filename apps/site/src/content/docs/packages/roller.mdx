@@ -4,7 +4,8 @@ description: The core dice rolling engine that powers the RANDSUM ecosystem
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '../../../components/playground/RollerPlayground'
 
 `@randsum/roller` is the core dice rolling engine that powers the entire RANDSUM ecosystem. It provides advanced dice notation support for simple and complex rolling mechanics, with full TypeScript types and zero runtime dependencies.
 
@@ -12,10 +13,10 @@ import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
 
 <Tabs>
   <TabItem label="bun">
-    <LiveRepl readonly lang="bash" code={`bun add @randsum/roller`} />
+    <CodeExample readonly lang="bash" code={`bun add @randsum/roller`} />
   </TabItem>
   <TabItem label="npm">
-    <LiveRepl readonly lang="bash" code={`npm install @randsum/roller`} />
+    <CodeExample readonly lang="bash" code={`npm install @randsum/roller`} />
   </TabItem>
 </Tabs>
 
@@ -33,36 +34,20 @@ import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
 
 ## Basic usage
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<RollerPlayground defaultNotation="1d20" client:only="react" />
 
-// Simple d20 roll
-roll(20) // Returns 1-20
-// or
-roll('1d20') // Returns 1-20`} />
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<RollerPlayground defaultNotation="2d20H" client:only="react" />
+<RollerPlayground defaultNotation="2d20L" client:only="react" />
 
-// Roll 4d6, drop lowest (D&D ability scores)
-roll('4d6L')`} />
-
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// Roll with advantage (2d20, keep highest)
-roll('2d20H')
-
-// Roll with disadvantage (2d20, keep lowest)
-roll('2d20L')`} />
-
-<LiveRepl code={`import { roll } from '@randsum/roller'
-
-// Roll 4d6, drop lowest, reroll below 3, exploding
-roll('4d6L!R{<3}')`} />
+<RollerPlayground defaultNotation="4d6L!R{<3}" client:only="react" />
 
 ## Argument types
 
 The `roll()` function accepts several input types:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Number: roll 1 die with N sides
 roll(20)
@@ -79,6 +64,8 @@ roll({
 
 // Multiple arguments: combined total
 roll('1d20', '2d6', '+5')`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
 
 ## Dice notation
 
@@ -105,12 +92,14 @@ For the full notation reference, see [Dice Notation](/reference/dice-notation/).
 
 ## Result object
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('4d6L+2')
 
 console.log(result.total)  // Final total after all modifiers
 console.log(result.rolls)  // Array of RollRecord objects`} />
+
+<RollerPlayground defaultNotation="4d6L+2" client:only="react" />
 
 :::note
 `roll()` never throws. If input is invalid, an error is returned in the result: check `result.error` before using `result.total`.
@@ -118,7 +107,7 @@ console.log(result.rolls)  // Array of RollRecord objects`} />
 
 ## Validation utilities
 
-<LiveRepl code={`import { isDiceNotation, validateNotation, roll } from '@randsum/roller'
+<CodeExample code={`import { isDiceNotation, validateNotation, roll } from '@randsum/roller'
 
 // Type guard
 if (isDiceNotation('4d6L')) {
@@ -129,22 +118,26 @@ if (isDiceNotation('4d6L')) {
 const validation = validateNotation('4d6L')
 console.log(validation)`} />
 
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
 ## Custom random function
 
 Override `Math.random` for reproducible results or cryptographic randomness:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const cryptoRandom = () =>
   crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
 
 roll('2d6', { randomFn: cryptoRandom })`} />
 
+<RollerPlayground defaultNotation="2d6" client:only="react" />
+
 ## TypeScript types
 
 All types are exported for use in your applications:
 
-<LiveRepl readonly code={`import type {
+<CodeExample readonly code={`import type {
   RollArgument,
   RollerRollResult,
   RollOptions,
