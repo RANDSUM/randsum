@@ -30,7 +30,7 @@ The `randomFn` must return a number in `[0, 1)` — the same contract as `Math.r
 
 ## Example: unit test with a known seed
 
-<CodeExample readonly code={`import { describe, expect, test } from 'bun:test'
+<CodeExample code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 function seededRandom(seed: number) {
@@ -64,7 +64,7 @@ Property-based testing runs your assertions against many randomly generated inpu
 
 `fast-check` is already included as a workspace dev dependency — no installation needed.
 
-<CodeExample readonly code={`import { describe, test } from 'bun:test'
+<CodeExample code={`import { describe, test } from 'bun:test'
 import fc from 'fast-check'
 import { roll } from '@randsum/roller'
 
@@ -102,7 +102,7 @@ describe('roll property-based tests', () => {
 
 For boundary validation, a tight loop is often clearer than a property test:
 
-<CodeExample readonly code={`import { describe, expect, test } from 'bun:test'
+<CodeExample code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 describe('2d6 stress test', () => {
@@ -123,7 +123,7 @@ Game package roll functions (for example, `roll` from `@randsum/fifth` or `@rand
 
 To test game packages deterministically, test the underlying `roll()` from `@randsum/roller` with a seeded RNG to verify the dice math, and test the game package's interpretation logic separately with known totals.
 
-<CodeExample readonly code={`import { describe, expect, test } from 'bun:test'
+<CodeExample code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 // Verify the dice configuration a game package would use
@@ -151,7 +151,7 @@ describe('5e-style advantage roll (deterministic)', () => {
 
 `roll()` never throws. When given invalid input, it returns a result with a non-null `error` property.
 
-<CodeExample readonly code={`import { describe, expect, test } from 'bun:test'
+<CodeExample code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 
 describe('error handling', () => {

@@ -5,12 +5,11 @@ import { OpenInStackBlitz } from './OpenInStackBlitz'
 interface Props {
   code: string
   lang?: string
-  readonly?: boolean
 }
 
-const { code, lang = 'typescript', readonly = false } = Astro.props
+const { code, lang = 'typescript' } = Astro.props
 const isTypeScript = lang === 'typescript'
 ---
 
 <Code code={code} lang={lang} />
-{isTypeScript && !readonly && <OpenInStackBlitz code={code} client:visible />}
+{isTypeScript && <OpenInStackBlitz code={code} client:visible />}

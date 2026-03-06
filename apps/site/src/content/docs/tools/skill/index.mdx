@@ -27,7 +27,7 @@ The skill file lives at [`skills/dice-rolling/SKILL.md`](https://github.com/RAND
 
 Place the skill file in your project's `.claude/skills/` directory, or reference it in your agent configuration:
 
-<CodeExample readonly lang="bash" code={`# Download the skill
+<CodeExample lang="bash" code={`# Download the skill
 curl -o .claude/skills/dice-rolling/SKILL.md \\
   https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/dice-rolling/SKILL.md`} />
 
@@ -36,7 +36,7 @@ curl -o .claude/skills/dice-rolling/SKILL.md \\
 
 Load the skill content as part of your agent's system prompt or tool definitions:
 
-<CodeExample readonly code={`import { readFileSync } from 'fs'
+<CodeExample code={`import { readFileSync } from 'fs'
 
 const skillContent = readFileSync('skills/dice-rolling/SKILL.md', 'utf-8')
 // Include skillContent in your agent's system prompt`} />
@@ -68,7 +68,7 @@ See the full [Skill Definition](/tools/skill/dice-rolling/) for the complete fil
 
 If you're building a custom agent, you can also use `@randsum/roller` directly:
 
-<CodeExample readonly lang="bash" code={`bun add @randsum/roller`} />
+<CodeExample lang="bash" code={`bun add @randsum/roller`} />
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 

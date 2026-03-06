@@ -22,6 +22,10 @@ export const PRESETS: Record<string, DiceNotation | RollOptions> = {
   'dnd-ability-score': notation('4d6L'),
   'dnd-advantage': notation('2d20L'),
   'dnd-disadvantage': notation('2d20H'),
+  // Bounded ability score: 4d6, cap max at 5 (bare number), reroll 1s, keep highest 3
+  'bounded-ability-score': notation('4d6C{5}K3R{1}'),
+  // Balanced hero roll: 8d10, cap to [3,8] range, keep top 5, reroll floor values, add 4
+  'balanced-hero-roll': notation('8d10C{>8,<3}K5R{=3}+4'),
   'fate-dice': fateDicePreset
 }
 

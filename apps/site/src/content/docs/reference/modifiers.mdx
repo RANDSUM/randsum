@@ -33,7 +33,7 @@ This means dice values are capped/constrained first, then pool size is adjusted 
 
 ## ModifierOptions interface
 
-<CodeExample readonly code={`interface ModifierOptions {
+<CodeExample code={`interface ModifierOptions {
   cap?: ComparisonOptions
   drop?: DropOptions
   keep?: KeepOptions
@@ -83,7 +83,7 @@ roll({
 
 **ComparisonOptions:**
 
-<CodeExample readonly code={`interface ComparisonOptions {
+<CodeExample code={`interface ComparisonOptions {
   greaterThan?: number
   lessThan?: number
 }`} />
@@ -127,7 +127,7 @@ roll({
 
 **DropOptions:**
 
-<CodeExample readonly code={`interface DropOptions extends ComparisonOptions {
+<CodeExample code={`interface DropOptions extends ComparisonOptions {
   highest?: number
   lowest?: number
   exact?: number[]
@@ -161,7 +161,7 @@ roll({
 
 **KeepOptions:**
 
-<CodeExample readonly code={`interface KeepOptions {
+<CodeExample code={`interface KeepOptions {
   highest?: number
   lowest?: number
 }`} />
@@ -206,7 +206,7 @@ roll({
 
 **ReplaceOptions:**
 
-<CodeExample readonly code={`interface ReplaceOptions {
+<CodeExample code={`interface ReplaceOptions {
   from: number | ComparisonOptions
   to: number
 }`} />
@@ -243,7 +243,7 @@ roll({
 
 **RerollOptions:**
 
-<CodeExample readonly code={`interface RerollOptions extends ComparisonOptions {
+<CodeExample code={`interface RerollOptions extends ComparisonOptions {
   exact?: number[]
   max?: number
 }`} />
@@ -353,7 +353,7 @@ roll({
 
 **UniqueOptions:**
 
-<CodeExample readonly code={`interface UniqueOptions {
+<CodeExample code={`interface UniqueOptions {
   notUnique: number[]
 }`} />
 
@@ -419,7 +419,7 @@ roll({
 
 **SuccessCountOptions:**
 
-<CodeExample readonly code={`interface SuccessCountOptions {
+<CodeExample code={`interface SuccessCountOptions {
   threshold: number
   botchThreshold?: number
 }`} />

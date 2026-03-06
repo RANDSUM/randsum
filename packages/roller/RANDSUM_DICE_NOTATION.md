@@ -66,11 +66,23 @@ roll({
 
 Limit roll values to specific ranges:
 
-| Notation   | Description                       |
-| ---------- | --------------------------------- |
-| `C{>N}`    | Cap rolls over N down to N        |
-| `C{<N}`    | Cap rolls under N up to N         |
-| `C{<N,>M}` | Cap both ends: floor N, ceiling M |
+| Notation   | Description                                    |
+| ---------- | ---------------------------------------------- |
+| `C{>N}`    | Cap rolls over N down to N                     |
+| `C{<N}`    | Cap rolls under N up to N                      |
+| `C{>=N}`   | Cap rolls at or over N down to N               |
+| `C{<=N}`   | Cap rolls at or under N up to N                |
+| `C{N}`     | Cap rolls above N to N (bare number = max cap) |
+| `C{=N}`    | Same as `C{N}` — explicit equals syntax        |
+| `C{<N,>M}` | Cap both ends: floor N, ceiling M              |
+
+**Comparison operators:** All condition-based modifiers (`C`, `D`, `R`) support:
+
+- `>N` — strictly greater than N
+- `<N` — strictly less than N
+- `>=N` — greater than or equal to N
+- `<=N` — less than or equal to N
+- `=N` or bare `N` — exactly equal to N (behavior depends on modifier)
 
 ```typescript
 roll("4d20C{>18}") // Cap rolls over 18 to 18
@@ -91,6 +103,35 @@ roll({
   }
 })
 
+roll("4d20C{>=18}") // Cap rolls at or over 18 to 18
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    cap: { greaterThanOrEqual: 18 }
+  }
+})
+
+roll("4d20C{<=3}") // Cap rolls at or under 3 to 3
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    cap: { lessThanOrEqual: 3 }
+  }
+})
+
+// Bare number: cap max at 5 (no roll can exceed 5)
+roll("4d6C{5}")
+roll("4d6C{=5}") // Same as above — explicit = syntax
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    cap: { exact: [5] } // exact values act as a max cap
+  }
+})
+
 roll("4d20C{<2,>19}") // Cap rolls under 2 to 2 and over 19 to 19
 roll({
   sides: 20,
@@ -108,16 +149,19 @@ roll({
 
 Drop specific dice from the results:
 
-| Notation     | Description                 |
-| ------------ | --------------------------- |
-| `L`          | Drop lowest 1               |
-| `LN`         | Drop lowest N               |
-| `H`          | Drop highest 1              |
-| `HN`         | Drop highest N              |
-| `LH`         | Drop lowest 1 and highest 1 |
-| `D{>N}`      | Drop all rolls over N       |
-| `D{<N}`      | Drop all rolls under N      |
-| `D{X,Y,...}` | Drop exact values           |
+| Notation     | Description                      |
+| ------------ | -------------------------------- |
+| `L`          | Drop lowest 1                    |
+| `LN`         | Drop lowest N                    |
+| `H`          | Drop highest 1                   |
+| `HN`         | Drop highest N                   |
+| `LH`         | Drop lowest 1 and highest 1      |
+| `D{>N}`      | Drop all rolls over N            |
+| `D{>=N}`     | Drop all rolls at or over N      |
+| `D{<N}`      | Drop all rolls under N           |
+| `D{<=N}`     | Drop all rolls at or under N     |
+| `D{X,Y,...}` | Drop exact values                |
+| `D{=X,=Y}`   | Drop exact values (explicit `=`) |
 
 ```typescript
 roll("4d6L") // Drop lowest
@@ -158,6 +202,13 @@ roll({
   modifiers: { drop: { greaterThan: 17 } }
 })
 
+roll("4d20D{>=17}") // Drop rolls at or over 17
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: { drop: { greaterThanOrEqual: 17 } }
+})
+
 roll("4d20D{<5}") // Drop rolls under 5
 roll({
   sides: 20,
@@ -165,7 +216,15 @@ roll({
   modifiers: { drop: { lessThan: 5 } }
 })
 
-roll("4d20D{8,12}") // Drop 8s and 12s
+roll("4d20D{<=5}") // Drop rolls at or under 5
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: { drop: { lessThanOrEqual: 5 } }
+})
+
+roll("4d20D{8,12}") // Drop 8s and 12s (bare numbers = exact match)
+roll("4d20D{=8,=12}") // Same — explicit = syntax
 roll({
   sides: 20,
   quantity: 4,
@@ -179,12 +238,15 @@ roll({
 
 Reroll dice matching certain conditions:
 
-| Notation | Description                         |
-| -------- | ----------------------------------- |
-| `R{>N}`  | Reroll results over N               |
-| `R{<N}`  | Reroll results under N              |
-| `R{X,Y}` | Reroll exact values X and Y         |
-| `R{<N}M` | Reroll under N, max M total rerolls |
+| Notation   | Description                               |
+| ---------- | ----------------------------------------- |
+| `R{>N}`    | Reroll results over N                     |
+| `R{>=N}`   | Reroll results at or over N               |
+| `R{<N}`    | Reroll results under N                    |
+| `R{<=N}`   | Reroll results at or under N              |
+| `R{X,Y}`   | Reroll exact values X and Y               |
+| `R{=X,=Y}` | Reroll exact values (explicit `=` syntax) |
+| `R{<N}M`   | Reroll under N, max M total rerolls       |
 
 ```typescript
 roll("4d20R{>17}") // Reroll results over 17
@@ -194,6 +256,13 @@ roll({
   modifiers: { reroll: { greaterThan: 17 } }
 })
 
+roll("4d20R{>=17}") // Reroll results at or over 17
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: { reroll: { greaterThanOrEqual: 17 } }
+})
+
 roll("4d20R{<5}") // Reroll results under 5
 roll({
   sides: 20,
@@ -201,7 +270,15 @@ roll({
   modifiers: { reroll: { lessThan: 5 } }
 })
 
-roll("4d20R{8,12}") // Reroll 8s and 12s
+roll("4d20R{<=5}") // Reroll results at or under 5
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: { reroll: { lessThanOrEqual: 5 } }
+})
+
+roll("4d20R{8,12}") // Reroll 8s and 12s (bare numbers = exact match)
+roll("4d20R{=8,=12}") // Same — explicit = syntax
 roll({
   sides: 20,
   quantity: 4,
@@ -231,7 +308,9 @@ Replace specific results with new values:
 | ------------ | ---------------------------------------------- |
 | `V{X=Y}`     | Replace value X with Y                         |
 | `V{>N=Y}`    | Replace results over N with Y                  |
+| `V{>=N=Y}`   | Replace results at or over N with Y            |
 | `V{<N=Y}`    | Replace results under N with Y                 |
+| `V{<=N=Y}`   | Replace results at or under N with Y           |
 | `V{X=Y,A=B}` | Replace X with Y and A with B (multiple rules) |
 
 ```typescript
@@ -266,6 +345,30 @@ roll({
   modifiers: {
     replace: {
       from: { lessThan: 5 },
+      to: 1
+    }
+  }
+})
+
+roll("4d20V{>=18=20}") // Replace results at or over 18 with 20
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    replace: {
+      from: { greaterThanOrEqual: 18 },
+      to: 20
+    }
+  }
+})
+
+roll("4d20V{<=3=1}") // Replace results at or under 3 with 1
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    replace: {
+      from: { lessThanOrEqual: 3 },
       to: 1
     }
   }
@@ -731,6 +834,64 @@ roll(
   }
 )
 ```
+
+### Ultra-Complex: Balanced Hero Roll
+
+A roll that demonstrates every comparison operator working together:
+
+```typescript
+// "Balanced Hero Roll":
+// - Roll 8d10
+// - Cap values above 8 to 8 (ceiling), and cap values below 3 to 3 (floor) → effective range [3,8]
+// - Keep highest 5
+// - Reroll any remaining 3s (the floor-capped minimum)
+// - Add 4
+roll("8d10C{>8,<3}K5R{=3}+4")
+roll({
+  sides: 10,
+  quantity: 8,
+  modifiers: {
+    cap: { greaterThan: 8, lessThan: 3 },
+    keep: { highest: 5 },
+    reroll: { exact: [3] },
+    plus: 4
+  }
+})
+
+// Equivalent using >=/<= operators (functionally the same for integer dice):
+roll("8d10C{>=8,<=3}K5R{=3}+4")
+roll({
+  sides: 10,
+  quantity: 8,
+  modifiers: {
+    cap: { greaterThanOrEqual: 8, lessThanOrEqual: 3 },
+    keep: { highest: 5 },
+    reroll: { exact: [3] },
+    plus: 4
+  }
+})
+
+// "Bounded Ability Score": 4d6, cap max at 5, reroll 1s, keep highest 3
+roll("4d6C{5}K3R{1}") // bare number cap
+roll("4d6C{=5}K3R{=1}") // explicit = form
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    cap: { exact: [5] }, // bare/exact values cap the maximum
+    keep: { highest: 3 },
+    reroll: { exact: [1] }
+  }
+})
+```
+
+**Step-by-step for `8d10C{>8,<3}K5R{=3}+4`:**
+
+1. Roll 8d10 → e.g. `[10, 7, 3, 9, 2, 8, 1, 5]`
+2. Cap `>8` to 8, cap `<3` to 3 → `[8, 7, 3, 8, 3, 8, 3, 5]`
+3. Keep highest 5 → `[8, 7, 8, 8, 5]`
+4. Reroll any 3s (none left after step 3) → `[8, 7, 8, 8, 5]`
+5. Add 4 → total = 40
 
 ## Common Use Cases
 

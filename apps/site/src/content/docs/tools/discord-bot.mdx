@@ -21,7 +21,7 @@ No configuration is required after adding.
 
 The core dice rolling command. Supports the full RANDSUM dice notation with detailed breakdowns showing individual die results, modifiers, and final totals.
 
-<CodeExample readonly lang="bash" code={`/roll notation:4d6L+2
+<CodeExample lang="bash" code={`/roll notation:4d6L+2
 /roll notation:2d20H
 /roll notation:3d8+5`} />
 
@@ -29,7 +29,7 @@ The core dice rolling command. Supports the full RANDSUM dice notation with deta
 
 Roll Blades in the Dark action rolls. Takes the number of dice in your pool and returns the outcome (critical, success, partial, or failure) with color-coded embeds.
 
-<CodeExample readonly lang="bash" code={`/blades dice:3
+<CodeExample lang="bash" code={`/blades dice:3
 /blades dice:2
 /blades dice:0   # Desperate position (rolls 2d6, takes lowest)`} />
 
@@ -37,7 +37,7 @@ Roll Blades in the Dark action rolls. Takes the number of dice in your pool and 
 
 Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantage/disadvantage, and amplification of hope or fear dice.
 
-<CodeExample readonly lang="bash" code={`/dh modifier:5 rollingWith:Advantage
+<CodeExample lang="bash" code={`/dh modifier:5 rollingWith:Advantage
 /dh modifier:3 rollingWith:Disadvantage
 /dh amplifyHope:true amplifyFear:false
 /dh modifier:2`} />
@@ -46,7 +46,7 @@ Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantag
 
 Roll Root RPG mechanics. Rolls 2d6 with an optional modifier and returns the outcome (Strong Hit, Weak Hit, or Miss).
 
-<CodeExample readonly lang="bash" code={`/root modifier:2
+<CodeExample lang="bash" code={`/root modifier:2
 /root modifier:-1
 /root   # No modifier`} />
 
@@ -54,7 +54,7 @@ Roll Root RPG mechanics. Rolls 2d6 with an optional modifier and returns the out
 
 Roll on Salvage Union tables. Supports all Salvage Union tables including Core Mechanic, Morale, and others.
 
-<CodeExample readonly lang="bash" code={`/su table:Core Mechanic
+<CodeExample lang="bash" code={`/su table:Core Mechanic
 /su table:Morale
 /su   # Uses default table`} />
 
@@ -62,7 +62,7 @@ Roll on Salvage Union tables. Supports all Salvage Union tables including Core M
 
 Display a reference guide for RANDSUM dice notation. Shows all available modifiers, syntax, and examples.
 
-<CodeExample readonly lang="bash" code={`/notation`} />
+<CodeExample lang="bash" code={`/notation`} />
 
 ## Supported game packages
 
@@ -87,7 +87,7 @@ Each game package has a dedicated command with game-specific results, color-code
 
 If you prefer to run the bot yourself:
 
-<CodeExample readonly lang="bash" code={`# From the monorepo root
+<CodeExample lang="bash" code={`# From the monorepo root
 cd apps/discord-bot
 
 # Install dependencies

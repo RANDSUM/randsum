@@ -13,10 +13,10 @@ import { RollerPlayground } from '../../../components/playground/RollerPlaygroun
 
 <Tabs>
   <TabItem label="bun">
-    <CodeExample readonly lang="bash" code={`bun add @randsum/roller`} />
+    <CodeExample lang="bash" code={`bun add @randsum/roller`} />
   </TabItem>
   <TabItem label="npm">
-    <CodeExample readonly lang="bash" code={`npm install @randsum/roller`} />
+    <CodeExample lang="bash" code={`npm install @randsum/roller`} />
   </TabItem>
 </Tabs>
 
@@ -137,7 +137,7 @@ roll('2d6', { randomFn: cryptoRandom })`} />
 
 All types are exported for use in your applications:
 
-<CodeExample readonly code={`import type {
+<CodeExample code={`import type {
   RollArgument,
   RollerRollResult,
   RollOptions,

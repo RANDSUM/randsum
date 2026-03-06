@@ -66,17 +66,35 @@ All notation is case-insensitive. Basic syntax: `NdS` (N dice, S sides).
 
 ### Conditional Modifiers
 
+Conditions use comparison operators: `>N` (greater than), `<N` (less than), `>=N` (at or over), `<=N` (at or under), `=N` or bare `N` (exact match).
+
 | Notation | Description |
 |---|---|
-| `4d6R{1}` | Reroll 1s |
+| `4d6R{1}` | Reroll 1s (bare number = exact match) |
+| `4d6R{=1}` | Same — explicit `=` form |
 | `4d20R{<5}` | Reroll under 5 |
-| `4d20R{<5}3` | Reroll under 5, max 3 attempts per die |
+| `4d20R{<=5}` | Reroll 5 or under |
+| `4d20R{>=17}` | Reroll 17 or over |
+| `4d20R{<5}3` | Reroll under 5, max 3 attempts |
 | `4d20V{8=12}` | Replace 8s with 12s |
 | `4d20V{>17=20}` | Replace results over 17 with 20 |
+| `4d20V{>=17=20}` | Replace results at or over 17 with 20 |
+| `4d20V{<=3=1}` | Replace results at or under 3 with 1 |
 | `4d20C{>18}` | Cap rolls over 18 down to 18 |
+| `4d20C{5}` | Cap rolls above 5 to 5 (bare number = max cap) |
+| `4d20C{=5}` | Same — explicit `=` form |
+| `4d20C{>=5}` | Cap rolls at or over 5 to 5 |
 | `4d20C{<2,>19}` | Floor 2, ceiling 19 |
 | `4d20U` | All results must be unique |
 | `4d20D{>17}` | Drop dice over 17 |
+| `4d20D{>=17}` | Drop dice at or over 17 |
+| `4d20D{1,2}` | Drop 1s and 2s |
+| `4d20D{=1,=2}` | Same — explicit `=` form |
+
+**Ultra-complex example** — roll 8d10, cap to [3,8] range, keep top 5, reroll floor values, add 4:
+```
+8d10C{>8,<3}K5R{=3}+4
+```
 
 ### Exploding Dice
 
