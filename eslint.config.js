@@ -84,7 +84,7 @@ export default tseslint.config(
         {
           accessibility: 'explicit',
           overrides: {
-            accessors: 'explicit',
+            accessors: 'no-public',
             constructors: 'no-public',
             methods: 'explicit',
             properties: 'explicit',
