@@ -40,6 +40,10 @@ function computeRollState(
   return { segments, total: result.total, commentLineIndex }
 }
 
+/**
+ * Interactive code block with live dice rolling.
+ * Must be used with `client:only="react"` in MDX — React hooks are incompatible with client:load SSR.
+ */
 export function RollableCode({
   code,
   lang = 'typescript',
