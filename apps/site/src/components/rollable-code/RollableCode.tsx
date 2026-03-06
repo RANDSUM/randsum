@@ -10,7 +10,7 @@ import './RollableCode.css'
 interface RollableCodeProps {
   readonly code: string
   readonly lang?: string
-  readonly liveArgs: readonly (string | number)[]
+  readonly liveArgs: readonly (string | number | Record<string, unknown>)[]
   readonly children?: never
 }
 
@@ -26,8 +26,8 @@ function computeRollState(
 ): RollState | null {
   if (result.error) return null
 
+  if (result.rolls.length === 0) return null
   const record = result.rolls[0]
-  if (!record) return null
   const initial = record.modifierHistory.initialRolls
   const modified = record.modifierHistory.modifiedRolls
   const dropped = findDroppedIndices(initial, modified)

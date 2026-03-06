@@ -3,6 +3,8 @@ title: Recipes
 description: Short, focused code patterns for common RANDSUM use cases
 ---
 
+import { RollableCode } from '../../../components/rollable-code/RollableCode'
+
 Short solutions to common dice-rolling problems.
 
 ## Seeded rolls
@@ -29,12 +31,10 @@ const result = roll('4d6L', { randomFn: seededRandom(42) })
 
 Pass multiple arguments to `roll()` — they are combined into a single `total`.
 
+<RollableCode client:only="react" code={`roll('1d20+5', '2d6+3') // combined total`} liveArgs={['1d20+5', '2d6+3']} />
+
 ```typescript
 import { roll } from '@randsum/roller'
-
-// Attack roll + damage roll
-const result = roll('1d20+5', '2d6+3')
-console.log(result.total) // d20+5 + 2d6+3, combined
 
 // Mix numbers, strings, and options objects
 const combined = roll(20, '2d6', { sides: 8, quantity: 1 })
@@ -52,11 +52,13 @@ roll({ sides: 12, quantity: 2, modifiers: { drop: { lowest: 1 } } })
 
 // Disadvantage on 2d6
 roll({ sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } })
-
-// Advantage shorthand via notation
-roll('2d12H') // Roll 2d12, drop highest (disadvantage)
-roll('2d12L') // Roll 2d12, drop lowest  (advantage)
 ```
+
+Advantage shorthand via notation:
+
+<RollableCode client:only="react" code={`roll('2d12H') // 1-12 (drop highest — disadvantage)`} liveArgs={['2d12H']} />
+
+<RollableCode client:only="react" code={`roll('2d12L') // 1-12 (drop lowest — advantage)`} liveArgs={['2d12L']} />
 
 ## Subtracting one roll from another
 
