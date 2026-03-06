@@ -37,12 +37,13 @@ export function SandpackRepl({ code, readonly = false }: Props): React.JSX.Eleme
       template="node"
       theme={theme}
       files={{ '/index.ts': code }}
-      customSetup={{ dependencies }}
+      customSetup={{ dependencies, entry: '/index.ts' }}
       options={{
         readOnly: readonly,
         showConsole: true,
         showConsoleButton: true,
-        editorHeight: 'auto'
+        editorHeight: 'auto',
+        activeFile: '/index.ts'
       }}
     />
   )
