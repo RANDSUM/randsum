@@ -7,11 +7,8 @@ export interface DiceSegment {
  * Finds the index of the last line containing a `// comment`.
  * Returns -1 if no such line exists.
  */
-export function findLastCommentIndex(lines: string[]): number {
-  return lines.reduceRight((found, line, i) => {
-    if (found !== -1) return found
-    return /\/\/\s*.+/.test(line) ? i : -1
-  }, -1)
+export function findLastCommentIndex(lines: readonly string[]): number {
+  return lines.findLastIndex(line => /\/\/\s*.+/.test(line))
 }
 
 /**
@@ -33,7 +30,7 @@ export function findDroppedIndices(
   for (const val of modified) {
     const indices = remaining.get(val)
     if (indices && indices.length > 0) {
-      indices.shift()
+      remaining.set(val, indices.slice(1))
     }
   }
 
