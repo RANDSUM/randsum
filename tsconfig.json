@@ -35,6 +35,7 @@
     { "path": "packages/fifth" },
     { "path": "packages/pbta" },
     { "path": "packages/root-rpg" },
-    { "path": "packages/salvageunion" }
+    { "path": "packages/salvageunion" },
+    { "path": "packages/component-library" }
   ]
 }
