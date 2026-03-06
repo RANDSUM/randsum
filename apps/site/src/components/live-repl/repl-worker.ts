@@ -10,6 +10,7 @@ interface WorkerResult {
 const serialize = (value: unknown): string => {
   if (value === null) return 'null'
   if (typeof value === 'object') return JSON.stringify(value, null, 2)
+  // eslint-disable-next-line @typescript-eslint/no-base-to-string
   return String(value)
 }
 
@@ -31,8 +32,9 @@ self.onmessage = (event: MessageEvent<string>) => {
       .join('\n')
 
     // Execute with pre-injected deps in isolated function scope
-    // eslint-disable-next-line no-new-func
+    // eslint-disable-next-line no-new-func, @typescript-eslint/no-implied-eval
     const fn = Function('roll', 'console', `"use strict";\n${executableCode}`)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const lastValue: unknown = fn(roll, capturedConsole)
 
     const result: WorkerResult = {
