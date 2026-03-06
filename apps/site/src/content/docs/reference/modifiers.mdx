@@ -382,10 +382,6 @@ Add or subtract a fixed value from the total.
 
 **Options keys:** `plus`, `minus`
 
-<RollerPlayground defaultNotation="4d6+5" client:only="react" />
-
-<RollerPlayground defaultNotation="2d8-2" client:only="react" />
-
 <CodeExample code={`import { roll } from '@randsum/roller'
 
 // Options object
@@ -394,6 +390,10 @@ roll({
   quantity: 4,
   modifiers: { plus: 5 }
 })`} />
+
+<RollerPlayground defaultNotation="4d6+5" client:only="react" />
+
+<RollerPlayground defaultNotation="2d8-2" client:only="react" />
 
 ## Count successes
 
