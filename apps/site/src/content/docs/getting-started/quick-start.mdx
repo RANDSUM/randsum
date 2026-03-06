@@ -3,17 +3,17 @@ title: Quick Start
 description: Learn the basics of rolling dice with @randsum/roller
 ---
 
+import { RollableCode } from '../../../components/rollable-code/RollableCode'
+
 This guide walks you through the basics of using `@randsum/roller` to roll dice in your application.
 
 ## Your first roll
 
-```typescript
-import { roll } from '@randsum/roller'
+<RollableCode client:only="react" liveArgs={[20]} code={`import { roll } from '@randsum/roller'
 
 // Roll a single d20
 const result = roll(20)
-console.log(result.total) // 1-20
-```
+console.log(result.total) // 1-20`} />
 
 The `roll()` function accepts several argument types. A plain number means "roll one die with that many sides."
 
@@ -56,20 +56,18 @@ roll('4d6L2')
 
 Add or subtract from the roll total:
 
-```typescript
-// Attack roll with +5 modifier
-roll('1d20+5')
+<RollableCode client:only="react" liveArgs={['1d20+5']} code={`// Attack roll with +5 modifier
+roll('1d20+5') // 6-25`} />
 
-// Damage with -1 penalty
-roll('2d6-1')
-```
+<RollableCode client:only="react" liveArgs={['2d6-1']} code={`// Damage with -1 penalty
+roll('2d6-1') // 1-11`} />
 
 ## Reroll and explode
 
-```typescript
-// Reroll any 1s
-roll('4d6R{1}')
+<RollableCode client:only="react" liveArgs={["4d6R{1}"]} code={`// Reroll any 1s
+roll('4d6R{1}') // 4-24`} />
 
+```typescript
 // Reroll results below 3
 roll('4d6R{<3}')
 
