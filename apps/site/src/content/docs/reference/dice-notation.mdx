@@ -242,7 +242,7 @@ Count dice meeting a threshold instead of summing values. Used in dice pool syst
 | Notation | Description |
 |---|---|
 | `S{N}` | Count dice >= N |
-| `S{N,B}` | Count successes >= N, subtract botches <= B |
+| `S{N,B}` | Count successes >= N, subtract botches &lt;= B |
 
 ```typescript
 roll('5d10S{7}')    // Count how many dice rolled >= 7
