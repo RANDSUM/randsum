@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { roll } from '@randsum/roller'
 import type { RollArgument } from '@randsum/roller'
 import { findDroppedIndices, findLastCommentIndex } from './formatLiveResult'
@@ -49,6 +50,24 @@ export function RollableCode({
   liveArgs
 }: RollableCodeProps): React.JSX.Element {
   const [rollState, setRollState] = useState<RollState | null>(null)
+  const [isDark, setIsDark] = useState(true)
+
+  useEffect(() => {
+    const check = (): void => {
+      setIsDark(document.documentElement.dataset.theme !== 'light')
+    }
+    check()
+    const observer = new MutationObserver(check)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    })
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  const highlightStyle = isDark ? atomOneDark : atomOneLight
 
   const lines = code.split('\n')
   const commentLineIndex = findLastCommentIndex(lines)
@@ -91,11 +110,12 @@ export function RollableCode({
             commentLineIndex={commentLineIndex}
             rollState={rollState}
             lang={lang}
+            highlightStyle={highlightStyle}
           />
         ) : (
           <SyntaxHighlighter
             language={lang}
-            style={atomOneDark}
+            style={highlightStyle}
             customStyle={{
               margin: 0,
               padding: '1.25rem 1.5rem',
@@ -118,13 +138,15 @@ interface LiveCodeViewProps {
   readonly commentLineIndex: number
   readonly rollState: RollState
   readonly lang: string
+  readonly highlightStyle: Record<string, React.CSSProperties>
 }
 
 function LiveCodeView({
   lines,
   commentLineIndex,
   rollState,
-  lang
+  lang,
+  highlightStyle
 }: LiveCodeViewProps): React.JSX.Element {
   const beforeLines = lines.slice(0, commentLineIndex)
   const commentLine = lines[commentLineIndex] ?? ''
@@ -137,7 +159,7 @@ function LiveCodeView({
     <>
       <SyntaxHighlighter
         language={lang}
-        style={atomOneDark}
+        style={highlightStyle}
         customStyle={{
           margin: 0,
           padding: '1.25rem 1.5rem 0',
