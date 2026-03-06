@@ -25,7 +25,7 @@ export default defineConfig({
           href: 'https://github.com/RANDSUM/randsum'
         }
       ],
-      customCss: ['./src/styles/custom.css'],
+      customCss: ['./src/styles/custom.css', './src/styles/roller-playground-theme.css'],
       sidebar: [
         {
           label: 'Getting Started',

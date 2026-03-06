@@ -17,6 +17,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@randsum/component-library": "workspace:~",
     "@astrojs/netlify": "^6.6.4",
     "@astrojs/react": "^4.4.2",
     "@astrojs/starlight": "^0.34.0",

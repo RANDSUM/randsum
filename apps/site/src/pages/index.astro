@@ -3,7 +3,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { Image } from 'astro:assets'
 import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
-import { RollerPlayground } from '../components/playground/RollerPlayground'
+import { RollerPlayground } from '@randsum/component-library'
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--tool-roller)',
@@ -49,7 +49,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           Throw Dice, Not Exceptions.
         </p>
         <div class="roller-playground-wrap">
-          <RollerPlayground client:only="react" />
+          <RollerPlayground client:only="react" className="site-roller" />
         </div>
         <div class="hero-actions">
           <a href="/getting-started/introduction/" class="btn btn-primary">Get Started</a>

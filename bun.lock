@@ -68,6 +68,7 @@
         "@astrojs/react": "^4.4.2",
         "@astrojs/starlight": "^0.34.0",
         "@randsum/blades": "workspace:~",
+        "@randsum/component-library": "workspace:~",
         "@randsum/daggerheart": "workspace:~",
         "@randsum/fifth": "workspace:~",
         "@randsum/pbta": "workspace:~",
@@ -88,6 +89,19 @@
       "version": "1.1.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
+      },
+    },
+    "packages/component-library": {
+      "name": "@randsum/component-library",
+      "version": "0.1.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+      "devDependencies": {
+        "@types/react": "catalog:",
+      },
+      "peerDependencies": {
+        "react": ">=18",
       },
     },
     "packages/daggerheart": {
@@ -113,7 +127,7 @@
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "1.1.0",
+      "version": "1.1.2",
       "bin": "./bin/randsum",
       "devDependencies": {
         "fast-check": "catalog:",
@@ -651,6 +665,8 @@
     "@randsum/blades": ["@randsum/blades@workspace:packages/blades"],
 
     "@randsum/cli": ["@randsum/cli@workspace:apps/cli"],
+
+    "@randsum/component-library": ["@randsum/component-library@workspace:packages/component-library"],
 
     "@randsum/daggerheart": ["@randsum/daggerheart@workspace:packages/daggerheart"],
 
