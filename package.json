@@ -111,7 +111,7 @@
     "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run site:build",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
-    "site:dev": "bun --filter @randsum/site dev",
+    "site:dev": "bun run --filter @randsum/component-library build && bun --filter @randsum/site dev",
     "discord:dev": "cd apps/discord-bot && bun run dev",
     "discord:deploy": "cd apps/discord-bot && bun run deploy-commands",
     "discord:start": "cd apps/discord-bot && bun run start",
