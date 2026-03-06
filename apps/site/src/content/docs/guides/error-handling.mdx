@@ -4,7 +4,7 @@ description: How to handle errors with RANDSUM's never-throw design
 ---
 
 import { Aside } from '@astrojs/starlight/components'
-import { LiveRepl } from '../../../components/live-repl/LiveRepl'
+import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
 
 RANDSUM uses a **never-throw** design. The `roll()` function never raises an exception — errors are returned as values in the result object.
 

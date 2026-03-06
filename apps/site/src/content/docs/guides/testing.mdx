@@ -3,7 +3,7 @@ title: Testing
 description: How to write deterministic tests for code that uses RANDSUM
 ---
 
-import { LiveRepl } from '../../../components/live-repl/LiveRepl'
+import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
 
 Rolling dice is inherently random, which makes testing tricky. RANDSUM provides a `randomFn` option on `roll()` so you can inject a deterministic random number generator and make your tests reproducible.
 
