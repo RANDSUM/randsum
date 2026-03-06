@@ -34,7 +34,7 @@
 .roller-playground-input-wrap {
   position: relative;
   flex: 1;
-  height: 100%;
+  align-self: stretch;
   display: flex;
   align-items: center;
 }
