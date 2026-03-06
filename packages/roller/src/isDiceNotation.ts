@@ -28,11 +28,10 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
 }
 
 /**
- * Creates a branded DiceNotation type from a string.
- * Throws NotationParseError if the string is not valid dice notation.
+ * Validates a string as DiceNotation, throwing if invalid.
  *
- * @param input - String to validate and convert to DiceNotation
- * @returns Branded DiceNotation type
+ * @param input - String to validate
+ * @returns The input narrowed to DiceNotation
  * @throws NotationParseError if input is not valid dice notation
  */
 export function notation(input: string): DiceNotation {

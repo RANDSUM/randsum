@@ -1,25 +1,29 @@
 import type { ModifierOptions } from './modifiers'
 
 /**
- * Branded type for validated dice notation strings.
+ * Template literal type for dice notation strings.
  *
- * Use `isDiceNotation()` or `notation()` to create validated DiceNotation values.
- * This ensures type safety for notation strings throughout the API.
+ * Enforces the structural shape `NdS[modifiers]` at the type level —
+ * `'4d6L'` and `'2d20H+5'` are valid, `'foo'` is not.
+ * Plain string literals that match the pattern are directly assignable;
+ * no type guard or cast is required to call `roll('4d6L')`.
+ *
+ * Use `isDiceNotation()` as a runtime guard when the input is unknown.
+ * Use `notation()` to parse and throw on invalid input.
  *
  * @example
  * ```ts
- * // Type guard validation
+ * // Plain literals work directly
+ * roll('4d6L')
+ * roll('2d20H+5')
+ *
+ * // Runtime guard for unknown input
  * if (isDiceNotation(input)) {
- *   // input is now typed as DiceNotation
  *   roll(input)
  * }
- *
- * // Direct conversion (throws if invalid)
- * const d = notation("4d6L")
  * ```
  */
-declare const __brand: unique symbol
-export type DiceNotation = string & { [__brand]: 'DiceNotation' }
+export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
 
 /**
  * Configuration options for a dice roll.
