@@ -3,16 +3,17 @@ title: Testing
 description: How to write deterministic tests for code that uses RANDSUM
 ---
 
+import { LiveRepl } from '../../../components/live-repl/LiveRepl'
+
 Rolling dice is inherently random, which makes testing tricky. RANDSUM provides a `randomFn` option on `roll()` so you can inject a deterministic random number generator and make your tests reproducible.
 
 ## Seeded random
 
 The `roll()` function accepts an optional `RollConfig` object as its last argument. Pass a `randomFn` to replace the built-in RNG:
 
-```typescript
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-function seededRandom(seed: number) {
+function seededRandom(seed) {
   let s = seed
   return () => {
     s = (s * 1664525 + 1013904223) % 2 ** 32
@@ -23,7 +24,7 @@ function seededRandom(seed: number) {
 const rng = seededRandom(42)
 const result = roll('2d6', { randomFn: rng })
 // result.total is the same value every time this test runs
-```
+console.log(result.total)`} />
 
 The `randomFn` must return a number in `[0, 1)` — the same contract as `Math.random()`. The LCG above (linear congruential generator) is simple and sufficient for tests.
 

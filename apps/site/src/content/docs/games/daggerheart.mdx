@@ -4,6 +4,7 @@ description: Daggerheart RPG hope and fear dice mechanics with RANDSUM
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { LiveRepl } from '../../../components/live-repl/LiveRepl'
 
 The `@randsum/daggerheart` package provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
 
@@ -32,15 +33,12 @@ The `@randsum/daggerheart` package provides mechanics for [Daggerheart](https://
 
 ## Usage
 
-```typescript title="Basic Roll"
-import { roll } from '@randsum/daggerheart'
+<LiveRepl code={`import { roll } from '@randsum/daggerheart'
 
 // Basic roll with modifier
-const result = roll({ modifier: 5 })
-```
+const result = roll({ modifier: 5 })`} />
 
-```typescript title="Advantage and Disadvantage"
-import { roll } from '@randsum/daggerheart'
+<LiveRepl code={`import { roll } from '@randsum/daggerheart'
 
 // Roll with advantage (adds a d6)
 roll({
@@ -52,11 +50,9 @@ roll({
 roll({
   modifier: -2,
   rollingWith: 'Disadvantage'
-})
-```
+})`} />
 
-```typescript title="Amplified Dice"
-import { roll } from '@randsum/daggerheart'
+<LiveRepl code={`import { roll } from '@randsum/daggerheart'
 
 // Amplify hope die (d12 becomes d20)
 roll({
@@ -75,18 +71,15 @@ roll({
   amplifyHope: true,
   amplifyFear: true,
   modifier: 4
-})
-```
+})`} />
 
-```typescript title="Result Handling"
-import { roll } from '@randsum/daggerheart'
+<LiveRepl code={`import { roll } from '@randsum/daggerheart'
 
 const { result, total } = roll({ modifier: 3 })
 
 // result contains type and detailed breakdown
 const { type, details } = result
-const { hope, fear, advantage, modifier } = details
-```
+const { hope, fear, advantage, modifier } = details`} />
 
 ## API reference
 

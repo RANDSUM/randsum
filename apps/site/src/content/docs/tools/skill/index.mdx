@@ -4,6 +4,7 @@ description: Use RANDSUM dice rolling in AI assistants and LLM agents
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { LiveRepl } from '../../../../components/live-repl/LiveRepl'
 
 RANDSUM provides a **dice rolling skill** for LLM agents -- a structured prompt and reference that enables AI assistants to roll dice using RANDSUM notation for any tabletop RPG system.
 
@@ -75,12 +76,10 @@ If you're building a custom agent, you can also use `@randsum/roller` directly:
 bun add @randsum/roller
 ```
 
-```typescript
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 const result = roll('4d6L')
 console.log(result.total)  // Sum after dropping lowest
-console.log(result.rolls)  // Individual die results
-```
+console.log(result.rolls)  // Individual die results`} />
 
 See the [roller documentation](/packages/roller/) for the full API.

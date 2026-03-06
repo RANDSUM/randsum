@@ -4,6 +4,7 @@ description: The core dice rolling engine that powers the RANDSUM ecosystem
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { LiveRepl } from '../../../components/live-repl/LiveRepl'
 
 `@randsum/roller` is the core dice rolling engine that powers the entire RANDSUM ecosystem. It provides advanced dice notation support for simple and complex rolling mechanics, with full TypeScript types and zero runtime dependencies.
 
@@ -36,44 +37,37 @@ import { Tabs, TabItem } from '@astrojs/starlight/components'
 
 ## Basic usage
 
-```typescript title="Basic Roll"
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 // Simple d20 roll
 roll(20) // Returns 1-20
 // or
-roll('1d20') // Returns 1-20
-```
+roll('1d20') // Returns 1-20`} />
 
-```typescript title="Character Stat Roll"
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 // Roll 4d6, drop lowest (D&D ability scores)
-roll('4d6L')
-```
+roll('4d6L')`} />
 
-```typescript title="Advantage and Disadvantage"
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 // Roll with advantage (2d20, keep highest)
 roll('2d20H')
 
 // Roll with disadvantage (2d20, keep lowest)
-roll('2d20L')
-```
+roll('2d20L')`} />
 
-```typescript title="Complex Notation"
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 // Roll 4d6, drop lowest, reroll below 3, exploding
-roll('4d6L!R{<3}')
-```
+roll('4d6L!R{<3}')`} />
 
 ## Argument types
 
 The `roll()` function accepts several input types:
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 // Number: roll 1 die with N sides
 roll(20)
 
@@ -88,8 +82,7 @@ roll({
 })
 
 // Multiple arguments: combined total
-roll('1d20', '2d6', '+5')
-```
+roll('1d20', '2d6', '+5')`} />
 
 ## Dice notation
 
@@ -116,12 +109,12 @@ For the full notation reference, see [Dice Notation](/reference/dice-notation/).
 
 ## Result object
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 const result = roll('4d6L+2')
 
-result.total  // Final total after all modifiers
-result.rolls  // Array of RollRecord objects
-```
+console.log(result.total)  // Final total after all modifiers
+console.log(result.rolls)  // Array of RollRecord objects`} />
 
 :::note
 `roll()` never throws. If input is invalid, an error is returned in the result: check `result.error` before using `result.total`.
@@ -129,30 +122,27 @@ result.rolls  // Array of RollRecord objects
 
 ## Validation utilities
 
-```typescript
-import { isDiceNotation, validateNotation } from '@randsum/roller'
+<LiveRepl code={`import { isDiceNotation, validateNotation, roll } from '@randsum/roller'
 
 // Type guard
-if (isDiceNotation(userInput)) {
-  roll(userInput) // userInput is typed as DiceNotation
+if (isDiceNotation('4d6L')) {
+  roll('4d6L') // typed as DiceNotation
 }
 
 // Full validation
 const validation = validateNotation('4d6L')
-```
+console.log(validation)`} />
 
 ## Custom random function
 
 Override `Math.random` for reproducible results or cryptographic randomness:
 
-```typescript
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 const cryptoRandom = () =>
   crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
 
-roll('2d6', { randomFn: cryptoRandom })
-```
+roll('2d6', { randomFn: cryptoRandom })`} />
 
 ## TypeScript types
 

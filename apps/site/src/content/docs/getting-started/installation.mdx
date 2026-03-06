@@ -4,6 +4,7 @@ description: Install RANDSUM packages in your project with bun, npm, or yarn
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { LiveRepl } from '../../../components/live-repl/LiveRepl'
 
 ## Core package
 
@@ -106,11 +107,9 @@ All packages ship as both ESM and CJS with full type declarations.
 
 ## Verify installation
 
-```typescript
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 const result = roll('2d6')
-console.log(result.total) // Sum of 2d6
-```
+console.log(result.total) // Sum of 2d6`} />
 
 If this runs without errors, installation is complete. See the [Quick Start](/getting-started/quick-start/) guide to learn the basics.

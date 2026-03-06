@@ -3,6 +3,8 @@ title: Introduction
 description: Welcome to RANDSUM — a zero-dependency dice engine with expressive notation
 ---
 
+import { LiveRepl } from '../../../components/live-repl/LiveRepl'
+
 RANDSUM is a zero-dependency dice engine with expressive notation, built for developers who take their dice seriously.
 
 ## Why RANDSUM?
@@ -17,8 +19,7 @@ RANDSUM is a zero-dependency dice engine with expressive notation, built for dev
 
 At its simplest, RANDSUM lets you roll dice with a single function call:
 
-```typescript
-import { roll } from '@randsum/roller'
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
 // Roll a d20
 const result = roll(20)
@@ -28,8 +29,7 @@ console.log(result.total) // 1-20
 const abilityScore = roll('4d6L')
 
 // Roll with advantage
-const attack = roll('2d20H+5')
-```
+const attack = roll('2d20H+5')`} />
 
 The `roll()` function accepts numbers, notation strings, or options objects -- and you can mix and match them freely.
 
