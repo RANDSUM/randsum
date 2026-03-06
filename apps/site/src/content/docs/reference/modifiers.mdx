@@ -3,6 +3,8 @@ title: Modifiers
 description: Complete reference for the RANDSUM modifier system
 ---
 
+import { RollableCode } from '../../../components/rollable-code/RollableCode'
+
 Modifiers transform dice results after rolling. They can drop dice, reroll values, cap ranges, make dice explode, and more. Modifiers are applied in a fixed priority order to ensure consistent, predictable results.
 
 ## Application order
@@ -55,9 +57,9 @@ Limit roll values to a specific range. Values outside the range are clamped to t
 
 **Options key:** `cap`
 
+<RollableCode client:only="react" liveArgs={['4d20C{>18}']} code={`roll('4d20C{>18}') // caps at 18`} />
+
 ```typescript
-// Notation
-roll('4d20C{>18}')     // Cap over 18 to 18
 roll('4d20C{<3}')      // Cap under 3 to 3
 roll('4d20C{<2,>19}')  // Cap both ends
 
@@ -94,9 +96,9 @@ Remove dice from the result pool.
 
 **Options key:** `drop`
 
+<RollableCode client:only="react" liveArgs={['4d6L']} code={`roll('4d6L') // 3-18`} />
+
 ```typescript
-// Drop lowest / highest
-roll('4d6L')    // Drop lowest 1
 roll('4d6L2')   // Drop lowest 2
 roll('4d6H')    // Drop highest 1
 roll('4d6H2')   // Drop highest 2
@@ -140,9 +142,9 @@ Keep specific dice from the result (complement of drop).
 
 **Options key:** `keep`
 
+<RollableCode client:only="react" liveArgs={['4d6K3']} code={`roll('4d6K3') // 3-18`} />
+
 ```typescript
-// Keep highest
-roll('4d6K3')  // Keep highest 3
 roll('4d6K')   // Keep highest 1
 
 // Keep lowest
@@ -221,10 +223,10 @@ Reroll dice matching certain conditions.
 
 **Options key:** `reroll`
 
+<RollableCode client:only="react" liveArgs={['4d20R{<5}']} code={`roll('4d20R{<5}') // 4-20`} />
+
 ```typescript
-// Reroll by comparison
 roll('4d20R{>17}')    // Reroll results over 17
-roll('4d20R{<5}')     // Reroll results under 5
 
 // Reroll exact values
 roll('4d20R{8,12}')   // Reroll 8s and 12s
@@ -257,8 +259,9 @@ Roll additional dice when a die shows its maximum value.
 
 **Options key:** `explode`
 
+<RollableCode client:only="react" liveArgs={['4d20!']} code={`roll('4d20!') // 4+`} />
+
 ```typescript
-roll('4d20!')   // Explode once per die
 roll('3d6!5')   // Max depth of 5
 roll('3d6!0')   // Unlimited (capped at 100)
 
@@ -326,8 +329,9 @@ Force all dice in a pool to show different values.
 
 **Options key:** `unique`
 
+<RollableCode client:only="react" liveArgs={['4d20U']} code={`roll('4d20U') // 4-80`} />
+
 ```typescript
-roll('4d20U')        // All must be unique
 roll('4d20U{5,10}')  // Unique except 5s and 10s
 
 // Options object
@@ -377,10 +381,11 @@ Add or subtract a fixed value from the total.
 
 **Options keys:** `plus`, `minus`
 
-```typescript
-roll('4d6+5')   // Add 5
-roll('2d8-2')   // Subtract 2
+<RollableCode client:only="react" liveArgs={['4d6+5']} code={`roll('4d6+5') // 9-29`} />
 
+<RollableCode client:only="react" liveArgs={['2d8-2']} code={`roll('2d8-2') // 0-14`} />
+
+```typescript
 // Options object
 roll({
   sides: 6,
@@ -395,8 +400,9 @@ Count dice meeting a threshold instead of summing. Used in dice pool systems (Wo
 
 **Options key:** `countSuccesses`
 
+<RollableCode client:only="react" liveArgs={['5d10S{7}']} code={`roll('5d10S{7}') // 0-5`} />
+
 ```typescript
-roll('5d10S{7}')    // Count dice >= 7
 roll('5d10S{7,1}')  // Successes >= 7, minus botches <= 1
 
 // Options object
