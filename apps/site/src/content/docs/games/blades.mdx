@@ -4,7 +4,7 @@ description: Blades in the Dark dice pool mechanics with RANDSUM
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/blades` package provides mechanics for [Blades in the Dark](https://www.evilhat.com/home/blades-in-the-dark/), a tabletop RPG about a crew of daring scoundrels seeking their fortunes on the haunted streets of an industrial-fantasy city.
 
@@ -19,22 +19,22 @@ The `@randsum/blades` package provides mechanics for [Blades in the Dark](https:
 
 <Tabs>
   <TabItem label="bun">
-    <LiveRepl readonly lang="bash" code={`bun add @randsum/blades`} />
+    <CodeExample readonly lang="bash" code={`bun add @randsum/blades`} />
   </TabItem>
   <TabItem label="npm">
-    <LiveRepl readonly lang="bash" code={`npm install @randsum/blades`} />
+    <CodeExample readonly lang="bash" code={`npm install @randsum/blades`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-<LiveRepl code={`import { roll } from '@randsum/blades'
+<CodeExample code={`import { roll } from '@randsum/blades'
 
 // Roll with a dice pool of 3
 const { result } = roll(3)
 console.log(result) // 'critical' | 'success' | 'partial' | 'failure'`} />
 
-<LiveRepl code={`import { roll } from '@randsum/blades'
+<CodeExample code={`import { roll } from '@randsum/blades'
 
 roll(0)  // Desperate: rolls 2d6, keeps lowest
 roll(1)  // One die
@@ -42,7 +42,7 @@ roll(2)  // Two dice
 roll(3)  // Three dice
 roll(4)  // Four dice (e.g., with assistance)`} />
 
-<LiveRepl code={`import { roll } from '@randsum/blades'
+<CodeExample code={`import { roll } from '@randsum/blades'
 
 const { result } = roll(2)
 
@@ -94,7 +94,7 @@ When the dice pool is 0 (desperate position), the system rolls 2d6 and drops the
 
 ## Type exports
 
-<LiveRepl readonly code={`import type { BladesResult } from '@randsum/blades'`} />
+<CodeExample readonly code={`import type { BladesResult } from '@randsum/blades'`} />
 
 ## Links
 

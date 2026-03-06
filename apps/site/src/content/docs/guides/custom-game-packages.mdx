@@ -4,7 +4,7 @@ description: Build your own game package using the createGameRoll factory
 ---
 
 import { Aside } from '@astrojs/starlight/components'
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 ## When to use this
 
@@ -18,7 +18,7 @@ Use `createGameRoll` when you need to:
 
 `createGameRoll` is a factory that wires together three hooks — validate, convert, interpret — and returns a ready-to-call roll function.
 
-<LiveRepl code={`import { createGameRoll } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll } from '@randsum/roller'
 
 const myRoll = createGameRoll({
   validate: (input) => { /* throw if invalid */ },
@@ -32,7 +32,7 @@ Called first with the raw input. Throw here if the input is invalid — the erro
 
 `@randsum/roller` exports these validation helpers:
 
-<LiveRepl readonly code={`import {
+<CodeExample readonly code={`import {
   validateFinite,      // value is a finite number
   validateInteger,     // value is an integer
   validateRange,       // value is within min/max bounds
@@ -43,7 +43,7 @@ Called first with the raw input. Throw here if the input is invalid — the erro
 
 Each helper takes the value, a label string, and (for range helpers) bounds:
 
-<LiveRepl code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
 
 const myRoll = createGameRoll({
   validate: (input) => {
@@ -56,7 +56,7 @@ const myRoll = createGameRoll({
 
 `validateGreaterThan` and `validateLessThan` take `(value, threshold, name)`:
 
-<LiveRepl code={`import { createGameRoll, validateGreaterThan, validateLessThan } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll, validateGreaterThan, validateLessThan } from '@randsum/roller'
 
 const myRoll = createGameRoll({
   validate: (input) => {
@@ -72,7 +72,7 @@ const myRoll = createGameRoll({
   Validation errors throw directly. Wrap the call in a try/catch if you need to handle them gracefully rather than letting them propagate.
 </Aside>
 
-<LiveRepl code={`import { createGameRoll, validateRange } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll, validateRange } from '@randsum/roller'
 
 const rollPbta = createGameRoll({
   validate: (stat) => {
@@ -97,7 +97,7 @@ try {
 
 Converts validated input into a `RollOptions` object (or an array of them for multi-pool rolls). This is where you express game mechanics as dice parameters.
 
-<LiveRepl code={`import { createGameRoll } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll } from '@randsum/roller'
 
 const myRoll = createGameRoll({
   validate: (_input) => {},
@@ -116,7 +116,7 @@ const myRoll = createGameRoll({
 
 Receives the resolved total, the individual roll records, and the full `RollerRollResult`. Return your game-specific `TResult` here.
 
-<LiveRepl code={`import { createGameRoll } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll } from '@randsum/roller'
 
 const myRoll = createGameRoll({
   validate: (_input) => {},
@@ -132,7 +132,7 @@ const myRoll = createGameRoll({
 
 A PbtA-style roll that maps 2d6 + stat to a three-outcome result:
 
-<LiveRepl code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
 
 const rollPbta = createGameRoll({
   validate: (stat) => {
@@ -160,7 +160,7 @@ console.log(result.total)  // 2d6 + 2`} />
 
 Use the optional `computeDetails` hook to attach structured metadata to the result. Pass `TDetails` as the third generic argument.
 
-<LiveRepl code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
 
 const rollPbta = createGameRoll({
   validate: (stat) => {
@@ -192,7 +192,7 @@ Use `createMultiRollGameRoll` when your game requires multiple distinct, named d
 
 Each entry in `toRollOptions` takes a `key` string. After rolling, `interpretResult` receives a `Map<string, RollRecord>` keyed by those strings.
 
-<LiveRepl code={`import { createMultiRollGameRoll, validateFinite, validateRange } from '@randsum/roller'
+<CodeExample code={`import { createMultiRollGameRoll, validateFinite, validateRange } from '@randsum/roller'
 
 const rollDual = createMultiRollGameRoll({
   validate: (input) => {

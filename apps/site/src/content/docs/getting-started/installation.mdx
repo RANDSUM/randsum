@@ -4,7 +4,7 @@ description: Install RANDSUM packages in your project with bun, npm, or yarn
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 ## Core package
 
@@ -12,13 +12,13 @@ The core `@randsum/roller` package is all you need for general-purpose dice roll
 
 <Tabs>
   <TabItem label="bun">
-    <LiveRepl readonly lang="bash" code={`bun add @randsum/roller`} />
+    <CodeExample readonly lang="bash" code={`bun add @randsum/roller`} />
   </TabItem>
   <TabItem label="npm">
-    <LiveRepl readonly lang="bash" code={`npm install @randsum/roller`} />
+    <CodeExample readonly lang="bash" code={`npm install @randsum/roller`} />
   </TabItem>
   <TabItem label="yarn">
-    <LiveRepl readonly lang="bash" code={`yarn add @randsum/roller`} />
+    <CodeExample readonly lang="bash" code={`yarn add @randsum/roller`} />
   </TabItem>
 </Tabs>
 
@@ -28,7 +28,7 @@ If you are building for a specific tabletop RPG system, install the correspondin
 
 <Tabs>
   <TabItem label="bun">
-    <LiveRepl readonly lang="bash" code={`# D&D 5th Edition
+    <CodeExample readonly lang="bash" code={`# D&D 5th Edition
 bun add @randsum/fifth
 
 # Blades in the Dark
@@ -47,7 +47,7 @@ bun add @randsum/root-rpg
 bun add @randsum/salvageunion`} />
   </TabItem>
   <TabItem label="npm">
-    <LiveRepl readonly lang="bash" code={`# D&D 5th Edition
+    <CodeExample readonly lang="bash" code={`# D&D 5th Edition
 npm install @randsum/fifth
 
 # Blades in the Dark
@@ -66,7 +66,7 @@ npm install @randsum/root-rpg
 npm install @randsum/salvageunion`} />
   </TabItem>
   <TabItem label="yarn">
-    <LiveRepl readonly lang="bash" code={`# D&D 5th Edition
+    <CodeExample readonly lang="bash" code={`# D&D 5th Edition
 yarn add @randsum/fifth
 
 # Blades in the Dark
@@ -95,7 +95,7 @@ All packages ship as both ESM and CJS with full type declarations.
 
 ## Verify installation
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('2d6')
 console.log(result.total) // Sum of 2d6`} />

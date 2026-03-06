@@ -4,7 +4,7 @@ description: Daggerheart RPG hope and fear dice mechanics with RANDSUM
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/daggerheart` package provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
 
@@ -20,21 +20,21 @@ The `@randsum/daggerheart` package provides mechanics for [Daggerheart](https://
 
 <Tabs>
   <TabItem label="bun">
-    <LiveRepl readonly lang="bash" code={`bun add @randsum/daggerheart`} />
+    <CodeExample readonly lang="bash" code={`bun add @randsum/daggerheart`} />
   </TabItem>
   <TabItem label="npm">
-    <LiveRepl readonly lang="bash" code={`npm install @randsum/daggerheart`} />
+    <CodeExample readonly lang="bash" code={`npm install @randsum/daggerheart`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-<LiveRepl code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/daggerheart'
 
 // Basic roll with modifier
 const result = roll({ modifier: 5 })`} />
 
-<LiveRepl code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/daggerheart'
 
 // Roll with advantage (adds a d6)
 roll({
@@ -48,7 +48,7 @@ roll({
   rollingWith: 'Disadvantage'
 })`} />
 
-<LiveRepl code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/daggerheart'
 
 // Amplify hope die (d12 becomes d20)
 roll({
@@ -69,7 +69,7 @@ roll({
   modifier: 4
 })`} />
 
-<LiveRepl code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/daggerheart'
 
 const { result, total } = roll({ modifier: 3 })
 
@@ -122,7 +122,7 @@ The `details` object provides full visibility into each component:
 
 ## Type exports
 
-<LiveRepl readonly code={`import type {
+<CodeExample readonly code={`import type {
   DaggerheartRollArgument,
   DaggerheartRollResult,
   DaggerheartRollResultType,

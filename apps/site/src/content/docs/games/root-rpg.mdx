@@ -4,7 +4,7 @@ description: Root RPG dice mechanics with RANDSUM
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/root-rpg` package provides mechanics for [Root RPG](https://magpiegames.com/pages/root-rpg), a tabletop roleplaying game set in the world of the Root board game. It uses a 2d6 + bonus system with success thresholds similar to Powered by the Apocalypse games.
 
@@ -20,22 +20,22 @@ The `@randsum/root-rpg` package provides mechanics for [Root RPG](https://magpie
 
 <Tabs>
   <TabItem label="bun">
-    <LiveRepl readonly lang="bash" code={`bun add @randsum/root-rpg`} />
+    <CodeExample readonly lang="bash" code={`bun add @randsum/root-rpg`} />
   </TabItem>
   <TabItem label="npm">
-    <LiveRepl readonly lang="bash" code={`npm install @randsum/root-rpg`} />
+    <CodeExample readonly lang="bash" code={`npm install @randsum/root-rpg`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-<LiveRepl code={`import { roll } from '@randsum/root-rpg'
+<CodeExample code={`import { roll } from '@randsum/root-rpg'
 
 // Roll with a stat bonus
 const { result, total } = roll(2)
 // result: 'Strong Hit' | 'Weak Hit' | 'Miss'`} />
 
-<LiveRepl code={`import { roll } from '@randsum/root-rpg'
+<CodeExample code={`import { roll } from '@randsum/root-rpg'
 
 const { result } = roll(0)
 
@@ -51,7 +51,7 @@ switch (result) {
     break
 }`} />
 
-<LiveRepl code={`import { roll } from '@randsum/root-rpg'
+<CodeExample code={`import { roll } from '@randsum/root-rpg'
 
 roll(2)   // Strong stat
 roll(0)   // No bonus
@@ -85,7 +85,7 @@ roll(-1)  // Penalty`} />
 
 ## Type exports
 
-<LiveRepl readonly code={`import type { RootRpgResult } from '@randsum/root-rpg'`} />
+<CodeExample readonly code={`import type { RootRpgResult } from '@randsum/root-rpg'`} />
 
 ## Links
 

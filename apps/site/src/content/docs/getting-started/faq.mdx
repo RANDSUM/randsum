@@ -3,13 +3,13 @@ title: FAQ
 description: Common questions about RANDSUM
 ---
 
-import LiveRepl from '../../../components/live-repl/LiveRepl.astro'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 ## Why doesn't `roll()` throw?
 
 RANDSUM follows a never-throw design — errors are returned as values rather than raised as exceptions. This makes error handling explicit and composable without try/catch blocks.
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('invalid notation')
 
@@ -27,7 +27,7 @@ See [Error Handling](/guides/error-handling/) for the full pattern.
 
 Pass `0` to `roll()` from `@randsum/blades`. A 0-dice pool represents a **desperate position** in Blades in the Dark — the system rolls 2d6 and keeps the lowest die.
 
-<LiveRepl code={`import { roll } from '@randsum/blades'
+<CodeExample code={`import { roll } from '@randsum/blades'
 
 const result = roll(0) // Rolls 2d6, keeps lowest
 console.log(result.result) // 'critical' | 'success' | 'partial' | 'failure'`} />
@@ -36,7 +36,7 @@ console.log(result.result) // 'critical' | 'success' | 'partial' | 'failure'`} /
 
 Every `roll()` result includes a `rolls` array of `RollRecord` objects — one per dice group. Each record contains the individual die values before and after modifiers.
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('4d6L')
 
@@ -68,7 +68,7 @@ The reroll modifier has a built-in attempt limit (`MAX_REROLL_ATTEMPTS = 99`). I
 
 Yes — pass a `randomFn` in the `RollConfig` argument. Any function that returns a number in `[0, 1)` works. Here is a simple seeded random function you can use:
 
-<LiveRepl code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Simple seeded random (linear congruential generator)
 function seededRandom(seed) {
