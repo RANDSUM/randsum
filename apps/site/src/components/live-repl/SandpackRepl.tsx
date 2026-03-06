@@ -1,4 +1,9 @@
-import { Sandpack } from '@codesandbox/sandpack-react'
+import {
+  SandpackCodeEditor,
+  SandpackConsole,
+  SandpackLayout,
+  SandpackProvider
+} from '@codesandbox/sandpack-react'
 import { sandpackDark } from '@codesandbox/sandpack-themes'
 import { extractRandsumDeps } from './extractRandsumDeps'
 
@@ -32,19 +37,31 @@ const theme = {
 export function SandpackRepl({ code, readonly = false }: Props): React.JSX.Element {
   const dependencies = extractRandsumDeps(code)
 
+  const packageJson = JSON.stringify(
+    {
+      name: 'randsum-example',
+      type: 'module',
+      scripts: { start: 'node index.js' },
+      dependencies
+    },
+    null,
+    2
+  )
+
   return (
-    <Sandpack
+    <SandpackProvider
       template="node"
       theme={theme}
-      files={{ '/index.ts': code }}
-      customSetup={{ dependencies, entry: '/index.ts' }}
-      options={{
-        readOnly: readonly,
-        showConsole: true,
-        showConsoleButton: true,
-        editorHeight: 'auto',
-        activeFile: '/index.ts'
+      files={{
+        '/index.js': { code, active: true },
+        '/package.json': { code: packageJson, hidden: true }
       }}
-    />
+      customSetup={{ dependencies }}
+    >
+      <SandpackLayout>
+        <SandpackCodeEditor readOnly={readonly} />
+        <SandpackConsole />
+      </SandpackLayout>
+    </SandpackProvider>
   )
 }
