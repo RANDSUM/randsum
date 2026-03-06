@@ -1,7 +1,7 @@
 {
   "name": "@randsum/roller",
   "version": "1.1.1",
-  "description": "A flexible, type-safe dice roller for tabletop RPGs, game development, and probability simulations",
+  "description": "TypeScript-first dice notation engine for tabletop RPGs, game development, and probability simulations",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
