@@ -120,6 +120,13 @@ roll({
   modifiers: { drop: { highest: 2 } }
 })
 
+roll("4d6LH") // Drop both lowest and highest
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { drop: { lowest: 1, highest: 1 } }
+})
+
 // Drop by value
 roll("4d20D{>17}") // Drop rolls over 17
 roll({
@@ -461,6 +468,40 @@ roll({
 - **Pre-Arithmetic (`*`)**: `2d6*2+3` = (9 × 2) + 3 = 21
 - **Total (`**`)**: `2d6+3\*\*2` = (9 + 3) × 2 = 24
 
+### Count Successes (S{...})
+
+Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
+
+```typescript
+roll("5d10S{7}") // Count how many dice rolled >= 7
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countSuccesses: { threshold: 7 }
+  }
+})
+
+// With botch threshold (successes - botches)
+roll("5d10S{7,1}") // Count successes >= 7, subtract botches <= 1
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countSuccesses: {
+      threshold: 7,
+      botchThreshold: 1
+    }
+  }
+})
+```
+
+**How it works:** Instead of summing dice values, the total becomes a count of dice that meet or exceed the threshold. If a botch threshold is specified, dice at or below that value are subtracted from the success count.
+
+**Example:** `5d10S{7}` rolls [8, 3, 10, 6, 9]. Successes >= 7: [8, 10, 9] = 3.
+
+**Example with botch:** `5d10S{7,1}` rolls [8, 1, 10, 1, 9]. Successes: 3, Botches: 2. Result = 1.
+
 ### Combining Modifiers
 
 Modifiers can be chained together. They are applied in a specific order to ensure consistent results:
@@ -473,7 +514,7 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 4. Reroll
 5. Explode / Compound / Penetrate
 6. Unique
-7. Success Count
+7. Count Successes
 8. Pre-Arithmetic Multiply (`*`)
 9. Plus / Minus
 10. Total Multiply (`**`)
