@@ -54,6 +54,22 @@ export function RollerPlayground(): React.JSX.Element {
   return (
     <div className="roller-playground">
       <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
+        <button
+          className="roller-playground-btn"
+          onClick={handleRoll}
+          disabled={!isValid || state.status === 'rolling'}
+          aria-label={
+            state.status === 'rolling' ? 'Rolling' : state.status === 'result' ? 'Reroll' : 'Roll'
+          }
+        >
+          {state.status === 'rolling' ? (
+            <span className="roller-playground-spinner" aria-hidden="true" />
+          ) : state.status === 'result' ? (
+            'Reroll'
+          ) : (
+            'Roll'
+          )}
+        </button>
         <div className="roller-playground-input-wrap" ref={inputWrapRef}>
           <input
             type="text"
@@ -124,23 +140,6 @@ export function RollerPlayground(): React.JSX.Element {
             )}
           </div>
         )}
-
-        <button
-          className="roller-playground-btn"
-          onClick={handleRoll}
-          disabled={!isValid || state.status === 'rolling'}
-          aria-label={
-            state.status === 'rolling' ? 'Rolling' : state.status === 'result' ? 'Reroll' : 'Roll'
-          }
-        >
-          {state.status === 'rolling' ? (
-            <span className="roller-playground-spinner" aria-hidden="true" />
-          ) : state.status === 'result' ? (
-            'Reroll'
-          ) : (
-            'Roll'
-          )}
-        </button>
       </div>
     </div>
   )
