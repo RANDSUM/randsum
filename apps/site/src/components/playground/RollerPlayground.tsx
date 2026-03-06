@@ -171,11 +171,11 @@ const MAX_DICE_SHOWN = 10
 function formatAsMath(rolls: readonly number[], delta = 0): string {
   const terms = rolls.map((n, i) => {
     if (i === 0) return String(n)
-    return n < 0 ? ` - ${Math.abs(n)}` : ` + ${n}`
+    return n < 0 ? `-${Math.abs(n)}` : `+${n}`
   })
-  if (delta > 0) terms.push(` + ${delta}`)
-  if (delta < 0) terms.push(` - ${Math.abs(delta)}`)
-  return terms.join('')
+  if (delta > 0) terms.push(`+${delta}`)
+  if (delta < 0) terms.push(`-${Math.abs(delta)}`)
+  return terms.join(' ')
 }
 
 function computeSteps(record: RollRecord): readonly TooltipStep[] {
@@ -240,17 +240,17 @@ function DiceGroup({
     <span className="roller-tooltip-dice-group">
       {removed.length > 0 && (
         <span className="roller-tooltip-dice roller-tooltip-dice--removed">
-          {removed.join(', ')}
+          {removed.join(' ')}
         </span>
       )}
       {added.length > 0 && (
-        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(', ')}</span>
+        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(' ')}</span>
       )}
       {hasModified && shown.length > 0 && <span className="roller-tooltip-dice-sep">|</span>}
       {shown.length > 0 && (
         <span className="roller-tooltip-dice">
-          {shown.join(', ')}
-          {truncated ? ', …' : ''}
+          {shown.join(' ')}
+          {truncated ? ' …' : ''}
         </span>
       )}
     </span>
