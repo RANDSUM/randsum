@@ -86,12 +86,7 @@ export function RollerPlayground(): React.JSX.Element {
             'Roll'
           )}
         </button>
-      </div>
-      <p className={`roller-playground-subtext roller-playground-subtext--${subtext.variant}`}>
-        {subtext.text}
-      </p>
-      {state.status === 'result' && (
-        <div className="roller-playground-chip-wrap">
+        {state.status === 'result' && (
           <div
             className="roller-playground-chip"
             onMouseEnter={() => {
@@ -109,8 +104,11 @@ export function RollerPlayground(): React.JSX.Element {
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      <p className={`roller-playground-subtext roller-playground-subtext--${subtext.variant}`}>
+        {subtext.text}
+      </p>
     </div>
   )
 }

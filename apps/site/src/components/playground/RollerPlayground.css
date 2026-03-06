@@ -95,29 +95,23 @@
   color: #f97583;
 }
 
-/* ===== Chip wrap ===== */
-.roller-playground-chip-wrap {
-  margin-top: 0.75rem;
-  min-height: 2.25rem;
-  display: flex;
-  align-items: center;
-}
-
 /* ===== Chip ===== */
 .roller-playground-chip {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.25rem;
   background: var(--sl-color-gray-6);
   border: 1px solid var(--sl-color-gray-4);
-  border-radius: 2rem;
+  border-radius: 0.5rem;
   font-family: var(--sl-font-mono);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   cursor: default;
   user-select: none;
+  white-space: nowrap;
   animation: chip-enter 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
@@ -137,8 +131,8 @@
 }
 
 .roller-playground-chip-dot {
-  width: 0.45rem;
-  height: 0.45rem;
+  width: 0.4rem;
+  height: 0.4rem;
   border-radius: 50%;
   background: var(--sl-color-accent);
   flex-shrink: 0;
