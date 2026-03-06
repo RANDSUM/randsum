@@ -1,8 +1,9 @@
+import type { ComparisonOptions } from '../../../types'
 import { formatComparisonDescription, formatComparisonNotation } from '../../comparison'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
-const replacePattern = /[Vv]\{([^}]{1,50})\}/
+const replacePattern = /[Vv]\{((?:>=|<=|>|<)?\d+=\d+(?:,(?:>=|<=|>|<)?\d+=\d+)*)\}/
 
 /**
  * Replace modifier - substitutes specific roll values with other values.
@@ -28,16 +29,21 @@ export const replaceModifier: TypedModifierDefinition<'replace'> = defineModifie
     const parts = content.split(',').map(s => s.trim())
 
     const replacements = parts.map(part => {
-      const [fromPart, toPart] = part.split('=')
-      if (!fromPart || !toPart) return { from: 0, to: 0 }
+      const fromToMatch = /^((?:>=|<=|>|<)?\d+)=(\d+)$/.exec(part)
+      if (!fromToMatch?.[1] || !fromToMatch[2]) return { from: 0, to: 0 }
 
-      const from: number | { greaterThan: number } | { lessThan: number } = fromPart.startsWith('>')
-        ? { greaterThan: Number(fromPart.slice(1)) }
-        : fromPart.startsWith('<')
-          ? { lessThan: Number(fromPart.slice(1)) }
-          : Number(fromPart)
+      const [, fromStr, toStr] = fromToMatch
+      const from: number | ComparisonOptions = fromStr.startsWith('>=')
+        ? { greaterThanOrEqual: Number(fromStr.slice(2)) }
+        : fromStr.startsWith('<=')
+          ? { lessThanOrEqual: Number(fromStr.slice(2)) }
+          : fromStr.startsWith('>')
+            ? { greaterThan: Number(fromStr.slice(1)) }
+            : fromStr.startsWith('<')
+              ? { lessThan: Number(fromStr.slice(1)) }
+              : Number(fromStr)
 
-      return { from, to: Number(toPart) }
+      return { from, to: Number(toStr) }
     })
 
     return { replace: replacements }
@@ -74,9 +80,11 @@ export const replaceModifier: TypedModifierDefinition<'replace'> = defineModifie
       const { from, to } = rule
       return currentRolls.map(roll => {
         if (typeof from === 'object') {
-          const { greaterThan, lessThan } = from
+          const { greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual } = from
           if (greaterThan !== undefined && roll > greaterThan) return to
+          if (greaterThanOrEqual !== undefined && roll >= greaterThanOrEqual) return to
           if (lessThan !== undefined && roll < lessThan) return to
+          if (lessThanOrEqual !== undefined && roll <= lessThanOrEqual) return to
           return roll
         }
         return roll === from ? to : roll

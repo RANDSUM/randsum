@@ -38,7 +38,6 @@ export {
   parseComparisonNotation,
   hasConditions
 } from './internal/api'
-export type { ExtendedComparisonOptions } from './internal/api'
 
 export type {
   DiceNotation,

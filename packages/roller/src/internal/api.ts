@@ -39,4 +39,3 @@ export {
   parseComparisonNotation,
   hasConditions
 } from '../lib/comparison'
-export type { ExtendedComparisonOptions } from '../lib/comparison'

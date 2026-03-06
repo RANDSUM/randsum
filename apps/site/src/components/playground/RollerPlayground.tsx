@@ -31,7 +31,8 @@ console.log('Rolls:   ', result.rolls)
       name: 'randsum-playground',
       version: '1.0.0',
       private: true,
-      dependencies: { '@randsum/roller': 'latest' }
+      scripts: { start: 'tsx index.ts' },
+      dependencies: { '@randsum/roller': 'latest', tsx: 'latest' }
     },
     null,
     2
@@ -59,9 +60,10 @@ console.log('Rolls:   ', result.rolls)
 }
 
 export function RollerPlayground({
-  stackblitz = true
-}: { readonly stackblitz?: boolean } = {}): React.JSX.Element {
-  const [notation, setNotation] = useState('4d6L')
+  stackblitz = true,
+  defaultNotation = '4d6L'
+}: { readonly stackblitz?: boolean; readonly defaultNotation?: string } = {}): React.JSX.Element {
+  const [notation, setNotation] = useState(defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [showTooltip, setShowTooltip] = useState(false)
   const [copied, setCopied] = useState(false)
