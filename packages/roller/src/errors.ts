@@ -18,7 +18,9 @@ export const ERROR_CODES: Record<string, string> & {
   ROLL_ERROR: 'ROLL_ERROR'
 } as const satisfies Record<string, string>
 
-export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
+export type ErrorCode =
+  | (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
+  | (string & Record<never, never>)
 
 /**
  * Base error class for all RANDSUM errors.
