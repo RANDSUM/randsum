@@ -118,6 +118,9 @@ export function RollableCode({
             margin: 0,
             padding: '0.75rem 1.5rem 0',
             background: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+            borderRadius: 0,
             fontSize: '0.9rem',
             lineHeight: 1.7
           }}

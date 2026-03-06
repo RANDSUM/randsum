@@ -41,11 +41,14 @@
 
 .rollable-code-controls {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0.5rem;
 }
 
-.rollable-btn {
+/* High specificity to override Starlight's button resets inside markdown content */
+.rollable-code .rollable-btn {
   font-size: 0.75rem;
   font-family: var(--sl-font-mono);
   height: 1.75rem;
@@ -59,34 +62,34 @@
   white-space: nowrap;
 }
 
-.rollable-btn-run {
+.rollable-code .rollable-btn-run {
   background: var(--sl-color-accent);
   color: var(--sl-color-black);
   border-color: var(--sl-color-accent);
 }
 
-.rollable-btn-run:hover {
+.rollable-code .rollable-btn-run:hover {
   filter: brightness(1.15);
 }
 
-.rollable-btn-reroll {
+.rollable-code .rollable-btn-reroll {
   background: transparent;
   color: var(--sl-color-accent);
   border-color: var(--sl-color-accent);
 }
 
-.rollable-btn-reroll:hover {
+.rollable-code .rollable-btn-reroll:hover {
   background: var(--sl-color-accent);
   color: var(--sl-color-black);
 }
 
-.rollable-btn-clear {
+.rollable-code .rollable-btn-clear {
   background: transparent;
   color: var(--sl-color-gray-3);
   border-color: var(--sl-color-gray-4);
 }
 
-.rollable-btn-clear:hover {
+.rollable-code .rollable-btn-clear:hover {
   color: var(--sl-color-white);
   border-color: var(--sl-color-gray-3);
 }
