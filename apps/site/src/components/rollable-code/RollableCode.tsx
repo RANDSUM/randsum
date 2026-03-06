@@ -26,7 +26,6 @@ function computeRollState(
 ): RollState | null {
   if (result.error) return null
 
-  if (result.rolls.length === 0) return null
   const record = result.rolls[0]
   const initial = record.modifierHistory.initialRolls
   const modified = record.modifierHistory.modifiedRolls
