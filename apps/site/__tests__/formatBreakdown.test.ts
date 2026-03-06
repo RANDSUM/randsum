@@ -1,14 +1,22 @@
 import { describe, expect, test } from 'bun:test'
 import { formatBreakdown } from '../src/components/playground/helpers/formatBreakdown'
-import { notation } from '@randsum/roller'
-import type { RollRecord } from '@randsum/roller'
+import { type RollParams, type RollRecord, notation } from '@randsum/roller'
 
 function makeRecord(overrides: Partial<RollRecord> = {}): RollRecord {
   return {
     argument: notation('4d6L'),
     notation: notation('4d6L'),
     description: ['4d6 drop lowest 1'],
-    parameters: {} as never,
+    parameters: {
+      argument: notation('4d6L'),
+      notation: notation('4d6L'),
+      description: ['4d6 drop lowest 1'],
+      sides: 6,
+      quantity: 4,
+      modifiers: {},
+      arithmetic: 'add',
+      key: '4d6L'
+    } as RollParams,
     rolls: [6, 4, 3, 1],
     modifierHistory: {
       logs: [],
