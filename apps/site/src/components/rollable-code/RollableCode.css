@@ -16,10 +16,27 @@
   background: var(--sl-color-gray-6);
 }
 
-.rollable-code-lang {
-  font-size: 0.75rem;
-  color: var(--sl-color-gray-3);
-  font-family: var(--sl-font-mono);
+.rollable-traffic-lights {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.rollable-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.rollable-dot-red {
+  background: #ff5f57;
+}
+.rollable-dot-yellow {
+  background: #ffbd2e;
+}
+.rollable-dot-green {
+  background: #28c840;
 }
 
 .rollable-code-controls {
@@ -30,11 +47,15 @@
 .rollable-btn {
   font-size: 0.75rem;
   font-family: var(--sl-font-mono);
-  padding: 0.2rem 0.6rem;
+  height: 1.75rem;
+  padding: 0 0.6rem;
   border-radius: 0.25rem;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .rollable-btn-run {
@@ -74,10 +95,15 @@
 }
 
 .rollable-live-comment {
-  padding: 0 1.5rem 1.25rem;
+  border-top: 1px solid var(--sl-color-gray-5);
+  padding: 0.4rem 1.5rem 0.75rem;
   font-size: 0.9rem;
   line-height: 1.7;
   font-family: var(--sl-font-mono);
+}
+
+.rollable-live-comment-empty {
+  opacity: 0.4;
 }
 
 .rollable-comment-prefix {

@@ -18,13 +18,9 @@ interface RollableCodeProps {
 interface RollState {
   readonly segments: readonly DiceSegment[]
   readonly total: number
-  readonly commentLineIndex: number
 }
 
-function computeRollState(
-  result: ReturnType<typeof roll>,
-  commentLineIndex: number
-): RollState | null {
+function computeRollState(result: ReturnType<typeof roll>): RollState | null {
   if (result.error) return null
 
   const record = result.rolls[0]
@@ -37,7 +33,7 @@ function computeRollState(
     dropped: dropped.has(i)
   }))
 
-  return { segments, total: result.total, commentLineIndex }
+  return { segments, total: result.total }
 }
 
 /**
@@ -72,10 +68,17 @@ export function RollableCode({
   const lines = code.split('\n')
   const commentLineIndex = findLastCommentIndex(lines)
 
+  // Always split at the comment line for a consistent two-section layout
+  const beforeLines = commentLineIndex !== -1 ? lines.slice(0, commentLineIndex) : lines
+  const commentLine = commentLineIndex !== -1 ? (lines[commentLineIndex] ?? '') : ''
+  const commentStart = commentLine.lastIndexOf('//')
+  const beforeComment = commentStart !== -1 ? commentLine.slice(0, commentStart) : commentLine
+  const beforeCode = [...beforeLines, beforeComment].join('\n').trimEnd()
+
   const execute = useCallback(() => {
     const result = roll(...(liveArgs as RollArgument[]))
-    setRollState(computeRollState(result, commentLineIndex))
-  }, [liveArgs, commentLineIndex])
+    setRollState(computeRollState(result))
+  }, [liveArgs])
 
   const clear = useCallback(() => {
     setRollState(null)
@@ -84,7 +87,11 @@ export function RollableCode({
   return (
     <div className="rollable-code">
       <div className="rollable-code-header">
-        <span className="rollable-code-lang">{lang}</span>
+        <div className="rollable-traffic-lights">
+          <span className="rollable-dot rollable-dot-red" />
+          <span className="rollable-dot rollable-dot-yellow" />
+          <span className="rollable-dot rollable-dot-green" />
+        </div>
         <div className="rollable-code-controls">
           {rollState === null ? (
             <button type="button" className="rollable-btn rollable-btn-run" onClick={execute}>
@@ -104,87 +111,49 @@ export function RollableCode({
       </div>
 
       <div className="rollable-code-body">
-        {rollState !== null && commentLineIndex !== -1 ? (
-          <LiveCodeView
-            lines={lines}
-            commentLineIndex={commentLineIndex}
-            rollState={rollState}
-            lang={lang}
-            highlightStyle={highlightStyle}
-          />
-        ) : (
-          <SyntaxHighlighter
-            language={lang}
-            style={highlightStyle}
-            customStyle={{
-              margin: 0,
-              padding: '1.25rem 1.5rem',
-              background: 'transparent',
-              fontSize: '0.9rem',
-              lineHeight: 1.7
-            }}
-            codeTagProps={{ style: { fontFamily: 'inherit' } }}
-          >
-            {code}
-          </SyntaxHighlighter>
-        )}
+        <SyntaxHighlighter
+          language={lang}
+          style={highlightStyle}
+          customStyle={{
+            margin: 0,
+            padding: '0.75rem 1.5rem 0',
+            background: 'transparent',
+            fontSize: '0.9rem',
+            lineHeight: 1.7
+          }}
+          codeTagProps={{ style: { fontFamily: 'inherit' } }}
+        >
+          {beforeCode}
+        </SyntaxHighlighter>
+        <ResultPane rollState={rollState} />
       </div>
     </div>
   )
 }
 
-interface LiveCodeViewProps {
-  readonly lines: readonly string[]
-  readonly commentLineIndex: number
-  readonly rollState: RollState
-  readonly lang: string
-  readonly highlightStyle: Record<string, React.CSSProperties>
-}
-
-function LiveCodeView({
-  lines,
-  commentLineIndex,
-  rollState,
-  lang,
-  highlightStyle
-}: LiveCodeViewProps): React.JSX.Element {
-  const beforeLines = lines.slice(0, commentLineIndex)
-  const commentLine = lines[commentLineIndex] ?? ''
-  const commentStart = commentLine.lastIndexOf('//')
-  const beforeComment = commentLine.slice(0, commentStart)
-
-  const beforeCode = [...beforeLines, beforeComment].join('\n')
+function ResultPane({ rollState }: { readonly rollState: RollState | null }): React.JSX.Element {
+  if (rollState === null) {
+    return (
+      <div className="rollable-live-comment rollable-live-comment-empty">
+        <span className="rollable-comment-prefix">// ...</span>
+      </div>
+    )
+  }
 
   return (
-    <>
-      <SyntaxHighlighter
-        language={lang}
-        style={highlightStyle}
-        customStyle={{
-          margin: 0,
-          padding: '1.25rem 1.5rem 0',
-          background: 'transparent',
-          fontSize: '0.9rem',
-          lineHeight: 1.7
-        }}
-        codeTagProps={{ style: { fontFamily: 'inherit' } }}
-      >
-        {beforeCode}
-      </SyntaxHighlighter>
-      <div className="rollable-live-comment">
-        <span className="rollable-comment-prefix">// [</span>
-        {rollState.segments.map((seg, i) => (
-          <span key={i}>
-            {i > 0 && <span className="rollable-comment-sep">, </span>}
-            {seg.dropped ? (
-              <del className="rollable-dice-dropped">{seg.value}</del>
-            ) : (
-              <span className="rollable-dice-kept">{seg.value}</span>
-            )}
-          </span>
-        ))}
-        <span className="rollable-comment-prefix">] = {rollState.total}</span>
-      </div>
-    </>
+    <div className="rollable-live-comment">
+      <span className="rollable-comment-prefix">// [</span>
+      {rollState.segments.map((seg, i) => (
+        <span key={i}>
+          {i > 0 && <span className="rollable-comment-sep">, </span>}
+          {seg.dropped ? (
+            <del className="rollable-dice-dropped">{seg.value}</del>
+          ) : (
+            <span className="rollable-dice-kept">{seg.value}</span>
+          )}
+        </span>
+      ))}
+      <span className="rollable-comment-prefix">] = {rollState.total}</span>
+    </div>
   )
 }
