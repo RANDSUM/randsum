@@ -3,6 +3,8 @@ title: Dice Notation
 description: Complete reference for RANDSUM dice notation syntax
 ---
 
+import { RollableCode } from '../../../components/rollable-code/RollableCode'
+
 RANDSUM uses an extended version of standard dice notation. All notation is **case-insensitive** (`2d8` = `2D8`).
 
 ## Basic syntax
@@ -24,9 +26,7 @@ roll('2d12')
 
 You can also pass a number directly to roll a single die:
 
-```typescript
-roll(20) // same as roll('1d20')
-```
+<RollableCode client:only="react" code={`roll(20) // 1-20`} liveArgs={[20]} />
 
 ## Arithmetic modifiers
 
