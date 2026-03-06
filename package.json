@@ -59,6 +59,30 @@
     {
       "path": "packages/pbta/dist/index.js",
       "limit": "7 KB"
+    },
+    {
+      "path": "packages/roller/dist/index.d.ts",
+      "limit": "1 KB"
+    },
+    {
+      "path": "packages/blades/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/fifth/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/daggerheart/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/root-rpg/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/pbta/dist/index.d.ts",
+      "limit": "6 KB"
     }
   ],
   "scripts": {
