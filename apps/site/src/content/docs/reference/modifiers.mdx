@@ -3,7 +3,7 @@ title: Modifiers
 description: Complete reference for the RANDSUM modifier system
 ---
 
-import { RollableCode } from '../../../components/rollable-code/RollableCode'
+import { LiveRepl } from '../../../components/live-repl/LiveRepl'
 
 Modifiers transform dice results after rolling. They can drop dice, reroll values, cap ranges, make dice explode, and more. Modifiers are applied in a fixed priority order to ensure consistent, predictable results.
 
@@ -57,9 +57,9 @@ Limit roll values to a specific range. Values outside the range are clamped to t
 
 **Options key:** `cap`
 
-<RollableCode client:only="react" liveArgs={['4d20C{>18}']} code={`roll('4d20C{>18}') // caps at 18`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-```typescript
+roll('4d20C{>18}') // caps at 18
 roll('4d20C{<3}')      // Cap under 3 to 3
 roll('4d20C{<2,>19}')  // Cap both ends
 
@@ -78,8 +78,7 @@ roll({
   modifiers: {
     cap: { greaterThan: 19, lessThan: 2 }
   }
-})
-```
+})`} />
 
 **ComparisonOptions:**
 
@@ -96,9 +95,9 @@ Remove dice from the result pool.
 
 **Options key:** `drop`
 
-<RollableCode client:only="react" liveArgs={['4d6L']} code={`roll('4d6L') // 3-18`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-```typescript
+roll('4d6L') // 3-18
 roll('4d6L2')   // Drop lowest 2
 roll('4d6H')    // Drop highest 1
 roll('4d6H2')   // Drop highest 2
@@ -123,8 +122,7 @@ roll({
   modifiers: {
     drop: { greaterThan: 17 }
   }
-})
-```
+})`} />
 
 **DropOptions:**
 
@@ -142,9 +140,9 @@ Keep specific dice from the result (complement of drop).
 
 **Options key:** `keep`
 
-<RollableCode client:only="react" liveArgs={['4d6K3']} code={`roll('4d6K3') // 3-18`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-```typescript
+roll('4d6K3') // 3-18
 roll('4d6K')   // Keep highest 1
 
 // Keep lowest
@@ -158,8 +156,7 @@ roll({
   modifiers: {
     keep: { highest: 3 }
   }
-})
-```
+})`} />
 
 **KeepOptions:**
 
@@ -180,7 +177,8 @@ Replace specific results with new values.
 
 **Options key:** `replace`
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 // Replace exact values
 roll('4d20V{8=12}')    // Replace 8s with 12s
 
@@ -203,8 +201,7 @@ roll({
   modifiers: {
     replace: { from: { greaterThan: 17 }, to: 20 }
   }
-})
-```
+})`} />
 
 **ReplaceOptions:**
 
@@ -223,9 +220,9 @@ Reroll dice matching certain conditions.
 
 **Options key:** `reroll`
 
-<RollableCode client:only="react" liveArgs={['4d20R{<5}']} code={`roll('4d20R{<5}') // 4-20`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-```typescript
+roll('4d20R{<5}') // 4-20
 roll('4d20R{>17}')    // Reroll results over 17
 
 // Reroll exact values
@@ -241,8 +238,7 @@ roll({
   modifiers: {
     reroll: { lessThan: 5, max: 3 }
   }
-})
-```
+})`} />
 
 **RerollOptions:**
 
@@ -259,9 +255,9 @@ Roll additional dice when a die shows its maximum value.
 
 **Options key:** `explode`
 
-<RollableCode client:only="react" liveArgs={['4d20!']} code={`roll('4d20!') // 4+`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-```typescript
+roll('4d20!') // 4+
 roll('3d6!5')   // Max depth of 5
 roll('3d6!0')   // Unlimited (capped at 100)
 
@@ -276,8 +272,7 @@ roll({
   sides: 6,
   quantity: 3,
   modifiers: { explode: 5 }     // Max depth 5
-})
-```
+})`} />
 
 When a die shows its maximum value, a new die is rolled and added as a separate result. Each new maximum continues the chain.
 
@@ -287,7 +282,8 @@ Compounding exploding dice add to the triggering die instead of creating new dic
 
 **Options key:** `compound`
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 roll('3d6!!')    // Compound once
 roll('3d6!!5')   // Max depth 5
 roll('3d6!!0')   // Unlimited (capped at 100)
@@ -297,8 +293,7 @@ roll({
   sides: 6,
   quantity: 3,
   modifiers: { compound: true }
-})
-```
+})`} />
 
 Unlike regular exploding, compound does not create new dice -- it modifies the existing die value.
 
@@ -308,7 +303,8 @@ Penetrating exploding dice subtract 1 from each subsequent explosion (Hackmaster
 
 **Options key:** `penetrate`
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 roll('3d6!p')    // Penetrate once
 roll('3d6!p5')   // Max depth 5
 roll('3d6!p0')   // Unlimited (capped at 100)
@@ -318,8 +314,7 @@ roll({
   sides: 6,
   quantity: 3,
   modifiers: { penetrate: true }
-})
-```
+})`} />
 
 Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
 
@@ -329,9 +324,9 @@ Force all dice in a pool to show different values.
 
 **Options key:** `unique`
 
-<RollableCode client:only="react" liveArgs={['4d20U']} code={`roll('4d20U') // 4-80`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-```typescript
+roll('4d20U') // 4-80
 roll('4d20U{5,10}')  // Unique except 5s and 10s
 
 // Options object
@@ -347,8 +342,7 @@ roll({
   modifiers: {
     unique: { notUnique: [5, 10] }
   }
-})
-```
+})`} />
 
 **UniqueOptions:**
 
@@ -364,7 +358,8 @@ Multiply the dice sum before +/- arithmetic.
 
 **Options key:** `multiply`
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 roll('2d6*2+3')  // (dice sum * 2) + 3
 
 // Options object
@@ -372,8 +367,7 @@ roll({
   sides: 6,
   quantity: 2,
   modifiers: { multiply: 2, plus: 3 }
-})
-```
+})`} />
 
 ## Plus / Minus
 
@@ -381,18 +375,22 @@ Add or subtract a fixed value from the total.
 
 **Options keys:** `plus`, `minus`
 
-<RollableCode client:only="react" liveArgs={['4d6+5']} code={`roll('4d6+5') // 9-29`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-<RollableCode client:only="react" liveArgs={['2d8-2']} code={`roll('2d8-2') // 0-14`} />
+roll('4d6+5') // 9-29`} />
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
+roll('2d8-2') // 0-14`} />
+
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 // Options object
 roll({
   sides: 6,
   quantity: 4,
   modifiers: { plus: 5 }
-})
-```
+})`} />
 
 ## Count successes
 
@@ -400,9 +398,9 @@ Count dice meeting a threshold instead of summing. Used in dice pool systems (Wo
 
 **Options key:** `countSuccesses`
 
-<RollableCode client:only="react" liveArgs={['5d10S{7}']} code={`roll('5d10S{7}') // 0-5`} />
+<LiveRepl code={`import { roll } from '@randsum/roller'
 
-```typescript
+roll('5d10S{7}') // 0-5
 roll('5d10S{7,1}')  // Successes >= 7, minus botches <= 1
 
 // Options object
@@ -412,8 +410,7 @@ roll({
   modifiers: {
     countSuccesses: { threshold: 7, botchThreshold: 1 }
   }
-})
-```
+})`} />
 
 **SuccessCountOptions:**
 
@@ -430,7 +427,8 @@ Multiply the entire final total after all other modifiers.
 
 **Options key:** `multiplyTotal`
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 roll('2d6+3**2')     // (dice + 3) * 2
 roll('4d6L+2**3')    // ((drop lowest) + 2) * 3
 
@@ -439,8 +437,7 @@ roll({
   sides: 6,
   quantity: 2,
   modifiers: { plus: 3, multiplyTotal: 2 }
-})
-```
+})`} />
 
 ## Complete order of operations
 
@@ -459,7 +456,7 @@ The full calculation order is:
 11. Count successes if applicable (S&#123;...&#125;)
 12. Apply total multiply (`**`)
 
-```typescript
+<LiveRepl code={`import { roll } from '@randsum/roller'
+
 // Full example: ((sum of kept dice) * 2) + 3) * 2
-roll('4d6K3!*2+3**2')
-```
+roll('4d6K3!*2+3**2')`} />
