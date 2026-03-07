@@ -1,12 +1,34 @@
 ---
-title: Powered by the Apocalypse
-description: PbtA dice mechanics for Dungeon World, Monster of the Week, Apocalypse World, and more
+title: "PbtA Dice Library — 2d6+stat for Dungeon World & More"
+description: TypeScript dice package for Powered by the Apocalypse games. Works with Dungeon World, Monster of the Week, Apocalypse World, Masks, and any 2d6+stat system.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/pbta",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "1.2.0",
+        "description": "TypeScript dice package for Powered by the Apocalypse games. 2d6 resolution with strong hit, weak hit, and miss outcomes for Dungeon World, Apocalypse World, and more.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/pbta",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/pbta",
+        "keywords": "PbtA, Powered by the Apocalypse, Dungeon World, 2d6, TypeScript, tabletop RPG"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/pbta` package provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
+
+## How PbtA dice work
+
+Powered by the Apocalypse games use a **2d6 + stat** roll. You roll two six-sided dice, add a stat modifier (usually −1 to +3), and the total determines your outcome tier: 10+ is a strong hit (full success), 7–9 is a weak hit (success with a complication), and 6 or lower is a miss (the GM makes a move). Some moves allow **advantage** (roll 3d6, keep the two highest) or **disadvantage** (roll 3d6, keep the two lowest). Bonuses like *forward* (a one-time +1) and *ongoing* (a persistent modifier) stack on top. The `@randsum/pbta` package covers all of this with a single typed function call.
 
 ## Overview
 

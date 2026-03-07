@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0f172a"/>
+
+  <!-- Accent bar top -->
+  <rect width="1200" height="4" fill="#6366f1"/>
+
+  <!-- Left accent line -->
+  <rect x="80" y="80" width="4" height="470" fill="#6366f1" rx="2"/>
+
+  <!-- RANDSUM title -->
+  <text x="120" y="200" font-family="system-ui, -apple-system, monospace" font-size="96" font-weight="700" fill="#f8fafc" letter-spacing="-2">RANDSUM</text>
+
+  <!-- Tagline -->
+  <text x="120" y="270" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#94a3b8">TypeScript Dice Rolling Library for Tabletop RPGs</text>
+
+  <!-- Code block background -->
+  <rect x="120" y="310" width="700" height="140" rx="8" fill="#1e293b"/>
+
+  <!-- Code block border -->
+  <rect x="120" y="310" width="700" height="140" rx="8" fill="none" stroke="#334155" stroke-width="1"/>
+
+  <!-- Code text -->
+  <text x="155" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#94a3b8">import</text>
+  <text x="235" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">{ roll }</text>
+  <text x="330" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#94a3b8">from</text>
+  <text x="390" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#a5f3fc">'@randsum/roller'</text>
+
+  <text x="155" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#7c3aed">roll</text>
+  <text x="197" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">(</text>
+  <text x="210" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#a5f3fc">'4d6L'</text>
+  <text x="286" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">)</text>
+  <text x="310" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#475569">// D&amp;D ability score (drop lowest)</text>
+
+  <text x="155" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#7c3aed">roll</text>
+  <text x="197" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">(</text>
+  <text x="210" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#a5f3fc">'2d20H'</text>
+  <text x="298" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">)</text>
+  <text x="322" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#475569">// advantage</text>
+
+  <!-- npm badge area -->
+  <rect x="120" y="490" width="360" height="50" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="145" y="522" font-family="monospace, 'Courier New'" font-size="18" fill="#94a3b8">npm install</text>
+  <text x="278" y="522" font-family="monospace, 'Courier New'" font-size="18" fill="#a5f3fc">@randsum/roller</text>
+
+  <!-- Dice illustration (simple d20 shape) -->
+  <g transform="translate(950, 315)">
+    <!-- D20 outline -->
+    <polygon points="120,0 240,80 240,200 120,280 0,200 0,80" fill="none" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
+    <polygon points="120,0 240,80 120,140 0,80" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
+    <polygon points="0,80 120,140 0,200" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
+    <polygon points="240,80 120,140 240,200" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
+    <polygon points="0,200 120,140 120,280 0,200" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8" transform="translate(0,0)"/>
+    <polygon points="240,200 120,140 120,280" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
+    <!-- 20 text -->
+    <text x="120" y="155" font-family="monospace" font-size="40" font-weight="700" fill="#6366f1" text-anchor="middle">20</text>
+  </g>
+
+  <!-- Bottom: website URL -->
+  <text x="120" y="598" font-family="system-ui, sans-serif" font-size="22" fill="#475569">randsum.dev</text>
+
+  <!-- Bottom right: zero-dependency badge -->
+  <rect x="950" y="570" width="210" height="36" rx="18" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+  <text x="1055" y="594" font-family="system-ui, sans-serif" font-size="16" fill="#a5b4fc" text-anchor="middle">zero dependencies</text>
+</svg>

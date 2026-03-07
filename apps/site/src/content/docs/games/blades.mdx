@@ -1,12 +1,34 @@
 ---
-title: Blades in the Dark
-description: Blades in the Dark dice pool mechanics with RANDSUM
+title: Blades in the Dark Dice Library — @randsum/blades
+description: TypeScript package for Blades in the Dark dice pools. Handles 0–10 dice, desperate position (0 dice), and returns critical, success, partial, or failure.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/blades",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "1.1.0",
+        "description": "TypeScript dice rolling package for Blades in the Dark. Handles dice pool mechanics with critical, success, partial success, and failure outcomes.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/blades",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/blades",
+        "keywords": "Blades in the Dark, BITD, dice pool, TypeScript, tabletop RPG, action roll"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/blades` package provides mechanics for [Blades in the Dark](https://www.evilhat.com/home/blades-in-the-dark/), a tabletop RPG about a crew of daring scoundrels seeking their fortunes on the haunted streets of an industrial-fantasy city.
+
+## How Blades in the Dark dice work
+
+Blades in the Dark uses a **dice pool** system built around six-sided dice. You assemble a pool of 1–4 dice based on your action rating, roll them all, and read only the single highest result: a 6 is a full success, 4–5 is a partial success with a consequence, and 1–3 is a failure. Rolling zero dice (a desperate position with no rating) means rolling two dice and keeping the *lowest*. A **critical** result — two or more 6s — means an exceptional outcome. The `@randsum/blades` package handles all pool assembly, the two-dice-lowest rule for zero-dice rolls, and the outcome tier logic.
 
 ## Overview
 

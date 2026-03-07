@@ -1,6 +1,24 @@
 ---
-title: '@randsum/roller'
-description: The core dice rolling engine that powers the RANDSUM ecosystem
+title: "@randsum/roller — Zero-Dependency TypeScript Dice Engine"
+description: Zero-dependency TypeScript dice engine. Advanced notation, exploding dice, all modifiers, and no exceptions. Works in Node.js, Bun, Deno, and browsers.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/roller",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "1.1.2",
+        "description": "Zero-dependency TypeScript dice rolling engine with full dice notation support. Handles advanced modifiers, exploding dice, and custom random functions.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/roller",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/roller",
+        "keywords": "dice, dice rolling, tabletop RPG, TypeScript, D&D, dice notation"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'

@@ -17,7 +17,21 @@ export default defineConfig({
   site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
   integrations: [
     starlight({
-      title: 'RANDSUM',
+      title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
+      head: [
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image', content: 'https://randsum.dev/og-image.svg' }
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'twitter:image', content: 'https://randsum.dev/og-image.svg' }
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'twitter:card', content: 'summary_large_image' }
+        }
+      ],
       logo: {
         src: './src/assets/randsum-logo.png',
         replacesTitle: true

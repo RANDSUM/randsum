@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import { ModifierReference } from '../ModifierReference'
@@ -72,14 +72,30 @@ export function RollerPlayground({
   const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [expanded, setExpanded] = useState(false)
+  const [modifiersOpen, setModifiersOpen] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const inputRef = useRef<HTMLInputElement>(null)
+  const modifiersRef = useRef<HTMLDivElement>(null)
+  const modifiersId = useId()
 
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
+
+  useEffect(() => {
+    if (!modifiersOpen) return
+    const handler = (e: MouseEvent): void => {
+      if (modifiersRef.current && !modifiersRef.current.contains(e.target as Node)) {
+        setModifiersOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => {
+      document.removeEventListener('mousedown', handler)
+    }
+  }, [modifiersOpen])
 
   useEffect(() => {
     if (controlledNotation === undefined) return
@@ -255,44 +271,62 @@ export function RollerPlayground({
           </div>
         </div>
         <div className="roller-playground-desc-row">
+          <div className="roller-playground-modifiers-wrap" ref={modifiersRef}>
+            <button
+              className={[
+                'roller-playground-stackblitz',
+                'roller-playground-modifiers-btn',
+                modifiersOpen ? 'roller-playground-modifiers-btn--active' : ''
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              type="button"
+              aria-label={modifiersOpen ? 'Hide modifier reference' : 'Show modifier reference'}
+              aria-expanded={modifiersOpen}
+              aria-controls={modifiersId}
+              onClick={e => {
+                e.stopPropagation()
+                setModifiersOpen(o => !o)
+              }}
+            >
+              Modifiers
+            </button>
+            <div
+              id={modifiersId}
+              className={[
+                'roller-playground-modifiers-tooltip',
+                modifiersOpen ? 'roller-playground-modifiers-tooltip--open' : ''
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              <ModifierReference />
+            </div>
+          </div>
           <span
-            className={`roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
+            className={`roller-playground-desc roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
           >
             {notationDesc(notation, isValid)}
           </span>
-          <div className="roller-playground-btn-group">
-            {stackblitz && (
-              <button
-                className="roller-playground-stackblitz"
-                onClick={() => {
-                  openInStackBlitz(notation)
-                }}
-                aria-label="Open in StackBlitz"
+          {stackblitz && (
+            <button
+              className="roller-playground-stackblitz"
+              onClick={() => {
+                openInStackBlitz(notation)
+              }}
+              aria-label="Open in StackBlitz"
+            >
+              <svg
+                className="roller-playground-stackblitz-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
               >
-                <svg
-                  className="roller-playground-stackblitz-icon"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
-                </svg>
-                Code
-              </button>
-            )}
-            <div className="roller-playground-modifiers-wrap">
-              <button
-                className="roller-playground-stackblitz roller-playground-modifiers-btn"
-                type="button"
-                aria-label="Show modifier reference"
-              >
-                Modifiers
-              </button>
-              <div className="roller-playground-modifiers-tooltip" aria-hidden="true">
-                <ModifierReference />
-              </div>
-            </div>
-          </div>
+                <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
+              </svg>
+              Code
+            </button>
+          )}
         </div>
         <div
           className={`roller-playground-expand${expanded ? ' roller-playground-expand--open' : ''}`}

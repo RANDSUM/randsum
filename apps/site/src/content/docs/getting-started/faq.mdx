@@ -1,6 +1,57 @@
 ---
-title: FAQ
-description: Common questions about RANDSUM
+title: RANDSUM FAQ — Common Questions About the Dice Library
+description: "Answers to common questions: why roll() never throws, seeded RNG for testing, browser support, reroll infinite loop prevention, and how drop vs. keep differ."
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why doesn't roll() throw errors?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "RANDSUM's roll() is designed to never throw. Invalid input or runtime errors are returned in the result object as result.error, allowing you to handle failures gracefully without try/catch blocks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I use RANDSUM in a browser?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "All RANDSUM packages are zero-dependency and ship as ESM, making them compatible with modern browsers, Vite, webpack, and other bundlers without any special configuration."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I write deterministic tests for dice rolls?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pass a custom randomFn option to roll() to provide seeded or deterministic random values. This makes dice outcomes reproducible for unit tests."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can reroll modifiers cause infinite loops?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. RANDSUM caps reroll attempts at 99 by default. You can also specify a maximum reroll count with the M suffix: R{<3}5 means reroll below 3 up to 5 times."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between drop and keep modifiers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Drop removes dice from the pool (4d6L drops the lowest die). Keep retains only the specified dice (4d6K3 keeps the 3 highest). They are logical complements — 4d6L and 4d6K3 produce identical results."
+            }
+          }
+        ]
+      }
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
