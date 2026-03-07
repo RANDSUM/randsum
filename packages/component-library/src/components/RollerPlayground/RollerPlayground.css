@@ -273,3 +273,161 @@
 .roller-playground-chip-value {
   color: #fff;
 }
+
+/* ===== Expand panel ===== */
+.roller-playground-expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.roller-playground-expand--open {
+  grid-template-rows: 1fr;
+}
+
+.roller-playground-expand-inner {
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #e6edf3;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-expand-inner {
+    border-top-color: rgba(0, 0, 0, 0.1);
+    color: #1f2328;
+  }
+}
+
+/* ===== Total row at bottom of expand panel ===== */
+.roller-playground-expand-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-top: 0.3rem;
+  margin-top: 0.1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  font-size: 0.8rem;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #e6edf3;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-expand-total {
+    border-top-color: rgba(0, 0, 0, 0.1);
+    color: #1f2328;
+  }
+}
+
+/* ===== Embedded RollTooltip styles ===== */
+.roller-tooltip-inner {
+  background: transparent;
+  padding: 0;
+}
+
+.roller-tooltip-notation {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #60a5fa;
+  margin-bottom: 0.1rem;
+}
+
+.roller-tooltip-desc {
+  color: #6b7280;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.roller-tooltip-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0.1rem 0;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-tooltip-divider {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.roller-tooltip-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.05rem 0;
+  line-height: 1.4;
+}
+
+.roller-tooltip-label {
+  color: #9ca3af;
+}
+
+.roller-tooltip-dice-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.2rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.roller-tooltip-dice {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  letter-spacing: 0;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.roller-tooltip-dice-sep {
+  color: rgba(255, 255, 255, 0.1);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+}
+
+.roller-tooltip-dice--removed {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: line-through;
+  text-decoration-color: #9ca3af;
+}
+
+.roller-tooltip-dice--added {
+  color: #60a5fa;
+}
+
+.roller-tooltip-dice--arithmetic {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.roller-tooltip-row--final {
+  padding-bottom: 0.3rem;
+}
+
+.roller-tooltip-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.05rem 0;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  line-height: 1;
+  font-weight: 700;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-tooltip-total {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+}
