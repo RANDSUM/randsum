@@ -29,8 +29,7 @@
 .roller-playground-row {
   display: flex;
   align-items: stretch;
-  height: 2rem;
-  padding: 0.25rem 0;
+  min-height: 2.5rem;
 }
 
 /* ===== Description row ===== */
@@ -214,14 +213,8 @@
   font-size: 0.95rem;
   font-weight: 700;
   flex-shrink: 0;
-  cursor: pointer;
-  user-select: none;
   transition: filter 0.15s ease;
   animation: chip-enter 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.roller-playground-chip:hover {
-  filter: brightness(1.1);
 }
 
 .roller-playground-chip--empty {
@@ -235,10 +228,6 @@
   .roller-playground-chip--empty {
     background: rgba(0, 0, 0, 0.1);
   }
-}
-
-.roller-playground-chip--copied {
-  background: #3fb950;
 }
 
 @keyframes chip-enter {
