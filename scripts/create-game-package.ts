@@ -217,13 +217,13 @@ SOFTWARE.
 
 writeFileSync(join(packageDir, 'LICENSE'), license)
 
-// AGENTS.md
-const agentsMd = `# @randsum/${packageName}
+// CLAUDE.md
+const claudeMd = `# @randsum/${packageName}
 
 ${pascalName} dice rolling package for RANDSUM.
 `
 
-writeFileSync(join(packageDir, 'AGENTS.md'), agentsMd)
+writeFileSync(join(packageDir, 'CLAUDE.md'), claudeMd)
 
 console.log(`✓ Created game package: ${packageName}`)
 console.log(`  Location: ${packageDir}`)

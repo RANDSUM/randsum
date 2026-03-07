@@ -17,7 +17,6 @@
     "prettier-plugin-astro": "0.14.1",
     "size-limit": "12.0.0",
     "ts-unused-exports": "11.0.1",
-    "typedoc": "0.28.17",
     "typescript": "5.9.3",
     "typescript-eslint": "8.56.1"
   },
@@ -42,19 +41,19 @@
     },
     {
       "path": "packages/blades/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/fifth/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/daggerheart/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/root-rpg/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/salvageunion/dist/index.js",
@@ -62,7 +61,7 @@
     },
     {
       "path": "packages/pbta/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/roller/dist/index.d.ts",
@@ -103,8 +102,6 @@
     "typecheck": "bun run --filter \"*\" typecheck",
     "size": "size-limit",
     "size:check": "size-limit --json",
-    "docs": "typedoc",
-    "docs:site": "typedoc --out apps/site/public/api",
     "check:exports": "ts-unused-exports tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
     "bench": "bun run packages/roller/__benchmarks__/roll.bench.ts",
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",

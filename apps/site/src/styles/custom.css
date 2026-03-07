@@ -81,3 +81,11 @@ h6 {
   font-family: var(--sl-font-heading);
   letter-spacing: -0.02em;
 }
+
+/* ===== Header layout ===== */
+/* Make search bar flush against the logo instead of aligned to content column */
+@media (min-width: 50rem) {
+  .header {
+    grid-template-columns: auto 1fr auto;
+  }
+}
