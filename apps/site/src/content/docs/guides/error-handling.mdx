@@ -1,13 +1,13 @@
 ---
 title: Error Handling
-description: How to handle errors with RANDSUM's never-throw design
+description: How to handle errors with RANDSUM's error-as-value design
 ---
 
 import { Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 import { RollerPlayground } from '@randsum/component-library'
 
-RANDSUM uses a **never-throw** design. The `roll()` function never raises an exception — errors are returned as values in the result object.
+RANDSUM is not designed to throw. The `roll()` function is not designed to raise exceptions — errors are returned as values in the result object.
 
 <Aside type="tip">
   This design means you never need try/catch around `roll()` calls. Error handling is always explicit.

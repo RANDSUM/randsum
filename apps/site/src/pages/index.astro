@@ -3,8 +3,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { Image } from 'astro:assets'
 import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
-import { RollerPlayground } from '@randsum/component-library'
-import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton } from '../components/HeroInteractive'
+import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRollerPlayground } from '../components/HeroInteractive'
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--tool-roller)',
@@ -54,7 +53,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           </div>
         </div>
         <div class="roller-playground-wrap not-content">
-          <RollerPlayground client:only="react" />
+          <HeroRollerPlayground client:only="react" />
         </div>
       </div>
       <div class="pkg-section-label">Packages</div>
@@ -70,19 +69,21 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       </div>
       <div class="pkg-grid">
         {[...corePackages, ...gamePackages, ...toolPackages].map((pkg) => (
-          <a
-            href={getCardHref(pkg)}
+          <div
             class="pkg-card"
             data-category={pkg.category}
             style={`--card-accent: ${getAccentColor(pkg)}`}
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
-              <code class="pkg-card-npm">{pkg.npmPackage}</code>
+              {pkg.version && <span class="pkg-card-version">v{pkg.version}</span>}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
-            <span class="pkg-card-link">View docs &rarr;</span>
-          </a>
+            <div class="pkg-card-footer">
+              <a href={pkg.sourceUrl} class="pkg-card-link pkg-card-link--source" target="_blank" rel="noopener noreferrer">View source</a>
+              <a href={getCardHref(pkg)} class="pkg-card-link">View docs &rarr;</a>
+            </div>
+          </div>
         ))}
       </div>
     </div>
@@ -155,13 +156,14 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   /* ===== Hero ===== */
   .hero {
-    padding: 2rem 1.5rem 0;
+    padding: 2rem 0 0;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
   .hero-inner {
-    max-width: 56rem;
+    max-width: 72rem;
     margin: 0 auto;
+    padding: 0 1.5rem;
   }
 
   .hero-lockup {
@@ -363,9 +365,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   .pkg-section-label {
-    max-width: 72rem;
-    margin: 1.5rem auto 0;
-    padding: 0 0 0.6rem;
+    padding: 1.5rem 0 0.6rem;
     font-size: 1.05rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -375,9 +375,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   /* ===== Package Grid ===== */
   .pkg-grid-wrap {
-    padding: 1.5rem 1.5rem 2.5rem;
-    max-width: 72rem;
-    margin: 0 auto;
+    padding: 0 0 2.5rem;
   }
 
   .pkg-filter-chips {
@@ -428,6 +426,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   .pkg-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;
     gap: 1rem;
   }
 
@@ -438,6 +437,9 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   .pkg-card {
     display: flex;
     flex-direction: column;
+    align-self: stretch;
+    height: 180px;
+    margin-top: 0;
     padding: 1.25rem 1.5rem;
     border: 1px solid var(--sl-color-gray-5);
     border-radius: 0.75rem;
@@ -458,11 +460,10 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   .pkg-card-header {
     display: flex;
-    justify-content: space-between;
     align-items: baseline;
+    justify-content: space-between;
     gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    flex-wrap: wrap;
+    margin: 0 0 0.75rem;
   }
 
   .pkg-card-name {
@@ -473,34 +474,46 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     letter-spacing: -0.01em;
   }
 
-  .pkg-card-npm {
-    font-family: var(--sl-font-mono);
+  .pkg-card-version {
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
     font-size: 0.75rem;
     color: var(--sl-color-gray-3);
-    background: var(--sl-color-gray-5);
-    padding: 0.15rem 0.5rem;
-    border-radius: 0.25rem;
+    flex-shrink: 0;
   }
 
   .pkg-card-desc {
-    flex-grow: 1;
     margin: 0 0 0.75rem;
     font-size: 0.9rem;
     line-height: 1.6;
     color: var(--sl-color-gray-2);
   }
 
+  .pkg-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+  }
+
   .pkg-card-link {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--sl-color-accent);
-    margin-top: auto;
+    text-decoration: none;
     transition: color 0.15s ease, letter-spacing 0.15s ease;
+  }
+
+  .pkg-card-link--source {
+    color: var(--sl-color-gray-3);
   }
 
   .pkg-card:hover .pkg-card-link {
     color: var(--sl-color-accent-high);
     letter-spacing: 0.01em;
+  }
+
+  .pkg-card:hover .pkg-card-link--source {
+    color: var(--sl-color-gray-1);
   }
 
   /* ===== Footer ===== */
@@ -551,8 +564,12 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   /* ===== Responsive ===== */
   @media (max-width: 768px) {
     .hero {
-      padding: 1.5rem 1rem 2rem;
+      padding: 1.5rem 0 2rem;
       text-align: center;
+    }
+
+    .hero-inner {
+      padding: 0 1rem;
     }
 
     .hero-lockup {

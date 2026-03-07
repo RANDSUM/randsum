@@ -23,7 +23,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * Accepts multiple roll arguments and an optional configuration object. Each argument
  * can be a dice notation string, a number (sides), or a roll options object.
  *
- * Never throws - errors are returned in the result's `error` property.
+ * Not designed to throw - errors are returned in the result's `error` property.
  *
  * @typeParam T - Type for custom dice faces. Defaults to `string`.
  *   - For standard numeric dice (notation strings or numbers), `result` contains

@@ -25,7 +25,7 @@ export default defineConfig({
           href: 'https://github.com/RANDSUM/randsum'
         }
       ],
-      customCss: ['./src/styles/custom.css', '@randsum/component-library/dist/index.css'],
+      customCss: ['./src/styles/custom.css'],
       sidebar: [
         {
           label: 'Getting Started',
@@ -82,8 +82,16 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Tools',
-          items: [{ label: 'Discord Bot', slug: 'tools/discord-bot' }]
+          label: 'Components',
+          items: [
+            { label: 'Overview', slug: 'tools/components' },
+            { label: 'RollerPlayground', slug: 'tools/components/roller-playground' },
+            { label: 'ModifierReference', slug: 'tools/components/modifier-reference' }
+          ]
+        },
+        {
+          label: 'Discord Bot',
+          items: [{ label: 'Overview', slug: 'tools/discord-bot' }]
         }
       ]
     }),

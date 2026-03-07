@@ -6,7 +6,7 @@ description: Complete API reference for the roll() function and RollOptions obje
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 import { RollerPlayground } from '@randsum/component-library'
 
-The `roll()` function is the main entry point for all dice rolling in RANDSUM. It accepts several argument types and never throws -- errors are returned in the result object.
+The `roll()` function is the main entry point for all dice rolling in RANDSUM. It accepts several argument types and is not designed to throw -- errors are returned in the result object.
 
 ## Argument types
 
@@ -169,7 +169,7 @@ An array of `RollRecord` objects, one for each dice group in the roll. Each reco
 
 ## Error handling
 
-`roll()` never throws. If the input is invalid, an error is returned in the result:
+`roll()` is not designed to throw. If the input is invalid, an error is returned in the result:
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 

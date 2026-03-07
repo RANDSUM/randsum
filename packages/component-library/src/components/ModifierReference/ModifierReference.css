@@ -64,21 +64,24 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.5rem 0.85rem;
-  cursor: pointer;
   transition: background 0.12s ease;
   user-select: none;
 }
 
-.modifier-reference-cell:hover {
+.modifier-reference-cell--interactive {
+  cursor: pointer;
+}
+
+.modifier-reference-cell--interactive:hover {
   background: rgba(255, 255, 255, 0.07);
 }
 
 @media (prefers-color-scheme: light) {
-  .modifier-reference-cell:hover {
+  .modifier-reference-cell--interactive:hover {
     background: rgba(0, 0, 0, 0.05);
   }
 }
-[data-theme='light'] .modifier-reference-cell:hover {
+[data-theme='light'] .modifier-reference-cell--interactive:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
@@ -108,7 +111,6 @@
   padding: 0.6rem 0.85rem;
   background: rgba(255, 255, 255, 0.08);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  cursor: pointer;
   transition: background 0.12s ease;
   user-select: none;
 }
@@ -118,7 +120,11 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.modifier-reference-core:hover {
+.modifier-reference-core--interactive {
+  cursor: pointer;
+}
+
+.modifier-reference-core--interactive:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -130,7 +136,7 @@
   .modifier-reference-core--top {
     border-bottom-color: rgba(0, 0, 0, 0.08);
   }
-  .modifier-reference-core:hover {
+  .modifier-reference-core--interactive:hover {
     background: rgba(0, 0, 0, 0.06);
   }
 }
@@ -141,7 +147,7 @@
 [data-theme='light'] .modifier-reference-core--top {
   border-bottom-color: rgba(0, 0, 0, 0.08);
 }
-[data-theme='light'] .modifier-reference-core:hover {
+[data-theme='light'] .modifier-reference-core--interactive:hover {
   background: rgba(0, 0, 0, 0.06);
 }
 
@@ -150,7 +156,7 @@
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-weight: 700;
   font-size: 1rem;
-  color: #e6edf3;
+  color: #ffffff;
   white-space: nowrap;
   line-height: 1;
 }
@@ -166,13 +172,13 @@
 
 .modifier-reference-desc {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: #ffffff;
   white-space: nowrap;
 }
 
 .modifier-reference-core-desc {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: #ffffff;
   white-space: nowrap;
 }
 

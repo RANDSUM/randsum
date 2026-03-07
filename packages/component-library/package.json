@@ -35,7 +35,6 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./dist/index.css": "./dist/index.css",
     "./package.json": "./package.json"
   },
   "peerDependencies": {
@@ -65,7 +64,7 @@
   ],
   "scripts": {
     "dev": "bunup --watch",
-    "build": "bunup --entry src/index.ts --format esm,cjs --dts --external react --external react-dom --minify --sourcemap external --target browser --clean",
+    "build": "bunup",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

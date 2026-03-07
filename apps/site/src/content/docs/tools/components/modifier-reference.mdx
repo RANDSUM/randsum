@@ -1,0 +1,83 @@
+---
+title: ModifierReference
+description: Reference grid of all supported dice notation modifiers
+---
+
+import CodeExample from '../../../../components/live-repl/CodeExample.astro'
+import { ModifierReference } from '@randsum/component-library'
+
+A compact reference grid of all supported dice notation modifiers. Useful as a help panel, a notation guide, or an input aid — cells can be made clickable to insert notation into your own input.
+
+## Live Demo
+
+<div class="not-content" style="margin: 1.5rem 0; max-width: 480px;">
+  <ModifierReference client:only="react" />
+</div>
+
+<CodeExample lang="typescript" code={`import { ModifierReference } from '@randsum/component-library'
+
+export default function HelpPanel() {
+  return <ModifierReference />
+}`} />
+
+## Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `corePosition` | `'top' \| 'bottom'` | `'top'` | Where to render the core `xdY` row relative to the modifier grid |
+| `coreDisabled` | `boolean` | `false` | Hide (grey out) the core `xdY` row |
+| `modifiersDisabled` | `boolean` | `false` | Hide (grey out) all modifier rows |
+| `onCellClick` | `(cell: ModifierReferenceCell) => void` | — | Called when a cell is clicked; enables hover and keyboard interaction |
+
+## `ModifierReferenceCell` type
+
+When `onCellClick` is provided, each click receives a `ModifierReferenceCell`:
+
+<CodeExample lang="typescript" code={`import type { ModifierReferenceCell } from '@randsum/component-library'
+
+// ModifierReferenceCell shape:
+// {
+//   notation: string      // e.g. 'L', '!', 'R{..}'
+//   description: string  // e.g. 'drop lowest'
+//   isCore: boolean      // true only for the xdY core row
+// }`} />
+
+## Interactive usage
+
+Use `onCellClick` to build a notation-builder — clicking a modifier appends its notation to the user's input:
+
+<CodeExample lang="typescript" code={`import { useState } from 'react'
+import { ModifierReference } from '@randsum/component-library'
+import type { ModifierReferenceCell } from '@randsum/component-library'
+
+export default function NotationBuilder() {
+  const [notation, setNotation] = useState('4d6')
+
+  function handleCellClick(cell: ModifierReferenceCell) {
+    if (cell.isCore) {
+      setNotation('NdS')
+    } else {
+      setNotation(prev => prev + cell.notation)
+    }
+  }
+
+  return (
+    <>
+      <input value={notation} onChange={e => setNotation(e.target.value)} />
+      <ModifierReference onCellClick={handleCellClick} />
+    </>
+  )
+}`} />
+
+## `corePosition` variants
+
+<div class="not-content" style="display: flex; gap: 2rem; flex-wrap: wrap; margin: 1.5rem 0;">
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">corePosition="top" (default)</p>
+    <ModifierReference client:only="react" corePosition="top" />
+  </div>
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">corePosition="bottom"</p>
+    <ModifierReference client:only="react" corePosition="bottom" />
+  </div>
+</div>

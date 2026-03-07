@@ -91,7 +91,7 @@ console.log(result.rolls)  // Array of individual roll records`} />
 <RollerPlayground defaultNotation="4d6L+2" client:only="react" />
 
 :::note
-\`roll()\` never throws. If there is an error (e.g., invalid notation), it is returned in the result object rather than thrown as an exception.
+\`roll()\` is not designed to throw. If there is an error (e.g., invalid notation), it is returned in the result object rather than thrown as an exception.
 :::
 
 ## Multiple dice groups

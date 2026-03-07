@@ -149,7 +149,7 @@ describe('5e-style advantage roll (deterministic)', () => {
 
 ## Testing error paths
 
-`roll()` never throws. When given invalid input, it returns a result with a non-null `error` property.
+`roll()` is not designed to throw. When given invalid input, it returns a result with a non-null `error` property.
 
 <CodeExample code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'

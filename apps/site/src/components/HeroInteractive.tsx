@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { roll } from '@randsum/roller'
+import { RollerPlayground } from '@randsum/component-library'
 
 const TAGLINES = [
   'Throw Dice, Not Exceptions.',
@@ -42,6 +43,28 @@ const SLOT_INTERVALS = [
 ]
 
 const DIE_ROLLED = 'die-rolled'
+
+// Curated progression from simplest to most complex, drawn from the roller test suite
+const HERO_NOTATIONS = [
+  '1d6',
+  '1d20',
+  '2d6',
+  '2d6+3',
+  '1d20+5',
+  '4d6',
+  '4d6L',
+  '2d20H',
+  '2d20L',
+  '4d6L+3',
+  '3d6!',
+  '4d6R{1}',
+  '2d10R{<3}',
+  '4d6K3',
+  '3d6!+5',
+  '4d6LR{1}!+3',
+  '6d8L2H1R{1,2}U!C{>7}+5-2',
+  '4d6C{>5,<2}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1'
+] as const
 
 function useSlotMachine<T extends string>(
   labels: readonly T[],
@@ -167,6 +190,42 @@ export function GetStartedButton(): React.JSX.Element {
       </span>
     </a>
   )
+}
+
+export function HeroRollerPlayground(): React.JSX.Element {
+  const [notation, setNotation] = useState<string>(HERO_NOTATIONS[0])
+  const targetIndexRef = useRef(0)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => {
+    const handler = (): void => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+
+      targetIndexRef.current = (targetIndexRef.current + 1) % HERO_NOTATIONS.length
+      const finalNotation = HERO_NOTATIONS[targetIndexRef.current]
+      const stepRef = { current: 0 }
+
+      const tick = (): void => {
+        if (stepRef.current < SLOT_INTERVALS.length - 1) {
+          setNotation(HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1])
+          stepRef.current++
+          timerRef.current = setTimeout(tick, SLOT_INTERVALS[stepRef.current])
+        } else {
+          setNotation(finalNotation)
+        }
+      }
+
+      timerRef.current = setTimeout(tick, SLOT_INTERVALS[0] ?? 45)
+    }
+
+    window.addEventListener(DIE_ROLLED, handler)
+    return () => {
+      window.removeEventListener(DIE_ROLLED, handler)
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  return <RollerPlayground notation={notation} />
 }
 
 export function GithubButton(): React.JSX.Element {

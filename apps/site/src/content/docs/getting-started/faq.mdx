@@ -7,7 +7,7 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 ## Why doesn't `roll()` throw?
 
-RANDSUM follows a never-throw design — errors are returned as values rather than raised as exceptions. This makes error handling explicit and composable without try/catch blocks.
+RANDSUM is not designed to throw — errors are returned as values rather than raised as exceptions. This makes error handling explicit and composable without try/catch blocks.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 

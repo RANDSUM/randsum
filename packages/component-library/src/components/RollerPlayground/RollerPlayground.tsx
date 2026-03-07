@@ -59,15 +59,17 @@ console.log('Rolls:   ', result.rolls)
 export function RollerPlayground({
   stackblitz = true,
   defaultNotation = '4d6L',
+  notation: controlledNotation,
   className,
   size = 'l'
 }: {
   readonly stackblitz?: boolean
   readonly defaultNotation?: string
+  readonly notation?: string
   readonly className?: string
   readonly size?: 's' | 'm' | 'l'
 } = {}): React.JSX.Element {
-  const [notation, setNotation] = useState(defaultNotation)
+  const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [expanded, setExpanded] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -78,6 +80,13 @@ export function RollerPlayground({
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
+
+  useEffect(() => {
+    if (controlledNotation === undefined) return
+    setNotation(controlledNotation)
+    setState({ status: 'idle' })
+    setExpanded(false)
+  }, [controlledNotation])
 
   const isValid = notation.length > 0 && isDiceNotation(notation)
   const shellVariant = notation.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'
@@ -91,7 +100,9 @@ export function RollerPlayground({
       const result = roll(notation)
       if (result.error || !result.rolls[0]) return
       setState({ status: 'result', total: result.total, record: result.rolls[0] })
-      setExpanded(true)
+      requestAnimationFrame(() => {
+        setExpanded(true)
+      })
     }, 300)
   }, [notation, isValid])
 
@@ -128,7 +139,8 @@ export function RollerPlayground({
               >
                 roll
               </button>
-              (&#39;
+              <span className="roller-playground-code-paren">(</span>
+              <span className="roller-playground-code-str-delim">&#39;</span>
             </span>
             <input
               ref={inputRef}
@@ -140,12 +152,27 @@ export function RollerPlayground({
               onKeyDown={e => {
                 if (e.key === 'Enter') handleRoll()
               }}
-              placeholder="4d6L"
+              placeholder="1d20"
               spellCheck={false}
               autoComplete="off"
               aria-label="Dice notation"
             />
-            <span className="roller-playground-code-suffix">&#39;)</span>
+            <span
+              className="roller-playground-code-suffix"
+              onClick={e => {
+                e.stopPropagation()
+                const input = inputRef.current
+                if (input) {
+                  input.focus()
+                  const len = input.value.length
+                  input.setSelectionRange(len, len)
+                }
+              }}
+              style={{ cursor: 'text' }}
+            >
+              <span className="roller-playground-code-str-delim">&#39;</span>
+              <span className="roller-playground-code-paren">)</span>
+            </span>
           </div>
 
           <div
@@ -228,43 +255,45 @@ export function RollerPlayground({
           >
             {notationDesc(notation, isValid)}
           </span>
-          {stackblitz && (
-            <button
-              className="roller-playground-stackblitz"
-              onClick={() => {
-                openInStackBlitz(notation)
-              }}
-              aria-label="Open in StackBlitz"
-            >
-              <svg
-                className="roller-playground-stackblitz-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+          <div className="roller-playground-btn-group">
+            {stackblitz && (
+              <button
+                className="roller-playground-stackblitz"
+                onClick={() => {
+                  openInStackBlitz(notation)
+                }}
+                aria-label="Open in StackBlitz"
               >
-                <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
-              </svg>
-              Code
-            </button>
-          )}
-          <div className="roller-playground-modifiers-wrap">
-            <button
-              className="roller-playground-stackblitz roller-playground-modifiers-btn"
-              type="button"
-              aria-label="Show modifier reference"
-            >
-              Modifiers
-            </button>
-            <div className="roller-playground-modifiers-tooltip" aria-hidden="true">
-              <ModifierReference coreDisabled modifiersDisabled />
+                <svg
+                  className="roller-playground-stackblitz-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
+                </svg>
+                Code
+              </button>
+            )}
+            <div className="roller-playground-modifiers-wrap">
+              <button
+                className="roller-playground-stackblitz roller-playground-modifiers-btn"
+                type="button"
+                aria-label="Show modifier reference"
+              >
+                Modifiers
+              </button>
+              <div className="roller-playground-modifiers-tooltip" aria-hidden="true">
+                <ModifierReference />
+              </div>
             </div>
           </div>
         </div>
-        {state.status === 'result' && (
-          <div
-            className={`roller-playground-expand${expanded ? ' roller-playground-expand--open' : ''}`}
-          >
-            <div className="roller-playground-expand-inner">
+        <div
+          className={`roller-playground-expand${expanded ? ' roller-playground-expand--open' : ''}`}
+        >
+          <div className="roller-playground-expand-inner">
+            {state.status === 'result' && (
               <div className="roller-playground-expand-content">
                 <RollTooltip record={state.record} />
                 <div className="roller-playground-expand-total">
@@ -272,9 +301,9 @@ export function RollerPlayground({
                   <span className="roller-playground-expand-total-chip">{state.total}</span>
                 </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   )
@@ -347,13 +376,24 @@ function modifierLabel(modifier: string, options: unknown): string {
     if (modifier === 'drop' || modifier === 'keep') {
       const lowest = numVal(opts, 'lowest')
       const highest = numVal(opts, 'highest')
-      if (lowest !== undefined) return `${base} Lowest ${lowest}`
-      if (highest !== undefined) return `${base} Highest ${highest}`
+      const parts: string[] = []
+      if (lowest !== undefined) parts.push(`Lowest ${lowest}`)
+      if (highest !== undefined) parts.push(`Highest ${highest}`)
+      if (parts.length > 0) return `${base} ${parts.join(', ')}`
     }
     const comparison = formatComparison(opts)
     if (comparison) return `${base} ${comparison}`
   }
   return base
+}
+
+function applyRemove(pool: number[], values: readonly number[]): number[] {
+  const result = [...pool]
+  for (const val of values) {
+    const idx = result.indexOf(val)
+    if (idx !== -1) result.splice(idx, 1)
+  }
+  return result
 }
 
 function computeSteps(record: RollRecord): readonly TooltipStep[] {
@@ -375,7 +415,47 @@ function computeSteps(record: RollRecord): readonly TooltipStep[] {
       })
       continue
     }
-    if (log.removed.length === 0 && log.added.length === 0) continue
+
+    const isSplittable =
+      (log.modifier === 'drop' || log.modifier === 'keep') && typeof log.options === 'object'
+
+    if (isSplittable) {
+      const opts = log.options as Record<string, unknown>
+      const lowest = numVal(opts, 'lowest')
+      const highest = numVal(opts, 'highest')
+      const base = log.modifier.charAt(0).toUpperCase() + log.modifier.slice(1)
+
+      if (lowest !== undefined && highest !== undefined) {
+        // Split into two rows: lowest first, then highest
+        const sortedAsc = [...current].sort((a, b) => a - b)
+        const lowestRemoved = sortedAsc.slice(0, lowest)
+        const afterLowest = applyRemove(current, lowestRemoved)
+
+        const sortedDesc = [...afterLowest].sort((a, b) => b - a)
+        const highestRemoved = sortedDesc.slice(0, highest)
+        const afterHighest = applyRemove(afterLowest, highestRemoved)
+
+        modifierSteps.push({
+          kind: 'rolls',
+          label: `${base} Lowest ${lowest}`,
+          unchanged: afterLowest,
+          removed: lowestRemoved,
+          added: []
+        })
+        modifierSteps.push({
+          kind: 'rolls',
+          label: `${base} Highest ${highest}`,
+          unchanged: afterHighest,
+          removed: highestRemoved,
+          added: []
+        })
+
+        current.length = 0
+        current.push(...afterHighest)
+        continue
+      }
+    }
+
     for (const val of log.removed) {
       const idx = current.indexOf(val)
       if (idx !== -1) current.splice(idx, 1)
@@ -417,16 +497,16 @@ function DiceGroup({
     <span className="roller-tooltip-dice-group">
       {removed.length > 0 && (
         <span className="roller-tooltip-dice roller-tooltip-dice--removed">
-          {removed.join(',')}
+          {removed.join(', ')}
         </span>
       )}
       {added.length > 0 && (
-        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(',')}</span>
+        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(', ')}</span>
       )}
       {hasModified && shown.length > 0 && <span className="roller-tooltip-dice-sep">|</span>}
       {shown.length > 0 && (
         <span className="roller-tooltip-dice">
-          {shown.join(',')}
+          {shown.join(', ')}
           {truncated ? ' …' : ''}
         </span>
       )}

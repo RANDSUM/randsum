@@ -99,7 +99,7 @@ console.log(result.rolls)  // Array of RollRecord objects`} />
 <RollerPlayground defaultNotation="4d6L+2" client:only="react" />
 
 :::note
-`roll()` never throws. If input is invalid, an error is returned in the result: check `result.error` before using `result.total`.
+`roll()` is not designed to throw. If input is invalid, an error is returned in the result: check `result.error` before using `result.total`.
 :::
 
 ## Validation utilities

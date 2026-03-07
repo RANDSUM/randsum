@@ -1,0 +1,65 @@
+---
+title: RollerPlayground
+description: Interactive dice notation editor with live roll results and step-by-step breakdown
+---
+
+import CodeExample from '../../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+An interactive dice notation editor. The user types a notation string, presses `roll`, and sees the total with a step-by-step breakdown panel.
+
+## Live Demo
+
+<div class="not-content" style="margin: 1.5rem 0;">
+  <RollerPlayground client:only="react" defaultNotation="4d6L" />
+</div>
+
+<CodeExample lang="typescript" code={`import { RollerPlayground } from '@randsum/component-library'
+
+export default function App() {
+  return <RollerPlayground defaultNotation="4d6L" />
+}`} />
+
+## Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `defaultNotation` | `string` | `'4d6L'` | Initial dice notation shown in the input |
+| `size` | `'s' \| 'm' \| 'l'` | `'l'` | Overall size — scales font, padding, and chip |
+| `stackblitz` | `boolean` | `true` | Show the **Code** button to open the notation in StackBlitz |
+| `className` | `string` | — | Additional class name appended to the root element |
+
+## `size` variants
+
+The `size` prop scales the entire component proportionally.
+
+<div class="not-content" style="display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0;">
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">size="s"</p>
+    <RollerPlayground client:only="react" size="s" defaultNotation="1d20" stackblitz={false} />
+  </div>
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">size="m"</p>
+    <RollerPlayground client:only="react" size="m" defaultNotation="2d6+3" stackblitz={false} />
+  </div>
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">size="l" (default)</p>
+    <RollerPlayground client:only="react" size="l" defaultNotation="4d6L" stackblitz={false} />
+  </div>
+</div>
+
+<CodeExample lang="typescript" code={`<RollerPlayground size="s" defaultNotation="1d20" />
+<RollerPlayground size="m" defaultNotation="2d6+3" />
+<RollerPlayground size="l" defaultNotation="4d6L" />`} />
+
+## Theming
+
+The component respects `prefers-color-scheme` automatically. Force a specific theme by setting `data-theme` on any ancestor:
+
+<CodeExample lang="typescript" code={`<div data-theme="light">
+  <RollerPlayground />
+</div>
+
+<div data-theme="dark">
+  <RollerPlayground />
+</div>`} />
