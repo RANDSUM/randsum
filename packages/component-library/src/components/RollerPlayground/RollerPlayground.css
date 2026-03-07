@@ -440,3 +440,18 @@
     border-top-color: rgba(0, 0, 0, 0.1);
   }
 }
+
+@media (prefers-color-scheme: light) {
+  .roller-tooltip-label {
+    color: #6b7280;
+  }
+
+  .roller-tooltip-dice--removed {
+    color: rgba(0, 0, 0, 0.35);
+    text-decoration-color: #6b7280;
+  }
+
+  .roller-tooltip-dice-sep {
+    color: rgba(0, 0, 0, 0.2);
+  }
+}

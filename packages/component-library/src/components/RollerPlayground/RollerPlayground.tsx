@@ -146,6 +146,17 @@ export function RollerPlayground({
                 : undefined
             }
             role={state.status === 'result' ? 'button' : undefined}
+            tabIndex={state.status === 'result' ? 0 : undefined}
+            onKeyDown={
+              state.status === 'result'
+                ? (e: React.KeyboardEvent) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setExpanded(prev => !prev)
+                    }
+                  }
+                : undefined
+            }
             aria-label={
               state.status === 'result'
                 ? expanded
@@ -236,7 +247,6 @@ type TooltipStep =
   | { kind: 'divider' }
   | { kind: 'arithmetic'; label: string; display: string }
   | { kind: 'finalRolls'; rolls: readonly number[]; arithmeticDelta: number }
-  | { kind: 'total'; value: number }
 
 const ARITHMETIC_MODIFIERS: Partial<Record<string, { label: string; sign: string }>> = {
   plus: { label: 'Add', sign: '+' },
@@ -297,7 +307,6 @@ function computeSteps(record: RollRecord): readonly TooltipStep[] {
     steps.push(...modifierSteps)
     const arithmeticDelta = record.appliedTotal - record.modifierHistory.total
     steps.push({ kind: 'finalRolls', rolls: record.modifierHistory.modifiedRolls, arithmeticDelta })
-    steps.push({ kind: 'total', value: record.appliedTotal })
   }
   return steps
 }
@@ -368,20 +377,12 @@ export function RollTooltip({ record }: { readonly record: RollRecord }): React.
             </div>
           )
         }
-        if (step.kind === 'finalRolls') {
-          return (
-            <div key="finalRolls" className="roller-tooltip-row roller-tooltip-row--final">
-              <span className="roller-tooltip-label">Final rolls</span>
-              <span className="roller-tooltip-dice">
-                {formatAsMath(step.rolls, step.arithmeticDelta)}
-              </span>
-            </div>
-          )
-        }
         return (
-          <div key="total" className="roller-tooltip-total">
-            <span>Total</span>
-            <span>{step.value}</span>
+          <div key="finalRolls" className="roller-tooltip-row roller-tooltip-row--final">
+            <span className="roller-tooltip-label">Final rolls</span>
+            <span className="roller-tooltip-dice">
+              {formatAsMath(step.rolls, step.arithmeticDelta)}
+            </span>
           </div>
         )
       })}
