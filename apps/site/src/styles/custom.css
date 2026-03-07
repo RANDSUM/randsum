@@ -87,12 +87,6 @@ h6 {
   margin-top: 1rem;
 }
 
-/* ===== Content layout ===== */
-/* Left-align content so the left gap matches the top padding instead of centering */
-:root {
-  --sl-content-margin-inline: 0 auto;
-}
-
 /* ===== Header layout ===== */
 /* Make search bar flush against the logo instead of aligned to content column */
 @media (min-width: 50rem) {
