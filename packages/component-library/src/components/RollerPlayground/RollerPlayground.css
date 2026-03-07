@@ -233,6 +233,26 @@
   filter: brightness(1.1);
 }
 
+/* ===== Chip open hint (hover) ===== */
+.roller-playground-chip-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.92);
+  border-radius: inherit;
+  color: #fff;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.roller-playground-chip:not(.roller-playground-chip--empty):hover .roller-playground-chip-hint {
+  opacity: 1;
+}
+
 @media (prefers-color-scheme: light) {
   .roller-playground-chip--empty {
     background: rgba(0, 0, 0, 0.1);

@@ -156,7 +156,14 @@ export function RollerPlayground({
             aria-expanded={state.status === 'result' ? expanded : undefined}
           >
             {state.status === 'result' && (
-              <span className="roller-playground-chip-value">{expanded ? '×' : state.total}</span>
+              <>
+                <span className="roller-playground-chip-value">{expanded ? '×' : state.total}</span>
+                {!expanded && (
+                  <span className="roller-playground-chip-hint" aria-hidden="true">
+                    ↓
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
