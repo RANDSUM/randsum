@@ -58,11 +58,13 @@ console.log('Rolls:   ', result.rolls)
 export function RollerPlayground({
   stackblitz = true,
   defaultNotation = '4d6L',
-  className
+  className,
+  size = 's'
 }: {
   readonly stackblitz?: boolean
   readonly defaultNotation?: string
   readonly className?: string
+  readonly size?: 's' | 'm' | 'l'
 } = {}): React.JSX.Element {
   const [notation, setNotation] = useState(defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
@@ -96,7 +98,9 @@ export function RollerPlayground({
     setExpanded(false)
   }, [])
 
-  const rootClass = ['roller-playground', className].filter(Boolean).join(' ')
+  const rootClass = ['roller-playground', `roller-playground--size-${size}`, className]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div className={rootClass}>
@@ -290,6 +294,18 @@ function formatAsMath(rolls: readonly number[], delta = 0): string {
   return terms.join(' ')
 }
 
+function modifierLabel(modifier: string, options: unknown): string {
+  const base = modifier.charAt(0).toUpperCase() + modifier.slice(1)
+  if (options !== null && typeof options === 'object') {
+    const opts = options as Record<string, unknown>
+    if (modifier === 'drop' || modifier === 'keep') {
+      if (opts['lowest'] !== undefined) return `${base} Lowest`
+      if (opts['highest'] !== undefined) return `${base} Highest`
+    }
+  }
+  return base
+}
+
 function computeSteps(record: RollRecord): readonly TooltipStep[] {
   const steps: TooltipStep[] = []
   const current: number[] = [...record.modifierHistory.initialRolls]
@@ -322,7 +338,7 @@ function computeSteps(record: RollRecord): readonly TooltipStep[] {
       if (idx !== -1) unchanged.splice(idx, 1)
     }
 
-    const label = log.modifier.charAt(0).toUpperCase() + log.modifier.slice(1)
+    const label = modifierLabel(log.modifier, log.options)
     modifierSteps.push({ kind: 'rolls', label, unchanged, removed: log.removed, added: log.added })
   }
 
@@ -351,16 +367,16 @@ function DiceGroup({
     <span className="roller-tooltip-dice-group">
       {removed.length > 0 && (
         <span className="roller-tooltip-dice roller-tooltip-dice--removed">
-          {removed.join(', ')}
+          {removed.join(',')}
         </span>
       )}
       {added.length > 0 && (
-        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(', ')}</span>
+        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(',')}</span>
       )}
       {hasModified && shown.length > 0 && <span className="roller-tooltip-dice-sep">|</span>}
       {shown.length > 0 && (
         <span className="roller-tooltip-dice">
-          {shown.join(', ')}
+          {shown.join(',')}
           {truncated ? ' …' : ''}
         </span>
       )}
