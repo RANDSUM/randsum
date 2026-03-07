@@ -1,7 +1,7 @@
 [build]
   # Build command runs from root (base directory)
   # Builds packages first (for workspace resolution), generates API docs, then builds the site
-  command = "bun run build && bun run docs:site && bun run site:build"
+  command = "bun run build && bun run site:build"
   publish = "apps/site/dist"
 
 [dev]
