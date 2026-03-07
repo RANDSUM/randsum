@@ -87,7 +87,7 @@ h6 {
   margin-top: 1.5rem;
 }
 
-.sl-markdown-content .roller-playground.roller-playground--size-l {
+.sl-markdown-content .roller-playground.roller-playground--size-l:not(:where(.not-content *)) {
   margin: 2rem 0;
 }
 
