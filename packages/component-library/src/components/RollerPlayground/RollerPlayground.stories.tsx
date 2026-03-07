@@ -9,13 +9,13 @@ export default meta
 
 export const Default: Story = () => (
   <div style={{ padding: '2rem' }}>
-    <RollerPlayground size="l" />
+    <RollerPlayground />
   </div>
 )
 
 export const NoStackBlitz: Story = () => (
   <div style={{ padding: '2rem' }}>
-    <RollerPlayground stackblitz={false} size="l" />
+    <RollerPlayground stackblitz={false} />
   </div>
 )
 

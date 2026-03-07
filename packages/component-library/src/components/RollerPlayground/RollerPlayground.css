@@ -25,7 +25,7 @@
 }
 
 .roller-playground--size-l {
-  --rp-max-width: 40rem;
+  --rp-max-width: 100%;
   --rp-row-height: 3rem;
   --rp-margin: 0.5rem;
   --rp-font-size-input: 1.25rem;

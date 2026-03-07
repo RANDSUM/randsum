@@ -59,7 +59,7 @@ export function RollerPlayground({
   stackblitz = true,
   defaultNotation = '4d6L',
   className,
-  size = 's'
+  size = 'l'
 }: {
   readonly stackblitz?: boolean
   readonly defaultNotation?: string
@@ -220,7 +220,7 @@ export function RollerPlayground({
               onClick={() => {
                 openInStackBlitz(notation)
               }}
-              aria-label="Edit in StackBlitz"
+              aria-label="Open in StackBlitz"
             >
               <svg
                 className="roller-playground-stackblitz-icon"
@@ -230,7 +230,7 @@ export function RollerPlayground({
               >
                 <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
               </svg>
-              Edit
+              Code
             </button>
           )}
         </div>
@@ -294,14 +294,38 @@ function formatAsMath(rolls: readonly number[], delta = 0): string {
   return terms.join(' ')
 }
 
+function numVal(opts: Record<string, unknown>, key: string): number | undefined {
+  const v = opts[key]
+  return typeof v === 'number' ? v : undefined
+}
+
+function formatComparison(opts: Record<string, unknown>): string {
+  const parts: string[] = []
+  const gt = numVal(opts, 'greaterThan')
+  if (gt !== undefined) parts.push(`Greater than ${gt}`)
+  const gte = numVal(opts, 'greaterThanOrEqual')
+  if (gte !== undefined) parts.push(`At least ${gte}`)
+  const lt = numVal(opts, 'lessThan')
+  if (lt !== undefined) parts.push(`Less than ${lt}`)
+  const lte = numVal(opts, 'lessThanOrEqual')
+  if (lte !== undefined) parts.push(`At most ${lte}`)
+  const exact = numVal(opts, 'exact')
+  if (exact !== undefined) parts.push(`${exact}`)
+  return parts.join(', ')
+}
+
 function modifierLabel(modifier: string, options: unknown): string {
   const base = modifier.charAt(0).toUpperCase() + modifier.slice(1)
   if (options !== null && typeof options === 'object') {
     const opts = options as Record<string, unknown>
     if (modifier === 'drop' || modifier === 'keep') {
-      if (opts['lowest'] !== undefined) return `${base} Lowest`
-      if (opts['highest'] !== undefined) return `${base} Highest`
+      const lowest = numVal(opts, 'lowest')
+      const highest = numVal(opts, 'highest')
+      if (lowest !== undefined) return `${base} Lowest ${lowest}`
+      if (highest !== undefined) return `${base} Highest ${highest}`
     }
+    const comparison = formatComparison(opts)
+    if (comparison) return `${base} ${comparison}`
   }
   return base
 }
