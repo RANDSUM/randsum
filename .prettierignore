@@ -45,19 +45,6 @@ Thumbs.db
 docs/
 .typedoc/
 
-# Binary files
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.ico
-*.webp
-*.svg
-*.woff
-*.woff2
-*.ttf
-*.eot
-
 # Lock files
 *.lock
 yarn.lock

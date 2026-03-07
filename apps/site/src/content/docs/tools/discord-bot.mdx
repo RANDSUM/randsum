@@ -3,6 +3,8 @@ title: Discord Bot
 description: Roll dice directly in Discord with the RANDSUM bot
 ---
 
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
 The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. Built with [discord.js](https://discord.js.org) and Bun, it provides detailed roll breakdowns and full support for all RANDSUM game packages.
 
 ## Add to your server
@@ -19,60 +21,48 @@ No configuration is required after adding.
 
 The core dice rolling command. Supports the full RANDSUM dice notation with detailed breakdowns showing individual die results, modifiers, and final totals.
 
-```bash
-/roll notation:4d6L+2
+<CodeExample lang="bash" code={`/roll notation:4d6L+2
 /roll notation:2d20H
-/roll notation:3d8+5
-```
+/roll notation:3d8+5`} />
 
 ### `/blades`
 
 Roll Blades in the Dark action rolls. Takes the number of dice in your pool and returns the outcome (critical, success, partial, or failure) with color-coded embeds.
 
-```bash
-/blades dice:3
+<CodeExample lang="bash" code={`/blades dice:3
 /blades dice:2
-/blades dice:0   # Desperate position (rolls 2d6, takes lowest)
-```
+/blades dice:0   # Desperate position (rolls 2d6, takes lowest)`} />
 
 ### `/dh`
 
 Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantage/disadvantage, and amplification of hope or fear dice.
 
-```bash
-/dh modifier:5 rollingWith:Advantage
+<CodeExample lang="bash" code={`/dh modifier:5 rollingWith:Advantage
 /dh modifier:3 rollingWith:Disadvantage
 /dh amplifyHope:true amplifyFear:false
-/dh modifier:2
-```
+/dh modifier:2`} />
 
 ### `/root`
 
 Roll Root RPG mechanics. Rolls 2d6 with an optional modifier and returns the outcome (Strong Hit, Weak Hit, or Miss).
 
-```bash
-/root modifier:2
+<CodeExample lang="bash" code={`/root modifier:2
 /root modifier:-1
-/root   # No modifier
-```
+/root   # No modifier`} />
 
 ### `/su`
 
 Roll on Salvage Union tables. Supports all Salvage Union tables including Core Mechanic, Morale, and others.
 
-```bash
-/su table:Core Mechanic
+<CodeExample lang="bash" code={`/su table:Core Mechanic
 /su table:Morale
-/su   # Uses default table
-```
+/su   # Uses default table`} />
 
 ### `/notation`
 
 Display a reference guide for RANDSUM dice notation. Shows all available modifiers, syntax, and examples.
 
-```bash
-/notation
-```
+<CodeExample lang="bash" code={`/notation`} />
 
 ## Supported game packages
 
@@ -97,8 +87,7 @@ Each game package has a dedicated command with game-specific results, color-code
 
 If you prefer to run the bot yourself:
 
-```bash
-# From the monorepo root
+<CodeExample lang="bash" code={`# From the monorepo root
 cd apps/discord-bot
 
 # Install dependencies
@@ -111,8 +100,7 @@ cp .env.example .env
 bun run deploy-commands
 
 # Run the bot
-bun run dev
-```
+bun run dev`} />
 
 For detailed setup instructions, see the [Discord Bot source on GitHub](https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot).
 

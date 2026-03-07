@@ -1,15 +1,18 @@
 ---
 title: Introduction
-description: Welcome to RANDSUM — a zero-dependency dice engine with expressive notation
+description: Welcome to RANDSUM — TypeScript-First Dice Notation Ecosystem
 ---
 
-RANDSUM is a zero-dependency dice engine with expressive notation, built for developers who take their dice seriously.
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+RANDSUM is a TypeScript-first dice notation ecosystem for tabletop RPGs and game development. Throw dice, not exceptions.
 
 ## Why RANDSUM?
 
 - **Zero dependencies** -- the core roller has no runtime dependencies
 - **Full TypeScript support** -- strict types, branded notation strings, and exhaustive result types
-- **Never throws** -- errors are returned in the result, not thrown as exceptions
+- **Not designed to throw** -- errors are returned in the result, not thrown as exceptions
 - **Modular architecture** -- install only the packages you need
 - **Game-specific packages** -- first-class support for D&D 5e, Blades in the Dark, PbtA, and more
 
@@ -17,8 +20,7 @@ RANDSUM is a zero-dependency dice engine with expressive notation, built for dev
 
 At its simplest, RANDSUM lets you roll dice with a single function call:
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Roll a d20
 const result = roll(20)
@@ -28,8 +30,9 @@ console.log(result.total) // 1-20
 const abilityScore = roll('4d6L')
 
 // Roll with advantage
-const attack = roll('2d20H+5')
-```
+const attack = roll('2d20H+5')`} />
+
+<RollerPlayground defaultNotation="1d20" client:only="react" />
 
 The `roll()` function accepts numbers, notation strings, or options objects -- and you can mix and match them freely.
 

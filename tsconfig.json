@@ -27,5 +27,15 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
-  }
+  },
+  "references": [
+    { "path": "packages/roller" },
+    { "path": "packages/blades" },
+    { "path": "packages/daggerheart" },
+    { "path": "packages/fifth" },
+    { "path": "packages/pbta" },
+    { "path": "packages/root-rpg" },
+    { "path": "packages/salvageunion" },
+    { "path": "packages/component-library" }
+  ]
 }

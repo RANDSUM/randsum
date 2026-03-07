@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/jarvis/Code/RANDSUM/@RANDSUM && bun run format 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'bun.lockb'; then echo 'Blocked: do not edit bun.lockb directly. Run bun install instead.' && exit 2; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

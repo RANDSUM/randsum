@@ -4,6 +4,7 @@ description: Game-specific packages for popular tabletop RPG systems
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 RANDSUM includes specialized packages for popular tabletop RPG systems. Each game package wraps the core `@randsum/roller` engine with game-specific validation, roll configuration, and result interpretation.
 
@@ -51,15 +52,12 @@ Every game package follows the same pattern using the `createGameRoll` factory f
 3. **Roll** -- Execute the roll using the core roller engine
 4. **Interpret** -- Transform the raw result into a game-specific outcome
 
-```typescript
-// Each game package exports a `roll()` function with game-specific types
-import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/fifth'
 
-const result = roll({ modifier: 5, rollingWith: 'Advantage' })
+const result = roll({ modifier: 5, rollingWith: { advantage: true } })
 // result.result is the game-specific outcome (number for D&D 5e)
 // result.total is the final total
-// result.rolls contains the raw dice data
-```
+// result.rolls contains the raw dice data`} />
 
 ## Common patterns
 
@@ -76,15 +74,13 @@ All game packages share these characteristics:
 
 Install game packages individually. Each one pulls in `@randsum/roller` automatically.
 
-```bash
-# Pick the games you need
+<CodeExample lang="bash" code={`# Pick the games you need
 bun add @randsum/fifth
 bun add @randsum/blades
 bun add @randsum/pbta
 bun add @randsum/daggerheart
 bun add @randsum/root-rpg
-bun add @randsum/salvageunion
-```
+bun add @randsum/salvageunion`} />
 
 ## Quick comparison
 

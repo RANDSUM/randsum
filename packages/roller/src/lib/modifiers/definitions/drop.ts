@@ -7,7 +7,7 @@ import { defineModifier } from '../registry'
 
 const dropHighestPattern = /[Hh](\d+)?/g
 const dropLowestPattern = /[Ll](\d+)?/g
-const dropConstraintsPattern = /[Dd]\{([^}]{1,50})\}/
+const dropConstraintsPattern = /[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
 /**
  * Drop modifier - removes dice from the result pool.
@@ -15,19 +15,20 @@ const dropConstraintsPattern = /[Dd]\{([^}]{1,50})\}/
  * Notation:
  *   - H or H{N} - Drop highest (N defaults to 1)
  *   - L or L{N} - Drop lowest (N defaults to 1)
- *   - D{conditions} - Drop by condition (>N, <N, exact values)
+ *   - D{conditions} - Drop by condition (>=N, <=N, >N, <N, =N, exact values)
  *
  * Examples:
  *   - 4d6L - Roll 4d6, drop lowest (D&D ability scores)
  *   - 2d20H - Roll 2d20, drop highest (disadvantage)
  *   - 4d6D{1} - Drop all 1s
+ *   - 4d6D{>=5} - Drop all 5s and above
  *   - 4d6LH - Drop both lowest and highest
  */
 export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'drop'>({
   name: 'drop',
   priority: 20,
 
-  pattern: /([Hh](\d+)?|[Ll](\d+)?|[Dd]\{([^}]{1,50})\})/,
+  pattern: /([Hh](\d+)?|[Ll](\d+)?|[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})/,
 
   parse: notation => {
     const drop: DropOptions = {}
@@ -50,7 +51,10 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
     if (constraintsMatch?.[1]) {
       const parsed = parseComparisonNotation(constraintsMatch[1])
       if (parsed.greaterThan !== undefined) drop.greaterThan = parsed.greaterThan
+      if (parsed.greaterThanOrEqual !== undefined)
+        drop.greaterThanOrEqual = parsed.greaterThanOrEqual
       if (parsed.lessThan !== undefined) drop.lessThan = parsed.lessThan
+      if (parsed.lessThanOrEqual !== undefined) drop.lessThanOrEqual = parsed.lessThanOrEqual
       if (parsed.exact) drop.exact = parsed.exact
     }
 
@@ -60,7 +64,8 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
   },
 
   toNotation: options => {
-    const { highest, lowest, greaterThan, lessThan, exact } = options
+    const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } =
+      options
     const parts: string[] = []
 
     if (highest) {
@@ -73,17 +78,11 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
 
     const dropList: string[] = []
 
-    if (greaterThan !== undefined) {
-      dropList.push(`>${greaterThan}`)
-    }
-
-    if (lessThan !== undefined) {
-      dropList.push(`<${lessThan}`)
-    }
-
-    if (exact) {
-      exact.forEach(roll => dropList.push(`${roll}`))
-    }
+    if (greaterThanOrEqual !== undefined) dropList.push(`>=${greaterThanOrEqual}`)
+    if (greaterThan !== undefined) dropList.push(`>${greaterThan}`)
+    if (lessThanOrEqual !== undefined) dropList.push(`<=${lessThanOrEqual}`)
+    if (lessThan !== undefined) dropList.push(`<${lessThan}`)
+    if (exact) exact.forEach(roll => dropList.push(`${roll}`))
 
     if (dropList.length > 0) {
       parts.push(`D{${dropList.join(',')}}`)
@@ -93,7 +92,8 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
   },
 
   toDescription: options => {
-    const { highest, lowest, greaterThan, lessThan, exact } = options
+    const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } =
+      options
     const descriptions: string[] = []
 
     if (highest) {
@@ -108,8 +108,16 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
       descriptions.push(`Drop ${formatHumanList(exact)}`)
     }
 
+    if (greaterThanOrEqual !== undefined) {
+      descriptions.push(`Drop greater than or equal to [${greaterThanOrEqual}]`)
+    }
+
     if (greaterThan !== undefined) {
       descriptions.push(`Drop greater than [${greaterThan}]`)
+    }
+
+    if (lessThanOrEqual !== undefined) {
+      descriptions.push(`Drop less than or equal to [${lessThanOrEqual}]`)
     }
 
     if (lessThan !== undefined) {
@@ -120,12 +128,15 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
   },
 
   apply: (rolls, options) => {
-    const { highest, lowest, greaterThan, lessThan, exact } = options
+    const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } =
+      options
 
     const exactSet = exact ? new Set(exact) : null
     const filteredByConditions = rolls.filter(roll => {
       if (greaterThan !== undefined && roll > greaterThan) return false
+      if (greaterThanOrEqual !== undefined && roll >= greaterThanOrEqual) return false
       if (lessThan !== undefined && roll < lessThan) return false
+      if (lessThanOrEqual !== undefined && roll <= lessThanOrEqual) return false
       if (exactSet?.has(roll)) return false
       return true
     })

@@ -12,7 +12,7 @@ import type { TypedModifierDefinition } from '../schema'
 import { assertRollFn } from '../schema'
 import { defineModifier } from '../registry'
 
-const rerollPattern = /[Rr]\{([^}]{1,50})\}(\d+)?/g
+const rerollPattern = /[Rr]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/g
 
 /**
  * Reroll modifier - rerolls dice matching conditions.
@@ -29,7 +29,7 @@ export const rerollModifier: TypedModifierDefinition<'reroll'> = defineModifier<
   priority: 40,
   requiresRollFn: true,
 
-  pattern: /[Rr]\{([^}]{1,50})\}(\d+)?/,
+  pattern: /[Rr]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/,
 
   parse: notation => {
     const matches = Array.from(notation.matchAll(rerollPattern))
@@ -48,7 +48,10 @@ export const rerollModifier: TypedModifierDefinition<'reroll'> = defineModifier<
       if (conditions) {
         const parsed = parseComparisonNotation(conditions)
         if (parsed.greaterThan !== undefined) reroll.greaterThan = parsed.greaterThan
+        if (parsed.greaterThanOrEqual !== undefined)
+          reroll.greaterThanOrEqual = parsed.greaterThanOrEqual
         if (parsed.lessThan !== undefined) reroll.lessThan = parsed.lessThan
+        if (parsed.lessThanOrEqual !== undefined) reroll.lessThanOrEqual = parsed.lessThanOrEqual
         if (parsed.exact) reroll.exact = [...(reroll.exact ?? []), ...parsed.exact]
       }
     }
@@ -65,7 +68,7 @@ export const rerollModifier: TypedModifierDefinition<'reroll'> = defineModifier<
   },
 
   toDescription: options => {
-    const { exact, greaterThan, lessThan, max } = options
+    const { exact, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, max } = options
     const rerollList: string[] = []
 
     if (exact) {
@@ -73,8 +76,14 @@ export const rerollModifier: TypedModifierDefinition<'reroll'> = defineModifier<
     }
 
     const greaterLessList: string[] = []
+    if (greaterThanOrEqual !== undefined) {
+      greaterLessList.push(`greater than or equal to [${greaterThanOrEqual}]`)
+    }
     if (greaterThan !== undefined) {
       greaterLessList.push(`greater than [${greaterThan}]`)
+    }
+    if (lessThanOrEqual !== undefined) {
+      greaterLessList.push(`less than or equal to [${lessThanOrEqual}]`)
     }
     if (lessThan !== undefined) {
       greaterLessList.push(`less than [${lessThan}]`)

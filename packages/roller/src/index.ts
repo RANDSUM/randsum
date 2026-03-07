@@ -31,6 +31,14 @@ export { PRESETS, resolvePreset, resolvePresetParam } from './internal/api'
 
 export { createGameRoll, createMultiRollGameRoll } from './internal/api'
 
+export {
+  matchesComparison,
+  formatComparisonDescription,
+  formatComparisonNotation,
+  parseComparisonNotation,
+  hasConditions
+} from './internal/api'
+
 export type {
   DiceNotation,
   RollArgument,

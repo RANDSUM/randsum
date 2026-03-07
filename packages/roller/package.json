@@ -1,7 +1,7 @@
 {
   "name": "@randsum/roller",
-  "version": "1.1.0",
-  "description": "A flexible, type-safe dice roller for tabletop RPGs, game development, and probability simulations",
+  "version": "1.1.2",
+  "description": "TypeScript-first dice notation engine for tabletop RPGs, game development, and probability simulations",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -17,7 +17,6 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "react-native": "./src/index.ts",
   "files": [
     "dist",
     "src",
@@ -28,6 +27,16 @@
   "type": "module",
   "exports": {
     ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./types": {
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"

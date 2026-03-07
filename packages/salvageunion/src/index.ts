@@ -7,3 +7,4 @@ export type {
   SalvageUnionTableListing,
   SalvageUnionRollRecord
 } from './types'
+export type { GameRollResult, RollRecord } from '@randsum/roller'

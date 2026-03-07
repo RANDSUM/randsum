@@ -51,6 +51,12 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('4d20C{>18}')).toBe(true)
       expect(isDiceNotation('3d6C{<2}')).toBe(true)
       expect(isDiceNotation('2d8C{>6,<2}')).toBe(true)
+      // New: bare number and = operator
+      expect(isDiceNotation('4d6KC{4}')).toBe(true)
+      expect(isDiceNotation('4d6C{=4}')).toBe(true)
+      // New: >= and <= operators
+      expect(isDiceNotation('4d6C{>=4}')).toBe(true)
+      expect(isDiceNotation('4d6C{<=2}')).toBe(true)
     })
 
     test('returns true for dice notation with unique modifiers', () => {

@@ -1,0 +1,560 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
+import type { RollRecord } from '@randsum/roller'
+import { ModifierReference } from '../ModifierReference'
+import './RollerPlayground.css'
+
+type PlaygroundState =
+  | { status: 'idle' }
+  | { status: 'rolling' }
+  | { status: 'result'; total: number; record: RollRecord }
+
+function openInStackBlitz(notation: string): void {
+  const code = `import { roll } from '@randsum/roller'
+
+const result = roll('${notation}')
+
+console.log('Notation:', '${notation}')
+console.log('Total:   ', result.total)
+console.log('Rolls:   ', result.rolls)
+`
+  const form = document.createElement('form')
+  form.method = 'POST'
+  form.action = 'https://stackblitz.com/run'
+  form.target = '_blank'
+
+  const packageJson = JSON.stringify(
+    {
+      name: 'randsum-playground',
+      version: '1.0.0',
+      private: true,
+      scripts: { start: 'tsx index.ts' },
+      dependencies: { '@randsum/roller': 'latest', tsx: 'latest' }
+    },
+    null,
+    2
+  )
+
+  const fields: Record<string, string> = {
+    'project[title]': `RANDSUM — ${notation}`,
+    'project[description]': `Rolling ${notation} with @randsum/roller`,
+    'project[template]': 'node',
+    'project[files][index.ts]': code,
+    'project[files][package.json]': packageJson
+  }
+
+  for (const [name, value] of Object.entries(fields)) {
+    const input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = name
+    input.value = value
+    form.appendChild(input)
+  }
+
+  document.body.appendChild(form)
+  form.submit()
+  document.body.removeChild(form)
+}
+
+export function RollerPlayground({
+  stackblitz = true,
+  defaultNotation = '4d6L',
+  notation: controlledNotation,
+  className,
+  size = 'l'
+}: {
+  readonly stackblitz?: boolean
+  readonly defaultNotation?: string
+  readonly notation?: string
+  readonly className?: string
+  readonly size?: 's' | 'm' | 'l'
+} = {}): React.JSX.Element {
+  const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
+  const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
+  const [expanded, setExpanded] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (controlledNotation === undefined) return
+    setNotation(controlledNotation)
+    setState({ status: 'idle' })
+    setExpanded(false)
+  }, [controlledNotation])
+
+  const isValid = notation.length > 0 && isDiceNotation(notation)
+  const shellVariant = notation.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'
+
+  const handleRoll = useCallback(() => {
+    if (!isValid) return
+    setState({ status: 'rolling' })
+    setExpanded(false)
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => {
+      const result = roll(notation)
+      if (result.error || !result.rolls[0]) return
+      setState({ status: 'result', total: result.total, record: result.rolls[0] })
+      requestAnimationFrame(() => {
+        setExpanded(true)
+      })
+    }, 300)
+  }, [notation, isValid])
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNotation(e.target.value)
+    setState({ status: 'idle' })
+    setExpanded(false)
+  }, [])
+
+  const rootClass = [
+    'roller-playground',
+    `roller-playground--size-${size}`,
+    'not-content',
+    className
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  return (
+    <div
+      className={rootClass}
+      onClick={e => {
+        if (!(e.target instanceof HTMLButtonElement) && !(e.target instanceof HTMLInputElement))
+          inputRef.current?.focus()
+      }}
+    >
+      <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
+        <div className="roller-playground-row">
+          <div className="roller-playground-code-wrap">
+            <span className="roller-playground-code-prefix">
+              <button
+                className="roller-playground-code-fn"
+                onClick={e => {
+                  e.stopPropagation()
+                  handleRoll()
+                }}
+                disabled={!isValid || state.status === 'rolling'}
+                aria-label="Roll"
+              >
+                roll
+              </button>
+              <span className="roller-playground-code-paren">(</span>
+              <span className="roller-playground-code-str-delim">&#39;</span>
+            </span>
+            <input
+              ref={inputRef}
+              type="text"
+              className="roller-playground-input"
+              style={{ width: `${notation.length || 4}ch` }}
+              value={notation}
+              onChange={handleChange}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleRoll()
+              }}
+              placeholder="1d20"
+              spellCheck={false}
+              autoComplete="off"
+              aria-label="Dice notation"
+            />
+            <span
+              className="roller-playground-code-suffix"
+              onClick={e => {
+                e.stopPropagation()
+                const input = inputRef.current
+                if (input) {
+                  input.focus()
+                  const len = input.value.length
+                  input.setSelectionRange(len, len)
+                }
+              }}
+              style={{ cursor: 'text' }}
+            >
+              <span className="roller-playground-code-str-delim">&#39;</span>
+              <span className="roller-playground-code-paren">)</span>
+            </span>
+          </div>
+
+          <div
+            className={[
+              'roller-playground-chip',
+              state.status !== 'result' ? 'roller-playground-chip--empty' : '',
+              state.status === 'result' && expanded ? 'roller-playground-chip--expanded' : ''
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            onClick={
+              state.status === 'result'
+                ? () => {
+                    setExpanded(e => !e)
+                  }
+                : undefined
+            }
+            role={state.status === 'result' ? 'button' : undefined}
+            tabIndex={state.status === 'result' ? 0 : undefined}
+            onKeyDown={
+              state.status === 'result'
+                ? (e: React.KeyboardEvent) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setExpanded(prev => !prev)
+                    }
+                  }
+                : undefined
+            }
+            aria-label={
+              state.status === 'result'
+                ? expanded
+                  ? 'Collapse breakdown'
+                  : 'Expand breakdown'
+                : undefined
+            }
+            aria-expanded={state.status === 'result' ? expanded : undefined}
+          >
+            {state.status === 'result' && (
+              <>
+                <span
+                  className={[
+                    'roller-playground-chip-value',
+                    expanded ? 'roller-playground-chip-value--hidden' : ''
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  {state.total}
+                </span>
+                {expanded ? (
+                  <span className="roller-playground-chip-collapse" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="18 15 12 9 6 15" />
+                    </svg>
+                  </span>
+                ) : (
+                  <span className="roller-playground-chip-hint" aria-hidden="true">
+                    ↓
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+        <div className="roller-playground-desc-row">
+          <span
+            className={`roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
+          >
+            {notationDesc(notation, isValid)}
+          </span>
+          <div className="roller-playground-btn-group">
+            {stackblitz && (
+              <button
+                className="roller-playground-stackblitz"
+                onClick={() => {
+                  openInStackBlitz(notation)
+                }}
+                aria-label="Open in StackBlitz"
+              >
+                <svg
+                  className="roller-playground-stackblitz-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
+                </svg>
+                Code
+              </button>
+            )}
+            <div className="roller-playground-modifiers-wrap">
+              <button
+                className="roller-playground-stackblitz roller-playground-modifiers-btn"
+                type="button"
+                aria-label="Show modifier reference"
+              >
+                Modifiers
+              </button>
+              <div className="roller-playground-modifiers-tooltip" aria-hidden="true">
+                <ModifierReference />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className={`roller-playground-expand${expanded ? ' roller-playground-expand--open' : ''}`}
+        >
+          <div className="roller-playground-expand-inner">
+            {state.status === 'result' && (
+              <div className="roller-playground-expand-content">
+                <RollTooltip record={state.record} />
+                <div className="roller-playground-expand-total">
+                  <span>Total</span>
+                  <span className="roller-playground-expand-total-chip">{state.total}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function notationDesc(notation: string, isValid: boolean): string {
+  if (notation.length === 0) return 'Try: 4d6L, 1d20+5, 2d8!'
+  if (!isValid) return 'Invalid notation'
+  const result = validateNotation(notation)
+  if (!result.valid) return notation
+  const lines = result.description.flat()
+  return lines.length > 0 ? lines.join(', ') : notation
+}
+
+type TooltipStep =
+  | {
+      kind: 'rolls'
+      label: string
+      unchanged: readonly number[]
+      removed: readonly number[]
+      added: readonly number[]
+    }
+  | { kind: 'divider' }
+  | { kind: 'arithmetic'; label: string; display: string }
+  | { kind: 'finalRolls'; rolls: readonly number[]; arithmeticDelta: number }
+
+const ARITHMETIC_MODIFIERS: Partial<Record<string, { label: string; sign: string }>> = {
+  plus: { label: 'Add', sign: '+' },
+  minus: { label: 'Subtract', sign: '-' },
+  multiply: { label: 'Multiply', sign: '×' },
+  multiplyTotal: { label: 'Multiply total', sign: '×' }
+}
+
+const MAX_DICE_SHOWN = 10
+
+function formatAsMath(rolls: readonly number[], delta = 0): string {
+  const terms = rolls.map((n, i) => {
+    if (i === 0) return String(n)
+    return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`
+  })
+  if (delta > 0) terms.push(`+ ${delta}`)
+  if (delta < 0) terms.push(`- ${Math.abs(delta)}`)
+  return terms.join(' ')
+}
+
+function numVal(opts: Record<string, unknown>, key: string): number | undefined {
+  const v = opts[key]
+  return typeof v === 'number' ? v : undefined
+}
+
+function formatComparison(opts: Record<string, unknown>): string {
+  const parts: string[] = []
+  const gt = numVal(opts, 'greaterThan')
+  if (gt !== undefined) parts.push(`Greater than ${gt}`)
+  const gte = numVal(opts, 'greaterThanOrEqual')
+  if (gte !== undefined) parts.push(`At least ${gte}`)
+  const lt = numVal(opts, 'lessThan')
+  if (lt !== undefined) parts.push(`Less than ${lt}`)
+  const lte = numVal(opts, 'lessThanOrEqual')
+  if (lte !== undefined) parts.push(`At most ${lte}`)
+  const exact = numVal(opts, 'exact')
+  if (exact !== undefined) parts.push(`${exact}`)
+  return parts.join(', ')
+}
+
+function modifierLabel(modifier: string, options: unknown): string {
+  const base = modifier.charAt(0).toUpperCase() + modifier.slice(1)
+  if (options !== null && typeof options === 'object') {
+    const opts = options as Record<string, unknown>
+    if (modifier === 'drop' || modifier === 'keep') {
+      const lowest = numVal(opts, 'lowest')
+      const highest = numVal(opts, 'highest')
+      const parts: string[] = []
+      if (lowest !== undefined) parts.push(`Lowest ${lowest}`)
+      if (highest !== undefined) parts.push(`Highest ${highest}`)
+      if (parts.length > 0) return `${base} ${parts.join(', ')}`
+    }
+    const comparison = formatComparison(opts)
+    if (comparison) return `${base} ${comparison}`
+  }
+  return base
+}
+
+function applyRemove(pool: number[], values: readonly number[]): number[] {
+  const result = [...pool]
+  for (const val of values) {
+    const idx = result.indexOf(val)
+    if (idx !== -1) result.splice(idx, 1)
+  }
+  return result
+}
+
+function computeSteps(record: RollRecord): readonly TooltipStep[] {
+  const steps: TooltipStep[] = []
+  const current: number[] = [...record.modifierHistory.initialRolls]
+
+  steps.push({ kind: 'rolls', label: 'Rolled', unchanged: [...current], removed: [], added: [] })
+
+  const modifierSteps: TooltipStep[] = []
+
+  for (const log of record.modifierHistory.logs) {
+    const arith = ARITHMETIC_MODIFIERS[log.modifier]
+    if (arith) {
+      const value = log.options as number
+      modifierSteps.push({
+        kind: 'arithmetic',
+        label: arith.label,
+        display: `${arith.sign}${value}`
+      })
+      continue
+    }
+
+    const isSplittable =
+      (log.modifier === 'drop' || log.modifier === 'keep') && typeof log.options === 'object'
+
+    if (isSplittable) {
+      const opts = log.options as Record<string, unknown>
+      const lowest = numVal(opts, 'lowest')
+      const highest = numVal(opts, 'highest')
+      const base = log.modifier.charAt(0).toUpperCase() + log.modifier.slice(1)
+
+      if (lowest !== undefined && highest !== undefined) {
+        // Split into two rows: lowest first, then highest
+        const sortedAsc = [...current].sort((a, b) => a - b)
+        const lowestRemoved = sortedAsc.slice(0, lowest)
+        const afterLowest = applyRemove(current, lowestRemoved)
+
+        const sortedDesc = [...afterLowest].sort((a, b) => b - a)
+        const highestRemoved = sortedDesc.slice(0, highest)
+        const afterHighest = applyRemove(afterLowest, highestRemoved)
+
+        modifierSteps.push({
+          kind: 'rolls',
+          label: `${base} Lowest ${lowest}`,
+          unchanged: afterLowest,
+          removed: lowestRemoved,
+          added: []
+        })
+        modifierSteps.push({
+          kind: 'rolls',
+          label: `${base} Highest ${highest}`,
+          unchanged: afterHighest,
+          removed: highestRemoved,
+          added: []
+        })
+
+        current.length = 0
+        current.push(...afterHighest)
+        continue
+      }
+    }
+
+    for (const val of log.removed) {
+      const idx = current.indexOf(val)
+      if (idx !== -1) current.splice(idx, 1)
+    }
+    current.push(...log.added)
+
+    const unchanged = [...current]
+    for (const val of log.added) {
+      const idx = unchanged.indexOf(val)
+      if (idx !== -1) unchanged.splice(idx, 1)
+    }
+
+    const label = modifierLabel(log.modifier, log.options)
+    modifierSteps.push({ kind: 'rolls', label, unchanged, removed: log.removed, added: log.added })
+  }
+
+  if (modifierSteps.length > 0) {
+    steps.push(...modifierSteps)
+    const arithmeticDelta = record.appliedTotal - record.modifierHistory.total
+    steps.push({ kind: 'finalRolls', rolls: record.modifierHistory.modifiedRolls, arithmeticDelta })
+  }
+  return steps
+}
+
+function DiceGroup({
+  unchanged,
+  removed,
+  added
+}: {
+  readonly unchanged: readonly number[]
+  readonly removed: readonly number[]
+  readonly added: readonly number[]
+}): React.JSX.Element {
+  const hasModified = removed.length > 0 || added.length > 0
+  const shown = unchanged.slice(0, MAX_DICE_SHOWN)
+  const truncated = unchanged.length > MAX_DICE_SHOWN
+
+  return (
+    <span className="roller-tooltip-dice-group">
+      {removed.length > 0 && (
+        <span className="roller-tooltip-dice roller-tooltip-dice--removed">
+          {removed.join(', ')}
+        </span>
+      )}
+      {added.length > 0 && (
+        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(', ')}</span>
+      )}
+      {hasModified && shown.length > 0 && <span className="roller-tooltip-dice-sep">|</span>}
+      {shown.length > 0 && (
+        <span className="roller-tooltip-dice">
+          {shown.join(', ')}
+          {truncated ? ' …' : ''}
+        </span>
+      )}
+    </span>
+  )
+}
+
+export function RollTooltip({ record }: { readonly record: RollRecord }): React.JSX.Element {
+  const steps = computeSteps(record)
+
+  return (
+    <div className="roller-tooltip-inner">
+      {steps.map((step, i) => {
+        if (step.kind === 'divider') {
+          return <div key={`div-${i}`} className="roller-tooltip-divider" />
+        }
+        if (step.kind === 'arithmetic') {
+          return (
+            <div key={i} className="roller-tooltip-row">
+              <span className="roller-tooltip-label">{step.label}</span>
+              <span className="roller-tooltip-dice roller-tooltip-dice--arithmetic">
+                {step.display}
+              </span>
+            </div>
+          )
+        }
+        if (step.kind === 'rolls') {
+          return (
+            <div key={i} className="roller-tooltip-row">
+              <span className="roller-tooltip-label">{step.label}</span>
+              <DiceGroup unchanged={step.unchanged} removed={step.removed} added={step.added} />
+            </div>
+          )
+        }
+        return (
+          <div key="finalRolls" className="roller-tooltip-row roller-tooltip-row--final">
+            <span className="roller-tooltip-label">Final rolls</span>
+            <span className="roller-tooltip-dice">
+              {formatAsMath(step.rolls, step.arithmeticDelta)}
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

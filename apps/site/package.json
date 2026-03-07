@@ -17,6 +17,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@randsum/component-library": "workspace:~",
     "@astrojs/netlify": "^6.6.4",
     "@astrojs/react": "^4.4.2",
     "@astrojs/starlight": "^0.34.0",
@@ -27,11 +28,12 @@
     "@randsum/roller": "workspace:~",
     "@randsum/root-rpg": "workspace:~",
     "@randsum/salvageunion": "workspace:~",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@stackblitz/sdk": "latest",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "astro": "^5.18.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0",
@@ -47,5 +49,6 @@
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit"
-  }
+  },
+  "devDependencies": {}
 }

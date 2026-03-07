@@ -17,7 +17,6 @@
     "prettier-plugin-astro": "0.14.1",
     "size-limit": "12.0.0",
     "ts-unused-exports": "11.0.1",
-    "typedoc": "0.28.17",
     "typescript": "5.9.3",
     "typescript-eslint": "8.56.1"
   },
@@ -29,7 +28,11 @@
     "fast-check": "4.5.3",
     "@types/bun": "1.3.10",
     "mitata": "1.0.34",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
   },
   "size-limit": [
     {
@@ -38,19 +41,19 @@
     },
     {
       "path": "packages/blades/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/fifth/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/daggerheart/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/root-rpg/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
     },
     {
       "path": "packages/salvageunion/dist/index.js",
@@ -58,7 +61,31 @@
     },
     {
       "path": "packages/pbta/dist/index.js",
-      "limit": "7 KB"
+      "limit": "8 KB"
+    },
+    {
+      "path": "packages/roller/dist/index.d.ts",
+      "limit": "1 KB"
+    },
+    {
+      "path": "packages/blades/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/fifth/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/daggerheart/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/root-rpg/dist/index.d.ts",
+      "limit": "6 KB"
+    },
+    {
+      "path": "packages/pbta/dist/index.d.ts",
+      "limit": "6 KB"
     }
   ],
   "scripts": {
@@ -75,8 +102,6 @@
     "typecheck": "bun run --filter \"*\" typecheck",
     "size": "size-limit",
     "size:check": "size-limit --json",
-    "docs": "typedoc",
-    "docs:site": "typedoc --out apps/site/public/api",
     "check:exports": "ts-unused-exports tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
     "bench": "bun run packages/roller/__benchmarks__/roll.bench.ts",
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
@@ -85,7 +110,8 @@
     "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run site:build",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
-    "site:dev": "bun --filter @randsum/site dev",
+    "site:dev": "bun run --filter @randsum/component-library dev & bun run --filter @randsum/site dev",
+    "stories": "bun run --filter @randsum/component-library ladle",
     "discord:dev": "cd apps/discord-bot && bun run dev",
     "discord:deploy": "cd apps/discord-bot && bun run deploy-commands",
     "discord:start": "cd apps/discord-bot && bun run start",

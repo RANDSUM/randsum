@@ -4,6 +4,7 @@ description: Blades in the Dark dice pool mechanics with RANDSUM
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/blades` package provides mechanics for [Blades in the Dark](https://www.evilhat.com/home/blades-in-the-dark/), a tabletop RPG about a crew of daring scoundrels seeking their fortunes on the haunted streets of an industrial-fantasy city.
 
@@ -18,39 +19,30 @@ The `@randsum/blades` package provides mechanics for [Blades in the Dark](https:
 
 <Tabs>
   <TabItem label="bun">
-    ```bash
-    bun add @randsum/blades
-    ```
+    <CodeExample lang="bash" code={`bun add @randsum/blades`} />
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install @randsum/blades
-    ```
+    <CodeExample lang="bash" code={`npm install @randsum/blades`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-```typescript title="Basic Roll"
-import { roll } from '@randsum/blades'
+<CodeExample code={`import { roll } from '@randsum/blades'
 
 // Roll with a dice pool of 3
 const { result } = roll(3)
-console.log(result) // 'critical' | 'success' | 'partial' | 'failure'
-```
+console.log(result) // 'critical' | 'success' | 'partial' | 'failure'`} />
 
-```typescript title="Different Pool Sizes"
-import { roll } from '@randsum/blades'
+<CodeExample code={`import { roll } from '@randsum/blades'
 
 roll(0)  // Desperate: rolls 2d6, keeps lowest
 roll(1)  // One die
 roll(2)  // Two dice
 roll(3)  // Three dice
-roll(4)  // Four dice (e.g., with assistance)
-```
+roll(4)  // Four dice (e.g., with assistance)`} />
 
-```typescript title="Result Handling"
-import { roll } from '@randsum/blades'
+<CodeExample code={`import { roll } from '@randsum/blades'
 
 const { result } = roll(2)
 
@@ -67,8 +59,7 @@ switch (result) {
   case 'failure':
     // Highest die is 1-3 - things go badly
     break
-}
-```
+}`} />
 
 ## API reference
 
@@ -103,9 +94,7 @@ When the dice pool is 0 (desperate position), the system rolls 2d6 and drops the
 
 ## Type exports
 
-```typescript
-import type { BladesResult } from '@randsum/blades'
-```
+<CodeExample code={`import type { BladesResult } from '@randsum/blades'`} />
 
 ## Links
 

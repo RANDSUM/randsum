@@ -4,10 +4,11 @@ export interface PackageInfo {
   displayName: string
   description: string
   npmPackage: string
+  sourceUrl: string
+  version?: string
   color?: string
   category: 'core' | 'game' | 'tool'
   examples: CodeExample[]
-  features?: string[]
 }
 
 export interface CodeExample {
@@ -21,18 +22,12 @@ export const corePackages: PackageInfo[] = [
     id: 'roller',
     name: 'roller',
     displayName: 'Roller',
-    description:
-      'Core dice rolling engine with advanced notation support. The foundation of the RANDSUM ecosystem.',
+    description: 'Zero-dependency dice engine with full notation support.',
     npmPackage: '@randsum/roller',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/roller',
+    version: '1.1.2',
     category: 'core',
     color: '#f8fafc', // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
-    features: [
-      'Advanced dice notation (4d6L, 2d20H, etc.)',
-      'Reroll modifiers',
-      'Exploding dice',
-      'Drop/keep modifiers',
-      'Full TypeScript support'
-    ],
     examples: [
       {
         title: 'Basic Roll',
@@ -87,9 +82,10 @@ export const gamePackages: PackageInfo[] = [
     id: 'blades',
     name: 'blades',
     displayName: 'Blades in the Dark',
-    description:
-      'Blades in the Dark system mechanics including action rolls, position, effect, and stress tracking.',
+    description: 'Action roll resolution for Blades in the Dark.',
     npmPackage: '@randsum/blades',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/blades',
+    version: '1.1.0',
     category: 'game',
     color: '#f97316', // orange
     examples: [
@@ -126,8 +122,10 @@ bun add @randsum/blades`,
     id: 'daggerheart',
     name: 'daggerheart',
     displayName: 'Daggerheart',
-    description: 'Daggerheart RPG system support with hope and fear dice mechanics.',
+    description: 'Hope and fear roll resolution for Daggerheart.',
     npmPackage: '@randsum/daggerheart',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/daggerheart',
+    version: '1.2.0',
     category: 'game',
     color: '#9333ea', // purple
     examples: [
@@ -164,9 +162,10 @@ bun add @randsum/daggerheart`,
     id: 'fifth',
     name: 'fifth',
     displayName: 'D&D 5th Edition',
-    description:
-      'Dungeons & Dragons 5th Edition mechanics including ability checks, saving throws, and combat rolls.',
+    description: 'd20 roll resolution for D&D 5e.',
     npmPackage: '@randsum/fifth',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/fifth',
+    version: '1.1.0',
     category: 'game',
     color: '#dc2626', // red
     examples: [
@@ -214,9 +213,10 @@ bun add @randsum/fifth`,
     id: 'root-rpg',
     name: 'root-rpg',
     displayName: 'Root RPG',
-    description:
-      'Root RPG system implementation with reputation, relationships, and advancement mechanics.',
+    description: '2d6 roll resolution for Root RPG.',
     npmPackage: '@randsum/root-rpg',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/root-rpg',
+    version: '2.0.0',
     category: 'game',
     color: '#22c55e', // green
     examples: [
@@ -262,8 +262,10 @@ bun add @randsum/root-rpg`,
     id: 'salvageunion',
     name: 'salvageunion',
     displayName: 'Salvage Union',
-    description: 'Salvage Union mechanics for mech-based tabletop RPG gameplay.',
+    description: 'd20 table lookups for Salvage Union.',
     npmPackage: '@randsum/salvageunion',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/salvageunion',
+    version: '1.1.0',
     category: 'game',
     color: '#60a5fa', // lightblue
     examples: [
@@ -316,9 +318,10 @@ bun add @randsum/salvageunion`,
     id: 'pbta',
     name: 'pbta',
     displayName: 'Powered by the Apocalypse',
-    description:
-      'Generic PbtA mechanics for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.',
+    description: '2d6 roll resolution for any PbtA system.',
     npmPackage: '@randsum/pbta',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/pbta',
+    version: '1.2.0',
     category: 'game',
     color: '#6b7280', // grey
     examples: [
@@ -367,12 +370,42 @@ bun add @randsum/pbta`,
 
 export const toolPackages: PackageInfo[] = [
   {
+    id: 'component-library',
+    name: 'component-library',
+    displayName: 'Component Library',
+    description: 'React components for embedding dice rollers in any web app.',
+    npmPackage: '@randsum/component-library',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/component-library',
+    version: '0.1.0',
+    category: 'tool',
+    color: '#3b82f6', // blue
+    examples: [
+      {
+        title: 'Installation',
+        code: `npm install @randsum/component-library
+# or
+bun add @randsum/component-library`,
+        language: 'bash'
+      },
+      {
+        title: 'RollerPlayground',
+        code: `import { RollerPlayground } from '@randsum/component-library'
+import '@randsum/component-library/dist/index.css'
+
+export default function App() {
+  return <RollerPlayground defaultNotation="4d6L" />
+}`,
+        language: 'typescript'
+      }
+    ]
+  },
+  {
     id: 'skill',
     name: 'skill',
     displayName: 'LLM Skill',
-    description:
-      'A structured prompt file that teaches AI assistants RANDSUM dice notation and game system mechanics. Compatible with Claude, ChatGPT, and any LLM that supports tool use or custom prompts.',
+    description: 'Prompt file for teaching RANDSUM dice notation to any LLM.',
     npmPackage: 'skills/dice-rolling/SKILL.md',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills/dice-rolling',
     category: 'tool',
     color: '#06b6d4', // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
     examples: [
@@ -389,9 +422,10 @@ curl -o .claude/skills/dice-rolling/SKILL.md \\
     id: 'discord-bot',
     name: 'discord-bot',
     displayName: 'Discord Bot',
-    description:
-      'A Discord bot for rolling dice in chat. Built with discord.js and Bun, supporting all RANDSUM game packages with beautiful embeds and detailed roll results.',
+    description: 'Discord bot with slash commands for all RANDSUM packages.',
     npmPackage: '@randsum/discord-bot',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot',
+    version: '1.0.0',
     category: 'tool',
     color: '#5865F2', // Discord purple
     examples: [

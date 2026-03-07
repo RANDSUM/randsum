@@ -2,7 +2,12 @@
  * Centralized error codes for all RANDSUM errors.
  * Use these constants instead of raw strings for consistency.
  */
-export const ERROR_CODES = {
+export const ERROR_CODES: Record<string, string> & {
+  readonly INVALID_NOTATION: 'INVALID_NOTATION'
+  readonly MODIFIER_ERROR: 'MODIFIER_ERROR'
+  readonly VALIDATION_ERROR: 'VALIDATION_ERROR'
+  readonly ROLL_ERROR: 'ROLL_ERROR'
+} = {
   /** Invalid dice notation syntax */
   INVALID_NOTATION: 'INVALID_NOTATION',
   /** Error applying a modifier */
@@ -11,9 +16,11 @@ export const ERROR_CODES = {
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   /** General roll execution error */
   ROLL_ERROR: 'ROLL_ERROR'
-} as const
+} as const satisfies Record<string, string>
 
-export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
+export type ErrorCode =
+  | (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
+  | (string & Record<never, never>)
 
 /**
  * Base error class for all RANDSUM errors.

@@ -3,131 +3,105 @@ title: Quick Start
 description: Learn the basics of rolling dice with @randsum/roller
 ---
 
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
 This guide walks you through the basics of using `@randsum/roller` to roll dice in your application.
 
 ## Your first roll
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Roll a single d20
 const result = roll(20)
-console.log(result.total) // 1-20
-```
+console.log(result.total) // 1-20`} />
 
-The `roll()` function accepts several argument types. A plain number means "roll one die with that many sides."
+<RollerPlayground defaultNotation="1d20" client:only="react" />
+
+The \`roll()\` function accepts several argument types. A plain number means "roll one die with that many sides."
 
 ## Notation strings
 
-RANDSUM supports standard dice notation. The format is `NdS` where **N** is the number of dice and **S** is the number of sides.
+RANDSUM supports standard dice notation. The format is \`NdS\` where **N** is the number of dice and **S** is the number of sides.
 
-```typescript
-import { roll } from '@randsum/roller'
-
-// Roll 2d6
-roll('2d6')
-
-// Roll 4d8
-roll('4d8')
-
-// Roll 1d20
-roll('1d20')
-```
+<RollerPlayground defaultNotation="2d6" client:only="react" />
+<RollerPlayground defaultNotation="4d8" client:only="react" />
+<RollerPlayground defaultNotation="1d20" client:only="react" />
 
 ## Drop modifiers
 
 Drop the lowest or highest dice from a roll:
 
-```typescript
-// D&D ability score: 4d6, drop lowest
-roll('4d6L')
-
-// Advantage: 2d20, keep highest (drop lowest)
-roll('2d20L')
-
-// Disadvantage: 2d20, keep lowest (drop highest)
-roll('2d20H')
-
-// Drop 2 lowest
-roll('4d6L2')
-```
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+<RollerPlayground defaultNotation="2d20L" client:only="react" />
+<RollerPlayground defaultNotation="2d20H" client:only="react" />
+<RollerPlayground defaultNotation="4d6L2" client:only="react" />
 
 ## Arithmetic modifiers
 
 Add or subtract from the roll total:
 
-```typescript
-// Attack roll with +5 modifier
-roll('1d20+5')
+<RollerPlayground defaultNotation="1d20+5" client:only="react" />
 
-// Damage with -1 penalty
-roll('2d6-1')
-```
+<RollerPlayground defaultNotation="2d6-1" client:only="react" />
 
 ## Reroll and explode
 
-```typescript
-// Reroll any 1s
-roll('4d6R{1}')
+<RollerPlayground defaultNotation="4d6R{1}" client:only="react" />
 
-// Reroll results below 3
-roll('4d6R{<3}')
-
-// Exploding dice (reroll and add on max)
-roll('3d6!')
-```
+<RollerPlayground defaultNotation="4d6R{<3}" client:only="react" />
+<RollerPlayground defaultNotation="3d6!" client:only="react" />
 
 ## Combining modifiers
 
 Chain multiple modifiers together:
 
-```typescript
-// Reroll 1s, drop lowest, add 2
-roll('4d6R{1}L+2')
-
-// Exploding dice with drop
-roll('3d6!L')
-```
+<RollerPlayground defaultNotation="4d6R{1}L+2" client:only="react" />
+<RollerPlayground defaultNotation="3d6!L" client:only="react" />
 
 ## Using the options object
 
 Every notation string has an equivalent options object form:
 
-```typescript
+<CodeExample code={`import { roll } from '@randsum/roller'
+
 // These are equivalent:
 roll('4d6L')
 roll({
   sides: 6,
   quantity: 4,
   modifiers: { drop: { lowest: 1 } }
-})
-```
+})`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
 
 The options object gives you full programmatic control when notation strings are not flexible enough.
 
 ## Reading the result
 
-The `roll()` function returns a result object with useful properties:
+The \`roll()\` function returns a result object with useful properties:
 
-```typescript
+<CodeExample code={`import { roll } from '@randsum/roller'
+
 const result = roll('4d6L+2')
 
-result.total       // Final total after all modifiers
-result.rolls       // Array of individual roll records
-```
+console.log(result.total)  // Final total after all modifiers
+console.log(result.rolls)  // Array of individual roll records`} />
+
+<RollerPlayground defaultNotation="4d6L+2" client:only="react" />
 
 :::note
-`roll()` never throws. If there is an error (e.g., invalid notation), it is returned in the result object rather than thrown as an exception.
+\`roll()\` is not designed to throw. If there is an error (e.g., invalid notation), it is returned in the result object rather than thrown as an exception.
 :::
 
 ## Multiple dice groups
 
 Roll different dice types in a single expression:
 
-```typescript
+<CodeExample code={`import { roll } from '@randsum/roller'
+
 // Attack + damage in one call
-roll('1d20+5', '2d6+3')
-```
+roll('1d20+5', '2d6+3')`} />
 
 ## Next steps
 

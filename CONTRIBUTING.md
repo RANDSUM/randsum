@@ -233,7 +233,7 @@ packages/{game-name}/
       index.ts            # Roll implementation (customize this)
   __tests__/
     {game-name}.test.ts   # Initial test file
-  AGENTS.md
+  CLAUDE.md
   LICENSE
   README.md
   package.json
@@ -246,10 +246,10 @@ After generation:
 2. **Implement `src/roll{GameName}/index.ts`** with your game logic
 3. **Add tests** in `__tests__/` directory
 4. **Run `bun install`** to link workspace dependencies
-5. **Update root `AGENTS.md`** to list the new package
+5. **Update root `CLAUDE.md`** to list the new package
 6. **Add to site documentation** in `apps/site/` (optional)
 
-For detailed patterns, see [AGENTS/game-packages.md](AGENTS/game-packages.md).
+For detailed patterns, see [CLAUDE/game-packages.md](CLAUDE/game-packages.md).
 
 ## Common Tasks
 

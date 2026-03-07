@@ -35,3 +35,10 @@ bun run test                   # Run tests
 - `ink` - React for CLI (TUI framework)
 - `ink-text-input` - Text input component for Ink
 - `react` - React (required by Ink)
+
+## Dependency Note
+
+`@randsum/roller` is intentionally listed as a versioned npm dependency (`^1.1.0`) rather than `workspace:~`.
+This is because the CLI is built as a standalone binary that consumers install globally via npm/bun.
+The workspace protocol resolves only at build time within the monorepo — the published artifact must
+reference a real npm version. When upgrading roller, bump this version manually alongside the release.

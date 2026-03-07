@@ -13,10 +13,16 @@
  * ```
  */
 export interface ComparisonOptions {
-  /** Threshold for "greater than" comparisons */
+  /** Threshold for "greater than" comparisons (strict: roll > N) */
   greaterThan?: number
-  /** Threshold for "less than" comparisons */
+  /** Threshold for "greater than or equal to" comparisons (roll >= N) */
+  greaterThanOrEqual?: number
+  /** Threshold for "less than" comparisons (strict: roll < N) */
   lessThan?: number
+  /** Threshold for "less than or equal to" comparisons (roll <= N) */
+  lessThanOrEqual?: number
+  /** Exact values to match */
+  exact?: number[]
 }
 
 /**
@@ -41,8 +47,6 @@ export interface DropOptions extends ComparisonOptions {
   highest?: number
   /** Number of lowest dice to drop */
   lowest?: number
-  /** Specific values to drop */
-  exact?: number[]
 }
 
 /**
@@ -82,8 +86,6 @@ export interface KeepOptions {
  * ```
  */
 export interface RerollOptions extends ComparisonOptions {
-  /** Specific values to reroll */
-  exact?: number[]
   /** Maximum number of rerolls allowed */
   max?: number
 }

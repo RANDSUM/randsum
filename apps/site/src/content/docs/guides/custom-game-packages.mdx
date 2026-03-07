@@ -4,6 +4,7 @@ description: Build your own game package using the createGameRoll factory
 ---
 
 import { Aside } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 ## When to use this
 
@@ -17,15 +18,13 @@ Use `createGameRoll` when you need to:
 
 `createGameRoll` is a factory that wires together three hooks — validate, convert, interpret — and returns a ready-to-call roll function.
 
-```typescript
-import { createGameRoll } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll } from '@randsum/roller'
 
-const myRoll = createGameRoll<TInput, TResult, TDetails>({
+const myRoll = createGameRoll({
   validate: (input) => { /* throw if invalid */ },
   toRollOptions: (input) => ({ sides: 6, quantity: 2 }),
-  interpretResult: (input, total, rolls, fullResult) => { /* return TResult */ }
-})
-```
+  interpretResult: (input, total, rolls, fullResult) => { /* return result */ }
+})`} />
 
 ### `validate`
 
@@ -33,86 +32,109 @@ Called first with the raw input. Throw here if the input is invalid — the erro
 
 `@randsum/roller` exports these validation helpers:
 
-```typescript
-import {
+<CodeExample code={`import {
   validateFinite,      // value is a finite number
   validateInteger,     // value is an integer
   validateRange,       // value is within min/max bounds
   validateNonNegative, // value >= 0
   validateGreaterThan, // value > threshold
   validateLessThan     // value < threshold
-} from '@randsum/roller'
-```
+} from '@randsum/roller'`} />
 
 Each helper takes the value, a label string, and (for range helpers) bounds:
 
-```typescript
-validate: (input) => {
-  validateFinite(input.modifier, 'modifier')
-  validateRange(input.modifier, -10, 10, 'modifier')
-}
-```
+<CodeExample code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
+
+const myRoll = createGameRoll({
+  validate: (input) => {
+    validateFinite(input.modifier, 'modifier')
+    validateRange(input.modifier, -10, 10, 'modifier')
+  },
+  toRollOptions: (input) => ({ sides: 20, quantity: 1 }),
+  interpretResult: (_input, total) => total
+})`} />
 
 `validateGreaterThan` and `validateLessThan` take `(value, threshold, name)`:
 
-```typescript
-// validateGreaterThan and validateLessThan take (value, threshold, name)
-validateGreaterThan(input.count, 0, 'count')  // must be > 0
-validateLessThan(input.count, 100, 'count')   // must be < 100
-```
+<CodeExample code={`import { createGameRoll, validateGreaterThan, validateLessThan } from '@randsum/roller'
+
+const myRoll = createGameRoll({
+  validate: (input) => {
+    // validateGreaterThan and validateLessThan take (value, threshold, name)
+    validateGreaterThan(input.count, 0, 'count')  // must be > 0
+    validateLessThan(input.count, 100, 'count')   // must be < 100
+  },
+  toRollOptions: (input) => ({ sides: 6, quantity: input.count }),
+  interpretResult: (_input, total) => total
+})`} />
 
 <Aside type="caution">
   Validation errors throw directly. Wrap the call in a try/catch if you need to handle them gracefully rather than letting them propagate.
 </Aside>
 
-```typescript
+<CodeExample code={`import { createGameRoll, validateRange } from '@randsum/roller'
+
+const rollPbta = createGameRoll({
+  validate: (stat) => {
+    validateRange(stat, -3, 3, 'stat')
+  },
+  toRollOptions: (stat) => ({ quantity: 2, sides: 6, modifiers: { plus: stat } }),
+  interpretResult: (_input, total) => {
+    if (total >= 10) return 'strong_hit'
+    if (total >= 7) return 'weak_hit'
+    return 'miss'
+  }
+})
+
 // Wrap in try/catch to handle validation errors gracefully
 try {
-  const result = rollPbta({ stat: 999 })
+  const result = rollPbta(999)
 } catch (err) {
   if (err instanceof Error) console.error(err.message)
-}
-```
+}`} />
 
 ### `toRollOptions`
 
 Converts validated input into a `RollOptions` object (or an array of them for multi-pool rolls). This is where you express game mechanics as dice parameters.
 
-```typescript
-toRollOptions: (input) => ({
-  sides: 20,
-  quantity: input.advantage ? 2 : 1,
-  modifiers: {
-    drop: input.advantage ? { lowest: 1 } : undefined,
-    plus: input.modifier
-  }
-})
-```
+<CodeExample code={`import { createGameRoll } from '@randsum/roller'
+
+const myRoll = createGameRoll({
+  validate: (_input) => {},
+  toRollOptions: (input) => ({
+    sides: 20,
+    quantity: input.advantage ? 2 : 1,
+    modifiers: {
+      drop: input.advantage ? { lowest: 1 } : undefined,
+      plus: input.modifier
+    }
+  }),
+  interpretResult: (_input, total) => total
+})`} />
 
 ### `interpretResult`
 
 Receives the resolved total, the individual roll records, and the full `RollerRollResult`. Return your game-specific `TResult` here.
 
-```typescript
-interpretResult: (input, total, rolls, fullResult) => {
-  if (total >= 10) return 'strong_hit'
-  if (total >= 7)  return 'weak_hit'
-  return 'miss'
-}
-```
+<CodeExample code={`import { createGameRoll } from '@randsum/roller'
+
+const myRoll = createGameRoll({
+  validate: (_input) => {},
+  toRollOptions: (_input) => ({ sides: 6, quantity: 2 }),
+  interpretResult: (input, total, rolls, fullResult) => {
+    if (total >= 10) return 'strong_hit'
+    if (total >= 7)  return 'weak_hit'
+    return 'miss'
+  }
+})`} />
 
 ## Minimal example: a 2d6+stat system
 
 A PbtA-style roll that maps 2d6 + stat to a three-outcome result:
 
-```typescript
-import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
-import type { GameRollResult, RollRecord } from '@randsum/roller'
+<CodeExample code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
 
-type PbtaStat = number
-type PbtaOutcome = 'strong_hit' | 'weak_hit' | 'miss'
-
-const rollPbta = createGameRoll<PbtaStat, PbtaOutcome>({
+const rollPbta = createGameRoll({
   validate: (stat) => {
     validateFinite(stat, 'stat')
     validateRange(stat, -3, 3, 'stat')
@@ -131,22 +153,16 @@ const rollPbta = createGameRoll<PbtaStat, PbtaOutcome>({
 
 // Usage
 const result = rollPbta(2)
-// result.result => 'strong_hit' | 'weak_hit' | 'miss'
-// result.total  => 2d6 + 2
-// result.rolls  => RollRecord[]
-```
+console.log(result.result) // 'strong_hit' | 'weak_hit' | 'miss'
+console.log(result.total)  // 2d6 + 2`} />
 
 ## Adding details (`computeDetails`)
 
 Use the optional `computeDetails` hook to attach structured metadata to the result. Pass `TDetails` as the third generic argument.
 
-```typescript
-type PbtaDetails = {
-  diceValues: number[]
-  statBonus: number
-}
+<CodeExample code={`import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
 
-const rollPbta = createGameRoll<PbtaStat, PbtaOutcome, PbtaDetails>({
+const rollPbta = createGameRoll({
   validate: (stat) => {
     validateFinite(stat, 'stat')
     validateRange(stat, -3, 3, 'stat')
@@ -167,8 +183,8 @@ const rollPbta = createGameRoll<PbtaStat, PbtaOutcome, PbtaDetails>({
   })
 })
 
-// result.details => PbtaDetails
-```
+const result = rollPbta(2)
+console.log(result.details) // { diceValues: [...], statBonus: 2 }`} />
 
 ## `createMultiRollGameRoll`
 
@@ -176,14 +192,9 @@ Use `createMultiRollGameRoll` when your game requires multiple distinct, named d
 
 Each entry in `toRollOptions` takes a `key` string. After rolling, `interpretResult` receives a `Map<string, RollRecord>` keyed by those strings.
 
-```typescript
-import { createMultiRollGameRoll, validateFinite, validateRange } from '@randsum/roller'
-import type { RollRecord, RollerRollResult } from '@randsum/roller'
+<CodeExample code={`import { createMultiRollGameRoll, validateFinite, validateRange } from '@randsum/roller'
 
-type DualDiceInput = { modifier: number }
-type DualDiceResult = 'dominant_a' | 'dominant_b' | 'tied'
-
-const rollDual = createMultiRollGameRoll<DualDiceInput, DualDiceResult>({
+const rollDual = createMultiRollGameRoll({
   validate: (input) => {
     validateFinite(input.modifier, 'modifier')
     validateRange(input.modifier, -10, 10, 'modifier')
@@ -198,7 +209,7 @@ const rollDual = createMultiRollGameRoll<DualDiceInput, DualDiceResult>({
 
     if (!rollA || !rollB) throw new Error('Missing expected dice')
 
-    let result: DualDiceResult
+    let result
     if (rollA.total > rollB.total)      result = 'dominant_a'
     else if (rollB.total > rollA.total) result = 'dominant_b'
     else                                result = 'tied'
@@ -209,9 +220,8 @@ const rollDual = createMultiRollGameRoll<DualDiceInput, DualDiceResult>({
 
 // Usage
 const result = rollDual({ modifier: 2 })
-// result.result => 'dominant_a' | 'dominant_b' | 'tied'
-// result.total  => sum of both dice + 2
-```
+console.log(result.result) // 'dominant_a' | 'dominant_b' | 'tied'
+console.log(result.total)  // sum of both dice + 2`} />
 
 <Aside>
   In `createMultiRollGameRoll`, `interpretResult` returns an object `{ result, details?, total? }` rather than returning the result value directly. The optional `total` overrides the summed total from the roll engine; the optional `details` is attached to the final `GameRollResult`.

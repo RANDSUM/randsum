@@ -1,5 +1,5 @@
 export { createSeededRandom } from './seededRandom'
-export type { RandomFn } from '../../src/lib/random'
+export type { RandomFn } from '../../src'
 export { expectRollInRange, expectAllRollsInRange } from './assertions'
 export {
   commonNotations,

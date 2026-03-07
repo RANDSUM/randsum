@@ -4,6 +4,7 @@ description: PbtA dice mechanics for Dungeon World, Monster of the Week, Apocaly
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/pbta` package provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
 
@@ -20,40 +21,31 @@ The `@randsum/pbta` package provides generic [Powered by the Apocalypse](https:/
 
 <Tabs>
   <TabItem label="bun">
-    ```bash
-    bun add @randsum/pbta
-    ```
+    <CodeExample lang="bash" code={`bun add @randsum/pbta`} />
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install @randsum/pbta
-    ```
+    <CodeExample lang="bash" code={`npm install @randsum/pbta`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-```typescript title="Basic Roll"
-import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/pbta'
 
 // Roll 2d6 + stat modifier
 const result = roll({ stat: 2 })
-// result.result: 'strong_hit' | 'weak_hit' | 'miss'
-```
+// result.result: 'strong_hit' | 'weak_hit' | 'miss'`} />
 
-```typescript title="With Bonuses"
-import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/pbta'
 
 // With forward and ongoing bonuses
 const result = roll({
   stat: 1,
   forward: 1,  // One-time bonus
   ongoing: 0   // Persistent bonus
-})
-```
+})`} />
 
-```typescript title="Advantage and Disadvantage"
-import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/pbta'
 
 // Roll with advantage (3d6, keep 2 highest)
 const result = roll({
@@ -62,14 +54,12 @@ const result = roll({
 })
 
 // Roll with disadvantage (3d6, keep 2 lowest)
-const result = roll({
+const result2 = roll({
   stat: 2,
   disadvantage: true
-})
-```
+})`} />
 
-```typescript title="Result Handling"
-import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/pbta'
 
 const { result, total } = roll({ stat: 2 })
 
@@ -83,8 +73,7 @@ switch (result) {
   case 'miss':
     // 6- total: failure
     break
-}
-```
+}`} />
 
 ## API reference
 

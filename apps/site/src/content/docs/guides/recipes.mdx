@@ -3,14 +3,16 @@ title: Recipes
 description: Short, focused code patterns for common RANDSUM use cases
 ---
 
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
 Short solutions to common dice-rolling problems.
 
 ## Seeded rolls
 
 Produce the same result every time — useful for replays, testing, or deterministic outcomes.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Simple seeded random (linear congruential generator)
 function seededRandom(seed: number) {
@@ -22,102 +24,92 @@ function seededRandom(seed: number) {
 }
 
 const result = roll('4d6L', { randomFn: seededRandom(42) })
-// Same result every time with seed 42
-```
+// Same result every time with seed 42`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
 
 ## Combining multiple rolls into one total
 
 Pass multiple arguments to `roll()` — they are combined into a single `total`.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
-// Attack roll + damage roll
-const result = roll('1d20+5', '2d6+3')
-console.log(result.total) // d20+5 + 2d6+3, combined
+roll('1d20+5', '2d6+3') // combined total
 
 // Mix numbers, strings, and options objects
-const combined = roll(20, '2d6', { sides: 8, quantity: 1 })
-```
+const combined = roll(20, '2d6', { sides: 8, quantity: 1 })`} />
 
 ## Advantage with arbitrary dice
 
 The drop modifier works on any die type — not just d20.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Advantage on a d12 (Daggerheart-style)
 roll({ sides: 12, quantity: 2, modifiers: { drop: { lowest: 1 } } })
 
 // Disadvantage on 2d6
-roll({ sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } })
+roll({ sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } })`} />
 
-// Advantage shorthand via notation
-roll('2d12H') // Roll 2d12, drop highest (disadvantage)
-roll('2d12L') // Roll 2d12, drop lowest  (advantage)
-```
+Advantage and disadvantage shorthand via notation:
+
+<RollerPlayground defaultNotation="2d12L" client:only="react" />
+
+<RollerPlayground defaultNotation="2d12H" client:only="react" />
 
 ## Subtracting one roll from another
 
 Use the `arithmetic: 'subtract'` option on a roll group.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // 2d12 minus 1d6
 const result = roll(
   { sides: 12, quantity: 2 },
   { sides: 6, quantity: 1, arithmetic: 'subtract' }
-)
-```
+)`} />
 
 ## Custom faces (non-numeric dice)
 
 Pass an array of strings or values as `sides` for dice with custom faces (Fate/Fudge dice, custom results).
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Fate dice: 4dF (−, ·, +)
 const fate = roll({
   sides: ['+', '+', ' ', ' ', '-', '-'],
   quantity: 4
 })
-console.log(fate.result) // e.g. ['+', '-', ' ', '+']
-```
+console.log(fate.result) // e.g. ['+', '-', ' ', '+']`} />
 
 ## Rolling and filtering results
 
 Roll several times and collect only the results you want.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 // Roll 10d6, keep only 6s (counting successes manually)
 const results = Array.from({ length: 10 }, () => roll(6).total)
-const successes = results.filter(r => r === 6).length
-```
+const successes = results.filter(r => r === 6).length`} />
 
 Or use the `countSuccesses` modifier to do it in one call:
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll({
   sides: 6,
   quantity: 10,
   modifiers: { countSuccesses: { threshold: 4 } }
 })
-console.log(result.total) // Count of dice >= 4
-```
+console.log(result.total) // Count of dice >= 4`} />
+
+<RollerPlayground defaultNotation="10d6S{4}" client:only="react" />
 
 ## Generating a roll histogram
 
 Roll many times and count how often each total appears.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const histogram: Record<number, number> = {}
 
@@ -127,18 +119,19 @@ for (let i = 0; i < 10000; i++) {
 }
 
 console.log(histogram)
-// { '2': ~278, '7': ~1667, '12': ~278, ... }
-```
+// { '2': ~278, '7': ~1667, '12': ~278, ... }`} />
+
+<RollerPlayground defaultNotation="2d6" client:only="react" />
 
 ## Using a crypto-quality random function
 
 Replace `Math.random` with `crypto.getRandomValues` for better entropy.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const cryptoRandom = (): number =>
   crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
 
-const result = roll('2d6', { randomFn: cryptoRandom })
-```
+const result = roll('2d6', { randomFn: cryptoRandom })`} />
+
+<RollerPlayground defaultNotation="2d6" client:only="react" />

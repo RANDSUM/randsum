@@ -1,9 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
+import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'path'
 
 import starlight from '@astrojs/starlight'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
@@ -64,7 +68,6 @@ export default defineConfig({
           label: 'Games',
           items: [
             { label: 'Overview', slug: 'games/overview' },
-            { label: 'Game Comparison', slug: 'games/comparison' },
             { label: 'Blades in the Dark', slug: 'games/blades' },
             { label: 'Daggerheart', slug: 'games/daggerheart' },
             { label: 'D&D 5e', slug: 'games/fifth' },
@@ -83,13 +86,31 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Tools',
-          items: [{ label: 'Discord Bot', slug: 'tools/discord-bot' }]
+          label: 'Components',
+          items: [
+            { label: 'Overview', slug: 'tools/components' },
+            { label: 'RollerPlayground', slug: 'tools/components/roller-playground' },
+            { label: 'ModifierReference', slug: 'tools/components/modifier-reference' }
+          ]
+        },
+        {
+          label: 'Discord Bot',
+          items: [{ label: 'Overview', slug: 'tools/discord-bot' }]
         }
       ]
     }),
     react()
   ],
   output: 'static',
-  adapter: isDev ? undefined : netlify()
+  adapter: isDev ? undefined : netlify(),
+  vite: {
+    resolve: {
+      alias: {
+        '@randsum/component-library': resolve(
+          __dirname,
+          '../../packages/component-library/src/index.ts'
+        )
+      }
+    }
+  }
 })

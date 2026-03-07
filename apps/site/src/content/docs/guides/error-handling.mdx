@@ -1,11 +1,13 @@
 ---
 title: Error Handling
-description: How to handle errors with RANDSUM's never-throw design
+description: How to handle errors with RANDSUM's error-as-value design
 ---
 
 import { Aside } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
 
-RANDSUM uses a **never-throw** design. The `roll()` function never raises an exception — errors are returned as values in the result object.
+RANDSUM is not designed to throw. The `roll()` function is not designed to raise exceptions — errors are returned as values in the result object.
 
 <Aside type="tip">
   This design means you never need try/catch around `roll()` calls. Error handling is always explicit.
@@ -15,20 +17,17 @@ RANDSUM uses a **never-throw** design. The `roll()` function never raises an exc
 
 When `roll()` encounters an error, it returns an object where `result.error` is set and `result.total` is `0`. Check for `result.error` before using `result.total`:
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
-const result = roll(userInput)
+const result = roll('not-valid-notation')
 
 if (result.error) {
   // result.total is 0 — do not use it
   console.error(result.error.message)
-  return
-}
-
-// TypeScript narrows the type here — result.total is number
-console.log(result.total)
-```
+} else {
+  // TypeScript narrows the type here — result.total is number
+  console.log(result.total)
+}`} />
 
 ## When errors occur
 
@@ -46,10 +45,9 @@ If you want to check notation before passing it to `roll()`, use `validateNotati
 
 ### `isDiceNotation` — type guard
 
-```typescript
-import { isDiceNotation, roll } from '@randsum/roller'
+<CodeExample code={`import { isDiceNotation, roll } from '@randsum/roller'
 
-function rollUserInput(input: string) {
+function rollUserInput(input) {
   if (!isDiceNotation(input)) {
     return { error: 'Not valid dice notation' }
   }
@@ -57,12 +55,15 @@ function rollUserInput(input: string) {
   // input is now typed as DiceNotation
   return roll(input)
 }
-```
+
+console.log(rollUserInput('4d6L'))
+console.log(rollUserInput('not-dice'))`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
 
 ### `validateNotation` — parsed result
 
-```typescript
-import { validateNotation } from '@randsum/roller'
+<CodeExample code={`import { validateNotation } from '@randsum/roller'
 
 const validation = validateNotation('4d6L')
 
@@ -71,27 +72,28 @@ if (!validation.valid) {
 } else {
   // validation.options contains the structured roll options
   console.log(validation.options)
-}
-```
+}`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
 
 ## Checking the error value
 
 `result.error` is typed as `RandsumError | null`. On success it is `null`; on error it is a `RandsumError`. `result.total` is always a `number` — on error its value is `0`.
 
-```typescript
-import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll } from '@randsum/roller'
 
 const result = roll('2d6')
 
 if (result.error !== null) {
   // result.error is RandsumError — inspect result.error.message
   // result.total is 0 — do not use it for game logic
-  return
-}
+  console.log('error:', result.error)
+} else {
+  // result.error is null — safe to use result.total
+  console.log(result.total)
+}`} />
 
-// result.error is null — safe to use result.total
-console.log(result.total)
-```
+<RollerPlayground defaultNotation="2d6" client:only="react" />
 
 ## Production checklist
 

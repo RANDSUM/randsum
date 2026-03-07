@@ -36,7 +36,8 @@ export default tseslint.config(
       'packages/site/.astro/**',
       '**/.astro/**',
       '**/.netlify/**',
-      '**/public/**'
+      '**/public/**',
+      '**/.ladle/**'
     ]
   },
   {
@@ -84,7 +85,7 @@ export default tseslint.config(
         {
           accessibility: 'explicit',
           overrides: {
-            accessors: 'explicit',
+            accessors: 'no-public',
             constructors: 'no-public',
             methods: 'explicit',
             properties: 'explicit',
@@ -141,6 +142,17 @@ export default tseslint.config(
           selector: 'VariableDeclaration[kind="let"]',
           message: 'Use `const` instead of `let`. Prefer immutable bindings.'
         }
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['*/src/lib/*', '*/src/internal/*', '*/src/roll/*'],
+              message: 'Import from the package public API instead (e.g. @randsum/roller, not internal paths).'
+            }
+          ]
+        }
       ]
     }
   },
@@ -164,13 +176,15 @@ export default tseslint.config(
   {
     // Override for test files and test-utils package
     // ESLint's type-aware rules can't resolve types from workspace packages properly
+    // Internal path imports are allowed in tests to enable unit testing of internals
     files: ['**/__tests__/**/*.ts', '**/test-utils/**/*.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
-      '@typescript-eslint/no-unsafe-return': 'off'
+      '@typescript-eslint/no-unsafe-return': 'off',
+      'no-restricted-imports': 'off'
     }
   }
 )

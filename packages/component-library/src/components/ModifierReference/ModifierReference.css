@@ -1,0 +1,194 @@
+/* ===== Container ===== */
+.modifier-reference {
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  .modifier-reference {
+    background: #f6f8fa;
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+}
+[data-theme='light'] .modifier-reference {
+  background: #f6f8fa;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* ===== Disabled (faded, non-interactive) ===== */
+.modifier-reference--disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: default;
+}
+
+/* ===== Grid ===== */
+.modifier-reference-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Row ===== */
+.modifier-reference-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.modifier-reference-row:nth-child(odd) .modifier-reference-cell--right,
+.modifier-reference-row:nth-child(even) .modifier-reference-cell--left {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+@media (prefers-color-scheme: light) {
+  .modifier-reference-row:nth-child(odd) .modifier-reference-cell--right,
+  .modifier-reference-row:nth-child(even) .modifier-reference-cell--left {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+[data-theme='light'] .modifier-reference-row:nth-child(odd) .modifier-reference-cell--right,
+[data-theme='light'] .modifier-reference-row:nth-child(even) .modifier-reference-cell--left {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ===== Cells ===== */
+.modifier-reference-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.85rem;
+  transition: background 0.12s ease;
+  user-select: none;
+}
+
+.modifier-reference-cell--interactive {
+  cursor: pointer;
+}
+
+.modifier-reference-cell--interactive:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+@media (prefers-color-scheme: light) {
+  .modifier-reference-cell--interactive:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+[data-theme='light'] .modifier-reference-cell--interactive:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.modifier-reference-cell--left {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-color-scheme: light) {
+  .modifier-reference-cell--left {
+    border-right-color: rgba(0, 0, 0, 0.08);
+  }
+}
+[data-theme='light'] .modifier-reference-cell--left {
+  border-right-color: rgba(0, 0, 0, 0.08);
+}
+
+.modifier-reference-cell--right {
+  justify-content: flex-end;
+}
+
+/* ===== Core row ===== */
+.modifier-reference-core {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.12s ease;
+  user-select: none;
+}
+
+.modifier-reference-core--top {
+  border-top: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modifier-reference-core--interactive {
+  cursor: pointer;
+}
+
+.modifier-reference-core--interactive:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-color-scheme: light) {
+  .modifier-reference-core {
+    background: rgba(0, 0, 0, 0.07);
+    border-top-color: rgba(0, 0, 0, 0.08);
+  }
+  .modifier-reference-core--top {
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+  .modifier-reference-core--interactive:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+}
+[data-theme='light'] .modifier-reference-core {
+  background: rgba(0, 0, 0, 0.07);
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme='light'] .modifier-reference-core--top {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme='light'] .modifier-reference-core--interactive:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* ===== Text ===== */
+.modifier-reference-notation {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: light) {
+  .modifier-reference-notation {
+    color: #1f2328;
+  }
+}
+[data-theme='light'] .modifier-reference-notation {
+  color: #1f2328;
+}
+
+.modifier-reference-desc {
+  font-size: 0.875rem;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.modifier-reference-core-desc {
+  font-size: 0.875rem;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: light) {
+  .modifier-reference-desc,
+  .modifier-reference-core-desc {
+    color: #6b7280;
+  }
+}
+[data-theme='light'] .modifier-reference-desc,
+[data-theme='light'] .modifier-reference-core-desc {
+  color: #6b7280;
+}

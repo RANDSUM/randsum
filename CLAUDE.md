@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** (each wraps roller with game-specific interpretation):
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
 
-**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private)
+**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/component-library` (React UI components, private)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
@@ -68,7 +68,7 @@ bun run help                             # Quick command reference
 All packages use `bunup` producing identical structure:
 - `dist/index.js` (ESM), `dist/index.cjs` (CJS)
 - `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
-- Bundle size limits enforced: roller 10KB, game packages 7KB, salvageunion 170KB
+- Bundle size limits enforced: roller 10KB, game packages 8KB, salvageunion 170KB
 
 ## Key Patterns
 

@@ -1,0 +1,15 @@
+---
+import { Code } from '@astrojs/starlight/components'
+import { OpenInStackBlitz } from './OpenInStackBlitz'
+
+interface Props {
+  code: string
+  lang?: string
+}
+
+const { code, lang = 'typescript' } = Astro.props
+const isTypeScript = lang === 'typescript'
+---
+
+<Code code={code} lang={lang} />
+{isTypeScript && <OpenInStackBlitz code={code} client:visible />}

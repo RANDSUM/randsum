@@ -4,6 +4,7 @@ description: Dungeons & Dragons 5th Edition dice mechanics with RANDSUM
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/fifth` package provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
 
@@ -17,46 +18,36 @@ The `@randsum/fifth` package provides [Dungeons & Dragons 5th Edition](https://w
 
 <Tabs>
   <TabItem label="bun">
-    ```bash
-    bun add @randsum/fifth
-    ```
+    <CodeExample lang="bash" code={`bun add @randsum/fifth`} />
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install @randsum/fifth
-    ```
+    <CodeExample lang="bash" code={`npm install @randsum/fifth`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-```typescript title="Basic Roll"
-import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/fifth'
 
 // Basic roll with modifier
 const result = roll({ modifier: 5 })
-// result.result: 6-25 (d20 + 5)
-```
+// result.result: 6-25 (d20 + 5)`} />
 
-```typescript title="Advantage"
-import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/fifth'
 
 // Roll with advantage (2d20, keep highest, + modifier)
 const result = roll({
   modifier: 5,
   rollingWith: { advantage: true }
-})
-```
+})`} />
 
-```typescript title="Disadvantage"
-import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/fifth'
 
 // Roll with disadvantage (2d20, keep lowest, + modifier)
 const result = roll({
   modifier: -2,
   rollingWith: { disadvantage: true }
-})
-```
+})`} />
 
 ## API reference
 
@@ -87,7 +78,8 @@ The modifier is validated to be a finite number in the range -30 to +30.
 
 ## Common patterns
 
-```typescript
+<CodeExample code={`import { roll } from '@randsum/fifth'
+
 // Attack roll with +5 to hit
 roll({ modifier: 5 })
 
@@ -98,8 +90,7 @@ roll({ modifier: 5, rollingWith: { advantage: true } })
 roll({ modifier: -1, rollingWith: { disadvantage: true } })
 
 // Perception check with +3 Wisdom
-roll({ modifier: 3 })
-```
+roll({ modifier: 3 })`} />
 
 :::tip
 For D&D ability score generation (4d6 drop lowest), use the core roller directly: `roll('4d6L')` from `@randsum/roller`.
@@ -107,13 +98,11 @@ For D&D ability score generation (4d6 drop lowest), use the core roller directly
 
 ## Type exports
 
-```typescript
-import type {
+<CodeExample code={`import type {
   FifthRollArgument,
   FifthAdvantageDisadvantage,
   FifthRollResult
-} from '@randsum/fifth'
-```
+} from '@randsum/fifth'`} />
 
 ## Links
 

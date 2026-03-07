@@ -4,6 +4,7 @@ description: Salvage Union table-based dice mechanics with RANDSUM
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/salvageunion` package provides mechanics for [Salvage Union](https://leyline.press/pages/salvage-union), a post-apocalyptic mech-based tabletop RPG that uses table-based d20 mechanics.
 
@@ -18,47 +19,36 @@ The `@randsum/salvageunion` package provides mechanics for [Salvage Union](https
 
 <Tabs>
   <TabItem label="bun">
-    ```bash
-    bun add @randsum/salvageunion
-    ```
+    <CodeExample lang="bash" code={`bun add @randsum/salvageunion`} />
   </TabItem>
   <TabItem label="npm">
-    ```bash
-    npm install @randsum/salvageunion
-    ```
+    <CodeExample lang="bash" code={`npm install @randsum/salvageunion`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-```typescript title="Basic Roll"
-import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/salvageunion'
 
 // Roll with default table (Core Mechanic)
-const result = roll()
-```
+const result = roll()`} />
 
-```typescript title="Specific Table"
-import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/salvageunion'
 
 // Roll on a specific table
-const result = roll('Morale')
-```
+const result = roll('Morale')`} />
 
-```typescript title="Result Handling"
-import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/salvageunion'
 
 const { result } = roll()
 const { label, description, roll: rollValue } = result
 
-console.log(`${rollValue} - ${label}`)
+console.log(\`\${rollValue} - \${label}\`)
 // e.g., "16 - Success"
 console.log(description)
-// e.g., "You have achieved your goal without any compromises."
-```
+// e.g., "You have achieved your goal without any compromises."`} />
 
-```typescript title="Type-Safe Result Handling"
-import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/salvageunion'
 
 const { result } = roll('Core Mechanic')
 
@@ -73,8 +63,7 @@ switch (result.key) {
   case 'tough_choice':
     // Roll of 6-10 - success with complications
     break
-}
-```
+}`} />
 
 ## API reference
 
@@ -125,13 +114,11 @@ Other tables in Salvage Union have different result tiers and descriptions. The 
 
 ## Type exports
 
-```typescript
-import type {
+<CodeExample code={`import type {
   SalvageUnionRollRecord,
   SalvageUnionTableListing,
   SalvageUnionTableName
-} from '@randsum/salvageunion'
-```
+} from '@randsum/salvageunion'`} />
 
 ## Links
 

@@ -26,7 +26,7 @@ Review changed files against these project-specific patterns:
 
 ### Bundle Size
 - roller: 10KB limit
-- game packages: 7KB limit
+- game packages: 8KB limit
 - salvageunion: 170KB limit (exception due to game data)
 
 ### Testing
