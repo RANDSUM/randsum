@@ -64,7 +64,6 @@ export default defineConfig({
           label: 'Games',
           items: [
             { label: 'Overview', slug: 'games/overview' },
-            { label: 'Game Comparison', slug: 'games/comparison' },
             { label: 'Blades in the Dark', slug: 'games/blades' },
             { label: 'Daggerheart', slug: 'games/daggerheart' },
             { label: 'D&D 5e', slug: 'games/fifth' },

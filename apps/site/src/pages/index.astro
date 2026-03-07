@@ -4,6 +4,7 @@ import { Image } from 'astro:assets'
 import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { RollerPlayground } from '@randsum/component-library'
+import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton } from '../components/HeroInteractive'
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--tool-roller)',
@@ -40,107 +41,51 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       <div class="hero-inner">
         <div class="hero-lockup">
           <div class="hero-logo-wrap">
-            <Image src={logo} alt="RANDSUM logo" class="hero-logo" width={160} height={160} />
+            <SpinningLogo logoSrc={logo.src} client:load />
           </div>
-          <h1 class="hero-title">RANDSUM</h1>
+          <div class="hero-text">
+            <h1 class="hero-title">RANDSUM</h1>
+            <p class="hero-tagline">TypeScript-First Dice Notation Ecosystem</p>
+            <ClickSubtitle client:load />
+            <div class="hero-actions">
+              <GetStartedButton client:load />
+              <GithubButton client:load />
+            </div>
+          </div>
         </div>
-        <p class="hero-tagline">TypeScript-First Dice Notation Ecosystem</p>
-        <p class="hero-subtitle">
-          Throw Dice, Not Exceptions.
-        </p>
         <div class="roller-playground-wrap not-content">
           <RollerPlayground client:only="react" />
         </div>
-        <div class="hero-actions">
-          <a href="/getting-started/introduction/" class="btn btn-primary">Get Started</a>
+      </div>
+      <div class="pkg-section-label">Packages</div>
+    </section>
+
+    <!-- Packages -->
+    <div class="pkg-grid-wrap">
+      <div class="pkg-filter-chips">
+        <button class="pkg-filter-chip is-active" data-filter="all">All</button>
+        <button class="pkg-filter-chip" data-filter="core">Core</button>
+        <button class="pkg-filter-chip" data-filter="game">Games</button>
+        <button class="pkg-filter-chip" data-filter="tool">Tools</button>
+      </div>
+      <div class="pkg-grid">
+        {[...corePackages, ...gamePackages, ...toolPackages].map((pkg) => (
           <a
-            href="https://github.com/RANDSUM/randsum"
-            class="btn btn-outline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >GitHub</a>
-        </div>
+            href={getCardHref(pkg)}
+            class="pkg-card"
+            data-category={pkg.category}
+            style={`--card-accent: ${getAccentColor(pkg)}`}
+          >
+            <div class="pkg-card-header">
+              <h3 class="pkg-card-name">{pkg.displayName}</h3>
+              <code class="pkg-card-npm">{pkg.npmPackage}</code>
+            </div>
+            <p class="pkg-card-desc">{pkg.description}</p>
+            <span class="pkg-card-link">View docs &rarr;</span>
+          </a>
+        ))}
       </div>
-    </section>
-
-    <!-- Core Package -->
-    <section class="packages-section">
-      <div class="section-inner">
-        <h2 class="section-heading">Core Package</h2>
-        <p class="section-desc">The foundation of the RANDSUM ecosystem</p>
-        <div class="card-grid card-grid-single">
-          {corePackages.map((pkg) => (
-            <a
-              href={getCardHref(pkg)}
-              class="pkg-card"
-              style={`--card-accent: ${getAccentColor(pkg)}`}
-            >
-              <div class="pkg-card-header">
-                <h3 class="pkg-card-name">{pkg.displayName}</h3>
-                <code class="pkg-card-npm">{pkg.npmPackage}</code>
-              </div>
-              <p class="pkg-card-desc">{pkg.description}</p>
-              {pkg.features && pkg.features.length > 0 && (
-                <ul class="pkg-card-features">
-                  {pkg.features.slice(0, 4).map((f) => (
-                    <li>{f}</li>
-                  ))}
-                </ul>
-              )}
-              <span class="pkg-card-link">View docs &rarr;</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- Game Packages -->
-    <section class="packages-section">
-      <div class="section-inner">
-        <h2 class="section-heading">Game Packages</h2>
-        <p class="section-desc">Specialized mechanics for popular tabletop RPG systems</p>
-        <div class="card-grid card-grid-games">
-          {gamePackages.map((pkg) => (
-            <a
-              href={getCardHref(pkg)}
-              class="pkg-card"
-              style={`--card-accent: ${getAccentColor(pkg)}`}
-            >
-              <div class="pkg-card-header">
-                <h3 class="pkg-card-name">{pkg.displayName}</h3>
-                <code class="pkg-card-npm">{pkg.npmPackage}</code>
-              </div>
-              <p class="pkg-card-desc">{pkg.description}</p>
-              <span class="pkg-card-link">View docs &rarr;</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- Tool Packages -->
-    <section class="packages-section">
-      <div class="section-inner">
-        <h2 class="section-heading">Tools & Integrations</h2>
-        <p class="section-desc">Extend RANDSUM into your workflow</p>
-        <div class="card-grid card-grid-tools">
-          {toolPackages.map((pkg) => (
-            <a
-              href={getCardHref(pkg)}
-              class="pkg-card"
-              style={`--card-accent: ${getAccentColor(pkg)}`}
-            >
-              <div class="pkg-card-header">
-                <h3 class="pkg-card-name">{pkg.displayName}</h3>
-                <code class="pkg-card-npm">{pkg.npmPackage}</code>
-              </div>
-              <p class="pkg-card-desc">{pkg.description}</p>
-              <span class="pkg-card-link">View docs &rarr;</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
+    </div>
 
     <!-- Footer Links -->
     <footer class="landing-footer">
@@ -186,6 +131,16 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 </StarlightPage>
 
 <style>
+  /* Hide Starlight's auto-generated title on the landing page only */
+  :global(.content-panel:has(#_top)) {
+    display: none !important;
+  }
+
+  /* Hide the top nav header on the landing page */
+  :global(#starlight__header) {
+    display: none !important;
+  }
+
   /* ===== Layout ===== */
   .landing {
     max-width: 100%;
@@ -198,39 +153,33 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     padding: 0 1.5rem;
   }
 
-  .section-heading {
-    font-family: var(--sl-font-heading, var(--sl-font));
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.025em;
-  }
-
-  .section-desc {
-    text-align: center;
-    color: var(--sl-color-gray-2);
-    margin-bottom: 1.75rem;
-    font-size: 1.1rem;
-  }
-
   /* ===== Hero ===== */
   .hero {
-    text-align: center;
-    padding: 3.75rem 1.5rem 4.5rem;
+    padding: 2rem 1.5rem 0;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
   .hero-inner {
-    max-width: 48rem;
+    max-width: 56rem;
     margin: 0 auto;
   }
 
   .hero-lockup {
     display: flex;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-evenly;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-text {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    gap: 1.25rem;
-    margin-bottom: 1.25rem;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
   }
 
   .hero-logo-wrap {
@@ -238,6 +187,10 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     display: inline-flex;
     flex-shrink: 0;
     animation: levitate 3s ease-in-out infinite;
+  }
+
+  .hero-logo-wrap:hover {
+    animation: go-to-apex 0.4s ease-out forwards;
   }
 
   .hero-logo-wrap::after {
@@ -254,6 +207,18 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     animation: glow-pulse 3s ease-in-out infinite;
   }
 
+  .hero-logo-wrap:hover::after {
+    animation: glow-to-full 0.4s ease-out forwards;
+  }
+
+  @keyframes go-to-apex {
+    to { transform: translateY(-8px); }
+  }
+
+  @keyframes glow-to-full {
+    to { opacity: 1; transform: translateX(-50%) scaleX(1); }
+  }
+
   @keyframes levitate {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
@@ -266,16 +231,42 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   .hero-logo {
     display: block;
-    width: 120px;
+    width: 104px;
     height: auto;
+  }
+
+  :global(.hero-logo--spinning) {
+    animation: die-spin var(--spin-duration, 3.2s) cubic-bezier(0.15, 0, 0.5, 1) both !important;
+  }
+
+  @keyframes die-spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(1800deg); }
+  }
+
+  :global(.hero-subtitle-inner) {
+    display: inline-block;
+    animation: slot-tick 0.06s ease-out both;
+  }
+
+  @keyframes slot-tick {
+    0%   { transform: translateY(8px); opacity: 0; }
+    100% { transform: translateY(0);   opacity: 1; }
+  }
+
+  :global(.hero-subtitle) {
+    font-size: 1.0rem;
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+    margin: 0;
   }
 
   .hero-title {
     font-family: var(--sl-font-heading, var(--sl-font));
-    font-size: 3.5rem;
+    font-size: 5rem;
     font-weight: 700;
     letter-spacing: -0.03em;
-    margin: 0;
+    margin: 0 0 0.25rem;
     background: linear-gradient(
       135deg,
       var(--sl-color-accent-high),
@@ -285,21 +276,14 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    line-height: 1;
   }
 
   .hero-tagline {
-    font-size: 1.35rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--sl-color-white);
-    margin: 0 0 1rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--sl-color-gray-2);
-    max-width: 40rem;
-    margin: 0 auto 1.5rem;
+    margin: 0 0 0.5rem;
   }
 
   .hero-actions {
@@ -307,6 +291,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     gap: 0.75rem;
     justify-content: center;
     flex-wrap: wrap;
+    margin-top: 1rem;
   }
 
   /* ===== Playground ===== */
@@ -314,12 +299,29 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     margin: 1.5rem auto;
     display: flex;
     justify-content: center;
+    width: 100%;
+    min-height: calc(3rem * 2 + 2px);
+  }
+
+  .roller-playground-wrap astro-island {
+    display: block;
+    width: 100%;
+    min-height: calc(3rem * 2 + 2px);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #0d1117;
+  }
+
+  .roller-playground-wrap astro-island:not(:empty) {
+    border: none;
+    background: none;
   }
 
   /* ===== Buttons ===== */
-  .btn {
+  :global(.btn) {
     display: inline-flex;
     align-items: center;
+    gap: 0.5rem;
     padding: 0.65rem 1.5rem;
     border-radius: 0.5rem;
     font-weight: 600;
@@ -329,66 +331,108 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     border: 1px solid transparent;
   }
 
-  .btn-primary {
+  :global(.btn-primary) {
     background: var(--sl-color-accent);
-    color: var(--sl-color-black);
+    color: var(--sl-color-white);
   }
 
-  .btn-primary:hover {
+  :global(.btn-primary:hover) {
     filter: brightness(1.1);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
   }
 
-  .btn-secondary {
+  :global(.btn-secondary) {
     background: var(--sl-color-gray-5);
     color: var(--sl-color-white);
     border-color: var(--sl-color-gray-4);
   }
 
-  .btn-secondary:hover {
+  :global(.btn-secondary:hover) {
     background: var(--sl-color-gray-4);
   }
 
-  .btn-outline {
+  :global(.btn-outline) {
     background: transparent;
     color: var(--sl-color-gray-1);
     border-color: var(--sl-color-gray-4);
   }
 
-  .btn-outline:hover {
+  :global(.btn-outline:hover) {
     background: var(--sl-color-gray-5);
     border-color: var(--sl-color-gray-3);
   }
 
-  /* ===== Package Cards ===== */
-  .packages-section {
-    padding: 3.5rem 0;
-    border-bottom: 1px solid var(--sl-color-gray-5);
+  .pkg-section-label {
+    max-width: 72rem;
+    margin: 1.5rem auto 0;
+    padding: 0 0 0.6rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-2);
   }
 
-  .packages-section:last-of-type {
-    border-bottom: none;
+  /* ===== Package Grid ===== */
+  .pkg-grid-wrap {
+    padding: 1.5rem 1.5rem 2.5rem;
+    max-width: 72rem;
+    margin: 0 auto;
   }
 
-  .card-grid {
+  .pkg-filter-chips {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .pkg-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.625rem;
+    padding: 0;
+    min-width: 6.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--sl-color-gray-5);
+    background: transparent;
+    color: var(--sl-color-gray-3);
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    align-self: center;
+    vertical-align: middle;
+    margin-top: 0;
+    transition: all 0.15s ease;
+  }
+
+  .pkg-filter-chip:hover {
+    border-color: var(--sl-color-gray-3);
+    color: var(--sl-color-gray-1);
+  }
+
+  .pkg-filter-chip.is-active {
+    border-color: var(--sl-color-accent);
+    color: var(--sl-color-white);
+    background: rgba(59, 130, 246, 0.08);
+  }
+
+  .pkg-grid {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
   }
 
-  .card-grid-single {
-    grid-template-columns: 1fr;
-    max-width: 48rem;
-    margin: 0 auto;
-  }
-
-  .card-grid-games {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .card-grid-tools {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 52rem;
-    margin: 0 auto;
+  .pkg-grid.has-filter .pkg-card.is-dimmed {
+    opacity: 0.25;
   }
 
   .pkg-card {
@@ -400,7 +444,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     background: var(--sl-color-gray-6);
     text-decoration: none;
     color: inherit;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.25s ease;
     border-top: 3px solid var(--card-accent, var(--sl-color-gray-4));
   }
 
@@ -446,28 +490,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     color: var(--sl-color-gray-2);
   }
 
-  .pkg-card-features {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 0.75rem;
-  }
-
-  .pkg-card-features li {
-    font-size: 0.85rem;
-    color: var(--sl-color-gray-2);
-    padding: 0.2rem 0;
-    padding-left: 1.2rem;
-    position: relative;
-  }
-
-  .pkg-card-features li::before {
-    content: '\2022';
-    position: absolute;
-    left: 0;
-    color: var(--card-accent, var(--sl-color-gray-3));
-    font-weight: 700;
-  }
-
   .pkg-card-link {
     font-size: 0.85rem;
     font-weight: 600;
@@ -483,7 +505,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   /* ===== Footer ===== */
   .landing-footer {
-    padding: 3rem 0 2rem;
+    padding: 2rem 0 1.5rem;
     border-top: 1px solid var(--sl-color-gray-5);
   }
 
@@ -529,32 +551,35 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   /* ===== Responsive ===== */
   @media (max-width: 768px) {
     .hero {
-      padding: 2.75rem 1rem 3.25rem;
+      padding: 1.5rem 1rem 2rem;
+      text-align: center;
     }
 
     .hero-lockup {
       flex-direction: column;
-      gap: 0.75rem;
+      align-items: center;
+      gap: 1rem;
     }
 
     .hero-title {
-      font-size: 2.5rem;
+      font-size: 3rem;
     }
 
     .hero-tagline {
-      font-size: 1.15rem;
+      font-size: 1rem;
     }
 
-    .hero-subtitle {
-      font-size: 0.95rem;
+    :global(.hero-subtitle) {
+      font-size: 0.9rem;
     }
 
     .hero-actions {
+      justify-content: center;
       flex-direction: column;
       align-items: center;
     }
 
-    .btn {
+    :global(.btn) {
       width: 100%;
       max-width: 16rem;
       justify-content: center;
@@ -564,11 +589,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       font-size: 1.6rem;
     }
 
-    .card-grid-games {
-      grid-template-columns: 1fr;
-    }
-
-    .card-grid-tools {
+    .pkg-grid {
       grid-template-columns: 1fr;
     }
 
@@ -579,9 +600,61 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
-    .card-grid-games {
+    .pkg-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
 </style>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.pkg-filter-chip')
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.pkg-card[data-category]'))
+  const grid = document.querySelector<HTMLElement>('.pkg-grid')
+
+  function applyFilter(filter: string) {
+    if (!grid) return
+
+    // Record positions before reorder (FLIP: first)
+    const before = cards.map(c => c.getBoundingClientRect())
+
+    // Apply order + classes
+    if (filter === 'all') {
+      grid.classList.remove('has-filter')
+      cards.forEach(card => {
+        card.style.order = ''
+        card.classList.remove('is-highlighted', 'is-dimmed')
+      })
+    } else {
+      grid.classList.add('has-filter')
+      cards.forEach(card => {
+        const match = card.dataset['category'] === filter
+        card.classList.toggle('is-highlighted', match)
+        card.classList.toggle('is-dimmed', !match)
+        card.style.order = match ? '0' : '1'
+      })
+    }
+
+    // FLIP: invert + play
+    cards.forEach((card, i) => {
+      const after = card.getBoundingClientRect()
+      const dx = before[i]!.left - after.left
+      const dy = before[i]!.top - after.top
+      if (dx === 0 && dy === 0) return
+      card.style.transition = 'opacity 0.25s ease'
+      card.style.transform = `translate(${dx}px, ${dy}px)`
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        card.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, border-color 0.15s ease, box-shadow 0.15s ease'
+        card.style.transform = ''
+      }))
+    })
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('is-active'))
+      chip.classList.add('is-active')
+      applyFilter(chip.dataset['filter'] ?? 'all')
+    })
+  })
+</script>
