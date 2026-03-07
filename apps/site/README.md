@@ -21,7 +21,7 @@ src/
   components/   # React/Astro components
   layouts/      # Page layouts
 public/
-  api/          # Generated TypeDoc API docs (via `bun run docs:site`)
+  # static assets
 ```
 
 ## Deployment
