@@ -304,7 +304,11 @@
 .roller-playground-expand-inner {
   overflow: hidden;
   min-height: 0;
+}
+
+.roller-playground-expand-content {
   padding: 0.5rem 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.8rem;
   font-family:
     system-ui,
@@ -313,17 +317,10 @@
   color: #e6edf3;
 }
 
-.roller-playground-expand--open .roller-playground-expand-inner {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 @media (prefers-color-scheme: light) {
-  .roller-playground-expand-inner {
-    color: #1f2328;
-  }
-
-  .roller-playground-expand--open .roller-playground-expand-inner {
+  .roller-playground-expand-content {
     border-top-color: rgba(0, 0, 0, 0.1);
+    color: #1f2328;
   }
 }
 

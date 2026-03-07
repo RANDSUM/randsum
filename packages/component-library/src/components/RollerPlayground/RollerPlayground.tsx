@@ -235,10 +235,12 @@ export function RollerPlayground({
             className={`roller-playground-expand${expanded ? ' roller-playground-expand--open' : ''}`}
           >
             <div className="roller-playground-expand-inner">
-              <RollTooltip record={state.record} />
-              <div className="roller-playground-expand-total">
-                <span>Total</span>
-                <span>{state.total}</span>
+              <div className="roller-playground-expand-content">
+                <RollTooltip record={state.record} />
+                <div className="roller-playground-expand-total">
+                  <span>Total</span>
+                  <span>{state.total}</span>
+                </div>
               </div>
             </div>
           </div>
