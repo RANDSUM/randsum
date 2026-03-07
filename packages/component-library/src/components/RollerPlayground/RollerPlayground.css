@@ -97,19 +97,67 @@
   border-color: #f97583;
 }
 
-/* ===== Input wrap ===== */
-.roller-playground-input-wrap {
-  position: relative;
-  flex: 1;
-  margin: 0;
+/* ===== Code prefix/suffix (roll(' ... ')) ===== */
+.roller-playground-code-prefix,
+.roller-playground-code-suffix {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: var(--rp-font-size-input);
+  color: rgba(230, 237, 243, 0.6);
   display: flex;
   align-items: center;
+  align-self: stretch;
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.roller-playground-code-wrap:has(.roller-playground-code-prefix:hover)
+  .roller-playground-code-prefix,
+.roller-playground-code-wrap:has(.roller-playground-code-prefix:hover)
+  .roller-playground-code-suffix,
+.roller-playground-code-wrap:has(.roller-playground-code-suffix:hover)
+  .roller-playground-code-prefix,
+.roller-playground-code-wrap:has(.roller-playground-code-suffix:hover)
+  .roller-playground-code-suffix {
+  color: #e6edf3;
+}
+
+/* ===== Code wrap (holds prefix + input + cursor + suffix) ===== */
+.roller-playground-code-wrap {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  padding: 0 0.5rem 0 var(--rp-margin);
+}
+
+/* ===== "roll" keyword chip ===== */
+.roller-playground-code-fn {
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+  padding: 0 0.4em;
+  margin: var(--rp-margin) 0.1rem var(--rp-margin) 0;
+  border: 1.5px solid rgba(230, 237, 243, 0.2);
+  border-radius: 0.35rem;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.roller-playground-code-prefix:hover .roller-playground-code-fn {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
 }
 
 /* ===== Input ===== */
 .roller-playground-input {
-  width: 100%;
-  padding: 0 0.5rem;
+  padding: 0;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: var(--rp-font-size-input);
   line-height: 1;
@@ -117,6 +165,7 @@
   border: none;
   outline: none;
   color: #e6edf3;
+  caret-color: #3b82f6;
   box-sizing: border-box;
 }
 
@@ -129,40 +178,6 @@
   color: #1f2328;
 }
 
-/* ===== Roll button ===== */
-.roller-playground-btn {
-  position: relative;
-  flex-shrink: 0;
-  margin: var(--rp-margin) 0.125rem var(--rp-margin) var(--rp-margin);
-  padding: 0 1rem;
-  min-width: 4.5rem;
-  background: #3b82f6;
-  color: #fff;
-  border: none;
-  border-radius: 0.35rem;
-  font-weight: 600;
-  font-size: var(--rp-font-size-ui);
-  cursor: pointer;
-  transition: filter 0.15s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
-  line-height: 1;
-}
-
-.roller-playground-btn:hover:not(:disabled) {
-  filter: brightness(1.1);
-}
-
-.roller-playground-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* ===== Spinner ===== */
 .roller-playground-spinner {
   display: inline-block;
@@ -171,7 +186,7 @@
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: rgba(255, 255, 255, 0.85);
   border-radius: 50%;
-  animation: roller-spin 0.6s linear infinite;
+  animation: roller-spin 0.05s linear 0s 40;
 }
 
 @keyframes roller-spin {

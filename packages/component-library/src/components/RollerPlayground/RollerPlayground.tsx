@@ -70,6 +70,7 @@ export function RollerPlayground({
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [expanded, setExpanded] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     return () => {
@@ -89,6 +90,7 @@ export function RollerPlayground({
       const result = roll(notation)
       if (result.error || !result.rolls[0]) return
       setState({ status: 'result', total: result.total, record: result.rolls[0] })
+      setExpanded(true)
     }, 300)
   }, [notation, isValid])
 
@@ -103,25 +105,31 @@ export function RollerPlayground({
     .join(' ')
 
   return (
-    <div className={rootClass}>
+    <div
+      className={rootClass}
+      onClick={e => {
+        if (!(e.target instanceof HTMLButtonElement)) inputRef.current?.focus()
+      }}
+    >
       <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
         <div className="roller-playground-row">
-          <button
-            className="roller-playground-btn"
-            onClick={handleRoll}
-            disabled={!isValid || state.status === 'rolling'}
-            aria-label={state.status === 'rolling' ? 'Rolling' : 'Roll'}
-          >
-            {state.status === 'rolling' ? (
-              <span className="roller-playground-spinner" aria-hidden="true" />
-            ) : (
-              'Roll'
-            )}
-          </button>
-          <div className="roller-playground-input-wrap">
+          <div className="roller-playground-code-wrap">
+            <span
+              className="roller-playground-code-prefix"
+              onClick={e => {
+                e.stopPropagation()
+                handleRoll()
+              }}
+              role="button"
+              aria-label="Roll"
+            >
+              <span className="roller-playground-code-fn">roll</span>(&#39;
+            </span>
             <input
+              ref={inputRef}
               type="text"
               className="roller-playground-input"
+              style={{ width: `${notation.length || 4}ch` }}
               value={notation}
               onChange={handleChange}
               onKeyDown={e => {
@@ -132,6 +140,17 @@ export function RollerPlayground({
               autoComplete="off"
               aria-label="Dice notation"
             />
+            <span
+              className="roller-playground-code-suffix"
+              onClick={e => {
+                e.stopPropagation()
+                handleRoll()
+              }}
+              role="button"
+              aria-label="Roll"
+            >
+              &#39;)
+            </span>
           </div>
 
           <div
