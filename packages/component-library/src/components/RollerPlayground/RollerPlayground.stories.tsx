@@ -7,20 +7,12 @@ const meta: StoryDefault = {
 
 export default meta
 
-export const Default: Story = () => (
-  <div style={{ padding: '2rem' }}>
-    <RollerPlayground />
-  </div>
-)
+export const Default: Story = () => <RollerPlayground />
 
-export const NoStackBlitz: Story = () => (
-  <div style={{ padding: '2rem' }}>
-    <RollerPlayground stackblitz={false} />
-  </div>
-)
+export const NoStackBlitz: Story = () => <RollerPlayground stackblitz={false} />
 
 export const Sizes: Story = () => (
-  <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
     {(['s', 'm', 'l'] as const).map(size => (
       <div key={size}>
         <p

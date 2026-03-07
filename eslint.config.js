@@ -36,7 +36,8 @@ export default tseslint.config(
       'packages/site/.astro/**',
       '**/.astro/**',
       '**/.netlify/**',
-      '**/public/**'
+      '**/public/**',
+      '**/.ladle/**'
     ]
   },
   {

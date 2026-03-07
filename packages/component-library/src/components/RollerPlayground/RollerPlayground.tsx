@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
+import { ModifierReference } from '../ModifierReference'
 import './RollerPlayground.css'
 
 type PlaygroundState =
@@ -108,22 +109,26 @@ export function RollerPlayground({
     <div
       className={rootClass}
       onClick={e => {
-        if (!(e.target instanceof HTMLButtonElement)) inputRef.current?.focus()
+        if (!(e.target instanceof HTMLButtonElement) && !(e.target instanceof HTMLInputElement))
+          inputRef.current?.focus()
       }}
     >
       <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
         <div className="roller-playground-row">
           <div className="roller-playground-code-wrap">
-            <span
-              className="roller-playground-code-prefix"
-              onClick={e => {
-                e.stopPropagation()
-                handleRoll()
-              }}
-              role="button"
-              aria-label="Roll"
-            >
-              <span className="roller-playground-code-fn">roll</span>(&#39;
+            <span className="roller-playground-code-prefix">
+              <button
+                className="roller-playground-code-fn"
+                onClick={e => {
+                  e.stopPropagation()
+                  handleRoll()
+                }}
+                disabled={!isValid || state.status === 'rolling'}
+                aria-label="Roll"
+              >
+                roll
+              </button>
+              (&#39;
             </span>
             <input
               ref={inputRef}
@@ -140,17 +145,7 @@ export function RollerPlayground({
               autoComplete="off"
               aria-label="Dice notation"
             />
-            <span
-              className="roller-playground-code-suffix"
-              onClick={e => {
-                e.stopPropagation()
-                handleRoll()
-              }}
-              role="button"
-              aria-label="Roll"
-            >
-              &#39;)
-            </span>
+            <span className="roller-playground-code-suffix">&#39;)</span>
           </div>
 
           <div
@@ -252,6 +247,18 @@ export function RollerPlayground({
               Code
             </button>
           )}
+          <div className="roller-playground-modifiers-wrap">
+            <button
+              className="roller-playground-stackblitz roller-playground-modifiers-btn"
+              type="button"
+              aria-label="Show modifier reference"
+            >
+              Modifiers
+            </button>
+            <div className="roller-playground-modifiers-tooltip" aria-hidden="true">
+              <ModifierReference coreDisabled modifiersDisabled />
+            </div>
+          </div>
         </div>
         {state.status === 'result' && (
           <div

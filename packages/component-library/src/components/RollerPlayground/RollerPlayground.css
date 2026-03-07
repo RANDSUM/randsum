@@ -93,6 +93,15 @@
   border-color: #3b82f6;
 }
 
+@media (prefers-color-scheme: light) {
+  .roller-playground-shell--valid {
+    border-color: #4878c8;
+  }
+}
+[data-theme='light'] .roller-playground-shell--valid {
+  border-color: #4878c8;
+}
+
 .roller-playground-shell--invalid {
   border-color: #f97583;
 }
@@ -110,19 +119,48 @@
   user-select: none;
   flex-shrink: 0;
   line-height: 1;
-  cursor: pointer;
   transition: color 0.15s ease;
 }
 
-.roller-playground-code-wrap:has(.roller-playground-code-prefix:hover)
-  .roller-playground-code-prefix,
-.roller-playground-code-wrap:has(.roller-playground-code-prefix:hover)
-  .roller-playground-code-suffix,
-.roller-playground-code-wrap:has(.roller-playground-code-suffix:hover)
-  .roller-playground-code-prefix,
-.roller-playground-code-wrap:has(.roller-playground-code-suffix:hover)
-  .roller-playground-code-suffix {
+.roller-playground-code-wrap:has(.roller-playground-code-fn:hover) .roller-playground-code-prefix,
+.roller-playground-code-wrap:has(.roller-playground-code-fn:hover) .roller-playground-code-suffix {
   color: #e6edf3;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-code-prefix,
+  .roller-playground-code-suffix {
+    color: rgba(31, 35, 40, 0.5);
+  }
+  .roller-playground-code-wrap:has(.roller-playground-code-fn:hover) .roller-playground-code-prefix,
+  .roller-playground-code-wrap:has(.roller-playground-code-fn:hover)
+    .roller-playground-code-suffix {
+    color: #1f2328;
+  }
+  .roller-playground-code-fn {
+    border-color: rgba(31, 35, 40, 0.25);
+  }
+  .roller-playground-code-fn:hover {
+    border-color: #1f2328;
+  }
+}
+[data-theme='light'] .roller-playground-code-prefix,
+[data-theme='light'] .roller-playground-code-suffix {
+  color: rgba(31, 35, 40, 0.5);
+}
+[data-theme='light']
+  .roller-playground-code-wrap:has(.roller-playground-code-fn:hover)
+  .roller-playground-code-prefix,
+[data-theme='light']
+  .roller-playground-code-wrap:has(.roller-playground-code-fn:hover)
+  .roller-playground-code-suffix {
+  color: #1f2328;
+}
+[data-theme='light'] .roller-playground-code-fn {
+  border-color: rgba(31, 35, 40, 0.25);
+}
+[data-theme='light'] .roller-playground-code-fn:hover {
+  border-color: #1f2328;
 }
 
 /* ===== Code wrap (holds prefix + input + cursor + suffix) ===== */
@@ -141,8 +179,12 @@
   align-self: stretch;
   padding: 0 0.4em;
   margin: var(--rp-margin) 0.1rem var(--rp-margin) 0;
+  background: transparent;
   border: 1.5px solid rgba(230, 237, 243, 0.2);
   border-radius: 0.35rem;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
   transition:
     border-color 0.15s ease,
     background 0.15s ease;
@@ -150,8 +192,8 @@
   box-sizing: border-box;
 }
 
-.roller-playground-code-prefix:hover .roller-playground-code-fn {
-  border-color: #3b82f6;
+.roller-playground-code-fn:hover {
+  border-color: #fff;
   background: rgba(59, 130, 246, 0.15);
 }
 
@@ -172,10 +214,12 @@
 @media (prefers-color-scheme: light) {
   .roller-playground-input {
     color: #1f2328;
+    caret-color: #4878c8;
   }
 }
 [data-theme='light'] .roller-playground-input {
   color: #1f2328;
+  caret-color: #4878c8;
 }
 
 /* ===== Spinner ===== */
@@ -247,6 +291,17 @@
   color: #3b82f6;
 }
 
+@media (prefers-color-scheme: light) {
+  .roller-playground-stackblitz:hover {
+    border-color: #4878c8;
+    color: #4878c8;
+  }
+}
+[data-theme='light'] .roller-playground-stackblitz:hover {
+  border-color: #4878c8;
+  color: #4878c8;
+}
+
 .roller-playground-stackblitz-icon {
   width: 0.55rem;
   height: 0.55rem;
@@ -290,6 +345,35 @@
 }
 [data-theme='light'] .roller-playground-chip--empty {
   border-color: rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-chip {
+    border-color: #4878c8;
+  }
+  .roller-playground-chip-value {
+    color: #1f2328;
+  }
+  .roller-playground-chip-collapse {
+    color: #1f2328;
+  }
+  .roller-playground-chip-hint {
+    color: #4878c8;
+    background: rgba(72, 120, 200, 0.12);
+  }
+}
+[data-theme='light'] .roller-playground-chip {
+  border-color: #4878c8;
+}
+[data-theme='light'] .roller-playground-chip-value {
+  color: #1f2328;
+}
+[data-theme='light'] .roller-playground-chip-collapse {
+  color: #1f2328;
+}
+[data-theme='light'] .roller-playground-chip-hint {
+  color: #4878c8;
+  background: rgba(72, 120, 200, 0.12);
 }
 
 .roller-playground-chip:not(.roller-playground-chip--empty) {
@@ -411,11 +495,13 @@
 
 @media (prefers-color-scheme: light) {
   .roller-playground-expand-total {
+    border-top-color: #4878c8;
     border-bottom-color: rgba(0, 0, 0, 0.1);
     color: #1f2328;
   }
 }
 [data-theme='light'] .roller-playground-expand-total {
+  border-top-color: #4878c8;
   border-bottom-color: rgba(0, 0, 0, 0.1);
   color: #1f2328;
 }
@@ -435,6 +521,15 @@
   font-weight: 700;
 }
 
+@media (prefers-color-scheme: light) {
+  .roller-playground-expand-total-chip {
+    color: #1f2328;
+  }
+}
+[data-theme='light'] .roller-playground-expand-total-chip {
+  color: #1f2328;
+}
+
 /* ===== Embedded RollTooltip styles ===== */
 .roller-tooltip-inner {
   background: transparent;
@@ -447,6 +542,15 @@
   font-size: 0.9rem;
   color: #60a5fa;
   margin-bottom: 0.1rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-tooltip-notation {
+    color: #4878c8;
+  }
+}
+[data-theme='light'] .roller-tooltip-notation {
+  color: #4878c8;
 }
 
 .roller-tooltip-desc {
@@ -561,14 +665,16 @@
   .roller-tooltip-label {
     color: #6b7280;
   }
-
   .roller-tooltip-dice--removed {
     color: rgba(0, 0, 0, 0.35);
     text-decoration-color: #6b7280;
   }
-
   .roller-tooltip-dice-sep {
     color: rgba(0, 0, 0, 0.2);
+  }
+  .roller-tooltip-dice--added,
+  .roller-tooltip-dice--arithmetic {
+    color: #4878c8;
   }
 }
 [data-theme='light'] .roller-tooltip-label {
@@ -580,4 +686,34 @@
 }
 [data-theme='light'] .roller-tooltip-dice-sep {
   color: rgba(0, 0, 0, 0.2);
+}
+[data-theme='light'] .roller-tooltip-dice--added,
+[data-theme='light'] .roller-tooltip-dice--arithmetic {
+  color: #4878c8;
+}
+
+/* ===== Modifiers hover tooltip ===== */
+.roller-playground-modifiers-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.roller-playground-modifiers-tooltip {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 10;
+  min-width: 16rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.roller-playground-modifiers-wrap:hover .roller-playground-modifiers-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }

@@ -37,7 +37,9 @@ const GITHUB_LABELS = [
 ] as const
 
 // Slot machine tick intervals in ms — fast start, slows to a stop (~2.5s total)
-const SLOT_INTERVALS = [45, 50, 55, 60, 70, 80, 95, 115, 140, 170, 210, 260, 325, 410, 510, 640, 860]
+const SLOT_INTERVALS = [
+  45, 50, 55, 60, 70, 80, 95, 115, 140, 170, 210, 260, 325, 410, 510, 640, 860
+]
 
 const DIE_ROLLED = 'die-rolled'
 
