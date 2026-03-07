@@ -239,7 +239,7 @@ export function RollerPlayground({
                 <RollTooltip record={state.record} />
                 <div className="roller-playground-expand-total">
                   <span>Total</span>
-                  <span>{state.total}</span>
+                  <span className="roller-playground-expand-total-chip">{state.total}</span>
                 </div>
               </div>
             </div>

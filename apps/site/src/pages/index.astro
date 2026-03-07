@@ -48,8 +48,8 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         <p class="hero-subtitle">
           Throw Dice, Not Exceptions.
         </p>
-        <div class="roller-playground-wrap">
-          <RollerPlayground client:only="react" className="site-roller" />
+        <div class="roller-playground-wrap not-content">
+          <RollerPlayground client:only="react" />
         </div>
         <div class="hero-actions">
           <a href="/getting-started/introduction/" class="btn btn-primary">Get Started</a>
@@ -312,8 +312,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   /* ===== Playground ===== */
   .roller-playground-wrap {
     margin: 1.5rem auto;
-    max-width: 36rem;
-    width: 100%;
   }
 
   /* ===== Buttons ===== */
