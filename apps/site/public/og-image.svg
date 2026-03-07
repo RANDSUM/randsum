@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <filter id="logo-shadow">
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#6366f1" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
   <!-- Background -->
   <rect width="1200" height="630" fill="#0f172a"/>
 
@@ -8,58 +14,58 @@
   <!-- Left accent line -->
   <rect x="80" y="80" width="4" height="470" fill="#6366f1" rx="2"/>
 
+  <!-- Logo -->
+  <image href="data:image/png;base64,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" x="120" y="82" width="116" height="116" filter="url(#logo-shadow)"/>
+
   <!-- RANDSUM title -->
-  <text x="120" y="200" font-family="system-ui, -apple-system, monospace" font-size="96" font-weight="700" fill="#f8fafc" letter-spacing="-2">RANDSUM</text>
+  <text x="260" y="165" font-family="system-ui, -apple-system, monospace" font-size="84" font-weight="700" fill="#f8fafc" letter-spacing="-2">RANDSUM</text>
 
   <!-- Tagline -->
-  <text x="120" y="270" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#94a3b8">TypeScript Dice Rolling Library for Tabletop RPGs</text>
+  <text x="120" y="248" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#e2e8f0">TypeScript-First Dice Notation Ecosystem</text>
 
-  <!-- Code block background -->
-  <rect x="120" y="310" width="700" height="140" rx="8" fill="#1e293b"/>
+  <!-- Subline -->
+  <text x="120" y="292" font-family="system-ui, -apple-system, sans-serif" font-size="22" fill="#818cf8" font-style="italic">Throw Dice, Not Exceptions.</text>
 
-  <!-- Code block border -->
-  <rect x="120" y="310" width="700" height="140" rx="8" fill="none" stroke="#334155" stroke-width="1"/>
+  <!-- Code block background (solarized dark) -->
+  <rect x="120" y="318" width="960" height="140" rx="8" fill="#073642"/>
+  <rect x="120" y="318" width="960" height="140" rx="8" fill="none" stroke="#586e75" stroke-width="1"/>
 
-  <!-- Code text -->
-  <text x="155" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#94a3b8">import</text>
-  <text x="235" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">{ roll }</text>
-  <text x="330" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#94a3b8">from</text>
-  <text x="390" y="360" font-family="monospace, 'Courier New'" font-size="22" fill="#a5f3fc">'@randsum/roller'</text>
+  <!-- Code: import { roll } from '@randsum/roller' -->
+  <text x="155" y="364" font-family="monospace, 'Courier New'" font-size="21" fill="#859900">import</text>
+  <text x="232" y="364" font-family="monospace, 'Courier New'" font-size="21" fill="#839496">{ roll }</text>
+  <text x="323" y="364" font-family="monospace, 'Courier New'" font-size="21" fill="#859900">from</text>
+  <text x="380" y="364" font-family="monospace, 'Courier New'" font-size="21" fill="#2aa198">'@randsum/roller'</text>
 
-  <text x="155" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#7c3aed">roll</text>
-  <text x="197" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">(</text>
-  <text x="210" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#a5f3fc">'4d6L'</text>
-  <text x="286" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">)</text>
-  <text x="310" y="400" font-family="monospace, 'Courier New'" font-size="22" fill="#475569">// D&amp;D ability score (drop lowest)</text>
+  <!-- Code: roll('4d6L') -->
+  <text x="155" y="402" font-family="monospace, 'Courier New'" font-size="21" fill="#268bd2">roll</text>
+  <text x="195" y="402" font-family="monospace, 'Courier New'" font-size="21" fill="#839496">(</text>
+  <text x="207" y="402" font-family="monospace, 'Courier New'" font-size="21" fill="#2aa198">'4d6L'</text>
+  <text x="281" y="402" font-family="monospace, 'Courier New'" font-size="21" fill="#839496">)</text>
+  <text x="304" y="402" font-family="monospace, 'Courier New'" font-size="21" fill="#586e75">// D&amp;D ability score (drop lowest)</text>
 
-  <text x="155" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#7c3aed">roll</text>
-  <text x="197" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">(</text>
-  <text x="210" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#a5f3fc">'2d20H'</text>
-  <text x="298" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#f8fafc">)</text>
-  <text x="322" y="430" font-family="monospace, 'Courier New'" font-size="22" fill="#475569">// advantage</text>
+  <!-- Code: roll('2d20H') -->
+  <text x="155" y="440" font-family="monospace, 'Courier New'" font-size="21" fill="#268bd2">roll</text>
+  <text x="195" y="440" font-family="monospace, 'Courier New'" font-size="21" fill="#839496">(</text>
+  <text x="207" y="440" font-family="monospace, 'Courier New'" font-size="21" fill="#2aa198">'2d20H'</text>
+  <text x="294" y="440" font-family="monospace, 'Courier New'" font-size="21" fill="#839496">)</text>
+  <text x="317" y="440" font-family="monospace, 'Courier New'" font-size="21" fill="#586e75">// advantage</text>
 
-  <!-- npm badge area -->
-  <rect x="120" y="490" width="360" height="50" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
-  <text x="145" y="522" font-family="monospace, 'Courier New'" font-size="18" fill="#94a3b8">npm install</text>
-  <text x="278" y="522" font-family="monospace, 'Courier New'" font-size="18" fill="#a5f3fc">@randsum/roller</text>
+  <!-- Install badges: npm, bun, yarn -->
+  <!-- npm -->
+  <rect x="120" y="478" width="318" height="44" rx="6" fill="#073642" stroke="#586e75" stroke-width="1"/>
+  <text x="144" y="506" font-family="monospace, 'Courier New'" font-size="17" fill="#839496">npm install </text>
+  <text x="280" y="506" font-family="monospace, 'Courier New'" font-size="17" fill="#2aa198">@randsum/roller</text>
 
-  <!-- Dice illustration (simple d20 shape) -->
-  <g transform="translate(950, 315)">
-    <!-- D20 outline -->
-    <polygon points="120,0 240,80 240,200 120,280 0,200 0,80" fill="none" stroke="#6366f1" stroke-width="2" opacity="0.6"/>
-    <polygon points="120,0 240,80 120,140 0,80" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
-    <polygon points="0,80 120,140 0,200" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
-    <polygon points="240,80 120,140 240,200" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
-    <polygon points="0,200 120,140 120,280 0,200" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8" transform="translate(0,0)"/>
-    <polygon points="240,200 120,140 120,280" fill="#1e293b" stroke="#6366f1" stroke-width="1" opacity="0.8"/>
-    <!-- 20 text -->
-    <text x="120" y="155" font-family="monospace" font-size="40" font-weight="700" fill="#6366f1" text-anchor="middle">20</text>
-  </g>
+  <!-- bun -->
+  <rect x="454" y="478" width="278" height="44" rx="6" fill="#073642" stroke="#586e75" stroke-width="1"/>
+  <text x="478" y="506" font-family="monospace, 'Courier New'" font-size="17" fill="#839496">bun add </text>
+  <text x="566" y="506" font-family="monospace, 'Courier New'" font-size="17" fill="#2aa198">@randsum/roller</text>
+
+  <!-- yarn -->
+  <rect x="748" y="478" width="282" height="44" rx="6" fill="#073642" stroke="#586e75" stroke-width="1"/>
+  <text x="772" y="506" font-family="monospace, 'Courier New'" font-size="17" fill="#839496">yarn add </text>
+  <text x="866" y="506" font-family="monospace, 'Courier New'" font-size="17" fill="#2aa198">@randsum/roller</text>
 
   <!-- Bottom: website URL -->
-  <text x="120" y="598" font-family="system-ui, sans-serif" font-size="22" fill="#475569">randsum.dev</text>
-
-  <!-- Bottom right: zero-dependency badge -->
-  <rect x="950" y="570" width="210" height="36" rx="18" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
-  <text x="1055" y="594" font-family="system-ui, sans-serif" font-size="16" fill="#a5b4fc" text-anchor="middle">zero dependencies</text>
+  <text x="120" y="592" font-family="system-ui, sans-serif" font-size="22" fill="#475569">randsum.dev</text>
 </svg>
