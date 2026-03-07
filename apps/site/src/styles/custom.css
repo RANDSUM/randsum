@@ -84,7 +84,7 @@ h6 {
 
 /* ===== RollerPlayground spacing ===== */
 .roller-playground + .roller-playground {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 /* ===== Header layout ===== */
