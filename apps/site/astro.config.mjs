@@ -1,9 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
+import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'path'
 
 import starlight from '@astrojs/starlight'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
@@ -98,5 +102,15 @@ export default defineConfig({
     react()
   ],
   output: 'static',
-  adapter: isDev ? undefined : netlify()
+  adapter: isDev ? undefined : netlify(),
+  vite: {
+    resolve: {
+      alias: {
+        '@randsum/component-library': resolve(
+          __dirname,
+          '../../packages/component-library/src/index.ts'
+        )
+      }
+    }
+  }
 })

@@ -33,8 +33,7 @@
     "@types/react-dom": "catalog:",
     "astro": "^5.18.0",
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "sucrase": "3.35.1"
+    "react-dom": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0",
