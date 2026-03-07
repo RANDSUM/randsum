@@ -144,6 +144,7 @@
 /* ===== Notation description text ===== */
 .roller-playground-desc--hint {
   color: rgba(230, 237, 243, 0.35);
+  transition: opacity 0.2s ease;
 }
 
 @media (prefers-color-scheme: light) {
@@ -154,10 +155,18 @@
 
 .roller-playground-desc--valid {
   color: #9ca3af;
+  transition: opacity 0.2s ease;
 }
 
 .roller-playground-desc--invalid {
   color: #f97583;
+  transition: opacity 0.2s ease;
+}
+
+.roller-playground-desc--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
 }
 
 /* ===== StackBlitz button ===== */

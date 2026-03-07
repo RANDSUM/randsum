@@ -169,7 +169,12 @@ export function RollerPlayground({
         </div>
         <div className="roller-playground-desc-row">
           <span
-            className={`roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
+            className={[
+              `roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`,
+              expanded ? 'roller-playground-desc--hidden' : ''
+            ]
+              .filter(Boolean)
+              .join(' ')}
           >
             {notationDesc(notation, isValid)}
           </span>
