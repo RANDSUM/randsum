@@ -87,6 +87,10 @@ h6 {
   margin-top: 1.5rem;
 }
 
+.roller-playground.roller-playground--size-l {
+  margin: 2rem 0;
+}
+
 /* ===== Header layout ===== */
 /* Make search bar flush against the logo instead of aligned to content column */
 @media (min-width: 50rem) {
