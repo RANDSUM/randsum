@@ -98,7 +98,7 @@ export function ModifierReference({
   )
 
   return (
-    <div className="modifier-reference">
+    <div className="modifier-reference not-content">
       {corePosition === 'top' && coreRow}
       <div
         className={`modifier-reference-grid${modifiersDisabled ? ' modifier-reference--disabled' : ''}`}

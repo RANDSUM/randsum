@@ -112,7 +112,12 @@ export function RollerPlayground({
     setExpanded(false)
   }, [])
 
-  const rootClass = ['roller-playground', `roller-playground--size-${size}`, className]
+  const rootClass = [
+    'roller-playground',
+    `roller-playground--size-${size}`,
+    'not-content',
+    className
+  ]
     .filter(Boolean)
     .join(' ')
 
