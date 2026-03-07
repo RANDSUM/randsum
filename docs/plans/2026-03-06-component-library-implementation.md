@@ -4,33 +4,9 @@
 
 **Goal:** Extract `RollerPlayground` from `apps/site` into a standalone, publishable `@randsum/component-library` package and re-import it back into the site.
 
-**Architecture:** New package at `packages/component-library/` — same bunup ESM+CJS+DTS build pattern as other packages, with React as a peer dependency. CSS ships with the package using `--randsum-*` design tokens (with defaults baked in at `:root`), replacing all Starlight-specific `--sl-*` vars. The site adds a one-time token override mapping `--randsum-*` → `--sl-*`.
+**Architecture:** New package at `packages/component-library/` — same bunup ESM+CJS+DTS build pattern as other packages, with React as a peer dependency. CSS ships with sensible hardcoded defaults and predictable `.roller-playground-*` class names. Consumers style via a `className` prop on the root — targeting descendant class names with their own CSS is the familiar, obvious override path. No token layer, no special configuration needed.
 
 **Tech Stack:** React 18+, bunup, TypeScript (strict + isolatedDeclarations), `@randsum/roller` for dice logic.
-
----
-
-## Token Mapping Reference
-
-Every `--sl-*` var maps to a `--randsum-*` token:
-
-| Old (`--sl-*`) | New (`--randsum-*`) | Default value |
-|---|---|---|
-| `--sl-color-accent` | `--randsum-accent` | `#7c3aed` |
-| `--sl-color-accent-high` | `--randsum-accent-high` | `#a78bfa` |
-| `--sl-color-black` (on accent) | `--randsum-on-accent` | `#000` |
-| `--sl-color-white` (text) | `--randsum-text` | `#f0f0f0` |
-| `--sl-color-gray-3` (muted) | `--randsum-text-muted` | `#9ca3af` |
-| `--sl-color-gray-2` (dim) | `--randsum-text-dim` | `#6b7280` |
-| `--sl-color-gray-4` (border) | `--randsum-border` | `rgba(255,255,255,0.2)` |
-| `--sl-color-gray-5` (subtle) | `--randsum-border-subtle` | `rgba(255,255,255,0.1)` |
-| `--sl-color-bg-nav`/`gray-6` | `--randsum-tooltip-bg` | `#1e1e2e` |
-| `--sl-font` | `--randsum-font` | `system-ui, sans-serif` |
-| `--sl-font-mono` | `--randsum-font-mono` | `'Menlo', 'Consolas', monospace` |
-| hardcoded `#f97583` | `--randsum-invalid` | `#f97583` |
-| hardcoded `#3fb950` | `--randsum-success` | `#3fb950` |
-
-The light-mode variant (was `[data-theme='light']`) becomes `@media (prefers-color-scheme: light)` in the package. The site re-applies `[data-theme='light']` separately for Starlight compatibility.
 
 ---
 
@@ -136,7 +112,7 @@ This package needs JSX support, which the root tsconfig doesn't enable.
 
 **Step 3: Add to root `tsconfig.json` references**
 
-In `/tsconfig.json`, add to the `references` array:
+In `tsconfig.json` (repo root), add to the `references` array:
 
 ```json
 { "path": "packages/component-library" }
@@ -159,12 +135,14 @@ git commit -m "feat(component-library): scaffold package"
 
 ---
 
-## Task 2: Create the CSS file with `--randsum-*` tokens
+## Task 2: Create the CSS file
 
 **Files:**
 - Create: `packages/component-library/src/components/RollerPlayground/RollerPlayground.css`
 
-**Step 1: Create the directory structure**
+The CSS ships with hardcoded sensible defaults (dark-mode biased) and predictable `.roller-playground-*` class names. No token layer — consumers override by targeting these class names from a `className` they pass to the root element.
+
+**Step 1: Create directory**
 
 ```bash
 mkdir -p packages/component-library/src/components/RollerPlayground
@@ -172,35 +150,9 @@ mkdir -p packages/component-library/src/components/RollerPlayground
 
 **Step 2: Create `RollerPlayground.css`**
 
-This is a complete rewrite of `apps/site/src/components/playground/RollerPlayground.css`, replacing all `--sl-*` vars with `--randsum-*`. The `:root` block provides defaults so the component looks good without any consumer setup.
+This is a rewrite of `apps/site/src/components/playground/RollerPlayground.css` with all `--sl-*` Starlight vars replaced by actual hardcoded values. Light mode uses `@media (prefers-color-scheme: light)`.
 
 ```css
-/* ===== Design tokens with self-contained defaults ===== */
-:root {
-  --randsum-accent: #7c3aed;
-  --randsum-accent-high: #a78bfa;
-  --randsum-on-accent: #000;
-  --randsum-bg: rgba(0, 0, 0, 0.25);
-  --randsum-text: #f0f0f0;
-  --randsum-text-muted: #9ca3af;
-  --randsum-text-dim: #6b7280;
-  --randsum-border: rgba(255, 255, 255, 0.2);
-  --randsum-border-subtle: rgba(255, 255, 255, 0.1);
-  --randsum-tooltip-bg: #1e1e2e;
-  --randsum-invalid: #f97583;
-  --randsum-success: #3fb950;
-  --randsum-font: system-ui, -apple-system, sans-serif;
-  --randsum-font-mono: 'Menlo', 'Consolas', 'Monaco', monospace;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --randsum-bg: rgba(255, 255, 255, 0.8);
-    --randsum-text: #111;
-    --randsum-tooltip-bg: #fff;
-  }
-}
-
 /* ===== Container ===== */
 .roller-playground {
   max-width: 36rem;
@@ -212,12 +164,19 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--randsum-bg);
-  border: 1px solid var(--randsum-border);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0.5rem;
   box-sizing: border-box;
   transition: border-color 0.15s ease;
   overflow: visible;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-shell {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
 }
 
 /* ===== Main content row ===== */
@@ -230,10 +189,10 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
 
 /* ===== Description row ===== */
 .roller-playground-desc-row {
-  border-top: 1px solid var(--randsum-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0.2rem 0.2rem 0.2rem 0.5rem;
   margin-top: 0.5rem;
-  font-family: var(--randsum-font-mono);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.7rem;
   line-height: 1.2;
   display: flex;
@@ -241,15 +200,21 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   justify-content: space-between;
 }
 
+@media (prefers-color-scheme: light) {
+  .roller-playground-desc-row {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
 .roller-playground-shell--valid {
-  border-color: var(--randsum-accent);
+  border-color: #7c3aed;
 }
 
 .roller-playground-shell--invalid {
-  border-color: var(--randsum-invalid);
+  border-color: #f97583;
 }
 
-/* ===== Input wrap (for tooltip positioning) ===== */
+/* ===== Input wrap ===== */
 .roller-playground-input-wrap {
   position: relative;
   flex: 1;
@@ -258,28 +223,34 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   align-items: center;
 }
 
-/* ===== Input (transparent inside shell) ===== */
+/* ===== Input ===== */
 .roller-playground-input {
   width: 100%;
   padding: 0 0.5rem;
-  font-family: var(--randsum-font-mono);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 1rem;
   line-height: 1;
   background: transparent;
   border: none;
   outline: none;
-  color: var(--randsum-text);
+  color: #f0f0f0;
   box-sizing: border-box;
 }
 
-/* ===== Button (inset inside shell) ===== */
+@media (prefers-color-scheme: light) {
+  .roller-playground-input {
+    color: #111;
+  }
+}
+
+/* ===== Roll button ===== */
 .roller-playground-btn {
   position: relative;
   flex-shrink: 0;
   margin: 0 0.125rem 0 0.25rem;
   padding: 0 0.875rem;
-  background: var(--randsum-accent);
-  color: var(--randsum-on-accent);
+  background: #7c3aed;
+  color: #fff;
   border: none;
   border-radius: 0.35rem;
   font-weight: 600;
@@ -290,7 +261,7 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--randsum-font);
+  font-family: system-ui, -apple-system, sans-serif;
   line-height: 1;
 }
 
@@ -308,8 +279,8 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   display: inline-block;
   width: 1rem;
   height: 1rem;
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  border-top-color: rgba(0, 0, 0, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: rgba(255, 255, 255, 0.85);
   border-radius: 50%;
   animation: roller-spin 0.6s linear infinite;
 }
@@ -320,19 +291,26 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   }
 }
 
+/* ===== Notation description text ===== */
 .roller-playground-desc--hint {
-  color: var(--randsum-border);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-desc--hint {
+    color: rgba(0, 0, 0, 0.3);
+  }
 }
 
 .roller-playground-desc--valid {
-  color: var(--randsum-text-muted);
+  color: #9ca3af;
 }
 
 .roller-playground-desc--invalid {
-  color: var(--randsum-invalid);
+  color: #f97583;
 }
 
-/* ===== StackBlitz chip ===== */
+/* ===== StackBlitz button ===== */
 .roller-playground-stackblitz {
   display: flex;
   align-items: center;
@@ -340,10 +318,10 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   margin: 0.15rem;
   padding: 0.2rem 0.4rem;
   background: transparent;
-  border: 1px solid var(--randsum-border-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0.25rem;
-  color: var(--randsum-text-muted);
-  font-family: var(--randsum-font);
+  color: #9ca3af;
+  font-family: system-ui, -apple-system, sans-serif;
   font-size: 0.65rem;
   font-weight: 600;
   flex-shrink: 0;
@@ -366,7 +344,7 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   flex-shrink: 0;
 }
 
-/* ===== Chip (inside shell, before button) ===== */
+/* ===== Result chip ===== */
 .roller-playground-chip {
   position: relative;
   display: flex;
@@ -374,10 +352,10 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   justify-content: center;
   padding: 0 0.875rem;
   margin: 0 0.375rem 0 0.5rem;
-  background: var(--randsum-accent);
+  background: #7c3aed;
   border: none;
   border-radius: 0.35rem;
-  font-family: var(--randsum-font-mono);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.95rem;
   font-weight: 700;
   flex-shrink: 0;
@@ -392,7 +370,7 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
 }
 
 .roller-playground-chip--copied {
-  background: var(--randsum-success);
+  background: #3fb950;
 }
 
 @keyframes chip-enter {
@@ -407,10 +385,10 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
 }
 
 .roller-playground-chip-value {
-  color: var(--randsum-on-accent);
+  color: #fff;
 }
 
-/* ===== Tooltips ===== */
+/* ===== Tooltip ===== */
 .roller-playground-tooltip {
   position: absolute;
   left: 0;
@@ -441,47 +419,60 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
 }
 
 .roller-tooltip-inner {
-  background: var(--randsum-tooltip-bg);
-  border: 1px solid var(--randsum-border);
+  background: #1e1e2e;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0.5rem;
   padding: 0.5rem 0.875rem;
   min-width: 12rem;
   white-space: nowrap;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   font-size: 0.8rem;
-  font-family: var(--randsum-font);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-tooltip-inner {
+    background: #fff;
+    border-color: rgba(0, 0, 0, 0.15);
+  }
 }
 
 .roller-tooltip-hint {
-  color: var(--randsum-text-muted);
+  color: #9ca3af;
 }
 
 .roller-tooltip-valid {
-  color: var(--randsum-accent-high);
+  color: #a78bfa;
 }
 
 .roller-tooltip-invalid {
-  color: var(--randsum-invalid);
+  color: #f97583;
 }
 
 .roller-tooltip-notation {
-  font-family: var(--randsum-font-mono);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-weight: 700;
   font-size: 0.9rem;
-  color: var(--randsum-accent-high);
+  color: #a78bfa;
   margin-bottom: 0.1rem;
 }
 
 .roller-tooltip-desc {
-  color: var(--randsum-text-dim);
+  color: #6b7280;
   font-size: 0.75rem;
   margin-bottom: 0.25rem;
 }
 
 .roller-tooltip-divider {
   height: 1px;
-  background: var(--randsum-border-subtle);
+  background: rgba(255, 255, 255, 0.1);
   margin: 0.1rem 0;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-tooltip-divider {
+    background: rgba(0, 0, 0, 0.1);
+  }
 }
 
 .roller-tooltip-row {
@@ -494,7 +485,7 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
 }
 
 .roller-tooltip-label {
-  color: var(--randsum-text-muted);
+  color: #9ca3af;
 }
 
 .roller-tooltip-dice-group {
@@ -504,27 +495,27 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
 }
 
 .roller-tooltip-dice {
-  font-family: var(--randsum-font-mono);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   letter-spacing: 0;
 }
 
 .roller-tooltip-dice-sep {
-  color: var(--randsum-border-subtle);
-  font-family: var(--randsum-font-mono);
+  color: rgba(255, 255, 255, 0.1);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
 }
 
 .roller-tooltip-dice--removed {
-  color: var(--randsum-border);
+  color: rgba(255, 255, 255, 0.3);
   text-decoration: line-through;
-  text-decoration-color: var(--randsum-text-muted);
+  text-decoration-color: #9ca3af;
 }
 
 .roller-tooltip-dice--added {
-  color: var(--randsum-accent-high);
+  color: #a78bfa;
 }
 
 .roller-tooltip-dice--arithmetic {
-  color: var(--randsum-accent-high);
+  color: #a78bfa;
   font-weight: 600;
 }
 
@@ -539,9 +530,15 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
   gap: 1.5rem;
   padding: 0.05rem 0;
   padding-top: 0.3rem;
-  border-top: 1px solid var(--randsum-border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   line-height: 1;
   font-weight: 700;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-tooltip-total {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
 }
 ```
 
@@ -549,7 +546,7 @@ This is a complete rewrite of `apps/site/src/components/playground/RollerPlaygro
 
 ```bash
 git add packages/component-library/src/components/RollerPlayground/RollerPlayground.css
-git commit -m "feat(component-library): add RollerPlayground CSS with --randsum-* tokens"
+git commit -m "feat(component-library): add RollerPlayground CSS with hardcoded defaults"
 ```
 
 ---
@@ -559,9 +556,10 @@ git commit -m "feat(component-library): add RollerPlayground CSS with --randsum-
 **Files:**
 - Create: `packages/component-library/src/components/RollerPlayground/RollerPlayground.tsx`
 
-This is adapted from `apps/site/src/components/playground/RollerPlayground.tsx` with two additions:
-1. `className?: string` — appended to the root `div`
-2. `unstyled?: boolean` — when `true`, no `roller-playground-*` class names are applied to any element (CSS is still a module side-effect, but no selectors match, so nothing is styled). Defaults to `false`.
+Adapted from `apps/site/src/components/playground/RollerPlayground.tsx` with one addition:
+- `className?: string` — appended to the root `div` alongside `roller-playground`
+
+No `unstyled` prop. Consumers who want custom styles pass a `className` and use descendant CSS selectors to target `.roller-playground-*` elements. All class names stay as-is; no `cx` helper needed.
 
 **Step 1: Create `RollerPlayground.tsx`**
 
@@ -630,13 +628,11 @@ console.log('Rolls:   ', result.rolls)
 export function RollerPlayground({
   stackblitz = true,
   defaultNotation = '4d6L',
-  className,
-  unstyled = false
+  className
 }: {
   readonly stackblitz?: boolean
   readonly defaultNotation?: string
   readonly className?: string
-  readonly unstyled?: boolean
 } = {}): React.JSX.Element {
   const [notation, setNotation] = useState(defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
@@ -675,32 +671,28 @@ export function RollerPlayground({
     setShowTooltip(false)
   }, [])
 
-  // When unstyled=true, class names are omitted so default CSS rules don't apply.
-  // Consumers can style freely via the className prop or descendant selectors.
-  const cx = unstyled ? () => undefined : (name: string) => name
-
-  const rootClass = [cx('roller-playground'), className].filter(Boolean).join(' ') || undefined
+  const rootClass = ['roller-playground', className].filter(Boolean).join(' ')
 
   return (
     <div className={rootClass}>
-      <div className={cx(`roller-playground-shell roller-playground-shell--${shellVariant}`)}>
-        <div className={cx('roller-playground-row')}>
+      <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
+        <div className="roller-playground-row">
           <button
-            className={cx('roller-playground-btn')}
+            className="roller-playground-btn"
             onClick={handleRoll}
             disabled={!isValid || state.status === 'rolling'}
             aria-label={state.status === 'rolling' ? 'Rolling' : 'Roll'}
           >
             {state.status === 'rolling' ? (
-              <span className={cx('roller-playground-spinner')} aria-hidden="true" />
+              <span className="roller-playground-spinner" aria-hidden="true" />
             ) : (
               'Roll'
             )}
           </button>
-          <div className={cx('roller-playground-input-wrap')}>
+          <div className="roller-playground-input-wrap">
             <input
               type="text"
-              className={cx('roller-playground-input')}
+              className="roller-playground-input"
               value={notation}
               onChange={handleChange}
               onKeyDown={e => {
@@ -716,12 +708,7 @@ export function RollerPlayground({
           {state.status === 'result' && (
             <div
               ref={chipRef}
-              className={[
-                cx('roller-playground-chip'),
-                copied ? cx('roller-playground-chip--copied') : undefined
-              ]
-                .filter(Boolean)
-                .join(' ') || undefined}
+              className={`roller-playground-chip${copied ? ' roller-playground-chip--copied' : ''}`}
               onMouseEnter={() => {
                 if (chipRef.current) setChipDir(tooltipDir(chipRef.current))
                 setShowTooltip(true)
@@ -740,42 +727,40 @@ export function RollerPlayground({
               role="button"
               aria-label={`Copy result ${state.total}`}
             >
-              <span className={cx('roller-playground-chip-value')}>{copied ? '✓' : state.total}</span>
+              <span className="roller-playground-chip-value">{copied ? '✓' : state.total}</span>
               {showTooltip && (
                 <div
-                  className={cx(`roller-playground-tooltip roller-playground-tooltip--${chipDir}`)}
+                  className={`roller-playground-tooltip roller-playground-tooltip--${chipDir}`}
                   role="tooltip"
                 >
                   {copied ? (
-                    <div className={cx('roller-tooltip-inner')}>
-                      <span className={cx('roller-tooltip-valid')}>Result copied</span>
+                    <div className="roller-tooltip-inner">
+                      <span className="roller-tooltip-valid">Result copied</span>
                     </div>
                   ) : (
-                    <RollTooltip record={state.record} unstyled={unstyled} />
+                    <RollTooltip record={state.record} />
                   )}
                 </div>
               )}
             </div>
           )}
         </div>
-        <div className={cx('roller-playground-desc-row')}>
+        <div className="roller-playground-desc-row">
           <span
-            className={cx(
-              `roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`
-            )}
+            className={`roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
           >
             {notationDesc(notation, isValid)}
           </span>
           {stackblitz && (
             <button
-              className={cx('roller-playground-stackblitz')}
+              className="roller-playground-stackblitz"
               onClick={() => {
                 openInStackBlitz(notation)
               }}
               aria-label="Edit in StackBlitz"
             >
               <svg
-                className={cx('roller-playground-stackblitz-icon')}
+                className="roller-playground-stackblitz-icon"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -880,32 +865,29 @@ function computeSteps(record: RollRecord): readonly TooltipStep[] {
 function DiceGroup({
   unchanged,
   removed,
-  added,
-  unstyled
+  added
 }: {
   readonly unchanged: readonly number[]
   readonly removed: readonly number[]
   readonly added: readonly number[]
-  readonly unstyled: boolean
 }): React.JSX.Element {
-  const cx = unstyled ? () => undefined : (name: string) => name
   const hasModified = removed.length > 0 || added.length > 0
   const shown = unchanged.slice(0, MAX_DICE_SHOWN)
   const truncated = unchanged.length > MAX_DICE_SHOWN
 
   return (
-    <span className={cx('roller-tooltip-dice-group')}>
+    <span className="roller-tooltip-dice-group">
       {removed.length > 0 && (
-        <span className={cx('roller-tooltip-dice roller-tooltip-dice--removed')}>
+        <span className="roller-tooltip-dice roller-tooltip-dice--removed">
           {removed.join(' ')}
         </span>
       )}
       {added.length > 0 && (
-        <span className={cx('roller-tooltip-dice roller-tooltip-dice--added')}>{added.join(' ')}</span>
+        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(' ')}</span>
       )}
-      {hasModified && shown.length > 0 && <span className={cx('roller-tooltip-dice-sep')}>|</span>}
+      {hasModified && shown.length > 0 && <span className="roller-tooltip-dice-sep">|</span>}
       {shown.length > 0 && (
-        <span className={cx('roller-tooltip-dice')}>
+        <span className="roller-tooltip-dice">
           {shown.join(' ')}
           {truncated ? ' …' : ''}
         </span>
@@ -914,32 +896,25 @@ function DiceGroup({
   )
 }
 
-function RollTooltip({
-  record,
-  unstyled
-}: {
-  readonly record: RollRecord
-  readonly unstyled: boolean
-}): React.JSX.Element {
-  const cx = unstyled ? () => undefined : (name: string) => name
+function RollTooltip({ record }: { readonly record: RollRecord }): React.JSX.Element {
   const steps = computeSteps(record)
 
   return (
-    <div className={cx('roller-tooltip-inner')}>
-      <div className={cx('roller-tooltip-notation')}>{record.notation}</div>
+    <div className="roller-tooltip-inner">
+      <div className="roller-tooltip-notation">{record.notation}</div>
       {record.description.length > 0 && (
-        <div className={cx('roller-tooltip-desc')}>{record.description.join(', ')}</div>
+        <div className="roller-tooltip-desc">{record.description.join(', ')}</div>
       )}
-      <div className={cx('roller-tooltip-divider')} />
+      <div className="roller-tooltip-divider" />
       {steps.map((step, i) => {
         if (step.kind === 'divider') {
-          return <div key={`div-${i}`} className={cx('roller-tooltip-divider')} />
+          return <div key={`div-${i}`} className="roller-tooltip-divider" />
         }
         if (step.kind === 'arithmetic') {
           return (
-            <div key={i} className={cx('roller-tooltip-row')}>
-              <span className={cx('roller-tooltip-label')}>{step.label}</span>
-              <span className={cx('roller-tooltip-dice roller-tooltip-dice--arithmetic')}>
+            <div key={i} className="roller-tooltip-row">
+              <span className="roller-tooltip-label">{step.label}</span>
+              <span className="roller-tooltip-dice roller-tooltip-dice--arithmetic">
                 {step.display}
               </span>
             </div>
@@ -947,29 +922,24 @@ function RollTooltip({
         }
         if (step.kind === 'rolls') {
           return (
-            <div key={i} className={cx('roller-tooltip-row')}>
-              <span className={cx('roller-tooltip-label')}>{step.label}</span>
-              <DiceGroup
-                unchanged={step.unchanged}
-                removed={step.removed}
-                added={step.added}
-                unstyled={unstyled}
-              />
+            <div key={i} className="roller-tooltip-row">
+              <span className="roller-tooltip-label">{step.label}</span>
+              <DiceGroup unchanged={step.unchanged} removed={step.removed} added={step.added} />
             </div>
           )
         }
         if (step.kind === 'finalRolls') {
           return (
-            <div key="finalRolls" className={cx('roller-tooltip-row roller-tooltip-row--final')}>
-              <span className={cx('roller-tooltip-label')}>Final rolls</span>
-              <span className={cx('roller-tooltip-dice')}>
+            <div key="finalRolls" className="roller-tooltip-row roller-tooltip-row--final">
+              <span className="roller-tooltip-label">Final rolls</span>
+              <span className="roller-tooltip-dice">
                 {formatAsMath(step.rolls, step.arithmeticDelta)}
               </span>
             </div>
           )
         }
         return (
-          <div key="total" className={cx('roller-tooltip-total')}>
+          <div key="total" className="roller-tooltip-total">
             <span>Total</span>
             <span>{step.value}</span>
           </div>
@@ -1036,15 +1006,21 @@ Expected: No errors. Check that `packages/component-library/dist/` contains:
 - `index.d.ts` (types)
 - `index.d.cts` (CJS types)
 
-**Step 3: Check CSS handling**
+**Step 3: Check CSS output**
 
-If the build produces a `dist/index.css` file, great — bunup extracted it. If not, add a postbuild step to the package.json `build` script:
+Bun's bundler may extract the imported CSS into `dist/index.css`. Check with:
+
+```bash
+ls packages/component-library/dist/
+```
+
+If no CSS file is in dist, add a manual copy to the build script in `packages/component-library/package.json`:
 
 ```json
 "build": "bunup --entry src/index.ts --format esm,cjs --dts --external react --external react-dom --minify --sourcemap external --target browser --clean && cp src/components/RollerPlayground/RollerPlayground.css dist/roller-playground.css"
 ```
 
-> **Note:** Whether CSS is auto-extracted or manually copied, the `dist/` includes it and the JS bundle references it. Astro/Vite will process it as a CSS side-effect when consuming the package via workspace.
+Then rebuild.
 
 **Step 4: Typecheck**
 
@@ -1052,7 +1028,7 @@ If the build produces a `dist/index.css` file, great — bunup extracted it. If 
 bun run --filter @randsum/component-library typecheck
 ```
 
-Expected: No errors. If you see JSX-related errors, verify `tsconfig.json` has `"jsx": "react-jsx"` and `"jsxImportSource": "react"`.
+Expected: No errors. If JSX errors appear, verify `tsconfig.json` has `"jsx": "react-jsx"` and `"jsxImportSource": "react"`.
 
 **Step 5: Commit any build config fixes**
 
@@ -1069,12 +1045,10 @@ git commit -m "fix(component-library): adjust build config for CSS output"
 - Modify: `apps/site/package.json` — add dependency
 - Delete: `apps/site/src/components/playground/RollerPlayground.tsx`
 - Delete: `apps/site/src/components/playground/RollerPlayground.css`
-- Find and update: wherever `RollerPlayground` is imported in the site — update import path
-- Add: CSS theme override (map `--randsum-*` → `--sl-*`)
+- Update imports in site files that use `RollerPlayground`
+- Add site CSS overrides targeting `.roller-playground-*` via a scoped wrapper class
 
-**Step 1: Add dependency to site**
-
-In `apps/site/package.json`, add to `dependencies`:
+**Step 1: Add dependency to site `package.json`**
 
 ```json
 "@randsum/component-library": "workspace:~"
@@ -1086,73 +1060,138 @@ In `apps/site/package.json`, add to `dependencies`:
 bun install
 ```
 
-**Step 3: Find all usages of the local RollerPlayground in the site**
+**Step 3: Find all usages of the local RollerPlayground**
 
 ```bash
 grep -r "RollerPlayground" apps/site/src --include="*.tsx" --include="*.astro" --include="*.ts" -l
 ```
 
-Update each import from:
-```ts
-import { RollerPlayground } from '../components/playground/RollerPlayground'
-// or any relative path
-```
-to:
+For each file, update the import to:
+
 ```ts
 import { RollerPlayground } from '@randsum/component-library'
 ```
 
-**Step 4: Delete the now-local files**
+Also add `className="site-roller"` to each `<RollerPlayground />` usage (this is the hook for site-specific CSS overrides).
+
+**Step 4: Delete the local files**
 
 ```bash
 rm apps/site/src/components/playground/RollerPlayground.tsx
 rm apps/site/src/components/playground/RollerPlayground.css
 ```
 
-**Step 5: Add the Starlight theme integration CSS**
+**Step 5: Add site CSS overrides**
 
-Find the site's global CSS file (likely `apps/site/src/styles/` or the Starlight config's `customCss`). Add a new CSS block that maps `--randsum-*` tokens to Starlight's `--sl-*` variables:
+Find the site's global CSS entry or Starlight `customCss` config. Add a new CSS block that overrides the component's defaults to match Starlight's theme, scoped via `.site-roller` so it doesn't bleed:
 
 ```css
-/* apps/site/src/styles/randsum-tokens.css (new file, or add to existing global CSS) */
-
-/* Map RANDSUM design tokens to Starlight theme */
-:root {
-  --randsum-accent: var(--sl-color-accent);
-  --randsum-accent-high: var(--sl-color-accent-high);
-  --randsum-on-accent: var(--sl-color-black);
-  --randsum-text: var(--sl-color-white);
-  --randsum-text-muted: var(--sl-color-gray-3);
-  --randsum-text-dim: var(--sl-color-gray-2);
-  --randsum-border: var(--sl-color-gray-4);
-  --randsum-border-subtle: var(--sl-color-gray-5);
-  --randsum-tooltip-bg: var(--sl-color-bg-nav, var(--sl-color-gray-6));
-  --randsum-font: var(--sl-font);
-  --randsum-font-mono: var(--sl-font-mono);
+/* Scope: applied when the site passes className="site-roller" */
+.site-roller .roller-playground-btn {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-black);
+  font-family: var(--sl-font);
 }
 
-:root[data-theme='light'] {
-  --randsum-bg: rgba(255, 255, 255, 0.8);
-  --randsum-text: var(--sl-color-black);
-  --randsum-on-accent: var(--sl-color-black);
+.site-roller .roller-playground-shell {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: var(--sl-color-gray-4);
+}
+
+.site-roller .roller-playground-shell--valid {
+  border-color: var(--sl-color-accent);
+}
+
+.site-roller .roller-playground-input {
+  color: var(--sl-color-white);
+  font-family: var(--sl-font-mono);
+}
+
+.site-roller .roller-playground-chip {
+  background: var(--sl-color-accent);
+  font-family: var(--sl-font-mono);
+}
+
+.site-roller .roller-playground-chip-value {
+  color: var(--sl-color-black);
+}
+
+.site-roller .roller-playground-desc-row {
+  border-top-color: var(--sl-color-gray-4);
+  font-family: var(--sl-font-mono);
+}
+
+.site-roller .roller-playground-desc--hint {
+  color: var(--sl-color-gray-4);
+}
+
+.site-roller .roller-playground-desc--valid {
+  color: var(--sl-color-gray-3);
+}
+
+.site-roller .roller-playground-stackblitz {
+  border-color: var(--sl-color-gray-5);
+  color: var(--sl-color-gray-3);
+  font-family: var(--sl-font);
+}
+
+.site-roller .roller-tooltip-inner {
+  background: var(--sl-color-bg-nav, var(--sl-color-gray-6));
+  border-color: var(--sl-color-gray-4);
+  font-family: var(--sl-font);
+}
+
+.site-roller .roller-tooltip-notation {
+  color: var(--sl-color-accent-high);
+  font-family: var(--sl-font-mono);
+}
+
+.site-roller .roller-tooltip-valid {
+  color: var(--sl-color-accent-high);
+}
+
+.site-roller .roller-tooltip-label {
+  color: var(--sl-color-gray-3);
+}
+
+.site-roller .roller-tooltip-desc {
+  color: var(--sl-color-gray-2);
+}
+
+.site-roller .roller-tooltip-divider {
+  background: var(--sl-color-gray-5);
+}
+
+.site-roller .roller-tooltip-dice--added {
+  color: var(--sl-color-accent-high);
+}
+
+.site-roller .roller-tooltip-dice--arithmetic {
+  color: var(--sl-color-accent-high);
+}
+
+.site-roller .roller-tooltip-total {
+  border-top-color: var(--sl-color-gray-5);
+}
+
+/* Light mode */
+:root[data-theme='light'] .site-roller .roller-playground-shell {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+:root[data-theme='light'] .site-roller .roller-playground-input {
+  color: var(--sl-color-black);
 }
 ```
 
-Then register it in `apps/site/astro.config.mjs` under Starlight's `customCss`:
+Find the Starlight config in `apps/site/astro.config.mjs`. Look for the `customCss` array and add the new stylesheet, or add a new stylesheet file if one doesn't exist.
 
-```js
-starlight({
-  customCss: [
-    // ... existing entries
-    './src/styles/randsum-tokens.css',
-  ],
-})
-```
+Check the Astro config to understand the current `customCss` setup before editing.
 
 **Step 6: Commit**
 
 ```bash
-git add apps/site/package.json apps/site/src/ apps/site/astro.config.mjs
+git add apps/site/
 git commit -m "feat(site): migrate RollerPlayground to @randsum/component-library"
 ```
 
@@ -1166,28 +1205,30 @@ git commit -m "feat(site): migrate RollerPlayground to @randsum/component-librar
 bun run build
 ```
 
-Expected: All packages build without errors.
+Expected: No errors across all packages.
 
-**Step 2: Typecheck everything**
+**Step 2: Typecheck**
 
 ```bash
 bun run typecheck
 ```
 
-**Step 3: Run the site dev server and spot-check**
+**Step 3: Run site dev server**
 
 ```bash
 bun run site:dev
 ```
 
-Navigate to the page with the RollerPlayground. Verify:
-- Component renders and looks identical to before
-- Roll button works, tooltip appears on hover, StackBlitz button opens
-- `unstyled={true}` can be temporarily tested to confirm class names are removed
+Navigate to the page with the RollerPlayground. Verify visually:
+- Looks identical to before (Starlight theme applied via `.site-roller` overrides)
+- Roll button works
+- Tooltip appears on hover with dice breakdown
+- StackBlitz button opens
+- Copy-to-clipboard chip works
 
-**Step 4: Commit any fixes, then final commit**
+**Step 4: Commit any fixes**
 
 ```bash
 git add -A
-git commit -m "chore: verify component-library integration"
+git commit -m "chore: final verification fixes for component-library integration"
 ```
