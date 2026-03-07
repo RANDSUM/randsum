@@ -66,6 +66,7 @@ export function RollerPlayground({
 } = {}): React.JSX.Element {
   const [notation, setNotation] = useState(defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
+  const [expanded, setExpanded] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
@@ -80,6 +81,7 @@ export function RollerPlayground({
   const handleRoll = useCallback(() => {
     if (!isValid) return
     setState({ status: 'rolling' })
+    setExpanded(false)
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
       const result = roll(notation)
@@ -91,6 +93,7 @@ export function RollerPlayground({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setNotation(e.target.value)
     setState({ status: 'idle' })
+    setExpanded(false)
   }, [])
 
   const rootClass = ['roller-playground', className].filter(Boolean).join(' ')
@@ -130,13 +133,30 @@ export function RollerPlayground({
           <div
             className={[
               'roller-playground-chip',
-              state.status !== 'result' ? 'roller-playground-chip--empty' : ''
+              state.status !== 'result' ? 'roller-playground-chip--empty' : '',
+              state.status === 'result' && expanded ? 'roller-playground-chip--expanded' : ''
             ]
               .filter(Boolean)
               .join(' ')}
+            onClick={
+              state.status === 'result'
+                ? () => {
+                    setExpanded(e => !e)
+                  }
+                : undefined
+            }
+            role={state.status === 'result' ? 'button' : undefined}
+            aria-label={
+              state.status === 'result'
+                ? expanded
+                  ? 'Close breakdown'
+                  : 'Open breakdown'
+                : undefined
+            }
+            aria-expanded={state.status === 'result' ? expanded : undefined}
           >
             {state.status === 'result' && (
-              <span className="roller-playground-chip-value">{state.total}</span>
+              <span className="roller-playground-chip-value">{expanded ? '×' : state.total}</span>
             )}
           </div>
         </div>
