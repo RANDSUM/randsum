@@ -160,16 +160,42 @@ export function RollerPlayground({
             aria-label={
               state.status === 'result'
                 ? expanded
-                  ? 'Close breakdown'
-                  : 'Open breakdown'
+                  ? 'Collapse breakdown'
+                  : 'Expand breakdown'
                 : undefined
             }
             aria-expanded={state.status === 'result' ? expanded : undefined}
           >
             {state.status === 'result' && (
               <>
-                <span className="roller-playground-chip-value">{expanded ? '×' : state.total}</span>
-                {!expanded && (
+                <span
+                  className={[
+                    'roller-playground-chip-value',
+                    expanded ? 'roller-playground-chip-value--hidden' : ''
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  {state.total}
+                </span>
+                {expanded ? (
+                  <span className="roller-playground-chip-collapse" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="18 15 12 9 6 15" />
+                    </svg>
+                  </span>
+                ) : (
                   <span className="roller-playground-chip-hint" aria-hidden="true">
                     ↓
                   </span>
@@ -180,12 +206,7 @@ export function RollerPlayground({
         </div>
         <div className="roller-playground-desc-row">
           <span
-            className={[
-              `roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`,
-              expanded ? 'roller-playground-desc--hidden' : ''
-            ]
-              .filter(Boolean)
-              .join(' ')}
+            className={`roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
           >
             {notationDesc(notation, isValid)}
           </span>
@@ -350,11 +371,6 @@ export function RollTooltip({ record }: { readonly record: RollRecord }): React.
 
   return (
     <div className="roller-tooltip-inner">
-      <div className="roller-tooltip-notation">{record.notation}</div>
-      {record.description.length > 0 && (
-        <div className="roller-tooltip-desc">{record.description.join(', ')}</div>
-      )}
-      <div className="roller-tooltip-divider" />
       {steps.map((step, i) => {
         if (step.kind === 'divider') {
           return <div key={`div-${i}`} className="roller-tooltip-divider" />

@@ -144,7 +144,6 @@
 /* ===== Notation description text ===== */
 .roller-playground-desc--hint {
   color: rgba(230, 237, 243, 0.35);
-  transition: opacity 0.2s ease;
 }
 
 @media (prefers-color-scheme: light) {
@@ -155,18 +154,10 @@
 
 .roller-playground-desc--valid {
   color: #9ca3af;
-  transition: opacity 0.2s ease;
 }
 
 .roller-playground-desc--invalid {
   color: #f97583;
-  transition: opacity 0.2s ease;
-}
-
-.roller-playground-desc--hidden {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
 }
 
 /* ===== StackBlitz button ===== */
@@ -281,6 +272,22 @@
 
 .roller-playground-chip-value {
   color: #fff;
+  font-size: 0.8rem;
+  transition: opacity 0.15s ease;
+}
+
+.roller-playground-chip-value--hidden {
+  opacity: 0;
+}
+
+.roller-playground-chip-collapse {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  pointer-events: none;
 }
 
 /* ===== Expand panel ===== */
@@ -296,7 +303,7 @@
 
 .roller-playground-expand-inner {
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 0;
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;
   font-family:
@@ -306,10 +313,17 @@
   color: #e6edf3;
 }
 
+.roller-playground-expand--open .roller-playground-expand-inner {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 @media (prefers-color-scheme: light) {
   .roller-playground-expand-inner {
-    border-top-color: rgba(0, 0, 0, 0.1);
     color: #1f2328;
+  }
+
+  .roller-playground-expand--open .roller-playground-expand-inner {
+    border-top-color: rgba(0, 0, 0, 0.1);
   }
 }
 
