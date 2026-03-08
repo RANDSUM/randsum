@@ -125,6 +125,21 @@ function parseFrom(notation: string, cursor: number, tokens: Token[]): readonly 
 
   const remaining = notation.slice(cursor)
 
+  // A second dice pool (e.g. +1d20 in "1d6+1d20") must be detected before
+  // the plus/minus modifier patterns would consume the leading +/- sign.
+  const newPoolMatch = /^[+-]\d+[Dd][1-9]\d*/.exec(remaining)
+  if (newPoolMatch) {
+    const text = newPoolMatch[0]
+    tokens.push({
+      text,
+      type: 'core',
+      start: cursor,
+      end: cursor + text.length,
+      description: describeCoreToken(text)
+    })
+    return parseFrom(notation, cursor + text.length, tokens)
+  }
+
   for (const entry of MODIFIERS) {
     const m = remaining.match(entry.pattern)
     if (m) {
