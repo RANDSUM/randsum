@@ -274,15 +274,15 @@
 .rp-token--core {
   color: #60a5fa;
 }
-/* Drop family: reds/corals (H = deeper, L = brighter, D{} = mid) */
+/* Drop family: fuchsia (H = deeper, L = brighter, D{} = mid) */
 .rp-token--dropHighest {
-  color: #d96f7f;
+  color: #b858b0;
 }
 .rp-token--dropLowest {
-  color: #f97583;
+  color: #f060d0;
 }
 .rp-token--dropCondition {
-  color: #e88898;
+  color: #d860c0;
 }
 /* Keep family: oranges (K = bright, kl = deeper) */
 .rp-token--keepHighest {
@@ -291,15 +291,15 @@
 .rp-token--keepLowest {
   color: #d4845a;
 }
-/* Explode family: golds (! = bright, !! = deeper, !p = amber) */
+/* Explode family: gold/orange/lime (! = gold, !! = orange, !p = lime) */
 .rp-token--explode {
   color: #e5c07b;
 }
 .rp-token--compound {
-  color: #c49a4e;
+  color: #e08040;
 }
 .rp-token--penetrate {
-  color: #d4a94a;
+  color: #b8d858;
 }
 /* Reroll: purple */
 .rp-token--reroll {
@@ -335,9 +335,9 @@
 .rp-token--multiplyTotal {
   color: #e8a93a;
 }
-/* Unknown: grey */
+/* Unknown: error red */
 .rp-token--unknown {
-  color: rgba(230, 237, 243, 0.3);
+  color: #f97583;
 }
 
 /* Token colors — light mode */
@@ -346,13 +346,13 @@
     color: #2563eb;
   }
   .rp-token--dropHighest {
-    color: #b03060;
+    color: #802090;
   }
   .rp-token--dropLowest {
-    color: #c0394a;
+    color: #b028a8;
   }
   .rp-token--dropCondition {
-    color: #b85060;
+    color: #9020a0;
   }
   .rp-token--keepHighest {
     color: #c2620a;
@@ -364,10 +364,10 @@
     color: #9a7c1a;
   }
   .rp-token--compound {
-    color: #7a6010;
+    color: #c05818;
   }
   .rp-token--penetrate {
-    color: #8a6e14;
+    color: #5a8018;
   }
   .rp-token--reroll {
     color: #7c4dab;
@@ -397,20 +397,20 @@
     color: #7a5800;
   }
   .rp-token--unknown {
-    color: rgba(31, 35, 40, 0.3);
+    color: #c0394a;
   }
 }
 [data-theme='light'] .rp-token--core {
   color: #2563eb;
 }
 [data-theme='light'] .rp-token--dropHighest {
-  color: #b03060;
+  color: #802090;
 }
 [data-theme='light'] .rp-token--dropLowest {
-  color: #c0394a;
+  color: #b028a8;
 }
 [data-theme='light'] .rp-token--dropCondition {
-  color: #b85060;
+  color: #9020a0;
 }
 [data-theme='light'] .rp-token--keepHighest {
   color: #c2620a;
@@ -422,10 +422,10 @@
   color: #9a7c1a;
 }
 [data-theme='light'] .rp-token--compound {
-  color: #7a6010;
+  color: #c05818;
 }
 [data-theme='light'] .rp-token--penetrate {
-  color: #8a6e14;
+  color: #5a8018;
 }
 [data-theme='light'] .rp-token--reroll {
   color: #7c4dab;
@@ -455,7 +455,7 @@
   color: #7a5800;
 }
 [data-theme='light'] .rp-token--unknown {
-  color: rgba(31, 35, 40, 0.3);
+  color: #c0394a;
 }
 
 /* ===== Description chips ===== */
@@ -501,16 +501,16 @@
   --chip-bg: rgba(96, 165, 250, 0.12);
 }
 .rp-desc-chip--dropHighest {
-  --chip-color: #d96f7f;
-  --chip-bg: rgba(217, 111, 127, 0.12);
+  --chip-color: #b858b0;
+  --chip-bg: rgba(184, 88, 176, 0.12);
 }
 .rp-desc-chip--dropLowest {
-  --chip-color: #f97583;
-  --chip-bg: rgba(249, 117, 131, 0.12);
+  --chip-color: #f060d0;
+  --chip-bg: rgba(240, 96, 208, 0.12);
 }
 .rp-desc-chip--dropCondition {
-  --chip-color: #e88898;
-  --chip-bg: rgba(232, 136, 152, 0.12);
+  --chip-color: #d860c0;
+  --chip-bg: rgba(216, 96, 192, 0.12);
 }
 .rp-desc-chip--keepHighest {
   --chip-color: #ffab70;
@@ -525,12 +525,12 @@
   --chip-bg: rgba(229, 192, 123, 0.12);
 }
 .rp-desc-chip--compound {
-  --chip-color: #c49a4e;
-  --chip-bg: rgba(196, 154, 78, 0.12);
+  --chip-color: #e08040;
+  --chip-bg: rgba(224, 128, 64, 0.12);
 }
 .rp-desc-chip--penetrate {
-  --chip-color: #d4a94a;
-  --chip-bg: rgba(212, 169, 74, 0.12);
+  --chip-color: #b8d858;
+  --chip-bg: rgba(184, 216, 88, 0.12);
 }
 .rp-desc-chip--reroll {
   --chip-color: #c792ea;
@@ -576,16 +576,16 @@
     --chip-bg: rgba(37, 99, 235, 0.08);
   }
   .rp-desc-chip--dropHighest {
-    --chip-color: #b03060;
-    --chip-bg: rgba(176, 48, 96, 0.08);
+    --chip-color: #802090;
+    --chip-bg: rgba(128, 32, 144, 0.08);
   }
   .rp-desc-chip--dropLowest {
-    --chip-color: #c0394a;
-    --chip-bg: rgba(192, 57, 74, 0.08);
+    --chip-color: #b028a8;
+    --chip-bg: rgba(176, 40, 168, 0.08);
   }
   .rp-desc-chip--dropCondition {
-    --chip-color: #b85060;
-    --chip-bg: rgba(184, 80, 96, 0.08);
+    --chip-color: #9020a0;
+    --chip-bg: rgba(144, 32, 160, 0.08);
   }
   .rp-desc-chip--keepHighest {
     --chip-color: #c2620a;
@@ -600,12 +600,12 @@
     --chip-bg: rgba(154, 124, 26, 0.08);
   }
   .rp-desc-chip--compound {
-    --chip-color: #7a6010;
-    --chip-bg: rgba(122, 96, 16, 0.08);
+    --chip-color: #c05818;
+    --chip-bg: rgba(192, 88, 24, 0.08);
   }
   .rp-desc-chip--penetrate {
-    --chip-color: #8a6e14;
-    --chip-bg: rgba(138, 110, 20, 0.08);
+    --chip-color: #5a8018;
+    --chip-bg: rgba(90, 128, 24, 0.08);
   }
   .rp-desc-chip--reroll {
     --chip-color: #7c4dab;
@@ -649,16 +649,16 @@
   --chip-bg: rgba(37, 99, 235, 0.08);
 }
 [data-theme='light'] .rp-desc-chip--dropHighest {
-  --chip-color: #b03060;
-  --chip-bg: rgba(176, 48, 96, 0.08);
+  --chip-color: #802090;
+  --chip-bg: rgba(128, 32, 144, 0.08);
 }
 [data-theme='light'] .rp-desc-chip--dropLowest {
-  --chip-color: #c0394a;
-  --chip-bg: rgba(192, 57, 74, 0.08);
+  --chip-color: #b028a8;
+  --chip-bg: rgba(176, 40, 168, 0.08);
 }
 [data-theme='light'] .rp-desc-chip--dropCondition {
-  --chip-color: #b85060;
-  --chip-bg: rgba(184, 80, 96, 0.08);
+  --chip-color: #9020a0;
+  --chip-bg: rgba(144, 32, 160, 0.08);
 }
 [data-theme='light'] .rp-desc-chip--keepHighest {
   --chip-color: #c2620a;
@@ -673,12 +673,12 @@
   --chip-bg: rgba(154, 124, 26, 0.08);
 }
 [data-theme='light'] .rp-desc-chip--compound {
-  --chip-color: #7a6010;
-  --chip-bg: rgba(122, 96, 16, 0.08);
+  --chip-color: #c05818;
+  --chip-bg: rgba(192, 88, 24, 0.08);
 }
 [data-theme='light'] .rp-desc-chip--penetrate {
-  --chip-color: #8a6e14;
-  --chip-bg: rgba(138, 110, 20, 0.08);
+  --chip-color: #5a8018;
+  --chip-bg: rgba(90, 128, 24, 0.08);
 }
 [data-theme='light'] .rp-desc-chip--reroll {
   --chip-color: #7c4dab;
@@ -1263,7 +1263,7 @@
 
 /* ===== Expand panel showing modifier reference ===== */
 .roller-playground-expand-reference {
-  padding: 0 0 0.85rem;
+  padding: 0 0 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 }

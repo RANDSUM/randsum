@@ -103,7 +103,7 @@ const MODIFIERS: readonly ModifierEntry[] = [
   },
   {
     type: 'countSuccesses',
-    pattern: /^[Ss]\{[^}]+\}/,
+    pattern: /^[Ss]\{\d+(?:,\d+)?\}/,
     describe: t => `Successes ${t.slice(2, -1)}`
   },
   // Arithmetic — only meaningful after a core token

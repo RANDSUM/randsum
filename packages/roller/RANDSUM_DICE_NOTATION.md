@@ -594,7 +594,7 @@ roll({
 
 **Use cases:** Critical hits that double or triple base damage before modifiers. Or systems where dice are multiplied before bonuses are added.
 
-### Count Successes (S{...})
+### Count Successes (S{N})
 
 Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
 
@@ -602,6 +602,8 @@ Count dice meeting a threshold instead of summing values. Used in dice pool syst
 | -------- | ------------------------------------------- |
 | `S{N}`   | Count dice that rolled >= N                 |
 | `S{N,B}` | Count successes >= N, subtract botches <= B |
+
+**Important:** `S` only accepts plain integer thresholds — comparison operators (`>`, `<`, `>=`, `<=`) are **not** supported inside `S{}`. Use `S{7}`, not `S{>7}`.
 
 ```typescript
 roll("5d10S{7}") // Count how many dice rolled >= 7

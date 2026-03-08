@@ -6,6 +6,8 @@
     sans-serif;
   color: #e6edf3;
   min-width: 260px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== Top row: notation box + title/desc ===== */
@@ -14,6 +16,11 @@
   align-items: stretch;
   gap: 0.75rem;
   margin-bottom: 0.5rem;
+  position: sticky;
+  top: -0.25rem;
+  background: #161b22;
+  z-index: 1;
+  padding-top: 0.1rem;
 }
 
 .modifier-doc-notation-box {
@@ -189,6 +196,21 @@
   text-align: right;
 }
 
+/* ===== Footer (back + add) ===== */
+.modifier-doc-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin-top: 0.35rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.1rem;
+  position: sticky;
+  bottom: -0.25rem;
+  background: #161b22;
+  z-index: 1;
+}
+
 /* ===== Back button ===== */
 .modifier-doc-back {
   display: inline-flex;
@@ -196,23 +218,65 @@
   gap: 0.25rem;
   background: none;
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
   color: #6b7280;
   font-size: 0.7rem;
   cursor: pointer;
-  padding: 0.25rem 0 0;
-  margin-top: 0.35rem;
-  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .modifier-doc-back:hover {
   color: #9ca3af;
 }
 
+/* ===== Add modifier button ===== */
+.modifier-doc-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
+  width: 100%;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid #3b82f6;
+  border-radius: 0.3rem;
+  color: #60a5fa;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+.modifier-doc-add:hover {
+  background: rgba(59, 130, 246, 0.22);
+  color: #93c5fd;
+}
+
+.modifier-doc-add-key {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.9rem;
+  background: rgba(59, 130, 246, 0.18);
+  border-radius: 0.2rem;
+  padding: 0 0.3em;
+}
+
 /* ===== Light mode ===== */
 @media (prefers-color-scheme: light) {
   .modifier-doc {
     color: #1f2328;
+  }
+  .modifier-doc-top {
+    background: #ffffff;
+  }
+  .modifier-doc-footer {
+    background: #ffffff;
+    border-top-color: rgba(0, 0, 0, 0.08);
   }
   .modifier-doc-notation-base {
     color: #1f2328;
@@ -229,10 +293,26 @@
   .modifier-doc-example-notation {
     color: #4878c8;
   }
+  .modifier-doc-add {
+    background: rgba(72, 120, 200, 0.1);
+    border-color: #4878c8;
+    color: #4878c8;
+  }
+  .modifier-doc-add:hover {
+    background: rgba(72, 120, 200, 0.2);
+    color: #2563eb;
+  }
 }
 
 [data-theme='light'] .modifier-doc {
   color: #1f2328;
+}
+[data-theme='light'] .modifier-doc-top {
+  background: #ffffff;
+}
+[data-theme='light'] .modifier-doc-footer {
+  background: #ffffff;
+  border-top-color: rgba(0, 0, 0, 0.08);
 }
 [data-theme='light'] .modifier-doc-notation-base {
   color: #1f2328;
@@ -248,4 +328,13 @@
 }
 [data-theme='light'] .modifier-doc-example-notation {
   color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-add {
+  background: rgba(72, 120, 200, 0.1);
+  border-color: #4878c8;
+  color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-add:hover {
+  background: rgba(72, 120, 200, 0.2);
+  color: #2563eb;
 }

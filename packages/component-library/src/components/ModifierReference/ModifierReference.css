@@ -72,16 +72,30 @@
   cursor: pointer;
 }
 
-.modifier-reference-cell--interactive:hover {
+.modifier-reference-cell--interactive:hover,
+.modifier-reference-row:nth-child(odd)
+  .modifier-reference-cell--right.modifier-reference-cell--interactive:hover,
+.modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--left.modifier-reference-cell--interactive:hover {
   background: rgba(255, 255, 255, 0.07);
 }
 
 @media (prefers-color-scheme: light) {
-  .modifier-reference-cell--interactive:hover {
+  .modifier-reference-cell--interactive:hover,
+  .modifier-reference-row:nth-child(odd)
+    .modifier-reference-cell--right.modifier-reference-cell--interactive:hover,
+  .modifier-reference-row:nth-child(even)
+    .modifier-reference-cell--left.modifier-reference-cell--interactive:hover {
     background: rgba(0, 0, 0, 0.05);
   }
 }
-[data-theme='light'] .modifier-reference-cell--interactive:hover {
+[data-theme='light'] .modifier-reference-cell--interactive:hover,
+[data-theme='light']
+  .modifier-reference-row:nth-child(odd)
+  .modifier-reference-cell--right.modifier-reference-cell--interactive:hover,
+[data-theme='light']
+  .modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--left.modifier-reference-cell--interactive:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 

@@ -25,7 +25,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     examples: [
       { notation: '4d6D{1}', description: 'Drop all 1s' },
       { notation: '4d6D{>=5}', description: 'Drop all 5s and above' },
-      { notation: '4d6D{<=2}', description: 'Drop any result of 2 or lower' }
+      { notation: '4d6D{<=2}', description: 'Drop any result of 2 or lower' },
+      { notation: '4d6D{1,6}', description: 'Drop multiple' }
     ]
   },
   xDY: {
@@ -149,7 +150,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     ],
     examples: [
       { notation: '4d6V{1=2}', description: 'Replace 1s with 2' },
-      { notation: '4d20V{>18=20}', description: 'Cap 19s and 20s to 20' }
+      { notation: '4d20V{>18=20}', description: 'Cap 19s and 20s to 20' },
+      { notation: '4d6V{1=2,6=5}', description: 'Replace multiple' }
     ]
   },
   'S{..}': {

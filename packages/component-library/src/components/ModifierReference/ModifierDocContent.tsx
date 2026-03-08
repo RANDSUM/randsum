@@ -39,12 +39,17 @@ function NotationBase({ text }: { readonly text: string }): React.JSX.Element {
 
 export function ModifierDocContent({
   cell,
-  onBack
+  onBack,
+  onAdd
 }: {
   readonly cell: ModifierReferenceCell
   readonly onBack?: () => void
+  readonly onAdd?: () => void
 }): React.JSX.Element {
   const doc = MODIFIER_DOCS[cell.notation]
+  const insertable = cell.notation === '\u2013' ? '-' : cell.notation.replace('..', '')
+  const showAdd = !cell.isCore && onAdd !== undefined
+  const hasFooter = Boolean(onBack) || showAdd
 
   if (!doc) {
     return (
@@ -57,10 +62,19 @@ export function ModifierDocContent({
             <div className="modifier-doc-title">{cell.description}</div>
           </div>
         </div>
-        {onBack && (
-          <button className="modifier-doc-back" onClick={onBack} type="button">
-            ← back
-          </button>
+        {hasFooter && (
+          <div className="modifier-doc-footer">
+            {onBack && (
+              <button className="modifier-doc-back" onClick={onBack} type="button">
+                ← back
+              </button>
+            )}
+            {showAdd && (
+              <button className="modifier-doc-add" onClick={onAdd} type="button">
+                Add <span className="modifier-doc-add-key">{insertable}</span>
+              </button>
+            )}
+          </div>
         )}
       </div>
     )
@@ -115,10 +129,19 @@ export function ModifierDocContent({
         </div>
       </div>
 
-      {onBack && (
-        <button className="modifier-doc-back" onClick={onBack} type="button">
-          ← back
-        </button>
+      {hasFooter && (
+        <div className="modifier-doc-footer">
+          {onBack && (
+            <button className="modifier-doc-back" onClick={onBack} type="button">
+              ← back
+            </button>
+          )}
+          {showAdd && (
+            <button className="modifier-doc-add" onClick={onAdd} type="button">
+              Add <span className="modifier-doc-add-key">{insertable}</span>
+            </button>
+          )}
+        </div>
       )}
     </div>
   )

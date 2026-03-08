@@ -178,6 +178,13 @@ export function RollerPlayground({
     [overlayContent]
   )
 
+  const handleAddModifier = useCallback((cell: ModifierReferenceCell) => {
+    const insertable = cell.notation === '\u2013' ? '-' : cell.notation.replace('..', '')
+    setNotation(prev => prev + insertable)
+    setOverlayContent(null)
+    inputRef.current?.focus()
+  }, [])
+
   const rootClass = [
     'roller-playground',
     `roller-playground--size-${size}`,
@@ -196,25 +203,6 @@ export function RollerPlayground({
       }}
     >
       <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
-        {stackblitz && (
-          <button
-            className="roller-playground-stackblitz roller-playground-stackblitz--corner"
-            onClick={() => {
-              openInStackBlitz(notation)
-            }}
-            aria-label="Open in StackBlitz"
-          >
-            <svg
-              className="roller-playground-stackblitz-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
-            </svg>
-            Edit in StackBlitz
-          </button>
-        )}
         <div className="roller-playground-row">
           <div className="roller-playground-code-wrap">
             <span className="roller-playground-code-prefix">
@@ -500,14 +488,41 @@ export function RollerPlayground({
                       onBack={() => {
                         setOverlayContent({ kind: 'result' })
                       }}
+                      onAdd={() => {
+                        handleAddModifier(overlayContent.cell)
+                      }}
                     />
                   ) : (
-                    <ModifierDocContent cell={overlayContent.cell} />
+                    <ModifierDocContent
+                      cell={overlayContent.cell}
+                      onAdd={() => {
+                        handleAddModifier(overlayContent.cell)
+                      }}
+                    />
                   ))}
               </Overlay>
             </div>
           </div>
         </div>
+        {stackblitz && (
+          <button
+            className="roller-playground-stackblitz roller-playground-stackblitz--corner"
+            onClick={() => {
+              openInStackBlitz(notation)
+            }}
+            aria-label="Open in StackBlitz"
+          >
+            <svg
+              className="roller-playground-stackblitz-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
+            </svg>
+            Edit in StackBlitz
+          </button>
+        )}
       </div>
     </div>
   )

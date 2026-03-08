@@ -50,19 +50,22 @@ const HERO_NOTATIONS = [
   '1d6',
   '1d20',
   '2d6',
-  '2d6+3',
-  '1d20+5',
+  '2d8+3',
+  '1d12+5',
   '4d6',
   '4d6L',
   '2d20H',
-  '2d20L',
-  '4d6L+3',
+  '2d12H',
+  '5d6L',
   '3d6!',
   '4d6R{1}',
   '2d10R{<3}',
   '4d6K3',
-  '3d6!+5',
+  '3d10!+3',
   '4d6LR{1}!+3',
+  '1d4+1d6+1d8+1d10+1d12+1d20',
+  '2d4+2d6+2d8',
+  '3d4+2d6+1d8',
   '1d6+1d20',
   '4d6L+1d20',
   '2d8+1d6+5',
@@ -72,7 +75,11 @@ const HERO_NOTATIONS = [
   '8d8!U+5',
   '6d6C{<2,>5}R{1}+3',
   '6d8L2H1R{1,2}U!C{>7}+5-2',
-  '4d6C{>5,<2}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1'
+  '4d6C{>5,<2}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1',
+  '8d10R{<3}K5C{>9}!S{7}+2d6L',
+  '6d8!!H2R{1,2}C{<2,>7}U{1,8}V{8=6}+3d4L-2',
+  '10d12R{<4}K6D{>10,<2}!C{<3,>11}U{1,12}V{12=10}S{8}+2d6-1d4',
+  '4d6LR{<3}!C{>5}+2d8!UR{1}C{<2,>7}+1d12V{12=10}-3'
 ] as const
 
 function useSlotMachine<T extends string>(
@@ -121,10 +128,29 @@ function useSlotMachine<T extends string>(
 
 export function SpinningLogo({ logoSrc }: { readonly logoSrc: string }): React.JSX.Element {
   const [spinning, setSpinning] = useState(false)
+  const [nudging, setNudging] = useState(false)
   const [spinDuration, setSpinDuration] = useState(3.2)
+  const nudgeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => {
+    const schedule = (): void => {
+      nudgeTimerRef.current = setTimeout(
+        () => {
+          setNudging(true)
+        },
+        5000 + roll(3000).total
+      )
+    }
+    if (!spinning) schedule()
+    return () => {
+      if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current)
+    }
+  }, [spinning, nudging])
 
   const handleClick = (): void => {
     if (spinning) return
+    if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current)
+    setNudging(false)
     const duration = 3.0 + (roll(5).total - 1) * 0.1
     setSpinDuration(duration)
     setSpinning(true)
@@ -135,12 +161,19 @@ export function SpinningLogo({ logoSrc }: { readonly logoSrc: string }): React.J
     <img
       src={logoSrc}
       alt="RANDSUM logo"
-      className={`hero-logo${spinning ? ' hero-logo--spinning' : ''}`}
+      className={[
+        'hero-logo',
+        spinning ? 'hero-logo--spinning' : '',
+        nudging ? 'hero-logo--nudge' : ''
+      ]
+        .filter(Boolean)
+        .join(' ')}
       width={240}
       height={240}
       onClick={handleClick}
-      onAnimationEnd={() => {
-        setSpinning(false)
+      onAnimationEnd={e => {
+        if (e.animationName === 'die-spin') setSpinning(false)
+        if (e.animationName === 'logo-nudge') setNudging(false)
       }}
       style={{ cursor: 'pointer', '--spin-duration': `${spinDuration}s` } as React.CSSProperties}
     />
@@ -210,7 +243,7 @@ export function HeroRollerPlayground(): React.JSX.Element {
     const handler = (): void => {
       if (timerRef.current) clearTimeout(timerRef.current)
 
-      targetIndexRef.current = (targetIndexRef.current + 1) % HERO_NOTATIONS.length
+      targetIndexRef.current = roll(HERO_NOTATIONS.length).total - 1
       const finalNotation = HERO_NOTATIONS[targetIndexRef.current]
       const stepRef = { current: 0 }
 
