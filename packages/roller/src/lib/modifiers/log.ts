@@ -22,6 +22,15 @@ export function createArithmeticLog(
   }
 }
 
+/**
+ * Creates a ModifierLog by computing the frequency difference between
+ * initialRolls and newRolls.
+ *
+ * Values appearing more in newRolls → added[]
+ * Values appearing less in newRolls (more in initialRolls) → removed[]
+ *
+ * Example: [1, 3, 3] → [3, 3, 5]: added=[5], removed=[1]
+ */
 export function createModifierLog(
   modifier: string,
   options: ModifierConfig | undefined,

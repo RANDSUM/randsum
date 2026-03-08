@@ -25,8 +25,6 @@ export {
 
 export type { ErrorCode } from './internal/api'
 
-export { analyze } from './internal/api'
-
 export { PRESETS, resolvePreset, resolvePresetParam } from './internal/api'
 
 export { createGameRoll, createMultiRollGameRoll } from './internal/api'
@@ -38,6 +36,13 @@ export {
   parseComparisonNotation,
   hasConditions
 } from './internal/api'
+
+export { MODIFIER_PRIORITIES } from './internal/api'
+export type { ModifierPriorityName } from './internal/api'
+
+export { normalize, equate } from './internal/api'
+
+export { d, DiceBuilder } from './internal/api'
 
 export type {
   DiceNotation,
@@ -66,7 +71,6 @@ export type {
   ValidationErrorInfo,
   ValidationResult,
   GameRollResult,
-  ProbabilityAnalysis,
   GameRollConfig,
   MultiRollGameConfig
 } from './internal/publicTypes'

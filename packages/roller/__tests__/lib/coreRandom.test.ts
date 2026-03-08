@@ -54,6 +54,17 @@ describe('coreRandom', () => {
       const result = coreRandom(0.1)
       expect(result).toBe(0)
     })
+
+    test('handles max values above 2^31 without truncation', () => {
+      const largeMax = 2 ** 32
+      Array.from({ length: 100 }).forEach(() => {
+        const result = coreRandom(largeMax)
+        expect(result).toBeGreaterThanOrEqual(0)
+        expect(result).toBeLessThan(largeMax)
+        expect(Number.isInteger(result)).toBe(true)
+        expect(result).toBeGreaterThanOrEqual(0)
+      })
+    })
   })
 
   describe('distribution validation', () => {

@@ -1,6 +1,6 @@
 {
   "name": "@randsum/component-library",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "React component library for RANDSUM dice rolling tools",
   "private": false,
   "author": {

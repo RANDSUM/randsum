@@ -1,12 +1,34 @@
 ---
-title: Daggerheart
-description: Daggerheart RPG hope and fear dice mechanics with RANDSUM
+title: Daggerheart Dice — Hope & Fear Mechanics in TypeScript
+description: TypeScript package for Daggerheart's duality dice system. Rolls Hope and Fear d12s, handles advantage/disadvantage, amplification, and critical hope outcomes.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/daggerheart",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "1.2.0",
+        "description": "TypeScript dice package for Daggerheart. Handles the duality dice system with Hope and Fear d12s, advantage, disadvantage, and critical outcomes.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/daggerheart",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/daggerheart",
+        "keywords": "Daggerheart, Critical Role, duality dice, Hope, Fear, TypeScript, tabletop RPG"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/daggerheart` package provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
+
+## How Daggerheart dice work
+
+Daggerheart's action rolls use two twelve-sided dice called the **Duality Dice** — one Hope die and one Fear die. You roll both, add a modifier, and compare the total to a difficulty threshold. If the Hope die shows higher than the Fear die, you act *with Hope* (a positive narrative currency). If Fear is higher, you succeed *with Fear* (the GM gains a resource). A **critical** occurs when both dice show the same value. Advantage rolls add a third die and drop the lowest; disadvantage adds a third and drops the highest. The `@randsum/daggerheart` package returns the full breakdown: totals, individual die values, Hope/Fear comparison, and whether a critical occurred.
 
 ## Overview
 

@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, mock, spyOn, test } from 'bun:test'
 
 import * as RandomUtils from '../../src/lib/random'
+import { roll } from '../../src/roll'
 import { RollPipeline, executeRollPipeline } from '../../src/roll/pipeline'
 import { createRollParams } from '../support/fixtures'
 
@@ -481,6 +482,16 @@ describe(executeRollPipeline, () => {
         total: 10
       })
     })
+  })
+})
+
+describe('invalid input throws', () => {
+  test('roll() throws on invalid sides', () => {
+    expect(() => roll({ sides: 0, quantity: 1 })).toThrow()
+  })
+
+  test('roll() throws on invalid quantity', () => {
+    expect(() => roll({ sides: 6, quantity: -1 })).toThrow()
   })
 })
 

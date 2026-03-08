@@ -3,23 +3,38 @@ import type { ModifierOptions } from './modifiers'
 /**
  * Template literal type for dice notation strings.
  *
- * Enforces the structural shape `NdS[modifiers]` at the type level —
- * `'4d6L'` and `'2d20H+5'` are valid, `'foo'` is not.
- * Plain string literals that match the pattern are directly assignable;
- * no type guard or cast is required to call `roll('4d6L')`.
+ * Enforces the structural shape `NdS[modifiers]` for known string literals —
+ * `'4d6L'` and `'2d20H+5'` are accepted, `'foo'` is rejected.
  *
- * Use `isDiceNotation()` as a runtime guard when the input is unknown.
- * Use `notation()` to parse and throw on invalid input.
+ * ## Known limitation
+ *
+ * The trailing `${string}` is intentionally broad: it allows modifier suffixes
+ * (`L`, `H`, `R{<3}`, `!`, etc.) without enumerating them all in the type.
+ * As a result, invalid modifiers are NOT caught at compile time:
+ *
+ * ```ts
+ * const x: DiceNotation = '1d6garbage' // ← compiles; isDiceNotation() returns false at runtime
+ * ```
+ *
+ * True nominal branding would close this gap but breaks direct literal assignment —
+ * `roll('4d6L')` would require `roll(notation('4d6L'))` everywhere. The current design
+ * is the right trade-off: static checking for literal strings, runtime guard for dynamic ones.
+ *
+ * ## Usage patterns
+ *
+ * - Known literals: assignable directly — TypeScript verifies the `NdS` prefix
+ * - Dynamic/unknown strings: guard with `isDiceNotation(input)` before passing to `roll()`
+ * - Throwing validation: use `notation(input)` which throws `NotationParseError` if invalid
  *
  * @example
  * ```ts
- * // Plain literals work directly
- * roll('4d6L')
- * roll('2d20H+5')
+ * roll('4d6L')              // ✅ verified at compile time
+ * roll('hello')             // ❌ missing NdS prefix — compile error
  *
- * // Runtime guard for unknown input
- * if (isDiceNotation(input)) {
- *   roll(input)
+ * const s = getInput()      // s: string
+ * roll(s)                   // ❌ plain string not assignable — compile error
+ * if (isDiceNotation(s)) {
+ *   roll(s)                 // ✅ narrowed to DiceNotation
  * }
  * ```
  */
@@ -51,7 +66,26 @@ export interface RollOptions<T = string> {
   sides: number | T[]
   /** Modifiers to apply to the roll (drop, reroll, explode, etc.) */
   modifiers?: ModifierOptions
-  /** Optional identifier for this roll in multi-roll expressions */
+  /**
+   * Optional identifier for this roll in multi-roll expressions.
+   *
+   * When `roll()` receives multiple arguments, each produces a `RollRecord`
+   * with a `parameters.key` for identification. Default keys are
+   * auto-generated as `"Roll 1"`, `"Roll 2"`, etc.
+   *
+   * Provide a `key` via `RollOptions` for stable, meaningful identifiers
+   * when you need to look up specific rolls from a multi-roll result.
+   *
+   * @example
+   * ```ts
+   * const result = roll(
+   *   { sides: 20, key: 'attack' },
+   *   { sides: 6, quantity: 2, modifiers: { plus: 3 }, key: 'damage' }
+   * )
+   * const attack = result.rolls.find(r => r.parameters.key === 'attack')
+   * const damage = result.rolls.find(r => r.parameters.key === 'damage')
+   * ```
+   */
   key?: string | undefined
 }
 

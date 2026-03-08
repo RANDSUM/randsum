@@ -2,6 +2,7 @@
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/blades</h1>
   <h3>Blades in the Dark dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
+  <p>Throw Dice, Not Exceptions.</p>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/blades)](https://www.npmjs.com/package/@randsum/blades)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/blades)](https://bundlephobia.com/package/@randsum/blades)

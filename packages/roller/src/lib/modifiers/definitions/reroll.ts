@@ -4,7 +4,8 @@ import {
   formatComparisonNotation,
   hasConditions,
   matchesComparison,
-  parseComparisonNotation
+  parseComparisonNotation,
+  validateComparisonOptions
 } from '../../comparison'
 import { formatHumanList } from '../../utils'
 import { MAX_REROLL_ATTEMPTS } from '../../constants'
@@ -133,6 +134,8 @@ export const rerollModifier: TypedModifierDefinition<'reroll'> = defineModifier<
         }
       }
     }
+
+    validateComparisonOptions('reroll', options)
   }
 })
 

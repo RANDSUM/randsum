@@ -1,5 +1,9 @@
 import type { ComparisonOptions } from '../../../types'
-import { formatComparisonDescription, formatComparisonNotation } from '../../comparison'
+import {
+  formatComparisonDescription,
+  formatComparisonNotation,
+  validateComparisonOptions
+} from '../../comparison'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
@@ -94,5 +98,14 @@ export const replaceModifier: TypedModifierDefinition<'replace'> = defineModifie
     const result = replaceRules.reduce((currentRolls, rule) => applyRule(currentRolls, rule), rolls)
 
     return { rolls: result }
+  },
+
+  validate: options => {
+    const rules = Array.isArray(options) ? options : [options]
+    for (const { from } of rules) {
+      if (typeof from === 'object') {
+        validateComparisonOptions('replace', from)
+      }
+    }
   }
 })

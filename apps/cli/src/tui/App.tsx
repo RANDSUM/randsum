@@ -31,12 +31,12 @@ function App(): React.JSX.Element {
     const trimmed = value.trim()
     if (trimmed === '') return
 
-    const result = roll(trimmed as RollArgument)
-    if (result.error) {
-      setError(result.error.message)
-    } else {
+    try {
+      const result = roll(trimmed as RollArgument)
       setError('')
       addRoll(trimmed, result)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
     }
     setInput('')
   }

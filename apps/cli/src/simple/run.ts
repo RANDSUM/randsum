@@ -32,8 +32,12 @@ export function runSimple(options: SimpleOptions): string {
   const notations = options.notations as readonly RollArgument[]
 
   for (const _i of Array.from({ length: options.repeat })) {
-    const result = config ? roll(...notations, config) : roll(...notations)
-    lines.push(format(result))
+    try {
+      const result = config ? roll(...notations, config) : roll(...notations)
+      lines.push(format(result))
+    } catch (e) {
+      lines.push(`Error: ${e instanceof Error ? e.message : String(e)}`)
+    }
   }
 
   return lines.join('\n')

@@ -3,7 +3,7 @@ import { SalvageUnionReference } from 'salvageunion-reference'
 
 export const SALVAGE_UNION_TABLE_NAMES: readonly string[] = Object.freeze(
   SalvageUnionReference.RollTables.all()
-    .filter(t => t.indexable === true)
+    .filter(t => t.indexable)
     .map(t => t.name)
 )
 

@@ -1,12 +1,34 @@
 ---
-title: D&D 5th Edition
-description: Dungeons & Dragons 5th Edition dice mechanics with RANDSUM
+title: "D&D 5e Dice Library — @randsum/fifth for TypeScript"
+description: TypeScript package for Dungeons & Dragons 5e dice mechanics. Handles d20 rolls, ability checks, saving throws, attack rolls, and advantage/disadvantage.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/fifth",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "1.1.0",
+        "description": "TypeScript dice rolling package for Dungeons & Dragons 5th Edition. Handles d20 rolls, advantage, disadvantage, and modifier arithmetic.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/fifth",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/fifth",
+        "keywords": "D&D 5e, Dungeons and Dragons, d20, advantage, disadvantage, TypeScript, dice"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/fifth` package provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
+
+## How D&D 5e dice work
+
+In Dungeons & Dragons 5th Edition, most action resolution uses a single twenty-sided die (d20). You roll the die, add an ability modifier (typically −4 to +10), and compare the result against a target number called a Difficulty Class. Rolling with **advantage** means rolling two d20s and keeping the higher result — mechanically reflecting favorable circumstances like a spell, high ground, or helping ally. **Disadvantage** is the reverse: roll two d20s and keep the lower. The `@randsum/fifth` package implements these mechanics exactly, handling the 2d20 rolls, modifier application, and advantage/disadvantage resolution with full TypeScript types.
 
 ## Overview
 
