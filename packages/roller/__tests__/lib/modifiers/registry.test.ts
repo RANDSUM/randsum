@@ -11,6 +11,7 @@ import {
   hasRegisteredModifiers,
   modifierToDescriptionFromRegistry,
   modifierToNotationFromRegistry,
+  parseModifiersFromRegistry,
   registerDefaultModifiers
 } from '../../../src/lib/modifiers/registry'
 import {
@@ -250,6 +251,30 @@ describe('registry functions', () => {
       expect((caught.value as ModifierError).message).toContain('Unknown error: 42')
 
       defineModifier(plusModifier)
+    })
+  })
+})
+
+describe('parseModifiersFromRegistry - stateful regex safety', () => {
+  test('returns identical results on repeated calls with same notation', () => {
+    const notation = '4d6L+3'
+    const result1 = parseModifiersFromRegistry(notation)
+    const result2 = parseModifiersFromRegistry(notation)
+    const result3 = parseModifiersFromRegistry(notation)
+    expect(result1).toEqual(result2)
+    expect(result2).toEqual(result3)
+  })
+
+  test('returns correct results when alternating between two notations', () => {
+    const a = '2d6R{<2}'
+    const b = '4d6L'
+    Array.from({ length: 20 }).forEach(() => {
+      const resultA = parseModifiersFromRegistry(a)
+      const resultB = parseModifiersFromRegistry(b)
+      expect(resultA.reroll).toBeDefined()
+      expect(resultA.drop).toBeUndefined()
+      expect(resultB.drop).toBeDefined()
+      expect(resultB.reroll).toBeUndefined()
     })
   })
 })
