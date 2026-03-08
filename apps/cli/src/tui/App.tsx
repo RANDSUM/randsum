@@ -1,22 +1,21 @@
 import { Box, Text, render, useInput, useStdout } from 'ink'
 import { useState } from 'react'
-import type { RollArgument } from '@randsum/roller'
-import { roll } from '@randsum/roller'
+import { roll, validateNotation } from '@randsum/roller'
 import { RollHistory } from './components/RollHistory'
 import { NotationInput } from './components/NotationInput'
 import { DiceToolbar } from './components/DiceToolbar'
 import { NotationReference } from './components/NotationReference'
 import { useRollHistory } from './hooks/useRollHistory'
 import { incrementDiceQuantity } from './helpers/incrementDiceQuantity'
+import { formatResult, isFormattedError } from './helpers/formatResult'
 
 type FocusZone = 'input' | 'toolbar'
 
 const WIDE_BREAKPOINT = 80
 
 function App(): React.JSX.Element {
-  const { history, addRoll, clearHistory: _clearHistory } = useRollHistory()
+  const { history, addRoll, clearHistory } = useRollHistory()
   const [input, setInput] = useState('')
-  const [error, setError] = useState('')
   const [focus, setFocus] = useState<FocusZone>('input')
   const { stdout } = useStdout()
   const isWide = stdout.columns >= WIDE_BREAKPOINT
@@ -25,24 +24,28 @@ function App(): React.JSX.Element {
     if (key.tab) {
       setFocus(prev => (prev === 'input' ? 'toolbar' : 'input'))
     }
+    if (key.ctrl && _input === 'l') {
+      clearHistory()
+    }
   })
 
   const handleSubmit = (value: string): void => {
     const trimmed = value.trim()
     if (trimmed === '') return
 
-    try {
-      const result = roll(trimmed as RollArgument)
-      setError('')
-      addRoll({
-        notation: trimmed,
-        total: result.total,
-        rolls: result.rolls.map(r => r.rolls),
-        description: `Total: ${result.total}`
-      })
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    }
+    const validation = validateNotation(trimmed)
+    if (!validation.valid) return
+
+    const result = roll(...validation.notation)
+    const formatted = formatResult(result)
+    if (isFormattedError(formatted)) return
+
+    addRoll({
+      notation: trimmed,
+      total: formatted.total,
+      rolls: formatted.rolls,
+      description: formatted.description
+    })
     setInput('')
   }
 
@@ -102,7 +105,6 @@ function App(): React.JSX.Element {
 
       <NotationInput
         value={input}
-        error={error}
         onChange={setInput}
         onSubmit={handleSubmit}
         active={focus === 'input'}
