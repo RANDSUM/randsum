@@ -195,9 +195,21 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     display: none !important;
   }
 
-  /* Hide the top nav header on the landing page */
-  :global(#starlight__header) {
+  /* Hide the blank nav header wrapper on the landing page */
+  :global(.header) {
     display: none !important;
+  }
+
+  /* Remove padding reserved for sticky nav height */
+  :global(.page) {
+    --sl-nav-height: 0px !important;
+  }
+
+  /* Remove top padding on Starlight's content wrappers */
+  :global(.main-frame),
+  :global(.content-panel) {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
   }
 
   /* ===== Layout ===== */
@@ -214,7 +226,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   /* ===== Hero ===== */
   .hero {
-    padding: 2rem 0 0;
+    padding: 0;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
@@ -649,14 +661,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     }
 
     .hero-actions {
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    :global(.btn) {
-      width: 100%;
-      max-width: 16rem;
       justify-content: center;
     }
 

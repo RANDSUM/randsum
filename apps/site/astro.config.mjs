@@ -43,6 +43,9 @@ export default defineConfig({
           href: 'https://github.com/RANDSUM/randsum'
         }
       ],
+      components: {
+        Header: './src/components/Header.astro'
+      },
       customCss: ['./src/styles/custom.css'],
       sidebar: [
         {

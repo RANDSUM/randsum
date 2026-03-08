@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { isDiceNotation, roll } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import { ModifierReference } from '../ModifierReference'
+import { tokenize } from './tokenize'
 import './RollerPlayground.css'
 
 type PlaygroundState =
@@ -74,8 +75,11 @@ export function RollerPlayground({
   const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [expanded, setExpanded] = useState(false)
+  const [overlayVisible, setOverlayVisible] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [hoveredTokenIdx, setHoveredTokenIdx] = useState<number | null>(null)
+  const tokens = useMemo(() => tokenize(notation), [notation])
 
   useEffect(() => {
     return () => {
@@ -84,10 +88,23 @@ export function RollerPlayground({
   }, [])
 
   useEffect(() => {
+    if (!overlayVisible || state.status !== 'result') return
+    const onKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') setOverlayVisible(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [overlayVisible, state.status])
+
+  useEffect(() => {
     if (controlledNotation === undefined) return
     setNotation(controlledNotation)
     setState({ status: 'idle' })
     setExpanded(false)
+    setOverlayVisible(false)
+    setHoveredTokenIdx(null)
   }, [controlledNotation])
 
   const isValid = notation.length > 0 && isDiceNotation(notation)
@@ -96,26 +113,44 @@ export function RollerPlayground({
   const handleRoll = useCallback(() => {
     if (!isValid) return
     setState({ status: 'rolling' })
-    if (state.status === 'result') setExpanded(false)
+    setOverlayVisible(true)
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
       try {
         const result = roll(notation)
         if (!result.rolls[0]) return
         setState({ status: 'result', total: result.total, record: result.rolls[0] })
-        requestAnimationFrame(() => {
-          setExpanded(true)
-        })
+        setOverlayVisible(true)
       } catch {
         // invalid notation — isDiceNotation guard above should prevent this
       }
     }, 300)
-  }, [notation, isValid, state.status])
+  }, [notation, isValid])
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLInputElement>) => {
+      if (tokens.length === 0 || notation.length === 0) return
+      const input = inputRef.current
+      if (!input) return
+      const rect = input.getBoundingClientRect()
+      const chWidth = input.offsetWidth / notation.length
+      const charIdx = Math.floor((e.clientX - rect.left) / chWidth)
+      const tokenIdx = tokens.findIndex(t => charIdx >= t.start && charIdx < t.end)
+      setHoveredTokenIdx(tokenIdx === -1 ? null : tokenIdx)
+    },
+    [tokens, notation.length]
+  )
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredTokenIdx(null)
+  }, [])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setNotation(e.target.value)
     setState({ status: 'idle' })
     setExpanded(false)
+    setOverlayVisible(false)
+    setHoveredTokenIdx(null)
   }, [])
 
   const rootClass = [
@@ -136,6 +171,25 @@ export function RollerPlayground({
       }}
     >
       <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
+        {stackblitz && (
+          <button
+            className="roller-playground-stackblitz roller-playground-stackblitz--corner"
+            onClick={() => {
+              openInStackBlitz(notation)
+            }}
+            aria-label="Open in StackBlitz"
+          >
+            <svg
+              className="roller-playground-stackblitz-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
+            </svg>
+            Edit in StackBlitz
+          </button>
+        )}
         <div className="roller-playground-row">
           <div className="roller-playground-code-wrap">
             <span className="roller-playground-code-prefix">
@@ -153,21 +207,49 @@ export function RollerPlayground({
               <span className="roller-playground-code-paren">(</span>
               <span className="roller-playground-code-str-delim">&#39;</span>
             </span>
-            <input
-              ref={inputRef}
-              type="text"
-              className="roller-playground-input"
-              style={{ width: `${notation.length || 4}ch` }}
-              value={notation}
-              onChange={handleChange}
-              onKeyDown={e => {
-                if (e.key === 'Enter') handleRoll()
-              }}
-              placeholder="1d20"
-              spellCheck={false}
-              autoComplete="off"
-              aria-label="Dice notation"
-            />
+            <div className="rp-input-wrap">
+              {tokens.length > 0 && (
+                <div className="rp-notation-overlay" aria-hidden="true">
+                  {tokens.map((token, i) => (
+                    <span
+                      key={i}
+                      className={[
+                        'rp-token',
+                        `rp-token--${token.type}`,
+                        hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'rp-token--dim' : '',
+                        hoveredTokenIdx === i ? 'rp-token--active' : ''
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      {token.text}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <input
+                ref={inputRef}
+                type="text"
+                className={[
+                  'roller-playground-input',
+                  tokens.length > 0 ? 'roller-playground-input--highlight' : ''
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                style={{ width: `${notation.length || 4}ch` }}
+                value={notation}
+                onChange={handleChange}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleRoll()
+                }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                placeholder="1d20"
+                spellCheck={false}
+                autoComplete="off"
+                aria-label="Dice notation"
+              />
+            </div>
             <span
               className="roller-playground-code-suffix"
               onClick={e => {
@@ -191,7 +273,9 @@ export function RollerPlayground({
               className={[
                 'roller-playground-chip',
                 state.status !== 'result' ? 'roller-playground-chip--modifiers' : '',
-                state.status === 'result' && expanded ? 'roller-playground-chip--expanded' : ''
+                (state.status === 'result' ? overlayVisible : expanded)
+                  ? 'roller-playground-chip--expanded'
+                  : ''
               ]
                 .filter(Boolean)
                 .join(' ')}
@@ -199,7 +283,11 @@ export function RollerPlayground({
                 state.status === 'rolling'
                   ? undefined
                   : () => {
-                      setExpanded(e => !e)
+                      if (state.status === 'result') {
+                        setOverlayVisible(v => !v)
+                      } else {
+                        setExpanded(v => !v)
+                      }
                     }
               }
               role="button"
@@ -210,34 +298,38 @@ export function RollerPlayground({
                   : (e: React.KeyboardEvent) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
-                        setExpanded(prev => !prev)
+                        if (state.status === 'result') {
+                          setOverlayVisible(v => !v)
+                        } else {
+                          setExpanded(prev => !prev)
+                        }
                       }
                     }
               }
               aria-label={
                 state.status === 'result'
-                  ? expanded
-                    ? 'Collapse breakdown'
-                    : 'Expand breakdown'
+                  ? overlayVisible
+                    ? 'Close result'
+                    : 'Open result'
                   : expanded
                     ? 'Close modifier reference'
                     : 'Open modifier reference'
               }
-              aria-expanded={expanded}
+              aria-expanded={state.status === 'result' ? overlayVisible : expanded}
             >
               {state.status === 'result' ? (
                 <>
                   <span
                     className={[
                       'roller-playground-chip-value',
-                      expanded ? 'roller-playground-chip-value--hidden' : ''
+                      overlayVisible ? 'roller-playground-chip-value--hidden' : ''
                     ]
                       .filter(Boolean)
                       .join(' ')}
                   >
                     {state.total}
                   </span>
-                  {expanded ? (
+                  {overlayVisible ? (
                     <span className="roller-playground-chip-collapse" aria-hidden="true">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -284,74 +376,92 @@ export function RollerPlayground({
           )}
         </div>
         <div className="roller-playground-desc-row">
-          <span
-            className={`roller-playground-desc roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
-          >
-            {notationDesc(notation, isValid)}
-          </span>
-          {stackblitz && (
-            <button
-              className="roller-playground-stackblitz"
-              onClick={() => {
-                openInStackBlitz(notation)
-              }}
-              aria-label="Open in StackBlitz"
-            >
-              <svg
-                className="roller-playground-stackblitz-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
-              </svg>
-              Code
-            </button>
+          {notation.length === 0 ? (
+            <span className="roller-playground-desc roller-playground-desc--hint">
+              Try: 4d6L, 1d20+5, 2d8!
+            </span>
+          ) : !isValid ? (
+            <span className="roller-playground-desc roller-playground-desc--invalid">
+              Invalid notation
+            </span>
+          ) : (
+            <span className="roller-playground-desc roller-playground-desc--valid">
+              {tokens.map((token, tokenIdx) => {
+                if (!token.description) return null
+                return (
+                  <span
+                    key={tokenIdx}
+                    className={[
+                      'rp-desc-chip',
+                      `rp-desc-chip--${token.type}`,
+                      hoveredTokenIdx === tokenIdx ? 'rp-desc-chip--active' : ''
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    onMouseEnter={() => {
+                      setHoveredTokenIdx(tokenIdx)
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredTokenIdx(null)
+                    }}
+                  >
+                    {token.description}
+                  </span>
+                )
+              })}
+            </span>
           )}
         </div>
         <div
-          className={`roller-playground-expand${expandedProp || expanded ? ' roller-playground-expand--open' : ''}`}
+          className={`roller-playground-expand${expandedProp || expanded || overlayVisible ? ' roller-playground-expand--open' : ''}`}
         >
           <div className="roller-playground-expand-inner">
-            {state.status === 'result' ? (
-              <div className="roller-playground-expand-content">
-                <RollTooltip record={state.record} />
-                <div className="roller-playground-expand-total">
-                  <span>Total</span>
-                  <span className="roller-playground-expand-total-chip">{state.total}</span>
-                </div>
-              </div>
-            ) : (
-              <div
-                className={[
-                  'roller-playground-expand-reference',
-                  state.status === 'rolling' ? 'roller-playground-expand-reference--loading' : ''
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                <ModifierReference />
-                {state.status === 'rolling' && (
-                  <div className="roller-playground-expand-loading-overlay">
-                    <div className="roller-playground-expand-loading-spinner" />
+            <div className="roller-playground-expand-reference">
+              <ModifierReference modifiersDisabled={!isValid} />
+              {overlayVisible && (state.status === 'rolling' || state.status === 'result') && (
+                <div
+                  className={[
+                    'roller-playground-result-overlay',
+                    state.status === 'result' ? 'roller-playground-result-overlay--dismissible' : ''
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={
+                    state.status === 'result'
+                      ? () => {
+                          setOverlayVisible(false)
+                        }
+                      : undefined
+                  }
+                >
+                  <div
+                    className="roller-playground-result-card"
+                    onClick={e => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    {state.status === 'rolling' ? (
+                      <div className="roller-playground-result-loading">
+                        <div className="roller-playground-expand-loading-spinner" />
+                      </div>
+                    ) : (
+                      <>
+                        <RollTooltip record={state.record} />
+                        <div className="roller-playground-expand-total">
+                          <span>Total</span>
+                          <span className="roller-playground-expand-total-chip">{state.total}</span>
+                        </div>
+                      </>
+                    )}
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
   )
-}
-
-function notationDesc(notation: string, isValid: boolean): string {
-  if (notation.length === 0) return 'Try: 4d6L, 1d20+5, 2d8!'
-  if (!isValid) return 'Invalid notation'
-  const result = validateNotation(notation)
-  if (!result.valid) return notation
-  const lines = result.description.flat()
-  return lines.length > 0 ? lines.join(', ') : notation
 }
 
 type TooltipStep =

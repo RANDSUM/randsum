@@ -4,16 +4,17 @@ import { RollerPlayground } from '@randsum/component-library'
 
 const TAGLINES = [
   'Throw Dice, Not Exceptions.',
-  '10 years, and all I got was this website.',
-  'Specific Randum Numbers.',
-  'Stored safely in the bike-shed.',
+  'Spend 13+ years building this library and all I got was this stupid website',
+  'Very Specific Random Numbers',
+  'Living Comfortably in the Bike Shed.',
   'Zero dependencies. Infinite regrets.',
   'We have types for that.',
   'Probability as a Service.',
   'Just roll with it.',
   "It's not gambling if you have types.",
   'Dice notation: surprisingly controversial.',
-  "The last dice library you'll ever need. (Until next week.)"
+  "The first dice library you'll ever want.",
+  'Fuck ICE'
 ] as const
 
 const GET_STARTED_LABELS = [
@@ -21,7 +22,6 @@ const GET_STARTED_LABELS = [
   'Read (Please)',
   'Begin Your Descent',
   'Copy the Import',
-  'Sure, Why Not',
   'Touch Grass Later',
   'For People',
   'Having fun?',
@@ -34,7 +34,8 @@ const GITHUB_LABELS = [
   'Open Issues',
   'Blame History',
   'Source of Truth',
-  'Fork It'
+  'Fork It',
+  'A Legacy of Pain'
 ] as const
 
 // Slot machine tick intervals in ms — fast start, slows to a stop (~2.5s total)

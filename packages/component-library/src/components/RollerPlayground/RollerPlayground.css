@@ -76,7 +76,7 @@
   line-height: 1.4;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 0.75rem;
   box-sizing: border-box;
 }
@@ -231,6 +231,486 @@
   background: rgba(59, 130, 246, 0.15);
 }
 
+/* ===== Input wrapper (positions overlay over the input) ===== */
+.rp-input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ===== Notation overlay (colored token spans, sits above transparent input text) ===== */
+.rp-notation-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: var(--rp-font-size-input);
+  line-height: 1;
+  overflow: hidden;
+}
+
+/* ===== Token spans ===== */
+.rp-token {
+  transition: color 0.12s ease;
+}
+
+.rp-token--dim {
+  color: inherit !important;
+}
+
+.rp-token--active {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+/* Token color families — dark mode */
+/* Core: blue */
+.rp-token--core {
+  color: #60a5fa;
+}
+/* Drop family: reds/corals (H = deeper, L = brighter, D{} = mid) */
+.rp-token--dropHighest {
+  color: #d96f7f;
+}
+.rp-token--dropLowest {
+  color: #f97583;
+}
+.rp-token--dropCondition {
+  color: #e88898;
+}
+/* Keep family: oranges (K = bright, kl = deeper) */
+.rp-token--keepHighest {
+  color: #ffab70;
+}
+.rp-token--keepLowest {
+  color: #d4845a;
+}
+/* Explode family: golds (! = bright, !! = deeper, !p = amber) */
+.rp-token--explode {
+  color: #e5c07b;
+}
+.rp-token--compound {
+  color: #c49a4e;
+}
+.rp-token--penetrate {
+  color: #d4a94a;
+}
+/* Reroll: purple */
+.rp-token--reroll {
+  color: #c792ea;
+}
+/* Cap: cyan */
+.rp-token--cap {
+  color: #89ddff;
+}
+/* Replace: lime */
+.rp-token--replace {
+  color: #c3e88d;
+}
+/* Unique: teal */
+.rp-token--unique {
+  color: #80cbc4;
+}
+/* Count successes: blue-violet */
+.rp-token--countSuccesses {
+  color: #82aaff;
+}
+/* Arithmetic family: greens (+ = bright, - = muted) */
+.rp-token--plus {
+  color: #98c379;
+}
+.rp-token--minus {
+  color: #6b9e52;
+}
+/* Multiplier family: warm yellows (**N = deeper) */
+.rp-token--multiply {
+  color: #ffcb6b;
+}
+.rp-token--multiplyTotal {
+  color: #e8a93a;
+}
+/* Unknown: grey */
+.rp-token--unknown {
+  color: rgba(230, 237, 243, 0.3);
+}
+
+/* Token colors — light mode */
+@media (prefers-color-scheme: light) {
+  .rp-token--core {
+    color: #2563eb;
+  }
+  .rp-token--dropHighest {
+    color: #b03060;
+  }
+  .rp-token--dropLowest {
+    color: #c0394a;
+  }
+  .rp-token--dropCondition {
+    color: #b85060;
+  }
+  .rp-token--keepHighest {
+    color: #c2620a;
+  }
+  .rp-token--keepLowest {
+    color: #9e4e20;
+  }
+  .rp-token--explode {
+    color: #9a7c1a;
+  }
+  .rp-token--compound {
+    color: #7a6010;
+  }
+  .rp-token--penetrate {
+    color: #8a6e14;
+  }
+  .rp-token--reroll {
+    color: #7c4dab;
+  }
+  .rp-token--cap {
+    color: #0082a5;
+  }
+  .rp-token--replace {
+    color: #4a8020;
+  }
+  .rp-token--unique {
+    color: #1a7a72;
+  }
+  .rp-token--countSuccesses {
+    color: #3a60c8;
+  }
+  .rp-token--plus {
+    color: #3a7d20;
+  }
+  .rp-token--minus {
+    color: #2a6018;
+  }
+  .rp-token--multiply {
+    color: #8a6a00;
+  }
+  .rp-token--multiplyTotal {
+    color: #7a5800;
+  }
+  .rp-token--unknown {
+    color: rgba(31, 35, 40, 0.3);
+  }
+}
+[data-theme='light'] .rp-token--core {
+  color: #2563eb;
+}
+[data-theme='light'] .rp-token--dropHighest {
+  color: #b03060;
+}
+[data-theme='light'] .rp-token--dropLowest {
+  color: #c0394a;
+}
+[data-theme='light'] .rp-token--dropCondition {
+  color: #b85060;
+}
+[data-theme='light'] .rp-token--keepHighest {
+  color: #c2620a;
+}
+[data-theme='light'] .rp-token--keepLowest {
+  color: #9e4e20;
+}
+[data-theme='light'] .rp-token--explode {
+  color: #9a7c1a;
+}
+[data-theme='light'] .rp-token--compound {
+  color: #7a6010;
+}
+[data-theme='light'] .rp-token--penetrate {
+  color: #8a6e14;
+}
+[data-theme='light'] .rp-token--reroll {
+  color: #7c4dab;
+}
+[data-theme='light'] .rp-token--cap {
+  color: #0082a5;
+}
+[data-theme='light'] .rp-token--replace {
+  color: #4a8020;
+}
+[data-theme='light'] .rp-token--unique {
+  color: #1a7a72;
+}
+[data-theme='light'] .rp-token--countSuccesses {
+  color: #3a60c8;
+}
+[data-theme='light'] .rp-token--plus {
+  color: #3a7d20;
+}
+[data-theme='light'] .rp-token--minus {
+  color: #2a6018;
+}
+[data-theme='light'] .rp-token--multiply {
+  color: #8a6a00;
+}
+[data-theme='light'] .rp-token--multiplyTotal {
+  color: #7a5800;
+}
+[data-theme='light'] .rp-token--unknown {
+  color: rgba(31, 35, 40, 0.3);
+}
+
+/* ===== Description chips ===== */
+.rp-desc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.rp-desc-chip {
+  font-size: var(--rp-font-size-desc);
+  padding: 0.05em 0.25em;
+  border-radius: 0.2rem;
+  cursor: default;
+  user-select: none;
+  color: inherit;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+  line-height: 1.5;
+}
+
+.rp-desc-chip:hover,
+.rp-desc-chip--active {
+  color: var(--chip-color, inherit);
+  background: var(--chip-bg, transparent);
+}
+
+.rp-desc-chip--dim {
+  opacity: 0.35;
+}
+
+/* Chip colors + active backgrounds — dark mode */
+.rp-desc-chip--core {
+  --chip-color: #60a5fa;
+  --chip-bg: rgba(96, 165, 250, 0.12);
+}
+.rp-desc-chip--dropHighest {
+  --chip-color: #d96f7f;
+  --chip-bg: rgba(217, 111, 127, 0.12);
+}
+.rp-desc-chip--dropLowest {
+  --chip-color: #f97583;
+  --chip-bg: rgba(249, 117, 131, 0.12);
+}
+.rp-desc-chip--dropCondition {
+  --chip-color: #e88898;
+  --chip-bg: rgba(232, 136, 152, 0.12);
+}
+.rp-desc-chip--keepHighest {
+  --chip-color: #ffab70;
+  --chip-bg: rgba(255, 171, 112, 0.12);
+}
+.rp-desc-chip--keepLowest {
+  --chip-color: #d4845a;
+  --chip-bg: rgba(212, 132, 90, 0.12);
+}
+.rp-desc-chip--explode {
+  --chip-color: #e5c07b;
+  --chip-bg: rgba(229, 192, 123, 0.12);
+}
+.rp-desc-chip--compound {
+  --chip-color: #c49a4e;
+  --chip-bg: rgba(196, 154, 78, 0.12);
+}
+.rp-desc-chip--penetrate {
+  --chip-color: #d4a94a;
+  --chip-bg: rgba(212, 169, 74, 0.12);
+}
+.rp-desc-chip--reroll {
+  --chip-color: #c792ea;
+  --chip-bg: rgba(199, 146, 234, 0.12);
+}
+.rp-desc-chip--cap {
+  --chip-color: #89ddff;
+  --chip-bg: rgba(137, 221, 255, 0.12);
+}
+.rp-desc-chip--replace {
+  --chip-color: #c3e88d;
+  --chip-bg: rgba(195, 232, 141, 0.12);
+}
+.rp-desc-chip--unique {
+  --chip-color: #80cbc4;
+  --chip-bg: rgba(128, 203, 196, 0.12);
+}
+.rp-desc-chip--countSuccesses {
+  --chip-color: #82aaff;
+  --chip-bg: rgba(130, 170, 255, 0.12);
+}
+.rp-desc-chip--plus {
+  --chip-color: #98c379;
+  --chip-bg: rgba(152, 195, 121, 0.12);
+}
+.rp-desc-chip--minus {
+  --chip-color: #6b9e52;
+  --chip-bg: rgba(107, 158, 82, 0.12);
+}
+.rp-desc-chip--multiply {
+  --chip-color: #ffcb6b;
+  --chip-bg: rgba(255, 203, 107, 0.12);
+}
+.rp-desc-chip--multiplyTotal {
+  --chip-color: #e8a93a;
+  --chip-bg: rgba(232, 169, 58, 0.12);
+}
+
+/* Chip colors — light mode */
+@media (prefers-color-scheme: light) {
+  .rp-desc-chip--core {
+    --chip-color: #2563eb;
+    --chip-bg: rgba(37, 99, 235, 0.08);
+  }
+  .rp-desc-chip--dropHighest {
+    --chip-color: #b03060;
+    --chip-bg: rgba(176, 48, 96, 0.08);
+  }
+  .rp-desc-chip--dropLowest {
+    --chip-color: #c0394a;
+    --chip-bg: rgba(192, 57, 74, 0.08);
+  }
+  .rp-desc-chip--dropCondition {
+    --chip-color: #b85060;
+    --chip-bg: rgba(184, 80, 96, 0.08);
+  }
+  .rp-desc-chip--keepHighest {
+    --chip-color: #c2620a;
+    --chip-bg: rgba(194, 98, 10, 0.08);
+  }
+  .rp-desc-chip--keepLowest {
+    --chip-color: #9e4e20;
+    --chip-bg: rgba(158, 78, 32, 0.08);
+  }
+  .rp-desc-chip--explode {
+    --chip-color: #9a7c1a;
+    --chip-bg: rgba(154, 124, 26, 0.08);
+  }
+  .rp-desc-chip--compound {
+    --chip-color: #7a6010;
+    --chip-bg: rgba(122, 96, 16, 0.08);
+  }
+  .rp-desc-chip--penetrate {
+    --chip-color: #8a6e14;
+    --chip-bg: rgba(138, 110, 20, 0.08);
+  }
+  .rp-desc-chip--reroll {
+    --chip-color: #7c4dab;
+    --chip-bg: rgba(124, 77, 171, 0.08);
+  }
+  .rp-desc-chip--cap {
+    --chip-color: #0082a5;
+    --chip-bg: rgba(0, 130, 165, 0.08);
+  }
+  .rp-desc-chip--replace {
+    --chip-color: #4a8020;
+    --chip-bg: rgba(74, 128, 32, 0.08);
+  }
+  .rp-desc-chip--unique {
+    --chip-color: #1a7a72;
+    --chip-bg: rgba(26, 122, 114, 0.08);
+  }
+  .rp-desc-chip--countSuccesses {
+    --chip-color: #3a60c8;
+    --chip-bg: rgba(58, 96, 200, 0.08);
+  }
+  .rp-desc-chip--plus {
+    --chip-color: #3a7d20;
+    --chip-bg: rgba(58, 125, 32, 0.08);
+  }
+  .rp-desc-chip--minus {
+    --chip-color: #2a6018;
+    --chip-bg: rgba(42, 96, 24, 0.08);
+  }
+  .rp-desc-chip--multiply {
+    --chip-color: #8a6a00;
+    --chip-bg: rgba(138, 106, 0, 0.08);
+  }
+  .rp-desc-chip--multiplyTotal {
+    --chip-color: #7a5800;
+    --chip-bg: rgba(122, 88, 0, 0.08);
+  }
+}
+[data-theme='light'] .rp-desc-chip--core {
+  --chip-color: #2563eb;
+  --chip-bg: rgba(37, 99, 235, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--dropHighest {
+  --chip-color: #b03060;
+  --chip-bg: rgba(176, 48, 96, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--dropLowest {
+  --chip-color: #c0394a;
+  --chip-bg: rgba(192, 57, 74, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--dropCondition {
+  --chip-color: #b85060;
+  --chip-bg: rgba(184, 80, 96, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--keepHighest {
+  --chip-color: #c2620a;
+  --chip-bg: rgba(194, 98, 10, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--keepLowest {
+  --chip-color: #9e4e20;
+  --chip-bg: rgba(158, 78, 32, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--explode {
+  --chip-color: #9a7c1a;
+  --chip-bg: rgba(154, 124, 26, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--compound {
+  --chip-color: #7a6010;
+  --chip-bg: rgba(122, 96, 16, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--penetrate {
+  --chip-color: #8a6e14;
+  --chip-bg: rgba(138, 110, 20, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--reroll {
+  --chip-color: #7c4dab;
+  --chip-bg: rgba(124, 77, 171, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--cap {
+  --chip-color: #0082a5;
+  --chip-bg: rgba(0, 130, 165, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--replace {
+  --chip-color: #4a8020;
+  --chip-bg: rgba(74, 128, 32, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--unique {
+  --chip-color: #1a7a72;
+  --chip-bg: rgba(26, 122, 114, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--countSuccesses {
+  --chip-color: #3a60c8;
+  --chip-bg: rgba(58, 96, 200, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--plus {
+  --chip-color: #3a7d20;
+  --chip-bg: rgba(58, 125, 32, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--minus {
+  --chip-color: #2a6018;
+  --chip-bg: rgba(42, 96, 24, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--multiply {
+  --chip-color: #8a6a00;
+  --chip-bg: rgba(138, 106, 0, 0.08);
+}
+[data-theme='light'] .rp-desc-chip--multiplyTotal {
+  --chip-color: #7a5800;
+  --chip-bg: rgba(122, 88, 0, 0.08);
+}
+
 /* ===== Input ===== */
 .roller-playground-input {
   padding: 0;
@@ -243,6 +723,11 @@
   color: #98c379;
   caret-color: #3b82f6;
   box-sizing: border-box;
+}
+
+/* When overlay is active, input text is hidden (caret and selection remain visible) */
+.roller-playground-input--highlight {
+  color: transparent;
 }
 
 @media (prefers-color-scheme: light) {
@@ -323,6 +808,16 @@
 .roller-playground-stackblitz:hover {
   border-color: #3b82f6;
   color: #3b82f6;
+}
+
+.roller-playground-stackblitz--corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-top: none;
+  border-right: none;
+  border-radius: 0 0.5rem 0 0.375rem;
+  z-index: 1;
 }
 
 @media (prefers-color-scheme: light) {
@@ -709,10 +1204,10 @@
   color: #4878c8;
 }
 
-/* ===== Description text (centered) ===== */
+/* ===== Description text ===== */
 .roller-playground-desc {
   flex: 1;
-  text-align: center;
+  text-align: left;
 }
 
 /* ===== Chip in modifiers mode (no result) ===== */
@@ -755,7 +1250,7 @@
 
 /* ===== Expand panel showing modifier reference ===== */
 .roller-playground-expand-reference {
-  padding: 0.25rem 0.5rem 0.5rem;
+  padding: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 }
@@ -806,11 +1301,11 @@
 }
 
 .roller-playground-expand-reference .modifier-reference-cell {
-  padding: 0.2rem 0;
+  padding: 0.2rem 0.85rem;
 }
 
 .roller-playground-expand-reference .modifier-reference-core {
-  padding: 0.25rem 0;
+  padding: 0.25rem 0.85rem;
 }
 
 @media (prefers-color-scheme: light) {
@@ -823,4 +1318,84 @@
 [data-theme='light'] .roller-playground-expand-reference .modifier-reference {
   background: transparent;
   border: none;
+}
+
+/* ===== Result overlay modal ===== */
+.roller-playground-result-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  z-index: 10;
+  background: rgba(13, 17, 23, 0.82);
+  backdrop-filter: blur(4px);
+  animation: result-overlay-enter 0.18s ease both;
+}
+
+.roller-playground-result-overlay--dismissible {
+  cursor: pointer;
+}
+
+@keyframes result-overlay-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-result-overlay {
+    background: rgba(246, 248, 250, 0.88);
+  }
+}
+[data-theme='light'] .roller-playground-result-overlay {
+  background: rgba(246, 248, 250, 0.88);
+}
+
+.roller-playground-result-card {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  cursor: default;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  animation: result-card-enter 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes result-card-enter {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-result-card {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+[data-theme='light'] .roller-playground-result-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.roller-playground-result-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 0;
 }

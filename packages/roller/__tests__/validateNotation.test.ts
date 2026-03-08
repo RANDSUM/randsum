@@ -216,11 +216,7 @@ describe('validateNotation', () => {
     test('validates zero-sided dice', () => {
       const result = validateNotation('1d0')
 
-      expect(result.valid).toBe(true)
-      if (result.valid) {
-        expect(result.options[0]?.sides).toBe(0)
-        expect(result.options[0]?.quantity).toBe(1)
-      }
+      expect(result.valid).toBe(false)
     })
 
     test('validates zero quantity dice', () => {

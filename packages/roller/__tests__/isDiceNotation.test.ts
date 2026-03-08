@@ -86,8 +86,11 @@ describe('isDiceNotation', () => {
 
     test('returns true for edge case dice values', () => {
       expect(isDiceNotation('0d6')).toBe(true)
-      expect(isDiceNotation('1d0')).toBe(true)
       expect(isDiceNotation('999d999')).toBe(true)
+    })
+
+    test('returns false for zero sides', () => {
+      expect(isDiceNotation('1d0')).toBe(false)
     })
   })
 

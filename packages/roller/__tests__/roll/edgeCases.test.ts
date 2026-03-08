@@ -32,6 +32,10 @@ describe('edge cases', () => {
     test('empty sides array throws', () => {
       expect(() => roll({ sides: [], quantity: 1 })).toThrow(ValidationError)
     })
+
+    test('"1d0" notation throws', () => {
+      expect(() => roll('1d0' as string)).toThrow(ValidationError)
+    })
   })
 
   describe('modifier edge cases', () => {
