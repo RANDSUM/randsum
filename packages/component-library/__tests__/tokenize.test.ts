@@ -39,11 +39,11 @@ describe('tokenize — bare drop/keep suffixes (no number)', () => {
     expect(t?.text).toBe('H')
   })
 
-  test('KL alone → keepLowest with "Keep lowest" description', () => {
+  test('KL alone → keepLowest with "Drop lowest, Keep lowest" description', () => {
     const tokens = tokenize('1d6KL')
     const t = tokens.find(t => t.type === 'keepLowest')
     expect(t).toBeDefined()
-    expect(t?.description).toBe('Keep lowest')
+    expect(t?.description).toBe('Drop lowest, Keep lowest')
     expect(t?.text).toBe('KL')
   })
 
@@ -61,13 +61,13 @@ describe('tokenize — reroll inner condition extraction', () => {
     const tokens = tokenize('1d6R{<3}')
     const t = tokens.find(t => t.type === 'reroll')
     expect(t).toBeDefined()
-    expect(t?.description).toBe('Reroll <3')
+    expect(t?.description).toBe('Reroll less than [3]')
   })
 
   test('R{1,2} → description is "Reroll 1,2"', () => {
     const tokens = tokenize('1d6R{1,2}')
     const t = tokens.find(t => t.type === 'reroll')
-    expect(t?.description).toBe('Reroll 1,2')
+    expect(t?.description).toBe('Reroll [1] and [2]')
   })
 })
 
