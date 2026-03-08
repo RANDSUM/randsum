@@ -1,13 +1,15 @@
 import { Box, Text, render, useInput, useStdout } from 'ink'
-import { useState } from 'react'
-import { roll, validateNotation } from '@randsum/roller'
+import { useMemo, useState } from 'react'
+import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
 import { RollHistory } from './components/RollHistory'
 import { NotationInput } from './components/NotationInput'
 import { DiceToolbar } from './components/DiceToolbar'
 import { NotationReference } from './components/NotationReference'
+import { NotationDescriptionRow } from './components/NotationDescriptionRow'
 import { useRollHistory } from './hooks/useRollHistory'
 import { incrementDiceQuantity } from './helpers/incrementDiceQuantity'
 import { formatResult, isFormattedError } from './helpers/formatResult'
+import { tokenize } from './helpers/tokenize'
 
 type FocusZone = 'input' | 'toolbar'
 
@@ -28,6 +30,9 @@ function App(): React.JSX.Element {
       clearHistory()
     }
   })
+
+  const tokens = useMemo(() => tokenize(input), [input])
+  const isValid = input.trim().length > 0 && isDiceNotation(input.trim())
 
   const handleSubmit = (value: string): void => {
     const trimmed = value.trim()
@@ -109,6 +114,8 @@ function App(): React.JSX.Element {
         onSubmit={handleSubmit}
         active={focus === 'input'}
       />
+
+      <NotationDescriptionRow notation={input} tokens={tokens} isValid={isValid} />
     </Box>
   )
 }
