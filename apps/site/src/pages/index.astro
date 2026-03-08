@@ -451,6 +451,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   .pkg-filter-chips {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0;
     margin-bottom: 1.5rem;
@@ -461,8 +462,9 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     align-items: center;
     justify-content: center;
     height: 2.625rem;
-    padding: 0;
+    padding: 0 1rem;
     min-width: 6.75rem;
+    flex: 1 1 auto;
     border-radius: 999px;
     border: 1px solid var(--sl-color-gray-5);
     background: transparent;
@@ -508,7 +510,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     display: flex;
     flex-direction: column;
     align-self: stretch;
-    height: 180px;
+    min-height: 180px;
     margin-top: 0;
     padding: 1.25rem 1.5rem;
     border: 1px solid var(--sl-color-gray-5);
