@@ -1263,7 +1263,7 @@
 
 /* ===== Expand panel showing modifier reference ===== */
 .roller-playground-expand-reference {
-  padding: 0;
+  padding: 0 0 0.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 }

@@ -24,27 +24,27 @@ const MODIFIER_PAIRS: readonly ModifierPair[] = [
   ],
   [
     { notation: 'K', description: 'keep highest' },
-    { notation: '**', description: 'multiply total' }
-  ],
-  [
-    { notation: 'kl', description: 'keep lowest' },
-    { notation: '*', description: 'multiply dice' }
-  ],
-  [
-    { notation: '!', description: 'explode' },
-    { notation: '\u2013', description: 'subtract' }
-  ],
-  [
-    { notation: '!!', description: 'compound' },
-    { notation: '+', description: 'add' }
-  ],
-  [
-    { notation: '!p', description: 'penetrate' },
     { notation: 'C{..}', description: 'cap...' }
   ],
   [
-    { notation: 'U', description: 'unique' },
+    { notation: 'kl', description: 'keep lowest' },
     { notation: 'R{..}', description: 'reroll...' }
+  ],
+  [
+    { notation: '!', description: 'explode' },
+    { notation: '**', description: 'multiply total' }
+  ],
+  [
+    { notation: '!!', description: 'compound' },
+    { notation: '*', description: 'multiply dice' }
+  ],
+  [
+    { notation: '!p', description: 'penetrate' },
+    { notation: '\u2013', description: 'subtract' }
+  ],
+  [
+    { notation: 'U', description: 'unique' },
+    { notation: '+', description: 'add' }
   ]
 ] as const
 

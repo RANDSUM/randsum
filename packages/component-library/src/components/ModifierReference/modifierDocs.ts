@@ -121,8 +121,10 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     displayBase: 'V',
     displayOptional: '{..}',
     forms: [
-      { notation: 'V{X=Y}', note: 'Single rule' },
-      { notation: 'V{X=Y,A=B,...}', note: 'Multiple rules' }
+      {
+        notation: 'V{n=y, >n=y, <n=y, ...}',
+        note: 'Exact, over, or under — comma-separate multiple rules'
+      }
     ],
     examples: [
       { notation: '4d6V{1=2}', description: 'Replace 1s with 2' },
@@ -195,8 +197,10 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     displayBase: 'C',
     displayOptional: '{..}',
     forms: [
-      { notation: 'C{n}', note: 'Single cap value' },
-      { notation: 'C{<n,>m}', note: 'Floor and ceiling' }
+      {
+        notation: 'C{n, >n, <n, ...}',
+        note: 'Exact, over, or under — comma-separate multiple conditions'
+      }
     ],
     examples: [
       { notation: '4d6C{>5}', description: 'Cap rolls: nothing exceeds 5' },
@@ -209,7 +213,9 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       'Reroll dice that match a condition. The new result stands (may reroll again if still matching).',
     displayBase: 'R',
     displayOptional: '{..}',
-    forms: [{ notation: 'R{..}(n)', note: 'Reroll matching dice (max n attempts)' }],
+    forms: [
+      { notation: 'R{n, >n, <n, ...}(d)', note: 'Exact, over, or under — optional max depth d' }
+    ],
     examples: [
       { notation: '4d6R{1}', description: 'Reroll any 1s' },
       { notation: '2d10R{<3}', description: 'Reroll results under 3' },
