@@ -53,11 +53,10 @@ describe('NotationParseError', () => {
     expect(error.suggestion).toBe('1d6')
   })
 
-  test('is instanceof RandsumError', () => {
+  test('is instanceof Error and NotationParseError', () => {
     const error = new NotationParseError('bad', 'reason')
 
     expect(error).toBeInstanceOf(Error)
-    expect(error).toBeInstanceOf(RandsumError)
     expect(error).toBeInstanceOf(NotationParseError)
   })
 })

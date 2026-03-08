@@ -48,6 +48,7 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
  * Error thrown when a string is not valid dice notation.
  */
 export class NotationParseError extends Error {
+  public readonly code = 'INVALID_NOTATION' as const
   public readonly suggestion: string | undefined
 
   constructor(notation: string, reason: string, suggestion?: string) {
