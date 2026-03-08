@@ -28,14 +28,9 @@ function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
  *
  * @param argument - The roll argument (notation, number, or options)
  * @param position - Position in multi-roll expressions (for key naming)
- * @param lightweight - When true, skip description and notation building
  * @returns Array of resolved roll parameters
  */
-export function parseArguments<T>(
-  argument: RollArgument<T>,
-  position: number,
-  lightweight = false
-): RollParams<T>[] {
+export function parseArguments<T>(argument: RollArgument<T>, position: number): RollParams<T>[] {
   const allOptions = optionsFromArgument(argument)
   return allOptions.map((options, index) => {
     const indexLabel = index === 0 ? '' : `-${index + 1}`
@@ -53,8 +48,8 @@ export function parseArguments<T>(
       quantity,
       arithmetic,
       argument,
-      notation: lightweight ? null : optionsToNotation(options),
-      description: lightweight ? [] : optionsToDescription(options)
+      notation: optionsToNotation(options),
+      description: optionsToDescription(options)
     }
   })
 }

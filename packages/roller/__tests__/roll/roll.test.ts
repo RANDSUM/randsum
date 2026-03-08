@@ -6,21 +6,6 @@ import { createSeededRandom } from '../../test-utils/src/seededRandom'
 const loops = 9999
 
 describe(roll, () => {
-  describe('lightweight mode', () => {
-    test('lightweight roll returns correct total', () => {
-      const result = roll('4d6L', { lightweight: true })
-      expect(result.error).toBeNull()
-      expect(result.total).toBeGreaterThanOrEqual(3)
-    })
-
-    test('lightweight roll skips description building and sets notation to null', () => {
-      const result = roll('4d6L', { lightweight: true })
-      expect(result.error).toBeNull()
-      expect(result.rolls[0]?.description).toEqual([])
-      expect(result.rolls[0]?.notation).toBeNull()
-    })
-  })
-
   describe('Stress Test', () => {
     describe('numeric dice', () => {
       describe('numeric args', () => {

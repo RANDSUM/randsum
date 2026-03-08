@@ -18,11 +18,8 @@ export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 's
   argument: RollArgument<T>
   /** Human-readable description of the roll */
   description: string[]
-  /**
-   * Dice notation string, or null in lightweight mode.
-   * @see RollConfig.lightweight
-   */
-  notation: DiceNotation | null
+  /** Dice notation string */
+  notation: DiceNotation
 }
 
 /**
