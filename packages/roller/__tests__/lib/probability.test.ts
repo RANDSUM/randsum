@@ -122,6 +122,20 @@ describe('analyze', () => {
     })
   })
 
+  describe('input validation', () => {
+    test('throws on zero sample count', () => {
+      expect(() => analyze('1d6', 0)).toThrow()
+    })
+
+    test('throws on negative sample count', () => {
+      expect(() => analyze('1d6', -1)).toThrow()
+    })
+
+    test('throws on non-integer sample count', () => {
+      expect(() => analyze('1d6', 1.5)).toThrow()
+    })
+  })
+
   describe('sample size parameter', () => {
     test('works with small sample size', () => {
       const result = analyze('1d6', 100)

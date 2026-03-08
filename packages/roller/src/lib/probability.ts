@@ -1,4 +1,5 @@
 import { roll } from '../roll'
+import { ValidationError } from '../errors'
 import type { DiceNotation } from '../types'
 
 /**
@@ -39,6 +40,10 @@ export interface ProbabilityAnalysis {
  * ```
  */
 export function analyze(notation: DiceNotation, samples = 10000): ProbabilityAnalysis {
+  if (!Number.isInteger(samples) || samples < 1) {
+    throw new ValidationError(`samples must be a positive integer, got ${samples}`)
+  }
+
   const results = Array.from({ length: samples }, () => roll(notation).total)
 
   const sortedResults = results.toSorted((a, b) => a - b)
