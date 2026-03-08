@@ -758,4 +758,36 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       applyFilter(chip.dataset['filter'] ?? 'all')
     })
   })
+
+  // --- Slot machine filter on die roll ---
+  const FILTER_SLOT_INTERVALS = [45, 50, 55, 60, 70, 80, 95, 115, 140, 170, 210, 260, 325, 410, 510, 640, 860]
+
+  let filterSlotTimeout: ReturnType<typeof setTimeout> | undefined = undefined
+
+  window.addEventListener('die-rolled', () => {
+    if (filterSlotTimeout !== undefined) {
+      clearTimeout(filterSlotTimeout)
+      filterSlotTimeout = undefined
+    }
+
+    const filterValues = Array.from(chips).map(chip => chip.dataset['filter'] ?? 'all')
+    const finalFilter = filterValues[Math.floor(Math.random() * filterValues.length)] ?? 'all'
+    let step = 0
+
+    const tick = () => {
+      if (step < FILTER_SLOT_INTERVALS.length - 1) {
+        const randomFilter = filterValues[Math.floor(Math.random() * filterValues.length)] ?? 'all'
+        chips.forEach(chip => {
+          chip.classList.toggle('is-active', chip.dataset['filter'] === randomFilter)
+        })
+        step++
+        filterSlotTimeout = setTimeout(tick, FILTER_SLOT_INTERVALS[step])
+      } else {
+        filterSlotTimeout = undefined
+        applyFilter(finalFilter)
+      }
+    }
+
+    filterSlotTimeout = setTimeout(tick, FILTER_SLOT_INTERVALS[0] ?? 45)
+  })
 </script>
