@@ -20,12 +20,10 @@ const TAGLINES = [
 const GET_STARTED_LABELS = [
   'Get Started',
   'Read (Please)',
-  'Begin Your Descent',
-  'Copy the Import',
-  'Touch Grass Later',
   'For People',
   'Having fun?',
-  'Critical Hit!'
+  'Critical Hit!',
+  'DESCEND'
 ] as const
 
 const GITHUB_LABELS = [
@@ -33,9 +31,9 @@ const GITHUB_LABELS = [
   'Star & Forget',
   'Open Issues',
   'Blame History',
-  'Source of Truth',
   'Fork It',
-  'A Legacy of Pain'
+  'PAIN',
+  'TRUTH'
 ] as const
 
 // Slot machine tick intervals in ms — fast start, slows to a stop (~2.5s total)

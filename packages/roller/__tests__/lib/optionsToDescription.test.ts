@@ -34,7 +34,7 @@ describe('greaterThanOrEqual descriptions', () => {
       modifiers: { drop: { greaterThanOrEqual: 5 } }
     })
     const allText = descriptions.join(' ')
-    expect(allText).toMatch(/greater than or equal to \[5\]/i)
+    expect(allText).toMatch(/greater than or equal to 5/i)
   })
 
   test('reroll modifier includes greaterThanOrEqual description', () => {
@@ -44,6 +44,6 @@ describe('greaterThanOrEqual descriptions', () => {
       modifiers: { reroll: { greaterThanOrEqual: 4 } }
     })
     const allText = descriptions.join(' ')
-    expect(allText).toMatch(/greater than or equal to \[4\]/i)
+    expect(allText).toMatch(/greater than or equal to 4/i)
   })
 })

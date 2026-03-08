@@ -2,6 +2,7 @@ import './definitions'
 
 export {
   defineModifier,
+  registerNotationSchema,
   getModifier,
   hasModifier,
   getAllModifiers,
@@ -20,6 +21,7 @@ export {
 
 export type {
   ModifierDefinition,
+  ModifierBehavior,
   ModifierContext,
   ModifierApplyResult,
   ModifierOptionTypes,

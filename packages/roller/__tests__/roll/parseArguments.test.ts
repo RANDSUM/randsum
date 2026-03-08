@@ -61,8 +61,8 @@ describe(parseArguments, () => {
           notation: '4d6V{>5=1}R{2,1,4}3U',
           description: [
             'Roll 4 6-sided dice',
-            'Replace greater than [5] with [1]',
-            'Reroll [2] [1] and [4] (up to 3 times)',
+            'Replace greater than 5 with 1',
+            'Reroll 2 1 and 4 (up to 3 times)',
             'No Duplicate Rolls'
           ]
         })
@@ -99,14 +99,14 @@ describe(parseArguments, () => {
           notation: '4d6C{>5}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1',
           description: [
             'Roll 4 6-sided dice',
-            'No Rolls greater than [5]',
+            'No Rolls greater than 5',
             'Drop lowest',
-            'Drop [2] and [3]',
-            'Drop greater than [2]',
-            'Drop less than [6]',
-            'Replace [6] with [1]',
+            'Drop 2 and 3',
+            'Drop greater than 2',
+            'Drop less than 6',
+            'Replace 6 with 1',
             'Exploding Dice',
-            'No Duplicates (except [1] and [2])',
+            'No Duplicates (except 1 and 2)',
             'Add 2',
             'Subtract 1'
           ]
@@ -233,9 +233,9 @@ describe(parseArguments, () => {
           notation: '4d6D{>5,<2,2,4}',
           description: [
             'Roll 4 6-sided dice',
-            'Drop [2] and [4]',
-            'Drop greater than [5]',
-            'Drop less than [2]'
+            'Drop 2 and 4',
+            'Drop greater than 5',
+            'Drop less than 2'
           ]
         })
       })
@@ -252,11 +252,7 @@ describe(parseArguments, () => {
           ...coreDicePools,
           modifiers: { cap: { lessThan: 2, greaterThan: 5 } },
           notation: '4d6C{>5,<2}',
-          description: [
-            'Roll 4 6-sided dice',
-            'No Rolls greater than [5]',
-            'No Rolls less than [2]'
-          ]
+          description: ['Roll 4 6-sided dice', 'No Rolls greater than 5', 'No Rolls less than 2']
         })
       })
     })
@@ -310,7 +306,7 @@ describe(parseArguments, () => {
             }
           },
           notation: '4d6R{5,>2,<6}',
-          description: ['Roll 4 6-sided dice', 'Reroll [5], greater than [2] and less than [6]']
+          description: ['Roll 4 6-sided dice', 'Reroll 5, greater than 2 and less than 6']
         })
       })
       describe('with a max modifier', () => {
@@ -333,7 +329,7 @@ describe(parseArguments, () => {
             notation: '4d6R{5,20,>2,<6}3',
             description: [
               'Roll 4 6-sided dice',
-              'Reroll [5] and [20], greater than [2] and less than [6] (up to 3 times)'
+              'Reroll 5 and 20, greater than 2 and less than 6 (up to 3 times)'
             ]
           })
         })
@@ -352,7 +348,7 @@ describe(parseArguments, () => {
             ...coreDicePools,
             modifiers: { unique: { notUnique: [5, 6] } },
             notation: '4d6U{5,6}',
-            description: ['Roll 4 6-sided dice', 'No Duplicates (except [5] and [6])']
+            description: ['Roll 4 6-sided dice', 'No Duplicates (except 5 and 6)']
           })
         })
       })
@@ -368,7 +364,7 @@ describe(parseArguments, () => {
             ...coreDicePools,
             modifiers: { unique: { notUnique: [5, 6] } },
             notation: '4d6U{5,6}',
-            description: ['Roll 4 6-sided dice', 'No Duplicates (except [5] and [6])']
+            description: ['Roll 4 6-sided dice', 'No Duplicates (except 5 and 6)']
           })
         })
       })
@@ -425,8 +421,8 @@ describe(parseArguments, () => {
             notation: '4d6V{1=2,>2=6}',
             description: [
               'Roll 4 6-sided dice',
-              'Replace [1] with [2]',
-              'Replace greater than [2] with [6]'
+              'Replace 1 with 2',
+              'Replace greater than 2 with 6'
             ]
           })
         })
@@ -443,7 +439,7 @@ describe(parseArguments, () => {
             ...coreDicePools,
             modifiers: { replace: [{ from: { lessThan: 2 }, to: 6 }] },
             notation: '4d6V{<2=6}',
-            description: ['Roll 4 6-sided dice', 'Replace less than [2] with [6]']
+            description: ['Roll 4 6-sided dice', 'Replace less than 2 with 6']
           })
         })
       })
@@ -509,18 +505,18 @@ describe(parseArguments, () => {
             notation: '10d20C{>18,<2}H2LD{>5,<2,2,4}V{1=2,>2=6}R{5,2,<6}3!U{5}+5-5',
             description: [
               'Roll 10 20-sided dice',
-              'No Rolls greater than [18]',
-              'No Rolls less than [2]',
+              'No Rolls greater than 18',
+              'No Rolls less than 2',
               'Drop highest 2',
               'Drop lowest',
-              'Drop [2] and [4]',
-              'Drop greater than [5]',
-              'Drop less than [2]',
-              'Replace [1] with [2]',
-              'Replace greater than [2] with [6]',
-              'Reroll [5] and [2], less than [6] (up to 3 times)',
+              'Drop 2 and 4',
+              'Drop greater than 5',
+              'Drop less than 2',
+              'Replace 1 with 2',
+              'Replace greater than 2 with 6',
+              'Reroll 5 and 2, less than 6 (up to 3 times)',
               'Exploding Dice',
-              'No Duplicates (except [5])',
+              'No Duplicates (except 5)',
               'Add 5',
               'Subtract 5'
             ]

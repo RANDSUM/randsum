@@ -10,6 +10,7 @@ import type {
   SuccessCountOptions,
   UniqueOptions
 } from '../../types'
+import type { NotationSchema } from '../notation/schema'
 
 /**
  * Context passed to modifier handlers that may need dice rolling or roll info.
@@ -126,62 +127,16 @@ export interface ModifierApplyResult {
 }
 
 /**
- * Complete definition of a dice roll modifier.
+ * Execution-only half of a modifier definition.
  *
- * This schema defines everything needed to:
- * - Parse the modifier from notation
- * - Apply the modifier to dice rolls
- * - Convert back to notation string
- * - Generate human-readable description
- * - Validate the modifier options
+ * Covers dice manipulation concerns:
+ * - Applying the modifier to rolls
+ * - Validating modifier options
+ * - Declaring context requirements (rollOne, parameters)
  *
  * @template TOptions - The type of options this modifier accepts
  */
-export interface ModifierDefinition<TOptions = unknown> {
-  /** Unique identifier matching the key in ModifierOptions */
-  name: keyof ModifierOptions
-
-  /**
-   * Execution priority (lower = earlier).
-   * Standard order:
-   * - 10-19: Pre-processing (cap)
-   * - 20-29: Pool reduction (drop, keep)
-   * - 30-39: Value replacement (replace)
-   * - 40-49: Rerolling (reroll)
-   * - 50-59: Explosions (explode, compound, penetrate)
-   * - 60-69: Uniqueness (unique)
-   * - 70-79: Counting (countSuccesses)
-   * - 80-89: Multiplication (multiply)
-   * - 90-99: Arithmetic (plus, minus)
-   * - 100+: Final (multiplyTotal)
-   */
-  priority: number
-
-  /**
-   * Regex pattern to match this modifier in notation string.
-   * Should NOT include 'g' flag - that's handled by the registry.
-   */
-  pattern: RegExp
-
-  /**
-   * Parse notation string into modifier options.
-   * Receives the full notation string to allow finding multiple matches.
-   * Returns a partial ModifierOptions with just this modifier's key.
-   */
-  parse: (notation: string) => Partial<ModifierOptions>
-
-  /**
-   * Convert options to notation string (e.g., "C{>5}").
-   * Returns undefined if options would produce empty notation.
-   */
-  toNotation: (options: TOptions) => string | undefined
-
-  /**
-   * Convert options to human-readable description strings.
-   * Returns array of descriptions (some modifiers produce multiple lines).
-   */
-  toDescription: (options: TOptions) => string[]
-
+export interface ModifierBehavior<TOptions = unknown> {
   /**
    * Apply this modifier to roll values.
    * Returns new rolls array (should not mutate input).
@@ -206,6 +161,29 @@ export interface ModifierDefinition<TOptions = unknown> {
    */
   requiresParameters?: boolean
 }
+
+/**
+ * Complete definition of a dice roll modifier.
+ *
+ * Combines the notation schema (string transformation) and modifier behavior
+ * (dice execution) into one unified type. This is what the registry stores.
+ *
+ * Standard priority order:
+ * - 10-19: Pre-processing (cap)
+ * - 20-29: Pool reduction (drop, keep)
+ * - 30-39: Value replacement (replace)
+ * - 40-49: Rerolling (reroll)
+ * - 50-59: Explosions (explode, compound, penetrate)
+ * - 60-69: Uniqueness (unique)
+ * - 70-79: Counting (countSuccesses)
+ * - 80-89: Multiplication (multiply)
+ * - 90-99: Arithmetic (plus, minus)
+ * - 100+: Final (multiplyTotal)
+ *
+ * @template TOptions - The type of options this modifier accepts
+ */
+export type ModifierDefinition<TOptions = unknown> = NotationSchema<TOptions> &
+  ModifierBehavior<TOptions>
 
 /**
  * Maps modifier names to their option types.
