@@ -1,6 +1,6 @@
 {
   "name": "@randsum/roller",
-  "version": "1.2.0",
+  "version": "3.0.0",
   "description": "TypeScript-first dice notation engine for tabletop RPGs, game development, and probability simulations",
   "private": false,
   "author": {

@@ -1,6 +1,6 @@
 {
   "name": "@randsum/cli",
-  "version": "1.1.0",
+  "version": "3.0.0",
   "description": "Dice rolling CLI and interactive TUI powered by RANDSUM",
   "private": false,
   "author": {
@@ -39,7 +39,7 @@
     "dice-roller"
   ],
   "dependencies": {
-    "@randsum/roller": "^1.2.0",
+    "@randsum/roller": "^3.0.0",
     "ink": "^5.2.0",
     "ink-text-input": "^6.0.0",
     "react": "catalog:"
