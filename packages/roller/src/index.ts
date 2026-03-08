@@ -42,6 +42,8 @@ export {
 export { MODIFIER_PRIORITIES } from './internal/api'
 export type { ModifierPriorityName } from './internal/api'
 
+export { normalize, equate } from './internal/api'
+
 export type {
   DiceNotation,
   RollArgument,
