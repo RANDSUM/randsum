@@ -141,4 +141,10 @@ export type RandomFn = () => number
 export interface RollConfig {
   /** Custom random function (default: Math.random) */
   randomFn?: RandomFn
+  /**
+   * Skip building description and notation in each RollRecord.
+   * Use when only total is needed. Reduces allocations for high-frequency rolling.
+   * @default false
+   */
+  lightweight?: boolean
 }

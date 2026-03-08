@@ -2,7 +2,7 @@ import { isDiceNotation } from '../isDiceNotation'
 import { notationToOptions } from '../lib/notation'
 import { optionsToDescription, optionsToNotation, optionsToSidesFaces } from '../lib/transformers'
 import { validateRollOptions } from '../lib/optionsValidation'
-import type { RollArgument, RollOptions, RollParams } from '../types'
+import type { DiceNotation, RollArgument, RollOptions, RollParams } from '../types'
 
 /**
  * Convert a roll argument to roll options.
@@ -28,9 +28,14 @@ function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
  *
  * @param argument - The roll argument (notation, number, or options)
  * @param position - Position in multi-roll expressions (for key naming)
+ * @param lightweight - When true, skip description and notation building
  * @returns Array of resolved roll parameters
  */
-export function parseArguments<T>(argument: RollArgument<T>, position: number): RollParams<T>[] {
+export function parseArguments<T>(
+  argument: RollArgument<T>,
+  position: number,
+  lightweight = false
+): RollParams<T>[] {
   const allOptions = optionsFromArgument(argument)
   return allOptions.map((options, index) => {
     const indexLabel = index === 0 ? '' : `-${index + 1}`
@@ -48,8 +53,8 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
       quantity,
       arithmetic,
       argument,
-      notation: optionsToNotation(options),
-      description: optionsToDescription(options)
+      notation: lightweight ? ('' as DiceNotation) : optionsToNotation(options),
+      description: lightweight ? [] : optionsToDescription(options)
     }
   })
 }

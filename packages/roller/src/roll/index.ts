@@ -5,13 +5,13 @@ import { executeRollPipeline } from './pipeline'
 
 /**
  * Type guard to check if an argument is a RollConfig object.
- * RollConfig has randomFn but not sides/quantity, distinguishing it from RollOptions.
+ * RollConfig has randomFn and/or lightweight but not sides/quantity, distinguishing it from RollOptions.
  */
 function isRollConfig(arg: unknown): arg is RollConfig {
   return (
     arg !== null &&
     typeof arg === 'object' &&
-    'randomFn' in arg &&
+    ('randomFn' in arg || 'lightweight' in arg) &&
     !('sides' in arg) &&
     !('quantity' in arg)
   )
@@ -100,7 +100,9 @@ export function roll<T = string>(
 
     const rollArgs = (hasConfig ? args.slice(0, -1) : args) as RollArgument<T>[]
 
-    const parameters = rollArgs.flatMap((arg, index) => parseArguments(arg, index + 1))
+    const parameters = rollArgs.flatMap((arg, index) =>
+      parseArguments(arg, index + 1, config?.lightweight)
+    )
     const rolls = parameters.map(parameter => executeRollPipeline(parameter, config?.randomFn))
     const total = rolls.reduce((acc, cur) => {
       const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
