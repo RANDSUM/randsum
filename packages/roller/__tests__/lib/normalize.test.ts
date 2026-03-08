@@ -14,6 +14,14 @@ describe('normalize', () => {
     expect(typeof result).toBe('string')
     expect(result).toMatch(/\d+[dD]\d+/)
   })
+
+  test('throws for compound notation', () => {
+    expect(() => normalize('1d6+1d20')).toThrow()
+  })
+
+  test('error message contains "single-segment notation"', () => {
+    expect(() => normalize('1d6+1d20')).toThrow('single-segment notation')
+  })
 })
 
 describe('equate', () => {
