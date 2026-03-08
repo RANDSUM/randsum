@@ -77,7 +77,6 @@
 .modifier-doc-forms {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
   margin-bottom: 0.1rem;
 }
 
@@ -86,6 +85,14 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.3rem;
+  margin: 0 -0.3rem;
+  border-radius: 0.2rem;
+}
+
+.modifier-doc-form-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .modifier-doc-form-notation {
@@ -94,7 +101,12 @@
   flex-shrink: 0;
 }
 
+.modifier-doc-form-notation-optional {
+  color: rgba(255, 255, 255, 0.25);
+}
+
 .modifier-doc-form-note {
+  font-size: 0.85rem;
   color: #6b7280;
   text-align: right;
 }
@@ -103,7 +115,6 @@
 .modifier-doc-examples {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
 }
 
 .modifier-doc-example-row {
@@ -111,15 +122,25 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.3rem;
+  margin: 0 -0.3rem;
+  border-radius: 0.2rem;
+}
+
+.modifier-doc-example-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .modifier-doc-example-notation {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.85rem;
   color: #60a5fa;
   flex-shrink: 0;
 }
 
 .modifier-doc-example-desc {
+  font-size: 0.85rem;
   color: #6b7280;
   text-align: right;
 }

@@ -24,10 +24,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Remove the lowest-valued dice from the pool before summing.',
     displayBase: 'L',
     displayOptional: 'n',
-    forms: [
-      { notation: 'L', note: 'No argument — drop 1 lowest' },
-      { notation: 'LN', note: 'Drop N lowest' }
-    ],
+    forms: [{ notation: 'L(n)', note: 'Drop n lowest (default: 1)' }],
     examples: [
       { notation: '4d6L', description: 'Roll 4d6, drop lowest (ability scores)' },
       { notation: '5d6L2', description: 'Roll 5d6, drop 2 lowest' }
@@ -38,10 +35,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Remove the highest-valued dice from the pool before summing.',
     displayBase: 'H',
     displayOptional: 'n',
-    forms: [
-      { notation: 'H', note: 'No argument — drop 1 highest' },
-      { notation: 'HN', note: 'Drop N highest' }
-    ],
+    forms: [{ notation: 'H(n)', note: 'Drop n highest (default: 1)' }],
     examples: [
       { notation: '2d20H', description: 'Roll 2d20, drop highest (disadvantage)' },
       { notation: '4d6H', description: 'Roll 4d6, drop highest' }
@@ -49,13 +43,10 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   K: {
     title: 'Keep Highest',
-    description: 'Keep only the N highest-valued dice; discard the rest.',
+    description: 'Keep only the n highest-valued dice; discard the rest.',
     displayBase: 'K',
     displayOptional: 'n',
-    forms: [
-      { notation: 'K', note: 'No argument — keep 1 highest' },
-      { notation: 'KN', note: 'Keep N highest' }
-    ],
+    forms: [{ notation: 'K(n)', note: 'Keep n highest (default: 1)' }],
     examples: [
       { notation: '2d20K', description: 'Roll 2d20, keep highest (advantage)' },
       { notation: '4d6K3', description: 'Roll 4d6, keep highest 3' }
@@ -63,13 +54,10 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   kl: {
     title: 'Keep Lowest',
-    description: 'Keep only the N lowest-valued dice; discard the rest.',
+    description: 'Keep only the n lowest-valued dice; discard the rest.',
     displayBase: 'kl',
     displayOptional: 'n',
-    forms: [
-      { notation: 'kl', note: 'No argument — keep 1 lowest' },
-      { notation: 'klN', note: 'Keep N lowest' }
-    ],
+    forms: [{ notation: 'kl(n)', note: 'Keep n lowest (default: 1)' }],
     examples: [
       { notation: '2d20kl', description: 'Roll 2d20, keep lowest (disadvantage)' },
       { notation: '4d6kl2', description: 'Roll 4d6, keep 2 lowest' }
@@ -93,9 +81,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     displayBase: '!!',
     displayOptional: 'n',
     forms: [
-      { notation: '!!', note: 'No argument — compound once on max' },
-      { notation: '!!N', note: 'Compound up to N times' },
-      { notation: '!!0', note: 'Unlimited (capped at 100)' }
+      { notation: '!!(n)', note: 'Compound up to n times (default: once)' },
+      { notation: '!!0', note: 'Unlimited depth (capped at 100)' }
     ],
     examples: [
       { notation: '3d6!!', description: 'Roll 3d6; 6s add to themselves' },
@@ -109,9 +96,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     displayBase: '!p',
     displayOptional: 'n',
     forms: [
-      { notation: '!p', note: 'No argument — penetrate once' },
-      { notation: '!pN', note: 'Penetrate up to N times' },
-      { notation: '!p0', note: 'Unlimited (capped at 100)' }
+      { notation: '!p(n)', note: 'Penetrate up to n times (default: once)' },
+      { notation: '!p0', note: 'Unlimited depth (capped at 100)' }
     ],
     examples: [
       { notation: '1d6!p', description: 'Roll 1d6; max penetrates with -1 per chain' },
@@ -123,10 +109,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Force all dice in the pool to show different values by rerolling duplicates.',
     displayBase: 'U',
     displayOptional: '{..}',
-    forms: [
-      { notation: 'U', note: 'No argument — all values must be unique' },
-      { notation: 'U{X,...}', note: 'Allow listed values to repeat' }
-    ],
+    forms: [{ notation: 'U({..})', note: 'All unique; optional exceptions list' }],
     examples: [
       { notation: '4d20U', description: 'Roll 4d20, no duplicate results' },
       { notation: '4d6U{1}', description: 'Unique except 1s may repeat' }
@@ -153,8 +136,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     displayBase: 'S',
     displayOptional: '{..}',
     forms: [
-      { notation: 'S{N}', note: 'Single success threshold' },
-      { notation: 'S{N,B}', note: 'Threshold + botch threshold' }
+      { notation: 'S{n}', note: 'Single success threshold' },
+      { notation: 'S{n,b}', note: 'Threshold + botch threshold' }
     ],
     examples: [
       { notation: '5d10S{7}', description: 'Count dice that rolled 7 or higher' },
@@ -166,7 +149,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Multiply the entire final total after all other modifiers have been applied.',
     displayBase: '**',
     displayOptional: 'n',
-    forms: [{ notation: '**N', note: 'Multiply final total by N' }],
+    forms: [{ notation: '**n', note: 'Multiply final total by n' }],
     examples: [
       { notation: '2d6+3**2', description: '(roll + 3) × 2' },
       { notation: '4d6L**3', description: '(drop-lowest sum) × 3' }
@@ -177,7 +160,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Multiply the dice sum before applying +/− arithmetic modifiers.',
     displayBase: '*',
     displayOptional: 'n',
-    forms: [{ notation: '*N', note: 'Multiply dice sum by N (pre-arithmetic)' }],
+    forms: [{ notation: '*n', note: 'Multiply dice sum by n (pre-arithmetic)' }],
     examples: [
       { notation: '2d6*2+3', description: '(roll × 2) + 3' },
       { notation: '4d6*3', description: 'Triple the dice sum' }
@@ -188,7 +171,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Subtract a fixed number from the total after all dice are rolled.',
     displayBase: '−',
     displayOptional: 'n',
-    forms: [{ notation: '-N', note: 'Subtract N from total' }],
+    forms: [{ notation: '-n', note: 'Subtract n from total' }],
     examples: [
       { notation: '1d20-2', description: 'Roll 1d20, subtract 2' },
       { notation: '4d6L-1', description: 'Drop lowest, subtract 1' }
@@ -199,7 +182,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Add a fixed number to the total after all dice are rolled.',
     displayBase: '+',
     displayOptional: 'n',
-    forms: [{ notation: '+N', note: 'Add N to total' }],
+    forms: [{ notation: '+n', note: 'Add n to total' }],
     examples: [
       { notation: '1d20+5', description: 'Roll 1d20, add 5' },
       { notation: '2d6+3', description: 'Roll 2d6, add 3' }
@@ -212,8 +195,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     displayBase: 'C',
     displayOptional: '{..}',
     forms: [
-      { notation: 'C{N}', note: 'Single cap value' },
-      { notation: 'C{<N,>M}', note: 'Floor and ceiling' }
+      { notation: 'C{n}', note: 'Single cap value' },
+      { notation: 'C{<n,>m}', note: 'Floor and ceiling' }
     ],
     examples: [
       { notation: '4d6C{>5}', description: 'Cap rolls: nothing exceeds 5' },
@@ -226,10 +209,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       'Reroll dice that match a condition. The new result stands (may reroll again if still matching).',
     displayBase: 'R',
     displayOptional: '{..}',
-    forms: [
-      { notation: 'R{..}', note: 'Reroll matching dice' },
-      { notation: 'R{..}N', note: 'Reroll, max N attempts' }
-    ],
+    forms: [{ notation: 'R{..}(n)', note: 'Reroll matching dice (max n attempts)' }],
     examples: [
       { notation: '4d6R{1}', description: 'Reroll any 1s' },
       { notation: '2d10R{<3}', description: 'Reroll results under 3' },
