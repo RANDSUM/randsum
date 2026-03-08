@@ -3,12 +3,11 @@ import type { HistoryEntry } from '../hooks/useRollHistory'
 
 interface RollHistoryProps {
   readonly history: readonly HistoryEntry[]
-  readonly onClear: () => void
 }
 
 const MAX_VISIBLE = 10
 
-export function RollHistory({ history, onClear: _onClear }: RollHistoryProps): React.JSX.Element {
+export function RollHistory({ history }: RollHistoryProps): React.JSX.Element {
   if (history.length === 0) {
     return (
       <Box flexDirection="column" paddingX={1}>

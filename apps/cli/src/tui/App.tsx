@@ -14,7 +14,7 @@ type FocusZone = 'input' | 'toolbar'
 const WIDE_BREAKPOINT = 80
 
 function App(): React.JSX.Element {
-  const { history, addRoll, clearHistory } = useRollHistory()
+  const { history, addRoll, clearHistory: _clearHistory } = useRollHistory()
   const [input, setInput] = useState('')
   const [error, setError] = useState('')
   const [focus, setFocus] = useState<FocusZone>('input')
@@ -65,7 +65,7 @@ function App(): React.JSX.Element {
           {/* Left column: history, description, toolbar */}
           <Box flexDirection="column" width="33%">
             <Box flexDirection="column" flexGrow={1}>
-              <RollHistory history={history} onClear={clearHistory} />
+              <RollHistory history={history} />
             </Box>
 
             <Box marginY={1}>
@@ -88,7 +88,7 @@ function App(): React.JSX.Element {
         </Box>
       ) : (
         <Box flexDirection="column">
-          <RollHistory history={history} onClear={clearHistory} />
+          <RollHistory history={history} />
 
           <NotationReference />
 
