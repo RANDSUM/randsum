@@ -1,19 +1,13 @@
 import { coreNotationPattern } from './coreNotationPattern'
-import { buildCombinedPattern } from '../modifiers'
+import { getCachedCombinedPattern } from '../modifiers'
 
 /**
- * Build the complete roll pattern source from core notation + all registered modifiers.
- */
-function buildCompletePatternSource(): string {
-  const modifierPattern = buildCombinedPattern()
-  return [coreNotationPattern.source, modifierPattern.source].join('|')
-}
-
-/**
- * Factory function to get the global RegExp for complete roll pattern.
- * Returns a fresh pattern each time to avoid stateful regex issues.
+ * Get the complete roll pattern (core notation + all modifier patterns).
+ * Result is cached and invalidated when modifiers change.
+ * Returns a fresh RegExp instance each time to prevent shared lastIndex state.
  */
 export function createCompleteRollPattern(): RegExp {
-  const source = buildCompletePatternSource()
+  const cached = getCachedCombinedPattern()
+  const source = [coreNotationPattern.source, cached.source].join('|')
   return new RegExp(source, 'g')
 }

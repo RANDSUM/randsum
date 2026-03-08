@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { coreNotationPattern, createCompleteRollPattern } from '../../src/lib/patterns'
+import { isDiceNotation } from '../../src/isDiceNotation'
 
 describe('coreNotationPattern', () => {
   describe('valid core notations', () => {
@@ -124,4 +125,13 @@ describe('createCompleteRollPattern', () => {
       expect(endTime - startTime).toBeLessThan(50)
     })
   })
+})
+
+test('isDiceNotation is fast enough for high-frequency use', () => {
+  const iterations = 50000
+  const start = performance.now()
+  Array.from({ length: iterations }, () => isDiceNotation('4d6L'))
+  const duration = performance.now() - start
+  // Should complete 50k validations in under 200ms (4µs/call)
+  expect(duration).toBeLessThan(200)
 })

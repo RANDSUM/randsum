@@ -31,6 +31,17 @@ import { createModifierLog, mergeLogs } from './log'
 const registry: ModifierRegistry = new Map()
 
 /**
+ * Cache for the combined modifier pattern.
+ * Invalidated whenever the registry changes (defineModifier or clearRegistry).
+ */
+// eslint-disable-next-line no-restricted-syntax
+let cachedCombinedPattern: RegExp | null = null
+
+function invalidateCombinedPatternCache(): void {
+  cachedCombinedPattern = null
+}
+
+/**
  * Define and register a modifier.
  * This is the main entry point for creating modifiers.
  *
@@ -55,6 +66,7 @@ export function defineModifier<K extends keyof ModifierOptions>(
   definition: ModifierDefinition<ModifierOptionTypes[K]> & { name: K }
 ): ModifierDefinition<ModifierOptionTypes[K]> {
   registry.set(definition.name, definition as ModifierDefinition)
+  invalidateCombinedPatternCache()
   return definition
 }
 
@@ -114,6 +126,7 @@ export function getRegisteredModifierCount(): number {
  */
 export function clearRegistry(): void {
   registry.clear()
+  invalidateCombinedPatternCache()
 }
 
 /**
@@ -124,6 +137,7 @@ export function registerDefaultModifiers(definitions: ModifierDefinition[]): voi
   for (const def of definitions) {
     registry.set(def.name, def)
   }
+  invalidateCombinedPatternCache()
 }
 
 /**
@@ -145,6 +159,16 @@ export function buildCombinedPattern(): RegExp {
     .map(([, def]) => def.pattern.source)
 
   return new RegExp(sources.join('|'), 'g')
+}
+
+/**
+ * Get the cached combined modifier pattern.
+ * Builds the pattern lazily on first call and caches it.
+ * Cache is invalidated when modifiers are registered or the registry is cleared.
+ */
+export function getCachedCombinedPattern(): RegExp {
+  cachedCombinedPattern ??= buildCombinedPattern()
+  return cachedCombinedPattern
 }
 
 /**

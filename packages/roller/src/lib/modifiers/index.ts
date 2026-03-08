@@ -7,6 +7,7 @@ export {
   getAllModifiers,
   getModifierOrder,
   buildCombinedPattern,
+  getCachedCombinedPattern,
   parseModifiersFromRegistry,
   applyModifierFromRegistry,
   applyAllModifiersFromRegistry,
