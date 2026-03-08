@@ -142,10 +142,17 @@
         "salvageunion-reference": "^2.4.0",
       },
     },
+    "packages/notation": {
+      "name": "@randsum/notation",
+      "version": "3.0.0",
+    },
     "packages/roller": {
       "name": "@randsum/roller",
       "version": "3.0.0",
       "bin": "./bin/randsum",
+      "dependencies": {
+        "@randsum/notation": "workspace:~",
+      },
       "devDependencies": {
         "fast-check": "catalog:",
       },
@@ -703,6 +710,8 @@
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
 
     "@randsum/fifth": ["@randsum/fifth@workspace:packages/gamePackages/fifth"],
+
+    "@randsum/notation": ["@randsum/notation@workspace:packages/notation"],
 
     "@randsum/pbta": ["@randsum/pbta@workspace:packages/gamePackages/pbta"],
 

@@ -29,6 +29,7 @@
     "esModuleInterop": true
   },
   "references": [
+    { "path": "packages/notation" },
     { "path": "packages/roller" },
     { "path": "packages/gamePackages/blades" },
     { "path": "packages/gamePackages/daggerheart" },

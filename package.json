@@ -36,6 +36,10 @@
   },
   "size-limit": [
     {
+      "path": "packages/notation/dist/index.js",
+      "limit": "13 KB"
+    },
+    {
       "path": "packages/roller/dist/index.js",
       "limit": "10 KB"
     },
@@ -65,7 +69,7 @@
     },
     {
       "path": "packages/roller/dist/index.d.ts",
-      "limit": "1 KB"
+      "limit": "4 KB"
     },
     {
       "path": "packages/gamePackages/blades/dist/index.d.ts",
