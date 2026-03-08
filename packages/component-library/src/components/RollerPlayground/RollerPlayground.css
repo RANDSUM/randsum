@@ -1042,13 +1042,13 @@
   color: #1f2328;
 }
 
-/* ===== Embedded RollTooltip styles ===== */
-.roller-tooltip-inner {
+/* ===== Embedded RollResult styles ===== */
+.roller-result-inner {
   background: transparent;
   padding: 0;
 }
 
-.roller-tooltip-notation {
+.roller-result-notation {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-weight: 700;
   font-size: 0.9rem;
@@ -1057,27 +1057,27 @@
 }
 
 @media (prefers-color-scheme: light) {
-  .roller-tooltip-notation {
+  .roller-result-notation {
     color: #4878c8;
   }
 }
-[data-theme='light'] .roller-tooltip-notation {
+[data-theme='light'] .roller-result-notation {
   color: #4878c8;
 }
 
-.roller-tooltip-desc {
+.roller-result-desc {
   color: #6b7280;
   font-size: 0.75rem;
   margin-bottom: 0.25rem;
 }
 
-.roller-tooltip-divider {
+.roller-result-divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.1);
   margin: 0.1rem 0;
 }
 
-.roller-tooltip-pool-header {
+.roller-result-pool-header {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.7rem;
   opacity: 0.5;
@@ -1085,22 +1085,22 @@
   letter-spacing: 0.02em;
 }
 
-.roller-tooltip-pool-divider {
+.roller-result-pool-divider {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin: 0.35rem 0;
 }
 
 @media (prefers-color-scheme: light) {
-  .roller-tooltip-divider {
+  .roller-result-divider {
     background: rgba(0, 0, 0, 0.1);
   }
 }
-[data-theme='light'] .roller-tooltip-divider {
+[data-theme='light'] .roller-result-divider {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.roller-tooltip-row {
+.roller-result-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1109,11 +1109,11 @@
   line-height: 1.4;
 }
 
-.roller-tooltip-label {
+.roller-result-label {
   color: #9ca3af;
 }
 
-.roller-tooltip-dice-group {
+.roller-result-dice-group {
   display: flex;
   align-items: flex-start;
   gap: 0.2rem;
@@ -1122,38 +1122,38 @@
   text-align: right;
 }
 
-.roller-tooltip-dice {
+.roller-result-dice {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   letter-spacing: 0;
   white-space: normal;
   word-break: break-word;
 }
 
-.roller-tooltip-dice-sep {
+.roller-result-dice-sep {
   color: rgba(255, 255, 255, 0.1);
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
 }
 
-.roller-tooltip-dice--removed {
+.roller-result-dice--removed {
   color: rgba(255, 255, 255, 0.3);
   text-decoration: line-through;
   text-decoration-color: #9ca3af;
 }
 
-.roller-tooltip-dice--added {
+.roller-result-dice--added {
   color: #60a5fa;
 }
 
-.roller-tooltip-dice--arithmetic {
+.roller-result-dice--arithmetic {
   color: #60a5fa;
   font-weight: 600;
 }
 
-.roller-tooltip-row--final {
+.roller-result-row--final {
   padding-bottom: 0.3rem;
 }
 
-.roller-tooltip-total {
+.roller-result-total {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1166,42 +1166,42 @@
 }
 
 @media (prefers-color-scheme: light) {
-  .roller-tooltip-total {
+  .roller-result-total {
     border-top-color: rgba(0, 0, 0, 0.1);
   }
 }
-[data-theme='light'] .roller-tooltip-total {
+[data-theme='light'] .roller-result-total {
   border-top-color: rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: light) {
-  .roller-tooltip-label {
+  .roller-result-label {
     color: #6b7280;
   }
-  .roller-tooltip-dice--removed {
+  .roller-result-dice--removed {
     color: rgba(0, 0, 0, 0.35);
     text-decoration-color: #6b7280;
   }
-  .roller-tooltip-dice-sep {
+  .roller-result-dice-sep {
     color: rgba(0, 0, 0, 0.2);
   }
-  .roller-tooltip-dice--added,
-  .roller-tooltip-dice--arithmetic {
+  .roller-result-dice--added,
+  .roller-result-dice--arithmetic {
     color: #4878c8;
   }
 }
-[data-theme='light'] .roller-tooltip-label {
+[data-theme='light'] .roller-result-label {
   color: #6b7280;
 }
-[data-theme='light'] .roller-tooltip-dice--removed {
+[data-theme='light'] .roller-result-dice--removed {
   color: rgba(0, 0, 0, 0.35);
   text-decoration-color: #6b7280;
 }
-[data-theme='light'] .roller-tooltip-dice-sep {
+[data-theme='light'] .roller-result-dice-sep {
   color: rgba(0, 0, 0, 0.2);
 }
-[data-theme='light'] .roller-tooltip-dice--added,
-[data-theme='light'] .roller-tooltip-dice--arithmetic {
+[data-theme='light'] .roller-result-dice--added,
+[data-theme='light'] .roller-result-dice--arithmetic {
   color: #4878c8;
 }
 

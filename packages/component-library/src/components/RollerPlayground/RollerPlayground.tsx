@@ -450,7 +450,7 @@ export function RollerPlayground({
                       </div>
                     ) : (
                       <>
-                        <RollTooltip records={state.records} />
+                        <RollResult records={state.records} />
                         <div className="roller-playground-expand-total">
                           <span>Total</span>
                           <span className="roller-playground-expand-total-chip">{state.total}</span>
@@ -644,18 +644,16 @@ function DiceGroup({
   const truncated = unchanged.length > MAX_DICE_SHOWN
 
   return (
-    <span className="roller-tooltip-dice-group">
+    <span className="roller-result-dice-group">
       {removed.length > 0 && (
-        <span className="roller-tooltip-dice roller-tooltip-dice--removed">
-          {removed.join(', ')}
-        </span>
+        <span className="roller-result-dice roller-result-dice--removed">{removed.join(', ')}</span>
       )}
       {added.length > 0 && (
-        <span className="roller-tooltip-dice roller-tooltip-dice--added">{added.join(', ')}</span>
+        <span className="roller-result-dice roller-result-dice--added">{added.join(', ')}</span>
       )}
-      {hasModified && shown.length > 0 && <span className="roller-tooltip-dice-sep">|</span>}
+      {hasModified && shown.length > 0 && <span className="roller-result-dice-sep">|</span>}
       {shown.length > 0 && (
-        <span className="roller-tooltip-dice">
+        <span className="roller-result-dice">
           {shown.join(', ')}
           {truncated ? ' …' : ''}
         </span>
@@ -670,13 +668,13 @@ function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Eleme
     <>
       {steps.map((step, i) => {
         if (step.kind === 'divider') {
-          return <div key={`div-${i}`} className="roller-tooltip-divider" />
+          return <div key={`div-${i}`} className="roller-result-divider" />
         }
         if (step.kind === 'arithmetic') {
           return (
-            <div key={i} className="roller-tooltip-row">
-              <span className="roller-tooltip-label">{step.label}</span>
-              <span className="roller-tooltip-dice roller-tooltip-dice--arithmetic">
+            <div key={i} className="roller-result-row">
+              <span className="roller-result-label">{step.label}</span>
+              <span className="roller-result-dice roller-result-dice--arithmetic">
                 {step.display}
               </span>
             </div>
@@ -684,16 +682,16 @@ function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Eleme
         }
         if (step.kind === 'rolls') {
           return (
-            <div key={i} className="roller-tooltip-row">
-              <span className="roller-tooltip-label">{step.label}</span>
+            <div key={i} className="roller-result-row">
+              <span className="roller-result-label">{step.label}</span>
               <DiceGroup unchanged={step.unchanged} removed={step.removed} added={step.added} />
             </div>
           )
         }
         return (
-          <div key="finalRolls" className="roller-tooltip-row roller-tooltip-row--final">
-            <span className="roller-tooltip-label">Final rolls</span>
-            <span className="roller-tooltip-dice">
+          <div key="finalRolls" className="roller-result-row roller-result-row--final">
+            <span className="roller-result-label">Final rolls</span>
+            <span className="roller-result-dice">
               {formatAsMath(step.rolls, step.arithmeticDelta)}
             </span>
           </div>
@@ -703,7 +701,7 @@ function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Eleme
   )
 }
 
-export function RollTooltip({
+export function RollResult({
   records
 }: {
   readonly records: readonly RollRecord[]
@@ -711,12 +709,12 @@ export function RollTooltip({
   const multiPool = records.length > 1
 
   return (
-    <div className="roller-tooltip-inner">
+    <div className="roller-result-inner">
       {records.map((record, i) => (
         <Fragment key={i}>
-          {multiPool && <div className="roller-tooltip-pool-header">{record.notation}</div>}
+          {multiPool && <div className="roller-result-pool-header">{record.notation}</div>}
           <PoolSteps record={record} />
-          {multiPool && i < records.length - 1 && <div className="roller-tooltip-pool-divider" />}
+          {multiPool && i < records.length - 1 && <div className="roller-result-pool-divider" />}
         </Fragment>
       ))}
     </div>
