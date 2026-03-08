@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { isDiceNotation } from '../src/isDiceNotation'
+import { isDiceNotation } from '@randsum/notation'
 
 describe('isDiceNotation', () => {
   describe('valid dice notation strings', () => {

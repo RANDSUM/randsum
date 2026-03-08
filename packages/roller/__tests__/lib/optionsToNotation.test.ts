@@ -1,7 +1,7 @@
 import { describe, expect, spyOn, test } from 'bun:test'
 import { optionsToNotation } from '../../src/lib/transformers'
 import { createRollOptions } from '../support/fixtures'
-import * as notationModule from '../../src/isDiceNotation'
+import * as notationModule from '@randsum/notation'
 import { NotationParseError } from '../../src/errors'
 
 describe(optionsToNotation, () => {

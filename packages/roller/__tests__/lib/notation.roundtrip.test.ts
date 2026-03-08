@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import * as fc from 'fast-check'
 import { optionsToNotation } from '../../src/lib/transformers'
-import { notationToOptions } from '../../src/lib/notation/notationToOptions'
+import { notationToOptions } from '@randsum/notation'
 import type { ModifierOptions, RollOptions } from '../../src'
 
 /**
@@ -127,7 +127,7 @@ describe('notation round-trip property tests', () => {
 
         // Core properties should match
         expect(first.sides).toBe(options.sides)
-        expect(first.quantity ?? 1).toBe(options.quantity ?? 1)
+        expect(first.quantity).toBe(options.quantity ?? 1)
 
         return true
       }),
@@ -152,7 +152,7 @@ describe('notation round-trip property tests', () => {
         if (!first) return false
 
         expect(first.sides).toBe(options.sides)
-        expect(first.quantity ?? 1).toBe(options.quantity)
+        expect(first.quantity).toBe(options.quantity)
 
         return true
       }),
