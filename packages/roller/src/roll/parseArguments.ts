@@ -53,7 +53,9 @@ export function parseArguments<T>(
       quantity,
       arithmetic,
       argument,
-      notation: lightweight ? ('' as DiceNotation) : optionsToNotation(options),
+      // '0d0' is a valid DiceNotation-shaped placeholder used in lightweight mode
+      // where notation is never re-parsed — only stored for display purposes
+      notation: lightweight ? ('0d0' as DiceNotation) : optionsToNotation(options),
       description: lightweight ? [] : optionsToDescription(options)
     }
   })

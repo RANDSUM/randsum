@@ -4,7 +4,11 @@ import { notationToOptions } from './notation'
 import { optionsToNotation } from './transformers'
 
 export function normalize(notation: DiceNotation): DiceNotation {
-  const options = notationToOptions(notation)[0]
+  const parsed = notationToOptions(notation)
+  if (parsed.length !== 1) {
+    throw new NotationParseError(notation, 'normalize() only supports single-segment notation')
+  }
+  const [options] = parsed
   if (options === undefined) {
     throw new NotationParseError(notation, 'Could not parse notation into options')
   }

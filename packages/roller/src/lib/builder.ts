@@ -1,4 +1,10 @@
-import type { ComparisonOptions, RerollOptions, RollOptions, RollerRollResult } from '../types'
+import type {
+  ComparisonOptions,
+  ModifierOptions,
+  RerollOptions,
+  RollOptions,
+  RollerRollResult
+} from '../types'
 import { roll } from '../roll'
 
 /**
@@ -70,7 +76,7 @@ export class DiceBuilder {
     return roll(this.opts)
   }
 
-  private merge(modifier: RollOptions['modifiers']): DiceBuilder {
+  private merge(modifier: Partial<ModifierOptions>): DiceBuilder {
     return new DiceBuilder({
       ...this.opts,
       modifiers: { ...this.opts.modifiers, ...modifier }
