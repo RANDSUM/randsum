@@ -1109,19 +1109,6 @@
   line-height: 1.4;
 }
 
-.roller-tooltip-row:nth-child(even) {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-@media (prefers-color-scheme: light) {
-  .roller-tooltip-row:nth-child(even) {
-    background: rgba(0, 0, 0, 0.04);
-  }
-}
-[data-theme='light'] .roller-tooltip-row:nth-child(even) {
-  background: rgba(0, 0, 0, 0.04);
-}
-
 .roller-tooltip-label {
   color: #9ca3af;
 }

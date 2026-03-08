@@ -118,7 +118,11 @@ export function RollerPlayground({
     timerRef.current = setTimeout(() => {
       try {
         const result = roll(notation)
-        if (result.rolls.length === 0) return
+        if (result.rolls.length === 0) {
+          setState({ status: 'idle' })
+          setOverlayVisible(false)
+          return
+        }
         setState({ status: 'result', total: result.total, records: result.rolls })
         setOverlayVisible(true)
       } catch {
