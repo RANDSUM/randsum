@@ -1,6 +1,8 @@
 export interface ModifierDoc {
   readonly title: string
   readonly description: string
+  readonly displayBase: string
+  readonly displayOptional?: string
   readonly forms: readonly { readonly notation: string; readonly note: string }[]
   readonly examples: readonly { readonly notation: string; readonly description: string }[]
 }
@@ -8,12 +10,9 @@ export interface ModifierDoc {
 export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   xDY: {
     title: 'Core Roll',
-    description: 'Roll X dice with Y sides each. The foundation of every notation string.',
-    forms: [
-      { notation: 'NdS', note: 'Roll N dice, S sides' },
-      { notation: '1d20', note: 'One twenty-sided die' },
-      { notation: '4d6', note: 'Four six-sided dice' }
-    ],
+    description: 'Roll N dice with S sides each. The foundation of every notation string.',
+    displayBase: 'NdS',
+    forms: [{ notation: 'NdS', note: 'Roll N dice, S sides each' }],
     examples: [
       { notation: '1d20', description: 'Roll one d20' },
       { notation: '4d6', description: 'Roll four d6' },
@@ -23,10 +22,11 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   L: {
     title: 'Drop Lowest',
     description: 'Remove the lowest-valued dice from the pool before summing.',
+    displayBase: 'L',
+    displayOptional: 'N',
     forms: [
-      { notation: 'L', note: 'Drop 1 lowest' },
-      { notation: 'LN', note: 'Drop N lowest' },
-      { notation: 'LH', note: 'Drop lowest and highest' }
+      { notation: 'L', note: 'No argument — drop 1 lowest' },
+      { notation: 'LN', note: 'Drop N lowest' }
     ],
     examples: [
       { notation: '4d6L', description: 'Roll 4d6, drop lowest (ability scores)' },
@@ -36,10 +36,11 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   H: {
     title: 'Drop Highest',
     description: 'Remove the highest-valued dice from the pool before summing.',
+    displayBase: 'H',
+    displayOptional: 'N',
     forms: [
-      { notation: 'H', note: 'Drop 1 highest' },
-      { notation: 'HN', note: 'Drop N highest' },
-      { notation: 'LH', note: 'Drop lowest and highest' }
+      { notation: 'H', note: 'No argument — drop 1 highest' },
+      { notation: 'HN', note: 'Drop N highest' }
     ],
     examples: [
       { notation: '2d20H', description: 'Roll 2d20, drop highest (disadvantage)' },
@@ -49,8 +50,10 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   K: {
     title: 'Keep Highest',
     description: 'Keep only the N highest-valued dice; discard the rest.',
+    displayBase: 'K',
+    displayOptional: 'N',
     forms: [
-      { notation: 'K', note: 'Keep 1 highest' },
+      { notation: 'K', note: 'No argument — keep 1 highest' },
       { notation: 'KN', note: 'Keep N highest' }
     ],
     examples: [
@@ -61,8 +64,10 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   kl: {
     title: 'Keep Lowest',
     description: 'Keep only the N lowest-valued dice; discard the rest.',
+    displayBase: 'kl',
+    displayOptional: 'N',
     forms: [
-      { notation: 'kl', note: 'Keep 1 lowest' },
+      { notation: 'kl', note: 'No argument — keep 1 lowest' },
       { notation: 'klN', note: 'Keep N lowest' }
     ],
     examples: [
@@ -73,10 +78,11 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   '!': {
     title: 'Explode',
     description:
-      'Each die that shows its maximum value triggers an extra die roll, added to the result. Continues if new dice also max.',
+      'Each die showing its maximum value triggers an extra die roll. Continues if new dice also max.',
+    displayBase: '!',
     forms: [{ notation: '!', note: 'Explode on max value' }],
     examples: [
-      { notation: '3d6!', description: 'Roll 3d6; any 6 explodes (adds another d6)' },
+      { notation: '3d6!', description: 'Roll 3d6; any 6 adds another d6' },
       { notation: '4d6L!', description: 'Roll 4d6, explode, then drop lowest' }
     ]
   },
@@ -84,10 +90,12 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Compound Explode',
     description:
       'Like explode, but extra rolls add to the triggering die rather than creating new dice.',
+    displayBase: '!!',
+    displayOptional: 'N',
     forms: [
-      { notation: '!!', note: 'Compound once on max' },
-      { notation: '!!N', note: 'Compound up to depth N' },
-      { notation: '!!0', note: 'Compound unlimited (capped at 100)' }
+      { notation: '!!', note: 'No argument — compound once on max' },
+      { notation: '!!N', note: 'Compound up to N times' },
+      { notation: '!!0', note: 'Unlimited (capped at 100)' }
     ],
     examples: [
       { notation: '3d6!!', description: 'Roll 3d6; 6s add to themselves' },
@@ -98,10 +106,12 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Penetrating Explode',
     description:
       'Like explode, but each subsequent explosion subtracts 1 from the result (Hackmaster-style).',
+    displayBase: '!p',
+    displayOptional: 'N',
     forms: [
-      { notation: '!p', note: 'Penetrate on max value' },
-      { notation: '!pN', note: 'Penetrate up to depth N' },
-      { notation: '!p0', note: 'Penetrate unlimited (capped at 100)' }
+      { notation: '!p', note: 'No argument — penetrate once' },
+      { notation: '!pN', note: 'Penetrate up to N times' },
+      { notation: '!p0', note: 'Unlimited (capped at 100)' }
     ],
     examples: [
       { notation: '1d6!p', description: 'Roll 1d6; max penetrates with -1 per chain' },
@@ -111,9 +121,11 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   U: {
     title: 'Unique',
     description: 'Force all dice in the pool to show different values by rerolling duplicates.',
+    displayBase: 'U',
+    displayOptional: '{..}',
     forms: [
-      { notation: 'U', note: 'All values must be unique' },
-      { notation: 'U{X,Y}', note: 'Unique except X and Y may repeat' }
+      { notation: 'U', note: 'No argument — all values must be unique' },
+      { notation: 'U{X,...}', note: 'Allow listed values to repeat' }
     ],
     examples: [
       { notation: '4d20U', description: 'Roll 4d20, no duplicate results' },
@@ -123,33 +135,37 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   'V{..}': {
     title: 'Replace',
     description: 'Replace dice showing specific values with a new value.',
+    displayBase: 'V',
+    displayOptional: '{..}',
     forms: [
-      { notation: 'V{X=Y}', note: 'Replace exact value X with Y' },
-      { notation: 'V{>N=Y}', note: 'Replace results over N with Y' },
-      { notation: 'V{<N=Y}', note: 'Replace results under N with Y' },
-      { notation: 'V{X=Y,A=B}', note: 'Multiple replacement rules' }
+      { notation: 'V{X=Y}', note: 'Single rule' },
+      { notation: 'V{X=Y,A=B,...}', note: 'Multiple rules' }
     ],
     examples: [
-      { notation: '4d6V{1=2}', description: 'Reroll 1s, replace with 2' },
-      { notation: '4d20V{>18=20}', description: 'Cap 19s and 20s to 20 by replace' }
+      { notation: '4d6V{1=2}', description: 'Replace 1s with 2' },
+      { notation: '4d20V{>18=20}', description: 'Cap 19s and 20s to 20' }
     ]
   },
   'S{..}': {
     title: 'Count Successes',
     description:
       'Count dice that meet a threshold instead of summing values — used in dice pool systems.',
+    displayBase: 'S',
+    displayOptional: '{..}',
     forms: [
-      { notation: 'S{N}', note: 'Count dice >= N' },
-      { notation: 'S{N,B}', note: 'Successes >= N minus botches <= B' }
+      { notation: 'S{N}', note: 'Single success threshold' },
+      { notation: 'S{N,B}', note: 'Threshold + botch threshold' }
     ],
     examples: [
       { notation: '5d10S{7}', description: 'Count dice that rolled 7 or higher' },
-      { notation: '5d10S{7,1}', description: 'Successes >= 7, subtract botches <= 1' }
+      { notation: '5d10S{7,1}', description: 'Successes ≥ 7, subtract botches ≤ 1' }
     ]
   },
   '**': {
     title: 'Multiply Total',
     description: 'Multiply the entire final total after all other modifiers have been applied.',
+    displayBase: '**',
+    displayOptional: 'N',
     forms: [{ notation: '**N', note: 'Multiply final total by N' }],
     examples: [
       { notation: '2d6+3**2', description: '(roll + 3) × 2' },
@@ -158,7 +174,9 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   '*': {
     title: 'Multiply Dice',
-    description: 'Multiply the dice sum before applying +/- arithmetic modifiers.',
+    description: 'Multiply the dice sum before applying +/− arithmetic modifiers.',
+    displayBase: '*',
+    displayOptional: 'N',
     forms: [{ notation: '*N', note: 'Multiply dice sum by N (pre-arithmetic)' }],
     examples: [
       { notation: '2d6*2+3', description: '(roll × 2) + 3' },
@@ -168,6 +186,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   '\u2013': {
     title: 'Subtract',
     description: 'Subtract a fixed number from the total after all dice are rolled.',
+    displayBase: '−',
+    displayOptional: 'N',
     forms: [{ notation: '-N', note: 'Subtract N from total' }],
     examples: [
       { notation: '1d20-2', description: 'Roll 1d20, subtract 2' },
@@ -177,6 +197,8 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   '+': {
     title: 'Add',
     description: 'Add a fixed number to the total after all dice are rolled.',
+    displayBase: '+',
+    displayOptional: 'N',
     forms: [{ notation: '+N', note: 'Add N to total' }],
     examples: [
       { notation: '1d20+5', description: 'Roll 1d20, add 5' },
@@ -186,12 +208,12 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   'C{..}': {
     title: 'Cap',
     description:
-      'Clamp individual die values to a range — dice that fall outside are moved to the boundary.',
+      'Clamp individual die values to a range — dice outside the boundary are moved to it.',
+    displayBase: 'C',
+    displayOptional: '{..}',
     forms: [
-      { notation: 'C{>N}', note: 'Cap rolls over N to N' },
-      { notation: 'C{<N}', note: 'Cap rolls under N to N' },
-      { notation: 'C{N}', note: 'Max cap at N (bare number)' },
-      { notation: 'C{<N,>M}', note: 'Floor N and ceiling M' }
+      { notation: 'C{N}', note: 'Single cap value' },
+      { notation: 'C{<N,>M}', note: 'Floor and ceiling' }
     ],
     examples: [
       { notation: '4d6C{>5}', description: 'Cap rolls: nothing exceeds 5' },
@@ -202,11 +224,11 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Reroll',
     description:
       'Reroll dice that match a condition. The new result stands (may reroll again if still matching).',
+    displayBase: 'R',
+    displayOptional: '{..}',
     forms: [
-      { notation: 'R{<N}', note: 'Reroll results under N' },
-      { notation: 'R{>N}', note: 'Reroll results over N' },
-      { notation: 'R{X,Y}', note: 'Reroll exact values X, Y' },
-      { notation: 'R{<N}M', note: 'Reroll under N, max M attempts' }
+      { notation: 'R{..}', note: 'Reroll matching dice' },
+      { notation: 'R{..}N', note: 'Reroll, max N attempts' }
     ],
     examples: [
       { notation: '4d6R{1}', description: 'Reroll any 1s' },

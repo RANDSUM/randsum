@@ -15,9 +15,13 @@ export function ModifierDocContent({
   if (!doc) {
     return (
       <div className="modifier-doc">
-        <div className="modifier-doc-header">
-          <span className="modifier-doc-notation">{cell.notation}</span>
-          <span className="modifier-doc-title">{cell.description}</span>
+        <div className="modifier-doc-top">
+          <div className="modifier-doc-notation-box">
+            <span className="modifier-doc-notation-base">{cell.notation}</span>
+          </div>
+          <div className="modifier-doc-header-text">
+            <div className="modifier-doc-title">{cell.description}</div>
+          </div>
         </div>
         {onBack && (
           <button className="modifier-doc-back" onClick={onBack} type="button">
@@ -30,11 +34,18 @@ export function ModifierDocContent({
 
   return (
     <div className="modifier-doc">
-      <div className="modifier-doc-header">
-        <span className="modifier-doc-notation">{cell.notation}</span>
-        <span className="modifier-doc-title">{doc.title}</span>
+      <div className="modifier-doc-top">
+        <div className="modifier-doc-notation-box">
+          <span className="modifier-doc-notation-base">{doc.displayBase}</span>
+          {doc.displayOptional && (
+            <span className="modifier-doc-notation-optional">{doc.displayOptional}</span>
+          )}
+        </div>
+        <div className="modifier-doc-header-text">
+          <div className="modifier-doc-title">{doc.title}</div>
+          <p className="modifier-doc-description">{doc.description}</p>
+        </div>
       </div>
-      <p className="modifier-doc-description">{doc.description}</p>
 
       <div className="modifier-doc-section-label">Forms</div>
       <div className="modifier-doc-forms">

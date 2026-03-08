@@ -5,49 +5,79 @@
     -apple-system,
     sans-serif;
   color: #e6edf3;
-  min-width: 220px;
+  min-width: 260px;
 }
 
-.modifier-doc-header {
+/* ===== Top row: notation box + title/desc ===== */
+.modifier-doc-top {
   display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  padding-bottom: 0.35rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 0.35rem;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
-.modifier-doc-notation {
+.modifier-doc-notation-box {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-  font-size: 1rem;
+  font-size: 3rem;
   font-weight: 700;
-  color: #60a5fa;
+  line-height: 1;
+  color: #ffffff;
+  padding: 0.5rem 0.75rem 0.4rem;
+  border: 1.5px solid #3b82f6;
+  border-radius: 0.5rem;
+  min-width: 3ch;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.modifier-doc-notation-base {
+  color: #ffffff;
+}
+
+.modifier-doc-notation-optional {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.modifier-doc-header-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding-top: 0.25rem;
 }
 
 .modifier-doc-title {
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: #e6edf3;
+  line-height: 1.2;
 }
 
 .modifier-doc-description {
   color: #9ca3af;
-  margin-bottom: 0.4rem;
   line-height: 1.4;
+  margin: 0;
 }
 
+/* ===== Section label ===== */
 .modifier-doc-section-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #6b7280;
+  letter-spacing: 0.07em;
+  color: #4b5563;
   margin-bottom: 0.2rem;
+  margin-top: 0.35rem;
 }
 
+/* ===== Forms ===== */
 .modifier-doc-forms {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.1rem;
 }
 
 .modifier-doc-form-row {
@@ -68,6 +98,7 @@
   text-align: right;
 }
 
+/* ===== Examples ===== */
 .modifier-doc-examples {
   display: flex;
   flex-direction: column;
@@ -92,18 +123,19 @@
   text-align: right;
 }
 
+/* ===== Back button ===== */
 .modifier-doc-back {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   background: none;
   border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
   color: #6b7280;
   font-size: 0.7rem;
   cursor: pointer;
   padding: 0.25rem 0 0;
-  margin-top: 0.15rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin-top: 0.35rem;
   width: 100%;
 }
 
@@ -111,14 +143,42 @@
   color: #9ca3af;
 }
 
+/* ===== Light mode ===== */
+@media (prefers-color-scheme: light) {
+  .modifier-doc {
+    color: #1f2328;
+  }
+  .modifier-doc-notation-base {
+    color: #1f2328;
+  }
+  .modifier-doc-notation-box {
+    border-color: #4878c8;
+  }
+  .modifier-doc-notation-optional {
+    color: rgba(31, 35, 40, 0.2);
+  }
+  .modifier-doc-title {
+    color: #1f2328;
+  }
+  .modifier-doc-example-notation {
+    color: #4878c8;
+  }
+}
+
 [data-theme='light'] .modifier-doc {
   color: #1f2328;
 }
-[data-theme='light'] .modifier-doc-title {
+[data-theme='light'] .modifier-doc-notation-base {
   color: #1f2328;
 }
-[data-theme='light'] .modifier-doc-notation {
-  color: #4878c8;
+[data-theme='light'] .modifier-doc-notation-box {
+  border-color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-notation-optional {
+  color: rgba(31, 35, 40, 0.2);
+}
+[data-theme='light'] .modifier-doc-title {
+  color: #1f2328;
 }
 [data-theme='light'] .modifier-doc-example-notation {
   color: #4878c8;
