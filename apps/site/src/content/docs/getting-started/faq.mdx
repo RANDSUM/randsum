@@ -1,6 +1,6 @@
 ---
 title: RANDSUM FAQ — Common Questions About the Dice Library
-description: "Answers to common questions: why roll() never throws, seeded RNG for testing, browser support, reroll infinite loop prevention, and how drop vs. keep differ."
+description: "Answers to common questions: when roll() throws, seeded RNG for testing, browser support, reroll infinite loop prevention, and how drop vs. keep differ."
 head:
   - tag: script
     attrs:
@@ -12,10 +12,10 @@ head:
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "Why doesn't roll() throw errors?",
+            "name": "When does roll() throw?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "RANDSUM's roll() is designed to never throw. Invalid input or runtime errors are returned in the result object as result.error, allowing you to handle failures gracefully without try/catch blocks."
+              "text": "roll() throws a RandsumError when given invalid input: invalid notation strings, invalid option values (like sides: 0), or modifiers with impossible conditions. Hardcoded notation like roll('4d6L') will never throw in practice — errors only occur with input from outside your control."
             }
           },
           {
@@ -56,20 +56,25 @@ head:
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-## Why doesn't `roll()` throw?
+## When does `roll()` throw?
 
-RANDSUM is not designed to throw — errors are returned as values rather than raised as exceptions. This makes error handling explicit and composable without try/catch blocks.
+`roll()` throws a `RandsumError` when given invalid input — invalid notation strings, bad option values (like `sides: 0`), or modifiers with impossible conditions. Hardcoded notation in your source will never throw in practice.
 
-<CodeExample code={`import { roll } from '@randsum/roller'
+For user-provided input, validate before rolling:
 
-const result = roll('invalid notation')
+<CodeExample code={`import { validateNotation, isDiceNotation, roll } from '@randsum/roller'
 
-if (result.error) {
-  // Handle the error — result.total is undefined here
-  console.error(result.error.message)
+// Option 1: validate and get structured error info
+const validation = validateNotation(userInput)
+if (!validation.valid) {
+  console.error(validation.error.message)
 } else {
-  // Safe to use result.total here
-  console.log(result.total)
+  const result = roll(userInput)
+}
+
+// Option 2: type guard
+if (isDiceNotation(userInput)) {
+  const result = roll(userInput) // typed as DiceNotation
 }`} />
 
 See [Error Handling](/guides/error-handling/) for the full pattern.

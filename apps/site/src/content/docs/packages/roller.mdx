@@ -117,7 +117,7 @@ console.log(result.rolls)  // Array of RollRecord objects`} />
 <RollerPlayground defaultNotation="4d6L+2" client:only="react" />
 
 :::note
-`roll()` is not designed to throw. If input is invalid, an error is returned in the result: check `result.error` before using `result.total`.
+`roll()` throws a `RandsumError` on invalid input. Hardcoded notation like `roll('4d6L')` will never throw in practice. Use `validateNotation()` or `isDiceNotation()` before rolling user-provided strings. See [Error Handling](/guides/error-handling/).
 :::
 
 ## Validation utilities

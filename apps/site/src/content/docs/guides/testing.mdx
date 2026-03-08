@@ -52,7 +52,6 @@ describe('roll with seeded RNG', () => {
 
   test('returns a valid result for any seed', () => {
     const result = roll('1d20', { randomFn: seededRandom(42) })
-    expect(result.error).toBeNull()
     expect(result.total).toBeGreaterThanOrEqual(1)
     expect(result.total).toBeLessThanOrEqual(20)
   })
@@ -143,34 +142,30 @@ describe('5e-style advantage roll (deterministic)', () => {
     )
     expect(result.total).toBeGreaterThanOrEqual(1)
     expect(result.total).toBeLessThanOrEqual(20)
-    expect(result.error).toBeNull()
   })
 })`} />
 
 ## Testing error paths
 
-`roll()` is not designed to throw. When given invalid input, it returns a result with a non-null `error` property.
+`roll()` throws a `RandsumError` on invalid input. Test error paths with `expect(() => ...).toThrow()`:
 
 <CodeExample code={`import { describe, expect, test } from 'bun:test'
-import { roll } from '@randsum/roller'
+import { roll, ValidationError, ModifierError } from '@randsum/roller'
 
 describe('error handling', () => {
-  test('returns an error for invalid notation', () => {
-    const result = roll('not-valid-notation')
-    expect(result.error).not.toBeNull()
-    expect(result.total).toBe(0)
-    expect(result.rolls).toHaveLength(0)
+  test('throws on invalid notation', () => {
+    expect(() => roll('not-valid-notation')).toThrow()
   })
 
-  test('returns an error for zero sides', () => {
-    const result = roll({ sides: 0, quantity: 1 })
-    expect(result.error).not.toBeNull()
+  test('throws ValidationError for zero sides', () => {
+    expect(() => roll({ sides: 0, quantity: 1 })).toThrow(ValidationError)
   })
 
-  test('returns null error for valid input', () => {
-    const result = roll('2d6')
-    expect(result.error).toBeNull()
+  test('throws ModifierError when dropping all dice', () => {
+    expect(() => roll({ sides: 6, quantity: 2, modifiers: { drop: { lowest: 2 } } })).toThrow(ModifierError)
+  })
+
+  test('valid input does not throw', () => {
+    expect(() => roll('2d6')).not.toThrow()
   })
 })`} />
-
-Always check `result.error` before using `result.total` in application code — the same pattern applies in tests.
