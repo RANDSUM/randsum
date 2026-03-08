@@ -52,10 +52,9 @@ export function ModifierDocContent({
           <div className="modifier-doc-section-label">Comparisons</div>
           <div className="modifier-doc-comparisons">
             {doc.comparisons.map(cmp => (
-              <div key={cmp.operator} className="modifier-doc-comparison-row">
-                <span className="modifier-doc-comparison-operator">{cmp.operator}</span>
-                <span className="modifier-doc-comparison-note">{cmp.note}</span>
-              </div>
+              <span key={cmp.operator} className="modifier-doc-comparison-chip" title={cmp.note}>
+                {cmp.operator}
+              </span>
             ))}
           </div>
         </>

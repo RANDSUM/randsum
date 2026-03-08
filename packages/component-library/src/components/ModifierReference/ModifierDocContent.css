@@ -77,35 +77,26 @@
 /* ===== Comparisons ===== */
 .modifier-doc-comparisons {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 0.3rem;
   margin-bottom: 0.1rem;
 }
 
-.modifier-doc-comparison-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  font-size: 0.85rem;
-  padding: 0.15rem 0.3rem;
-  margin: 0 -0.3rem;
-  border-radius: 0.2rem;
-}
-
-.modifier-doc-comparison-row:nth-child(even) {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.modifier-doc-comparison-operator {
+.modifier-doc-comparison-chip {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.8rem;
   color: #e6edf3;
-  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.4rem;
+  cursor: default;
+  transition: background 0.12s ease;
 }
 
-.modifier-doc-comparison-note {
-  font-size: 0.85rem;
-  color: #6b7280;
-  text-align: right;
+.modifier-doc-comparison-chip:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 /* ===== Examples ===== */
