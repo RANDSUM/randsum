@@ -42,16 +42,19 @@
   grid-template-columns: 1fr 1fr;
 }
 
-.modifier-reference-row:nth-child(even) .modifier-reference-cell {
+.modifier-reference-row:nth-child(odd) .modifier-reference-cell--right,
+.modifier-reference-row:nth-child(even) .modifier-reference-cell--left {
   background: rgba(255, 255, 255, 0.04);
 }
 
 @media (prefers-color-scheme: light) {
-  .modifier-reference-row:nth-child(even) .modifier-reference-cell {
+  .modifier-reference-row:nth-child(odd) .modifier-reference-cell--right,
+  .modifier-reference-row:nth-child(even) .modifier-reference-cell--left {
     background: rgba(0, 0, 0, 0.04);
   }
 }
-[data-theme='light'] .modifier-reference-row:nth-child(even) .modifier-reference-cell {
+[data-theme='light'] .modifier-reference-row:nth-child(odd) .modifier-reference-cell--right,
+[data-theme='light'] .modifier-reference-row:nth-child(even) .modifier-reference-cell--left {
   background: rgba(0, 0, 0, 0.04);
 }
 
