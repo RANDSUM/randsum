@@ -162,6 +162,57 @@
   opacity: 1;
 }
 
+/* ===== Notation box: invalid state ===== */
+.modifier-doc-notation-box--invalid {
+  border-color: #f97583;
+}
+
+/* ===== Inline notation inputs ===== */
+.modifier-doc-notation-input {
+  background: none;
+  border: none;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: #ffffff;
+  padding: 0;
+  min-width: 1ch;
+  text-align: center;
+  box-sizing: content-box;
+  caret-color: #3b82f6;
+  vertical-align: baseline;
+}
+
+.modifier-doc-notation-input::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.modifier-doc-notation-input:focus {
+  border-bottom-color: #3b82f6;
+}
+
+.modifier-doc-notation-input--muted {
+  color: rgba(255, 255, 255, 0.4);
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.modifier-doc-notation-input--muted:focus {
+  color: #ffffff;
+  border-bottom-color: #3b82f6;
+}
+
+/* ===== Clickable example rows ===== */
+.modifier-doc-example-row--clickable {
+  cursor: pointer;
+}
+
+.modifier-doc-example-row--clickable:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
 /* ===== Examples ===== */
 .modifier-doc-examples {
   display: flex;
@@ -284,14 +335,38 @@
   .modifier-doc-notation-box {
     border-color: #4878c8;
   }
+  .modifier-doc-notation-box--invalid {
+    border-color: #cf222e;
+  }
   .modifier-doc-notation-optional {
     color: rgba(31, 35, 40, 0.2);
+  }
+  .modifier-doc-notation-input {
+    color: #1f2328;
+    border-bottom-color: rgba(31, 35, 40, 0.3);
+  }
+  .modifier-doc-notation-input::placeholder {
+    color: rgba(31, 35, 40, 0.2);
+  }
+  .modifier-doc-notation-input:focus {
+    border-bottom-color: #4878c8;
+  }
+  .modifier-doc-notation-input--muted {
+    color: rgba(31, 35, 40, 0.4);
+    border-bottom-color: rgba(31, 35, 40, 0.15);
+  }
+  .modifier-doc-notation-input--muted:focus {
+    color: #1f2328;
+    border-bottom-color: #4878c8;
   }
   .modifier-doc-title {
     color: #1f2328;
   }
   .modifier-doc-example-notation {
     color: #4878c8;
+  }
+  .modifier-doc-example-row--clickable:hover {
+    background: rgba(0, 0, 0, 0.04);
   }
   .modifier-doc-add {
     background: rgba(72, 120, 200, 0.1);
@@ -319,6 +394,30 @@
 }
 [data-theme='light'] .modifier-doc-notation-box {
   border-color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-notation-box--invalid {
+  border-color: #cf222e;
+}
+[data-theme='light'] .modifier-doc-notation-input {
+  color: #1f2328;
+  border-bottom-color: rgba(31, 35, 40, 0.3);
+}
+[data-theme='light'] .modifier-doc-notation-input::placeholder {
+  color: rgba(31, 35, 40, 0.2);
+}
+[data-theme='light'] .modifier-doc-notation-input:focus {
+  border-bottom-color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-notation-input--muted {
+  color: rgba(31, 35, 40, 0.4);
+  border-bottom-color: rgba(31, 35, 40, 0.15);
+}
+[data-theme='light'] .modifier-doc-notation-input--muted:focus {
+  color: #1f2328;
+  border-bottom-color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-example-row--clickable:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
 [data-theme='light'] .modifier-doc-notation-optional {
   color: rgba(31, 35, 40, 0.2);

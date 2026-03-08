@@ -251,7 +251,12 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     justify-content: center;
     align-items: center;
     text-align: center;
-    min-width: 0;
+    width: max-content;
+    max-width: 100%;
+  }
+
+  .hero-tagline {
+    white-space: nowrap;
   }
 
   .hero-logo-wrap {
@@ -320,8 +325,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     15%  { transform: rotate(1800deg); }
     70%  { transform: rotate(3420deg); }
     85%  { transform: rotate(3555deg); }
-    92%  { transform: rotate(3600deg); }
-    96%  { transform: rotate(3628deg); }
     100% { transform: rotate(3600deg); }
   }
 

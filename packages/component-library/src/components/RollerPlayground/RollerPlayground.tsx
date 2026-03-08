@@ -178,12 +178,13 @@ export function RollerPlayground({
     [overlayContent]
   )
 
-  const handleAddModifier = useCallback((cell: ModifierReferenceCell) => {
-    const insertable = cell.notation === '\u2013' ? '-' : cell.notation.replace('..', '')
-    setNotation(prev => prev + insertable)
+  const handleAddModifier = useCallback((insertNotation: string) => {
+    setNotation(prev => prev + insertNotation)
     setOverlayContent(null)
     inputRef.current?.focus()
   }, [])
+
+  const notationHasCore = /\d+[Dd]\d+/.test(notation)
 
   const rootClass = [
     'roller-playground',
@@ -488,16 +489,14 @@ export function RollerPlayground({
                       onBack={() => {
                         setOverlayContent({ kind: 'result' })
                       }}
-                      onAdd={() => {
-                        handleAddModifier(overlayContent.cell)
-                      }}
+                      onAdd={handleAddModifier}
+                      notationHasCore={notationHasCore}
                     />
                   ) : (
                     <ModifierDocContent
                       cell={overlayContent.cell}
-                      onAdd={() => {
-                        handleAddModifier(overlayContent.cell)
-                      }}
+                      onAdd={handleAddModifier}
+                      notationHasCore={notationHasCore}
                     />
                   ))}
               </Overlay>

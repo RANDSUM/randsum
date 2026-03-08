@@ -159,6 +159,14 @@
   color: #1f2328;
 }
 
+.modifier-reference-notation-suffix--required {
+  opacity: 1;
+}
+
+.modifier-reference-notation-suffix--optional {
+  opacity: 0.35;
+}
+
 .modifier-reference-desc {
   font-size: 0.875rem;
   color: #9ca3af;

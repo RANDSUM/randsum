@@ -29,11 +29,11 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       { notation: '4d6D{1,6}', description: 'Drop multiple' }
     ]
   },
-  xDY: {
+  xDN: {
     title: 'Core Roll',
-    description: 'Roll N dice with S sides each. The foundation of every notation string.',
-    displayBase: 'NdS',
-    forms: [{ notation: 'NdS', note: 'Roll N dice, S sides each' }],
+    description: 'Roll x dice with N sides each. The foundation of every notation string.',
+    displayBase: 'xDN',
+    forms: [{ notation: 'xDN', note: 'Roll x dice, N sides each' }],
     examples: [
       { notation: '1d20', description: 'Roll one d20' },
       { notation: '4d6', description: 'Roll four d6' },
