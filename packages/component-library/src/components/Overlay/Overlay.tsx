@@ -45,7 +45,7 @@ export function Overlay({
           e.stopPropagation()
         }}
       >
-        {children}
+        <div className="rp-overlay-card-inner">{children}</div>
       </div>
     </div>
   )

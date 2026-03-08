@@ -3,6 +3,20 @@ import type { ModifierReferenceCell } from './ModifierReference'
 import { MODIFIER_DOCS } from './modifierDocs'
 import './ModifierDocContent.css'
 
+function NotationBase({ text }: { readonly text: string }): React.JSX.Element {
+  const dotIdx = text.indexOf('..')
+  if (dotIdx === -1) {
+    return <span className="modifier-doc-notation-base">{text}</span>
+  }
+  return (
+    <span className="modifier-doc-notation-base">
+      {text.slice(0, dotIdx)}
+      <span className="modifier-doc-notation-optional">{'..'}</span>
+      {text.slice(dotIdx + 2)}
+    </span>
+  )
+}
+
 export function ModifierDocContent({
   cell,
   onBack
@@ -17,7 +31,7 @@ export function ModifierDocContent({
       <div className="modifier-doc">
         <div className="modifier-doc-top">
           <div className="modifier-doc-notation-box">
-            <span className="modifier-doc-notation-base">{cell.notation}</span>
+            <NotationBase text={cell.notation} />
           </div>
           <div className="modifier-doc-header-text">
             <div className="modifier-doc-title">{cell.description}</div>
@@ -36,7 +50,7 @@ export function ModifierDocContent({
     <div className="modifier-doc">
       <div className="modifier-doc-top">
         <div className="modifier-doc-notation-box">
-          <span className="modifier-doc-notation-base">{doc.displayBase}</span>
+          <NotationBase text={doc.displayBase} />
           {doc.displayOptional && (
             <span className="modifier-doc-notation-optional">{doc.displayOptional}</span>
           )}
@@ -52,7 +66,11 @@ export function ModifierDocContent({
           <div className="modifier-doc-section-label">Comparisons</div>
           <div className="modifier-doc-comparisons">
             {doc.comparisons.map(cmp => (
-              <span key={cmp.operator} className="modifier-doc-comparison-chip" title={cmp.note}>
+              <span
+                key={cmp.operator}
+                className="modifier-doc-comparison-chip"
+                data-tooltip={cmp.note}
+              >
                 {cmp.operator}
               </span>
             ))}
