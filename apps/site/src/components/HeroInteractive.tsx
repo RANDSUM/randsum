@@ -225,7 +225,7 @@ export function HeroRollerPlayground(): React.JSX.Element {
     }
   }, [])
 
-  return <RollerPlayground notation={notation} />
+  return <RollerPlayground notation={notation} expanded />
 }
 
 export function GithubButton(): React.JSX.Element {
