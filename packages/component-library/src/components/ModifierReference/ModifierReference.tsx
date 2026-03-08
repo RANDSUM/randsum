@@ -68,7 +68,7 @@ const GRID_ROWS: readonly GridRow[] = [
   ],
   [
     { notation: 'U', description: 'unique', notationSuffix: '{..}' },
-    { notation: 'R{..}', description: 'reroll...' }
+    { notation: 'R{..}', description: 'reroll...', notationSuffix: 'N' }
   ]
 ] as const
 

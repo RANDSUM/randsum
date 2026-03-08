@@ -39,14 +39,22 @@ function NotationBase({ text }: { readonly text: string }): React.JSX.Element {
   )
 }
 
-type InputKind = 'core' | 'none' | 'optional-num' | 'required-num' | 'brace' | 'optional-brace'
+type InputKind =
+  | 'core'
+  | 'none'
+  | 'optional-num'
+  | 'required-num'
+  | 'brace'
+  | 'brace-opt-suffix'
+  | 'optional-brace'
 
 function getInputKind(notation: string): InputKind {
   if (notation === 'xDN') return 'core'
   if (notation === '!') return 'none'
   if (['L', 'H', 'K', 'KL', '!!', '!p'].includes(notation)) return 'optional-num'
   if (['+', '\u2013', '*', '**'].includes(notation)) return 'required-num'
-  if (['R{..}', 'C{..}', 'D{..}', 'V{..}', 'S{..}'].includes(notation)) return 'brace'
+  if (notation === 'R{..}') return 'brace-opt-suffix'
+  if (['C{..}', 'D{..}', 'V{..}', 'S{..}'].includes(notation)) return 'brace'
   if (notation === 'U') return 'optional-brace'
   return 'none'
 }
@@ -64,20 +72,22 @@ function buildInsert(
   inputValue: string,
   quantity: string,
   sides: string,
-  notationHasCore: boolean
+  notationHasCore: boolean,
+  suffixValue = ''
 ): string {
   if (kind === 'core') return notationHasCore ? `+${quantity}d${sides}` : `${quantity}d${sides}`
   const base = getInsertBase(notation)
   if (kind === 'none') return base
   if (kind === 'optional-num' || kind === 'required-num') return `${base}${inputValue}`
   if (kind === 'brace') return `${base}{${inputValue}}`
+  if (kind === 'brace-opt-suffix') return `${base}{${inputValue}}${suffixValue}`
   return inputValue ? `${base}{${inputValue}}` : base
 }
 
 function checkIsValid(kind: InputKind, insert: string): boolean {
   if (kind === 'none') return true
   if (kind === 'required-num' && !/\d/.test(insert)) return false
-  if (kind === 'brace' && !/\{.+\}/.test(insert)) return false
+  if ((kind === 'brace' || kind === 'brace-opt-suffix') && !/\{.+\}/.test(insert)) return false
   if (kind === 'core') {
     const coreStr = insert.startsWith('+') ? insert.slice(1) : insert
     return isDiceNotation(coreStr)
@@ -88,7 +98,12 @@ function checkIsValid(kind: InputKind, insert: string): boolean {
 function extractExampleValue(
   exNotation: string,
   cellNotation: string
-): { readonly quantity?: string; readonly sides?: string; readonly value?: string } {
+): {
+  readonly quantity?: string
+  readonly sides?: string
+  readonly value?: string
+  readonly suffix?: string
+} {
   if (cellNotation === 'xDN') {
     const m = /^(\d+)[Dd](\d+)/.exec(exNotation)
     return m ? { quantity: m[1] ?? '', sides: m[2] ?? '' } : {}
@@ -111,6 +126,10 @@ function extractExampleValue(
   }
   if (cellNotation === '**') return { value: /\*\*(\d+)/.exec(stripped)?.[1] ?? '' }
   if (cellNotation === 'U') return { value: /[Uu](?:\{([^}]*)\})?/.exec(stripped)?.[1] ?? '' }
+  if (cellNotation === 'R{..}') {
+    const m = /[Rr]\{([^}]*)\}(\d*)/.exec(stripped)
+    return { value: m?.[1] ?? '', suffix: m?.[2] ?? '' }
+  }
   return { value: /\{([^}]*)\}/.exec(stripped)?.[1] ?? '' }
 }
 
@@ -135,6 +154,7 @@ export function ModifierDocContent({
   const [inputValue, setInputValue] = useState('')
   const [quantityInput, setQuantityInput] = useState('')
   const [sidesInput, setSidesInput] = useState('')
+  const [suffixInput, setSuffixInput] = useState('')
   const [isDirty, setIsDirty] = useState(false)
 
   const insertString = buildInsert(
@@ -143,7 +163,8 @@ export function ModifierDocContent({
     inputValue,
     quantityInput,
     sidesInput,
-    notationHasCore
+    notationHasCore,
+    suffixInput
   )
   const isValid = checkIsValid(kind, insertString)
   const showAdd = onAdd !== undefined
@@ -154,6 +175,7 @@ export function ModifierDocContent({
     if (extracted.quantity !== undefined) setQuantityInput(extracted.quantity)
     if (extracted.sides !== undefined) setSidesInput(extracted.sides)
     if (extracted.value !== undefined) setInputValue(extracted.value)
+    if (extracted.suffix !== undefined) setSuffixInput(extracted.suffix)
     setIsDirty(true)
   }
 
@@ -179,6 +201,7 @@ export function ModifierDocContent({
             style={{ width: iw(quantityInput, 'x') }}
             type="text"
             inputMode="numeric"
+            maxLength={5}
             spellCheck={false}
             autoComplete="off"
           />
@@ -194,6 +217,7 @@ export function ModifierDocContent({
             style={{ width: iw(sidesInput, 'N') }}
             type="text"
             inputMode="numeric"
+            maxLength={5}
             spellCheck={false}
             autoComplete="off"
           />
@@ -231,6 +255,7 @@ export function ModifierDocContent({
             style={{ width: iw(inputValue, placeholder) }}
             type="text"
             inputMode="numeric"
+            maxLength={8}
             spellCheck={false}
             autoComplete="off"
           />
@@ -256,10 +281,54 @@ export function ModifierDocContent({
             }}
             style={{ width: iw(inputValue, '..') }}
             type="text"
+            maxLength={8}
             spellCheck={false}
             autoComplete="off"
           />
           <span className="modifier-doc-notation-base">{'}'}</span>
+        </div>
+      )
+    }
+
+    // brace-opt-suffix (R{..}n)
+    if (kind === 'brace-opt-suffix') {
+      const displayBase = doc?.displayBase ?? cell.notation
+      const braceIdx = displayBase.indexOf('{')
+      const prefix = braceIdx !== -1 ? displayBase.slice(0, braceIdx) : getInsertBase(cell.notation)
+      return (
+        <div className={boxClass}>
+          <span className="modifier-doc-notation-base">{prefix}</span>
+          <span className="modifier-doc-notation-base">{'{'}</span>
+          <input
+            className="modifier-doc-notation-input"
+            value={inputValue}
+            placeholder=".."
+            onChange={e => {
+              setInputValue(e.target.value)
+              setIsDirty(true)
+            }}
+            style={{ width: iw(inputValue, '..') }}
+            type="text"
+            maxLength={8}
+            spellCheck={false}
+            autoComplete="off"
+          />
+          <span className="modifier-doc-notation-base">{'}'}</span>
+          <input
+            className="modifier-doc-notation-input modifier-doc-notation-input--muted"
+            value={suffixInput}
+            placeholder="n"
+            onChange={e => {
+              setSuffixInput(e.target.value.replace(/[^0-9]/g, ''))
+              setIsDirty(true)
+            }}
+            style={{ width: iw(suffixInput, 'n') }}
+            type="text"
+            inputMode="numeric"
+            maxLength={3}
+            spellCheck={false}
+            autoComplete="off"
+          />
         </div>
       )
     }
@@ -279,6 +348,7 @@ export function ModifierDocContent({
           }}
           style={{ width: iw(inputValue, '..') }}
           type="text"
+          maxLength={8}
           spellCheck={false}
           autoComplete="off"
         />

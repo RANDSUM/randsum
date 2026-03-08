@@ -201,6 +201,10 @@ export function RollerPlayground({
       onClick={e => {
         if (!(e.target instanceof HTMLButtonElement) && !(e.target instanceof HTMLInputElement))
           inputRef.current?.focus()
+        const expandEl = (e.currentTarget as HTMLElement).querySelector('.roller-playground-expand')
+        if (overlayContent !== null && expandEl && !expandEl.contains(e.target as Node)) {
+          dismiss()
+        }
       }}
     >
       <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
