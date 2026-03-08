@@ -1,0 +1,65 @@
+---
+title: Changelog — RANDSUM Release History
+description: Release history for RANDSUM packages including @randsum/roller, @randsum/notation, and game packages. View full release notes on GitHub.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+This page summarizes the major version milestones for the RANDSUM ecosystem. For full release notes, dates, and patch-level changes, see the [GitHub Releases page](https://github.com/RANDSUM/randsum/releases).
+
+<Aside type="tip">
+  All packages in the RANDSUM ecosystem follow the same major version. A major bump in `@randsum/roller` is accompanied by corresponding bumps in game packages and other dependents.
+</Aside>
+
+---
+
+## v3.x — Current
+
+**Packages:** `@randsum/notation`, `@randsum/roller`, all game packages
+
+The notation layer was extracted from `@randsum/roller` into a standalone package, `@randsum/notation`. This package provides:
+
+- `isDiceNotation()` — type guard for valid notation strings
+- `validateNotation()` — structured validation with error details
+- `suggestNotationFix()` — correction suggestions for invalid input
+- `notationToOptions()`, `optionsToNotation()` — round-trip conversion between notation strings and options objects
+- All shared types: `DiceNotation`, `RollOptions`, `ModifierOptions`, and more
+
+`@randsum/roller` continues to re-export everything from `@randsum/notation` for backward compatibility, so existing import paths do not need to change. Code that imports directly from `@randsum/notation` benefits from a zero-dependency footprint without pulling in the roller's runtime.
+
+Game packages received corresponding minor bumps to stay in sync with the core version.
+
+---
+
+## v2.x
+
+**Packages:** `@randsum/roller`, initial game packages
+
+The game package ecosystem was introduced in v2. This release added:
+
+- The `createGameRoll` factory in `@randsum/roller` — a standardized way for game packages to wrap the core `roll()` function with game-specific validation and result interpretation
+- Initial game packages: `@randsum/blades`, `@randsum/daggerheart`, `@randsum/fifth`, `@randsum/pbta`, `@randsum/root-rpg`, `@randsum/salvageunion`
+- The `GameRollResult` return type, which wraps roll output with an interpreted outcome tier specific to each game system
+
+Each game package follows the same pattern: accept game-specific input, validate it, translate it to roller options, roll, and interpret the numeric result into a game-meaningful outcome.
+
+---
+
+## v1.x
+
+**Packages:** `@randsum/roller`
+
+Initial public release of `@randsum/roller`. Established the core API:
+
+- `roll()` — the primary entry point accepting numbers, notation strings, and options objects
+- Extended dice notation: `NdS` base syntax plus drop (`L`/`H`), keep (`K`/`kl`), cap (`C{...}`), reroll (`R{...}`), explode (`!`), unique (`U`), count successes (`S{...}`), and arithmetic modifiers
+- The modifier priority system — a fixed execution order ensuring consistent, predictable results regardless of the order modifiers appear in notation
+- Zero-dependency design — no runtime dependencies
+
+---
+
+## Full release history
+
+The version milestones above are summaries. For complete release notes including all patch versions, bug fixes, and migration guides, visit the GitHub Releases page:
+
+[View all releases on GitHub](https://github.com/RANDSUM/randsum/releases)

@@ -12,12 +12,24 @@ head:
         "name": "@randsum/notation",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
-        "version": "3.0.0",
-        "description": "Zero-dependency dice notation parser and type foundation. Provides parsing, validation, and transformation utilities for dice notation strings.",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "Zero-dependency dice notation parser for the RANDSUM ecosystem. Parses dice notation strings into structured options.",
+        "offers": { "@type": "Offer", "price": "0" },
         "downloadUrl": "https://www.npmjs.com/package/@randsum/notation",
         "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/notation",
-        "keywords": "dice, dice notation, parser, TypeScript, tabletop RPG, validation"
+        "keywords": "dice notation parser, TypeScript, dice, tabletop RPG, npm package"
+      }
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Packages", "item": "https://randsum.dev/packages/overview/" },
+          { "@type": "ListItem", "position": 3, "name": "@randsum/notation", "item": "https://randsum.dev/packages/notation/" }
+        ]
       }
 ---
 

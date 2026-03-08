@@ -1,12 +1,26 @@
 ---
 title: Introduction to RANDSUM Dice Rolling Library
 description: Learn how RANDSUM's zero-dependency dice engine works, why it never throws exceptions, and how game-specific packages simplify D&D, PbtA, Blades in the Dark, and more.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Getting Started", "item": "https://randsum.dev/getting-started/introduction/" },
+          { "@type": "ListItem", "position": 3, "name": "Introduction", "item": "https://randsum.dev/getting-started/introduction/" }
+        ]
+      }
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 import { RollerPlayground } from '@randsum/component-library'
 
-RANDSUM is a TypeScript-first dice notation ecosystem for tabletop RPGs and game development. Throw dice, not exceptions.
+RANDSUM is an open-source, TypeScript-first [dice notation](/reference/dice-notation/) ecosystem for tabletop RPGs and game development. Throw dice, not exceptions.
 
 ## Why RANDSUM?
 
@@ -14,7 +28,7 @@ RANDSUM is a TypeScript-first dice notation ecosystem for tabletop RPGs and game
 - **Full TypeScript support** -- strict types, branded notation strings, and exhaustive result types
 - **Throws on invalid input** -- hardcoded notation never throws in practice; validate user-provided strings with `validateNotation()` or `isDiceNotation()`
 - **Modular architecture** -- install only the packages you need
-- **Game-specific packages** -- first-class support for D&D 5e, Blades in the Dark, PbtA, and more
+- **Game-specific packages** -- first-class support for [D&D 5e, Blades in the Dark, PbtA, and more](/games/overview/)
 
 ## How it works
 

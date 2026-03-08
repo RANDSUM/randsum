@@ -62,7 +62,8 @@ export default defineConfig({
           items: [
             { label: 'Dice Notation', slug: 'reference/dice-notation' },
             { label: 'Roll Options', slug: 'reference/roll-options' },
-            { label: 'Modifiers', slug: 'reference/modifiers' }
+            { label: 'Modifiers', slug: 'reference/modifiers' },
+            { label: 'Changelog', slug: 'reference/changelog' }
           ]
         },
         {
@@ -71,7 +72,8 @@ export default defineConfig({
             { label: 'Error Handling', slug: 'guides/error-handling' },
             { label: 'Recipes', slug: 'guides/recipes' },
             { label: 'Custom Game Packages', slug: 'guides/custom-game-packages' },
-            { label: 'Testing', slug: 'guides/testing' }
+            { label: 'Testing', slug: 'guides/testing' },
+            { label: 'Troubleshooting', slug: 'guides/troubleshooting' }
           ]
         },
         {

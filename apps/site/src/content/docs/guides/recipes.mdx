@@ -10,7 +10,7 @@ Short solutions to common dice-rolling problems.
 
 ## Seeded rolls
 
-Produce the same result every time — useful for replays, testing, or deterministic outcomes.
+Produce the same result every time — useful for replays, [testing](/guides/testing/), or deterministic outcomes.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
@@ -51,7 +51,7 @@ roll({ sides: 12, quantity: 2, modifiers: { drop: { lowest: 1 } } })
 // Disadvantage on 2d6
 roll({ sides: 6, quantity: 2, modifiers: { drop: { highest: 1 } } })`} />
 
-Advantage and disadvantage shorthand via notation:
+Advantage and disadvantage shorthand via [dice notation](/reference/dice-notation/):
 
 <RollerPlayground defaultNotation="2d12L" client:only="react" />
 

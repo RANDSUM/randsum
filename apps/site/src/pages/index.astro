@@ -79,13 +79,14 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
               <GetStartedButton client:load />
               <GithubButton client:load />
             </div>
+            <p class="hero-install"><code>npm install @randsum/roller</code></p>
           </div>
         </div>
         <div class="roller-playground-wrap not-content">
           <HeroRollerPlayground client:only="react" />
         </div>
       </div>
-      <div class="pkg-section-label">Packages</div>
+      <h2 class="pkg-section-label">Packages</h2>
     </section>
 
     <!-- Packages -->
@@ -119,7 +120,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
     <!-- What is RANDSUM? -->
     <section class="not-content" style="max-width: 860px; margin: 4rem auto; padding: 0 1.5rem;">
-      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">What is RANDSUM?</h2>
+      <h2 class="section-heading">What is RANDSUM?</h2>
       <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
         RANDSUM is a TypeScript dice rolling library built for tabletop RPG developers. At its core is
         <code>@randsum/roller</code> — a zero-dependency npm package that parses and evaluates dice notation
@@ -384,6 +385,21 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 1rem;
+  }
+
+  .hero-install {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .hero-install code {
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.6rem;
+    color: var(--sl-color-accent-high);
   }
 
   /* ===== Playground ===== */
@@ -651,6 +667,12 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   .footer-col a:hover {
     color: var(--sl-color-accent-high);
+  }
+
+  .section-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
   }
 
   /* ===== Responsive ===== */

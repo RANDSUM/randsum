@@ -26,6 +26,14 @@ The **RANDSUM Component Library** ships two React components for embedding inter
 | [RollerPlayground](/tools/components/roller-playground/) | Interactive dice notation editor with live roll results and breakdown panel |
 | [ModifierReference](/tools/components/modifier-reference/) | Reference grid of all supported dice notation modifiers |
 
+## When to use these components
+
+Use `RollerPlayground` when you want to drop a working dice roller into an existing page without building the input handling, result display, and notation parsing yourself. It is a good fit for documentation sites, tutorial pages, or any context where you want readers to experiment with notation interactively. If you need tighter control over layout, state, or UX, build your own UI on top of `@randsum/roller` directly — the components are not a hard requirement.
+
+These components are built for React and are integrated into Astro via `@astrojs/react`. In an Astro project they need a `client:` directive (`client:only="react"` for components that rely on browser APIs). In a plain React app they work without any extra setup.
+
+The components ship with minimal built-in styles. They are designed to be drop-in starting points rather than finished UI widgets, so you can apply your own CSS or design system tokens on top without fighting existing opinions.
+
 ## Links
 
 - [npm package](https://www.npmjs.com/package/@randsum/component-library)
