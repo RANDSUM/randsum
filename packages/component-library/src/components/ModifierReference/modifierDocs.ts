@@ -9,6 +9,25 @@ export interface ModifierDoc {
 }
 
 export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
+  'D{..}': {
+    title: 'Drop by Condition',
+    description:
+      'Drop any dice matching a condition — more flexible than L/H for arbitrary thresholds.',
+    displayBase: 'D{..}',
+    forms: [{ notation: 'D{...}', note: 'Comma-separate multiple conditions' }],
+    comparisons: [
+      { operator: 'n', note: 'drop dice showing exactly n' },
+      { operator: '>n', note: 'drop dice showing more than n' },
+      { operator: '>=n', note: 'drop dice showing n or more' },
+      { operator: '<n', note: 'drop dice showing less than n' },
+      { operator: '<=n', note: 'drop dice showing n or less' }
+    ],
+    examples: [
+      { notation: '4d6D{1}', description: 'Drop all 1s' },
+      { notation: '4d6D{>=5}', description: 'Drop all 5s and above' },
+      { notation: '4d6D{<=2}', description: 'Drop any result of 2 or lower' }
+    ]
+  },
   xDY: {
     title: 'Core Roll',
     description: 'Roll N dice with S sides each. The foundation of every notation string.',
@@ -119,13 +138,14 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   'V{..}': {
     title: 'Replace',
     description: 'Replace dice showing specific values with a new value.',
-    displayBase: 'V',
-    displayOptional: '{..}',
+    displayBase: 'V{..}',
     forms: [{ notation: 'V{...}', note: 'Comma-separate multiple rules' }],
     comparisons: [
       { operator: 'n=y', note: 'replace exact match n with y' },
       { operator: '>n=y', note: 'replace anything above n with y' },
-      { operator: '<n=y', note: 'replace anything below n with y' }
+      { operator: '>=n=y', note: 'replace n or higher with y' },
+      { operator: '<n=y', note: 'replace anything below n with y' },
+      { operator: '<=n=y', note: 'replace n or lower with y' }
     ],
     examples: [
       { notation: '4d6V{1=2}', description: 'Replace 1s with 2' },
@@ -136,8 +156,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Count Successes',
     description:
       'Count dice that meet a threshold instead of summing values — used in dice pool systems.',
-    displayBase: 'S',
-    displayOptional: '{..}',
+    displayBase: 'S{..}',
     forms: [
       { notation: 'S{n}', note: 'Single success threshold' },
       { notation: 'S{n,b}', note: 'Threshold + botch threshold' }
@@ -195,12 +214,14 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Cap',
     description:
       'Clamp individual die values to a range — dice outside the boundary are moved to it.',
-    displayBase: 'C',
-    displayOptional: '{..}',
+    displayBase: 'C{..}',
     forms: [{ notation: 'C{...}', note: 'Comma-separate multiple conditions' }],
     comparisons: [
+      { operator: 'n', note: 'max cap: no result exceeds n' },
       { operator: '>n', note: 'cap: clamp anything above n down to n' },
-      { operator: '<n', note: 'floor: clamp anything below n up to n' }
+      { operator: '>=n', note: 'cap: clamp n and above down to n' },
+      { operator: '<n', note: 'floor: clamp anything below n up to n' },
+      { operator: '<=n', note: 'floor: clamp n and below up to n' }
     ],
     examples: [
       { notation: '4d6C{>5}', description: 'Cap rolls: nothing exceeds 5' },
@@ -211,8 +232,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Reroll',
     description:
       'Reroll dice that match a condition. The new result stands (may reroll again if still matching).',
-    displayBase: 'R',
-    displayOptional: '{..}',
+    displayBase: 'R{..}',
     forms: [
       { notation: 'R{...}', note: 'Reroll until result no longer matches' },
       { notation: 'R{...}(d)', note: 'Max d reroll attempts' }
@@ -220,7 +240,9 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     comparisons: [
       { operator: 'n', note: 'reroll dice showing exactly n' },
       { operator: '>n', note: 'reroll dice showing more than n' },
-      { operator: '<n', note: 'reroll dice showing less than n' }
+      { operator: '>=n', note: 'reroll dice showing n or more' },
+      { operator: '<n', note: 'reroll dice showing less than n' },
+      { operator: '<=n', note: 'reroll dice showing n or less' }
     ],
     examples: [
       { notation: '4d6R{1}', description: 'Reroll any 1s' },

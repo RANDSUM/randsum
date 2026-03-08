@@ -102,53 +102,28 @@
   justify-content: flex-end;
 }
 
-/* ===== Core row ===== */
-.modifier-reference-core {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.85rem;
+/* ===== Core cell (nested in first grid row) ===== */
+.modifier-reference-cell--core {
   background: rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.12s ease;
-  user-select: none;
 }
 
-.modifier-reference-core--top {
-  border-top: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.modifier-reference-core--interactive {
-  cursor: pointer;
-}
-
-.modifier-reference-core--interactive:hover {
-  background: rgba(255, 255, 255, 0.08);
+.modifier-reference-cell--core.modifier-reference-cell--interactive:hover {
+  background: rgba(255, 255, 255, 0.13);
 }
 
 @media (prefers-color-scheme: light) {
-  .modifier-reference-core {
+  .modifier-reference-cell--core {
     background: rgba(0, 0, 0, 0.07);
-    border-top-color: rgba(0, 0, 0, 0.08);
   }
-  .modifier-reference-core--top {
-    border-bottom-color: rgba(0, 0, 0, 0.08);
-  }
-  .modifier-reference-core--interactive:hover {
-    background: rgba(0, 0, 0, 0.06);
+  .modifier-reference-cell--core.modifier-reference-cell--interactive:hover {
+    background: rgba(0, 0, 0, 0.1);
   }
 }
-[data-theme='light'] .modifier-reference-core {
+[data-theme='light'] .modifier-reference-cell--core {
   background: rgba(0, 0, 0, 0.07);
-  border-top-color: rgba(0, 0, 0, 0.08);
 }
-[data-theme='light'] .modifier-reference-core--top {
-  border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-[data-theme='light'] .modifier-reference-core--interactive:hover {
-  background: rgba(0, 0, 0, 0.06);
+[data-theme='light'] .modifier-reference-cell--core.modifier-reference-cell--interactive:hover {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 /* ===== Text ===== */

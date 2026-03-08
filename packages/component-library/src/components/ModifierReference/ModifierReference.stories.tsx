@@ -13,12 +13,6 @@ export const Default: Story = () => (
   </div>
 )
 
-export const CoreBottom: Story = () => (
-  <div style={{ maxWidth: '480px' }}>
-    <ModifierReference corePosition="bottom" />
-  </div>
-)
-
 export const CoreDisabled: Story = () => (
   <div style={{ maxWidth: '480px' }}>
     <ModifierReference coreDisabled />

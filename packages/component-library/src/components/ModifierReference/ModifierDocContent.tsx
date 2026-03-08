@@ -57,17 +57,15 @@ export function ModifierDocContent({
         <div className="modifier-doc-header-text">
           <div className="modifier-doc-title">{doc.title}</div>
           <p className="modifier-doc-description">{doc.description}</p>
-        </div>
-      </div>
-
-      <div className="modifier-doc-section-label">Forms</div>
-      <div className="modifier-doc-forms">
-        {doc.forms.map(form => (
-          <div key={form.notation} className="modifier-doc-form-row">
-            <FormNotation notation={form.notation} />
-            <span className="modifier-doc-form-note">{form.note}</span>
+          <div className="modifier-doc-forms">
+            {doc.forms.map(form => (
+              <div key={form.notation} className="modifier-doc-form-row">
+                <FormNotation notation={form.notation} />
+                <span className="modifier-doc-form-note">{form.note}</span>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
       {doc.comparisons && (
