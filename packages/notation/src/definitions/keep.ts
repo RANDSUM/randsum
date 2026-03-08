@@ -1,7 +1,5 @@
 import type { KeepOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const keepHighestPattern = /[Kk](?![Ll])(\d+)?/
 const keepLowestPattern = /[Kk][Ll](\d+)?/i
 
@@ -59,5 +57,3 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
     return descriptions
   }
 })
-
-registerNotationSchema(keepSchema)

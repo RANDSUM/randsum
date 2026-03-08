@@ -1,6 +1,5 @@
 import type { NotationSchema } from '../schema'
 import { createArithmeticNotation } from './arithmetic'
-import { registerNotationSchema } from '../registry'
 
 export const minusSchema: NotationSchema<number> = createArithmeticNotation({
   name: 'minus',
@@ -8,5 +7,3 @@ export const minusSchema: NotationSchema<number> = createArithmeticNotation({
   operator: '-',
   verb: 'Subtract'
 })
-
-registerNotationSchema(minusSchema)

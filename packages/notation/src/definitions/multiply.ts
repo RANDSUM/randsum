@@ -1,6 +1,4 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const multiplyPattern = /(?<!\*)\*(?!\*)(\d+)/
 
 export const multiplySchema: NotationSchema<number> = defineNotationSchema<number>({
@@ -24,5 +22,3 @@ export const multiplySchema: NotationSchema<number> = defineNotationSchema<numbe
     return [`Multiply dice by ${options}`]
   }
 })
-
-registerNotationSchema(multiplySchema)

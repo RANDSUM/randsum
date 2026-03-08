@@ -1,8 +1,6 @@
 import type { UniqueOptions } from '../types'
 import { formatHumanList } from '../formatHumanList'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const uniquePattern = /[Uu](?:\{([^}]{1,50})\})?/
 
 export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotationSchema<
@@ -45,5 +43,3 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
     return []
   }
 })
-
-registerNotationSchema(uniqueSchema)

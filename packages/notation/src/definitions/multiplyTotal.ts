@@ -1,6 +1,4 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const multiplyTotalPattern = /\*\*(\d+)/
 
 export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<number>({
@@ -24,5 +22,3 @@ export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<
     return [`Multiply total by ${options}`]
   }
 })
-
-registerNotationSchema(multiplyTotalSchema)

@@ -1,6 +1,4 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const explodePattern = /(?<!!)!(?!!)/
 
 export const explodeSchema: NotationSchema<boolean | number> = defineNotationSchema<
@@ -27,5 +25,3 @@ export const explodeSchema: NotationSchema<boolean | number> = defineNotationSch
     return ['Exploding Dice']
   }
 })
-
-registerNotationSchema(explodeSchema)

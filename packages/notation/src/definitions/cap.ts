@@ -5,8 +5,6 @@ import {
   parseComparisonNotation
 } from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const capPattern = /[Cc]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
 export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema<ComparisonOptions>(
@@ -53,5 +51,3 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
     }
   }
 )
-
-registerNotationSchema(capSchema)

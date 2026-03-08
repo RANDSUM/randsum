@@ -1,6 +1,4 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const compoundPattern = /!!(\d+)?/
 
 export const compoundSchema: NotationSchema<boolean | number> = defineNotationSchema<
@@ -35,5 +33,3 @@ export const compoundSchema: NotationSchema<boolean | number> = defineNotationSc
     return []
   }
 })
-
-registerNotationSchema(compoundSchema)

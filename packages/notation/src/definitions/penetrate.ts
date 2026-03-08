@@ -1,6 +1,4 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const penetratePattern = /!p(\d+)?/i
 
 export const penetrateSchema: NotationSchema<boolean | number> = defineNotationSchema<
@@ -35,5 +33,3 @@ export const penetrateSchema: NotationSchema<boolean | number> = defineNotationS
     return []
   }
 })
-
-registerNotationSchema(penetrateSchema)

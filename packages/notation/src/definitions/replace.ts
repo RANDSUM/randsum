@@ -1,8 +1,6 @@
 import type { ComparisonOptions, ReplaceOptions } from '../types'
 import { formatComparisonDescription, formatComparisonNotation } from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const replacePattern = /[Vv]\{((?:>=|<=|>|<)?\d+=\d+(?:,(?:>=|<=|>|<)?\d+=\d+)*)\}/
 
 export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
@@ -65,5 +63,3 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
       })
     }
   })
-
-registerNotationSchema(replaceSchema)

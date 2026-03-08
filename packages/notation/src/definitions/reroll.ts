@@ -2,8 +2,6 @@ import type { RerollOptions } from '../types'
 import { formatComparisonNotation, hasConditions, parseComparisonNotation } from '../comparison'
 import { formatHumanList } from '../formatHumanList'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const rerollPattern = /[Rr]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/g
 
 export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<RerollOptions>({
@@ -80,5 +78,3 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
     return [`Reroll ${conditions}${maxText}`]
   }
 })
-
-registerNotationSchema(rerollSchema)

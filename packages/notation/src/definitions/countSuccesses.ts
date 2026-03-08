@@ -1,7 +1,5 @@
 import type { SuccessCountOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const countSuccessesPattern = /[Ss]\{(\d+)(?:,(\d+))?\}/
 
 export const countSuccessesSchema: NotationSchema<SuccessCountOptions> =
@@ -39,5 +37,3 @@ export const countSuccessesSchema: NotationSchema<SuccessCountOptions> =
       return [`Count successes >= ${options.threshold}`]
     }
   })
-
-registerNotationSchema(countSuccessesSchema)

@@ -2,8 +2,6 @@ import type { DropOptions } from '../types'
 import { hasConditions, parseComparisonNotation } from '../comparison'
 import { formatHumanList } from '../formatHumanList'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-import { registerNotationSchema } from '../registry'
-
 const dropHighestPattern = /[Hh](\d+)?/g
 const dropLowestPattern = /(?<![Kk])[Ll](\d+)?/g
 const dropConstraintsPattern = /[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
@@ -112,5 +110,3 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     return descriptions
   }
 })
-
-registerNotationSchema(dropSchema)
