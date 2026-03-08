@@ -2,6 +2,7 @@
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/salvageunion</h1>
   <h3>Salvage Union dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
+  <p>Throw Dice, Not Exceptions.</p>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/salvageunion)](https://www.npmjs.com/package/@randsum/salvageunion)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/salvageunion)](https://bundlephobia.com/package/@randsum/salvageunion)

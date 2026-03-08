@@ -2,6 +2,7 @@
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/pbta</h1>
   <h3>Powered by the Apocalypse dice mechanics for <a href="https://github.com/RANDSUM/randsum">@RANDSUM</a></h3>
+  <p>Throw Dice, Not Exceptions.</p>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/pbta)](https://www.npmjs.com/package/@randsum/pbta)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@randsum/pbta)](https://bundlephobia.com/package/@randsum/pbta)

@@ -2,7 +2,7 @@ import { isDiceNotation } from '../isDiceNotation'
 import { notationToOptions } from '../lib/notation'
 import { optionsToDescription, optionsToNotation, optionsToSidesFaces } from '../lib/transformers'
 import { validateRollOptions } from '../lib/optionsValidation'
-import type { DiceNotation, RollArgument, RollOptions, RollParams } from '../types'
+import type { RollArgument, RollOptions, RollParams } from '../types'
 
 /**
  * Convert a roll argument to roll options.
@@ -53,9 +53,7 @@ export function parseArguments<T>(
       quantity,
       arithmetic,
       argument,
-      // '0d0' is a valid DiceNotation-shaped placeholder used in lightweight mode
-      // where notation is never re-parsed — only stored for display purposes
-      notation: lightweight ? ('0d0' as DiceNotation) : optionsToNotation(options),
+      notation: lightweight ? null : optionsToNotation(options),
       description: lightweight ? [] : optionsToDescription(options)
     }
   })
