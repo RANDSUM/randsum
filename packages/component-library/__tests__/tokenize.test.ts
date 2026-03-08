@@ -39,11 +39,11 @@ describe('tokenize — bare drop/keep suffixes (no number)', () => {
     expect(t?.text).toBe('H')
   })
 
-  test('KL alone → keepLowest with "Drop lowest, Keep lowest" description', () => {
+  test('KL alone → keepLowest with "Keep lowest" description', () => {
     const tokens = tokenize('1d6KL')
     const t = tokens.find(t => t.type === 'keepLowest')
     expect(t).toBeDefined()
-    expect(t?.description).toBe('Drop lowest, Keep lowest')
+    expect(t?.description).toBe('Keep lowest')
     expect(t?.text).toBe('KL')
   })
 

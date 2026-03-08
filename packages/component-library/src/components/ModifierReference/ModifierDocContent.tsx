@@ -44,7 +44,7 @@ type InputKind = 'core' | 'none' | 'optional-num' | 'required-num' | 'brace' | '
 function getInputKind(notation: string): InputKind {
   if (notation === 'xDN') return 'core'
   if (notation === '!') return 'none'
-  if (['L', 'H', 'K', 'kl', '!!', '!p'].includes(notation)) return 'optional-num'
+  if (['L', 'H', 'K', 'KL', '!!', '!p'].includes(notation)) return 'optional-num'
   if (['+', '\u2013', '*', '**'].includes(notation)) return 'required-num'
   if (['R{..}', 'C{..}', 'D{..}', 'V{..}', 'S{..}'].includes(notation)) return 'brace'
   if (notation === 'U') return 'optional-brace'
@@ -100,7 +100,7 @@ function extractExampleValue(
     const noKl = stripped.replace(/[Kk][Ll]\d*/g, '')
     return { value: /[Kk](\d*)/.exec(noKl)?.[1] ?? '' }
   }
-  if (cellNotation === 'kl') return { value: /[Kk][Ll](\d*)/.exec(stripped)?.[1] ?? '' }
+  if (cellNotation === 'KL') return { value: /[Kk][Ll](\d*)/.exec(stripped)?.[1] ?? '' }
   if (cellNotation === '!!') return { value: /!!(\d*)/.exec(stripped)?.[1] ?? '' }
   if (cellNotation === '!p') return { value: /!p(\d*)/i.exec(stripped)?.[1] ?? '' }
   if (cellNotation === '+') return { value: /\+(\d+)/.exec(stripped)?.[1] ?? '' }
@@ -173,7 +173,7 @@ export function ModifierDocContent({
             value={quantityInput}
             placeholder="x"
             onChange={e => {
-              setQuantityInput(e.target.value)
+              setQuantityInput(e.target.value.replace(/[^0-9]/g, ''))
               setIsDirty(true)
             }}
             style={{ width: iw(quantityInput, 'x') }}
@@ -188,7 +188,7 @@ export function ModifierDocContent({
             value={sidesInput}
             placeholder="N"
             onChange={e => {
-              setSidesInput(e.target.value)
+              setSidesInput(e.target.value.replace(/[^0-9]/g, ''))
               setIsDirty(true)
             }}
             style={{ width: iw(sidesInput, 'N') }}
@@ -225,7 +225,7 @@ export function ModifierDocContent({
             value={inputValue}
             placeholder={placeholder}
             onChange={e => {
-              setInputValue(e.target.value)
+              setInputValue(e.target.value.replace(/[^0-9]/g, ''))
               setIsDirty(true)
             }}
             style={{ width: iw(inputValue, placeholder) }}

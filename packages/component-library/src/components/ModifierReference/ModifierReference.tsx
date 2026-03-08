@@ -51,7 +51,7 @@ const GRID_ROWS: readonly GridRow[] = [
     }
   ],
   [
-    { notation: 'kl', description: 'keep lowest', notationSuffix: 'N' },
+    { notation: 'KL', description: 'keep lowest', notationSuffix: 'N' },
     { notation: 'V{..}', description: 'replace...' }
   ],
   [

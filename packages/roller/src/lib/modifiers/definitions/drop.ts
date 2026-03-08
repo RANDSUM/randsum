@@ -6,7 +6,7 @@ import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
 const dropHighestPattern = /[Hh](\d+)?/g
-const dropLowestPattern = /[Ll](\d+)?/g
+const dropLowestPattern = /(?<![Kk])[Ll](\d+)?/g
 const dropConstraintsPattern = /[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
 /**
@@ -28,7 +28,8 @@ export const dropModifier: TypedModifierDefinition<'drop'> = defineModifier<'dro
   name: 'drop',
   priority: 20,
 
-  pattern: /([Hh](\d+)?|[Ll](\d+)?|[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})/,
+  pattern:
+    /([Hh](\d+)?|(?<![Kk])[Ll](\d+)?|[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})/,
 
   parse: notation => {
     const drop: DropOptions = {}

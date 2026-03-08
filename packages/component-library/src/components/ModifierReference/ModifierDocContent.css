@@ -309,6 +309,19 @@
   color: #93c5fd;
 }
 
+.modifier-doc-add:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: transparent;
+  border-color: rgba(59, 130, 246, 0.3);
+  color: rgba(96, 165, 250, 0.5);
+}
+
+.modifier-doc-add:disabled:hover {
+  background: transparent;
+  color: rgba(96, 165, 250, 0.5);
+}
+
 .modifier-doc-add-key {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.9rem;
@@ -377,6 +390,15 @@
     background: rgba(72, 120, 200, 0.2);
     color: #2563eb;
   }
+  .modifier-doc-add:disabled {
+    background: transparent;
+    border-color: rgba(72, 120, 200, 0.3);
+    color: rgba(72, 120, 200, 0.4);
+  }
+  .modifier-doc-add:disabled:hover {
+    background: transparent;
+    color: rgba(72, 120, 200, 0.4);
+  }
 }
 
 [data-theme='light'] .modifier-doc {
@@ -436,4 +458,13 @@
 [data-theme='light'] .modifier-doc-add:hover {
   background: rgba(72, 120, 200, 0.2);
   color: #2563eb;
+}
+[data-theme='light'] .modifier-doc-add:disabled {
+  background: transparent;
+  border-color: rgba(72, 120, 200, 0.3);
+  color: rgba(72, 120, 200, 0.4);
+}
+[data-theme='light'] .modifier-doc-add:disabled:hover {
+  background: transparent;
+  color: rgba(72, 120, 200, 0.4);
 }

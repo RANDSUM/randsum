@@ -73,15 +73,15 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       { notation: '4d6K3', description: 'Roll 4d6, keep highest 3' }
     ]
   },
-  kl: {
+  KL: {
     title: 'Keep Lowest',
     description: 'Keep only the n lowest-valued dice; discard the rest.',
-    displayBase: 'kl',
+    displayBase: 'KL',
     displayOptional: 'n',
-    forms: [{ notation: 'kl(n)', note: 'Keep n lowest (default: 1)' }],
+    forms: [{ notation: 'KL(n)', note: 'Keep n lowest (default: 1)' }],
     examples: [
-      { notation: '2d20kl', description: 'Roll 2d20, keep lowest (disadvantage)' },
-      { notation: '4d6kl2', description: 'Roll 4d6, keep 2 lowest' }
+      { notation: '2d20KL', description: 'Roll 2d20, keep lowest (disadvantage)' },
+      { notation: '4d6KL2', description: 'Roll 4d6, keep 2 lowest' }
     ]
   },
   '!': {
