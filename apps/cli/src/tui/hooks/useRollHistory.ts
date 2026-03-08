@@ -1,5 +1,5 @@
 // SYNC: apps/site/src/components/playground/hooks/useRollHistory.ts
-// Differences: uses string (not string|null) error type throughout; same HistoryEntry shape
+// HistoryEntry shape is identical. TUI uses the same prepend ordering and nextId pattern.
 import { useCallback, useState } from 'react'
 
 export interface HistoryEntry {
