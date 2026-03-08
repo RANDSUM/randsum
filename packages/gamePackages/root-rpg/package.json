@@ -1,19 +1,18 @@
 {
-  "name": "@randsum/salvageunion",
+  "name": "@randsum/root-rpg",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for the Salvage Union system",
+  "description": "A flexible, type-safe dice roller for the Root RPG system",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
-  "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/RANDSUM/randsum",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/salvageunion"
+    "directory": "packages/gamePackages/root-rpg"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -24,9 +23,9 @@
     "LICENSE",
     "README.md"
   ],
+  "type": "module",
   "dependencies": {
-    "@randsum/roller": "workspace:~",
-    "salvageunion-reference": "^2.4.0"
+    "@randsum/roller": "workspace:~"
   },
   "exports": {
     ".": {
@@ -51,16 +50,17 @@
     "rpg",
     "random",
     "typescript",
+    "root",
     "tabletop",
-    "salvage-union"
+    "root-rpg"
   ],
   "scripts": {
     "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "lint": "eslint . -c ../../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
     "typecheck": "tsc --noEmit"
   }
 }

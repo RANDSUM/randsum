@@ -1,9 +1,9 @@
 {
-  "extends": "../../tsconfig.packages.json",
+  "extends": "../../../tsconfig.packages.json",
   "compilerOptions": {
     "outDir": "dist"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [{ "path": "../roller" }]
+  "references": [{ "path": "../../roller" }]
 }

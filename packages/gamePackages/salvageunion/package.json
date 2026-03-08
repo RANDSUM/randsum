@@ -1,7 +1,7 @@
 {
-  "name": "@randsum/pbta",
+  "name": "@randsum/salvageunion",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for Powered by the Apocalypse games",
+  "description": "A flexible, type-safe dice roller for the Salvage Union system",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/pbta"
+    "directory": "packages/gamePackages/salvageunion"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -25,7 +25,8 @@
     "README.md"
   ],
   "dependencies": {
-    "@randsum/roller": "workspace:~"
+    "@randsum/roller": "workspace:~",
+    "salvageunion-reference": "^2.4.0"
   },
   "exports": {
     ".": {
@@ -51,18 +52,15 @@
     "random",
     "typescript",
     "tabletop",
-    "pbta",
-    "powered-by-the-apocalypse",
-    "dungeon-world",
-    "monster-of-the-week"
+    "salvage-union"
   ],
   "scripts": {
     "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "lint": "eslint . -c ../../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
     "typecheck": "tsc --noEmit"
   }
 }

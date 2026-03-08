@@ -82,13 +82,6 @@
         "react-dom": "catalog:",
       },
     },
-    "packages/blades": {
-      "name": "@randsum/blades",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
     "packages/component-library": {
       "name": "@randsum/component-library",
       "version": "0.2.0",
@@ -106,25 +99,47 @@
         "react": ">=18",
       },
     },
-    "packages/daggerheart": {
+    "packages/gamePackages/blades": {
+      "name": "@randsum/blades",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "packages/gamePackages/daggerheart": {
       "name": "@randsum/daggerheart",
       "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
-    "packages/fifth": {
+    "packages/gamePackages/fifth": {
       "name": "@randsum/fifth",
       "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
-    "packages/pbta": {
+    "packages/gamePackages/pbta": {
       "name": "@randsum/pbta",
       "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
+      },
+    },
+    "packages/gamePackages/root-rpg": {
+      "name": "@randsum/root-rpg",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "packages/gamePackages/salvageunion": {
+      "name": "@randsum/salvageunion",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+        "salvageunion-reference": "^2.4.0",
       },
     },
     "packages/roller": {
@@ -133,21 +148,6 @@
       "bin": "./bin/randsum",
       "devDependencies": {
         "fast-check": "catalog:",
-      },
-    },
-    "packages/root-rpg": {
-      "name": "@randsum/root-rpg",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
-    "packages/salvageunion": {
-      "name": "@randsum/salvageunion",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-        "salvageunion-reference": "^2.4.0",
       },
     },
   },
@@ -692,25 +692,25 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.9", "", {}, "sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA=="],
 
-    "@randsum/blades": ["@randsum/blades@workspace:packages/blades"],
+    "@randsum/blades": ["@randsum/blades@workspace:packages/gamePackages/blades"],
 
     "@randsum/cli": ["@randsum/cli@workspace:apps/cli"],
 
     "@randsum/component-library": ["@randsum/component-library@workspace:packages/component-library"],
 
-    "@randsum/daggerheart": ["@randsum/daggerheart@workspace:packages/daggerheart"],
+    "@randsum/daggerheart": ["@randsum/daggerheart@workspace:packages/gamePackages/daggerheart"],
 
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
 
-    "@randsum/fifth": ["@randsum/fifth@workspace:packages/fifth"],
+    "@randsum/fifth": ["@randsum/fifth@workspace:packages/gamePackages/fifth"],
 
-    "@randsum/pbta": ["@randsum/pbta@workspace:packages/pbta"],
+    "@randsum/pbta": ["@randsum/pbta@workspace:packages/gamePackages/pbta"],
 
     "@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
 
-    "@randsum/root-rpg": ["@randsum/root-rpg@workspace:packages/root-rpg"],
+    "@randsum/root-rpg": ["@randsum/root-rpg@workspace:packages/gamePackages/root-rpg"],
 
-    "@randsum/salvageunion": ["@randsum/salvageunion@workspace:packages/salvageunion"],
+    "@randsum/salvageunion": ["@randsum/salvageunion@workspace:packages/gamePackages/salvageunion"],
 
     "@randsum/site": ["@randsum/site@workspace:apps/site"],
 

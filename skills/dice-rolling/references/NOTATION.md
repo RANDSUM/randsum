@@ -1,5 +1,30 @@
 # Randsum Dice Notation
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Basic Syntax](#basic-syntax)
+- [Modifiers](#modifiers)
+  - [Basic Arithmetic](#basic-arithmetic)
+  - [Cap Modifiers](#cap-modifiers)
+  - [Drop Modifiers](#drop-modifiers)
+  - [Reroll Modifiers](#reroll-modifiers)
+  - [Replace Modifiers](#replace-modifiers)
+  - [Unique Results](#unique-results)
+  - [Keep Modifiers](#keep-modifiers)
+  - [Exploding Dice](#exploding-dice)
+  - [Compounding Exploding](#compounding-exploding-)
+  - [Penetrating Exploding](#penetrating-exploding-p)
+  - [Pre-Arithmetic Multiplier](#pre-arithmetic-multiplier-)
+  - [Total Multiplier](#total-multiplier-)
+  - [Count Successes](#count-successes-s)
+  - [Combining Modifiers](#combining-modifiers)
+- [Multiple Dice Groups](#multiple-dice-sides-in-a-single-roll)
+- [Common Use Cases](#common-use-cases)
+- [Performance Considerations](#performance-considerations)
+
+---
+
 ## Overview
 
 Dice notation is a compact way to represent dice rolls and their modifications. For example, `4d20+2` means "roll four twenty-sided dice, then add two".

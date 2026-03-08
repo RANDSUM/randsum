@@ -21,12 +21,12 @@ This repository contains multiple packages and applications for dice rolling and
 ### Core Packages
 
 - **[@randsum/roller](packages/roller)** - Core dice rolling engine with advanced notation support
-- **[@randsum/blades](packages/blades)** - Blades in the Dark system mechanics
-- **[@randsum/daggerheart](packages/daggerheart)** - Daggerheart RPG system support
-- **[@randsum/fifth](packages/fifth)** - D&D 5th Edition mechanics
-- **[@randsum/pbta](packages/pbta)** - Powered by the Apocalypse system mechanics
-- **[@randsum/root-rpg](packages/root-rpg)** - Root RPG system implementation
-- **[@randsum/salvageunion](packages/salvageunion)** - Salvage Union mechanics
+- **[@randsum/blades](packages/gamePackages/blades)** - Blades in the Dark system mechanics
+- **[@randsum/daggerheart](packages/gamePackages/daggerheart)** - Daggerheart RPG system support
+- **[@randsum/fifth](packages/gamePackages/fifth)** - D&D 5th Edition mechanics
+- **[@randsum/pbta](packages/gamePackages/pbta)** - Powered by the Apocalypse system mechanics
+- **[@randsum/root-rpg](packages/gamePackages/root-rpg)** - Root RPG system implementation
+- **[@randsum/salvageunion](packages/gamePackages/salvageunion)** - Salvage Union mechanics
 
 ### Applications
 

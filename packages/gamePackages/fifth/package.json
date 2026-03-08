@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/fifth"
+    "directory": "packages/gamePackages/fifth"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -60,9 +60,9 @@
     "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "lint": "eslint . -c ../../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
     "typecheck": "tsc --noEmit"
   }
 }

@@ -65,9 +65,13 @@ Modifiers execute in priority order (lowest first):
 | 95       | `countSuccesses` | Count dice meeting threshold       |
 | 100      | `multiplyTotal`  | Multiply entire final total        |
 
-## Creating a New Modifier
+## Contributing
 
-### Step 1: Add Type to ModifierOptions
+> These steps are for adding a new modifier to the roller's internal registry — not for external custom modifiers (see `custom-modifiers.md` for that).
+
+### Adding a New Modifier to the Registry
+
+#### Step 1: Add Type to ModifierOptions
 
 In `packages/roller/src/types/modifiers.ts`:
 
@@ -78,7 +82,7 @@ export interface ModifierOptions {
 }
 ```
 
-### Step 2: Add to ModifierOptionTypes
+#### Step 2: Add to ModifierOptionTypes
 
 In `packages/roller/src/lib/modifiers/schema.ts`:
 
@@ -89,7 +93,7 @@ export interface ModifierOptionTypes {
 }
 ```
 
-### Step 3: Create the Modifier Definition
+#### Step 3: Create the Modifier Definition
 
 Create `packages/roller/src/lib/modifiers/definitions/myModifier.ts`:
 
@@ -135,7 +139,7 @@ export const myModifierModifier: TypedModifierDefinition<'myModifier'> =
   })
 ```
 
-### Step 4: Register the Modifier
+#### Step 4: Register the Modifier
 
 Add to `packages/roller/src/lib/modifiers/definitions/index.ts`:
 
@@ -143,11 +147,11 @@ Add to `packages/roller/src/lib/modifiers/definitions/index.ts`:
 export { myModifierModifier } from './myModifier'
 ```
 
-### Step 5: Update Documentation
+#### Step 5: Update Documentation
 
 Add notation syntax to `packages/roller/RANDSUM_DICE_NOTATION.md`.
 
-### Step 6: Add Tests
+#### Step 6: Add Tests
 
 Create `packages/roller/__tests__/lib/modifiers/myModifier.test.ts`.
 

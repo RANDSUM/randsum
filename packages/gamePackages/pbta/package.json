@@ -1,20 +1,20 @@
 {
-  "name": "@randsum/blades",
+  "name": "@randsum/pbta",
   "version": "3.0.0",
-  "description": "Blades in the Dark compatible dice rolling implementation",
+  "description": "A flexible, type-safe dice roller for Powered by the Apocalypse games",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
+  "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/RANDSUM/randsum",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/blades"
+    "directory": "packages/gamePackages/pbta"
   },
-  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -51,16 +51,18 @@
     "random",
     "typescript",
     "tabletop",
-    "blades",
-    "forged-in-the-dark"
+    "pbta",
+    "powered-by-the-apocalypse",
+    "dungeon-world",
+    "monster-of-the-week"
   ],
   "scripts": {
     "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "lint": "eslint . -c ../../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
     "typecheck": "tsc --noEmit"
   }
 }

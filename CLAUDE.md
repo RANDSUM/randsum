@@ -8,7 +8,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 **Core**: `@randsum/roller` — zero-dependency dice engine. Every other package depends on it via `workspace:~`.
 
-**Game packages** (each wraps roller with game-specific interpretation):
+**Game packages** live in `packages/gamePackages/` — each wraps roller with game-specific interpretation:
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
 
 **Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/component-library` (React UI components, private)
@@ -69,6 +69,10 @@ All packages use `bunup` producing identical structure:
 - `dist/index.js` (ESM), `dist/index.cjs` (CJS)
 - `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
 - Bundle size limits enforced: roller 10KB, game packages 8KB, salvageunion 170KB
+
+## Versioning
+
+When a core package (`@randsum/roller`, or in future `@randsum/notation`) receives a minor version bump, dependent packages (game packages, component-library) should also receive a corresponding minor version bump to keep the ecosystem in sync. This applies to minor and major releases — patch bumps in core do not require dependents to bump.
 
 ## Key Patterns
 

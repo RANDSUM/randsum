@@ -21,7 +21,7 @@ packages/{game-name}/
 
 ## Creating a New Game Package
 
-1. **Copy template**: Use `packages/salvageunion/` as the simplest template
+1. **Copy template**: Use `packages/gamePackages/salvageunion/` as the simplest template
 2. **Update package.json**:
    - Change `name` to `@randsum/{game-name}`
    - Update `description`
