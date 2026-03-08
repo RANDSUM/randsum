@@ -16,30 +16,30 @@ type GridRow = readonly [ModifierEntry | 'CORE', ModifierEntry]
 const CORE: ModifierEntry = { notation: 'xDY', description: 'roll x dice with Y sides' }
 
 const GRID_ROWS: readonly GridRow[] = [
-  ['CORE', { notation: 'D{..}', description: 'drop condition...' }],
+  ['CORE', { notation: '+', description: 'add' }],
   [
     { notation: 'L', description: 'drop lowest' },
-    { notation: 'V{..}', description: 'replace...' }
-  ],
-  [
-    { notation: 'H', description: 'drop highest' },
-    { notation: 'S{..}', description: 'successes...' }
-  ],
-  [
-    { notation: 'K', description: 'keep highest' },
-    { notation: '+', description: 'add' }
-  ],
-  [
-    { notation: 'kl', description: 'keep lowest' },
     { notation: '\u2013', description: 'subtract' }
   ],
   [
-    { notation: '!', description: 'explode' },
+    { notation: 'H', description: 'drop highest' },
     { notation: '*', description: 'multiply dice' }
   ],
   [
-    { notation: '!!', description: 'compound' },
+    { notation: 'K', description: 'keep highest' },
     { notation: '**', description: 'multiply total' }
+  ],
+  [
+    { notation: 'kl', description: 'keep lowest' },
+    { notation: 'V{..}', description: 'replace...' }
+  ],
+  [
+    { notation: '!', description: 'explode' },
+    { notation: 'S{..}', description: 'successes...' }
+  ],
+  [
+    { notation: '!!', description: 'compound' },
+    { notation: 'D{..}', description: 'drop condition...' }
   ],
   [
     { notation: '!p', description: 'penetrate' },
