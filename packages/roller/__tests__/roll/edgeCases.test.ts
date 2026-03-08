@@ -58,8 +58,11 @@ describe('edge cases', () => {
     })
 
     test('unique modifier returns error when it cannot find unique values within attempt limit', () => {
-      // unique: { notUnique: [0] } means 0 is an exception (allowed to repeat)
-      // rollOne() always returns 0 (0-based), which is in exceptions → always triggers reroll → exhaustion
+      // Initial rolls are 1-based (coreSpreadRolls adds +1), so alwaysMin RNG produces [1, 1].
+      // Die 1 (value=1) succeeds and is tracked in seen.
+      // Die 2 (value=1) is a duplicate → triggers rerollUntilUnique via rollOne().
+      // rollOne() has no +1 offset, so alwaysMin always returns 0.
+      // Value 0 is in notUnique exceptions, so findUnique keeps retrying 0 → exhausts MAX_REROLL_ATTEMPTS.
       const alwaysMin: RandomFn = () => 0
       const result = roll(
         { sides: 6, quantity: 2, modifiers: { unique: { notUnique: [0] } } },
