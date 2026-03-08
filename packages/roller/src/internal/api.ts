@@ -26,8 +26,6 @@ export {
 
 export type { ErrorCode } from '../errors'
 
-export { analyze } from '../lib/probability'
-
 export { PRESETS, resolvePreset, resolvePresetParam } from '../presets'
 
 export { createGameRoll, createMultiRollGameRoll } from '../lib/gameRoll'
@@ -43,6 +41,6 @@ export {
 export { MODIFIER_PRIORITIES } from '../lib/modifiers/priorities'
 export type { ModifierPriorityName } from '../lib/modifiers/priorities'
 
-export { normalize, equate } from '../lib/normalize'
+export { normalize, equate, type NormalizeResult, type EquateResult } from '../lib/normalize'
 
 export { d, DiceBuilder } from '../lib/builder'

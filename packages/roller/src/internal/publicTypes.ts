@@ -32,6 +32,6 @@ export type {
 
 export type { GameRollResult } from '../types/game'
 
-export type { ProbabilityAnalysis } from '../lib/probability'
+export type { NormalizeResult, EquateResult } from '../lib/normalize'
 
 export type { GameRollConfig, MultiRollGameConfig } from '../lib/gameRoll'
