@@ -1,11 +1,5 @@
 import { Box, Text } from 'ink'
-import type { RollerRollResult } from '@randsum/roller'
-import { formatCompact } from '../../shared/format'
-
-interface HistoryEntry {
-  readonly notation: string
-  readonly result: RollerRollResult
-}
+import type { HistoryEntry } from '../hooks/useRollHistory'
 
 interface RollHistoryProps {
   readonly history: readonly HistoryEntry[]
@@ -24,10 +18,10 @@ export function RollHistory({ history }: RollHistoryProps): React.JSX.Element {
 
   return (
     <Box flexDirection="column" paddingX={1}>
-      {history.map((entry, i) => (
-        <Box key={i} flexDirection="column">
+      {history.map(entry => (
+        <Box key={entry.id} flexDirection="column">
           <Text color="cyan">{`> ${entry.notation}`}</Text>
-          <Text>{`  ${formatCompact(entry.result)}`}</Text>
+          <Text>{`  ${entry.description}`}</Text>
         </Box>
       ))}
     </Box>

@@ -1,22 +1,37 @@
+// SYNC: apps/site/src/components/playground/hooks/useRollHistory.ts
+// Differences: uses string (not string|null) error type throughout; same HistoryEntry shape
 import { useCallback, useState } from 'react'
-import type { RollerRollResult } from '@randsum/roller'
 
-interface HistoryEntry {
+export interface HistoryEntry {
+  readonly id: number
   readonly notation: string
-  readonly result: RollerRollResult
+  readonly total: number
+  readonly rolls: readonly (readonly number[])[]
+  readonly description: string
+  readonly timestamp: number
 }
 
 interface UseRollHistoryReturn {
   readonly history: readonly HistoryEntry[]
-  readonly addRoll: (notation: string, result: RollerRollResult) => void
+  readonly addRoll: (entry: Omit<HistoryEntry, 'id' | 'timestamp'>) => void
+  readonly clearHistory: () => void
 }
 
 export function useRollHistory(): UseRollHistoryReturn {
   const [history, setHistory] = useState<readonly HistoryEntry[]>([])
+  const [nextId, setNextId] = useState(0)
 
-  const addRoll = useCallback((notation: string, result: RollerRollResult): void => {
-    setHistory(prev => [...prev, { notation, result }])
+  const addRoll = useCallback(
+    (entry: Omit<HistoryEntry, 'id' | 'timestamp'>): void => {
+      setHistory(prev => [{ ...entry, id: nextId, timestamp: Date.now() }, ...prev])
+      setNextId(prev => prev + 1)
+    },
+    [nextId]
+  )
+
+  const clearHistory = useCallback((): void => {
+    setHistory([])
   }, [])
 
-  return { history, addRoll }
+  return { history, addRoll, clearHistory }
 }

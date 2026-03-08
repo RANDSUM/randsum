@@ -34,7 +34,12 @@ function App(): React.JSX.Element {
     try {
       const result = roll(trimmed as RollArgument)
       setError('')
-      addRoll(trimmed, result)
+      addRoll({
+        notation: trimmed,
+        total: result.total,
+        rolls: result.rolls.map(r => r.rolls),
+        description: `Total: ${result.total}`
+      })
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
     }
