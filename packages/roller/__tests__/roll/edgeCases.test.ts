@@ -90,7 +90,7 @@ describe('edge cases', () => {
       const result = roll({
         sides: 20,
         quantity: 1,
-        modifiers: { cap: { lessThan: 10, greaterThan: 5 } }
+        modifiers: { cap: { lessThan: 3, greaterThan: 10 } }
       })
       expect(result.error).toBeInstanceOf(ModifierError)
     })

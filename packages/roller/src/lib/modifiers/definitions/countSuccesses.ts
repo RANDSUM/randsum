@@ -1,3 +1,4 @@
+import { ModifierError } from '../../../errors'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
 
@@ -53,6 +54,15 @@ export const countSuccessesModifier: TypedModifierDefinition<'countSuccesses'> =
         return [`Count successes >= [${options.threshold}], botches <= [${options.botchThreshold}]`]
       }
       return [`Count successes >= [${options.threshold}]`]
+    },
+
+    validate: options => {
+      if (options.botchThreshold !== undefined && options.botchThreshold >= options.threshold) {
+        throw new ModifierError(
+          'countSuccesses',
+          `botchThreshold (${options.botchThreshold}) must be less than threshold (${options.threshold})`
+        )
+      }
     },
 
     apply: (rolls, options) => {

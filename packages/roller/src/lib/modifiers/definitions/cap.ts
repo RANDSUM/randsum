@@ -1,5 +1,4 @@
 import type { ComparisonOptions } from '../../../types'
-import { ModifierError } from '../../../errors'
 import {
   formatComparisonDescription,
   formatComparisonNotation,
@@ -93,23 +92,7 @@ export const capModifier: TypedModifierDefinition<'cap'> = defineModifier<'cap'>
     return { rolls: newRolls }
   },
 
-  validate: (options, { sides: _sides }) => {
-    const { greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual } = options
-
-    const effectiveHigh = greaterThan ?? greaterThanOrEqual
-    const effectiveLow = lessThan ?? lessThanOrEqual
-
-    if (
-      effectiveLow !== undefined &&
-      effectiveHigh !== undefined &&
-      effectiveLow >= effectiveHigh
-    ) {
-      throw new ModifierError(
-        'cap',
-        `Invalid cap range: lessThan (${effectiveLow}) must be less than greaterThan (${effectiveHigh})`
-      )
-    }
-
+  validate: options => {
     validateComparisonOptions('cap', options)
   }
 })
