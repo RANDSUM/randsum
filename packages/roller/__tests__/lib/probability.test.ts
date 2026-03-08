@@ -159,4 +159,34 @@ describe('analyze', () => {
       expect(diff2).toBeLessThan(0.2)
     })
   })
+
+  describe('statistical accuracy with high sample counts', () => {
+    test('1d6 mean is within 0.05 of analytical 3.5', () => {
+      const result = analyze('1d6', 50000)
+      expect(result.mean).toBeGreaterThan(3.45)
+      expect(result.mean).toBeLessThan(3.55)
+    })
+
+    test('1d6 standard deviation is within 0.05 of analytical 1.708', () => {
+      const result = analyze('1d6', 50000)
+      expect(result.standardDeviation).toBeGreaterThan(1.65)
+      expect(result.standardDeviation).toBeLessThan(1.77)
+    })
+
+    test('2d6 distribution at 7 is within 0.01 of analytical 1/6 (0.167)', () => {
+      const result = analyze('2d6', 100000)
+      const prob7 = result.distribution.get(7) ?? 0
+      expect(prob7).toBeGreaterThan(0.155)
+      expect(prob7).toBeLessThan(0.178)
+    })
+
+    test('1d20 all 20 faces appear with frequency within ±1.5% of 1/20 (5%)', () => {
+      const result = analyze('1d20', 20000)
+      Array.from({ length: 20 }, (_, i) => i + 1).forEach(face => {
+        const prob = result.distribution.get(face) ?? 0
+        expect(prob).toBeGreaterThan(0.035)
+        expect(prob).toBeLessThan(0.065)
+      })
+    })
+  })
 })
