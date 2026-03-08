@@ -78,6 +78,7 @@ export default defineConfig({
           label: 'Core',
           items: [
             { label: 'Overview', slug: 'packages/overview' },
+            { label: '@randsum/notation', slug: 'packages/notation' },
             { label: '@randsum/roller', slug: 'packages/roller' }
           ]
         },

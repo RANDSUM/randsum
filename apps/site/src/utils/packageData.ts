@@ -19,6 +19,57 @@ export interface CodeExample {
 
 export const corePackages: PackageInfo[] = [
   {
+    id: 'notation',
+    name: 'notation',
+    displayName: 'Notation',
+    description: 'Zero-dependency dice notation parser and type foundation.',
+    npmPackage: '@randsum/notation',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/notation',
+    version: '3.0.0',
+    category: 'core',
+    color: '#e2e8f0', // slate-200 — neutral, foundational
+    examples: [
+      {
+        title: 'Validate Notation',
+        code: `import { isDiceNotation, validateNotation } from '@randsum/notation'
+
+// Type guard
+isDiceNotation('4d6L') // true
+
+// Full validation with parsed options
+const result = validateNotation('4d6L')
+console.log(result)`,
+        language: 'typescript'
+      },
+      {
+        title: 'Parse Notation',
+        code: `import { notationToOptions } from '@randsum/notation'
+
+// Convert notation string to structured options
+const options = notationToOptions('4d6L')
+// { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }`,
+        language: 'typescript'
+      },
+      {
+        title: 'Transform Options',
+        code: `import { optionsToNotation, optionsToDescription } from '@randsum/notation'
+
+const options = { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }
+
+optionsToNotation(options)     // '4d6L'
+optionsToDescription(options)  // '4 six-sided dice, drop lowest 1'`,
+        language: 'typescript'
+      },
+      {
+        title: 'Installation',
+        code: `npm install @randsum/notation
+# or
+bun add @randsum/notation`,
+        language: 'bash'
+      }
+    ]
+  },
+  {
     id: 'roller',
     name: 'roller',
     displayName: 'Roller',

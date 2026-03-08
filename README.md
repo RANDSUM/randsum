@@ -20,6 +20,7 @@ This repository contains multiple packages and applications for dice rolling and
 
 ### Core Packages
 
+- **[@randsum/notation](packages/notation)** - Dice notation parser and type foundation
 - **[@randsum/roller](packages/roller)** - Core dice rolling engine with advanced notation support
 - **[@randsum/blades](packages/gamePackages/blades)** - Blades in the Dark system mechanics
 - **[@randsum/daggerheart](packages/gamePackages/daggerheart)** - Daggerheart RPG system support
