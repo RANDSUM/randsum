@@ -70,6 +70,20 @@ export function ModifierDocContent({
         ))}
       </div>
 
+      {doc.comparisons && (
+        <>
+          <div className="modifier-doc-section-label">Comparisons</div>
+          <div className="modifier-doc-comparisons">
+            {doc.comparisons.map(cmp => (
+              <div key={cmp.operator} className="modifier-doc-comparison-row">
+                <span className="modifier-doc-comparison-operator">{cmp.operator}</span>
+                <span className="modifier-doc-comparison-note">{cmp.note}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       <div className="modifier-doc-section-label">Examples</div>
       <div className="modifier-doc-examples">
         {doc.examples.map(ex => (

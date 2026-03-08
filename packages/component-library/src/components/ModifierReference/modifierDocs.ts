@@ -4,6 +4,7 @@ export interface ModifierDoc {
   readonly displayBase: string
   readonly displayOptional?: string
   readonly forms: readonly { readonly notation: string; readonly note: string }[]
+  readonly comparisons?: readonly { readonly operator: string; readonly note: string }[]
   readonly examples: readonly { readonly notation: string; readonly description: string }[]
 }
 
@@ -120,11 +121,11 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description: 'Replace dice showing specific values with a new value.',
     displayBase: 'V',
     displayOptional: '{..}',
-    forms: [
-      {
-        notation: 'V{n=y, >n=y, <n=y, ...}',
-        note: 'Exact, over, or under — comma-separate multiple rules'
-      }
+    forms: [{ notation: 'V{...}', note: 'Comma-separate multiple rules' }],
+    comparisons: [
+      { operator: 'n=y', note: 'replace exact match n with y' },
+      { operator: '>n=y', note: 'replace anything above n with y' },
+      { operator: '<n=y', note: 'replace anything below n with y' }
     ],
     examples: [
       { notation: '4d6V{1=2}', description: 'Replace 1s with 2' },
@@ -196,11 +197,10 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       'Clamp individual die values to a range — dice outside the boundary are moved to it.',
     displayBase: 'C',
     displayOptional: '{..}',
-    forms: [
-      {
-        notation: 'C{n, >n, <n, ...}',
-        note: 'Exact, over, or under — comma-separate multiple conditions'
-      }
+    forms: [{ notation: 'C{...}', note: 'Comma-separate multiple conditions' }],
+    comparisons: [
+      { operator: '>n', note: 'cap: clamp anything above n down to n' },
+      { operator: '<n', note: 'floor: clamp anything below n up to n' }
     ],
     examples: [
       { notation: '4d6C{>5}', description: 'Cap rolls: nothing exceeds 5' },
@@ -214,7 +214,13 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     displayBase: 'R',
     displayOptional: '{..}',
     forms: [
-      { notation: 'R{n, >n, <n, ...}(d)', note: 'Exact, over, or under — optional max depth d' }
+      { notation: 'R{...}', note: 'Reroll until result no longer matches' },
+      { notation: 'R{...}(d)', note: 'Max d reroll attempts' }
+    ],
+    comparisons: [
+      { operator: 'n', note: 'reroll dice showing exactly n' },
+      { operator: '>n', note: 'reroll dice showing more than n' },
+      { operator: '<n', note: 'reroll dice showing less than n' }
     ],
     examples: [
       { notation: '4d6R{1}', description: 'Reroll any 1s' },
