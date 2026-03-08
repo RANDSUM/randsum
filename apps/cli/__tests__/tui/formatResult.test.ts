@@ -15,6 +15,7 @@ describe('formatResult', () => {
   test('returns rolls as array of number arrays', () => {
     const result = roll('2d6')
     const formatted = formatResult(result)
+    expect(isFormattedError(formatted)).toBe(false)
     if (!isFormattedError(formatted)) {
       expect(formatted.rolls).toHaveLength(1)
       expect(formatted.rolls[0]).toHaveLength(2)
@@ -24,6 +25,7 @@ describe('formatResult', () => {
   test('returns description string', () => {
     const result = roll('2d6')
     const formatted = formatResult(result)
+    expect(isFormattedError(formatted)).toBe(false)
     if (!isFormattedError(formatted)) {
       expect(typeof formatted.description).toBe('string')
       expect(formatted.description.length).toBeGreaterThan(0)
