@@ -39,3 +39,6 @@ export {
   parseComparisonNotation,
   hasConditions
 } from '../lib/comparison'
+
+export { MODIFIER_PRIORITIES } from '../lib/modifiers/priorities'
+export type { ModifierPriorityName } from '../lib/modifiers/priorities'

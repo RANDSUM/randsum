@@ -39,6 +39,9 @@ export {
   hasConditions
 } from './internal/api'
 
+export { MODIFIER_PRIORITIES } from './internal/api'
+export type { ModifierPriorityName } from './internal/api'
+
 export type {
   DiceNotation,
   RollArgument,

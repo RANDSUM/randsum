@@ -33,3 +33,5 @@ export type {
 } from './schema'
 
 export { assertRollFn, assertParameters, assertRequiredContext } from './schema'
+
+export { MODIFIER_PRIORITIES, type ModifierPriorityName } from './priorities'

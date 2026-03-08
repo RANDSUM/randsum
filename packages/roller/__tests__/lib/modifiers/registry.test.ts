@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import '../../../src/lib/modifiers/definitions/index.js'
+import { MODIFIER_PRIORITIES } from '../../../src/lib/modifiers/priorities'
 import {
   applyModifierFromRegistry,
   clearRegistry,
@@ -252,6 +253,26 @@ describe('registry functions', () => {
 
       defineModifier(plusModifier)
     })
+  })
+})
+
+describe('MODIFIER_PRIORITIES', () => {
+  test('exports all 14 modifier names', () => {
+    expect(Object.keys(MODIFIER_PRIORITIES).length).toBe(14)
+  })
+
+  test('cap has lower priority than drop', () => {
+    expect(MODIFIER_PRIORITIES.cap).toBeLessThan(MODIFIER_PRIORITIES.drop)
+  })
+
+  test('multiplyTotal has highest priority of all modifiers', () => {
+    const max = Math.max(...Object.values(MODIFIER_PRIORITIES))
+    expect(MODIFIER_PRIORITIES.multiplyTotal).toBe(max)
+  })
+
+  test('cap has lowest priority (runs first)', () => {
+    const min = Math.min(...Object.values(MODIFIER_PRIORITIES))
+    expect(MODIFIER_PRIORITIES.cap).toBe(min)
   })
 })
 
