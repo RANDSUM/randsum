@@ -44,6 +44,8 @@ export type { ModifierPriorityName } from './internal/api'
 
 export { normalize, equate } from './internal/api'
 
+export { d, DiceBuilder } from './internal/api'
+
 export type {
   DiceNotation,
   RollArgument,
