@@ -40,4 +40,41 @@ describe('DiceBuilder', () => {
     expect(options.modifiers?.cap).toEqual({ greaterThan: 5 })
     expect(options.modifiers?.plus).toBe(2)
   })
+
+  test('dropHighest(n) adds drop.highest modifier', () => {
+    expect(d(6).quantity(4).dropHighest(2).build().modifiers?.drop).toEqual({ highest: 2 })
+  })
+
+  test('keep(highest) adds keep.highest modifier', () => {
+    expect(d(6).quantity(4).keep(3).build().modifiers?.keep).toEqual({ highest: 3 })
+  })
+
+  test('keepLowest(n) adds keep.lowest modifier', () => {
+    expect(d(6).quantity(4).keepLowest(2).build().modifiers?.keep).toEqual({ lowest: 2 })
+  })
+
+  test('minus(n) adds minus modifier', () => {
+    expect(d(6).minus(5).build().modifiers?.minus).toBe(5)
+  })
+
+  test('reroll(options) adds reroll modifier', () => {
+    expect(
+      d(6)
+        .reroll({ exact: [1] })
+        .build().modifiers?.reroll
+    ).toEqual({ exact: [1] })
+  })
+
+  test('explode() adds explode modifier', () => {
+    expect(d(6).explode().build().modifiers?.explode).toBe(true)
+  })
+
+  test('chain: quantity + dropHighest + reroll executes', () => {
+    const result = d(6)
+      .quantity(4)
+      .dropHighest(1)
+      .reroll({ exact: [1] })
+      .toRoll()
+    expect(result.rolls[0]?.rolls.length).toBeLessThanOrEqual(4)
+  })
 })
