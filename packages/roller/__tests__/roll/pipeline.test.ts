@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, mock, spyOn, test } from 'bun:test'
 
 import * as RandomUtils from '../../src/lib/random'
+import { roll } from '../../src/roll'
 import { RollPipeline, executeRollPipeline } from '../../src/roll/pipeline'
 import { createRollParams } from '../support/fixtures'
 
@@ -480,6 +481,16 @@ describe(executeRollPipeline, () => {
         },
         total: 10
       })
+    })
+  })
+})
+
+describe('never-throws contract', () => {
+  test('roll() catches all pipeline errors and surfaces them in result.error', () => {
+    const problematic = [roll({ sides: 0, quantity: 1 }), roll({ sides: 6, quantity: -1 })]
+    problematic.forEach(result => {
+      expect(result.error).not.toBeNull()
+      expect(result.total).toBe(0)
     })
   })
 })

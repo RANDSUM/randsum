@@ -96,6 +96,12 @@ export class RollPipeline<T = string> {
 
   /**
    * Build the final RollRecord with all computed values.
+   *
+   * Must be called after `generateInitialRolls()` and `applyModifiers()`.
+   * Prefer `execute()` which handles step ordering automatically.
+   *
+   * @throws {RollError} if called out of order (programmer error — not a user-facing error)
+   * @internal Not part of the public API. Use `executeRollPipeline()` instead.
    */
   public build(): RollRecord<T> {
     if (this.initialRolls.length === 0) {
