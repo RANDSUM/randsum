@@ -1,5 +1,5 @@
 import type { ModifierLog, ModifierOptions, RequiredNumericRollParameters } from '../../types'
-import type { NotationSchema } from '../notation/schema'
+import type { NotationSchema } from '@randsum/notation'
 import type {
   ModifierBehavior,
   ModifierContext,

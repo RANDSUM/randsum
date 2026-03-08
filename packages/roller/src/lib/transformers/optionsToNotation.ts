@@ -1,4 +1,4 @@
-import { isDiceNotation } from '../../isDiceNotation'
+import { isDiceNotation } from '@randsum/notation'
 import type { DiceNotation, RollOptions } from '../../types'
 import { processModifierNotationsFromRegistry } from '../modifiers'
 import { optionsToSidesFaces } from './optionsToSidesFaces'

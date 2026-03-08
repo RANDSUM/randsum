@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { penetrateSchema } from '../../notation/definitions/penetrate'
+import { penetrateSchema } from '@randsum/notation'
 import { penetrateBehavior } from '../behaviors/penetrate'
 import { defineModifier } from '../registry'
 

@@ -10,7 +10,7 @@ import type {
   SuccessCountOptions,
   UniqueOptions
 } from '../../types'
-import type { NotationSchema } from '../notation/schema'
+import type { NotationSchema } from '@randsum/notation'
 
 /**
  * Context passed to modifier handlers that may need dice rolling or roll info.

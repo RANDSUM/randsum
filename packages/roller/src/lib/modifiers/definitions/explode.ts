@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { explodeSchema } from '../../notation/definitions/explode'
+import { explodeSchema } from '@randsum/notation'
 import { explodeBehavior } from '../behaviors/explode'
 import { defineModifier } from '../registry'
 

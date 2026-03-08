@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { minusSchema } from '../../notation/definitions/minus'
+import { minusSchema } from '@randsum/notation'
 import { minusBehavior } from '../behaviors/arithmetic'
 import { defineModifier } from '../registry'
 

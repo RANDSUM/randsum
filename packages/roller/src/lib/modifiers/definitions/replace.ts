@@ -1,6 +1,6 @@
 import type { ReplaceOptions } from '../../../types'
 import type { ModifierDefinition } from '../schema'
-import { replaceSchema } from '../../notation/definitions/replace'
+import { replaceSchema } from '@randsum/notation'
 import { replaceBehavior } from '../behaviors/replace'
 import { defineModifier } from '../registry'
 

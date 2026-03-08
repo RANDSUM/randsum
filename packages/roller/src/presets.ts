@@ -1,6 +1,6 @@
 import type { DiceNotation, RollOptions } from './types'
 import { ValidationError } from './errors'
-import { notation } from './isDiceNotation'
+import { notation } from '@randsum/notation'
 
 /**
  * Fate dice preset configuration

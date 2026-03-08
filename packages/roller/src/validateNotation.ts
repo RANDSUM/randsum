@@ -1,7 +1,6 @@
-import { isDiceNotation } from './isDiceNotation'
+import { isDiceNotation, notationToOptions } from '@randsum/notation'
 import type { InvalidValidationResult, ValidValidationResult, ValidationResult } from './types'
 import { optionsToDescription, optionsToNotation } from './lib/transformers'
-import { notationToOptions } from './lib/notation'
 
 /**
  * Validates dice notation and returns parsed information.

@@ -1,7 +1,7 @@
 export { roll } from '../roll'
 
 export { validateNotation } from '../validateNotation'
-export { isDiceNotation, notation } from '../isDiceNotation'
+export { isDiceNotation, notation } from '@randsum/notation'
 export { validateRollOptions } from '../lib/optionsValidation'
 
 export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from '../lib/transformers'

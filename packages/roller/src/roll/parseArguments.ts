@@ -1,5 +1,4 @@
-import { isDiceNotation } from '../isDiceNotation'
-import { notationToOptions } from '../lib/notation'
+import { isDiceNotation, notationToOptions } from '@randsum/notation'
 import { optionsToDescription, optionsToNotation, optionsToSidesFaces } from '../lib/transformers'
 import { validateRollOptions } from '../lib/optionsValidation'
 import type { RollArgument, RollOptions, RollParams } from '../types'
@@ -10,7 +9,7 @@ import type { RollArgument, RollOptions, RollParams } from '../types'
  */
 function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
   if (isDiceNotation(argument)) {
-    return [...notationToOptions<T>(argument)]
+    return [...notationToOptions(argument)]
   }
 
   if (typeof argument === 'string' || typeof argument === 'number') {

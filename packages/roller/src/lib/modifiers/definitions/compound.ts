@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { compoundSchema } from '../../notation/definitions/compound'
+import { compoundSchema } from '@randsum/notation'
 import { compoundBehavior } from '../behaviors/compound'
 import { defineModifier } from '../registry'
 

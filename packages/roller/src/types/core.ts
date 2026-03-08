@@ -1,44 +1,8 @@
 import type { ModifierOptions } from './modifiers'
+import type { DiceNotation } from '@randsum/notation'
 
-/**
- * Template literal type for dice notation strings.
- *
- * Enforces the structural shape `NdS[modifiers]` for known string literals —
- * `'4d6L'` and `'2d20H+5'` are accepted, `'foo'` is rejected.
- *
- * ## Known limitation
- *
- * The trailing `${string}` is intentionally broad: it allows modifier suffixes
- * (`L`, `H`, `R{<3}`, `!`, etc.) without enumerating them all in the type.
- * As a result, invalid modifiers are NOT caught at compile time:
- *
- * ```ts
- * const x: DiceNotation = '1d6garbage' // ← compiles; isDiceNotation() returns false at runtime
- * ```
- *
- * True nominal branding would close this gap but breaks direct literal assignment —
- * `roll('4d6L')` would require `roll(notation('4d6L'))` everywhere. The current design
- * is the right trade-off: static checking for literal strings, runtime guard for dynamic ones.
- *
- * ## Usage patterns
- *
- * - Known literals: assignable directly — TypeScript verifies the `NdS` prefix
- * - Dynamic/unknown strings: guard with `isDiceNotation(input)` before passing to `roll()`
- * - Throwing validation: use `notation(input)` which throws `NotationParseError` if invalid
- *
- * @example
- * ```ts
- * roll('4d6L')              // ✅ verified at compile time
- * roll('hello')             // ❌ missing NdS prefix — compile error
- *
- * const s = getInput()      // s: string
- * roll(s)                   // ❌ plain string not assignable — compile error
- * if (isDiceNotation(s)) {
- *   roll(s)                 // ✅ narrowed to DiceNotation
- * }
- * ```
- */
-export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
+// Re-export DiceNotation from notation for backward compatibility
+export type { DiceNotation } from '@randsum/notation'
 
 /**
  * Configuration options for a dice roll.

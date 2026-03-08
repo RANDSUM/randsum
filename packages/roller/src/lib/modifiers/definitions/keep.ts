@@ -1,6 +1,6 @@
 import type { KeepOptions } from '../../../types'
 import type { ModifierDefinition } from '../schema'
-import { keepSchema } from '../../notation/definitions/keep'
+import { keepSchema } from '@randsum/notation'
 import { keepBehavior } from '../behaviors/keep'
 import { defineModifier } from '../registry'
 

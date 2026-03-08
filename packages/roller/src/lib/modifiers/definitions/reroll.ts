@@ -1,6 +1,6 @@
 import type { RerollOptions } from '../../../types'
 import type { ModifierDefinition } from '../schema'
-import { rerollSchema } from '../../notation/definitions/reroll'
+import { rerollSchema } from '@randsum/notation'
 import { rerollBehavior } from '../behaviors/reroll'
 import { defineModifier } from '../registry'
 

@@ -1,6 +1,6 @@
 import type { DiceNotation } from '../types'
 import { NotationParseError } from '../errors'
-import { notationToOptions } from './notation'
+import { notationToOptions } from '@randsum/notation'
 import { optionsToNotation } from './transformers'
 
 export function normalize(notation: DiceNotation): DiceNotation {
