@@ -66,7 +66,26 @@ export interface RollOptions<T = string> {
   sides: number | T[]
   /** Modifiers to apply to the roll (drop, reroll, explode, etc.) */
   modifiers?: ModifierOptions
-  /** Optional identifier for this roll in multi-roll expressions */
+  /**
+   * Optional identifier for this roll in multi-roll expressions.
+   *
+   * When `roll()` receives multiple arguments, each produces a `RollRecord`
+   * with a `parameters.key` for identification. Default keys are
+   * auto-generated as `"Roll 1"`, `"Roll 2"`, etc.
+   *
+   * Provide a `key` via `RollOptions` for stable, meaningful identifiers
+   * when you need to look up specific rolls from a multi-roll result.
+   *
+   * @example
+   * ```ts
+   * const result = roll(
+   *   { sides: 20, key: 'attack' },
+   *   { sides: 6, quantity: 2, modifiers: { plus: 3 }, key: 'damage' }
+   * )
+   * const attack = result.rolls.find(r => r.parameters.key === 'attack')
+   * const damage = result.rolls.find(r => r.parameters.key === 'damage')
+   * ```
+   */
   key?: string | undefined
 }
 
