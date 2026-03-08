@@ -67,7 +67,12 @@ export const uniqueModifier: TypedModifierDefinition<'unique'> = defineModifier<
 
     const rerollUntilUnique = (value: number, seen: Set<number>): number => {
       const findUnique = (current: number, attempts: number): number => {
-        if (attempts >= MAX_REROLL_ATTEMPTS) return current
+        if (attempts >= MAX_REROLL_ATTEMPTS) {
+          throw new ModifierError(
+            'unique',
+            `Could not find a unique value after ${MAX_REROLL_ATTEMPTS} attempts`
+          )
+        }
         if (!seen.has(current) && !exceptions.has(current)) return current
         return findUnique(rollOne(), attempts + 1)
       }

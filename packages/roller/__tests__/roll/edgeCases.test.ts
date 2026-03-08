@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { ModifierError, RollError, ValidationError } from '../../src/errors'
+import type { RandomFn } from '../../src/index'
 
 describe('edge cases', () => {
   describe('validation errors', () => {
@@ -53,6 +54,17 @@ describe('edge cases', () => {
 
     test('unique with quantity > sides returns error', () => {
       const result = roll({ sides: 4, quantity: 5, modifiers: { unique: true } })
+      expect(result.error).toBeInstanceOf(ModifierError)
+    })
+
+    test('unique modifier returns error when it cannot find unique values within attempt limit', () => {
+      // unique: { notUnique: [0] } means 0 is an exception (allowed to repeat)
+      // rollOne() always returns 0 (0-based), which is in exceptions → always triggers reroll → exhaustion
+      const alwaysMin: RandomFn = () => 0
+      const result = roll(
+        { sides: 6, quantity: 2, modifiers: { unique: { notUnique: [0] } } },
+        { randomFn: alwaysMin }
+      )
       expect(result.error).toBeInstanceOf(ModifierError)
     })
 
