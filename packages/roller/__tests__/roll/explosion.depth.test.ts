@@ -13,11 +13,8 @@ describe('explosion depth limits', () => {
         { randomFn: alwaysMax }
       )
       expect(result).toBeDefined()
-      if (!result.error) {
-        expect(Number.isFinite(result.total)).toBe(true)
-        // With always-max RNG, total = 6 * (DEFAULT_EXPLOSION_DEPTH + 1) at most
-        expect(result.total).toBeLessThanOrEqual(6 * 1001)
-      }
+      expect(Number.isFinite(result.total)).toBe(true)
+      expect(result.total).toBeLessThanOrEqual(6 * 1001)
     })
 
     test('compound with explicit depth=3 produces at most 4x die value', () => {
@@ -25,8 +22,6 @@ describe('explosion depth limits', () => {
         { sides: 6, quantity: 1, modifiers: { compound: 3 } },
         { randomFn: alwaysMax }
       )
-      expect(result.error).toBeNull()
-      // initial(6) + 3 extra rolls(6) = 24 max
       expect(result.total).toBeLessThanOrEqual(24)
     })
 
@@ -35,8 +30,7 @@ describe('explosion depth limits', () => {
         { sides: 6, quantity: 1, modifiers: { compound: true } },
         { randomFn: alwaysMax }
       )
-      expect(result.error).toBeNull()
-      expect(result.total).toBeLessThanOrEqual(12) // 6 + 6
+      expect(result.total).toBeLessThanOrEqual(12)
     })
   })
 
@@ -47,9 +41,7 @@ describe('explosion depth limits', () => {
         { randomFn: alwaysMax }
       )
       expect(result).toBeDefined()
-      if (!result.error) {
-        expect(Number.isFinite(result.total)).toBe(true)
-      }
+      expect(Number.isFinite(result.total)).toBe(true)
     })
 
     test('penetrate depth=3 produces at most 6+(5+5+5)=21', () => {
@@ -57,8 +49,7 @@ describe('explosion depth limits', () => {
         { sides: 6, quantity: 1, modifiers: { penetrate: 3 } },
         { randomFn: alwaysMax }
       )
-      expect(result.error).toBeNull()
-      expect(result.total).toBeLessThanOrEqual(21) // 6 + (6-1) + (6-1) + (6-1)
+      expect(result.total).toBeLessThanOrEqual(21)
     })
   })
 
@@ -68,8 +59,6 @@ describe('explosion depth limits', () => {
         { sides: 6, quantity: 3, modifiers: { explode: true } },
         { randomFn: alwaysMax }
       )
-      expect(result.error).toBeNull()
-      // 3 original all roll 6 → 3 extra dice. Basic explode does not chain.
       expect(result.rolls[0]?.rolls.length).toBeLessThanOrEqual(6)
     })
   })

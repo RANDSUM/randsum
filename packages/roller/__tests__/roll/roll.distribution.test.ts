@@ -14,7 +14,7 @@ function rollMany(
   const totals: number[] = []
   for (const _ of Array.from({ length: n })) {
     const r = roll(notation, { randomFn: rng })
-    if (!r.error) totals.push(r.total)
+    totals.push(r.total)
   }
   const mean = totals.reduce((a, b) => a + b, 0) / totals.length
   return {
@@ -25,7 +25,7 @@ function rollMany(
   }
 }
 
-describe.skipIf(!process.env.CI)('distribution tests', () => {
+describe('distribution tests', () => {
   describe('NdX mean = N * (X+1) / 2', () => {
     const cases: [string, number][] = [
       ['1d6', 3.5],

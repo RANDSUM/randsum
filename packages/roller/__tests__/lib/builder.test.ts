@@ -29,7 +29,6 @@ describe('DiceBuilder', () => {
 
   test('toRoll() executes the roll', () => {
     const result = d(6).quantity(4).toRoll()
-    expect(result.error).toBeNull()
     expect(result.rolls[0]?.rolls.length).toBe(4)
   })
 

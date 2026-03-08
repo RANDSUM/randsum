@@ -1,10 +1,6 @@
 import type { RollerRollResult } from '@randsum/roller'
 
 export function formatCompact(result: RollerRollResult): string {
-  if (result.error) {
-    return `Error: ${result.error.message}`
-  }
-
   const parts: string[] = [String(result.total)]
 
   for (const record of result.rolls) {
@@ -21,10 +17,6 @@ export function formatCompact(result: RollerRollResult): string {
 }
 
 export function formatVerbose(result: RollerRollResult): string {
-  if (result.error) {
-    return `Error: ${result.error.message}`
-  }
-
   const lines: string[] = []
 
   for (const record of result.rolls) {
@@ -42,10 +34,6 @@ export function formatVerbose(result: RollerRollResult): string {
 }
 
 export function formatJson(result: RollerRollResult): string {
-  if (result.error) {
-    return JSON.stringify({ error: result.error.message })
-  }
-
   return JSON.stringify({
     total: result.total,
     rolls: result.rolls.map(record => ({

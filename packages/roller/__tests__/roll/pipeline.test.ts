@@ -485,13 +485,13 @@ describe(executeRollPipeline, () => {
   })
 })
 
-describe('never-throws contract', () => {
-  test('roll() catches all pipeline errors and surfaces them in result.error', () => {
-    const problematic = [roll({ sides: 0, quantity: 1 }), roll({ sides: 6, quantity: -1 })]
-    problematic.forEach(result => {
-      expect(result.error).not.toBeNull()
-      expect(result.total).toBe(0)
-    })
+describe('invalid input throws', () => {
+  test('roll() throws on invalid sides', () => {
+    expect(() => roll({ sides: 0, quantity: 1 })).toThrow()
+  })
+
+  test('roll() throws on invalid quantity', () => {
+    expect(() => roll({ sides: 6, quantity: -1 })).toThrow()
   })
 })
 

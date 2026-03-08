@@ -40,19 +40,26 @@ export const rollCommand: Command = {
     }
 
     // Roll the dice
-    const result = roll(validNotation)
+    const rollResult = (() => {
+      try {
+        return { result: roll(validNotation), error: null }
+      } catch (e) {
+        return { result: null, error: e instanceof Error ? e.message : String(e) }
+      }
+    })()
 
-    // Check for error
-    if (result.error) {
+    if (rollResult.error !== null) {
       const errorEmbed = new EmbedBuilder()
         .setColor('#FF0000')
         .setTitle('Roll Error')
-        .setDescription(`Error: ${result.error.message}`)
+        .setDescription(`Error: ${rollResult.error}`)
         .setFooter(embedFooterDetails)
 
       await interaction.editReply({ embeds: [errorEmbed] })
       return
     }
+
+    const result = rollResult.result
 
     // Build embed
     const embed = new EmbedBuilder()

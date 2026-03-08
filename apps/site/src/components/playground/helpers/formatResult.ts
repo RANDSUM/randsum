@@ -19,10 +19,6 @@ function isFormattedError(output: FormatResultOutput): output is FormattedError 
 export { isFormattedError }
 
 export function formatResult(result: RollerRollResult): FormatResultOutput {
-  if (result.error) {
-    return { error: result.error.message }
-  }
-
   const rolls = result.rolls.map(record => record.rolls)
 
   const descriptions = result.rolls.flatMap(record => record.description).filter(Boolean)

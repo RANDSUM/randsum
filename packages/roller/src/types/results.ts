@@ -1,6 +1,5 @@
 import type { DiceNotation, RollArgument, RollOptions } from './core'
 import type { NumericRollBonus } from './modifiers'
-import type { RandsumError } from '../errors'
 
 /**
  * Fully resolved parameters for a single roll.
@@ -77,31 +76,18 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
  * Result from the roll() function.
  *
  * Contains all roll records, individual results, and the combined total.
- * Includes error reporting for error handling without try/catch.
  *
  * @template T - Type for custom dice faces
  *
- * @example Success case
+ * @example
  * ```ts
  * const result = roll("4d6L")
- * if (!result.error) {
- *   result.total   // => Sum of kept dice
- *   result.result  // => Array of individual die values
- *   result.rolls   // => Full roll records with history
- * }
- * ```
- *
- * @example Error handling
- * ```ts
- * const result = roll("invalid")
- * if (result.error) {
- *   result.error.message // => "Invalid dice notation: ..."
- * }
+ * result.total   // => Sum of kept dice
+ * result.result  // => Array of individual die values
+ * result.rolls   // => Full roll records with history
  * ```
  */
 export interface RollerRollResult<T = string> extends RollResult<T[], RollRecord<T>> {
   /** Combined total of all rolls */
   total: number
-  /** Error if the roll failed, null on success */
-  error: RandsumError | null
 }

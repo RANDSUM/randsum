@@ -99,12 +99,16 @@ export function RollerPlayground({
     if (state.status === 'result') setExpanded(false)
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
-      const result = roll(notation)
-      if (result.error || !result.rolls[0]) return
-      setState({ status: 'result', total: result.total, record: result.rolls[0] })
-      requestAnimationFrame(() => {
-        setExpanded(true)
-      })
+      try {
+        const result = roll(notation)
+        if (!result.rolls[0]) return
+        setState({ status: 'result', total: result.total, record: result.rolls[0] })
+        requestAnimationFrame(() => {
+          setExpanded(true)
+        })
+      } catch {
+        // invalid notation — isDiceNotation guard above should prevent this
+      }
     }, 300)
   }, [notation, isValid, state.status])
 

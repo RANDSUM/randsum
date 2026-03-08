@@ -1,5 +1,4 @@
 import type { RollArgument, RollConfig, RollerRollResult } from '../types'
-import { RandsumError, RollError } from '../errors'
 import { parseArguments } from './parseArguments'
 import { executeRollPipeline } from './pipeline'
 
@@ -23,7 +22,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * Accepts multiple roll arguments and an optional configuration object. Each argument
  * can be a dice notation string, a number (sides), or a roll options object.
  *
- * Not designed to throw - errors are returned in the result's `error` property.
+ * Throws on invalid input (bad notation, nonsensical options).
  *
  * @typeParam T - Type for custom dice faces. Defaults to `string`.
  *   - For standard numeric dice (notation strings or numbers), `result` contains
@@ -82,9 +81,10 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  *
  * @example Error handling
  * ```ts
- * const result = roll("invalid notation")
- * if (result.error) {
- *   result.error.message // => "Invalid dice notation: ..."
+ * try {
+ *   const result = roll("invalid notation")
+ * } catch (e) {
+ *   e.message // => "Invalid dice notation: ..."
  * }
  * ```
  */
@@ -93,44 +93,29 @@ export function roll<T = string>(...args: [...RollArgument<T>[], RollConfig]): R
 export function roll<T = string>(
   ...args: RollArgument<T>[] | [...RollArgument<T>[], RollConfig]
 ): RollerRollResult<T> {
-  try {
-    const lastArg = args[args.length - 1]
-    const hasConfig = lastArg !== undefined && isRollConfig(lastArg)
-    const config: RollConfig | undefined = hasConfig ? lastArg : undefined
+  const lastArg = args[args.length - 1]
+  const hasConfig = lastArg !== undefined && isRollConfig(lastArg)
+  const config: RollConfig | undefined = hasConfig ? lastArg : undefined
 
-    const rollArgs = (hasConfig ? args.slice(0, -1) : args) as RollArgument<T>[]
+  const rollArgs = (hasConfig ? args.slice(0, -1) : args) as RollArgument<T>[]
 
-    const parameters = rollArgs.flatMap((arg, index) => parseArguments(arg, index + 1))
-    const rolls = parameters.map(parameter => executeRollPipeline(parameter, config?.randomFn))
-    const total = rolls.reduce((acc, cur) => {
-      const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
-      return acc + cur.total * factor
-    }, 0)
+  const parameters = rollArgs.flatMap((arg, index) => parseArguments(arg, index + 1))
+  const rolls = parameters.map(parameter => executeRollPipeline(parameter, config?.randomFn))
+  const total = rolls.reduce((acc, cur) => {
+    const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
+    return acc + cur.total * factor
+  }, 0)
 
-    const result = rolls.flatMap<T>(r => {
-      if (r.customResults) {
-        return r.customResults
-      }
-      return r.rolls.map(n => String(n) as T)
-    })
-
-    return {
-      rolls,
-      result,
-      total,
-      error: null
+  const result = rolls.flatMap<T>(r => {
+    if (r.customResults) {
+      return r.customResults
     }
-  } catch (e) {
-    const error =
-      e instanceof RandsumError ? e : new RollError(e instanceof Error ? e.message : String(e))
+    return r.rolls.map(n => String(n) as T)
+  })
 
-    const emptyResult: T[] = []
-
-    return {
-      rolls: [],
-      result: emptyResult,
-      total: 0,
-      error
-    }
+  return {
+    rolls,
+    result,
+    total
   }
 }

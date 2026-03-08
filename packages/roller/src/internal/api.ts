@@ -41,6 +41,6 @@ export {
 export { MODIFIER_PRIORITIES } from '../lib/modifiers/priorities'
 export type { ModifierPriorityName } from '../lib/modifiers/priorities'
 
-export { normalize, equate, type NormalizeResult, type EquateResult } from '../lib/normalize'
+export { normalize, equate } from '../lib/normalize'
 
 export { d, DiceBuilder } from '../lib/builder'

@@ -32,6 +32,4 @@ export type {
 
 export type { GameRollResult } from '../types/game'
 
-export type { NormalizeResult, EquateResult } from '../lib/normalize'
-
 export type { GameRollConfig, MultiRollGameConfig } from '../lib/gameRoll'
