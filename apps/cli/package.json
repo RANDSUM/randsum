@@ -39,13 +39,7 @@
     "dice-roller"
   ],
   "dependencies": {
-    "@randsum/blades": "^3.0.0",
-    "@randsum/daggerheart": "^3.0.0",
-    "@randsum/fifth": "^3.0.0",
-    "@randsum/pbta": "^3.0.0",
-    "@randsum/root-rpg": "^3.0.0",
     "@randsum/roller": "^3.0.0",
-    "@randsum/salvageunion": "^3.0.0",
     "ink": "^5.2.0",
     "ink-text-input": "^6.0.0",
     "react": "catalog:"
