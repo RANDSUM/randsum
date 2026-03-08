@@ -18,8 +18,10 @@ export function NotationInput({
   const { validationError } = useValidation(value)
   const hasError = validationError !== ''
 
-  const borderColor = hasError ? 'red' : active ? 'green' : 'gray'
-  const promptColor = hasError ? 'red' : 'green'
+  const hasInput = value.trim() !== ''
+  const isValid = hasInput && !hasError
+  const borderColor = hasError ? 'red' : isValid ? 'green' : 'gray'
+  const promptColor = hasError ? 'red' : isValid ? 'green' : 'gray'
 
   return (
     <Box borderStyle="single" borderColor={borderColor} paddingX={1} flexDirection="column">
