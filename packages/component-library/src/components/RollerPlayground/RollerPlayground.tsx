@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isDiceNotation, roll } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import { ModifierReference } from '../ModifierReference'
@@ -8,7 +8,7 @@ import './RollerPlayground.css'
 type PlaygroundState =
   | { status: 'idle' }
   | { status: 'rolling' }
-  | { status: 'result'; total: number; record: RollRecord }
+  | { status: 'result'; total: number; records: readonly RollRecord[] }
 
 function openInStackBlitz(notation: string): void {
   const code = `import { roll } from '@randsum/roller'
@@ -118,8 +118,8 @@ export function RollerPlayground({
     timerRef.current = setTimeout(() => {
       try {
         const result = roll(notation)
-        if (!result.rolls[0]) return
-        setState({ status: 'result', total: result.total, record: result.rolls[0] })
+        if (result.rolls.length === 0) return
+        setState({ status: 'result', total: result.total, records: result.rolls })
         setOverlayVisible(true)
       } catch {
         // invalid notation — isDiceNotation guard above should prevent this
@@ -446,7 +446,7 @@ export function RollerPlayground({
                       </div>
                     ) : (
                       <>
-                        <RollTooltip record={state.record} />
+                        <RollTooltip records={state.records} />
                         <div className="roller-playground-expand-total">
                           <span>Total</span>
                           <span className="roller-playground-expand-total-chip">{state.total}</span>
@@ -660,11 +660,10 @@ function DiceGroup({
   )
 }
 
-export function RollTooltip({ record }: { readonly record: RollRecord }): React.JSX.Element {
+function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Element {
   const steps = computeSteps(record)
-
   return (
-    <div className="roller-tooltip-inner">
+    <>
       {steps.map((step, i) => {
         if (step.kind === 'divider') {
           return <div key={`div-${i}`} className="roller-tooltip-divider" />
@@ -696,6 +695,26 @@ export function RollTooltip({ record }: { readonly record: RollRecord }): React.
           </div>
         )
       })}
+    </>
+  )
+}
+
+export function RollTooltip({
+  records
+}: {
+  readonly records: readonly RollRecord[]
+}): React.JSX.Element {
+  const multiPool = records.length > 1
+
+  return (
+    <div className="roller-tooltip-inner">
+      {records.map((record, i) => (
+        <Fragment key={i}>
+          {multiPool && <div className="roller-tooltip-pool-header">{record.notation}</div>}
+          <PoolSteps record={record} />
+          {multiPool && i < records.length - 1 && <div className="roller-tooltip-pool-divider" />}
+        </Fragment>
+      ))}
     </div>
   )
 }
