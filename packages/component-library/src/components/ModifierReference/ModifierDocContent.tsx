@@ -3,6 +3,26 @@ import type { ModifierReferenceCell } from './ModifierReference'
 import { MODIFIER_DOCS } from './modifierDocs'
 import './ModifierDocContent.css'
 
+function ChipLabel({ text }: { readonly text: string }): React.JSX.Element {
+  const parts = (text.match(/[><=]+|[^><=]+/g) ?? []).map(segment => ({
+    segment,
+    isOp: '><='.includes(segment[0] ?? '')
+  }))
+  return (
+    <>
+      {parts.map((part, idx) =>
+        part.isOp ? (
+          <span key={idx}>{part.segment}</span>
+        ) : (
+          <span key={idx} className="modifier-doc-chip-var">
+            {part.segment}
+          </span>
+        )
+      )}
+    </>
+  )
+}
+
 function NotationBase({ text }: { readonly text: string }): React.JSX.Element {
   const dotIdx = text.indexOf('..')
   if (dotIdx === -1) {
@@ -61,31 +81,38 @@ export function ModifierDocContent({
         </div>
       </div>
 
-      {doc.comparisons && (
-        <>
-          <div className="modifier-doc-section-label">Comparisons</div>
-          <div className="modifier-doc-comparisons">
-            {doc.comparisons.map(cmp => (
-              <span
-                key={cmp.operator}
-                className="modifier-doc-comparison-chip"
-                data-tooltip={cmp.note}
-              >
-                {cmp.operator}
-              </span>
+      <div className="modifier-doc-body">
+        {doc.comparisons && (
+          <div className="modifier-doc-body-comparisons">
+            <div className="modifier-doc-section-label">Comparisons</div>
+            <div className="modifier-doc-comparisons">
+              {doc.comparisons.map(cmp => (
+                <span
+                  key={cmp.operator}
+                  className="modifier-doc-comparison-chip"
+                  data-tooltip={cmp.note}
+                >
+                  <ChipLabel text={cmp.operator} />
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        <div
+          className={
+            doc.comparisons ? 'modifier-doc-body-examples' : 'modifier-doc-body-examples--full'
+          }
+        >
+          <div className="modifier-doc-section-label">Examples</div>
+          <div className="modifier-doc-examples">
+            {doc.examples.map(ex => (
+              <div key={ex.notation} className="modifier-doc-example-row">
+                <span className="modifier-doc-example-notation">{ex.notation}</span>
+                <span className="modifier-doc-example-desc">{ex.description}</span>
+              </div>
             ))}
           </div>
-        </>
-      )}
-
-      <div className="modifier-doc-section-label">Examples</div>
-      <div className="modifier-doc-examples">
-        {doc.examples.map(ex => (
-          <div key={ex.notation} className="modifier-doc-example-row">
-            <span className="modifier-doc-example-notation">{ex.notation}</span>
-            <span className="modifier-doc-example-desc">{ex.description}</span>
-          </div>
-        ))}
+        </div>
       </div>
 
       {onBack && (

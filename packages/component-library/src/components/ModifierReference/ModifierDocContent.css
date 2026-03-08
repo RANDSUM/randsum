@@ -74,6 +74,30 @@
   margin-top: 0.35rem;
 }
 
+/* ===== Two-column body ===== */
+.modifier-doc-body {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+}
+
+.modifier-doc-body-comparisons {
+  flex: 0 0 33%;
+  padding-right: 0.6rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  margin-right: 0.6rem;
+}
+
+.modifier-doc-body-examples {
+  flex: 1;
+  min-width: 0;
+}
+
+.modifier-doc-body-examples--full {
+  flex: 1;
+  min-width: 0;
+}
+
 /* ===== Comparisons ===== */
 .modifier-doc-comparisons {
   display: flex;
@@ -98,6 +122,10 @@
 .modifier-doc-comparison-chip:hover {
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.22);
+}
+
+.modifier-doc-chip-var {
+  color: rgba(230, 237, 243, 0.35);
 }
 
 .modifier-doc-comparison-chip[data-tooltip]::after {
