@@ -1,0 +1,116 @@
+import type { ModifierOptions } from '../types'
+import {
+  capSchema,
+  compoundSchema,
+  countSuccessesSchema,
+  dropSchema,
+  explodeSchema,
+  keepSchema,
+  minusSchema,
+  multiplySchema,
+  multiplyTotalSchema,
+  penetrateSchema,
+  plusSchema,
+  replaceSchema,
+  rerollSchema,
+  uniqueSchema
+} from '../definitions'
+
+/**
+ * Convert modifier options to a notation string suffix.
+ * Processes modifiers in priority order (cap → multiplyTotal).
+ */
+export function modifiersToNotation(modifiers: ModifierOptions | undefined): string {
+  if (!modifiers) return ''
+  const parts: string[] = []
+
+  if (modifiers.cap !== undefined) {
+    const n = capSchema.toNotation(modifiers.cap)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.drop !== undefined) {
+    const n = dropSchema.toNotation(modifiers.drop)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.keep !== undefined) {
+    const n = keepSchema.toNotation(modifiers.keep)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.replace !== undefined) {
+    const n = replaceSchema.toNotation(modifiers.replace)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.reroll !== undefined) {
+    const n = rerollSchema.toNotation(modifiers.reroll)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.explode !== undefined) {
+    const n = explodeSchema.toNotation(modifiers.explode)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.compound !== undefined) {
+    const n = compoundSchema.toNotation(modifiers.compound)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.penetrate !== undefined) {
+    const n = penetrateSchema.toNotation(modifiers.penetrate)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.unique !== undefined) {
+    const n = uniqueSchema.toNotation(modifiers.unique)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.multiply !== undefined) {
+    const n = multiplySchema.toNotation(modifiers.multiply)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.plus !== undefined) {
+    const n = plusSchema.toNotation(modifiers.plus)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.minus !== undefined) {
+    const n = minusSchema.toNotation(modifiers.minus)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.countSuccesses !== undefined) {
+    const n = countSuccessesSchema.toNotation(modifiers.countSuccesses)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.multiplyTotal !== undefined) {
+    const n = multiplyTotalSchema.toNotation(modifiers.multiplyTotal)
+    if (n !== undefined) parts.push(n)
+  }
+
+  return parts.join('')
+}
+
+/**
+ * Convert modifier options to an array of human-readable description strings.
+ * Processes modifiers in priority order (cap → multiplyTotal).
+ */
+export function modifiersToDescription(modifiers: ModifierOptions | undefined): string[] {
+  if (!modifiers) return []
+  const parts: string[] = []
+
+  if (modifiers.cap !== undefined) parts.push(...capSchema.toDescription(modifiers.cap))
+  if (modifiers.drop !== undefined) parts.push(...dropSchema.toDescription(modifiers.drop))
+  if (modifiers.keep !== undefined) parts.push(...keepSchema.toDescription(modifiers.keep))
+  if (modifiers.replace !== undefined) parts.push(...replaceSchema.toDescription(modifiers.replace))
+  if (modifiers.reroll !== undefined) parts.push(...rerollSchema.toDescription(modifiers.reroll))
+  if (modifiers.explode !== undefined) parts.push(...explodeSchema.toDescription(modifiers.explode))
+  if (modifiers.compound !== undefined)
+    parts.push(...compoundSchema.toDescription(modifiers.compound))
+  if (modifiers.penetrate !== undefined)
+    parts.push(...penetrateSchema.toDescription(modifiers.penetrate))
+  if (modifiers.unique !== undefined) parts.push(...uniqueSchema.toDescription(modifiers.unique))
+  if (modifiers.multiply !== undefined)
+    parts.push(...multiplySchema.toDescription(modifiers.multiply))
+  if (modifiers.plus !== undefined) parts.push(...plusSchema.toDescription(modifiers.plus))
+  if (modifiers.minus !== undefined) parts.push(...minusSchema.toDescription(modifiers.minus))
+  if (modifiers.countSuccesses !== undefined)
+    parts.push(...countSuccessesSchema.toDescription(modifiers.countSuccesses))
+  if (modifiers.multiplyTotal !== undefined)
+    parts.push(...multiplyTotalSchema.toDescription(modifiers.multiplyTotal))
+
+  return parts
+}

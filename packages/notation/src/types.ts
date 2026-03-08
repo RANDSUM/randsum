@@ -112,3 +112,69 @@ export interface ParsedNotationOptions {
  * Template literal type for dice notation strings.
  */
 export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
+
+/**
+ * Configuration options for a dice roll.
+ *
+ * @template T - Type for custom dice faces (defaults to string)
+ */
+export interface RollOptions<T = string> {
+  /** Number of dice to roll (default: 1) */
+  quantity?: number
+  /** How this roll combines with others: 'add' or 'subtract' (default: 'add') */
+  arithmetic?: 'add' | 'subtract'
+  /** Number of sides, or array of custom face values */
+  sides: number | T[]
+  /** Modifiers to apply to the roll (drop, reroll, explode, etc.) */
+  modifiers?: ModifierOptions
+  /**
+   * Optional identifier for this roll in multi-roll expressions.
+   * Default keys are auto-generated as "Roll 1", "Roll 2", etc.
+   */
+  key?: string | undefined
+}
+
+/**
+ * Successful validation result.
+ */
+export interface ValidValidationResult {
+  /** Indicates successful validation */
+  valid: true
+  /** Original input as DiceNotation */
+  argument: DiceNotation
+  /** Human-readable descriptions for each roll */
+  description: string[][]
+  /** Parsed roll options for each roll */
+  options: ParsedNotationOptions[]
+  /** Notation strings for each roll */
+  notation: DiceNotation[]
+  /** No error on success */
+  error: null
+}
+
+/**
+ * Error information from validation.
+ */
+export interface ValidationErrorInfo {
+  /** Description of what's wrong */
+  message: string
+  /** The input that failed validation */
+  argument: string
+}
+
+/**
+ * Failed validation result.
+ */
+export interface InvalidValidationResult {
+  /** Indicates failed validation */
+  valid: false
+  /** Original input string */
+  argument: string
+  /** Error information */
+  error: ValidationErrorInfo
+}
+
+/**
+ * Result of notation validation.
+ */
+export type ValidationResult = ValidValidationResult | InvalidValidationResult

@@ -10,7 +10,12 @@ export type {
   ModifierConfig,
   ModifierOptions,
   DiceNotation,
-  ParsedNotationOptions
+  ParsedNotationOptions,
+  RollOptions,
+  ValidValidationResult,
+  InvalidValidationResult,
+  ValidationErrorInfo,
+  ValidationResult
 } from './types'
 
 // Schema
@@ -21,6 +26,18 @@ export { defineNotationSchema } from './schema'
 export { notationToOptions } from './parse/notationToOptions'
 export { listOfNotations } from './parse/listOfNotations'
 export { isDiceNotation, notation, NotationParseError } from './isDiceNotation'
+
+// Validation
+export { validateNotation } from './validateNotation'
+
+// Transformers
+export {
+  optionsToNotation,
+  optionsToDescription,
+  optionsToSidesFaces,
+  modifiersToNotation,
+  modifiersToDescription
+} from './transformers'
 
 // Validation/suggestions
 export { suggestNotationFix } from './suggestions'
