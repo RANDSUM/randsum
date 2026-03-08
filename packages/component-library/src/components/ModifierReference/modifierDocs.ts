@@ -23,7 +23,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Drop Lowest',
     description: 'Remove the lowest-valued dice from the pool before summing.',
     displayBase: 'L',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [
       { notation: 'L', note: 'No argument — drop 1 lowest' },
       { notation: 'LN', note: 'Drop N lowest' }
@@ -37,7 +37,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Drop Highest',
     description: 'Remove the highest-valued dice from the pool before summing.',
     displayBase: 'H',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [
       { notation: 'H', note: 'No argument — drop 1 highest' },
       { notation: 'HN', note: 'Drop N highest' }
@@ -51,7 +51,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Keep Highest',
     description: 'Keep only the N highest-valued dice; discard the rest.',
     displayBase: 'K',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [
       { notation: 'K', note: 'No argument — keep 1 highest' },
       { notation: 'KN', note: 'Keep N highest' }
@@ -65,7 +65,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Keep Lowest',
     description: 'Keep only the N lowest-valued dice; discard the rest.',
     displayBase: 'kl',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [
       { notation: 'kl', note: 'No argument — keep 1 lowest' },
       { notation: 'klN', note: 'Keep N lowest' }
@@ -91,7 +91,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description:
       'Like explode, but extra rolls add to the triggering die rather than creating new dice.',
     displayBase: '!!',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [
       { notation: '!!', note: 'No argument — compound once on max' },
       { notation: '!!N', note: 'Compound up to N times' },
@@ -107,7 +107,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description:
       'Like explode, but each subsequent explosion subtracts 1 from the result (Hackmaster-style).',
     displayBase: '!p',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [
       { notation: '!p', note: 'No argument — penetrate once' },
       { notation: '!pN', note: 'Penetrate up to N times' },
@@ -165,7 +165,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Multiply Total',
     description: 'Multiply the entire final total after all other modifiers have been applied.',
     displayBase: '**',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [{ notation: '**N', note: 'Multiply final total by N' }],
     examples: [
       { notation: '2d6+3**2', description: '(roll + 3) × 2' },
@@ -176,7 +176,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Multiply Dice',
     description: 'Multiply the dice sum before applying +/− arithmetic modifiers.',
     displayBase: '*',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [{ notation: '*N', note: 'Multiply dice sum by N (pre-arithmetic)' }],
     examples: [
       { notation: '2d6*2+3', description: '(roll × 2) + 3' },
@@ -187,7 +187,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Subtract',
     description: 'Subtract a fixed number from the total after all dice are rolled.',
     displayBase: '−',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [{ notation: '-N', note: 'Subtract N from total' }],
     examples: [
       { notation: '1d20-2', description: 'Roll 1d20, subtract 2' },
@@ -198,7 +198,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     title: 'Add',
     description: 'Add a fixed number to the total after all dice are rolled.',
     displayBase: '+',
-    displayOptional: 'N',
+    displayOptional: 'n',
     forms: [{ notation: '+N', note: 'Add N to total' }],
     examples: [
       { notation: '1d20+5', description: 'Roll 1d20, add 5' },
