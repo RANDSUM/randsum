@@ -1,0 +1,125 @@
+.modifier-doc {
+  font-size: var(--rp-font-size-expand, 0.8rem);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #e6edf3;
+  min-width: 220px;
+}
+
+.modifier-doc-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.35rem;
+}
+
+.modifier-doc-notation {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #60a5fa;
+}
+
+.modifier-doc-title {
+  font-weight: 600;
+  color: #e6edf3;
+}
+
+.modifier-doc-description {
+  color: #9ca3af;
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+.modifier-doc-section-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  margin-bottom: 0.2rem;
+}
+
+.modifier-doc-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.4rem;
+}
+
+.modifier-doc-form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.modifier-doc-form-notation {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  color: #e6edf3;
+  flex-shrink: 0;
+}
+
+.modifier-doc-form-note {
+  color: #6b7280;
+  text-align: right;
+}
+
+.modifier-doc-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.modifier-doc-example-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.modifier-doc-example-notation {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  color: #60a5fa;
+  flex-shrink: 0;
+}
+
+.modifier-doc-example-desc {
+  color: #6b7280;
+  text-align: right;
+}
+
+.modifier-doc-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0.25rem 0 0;
+  margin-top: 0.15rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  width: 100%;
+}
+
+.modifier-doc-back:hover {
+  color: #9ca3af;
+}
+
+[data-theme='light'] .modifier-doc {
+  color: #1f2328;
+}
+[data-theme='light'] .modifier-doc-title {
+  color: #1f2328;
+}
+[data-theme='light'] .modifier-doc-notation {
+  color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-example-notation {
+  color: #4878c8;
+}
