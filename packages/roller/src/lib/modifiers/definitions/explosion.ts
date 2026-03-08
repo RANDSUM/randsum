@@ -61,9 +61,14 @@ export const ExplosionStrategies: {
 /**
  * Resolve the max depth from explosion options.
  *
- * @param options - true (default depth), 0 (unlimited), or a specific number
- * @param defaultDepth - Depth to use when options is true (default: 1)
- * @returns The resolved max depth
+ * Convention:
+ *   - `true`      → use defaultDepth (modifier's built-in default)
+ *   - `0`         → "unlimited" — uses DEFAULT_EXPLOSION_DEPTH as a practical ceiling
+ *   - N (integer) → explode at most N times
+ *   - `false`     → disabled (should not reach here; handled upstream)
+ *
+ * Note: `0` means "unlimited" by convention (matching dice notation where !!0 = unlimited
+ * compound). It does NOT mean "never explode". Use `false` to disable.
  */
 export function resolveExplosionDepth(options: boolean | number, defaultDepth = 1): number {
   if (options === true) return defaultDepth
