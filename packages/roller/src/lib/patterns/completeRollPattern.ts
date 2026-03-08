@@ -3,8 +3,9 @@ import { getCachedCombinedPattern } from '../modifiers'
 
 /**
  * Get the complete roll pattern (core notation + all modifier patterns).
- * Result is cached and invalidated when modifiers change.
- * Returns a fresh RegExp instance each time to prevent shared lastIndex state.
+ * Constructs the complete roll pattern from the cached combined modifier source.
+ * The underlying pattern source is cached and only rebuilt when modifiers change.
+ * Returns a fresh RegExp instance each call to prevent shared lastIndex state.
  */
 export function createCompleteRollPattern(): RegExp {
   const cached = getCachedCombinedPattern()
