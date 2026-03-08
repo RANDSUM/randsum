@@ -3,19 +3,6 @@ import type { ModifierReferenceCell } from './ModifierReference'
 import { MODIFIER_DOCS } from './modifierDocs'
 import './ModifierDocContent.css'
 
-function FormNotation({ notation }: { readonly notation: string }): React.JSX.Element {
-  const parenIdx = notation.indexOf('(')
-  if (parenIdx === -1) {
-    return <span className="modifier-doc-form-notation">{notation}</span>
-  }
-  return (
-    <span className="modifier-doc-form-notation">
-      {notation.slice(0, parenIdx)}
-      <span className="modifier-doc-form-notation-optional">{notation.slice(parenIdx)}</span>
-    </span>
-  )
-}
-
 export function ModifierDocContent({
   cell,
   onBack
@@ -57,14 +44,6 @@ export function ModifierDocContent({
         <div className="modifier-doc-header-text">
           <div className="modifier-doc-title">{doc.title}</div>
           <p className="modifier-doc-description">{doc.description}</p>
-          <div className="modifier-doc-forms">
-            {doc.forms.map(form => (
-              <div key={form.notation} className="modifier-doc-form-row">
-                <FormNotation notation={form.notation} />
-                <span className="modifier-doc-form-note">{form.note}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 

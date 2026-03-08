@@ -27,19 +27,19 @@ const GRID_ROWS: readonly GridRow[] = [
   ],
   [
     { notation: 'K', description: 'keep highest' },
-    { notation: '**', description: 'multiply total' }
+    { notation: '+', description: 'add' }
   ],
   [
     { notation: 'kl', description: 'keep lowest' },
-    { notation: '*', description: 'multiply dice' }
-  ],
-  [
-    { notation: '!', description: 'explode' },
     { notation: '\u2013', description: 'subtract' }
   ],
   [
+    { notation: '!', description: 'explode' },
+    { notation: '*', description: 'multiply dice' }
+  ],
+  [
     { notation: '!!', description: 'compound' },
-    { notation: '+', description: 'add' }
+    { notation: '**', description: 'multiply total' }
   ],
   [
     { notation: '!p', description: 'penetrate' },

@@ -61,7 +61,7 @@
   font-size: 0.85rem;
   color: #9ca3af;
   line-height: 1.4;
-  margin: 0 0 0.3rem;
+  margin: 0;
 }
 
 /* ===== Section label ===== */
@@ -72,44 +72,6 @@
   color: #4b5563;
   margin-bottom: 0.2rem;
   margin-top: 0.35rem;
-}
-
-/* ===== Forms (nested in header) ===== */
-.modifier-doc-forms {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.3rem;
-  overflow: hidden;
-}
-
-.modifier-doc-form-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  font-size: 0.85rem;
-  padding: 0.15rem 0.4rem;
-}
-
-.modifier-doc-form-row:nth-child(even) {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.modifier-doc-form-notation {
-  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-  color: #e6edf3;
-  flex-shrink: 0;
-}
-
-.modifier-doc-form-notation-optional {
-  color: rgba(255, 255, 255, 0.25);
-}
-
-.modifier-doc-form-note {
-  font-size: 0.85rem;
-  color: #6b7280;
-  text-align: right;
 }
 
 /* ===== Comparisons ===== */
