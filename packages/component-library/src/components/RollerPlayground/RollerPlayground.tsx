@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import { ModifierReference } from '../ModifierReference'
@@ -61,41 +61,27 @@ export function RollerPlayground({
   defaultNotation = '4d6L',
   notation: controlledNotation,
   className,
-  size = 'l'
+  size = 'l',
+  expanded: expandedProp = false
 }: {
   readonly stackblitz?: boolean
   readonly defaultNotation?: string
   readonly notation?: string
   readonly className?: string
   readonly size?: 's' | 'm' | 'l'
+  readonly expanded?: boolean
 } = {}): React.JSX.Element {
   const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [expanded, setExpanded] = useState(false)
-  const [modifiersOpen, setModifiersOpen] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const inputRef = useRef<HTMLInputElement>(null)
-  const modifiersRef = useRef<HTMLDivElement>(null)
-  const modifiersId = useId()
 
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
-
-  useEffect(() => {
-    if (!modifiersOpen) return
-    const handler = (e: MouseEvent): void => {
-      if (modifiersRef.current && !modifiersRef.current.contains(e.target as Node)) {
-        setModifiersOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => {
-      document.removeEventListener('mousedown', handler)
-    }
-  }, [modifiersOpen])
 
   useEffect(() => {
     if (controlledNotation === undefined) return
@@ -110,7 +96,7 @@ export function RollerPlayground({
   const handleRoll = useCallback(() => {
     if (!isValid) return
     setState({ status: 'rolling' })
-    setExpanded(false)
+    if (state.status === 'result') setExpanded(false)
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
       const result = roll(notation)
@@ -120,7 +106,7 @@ export function RollerPlayground({
         setExpanded(true)
       })
     }, 300)
-  }, [notation, isValid])
+  }, [notation, isValid, state.status])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setNotation(e.target.value)
@@ -196,113 +182,104 @@ export function RollerPlayground({
             </span>
           </div>
 
-          <div
-            className={[
-              'roller-playground-chip',
-              state.status !== 'result' ? 'roller-playground-chip--empty' : '',
-              state.status === 'result' && expanded ? 'roller-playground-chip--expanded' : ''
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            onClick={
-              state.status === 'result'
-                ? () => {
-                    setExpanded(e => !e)
-                  }
-                : undefined
-            }
-            role={state.status === 'result' ? 'button' : undefined}
-            tabIndex={state.status === 'result' ? 0 : undefined}
-            onKeyDown={
-              state.status === 'result'
-                ? (e: React.KeyboardEvent) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      setExpanded(prev => !prev)
+          {!expandedProp && (
+            <div
+              className={[
+                'roller-playground-chip',
+                state.status !== 'result' ? 'roller-playground-chip--modifiers' : '',
+                state.status === 'result' && expanded ? 'roller-playground-chip--expanded' : ''
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              onClick={
+                state.status === 'rolling'
+                  ? undefined
+                  : () => {
+                      setExpanded(e => !e)
                     }
-                  }
-                : undefined
-            }
-            aria-label={
-              state.status === 'result'
-                ? expanded
-                  ? 'Collapse breakdown'
-                  : 'Expand breakdown'
-                : undefined
-            }
-            aria-expanded={state.status === 'result' ? expanded : undefined}
-          >
-            {state.status === 'result' && (
-              <>
-                <span
-                  className={[
-                    'roller-playground-chip-value',
-                    expanded ? 'roller-playground-chip-value--hidden' : ''
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                >
-                  {state.total}
+              }
+              role="button"
+              tabIndex={state.status === 'rolling' ? undefined : 0}
+              onKeyDown={
+                state.status === 'rolling'
+                  ? undefined
+                  : (e: React.KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setExpanded(prev => !prev)
+                      }
+                    }
+              }
+              aria-label={
+                state.status === 'result'
+                  ? expanded
+                    ? 'Collapse breakdown'
+                    : 'Expand breakdown'
+                  : expanded
+                    ? 'Close modifier reference'
+                    : 'Open modifier reference'
+              }
+              aria-expanded={expanded}
+            >
+              {state.status === 'result' ? (
+                <>
+                  <span
+                    className={[
+                      'roller-playground-chip-value',
+                      expanded ? 'roller-playground-chip-value--hidden' : ''
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {state.total}
+                  </span>
+                  {expanded ? (
+                    <span className="roller-playground-chip-collapse" aria-hidden="true">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="12"
+                        height="12"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <polyline points="18 15 12 9 6 15" />
+                      </svg>
+                    </span>
+                  ) : (
+                    <span className="roller-playground-chip-hint" aria-hidden="true">
+                      ↓
+                    </span>
+                  )}
+                </>
+              ) : expanded ? (
+                <span className="roller-playground-chip-collapse" aria-hidden="true">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <polyline points="18 15 12 9 6 15" />
+                  </svg>
                 </span>
-                {expanded ? (
-                  <span className="roller-playground-chip-collapse" aria-hidden="true">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      width="12"
-                      height="12"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <polyline points="18 15 12 9 6 15" />
-                    </svg>
-                  </span>
-                ) : (
-                  <span className="roller-playground-chip-hint" aria-hidden="true">
-                    ↓
-                  </span>
-                )}
-              </>
-            )}
-          </div>
+              ) : (
+                <span className="roller-playground-chip-modifiers-label">Modifiers</span>
+              )}
+            </div>
+          )}
         </div>
         <div className="roller-playground-desc-row">
-          <div className="roller-playground-modifiers-wrap" ref={modifiersRef}>
-            <button
-              className={[
-                'roller-playground-stackblitz',
-                'roller-playground-modifiers-btn',
-                modifiersOpen ? 'roller-playground-modifiers-btn--active' : ''
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              type="button"
-              aria-label={modifiersOpen ? 'Hide modifier reference' : 'Show modifier reference'}
-              aria-expanded={modifiersOpen}
-              aria-controls={modifiersId}
-              onClick={e => {
-                e.stopPropagation()
-                setModifiersOpen(o => !o)
-              }}
-            >
-              Modifiers
-            </button>
-            <div
-              id={modifiersId}
-              className={[
-                'roller-playground-modifiers-tooltip',
-                modifiersOpen ? 'roller-playground-modifiers-tooltip--open' : ''
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              <ModifierReference />
-            </div>
-          </div>
           <span
             className={`roller-playground-desc roller-playground-desc--${notation.length === 0 ? 'hint' : isValid ? 'valid' : 'invalid'}`}
           >
@@ -329,16 +306,32 @@ export function RollerPlayground({
           )}
         </div>
         <div
-          className={`roller-playground-expand${expanded ? ' roller-playground-expand--open' : ''}`}
+          className={`roller-playground-expand${expandedProp || expanded ? ' roller-playground-expand--open' : ''}`}
         >
           <div className="roller-playground-expand-inner">
-            {state.status === 'result' && (
+            {state.status === 'result' ? (
               <div className="roller-playground-expand-content">
                 <RollTooltip record={state.record} />
                 <div className="roller-playground-expand-total">
                   <span>Total</span>
                   <span className="roller-playground-expand-total-chip">{state.total}</span>
                 </div>
+              </div>
+            ) : (
+              <div
+                className={[
+                  'roller-playground-expand-reference',
+                  state.status === 'rolling' ? 'roller-playground-expand-reference--loading' : ''
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <ModifierReference />
+                {state.status === 'rolling' && (
+                  <div className="roller-playground-expand-loading-overlay">
+                    <div className="roller-playground-expand-loading-spinner" />
+                  </div>
+                )}
               </div>
             )}
           </div>

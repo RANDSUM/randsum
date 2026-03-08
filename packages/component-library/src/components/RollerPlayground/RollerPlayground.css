@@ -364,23 +364,6 @@
   animation: chip-enter 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.roller-playground-chip--empty {
-  box-sizing: content-box;
-  border-color: rgba(255, 255, 255, 0.12);
-  cursor: default;
-  pointer-events: none;
-  animation: none;
-}
-
-@media (prefers-color-scheme: light) {
-  .roller-playground-chip--empty {
-    border-color: rgba(0, 0, 0, 0.12);
-  }
-}
-[data-theme='light'] .roller-playground-chip--empty {
-  border-color: rgba(0, 0, 0, 0.12);
-}
-
 @media (prefers-color-scheme: light) {
   .roller-playground-chip {
     border-color: #4878c8;
@@ -410,12 +393,12 @@
   background: rgba(72, 120, 200, 0.12);
 }
 
-.roller-playground-chip:not(.roller-playground-chip--empty) {
+.roller-playground-chip {
   cursor: pointer;
   user-select: none;
 }
 
-.roller-playground-chip:not(.roller-playground-chip--empty):hover {
+.roller-playground-chip:hover {
   filter: brightness(1.1);
 }
 
@@ -435,7 +418,7 @@
   pointer-events: none;
 }
 
-.roller-playground-chip:not(.roller-playground-chip--empty):hover .roller-playground-chip-hint {
+.roller-playground-chip:hover .roller-playground-chip-hint {
   opacity: 1;
 }
 
@@ -732,45 +715,184 @@
   text-align: center;
 }
 
-/* ===== Modifiers hover tooltip ===== */
-.roller-playground-modifiers-wrap {
-  position: relative;
-  flex-shrink: 0;
+/* ===== Chip in modifiers mode (no result) ===== */
+.roller-playground-chip--modifiers {
+  border-color: rgba(255, 255, 255, 0.12);
+  animation: none;
 }
 
-.roller-playground-modifiers-btn--active {
+.roller-playground-chip--modifiers:hover {
   border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-[data-theme='light'] .roller-playground-modifiers-btn--active {
-  border-color: #4878c8;
-  color: #4878c8;
 }
 
 @media (prefers-color-scheme: light) {
-  .roller-playground-modifiers-btn--active {
+  .roller-playground-chip--modifiers {
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+  .roller-playground-chip--modifiers:hover {
     border-color: #4878c8;
-    color: #4878c8;
   }
 }
 
-.roller-playground-modifiers-tooltip {
-  position: absolute;
-  top: calc(100% + 0.35rem);
-  left: 0;
-  z-index: 10;
-  min-width: 16rem;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-4px);
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
+[data-theme='light'] .roller-playground-chip--modifiers {
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
-.roller-playground-modifiers-tooltip--open {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+[data-theme='light'] .roller-playground-chip--modifiers:hover {
+  border-color: #4878c8;
+}
+
+.roller-playground-chip-modifiers-label {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #8b949e;
+  white-space: nowrap;
+}
+
+/* ===== Expand panel showing modifier reference ===== */
+.roller-playground-expand-reference {
+  padding: 0.25rem 0.5rem 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-expand-reference {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+[data-theme='light'] .roller-playground-expand-reference {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.roller-playground-expand-reference--loading .modifier-reference {
+  opacity: 0.15;
+  transition: opacity 0.2s ease;
+}
+
+.roller-playground-expand-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roller-playground-expand-loading-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: roller-spin 0.6s linear infinite;
+}
+
+/* ===== ModifierReference embedded in playground ===== */
+.roller-playground-expand-reference .modifier-reference {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  font-size: var(--rp-font-size-expand);
+}
+
+.roller-playground-expand-reference .modifier-reference-cell {
+  padding: 0.2rem 0;
+}
+
+.roller-playground-expand-reference .modifier-reference-core {
+  padding: 0.25rem 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Unified row-based zebra (override the diagonal cell pattern) */
+.roller-playground-expand-reference
+  .modifier-reference-row:nth-child(odd)
+  .modifier-reference-cell--right,
+.roller-playground-expand-reference
+  .modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--left {
+  background: transparent;
+}
+
+.roller-playground-expand-reference
+  .modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--left,
+.roller-playground-expand-reference
+  .modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--right {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Match text colors to playground tooltip */
+.roller-playground-expand-reference .modifier-reference-notation {
+  font-size: var(--rp-font-size-expand);
+  color: #e6edf3;
+}
+
+.roller-playground-expand-reference .modifier-reference-desc,
+.roller-playground-expand-reference .modifier-reference-core-desc {
+  font-size: var(--rp-font-size-expand);
+  color: #9ca3af;
+}
+
+@media (prefers-color-scheme: light) {
+  .roller-playground-expand-reference .modifier-reference {
+    background: transparent;
+    border: none;
+  }
+  .roller-playground-expand-reference .modifier-reference-core {
+    background: rgba(0, 0, 0, 0.04);
+    border-top-color: rgba(0, 0, 0, 0.08);
+  }
+  .roller-playground-expand-reference
+    .modifier-reference-row:nth-child(even)
+    .modifier-reference-cell--left,
+  .roller-playground-expand-reference
+    .modifier-reference-row:nth-child(even)
+    .modifier-reference-cell--right {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .roller-playground-expand-reference .modifier-reference-notation {
+    color: #1f2328;
+  }
+  .roller-playground-expand-reference .modifier-reference-desc,
+  .roller-playground-expand-reference .modifier-reference-core-desc {
+    color: #6b7280;
+  }
+}
+
+[data-theme='light'] .roller-playground-expand-reference .modifier-reference {
+  background: transparent;
+  border: none;
+}
+
+[data-theme='light'] .roller-playground-expand-reference .modifier-reference-core {
+  background: rgba(0, 0, 0, 0.04);
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light']
+  .roller-playground-expand-reference
+  .modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--left,
+[data-theme='light']
+  .roller-playground-expand-reference
+  .modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--right {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .roller-playground-expand-reference .modifier-reference-notation {
+  color: #1f2328;
+}
+
+[data-theme='light'] .roller-playground-expand-reference .modifier-reference-desc,
+[data-theme='light'] .roller-playground-expand-reference .modifier-reference-core-desc {
+  color: #6b7280;
 }
