@@ -31,7 +31,7 @@
     },
     "apps/cli": {
       "name": "@randsum/cli",
-      "version": "1.0.0",
+      "version": "3.0.0",
       "bin": {
         "randsum": "dist/index.js",
       },
@@ -84,14 +84,14 @@
     },
     "packages/blades": {
       "name": "@randsum/blades",
-      "version": "1.1.0",
+      "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/component-library": {
       "name": "@randsum/component-library",
-      "version": "0.1.2",
+      "version": "0.2.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
@@ -108,28 +108,28 @@
     },
     "packages/daggerheart": {
       "name": "@randsum/daggerheart",
-      "version": "1.2.0",
+      "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/fifth": {
       "name": "@randsum/fifth",
-      "version": "1.1.0",
+      "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/pbta": {
       "name": "@randsum/pbta",
-      "version": "1.2.0",
+      "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "1.1.2",
+      "version": "3.0.0",
       "bin": "./bin/randsum",
       "devDependencies": {
         "fast-check": "catalog:",
@@ -137,17 +137,17 @@
     },
     "packages/root-rpg": {
       "name": "@randsum/root-rpg",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
     },
     "packages/salvageunion": {
       "name": "@randsum/salvageunion",
-      "version": "1.1.0",
+      "version": "3.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
-        "salvageunion-reference": "2.3.5",
+        "salvageunion-reference": "^2.4.0",
       },
     },
   },
@@ -2348,7 +2348,7 @@
 
     "safe-stable-stringify": ["safe-stable-stringify@2.5.0", "", {}, "sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA=="],
 
-    "salvageunion-reference": ["salvageunion-reference@2.3.5", "", {}, "sha512-pTfTX7yKS5SS0ozGWXi5v08cw8Ok41oBgdYxiKWh4RwqO9RkURGo3otzQq8eY3tHYAiaZJP5rpURDH3AWkiGEg=="],
+    "salvageunion-reference": ["salvageunion-reference@2.4.0", "", { "dependencies": { "zod": "^4.3.6" } }, "sha512-ZzL30v+D1WRy0t+zsiuJqMz+sxQcl2x0g70oV9g1cLhC/zaxLP88n3pZocJuMntjCq2qU20Ze+xMCWILNm5KxQ=="],
 
     "sass-formatter": ["sass-formatter@0.7.9", "", { "dependencies": { "suf-log": "^2.5.3" } }, "sha512-CWZ8XiSim+fJVG0cFLStwDvft1VI7uvXdCNJYXhDvowiv+DsbD1nXLiQ4zrE5UBvj5DWZJ93cwN0NX5PMsr1Pw=="],
 
@@ -2937,6 +2937,8 @@
     "safe-array-concat/isarray": ["isarray@2.0.5", "", {}, "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="],
 
     "safe-push-apply/isarray": ["isarray@2.0.5", "", {}, "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw=="],
+
+    "salvageunion-reference/zod": ["zod@4.3.6", "", {}, "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="],
 
     "sharp/detect-libc": ["detect-libc@2.1.2", "", {}, "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ=="],
 
