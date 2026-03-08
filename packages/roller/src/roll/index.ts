@@ -64,6 +64,16 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * const result = roll("1d20", { randomFn: seeded })
  * ```
  *
+ * ## Config object must be last
+ *
+ * The optional `RollConfig` must be the **last** argument. If placed earlier,
+ * it is treated as a roll argument and will fail validation.
+ *
+ * ```ts
+ * roll('1d20', { randomFn: seeded })     // ✅ config is last
+ * roll({ randomFn: seeded }, '1d20')     // ❌ config treated as roll arg → error
+ * ```
+ *
  * @example Multiple rolls
  * ```ts
  * const result = roll("1d20+5", "2d6+3")
