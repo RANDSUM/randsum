@@ -3,7 +3,8 @@ import { ModifierError } from '../../../errors'
 import {
   formatComparisonDescription,
   formatComparisonNotation,
-  parseComparisonNotation
+  parseComparisonNotation,
+  validateComparisonOptions
 } from '../../comparison'
 import type { TypedModifierDefinition } from '../schema'
 import { defineModifier } from '../registry'
@@ -108,5 +109,7 @@ export const capModifier: TypedModifierDefinition<'cap'> = defineModifier<'cap'>
         `Invalid cap range: lessThan (${effectiveLow}) must be less than greaterThan (${effectiveHigh})`
       )
     }
+
+    validateComparisonOptions('cap', options)
   }
 })

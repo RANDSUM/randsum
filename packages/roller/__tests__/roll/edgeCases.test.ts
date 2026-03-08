@@ -94,6 +94,24 @@ describe('edge cases', () => {
       })
       expect(result.error).toBeInstanceOf(ModifierError)
     })
+
+    test('cap with mutually exclusive gt/lt conditions returns modifier error', () => {
+      const result = roll({
+        sides: 6,
+        quantity: 3,
+        modifiers: { cap: { greaterThan: 10, lessThan: 3 } }
+      })
+      expect(result.error).toBeInstanceOf(ModifierError)
+    })
+
+    test('reroll with impossible gte/lte conditions returns modifier error', () => {
+      const result = roll({
+        sides: 6,
+        quantity: 3,
+        modifiers: { reroll: { greaterThanOrEqual: 8, lessThanOrEqual: 2 } }
+      })
+      expect(result.error).toBeInstanceOf(ModifierError)
+    })
   })
 
   describe('arithmetic edge cases', () => {

@@ -83,7 +83,7 @@ describe(parseArguments, () => {
             exact: [2, 3]
           },
           reroll: { exact: [] },
-          cap: { greaterThan: 2, lessThan: 1 },
+          cap: { greaterThan: 5 },
           replace: { from: 6, to: 1 },
           unique: { notUnique: [1, 2] },
           explode: true
@@ -96,11 +96,10 @@ describe(parseArguments, () => {
         expect(params).toMatchObject({
           argument,
           ...argument,
-          notation: '4d6C{>2,<1}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1',
+          notation: '4d6C{>5}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1',
           description: [
             'Roll 4 6-sided dice',
-            'No Rolls greater than [2]',
-            'No Rolls less than [1]',
+            'No Rolls greater than [5]',
             'Drop lowest',
             'Drop [2] and [3]',
             'Drop greater than [2]',
