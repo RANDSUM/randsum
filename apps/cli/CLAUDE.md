@@ -39,7 +39,7 @@ bun run test                   # Run tests
 
 - `@randsum/roller` ^3.0.0 - Core dice engine
 - `@randsum/notation` ^3.0.0 - Notation parsing and tokenization
-- `@randsum/display-utils` ^3.0.0 - Display formatting utilities (computeSteps, MODIFIER_DOCS, etc.)
+- `@randsum/display-utils` ^3.0.1 - Display formatting utilities (computeSteps, MODIFIER_DOCS, etc.)
 - `ink` - React for CLI (TUI framework)
 - `ink-text-input` - Text input component for Ink
 - `react` - React (required by Ink)

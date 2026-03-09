@@ -13,12 +13,14 @@ Built targeting the browser environment (`bunup` target: `browser`). Externals `
 Takes a single `RollRecord` (from `roll().rolls[n]`) and returns an ordered array of `TooltipStep` values describing each transformation applied to the dice pool.
 
 Steps are built by walking `record.modifierLogs`:
+
 - Arithmetic modifiers (`plus`, `minus`, `multiply`, `multiplyTotal`) produce `kind: 'arithmetic'` steps
 - `drop`/`keep` modifiers with both `lowest` and `highest` in one log entry are split into two separate `kind: 'rolls'` steps
 - All other modifiers produce a single `kind: 'rolls'` step
 - If any modifier steps were emitted, a `kind: 'finalRolls'` step is appended at the end
 
 `TooltipStep` discriminated union:
+
 - `{ kind: 'rolls'; label: string; unchanged: readonly number[]; removed: readonly number[]; added: readonly number[] }`
 - `{ kind: 'divider' }`
 - `{ kind: 'arithmetic'; label: string; display: string }`
@@ -31,6 +33,7 @@ Also exports `formatAsMath(rolls, delta?)` — formats a number array as a space
 `Readonly<Record<string, ModifierDoc>>` — static documentation for every RANDSUM dice modifier. Keys are the notation shorthand (e.g. `'R{..}'`, `'!'`, `'L'`, `'xDN'`).
 
 `ModifierDoc` shape:
+
 ```typescript
 interface ModifierDoc {
   readonly title: string
@@ -50,6 +53,7 @@ Covers 16 modifiers: `xDN`, `L`, `H`, `K`, `KL`, `D{..}`, `!`, `!!`, `!p`, `U`, 
 Generates a StackBlitz-compatible project object for the given dice notation. The resulting `files` map contains `index.ts` (a runnable script calling `roll()`) and `package.json` (with `@randsum/roller` as a dependency). Intended to be passed directly to `@stackblitz/sdk`'s `openProject` or `embedProject`.
 
 `StackBlitzProject` shape:
+
 ```typescript
 interface StackBlitzProject {
   readonly title: string
@@ -79,14 +83,11 @@ src/
 
 ## Testing
 
-No tests currently exist for this package. If adding tests, use `bun:test`:
+Tests use `bun:test`. Three test files cover the public API:
 
-```typescript
-import { describe, expect, test } from 'bun:test'
-import { computeSteps } from '../src/computeSteps'
-```
-
-Place test files in `__tests__/` with `.test.ts` extension.
+- `__tests__/computeSteps.test.ts` — covers `computeSteps`, `formatAsMath`, and all `TooltipStep` kinds
+- `__tests__/modifierDocs.test.ts` — validates `MODIFIER_DOCS` shape and all modifier entries
+- `__tests__/stackblitz.test.ts` — validates `buildStackBlitzProject` output and notation escaping
 
 ## Dependencies
 
