@@ -55,36 +55,35 @@ if (!result.valid) {
 
 ---
 
-## `roll()` result has an error
+## `roll()` throws on invalid input
 
-`roll()` never throws. Instead, when given invalid input it returns a result object with an `error` field set. Not checking for this is one of the most common sources of silent failures.
+`roll()` throws a `RandsumError` when given invalid input. Wrap calls in try/catch when input comes from outside your control.
 
 <Aside type="caution">
-  If you pass invalid input to `roll()` and do not check `result.error`, you will silently use an undefined or incorrect total.
+  If you upgraded from v2, note that `result.error` no longer exists. The field was removed in 3.0. Code checking `if (result.error)` will silently pass. Use try/catch instead.
 </Aside>
 
-**Always check `result.error` before using the result:**
+**Wrap `roll()` in try/catch when handling user input:**
 
-<CodeExample code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { roll, RandsumError } from '@randsum/roller'
 
-const result = roll(userInput)
+try {
+  const result = roll(userInput)
+  console.log(result.total)
+} catch (e) {
+  if (e instanceof RandsumError) {
+    console.error(e.message)
+  }
+}`} />
 
-if (result.error) {
-  // Handle the error — do not use result.total
-  console.error(result.error.message)
-  return
-}
-
-console.log(result.total)`} />
-
-**Common causes of errors in `result.error`:**
+**Common causes of thrown errors:**
 
 - `sides: 0` — a die with zero sides is not valid
 - `sides` as a negative number
 - `quantity: 0` or a negative quantity
 - An options object with mutually exclusive modifiers
 
-For hardcoded notation like `roll('4d6L')`, errors will never occur in practice. The `result.error` check is only critical when input comes from outside your control.
+For hardcoded notation like `roll('4d6L')`, errors will never occur in practice. The try/catch is only critical when input comes from outside your control.
 
 ---
 

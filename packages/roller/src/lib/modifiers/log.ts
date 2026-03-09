@@ -1,6 +1,6 @@
 import type { ModifierConfig, ModifierLog } from '../../types'
 
-export function createFrequencyMap(values: number[]): Map<number, number> {
+function createFrequencyMap(values: number[]): Map<number, number> {
   const freq = new Map<number, number>()
 
   for (const value of values) {

@@ -45,10 +45,10 @@ import { validateNotation } from "@randsum/notation"
 const result = validateNotation("4d6L")
 
 if (result.valid) {
-  result.notation // '4d6L'
-  result.options // parsed RollOptions
+  result.notation // DiceNotation[] — parsed notation strings
+  result.options // ParsedNotationOptions[] — parsed roll options
 } else {
-  result.errors // array of validation errors
+  result.error // { message, argument } — validation error details
 }
 ```
 

@@ -38,7 +38,7 @@ export interface RollRecord<T = string> {
   description: RollParams<T>['description']
   /** Full roll parameters */
   parameters: RollParams<T>
-  /** Raw die results before modifiers */
+  /** Die results after modifiers (pre-modifier values in modifierHistory.initialRolls) */
   rolls: number[]
   /** History of modifier applications */
   modifierHistory: {

@@ -55,18 +55,18 @@ describe(executeRollPipeline, () => {
         parameters: uniqueParameters,
         modifierHistory: {
           initialRolls,
-          modifiedRolls: [1, 200, 2, 3],
-          total: 206,
+          modifiedRolls: [1, 201, 2, 3],
+          total: 207,
           logs: [
             {
-              added: [200],
+              added: [201],
               modifier: 'unique',
               options: true,
               removed: [1]
             }
           ]
         },
-        total: 206
+        total: 207
       })
     })
 
@@ -255,19 +255,19 @@ describe(executeRollPipeline, () => {
       expect(executeRollPipeline(explodeParameters)).toMatchObject({
         parameters: explodeParameters,
         modifierHistory: {
-          modifiedRolls: [1, 2, 3, 6, 200],
-          total: 212,
+          modifiedRolls: [1, 2, 3, 6, 201],
+          total: 213,
           initialRolls: explodeRollTotals,
           logs: [
             {
-              added: [200],
+              added: [201],
               modifier: 'explode',
               options: true,
               removed: []
             }
           ]
         },
-        total: 212
+        total: 213
       })
     })
   })
@@ -285,12 +285,12 @@ describe(executeRollPipeline, () => {
         expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
           modifierHistory: {
-            modifiedRolls: [1, 2, 3, 200],
-            total: 206,
+            modifiedRolls: [1, 2, 3, 201],
+            total: 207,
             initialRolls: testRollSet,
             logs: [
               {
-                added: [200],
+                added: [201],
                 modifier: 'reroll',
                 options: {
                   greaterThan: 3
@@ -299,7 +299,7 @@ describe(executeRollPipeline, () => {
               }
             ]
           },
-          total: 206
+          total: 207
         })
       })
     })
@@ -318,12 +318,12 @@ describe(executeRollPipeline, () => {
         expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
           modifierHistory: {
-            modifiedRolls: [1, 200, 3, 200],
+            modifiedRolls: [1, 201, 3, 201],
             initialRolls: testRollSet,
-            total: 404,
+            total: 406,
             logs: [
               {
-                added: [200, 200],
+                added: [201, 201],
                 modifier: 'reroll',
                 options: {
                   exact: [2],
@@ -334,7 +334,7 @@ describe(executeRollPipeline, () => {
               }
             ]
           },
-          total: 404
+          total: 406
         })
       })
     })
@@ -353,10 +353,10 @@ describe(executeRollPipeline, () => {
         expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
           modifierHistory: {
-            modifiedRolls: [200, 2, 200, 4],
-            total: 406
+            modifiedRolls: [201, 2, 201, 4],
+            total: 408
           },
-          total: 406
+          total: 408
         })
       })
     })

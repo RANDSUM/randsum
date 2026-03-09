@@ -128,8 +128,9 @@
     },
     "packages/component-library": {
       "name": "@randsum/component-library",
-      "version": "0.2.0",
+      "version": "3.0.0",
       "dependencies": {
+        "@randsum/display-utils": "workspace:~",
         "@randsum/notation": "workspace:~",
         "@randsum/roller": "workspace:~",
       },
@@ -142,6 +143,16 @@
       },
       "peerDependencies": {
         "react": ">=18",
+      },
+    },
+    "packages/display-utils": {
+      "name": "@randsum/display-utils",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+      "devDependencies": {
+        "typescript": "^5.8.2",
       },
     },
     "packages/notation": {
@@ -710,6 +721,8 @@
     "@randsum/daggerheart": ["@randsum/daggerheart@workspace:games/daggerheart"],
 
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
+
+    "@randsum/display-utils": ["@randsum/display-utils@workspace:packages/display-utils"],
 
     "@randsum/fifth": ["@randsum/fifth@workspace:games/fifth"],
 

@@ -1,6 +1,6 @@
 import type { ModifierBehavior } from '../schema'
 
-export function createArithmeticBehavior(operator: '+' | '-'): ModifierBehavior<number> {
+function createArithmeticBehavior(operator: '+' | '-'): ModifierBehavior<number> {
   return {
     apply: (rolls, options) => {
       return {

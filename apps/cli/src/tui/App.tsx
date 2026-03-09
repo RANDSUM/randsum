@@ -2,13 +2,7 @@ import { Box, Text, render, useInput } from 'ink'
 import TextInput from 'ink-text-input'
 import { useMemo, useRef, useState } from 'react'
 import type { RollRecord } from '@randsum/roller'
-import {
-  formatResult,
-  isDiceNotation,
-  isFormattedError,
-  roll,
-  validateNotation
-} from '@randsum/roller'
+import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
 import { tokenize } from '@randsum/notation'
 import { NotationReference } from './components/NotationReference'
 import { openInStackblitz } from './helpers/openInStackblitz'
@@ -94,7 +88,7 @@ function App(): React.JSX.Element {
         setFocus('input')
       } else if (key.downArrow) {
         setFocus('reference')
-      } else if (_input && !key.ctrl && !key.meta) {
+      } else if (_input && !key.ctrl && !key.meta && !key.tab) {
         setInput(prev => prev + _input)
         setCursorPos(input.length + 1)
         setFocus('input')
@@ -172,11 +166,6 @@ function App(): React.JSX.Element {
     if (rollingTimerRef.current) clearTimeout(rollingTimerRef.current)
     rollingTimerRef.current = setTimeout(() => {
       const result = roll(...validation.notation)
-      const formatted = formatResult(result)
-      if (isFormattedError(formatted)) {
-        setRolling(false)
-        return
-      }
       setLastResult({ records: result.rolls, notation: value.trim() })
       setRolling(false)
     }, 400)
@@ -216,7 +205,7 @@ function App(): React.JSX.Element {
             : focus === 'description' && isValid
               ? 'Roll'
               : focus === 'description'
-                ? 'noop'
+                ? ''
                 : 'Roll'
 
   const addModifierActive = focus === 'reference'
@@ -252,7 +241,7 @@ function App(): React.JSX.Element {
           <Text dimColor>Tab: Cycle Sections</Text>
         </Box>
         <Box paddingX={1}>
-          <Text {...(enterLabel === 'noop' ? { color: '#555555' as string } : {})} dimColor>
+          <Text {...(enterLabel === '' ? { color: '#555555' as string } : {})} dimColor>
             Enter: {enterLabel}
           </Text>
         </Box>

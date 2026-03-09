@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### @randsum/roller
 
+- **Error handling changed from result objects to thrown exceptions.** `roll()` now throws a `RandsumError` on invalid input instead of returning `result.error`. Code checking `if (result.error)` will silently pass on 3.0 since the field no longer exists. Wrap `roll()` calls in try/catch instead. See the [migration guide](apps/site/src/content/docs/guides/migrating-from-v2.mdx) for details.
 - `analyze()` removed from public API (was previously exported; still available internally but not part of the public surface)
 - `@randsum/notation` is now a peer dependency — if you import notation utilities directly from `@randsum/roller`, they still work (re-exported for backward compatibility), but you may want to depend on `@randsum/notation` directly for a zero-dependency footprint
 

@@ -51,10 +51,10 @@
     "random",
     "typescript",
     "tabletop",
-    "5th",
     "daggerheart",
-    "Dungeons",
-    "Dragons"
+    "hope",
+    "fear",
+    "darrington-press"
   ],
   "scripts": {
     "dev": "bunup --watch",

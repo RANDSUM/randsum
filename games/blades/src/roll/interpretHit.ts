@@ -8,7 +8,7 @@ export function interpretHit({ rolls }: RollerRollResult, canCrit: boolean): Bla
     return 'critical'
   }
 
-  switch (sortedRolls[0]) {
+  switch (Math.max(...sortedRolls)) {
     case 6:
       return 'success'
     case 5:

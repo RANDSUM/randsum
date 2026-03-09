@@ -34,7 +34,7 @@ roll("4d6L") // Roll 4d6, drop lowest
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
 
 // Complex modifiers
-roll("2d20H") // Advantage (keep highest)
+roll("2d20L") // Advantage (drop lowest, keep highest)
 roll("4d6!R{<3}") // Exploding dice, reroll below 3
 roll("1d20+5", "2d6+3") // Multiple rolls combined
 ```
@@ -59,22 +59,36 @@ const result = roll("2d6+3")
 result.total // Final total after all modifiers
 result.result // Array of individual die values
 result.rolls // Full roll records with modifier history
-result.error // null on success, RandsumError on failure
+```
+
+`roll()` throws on invalid input. Wrap calls in try/catch:
+
+```typescript
+import { roll, RandsumError } from "@randsum/roller"
+
+try {
+  const result = roll(userInput)
+  console.log(result.total)
+} catch (e) {
+  if (e instanceof RandsumError) {
+    console.error(e.message)
+  }
+}
 ```
 
 ### Notation Reference
 
-| Notation   | Description                |
-| ---------- | -------------------------- |
-| `4d6`      | Roll 4 six-sided dice      |
-| `4d6+2`    | Add 2 to total             |
-| `4d6L`     | Drop lowest                |
-| `4d6H`     | Drop highest               |
-| `2d20H`    | Keep highest (advantage)   |
-| `2d20L`    | Keep lowest (disadvantage) |
-| `4d6!`     | Exploding dice             |
-| `4d6R{<3}` | Reroll values below 3      |
-| `4d6U`     | Unique rolls only          |
+| Notation   | Description                 |
+| ---------- | --------------------------- |
+| `4d6`      | Roll 4 six-sided dice       |
+| `4d6+2`    | Add 2 to total              |
+| `4d6L`     | Drop lowest                 |
+| `4d6H`     | Drop highest                |
+| `2d20L`    | Drop lowest (advantage)     |
+| `2d20H`    | Drop highest (disadvantage) |
+| `4d6!`     | Exploding dice              |
+| `4d6R{<3}` | Reroll values below 3       |
+| `4d6U`     | Unique rolls only           |
 
 See [RANDSUM_DICE_NOTATION.md](./RANDSUM_DICE_NOTATION.md) for the complete notation guide.
 
@@ -90,9 +104,6 @@ import {
   // Conversion utilities
   optionsToNotation,
   optionsToDescription,
-
-  // Probability analysis
-  analyze,
 
   // Game system helpers
   createGameRoll,

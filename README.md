@@ -54,8 +54,8 @@ roll("4d6L") // Roll 4d6, drop lowest
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
 
 // Advantage and disadvantage
-roll("2d20H") // Roll with advantage (2d20, keep highest)
-roll("2d20L") // Roll with disadvantage (2d20, keep lowest)
+roll("2d20L") // Roll with advantage (2d20, drop lowest)
+roll("2d20H") // Roll with disadvantage (2d20, drop highest)
 
 // Multiple arguments: combine rolls
 roll("1d20+5", "2d6+3") // Attack roll + damage roll
@@ -68,7 +68,7 @@ Or directly from your terminal:
 ```bash
 npx @randsum/cli 2d20    # Roll two twenty-sided dice
 npx @randsum/cli 4d6L    # Character stat roll (drop lowest)
-npx @randsum/cli 2d20H   # Roll with advantage
+npx @randsum/cli 2d20L   # Roll with advantage (drop lowest)
 npx @randsum/cli         # Interactive TUI mode
 ```
 

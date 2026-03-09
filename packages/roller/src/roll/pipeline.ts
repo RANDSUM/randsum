@@ -67,7 +67,7 @@ export class RollPipeline<T = string> {
       return this
     }
 
-    const rollOne = (): number => coreRandom(sides, this.rng)
+    const rollOne = (): number => coreRandom(sides, this.rng) + 1
     const ctx: ModifierContext = {
       rollOne,
       parameters: { sides, quantity }

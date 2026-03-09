@@ -24,10 +24,10 @@ Rolls a Blades in the Dark action roll.
 
 `BladesResult` type:
 
-- `"critical"` - Multiple 6s (critical success)
-- `"success"` - Highest die is 4-6 (full success)
-- `"partial"` - Highest die is 1-3 (partial success/complication)
-- `"failure"` - No dice (should not occur with valid input)
+- `"critical"` - Two or more 6s (critical success)
+- `"success"` - Highest die is 6 (full success)
+- `"partial"` - Highest die is 4-5 (partial success/complication)
+- `"failure"` - Highest die is 1-3 (bad outcome)
 
 ## Implementation Details
 

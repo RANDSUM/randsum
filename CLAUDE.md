@@ -90,9 +90,9 @@ createGameRoll<TInput, TResult>({
 
 Returns `GameRollResult<TResult, TDetails, RollRecord>`.
 
-### Never-Throw Errors
+### Error Handling
 
-`roll()` never throws. Errors are returned in the result: `if (result.error) { ... }`
+`roll()` throws on invalid input. Wrap calls in try/catch: `try { roll(...) } catch (e) { ... }`
 
 ### Modifier Registry
 
