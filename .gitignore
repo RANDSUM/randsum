@@ -94,3 +94,6 @@ packages/site/public/api/
 
 # Git worktrees
 .worktrees
+
+#plans
+/docs/plans/
