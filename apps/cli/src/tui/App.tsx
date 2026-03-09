@@ -221,23 +221,15 @@ function App(): React.JSX.Element {
 
       {/* Hints */}
       <Box justifyContent="space-between">
-        <Box borderStyle="single" borderColor="#888888" paddingX={1}>
+        <Box paddingX={1}>
           <Text dimColor>↑↓←→: Navigate</Text>
         </Box>
-        <Box
-          borderStyle="single"
-          borderColor={enterLabel === 'noop' ? '#555555' : '#888888'}
-          paddingX={1}
-        >
+        <Box paddingX={1}>
           <Text {...(enterLabel === 'noop' ? { color: '#555555' as string } : {})} dimColor>
             Enter: {enterLabel}
           </Text>
         </Box>
-        <Box
-          borderStyle="single"
-          borderColor={addModifierActive ? '#888888' : '#555555'}
-          paddingX={1}
-        >
+        <Box paddingX={1}>
           <Text
             {...(!addModifierActive ? { color: '#555555' as string } : {})}
             dimColor={addModifierActive}
@@ -245,12 +237,12 @@ function App(): React.JSX.Element {
             a: Add Modifier
           </Text>
         </Box>
-        <Box borderStyle="single" borderColor={escActive ? '#888888' : '#555555'} paddingX={1}>
+        <Box paddingX={1}>
           <Text {...(!escActive ? { color: '#555555' as string } : {})} dimColor>
             Esc: {escLabel}
           </Text>
         </Box>
-        <Box borderStyle="single" borderColor="#888888" paddingX={1}>
+        <Box paddingX={1}>
           <Text dimColor>Ctrl+C: Quit</Text>
         </Box>
       </Box>

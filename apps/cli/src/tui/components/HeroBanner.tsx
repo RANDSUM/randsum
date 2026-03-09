@@ -1,5 +1,5 @@
 import { Box, Text, useInput } from 'ink'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { execFile } from 'node:child_process'
 import { roll } from '@randsum/roller'
 import { useTerminalWidth } from '../hooks/useTerminalWidth'
@@ -96,69 +96,69 @@ const GRAD_END = '#93c5fd'
 const DIE_FACES: readonly (readonly string[])[] = [
   // 1 pip
   [
-    '╔═════════════╗',
-    '║             ║',
-    '║             ║',
-    '║      ●      ║',
-    '║             ║',
-    '║             ║',
-    '║             ║',
-    '╚═════════════╝'
+    '███████████████',
+    '█             █',
+    '█             █',
+    '█      ■      █',
+    '█             █',
+    '█             █',
+    '█             █',
+    '███████████████'
   ],
   // 2 pips
   [
-    '╔═════════════╗',
-    '║  ●          ║',
-    '║             ║',
-    '║             ║',
-    '║             ║',
-    '║             ║',
-    '║          ●  ║',
-    '╚═════════════╝'
+    '███████████████',
+    '█  ■          █',
+    '█             █',
+    '█             █',
+    '█             █',
+    '█             █',
+    '█          ■  █',
+    '███████████████'
   ],
   // 3 pips
   [
-    '╔═════════════╗',
-    '║  ●          ║',
-    '║             ║',
-    '║      ●      ║',
-    '║             ║',
-    '║             ║',
-    '║          ●  ║',
-    '╚═════════════╝'
+    '███████████████',
+    '█  ■          █',
+    '█             █',
+    '█      ■      █',
+    '█             █',
+    '█             █',
+    '█          ■  █',
+    '███████████████'
   ],
   // 4 pips
   [
-    '╔═════════════╗',
-    '║  ●       ●  ║',
-    '║             ║',
-    '║             ║',
-    '║             ║',
-    '║             ║',
-    '║  ●       ●  ║',
-    '╚═════════════╝'
+    '███████████████',
+    '█  ■       ■  █',
+    '█             █',
+    '█             █',
+    '█             █',
+    '█             █',
+    '█  ■       ■  █',
+    '███████████████'
   ],
   // 5 pips
   [
-    '╔═════════════╗',
-    '║  ●       ●  ║',
-    '║             ║',
-    '║      ●      ║',
-    '║             ║',
-    '║             ║',
-    '║  ●       ●  ║',
-    '╚═════════════╝'
+    '███████████████',
+    '█  ■       ■  █',
+    '█             █',
+    '█      ■      █',
+    '█             █',
+    '█             █',
+    '█  ■       ■  █',
+    '███████████████'
   ],
   // RANDSUM logo: R-pattern (top-right cluster shifted center, bottom dots spread)
   [
-    '╔═════════════╗',
-    '║  ●  ●       ║',
-    '║             ║',
-    '║  ●  ●       ║',
-    '║             ║',
-    '║  ●       ●  ║',
-    '║             ║',
-    '╚═════════════╝'
+    '███████████████',
+    '█  ■  ■       █',
+    '█             █',
+    '█  ■  ■       █',
+    '█             █',
+    '█  ■       ■  █',
+    '█             █',
+    '███████████████'
   ]
 ]
 
@@ -188,6 +188,24 @@ export function HeroBanner({
   readonly onNotationChange?: (notation: string) => void
 }): React.JSX.Element {
   const termWidth = useTerminalWidth()
+
+  const randSumArt = useMemo(
+    () =>
+      RANDSUM_ART.map((line, row) => (
+        <Box key={row} flexDirection="row">
+          {[...line].map((char, col) => (
+            <Text
+              key={col}
+              color={lerpColor(GRAD_START, GRAD_END, col / Math.max(1, line.length - 1))}
+            >
+              {char}
+            </Text>
+          ))}
+        </Box>
+      )),
+    []
+  )
+
   const [selectedItem, setSelectedItem] = useState<0 | 1 | 2>(0)
   const [tagline, setTagline] = useState<string>(TAGLINES[0])
   const [getStartedLabel, setGetStartedLabel] = useState<string>(GET_STARTED_LABELS[0])
@@ -268,10 +286,16 @@ export function HeroBanner({
   const showDie = termWidth >= 80
 
   return (
-    <Box flexDirection="row" paddingX={1} paddingY={1}>
+    <Box flexDirection="row" paddingX={1} paddingY={1} alignItems="center">
       {/* Die logo — selectable, triggers slot machine on Enter */}
       {showDie && (
-        <Box flexDirection="column" marginRight={3} justifyContent="center" alignItems="center">
+        <Box
+          flexDirection="column"
+          marginRight={3}
+          marginLeft={3}
+          justifyContent="center"
+          alignItems="center"
+        >
           {dieFace.map((line, i) => (
             <Text key={i} color={dieSelected ? 'white' : '#888888'} bold={dieSelected}>
               {line}
@@ -282,20 +306,9 @@ export function HeroBanner({
 
       {/* Right content */}
       <Box flexDirection="column" justifyContent="center" flexGrow={1}>
-        {/* RANDSUM gradient ASCII art — centered, horizontal gradient */}
+        {/* RANDSUM gradient ASCII art — centered, horizontal gradient (memoized: colors never change) */}
         <Box flexDirection="column" alignItems="center">
-          {RANDSUM_ART.map((line, row) => (
-            <Box key={row} flexDirection="row">
-              {[...line].map((char, col) => (
-                <Text
-                  key={col}
-                  color={lerpColor(GRAD_START, GRAD_END, col / Math.max(1, line.length - 1))}
-                >
-                  {char}
-                </Text>
-              ))}
-            </Box>
-          ))}
+          {randSumArt}
         </Box>
 
         {/* Subtitle + tagline + buttons — centered */}
