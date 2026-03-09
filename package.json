@@ -131,7 +131,7 @@
     "version:patch": "bun pm version patch",
     "version:minor": "bun pm version minor",
     "version:major": "bun pm version major",
-    "publish": "bun run build && bun run test && bun run lint && bun run typecheck && bun run size && bun run check:exports && npm publish --workspaces --access=public"
+    "publish": "bun run lint && bun run typecheck && bun run test && bun run build && bun run size && bun run check:exports && npm publish --workspaces --access=public"
   },
   "type": "module",
   "workspaces": [

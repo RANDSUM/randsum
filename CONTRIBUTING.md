@@ -40,8 +40,8 @@ RANDSUM is a Bun workspace monorepo with the following structure:
 packages/
   roller/              # Core dice rolling engine (all other packages depend on this)
   notation/            # Dice notation parser
+  display-utils/       # Display formatting utilities
   component-library/   # React UI components
-  cli/                 # Command-line interface
 games/
   blades/              # Blades in the Dark mechanics
   daggerheart/         # Daggerheart RPG support
@@ -50,6 +50,7 @@ games/
   salvageunion/        # Salvage Union mechanics
   pbta/                # Powered by the Apocalypse mechanics
 apps/
+  cli/                 # Command-line interface
   discord-bot/         # Discord bot (discord.js + Bun)
   site/                # Documentation website (Astro)
 ```
