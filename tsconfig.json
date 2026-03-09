@@ -31,6 +31,7 @@
   "references": [
     { "path": "packages/notation" },
     { "path": "packages/roller" },
+    { "path": "packages/display-utils" },
     { "path": "games/blades" },
     { "path": "games/daggerheart" },
     { "path": "games/fifth" },

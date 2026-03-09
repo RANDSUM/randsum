@@ -112,7 +112,7 @@ roll("1d20", "2d6", "+5")   // Multiple arguments combined
 ## Git Hooks (Lefthook)
 
 **pre-commit** (parallel): ESLint --fix, Prettier, typecheck
-**pre-push**: all tests, unused exports check, security audit
+**pre-push**: all tests, unused exports check, security audit, skill verification, bundle size check
 
 If hooks fail, run `bun run fix:all`.
 

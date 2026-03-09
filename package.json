@@ -76,6 +76,10 @@
       "limit": "4 KB"
     },
     {
+      "path": "packages/notation/dist/index.d.ts",
+      "limit": "4 KB"
+    },
+    {
       "path": "games/blades/dist/index.d.ts",
       "limit": "6 KB"
     },
