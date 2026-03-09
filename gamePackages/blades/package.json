@@ -1,7 +1,7 @@
 {
-  "name": "@randsum/daggerheart",
+  "name": "@randsum/blades",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for building Daggerheart-compatible applications",
+  "description": "Blades in the Dark compatible dice rolling implementation",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -12,8 +12,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/gamePackages/daggerheart"
+    "directory": "gamePackages/blades"
   },
+  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -23,7 +24,6 @@
     "LICENSE",
     "README.md"
   ],
-  "type": "module",
   "dependencies": {
     "@randsum/roller": "workspace:~"
   },
@@ -51,18 +51,16 @@
     "random",
     "typescript",
     "tabletop",
-    "5th",
-    "daggerheart",
-    "Dungeons",
-    "Dragons"
+    "blades",
+    "forged-in-the-dark"
   ],
   "scripts": {
     "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
-    "lint": "eslint . -c ../../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit"
   }
 }

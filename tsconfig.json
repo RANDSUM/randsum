@@ -31,12 +31,12 @@
   "references": [
     { "path": "packages/notation" },
     { "path": "packages/roller" },
-    { "path": "packages/gamePackages/blades" },
-    { "path": "packages/gamePackages/daggerheart" },
-    { "path": "packages/gamePackages/fifth" },
-    { "path": "packages/gamePackages/pbta" },
-    { "path": "packages/gamePackages/root-rpg" },
-    { "path": "packages/gamePackages/salvageunion" },
+    { "path": "gamePackages/blades" },
+    { "path": "gamePackages/daggerheart" },
+    { "path": "gamePackages/fifth" },
+    { "path": "gamePackages/pbta" },
+    { "path": "gamePackages/root-rpg" },
+    { "path": "gamePackages/salvageunion" },
     { "path": "packages/component-library" }
   ]
 }

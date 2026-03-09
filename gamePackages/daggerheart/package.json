@@ -1,7 +1,7 @@
 {
-  "name": "@randsum/fifth",
+  "name": "@randsum/daggerheart",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for building 5E-compatible applications",
+  "description": "A flexible, type-safe dice roller for building Daggerheart-compatible applications",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/gamePackages/fifth"
+    "directory": "gamePackages/daggerheart"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -52,7 +52,7 @@
     "typescript",
     "tabletop",
     "5th",
-    "5e",
+    "daggerheart",
     "Dungeons",
     "Dragons"
   ],
@@ -60,9 +60,9 @@
     "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
-    "lint": "eslint . -c ../../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit"
   }
 }

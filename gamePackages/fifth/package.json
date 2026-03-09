@@ -1,19 +1,18 @@
 {
-  "name": "@randsum/pbta",
+  "name": "@randsum/fifth",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for Powered by the Apocalypse games",
+  "description": "A flexible, type-safe dice roller for building 5E-compatible applications",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
-  "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/RANDSUM/randsum",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/gamePackages/pbta"
+    "directory": "gamePackages/fifth"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -24,6 +23,7 @@
     "LICENSE",
     "README.md"
   ],
+  "type": "module",
   "dependencies": {
     "@randsum/roller": "workspace:~"
   },
@@ -51,18 +51,18 @@
     "random",
     "typescript",
     "tabletop",
-    "pbta",
-    "powered-by-the-apocalypse",
-    "dungeon-world",
-    "monster-of-the-week"
+    "5th",
+    "5e",
+    "Dungeons",
+    "Dragons"
   ],
   "scripts": {
     "dev": "bunup --watch",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
-    "lint": "eslint . -c ../../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit"
   }
 }

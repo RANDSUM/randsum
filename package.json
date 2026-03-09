@@ -44,27 +44,27 @@
       "limit": "10 KB"
     },
     {
-      "path": "packages/gamePackages/blades/dist/index.js",
+      "path": "gamePackages/blades/dist/index.js",
       "limit": "8 KB"
     },
     {
-      "path": "packages/gamePackages/fifth/dist/index.js",
+      "path": "gamePackages/fifth/dist/index.js",
       "limit": "8 KB"
     },
     {
-      "path": "packages/gamePackages/daggerheart/dist/index.js",
+      "path": "gamePackages/daggerheart/dist/index.js",
       "limit": "8 KB"
     },
     {
-      "path": "packages/gamePackages/root-rpg/dist/index.js",
+      "path": "gamePackages/root-rpg/dist/index.js",
       "limit": "8 KB"
     },
     {
-      "path": "packages/gamePackages/salvageunion/dist/index.js",
+      "path": "gamePackages/salvageunion/dist/index.js",
       "limit": "240 KB"
     },
     {
-      "path": "packages/gamePackages/pbta/dist/index.js",
+      "path": "gamePackages/pbta/dist/index.js",
       "limit": "8 KB"
     },
     {
@@ -72,23 +72,23 @@
       "limit": "4 KB"
     },
     {
-      "path": "packages/gamePackages/blades/dist/index.d.ts",
+      "path": "gamePackages/blades/dist/index.d.ts",
       "limit": "6 KB"
     },
     {
-      "path": "packages/gamePackages/fifth/dist/index.d.ts",
+      "path": "gamePackages/fifth/dist/index.d.ts",
       "limit": "6 KB"
     },
     {
-      "path": "packages/gamePackages/daggerheart/dist/index.d.ts",
+      "path": "gamePackages/daggerheart/dist/index.d.ts",
       "limit": "6 KB"
     },
     {
-      "path": "packages/gamePackages/root-rpg/dist/index.d.ts",
+      "path": "gamePackages/root-rpg/dist/index.d.ts",
       "limit": "6 KB"
     },
     {
-      "path": "packages/gamePackages/pbta/dist/index.d.ts",
+      "path": "gamePackages/pbta/dist/index.d.ts",
       "limit": "6 KB"
     }
   ],
@@ -132,7 +132,7 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "packages/gamePackages/*",
+    "gamePackages/*",
     "apps/cli",
     "apps/discord-bot",
     "apps/site"

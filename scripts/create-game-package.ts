@@ -21,7 +21,7 @@ if (!gameName) {
 }
 
 const packageName = gameName.toLowerCase().replace(/\s+/g, '-')
-const packageDir = join(process.cwd(), 'packages', 'gamePackages', packageName)
+const packageDir = join(process.cwd(), 'gamePackages', packageName)
 const pascalName = gameName
   .split(/[-_\s]/)
   .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -55,7 +55,7 @@ const packageJson = {
   repository: {
     type: 'git',
     url: 'git+https://github.com/RANDSUM/randsum.git',
-    directory: `packages/gamePackages/${packageName}`
+    directory: `gamePackages/${packageName}`
   },
   sideEffects: false,
   type: 'module',
@@ -90,10 +90,10 @@ const packageJson = {
     build:
       'bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean',
     test: 'bun test',
-    lint: 'eslint . -c ../../../eslint.config.js',
-    format: 'prettier --write . --ignore-path ../../../.prettierignore --config ../../../.prettierrc',
+    lint: 'eslint . -c ../../eslint.config.js',
+    format: 'prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc',
     'format:check':
-      'prettier --check . --ignore-path ../../../.prettierignore --config ../../../.prettierrc',
+      'prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc',
     typecheck: 'tsc --noEmit'
   }
 }
@@ -102,7 +102,7 @@ writeFileSync(join(packageDir, 'package.json'), JSON.stringify(packageJson, null
 
 // tsconfig.json
 const tsconfig = {
-  extends: '../../../tsconfig.packages.json',
+  extends: '../../tsconfig.packages.json',
   compilerOptions: {
     outDir: 'dist'
   },

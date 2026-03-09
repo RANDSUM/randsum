@@ -83,6 +83,49 @@
         "react-dom": "catalog:",
       },
     },
+    "gamePackages/blades": {
+      "name": "@randsum/blades",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "gamePackages/daggerheart": {
+      "name": "@randsum/daggerheart",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "gamePackages/fifth": {
+      "name": "@randsum/fifth",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "gamePackages/pbta": {
+      "name": "@randsum/pbta",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "gamePackages/root-rpg": {
+      "name": "@randsum/root-rpg",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+    },
+    "gamePackages/salvageunion": {
+      "name": "@randsum/salvageunion",
+      "version": "3.0.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+        "salvageunion-reference": "^2.4.0",
+      },
+    },
     "packages/component-library": {
       "name": "@randsum/component-library",
       "version": "0.2.0",
@@ -99,49 +142,6 @@
       },
       "peerDependencies": {
         "react": ">=18",
-      },
-    },
-    "packages/gamePackages/blades": {
-      "name": "@randsum/blades",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
-    "packages/gamePackages/daggerheart": {
-      "name": "@randsum/daggerheart",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
-    "packages/gamePackages/fifth": {
-      "name": "@randsum/fifth",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
-    "packages/gamePackages/pbta": {
-      "name": "@randsum/pbta",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
-    "packages/gamePackages/root-rpg": {
-      "name": "@randsum/root-rpg",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-    },
-    "packages/gamePackages/salvageunion": {
-      "name": "@randsum/salvageunion",
-      "version": "3.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-        "salvageunion-reference": "^2.4.0",
       },
     },
     "packages/notation": {
@@ -701,27 +701,27 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.9", "", {}, "sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA=="],
 
-    "@randsum/blades": ["@randsum/blades@workspace:packages/gamePackages/blades"],
+    "@randsum/blades": ["@randsum/blades@workspace:gamePackages/blades"],
 
     "@randsum/cli": ["@randsum/cli@workspace:apps/cli"],
 
     "@randsum/component-library": ["@randsum/component-library@workspace:packages/component-library"],
 
-    "@randsum/daggerheart": ["@randsum/daggerheart@workspace:packages/gamePackages/daggerheart"],
+    "@randsum/daggerheart": ["@randsum/daggerheart@workspace:gamePackages/daggerheart"],
 
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
 
-    "@randsum/fifth": ["@randsum/fifth@workspace:packages/gamePackages/fifth"],
+    "@randsum/fifth": ["@randsum/fifth@workspace:gamePackages/fifth"],
 
     "@randsum/notation": ["@randsum/notation@workspace:packages/notation"],
 
-    "@randsum/pbta": ["@randsum/pbta@workspace:packages/gamePackages/pbta"],
+    "@randsum/pbta": ["@randsum/pbta@workspace:gamePackages/pbta"],
 
     "@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
 
-    "@randsum/root-rpg": ["@randsum/root-rpg@workspace:packages/gamePackages/root-rpg"],
+    "@randsum/root-rpg": ["@randsum/root-rpg@workspace:gamePackages/root-rpg"],
 
-    "@randsum/salvageunion": ["@randsum/salvageunion@workspace:packages/gamePackages/salvageunion"],
+    "@randsum/salvageunion": ["@randsum/salvageunion@workspace:gamePackages/salvageunion"],
 
     "@randsum/site": ["@randsum/site@workspace:apps/site"],
 
