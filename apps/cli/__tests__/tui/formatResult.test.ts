@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
-import { formatResult, isFormattedError } from '../../src/tui/helpers/formatResult'
+import { formatResult, isFormattedError } from '@randsum/roller'
 
 describe('formatResult', () => {
   test('returns total matching roll total', () => {

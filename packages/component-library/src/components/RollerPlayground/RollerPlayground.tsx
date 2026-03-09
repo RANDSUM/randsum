@@ -5,7 +5,7 @@ import { ModifierReference } from '../ModifierReference'
 import type { ModifierReferenceCell } from '../ModifierReference'
 import { ModifierDocContent } from '../ModifierReference'
 import { Overlay } from '../Overlay'
-import { tokenize } from './tokenize'
+import { tokenize } from '@randsum/notation'
 import './RollerPlayground.css'
 
 type PlaygroundState =

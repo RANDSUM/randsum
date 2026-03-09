@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink'
-import type { Token } from '../helpers/tokenize'
+import type { Token } from '@randsum/notation'
 
 // Token type → Ink color mapping
 const TOKEN_COLORS: Partial<Record<Token['type'], string>> = {

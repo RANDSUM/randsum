@@ -1,13 +1,15 @@
 import { Box, Text, render, useInput, useStdout } from 'ink'
 import { useMemo, useState } from 'react'
+import type { RollRecord } from '@randsum/roller'
 import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
 import { RollHistory } from './components/RollHistory'
 import { NotationInput } from './components/NotationInput'
 import { NotationReference } from './components/NotationReference'
 import { NotationDescriptionRow } from './components/NotationDescriptionRow'
+import { RollResultPanel } from './components/RollResultPanel'
 import { useRollHistory } from './hooks/useRollHistory'
-import { formatResult, isFormattedError } from './helpers/formatResult'
-import { tokenize } from './helpers/tokenize'
+import { formatResult, isFormattedError } from '@randsum/roller'
+import { tokenize } from '@randsum/notation'
 
 type FocusZone = 'input' | 'reference'
 
@@ -17,6 +19,7 @@ function App(): React.JSX.Element {
   const { history, addRoll, clearHistory } = useRollHistory()
   const [input, setInput] = useState('')
   const [focus, setFocus] = useState<FocusZone>('input')
+  const [lastResult, setLastResult] = useState<readonly RollRecord[] | null>(null)
   const { stdout } = useStdout()
   const isWide = stdout.columns >= WIDE_BREAKPOINT
 
@@ -43,6 +46,7 @@ function App(): React.JSX.Element {
     const formatted = formatResult(result)
     if (isFormattedError(formatted)) return
 
+    setLastResult(result.rolls)
     addRoll({
       notation: trimmed,
       total: formatted.total,
@@ -52,17 +56,22 @@ function App(): React.JSX.Element {
     setInput('')
   }
 
+  const handleInputChange = (value: string): void => {
+    setInput(value)
+    setLastResult(null)
+  }
+
   const handleAddModifier = (notation: string): void => {
     setInput(prev => prev + notation)
+    setLastResult(null)
     setFocus('input')
   }
 
   return (
     <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
       <Box justifyContent="center" marginBottom={1}>
-        <Text bold color="cyan">
-          RANDSUM
-        </Text>
+        <Text bold>roll</Text>
+        <Text color="gray">()</Text>
       </Box>
 
       {isWide ? (
@@ -107,12 +116,14 @@ function App(): React.JSX.Element {
 
       <NotationInput
         value={input}
-        onChange={setInput}
+        onChange={handleInputChange}
         onSubmit={handleSubmit}
         active={focus === 'input'}
       />
 
       <NotationDescriptionRow notation={input} tokens={tokens} isValid={isValid} />
+
+      {lastResult !== null && <RollResultPanel records={lastResult} />}
     </Box>
   )
 }

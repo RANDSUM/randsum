@@ -36,6 +36,7 @@
         "randsum": "dist/index.js",
       },
       "dependencies": {
+        "@randsum/notation": "^3.0.0",
         "@randsum/roller": "^3.0.0",
         "ink": "^5.2.0",
         "ink-text-input": "^6.0.0",
@@ -86,6 +87,7 @@
       "name": "@randsum/component-library",
       "version": "0.2.0",
       "dependencies": {
+        "@randsum/notation": "workspace:~",
         "@randsum/roller": "workspace:~",
       },
       "devDependencies": {
