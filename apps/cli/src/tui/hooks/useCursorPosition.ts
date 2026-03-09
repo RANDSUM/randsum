@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useInput } from 'ink'
 import type { Token } from '@randsum/notation'
 
@@ -11,41 +11,34 @@ export function tokenCursorIndex(tokens: readonly Token[], cursorPos: number): n
 }
 
 /**
- * Tracks the text cursor position inside an ink text input by intercepting
- * left/right arrow keys. Returns the current cursor position and the index
- * of the token under the cursor.
+ * Handles left/right arrow navigation for a cursor managed externally.
+ * Returns the index of the token under the cursor.
  */
 export function useCursorPosition(
   value: string,
   tokens: readonly Token[],
   isActive: boolean,
+  cursorPos: number,
+  onCursorMove: (pos: number) => void,
   onLeftBoundary?: () => void
-): { readonly cursorPos: number; readonly activeTokenIdx: number } {
-  const [cursorPos, setCursorPos] = useState(value.length)
-
-  // Reset cursor to end whenever value changes (new character typed or cleared)
-  useEffect(() => {
-    setCursorPos(value.length)
-  }, [value])
-
+): { readonly activeTokenIdx: number } {
   const handleInput = useCallback(
     (_input: string, key: { readonly leftArrow?: boolean; readonly rightArrow?: boolean }) => {
       if (key.leftArrow) {
         if (cursorPos === 0) {
           onLeftBoundary?.()
         } else {
-          setCursorPos(prev => Math.max(0, prev - 1))
+          onCursorMove(Math.max(0, cursorPos - 1))
         }
       } else if (key.rightArrow) {
-        setCursorPos(prev => Math.min(value.length, prev + 1))
+        onCursorMove(Math.min(value.length, cursorPos + 1))
       }
     },
-    [value.length, cursorPos, onLeftBoundary]
+    [value.length, cursorPos, onLeftBoundary, onCursorMove]
   )
 
   useInput(handleInput, { isActive })
 
   const activeTokenIdx = tokenCursorIndex(tokens, cursorPos)
-
-  return { cursorPos, activeTokenIdx }
+  return { activeTokenIdx }
 }

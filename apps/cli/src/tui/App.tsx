@@ -12,44 +12,123 @@ import {
 import { tokenize } from '@randsum/notation'
 import { NotationReference } from './components/NotationReference'
 import { NotationDescriptionRow } from './components/NotationDescriptionRow'
+import { NotationHighlight } from './components/NotationHighlight'
 import { RollResultPanel } from './components/RollResultPanel'
+import { HeroBanner } from './components/HeroBanner'
 import { useCursorPosition } from './hooks/useCursorPosition'
+import type { ModifierDoc } from './helpers/modifierDocs'
 
-type FocusZone = 'input' | 'reference' | 'roll'
-type ViewMode = 'reference' | 'result'
+type FocusZone = 'input' | 'reference' | 'roll' | 'description' | 'banner'
 
 function App(): React.JSX.Element {
   const [input, setInput] = useState('')
   const [focus, setFocus] = useState<FocusZone>('input')
-  const [viewMode, setViewMode] = useState<ViewMode>('reference')
-  const [lastResult, setLastResult] = useState<readonly RollRecord[] | null>(null)
+  const [lastResult, setLastResult] = useState<{
+    readonly records: readonly RollRecord[]
+    readonly notation: string
+  } | null>(null)
+  const [descSelTokenIdx, setDescSelTokenIdx] = useState<number | undefined>(undefined)
+  const [cursorPos, setCursorPos] = useState(0)
+  const [activeDoc, setActiveDoc] = useState<ModifierDoc | undefined>(undefined)
+  const [bannerItemIdx, setBannerItemIdx] = useState<0 | 1 | 2>(0)
 
   const tokens = useMemo(() => tokenize(input), [input])
   const isValid = input.trim().length > 0 && isDiceNotation(input.trim())
+  const isInvalid = input.trim().length > 0 && !isValid
 
-  const { activeTokenIdx } = useCursorPosition(input, tokens, focus === 'input', () => {
-    setFocus('roll')
-  })
+  const { activeTokenIdx } = useCursorPosition(
+    input,
+    tokens,
+    focus === 'input',
+    cursorPos,
+    setCursorPos,
+    () => {
+      if (isValid) setFocus('roll')
+    }
+  )
+
+  const showHighlight = input.trim().length > 0 || focus === 'description'
+
+  const highlightTokenIdx: number | undefined =
+    focus === 'description'
+      ? isInvalid
+        ? -1
+        : descSelTokenIdx
+      : activeTokenIdx >= 0
+        ? activeTokenIdx
+        : undefined
 
   useInput((_input, key) => {
+    // When NotationHighlight replaces TextInput, handle editing manually
+    if (focus === 'input' && (isValid || isInvalid)) {
+      if (key.return) {
+        handleSubmit(input)
+        return
+      }
+      if (key.backspace || key.delete) {
+        if (cursorPos === 0) return
+        setInput(input.slice(0, cursorPos - 1) + input.slice(cursorPos))
+        setCursorPos(p => Math.max(0, p - 1))
+        return
+      }
+      if (_input && !key.ctrl && !key.meta && !key.tab) {
+        setInput(input.slice(0, cursorPos) + _input + input.slice(cursorPos))
+        setCursorPos(p => p + 1)
+        return
+      }
+    }
+
     if (focus === 'roll') {
       if (key.return) {
         handleSubmit(input)
-      } else if (key.rightArrow) {
+      } else if (key.rightArrow || _input === 'i') {
         setFocus('input')
+      } else if (key.downArrow) {
+        setFocus('reference')
       } else if (_input && !key.ctrl && !key.meta) {
         setInput(prev => prev + _input)
+        setCursorPos(input.length + 1)
         setFocus('input')
       }
       return
     }
 
-    if (key.tab && viewMode === 'reference') {
-      setFocus(prev => (prev === 'input' ? 'reference' : 'input'))
+    if (key.tab) {
+      setFocus(prev =>
+        prev === 'input' || prev === 'description' || prev === 'banner' ? 'reference' : 'input'
+      )
     }
-    if (key.escape && viewMode === 'result') {
-      setViewMode('reference')
-      setLastResult(null)
+    if (key.return && focus === 'description' && isValid) {
+      handleSubmit(input)
+      return
+    }
+    if (key.downArrow && focus === 'input') {
+      setFocus('description')
+    }
+    if (key.downArrow && focus === 'description') {
+      setFocus('reference')
+    }
+    if (key.upArrow && focus === 'description') {
+      setFocus('input')
+    }
+    if (key.upArrow && focus === 'input') {
+      setFocus('banner')
+    }
+    if (key.escape) {
+      if (focus === 'banner') {
+        setFocus('input')
+      } else {
+        if (focus === 'description') {
+          setInput('')
+          setCursorPos(0)
+          setFocus('input')
+        }
+        setLastResult(null)
+        setActiveDoc(undefined)
+      }
+    }
+    if (_input === 'i' && (focus === 'reference' || focus === 'description')) {
+      setFocus('input')
     }
   })
 
@@ -61,80 +140,208 @@ function App(): React.JSX.Element {
     const result = roll(...validation.notation)
     const formatted = formatResult(result)
     if (isFormattedError(formatted)) return
-    setLastResult(result.rolls)
-    setViewMode('result')
+    setLastResult({ records: result.rolls, notation: value.trim() })
+    setActiveDoc(undefined)
     setFocus('input')
+    setCursorPos(value.length)
   }
 
   const handleInputChange = (value: string): void => {
     setInput(value)
-    if (viewMode === 'result') {
-      setViewMode('reference')
-      setLastResult(null)
-    }
+    setCursorPos(value.length)
+    const nowValid = value.trim().length > 0 && isDiceNotation(value.trim())
+    if (!nowValid && (focus === 'roll' || focus === 'description')) setFocus('input')
   }
 
   const handleAddModifier = (notation: string): void => {
-    setInput(prev => prev + notation)
+    const newInput = input + notation
+    setInput(newInput)
+    setCursorPos(newInput.length)
     setFocus('input')
-    if (viewMode === 'result') {
-      setViewMode('reference')
-      setLastResult(null)
-    }
   }
 
+  const handleDocChange = (doc: ModifierDoc | undefined): void => {
+    if (doc === undefined) return
+    setActiveDoc(doc)
+    setLastResult(null)
+  }
+
+  const enterLabel =
+    focus === 'banner'
+      ? bannerItemIdx === 0
+        ? 'Roll'
+        : 'Open'
+      : focus === 'reference'
+        ? 'Inspect'
+        : focus === 'description' && input.trim().length === 0
+          ? 'Insert'
+          : focus === 'description' && isValid
+            ? 'Roll'
+            : focus === 'description'
+              ? 'noop'
+              : 'Roll'
+
+  const addModifierActive = focus === 'reference'
+  const hasInput = input.trim().length > 0
+  const inClearZone = (focus === 'roll' || focus === 'description') && hasInput
+  const escActive =
+    focus === 'banner' || inClearZone || lastResult !== null || activeDoc !== undefined
+  const escLabel = inClearZone ? 'Clear' : 'Cancel'
+
   return (
-    <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
-      {/* Header: roll(...) with inline input — full width */}
-      <Box width="100%">
-        <Text color="yellow" bold inverse={focus === 'roll'}>
-          roll
-        </Text>
-        <Text dimColor>(</Text>
-        <TextInput
-          value={input}
-          onChange={handleInputChange}
-          onSubmit={handleSubmit}
-          focus={focus === 'input'}
-          placeholder="4d6L"
-        />
-        <Text dimColor>)</Text>
-      </Box>
+    <Box flexDirection="column">
+      {/* Hero banner */}
+      <HeroBanner
+        isFocused={focus === 'banner'}
+        onDown={() => {
+          setFocus('input')
+        }}
+        onExit={() => {
+          setFocus('input')
+        }}
+        onSelectionChange={setBannerItemIdx}
+      />
 
-      {/* Description row — no border */}
-      <Box>
-        <NotationDescriptionRow
-          notation={input}
-          tokens={tokens}
-          isValid={isValid}
-          activeTokenIdx={activeTokenIdx}
-        />
-      </Box>
-
-      {/* Hint below description */}
-      {viewMode === 'reference' && (
-        <Box paddingX={1}>
-          <Text dimColor>Tab: switch focus Enter: roll Ctrl+C: quit</Text>
+      {/* Hints */}
+      <Box justifyContent="space-between">
+        <Box borderStyle="single" borderColor="#888888" paddingX={1}>
+          <Text dimColor>↑↓←→: Navigate</Text>
         </Box>
-      )}
+        <Box
+          borderStyle="single"
+          borderColor={enterLabel === 'noop' ? '#555555' : '#888888'}
+          paddingX={1}
+        >
+          <Text {...(enterLabel === 'noop' ? { color: '#555555' as string } : {})} dimColor>
+            Enter: {enterLabel}
+          </Text>
+        </Box>
+        <Box
+          borderStyle="single"
+          borderColor={addModifierActive ? '#888888' : '#555555'}
+          paddingX={1}
+        >
+          <Text
+            {...(!addModifierActive ? { color: '#555555' as string } : {})}
+            dimColor={addModifierActive}
+          >
+            a: Add Modifier
+          </Text>
+        </Box>
+        <Box borderStyle="single" borderColor={escActive ? '#888888' : '#555555'} paddingX={1}>
+          <Text {...(!escActive ? { color: '#555555' as string } : {})} dimColor>
+            Esc: {escLabel}
+          </Text>
+        </Box>
+        <Box borderStyle="single" borderColor="#888888" paddingX={1}>
+          <Text dimColor>Ctrl+C: Quit</Text>
+        </Box>
+      </Box>
 
-      {/* Main panel: modifier reference (bordered) OR roll result */}
-      {viewMode === 'reference' ? (
-        <Box borderStyle="single" borderColor="cyan">
+      <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
+        {/* Roll input */}
+        <Box borderStyle="single" borderColor={isInvalid ? 'red' : '#888888'} paddingX={1}>
+          <Text color={isValid ? 'yellow' : 'gray'} bold inverse={focus === 'roll'}>
+            roll
+          </Text>
+          <Text dimColor>(</Text>
+          {showHighlight ? (
+            <NotationHighlight
+              input={input}
+              tokens={tokens}
+              cursorPos={cursorPos}
+              showCursor={focus === 'input'}
+              dimAll={isInvalid && focus !== 'description'}
+              {...(isInvalid && focus === 'description' ? { highlightColor: 'red' } : {})}
+              {...(highlightTokenIdx !== undefined ? { activeTokenIdx: highlightTokenIdx } : {})}
+            />
+          ) : (
+            <TextInput
+              value={input}
+              onChange={handleInputChange}
+              onSubmit={handleSubmit}
+              focus={focus === 'input'}
+              placeholder="4d6L"
+            />
+          )}
+          <Text dimColor>)</Text>
+        </Box>
+
+        {/* Description — always shown */}
+        <Box borderStyle="single" borderTop={false} borderColor="#888888" paddingX={1}>
+          <NotationDescriptionRow
+            tokens={tokens}
+            isEmpty={input.trim().length === 0}
+            isInvalid={isInvalid}
+            activeTokenIdx={activeTokenIdx}
+            isFocused={focus === 'description'}
+            onSelectExample={example => {
+              handleInputChange(example)
+            }}
+            onSelectionChange={tokenIdx => {
+              setDescSelTokenIdx(tokenIdx)
+            }}
+          />
+        </Box>
+
+        {/* Shared panel: modifier doc > roll result > reference (default) */}
+        {activeDoc !== undefined ? (
+          <Box flexDirection="column" borderStyle="single" borderColor="cyan" paddingX={1}>
+            <Text bold color="cyan">
+              {activeDoc.title}
+            </Text>
+            <Text dimColor>{activeDoc.description}</Text>
+            {activeDoc.forms.length > 0 && (
+              <Box flexDirection="column" marginTop={1}>
+                {activeDoc.forms.map((form, i) => (
+                  <Box key={i} gap={2}>
+                    <Text color="yellow">{form.notation}</Text>
+                    <Text dimColor>{form.note}</Text>
+                  </Box>
+                ))}
+              </Box>
+            )}
+            {activeDoc.comparisons !== undefined && activeDoc.comparisons.length > 0 && (
+              <Box flexDirection="column" marginTop={1}>
+                {activeDoc.comparisons.map((comp, i) => (
+                  <Box key={i} gap={2}>
+                    <Text color="yellow">{comp.operator}</Text>
+                    <Text dimColor>{comp.note}</Text>
+                  </Box>
+                ))}
+              </Box>
+            )}
+            {activeDoc.examples.length > 0 && (
+              <Box flexDirection="column" marginTop={1}>
+                <Text dimColor bold>
+                  Examples
+                </Text>
+                {activeDoc.examples.map((ex, i) => (
+                  <Box key={i} gap={2}>
+                    <Text color="green">{ex.notation}</Text>
+                    <Text dimColor>{ex.description}</Text>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
+        ) : lastResult !== null ? (
+          <RollResultPanel records={lastResult.records} notation={lastResult.notation} />
+        ) : (
           <NotationReference
             active={focus === 'reference'}
             modifiersDisabled={!isValid}
             onAddModifier={handleAddModifier}
+            onTopExit={() => {
+              setFocus('description')
+            }}
+            onBottomExit={() => {
+              setFocus('input')
+            }}
+            onDocChange={handleDocChange}
           />
-        </Box>
-      ) : (
-        <Box flexDirection="column">
-          {lastResult !== null && <RollResultPanel records={lastResult} />}
-          <Box paddingX={1} marginTop={1}>
-            <Text dimColor>type to return to reference</Text>
-          </Box>
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   )
 }

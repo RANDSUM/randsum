@@ -1,61 +1,30 @@
 import { Box, Text } from 'ink'
+import { useInput } from 'ink'
+import { useEffect, useState } from 'react'
 import type { Token } from '@randsum/notation'
+import { TOKEN_COLORS } from '../helpers/tokenColors'
 
-/**
- * Token type → Ink color mapping.
- * Colors match the Playground CSS token families (dark mode).
- * SYNC: packages/component-library/src/components/RollerPlayground/RollerPlayground.css
- */
-const TOKEN_COLORS: Partial<Record<Token['type'], string>> = {
-  core: 'blue',            // #60a5fa
-  dropLowest: 'magenta',   // #f060d0
-  dropHighest: 'magenta',  // #b858b0
-  keepHighest: 'yellow',   // #ffab70
-  keepLowest: 'yellow',    // #d4845a
-  explode: 'yellow',       // #e5c07b
-  compound: 'yellow',      // #e08040
-  penetrate: 'green',      // #b8d858
-  reroll: 'magenta',       // #c792ea
-  cap: 'cyan',             // #89ddff
-  replace: 'green',        // #c3e88d
-  unique: 'cyan',          // #80cbc4
-  countSuccesses: 'blue',  // #82aaff
-  dropCondition: 'magenta',// #d860c0
-  plus: 'green',           // #98c379
-  minus: 'green',          // #6b9e52
-  multiply: 'yellow',      // #ffcb6b
-  multiplyTotal: 'yellow', // #e8a93a
-  unknown: 'red'           // #f97583
-}
+const EXAMPLES = ['4d6L', '1d20+5', '2d12+1d6', '4d6LR{<3}!C{>5}+2d8!UR{1}C{<2,>7}+1d12V{12=10}-3']
 
 export function NotationDescriptionRow({
-  notation,
   tokens,
-  isValid,
-  activeTokenIdx = -1
+  isEmpty = false,
+  isInvalid = false,
+  activeTokenIdx = -1,
+  isFocused = false,
+  onSelectExample,
+  onSelectionChange
 }: {
-  readonly notation: string
   readonly tokens: readonly Token[]
-  readonly isValid: boolean
+  readonly isEmpty?: boolean
+  readonly isInvalid?: boolean
   readonly activeTokenIdx?: number
+  readonly isFocused?: boolean
+  readonly onSelectExample?: (example: string) => void
+  readonly onSelectionChange?: (tokenIdx: number) => void
 }): React.JSX.Element {
-  if (notation.length === 0) {
-    return (
-      <Box paddingX={1}>
-        <Text dimColor>Try: 4d6L, 1d20+5, 2d8!</Text>
-      </Box>
-    )
-  }
-
-  if (!isValid) {
-    return (
-      <Box paddingX={1}>
-        <Text color="red" dimColor>
-          Invalid notation
-        </Text>
-      </Box>
-    )
-  }
+  const [selectedExample, setSelectedExample] = useState(0)
+  const [selectedDescIdx, setSelectedDescIdx] = useState(0)
 
   const described = tokens.filter(t => Boolean(t.description))
   const describedWithIdx = described.map(t => ({
@@ -63,8 +32,70 @@ export function NotationDescriptionRow({
     tokenIdx: tokens.indexOf(t)
   }))
 
+  // Report selection when description is focused
+  useEffect(() => {
+    if (isFocused && !isEmpty && !isInvalid) {
+      const entry = describedWithIdx[selectedDescIdx]
+      if (entry !== undefined) onSelectionChange?.(entry.tokenIdx)
+    }
+  }, [isFocused, selectedDescIdx, isEmpty, isInvalid])
+
+  useInput(
+    (_input, key) => {
+      if (key.leftArrow) {
+        setSelectedExample(prev => Math.max(0, prev - 1))
+      } else if (key.rightArrow) {
+        setSelectedExample(prev => Math.min(EXAMPLES.length - 1, prev + 1))
+      } else if (key.return) {
+        const ex = EXAMPLES[selectedExample]
+        if (ex !== undefined) onSelectExample?.(ex)
+      }
+    },
+    { isActive: isEmpty && isFocused }
+  )
+
+  useInput(
+    (_input, key) => {
+      if (key.leftArrow) {
+        setSelectedDescIdx(prev => Math.max(0, prev - 1))
+      } else if (key.rightArrow) {
+        setSelectedDescIdx(prev => Math.min(describedWithIdx.length - 1, prev + 1))
+      }
+    },
+    { isActive: !isEmpty && !isInvalid && isFocused }
+  )
+
+  if (isInvalid) {
+    return (
+      <Box backgroundColor="red" paddingX={1} width="100%">
+        <Text color="white" bold>
+          Invalid notation
+        </Text>
+      </Box>
+    )
+  }
+
+  if (isEmpty) {
+    return (
+      <Box>
+        <Text dimColor>Try: </Text>
+        {EXAMPLES.map((ex, i) => {
+          const isSelected = isFocused && i === selectedExample
+          return (
+            <Box key={ex} flexDirection="row">
+              {i > 0 && <Text dimColor>, </Text>}
+              <Text color="yellow" bold={isSelected} inverse={isSelected}>
+                {ex}
+              </Text>
+            </Box>
+          )
+        })}
+      </Box>
+    )
+  }
+
   return (
-    <Box paddingX={1} flexWrap="wrap">
+    <Box flexWrap="wrap">
       {describedWithIdx.map(({ token, tokenIdx }, i) => {
         const sep =
           i === 0
@@ -75,7 +106,7 @@ export function NotationDescriptionRow({
                 : ' + '
               : ', '
         const color = TOKEN_COLORS[token.type] ?? 'gray'
-        const isActive = tokenIdx === activeTokenIdx
+        const isActive = isFocused ? i === selectedDescIdx : tokenIdx === activeTokenIdx
         return (
           <Box key={`${token.type}-${token.start}`} flexDirection="row">
             {sep !== null && <Text dimColor>{sep}</Text>}
