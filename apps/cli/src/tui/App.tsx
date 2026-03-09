@@ -111,7 +111,7 @@ function App(): React.JSX.Element {
     }
     if (key.return && focus === 'stackblitz') {
       const trimmed = input.trim()
-      if (trimmed.length > 0) openInStackblitz(trimmed)
+      openInStackblitz(trimmed.length > 0 ? trimmed : '4d6')
       return
     }
     if (key.return && focus === 'description' && isValid) {
@@ -249,6 +249,9 @@ function App(): React.JSX.Element {
           <Text dimColor>↑↓←→: Navigate</Text>
         </Box>
         <Box paddingX={1}>
+          <Text dimColor>Tab: Cycle Sections</Text>
+        </Box>
+        <Box paddingX={1}>
           <Text {...(enterLabel === 'noop' ? { color: '#555555' as string } : {})} dimColor>
             Enter: {enterLabel}
           </Text>
@@ -373,7 +376,7 @@ function App(): React.JSX.Element {
               setFocus('description')
             }}
             onBottomExit={() => {
-              setFocus('input')
+              setFocus('stackblitz')
             }}
             onDocChange={handleDocChange}
             selectedPos={refSelectedPos}
