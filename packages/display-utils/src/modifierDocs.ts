@@ -23,9 +23,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description:
       'Drop any dice matching a condition \u2014 more flexible than L/H for arbitrary thresholds.',
     displayBase: 'D{..}',
-    forms: [
-      { notation: 'D{...}', note: 'Comma-separate multiple conditions' }
-    ],
+    forms: [{ notation: 'D{...}', note: 'Comma-separate multiple conditions' }],
     comparisons: [
       { operator: 'n', note: 'drop dice showing exactly n' },
       { operator: '>n', note: 'drop dice showing more than n' },
@@ -45,8 +43,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   xDN: {
     title: 'Core Roll',
-    description:
-      'Roll x dice with N sides each. The foundation of every notation string.',
+    description: 'Roll x dice with N sides each. The foundation of every notation string.',
     displayBase: 'xDN',
     forms: [{ notation: 'xDN', note: 'Roll x dice, N sides each' }],
     examples: [
@@ -57,8 +54,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   L: {
     title: 'Drop Lowest',
-    description:
-      'Remove the lowest-valued dice from the pool before summing.',
+    description: 'Remove the lowest-valued dice from the pool before summing.',
     displayBase: 'L',
     displayOptional: 'n',
     forms: [{ notation: 'L(n)', note: 'Drop n lowest (default: 1)' }],
@@ -72,8 +68,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   H: {
     title: 'Drop Highest',
-    description:
-      'Remove the highest-valued dice from the pool before summing.',
+    description: 'Remove the highest-valued dice from the pool before summing.',
     displayBase: 'H',
     displayOptional: 'n',
     forms: [{ notation: 'H(n)', note: 'Drop n highest (default: 1)' }],
@@ -87,8 +82,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   K: {
     title: 'Keep Highest',
-    description:
-      'Keep only the n highest-valued dice; discard the rest.',
+    description: 'Keep only the n highest-valued dice; discard the rest.',
     displayBase: 'K',
     displayOptional: 'n',
     forms: [{ notation: 'K(n)', note: 'Keep n highest (default: 1)' }],
@@ -102,8 +96,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   KL: {
     title: 'Keep Lowest',
-    description:
-      'Keep only the n lowest-valued dice; discard the rest.',
+    description: 'Keep only the n lowest-valued dice; discard the rest.',
     displayBase: 'KL',
     displayOptional: 'n',
     forms: [{ notation: 'KL(n)', note: 'Keep n lowest (default: 1)' }],
@@ -172,8 +165,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     examples: [
       {
         notation: '1d6!p',
-        description:
-          'Roll 1d6; max penetrates with -1 per chain'
+        description: 'Roll 1d6; max penetrates with -1 per chain'
       },
       {
         notation: '2d6!pL',
@@ -183,8 +175,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   U: {
     title: 'Unique',
-    description:
-      'Force all dice in the pool to show different values by rerolling duplicates.',
+    description: 'Force all dice in the pool to show different values by rerolling duplicates.',
     displayBase: 'U',
     displayOptional: '{..}',
     forms: [
@@ -206,12 +197,9 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   'V{..}': {
     title: 'Replace',
-    description:
-      'Replace dice showing specific values with a new value.',
+    description: 'Replace dice showing specific values with a new value.',
     displayBase: 'V{..}',
-    forms: [
-      { notation: 'V{...}', note: 'Comma-separate multiple rules' }
-    ],
+    forms: [{ notation: 'V{...}', note: 'Comma-separate multiple rules' }],
     comparisons: [
       { operator: 'n=y', note: 'replace exact match n with y' },
       { operator: '>n=y', note: 'replace anything above n with y' },
@@ -250,15 +238,13 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       },
       {
         notation: '5d10S{7,1}',
-        description:
-          'Successes \u2265 7, subtract botches \u2264 1'
+        description: 'Successes \u2265 7, subtract botches \u2264 1'
       }
     ]
   },
   '**': {
     title: 'Multiply Total',
-    description:
-      'Multiply the entire final total after all other modifiers have been applied.',
+    description: 'Multiply the entire final total after all other modifiers have been applied.',
     displayBase: '**',
     displayOptional: 'n',
     forms: [{ notation: '**n', note: 'Multiply final total by n' }],
@@ -272,8 +258,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   '*': {
     title: 'Multiply Dice',
-    description:
-      'Multiply the dice sum before applying +/\u2212 arithmetic modifiers.',
+    description: 'Multiply the dice sum before applying +/\u2212 arithmetic modifiers.',
     displayBase: '*',
     displayOptional: 'n',
     forms: [
@@ -289,8 +274,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   '-': {
     title: 'Subtract',
-    description:
-      'Subtract a fixed number from the total after all dice are rolled.',
+    description: 'Subtract a fixed number from the total after all dice are rolled.',
     displayBase: '\u2212',
     displayOptional: 'n',
     forms: [{ notation: '-n', note: 'Subtract n from total' }],
@@ -304,8 +288,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
   },
   '+': {
     title: 'Add',
-    description:
-      'Add a fixed number to the total after all dice are rolled.',
+    description: 'Add a fixed number to the total after all dice are rolled.',
     displayBase: '+',
     displayOptional: 'n',
     forms: [{ notation: '+n', note: 'Add n to total' }],
@@ -319,9 +302,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
     description:
       'Clamp individual die values to a range \u2014 dice outside the boundary are moved to it.',
     displayBase: 'C{..}',
-    forms: [
-      { notation: 'C{...}', note: 'Comma-separate multiple conditions' }
-    ],
+    forms: [{ notation: 'C{...}', note: 'Comma-separate multiple conditions' }],
     comparisons: [
       { operator: 'n', note: 'max cap: no result exceeds n' },
       {

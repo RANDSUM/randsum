@@ -12,19 +12,14 @@ export type TooltipStep =
   | { kind: 'arithmetic'; label: string; display: string }
   | { kind: 'finalRolls'; rolls: readonly number[]; arithmeticDelta: number }
 
-export const ARITHMETIC_MODIFIERS: Partial<
-  Record<string, { label: string; sign: string }>
-> = {
+export const ARITHMETIC_MODIFIERS: Partial<Record<string, { label: string; sign: string }>> = {
   plus: { label: 'Add', sign: '+' },
   minus: { label: 'Subtract', sign: '-' },
   multiply: { label: 'Multiply', sign: '\u00d7' },
   multiplyTotal: { label: 'Multiply total', sign: '\u00d7' }
 }
 
-export function numVal(
-  opts: Record<string, unknown>,
-  key: string
-): number | undefined {
+export function numVal(opts: Record<string, unknown>, key: string): number | undefined {
   const v = opts[key]
   return typeof v === 'number' ? v : undefined
 }
@@ -62,10 +57,7 @@ export function modifierLabel(modifier: string, options: unknown): string {
   return base
 }
 
-export function formatAsMath(
-  rolls: readonly number[],
-  delta = 0
-): string {
+export function formatAsMath(rolls: readonly number[], delta = 0): string {
   const terms = rolls.map((n, i) => {
     if (i === 0) return String(n)
     return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`
@@ -75,10 +67,7 @@ export function formatAsMath(
   return terms.join(' ')
 }
 
-export function applyRemove(
-  pool: readonly number[],
-  values: readonly number[]
-): number[] {
+export function applyRemove(pool: readonly number[], values: readonly number[]): number[] {
   const result = [...pool]
   for (const val of values) {
     const idx = result.indexOf(val)
@@ -87,9 +76,7 @@ export function applyRemove(
   return result
 }
 
-export function computeSteps(
-  record: RollRecord
-): readonly TooltipStep[] {
+export function computeSteps(record: RollRecord): readonly TooltipStep[] {
   const steps: TooltipStep[] = []
   const current: number[] = [...record.initialRolls]
 
@@ -116,15 +103,13 @@ export function computeSteps(
     }
 
     const isSplittable =
-      (log.modifier === 'drop' || log.modifier === 'keep') &&
-      typeof log.options === 'object'
+      (log.modifier === 'drop' || log.modifier === 'keep') && typeof log.options === 'object'
 
     if (isSplittable) {
       const opts = log.options as Record<string, unknown>
       const lowest = numVal(opts, 'lowest')
       const highest = numVal(opts, 'highest')
-      const base =
-        log.modifier.charAt(0).toUpperCase() + log.modifier.slice(1)
+      const base = log.modifier.charAt(0).toUpperCase() + log.modifier.slice(1)
 
       if (lowest !== undefined && highest !== undefined) {
         const sortedAsc = [...current].sort((a, b) => a - b)
@@ -180,8 +165,7 @@ export function computeSteps(
 
   if (modifierSteps.length > 0) {
     steps.push(...modifierSteps)
-    const arithmeticDelta =
-      record.appliedTotal - record.total
+    const arithmeticDelta = record.appliedTotal - record.total
     steps.push({
       kind: 'finalRolls',
       rolls: record.rolls,

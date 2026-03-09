@@ -5,9 +5,7 @@ export interface StackBlitzProject {
   readonly files: Readonly<Record<string, string>>
 }
 
-export function buildStackBlitzProject(
-  notation: string
-): StackBlitzProject {
+export function buildStackBlitzProject(notation: string): StackBlitzProject {
   const safe = JSON.stringify(notation)
   const code = `import { roll } from '@randsum/roller'
 
