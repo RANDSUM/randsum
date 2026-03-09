@@ -119,9 +119,7 @@ describe('computeSteps', () => {
         appliedTotal: 9
       })
     )
-    const dropStep = steps.find(
-      s => s.kind === 'rolls' && (s as { label: string }).label !== 'Rolled'
-    )
+    const dropStep = steps.find(s => s.kind === 'rolls' && s.label !== 'Rolled')
     expect(dropStep).toMatchObject({ kind: 'rolls', label: 'Drop Lowest 1' })
   })
 
@@ -135,9 +133,7 @@ describe('computeSteps', () => {
         appliedTotal: 6
       })
     )
-    const dropStep = steps.find(
-      s => s.kind === 'rolls' && (s as { label: string }).label !== 'Rolled'
-    )
+    const dropStep = steps.find(s => s.kind === 'rolls' && s.label !== 'Rolled')
     expect(dropStep).toMatchObject({ kind: 'rolls', label: 'Drop Highest 1' })
   })
 
@@ -153,9 +149,7 @@ describe('computeSteps', () => {
         appliedTotal: 8
       })
     )
-    const dropSteps = steps.filter(
-      s => s.kind === 'rolls' && (s as { label: string }).label !== 'Rolled'
-    )
+    const dropSteps = steps.filter(s => s.kind === 'rolls' && s.label !== 'Rolled')
     expect(dropSteps.length).toBe(2)
     expect(dropSteps[0]).toMatchObject({ label: 'Drop Lowest 1' })
     expect(dropSteps[1]).toMatchObject({ label: 'Drop Highest 1' })
@@ -171,9 +165,7 @@ describe('computeSteps', () => {
         appliedTotal: 5
       })
     )
-    const keepStep = steps.find(
-      s => s.kind === 'rolls' && (s as { label: string }).label !== 'Rolled'
-    )
+    const keepStep = steps.find(s => s.kind === 'rolls' && s.label !== 'Rolled')
     expect(keepStep).toMatchObject({ label: 'Keep Highest 1' })
   })
 
@@ -187,9 +179,7 @@ describe('computeSteps', () => {
         appliedTotal: 7
       })
     )
-    const modStep = steps.find(
-      s => s.kind === 'rolls' && (s as { label: string }).label !== 'Rolled'
-    )
+    const modStep = steps.find(s => s.kind === 'rolls' && s.label !== 'Rolled')
     expect(modStep).toBeDefined()
     expect(modStep).toMatchObject({ kind: 'rolls' })
   })
@@ -204,9 +194,7 @@ describe('computeSteps', () => {
         appliedTotal: 5
       })
     )
-    const uniqueStep = steps.find(
-      s => s.kind === 'rolls' && (s as { label: string }).label === 'Unique'
-    )
+    const uniqueStep = steps.find(s => s.kind === 'rolls' && s.label === 'Unique')
     expect(uniqueStep).toBeDefined()
   })
 

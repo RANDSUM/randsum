@@ -112,7 +112,7 @@ describe('suCommand', () => {
     })
     const interaction = makeInteraction(null)
     await suCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalled()
+    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
   })
 })

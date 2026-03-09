@@ -125,7 +125,7 @@ describe('rootCommand', () => {
     })
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalled()
+    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
   })
 })

@@ -157,7 +157,7 @@ describe('pbtaCommand', () => {
     })
     const interaction = makeInteraction({ stat: 2 })
     await pbtaCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalled()
+    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
   })
 })

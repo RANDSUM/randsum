@@ -129,7 +129,7 @@ describe('bladesCommand', () => {
     })
     const interaction = makeInteraction(3)
     await bladesCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalled()
+    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
   })
 })
