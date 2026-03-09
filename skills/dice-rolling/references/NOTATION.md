@@ -333,7 +333,7 @@ roll({
   modifiers: { explode: 5 }
 })
 
-roll("3d6!0") // Explode unlimited (capped at 100 for safety)
+roll("3d6!0") // Explode unlimited (capped at 1000 for safety)
 roll({
   sides: 6,
   quantity: 3,
@@ -364,7 +364,7 @@ roll({
   modifiers: { compound: 5 }
 })
 
-roll("3d6!!0") // Compound explode unlimited (capped at 100)
+roll("3d6!!0") // Compound explode unlimited (capped at 1000)
 roll({
   sides: 6,
   quantity: 3,
@@ -402,7 +402,7 @@ roll({
   modifiers: { penetrate: 5 }
 })
 
-roll("3d6!p0") // Penetrate unlimited (capped at 100)
+roll("3d6!p0") // Penetrate unlimited (capped at 1000)
 roll({
   sides: 6,
   quantity: 3,
@@ -621,7 +621,7 @@ roll("8d6+5**2") // 8d6+5 damage, doubled for area effect
 All explosive modifiers (explode, compound, penetrate) have built-in depth limits:
 
 - **Explicit depth**: `!N`, `!!N`, `!pN` - Limited to N depth
-- **Unlimited (0)**: `!0`, `!!0`, `!p0` - Capped at 100 for safety
+- **Unlimited (0)**: `!0`, `!!0`, `!p0` - Capped at 1000 for safety
 - **Default**: `!`, `!!`, `!p` - Limited to 1 explosion per die
 
 ### Best Practices

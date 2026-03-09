@@ -91,7 +91,7 @@ export function computeSteps(
   record: RollRecord
 ): readonly TooltipStep[] {
   const steps: TooltipStep[] = []
-  const current: number[] = [...record.modifierHistory.initialRolls]
+  const current: number[] = [...record.initialRolls]
 
   steps.push({
     kind: 'rolls',
@@ -103,7 +103,7 @@ export function computeSteps(
 
   const modifierSteps: TooltipStep[] = []
 
-  for (const log of record.modifierHistory.logs) {
+  for (const log of record.modifierLogs) {
     const arith = ARITHMETIC_MODIFIERS[log.modifier]
     if (arith) {
       const value = log.options as number
@@ -181,10 +181,10 @@ export function computeSteps(
   if (modifierSteps.length > 0) {
     steps.push(...modifierSteps)
     const arithmeticDelta =
-      record.appliedTotal - record.modifierHistory.total
+      record.appliedTotal - record.total
     steps.push({
       kind: 'finalRolls',
-      rolls: record.modifierHistory.modifiedRolls,
+      rolls: record.rolls,
       arithmeticDelta
     })
   }

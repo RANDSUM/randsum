@@ -21,15 +21,13 @@ export type {
   UniqueOptions
 } from '../types/modifiers'
 
-export type { RollParams, RollRecord, RollResult, RollerRollResult } from '../types/results'
+export type { RollParams, RollRecord, RollerRollResult } from '../types/results'
 
 export type {
   InvalidValidationResult,
   ValidValidationResult,
   ValidationErrorInfo,
   ValidationResult
-} from '../types/validation'
+} from '@randsum/notation'
 
 export type { GameRollResult } from '../types/game'
-
-export type { GameRollConfig, MultiRollGameConfig } from '../lib/gameRoll'

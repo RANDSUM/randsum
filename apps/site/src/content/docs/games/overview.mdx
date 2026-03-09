@@ -66,9 +66,9 @@ All game packages share these characteristics:
 - Export a single `roll()` function as the main API
 - Accept game-specific input types (not raw notation strings)
 - Return a `GameRollResult` with both raw and interpreted results
-- Validate input and return errors rather than throwing
+- Validate input and throw on invalid values (same as `roll()`)
 - Depend only on `@randsum/roller` (never on each other)
-- Ship under 7KB bundled
+- Ship under 8KB bundled
 
 ## Installation
 

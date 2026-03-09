@@ -39,7 +39,7 @@ head:
             "name": "Can reroll modifiers cause infinite loops?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. RANDSUM caps reroll attempts at 99 by default. You can also specify a maximum reroll count with the M suffix: R{<3}5 means reroll below 3 up to 5 times."
+              "text": "No. RANDSUM caps reroll attempts at 99 by default. You can also limit rerolls by appending a number after the condition: R{<3}5 means reroll below 3, with a maximum of 5 total rerolls across the pool."
             }
           },
           {
@@ -69,7 +69,7 @@ const validation = validateNotation(userInput)
 if (!validation.valid) {
   console.error(validation.error.message)
 } else {
-  const result = roll(userInput)
+  const result = roll(validation.argument) // typed as DiceNotation
 }
 
 // Option 2: type guard
@@ -98,8 +98,8 @@ const result = roll('4d6L')
 
 // Access all roll records
 result.rolls.forEach(record => {
-  console.log(record.modifierHistory.modifiedRolls)  // die values after modifiers
-  console.log(record.rolls)                          // die values before modifiers
+  console.log(record.rolls)          // die values after modifiers
+  console.log(record.initialRolls)  // die values before modifiers
 })`} />
 
 ## Can I use RANDSUM in the browser?

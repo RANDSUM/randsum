@@ -48,12 +48,7 @@ export const roll: (count: number) => GameRollResult<BladesResult, undefined, Ro
         ...(canCrit ? {} : { modifiers: { drop: { highest: 1 } } })
       }
     },
-    interpretResult: (
-      count: number,
-      _total: number,
-      _rolls: RollRecord[],
-      fullResult: RollerRollResult
-    ): BladesResult => {
+    interpretResult: (count: number, fullResult: RollerRollResult): BladesResult => {
       const canCrit = count > 0
       return interpretHit(fullResult, canCrit)
     }

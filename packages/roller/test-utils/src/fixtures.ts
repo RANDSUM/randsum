@@ -41,7 +41,6 @@ export function createNumericRollBonus(
 ): NumericRollBonus {
   return {
     rolls: [5, 10, 15],
-    simpleMathModifier: 0,
     logs: [],
     ...overrides
   }

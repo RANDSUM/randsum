@@ -4,7 +4,7 @@ export function formatCompact(result: RollerRollResult): string {
   const parts: string[] = [String(result.total)]
 
   for (const record of result.rolls) {
-    const rolls = record.modifierHistory.modifiedRolls
+    const rolls = record.rolls
     parts.push(`[${rolls.join(', ')}]`)
 
     const description = record.description.slice(1)
@@ -21,10 +21,10 @@ export function formatVerbose(result: RollerRollResult): string {
 
   for (const record of result.rolls) {
     lines.push(`Roll:  ${record.description.join(', ')}`)
-    lines.push(`Raw:   [${record.modifierHistory.initialRolls.join(', ')}]`)
+    lines.push(`Raw:   [${record.initialRolls.join(', ')}]`)
 
-    if (record.modifierHistory.logs.length > 0) {
-      lines.push(`Kept:  [${record.modifierHistory.modifiedRolls.join(', ')}]`)
+    if (record.modifierLogs.length > 0) {
+      lines.push(`Kept:  [${record.rolls.join(', ')}]`)
     }
   }
 
@@ -38,8 +38,8 @@ export function formatJson(result: RollerRollResult): string {
     total: result.total,
     rolls: result.rolls.map(record => ({
       description: record.description,
-      raw: record.modifierHistory.initialRolls,
-      kept: record.modifierHistory.modifiedRolls,
+      raw: record.initialRolls,
+      kept: record.rolls,
       total: record.total
     }))
   })

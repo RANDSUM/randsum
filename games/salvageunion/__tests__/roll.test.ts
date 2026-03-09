@@ -112,12 +112,8 @@ describe('roll', () => {
               faces: undefined
             },
             rolls: [10],
-            modifierHistory: {
-              logs: [],
-              modifiedRolls: [10],
-              total: 10,
-              initialRolls: [10]
-            },
+            initialRolls: [10],
+            modifierLogs: [],
             appliedTotal: 10,
             total: 10
           }
@@ -159,12 +155,8 @@ describe('roll', () => {
               faces: undefined
             },
             rolls: [15],
-            modifierHistory: {
-              logs: [],
-              modifiedRolls: [15],
-              total: 15,
-              initialRolls: [15]
-            },
+            initialRolls: [15],
+            modifierLogs: [],
             appliedTotal: 15,
             total: 15
           }
@@ -204,12 +196,8 @@ describe('roll', () => {
               faces: undefined
             },
             rolls: [10],
-            modifierHistory: {
-              logs: [],
-              modifiedRolls: [10],
-              total: 10,
-              initialRolls: [10]
-            },
+            initialRolls: [10],
+            modifierLogs: [],
             appliedTotal: 10,
             total: 10
           }

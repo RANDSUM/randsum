@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type React from 'react'
 import { isDiceNotation } from '@randsum/roller'
 import type { ModifierReferenceCell } from './ModifierReference'
-import { MODIFIER_DOCS } from './modifierDocs'
+import { MODIFIER_DOCS } from '@randsum/display-utils'
 import './ModifierDocContent.css'
 
 function ChipLabel({ text }: { readonly text: string }): React.JSX.Element {

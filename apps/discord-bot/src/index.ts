@@ -7,6 +7,7 @@ import type { Command } from './types.js'
 import { bladesCommand } from './commands/blades.js'
 import { dhCommand } from './commands/dh.js'
 import { notationCommand } from './commands/notation.js'
+import { pbtaCommand } from './commands/pbta.js'
 import { rollCommand } from './commands/roll.js'
 import { rootCommand } from './commands/root.js'
 import { suCommand } from './commands/su.js'
@@ -23,7 +24,15 @@ const client = new Client({
 const commands = new Collection<string, Command>()
 
 // Register commands
-const commandList = [bladesCommand, dhCommand, notationCommand, rollCommand, rootCommand, suCommand]
+const commandList = [
+  bladesCommand,
+  dhCommand,
+  notationCommand,
+  pbtaCommand,
+  rollCommand,
+  rootCommand,
+  suCommand
+]
 
 for (const command of commandList) {
   commands.set(command.data.name, command)

@@ -108,7 +108,7 @@ roll("4d6D{>6}") // Drop values > 6 on d6 (impossible)
 
    ```typescript
    const result = roll("4d6L2")
-   console.log(result.rolls[0].modifierHistory.logs)
+   console.log(result.rolls[0].modifierLogs)
    // Shows what modifiers were applied and their effects
    ```
 
@@ -254,7 +254,7 @@ try {
    ```typescript
    const result = roll(notation)
    // Check result.rolls for individual roll records
-   // Check result.rolls[0].modifierHistory for modifier application
+   // Check result.rolls[0].modifierLogs for modifier application
    ```
 
 ---

@@ -10,8 +10,7 @@ export {
   validateRange,
   validateNonNegative,
   validateFinite,
-  validateGreaterThan,
-  validateLessThan
+  validateGreaterThan
 } from './internal/api'
 
 export {
@@ -22,8 +21,6 @@ export {
   ValidationError,
   RollError
 } from './internal/api'
-
-export type { ErrorCode } from './internal/api'
 
 export { PRESETS, resolvePreset, resolvePresetParam } from './internal/api'
 
@@ -38,11 +35,6 @@ export {
 } from './internal/api'
 
 export { MODIFIER_PRIORITIES } from './internal/api'
-export type { ModifierPriorityName } from './internal/api'
-
-export { normalize, equate } from './internal/api'
-
-export { d, DiceBuilder } from './internal/api'
 
 export { formatResult, isFormattedError } from './internal/api'
 
@@ -66,15 +58,10 @@ export type {
   UniqueOptions,
   RollParams,
   RollRecord,
-  RollResult,
   RollerRollResult,
   InvalidValidationResult,
   ValidValidationResult,
   ValidationErrorInfo,
   ValidationResult,
-  GameRollResult,
-  GameRollConfig,
-  MultiRollGameConfig
+  GameRollResult
 } from './internal/publicTypes'
-
-export type { FormattedResult, FormattedError, FormatResultOutput } from './formatResult'

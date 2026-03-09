@@ -12,7 +12,7 @@ import { RollResultPanel } from './components/RollResultPanel'
 import { HeroBanner } from './components/HeroBanner'
 import { Spinner } from './components/Spinner'
 import { useCursorPosition } from './hooks/useCursorPosition'
-import type { ModifierDoc } from './helpers/modifierDocs'
+import type { ModifierDoc } from '@randsum/display-utils'
 import type { GridPosition } from './helpers/modifierGrid'
 
 type FocusZone = 'input' | 'reference' | 'roll' | 'description' | 'banner' | 'stackblitz'
@@ -31,6 +31,7 @@ function App(): React.JSX.Element {
   const [refSelectedPos, setRefSelectedPos] = useState<GridPosition>({ row: 0, col: 0 })
   const [preFocusBeforeRoll, setPreFocusBeforeRoll] = useState<FocusZone>('input')
   const [rolling, setRolling] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const rollingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const tokens = useMemo(() => tokenize(input), [input])
@@ -165,13 +166,20 @@ function App(): React.JSX.Element {
     setCursorPos(value.length)
     if (rollingTimerRef.current) clearTimeout(rollingTimerRef.current)
     rollingTimerRef.current = setTimeout(() => {
-      const result = roll(...validation.notation)
-      setLastResult({ records: result.rolls, notation: value.trim() })
-      setRolling(false)
+      try {
+        const result = roll(...validation.notation)
+        setLastResult({ records: result.rolls, notation: value.trim() })
+        setError(null)
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Unknown roll error')
+      } finally {
+        setRolling(false)
+      }
     }, 400)
   }
 
   const handleInputChange = (value: string): void => {
+    setError(null)
     setInput(value)
     setCursorPos(value.length)
     const nowValid = value.trim().length > 0 && isDiceNotation(value.trim())
@@ -313,6 +321,10 @@ function App(): React.JSX.Element {
         {rolling ? (
           <Box justifyContent="center">
             <Spinner />
+          </Box>
+        ) : error !== null ? (
+          <Box borderStyle="single" borderColor="red" paddingX={1}>
+            <Text color="red">Error: {error}</Text>
           </Box>
         ) : activeDoc !== undefined ? (
           <Box flexDirection="column" borderStyle="single" borderColor="cyan" paddingX={1}>

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { createArithmeticLog, createModifierLog, mergeLogs } from '../../../src/lib/modifiers/log'
+import { createArithmeticLog, createModifierLog } from '../../../src/lib/modifiers/log'
 
 describe('createArithmeticLog', () => {
   test('creates log with modifier name and options', () => {
@@ -95,38 +95,5 @@ describe('createModifierLog', () => {
 
     expect(log.modifier).toBe('drop')
     expect(log.options).toEqual(options)
-  })
-})
-
-describe('mergeLogs', () => {
-  test('appends new log to existing logs', () => {
-    const existing = [{ modifier: 'drop', options: undefined, added: [], removed: [1] }]
-    const newLog = { modifier: 'plus', options: 5, added: [], removed: [] }
-
-    const merged = mergeLogs(existing, newLog)
-
-    expect(merged).toHaveLength(2)
-    expect(merged[0]).toEqual(existing[0])
-    expect(merged[1]).toEqual(newLog)
-  })
-
-  test('handles empty existing logs', () => {
-    const newLog = { modifier: 'plus', options: 5, added: [], removed: [] }
-
-    const merged = mergeLogs([], newLog)
-
-    expect(merged).toHaveLength(1)
-    expect(merged[0]).toEqual(newLog)
-  })
-
-  test('does not mutate original array', () => {
-    const existing = [{ modifier: 'drop', options: undefined, added: [], removed: [] }]
-    const newLog = { modifier: 'plus', options: 5, added: [], removed: [] }
-
-    const merged = mergeLogs(existing, newLog)
-
-    expect(existing).toHaveLength(1)
-    expect(merged).toHaveLength(2)
-    expect(merged).not.toBe(existing)
   })
 })

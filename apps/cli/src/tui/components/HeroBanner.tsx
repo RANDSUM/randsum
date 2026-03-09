@@ -1,9 +1,9 @@
 import { Box, Text, useInput } from 'ink'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { execFile } from 'node:child_process'
 import { roll } from '@randsum/roller'
 import { useTerminalWidth } from '../hooks/useTerminalWidth'
 import { lerpColor } from '../helpers/gradientColor'
+import { openUrl } from '../helpers/openUrl'
 
 const DOCS_URL = 'https://randsum.dev'
 const GITHUB_URL = 'https://github.com/RANDSUM/randsum'
@@ -161,12 +161,6 @@ const DIE_FACES: readonly (readonly string[])[] = [
     '███████████████'
   ]
 ]
-
-function openUrl(url: string): void {
-  const cmd =
-    process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
-  execFile(cmd, [url])
-}
 
 function pickRandom<T>(arr: readonly T[]): T {
   const result = arr[roll(arr.length).total - 1]

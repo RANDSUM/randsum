@@ -81,14 +81,14 @@ export const roll: (
         : undefined
 
       const resultType = calculateType(hopeRoll.total, fearRoll.total)
+      const modifier = input.modifier ?? 0
       const details: DaggerheartRollResult['details'] = {
         hope: digestHopeFearTotal(hopeRoll),
         fear: digestHopeFearTotal(fearRoll),
         advantage,
-        modifier: input.modifier ?? 0
+        modifier
       }
 
-      const modifier = input.modifier ?? 0
       const baseTotal = _rollResult.total
 
       return {

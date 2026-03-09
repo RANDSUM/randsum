@@ -14,5 +14,5 @@ export const roll: (bonus: number) => GameRollResult<RootRpgResult, undefined, R
       sides: 6,
       modifiers: { plus: bonus }
     }),
-    interpretResult: (_input: number, total: number) => interpretResult(total)
+    interpretResult: (_input: number, fullResult) => interpretResult(fullResult.total)
   })

@@ -47,7 +47,6 @@ describe('createNumericRollBonus', () => {
     const bonus = createNumericRollBonus()
 
     expect(bonus.rolls).toEqual([5, 10, 15])
-    expect(bonus.simpleMathModifier).toBe(0)
     expect(bonus.logs).toEqual([])
   })
 
@@ -55,14 +54,6 @@ describe('createNumericRollBonus', () => {
     const bonus = createNumericRollBonus({ rolls: [1, 2, 3] })
 
     expect(bonus.rolls).toEqual([1, 2, 3])
-    expect(bonus.simpleMathModifier).toBe(0)
-  })
-
-  test('allows overriding simpleMathModifier', () => {
-    const bonus = createNumericRollBonus({ simpleMathModifier: 5 })
-
-    expect(bonus.simpleMathModifier).toBe(5)
-    expect(bonus.rolls).toEqual([5, 10, 15])
   })
 
   test('allows overriding logs', () => {
@@ -75,12 +66,10 @@ describe('createNumericRollBonus', () => {
   test('allows overriding multiple properties', () => {
     const bonus = createNumericRollBonus({
       rolls: [6, 6, 6],
-      simpleMathModifier: 10,
       logs: []
     })
 
     expect(bonus.rolls).toEqual([6, 6, 6])
-    expect(bonus.simpleMathModifier).toBe(10)
     expect(bonus.logs).toEqual([])
   })
 })

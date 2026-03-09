@@ -115,9 +115,10 @@ switch (result) {
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `PbtaResult` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
+| `result` | `PbtAOutcome` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
 | `total` | `number` | Sum of 2d6 + all modifiers |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+| `details` | `PbtARollDetails` | `{ stat, forward, ongoing, diceTotal }` |
 
 ## Result interpretation
 
@@ -138,6 +139,14 @@ This package works with any PbtA game, including:
 - **The Sprawl** -- Cyberpunk missions
 - **Urban Shadows** -- Urban supernatural politics
 - And many more
+
+## Type exports
+
+<CodeExample code={`import type {
+  PbtARollArgument,
+  PbtAOutcome,
+  PbtARollDetails
+} from '@randsum/pbta'`} />
 
 ## Links
 

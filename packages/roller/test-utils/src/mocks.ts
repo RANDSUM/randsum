@@ -25,12 +25,8 @@ export function createMockRoll(rolls: number[], total?: number): RollerRollResul
       description: ['Mock roll']
     },
     rolls,
-    modifierHistory: {
-      logs: [],
-      modifiedRolls: rolls,
-      total: total ?? rolls.reduce((a, b) => a + b, 0),
-      initialRolls: rolls
-    },
+    initialRolls: rolls,
+    modifierLogs: [],
     appliedTotal: total ?? rolls.reduce((a, b) => a + b, 0),
     total: total ?? rolls.reduce((a, b) => a + b, 0)
   }

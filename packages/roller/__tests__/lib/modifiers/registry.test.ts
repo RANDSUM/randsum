@@ -7,9 +7,7 @@ import {
   defineModifier,
   getAllModifiers,
   getModifier,
-  getRegisteredModifierCount,
   hasModifier,
-  hasRegisteredModifiers,
   modifierToDescriptionFromRegistry,
   modifierToNotationFromRegistry,
   parseModifiersFromRegistry,
@@ -39,10 +37,10 @@ import type { ModifierContext } from '../../../src/lib/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'
 
 describe('registry functions', () => {
-  describe('hasRegisteredModifiers', () => {
-    test('returns true when modifiers are registered', () => {
+  describe('registry populated on import', () => {
+    test('has modifiers registered', () => {
       // Modifiers are registered on import
-      expect(hasRegisteredModifiers()).toBe(true)
+      expect(getAllModifiers().length).toBeGreaterThan(0)
     })
   })
 
@@ -132,22 +130,13 @@ describe('registry functions', () => {
     })
   })
 
-  describe('getRegisteredModifierCount', () => {
-    test('returns count of registered modifiers', () => {
-      const count = getRegisteredModifierCount()
-      expect(count).toBeGreaterThan(0)
-      expect(count).toBe(getAllModifiers().length)
-    })
-  })
-
   describe('clearRegistry', () => {
     test('clears all modifiers from registry', () => {
-      const countBefore = getRegisteredModifierCount()
+      const countBefore = getAllModifiers().length
       expect(countBefore).toBeGreaterThan(0)
 
       clearRegistry()
-      expect(getRegisteredModifierCount()).toBe(0)
-      expect(hasRegisteredModifiers()).toBe(false)
+      expect(getAllModifiers().length).toBe(0)
 
       registerDefaultModifiers([
         capModifier,
@@ -165,13 +154,13 @@ describe('registry functions', () => {
         rerollModifier,
         uniqueModifier
       ])
-      expect(getRegisteredModifierCount()).toBe(countBefore)
+      expect(getAllModifiers().length).toBe(countBefore)
     })
   })
 
   describe('modifierToNotationFromRegistry and modifierToDescriptionFromRegistry', () => {
     test('return undefined when modifier not in registry', () => {
-      const countBefore = getRegisteredModifierCount()
+      const countBefore = getAllModifiers().length
       clearRegistry()
 
       expect(modifierToNotationFromRegistry('plus', 5)).toBeUndefined()
@@ -193,7 +182,7 @@ describe('registry functions', () => {
         rerollModifier,
         uniqueModifier
       ])
-      expect(getRegisteredModifierCount()).toBe(countBefore)
+      expect(getAllModifiers().length).toBe(countBefore)
     })
   })
 

@@ -196,11 +196,11 @@ If you are getting an outcome tier that does not match your expectation:
 
 <CodeExample code={`import { roll } from '@randsum/fifth'
 
-const result = roll({ abilityModifier: 3 })
+const result = roll({ modifier: 3 })
 
-// result.type is the interpreted outcome (e.g. 'success', 'failure')
+// result.result is the total (d20 + modifier)
 // result.rolls contains the raw dice values
-console.log(result.type)
+console.log(result.result)
 console.log(result.rolls)`} />
 
 ---

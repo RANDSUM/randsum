@@ -57,7 +57,9 @@ Remove dice from the result pool.
 | `H` | Drop highest 1 |
 | `H2` | Drop highest 2 |
 | `D{>N}` | Drop rolls over N |
+| `D{>=N}` | Drop rolls at or over N |
 | `D{<N}` | Drop rolls under N |
+| `D{<=N}` | Drop rolls at or under N |
 | `D{X,Y}` | Drop exact values X and Y |
 
 <RollerPlayground defaultNotation="4d6L" client:only="react" />
@@ -107,7 +109,9 @@ Reroll dice matching certain conditions.
 | Notation | Description |
 |---|---|
 | `R{>N}` | Reroll results over N |
+| `R{>=N}` | Reroll results at or over N |
 | `R{<N}` | Reroll results under N |
+| `R{<=N}` | Reroll results at or under N |
 | `R{X,Y}` | Reroll exact values X, Y |
 | `R{<N}M` | Reroll under N, max M attempts |
 
@@ -148,15 +152,11 @@ Roll additional dice when a die shows its maximum value.
 
 | Notation | Description |
 |---|---|
-| `!` | Explode once per die |
-| `!N` | Explode with max depth N |
-| `!0` | Explode unlimited (capped at 100) |
+| `!` | Explode: one additional die per max result (single pass) |
 
 <RollerPlayground defaultNotation="4d20!" client:only="react" />
-<RollerPlayground defaultNotation="3d6!5" client:only="react" />
-<RollerPlayground defaultNotation="3d6!0" client:only="react" />
 
-When a die shows its maximum value, it "explodes" -- a new die is rolled and added to the result. This continues for each new maximum value rolled.
+When a die shows its maximum value, it "explodes" — one new die is rolled and added to the result. This is a single pass: the newly added dice are not checked for further explosions. For recursive explosions, use compound (`!!`) or penetrate (`!p`).
 
 **Example:** `3d6!` rolls `[6, 4, 6]`. The two 6s explode, adding `[5, 3]`. Final result: `[6, 4, 6, 5, 3]` = 24.
 
@@ -168,7 +168,7 @@ Exploding dice that add to the triggering die instead of creating new dice.
 |---|---|
 | `!!` | Compound once per die |
 | `!!N` | Compound with max depth N |
-| `!!0` | Compound unlimited (capped at 100) |
+| `!!0` | Compound unlimited (capped at 1000) |
 
 <RollerPlayground defaultNotation="3d6!!" client:only="react" />
 <RollerPlayground defaultNotation="3d6!!5" client:only="react" />
@@ -187,7 +187,7 @@ Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style).
 |---|---|
 | `!p` | Penetrate once per die |
 | `!pN` | Penetrate with max depth N |
-| `!p0` | Penetrate unlimited (capped at 100) |
+| `!p0` | Penetrate unlimited (capped at 1000) |
 
 <RollerPlayground defaultNotation="3d6!p" client:only="react" />
 <RollerPlayground defaultNotation="3d6!p5" client:only="react" />

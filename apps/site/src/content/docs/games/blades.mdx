@@ -28,12 +28,12 @@ The `@randsum/blades` package provides mechanics for [Blades in the Dark](https:
 
 ## How Blades in the Dark dice work
 
-Blades in the Dark uses a **dice pool** system built around six-sided dice. You assemble a pool of 1–4 dice based on your action rating, roll them all, and read only the single highest result: a 6 is a full success, 4–5 is a partial success with a consequence, and 1–3 is a failure. Rolling zero dice (a desperate position with no rating) means rolling two dice and keeping the *lowest*. A **critical** result — two or more 6s — means an exceptional outcome. The `@randsum/blades` package handles all pool assembly, the two-dice-lowest rule for zero-dice rolls, and the outcome tier logic.
+Blades in the Dark uses a **dice pool** system built around six-sided dice. You assemble a pool of dice based on your action rating plus any bonus dice (from pushing yourself, assistance, or devil's bargains), roll them all, and read only the single highest result: a 6 is a full success, 4–5 is a partial success with a consequence, and 1–3 is a failure. Rolling zero dice (when your effective pool is 0) means rolling two dice and keeping the *lowest*. A **critical** result — two or more 6s — means an exceptional outcome. The `@randsum/blades` package handles all pool assembly, the two-dice-lowest rule for zero-dice rolls, and the outcome tier logic.
 
 ## Overview
 
 - Rolls a dice pool of d6s (0-10 dice)
-- 0 dice pool: rolls 2d6 and keeps the lowest (desperate position)
+- 0 dice pool: rolls 2d6 and keeps the lowest
 - Determines outcome from the highest die in the pool
 - Returns one of four outcomes: critical, success, partial, or failure
 
@@ -98,7 +98,7 @@ switch (result) {
 | Property | Type | Description |
 |---|---|---|
 | `result` | `BladesResult` | `'critical' \| 'success' \| 'partial' \| 'failure'` |
-| `total` | `number` | Sum of all dice |
+| `total` | `number` | Sum of kept dice after modifiers |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ## Result interpretation

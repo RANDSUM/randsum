@@ -37,9 +37,9 @@ Roll Blades in the Dark action rolls. Takes the number of dice in your pool and 
 
 Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantage/disadvantage, and amplification of hope or fear dice.
 
-<CodeExample lang="bash" code={`/dh modifier:5 rollingWith:Advantage
-/dh modifier:3 rollingWith:Disadvantage
-/dh amplifyHope:true amplifyFear:false
+<CodeExample lang="bash" code={`/dh modifier:5 rolling_with:Advantage
+/dh modifier:3 rolling_with:Disadvantage
+/dh amplify_hope:true amplify_fear:false
 /dh modifier:2`} />
 
 ### `/root`
@@ -66,15 +66,14 @@ Display a reference guide for RANDSUM dice notation. Shows all available modifie
 
 ## Supported game packages
 
-All RANDSUM game packages are fully supported:
+The following game packages have dedicated slash commands:
 
-- **@randsum/blades** -- Blades in the Dark action rolls
-- **@randsum/daggerheart** -- Daggerheart hope and fear dice
-- **@randsum/fifth** -- D&D 5th Edition rolls
-- **@randsum/root-rpg** -- Root RPG mechanics
-- **@randsum/salvageunion** -- Salvage Union table rolls
+- **@randsum/blades** -- `/blades` for Blades in the Dark action rolls
+- **@randsum/daggerheart** -- `/dh` for Daggerheart hope and fear dice
+- **@randsum/root-rpg** -- `/root` for Root RPG mechanics
+- **@randsum/salvageunion** -- `/su` for Salvage Union table rolls
 
-Each game package has a dedicated command with game-specific results, color-coded embeds, and detailed breakdowns.
+For other systems (including D&D 5e and PbtA), use the `/roll` command with standard RANDSUM dice notation.
 
 ## Features
 

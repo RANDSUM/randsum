@@ -176,7 +176,7 @@ An array of `RollRecord` objects, one for each dice group in the roll. Each reco
 // Validate before rolling (preferred for user input)
 const validation = validateNotation(userInput)
 if (validation.valid) {
-  const result = roll(userInput)
+  const result = roll(validation.argument) // use validation.argument (typed as DiceNotation)
 }
 
 // Or use a type guard

@@ -8,7 +8,7 @@ describe('createGameRoll', () => {
       const simpleRoll = createGameRoll({
         validate: () => undefined,
         toRollOptions: () => ({ sides: 6, quantity: 1 }),
-        interpretResult: (_input, total) => total
+        interpretResult: (_input, fullResult) => fullResult.total
       })
 
       const result = simpleRoll({})
@@ -36,7 +36,7 @@ describe('createGameRoll', () => {
           quantity: 1,
           modifiers: { plus: input.modifier }
         }),
-        interpretResult: (_input, total) => total
+        interpretResult: (_input, fullResult) => fullResult.total
       })
 
       const result = rollWithInput({ modifier: 5, sides: 20 })
@@ -53,7 +53,7 @@ describe('createGameRoll', () => {
           }
         },
         toRollOptions: () => ({ sides: 6, quantity: 1 }),
-        interpretResult: (_input, total) => total
+        interpretResult: (_input, fullResult) => fullResult.total
       })
 
       expect(() => rollWithValidation({ value: -1 })).toThrow(ValidationError)
@@ -68,7 +68,7 @@ describe('createGameRoll', () => {
           { sides: 20, quantity: 1 },
           { sides: 6, quantity: 2 }
         ],
-        interpretResult: (_input, total) => total
+        interpretResult: (_input, fullResult) => fullResult.total
       })
 
       const result = multiRoll({})
@@ -81,15 +81,15 @@ describe('createGameRoll', () => {
   })
 
   describe('interpretResult', () => {
-    test('receives total and rolls', () => {
+    test('receives fullResult', () => {
       const captured: { total?: number; rolls?: unknown[] } = {}
 
       const rollWithCapture = createGameRoll({
         validate: () => undefined,
         toRollOptions: () => ({ sides: 6, quantity: 2 }),
-        interpretResult: (_input, total, rolls) => {
-          captured.total = total
-          captured.rolls = rolls
+        interpretResult: (_input, fullResult) => {
+          captured.total = fullResult.total
+          captured.rolls = fullResult.rolls
           return 'captured'
         }
       })
@@ -107,7 +107,8 @@ describe('createGameRoll', () => {
       const passFailRoll = createGameRoll<{ dc: number }, Outcome>({
         validate: () => undefined,
         toRollOptions: () => ({ sides: 20, quantity: 1 }),
-        interpretResult: (input, total) => (total >= input.dc ? 'success' : 'failure')
+        interpretResult: (input, fullResult) =>
+          fullResult.total >= input.dc ? 'success' : 'failure'
       })
 
       // Roll against DC 1 should always succeed
@@ -129,8 +130,8 @@ describe('createGameRoll', () => {
       >({
         validate: () => undefined,
         toRollOptions: () => ({ sides: 6, quantity: 2 }),
-        interpretResult: (_input, total) => (total >= 7 ? 'hit' : 'miss'),
-        computeDetails: (input, _total, _rolls, _fullResult) => ({
+        interpretResult: (_input, fullResult) => (fullResult.total >= 7 ? 'hit' : 'miss'),
+        computeDetails: (input, _fullResult) => ({
           appliedModifier: input.modifier
         })
       })
@@ -144,7 +145,7 @@ describe('createGameRoll', () => {
       const rollWithoutDetails = createGameRoll<{ modifier: number }, string>({
         validate: () => undefined,
         toRollOptions: () => ({ sides: 6, quantity: 2 }),
-        interpretResult: (_input, total) => (total >= 7 ? 'hit' : 'miss')
+        interpretResult: (_input, fullResult) => (fullResult.total >= 7 ? 'hit' : 'miss')
       })
 
       const result = rollWithoutDetails({ modifier: 3 })

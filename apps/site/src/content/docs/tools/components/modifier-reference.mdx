@@ -24,7 +24,6 @@ export default function HelpPanel() {
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `corePosition` | `'top' \| 'bottom'` | `'top'` | Where to render the core `xdY` row relative to the modifier grid |
 | `coreDisabled` | `boolean` | `false` | Hide (grey out) the core `xdY` row |
 | `modifiersDisabled` | `boolean` | `false` | Hide (grey out) all modifier rows |
 | `onCellClick` | `(cell: ModifierReferenceCell) => void` | — | Called when a cell is clicked; enables hover and keyboard interaction |
@@ -69,15 +68,3 @@ export default function NotationBuilder() {
   )
 }`} />
 
-## `corePosition` variants
-
-<div class="not-content" style="display: flex; gap: 2rem; flex-wrap: wrap; margin: 1.5rem 0;">
-  <div>
-    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">corePosition="top" (default)</p>
-    <ModifierReference client:only="react" corePosition="top" />
-  </div>
-  <div>
-    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">corePosition="bottom"</p>
-    <ModifierReference client:only="react" corePosition="bottom" />
-  </div>
-</div>

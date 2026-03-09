@@ -1,4 +1,4 @@
-import { describe, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import fc from 'fast-check'
 import { roll } from '../src/roll'
 
@@ -16,7 +16,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: 1, max: 10 }), pool => {
         const { rolls } = roll(pool)
-        const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
+        const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.length === pool
       })
     )
@@ -33,20 +33,18 @@ describe('roll property-based tests', () => {
   })
 
   test('zero dice pool uses 2d6 drop highest mechanic', () => {
-    fc.assert(
-      fc.property(fc.constant(0), () => {
-        const { rolls, result } = roll(0)
-        const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
-        // Zero pool rolls 2d6 and drops highest
-        return initialRolls.length === 2 && !['critical'].includes(result)
-      }),
-      { numRuns: 50 }
-    )
+    Array.from({ length: 50 }).forEach(() => {
+      const { rolls, result } = roll(0)
+      const initialRolls = rolls[0]?.initialRolls ?? []
+      // Zero pool rolls 2d6 and drops highest
+      expect(initialRolls).toHaveLength(2)
+      expect(['critical']).not.toContain(result)
+    })
   })
 
   test('critical only possible with pool >= 1', () => {
     fc.assert(
-      fc.property(fc.integer({ min: 1, max: 10 }), fc.integer({ min: 1, max: 1000 }), (pool, _) => {
+      fc.property(fc.integer({ min: 1, max: 10 }), pool => {
         // Run multiple times to increase chance of seeing a critical
         const results = Array.from({ length: 20 }, () => roll(pool))
         // Just verify no crashes and valid results
@@ -62,7 +60,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: 1, max: 10 }), pool => {
         const { rolls } = roll(pool)
-        const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
+        const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.every(roll => roll >= 1 && roll <= 6)
       })
     )

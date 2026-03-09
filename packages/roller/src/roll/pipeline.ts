@@ -6,7 +6,7 @@ import {
   getModifierOrder
 } from '../lib/modifiers'
 import type { RegistryProcessResult } from '../lib/modifiers/schema'
-import type { ModifierLog, RollParams, RollRecord } from '../types'
+import type { RollParams, RollRecord } from '../types'
 import { RollError } from '../errors'
 
 /**
@@ -125,12 +125,8 @@ export class RollPipeline<T = string> {
       argument,
       notation,
       description,
-      modifierHistory: {
-        logs: this.modifierResult.logs,
-        modifiedRolls: this.modifierResult.rolls,
-        total,
-        initialRolls: this.initialRolls
-      },
+      initialRolls: this.initialRolls,
+      modifierLogs: this.modifierResult.logs,
       rolls: this.modifierResult.rolls,
       appliedTotal: isNegative ? -total : total,
       total
@@ -142,21 +138,6 @@ export class RollPipeline<T = string> {
    */
   public execute(): RollRecord<T> {
     return this.generateInitialRolls().applyModifiers().build()
-  }
-
-  /** Get the initial rolls before modifiers */
-  public getInitialRolls(): readonly number[] {
-    return this.initialRolls
-  }
-
-  /** Get the rolls after modifiers */
-  public getModifiedRolls(): readonly number[] {
-    return this.modifierResult?.rolls ?? []
-  }
-
-  /** Get the modifier logs */
-  public getModifierLogs(): readonly ModifierLog[] {
-    return this.modifierResult?.logs ?? []
   }
 }
 

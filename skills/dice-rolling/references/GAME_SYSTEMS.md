@@ -33,8 +33,8 @@ interface DaggerheartRollArgument {
 }
 
 const result = roll({ modifier: 3, rollingWith: 'Advantage' })
-result.result.type    // 'hope' | 'fear' | 'critical hope'
-result.result.details // { hope, fear, advantage, modifier }
+result.result         // 'hope' | 'fear' | 'critical hope'
+result.details        // { hope, fear, advantage, modifier }
 ```
 
 ### @randsum/fifth - D&D 5th Edition

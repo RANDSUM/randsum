@@ -288,12 +288,8 @@ describe('roll', () => {
               faces: undefined
             },
             rolls: [5],
-            modifierHistory: {
-              logs: [],
-              modifiedRolls: [5],
-              total: 5,
-              initialRolls: [5]
-            },
+            initialRolls: [5],
+            modifierLogs: [],
             appliedTotal: 5,
             total: 5
           }

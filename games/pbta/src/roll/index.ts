@@ -52,12 +52,12 @@ export const roll: (
           : { plus: modifier }
     }
   },
-  interpretResult: (_input: PbtARollArgument, total: number): PbtAOutcome =>
-    total >= 10 ? 'strong_hit' : total >= 7 ? 'weak_hit' : 'miss',
-  computeDetails: (arg: PbtARollArgument, total: number): PbtARollDetails => ({
+  interpretResult: (_input: PbtARollArgument, fullResult): PbtAOutcome =>
+    fullResult.total >= 10 ? 'strong_hit' : fullResult.total >= 7 ? 'weak_hit' : 'miss',
+  computeDetails: (arg: PbtARollArgument, fullResult): PbtARollDetails => ({
     stat: arg.stat,
     forward: arg.forward ?? 0,
     ongoing: arg.ongoing ?? 0,
-    diceTotal: total - arg.stat - (arg.forward ?? 0) - (arg.ongoing ?? 0)
+    diceTotal: fullResult.total - arg.stat - (arg.forward ?? 0) - (arg.ongoing ?? 0)
   })
 })

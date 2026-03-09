@@ -31,7 +31,7 @@ export const rootCommand: Command = {
     const result = roll(modifier)
 
     // Get initial dice rolls
-    const initialRolls = result.rolls[0]?.modifierHistory.initialRolls ?? []
+    const initialRolls = result.rolls[0]?.initialRolls ?? []
 
     // Determine color, title, and description based on result
     const resultConfig = {

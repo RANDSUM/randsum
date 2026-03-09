@@ -1,7 +1,6 @@
 export { roll } from '../roll'
 
-export { validateNotation } from '../validateNotation'
-export { isDiceNotation, notation } from '@randsum/notation'
+export { validateNotation, isDiceNotation, notation } from '@randsum/notation'
 export { validateRollOptions } from '../lib/optionsValidation'
 
 export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from '../lib/transformers'
@@ -11,8 +10,7 @@ export {
   validateRange,
   validateNonNegative,
   validateFinite,
-  validateGreaterThan,
-  validateLessThan
+  validateGreaterThan
 } from '../lib/utils'
 
 export {
@@ -23,8 +21,6 @@ export {
   ValidationError,
   RollError
 } from '../errors'
-
-export type { ErrorCode } from '../errors'
 
 export { PRESETS, resolvePreset, resolvePresetParam } from '../presets'
 
@@ -39,10 +35,5 @@ export {
 } from '../lib/comparison'
 
 export { MODIFIER_PRIORITIES } from '../lib/modifiers/priorities'
-export type { ModifierPriorityName } from '../lib/modifiers/priorities'
-
-export { normalize, equate } from '../lib/normalize'
-
-export { d, DiceBuilder } from '../lib/builder'
 
 export { formatResult, isFormattedError } from '../formatResult'

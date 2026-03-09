@@ -1,12 +1,4 @@
-export {
-  computeSteps,
-  formatAsMath,
-  formatComparison,
-  modifierLabel,
-  numVal,
-  applyRemove,
-  ARITHMETIC_MODIFIERS
-} from './computeSteps'
+export { computeSteps, formatAsMath } from './computeSteps'
 export type { TooltipStep } from './computeSteps'
 
 export { MODIFIER_DOCS } from './modifierDocs'

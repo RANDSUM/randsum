@@ -25,7 +25,7 @@ The notation layer was extracted from `@randsum/roller` into a standalone packag
 - `notationToOptions()`, `optionsToNotation()` — round-trip conversion between notation strings and options objects
 - All shared types: `DiceNotation`, `RollOptions`, `ModifierOptions`, and more
 
-`@randsum/roller` continues to re-export everything from `@randsum/notation` for backward compatibility, so existing import paths do not need to change. Code that imports directly from `@randsum/notation` benefits from a zero-dependency footprint without pulling in the roller's runtime.
+`@randsum/roller` re-exports the most commonly used notation utilities (`validateNotation`, `isDiceNotation`, `optionsToNotation`) for convenience. Functions like `notationToOptions` and `suggestNotationFix` must be imported directly from `@randsum/notation`. Code that imports directly from `@randsum/notation` benefits from a zero-dependency footprint without pulling in the roller's runtime.
 
 Game packages received corresponding minor bumps to stay in sync with the core version.
 

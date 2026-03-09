@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { notation as createNotation, roll } from '@randsum/roller'
 import { embedFooterDetails } from '../utils/constants.js'
+import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
 export const rollCommand: Command = {
@@ -27,15 +28,11 @@ export const rollCommand: Command = {
     })()
 
     if (!validNotation) {
-      const errorEmbed = new EmbedBuilder()
-        .setColor('#FF0000')
-        .setTitle('Invalid Notation')
-        .setDescription(
-          `The notation "${notationString}" is invalid.\n\n[View notation guide](https://github.com/RANDSUM/randsum/blob/main/packages/roller/GUIDE.md)`
-        )
-        .setFooter(embedFooterDetails)
-
-      await interaction.editReply({ embeds: [errorEmbed] })
+      await replyWithError(
+        interaction,
+        'Invalid Notation',
+        `The notation "${notationString}" is invalid.\n\n[View notation guide](https://github.com/RANDSUM/randsum/blob/main/packages/roller/GUIDE.md)`
+      )
       return
     }
 
@@ -49,13 +46,7 @@ export const rollCommand: Command = {
     })()
 
     if (rollResult.error !== null) {
-      const errorEmbed = new EmbedBuilder()
-        .setColor('#FF0000')
-        .setTitle('Roll Error')
-        .setDescription(`Error: ${rollResult.error}`)
-        .setFooter(embedFooterDetails)
-
-      await interaction.editReply({ embeds: [errorEmbed] })
+      await replyWithError(interaction, 'Roll Error', `Error: ${rollResult.error}`)
       return
     }
 
@@ -73,7 +64,7 @@ export const rollCommand: Command = {
       const rollRecord = result.rolls[0]
       if (rollRecord) {
         // Add initial rolls (before modifiers)
-        const initialRolls = rollRecord.modifierHistory.initialRolls
+        const initialRolls = rollRecord.initialRolls
         if (initialRolls.length > 0) {
           embed.addFields({
             name: 'Initial Rolls',
@@ -83,7 +74,7 @@ export const rollCommand: Command = {
         }
 
         // Add modified rolls if different from initial
-        const modifiedRolls = rollRecord.modifierHistory.modifiedRolls
+        const modifiedRolls = rollRecord.rolls
         if (
           modifiedRolls.length > 0 &&
           JSON.stringify(modifiedRolls) !== JSON.stringify(initialRolls)

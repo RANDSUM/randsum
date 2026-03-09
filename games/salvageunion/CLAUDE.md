@@ -7,7 +7,7 @@ Salvage Union is a mech-based tabletop RPG that uses table-based mechanics with 
 ## Core Mechanics
 
 - Roll 1d20 against tables
-- Lower is better (1 = critical success, 20 = critical failure)
+- Higher is better (20 = Nailed It, 1 = Cascade Failure)
 - Results are looked up in reference tables
 - Different tables for different game mechanics
 
@@ -42,10 +42,11 @@ Rolls on a Salvage Union table.
 
 Result quality is determined by the roll value:
 
-- **1** - Critical success ("Nailed It" on Core Mechanic)
-- **2-10** - Success with complications ("Tough Choice" on Core Mechanic)
-- **11-19** - Standard success ("Success" on Core Mechanic)
-- **20** - Critical failure
+- **20** - Nailed It (critical success on Core Mechanic)
+- **11-19** - Success (goal achieved without compromise)
+- **6-10** - Tough Choice (success with complications)
+- **2-5** - Failure
+- **1** - Cascade Failure (critical failure)
 
 ## Usage
 

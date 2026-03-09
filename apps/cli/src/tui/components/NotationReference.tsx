@@ -6,8 +6,8 @@ import { useTerminalWidth } from '../hooks/useTerminalWidth'
 const TWO_COL_THRESHOLD = 80
 import type { GridPosition } from '../helpers/modifierGrid'
 import { navigateGrid } from '../helpers/modifierGrid'
-import { MODIFIER_DOCS } from '../helpers/modifierDocs'
-import type { ModifierDoc } from '../helpers/modifierDocs'
+import { MODIFIER_DOCS } from '@randsum/display-utils'
+import type { ModifierDoc } from '@randsum/display-utils'
 
 interface ModifierEntry {
   readonly notation: string

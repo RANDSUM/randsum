@@ -93,10 +93,10 @@ roll({
 
 <CodeExample code={`import { roll } from '@randsum/daggerheart'
 
-const { result, total } = roll({ modifier: 3 })
+const { result, total, details } = roll({ modifier: 3 })
+// result: 'hope' | 'fear' | 'critical hope'
+// details: { hope, fear, advantage, modifier }
 
-// result contains type and detailed breakdown
-const { type, details } = result
 const { hope, fear, advantage, modifier } = details`} />
 
 ## API reference
@@ -107,7 +107,7 @@ const { hope, fear, advantage, modifier } = details`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `modifier` | `number` | Modifier added to the total |
+| `modifier` | `number` (optional) | Modifier added to the total |
 | `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Adds or subtracts a d6 |
 | `amplifyHope` | `boolean` | Use d20 instead of d12 for hope die |
 | `amplifyFear` | `boolean` | Use d20 instead of d12 for fear die |

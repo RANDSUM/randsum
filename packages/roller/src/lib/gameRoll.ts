@@ -14,19 +14,9 @@ export interface GameRollConfig<TInput, TResult, TDetails = undefined> {
   /** Converts input to RollOptions or array of RollOptions */
   toRollOptions: (input: TInput) => RollOptions | RollOptions[]
   /** Interprets the roll result to produce game-specific result */
-  interpretResult: (
-    input: TInput,
-    total: number,
-    rolls: RollRecord[],
-    fullResult: RollerRollResult
-  ) => TResult
+  interpretResult: (input: TInput, fullResult: RollerRollResult) => TResult
   /** Optional callback to compute additional details about the roll */
-  computeDetails?: (
-    input: TInput,
-    total: number,
-    rolls: RollRecord[],
-    fullResult: RollerRollResult
-  ) => TDetails
+  computeDetails?: (input: TInput, fullResult: RollerRollResult) => TDetails
 }
 
 /**
@@ -48,7 +38,7 @@ export interface GameRollConfig<TInput, TResult, TDetails = undefined> {
  *     quantity: arg.advantage ? 2 : 1,
  *     modifiers: { drop: arg.advantage ? { lowest: 1 } : undefined, plus: arg.modifier }
  *   }),
- *   interpretResult: (_input, total) => total
+ *   interpretResult: (_input, fullResult) => fullResult.total
  * })
  * ```
  */
@@ -62,15 +52,10 @@ export function createGameRoll<TInput, TResult, TDetails = undefined>(
     const gameResult: GameRollResult<TResult, TDetails, RollRecord> = {
       rolls: rollResult.rolls,
       total: rollResult.total,
-      result: config.interpretResult(input, rollResult.total, rollResult.rolls, rollResult)
+      result: config.interpretResult(input, rollResult)
     }
     if (config.computeDetails) {
-      gameResult.details = config.computeDetails(
-        input,
-        rollResult.total,
-        rollResult.rolls,
-        rollResult
-      )
+      gameResult.details = config.computeDetails(input, rollResult)
     }
     return gameResult
   }

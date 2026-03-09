@@ -24,7 +24,7 @@ export const bladesCommand: Command = {
     const result = roll(dice)
 
     // Get highest die value from initial rolls
-    const initialRolls = result.rolls[0]?.modifierHistory.initialRolls ?? []
+    const initialRolls = result.rolls[0]?.initialRolls ?? []
     const highestDie = initialRolls.length > 0 ? Math.max(...initialRolls) : 1
 
     // Determine color and text based on result

@@ -10,7 +10,7 @@ import type {
   TotalTransformer
 } from './schema'
 import { ModifierError } from '../../errors'
-import { createModifierLog, mergeLogs } from './log'
+import { createModifierLog } from './log'
 
 /**
  * Minimal schema fields needed for notation parsing.
@@ -130,27 +130,6 @@ export function hasModifier(name: keyof ModifierOptions): boolean {
  */
 export function getAllModifiers(): ModifierDefinition[] {
   return Array.from(registry.values())
-}
-
-/**
- * Check if modifiers have been registered.
- *
- * This is useful for debugging and verifying the registry state.
- * Under normal usage through the package entry point, modifiers
- * are always registered automatically.
- *
- * @returns true if at least one modifier is registered
- */
-export function hasRegisteredModifiers(): boolean {
-  return registry.size > 0
-}
-
-/**
- * Get the count of registered modifiers.
- * Useful for debugging and testing.
- */
-export function getRegisteredModifierCount(): number {
-  return registry.size
 }
 
 /**
@@ -298,7 +277,7 @@ export function applyAllModifiersFromRegistry(
     const result = applyModifierFromRegistry(name, options, state.rolls, ctx)
     return {
       rolls: result.rolls,
-      logs: result.log ? mergeLogs(state.logs, result.log) : state.logs,
+      logs: result.log ? [...state.logs, result.log] : state.logs,
       totalTransformers: result.transformTotal
         ? [...state.totalTransformers, result.transformTotal]
         : state.totalTransformers

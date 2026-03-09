@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { validateNotation } from '../src/validateNotation'
+import { validateNotation } from '../src'
 
 describe('validateNotation', () => {
   describe('valid notation', () => {

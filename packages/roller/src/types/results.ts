@@ -38,19 +38,12 @@ export interface RollRecord<T = string> {
   description: RollParams<T>['description']
   /** Full roll parameters */
   parameters: RollParams<T>
-  /** Die results after modifiers (pre-modifier values in modifierHistory.initialRolls) */
+  /** Die results after modifiers */
   rolls: number[]
-  /** History of modifier applications */
-  modifierHistory: {
-    /** Logs from each modifier */
-    logs: NumericRollBonus['logs']
-    /** Rolls after all modifiers */
-    modifiedRolls: number[]
-    /** Total after modifiers */
-    total: number
-    /** Original rolls before modifiers */
-    initialRolls: number[]
-  }
+  /** Original rolls before modifiers */
+  initialRolls: number[]
+  /** Logs from each modifier application */
+  modifierLogs: NumericRollBonus['logs']
   /** Total including arithmetic modifiers */
   appliedTotal: number
   /** Custom face results (for non-numeric dice) */

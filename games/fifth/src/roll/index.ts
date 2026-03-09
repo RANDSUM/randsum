@@ -1,8 +1,6 @@
 import { createGameRoll, validateFinite, validateRange } from '@randsum/roller'
 import type { GameRollResult, RollRecord } from '@randsum/roller'
 import type { FifthRollArgument, FifthRollResult } from '../types'
-import { generateQuantity } from './generateQuantity'
-import { generateModifiers } from './generateModifiers'
 
 /**
  * Rolls a D&D 5th Edition action roll (d20 + modifier).
@@ -41,10 +39,20 @@ export const roll: (
     validateFinite(arg.modifier, '5E modifier')
     validateRange(arg.modifier, -30, 30, '5E modifier')
   },
-  toRollOptions: (arg: FifthRollArgument) => ({
-    sides: 20,
-    quantity: generateQuantity(arg.rollingWith),
-    modifiers: { ...generateModifiers(arg.rollingWith), plus: arg.modifier }
-  }),
-  interpretResult: (_input: FifthRollArgument, total: number) => total
+  toRollOptions: (arg: FifthRollArgument) => {
+    const { advantage, disadvantage } = arg.rollingWith ?? {}
+    const isNormalRoll =
+      ((advantage ?? false) && (disadvantage ?? false)) ||
+      (!(advantage ?? false) && !(disadvantage ?? false))
+
+    return {
+      sides: 20,
+      quantity: isNormalRoll ? 1 : 2,
+      modifiers: {
+        ...(isNormalRoll ? {} : { drop: advantage ? { lowest: 1 } : { highest: 1 } }),
+        plus: arg.modifier
+      }
+    }
+  },
+  interpretResult: (_input: FifthRollArgument, fullResult) => fullResult.total
 })

@@ -3,7 +3,7 @@ export interface GridPosition {
   readonly col: number
 }
 
-export type NavigationDirection = 'up' | 'down' | 'left' | 'right'
+type NavigationDirection = 'up' | 'down' | 'left' | 'right'
 
 export function navigateGrid(
   pos: GridPosition,

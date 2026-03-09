@@ -17,7 +17,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
         const { rolls } = roll({ modifier })
-        const rawRoll = rolls[0]?.modifierHistory.initialRolls[0] ?? 0
+        const rawRoll = rolls[0]?.initialRolls[0] ?? 0
         const total = rolls[0]?.total ?? 0
         return total === rawRoll + modifier
       })
@@ -28,7 +28,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
         const { rolls } = roll({ modifier, rollingWith: { advantage: true } })
-        const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
+        const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.length === 2
       })
     )
@@ -38,7 +38,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
         const { rolls } = roll({ modifier, rollingWith: { disadvantage: true } })
-        const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
+        const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.length === 2
       })
     )
@@ -51,7 +51,7 @@ describe('roll property-based tests', () => {
           modifier,
           rollingWith: { advantage: true, disadvantage: true }
         })
-        const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
+        const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.length === 1
       })
     )
@@ -68,7 +68,7 @@ describe('roll property-based tests', () => {
             modifier,
             rollingWith: { advantage, disadvantage }
           })
-          const initialRolls = rolls[0]?.modifierHistory.initialRolls ?? []
+          const initialRolls = rolls[0]?.initialRolls ?? []
           return initialRolls.every(roll => roll >= 1 && roll <= 20)
         }
       )

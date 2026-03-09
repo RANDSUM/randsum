@@ -27,7 +27,6 @@ export type {
   ModifierOptionTypes,
   ModifierRegistry,
   RegistryProcessResult,
-  TypedModifierDefinition,
   TotalTransformer,
   ContextWithRollFn,
   ContextWithParameters,
@@ -36,4 +35,4 @@ export type {
 
 export { assertRollFn, assertParameters, assertRequiredContext } from './schema'
 
-export { MODIFIER_PRIORITIES, type ModifierPriorityName } from './priorities'
+export { MODIFIER_PRIORITIES } from './priorities'

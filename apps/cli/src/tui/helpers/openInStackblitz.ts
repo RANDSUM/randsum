@@ -1,8 +1,8 @@
-import { execFile } from 'node:child_process'
 import { unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { buildStackBlitzProject } from '@randsum/display-utils'
+import { openUrl } from './openUrl'
 
 function esc(s: string): string {
   return s
@@ -43,9 +43,7 @@ ${inputs}
   const tmpFile = join(tmpdir(), `randsum-stackblitz-${Date.now()}.html`)
   writeFileSync(tmpFile, html, 'utf8')
 
-  const cmd =
-    process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
-  execFile(cmd, [tmpFile])
+  openUrl(tmpFile)
 
   setTimeout(() => {
     try {

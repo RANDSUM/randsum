@@ -150,6 +150,6 @@ roll("1d20", "2d6", "+5")  // multiple args, combined total
 
 const result = roll("2d6+3")
 result.total   // final sum
-result.rolls   // raw dice values
-result.result  // values after modifiers
+result.rolls   // RollRecord[] — full roll data per dice group
+result.result  // string[] — rolled values as strings
 ```

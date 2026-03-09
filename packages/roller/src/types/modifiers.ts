@@ -49,8 +49,6 @@ export interface ModifierLog {
 export interface NumericRollBonus {
   /** Current roll values */
   rolls: number[]
-  /** Arithmetic modifier (+/-) to apply to total */
-  simpleMathModifier: number
   /** History of modifier applications */
   logs: ModifierLog[]
 }
