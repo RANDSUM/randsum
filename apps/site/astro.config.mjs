@@ -122,6 +122,10 @@ export default defineConfig({
         {
           label: 'Discord Bot',
           items: [{ label: 'Overview', slug: 'tools/discord-bot' }]
+        },
+        {
+          label: 'Display Utils',
+          items: [{ label: 'Overview', slug: 'tools/display-utils' }]
         }
       ]
     }),
