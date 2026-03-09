@@ -93,7 +93,7 @@ export const dhCommand: Command = {
     }
 
     // Add advantage/disadvantage info if present
-    if (rollingWith && result.details?.advantage) {
+    if (rollingWith && result.details?.extraDie) {
       embed.addFields({
         name: 'Roll Type',
         value: rollingWith,
@@ -101,7 +101,7 @@ export const dhCommand: Command = {
       })
       embed.addFields({
         name: `${rollingWith} Die (d6)`,
-        value: String(result.details.advantage.roll),
+        value: String(result.details.extraDie.roll),
         inline: true
       })
     }

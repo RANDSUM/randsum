@@ -73,7 +73,7 @@ export const roll: (
         throw new Error('Failed to properly roll.')
       }
 
-      const advantage = advDisadvantageRoll
+      const extraDie = advDisadvantageRoll
         ? {
             roll: advDisadvantageRoll.appliedTotal,
             amplified: false
@@ -85,7 +85,7 @@ export const roll: (
       const details: DaggerheartRollResult['details'] = {
         hope: digestHopeFearTotal(hopeRoll),
         fear: digestHopeFearTotal(fearRoll),
-        advantage,
+        extraDie,
         modifier
       }
 

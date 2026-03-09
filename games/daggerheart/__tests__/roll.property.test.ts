@@ -93,9 +93,9 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier, rollingWith: 'Advantage' })
-        if (!details?.advantage) return false
+        if (!details?.extraDie) return false
         // Advantage roll should be 1-6
-        return details.advantage.roll >= 1 && details.advantage.roll <= 6
+        return details.extraDie.roll >= 1 && details.extraDie.roll <= 6
       })
     )
   })
@@ -104,9 +104,9 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier, rollingWith: 'Disadvantage' })
-        if (!details?.advantage) return false
+        if (!details?.extraDie) return false
         // Disadvantage roll should be -6 to -1
-        return details.advantage.roll >= -6 && details.advantage.roll <= -1
+        return details.extraDie.roll >= -6 && details.extraDie.roll <= -1
       })
     )
   })
@@ -115,7 +115,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier })
-        return details?.advantage === undefined
+        return details?.extraDie === undefined
       })
     )
   })

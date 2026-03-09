@@ -19,7 +19,7 @@ describe('roll', () => {
       const result = roll({})
       const { details } = result
 
-      if (details?.advantage === undefined && details !== undefined) {
+      if (details?.extraDie === undefined && details !== undefined) {
         expect(result.total).toBe(details.hope.roll + details.fear.roll)
       }
     })
@@ -88,26 +88,26 @@ describe('roll', () => {
     test('handles advantage rolling', () => {
       const result = roll({ rollingWith: 'Advantage' })
 
-      if (result.details?.advantage?.roll !== undefined) {
-        expect(typeof result.details.advantage.roll).toBe('number')
-        expect(result.details.advantage.roll).toBeGreaterThanOrEqual(1)
-        expect(result.details.advantage.roll).toBeLessThanOrEqual(6)
+      if (result.details?.extraDie?.roll !== undefined) {
+        expect(typeof result.details.extraDie.roll).toBe('number')
+        expect(result.details.extraDie.roll).toBeGreaterThanOrEqual(1)
+        expect(result.details.extraDie.roll).toBeLessThanOrEqual(6)
       }
     })
 
     test('handles disadvantage rolling', () => {
       const result = roll({ rollingWith: 'Disadvantage' })
 
-      if (result.details?.advantage !== undefined) {
-        expect(result.details.advantage.roll).toBeGreaterThanOrEqual(-6)
-        expect(result.details.advantage.roll).toBeLessThanOrEqual(-1)
+      if (result.details?.extraDie !== undefined) {
+        expect(result.details.extraDie.roll).toBeGreaterThanOrEqual(-6)
+        expect(result.details.extraDie.roll).toBeLessThanOrEqual(-1)
       }
     })
 
     test('advantage undefined when not rolling with advantage/disadvantage', () => {
       const result = roll({})
 
-      expect(result.details?.advantage).toBeUndefined()
+      expect(result.details?.extraDie).toBeUndefined()
     })
 
     test('advantage with modifier applies correctly', () => {
@@ -118,9 +118,9 @@ describe('roll', () => {
       })
 
       expect(result.details?.modifier).toBe(modifier)
-      if (result.details?.advantage !== undefined) {
-        expect(result.details.advantage.roll).toBeGreaterThanOrEqual(1)
-        expect(result.details.advantage.roll).toBeLessThanOrEqual(6)
+      if (result.details?.extraDie !== undefined) {
+        expect(result.details.extraDie.roll).toBeGreaterThanOrEqual(1)
+        expect(result.details.extraDie.roll).toBeLessThanOrEqual(6)
       }
     })
   })
@@ -173,7 +173,7 @@ describe('roll', () => {
       expect(result.details?.modifier).toBe(2)
       expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
       expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
-      expect(typeof result.details?.advantage?.roll).toBe('number')
+      expect(typeof result.details?.extraDie?.roll).toBe('number')
     })
   })
 
@@ -193,7 +193,7 @@ describe('roll', () => {
       const result = roll({})
 
       expect(result.details?.modifier).toBe(0)
-      expect(result.details?.advantage).toBeUndefined()
+      expect(result.details?.extraDie).toBeUndefined()
       expect(typeof result.result).toBe('string')
       expect(typeof result.total).toBe('number')
     })

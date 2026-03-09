@@ -20,6 +20,6 @@ export interface DaggerheartRollResult {
     hope: DaggerheartRollRecord
     fear: DaggerheartRollRecord
     modifier: number
-    advantage: DaggerheartRollRecord | undefined
+    extraDie: DaggerheartRollRecord | undefined
   }
 }

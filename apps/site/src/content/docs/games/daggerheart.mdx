@@ -87,9 +87,9 @@ roll({
 
 const { result, total, details } = roll({ modifier: 3 })
 // result: 'hope' | 'fear' | 'critical hope'
-// details: { hope, fear, advantage, modifier }
+// details: { hope, fear, extraDie, modifier }
 
-const { hope, fear, advantage, modifier } = details`} />
+const { hope, fear, extraDie, modifier } = details`} />
 
 ## API
 
@@ -131,7 +131,7 @@ The `details` object provides full visibility into each component:
 
 - `hope` -- Hope die result and whether it was amplified
 - `fear` -- Fear die result and whether it was amplified
-- `advantage` -- Advantage/disadvantage die result (if applicable)
+- `extraDie` -- Advantage/disadvantage die result (if applicable)
 - `modifier` -- Applied modifier value
 
 ## Types
