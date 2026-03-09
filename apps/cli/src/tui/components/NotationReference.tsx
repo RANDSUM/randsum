@@ -1,5 +1,5 @@
 // SYNC: packages/component-library/src/components/ModifierReference/ModifierReference.tsx
-import { Box, Text, useInput } from 'ink'
+import { Box, Text, useInput, useStdout } from 'ink'
 import { useState } from 'react'
 import type { GridPosition } from '../helpers/modifierGrid'
 import { navigateGrid } from '../helpers/modifierGrid'
@@ -13,7 +13,6 @@ interface ModifierEntry {
 
 const CORE: ModifierEntry = { notation: 'xDN', description: 'roll x dice with N sides' }
 
-// Matches GRID_ROWS from ModifierReference.tsx
 const GRID_ROWS = [
   [CORE, { notation: '+', description: 'add', notationSuffix: 'N' }],
   [
@@ -61,6 +60,8 @@ export function NotationReference({
 }): React.JSX.Element {
   const [selectedPos, setSelectedPos] = useState<GridPosition>({ row: 0, col: 0 })
   const [showDoc, setShowDoc] = useState(false)
+  const { stdout } = useStdout()
+  const separatorWidth = Math.max(10, (stdout?.columns ?? 80) - 6)
 
   useInput(
     (_input, key) => {
@@ -112,21 +113,14 @@ export function NotationReference({
   const selectedDoc = selectedCell !== undefined ? MODIFIER_DOCS[selectedCell.notation] : undefined
 
   return (
-    <Box
-      flexDirection="column"
-      flexGrow={1}
-      borderStyle="single"
-      borderColor={active ? 'cyan' : 'gray'}
-      paddingX={1}
-    >
-      <Box justifyContent="space-between">
-        <Text bold dimColor>
-          Modifier Reference
-        </Text>
-        {active && <Text dimColor>arrows:navigate Enter:details a:add</Text>}
-      </Box>
+    <Box flexDirection="column" flexGrow={1} paddingX={1}>
+      {active && (
+        <Box marginBottom={0}>
+          <Text dimColor>arrows:navigate  Enter:details  a:add</Text>
+        </Box>
+      )}
 
-      <Box marginTop={1} flexDirection="column">
+      <Box flexDirection="column">
         {GRID_ROWS.map((row, rowIdx) => {
           const left = row[0]
           const right = row[1]
@@ -137,46 +131,39 @@ export function NotationReference({
           const rightDimmed = !rightSelected && modifiersDisabled
 
           return (
-            <Box key={rowIdx} gap={2}>
-              {/* Left cell */}
-              <Box flexGrow={1} gap={1}>
-                {leftSelected ? (
-                  <Text bold color="cyan">
+            <Box key={rowIdx} flexDirection="column">
+              <Box justifyContent="space-between">
+                {/* Left cell: bold notation + description */}
+                <Box gap={1} flexGrow={1}>
+                  <Text bold color={leftSelected ? 'cyan' : undefined} dimColor={leftDimmed}>
                     {left.notation}
-                    {'notationSuffix' in left ? left.notationSuffix : ''}
+                    {'notationSuffix' in left ? (
+                      <Text dimColor={!leftSelected}>{left.notationSuffix}</Text>
+                    ) : ''}
                   </Text>
-                ) : (
-                  <Text dimColor={leftDimmed}>
-                    {left.notation}
-                    {'notationSuffix' in left ? left.notationSuffix : ''}
+                  <Text dimColor={!leftSelected || leftDimmed}>{left.description}</Text>
+                </Box>
+
+                {/* Right cell: description + bold notation (mirrored) */}
+                <Box gap={1} justifyContent="flex-end" flexGrow={1}>
+                  <Text dimColor={!rightSelected || rightDimmed}>{right.description}</Text>
+                  <Text bold color={rightSelected ? 'cyan' : undefined} dimColor={rightDimmed}>
+                    {right.notation}
+                    {'notationSuffix' in right ? (
+                      <Text dimColor={!rightSelected}>{right.notationSuffix}</Text>
+                    ) : ''}
                   </Text>
-                )}
-                <Text dimColor={!leftSelected || leftDimmed}>{left.description}</Text>
+                </Box>
               </Box>
 
-              <Text dimColor>│</Text>
-
-              {/* Right cell — description on left, notation on right (mirrored layout) */}
-              <Box flexGrow={1} gap={1} justifyContent="flex-end">
-                <Text dimColor={!rightSelected || rightDimmed}>{right.description}</Text>
-                {rightSelected ? (
-                  <Text bold color="cyan">
-                    {right.notation}
-                    {'notationSuffix' in right ? right.notationSuffix : ''}
-                  </Text>
-                ) : (
-                  <Text dimColor={rightDimmed}>
-                    {right.notation}
-                    {'notationSuffix' in right ? right.notationSuffix : ''}
-                  </Text>
-                )}
-              </Box>
+              {rowIdx < GRID_ROWS.length - 1 && (
+                <Text dimColor>{'─'.repeat(separatorWidth)}</Text>
+              )}
             </Box>
           )
         })}
       </Box>
 
-      {/* Modifier doc panel */}
       {showDoc && selectedDoc !== undefined && (
         <Box
           flexDirection="column"
@@ -223,7 +210,7 @@ export function NotationReference({
             </Box>
           )}
           <Box marginTop={1}>
-            <Text dimColor>Enter/a to add Enter again to close</Text>
+            <Text dimColor>Enter/a to add  Enter again to close</Text>
           </Box>
         </Box>
       )}
