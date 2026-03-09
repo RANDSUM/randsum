@@ -6,11 +6,8 @@ import type { Token } from '@randsum/notation'
  * Returns the index (into `tokens`) of the token that contains `cursorPos`,
  * or -1 if the cursor is not inside any token.
  */
-export function tokenCursorIndex(
-  tokens: readonly Token[],
-  cursorPos: number
-): number {
-  return tokens.findIndex((t) => cursorPos >= t.start && cursorPos < t.end)
+export function tokenCursorIndex(tokens: readonly Token[], cursorPos: number): number {
+  return tokens.findIndex(t => cursorPos >= t.start && cursorPos < t.end)
 }
 
 /**
@@ -21,7 +18,8 @@ export function tokenCursorIndex(
 export function useCursorPosition(
   value: string,
   tokens: readonly Token[],
-  isActive: boolean
+  isActive: boolean,
+  onLeftBoundary?: () => void
 ): { readonly cursorPos: number; readonly activeTokenIdx: number } {
   const [cursorPos, setCursorPos] = useState(value.length)
 
@@ -31,17 +29,18 @@ export function useCursorPosition(
   }, [value])
 
   const handleInput = useCallback(
-    (
-      _input: string,
-      key: { readonly leftArrow?: boolean; readonly rightArrow?: boolean }
-    ) => {
+    (_input: string, key: { readonly leftArrow?: boolean; readonly rightArrow?: boolean }) => {
       if (key.leftArrow) {
-        setCursorPos((prev) => Math.max(0, prev - 1))
+        if (cursorPos === 0) {
+          onLeftBoundary?.()
+        } else {
+          setCursorPos(prev => Math.max(0, prev - 1))
+        }
       } else if (key.rightArrow) {
-        setCursorPos((prev) => Math.min(value.length, prev + 1))
+        setCursorPos(prev => Math.min(value.length, prev + 1))
       }
     },
-    [value.length]
+    [value.length, cursorPos, onLeftBoundary]
   )
 
   useInput(handleInput, { isActive })
