@@ -87,7 +87,7 @@ function App(): React.JSX.Element {
     <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
       {/* Header: roll(...) with inline input — full width */}
       <Box width="100%">
-        <Text color="yellow" bold>
+        <Text color="yellow" bold inverse={focus === 'roll'}>
           roll
         </Text>
         <Text dimColor>(</Text>
