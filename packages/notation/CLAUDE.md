@@ -34,6 +34,12 @@ Zero-dependency package providing dice notation parsing, validation, and the sha
 
 14 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, unique, countSuccesses, multiply, plus, minus, multiplyTotal). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry.
 
+### Tokenization
+
+- `tokenize(notation: string): readonly Token[]` — Parse notation into typed tokens for UI display. Returns tokens with `text`, `type`, `start`, `end`, `description` for each segment.
+- `Token` — Interface: `{ text, type: TokenType, start, end, description }`
+- `TokenType` — Union of all token types: `'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest' | 'explode' | 'compound' | 'penetrate' | 'reroll' | 'cap' | 'replace' | 'unique' | 'countSuccesses' | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal' | 'unknown'`
+
 ### Types
 
 All shared types: `DiceNotation`, `RollOptions`, `ParsedNotationOptions`, `ModifierOptions`, `ModifierConfig`, `ComparisonOptions`, `DropOptions`, `KeepOptions`, `RerollOptions`, `ReplaceOptions`, `UniqueOptions`, `SuccessCountOptions`, `ValidationResult`, `ValidValidationResult`, `InvalidValidationResult`, `ValidationErrorInfo`, `NotationSchema`
@@ -55,6 +61,8 @@ All shared types: `DiceNotation`, `RollOptions`, `ParsedNotationOptions`, `Modif
 ## What Belongs Here vs Roller
 
 **Notation package**: Anything related to parsing, validating, or converting dice notation strings. All modifier _schemas_ (pattern matching and formatting). All shared types.
+
+- `tokenize()` — notation UI tokenizer (parses notation into colored token segments for display)
 
 **Roller package**: The `roll()` function, modifier _application_ logic (actually modifying dice pools), random number generation, `analyze()`, `createGameRoll`, error types like `RandsumError` and `ValidationError`.
 

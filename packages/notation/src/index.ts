@@ -53,6 +53,10 @@ export {
   formatComparisonDescription
 } from './comparison'
 
+// Tokenization (for UI display)
+export { tokenize } from './tokenize'
+export type { Token, TokenType } from './tokenize'
+
 // Format utility
 export { formatHumanList } from './formatHumanList'
 

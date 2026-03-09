@@ -44,6 +44,8 @@ export { normalize, equate } from './internal/api'
 
 export { d, DiceBuilder } from './internal/api'
 
+export { formatResult, isFormattedError } from './internal/api'
+
 export type {
   DiceNotation,
   RollArgument,
@@ -74,3 +76,5 @@ export type {
   GameRollConfig,
   MultiRollGameConfig
 } from './internal/publicTypes'
+
+export type { FormattedResult, FormattedError, FormatResultOutput } from './formatResult'

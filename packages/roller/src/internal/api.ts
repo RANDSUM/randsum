@@ -44,3 +44,5 @@ export type { ModifierPriorityName } from '../lib/modifiers/priorities'
 export { normalize, equate } from '../lib/normalize'
 
 export { d, DiceBuilder } from '../lib/builder'
+
+export { formatResult, isFormattedError } from '../formatResult'
