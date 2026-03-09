@@ -163,7 +163,6 @@
     "packages/roller": {
       "name": "@randsum/roller",
       "version": "3.0.0",
-      "bin": "./bin/randsum",
       "dependencies": {
         "@randsum/notation": "workspace:~",
       },
