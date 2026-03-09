@@ -55,7 +55,7 @@ switch (result) {
 Makes a 2d6 roll following Root RPG rules, returning an object with the interpreted result and numeric details.
 
 ```typescript
-function roll(bonus: number): RootRpgRollResult
+function roll(bonus: number): GameRollResult<RootRpgResult, undefined, RollRecord>
 ```
 
 ```typescript

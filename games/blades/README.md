@@ -47,7 +47,7 @@ roll(3) // Three-dice pool
 Makes a Blades in the Dark roll, returning the result based on the highest die.
 
 ```typescript
-function roll(dicePool: number): BladesRollResult
+function roll(dicePool: number): GameRollResult<BladesResult, undefined, RollRecord>
 ```
 
 **Parameters:**

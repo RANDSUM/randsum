@@ -82,7 +82,9 @@ console.log(details.modifier) // Applied modifier
 ### `roll(options)`
 
 ```typescript
-function roll(options: DaggerheartRollArgument): DaggerheartRollResult
+function roll(
+  options: DaggerheartRollArgument
+): GameRollResult<DaggerheartRollResult["type"], DaggerheartRollResult["details"], RollRecord>
 ```
 
 **Options:**
@@ -97,14 +99,16 @@ function roll(options: DaggerheartRollArgument): DaggerheartRollResult
 **Returns:**
 
 ```typescript
-interface DaggerheartRollResult {
-  total: number
+// GameRollResult<DaggerheartRollResult['type'], DaggerheartRollResult['details'], RollRecord>
+{
   result: "hope" | "fear" | "critical hope"
+  total: number
+  rolls: RollRecord[]  // Full roll records from @randsum/roller
   details: {
     hope: { roll: number; amplified: boolean }
     fear: { roll: number; amplified: boolean }
     modifier: number
-    extraDie: { roll: number } | undefined
+    extraDie: { roll: number; amplified?: boolean } | undefined
   }
 }
 ```
