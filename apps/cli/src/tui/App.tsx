@@ -1,43 +1,21 @@
 import { Box, Text, render, useInput } from 'ink'
+import TextInput from 'ink-text-input'
 import { useMemo, useState } from 'react'
 import type { RollRecord } from '@randsum/roller'
-import { isDiceNotation, roll, validateNotation, formatResult, isFormattedError } from '@randsum/roller'
+import {
+  formatResult,
+  isDiceNotation,
+  isFormattedError,
+  roll,
+  validateNotation
+} from '@randsum/roller'
 import { tokenize } from '@randsum/notation'
-import type { Token } from '@randsum/notation'
-import { NotationInput } from './components/NotationInput'
 import { NotationReference } from './components/NotationReference'
 import { NotationDescriptionRow } from './components/NotationDescriptionRow'
 import { RollResultPanel } from './components/RollResultPanel'
 import { useCursorPosition } from './hooks/useCursorPosition'
 
-/**
- * Token type → Ink color mapping.
- * Matches Playground CSS token families (dark mode).
- * SYNC: packages/component-library/src/components/RollerPlayground/RollerPlayground.css
- */
-const TOKEN_COLORS: Partial<Record<Token['type'], string>> = {
-  core: 'blue',            // #60a5fa
-  dropLowest: 'magenta',   // #f060d0
-  dropHighest: 'magenta',  // #b858b0
-  keepHighest: 'yellow',   // #ffab70
-  keepLowest: 'yellow',    // #d4845a
-  explode: 'yellow',       // #e5c07b
-  compound: 'yellow',      // #e08040
-  penetrate: 'green',      // #b8d858
-  reroll: 'magenta',       // #c792ea
-  cap: 'cyan',             // #89ddff
-  replace: 'green',        // #c3e88d
-  unique: 'cyan',          // #80cbc4
-  countSuccesses: 'blue',  // #82aaff
-  dropCondition: 'magenta',// #d860c0
-  plus: 'green',           // #98c379
-  minus: 'green',          // #6b9e52
-  multiply: 'yellow',      // #ffcb6b
-  multiplyTotal: 'yellow', // #e8a93a
-  unknown: 'red'           // #f97583
-}
-
-type FocusZone = 'input' | 'reference'
+type FocusZone = 'input' | 'reference' | 'roll'
 type ViewMode = 'reference' | 'result'
 
 function App(): React.JSX.Element {
@@ -49,9 +27,23 @@ function App(): React.JSX.Element {
   const tokens = useMemo(() => tokenize(input), [input])
   const isValid = input.trim().length > 0 && isDiceNotation(input.trim())
 
-  const { activeTokenIdx } = useCursorPosition(input, tokens, focus === 'input')
+  const { activeTokenIdx } = useCursorPosition(input, tokens, focus === 'input', () => {
+    setFocus('roll')
+  })
 
   useInput((_input, key) => {
+    if (focus === 'roll') {
+      if (key.return) {
+        handleSubmit(input)
+      } else if (key.rightArrow) {
+        setFocus('input')
+      } else if (_input && !key.ctrl && !key.meta) {
+        setInput(prev => prev + _input)
+        setFocus('input')
+      }
+      return
+    }
+
     if (key.tab && viewMode === 'reference') {
       setFocus(prev => (prev === 'input' ? 'reference' : 'input'))
     }
@@ -93,71 +85,54 @@ function App(): React.JSX.Element {
 
   return (
     <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
-      {/* Header: roll('notation') with live token colors */}
-      <Box>
-        <Text color="yellow" bold>roll</Text>
+      {/* Header: roll(...) with inline input — full width */}
+      <Box width="100%">
+        <Text color="yellow" bold>
+          roll
+        </Text>
         <Text dimColor>(</Text>
-        {input.length === 0 ? (
-          <Text dimColor>)</Text>
-        ) : (
-          <>
-            <Text color="green">&apos;</Text>
-            {tokens.length > 0 ? (
-              tokens.map((token, i) => (
-                <Text
-                  key={`${token.type}-${token.start}`}
-                  color={TOKEN_COLORS[token.type] ?? 'gray'}
-                  bold={i === activeTokenIdx}
-                  inverse={i === activeTokenIdx}
-                >
-                  {token.text}
-                </Text>
-              ))
-            ) : (
-              <Text dimColor>{input}</Text>
-            )}
-            <Text color="green">&apos;</Text>
-            <Text dimColor>)</Text>
-          </>
-        )}
+        <TextInput
+          value={input}
+          onChange={handleInputChange}
+          onSubmit={handleSubmit}
+          focus={focus === 'input'}
+          placeholder="4d6L"
+        />
+        <Text dimColor>)</Text>
       </Box>
 
-      {/* Description row */}
-      <NotationDescriptionRow
-        notation={input}
-        tokens={tokens}
-        isValid={isValid}
-        activeTokenIdx={activeTokenIdx}
-      />
-
-      {/* Main panel: modifier reference OR roll result */}
-      {viewMode === 'reference' ? (
-        <NotationReference
-          active={focus === 'reference'}
-          modifiersDisabled={!isValid}
-          onAddModifier={handleAddModifier}
+      {/* Description row — no border */}
+      <Box>
+        <NotationDescriptionRow
+          notation={input}
+          tokens={tokens}
+          isValid={isValid}
+          activeTokenIdx={activeTokenIdx}
         />
+      </Box>
+
+      {/* Hint below description */}
+      {viewMode === 'reference' && (
+        <Box paddingX={1}>
+          <Text dimColor>Tab: switch focus Enter: roll Ctrl+C: quit</Text>
+        </Box>
+      )}
+
+      {/* Main panel: modifier reference (bordered) OR roll result */}
+      {viewMode === 'reference' ? (
+        <Box borderStyle="single" borderColor="cyan">
+          <NotationReference
+            active={focus === 'reference'}
+            modifiersDisabled={!isValid}
+            onAddModifier={handleAddModifier}
+          />
+        </Box>
       ) : (
         <Box flexDirection="column">
           {lastResult !== null && <RollResultPanel records={lastResult} />}
           <Box paddingX={1} marginTop={1}>
             <Text dimColor>type to return to reference</Text>
           </Box>
-        </Box>
-      )}
-
-      {/* Input */}
-      <NotationInput
-        value={input}
-        onChange={handleInputChange}
-        onSubmit={handleSubmit}
-        active={focus === 'input'}
-      />
-
-      {/* Footer hint */}
-      {viewMode === 'reference' && (
-        <Box paddingX={1}>
-          <Text dimColor>Tab: switch focus  Enter: roll  Ctrl+C: quit</Text>
         </Box>
       )}
     </Box>
