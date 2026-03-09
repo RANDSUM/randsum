@@ -36,6 +36,7 @@ function getCompleteNotationPattern(): RegExp {
 export function isDiceNotation(argument: unknown): argument is DiceNotation {
   if (typeof argument !== 'string') return false
   const trimmedArg = argument.trim()
+  if (trimmedArg.length > 1000) return false
   const basicTest = coreNotationPattern.test(trimmedArg)
   if (!basicTest) return false
 
