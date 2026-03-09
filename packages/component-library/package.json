@@ -40,6 +40,7 @@
     "react": ">=18"
   },
   "dependencies": {
+    "@randsum/display-utils": "workspace:~",
     "@randsum/notation": "workspace:~",
     "@randsum/roller": "workspace:~"
   },

@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process'
 import { unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { buildStackBlitzProject } from '@randsum/display-utils'
 
 function esc(s: string): string {
   return s
@@ -14,33 +15,15 @@ function esc(s: string): string {
 }
 
 export function openInStackblitz(notation: string): void {
-  const code = `import { roll } from '@randsum/roller'
-
-const result = roll('${notation}')
-
-console.log('Notation:', '${notation}')
-console.log('Total:   ', result.total)
-console.log('Rolls:   ', result.rolls)
-`
-
-  const packageJson = JSON.stringify(
-    {
-      name: 'randsum-playground',
-      version: '1.0.0',
-      private: true,
-      scripts: { start: 'tsx index.ts' },
-      dependencies: { '@randsum/roller': 'latest', tsx: 'latest' }
-    },
-    null,
-    2
-  )
+  const project = buildStackBlitzProject(notation)
 
   const fields: Record<string, string> = {
-    'project[title]': `RANDSUM — ${notation}`,
-    'project[description]': `Rolling ${notation} with @randsum/roller`,
-    'project[template]': 'node',
-    'project[files][index.ts]': code,
-    'project[files][package.json]': packageJson
+    'project[title]': project.title,
+    'project[description]': project.description,
+    'project[template]': project.template,
+    ...Object.fromEntries(
+      Object.entries(project.files).map(([name, content]) => [`project[files][${name}]`, content])
+    )
   }
 
   const inputs = Object.entries(fields)
