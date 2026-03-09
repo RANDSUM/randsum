@@ -40,7 +40,8 @@ randsum -i            # Explicit interactive flag
 ```
 -i, --interactive     Launch interactive TUI mode
 -v, --verbose         Show detailed roll breakdown
--j, --json            Output results as JSON
+--json                Output results as JSON
+-r, --repeat N        Roll N times (default: 1)
 -s, --seed <number>   Set random seed for reproducible rolls
 -V, --version         Show version
 -h, --help            Show help
