@@ -42,7 +42,7 @@ Rolls a Daggerheart action roll.
 - `details`:
   - `hope`: Hope die result with amplification status
   - `fear`: Fear die result with amplification status
-  - `advantage`: Advantage/disadvantage die (if applicable)
+  - `extraDie`: Advantage/disadvantage extra die (if applicable)
   - `modifier`: Applied modifier
 
 ## Result Interpretation
@@ -85,7 +85,7 @@ const result = roll({
 
 // Access details
 const { type, details } = result.result
-const { hope, fear, advantage, modifier } = details
+const { hope, fear, extraDie, modifier } = details
 ```
 
 ## Implementation Details
