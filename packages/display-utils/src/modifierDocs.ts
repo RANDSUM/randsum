@@ -287,7 +287,7 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       { notation: '4d6*3', description: 'Triple the dice sum' }
     ]
   },
-  '\u2013': {
+  '-': {
     title: 'Subtract',
     description:
       'Subtract a fixed number from the total after all dice are rolled.',

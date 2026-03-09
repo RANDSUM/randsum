@@ -8,11 +8,12 @@ export interface StackBlitzProject {
 export function buildStackBlitzProject(
   notation: string
 ): StackBlitzProject {
+  const safe = JSON.stringify(notation)
   const code = `import { roll } from '@randsum/roller'
 
-const result = roll('${notation}')
+const result = roll(${safe})
 
-console.log('Notation:', '${notation}')
+console.log('Notation:', ${safe})
 console.log('Total:   ', result.total)
 console.log('Rolls:   ', result.rolls)
 `
