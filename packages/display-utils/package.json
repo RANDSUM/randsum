@@ -1,7 +1,20 @@
 {
   "name": "@randsum/display-utils",
-  "version": "3.0.0",
+  "version": "3.0.1",
+  "description": "Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UIs",
   "private": false,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://randsum.dev/packages/display-utils/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/display-utils"
+  },
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -18,7 +31,11 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": ["dist", "README.md", "LICENSE"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["dice", "randsum", "display", "utilities"],
   "dependencies": {
     "@randsum/roller": "workspace:~"
   },
