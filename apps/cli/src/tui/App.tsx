@@ -11,6 +11,7 @@ import {
 } from '@randsum/roller'
 import { tokenize } from '@randsum/notation'
 import { NotationReference } from './components/NotationReference'
+import { openInStackblitz } from './helpers/openInStackblitz'
 import { NotationDescriptionRow } from './components/NotationDescriptionRow'
 import { NotationHighlight } from './components/NotationHighlight'
 import { RollResultPanel } from './components/RollResultPanel'
@@ -20,7 +21,7 @@ import { useCursorPosition } from './hooks/useCursorPosition'
 import type { ModifierDoc } from './helpers/modifierDocs'
 import type { GridPosition } from './helpers/modifierGrid'
 
-type FocusZone = 'input' | 'reference' | 'roll' | 'description' | 'banner'
+type FocusZone = 'input' | 'reference' | 'roll' | 'description' | 'banner' | 'stackblitz'
 
 function App(): React.JSX.Element {
   const [input, setInput] = useState('')
@@ -102,9 +103,16 @@ function App(): React.JSX.Element {
     }
 
     if (key.tab) {
-      setFocus(prev =>
-        prev === 'input' || prev === 'description' || prev === 'banner' ? 'reference' : 'input'
-      )
+      setFocus(prev => {
+        if (prev === 'input' || prev === 'description' || prev === 'banner') return 'reference'
+        if (prev === 'reference') return 'stackblitz'
+        return 'input'
+      })
+    }
+    if (key.return && focus === 'stackblitz') {
+      const trimmed = input.trim()
+      if (trimmed.length > 0) openInStackblitz(trimmed)
+      return
     }
     if (key.return && focus === 'description' && isValid) {
       handleSubmit(input)
@@ -139,7 +147,13 @@ function App(): React.JSX.Element {
         }
       }
     }
-    if (_input === 'i' && (focus === 'reference' || focus === 'description')) {
+    if (key.upArrow && focus === 'stackblitz') {
+      setFocus('reference')
+    }
+    if (
+      _input === 'i' &&
+      (focus === 'reference' || focus === 'description' || focus === 'stackblitz')
+    ) {
       setFocus('input')
     }
   })
@@ -189,19 +203,21 @@ function App(): React.JSX.Element {
   }
 
   const enterLabel =
-    focus === 'banner'
-      ? bannerItemIdx === 0
-        ? 'Roll'
-        : 'Open'
-      : focus === 'reference'
-        ? 'Inspect'
-        : focus === 'description' && input.trim().length === 0
-          ? 'Insert'
-          : focus === 'description' && isValid
-            ? 'Roll'
-            : focus === 'description'
-              ? 'noop'
-              : 'Roll'
+    focus === 'stackblitz'
+      ? 'Open'
+      : focus === 'banner'
+        ? bannerItemIdx === 0
+          ? 'Roll'
+          : 'Open'
+        : focus === 'reference'
+          ? 'Inspect'
+          : focus === 'description' && input.trim().length === 0
+            ? 'Insert'
+            : focus === 'description' && isValid
+              ? 'Roll'
+              : focus === 'description'
+                ? 'noop'
+                : 'Roll'
 
   const addModifierActive = focus === 'reference'
   const hasInput = input.trim().length > 0
@@ -364,6 +380,20 @@ function App(): React.JSX.Element {
             onSelectedPosChange={setRefSelectedPos}
           />
         )}
+      </Box>
+
+      {/* StackBlitz button — outside cyan border, right-aligned */}
+      <Box justifyContent="flex-end">
+        <Box
+          borderStyle="single"
+          borderColor={focus === 'stackblitz' ? 'white' : '#444444'}
+          paddingX={1}
+        >
+          <Text bold color={focus === 'stackblitz' ? 'yellowBright' : 'gray'}>
+            ⚡
+          </Text>
+          <Text color={focus === 'stackblitz' ? 'white' : '#555555'}> Edit In StackBlitz</Text>
+        </Box>
       </Box>
     </Box>
   )
