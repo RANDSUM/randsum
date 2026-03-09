@@ -11,6 +11,8 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** live in `games/` — each wraps roller with game-specific interpretation:
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
 
+**Display & UI Utilities**: `@randsum/display-utils` — browser-targeted utilities for step visualization, modifier docs, and StackBlitz integration (published to npm, consumed by CLI and component-library)
+
 **Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/component-library` (React UI components, published to npm)
 
 Game packages never depend on each other — only on `@randsum/roller`.
@@ -61,14 +63,14 @@ bun run help                             # Quick command reference
 - Property-based tests use `fast-check` with `.property.test.ts` suffix
 - Stress tests use 9999 iterations for boundary validation
 - Seeded random available: `createSeededRandom(42)` from test-utils
-- Coverage target: 100% project and patch (Codecov)
+- Coverage target: 80% project, 70% patch (Codecov)
 
 ## Package Build Output
 
 All packages use `bunup` producing identical structure:
 - `dist/index.js` (ESM), `dist/index.cjs` (CJS)
 - `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
-- Bundle size limits enforced: roller 10KB, game packages 8KB, salvageunion 300KB
+- Bundle size limits enforced: roller 10KB, notation 8KB, display-utils 20KB, game packages 8KB, salvageunion 300KB
 
 ## Versioning
 
@@ -116,13 +118,7 @@ If hooks fail, run `bun run fix:all`.
 
 ## Development Guidelines
 
-Detailed guides in the [CLAUDE/](CLAUDE/) directory:
-- [Scripts Reference](CLAUDE/scripts.md)
-- [Game Package Patterns](CLAUDE/game-packages.md)
-- [Modifier System](CLAUDE/modifiers.md)
-- [Testing Patterns](CLAUDE/testing.md)
-
-Per-package `CLAUDE.md` files exist in each `packages/*/` and `apps/*/` directory.
+Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps/*/` directory for detailed guidance on each component.
 
 ## Dice Notation Reference
 
