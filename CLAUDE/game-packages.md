@@ -5,7 +5,7 @@
 All game packages follow this pattern:
 
 ```
-packages/{game-name}/
+gamePackages/{game-name}/
   src/
     index.ts              # Main exports
     types.ts              # Game-specific types
