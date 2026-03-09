@@ -20,13 +20,13 @@ Ask the user for:
 
 Run: `bun run create:game <name>`
 
-This creates the package structure at `gamePackages/<name>/`.
+This creates the package structure at `games/<name>/`.
 
 ## Post-scaffold Guidance
 
 After the script runs:
 
-1. **Verify structure**: confirm `gamePackages/<name>/` has `src/`, `__tests__/`, `package.json`, `CLAUDE.md`
+1. **Verify structure**: confirm `games/<name>/` has `src/`, `__tests__/`, `package.json`, `CLAUDE.md`
 2. **Install deps**: `bun install` to link workspace dependencies
 3. **Implement types**: Edit `src/types.ts` with game-specific result types based on the user's description
 4. **Implement roll function**: Edit `src/roll<GameName>/index.ts` using the `createGameRoll` factory:
@@ -37,7 +37,7 @@ After the script runs:
      interpretResult: (input, total, rolls, fullResult) => TResult
    })
    ```
-5. **Write tests**: Add tests in `__tests__/` following existing game package patterns (see `gamePackages/blades/__tests__/` or `gamePackages/fifth/__tests__/` for examples)
+5. **Write tests**: Add tests in `__tests__/` following existing game package patterns (see `games/blades/__tests__/` or `games/fifth/__tests__/` for examples)
 6. **Add size limit**: Add entry to root `package.json` `size-limit` array with 7KB limit
 7. **Verify**: `bun run --filter @randsum/<name> test && bun run --filter @randsum/<name> build`
 

@@ -44,7 +44,7 @@ Uses `@astrojs/react` for React components:
 Package metadata defined in `src/utils/packageData.ts`:
 
 - `corePackages` - Core packages array
-- `gamePackages` - Game system packages
+- `games` - Game system packages
 - `toolPackages` - Tool packages
 
 ## Styling
