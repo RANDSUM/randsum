@@ -219,9 +219,15 @@ export function RollResultPanel({
                 )
               }
               return (
-                <Box key={j} gap={1}>
-                  <Text dimColor>{'Final'.padEnd(16)}</Text>
-                  <Text bold>{formatAsMath(step.rolls, step.arithmeticDelta)}</Text>
+                <Box key={j} flexDirection="column" gap={0}>
+                  <Box gap={1}>
+                    <Text dimColor>{'Final'.padEnd(16)}</Text>
+                    <Text bold>{formatAsMath(step.rolls, step.arithmeticDelta)}</Text>
+                  </Box>
+                  <Box gap={1}>
+                    <Text dimColor>{'Total'.padEnd(16)}</Text>
+                    <Text bold color="cyan">{record.appliedTotal}</Text>
+                  </Box>
                 </Box>
               )
             })}
