@@ -13,10 +13,11 @@ import type { BladesResult } from '../types'
  * Rolls dice for Blades in the Dark.
  *
  * Rolls a pool of d6s and interprets the result according to Blades mechanics:
- * - 6: Critical success
- * - 4-5: Success
- * - 1-3: Failure
- * - If pool is 0, rolls 2d6 and drops the highest (desperate action)
+ * - Two or more 6s: Critical (only with pool > 0)
+ * - Highest die is 6: Success
+ * - Highest die is 4-5: Partial success
+ * - Highest die is 1-3: Failure
+ * - If pool is 0, rolls 2d6 and keeps the lowest (zero dice roll)
  *
  * @param count - Number of dice in the pool (0-10 recommended)
  * @returns Game roll result with Blades-specific interpretation

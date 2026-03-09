@@ -6,7 +6,7 @@ description: Step-by-step guide to building your own typed dice system using cre
 import { Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-## When to use this
+## When to Use
 
 Use `createGameRoll` when you need to:
 
@@ -128,7 +128,7 @@ const myRoll = createGameRoll({
   }
 })`} />
 
-## Minimal example: a 2d6+stat system
+## Minimal Example
 
 A PbtA-style roll that maps 2d6 + stat to a three-outcome result:
 
@@ -156,7 +156,7 @@ const result = rollPbta(2)
 console.log(result.result) // 'strong_hit' | 'weak_hit' | 'miss'
 console.log(result.total)  // 2d6 + 2`} />
 
-## Adding details (`computeDetails`)
+## Details Hook
 
 Use the optional `computeDetails` hook to attach structured metadata to the result. Pass `TDetails` as the third generic argument.
 

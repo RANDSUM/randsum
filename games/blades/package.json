@@ -1,14 +1,15 @@
 {
   "name": "@randsum/blades",
   "version": "3.0.0",
-  "description": "Blades in the Dark compatible dice rolling implementation",
+  "description": "Blades in the Dark dice roller with critical, success, partial, and failure outcomes for Forged in the Dark apps",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/games/blades/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",

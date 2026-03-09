@@ -207,13 +207,6 @@ export interface ModifierOptionTypes {
 }
 
 /**
- * Helper type to create a correctly-typed modifier definition.
- */
-export type TypedModifierDefinition<K extends keyof ModifierOptions> = ModifierDefinition<
-  ModifierOptionTypes[K]
->
-
-/**
  * The modifier registry - maps modifier names to their definitions.
  */
 export type ModifierRegistry = Map<keyof ModifierOptions, ModifierDefinition>

@@ -26,15 +26,9 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/fifth` package provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
 
-## How D&D 5e dice work
+## The d20 System
 
 In Dungeons & Dragons 5th Edition, most action resolution uses a single twenty-sided die (d20). You roll the die, add an ability modifier (typically −4 to +10), and compare the result against a target number called a Difficulty Class. Rolling with **advantage** means rolling two d20s and keeping the higher result — mechanically reflecting favorable circumstances like a spell, high ground, or helping ally. **Disadvantage** is the reverse: roll two d20s and keep the lower. The `@randsum/fifth` package implements these mechanics exactly, handling the 2d20 rolls, modifier application, and advantage/disadvantage resolution with full TypeScript types.
-
-## Overview
-
-- Rolls 1d20 (normal) or 2d20 (advantage/disadvantage)
-- Applies an ability/skill modifier to the total
-- Returns a numeric result (d20 roll + modifier)
 
 ## Installation
 
@@ -71,7 +65,7 @@ const result = roll({
   rollingWith: { disadvantage: true }
 })`} />
 
-## API reference
+## API
 
 ### `roll(arg: FifthRollArgument)`
 
@@ -90,7 +84,7 @@ const result = roll({
 | `total` | `number` | Same as result |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
-## Result interpretation
+## Outcomes
 
 - **Normal roll**: 1d20 + modifier
 - **Advantage** (`{ advantage: true }`): Roll 2d20, drop lowest, + modifier (equivalent to `2d20L+modifier`)
@@ -118,7 +112,7 @@ roll({ modifier: 3 })`} />
 For D&D ability score generation (4d6 drop lowest), use the core roller directly: `roll('4d6L')` from `@randsum/roller`.
 :::
 
-## Type exports
+## Types
 
 <CodeExample code={`import type {
   FifthRollArgument,

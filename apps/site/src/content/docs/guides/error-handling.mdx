@@ -23,11 +23,11 @@ RANDSUM throws dice, not exceptions — but `roll()` will throw if you give it i
 
 Valid-but-unusual inputs (like `roll(1)` for a single-sided die) are not errors.
 
-## Handling user-provided input
+## User Input
 
 For user-facing inputs — form fields, chat commands, API parameters — validate before rolling. This avoids try/catch and gives you structured error information.
 
-### `validateNotation` — parsed result
+### `validateNotation`
 
 <CodeExample code={`import { validateNotation, roll } from '@randsum/roller'
 
@@ -46,7 +46,7 @@ function rollUserInput(input: string) {
 
 <RollerPlayground defaultNotation="4d6L" client:only="react" />
 
-### `isDiceNotation` — type guard
+### `isDiceNotation`
 
 <CodeExample code={`import { isDiceNotation, roll } from '@randsum/roller'
 
@@ -65,7 +65,7 @@ console.log(rollUserInput('not-dice'))`} />
 
 <RollerPlayground defaultNotation="4d6L" client:only="react" />
 
-## try/catch when you need it
+## Try/Catch
 
 For cases where you need to catch errors from `roll()` directly:
 

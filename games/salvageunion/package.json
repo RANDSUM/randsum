@@ -1,7 +1,7 @@
 {
   "name": "@randsum/salvageunion",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for the Salvage Union system",
+  "description": "Salvage Union mech RPG dice roller with d20 table lookups and reference data integration",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -9,7 +9,8 @@
   },
   "type": "module",
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/games/salvageunion/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",

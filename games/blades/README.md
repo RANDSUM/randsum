@@ -34,7 +34,7 @@ const { result } = roll(2)
 console.log(result) // 'critical' | 'success' | 'partial' | 'failure'
 
 // Different dice pool sizes
-roll(0) // Zero-dice roll (2d6, drop highest — desperate action)
+roll(0) // Zero-dice roll (2d6, keep lowest)
 roll(1) // Single die
 roll(2) // Two-dice pool
 roll(3) // Three-dice pool

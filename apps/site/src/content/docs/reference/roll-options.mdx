@@ -128,7 +128,7 @@ An optional final argument to `roll()` that configures execution behavior.
   randomFn?: RandomFn
 }`} />
 
-### Custom random function
+### Custom RNG
 
 Override `Math.random` with your own random number generator. Must return a number in the range `[0, 1)`.
 
@@ -142,7 +142,7 @@ roll('2d6', { randomFn: cryptoRandom })`} />
 
 <RollerPlayground defaultNotation="2d6" client:only="react" />
 
-## Result object
+## Result Object
 
 The `roll()` function returns a `RollerRollResult` object.
 
@@ -197,7 +197,7 @@ try {
 Hardcoded notation like `roll('4d6L')` will never throw in practice. Only validate when input comes from outside your control: form fields, API parameters, configuration files.
 :::
 
-## Validation utilities
+## Validation
 
 ### `isDiceNotation(value: string): value is DiceNotation`
 

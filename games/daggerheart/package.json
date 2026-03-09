@@ -1,14 +1,15 @@
 {
   "name": "@randsum/daggerheart",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for building Daggerheart-compatible applications",
+  "description": "Daggerheart RPG dice roller with hope/fear dice, amplification, and advantage/disadvantage support",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/games/daggerheart/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",

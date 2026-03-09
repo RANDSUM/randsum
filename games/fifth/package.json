@@ -1,14 +1,15 @@
 {
   "name": "@randsum/fifth",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for building 5E-compatible applications",
+  "description": "D&D 5th Edition dice roller with advantage, disadvantage, and modifier support for type-safe 5e apps",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/games/fifth/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
@@ -48,13 +49,15 @@
     "dice",
     "roller",
     "rpg",
-    "random",
     "typescript",
-    "tabletop",
-    "5th",
+    "dnd",
     "5e",
-    "Dungeons",
-    "Dragons"
+    "d20",
+    "dungeons-and-dragons",
+    "tabletop",
+    "ttrpg",
+    "advantage",
+    "dice-roller"
   ],
   "scripts": {
     "dev": "bunup --watch",

@@ -28,7 +28,7 @@ console.log(result.total)`} />
 
 The `randomFn` must return a number in `[0, 1)` — the same contract as `Math.random()`. The LCG above (linear congruential generator) is simple and sufficient for tests.
 
-## Example: unit test with a known seed
+## Seeded Test Example
 
 <CodeExample code={`import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
@@ -57,7 +57,7 @@ describe('roll with seeded RNG', () => {
   })
 })`} />
 
-## Property-based tests with fast-check
+## Property Tests
 
 Property-based testing runs your assertions against many randomly generated inputs rather than a single fixed example. Instead of checking "does `roll('2d6')` return 7?", you check "does `roll({ sides: S, quantity: Q })` always return a total between `Q` and `Q * S`?"
 

@@ -1,14 +1,15 @@
 {
   "name": "@randsum/root-rpg",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for the Root RPG system",
+  "description": "Root RPG dice roller with Strong Hit, Weak Hit, and Miss outcomes for the Root board game TTRPG",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/games/root-rpg/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",

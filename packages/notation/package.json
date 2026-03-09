@@ -1,14 +1,15 @@
 {
   "name": "@randsum/notation",
   "version": "3.0.0",
-  "description": "Dice notation parser and types for the @randsum ecosystem",
+  "description": "Zero-dependency dice notation parser, validator, and type system for JavaScript and TypeScript",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/packages/notation/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
@@ -48,7 +49,13 @@
     "parser",
     "typescript",
     "ttrpg",
-    "randsum"
+    "randsum",
+    "dice-notation",
+    "dice-roller",
+    "tabletop",
+    "game-development",
+    "validation",
+    "zero-dependency"
   ],
   "dependencies": {},
   "devDependencies": {},

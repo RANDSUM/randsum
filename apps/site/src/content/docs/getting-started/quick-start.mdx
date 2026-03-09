@@ -37,7 +37,7 @@ Drop the lowest or highest dice from a roll:
 <RollerPlayground defaultNotation="2d20H" client:only="react" />
 <RollerPlayground defaultNotation="4d6L2" client:only="react" />
 
-## Arithmetic modifiers
+## Arithmetic
 
 Add or subtract from the roll total:
 
@@ -59,7 +59,7 @@ Chain multiple modifiers together:
 <RollerPlayground defaultNotation="4d6R{1}L+2" client:only="react" />
 <RollerPlayground defaultNotation="3d6!L" client:only="react" />
 
-## Using the options object
+## Options Object
 
 Every notation string has an equivalent options object form:
 
@@ -77,7 +77,7 @@ roll({
 
 The options object gives you full programmatic control when notation strings are not flexible enough.
 
-## Reading the result
+## Result Object
 
 The \`roll()\` function returns a result object with useful properties:
 
@@ -94,7 +94,7 @@ console.log(result.rolls)  // Array of individual roll records`} />
 Hardcoded notation like `roll('4d6L')` will never throw in practice. `roll()` only throws when given invalid input from outside your control — use `validateNotation()` or `isDiceNotation()` before rolling user-provided strings.
 :::
 
-## Multiple dice groups
+## Multiple Groups
 
 Roll different dice types in a single expression:
 

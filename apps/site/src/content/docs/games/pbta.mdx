@@ -26,18 +26,9 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/pbta` package provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
 
-## How PbtA dice work
+## The 2d6 Tiers
 
 Powered by the Apocalypse games use a **2d6 + stat** roll. You roll two six-sided dice, add a stat modifier (usually −1 to +3), and the total determines your outcome tier: 10+ is a strong hit (full success), 7–9 is a weak hit (success with a complication), and 6 or lower is a miss (the GM makes a move). Some moves allow **advantage** (roll 3d6, keep the two highest) or **disadvantage** (roll 3d6, keep the two lowest). Bonuses like *forward* (a one-time +1) and *ongoing* (a persistent modifier) stack on top. The `@randsum/pbta` package covers all of this with a single typed function call.
-
-## Overview
-
-- Rolls 2d6 + stat modifier
-- 10+ = strong hit (complete success)
-- 7-9 = weak hit (partial success, success with cost)
-- 6- = miss (failure)
-- Supports advantage (3d6, keep 2 highest) and disadvantage (3d6, keep 2 lowest)
-- Supports forward and ongoing bonuses
 
 ## Installation
 
@@ -97,7 +88,7 @@ switch (result) {
     break
 }`} />
 
-## API reference
+## API
 
 ### `roll(arg: PbtaRollArgument)`
 
@@ -120,7 +111,7 @@ switch (result) {
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 | `details` | `PbtARollDetails` | `{ stat, forward, ongoing, diceTotal }` |
 
-## Result interpretation
+## Outcomes
 
 | Outcome | Total | Description |
 |---|---|---|
@@ -128,7 +119,7 @@ switch (result) {
 | `weak_hit` | 7-9 | Partial success, success with cost |
 | `miss` | 6- | Failure |
 
-## Compatible games
+## Compatible Systems
 
 This package works with any PbtA game, including:
 
@@ -140,7 +131,7 @@ This package works with any PbtA game, including:
 - **Urban Shadows** -- Urban supernatural politics
 - And many more
 
-## Type exports
+## Types
 
 <CodeExample code={`import type {
   PbtARollArgument,

@@ -8,7 +8,7 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 This guide covers the breaking changes introduced in RANDSUM 3.0 and how to update your code.
 
-## Error handling: result.error to try/catch
+## Error Handling Changes
 
 The biggest change in 3.0 is how errors are handled. In 2.x, `roll()` never threw — errors were returned in the result object. In 3.x, `roll()` throws a `RandsumError` on invalid input.
 
@@ -72,7 +72,7 @@ const stats = analyze('4d6L')
 
 **After (3.x):** Remove `analyze` imports. There is no direct replacement in the public API.
 
-## @randsum/notation extracted
+## Notation Extracted
 
 Notation parsing, validation, and types have been extracted into a standalone `@randsum/notation` package. `@randsum/roller` re-exports everything from `@randsum/notation`, so **existing import paths continue to work** without changes.
 
@@ -84,7 +84,7 @@ import { isDiceNotation, validateNotation } from '@randsum/roller'
 import { isDiceNotation, validateNotation } from '@randsum/notation'
 ```
 
-## Game package peer dependency
+## Peer Dependencies
 
 All game packages now require `@randsum/roller` ^3.0.0 as a peer dependency. Update your roller version before upgrading game packages:
 

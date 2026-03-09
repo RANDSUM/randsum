@@ -73,7 +73,8 @@ export default defineConfig({
             { label: 'Recipes', slug: 'guides/recipes' },
             { label: 'Custom Game Packages', slug: 'guides/custom-game-packages' },
             { label: 'Testing', slug: 'guides/testing' },
-            { label: 'Troubleshooting', slug: 'guides/troubleshooting' }
+            { label: 'Troubleshooting', slug: 'guides/troubleshooting' },
+            { label: 'Migrating from v2', slug: 'guides/migrating-from-v2' }
           ]
         },
         {
@@ -88,6 +89,7 @@ export default defineConfig({
           label: 'Games',
           items: [
             { label: 'Overview', slug: 'games/overview' },
+            { label: 'Comparison', slug: 'games/comparison' },
             { label: 'Blades in the Dark', slug: 'games/blades' },
             { label: 'Daggerheart', slug: 'games/daggerheart' },
             { label: 'D&D 5e', slug: 'games/fifth' },

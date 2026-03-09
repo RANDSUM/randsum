@@ -26,17 +26,9 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/root-rpg` package provides mechanics for [Root RPG](https://magpiegames.com/pages/root-rpg), a tabletop roleplaying game set in the world of the Root board game. It uses a 2d6 + bonus system with success thresholds similar to Powered by the Apocalypse games.
 
-## How Root RPG dice work
+## The 2d6 Tiers
 
 Root RPG is built on a **2d6 + bonus** resolution system. You roll two six-sided dice, add a stat bonus (typically −1 to +3), and read the outcome from the total: 10 or higher is a **Strong Hit** (full success), 7–9 is a **Weak Hit** (success with a cost or complication), and 6 or lower is a **Miss** (failure, often with consequences). The system is straightforward and fast — no advantage dice, no dice pools, just a clear three-tier outcome. The `@randsum/root-rpg` package wraps this cleanly: pass a numeric bonus, receive a typed result with the total, outcome tier, and the underlying roll detail.
-
-## Overview
-
-- Rolls 2d6 + stat bonus
-- 10+ = Strong Hit (complete success)
-- 7-9 = Weak Hit (partial success, success with cost)
-- 6- = Miss (failure)
-- Simple API: pass a single bonus number
 
 ## Installation
 
@@ -79,7 +71,7 @@ roll(2)   // Strong stat
 roll(0)   // No bonus
 roll(-1)  // Penalty`} />
 
-## API reference
+## API
 
 ### `roll(bonus: number)`
 
@@ -97,7 +89,7 @@ roll(-1)  // Penalty`} />
 | `total` | `number` | Sum of 2d6 + bonus |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
-## Result interpretation
+## Outcomes
 
 | Outcome | Total | Description |
 |---|---|---|
@@ -105,7 +97,7 @@ roll(-1)  // Penalty`} />
 | `Weak Hit` | 7-9 | Partial success -- you do it, but with a cost or complication |
 | `Miss` | 6- | Failure -- things go badly |
 
-## Type exports
+## Types
 
 <CodeExample code={`import type { RootRpgResult } from '@randsum/root-rpg'`} />
 

@@ -34,7 +34,7 @@ You can also pass a number directly to roll a single die:
 
 <RollerPlayground defaultNotation="1d20" client:only="react" />
 
-## Arithmetic modifiers
+## Arithmetic
 
 Add or subtract a fixed value from the total.
 
@@ -46,7 +46,7 @@ Add or subtract a fixed value from the total.
 <RollerPlayground defaultNotation="4d6+2" client:only="react" />
 <RollerPlayground defaultNotation="4d6-1" client:only="react" />
 
-## Drop modifiers
+## Drop
 
 Remove dice from the result pool.
 
@@ -68,7 +68,7 @@ Remove dice from the result pool.
 <RollerPlayground defaultNotation="4d20D{<5}" client:only="react" />
 <RollerPlayground defaultNotation="4d20D{8,12}" client:only="react" />
 
-## Keep modifiers
+## Keep
 
 Keep specific dice from the result (complement of drop).
 
@@ -88,7 +88,7 @@ Keep specific dice from the result (complement of drop).
 Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L`.
 :::
 
-## Cap modifiers
+## Cap
 
 Limit roll values to a specific range.
 
@@ -102,7 +102,7 @@ Limit roll values to a specific range.
 <RollerPlayground defaultNotation="4d20C{<3}" client:only="react" />
 <RollerPlayground defaultNotation="4d20C{<2,>19}" client:only="react" />
 
-## Reroll modifiers
+## Reroll
 
 Reroll dice matching certain conditions.
 
@@ -120,7 +120,7 @@ Reroll dice matching certain conditions.
 <RollerPlayground defaultNotation="4d20R{8,12}" client:only="react" />
 <RollerPlayground defaultNotation="4d20R{<5}3" client:only="react" />
 
-## Replace modifiers
+## Replace
 
 Replace specific results with new values.
 
@@ -134,7 +134,7 @@ Replace specific results with new values.
 <RollerPlayground defaultNotation="4d20V{>17=20}" client:only="react" />
 <RollerPlayground defaultNotation="4d20V{<5=1}" client:only="react" />
 
-## Unique modifier
+## Unique
 
 Force all dice in a pool to show different values.
 
@@ -146,7 +146,7 @@ Force all dice in a pool to show different values.
 <RollerPlayground defaultNotation="4d20U" client:only="react" />
 <RollerPlayground defaultNotation="4d20U{5,10}" client:only="react" />
 
-## Exploding dice
+## Explode
 
 Roll additional dice when a die shows its maximum value.
 
@@ -160,7 +160,7 @@ When a die shows its maximum value, it "explodes" — one new die is rolled and 
 
 **Example:** `3d6!` rolls `[6, 4, 6]`. The two 6s explode, adding `[5, 3]`. Final result: `[6, 4, 6, 5, 3]` = 24.
 
-## Compounding exploding dice
+## Compound
 
 Exploding dice that add to the triggering die instead of creating new dice.
 
@@ -179,7 +179,7 @@ Exploding dice that add to the triggering die instead of creating new dice.
 - **Explode (`!`)**: Creates new dice -- `[6, 4, 6]` becomes `[6, 4, 6, 5, 3]` (5 dice)
 - **Compound (`!!`)**: Modifies existing die -- `[6, 4, 6]` becomes `[15, 4, 12]` (still 3 dice)
 
-## Penetrating exploding dice
+## Penetrate
 
 Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style).
 
@@ -194,7 +194,7 @@ Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style).
 
 **Example:** `1d6!p` rolls 6. This penetrates, rolling 5. The value added is 5 - 1 = 4, so the die becomes 6 + 4 = 10.
 
-## Pre-arithmetic multiplier
+## Pre-Arithmetic Multiply
 
 Multiply the dice sum before adding/subtracting arithmetic modifiers.
 
@@ -221,7 +221,7 @@ Count dice meeting a threshold instead of summing values. Used in dice pool syst
 
 **Example:** `5d10S{7}` rolls `[8, 3, 10, 6, 9]`. Successes >= 7: `[8, 10, 9]` = 3 successes.
 
-## Total multiplier
+## Total Multiply
 
 Multiply the entire final total after all other modifiers.
 
@@ -262,7 +262,7 @@ Modifiers can be chained together. They are applied in a fixed priority order:
 <RollerPlayground defaultNotation="3d6!!*2+3" client:only="react" />
 <RollerPlayground defaultNotation="4d6K3!+2" client:only="react" />
 
-## Multiple dice groups
+## Multiple Groups
 
 Roll different dice types in a single expression:
 

@@ -28,7 +28,7 @@ const result = roll('4d6L', { randomFn: seededRandom(42) })
 
 <RollerPlayground defaultNotation="4d6L" client:only="react" />
 
-## Combining multiple rolls into one total
+## Combining Rolls
 
 Pass multiple arguments to `roll()` — they are combined into a single `total`.
 
@@ -57,7 +57,7 @@ Advantage and disadvantage shorthand via [dice notation](/reference/dice-notatio
 
 <RollerPlayground defaultNotation="2d12H" client:only="react" />
 
-## Subtracting one roll from another
+## Subtract Rolls
 
 Use the `arithmetic: 'subtract'` option on a roll group.
 
@@ -69,7 +69,7 @@ const result = roll(
   { sides: 6, quantity: 1, arithmetic: 'subtract' }
 )`} />
 
-## Custom faces (non-numeric dice)
+## Custom Faces
 
 Pass an array of strings or values as `sides` for dice with custom faces (Fate/Fudge dice, custom results).
 
@@ -82,7 +82,7 @@ const fate = roll({
 })
 console.log(fate.result) // e.g. ['+', '-', ' ', '+']`} />
 
-## Rolling and filtering results
+## Filter Results
 
 Roll several times and collect only the results you want.
 
@@ -105,7 +105,7 @@ console.log(result.total) // Count of dice >= 4`} />
 
 <RollerPlayground defaultNotation="10d6S{4}" client:only="react" />
 
-## Generating a roll histogram
+## Histogram
 
 Roll many times and count how often each total appears.
 
@@ -123,7 +123,7 @@ console.log(histogram)
 
 <RollerPlayground defaultNotation="2d6" client:only="react" />
 
-## Using a crypto-quality random function
+## Crypto Random
 
 Replace `Math.random` with `crypto.getRandomValues` for better entropy.
 
