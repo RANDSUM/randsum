@@ -87,9 +87,6 @@ packages/*/lib/
 /docs/api/
 packages/site/public/api/
 
-# Keep design docs tracked
-!/docs/plans/
-
 # Claude local settings
 .claude/*.local.json
 

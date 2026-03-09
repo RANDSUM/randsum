@@ -69,6 +69,10 @@ describe('DiceBuilder', () => {
     expect(d(6).explode().build().modifiers?.explode).toBe(true)
   })
 
+  test('unique() adds unique modifier', () => {
+    expect(d(6).quantity(4).unique().build().modifiers?.unique).toBe(true)
+  })
+
   test('chain: quantity + dropHighest + reroll executes', () => {
     const result = d(6)
       .quantity(4)

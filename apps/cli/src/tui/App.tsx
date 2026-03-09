@@ -1,6 +1,6 @@
 import { Box, Text, render, useInput } from 'ink'
 import TextInput from 'ink-text-input'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { RollRecord } from '@randsum/roller'
 import {
   formatResult,
@@ -15,6 +15,7 @@ import { NotationDescriptionRow } from './components/NotationDescriptionRow'
 import { NotationHighlight } from './components/NotationHighlight'
 import { RollResultPanel } from './components/RollResultPanel'
 import { HeroBanner } from './components/HeroBanner'
+import { Spinner } from './components/Spinner'
 import { useCursorPosition } from './hooks/useCursorPosition'
 import type { ModifierDoc } from './helpers/modifierDocs'
 
@@ -31,6 +32,8 @@ function App(): React.JSX.Element {
   const [cursorPos, setCursorPos] = useState(0)
   const [activeDoc, setActiveDoc] = useState<ModifierDoc | undefined>(undefined)
   const [bannerItemIdx, setBannerItemIdx] = useState<0 | 1 | 2>(0)
+  const [rolling, setRolling] = useState(false)
+  const rollingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const tokens = useMemo(() => tokenize(input), [input])
   const isValid = input.trim().length > 0 && isDiceNotation(input.trim())
@@ -77,6 +80,8 @@ function App(): React.JSX.Element {
         return
       }
     }
+
+    if (rolling) return
 
     if (focus === 'roll') {
       if (key.return) {
@@ -137,13 +142,22 @@ function App(): React.JSX.Element {
     if (trimmed === '') return
     const validation = validateNotation(trimmed)
     if (!validation.valid) return
-    const result = roll(...validation.notation)
-    const formatted = formatResult(result)
-    if (isFormattedError(formatted)) return
-    setLastResult({ records: result.rolls, notation: value.trim() })
+    setLastResult(null)
     setActiveDoc(undefined)
+    setRolling(true)
     setFocus('input')
     setCursorPos(value.length)
+    if (rollingTimerRef.current) clearTimeout(rollingTimerRef.current)
+    rollingTimerRef.current = setTimeout(() => {
+      const result = roll(...validation.notation)
+      const formatted = formatResult(result)
+      if (isFormattedError(formatted)) {
+        setRolling(false)
+        return
+      }
+      setLastResult({ records: result.rolls, notation: value.trim() })
+      setRolling(false)
+    }, 400)
   }
 
   const handleInputChange = (value: string): void => {
@@ -287,8 +301,12 @@ function App(): React.JSX.Element {
           />
         </Box>
 
-        {/* Shared panel: modifier doc > roll result > reference (default) */}
-        {activeDoc !== undefined ? (
+        {/* Shared panel: loading > modifier doc > roll result > reference (default) */}
+        {rolling ? (
+          <Box justifyContent="center">
+            <Spinner />
+          </Box>
+        ) : activeDoc !== undefined ? (
           <Box flexDirection="column" borderStyle="single" borderColor="cyan" paddingX={1}>
             <Text bold color="cyan">
               {activeDoc.title}

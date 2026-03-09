@@ -11,11 +11,7 @@ describe('lerpColor', () => {
   })
 
   test('t=0.5 returns midpoint between the two colors', () => {
-    const result = lerpColor('#3b82f6', '#93c5fd', 0.5)
-    expect(result).toMatch(/^#[0-9a-f]{6}$/)
-    const r = parseInt(result.slice(1, 3), 16)
-    expect(r).toBeGreaterThan(59)
-    expect(r).toBeLessThan(147)
+    expect(lerpColor('#3b82f6', '#93c5fd', 0.5)).toBe('#67a4fa')
   })
 
   test('returns lowercase hex string', () => {
@@ -24,5 +20,13 @@ describe('lerpColor', () => {
 
   test('handles identical start and end', () => {
     expect(lerpColor('#3b82f6', '#3b82f6', 0.5)).toBe('#3b82f6')
+  })
+
+  test('t below 0 is clamped to 0', () => {
+    expect(lerpColor('#3b82f6', '#93c5fd', -1)).toBe('#3b82f6')
+  })
+
+  test('t above 1 is clamped to 1', () => {
+    expect(lerpColor('#3b82f6', '#93c5fd', 2)).toBe('#93c5fd')
   })
 })

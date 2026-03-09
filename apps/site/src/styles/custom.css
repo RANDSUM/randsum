@@ -32,6 +32,10 @@
   --game-blades: #f59e0b; /* amber-500 */
   --game-pbta: #6b7280; /* gray-500 */
 
+  /* Core package colors */
+  --core-roller: #a5b4fc; /* indigo-300 — pastel periwinkle */
+  --core-notation: #f9a8d4; /* rose-300 — pastel pink */
+
   /* Tool package colors */
   --tool-roller: var(--sl-color-white); /* white in dark mode, near-black in light mode */
   --tool-skill: #06b6d4; /* cyan-500 */
@@ -62,6 +66,10 @@
   --game-root-rpg: #059669; /* emerald-600 */
   --game-blades: #d97706; /* amber-600 */
   --game-pbta: #4b5563; /* gray-600 */
+
+  /* Core package colors */
+  --core-roller: #4338ca; /* indigo-700 — pastel indigo for light bg */
+  --core-notation: #be185d; /* pink-700 — pastel rose for light bg */
 
   /* Tool package colors */
   --tool-skill: #0891b2; /* cyan-600 for light bg */
