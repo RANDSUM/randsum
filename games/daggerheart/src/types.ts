@@ -1,7 +1,7 @@
-export type DaggerheartAdvantageDisadvantage = 'Advantage' | 'Disadvantage'
+export type DaggerheartExtraDieMode = 'Advantage' | 'Disadvantage'
 export interface DaggerheartRollArgument {
   modifier?: number
-  rollingWith?: DaggerheartAdvantageDisadvantage
+  rollingWith?: DaggerheartExtraDieMode
   amplifyHope?: boolean
   amplifyFear?: boolean
 }

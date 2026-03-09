@@ -3,6 +3,6 @@ export type {
   DaggerheartRollArgument,
   DaggerheartRollResult,
   DaggerheartRollResultType,
-  DaggerheartAdvantageDisadvantage
+  DaggerheartExtraDieMode
 } from './types'
 export type { GameRollResult, RollRecord } from '@randsum/roller'

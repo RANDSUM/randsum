@@ -21,7 +21,7 @@ Rolls a Daggerheart action roll.
 
 **Parameters:**
 
-- `rollingWith`: `'Advantage' | 'Disadvantage' | undefined` - Optional advantage/disadvantage
+- `rollingWith`: `DaggerheartExtraDieMode | undefined` - Optional extra die mode (adds or subtracts a d6)
 - `amplifyHope`: `boolean` - Use d20 instead of d12 for hope die
 - `amplifyFear`: `boolean` - Use d20 instead of d12 for fear die
 - `modifier`: `number` - Additional modifier to total
@@ -105,7 +105,7 @@ export type {
   DaggerheartRollArgument,
   DaggerheartRollResult,
   DaggerheartRollResultType,
-  DaggerheartAdvantageDisadvantage
+  DaggerheartExtraDieMode
 } from "./types"
 ```
 
