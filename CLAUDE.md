@@ -68,7 +68,7 @@ bun run help                             # Quick command reference
 All packages use `bunup` producing identical structure:
 - `dist/index.js` (ESM), `dist/index.cjs` (CJS)
 - `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
-- Bundle size limits enforced: roller 10KB, game packages 8KB, salvageunion 170KB
+- Bundle size limits enforced: roller 10KB, game packages 8KB, salvageunion 300KB
 
 ## Versioning
 

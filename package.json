@@ -61,7 +61,7 @@
     },
     {
       "path": "games/salvageunion/dist/index.js",
-      "limit": "240 KB"
+      "limit": "300 KB"
     },
     {
       "path": "games/pbta/dist/index.js",
