@@ -135,7 +135,7 @@ export function NotationReference({
               <Box justifyContent="space-between">
                 {/* Left cell: bold notation + description */}
                 <Box gap={1} flexGrow={1}>
-                  <Text bold color={leftSelected ? 'cyan' : undefined} dimColor={leftDimmed}>
+                  <Text bold {...(leftSelected ? { color: 'cyan' } : {})} dimColor={leftDimmed}>
                     {left.notation}
                     {'notationSuffix' in left ? (
                       <Text dimColor={!leftSelected}>{left.notationSuffix}</Text>
@@ -147,7 +147,7 @@ export function NotationReference({
                 {/* Right cell: description + bold notation (mirrored) */}
                 <Box gap={1} justifyContent="flex-end" flexGrow={1}>
                   <Text dimColor={!rightSelected || rightDimmed}>{right.description}</Text>
-                  <Text bold color={rightSelected ? 'cyan' : undefined} dimColor={rightDimmed}>
+                  <Text bold {...(rightSelected ? { color: 'cyan' } : {})} dimColor={rightDimmed}>
                     {right.notation}
                     {'notationSuffix' in right ? (
                       <Text dimColor={!rightSelected}>{right.notationSuffix}</Text>
