@@ -3,15 +3,13 @@ import { useMemo, useState } from 'react'
 import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
 import { RollHistory } from './components/RollHistory'
 import { NotationInput } from './components/NotationInput'
-import { DiceToolbar } from './components/DiceToolbar'
 import { NotationReference } from './components/NotationReference'
 import { NotationDescriptionRow } from './components/NotationDescriptionRow'
 import { useRollHistory } from './hooks/useRollHistory'
-import { incrementDiceQuantity } from './helpers/incrementDiceQuantity'
 import { formatResult, isFormattedError } from './helpers/formatResult'
 import { tokenize } from './helpers/tokenize'
 
-type FocusZone = 'input' | 'toolbar'
+type FocusZone = 'input' | 'reference'
 
 const WIDE_BREAKPOINT = 80
 
@@ -24,7 +22,7 @@ function App(): React.JSX.Element {
 
   useInput((_input, key) => {
     if (key.tab) {
-      setFocus(prev => (prev === 'input' ? 'toolbar' : 'input'))
+      setFocus(prev => (prev === 'input' ? 'reference' : 'input'))
     }
     if (key.ctrl && _input === 'l') {
       clearHistory()
@@ -54,9 +52,8 @@ function App(): React.JSX.Element {
     setInput('')
   }
 
-  const handleDiceSelect = (notation: string): void => {
-    const sides = Number(notation.replace(/\D/g, ''))
-    setInput(prev => incrementDiceQuantity(prev, sides))
+  const handleAddModifier = (notation: string): void => {
+    setInput(prev => prev + notation)
     setFocus('input')
   }
 
@@ -70,7 +67,7 @@ function App(): React.JSX.Element {
 
       {isWide ? (
         <Box>
-          {/* Left column: history, description, toolbar */}
+          {/* Left column: history */}
           <Box flexDirection="column" width="33%">
             <Box flexDirection="column" flexGrow={1}>
               <RollHistory history={history} />
@@ -81,30 +78,30 @@ function App(): React.JSX.Element {
             </Box>
 
             <Box paddingX={1}>
-              <Text dimColor>Type notation and press Enter to roll, or use the dice buttons.</Text>
+              <Text dimColor>Tab to switch focus. Type notation and press Enter to roll.</Text>
             </Box>
-
-            <Box marginY={1}>
-              <Text dimColor>{'─'.repeat(30)}</Text>
-            </Box>
-
-            <DiceToolbar active={focus === 'toolbar'} onSelect={handleDiceSelect} />
           </Box>
 
-          {/* Right column: notation reference */}
-          <NotationReference />
+          {/* Right column: modifier reference */}
+          <NotationReference
+            active={focus === 'reference'}
+            modifiersDisabled={!isValid}
+            onAddModifier={handleAddModifier}
+          />
         </Box>
       ) : (
         <Box flexDirection="column">
           <RollHistory history={history} />
 
-          <NotationReference />
+          <NotationReference
+            active={focus === 'reference'}
+            modifiersDisabled={!isValid}
+            onAddModifier={handleAddModifier}
+          />
 
           <Box paddingX={1} marginTop={1}>
-            <Text dimColor>Type notation and press Enter to roll, or use the dice buttons.</Text>
+            <Text dimColor>Tab to switch focus. Type notation and press Enter to roll.</Text>
           </Box>
-
-          <DiceToolbar active={focus === 'toolbar'} onSelect={handleDiceSelect} />
         </Box>
       )}
 
