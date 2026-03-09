@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { execFile } from 'node:child_process'
 import { roll } from '@randsum/roller'
 import { useTerminalWidth } from '../hooks/useTerminalWidth'
+import { lerpColor } from '../helpers/gradientColor'
 
 const DOCS_URL = 'https://randsum.dev'
 const GITHUB_URL = 'https://github.com/RANDSUM/randsum'
@@ -86,15 +87,9 @@ const RANDSUM_ART: readonly string[] = [
   '╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═════╝ ╚═╝     ╚═╝'
 ]
 
-// Light blue (top) → deep blue (bottom)
-const GRADIENT: readonly string[] = [
-  '#C8DEFF',
-  '#A8C8FF',
-  '#7AABFF',
-  '#5292FF',
-  '#3878F0',
-  '#2060E0'
-]
+// Matches site CSS: --sl-color-accent and --sl-color-accent-high (dark mode)
+const GRAD_START = '#3b82f6'
+const GRAD_END = '#93c5fd'
 
 // Die faces: 8 rows × 15 cols (visually ≈ square at ~2:1 terminal char aspect)
 // Index 0–4 = pip faces 1–5; index 5 = RANDSUM logo (R-pattern, always final)
@@ -287,12 +282,19 @@ export function HeroBanner({
 
       {/* Right content */}
       <Box flexDirection="column" justifyContent="center" flexGrow={1}>
-        {/* RANDSUM gradient ASCII art — centered */}
+        {/* RANDSUM gradient ASCII art — centered, horizontal gradient */}
         <Box flexDirection="column" alignItems="center">
-          {RANDSUM_ART.map((line, i) => (
-            <Text key={i} color={GRADIENT[i] ?? '#2060E0'}>
-              {line}
-            </Text>
+          {RANDSUM_ART.map((line, row) => (
+            <Box key={row} flexDirection="row">
+              {[...line].map((char, col) => (
+                <Text
+                  key={col}
+                  color={lerpColor(GRAD_START, GRAD_END, col / Math.max(1, line.length - 1))}
+                >
+                  {char}
+                </Text>
+              ))}
+            </Box>
           ))}
         </Box>
 
