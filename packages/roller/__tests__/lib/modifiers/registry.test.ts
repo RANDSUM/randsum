@@ -13,7 +13,10 @@ import {
   modifierToDescriptionFromRegistry,
   modifierToNotationFromRegistry,
   parseModifiersFromRegistry,
-  registerDefaultModifiers
+  processModifierDescriptionsFromRegistry,
+  processModifierNotationsFromRegistry,
+  registerDefaultModifiers,
+  registerNotationSchema
 } from '../../../src/lib/modifiers/registry'
 import {
   capModifier,
@@ -273,6 +276,70 @@ describe('MODIFIER_PRIORITIES', () => {
   test('cap has lowest priority (runs first)', () => {
     const min = Math.min(...Object.values(MODIFIER_PRIORITIES))
     expect(MODIFIER_PRIORITIES.cap).toBe(min)
+  })
+})
+
+describe('registerNotationSchema', () => {
+  test('registers a minimal ParseableSchema to the notation registry', () => {
+    const schema = {
+      name: 'plus' as const,
+      priority: 90,
+      pattern: /\+(\d+)/,
+      parse: (notation: string): Partial<ModifierOptions> => {
+        const match = /\+(\d+)/.exec(notation)
+        return match ? { plus: Number(match[1]) } : {}
+      }
+    }
+
+    // Should not throw
+    registerNotationSchema(schema)
+
+    // Verify it works by parsing notation that uses the registered schema
+    const result = parseModifiersFromRegistry('2d6+5')
+    expect(result.plus).toBe(5)
+  })
+})
+
+describe('processModifierNotationsFromRegistry', () => {
+  test('returns empty string when modifiers is undefined', () => {
+    expect(processModifierNotationsFromRegistry(undefined)).toBe('')
+  })
+
+  test('returns notation string for populated modifiers', () => {
+    const result = processModifierNotationsFromRegistry({ plus: 3 })
+    expect(typeof result).toBe('string')
+    expect(result).toContain('+3')
+  })
+
+  test('returns combined notation for multiple modifiers', () => {
+    const result = processModifierNotationsFromRegistry({
+      drop: { lowest: 1 },
+      plus: 5
+    })
+    expect(typeof result).toBe('string')
+    expect(result.length).toBeGreaterThan(0)
+    expect(result).toContain('+5')
+  })
+})
+
+describe('processModifierDescriptionsFromRegistry', () => {
+  test('returns empty array when modifiers is undefined', () => {
+    expect(processModifierDescriptionsFromRegistry(undefined)).toEqual([])
+  })
+
+  test('returns descriptions for populated modifiers', () => {
+    const result = processModifierDescriptionsFromRegistry({ plus: 3 })
+    expect(Array.isArray(result)).toBe(true)
+    expect(result.length).toBeGreaterThan(0)
+  })
+
+  test('returns descriptions for multiple modifiers', () => {
+    const result = processModifierDescriptionsFromRegistry({
+      drop: { lowest: 1 },
+      plus: 5
+    })
+    expect(Array.isArray(result)).toBe(true)
+    expect(result.length).toBeGreaterThanOrEqual(2)
   })
 })
 

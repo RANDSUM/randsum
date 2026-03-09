@@ -61,7 +61,7 @@ export function NotationReference({
   const [selectedPos, setSelectedPos] = useState<GridPosition>({ row: 0, col: 0 })
   const [showDoc, setShowDoc] = useState(false)
   const { stdout } = useStdout()
-  const separatorWidth = Math.max(10, (stdout?.columns ?? 80) - 6)
+  const separatorWidth = Math.max(10, stdout.columns - 6)
 
   useInput(
     (_input, key) => {
@@ -116,7 +116,7 @@ export function NotationReference({
     <Box flexDirection="column" flexGrow={1} paddingX={1}>
       {active && (
         <Box marginBottom={0}>
-          <Text dimColor>arrows:navigate  Enter:details  a:add</Text>
+          <Text dimColor>arrows:navigate Enter:details a:add</Text>
         </Box>
       )}
 
@@ -139,7 +139,9 @@ export function NotationReference({
                     {left.notation}
                     {'notationSuffix' in left ? (
                       <Text dimColor={!leftSelected}>{left.notationSuffix}</Text>
-                    ) : ''}
+                    ) : (
+                      ''
+                    )}
                   </Text>
                   <Text dimColor={!leftSelected || leftDimmed}>{left.description}</Text>
                 </Box>
@@ -151,14 +153,14 @@ export function NotationReference({
                     {right.notation}
                     {'notationSuffix' in right ? (
                       <Text dimColor={!rightSelected}>{right.notationSuffix}</Text>
-                    ) : ''}
+                    ) : (
+                      ''
+                    )}
                   </Text>
                 </Box>
               </Box>
 
-              {rowIdx < GRID_ROWS.length - 1 && (
-                <Text dimColor>{'─'.repeat(separatorWidth)}</Text>
-              )}
+              {rowIdx < GRID_ROWS.length - 1 && <Text dimColor>{'─'.repeat(separatorWidth)}</Text>}
             </Box>
           )
         })}
@@ -210,7 +212,7 @@ export function NotationReference({
             </Box>
           )}
           <Box marginTop={1}>
-            <Text dimColor>Enter/a to add  Enter again to close</Text>
+            <Text dimColor>Enter/a to add Enter again to close</Text>
           </Box>
         </Box>
       )}

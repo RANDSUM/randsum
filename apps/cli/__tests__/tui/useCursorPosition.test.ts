@@ -28,9 +28,11 @@ describe('tokenCursorIndex', () => {
 
   test('handles cursor at start of token', () => {
     const tokens = tokenize('1d20+5')
-    const plusIdx = tokens.findIndex((t) => t.text.startsWith('+'))
+    const plusIdx = tokens.findIndex(t => t.text.startsWith('+'))
     expect(plusIdx).toBeGreaterThan(-1)
-    const plusToken = tokens[plusIdx]!
+    const plusToken = tokens[plusIdx]
+    expect(plusToken).toBeDefined()
+    if (plusToken === undefined) return
     expect(tokenCursorIndex(tokens, plusToken.start)).toBe(plusIdx)
   })
 })
