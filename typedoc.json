@@ -3,12 +3,12 @@
   "tsconfig": "./tsconfig.typedoc.json",
   "entryPoints": [
     "packages/roller/src/index.ts",
-    "gamePackages/blades/src/index.ts",
-    "gamePackages/daggerheart/src/index.ts",
-    "gamePackages/fifth/src/index.ts",
-    "gamePackages/root-rpg/src/index.ts",
-    "gamePackages/salvageunion/src/index.ts",
-    "gamePackages/pbta/src/index.ts"
+    "games/blades/src/index.ts",
+    "games/daggerheart/src/index.ts",
+    "games/fifth/src/index.ts",
+    "games/root-rpg/src/index.ts",
+    "games/salvageunion/src/index.ts",
+    "games/pbta/src/index.ts"
   ],
   "entryPointStrategy": "expand",
   "out": "docs/api",

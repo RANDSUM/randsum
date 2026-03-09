@@ -1,18 +1,19 @@
 {
-  "name": "@randsum/daggerheart",
+  "name": "@randsum/salvageunion",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for building Daggerheart-compatible applications",
+  "description": "A flexible, type-safe dice roller for the Salvage Union system",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
+  "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/RANDSUM/randsum",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "gamePackages/daggerheart"
+    "directory": "games/salvageunion"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -23,9 +24,9 @@
     "LICENSE",
     "README.md"
   ],
-  "type": "module",
   "dependencies": {
-    "@randsum/roller": "workspace:~"
+    "@randsum/roller": "workspace:~",
+    "salvageunion-reference": "^2.4.0"
   },
   "exports": {
     ".": {
@@ -51,10 +52,7 @@
     "random",
     "typescript",
     "tabletop",
-    "5th",
-    "daggerheart",
-    "Dungeons",
-    "Dragons"
+    "salvage-union"
   ],
   "scripts": {
     "dev": "bunup --watch",

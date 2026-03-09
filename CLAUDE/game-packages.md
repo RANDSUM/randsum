@@ -5,7 +5,7 @@
 All game packages follow this pattern:
 
 ```
-gamePackages/{game-name}/
+games/{game-name}/
   src/
     index.ts              # Main exports
     types.ts              # Game-specific types
@@ -21,7 +21,7 @@ gamePackages/{game-name}/
 
 ## Creating a New Game Package
 
-1. **Copy template**: Use `gamePackages/salvageunion/` as the simplest template
+1. **Copy template**: Use `games/salvageunion/` as the simplest template
 2. **Update package.json**:
    - Change `name` to `@randsum/{game-name}`
    - Update `description`

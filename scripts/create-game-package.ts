@@ -21,7 +21,7 @@ if (!gameName) {
 }
 
 const packageName = gameName.toLowerCase().replace(/\s+/g, '-')
-const packageDir = join(process.cwd(), 'gamePackages', packageName)
+const packageDir = join(process.cwd(), 'games', packageName)
 const pascalName = gameName
   .split(/[-_\s]/)
   .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -55,7 +55,7 @@ const packageJson = {
   repository: {
     type: 'git',
     url: 'git+https://github.com/RANDSUM/randsum.git',
-    directory: `gamePackages/${packageName}`
+    directory: `games/${packageName}`
   },
   sideEffects: false,
   type: 'module',

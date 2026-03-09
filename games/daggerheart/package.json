@@ -1,7 +1,7 @@
 {
-  "name": "@randsum/root-rpg",
+  "name": "@randsum/daggerheart",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for the Root RPG system",
+  "description": "A flexible, type-safe dice roller for building Daggerheart-compatible applications",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "gamePackages/root-rpg"
+    "directory": "games/daggerheart"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -50,9 +50,11 @@
     "rpg",
     "random",
     "typescript",
-    "root",
     "tabletop",
-    "root-rpg"
+    "5th",
+    "daggerheart",
+    "Dungeons",
+    "Dragons"
   ],
   "scripts": {
     "dev": "bunup --watch",

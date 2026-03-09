@@ -1,20 +1,20 @@
 {
-  "name": "@randsum/pbta",
+  "name": "@randsum/blades",
   "version": "3.0.0",
-  "description": "A flexible, type-safe dice roller for Powered by the Apocalypse games",
+  "description": "Blades in the Dark compatible dice rolling implementation",
   "private": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
   },
-  "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/RANDSUM/randsum",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "gamePackages/pbta"
+    "directory": "games/blades"
   },
+  "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -51,10 +51,8 @@
     "random",
     "typescript",
     "tabletop",
-    "pbta",
-    "powered-by-the-apocalypse",
-    "dungeon-world",
-    "monster-of-the-week"
+    "blades",
+    "forged-in-the-dark"
   ],
   "scripts": {
     "dev": "bunup --watch",

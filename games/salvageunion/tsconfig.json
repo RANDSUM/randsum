@@ -5,5 +5,5 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [{ "path": "../packages/roller" }]
+  "references": [{ "path": "../../packages/roller" }]
 }
