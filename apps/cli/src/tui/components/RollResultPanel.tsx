@@ -171,7 +171,7 @@ function DiceRow({
           {removed.join(', ')}
         </Text>
       )}
-      {added.length > 0 && <Text color="green">{added.join(', ')}</Text>}
+      {added.length > 0 && <Text color="blue">{added.join(', ')}</Text>}
       {(removed.length > 0 || added.length > 0) && unchanged.length > 0 && <Text dimColor>|</Text>}
       {unchanged.length > 0 && <Text>{unchanged.join(', ')}</Text>}
     </Box>
@@ -186,10 +186,8 @@ export function RollResultPanel({
   const multiPool = records.length > 1
 
   return (
-    <Box flexDirection="column" borderStyle="single" borderColor="gray" paddingX={1} marginTop={1}>
-      <Text bold dimColor>
-        Result Breakdown
-      </Text>
+    <Box flexDirection="column" paddingX={1} marginTop={1}>
+      <Text dimColor>{'─'.repeat(40)}</Text>
       {records.map((record, i) => {
         const steps = computeSteps(record)
         const hasModifiers = steps.length > 1
@@ -230,7 +228,7 @@ export function RollResultPanel({
             {!hasModifiers && (
               <Box gap={1}>
                 <Text dimColor>{'Total'.padEnd(16)}</Text>
-                <Text bold>{record.total}</Text>
+                <Text bold color="cyan">{record.total}</Text>
               </Box>
             )}
             {multiPool && i < records.length - 1 && <Text dimColor>{'─'.repeat(20)}</Text>}
