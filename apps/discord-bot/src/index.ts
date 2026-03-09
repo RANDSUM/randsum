@@ -67,6 +67,20 @@ process.on('uncaughtException', error => {
   console.error(error)
 })
 
+// Graceful shutdown
+function shutdown(signal: string): void {
+  console.warn(`🛑 ${signal} received, shutting down...`)
+  void client.destroy()
+  process.exit(0)
+}
+
+process.on('SIGTERM', () => {
+  shutdown('SIGTERM')
+})
+process.on('SIGINT', () => {
+  shutdown('SIGINT')
+})
+
 // Login to Discord
 console.warn('🔄 Connecting to Discord...')
 try {
