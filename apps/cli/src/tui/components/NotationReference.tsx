@@ -59,7 +59,9 @@ export function NotationReference({
   onAddModifier,
   onTopExit,
   onBottomExit,
-  onDocChange
+  onDocChange,
+  selectedPos,
+  onSelectedPosChange
 }: {
   readonly active: boolean
   readonly modifiersDisabled: boolean
@@ -67,8 +69,9 @@ export function NotationReference({
   readonly onTopExit?: () => void
   readonly onBottomExit?: () => void
   readonly onDocChange?: (doc: ModifierDoc | undefined) => void
+  readonly selectedPos: GridPosition
+  readonly onSelectedPosChange: (pos: GridPosition) => void
 }): React.JSX.Element {
-  const [selectedPos, setSelectedPos] = useState<GridPosition>({ row: 0, col: 0 })
   const [showDoc, setShowDoc] = useState(false)
 
   const selectedRow = GRID_ROWS[selectedPos.row]
@@ -86,7 +89,7 @@ export function NotationReference({
         if (selectedPos.row === 0) {
           onTopExit?.()
         } else {
-          setSelectedPos(prev => navigateGrid(prev, 'up', GRID_ROWS.length))
+          onSelectedPosChange(navigateGrid(selectedPos, 'up', GRID_ROWS.length))
           setShowDoc(false)
           onDocChange?.(undefined)
         }
@@ -94,16 +97,16 @@ export function NotationReference({
         if (selectedPos.row === GRID_ROWS.length - 1) {
           onBottomExit?.()
         } else {
-          setSelectedPos(prev => navigateGrid(prev, 'down', GRID_ROWS.length))
+          onSelectedPosChange(navigateGrid(selectedPos, 'down', GRID_ROWS.length))
           setShowDoc(false)
           onDocChange?.(undefined)
         }
       } else if (key.leftArrow) {
-        setSelectedPos(prev => navigateGrid(prev, 'left', GRID_ROWS.length))
+        onSelectedPosChange(navigateGrid(selectedPos, 'left', GRID_ROWS.length))
         setShowDoc(false)
         onDocChange?.(undefined)
       } else if (key.rightArrow) {
-        setSelectedPos(prev => navigateGrid(prev, 'right', GRID_ROWS.length))
+        onSelectedPosChange(navigateGrid(selectedPos, 'right', GRID_ROWS.length))
         setShowDoc(false)
         onDocChange?.(undefined)
       } else if (key.return) {

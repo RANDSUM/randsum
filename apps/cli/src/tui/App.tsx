@@ -18,6 +18,7 @@ import { HeroBanner } from './components/HeroBanner'
 import { Spinner } from './components/Spinner'
 import { useCursorPosition } from './hooks/useCursorPosition'
 import type { ModifierDoc } from './helpers/modifierDocs'
+import type { GridPosition } from './helpers/modifierGrid'
 
 type FocusZone = 'input' | 'reference' | 'roll' | 'description' | 'banner'
 
@@ -32,6 +33,8 @@ function App(): React.JSX.Element {
   const [cursorPos, setCursorPos] = useState(0)
   const [activeDoc, setActiveDoc] = useState<ModifierDoc | undefined>(undefined)
   const [bannerItemIdx, setBannerItemIdx] = useState<0 | 1 | 2>(0)
+  const [refSelectedPos, setRefSelectedPos] = useState<GridPosition>({ row: 0, col: 0 })
+  const [preFocusBeforeRoll, setPreFocusBeforeRoll] = useState<FocusZone>('input')
   const [rolling, setRolling] = useState(false)
   const rollingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
@@ -128,8 +131,12 @@ function App(): React.JSX.Element {
           setCursorPos(0)
           setFocus('input')
         }
+        const hadResult = lastResult !== null
         setLastResult(null)
         setActiveDoc(undefined)
+        if (hadResult) {
+          setFocus(preFocusBeforeRoll)
+        }
       }
     }
     if (_input === 'i' && (focus === 'reference' || focus === 'description')) {
@@ -142,6 +149,7 @@ function App(): React.JSX.Element {
     if (trimmed === '') return
     const validation = validateNotation(trimmed)
     if (!validation.valid) return
+    setPreFocusBeforeRoll(focus)
     setLastResult(null)
     setActiveDoc(undefined)
     setRolling(true)
@@ -352,6 +360,8 @@ function App(): React.JSX.Element {
               setFocus('input')
             }}
             onDocChange={handleDocChange}
+            selectedPos={refSelectedPos}
+            onSelectedPosChange={setRefSelectedPos}
           />
         )}
       </Box>
