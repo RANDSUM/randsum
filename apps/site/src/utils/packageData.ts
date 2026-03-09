@@ -512,3 +512,22 @@ export const allPackages: PackageInfo[] = [...corePackages, ...gamePackages, ...
 export function getPackageById(id: string): PackageInfo | undefined {
   return allPackages.find(pkg => pkg.id === id)
 }
+
+export async function fetchNpmVersions(
+  packages: readonly PackageInfo[]
+): Promise<Map<string, string>> {
+  const entries = await Promise.all(
+    packages.map(async (pkg): Promise<readonly [string, string] | null> => {
+      try {
+        const res = await fetch(`https://registry.npmjs.org/${pkg.npmPackage}/latest`)
+        if (!res.ok) throw new Error(`${res.status}`)
+        const data = (await res.json()) as { version: string }
+        return [pkg.id, data.version]
+      } catch {
+        return pkg.version !== undefined ? [pkg.id, pkg.version] : null
+      }
+    })
+  )
+
+  return new Map(entries.filter((e): e is readonly [string, string] => e !== null))
+}

@@ -107,7 +107,11 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
-              {pkg.version && <span class="pkg-card-version">v{pkg.version}</span>}
+              {pkg.npmPackage.startsWith('@') && (
+                <span class="pkg-card-version" data-npm-version={pkg.npmPackage}>
+                  {pkg.version ? `v${pkg.version}` : ''}
+                </span>
+              )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
             <div class="pkg-card-footer">
@@ -732,6 +736,30 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 </style>
 
 <script>
+  // Fetch npm versions live and update version badges
+  ;(async () => {
+    const versionEls = Array.from(document.querySelectorAll<HTMLElement>('[data-npm-version]'))
+    const packageNames = [...new Set(versionEls.map(el => el.dataset['npmVersion']!))]
+
+    const results = await Promise.allSettled(
+      packageNames.map(async (pkg) => {
+        const res = await fetch(`https://registry.npmjs.org/${pkg}/latest`)
+        if (!res.ok) throw new Error(`${res.status}`)
+        const data = await res.json() as { version: string }
+        return [pkg, data.version] as const
+      })
+    )
+
+    const versionMap = new Map(
+      results.flatMap(r => r.status === 'fulfilled' ? [r.value] : [])
+    )
+
+    versionEls.forEach(el => {
+      const version = versionMap.get(el.dataset['npmVersion']!)
+      if (version) el.textContent = `v${version}`
+    })
+  })()
+
   const chips = document.querySelectorAll<HTMLButtonElement>('.pkg-filter-chip')
   const cards = Array.from(document.querySelectorAll<HTMLElement>('.pkg-card[data-category]'))
   const grid = document.querySelector<HTMLElement>('.pkg-grid')
