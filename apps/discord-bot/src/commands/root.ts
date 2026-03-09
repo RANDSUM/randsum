@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { roll } from '@randsum/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
+import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
 const ROOT_IMAGES = {
@@ -28,60 +29,68 @@ export const rootCommand: Command = {
 
     await interaction.deferReply()
 
-    const result = roll(modifier)
+    try {
+      const result = roll(modifier)
 
-    // Get initial dice rolls
-    const initialRolls = result.rolls[0]?.initialRolls ?? []
+      // Get initial dice rolls
+      const initialRolls = result.rolls[0]?.initialRolls ?? []
 
-    // Determine color, title, and description based on result
-    const resultConfig = {
-      'Strong Hit': {
-        color: 0x00ff00, // Green
-        resultDescription: 'You succeed at your goal'
-      },
-      'Weak Hit': {
-        color: 0xffff00, // Yellow
-        resultDescription: 'You succeed, but with a cost or complication'
-      },
-      Miss: {
-        color: 0xff0000, // Red
-        resultDescription: "Things don't go your way"
-      }
-    } as const
+      // Determine color, title, and description based on result
+      const resultConfig = {
+        'Strong Hit': {
+          color: 0x00ff00, // Green
+          resultDescription: 'You succeed at your goal'
+        },
+        'Weak Hit': {
+          color: 0xffff00, // Yellow
+          resultDescription: 'You succeed, but with a cost or complication'
+        },
+        Miss: {
+          color: 0xff0000, // Red
+          resultDescription: "Things don't go your way"
+        }
+      } as const
 
-    const { color, resultDescription } = resultConfig[result.result]
-    const thumbnail = ROOT_IMAGES[result.result]
+      const { color, resultDescription } = resultConfig[result.result]
+      const thumbnail = ROOT_IMAGES[result.result]
 
-    const embed = new EmbedBuilder()
-      .setColor(color)
-      .setTitle(`${memberNick} rolled a ${result.result}`)
-      .setDescription(resultDescription)
-      .setThumbnail(thumbnail)
-      .setFooter(embedFooterDetails)
+      const embed = new EmbedBuilder()
+        .setColor(color)
+        .setTitle(`${memberNick} rolled a ${result.result}`)
+        .setDescription(resultDescription)
+        .setThumbnail(thumbnail)
+        .setFooter(embedFooterDetails)
 
-    // Add dice rolls
-    embed.addFields({
-      name: 'Dice Rolls',
-      value: initialRolls.join(', '),
-      inline: true
-    })
-
-    // Add total
-    embed.addFields({
-      name: 'Total',
-      value: String(result.total),
-      inline: true
-    })
-
-    // Add modifier if present
-    if (modifier !== 0) {
+      // Add dice rolls
       embed.addFields({
-        name: 'Modifier',
-        value: modifier > 0 ? `+${modifier}` : String(modifier),
+        name: 'Dice Rolls',
+        value: initialRolls.join(', '),
         inline: true
       })
-    }
 
-    await interaction.editReply({ embeds: [embed] })
+      // Add total
+      embed.addFields({
+        name: 'Total',
+        value: String(result.total),
+        inline: true
+      })
+
+      // Add modifier if present
+      if (modifier !== 0) {
+        embed.addFields({
+          name: 'Modifier',
+          value: modifier > 0 ? `+${modifier}` : String(modifier),
+          inline: true
+        })
+      }
+
+      await interaction.editReply({ embeds: [embed] })
+    } catch (e) {
+      await replyWithError(
+        interaction,
+        'Error',
+        e instanceof Error ? e.message : 'An unknown error occurred'
+      )
+    }
   }
 }

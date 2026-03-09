@@ -105,4 +105,14 @@ describe('suCommand', () => {
     await suCommand.execute(interaction as never)
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('Success')
   })
+
+  test('error path: roll throws, replies with error embed', async () => {
+    mockRoll.mockImplementationOnce(() => {
+      throw new Error('Test error')
+    })
+    const interaction = makeInteraction(null)
+    await suCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalled()
+    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+  })
 })

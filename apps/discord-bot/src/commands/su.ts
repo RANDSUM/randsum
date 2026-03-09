@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { SALVAGE_UNION_TABLE_NAMES, roll } from '@randsum/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
+import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
 function getColor(roll: number): number {
@@ -51,28 +52,36 @@ export const suCommand: Command = {
 
     await interaction.deferReply()
 
-    const rollResult = roll(tableName)
-    const color = getColor(rollResult.result.roll)
+    try {
+      const rollResult = roll(tableName)
+      const color = getColor(rollResult.result.roll)
 
-    const embed = new EmbedBuilder()
-      .setColor(color)
-      .setTitle(rollResult.result.label)
-      .setDescription(rollResult.result.description)
-      .setFooter(embedFooterDetails)
+      const embed = new EmbedBuilder()
+        .setColor(color)
+        .setTitle(rollResult.result.label)
+        .setDescription(rollResult.result.description)
+        .setFooter(embedFooterDetails)
 
-    embed.addFields(
-      {
-        name: 'Table',
-        value: rollResult.result.tableName,
-        inline: true
-      },
-      {
-        name: 'Roll',
-        value: String(rollResult.result.roll),
-        inline: true
-      }
-    )
+      embed.addFields(
+        {
+          name: 'Table',
+          value: rollResult.result.tableName,
+          inline: true
+        },
+        {
+          name: 'Roll',
+          value: String(rollResult.result.roll),
+          inline: true
+        }
+      )
 
-    await interaction.editReply({ embeds: [embed] })
+      await interaction.editReply({ embeds: [embed] })
+    } catch (e) {
+      await replyWithError(
+        interaction,
+        'Error',
+        e instanceof Error ? e.message : 'An unknown error occurred'
+      )
+    }
   }
 }

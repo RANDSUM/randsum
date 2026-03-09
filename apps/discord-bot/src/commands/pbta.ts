@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { roll } from '@randsum/pbta'
 import { embedFooterDetails } from '../utils/constants.js'
+import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
 export const pbtaCommand: Command = {
@@ -43,81 +44,89 @@ export const pbtaCommand: Command = {
 
     await interaction.deferReply()
 
-    const result = roll({
-      stat,
-      ...(forward !== 0 ? { forward } : {}),
-      ...(ongoing !== 0 ? { ongoing } : {}),
-      ...(rollingWith === 'Advantage' ? { advantage: true } : {}),
-      ...(rollingWith === 'Disadvantage' ? { disadvantage: true } : {})
-    })
+    try {
+      const result = roll({
+        stat,
+        ...(forward !== 0 ? { forward } : {}),
+        ...(ongoing !== 0 ? { ongoing } : {}),
+        ...(rollingWith === 'Advantage' ? { advantage: true } : {}),
+        ...(rollingWith === 'Disadvantage' ? { disadvantage: true } : {})
+      })
 
-    const initialRolls = result.rolls[0]?.initialRolls ?? []
+      const initialRolls = result.rolls[0]?.initialRolls ?? []
 
-    const resultConfig = {
-      strong_hit: {
-        color: 0xffd700, // Gold
-        resultTitle: 'Strong Hit!'
-      },
-      weak_hit: {
-        color: 0xffff00, // Yellow
-        resultTitle: 'Weak Hit'
-      },
-      miss: {
-        color: 0xff0000, // Red
-        resultTitle: 'Miss'
+      const resultConfig = {
+        strong_hit: {
+          color: 0xffd700, // Gold
+          resultTitle: 'Strong Hit!'
+        },
+        weak_hit: {
+          color: 0xffff00, // Yellow
+          resultTitle: 'Weak Hit'
+        },
+        miss: {
+          color: 0xff0000, // Red
+          resultTitle: 'Miss'
+        }
+      } as const
+
+      const { color, resultTitle } = resultConfig[result.result]
+
+      const embed = new EmbedBuilder()
+        .setColor(color)
+        .setTitle(resultTitle)
+        .setDescription(`Total: ${result.total}`)
+        .setFooter(embedFooterDetails)
+
+      embed.addFields({
+        name: 'Dice Rolled',
+        value: initialRolls.join(', ') || 'None',
+        inline: true
+      })
+
+      embed.addFields({
+        name: 'Stat',
+        value: stat >= 0 ? `+${stat}` : String(stat),
+        inline: true
+      })
+
+      embed.addFields({
+        name: 'Total',
+        value: String(result.total),
+        inline: true
+      })
+
+      if (forward !== 0) {
+        embed.addFields({
+          name: 'Forward',
+          value: forward > 0 ? `+${forward}` : String(forward),
+          inline: true
+        })
       }
-    } as const
 
-    const { color, resultTitle } = resultConfig[result.result]
+      if (ongoing !== 0) {
+        embed.addFields({
+          name: 'Ongoing',
+          value: ongoing > 0 ? `+${ongoing}` : String(ongoing),
+          inline: true
+        })
+      }
 
-    const embed = new EmbedBuilder()
-      .setColor(color)
-      .setTitle(resultTitle)
-      .setDescription(`Total: ${result.total}`)
-      .setFooter(embedFooterDetails)
+      if (rollingWith) {
+        embed.addFields({
+          name: 'Rolling With',
+          value: rollingWith,
+          inline: true
+        })
+      }
 
-    embed.addFields({
-      name: 'Dice Rolled',
-      value: initialRolls.join(', ') || 'None',
-      inline: true
-    })
-
-    embed.addFields({
-      name: 'Stat',
-      value: stat >= 0 ? `+${stat}` : String(stat),
-      inline: true
-    })
-
-    embed.addFields({
-      name: 'Total',
-      value: String(result.total),
-      inline: true
-    })
-
-    if (forward !== 0) {
-      embed.addFields({
-        name: 'Forward',
-        value: forward > 0 ? `+${forward}` : String(forward),
-        inline: true
-      })
+      await interaction.editReply({ embeds: [embed] })
+    } catch (e) {
+      await replyWithError(
+        interaction,
+        'Error',
+        e instanceof Error ? e.message : 'An unknown error occurred'
+      )
     }
-
-    if (ongoing !== 0) {
-      embed.addFields({
-        name: 'Ongoing',
-        value: ongoing > 0 ? `+${ongoing}` : String(ongoing),
-        inline: true
-      })
-    }
-
-    if (rollingWith) {
-      embed.addFields({
-        name: 'Rolling With',
-        value: rollingWith,
-        inline: true
-      })
-    }
-
-    await interaction.editReply({ embeds: [embed] })
   }
 }

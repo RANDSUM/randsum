@@ -122,4 +122,14 @@ describe('bladesCommand', () => {
     await bladesCommand.execute(interaction as never)
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('Failure')
   })
+
+  test('error path: roll throws, replies with error embed', async () => {
+    mockRoll.mockImplementationOnce(() => {
+      throw new Error('Test error')
+    })
+    const interaction = makeInteraction(3)
+    await bladesCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalled()
+    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+  })
 })

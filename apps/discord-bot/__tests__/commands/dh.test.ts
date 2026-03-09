@@ -154,4 +154,14 @@ describe('dhCommand', () => {
     await dhCommand.execute(interaction as never)
     expect(mockEmbed.addFields).toHaveBeenCalled()
   })
+
+  test('error path: roll throws, replies with error embed', async () => {
+    mockRoll.mockImplementationOnce(() => {
+      throw new Error('Test error')
+    })
+    const interaction = makeInteraction()
+    await dhCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalled()
+    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+  })
 })
