@@ -1,34 +1,24 @@
-import { Box, Text, render, useInput, useStdout } from 'ink'
+import { Box, Text, render, useInput } from 'ink'
 import { useMemo, useState } from 'react'
 import type { RollRecord } from '@randsum/roller'
 import { isDiceNotation, roll, validateNotation } from '@randsum/roller'
-import { RollHistory } from './components/RollHistory'
 import { NotationInput } from './components/NotationInput'
 import { NotationReference } from './components/NotationReference'
 import { NotationDescriptionRow } from './components/NotationDescriptionRow'
 import { RollResultPanel } from './components/RollResultPanel'
-import { useRollHistory } from './hooks/useRollHistory'
 import { formatResult, isFormattedError } from '@randsum/roller'
 import { tokenize } from '@randsum/notation'
 
 type FocusZone = 'input' | 'reference'
 
-const WIDE_BREAKPOINT = 80
-
 function App(): React.JSX.Element {
-  const { history, addRoll, clearHistory } = useRollHistory()
   const [input, setInput] = useState('')
   const [focus, setFocus] = useState<FocusZone>('input')
   const [lastResult, setLastResult] = useState<readonly RollRecord[] | null>(null)
-  const { stdout } = useStdout()
-  const isWide = stdout.columns >= WIDE_BREAKPOINT
 
   useInput((_input, key) => {
     if (key.tab) {
       setFocus(prev => (prev === 'input' ? 'reference' : 'input'))
-    }
-    if (key.ctrl && _input === 'l') {
-      clearHistory()
     }
   })
 
@@ -47,12 +37,6 @@ function App(): React.JSX.Element {
     if (isFormattedError(formatted)) return
 
     setLastResult(result.rolls)
-    addRoll({
-      notation: trimmed,
-      total: formatted.total,
-      rolls: formatted.rolls,
-      description: formatted.description
-    })
     setInput('')
   }
 
@@ -74,45 +58,17 @@ function App(): React.JSX.Element {
         <Text color="gray">()</Text>
       </Box>
 
-      {isWide ? (
-        <Box>
-          {/* Left column: history */}
-          <Box flexDirection="column" width="33%">
-            <Box flexDirection="column" flexGrow={1}>
-              <RollHistory history={history} />
-            </Box>
+      <Box flexDirection="column">
+        <NotationReference
+          active={focus === 'reference'}
+          modifiersDisabled={!isValid}
+          onAddModifier={handleAddModifier}
+        />
 
-            <Box marginY={1}>
-              <Text dimColor>{'─'.repeat(30)}</Text>
-            </Box>
-
-            <Box paddingX={1}>
-              <Text dimColor>Tab to switch focus. Type notation and press Enter to roll.</Text>
-            </Box>
-          </Box>
-
-          {/* Right column: modifier reference */}
-          <NotationReference
-            active={focus === 'reference'}
-            modifiersDisabled={!isValid}
-            onAddModifier={handleAddModifier}
-          />
+        <Box paddingX={1} marginTop={1}>
+          <Text dimColor>Tab to switch focus. Type notation and press Enter to roll.</Text>
         </Box>
-      ) : (
-        <Box flexDirection="column">
-          <RollHistory history={history} />
-
-          <NotationReference
-            active={focus === 'reference'}
-            modifiersDisabled={!isValid}
-            onAddModifier={handleAddModifier}
-          />
-
-          <Box paddingX={1} marginTop={1}>
-            <Text dimColor>Tab to switch focus. Type notation and press Enter to roll.</Text>
-          </Box>
-        </Box>
-      )}
+      </Box>
 
       <NotationInput
         value={input}
