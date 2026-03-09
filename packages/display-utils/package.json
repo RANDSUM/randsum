@@ -1,6 +1,7 @@
 {
   "name": "@randsum/display-utils",
   "version": "3.0.0",
+  "private": false,
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -26,6 +27,8 @@
   },
   "scripts": {
     "build": "bunup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "lint": "eslint . -c ../../eslint.config.js"
   }
 }
