@@ -104,7 +104,7 @@ interface DaggerheartRollResult {
     hope: { roll: number; amplified: boolean }
     fear: { roll: number; amplified: boolean }
     modifier: number
-    advantage: { roll: number } | undefined
+    extraDie: { roll: number } | undefined
   }
 }
 ```

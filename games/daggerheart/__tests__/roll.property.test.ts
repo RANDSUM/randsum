@@ -111,7 +111,7 @@ describe('roll property-based tests', () => {
     )
   })
 
-  test('no advantage when not specified', () => {
+  test('extraDie is undefined when rollingWith is not set', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier })

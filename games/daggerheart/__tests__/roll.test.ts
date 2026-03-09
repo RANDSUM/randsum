@@ -104,13 +104,13 @@ describe('roll', () => {
       }
     })
 
-    test('advantage undefined when not rolling with advantage/disadvantage', () => {
+    test('extraDie is undefined when rollingWith is not specified', () => {
       const result = roll({})
 
       expect(result.details?.extraDie).toBeUndefined()
     })
 
-    test('advantage with modifier applies correctly', () => {
+    test('extraDie is present with modifier when rollingWith is set', () => {
       const modifier = 3
       const result = roll({
         modifier,
