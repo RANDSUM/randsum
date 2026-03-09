@@ -114,6 +114,10 @@ export default defineConfig({
           ]
         },
         {
+          label: 'CLI',
+          items: [{ label: 'Overview', slug: 'tools/cli' }]
+        },
+        {
           label: 'Discord Bot',
           items: [{ label: 'Overview', slug: 'tools/discord-bot' }]
         }
