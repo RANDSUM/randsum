@@ -61,7 +61,7 @@ bun run help                             # Quick command reference
 - Property-based tests use `fast-check` with `.property.test.ts` suffix
 - Stress tests use 9999 iterations for boundary validation
 - Seeded random available: `createSeededRandom(42)` from test-utils
-- Coverage target: 80% project, 70% patch (Codecov)
+- Coverage target: 100% project and patch (Codecov)
 
 ## Package Build Output
 
