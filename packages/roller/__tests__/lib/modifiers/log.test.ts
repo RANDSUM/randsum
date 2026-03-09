@@ -1,40 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import {
-  createArithmeticLog,
-  createFrequencyMap,
-  createModifierLog,
-  mergeLogs
-} from '../../../src/lib/modifiers/log'
-
-describe('createFrequencyMap', () => {
-  test('creates frequency map from array', () => {
-    const freq = createFrequencyMap([1, 2, 2, 3, 3, 3])
-
-    expect(freq.get(1)).toBe(1)
-    expect(freq.get(2)).toBe(2)
-    expect(freq.get(3)).toBe(3)
-  })
-
-  test('handles empty array', () => {
-    const freq = createFrequencyMap([])
-
-    expect(freq.size).toBe(0)
-  })
-
-  test('handles single value', () => {
-    const freq = createFrequencyMap([5])
-
-    expect(freq.get(5)).toBe(1)
-    expect(freq.size).toBe(1)
-  })
-
-  test('handles all same values', () => {
-    const freq = createFrequencyMap([4, 4, 4, 4])
-
-    expect(freq.get(4)).toBe(4)
-    expect(freq.size).toBe(1)
-  })
-})
+import { createArithmeticLog, createModifierLog, mergeLogs } from '../../../src/lib/modifiers/log'
 
 describe('createArithmeticLog', () => {
   test('creates log with modifier name and options', () => {

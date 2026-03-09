@@ -22,7 +22,7 @@ Dual-mode terminal app. Pass notation args for instant results, or run bare for 
 - `src/tui/components/NotationReference.tsx` - Modifier reference panel
 - `src/tui/components/RollResultPanel.tsx` - Roll result display
 - `src/tui/components/Spinner.tsx` - Loading spinner
-- `src/tui/hooks/` - useValidation, useCursorPosition, useTerminalWidth
+- `src/tui/hooks/` - useCursorPosition, useTerminalWidth
 - `src/tui/helpers/` - modifierGrid, modifierDocs, tokenColors, gradientColor, openInStackblitz
 
 ## Commands
