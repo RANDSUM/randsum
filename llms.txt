@@ -4,6 +4,7 @@
 
 ## Packages
 
+- @randsum/notation - Dice notation parser and type foundation
 - @randsum/roller - Core dice engine
 - @randsum/fifth - D&D 5th Edition
 - @randsum/blades - Blades in the Dark
@@ -29,7 +30,6 @@ roll("1d20", "2d6", "+5")  // Multiple: attack + damage + modifier
 
 - skills/dice-rolling/SKILL.md - AI agent skill (agentskills.io format)
 - packages/roller/RANDSUM_DICE_NOTATION.md - Complete notation reference
-- AGENTS.md - Project development guidelines
 
 ## Links
 
