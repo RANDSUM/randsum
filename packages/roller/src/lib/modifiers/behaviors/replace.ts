@@ -1,5 +1,6 @@
 import type { ReplaceOptions } from '../../../types'
 import { validateComparisonOptions } from '../../comparison'
+import { matchesComparison } from '../../comparison/matchesComparison'
 import type { ModifierBehavior } from '../schema'
 
 export const replaceBehavior: ModifierBehavior<ReplaceOptions | ReplaceOptions[]> = {
@@ -10,12 +11,7 @@ export const replaceBehavior: ModifierBehavior<ReplaceOptions | ReplaceOptions[]
       const { from, to } = rule
       return currentRolls.map(roll => {
         if (typeof from === 'object') {
-          const { greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual } = from
-          if (greaterThan !== undefined && roll > greaterThan) return to
-          if (greaterThanOrEqual !== undefined && roll >= greaterThanOrEqual) return to
-          if (lessThan !== undefined && roll < lessThan) return to
-          if (lessThanOrEqual !== undefined && roll <= lessThanOrEqual) return to
-          return roll
+          return matchesComparison(roll, from) ? to : roll
         }
         return roll === from ? to : roll
       })

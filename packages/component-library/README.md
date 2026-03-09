@@ -51,7 +51,6 @@ A two-column reference grid of all RANDSUM modifier notation. Can be used standa
 
 ```tsx
 import { ModifierReference } from "@randsum/component-library"
-
 ;<ModifierReference onCellClick={cell => console.log(cell.notation, cell.description)} />
 ```
 
@@ -81,7 +80,6 @@ A dismissible overlay panel with keyboard (`Escape`) support. Used internally by
 
 ```tsx
 import { Overlay } from "@randsum/component-library"
-
 ;<Overlay visible={open} dismissing={dismissing} onDismiss={() => setOpen(false)}>
   <p>Overlay content</p>
 </Overlay>

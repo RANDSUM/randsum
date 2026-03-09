@@ -1,21 +1,13 @@
 import type { DropOptions } from '../../../types'
 import { ModifierError } from '../../../errors'
+import { matchesComparison } from '../../comparison/matchesComparison'
 import type { ModifierBehavior } from '../schema'
 
 export const dropBehavior: ModifierBehavior<DropOptions> = {
   apply: (rolls, options) => {
-    const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } =
-      options
+    const { highest, lowest } = options
 
-    const exactSet = exact ? new Set(exact) : null
-    const filteredByConditions = rolls.filter(roll => {
-      if (greaterThan !== undefined && roll > greaterThan) return false
-      if (greaterThanOrEqual !== undefined && roll >= greaterThanOrEqual) return false
-      if (lessThan !== undefined && roll < lessThan) return false
-      if (lessThanOrEqual !== undefined && roll <= lessThanOrEqual) return false
-      if (exactSet?.has(roll)) return false
-      return true
-    })
+    const filteredByConditions = rolls.filter(roll => !matchesComparison(roll, options))
 
     if (highest === undefined && lowest === undefined) {
       return { rolls: filteredByConditions }

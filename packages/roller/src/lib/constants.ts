@@ -12,9 +12,3 @@ export const MAX_REROLL_ATTEMPTS = 99
  * (e.g., `2d6!!0`). Since true infinite recursion is impossible, we use this ceiling.
  */
 export const DEFAULT_EXPLOSION_DEPTH = 1000
-
-/**
- * Default depth for explode modifier when no depth specified.
- * Unlike compound/penetrate, basic explode only triggers once by default.
- */
-export const DEFAULT_EXPLODE_DEPTH = 1

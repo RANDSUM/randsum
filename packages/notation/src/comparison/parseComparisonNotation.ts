@@ -1,12 +1,6 @@
 import type { ComparisonOptions } from '../types'
 
 /**
- * Backward-compatible alias. ComparisonOptions now includes all fields.
- * @deprecated Use ComparisonOptions directly.
- */
-export type ExtendedComparisonOptions = ComparisonOptions
-
-/**
  * Parses a condition string into comparison options.
  */
 export function parseComparisonNotation(conditionString: string): ComparisonOptions {

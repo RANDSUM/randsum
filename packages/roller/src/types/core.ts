@@ -7,7 +7,7 @@ export type { DiceNotation, RollOptions } from '@randsum/notation'
  * RollOptions with required numeric fields.
  * Used internally when sides must be numeric and quantity is known.
  */
-export type RequiredNumericRollParameters = Pick<RollOptions, 'quantity' | 'sides'> & {
+export interface RequiredNumericRollParameters {
   quantity: number
   sides: number
 }
