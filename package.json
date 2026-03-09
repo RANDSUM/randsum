@@ -94,6 +94,14 @@
     {
       "path": "games/pbta/dist/index.d.ts",
       "limit": "6 KB"
+    },
+    {
+      "path": "packages/display-utils/dist/index.d.ts",
+      "limit": "2 KB"
+    },
+    {
+      "path": "games/salvageunion/dist/index.d.ts",
+      "limit": "6 KB"
     }
   ],
   "scripts": {

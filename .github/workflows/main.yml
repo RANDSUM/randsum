@@ -66,5 +66,8 @@ jobs:
       - name: Check bundle sizes
         run: bun run size
 
+      - name: Check exports
+        run: bun run check:exports
+
       - name: Build site
         run: bun run site:build
