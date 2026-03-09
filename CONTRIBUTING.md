@@ -253,7 +253,7 @@ After generation:
 5. **Update root `CLAUDE.md`** to list the new package
 6. **Add to site documentation** in `apps/site/` (optional)
 
-For detailed patterns, see [CLAUDE/game-packages.md](CLAUDE/game-packages.md).
+For detailed patterns, see the per-package `CLAUDE.md` files in each package directory (e.g. `games/blades/CLAUDE.md`).
 
 ## Common Tasks
 
