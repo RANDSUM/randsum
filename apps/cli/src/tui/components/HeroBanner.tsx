@@ -4,7 +4,7 @@ import { execFile } from 'node:child_process'
 import { roll } from '@randsum/roller'
 import { useTerminalWidth } from '../hooks/useTerminalWidth'
 
-const DOCS_URL = 'https://randsum.dev/getting-started/introduction/'
+const DOCS_URL = 'https://randsum.dev'
 const GITHUB_URL = 'https://github.com/RANDSUM/randsum'
 
 const TAGLINES = [
@@ -41,6 +41,37 @@ const GITHUB_LABELS = [
   'TRUTH'
 ] as const
 
+const HERO_NOTATIONS = [
+  '1d6',
+  '1d20',
+  '2d6',
+  '2d8+3',
+  '1d12+5',
+  '4d6',
+  '4d6L',
+  '2d20H',
+  '2d12H',
+  '5d6L',
+  '3d6!',
+  '4d6R{1}',
+  '2d10R{<3}',
+  '4d6K3',
+  '3d10!+3',
+  '4d6LR{1}!+3',
+  '1d4+1d6+1d8+1d10+1d12+1d20',
+  '2d4+2d6+2d8',
+  '3d4+2d6+1d8',
+  '1d6+1d20',
+  '4d6L+1d20',
+  '2d8+1d6+5',
+  '4d6L+2d20H',
+  '3d20R{<5}H+2d6L',
+  '10d6R{<3}K5',
+  '8d8!U+5',
+  '6d6C{<2,>5}R{1}+3',
+  '6d8L2H1R{1,2}U!C{>7}+5-2'
+] as const
+
 // Slot machine tick intervals — fast start, slows to a stop (~4.5s total)
 const SLOT_INTERVALS: readonly number[] = [
   45, 50, 55, 60, 70, 80, 95, 115, 140, 170, 210, 260, 325, 410, 510, 640, 860
@@ -65,14 +96,75 @@ const GRADIENT: readonly string[] = [
   '#2060E0'
 ]
 
-// Die faces: index 0 = 1 pip, index 5 = 6 pips
+// Die faces: 8 rows × 15 cols (visually ≈ square at ~2:1 terminal char aspect)
+// Index 0–4 = pip faces 1–5; index 5 = RANDSUM logo (R-pattern, always final)
 const DIE_FACES: readonly (readonly string[])[] = [
-  ['╔═════════════╗', '║             ║', '║      ●      ║', '║             ║', '╚═════════════╝'],
-  ['╔═════════════╗', '║  ●          ║', '║             ║', '║          ●  ║', '╚═════════════╝'],
-  ['╔═════════════╗', '║  ●          ║', '║      ●      ║', '║          ●  ║', '╚═════════════╝'],
-  ['╔═════════════╗', '║  ●       ●  ║', '║             ║', '║  ●       ●  ║', '╚═════════════╝'],
-  ['╔═════════════╗', '║  ●       ●  ║', '║      ●      ║', '║  ●       ●  ║', '╚═════════════╝'],
-  ['╔═════════════╗', '║  ●       ●  ║', '║  ●       ●  ║', '║  ●       ●  ║', '╚═════════════╝']
+  // 1 pip
+  [
+    '╔═════════════╗',
+    '║             ║',
+    '║             ║',
+    '║      ●      ║',
+    '║             ║',
+    '║             ║',
+    '║             ║',
+    '╚═════════════╝'
+  ],
+  // 2 pips
+  [
+    '╔═════════════╗',
+    '║  ●          ║',
+    '║             ║',
+    '║             ║',
+    '║             ║',
+    '║             ║',
+    '║          ●  ║',
+    '╚═════════════╝'
+  ],
+  // 3 pips
+  [
+    '╔═════════════╗',
+    '║  ●          ║',
+    '║             ║',
+    '║      ●      ║',
+    '║             ║',
+    '║             ║',
+    '║          ●  ║',
+    '╚═════════════╝'
+  ],
+  // 4 pips
+  [
+    '╔═════════════╗',
+    '║  ●       ●  ║',
+    '║             ║',
+    '║             ║',
+    '║             ║',
+    '║             ║',
+    '║  ●       ●  ║',
+    '╚═════════════╝'
+  ],
+  // 5 pips
+  [
+    '╔═════════════╗',
+    '║  ●       ●  ║',
+    '║             ║',
+    '║      ●      ║',
+    '║             ║',
+    '║             ║',
+    '║  ●       ●  ║',
+    '╚═════════════╝'
+  ],
+  // RANDSUM logo: R-pattern (top-right cluster shifted center, bottom dots spread)
+  [
+    '╔═════════════╗',
+    '║  ●  ●       ║',
+    '║             ║',
+    '║  ●  ●       ║',
+    '║             ║',
+    '║  ●       ●  ║',
+    '║             ║',
+    '╚═════════════╝'
+  ]
 ]
 
 function openUrl(url: string): void {
@@ -91,12 +183,14 @@ export function HeroBanner({
   isFocused,
   onDown,
   onExit,
-  onSelectionChange
+  onSelectionChange,
+  onNotationChange
 }: {
   readonly isFocused: boolean
   readonly onDown?: () => void
   readonly onExit?: () => void
   readonly onSelectionChange?: (idx: 0 | 1 | 2) => void
+  readonly onNotationChange?: (notation: string) => void
 }): React.JSX.Element {
   const termWidth = useTerminalWidth()
   const [selectedItem, setSelectedItem] = useState<0 | 1 | 2>(0)
@@ -124,7 +218,7 @@ export function HeroBanner({
     const finalTagline = pickRandom(TAGLINES)
     const finalGetStarted = pickRandom(GET_STARTED_LABELS)
     const finalGitHub = pickRandom(GITHUB_LABELS)
-    const finalFace = (roll(6).total - 1) as 0 | 1 | 2 | 3 | 4 | 5
+    const finalNotation = pickRandom(HERO_NOTATIONS)
 
     const progress = { step: 0 }
     const tick = (): void => {
@@ -132,20 +226,22 @@ export function HeroBanner({
         setTagline(pickRandom(TAGLINES))
         setGetStartedLabel(pickRandom(GET_STARTED_LABELS))
         setGithubLabel(pickRandom(GITHUB_LABELS))
-        setDieFaceIdx((roll(6).total - 1) as 0 | 1 | 2 | 3 | 4 | 5)
+        setDieFaceIdx((roll(5).total - 1) as 0 | 1 | 2 | 3 | 4)
+        onNotationChange?.(pickRandom(HERO_NOTATIONS))
         progress.step++
         spinRef.current = setTimeout(tick, SLOT_INTERVALS[progress.step] ?? 860)
       } else {
         setTagline(finalTagline)
         setGetStartedLabel(finalGetStarted)
         setGithubLabel(finalGitHub)
-        setDieFaceIdx(finalFace)
+        setDieFaceIdx(5)
+        onNotationChange?.(finalNotation)
         setIsSpinning(false)
       }
     }
 
     spinRef.current = setTimeout(tick, SLOT_INTERVALS[0] ?? 45)
-  }, [isSpinning])
+  }, [isSpinning, onNotationChange])
 
   useInput(
     (_input, key) => {
@@ -190,9 +286,9 @@ export function HeroBanner({
       )}
 
       {/* Right content */}
-      <Box flexDirection="column" justifyContent="center">
-        {/* RANDSUM gradient ASCII art */}
-        <Box flexDirection="column">
+      <Box flexDirection="column" justifyContent="center" flexGrow={1}>
+        {/* RANDSUM gradient ASCII art — centered */}
+        <Box flexDirection="column" alignItems="center">
           {RANDSUM_ART.map((line, i) => (
             <Text key={i} color={GRADIENT[i] ?? '#2060E0'}>
               {line}
@@ -200,31 +296,36 @@ export function HeroBanner({
           ))}
         </Box>
 
-        <Box marginTop={1}>
+        {/* Subtitle + tagline + buttons — centered */}
+        <Box flexDirection="column" alignItems="center" marginTop={1}>
           <Text bold color="white">
             TypeScript-First Dice Notation Ecosystem
           </Text>
-        </Box>
 
-        <Text dimColor>{tagline}</Text>
+          <Text dimColor>{tagline}</Text>
 
-        {/* Link buttons */}
-        <Box flexDirection="row" gap={2} marginTop={1}>
-          <Box
-            borderStyle="round"
-            borderColor={docsSelected ? 'white' : '#4d8eff'}
-            backgroundColor={docsSelected ? '#4d8eff' : '#2d68ff'}
-            paddingX={2}
-          >
-            <Text bold color="white">
-              {getStartedLabel}
-            </Text>
-          </Box>
+          {/* Link buttons */}
+          <Box flexDirection="row" gap={2} marginTop={1}>
+            <Box
+              borderStyle="round"
+              borderColor={docsSelected ? 'white' : '#7aabff'}
+              backgroundColor={docsSelected ? '#5292FF' : '#1a3a8f'}
+              paddingX={2}
+            >
+              <Text bold color="white">
+                {getStartedLabel}
+              </Text>
+            </Box>
 
-          <Box borderStyle="round" borderColor={githubSelected ? 'white' : '#666666'} paddingX={2}>
-            <Text bold color={githubSelected ? 'white' : '#888888'}>
-              {githubLabel}
-            </Text>
+            <Box
+              borderStyle="round"
+              borderColor={githubSelected ? 'white' : '#666666'}
+              paddingX={2}
+            >
+              <Text bold color={githubSelected ? 'white' : '#888888'}>
+                {githubLabel}
+              </Text>
+            </Box>
           </Box>
         </Box>
       </Box>

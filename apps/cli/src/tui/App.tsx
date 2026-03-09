@@ -200,6 +200,9 @@ function App(): React.JSX.Element {
           setFocus('input')
         }}
         onSelectionChange={setBannerItemIdx}
+        onNotationChange={notation => {
+          handleInputChange(notation)
+        }}
       />
 
       {/* Hints */}
