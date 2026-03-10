@@ -46,7 +46,8 @@ bun run test                   # Run tests
 
 ## Dependency Note
 
-`@randsum/roller` and `@randsum/notation` are intentionally listed as versioned npm dependencies rather than `workspace:~`.
-This is because the CLI is built as a standalone binary that consumers install globally via npm/bun.
-The workspace protocol resolves only at build time within the monorepo — the published artifact must
-reference a real npm version. When upgrading roller, bump this version manually alongside the release.
+`@randsum/roller`, `@randsum/notation`, and `@randsum/display-utils` are in `devDependencies` using `workspace:~`.
+This ensures Bun builds them before `cli` in the monorepo build order.
+
+`devDependencies` are stripped from the published package — `npx @randsum/cli` only installs `ink`, `ink-text-input`, and `react`.
+The `@randsum/*` packages are bundled into `dist/index.js` by `bunup` at build time, so consumers never need them directly.

@@ -45,9 +45,9 @@
     "react": "^19.2.0"
   },
   "devDependencies": {
-    "@randsum/display-utils": "^3.0.1",
-    "@randsum/notation": "^3.0.0",
-    "@randsum/roller": "^3.0.0",
+    "@randsum/display-utils": "workspace:~",
+    "@randsum/notation": "workspace:~",
+    "@randsum/roller": "workspace:~",
     "@types/react": "^19.0.0"
   },
   "scripts": {
