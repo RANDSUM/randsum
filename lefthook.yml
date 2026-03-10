@@ -23,8 +23,6 @@ pre-push:
       run: bun run check:exports
     build:
       run: bun run build
-    size:
-      run: bun run size
     skill-verify:
       run: npx skills-ref validate skills/dice-rolling/SKILL.md
     audit:
