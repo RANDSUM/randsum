@@ -38,12 +38,11 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "react": ">=18"
-  },
-  "dependencies": {
-    "@randsum/display-utils": "workspace:~",
-    "@randsum/notation": "workspace:~",
-    "@randsum/roller": "workspace:~"
+    "react": ">=18",
+    "react-dom": ">=18",
+    "@randsum/roller": ">=3.0.0",
+    "@randsum/display-utils": ">=3.0.0",
+    "@randsum/notation": ">=3.0.0"
   },
   "devDependencies": {
     "@ladle/react": "5.1.1",
@@ -66,6 +65,7 @@
   ],
   "scripts": {
     "dev": "bunup --watch",
+    "prepublishOnly": "bun run build",
     "build": "bunup",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",

@@ -12,6 +12,8 @@ bun add @randsum/component-library
 
 CSS is bundled and injected automatically — no separate stylesheet import needed.
 
+> **CSP note:** Styles are injected via JavaScript at runtime using `<style>` tags. Consumers must allow `style-src 'unsafe-inline'` in their Content Security Policy. There is no separate CSS file to import. This is a known limitation and will be addressed in a future major version.
+
 ## Peer Dependencies
 
 Requires React 18 or later.
@@ -98,3 +100,7 @@ import { Overlay } from "@randsum/component-library"
 ## License
 
 MIT
+
+<div align="center">
+Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
+</div>

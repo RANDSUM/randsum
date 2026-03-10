@@ -53,7 +53,7 @@ const success = total >= 15 // DC 15 check
 ### `roll(options)`
 
 ```typescript
-function roll(options: FifthRollArgument): FifthRollResult
+function roll(options: FifthRollArgument): GameRollResult<number, undefined, RollRecord>
 ```
 
 **Options:**
@@ -66,10 +66,11 @@ function roll(options: FifthRollArgument): FifthRollResult
 **Returns:**
 
 ```typescript
-interface FifthRollResult {
-  total: number // Final total (d20 result + modifier)
-  result: number // Same as total
-  rolls: RollRecord[] // Full roll records
+// GameRollResult<number, undefined, RollRecord>
+{
+  result: number    // Final total (d20 roll + modifier)
+  total: number     // Same as result
+  rolls: RollRecord[] // Full roll records from @randsum/roller
 }
 ```
 

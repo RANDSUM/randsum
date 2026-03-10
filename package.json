@@ -1,11 +1,14 @@
 {
   "name": "randsum-monorepo",
+  "private": true,
   "devDependencies": {
+    "@astrojs/netlify": "6.6.4",
     "@eslint/js": "10.0.1",
     "@size-limit/preset-small-lib": "12.0.0",
     "@types/bun": "1.3.10",
     "@typescript-eslint/eslint-plugin": "8.56.1",
     "@typescript-eslint/parser": "8.56.1",
+    "astro": "5.18.0",
     "bunup": "0.16.31",
     "eslint": "10.0.2",
     "eslint-config-prettier": "10.1.8",
@@ -46,6 +49,10 @@
     {
       "path": "packages/display-utils/dist/index.js",
       "limit": "20 KB"
+    },
+    {
+      "path": "packages/component-library/dist/index.js",
+      "limit": "50 KB"
     },
     {
       "path": "games/blades/dist/index.js",
@@ -127,7 +134,7 @@
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
-    "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run site:build",
+    "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run check:exports && bun run site:build",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/component-library dev & bun run --filter @randsum/site dev",
@@ -143,7 +150,7 @@
     "version:patch": "bun pm version patch",
     "version:minor": "bun pm version minor",
     "version:major": "bun pm version major",
-    "publish": "bun run lint && bun run typecheck && bun run test && bun run build && bun run size && bun run check:exports && npm publish --workspaces --access=public"
+    "publish": "bun run lint && bun run format:check && bun run typecheck && bun run test && bun run build && bun run size && bun run check:exports && npm publish --workspaces --access=public"
   },
   "type": "module",
   "workspaces": [
@@ -158,9 +165,5 @@
     "markdown-it": "14.1.1",
     "mdast-util-to-hast": "13.2.1",
     "undici": "6.23.0"
-  },
-  "dependencies": {
-    "@astrojs/netlify": "6.6.4",
-    "astro": "5.18.0"
   }
 }

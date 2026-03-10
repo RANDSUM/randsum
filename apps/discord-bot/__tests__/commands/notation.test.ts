@@ -44,7 +44,7 @@ describe('notationCommand', () => {
     await notationCommand.execute(interaction as never)
     expect(interaction.deferReply).toHaveBeenCalledTimes(1)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('RANDSUM.io')
+    expect(mockEmbed.setTitle).toHaveBeenCalledWith('randsum.dev')
     expect(mockEmbed.addFields).toHaveBeenCalled()
   })
 })

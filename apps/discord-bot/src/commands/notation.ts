@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { embedFooterDetails } from '../utils/constants.js'
+import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
 const notationReference = [
@@ -21,21 +22,21 @@ const notationReference = [
     label: 'Cap',
     notation: 'C',
     description: 'Caps all dice at a maximum value',
-    example: '3d10C5',
+    example: '3d10C{5}',
     exampleExplanation: 'Roll 3d10, cap each die at 5'
   },
   {
     label: 'Reroll',
     notation: 'R',
     description: 'Rerolls dice that match the specified value',
-    example: '2d20R1',
+    example: '2d20R{1}',
     exampleExplanation: 'Roll 2d20, reroll any 1s once'
   },
   {
     label: 'Replace',
-    notation: 'r',
+    notation: 'V',
     description: 'Replaces dice that match the first value with the second value',
-    example: '3d6r1:6',
+    example: '3d6V{1=6}',
     exampleExplanation: 'Roll 3d6, replace any 1s with 6s'
   },
   {
@@ -83,20 +84,30 @@ export const notationCommand: Command = {
   async execute(interaction) {
     await interaction.deferReply()
 
-    const fields = notationReference.map(notation => ({
-      name: `${notation.label} (${notation.notation})`,
-      value: `${notation.description}\n**Example:** \`${notation.example}\` - ${notation.exampleExplanation}`,
-      inline: false
-    }))
+    try {
+      const fields = notationReference.map(notation => ({
+        name: `${notation.label} (${notation.notation})`,
+        value: `${notation.description}\n**Example:** \`${notation.example}\` - ${notation.exampleExplanation}`,
+        inline: false
+      }))
 
-    const embed = new EmbedBuilder()
-      .setColor('#FFD700')
-      .setTitle('RANDSUM.io')
-      .setURL('https://github.com/RANDSUM/randsum/blob/main/packages/roller/GUIDE.md')
-      .setDescription('Dice Notation Reference Guide')
-      .addFields(fields)
-      .setFooter(embedFooterDetails)
+      const embed = new EmbedBuilder()
+        .setColor('#FFD700')
+        .setTitle('randsum.dev')
+        .setURL(
+          'https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md'
+        )
+        .setDescription('Dice Notation Reference Guide')
+        .addFields(fields)
+        .setFooter(embedFooterDetails)
 
-    await interaction.editReply({ embeds: [embed] })
+      await interaction.editReply({ embeds: [embed] })
+    } catch (e) {
+      await replyWithError(
+        interaction,
+        'Error',
+        e instanceof Error ? e.message : 'An unknown error occurred'
+      )
+    }
   }
 }

@@ -136,5 +136,5 @@ All 14 modifier notation schemas are exported for use by the roller's modifier r
 - [randsum.dev](https://randsum.dev) - Documentation site
 
 <div align="center">
-Made with <a href="https://github.com/RANDSUM">RANDSUM</a>
+Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
 </div>

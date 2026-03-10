@@ -27,10 +27,10 @@ bun add @randsum/display-utils
 Takes a `RollRecord` from `@randsum/roller` and returns an ordered array of `TooltipStep` values describing each stage of a roll — initial dice, modifier applications, and the final result. Used to render step-by-step roll breakdowns in tooltips and detail panels.
 
 ```typescript
-import { computeSteps } from '@randsum/display-utils'
-import { roll } from '@randsum/roller'
+import { computeSteps } from "@randsum/display-utils"
+import { roll } from "@randsum/roller"
 
-const result = roll('4d6L')
+const result = roll("4d6L")
 const steps = computeSteps(result.rolls[0])
 // steps: [{ kind: 'rolls', label: 'Rolled', ... }, { kind: 'rolls', label: 'Drop Lowest 1', ... }, ...]
 ```
@@ -44,9 +44,9 @@ Also exports `formatAsMath(rolls, delta?)` — formats a roll array as a math ex
 A static record mapping modifier notation keys to `ModifierDoc` objects. Each entry documents a RANDSUM dice modifier with its title, description, notation forms, comparison operators, and usage examples.
 
 ```typescript
-import { MODIFIER_DOCS } from '@randsum/display-utils'
+import { MODIFIER_DOCS } from "@randsum/display-utils"
 
-const doc = MODIFIER_DOCS['R{..}']
+const doc = MODIFIER_DOCS["R{..}"]
 // doc.title      => 'Reroll'
 // doc.forms      => [{ notation: 'R{...}', note: '...' }, ...]
 // doc.examples   => [{ notation: '4d6R{1}', description: 'Reroll any 1s' }, ...]
@@ -59,9 +59,9 @@ Covers all modifiers: core roll (`xDN`), drop/keep (`L`, `H`, `K`, `KL`, `D{..}`
 Generates a `StackBlitzProject` object ready to pass to the StackBlitz SDK. The project contains a runnable `index.ts` that rolls the given notation with `@randsum/roller` and logs the result.
 
 ```typescript
-import { buildStackBlitzProject } from '@randsum/display-utils'
+import { buildStackBlitzProject } from "@randsum/display-utils"
 
-const project = buildStackBlitzProject('4d6L')
+const project = buildStackBlitzProject("4d6L")
 // project.title   => 'RANDSUM — 4d6L'
 // project.files   => { 'index.ts': '...', 'package.json': '...' }
 // project.template => 'node'
@@ -70,8 +70,8 @@ const project = buildStackBlitzProject('4d6L')
 ## Related Packages
 
 - [@randsum/roller](../roller) - Core dice rolling engine
-- [@randsum/component-library](../../apps/component-library) - React UI components
+- [@randsum/component-library](../component-library) - React UI components
 
 <div align="center">
-Made with by <a href="https://github.com/RANDSUM">RANDSUM</a>
+Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>
 </div>

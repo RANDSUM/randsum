@@ -7,6 +7,10 @@ export const SALVAGE_UNION_TABLE_NAMES: readonly string[] = Object.freeze(
     .map(t => t.name)
 )
 
+// Note: SalvageUnionTableName resolves to `string` at the type level because
+// table names are derived from the runtime salvageunion-reference dependency
+// and cannot be narrowed to a string literal union. Runtime validation in roll()
+// ensures only valid table names are accepted.
 export type SalvageUnionTableName = (typeof SALVAGE_UNION_TABLE_NAMES)[number]
 
 export interface SalvageUnionTableListing {

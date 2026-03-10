@@ -3,10 +3,10 @@ import { defineConfig } from 'bunup'
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
-  dts: true,
+  dts: false,
   minify: true,
   sourcemap: 'external',
   target: 'node',
   clean: true,
-  noExternal: ['@randsum/roller']
+  noExternal: ['@randsum/roller', '@randsum/notation', '@randsum/display-utils']
 })

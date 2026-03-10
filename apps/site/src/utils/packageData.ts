@@ -42,7 +42,7 @@ export const gamePackages: PackageInfo[] = [
     displayName: 'Blades in the Dark',
     description: 'Action roll resolution for Blades in the Dark.',
     npmPackage: '@randsum/blades',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/blades',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/blades',
     version: '3.0.0',
     category: 'game',
     color: '#f97316' // orange
@@ -53,7 +53,7 @@ export const gamePackages: PackageInfo[] = [
     displayName: 'Daggerheart',
     description: 'Hope and fear roll resolution for Daggerheart.',
     npmPackage: '@randsum/daggerheart',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/daggerheart',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/daggerheart',
     version: '3.0.0',
     category: 'game',
     color: '#9333ea' // purple
@@ -64,7 +64,7 @@ export const gamePackages: PackageInfo[] = [
     displayName: 'D&D 5th Edition',
     description: 'd20 roll resolution for D&D 5e.',
     npmPackage: '@randsum/fifth',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/fifth',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/fifth',
     version: '3.0.0',
     category: 'game',
     color: '#dc2626' // red
@@ -75,7 +75,7 @@ export const gamePackages: PackageInfo[] = [
     displayName: 'Root RPG',
     description: '2d6 roll resolution for Root RPG.',
     npmPackage: '@randsum/root-rpg',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/root-rpg',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/root-rpg',
     version: '3.0.0',
     category: 'game',
     color: '#22c55e' // green
@@ -86,7 +86,7 @@ export const gamePackages: PackageInfo[] = [
     displayName: 'Salvage Union',
     description: 'd20 table lookups for Salvage Union.',
     npmPackage: '@randsum/salvageunion',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/salvageunion',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/salvageunion',
     version: '3.0.0',
     category: 'game',
     color: '#60a5fa' // lightblue
@@ -97,7 +97,7 @@ export const gamePackages: PackageInfo[] = [
     displayName: 'Powered by the Apocalypse',
     description: '2d6 roll resolution for any PbtA system.',
     npmPackage: '@randsum/pbta',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/pbta',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/pbta',
     version: '3.0.0',
     category: 'game',
     color: '#6b7280' // grey
@@ -123,7 +123,7 @@ export const toolPackages: PackageInfo[] = [
     description: 'React components for embedding dice rollers in any web app.',
     npmPackage: '@randsum/component-library',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/component-library',
-    version: '0.1.0',
+    version: '3.0.0',
     category: 'tool',
     color: '#3b82f6' // blue
   },

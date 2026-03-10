@@ -25,6 +25,7 @@ export type { RollParams, RollRecord, RollerRollResult } from '../types/results'
 
 export type {
   InvalidValidationResult,
+  ParsedNotationOptions,
   ValidValidationResult,
   ValidationErrorInfo,
   ValidationResult

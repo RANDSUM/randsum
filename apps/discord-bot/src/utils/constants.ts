@@ -1,5 +1,5 @@
 export const embedFooterDetails = {
-  text: 'Rolled with 👹 by RANDSUM.io'
+  text: 'Rolled with 👹 by randsum.dev'
 }
 
 export const D6_IMAGES = {

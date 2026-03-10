@@ -42,9 +42,9 @@ roll("1d20+5", "2d6+3") // Multiple rolls combined
 ## CLI
 
 ```bash
-npx randsum 2d20    # Roll two d20s
-npx randsum 4d6L    # Roll 4d6, drop lowest
-npx randsum 3d8+2   # Roll 3d8 and add 2
+npx @randsum/cli 2d20    # Roll two d20s
+npx @randsum/cli 4d6L    # Roll 4d6, drop lowest
+npx @randsum/cli 3d8+2   # Roll 3d8 and add 2
 ```
 
 ## API
@@ -118,11 +118,12 @@ import {
 
 ## Related Packages
 
-- [@randsum/blades](../blades) - Blades in the Dark
-- [@randsum/daggerheart](../daggerheart) - Daggerheart
-- [@randsum/fifth](../fifth) - D&D 5th Edition
-- [@randsum/root-rpg](../root-rpg) - Root RPG
-- [@randsum/salvageunion](../salvageunion) - Salvage Union
+- [@randsum/blades](../../games/blades) - Blades in the Dark
+- [@randsum/daggerheart](../../games/daggerheart) - Daggerheart
+- [@randsum/fifth](../../games/fifth) - D&D 5th Edition
+- [@randsum/root-rpg](../../games/root-rpg) - Root RPG
+- [@randsum/salvageunion](../../games/salvageunion) - Salvage Union
+- [@randsum/pbta](../../games/pbta) - Powered by the Apocalypse
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

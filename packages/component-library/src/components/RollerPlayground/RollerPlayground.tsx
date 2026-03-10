@@ -6,6 +6,7 @@ import { ModifierReference } from '../ModifierReference'
 import type { ModifierReferenceCell } from '../ModifierReference'
 import { ModifierDocContent } from '../ModifierReference'
 import { Overlay } from '../Overlay'
+import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/notation'
 import './RollerPlayground.css'
 
@@ -179,130 +180,114 @@ export function RollerPlayground({
     .join(' ')
 
   return (
-    <div
-      className={rootClass}
-      onClick={e => {
-        if (!(e.target instanceof HTMLButtonElement) && !(e.target instanceof HTMLInputElement))
-          inputRef.current?.focus()
-        const expandEl = (e.currentTarget as HTMLElement).querySelector('.roller-playground-expand')
-        if (overlayContent !== null && expandEl && !expandEl.contains(e.target as Node)) {
-          dismiss()
-        }
-      }}
-    >
-      <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
-        <div className="roller-playground-row">
-          <div className="roller-playground-code-wrap">
-            <span className="roller-playground-code-prefix">
-              <button
-                className="roller-playground-code-fn"
+    <ErrorBoundary>
+      <div
+        className={rootClass}
+        onClick={e => {
+          if (!(e.target instanceof HTMLButtonElement) && !(e.target instanceof HTMLInputElement))
+            inputRef.current?.focus()
+          const expandEl = (e.currentTarget as HTMLElement).querySelector(
+            '.roller-playground-expand'
+          )
+          if (overlayContent !== null && expandEl && !expandEl.contains(e.target as Node)) {
+            dismiss()
+          }
+        }}
+      >
+        <div className={`roller-playground-shell roller-playground-shell--${shellVariant}`}>
+          <div className="roller-playground-row">
+            <div className="roller-playground-code-wrap">
+              <span className="roller-playground-code-prefix">
+                <button
+                  className="roller-playground-code-fn"
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleRoll()
+                  }}
+                  disabled={!isValid || state.status === 'rolling'}
+                  aria-label="Roll"
+                >
+                  roll
+                </button>
+                <span className="roller-playground-code-paren">(</span>
+                <span className="roller-playground-code-str-delim">&#39;</span>
+              </span>
+              <div className="rp-input-wrap">
+                {tokens.length > 0 && (
+                  <div className="rp-notation-overlay" aria-hidden="true">
+                    {tokens.map((token, i) => (
+                      <span
+                        key={i}
+                        className={[
+                          'rp-token',
+                          `rp-token--${token.type}`,
+                          hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'rp-token--dim' : '',
+                          hoveredTokenIdx === i ? 'rp-token--active' : ''
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
+                        {token.text}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className={[
+                    'roller-playground-input',
+                    tokens.length > 0 ? 'roller-playground-input--highlight' : ''
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  style={{ width: `${notation.length || 4}ch` }}
+                  value={notation}
+                  onChange={handleChange}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') handleRoll()
+                  }}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  placeholder="1d20"
+                  spellCheck={false}
+                  autoComplete="off"
+                  aria-label="Dice notation"
+                />
+              </div>
+              <span
+                className="roller-playground-code-suffix"
                 onClick={e => {
                   e.stopPropagation()
-                  handleRoll()
+                  const input = inputRef.current
+                  if (input) {
+                    input.focus()
+                    const len = input.value.length
+                    input.setSelectionRange(len, len)
+                  }
                 }}
-                disabled={!isValid || state.status === 'rolling'}
-                aria-label="Roll"
+                style={{ cursor: 'text' }}
               >
-                roll
-              </button>
-              <span className="roller-playground-code-paren">(</span>
-              <span className="roller-playground-code-str-delim">&#39;</span>
-            </span>
-            <div className="rp-input-wrap">
-              {tokens.length > 0 && (
-                <div className="rp-notation-overlay" aria-hidden="true">
-                  {tokens.map((token, i) => (
-                    <span
-                      key={i}
-                      className={[
-                        'rp-token',
-                        `rp-token--${token.type}`,
-                        hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'rp-token--dim' : '',
-                        hoveredTokenIdx === i ? 'rp-token--active' : ''
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
-                    >
-                      {token.text}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <input
-                ref={inputRef}
-                type="text"
+                <span className="roller-playground-code-str-delim">&#39;</span>
+                <span className="roller-playground-code-paren">)</span>
+              </span>
+            </div>
+
+            {!expandedProp && (
+              <div
                 className={[
-                  'roller-playground-input',
-                  tokens.length > 0 ? 'roller-playground-input--highlight' : ''
+                  'roller-playground-chip',
+                  state.status !== 'result' ? 'roller-playground-chip--modifiers' : '',
+                  (state.status === 'result' ? overlayContent !== null : expanded)
+                    ? 'roller-playground-chip--expanded'
+                    : ''
                 ]
                   .filter(Boolean)
                   .join(' ')}
-                style={{ width: `${notation.length || 4}ch` }}
-                value={notation}
-                onChange={handleChange}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') handleRoll()
-                }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                placeholder="1d20"
-                spellCheck={false}
-                autoComplete="off"
-                aria-label="Dice notation"
-              />
-            </div>
-            <span
-              className="roller-playground-code-suffix"
-              onClick={e => {
-                e.stopPropagation()
-                const input = inputRef.current
-                if (input) {
-                  input.focus()
-                  const len = input.value.length
-                  input.setSelectionRange(len, len)
-                }
-              }}
-              style={{ cursor: 'text' }}
-            >
-              <span className="roller-playground-code-str-delim">&#39;</span>
-              <span className="roller-playground-code-paren">)</span>
-            </span>
-          </div>
-
-          {!expandedProp && (
-            <div
-              className={[
-                'roller-playground-chip',
-                state.status !== 'result' ? 'roller-playground-chip--modifiers' : '',
-                (state.status === 'result' ? overlayContent !== null : expanded)
-                  ? 'roller-playground-chip--expanded'
-                  : ''
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              onClick={
-                state.status === 'rolling'
-                  ? undefined
-                  : () => {
-                      if (state.status === 'result') {
-                        if (overlayContent) {
-                          setOverlayContent(null)
-                        } else {
-                          setOverlayContent({ kind: 'result' })
-                        }
-                      } else {
-                        setExpanded(v => !v)
-                      }
-                    }
-              }
-              role="button"
-              tabIndex={state.status === 'rolling' ? undefined : 0}
-              onKeyDown={
-                state.status === 'rolling'
-                  ? undefined
-                  : (e: React.KeyboardEvent) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
+                onClick={
+                  state.status === 'rolling'
+                    ? undefined
+                    : () => {
                         if (state.status === 'result') {
                           if (overlayContent) {
                             setOverlayContent(null)
@@ -310,207 +295,227 @@ export function RollerPlayground({
                             setOverlayContent({ kind: 'result' })
                           }
                         } else {
-                          setExpanded(prev => !prev)
+                          setExpanded(v => !v)
                         }
                       }
-                    }
-              }
-              aria-label={
-                state.status === 'result'
-                  ? overlayContent !== null
-                    ? 'Close result'
-                    : 'Open result'
-                  : expanded
-                    ? 'Close modifier reference'
-                    : 'Open modifier reference'
-              }
-              aria-expanded={state.status === 'result' ? overlayContent !== null : expanded}
-            >
-              {state.status === 'result' ? (
-                <>
-                  <span
-                    className={[
-                      'roller-playground-chip-value',
-                      overlayContent !== null ? 'roller-playground-chip-value--hidden' : ''
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
-                  >
-                    {state.total}
-                  </span>
-                  {overlayContent !== null ? (
-                    <span className="roller-playground-chip-collapse" aria-hidden="true">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        width="12"
-                        height="12"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <polyline points="18 15 12 9 6 15" />
-                      </svg>
-                    </span>
-                  ) : (
-                    <span className="roller-playground-chip-hint" aria-hidden="true">
-                      ↓
-                    </span>
-                  )}
-                </>
-              ) : expanded ? (
-                <span className="roller-playground-chip-collapse" aria-hidden="true">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="12"
-                    height="12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <polyline points="18 15 12 9 6 15" />
-                  </svg>
-                </span>
-              ) : (
-                <span className="roller-playground-chip-modifiers-label">Modifiers</span>
-              )}
-            </div>
-          )}
-        </div>
-        <div className="roller-playground-desc-row">
-          {notation.length === 0 ? (
-            <span className="roller-playground-desc roller-playground-desc--hint">
-              Try: 4d6L, 1d20+5, 2d8!
-            </span>
-          ) : !isValid ? (
-            <span className="roller-playground-desc roller-playground-desc--invalid">
-              Invalid notation
-            </span>
-          ) : (
-            <span className="roller-playground-desc roller-playground-desc--valid">
-              {tokens
-                .map((token, tokenIdx) => ({ token, tokenIdx }))
-                .filter(({ token }) => Boolean(token.description))
-                .map(({ token, tokenIdx }, i) => {
-                  const sep =
-                    i === 0
-                      ? null
-                      : token.type === 'core'
-                        ? token.text.startsWith('-')
-                          ? ' − '
-                          : ' + '
-                        : ', '
-                  return (
-                    <Fragment key={tokenIdx}>
-                      {sep !== null && <span className="rp-desc-sep">{sep}</span>}
-                      <span
-                        className={[
-                          'rp-desc-chip',
-                          `rp-desc-chip--${token.type}`,
-                          hoveredTokenIdx === tokenIdx ? 'rp-desc-chip--active' : ''
-                        ]
-                          .filter(Boolean)
-                          .join(' ')}
-                        onMouseEnter={() => {
-                          setHoveredTokenIdx(tokenIdx)
-                        }}
-                        onMouseLeave={() => {
-                          setHoveredTokenIdx(null)
-                        }}
-                      >
-                        {token.description}
-                      </span>
-                    </Fragment>
-                  )
-                })}
-            </span>
-          )}
-        </div>
-        <div
-          className={`roller-playground-expand${expandedProp || expanded || overlayContent !== null ? ' roller-playground-expand--open' : ''}`}
-        >
-          <div className="roller-playground-expand-inner">
-            <div className="roller-playground-expand-reference">
-              <ModifierReference modifiersDisabled={!isValid} onCellClick={handleCellClick} />
-              <Overlay
-                visible={overlayContent !== null}
-                dismissing={dismissing}
-                dismissible={
-                  overlayContent?.kind === 'result' ||
-                  (overlayContent?.kind === 'modifier-doc' && overlayContent.returnTo === null)
                 }
-                onDismiss={
-                  overlayContent?.kind === 'modifier-doc' && overlayContent.returnTo === 'result'
-                    ? () => {
-                        setOverlayContent({ kind: 'result' })
+                role="button"
+                tabIndex={state.status === 'rolling' ? undefined : 0}
+                onKeyDown={
+                  state.status === 'rolling'
+                    ? undefined
+                    : (e: React.KeyboardEvent) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          if (state.status === 'result') {
+                            if (overlayContent) {
+                              setOverlayContent(null)
+                            } else {
+                              setOverlayContent({ kind: 'result' })
+                            }
+                          } else {
+                            setExpanded(prev => !prev)
+                          }
+                        }
                       }
-                    : dismiss
                 }
+                aria-label={
+                  state.status === 'result'
+                    ? overlayContent !== null
+                      ? 'Close result'
+                      : 'Open result'
+                    : expanded
+                      ? 'Close modifier reference'
+                      : 'Open modifier reference'
+                }
+                aria-expanded={state.status === 'result' ? overlayContent !== null : expanded}
               >
-                {overlayContent?.kind === 'rolling' && (
-                  <div className="roller-playground-result-loading">
-                    <div className="roller-playground-expand-loading-spinner" />
-                  </div>
-                )}
-                {overlayContent?.kind === 'result' && state.status === 'result' && (
+                {state.status === 'result' ? (
                   <>
-                    <div className="roller-playground-result-total-hero">{state.total}</div>
-                    <RollResult records={state.records} />
-                    <div className="roller-playground-expand-total">
-                      <span>Total</span>
-                      <span className="roller-playground-expand-total-chip">{state.total}</span>
-                    </div>
+                    <span
+                      className={[
+                        'roller-playground-chip-value',
+                        overlayContent !== null ? 'roller-playground-chip-value--hidden' : ''
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      {state.total}
+                    </span>
+                    {overlayContent !== null ? (
+                      <span className="roller-playground-chip-collapse" aria-hidden="true">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="12"
+                          height="12"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <polyline points="18 15 12 9 6 15" />
+                        </svg>
+                      </span>
+                    ) : (
+                      <span className="roller-playground-chip-hint" aria-hidden="true">
+                        ↓
+                      </span>
+                    )}
                   </>
+                ) : expanded ? (
+                  <span className="roller-playground-chip-collapse" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="18 15 12 9 6 15" />
+                    </svg>
+                  </span>
+                ) : (
+                  <span className="roller-playground-chip-modifiers-label">Modifiers</span>
                 )}
-                {overlayContent?.kind === 'modifier-doc' &&
-                  (overlayContent.returnTo === 'result' ? (
-                    <ModifierDocContent
-                      cell={overlayContent.cell}
-                      onBack={() => {
-                        setOverlayContent({ kind: 'result' })
-                      }}
-                      onAdd={handleAddModifier}
-                      notationHasCore={notationHasCore}
-                    />
-                  ) : (
-                    <ModifierDocContent
-                      cell={overlayContent.cell}
-                      onAdd={handleAddModifier}
-                      notationHasCore={notationHasCore}
-                    />
-                  ))}
-              </Overlay>
+              </div>
+            )}
+          </div>
+          <div className="roller-playground-desc-row">
+            {notation.length === 0 ? (
+              <span className="roller-playground-desc roller-playground-desc--hint">
+                Try: 4d6L, 1d20+5, 2d8!
+              </span>
+            ) : !isValid ? (
+              <span className="roller-playground-desc roller-playground-desc--invalid">
+                Invalid notation
+              </span>
+            ) : (
+              <span className="roller-playground-desc roller-playground-desc--valid">
+                {tokens
+                  .map((token, tokenIdx) => ({ token, tokenIdx }))
+                  .filter(({ token }) => Boolean(token.description))
+                  .map(({ token, tokenIdx }, i) => {
+                    const sep =
+                      i === 0
+                        ? null
+                        : token.type === 'core'
+                          ? token.text.startsWith('-')
+                            ? ' − '
+                            : ' + '
+                          : ', '
+                    return (
+                      <Fragment key={tokenIdx}>
+                        {sep !== null && <span className="rp-desc-sep">{sep}</span>}
+                        <span
+                          className={[
+                            'rp-desc-chip',
+                            `rp-desc-chip--${token.type}`,
+                            hoveredTokenIdx === tokenIdx ? 'rp-desc-chip--active' : ''
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
+                          onMouseEnter={() => {
+                            setHoveredTokenIdx(tokenIdx)
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredTokenIdx(null)
+                          }}
+                        >
+                          {token.description}
+                        </span>
+                      </Fragment>
+                    )
+                  })}
+              </span>
+            )}
+          </div>
+          <div
+            className={`roller-playground-expand${expandedProp || expanded || overlayContent !== null ? ' roller-playground-expand--open' : ''}`}
+          >
+            <div className="roller-playground-expand-inner">
+              <div className="roller-playground-expand-reference">
+                <ModifierReference modifiersDisabled={!isValid} onCellClick={handleCellClick} />
+                <Overlay
+                  visible={overlayContent !== null}
+                  dismissing={dismissing}
+                  dismissible={
+                    overlayContent?.kind === 'result' ||
+                    (overlayContent?.kind === 'modifier-doc' && overlayContent.returnTo === null)
+                  }
+                  onDismiss={
+                    overlayContent?.kind === 'modifier-doc' && overlayContent.returnTo === 'result'
+                      ? () => {
+                          setOverlayContent({ kind: 'result' })
+                        }
+                      : dismiss
+                  }
+                >
+                  {overlayContent?.kind === 'rolling' && (
+                    <div className="roller-playground-result-loading">
+                      <div className="roller-playground-expand-loading-spinner" />
+                    </div>
+                  )}
+                  {overlayContent?.kind === 'result' && state.status === 'result' && (
+                    <>
+                      <div className="roller-playground-result-total-hero">{state.total}</div>
+                      <RollResult records={state.records} />
+                      <div className="roller-playground-expand-total">
+                        <span>Total</span>
+                        <span className="roller-playground-expand-total-chip">{state.total}</span>
+                      </div>
+                    </>
+                  )}
+                  {overlayContent?.kind === 'modifier-doc' &&
+                    (overlayContent.returnTo === 'result' ? (
+                      <ModifierDocContent
+                        cell={overlayContent.cell}
+                        onBack={() => {
+                          setOverlayContent({ kind: 'result' })
+                        }}
+                        onAdd={handleAddModifier}
+                        notationHasCore={notationHasCore}
+                      />
+                    ) : (
+                      <ModifierDocContent
+                        cell={overlayContent.cell}
+                        onAdd={handleAddModifier}
+                        notationHasCore={notationHasCore}
+                      />
+                    ))}
+                </Overlay>
+              </div>
             </div>
           </div>
-        </div>
-        {stackblitz && (
-          <button
-            className="roller-playground-stackblitz roller-playground-stackblitz--corner"
-            onClick={() => {
-              openInStackBlitz(notation)
-            }}
-            aria-label="Open in StackBlitz"
-          >
-            <svg
-              className="roller-playground-stackblitz-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+          {stackblitz && (
+            <button
+              className="roller-playground-stackblitz roller-playground-stackblitz--corner"
+              onClick={() => {
+                openInStackBlitz(notation)
+              }}
+              aria-label="Open in StackBlitz"
             >
-              <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
-            </svg>
-            Edit in StackBlitz
-          </button>
-        )}
+              <svg
+                className="roller-playground-stackblitz-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M10 0L0 14h10L5 24 24 8h-10L19 0z" />
+              </svg>
+              Edit in StackBlitz
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   )
 }
 

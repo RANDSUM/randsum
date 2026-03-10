@@ -9,13 +9,15 @@ export {
   NotationParseError,
   ModifierError,
   ValidationError,
-  RollError
+  RollError,
+  ERROR_CODES
 } from './internal/api'
 
 export { createGameRoll, createMultiRollGameRoll } from './internal/api'
 
 export type {
   DiceNotation,
+  ParsedNotationOptions,
   RollArgument,
   RollConfig,
   RollOptions,

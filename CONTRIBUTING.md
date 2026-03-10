@@ -230,7 +230,7 @@ bun run create:game <game-name>
 This creates a complete package structure with all required files:
 
 ```
-packages/{game-name}/
+games/{game-name}/
   src/
     index.ts              # Main exports
     types.ts              # Game-specific types (customize this)

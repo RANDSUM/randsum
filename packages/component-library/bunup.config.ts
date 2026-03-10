@@ -4,7 +4,15 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-  external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+  external: [
+    'react',
+    'react-dom',
+    'react/jsx-runtime',
+    'react/jsx-dev-runtime',
+    '@randsum/roller',
+    '@randsum/display-utils',
+    '@randsum/notation'
+  ],
   minify: true,
   sourcemap: 'external',
   target: 'browser',

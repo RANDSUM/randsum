@@ -62,7 +62,7 @@ export const roll: (
     },
     interpretResult: (
       input: DaggerheartRollArgument,
-      _rollResult: RollerRollResult,
+      rollResult: RollerRollResult,
       rollsByKey: Map<string, RollRecord>
     ) => {
       const hopeRoll = rollsByKey.get('hope')
@@ -89,7 +89,7 @@ export const roll: (
         modifier
       }
 
-      const baseTotal = _rollResult.total
+      const baseTotal = rollResult.total
 
       return {
         result: resultType,

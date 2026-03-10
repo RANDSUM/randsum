@@ -1,4 +1,5 @@
 import './ModifierReference.css'
+import { ErrorBoundary } from '../ErrorBoundary'
 
 export interface ModifierReferenceCell {
   readonly notation: string
@@ -85,114 +86,116 @@ export function ModifierReference({
   const cellsInteractive = !modifiersDisabled && onCellClick !== undefined
 
   return (
-    <div className="modifier-reference not-content">
-      <div className="modifier-reference-grid">
-        {GRID_ROWS.map(([left, right]) => {
-          const isCore = left === 'CORE'
-          const leftEntry = isCore ? CORE : left
-          const rowKey = isCore ? 'CORE' : leftEntry.notation
-          const leftInteractive = isCore ? coreInteractive : cellsInteractive
-          const leftDisabled = isCore ? coreDisabled : modifiersDisabled
+    <ErrorBoundary>
+      <div className="modifier-reference not-content">
+        <div className="modifier-reference-grid">
+          {GRID_ROWS.map(([left, right]) => {
+            const isCore = left === 'CORE'
+            const leftEntry = isCore ? CORE : left
+            const rowKey = isCore ? 'CORE' : leftEntry.notation
+            const leftInteractive = isCore ? coreInteractive : cellsInteractive
+            const leftDisabled = isCore ? coreDisabled : modifiersDisabled
 
-          return (
-            <div key={rowKey} className="modifier-reference-row">
-              <div
-                className={[
-                  'modifier-reference-cell modifier-reference-cell--left',
-                  isCore ? 'modifier-reference-cell--core' : '',
-                  leftInteractive ? 'modifier-reference-cell--interactive' : '',
-                  leftDisabled ? 'modifier-reference--disabled' : ''
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                role={leftInteractive ? 'button' : undefined}
-                tabIndex={leftInteractive ? 0 : undefined}
-                onClick={
-                  leftInteractive
-                    ? () => {
-                        onCellClick?.({ ...leftEntry, isCore })
-                      }
-                    : undefined
-                }
-                onKeyDown={
-                  leftInteractive
-                    ? e => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
+            return (
+              <div key={rowKey} className="modifier-reference-row">
+                <div
+                  className={[
+                    'modifier-reference-cell modifier-reference-cell--left',
+                    isCore ? 'modifier-reference-cell--core' : '',
+                    leftInteractive ? 'modifier-reference-cell--interactive' : '',
+                    leftDisabled ? 'modifier-reference--disabled' : ''
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  role={leftInteractive ? 'button' : undefined}
+                  tabIndex={leftInteractive ? 0 : undefined}
+                  onClick={
+                    leftInteractive
+                      ? () => {
                           onCellClick?.({ ...leftEntry, isCore })
                         }
-                      }
-                    : undefined
-                }
-              >
-                <span className="modifier-reference-notation">
-                  {leftEntry.notation}
-                  {leftEntry.notationSuffix && (
-                    <span
-                      className={
-                        leftEntry.notationSuffixRequired
-                          ? 'modifier-reference-notation-suffix--required'
-                          : 'modifier-reference-notation-suffix--optional'
-                      }
-                    >
-                      {leftEntry.notationSuffix}
-                    </span>
-                  )}
-                </span>
-                <span
-                  className={isCore ? 'modifier-reference-core-desc' : 'modifier-reference-desc'}
+                      : undefined
+                  }
+                  onKeyDown={
+                    leftInteractive
+                      ? e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            onCellClick?.({ ...leftEntry, isCore })
+                          }
+                        }
+                      : undefined
+                  }
                 >
-                  {leftEntry.description}
-                </span>
-              </div>
-              <div
-                className={[
-                  'modifier-reference-cell modifier-reference-cell--right',
-                  cellsInteractive ? 'modifier-reference-cell--interactive' : '',
-                  modifiersDisabled ? 'modifier-reference--disabled' : ''
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                role={cellsInteractive ? 'button' : undefined}
-                tabIndex={cellsInteractive ? 0 : undefined}
-                onClick={
-                  cellsInteractive
-                    ? () => {
-                        onCellClick({ ...right, isCore: false })
-                      }
-                    : undefined
-                }
-                onKeyDown={
-                  cellsInteractive
-                    ? e => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
+                  <span className="modifier-reference-notation">
+                    {leftEntry.notation}
+                    {leftEntry.notationSuffix && (
+                      <span
+                        className={
+                          leftEntry.notationSuffixRequired
+                            ? 'modifier-reference-notation-suffix--required'
+                            : 'modifier-reference-notation-suffix--optional'
+                        }
+                      >
+                        {leftEntry.notationSuffix}
+                      </span>
+                    )}
+                  </span>
+                  <span
+                    className={isCore ? 'modifier-reference-core-desc' : 'modifier-reference-desc'}
+                  >
+                    {leftEntry.description}
+                  </span>
+                </div>
+                <div
+                  className={[
+                    'modifier-reference-cell modifier-reference-cell--right',
+                    cellsInteractive ? 'modifier-reference-cell--interactive' : '',
+                    modifiersDisabled ? 'modifier-reference--disabled' : ''
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  role={cellsInteractive ? 'button' : undefined}
+                  tabIndex={cellsInteractive ? 0 : undefined}
+                  onClick={
+                    cellsInteractive
+                      ? () => {
                           onCellClick({ ...right, isCore: false })
                         }
-                      }
-                    : undefined
-                }
-              >
-                <span className="modifier-reference-desc">{right.description}</span>
-                <span className="modifier-reference-notation">
-                  {right.notation}
-                  {right.notationSuffix && (
-                    <span
-                      className={
-                        right.notationSuffixRequired
-                          ? 'modifier-reference-notation-suffix--required'
-                          : 'modifier-reference-notation-suffix--optional'
-                      }
-                    >
-                      {right.notationSuffix}
-                    </span>
-                  )}
-                </span>
+                      : undefined
+                  }
+                  onKeyDown={
+                    cellsInteractive
+                      ? e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            onCellClick({ ...right, isCore: false })
+                          }
+                        }
+                      : undefined
+                  }
+                >
+                  <span className="modifier-reference-desc">{right.description}</span>
+                  <span className="modifier-reference-notation">
+                    {right.notation}
+                    {right.notationSuffix && (
+                      <span
+                        className={
+                          right.notationSuffixRequired
+                            ? 'modifier-reference-notation-suffix--required'
+                            : 'modifier-reference-notation-suffix--optional'
+                        }
+                      >
+                        {right.notationSuffix}
+                      </span>
+                    )}
+                  </span>
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   )
 }
