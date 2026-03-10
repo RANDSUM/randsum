@@ -34,14 +34,14 @@
         "randsum": "dist/index.js",
       },
       "dependencies": {
+        "@randsum/display-utils": "workspace:~",
+        "@randsum/notation": "workspace:~",
+        "@randsum/roller": "workspace:~",
         "ink": "^6.8.0",
         "ink-text-input": "^6.0.0",
         "react": "^19.2.0",
       },
       "devDependencies": {
-        "@randsum/display-utils": "workspace:~",
-        "@randsum/notation": "workspace:~",
-        "@randsum/roller": "workspace:~",
         "@types/react": "^19.0.0",
       },
     },

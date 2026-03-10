@@ -42,12 +42,12 @@
   "dependencies": {
     "ink": "^6.8.0",
     "ink-text-input": "^6.0.0",
-    "react": "^19.2.0"
-  },
-  "devDependencies": {
+    "react": "^19.2.0",
     "@randsum/display-utils": "workspace:~",
     "@randsum/notation": "workspace:~",
-    "@randsum/roller": "workspace:~",
+    "@randsum/roller": "workspace:~"
+  },
+  "devDependencies": {
     "@types/react": "^19.0.0"
   },
   "scripts": {
