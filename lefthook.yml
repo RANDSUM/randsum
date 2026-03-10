@@ -28,4 +28,4 @@ pre-push:
     skill-verify:
       run: npx skills-ref validate skills/dice-rolling/SKILL.md
     audit:
-      run: npm audit --audit-level=high
+      run: bun audit --level=high
