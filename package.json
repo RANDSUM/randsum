@@ -13,7 +13,7 @@
     "eslint": "10.0.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.5",
-    "fast-check": "4.5.3",
+    "fast-check": "4.6.0",
     "lefthook": "2.1.2",
     "mitata": "1.0.34",
     "prettier": "3.8.1",
