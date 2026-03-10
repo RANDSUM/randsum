@@ -2,11 +2,13 @@ import './definitions'
 
 export {
   defineModifier,
+  registerNotationSchema,
   getModifier,
   hasModifier,
   getAllModifiers,
   getModifierOrder,
   buildCombinedPattern,
+  getCachedCombinedPattern,
   parseModifiersFromRegistry,
   applyModifierFromRegistry,
   applyAllModifiersFromRegistry,
@@ -19,12 +21,12 @@ export {
 
 export type {
   ModifierDefinition,
+  ModifierBehavior,
   ModifierContext,
   ModifierApplyResult,
   ModifierOptionTypes,
   ModifierRegistry,
   RegistryProcessResult,
-  TypedModifierDefinition,
   TotalTransformer,
   ContextWithRollFn,
   ContextWithParameters,
@@ -32,3 +34,5 @@ export type {
 } from './schema'
 
 export { assertRollFn, assertParameters, assertRequiredContext } from './schema'
+
+export { MODIFIER_PRIORITIES } from './priorities'

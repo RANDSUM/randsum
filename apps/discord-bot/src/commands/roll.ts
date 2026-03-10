@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { notation as createNotation, roll } from '@randsum/roller'
 import { embedFooterDetails } from '../utils/constants.js'
+import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
 export const rollCommand: Command = {
@@ -13,83 +14,50 @@ export const rollCommand: Command = {
 
   async execute(interaction) {
     const notationString = interaction.options.getString('notation', true)
-
     await interaction.deferReply()
 
-    // Convert to validated notation - will throw if invalid
-    const validNotation = (() => {
-      try {
-        return createNotation(notationString)
-      } catch (_error) {
-        // Will be handled below
-        return null
-      }
-    })()
+    try {
+      const validNotation = createNotation(notationString)
+      const result = roll(validNotation)
 
-    if (!validNotation) {
-      const errorEmbed = new EmbedBuilder()
-        .setColor('#FF0000')
-        .setTitle('Invalid Notation')
-        .setDescription(
-          `The notation "${notationString}" is invalid.\n\n[View notation guide](https://github.com/RANDSUM/randsum/blob/main/packages/roller/GUIDE.md)`
-        )
+      const embed = new EmbedBuilder()
+        .setColor('#FFD700')
+        .setTitle(`You rolled a ${result.total}`)
+        .setDescription(`Rolling: ${notationString}`)
         .setFooter(embedFooterDetails)
 
-      await interaction.editReply({ embeds: [errorEmbed] })
-      return
-    }
-
-    // Roll the dice
-    const result = roll(validNotation)
-
-    // Check for error
-    if (result.error) {
-      const errorEmbed = new EmbedBuilder()
-        .setColor('#FF0000')
-        .setTitle('Roll Error')
-        .setDescription(`Error: ${result.error.message}`)
-        .setFooter(embedFooterDetails)
-
-      await interaction.editReply({ embeds: [errorEmbed] })
-      return
-    }
-
-    // Build embed
-    const embed = new EmbedBuilder()
-      .setColor('#FFD700')
-      .setTitle(`You rolled a ${result.total}`)
-      .setDescription(`Rolling: ${notationString}`)
-      .setFooter(embedFooterDetails)
-
-    // Add individual die results if available
-    if (result.rolls.length > 0) {
-      const rollRecord = result.rolls[0]
-      if (rollRecord) {
-        // Add initial rolls (before modifiers)
-        const initialRolls = rollRecord.modifierHistory.initialRolls
-        if (initialRolls.length > 0) {
-          embed.addFields({
-            name: 'Initial Rolls',
-            value: initialRolls.join(', '),
-            inline: true
-          })
-        }
-
-        // Add modified rolls if different from initial
-        const modifiedRolls = rollRecord.modifierHistory.modifiedRolls
-        if (
-          modifiedRolls.length > 0 &&
-          JSON.stringify(modifiedRolls) !== JSON.stringify(initialRolls)
-        ) {
-          embed.addFields({
-            name: 'Modified Rolls',
-            value: modifiedRolls.join(', '),
-            inline: true
-          })
+      if (result.rolls.length > 0) {
+        const rollRecord = result.rolls[0]
+        if (rollRecord) {
+          const initialRolls = rollRecord.initialRolls
+          if (initialRolls.length > 0) {
+            embed.addFields({
+              name: 'Initial Rolls',
+              value: initialRolls.join(', '),
+              inline: true
+            })
+          }
+          const modifiedRolls = rollRecord.rolls
+          if (
+            modifiedRolls.length > 0 &&
+            JSON.stringify(modifiedRolls) !== JSON.stringify(initialRolls)
+          ) {
+            embed.addFields({
+              name: 'Modified Rolls',
+              value: modifiedRolls.join(', '),
+              inline: true
+            })
+          }
         }
       }
-    }
 
-    await interaction.editReply({ embeds: [embed] })
+      await interaction.editReply({ embeds: [embed] })
+    } catch (e) {
+      await replyWithError(
+        interaction,
+        'Error',
+        e instanceof Error ? e.message : 'An unknown error occurred'
+      )
+    }
   }
 }

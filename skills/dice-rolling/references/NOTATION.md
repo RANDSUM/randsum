@@ -1,5 +1,30 @@
 # Randsum Dice Notation
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Basic Syntax](#basic-syntax)
+- [Modifiers](#modifiers)
+  - [Basic Arithmetic](#basic-arithmetic)
+  - [Cap Modifiers](#cap-modifiers)
+  - [Drop Modifiers](#drop-modifiers)
+  - [Reroll Modifiers](#reroll-modifiers)
+  - [Replace Modifiers](#replace-modifiers)
+  - [Unique Results](#unique-results)
+  - [Keep Modifiers](#keep-modifiers)
+  - [Exploding Dice](#exploding-dice)
+  - [Compounding Exploding](#compounding-exploding-)
+  - [Penetrating Exploding](#penetrating-exploding-p)
+  - [Pre-Arithmetic Multiplier](#pre-arithmetic-multiplier-)
+  - [Total Multiplier](#total-multiplier-)
+  - [Count Successes](#count-successes-s)
+  - [Combining Modifiers](#combining-modifiers)
+- [Multiple Dice Groups](#multiple-dice-sides-in-a-single-roll)
+- [Common Use Cases](#common-use-cases)
+- [Performance Considerations](#performance-considerations)
+
+---
+
 ## Overview
 
 Dice notation is a compact way to represent dice rolls and their modifications. For example, `4d20+2` means "roll four twenty-sided dice, then add two".
@@ -308,7 +333,7 @@ roll({
   modifiers: { explode: 5 }
 })
 
-roll("3d6!0") // Explode unlimited (capped at 100 for safety)
+roll("3d6!0") // Explode unlimited (capped at 1000 for safety)
 roll({
   sides: 6,
   quantity: 3,
@@ -339,7 +364,7 @@ roll({
   modifiers: { compound: 5 }
 })
 
-roll("3d6!!0") // Compound explode unlimited (capped at 100)
+roll("3d6!!0") // Compound explode unlimited (capped at 1000)
 roll({
   sides: 6,
   quantity: 3,
@@ -377,7 +402,7 @@ roll({
   modifiers: { penetrate: 5 }
 })
 
-roll("3d6!p0") // Penetrate unlimited (capped at 100)
+roll("3d6!p0") // Penetrate unlimited (capped at 1000)
 roll({
   sides: 6,
   quantity: 3,
@@ -596,7 +621,7 @@ roll("8d6+5**2") // 8d6+5 damage, doubled for area effect
 All explosive modifiers (explode, compound, penetrate) have built-in depth limits:
 
 - **Explicit depth**: `!N`, `!!N`, `!pN` - Limited to N depth
-- **Unlimited (0)**: `!0`, `!!0`, `!p0` - Capped at 100 for safety
+- **Unlimited (0)**: `!0`, `!!0`, `!p0` - Capped at 1000 for safety
 - **Default**: `!`, `!!`, `!p` - Limited to 1 explosion per die
 
 ### Best Practices

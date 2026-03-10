@@ -1,6 +1,24 @@
 ---
-title: Salvage Union
-description: Salvage Union table-based dice mechanics with RANDSUM
+title: Salvage Union Dice Library — @randsum/salvageunion
+description: TypeScript dice package for Salvage Union mech RPG. D20 table-based resolution with labeled outcomes for Core Mechanic, Morale, and other game tables.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/salvageunion",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "3.0.0",
+        "description": "TypeScript dice package for Salvage Union mech RPG. D20 table-based resolution with labeled outcomes for Core Mechanic, Morale, and other tables.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/salvageunion",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/salvageunion",
+        "keywords": "Salvage Union, mech RPG, d20, table lookup, TypeScript, tabletop RPG"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
@@ -8,12 +26,9 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/salvageunion` package provides mechanics for [Salvage Union](https://leyline.press/pages/salvage-union), a post-apocalyptic mech-based tabletop RPG that uses table-based d20 mechanics.
 
-## Overview
+## The d20 Table
 
-- Rolls 1d20 against reference tables
-- Results are looked up from game tables with labels and descriptions
-- Supports multiple tables (Core Mechanic, Morale, and more)
-- Returns structured result data including hit type, label, and description
+Salvage Union uses a **single d20** roll against a fixed outcome table. Every roll maps to one of five labeled results: **Nailed It** (20), **Success** (11–19), **Tough Choice** (6–10), **Failure** (2–5), and **Cascade Failure** (1). There are no modifiers — the d20 roll is read directly against the table. Different in-game situations use different named tables (Core Mechanic, Morale, and others), each with the same five tiers but different narrative descriptions. The `@randsum/salvageunion` package rolls a d20, performs the table lookup, and returns the hit type, table label, narrative description, and raw roll value.
 
 ## Installation
 
@@ -65,7 +80,7 @@ switch (result.key) {
     break
 }`} />
 
-## API reference
+## API
 
 ### `roll(tableName?: SalvageUnionTableName)`
 
@@ -112,15 +127,18 @@ The default Core Mechanic table uses these result tiers:
 Other tables in Salvage Union have different result tiers and descriptions. The package includes all official tables from the Salvage Union reference.
 :::
 
-## Type exports
+## Types
 
 <CodeExample code={`import type {
   SalvageUnionRollRecord,
   SalvageUnionTableListing,
   SalvageUnionTableName
-} from '@randsum/salvageunion'`} />
+} from '@randsum/salvageunion'
+
+// Runtime constant: array of all valid table names
+import { SALVAGE_UNION_TABLE_NAMES } from '@randsum/salvageunion'`} />
 
 ## Links
 
 - [npm package](https://www.npmjs.com/package/@randsum/salvageunion)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/salvageunion)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/salvageunion)

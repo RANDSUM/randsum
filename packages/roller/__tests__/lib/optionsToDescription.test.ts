@@ -25,3 +25,25 @@ describe(optionsToDescription, () => {
     expect(description[0]).toContain('Roll 2 20-sided dice')
   })
 })
+
+describe('greaterThanOrEqual descriptions', () => {
+  test('drop modifier includes greaterThanOrEqual description', () => {
+    const descriptions = optionsToDescription({
+      sides: 6,
+      quantity: 4,
+      modifiers: { drop: { greaterThanOrEqual: 5 } }
+    })
+    const allText = descriptions.join(' ')
+    expect(allText).toMatch(/greater than or equal to 5/i)
+  })
+
+  test('reroll modifier includes greaterThanOrEqual description', () => {
+    const descriptions = optionsToDescription({
+      sides: 6,
+      quantity: 4,
+      modifiers: { reroll: { greaterThanOrEqual: 4 } }
+    })
+    const allText = descriptions.join(' ')
+    expect(allText).toMatch(/greater than or equal to 4/i)
+  })
+})

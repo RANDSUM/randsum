@@ -1,72 +1,87 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to the RANDSUM ecosystem are documented here.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [3.0.0] — 2024
 
-## [1.0.0] - 2025-02-01
+### Breaking Changes
 
-The first stable release of the RANDSUM dice rolling ecosystem.
+#### `@randsum/notation` extracted as a standalone package
 
-### Packages
+The notation parser and all shared types have been moved out of `@randsum/roller` into a new zero-dependency package `@randsum/notation`. `@randsum/roller` continues to re-export everything for backward compatibility, but consumers that only need parsing can now depend on `@randsum/notation` directly.
 
-#### @randsum/roller
+**Migration:** No changes required if you import from `@randsum/roller`. To reduce bundle size, switch imports to `@randsum/notation`:
 
-The core dice rolling engine with comprehensive notation support.
+```typescript
+// Before (still works)
+import { isDiceNotation, validateNotation } from '@randsum/roller'
 
-- `roll()` function supporting numbers, notation strings, and options objects
-- Full dice notation parsing with modifiers (drop, keep, reroll, explode, etc.)
-- `notation()` and `validateNotation()` for notation validation
-- `analyze()` for probability analysis
-- Custom error classes with detailed error codes
-- Dual ESM/CJS exports with full TypeScript definitions
+// After (lighter weight)
+import { isDiceNotation, validateNotation } from '@randsum/notation'
+```
 
-#### @randsum/blades
+#### `optionsToNotation` and `optionsToDescription` moved
 
-Blades in the Dark dice mechanics.
+These conversion utilities moved from `@randsum/roller` to `@randsum/notation`.
 
-- `rollBlades()` for pool-based d6 rolling
-- Returns outcomes: critical, success, partial, or failure
+**Migration:** Update import source or continue importing from `@randsum/roller` (re-exported).
 
-#### @randsum/daggerheart
+#### New error types
 
-Daggerheart RPG system support.
+`NotationParseError`, `ModifierError`, `RollError` added alongside existing `RandsumError` and `ValidationError`. Each error has a typed `code` property using the new `ERROR_CODES` constant.
 
-- `rollDaggerheart()` for Hope/Fear dual-d12 mechanics
-- Advantage/disadvantage support
+#### `createGameRoll` result shape change
 
-#### @randsum/fifth
+`GameRollResult` now has a stable shape:
 
-D&D 5th Edition mechanics.
+```typescript
+{
+  result: TResult       // Game-specific interpretation
+  total: number         // Numeric total after all modifiers
+  rolls: RollRecord[]   // Full roll history with modifier logs
+}
+```
 
-- `actionRoll()` for d20 + modifier rolls
-- Advantage/disadvantage support
+#### Package peer dependency changes
 
-#### @randsum/pbta
+`@randsum/component-library` now lists `@randsum/roller`, `@randsum/display-utils`, and `@randsum/notation` as `peerDependencies` (previously `dependencies`). Install them explicitly in your app.
 
-Powered by the Apocalypse mechanics.
+**Migration:**
 
-- `rollPbtA()` for 2d6 + stat modifier rolls
-- Standard PbtA outcome thresholds
+```bash
+npm install @randsum/roller @randsum/display-utils @randsum/notation
+```
 
-#### @randsum/root-rpg
+### New Features
 
-Root RPG system implementation.
+- `@randsum/notation` — standalone dice notation package (zero deps)
+- `ERROR_CODES` constant exported from `@randsum/roller` for consistent error handling
+- `ParsedNotationOptions` type exported from both `@randsum/notation` and `@randsum/roller`
+- `NotationSchema` / `defineNotationSchema` — extend the notation system with custom modifier schemas
+- `tokenize()` — parse notation into typed token segments for syntax highlighting in UIs
+- `suggestNotationFix()` — suggest corrections for invalid notation input
+- `buildStackBlitzProject()` in `@randsum/display-utils` — generate StackBlitz sandbox projects
+- `@randsum/component-library` — new React component library (`RollerPlayground`, `ModifierReference`, `ErrorBoundary`)
+- `@randsum/cli` — rewritten as an Ink-based TUI with interactive mode
 
-- `rollRootRpg()` for Root-specific dice mechanics
+### Package Versions
 
-#### @randsum/salvageunion
+| Package | Version |
+| --- | --- |
+| `@randsum/roller` | 3.0.0 |
+| `@randsum/notation` | 3.0.0 |
+| `@randsum/display-utils` | 3.0.1 |
+| `@randsum/component-library` | 3.0.0 |
+| `@randsum/cli` | 3.0.0 |
+| `@randsum/blades` | 3.0.0 |
+| `@randsum/daggerheart` | 3.0.0 |
+| `@randsum/fifth` | 3.0.0 |
+| `@randsum/pbta` | 3.0.0 |
+| `@randsum/root-rpg` | 3.0.0 |
+| `@randsum/salvageunion` | 3.0.0 |
 
-Salvage Union mechanics.
+---
 
-- `rollTable()` for table-based dice lookups
-- Pre-configured Salvage Union reference tables
+## [2.x] and earlier
 
-#### @randsum/mcp
-
-Model Context Protocol server for AI integration.
-
-- Multiple transport modes: stdio, http, sse
-- Exposes all game system rolling as MCP tools
-- CLI: `npx randsum-mcp`
+See git history for changes prior to the 3.0.0 monorepo restructure.

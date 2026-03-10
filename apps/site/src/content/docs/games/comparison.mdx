@@ -1,6 +1,6 @@
 ---
-title: Game Comparison
-description: Compare all RANDSUM game packages side by side
+title: Compare RANDSUM Game Packages — D&D, Blades, PbtA & More
+description: Side-by-side comparison of all RANDSUM game packages. Find the right package for D&D 5e, Blades in the Dark, PbtA, Daggerheart, Root RPG, and Salvage Union.
 ---
 
 import { GameComparison } from '../../../components/GameComparison'
@@ -10,16 +10,30 @@ RANDSUM supports six tabletop RPG systems, each with its own dice mechanics and 
 
 Every game package wraps the core `@randsum/roller` engine, so they all share the same reliable dice rolling foundation. The difference is in how each package validates input, configures the roll, and interprets the result.
 
+## Package Comparison
+
+| Package | Game System | Dice | Input | Outcomes |
+|---|---|---|---|---|
+| `@randsum/fifth` | D&D 5th Edition | 1d20 + modifier | `{ modifier, rollingWith }` | numeric total + roll detail |
+| `@randsum/blades` | Blades in the Dark | 0–10d6 dice pool | dice count (0–10) | critical / success / partial / failure |
+| `@randsum/pbta` | Powered by the Apocalypse | 2d6 + stat | `{ stat, forward, ongoing, advantage, disadvantage }` | strong_hit / weak_hit / miss |
+| `@randsum/daggerheart` | Daggerheart | 2d12 (Hope + Fear) | `{ modifier, rollingWith }` | Hope/Fear total, critical, with fear |
+| `@randsum/root-rpg` | Root RPG | 2d6 + bonus | bonus number | Strong Hit / Weak Hit / Miss |
+| `@randsum/salvageunion` | Salvage Union | 1d20 | table name (optional) | Nailed It / Success / Tough Choice / Failure / Cascade Failure |
+
+All packages wrap `@randsum/roller` and are available on npm under the `@randsum` organization.
+
 <GameComparison client:visible />
 
-## Choosing a package
+## Choosing a System
 
-- **Building a D&D character sheet?** Use `@randsum/fifth` for d20-based rolls with advantage/disadvantage.
-- **Running a Blades in the Dark campaign?** Use `@randsum/blades` for dice pool resolution with four outcome tiers.
-- **Playing a PbtA game?** Use `@randsum/pbta` for the universal 2d6+stat engine that works across the entire Powered by the Apocalypse family.
-- **Exploring Daggerheart?** Use `@randsum/daggerheart` for hope/fear dual-die mechanics.
-- **Adventuring in the Woodland?** Use `@randsum/root-rpg` for Root's 2d6+bonus system.
-- **Piloting mechs?** Use `@randsum/salvageunion` for d20 table-based resolution.
+If you are building a D&D 5e tool — character sheets, encounter trackers, spell attack calculators — reach for `@randsum/fifth`. It handles the d20+modifier system natively, including advantage (roll 2d20, keep highest) and disadvantage (keep lowest), and returns both the numeric total and which die was used.
+
+For Blades in the Dark, use `@randsum/blades`. The game uses a dice pool where only the single highest die matters: 6 is a full success, 4–5 is a partial success, 1–3 is a failure, and two or more 6s is a critical. Pass a dice count (0–10) and get one of four outcome tiers back.
+
+If you are targeting any Powered by the Apocalypse game — Dungeon World, Monster of the Week, Apocalypse World, Masks, and others — use `@randsum/pbta`. The 2d6+stat engine is universal across the whole family: 10+ strong hit, 7–9 weak hit, 6− miss.
+
+For systems not covered by a dedicated package, use `@randsum/roller` directly with notation strings or options objects. The full modifier system (drop, keep, reroll, explode, cap, and more) handles most custom mechanics without additional abstractions.
 
 ## Installation
 

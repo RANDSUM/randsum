@@ -8,10 +8,12 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 **Core**: `@randsum/roller` — zero-dependency dice engine. Every other package depends on it via `workspace:~`.
 
-**Game packages** (each wraps roller with game-specific interpretation):
+**Game packages** live in `games/` — each wraps roller with game-specific interpretation:
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
 
-**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/component-library` (React UI components, private)
+**Display & UI Utilities**: `@randsum/display-utils` — browser-targeted utilities for step visualization, modifier docs, and StackBlitz integration (published to npm, consumed by CLI and component-library)
+
+**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/component-library` (React UI components, published to npm)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
@@ -68,7 +70,11 @@ bun run help                             # Quick command reference
 All packages use `bunup` producing identical structure:
 - `dist/index.js` (ESM), `dist/index.cjs` (CJS)
 - `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
-- Bundle size limits enforced: roller 10KB, game packages 8KB, salvageunion 170KB
+- Bundle size limits enforced: roller 10KB, notation 8KB, display-utils 20KB, game packages 8KB, salvageunion 300KB
+
+## Versioning
+
+When a core package (`@randsum/roller`, or in future `@randsum/notation`) receives a minor version bump, dependent packages (game packages, component-library) should also receive a corresponding minor version bump to keep the ecosystem in sync. This applies to minor and major releases — patch bumps in core do not require dependents to bump.
 
 ## Key Patterns
 
@@ -86,9 +92,9 @@ createGameRoll<TInput, TResult>({
 
 Returns `GameRollResult<TResult, TDetails, RollRecord>`.
 
-### Never-Throw Errors
+### Error Handling
 
-`roll()` never throws. Errors are returned in the result: `if (result.error) { ... }`
+`roll()` throws on invalid input. Wrap calls in try/catch: `try { roll(...) } catch (e) { ... }`
 
 ### Modifier Registry
 
@@ -106,19 +112,13 @@ roll("1d20", "2d6", "+5")   // Multiple arguments combined
 ## Git Hooks (Lefthook)
 
 **pre-commit** (parallel): ESLint --fix, Prettier, typecheck
-**pre-push**: all tests, unused exports check, security audit
+**pre-push**: all tests, unused exports check, security audit, skill verification, bundle size check
 
 If hooks fail, run `bun run fix:all`.
 
 ## Development Guidelines
 
-Detailed guides in the [CLAUDE/](CLAUDE/) directory:
-- [Scripts Reference](CLAUDE/scripts.md)
-- [Game Package Patterns](CLAUDE/game-packages.md)
-- [Modifier System](CLAUDE/modifiers.md)
-- [Testing Patterns](CLAUDE/testing.md)
-
-Per-package `CLAUDE.md` files exist in each `packages/*/` and `apps/*/` directory.
+Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps/*/` directory for detailed guidance on each component.
 
 ## Dice Notation Reference
 

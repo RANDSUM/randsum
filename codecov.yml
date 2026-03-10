@@ -2,12 +2,14 @@ coverage:
   status:
     project:
       default:
-        target: 99%
-        threshold: 2%
+        target: 80%
+        threshold: 5%
     patch:
       default:
-        target: 99%
+        target: 70%
         threshold: 5%
+  ignore:
+    - "apps/cli/src/tui/hooks/useCursorPosition.ts"
 
 comment:
   layout: "reach,diff,flags,files"

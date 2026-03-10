@@ -1,4 +1,8 @@
 export { matchesComparison } from './matchesComparison'
-export { formatComparisonDescription } from './formatComparisonDescription'
-export { formatComparisonNotation } from './formatComparisonNotation'
-export { parseComparisonNotation, hasConditions } from './parseComparisonNotation'
+export { validateComparisonOptions } from './validateComparisonOptions'
+export {
+  formatComparisonDescription,
+  formatComparisonNotation,
+  parseComparisonNotation,
+  hasConditions
+} from '@randsum/notation'

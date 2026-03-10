@@ -6,7 +6,8 @@ import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRollerPlayground } from '../components/HeroInteractive'
 
 const gameColorMap: Record<string, string> = {
-  roller: 'var(--tool-roller)',
+  roller: 'var(--core-roller)',
+  notation: 'var(--core-notation)',
   fifth: 'var(--game-fifth)',
   blades: 'var(--game-blades)',
   daggerheart: 'var(--game-daggerheart)',
@@ -33,6 +34,35 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     template: 'splash'
   }}
   hasSidebar={false}
+  head={[
+    {
+      tag: 'script',
+      attrs: { type: 'application/ld+json' },
+      content: JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://randsum.dev/#website",
+            "name": "RANDSUM",
+            "url": "https://randsum.dev/",
+            "description": "TypeScript-first dice notation ecosystem for tabletop RPGs. Zero-dependency dice engine with full notation support and game-specific packages.",
+            "publisher": { "@id": "https://randsum.dev/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://randsum.dev/#organization",
+            "name": "RANDSUM",
+            "url": "https://randsum.dev/",
+            "sameAs": [
+              "https://github.com/RANDSUM/randsum",
+              "https://www.npmjs.com/org/randsum"
+            ]
+          }
+        ]
+      })
+    }
+  ]}
 >
   <div class="landing">
     <!-- Hero -->
@@ -50,13 +80,14 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
               <GetStartedButton client:load />
               <GithubButton client:load />
             </div>
+            <p class="hero-install"><code>npm install @randsum/roller</code></p>
           </div>
         </div>
         <div class="roller-playground-wrap not-content">
           <HeroRollerPlayground client:only="react" />
         </div>
       </div>
-      <div class="pkg-section-label">Packages</div>
+      <h2 class="pkg-section-label">Packages</h2>
     </section>
 
     <!-- Packages -->
@@ -76,7 +107,11 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
-              {pkg.version && <span class="pkg-card-version">v{pkg.version}</span>}
+              {pkg.npmPackage.startsWith('@') && (
+                <span class="pkg-card-version" data-npm-version={pkg.npmPackage}>
+                  {pkg.version ? `v${pkg.version}` : ''}
+                </span>
+              )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
             <div class="pkg-card-footer">
@@ -87,6 +122,35 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         ))}
       </div>
     </div>
+
+    <!-- What is RANDSUM? -->
+    <section class="not-content" style="max-width: 860px; margin: 4rem auto; padding: 0 1.5rem;">
+      <h2 class="section-heading">What is RANDSUM?</h2>
+      <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
+        RANDSUM is a TypeScript dice rolling library built for tabletop RPG developers. At its core is
+        <code>@randsum/roller</code> — a zero-dependency npm package that parses and evaluates dice notation
+        with no external runtime requirements. It ships as both ESM and CommonJS and is fully typed.
+      </p>
+      <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
+        The ecosystem includes game-specific packages layered on top of the core engine.
+        <code>@randsum/fifth</code> handles d20 roll resolution for D&amp;D 5e, including advantage,
+        disadvantage, and modifier arithmetic. <code>@randsum/blades</code> implements the dice pool
+        mechanics of Blades in the Dark, evaluating outcome tiers from a pool of 1–4 six-sided dice.
+        <code>@randsum/pbta</code> covers 2d6 roll resolution for any Powered by the Apocalypse system,
+        with support for stat modifiers, forward, and ongoing bonuses.
+      </p>
+      <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
+        RANDSUM dice notation is an extended superset of standard dice notation. Expressions like
+        <code>4d6L</code> (roll 4d6, drop lowest), <code>2d20H</code> (keep highest of 2d20), and
+        <code>4d6R&#123;&lt;3&#125;!</code> (reroll below 3, explode on max) are parsed into structured roll
+        options and evaluated with consistent, well-defined semantics.
+      </p>
+      <p style="line-height: 1.7; color: var(--sl-color-text);">
+        Whether you're building a character sheet app, a Discord bot, a virtual tabletop, or any
+        tabletop RPG tool, RANDSUM gives you a composable, type-safe foundation for dice mechanics
+        without the overhead of a larger game engine.
+      </p>
+    </section>
 
     <!-- Footer Links -->
     <footer class="landing-footer">
@@ -137,9 +201,21 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     display: none !important;
   }
 
-  /* Hide the top nav header on the landing page */
-  :global(#starlight__header) {
+  /* Hide the blank nav header wrapper on the landing page */
+  :global(.header) {
     display: none !important;
+  }
+
+  /* Remove padding reserved for sticky nav height */
+  :global(.page) {
+    --sl-nav-height: 0px !important;
+  }
+
+  /* Remove top padding on Starlight's content wrappers */
+  :global(.main-frame),
+  :global(.content-panel) {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
   }
 
   /* ===== Layout ===== */
@@ -156,7 +232,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   /* ===== Hero ===== */
   .hero {
-    padding: 2rem 0 0;
+    padding: 0;
     border-bottom: 1px solid var(--sl-color-gray-5);
   }
 
@@ -181,7 +257,12 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     justify-content: center;
     align-items: center;
     text-align: center;
-    min-width: 0;
+    width: max-content;
+    max-width: min(400px, 100%);
+  }
+
+  .hero-tagline {
+    white-space: nowrap;
   }
 
   .hero-logo-wrap {
@@ -238,12 +319,27 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   :global(.hero-logo--spinning) {
-    animation: die-spin var(--spin-duration, 3.2s) cubic-bezier(0.15, 0, 0.5, 1) both !important;
+    animation: die-spin var(--spin-duration, 3.2s) linear both !important;
+  }
+
+  :global(.hero-logo--nudge) {
+    animation: logo-nudge 0.55s ease-in-out both;
   }
 
   @keyframes die-spin {
     0%   { transform: rotate(0deg); }
-    100% { transform: rotate(1800deg); }
+    15%  { transform: rotate(1800deg); }
+    70%  { transform: rotate(3420deg); }
+    85%  { transform: rotate(3555deg); }
+    100% { transform: rotate(3600deg); }
+  }
+
+  @keyframes logo-nudge {
+    0%   { transform: translateY(0)    rotate(0deg); }
+    22%  { transform: translateY(-7px) rotate(-3deg); }
+    44%  { transform: translateY(0)    rotate(0deg); }
+    66%  { transform: translateY(-4px) rotate(2deg); }
+    100% { transform: translateY(0)    rotate(0deg); }
   }
 
   :global(.hero-subtitle-inner) {
@@ -294,6 +390,21 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 1rem;
+  }
+
+  .hero-install {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .hero-install code {
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.6rem;
+    color: var(--sl-color-accent-high);
   }
 
   /* ===== Playground ===== */
@@ -381,6 +492,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   .pkg-filter-chips {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0;
     margin-bottom: 1.5rem;
@@ -391,8 +503,9 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     align-items: center;
     justify-content: center;
     height: 2.625rem;
-    padding: 0;
+    padding: 0 1rem;
     min-width: 6.75rem;
+    flex: 1 1 auto;
     border-radius: 999px;
     border: 1px solid var(--sl-color-gray-5);
     background: transparent;
@@ -438,7 +551,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     display: flex;
     flex-direction: column;
     align-self: stretch;
-    height: 180px;
+    min-height: 180px;
     margin-top: 0;
     padding: 1.25rem 1.5rem;
     border: 1px solid var(--sl-color-gray-5);
@@ -561,6 +674,12 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     color: var(--sl-color-accent-high);
   }
 
+  .section-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
   /* ===== Responsive ===== */
   @media (max-width: 768px) {
     .hero {
@@ -592,14 +711,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
     .hero-actions {
       justify-content: center;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    :global(.btn) {
-      width: 100%;
-      max-width: 16rem;
-      justify-content: center;
     }
 
     .section-heading {
@@ -625,6 +736,30 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 </style>
 
 <script>
+  // Fetch npm versions live and update version badges
+  ;(async () => {
+    const versionEls = Array.from(document.querySelectorAll<HTMLElement>('[data-npm-version]'))
+    const packageNames = [...new Set(versionEls.map(el => el.dataset['npmVersion']!))]
+
+    const results = await Promise.allSettled(
+      packageNames.map(async (pkg) => {
+        const res = await fetch(`https://registry.npmjs.org/${pkg}/latest`)
+        if (!res.ok) throw new Error(`${res.status}`)
+        const data = await res.json() as { version: string }
+        return [pkg, data.version] as const
+      })
+    )
+
+    const versionMap = new Map(
+      results.flatMap(r => r.status === 'fulfilled' ? [r.value] : [])
+    )
+
+    versionEls.forEach(el => {
+      const version = versionMap.get(el.dataset['npmVersion']!)
+      if (version) el.textContent = `v${version}`
+    })
+  })()
+
   const chips = document.querySelectorAll<HTMLButtonElement>('.pkg-filter-chip')
   const cards = Array.from(document.querySelectorAll<HTMLElement>('.pkg-card[data-category]'))
   const grid = document.querySelector<HTMLElement>('.pkg-grid')
@@ -673,5 +808,37 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       chip.classList.add('is-active')
       applyFilter(chip.dataset['filter'] ?? 'all')
     })
+  })
+
+  // --- Slot machine filter on die roll ---
+  const FILTER_SLOT_INTERVALS = [45, 50, 55, 60, 70, 80, 95, 115, 140, 170, 210, 260, 325, 410, 510, 640, 860]
+
+  let filterSlotTimeout: ReturnType<typeof setTimeout> | undefined = undefined
+
+  window.addEventListener('die-rolled', () => {
+    if (filterSlotTimeout !== undefined) {
+      clearTimeout(filterSlotTimeout)
+      filterSlotTimeout = undefined
+    }
+
+    const filterValues = Array.from(chips).map(chip => chip.dataset['filter'] ?? 'all')
+    const finalFilter = filterValues[Math.floor(Math.random() * filterValues.length)] ?? 'all'
+    let step = 0
+
+    const tick = () => {
+      if (step < FILTER_SLOT_INTERVALS.length - 1) {
+        const randomFilter = filterValues[Math.floor(Math.random() * filterValues.length)] ?? 'all'
+        chips.forEach(chip => {
+          chip.classList.toggle('is-active', chip.dataset['filter'] === randomFilter)
+        })
+        step++
+        filterSlotTimeout = setTimeout(tick, FILTER_SLOT_INTERVALS[step])
+      } else {
+        filterSlotTimeout = undefined
+        applyFilter(finalFilter)
+      }
+    }
+
+    filterSlotTimeout = setTimeout(tick, FILTER_SLOT_INTERVALS[0] ?? 45)
   })
 </script>

@@ -1,6 +1,6 @@
 {
   "name": "@randsum/cli",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Dice rolling CLI and interactive TUI powered by RANDSUM",
   "private": false,
   "author": {
@@ -8,7 +8,8 @@
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/tools/cli/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
@@ -39,13 +40,15 @@
     "dice-roller"
   ],
   "dependencies": {
-    "@randsum/roller": "^1.1.0",
-    "ink": "^5.2.0",
+    "ink": "^6.8.0",
     "ink-text-input": "^6.0.0",
-    "react": "catalog:"
+    "react": "^19.2.0",
+    "@randsum/display-utils": "workspace:~",
+    "@randsum/notation": "workspace:~",
+    "@randsum/roller": "workspace:~"
   },
   "devDependencies": {
-    "@types/react": "catalog:"
+    "@types/react": "^19.0.0"
   },
   "scripts": {
     "build": "bunup && chmod +x dist/index.js",
@@ -54,6 +57,7 @@
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "prepublishOnly": "bun run build",
     "typecheck": "tsc --noEmit"
   },
   "engines": {

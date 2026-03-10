@@ -17,7 +17,21 @@ export default defineConfig({
   site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
   integrations: [
     starlight({
-      title: 'RANDSUM',
+      title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
+      head: [
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image', content: 'https://randsum.dev/og-image.svg' }
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'twitter:image', content: 'https://randsum.dev/og-image.svg' }
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'twitter:card', content: 'summary_large_image' }
+        }
+      ],
       logo: {
         src: './src/assets/randsum-logo.png',
         replacesTitle: true
@@ -29,6 +43,9 @@ export default defineConfig({
           href: 'https://github.com/RANDSUM/randsum'
         }
       ],
+      components: {
+        Header: './src/components/Header.astro'
+      },
       customCss: ['./src/styles/custom.css'],
       sidebar: [
         {
@@ -45,7 +62,8 @@ export default defineConfig({
           items: [
             { label: 'Dice Notation', slug: 'reference/dice-notation' },
             { label: 'Roll Options', slug: 'reference/roll-options' },
-            { label: 'Modifiers', slug: 'reference/modifiers' }
+            { label: 'Modifiers', slug: 'reference/modifiers' },
+            { label: 'Changelog', slug: 'reference/changelog' }
           ]
         },
         {
@@ -54,13 +72,16 @@ export default defineConfig({
             { label: 'Error Handling', slug: 'guides/error-handling' },
             { label: 'Recipes', slug: 'guides/recipes' },
             { label: 'Custom Game Packages', slug: 'guides/custom-game-packages' },
-            { label: 'Testing', slug: 'guides/testing' }
+            { label: 'Testing', slug: 'guides/testing' },
+            { label: 'Troubleshooting', slug: 'guides/troubleshooting' },
+            { label: 'Migrating from v2', slug: 'guides/migrating-from-v2' }
           ]
         },
         {
           label: 'Core',
           items: [
             { label: 'Overview', slug: 'packages/overview' },
+            { label: '@randsum/notation', slug: 'packages/notation' },
             { label: '@randsum/roller', slug: 'packages/roller' }
           ]
         },
@@ -68,6 +89,7 @@ export default defineConfig({
           label: 'Games',
           items: [
             { label: 'Overview', slug: 'games/overview' },
+            { label: 'Comparison', slug: 'games/comparison' },
             { label: 'Blades in the Dark', slug: 'games/blades' },
             { label: 'Daggerheart', slug: 'games/daggerheart' },
             { label: 'D&D 5e', slug: 'games/fifth' },
@@ -94,8 +116,16 @@ export default defineConfig({
           ]
         },
         {
+          label: 'CLI',
+          items: [{ label: 'Overview', slug: 'tools/cli' }]
+        },
+        {
           label: 'Discord Bot',
           items: [{ label: 'Overview', slug: 'tools/discord-bot' }]
+        },
+        {
+          label: 'Display Utils',
+          items: [{ label: 'Overview', slug: 'tools/display-utils' }]
         }
       ]
     }),

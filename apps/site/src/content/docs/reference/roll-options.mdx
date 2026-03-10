@@ -1,12 +1,12 @@
 ---
-title: Roll Options
-description: Complete API reference for the roll() function and RollOptions object
+title: RollOptions API Reference | @randsum/roller
+description: API reference for roll() RollOptions, RollConfig, custom random functions, result object, and the isDiceNotation and validateNotation helpers.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 import { RollerPlayground } from '@randsum/component-library'
 
-The `roll()` function is the main entry point for all dice rolling in RANDSUM. It accepts several argument types and is not designed to throw -- errors are returned in the result object.
+The `roll()` function is the main entry point for all dice rolling in RANDSUM. It accepts several argument types and throws a `RandsumError` on invalid input.
 
 ## Argument types
 
@@ -128,7 +128,7 @@ An optional final argument to `roll()` that configures execution behavior.
   randomFn?: RandomFn
 }`} />
 
-### Custom random function
+### Custom RNG
 
 Override `Math.random` with your own random number generator. Must return a number in the range `[0, 1)`.
 
@@ -142,7 +142,7 @@ roll('2d6', { randomFn: cryptoRandom })`} />
 
 <RollerPlayground defaultNotation="2d6" client:only="react" />
 
-## Result object
+## Result Object
 
 The `roll()` function returns a `RollerRollResult` object.
 
@@ -169,20 +169,35 @@ An array of `RollRecord` objects, one for each dice group in the roll. Each reco
 
 ## Error handling
 
-`roll()` is not designed to throw. If the input is invalid, an error is returned in the result:
+`roll()` throws a `RandsumError` on invalid input. For user-provided notation strings, validate before rolling:
 
-<CodeExample code={`import { roll } from '@randsum/roller'
+<CodeExample code={`import { validateNotation, isDiceNotation, roll, RandsumError } from '@randsum/roller'
 
-const result = roll('invalid')
-if (result.error) {
-  console.error(result.error) // Error description
+// Validate before rolling (preferred for user input)
+const validation = validateNotation(userInput)
+if (validation.valid) {
+  const result = roll(validation.argument) // use validation.argument (typed as DiceNotation)
+}
+
+// Or use a type guard
+if (isDiceNotation(userInput)) {
+  const result = roll(userInput)
+}
+
+// Or catch the error directly
+try {
+  const result = roll(userInput)
+} catch (e) {
+  if (e instanceof RandsumError) {
+    console.error(e.message)
+  }
 }`} />
 
 :::tip
-Always check `result.error` before using `result.total` in production code, especially when processing user-provided notation strings.
+Hardcoded notation like `roll('4d6L')` will never throw in practice. Only validate when input comes from outside your control: form fields, API parameters, configuration files.
 :::
 
-## Validation utilities
+## Validation
 
 ### `isDiceNotation(value: string): value is DiceNotation`
 

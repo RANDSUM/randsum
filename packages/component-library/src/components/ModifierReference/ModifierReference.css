@@ -25,7 +25,7 @@
 
 /* ===== Disabled (faded, non-interactive) ===== */
 .modifier-reference--disabled {
-  opacity: 0.35;
+  opacity: 0.7;
   pointer-events: none;
   cursor: default;
 }
@@ -72,16 +72,30 @@
   cursor: pointer;
 }
 
-.modifier-reference-cell--interactive:hover {
+.modifier-reference-cell--interactive:hover,
+.modifier-reference-row:nth-child(odd)
+  .modifier-reference-cell--right.modifier-reference-cell--interactive:hover,
+.modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--left.modifier-reference-cell--interactive:hover {
   background: rgba(255, 255, 255, 0.07);
 }
 
 @media (prefers-color-scheme: light) {
-  .modifier-reference-cell--interactive:hover {
+  .modifier-reference-cell--interactive:hover,
+  .modifier-reference-row:nth-child(odd)
+    .modifier-reference-cell--right.modifier-reference-cell--interactive:hover,
+  .modifier-reference-row:nth-child(even)
+    .modifier-reference-cell--left.modifier-reference-cell--interactive:hover {
     background: rgba(0, 0, 0, 0.05);
   }
 }
-[data-theme='light'] .modifier-reference-cell--interactive:hover {
+[data-theme='light'] .modifier-reference-cell--interactive:hover,
+[data-theme='light']
+  .modifier-reference-row:nth-child(odd)
+  .modifier-reference-cell--right.modifier-reference-cell--interactive:hover,
+[data-theme='light']
+  .modifier-reference-row:nth-child(even)
+  .modifier-reference-cell--left.modifier-reference-cell--interactive:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
@@ -102,53 +116,28 @@
   justify-content: flex-end;
 }
 
-/* ===== Core row ===== */
-.modifier-reference-core {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.85rem;
+/* ===== Core cell (nested in first grid row) ===== */
+.modifier-reference-cell--core {
   background: rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.12s ease;
-  user-select: none;
 }
 
-.modifier-reference-core--top {
-  border-top: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.modifier-reference-core--interactive {
-  cursor: pointer;
-}
-
-.modifier-reference-core--interactive:hover {
-  background: rgba(255, 255, 255, 0.08);
+.modifier-reference-cell--core.modifier-reference-cell--interactive:hover {
+  background: rgba(255, 255, 255, 0.13);
 }
 
 @media (prefers-color-scheme: light) {
-  .modifier-reference-core {
+  .modifier-reference-cell--core {
     background: rgba(0, 0, 0, 0.07);
-    border-top-color: rgba(0, 0, 0, 0.08);
   }
-  .modifier-reference-core--top {
-    border-bottom-color: rgba(0, 0, 0, 0.08);
-  }
-  .modifier-reference-core--interactive:hover {
-    background: rgba(0, 0, 0, 0.06);
+  .modifier-reference-cell--core.modifier-reference-cell--interactive:hover {
+    background: rgba(0, 0, 0, 0.1);
   }
 }
-[data-theme='light'] .modifier-reference-core {
+[data-theme='light'] .modifier-reference-cell--core {
   background: rgba(0, 0, 0, 0.07);
-  border-top-color: rgba(0, 0, 0, 0.08);
 }
-[data-theme='light'] .modifier-reference-core--top {
-  border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-[data-theme='light'] .modifier-reference-core--interactive:hover {
-  background: rgba(0, 0, 0, 0.06);
+[data-theme='light'] .modifier-reference-cell--core.modifier-reference-cell--interactive:hover {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 /* ===== Text ===== */
@@ -170,15 +159,23 @@
   color: #1f2328;
 }
 
+.modifier-reference-notation-suffix--required {
+  opacity: 1;
+}
+
+.modifier-reference-notation-suffix--optional {
+  opacity: 0.35;
+}
+
 .modifier-reference-desc {
   font-size: 0.875rem;
-  color: #ffffff;
+  color: #9ca3af;
   white-space: nowrap;
 }
 
 .modifier-reference-core-desc {
   font-size: 0.875rem;
-  color: #ffffff;
+  color: #9ca3af;
   white-space: nowrap;
 }
 

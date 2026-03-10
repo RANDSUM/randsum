@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it, test } from 'bun:test'
 import { coreNotationPattern, createCompleteRollPattern } from '../../src/lib/patterns'
+import { isDiceNotation } from '@randsum/notation'
 
 describe('coreNotationPattern', () => {
   describe('valid core notations', () => {
@@ -13,7 +14,7 @@ describe('coreNotationPattern', () => {
   })
 
   describe('invalid core notations', () => {
-    const invalidCoreNotations = ['d6', '2d', '2x6', 'dd6', 'abc', '123', '', '1d{', '1d}']
+    const invalidCoreNotations = ['d6', '2d', '2x6', 'dd6', 'abc', '123', '', '1d{', '1d}', '1d0']
 
     invalidCoreNotations.forEach(notation => {
       it(`does not match invalid core notation: "${notation}"`, () => {
@@ -23,7 +24,7 @@ describe('coreNotationPattern', () => {
   })
 
   describe('edge cases that do match core pattern', () => {
-    const edgeCasesThatMatch = ['0d6', '1d0', '2d6d']
+    const edgeCasesThatMatch = ['0d6', '2d6d']
 
     edgeCasesThatMatch.forEach(notation => {
       it(`matches edge case: "${notation}"`, () => {
@@ -124,4 +125,13 @@ describe('createCompleteRollPattern', () => {
       expect(endTime - startTime).toBeLessThan(50)
     })
   })
+})
+
+test('isDiceNotation is fast enough for high-frequency use', () => {
+  const iterations = 50000
+  const start = performance.now()
+  Array.from({ length: iterations }, () => isDiceNotation('4d6L'))
+  const duration = performance.now() - start
+  // Should complete 50k validations in under 200ms (4µs/call)
+  expect(duration).toBeLessThan(200)
 })

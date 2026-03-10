@@ -1,0 +1,216 @@
+---
+title: Troubleshooting
+description: Solutions to common RANDSUM issues. Covers isDiceNotation returning false, roll() returning errors, notation parsing failures, TypeScript type errors, and build issues.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+Solutions to the most common issues encountered when using RANDSUM.
+
+## `isDiceNotation()` returns false for valid-looking notation
+
+`isDiceNotation()` runs a strict regex against the input. Several things cause it to reject notation that looks correct at first glance.
+
+**Common causes:**
+
+- Leading or trailing whitespace — `' 4d6'` fails, `'4d6'` passes
+- Invalid case combinations — notation is case-insensitive overall, but modifier tokens like `R{...}` and `C{...}` must use uppercase letters for the modifier name
+- Unsupported syntax — notation that looks like dice notation but uses characters or patterns outside the spec
+
+**Valid vs invalid examples:**
+
+| Input | Valid? | Reason |
+|---|---|---|
+| `'4d6L'` | Yes | Standard drop-lowest |
+| `'4d6l'` | Yes | Case-insensitive |
+| `' 4d6'` | No | Leading whitespace |
+| `'4d6 L'` | No | Internal whitespace |
+| `'4dX'` | No | Non-numeric sides |
+| `'roll(4d6)'` | No | Unsupported wrapper syntax |
+
+<CodeExample code={`import { isDiceNotation } from '@randsum/roller'
+
+isDiceNotation('4d6L')   // true
+isDiceNotation(' 4d6L')  // false — whitespace
+isDiceNotation('4d6 L')  // false — internal whitespace
+isDiceNotation('4dX')    // false — non-numeric sides`} />
+
+**Tip:** If you are accepting user input and want to suggest a corrected version, use `suggestNotationFix()` from `@randsum/notation`:
+
+<CodeExample code={`import { suggestNotationFix } from '@randsum/notation'
+
+const input = ' 4d6L '
+const suggestion = suggestNotationFix(input)
+// suggestion may be '4d6L' — trimmed and normalized`} />
+
+For full validation with error details, use `validateNotation()` which returns a structured result explaining what failed:
+
+<CodeExample code={`import { validateNotation } from '@randsum/roller'
+
+const result = validateNotation(userInput)
+if (!result.valid) {
+  console.error(result.error.message) // Explains what is wrong
+}`} />
+
+---
+
+## `roll()` throws on invalid input
+
+`roll()` throws a `RandsumError` when given invalid input. Wrap calls in try/catch when input comes from outside your control.
+
+<Aside type="caution">
+  If you upgraded from v2, note that `result.error` no longer exists. The field was removed in 3.0. Code checking `if (result.error)` will silently pass. Use try/catch instead.
+</Aside>
+
+**Wrap `roll()` in try/catch when handling user input:**
+
+<CodeExample code={`import { roll, RandsumError } from '@randsum/roller'
+
+try {
+  const result = roll(userInput)
+  console.log(result.total)
+} catch (e) {
+  if (e instanceof RandsumError) {
+    console.error(e.message)
+  }
+}`} />
+
+**Common causes of thrown errors:**
+
+- `sides: 0` — a die with zero sides is not valid
+- `sides` as a negative number
+- `quantity: 0` or a negative quantity
+- An options object with mutually exclusive modifiers
+
+For hardcoded notation like `roll('4d6L')`, errors will never occur in practice. The try/catch is only critical when input comes from outside your control.
+
+---
+
+## TypeScript: "Type X is not assignable to..."
+
+The most common TypeScript errors in RANDSUM arise from `ModifierOptions` and the project's use of `exactOptionalPropertyTypes`.
+
+**`exactOptionalPropertyTypes` is strict about optional fields.** If your `tsconfig.json` does not have this enabled and RANDSUM's types do, assignments may fail even when values look correct.
+
+<CodeExample code={`import type { ModifierOptions } from '@randsum/roller'
+
+// This may fail under exactOptionalPropertyTypes:
+const mods: ModifierOptions = {
+  drop: { lowest: undefined } // 'undefined' is not assignable to 'number'
+}
+
+// Correct — omit the key entirely rather than setting it to undefined:
+const mods: ModifierOptions = {
+  drop: { lowest: 1 }
+}`} />
+
+**Always import types directly from `@randsum/roller`** rather than constructing them inline without type annotations. This lets TypeScript catch shape mismatches at the point of definition:
+
+<CodeExample code={`import type { RollOptions, ModifierOptions } from '@randsum/roller'
+
+const options: RollOptions = {
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    drop: { lowest: 1 }
+  }
+}`} />
+
+If you are seeing errors on `RollerRollResult` or game package return types, make sure you are importing the type rather than inferring it — `import type { RollerRollResult }` not `typeof result`.
+
+---
+
+## Notation parses but gives unexpected results
+
+If your notation is accepted but the result is not what you expected, modifier execution order is usually the cause.
+
+Modifiers run in a fixed priority order — lower priority number means it runs earlier. For example, `cap` (priority 10) runs before `drop` (priority 20), which means values are capped _before_ any are dropped.
+
+**Example:** `4d6C{<2}L`
+
+1. Cap runs first: any die showing 1 is raised to 2
+2. Drop lowest runs after: the lowest of the remaining (now possibly modified) values is dropped
+
+If you expected the drop to happen on the original values before capping, the priority order explains the discrepancy.
+
+**Full modifier priority table:** See the [Modifiers reference](/reference/modifiers/) for the complete execution order.
+
+**Debugging tip:** Check `result.rolls` to see the individual die values after all modifiers are applied. This shows you what each step produced.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+const result = roll('4d6C{<2}L')
+console.log(result.rolls)  // Array of per-group roll details
+console.log(result.total)  // Final summed total`} />
+
+---
+
+## Build errors: "Cannot find module '@randsum/roller'"
+
+This error means the package is not installed or is being imported with the wrong path.
+
+**Install the package:**
+
+```bash
+npm install @randsum/roller
+# or
+bun add @randsum/roller
+```
+
+**Use the correct import path.** The package exports from its root — do not import from internal paths:
+
+<CodeExample code={`// Correct
+import { roll, isDiceNotation } from '@randsum/roller'
+import type { RollOptions } from '@randsum/roller'
+
+// Wrong — do not import from internal paths
+import { roll } from '@randsum/roller/dist/roll'
+import { roll } from '@randsum/roller/src/roll'`} />
+
+**In a monorepo using workspace packages,** make sure your `package.json` references the workspace correctly:
+
+```json
+{
+  "dependencies": {
+    "@randsum/roller": "workspace:~"
+  }
+}
+```
+
+Then run `bun install` (or your package manager's install command) to link the workspace dependency.
+
+---
+
+## Game package returns unexpected outcome tier
+
+Each game package interprets `roll()` results according to its own rules. The same numeric total can mean different things in different systems.
+
+For example, a result of `4` might be a **partial success** in one system and a **failure** in another — each game package defines its own tier boundaries.
+
+If you are getting an outcome tier that does not match your expectation:
+
+1. Check the docs for the specific game package — each has its own result interpretation page under [Games](/games/overview/)
+2. Inspect `result.details` on the game roll result — this includes the raw numeric values before interpretation
+3. Verify you are calling the correct game package's roll function and not `@randsum/roller`'s generic `roll()`
+
+<CodeExample code={`import { roll } from '@randsum/fifth'
+
+const result = roll({ modifier: 3 })
+
+// result.result is the total (d20 + modifier)
+// result.rolls contains the raw dice values
+console.log(result.result)
+console.log(result.rolls)`} />
+
+---
+
+## Still stuck?
+
+If none of the above resolves your issue, open a GitHub Issue with:
+
+- The input you passed to `roll()` or the notation string
+- The full error message or unexpected result you received
+- Your package version (`@randsum/roller` version from `package.json`)
+
+[Open an issue on GitHub](https://github.com/RANDSUM/randsum/issues)

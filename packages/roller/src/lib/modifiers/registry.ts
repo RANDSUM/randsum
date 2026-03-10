@@ -1,5 +1,7 @@
 import type { ModifierLog, ModifierOptions, RequiredNumericRollParameters } from '../../types'
+import type { NotationSchema } from '@randsum/notation'
 import type {
+  ModifierBehavior,
   ModifierContext,
   ModifierDefinition,
   ModifierOptionTypes,
@@ -8,7 +10,19 @@ import type {
   TotalTransformer
 } from './schema'
 import { ModifierError } from '../../errors'
-import { createModifierLog, mergeLogs } from './log'
+import { createModifierLog } from './log'
+
+/**
+ * Minimal schema fields needed for notation parsing.
+ * Used as the storage type for the notationRegistry to avoid
+ * function parameter variance issues with NotationSchema<TOptions>.
+ */
+interface ParseableSchema {
+  readonly name: keyof ModifierOptions
+  readonly priority: number
+  readonly pattern: RegExp
+  readonly parse: (notation: string) => Partial<ModifierOptions>
+}
 
 /**
  * Global modifier registry.
@@ -31,30 +45,61 @@ import { createModifierLog, mergeLogs } from './log'
 const registry: ModifierRegistry = new Map()
 
 /**
- * Define and register a modifier.
+ * Notation-only registry.
+ * Populated alongside the full registry by defineModifier().
+ *
+ * Stores ParseableSchema (the parse-relevant subset of NotationSchema)
+ * to avoid function parameter variance issues with generic types.
+ * Exists so that parseModifiersFromRegistry can work using only
+ * notation schemas, without loading execution logic.
+ */
+const notationRegistry = new Map<keyof ModifierOptions, ParseableSchema>()
+
+/**
+ * Register a notation schema to the notation registry.
+ * Accepts any schema that has the parse-relevant fields.
+ */
+export function registerNotationSchema(schema: ParseableSchema): void {
+  notationRegistry.set(schema.name, schema)
+}
+
+/**
+ * Cache for the combined modifier pattern.
+ * Invalidated whenever the registry changes (defineModifier or clearRegistry).
+ */
+// eslint-disable-next-line no-restricted-syntax
+let cachedCombinedPattern: RegExp | null = null
+
+function invalidateCombinedPatternCache(): void {
+  cachedCombinedPattern = null
+}
+
+/**
+ * Define and register a modifier from separate notation schema and behavior.
  * This is the main entry point for creating modifiers.
  *
- * @template K - The modifier name (key in ModifierOptions)
- * @param definition - Complete modifier definition
+ * Registers the combined definition to the full modifier registry and
+ * the schema to the notation-only registry.
+ *
+ * @template K - The modifier name (key in ModifierOptions), inferred from schema.name
+ * @template TOptions - The option type, inferred from schema functions
+ * @param schema - Notation schema (pattern, parse, toNotation, toDescription)
+ * @param behavior - Execution behavior (apply, validate, requiresRollFn, requiresParameters)
  * @returns The registered definition (for re-export)
  *
  * @example
  * ```ts
- * export const capModifier = defineModifier({
- *   name: 'cap',
- *   priority: 10,
- *   pattern: /[Cc]\{([^}]{1,50})\}/,
- *   parse: (match) => { ... },
- *   toNotation: (options) => `C{...}`,
- *   toDescription: (options) => ['No rolls greater than X'],
- *   apply: (rolls, options) => ({ rolls: rolls.map(...) })
- * })
+ * export const capModifier = defineModifier(capSchema, capBehavior)
  * ```
  */
-export function defineModifier<K extends keyof ModifierOptions>(
-  definition: ModifierDefinition<ModifierOptionTypes[K]> & { name: K }
-): ModifierDefinition<ModifierOptionTypes[K]> {
-  registry.set(definition.name, definition as ModifierDefinition)
+export function defineModifier<TOptions>(
+  schema: NotationSchema<TOptions> & { name: keyof ModifierOptions },
+  behavior: ModifierBehavior<TOptions>
+): ModifierDefinition<TOptions> {
+  const definition = { ...schema, ...behavior } as ModifierDefinition<TOptions>
+  registry.set(schema.name, definition as ModifierDefinition)
+  notationRegistry.set(schema.name, schema) // NotationSchema<TOptions> satisfies ParseableSchema
+  invalidateCombinedPatternCache()
   return definition
 }
 
@@ -88,32 +133,13 @@ export function getAllModifiers(): ModifierDefinition[] {
 }
 
 /**
- * Check if modifiers have been registered.
- *
- * This is useful for debugging and verifying the registry state.
- * Under normal usage through the package entry point, modifiers
- * are always registered automatically.
- *
- * @returns true if at least one modifier is registered
- */
-export function hasRegisteredModifiers(): boolean {
-  return registry.size > 0
-}
-
-/**
- * Get the count of registered modifiers.
- * Useful for debugging and testing.
- */
-export function getRegisteredModifierCount(): number {
-  return registry.size
-}
-
-/**
  * Clear the registry (for testing purposes only).
  * @internal
  */
 export function clearRegistry(): void {
   registry.clear()
+  notationRegistry.clear()
+  invalidateCombinedPatternCache()
 }
 
 /**
@@ -123,7 +149,9 @@ export function clearRegistry(): void {
 export function registerDefaultModifiers(definitions: ModifierDefinition[]): void {
   for (const def of definitions) {
     registry.set(def.name, def)
+    notationRegistry.set(def.name, def) // ModifierDefinition satisfies ParseableSchema
   }
+  invalidateCombinedPatternCache()
 }
 
 /**
@@ -148,15 +176,26 @@ export function buildCombinedPattern(): RegExp {
 }
 
 /**
- * Parse notation string into ModifierOptions using registry.
+ * Get the cached combined modifier pattern.
+ * Builds the pattern lazily on first call and caches it.
+ * Cache is invalidated when modifiers are registered or the registry is cleared.
+ */
+export function getCachedCombinedPattern(): RegExp {
+  cachedCombinedPattern ??= buildCombinedPattern()
+  return cachedCombinedPattern
+}
+
+/**
+ * Parse notation string into ModifierOptions using the notation registry.
+ * Works with notation schemas only — no execution logic required.
  */
 export function parseModifiersFromRegistry(notation: string): ModifierOptions {
   const result: ModifierOptions = {}
 
-  for (const modifier of registry.values()) {
-    if (modifier.pattern.test(notation)) {
-      modifier.pattern.lastIndex = 0
-      Object.assign(result, modifier.parse(notation))
+  for (const schema of notationRegistry.values()) {
+    if (schema.pattern.test(notation)) {
+      schema.pattern.lastIndex = 0
+      Object.assign(result, schema.parse(notation))
     }
   }
 
@@ -238,7 +277,7 @@ export function applyAllModifiersFromRegistry(
     const result = applyModifierFromRegistry(name, options, state.rolls, ctx)
     return {
       rolls: result.rolls,
-      logs: result.log ? mergeLogs(state.logs, result.log) : state.logs,
+      logs: result.log ? [...state.logs, result.log] : state.logs,
       totalTransformers: result.transformTotal
         ? [...state.totalTransformers, result.transformTotal]
         : state.totalTransformers

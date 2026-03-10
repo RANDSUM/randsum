@@ -1,6 +1,24 @@
 ---
-title: Powered by the Apocalypse
-description: PbtA dice mechanics for Dungeon World, Monster of the Week, Apocalypse World, and more
+title: "PbtA Dice Library — Powered by the Apocalypse Dice for TypeScript"
+description: TypeScript dice package for Powered by the Apocalypse games. Works with Dungeon World, Monster of the Week, Apocalypse World, Masks, and any 2d6+stat system.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/pbta",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "1.2.0",
+        "description": "TypeScript dice package for Powered by the Apocalypse games. 2d6 resolution with strong hit, weak hit, and miss outcomes for Dungeon World, Apocalypse World, and more.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/pbta",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/pbta",
+        "keywords": "PbtA, Powered by the Apocalypse, Dungeon World, 2d6, TypeScript, tabletop RPG"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
@@ -8,14 +26,9 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/pbta` package provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
 
-## Overview
+## The 2d6 Tiers
 
-- Rolls 2d6 + stat modifier
-- 10+ = strong hit (complete success)
-- 7-9 = weak hit (partial success, success with cost)
-- 6- = miss (failure)
-- Supports advantage (3d6, keep 2 highest) and disadvantage (3d6, keep 2 lowest)
-- Supports forward and ongoing bonuses
+Powered by the Apocalypse games use a **2d6 + stat** roll. You roll two six-sided dice, add a stat modifier (usually −1 to +3), and the total determines your outcome tier: 10+ is a strong hit (full success), 7–9 is a weak hit (success with a complication), and 6 or lower is a miss (the GM makes a move). Some moves allow **advantage** (roll 3d6, keep the two highest) or **disadvantage** (roll 3d6, keep the two lowest). Bonuses like *forward* (a one-time +1) and *ongoing* (a persistent modifier) stack on top. The `@randsum/pbta` package covers all of this with a single typed function call.
 
 ## Installation
 
@@ -75,7 +88,7 @@ switch (result) {
     break
 }`} />
 
-## API reference
+## API
 
 ### `roll(arg: PbtaRollArgument)`
 
@@ -93,11 +106,12 @@ switch (result) {
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `PbtaResult` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
+| `result` | `PbtAOutcome` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
 | `total` | `number` | Sum of 2d6 + all modifiers |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+| `details` | `PbtARollDetails` | `{ stat, forward, ongoing, diceTotal }` |
 
-## Result interpretation
+## Outcomes
 
 | Outcome | Total | Description |
 |---|---|---|
@@ -105,7 +119,7 @@ switch (result) {
 | `weak_hit` | 7-9 | Partial success, success with cost |
 | `miss` | 6- | Failure |
 
-## Compatible games
+## Compatible Systems
 
 This package works with any PbtA game, including:
 
@@ -117,7 +131,15 @@ This package works with any PbtA game, including:
 - **Urban Shadows** -- Urban supernatural politics
 - And many more
 
+## Types
+
+<CodeExample code={`import type {
+  PbtARollArgument,
+  PbtAOutcome,
+  PbtARollDetails
+} from '@randsum/pbta'`} />
+
 ## Links
 
 - [npm package](https://www.npmjs.com/package/@randsum/pbta)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/pbta)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/pbta)

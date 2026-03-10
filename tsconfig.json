@@ -29,13 +29,15 @@
     "esModuleInterop": true
   },
   "references": [
+    { "path": "packages/notation" },
     { "path": "packages/roller" },
-    { "path": "packages/blades" },
-    { "path": "packages/daggerheart" },
-    { "path": "packages/fifth" },
-    { "path": "packages/pbta" },
-    { "path": "packages/root-rpg" },
-    { "path": "packages/salvageunion" },
+    { "path": "packages/display-utils" },
+    { "path": "games/blades" },
+    { "path": "games/daggerheart" },
+    { "path": "games/fifth" },
+    { "path": "games/pbta" },
+    { "path": "games/root-rpg" },
+    { "path": "games/salvageunion" },
     { "path": "packages/component-library" }
   ]
 }

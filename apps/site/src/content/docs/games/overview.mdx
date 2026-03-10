@@ -1,6 +1,6 @@
 ---
-title: Games Overview
-description: Game-specific packages for popular tabletop RPG systems
+title: TTRPG Dice Packages for D&D, Blades, PbtA & More
+description: Game-specific npm packages wrapping @randsum/roller with validated mechanics for D&D 5e, Blades in the Dark, PbtA, Daggerheart, Root RPG, and Salvage Union.
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components'
@@ -8,7 +8,7 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 RANDSUM includes specialized packages for popular tabletop RPG systems. Each game package wraps the core `@randsum/roller` engine with game-specific validation, roll configuration, and result interpretation.
 
-## Available game packages
+## Available Games
 
 <CardGrid>
   <Card title="D&D 5th Edition" icon="seti:favicon">
@@ -43,7 +43,7 @@ RANDSUM includes specialized packages for popular tabletop RPG systems. Each gam
   </Card>
 </CardGrid>
 
-## How game packages work
+## How They Work
 
 Every game package follows the same pattern using the `createGameRoll` factory from `@randsum/roller`:
 
@@ -66,9 +66,9 @@ All game packages share these characteristics:
 - Export a single `roll()` function as the main API
 - Accept game-specific input types (not raw notation strings)
 - Return a `GameRollResult` with both raw and interpreted results
-- Validate input and return errors rather than throwing
+- Validate input and throw on invalid values (same as `roll()`)
 - Depend only on `@randsum/roller` (never on each other)
-- Ship under 7KB bundled
+- Ship under 8KB bundled
 
 ## Installation
 

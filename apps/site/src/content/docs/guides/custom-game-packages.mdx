@@ -1,12 +1,12 @@
 ---
-title: Custom Game Packages
-description: Build your own game package using the createGameRoll factory
+title: Build a Custom RPG Dice System with createGameRoll
+description: Step-by-step guide to building your own typed dice system using createGameRoll. Covers validate, toRollOptions, interpretResult, and multi-roll game mechanics.
 ---
 
 import { Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-## When to use this
+## When to Use
 
 Use `createGameRoll` when you need to:
 
@@ -23,7 +23,7 @@ Use `createGameRoll` when you need to:
 const myRoll = createGameRoll({
   validate: (input) => { /* throw if invalid */ },
   toRollOptions: (input) => ({ sides: 6, quantity: 2 }),
-  interpretResult: (input, total, rolls, fullResult) => { /* return result */ }
+  interpretResult: (input, fullResult) => { /* return result */ }
 })`} />
 
 ### `validate`
@@ -51,7 +51,7 @@ const myRoll = createGameRoll({
     validateRange(input.modifier, -10, 10, 'modifier')
   },
   toRollOptions: (input) => ({ sides: 20, quantity: 1 }),
-  interpretResult: (_input, total) => total
+  interpretResult: (_input, fullResult) => fullResult.total
 })`} />
 
 `validateGreaterThan` and `validateLessThan` take `(value, threshold, name)`:
@@ -65,7 +65,7 @@ const myRoll = createGameRoll({
     validateLessThan(input.count, 100, 'count')   // must be < 100
   },
   toRollOptions: (input) => ({ sides: 6, quantity: input.count }),
-  interpretResult: (_input, total) => total
+  interpretResult: (_input, fullResult) => fullResult.total
 })`} />
 
 <Aside type="caution">
@@ -79,9 +79,9 @@ const rollPbta = createGameRoll({
     validateRange(stat, -3, 3, 'stat')
   },
   toRollOptions: (stat) => ({ quantity: 2, sides: 6, modifiers: { plus: stat } }),
-  interpretResult: (_input, total) => {
-    if (total >= 10) return 'strong_hit'
-    if (total >= 7) return 'weak_hit'
+  interpretResult: (_input, fullResult) => {
+    if (fullResult.total >= 10) return 'strong_hit'
+    if (fullResult.total >= 7) return 'weak_hit'
     return 'miss'
   }
 })
@@ -109,26 +109,26 @@ const myRoll = createGameRoll({
       plus: input.modifier
     }
   }),
-  interpretResult: (_input, total) => total
+  interpretResult: (_input, fullResult) => fullResult.total
 })`} />
 
 ### `interpretResult`
 
-Receives the resolved total, the individual roll records, and the full `RollerRollResult`. Return your game-specific `TResult` here.
+Receives the input and the full `RollerRollResult`. Return your game-specific `TResult` here.
 
 <CodeExample code={`import { createGameRoll } from '@randsum/roller'
 
 const myRoll = createGameRoll({
   validate: (_input) => {},
   toRollOptions: (_input) => ({ sides: 6, quantity: 2 }),
-  interpretResult: (input, total, rolls, fullResult) => {
-    if (total >= 10) return 'strong_hit'
-    if (total >= 7)  return 'weak_hit'
+  interpretResult: (_input, fullResult) => {
+    if (fullResult.total >= 10) return 'strong_hit'
+    if (fullResult.total >= 7)  return 'weak_hit'
     return 'miss'
   }
 })`} />
 
-## Minimal example: a 2d6+stat system
+## Minimal Example
 
 A PbtA-style roll that maps 2d6 + stat to a three-outcome result:
 
@@ -144,9 +144,9 @@ const rollPbta = createGameRoll({
     sides: 6,
     modifiers: { plus: stat }
   }),
-  interpretResult: (_input, total) => {
-    if (total >= 10) return 'strong_hit'
-    if (total >= 7)  return 'weak_hit'
+  interpretResult: (_input, fullResult) => {
+    if (fullResult.total >= 10) return 'strong_hit'
+    if (fullResult.total >= 7)  return 'weak_hit'
     return 'miss'
   }
 })
@@ -156,7 +156,7 @@ const result = rollPbta(2)
 console.log(result.result) // 'strong_hit' | 'weak_hit' | 'miss'
 console.log(result.total)  // 2d6 + 2`} />
 
-## Adding details (`computeDetails`)
+## Details Hook
 
 Use the optional `computeDetails` hook to attach structured metadata to the result. Pass `TDetails` as the third generic argument.
 
@@ -172,13 +172,13 @@ const rollPbta = createGameRoll({
     sides: 6,
     modifiers: { plus: stat }
   }),
-  interpretResult: (_input, total) => {
-    if (total >= 10) return 'strong_hit'
-    if (total >= 7)  return 'weak_hit'
+  interpretResult: (_input, fullResult) => {
+    if (fullResult.total >= 10) return 'strong_hit'
+    if (fullResult.total >= 7)  return 'weak_hit'
     return 'miss'
   },
-  computeDetails: (input, _total, rolls) => ({
-    diceValues: rolls.flatMap(r => r.rolls),
+  computeDetails: (input, fullResult) => ({
+    diceValues: fullResult.rolls.flatMap(r => r.rolls),
     statBonus: input
   })
 })
@@ -229,4 +229,4 @@ console.log(result.total)  // sum of both dice + 2`} />
 
 ## Bundle size note
 
-Keep your custom package under 7 KB (gzipped) — the same limit enforced for all official `@randsum` game packages.
+Keep your custom package under 8 KB (gzipped) — the same limit enforced for all official `@randsum` game packages.

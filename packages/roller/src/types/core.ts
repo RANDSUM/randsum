@@ -1,65 +1,13 @@
-import type { ModifierOptions } from './modifiers'
+import type { DiceNotation, RollOptions } from '@randsum/notation'
 
-/**
- * Template literal type for dice notation strings.
- *
- * Enforces the structural shape `NdS[modifiers]` at the type level —
- * `'4d6L'` and `'2d20H+5'` are valid, `'foo'` is not.
- * Plain string literals that match the pattern are directly assignable;
- * no type guard or cast is required to call `roll('4d6L')`.
- *
- * Use `isDiceNotation()` as a runtime guard when the input is unknown.
- * Use `notation()` to parse and throw on invalid input.
- *
- * @example
- * ```ts
- * // Plain literals work directly
- * roll('4d6L')
- * roll('2d20H+5')
- *
- * // Runtime guard for unknown input
- * if (isDiceNotation(input)) {
- *   roll(input)
- * }
- * ```
- */
-export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
-
-/**
- * Configuration options for a dice roll.
- *
- * @template T - Type for custom dice faces (defaults to string)
- *
- * @example
- * ```ts
- * // Numeric dice
- * const options: RollOptions = { sides: 20, quantity: 2 }
- *
- * // Custom faces
- * const fateOptions: RollOptions<string> = {
- *   sides: ['+', '+', ' ', ' ', '-', '-'],
- *   quantity: 4
- * }
- * ```
- */
-export interface RollOptions<T = string> {
-  /** Number of dice to roll (default: 1) */
-  quantity?: number
-  /** How this roll combines with others: 'add' or 'subtract' (default: 'add') */
-  arithmetic?: 'add' | 'subtract'
-  /** Number of sides, or array of custom face values */
-  sides: number | T[]
-  /** Modifiers to apply to the roll (drop, reroll, explode, etc.) */
-  modifiers?: ModifierOptions
-  /** Optional identifier for this roll in multi-roll expressions */
-  key?: string | undefined
-}
+// Re-export notation types for backward compatibility
+export type { DiceNotation, RollOptions } from '@randsum/notation'
 
 /**
  * RollOptions with required numeric fields.
  * Used internally when sides must be numeric and quantity is known.
  */
-export type RequiredNumericRollParameters = Pick<RollOptions, 'quantity' | 'sides'> & {
+export interface RequiredNumericRollParameters {
   quantity: number
   sides: number
 }
@@ -81,28 +29,11 @@ export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number | 
 /**
  * Type for custom random number generators.
  * Must return a number in the range [0, 1).
- *
- * @example
- * ```ts
- * // Custom RNG using crypto
- * const cryptoRandom: RandomFn = () =>
- *   crypto.getRandomValues(new Uint32Array(1))[0] / 2**32
- *
- * // Seeded RNG for reproducibility
- * const seededRandom: RandomFn = createSeededRandom(42)
- * ```
  */
 export type RandomFn = () => number
 
 /**
  * Configuration options for roll execution.
- *
- * @example
- * ```ts
- * // Use seeded random for reproducible results
- * const seeded = createSeededRandom(42)
- * roll("1d20", { randomFn: seeded })
- * ```
  */
 export interface RollConfig {
   /** Custom random function (default: Math.random) */

@@ -1,6 +1,6 @@
 ---
-title: Discord Bot
-description: Roll dice directly in Discord with the RANDSUM bot
+title: RANDSUM Discord Dice Bot — D&D, Blades, PbtA & More
+description: Add a dice rolling bot to your Discord server. Supports RANDSUM notation, D&D 5e, Blades in the Dark, Daggerheart, Root RPG, and Salvage Union with rich embeds.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
@@ -37,9 +37,9 @@ Roll Blades in the Dark action rolls. Takes the number of dice in your pool and 
 
 Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantage/disadvantage, and amplification of hope or fear dice.
 
-<CodeExample lang="bash" code={`/dh modifier:5 rollingWith:Advantage
-/dh modifier:3 rollingWith:Disadvantage
-/dh amplifyHope:true amplifyFear:false
+<CodeExample lang="bash" code={`/dh modifier:5 rolling_with:Advantage
+/dh modifier:3 rolling_with:Disadvantage
+/dh amplify_hope:true amplify_fear:false
 /dh modifier:2`} />
 
 ### `/root`
@@ -64,17 +64,16 @@ Display a reference guide for RANDSUM dice notation. Shows all available modifie
 
 <CodeExample lang="bash" code={`/notation`} />
 
-## Supported game packages
+## Game Support
 
-All RANDSUM game packages are fully supported:
+The following game packages have dedicated slash commands:
 
-- **@randsum/blades** -- Blades in the Dark action rolls
-- **@randsum/daggerheart** -- Daggerheart hope and fear dice
-- **@randsum/fifth** -- D&D 5th Edition rolls
-- **@randsum/root-rpg** -- Root RPG mechanics
-- **@randsum/salvageunion** -- Salvage Union table rolls
+- **@randsum/blades** -- `/blades` for Blades in the Dark action rolls
+- **@randsum/daggerheart** -- `/dh` for Daggerheart hope and fear dice
+- **@randsum/root-rpg** -- `/root` for Root RPG mechanics
+- **@randsum/salvageunion** -- `/su` for Salvage Union table rolls
 
-Each game package has a dedicated command with game-specific results, color-coded embeds, and detailed breakdowns.
+For other systems (including D&D 5e and PbtA), use the `/roll` command with standard RANDSUM dice notation.
 
 ## Features
 
@@ -83,7 +82,7 @@ Each game package has a dedicated command with game-specific results, color-code
 - **Game-specific commands** -- Dedicated commands for each supported RPG system
 - **Color-coded embeds** -- Results are visually distinct by outcome type
 
-## Self-hosted installation
+## Self-Hosted Setup
 
 If you prefer to run the bot yourself:
 

@@ -1,0 +1,56 @@
+import {
+  type GameRollResult,
+  type RollRecord,
+  type RollerRollResult,
+  createGameRoll,
+  validateInteger,
+  validateNonNegative
+} from '@randsum/roller'
+import { interpretHit } from './interpretHit'
+import type { BladesResult } from '../types'
+
+/**
+ * Rolls dice for Blades in the Dark.
+ *
+ * Rolls a pool of d6s and interprets the result according to Blades mechanics:
+ * - Two or more 6s: Critical (only with pool > 0)
+ * - Highest die is 6: Success
+ * - Highest die is 4-5: Partial success
+ * - Highest die is 1-3: Failure
+ * - If pool is 0, rolls 2d6 and keeps the lowest (zero dice roll)
+ *
+ * @param count - Number of dice in the pool (0-10 recommended)
+ * @returns Game roll result with Blades-specific interpretation
+ *
+ * @example
+ * ```ts
+ * const result = roll(3) // Roll 3d6
+ * result.result // => "critical", "success", "partial", or "failure"
+ * ```
+ *
+ * @throws Error if count is not an integer, negative, or unusually large (>10)
+ */
+export const roll: (count: number) => GameRollResult<BladesResult, undefined, RollRecord> =
+  createGameRoll<number, BladesResult>({
+    validate: (count: number) => {
+      validateInteger(count, 'Blades dice pool')
+      validateNonNegative(count, 'Blades dice pool')
+      if (count > 10) {
+        throw new Error(
+          `Blades dice pool is unusually large (${count}). Maximum recommended is 10.`
+        )
+      }
+    },
+    toRollOptions: (count: number) => {
+      const canCrit = count > 0
+      return {
+        sides: 6,
+        quantity: canCrit ? count : 2,
+        ...(canCrit ? {} : { modifiers: { drop: { highest: 1 } } })
+      }
+    },
+    interpretResult: (count: number, fullResult: RollerRollResult): BladesResult => {
+      const canCrit = count > 0
+      return interpretHit(fullResult, canCrit)
+    }
+  })

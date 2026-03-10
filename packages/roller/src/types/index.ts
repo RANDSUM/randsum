@@ -28,6 +28,6 @@ export type {
   InvalidValidationResult,
   ValidationErrorInfo,
   ValidationResult
-} from './validation'
+} from '@randsum/notation'
 
 export type { GameRollResult } from './game'

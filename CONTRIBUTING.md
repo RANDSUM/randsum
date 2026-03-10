@@ -38,16 +38,21 @@ RANDSUM is a Bun workspace monorepo with the following structure:
 
 ```
 packages/
-  roller/          # Core dice rolling engine (all other packages depend on this)
-  blades/          # Blades in the Dark mechanics
-  daggerheart/     # Daggerheart RPG support
-  fifth/           # D&D 5th Edition mechanics
-  root-rpg/        # Root RPG implementation
-  salvageunion/    # Salvage Union mechanics
-  pbta/            # Powered by the Apocalypse mechanics
+  roller/              # Core dice rolling engine (all other packages depend on this)
+  notation/            # Dice notation parser
+  display-utils/       # Display formatting utilities
+  component-library/   # React UI components
+games/
+  blades/              # Blades in the Dark mechanics
+  daggerheart/         # Daggerheart RPG support
+  fifth/               # D&D 5th Edition mechanics
+  root-rpg/            # Root RPG implementation
+  salvageunion/        # Salvage Union mechanics
+  pbta/                # Powered by the Apocalypse mechanics
 apps/
-  discord-bot/     # Discord bot (discord.js + Bun)
-  site/            # Documentation website (Astro)
+  cli/                 # Command-line interface
+  discord-bot/         # Discord bot (discord.js + Bun)
+  site/                # Documentation website (Astro)
 ```
 
 ### Package Patterns
@@ -225,7 +230,7 @@ bun run create:game <game-name>
 This creates a complete package structure with all required files:
 
 ```
-packages/{game-name}/
+games/{game-name}/
   src/
     index.ts              # Main exports
     types.ts              # Game-specific types (customize this)
@@ -249,7 +254,7 @@ After generation:
 5. **Update root `CLAUDE.md`** to list the new package
 6. **Add to site documentation** in `apps/site/` (optional)
 
-For detailed patterns, see [CLAUDE/game-packages.md](CLAUDE/game-packages.md).
+For detailed patterns, see the per-package `CLAUDE.md` files in each package directory (e.g. `games/blades/CLAUDE.md`).
 
 ## Common Tasks
 

@@ -1,0 +1,173 @@
+---
+title: "@randsum/notation — Dice Notation Parser and Type Foundation"
+description: Zero-dependency dice notation parser and type foundation for the RANDSUM ecosystem. Parsing, validation, and transformation utilities for TypeScript.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/notation",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "description": "Zero-dependency dice notation parser for the RANDSUM ecosystem. Parses dice notation strings into structured options.",
+        "offers": { "@type": "Offer", "price": "0" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/notation",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/notation",
+        "keywords": "dice notation parser, TypeScript, dice, tabletop RPG, npm package"
+      }
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Packages", "item": "https://randsum.dev/packages/overview/" },
+          { "@type": "ListItem", "position": 3, "name": "@randsum/notation", "item": "https://randsum.dev/packages/notation/" }
+        ]
+      }
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+`@randsum/notation` is the type foundation of the RANDSUM ecosystem. It provides dice notation parsing, validation, and transformation utilities with zero runtime dependencies.
+
+If you need to roll dice, use [`@randsum/roller`](/packages/roller/) instead — it re-exports everything from this package plus the `roll()` function.
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    <CodeExample lang="bash" code={`bun add @randsum/notation`} />
+  </TabItem>
+  <TabItem label="npm">
+    <CodeExample lang="bash" code={`npm install @randsum/notation`} />
+  </TabItem>
+</Tabs>
+
+## When to Use
+
+Use `@randsum/notation` directly when you need notation parsing or validation without the roll engine:
+
+- Building a notation editor or input component
+- Validating user-provided dice strings
+- Converting between notation formats and structured options
+- Authoring tools that work with dice types but don't execute rolls
+
+If you also need `roll()`, just use `@randsum/roller` — it re-exports the entire notation API.
+
+## Validation
+
+<CodeExample code={`import { isDiceNotation, validateNotation } from '@randsum/notation'
+
+// Type guard — narrows to DiceNotation branded type
+if (isDiceNotation('4d6L')) {
+  // value is typed as DiceNotation
+}
+
+// Full validation with error details
+const result = validateNotation('4d6L')
+if (result.valid) {
+  console.log(result.options) // parsed RollOptions
+  console.log(result.notation) // normalized notation string
+} else {
+  console.log(result.errors) // array of ValidationErrorInfo
+}`} />
+
+## Parsing
+
+<CodeExample code={`import { notationToOptions, listOfNotations } from '@randsum/notation'
+
+// Parse a notation string into structured options
+const options = notationToOptions('4d6L')
+// { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }
+
+// Parse a multi-part notation string
+const notations = listOfNotations('1d20+5 2d6')
+// ['1d20+5', '2d6']`} />
+
+## Transformation
+
+Convert between notation strings, structured options, and human-readable descriptions:
+
+<CodeExample code={`import {
+  optionsToNotation,
+  optionsToDescription,
+  modifiersToNotation,
+  modifiersToDescription
+} from '@randsum/notation'
+
+const options = {
+  sides: 6,
+  quantity: 4,
+  modifiers: { drop: { lowest: 1 } }
+}
+
+optionsToNotation(options)     // '4d6L'
+optionsToDescription(options)  // '4 six-sided dice, drop lowest 1'`} />
+
+## Suggestions
+
+Provide helpful fix suggestions for invalid notation:
+
+<CodeExample code={`import { suggestNotationFix } from '@randsum/notation'
+
+const suggestion = suggestNotationFix('4d6l')
+// Suggests '4d6L' (uppercase L for drop lowest)`} />
+
+## Types
+
+All types are exported for use in your applications:
+
+<CodeExample code={`import type {
+  DiceNotation,
+  RollOptions,
+  ModifierOptions,
+  ComparisonOptions,
+  DropOptions,
+  KeepOptions,
+  RerollOptions,
+  ReplaceOptions,
+  UniqueOptions,
+  SuccessCountOptions,
+  ValidationResult,
+  ValidValidationResult,
+  InvalidValidationResult,
+  ValidationErrorInfo,
+  ParsedNotationOptions,
+  NotationSchema
+} from '@randsum/notation'`} />
+
+## Modifier Schemas
+
+The package exports all 14 modifier notation schemas used by the roll engine. Each schema defines how a modifier is parsed from and serialized to notation:
+
+| Schema | Notation | Example |
+|---|---|---|
+| `capSchema` | `C{...}` | `C{<1,>6}` |
+| `dropSchema` | `L` / `H` / `D{...}` | `4d6L` |
+| `keepSchema` | `K` / `kl` / `K{...}` | `4d6K3` |
+| `replaceSchema` | `V{...}` | `V{1=6}` |
+| `rerollSchema` | `R{...}` | `R{<3}` |
+| `explodeSchema` | `!` | `3d6!` |
+| `compoundSchema` | `!!` | `3d6!!` |
+| `penetrateSchema` | `!p` | `3d6!p` |
+| `uniqueSchema` | `U` | `4d20U` |
+| `countSuccessesSchema` | `S{...}` | `5d10S{>7}` |
+| `multiplySchema` | `*N` | `2d6*2` |
+| `plusSchema` | `+N` | `1d20+5` |
+| `minusSchema` | `-N` | `1d20-2` |
+| `multiplyTotalSchema` | `**N` | `2d6+3**2` |
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/notation)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/notation)
+- [Dice Notation Reference](/reference/dice-notation/)
+- [Modifiers Reference](/reference/modifiers/)

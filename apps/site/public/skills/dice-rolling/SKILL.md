@@ -2,10 +2,10 @@
 name: dice-rolling
 description: Roll dice using RANDSUM notation for tabletop RPGs. Use when users ask to roll dice, need probability calculations, or want game-specific mechanics for D&D, Blades in the Dark, PbtA, Daggerheart, Root RPG, and Salvage Union.
 license: MIT
-compatibility: Requires @randsum/mcp MCP server or @randsum/roller npm package
+compatibility: Requires @randsum/roller npm package or @randsum/cli
 metadata:
   author: RANDSUM
-  version: "2.0"
+  version: "3.0"
   repository: https://github.com/RANDSUM/randsum
 ---
 
@@ -55,28 +55,15 @@ See [references/GAME_SYSTEMS.md](references/GAME_SYSTEMS.md) for detailed mechan
 
 ## Implementation Options
 
-### Option 1: MCP Server (Recommended for AI Agents)
-
-```json
-{
-  "mcpServers": {
-    "randsum": {
-      "command": "npx",
-      "args": ["-y", "@randsum/mcp@latest"]
-    }
-  }
-}
-```
-
-Available MCP tools: `roll`, `validate-notation`, `try-roll`, `analyze`, `game-roll`, `batch-roll`, `compare`, `count-successes`, `preset`.
-
-### Option 2: CLI
+### Option 1: CLI
 
 ```bash
-npx @randsum/roller "4d6L"
+npx @randsum/cli "4d6L"
+# or install globally
+npm install -g @randsum/cli
 ```
 
-### Option 3: Programmatic (TypeScript/JavaScript)
+### Option 2: Programmatic (TypeScript/JavaScript)
 
 `roll()` accepts a number (sides for 1 die), a notation string, an options object, or multiple arguments:
 
@@ -144,5 +131,5 @@ console.log(result.result) // After modifiers applied
 
 - [Complete RANDSUM Notation Reference](https://randsum.dev/packages/roller/)
 - [Game-Specific Mechanics Documentation](https://randsum.dev/games/)
-- [MCP Server Documentation](https://randsum.dev/tools/mcp/)
+- [CLI Documentation](https://randsum.dev/tools/cli/)
 - [GitHub Repository](https://github.com/RANDSUM/randsum)

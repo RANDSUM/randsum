@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { validateNotation } from '../src/validateNotation'
+import { validateNotation } from '../src'
 
 describe('validateNotation', () => {
   describe('valid notation', () => {
@@ -120,7 +120,7 @@ describe('validateNotation', () => {
         expect(result.options[0]?.modifiers?.reroll?.exact).toContain(1)
         expect(result.notation[0]).toBe('4d6R{1}')
         expect(result.description[0]).toContain('Roll 4 6-sided dice')
-        expect(result.description[0]).toContain('Reroll [1]')
+        expect(result.description[0]).toContain('Reroll 1')
       }
     })
 
@@ -151,7 +151,7 @@ describe('validateNotation', () => {
         expect(result.notation[0]).toBe('4d6LR{1}+3')
         expect(result.description[0]).toContain('Roll 4 6-sided dice')
         expect(result.description[0]).toContain('Drop lowest')
-        expect(result.description[0]).toContain('Reroll [1]')
+        expect(result.description[0]).toContain('Reroll 1')
         expect(result.description[0]).toContain('Add 3')
       }
     })
@@ -216,11 +216,7 @@ describe('validateNotation', () => {
     test('validates zero-sided dice', () => {
       const result = validateNotation('1d0')
 
-      expect(result.valid).toBe(true)
-      if (result.valid) {
-        expect(result.options[0]?.sides).toBe(0)
-        expect(result.options[0]?.quantity).toBe(1)
-      }
+      expect(result.valid).toBe(false)
     })
 
     test('validates zero quantity dice', () => {

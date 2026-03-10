@@ -1,89 +1,201 @@
-import { Box, Text } from 'ink'
+// SYNC: packages/component-library/src/components/ModifierReference/ModifierReference.tsx
+import { Box, Text, useInput } from 'ink'
+import { useState } from 'react'
+import { useTerminalWidth } from '../hooks/useTerminalWidth'
 
-const REFERENCE_ENTRIES = [
-  ['NdS', '4d6', 'Roll N dice with S sides'],
-  ['+X', '2d6+3', 'Add X to total'],
-  ['-X', '2d6-1', 'Subtract X from total'],
-  ['L', '4d6L', 'Drop lowest roll'],
-  ['H', '4d6H', 'Drop highest roll'],
-  ['K', '4d6K', 'Keep highest roll'],
-  ['R{<N}', '4d20R{<3}', 'Reroll dice below N'],
-  ['C{>N}', '4d20C{>18}', 'Clamp values above N'],
-  ['V{N=M}', 'd6V{1=6}', 'Replace N with M'],
-  ['S{N}', '5d10S{7}', 'Count successes ≥ N'],
-  ['!', '3d6!', 'Max adds new die to pool'],
-  ['!!', '3d6!!', 'Max adds to same die'],
-  ['!p', '3d6!p', 'Max adds roll-1 to die'],
-  ['U', '4d6U', 'Reroll duplicates'],
-  ['*N', '2d6*3', 'Multiply sum before +/-'],
-  ['**N', '2d6**2', 'Multiply final total']
-] as const
+const TWO_COL_THRESHOLD = 80
+import type { GridPosition } from '../helpers/modifierGrid'
+import { navigateGrid } from '../helpers/modifierGrid'
+import { MODIFIER_DOCS } from '@randsum/display-utils'
+import type { ModifierDoc } from '@randsum/display-utils'
 
-const EXPLODE_TIPS = [
-  ['!  Explode', '[6,4,6] → [6,4,6,5,3] (new dice)'],
-  ['!! Compound', '[6,4,6] → [11,4,9] (same dice)'],
-  ['!p Penetrate', '[6,4,6] → [10,4,8] (same, -1 each)']
-] as const
+interface ModifierEntry {
+  readonly notation: string
+  readonly description: string
+  readonly notationSuffix?: string
+}
 
-const midpoint = Math.ceil(REFERENCE_ENTRIES.length / 2)
-const LEFT_COLUMN = REFERENCE_ENTRIES.slice(0, midpoint)
-const RIGHT_COLUMN = REFERENCE_ENTRIES.slice(midpoint)
+const CORE: ModifierEntry = { notation: 'xDN', description: 'roll x dice with N sides' }
 
-function ReferenceColumn({
-  entries
+const GRID_ROWS = [
+  [CORE, { notation: '+', description: 'add', notationSuffix: 'N' }],
+  [
+    { notation: 'L', description: 'drop lowest', notationSuffix: 'N' },
+    { notation: '-', description: 'subtract', notationSuffix: 'N' }
+  ],
+  [
+    { notation: 'H', description: 'drop highest', notationSuffix: 'N' },
+    { notation: '*', description: 'multiply dice', notationSuffix: 'N' }
+  ],
+  [
+    { notation: 'K', description: 'keep highest', notationSuffix: 'N' },
+    { notation: '**', description: 'multiply total', notationSuffix: 'N' }
+  ],
+  [
+    { notation: 'KL', description: 'keep lowest', notationSuffix: 'N' },
+    { notation: 'V{..}', description: 'replace...' }
+  ],
+  [
+    { notation: '!', description: 'explode' },
+    { notation: 'S{..}', description: 'successes...' }
+  ],
+  [
+    { notation: '!!', description: 'compound', notationSuffix: 'N' },
+    { notation: 'D{..}', description: 'drop condition...' }
+  ],
+  [
+    { notation: '!p', description: 'penetrate', notationSuffix: 'N' },
+    { notation: 'C{..}', description: 'cap...' }
+  ],
+  [
+    { notation: 'U', description: 'unique', notationSuffix: '{..}' },
+    { notation: 'R{..}', description: 'reroll...', notationSuffix: 'N' }
+  ]
+] as const satisfies readonly (readonly [ModifierEntry, ModifierEntry])[]
+
+export function NotationReference({
+  active,
+  modifiersDisabled,
+  onAddModifier,
+  onTopExit,
+  onBottomExit,
+  onDocChange,
+  selectedPos,
+  onSelectedPosChange
 }: {
-  readonly entries: readonly (readonly [string, string, string])[]
+  readonly active: boolean
+  readonly modifiersDisabled: boolean
+  readonly onAddModifier: (notation: string) => void
+  readonly onTopExit?: () => void
+  readonly onBottomExit?: () => void
+  readonly onDocChange?: (doc: ModifierDoc | undefined) => void
+  readonly selectedPos: GridPosition
+  readonly onSelectedPosChange: (pos: GridPosition) => void
 }): React.JSX.Element {
+  const [showDoc, setShowDoc] = useState(false)
+
+  const selectedRow = GRID_ROWS[selectedPos.row]
+  const selectedCell =
+    selectedRow !== undefined
+      ? selectedPos.col === 0
+        ? selectedRow[0]
+        : selectedRow[1]
+      : undefined
+  const selectedDoc = selectedCell !== undefined ? MODIFIER_DOCS[selectedCell.notation] : undefined
+
+  useInput(
+    (_input, key) => {
+      if (key.upArrow) {
+        if (selectedPos.row === 0) {
+          onTopExit?.()
+        } else {
+          onSelectedPosChange(navigateGrid(selectedPos, 'up', GRID_ROWS.length))
+          setShowDoc(false)
+          onDocChange?.(undefined)
+        }
+      } else if (key.downArrow) {
+        if (selectedPos.row === GRID_ROWS.length - 1) {
+          onBottomExit?.()
+        } else {
+          onSelectedPosChange(navigateGrid(selectedPos, 'down', GRID_ROWS.length))
+          setShowDoc(false)
+          onDocChange?.(undefined)
+        }
+      } else if (key.leftArrow) {
+        onSelectedPosChange(navigateGrid(selectedPos, 'left', GRID_ROWS.length))
+        setShowDoc(false)
+        onDocChange?.(undefined)
+      } else if (key.rightArrow) {
+        onSelectedPosChange(navigateGrid(selectedPos, 'right', GRID_ROWS.length))
+        setShowDoc(false)
+        onDocChange?.(undefined)
+      } else if (key.return) {
+        if (showDoc) {
+          const row = GRID_ROWS[selectedPos.row]
+          if (row === undefined) return
+          const cell = selectedPos.col === 0 ? row[0] : row[1]
+          const isCore = selectedPos.row === 0 && selectedPos.col === 0
+          if (!modifiersDisabled || isCore) {
+            onAddModifier(cell.notation)
+          }
+          setShowDoc(false)
+          onDocChange?.(undefined)
+        } else {
+          setShowDoc(true)
+          onDocChange?.(selectedDoc)
+        }
+      } else if (_input === 'a' || _input === 'A') {
+        const row = GRID_ROWS[selectedPos.row]
+        if (row === undefined) return
+        const cell = selectedPos.col === 0 ? row[0] : row[1]
+        const isCore = selectedPos.row === 0 && selectedPos.col === 0
+        if (!modifiersDisabled || isCore) {
+          onAddModifier(cell.notation)
+        }
+      }
+    },
+    { isActive: active }
+  )
+
+  const termWidth = useTerminalWidth()
+  const twoCol = termWidth >= TWO_COL_THRESHOLD
+
   return (
     <Box flexDirection="column" flexGrow={1}>
-      {entries.map(([modifier, example, description]) => (
-        <Box key={modifier} gap={1}>
-          <Text dimColor bold>
-            {modifier.padEnd(7)}
-          </Text>
-          <Text dimColor>{example.padEnd(12)}</Text>
-          <Text color="gray">{description}</Text>
-        </Box>
-      ))}
-    </Box>
-  )
-}
+      <Box flexDirection="column">
+        {GRID_ROWS.map((row, rowIdx) => {
+          const left = row[0]
+          const right = row[1]
+          const isCore = rowIdx === 0
+          const leftSelected = active && selectedPos.row === rowIdx && selectedPos.col === 0
+          const rightSelected = active && selectedPos.row === rowIdx && selectedPos.col === 1
+          const leftDisabled = modifiersDisabled && !isCore && !leftSelected
+          const rightDisabled = modifiersDisabled && !rightSelected
+          const leftBg = isCore ? '#2a3232' : rowIdx % 2 === 0 ? '#262626' : undefined
+          const rightBg = rowIdx % 2 === 1 ? '#262626' : undefined
+          const leftKeyColor = leftSelected ? 'yellowBright' : leftDisabled ? 'gray' : 'white'
+          const rightKeyColor = rightSelected ? 'yellowBright' : rightDisabled ? 'gray' : 'white'
 
-function ColumnSeparator({ height }: { readonly height: number }): React.JSX.Element {
-  return (
-    <Box flexDirection="column">
-      {Array.from({ length: height }, (_, i) => (
-        <Text key={i} dimColor>
-          │
-        </Text>
-      ))}
-    </Box>
-  )
-}
+          return (
+            <Box key={rowIdx} flexDirection={twoCol ? 'row' : 'column'}>
+              {/* Left cell: bold notation + description */}
+              <Box
+                gap={1}
+                width={twoCol ? '50%' : '100%'}
+                paddingX={1}
+                borderStyle="single"
+                borderTop={rowIdx === 0}
+                borderRight={twoCol ? false : undefined}
+                borderColor={leftSelected ? 'white' : leftDisabled ? '#888888' : '#c0c0c0'}
+                {...(leftBg !== undefined ? { backgroundColor: leftBg } : {})}
+              >
+                <Text bold color={leftKeyColor}>
+                  {left.notation}
+                  {'notationSuffix' in left ? <Text dimColor>{left.notationSuffix}</Text> : ''}
+                </Text>
+                <Text dimColor={!leftSelected}>{left.description}</Text>
+              </Box>
 
-export function NotationReference(): React.JSX.Element {
-  return (
-    <Box flexDirection="column" flexGrow={1} borderStyle="single" borderColor="gray" paddingX={1}>
-      <Text bold dimColor>
-        Dice Notation
-      </Text>
-      <Box marginTop={1} gap={2}>
-        <ReferenceColumn entries={LEFT_COLUMN} />
-        <ColumnSeparator height={LEFT_COLUMN.length} />
-        <ReferenceColumn entries={RIGHT_COLUMN} />
-      </Box>
-      <Box marginTop={1} flexDirection="column">
-        <Text bold dimColor>
-          Explosion Types (3d6 example)
-        </Text>
-        {EXPLODE_TIPS.map(([label, example]) => (
-          <Box key={label} gap={1}>
-            <Text dimColor bold>
-              {label.padEnd(14)}
-            </Text>
-            <Text color="gray">{example}</Text>
-          </Box>
-        ))}
+              {/* Right cell: description + bold notation (mirrored) */}
+              <Box
+                gap={1}
+                justifyContent={twoCol ? 'flex-end' : 'space-between'}
+                width={twoCol ? '50%' : '100%'}
+                paddingX={1}
+                borderStyle="single"
+                borderTop={twoCol ? rowIdx === 0 : false}
+                borderColor={rightSelected ? 'white' : rightDisabled ? '#888888' : '#c0c0c0'}
+                {...(rightBg !== undefined ? { backgroundColor: rightBg } : {})}
+              >
+                <Text dimColor={!rightSelected}>{right.description}</Text>
+                <Text bold color={rightKeyColor}>
+                  {right.notation}
+                  {'notationSuffix' in right ? <Text dimColor>{right.notationSuffix}</Text> : ''}
+                </Text>
+              </Box>
+            </Box>
+          )
+        })}
       </Box>
     </Box>
   )

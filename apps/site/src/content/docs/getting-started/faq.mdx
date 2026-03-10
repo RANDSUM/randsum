@@ -1,24 +1,80 @@
 ---
 title: FAQ
-description: Common questions about RANDSUM
+description: "Answers to common questions: when roll() throws, seeded RNG for testing, browser support, reroll infinite loop prevention, and how drop vs. keep differ."
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "When does roll() throw?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "roll() throws a RandsumError when given invalid input: invalid notation strings, invalid option values (like sides: 0), or modifiers with impossible conditions. Hardcoded notation like roll('4d6L') will never throw in practice — errors only occur with input from outside your control."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I use RANDSUM in a browser?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "All RANDSUM packages are zero-dependency and ship as ESM, making them compatible with modern browsers, Vite, webpack, and other bundlers without any special configuration."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I write deterministic tests for dice rolls?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pass a custom randomFn option to roll() to provide seeded or deterministic random values. This makes dice outcomes reproducible for unit tests."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can reroll modifiers cause infinite loops?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. RANDSUM caps reroll attempts at 99 by default. You can also limit rerolls by appending a number after the condition: R{<3}5 means reroll below 3, with a maximum of 5 total rerolls across the pool."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between drop and keep modifiers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Drop removes dice from the pool (4d6L drops the lowest die). Keep retains only the specified dice (4d6K3 keeps the 3 highest). They are logical complements — 4d6L and 4d6K3 produce identical results."
+            }
+          }
+        ]
+      }
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-## Why doesn't `roll()` throw?
+## When does `roll()` throw?
 
-RANDSUM is not designed to throw — errors are returned as values rather than raised as exceptions. This makes error handling explicit and composable without try/catch blocks.
+`roll()` throws a `RandsumError` when given invalid input — invalid notation strings, bad option values (like `sides: 0`), or modifiers with impossible conditions. Hardcoded notation in your source will never throw in practice.
 
-<CodeExample code={`import { roll } from '@randsum/roller'
+For user-provided input, validate before rolling:
 
-const result = roll('invalid notation')
+<CodeExample code={`import { validateNotation, isDiceNotation, roll } from '@randsum/roller'
 
-if (result.error) {
-  // Handle the error — result.total is undefined here
-  console.error(result.error.message)
+// Option 1: validate and get structured error info
+const validation = validateNotation(userInput)
+if (!validation.valid) {
+  console.error(validation.error.message)
 } else {
-  // Safe to use result.total here
-  console.log(result.total)
+  const result = roll(validation.argument) // typed as DiceNotation
+}
+
+// Option 2: type guard
+if (isDiceNotation(userInput)) {
+  const result = roll(userInput) // typed as DiceNotation
 }`} />
 
 See [Error Handling](/guides/error-handling/) for the full pattern.
@@ -42,8 +98,8 @@ const result = roll('4d6L')
 
 // Access all roll records
 result.rolls.forEach(record => {
-  console.log(record.modifierHistory.modifiedRolls)  // die values after modifiers
-  console.log(record.rolls)                          // die values before modifiers
+  console.log(record.rolls)          // die values after modifiers
+  console.log(record.initialRolls)  // die values before modifiers
 })`} />
 
 ## Can I use RANDSUM in the browser?

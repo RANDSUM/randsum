@@ -1,6 +1,6 @@
 import type { ModifierConfig, ModifierLog } from '../../types'
 
-export function createFrequencyMap(values: number[]): Map<number, number> {
+function createFrequencyMap(values: number[]): Map<number, number> {
   const freq = new Map<number, number>()
 
   for (const value of values) {
@@ -22,6 +22,15 @@ export function createArithmeticLog(
   }
 }
 
+/**
+ * Creates a ModifierLog by computing the frequency difference between
+ * initialRolls and newRolls.
+ *
+ * Values appearing more in newRolls → added[]
+ * Values appearing less in newRolls (more in initialRolls) → removed[]
+ *
+ * Example: [1, 3, 3] → [3, 3, 5]: added=[5], removed=[1]
+ */
 export function createModifierLog(
   modifier: string,
   options: ModifierConfig | undefined,
@@ -63,8 +72,4 @@ export function createModifierLog(
   }
 
   return { ...baseLog, added, removed }
-}
-
-export function mergeLogs(existingLogs: ModifierLog[], newLog: ModifierLog): ModifierLog[] {
-  return [...existingLogs, newLog]
 }

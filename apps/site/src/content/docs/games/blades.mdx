@@ -1,6 +1,24 @@
 ---
-title: Blades in the Dark
-description: Blades in the Dark dice pool mechanics with RANDSUM
+title: Blades in the Dark Dice Library — @randsum/blades
+description: TypeScript package for Blades in the Dark dice pools. Handles 0–10 dice, desperate position (0 dice), and returns critical, success, partial, or failure.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/blades",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "3.0.0",
+        "description": "TypeScript dice rolling package for Blades in the Dark. Handles dice pool mechanics with critical, success, partial success, and failure outcomes.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/blades",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/blades",
+        "keywords": "Blades in the Dark, BITD, dice pool, TypeScript, tabletop RPG, action roll"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
@@ -8,12 +26,9 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/blades` package provides mechanics for [Blades in the Dark](https://www.evilhat.com/home/blades-in-the-dark/), a tabletop RPG about a crew of daring scoundrels seeking their fortunes on the haunted streets of an industrial-fantasy city.
 
-## Overview
+## The Action Roll
 
-- Rolls a dice pool of d6s (0-10 dice)
-- 0 dice pool: rolls 2d6 and keeps the lowest (desperate position)
-- Determines outcome from the highest die in the pool
-- Returns one of four outcomes: critical, success, partial, or failure
+Blades in the Dark uses a **dice pool** system built around six-sided dice. You assemble a pool of dice based on your action rating plus any bonus dice (from pushing yourself, assistance, or devil's bargains), roll them all, and read only the single highest result: a 6 is a full success, 4–5 is a partial success with a consequence, and 1–3 is a failure. Rolling zero dice (when your effective pool is 0) means rolling two dice and keeping the *lowest*. A **critical** result — two or more 6s — means an exceptional outcome. The `@randsum/blades` package handles all pool assembly, the two-dice-lowest rule for zero-dice rolls, and the outcome tier logic.
 
 ## Installation
 
@@ -36,7 +51,7 @@ console.log(result) // 'critical' | 'success' | 'partial' | 'failure'`} />
 
 <CodeExample code={`import { roll } from '@randsum/blades'
 
-roll(0)  // Desperate: rolls 2d6, keeps lowest
+roll(0)  // Zero dice: rolls 2d6, keeps lowest
 roll(1)  // One die
 roll(2)  // Two dice
 roll(3)  // Three dice
@@ -61,7 +76,7 @@ switch (result) {
     break
 }`} />
 
-## API reference
+## API
 
 ### `roll(count: number)`
 
@@ -76,10 +91,10 @@ switch (result) {
 | Property | Type | Description |
 |---|---|---|
 | `result` | `BladesResult` | `'critical' \| 'success' \| 'partial' \| 'failure'` |
-| `total` | `number` | Sum of all dice |
+| `total` | `number` | Sum of kept dice after modifiers |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
-## Result interpretation
+## Outcomes
 
 | Outcome | Condition | Description |
 |---|---|---|
@@ -88,15 +103,15 @@ switch (result) {
 | `partial` | Highest die is 4-5 | Partial success -- you do it, but with a complication |
 | `failure` | Highest die is 1-3 | Bad outcome -- things go wrong |
 
-### Zero dice pool
+### Zero Dice Pool
 
-When the dice pool is 0 (desperate position), the system rolls 2d6 and drops the highest, keeping only the lowest die. This makes failure much more likely.
+When the dice pool is 0, the system rolls 2d6 and keeps only the lowest die. This makes failure much more likely and prevents critical results.
 
-## Type exports
+## Types
 
 <CodeExample code={`import type { BladesResult } from '@randsum/blades'`} />
 
 ## Links
 
 - [npm package](https://www.npmjs.com/package/@randsum/blades)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/blades)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/blades)

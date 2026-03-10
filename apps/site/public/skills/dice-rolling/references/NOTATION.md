@@ -301,7 +301,7 @@ roll({
   modifiers: { explode: 5 }
 })
 
-roll("3d6!0") // Explode unlimited (capped at 100 for safety)
+roll("3d6!0") // Explode unlimited (capped at 1000 for safety)
 roll({
   sides: 6,
   quantity: 3,
@@ -332,7 +332,7 @@ roll({
   modifiers: { compound: 5 }
 })
 
-roll("3d6!!0") // Compound explode unlimited (capped at 100)
+roll("3d6!!0") // Compound explode unlimited (capped at 1000)
 roll({
   sides: 6,
   quantity: 3,
@@ -370,7 +370,7 @@ roll({
   modifiers: { penetrate: 5 }
 })
 
-roll("3d6!p0") // Penetrate unlimited (capped at 100)
+roll("3d6!p0") // Penetrate unlimited (capped at 1000)
 roll({
   sides: 6,
   quantity: 3,

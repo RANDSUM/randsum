@@ -1,0 +1,81 @@
+---
+title: "@randsum/cli — Dice Rolling CLI & TUI"
+description: Roll dice from the terminal using RANDSUM notation. Features instant mode for quick rolls and an interactive TUI for exploration. Install globally via npm or bun.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+`@randsum/cli` is a terminal dice roller with two modes: instant roll-and-exit for quick results, and an interactive TUI for exploration.
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun (global)">
+    <CodeExample lang="bash" code={`bun install -g @randsum/cli`} />
+  </TabItem>
+  <TabItem label="npm (global)">
+    <CodeExample lang="bash" code={`npm install -g @randsum/cli`} />
+  </TabItem>
+  <TabItem label="one-off (npx)">
+    <CodeExample lang="bash" code={`npx @randsum/cli 4d6L`} />
+  </TabItem>
+  <TabItem label="one-off (bunx)">
+    <CodeExample lang="bash" code={`bunx @randsum/cli 4d6L`} />
+  </TabItem>
+</Tabs>
+
+## Quick Roll
+
+Pass notation as arguments for an instant result:
+
+<CodeExample lang="bash" code={`randsum 4d6L          # Roll 4d6, drop lowest (D&D ability score)
+randsum 2d20L+7       # Advantage attack roll with +7
+randsum 1d20 -v       # Verbose output with full breakdown
+randsum 3d6 --json    # JSON output for scripting`} />
+
+## Interactive Mode
+
+Run with no arguments (or `-i`) to open the interactive terminal UI:
+
+<CodeExample lang="bash" code={`randsum
+randsum -i`} />
+
+The TUI provides:
+- **Live notation input** with color-coded token highlighting
+- **Modifier reference** with keyboard navigation — browse all modifiers and add them to your notation
+- **Roll result panel** showing individual dice, applied modifiers, and final total
+- **Token focus navigation** — arrow keys move between notation tokens; left from position 0 enters roll focus
+
+## Flags
+
+| Flag | Description |
+|---|---|
+| `-i, --interactive` | Launch interactive TUI mode |
+| `-v, --verbose` | Show detailed roll breakdown |
+| `--json` | Output results as JSON |
+| `-r, --repeat N` | Roll N times |
+| `-s, --seed N` | Use seeded random for reproducible rolls |
+| `-V, --version` | Show version |
+| `-h, --help` | Show help |
+
+## Examples
+
+<CodeExample lang="bash" code={`# D&D character generation (6 ability scores)
+randsum 4d6L -r 6
+
+# Attack roll with advantage, verbose
+randsum 2d20L+7 -v
+
+# Blades in the Dark pool
+randsum 3d6
+
+# JSON output for scripts
+randsum 2d6+3 --json
+
+# Seeded roll (reproducible result)
+randsum 1d20 -s 42`} />
+
+## Dice Notation
+
+Uses [RANDSUM Dice Notation](/reference/dice-notation/) — the same notation accepted by `@randsum/roller`.

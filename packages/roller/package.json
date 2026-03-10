@@ -1,6 +1,6 @@
 {
   "name": "@randsum/roller",
-  "version": "1.1.2",
+  "version": "3.0.0",
   "description": "TypeScript-first dice notation engine for tabletop RPGs, game development, and probability simulations",
   "private": false,
   "author": {
@@ -8,7 +8,8 @@
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
-  "homepage": "https://github.com/RANDSUM/randsum",
+  "homepage": "https://randsum.dev/packages/roller/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RANDSUM/randsum.git",
@@ -21,8 +22,7 @@
     "dist",
     "src",
     "LICENSE",
-    "README.md",
-    "bin"
+    "README.md"
   ],
   "type": "module",
   "exports": {
@@ -71,13 +71,15 @@
     "simulation",
     "randsum"
   ],
-  "bin": "./bin/randsum",
-  "dependencies": {},
+  "dependencies": {
+    "@randsum/notation": "workspace:~"
+  },
   "devDependencies": {
     "fast-check": "catalog:"
   },
   "scripts": {
     "dev": "bunup --watch",
+    "prepublishOnly": "bun run build",
     "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",

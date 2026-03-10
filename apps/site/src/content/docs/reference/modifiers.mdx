@@ -1,6 +1,6 @@
 ---
 title: Modifiers
-description: Complete reference for the RANDSUM modifier system
+description: "Full TypeScript API for every RANDSUM modifier: cap, drop, keep, replace, reroll, explode, compound, penetrate, unique, count successes, and multipliers."
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
@@ -85,7 +85,10 @@ roll({
 
 <CodeExample code={`interface ComparisonOptions {
   greaterThan?: number
+  greaterThanOrEqual?: number
   lessThan?: number
+  lessThanOrEqual?: number
+  exact?: number[]
 }`} />
 
 ## Drop
@@ -444,7 +447,7 @@ roll({
 
 <RollerPlayground defaultNotation="2d6+3**2" client:only="react" />
 
-## Complete order of operations
+## Order of Operations
 
 The full calculation order is:
 

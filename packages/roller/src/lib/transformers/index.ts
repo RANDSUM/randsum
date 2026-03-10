@@ -1,3 +1,1 @@
-export { optionsToDescription } from './optionsToDescription'
-export { optionsToNotation } from './optionsToNotation'
-export { optionsToSidesFaces } from './optionsToSidesFaces'
+export { optionsToDescription, optionsToNotation, optionsToSidesFaces } from '@randsum/notation'

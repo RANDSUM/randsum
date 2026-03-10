@@ -1,0 +1,470 @@
+.modifier-doc {
+  font-size: var(--rp-font-size-expand, 0.8rem);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #e6edf3;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Top row: notation box + title/desc ===== */
+.modifier-doc-top {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  position: sticky;
+  top: -0.25rem;
+  background: #161b22;
+  z-index: 1;
+  padding-top: 0.1rem;
+}
+
+.modifier-doc-notation-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #3b82f6;
+  border-radius: 0.5rem;
+  min-width: 3ch;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.modifier-doc-notation-base {
+  color: #ffffff;
+}
+
+.modifier-doc-notation-optional {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.modifier-doc-header-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.modifier-doc-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e6edf3;
+  line-height: 1.2;
+}
+
+.modifier-doc-description {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ===== Section label ===== */
+.modifier-doc-section-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #4b5563;
+  margin-bottom: 0.2rem;
+  margin-top: 0.35rem;
+}
+
+/* ===== Two-column body ===== */
+.modifier-doc-body {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+}
+
+.modifier-doc-body-comparisons {
+  flex: 0 0 33%;
+  padding-right: 0.6rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  margin-right: 0.6rem;
+}
+
+.modifier-doc-body-examples {
+  flex: 1;
+  min-width: 0;
+}
+
+.modifier-doc-body-examples--full {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===== Comparisons ===== */
+.modifier-doc-comparisons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.1rem;
+}
+
+.modifier-doc-comparison-chip {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.8rem;
+  color: #e6edf3;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.4rem;
+  cursor: default;
+  transition: background 0.12s ease;
+  position: relative;
+}
+
+.modifier-doc-comparison-chip:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.modifier-doc-chip-var {
+  color: rgba(230, 237, 243, 0.35);
+}
+
+.modifier-doc-comparison-chip[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c2128;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  z-index: 20;
+}
+
+.modifier-doc-comparison-chip[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* ===== Notation box: invalid state ===== */
+.modifier-doc-notation-box--invalid {
+  border-color: #f97583;
+}
+
+/* ===== Inline notation inputs ===== */
+.modifier-doc-notation-input {
+  background: none;
+  border: none;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: #ffffff;
+  padding: 0;
+  min-width: 1ch;
+  text-align: center;
+  box-sizing: content-box;
+  caret-color: #3b82f6;
+  vertical-align: baseline;
+}
+
+.modifier-doc-notation-input::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.modifier-doc-notation-input:focus {
+  border-bottom-color: #3b82f6;
+}
+
+.modifier-doc-notation-input--muted {
+  color: rgba(255, 255, 255, 0.4);
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.modifier-doc-notation-input--muted:focus {
+  color: #ffffff;
+  border-bottom-color: #3b82f6;
+}
+
+/* ===== Clickable example rows ===== */
+.modifier-doc-example-row--clickable {
+  cursor: pointer;
+}
+
+.modifier-doc-example-row--clickable:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ===== Examples ===== */
+.modifier-doc-examples {
+  display: flex;
+  flex-direction: column;
+}
+
+.modifier-doc-example-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.3rem;
+  margin: 0 -0.3rem;
+  border-radius: 0.2rem;
+}
+
+.modifier-doc-example-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.modifier-doc-example-notation {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.85rem;
+  color: #60a5fa;
+  flex-shrink: 0;
+}
+
+.modifier-doc-example-desc {
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* ===== Footer (back + add) ===== */
+.modifier-doc-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin-top: 0.35rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.1rem;
+  position: sticky;
+  bottom: -0.25rem;
+  background: #161b22;
+  z-index: 1;
+}
+
+/* ===== Back button ===== */
+.modifier-doc-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.modifier-doc-back:hover {
+  color: #9ca3af;
+}
+
+/* ===== Add modifier button ===== */
+.modifier-doc-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3em;
+  width: 100%;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid #3b82f6;
+  border-radius: 0.3rem;
+  color: #60a5fa;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+.modifier-doc-add:hover {
+  background: rgba(59, 130, 246, 0.22);
+  color: #93c5fd;
+}
+
+.modifier-doc-add:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: transparent;
+  border-color: rgba(59, 130, 246, 0.3);
+  color: rgba(96, 165, 250, 0.5);
+}
+
+.modifier-doc-add:disabled:hover {
+  background: transparent;
+  color: rgba(96, 165, 250, 0.5);
+}
+
+.modifier-doc-add-key {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.9rem;
+  background: rgba(59, 130, 246, 0.18);
+  border-radius: 0.2rem;
+  padding: 0 0.3em;
+}
+
+/* ===== Light mode ===== */
+@media (prefers-color-scheme: light) {
+  .modifier-doc {
+    color: #1f2328;
+  }
+  .modifier-doc-top {
+    background: #ffffff;
+  }
+  .modifier-doc-footer {
+    background: #ffffff;
+    border-top-color: rgba(0, 0, 0, 0.08);
+  }
+  .modifier-doc-notation-base {
+    color: #1f2328;
+  }
+  .modifier-doc-notation-box {
+    border-color: #4878c8;
+  }
+  .modifier-doc-notation-box--invalid {
+    border-color: #cf222e;
+  }
+  .modifier-doc-notation-optional {
+    color: rgba(31, 35, 40, 0.2);
+  }
+  .modifier-doc-notation-input {
+    color: #1f2328;
+    border-bottom-color: rgba(31, 35, 40, 0.3);
+  }
+  .modifier-doc-notation-input::placeholder {
+    color: rgba(31, 35, 40, 0.2);
+  }
+  .modifier-doc-notation-input:focus {
+    border-bottom-color: #4878c8;
+  }
+  .modifier-doc-notation-input--muted {
+    color: rgba(31, 35, 40, 0.4);
+    border-bottom-color: rgba(31, 35, 40, 0.15);
+  }
+  .modifier-doc-notation-input--muted:focus {
+    color: #1f2328;
+    border-bottom-color: #4878c8;
+  }
+  .modifier-doc-title {
+    color: #1f2328;
+  }
+  .modifier-doc-example-notation {
+    color: #4878c8;
+  }
+  .modifier-doc-example-row--clickable:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .modifier-doc-add {
+    background: rgba(72, 120, 200, 0.1);
+    border-color: #4878c8;
+    color: #4878c8;
+  }
+  .modifier-doc-add:hover {
+    background: rgba(72, 120, 200, 0.2);
+    color: #2563eb;
+  }
+  .modifier-doc-add:disabled {
+    background: transparent;
+    border-color: rgba(72, 120, 200, 0.3);
+    color: rgba(72, 120, 200, 0.4);
+  }
+  .modifier-doc-add:disabled:hover {
+    background: transparent;
+    color: rgba(72, 120, 200, 0.4);
+  }
+}
+
+[data-theme='light'] .modifier-doc {
+  color: #1f2328;
+}
+[data-theme='light'] .modifier-doc-top {
+  background: #ffffff;
+}
+[data-theme='light'] .modifier-doc-footer {
+  background: #ffffff;
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme='light'] .modifier-doc-notation-base {
+  color: #1f2328;
+}
+[data-theme='light'] .modifier-doc-notation-box {
+  border-color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-notation-box--invalid {
+  border-color: #cf222e;
+}
+[data-theme='light'] .modifier-doc-notation-input {
+  color: #1f2328;
+  border-bottom-color: rgba(31, 35, 40, 0.3);
+}
+[data-theme='light'] .modifier-doc-notation-input::placeholder {
+  color: rgba(31, 35, 40, 0.2);
+}
+[data-theme='light'] .modifier-doc-notation-input:focus {
+  border-bottom-color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-notation-input--muted {
+  color: rgba(31, 35, 40, 0.4);
+  border-bottom-color: rgba(31, 35, 40, 0.15);
+}
+[data-theme='light'] .modifier-doc-notation-input--muted:focus {
+  color: #1f2328;
+  border-bottom-color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-example-row--clickable:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+[data-theme='light'] .modifier-doc-notation-optional {
+  color: rgba(31, 35, 40, 0.2);
+}
+[data-theme='light'] .modifier-doc-title {
+  color: #1f2328;
+}
+[data-theme='light'] .modifier-doc-example-notation {
+  color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-add {
+  background: rgba(72, 120, 200, 0.1);
+  border-color: #4878c8;
+  color: #4878c8;
+}
+[data-theme='light'] .modifier-doc-add:hover {
+  background: rgba(72, 120, 200, 0.2);
+  color: #2563eb;
+}
+[data-theme='light'] .modifier-doc-add:disabled {
+  background: transparent;
+  border-color: rgba(72, 120, 200, 0.3);
+  color: rgba(72, 120, 200, 0.4);
+}
+[data-theme='light'] .modifier-doc-add:disabled:hover {
+  background: transparent;
+  color: rgba(72, 120, 200, 0.4);
+}

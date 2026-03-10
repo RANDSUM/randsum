@@ -1,17 +1,20 @@
 import { describe, expect, test } from 'bun:test'
 import '../../../src/lib/modifiers/definitions/index.js'
+import { MODIFIER_PRIORITIES } from '../../../src/lib/modifiers/priorities'
 import {
   applyModifierFromRegistry,
   clearRegistry,
   defineModifier,
   getAllModifiers,
   getModifier,
-  getRegisteredModifierCount,
   hasModifier,
-  hasRegisteredModifiers,
   modifierToDescriptionFromRegistry,
   modifierToNotationFromRegistry,
-  registerDefaultModifiers
+  parseModifiersFromRegistry,
+  processModifierDescriptionsFromRegistry,
+  processModifierNotationsFromRegistry,
+  registerDefaultModifiers,
+  registerNotationSchema
 } from '../../../src/lib/modifiers/registry'
 import {
   capModifier,
@@ -34,10 +37,10 @@ import type { ModifierContext } from '../../../src/lib/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'
 
 describe('registry functions', () => {
-  describe('hasRegisteredModifiers', () => {
-    test('returns true when modifiers are registered', () => {
+  describe('registry populated on import', () => {
+    test('has modifiers registered', () => {
       // Modifiers are registered on import
-      expect(hasRegisteredModifiers()).toBe(true)
+      expect(getAllModifiers().length).toBeGreaterThan(0)
     })
   })
 
@@ -127,22 +130,13 @@ describe('registry functions', () => {
     })
   })
 
-  describe('getRegisteredModifierCount', () => {
-    test('returns count of registered modifiers', () => {
-      const count = getRegisteredModifierCount()
-      expect(count).toBeGreaterThan(0)
-      expect(count).toBe(getAllModifiers().length)
-    })
-  })
-
   describe('clearRegistry', () => {
     test('clears all modifiers from registry', () => {
-      const countBefore = getRegisteredModifierCount()
+      const countBefore = getAllModifiers().length
       expect(countBefore).toBeGreaterThan(0)
 
       clearRegistry()
-      expect(getRegisteredModifierCount()).toBe(0)
-      expect(hasRegisteredModifiers()).toBe(false)
+      expect(getAllModifiers().length).toBe(0)
 
       registerDefaultModifiers([
         capModifier,
@@ -160,13 +154,13 @@ describe('registry functions', () => {
         rerollModifier,
         uniqueModifier
       ])
-      expect(getRegisteredModifierCount()).toBe(countBefore)
+      expect(getAllModifiers().length).toBe(countBefore)
     })
   })
 
   describe('modifierToNotationFromRegistry and modifierToDescriptionFromRegistry', () => {
     test('return undefined when modifier not in registry', () => {
-      const countBefore = getRegisteredModifierCount()
+      const countBefore = getAllModifiers().length
       clearRegistry()
 
       expect(modifierToNotationFromRegistry('plus', 5)).toBeUndefined()
@@ -188,7 +182,7 @@ describe('registry functions', () => {
         rerollModifier,
         uniqueModifier
       ])
-      expect(getRegisteredModifierCount()).toBe(countBefore)
+      expect(getAllModifiers().length).toBe(countBefore)
     })
   })
 
@@ -250,6 +244,114 @@ describe('registry functions', () => {
       expect((caught.value as ModifierError).message).toContain('Unknown error: 42')
 
       defineModifier(plusModifier)
+    })
+  })
+})
+
+describe('MODIFIER_PRIORITIES', () => {
+  test('exports all 14 modifier names', () => {
+    expect(Object.keys(MODIFIER_PRIORITIES).length).toBe(14)
+  })
+
+  test('cap has lower priority than drop', () => {
+    expect(MODIFIER_PRIORITIES.cap).toBeLessThan(MODIFIER_PRIORITIES.drop)
+  })
+
+  test('multiplyTotal has highest priority of all modifiers', () => {
+    const max = Math.max(...Object.values(MODIFIER_PRIORITIES))
+    expect(MODIFIER_PRIORITIES.multiplyTotal).toBe(max)
+  })
+
+  test('cap has lowest priority (runs first)', () => {
+    const min = Math.min(...Object.values(MODIFIER_PRIORITIES))
+    expect(MODIFIER_PRIORITIES.cap).toBe(min)
+  })
+})
+
+describe('registerNotationSchema', () => {
+  test('registers a minimal ParseableSchema to the notation registry', () => {
+    const schema = {
+      name: 'plus' as const,
+      priority: 90,
+      pattern: /\+(\d+)/,
+      parse: (notation: string): Partial<ModifierOptions> => {
+        const match = /\+(\d+)/.exec(notation)
+        return match ? { plus: Number(match[1]) } : {}
+      }
+    }
+
+    // Should not throw
+    registerNotationSchema(schema)
+
+    // Verify it works by parsing notation that uses the registered schema
+    const result = parseModifiersFromRegistry('2d6+5')
+    expect(result.plus).toBe(5)
+  })
+})
+
+describe('processModifierNotationsFromRegistry', () => {
+  test('returns empty string when modifiers is undefined', () => {
+    expect(processModifierNotationsFromRegistry(undefined)).toBe('')
+  })
+
+  test('returns notation string for populated modifiers', () => {
+    const result = processModifierNotationsFromRegistry({ plus: 3 })
+    expect(typeof result).toBe('string')
+    expect(result).toContain('+3')
+  })
+
+  test('returns combined notation for multiple modifiers', () => {
+    const result = processModifierNotationsFromRegistry({
+      drop: { lowest: 1 },
+      plus: 5
+    })
+    expect(typeof result).toBe('string')
+    expect(result.length).toBeGreaterThan(0)
+    expect(result).toContain('+5')
+  })
+})
+
+describe('processModifierDescriptionsFromRegistry', () => {
+  test('returns empty array when modifiers is undefined', () => {
+    expect(processModifierDescriptionsFromRegistry(undefined)).toEqual([])
+  })
+
+  test('returns descriptions for populated modifiers', () => {
+    const result = processModifierDescriptionsFromRegistry({ plus: 3 })
+    expect(Array.isArray(result)).toBe(true)
+    expect(result.length).toBeGreaterThan(0)
+  })
+
+  test('returns descriptions for multiple modifiers', () => {
+    const result = processModifierDescriptionsFromRegistry({
+      drop: { lowest: 1 },
+      plus: 5
+    })
+    expect(Array.isArray(result)).toBe(true)
+    expect(result.length).toBeGreaterThanOrEqual(2)
+  })
+})
+
+describe('parseModifiersFromRegistry - stateful regex safety', () => {
+  test('returns identical results on repeated calls with same notation', () => {
+    const notation = '4d6L+3'
+    const result1 = parseModifiersFromRegistry(notation)
+    const result2 = parseModifiersFromRegistry(notation)
+    const result3 = parseModifiersFromRegistry(notation)
+    expect(result1).toEqual(result2)
+    expect(result2).toEqual(result3)
+  })
+
+  test('returns correct results when alternating between two notations', () => {
+    const a = '2d6R{<2}'
+    const b = '4d6L'
+    Array.from({ length: 20 }).forEach(() => {
+      const resultA = parseModifiersFromRegistry(a)
+      const resultB = parseModifiersFromRegistry(b)
+      expect(resultA.reroll).toBeDefined()
+      expect(resultA.drop).toBeUndefined()
+      expect(resultB.drop).toBeDefined()
+      expect(resultB.reroll).toBeUndefined()
     })
   })
 })

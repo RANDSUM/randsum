@@ -27,7 +27,7 @@ bunx @randsum/cli 3d6              # Blades in the Dark pool
 bunx @randsum/cli 5d10S{7}         # World of Darkness successes
 ```
 
-If you don't have shell access, **simulate the roll yourself** — pick numbers that feel realistic and present them clearly. Don't just describe how the roll would work without giving a result.
+If you don't have shell access, **simulate the roll yourself** — mentally generate random numbers as you would genuinely roll dice, and present them clearly. Don't just describe how the roll would work without giving a result.
 
 ## Response Format
 
@@ -150,6 +150,6 @@ roll("1d20", "2d6", "+5")  // multiple args, combined total
 
 const result = roll("2d6+3")
 result.total   // final sum
-result.rolls   // raw dice values
-result.result  // values after modifiers
+result.rolls   // RollRecord[] — full roll data per dice group
+result.result  // string[] — rolled values as strings
 ```

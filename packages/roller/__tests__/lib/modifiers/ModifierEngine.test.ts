@@ -444,7 +444,7 @@ describe('modifierToDescriptionFromRegistry', () => {
 
   test('generates description for cap modifier', () => {
     const result = modifierToDescriptionFromRegistry('cap', { greaterThan: 5 })
-    expect(result).toEqual(['No Rolls greater than [5]'])
+    expect(result).toEqual(['No Rolls greater than 5'])
   })
 
   test('generates description for drop modifier', () => {
@@ -474,7 +474,7 @@ describe('modifierToDescriptionFromRegistry', () => {
 
   test('generates description for reroll modifier', () => {
     const result = modifierToDescriptionFromRegistry('reroll', { exact: [1, 2] })
-    expect(result).toEqual(['Reroll [1] and [2]'])
+    expect(result).toEqual(['Reroll 1 and 2'])
   })
 
   test('generates description for explode modifier', () => {
@@ -489,12 +489,12 @@ describe('modifierToDescriptionFromRegistry', () => {
 
   test('generates description for unique modifier with exceptions', () => {
     const result = modifierToDescriptionFromRegistry('unique', { notUnique: [1, 2] })
-    expect(result).toEqual(['No Duplicates (except [1] and [2])'])
+    expect(result).toEqual(['No Duplicates (except 1 and 2)'])
   })
 
   test('generates description for replace modifier', () => {
     const result = modifierToDescriptionFromRegistry('replace', { from: 1, to: 6 })
-    expect(result).toEqual(['Replace [1] with [6]'])
+    expect(result).toEqual(['Replace 1 with 6'])
   })
 
   test('returns undefined for undefined options', () => {
@@ -872,7 +872,7 @@ describe('modifierToDescriptionFromRegistry - additional modifiers', () => {
 
   test('generates description for countSuccesses modifier', () => {
     const result = modifierToDescriptionFromRegistry('countSuccesses', { threshold: 7 })
-    expect(result).toEqual(['Count successes >= [7]'])
+    expect(result).toEqual(['Count successes >= 7'])
   })
 
   test('generates description for countSuccesses modifier with botch', () => {
@@ -880,7 +880,7 @@ describe('modifierToDescriptionFromRegistry - additional modifiers', () => {
       threshold: 7,
       botchThreshold: 1
     })
-    expect(result).toEqual(['Count successes >= [7], botches <= [1]'])
+    expect(result).toEqual(['Count successes >= 7, botches <= 1'])
   })
 })
 

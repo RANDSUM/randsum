@@ -1,59 +1,63 @@
 ---
-title: Error Handling
-description: How to handle errors with RANDSUM's error-as-value design
+title: Error Handling — Throw Dice, Not Exceptions
+description: How RANDSUM handles errors — roll() throws on invalid input, validateNotation() for user-provided strings, and isDiceNotation() for type-safe guards.
 ---
 
 import { Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 import { RollerPlayground } from '@randsum/component-library'
 
-RANDSUM is not designed to throw. The `roll()` function is not designed to raise exceptions — errors are returned as values in the result object.
+RANDSUM throws dice, not exceptions — but `roll()` will throw if you give it invalid input. The distinction matters for how you structure error handling.
 
 <Aside type="tip">
-  This design means you never need try/catch around `roll()` calls. Error handling is always explicit.
+  Hardcoded notation like `roll('4d6L')` will never throw in practice. Errors only occur when input comes from outside your control: user input, API parameters, configuration files.
 </Aside>
 
-## The `result.error` pattern
+## When `roll()` throws
 
-When `roll()` encounters an error, it returns an object where `result.error` is set and `result.total` is `0`. Check for `result.error` before using `result.total`:
-
-<CodeExample code={`import { roll } from '@randsum/roller'
-
-const result = roll('not-valid-notation')
-
-if (result.error) {
-  // result.total is 0 — do not use it
-  console.error(result.error.message)
-} else {
-  // TypeScript narrows the type here — result.total is number
-  console.log(result.total)
-}`} />
-
-## When errors occur
-
-`roll()` returns an error when:
+`roll()` throws a `RandsumError` when:
 
 - The notation string is syntactically invalid (`'4dX'`, `'not dice'`)
-- The options object has invalid values (e.g., `sides: 0`, `quantity: -1`)
+- The options object has invalid values (`sides: 0`, `quantity: -1`)
 - A modifier receives an out-of-range argument
 
 Valid-but-unusual inputs (like `roll(1)` for a single-sided die) are not errors.
 
-## Validating before rolling
+## User Input
 
-If you want to check notation before passing it to `roll()`, use `validateNotation()` or the `isDiceNotation()` type guard:
+For user-facing inputs — form fields, chat commands, API parameters — validate before rolling. This avoids try/catch and gives you structured error information.
 
-### `isDiceNotation` — type guard
+### `validateNotation`
+
+<CodeExample code={`import { validateNotation, roll } from '@randsum/roller'
+
+function rollUserInput(input: string) {
+  const validation = validateNotation(input)
+
+  if (!validation.valid) {
+    // validation.error.message describes what's wrong
+    return { error: validation.error.message }
+  }
+
+  // Safe to roll — input is valid notation
+  const result = roll(input)
+  return { total: result.total }
+}`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
+### `isDiceNotation`
 
 <CodeExample code={`import { isDiceNotation, roll } from '@randsum/roller'
 
-function rollUserInput(input) {
+function rollUserInput(input: string) {
   if (!isDiceNotation(input)) {
     return { error: 'Not valid dice notation' }
   }
 
   // input is now typed as DiceNotation
-  return roll(input)
+  const result = roll(input)
+  return { total: result.total }
 }
 
 console.log(rollUserInput('4d6L'))
@@ -61,42 +65,28 @@ console.log(rollUserInput('not-dice'))`} />
 
 <RollerPlayground defaultNotation="4d6L" client:only="react" />
 
-### `validateNotation` — parsed result
+## Try/Catch
 
-<CodeExample code={`import { validateNotation } from '@randsum/roller'
+For cases where you need to catch errors from `roll()` directly:
 
-const validation = validateNotation('4d6L')
+<CodeExample code={`import { roll, RandsumError } from '@randsum/roller'
 
-if (!validation.valid) {
-  console.error(validation.error.message)
-} else {
-  // validation.options contains the structured roll options
-  console.log(validation.options)
-}`} />
-
-<RollerPlayground defaultNotation="4d6L" client:only="react" />
-
-## Checking the error value
-
-`result.error` is typed as `RandsumError | null`. On success it is `null`; on error it is a `RandsumError`. `result.total` is always a `number` — on error its value is `0`.
-
-<CodeExample code={`import { roll } from '@randsum/roller'
-
-const result = roll('2d6')
-
-if (result.error !== null) {
-  // result.error is RandsumError — inspect result.error.message
-  // result.total is 0 — do not use it for game logic
-  console.log('error:', result.error)
-} else {
-  // result.error is null — safe to use result.total
+try {
+  const result = roll(userProvidedNotation)
   console.log(result.total)
+} catch (e) {
+  if (e instanceof RandsumError) {
+    console.error(e.message) // Structured RANDSUM error
+  } else {
+    throw e // Re-throw unexpected errors
+  }
 }`} />
 
 <RollerPlayground defaultNotation="2d6" client:only="react" />
 
 ## Production checklist
 
-- Always check `result.error` when rolling user-provided input (form fields, chat commands, API parameters)
-- Internal rolls with hardcoded notation can skip the check — `roll('2d6')` will never produce an error
-- Use `isDiceNotation()` to validate strings at system boundaries (user input, external APIs)
+- **Hardcoded notation** — no error handling needed; `roll('2d6')` will never throw
+- **User-provided notation** — validate with `validateNotation()` or `isDiceNotation()` before calling `roll()`
+- **Dynamic options objects** — validate inputs before constructing options; or wrap in try/catch
+- **Game packages** — their `roll()` functions also throw on invalid input; validate inputs in the `validate` hook

@@ -8,16 +8,20 @@ export interface PackageInfo {
   version?: string
   color?: string
   category: 'core' | 'game' | 'tool'
-  examples: CodeExample[]
-}
-
-export interface CodeExample {
-  title: string
-  code: string
-  language: 'typescript' | 'bash' | 'json'
 }
 
 export const corePackages: PackageInfo[] = [
+  {
+    id: 'notation',
+    name: 'notation',
+    displayName: 'Notation',
+    description: 'Zero-dependency dice notation parser and type foundation.',
+    npmPackage: '@randsum/notation',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/notation',
+    version: '3.0.0',
+    category: 'core',
+    color: '#e2e8f0' // slate-200 — neutral, foundational
+  },
   {
     id: 'roller',
     name: 'roller',
@@ -25,55 +29,9 @@ export const corePackages: PackageInfo[] = [
     description: 'Zero-dependency dice engine with full notation support.',
     npmPackage: '@randsum/roller',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/roller',
-    version: '1.1.2',
+    version: '3.0.0',
     category: 'core',
-    color: '#f8fafc', // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
-    examples: [
-      {
-        title: 'Basic Roll',
-        code: `import { roll } from '@randsum/roller';
-
-// Simple d20 roll
-roll(20); // Returns 1-20
-// or
-roll('1d20'); // Returns 1-20`,
-        language: 'typescript'
-      },
-      {
-        title: 'Character Stat Roll',
-        code: `import { roll } from '@randsum/roller';
-
-// Roll 4d6, drop lowest (D&D ability scores)
-roll('4d6L');`,
-        language: 'typescript'
-      },
-      {
-        title: 'Advantage and Disadvantage',
-        code: `import { roll } from '@randsum/roller';
-
-// Roll with advantage (2d20, keep highest)
-roll('2d20H');
-
-// Roll with disadvantage (2d20, keep lowest)
-roll('2d20L');`,
-        language: 'typescript'
-      },
-      {
-        title: 'Complex Notation',
-        code: `import { roll } from '@randsum/roller';
-
-// Roll 4d6, drop lowest, reroll below 3
-roll('4d6L!R{<3}');`,
-        language: 'typescript'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/roller
-# or
-bun add @randsum/roller`,
-        language: 'bash'
-      }
-    ]
+    color: '#f8fafc' // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
   }
 ]
 
@@ -84,39 +42,10 @@ export const gamePackages: PackageInfo[] = [
     displayName: 'Blades in the Dark',
     description: 'Action roll resolution for Blades in the Dark.',
     npmPackage: '@randsum/blades',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/blades',
-    version: '1.1.0',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/blades',
+    version: '3.0.0',
     category: 'game',
-    color: '#f97316', // orange
-    examples: [
-      {
-        title: 'Basic Roll',
-        code: `import { roll } from "@randsum/blades"
-import type { BladesRollResult } from "@randsum/blades"
-
-// Basic roll with dice pool
-const { outcome, result } = roll(2)
-console.log(outcome) // 'critical' | 'success' | 'partial' | 'failure'`,
-        language: 'typescript'
-      },
-      {
-        title: 'Different Dice Pool Sizes',
-        code: `import { roll } from "@randsum/blades"
-
-roll(1) // Desperate position
-roll(2) // Risky position
-roll(3) // Controlled position
-roll(4) // Controlled with assistance`,
-        language: 'typescript'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/blades
-# or
-bun add @randsum/blades`,
-        language: 'bash'
-      }
-    ]
+    color: '#f97316' // orange
   },
   {
     id: 'daggerheart',
@@ -124,39 +53,10 @@ bun add @randsum/blades`,
     displayName: 'Daggerheart',
     description: 'Hope and fear roll resolution for Daggerheart.',
     npmPackage: '@randsum/daggerheart',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/daggerheart',
-    version: '1.2.0',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/daggerheart',
+    version: '3.0.0',
     category: 'game',
-    color: '#9333ea', // purple
-    examples: [
-      {
-        title: 'Basic Usage',
-        code: `import { roll } from "@randsum/daggerheart"
-
-// Basic roll with modifier
-roll({ modifier: 5 })
-
-// Roll with advantage
-roll({
-  modifier: 5,
-  rollingWith: "Advantage"
-})
-
-// Roll with disadvantage
-roll({
-  modifier: -2,
-  rollingWith: "Disadvantage"
-})`,
-        language: 'typescript'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/daggerheart
-# or
-bun add @randsum/daggerheart`,
-        language: 'bash'
-      }
-    ]
+    color: '#9333ea' // purple
   },
   {
     id: 'fifth',
@@ -164,50 +64,10 @@ bun add @randsum/daggerheart`,
     displayName: 'D&D 5th Edition',
     description: 'd20 roll resolution for D&D 5e.',
     npmPackage: '@randsum/fifth',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/fifth',
-    version: '1.1.0',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/fifth',
+    version: '3.0.0',
     category: 'game',
-    color: '#dc2626', // red
-    examples: [
-      {
-        title: 'Basic Roll',
-        code: `import { roll } from "@randsum/fifth"
-import type { RollArgument } from "@randsum/fifth"
-
-// Basic roll with modifier
-roll({ modifier: 5 })`,
-        language: 'typescript'
-      },
-      {
-        title: 'Roll with Advantage',
-        code: `import { roll } from "@randsum/fifth"
-
-// Roll with advantage
-roll({
-  modifier: 5,
-  rollingWith: { advantage: true }
-})`,
-        language: 'typescript'
-      },
-      {
-        title: 'Roll with Disadvantage',
-        code: `import { roll } from "@randsum/fifth"
-
-// Roll with disadvantage
-roll({
-  modifier: -2,
-  rollingWith: { disadvantage: true }
-})`,
-        language: 'typescript'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/fifth
-# or
-bun add @randsum/fifth`,
-        language: 'bash'
-      }
-    ]
+    color: '#dc2626' // red
   },
   {
     id: 'root-rpg',
@@ -215,48 +75,10 @@ bun add @randsum/fifth`,
     displayName: 'Root RPG',
     description: '2d6 roll resolution for Root RPG.',
     npmPackage: '@randsum/root-rpg',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/root-rpg',
-    version: '2.0.0',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/root-rpg',
+    version: '3.0.0',
     category: 'game',
-    color: '#22c55e', // green
-    examples: [
-      {
-        title: 'Basic Roll',
-        code: `import { roll } from "@randsum/root-rpg"
-import type { RootRpgResult } from "@randsum/root-rpg"
-
-// Basic roll with modifier
-const { outcome, roll, result } = roll(2)
-// outcome: 'Strong Hit' | 'Weak Hit' | 'Miss'
-// roll: numeric total, result: detailed roll information`,
-        language: 'typescript'
-      },
-      {
-        title: 'Type-Safe Result Handling',
-        code: `import { roll } from "@randsum/root-rpg"
-
-const { outcome } = roll(0)
-switch (outcome) {
-  case "Strong Hit":
-    // 10 or higher
-    break
-  case "Weak Hit":
-    // 7-9
-    break
-  case "Miss":
-    // 6 or lower
-    break
-}`,
-        language: 'typescript'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/root-rpg
-# or
-bun add @randsum/root-rpg`,
-        language: 'bash'
-      }
-    ]
+    color: '#22c55e' // green
   },
   {
     id: 'salvageunion',
@@ -264,55 +86,10 @@ bun add @randsum/root-rpg`,
     displayName: 'Salvage Union',
     description: 'd20 table lookups for Salvage Union.',
     npmPackage: '@randsum/salvageunion',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/salvageunion',
-    version: '1.1.0',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/salvageunion',
+    version: '3.0.0',
     category: 'game',
-    color: '#60a5fa', // lightblue
-    examples: [
-      {
-        title: 'Basic Roll',
-        code: `import { roll } from "@randsum/salvageunion"
-import type { SalvageUnionTableResult } from "@randsum/salvageunion"
-
-// Basic roll with default table
-const result = roll()
-// Returns table result with hit type, label, description, and roll value`,
-        language: 'typescript'
-      },
-      {
-        title: 'Roll with Specific Table',
-        code: `import { roll } from "@randsum/salvageunion"
-
-// Roll with specific table
-const result = roll("Morale")`,
-        language: 'typescript'
-      },
-      {
-        title: 'Type-Safe Result Handling',
-        code: `import { roll } from "@randsum/salvageunion"
-
-const { hit, label, description, roll } = roll("Core Mechanic")
-switch (hit) {
-  case "Nailed It":
-    // 20
-    break
-  case "Success":
-    // 11-19
-    break
-  case "Tough Choice":
-    // 6-10
-    break
-}`,
-        language: 'typescript'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/salvageunion
-# or
-bun add @randsum/salvageunion`,
-        language: 'bash'
-      }
-    ]
+    color: '#60a5fa' // lightblue
   },
   {
     id: 'pbta',
@@ -320,55 +97,25 @@ bun add @randsum/salvageunion`,
     displayName: 'Powered by the Apocalypse',
     description: '2d6 roll resolution for any PbtA system.',
     npmPackage: '@randsum/pbta',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/pbta',
-    version: '1.2.0',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/games/pbta',
+    version: '3.0.0',
     category: 'game',
-    color: '#6b7280', // grey
-    examples: [
-      {
-        title: 'Basic Roll',
-        code: `import { roll } from "@randsum/pbta"
-
-// Basic roll with stat modifier
-const result = roll({ stat: 2 })
-// result.result: 'strong_hit' | 'weak_hit' | 'miss'`,
-        language: 'typescript'
-      },
-      {
-        title: 'With Bonuses',
-        code: `import { roll } from "@randsum/pbta"
-
-// With forward and ongoing bonuses
-const result = roll({
-  stat: 1,
-  forward: 1,  // One-time bonus
-  ongoing: 0   // Persistent bonus
-})`,
-        language: 'typescript'
-      },
-      {
-        title: 'With Advantage',
-        code: `import { roll } from "@randsum/pbta"
-
-// Roll with advantage (3d6, keep 2 highest)
-const result = roll({
-  stat: 2,
-  advantage: true
-})`,
-        language: 'typescript'
-      },
-      {
-        title: 'Installation',
-        code: `npm install @randsum/pbta
-# or
-bun add @randsum/pbta`,
-        language: 'bash'
-      }
-    ]
+    color: '#6b7280' // grey
   }
 ]
 
 export const toolPackages: PackageInfo[] = [
+  {
+    id: 'display-utils',
+    name: 'display-utils',
+    displayName: 'Display Utils',
+    description: 'Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UI.',
+    npmPackage: '@randsum/display-utils',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/display-utils',
+    version: '3.0.1',
+    category: 'tool',
+    color: '#10b981'
+  },
   {
     id: 'component-library',
     name: 'component-library',
@@ -376,28 +123,9 @@ export const toolPackages: PackageInfo[] = [
     description: 'React components for embedding dice rollers in any web app.',
     npmPackage: '@randsum/component-library',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/component-library',
-    version: '0.1.0',
+    version: '3.0.0',
     category: 'tool',
-    color: '#3b82f6', // blue
-    examples: [
-      {
-        title: 'Installation',
-        code: `npm install @randsum/component-library
-# or
-bun add @randsum/component-library`,
-        language: 'bash'
-      },
-      {
-        title: 'RollerPlayground',
-        code: `import { RollerPlayground } from '@randsum/component-library'
-import '@randsum/component-library/dist/index.css'
-
-export default function App() {
-  return <RollerPlayground defaultNotation="4d6L" />
-}`,
-        language: 'typescript'
-      }
-    ]
+    color: '#3b82f6' // blue
   },
   {
     id: 'skill',
@@ -407,16 +135,7 @@ export default function App() {
     npmPackage: 'skills/dice-rolling/SKILL.md',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills/dice-rolling',
     category: 'tool',
-    color: '#06b6d4', // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
-    examples: [
-      {
-        title: 'Claude Code Setup',
-        code: `# Download the skill into your project
-curl -o .claude/skills/dice-rolling/SKILL.md \\
-  https://raw.githubusercontent.com/RANDSUM/randsum/main/skills/dice-rolling/SKILL.md`,
-        language: 'bash'
-      }
-    ]
+    color: '#06b6d4' // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
   },
   {
     id: 'discord-bot',
@@ -427,37 +146,6 @@ curl -o .claude/skills/dice-rolling/SKILL.md \\
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot',
     version: '1.0.0',
     category: 'tool',
-    color: '#5865F2', // Discord purple
-    examples: [
-      {
-        title: 'Basic Roll Command',
-        code: `/roll notation:4d6L+2`,
-        language: 'bash'
-      },
-      {
-        title: 'Installation',
-        code: `# From the monorepo root
-cd apps/discord-bot
-
-# Install dependencies
-bun install
-
-# Set up environment variables
-cp .env.example .env
-
-# Deploy commands
-bun run deploy-commands
-
-# Run the bot
-bun run dev`,
-        language: 'bash'
-      }
-    ]
+    color: '#5865F2' // Discord purple
   }
 ]
-
-export const allPackages: PackageInfo[] = [...corePackages, ...gamePackages, ...toolPackages]
-
-export function getPackageById(id: string): PackageInfo | undefined {
-  return allPackages.find(pkg => pkg.id === id)
-}

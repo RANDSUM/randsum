@@ -1,40 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import {
-  createArithmeticLog,
-  createFrequencyMap,
-  createModifierLog,
-  mergeLogs
-} from '../../../src/lib/modifiers/log'
-
-describe('createFrequencyMap', () => {
-  test('creates frequency map from array', () => {
-    const freq = createFrequencyMap([1, 2, 2, 3, 3, 3])
-
-    expect(freq.get(1)).toBe(1)
-    expect(freq.get(2)).toBe(2)
-    expect(freq.get(3)).toBe(3)
-  })
-
-  test('handles empty array', () => {
-    const freq = createFrequencyMap([])
-
-    expect(freq.size).toBe(0)
-  })
-
-  test('handles single value', () => {
-    const freq = createFrequencyMap([5])
-
-    expect(freq.get(5)).toBe(1)
-    expect(freq.size).toBe(1)
-  })
-
-  test('handles all same values', () => {
-    const freq = createFrequencyMap([4, 4, 4, 4])
-
-    expect(freq.get(4)).toBe(4)
-    expect(freq.size).toBe(1)
-  })
-})
+import { createArithmeticLog, createModifierLog } from '../../../src/lib/modifiers/log'
 
 describe('createArithmeticLog', () => {
   test('creates log with modifier name and options', () => {
@@ -130,38 +95,5 @@ describe('createModifierLog', () => {
 
     expect(log.modifier).toBe('drop')
     expect(log.options).toEqual(options)
-  })
-})
-
-describe('mergeLogs', () => {
-  test('appends new log to existing logs', () => {
-    const existing = [{ modifier: 'drop', options: undefined, added: [], removed: [1] }]
-    const newLog = { modifier: 'plus', options: 5, added: [], removed: [] }
-
-    const merged = mergeLogs(existing, newLog)
-
-    expect(merged).toHaveLength(2)
-    expect(merged[0]).toEqual(existing[0])
-    expect(merged[1]).toEqual(newLog)
-  })
-
-  test('handles empty existing logs', () => {
-    const newLog = { modifier: 'plus', options: 5, added: [], removed: [] }
-
-    const merged = mergeLogs([], newLog)
-
-    expect(merged).toHaveLength(1)
-    expect(merged[0]).toEqual(newLog)
-  })
-
-  test('does not mutate original array', () => {
-    const existing = [{ modifier: 'drop', options: undefined, added: [], removed: [] }]
-    const newLog = { modifier: 'plus', options: 5, added: [], removed: [] }
-
-    const merged = mergeLogs(existing, newLog)
-
-    expect(existing).toHaveLength(1)
-    expect(merged).toHaveLength(2)
-    expect(merged).not.toBe(existing)
   })
 })

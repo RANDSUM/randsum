@@ -1,41 +1,16 @@
 export { roll } from '../roll'
 
-export { validateNotation } from '../validateNotation'
-export { isDiceNotation, notation } from '../isDiceNotation'
-export { validateRollOptions } from '../lib/optionsValidation'
+export { validateNotation, isDiceNotation, notation } from '@randsum/notation'
 
-export { optionsToNotation, optionsToDescription, optionsToSidesFaces } from '../lib/transformers'
+export { validateInteger, validateRange, validateNonNegative, validateFinite } from '../lib/utils'
 
 export {
-  validateInteger,
-  validateRange,
-  validateNonNegative,
-  validateFinite,
-  validateGreaterThan,
-  validateLessThan
-} from '../lib/utils'
-
-export {
-  ERROR_CODES,
   RandsumError,
   NotationParseError,
   ModifierError,
   ValidationError,
-  RollError
+  RollError,
+  ERROR_CODES
 } from '../errors'
 
-export type { ErrorCode } from '../errors'
-
-export { analyze } from '../lib/probability'
-
-export { PRESETS, resolvePreset, resolvePresetParam } from '../presets'
-
 export { createGameRoll, createMultiRollGameRoll } from '../lib/gameRoll'
-
-export {
-  matchesComparison,
-  formatComparisonDescription,
-  formatComparisonNotation,
-  parseComparisonNotation,
-  hasConditions
-} from '../lib/comparison'

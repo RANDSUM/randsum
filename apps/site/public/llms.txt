@@ -1,50 +1,91 @@
-# RANDSUM - Universal Dice Rolling Library
+# RANDSUM
 
-> Dice notation and rolling for tabletop RPGs. Works with D&D 5E, Blades in the Dark, PbtA, Daggerheart, Root RPG, Salvage Union, and more.
+> TypeScript-first dice notation ecosystem for tabletop RPGs. Zero-dependency, full notation support, game-specific packages.
 
-## Packages
+RANDSUM provides TypeScript packages for dice rolling in tabletop RPG applications. The core engine supports advanced dice notation; game-specific packages add interpretation layers.
 
-- @randsum/roller - Core dice engine
-- @randsum/mcp - AI agent integration (MCP server)
-- @randsum/fifth - D&D 5th Edition
-- @randsum/blades - Blades in the Dark
-- @randsum/pbta - Powered by the Apocalypse
-- @randsum/daggerheart - Daggerheart RPG
-- @randsum/root-rpg - Root RPG
-- @randsum/salvageunion - Salvage Union
+## Core Package
 
-## Quick Start
+- [roller](https://randsum.dev/packages/roller/): `@randsum/roller` — core dice engine, zero dependencies, full notation support
+  - Install: `bun add @randsum/roller` or `npm install @randsum/roller`
+  - [npm](https://www.npmjs.com/package/@randsum/roller) | [source](https://github.com/RANDSUM/randsum/tree/main/packages/roller)
 
-npm install @randsum/roller
+## Game Packages
 
-roll("4d6L")   // D&D ability score (4d6, drop lowest)
-roll("2d20L+5") // Advantage attack roll
-roll("2d6+3")   // PbtA / 2d6 + stat
+- [Blades in the Dark](https://randsum.dev/games/blades/): `@randsum/blades` — action roll resolution (dice pool, 1–4 dice)
+- [Daggerheart](https://randsum.dev/games/daggerheart/): `@randsum/daggerheart` — Hope/Fear dual-die mechanics
+- [D&D 5th Edition](https://randsum.dev/games/fifth/): `@randsum/fifth` — d20 rolls with advantage/disadvantage
+- [Root RPG](https://randsum.dev/games/root-rpg/): `@randsum/root-rpg` — 2d6 Strong Hit / Weak Hit / Miss
+- [Salvage Union](https://randsum.dev/games/salvageunion/): `@randsum/salvageunion` — d20 table lookups
+- [Powered by the Apocalypse](https://randsum.dev/games/pbta/): `@randsum/pbta` — 2d6 strong hit / weak hit / miss with stat and forward/ongoing bonuses
+
+## Tools
+
+- [Component Library](https://randsum.dev/tools/components/): `@randsum/component-library` — React dice roller UI components
+- [Discord Bot](https://randsum.dev/tools/discord-bot/): slash commands for all RANDSUM packages
+- [LLM Skill](https://randsum.dev/tools/skill/): prompt file for teaching RANDSUM dice notation to any LLM
 
 ## Documentation
 
-- Skill (agentskills.io): https://randsum.dev/skills/dice-rolling/SKILL.md
-- Notation reference: https://randsum.dev/packages/roller/
-- MCP docs: https://randsum.dev/tools/mcp/
+- [Getting Started](https://randsum.dev/getting-started/introduction/)
+- [Dice Notation Reference](https://randsum.dev/reference/dice-notation/)
+- [Roll Options Reference](https://randsum.dev/reference/roll-options/)
+- [Modifiers Reference](https://randsum.dev/reference/modifiers/)
+- [FAQ](https://randsum.dev/getting-started/faq/)
+- [Recipes](https://randsum.dev/guides/recipes/)
 
-## MCP Integration
+## Dice Notation Quick Reference
 
-Configure your AI agent to use RANDSUM via MCP:
+RANDSUM uses extended standard dice notation (case-insensitive):
 
-{
-  "mcpServers": {
-    "randsum": {
-      "command": "npx",
-      "args": ["-y", "@randsum/mcp@latest"]
-    }
-  }
-}
+| Notation | Description | Example |
+|----------|-------------|---------|
+| `NdS` | Roll N dice with S sides | `4d6` |
+| `+X` / `-X` | Add/subtract from total | `1d20+5` |
+| `L` / `L2` | Drop lowest 1 / 2 | `4d6L` |
+| `H` / `H2` | Drop highest 1 / 2 | `4d20H2` |
+| `K` / `K3` | Keep highest 1 / 3 | `4d6K3` |
+| `kl` / `kl2` | Keep lowest 1 / 2 | `2d20kl` |
+| `R{<N}` | Reroll under N | `4d6R{<3}` |
+| `R{>N}` | Reroll over N | `4d20R{>17}` |
+| `!` | Exploding dice | `3d6!` |
+| `!!` | Compounding exploding | `3d6!!` |
+| `!p` | Penetrating exploding | `3d6!p` |
+| `U` | Unique results | `4d20U` |
+| `C{>N}` | Cap over N | `4d20C{>18}` |
+| `C{<N}` | Cap under N | `4d20C{<3}` |
+| `V{X=Y}` | Replace X with Y | `4d20V{1=20}` |
+| `S{N}` | Count successes >= N | `5d10S{7}` |
+| `*N` | Pre-arithmetic multiply | `2d6*2+3` |
+| `**N` | Total multiply | `2d6+3**2` |
 
-Available tools: roll, validate-notation, try-roll, analyze, game-roll, batch-roll, compare, count-successes, preset.
+Common patterns:
+- `roll('4d6L')` — D&D ability score (drop lowest)
+- `roll('2d20H')` — advantage (keep highest)
+- `roll('2d20L')` — disadvantage (keep lowest)
+- `roll('4d6L', '4d6L', '4d6L', '4d6L', '4d6L', '4d6L')` — full 6-stat character generation
 
-## Links
+## TypeScript Usage
 
-- Documentation: https://randsum.dev/
-- GitHub: https://github.com/RANDSUM/randsum
-- Notation reference: https://randsum.dev/packages/roller/
-- MCP docs: https://randsum.dev/tools/mcp/
+```typescript
+import { roll } from '@randsum/roller'
+
+// Number: roll single die
+roll(20)              // 1d20
+
+// String notation
+roll('4d6L')          // 4d6, drop lowest
+roll('2d20H')         // advantage
+roll('2d20L')         // disadvantage
+
+// Options object
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
+
+// Multiple groups
+roll('1d20+5', '2d6+3')  // attack + damage
+```
+
+## Optional
+
+- [Game Systems Comparison](https://randsum.dev/games/comparison/)
+- [Quick Start Guide](https://randsum.dev/getting-started/quick-start/)

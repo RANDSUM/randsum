@@ -34,7 +34,7 @@ roll("4d6L") // Roll 4d6, drop lowest
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
 
 // Complex modifiers
-roll("2d20H") // Advantage (keep highest)
+roll("2d20L") // Advantage (drop lowest, keep highest)
 roll("4d6!R{<3}") // Exploding dice, reroll below 3
 roll("1d20+5", "2d6+3") // Multiple rolls combined
 ```
@@ -42,9 +42,9 @@ roll("1d20+5", "2d6+3") // Multiple rolls combined
 ## CLI
 
 ```bash
-npx randsum 2d20    # Roll two d20s
-npx randsum 4d6L    # Roll 4d6, drop lowest
-npx randsum 3d8+2   # Roll 3d8 and add 2
+npx @randsum/cli 2d20    # Roll two d20s
+npx @randsum/cli 4d6L    # Roll 4d6, drop lowest
+npx @randsum/cli 3d8+2   # Roll 3d8 and add 2
 ```
 
 ## API
@@ -59,22 +59,36 @@ const result = roll("2d6+3")
 result.total // Final total after all modifiers
 result.result // Array of individual die values
 result.rolls // Full roll records with modifier history
-result.error // null on success, RandsumError on failure
+```
+
+`roll()` throws on invalid input. Wrap calls in try/catch:
+
+```typescript
+import { roll, RandsumError } from "@randsum/roller"
+
+try {
+  const result = roll(userInput)
+  console.log(result.total)
+} catch (e) {
+  if (e instanceof RandsumError) {
+    console.error(e.message)
+  }
+}
 ```
 
 ### Notation Reference
 
-| Notation   | Description                |
-| ---------- | -------------------------- |
-| `4d6`      | Roll 4 six-sided dice      |
-| `4d6+2`    | Add 2 to total             |
-| `4d6L`     | Drop lowest                |
-| `4d6H`     | Drop highest               |
-| `2d20H`    | Keep highest (advantage)   |
-| `2d20L`    | Keep lowest (disadvantage) |
-| `4d6!`     | Exploding dice             |
-| `4d6R{<3}` | Reroll values below 3      |
-| `4d6U`     | Unique rolls only          |
+| Notation   | Description                 |
+| ---------- | --------------------------- |
+| `4d6`      | Roll 4 six-sided dice       |
+| `4d6+2`    | Add 2 to total              |
+| `4d6L`     | Drop lowest                 |
+| `4d6H`     | Drop highest                |
+| `2d20L`    | Drop lowest (advantage)     |
+| `2d20H`    | Drop highest (disadvantage) |
+| `4d6!`     | Exploding dice              |
+| `4d6R{<3}` | Reroll values below 3       |
+| `4d6U`     | Unique rolls only           |
 
 See [RANDSUM_DICE_NOTATION.md](./RANDSUM_DICE_NOTATION.md) for the complete notation guide.
 
@@ -91,9 +105,6 @@ import {
   optionsToNotation,
   optionsToDescription,
 
-  // Probability analysis
-  analyze,
-
   // Game system helpers
   createGameRoll,
   createMultiRollGameRoll,
@@ -107,11 +118,12 @@ import {
 
 ## Related Packages
 
-- [@randsum/blades](../blades) - Blades in the Dark
-- [@randsum/daggerheart](../daggerheart) - Daggerheart
-- [@randsum/fifth](../fifth) - D&D 5th Edition
-- [@randsum/root-rpg](../root-rpg) - Root RPG
-- [@randsum/salvageunion](../salvageunion) - Salvage Union
+- [@randsum/blades](../../games/blades) - Blades in the Dark
+- [@randsum/daggerheart](../../games/daggerheart) - Daggerheart
+- [@randsum/fifth](../../games/fifth) - D&D 5th Edition
+- [@randsum/root-rpg](../../games/root-rpg) - Root RPG
+- [@randsum/salvageunion](../../games/salvageunion) - Salvage Union
+- [@randsum/pbta](../../games/pbta) - Powered by the Apocalypse
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

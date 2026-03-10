@@ -87,9 +87,6 @@ packages/*/lib/
 /docs/api/
 packages/site/public/api/
 
-# Keep design docs tracked
-!/docs/plans/
-
 # Claude local settings
 .claude/*.local.json
 
@@ -97,3 +94,6 @@ packages/site/public/api/
 
 # Git worktrees
 .worktrees
+
+#plans
+/docs/plans/

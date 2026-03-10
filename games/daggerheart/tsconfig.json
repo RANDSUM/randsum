@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.packages.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [{ "path": "../../packages/roller" }]
+}

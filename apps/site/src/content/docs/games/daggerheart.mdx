@@ -1,6 +1,24 @@
 ---
-title: Daggerheart
-description: Daggerheart RPG hope and fear dice mechanics with RANDSUM
+title: Daggerheart Dice — Hope & Fear Mechanics in TypeScript
+description: TypeScript package for Daggerheart's duality dice system. Rolls Hope and Fear d12s, handles advantage/disadvantage, amplification, and critical hope outcomes.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/daggerheart",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "1.2.0",
+        "description": "TypeScript dice package for Daggerheart. Handles the duality dice system with Hope and Fear d12s, advantage, disadvantage, and critical outcomes.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/daggerheart",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/daggerheart",
+        "keywords": "Daggerheart, Critical Role, duality dice, Hope, Fear, TypeScript, tabletop RPG"
+      }
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
@@ -8,13 +26,9 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/daggerheart` package provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
 
-## Overview
+## Hope & Fear
 
-- Rolls a Hope die (d12) and a Fear die (d12)
-- The higher die determines the narrative outcome (hope vs. fear)
-- The sum determines mechanical success
-- Supports advantage/disadvantage (adds or subtracts a d6)
-- Hope or Fear dice can be amplified to d20
+Daggerheart's action rolls use two twelve-sided dice called the **Duality Dice** — one Hope die and one Fear die. You roll both, add a modifier, and compare the total to a difficulty threshold. If the Hope die shows higher than the Fear die, you act *with Hope* (a positive narrative currency). If Fear is higher, you succeed *with Fear* (the GM gains a resource). A **critical** occurs when both dice show the same value. Advantage adds a d6 to the total; disadvantage subtracts a d6. Either die can be **amplified** from d12 to d20 for greater range. The `@randsum/daggerheart` package returns the full breakdown: totals, individual die values, Hope/Fear comparison, and whether a critical occurred.
 
 ## Installation
 
@@ -71,13 +85,13 @@ roll({
 
 <CodeExample code={`import { roll } from '@randsum/daggerheart'
 
-const { result, total } = roll({ modifier: 3 })
+const { result, total, details } = roll({ modifier: 3 })
+// result: 'hope' | 'fear' | 'critical hope'
+// details: { hope, fear, extraDie, modifier }
 
-// result contains type and detailed breakdown
-const { type, details } = result
-const { hope, fear, advantage, modifier } = details`} />
+const { hope, fear, extraDie, modifier } = details`} />
 
-## API reference
+## API
 
 ### `roll(arg: DaggerheartRollArgument)`
 
@@ -85,7 +99,7 @@ const { hope, fear, advantage, modifier } = details`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `modifier` | `number` | Modifier added to the total |
+| `modifier` | `number` (optional) | Modifier added to the total |
 | `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Adds or subtracts a d6 |
 | `amplifyHope` | `boolean` | Use d20 instead of d12 for hope die |
 | `amplifyFear` | `boolean` | Use d20 instead of d12 for fear die |
@@ -99,7 +113,7 @@ const { hope, fear, advantage, modifier } = details`} />
 | `details` | `DaggerheartRollDetails` | Detailed breakdown |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
-## Result interpretation
+## Outcomes
 
 The result type is determined by comparing the Hope and Fear die values:
 
@@ -111,25 +125,25 @@ The result type is determined by comparing the Hope and Fear die values:
 
 The total (sum of all dice + modifier) determines mechanical success or failure.
 
-## Details breakdown
+## Details Object
 
 The `details` object provides full visibility into each component:
 
 - `hope` -- Hope die result and whether it was amplified
 - `fear` -- Fear die result and whether it was amplified
-- `advantage` -- Advantage/disadvantage die result (if applicable)
+- `extraDie` -- Advantage/disadvantage die result (if applicable)
 - `modifier` -- Applied modifier value
 
-## Type exports
+## Types
 
 <CodeExample code={`import type {
   DaggerheartRollArgument,
   DaggerheartRollResult,
   DaggerheartRollResultType,
-  DaggerheartAdvantageDisadvantage
+  DaggerheartExtraDieMode
 } from '@randsum/daggerheart'`} />
 
 ## Links
 
 - [npm package](https://www.npmjs.com/package/@randsum/daggerheart)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/daggerheart)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/daggerheart)

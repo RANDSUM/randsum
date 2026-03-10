@@ -6,7 +6,7 @@ import {
   getModifierOrder
 } from '../lib/modifiers'
 import type { RegistryProcessResult } from '../lib/modifiers/schema'
-import type { ModifierLog, RollParams, RollRecord } from '../types'
+import type { RollParams, RollRecord } from '../types'
 import { RollError } from '../errors'
 
 /**
@@ -67,7 +67,7 @@ export class RollPipeline<T = string> {
       return this
     }
 
-    const rollOne = (): number => coreRandom(sides, this.rng)
+    const rollOne = (): number => coreRandom(sides, this.rng) + 1
     const ctx: ModifierContext = {
       rollOne,
       parameters: { sides, quantity }
@@ -96,6 +96,12 @@ export class RollPipeline<T = string> {
 
   /**
    * Build the final RollRecord with all computed values.
+   *
+   * Must be called after `generateInitialRolls()` and `applyModifiers()`.
+   * Prefer `execute()` which handles step ordering automatically.
+   *
+   * @throws {RollError} if called out of order (programmer error — not a user-facing error)
+   * @internal Not part of the public API. Use `executeRollPipeline()` instead.
    */
   public build(): RollRecord<T> {
     if (this.initialRolls.length === 0) {
@@ -119,12 +125,8 @@ export class RollPipeline<T = string> {
       argument,
       notation,
       description,
-      modifierHistory: {
-        logs: this.modifierResult.logs,
-        modifiedRolls: this.modifierResult.rolls,
-        total,
-        initialRolls: this.initialRolls
-      },
+      initialRolls: this.initialRolls,
+      modifierLogs: this.modifierResult.logs,
       rolls: this.modifierResult.rolls,
       appliedTotal: isNegative ? -total : total,
       total
@@ -136,21 +138,6 @@ export class RollPipeline<T = string> {
    */
   public execute(): RollRecord<T> {
     return this.generateInitialRolls().applyModifiers().build()
-  }
-
-  /** Get the initial rolls before modifiers */
-  public getInitialRolls(): readonly number[] {
-    return this.initialRolls
-  }
-
-  /** Get the rolls after modifiers */
-  public getModifiedRolls(): readonly number[] {
-    return this.modifierResult?.rolls ?? []
-  }
-
-  /** Get the modifier logs */
-  public getModifierLogs(): readonly ModifierLog[] {
-    return this.modifierResult?.logs ?? []
   }
 }
 

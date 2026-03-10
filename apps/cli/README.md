@@ -1,4 +1,9 @@
-# @randsum/cli
+<div align="center">
+  <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
+  <h1>@randsum/cli</h1>
+  <h3>TypeScript-First Dice Notation Ecosystem</h3>
+  <p>Throw Dice, Not Exceptions.</p>
+</div>
 
 Dice rolling CLI and interactive TUI powered by [RANDSUM](https://github.com/RANDSUM/randsum).
 
@@ -35,7 +40,8 @@ randsum -i            # Explicit interactive flag
 ```
 -i, --interactive     Launch interactive TUI mode
 -v, --verbose         Show detailed roll breakdown
--j, --json            Output results as JSON
+--json                Output results as JSON
+-r, --repeat N        Roll N times (default: 1)
 -s, --seed <number>   Set random seed for reproducible rolls
 -V, --version         Show version
 -h, --help            Show help

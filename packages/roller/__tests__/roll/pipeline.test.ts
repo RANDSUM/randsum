@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, mock, spyOn, test } from 'bun:test'
 
 import * as RandomUtils from '../../src/lib/random'
+import { roll } from '../../src/roll'
 import { RollPipeline, executeRollPipeline } from '../../src/roll/pipeline'
 import { createRollParams } from '../support/fixtures'
 
@@ -27,12 +28,9 @@ describe(executeRollPipeline, () => {
       expect(executeRollPipeline(coreParameters)).toMatchObject({
         parameters: coreParameters,
         total: 10,
-        modifierHistory: {
-          initialRolls: testRollSet,
-          logs: [],
-          modifiedRolls: testRollSet,
-          total: 10
-        }
+        initialRolls: testRollSet,
+        modifierLogs: [],
+        rolls: testRollSet
       })
     })
   })
@@ -52,20 +50,17 @@ describe(executeRollPipeline, () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(uniqueRolls)
       expect(executeRollPipeline(uniqueParameters)).toMatchObject({
         parameters: uniqueParameters,
-        modifierHistory: {
-          initialRolls,
-          modifiedRolls: [1, 200, 2, 3],
-          total: 206,
-          logs: [
-            {
-              added: [200],
-              modifier: 'unique',
-              options: true,
-              removed: [1]
-            }
-          ]
-        },
-        total: 206
+        initialRolls,
+        rolls: [1, 201, 2, 3],
+        modifierLogs: [
+          {
+            added: [201],
+            modifier: 'unique',
+            options: true,
+            removed: [1]
+          }
+        ],
+        total: 207
       })
     })
 
@@ -80,19 +75,16 @@ describe(executeRollPipeline, () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(uniqueRolls)
         expect(executeRollPipeline(notUniqueParameters)).toMatchObject({
           parameters: notUniqueParameters,
-          modifierHistory: {
-            modifiedRolls: uniqueRolls,
-            total: 7,
-            initialRolls: uniqueRolls,
-            logs: [
-              {
-                added: [],
-                modifier: 'unique',
-                options: { notUnique: [1] },
-                removed: []
-              }
-            ]
-          },
+          rolls: uniqueRolls,
+          initialRolls: uniqueRolls,
+          modifierLogs: [
+            {
+              added: [],
+              modifier: 'unique',
+              options: { notUnique: [1] },
+              removed: []
+            }
+          ],
           total: 7
         })
       })
@@ -136,25 +128,22 @@ describe(executeRollPipeline, () => {
 
       expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifierHistory: {
-          initialRolls: longerRollTotals,
-          modifiedRolls: [4, 6, 7],
-          total: 17,
-          logs: [
-            {
-              added: [],
-              modifier: 'drop',
-              options: {
-                exact: [5],
-                greaterThan: 8,
-                highest: 1,
-                lessThan: 2,
-                lowest: 2
-              },
-              removed: [1, 2, 3, 5, 8, 9]
-            }
-          ]
-        },
+        initialRolls: longerRollTotals,
+        rolls: [4, 6, 7],
+        modifierLogs: [
+          {
+            added: [],
+            modifier: 'drop',
+            options: {
+              exact: [5],
+              greaterThan: 8,
+              highest: 1,
+              lessThan: 2,
+              lowest: 2
+            },
+            removed: [1, 2, 3, 5, 8, 9]
+          }
+        ],
         total: 17
       })
     })
@@ -172,22 +161,19 @@ describe(executeRollPipeline, () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
         expect(executeRollPipeline(dropParameters)).toMatchObject({
           parameters: dropParameters,
-          modifierHistory: {
-            initialRolls: testRollSet,
-            modifiedRolls: [2, 2, 3, 4],
-            total: 11,
-            logs: [
-              {
-                added: [2],
-                modifier: 'replace',
-                options: {
-                  from: 1,
-                  to: 2
-                },
-                removed: [1]
-              }
-            ]
-          },
+          initialRolls: testRollSet,
+          rolls: [2, 2, 3, 4],
+          modifierLogs: [
+            {
+              added: [2],
+              modifier: 'replace',
+              options: {
+                from: 1,
+                to: 2
+              },
+              removed: [1]
+            }
+          ],
           total: 11
         })
       })
@@ -209,30 +195,27 @@ describe(executeRollPipeline, () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
         expect(executeRollPipeline(dropParameters)).toMatchObject({
           parameters: dropParameters,
-          modifierHistory: {
-            modifiedRolls: [2, 2, 3, 6],
-            initialRolls: testRollSet,
-            total: 13,
-            logs: [
-              {
-                added: [2, 6],
-                modifier: 'replace',
-                options: [
-                  {
-                    from: 1,
-                    to: 2
+          rolls: [2, 2, 3, 6],
+          initialRolls: testRollSet,
+          modifierLogs: [
+            {
+              added: [2, 6],
+              modifier: 'replace',
+              options: [
+                {
+                  from: 1,
+                  to: 2
+                },
+                {
+                  from: {
+                    greaterThan: 3
                   },
-                  {
-                    from: {
-                      greaterThan: 3
-                    },
-                    to: 6
-                  }
-                ],
-                removed: [1, 4]
-              }
-            ]
-          },
+                  to: 6
+                }
+              ],
+              removed: [1, 4]
+            }
+          ],
           total: 13
         })
       })
@@ -253,20 +236,17 @@ describe(executeRollPipeline, () => {
 
       expect(executeRollPipeline(explodeParameters)).toMatchObject({
         parameters: explodeParameters,
-        modifierHistory: {
-          modifiedRolls: [1, 2, 3, 6, 200],
-          total: 212,
-          initialRolls: explodeRollTotals,
-          logs: [
-            {
-              added: [200],
-              modifier: 'explode',
-              options: true,
-              removed: []
-            }
-          ]
-        },
-        total: 212
+        rolls: [1, 2, 3, 6, 201],
+        initialRolls: explodeRollTotals,
+        modifierLogs: [
+          {
+            added: [201],
+            modifier: 'explode',
+            options: true,
+            removed: []
+          }
+        ],
+        total: 213
       })
     })
   })
@@ -283,22 +263,19 @@ describe(executeRollPipeline, () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
         expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
-          modifierHistory: {
-            modifiedRolls: [1, 2, 3, 200],
-            total: 206,
-            initialRolls: testRollSet,
-            logs: [
-              {
-                added: [200],
-                modifier: 'reroll',
-                options: {
-                  greaterThan: 3
-                },
-                removed: [4]
-              }
-            ]
-          },
-          total: 206
+          rolls: [1, 2, 3, 201],
+          initialRolls: testRollSet,
+          modifierLogs: [
+            {
+              added: [201],
+              modifier: 'reroll',
+              options: {
+                greaterThan: 3
+              },
+              removed: [4]
+            }
+          ],
+          total: 207
         })
       })
     })
@@ -316,24 +293,21 @@ describe(executeRollPipeline, () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
         expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
-          modifierHistory: {
-            modifiedRolls: [1, 200, 3, 200],
-            initialRolls: testRollSet,
-            total: 404,
-            logs: [
-              {
-                added: [200, 200],
-                modifier: 'reroll',
-                options: {
-                  exact: [2],
-                  greaterThan: 3,
-                  max: 2
-                },
-                removed: [2, 4]
-              }
-            ]
-          },
-          total: 404
+          rolls: [1, 201, 3, 201],
+          initialRolls: testRollSet,
+          modifierLogs: [
+            {
+              added: [201, 201],
+              modifier: 'reroll',
+              options: {
+                exact: [2],
+                greaterThan: 3,
+                max: 2
+              },
+              removed: [2, 4]
+            }
+          ],
+          total: 406
         })
       })
     })
@@ -351,11 +325,8 @@ describe(executeRollPipeline, () => {
         spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
         expect(executeRollPipeline(reDicePools)).toMatchObject({
           parameters: reDicePools,
-          modifierHistory: {
-            modifiedRolls: [200, 2, 200, 4],
-            total: 406
-          },
-          total: 406
+          rolls: [201, 2, 201, 4],
+          total: 408
         })
       })
     })
@@ -372,22 +343,19 @@ describe(executeRollPipeline, () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifierHistory: {
-          modifiedRolls: [2, 2, 3, 3],
-          total: 10,
-          initialRolls: [1, 2, 3, 4],
-          logs: [
-            {
-              added: [2, 3],
-              modifier: 'cap',
-              options: {
-                greaterThan: 3,
-                lessThan: 2
-              },
-              removed: [1, 4]
-            }
-          ]
-        },
+        rolls: [2, 2, 3, 3],
+        initialRolls: [1, 2, 3, 4],
+        modifierLogs: [
+          {
+            added: [2, 3],
+            modifier: 'cap',
+            options: {
+              greaterThan: 3,
+              lessThan: 2
+            },
+            removed: [1, 4]
+          }
+        ],
         total: 10
       })
     })
@@ -404,19 +372,16 @@ describe(executeRollPipeline, () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifierHistory: {
-          modifiedRolls: testRollSet,
-          initialRolls: testRollSet,
-          total: 12,
-          logs: [
-            {
-              added: [],
-              modifier: 'plus',
-              options: 2,
-              removed: []
-            }
-          ]
-        },
+        rolls: testRollSet,
+        initialRolls: testRollSet,
+        modifierLogs: [
+          {
+            added: [],
+            modifier: 'plus',
+            options: 2,
+            removed: []
+          }
+        ],
         total: 12
       })
     })
@@ -433,19 +398,16 @@ describe(executeRollPipeline, () => {
       spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce(testRollSet)
       expect(executeRollPipeline(dropParameters)).toMatchObject({
         parameters: dropParameters,
-        modifierHistory: {
-          modifiedRolls: testRollSet,
-          total: 8,
-          initialRolls: testRollSet,
-          logs: [
-            {
-              added: [],
-              modifier: 'minus',
-              options: 2,
-              removed: []
-            }
-          ]
-        },
+        rolls: testRollSet,
+        initialRolls: testRollSet,
+        modifierLogs: [
+          {
+            added: [],
+            modifier: 'minus',
+            options: 2,
+            removed: []
+          }
+        ],
         total: 8
       })
     })
@@ -465,90 +427,67 @@ describe(executeRollPipeline, () => {
 
       expect(result).toMatchObject({
         parameters: parametersWithZeroModifier,
-        modifierHistory: {
-          modifiedRolls: testRollSet,
-          initialRolls: testRollSet,
-          total: 10,
-          logs: [
-            {
-              added: [],
-              modifier: 'plus',
-              options: 0,
-              removed: []
-            }
-          ]
-        },
+        rolls: testRollSet,
+        initialRolls: testRollSet,
+        modifierLogs: [
+          {
+            added: [],
+            modifier: 'plus',
+            options: 0,
+            removed: []
+          }
+        ],
         total: 10
       })
     })
   })
 })
 
-describe('RollPipeline class methods', () => {
-  describe('getInitialRolls', () => {
-    test('returns empty array before generateInitialRolls is called', () => {
-      const params = createRollParams({ sides: 6, quantity: 4 })
-      const pipeline = new RollPipeline(params)
-
-      expect(pipeline.getInitialRolls()).toEqual([])
-    })
-
-    test('returns initial rolls after generateInitialRolls is called', () => {
-      const params = createRollParams({ sides: 6, quantity: 4 })
-      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
-
-      const pipeline = new RollPipeline(params)
-      pipeline.generateInitialRolls()
-
-      expect(pipeline.getInitialRolls()).toEqual([1, 2, 3, 4])
-    })
+describe('invalid input throws', () => {
+  test('roll() throws on invalid sides', () => {
+    expect(() => roll({ sides: 0, quantity: 1 })).toThrow()
   })
 
-  describe('getModifiedRolls', () => {
-    test('returns empty array before applyModifiers is called', () => {
-      const params = createRollParams({ sides: 6, quantity: 4 })
-      const pipeline = new RollPipeline(params)
+  test('roll() throws on invalid quantity', () => {
+    expect(() => roll({ sides: 6, quantity: -1 })).toThrow()
+  })
+})
 
-      expect(pipeline.getModifiedRolls()).toEqual([])
-    })
+describe('RollPipeline build() exposes pipeline state', () => {
+  test('build() returns initialRolls and rolls after full pipeline', () => {
+    const params = createRollParams({ sides: 6, quantity: 4 })
+    spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
 
-    test('returns modified rolls after applyModifiers is called', () => {
-      const params = createRollParams({
-        sides: 6,
-        quantity: 4,
-        modifiers: { drop: { lowest: 1 } }
-      })
-      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
+    const result = new RollPipeline(params).execute()
 
-      const pipeline = new RollPipeline(params)
-      pipeline.generateInitialRolls().applyModifiers()
-
-      expect(pipeline.getModifiedRolls()).toEqual([2, 3, 4])
-    })
+    expect(result.initialRolls).toEqual([1, 2, 3, 4])
+    expect(result.rolls).toEqual([1, 2, 3, 4])
   })
 
-  describe('getModifierLogs', () => {
-    test('returns empty array before applyModifiers is called', () => {
-      const params = createRollParams({ sides: 6, quantity: 4 })
-      const pipeline = new RollPipeline(params)
-
-      expect(pipeline.getModifierLogs()).toEqual([])
+  test('build() returns modified rolls after modifiers applied', () => {
+    const params = createRollParams({
+      sides: 6,
+      quantity: 4,
+      modifiers: { drop: { lowest: 1 } }
     })
+    spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
 
-    test('returns logs after applyModifiers is called', () => {
-      const params = createRollParams({
-        sides: 6,
-        quantity: 4,
-        modifiers: { plus: 5 }
-      })
-      spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
+    const result = new RollPipeline(params).execute()
 
-      const pipeline = new RollPipeline(params)
-      pipeline.generateInitialRolls().applyModifiers()
+    expect(result.rolls).toEqual([2, 3, 4])
+  })
 
-      const logs = pipeline.getModifierLogs()
-      expect(logs.length).toBe(1)
-      expect(logs[0]?.modifier).toBe('plus')
+  test('build() returns modifier logs', () => {
+    const params = createRollParams({
+      sides: 6,
+      quantity: 4,
+      modifiers: { plus: 5 }
     })
+    spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
+
+    const result = new RollPipeline(params).execute()
+
+    expect(result.modifierLogs.length).toBe(1)
+    expect(result.modifierLogs[0]?.modifier).toBe('plus')
   })
 })

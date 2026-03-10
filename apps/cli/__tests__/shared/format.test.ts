@@ -16,12 +16,6 @@ describe('formatCompact', () => {
     expect(output).toContain(']')
     expect(output).toMatch(/^\d+/)
   })
-
-  test('formats an error result', () => {
-    const result = roll('zzzz')
-    const output = formatCompact(result)
-    expect(output).toStartWith('Error:')
-  })
 })
 
 describe('formatVerbose', () => {
@@ -37,12 +31,6 @@ describe('formatVerbose', () => {
     const output = formatVerbose(result)
     expect(output).toContain('Raw:')
   })
-
-  test('formats an error result', () => {
-    const result = roll('zzzz')
-    const output = formatVerbose(result)
-    expect(output).toStartWith('Error:')
-  })
 })
 
 describe('formatJson', () => {
@@ -52,12 +40,5 @@ describe('formatJson', () => {
     const parsed = JSON.parse(output) as Record<string, unknown>
     expect(parsed).toHaveProperty('total')
     expect(parsed).toHaveProperty('rolls')
-  })
-
-  test('includes error in JSON for invalid rolls', () => {
-    const result = roll('zzzz')
-    const output = formatJson(result)
-    const parsed = JSON.parse(output) as Record<string, unknown>
-    expect(parsed).toHaveProperty('error')
   })
 })
