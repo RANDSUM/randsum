@@ -1,0 +1,29 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Test Game",
+  "shortcode": "test",
+  "version": "1.0.0",
+  "game_url": "https://example.com/test-game",
+  "pools": { "d6": { "sides": 6 } },
+  "tables": {
+    "basic": {
+      "ranges": [
+        { "exact": 6, "result": "high" },
+        { "min": 1, "max": 5, "result": "low" }
+      ]
+    }
+  },
+  "roll": {
+    "inputs": { "count": { "type": "integer", "minimum": 1, "default": 1 } },
+    "dice": { "pool": { "$ref": "#/pools/d6" }, "quantity": { "$input": "count" } },
+    "modify": [{ "keepHighest": 1 }],
+    "resolve": "sum",
+    "outcome": { "tableLookup": { "$ref": "#/tables/basic" } }
+  },
+  "rollBonus": {
+    "inputs": { "sides": { "type": "integer", "minimum": 2, "default": 6 } },
+    "dice": { "pool": { "sides": { "$input": "sides" } }, "quantity": 1 },
+    "resolve": "sum",
+    "outcome": { "ranges": [{ "min": 1, "max": 20, "result": "done" }] }
+  }
+}

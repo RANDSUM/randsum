@@ -26,42 +26,65 @@ bun add @randsum/blades
 ## Usage
 
 ```typescript
-import { roll } from "@randsum/blades"
+import { roll, rollFortune, rollResistance } from "@randsum/blades"
 import type { BladesResult } from "@randsum/blades"
 
-// Basic roll with dice pool
-const { result } = roll(2)
+// Action roll (most common)
+const { result } = roll({ rating: 2 })
 console.log(result) // 'critical' | 'success' | 'partial' | 'failure'
 
-// Different dice pool sizes
-roll(0) // Zero-dice roll (2d6, keep lowest)
-roll(1) // Single die
-roll(2) // Two-dice pool
-roll(3) // Three-dice pool
+// Desperate action (rating 0 — rolls 2d6, keeps lowest)
+roll({ rating: 0 })
+
+// Fortune roll
+rollFortune({ quantity: 3 })
+
+// Resistance roll
+rollResistance({ rating: 2 })
 ```
 
 ## API Reference
 
-### `roll`
+### `roll(input?)`
 
-Makes a Blades in the Dark roll, returning the result based on the highest die.
+Action roll. Rolls `rating` d6 dice and keeps the highest.
 
 ```typescript
-function roll(dicePool: number): GameRollResult<BladesResult, undefined, RollRecord>
+function roll(input?: { rating?: number }): GameRollResult
 ```
 
-**Parameters:**
+- `rating` (default `1`): Action rating (0–4). At `0`, rolls 2d6 and keeps the lowest instead.
 
-- `dicePool`: Number of d6 dice to roll (typically 1-4)
+**Results:**
 
-**Returns:**
-
-- `'critical'`: Two or more dice showing 6 (only possible with dice pool > 0)
+- `'critical'`: Two or more 6s in the pool
 - `'success'`: Highest die is 6
 - `'partial'`: Highest die is 4–5
 - `'failure'`: Highest die is 1–3
 
-**Result Interpretation:**
+### `rollFortune(input)`
+
+Fortune roll. Rolls a pool of d6 dice and keeps the highest.
+
+```typescript
+function rollFortune(input: { quantity: number }): GameRollResult
+```
+
+Returns the same result strings as `roll`.
+
+### `rollResistance(input?)`
+
+Resistance roll. Determines how much harm is resisted.
+
+```typescript
+function rollResistance(input?: { rating?: number }): GameRollResult
+```
+
+**Results:**
+
+- `'clearWithBenefit'`: Highest die is 6
+- `'clear'`: Highest die is 4–5
+- `'takeLesserHarm'`: Highest die is 1–3
 
 ```typescript
 type BladesResult = "critical" | "success" | "partial" | "failure"

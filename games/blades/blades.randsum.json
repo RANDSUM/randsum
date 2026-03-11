@@ -1,0 +1,109 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Blades in the Dark",
+  "shortcode": "blades",
+  "version": "1.0.0",
+  "game_url": "https://bladesinthedark.com",
+  "srd_url": "https://bladesinthedark.com/basics",
+
+  "pools": {
+    "actionDice": { "sides": 6 }
+  },
+
+  "tables": {
+    "coreMechanic": {
+      "ranges": [
+        {
+          "poolCondition": { "countWhere": { "operator": "=", "value": 6 }, "atLeast": 2 },
+          "result": "critical"
+        },
+        { "exact": 6, "result": "success" },
+        { "min": 4, "max": 5, "result": "partial" },
+        { "min": 1, "max": 3, "result": "failure" }
+      ]
+    }
+  },
+
+  "outcomes": {
+    "coreMechanicOutcome": { "tableLookup": { "$ref": "#/tables/coreMechanic" } },
+    "desperateActionOutcome": {
+      "ranges": [
+        { "exact": 6, "result": "success" },
+        { "min": 4, "max": 5, "result": "partial" },
+        { "min": 1, "max": 3, "result": "failure" }
+      ]
+    },
+    "resistanceOutcome": {
+      "ranges": [
+        { "exact": 6, "result": "clearWithBenefit" },
+        { "min": 4, "max": 5, "result": "clear" },
+        { "min": 1, "max": 3, "result": "takeLesserHarm" }
+      ]
+    }
+  },
+
+  "roll": {
+    "inputs": {
+      "rating": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4,
+        "default": 1,
+        "description": "Action rating (0 = desperate: roll 2 dice, keep lowest; 1–4 = roll that many, keep highest)"
+      }
+    },
+    "dice": {
+      "pool": { "$ref": "#/pools/actionDice" },
+      "quantity": { "$input": "rating" }
+    },
+    "modify": [{ "keepHighest": 1 }],
+    "resolve": "sum",
+    "outcome": { "$ref": "#/outcomes/coreMechanicOutcome" },
+    "when": [
+      {
+        "condition": { "input": "rating", "operator": "=", "value": 0 },
+        "override": {
+          "dice": { "pool": { "$ref": "#/pools/actionDice" }, "quantity": 2 },
+          "modify": [{ "keepLowest": 1 }],
+          "outcome": { "$ref": "#/outcomes/desperateActionOutcome" }
+        }
+      }
+    ]
+  },
+
+  "rollFortune": {
+    "inputs": {
+      "quantity": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Number of dice to roll"
+      }
+    },
+    "dice": {
+      "pool": { "$ref": "#/pools/actionDice" },
+      "quantity": { "$input": "quantity" }
+    },
+    "modify": [{ "keepHighest": 1 }],
+    "resolve": "sum",
+    "outcome": { "$ref": "#/outcomes/coreMechanicOutcome" }
+  },
+
+  "rollResistance": {
+    "inputs": {
+      "rating": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4,
+        "default": 1,
+        "description": "Attribute rating"
+      }
+    },
+    "dice": {
+      "pool": { "$ref": "#/pools/actionDice" },
+      "quantity": { "$input": "rating" }
+    },
+    "modify": [{ "keepHighest": 1 }],
+    "resolve": "sum",
+    "outcome": { "$ref": "#/outcomes/resistanceOutcome" }
+  }
+}

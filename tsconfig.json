@@ -38,6 +38,7 @@
     { "path": "games/pbta" },
     { "path": "games/root-rpg" },
     { "path": "games/salvageunion" },
-    { "path": "packages/component-library" }
+    { "path": "packages/component-library" },
+    { "path": "games/gameSchema" }
   ]
 }
