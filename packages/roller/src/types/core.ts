@@ -24,7 +24,7 @@ export interface RequiredNumericRollParameters {
  * roll({ sides: 6, quantity: 4 })  // options object
  * ```
  */
-export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number | `${number}`
+export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number
 
 /**
  * Type for custom random number generators.

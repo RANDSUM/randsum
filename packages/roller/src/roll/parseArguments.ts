@@ -1,6 +1,7 @@
 import { isDiceNotation, notationToOptions } from '@randsum/notation'
 import { optionsToDescription, optionsToNotation, optionsToSidesFaces } from '../lib/transformers'
 import { validateRollOptions } from '../lib/optionsValidation'
+import { ValidationError } from '../errors'
 import type { RollArgument, RollOptions, RollParams } from '../types'
 
 /**
@@ -12,8 +13,12 @@ function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
     return [...notationToOptions(argument)]
   }
 
-  if (typeof argument === 'string' || typeof argument === 'number') {
-    const options = { quantity: 1, sides: Number(argument) }
+  if (typeof argument === 'string') {
+    throw new ValidationError(`"${argument}" is not valid dice notation`)
+  }
+
+  if (typeof argument === 'number') {
+    const options = { quantity: 1, sides: argument }
     validateRollOptions(options)
     return [options]
   }

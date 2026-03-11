@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { parseArguments } from '../../src/roll/parseArguments'
+import { ValidationError } from '../../src/errors'
 
 describe(parseArguments, () => {
   describe('given a number', () => {
@@ -523,6 +524,18 @@ describe(parseArguments, () => {
           })
         })
       })
+    })
+  })
+
+  describe('given a non-dice-notation string', () => {
+    test('throws a ValidationError for arithmetic-only strings like "+5"', () => {
+      // @ts-expect-error - testing that invalid string input is rejected at runtime
+      expect(() => parseArguments('+5', 1)).toThrow(ValidationError)
+    })
+
+    test('throws a ValidationError for bare numeric strings like "5"', () => {
+      // @ts-expect-error - testing that invalid string input is rejected at runtime
+      expect(() => parseArguments('5', 1)).toThrow(ValidationError)
     })
   })
 
