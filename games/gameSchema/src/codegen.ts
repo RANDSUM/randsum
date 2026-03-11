@@ -274,18 +274,61 @@ function generateFunctionBody(
   return lines
 }
 
+interface SingleInputOverload {
+  readonly fieldName: string
+  readonly tsType: 'number' | 'string' | 'boolean'
+  readonly fieldOptional: boolean
+}
+
+function getSingleInputOverload(rollDef: RollDefinition): SingleInputOverload | null {
+  const { inputs } = rollDef
+  if (!inputs) return null
+  const entries = Object.entries(inputs)
+  if (entries.length !== 1) return null
+  const first = entries[0]
+  if (first === undefined) return null
+  const [fieldName, decl] = first
+  const tsType: 'number' | 'string' | 'boolean' =
+    decl.type === 'integer' ? 'number' : decl.type === 'boolean' ? 'boolean' : 'string'
+  const fieldOptional = decl.default !== undefined
+  return { fieldName, tsType, fieldOptional }
+}
+
 function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSpec): string[] {
   const Key = capitalize(key)
   const results = collectResults(rollDef, spec)
   const optional = inputAllOptional(rollDef.inputs)
   const inputType = buildInputType(rollDef.inputs)
-  const param = optional ? `input?: ${inputType}` : `input: ${inputType}`
+  const overload = getSingleInputOverload(rollDef)
 
   const parts: string[] = []
   const resultUnion = results.map(r => `'${r}'`).join(' | ')
   parts.push(`export type ${Key}Result = ${resultUnion}`)
   parts.push(``)
-  parts.push(`export function ${key}(${param}): GameRollResult {`)
+
+  if (overload) {
+    const { fieldName, tsType, fieldOptional } = overload
+    const nakedOpt = fieldOptional ? '?' : ''
+    const objOpt = optional ? '?' : ''
+    // Overload 1: naked scalar
+    parts.push(`export function ${key}(${fieldName}${nakedOpt}: ${tsType}): GameRollResult`)
+    // Overload 2: object form
+    parts.push(`export function ${key}(input${objOpt}: ${inputType}): GameRollResult`)
+    // Implementation signature
+    const rawOpt = optional ? '?' : ''
+    parts.push(
+      `export function ${key}(rawInput${rawOpt}: ${tsType} | ${inputType}): GameRollResult {`
+    )
+    // Normalization: coerce naked scalar into object so function body is unchanged
+    const fallback = optional ? ' ?? {}' : ''
+    parts.push(
+      `  const input: ${inputType} = typeof rawInput === '${tsType}' ? { ${fieldName}: rawInput } : rawInput${fallback}`
+    )
+  } else {
+    const param = optional ? `input?: ${inputType}` : `input: ${inputType}`
+    parts.push(`export function ${key}(${param}): GameRollResult {`)
+  }
+
   parts.push(...generateFunctionBody(rollDef, spec, optional))
   parts.push(`}`)
   parts.push(``)
