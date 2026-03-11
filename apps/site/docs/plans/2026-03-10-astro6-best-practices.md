@@ -1,0 +1,247 @@
+# Astro 6 Best Practices Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Goal:** Apply all applicable Astro v6 upgrade guide changes and adopt new stable features: correct Node engine requirement, self-hosted fonts via the built-in Fonts API, and Content Security Policy.
+
+**Architecture:** Three targeted changes to `package.json`, `astro.config.mjs`, and `src/styles/custom.css`. No new files. No deprecated APIs are currently in use — this is purely additive + one metadata fix. CSP is delivered as a `<meta>` tag on static output (no server required).
+
+**Tech Stack:** Astro 6, `astro/config` fontProviders, `security.csp`, Starlight 0.37, Netlify adapter, Bun
+
+---
+
+## Pre-flight Check
+
+Before starting, confirm the site builds cleanly:
+
+```bash
+cd /Users/jarvis/Code/RANDSUM/@RANDSUM/apps/site
+bun run build
+```
+
+Expected: build succeeds with no errors. If it fails, stop and fix before proceeding.
+
+---
+
+### Task 1: Fix Node engine requirement
+
+**Files:**
+- Modify: `package.json`
+
+Astro 6 requires Node 22.12.0+. The engines field currently says `>=18.0.0`.
+
+**Step 1: Update engines.node**
+
+In `package.json`, change:
+
+```json
+"engines": {
+  "node": ">=18.0.0",
+  "bun": ">=1.3.10"
+},
+```
+
+to:
+
+```json
+"engines": {
+  "node": ">=22.12.0",
+  "bun": ">=1.3.10"
+},
+```
+
+**Step 2: Verify no test needed**
+
+This is a metadata declaration. No runtime behavior changes. Skip to commit.
+
+**Step 3: Commit**
+
+```bash
+git add apps/site/package.json
+git commit -m "chore(site): bump engines.node to >=22.12.0 per Astro 6 requirement"
+```
+
+---
+
+### Task 2: Migrate Google Fonts to Astro 6 built-in Fonts API
+
+**Files:**
+- Modify: `astro.config.mjs`
+- Modify: `src/styles/custom.css`
+
+Currently `custom.css` loads Inter and JetBrains Mono via an external `@import url('https://fonts.googleapis.com/...')`. Astro 6's Fonts API downloads, self-hosts, and optimizes these automatically — no CDN dependency, generated preload hints, optimized fallbacks.
+
+**Step 1: Add fonts config to astro.config.mjs**
+
+At the top of `astro.config.mjs`, update the import to include `fontProviders`:
+
+```js
+import { defineConfig, fontProviders } from 'astro/config'
+```
+
+Then add a top-level `fonts` array to `defineConfig(...)` (alongside `integrations`, `output`, etc.):
+
+```js
+fonts: [
+  {
+    name: 'Inter',
+    cssVariable: '--font-inter',
+    provider: fontProviders.google(),
+    weights: [400, 500, 600, 700],
+    styles: ['normal']
+  },
+  {
+    name: 'JetBrains Mono',
+    cssVariable: '--font-jetbrains-mono',
+    provider: fontProviders.google(),
+    weights: [400, 500, 600, 700],
+    styles: ['normal']
+  }
+],
+```
+
+**Step 2: Update src/styles/custom.css**
+
+Remove line 4 entirely:
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+```
+
+Then update the `--sl-font` and `--sl-font-mono` custom properties (currently at lines 24–25) to reference the Astro-generated variables:
+
+```css
+/* Fonts */
+--sl-font: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+--sl-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+```
+
+**Step 3: Build to verify fonts are bundled**
+
+```bash
+bun run build
+```
+
+Expected:
+- No build errors
+- `dist/` contains `_astro/` directory with font files (`.woff2`)
+- No requests to `fonts.googleapis.com` in generated HTML
+
+Quick check:
+```bash
+grep -r "fonts.googleapis.com" dist/ | wc -l
+# Expected: 0
+
+find dist/_astro -name "*.woff2" | head -5
+# Expected: several .woff2 files
+```
+
+**Step 4: Preview and verify fonts render**
+
+```bash
+bun run preview
+```
+
+Open `http://localhost:4321` in browser. Confirm:
+- Inter renders on body text
+- JetBrains Mono renders on code blocks
+- No console errors about font loading
+
+**Step 5: Commit**
+
+```bash
+git add apps/site/astro.config.mjs apps/site/src/styles/custom.css
+git commit -m "feat(site): migrate Google Fonts to Astro 6 built-in Fonts API"
+```
+
+---
+
+### Task 3: Enable Content Security Policy
+
+**Files:**
+- Modify: `astro.config.mjs`
+
+Astro 6 ships stable CSP support. It auto-hashes all inline scripts and styles, injecting a `<meta http-equiv="Content-Security-Policy">` tag into every page. We also need to declare `connect-src` for the npm registry fetch in `index.astro` (the live version badge script).
+
+**Note:** CSP does NOT work in `astro dev`. Always test with `bun run build && bun run preview`.
+
+**Step 1: Add security.csp to astro.config.mjs**
+
+Add to `defineConfig(...)`:
+
+```js
+security: {
+  csp: {
+    algorithm: 'SHA-256',
+    directives: [
+      "default-src 'self'",
+      "img-src 'self' data:",
+      "connect-src 'self' https://registry.npmjs.org"
+    ]
+  }
+},
+```
+
+The `script-src` and `style-src` directives are automatically generated by Astro with SHA-256 hashes — do not add them manually or you will override Astro's generated hashes.
+
+**Step 2: Build**
+
+```bash
+bun run build
+```
+
+Expected: build succeeds. If you see CSP-related errors, check the error message carefully — it usually tells you which directive is missing.
+
+**Step 3: Verify CSP meta tag in output**
+
+```bash
+grep -l "Content-Security-Policy" dist/**/*.html | head -3
+# Expected: several .html files listed
+
+grep "Content-Security-Policy" dist/index.html | head -c 300
+# Expected: <meta http-equiv="Content-Security-Policy" content="...sha256-...">
+```
+
+**Step 4: Preview and check for CSP violations**
+
+```bash
+bun run preview
+```
+
+Open browser DevTools → Console. Navigate through several pages:
+- `/` (homepage — has inline filter chip script and npm version fetch)
+- `/getting-started/introduction/`
+- Any page with a live REPL (e.g. `/packages/roller/`)
+
+Expected: **zero** CSP violation errors in the console.
+
+If violations appear, note the blocked source and add the appropriate directive. Common sources:
+- `data:` URIs for images → already covered by `img-src 'self' data:`
+- External fetch → add to `connect-src`
+- Worker scripts from bundled JS → add `worker-src 'self'`
+
+**Step 5: Commit**
+
+```bash
+git add apps/site/astro.config.mjs
+git commit -m "feat(site): enable Astro 6 Content Security Policy with SHA-256 hashing"
+```
+
+---
+
+## Final Verification
+
+```bash
+bun run build
+bun run preview
+```
+
+Checklist:
+- [ ] Build passes with no errors
+- [ ] Fonts load correctly (Inter body, JetBrains Mono code)
+- [ ] No `fonts.googleapis.com` requests in DevTools Network tab
+- [ ] No CSP violations in DevTools Console
+- [ ] `<meta http-equiv="Content-Security-Policy">` present in page source
+- [ ] Package filter chips work on homepage
+- [ ] Live REPLs function on docs pages
+- [ ] StackBlitz "Open in StackBlitz" button works

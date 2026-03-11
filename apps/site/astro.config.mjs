@@ -34,6 +34,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
+      favicon: '/favicon.ico',
       head: [
         {
           tag: 'meta',
@@ -147,16 +148,6 @@ export default defineConfig({
     }),
     react()
   ],
-  security: {
-    csp: {
-      algorithm: 'SHA-256',
-      directives: [
-        "default-src 'self'",
-        "img-src 'self' data:",
-        "connect-src 'self' https://registry.npmjs.org"
-      ]
-    }
-  },
   output: 'static',
   adapter: isDev ? undefined : netlify(),
   vite: {
