@@ -147,6 +147,16 @@ export default defineConfig({
     }),
     react()
   ],
+  security: {
+    csp: {
+      algorithm: 'SHA-256',
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "connect-src 'self' https://registry.npmjs.org"
+      ]
+    }
+  },
   output: 'static',
   adapter: isDev ? undefined : netlify(),
   vite: {
