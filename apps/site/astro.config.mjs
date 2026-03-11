@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config'
+import { defineConfig, fontProviders } from 'astro/config'
 import { fileURLToPath } from 'url'
 import { dirname, resolve } from 'path'
 
@@ -14,6 +14,22 @@ const isDev = process.argv.includes('dev')
 
 export default defineConfig({
   base: '/',
+  fonts: [
+    {
+      name: 'Inter',
+      cssVariable: '--font-inter',
+      provider: fontProviders.google(),
+      weights: [400, 500, 600, 700],
+      styles: ['normal']
+    },
+    {
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains-mono',
+      provider: fontProviders.google(),
+      weights: [400, 500, 600, 700],
+      styles: ['normal']
+    }
+  ],
   site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
   integrations: [
     starlight({
