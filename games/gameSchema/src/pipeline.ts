@@ -15,6 +15,7 @@ import type {
   OutcomeOperation,
   PoolCondition,
   PoolDefinition,
+  PostResolveModifyOperation,
   RandSumSpec,
   Ref,
   RefOrTableDefinition,
@@ -226,6 +227,18 @@ function resolveTotal(
   return rolls.reduce((sum, v) => sum + v, 0)
 }
 
+function applyPostResolveModifiers(
+  total: number,
+  postResolveModifiers: readonly PostResolveModifyOperation[] | undefined,
+  input: RollInput
+): number {
+  if (!postResolveModifiers || postResolveModifiers.length === 0) return total
+  return postResolveModifiers.reduce((acc, op) => {
+    if (op.add !== undefined) return acc + bindInteger(op.add, input)
+    return acc
+  }, total)
+}
+
 function applyOutcome(
   total: number,
   outcome: OutcomeOperation | Ref | undefined,
@@ -265,6 +278,8 @@ export function executePipeline(
   const effectiveModify = override?.modify ?? rollDef.modify ?? []
   const effectiveResolve = override?.resolve ?? rollDef.resolve
   const effectiveOutcome = override?.outcome ?? rollDef.outcome
+  const effectivePostResolveModifiers =
+    override?.postResolveModifiers ?? rollDef.postResolveModifiers
 
   const { rollerOptions, manualOps } = translateModifiers(effectiveModify, mergedInput)
   const optionsArray = buildRollOptionsArray(effectiveDice, mergedInput, spec, rollerOptions)
@@ -273,7 +288,8 @@ export function executePipeline(
   const preModifyRolls = rollerResult.rolls.flatMap((r: RollRecord) => r.initialRolls)
   const rawRolls = rollerResult.rolls.flatMap((r: RollRecord) => r.rolls)
   const workingRolls = applyManualModifiers(rawRolls, manualOps)
-  const total = resolveTotal(workingRolls, effectiveResolve, mergedInput)
+  const rawTotal = resolveTotal(workingRolls, effectiveResolve, mergedInput)
+  const total = applyPostResolveModifiers(rawTotal, effectivePostResolveModifiers, mergedInput)
   const result = applyOutcome(total, effectiveOutcome, spec, preModifyRolls, workingRolls)
 
   return { total, result, rolls: rollerResult.rolls }

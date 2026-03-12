@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { validateSpec } from '../src'
+import { loadSpec, validateSpec } from '../src'
 
 const BASE = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -88,5 +88,77 @@ describe('postResolveModifiers schema validation', () => {
       }
     })
     expect(result.valid).toBe(true)
+  })
+})
+
+describe('postResolveModifiers runtime behavior', () => {
+  const SPEC_WITH_BONUS = {
+    $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+    name: 'Bonus Test',
+    shortcode: 'test-bonus',
+    game_url: 'https://example.com',
+    roll: {
+      inputs: { bonus: { type: 'integer' as const, default: 0 } },
+      dice: { pool: { sides: 6 }, quantity: 2 },
+      resolve: 'sum' as const,
+      postResolveModifiers: [{ add: { $input: 'bonus' } }],
+      outcome: {
+        ranges: [{ min: 1, max: 999, result: 'any' }]
+      }
+    }
+  }
+
+  test('bonus 100 makes total >= 102 (proves bonus applied after sum, not per-die)', () => {
+    const game = loadSpec(SPEC_WITH_BONUS)
+    // 2d6 min is 2. With bonus 100, total must be >= 102.
+    // If bonus were per-die: 2*(1+100) = 202 minimum — different value, not what we test.
+    // With post-resolve: total = (sum of 2d6) + 100 ∈ [102, 112].
+    Array.from({ length: 20 }, () => game.roll({ bonus: 100 })).forEach(r => {
+      expect(r.total).toBeGreaterThanOrEqual(102)
+      expect(r.total).toBeLessThanOrEqual(112)
+    })
+  })
+
+  test('bonus 0 leaves total in 2d6 range [2, 12]', () => {
+    const game = loadSpec(SPEC_WITH_BONUS)
+    Array.from({ length: 50 }, () => game.roll({ bonus: 0 })).forEach(r => {
+      expect(r.total).toBeGreaterThanOrEqual(2)
+      expect(r.total).toBeLessThanOrEqual(12)
+    })
+  })
+
+  test('static bonus (number literal) works', () => {
+    const game = loadSpec({
+      ...SPEC_WITH_BONUS,
+      roll: {
+        ...SPEC_WITH_BONUS.roll,
+        postResolveModifiers: [{ add: 10 }]
+      }
+    })
+    Array.from({ length: 20 }, () => game.roll()).forEach(r => {
+      expect(r.total).toBeGreaterThanOrEqual(12) // 2+10
+      expect(r.total).toBeLessThanOrEqual(22) // 12+10
+    })
+  })
+
+  test('postResolveModifiers in when override applies correctly', () => {
+    const game = loadSpec({
+      ...SPEC_WITH_BONUS,
+      roll: {
+        ...SPEC_WITH_BONUS.roll,
+        inputs: {
+          mode: { type: 'string' as const, enum: ['normal', 'boosted'], default: 'normal' }
+        },
+        postResolveModifiers: [],
+        when: [
+          {
+            condition: { input: 'mode', operator: '=' as const, value: 'boosted' },
+            override: { postResolveModifiers: [{ add: 50 }] }
+          }
+        ]
+      }
+    })
+    const boosted = game.roll({ mode: 'boosted' })
+    expect(boosted.total).toBeGreaterThanOrEqual(52)
   })
 })
