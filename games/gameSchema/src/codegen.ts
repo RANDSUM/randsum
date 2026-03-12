@@ -192,7 +192,8 @@ function getResultStrings(
 function generateDegreeLines(
   degrees: DegreeOfSuccessOperation,
   indent: string,
-  rollsExpr: string
+  rollsExpr: string,
+  hasDetails: boolean
 ): string[] {
   const candidates: [string, number][] = []
   if (degrees.criticalSuccess !== undefined)
@@ -203,16 +204,17 @@ function generateDegreeLines(
     candidates.push(['criticalFailure', degrees.criticalFailure])
   candidates.sort((a, b) => b[1] - a[1])
 
+  const detailsPart = hasDetails ? ', details' : ''
   const ifLines = candidates
     .slice(0, -1)
     .map(
       ([name, threshold]) =>
-        `${indent}if (total >= ${threshold}) return { total, result: '${name}', rolls: ${rollsExpr} }`
+        `${indent}if (total >= ${threshold}) return { total, result: '${name}', rolls: ${rollsExpr}${detailsPart} }`
     )
   const last = candidates[candidates.length - 1]
   const defaultLine =
     last !== undefined
-      ? `${indent}return { total, result: '${last[0]}', rolls: ${rollsExpr} }`
+      ? `${indent}return { total, result: '${last[0]}', rolls: ${rollsExpr}${detailsPart} }`
       : `${indent}throw new Error(\`No degree match for total \${total}\`)`
   return [...ifLines, defaultLine]
 }
@@ -252,10 +254,12 @@ function buildRangeReturn(
   range: TableRange,
   indent: string,
   inputs: RollDefinition['inputs'],
-  optional: boolean
+  optional: boolean,
+  hasDetails: boolean
 ): string | null {
   const conditions: string[] = []
-  const ret = `{ total, result: '${range.result}', rolls: r.rolls }`
+  const detailsPart = hasDetails ? ', details' : ''
+  const ret = `{ total, result: '${range.result}', rolls: r.rolls${detailsPart} }`
 
   if (range.poolCondition !== undefined) {
     const pc = range.poolCondition
@@ -367,6 +371,14 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
     }
   }
 
+  // Capture diceTotal for details (sum of base pools, before conditional/postResolve)
+  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
+  const needsDiceTotal =
+    hasDetails && Object.values(rollDef.details!).some(d => 'expr' in d && d.expr === 'diceTotal')
+  if (needsDiceTotal) {
+    lines.push(`  const diceTotal = total`)
+  }
+
   // Emit postResolveModifiers for multi-pool
   if (rollDef.postResolveModifiers !== undefined && rollDef.postResolveModifiers.length > 0) {
     for (const op of rollDef.postResolveModifiers) {
@@ -374,6 +386,20 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
         lines.push(`  total += ${integerOrInputCode(op.add, rollDef.inputs, optional)}`)
       }
     }
+  }
+
+  // Build details object if declared
+  const detailsPart = hasDetails ? ', details' : ''
+  if (hasDetails) {
+    const detailFields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
+      if ('expr' in def) return `${fieldName}: ${def.expr}`
+      const accessor = optional ? `input?.${def.$input}` : `input.${def.$input}`
+      if (def.default !== undefined) {
+        return `${fieldName}: ${accessor} ?? ${typeof def.default === 'string' ? `'${def.default}'` : String(def.default)}`
+      }
+      return `${fieldName}: ${accessor}`
+    })
+    lines.push(`  const details = { ${detailFields.join(', ')} }`)
   }
 
   // Emit comparison logic
@@ -385,16 +411,16 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
     const [keyA, keyB] = op.pools
     const tiesReturn =
       op.ties !== undefined
-        ? `{ total, result: '${op.ties}', rolls }`
-        : `{ total, result: '${keyA}=${keyB}', rolls }`
-    const aWinsReturn = `{ total, result: '${op.outcomes[keyA] ?? keyA}', rolls }`
-    const bWinsReturn = `{ total, result: '${op.outcomes[keyB] ?? keyB}', rolls }`
+        ? `{ total, result: '${op.ties}', rolls${detailsPart} }`
+        : `{ total, result: '${keyA}=${keyB}', rolls${detailsPart} }`
+    const aWinsReturn = `{ total, result: '${op.outcomes[keyA] ?? keyA}', rolls${detailsPart} }`
+    const bWinsReturn = `{ total, result: '${op.outcomes[keyB] ?? keyB}', rolls${detailsPart} }`
 
     lines.push(`  if (${keyA}Total === ${keyB}Total) return ${tiesReturn}`)
     lines.push(`  if (${keyA}Total > ${keyB}Total) return ${aWinsReturn}`)
     lines.push(`  return ${bWinsReturn}`)
   } else {
-    lines.push(`  return { total, result: String(total), rolls }`)
+    lines.push(`  return { total, result: String(total), rolls${detailsPart} }`)
   }
 
   return lines
@@ -406,22 +432,24 @@ function generateOutcomeLines(
   indent: string,
   rollsExpr: string,
   inputs: RollDefinition['inputs'],
-  optional: boolean
+  optional: boolean,
+  hasDetails: boolean = false
 ): string[] {
   const resolved = resolveOutcome(outcome, spec)
+  const detailsPart = hasDetails ? ', details' : ''
 
   if (resolved === undefined) {
-    return [`${indent}return { total, result: total, rolls: ${rollsExpr} }`]
+    return [`${indent}return { total, result: total, rolls: ${rollsExpr}${detailsPart} }`]
   }
 
   if ('degreeOfSuccess' in resolved) {
-    return generateDegreeLines(resolved.degreeOfSuccess, indent, rollsExpr)
+    return generateDegreeLines(resolved.degreeOfSuccess, indent, rollsExpr, hasDetails)
   }
 
   const ranges = getOutcomeRanges(outcome, spec)
   const lines: string[] = []
   for (const range of ranges) {
-    const check = buildRangeReturn(range, indent, inputs, optional)
+    const check = buildRangeReturn(range, indent, inputs, optional, hasDetails)
     if (check) lines.push(check)
   }
   lines.push(`${indent}throw new Error(\`No table match for total \${total}\`)`)
@@ -439,6 +467,10 @@ function generateFunctionBody(
   }
 
   const lines: string[] = []
+
+  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
+  const needsDiceTotal =
+    hasDetails && Object.values(rollDef.details!).some(d => 'expr' in d && d.expr === 'diceTotal')
 
   for (const rollCase of rollDef.when ?? []) {
     const cond = conditionCode(rollCase, optional)
@@ -466,9 +498,31 @@ function generateFunctionBody(
     lines.push(`    const r = executeRoll(${diceCode})`)
     if (needsPre) lines.push(`    const preModify = r.rolls.flatMap(x => x.initialRolls)`)
     if (needsPost) lines.push(`    const postModify = r.rolls.flatMap(x => x.rolls)`)
+    if (hasDetails && needsDiceTotal) {
+      lines.push(`    const diceTotal = r.total`)
+    }
     lines.push(`    const total = ${overrideTotalExpr}`)
+    if (hasDetails) {
+      const detailFields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
+        if ('expr' in def) return `${fieldName}: ${def.expr}`
+        const accessor = optional ? `input?.${def.$input}` : `input.${def.$input}`
+        if (def.default !== undefined) {
+          return `${fieldName}: ${accessor} ?? ${typeof def.default === 'string' ? `'${def.default}'` : String(def.default)}`
+        }
+        return `${fieldName}: ${accessor}`
+      })
+      lines.push(`    const details = { ${detailFields.join(', ')} }`)
+    }
     lines.push(
-      ...generateOutcomeLines(overrideOutcome, spec, '    ', 'r.rolls', rollDef.inputs, optional)
+      ...generateOutcomeLines(
+        overrideOutcome,
+        spec,
+        '    ',
+        'r.rolls',
+        rollDef.inputs,
+        optional,
+        hasDetails
+      )
     )
     lines.push(`  }`)
   }
@@ -497,17 +551,50 @@ function generateFunctionBody(
   lines.push(`  const r = executeRoll(${defaultDiceCode})`)
   if (needsPre) lines.push(`  const preModify = r.rolls.flatMap(x => x.initialRolls)`)
   if (needsPost) lines.push(`  const postModify = r.rolls.flatMap(x => x.rolls)`)
+
+  // Capture diceTotal before post-resolve modifiers (for details)
+  if (needsDiceTotal) {
+    lines.push(`  const diceTotal = r.total`)
+  }
+
   lines.push(`  const total = ${totalExpr}`)
+
+  // Build details object if declared
+  if (hasDetails) {
+    const detailFields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
+      if ('expr' in def) {
+        return `${fieldName}: ${def.expr}`
+      }
+      const accessor = optional ? `input?.${def.$input}` : `input.${def.$input}`
+      if (def.default !== undefined) {
+        return `${fieldName}: ${accessor} ?? ${typeof def.default === 'string' ? `'${def.default}'` : String(def.default)}`
+      }
+      return `${fieldName}: ${accessor}`
+    })
+    lines.push(`  const details = { ${detailFields.join(', ')} }`)
+  }
 
   // External table lookup replaces outcome lines with a lookup call
   if (typeof rollDef.resolve === 'object' && 'externalTableLookup' in rollDef.resolve) {
     const etl = rollDef.resolve.externalTableLookup
     const keyAccessor = optional ? `input?.${etl.keyInput}` : `input.${etl.keyInput}`
     lines.push(`  const result = ${etl.export}(${keyAccessor}, total)`)
-    lines.push(`  return { total, result, rolls: r.rolls }`)
+    lines.push(
+      hasDetails
+        ? `  return { total, result, rolls: r.rolls, details }`
+        : `  return { total, result, rolls: r.rolls }`
+    )
   } else {
     lines.push(
-      ...generateOutcomeLines(rollDef.outcome, spec, '  ', 'r.rolls', rollDef.inputs, optional)
+      ...generateOutcomeLines(
+        rollDef.outcome,
+        spec,
+        '  ',
+        'r.rolls',
+        rollDef.inputs,
+        optional,
+        hasDetails
+      )
     )
   }
 
@@ -555,7 +642,30 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
   }
   parts.push(``)
 
-  const returnType = `GameRollResult<${Key}Result, undefined, RollRecord>`
+  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
+  let detailsTypeName = 'undefined'
+
+  if (hasDetails) {
+    detailsTypeName = `${Key}Details`
+    const fields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
+      if ('expr' in def) {
+        return `readonly ${fieldName}: number`
+      }
+      const inputName = def.$input
+      const decl = rollDef.inputs?.[inputName]
+      const tsType =
+        decl?.type === 'integer' ? 'number' : decl?.type === 'boolean' ? 'boolean' : 'string'
+      return `readonly ${fieldName}: ${tsType}`
+    })
+    parts.push(`export interface ${detailsTypeName} {`)
+    for (const field of fields) {
+      parts.push(`  ${field}`)
+    }
+    parts.push(`}`)
+    parts.push(``)
+  }
+
+  const returnType = `GameRollResult<${Key}Result, ${detailsTypeName}, RollRecord>`
 
   if (overload) {
     const { fieldName, tsType, fieldOptional } = overload

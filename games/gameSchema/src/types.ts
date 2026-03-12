@@ -140,6 +140,10 @@ export interface ConditionalPool {
   readonly arithmetic: 'add' | 'subtract'
 }
 
+export type DetailsFieldDef =
+  | { readonly $input: string; readonly default?: InputValue }
+  | { readonly expr: 'diceTotal' | 'total' }
+
 export interface RollDefinition {
   readonly inputs?: Readonly<Record<string, InputDeclaration>>
   readonly dice?: DiceConfig | readonly DiceConfig[]
@@ -150,6 +154,7 @@ export interface RollDefinition {
   readonly resolve: ResolveOperation
   readonly outcome?: OutcomeOperation | Ref
   readonly when?: readonly RollCase[]
+  readonly details?: Readonly<Record<string, DetailsFieldDef>>
 }
 
 export interface RandSumSpec {
@@ -172,5 +177,14 @@ export type { GameRollResult, RollRecord }
 export type RollInput = Readonly<Record<string, InputValue>>
 
 export type LoadedSpec = Readonly<
-  Record<string, (input?: RollInput) => GameRollResult<string | number, undefined, RollRecord>>
+  Record<
+    string,
+    (
+      input?: RollInput
+    ) => GameRollResult<
+      string | number,
+      Readonly<Record<string, InputValue | number>> | undefined,
+      RollRecord
+    >
+  >
 >

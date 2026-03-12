@@ -9,6 +9,7 @@ import { isRef, resolveRef } from './refResolver'
 import type {
   ComparePoolOperation,
   Condition,
+  DetailsFieldDef,
   DegreeOfSuccessOperation,
   DiceConfig,
   GameRollResult,
@@ -327,11 +328,34 @@ function applyOutcome(
   return String(total)
 }
 
+function buildDetails(
+  detailsDef: Readonly<Record<string, DetailsFieldDef>>,
+  input: RollInput,
+  diceTotal: number,
+  total: number
+): Readonly<Record<string, InputValue | number>> {
+  return Object.fromEntries(
+    Object.entries(detailsDef).map(([fieldName, def]) => {
+      if ('expr' in def) {
+        return [fieldName, def.expr === 'diceTotal' ? diceTotal : total]
+      }
+      const val = input[def.$input]
+      if (val !== undefined) return [fieldName, val]
+      if (def.default !== undefined) return [fieldName, def.default]
+      return [fieldName, undefined]
+    })
+  )
+}
+
 export function executePipeline(
   rollDef: RollDefinition,
   input: RollInput,
   spec: RandSumSpec
-): GameRollResult<string | number, undefined, RollRecord> {
+): GameRollResult<
+  string | number,
+  Readonly<Record<string, InputValue | number>> | undefined,
+  RollRecord
+> {
   const mergedInput = applyInputDefaults(input, rollDef.inputs)
   const override = evaluateWhen(rollDef.when, mergedInput)
 
@@ -376,8 +400,13 @@ export function executePipeline(
       }
     }
 
+    const diceTotal = total
     total = applyPostResolveModifiers(total, effectivePostResolveModifiers, mergedInput)
     const result = resolveCompareResult(override?.resolve ?? rollDef.resolve, poolResults)
+    if (rollDef.details !== undefined && Object.keys(rollDef.details).length > 0) {
+      const details = buildDetails(rollDef.details, mergedInput, diceTotal, total)
+      return { total, result, rolls: allRolls, details }
+    }
     return { total, result, rolls: allRolls }
   }
 
@@ -404,5 +433,9 @@ export function executePipeline(
     mergedInput
   )
 
+  if (rollDef.details !== undefined && Object.keys(rollDef.details).length > 0) {
+    const details = buildDetails(rollDef.details, mergedInput, rawTotal, total)
+    return { total, result, rolls: rollerResult.rolls, details }
+  }
   return { total, result, rolls: rollerResult.rolls }
 }

@@ -226,6 +226,11 @@
           "description": "Extra dice pools rolled only when a condition matches. Each pool's total is added or subtracted from the main total.",
           "type": "array",
           "items": { "$ref": "#/$defs/ConditionalPool" }
+        },
+        "details": {
+          "type": "object",
+          "description": "Named fields returned alongside the roll result. Each field is either a pass-through of an input value or a computed expression (diceTotal = sum before postResolveModifiers, total = final total).",
+          "additionalProperties": { "$ref": "#/$defs/DetailsFieldDef" }
         }
       }
     },
@@ -644,6 +649,39 @@
     "RefOrTableDefinition": {
       "description": "A reference to a named table or an inline table definition.",
       "oneOf": [{ "$ref": "#/$defs/Ref" }, { "$ref": "#/$defs/TableDefinition" }]
+    },
+
+    "DetailsFieldDef": {
+      "description": "A single field in the details object. Either passes through an input value or computes a pipeline expression.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["$input"],
+          "additionalProperties": false,
+          "properties": {
+            "$input": {
+              "type": "string",
+              "description": "Name of the declared input parameter to pass through"
+            },
+            "default": {
+              "description": "Default value if the input is not provided",
+              "oneOf": [{ "type": "integer" }, { "type": "string" }, { "type": "boolean" }]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["expr"],
+          "additionalProperties": false,
+          "properties": {
+            "expr": {
+              "type": "string",
+              "enum": ["diceTotal", "total"],
+              "description": "Computed expression: 'diceTotal' = sum before postResolveModifiers, 'total' = final total"
+            }
+          }
+        }
+      ]
     },
 
     "IntegerOrInput": {
