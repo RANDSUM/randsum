@@ -79,12 +79,20 @@ export interface ComparePoolOperation {
   readonly outcomes: Readonly<Record<string, string>>
 }
 
+export interface ExternalTableLookupOperation {
+  readonly package: string
+  readonly export: string
+  readonly keyInput: string
+  readonly lookupBy: string
+}
+
 export type ResolveOperation =
   | 'sum'
   | { readonly countMatching: CountMatchingOperation }
   | { readonly tableLookup: RefOrTableDefinition }
   | { readonly comparePoolHighest: ComparePoolOperation }
   | { readonly comparePoolSum: ComparePoolOperation }
+  | { readonly externalTableLookup: ExternalTableLookupOperation }
 
 export interface DegreeOfSuccessOperation {
   readonly criticalSuccess?: number

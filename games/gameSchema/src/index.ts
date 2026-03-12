@@ -35,5 +35,6 @@ export type {
   MarkDiceOperation,
   PoolCondition,
   PostResolveModifyOperation,
-  ConditionalPool
+  ConditionalPool,
+  ExternalTableLookupOperation
 } from './types'

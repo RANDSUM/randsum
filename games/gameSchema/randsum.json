@@ -533,8 +533,41 @@
           "properties": {
             "comparePoolSum": { "$ref": "#/$defs/ComparePoolOperation" }
           }
+        },
+        {
+          "type": "object",
+          "required": ["externalTableLookup"],
+          "additionalProperties": false,
+          "properties": {
+            "externalTableLookup": { "$ref": "#/$defs/ExternalTableLookupOperation" }
+          }
         }
       ]
+    },
+
+    "ExternalTableLookupOperation": {
+      "type": "object",
+      "description": "Resolve the roll by calling an external package's lookup function. The export must be a function (keyValue, rollValue) => result.",
+      "required": ["package", "export", "keyInput", "lookupBy"],
+      "additionalProperties": false,
+      "properties": {
+        "package": {
+          "type": "string",
+          "description": "npm package to import (e.g. 'salvageunion-reference')"
+        },
+        "export": {
+          "type": "string",
+          "description": "Named export to import from the package (e.g. 'RollTables')"
+        },
+        "keyInput": {
+          "type": "string",
+          "description": "Name of the input parameter used to identify which table to look up"
+        },
+        "lookupBy": {
+          "type": "string",
+          "description": "Name of the field to use for lookup (e.g. 'roll' to look up by the roll total)"
+        }
+      }
     },
 
     "OutcomeOperation": {
