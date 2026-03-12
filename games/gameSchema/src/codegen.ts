@@ -18,6 +18,7 @@ import type {
   PostResolveModifyOperation,
   RandSumSpec,
   Ref,
+  ResultMappingLeaf,
   RollCase,
   RollDefinition,
   TableRange
@@ -481,6 +482,21 @@ function generateOutcomeLines(
   return lines
 }
 
+function resultMappingLeafExpr(leaf: ResultMappingLeaf, optional: boolean): string {
+  if ('$lookupResult' in leaf) {
+    const primary = `lookupResult.${leaf.$lookupResult}`
+    if (leaf.fallback !== undefined) {
+      return `${primary} ?? ${resultMappingLeafExpr(leaf.fallback, optional)}`
+    }
+    return primary
+  }
+  if ('$foundTable' in leaf) return `foundTable.${leaf.$foundTable}`
+  if ('$input' in leaf) {
+    return optional ? `input?.${leaf.$input}` : `input.${leaf.$input}`
+  }
+  return 'total'
+}
+
 function generateFunctionBody(
   rollDef: RollDefinition,
   spec: RandSumSpec,
@@ -605,15 +621,7 @@ function generateFunctionBody(
     // Emit return — either resultMapping or plain passthrough
     if (etl.resultMapping !== undefined) {
       const mappingFields = Object.entries(etl.resultMapping)
-        .map(([fieldName, leaf]) => {
-          if ('$lookupResult' in leaf) return `    ${fieldName}: lookupResult.${leaf.$lookupResult}`
-          if ('$foundTable' in leaf) return `    ${fieldName}: foundTable.${leaf.$foundTable}`
-          if ('$input' in leaf) {
-            const acc = optional ? `input?.${leaf.$input}` : `input.${leaf.$input}`
-            return `    ${fieldName}: ${acc}`
-          }
-          return `    ${fieldName}: total`
-        })
+        .map(([fieldName, leaf]) => `    ${fieldName}: ${resultMappingLeafExpr(leaf, optional)}`)
         .join(',\n')
       const detailsPart = hasDetails ? ', details' : ''
       lines.push(

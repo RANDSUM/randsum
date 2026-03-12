@@ -635,6 +635,10 @@
             "$lookupResult": {
               "type": "string",
               "description": "Dot-path into the resolver function's return value (e.g. 'result.label')"
+            },
+            "fallback": {
+              "$ref": "#/$defs/ResultMappingLeaf",
+              "description": "Fallback value when the primary $lookupResult path is undefined"
             }
           }
         },

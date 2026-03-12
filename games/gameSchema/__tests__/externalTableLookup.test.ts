@@ -201,3 +201,60 @@ describe('externalTableLookup resultMapping (#996)', () => {
     expect(code).toContain('result: {')
   })
 })
+
+// --- #996 follow-up: $lookupResult fallback ---
+
+const FALLBACK_SPEC = {
+  $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+  name: 'Fallback Test',
+  shortcode: 'test-fallback',
+  game_url: 'https://example.com',
+  roll: {
+    inputs: { tableName: { type: 'string' as const } },
+    dice: { pool: { sides: 20 }, quantity: 1 },
+    resolve: {
+      externalTableLookup: {
+        package: 'some-lib',
+        imports: ['Ref', 'lookup'],
+        find: {
+          collection: 'Ref.Tables',
+          where: { field: 'name', input: 'tableName' }
+        },
+        resolve: { fn: 'lookup', tableField: 'data' },
+        resultMapping: {
+          label: {
+            $lookupResult: 'result.label',
+            fallback: { $lookupResult: 'key' }
+          },
+          desc: {
+            $lookupResult: 'result.value',
+            fallback: { $foundTable: 'name' }
+          },
+          roll: { expr: 'total' as const }
+        }
+      }
+    }
+  }
+}
+
+describe('$lookupResult fallback (#996)', () => {
+  test('spec with fallback is valid', () => {
+    const result = validateSpec(FALLBACK_SPEC)
+    expect(result.valid).toBe(true)
+  })
+
+  test('codegen emits ?? for $lookupResult fallback', () => {
+    const code = generateCode(FALLBACK_SPEC)
+    expect(code).toContain('label: lookupResult.result.label ?? lookupResult.key')
+  })
+
+  test('codegen emits ?? with $foundTable fallback', () => {
+    const code = generateCode(FALLBACK_SPEC)
+    expect(code).toContain('desc: lookupResult.result.value ?? foundTable.name')
+  })
+
+  test('non-fallback fields are unaffected', () => {
+    const code = generateCode(FALLBACK_SPEC)
+    expect(code).toContain('roll: total')
+  })
+})

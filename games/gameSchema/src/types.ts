@@ -91,7 +91,7 @@ export interface ExternalTableLookupResolve {
 }
 
 export type ResultMappingLeaf =
-  | { readonly $lookupResult: string }
+  | { readonly $lookupResult: string; readonly fallback?: ResultMappingLeaf }
   | { readonly $foundTable: string }
   | { readonly $input: string }
   | { readonly expr: 'total' }
