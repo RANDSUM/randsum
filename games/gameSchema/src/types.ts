@@ -141,9 +141,19 @@ export interface ConditionalPool {
   readonly arithmetic: 'add' | 'subtract'
 }
 
-export type DetailsFieldDef =
+export type DetailsLeafDef =
   | { readonly $input: string; readonly default?: InputValue }
   | { readonly expr: 'diceTotal' | 'total' }
+  | { readonly $pool: string; readonly field: 'total' }
+  | { readonly $conditionalPool: number; readonly field: 'total' }
+
+export type DetailsFieldDef =
+  | DetailsLeafDef
+  | Readonly<Record<string, DetailsLeafDef>>
+  | {
+      readonly when: { readonly input: string }
+      readonly value: Readonly<Record<string, DetailsLeafDef>>
+    }
 
 export interface RollDefinition {
   readonly inputs?: Readonly<Record<string, InputDeclaration>>
@@ -182,10 +192,6 @@ export type LoadedSpec = Readonly<
     string,
     (
       input?: RollInput
-    ) => GameRollResult<
-      string | number,
-      Readonly<Record<string, InputValue | number>> | undefined,
-      RollRecord
-    >
+    ) => GameRollResult<string | number, Readonly<Record<string, unknown>> | undefined, RollRecord>
   >
 >

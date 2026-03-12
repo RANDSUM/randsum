@@ -10,6 +10,7 @@ import type {
   ComparePoolOperation,
   Condition,
   DetailsFieldDef,
+  DetailsLeafDef,
   DegreeOfSuccessOperation,
   DiceConfig,
   GameRollResult,
@@ -341,21 +342,58 @@ function validateInputs(rollDef: RollDefinition, input: RollInput, specName: str
   }
 }
 
+interface DetailsContext {
+  readonly input: RollInput
+  readonly diceTotal: number
+  readonly total: number
+  readonly poolTotals: Readonly<Record<string, number>>
+  readonly conditionalPoolTotals: readonly number[]
+}
+
+function isDetailsLeaf(def: DetailsFieldDef): def is DetailsLeafDef {
+  return '$input' in def || 'expr' in def || '$pool' in def || '$conditionalPool' in def
+}
+
+function isConditionalDetails(def: DetailsFieldDef): def is {
+  readonly when: { readonly input: string }
+  readonly value: Readonly<Record<string, DetailsLeafDef>>
+} {
+  return 'when' in def && 'value' in def
+}
+
+function resolveLeaf(leaf: DetailsLeafDef, ctx: DetailsContext): InputValue | number | undefined {
+  if ('expr' in leaf) return leaf.expr === 'diceTotal' ? ctx.diceTotal : ctx.total
+  if ('$pool' in leaf) return ctx.poolTotals[leaf.$pool] ?? 0
+  if ('$conditionalPool' in leaf) return ctx.conditionalPoolTotals[leaf.$conditionalPool] ?? 0
+  const val = ctx.input[leaf.$input]
+  if (val !== undefined) return val
+  if (leaf.default !== undefined) return leaf.default
+  return undefined
+}
+
 function buildDetails(
   detailsDef: Readonly<Record<string, DetailsFieldDef>>,
-  input: RollInput,
-  diceTotal: number,
-  total: number
-): Readonly<Record<string, InputValue | number>> {
+  ctx: DetailsContext
+): Readonly<Record<string, unknown>> {
   return Object.fromEntries(
     Object.entries(detailsDef).map(([fieldName, def]) => {
-      if ('expr' in def) {
-        return [fieldName, def.expr === 'diceTotal' ? diceTotal : total]
+      if (isDetailsLeaf(def)) {
+        return [fieldName, resolveLeaf(def, ctx)]
       }
-      const val = input[def.$input]
-      if (val !== undefined) return [fieldName, val]
-      if (def.default !== undefined) return [fieldName, def.default]
-      return [fieldName, undefined]
+      if (isConditionalDetails(def)) {
+        const condVal = ctx.input[def.when.input]
+        if (condVal === undefined) return [fieldName, undefined]
+        const nested = Object.fromEntries(
+          Object.entries(def.value).map(([k, v]) => [k, resolveLeaf(v, ctx)])
+        )
+        return [fieldName, nested]
+      }
+      // Nested object
+      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      return [
+        fieldName,
+        Object.fromEntries(Object.entries(nested).map(([k, v]) => [k, resolveLeaf(v, ctx)]))
+      ]
     })
   )
 }
@@ -364,11 +402,7 @@ export function executePipeline(
   rollDef: RollDefinition,
   input: RollInput,
   spec: RandSumSpec
-): GameRollResult<
-  string | number,
-  Readonly<Record<string, InputValue | number>> | undefined,
-  RollRecord
-> {
+): GameRollResult<string | number, Readonly<Record<string, unknown>> | undefined, RollRecord> {
   validateInputs(rollDef, input, spec.name)
   const mergedInput = applyInputDefaults(input, rollDef.inputs)
   const override = evaluateWhen(rollDef.when, mergedInput)
@@ -390,11 +424,15 @@ export function executePipeline(
     const allRolls: RollRecord[] = Object.values(poolResults).flatMap(p => [...p.rolls])
     let total = Object.values(poolResults).reduce((s, p) => s + p.total, 0)
 
-    // Apply conditional pools
+    // Apply conditional pools (track totals by index for $conditionalPool details refs)
+    const conditionalPoolTotals: number[] = []
     if (rollDef.conditionalPools !== undefined) {
       for (const cp of rollDef.conditionalPools) {
         const inputVal = mergedInput[cp.condition.input]
-        if (inputVal === undefined) continue
+        if (inputVal === undefined) {
+          conditionalPoolTotals.push(0)
+          continue
+        }
         if (evaluateCondition(cp.condition, mergedInput)) {
           const cpPool = resolveDicePool(cp.pool, mergedInput, spec)
           const cpSides = bindInteger(cpPool.sides, mergedInput)
@@ -404,12 +442,15 @@ export function executePipeline(
           const cpTotal = cpResult.rolls
             .flatMap((r: RollRecord) => r.rolls)
             .reduce((s, v) => s + v, 0)
+          conditionalPoolTotals.push(cpTotal)
           if (cp.arithmetic === 'add') {
             total += cpTotal
           } else {
             total -= cpTotal
           }
           allRolls.push(...cpResult.rolls)
+        } else {
+          conditionalPoolTotals.push(0)
         }
       }
     }
@@ -418,7 +459,16 @@ export function executePipeline(
     total = applyPostResolveModifiers(total, effectivePostResolveModifiers, mergedInput)
     const result = resolveCompareResult(override?.resolve ?? rollDef.resolve, poolResults)
     if (rollDef.details !== undefined && Object.keys(rollDef.details).length > 0) {
-      const details = buildDetails(rollDef.details, mergedInput, diceTotal, total)
+      const poolTotals = Object.fromEntries(
+        Object.entries(poolResults).map(([k, v]) => [k, v.total])
+      )
+      const details = buildDetails(rollDef.details, {
+        input: mergedInput,
+        diceTotal,
+        total,
+        poolTotals,
+        conditionalPoolTotals
+      })
       return { total, result, rolls: allRolls, details }
     }
     return { total, result, rolls: allRolls }
@@ -448,7 +498,13 @@ export function executePipeline(
   )
 
   if (rollDef.details !== undefined && Object.keys(rollDef.details).length > 0) {
-    const details = buildDetails(rollDef.details, mergedInput, rawTotal, total)
+    const details = buildDetails(rollDef.details, {
+      input: mergedInput,
+      diceTotal: rawTotal,
+      total,
+      poolTotals: {},
+      conditionalPoolTotals: []
+    })
     return { total, result, rolls: rollerResult.rolls, details }
   }
   return { total, result, rolls: rollerResult.rolls }

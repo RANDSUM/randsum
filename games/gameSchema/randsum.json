@@ -655,8 +655,8 @@
       "oneOf": [{ "$ref": "#/$defs/Ref" }, { "$ref": "#/$defs/TableDefinition" }]
     },
 
-    "DetailsFieldDef": {
-      "description": "A single field in the details object. Either passes through an input value or computes a pipeline expression.",
+    "DetailsLeafDef": {
+      "description": "A leaf field in the details object. Either passes through an input value, computes a pipeline expression, or references a pool total.",
       "oneOf": [
         {
           "type": "object",
@@ -682,6 +682,75 @@
               "type": "string",
               "enum": ["diceTotal", "total"],
               "description": "Computed expression: 'diceTotal' = sum before postResolveModifiers, 'total' = final total"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$pool", "field"],
+          "additionalProperties": false,
+          "properties": {
+            "$pool": {
+              "type": "string",
+              "description": "Name of the dice pool whose total to include"
+            },
+            "field": {
+              "type": "string",
+              "enum": ["total"],
+              "description": "Which value from the pool result (currently only 'total')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$conditionalPool", "field"],
+          "additionalProperties": false,
+          "properties": {
+            "$conditionalPool": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Zero-based index of the conditional pool whose total to include"
+            },
+            "field": {
+              "type": "string",
+              "enum": ["total"],
+              "description": "Which value from the conditional pool result (currently only 'total')"
+            }
+          }
+        }
+      ]
+    },
+
+    "DetailsFieldDef": {
+      "description": "A details field: a leaf value, a nested object of leaves, or a conditional object (present only when an input is provided).",
+      "oneOf": [
+        { "$ref": "#/$defs/DetailsLeafDef" },
+        {
+          "type": "object",
+          "description": "Nested object of leaf fields",
+          "additionalProperties": { "$ref": "#/$defs/DetailsLeafDef" }
+        },
+        {
+          "type": "object",
+          "required": ["when", "value"],
+          "additionalProperties": false,
+          "description": "Conditional details object: present when the input exists, undefined otherwise",
+          "properties": {
+            "when": {
+              "type": "object",
+              "required": ["input"],
+              "additionalProperties": false,
+              "properties": {
+                "input": {
+                  "type": "string",
+                  "description": "Name of the input to check for presence"
+                }
+              }
+            },
+            "value": {
+              "type": "object",
+              "description": "Nested object of leaf fields, emitted when the condition matches",
+              "additionalProperties": { "$ref": "#/$defs/DetailsLeafDef" }
             }
           }
         }

@@ -6,6 +6,8 @@ import { isRef, resolveRef } from './refResolver'
 import type {
   Condition,
   DegreeOfSuccessOperation,
+  DetailsFieldDef,
+  DetailsLeafDef,
   DiceConfig,
   InputDeclaration,
   IntegerOrInput,
@@ -365,9 +367,19 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   )
   lines.push(`  let total = ${poolNames.map(n => `${n}Total`).join(' + ')}`)
 
-  // Emit conditional pools
+  // Emit conditional pools (track totals by index for $conditionalPool details refs)
+  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
+  const cpIndicesNeeded = hasDetails
+    ? detailsNeedsConditionalPool(rollDef.details!)
+    : new Set<number>()
+
   if (rollDef.conditionalPools !== undefined && rollDef.conditionalPools.length > 0) {
-    for (const cp of rollDef.conditionalPools) {
+    // Pre-declare conditionalPoolNTotal variables for details refs
+    for (const idx of cpIndicesNeeded) {
+      lines.push(`  let conditionalPool${idx}Total = 0`)
+    }
+    for (const [idxStr, cp] of rollDef.conditionalPools.entries()) {
+      const idx = Number(idxStr)
       const cond = conditionCodeFromCondition(cp.condition, optional)
       const cpPool = isRef(cp.pool) ? (resolveRef(spec, cp.pool.$ref) as PoolDefinition) : cp.pool
       const cpSides = integerOrInputCode(cpPool.sides, rollDef.inputs, optional)
@@ -381,6 +393,9 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
       lines.push(
         `    const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)`
       )
+      if (cpIndicesNeeded.has(idx)) {
+        lines.push(`    conditionalPool${idx}Total = cpTotal`)
+      }
       lines.push(`    total ${sign} cpTotal`)
       lines.push(`    rolls.push(...cpResult.rolls)`)
       lines.push(`  }`)
@@ -388,9 +403,7 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   }
 
   // Capture diceTotal for details (sum of base pools, before conditional/postResolve)
-  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
-  const needsDiceTotal =
-    hasDetails && Object.values(rollDef.details!).some(d => 'expr' in d && d.expr === 'diceTotal')
+  const needsDiceTotal = hasDetails && detailsNeedsDiceTotal(rollDef.details!)
   if (needsDiceTotal) {
     lines.push(`  const diceTotal = total`)
   }
@@ -407,15 +420,7 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   // Build details object if declared
   const detailsPart = hasDetails ? ', details' : ''
   if (hasDetails) {
-    const detailFields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
-      if ('expr' in def) return `${fieldName}: ${def.expr}`
-      const accessor = optional ? `input?.${def.$input}` : `input.${def.$input}`
-      if (def.default !== undefined) {
-        return `${fieldName}: ${accessor} ?? ${typeof def.default === 'string' ? `'${def.default}'` : String(def.default)}`
-      }
-      return `${fieldName}: ${accessor}`
-    })
-    lines.push(`  const details = { ${detailFields.join(', ')} }`)
+    lines.push(...emitDetailsObjectCode(rollDef.details!, optional, '  '))
   }
 
   // Emit comparison logic
@@ -487,8 +492,7 @@ function generateFunctionBody(
   const lines: string[] = [...validationLines]
 
   const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
-  const needsDiceTotal =
-    hasDetails && Object.values(rollDef.details!).some(d => 'expr' in d && d.expr === 'diceTotal')
+  const needsDiceTotal = hasDetails && detailsNeedsDiceTotal(rollDef.details!)
 
   for (const rollCase of rollDef.when ?? []) {
     const cond = conditionCode(rollCase, optional)
@@ -521,15 +525,7 @@ function generateFunctionBody(
     }
     lines.push(`    const total = ${overrideTotalExpr}`)
     if (hasDetails) {
-      const detailFields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
-        if ('expr' in def) return `${fieldName}: ${def.expr}`
-        const accessor = optional ? `input?.${def.$input}` : `input.${def.$input}`
-        if (def.default !== undefined) {
-          return `${fieldName}: ${accessor} ?? ${typeof def.default === 'string' ? `'${def.default}'` : String(def.default)}`
-        }
-        return `${fieldName}: ${accessor}`
-      })
-      lines.push(`    const details = { ${detailFields.join(', ')} }`)
+      lines.push(...emitDetailsObjectCode(rollDef.details!, optional, '    '))
     }
     lines.push(
       ...generateOutcomeLines(
@@ -579,17 +575,7 @@ function generateFunctionBody(
 
   // Build details object if declared
   if (hasDetails) {
-    const detailFields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
-      if ('expr' in def) {
-        return `${fieldName}: ${def.expr}`
-      }
-      const accessor = optional ? `input?.${def.$input}` : `input.${def.$input}`
-      if (def.default !== undefined) {
-        return `${fieldName}: ${accessor} ?? ${typeof def.default === 'string' ? `'${def.default}'` : String(def.default)}`
-      }
-      return `${fieldName}: ${accessor}`
-    })
-    lines.push(`  const details = { ${detailFields.join(', ')} }`)
+    lines.push(...emitDetailsObjectCode(rollDef.details!, optional, '  '))
   }
 
   // External table lookup replaces outcome lines with a lookup call
@@ -617,6 +603,136 @@ function generateFunctionBody(
   }
 
   return lines
+}
+
+// --- Details field helpers ---
+
+function isDetailsLeaf(def: DetailsFieldDef): def is DetailsLeafDef {
+  if ('$input' in def || 'expr' in def || '$pool' in def || '$conditionalPool' in def) return true
+  return false
+}
+
+function isConditionalDetails(def: DetailsFieldDef): def is {
+  readonly when: { readonly input: string }
+  readonly value: Readonly<Record<string, DetailsLeafDef>>
+} {
+  return 'when' in def && 'value' in def
+}
+
+function leafTsType(leaf: DetailsLeafDef, inputs: RollDefinition['inputs']): string {
+  if ('expr' in leaf) return 'number'
+  if ('$pool' in leaf) return 'number'
+  if ('$conditionalPool' in leaf) return 'number'
+  // $input — look up the input declaration
+  const decl = inputs?.[leaf.$input]
+  return decl?.type === 'integer' ? 'number' : decl?.type === 'boolean' ? 'boolean' : 'string'
+}
+
+function emitDetailsInterface(
+  typeName: string,
+  details: Readonly<Record<string, DetailsFieldDef>>,
+  inputs: RollDefinition['inputs']
+): string[] {
+  const lines: string[] = [`export interface ${typeName} {`]
+  for (const [fieldName, def] of Object.entries(details)) {
+    if (isDetailsLeaf(def)) {
+      lines.push(`  readonly ${fieldName}: ${leafTsType(def, inputs)}`)
+    } else if (isConditionalDetails(def)) {
+      // Conditional: { subField: type } | undefined
+      const subFields = Object.entries(def.value)
+        .map(([k, v]) => `readonly ${k}: ${leafTsType(v, inputs)}`)
+        .join('; ')
+      lines.push(`  readonly ${fieldName}: { ${subFields} } | undefined`)
+    } else {
+      // Nested object
+      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      const subFields = Object.entries(nested)
+        .map(([k, v]) => `readonly ${k}: ${leafTsType(v, inputs)}`)
+        .join('; ')
+      lines.push(`  readonly ${fieldName}: { ${subFields} }`)
+    }
+  }
+  lines.push(`}`)
+  return lines
+}
+
+function leafValueCode(leaf: DetailsLeafDef, optional: boolean): string {
+  if ('expr' in leaf) return leaf.expr
+  if ('$pool' in leaf) return `${leaf.$pool}Total`
+  if ('$conditionalPool' in leaf) return `conditionalPool${leaf.$conditionalPool}Total`
+  const accessor = optional ? `input?.${leaf.$input}` : `input.${leaf.$input}`
+  if ('default' in leaf && leaf.default !== undefined) {
+    return `${accessor} ?? ${typeof leaf.default === 'string' ? `'${leaf.default}'` : String(leaf.default)}`
+  }
+  return accessor
+}
+
+function emitDetailsObjectCode(
+  details: Readonly<Record<string, DetailsFieldDef>>,
+  optional: boolean,
+  indent: string
+): string[] {
+  const fields: string[] = []
+  for (const [fieldName, def] of Object.entries(details)) {
+    if (isDetailsLeaf(def)) {
+      fields.push(`${indent}  ${fieldName}: ${leafValueCode(def, optional)}`)
+    } else if (isConditionalDetails(def)) {
+      const condAccessor = optional ? `input?.${def.when.input}` : `input.${def.when.input}`
+      const subFields = Object.entries(def.value)
+        .map(([k, v]) => `${k}: ${leafValueCode(v, optional)}`)
+        .join(', ')
+      fields.push(
+        `${indent}  ${fieldName}: ${condAccessor} !== undefined ? { ${subFields} } : undefined`
+      )
+    } else {
+      // Nested object
+      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      const subFields = Object.entries(nested)
+        .map(([k, v]) => `${k}: ${leafValueCode(v, optional)}`)
+        .join(', ')
+      fields.push(`${indent}  ${fieldName}: { ${subFields} }`)
+    }
+  }
+  return [`${indent}const details = {`, ...fields.map(f => `${f},`), `${indent}}`]
+}
+
+function detailsNeedsDiceTotal(details: Readonly<Record<string, DetailsFieldDef>>): boolean {
+  for (const def of Object.values(details)) {
+    if (isDetailsLeaf(def)) {
+      if ('expr' in def && def.expr === 'diceTotal') return true
+    } else if (isConditionalDetails(def)) {
+      for (const v of Object.values(def.value)) {
+        if ('expr' in v && v.expr === 'diceTotal') return true
+      }
+    } else {
+      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      for (const v of Object.values(nested)) {
+        if ('expr' in v && v.expr === 'diceTotal') return true
+      }
+    }
+  }
+  return false
+}
+
+function detailsNeedsConditionalPool(
+  details: Readonly<Record<string, DetailsFieldDef>>
+): Set<number> {
+  const indices = new Set<number>()
+  for (const def of Object.values(details)) {
+    if (isDetailsLeaf(def) && '$conditionalPool' in def) {
+      indices.add(def.$conditionalPool)
+    } else if (isConditionalDetails(def)) {
+      for (const v of Object.values(def.value)) {
+        if ('$conditionalPool' in v) indices.add(v.$conditionalPool)
+      }
+    } else if (!isDetailsLeaf(def)) {
+      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      for (const v of Object.values(nested)) {
+        if ('$conditionalPool' in v) indices.add(v.$conditionalPool)
+      }
+    }
+  }
+  return indices
 }
 
 interface SingleInputOverload {
@@ -667,21 +783,7 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
 
   if (hasDetails) {
     detailsTypeName = `${Key}Details`
-    const fields = Object.entries(rollDef.details!).map(([fieldName, def]) => {
-      if ('expr' in def) {
-        return `readonly ${fieldName}: number`
-      }
-      const inputName = def.$input
-      const decl = rollDef.inputs?.[inputName]
-      const tsType =
-        decl?.type === 'integer' ? 'number' : decl?.type === 'boolean' ? 'boolean' : 'string'
-      return `readonly ${fieldName}: ${tsType}`
-    })
-    parts.push(`export interface ${detailsTypeName} {`)
-    for (const field of fields) {
-      parts.push(`  ${field}`)
-    }
-    parts.push(`}`)
+    parts.push(...emitDetailsInterface(detailsTypeName, rollDef.details!, rollDef.inputs))
     parts.push(``)
   }
 
