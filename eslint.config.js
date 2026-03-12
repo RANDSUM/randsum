@@ -37,7 +37,9 @@ export default tseslint.config(
       '**/.astro/**',
       '**/.netlify/**',
       '**/public/**',
-      '**/.ladle/**'
+      '**/.ladle/**',
+      '**/__tests__/fixtures/dist/**',
+      '**/__tests__/fixtures/*.ts'
     ]
   },
   {
