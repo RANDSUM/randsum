@@ -13,9 +13,15 @@ const ETL_SPEC = {
     resolve: {
       externalTableLookup: {
         package: 'some-reference-lib',
-        export: 'lookupTable',
-        keyInput: 'tableName',
-        lookupBy: 'roll'
+        imports: ['SomeReference', 'resultForTable'],
+        find: {
+          collection: 'SomeReference.RollTables',
+          where: { field: 'name', input: 'tableName' }
+        },
+        resolve: {
+          fn: 'resultForTable',
+          tableField: 'table'
+        }
       }
     }
   }
@@ -35,8 +41,8 @@ describe('externalTableLookup schema validation', () => {
         resolve: {
           externalTableLookup: {
             package: 'some-lib',
-            export: 'lookup'
-            // missing keyInput and lookupBy
+            imports: ['lookup']
+            // missing find and resolve
           }
         }
       }
@@ -46,14 +52,26 @@ describe('externalTableLookup schema validation', () => {
 })
 
 describe('externalTableLookup codegen', () => {
-  test('emits import from external package', () => {
+  test('emits imports from external package', () => {
     const code = generateCode(ETL_SPEC)
-    expect(code).toContain("import { lookupTable } from 'some-reference-lib'")
+    expect(code).toContain("import { SomeReference, resultForTable } from 'some-reference-lib'")
   })
 
-  test('emits lookup call with keyInput and total', () => {
+  test('emits find call with collection and where', () => {
     const code = generateCode(ETL_SPEC)
-    expect(code).toContain('lookupTable(input.tableName, total)')
+    expect(code).toContain(
+      'const foundTable = SomeReference.RollTables.find(t => t.name === input.tableName)'
+    )
+  })
+
+  test('emits null check for found table', () => {
+    const code = generateCode(ETL_SPEC)
+    expect(code).toContain('if (!foundTable) throw new Error')
+  })
+
+  test('emits resolve call with tableField and total', () => {
+    const code = generateCode(ETL_SPEC)
+    expect(code).toContain('resultForTable(foundTable.table, total)')
   })
 
   test('result type is string (opaque)', () => {
@@ -64,10 +82,5 @@ describe('externalTableLookup codegen', () => {
   test('return includes total, result, and rolls', () => {
     const code = generateCode(ETL_SPEC)
     expect(code).toContain('return { total, result, rolls: r.rolls }')
-  })
-
-  test('does not emit outcome range lines', () => {
-    const code = generateCode(ETL_SPEC)
-    expect(code).not.toContain('throw new Error')
   })
 })

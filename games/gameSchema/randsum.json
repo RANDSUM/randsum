@@ -556,25 +556,59 @@
 
     "ExternalTableLookupOperation": {
       "type": "object",
-      "description": "Resolve the roll by calling an external package's lookup function. The export must be a function (keyValue, rollValue) => result.",
-      "required": ["package", "export", "keyInput", "lookupBy"],
+      "description": "Resolve the roll by looking up a result in an external package. Uses a find+resolve pattern: find a table by name, then resolve by roll value.",
+      "required": ["package", "imports", "find", "resolve"],
       "additionalProperties": false,
       "properties": {
         "package": {
           "type": "string",
           "description": "npm package to import (e.g. 'salvageunion-reference')"
         },
-        "export": {
-          "type": "string",
-          "description": "Named export to import from the package (e.g. 'RollTables')"
+        "imports": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Named exports to import from the package (e.g. ['SalvageUnionReference', 'resultForTable'])"
         },
-        "keyInput": {
-          "type": "string",
-          "description": "Name of the input parameter used to identify which table to look up"
+        "find": {
+          "type": "object",
+          "required": ["collection", "where"],
+          "additionalProperties": false,
+          "properties": {
+            "collection": {
+              "type": "string",
+              "description": "Dotted path to the collection to search (e.g. 'SalvageUnionReference.RollTables')"
+            },
+            "where": {
+              "type": "object",
+              "required": ["field", "input"],
+              "additionalProperties": false,
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "Field on each collection item to match against (e.g. 'name')"
+                },
+                "input": {
+                  "type": "string",
+                  "description": "Name of the input parameter whose value to match (e.g. 'tableName')"
+                }
+              }
+            }
+          }
         },
-        "lookupBy": {
-          "type": "string",
-          "description": "Name of the field to use for lookup (e.g. 'roll' to look up by the roll total)"
+        "resolve": {
+          "type": "object",
+          "required": ["fn", "tableField"],
+          "additionalProperties": false,
+          "properties": {
+            "fn": {
+              "type": "string",
+              "description": "Name of the resolver function to call (e.g. 'resultForTable')"
+            },
+            "tableField": {
+              "type": "string",
+              "description": "Field on the found item to pass to the resolver (e.g. 'table')"
+            }
+          }
         }
       }
     },

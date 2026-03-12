@@ -79,11 +79,21 @@ export interface ComparePoolOperation {
   readonly outcomes: Readonly<Record<string, string>>
 }
 
+export interface ExternalTableLookupFind {
+  readonly collection: string
+  readonly where: { readonly field: string; readonly input: string }
+}
+
+export interface ExternalTableLookupResolve {
+  readonly fn: string
+  readonly tableField: string
+}
+
 export interface ExternalTableLookupOperation {
   readonly package: string
-  readonly export: string
-  readonly keyInput: string
-  readonly lookupBy: string
+  readonly imports: readonly string[]
+  readonly find: ExternalTableLookupFind
+  readonly resolve: ExternalTableLookupResolve
 }
 
 export type ResolveOperation =

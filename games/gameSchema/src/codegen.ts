@@ -578,11 +578,16 @@ function generateFunctionBody(
     lines.push(...emitDetailsObjectCode(rollDef.details!, optional, '  '))
   }
 
-  // External table lookup replaces outcome lines with a lookup call
+  // External table lookup replaces outcome lines with a find+resolve call
   if (typeof rollDef.resolve === 'object' && 'externalTableLookup' in rollDef.resolve) {
     const etl = rollDef.resolve.externalTableLookup
-    const keyAccessor = optional ? `input?.${etl.keyInput}` : `input.${etl.keyInput}`
-    lines.push(`  const result = ${etl.export}(${keyAccessor}, total)`)
+    const { find, resolve: etlResolve } = etl
+    const keyAccessor = optional ? `input?.${find.where.input}` : `input.${find.where.input}`
+    lines.push(
+      `  const foundTable = ${find.collection}.find(t => t.${find.where.field} === ${keyAccessor})`
+    )
+    lines.push(`  if (!foundTable) throw new Error(\`No table found: \${${keyAccessor}}\`)`)
+    lines.push(`  const result = ${etlResolve.fn}(foundTable.${etlResolve.tableField}, total)`)
     lines.push(
       hasDetails
         ? `  return { total, result, rolls: r.rolls, details }`
@@ -884,9 +889,11 @@ function collectExternalImports(spec: RandSumSpec): ReadonlyMap<string, Readonly
     const rollDef = spec[key] as RollDefinition
     const resolve = rollDef.resolve
     if (typeof resolve === 'object' && 'externalTableLookup' in resolve) {
-      const { package: pkg, export: exp } = resolve.externalTableLookup
+      const { package: pkg, imports: importNames } = resolve.externalTableLookup
       const existing = imports.get(pkg) ?? new Set<string>()
-      existing.add(exp)
+      for (const name of importNames) {
+        existing.add(name)
+      }
       imports.set(pkg, existing)
     }
   }

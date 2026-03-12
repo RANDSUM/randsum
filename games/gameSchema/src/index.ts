@@ -37,6 +37,8 @@ export type {
   PostResolveModifyOperation,
   ConditionalPool,
   ExternalTableLookupOperation,
+  ExternalTableLookupFind,
+  ExternalTableLookupResolve,
   DetailsLeafDef,
   DetailsFieldDef
 } from './types'
