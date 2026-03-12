@@ -20,7 +20,9 @@ import type {
 import { validateSpec } from './validator'
 
 function isRollDefinition(value: unknown): value is RollDefinition {
-  return typeof value === 'object' && value !== null && 'dice' in value && 'resolve' in value
+  if (typeof value !== 'object' || value === null) return false
+  if (!('resolve' in value)) return false
+  return 'dice' in value || 'dicePools' in value
 }
 
 function capitalize(str: string): string {
@@ -161,6 +163,21 @@ function getOutcomeRanges(
 }
 
 function collectResults(rollDef: RollDefinition, spec: RandSumSpec): string[] | null {
+  // dicePools: collect results from compare operation outcomes + ties
+  if (rollDef.dicePools !== undefined) {
+    const resolve = rollDef.resolve
+    if (
+      typeof resolve === 'object' &&
+      ('comparePoolHighest' in resolve || 'comparePoolSum' in resolve)
+    ) {
+      const op =
+        'comparePoolHighest' in resolve ? resolve.comparePoolHighest : resolve.comparePoolSum
+      const results = Object.values(op.outcomes)
+      if (op.ties !== undefined) results.push(op.ties)
+      return [...new Set(results)].sort()
+    }
+    return null
+  }
   // null signals "no outcome" — numeric passthrough
   if (rollDef.outcome === undefined) return null
   const defaultRanges = getOutcomeRanges(rollDef.outcome, spec)
@@ -234,11 +251,69 @@ function buildPostResolveTotalExpr(
   return `r.total + ${adds.join(' + ')}`
 }
 
+function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): string[] {
+  const { dicePools, resolve } = rollDef
+  if (dicePools === undefined) return []
+
+  const lines: string[] = []
+  const poolNames = Object.keys(dicePools)
+
+  // Emit one executeRoll per pool
+  for (const poolName of poolNames) {
+    const dc = dicePools[poolName]
+    if (dc === undefined) continue
+    const pool = isRef(dc.pool) ? (resolveRef(spec, dc.pool.$ref) as PoolDefinition) : dc.pool
+    const sides = typeof pool.sides === 'number' ? String(pool.sides) : `/* dynamic */`
+    const quantitySource = dc.quantity ?? pool.quantity
+    const qty =
+      quantitySource !== undefined
+        ? typeof quantitySource === 'number'
+          ? String(quantitySource)
+          : '1'
+        : '1'
+    lines.push(`  const ${poolName}Result = executeRoll({ sides: ${sides}, quantity: ${qty} })`)
+    lines.push(
+      `  const ${poolName}Total = ${poolName}Result.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)`
+    )
+  }
+
+  lines.push(`  const rolls = [${poolNames.map(n => `...${n}Result.rolls`).join(', ')}]`)
+  lines.push(`  const total = ${poolNames.map(n => `${n}Total`).join(' + ')}`)
+
+  // Emit comparison logic
+  if (
+    typeof resolve === 'object' &&
+    ('comparePoolHighest' in resolve || 'comparePoolSum' in resolve)
+  ) {
+    const op = 'comparePoolHighest' in resolve ? resolve.comparePoolHighest : resolve.comparePoolSum
+    const [keyA, keyB] = op.pools
+    const tiesReturn =
+      op.ties !== undefined
+        ? `{ total, result: '${op.ties}', rolls }`
+        : `{ total, result: '${keyA}=${keyB}', rolls }`
+    const aWinsReturn = `{ total, result: '${op.outcomes[keyA] ?? keyA}', rolls }`
+    const bWinsReturn = `{ total, result: '${op.outcomes[keyB] ?? keyB}', rolls }`
+
+    lines.push(`  if (${keyA}Total === ${keyB}Total) return ${tiesReturn}`)
+    lines.push(`  if (${keyA}Total > ${keyB}Total) return ${aWinsReturn}`)
+    lines.push(`  return ${bWinsReturn}`)
+  } else {
+    lines.push(`  return { total, result: String(total), rolls }`)
+  }
+
+  return lines
+}
+
 function generateFunctionBody(
   rollDef: RollDefinition,
   spec: RandSumSpec,
   optional: boolean
 ): string[] {
+  // Delegate multi-pool rolls to dedicated generator
+  if (rollDef.dicePools !== undefined) {
+    return generateMultiPoolBody(rollDef, spec)
+  }
+
   const lines: string[] = []
 
   for (const rollCase of rollDef.when ?? []) {
@@ -248,7 +323,7 @@ function generateFunctionBody(
     const overrideOutcome = rollCase.override.outcome ?? rollDef.outcome
     const overrideRanges = getOutcomeRanges(overrideOutcome, spec)
     if (overrideDice === undefined) {
-      throw new Error('buildWhenBranches: dice is required (dicePools path not yet implemented)')
+      throw new SchemaError('INVALID_SPEC', 'when branch has no dice and no override.dice')
     }
     const diceCode = buildDiceOptionsCode(overrideDice, overrideMod, spec, rollDef.inputs, optional)
     const needsPre = overrideRanges.some(
@@ -282,9 +357,7 @@ function generateFunctionBody(
   }
 
   if (rollDef.dice === undefined) {
-    throw new Error(
-      'buildWhenBranches: rollDef.dice is required (dicePools path not yet implemented)'
-    )
+    throw new SchemaError('INVALID_SPEC', 'rollDef.dice is required for single-pool roll')
   }
   const defaultDiceCode = buildDiceOptionsCode(
     rollDef.dice,

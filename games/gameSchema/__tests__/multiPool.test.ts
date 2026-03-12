@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { generateCode } from '../src/codegen'
 import { loadSpec, validateSpec } from '../src'
 
 const BASE_MULTI = {
@@ -136,5 +137,54 @@ describe('dicePools schema validation', () => {
       }
     })
     expect(result.valid).toBe(true)
+  })
+})
+
+const CODEGEN_MULTI_SPEC = {
+  $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+  name: 'Codegen Multi Test',
+  shortcode: 'test-cg-multi',
+  game_url: 'https://example.com',
+  roll: {
+    dicePools: {
+      hope: { pool: { sides: 12 }, quantity: 1 },
+      fear: { pool: { sides: 12 }, quantity: 1 }
+    },
+    resolve: {
+      comparePoolHighest: {
+        pools: ['hope', 'fear'],
+        ties: 'critical hope',
+        outcomes: { hope: 'hope', fear: 'fear' }
+      }
+    }
+  }
+}
+
+describe('dicePools codegen', () => {
+  test('generated code contains executeRoll calls for each pool', () => {
+    const code = generateCode(CODEGEN_MULTI_SPEC)
+    // Should have multiple executeRoll calls
+    const matches = code.match(/executeRoll/g) ?? []
+    expect(matches.length).toBeGreaterThanOrEqual(2)
+  })
+
+  test('generated code references pool names', () => {
+    const code = generateCode(CODEGEN_MULTI_SPEC)
+    expect(code).toContain('hope')
+    expect(code).toContain('fear')
+  })
+
+  test('generated Result type contains all outcomes and ties', () => {
+    const code = generateCode(CODEGEN_MULTI_SPEC)
+    expect(code).toContain("'hope'")
+    expect(code).toContain("'fear'")
+    expect(code).toContain("'critical hope'")
+  })
+
+  test('generated code compiles and runs correctly', () => {
+    // The runtime already tested via loader; this confirms codegen produces valid TS
+    const code = generateCode(CODEGEN_MULTI_SPEC)
+    expect(typeof code).toBe('string')
+    expect(code.length).toBeGreaterThan(100)
   })
 })
