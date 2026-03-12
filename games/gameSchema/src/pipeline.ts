@@ -7,6 +7,7 @@ import { bindInteger } from './inputBinder'
 import { type ManualOp, translateModifiers } from './modifierTranslator'
 import { isRef, resolveRef } from './refResolver'
 import type {
+  ComparePoolOperation,
   DegreeOfSuccessOperation,
   DiceConfig,
   GameRollResult,
@@ -239,6 +240,43 @@ function applyPostResolveModifiers(
   }, total)
 }
 
+function rollSinglePool(
+  diceConfig: DiceConfig,
+  mergedInput: RollInput,
+  spec: RandSumSpec
+): { readonly total: number; readonly rolls: readonly RollRecord[] } {
+  const opts = buildSingleRollOptions(diceConfig, mergedInput, spec, {})
+  const result = roll(opts)
+  const poolTotal = result.rolls.flatMap((r: RollRecord) => r.rolls).reduce((s, v) => s + v, 0)
+  return { total: poolTotal, rolls: result.rolls }
+}
+
+function applyComparePool(
+  poolResults: Readonly<Record<string, { readonly total: number }>>,
+  op: ComparePoolOperation
+): string {
+  const [keyA, keyB] = op.pools
+  const a = poolResults[keyA]?.total ?? 0
+  const b = poolResults[keyB]?.total ?? 0
+
+  if (a === b) return op.ties ?? `${keyA}=${keyB}`
+  const winner = a > b ? keyA : keyB
+  return op.outcomes[winner] ?? winner
+}
+
+function resolveCompareResult(
+  resolve: ResolveOperation,
+  poolResults: Readonly<Record<string, { readonly total: number }>>
+): string {
+  if (typeof resolve === 'object' && 'comparePoolHighest' in resolve) {
+    return applyComparePool(poolResults, resolve.comparePoolHighest)
+  }
+  if (typeof resolve === 'object' && 'comparePoolSum' in resolve) {
+    return applyComparePool(poolResults, resolve.comparePoolSum)
+  }
+  return String(Object.values(poolResults).reduce((s, p) => s + p.total, 0))
+}
+
 function applyOutcome(
   total: number,
   outcome: OutcomeOperation | Ref | undefined,
@@ -282,8 +320,23 @@ export function executePipeline(
     override?.postResolveModifiers ?? rollDef.postResolveModifiers
 
   const { rollerOptions, manualOps } = translateModifiers(effectiveModify, mergedInput)
+
+  if (rollDef.dicePools !== undefined) {
+    const poolEntries = Object.entries(rollDef.dicePools)
+    const poolResults = Object.fromEntries(
+      poolEntries.map(([key, diceConfig]) => [key, rollSinglePool(diceConfig, mergedInput, spec)])
+    )
+    const allRolls = Object.values(poolResults).flatMap(p => p.rolls)
+    const total = Object.values(poolResults).reduce((s, p) => s + p.total, 0)
+    const result = resolveCompareResult(override?.resolve ?? rollDef.resolve, poolResults)
+    return { total, result, rolls: allRolls }
+  }
+
   if (effectiveDice === undefined) {
-    throw new Error('executePipeline: dice is required (dicePools path not yet implemented)')
+    throw new SchemaError(
+      'INVALID_SPEC',
+      'executePipeline: dice is required when dicePools is absent'
+    )
   }
   const optionsArray = buildRollOptionsArray(effectiveDice, mergedInput, spec, rollerOptions)
 

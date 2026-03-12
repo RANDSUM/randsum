@@ -14,7 +14,12 @@ import type {
 import { validateSpec } from './validator'
 
 function isRollDefinition(value: unknown): value is RollDefinition {
-  return typeof value === 'object' && value !== null && 'dice' in value && 'resolve' in value
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    ('dice' in value || 'dicePools' in value) &&
+    'resolve' in value
+  )
 }
 
 function assertValidSpec(spec: unknown): asserts spec is RandSumSpec {
