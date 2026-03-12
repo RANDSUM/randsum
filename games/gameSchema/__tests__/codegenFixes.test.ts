@@ -25,14 +25,14 @@ describe('#990: duplicate plus bug', () => {
     }
   }
 
-  test('emits single plus with summed adds', () => {
-    const code = generateCode(MULTI_ADD_SPEC)
+  test('emits single plus with summed adds', async () => {
+    const code = await generateCode(MULTI_ADD_SPEC)
     const plusMatches = code.match(/plus:/g)
     expect(plusMatches).toHaveLength(1)
   })
 
-  test('emits add expressions joined with +', () => {
-    const code = generateCode(MULTI_ADD_SPEC)
+  test('emits add expressions joined with +', async () => {
+    const code = await generateCode(MULTI_ADD_SPEC)
     expect(code).toContain(
       'plus: (input?.stat ?? 0) + (input?.forward ?? 0) + (input?.ongoing ?? 0)'
     )
@@ -63,19 +63,19 @@ describe('#991: enum union types', () => {
     expect(result.valid).toBe(true)
   })
 
-  test('emits enum values as union type', () => {
-    const code = generateCode(ENUM_SPEC)
+  test('emits enum values as union type', async () => {
+    const code = await generateCode(ENUM_SPEC)
     expect(code).toContain("'Advantage' | 'Disadvantage'")
     expect(code).not.toMatch(/rollingWith\??: string\b/)
   })
 
-  test('optional input without default emits ? in signature', () => {
-    const code = generateCode(ENUM_SPEC)
+  test('optional input without default emits ? in signature', async () => {
+    const code = await generateCode(ENUM_SPEC)
     expect(code).toContain('rollingWith?:')
   })
 
-  test('single-input overload uses baseType for typeof check', () => {
-    const code = generateCode(ENUM_SPEC)
+  test('single-input overload uses baseType for typeof check', async () => {
+    const code = await generateCode(ENUM_SPEC)
     expect(code).toContain("typeof rawInput === 'string'")
     expect(code).not.toContain("typeof rawInput === ''Advantage'")
   })
@@ -97,20 +97,20 @@ describe('#10: validation codegen', () => {
     }
   }
 
-  test('emits validateFinite and validateRange imports', () => {
-    const code = generateCode(VALIDATED_SPEC)
+  test('emits validateFinite and validateRange imports', async () => {
+    const code = await generateCode(VALIDATED_SPEC)
     expect(code).toContain('validateFinite')
     expect(code).toContain('validateRange')
     expect(code).toMatch(/import \{.*validateFinite.*\} from '@randsum\/gameSchema'/)
   })
 
-  test('emits validateFinite call', () => {
-    const code = generateCode(VALIDATED_SPEC)
+  test('emits validateFinite call', async () => {
+    const code = await generateCode(VALIDATED_SPEC)
     expect(code).toContain("validateFinite(input?.bonus, 'Root RPG bonus')")
   })
 
-  test('emits validateRange call with min and max', () => {
-    const code = generateCode(VALIDATED_SPEC)
+  test('emits validateRange call with min and max', async () => {
+    const code = await generateCode(VALIDATED_SPEC)
     expect(code).toContain("validateRange(input?.bonus, -20, 20, 'Root RPG bonus')")
   })
 
@@ -124,7 +124,7 @@ describe('#10: validation codegen', () => {
     expect(() => loaded.roll({ bonus: 1000 })).toThrow('Root RPG bonus must be between -20 and 20')
   })
 
-  test('no validation imports when no integer inputs', () => {
+  test('no validation imports when no integer inputs', async () => {
     const noIntSpec = {
       $schema: 'https://randsum.dev/schemas/v1/randsum.json',
       name: 'No Int',
@@ -135,14 +135,14 @@ describe('#10: validation codegen', () => {
         resolve: 'sum' as const
       }
     }
-    const code = generateCode(noIntSpec)
+    const code = await generateCode(noIntSpec)
     expect(code).not.toContain('validateFinite')
     expect(code).not.toContain('validateRange')
   })
 })
 
 describe('#995: validation description label', () => {
-  test('uses description field as validation label when present', () => {
+  test('uses description field as validation label when present', async () => {
     const spec = {
       $schema: 'https://randsum.dev/schemas/v1/randsum.json',
       name: 'Test Game',
@@ -163,13 +163,13 @@ describe('#995: validation description label', () => {
         resolve: 'sum' as const
       }
     }
-    const code = generateCode(spec)
+    const code = await generateCode(spec)
     expect(code).toContain("validateFinite(input?.bonus, 'custom label')")
     expect(code).toContain("validateRange(input?.bonus, -10, 10, 'custom label')")
     expect(code).not.toContain('Test Game bonus')
   })
 
-  test('falls back to spec name + field name when no description', () => {
+  test('falls back to spec name + field name when no description', async () => {
     const spec = {
       $schema: 'https://randsum.dev/schemas/v1/randsum.json',
       name: 'Fallback Test',
@@ -184,7 +184,7 @@ describe('#995: validation description label', () => {
         resolve: 'sum' as const
       }
     }
-    const code = generateCode(spec)
+    const code = await generateCode(spec)
     expect(code).toContain("validateFinite(input?.bonus, 'Fallback Test bonus')")
   })
 
@@ -233,8 +233,8 @@ describe('#995: string enum validation', () => {
     }
   }
 
-  test('codegen emits enum validation guard', () => {
-    const code = generateCode(ENUM_GUARD_SPEC)
+  test('codegen emits enum validation guard', async () => {
+    const code = await generateCode(ENUM_GUARD_SPEC)
     expect(code).toContain("!['Alpha', 'Beta'].includes(")
     expect(code).toContain('Invalid mode value')
   })

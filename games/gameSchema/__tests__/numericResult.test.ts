@@ -25,8 +25,8 @@ describe('numeric result (no outcome field)', () => {
     expect(r.total).toBeLessThanOrEqual(25)
   })
 
-  test('codegen emits number result type for no-outcome roll', () => {
-    const code = generateCode(NUMERIC_SPEC)
+  test('codegen emits number result type for no-outcome roll', async () => {
+    const code = await generateCode(NUMERIC_SPEC)
     expect(code).toContain('RollResult = number')
   })
 })

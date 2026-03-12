@@ -113,8 +113,8 @@ describe('conditionalPools runtime', () => {
 })
 
 describe('conditionalPools codegen', () => {
-  test('generates conditional pool code blocks', () => {
-    const code = generateCode(COND_POOL_SPEC)
+  test('generates conditional pool code blocks', async () => {
+    const code = await generateCode(COND_POOL_SPEC)
     expect(code).toContain("'Advantage'")
     expect(code).toContain("'Disadvantage'")
     expect(code).toContain('cpResult')
@@ -122,8 +122,8 @@ describe('conditionalPools codegen', () => {
     expect(code).toContain('-= cpTotal')
   })
 
-  test('generated code has let total (mutable)', () => {
-    const code = generateCode(COND_POOL_SPEC)
+  test('generated code has let total (mutable)', async () => {
+    const code = await generateCode(COND_POOL_SPEC)
     expect(code).toContain('let total')
   })
 })

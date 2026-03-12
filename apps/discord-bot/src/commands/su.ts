@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { SALVAGE_UNION_TABLE_NAMES, roll } from '@randsum/salvageunion'
+import { VALID_TABLE_NAMES, roll } from '@randsum/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
@@ -30,10 +30,7 @@ function getColor(roll: number): number {
   return colors[roll - 1] ?? 0xffd700
 }
 
-const tableChoices = SALVAGE_UNION_TABLE_NAMES.map(name => ({
-  name,
-  value: name
-}))
+const tableChoices = VALID_TABLE_NAMES.map(name => ({ name, value: name }))
 
 export const suCommand: Command = {
   data: new SlashCommandBuilder()
@@ -54,23 +51,24 @@ export const suCommand: Command = {
 
     try {
       const rollResult = roll(tableName)
-      const color = getColor(rollResult.result.roll)
+      const { result } = rollResult
+      const color = getColor(result.roll)
 
       const embed = new EmbedBuilder()
         .setColor(color)
-        .setTitle(rollResult.result.label)
-        .setDescription(rollResult.result.description)
+        .setTitle(typeof result.label === 'string' ? result.label : 'Unknown')
+        .setDescription(typeof result.description === 'string' ? result.description : '')
         .setFooter(embedFooterDetails)
 
       embed.addFields(
         {
           name: 'Table',
-          value: rollResult.result.tableName,
+          value: result.tableName,
           inline: true
         },
         {
           name: 'Roll',
-          value: String(rollResult.result.roll),
+          value: String(result.roll),
           inline: true
         }
       )

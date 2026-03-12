@@ -34,14 +34,14 @@
         "randsum": "dist/index.js",
       },
       "dependencies": {
-        "@randsum/display-utils": "workspace:~",
-        "@randsum/notation": "workspace:~",
-        "@randsum/roller": "workspace:~",
         "ink": "^6.8.0",
         "ink-text-input": "^6.0.0",
         "react": "^19.2.0",
       },
       "devDependencies": {
+        "@randsum/display-utils": "workspace:~",
+        "@randsum/notation": "workspace:~",
+        "@randsum/roller": "workspace:~",
         "@types/react": "^19.0.0",
       },
     },
@@ -93,14 +93,14 @@
       "name": "@randsum/daggerheart",
       "version": "3.0.0",
       "dependencies": {
-        "@randsum/roller": "workspace:~",
+        "@randsum/gameSchema": "workspace:~",
       },
     },
     "games/fifth": {
       "name": "@randsum/fifth",
       "version": "3.0.0",
       "dependencies": {
-        "@randsum/roller": "workspace:~",
+        "@randsum/gameSchema": "workspace:~",
       },
     },
     "games/gameSchema": {
@@ -111,34 +111,36 @@
         "randsum-schema-build": "./dist/bin-build.cjs",
       },
       "dependencies": {
-        "@randsum/roller": "workspace:~",
         "ajv": "8.18.0",
       },
       "devDependencies": {
+        "@randsum/roller": "workspace:~",
         "bunup": "^0.11.0",
         "typescript": "^5.9.3",
+      },
+      "peerDependencies": {
+        "@randsum/roller": "^3.0.0",
       },
     },
     "games/pbta": {
       "name": "@randsum/pbta",
       "version": "3.0.0",
       "dependencies": {
-        "@randsum/roller": "workspace:~",
+        "@randsum/gameSchema": "workspace:~",
       },
     },
     "games/root-rpg": {
       "name": "@randsum/root-rpg",
       "version": "3.0.0",
       "dependencies": {
-        "@randsum/roller": "workspace:~",
+        "@randsum/gameSchema": "workspace:~",
       },
     },
     "games/salvageunion": {
       "name": "@randsum/salvageunion",
       "version": "3.0.0",
       "dependencies": {
-        "@randsum/roller": "workspace:~",
-        "salvageunion-reference": "^2.4.0",
+        "@randsum/gameSchema": "workspace:~",
       },
     },
     "packages/component-library": {
@@ -162,11 +164,12 @@
     "packages/display-utils": {
       "name": "@randsum/display-utils",
       "version": "3.0.1",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
       "devDependencies": {
+        "@randsum/roller": "workspace:~",
         "typescript": "^5.8.2",
+      },
+      "peerDependencies": {
+        "@randsum/roller": "^3.0.0",
       },
     },
     "packages/notation": {
@@ -2385,8 +2388,6 @@
     "safe-regex-test": ["safe-regex-test@1.1.0", "", { "dependencies": { "call-bound": "^1.0.2", "es-errors": "^1.3.0", "is-regex": "^1.2.1" } }, "sha512-x/+Cz4YrimQxQccJf5mKEbIa1NzeCRNI5Ecl/ekmlYaampdNLPalVyIcCZNNH3MvmqBugV5TMYZXv0ljslUlaw=="],
 
     "safe-stable-stringify": ["safe-stable-stringify@2.5.0", "", {}, "sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA=="],
-
-    "salvageunion-reference": ["salvageunion-reference@2.4.0", "", { "dependencies": { "zod": "^4.3.6" } }, "sha512-ZzL30v+D1WRy0t+zsiuJqMz+sxQcl2x0g70oV9g1cLhC/zaxLP88n3pZocJuMntjCq2qU20Ze+xMCWILNm5KxQ=="],
 
     "sass-formatter": ["sass-formatter@0.7.9", "", { "dependencies": { "suf-log": "^2.5.3" } }, "sha512-CWZ8XiSim+fJVG0cFLStwDvft1VI7uvXdCNJYXhDvowiv+DsbD1nXLiQ4zrE5UBvj5DWZJ93cwN0NX5PMsr1Pw=="],
 

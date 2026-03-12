@@ -422,6 +422,12 @@ export function executePipeline(
   input: RollInput,
   spec: RandSumSpec
 ): GameRollResult<string | number, Readonly<Record<string, unknown>> | undefined, RollRecord> {
+  if (typeof rollDef.resolve === 'object' && 'remoteTableLookup' in rollDef.resolve) {
+    throw new SchemaError(
+      'INVALID_SPEC',
+      'Spec uses remoteTableLookup which requires async execution. Use loadSpecAsync() instead.'
+    )
+  }
   validateInputs(rollDef, input, spec.name)
   const mergedInput = applyInputDefaults(input, rollDef.inputs)
   const override = evaluateWhen(rollDef.when, mergedInput)

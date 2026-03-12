@@ -9,7 +9,6 @@ import type {
   DetailsFieldDef,
   DetailsLeafDef,
   DiceConfig,
-  ExternalTableLookupOperation,
   InputDeclaration,
   IntegerOrInput,
   ModifyOperation,
@@ -18,6 +17,7 @@ import type {
   PostResolveModifyOperation,
   RandSumSpec,
   Ref,
+  RemoteTableLookupOperation,
   ResultMappingLeaf,
   RollCase,
   RollDefinition,
@@ -129,8 +129,9 @@ function buildModifiersCode(
   const addOps = modify.filter(
     (op): op is ModifyOperation & { readonly add: IntegerOrInput } => op.add !== undefined
   )
-  if (addOps.length === 1) {
-    mods.push(`plus: ${integerOrInputCode(addOps[0].add, inputs, optional)}`)
+  const firstAddOp = addOps[0]
+  if (addOps.length === 1 && firstAddOp !== undefined) {
+    mods.push(`plus: ${integerOrInputCode(firstAddOp.add, inputs, optional)}`)
   } else if (addOps.length > 1) {
     const sum = addOps.map(op => integerOrInputCode(op.add, inputs, optional)).join(' + ')
     mods.push(`plus: ${sum}`)
@@ -246,9 +247,9 @@ function collectResults(
   rollDef: RollDefinition,
   spec: RandSumSpec
 ): string[] | null | 'string' | 'object' {
-  // externalTableLookup: result type depends on resultMapping presence
-  if (typeof rollDef.resolve === 'object' && 'externalTableLookup' in rollDef.resolve) {
-    return rollDef.resolve.externalTableLookup.resultMapping !== undefined ? 'object' : 'string'
+  // remoteTableLookup: always has resultMapping
+  if (typeof rollDef.resolve === 'object' && 'remoteTableLookup' in rollDef.resolve) {
+    return 'object'
   }
   // dicePools: collect results from compare operation outcomes + ties
   if (rollDef.dicePools !== undefined) {
@@ -599,14 +600,12 @@ function generateFunctionBody(
     lines.push(...emitDetailsObjectCode(detailsDef, optional, '  '))
   }
 
-  // External table lookup replaces outcome lines with a find+resolve call
-  if (typeof rollDef.resolve === 'object' && 'externalTableLookup' in rollDef.resolve) {
-    const etl = rollDef.resolve.externalTableLookup
-    const { find, resolve: etlResolve } = etl
-    const keyAccessor = optional ? `input?.${find.where.input}` : `input.${find.where.input}`
-    lines.push(
-      `  const foundTable = ${find.collection}.find(t => t.${find.where.field} === ${keyAccessor})`
-    )
+  // Remote table lookup replaces outcome lines with a find+lookupByRange call
+  if (typeof rollDef.resolve === 'object' && 'remoteTableLookup' in rollDef.resolve) {
+    const rtl = rollDef.resolve.remoteTableLookup
+    const { find, tableField } = rtl
+    const keyAccessor = optional ? `input?.${find.input}` : `input.${find.input}`
+    lines.push(`  const foundTable = REMOTE_DATA.find(t => t.${find.field} === ${keyAccessor})`)
     // Emit error message — custom template or default
     if (find.errorMessage !== undefined) {
       const escaped = find.errorMessage.replace(/`/g, '\\`')
@@ -615,25 +614,13 @@ function generateFunctionBody(
     } else {
       lines.push(`  if (!foundTable) throw new Error(\`No table found: \${${keyAccessor}}\`)`)
     }
-    lines.push(
-      `  const lookupResult = ${etlResolve.fn}(foundTable.${etlResolve.tableField}, total)`
-    )
-    // Emit return — either resultMapping or plain passthrough
-    if (etl.resultMapping !== undefined) {
-      const mappingFields = Object.entries(etl.resultMapping)
-        .map(([fieldName, leaf]) => `    ${fieldName}: ${resultMappingLeafExpr(leaf, optional)}`)
-        .join(',\n')
-      const detailsPart = hasDetails ? ', details' : ''
-      lines.push(
-        `  return { total, result: {\n${mappingFields}\n  }, rolls: r.rolls${detailsPart} }`
-      )
-    } else {
-      lines.push(
-        hasDetails
-          ? `  return { total, result: lookupResult, rolls: r.rolls, details }`
-          : `  return { total, result: lookupResult, rolls: r.rolls }`
-      )
-    }
+    lines.push(`  const lookupResult = lookupByRange(foundTable.${tableField}, total)`)
+    // Always has resultMapping
+    const mappingFields = Object.entries(rtl.resultMapping)
+      .map(([fieldName, leaf]) => `    ${fieldName}: ${resultMappingLeafExpr(leaf, optional)}`)
+      .join(',\n')
+    const detailsPart = hasDetails ? ', details' : ''
+    lines.push(`  return { total, result: {\n${mappingFields}\n  }, rolls: r.rolls${detailsPart} }`)
   } else {
     lines.push(
       ...generateOutcomeLines(
@@ -818,20 +805,18 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
 
   if (isResultMapping) {
     // Emit an interface for the resultMapping shape
-    const etl = (rollDef.resolve as { readonly externalTableLookup: ExternalTableLookupOperation })
-      .externalTableLookup
-    const mapping = etl.resultMapping
-    if (mapping !== undefined) {
-      parts.push(`export interface ${Key}Result {`)
-      for (const fieldName of Object.keys(mapping)) {
-        // All resultMapping fields are opaque — use unknown for external refs, string for inputs, number for expr
-        const leaf = mapping[fieldName]
-        if (leaf === undefined) continue
-        const fieldType = 'expr' in leaf ? 'number' : '$input' in leaf ? 'string' : 'unknown'
-        parts.push(`  readonly ${fieldName}: ${fieldType}`)
-      }
-      parts.push(`}`)
+    const rtl = (rollDef.resolve as { readonly remoteTableLookup: RemoteTableLookupOperation })
+      .remoteTableLookup
+    const mapping = rtl.resultMapping
+    parts.push(`export interface ${Key}Result {`)
+    for (const fieldName of Object.keys(mapping)) {
+      // All resultMapping fields are opaque — use unknown for external refs, string for inputs, number for expr
+      const leaf = mapping[fieldName]
+      if (leaf === undefined) continue
+      const fieldType = 'expr' in leaf ? 'number' : '$input' in leaf ? 'string' : 'unknown'
+      parts.push(`  readonly ${fieldName}: ${fieldType}`)
     }
+    parts.push(`}`)
   } else if (isOpaqueString) {
     parts.push(`export type ${Key}Result = string`)
   } else if (isNumeric) {
@@ -933,36 +918,50 @@ function generateValidationLines(
   return lines
 }
 
-function collectExternalImports(spec: RandSumSpec): ReadonlyMap<string, ReadonlySet<string>> {
-  const imports = new Map<string, Set<string>>()
-  const patternKeys = Object.keys(spec).filter(k => /^roll[A-Z][a-zA-Z]*$/.test(k))
-  const rollKeys = ['roll', ...patternKeys].filter(k => isRollDefinition(spec[k]))
-
-  for (const key of rollKeys) {
-    const rollDef = spec[key] as RollDefinition
-    const resolve = rollDef.resolve
-    if (typeof resolve === 'object' && 'externalTableLookup' in resolve) {
-      const { package: pkg, imports: importNames } = resolve.externalTableLookup
-      const existing = imports.get(pkg) ?? new Set<string>()
-      for (const name of importNames) {
-        existing.add(name)
-      }
-      imports.set(pkg, existing)
-    }
+async function fetchRemoteData(url: string, dataPath?: string): Promise<unknown[]> {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new SchemaError(
+      'INVALID_SPEC',
+      `Failed to fetch remote table data from ${url}: ${String(response.status)}`
+    )
   }
-
-  return imports
+  const json: unknown = await response.json()
+  if (dataPath === undefined) return json as unknown[]
+  const traversed = dataPath
+    .split('.')
+    .reduce((acc: unknown, part: string) => (acc as Record<string, unknown>)[part], json)
+  return traversed as unknown[]
 }
 
-function buildCodeString(spec: RandSumSpec): string {
+async function buildCodeString(spec: RandSumSpec): Promise<string> {
   const patternKeys = Object.keys(spec).filter(k => /^roll[A-Z][a-zA-Z]*$/.test(k))
   const rollKeys = ['roll', ...patternKeys].filter(k => isRollDefinition(spec[k]))
+
+  // Detect remoteTableLookup and fetch data at codegen time
+  const rtlDef = rollKeys
+    .map(key => spec[key] as RollDefinition)
+    .find(
+      (
+        rollDef
+      ): rollDef is RollDefinition & {
+        resolve: { readonly remoteTableLookup: RemoteTableLookupOperation }
+      } => typeof rollDef.resolve === 'object' && 'remoteTableLookup' in rollDef.resolve
+    )?.resolve.remoteTableLookup
+  const remoteData: unknown[] | undefined = rtlDef
+    ? await fetchRemoteData(rtlDef.url, rtlDef.dataPath)
+    : undefined
 
   const { needsFinite, needsRange } = needsValidationImports(spec)
   const validationImports: string[] = []
   if (needsFinite) validationImports.push('validateFinite')
   if (needsRange) validationImports.push('validateRange')
-  const runtimeImports = ['executeRoll', ...validationImports].join(', ')
+  const hasRemote = remoteData !== undefined
+  const runtimeImports = [
+    'executeRoll',
+    ...(hasRemote ? ['lookupByRange'] : []),
+    ...validationImports
+  ].join(', ')
 
   const parts: string[] = [
     `/* eslint-disable */`,
@@ -972,11 +971,12 @@ function buildCodeString(spec: RandSumSpec): string {
     `import type { GameRollResult, RollRecord } from '@randsum/gameSchema'`
   ]
 
-  const externalImports = collectExternalImports(spec)
-  for (const [pkg, exports] of externalImports) {
-    parts.push(`import { ${[...exports].join(', ')} } from '${pkg}'`)
-  }
   parts.push(``)
+
+  if (remoteData !== undefined) {
+    parts.push(`const REMOTE_DATA = ${JSON.stringify(remoteData)} as const`)
+    parts.push(``)
+  }
 
   for (const key of rollKeys) {
     const rollDef = spec[key] as RollDefinition
@@ -984,6 +984,15 @@ function buildCodeString(spec: RandSumSpec): string {
   }
 
   parts.push(`export type { GameRollResult, RollRecord }`)
+
+  if (remoteData !== undefined) {
+    parts.push(``)
+    parts.push(`export const ROLL_TABLE_ENTRIES: typeof REMOTE_DATA = REMOTE_DATA`)
+    parts.push(
+      `export const VALID_TABLE_NAMES: string[] = REMOTE_DATA.map((t: { name: string }) => t.name)`
+    )
+  }
+
   parts.push(``)
 
   return parts.join('\n')
@@ -997,14 +1006,14 @@ function buildCodeString(spec: RandSumSpec): string {
  *                    (named after the spec) and returns the full filepath.
  *                    Otherwise returns the code string.
  */
-export function generateCode(spec: RandSumSpec, outputDir?: string): string {
+export async function generateCode(spec: RandSumSpec, outputDir?: string): Promise<string> {
   const result = validateSpec(spec)
   if (!result.valid) {
     const summary = result.errors.map(e => `${e.path}: ${e.message}`).join('; ')
     throw new SchemaError('INVALID_SPEC', `Invalid spec: ${summary}`)
   }
 
-  const code = buildCodeString(spec)
+  const code = await buildCodeString(spec)
 
   if (outputDir !== undefined) {
     const filename = `${spec.shortcode}.ts`

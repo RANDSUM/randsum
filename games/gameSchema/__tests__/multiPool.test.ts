@@ -171,27 +171,27 @@ const CODEGEN_MULTI_SPEC = {
 }
 
 describe('dicePools codegen', () => {
-  test('generated code contains executeRoll calls for each pool', () => {
-    const code = generateCode(CODEGEN_MULTI_SPEC)
+  test('generated code contains executeRoll calls for each pool', async () => {
+    const code = await generateCode(CODEGEN_MULTI_SPEC)
     // Should have multiple executeRoll calls
     const matches = code.match(/executeRoll/g) ?? []
     expect(matches.length).toBeGreaterThanOrEqual(2)
   })
 
-  test('generated code references pool names', () => {
-    const code = generateCode(CODEGEN_MULTI_SPEC)
+  test('generated code references pool names', async () => {
+    const code = await generateCode(CODEGEN_MULTI_SPEC)
     expect(code).toContain('hope')
     expect(code).toContain('fear')
   })
 
-  test('generated Result type contains all outcomes and ties', () => {
-    const code = generateCode(CODEGEN_MULTI_SPEC)
+  test('generated Result type contains all outcomes and ties', async () => {
+    const code = await generateCode(CODEGEN_MULTI_SPEC)
     expect(code).toContain("'hope'")
     expect(code).toContain("'fear'")
     expect(code).toContain("'critical hope'")
   })
 
-  test('generated Result type includes auto-tie string when ties is omitted', () => {
+  test('generated Result type includes auto-tie string when ties is omitted', async () => {
     const noTiesSpec = {
       ...CODEGEN_MULTI_SPEC,
       shortcode: 'test-no-ties',
@@ -209,14 +209,14 @@ describe('dicePools codegen', () => {
         }
       }
     }
-    const code = generateCode(noTiesSpec)
+    const code = await generateCode(noTiesSpec)
     // The auto-constructed tie string must appear in the generated type
     expect(code).toContain("'hope=fear'")
   })
 
-  test('generated code compiles and runs correctly', () => {
+  test('generated code compiles and runs correctly', async () => {
     // The runtime already tested via loader; this confirms codegen produces valid TS
-    const code = generateCode(CODEGEN_MULTI_SPEC)
+    const code = await generateCode(CODEGEN_MULTI_SPEC)
     expect(typeof code).toBe('string')
     expect(code.length).toBeGreaterThan(100)
   })

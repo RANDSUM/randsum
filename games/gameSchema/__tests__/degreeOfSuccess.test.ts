@@ -46,31 +46,31 @@ describe('degreeOfSuccess runtime', () => {
 })
 
 describe('degreeOfSuccess codegen', () => {
-  test('generated Result type contains all degree names', () => {
-    const code = generateCode(DOS_SPEC)
+  test('generated Result type contains all degree names', async () => {
+    const code = await generateCode(DOS_SPEC)
     expect(code).toContain("'criticalSuccess'")
     expect(code).toContain("'success'")
     expect(code).toContain("'failure'")
     expect(code).toContain("'criticalFailure'")
   })
 
-  test('generated Result type is NOT numeric (string union, not number)', () => {
-    const code = generateCode(DOS_SPEC)
+  test('generated Result type is NOT numeric (string union, not number)', async () => {
+    const code = await generateCode(DOS_SPEC)
     expect(code).not.toContain('RollResult = number')
     // Should be a string union
     expect(code).toMatch(/RollResult = '[a-zA-Z]/)
   })
 
-  test('generated code emits threshold comparisons in descending order', () => {
-    const code = generateCode(DOS_SPEC)
+  test('generated code emits threshold comparisons in descending order', async () => {
+    const code = await generateCode(DOS_SPEC)
     // criticalSuccess threshold (30) should appear before success (20) in the code
     const critIdx = code.indexOf('criticalSuccess')
     const successIdx = code.indexOf("'success'")
     expect(critIdx).toBeLessThan(successIdx)
   })
 
-  test('generated code does not emit No table match error (uses degree fallback)', () => {
-    const code = generateCode(DOS_SPEC)
+  test('generated code does not emit No table match error (uses degree fallback)', async () => {
+    const code = await generateCode(DOS_SPEC)
     // Should NOT emit range-lookup error, instead returns lowest degree as default
     expect(code).toContain("return { total, result: 'criticalFailure'")
   })

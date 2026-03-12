@@ -64,7 +64,7 @@ const mockRoll = mock(() => ({
 
 void mock.module('@randsum/salvageunion', () => ({
   roll: mockRoll,
-  SALVAGE_UNION_TABLE_NAMES: ['Core Mechanic', 'Morale']
+  VALID_TABLE_NAMES: ['Core Mechanic', 'Morale']
 }))
 
 const { suCommand } = await import('../../src/commands/su.js')

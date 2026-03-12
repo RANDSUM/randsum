@@ -101,18 +101,18 @@ describe('dynamic pool sides (conditional IntegerOrInput)', () => {
   })
 
   describe('codegen', () => {
-    test('generates ternary expression for conditional sides', () => {
-      const code = generateCode(DYNAMIC_SIDES_SPEC)
+    test('generates ternary expression for conditional sides', async () => {
+      const code = await generateCode(DYNAMIC_SIDES_SPEC)
       expect(code).toContain('? 20 : 12')
     })
 
-    test('generated code references the input field', () => {
-      const code = generateCode(DYNAMIC_SIDES_SPEC)
+    test('generated code references the input field', async () => {
+      const code = await generateCode(DYNAMIC_SIDES_SPEC)
       expect(code).toContain('amplify')
     })
 
-    test('static sides pool is unaffected', () => {
-      const code = generateCode(DYNAMIC_SIDES_SPEC)
+    test('static sides pool is unaffected', async () => {
+      const code = await generateCode(DYNAMIC_SIDES_SPEC)
       // fear pool uses static 12
       expect(code).toContain('sides: 12')
     })

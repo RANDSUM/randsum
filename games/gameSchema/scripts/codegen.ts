@@ -20,5 +20,6 @@ if (!specPath) {
 }
 
 const spec = JSON.parse(readFileSync(resolve(process.cwd(), specPath), 'utf-8')) as RandSumSpec
-const filepath = generateCode(spec, outputDir ?? '.')
-console.error(`Generated: ${filepath}`)
+void generateCode(spec, outputDir ?? '.').then(fp => {
+  console.error(`Generated: ${fp}`)
+})

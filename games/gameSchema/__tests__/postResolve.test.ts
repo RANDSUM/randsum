@@ -184,23 +184,23 @@ describe('postResolveModifiers codegen', () => {
     }
   }
 
-  test('generated code adds bonus to r.total', () => {
-    const code = generateCode(CODEGEN_SPEC)
+  test('generated code adds bonus to r.total', async () => {
+    const code = await generateCode(CODEGEN_SPEC)
     // Should contain r.total + something, not just r.total
     expect(code).toMatch(/r\.total \+/)
   })
 
-  test('generated code references the bonus input', () => {
-    const code = generateCode(CODEGEN_SPEC)
+  test('generated code references the bonus input', async () => {
+    const code = await generateCode(CODEGEN_SPEC)
     expect(code).toContain('bonus')
   })
 
-  test('no postResolveModifiers: generates plain r.total', () => {
+  test('no postResolveModifiers: generates plain r.total', async () => {
     const specNoBonus = {
       ...CODEGEN_SPEC,
       roll: { ...CODEGEN_SPEC.roll, postResolveModifiers: undefined }
     }
-    const code = generateCode(specNoBonus)
+    const code = await generateCode(specNoBonus)
     // Should be exactly r.total, not r.total + anything
     expect(code).toContain('const total = r.total')
     expect(code).not.toMatch(/r\.total \+/)

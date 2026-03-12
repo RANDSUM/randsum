@@ -79,29 +79,22 @@ export interface ComparePoolOperation {
   readonly outcomes: Readonly<Record<string, string>>
 }
 
-export interface ExternalTableLookupFind {
-  readonly collection: string
-  readonly where: { readonly field: string; readonly input: string }
-  readonly errorMessage?: string
-}
-
-export interface ExternalTableLookupResolve {
-  readonly fn: string
-  readonly tableField: string
-}
-
 export type ResultMappingLeaf =
   | { readonly $lookupResult: string; readonly fallback?: ResultMappingLeaf }
   | { readonly $foundTable: string }
   | { readonly $input: string }
   | { readonly expr: 'total' }
 
-export interface ExternalTableLookupOperation {
-  readonly package: string
-  readonly imports: readonly string[]
-  readonly find: ExternalTableLookupFind
-  readonly resolve: ExternalTableLookupResolve
-  readonly resultMapping?: Readonly<Record<string, ResultMappingLeaf>>
+export interface RemoteTableLookupOperation {
+  readonly url: string
+  readonly dataPath?: string
+  readonly find: {
+    readonly field: string
+    readonly input: string
+    readonly errorMessage?: string
+  }
+  readonly tableField: string
+  readonly resultMapping: Readonly<Record<string, ResultMappingLeaf>>
 }
 
 export type ResolveOperation =
@@ -110,7 +103,7 @@ export type ResolveOperation =
   | { readonly tableLookup: RefOrTableDefinition }
   | { readonly comparePoolHighest: ComparePoolOperation }
   | { readonly comparePoolSum: ComparePoolOperation }
-  | { readonly externalTableLookup: ExternalTableLookupOperation }
+  | { readonly remoteTableLookup: RemoteTableLookupOperation }
 
 export interface DegreeOfSuccessOperation {
   readonly criticalSuccess?: number

@@ -67,7 +67,7 @@ async function main(): Promise<void> {
   }
 
   const outputDir = outDir !== undefined ? resolve(process.cwd(), outDir) : specDir
-  generateCode(spec, outputDir)
+  await generateCode(spec, outputDir)
 
   if (outDir !== undefined) {
     // When --out is given, only codegen — skip the bunup build step

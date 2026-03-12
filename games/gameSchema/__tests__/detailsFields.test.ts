@@ -52,34 +52,34 @@ describe('details fields schema validation', () => {
 })
 
 describe('details fields codegen', () => {
-  test('emits RollDetails interface', () => {
-    const code = generateCode(DETAILS_SPEC)
+  test('emits RollDetails interface', async () => {
+    const code = await generateCode(DETAILS_SPEC)
     expect(code).toContain('export interface RollDetails')
     expect(code).toContain('readonly diceTotal: number')
     expect(code).toContain('readonly total: number')
     expect(code).toContain('readonly modifier: number')
   })
 
-  test('return type includes RollDetails', () => {
-    const code = generateCode(DETAILS_SPEC)
+  test('return type includes RollDetails', async () => {
+    const code = await generateCode(DETAILS_SPEC)
     expect(code).toContain('GameRollResult<RollResult, RollDetails, RollRecord>')
   })
 
-  test('captures diceTotal before postResolveModifiers', () => {
-    const code = generateCode(DETAILS_SPEC)
+  test('captures diceTotal before postResolveModifiers', async () => {
+    const code = await generateCode(DETAILS_SPEC)
     expect(code).toContain('const diceTotal = r.total')
   })
 
-  test('builds details object', () => {
-    const code = generateCode(DETAILS_SPEC)
+  test('builds details object', async () => {
+    const code = await generateCode(DETAILS_SPEC)
     expect(code).toContain('const details = {')
     expect(code).toContain('diceTotal: diceTotal')
     expect(code).toContain('total: total')
     expect(code).toContain('modifier:')
   })
 
-  test('return statements include details', () => {
-    const code = generateCode(DETAILS_SPEC)
+  test('return statements include details', async () => {
+    const code = await generateCode(DETAILS_SPEC)
     expect(code).toContain(', details }')
   })
 })
@@ -120,8 +120,8 @@ const NO_DETAILS_SPEC = {
 }
 
 describe('no details fields', () => {
-  test('return type is GameRollResult<..., undefined, ...> when no details', () => {
-    const code = generateCode(NO_DETAILS_SPEC)
+  test('return type is GameRollResult<..., undefined, ...> when no details', async () => {
+    const code = await generateCode(NO_DETAILS_SPEC)
     expect(code).toContain('GameRollResult<RollResult, undefined, RollRecord>')
     expect(code).not.toContain('RollDetails')
   })
@@ -162,15 +162,15 @@ describe('nested details objects (#992)', () => {
     expect(result.valid).toBe(true)
   })
 
-  test('codegen emits nested object type', () => {
-    const code = generateCode(NESTED_DETAILS_SPEC)
+  test('codegen emits nested object type', async () => {
+    const code = await generateCode(NESTED_DETAILS_SPEC)
     expect(code).toContain('export interface RollDetails')
     expect(code).toContain('readonly diceTotal: number')
     expect(code).toContain('readonly stats: { readonly total: number; readonly bonus: number }')
   })
 
-  test('codegen emits nested object construction', () => {
-    const code = generateCode(NESTED_DETAILS_SPEC)
+  test('codegen emits nested object construction', async () => {
+    const code = await generateCode(NESTED_DETAILS_SPEC)
     expect(code).toContain('stats: { total: total, bonus:')
   })
 
@@ -214,8 +214,8 @@ describe('$pool ref details (#992)', () => {
     expect(result.valid).toBe(true)
   })
 
-  test('codegen emits pool total references', () => {
-    const code = generateCode(POOL_REF_DETAILS_SPEC)
+  test('codegen emits pool total references', async () => {
+    const code = await generateCode(POOL_REF_DETAILS_SPEC)
     expect(code).toContain('hopeTotal: hopeTotal')
     expect(code).toContain('fearTotal: fearTotal')
   })
@@ -277,8 +277,8 @@ describe('$conditionalPool ref details (#992)', () => {
     expect(result.valid).toBe(true)
   })
 
-  test('codegen tracks conditional pool total by index', () => {
-    const code = generateCode(CONDITIONAL_POOL_DETAILS_SPEC)
+  test('codegen tracks conditional pool total by index', async () => {
+    const code = await generateCode(CONDITIONAL_POOL_DETAILS_SPEC)
     expect(code).toContain('let conditionalPool0Total = 0')
     expect(code).toContain('conditionalPool0Total = cpTotal')
     expect(code).toContain('bonusPool: conditionalPool0Total')
@@ -333,15 +333,15 @@ describe('conditional (when) details (#992)', () => {
     expect(result.valid).toBe(true)
   })
 
-  test('codegen emits conditional details type as union with undefined', () => {
-    const code = generateCode(CONDITIONAL_DETAILS_SPEC)
+  test('codegen emits conditional details type as union with undefined', async () => {
+    const code = await generateCode(CONDITIONAL_DETAILS_SPEC)
     expect(code).toContain(
       'readonly advantageInfo: { readonly active: boolean; readonly roll: number } | undefined'
     )
   })
 
-  test('codegen emits ternary for conditional field', () => {
-    const code = generateCode(CONDITIONAL_DETAILS_SPEC)
+  test('codegen emits ternary for conditional field', async () => {
+    const code = await generateCode(CONDITIONAL_DETAILS_SPEC)
     expect(code).toContain('advantageInfo: input?.advantage !== undefined ?')
   })
 

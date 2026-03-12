@@ -545,78 +545,55 @@
         },
         {
           "type": "object",
-          "required": ["externalTableLookup"],
+          "required": ["remoteTableLookup"],
           "additionalProperties": false,
           "properties": {
-            "externalTableLookup": { "$ref": "#/$defs/ExternalTableLookupOperation" }
+            "remoteTableLookup": { "$ref": "#/$defs/RemoteTableLookupOperation" }
           }
         }
       ]
     },
 
-    "ExternalTableLookupOperation": {
+    "RemoteTableLookupOperation": {
       "type": "object",
-      "description": "Resolve the roll by looking up a result in an external package. Uses a find+resolve pattern: find a table by name, then resolve by roll value.",
-      "required": ["package", "imports", "find", "resolve"],
+      "description": "Resolve the roll by looking up a result in a remote JSON dataset fetched at codegen time. The fetched data is embedded as a static constant in the generated TypeScript file.",
+      "required": ["url", "find", "tableField", "resultMapping"],
       "additionalProperties": false,
       "properties": {
-        "package": {
+        "url": {
           "type": "string",
-          "description": "npm package to import (e.g. 'salvageunion-reference')"
+          "description": "URL to fetch JSON data from at codegen time (e.g. 'https://example.com/tables.json')"
         },
-        "imports": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Named exports to import from the package (e.g. ['SalvageUnionReference', 'resultForTable'])"
+        "dataPath": {
+          "type": "string",
+          "description": "Optional dot-path to extract an array from the response (e.g. 'data.tables'). Omit if the root response IS the array."
         },
         "find": {
           "type": "object",
-          "required": ["collection", "where"],
+          "required": ["field", "input"],
           "additionalProperties": false,
           "properties": {
-            "collection": {
+            "field": {
               "type": "string",
-              "description": "Dotted path to the collection to search (e.g. 'SalvageUnionReference.RollTables')"
+              "description": "Field on each array entry to match against (e.g. 'name')"
             },
-            "where": {
-              "type": "object",
-              "required": ["field", "input"],
-              "additionalProperties": false,
-              "properties": {
-                "field": {
-                  "type": "string",
-                  "description": "Field on each collection item to match against (e.g. 'name')"
-                },
-                "input": {
-                  "type": "string",
-                  "description": "Name of the input parameter whose value to match (e.g. 'tableName')"
-                }
-              }
+            "input": {
+              "type": "string",
+              "description": "Name of the input parameter whose value to match (e.g. 'tableName')"
             },
             "errorMessage": {
               "type": "string",
-              "description": "Template error message when find returns no match. Use ${value} as placeholder for the input value (e.g. 'Invalid table name: \"${value}\"')"
+              "description": "Template error message when find returns no match. Use ${value} as placeholder for the input value."
             }
           }
         },
-        "resolve": {
-          "type": "object",
-          "required": ["fn", "tableField"],
-          "additionalProperties": false,
-          "properties": {
-            "fn": {
-              "type": "string",
-              "description": "Name of the resolver function to call (e.g. 'resultForTable')"
-            },
-            "tableField": {
-              "type": "string",
-              "description": "Field on the found item to pass to the resolver (e.g. 'table')"
-            }
-          }
+        "tableField": {
+          "type": "string",
+          "description": "Field on the found entry containing the range-keyed table (e.g. 'table')"
         },
         "resultMapping": {
           "type": "object",
-          "description": "Compose a typed result object from multiple sources instead of returning raw lookup output",
+          "description": "Compose a typed result object from the lookup result, found entry, inputs, and roll total",
           "additionalProperties": {
             "$ref": "#/$defs/ResultMappingLeaf"
           }
