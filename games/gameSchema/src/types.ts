@@ -126,10 +126,17 @@ export interface InputDeclaration {
   readonly description?: string
 }
 
+export interface ConditionalPool {
+  readonly condition: Condition
+  readonly pool: PoolDefinition | Ref
+  readonly arithmetic: 'add' | 'subtract'
+}
+
 export interface RollDefinition {
   readonly inputs?: Readonly<Record<string, InputDeclaration>>
   readonly dice?: DiceConfig | readonly DiceConfig[]
   readonly dicePools?: Readonly<Record<string, DiceConfig>>
+  readonly conditionalPools?: readonly ConditionalPool[]
   readonly modify?: readonly ModifyOperation[]
   readonly postResolveModifiers?: readonly PostResolveModifyOperation[]
   readonly resolve: ResolveOperation

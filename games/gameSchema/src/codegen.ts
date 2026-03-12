@@ -4,6 +4,8 @@ import { join, resolve } from 'node:path'
 import { SchemaError } from './errors'
 import { isRef, resolveRef } from './refResolver'
 import type {
+  Condition,
+  ConditionalPool,
   DegreeOfSuccessOperation,
   DiceConfig,
   InputDeclaration,
@@ -137,16 +139,15 @@ function buildDiceOptionsCode(
   return `{ ${fields.join(', ')} }`
 }
 
-function conditionCode(rollCase: RollCase, optional: boolean): string {
-  const tsOp = rollCase.condition.operator === '=' ? '===' : rollCase.condition.operator
-  const val =
-    typeof rollCase.condition.value === 'string'
-      ? `'${rollCase.condition.value}'`
-      : String(rollCase.condition.value)
-  const accessor = optional
-    ? `input?.${rollCase.condition.input}`
-    : `input.${rollCase.condition.input}`
+function conditionCodeFromCondition(condition: Condition, optional: boolean): string {
+  const tsOp = condition.operator === '=' ? '===' : condition.operator
+  const val = typeof condition.value === 'string' ? `'${condition.value}'` : String(condition.value)
+  const accessor = optional ? `input?.${condition.input}` : `input.${condition.input}`
   return `${accessor} ${tsOp} ${val}`
+}
+
+function conditionCode(rollCase: RollCase, optional: boolean): string {
+  return conditionCodeFromCondition(rollCase.condition, optional)
 }
 
 function getOutcomeRanges(
@@ -334,8 +335,41 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
     )
   }
 
-  lines.push(`  const rolls = [${poolNames.map(n => `...${n}Result.rolls`).join(', ')}]`)
-  lines.push(`  const total = ${poolNames.map(n => `${n}Total`).join(' + ')}`)
+  lines.push(
+    `  const rolls: RollRecord[] = [${poolNames.map(n => `...${n}Result.rolls`).join(', ')}]`
+  )
+  lines.push(`  let total = ${poolNames.map(n => `${n}Total`).join(' + ')}`)
+
+  // Emit conditional pools
+  if (rollDef.conditionalPools !== undefined && rollDef.conditionalPools.length > 0) {
+    for (const cp of rollDef.conditionalPools) {
+      const cond = conditionCodeFromCondition(cp.condition, optional)
+      const cpPool = isRef(cp.pool) ? (resolveRef(spec, cp.pool.$ref) as PoolDefinition) : cp.pool
+      const cpSides = integerOrInputCode(cpPool.sides, rollDef.inputs, optional)
+      const cpQty =
+        cpPool.quantity !== undefined
+          ? integerOrInputCode(cpPool.quantity, rollDef.inputs, optional)
+          : '1'
+      const sign = cp.arithmetic === 'add' ? '+=' : '-='
+      lines.push(`  if (${cond}) {`)
+      lines.push(`    const cpResult = executeRoll({ sides: ${cpSides}, quantity: ${cpQty} })`)
+      lines.push(
+        `    const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)`
+      )
+      lines.push(`    total ${sign} cpTotal`)
+      lines.push(`    rolls.push(...cpResult.rolls)`)
+      lines.push(`  }`)
+    }
+  }
+
+  // Emit postResolveModifiers for multi-pool
+  if (rollDef.postResolveModifiers !== undefined && rollDef.postResolveModifiers.length > 0) {
+    for (const op of rollDef.postResolveModifiers) {
+      if (op.add !== undefined) {
+        lines.push(`  total += ${integerOrInputCode(op.add, rollDef.inputs, optional)}`)
+      }
+    }
+  }
 
   // Emit comparison logic
   if (

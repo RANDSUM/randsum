@@ -34,5 +34,6 @@ export type {
   CapOperation,
   MarkDiceOperation,
   PoolCondition,
-  PostResolveModifyOperation
+  PostResolveModifyOperation,
+  ConditionalPool
 } from './types'

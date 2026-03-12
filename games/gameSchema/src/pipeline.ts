@@ -8,6 +8,7 @@ import { type ManualOp, translateModifiers } from './modifierTranslator'
 import { isRef, resolveRef } from './refResolver'
 import type {
   ComparePoolOperation,
+  Condition,
   DegreeOfSuccessOperation,
   DiceConfig,
   GameRollResult,
@@ -56,7 +57,7 @@ function applyInputDefaults(
 }
 
 function resolveDicePool(
-  pool: DiceConfig['pool'],
+  pool: DiceConfig['pool'] | PoolDefinition | Ref,
   _input: RollInput,
   spec: RandSumSpec
 ): PoolDefinition {
@@ -64,7 +65,26 @@ function resolveDicePool(
     const resolved = resolveRef(spec, pool.$ref)
     return resolved as PoolDefinition
   }
-  return pool
+  return pool as PoolDefinition
+}
+
+function evaluateCondition(condition: Condition, input: RollInput): boolean {
+  const inputVal = input[condition.input]
+  if (inputVal === undefined) return false
+  if (condition.operator === '=') return inputVal === condition.value
+  if (typeof inputVal !== 'number' || typeof condition.value !== 'number') return false
+  switch (condition.operator) {
+    case '>':
+      return inputVal > condition.value
+    case '>=':
+      return inputVal >= condition.value
+    case '<':
+      return inputVal < condition.value
+    case '<=':
+      return inputVal <= condition.value
+    default:
+      return false
+  }
 }
 
 function buildSingleRollOptions(
@@ -329,8 +349,34 @@ export function executePipeline(
     const poolResults = Object.fromEntries(
       poolEntries.map(([key, diceConfig]) => [key, rollSinglePool(diceConfig, mergedInput, spec)])
     )
-    const allRolls = Object.values(poolResults).flatMap(p => p.rolls)
-    const total = Object.values(poolResults).reduce((s, p) => s + p.total, 0)
+    const allRolls: RollRecord[] = Object.values(poolResults).flatMap(p => [...p.rolls])
+    let total = Object.values(poolResults).reduce((s, p) => s + p.total, 0)
+
+    // Apply conditional pools
+    if (rollDef.conditionalPools !== undefined) {
+      for (const cp of rollDef.conditionalPools) {
+        const inputVal = mergedInput[cp.condition.input]
+        if (inputVal === undefined) continue
+        if (evaluateCondition(cp.condition, mergedInput)) {
+          const cpPool = resolveDicePool(cp.pool, mergedInput, spec)
+          const cpSides = bindInteger(cpPool.sides, mergedInput)
+          const cpQty =
+            cpPool.quantity !== undefined ? bindInteger(cpPool.quantity, mergedInput) : 1
+          const cpResult = roll({ sides: cpSides, quantity: cpQty })
+          const cpTotal = cpResult.rolls
+            .flatMap((r: RollRecord) => r.rolls)
+            .reduce((s, v) => s + v, 0)
+          if (cp.arithmetic === 'add') {
+            total += cpTotal
+          } else {
+            total -= cpTotal
+          }
+          allRolls.push(...cpResult.rolls)
+        }
+      }
+    }
+
+    total = applyPostResolveModifiers(total, effectivePostResolveModifiers, mergedInput)
     const result = resolveCompareResult(override?.resolve ?? rollDef.resolve, poolResults)
     return { total, result, rolls: allRolls }
   }

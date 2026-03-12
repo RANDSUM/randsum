@@ -221,6 +221,30 @@
           "description": "Modifiers applied after resolve (to the total, not individual dice). Use for bonuses like 2d6+stat.",
           "type": "array",
           "items": { "$ref": "#/$defs/PostResolveModifyOperation" }
+        },
+        "conditionalPools": {
+          "description": "Extra dice pools rolled only when a condition matches. Each pool's total is added or subtracted from the main total.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/ConditionalPool" }
+        }
+      }
+    },
+
+    "ConditionalPool": {
+      "type": "object",
+      "description": "An extra dice pool rolled conditionally. When the condition matches, roll the pool and add or subtract its total.",
+      "required": ["condition", "pool", "arithmetic"],
+      "additionalProperties": false,
+      "properties": {
+        "condition": { "$ref": "#/$defs/Condition" },
+        "pool": {
+          "description": "The dice pool to roll when the condition matches.",
+          "oneOf": [{ "$ref": "#/$defs/PoolDefinition" }, { "$ref": "#/$defs/Ref" }]
+        },
+        "arithmetic": {
+          "type": "string",
+          "enum": ["add", "subtract"],
+          "description": "Whether to add or subtract this pool's total from the main total"
         }
       }
     },
