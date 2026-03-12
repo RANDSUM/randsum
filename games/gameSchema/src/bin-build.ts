@@ -74,7 +74,7 @@ async function main(): Promise<void> {
     return
   }
 
-  const entryFilename = `${spec.shortcode}.ts`
+  const entryFilename = `${spec.shortcode}.generated.ts`
 
   const result = spawnSync(
     'bun',

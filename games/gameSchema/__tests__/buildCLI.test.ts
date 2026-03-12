@@ -18,7 +18,7 @@ describe('bin-build CLI integration', () => {
         TMP_DIR
       ]).exited
       expect(result).toBe(0)
-      expect(existsSync(resolve(TMP_DIR, 'test.ts'))).toBe(true)
+      expect(existsSync(resolve(TMP_DIR, 'test.generated.ts'))).toBe(true)
     } finally {
       rmSync(TMP_DIR, { recursive: true, force: true })
     }

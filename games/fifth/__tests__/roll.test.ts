@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
-import { type FifthRollArgument, roll } from '../src'
+import { roll } from '@randsum/fifth'
 
 describe('roll', () => {
   describe('basic roll', () => {
-    const args: FifthRollArgument = { modifier: 5 }
+    const args = { modifier: 5 }
 
     test('returns a total within valid range', () => {
       const rollResult = roll(args)
@@ -24,9 +24,9 @@ describe('roll', () => {
   })
 
   describe('with advantage', () => {
-    const args: FifthRollArgument = {
+    const args = {
       modifier: 5,
-      rollingWith: { advantage: true }
+      rollingWith: 'Advantage' as const
     }
 
     test('returns two rolls', () => {
@@ -43,9 +43,9 @@ describe('roll', () => {
   })
 
   describe('with disadvantage', () => {
-    const args: FifthRollArgument = {
+    const args = {
       modifier: 5,
-      rollingWith: { disadvantage: true }
+      rollingWith: 'Disadvantage' as const
     }
 
     test('returns two rolls', () => {
@@ -62,10 +62,7 @@ describe('roll', () => {
   })
 
   describe('with both advantage and disadvantage', () => {
-    const args: FifthRollArgument = {
-      modifier: 5,
-      rollingWith: { advantage: true, disadvantage: true }
-    }
+    const args = { modifier: 5 }
 
     test('returns single roll result', () => {
       const result = roll(args)
@@ -80,7 +77,7 @@ describe('roll', () => {
   })
 
   describe('with negative modifier', () => {
-    const args: FifthRollArgument = { modifier: -3 }
+    const args = { modifier: -3 }
 
     test('returns a result within valid range', () => {
       const result = roll(args)

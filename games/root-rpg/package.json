@@ -15,28 +15,28 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "games/root-rpg"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/root-rpg.generated.cjs",
+  "module": "./dist/root-rpg.generated.js",
+  "types": "./dist/root-rpg.generated.d.ts",
   "files": [
     "dist",
-    "src",
+    "root-rpg.randsum.json",
     "LICENSE",
     "README.md"
   ],
   "type": "module",
   "dependencies": {
-    "@randsum/roller": "workspace:~"
+    "@randsum/gameSchema": "workspace:~"
   },
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/root-rpg.generated.d.ts",
+        "default": "./dist/root-rpg.generated.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/root-rpg.generated.d.cts",
+        "default": "./dist/root-rpg.generated.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -56,13 +56,9 @@
     "root-rpg"
   ],
   "scripts": {
-    "dev": "bunup --watch",
     "prepublishOnly": "bun run build",
-    "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
-    "test": "bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "typecheck": "tsc --noEmit"
+    "build": "bun run randsum-schema-build",
+    "validate": "bun run randsum-schema-validate",
+    "test": "bun run build && bun test"
   }
 }

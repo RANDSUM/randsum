@@ -1016,7 +1016,7 @@ export async function generateCode(spec: RandSumSpec, outputDir?: string): Promi
   const code = await buildCodeString(spec)
 
   if (outputDir !== undefined) {
-    const filename = `${spec.shortcode}.ts`
+    const filename = `${spec.shortcode}.generated.ts`
     const dir = resolve(outputDir)
     mkdirSync(dir, { recursive: true })
     const filepath = join(dir, filename)

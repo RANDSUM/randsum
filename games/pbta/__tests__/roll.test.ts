@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { roll } from '../src/roll'
+import { roll } from '@randsum/pbta'
 
 describe('roll', () => {
   test('returns valid outcome', () => {
@@ -63,7 +63,7 @@ describe('roll', () => {
   })
 
   test('advantage rolls 3d6 and keeps 2 highest', () => {
-    const result = roll({ stat: 0, advantage: true })
+    const result = roll({ stat: 0, rollingWith: 'Advantage' })
     // Should have 2 dice in the result (3 rolled, 1 dropped)
     expect(result.rolls[0]?.rolls.length).toBe(2)
     // Total should be sum of 2 highest from 3d6
@@ -72,7 +72,7 @@ describe('roll', () => {
   })
 
   test('disadvantage rolls 3d6 and keeps 2 lowest', () => {
-    const result = roll({ stat: 0, disadvantage: true })
+    const result = roll({ stat: 0, rollingWith: 'Disadvantage' })
     // Should have 2 dice in the result (3 rolled, 1 dropped)
     expect(result.rolls[0]?.rolls.length).toBe(2)
     // Total should be sum of 2 lowest from 3d6

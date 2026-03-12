@@ -51,6 +51,7 @@ yarn.lock
 package-lock.json
 
 # Generated files
+*.generated.ts
 *.d.ts.map
 *.js.map
 *.tsbuildinfo

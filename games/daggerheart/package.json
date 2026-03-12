@@ -15,9 +15,9 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "games/daggerheart"
   },
-  "main": "./dist/daggerheart.cjs",
-  "module": "./dist/daggerheart.js",
-  "types": "./dist/daggerheart.d.ts",
+  "main": "./dist/daggerheart.generated.cjs",
+  "module": "./dist/daggerheart.generated.js",
+  "types": "./dist/daggerheart.generated.d.ts",
   "files": [
     "dist",
     "daggerheart.randsum.json",
@@ -31,12 +31,12 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/daggerheart.d.ts",
-        "default": "./dist/daggerheart.js"
+        "types": "./dist/daggerheart.generated.d.ts",
+        "default": "./dist/daggerheart.generated.js"
       },
       "require": {
-        "types": "./dist/daggerheart.d.cts",
-        "default": "./dist/daggerheart.cjs"
+        "types": "./dist/daggerheart.generated.d.cts",
+        "default": "./dist/daggerheart.generated.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -58,12 +58,9 @@
     "darrington-press"
   ],
   "scripts": {
-    "dev": "bunup --watch",
     "prepublishOnly": "bun run build",
     "build": "bun run randsum-schema-build",
-    "test": "bun run build && bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc"
+    "validate": "bun run randsum-schema-validate",
+    "test": "bun run build && bun test"
   }
 }

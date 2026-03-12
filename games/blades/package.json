@@ -16,9 +16,9 @@
     "directory": "games/blades"
   },
   "type": "module",
-  "main": "./dist/blades.cjs",
-  "module": "./dist/blades.js",
-  "types": "./dist/blades.d.ts",
+  "main": "./dist/blades.generated.cjs",
+  "module": "./dist/blades.generated.js",
+  "types": "./dist/blades.generated.d.ts",
   "files": [
     "dist",
     "blades.randsum.json",
@@ -31,12 +31,12 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/blades.d.ts",
-        "default": "./dist/blades.js"
+        "types": "./dist/blades.generated.d.ts",
+        "default": "./dist/blades.generated.js"
       },
       "require": {
-        "types": "./dist/blades.d.cts",
-        "default": "./dist/blades.cjs"
+        "types": "./dist/blades.generated.d.cts",
+        "default": "./dist/blades.generated.cjs"
       }
     },
     "./package.json": "./package.json"

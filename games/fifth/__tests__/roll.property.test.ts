@@ -1,6 +1,6 @@
 import { describe, test } from 'bun:test'
 import fc from 'fast-check'
-import { roll } from '../src'
+import { roll } from '@randsum/fifth'
 
 describe('roll property-based tests', () => {
   test('total is within valid d20+modifier range', () => {
@@ -27,7 +27,7 @@ describe('roll property-based tests', () => {
   test('advantage rolls 2d20 and keeps highest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = roll({ modifier, rollingWith: { advantage: true } })
+        const { rolls } = roll({ modifier, rollingWith: 'Advantage' })
         const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.length === 2
       })
@@ -37,7 +37,7 @@ describe('roll property-based tests', () => {
   test('disadvantage rolls 2d20 and keeps lowest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = roll({ modifier, rollingWith: { disadvantage: true } })
+        const { rolls } = roll({ modifier, rollingWith: 'Disadvantage' })
         const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.length === 2
       })
@@ -47,10 +47,7 @@ describe('roll property-based tests', () => {
   test('both advantage and disadvantage cancel out to normal roll', () => {
     fc.assert(
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
-        const { rolls } = roll({
-          modifier,
-          rollingWith: { advantage: true, disadvantage: true }
-        })
+        const { rolls } = roll({ modifier })
         const initialRolls = rolls[0]?.initialRolls ?? []
         return initialRolls.length === 1
       })
@@ -61,13 +58,11 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(
         fc.integer({ min: -30, max: 30 }),
-        fc.boolean(),
-        fc.boolean(),
-        (modifier, advantage, disadvantage) => {
-          const { rolls } = roll({
-            modifier,
-            rollingWith: { advantage, disadvantage }
-          })
+        fc.constantFrom(undefined, 'Advantage', 'Disadvantage'),
+        (modifier, rollingWith) => {
+          const { rolls } = roll(
+            rollingWith !== undefined ? { modifier, rollingWith } : { modifier }
+          )
           const initialRolls = rolls[0]?.initialRolls ?? []
           return initialRolls.every(roll => roll >= 1 && roll <= 20)
         }
@@ -80,10 +75,10 @@ describe('roll property-based tests', () => {
       fc.property(fc.integer({ min: -30, max: 30 }), modifier => {
         // Roll many times to verify advantage >= disadvantage on average
         const advantageResults = Array.from({ length: 50 }, () =>
-          roll({ modifier, rollingWith: { advantage: true } })
+          roll({ modifier, rollingWith: 'Advantage' })
         )
         const disadvantageResults = Array.from({ length: 50 }, () =>
-          roll({ modifier, rollingWith: { disadvantage: true } })
+          roll({ modifier, rollingWith: 'Disadvantage' })
         )
 
         const avgAdvantage =

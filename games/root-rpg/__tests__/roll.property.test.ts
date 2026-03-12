@@ -1,6 +1,6 @@
 import { describe, test } from 'bun:test'
 import fc from 'fast-check'
-import { roll } from '../src/roll'
+import { roll } from '@randsum/root-rpg'
 
 const VALID_RESULTS = ['Strong Hit', 'Weak Hit', 'Miss'] as const
 

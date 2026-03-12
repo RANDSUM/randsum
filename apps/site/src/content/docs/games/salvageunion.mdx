@@ -129,14 +129,11 @@ Other tables in Salvage Union have different result tiers and descriptions. The 
 
 ## Types
 
-<CodeExample code={`import type {
-  SalvageUnionRollRecord,
-  SalvageUnionTableListing,
-  SalvageUnionTableName
-} from '@randsum/salvageunion'
+<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/salvageunion'
 
-// Runtime constant: array of all valid table names
-import { SALVAGE_UNION_TABLE_NAMES } from '@randsum/salvageunion'`} />
+// Table names are available from the reference package
+import { SalvageUnionReference } from 'salvageunion-reference'
+const tableNames = SalvageUnionReference.RollTables.all().map(t => t.name)`} />
 
 ## Links
 

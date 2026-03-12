@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { roll } from '../src/roll'
+import { roll } from '@randsum/root-rpg'
 
 describe('roll', () => {
   describe('roll ranges', () => {

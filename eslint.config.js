@@ -39,7 +39,8 @@ export default tseslint.config(
       '**/public/**',
       '**/.ladle/**',
       '**/__tests__/fixtures/dist/**',
-      '**/__tests__/fixtures/*.ts'
+      '**/__tests__/fixtures/*.ts',
+      '**/*.generated.ts'
     ]
   },
   {

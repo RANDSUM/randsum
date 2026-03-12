@@ -1,0 +1,23 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Root RPG",
+  "shortcode": "root-rpg",
+  "version": "1.0.0",
+  "game_url": "https://magpiegames.com/root-the-rpg/",
+
+  "roll": {
+    "inputs": {
+      "bonus": { "type": "integer", "minimum": -20, "maximum": 20 }
+    },
+    "dice": { "pool": { "sides": 6 }, "quantity": 2 },
+    "resolve": "sum",
+    "modify": [{ "add": { "$input": "bonus" } }],
+    "outcome": {
+      "ranges": [
+        { "min": 10, "max": 32, "result": "Strong Hit" },
+        { "min": 7, "max": 9, "result": "Weak Hit" },
+        { "min": -18, "max": 6, "result": "Miss" }
+      ]
+    }
+  }
+}

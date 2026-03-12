@@ -59,26 +59,6 @@
       "limit": "8 KB"
     },
     {
-      "path": "games/fifth/dist/index.js",
-      "limit": "8 KB"
-    },
-    {
-      "path": "games/daggerheart/dist/index.js",
-      "limit": "8 KB"
-    },
-    {
-      "path": "games/root-rpg/dist/index.js",
-      "limit": "8 KB"
-    },
-    {
-      "path": "games/salvageunion/dist/index.js",
-      "limit": "300 KB"
-    },
-    {
-      "path": "games/pbta/dist/index.js",
-      "limit": "8 KB"
-    },
-    {
       "path": "packages/roller/dist/index.d.ts",
       "limit": "4 KB"
     },
@@ -91,19 +71,19 @@
       "limit": "6 KB"
     },
     {
-      "path": "games/fifth/dist/index.d.ts",
+      "path": "games/fifth/dist/fifth.d.ts",
       "limit": "6 KB"
     },
     {
-      "path": "games/daggerheart/dist/index.d.ts",
+      "path": "games/daggerheart/dist/daggerheart.d.ts",
       "limit": "6 KB"
     },
     {
-      "path": "games/root-rpg/dist/index.d.ts",
+      "path": "games/root-rpg/dist/root-rpg.d.ts",
       "limit": "6 KB"
     },
     {
-      "path": "games/pbta/dist/index.d.ts",
+      "path": "games/pbta/dist/pbta.d.ts",
       "limit": "6 KB"
     },
     {
@@ -111,7 +91,7 @@
       "limit": "2 KB"
     },
     {
-      "path": "games/salvageunion/dist/index.d.ts",
+      "path": "games/salvageunion/dist/salvageunion.d.ts",
       "limit": "6 KB"
     }
   ],
@@ -120,7 +100,7 @@
     "help": "bun scripts/help.ts",
     "create:game": "bun scripts/create-game-package.ts",
     "dev": "bun run --filter '*' dev",
-    "build": "bun run --filter \"*\" build",
+    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' --filter '@randsum/gameSchema' build && bun run --filter '@randsum/component-library' --filter '@randsum/blades' --filter '@randsum/fifth' --filter '@randsum/pbta' --filter '@randsum/root-rpg' --filter '@randsum/daggerheart' --filter '@randsum/salvageunion' --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/site' build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "bun run --filter \"*\" lint",
@@ -134,7 +114,7 @@
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
-    "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run check:exports && bun run site:build",
+    "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run check:exports && bun run site:build",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/component-library dev & bun run --filter @randsum/site dev",

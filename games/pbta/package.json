@@ -16,27 +16,27 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "games/pbta"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/pbta.generated.cjs",
+  "module": "./dist/pbta.generated.js",
+  "types": "./dist/pbta.generated.d.ts",
   "files": [
     "dist",
-    "src",
+    "pbta.randsum.json",
     "LICENSE",
     "README.md"
   ],
   "dependencies": {
-    "@randsum/roller": "workspace:~"
+    "@randsum/gameSchema": "workspace:~"
   },
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/pbta.generated.d.ts",
+        "default": "./dist/pbta.generated.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/pbta.generated.d.cts",
+        "default": "./dist/pbta.generated.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -58,13 +58,9 @@
     "monster-of-the-week"
   ],
   "scripts": {
-    "dev": "bunup --watch",
     "prepublishOnly": "bun run build",
-    "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
-    "test": "bun test",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "typecheck": "tsc --noEmit"
+    "build": "bun run randsum-schema-build",
+    "validate": "bun run randsum-schema-validate",
+    "test": "bun run build && bun test"
   }
 }

@@ -1,6 +1,6 @@
 import { describe, test } from 'bun:test'
 import fc from 'fast-check'
-import { roll } from '../src/roll'
+import { roll } from '@randsum/pbta'
 
 describe('roll property-based tests', () => {
   test('result matches total threshold', () => {
@@ -72,7 +72,7 @@ describe('roll property-based tests', () => {
   test('advantage rolls 3d6 and keeps 2 highest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), stat => {
-        const { rolls } = roll({ stat, advantage: true })
+        const { rolls } = roll({ stat, rollingWith: 'Advantage' })
         // After dropping lowest, should have 2 dice in result
         return rolls[0]?.rolls.length === 2
       })
@@ -82,7 +82,7 @@ describe('roll property-based tests', () => {
   test('disadvantage rolls 3d6 and keeps 2 lowest', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), stat => {
-        const { rolls } = roll({ stat, disadvantage: true })
+        const { rolls } = roll({ stat, rollingWith: 'Disadvantage' })
         // After dropping highest, should have 2 dice in result
         return rolls[0]?.rolls.length === 2
       })

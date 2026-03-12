@@ -16,9 +16,9 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "games/salvageunion"
   },
-  "main": "./dist/salvageunion.cjs",
-  "module": "./dist/salvageunion.js",
-  "types": "./dist/salvageunion.d.ts",
+  "main": "./dist/salvageunion.generated.cjs",
+  "module": "./dist/salvageunion.generated.js",
+  "types": "./dist/salvageunion.generated.d.ts",
   "files": [
     "dist",
     "salvageunion.randsum.json",
@@ -31,12 +31,12 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/salvageunion.d.ts",
-        "default": "./dist/salvageunion.js"
+        "types": "./dist/salvageunion.generated.d.ts",
+        "default": "./dist/salvageunion.generated.js"
       },
       "require": {
-        "types": "./dist/salvageunion.d.cts",
-        "default": "./dist/salvageunion.cjs"
+        "types": "./dist/salvageunion.generated.d.cts",
+        "default": "./dist/salvageunion.generated.cjs"
       }
     },
     "./package.json": "./package.json"
