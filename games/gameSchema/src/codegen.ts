@@ -10,6 +10,7 @@ import type {
   ModifyOperation,
   OutcomeOperation,
   PoolDefinition,
+  PostResolveModifyOperation,
   RandSumSpec,
   Ref,
   RollCase,
@@ -216,6 +217,21 @@ function buildRangeReturn(range: TableRange, indent: string): string | null {
   return null
 }
 
+function buildPostResolveTotalExpr(
+  postResolveModifiers: RollDefinition['postResolveModifiers'],
+  inputs: RollDefinition['inputs'],
+  optional: boolean
+): string {
+  if (!postResolveModifiers || postResolveModifiers.length === 0) return 'r.total'
+  const adds = postResolveModifiers
+    .filter(
+      (op): op is PostResolveModifyOperation & { add: IntegerOrInput } => op.add !== undefined
+    )
+    .map(op => integerOrInputCode(op.add, inputs, optional))
+  if (adds.length === 0) return 'r.total'
+  return `r.total + ${adds.join(' + ')}`
+}
+
 function generateFunctionBody(
   rollDef: RollDefinition,
   spec: RandSumSpec,
@@ -235,11 +251,18 @@ function generateFunctionBody(
     )
     const needsPost = overrideRanges.some(r => r.poolCondition?.pool === 'postModify')
 
+    const overridePostResolve =
+      rollCase.override.postResolveModifiers ?? rollDef.postResolveModifiers
+    const overrideTotalExpr = buildPostResolveTotalExpr(
+      overridePostResolve,
+      rollDef.inputs,
+      optional
+    )
     lines.push(`  if (${cond}) {`)
     lines.push(`    const r = executeRoll(${diceCode})`)
     if (needsPre) lines.push(`    const preModify = r.rolls.flatMap(x => x.initialRolls)`)
     if (needsPost) lines.push(`    const postModify = r.rolls.flatMap(x => x.rolls)`)
-    lines.push(`    const total = r.total`)
+    lines.push(`    const total = ${overrideTotalExpr}`)
     for (const range of overrideRanges) {
       const check = buildRangeReturn(range, '    ')
       if (check) lines.push(check)
@@ -261,10 +284,15 @@ function generateFunctionBody(
   )
   const needsPost = defaultRanges.some(r => r.poolCondition?.pool === 'postModify')
 
+  const totalExpr = buildPostResolveTotalExpr(
+    rollDef.postResolveModifiers,
+    rollDef.inputs,
+    optional
+  )
   lines.push(`  const r = executeRoll(${defaultDiceCode})`)
   if (needsPre) lines.push(`  const preModify = r.rolls.flatMap(x => x.initialRolls)`)
   if (needsPost) lines.push(`  const postModify = r.rolls.flatMap(x => x.rolls)`)
-  lines.push(`  const total = r.total`)
+  lines.push(`  const total = ${totalExpr}`)
   for (const range of defaultRanges) {
     const check = buildRangeReturn(range, '  ')
     if (check) lines.push(check)

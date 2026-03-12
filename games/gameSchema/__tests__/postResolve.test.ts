@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { loadSpec, validateSpec } from '../src'
+import { generateCode } from '../src/codegen'
 
 const BASE = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -160,5 +161,48 @@ describe('postResolveModifiers runtime behavior', () => {
     })
     const boosted = game.roll({ mode: 'boosted' })
     expect(boosted.total).toBeGreaterThanOrEqual(52)
+  })
+})
+
+describe('postResolveModifiers codegen', () => {
+  const CODEGEN_SPEC = {
+    $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+    name: 'Codegen Test',
+    shortcode: 'test-cg',
+    game_url: 'https://example.com',
+    roll: {
+      inputs: { bonus: { type: 'integer' as const, default: 0 } },
+      dice: { pool: { sides: 6 }, quantity: 2 },
+      resolve: 'sum' as const,
+      postResolveModifiers: [{ add: { $input: 'bonus' } }],
+      outcome: {
+        ranges: [
+          { min: 1, max: 10, result: 'low' },
+          { min: 11, max: 999, result: 'high' }
+        ]
+      }
+    }
+  }
+
+  test('generated code adds bonus to r.total', () => {
+    const code = generateCode(CODEGEN_SPEC)
+    // Should contain r.total + something, not just r.total
+    expect(code).toMatch(/r\.total \+/)
+  })
+
+  test('generated code references the bonus input', () => {
+    const code = generateCode(CODEGEN_SPEC)
+    expect(code).toContain('bonus')
+  })
+
+  test('no postResolveModifiers: generates plain r.total', () => {
+    const specNoBonus = {
+      ...CODEGEN_SPEC,
+      roll: { ...CODEGEN_SPEC.roll, postResolveModifiers: undefined }
+    }
+    const code = generateCode(specNoBonus)
+    // Should be exactly r.total, not r.total + anything
+    expect(code).toContain('const total = r.total')
+    expect(code).not.toMatch(/r\.total \+/)
   })
 })
