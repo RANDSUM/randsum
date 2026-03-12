@@ -21,7 +21,7 @@
   "types": "./dist/index.d.ts",
   "bin": {
     "randsum-schema-validate": "./dist/bin.cjs",
-    "randsum-schema-build": "./dist/bin-build.cjs"
+    "randsum-schema-build": "./dist/bin-build.js"
   },
   "exports": {
     ".": {
@@ -49,7 +49,8 @@
   "devDependencies": {
     "@randsum/roller": "workspace:~",
     "typescript": "^5.9.3",
-    "bunup": "^0.11.0"
+    "bunup": "^0.16.0",
+    "prettier": "^3.8.1"
   },
   "engines": {
     "bun": ">=1.3.10",
@@ -58,7 +59,7 @@
   "scripts": {
     "dev": "bunup --watch",
     "prepublishOnly": "bun run build",
-    "build": "bunup && chmod +x dist/bin.cjs dist/bin-build.cjs",
+    "build": "bunup && chmod +x dist/bin.cjs dist/bin-build.js",
     "codegen": "bun scripts/codegen.ts",
     "validate": "bun src/bin.ts",
     "test": "bun run build && bun test",

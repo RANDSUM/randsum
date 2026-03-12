@@ -1,6 +1,3 @@
-import { mkdirSync, writeFileSync } from 'node:fs'
-import { join, resolve } from 'node:path'
-
 import { SchemaError } from './errors'
 import { isRef, resolveRef } from './refResolver'
 import type {
@@ -1002,27 +999,13 @@ async function buildCodeString(spec: RandSumSpec): Promise<string> {
  * Generate TypeScript roll functions from a spec.
  *
  * @param spec - The parsed .randsum.json spec
- * @param outputDir - If provided, writes the generated file to this directory
- *                    (named after the spec) and returns the full filepath.
- *                    Otherwise returns the code string.
  */
-export async function generateCode(spec: RandSumSpec, outputDir?: string): Promise<string> {
+export async function generateCode(spec: RandSumSpec): Promise<string> {
   const result = validateSpec(spec)
   if (!result.valid) {
     const summary = result.errors.map(e => `${e.path}: ${e.message}`).join('; ')
     throw new SchemaError('INVALID_SPEC', `Invalid spec: ${summary}`)
   }
 
-  const code = await buildCodeString(spec)
-
-  if (outputDir !== undefined) {
-    const filename = `${spec.shortcode}.generated.ts`
-    const dir = resolve(outputDir)
-    mkdirSync(dir, { recursive: true })
-    const filepath = join(dir, filename)
-    writeFileSync(filepath, code, 'utf-8')
-    return filepath
-  }
-
-  return code
+  return buildCodeString(spec)
 }

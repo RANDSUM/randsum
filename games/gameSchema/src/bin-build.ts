@@ -1,7 +1,9 @@
-#!/usr/bin/env node
-import { readFileSync, readdirSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { spawnSync } from 'node:child_process'
+#!/usr/bin/env bun
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+
+import { build } from 'bunup'
+import { format, resolveConfig } from 'prettier'
 
 import { generateCode } from './codegen'
 import { resolveExternalRefs } from './externalRefResolver'
@@ -50,6 +52,12 @@ async function resolveSpec(raw: RandSumSpec, path: string): Promise<RandSumSpec>
   }
 }
 
+async function writeFormatted(code: string, filepath: string): Promise<void> {
+  const config = await resolveConfig(filepath)
+  const formatted = await format(code, { ...(config ?? {}), parser: 'typescript' })
+  writeFileSync(filepath, formatted, 'utf-8')
+}
+
 async function main(): Promise<void> {
   const absSpecPath = resolve(process.cwd(), specPath)
   const specDir = dirname(absSpecPath)
@@ -67,37 +75,31 @@ async function main(): Promise<void> {
   }
 
   const outputDir = outDir !== undefined ? resolve(process.cwd(), outDir) : specDir
-  await generateCode(spec, outputDir)
+  const entryFilename = `${spec.shortcode}.generated.ts`
+  const entryFilepath = join(outputDir, entryFilename)
+
+  mkdirSync(outputDir, { recursive: true })
+  const code = await generateCode(spec)
+  await writeFormatted(code, entryFilepath)
 
   if (outDir !== undefined) {
     // When --out is given, only codegen — skip the bunup build step
     return
   }
 
-  const entryFilename = `${spec.shortcode}.generated.ts`
-
-  const result = spawnSync(
-    'bun',
-    [
-      'x',
-      'bunup',
-      entryFilename,
-      '--format',
-      'esm,cjs',
-      '--dts',
-      '--external',
-      '@randsum/gameSchema',
-      '--minify',
-      '--target',
-      'node',
-      '--sourcemap',
-      'external',
-      '--clean'
-    ],
-    { stdio: 'inherit', cwd: specDir }
+  await build(
+    {
+      entry: [entryFilename],
+      format: ['esm', 'cjs'],
+      dts: true,
+      external: ['@randsum/gameSchema'],
+      minify: true,
+      target: 'node',
+      sourcemap: 'external',
+      clean: true
+    },
+    specDir
   )
-
-  process.exit(result.status ?? 1)
 }
 
 main().catch((e: unknown) => {

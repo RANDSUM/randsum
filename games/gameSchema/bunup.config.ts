@@ -15,7 +15,7 @@ export default defineConfig([
     entry: ['src/bin-build.ts'],
     format: ['esm', 'cjs'],
     dts: false,
-    external: ['@randsum/roller'],
+    external: ['@randsum/roller', 'bunup', 'prettier'],
     minify: true,
     target: 'node',
     clean: false
