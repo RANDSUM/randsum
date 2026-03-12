@@ -332,12 +332,25 @@ function applyOutcome(
 function validateInputs(rollDef: RollDefinition, input: RollInput, specName: string): void {
   if (!rollDef.inputs) return
   for (const [fieldName, decl] of Object.entries(rollDef.inputs)) {
-    if (decl.type !== 'integer') continue
     const val = input[fieldName]
-    if (val === undefined || typeof val !== 'number') continue
-    validateFinite(val, `${specName} ${fieldName}`)
-    if (decl.minimum !== undefined && decl.maximum !== undefined) {
-      validateRange(val, decl.minimum, decl.maximum, `${specName} ${fieldName}`)
+    if (val === undefined) continue
+
+    if (decl.type === 'integer' && typeof val === 'number') {
+      const label = decl.description ?? `${specName} ${fieldName}`
+      validateFinite(val, label)
+      if (decl.minimum !== undefined && decl.maximum !== undefined) {
+        validateRange(val, decl.minimum, decl.maximum, label)
+      }
+    }
+
+    if (
+      decl.type === 'string' &&
+      decl.enum !== undefined &&
+      decl.enum.length > 0 &&
+      !decl.enum.includes(val as string)
+    ) {
+      const enumList = decl.enum.map(v => `'${v}'`).join(' or ')
+      throw new Error(`Invalid ${fieldName} value: ${String(val)}. Must be ${enumList}.`)
     }
   }
 }

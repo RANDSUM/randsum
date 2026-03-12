@@ -38,8 +38,13 @@ function specToLoadedSpec(spec: RandSumSpec): LoadedSpec {
     .filter(key => isRollDefinition(spec[key]))
     .map(key => {
       const rollDef = spec[key] as RollDefinition
-      const fn = (input?: RollInput): GameRollResult<string | number, undefined, RollRecord> =>
-        executePipeline(rollDef, input ?? {}, spec)
+      const fn = (
+        input?: RollInput
+      ): GameRollResult<
+        string | number,
+        Readonly<Record<string, unknown>> | undefined,
+        RollRecord
+      > => executePipeline(rollDef, input ?? {}, spec)
       return [key, fn] as const
     })
 

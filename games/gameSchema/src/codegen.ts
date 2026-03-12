@@ -848,17 +848,27 @@ function generateValidationLines(
   if (!rollDef.inputs) return []
   const lines: string[] = []
   for (const [fieldName, decl] of Object.entries(rollDef.inputs)) {
-    if (decl.type !== 'integer') continue
-    const label = `${spec.name} ${fieldName}`
     const accessor = optional ? `input?.${fieldName}` : `input.${fieldName}`
     const isOptionalField = isInputOptional(decl)
     const guard = isOptionalField ? `${accessor} !== undefined && ` : ''
-    lines.push(
-      `${indent}if (${guard}typeof ${accessor} === 'number') validateFinite(${accessor}, '${label}')`
-    )
-    if (decl.minimum !== undefined && decl.maximum !== undefined) {
+
+    if (decl.type === 'integer') {
+      const label = decl.description ?? `${spec.name} ${fieldName}`
       lines.push(
-        `${indent}if (${guard}typeof ${accessor} === 'number') validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, '${label}')`
+        `${indent}if (${guard}typeof ${accessor} === 'number') validateFinite(${accessor}, '${label}')`
+      )
+      if (decl.minimum !== undefined && decl.maximum !== undefined) {
+        lines.push(
+          `${indent}if (${guard}typeof ${accessor} === 'number') validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, '${label}')`
+        )
+      }
+    }
+
+    if (decl.type === 'string' && decl.enum !== undefined && decl.enum.length > 0) {
+      const enumValues = decl.enum.map(v => `'${v}'`).join(', ')
+      const enumList = decl.enum.map(v => `'${v}'`).join(' or ')
+      lines.push(
+        `${indent}if (${guard}![${enumValues}].includes(${accessor} as string)) throw new Error(\`Invalid ${fieldName} value: \${String(${accessor})}. Must be ${enumList}.\`)`
       )
     }
   }

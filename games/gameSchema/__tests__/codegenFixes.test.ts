@@ -140,3 +140,119 @@ describe('#10: validation codegen', () => {
     expect(code).not.toContain('validateRange')
   })
 })
+
+describe('#995: validation description label', () => {
+  test('uses description field as validation label when present', () => {
+    const spec = {
+      $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+      name: 'Test Game',
+      shortcode: 'test-desc',
+      game_url: 'https://example.com',
+      roll: {
+        inputs: {
+          bonus: {
+            type: 'integer' as const,
+            minimum: -10,
+            maximum: 10,
+            default: 0,
+            description: 'custom label'
+          }
+        },
+        dice: { pool: { sides: 20 }, quantity: 1 },
+        postResolveModifiers: [{ add: { $input: 'bonus' } }],
+        resolve: 'sum' as const
+      }
+    }
+    const code = generateCode(spec)
+    expect(code).toContain("validateFinite(input?.bonus, 'custom label')")
+    expect(code).toContain("validateRange(input?.bonus, -10, 10, 'custom label')")
+    expect(code).not.toContain('Test Game bonus')
+  })
+
+  test('falls back to spec name + field name when no description', () => {
+    const spec = {
+      $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+      name: 'Fallback Test',
+      shortcode: 'test-fallback',
+      game_url: 'https://example.com',
+      roll: {
+        inputs: {
+          bonus: { type: 'integer' as const, minimum: -5, maximum: 5, default: 0 }
+        },
+        dice: { pool: { sides: 20 }, quantity: 1 },
+        postResolveModifiers: [{ add: { $input: 'bonus' } }],
+        resolve: 'sum' as const
+      }
+    }
+    const code = generateCode(spec)
+    expect(code).toContain("validateFinite(input?.bonus, 'Fallback Test bonus')")
+  })
+
+  test('runtime uses description for error message', () => {
+    const spec = {
+      $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+      name: 'Desc Runtime',
+      shortcode: 'test-descrt',
+      game_url: 'https://example.com',
+      roll: {
+        inputs: {
+          bonus: {
+            type: 'integer' as const,
+            minimum: -5,
+            maximum: 5,
+            default: 0,
+            description: '5E modifier'
+          }
+        },
+        dice: { pool: { sides: 20 }, quantity: 1 },
+        postResolveModifiers: [{ add: { $input: 'bonus' } }],
+        resolve: 'sum' as const
+      }
+    }
+    const loaded = loadSpec(spec)
+    expect(() => loaded.roll({ bonus: 100 })).toThrow('5E modifier must be between -5 and 5')
+  })
+})
+
+describe('#995: string enum validation', () => {
+  const ENUM_GUARD_SPEC = {
+    $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+    name: 'Enum Guard Test',
+    shortcode: 'test-enumguard',
+    game_url: 'https://example.com',
+    roll: {
+      inputs: {
+        mode: {
+          type: 'string' as const,
+          enum: ['Alpha', 'Beta'],
+          optional: true
+        }
+      },
+      dice: { pool: { sides: 20 }, quantity: 1 },
+      resolve: 'sum' as const
+    }
+  }
+
+  test('codegen emits enum validation guard', () => {
+    const code = generateCode(ENUM_GUARD_SPEC)
+    expect(code).toContain("!['Alpha', 'Beta'].includes(")
+    expect(code).toContain('Invalid mode value')
+  })
+
+  test('runtime throws on invalid enum value', () => {
+    const loaded = loadSpec(ENUM_GUARD_SPEC)
+    expect(() => loaded.roll({ mode: 'Gamma' })).toThrow(
+      "Invalid mode value: Gamma. Must be 'Alpha' or 'Beta'."
+    )
+  })
+
+  test('runtime accepts valid enum value', () => {
+    const loaded = loadSpec(ENUM_GUARD_SPEC)
+    expect(() => loaded.roll({ mode: 'Alpha' })).not.toThrow()
+  })
+
+  test('runtime accepts undefined for optional enum', () => {
+    const loaded = loadSpec(ENUM_GUARD_SPEC)
+    expect(() => loaded.roll()).not.toThrow()
+  })
+})

@@ -262,5 +262,10 @@ describe('roll', () => {
       expect(() => roll({ modifier: 100 })).toThrow()
       expect(() => roll({ modifier: -100 })).toThrow()
     })
+
+    test('throws on invalid rollingWith value', () => {
+      // @ts-expect-error -- testing runtime validation
+      expect(() => roll({ rollingWith: 'invalid' })).toThrow()
+    })
   })
 })
