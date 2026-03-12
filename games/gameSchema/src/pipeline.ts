@@ -1,4 +1,4 @@
-import { roll } from '@randsum/roller'
+import { roll, validateFinite, validateRange } from '@randsum/roller'
 import type { RollOptions, RollRecord } from '@randsum/roller'
 
 import { evaluateWhen } from './conditionEvaluator'
@@ -328,6 +328,19 @@ function applyOutcome(
   return String(total)
 }
 
+function validateInputs(rollDef: RollDefinition, input: RollInput, specName: string): void {
+  if (!rollDef.inputs) return
+  for (const [fieldName, decl] of Object.entries(rollDef.inputs)) {
+    if (decl.type !== 'integer') continue
+    const val = input[fieldName]
+    if (val === undefined || typeof val !== 'number') continue
+    validateFinite(val, `${specName} ${fieldName}`)
+    if (decl.minimum !== undefined && decl.maximum !== undefined) {
+      validateRange(val, decl.minimum, decl.maximum, `${specName} ${fieldName}`)
+    }
+  }
+}
+
 function buildDetails(
   detailsDef: Readonly<Record<string, DetailsFieldDef>>,
   input: RollInput,
@@ -356,6 +369,7 @@ export function executePipeline(
   Readonly<Record<string, InputValue | number>> | undefined,
   RollRecord
 > {
+  validateInputs(rollDef, input, spec.name)
   const mergedInput = applyInputDefaults(input, rollDef.inputs)
   const override = evaluateWhen(rollDef.when, mergedInput)
 

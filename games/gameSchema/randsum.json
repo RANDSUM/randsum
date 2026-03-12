@@ -356,6 +356,10 @@
             "oneOf": [{ "type": "integer" }, { "type": "string" }, { "type": "boolean" }]
           }
         },
+        "optional": {
+          "type": "boolean",
+          "description": "When true, this input can be omitted even without a default value. The generated function parameter will be optional."
+        },
         "description": {
           "type": "string",
           "description": "Human-readable explanation of what this input represents"

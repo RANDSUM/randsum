@@ -131,6 +131,7 @@ export interface InputDeclaration {
   readonly maximum?: number
   readonly default?: InputValue
   readonly enum?: readonly InputValue[]
+  readonly optional?: boolean
   readonly description?: string
 }
 

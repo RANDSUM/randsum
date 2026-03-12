@@ -5,7 +5,6 @@ import { SchemaError } from './errors'
 import { isRef, resolveRef } from './refResolver'
 import type {
   Condition,
-  ConditionalPool,
   DegreeOfSuccessOperation,
   DiceConfig,
   InputDeclaration,
@@ -55,7 +54,7 @@ function resolvePool(pool: PoolDefinition | { $ref: string }, spec: RandSumSpec)
 
 function inputAllOptional(inputs: RollDefinition['inputs']): boolean {
   if (!inputs || Object.keys(inputs).length === 0) return true
-  return Object.values(inputs).every(decl => decl.default !== undefined)
+  return Object.values(inputs).every(isInputOptional)
 }
 
 function integerOrInputCode(
@@ -77,12 +76,24 @@ function integerOrInputCode(
   return accessor
 }
 
+function inputTsType(decl: InputDeclaration): string {
+  if (decl.type === 'integer') return 'number'
+  if (decl.type === 'boolean') return 'boolean'
+  if (decl.enum !== undefined && decl.enum.length > 0) {
+    return decl.enum.map(v => `'${v}'`).join(' | ')
+  }
+  return 'string'
+}
+
+function isInputOptional(decl: InputDeclaration): boolean {
+  return decl.default !== undefined || decl.optional === true
+}
+
 function buildInputType(inputs: RollDefinition['inputs']): string {
   if (!inputs || Object.keys(inputs).length === 0) return 'Record<string, never>'
   const fields = Object.entries(inputs).map(([name, decl]: [string, InputDeclaration]) => {
-    const tsType =
-      decl.type === 'integer' ? 'number' : decl.type === 'boolean' ? 'boolean' : 'string'
-    const opt = decl.default !== undefined ? '?' : ''
+    const tsType = inputTsType(decl)
+    const opt = isInputOptional(decl) ? '?' : ''
     return `${name}${opt}: ${tsType}`
   })
   return `{ ${fields.join('; ')} }`
@@ -101,9 +112,6 @@ function buildModifiersCode(
     if (op.keepLowest !== undefined) {
       mods.push(`keep: { lowest: ${integerOrInputCode(op.keepLowest, inputs, optional)} }`)
     }
-    if (op.add !== undefined) {
-      mods.push(`plus: ${integerOrInputCode(op.add, inputs, optional)}`)
-    }
     if (op.cap !== undefined) {
       const capParts: string[] = []
       if (op.cap.min !== undefined)
@@ -112,6 +120,14 @@ function buildModifiersCode(
         capParts.push(`greaterThan: ${integerOrInputCode(op.cap.max, inputs, optional)}`)
       mods.push(`cap: { ${capParts.join(', ')} }`)
     }
+  }
+  // Accumulate all add ops into a single plus to avoid duplicate keys
+  const addOps = modify.filter(op => op.add !== undefined)
+  if (addOps.length === 1) {
+    mods.push(`plus: ${integerOrInputCode(addOps[0]!.add!, inputs, optional)}`)
+  } else if (addOps.length > 1) {
+    const sum = addOps.map(op => integerOrInputCode(op.add!, inputs, optional)).join(' + ')
+    mods.push(`plus: ${sum}`)
   }
   if (mods.length === 0) return null
   return `modifiers: { ${mods.join(', ')} }`
@@ -461,12 +477,14 @@ function generateFunctionBody(
   spec: RandSumSpec,
   optional: boolean
 ): string[] {
+  const validationLines = generateValidationLines(rollDef, spec, optional, '  ')
+
   // Delegate multi-pool rolls to dedicated generator
   if (rollDef.dicePools !== undefined) {
-    return generateMultiPoolBody(rollDef, spec)
+    return [...validationLines, ...generateMultiPoolBody(rollDef, spec)]
   }
 
-  const lines: string[] = []
+  const lines: string[] = [...validationLines]
 
   const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
   const needsDiceTotal =
@@ -603,7 +621,8 @@ function generateFunctionBody(
 
 interface SingleInputOverload {
   readonly fieldName: string
-  readonly tsType: 'number' | 'string' | 'boolean'
+  readonly tsType: string
+  readonly baseType: 'number' | 'string' | 'boolean'
   readonly fieldOptional: boolean
 }
 
@@ -615,10 +634,11 @@ function getSingleInputOverload(rollDef: RollDefinition): SingleInputOverload | 
   const first = entries[0]
   if (first === undefined) return null
   const [fieldName, decl] = first
-  const tsType: 'number' | 'string' | 'boolean' =
+  const tsType = inputTsType(decl)
+  const baseType: 'number' | 'string' | 'boolean' =
     decl.type === 'integer' ? 'number' : decl.type === 'boolean' ? 'boolean' : 'string'
-  const fieldOptional = decl.default !== undefined
-  return { fieldName, tsType, fieldOptional }
+  const fieldOptional = isInputOptional(decl)
+  return { fieldName, tsType, baseType, fieldOptional }
 }
 
 function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSpec): string[] {
@@ -668,7 +688,7 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
   const returnType = `GameRollResult<${Key}Result, ${detailsTypeName}, RollRecord>`
 
   if (overload) {
-    const { fieldName, tsType, fieldOptional } = overload
+    const { fieldName, tsType, baseType, fieldOptional } = overload
     const nakedOpt = fieldOptional ? '?' : ''
     const objOpt = optional ? '?' : ''
     // Overload 1: naked scalar
@@ -683,7 +703,7 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
     // Normalization: coerce naked scalar into object so function body is unchanged
     const fallback = optional ? ' ?? {}' : ''
     parts.push(
-      `  const input: ${inputType} = typeof rawInput === '${tsType}' ? { ${fieldName}: rawInput } : rawInput${fallback}`
+      `  const input: ${inputType} = typeof rawInput === '${baseType}' ? { ${fieldName}: rawInput } : rawInput${fallback}`
     )
   } else {
     const param = optional ? `input?: ${inputType}` : `input: ${inputType}`
@@ -695,6 +715,52 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
   parts.push(``)
 
   return parts
+}
+
+function needsValidationImports(spec: RandSumSpec): { needsFinite: boolean; needsRange: boolean } {
+  const patternKeys = Object.keys(spec).filter(k => /^roll[A-Z][a-zA-Z]*$/.test(k))
+  const rollKeys = ['roll', ...patternKeys].filter(k => isRollDefinition(spec[k]))
+  let needsFinite = false
+  let needsRange = false
+  for (const key of rollKeys) {
+    const rollDef = spec[key] as RollDefinition
+    if (!rollDef.inputs) continue
+    for (const decl of Object.values(rollDef.inputs)) {
+      if (decl.type === 'integer') {
+        needsFinite = true
+        if (decl.minimum !== undefined || decl.maximum !== undefined) {
+          needsRange = true
+        }
+      }
+    }
+  }
+  return { needsFinite, needsRange }
+}
+
+function generateValidationLines(
+  rollDef: RollDefinition,
+  spec: RandSumSpec,
+  optional: boolean,
+  indent: string
+): string[] {
+  if (!rollDef.inputs) return []
+  const lines: string[] = []
+  for (const [fieldName, decl] of Object.entries(rollDef.inputs)) {
+    if (decl.type !== 'integer') continue
+    const label = `${spec.name} ${fieldName}`
+    const accessor = optional ? `input?.${fieldName}` : `input.${fieldName}`
+    const isOptionalField = isInputOptional(decl)
+    const guard = isOptionalField ? `${accessor} !== undefined && ` : ''
+    lines.push(
+      `${indent}if (${guard}typeof ${accessor} === 'number') validateFinite(${accessor}, '${label}')`
+    )
+    if (decl.minimum !== undefined && decl.maximum !== undefined) {
+      lines.push(
+        `${indent}if (${guard}typeof ${accessor} === 'number') validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, '${label}')`
+      )
+    }
+  }
+  return lines
 }
 
 function collectExternalImports(spec: RandSumSpec): ReadonlyMap<string, ReadonlySet<string>> {
@@ -720,10 +786,16 @@ function buildCodeString(spec: RandSumSpec): string {
   const patternKeys = Object.keys(spec).filter(k => /^roll[A-Z][a-zA-Z]*$/.test(k))
   const rollKeys = ['roll', ...patternKeys].filter(k => isRollDefinition(spec[k]))
 
+  const { needsFinite, needsRange } = needsValidationImports(spec)
+  const validationImports: string[] = []
+  if (needsFinite) validationImports.push('validateFinite')
+  if (needsRange) validationImports.push('validateRange')
+  const runtimeImports = ['executeRoll', ...validationImports].join(', ')
+
   const parts: string[] = [
     `// Auto-generated from ${spec.name} spec. Run \`bun run codegen\` to regenerate.`,
     `// Do not edit this file manually.`,
-    `import { executeRoll } from '@randsum/gameSchema'`,
+    `import { ${runtimeImports} } from '@randsum/gameSchema'`,
     `import type { GameRollResult, RollRecord } from '@randsum/gameSchema'`
   ]
 
