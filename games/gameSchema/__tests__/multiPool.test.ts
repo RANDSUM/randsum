@@ -138,6 +138,16 @@ describe('dicePools schema validation', () => {
     })
     expect(result.valid).toBe(true)
   })
+
+  test('RollDefinition with neither dice nor dicePools is invalid', () => {
+    const result = validateSpec({
+      ...BASE_MULTI,
+      roll: {
+        resolve: 'sum'
+      }
+    })
+    expect(result.valid).toBe(false)
+  })
 })
 
 const CODEGEN_MULTI_SPEC = {
@@ -179,6 +189,29 @@ describe('dicePools codegen', () => {
     expect(code).toContain("'hope'")
     expect(code).toContain("'fear'")
     expect(code).toContain("'critical hope'")
+  })
+
+  test('generated Result type includes auto-tie string when ties is omitted', () => {
+    const noTiesSpec = {
+      ...CODEGEN_MULTI_SPEC,
+      shortcode: 'test-no-ties',
+      roll: {
+        dicePools: {
+          hope: { pool: { sides: 12 }, quantity: 1 },
+          fear: { pool: { sides: 12 }, quantity: 1 }
+        },
+        resolve: {
+          comparePoolHighest: {
+            pools: ['hope', 'fear'],
+            outcomes: { hope: 'hope', fear: 'fear' }
+            // ties omitted — runtime will return 'hope=fear'
+          }
+        }
+      }
+    }
+    const code = generateCode(noTiesSpec)
+    // The auto-constructed tie string must appear in the generated type
+    expect(code).toContain("'hope=fear'")
   })
 
   test('generated code compiles and runs correctly', () => {

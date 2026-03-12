@@ -176,9 +176,7 @@
       "description": "A complete roll pipeline. Pipeline order: dice (or dicePools) → modify (optional) → resolve (required) → outcome (optional). Use 'when' to define conditional overrides evaluated before the pipeline runs.",
       "required": ["resolve"],
       "additionalProperties": false,
-      "not": {
-        "required": ["dice", "dicePools"]
-      },
+      "oneOf": [{ "required": ["dice"] }, { "required": ["dicePools"] }],
       "properties": {
         "inputs": {
           "type": "object",

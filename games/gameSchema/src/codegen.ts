@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path'
 import { SchemaError } from './errors'
 import { isRef, resolveRef } from './refResolver'
 import type {
+  DegreeOfSuccessOperation,
   DiceConfig,
   InputDeclaration,
   IntegerOrInput,
@@ -162,6 +163,55 @@ function getOutcomeRanges(
   return []
 }
 
+function resolveOutcome(
+  outcome: OutcomeOperation | Ref | undefined,
+  spec: RandSumSpec
+): OutcomeOperation | undefined {
+  if (outcome === undefined) return undefined
+  if (isRef(outcome)) return resolveRef(spec, outcome.$ref) as OutcomeOperation
+  return outcome
+}
+
+function getResultStrings(
+  outcome: OutcomeOperation | Ref | undefined,
+  spec: RandSumSpec
+): string[] {
+  const resolved = resolveOutcome(outcome, spec)
+  if (resolved === undefined) return []
+  if ('degreeOfSuccess' in resolved) {
+    return Object.keys(resolved.degreeOfSuccess)
+  }
+  return getOutcomeRanges(outcome, spec).map(r => r.result)
+}
+
+function generateDegreeLines(
+  degrees: DegreeOfSuccessOperation,
+  indent: string,
+  rollsExpr: string
+): string[] {
+  const candidates: [string, number][] = []
+  if (degrees.criticalSuccess !== undefined)
+    candidates.push(['criticalSuccess', degrees.criticalSuccess])
+  if (degrees.success !== undefined) candidates.push(['success', degrees.success])
+  if (degrees.failure !== undefined) candidates.push(['failure', degrees.failure])
+  if (degrees.criticalFailure !== undefined)
+    candidates.push(['criticalFailure', degrees.criticalFailure])
+  candidates.sort((a, b) => b[1] - a[1])
+
+  const ifLines = candidates
+    .slice(0, -1)
+    .map(
+      ([name, threshold]) =>
+        `${indent}if (total >= ${threshold}) return { total, result: '${name}', rolls: ${rollsExpr} }`
+    )
+  const last = candidates[candidates.length - 1]
+  const defaultLine =
+    last !== undefined
+      ? `${indent}return { total, result: '${last[0]}', rolls: ${rollsExpr} }`
+      : `${indent}throw new Error(\`No degree match for total \${total}\`)`
+  return [...ifLines, defaultLine]
+}
+
 function collectResults(rollDef: RollDefinition, spec: RandSumSpec): string[] | null {
   // dicePools: collect results from compare operation outcomes + ties
   if (rollDef.dicePools !== undefined) {
@@ -172,22 +222,28 @@ function collectResults(rollDef: RollDefinition, spec: RandSumSpec): string[] | 
     ) {
       const op =
         'comparePoolHighest' in resolve ? resolve.comparePoolHighest : resolve.comparePoolSum
-      const results = Object.values(op.outcomes)
-      if (op.ties !== undefined) results.push(op.ties)
-      return [...new Set(results)].sort()
+      const [keyA, keyB] = op.pools
+      // When ties is omitted the runtime emits 'keyA=keyB' — include it in the type
+      const tieResult = op.ties ?? `${keyA}=${keyB}`
+      return [...new Set([...Object.values(op.outcomes), tieResult])].sort()
     }
     return null
   }
   // null signals "no outcome" — numeric passthrough
   if (rollDef.outcome === undefined) return null
-  const defaultRanges = getOutcomeRanges(rollDef.outcome, spec)
-  const whenRanges = (rollDef.when ?? []).flatMap(wc =>
-    wc.override.outcome ? getOutcomeRanges(wc.override.outcome, spec) : []
+  const defaultResults = getResultStrings(rollDef.outcome, spec)
+  const whenResults = (rollDef.when ?? []).flatMap(wc =>
+    wc.override.outcome ? getResultStrings(wc.override.outcome, spec) : []
   )
-  return [...new Set([...defaultRanges, ...whenRanges].map(r => r.result))].sort()
+  return [...new Set([...defaultResults, ...whenResults])].sort()
 }
 
-function buildRangeReturn(range: TableRange, indent: string): string | null {
+function buildRangeReturn(
+  range: TableRange,
+  indent: string,
+  inputs: RollDefinition['inputs'],
+  optional: boolean
+): string | null {
   const conditions: string[] = []
   const ret = `{ total, result: '${range.result}', rolls: r.rolls }`
 
@@ -202,14 +258,11 @@ function buildRangeReturn(range: TableRange, indent: string): string | null {
       '<=': '<='
     }
     const op = opMap[pc.countWhere.operator] ?? '==='
-    const val =
-      typeof pc.countWhere.value === 'number'
-        ? String(pc.countWhere.value)
-        : pc.countWhere.value.$input
+    const val = integerOrInputCode(pc.countWhere.value, inputs, optional)
     const matchExpr = `${poolVar}.filter(v => v ${op} ${val}).length`
 
     if (pc.atLeast !== undefined) {
-      const atLeast = typeof pc.atLeast === 'number' ? pc.atLeast : 0
+      const atLeast = integerOrInputCode(pc.atLeast, inputs, optional)
       conditions.push(`${matchExpr} >= ${atLeast}`)
     } else if (pc.atLeastRatio !== undefined) {
       conditions.push(
@@ -304,6 +357,34 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   return lines
 }
 
+function generateOutcomeLines(
+  outcome: OutcomeOperation | Ref | undefined,
+  spec: RandSumSpec,
+  indent: string,
+  rollsExpr: string,
+  inputs: RollDefinition['inputs'],
+  optional: boolean
+): string[] {
+  const resolved = resolveOutcome(outcome, spec)
+
+  if (resolved === undefined) {
+    return [`${indent}return { total, result: total, rolls: ${rollsExpr} }`]
+  }
+
+  if ('degreeOfSuccess' in resolved) {
+    return generateDegreeLines(resolved.degreeOfSuccess, indent, rollsExpr)
+  }
+
+  const ranges = getOutcomeRanges(outcome, spec)
+  const lines: string[] = []
+  for (const range of ranges) {
+    const check = buildRangeReturn(range, indent, inputs, optional)
+    if (check) lines.push(check)
+  }
+  lines.push(`${indent}throw new Error(\`No table match for total \${total}\`)`)
+  return lines
+}
+
 function generateFunctionBody(
   rollDef: RollDefinition,
   spec: RandSumSpec,
@@ -343,16 +424,9 @@ function generateFunctionBody(
     if (needsPre) lines.push(`    const preModify = r.rolls.flatMap(x => x.initialRolls)`)
     if (needsPost) lines.push(`    const postModify = r.rolls.flatMap(x => x.rolls)`)
     lines.push(`    const total = ${overrideTotalExpr}`)
-    if (overrideRanges.length === 0) {
-      // numeric passthrough — no outcome table
-      lines.push(`    return { total, result: total, rolls: r.rolls }`)
-    } else {
-      for (const range of overrideRanges) {
-        const check = buildRangeReturn(range, '    ')
-        if (check) lines.push(check)
-      }
-      lines.push(`    throw new Error(\`No table match for total \${total}\`)`)
-    }
+    lines.push(
+      ...generateOutcomeLines(overrideOutcome, spec, '    ', 'r.rolls', rollDef.inputs, optional)
+    )
     lines.push(`  }`)
   }
 
@@ -381,16 +455,9 @@ function generateFunctionBody(
   if (needsPre) lines.push(`  const preModify = r.rolls.flatMap(x => x.initialRolls)`)
   if (needsPost) lines.push(`  const postModify = r.rolls.flatMap(x => x.rolls)`)
   lines.push(`  const total = ${totalExpr}`)
-  if (defaultRanges.length === 0) {
-    // numeric passthrough — no outcome table
-    lines.push(`  return { total, result: total, rolls: r.rolls }`)
-  } else {
-    for (const range of defaultRanges) {
-      const check = buildRangeReturn(range, '  ')
-      if (check) lines.push(check)
-    }
-    lines.push(`  throw new Error(\`No table match for total \${total}\`)`)
-  }
+  lines.push(
+    ...generateOutcomeLines(rollDef.outcome, spec, '  ', 'r.rolls', rollDef.inputs, optional)
+  )
 
   return lines
 }

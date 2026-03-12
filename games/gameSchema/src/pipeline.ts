@@ -150,14 +150,15 @@ function resolveTableDefinition(
 function evaluatePoolCondition(
   condition: PoolCondition,
   preModifyRolls: readonly number[],
-  workingRolls: readonly number[]
+  workingRolls: readonly number[],
+  input: RollInput
 ): boolean {
   const pool = condition.pool === 'postModify' ? workingRolls : preModifyRolls
   const matchCount = pool.filter(v =>
-    compareNum(v, condition.countWhere.operator, bindInteger(condition.countWhere.value, {}))
+    compareNum(v, condition.countWhere.operator, bindInteger(condition.countWhere.value, input))
   ).length
   if (condition.atLeast !== undefined) {
-    return matchCount >= bindInteger(condition.atLeast, {})
+    return matchCount >= bindInteger(condition.atLeast, input)
   }
   if (condition.atLeastRatio !== undefined) {
     return pool.length > 0 && matchCount / pool.length >= condition.atLeastRatio
@@ -169,12 +170,13 @@ function lookupRanges(
   total: number,
   ranges: readonly TableRange[],
   preModifyRolls: readonly number[],
-  workingRolls: readonly number[]
+  workingRolls: readonly number[],
+  input: RollInput
 ): string {
   for (const range of ranges) {
     const poolMatch =
       range.poolCondition === undefined ||
-      evaluatePoolCondition(range.poolCondition, preModifyRolls, workingRolls)
+      evaluatePoolCondition(range.poolCondition, preModifyRolls, workingRolls, input)
     const valueMatch =
       (range.exact !== undefined && total === range.exact) ||
       (range.min !== undefined &&
@@ -208,7 +210,7 @@ function applyDegreeOfSuccess(total: number, degrees: DegreeOfSuccessOperation):
     if (total >= threshold) return name
   }
 
-  return String(total)
+  throw new SchemaError('NO_TABLE_MATCH', `No degree of success matches total ${total}`)
 }
 
 function resolveTotal(
@@ -282,7 +284,8 @@ function applyOutcome(
   outcome: OutcomeOperation | Ref | undefined,
   spec: RandSumSpec,
   preModifyRolls: readonly number[],
-  workingRolls: readonly number[]
+  workingRolls: readonly number[],
+  input: RollInput
 ): string | number {
   if (outcome === undefined) return total
 
@@ -291,14 +294,14 @@ function applyOutcome(
     : outcome
 
   if ('ranges' in resolved) {
-    return lookupRanges(total, resolved.ranges, preModifyRolls, workingRolls)
+    return lookupRanges(total, resolved.ranges, preModifyRolls, workingRolls, input)
   }
   if ('degreeOfSuccess' in resolved) {
     return applyDegreeOfSuccess(total, resolved.degreeOfSuccess)
   }
   if ('tableLookup' in resolved) {
     const table = resolveTableDefinition(resolved.tableLookup, spec)
-    return lookupRanges(total, table.ranges, preModifyRolls, workingRolls)
+    return lookupRanges(total, table.ranges, preModifyRolls, workingRolls, input)
   }
 
   return String(total)
@@ -346,7 +349,14 @@ export function executePipeline(
   const workingRolls = applyManualModifiers(rawRolls, manualOps)
   const rawTotal = resolveTotal(workingRolls, effectiveResolve, mergedInput)
   const total = applyPostResolveModifiers(rawTotal, effectivePostResolveModifiers, mergedInput)
-  const result = applyOutcome(total, effectiveOutcome, spec, preModifyRolls, workingRolls)
+  const result = applyOutcome(
+    total,
+    effectiveOutcome,
+    spec,
+    preModifyRolls,
+    workingRolls,
+    mergedInput
+  )
 
   return { total, result, rolls: rollerResult.rolls }
 }

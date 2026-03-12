@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { type RollResult, roll } from '@randsum/blades'
+import { roll } from '@randsum/blades'
 import { D6_IMAGES, embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
@@ -57,8 +57,7 @@ export const bladesCommand: Command = {
         }
       }
 
-      const { color, resultTitle, resultDescription, thumbnail } =
-        resultConfig[result.result as RollResult]
+      const { color, resultTitle, resultDescription, thumbnail } = resultConfig[result.result]
 
       const embed = new EmbedBuilder()
         .setColor(color)
