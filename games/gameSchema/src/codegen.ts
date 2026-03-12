@@ -62,6 +62,10 @@ function integerOrInputCode(
   optional: boolean
 ): string {
   if (typeof val === 'number') return String(val)
+  if ('ifTrue' in val && 'ifFalse' in val) {
+    const accessor = optional ? `input?.${val.$input}` : `input.${val.$input}`
+    return `(${accessor} ? ${val.ifTrue} : ${val.ifFalse})`
+  }
   const fieldName = val.$input
   const decl = inputs?.[fieldName]
   const accessor = optional ? `input?.${fieldName}` : `input.${fieldName}`
@@ -311,18 +315,18 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   const lines: string[] = []
   const poolNames = Object.keys(dicePools)
 
+  const optional = inputAllOptional(rollDef.inputs)
+
   // Emit one executeRoll per pool
   for (const poolName of poolNames) {
     const dc = dicePools[poolName]
     if (dc === undefined) continue
     const pool = isRef(dc.pool) ? (resolveRef(spec, dc.pool.$ref) as PoolDefinition) : dc.pool
-    const sides = typeof pool.sides === 'number' ? String(pool.sides) : `/* dynamic */`
+    const sides = integerOrInputCode(pool.sides, rollDef.inputs, optional)
     const quantitySource = dc.quantity ?? pool.quantity
     const qty =
       quantitySource !== undefined
-        ? typeof quantitySource === 'number'
-          ? String(quantitySource)
-          : '1'
+        ? integerOrInputCode(quantitySource, rollDef.inputs, optional)
         : '1'
     lines.push(`  const ${poolName}Result = executeRoll({ sides: ${sides}, quantity: ${qty} })`)
     lines.push(

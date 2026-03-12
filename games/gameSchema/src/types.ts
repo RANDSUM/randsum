@@ -1,4 +1,7 @@
-export type IntegerOrInput = number | { readonly $input: string }
+export type IntegerOrInput =
+  | number
+  | { readonly $input: string }
+  | { readonly $input: string; readonly ifTrue: number; readonly ifFalse: number }
 
 export type InputValue = number | string | boolean
 

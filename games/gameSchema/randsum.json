@@ -590,7 +590,7 @@
     },
 
     "IntegerOrInput": {
-      "description": "A literal integer or a runtime input binding ({ \"$input\": \"paramName\" }).",
+      "description": "A literal integer, a runtime input binding ({ \"$input\": \"paramName\" }), or a conditional boolean binding ({ \"$input\": \"flag\", \"ifTrue\": N, \"ifFalse\": M }).",
       "oneOf": [
         { "type": "integer" },
         {
@@ -601,6 +601,25 @@
             "$input": {
               "type": "string",
               "description": "Name of the declared input parameter whose value will be used here"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$input", "ifTrue", "ifFalse"],
+          "additionalProperties": false,
+          "properties": {
+            "$input": {
+              "type": "string",
+              "description": "Name of the boolean input whose value determines which integer to use"
+            },
+            "ifTrue": {
+              "type": "integer",
+              "description": "Value to use when the input is truthy"
+            },
+            "ifFalse": {
+              "type": "integer",
+              "description": "Value to use when the input is falsy"
             }
           }
         }

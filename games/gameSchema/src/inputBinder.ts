@@ -5,12 +5,21 @@ function isInputRef(value: IntegerOrInput): value is { readonly $input: string }
   return typeof value === 'object' && '$input' in value
 }
 
+function isConditionalRef(
+  value: IntegerOrInput
+): value is { readonly $input: string; readonly ifTrue: number; readonly ifFalse: number } {
+  return typeof value === 'object' && '$input' in value && 'ifTrue' in value && 'ifFalse' in value
+}
+
 export function bindInteger(value: IntegerOrInput, input: RollInput): number {
   if (!isInputRef(value)) {
     return value
   }
   const key = value.$input
   const resolved = input[key]
+  if (isConditionalRef(value)) {
+    return resolved ? value.ifTrue : value.ifFalse
+  }
   if (resolved === undefined) {
     throw new SchemaError('INPUT_NOT_FOUND', `Required input "${key}" was not provided`)
   }
