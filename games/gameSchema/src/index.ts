@@ -1,3 +1,4 @@
+export { resolveExternalRefs } from './externalRefResolver'
 export { loadSpec, loadSpecAsync } from './loader'
 export { generateCode, specToFilename } from './codegen'
 export { validateSpec } from './validator'

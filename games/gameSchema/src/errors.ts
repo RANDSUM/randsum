@@ -5,6 +5,7 @@ export type SchemaErrorCode =
   | 'NO_TABLE_MATCH'
   | 'CONDITION_TYPE_MISMATCH'
   | 'INVALID_SPEC'
+  | 'EXTERNAL_REF_FAILED'
 
 export class SchemaError extends Error {
   public readonly code: SchemaErrorCode
