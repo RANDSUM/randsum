@@ -82,6 +82,7 @@ export interface ComparePoolOperation {
 export interface ExternalTableLookupFind {
   readonly collection: string
   readonly where: { readonly field: string; readonly input: string }
+  readonly errorMessage?: string
 }
 
 export interface ExternalTableLookupResolve {
@@ -89,11 +90,18 @@ export interface ExternalTableLookupResolve {
   readonly tableField: string
 }
 
+export type ResultMappingLeaf =
+  | { readonly $lookupResult: string }
+  | { readonly $foundTable: string }
+  | { readonly $input: string }
+  | { readonly expr: 'total' }
+
 export interface ExternalTableLookupOperation {
   readonly package: string
   readonly imports: readonly string[]
   readonly find: ExternalTableLookupFind
   readonly resolve: ExternalTableLookupResolve
+  readonly resultMapping?: Readonly<Record<string, ResultMappingLeaf>>
 }
 
 export type ResolveOperation =

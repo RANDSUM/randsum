@@ -592,6 +592,10 @@
                   "description": "Name of the input parameter whose value to match (e.g. 'tableName')"
                 }
               }
+            },
+            "errorMessage": {
+              "type": "string",
+              "description": "Template error message when find returns no match. Use ${value} as placeholder for the input value (e.g. 'Invalid table name: \"${value}\"')"
             }
           }
         },
@@ -609,8 +613,66 @@
               "description": "Field on the found item to pass to the resolver (e.g. 'table')"
             }
           }
+        },
+        "resultMapping": {
+          "type": "object",
+          "description": "Compose a typed result object from multiple sources instead of returning raw lookup output",
+          "additionalProperties": {
+            "$ref": "#/$defs/ResultMappingLeaf"
+          }
         }
       }
+    },
+
+    "ResultMappingLeaf": {
+      "description": "A single field in a resultMapping — sources a value from the lookup result, found table, input, or roll total",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["$lookupResult"],
+          "additionalProperties": false,
+          "properties": {
+            "$lookupResult": {
+              "type": "string",
+              "description": "Dot-path into the resolver function's return value (e.g. 'result.label')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$foundTable"],
+          "additionalProperties": false,
+          "properties": {
+            "$foundTable": {
+              "type": "string",
+              "description": "Field on the found table object (e.g. 'table')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$input"],
+          "additionalProperties": false,
+          "properties": {
+            "$input": {
+              "type": "string",
+              "description": "Pass-through value from a roll input (e.g. 'tableName')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["expr"],
+          "additionalProperties": false,
+          "properties": {
+            "expr": {
+              "type": "string",
+              "enum": ["total"],
+              "description": "A computed expression — currently only 'total' (the roll total)"
+            }
+          }
+        }
+      ]
     },
 
     "OutcomeOperation": {

@@ -39,6 +39,7 @@ export type {
   ExternalTableLookupOperation,
   ExternalTableLookupFind,
   ExternalTableLookupResolve,
+  ResultMappingLeaf,
   DetailsLeafDef,
   DetailsFieldDef
 } from './types'

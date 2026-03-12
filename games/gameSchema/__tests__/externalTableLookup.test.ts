@@ -74,13 +74,130 @@ describe('externalTableLookup codegen', () => {
     expect(code).toContain('resultForTable(foundTable.table, total)')
   })
 
-  test('result type is string (opaque)', () => {
+  test('result type is string (opaque) without resultMapping', () => {
     const code = generateCode(ETL_SPEC)
     expect(code).toContain('export type RollResult = string')
   })
 
-  test('return includes total, result, and rolls', () => {
+  test('return includes total, lookupResult, and rolls', () => {
     const code = generateCode(ETL_SPEC)
-    expect(code).toContain('return { total, result, rolls: r.rolls }')
+    expect(code).toContain('return { total, result: lookupResult, rolls: r.rolls }')
+  })
+
+  test('emits default error message when errorMessage not specified', () => {
+    const code = generateCode(ETL_SPEC)
+    expect(code).toContain('if (!foundTable) throw new Error(`No table found:')
+  })
+})
+
+// --- #996: errorMessage ---
+
+const ERROR_MSG_SPEC = {
+  $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+  name: 'Error Message Test',
+  shortcode: 'test-errmsg',
+  game_url: 'https://example.com',
+  roll: {
+    inputs: { tableName: { type: 'string' as const } },
+    dice: { pool: { sides: 20 }, quantity: 1 },
+    resolve: {
+      externalTableLookup: {
+        package: 'some-lib',
+        imports: ['Ref', 'lookup'],
+        find: {
+          collection: 'Ref.Tables',
+          where: { field: 'name', input: 'tableName' },
+          errorMessage: 'Invalid table name: "${value}"'
+        },
+        resolve: { fn: 'lookup', tableField: 'data' }
+      }
+    }
+  }
+}
+
+describe('externalTableLookup errorMessage (#996)', () => {
+  test('spec with errorMessage is valid', () => {
+    const result = validateSpec(ERROR_MSG_SPEC)
+    expect(result.valid).toBe(true)
+  })
+
+  test('codegen emits custom error message template', () => {
+    const code = generateCode(ERROR_MSG_SPEC)
+    expect(code).toContain('if (!foundTable) throw new Error(`Invalid table name: "')
+    expect(code).toContain('${input.tableName}')
+  })
+})
+
+// --- #996: resultMapping ---
+
+const RESULT_MAPPING_SPEC = {
+  $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+  name: 'Result Mapping Test',
+  shortcode: 'test-rmap',
+  game_url: 'https://example.com',
+  roll: {
+    inputs: { tableName: { type: 'string' as const } },
+    dice: { pool: { sides: 20 }, quantity: 1 },
+    resolve: {
+      externalTableLookup: {
+        package: 'some-lib',
+        imports: ['Ref', 'lookup'],
+        find: {
+          collection: 'Ref.Tables',
+          where: { field: 'name', input: 'tableName' }
+        },
+        resolve: { fn: 'lookup', tableField: 'data' },
+        resultMapping: {
+          key: { $lookupResult: 'key' },
+          label: { $lookupResult: 'result.label' },
+          tableName: { $input: 'tableName' },
+          tableData: { $foundTable: 'data' },
+          roll: { expr: 'total' as const }
+        }
+      }
+    }
+  }
+}
+
+describe('externalTableLookup resultMapping (#996)', () => {
+  test('spec with resultMapping is valid', () => {
+    const result = validateSpec(RESULT_MAPPING_SPEC)
+    expect(result.valid).toBe(true)
+  })
+
+  test('emits RollResult interface instead of type alias', () => {
+    const code = generateCode(RESULT_MAPPING_SPEC)
+    expect(code).toContain('export interface RollResult {')
+    expect(code).toContain('readonly key: unknown')
+    expect(code).toContain('readonly label: unknown')
+    expect(code).toContain('readonly tableName: string')
+    expect(code).toContain('readonly tableData: unknown')
+    expect(code).toContain('readonly roll: number')
+  })
+
+  test('emits $lookupResult as dot-path access', () => {
+    const code = generateCode(RESULT_MAPPING_SPEC)
+    expect(code).toContain('key: lookupResult.key')
+    expect(code).toContain('label: lookupResult.result.label')
+  })
+
+  test('emits $foundTable as field access', () => {
+    const code = generateCode(RESULT_MAPPING_SPEC)
+    expect(code).toContain('tableData: foundTable.data')
+  })
+
+  test('emits $input as input accessor', () => {
+    const code = generateCode(RESULT_MAPPING_SPEC)
+    expect(code).toContain('tableName: input.tableName')
+  })
+
+  test('emits expr total as total', () => {
+    const code = generateCode(RESULT_MAPPING_SPEC)
+    expect(code).toContain('roll: total')
+  })
+
+  test('wraps mapped fields in result object', () => {
+    const code = generateCode(RESULT_MAPPING_SPEC)
+    expect(code).toContain('result: {')
   })
 })

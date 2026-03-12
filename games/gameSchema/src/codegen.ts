@@ -9,6 +9,7 @@ import type {
   DetailsFieldDef,
   DetailsLeafDef,
   DiceConfig,
+  ExternalTableLookupOperation,
   InputDeclaration,
   IntegerOrInput,
   ModifyOperation,
@@ -124,11 +125,13 @@ function buildModifiersCode(
     }
   }
   // Accumulate all add ops into a single plus to avoid duplicate keys
-  const addOps = modify.filter(op => op.add !== undefined)
+  const addOps = modify.filter(
+    (op): op is ModifyOperation & { readonly add: IntegerOrInput } => op.add !== undefined
+  )
   if (addOps.length === 1) {
-    mods.push(`plus: ${integerOrInputCode(addOps[0]!.add!, inputs, optional)}`)
+    mods.push(`plus: ${integerOrInputCode(addOps[0].add, inputs, optional)}`)
   } else if (addOps.length > 1) {
-    const sum = addOps.map(op => integerOrInputCode(op.add!, inputs, optional)).join(' + ')
+    const sum = addOps.map(op => integerOrInputCode(op.add, inputs, optional)).join(' + ')
     mods.push(`plus: ${sum}`)
   }
   if (mods.length === 0) return null
@@ -237,11 +240,14 @@ function generateDegreeLines(
   return [...ifLines, defaultLine]
 }
 
-// Returns string[] for known unions, null for numeric passthrough, 'string' for opaque string
-function collectResults(rollDef: RollDefinition, spec: RandSumSpec): string[] | null | 'string' {
-  // externalTableLookup: result type is opaque string
+// Returns string[] for known unions, null for numeric passthrough, 'string' for opaque string, 'object' for resultMapping
+function collectResults(
+  rollDef: RollDefinition,
+  spec: RandSumSpec
+): string[] | null | 'string' | 'object' {
+  // externalTableLookup: result type depends on resultMapping presence
   if (typeof rollDef.resolve === 'object' && 'externalTableLookup' in rollDef.resolve) {
-    return 'string'
+    return rollDef.resolve.externalTableLookup.resultMapping !== undefined ? 'object' : 'string'
   }
   // dicePools: collect results from compare operation outcomes + ties
   if (rollDef.dicePools !== undefined) {
@@ -368,18 +374,16 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   lines.push(`  let total = ${poolNames.map(n => `${n}Total`).join(' + ')}`)
 
   // Emit conditional pools (track totals by index for $conditionalPool details refs)
-  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
-  const cpIndicesNeeded = hasDetails
-    ? detailsNeedsConditionalPool(rollDef.details!)
-    : new Set<number>()
+  const detailsDef = rollDef.details
+  const hasDetails = detailsDef !== undefined && Object.keys(detailsDef).length > 0
+  const cpIndicesNeeded = hasDetails ? detailsNeedsConditionalPool(detailsDef) : new Set<number>()
 
   if (rollDef.conditionalPools !== undefined && rollDef.conditionalPools.length > 0) {
     // Pre-declare conditionalPoolNTotal variables for details refs
     for (const idx of cpIndicesNeeded) {
       lines.push(`  let conditionalPool${idx}Total = 0`)
     }
-    for (const [idxStr, cp] of rollDef.conditionalPools.entries()) {
-      const idx = Number(idxStr)
+    for (const [idx, cp] of rollDef.conditionalPools.entries()) {
       const cond = conditionCodeFromCondition(cp.condition, optional)
       const cpPool = isRef(cp.pool) ? (resolveRef(spec, cp.pool.$ref) as PoolDefinition) : cp.pool
       const cpSides = integerOrInputCode(cpPool.sides, rollDef.inputs, optional)
@@ -403,7 +407,7 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   }
 
   // Capture diceTotal for details (sum of base pools, before conditional/postResolve)
-  const needsDiceTotal = hasDetails && detailsNeedsDiceTotal(rollDef.details!)
+  const needsDiceTotal = hasDetails && detailsNeedsDiceTotal(detailsDef)
   if (needsDiceTotal) {
     lines.push(`  const diceTotal = total`)
   }
@@ -420,7 +424,7 @@ function generateMultiPoolBody(rollDef: RollDefinition, spec: RandSumSpec): stri
   // Build details object if declared
   const detailsPart = hasDetails ? ', details' : ''
   if (hasDetails) {
-    lines.push(...emitDetailsObjectCode(rollDef.details!, optional, '  '))
+    lines.push(...emitDetailsObjectCode(detailsDef, optional, '  '))
   }
 
   // Emit comparison logic
@@ -454,7 +458,7 @@ function generateOutcomeLines(
   rollsExpr: string,
   inputs: RollDefinition['inputs'],
   optional: boolean,
-  hasDetails: boolean = false
+  hasDetails = false
 ): string[] {
   const resolved = resolveOutcome(outcome, spec)
   const detailsPart = hasDetails ? ', details' : ''
@@ -491,8 +495,9 @@ function generateFunctionBody(
 
   const lines: string[] = [...validationLines]
 
-  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
-  const needsDiceTotal = hasDetails && detailsNeedsDiceTotal(rollDef.details!)
+  const detailsDef = rollDef.details
+  const hasDetails = detailsDef !== undefined && Object.keys(detailsDef).length > 0
+  const needsDiceTotal = hasDetails && detailsNeedsDiceTotal(detailsDef)
 
   for (const rollCase of rollDef.when ?? []) {
     const cond = conditionCode(rollCase, optional)
@@ -525,7 +530,7 @@ function generateFunctionBody(
     }
     lines.push(`    const total = ${overrideTotalExpr}`)
     if (hasDetails) {
-      lines.push(...emitDetailsObjectCode(rollDef.details!, optional, '    '))
+      lines.push(...emitDetailsObjectCode(detailsDef, optional, '    '))
     }
     lines.push(
       ...generateOutcomeLines(
@@ -575,7 +580,7 @@ function generateFunctionBody(
 
   // Build details object if declared
   if (hasDetails) {
-    lines.push(...emitDetailsObjectCode(rollDef.details!, optional, '  '))
+    lines.push(...emitDetailsObjectCode(detailsDef, optional, '  '))
   }
 
   // External table lookup replaces outcome lines with a find+resolve call
@@ -586,13 +591,41 @@ function generateFunctionBody(
     lines.push(
       `  const foundTable = ${find.collection}.find(t => t.${find.where.field} === ${keyAccessor})`
     )
-    lines.push(`  if (!foundTable) throw new Error(\`No table found: \${${keyAccessor}}\`)`)
-    lines.push(`  const result = ${etlResolve.fn}(foundTable.${etlResolve.tableField}, total)`)
+    // Emit error message — custom template or default
+    if (find.errorMessage !== undefined) {
+      const escaped = find.errorMessage.replace(/`/g, '\\`')
+      const template = escaped.replace('${value}', `\${${keyAccessor}}`)
+      lines.push(`  if (!foundTable) throw new Error(\`${template}\`)`)
+    } else {
+      lines.push(`  if (!foundTable) throw new Error(\`No table found: \${${keyAccessor}}\`)`)
+    }
     lines.push(
-      hasDetails
-        ? `  return { total, result, rolls: r.rolls, details }`
-        : `  return { total, result, rolls: r.rolls }`
+      `  const lookupResult = ${etlResolve.fn}(foundTable.${etlResolve.tableField}, total)`
     )
+    // Emit return — either resultMapping or plain passthrough
+    if (etl.resultMapping !== undefined) {
+      const mappingFields = Object.entries(etl.resultMapping)
+        .map(([fieldName, leaf]) => {
+          if ('$lookupResult' in leaf) return `    ${fieldName}: lookupResult.${leaf.$lookupResult}`
+          if ('$foundTable' in leaf) return `    ${fieldName}: foundTable.${leaf.$foundTable}`
+          if ('$input' in leaf) {
+            const acc = optional ? `input?.${leaf.$input}` : `input.${leaf.$input}`
+            return `    ${fieldName}: ${acc}`
+          }
+          return `    ${fieldName}: total`
+        })
+        .join(',\n')
+      const detailsPart = hasDetails ? ', details' : ''
+      lines.push(
+        `  return { total, result: {\n${mappingFields}\n  }, rolls: r.rolls${detailsPart} }`
+      )
+    } else {
+      lines.push(
+        hasDetails
+          ? `  return { total, result: lookupResult, rolls: r.rolls, details }`
+          : `  return { total, result: lookupResult, rolls: r.rolls }`
+      )
+    }
   } else {
     lines.push(
       ...generateOutcomeLines(
@@ -650,7 +683,7 @@ function emitDetailsInterface(
       lines.push(`  readonly ${fieldName}: { ${subFields} } | undefined`)
     } else {
       // Nested object
-      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      const nested = def
       const subFields = Object.entries(nested)
         .map(([k, v]) => `readonly ${k}: ${leafTsType(v, inputs)}`)
         .join('; ')
@@ -666,7 +699,7 @@ function leafValueCode(leaf: DetailsLeafDef, optional: boolean): string {
   if ('$pool' in leaf) return `${leaf.$pool}Total`
   if ('$conditionalPool' in leaf) return `conditionalPool${leaf.$conditionalPool}Total`
   const accessor = optional ? `input?.${leaf.$input}` : `input.${leaf.$input}`
-  if ('default' in leaf && leaf.default !== undefined) {
+  if (leaf.default !== undefined) {
     return `${accessor} ?? ${typeof leaf.default === 'string' ? `'${leaf.default}'` : String(leaf.default)}`
   }
   return accessor
@@ -691,7 +724,7 @@ function emitDetailsObjectCode(
       )
     } else {
       // Nested object
-      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      const nested = def
       const subFields = Object.entries(nested)
         .map(([k, v]) => `${k}: ${leafValueCode(v, optional)}`)
         .join(', ')
@@ -710,7 +743,7 @@ function detailsNeedsDiceTotal(details: Readonly<Record<string, DetailsFieldDef>
         if ('expr' in v && v.expr === 'diceTotal') return true
       }
     } else {
-      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      const nested = def
       for (const v of Object.values(nested)) {
         if ('expr' in v && v.expr === 'diceTotal') return true
       }
@@ -731,7 +764,7 @@ function detailsNeedsConditionalPool(
         if ('$conditionalPool' in v) indices.add(v.$conditionalPool)
       }
     } else if (!isDetailsLeaf(def)) {
-      const nested = def as Readonly<Record<string, DetailsLeafDef>>
+      const nested = def
       for (const v of Object.values(nested)) {
         if ('$conditionalPool' in v) indices.add(v.$conditionalPool)
       }
@@ -773,7 +806,25 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
 
   const parts: string[] = []
 
-  if (isOpaqueString) {
+  const isResultMapping = results === 'object'
+
+  if (isResultMapping) {
+    // Emit an interface for the resultMapping shape
+    const etl = (rollDef.resolve as { readonly externalTableLookup: ExternalTableLookupOperation })
+      .externalTableLookup
+    const mapping = etl.resultMapping
+    if (mapping !== undefined) {
+      parts.push(`export interface ${Key}Result {`)
+      for (const fieldName of Object.keys(mapping)) {
+        // All resultMapping fields are opaque — use unknown for external refs, string for inputs, number for expr
+        const leaf = mapping[fieldName]
+        if (leaf === undefined) continue
+        const fieldType = 'expr' in leaf ? 'number' : '$input' in leaf ? 'string' : 'unknown'
+        parts.push(`  readonly ${fieldName}: ${fieldType}`)
+      }
+      parts.push(`}`)
+    }
+  } else if (isOpaqueString) {
     parts.push(`export type ${Key}Result = string`)
   } else if (isNumeric) {
     parts.push(`export type ${Key}Result = number`)
@@ -783,12 +834,12 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
   }
   parts.push(``)
 
-  const hasDetails = rollDef.details !== undefined && Object.keys(rollDef.details).length > 0
-  let detailsTypeName = 'undefined'
+  const detailsDef = rollDef.details
+  const hasDetails = detailsDef !== undefined && Object.keys(detailsDef).length > 0
+  const detailsTypeName = hasDetails ? `${Key}Details` : 'undefined'
 
   if (hasDetails) {
-    detailsTypeName = `${Key}Details`
-    parts.push(...emitDetailsInterface(detailsTypeName, rollDef.details!, rollDef.inputs))
+    parts.push(...emitDetailsInterface(detailsTypeName, detailsDef, rollDef.inputs))
     parts.push(``)
   }
 
@@ -827,20 +878,14 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
 function needsValidationImports(spec: RandSumSpec): { needsFinite: boolean; needsRange: boolean } {
   const patternKeys = Object.keys(spec).filter(k => /^roll[A-Z][a-zA-Z]*$/.test(k))
   const rollKeys = ['roll', ...patternKeys].filter(k => isRollDefinition(spec[k]))
-  let needsFinite = false
-  let needsRange = false
-  for (const key of rollKeys) {
+  const allInputDecls = rollKeys.flatMap(key => {
     const rollDef = spec[key] as RollDefinition
-    if (!rollDef.inputs) continue
-    for (const decl of Object.values(rollDef.inputs)) {
-      if (decl.type === 'integer') {
-        needsFinite = true
-        if (decl.minimum !== undefined || decl.maximum !== undefined) {
-          needsRange = true
-        }
-      }
-    }
-  }
+    return rollDef.inputs ? Object.values(rollDef.inputs) : []
+  })
+  const needsFinite = allInputDecls.some(decl => decl.type === 'integer')
+  const needsRange = allInputDecls.some(
+    decl => decl.type === 'integer' && (decl.minimum !== undefined || decl.maximum !== undefined)
+  )
   return { needsFinite, needsRange }
 }
 
@@ -912,6 +957,7 @@ function buildCodeString(spec: RandSumSpec): string {
   const runtimeImports = ['executeRoll', ...validationImports].join(', ')
 
   const parts: string[] = [
+    `/* eslint-disable */`,
     `// Auto-generated from ${spec.name} spec. Run \`bun run codegen\` to regenerate.`,
     `// Do not edit this file manually.`,
     `import { ${runtimeImports} } from '@randsum/gameSchema'`,
