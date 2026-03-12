@@ -31,5 +31,6 @@ export type {
   CountMatchingOperation,
   CapOperation,
   MarkDiceOperation,
-  PoolCondition
+  PoolCondition,
+  PostResolveModifyOperation
 } from './types'

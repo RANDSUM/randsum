@@ -51,4 +51,42 @@ describe('postResolveModifiers schema validation', () => {
     })
     expect(result.valid).toBe(false)
   })
+
+  test('empty postResolveModifiers array is valid', () => {
+    const result = validateSpec({
+      ...BASE,
+      roll: { ...BASE.roll, postResolveModifiers: [] }
+    })
+    // Empty array is allowed — no minItems constraint on the array itself
+    expect(result.valid).toBe(true)
+  })
+
+  test('multiple post-resolve modifiers are valid', () => {
+    const result = validateSpec({
+      ...BASE,
+      roll: {
+        ...BASE.roll,
+        inputs: { a: { type: 'integer', default: 0 }, b: { type: 'integer', default: 0 } },
+        postResolveModifiers: [{ add: { $input: 'a' } }, { add: { $input: 'b' } }]
+      }
+    })
+    expect(result.valid).toBe(true)
+  })
+
+  test('postResolveModifiers in when override is valid', () => {
+    const result = validateSpec({
+      ...BASE,
+      roll: {
+        ...BASE.roll,
+        inputs: { mode: { type: 'string', enum: ['normal', 'bonus'], default: 'normal' } },
+        when: [
+          {
+            condition: { input: 'mode', operator: '=', value: 'bonus' },
+            override: { postResolveModifiers: [{ add: 5 }] }
+          }
+        ]
+      }
+    })
+    expect(result.valid).toBe(true)
+  })
 })
