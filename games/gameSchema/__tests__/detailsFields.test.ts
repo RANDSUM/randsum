@@ -89,22 +89,22 @@ describe('details fields runtime (loadSpec)', () => {
     const loaded = loadSpec(DETAILS_SPEC)
     const result = loaded.roll({ modifier: 3 })
     expect(result.details).toBeDefined()
-    expect(result.details!.modifier).toBe(3)
-    expect(typeof result.details!.diceTotal).toBe('number')
-    expect(typeof result.details!.total).toBe('number')
-    expect(result.details!.total).toBe(result.total)
+    expect(result.details?.modifier).toBe(3)
+    expect(typeof result.details?.diceTotal).toBe('number')
+    expect(typeof result.details?.total).toBe('number')
+    expect(result.details?.total).toBe(result.total)
   })
 
   test('diceTotal differs from total when modifier applied', () => {
     const loaded = loadSpec(DETAILS_SPEC)
     const result = loaded.roll({ modifier: 5 })
-    expect(result.details!.diceTotal).toBe(result.total - 5)
+    expect(result.details?.diceTotal).toBe(result.total - 5)
   })
 
   test('uses default when input not provided', () => {
     const loaded = loadSpec(DETAILS_SPEC)
     const result = loaded.roll()
-    expect(result.details!.modifier).toBe(0)
+    expect(result.details?.modifier).toBe(0)
   })
 })
 
@@ -178,8 +178,8 @@ describe('nested details objects (#992)', () => {
     const loaded = loadSpec(NESTED_DETAILS_SPEC)
     const result = loaded.roll({ bonus: 7 })
     expect(result.details).toBeDefined()
-    expect(typeof result.details!.diceTotal).toBe('number')
-    const stats = result.details!.stats as { total: number; bonus: number }
+    expect(typeof result.details?.diceTotal).toBe('number')
+    const stats = result.details?.stats as { total: number; bonus: number }
     expect(stats.total).toBe(result.total)
     expect(stats.bonus).toBe(7)
   })
@@ -224,10 +224,10 @@ describe('$pool ref details (#992)', () => {
     const loaded = loadSpec(POOL_REF_DETAILS_SPEC)
     const result = loaded.roll()
     expect(result.details).toBeDefined()
-    expect(typeof result.details!.hopeTotal).toBe('number')
-    expect(typeof result.details!.fearTotal).toBe('number')
-    const hopeTotal = result.details!.hopeTotal as number
-    const fearTotal = result.details!.fearTotal as number
+    expect(typeof result.details?.hopeTotal).toBe('number')
+    expect(typeof result.details?.fearTotal).toBe('number')
+    const hopeTotal = result.details?.hopeTotal as number
+    const fearTotal = result.details?.fearTotal as number
     expect(hopeTotal).toBeGreaterThanOrEqual(2)
     expect(hopeTotal).toBeLessThanOrEqual(24)
     expect(fearTotal).toBeGreaterThanOrEqual(2)
@@ -288,21 +288,14 @@ describe('$conditionalPool ref details (#992)', () => {
     const loaded = loadSpec(CONDITIONAL_POOL_DETAILS_SPEC)
     const result = loaded.roll()
     expect(result.details).toBeDefined()
-    expect(result.details!.bonusPool).toBe(0)
+    expect(result.details?.bonusPool).toBe(0)
   })
 
   test('runtime returns nonzero for conditional pool when condition met', () => {
     const loaded = loadSpec(CONDITIONAL_POOL_DETAILS_SPEC)
     // Run multiple times to ensure at least one produces a nonzero
-    let found = false
-    for (let i = 0; i < 50; i++) {
-      const result = loaded.roll({ advantage: true })
-      const bonusPool = result.details!.bonusPool as number
-      if (bonusPool > 0) {
-        found = true
-        break
-      }
-    }
+    const results = Array.from({ length: 50 }, () => loaded.roll({ advantage: true }))
+    const found = results.some(r => (r.details?.bonusPool as number) > 0)
     expect(found).toBe(true)
   })
 })
@@ -356,14 +349,14 @@ describe('conditional (when) details (#992)', () => {
     const loaded = loadSpec(CONDITIONAL_DETAILS_SPEC)
     const result = loaded.roll()
     expect(result.details).toBeDefined()
-    expect(result.details!.advantageInfo).toBeUndefined()
+    expect(result.details?.advantageInfo).toBeUndefined()
   })
 
   test('runtime returns nested object for conditional when input provided', () => {
     const loaded = loadSpec(CONDITIONAL_DETAILS_SPEC)
     const result = loaded.roll({ advantage: true })
     expect(result.details).toBeDefined()
-    const info = result.details!.advantageInfo as { active: boolean; roll: number }
+    const info = result.details?.advantageInfo as { active: boolean; roll: number }
     expect(info).toBeDefined()
     expect(info.active).toBe(true)
     expect(info.roll).toBe(result.total)

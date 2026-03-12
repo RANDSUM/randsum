@@ -9,9 +9,9 @@ import { isRef, resolveRef } from './refResolver'
 import type {
   ComparePoolOperation,
   Condition,
+  DegreeOfSuccessOperation,
   DetailsFieldDef,
   DetailsLeafDef,
-  DegreeOfSuccessOperation,
   DiceConfig,
   GameRollResult,
   InputDeclaration,
@@ -67,7 +67,7 @@ function resolveDicePool(
     const resolved = resolveRef(spec, pool.$ref)
     return resolved as PoolDefinition
   }
-  return pool as PoolDefinition
+  return pool
 }
 
 function evaluateCondition(condition: Condition, input: RollInput): boolean {
@@ -388,27 +388,33 @@ function buildDetails(
   detailsDef: Readonly<Record<string, DetailsFieldDef>>,
   ctx: DetailsContext
 ): Readonly<Record<string, unknown>> {
-  return Object.fromEntries(
-    Object.entries(detailsDef).map(([fieldName, def]) => {
-      if (isDetailsLeaf(def)) {
-        return [fieldName, resolveLeaf(def, ctx)]
+  const result: Record<string, unknown> = {}
+  for (const [fieldName, def] of Object.entries(detailsDef)) {
+    if (isDetailsLeaf(def)) {
+      result[fieldName] = resolveLeaf(def, ctx)
+    } else if (isConditionalDetails(def)) {
+      const condVal = ctx.input[def.when.input]
+      if (condVal === undefined) {
+        result[fieldName] = undefined
+      } else {
+        const nested: Record<string, unknown> = {}
+        for (const [k, v] of Object.entries(def.value)) {
+          nested[k] = resolveLeaf(v, ctx)
+        }
+        result[fieldName] = nested
       }
-      if (isConditionalDetails(def)) {
-        const condVal = ctx.input[def.when.input]
-        if (condVal === undefined) return [fieldName, undefined]
-        const nested = Object.fromEntries(
-          Object.entries(def.value).map(([k, v]) => [k, resolveLeaf(v, ctx)])
-        )
-        return [fieldName, nested]
-      }
+    } else {
       // Nested object
-      const nested = def as Readonly<Record<string, DetailsLeafDef>>
-      return [
-        fieldName,
-        Object.fromEntries(Object.entries(nested).map(([k, v]) => [k, resolveLeaf(v, ctx)]))
-      ]
-    })
-  )
+      const nested: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(def)) {
+        if (isDetailsLeaf(v)) {
+          nested[k] = resolveLeaf(v, ctx)
+        }
+      }
+      result[fieldName] = nested
+    }
+  }
+  return result
 }
 
 export function executePipeline(
@@ -435,7 +441,7 @@ export function executePipeline(
       poolEntries.map(([key, diceConfig]) => [key, rollSinglePool(diceConfig, mergedInput, spec)])
     )
     const allRolls: RollRecord[] = Object.values(poolResults).flatMap(p => [...p.rolls])
-    let total = Object.values(poolResults).reduce((s, p) => s + p.total, 0)
+    const basePoolTotal = Object.values(poolResults).reduce((s, p) => s + p.total, 0)
 
     // Apply conditional pools (track totals by index for $conditionalPool details refs)
     const conditionalPoolTotals: number[] = []
@@ -456,11 +462,6 @@ export function executePipeline(
             .flatMap((r: RollRecord) => r.rolls)
             .reduce((s, v) => s + v, 0)
           conditionalPoolTotals.push(cpTotal)
-          if (cp.arithmetic === 'add') {
-            total += cpTotal
-          } else {
-            total -= cpTotal
-          }
           allRolls.push(...cpResult.rolls)
         } else {
           conditionalPoolTotals.push(0)
@@ -468,8 +469,12 @@ export function executePipeline(
       }
     }
 
-    const diceTotal = total
-    total = applyPostResolveModifiers(total, effectivePostResolveModifiers, mergedInput)
+    const cpAdjustment = (rollDef.conditionalPools ?? []).reduce((acc, cp, idx) => {
+      const cpTotal = conditionalPoolTotals[idx] ?? 0
+      return acc + (cp.arithmetic === 'add' ? cpTotal : -cpTotal)
+    }, 0)
+    const diceTotal = basePoolTotal + cpAdjustment
+    const total = applyPostResolveModifiers(diceTotal, effectivePostResolveModifiers, mergedInput)
     const result = resolveCompareResult(override?.resolve ?? rollDef.resolve, poolResults)
     if (rollDef.details !== undefined && Object.keys(rollDef.details).length > 0) {
       const poolTotals = Object.fromEntries(

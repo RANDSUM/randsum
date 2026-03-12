@@ -35,10 +35,10 @@ describe('roll property-based tests', () => {
         return (
           details.hope.roll >= 1 &&
           details.hope.roll <= 20 &&
-          details.hope.amplified === true &&
+          details.hope.amplified &&
           details.fear.roll >= 1 &&
           details.fear.roll <= 12 &&
-          details.fear.amplified === false
+          !details.fear.amplified
         )
       })
     )
@@ -52,10 +52,10 @@ describe('roll property-based tests', () => {
         return (
           details.fear.roll >= 1 &&
           details.fear.roll <= 20 &&
-          details.fear.amplified === true &&
+          details.fear.amplified &&
           details.hope.roll >= 1 &&
           details.hope.roll <= 12 &&
-          details.hope.amplified === false
+          !details.hope.amplified
         )
       })
     )
@@ -69,10 +69,10 @@ describe('roll property-based tests', () => {
         return (
           details.hope.roll >= 1 &&
           details.hope.roll <= 20 &&
-          details.hope.amplified === true &&
+          details.hope.amplified &&
           details.fear.roll >= 1 &&
           details.fear.roll <= 20 &&
-          details.fear.amplified === true
+          details.fear.amplified
         )
       })
     )
