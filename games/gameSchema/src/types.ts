@@ -138,14 +138,12 @@ export interface RandSumSpec {
   readonly [key: string]: unknown
 }
 
-import type { RollRecord } from '@randsum/roller'
+import type { GameRollResult, RollRecord } from '@randsum/roller'
+
+export type { GameRollResult, RollRecord }
 
 export type RollInput = Readonly<Record<string, InputValue>>
 
-export interface GameRollResult {
-  readonly total: number
-  readonly result: string
-  readonly rolls: readonly RollRecord[]
-}
-
-export type LoadedSpec = Readonly<Record<string, (input?: RollInput) => GameRollResult>>
+export type LoadedSpec = Readonly<
+  Record<string, (input?: RollInput) => GameRollResult<string | number, undefined, RollRecord>>
+>

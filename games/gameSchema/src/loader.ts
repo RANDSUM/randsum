@@ -3,7 +3,14 @@ import { readFile } from 'node:fs/promises'
 
 import { SchemaError } from './errors'
 import { executePipeline } from './pipeline'
-import type { GameRollResult, LoadedSpec, RandSumSpec, RollDefinition, RollInput } from './types'
+import type {
+  GameRollResult,
+  LoadedSpec,
+  RandSumSpec,
+  RollDefinition,
+  RollInput,
+  RollRecord
+} from './types'
 import { validateSpec } from './validator'
 
 function isRollDefinition(value: unknown): value is RollDefinition {
@@ -26,7 +33,8 @@ function specToLoadedSpec(spec: RandSumSpec): LoadedSpec {
     .filter(key => isRollDefinition(spec[key]))
     .map(key => {
       const rollDef = spec[key] as RollDefinition
-      const fn = (input?: RollInput): GameRollResult => executePipeline(rollDef, input ?? {}, spec)
+      const fn = (input?: RollInput): GameRollResult<string | number, undefined, RollRecord> =>
+        executePipeline(rollDef, input ?? {}, spec)
       return [key, fn] as const
     })
 

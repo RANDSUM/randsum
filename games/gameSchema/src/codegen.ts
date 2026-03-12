@@ -160,7 +160,9 @@ function getOutcomeRanges(
   return []
 }
 
-function collectResults(rollDef: RollDefinition, spec: RandSumSpec): string[] {
+function collectResults(rollDef: RollDefinition, spec: RandSumSpec): string[] | null {
+  // null signals "no outcome" — numeric passthrough
+  if (rollDef.outcome === undefined) return null
   const defaultRanges = getOutcomeRanges(rollDef.outcome, spec)
   const whenRanges = (rollDef.when ?? []).flatMap(wc =>
     wc.override.outcome ? getOutcomeRanges(wc.override.outcome, spec) : []
@@ -263,11 +265,16 @@ function generateFunctionBody(
     if (needsPre) lines.push(`    const preModify = r.rolls.flatMap(x => x.initialRolls)`)
     if (needsPost) lines.push(`    const postModify = r.rolls.flatMap(x => x.rolls)`)
     lines.push(`    const total = ${overrideTotalExpr}`)
-    for (const range of overrideRanges) {
-      const check = buildRangeReturn(range, '    ')
-      if (check) lines.push(check)
+    if (overrideRanges.length === 0) {
+      // numeric passthrough — no outcome table
+      lines.push(`    return { total, result: total, rolls: r.rolls }`)
+    } else {
+      for (const range of overrideRanges) {
+        const check = buildRangeReturn(range, '    ')
+        if (check) lines.push(check)
+      }
+      lines.push(`    throw new Error(\`No table match for total \${total}\`)`)
     }
-    lines.push(`    throw new Error(\`No table match for total \${total}\`)`)
     lines.push(`  }`)
   }
 
@@ -293,11 +300,16 @@ function generateFunctionBody(
   if (needsPre) lines.push(`  const preModify = r.rolls.flatMap(x => x.initialRolls)`)
   if (needsPost) lines.push(`  const postModify = r.rolls.flatMap(x => x.rolls)`)
   lines.push(`  const total = ${totalExpr}`)
-  for (const range of defaultRanges) {
-    const check = buildRangeReturn(range, '  ')
-    if (check) lines.push(check)
+  if (defaultRanges.length === 0) {
+    // numeric passthrough — no outcome table
+    lines.push(`  return { total, result: total, rolls: r.rolls }`)
+  } else {
+    for (const range of defaultRanges) {
+      const check = buildRangeReturn(range, '  ')
+      if (check) lines.push(check)
+    }
+    lines.push(`  throw new Error(\`No table match for total \${total}\`)`)
   }
-  lines.push(`  throw new Error(\`No table match for total \${total}\`)`)
 
   return lines
 }
@@ -328,24 +340,32 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
   const optional = inputAllOptional(rollDef.inputs)
   const inputType = buildInputType(rollDef.inputs)
   const overload = getSingleInputOverload(rollDef)
+  const isNumeric = results === null
 
   const parts: string[] = []
-  const resultUnion = results.map(r => `'${r}'`).join(' | ')
-  parts.push(`export type ${Key}Result = ${resultUnion}`)
+
+  if (isNumeric) {
+    parts.push(`export type ${Key}Result = number`)
+  } else {
+    const resultUnion = results.map(r => `'${r}'`).join(' | ')
+    parts.push(`export type ${Key}Result = ${resultUnion}`)
+  }
   parts.push(``)
+
+  const returnType = `GameRollResult<${Key}Result, undefined, RollRecord>`
 
   if (overload) {
     const { fieldName, tsType, fieldOptional } = overload
     const nakedOpt = fieldOptional ? '?' : ''
     const objOpt = optional ? '?' : ''
     // Overload 1: naked scalar
-    parts.push(`export function ${key}(${fieldName}${nakedOpt}: ${tsType}): GameRollResult`)
+    parts.push(`export function ${key}(${fieldName}${nakedOpt}: ${tsType}): ${returnType}`)
     // Overload 2: object form
-    parts.push(`export function ${key}(input${objOpt}: ${inputType}): GameRollResult`)
+    parts.push(`export function ${key}(input${objOpt}: ${inputType}): ${returnType}`)
     // Implementation signature
     const rawOpt = optional ? '?' : ''
     parts.push(
-      `export function ${key}(rawInput${rawOpt}: ${tsType} | ${inputType}): GameRollResult {`
+      `export function ${key}(rawInput${rawOpt}: ${tsType} | ${inputType}): ${returnType} {`
     )
     // Normalization: coerce naked scalar into object so function body is unchanged
     const fallback = optional ? ' ?? {}' : ''
@@ -354,7 +374,7 @@ function generateRollParts(key: string, rollDef: RollDefinition, spec: RandSumSp
     )
   } else {
     const param = optional ? `input?: ${inputType}` : `input: ${inputType}`
-    parts.push(`export function ${key}(${param}): GameRollResult {`)
+    parts.push(`export function ${key}(${param}): ${returnType} {`)
   }
 
   parts.push(...generateFunctionBody(rollDef, spec, optional))

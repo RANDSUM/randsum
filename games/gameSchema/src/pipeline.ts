@@ -245,8 +245,8 @@ function applyOutcome(
   spec: RandSumSpec,
   preModifyRolls: readonly number[],
   workingRolls: readonly number[]
-): string {
-  if (outcome === undefined) return String(total)
+): string | number {
+  if (outcome === undefined) return total
 
   const resolved: OutcomeOperation = isRef(outcome)
     ? (resolveRef(spec, outcome.$ref) as OutcomeOperation)
@@ -270,7 +270,7 @@ export function executePipeline(
   rollDef: RollDefinition,
   input: RollInput,
   spec: RandSumSpec
-): GameRollResult {
+): GameRollResult<string | number, undefined, RollRecord> {
   const mergedInput = applyInputDefaults(input, rollDef.inputs)
   const override = evaluateWhen(rollDef.when, mergedInput)
 
