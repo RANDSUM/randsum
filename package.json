@@ -55,7 +55,7 @@
       "limit": "50 KB"
     },
     {
-      "path": "games/blades/dist/index.js",
+      "path": "games/blades/dist/blades.js",
       "limit": "8 KB"
     },
     {
@@ -87,7 +87,7 @@
       "limit": "4 KB"
     },
     {
-      "path": "games/blades/dist/index.d.ts",
+      "path": "games/blades/dist/blades.d.ts",
       "limit": "6 KB"
     },
     {
@@ -150,7 +150,7 @@
     "version:patch": "bun pm version patch",
     "version:minor": "bun pm version minor",
     "version:major": "bun pm version major",
-    "publish": "bun run lint && bun run format:check && bun run typecheck && bun run test && bun run build && bun run size && bun run check:exports && npm publish --workspaces --access=public"
+    "publish": "bun run lint && bun run format:check && bun run typecheck && bun run test && bun run build && bun run size && bun run check:exports && bun scripts/publish.ts"
   },
   "type": "module",
   "workspaces": [

@@ -41,10 +41,13 @@
     "randsum.json"
   ],
   "dependencies": {
-    "@randsum/roller": "workspace:~",
     "ajv": "8.18.0"
   },
+  "peerDependencies": {
+    "@randsum/roller": "^3.0.0"
+  },
   "devDependencies": {
+    "@randsum/roller": "workspace:~",
     "typescript": "^5.9.3",
     "bunup": "^0.11.0"
   },

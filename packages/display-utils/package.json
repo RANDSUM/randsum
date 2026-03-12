@@ -46,13 +46,15 @@
     "display",
     "utilities"
   ],
-  "dependencies": {
-    "@randsum/roller": "workspace:~"
+  "peerDependencies": {
+    "@randsum/roller": "^3.0.0"
   },
   "devDependencies": {
+    "@randsum/roller": "workspace:~",
     "typescript": "^5.8.2"
   },
   "scripts": {
+    "dev": "bunup --watch",
     "build": "bunup",
     "prepublishOnly": "bun run build",
     "typecheck": "tsc --noEmit",
