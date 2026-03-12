@@ -61,6 +61,10 @@ export interface ModifyOperation {
   readonly keepMarked?: string
 }
 
+export interface PostResolveModifyOperation {
+  readonly add?: IntegerOrInput
+}
+
 export interface CountMatchingOperation {
   readonly operator: '>' | '>=' | '<' | '<=' | '='
   readonly value: IntegerOrInput
@@ -94,6 +98,7 @@ export interface PipelineOverride {
   readonly modify?: readonly ModifyOperation[]
   readonly resolve?: ResolveOperation
   readonly outcome?: OutcomeOperation | Ref
+  readonly postResolveModifiers?: readonly PostResolveModifyOperation[]
 }
 
 export interface RollCase {
@@ -117,6 +122,7 @@ export interface RollDefinition {
   readonly resolve: ResolveOperation
   readonly outcome?: OutcomeOperation | Ref
   readonly when?: readonly RollCase[]
+  readonly postResolveModifiers?: readonly PostResolveModifyOperation[]
 }
 
 export interface RandSumSpec {

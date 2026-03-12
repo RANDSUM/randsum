@@ -210,6 +210,11 @@
           "description": "Conditional overrides evaluated before the pipeline runs. First matching condition wins. Each entry can override any subset of pipeline stages.",
           "type": "array",
           "items": { "$ref": "#/$defs/RollCase" }
+        },
+        "postResolveModifiers": {
+          "description": "Modifiers applied after resolve (to the total, not individual dice). Use for bonuses like 2d6+stat.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/PostResolveModifyOperation" }
         }
       }
     },
@@ -276,6 +281,11 @@
         "outcome": {
           "description": "Override for Stage 4 (outcome mapping)",
           "$ref": "#/$defs/OutcomeOperationOrRef"
+        },
+        "postResolveModifiers": {
+          "description": "Override for post-resolve modifiers (applied to the total, not individual dice)",
+          "type": "array",
+          "items": { "$ref": "#/$defs/PostResolveModifyOperation" }
         }
       }
     },
@@ -335,6 +345,19 @@
         "key": {
           "type": "string",
           "description": "Name for this pool's results in a multi-pool roll (e.g. 'hope', 'fear'). Required when dice is an array."
+        }
+      }
+    },
+
+    "PostResolveModifyOperation": {
+      "type": "object",
+      "description": "A single modifier applied to the resolved total (not individual dice). Use for bonuses like 2d6+stat.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "add": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Add a flat value to the resolved total"
         }
       }
     },
