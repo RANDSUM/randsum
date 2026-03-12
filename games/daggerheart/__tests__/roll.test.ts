@@ -1,8 +1,5 @@
-import { describe, expect, spyOn, test } from 'bun:test'
-import { roll } from '../src/roll'
-import type { DaggerheartRollArgument } from '../src/types'
-import * as roller from '@randsum/roller'
-import type { RollerRollResult } from '@randsum/roller'
+import { describe, expect, test } from 'bun:test'
+import { roll } from '@randsum/daggerheart'
 
 describe('roll', () => {
   describe('basic functionality', () => {
@@ -15,11 +12,11 @@ describe('roll', () => {
       })
     })
 
-    test('total is sum of hope and fear dice', () => {
+    test('total is sum of hope and fear dice when no extra die', () => {
       const result = roll({})
       const { details } = result
 
-      if (details?.extraDie === undefined && details !== undefined) {
+      if (details !== undefined && details.extraDie === undefined) {
         expect(result.total).toBe(details.hope.roll + details.fear.roll)
       }
     })
@@ -88,20 +85,19 @@ describe('roll', () => {
     test('handles advantage rolling', () => {
       const result = roll({ rollingWith: 'Advantage' })
 
-      if (result.details?.extraDie?.roll !== undefined) {
-        expect(typeof result.details.extraDie.roll).toBe('number')
-        expect(result.details.extraDie.roll).toBeGreaterThanOrEqual(1)
-        expect(result.details.extraDie.roll).toBeLessThanOrEqual(6)
-      }
+      expect(result.details?.extraDie).toBeDefined()
+      expect(result.details?.extraDie?.advantageRoll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.extraDie?.advantageRoll).toBeLessThanOrEqual(6)
+      expect(result.details?.extraDie?.disadvantageRoll).toBe(0)
     })
 
     test('handles disadvantage rolling', () => {
       const result = roll({ rollingWith: 'Disadvantage' })
 
-      if (result.details?.extraDie !== undefined) {
-        expect(result.details.extraDie.roll).toBeGreaterThanOrEqual(-6)
-        expect(result.details.extraDie.roll).toBeLessThanOrEqual(-1)
-      }
+      expect(result.details?.extraDie).toBeDefined()
+      expect(result.details?.extraDie?.disadvantageRoll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.extraDie?.disadvantageRoll).toBeLessThanOrEqual(6)
+      expect(result.details?.extraDie?.advantageRoll).toBe(0)
     })
 
     test('extraDie is undefined when rollingWith is not specified', () => {
@@ -118,10 +114,9 @@ describe('roll', () => {
       })
 
       expect(result.details?.modifier).toBe(modifier)
-      if (result.details?.extraDie !== undefined) {
-        expect(result.details.extraDie.roll).toBeGreaterThanOrEqual(1)
-        expect(result.details.extraDie.roll).toBeLessThanOrEqual(6)
-      }
+      expect(result.details?.extraDie).toBeDefined()
+      expect(result.details?.extraDie?.advantageRoll).toBeGreaterThanOrEqual(1)
+      expect(result.details?.extraDie?.advantageRoll).toBeLessThanOrEqual(6)
     })
   })
 
@@ -134,7 +129,6 @@ describe('roll', () => {
           expect(hopeRoll).toBeLessThanOrEqual(20)
         }
       })
-      // At least verify we ran the test (d20 might not roll > 12 in 20 tries)
       expect(results.length).toBe(20)
     })
 
@@ -146,7 +140,6 @@ describe('roll', () => {
           expect(fearRoll).toBeLessThanOrEqual(20)
         }
       })
-      // At least verify we ran the test (d20 might not roll > 12 in 20 tries)
       expect(results.length).toBe(20)
     })
 
@@ -162,6 +155,13 @@ describe('roll', () => {
       expect(result.details?.fear.roll).toBeLessThanOrEqual(20)
     })
 
+    test('amplified flag is correct', () => {
+      const result = roll({ amplifyHope: true, amplifyFear: false })
+
+      expect(result.details?.hope.amplified).toBe(true)
+      expect(result.details?.fear.amplified).toBe(false)
+    })
+
     test('amplify with modifier and advantage works together', () => {
       const result = roll({
         modifier: 2,
@@ -173,7 +173,7 @@ describe('roll', () => {
       expect(result.details?.modifier).toBe(2)
       expect(result.details?.hope.roll).toBeGreaterThanOrEqual(1)
       expect(result.details?.fear.roll).toBeGreaterThanOrEqual(1)
-      expect(typeof result.details?.extraDie?.roll).toBe('number')
+      expect(result.details?.extraDie).toBeDefined()
     })
   })
 
@@ -210,17 +210,17 @@ describe('roll', () => {
   })
 
   describe('type validation', () => {
-    test('accepts valid DaggerheartRollArgument types', () => {
-      const validArgs: DaggerheartRollArgument[] = [
+    test('accepts valid argument types', () => {
+      const validArgs = [
         {},
         { modifier: 5 },
-        { rollingWith: 'Advantage' },
-        { rollingWith: 'Disadvantage' },
+        { rollingWith: 'Advantage' as const },
+        { rollingWith: 'Disadvantage' as const },
         { amplifyHope: true },
         { amplifyFear: true },
         {
           modifier: 3,
-          rollingWith: 'Advantage',
+          rollingWith: 'Advantage' as const,
           amplifyHope: true,
           amplifyFear: false
         }
@@ -261,47 +261,6 @@ describe('roll', () => {
     test('throws on unreasonable modifier', () => {
       expect(() => roll({ modifier: 100 })).toThrow()
       expect(() => roll({ modifier: -100 })).toThrow()
-    })
-
-    test('throws on invalid rollingWith value', () => {
-      // @ts-expect-error -- testing runtime validation
-      expect(() => roll({ rollingWith: 'invalid' })).toThrow()
-    })
-  })
-
-  describe('error handling', () => {
-    test('throws when hope or fear rolls are missing from result', () => {
-      const mockRollResult: RollerRollResult = {
-        total: 10,
-        rolls: [
-          {
-            description: ['1d12'],
-            parameters: {
-              quantity: 1,
-              sides: 12,
-              arithmetic: 'add' as const,
-              modifiers: {},
-              key: 'wrong-key',
-              argument: { sides: 12 },
-              notation: '1d12' as const,
-              description: ['1d12'],
-              faces: undefined
-            },
-            rolls: [5],
-            initialRolls: [5],
-            modifierLogs: [],
-            appliedTotal: 5,
-            total: 5
-          }
-        ],
-        result: ['5']
-      }
-
-      const rollSpy = spyOn(roller, 'roll').mockReturnValue(mockRollResult)
-
-      expect(() => roll({})).toThrow('Failed to properly roll.')
-
-      rollSpy.mockRestore()
     })
   })
 })

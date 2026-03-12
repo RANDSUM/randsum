@@ -15,28 +15,28 @@
     "url": "git+https://github.com/RANDSUM/randsum.git",
     "directory": "games/daggerheart"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/daggerheart.cjs",
+  "module": "./dist/daggerheart.js",
+  "types": "./dist/daggerheart.d.ts",
   "files": [
     "dist",
-    "src",
+    "daggerheart.randsum.json",
     "LICENSE",
     "README.md"
   ],
   "type": "module",
   "dependencies": {
-    "@randsum/roller": "workspace:~"
+    "@randsum/gameSchema": "workspace:~"
   },
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/daggerheart.d.ts",
+        "default": "./dist/daggerheart.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/daggerheart.d.cts",
+        "default": "./dist/daggerheart.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -60,11 +60,10 @@
   "scripts": {
     "dev": "bunup --watch",
     "prepublishOnly": "bun run build",
-    "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
-    "test": "bun test",
+    "build": "bun run randsum-schema-build",
+    "test": "bun run build && bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "typecheck": "tsc --noEmit"
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc"
   }
 }

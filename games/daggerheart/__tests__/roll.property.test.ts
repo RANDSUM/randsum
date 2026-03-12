@@ -1,6 +1,6 @@
 import { describe, test } from 'bun:test'
 import fc from 'fast-check'
-import { roll } from '../src/roll'
+import { roll } from '@randsum/daggerheart'
 
 describe('roll property-based tests', () => {
   test('result is always a valid Daggerheart outcome', () => {
@@ -32,7 +32,6 @@ describe('roll property-based tests', () => {
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier, amplifyHope: true })
         if (!details) return false
-        // Hope can be 1-20, fear stays 1-12
         return (
           details.hope.roll >= 1 &&
           details.hope.roll <= 20 &&
@@ -50,7 +49,6 @@ describe('roll property-based tests', () => {
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier, amplifyFear: true })
         if (!details) return false
-        // Fear can be 1-20, hope stays 1-12
         return (
           details.fear.roll >= 1 &&
           details.fear.roll <= 20 &&
@@ -94,8 +92,7 @@ describe('roll property-based tests', () => {
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier, rollingWith: 'Advantage' })
         if (!details?.extraDie) return false
-        // Advantage roll should be 1-6
-        return details.extraDie.roll >= 1 && details.extraDie.roll <= 6
+        return details.extraDie.advantageRoll >= 1 && details.extraDie.advantageRoll <= 6
       })
     )
   })
@@ -105,8 +102,7 @@ describe('roll property-based tests', () => {
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { details } = roll({ modifier, rollingWith: 'Disadvantage' })
         if (!details?.extraDie) return false
-        // Disadvantage roll should be -6 to -1
-        return details.extraDie.roll >= -6 && details.extraDie.roll <= -1
+        return details.extraDie.disadvantageRoll >= 1 && details.extraDie.disadvantageRoll <= 6
       })
     )
   })

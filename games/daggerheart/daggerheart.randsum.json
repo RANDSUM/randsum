@@ -1,0 +1,63 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Daggerheart",
+  "shortcode": "daggerheart",
+  "version": "1.0.0",
+  "game_url": "https://darringtonpress.com/daggerheart/",
+
+  "pools": {
+    "hope": { "sides": 12 },
+    "fear": { "sides": 12 }
+  },
+
+  "roll": {
+    "inputs": {
+      "modifier": { "type": "integer", "minimum": -30, "maximum": 30, "default": 0 },
+      "amplifyHope": { "type": "boolean", "default": false },
+      "amplifyFear": { "type": "boolean", "default": false },
+      "rollingWith": { "type": "string", "enum": ["Advantage", "Disadvantage"], "optional": true }
+    },
+    "dicePools": {
+      "hope": { "pool": { "sides": { "$input": "amplifyHope", "ifTrue": 20, "ifFalse": 12 } } },
+      "fear": { "pool": { "sides": { "$input": "amplifyFear", "ifTrue": 20, "ifFalse": 12 } } }
+    },
+    "conditionalPools": [
+      {
+        "condition": { "input": "rollingWith", "operator": "=", "value": "Advantage" },
+        "pool": { "sides": 6 },
+        "arithmetic": "add"
+      },
+      {
+        "condition": { "input": "rollingWith", "operator": "=", "value": "Disadvantage" },
+        "pool": { "sides": 6 },
+        "arithmetic": "subtract"
+      }
+    ],
+    "resolve": {
+      "comparePoolHighest": {
+        "pools": ["hope", "fear"],
+        "ties": "critical hope",
+        "outcomes": { "hope": "hope", "fear": "fear" }
+      }
+    },
+    "postResolveModifiers": [{ "add": { "$input": "modifier" } }],
+    "details": {
+      "hope": {
+        "roll": { "$pool": "hope", "field": "total" },
+        "amplified": { "$input": "amplifyHope", "default": false }
+      },
+      "fear": {
+        "roll": { "$pool": "fear", "field": "total" },
+        "amplified": { "$input": "amplifyFear", "default": false }
+      },
+      "modifier": { "$input": "modifier", "default": 0 },
+      "extraDie": {
+        "when": { "input": "rollingWith" },
+        "value": {
+          "advantageRoll": { "$conditionalPool": 0, "field": "total" },
+          "disadvantageRoll": { "$conditionalPool": 1, "field": "total" }
+        }
+      }
+    }
+  }
+}
