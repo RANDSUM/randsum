@@ -16,13 +16,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@randsum/blades": "workspace:~",
-    "@randsum/daggerheart": "workspace:~",
-    "@randsum/fifth": "workspace:~",
-    "@randsum/pbta": "workspace:~",
+    "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
-    "@randsum/root-rpg": "workspace:~",
-    "@randsum/salvageunion": "workspace:~",
     "discord.js": "^14.25.1"
   },
   "keywords": [

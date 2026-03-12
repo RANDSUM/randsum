@@ -61,7 +61,7 @@ const mockRoll = mock(() => ({
   rolls: [{ initialRolls: [5, 3], rolls: [5], modifierLogs: [] }]
 }))
 
-void mock.module('@randsum/blades', () => ({ roll: mockRoll }))
+void mock.module('@randsum/games/blades', () => ({ roll: mockRoll }))
 
 const { bladesCommand } = await import('../../src/commands/blades.js')
 

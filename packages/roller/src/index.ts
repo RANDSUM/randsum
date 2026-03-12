@@ -13,8 +13,6 @@ export {
   ERROR_CODES
 } from './internal/api'
 
-export { createGameRoll, createMultiRollGameRoll } from './internal/api'
-
 export type {
   DiceNotation,
   ParsedNotationOptions,
@@ -40,6 +38,5 @@ export type {
   InvalidValidationResult,
   ValidValidationResult,
   ValidationErrorInfo,
-  ValidationResult,
-  GameRollResult
+  ValidationResult
 } from './internal/publicTypes'

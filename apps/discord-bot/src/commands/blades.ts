@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { roll } from '@randsum/blades'
+import { roll } from '@randsum/games/blades'
 import { D6_IMAGES, embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'

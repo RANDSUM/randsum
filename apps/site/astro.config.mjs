@@ -88,7 +88,6 @@ export default defineConfig({
           items: [
             { label: 'Error Handling', slug: 'guides/error-handling' },
             { label: 'Recipes', slug: 'guides/recipes' },
-            { label: 'Custom Game Packages', slug: 'guides/custom-game-packages' },
             { label: 'Testing', slug: 'guides/testing' },
             { label: 'Troubleshooting', slug: 'guides/troubleshooting' },
             { label: 'Migrating from v2', slug: 'guides/migrating-from-v2' }

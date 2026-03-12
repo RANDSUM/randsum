@@ -12,5 +12,3 @@ export {
   RollError,
   ERROR_CODES
 } from '../errors'
-
-export { createGameRoll, createMultiRollGameRoll } from '../lib/gameRoll'

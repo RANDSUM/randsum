@@ -30,5 +30,3 @@ export type {
   ValidationErrorInfo,
   ValidationResult
 } from '@randsum/notation'
-
-export type { GameRollResult } from '../types/game'

@@ -201,8 +201,8 @@ bun run --filter @randsum/roller typecheck
 - Update documentation for new features
 
 **Working on a game package:**
-- Use `createGameRoll` or `createMultiRollGameRoll` factories when possible
-- Follow the pattern established in `@randsum/fifth` or `@randsum/daggerheart`
+- Game packages are code-generated from `.randsum.json` specs via `@randsum/gameSchema`
+- Edit the spec file, then run `bun run codegen` to regenerate
 - Keep game-specific logic isolated
 
 ## Pull Request Checklist

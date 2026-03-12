@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { VALID_TABLE_NAMES, roll } from '@randsum/salvageunion'
+import { VALID_TABLE_NAMES, roll } from '@randsum/games/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'

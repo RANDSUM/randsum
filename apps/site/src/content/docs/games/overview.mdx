@@ -45,12 +45,11 @@ RANDSUM includes specialized packages for popular tabletop RPG systems. Each gam
 
 ## How They Work
 
-Every game package follows the same pattern using the `createGameRoll` factory from `@randsum/roller`:
+Every game package is code-generated from a `.randsum.json` spec and calls `roll()` from `@randsum/roller` directly:
 
 1. **Validate** -- Check the input arguments (e.g., modifier range, dice pool size)
-2. **Convert** -- Transform game-specific input into standard `RollOptions`
-3. **Roll** -- Execute the roll using the core roller engine
-4. **Interpret** -- Transform the raw result into a game-specific outcome
+2. **Roll** -- Execute the roll using the core roller engine
+3. **Interpret** -- Transform the raw result into a game-specific outcome
 
 <CodeExample code={`import { roll } from '@randsum/fifth'
 

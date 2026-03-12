@@ -32,12 +32,8 @@
     { "path": "packages/notation" },
     { "path": "packages/roller" },
     { "path": "packages/display-utils" },
-{ "path": "games/daggerheart" },
-    { "path": "games/fifth" },
-    { "path": "games/pbta" },
-    { "path": "games/root-rpg" },
-    { "path": "games/salvageunion" },
+    { "path": "packages/games" },
     { "path": "packages/component-library" },
-    { "path": "games/gameSchema" }
+    { "path": "packages/gameSchema" }
   ]
 }

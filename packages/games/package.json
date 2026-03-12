@@ -1,0 +1,93 @@
+{
+  "name": "@randsum/games",
+  "version": "1.0.0",
+  "description": "TTRPG game packages for the RANDSUM dice ecosystem",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./blades": {
+      "import": {
+        "types": "./dist/blades.generated.d.ts",
+        "default": "./dist/blades.generated.js"
+      },
+      "require": {
+        "types": "./dist/blades.generated.d.cts",
+        "default": "./dist/blades.generated.cjs"
+      }
+    },
+    "./daggerheart": {
+      "import": {
+        "types": "./dist/daggerheart.generated.d.ts",
+        "default": "./dist/daggerheart.generated.js"
+      },
+      "require": {
+        "types": "./dist/daggerheart.generated.d.cts",
+        "default": "./dist/daggerheart.generated.cjs"
+      }
+    },
+    "./fifth": {
+      "import": {
+        "types": "./dist/fifth.generated.d.ts",
+        "default": "./dist/fifth.generated.js"
+      },
+      "require": {
+        "types": "./dist/fifth.generated.d.cts",
+        "default": "./dist/fifth.generated.cjs"
+      }
+    },
+    "./pbta": {
+      "import": {
+        "types": "./dist/pbta.generated.d.ts",
+        "default": "./dist/pbta.generated.js"
+      },
+      "require": {
+        "types": "./dist/pbta.generated.d.cts",
+        "default": "./dist/pbta.generated.cjs"
+      }
+    },
+    "./root-rpg": {
+      "import": {
+        "types": "./dist/root-rpg.generated.d.ts",
+        "default": "./dist/root-rpg.generated.js"
+      },
+      "require": {
+        "types": "./dist/root-rpg.generated.d.cts",
+        "default": "./dist/root-rpg.generated.cjs"
+      }
+    },
+    "./salvageunion": {
+      "import": {
+        "types": "./dist/salvageunion.generated.d.ts",
+        "default": "./dist/salvageunion.generated.js"
+      },
+      "require": {
+        "types": "./dist/salvageunion.generated.d.cts",
+        "default": "./dist/salvageunion.generated.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "*.randsum.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "@randsum/roller": "workspace:~"
+  },
+  "devDependencies": {
+    "@randsum/gameSchema": "workspace:~",
+    "bunup": "latest",
+    "prettier": "latest"
+  },
+  "scripts": {
+    "prepublishOnly": "bun run build",
+    "build": "bun run build.ts",
+    "codegen": "bun run build.ts --codegen-only",
+    "test": "bun run build && bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc"
+  }
+}

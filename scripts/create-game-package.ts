@@ -132,7 +132,8 @@ export interface ${pascalName}RollResult {
 writeFileSync(join(packageDir, 'src', 'types.ts'), typesTs)
 
 // src/roll${pascalName}/index.ts
-const rollIndexTs = `import type { RollRecord, GameRollResult } from '@randsum/roller'
+const rollIndexTs = `import type { RollRecord } from '@randsum/roller'
+import type { GameRollResult } from '../types'
 import { roll } from '@randsum/roller'
 import type { ${pascalName}RollArgument, ${pascalName}RollResult } from '../types'
 

@@ -64,7 +64,7 @@ All shared types: `DiceNotation`, `RollOptions`, `ParsedNotationOptions`, `Modif
 
 - `tokenize()` — notation UI tokenizer (parses notation into colored token segments for display)
 
-**Roller package**: The `roll()` function, modifier _application_ logic (actually modifying dice pools), random number generation, `analyze()`, `createGameRoll`, error types like `RandsumError` and `ValidationError`.
+**Roller package**: The `roll()` function, modifier _application_ logic (actually modifying dice pools), random number generation, `analyze()`, error types like `RandsumError` and `ValidationError`.
 
 ## Dependencies
 

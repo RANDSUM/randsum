@@ -62,7 +62,7 @@ const mockRoll = mock(() => ({
   rolls: []
 }))
 
-void mock.module('@randsum/salvageunion', () => ({
+void mock.module('@randsum/games/salvageunion', () => ({
   roll: mockRoll,
   VALID_TABLE_NAMES: ['Core Mechanic', 'Morale']
 }))

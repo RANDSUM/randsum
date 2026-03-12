@@ -55,8 +55,28 @@
       "limit": "50 KB"
     },
     {
-      "path": "games/blades/dist/blades.js",
+      "path": "packages/games/dist/blades.generated.js",
       "limit": "8 KB"
+    },
+    {
+      "path": "packages/games/dist/fifth.generated.js",
+      "limit": "8 KB"
+    },
+    {
+      "path": "packages/games/dist/daggerheart.generated.js",
+      "limit": "8 KB"
+    },
+    {
+      "path": "packages/games/dist/pbta.generated.js",
+      "limit": "8 KB"
+    },
+    {
+      "path": "packages/games/dist/root-rpg.generated.js",
+      "limit": "8 KB"
+    },
+    {
+      "path": "packages/games/dist/salvageunion.generated.js",
+      "limit": "100 KB"
     },
     {
       "path": "packages/roller/dist/index.d.ts",
@@ -67,32 +87,8 @@
       "limit": "4 KB"
     },
     {
-      "path": "games/blades/dist/blades.d.ts",
-      "limit": "6 KB"
-    },
-    {
-      "path": "games/fifth/dist/fifth.d.ts",
-      "limit": "6 KB"
-    },
-    {
-      "path": "games/daggerheart/dist/daggerheart.d.ts",
-      "limit": "6 KB"
-    },
-    {
-      "path": "games/root-rpg/dist/root-rpg.d.ts",
-      "limit": "6 KB"
-    },
-    {
-      "path": "games/pbta/dist/pbta.d.ts",
-      "limit": "6 KB"
-    },
-    {
       "path": "packages/display-utils/dist/index.d.ts",
       "limit": "2 KB"
-    },
-    {
-      "path": "games/salvageunion/dist/salvageunion.d.ts",
-      "limit": "6 KB"
     }
   ],
   "scripts": {
@@ -100,7 +96,7 @@
     "help": "bun scripts/help.ts",
     "create:game": "bun scripts/create-game-package.ts",
     "dev": "bun run --filter '*' dev",
-    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' --filter '@randsum/gameSchema' build && bun run --filter '@randsum/component-library' --filter '@randsum/blades' --filter '@randsum/fifth' --filter '@randsum/pbta' --filter '@randsum/root-rpg' --filter '@randsum/daggerheart' --filter '@randsum/salvageunion' --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/site' build",
+    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' --filter '@randsum/gameSchema' build && bun run --filter '@randsum/games' --filter '@randsum/component-library' --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/site' build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "bun run --filter \"*\" lint",
@@ -135,7 +131,6 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "games/*",
     "apps/cli",
     "apps/discord-bot",
     "apps/site"

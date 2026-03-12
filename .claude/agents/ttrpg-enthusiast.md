@@ -42,5 +42,5 @@ You know the core mechanics of every game package in this repo:
 
 - All game packages live in `games/` and use `@randsum/gameSchema`
 - Specs are in `<shortcode>.randsum.json`; generated code is in `<shortcode>.ts` (gitignored)
-- The `createGameRoll` factory and `executeRoll` handle the roll pipeline
+- Game code is generated from `.randsum.json` specs; generated code calls `roll()` from `@randsum/roller` directly
 - `preModify = r.rolls.flatMap(x => x.initialRolls)` captures the pre-modifier pool (important for criticals like Daggerheart doubles)

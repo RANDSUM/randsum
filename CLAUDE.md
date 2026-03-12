@@ -78,19 +78,9 @@ When a core package (`@randsum/roller`, or in future `@randsum/notation`) receiv
 
 ## Key Patterns
 
-### `createGameRoll` Factory
+### Code-Generated Game Packages
 
-Game packages use this factory from roller to create standardized roll functions:
-
-```typescript
-createGameRoll<TInput, TResult>({
-  validate: (input) => { ... },
-  toRollOptions: (input) => { ... },
-  interpretResult: (input, total, rolls, fullResult) => TResult
-})
-```
-
-Returns `GameRollResult<TResult, TDetails, RollRecord>`.
+Game packages are generated from `.randsum.json` specs via `@randsum/gameSchema` codegen. Each spec defines dice pools, modifiers, outcome tables, and input validation. The generated TypeScript calls `roll()` from `@randsum/roller` directly.
 
 ### Error Handling
 
