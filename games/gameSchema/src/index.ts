@@ -30,6 +30,7 @@ export type {
   RefOrTableDefinition,
   DegreeOfSuccessOperation,
   CountMatchingOperation,
+  ComparePoolOperation,
   CapOperation,
   MarkDiceOperation,
   PoolCondition,

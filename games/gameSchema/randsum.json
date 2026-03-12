@@ -173,9 +173,12 @@
 
     "RollDefinition": {
       "type": "object",
-      "description": "A complete roll pipeline. Pipeline order: dice (required) → modify (optional) → resolve (required) → outcome (optional). Use 'when' to define conditional overrides evaluated before the pipeline runs.",
-      "required": ["dice", "resolve"],
+      "description": "A complete roll pipeline. Pipeline order: dice (or dicePools) → modify (optional) → resolve (required) → outcome (optional). Use 'when' to define conditional overrides evaluated before the pipeline runs.",
+      "required": ["resolve"],
       "additionalProperties": false,
+      "not": {
+        "required": ["dice", "dicePools"]
+      },
       "properties": {
         "inputs": {
           "type": "object",
@@ -183,7 +186,7 @@
           "additionalProperties": { "$ref": "#/$defs/InputDeclaration" }
         },
         "dice": {
-          "description": "Stage 1 — define the dice pool(s) to roll. Single pool config or array of named pools for multi-pool rolls.",
+          "description": "Stage 1 — define the dice pool(s) to roll. Single pool config or array of named pools for multi-pool rolls. Mutually exclusive with dicePools.",
           "oneOf": [
             { "$ref": "#/$defs/DiceConfig" },
             {
@@ -193,13 +196,18 @@
             }
           ]
         },
+        "dicePools": {
+          "type": "object",
+          "description": "Named dice pools for multi-pool rolls. Use instead of dice. Each value is a DiceConfig. Mutually exclusive with dice.",
+          "additionalProperties": { "$ref": "#/$defs/DiceConfig" }
+        },
         "modify": {
           "description": "Stage 2 (optional) — apply modifiers to individual dice before resolving. Each entry applies one modifier.",
           "type": "array",
           "items": { "$ref": "#/$defs/ModifyOperation" }
         },
         "resolve": {
-          "description": "Stage 3 — collapse the dice pool into a single value. Use 'sum' to total the dice, 'countMatching' to count dice meeting a condition, or 'tableLookup' to map the total through a table.",
+          "description": "Stage 3 — collapse the dice pool into a single value. Use 'sum' to total the dice, 'countMatching' to count dice meeting a condition, 'tableLookup' to map the total through a table, or a comparePool operation for multi-pool rolls.",
           "$ref": "#/$defs/ResolveOperation"
         },
         "outcome": {
@@ -423,8 +431,33 @@
       }
     },
 
+    "ComparePoolOperation": {
+      "type": "object",
+      "description": "Compare two named dice pools and map the winner to an outcome string.",
+      "required": ["pools", "outcomes"],
+      "additionalProperties": false,
+      "properties": {
+        "pools": {
+          "type": "array",
+          "description": "Exactly two pool names to compare (must match keys in dicePools)",
+          "items": { "type": "string" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "ties": {
+          "type": "string",
+          "description": "Result string when both pools roll the same total. If omitted, ties are undefined behavior."
+        },
+        "outcomes": {
+          "type": "object",
+          "description": "Map from pool name to result string for the winning pool.",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+
     "ResolveOperation": {
-      "description": "Stage 3 — collapse the dice pool into a single value. Choose one: 'sum' to total the dice, 'countMatching' to count dice meeting a condition, or 'tableLookup' to map the sum through a table.",
+      "description": "Stage 3 — collapse the dice pool into a single value. Choose one: 'sum' to total the dice, 'countMatching' to count dice meeting a condition, 'tableLookup' to map the sum through a table, or a comparePool operation for multi-pool rolls.",
       "oneOf": [
         {
           "type": "string",
@@ -461,6 +494,22 @@
           "additionalProperties": false,
           "properties": {
             "tableLookup": { "$ref": "#/$defs/RefOrTableDefinition" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["comparePoolHighest"],
+          "additionalProperties": false,
+          "properties": {
+            "comparePoolHighest": { "$ref": "#/$defs/ComparePoolOperation" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["comparePoolSum"],
+          "additionalProperties": false,
+          "properties": {
+            "comparePoolSum": { "$ref": "#/$defs/ComparePoolOperation" }
           }
         }
       ]

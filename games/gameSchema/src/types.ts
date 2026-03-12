@@ -70,10 +70,18 @@ export interface CountMatchingOperation {
   readonly value: IntegerOrInput
 }
 
+export interface ComparePoolOperation {
+  readonly pools: readonly [string, string]
+  readonly ties?: string
+  readonly outcomes: Readonly<Record<string, string>>
+}
+
 export type ResolveOperation =
   | 'sum'
   | { readonly countMatching: CountMatchingOperation }
   | { readonly tableLookup: RefOrTableDefinition }
+  | { readonly comparePoolHighest: ComparePoolOperation }
+  | { readonly comparePoolSum: ComparePoolOperation }
 
 export interface DegreeOfSuccessOperation {
   readonly criticalSuccess?: number
@@ -117,12 +125,13 @@ export interface InputDeclaration {
 
 export interface RollDefinition {
   readonly inputs?: Readonly<Record<string, InputDeclaration>>
-  readonly dice: DiceConfig | readonly DiceConfig[]
+  readonly dice?: DiceConfig | readonly DiceConfig[]
+  readonly dicePools?: Readonly<Record<string, DiceConfig>>
   readonly modify?: readonly ModifyOperation[]
+  readonly postResolveModifiers?: readonly PostResolveModifyOperation[]
   readonly resolve: ResolveOperation
   readonly outcome?: OutcomeOperation | Ref
   readonly when?: readonly RollCase[]
-  readonly postResolveModifiers?: readonly PostResolveModifyOperation[]
 }
 
 export interface RandSumSpec {

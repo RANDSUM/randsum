@@ -282,6 +282,9 @@ export function executePipeline(
     override?.postResolveModifiers ?? rollDef.postResolveModifiers
 
   const { rollerOptions, manualOps } = translateModifiers(effectiveModify, mergedInput)
+  if (effectiveDice === undefined) {
+    throw new Error('executePipeline: dice is required (dicePools path not yet implemented)')
+  }
   const optionsArray = buildRollOptionsArray(effectiveDice, mergedInput, spec, rollerOptions)
 
   const rollerResult = roll(...optionsArray)

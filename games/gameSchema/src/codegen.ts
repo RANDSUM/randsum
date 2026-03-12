@@ -247,6 +247,9 @@ function generateFunctionBody(
     const overrideMod = rollCase.override.modify ?? rollDef.modify ?? []
     const overrideOutcome = rollCase.override.outcome ?? rollDef.outcome
     const overrideRanges = getOutcomeRanges(overrideOutcome, spec)
+    if (overrideDice === undefined) {
+      throw new Error('buildWhenBranches: dice is required (dicePools path not yet implemented)')
+    }
     const diceCode = buildDiceOptionsCode(overrideDice, overrideMod, spec, rollDef.inputs, optional)
     const needsPre = overrideRanges.some(
       r => r.poolCondition !== undefined && r.poolCondition.pool !== 'postModify'
@@ -278,6 +281,11 @@ function generateFunctionBody(
     lines.push(`  }`)
   }
 
+  if (rollDef.dice === undefined) {
+    throw new Error(
+      'buildWhenBranches: rollDef.dice is required (dicePools path not yet implemented)'
+    )
+  }
   const defaultDiceCode = buildDiceOptionsCode(
     rollDef.dice,
     rollDef.modify ?? [],
