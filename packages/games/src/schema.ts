@@ -27,7 +27,7 @@ export const lookupByRange: (
   value: number
 ) => {
   readonly key: string
-  readonly result: { readonly label?: string; readonly value?: string }
+  readonly result: { readonly label?: string | undefined; readonly value?: string | undefined }
 } = _lookupByRange
 
 export type { SchemaErrorCode } from './lib/errors'

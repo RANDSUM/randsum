@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import {
+  SchemaError,
   generateCode,
   loadSpec,
   lookupByRange,
   resolveExternalRefs,
-  SchemaError,
   specToFilename,
   validateSpec
 } from '@randsum/games/schema'

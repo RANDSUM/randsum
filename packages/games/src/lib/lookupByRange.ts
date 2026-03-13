@@ -2,7 +2,10 @@ import { SchemaError } from './errors'
 
 const RANGE_PATTERN = /^(-?\d+)(?:-(-?\d+))?$/
 
-function toEntry(rawEntry: unknown): { readonly label?: string; readonly value?: string } {
+function toEntry(rawEntry: unknown): {
+  readonly label?: string | undefined
+  readonly value?: string | undefined
+} {
   if (typeof rawEntry === 'object' && rawEntry !== null) {
     const obj = rawEntry as Record<string, unknown>
     return {
@@ -16,7 +19,10 @@ function toEntry(rawEntry: unknown): { readonly label?: string; readonly value?:
 export function lookupByRange(
   table: Readonly<Record<string, unknown>>,
   value: number
-): { readonly key: string; readonly result: { readonly label?: string; readonly value?: string } } {
+): {
+  readonly key: string
+  readonly result: { readonly label?: string | undefined; readonly value?: string | undefined }
+} {
   for (const [key, rawEntry] of Object.entries(table)) {
     const match = RANGE_PATTERN.exec(key)
     if (match === null) continue

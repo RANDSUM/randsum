@@ -15,7 +15,7 @@ pre-commit:
       run: bun run typecheck
 
 pre-push:
-  piped: true
+  parallel: true
   commands:
     test:
       run: bun test

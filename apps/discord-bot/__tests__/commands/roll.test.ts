@@ -1,5 +1,16 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
+// Import the real roll function directly from source (bypasses @randsum/roller package name).
+// This gives us a reference to the real implementation that's unaffected by mock.module.
+const { roll: realRoll } = await import('../../../../packages/roller/src/roll/index')
+const { validateFinite, validateRange } =
+  await import('../../../../packages/roller/src/lib/utils/validation')
+const { isDiceNotation, notation: realNotation } =
+  await import('../../../../packages/notation/src/parse')
+const { validateNotation } = await import('../../../../packages/notation/src/validate')
+const { RandsumError, NotationParseError, ModifierError, ValidationError, RollError, ERROR_CODES } =
+  await import('../../../../packages/roller/src/errors')
+
 const mockEmbed = {
   setColor: mock(() => {
     return mockEmbed
@@ -69,15 +80,27 @@ void mock.module('discord.js', () => ({
   }
 }))
 
-const mockNotation = mock(() => '1d20')
-const mockRoll = mock(() => ({
-  total: 15,
-  rolls: [{ initialRolls: [8, 7], rolls: [8, 7], modifierLogs: [] }]
-}))
+// Mock functions delegate to real implementations by default.
+// This is critical: mock.module leaks globally in Bun, so if other test files
+// import roll from @randsum/roller, they must get the real behavior, not mock data.
+// Only individual tests override with mockImplementationOnce for controlled results.
+const mockNotation = mock((...args: Parameters<typeof realNotation>) => realNotation(...args))
+const mockRoll = mock((...args: Parameters<typeof realRoll>) => realRoll(...args))
 
 void mock.module('@randsum/roller', () => ({
+  roll: mockRoll,
   notation: mockNotation,
-  roll: mockRoll
+  // Real exports so other files aren't broken by the mock leaking
+  validateFinite,
+  validateRange,
+  isDiceNotation,
+  validateNotation,
+  RandsumError,
+  NotationParseError,
+  ModifierError,
+  ValidationError,
+  RollError,
+  ERROR_CODES
 }))
 
 const { rollCommand } = await import('../../src/commands/roll.js')
@@ -96,12 +119,22 @@ function makeInteraction(opts: Record<string, string | null> = {}): {
 
 beforeEach(() => {
   for (const fn of Object.values(mockEmbed)) fn.mockClear()
-  mockNotation.mockClear()
-  mockRoll.mockClear()
+  // Reset to real implementations (mockClear only resets call counts, not implementation)
+  mockNotation
+    .mockClear()
+    .mockImplementation((...args: Parameters<typeof realNotation>) => realNotation(...args))
+  mockRoll
+    .mockClear()
+    .mockImplementation((...args: Parameters<typeof realRoll>) => realRoll(...args))
 })
 
 describe('rollCommand', () => {
   test('happy path: valid notation calls roll and replies with embed', async () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 15,
+      result: ['8', '7'],
+      rolls: [{ initialRolls: [8, 7], rolls: [8, 7], modifierLogs: [] }]
+    }))
     const interaction = makeInteraction({ notation: '2d6' })
     await rollCommand.execute(interaction as never)
     expect(interaction.deferReply).toHaveBeenCalledTimes(1)

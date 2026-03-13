@@ -1,4 +1,4 @@
-import type { ModifierConfig as _ModifierConfig } from '@randsum/notation'
+import type { ModifierConfig as _ModifierConfig } from '@randsum/notation/types'
 
 // Re-export modifier option types from notation for backward compatibility
 export type {
@@ -11,7 +11,7 @@ export type {
   SuccessCountOptions,
   ModifierConfig,
   ModifierOptions
-} from '@randsum/notation'
+} from '@randsum/notation/types'
 
 /**
  * Record of a single modifier's effect on the dice pool.

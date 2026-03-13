@@ -479,7 +479,7 @@ function resultMappingLeafExpr(leaf: ResultMappingLeaf, optional: boolean): stri
     if (leaf.fallback !== undefined) {
       return `${primary} ?? ${resultMappingLeafExpr(leaf.fallback, optional)}`
     }
-    return primary
+    return `${primary} ?? ''`
   }
   if ('$foundTable' in leaf) return `foundTable.${leaf.$foundTable}`
   if ('$input' in leaf) {
@@ -850,7 +850,7 @@ function generateRollParts(
   const detailsDef = rollDef.details
   const hasDetails = detailsDef !== undefined && Object.keys(detailsDef).length > 0
   const prefixedDetailsName = hasDetails ? `${PascalShortcode}${Key}Details` : undefined
-  const detailsTypeName = hasDetails ? (prefixedDetailsName as string) : 'undefined'
+  const detailsTypeName = prefixedDetailsName ?? 'undefined'
 
   if (hasDetails && prefixedDetailsName !== undefined) {
     parts.push(...emitDetailsInterface(prefixedDetailsName, detailsDef, rollDef.inputs))
@@ -960,8 +960,6 @@ async function fetchRemoteData(url: string, dataPath?: string): Promise<unknown[
 }
 
 async function buildCodeString(nspec: NormalizedSpec): Promise<string> {
-  const rollKeys = Object.keys(nspec.rolls)
-
   // Detect remoteTableLookup and fetch data at codegen time
   const rtlDef = Object.values(nspec.rolls).find(
     (

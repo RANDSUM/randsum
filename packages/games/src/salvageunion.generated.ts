@@ -2878,9 +2878,9 @@ export function roll(
   return {
     total,
     result: {
-      key: lookupResult.key,
-      label: lookupResult.result.label ?? lookupResult.key,
-      description: lookupResult.result.value,
+      key: lookupResult.key ?? '',
+      label: lookupResult.result.label ?? lookupResult.key ?? '',
+      description: lookupResult.result.value ?? '',
       tableName: input.tableName,
       table: foundTable.table,
       roll: total

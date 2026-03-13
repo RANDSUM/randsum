@@ -54,7 +54,7 @@ describe('details fields schema validation', () => {
 describe('details fields codegen', () => {
   test('emits RollDetails interface', async () => {
     const code = await generateCode(DETAILS_SPEC)
-    expect(code).toContain('export interface RollDetails')
+    expect(code).toContain('export interface TestDetailsRollDetails')
     expect(code).toContain('readonly diceTotal: number')
     expect(code).toContain('readonly total: number')
     expect(code).toContain('readonly modifier: number')
@@ -62,7 +62,9 @@ describe('details fields codegen', () => {
 
   test('return type includes RollDetails', async () => {
     const code = await generateCode(DETAILS_SPEC)
-    expect(code).toContain('GameRollResult<RollResult, RollDetails, RollRecord>')
+    expect(code).toContain(
+      'GameRollResult<TestDetailsRollResult, TestDetailsRollDetails, RollRecord>'
+    )
   })
 
   test('captures diceTotal before postResolveModifiers', async () => {
@@ -122,8 +124,8 @@ const NO_DETAILS_SPEC = {
 describe('no details fields', () => {
   test('return type is GameRollResult<..., undefined, ...> when no details', async () => {
     const code = await generateCode(NO_DETAILS_SPEC)
-    expect(code).toContain('GameRollResult<RollResult, undefined, RollRecord>')
-    expect(code).not.toContain('RollDetails')
+    expect(code).toContain('GameRollResult<TestNoDetailsRollResult, undefined, RollRecord>')
+    expect(code).not.toContain('TestNoDetailsRollDetails')
   })
 
   test('runtime returns no details property', () => {
@@ -164,7 +166,7 @@ describe('nested details objects (#992)', () => {
 
   test('codegen emits nested object type', async () => {
     const code = await generateCode(NESTED_DETAILS_SPEC)
-    expect(code).toContain('export interface RollDetails')
+    expect(code).toContain('export interface TestNestedRollDetails')
     expect(code).toContain('readonly diceTotal: number')
     expect(code).toContain('readonly stats: { readonly total: number; readonly bonus: number }')
   })

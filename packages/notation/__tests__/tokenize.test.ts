@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { tokenize } from '@randsum/notation'
+import { tokenize } from '@randsum/notation/tokenize'
 
 describe('tokenize', () => {
   test('returns empty array for empty string', () => {

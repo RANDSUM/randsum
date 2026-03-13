@@ -1,1 +1,1 @@
-export { coreNotationPattern } from '@randsum/notation'
+export { coreNotationPattern } from '@randsum/notation/parse'

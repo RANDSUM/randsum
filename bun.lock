@@ -32,7 +32,7 @@
     },
     "apps/cli": {
       "name": "@randsum/cli",
-      "version": "3.0.0",
+      "version": "3.5.0",
       "bin": {
         "randsum": "dist/index.js",
       },
@@ -50,7 +50,7 @@
     },
     "apps/discord-bot": {
       "name": "@randsum/discord-bot",
-      "version": "1.0.0",
+      "version": "3.5.0",
       "dependencies": {
         "@randsum/games": "workspace:~",
         "@randsum/roller": "workspace:~",
@@ -59,7 +59,7 @@
     },
     "apps/site": {
       "name": "@randsum/site",
-      "version": "1.0.0",
+      "version": "3.5.0",
       "dependencies": {
         "@astrojs/netlify": "7.0.1",
         "@astrojs/react": "5.0.0",
@@ -77,7 +77,7 @@
     },
     "packages/component-library": {
       "name": "@randsum/component-library",
-      "version": "3.0.0",
+      "version": "3.5.0",
       "devDependencies": {
         "@ladle/react": "5.1.1",
         "@types/react": "catalog:",
@@ -95,18 +95,18 @@
     },
     "packages/display-utils": {
       "name": "@randsum/display-utils",
-      "version": "3.0.1",
+      "version": "3.5.0",
       "devDependencies": {
         "@randsum/roller": "workspace:~",
         "typescript": "^5.8.2",
       },
       "peerDependencies": {
-        "@randsum/roller": "^3.0.0",
+        "@randsum/roller": "^3.5.0",
       },
     },
     "packages/games": {
       "name": "@randsum/games",
-      "version": "1.0.0",
+      "version": "3.5.0",
       "bin": {
         "randsum-schema-validate": "./dist/bin.cjs",
         "randsum-schema-build": "./dist/bin-build.js",
@@ -116,18 +116,18 @@
       },
       "devDependencies": {
         "ajv": "8.18.0",
-        "bunup": "latest",
-        "prettier": "latest",
+        "bunup": "0.16.31",
+        "prettier": "3.8.1",
         "typescript": "^5.9.3",
       },
     },
     "packages/notation": {
       "name": "@randsum/notation",
-      "version": "3.0.0",
+      "version": "3.5.0",
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "4.0.0",
+      "version": "3.5.0",
       "dependencies": {
         "@randsum/notation": "workspace:~",
       },

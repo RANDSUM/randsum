@@ -70,7 +70,7 @@ export const dhCommand: Command = {
         .setFooter(embedFooterDetails)
 
       // Add hope die
-      const hopeDie = result.details?.hope.roll ?? 0
+      const hopeDie = result.details.hope.roll
       embed.addFields({
         name: `Hope Die (${amplifyHope ? 'd20' : 'd12'})`,
         value: String(hopeDie),
@@ -78,7 +78,7 @@ export const dhCommand: Command = {
       })
 
       // Add fear die
-      const fearDie = result.details?.fear.roll ?? 0
+      const fearDie = result.details.fear.roll
       embed.addFields({
         name: `Fear Die (${amplifyFear ? 'd20' : 'd12'})`,
         value: String(fearDie),
@@ -95,7 +95,7 @@ export const dhCommand: Command = {
       }
 
       // Add advantage/disadvantage info if present
-      if (rollingWith && result.details?.extraDie) {
+      if (rollingWith && result.details.extraDie) {
         const dieRoll =
           rollingWith === 'Advantage'
             ? result.details.extraDie.advantageRoll

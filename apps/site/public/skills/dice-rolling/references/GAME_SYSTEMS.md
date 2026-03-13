@@ -7,7 +7,7 @@
 - **Mechanics**: d6 dice pools, keep highest result
 - **Outcomes**: 6 = success, 4-5 = partial, 1-3 = failure
 - **Special**: Multiple 6s = critical success
-- **Usage**: `roll(poolSize)`
+- **Usage**: `roll(rating?)` — 0 = desperate (2d6, keep lowest), 1-4 = roll that many d6
 
 ### @randsum/games/daggerheart - Daggerheart RPG
 
@@ -35,7 +35,7 @@
 - **Mechanics**: 2d6 + stat modifier (generic PbtA)
 - **Outcomes**: 10+ = strong hit, 7-9 = weak hit, 6- = miss
 - **Special**: Supports advantage/disadvantage (3d6, keep 2), forward/ongoing bonuses
-- **Usage**: `roll({ stat, forward?, ongoing?, advantage?, disadvantage? })`
+- **Usage**: `roll({ stat, forward?, ongoing?, rollingWith? })`
 - **Games**: Works for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more
 
 ### @randsum/games/salvageunion - Salvage Union

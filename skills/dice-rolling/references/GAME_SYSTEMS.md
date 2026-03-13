@@ -8,12 +8,12 @@
 - **Outcomes**: 6 = success, 4-5 = partial, 1-3 = failure; multiple 6s = critical
 - **0 dice pool**: rolls 2d6, drops highest (desperate position)
 - **Result type**: `'critical' | 'success' | 'partial' | 'failure'`
-- **Usage**: `roll(poolSize: number)`
+- **Usage**: `roll(rating?: number)` — 0 = desperate (2d6, keep lowest), 1-4 = roll that many d6, keep highest
 
 ```typescript
 const result = roll(3)
 result.result // 'critical' | 'success' | 'partial' | 'failure'
-result.total  // sum of dice
+result.total  // highest die value
 ```
 
 ### @randsum/games/daggerheart - Daggerheart RPG
@@ -44,17 +44,17 @@ result.details        // { hope, fear, advantage, modifier }
 - **Disadvantage**: Roll 2d20, keep lowest (`2d20H` — drop highest)
 - **Ability Scores**: use `roll("4d6L")` from `@randsum/roller` directly
 - **Result type**: `number` (d20 + modifier)
-- **Usage**: `roll(arg: FifthRollArgument)` — `modifier` is required
+- **Usage**: `roll(arg?: FifthRollArgument)`
 
 ```typescript
 interface FifthRollArgument {
-  modifier: number                               // required; range -30 to +30
-  rollingWith?: { advantage?: boolean; disadvantage?: boolean }
+  modifier?: number                              // range -30 to +30
+  rollingWith?: 'Advantage' | 'Disadvantage'
 }
 
 roll({ modifier: 5 })
-roll({ modifier: 3, rollingWith: { advantage: true } })
-roll({ modifier: -2, rollingWith: { disadvantage: true } })
+roll({ modifier: 3, rollingWith: 'Advantage' })
+roll({ modifier: -2, rollingWith: 'Disadvantage' })
 ```
 
 ### @randsum/games/root-rpg - Root RPG
@@ -80,11 +80,10 @@ result.total  // 2d6 + bonus
 
 ```typescript
 interface PbtARollArgument {
-  stat: number         // required; range -3 to +5
-  forward?: number     // one-time bonus; range -5 to +5
-  ongoing?: number     // persistent bonus; range -5 to +5
-  advantage?: boolean  // 3d6 keep highest 2
-  disadvantage?: boolean
+  stat: number                                   // required; range -3 to +5
+  forward?: number                               // one-time bonus; range -5 to +5
+  ongoing?: number                               // persistent bonus; range -5 to +5
+  rollingWith?: 'Advantage' | 'Disadvantage'     // 3d6 keep highest/lowest 2
 }
 
 const result = roll({ stat: 2, forward: 1 })

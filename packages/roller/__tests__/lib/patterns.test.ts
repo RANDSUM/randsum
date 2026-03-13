@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'bun:test'
 import { coreNotationPattern, createCompleteRollPattern } from '../../src/lib/patterns'
-import { isDiceNotation } from '@randsum/notation'
+import { isDiceNotation } from '@randsum/notation/parse'
 
 describe('coreNotationPattern', () => {
   describe('valid core notations', () => {

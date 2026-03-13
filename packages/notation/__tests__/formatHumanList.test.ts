@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { formatHumanList } from '@randsum/notation'
+import { formatHumanList } from '@randsum/notation/transform'
 
 describe('formatHumanList', () => {
   test('returns empty string for empty array', () => {

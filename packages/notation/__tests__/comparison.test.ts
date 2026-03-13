@@ -4,7 +4,7 @@ import {
   formatComparisonNotation,
   hasConditions,
   parseComparisonNotation
-} from '@randsum/notation'
+} from '@randsum/notation/comparison'
 
 describe('parseComparisonNotation', () => {
   test('parses greater than', () => {

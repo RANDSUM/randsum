@@ -5,7 +5,7 @@ export type {
   RollConfig,
   RollOptions,
   RequiredNumericRollParameters
-} from '../types/core'
+} from './types/core'
 
 export type {
   ComparisonOptions,
@@ -19,9 +19,9 @@ export type {
   RerollOptions,
   SuccessCountOptions,
   UniqueOptions
-} from '../types/modifiers'
+} from './types/modifiers'
 
-export type { RollParams, RollRecord, RollerRollResult } from '../types/results'
+export type { RollParams, RollRecord, RollerRollResult } from './types/results'
 
 export type {
   InvalidValidationResult,
@@ -29,4 +29,4 @@ export type {
   ValidValidationResult,
   ValidationErrorInfo,
   ValidationResult
-} from '@randsum/notation'
+} from '@randsum/notation/types'

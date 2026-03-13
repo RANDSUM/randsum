@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import '../../../src/lib/modifiers/definitions/index.js'
 import { MODIFIER_PRIORITIES } from '../../../src/lib/modifiers/priorities'
 import {
@@ -16,22 +16,6 @@ import {
   registerDefaultModifiers,
   registerNotationSchema
 } from '../../../src/lib/modifiers/registry'
-import {
-  capModifier,
-  compoundModifier,
-  countSuccessesModifier,
-  dropModifier,
-  explodeModifier,
-  keepModifier,
-  minusModifier,
-  multiplyModifier,
-  multiplyTotalModifier,
-  penetrateModifier,
-  plusModifier,
-  replaceModifier,
-  rerollModifier,
-  uniqueModifier
-} from '../../../src/lib/modifiers/definitions'
 import { ModifierError } from '../../../src/errors'
 import type { ModifierContext } from '../../../src/lib/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'
@@ -131,6 +115,18 @@ describe('registry functions', () => {
   })
 
   describe('clearRegistry', () => {
+    // eslint-disable-next-line no-restricted-syntax
+    let savedModifiers: ReturnType<typeof getAllModifiers>
+
+    beforeEach(() => {
+      savedModifiers = getAllModifiers()
+    })
+
+    afterEach(() => {
+      clearRegistry()
+      registerDefaultModifiers(savedModifiers)
+    })
+
     test('clears all modifiers from registry', () => {
       const countBefore = getAllModifiers().length
       expect(countBefore).toBeGreaterThan(0)
@@ -138,55 +134,45 @@ describe('registry functions', () => {
       clearRegistry()
       expect(getAllModifiers().length).toBe(0)
 
-      registerDefaultModifiers([
-        capModifier,
-        compoundModifier,
-        countSuccessesModifier,
-        dropModifier,
-        explodeModifier,
-        keepModifier,
-        minusModifier,
-        multiplyModifier,
-        multiplyTotalModifier,
-        penetrateModifier,
-        plusModifier,
-        replaceModifier,
-        rerollModifier,
-        uniqueModifier
-      ])
+      registerDefaultModifiers(savedModifiers)
       expect(getAllModifiers().length).toBe(countBefore)
     })
   })
 
   describe('modifierToNotationFromRegistry and modifierToDescriptionFromRegistry', () => {
+    // eslint-disable-next-line no-restricted-syntax
+    let savedModifiers: ReturnType<typeof getAllModifiers>
+
+    beforeEach(() => {
+      savedModifiers = getAllModifiers()
+    })
+
+    afterEach(() => {
+      clearRegistry()
+      registerDefaultModifiers(savedModifiers)
+    })
+
     test('return undefined when modifier not in registry', () => {
-      const countBefore = getAllModifiers().length
       clearRegistry()
 
       expect(modifierToNotationFromRegistry('plus', 5)).toBeUndefined()
       expect(modifierToDescriptionFromRegistry('plus', 5)).toBeUndefined()
-
-      registerDefaultModifiers([
-        capModifier,
-        compoundModifier,
-        countSuccessesModifier,
-        dropModifier,
-        explodeModifier,
-        keepModifier,
-        minusModifier,
-        multiplyModifier,
-        multiplyTotalModifier,
-        penetrateModifier,
-        plusModifier,
-        replaceModifier,
-        rerollModifier,
-        uniqueModifier
-      ])
-      expect(getAllModifiers().length).toBe(countBefore)
     })
   })
 
   describe('applyModifierFromRegistry error cases', () => {
+    // eslint-disable-next-line no-restricted-syntax
+    let savedModifiers: ReturnType<typeof getAllModifiers>
+
+    beforeEach(() => {
+      savedModifiers = getAllModifiers()
+    })
+
+    afterEach(() => {
+      clearRegistry()
+      registerDefaultModifiers(savedModifiers)
+    })
+
     test('throws ModifierError when modifier requires rollFn but none provided', () => {
       // reroll requires rollFn
       const ctx: ModifierContext = { parameters: { sides: 6, quantity: 4 } }
@@ -242,8 +228,6 @@ describe('registry functions', () => {
       }
       expect(caught.value).toBeInstanceOf(ModifierError)
       expect((caught.value as ModifierError).message).toContain('Unknown error: 42')
-
-      defineModifier(plusModifier)
     })
   })
 })

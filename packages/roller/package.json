@@ -18,14 +18,6 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "src",
-    "LICENSE",
-    "README.md"
-  ],
-  "type": "module",
-  "sideEffects": false,
   "exports": {
     ".": {
       "import": {
@@ -39,16 +31,43 @@
     },
     "./types": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/rollerTypes.d.ts",
+        "default": "./dist/rollerTypes.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/rollerTypes.d.cts",
+        "default": "./dist/rollerTypes.cjs"
+      }
+    },
+    "./errors": {
+      "import": {
+        "types": "./dist/rollerErrors.d.ts",
+        "default": "./dist/rollerErrors.js"
+      },
+      "require": {
+        "types": "./dist/rollerErrors.d.cts",
+        "default": "./dist/rollerErrors.cjs"
+      }
+    },
+    "./validate": {
+      "import": {
+        "types": "./dist/rollerValidate.d.ts",
+        "default": "./dist/rollerValidate.js"
+      },
+      "require": {
+        "types": "./dist/rollerValidate.d.cts",
+        "default": "./dist/rollerValidate.cjs"
       }
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "type": "module",
   "engines": {
     "bun": ">=1.3.10",
     "node": ">=18.0.0"
@@ -81,7 +100,7 @@
   "scripts": {
     "dev": "bunup --watch",
     "prepublishOnly": "bun run build",
-    "build": "bunup --entry src/index.ts --format esm,cjs --dts --minify --sourcemap external --target node --clean",
+    "build": "bunup --entry src/index.ts --entry src/rollerTypes.ts --entry src/rollerErrors.ts --entry src/rollerValidate.ts --format esm,cjs --dts --no-splitting --minify --sourcemap external --target node --clean",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

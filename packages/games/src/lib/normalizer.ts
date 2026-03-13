@@ -53,7 +53,7 @@ function normalizeDice(
   spec: RandSumSpec
 ): NormalizedDiceConfig | readonly NormalizedDiceConfig[] {
   if (Array.isArray(dice)) {
-    return dice.map(dc => normalizeDiceConfig(dc, spec))
+    return dice.map((dc: DiceConfig) => normalizeDiceConfig(dc, spec))
   }
   return normalizeDiceConfig(dice as DiceConfig, spec)
 }

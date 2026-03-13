@@ -37,10 +37,6 @@
   },
   "type": "module",
   "sideEffects": false,
-  "bin": {
-    "randsum-schema-validate": "./dist/bin.cjs",
-    "randsum-schema-build": "./dist/bin-build.js"
-  },
   "exports": {
     ".": {
       "import": {
@@ -126,6 +122,7 @@
   },
   "files": [
     "dist",
+    "!dist/bin*",
     "*.randsum.json",
     "randsum.json",
     "LICENSE",

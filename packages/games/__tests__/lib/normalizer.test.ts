@@ -53,12 +53,10 @@ function allPoolsMaterialized(rollDef: NormalizedRollDefinition): boolean {
 const specFiles = readdirSync(packageDir).filter(f => f.endsWith('.randsum.json'))
 
 describe('normalizeSpec', () => {
-  const specs: Array<{ readonly filename: string; readonly spec: RandSumSpec }> = specFiles.map(
-    f => ({
-      filename: f,
-      spec: loadSpec(f)
-    })
-  )
+  const specs: { readonly filename: string; readonly spec: RandSumSpec }[] = specFiles.map(f => ({
+    filename: f,
+    spec: loadSpec(f)
+  }))
 
   for (const { filename, spec } of specs) {
     describe(filename, () => {

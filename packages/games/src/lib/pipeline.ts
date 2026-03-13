@@ -6,9 +6,9 @@ import { SchemaError } from './errors'
 import { bindInteger } from './inputBinder'
 import { type ManualOp, translateModifiers } from './modifierTranslator'
 import type {
-  NormalizedDiceConfig,
   NormalizedDetailsFieldDef,
   NormalizedDetailsLeafDef,
+  NormalizedDiceConfig,
   NormalizedOutcome,
   NormalizedResolveOperation,
   NormalizedRollDefinition
