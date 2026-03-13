@@ -1,7 +1,0 @@
-{
-  "extends": "../../tsconfig.packages.json",
-  "compilerOptions": { "composite": true, "outDir": "dist" },
-  "include": ["src/**/*", "randsum.json"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"],
-  "references": [{ "path": "../../packages/roller" }]
-}

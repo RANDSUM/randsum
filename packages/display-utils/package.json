@@ -1,8 +1,8 @@
 {
   "name": "@randsum/display-utils",
-  "version": "3.0.1",
+  "version": "3.5.0",
   "description": "Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UIs",
-  "private": false,
+  "private": true,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
@@ -16,6 +16,7 @@
     "directory": "packages/display-utils"
   },
   "type": "module",
+  "sideEffects": false,
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -47,7 +48,7 @@
     "utilities"
   ],
   "peerDependencies": {
-    "@randsum/roller": "^3.0.0"
+    "@randsum/roller": "^3.5.0"
   },
   "devDependencies": {
     "@randsum/roller": "workspace:~",

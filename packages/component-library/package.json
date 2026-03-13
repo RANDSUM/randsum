@@ -1,8 +1,8 @@
 {
   "name": "@randsum/component-library",
-  "version": "3.0.0",
+  "version": "3.5.0",
   "description": "React component library for RANDSUM dice rolling tools",
-  "private": false,
+  "private": true,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
@@ -40,9 +40,9 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-    "@randsum/roller": "^3.0.0",
-    "@randsum/display-utils": "^3.0.0",
-    "@randsum/notation": "^3.0.0"
+    "@randsum/roller": "^3.5.0",
+    "@randsum/display-utils": "^3.5.0",
+    "@randsum/notation": "^3.5.0"
   },
   "devDependencies": {
     "@ladle/react": "5.1.1",

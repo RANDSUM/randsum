@@ -1,5 +1,5 @@
 ---
-title: Salvage Union Dice Library — @randsum/salvageunion
+title: Salvage Union Dice Library — @randsum/games/salvageunion
 description: TypeScript dice package for Salvage Union mech RPG. D20 table-based resolution with labeled outcomes for Core Mechanic, Morale, and other game tables.
 head:
   - tag: script
@@ -9,13 +9,13 @@ head:
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "@randsum/salvageunion",
+        "name": "@randsum/games/salvageunion",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
         "version": "3.0.0",
         "description": "TypeScript dice package for Salvage Union mech RPG. D20 table-based resolution with labeled outcomes for Core Mechanic, Morale, and other tables.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "downloadUrl": "https://www.npmjs.com/package/@randsum/salvageunion",
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/games",
         "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/salvageunion",
         "keywords": "Salvage Union, mech RPG, d20, table lookup, TypeScript, tabletop RPG"
       }
@@ -24,38 +24,38 @@ head:
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-The `@randsum/salvageunion` package provides mechanics for [Salvage Union](https://leyline.press/pages/salvage-union), a post-apocalyptic mech-based tabletop RPG that uses table-based d20 mechanics.
+The `@randsum/games/salvageunion` subpath provides mechanics for [Salvage Union](https://leyline.press/pages/salvage-union), a post-apocalyptic mech-based tabletop RPG that uses table-based d20 mechanics.
 
 ## The d20 Table
 
-Salvage Union uses a **single d20** roll against a fixed outcome table. Every roll maps to one of five labeled results: **Nailed It** (20), **Success** (11–19), **Tough Choice** (6–10), **Failure** (2–5), and **Cascade Failure** (1). There are no modifiers — the d20 roll is read directly against the table. Different in-game situations use different named tables (Core Mechanic, Morale, and others), each with the same five tiers but different narrative descriptions. The `@randsum/salvageunion` package rolls a d20, performs the table lookup, and returns the hit type, table label, narrative description, and raw roll value.
+Salvage Union uses a **single d20** roll against a fixed outcome table. Every roll maps to one of five labeled results: **Nailed It** (20), **Success** (11–19), **Tough Choice** (6–10), **Failure** (2–5), and **Cascade Failure** (1). There are no modifiers — the d20 roll is read directly against the table. Different in-game situations use different named tables (Core Mechanic, Morale, and others), each with the same five tiers but different narrative descriptions. The `@randsum/games/salvageunion` package rolls a d20, performs the table lookup, and returns the hit type, table label, narrative description, and raw roll value.
 
 ## Installation
 
 <Tabs>
   <TabItem label="bun">
-    <CodeExample lang="bash" code={`bun add @randsum/salvageunion`} />
+    <CodeExample lang="bash" code={`bun add @randsum/games`} />
   </TabItem>
   <TabItem label="npm">
-    <CodeExample lang="bash" code={`npm install @randsum/salvageunion`} />
+    <CodeExample lang="bash" code={`npm install @randsum/games`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-<CodeExample code={`import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/games/salvageunion'
 
-// Roll with default table (Core Mechanic)
-const result = roll()`} />
+// Roll on the Core Mechanic table
+const result = roll('Core Mechanic')`} />
 
-<CodeExample code={`import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/games/salvageunion'
 
-// Roll on a specific table
+// Roll on a different table
 const result = roll('Morale')`} />
 
-<CodeExample code={`import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/games/salvageunion'
 
-const { result } = roll()
+const { result } = roll('Core Mechanic')
 const { label, description, roll: rollValue } = result
 
 console.log(\`\${rollValue} - \${label}\`)
@@ -63,7 +63,7 @@ console.log(\`\${rollValue} - \${label}\`)
 console.log(description)
 // e.g., "You have achieved your goal without any compromises."`} />
 
-<CodeExample code={`import { roll } from '@randsum/salvageunion'
+<CodeExample code={`import { roll } from '@randsum/games/salvageunion'
 
 const { result } = roll('Core Mechanic')
 
@@ -82,32 +82,32 @@ switch (result.key) {
 
 ## API
 
-### `roll(tableName?: SalvageUnionTableName)`
+### `roll(tableName: string)`
 
 **Input:**
 
 | Parameter | Type | Description |
 |---|---|---|
-| `tableName` | `SalvageUnionTableName` | Table to roll on (defaults to `'Core Mechanic'`) |
+| `tableName` | `string` | Table to roll on (must be a valid table name from `VALID_TABLE_NAMES`) |
 
 **Returns:** `GameRollResult` with:
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `SalvageUnionRollRecord` | Table result with metadata |
+| `result` | `RollResult` | Table result with metadata |
 | `total` | `number` | D20 roll result (1-20) |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ### Result structure
 
-The `SalvageUnionRollRecord` includes:
+The `RollResult` interface includes:
 
 | Property | Type | Description |
 |---|---|---|
 | `key` | `string` | Internal result identifier |
 | `label` | `string` | Human-readable result label |
 | `description` | `string` | Detailed result description |
-| `table` | `object` | Full table data |
+| `table` | `Record<string, unknown>` | Full table data |
 | `tableName` | `string` | Name of the table rolled |
 | `roll` | `number` | D20 roll result (1-20) |
 
@@ -127,15 +127,36 @@ The default Core Mechanic table uses these result tiers:
 Other tables in Salvage Union have different result tiers and descriptions. The package includes all official tables from the Salvage Union reference.
 :::
 
+## Table names
+
+Use the `VALID_TABLE_NAMES` const tuple to get all available table names. This is generated from the spec at build time.
+
+<CodeExample code={`import { VALID_TABLE_NAMES } from '@randsum/games/salvageunion'
+
+// VALID_TABLE_NAMES is a readonly tuple of all valid table name strings
+// e.g. ['Core Mechanic', 'Group Initiative', 'Critical Injury', ...]`} />
+
+## Error handling
+
+Passing an invalid table name throws a `SchemaError`:
+
+<CodeExample code={`import { roll, SchemaError } from '@randsum/games/salvageunion'
+
+try {
+  roll('Not A Real Table')
+} catch (error) {
+  if (error instanceof SchemaError) {
+    console.log(error.code)    // 'NO_TABLE_MATCH'
+    console.log(error.message) // 'Invalid Salvage Union table name: "Not A Real Table"'
+  }
+}`} />
+
 ## Types
 
-<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/salvageunion'
-
-// Table names are available from the reference package
-import { SalvageUnionReference } from 'salvageunion-reference'
-const tableNames = SalvageUnionReference.RollTables.all().map(t => t.name)`} />
+<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/games/salvageunion'
+import { VALID_TABLE_NAMES, ROLL_TABLE_ENTRIES, SchemaError } from '@randsum/games/salvageunion'`} />
 
 ## Links
 
-- [npm package](https://www.npmjs.com/package/@randsum/salvageunion)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/salvageunion)
+- [npm package](https://www.npmjs.com/package/@randsum/games)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/games)

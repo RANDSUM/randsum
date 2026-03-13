@@ -4,10 +4,14 @@
 import { roll as executeRoll, validateFinite, validateRange } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import type { GameRollResult } from './types'
+import { SchemaError } from './lib/errors'
+import type { SchemaErrorCode } from './lib/errors'
 
-export type RollResult = 'critical hope' | 'fear' | 'hope'
+export type DaggerheartRollResult = 'critical hope' | 'fear' | 'hope'
+/** @deprecated Use {@link DaggerheartRollResult} to avoid cross-game name collisions */
+export type RollResult = DaggerheartRollResult
 
-export interface RollDetails {
+export interface DaggerheartRollDetails {
   readonly hope: { readonly roll: number; readonly amplified: boolean }
   readonly fear: { readonly roll: number; readonly amplified: boolean }
   readonly modifier: number
@@ -15,13 +19,15 @@ export interface RollDetails {
     | { readonly advantageRoll: number; readonly disadvantageRoll: number }
     | undefined
 }
+/** @deprecated Use {@link DaggerheartRollDetails} to avoid cross-game name collisions */
+export type RollDetails = DaggerheartRollDetails
 
 export function roll(input?: {
   modifier?: number
   amplifyHope?: boolean
   amplifyFear?: boolean
   rollingWith?: 'Advantage' | 'Disadvantage'
-}): GameRollResult<RollResult, RollDetails, RollRecord> {
+}): GameRollResult<DaggerheartRollResult, DaggerheartRollDetails, RollRecord> {
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
     validateFinite(input?.modifier, 'Daggerheart modifier')
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
@@ -30,7 +36,8 @@ export function roll(input?: {
     input?.rollingWith !== undefined &&
     !['Advantage', 'Disadvantage'].includes(input?.rollingWith as string)
   )
-    throw new Error(
+    throw new SchemaError(
+      'INVALID_INPUT_TYPE',
       `Invalid rollingWith value: ${String(input?.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`
     )
   const hopeResult = executeRoll({ sides: input?.amplifyHope ? 20 : 12, quantity: 1 })
@@ -39,19 +46,19 @@ export function roll(input?: {
   const fearTotal = fearResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)
   const rolls: RollRecord[] = [...hopeResult.rolls, ...fearResult.rolls]
   let total = hopeTotal + fearTotal
-  let conditionalPool0Total = 0
-  let conditionalPool1Total = 0
+  let conditionalPool_advantageTotal = 0
+  let conditionalPool_disadvantageTotal = 0
   if (input?.rollingWith === 'Advantage') {
     const cpResult = executeRoll({ sides: 6, quantity: 1 })
     const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)
-    conditionalPool0Total = cpTotal
+    conditionalPool_advantageTotal = cpTotal
     total += cpTotal
     rolls.push(...cpResult.rolls)
   }
   if (input?.rollingWith === 'Disadvantage') {
     const cpResult = executeRoll({ sides: 6, quantity: 1 })
     const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)
-    conditionalPool1Total = cpTotal
+    conditionalPool_disadvantageTotal = cpTotal
     total -= cpTotal
     rolls.push(...cpResult.rolls)
   }
@@ -62,7 +69,10 @@ export function roll(input?: {
     modifier: input?.modifier ?? 0,
     extraDie:
       input?.rollingWith !== undefined
-        ? { advantageRoll: conditionalPool0Total, disadvantageRoll: conditionalPool1Total }
+        ? {
+            advantageRoll: conditionalPool_advantageTotal,
+            disadvantageRoll: conditionalPool_disadvantageTotal
+          }
         : undefined
   }
   if (hopeTotal === fearTotal) return { total, result: 'critical hope', rolls, details }
@@ -70,4 +80,5 @@ export function roll(input?: {
   return { total, result: 'fear', rolls, details }
 }
 
-export type { GameRollResult, RollRecord }
+export { SchemaError }
+export type { GameRollResult, RollRecord, SchemaErrorCode }

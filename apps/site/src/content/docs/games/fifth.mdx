@@ -1,5 +1,5 @@
 ---
-title: "D&D 5e Dice Library — @randsum/fifth for TypeScript"
+title: "D&D 5e Dice Library — @randsum/games/fifth for TypeScript"
 description: TypeScript package for Dungeons & Dragons 5e dice mechanics. Handles d20 rolls, ability checks, saving throws, attack rolls, and advantage/disadvantage.
 head:
   - tag: script
@@ -9,13 +9,13 @@ head:
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "@randsum/fifth",
+        "name": "@randsum/games/fifth",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
         "version": "3.0.0",
         "description": "TypeScript dice rolling package for Dungeons & Dragons 5th Edition. Handles d20 rolls, advantage, disadvantage, and modifier arithmetic.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "downloadUrl": "https://www.npmjs.com/package/@randsum/fifth",
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/games",
         "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/fifth",
         "keywords": "D&D 5e, Dungeons and Dragons, d20, advantage, disadvantage, TypeScript, dice"
       }
@@ -24,57 +24,57 @@ head:
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-The `@randsum/fifth` package provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
+The `@randsum/games/fifth` subpath provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
 
 ## The d20 System
 
-In Dungeons & Dragons 5th Edition, most action resolution uses a single twenty-sided die (d20). You roll the die, add an ability modifier (typically −4 to +10), and compare the result against a target number called a Difficulty Class. Rolling with **advantage** means rolling two d20s and keeping the higher result — mechanically reflecting favorable circumstances like a spell, high ground, or helping ally. **Disadvantage** is the reverse: roll two d20s and keep the lower. The `@randsum/fifth` package implements these mechanics exactly, handling the 2d20 rolls, modifier application, and advantage/disadvantage resolution with full TypeScript types.
+In Dungeons & Dragons 5th Edition, most action resolution uses a single twenty-sided die (d20). You roll the die, add an ability modifier (typically −4 to +10), and compare the result against a target number called a Difficulty Class. Rolling with **advantage** means rolling two d20s and keeping the higher result — mechanically reflecting favorable circumstances like a spell, high ground, or helping ally. **Disadvantage** is the reverse: roll two d20s and keep the lower. The `@randsum/games/fifth` package implements these mechanics exactly, handling the 2d20 rolls, modifier application, and advantage/disadvantage resolution with full TypeScript types.
 
 ## Installation
 
 <Tabs>
   <TabItem label="bun">
-    <CodeExample lang="bash" code={`bun add @randsum/fifth`} />
+    <CodeExample lang="bash" code={`bun add @randsum/games`} />
   </TabItem>
   <TabItem label="npm">
-    <CodeExample lang="bash" code={`npm install @randsum/fifth`} />
+    <CodeExample lang="bash" code={`npm install @randsum/games`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-<CodeExample code={`import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/games/fifth'
 
 // Basic roll with modifier
 const result = roll({ modifier: 5 })
 // result.result: 6-25 (d20 + 5)`} />
 
-<CodeExample code={`import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/games/fifth'
 
 // Roll with advantage (2d20, keep highest, + modifier)
 const result = roll({
   modifier: 5,
-  rollingWith: { advantage: true }
+  rollingWith: 'Advantage'
 })`} />
 
-<CodeExample code={`import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/games/fifth'
 
 // Roll with disadvantage (2d20, keep lowest, + modifier)
 const result = roll({
   modifier: -2,
-  rollingWith: { disadvantage: true }
+  rollingWith: 'Disadvantage'
 })`} />
 
 ## API
 
-### `roll(arg: FifthRollArgument)`
+### `roll(input?: { modifier?: number, rollingWith?: 'Advantage' | 'Disadvantage' })`
 
 **Input:**
 
 | Property | Type | Description |
 |---|---|---|
-| `modifier` | `number` | Ability/skill modifier (-30 to +30) |
-| `rollingWith` | `FifthAdvantageDisadvantage \| undefined` | Optional `{ advantage: true }` or `{ disadvantage: true }` |
+| `modifier` | `number` (optional) | Ability/skill modifier (-30 to +30) |
+| `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Roll 2d20, keep highest or lowest |
 
 **Returns:** `GameRollResult` with:
 
@@ -87,23 +87,23 @@ const result = roll({
 ## Outcomes
 
 - **Normal roll**: 1d20 + modifier
-- **Advantage** (`{ advantage: true }`): Roll 2d20, drop lowest, + modifier (equivalent to `2d20L+modifier`)
-- **Disadvantage** (`{ disadvantage: true }`): Roll 2d20, drop highest, + modifier (equivalent to `2d20H+modifier`)
+- **Advantage** (`'Advantage'`): Roll 2d20, drop lowest, + modifier (equivalent to `2d20L+modifier`)
+- **Disadvantage** (`'Disadvantage'`): Roll 2d20, drop highest, + modifier (equivalent to `2d20H+modifier`)
 
 The modifier is validated to be a finite number in the range -30 to +30.
 
 ## Common patterns
 
-<CodeExample code={`import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/games/fifth'
 
 // Attack roll with +5 to hit
 roll({ modifier: 5 })
 
 // Attack with advantage
-roll({ modifier: 5, rollingWith: { advantage: true } })
+roll({ modifier: 5, rollingWith: 'Advantage' })
 
 // Saving throw with -1 penalty and disadvantage
-roll({ modifier: -1, rollingWith: { disadvantage: true } })
+roll({ modifier: -1, rollingWith: 'Disadvantage' })
 
 // Perception check with +3 Wisdom
 roll({ modifier: 3 })`} />
@@ -112,15 +112,27 @@ roll({ modifier: 3 })`} />
 For D&D ability score generation (4d6 drop lowest), use the core roller directly: `roll('4d6L')` from `@randsum/roller`.
 :::
 
+## Error handling
+
+Invalid inputs throw a `SchemaError` with a descriptive `code`:
+
+<CodeExample code={`import { roll, SchemaError } from '@randsum/games/fifth'
+
+try {
+  roll({ modifier: Infinity })
+} catch (error) {
+  if (error instanceof SchemaError) {
+    console.log(error.code)    // 'INVALID_INPUT_TYPE'
+    console.log(error.message) // describes what went wrong
+  }
+}`} />
+
 ## Types
 
-<CodeExample code={`import type {
-  FifthRollArgument,
-  FifthAdvantageDisadvantage,
-  FifthRollResult
-} from '@randsum/fifth'`} />
+<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/games/fifth'
+import { SchemaError } from '@randsum/games/fifth'`} />
 
 ## Links
 
-- [npm package](https://www.npmjs.com/package/@randsum/fifth)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/fifth)
+- [npm package](https://www.npmjs.com/package/@randsum/games)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/games)

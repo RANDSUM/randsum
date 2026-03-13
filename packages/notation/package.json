@@ -1,6 +1,6 @@
 {
   "name": "@randsum/notation",
-  "version": "3.0.0",
+  "version": "3.5.0",
   "description": "Zero-dependency dice notation parser, validator, and type system for JavaScript and TypeScript",
   "private": false,
   "author": {
@@ -25,6 +25,7 @@
     "README.md"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
       "import": {

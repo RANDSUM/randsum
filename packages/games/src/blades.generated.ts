@@ -4,14 +4,20 @@
 import { roll as executeRoll, validateFinite, validateRange } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import type { GameRollResult } from './types'
+import { SchemaError } from './lib/errors'
+import type { SchemaErrorCode } from './lib/errors'
 
-export type RollResult = 'critical' | 'failure' | 'partial' | 'success'
+export type BladesRollResult = 'critical' | 'failure' | 'partial' | 'success'
+/** @deprecated Use {@link BladesRollResult} to avoid cross-game name collisions */
+export type RollResult = BladesRollResult
 
-export function roll(rating?: number): GameRollResult<RollResult, undefined, RollRecord>
-export function roll(input?: { rating?: number }): GameRollResult<RollResult, undefined, RollRecord>
+export function roll(rating?: number): GameRollResult<BladesRollResult, undefined, RollRecord>
+export function roll(input?: {
+  rating?: number
+}): GameRollResult<BladesRollResult, undefined, RollRecord>
 export function roll(
   rawInput?: number | { rating?: number }
-): GameRollResult<RollResult, undefined, RollRecord> {
+): GameRollResult<BladesRollResult, undefined, RollRecord> {
   const input: { rating?: number } =
     typeof rawInput === 'number' ? { rating: rawInput } : (rawInput ?? {})
   if (input?.rating !== undefined && typeof input?.rating === 'number')
@@ -32,7 +38,7 @@ export function roll(
     if (total === 6) return { total, result: 'success', rolls: r.rolls }
     if (total >= 4 && total <= 5) return { total, result: 'partial', rolls: r.rolls }
     if (total >= 1 && total <= 3) return { total, result: 'failure', rolls: r.rolls }
-    throw new Error(`No table match for total ${total}`)
+    throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
   }
   const r = executeRoll({
     sides: 6,
@@ -46,7 +52,8 @@ export function roll(
   if (total === 6) return { total, result: 'success', rolls: r.rolls }
   if (total >= 4 && total <= 5) return { total, result: 'partial', rolls: r.rolls }
   if (total >= 1 && total <= 3) return { total, result: 'failure', rolls: r.rolls }
-  throw new Error(`No table match for total ${total}`)
+  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
 }
 
-export type { GameRollResult, RollRecord }
+export { SchemaError }
+export type { GameRollResult, RollRecord, SchemaErrorCode }

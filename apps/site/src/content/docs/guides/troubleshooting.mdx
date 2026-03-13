@@ -194,7 +194,7 @@ If you are getting an outcome tier that does not match your expectation:
 2. Inspect `result.details` on the game roll result — this includes the raw numeric values before interpretation
 3. Verify you are calling the correct game package's roll function and not `@randsum/roller`'s generic `roll()`
 
-<CodeExample code={`import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/games/fifth'
 
 const result = roll({ modifier: 3 })
 

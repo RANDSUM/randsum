@@ -104,36 +104,21 @@
         "@randsum/roller": "^3.0.0",
       },
     },
-    "packages/gameSchema": {
-      "name": "@randsum/gameSchema",
-      "version": "0.1.0",
+    "packages/games": {
+      "name": "@randsum/games",
+      "version": "1.0.0",
       "bin": {
         "randsum-schema-validate": "./dist/bin.cjs",
         "randsum-schema-build": "./dist/bin-build.js",
       },
       "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+      "devDependencies": {
         "ajv": "8.18.0",
-      },
-      "devDependencies": {
-        "@randsum/roller": "workspace:~",
-        "bunup": "^0.16.0",
-        "prettier": "^3.8.1",
-        "typescript": "^5.9.3",
-      },
-      "peerDependencies": {
-        "@randsum/roller": "^3.0.0",
-      },
-    },
-    "packages/games": {
-      "name": "@randsum/games",
-      "version": "1.0.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-      "devDependencies": {
-        "@randsum/gameSchema": "workspace:~",
         "bunup": "latest",
         "prettier": "latest",
+        "typescript": "^5.9.3",
       },
     },
     "packages/notation": {
@@ -705,8 +690,6 @@
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
 
     "@randsum/display-utils": ["@randsum/display-utils@workspace:packages/display-utils"],
-
-    "@randsum/gameSchema": ["@randsum/gameSchema@workspace:packages/gameSchema"],
 
     "@randsum/games": ["@randsum/games@workspace:packages/games"],
 

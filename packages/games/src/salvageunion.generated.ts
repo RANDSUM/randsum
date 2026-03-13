@@ -4,7 +4,9 @@
 import { roll as executeRoll } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import type { GameRollResult } from './types'
-import { lookupByRange } from './shared/lookupByRange'
+import { SchemaError } from './lib/errors'
+import type { SchemaErrorCode } from './lib/errors'
+import { lookupByRange } from './lib/lookupByRange'
 
 const REMOTE_DATA = [
   {
@@ -2842,28 +2844,36 @@ const REMOTE_DATA = [
   }
 ] as const
 
-export interface RollResult {
-  readonly key: unknown
-  readonly label: unknown
-  readonly description: unknown
+export interface SalvageunionRollResult {
+  readonly key: string
+  readonly label: string
+  readonly description: string
   readonly tableName: string
-  readonly table: unknown
+  readonly table: Record<string, unknown>
   readonly roll: number
 }
+/** @deprecated Use {@link SalvageunionRollResult} to avoid cross-game name collisions */
+export type RollResult = SalvageunionRollResult
 
-export function roll(tableName: string): GameRollResult<RollResult, undefined, RollRecord>
+export function roll(
+  tableName: string
+): GameRollResult<SalvageunionRollResult, undefined, RollRecord>
 export function roll(input: {
   tableName: string
-}): GameRollResult<RollResult, undefined, RollRecord>
+}): GameRollResult<SalvageunionRollResult, undefined, RollRecord>
 export function roll(
   rawInput: string | { tableName: string }
-): GameRollResult<RollResult, undefined, RollRecord> {
+): GameRollResult<SalvageunionRollResult, undefined, RollRecord> {
   const input: { tableName: string } =
     typeof rawInput === 'string' ? { tableName: rawInput } : rawInput
   const r = executeRoll({ sides: 20, quantity: 1 })
   const total = r.total
   const foundTable = REMOTE_DATA.find(t => t.name === input.tableName)
-  if (!foundTable) throw new Error(`Invalid Salvage Union table name: "${input.tableName}"`)
+  if (!foundTable)
+    throw new SchemaError(
+      'NO_TABLE_MATCH',
+      `Invalid Salvage Union table name: "${input.tableName}"`
+    )
   const lookupResult = lookupByRange(foundTable.table, total)
   return {
     total,
@@ -2879,7 +2889,88 @@ export function roll(
   }
 }
 
-export type { GameRollResult, RollRecord }
+export { SchemaError }
+export type { GameRollResult, RollRecord, SchemaErrorCode }
 
 export const ROLL_TABLE_ENTRIES: typeof REMOTE_DATA = REMOTE_DATA
-export const VALID_TABLE_NAMES: string[] = REMOTE_DATA.map((t: { name: string }) => t.name)
+export const VALID_TABLE_NAMES = [
+  'Core Mechanic',
+  'Group Initiative',
+  'Critical Injury',
+  'Critical Damage',
+  'Reactor Overload',
+  'Area Salvage',
+  'Mech Salvage',
+  'Reaction Roll',
+  'Meteor Encounter',
+  'Harvesting Chimerium',
+  'Chimerium Exposure',
+  'Chimerium Mutation',
+  'NPC Action',
+  'Morale',
+  'Retreat',
+  'Crawler Deterioration',
+  'Crawler Damage',
+  'Crawler Destruction',
+  'Keepsake',
+  'Motto',
+  'Pilot Appearance',
+  'A.I. Personality',
+  'Quirks',
+  'Mech Appearance',
+  'Mech Pattern Names',
+  'Crawler Name',
+  'Faction Encounter Table',
+  'Salvage Cache Table',
+  'Chimerium Mutant Ability Table',
+  'Bio-Chassis Damage Table',
+  'Bio-Chassis Overload Table',
+  'Rumour',
+  'Meld Encounter',
+  'Anomalous Zone',
+  'Aardvarks Tongue',
+  'Adv. Reactor Safety Protocols',
+  'Anti-Mech Mine Layer',
+  'Armoured Shield',
+  'Behemoth',
+  'Blinding Blue Laser Rifle',
+  'Counter-Hacking',
+  'Denial of Service Attack',
+  'Eggs Mayhem',
+  'Ejection System',
+  'Ejector Pod',
+  'Electro-Magnetic Shield Projector',
+  'Escape Hatch',
+  'Experimental Teleportation Hold',
+  'Firewall',
+  'Glanded Stims',
+  'Improved Trading Bay',
+  'Knife Missile',
+  "Let's Make a Deal",
+  'Mech Scrambler',
+  'Mechapult',
+  'Multi-Phase Shield',
+  'Panda Sneeze',
+  'Portable Multi-Phase Shield',
+  'Prawn Sifter',
+  'Probing Proboscis',
+  'Reactor Safety Protocols',
+  'Reflective Shielding',
+  'Refractive Shield Projector',
+  'Reinforced Chassis',
+  'Shield',
+  'Sonic Screecher',
+  'Survey Scanner',
+  'System and Software Hacker',
+  'Teleportation Pod',
+  'Union Call',
+  'Well actually...',
+  'Whirlwind Strike',
+  'Worm',
+  'Bio-Talon',
+  'Nanite Reconstruction',
+  'Meld Distorter',
+  'Trading Bay',
+  'Background',
+  'Callsign Table'
+] as const

@@ -12,32 +12,32 @@ RANDSUM includes specialized packages for popular tabletop RPG systems. Each gam
 
 <CardGrid>
   <Card title="D&D 5th Edition" icon="seti:favicon">
-    `@randsum/fifth` -- Ability checks, saving throws, attack rolls with advantage/disadvantage.
+    `@randsum/games/fifth` -- Ability checks, saving throws, attack rolls with advantage/disadvantage.
 
     [View documentation](/games/fifth/)
   </Card>
   <Card title="Blades in the Dark" icon="seti:favicon">
-    `@randsum/blades` -- Dice pool action rolls with critical, success, partial, and failure outcomes.
+    `@randsum/games/blades` -- Dice pool action rolls with critical, success, partial, and failure outcomes.
 
     [View documentation](/games/blades/)
   </Card>
   <Card title="Powered by the Apocalypse" icon="seti:favicon">
-    `@randsum/pbta` -- 2d6+stat rolls for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
+    `@randsum/games/pbta` -- 2d6+stat rolls for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
 
     [View documentation](/games/pbta/)
   </Card>
   <Card title="Daggerheart" icon="seti:favicon">
-    `@randsum/daggerheart` -- Hope and fear dice mechanics with amplification and advantage.
+    `@randsum/games/daggerheart` -- Hope and fear dice mechanics with amplification and advantage.
 
     [View documentation](/games/daggerheart/)
   </Card>
   <Card title="Root RPG" icon="seti:favicon">
-    `@randsum/root-rpg` -- 2d6+bonus with Strong Hit, Weak Hit, and Miss outcomes.
+    `@randsum/games/root-rpg` -- 2d6+bonus with Strong Hit, Weak Hit, and Miss outcomes.
 
     [View documentation](/games/root-rpg/)
   </Card>
   <Card title="Salvage Union" icon="seti:favicon">
-    `@randsum/salvageunion` -- D20 table-based rolls for mech combat and salvage operations.
+    `@randsum/games/salvageunion` -- D20 table-based rolls for mech combat and salvage operations.
 
     [View documentation](/games/salvageunion/)
   </Card>
@@ -51,9 +51,9 @@ Every game package is code-generated from a `.randsum.json` spec and calls `roll
 2. **Roll** -- Execute the roll using the core roller engine
 3. **Interpret** -- Transform the raw result into a game-specific outcome
 
-<CodeExample code={`import { roll } from '@randsum/fifth'
+<CodeExample code={`import { roll } from '@randsum/games/fifth'
 
-const result = roll({ modifier: 5, rollingWith: { advantage: true } })
+const result = roll({ modifier: 5, rollingWith: 'Advantage' })
 // result.result is the game-specific outcome (number for D&D 5e)
 // result.total is the final total
 // result.rolls contains the raw dice data`} />
@@ -65,29 +65,23 @@ All game packages share these characteristics:
 - Export a single `roll()` function as the main API
 - Accept game-specific input types (not raw notation strings)
 - Return a `GameRollResult` with both raw and interpreted results
-- Validate input and throw on invalid values (same as `roll()`)
+- Validate input and throw `SchemaError` on invalid values (importable from each subpath)
 - Depend only on `@randsum/roller` (never on each other)
 - Ship under 8KB bundled
 
 ## Installation
 
-Install game packages individually. Each one pulls in `@randsum/roller` automatically.
+All games are available via the `@randsum/games` package with subpath exports. Install once, import the game you need.
 
-<CodeExample lang="bash" code={`# Pick the games you need
-bun add @randsum/fifth
-bun add @randsum/blades
-bun add @randsum/pbta
-bun add @randsum/daggerheart
-bun add @randsum/root-rpg
-bun add @randsum/salvageunion`} />
+<CodeExample lang="bash" code={`bun add @randsum/games`} />
 
 ## Quick comparison
 
 | Package | Dice | Input | Outcomes |
 |---|---|---|---|
-| `@randsum/fifth` | 1d20 or 2d20 | modifier + rollingWith | Numeric total |
-| `@randsum/blades` | Nd6 pool | count (number) | critical, success, partial, failure |
-| `@randsum/pbta` | 2d6 | stat + forward + ongoing + advantage | strong_hit, weak_hit, miss |
-| `@randsum/daggerheart` | 2d12 + d6 | modifier + rollingWith + amplify | Hope/Fear outcome + total |
-| `@randsum/root-rpg` | 2d6 | bonus (number) | Strong Hit, Weak Hit, Miss |
-| `@randsum/salvageunion` | 1d20 | tableName (string) | Table result with label + description |
+| `@randsum/games/fifth` | 1d20 or 2d20 | modifier + rollingWith | Numeric total |
+| `@randsum/games/blades` | Nd6 pool | count (number) | critical, success, partial, failure |
+| `@randsum/games/pbta` | 2d6 | stat + forward + ongoing + rollingWith | strong_hit, weak_hit, miss |
+| `@randsum/games/daggerheart` | 2d12 + d6 | modifier + rollingWith + amplifyHope/amplifyFear | Hope/Fear outcome + total |
+| `@randsum/games/root-rpg` | 2d6 | bonus (number) | Strong Hit, Weak Hit, Miss |
+| `@randsum/games/salvageunion` | 1d20 | tableName (string) | Table result with label + description |

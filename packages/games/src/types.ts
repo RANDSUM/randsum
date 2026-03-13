@@ -1,14 +1,21 @@
 /**
- * Generic interface for game-specific roll results.
- * Game packages should implement this interface for their roll functions.
+ * Generic type for game-specific roll results.
+ * When TDetails is undefined, `details` is omitted from the type.
+ * When TDetails is a concrete type, `details` is required.
  *
  * @template TResult - The type of the game-specific result (e.g., 'hit', 'miss', 'critical')
- * @template TDetails - Optional additional details about the roll
+ * @template TDetails - Additional details about the roll, or undefined if none
  * @template TRollRecord - The type of roll record (typically RollRecord from @randsum/roller)
  */
-export interface GameRollResult<TResult, TDetails = undefined, TRollRecord = never> {
-  rolls: TRollRecord[]
-  total: number
-  result: TResult
-  details?: TDetails
-}
+export type GameRollResult<
+  TResult,
+  TDetails = undefined,
+  TRollRecord = never
+> = TDetails extends undefined
+  ? { readonly rolls: readonly TRollRecord[]; readonly total: number; readonly result: TResult }
+  : {
+      readonly rolls: readonly TRollRecord[]
+      readonly total: number
+      readonly result: TResult
+      readonly details: TDetails
+    }

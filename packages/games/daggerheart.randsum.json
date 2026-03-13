@@ -21,18 +21,18 @@
       "hope": { "pool": { "sides": { "$input": "amplifyHope", "ifTrue": 20, "ifFalse": 12 } } },
       "fear": { "pool": { "sides": { "$input": "amplifyFear", "ifTrue": 20, "ifFalse": 12 } } }
     },
-    "conditionalPools": [
-      {
+    "conditionalPools": {
+      "advantage": {
         "condition": { "input": "rollingWith", "operator": "=", "value": "Advantage" },
         "pool": { "sides": 6 },
         "arithmetic": "add"
       },
-      {
+      "disadvantage": {
         "condition": { "input": "rollingWith", "operator": "=", "value": "Disadvantage" },
         "pool": { "sides": 6 },
         "arithmetic": "subtract"
       }
-    ],
+    },
     "resolve": {
       "comparePoolHighest": {
         "pools": ["hope", "fear"],
@@ -54,8 +54,8 @@
       "extraDie": {
         "when": { "input": "rollingWith" },
         "value": {
-          "advantageRoll": { "$conditionalPool": 0, "field": "total" },
-          "disadvantageRoll": { "$conditionalPool": 1, "field": "total" }
+          "advantageRoll": { "$conditionalPool": "advantage", "field": "total" },
+          "disadvantageRoll": { "$conditionalPool": "disadvantage", "field": "total" }
         }
       }
     }

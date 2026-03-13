@@ -33,7 +33,6 @@
     { "path": "packages/roller" },
     { "path": "packages/display-utils" },
     { "path": "packages/games" },
-    { "path": "packages/component-library" },
-    { "path": "packages/gameSchema" }
+    { "path": "packages/component-library" }
   ]
 }

@@ -9,13 +9,13 @@ head:
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "@randsum/pbta",
+        "name": "@randsum/games/pbta",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
         "version": "1.2.0",
         "description": "TypeScript dice package for Powered by the Apocalypse games. 2d6 resolution with strong hit, weak hit, and miss outcomes for Dungeon World, Apocalypse World, and more.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "downloadUrl": "https://www.npmjs.com/package/@randsum/pbta",
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/games",
         "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/pbta",
         "keywords": "PbtA, Powered by the Apocalypse, Dungeon World, 2d6, TypeScript, tabletop RPG"
       }
@@ -24,32 +24,32 @@ head:
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-The `@randsum/pbta` package provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
+The `@randsum/games/pbta` subpath provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
 
 ## The 2d6 Tiers
 
-Powered by the Apocalypse games use a **2d6 + stat** roll. You roll two six-sided dice, add a stat modifier (usually −1 to +3), and the total determines your outcome tier: 10+ is a strong hit (full success), 7–9 is a weak hit (success with a complication), and 6 or lower is a miss (the GM makes a move). Some moves allow **advantage** (roll 3d6, keep the two highest) or **disadvantage** (roll 3d6, keep the two lowest). Bonuses like *forward* (a one-time +1) and *ongoing* (a persistent modifier) stack on top. The `@randsum/pbta` package covers all of this with a single typed function call.
+Powered by the Apocalypse games use a **2d6 + stat** roll. You roll two six-sided dice, add a stat modifier (usually −1 to +3), and the total determines your outcome tier: 10+ is a strong hit (full success), 7–9 is a weak hit (success with a complication), and 6 or lower is a miss (the GM makes a move). Some moves allow **advantage** (roll 3d6, keep the two highest) or **disadvantage** (roll 3d6, keep the two lowest). Bonuses like *forward* (a one-time +1) and *ongoing* (a persistent modifier) stack on top. The `@randsum/games/pbta` package covers all of this with a single typed function call.
 
 ## Installation
 
 <Tabs>
   <TabItem label="bun">
-    <CodeExample lang="bash" code={`bun add @randsum/pbta`} />
+    <CodeExample lang="bash" code={`bun add @randsum/games`} />
   </TabItem>
   <TabItem label="npm">
-    <CodeExample lang="bash" code={`npm install @randsum/pbta`} />
+    <CodeExample lang="bash" code={`npm install @randsum/games`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-<CodeExample code={`import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/games/pbta'
 
 // Roll 2d6 + stat modifier
 const result = roll({ stat: 2 })
 // result.result: 'strong_hit' | 'weak_hit' | 'miss'`} />
 
-<CodeExample code={`import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/games/pbta'
 
 // With forward and ongoing bonuses
 const result = roll({
@@ -58,21 +58,21 @@ const result = roll({
   ongoing: 0   // Persistent bonus
 })`} />
 
-<CodeExample code={`import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/games/pbta'
 
 // Roll with advantage (3d6, keep 2 highest)
 const result = roll({
   stat: 2,
-  advantage: true
+  rollingWith: 'Advantage'
 })
 
 // Roll with disadvantage (3d6, keep 2 lowest)
 const result2 = roll({
   stat: 2,
-  disadvantage: true
+  rollingWith: 'Disadvantage'
 })`} />
 
-<CodeExample code={`import { roll } from '@randsum/pbta'
+<CodeExample code={`import { roll } from '@randsum/games/pbta'
 
 const { result, total } = roll({ stat: 2 })
 
@@ -90,26 +90,25 @@ switch (result) {
 
 ## API
 
-### `roll(arg: PbtaRollArgument)`
+### `roll(input: { stat: number, forward?: number, ongoing?: number, rollingWith?: 'Advantage' | 'Disadvantage' })`
 
 **Input:**
 
 | Property | Type | Description |
 |---|---|---|
 | `stat` | `number` | Stat modifier (-3 to 5) |
-| `forward` | `number` | One-time bonus (-5 to 5) |
-| `ongoing` | `number` | Persistent bonus (-5 to 5) |
-| `advantage` | `boolean` | Roll 3d6, keep 2 highest |
-| `disadvantage` | `boolean` | Roll 3d6, keep 2 lowest |
+| `forward` | `number` (optional) | One-time bonus (-5 to 5) |
+| `ongoing` | `number` (optional) | Persistent bonus (-5 to 5) |
+| `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Roll 3d6, keep 2 highest or lowest |
 
 **Returns:** `GameRollResult` with:
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `PbtAOutcome` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
+| `result` | `RollResult` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
 | `total` | `number` | Sum of 2d6 + all modifiers |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
-| `details` | `PbtARollDetails` | `{ stat, forward, ongoing, diceTotal }` |
+| `details` | `RollDetails` | `{ stat, forward, ongoing, diceTotal }` |
 
 ## Outcomes
 
@@ -131,15 +130,27 @@ This package works with any PbtA game, including:
 - **Urban Shadows** -- Urban supernatural politics
 - And many more
 
+## Error handling
+
+Invalid inputs throw a `SchemaError` with a descriptive `code`:
+
+<CodeExample code={`import { roll, SchemaError } from '@randsum/games/pbta'
+
+try {
+  roll({ stat: 99 })
+} catch (error) {
+  if (error instanceof SchemaError) {
+    console.log(error.code)    // 'INVALID_INPUT_TYPE'
+    console.log(error.message) // describes what went wrong
+  }
+}`} />
+
 ## Types
 
-<CodeExample code={`import type {
-  PbtARollArgument,
-  PbtAOutcome,
-  PbtARollDetails
-} from '@randsum/pbta'`} />
+<CodeExample code={`import type { RollResult, RollDetails, GameRollResult, RollRecord } from '@randsum/games/pbta'
+import { SchemaError } from '@randsum/games/pbta'`} />
 
 ## Links
 
-- [npm package](https://www.npmjs.com/package/@randsum/pbta)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/pbta)
+- [npm package](https://www.npmjs.com/package/@randsum/games)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/games)

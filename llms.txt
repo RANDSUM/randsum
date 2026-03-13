@@ -6,12 +6,13 @@
 
 - @randsum/notation - Dice notation parser and type foundation
 - @randsum/roller - Core dice engine
-- @randsum/fifth - D&D 5th Edition
-- @randsum/blades - Blades in the Dark
-- @randsum/pbta - Powered by the Apocalypse
-- @randsum/daggerheart - Daggerheart RPG
-- @randsum/root-rpg - Root RPG
-- @randsum/salvageunion - Salvage Union
+- @randsum/games - Unified game package with subpath exports:
+  - @randsum/games/fifth - D&D 5th Edition
+  - @randsum/games/blades - Blades in the Dark
+  - @randsum/games/pbta - Powered by the Apocalypse
+  - @randsum/games/daggerheart - Daggerheart RPG
+  - @randsum/games/root-rpg - Root RPG
+  - @randsum/games/salvageunion - Salvage Union
 
 ## Quick Start
 

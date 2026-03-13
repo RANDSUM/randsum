@@ -4,22 +4,28 @@
 import { roll as executeRoll, validateFinite, validateRange } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import type { GameRollResult } from './types'
+import { SchemaError } from './lib/errors'
+import type { SchemaErrorCode } from './lib/errors'
 
-export type RollResult = 'miss' | 'strong_hit' | 'weak_hit'
+export type PbtaRollResult = 'miss' | 'strong_hit' | 'weak_hit'
+/** @deprecated Use {@link PbtaRollResult} to avoid cross-game name collisions */
+export type RollResult = PbtaRollResult
 
-export interface RollDetails {
+export interface PbtaRollDetails {
   readonly stat: number
   readonly forward: number
   readonly ongoing: number
   readonly diceTotal: number
 }
+/** @deprecated Use {@link PbtaRollDetails} to avoid cross-game name collisions */
+export type RollDetails = PbtaRollDetails
 
 export function roll(input: {
   stat: number
   forward?: number
   ongoing?: number
   rollingWith?: 'Advantage' | 'Disadvantage'
-}): GameRollResult<RollResult, RollDetails, RollRecord> {
+}): GameRollResult<PbtaRollResult, PbtaRollDetails, RollRecord> {
   if (typeof input.stat === 'number') validateFinite(input.stat, 'Powered by the Apocalypse stat')
   if (typeof input.stat === 'number')
     validateRange(input.stat, -3, 5, 'Powered by the Apocalypse stat')
@@ -35,7 +41,8 @@ export function roll(input: {
     input.rollingWith !== undefined &&
     !['Advantage', 'Disadvantage'].includes(input.rollingWith as string)
   )
-    throw new Error(
+    throw new SchemaError(
+      'INVALID_INPUT_TYPE',
       `Invalid rollingWith value: ${String(input.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`
     )
   if (input.rollingWith === 'Advantage') {
@@ -47,18 +54,17 @@ export function roll(input: {
         plus: input.stat + (input.forward ?? 0) + (input.ongoing ?? 0)
       }
     })
-    const diceTotal = r.total
     const total = r.total
     const details = {
       stat: input.stat,
       forward: input.forward ?? 0,
       ongoing: input.ongoing ?? 0,
-      diceTotal: diceTotal
+      diceTotal: total
     }
     if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
     if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
-    throw new Error(`No table match for total ${total}`)
+    throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
   }
   if (input.rollingWith === 'Disadvantage') {
     const r = executeRoll({
@@ -69,36 +75,35 @@ export function roll(input: {
         plus: input.stat + (input.forward ?? 0) + (input.ongoing ?? 0)
       }
     })
-    const diceTotal = r.total
     const total = r.total
     const details = {
       stat: input.stat,
       forward: input.forward ?? 0,
       ongoing: input.ongoing ?? 0,
-      diceTotal: diceTotal
+      diceTotal: total
     }
     if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
     if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
-    throw new Error(`No table match for total ${total}`)
+    throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
   }
   const r = executeRoll({
     sides: 6,
     quantity: 2,
     modifiers: { plus: input.stat + (input.forward ?? 0) + (input.ongoing ?? 0) }
   })
-  const diceTotal = r.total
   const total = r.total
   const details = {
     stat: input.stat,
     forward: input.forward ?? 0,
     ongoing: input.ongoing ?? 0,
-    diceTotal: diceTotal
+    diceTotal: total
   }
   if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
   if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
   if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
-  throw new Error(`No table match for total ${total}`)
+  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
 }
 
-export type { GameRollResult, RollRecord }
+export { SchemaError }
+export type { GameRollResult, RollRecord, SchemaErrorCode }

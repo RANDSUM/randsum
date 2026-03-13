@@ -1,12 +1,12 @@
 #!/usr/bin/env bun
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { chmodSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { build } from 'bunup'
 import { format, resolveConfig } from 'prettier'
 
-import { generateCode, resolveExternalRefs, validateSpec } from '@randsum/gameSchema'
-import type { RandSumSpec } from '@randsum/gameSchema'
+import { generateCode, resolveExternalRefs, validateSpec } from './src/lib'
+import type { RandSumSpec } from './src/lib/types'
 
 const packageDir = import.meta.dirname
 const srcDir = join(packageDir, 'src')
@@ -57,16 +57,65 @@ async function main(): Promise<void> {
 
   await build(
     {
-      entry: entries,
+      entry: [...entries, 'src/index.ts'],
       format: ['esm', 'cjs'],
       dts: true,
       external: ['@randsum/roller'],
+      splitting: false,
       minify: true,
       sourcemap: 'external',
       clean: true
     },
     packageDir
   )
+
+  // Build schema barrel — uses packages:"bundle" so that ./lib/* deps
+  // (including ajv from devDependencies) are bundled inline rather than
+  // treated as external.
+  await build(
+    {
+      entry: ['src/schema.ts'],
+      format: ['esm', 'cjs'],
+      dts: true,
+      external: ['@randsum/roller'],
+      packages: 'bundle',
+      minify: true,
+      sourcemap: 'external',
+      target: 'node',
+      clean: false
+    },
+    packageDir
+  )
+
+  // Build bin tools
+  await build(
+    {
+      entry: ['src/lib/bin.ts'],
+      format: ['esm', 'cjs'],
+      dts: false,
+      external: ['@randsum/roller'],
+      minify: true,
+      target: 'node',
+      clean: false
+    },
+    packageDir
+  )
+
+  await build(
+    {
+      entry: ['src/lib/bin-build.ts'],
+      format: ['esm', 'cjs'],
+      dts: false,
+      external: ['@randsum/roller', 'bunup', 'prettier'],
+      minify: true,
+      target: 'node',
+      clean: false
+    },
+    packageDir
+  )
+
+  chmodSync(join(packageDir, 'dist/bin.cjs'), 0o755)
+  chmodSync(join(packageDir, 'dist/bin-build.js'), 0o755)
 }
 
 main().catch((e: unknown) => {

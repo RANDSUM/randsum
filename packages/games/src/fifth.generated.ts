@@ -4,13 +4,17 @@
 import { roll as executeRoll, validateFinite, validateRange } from '@randsum/roller'
 import type { RollRecord } from '@randsum/roller'
 import type { GameRollResult } from './types'
+import { SchemaError } from './lib/errors'
+import type { SchemaErrorCode } from './lib/errors'
 
-export type RollResult = number
+export type FifthRollResult = number
+/** @deprecated Use {@link FifthRollResult} to avoid cross-game name collisions */
+export type RollResult = FifthRollResult
 
 export function roll(input?: {
   modifier?: number
   rollingWith?: 'Advantage' | 'Disadvantage'
-}): GameRollResult<RollResult, undefined, RollRecord> {
+}): GameRollResult<FifthRollResult, undefined, RollRecord> {
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
     validateFinite(input?.modifier, '5E modifier')
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
@@ -19,7 +23,8 @@ export function roll(input?: {
     input?.rollingWith !== undefined &&
     !['Advantage', 'Disadvantage'].includes(input?.rollingWith as string)
   )
-    throw new Error(
+    throw new SchemaError(
+      'INVALID_INPUT_TYPE',
       `Invalid rollingWith value: ${String(input?.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`
     )
   if (input?.rollingWith === 'Advantage') {
@@ -45,4 +50,5 @@ export function roll(input?: {
   return { total, result: total, rolls: r.rolls }
 }
 
-export type { GameRollResult, RollRecord }
+export { SchemaError }
+export type { GameRollResult, RollRecord, SchemaErrorCode }
