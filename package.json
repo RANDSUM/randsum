@@ -94,7 +94,7 @@
   "scripts": {
     "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
-"dev": "bun run --filter '*' dev",
+    "dev": "bun run --filter '*' dev",
     "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' build && bun run --filter '@randsum/games' --filter '@randsum/component-library' --filter '@randsum/cli' --filter '@randsum/discord-bot' build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
@@ -138,11 +138,15 @@
     "lodash": "4.17.23",
     "markdown-it": "14.1.1",
     "mdast-util-to-hast": "13.2.1",
-    "undici": "6.23.0",
+    "undici": "6.24.0",
     "tar": "7.5.11",
-    "devalue": "5.6.4"
+    "devalue": "5.6.4",
+    "flatted": "3.4.1",
+    "yauzl": "3.2.1"
   },
   "dependencies": {
-    "devalue": "5.6.4"
+    "devalue": "5.6.4",
+    "flatted": "3.4.1",
+    "undici": "6.24.0"
   }
 }

@@ -10,7 +10,8 @@ import type {
  * Matches keys like `rollFoo`, `rollBar`, etc. — the naming convention
  * for additional roll definitions beyond the base `roll` key.
  */
-export const ROLL_KEY_PATTERN = /^roll[A-Z][a-zA-Z]*$/
+// eslint-disable-next-line @typescript-eslint/no-inferrable-types
+export const ROLL_KEY_PATTERN: RegExp = /^roll[A-Z][a-zA-Z]*$/
 
 export function isRollDefinition(value: unknown): value is RollDefinition {
   if (typeof value !== 'object' || value === null) return false
