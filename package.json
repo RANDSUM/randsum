@@ -95,7 +95,7 @@
     "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
 "dev": "bun run --filter '*' dev",
-    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' --filter '@randsum/gameSchema' build && bun run --filter '@randsum/games' --filter '@randsum/component-library' --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/site' build",
+    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' --filter '@randsum/gameSchema' build && bun run --filter '@randsum/games' --filter '@randsum/component-library' --filter '@randsum/cli' --filter '@randsum/discord-bot' build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "bun run --filter \"*\" lint",
