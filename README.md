@@ -23,12 +23,12 @@ This repository contains multiple packages and applications for dice rolling and
 - **[@randsum/notation](packages/notation)** - Dice notation parser and type foundation
 - **[@randsum/roller](packages/roller)** - Core dice rolling engine with advanced notation support
 - **[@randsum/display-utils](packages/display-utils)** - Shared display and formatting utilities for RANDSUM packages
-- **[@randsum/blades](games/blades)** - Blades in the Dark system mechanics
-- **[@randsum/daggerheart](games/daggerheart)** - Daggerheart RPG system support
-- **[@randsum/fifth](games/fifth)** - D&D 5th Edition mechanics
-- **[@randsum/pbta](games/pbta)** - Powered by the Apocalypse system mechanics
-- **[@randsum/root-rpg](games/root-rpg)** - Root RPG system implementation
-- **[@randsum/salvageunion](games/salvageunion)** - Salvage Union mechanics
+- **[@randsum/games/blades](packages/games)** - Blades in the Dark system mechanics
+- **[@randsum/games/daggerheart](packages/games)** - Daggerheart RPG system support
+- **[@randsum/games/fifth](packages/games)** - D&D 5th Edition mechanics
+- **[@randsum/games/pbta](packages/games)** - Powered by the Apocalypse system mechanics
+- **[@randsum/games/root-rpg](packages/games)** - Root RPG system implementation
+- **[@randsum/games/salvageunion](packages/games)** - Salvage Union mechanics
 
 ### Applications
 
@@ -119,7 +119,7 @@ Bun's workspace features handle tasks across all packages with automatic depende
 
 ```bash
 bun run --filter @randsum/roller test      # Run tests for @randsum/roller only
-bun run --filter @randsum/blades build     # Build @randsum/blades only
+bun run --filter @randsum/games build      # Build @randsum/games only
 ```
 
 **Site-Specific Tasks**:

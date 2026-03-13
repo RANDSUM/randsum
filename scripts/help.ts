@@ -57,6 +57,5 @@ for (const [category, scripts] of Object.entries(categories)) {
 console.log('\n' + '='.repeat(55))
 console.log('\nPackage-specific commands:')
 console.log('  bun run --filter @randsum/<pkg> <script>')
-console.log('\nCreate new game package:')
-console.log('  bun run create:game <game-name>')
+console.log('\nAdd a new game: add <shortcode>.randsum.json to packages/games/, run bun run codegen')
 console.log('\nMore info: CLAUDE/scripts.md or CONTRIBUTING.md\n')

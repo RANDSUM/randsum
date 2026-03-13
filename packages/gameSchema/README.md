@@ -195,7 +195,7 @@ import schema from "@randsum/gameSchema/randsum.json"
 ## Related Packages
 
 - [@randsum/roller](https://github.com/RANDSUM/randsum/tree/main/packages/roller): Core dice rolling engine
-- [@randsum/blades](https://github.com/RANDSUM/randsum/tree/main/games/blades): Blades in the Dark — an example of a game built with this toolchain
+- [@randsum/games/blades](https://github.com/RANDSUM/randsum/tree/main/packages/games): Blades in the Dark — an example of a game built with this toolchain
 
 <div align="center">
 Made with by <a href="https://github.com/RANDSUM">RANDSUM</a>

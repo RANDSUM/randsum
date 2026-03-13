@@ -228,7 +228,7 @@ These files currently import notation-related items from roller. After extractio
   "references": [
     { "path": "packages/notation" },    // ADD THIS
     { "path": "packages/roller" },
-    { "path": "games/blades" },
+    { "path": "packages/games" },
     // ... rest unchanged
   ]
 }

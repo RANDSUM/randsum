@@ -2,7 +2,7 @@
 
 ## Supported Game Packages
 
-### @randsum/blades - Blades in the Dark
+### @randsum/games/blades - Blades in the Dark
 
 - **Mechanics**: d6 dice pools, keep highest result
 - **Outcomes**: 6 = success, 4-5 = partial, 1-3 = failure; multiple 6s = critical
@@ -16,7 +16,7 @@ result.result // 'critical' | 'success' | 'partial' | 'failure'
 result.total  // sum of dice
 ```
 
-### @randsum/daggerheart - Daggerheart RPG
+### @randsum/games/daggerheart - Daggerheart RPG
 
 - **Mechanics**: Hope/Fear d12 system
 - **Roll**: 2d12 (one Hope die, one Fear die) + optional advantage/disadvantage d6
@@ -37,7 +37,7 @@ result.result         // 'hope' | 'fear' | 'critical hope'
 result.details        // { hope, fear, advantage, modifier }
 ```
 
-### @randsum/fifth - D&D 5th Edition
+### @randsum/games/fifth - D&D 5th Edition
 
 - **Mechanics**: d20 with advantage/disadvantage
 - **Advantage**: Roll 2d20, keep highest (`2d20L` — drop lowest)
@@ -57,7 +57,7 @@ roll({ modifier: 3, rollingWith: { advantage: true } })
 roll({ modifier: -2, rollingWith: { disadvantage: true } })
 ```
 
-### @randsum/root-rpg - Root RPG
+### @randsum/games/root-rpg - Root RPG
 
 - **Mechanics**: 2d6 + stat modifier
 - **Outcomes**: 10+ = strong hit, 7-9 = weak hit, 6- = miss
@@ -70,7 +70,7 @@ result.result // 'Strong Hit' | 'Weak Hit' | 'Miss'
 result.total  // 2d6 + bonus
 ```
 
-### @randsum/pbta - Powered by the Apocalypse
+### @randsum/games/pbta - Powered by the Apocalypse
 
 - **Mechanics**: 2d6 + stat modifier (generic PbtA)
 - **Outcomes**: 10+ = strong hit, 7-9 = weak hit, 6- = miss
@@ -93,7 +93,7 @@ result.result // 'strong_hit' | 'weak_hit' | 'miss'
 
 **Games**: Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
 
-### @randsum/salvageunion - Salvage Union
+### @randsum/games/salvageunion - Salvage Union
 
 - **Mechanics**: d20 roll-under system; lower is better
 - **Outcome**: 1 = critical success, 20 = critical failure; results looked up in reference tables

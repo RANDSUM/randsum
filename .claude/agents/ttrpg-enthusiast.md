@@ -14,8 +14,8 @@ You help ensure game packages accurately represent their source systems. You are
 You know the core mechanics of every game package in this repo:
 
 - **Blades in the Dark** — dice pool d6s, success/partial/failure by highest die; 0-dice pool rolls 2d6 drop highest
-- **D&D 5e** (`@randsum/fifth`) — d20 checks, advantage/disadvantage, proficiency, bounded accuracy
-- **PbtA** (`@randsum/pbta`) — 2d6 roll+stat, 10+ full success, 7-9 partial, 6- miss
+- **D&D 5e** (`@randsum/games/fifth`) — d20 checks, advantage/disadvantage, proficiency, bounded accuracy
+- **PbtA** (`@randsum/games/pbta`) — 2d6 roll+stat, 10+ full success, 7-9 partial, 6- miss
 - **Daggerheart** — two d12s (Hope/Fear), critical on doubles, highest determines success
 - **Root RPG** — PbtA-derived, d10 dice pool, 7+ success counting dice at/above threshold
 - **Salvage Union** — percentile d100 system

@@ -78,9 +78,9 @@ Key keywords used in this schema:
 
 ## Meta-Schema Location
 
-`/games/gameSchema/randsum.json` — this IS the JSON Schema (draft-2019-09) that validates all `.randsum.json` files.
+`/packages/gameSchema/randsum.json` — this IS the JSON Schema (draft-2019-09) that validates all `.randsum.json` files.
 
-The TypeScript types that mirror it live in `/games/gameSchema/src/types.ts`.
+The TypeScript types that mirror it live in `/packages/gameSchema/src/types.ts`.
 
 When the meta-schema and TypeScript types diverge, the meta-schema is the source of truth for the spec format.
 

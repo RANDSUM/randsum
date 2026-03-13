@@ -1,44 +1,33 @@
 ---
 name: create-game
-description: Scaffold a new game package for a tabletop RPG system
+description: Add a new game to @randsum/games
 disable-model-invocation: true
 ---
 
-# Create Game Package
+# Add a New Game to @randsum/games
 
-Guided scaffold for a new @randsum game package.
+Games live as subpath exports inside `packages/games/`. No separate package needed.
 
 ## Gather Information
 
 Ask the user for:
-1. **Game name** (kebab-case, e.g. `mothership`)
-2. **Brief description** of the game's dice mechanics (e.g. "d100 roll-under with stress dice")
+1. **Game name** and **shortcode** (kebab-case, e.g. `mothership`)
+2. **Brief description** of the dice mechanics
 3. **Core dice** used (e.g. d6 pool, 2d6+stat, d20, d100)
-4. **Result interpretation** (what outcomes mean - success/failure thresholds, special results)
+4. **Result interpretation** (outcomes, thresholds, special results)
 
-## Scaffold
+## Steps
 
-Run: `bun run create:game <name>`
-
-This creates the package structure at `games/<name>/`.
-
-## Post-scaffold Guidance
-
-After the script runs:
-
-1. **Verify structure**: confirm `games/<name>/` has `src/`, `__tests__/`, `package.json`, `CLAUDE.md`
-2. **Install deps**: `bun install` to link workspace dependencies
-3. **Implement types**: Edit `src/types.ts` with game-specific result types based on the user's description
-4. **Create spec file**: Write a `<shortcode>.randsum.json` spec defining dice pools, modifiers, outcome tables, and input validation
-5. **Generate code**: Run `bun run codegen` to generate the TypeScript roll function from the spec
-6. **Write tests**: Add tests in `__tests__/` following existing game package patterns
-7. **Add size limit**: Add entry to root `package.json` `size-limit` array with 7KB limit
-8. **Verify**: `bun run --filter @randsum/<name> test && bun run --filter @randsum/<name> build`
+1. **Write the spec**: Create `packages/games/<shortcode>.randsum.json` following the schema at `packages/gameSchema/randsum.json`
+2. **Run codegen**: `bun run --filter @randsum/games codegen` — generates `packages/games/src/<shortcode>.generated.ts`
+3. **Add exports**: Add `".<shortcode>"` entry to `packages/games/package.json` exports map (following existing pattern)
+4. **Write tests**: Add `packages/games/__tests__/<shortcode>.test.ts` and `<shortcode>.property.test.ts`
+5. **Add size limit**: Add entry to root `package.json` `size-limit` array: `dist/<shortcode>.generated.js` with appropriate KB limit
+6. **Verify**: `bun run --filter @randsum/games test && bun run --filter @randsum/games build`
 
 ## Key Constraints
 
-- Game packages depend ONLY on `@randsum/roller` via `workspace:~`
-- Never depend on other game packages
-- Game code is generated from `.randsum.json` specs via `@randsum/gameSchema`
-- Bundle size limit: 7KB
-- Follow `const`-only, `import type`, no `any` conventions
+- All game logic lives in the `.randsum.json` spec — no hand-written TypeScript in generated files
+- Generated files are checked into git
+- Runtime dep: `@randsum/roller` only
+- Bundle size limit: 8KB per subpath (300KB for salvageunion due to baked-in table data)
