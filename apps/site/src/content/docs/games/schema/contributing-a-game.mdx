@@ -139,58 +139,11 @@ bun install`} />
       "limit": "8 KB"
     }`} />
 
-5. **Write tests**
-
-    Create two test files in `packages/games/__tests__/`:
-
-    **`<shortcode>.test.ts`** — behavioral tests:
-
-    <CodeExample code={`import { describe, expect, test } from 'bun:test'
-import { roll } from '@randsum/games/<shortcode>'
-
-describe('roll', () => {
-  test('returns a valid outcome', () => {
-    const { result } = roll()
-    expect(['success', 'partial', 'failure']).toContain(result)
-  })
-
-  test('total is within die bounds', () => {
-    const { rolls } = roll()
-    const total = rolls[0]?.total ?? 0
-    expect(total).toBeGreaterThanOrEqual(1)
-    expect(total).toBeLessThanOrEqual(6)
-  })
-})`} />
-
-    **`<shortcode>.property.test.ts`** — property-based tests with `fast-check`:
-
-    <CodeExample code={`import { describe, expect, test } from 'bun:test'
-import fc from 'fast-check'
-import { roll } from '@randsum/games/<shortcode>'
-
-describe('roll property-based tests', () => {
-  test('result is always a valid outcome', () => {
-    fc.assert(
-      fc.property(fc.constant(undefined), () => {
-        const { result } = roll()
-        return ['success', 'partial', 'failure'].includes(result)
-      })
-    )
-  })
-})`} />
-
-    Adapt these templates to your game's inputs and outcomes. See existing test files (e.g., `blades.test.ts`, `fifth.test.ts`) for patterns handling game-specific inputs like `rating` or `modifier`.
+5. **Write tests** — Create two test files in `packages/games/__tests__/`. See test templates below the steps.
 
 6. **Build and test**
 
-    <CodeExample code={`# Build the games package (includes your new generated file)
-bun run --filter @randsum/games build
-
-# Run tests
-bun run --filter @randsum/games test
-
-# Run the full check suite
-bun run --filter @randsum/games check`} />
+    <CodeExample code={`# Build the games package (includes your new generated file)\nbun run --filter @randsum/games build\n\n# Run tests\nbun run --filter @randsum/games test\n\n# Run the full check suite\nbun run --filter @randsum/games check`} />
 
 7. **Submit a PR**
 
@@ -203,6 +156,18 @@ bun run --filter @randsum/games check`} />
     In the PR description, link to the game's SRD or rules reference so reviewers can verify the outcome tables.
 
 </Steps>
+
+## Test templates
+
+**`<shortcode>.test.ts`** — behavioral tests:
+
+<CodeExample code={`import { describe, expect, test } from 'bun:test'\nimport { roll } from '@randsum/games/<shortcode>'\n\ndescribe('roll', () => {\n  test('returns a valid outcome', () => {\n    const { result } = roll()\n    expect(['success', 'partial', 'failure']).toContain(result)\n  })\n\n  test('total is within die bounds', () => {\n    const { rolls } = roll()\n    const total = rolls[0]?.total ?? 0\n    expect(total).toBeGreaterThanOrEqual(1)\n    expect(total).toBeLessThanOrEqual(6)\n  })\n})`} />
+
+**`<shortcode>.property.test.ts`** — property-based tests with `fast-check`:
+
+<CodeExample code={`import { describe, expect, test } from 'bun:test'\nimport fc from 'fast-check'\nimport { roll } from '@randsum/games/<shortcode>'\n\ndescribe('roll property-based tests', () => {\n  test('result is always a valid outcome', () => {\n    fc.assert(\n      fc.property(fc.constant(undefined), () => {\n        const { result } = roll()\n        return ['success', 'partial', 'failure'].includes(result)\n      })\n    )\n  })\n})`} />
+
+Adapt these templates to your game's inputs and outcomes. See existing test files (e.g., `blades.test.ts`, `fifth.test.ts`) for patterns handling game-specific inputs like `rating` or `modifier`.
 
 ## Tips
 

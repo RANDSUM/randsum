@@ -70,8 +70,8 @@ Each entry in the `ranges` array matches a roll total (or pool condition) to a r
 |---|---|---|
 | `result` | `string` | The outcome string returned when this range matches |
 | `exact` | `number` | Matches when the total equals this value |
-| `min` | `number` | Matches when the total is >= this value (used with `max`) |
-| `max` | `number` | Matches when the total is <= this value (used with `min`) |
+| `min` | `number` | Matches when the total is at least this value (used with `max`) |
+| `max` | `number` | Matches when the total is at most this value (used with `min`) |
 | `poolCondition` | `object` | Matches based on individual die values instead of the total |
 
 ### `poolCondition`
