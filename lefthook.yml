@@ -24,6 +24,8 @@ pre-push:
       priority: 2
     test:
       run: bun test
+    gen-check:
+      run: bun run --filter '@randsum/games' gen:check
     skill-verify:
       run: npx skills-ref validate skills/dice-rolling/SKILL.md
     audit:

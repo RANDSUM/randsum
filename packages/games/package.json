@@ -142,9 +142,9 @@
   },
   "scripts": {
     "prepublishOnly": "bun run build",
-    "build": "bun run build.ts --skip-codegen",
-    "build:full": "bun run build.ts",
-    "codegen": "bun run build.ts --codegen-only",
+    "build": "bun run build.ts",
+    "gen": "bun run codegen.ts",
+    "gen:check": "bun run codegen.ts --check",
     "test": "bun run build && bun test",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . -c ../../eslint.config.js",
