@@ -109,7 +109,7 @@
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
-    "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run check:exports && bun run site:build",
+    "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run check:exports && bun run site:build",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/component-library dev & bun run --filter @randsum/site dev",
