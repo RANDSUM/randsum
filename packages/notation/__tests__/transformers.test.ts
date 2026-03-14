@@ -5,7 +5,7 @@ import {
   optionsToDescription,
   optionsToNotation,
   optionsToSidesFaces
-} from '@randsum/notation'
+} from '../src/index'
 
 describe('optionsToSidesFaces', () => {
   test('returns sides for numeric sides', () => {

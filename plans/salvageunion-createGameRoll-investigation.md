@@ -142,4 +142,4 @@ The double `tableDataForTable` call is the sole tradeoff. It is acceptable: the 
 
 If the double-lookup becomes a recurring pattern in future packages, it would motivate adding an optional `context` slot to `GameRollConfig` — but that is not warranted here.
 
-**Action:** Refactor `games/salvageunion/src/roll/index.ts` to use `createGameRoll`. The public API surface (`roll()`, all exported types) remains identical.
+**Action:** Refactor `packages/games/src/salvageunion.generated.ts` to use `createGameRoll`. The public API surface (`roll()`, all exported types) remains identical.

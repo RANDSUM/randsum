@@ -64,7 +64,7 @@ const mockRoll = mock(() => ({
   rolls: []
 }))
 
-void mock.module('@randsum/daggerheart', () => ({ roll: mockRoll }))
+void mock.module('@randsum/games/daggerheart', () => ({ roll: mockRoll }))
 
 const { dhCommand } = await import('../../src/commands/dh.js')
 

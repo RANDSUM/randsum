@@ -12,12 +12,14 @@ RANDSUM provides TypeScript packages for dice rolling in tabletop RPG applicatio
 
 ## Game Packages
 
-- [Blades in the Dark](https://randsum.dev/games/blades/): `@randsum/blades` — action roll resolution (dice pool, 1–4 dice)
-- [Daggerheart](https://randsum.dev/games/daggerheart/): `@randsum/daggerheart` — Hope/Fear dual-die mechanics
-- [D&D 5th Edition](https://randsum.dev/games/fifth/): `@randsum/fifth` — d20 rolls with advantage/disadvantage
-- [Root RPG](https://randsum.dev/games/root-rpg/): `@randsum/root-rpg` — 2d6 Strong Hit / Weak Hit / Miss
-- [Salvage Union](https://randsum.dev/games/salvageunion/): `@randsum/salvageunion` — d20 table lookups
-- [Powered by the Apocalypse](https://randsum.dev/games/pbta/): `@randsum/pbta` — 2d6 strong hit / weak hit / miss with stat and forward/ongoing bonuses
+All game systems are available via `@randsum/games` with subpath exports (`bun add @randsum/games`):
+
+- [Blades in the Dark](https://randsum.dev/games/blades/): `@randsum/games/blades` — action roll resolution (dice pool, 1-4 dice)
+- [Daggerheart](https://randsum.dev/games/daggerheart/): `@randsum/games/daggerheart` — Hope/Fear dual-die mechanics
+- [D&D 5th Edition](https://randsum.dev/games/fifth/): `@randsum/games/fifth` — d20 rolls with advantage/disadvantage
+- [Root RPG](https://randsum.dev/games/root-rpg/): `@randsum/games/root-rpg` — 2d6 Strong Hit / Weak Hit / Miss
+- [Salvage Union](https://randsum.dev/games/salvageunion/): `@randsum/games/salvageunion` — d20 table lookups
+- [Powered by the Apocalypse](https://randsum.dev/games/pbta/): `@randsum/games/pbta` — 2d6 strong hit / weak hit / miss with stat and forward/ongoing bonuses
 
 ## Tools
 

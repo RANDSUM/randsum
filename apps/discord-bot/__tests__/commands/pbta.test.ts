@@ -65,7 +65,7 @@ const mockRoll = mock(() => ({
   rolls: [{ initialRolls: [5, 5], rolls: [5, 5], modifierLogs: [] }]
 }))
 
-void mock.module('@randsum/pbta', () => ({ roll: mockRoll }))
+void mock.module('@randsum/games/pbta', () => ({ roll: mockRoll }))
 
 const { pbtaCommand } = await import('../../src/commands/pbta.js')
 

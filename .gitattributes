@@ -1,0 +1,2 @@
+# Mark generated files so GitHub collapses diffs and excludes from language stats
+*.generated.ts linguist-generated=true

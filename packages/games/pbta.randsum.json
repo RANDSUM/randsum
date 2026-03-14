@@ -1,0 +1,62 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Powered by the Apocalypse",
+  "shortcode": "pbta",
+  "version": "1.0.0",
+  "game_url": "https://apocalypse-world.com/",
+
+  "roll": {
+    "inputs": {
+      "stat": { "type": "integer", "minimum": -3, "maximum": 5 },
+      "forward": { "type": "integer", "minimum": -5, "maximum": 5, "default": 0 },
+      "ongoing": { "type": "integer", "minimum": -5, "maximum": 5, "default": 0 },
+      "rollingWith": { "type": "string", "enum": ["Advantage", "Disadvantage"], "optional": true }
+    },
+    "dice": { "pool": { "sides": 6 }, "quantity": 2 },
+    "modify": [
+      { "add": { "$input": "stat" } },
+      { "add": { "$input": "forward" } },
+      { "add": { "$input": "ongoing" } }
+    ],
+    "resolve": "sum",
+    "details": {
+      "stat": { "$input": "stat" },
+      "forward": { "$input": "forward", "default": 0 },
+      "ongoing": { "$input": "ongoing", "default": 0 },
+      "diceTotal": { "expr": "diceTotal" }
+    },
+    "outcome": {
+      "ranges": [
+        { "min": 10, "max": 27, "result": "strong_hit" },
+        { "min": 7, "max": 9, "result": "weak_hit" },
+        { "min": -11, "max": 6, "result": "miss" }
+      ]
+    },
+    "when": [
+      {
+        "condition": { "input": "rollingWith", "operator": "=", "value": "Advantage" },
+        "override": {
+          "dice": { "pool": { "sides": 6 }, "quantity": 3 },
+          "modify": [
+            { "keepHighest": 2 },
+            { "add": { "$input": "stat" } },
+            { "add": { "$input": "forward" } },
+            { "add": { "$input": "ongoing" } }
+          ]
+        }
+      },
+      {
+        "condition": { "input": "rollingWith", "operator": "=", "value": "Disadvantage" },
+        "override": {
+          "dice": { "pool": { "sides": 6 }, "quantity": 3 },
+          "modify": [
+            { "keepLowest": 2 },
+            { "add": { "$input": "stat" } },
+            { "add": { "$input": "forward" } },
+            { "add": { "$input": "ongoing" } }
+          ]
+        }
+      }
+    ]
+  }
+}

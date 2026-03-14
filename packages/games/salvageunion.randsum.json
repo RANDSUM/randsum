@@ -1,0 +1,33 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Salvage Union",
+  "shortcode": "salvageunion",
+  "version": "1.0.0",
+  "game_url": "https://leyline.press/products/salvage-union/",
+
+  "roll": {
+    "inputs": {
+      "tableName": { "type": "string" }
+    },
+    "dice": { "pool": { "sides": 20 }, "quantity": 1 },
+    "resolve": {
+      "remoteTableLookup": {
+        "url": "https://salvageunion.io/schema/roll-tables.json",
+        "find": {
+          "field": "name",
+          "input": "tableName",
+          "errorMessage": "Invalid Salvage Union table name: \"${value}\""
+        },
+        "tableField": "table",
+        "resultMapping": {
+          "key": { "$lookupResult": "key" },
+          "label": { "$lookupResult": "result.label", "fallback": { "$lookupResult": "key" } },
+          "description": { "$lookupResult": "result.value" },
+          "tableName": { "$input": "tableName" },
+          "table": { "$foundTable": "table" },
+          "roll": { "expr": "total" }
+        }
+      }
+    }
+  }
+}

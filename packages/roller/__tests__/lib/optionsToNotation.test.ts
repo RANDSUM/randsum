@@ -1,8 +1,6 @@
-import { describe, expect, spyOn, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import { optionsToNotation } from '../../src/lib/transformers'
 import { createRollOptions } from '../support/fixtures'
-import * as notationModule from '@randsum/notation'
-import { NotationParseError } from '../../src/errors'
 
 describe(optionsToNotation, () => {
   test('converts basic numeric options to notation', () => {
@@ -74,14 +72,5 @@ describe(optionsToNotation, () => {
     expect(result).toContain('4d6')
     expect(result).toMatch(/[Ll]/)
     expect(result).toContain('+5')
-  })
-
-  test('throws when generated notation is invalid', () => {
-    const spy = spyOn(notationModule, 'isDiceNotation').mockReturnValue(false)
-
-    expect(() => optionsToNotation({ sides: 6 })).toThrow(NotationParseError)
-    expect(() => optionsToNotation({ sides: 6 })).toThrow('Generated notation is invalid')
-
-    spy.mockRestore()
   })
 })

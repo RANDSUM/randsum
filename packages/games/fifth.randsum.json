@@ -1,0 +1,57 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "D&D 5th Edition",
+  "shortcode": "fifth",
+  "version": "1.0.0",
+  "game_url": "https://dnd.wizards.com/",
+
+  "roll": {
+    "inputs": {
+      "modifier": {
+        "type": "integer",
+        "minimum": -30,
+        "maximum": 30,
+        "default": 0,
+        "description": "5E modifier"
+      },
+      "rollingWith": { "type": "string", "enum": ["Advantage", "Disadvantage"], "optional": true },
+      "crit": {
+        "type": "boolean",
+        "optional": true,
+        "description": "When true, check for natural 1 and natural 20"
+      }
+    },
+    "dice": { "pool": { "sides": 20 }, "quantity": 1 },
+    "resolve": "sum",
+    "modify": [{ "add": { "$input": "modifier" } }],
+    "details": {
+      "criticals": {
+        "when": { "input": "crit" },
+        "value": {
+          "isNatural1": {
+            "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 1 }
+          },
+          "isNatural20": {
+            "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 20 }
+          }
+        }
+      }
+    },
+    "when": [
+      {
+        "condition": { "input": "rollingWith", "operator": "=", "value": "Advantage" },
+        "override": {
+          "dice": { "pool": { "sides": 20 }, "quantity": 2 },
+          "modify": [{ "keepHighest": 1 }, { "add": { "$input": "modifier" } }]
+        }
+      },
+      {
+        "condition": { "input": "rollingWith", "operator": "=", "value": "Disadvantage" },
+        "override": {
+          "dice": { "pool": { "sides": 20 }, "quantity": 2 },
+          "modify": [{ "keepLowest": 1 }, { "add": { "$input": "modifier" } }]
+        }
+      }
+    ]
+  }
+}

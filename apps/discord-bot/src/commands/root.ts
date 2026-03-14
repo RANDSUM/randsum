@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { roll } from '@randsum/root-rpg'
+import { roll } from '@randsum/games/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'

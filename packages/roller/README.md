@@ -105,10 +105,6 @@ import {
   optionsToNotation,
   optionsToDescription,
 
-  // Game system helpers
-  createGameRoll,
-  createMultiRollGameRoll,
-
   // Error types
   RandsumError,
   NotationParseError,
@@ -118,12 +114,12 @@ import {
 
 ## Related Packages
 
-- [@randsum/blades](../../games/blades) - Blades in the Dark
-- [@randsum/daggerheart](../../games/daggerheart) - Daggerheart
-- [@randsum/fifth](../../games/fifth) - D&D 5th Edition
-- [@randsum/root-rpg](../../games/root-rpg) - Root RPG
-- [@randsum/salvageunion](../../games/salvageunion) - Salvage Union
-- [@randsum/pbta](../../games/pbta) - Powered by the Apocalypse
+- [@randsum/games/blades](../../packages/games) - Blades in the Dark
+- [@randsum/games/daggerheart](../../packages/games) - Daggerheart
+- [@randsum/games/fifth](../../packages/games) - D&D 5th Edition
+- [@randsum/games/root-rpg](../../packages/games) - Root RPG
+- [@randsum/games/salvageunion](../../packages/games) - Salvage Union
+- [@randsum/games/pbta](../../packages/games) - Powered by the Apocalypse
 
 <div align="center">
 Made with 👹 by <a href="https://github.com/RANDSUM">RANDSUM</a>

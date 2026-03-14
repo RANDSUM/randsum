@@ -33,6 +33,15 @@ Roll Blades in the Dark action rolls. Takes the number of dice in your pool and 
 /blades dice:2
 /blades dice:0   # Desperate position (rolls 2d6, takes lowest)`} />
 
+### `/fifth`
+
+Roll D&D 5th Edition dice (1d20 + modifier). Supports advantage and disadvantage.
+
+<CodeExample lang="bash" code={`/fifth modifier:5
+/fifth modifier:3 rolling_with:Advantage
+/fifth rolling_with:Disadvantage
+/fifth   # Straight 1d20`} />
+
 ### `/dh`
 
 Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantage/disadvantage, and amplification of hope or fear dice.
@@ -58,6 +67,15 @@ Roll on Salvage Union tables. Supports all Salvage Union tables including Core M
 /su table:Morale
 /su   # Uses default table`} />
 
+### `/pbta`
+
+Roll Powered by the Apocalypse moves (2d6 + stat). Supports forward, ongoing bonuses, and advantage/disadvantage.
+
+<CodeExample lang="bash" code={`/pbta stat:2
+/pbta stat:1 forward:1
+/pbta stat:3 rolling_with:Advantage
+/pbta stat:0 ongoing:1`} />
+
 ### `/notation`
 
 Display a reference guide for RANDSUM dice notation. Shows all available modifiers, syntax, and examples.
@@ -68,12 +86,12 @@ Display a reference guide for RANDSUM dice notation. Shows all available modifie
 
 The following game packages have dedicated slash commands:
 
-- **@randsum/blades** -- `/blades` for Blades in the Dark action rolls
-- **@randsum/daggerheart** -- `/dh` for Daggerheart hope and fear dice
-- **@randsum/root-rpg** -- `/root` for Root RPG mechanics
-- **@randsum/salvageunion** -- `/su` for Salvage Union table rolls
-
-For other systems (including D&D 5e and PbtA), use the `/roll` command with standard RANDSUM dice notation.
+- **@randsum/games/fifth** -- `/fifth` for D&D 5th Edition rolls
+- **@randsum/games/blades** -- `/blades` for Blades in the Dark action rolls
+- **@randsum/games/daggerheart** -- `/dh` for Daggerheart hope and fear dice
+- **@randsum/games/pbta** -- `/pbta` for Powered by the Apocalypse moves
+- **@randsum/games/root-rpg** -- `/root` for Root RPG mechanics
+- **@randsum/games/salvageunion** -- `/su` for Salvage Union table rolls
 
 ## Features
 

@@ -1,0 +1,258 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      notation: ${{ steps.filter.outputs.notation }}
+      roller: ${{ steps.filter.outputs.roller }}
+      games: ${{ steps.filter.outputs.games }}
+      cli: ${{ steps.filter.outputs.cli }}
+      component-library: ${{ steps.filter.outputs.component-library }}
+      site: ${{ steps.filter.outputs.site }}
+      skill: ${{ steps.filter.outputs.skill }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            notation:
+              - 'packages/notation/**'
+              - '.github/workflows/ci.yml'
+            roller:
+              - 'packages/notation/**'
+              - 'packages/roller/**'
+              - '.github/workflows/ci.yml'
+            games:
+              - 'packages/notation/**'
+              - 'packages/roller/**'
+              - 'packages/games/**'
+              - '.github/workflows/ci.yml'
+            cli:
+              - 'packages/notation/**'
+              - 'packages/roller/**'
+              - 'packages/display-utils/**'
+              - 'apps/cli/**'
+              - '.github/workflows/ci.yml'
+            component-library:
+              - 'packages/notation/**'
+              - 'packages/roller/**'
+              - 'packages/display-utils/**'
+              - 'packages/component-library/**'
+              - '.github/workflows/ci.yml'
+            site:
+              - 'packages/**'
+              - 'apps/site/**'
+              - '.github/workflows/ci.yml'
+            skill:
+              - 'skills/**'
+              - '.github/workflows/ci.yml'
+
+  notation:
+    name: notation
+    needs: changes
+    if: needs.changes.outputs.notation == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter '@randsum/notation' check
+      - name: Check bundle size
+        run: bun run --filter '@randsum/notation' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/notation' check:exports
+
+  roller:
+    name: roller
+    needs: changes
+    if: needs.changes.outputs.roller == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter '@randsum/notation' build
+      - run: bun run --filter '@randsum/roller' check
+      - name: Check bundle size
+        run: bun run --filter '@randsum/roller' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/roller' check:exports
+
+  games:
+    name: games
+    needs: changes
+    if: needs.changes.outputs.games == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter '@randsum/notation' build
+      - run: bun run --filter '@randsum/roller' build
+      - run: bun run --filter '@randsum/games' check
+      - name: Verify generated files are up to date
+        continue-on-error: true
+        run: bun run --filter '@randsum/games' gen:check
+      - name: Check bundle size
+        run: bun run --filter '@randsum/games' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/games' check:exports
+
+  cli:
+    name: cli
+    needs: changes
+    if: needs.changes.outputs.cli == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter '@randsum/notation' build
+      - run: bun run --filter '@randsum/roller' build
+      - run: bun run --filter '@randsum/display-utils' build
+      - run: bun run --filter '@randsum/cli' check
+      - name: Check unused exports
+        run: bun run --filter '@randsum/cli' check:exports
+
+  component-library:
+    name: component-library
+    needs: changes
+    if: needs.changes.outputs.component-library == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter '@randsum/notation' build
+      - run: bun run --filter '@randsum/roller' build
+      - run: bun run --filter '@randsum/display-utils' build
+      - run: bun run --filter '@randsum/component-library' check
+      - name: Check bundle size
+        run: bun run --filter '@randsum/component-library' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/component-library' check:exports
+
+  site:
+    name: site
+    needs: changes
+    if: needs.changes.outputs.site == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun run --filter '@randsum/site' check
+      - name: Check unused exports
+        run: bun run --filter '@randsum/site' check:exports
+
+  skill:
+    name: skill-verify
+    needs: changes
+    if: needs.changes.outputs.skill == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - run: npx skills-ref validate skills/dice-rolling/SKILL.md
+
+  ci-gate:
+    name: CI Gate
+    if: always()
+    needs: [notation, roller, games, cli, component-library, site, skill]
+    runs-on: ubuntu-latest
+    env:
+      RESULTS: ${{ join(needs.*.result, ' ') }}
+    steps:
+      - name: Check results
+        run: |
+          for result in $RESULTS; do
+            if [ "$result" = "failure" ] || [ "$result" = "cancelled" ]; then
+              echo "One or more checks failed or were cancelled"
+              exit 1
+            fi
+          done
+          echo "All checks passed (or were skipped)"

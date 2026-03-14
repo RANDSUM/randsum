@@ -1,7 +1,7 @@
-import type { DiceNotation, RollOptions } from '@randsum/notation'
+import type { DiceNotation, RollOptions } from '@randsum/notation/types'
 
 // Re-export notation types for backward compatibility
-export type { DiceNotation, RollOptions } from '@randsum/notation'
+export type { DiceNotation, RollOptions } from '@randsum/notation/types'
 
 /**
  * RollOptions with required numeric fields.
@@ -24,7 +24,7 @@ export interface RequiredNumericRollParameters {
  * roll({ sides: 6, quantity: 4 })  // options object
  * ```
  */
-export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number | `${number}`
+export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number
 
 /**
  * Type for custom random number generators.

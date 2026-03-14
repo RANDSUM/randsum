@@ -118,32 +118,9 @@ This is especially useful for modifiers like `drop` or `reroll` where the valid 
 
 ## Testing game packages
 
-Game package roll functions (for example, `roll` from `@randsum/fifth` or `@randsum/blades`) are created with `createGameRoll` and only accept their game-specific input type. They do not expose a `randomFn` parameter.
+Game packages (`@randsum/games/*`) are code-generated from `.randsum.json` specs and call `roll()` from `@randsum/roller` internally. They do not expose a `randomFn` parameter.
 
 To test game packages deterministically, test the underlying `roll()` from `@randsum/roller` with a seeded RNG to verify the dice math, and test the game package's interpretation logic separately with known totals.
-
-<CodeExample code={`import { describe, expect, test } from 'bun:test'
-import { roll } from '@randsum/roller'
-
-// Verify the dice configuration a game package would use
-function seededRandom(seed: number) {
-  let s = seed
-  return () => {
-    s = (s * 1664525 + 1013904223) % 2 ** 32
-    return s / 2 ** 32
-  }
-}
-
-describe('5e-style advantage roll (deterministic)', () => {
-  test('2d20 drop lowest produces a value from 1 to 20', () => {
-    const result = roll(
-      { sides: 20, quantity: 2, modifiers: { drop: { lowest: 1 } } },
-      { randomFn: seededRandom(42) }
-    )
-    expect(result.total).toBeGreaterThanOrEqual(1)
-    expect(result.total).toBeLessThanOrEqual(20)
-  })
-})`} />
 
 ## Testing error paths
 

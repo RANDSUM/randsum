@@ -2,21 +2,21 @@
 
 ## Supported Game Packages
 
-### @randsum/blades - Blades in the Dark
+### @randsum/games/blades - Blades in the Dark
 
 - **Mechanics**: d6 dice pools, keep highest result
 - **Outcomes**: 6 = success, 4-5 = partial, 1-3 = failure; multiple 6s = critical
 - **0 dice pool**: rolls 2d6, drops highest (desperate position)
 - **Result type**: `'critical' | 'success' | 'partial' | 'failure'`
-- **Usage**: `roll(poolSize: number)`
+- **Usage**: `roll(rating?: number)` — 0 = desperate (2d6, keep lowest), 1-4 = roll that many d6, keep highest
 
 ```typescript
 const result = roll(3)
 result.result // 'critical' | 'success' | 'partial' | 'failure'
-result.total  // sum of dice
+result.total  // highest die value
 ```
 
-### @randsum/daggerheart - Daggerheart RPG
+### @randsum/games/daggerheart - Daggerheart RPG
 
 - **Mechanics**: Hope/Fear d12 system
 - **Roll**: 2d12 (one Hope die, one Fear die) + optional advantage/disadvantage d6
@@ -37,27 +37,27 @@ result.result         // 'hope' | 'fear' | 'critical hope'
 result.details        // { hope, fear, advantage, modifier }
 ```
 
-### @randsum/fifth - D&D 5th Edition
+### @randsum/games/fifth - D&D 5th Edition
 
 - **Mechanics**: d20 with advantage/disadvantage
 - **Advantage**: Roll 2d20, keep highest (`2d20L` — drop lowest)
 - **Disadvantage**: Roll 2d20, keep lowest (`2d20H` — drop highest)
 - **Ability Scores**: use `roll("4d6L")` from `@randsum/roller` directly
 - **Result type**: `number` (d20 + modifier)
-- **Usage**: `roll(arg: FifthRollArgument)` — `modifier` is required
+- **Usage**: `roll(arg?: FifthRollArgument)`
 
 ```typescript
 interface FifthRollArgument {
-  modifier: number                               // required; range -30 to +30
-  rollingWith?: { advantage?: boolean; disadvantage?: boolean }
+  modifier?: number                              // range -30 to +30
+  rollingWith?: 'Advantage' | 'Disadvantage'
 }
 
 roll({ modifier: 5 })
-roll({ modifier: 3, rollingWith: { advantage: true } })
-roll({ modifier: -2, rollingWith: { disadvantage: true } })
+roll({ modifier: 3, rollingWith: 'Advantage' })
+roll({ modifier: -2, rollingWith: 'Disadvantage' })
 ```
 
-### @randsum/root-rpg - Root RPG
+### @randsum/games/root-rpg - Root RPG
 
 - **Mechanics**: 2d6 + stat modifier
 - **Outcomes**: 10+ = strong hit, 7-9 = weak hit, 6- = miss
@@ -70,7 +70,7 @@ result.result // 'Strong Hit' | 'Weak Hit' | 'Miss'
 result.total  // 2d6 + bonus
 ```
 
-### @randsum/pbta - Powered by the Apocalypse
+### @randsum/games/pbta - Powered by the Apocalypse
 
 - **Mechanics**: 2d6 + stat modifier (generic PbtA)
 - **Outcomes**: 10+ = strong hit, 7-9 = weak hit, 6- = miss
@@ -80,11 +80,10 @@ result.total  // 2d6 + bonus
 
 ```typescript
 interface PbtARollArgument {
-  stat: number         // required; range -3 to +5
-  forward?: number     // one-time bonus; range -5 to +5
-  ongoing?: number     // persistent bonus; range -5 to +5
-  advantage?: boolean  // 3d6 keep highest 2
-  disadvantage?: boolean
+  stat: number                                   // required; range -3 to +5
+  forward?: number                               // one-time bonus; range -5 to +5
+  ongoing?: number                               // persistent bonus; range -5 to +5
+  rollingWith?: 'Advantage' | 'Disadvantage'     // 3d6 keep highest/lowest 2
 }
 
 const result = roll({ stat: 2, forward: 1 })
@@ -93,7 +92,7 @@ result.result // 'strong_hit' | 'weak_hit' | 'miss'
 
 **Games**: Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
 
-### @randsum/salvageunion - Salvage Union
+### @randsum/games/salvageunion - Salvage Union
 
 - **Mechanics**: d20 roll-under system; lower is better
 - **Outcome**: 1 = critical success, 20 = critical failure; results looked up in reference tables

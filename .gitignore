@@ -97,3 +97,4 @@ packages/site/public/api/
 
 #plans
 /docs/plans/
+.claude/worktrees/

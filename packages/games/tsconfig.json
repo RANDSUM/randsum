@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@randsum/games/*": ["./src/*.generated.ts"]
+    }
+  },
+  "include": ["src", "__tests__", "build.ts"],
+  "exclude": ["node_modules", "dist", "__tests__/lib"]
+}

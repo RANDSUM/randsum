@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { roll } from '@randsum/blades'
+import { roll } from '@randsum/games/blades'
 import { D6_IMAGES, embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
@@ -23,7 +23,7 @@ export const bladesCommand: Command = {
     await interaction.deferReply()
 
     try {
-      const result = roll(dice)
+      const result = roll({ rating: dice })
 
       // Get highest die value from initial rolls
       const initialRolls = result.rolls[0]?.initialRolls ?? []

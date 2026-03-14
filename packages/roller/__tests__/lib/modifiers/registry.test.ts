@@ -16,25 +16,40 @@ import {
   registerDefaultModifiers,
   registerNotationSchema
 } from '../../../src/lib/modifiers/registry'
-import {
-  capModifier,
-  compoundModifier,
-  countSuccessesModifier,
-  dropModifier,
-  explodeModifier,
-  keepModifier,
-  minusModifier,
-  multiplyModifier,
-  multiplyTotalModifier,
-  penetrateModifier,
-  plusModifier,
-  replaceModifier,
-  rerollModifier,
-  uniqueModifier
-} from '../../../src/lib/modifiers/definitions'
 import { ModifierError } from '../../../src/errors'
 import type { ModifierContext } from '../../../src/lib/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'
+
+/**
+ * Run a callback with an empty registry, then unconditionally restore.
+ * Keeps the global registry mutation window as small as possible and
+ * guarantees restoration even when the callback throws.
+ */
+function withEmptyRegistry(fn: () => void): void {
+  const saved = getAllModifiers()
+  clearRegistry()
+  try {
+    fn()
+  } finally {
+    clearRegistry()
+    registerDefaultModifiers(saved)
+  }
+}
+
+/**
+ * Run a callback that may mutate the registry, then unconditionally restore.
+ * Unlike withEmptyRegistry, this does NOT clear before calling fn —
+ * it only snapshots and restores.
+ */
+function withRegistrySnapshot(fn: () => void): void {
+  const saved = getAllModifiers()
+  try {
+    fn()
+  } finally {
+    clearRegistry()
+    registerDefaultModifiers(saved)
+  }
+}
 
 describe('registry functions', () => {
   describe('registry populated on import', () => {
@@ -132,63 +147,26 @@ describe('registry functions', () => {
 
   describe('clearRegistry', () => {
     test('clears all modifiers from registry', () => {
-      const countBefore = getAllModifiers().length
-      expect(countBefore).toBeGreaterThan(0)
-
-      clearRegistry()
-      expect(getAllModifiers().length).toBe(0)
-
-      registerDefaultModifiers([
-        capModifier,
-        compoundModifier,
-        countSuccessesModifier,
-        dropModifier,
-        explodeModifier,
-        keepModifier,
-        minusModifier,
-        multiplyModifier,
-        multiplyTotalModifier,
-        penetrateModifier,
-        plusModifier,
-        replaceModifier,
-        rerollModifier,
-        uniqueModifier
-      ])
-      expect(getAllModifiers().length).toBe(countBefore)
+      withEmptyRegistry(() => {
+        expect(getAllModifiers().length).toBe(0)
+      })
+      // After restore, modifiers should be back
+      expect(getAllModifiers().length).toBeGreaterThan(0)
     })
   })
 
   describe('modifierToNotationFromRegistry and modifierToDescriptionFromRegistry', () => {
     test('return undefined when modifier not in registry', () => {
-      const countBefore = getAllModifiers().length
-      clearRegistry()
-
-      expect(modifierToNotationFromRegistry('plus', 5)).toBeUndefined()
-      expect(modifierToDescriptionFromRegistry('plus', 5)).toBeUndefined()
-
-      registerDefaultModifiers([
-        capModifier,
-        compoundModifier,
-        countSuccessesModifier,
-        dropModifier,
-        explodeModifier,
-        keepModifier,
-        minusModifier,
-        multiplyModifier,
-        multiplyTotalModifier,
-        penetrateModifier,
-        plusModifier,
-        replaceModifier,
-        rerollModifier,
-        uniqueModifier
-      ])
-      expect(getAllModifiers().length).toBe(countBefore)
+      withEmptyRegistry(() => {
+        expect(modifierToNotationFromRegistry('plus', 5)).toBeUndefined()
+        expect(modifierToDescriptionFromRegistry('plus', 5)).toBeUndefined()
+      })
     })
   })
 
   describe('applyModifierFromRegistry error cases', () => {
     test('throws ModifierError when modifier requires rollFn but none provided', () => {
-      // reroll requires rollFn
+      // reroll requires rollFn — no registry mutation needed
       const ctx: ModifierContext = { parameters: { sides: 6, quantity: 4 } }
 
       expect(() => {
@@ -197,7 +175,7 @@ describe('registry functions', () => {
     })
 
     test('throws ModifierError when modifier requires parameters but none provided', () => {
-      // unique requires parameters for validation
+      // unique requires parameters for validation — no registry mutation needed
       const rollOne = (): number => 5
       const ctx: ModifierContext = { rollOne }
 
@@ -216,34 +194,38 @@ describe('registry functions', () => {
     })
 
     test('wraps non-Error throws in ModifierError with Unknown error message', () => {
-      defineModifier({
-        name: 'plus',
-        priority: 90,
-        pattern: /\+/,
-        parse: () => ({}),
-        toNotation: () => '+',
-        toDescription: () => [],
-        apply: () => {
-          // eslint-disable-next-line @typescript-eslint/only-throw-error -- intentionally non-Error to test Unknown error branch
-          throw 42
+      withRegistrySnapshot(() => {
+        defineModifier(
+          {
+            name: 'plus',
+            priority: 90,
+            pattern: /\+/,
+            parse: () => ({}),
+            toNotation: () => '+',
+            toDescription: () => []
+          },
+          {
+            apply: () => {
+              // eslint-disable-next-line @typescript-eslint/only-throw-error -- intentionally non-Error to test Unknown error branch
+              throw 42
+            }
+          }
+        )
+
+        const ctx: ModifierContext = {
+          rollOne: (): number => 5,
+          parameters: { sides: 6, quantity: 4 }
         }
+
+        const caught: { value?: unknown } = {}
+        try {
+          applyModifierFromRegistry('plus', 5, [1, 2, 3], ctx)
+        } catch (e) {
+          caught.value = e
+        }
+        expect(caught.value).toBeInstanceOf(ModifierError)
+        expect((caught.value as ModifierError).message).toContain('Unknown error: 42')
       })
-
-      const ctx: ModifierContext = {
-        rollOne: (): number => 5,
-        parameters: { sides: 6, quantity: 4 }
-      }
-
-      const caught: { value?: unknown } = {}
-      try {
-        applyModifierFromRegistry('plus', 5, [1, 2, 3], ctx)
-      } catch (e) {
-        caught.value = e
-      }
-      expect(caught.value).toBeInstanceOf(ModifierError)
-      expect((caught.value as ModifierError).message).toContain('Unknown error: 42')
-
-      defineModifier(plusModifier)
     })
   })
 })
@@ -270,22 +252,24 @@ describe('MODIFIER_PRIORITIES', () => {
 
 describe('registerNotationSchema', () => {
   test('registers a minimal ParseableSchema to the notation registry', () => {
-    const schema = {
-      name: 'plus' as const,
-      priority: 90,
-      pattern: /\+(\d+)/,
-      parse: (notation: string): Partial<ModifierOptions> => {
-        const match = /\+(\d+)/.exec(notation)
-        return match ? { plus: Number(match[1]) } : {}
+    withRegistrySnapshot(() => {
+      const schema = {
+        name: 'plus' as const,
+        priority: 90,
+        pattern: /\+(\d+)/,
+        parse: (notation: string): Partial<ModifierOptions> => {
+          const match = /\+(\d+)/.exec(notation)
+          return match ? { plus: Number(match[1]) } : {}
+        }
       }
-    }
 
-    // Should not throw
-    registerNotationSchema(schema)
+      // Should not throw
+      registerNotationSchema(schema)
 
-    // Verify it works by parsing notation that uses the registered schema
-    const result = parseModifiersFromRegistry('2d6+5')
-    expect(result.plus).toBe(5)
+      // Verify it works by parsing notation that uses the registered schema
+      const result = parseModifiersFromRegistry('2d6+5')
+      expect(result.plus).toBe(5)
+    })
   })
 })
 

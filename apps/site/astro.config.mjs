@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config'
+import { defineConfig, fontProviders } from 'astro/config'
 import { fileURLToPath } from 'url'
 import { dirname, resolve } from 'path'
 
@@ -14,10 +14,27 @@ const isDev = process.argv.includes('dev')
 
 export default defineConfig({
   base: '/',
+  fonts: [
+    {
+      name: 'Inter',
+      cssVariable: '--font-inter',
+      provider: fontProviders.google(),
+      weights: [400, 500, 600, 700],
+      styles: ['normal']
+    },
+    {
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains-mono',
+      provider: fontProviders.google(),
+      weights: [400, 500, 600, 700],
+      styles: ['normal']
+    }
+  ],
   site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
   integrations: [
     starlight({
       title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
+      favicon: '/favicon.ico',
       head: [
         {
           tag: 'meta',
@@ -71,7 +88,6 @@ export default defineConfig({
           items: [
             { label: 'Error Handling', slug: 'guides/error-handling' },
             { label: 'Recipes', slug: 'guides/recipes' },
-            { label: 'Custom Game Packages', slug: 'guides/custom-game-packages' },
             { label: 'Testing', slug: 'guides/testing' },
             { label: 'Troubleshooting', slug: 'guides/troubleshooting' },
             { label: 'Migrating from v2', slug: 'guides/migrating-from-v2' }

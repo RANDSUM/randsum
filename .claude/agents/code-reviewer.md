@@ -8,7 +8,7 @@ Review changed files against these project-specific patterns:
 
 ### Architecture Rules
 - Game packages depend ONLY on `@randsum/roller` (never on each other)
-- All game packages use the `createGameRoll` factory
+- All game packages are code-generated from `.randsum.json` specs
 - `@randsum/roller` has zero external dependencies
 
 ### TypeScript Conventions

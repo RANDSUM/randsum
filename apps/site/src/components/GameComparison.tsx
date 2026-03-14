@@ -2,7 +2,7 @@ const games = [
   {
     id: 'fifth',
     name: 'D&D 5th Edition',
-    packageName: '@randsum/fifth',
+    packageName: '@randsum/games/fifth',
     color: 'var(--game-fifth)',
     dice: '1d20 or 2d20',
     input: 'modifier + rollingWith',
@@ -14,7 +14,7 @@ const games = [
   {
     id: 'blades',
     name: 'Blades in the Dark',
-    packageName: '@randsum/blades',
+    packageName: '@randsum/games/blades',
     color: 'var(--game-blades)',
     dice: 'Nd6 pool (0-10)',
     input: 'count (number)',
@@ -26,7 +26,7 @@ const games = [
   {
     id: 'daggerheart',
     name: 'Daggerheart',
-    packageName: '@randsum/daggerheart',
+    packageName: '@randsum/games/daggerheart',
     color: 'var(--game-daggerheart)',
     dice: '2d12 hope/fear + d6',
     input: 'modifier + rollingWith + amplify',
@@ -38,7 +38,7 @@ const games = [
   {
     id: 'pbta',
     name: 'Powered by the Apocalypse',
-    packageName: '@randsum/pbta',
+    packageName: '@randsum/games/pbta',
     color: 'var(--game-pbta)',
     dice: '2d6',
     input: 'stat + forward + ongoing + advantage',
@@ -50,7 +50,7 @@ const games = [
   {
     id: 'root-rpg',
     name: 'Root RPG',
-    packageName: '@randsum/root-rpg',
+    packageName: '@randsum/games/root-rpg',
     color: 'var(--game-root-rpg)',
     dice: '2d6',
     input: 'bonus (number, -20 to +20)',
@@ -61,7 +61,7 @@ const games = [
   {
     id: 'salvageunion',
     name: 'Salvage Union',
-    packageName: '@randsum/salvageunion',
+    packageName: '@randsum/games/salvageunion',
     color: 'var(--game-salvageunion)',
     dice: '1d20',
     input: 'tableName (string)',

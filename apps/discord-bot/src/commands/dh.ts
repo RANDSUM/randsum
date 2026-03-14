@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { roll } from '@randsum/daggerheart'
+import { roll } from '@randsum/games/daggerheart'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
@@ -70,7 +70,7 @@ export const dhCommand: Command = {
         .setFooter(embedFooterDetails)
 
       // Add hope die
-      const hopeDie = result.details?.hope.roll ?? 0
+      const hopeDie = result.details.hope.roll
       embed.addFields({
         name: `Hope Die (${amplifyHope ? 'd20' : 'd12'})`,
         value: String(hopeDie),
@@ -78,7 +78,7 @@ export const dhCommand: Command = {
       })
 
       // Add fear die
-      const fearDie = result.details?.fear.roll ?? 0
+      const fearDie = result.details.fear.roll
       embed.addFields({
         name: `Fear Die (${amplifyFear ? 'd20' : 'd12'})`,
         value: String(fearDie),
@@ -95,7 +95,11 @@ export const dhCommand: Command = {
       }
 
       // Add advantage/disadvantage info if present
-      if (rollingWith && result.details?.extraDie) {
+      if (rollingWith && result.details.extraDie) {
+        const dieRoll =
+          rollingWith === 'Advantage'
+            ? result.details.extraDie.advantageRoll
+            : result.details.extraDie.disadvantageRoll
         embed.addFields({
           name: 'Roll Type',
           value: rollingWith,
@@ -103,7 +107,7 @@ export const dhCommand: Command = {
         })
         embed.addFields({
           name: `${rollingWith} Die (d6)`,
-          value: String(result.details.extraDie.roll),
+          value: String(dieRoll),
           inline: true
         })
       }

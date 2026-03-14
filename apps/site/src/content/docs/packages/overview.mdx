@@ -12,12 +12,13 @@ RANDSUM is organized as a monorepo with a core dice engine and specialized game 
 ```
 @randsum/roller (core engine)
   |
-  +-- @randsum/fifth        (D&D 5e)
-  +-- @randsum/blades       (Blades in the Dark)
-  +-- @randsum/pbta          (Powered by the Apocalypse)
-  +-- @randsum/daggerheart  (Daggerheart)
-  +-- @randsum/root-rpg     (Root RPG)
-  +-- @randsum/salvageunion (Salvage Union)
+  +-- @randsum/games (unified package with subpath exports)
+       +-- /fifth        (D&D 5e)
+       +-- /blades       (Blades in the Dark)
+       +-- /pbta          (Powered by the Apocalypse)
+       +-- /daggerheart  (Daggerheart)
+       +-- /root-rpg     (Root RPG)
+       +-- /salvageunion (Salvage Union)
 ```
 
 All game packages depend only on `@randsum/roller` -- they never depend on each other.
@@ -35,32 +36,32 @@ All game packages depend only on `@randsum/roller` -- they never depend on each 
 ## Game packages
 
 <CardGrid>
-  <Card title="@randsum/fifth" icon="seti:favicon">
+  <Card title="@randsum/games/fifth" icon="seti:favicon">
     D&D 5th Edition mechanics -- ability checks, saving throws, advantage/disadvantage.
 
     [View documentation](/games/fifth/)
   </Card>
-  <Card title="@randsum/blades" icon="seti:favicon">
+  <Card title="@randsum/games/blades" icon="seti:favicon">
     Blades in the Dark action rolls -- dice pools with critical, success, partial, and failure outcomes.
 
     [View documentation](/games/blades/)
   </Card>
-  <Card title="@randsum/pbta" icon="seti:favicon">
+  <Card title="@randsum/games/pbta" icon="seti:favicon">
     Powered by the Apocalypse -- 2d6+stat rolls for Dungeon World, Monster of the Week, Apocalypse World, Masks, and more.
 
     [View documentation](/games/pbta/)
   </Card>
-  <Card title="@randsum/daggerheart" icon="seti:favicon">
+  <Card title="@randsum/games/daggerheart" icon="seti:favicon">
     Daggerheart RPG -- hope and fear dice mechanics with advantage/disadvantage and amplification.
 
     [View documentation](/games/daggerheart/)
   </Card>
-  <Card title="@randsum/root-rpg" icon="seti:favicon">
+  <Card title="@randsum/games/root-rpg" icon="seti:favicon">
     Root RPG -- 2d6+bonus rolls with Strong Hit, Weak Hit, and Miss outcomes.
 
     [View documentation](/games/root-rpg/)
   </Card>
-  <Card title="@randsum/salvageunion" icon="seti:favicon">
+  <Card title="@randsum/games/salvageunion" icon="seti:favicon">
     Salvage Union -- d20 table-based rolls for mech combat and salvage operations.
 
     [View documentation](/games/salvageunion/)
@@ -81,6 +82,6 @@ All game packages depend only on `@randsum/roller` -- they never depend on each 
 
 - **Zero core dependencies** -- the roller has no runtime dependencies
 - **Throws on invalid input** -- hardcoded notation never throws in practice; validate user-provided strings before rolling
-- **Game packages are thin wrappers** -- they use the `createGameRoll` factory to wrap the core roller with game-specific validation and result interpretation
+- **Game packages are code-generated** -- they are generated from `.randsum.json` specs and call the core roller directly
 - **Strict TypeScript** -- `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`
 - **Bundle size enforced** -- roller is under 10KB, game packages under 8KB

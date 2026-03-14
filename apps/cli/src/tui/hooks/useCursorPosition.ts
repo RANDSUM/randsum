@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useInput } from 'ink'
-import type { Token } from '@randsum/notation'
+import type { Token } from '@randsum/notation/tokenize'
 
 /**
  * Returns the index (into `tokens`) of the token that contains `cursorPos`,

@@ -37,7 +37,10 @@ export default tseslint.config(
       '**/.astro/**',
       '**/.netlify/**',
       '**/public/**',
-      '**/.ladle/**'
+      '**/.ladle/**',
+      '**/__tests__/fixtures/dist/**',
+      '**/__tests__/fixtures/*.ts',
+      '**/*.generated.ts'
     ]
   },
   {
@@ -184,7 +187,18 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
       'no-restricted-imports': 'off'
+    }
+  },
+  {
+    // Override for build scripts — internal imports, sequential IO, and console output are expected
+    files: ['**/build.ts'],
+    rules: {
+      'no-restricted-imports': 'off',
+      'no-await-in-loop': 'off',
+      'no-console': 'off'
     }
   }
 )

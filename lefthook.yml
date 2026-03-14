@@ -15,15 +15,12 @@ pre-commit:
       run: bun run typecheck
 
 pre-push:
-  piped: true
   commands:
-    test:
-      run: bun test
-    exports:
-      run: bun run check:exports
     build:
       run: bun run build
-    skill-verify:
-      run: npx skills-ref validate skills/dice-rolling/SKILL.md
+      priority: 1
+    test:
+      run: bun test
+      priority: 2
     audit:
       run: bun audit --level=high

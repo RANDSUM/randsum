@@ -9,13 +9,13 @@ head:
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "@randsum/daggerheart",
+        "name": "@randsum/games/daggerheart",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
         "version": "1.2.0",
         "description": "TypeScript dice package for Daggerheart. Handles the duality dice system with Hope and Fear d12s, advantage, disadvantage, and critical outcomes.",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "downloadUrl": "https://www.npmjs.com/package/@randsum/daggerheart",
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/games",
         "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/games/daggerheart",
         "keywords": "Daggerheart, Critical Role, duality dice, Hope, Fear, TypeScript, tabletop RPG"
       }
@@ -24,31 +24,31 @@ head:
 import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-The `@randsum/daggerheart` package provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
+The `@randsum/games/daggerheart` subpath provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
 
 ## Hope & Fear
 
-Daggerheart's action rolls use two twelve-sided dice called the **Duality Dice** — one Hope die and one Fear die. You roll both, add a modifier, and compare the total to a difficulty threshold. If the Hope die shows higher than the Fear die, you act *with Hope* (a positive narrative currency). If Fear is higher, you succeed *with Fear* (the GM gains a resource). A **critical** occurs when both dice show the same value. Advantage adds a d6 to the total; disadvantage subtracts a d6. Either die can be **amplified** from d12 to d20 for greater range. The `@randsum/daggerheart` package returns the full breakdown: totals, individual die values, Hope/Fear comparison, and whether a critical occurred.
+Daggerheart's action rolls use two twelve-sided dice called the **Duality Dice** — one Hope die and one Fear die. You roll both, add a modifier, and compare the total to a difficulty threshold. If the Hope die shows higher than the Fear die, you act *with Hope* (a positive narrative currency). If Fear is higher, you succeed *with Fear* (the GM gains a resource). A **critical** occurs when both dice show the same value. Advantage adds a d6 to the total; disadvantage subtracts a d6. Either die can be **amplified** from d12 to d20 for greater range. The `@randsum/games/daggerheart` package returns the full breakdown: totals, individual die values, Hope/Fear comparison, and whether a critical occurred.
 
 ## Installation
 
 <Tabs>
   <TabItem label="bun">
-    <CodeExample lang="bash" code={`bun add @randsum/daggerheart`} />
+    <CodeExample lang="bash" code={`bun add @randsum/games`} />
   </TabItem>
   <TabItem label="npm">
-    <CodeExample lang="bash" code={`npm install @randsum/daggerheart`} />
+    <CodeExample lang="bash" code={`npm install @randsum/games`} />
   </TabItem>
 </Tabs>
 
 ## Usage
 
-<CodeExample code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/games/daggerheart'
 
 // Basic roll with modifier
 const result = roll({ modifier: 5 })`} />
 
-<CodeExample code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/games/daggerheart'
 
 // Roll with advantage (adds a d6)
 roll({
@@ -62,7 +62,7 @@ roll({
   rollingWith: 'Disadvantage'
 })`} />
 
-<CodeExample code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/games/daggerheart'
 
 // Amplify hope die (d12 becomes d20)
 roll({
@@ -83,7 +83,7 @@ roll({
   modifier: 4
 })`} />
 
-<CodeExample code={`import { roll } from '@randsum/daggerheart'
+<CodeExample code={`import { roll } from '@randsum/games/daggerheart'
 
 const { result, total, details } = roll({ modifier: 3 })
 // result: 'hope' | 'fear' | 'critical hope'
@@ -93,7 +93,7 @@ const { hope, fear, extraDie, modifier } = details`} />
 
 ## API
 
-### `roll(arg: DaggerheartRollArgument)`
+### `roll(input?: { modifier?: number, rollingWith?: 'Advantage' | 'Disadvantage', amplifyHope?: boolean, amplifyFear?: boolean })`
 
 **Input:**
 
@@ -108,9 +108,9 @@ const { hope, fear, extraDie, modifier } = details`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `DaggerheartRollResultType` | Hope/Fear/Critical Hope outcome |
+| `result` | `RollResult` | Hope/Fear/Critical Hope outcome |
 | `total` | `number` | Sum of all dice + modifier |
-| `details` | `DaggerheartRollDetails` | Detailed breakdown |
+| `details` | `RollDetails` | Detailed breakdown |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ## Outcomes
@@ -134,16 +134,27 @@ The `details` object provides full visibility into each component:
 - `extraDie` -- Advantage/disadvantage die result (if applicable)
 - `modifier` -- Applied modifier value
 
+## Error handling
+
+Invalid inputs throw a `SchemaError` with a descriptive `code`:
+
+<CodeExample code={`import { roll, SchemaError } from '@randsum/games/daggerheart'
+
+try {
+  roll({ modifier: Infinity })
+} catch (error) {
+  if (error instanceof SchemaError) {
+    console.log(error.code)    // 'INVALID_INPUT_TYPE'
+    console.log(error.message) // describes what went wrong
+  }
+}`} />
+
 ## Types
 
-<CodeExample code={`import type {
-  DaggerheartRollArgument,
-  DaggerheartRollResult,
-  DaggerheartRollResultType,
-  DaggerheartExtraDieMode
-} from '@randsum/daggerheart'`} />
+<CodeExample code={`import type { RollResult, RollDetails, GameRollResult, RollRecord } from '@randsum/games/daggerheart'
+import { SchemaError } from '@randsum/games/daggerheart'`} />
 
 ## Links
 
-- [npm package](https://www.npmjs.com/package/@randsum/daggerheart)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/games/daggerheart)
+- [npm package](https://www.npmjs.com/package/@randsum/games)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/games)

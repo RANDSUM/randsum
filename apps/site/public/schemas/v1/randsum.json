@@ -1,0 +1,873 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://randsum.dev/schemas/v1/randsum.json",
+  "title": "randsum Dice Mechanic Spec",
+  "description": "Declarative format for expressing a complete game system's dice mechanics as a four-stage pipeline: Dice → Modify → Resolve → Outcome.",
+  "type": "object",
+  "required": ["$schema", "name", "shortcode", "game_url", "roll"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://randsum.dev/schemas/v1/randsum.json",
+      "description": "Must be the randsum schema URL to enable validation and VS Code autocomplete"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the game system (e.g. 'Blades in the Dark', 'D&D 5e')"
+    },
+    "shortcode": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Short identifier for the game, used as the generated TypeScript filename (e.g. 'blades' for Blades in the Dark)"
+    },
+    "game_url": {
+      "type": "string",
+      "description": "URL of the game's official page or marketing site"
+    },
+    "srd_url": {
+      "type": "string",
+      "description": "URL of the game's System Reference Document (SRD), if publicly available"
+    },
+    "version": {
+      "type": "string",
+      "description": "Spec version (semver recommended, e.g. '1.0.0')"
+    },
+    "pools": {
+      "type": "object",
+      "description": "Named reusable dice pool definitions. Reference with { \"$ref\": \"#/pools/<name>\" }.",
+      "additionalProperties": { "$ref": "#/$defs/PoolDefinition" }
+    },
+    "tables": {
+      "type": "object",
+      "description": "Named lookup tables mapping roll totals to result strings. Reference with { \"$ref\": \"#/tables/<name>\" }.",
+      "additionalProperties": { "$ref": "#/$defs/TableDefinition" }
+    },
+    "outcomes": {
+      "type": "object",
+      "description": "Named reusable outcome operations. Reference with { \"$ref\": \"#/outcomes/<name>\" }.",
+      "additionalProperties": { "$ref": "#/$defs/OutcomeOperation" }
+    },
+    "roll": {
+      "$ref": "#/$defs/RollDefinition",
+      "description": "Default roll — exported as `roll`"
+    }
+  },
+  "patternProperties": {
+    "^roll[A-Z][a-zA-Z]*$": {
+      "$ref": "#/$defs/RollDefinition",
+      "description": "Named roll — the key name becomes the export (e.g. rollFortune → rollFortune). Must start with 'roll' followed by an uppercase letter."
+    }
+  },
+  "$defs": {
+    "PoolDefinition": {
+      "type": "object",
+      "description": "A dice pool shape. Defines die sides and optionally a default quantity. Quantity can always be overridden in the dice stage.",
+      "required": ["sides"],
+      "additionalProperties": false,
+      "properties": {
+        "sides": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Number of faces on the die (e.g. 6 for a d6, 20 for a d20). Accepts $input for dynamic die types."
+        },
+        "quantity": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Default number of dice to roll. Can be overridden per-roll in the dice stage."
+        }
+      }
+    },
+
+    "TableDefinition": {
+      "type": "object",
+      "description": "A range-keyed lookup table mapping roll totals to result strings.",
+      "required": ["ranges"],
+      "additionalProperties": false,
+      "properties": {
+        "ranges": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Ordered list of range entries. Evaluated top to bottom; first match wins.",
+          "items": { "$ref": "#/$defs/TableRange" }
+        }
+      }
+    },
+
+    "TableRange": {
+      "type": "object",
+      "description": "A single condition-to-result entry in a lookup table. Match by resolved value (exact or min/max range), pool composition (poolCondition), or both. When both are present, both must match (AND semantics). Cannot mix exact and min/max.",
+      "required": ["result"],
+      "additionalProperties": false,
+      "properties": {
+        "min": { "type": "integer", "description": "Minimum resolved value (inclusive)" },
+        "max": { "type": "integer", "description": "Maximum resolved value (inclusive)" },
+        "exact": { "type": "integer", "description": "Exact resolved value to match" },
+        "poolCondition": {
+          "$ref": "#/$defs/PoolCondition",
+          "description": "Pool-composition condition. When combined with exact/min/max, both must match (AND semantics). Use for mechanics like Blades criticals (2+ sixes) or Shadowrun glitches (half+ ones)."
+        },
+        "result": {
+          "type": "string",
+          "description": "The game result string returned when this entry matches"
+        }
+      },
+      "allOf": [
+        {
+          "anyOf": [
+            { "required": ["exact"] },
+            { "required": ["min", "max"] },
+            { "required": ["poolCondition"] }
+          ]
+        },
+        {
+          "if": { "required": ["exact"] },
+          "then": { "not": { "anyOf": [{ "required": ["min"] }, { "required": ["max"] }] } }
+        }
+      ]
+    },
+
+    "PoolCondition": {
+      "type": "object",
+      "description": "Count dice in the pool matching a condition and check the count against a threshold. Specify exactly one of atLeast (absolute count) or atLeastRatio (proportion of pool).",
+      "required": ["countWhere"],
+      "additionalProperties": false,
+      "properties": {
+        "pool": {
+          "type": "string",
+          "enum": ["preModify", "postModify"],
+          "default": "preModify",
+          "description": "Which pool to evaluate: preModify (all dice as-rolled, before modifiers) or postModify (dice after modifiers). Defaults to preModify."
+        },
+        "countWhere": {
+          "type": "object",
+          "description": "Which dice to count. E.g. { operator: '=', value: 6 } counts sixes.",
+          "required": ["operator", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "operator": {
+              "type": "string",
+              "enum": [">", ">=", "<", "<=", "="],
+              "description": "Comparison operator applied to each die"
+            },
+            "value": {
+              "$ref": "#/$defs/IntegerOrInput",
+              "description": "Value to compare each die against"
+            }
+          }
+        },
+        "atLeast": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Minimum absolute count of matching dice required. E.g. 2 means two or more dice must match."
+        },
+        "atLeastRatio": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Minimum proportion of the pool that must match. E.g. 0.5 means half or more of the dice must match (Shadowrun glitch pattern)."
+        }
+      },
+      "oneOf": [
+        { "required": ["atLeast"], "not": { "required": ["atLeastRatio"] } },
+        { "required": ["atLeastRatio"], "not": { "required": ["atLeast"] } }
+      ]
+    },
+
+    "RollDefinition": {
+      "type": "object",
+      "description": "A complete roll pipeline. Pipeline order: dice (or dicePools) → modify (optional) → resolve (required) → outcome (optional). Use 'when' to define conditional overrides evaluated before the pipeline runs.",
+      "required": ["resolve"],
+      "additionalProperties": false,
+      "oneOf": [{ "required": ["dice"] }, { "required": ["dicePools"] }],
+      "properties": {
+        "inputs": {
+          "type": "object",
+          "description": "Declared runtime parameters for this roll. Bind values in the pipeline with { \"$input\": \"<name>\" }.",
+          "additionalProperties": { "$ref": "#/$defs/InputDeclaration" }
+        },
+        "dice": {
+          "description": "Stage 1 — define the dice pool(s) to roll. Single pool config or array of named pools for multi-pool rolls. Mutually exclusive with dicePools.",
+          "oneOf": [
+            { "$ref": "#/$defs/DiceConfig" },
+            {
+              "type": "array",
+              "items": { "$ref": "#/$defs/DiceConfig" },
+              "minItems": 2
+            }
+          ]
+        },
+        "dicePools": {
+          "type": "object",
+          "description": "Named dice pools for multi-pool rolls. Use instead of dice. Each value is a DiceConfig. Mutually exclusive with dice.",
+          "additionalProperties": { "$ref": "#/$defs/DiceConfig" }
+        },
+        "modify": {
+          "description": "Stage 2 (optional) — apply modifiers to individual dice before resolving. Each entry applies one modifier.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/ModifyOperation" }
+        },
+        "resolve": {
+          "description": "Stage 3 — collapse the dice pool into a single value. Use 'sum' to total the dice, 'countMatching' to count dice meeting a condition, 'tableLookup' to map the total through a table, or a comparePool operation for multi-pool rolls.",
+          "$ref": "#/$defs/ResolveOperation"
+        },
+        "outcome": {
+          "description": "Stage 4 (optional) — map the resolved value to a game result string. Use 'ranges' for range-to-result mappings, 'degreeOfSuccess' for the PF2e tiered pattern, 'tableLookup' for a table, or a $ref to a named outcome.",
+          "$ref": "#/$defs/OutcomeOperationOrRef"
+        },
+        "when": {
+          "description": "Conditional overrides evaluated before the pipeline runs. First matching condition wins. Each entry can override any subset of pipeline stages.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/RollCase" }
+        },
+        "postResolveModifiers": {
+          "description": "Modifiers applied after resolve (to the total, not individual dice). Use for bonuses like 2d6+stat.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/PostResolveModifyOperation" }
+        },
+        "conditionalPools": {
+          "description": "Named extra dice pools rolled only when a condition matches. Each pool's total is added or subtracted from the main total. Keys are used as identifiers for $conditionalPool references in details.",
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/ConditionalPool" }
+        },
+        "details": {
+          "type": "object",
+          "description": "Named fields returned alongside the roll result. Each field is either a pass-through of an input value or a computed expression (diceTotal = sum before postResolveModifiers, total = final total).",
+          "additionalProperties": { "$ref": "#/$defs/DetailsFieldDef" }
+        }
+      }
+    },
+
+    "ConditionalPool": {
+      "type": "object",
+      "description": "An extra dice pool rolled conditionally. When the condition matches, roll the pool and add or subtract its total.",
+      "required": ["condition", "pool", "arithmetic"],
+      "additionalProperties": false,
+      "properties": {
+        "condition": { "$ref": "#/$defs/Condition" },
+        "pool": {
+          "description": "The dice pool to roll when the condition matches.",
+          "oneOf": [{ "$ref": "#/$defs/PoolDefinition" }, { "$ref": "#/$defs/Ref" }]
+        },
+        "arithmetic": {
+          "type": "string",
+          "enum": ["add", "subtract"],
+          "description": "Whether to add or subtract this pool's total from the main total"
+        }
+      }
+    },
+
+    "RollCase": {
+      "type": "object",
+      "description": "A conditional pipeline override. When the condition matches, the override stages replace the corresponding defaults. Unspecified stages fall through to the defaults.",
+      "required": ["condition", "override"],
+      "additionalProperties": false,
+      "properties": {
+        "condition": { "$ref": "#/$defs/Condition" },
+        "override": { "$ref": "#/$defs/PipelineOverride" }
+      }
+    },
+
+    "Condition": {
+      "description": "A condition evaluated against a declared input at call time.",
+      "type": "object",
+      "required": ["input", "operator", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Name of the declared input to test (must match a key in 'inputs')"
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["=", ">", ">=", "<", "<="],
+          "description": "Comparison operator. Use '=' for equality; '>', '>=', '<', '<=' for numeric comparisons."
+        },
+        "value": {
+          "description": "Literal value to compare against (must match the input's declared type)",
+          "oneOf": [{ "type": "integer" }, { "type": "string" }, { "type": "boolean" }]
+        }
+      }
+    },
+
+    "PipelineOverride": {
+      "type": "object",
+      "description": "Partial pipeline override. Specify only the stages to replace; omitted stages fall through to the roll definition's defaults. At least one stage must be overridden.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "dice": {
+          "description": "Override for Stage 1 (dice pool)",
+          "oneOf": [
+            { "$ref": "#/$defs/DiceConfig" },
+            {
+              "type": "array",
+              "items": { "$ref": "#/$defs/DiceConfig" },
+              "minItems": 2
+            }
+          ]
+        },
+        "modify": {
+          "description": "Override for Stage 2 (modifiers)",
+          "type": "array",
+          "items": { "$ref": "#/$defs/ModifyOperation" }
+        },
+        "resolve": {
+          "description": "Override for Stage 3 (resolution)",
+          "$ref": "#/$defs/ResolveOperation"
+        },
+        "outcome": {
+          "description": "Override for Stage 4 (outcome mapping)",
+          "$ref": "#/$defs/OutcomeOperationOrRef"
+        },
+        "postResolveModifiers": {
+          "description": "Override for post-resolve modifiers (applied to the total, not individual dice)",
+          "type": "array",
+          "items": { "$ref": "#/$defs/PostResolveModifyOperation" }
+        }
+      }
+    },
+
+    "InputDeclaration": {
+      "type": "object",
+      "description": "Declaration of a runtime input parameter accepted by this roll.",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["integer", "string", "boolean"],
+          "description": "Data type of this input parameter"
+        },
+        "minimum": {
+          "type": "integer",
+          "description": "Minimum allowed value (integer inputs only)"
+        },
+        "maximum": {
+          "type": "integer",
+          "description": "Maximum allowed value (integer inputs only)"
+        },
+        "default": {
+          "description": "Default value used when the input is not provided",
+          "oneOf": [{ "type": "integer" }, { "type": "string" }, { "type": "boolean" }]
+        },
+        "enum": {
+          "type": "array",
+          "description": "Exhaustive list of allowed values for this input",
+          "minItems": 1,
+          "items": {
+            "oneOf": [{ "type": "integer" }, { "type": "string" }, { "type": "boolean" }]
+          }
+        },
+        "optional": {
+          "type": "boolean",
+          "description": "When true, this input can be omitted even without a default value. The generated function parameter will be optional."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable explanation of what this input represents"
+        }
+      }
+    },
+
+    "DiceConfig": {
+      "type": "object",
+      "description": "A single dice pool configuration in the dice stage. References a named pool or defines one inline.",
+      "required": ["pool"],
+      "additionalProperties": false,
+      "properties": {
+        "pool": {
+          "description": "The dice pool to roll — reference a named pool with $ref or define one inline.",
+          "oneOf": [{ "$ref": "#/$defs/Ref" }, { "$ref": "#/$defs/PoolDefinition" }]
+        },
+        "quantity": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Number of dice to roll. Overrides the pool's default quantity."
+        },
+        "key": {
+          "type": "string",
+          "description": "Name for this pool's results in a multi-pool roll (e.g. 'hope', 'fear'). Required when dice is an array."
+        }
+      }
+    },
+
+    "PostResolveModifyOperation": {
+      "type": "object",
+      "description": "A single modifier applied to the resolved total (not individual dice). Use for bonuses like 2d6+stat.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "add": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Add a flat value to the resolved total"
+        }
+      }
+    },
+
+    "ModifyOperation": {
+      "type": "object",
+      "description": "A single modifier applied to individual dice values before resolving. Include exactly one modifier key per entry.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "add": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Add a flat value to each individual die result (not the total — use addToTotal for post-resolve addition)"
+        },
+        "cap": {
+          "type": "object",
+          "description": "Clamp each die result to a min/max range",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "$ref": "#/$defs/IntegerOrInput",
+              "description": "Minimum value to clamp die results to"
+            },
+            "max": {
+              "$ref": "#/$defs/IntegerOrInput",
+              "description": "Maximum value to clamp die results to"
+            }
+          }
+        },
+        "markDice": {
+          "type": "object",
+          "description": "Attach a label to each die that satisfies a comparison. Use with keepMarked to filter.",
+          "required": ["operator", "value", "flag"],
+          "additionalProperties": false,
+          "properties": {
+            "operator": {
+              "type": "string",
+              "enum": [">", ">=", "<", "<=", "="],
+              "description": "Comparison operator"
+            },
+            "value": {
+              "$ref": "#/$defs/IntegerOrInput",
+              "description": "Value to compare each die against"
+            },
+            "flag": {
+              "type": "string",
+              "description": "Label to attach to dice that satisfy the comparison (e.g. 'hit', 'success')"
+            }
+          }
+        },
+        "keepMarked": {
+          "type": "string",
+          "description": "Keep only dice that were marked with this label by a preceding markDice operation"
+        },
+        "keepHighest": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Keep only the N highest dice, discarding the rest (e.g. advantage: keepHighest 1 of 2d20)"
+        },
+        "keepLowest": {
+          "$ref": "#/$defs/IntegerOrInput",
+          "description": "Keep only the N lowest dice, discarding the rest (e.g. disadvantage: keepLowest 1 of 2d20)"
+        }
+      }
+    },
+
+    "ComparePoolOperation": {
+      "type": "object",
+      "description": "Compare two named dice pools and map the winner to an outcome string.",
+      "required": ["pools", "outcomes"],
+      "additionalProperties": false,
+      "properties": {
+        "pools": {
+          "type": "array",
+          "description": "Exactly two pool names to compare (must match keys in dicePools)",
+          "items": { "type": "string" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "ties": {
+          "type": "string",
+          "description": "Result string when both pools roll the same total. If omitted, ties are undefined behavior."
+        },
+        "outcomes": {
+          "type": "object",
+          "description": "Map from pool name to result string for the winning pool.",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+
+    "ResolveOperation": {
+      "description": "Stage 3 — collapse the dice pool into a single value. Choose one: 'sum' to total the dice, 'countMatching' to count dice meeting a condition, 'tableLookup' to map the sum through a table, or a comparePool operation for multi-pool rolls.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["sum"],
+          "description": "Sum all remaining dice values into a single total"
+        },
+        {
+          "type": "object",
+          "required": ["countMatching"],
+          "additionalProperties": false,
+          "properties": {
+            "countMatching": {
+              "type": "object",
+              "description": "Count the number of dice satisfying a condition (e.g. count dice >= 4 for PbtA hits)",
+              "required": ["operator", "value"],
+              "additionalProperties": false,
+              "properties": {
+                "operator": {
+                  "type": "string",
+                  "enum": [">", ">=", "<", "<=", "="],
+                  "description": "Comparison operator"
+                },
+                "value": {
+                  "$ref": "#/$defs/IntegerOrInput",
+                  "description": "Value to compare each die against"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["tableLookup"],
+          "additionalProperties": false,
+          "properties": {
+            "tableLookup": { "$ref": "#/$defs/RefOrTableDefinition" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["comparePoolHighest"],
+          "additionalProperties": false,
+          "properties": {
+            "comparePoolHighest": { "$ref": "#/$defs/ComparePoolOperation" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["comparePoolSum"],
+          "additionalProperties": false,
+          "properties": {
+            "comparePoolSum": { "$ref": "#/$defs/ComparePoolOperation" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["remoteTableLookup"],
+          "additionalProperties": false,
+          "properties": {
+            "remoteTableLookup": { "$ref": "#/$defs/RemoteTableLookupOperation" }
+          }
+        }
+      ]
+    },
+
+    "RemoteTableLookupOperation": {
+      "type": "object",
+      "description": "Resolve the roll by looking up a result in a remote JSON dataset fetched at codegen time. The fetched data is embedded as a static constant in the generated TypeScript file.",
+      "required": ["url", "find", "tableField", "resultMapping"],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL to fetch JSON data from at codegen time (e.g. 'https://example.com/tables.json')"
+        },
+        "dataPath": {
+          "type": "string",
+          "description": "Optional dot-path to extract an array from the response (e.g. 'data.tables'). Omit if the root response IS the array."
+        },
+        "find": {
+          "type": "object",
+          "required": ["field", "input"],
+          "additionalProperties": false,
+          "properties": {
+            "field": {
+              "type": "string",
+              "description": "Field on each array entry to match against (e.g. 'name')"
+            },
+            "input": {
+              "type": "string",
+              "description": "Name of the input parameter whose value to match (e.g. 'tableName')"
+            },
+            "errorMessage": {
+              "type": "string",
+              "description": "Template error message when find returns no match. Use ${value} as placeholder for the input value."
+            }
+          }
+        },
+        "tableField": {
+          "type": "string",
+          "description": "Field on the found entry containing the range-keyed table (e.g. 'table')"
+        },
+        "resultMapping": {
+          "type": "object",
+          "description": "Compose a typed result object from the lookup result, found entry, inputs, and roll total",
+          "additionalProperties": {
+            "$ref": "#/$defs/ResultMappingLeaf"
+          }
+        }
+      }
+    },
+
+    "ResultMappingLeaf": {
+      "description": "A single field in a resultMapping — sources a value from the lookup result, found table, input, or roll total",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["$lookupResult"],
+          "additionalProperties": false,
+          "properties": {
+            "$lookupResult": {
+              "type": "string",
+              "description": "Dot-path into the resolver function's return value (e.g. 'result.label')"
+            },
+            "fallback": {
+              "$ref": "#/$defs/ResultMappingLeaf",
+              "description": "Fallback value when the primary $lookupResult path is undefined"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$foundTable"],
+          "additionalProperties": false,
+          "properties": {
+            "$foundTable": {
+              "type": "string",
+              "description": "Field on the found table object (e.g. 'table')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$input"],
+          "additionalProperties": false,
+          "properties": {
+            "$input": {
+              "type": "string",
+              "description": "Pass-through value from a roll input (e.g. 'tableName')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["expr"],
+          "additionalProperties": false,
+          "properties": {
+            "expr": {
+              "type": "string",
+              "enum": ["total"],
+              "description": "A computed expression — currently only 'total' (the roll total)"
+            }
+          }
+        }
+      ]
+    },
+
+    "OutcomeOperation": {
+      "description": "Stage 4 — map the resolved value to a game result string. Choose one: 'ranges' for range-to-result mapping, 'degreeOfSuccess' for PF2e-style tiered outcomes, or 'tableLookup' for a named table.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["ranges"],
+          "additionalProperties": false,
+          "properties": {
+            "ranges": {
+              "type": "array",
+              "description": "Ordered list of range-to-result mappings. Evaluated top to bottom; first match wins.",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/TableRange" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["degreeOfSuccess"],
+          "additionalProperties": false,
+          "properties": {
+            "degreeOfSuccess": {
+              "type": "object",
+              "description": "PF2e-style tiered outcome. Each value is the minimum total required to achieve that degree. At least one degree must be specified.",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "properties": {
+                "criticalSuccess": {
+                  "type": "integer",
+                  "description": "Minimum total for a critical success"
+                },
+                "success": { "type": "integer", "description": "Minimum total for a success" },
+                "failure": { "type": "integer", "description": "Minimum total for a failure" },
+                "criticalFailure": {
+                  "type": "integer",
+                  "description": "Minimum total for a critical failure"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["tableLookup"],
+          "additionalProperties": false,
+          "properties": {
+            "tableLookup": { "$ref": "#/$defs/RefOrTableDefinition" }
+          }
+        }
+      ]
+    },
+
+    "OutcomeOperationOrRef": {
+      "description": "An outcome operation or a $ref to a named entry in the 'outcomes' section.",
+      "oneOf": [{ "$ref": "#/$defs/OutcomeOperation" }, { "$ref": "#/$defs/Ref" }]
+    },
+
+    "Ref": {
+      "type": "object",
+      "description": "A JSON Pointer reference to a named definition within this spec file (e.g. { \"$ref\": \"#/pools/actionDice\" }).",
+      "required": ["$ref"],
+      "additionalProperties": false,
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "pattern": "^#/",
+          "description": "JSON Pointer path into this spec file. Examples: \"#/pools/actionDice\", \"#/tables/coreMechanic\""
+        }
+      }
+    },
+
+    "RefOrTableDefinition": {
+      "description": "A reference to a named table or an inline table definition.",
+      "oneOf": [{ "$ref": "#/$defs/Ref" }, { "$ref": "#/$defs/TableDefinition" }]
+    },
+
+    "DetailsLeafDef": {
+      "description": "A leaf field in the details object. Either passes through an input value, computes a pipeline expression, or references a pool total.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["$input"],
+          "additionalProperties": false,
+          "properties": {
+            "$input": {
+              "type": "string",
+              "description": "Name of the declared input parameter to pass through"
+            },
+            "default": {
+              "description": "Default value if the input is not provided",
+              "oneOf": [{ "type": "integer" }, { "type": "string" }, { "type": "boolean" }]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["expr"],
+          "additionalProperties": false,
+          "properties": {
+            "expr": {
+              "type": "string",
+              "enum": ["diceTotal", "total"],
+              "description": "Computed expression: 'diceTotal' = sum before postResolveModifiers, 'total' = final total"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$pool", "field"],
+          "additionalProperties": false,
+          "properties": {
+            "$pool": {
+              "type": "string",
+              "description": "Name of the dice pool whose total to include"
+            },
+            "field": {
+              "type": "string",
+              "enum": ["total"],
+              "description": "Which value from the pool result (currently only 'total')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$conditionalPool", "field"],
+          "additionalProperties": false,
+          "properties": {
+            "$conditionalPool": {
+              "type": "string",
+              "description": "Name of the conditional pool whose total to include (must match a key in conditionalPools)"
+            },
+            "field": {
+              "type": "string",
+              "enum": ["total"],
+              "description": "Which value from the conditional pool result (currently only 'total')"
+            }
+          }
+        }
+      ]
+    },
+
+    "DetailsFieldDef": {
+      "description": "A details field: a leaf value, a nested object of leaves, or a conditional object (present only when an input is provided).",
+      "oneOf": [
+        { "$ref": "#/$defs/DetailsLeafDef" },
+        {
+          "type": "object",
+          "description": "Nested object of leaf fields",
+          "additionalProperties": { "$ref": "#/$defs/DetailsLeafDef" }
+        },
+        {
+          "type": "object",
+          "required": ["when", "value"],
+          "additionalProperties": false,
+          "description": "Conditional details object: present when the input exists, undefined otherwise",
+          "properties": {
+            "when": {
+              "type": "object",
+              "required": ["input"],
+              "additionalProperties": false,
+              "properties": {
+                "input": {
+                  "type": "string",
+                  "description": "Name of the input to check for presence"
+                }
+              }
+            },
+            "value": {
+              "type": "object",
+              "description": "Nested object of leaf fields, emitted when the condition matches",
+              "additionalProperties": { "$ref": "#/$defs/DetailsLeafDef" }
+            }
+          }
+        }
+      ]
+    },
+
+    "IntegerOrInput": {
+      "description": "A literal integer, a runtime input binding ({ \"$input\": \"paramName\" }), or a conditional boolean binding ({ \"$input\": \"flag\", \"ifTrue\": N, \"ifFalse\": M }).",
+      "oneOf": [
+        { "type": "integer" },
+        {
+          "type": "object",
+          "required": ["$input"],
+          "additionalProperties": false,
+          "properties": {
+            "$input": {
+              "type": "string",
+              "description": "Name of the declared input parameter whose value will be used here"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$input", "ifTrue", "ifFalse"],
+          "additionalProperties": false,
+          "properties": {
+            "$input": {
+              "type": "string",
+              "description": "Name of the boolean input whose value determines which integer to use"
+            },
+            "ifTrue": {
+              "type": "integer",
+              "description": "Value to use when the input is truthy"
+            },
+            "ifFalse": {
+              "type": "integer",
+              "description": "Value to use when the input is falsy"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

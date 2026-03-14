@@ -1,0 +1,183 @@
+{
+  "name": "@randsum/games",
+  "version": "3.5.0",
+  "description": "TTRPG game packages for the RANDSUM dice ecosystem",
+  "private": false,
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://randsum.dev/games/overview/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/games"
+  },
+  "keywords": [
+    "dice",
+    "rpg",
+    "ttrpg",
+    "game",
+    "blades-in-the-dark",
+    "daggerheart",
+    "dnd",
+    "5e",
+    "pbta",
+    "salvage-union",
+    "root-rpg",
+    "randsum",
+    "typescript",
+    "codegen"
+  ],
+  "engines": {
+    "bun": ">=1.3.10",
+    "node": ">=18.0.0"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./blades": {
+      "import": {
+        "types": "./dist/blades.generated.d.ts",
+        "default": "./dist/blades.generated.js"
+      },
+      "require": {
+        "types": "./dist/blades.generated.d.cts",
+        "default": "./dist/blades.generated.cjs"
+      }
+    },
+    "./daggerheart": {
+      "import": {
+        "types": "./dist/daggerheart.generated.d.ts",
+        "default": "./dist/daggerheart.generated.js"
+      },
+      "require": {
+        "types": "./dist/daggerheart.generated.d.cts",
+        "default": "./dist/daggerheart.generated.cjs"
+      }
+    },
+    "./fifth": {
+      "import": {
+        "types": "./dist/fifth.generated.d.ts",
+        "default": "./dist/fifth.generated.js"
+      },
+      "require": {
+        "types": "./dist/fifth.generated.d.cts",
+        "default": "./dist/fifth.generated.cjs"
+      }
+    },
+    "./pbta": {
+      "import": {
+        "types": "./dist/pbta.generated.d.ts",
+        "default": "./dist/pbta.generated.js"
+      },
+      "require": {
+        "types": "./dist/pbta.generated.d.cts",
+        "default": "./dist/pbta.generated.cjs"
+      }
+    },
+    "./root-rpg": {
+      "import": {
+        "types": "./dist/root-rpg.generated.d.ts",
+        "default": "./dist/root-rpg.generated.js"
+      },
+      "require": {
+        "types": "./dist/root-rpg.generated.d.cts",
+        "default": "./dist/root-rpg.generated.cjs"
+      }
+    },
+    "./salvageunion": {
+      "import": {
+        "types": "./dist/salvageunion.generated.d.ts",
+        "default": "./dist/salvageunion.generated.js"
+      },
+      "require": {
+        "types": "./dist/salvageunion.generated.d.cts",
+        "default": "./dist/salvageunion.generated.cjs"
+      }
+    },
+    "./schema": {
+      "import": {
+        "types": "./dist/schema.d.ts",
+        "default": "./dist/schema.js"
+      },
+      "require": {
+        "types": "./dist/schema.d.cts",
+        "default": "./dist/schema.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "!dist/bin*",
+    "!dist/*.map",
+    "*.randsum.json",
+    "randsum.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "@randsum/roller": "workspace:~"
+  },
+  "devDependencies": {
+    "ajv": "8.18.0",
+    "bunup": "0.16.31",
+    "prettier": "3.8.1",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "prepublishOnly": "bun run build",
+    "build": "bun run build.ts",
+    "gen": "bun run codegen.ts",
+    "gen:check": "bun run codegen.ts --check",
+    "test": "bun run build && bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . -c ../../eslint.config.js",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "size": "size-limit",
+    "check:exports": "ts-unused-exports ../../tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
+    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
+  },
+  "size-limit": [
+    {
+      "path": "dist/blades.generated.js",
+      "limit": "8 KB"
+    },
+    {
+      "path": "dist/fifth.generated.js",
+      "limit": "8 KB"
+    },
+    {
+      "path": "dist/daggerheart.generated.js",
+      "limit": "8.1 KB"
+    },
+    {
+      "path": "dist/pbta.generated.js",
+      "limit": "8.2 KB"
+    },
+    {
+      "path": "dist/root-rpg.generated.js",
+      "limit": "8 KB"
+    },
+    {
+      "path": "dist/salvageunion.generated.js",
+      "limit": "100 KB"
+    }
+  ]
+}

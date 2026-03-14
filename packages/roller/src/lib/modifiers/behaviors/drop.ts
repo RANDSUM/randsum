@@ -34,7 +34,7 @@ export const dropBehavior: ModifierBehavior<DropOptions> = {
     const result = filteredByConditions.filter((_, index) => !indicesToDrop.has(index))
 
     if (lowest !== undefined && highest === undefined) {
-      return { rolls: result.toSorted((a, b) => a - b) }
+      return { rolls: [...result].sort((a, b) => a - b) }
     }
 
     return { rolls: result }

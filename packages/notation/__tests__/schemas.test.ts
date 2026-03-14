@@ -16,7 +16,7 @@ import {
   replaceSchema,
   rerollSchema,
   uniqueSchema
-} from '@randsum/notation'
+} from '../src/index'
 
 describe('coreNotationPattern', () => {
   test('matches basic notation', () => {

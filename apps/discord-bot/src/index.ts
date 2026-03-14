@@ -6,6 +6,7 @@ import type { Command } from './types.js'
 // Import commands
 import { bladesCommand } from './commands/blades.js'
 import { dhCommand } from './commands/dh.js'
+import { fifthCommand } from './commands/fifth.js'
 import { notationCommand } from './commands/notation.js'
 import { pbtaCommand } from './commands/pbta.js'
 import { rollCommand } from './commands/roll.js'
@@ -27,6 +28,7 @@ const commands = new Collection<string, Command>()
 const commandList = [
   bladesCommand,
   dhCommand,
+  fifthCommand,
   notationCommand,
   pbtaCommand,
   rollCommand,

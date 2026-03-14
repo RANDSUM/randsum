@@ -15,11 +15,11 @@ describe('extractRandsumDeps', () => {
   test('extracts multiple distinct @randsum imports', () => {
     const code = [
       `import { roll } from '@randsum/roller'`,
-      `import { bladeRoll } from '@randsum/blades'`
+      `import { bladeRoll } from '@randsum/games/blades'`
     ].join('\n')
     expect(extractRandsumDeps(code)).toEqual({
       '@randsum/roller': 'latest',
-      '@randsum/blades': 'latest'
+      '@randsum/games/blades': 'latest'
     })
   })
 

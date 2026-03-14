@@ -1,8 +1,5 @@
 /* Custom Starlight theme - dark-first Zed/Shadcn inspired */
 
-/* Google Fonts: Inter (body) + JetBrains Mono (headings/code) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
 /* ===== Dark mode (default in Starlight) ===== */
 :root {
   /* Accent - blue-500 (#3b82f6) based */
@@ -21,8 +18,8 @@
   --sl-color-black: #020617; /* slate-950 */
 
   /* Fonts */
-  --sl-font: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --sl-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --sl-font: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --sl-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 
   /* Game package colors */
   --game-fifth: #ef4444; /* red-500 */
@@ -77,7 +74,7 @@
 
 /* ===== Heading typography ===== */
 :root {
-  --sl-font-heading: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --sl-font-heading: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 h1,

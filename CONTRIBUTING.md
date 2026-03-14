@@ -42,13 +42,8 @@ packages/
   notation/            # Dice notation parser
   display-utils/       # Display formatting utilities
   component-library/   # React UI components
-games/
-  blades/              # Blades in the Dark mechanics
-  daggerheart/         # Daggerheart RPG support
-  fifth/               # D&D 5th Edition mechanics
-  root-rpg/            # Root RPG implementation
-  salvageunion/        # Salvage Union mechanics
-  pbta/                # Powered by the Apocalypse mechanics
+  games/               # All game system packages (subpath exports per game)
+  gameSchema/          # Dice mechanic spec format and codegen tools
 apps/
   cli/                 # Command-line interface
   discord-bot/         # Discord bot (discord.js + Bun)
@@ -201,8 +196,8 @@ bun run --filter @randsum/roller typecheck
 - Update documentation for new features
 
 **Working on a game package:**
-- Use `createGameRoll` or `createMultiRollGameRoll` factories when possible
-- Follow the pattern established in `@randsum/fifth` or `@randsum/daggerheart`
+- Game packages are code-generated from `.randsum.json` specs via `@randsum/gameSchema`
+- Edit the spec file, then run `bun run codegen` to regenerate
 - Keep game-specific logic isolated
 
 ## Pull Request Checklist
@@ -221,40 +216,17 @@ Before submitting a PR, ensure:
 
 ## Adding a New Game Package
 
-Use the generator script to scaffold a new game package:
+Game packages live in `packages/games/` as subpath exports of `@randsum/games`. Each game is defined by a `.randsum.json` spec and a generated `.ts` file.
 
-```bash
-bun run create:game <game-name>
-```
+To add a new game:
 
-This creates a complete package structure with all required files:
+1. **Create a spec file** `packages/games/src/<shortcode>.randsum.json`
+2. **Run codegen** `bun run codegen` to generate `packages/games/src/<shortcode>.generated.ts`
+3. **Add tests** in `packages/games/__tests__/<shortcode>.test.ts`
+4. **Add a subpath export** to `packages/games/package.json`
+5. **Update root `CLAUDE.md`** to list the new game
 
-```
-games/{game-name}/
-  src/
-    index.ts              # Main exports
-    types.ts              # Game-specific types (customize this)
-    roll{GameName}/
-      index.ts            # Roll implementation (customize this)
-  __tests__/
-    {game-name}.test.ts   # Initial test file
-  CLAUDE.md
-  LICENSE
-  README.md
-  package.json
-  tsconfig.json
-```
-
-After generation:
-
-1. **Edit `src/types.ts`** with your game-specific types
-2. **Implement `src/roll{GameName}/index.ts`** with your game logic
-3. **Add tests** in `__tests__/` directory
-4. **Run `bun install`** to link workspace dependencies
-5. **Update root `CLAUDE.md`** to list the new package
-6. **Add to site documentation** in `apps/site/` (optional)
-
-For detailed patterns, see the per-package `CLAUDE.md` files in each package directory (e.g. `games/blades/CLAUDE.md`).
+For detailed patterns, see `packages/games/CLAUDE.md` and `packages/gameSchema/README.md`.
 
 ## Common Tasks
 

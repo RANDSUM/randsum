@@ -31,13 +31,12 @@ bun run fix:all                          # Auto-fix lint + format issues
 
 # Single package
 bun run --filter @randsum/roller test    # Test one package
-bun run --filter @randsum/fifth build    # Build one package
+bun run --filter @randsum/games build    # Build one package
 
 # Single test file
 bun test packages/roller/__tests__/roll/roll.test.ts
 
 # Other
-bun run create:game <name>               # Scaffold new game package
 bun run size                             # Bundle size checks (size-limit)
 bun run bench                            # Performance benchmarks (mitata)
 bun run site:dev                         # Astro dev server (localhost:4321)
@@ -78,19 +77,9 @@ When a core package (`@randsum/roller`, or in future `@randsum/notation`) receiv
 
 ## Key Patterns
 
-### `createGameRoll` Factory
+### Code-Generated Game Packages
 
-Game packages use this factory from roller to create standardized roll functions:
-
-```typescript
-createGameRoll<TInput, TResult>({
-  validate: (input) => { ... },
-  toRollOptions: (input) => { ... },
-  interpretResult: (input, total, rolls, fullResult) => TResult
-})
-```
-
-Returns `GameRollResult<TResult, TDetails, RollRecord>`.
+Game packages are generated from `.randsum.json` specs via `@randsum/gameSchema` codegen. Each spec defines dice pools, modifiers, outcome tables, and input validation. The generated TypeScript calls `roll()` from `@randsum/roller` directly.
 
 ### Error Handling
 
