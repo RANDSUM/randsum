@@ -13,7 +13,7 @@ Main entry point for rolling dice. Accepts number, notation string, options obje
 - **Number**: `roll(20)` - Roll 1d20 (quantity 1, sides = number)
 - **Notation**: `roll("4d6L")` - Parse notation string
 - **Options object**: `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })` - Same as 4d6L
-- **Multiple arguments**: `roll("1d20", "2d6", "+5")` - Combine rolls into one total
+- **Multiple arguments**: `roll("1d20+5", "2d6")` - Combine rolls into one total
 
 ```typescript
 roll(20) // 1d20

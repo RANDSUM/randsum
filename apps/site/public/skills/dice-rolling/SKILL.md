@@ -80,7 +80,7 @@ roll("2d6+3")
 roll({ sides: 6, quantity: 2, modifiers: { plus: 3 } })
 
 // Multiple arguments: combined total
-roll("1d20", "2d6", "+5") // attack + damage + modifier
+roll("1d20+5", "2d6") // attack with modifier + damage
 
 const result = roll("2d6+3")
 console.log(result.total) // Sum of dice + modifiers

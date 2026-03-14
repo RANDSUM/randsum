@@ -95,7 +95,7 @@ Modifiers (cap, drop, keep, reroll, explode, etc.) are self-registering definiti
 roll(20)                    // Number: 1d20
 roll("4d6L")                // Notation string
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })  // Options object
-roll("1d20", "2d6", "+5")   // Multiple arguments combined
+roll("1d20+5", "2d6")       // Multiple arguments combined
 ```
 
 ## Git Hooks (Lefthook)
