@@ -8,8 +8,6 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type RootRpgRollResult = 'Miss' | 'Strong Hit' | 'Weak Hit'
-/** @deprecated Use {@link RootRpgRollResult} to avoid cross-game name collisions */
-export type RollResult = RootRpgRollResult
 
 export function roll(bonus: number): GameRollResult<RootRpgRollResult, undefined, RollRecord>
 export function roll(input: {

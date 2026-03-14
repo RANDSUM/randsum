@@ -8,8 +8,6 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type BladesRollResult = 'critical' | 'failure' | 'partial' | 'success'
-/** @deprecated Use {@link BladesRollResult} to avoid cross-game name collisions */
-export type RollResult = BladesRollResult
 
 export function roll(rating?: number): GameRollResult<BladesRollResult, undefined, RollRecord>
 export function roll(input?: {

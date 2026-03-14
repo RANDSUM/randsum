@@ -67,9 +67,11 @@ describe('details fields codegen', () => {
     )
   })
 
-  test('captures diceTotal before postResolveModifiers', async () => {
+  test('captures diceTotal as raw sum of kept dice', async () => {
     const code = await generateCode(DETAILS_SPEC)
-    expect(code).toContain('const diceTotal = r.total')
+    expect(code).toContain(
+      'const diceTotal = r.rolls.flatMap(x => x.rolls).reduce((a, b) => a + b, 0)'
+    )
   })
 
   test('builds details object', async () => {

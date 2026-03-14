@@ -51,6 +51,15 @@ export type NormalizedDetailsLeafDef =
   | { readonly expr: 'diceTotal' | 'total' }
   | { readonly $pool: string; readonly field: 'total' }
   | { readonly $conditionalPool: string; readonly field: 'total' }
+  | {
+      readonly $dieCheck: {
+        readonly pool: number
+        readonly field: 'final' | 'initial'
+        readonly die: number
+        readonly operator: '=' | '>' | '>=' | '<' | '<='
+        readonly value: number
+      }
+    }
 
 export type NormalizedDetailsFieldDef =
   | {

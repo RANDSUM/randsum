@@ -152,11 +152,20 @@ export interface ConditionalPool {
   readonly arithmetic: 'add' | 'subtract'
 }
 
+export interface DieCheckDef {
+  readonly pool: number
+  readonly field: 'final' | 'initial'
+  readonly die: number
+  readonly operator: '=' | '>' | '>=' | '<' | '<='
+  readonly value: number
+}
+
 export type DetailsLeafDef =
   | { readonly $input: string; readonly default?: InputValue }
   | { readonly expr: 'diceTotal' | 'total' }
   | { readonly $pool: string; readonly field: 'total' }
   | { readonly $conditionalPool: string; readonly field: 'total' }
+  | { readonly $dieCheck: DieCheckDef }
 
 export type DetailsFieldDef =
   | DetailsLeafDef

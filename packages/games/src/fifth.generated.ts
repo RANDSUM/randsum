@@ -8,13 +8,16 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type FifthRollResult = number
-/** @deprecated Use {@link FifthRollResult} to avoid cross-game name collisions */
-export type RollResult = FifthRollResult
+
+export interface FifthRollDetails {
+  readonly isNatural1: boolean
+  readonly isNatural20: boolean
+}
 
 export function roll(input?: {
   modifier?: number
   rollingWith?: 'Advantage' | 'Disadvantage'
-}): GameRollResult<FifthRollResult, undefined, RollRecord> {
+}): GameRollResult<FifthRollResult, FifthRollDetails, RollRecord> {
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
     validateFinite(input?.modifier, '5E modifier')
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
@@ -34,7 +37,11 @@ export function roll(input?: {
       modifiers: { keep: { highest: 1 }, plus: input?.modifier ?? 0 }
     })
     const total = r.total
-    return { total, result: total, rolls: r.rolls }
+    const details = {
+      isNatural1: r.rolls[0]?.rolls[0] === 1,
+      isNatural20: r.rolls[0]?.rolls[0] === 20
+    }
+    return { total, result: total, rolls: r.rolls, details }
   }
   if (input?.rollingWith === 'Disadvantage') {
     const r = executeRoll({
@@ -43,11 +50,19 @@ export function roll(input?: {
       modifiers: { keep: { lowest: 1 }, plus: input?.modifier ?? 0 }
     })
     const total = r.total
-    return { total, result: total, rolls: r.rolls }
+    const details = {
+      isNatural1: r.rolls[0]?.rolls[0] === 1,
+      isNatural20: r.rolls[0]?.rolls[0] === 20
+    }
+    return { total, result: total, rolls: r.rolls, details }
   }
   const r = executeRoll({ sides: 20, quantity: 1, modifiers: { plus: input?.modifier ?? 0 } })
   const total = r.total
-  return { total, result: total, rolls: r.rolls }
+  const details = {
+    isNatural1: r.rolls[0]?.rolls[0] === 1,
+    isNatural20: r.rolls[0]?.rolls[0] === 20
+  }
+  return { total, result: total, rolls: r.rolls, details }
 }
 
 export { SchemaError }

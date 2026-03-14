@@ -8,8 +8,6 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type PbtaRollResult = 'miss' | 'strong_hit' | 'weak_hit'
-/** @deprecated Use {@link PbtaRollResult} to avoid cross-game name collisions */
-export type RollResult = PbtaRollResult
 
 export interface PbtaRollDetails {
   readonly stat: number
@@ -17,8 +15,6 @@ export interface PbtaRollDetails {
   readonly ongoing: number
   readonly diceTotal: number
 }
-/** @deprecated Use {@link PbtaRollDetails} to avoid cross-game name collisions */
-export type RollDetails = PbtaRollDetails
 
 export function roll(input: {
   stat: number
@@ -54,12 +50,13 @@ export function roll(input: {
         plus: input.stat + (input.forward ?? 0) + (input.ongoing ?? 0)
       }
     })
+    const diceTotal = r.rolls.flatMap(x => x.rolls).reduce((a, b) => a + b, 0)
     const total = r.total
     const details = {
       stat: input.stat,
       forward: input.forward ?? 0,
       ongoing: input.ongoing ?? 0,
-      diceTotal: total
+      diceTotal: diceTotal
     }
     if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
@@ -75,12 +72,13 @@ export function roll(input: {
         plus: input.stat + (input.forward ?? 0) + (input.ongoing ?? 0)
       }
     })
+    const diceTotal = r.rolls.flatMap(x => x.rolls).reduce((a, b) => a + b, 0)
     const total = r.total
     const details = {
       stat: input.stat,
       forward: input.forward ?? 0,
       ongoing: input.ongoing ?? 0,
-      diceTotal: total
+      diceTotal: diceTotal
     }
     if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
@@ -92,12 +90,13 @@ export function roll(input: {
     quantity: 2,
     modifiers: { plus: input.stat + (input.forward ?? 0) + (input.ongoing ?? 0) }
   })
+  const diceTotal = r.rolls.flatMap(x => x.rolls).reduce((a, b) => a + b, 0)
   const total = r.total
   const details = {
     stat: input.stat,
     forward: input.forward ?? 0,
     ongoing: input.ongoing ?? 0,
-    diceTotal: total
+    diceTotal: diceTotal
   }
   if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
   if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }

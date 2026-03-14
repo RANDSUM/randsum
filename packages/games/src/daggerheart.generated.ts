@@ -8,8 +8,6 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type DaggerheartRollResult = 'critical hope' | 'fear' | 'hope'
-/** @deprecated Use {@link DaggerheartRollResult} to avoid cross-game name collisions */
-export type RollResult = DaggerheartRollResult
 
 export interface DaggerheartRollDetails {
   readonly hope: { readonly roll: number; readonly amplified: boolean }
@@ -19,8 +17,6 @@ export interface DaggerheartRollDetails {
     | { readonly advantageRoll: number; readonly disadvantageRoll: number }
     | undefined
 }
-/** @deprecated Use {@link DaggerheartRollDetails} to avoid cross-game name collisions */
-export type RollDetails = DaggerheartRollDetails
 
 export function roll(input?: {
   modifier?: number

@@ -80,13 +80,13 @@
       "version": "3.5.0",
       "devDependencies": {
         "@ladle/react": "5.1.1",
+        "@randsum/display-utils": "workspace:~",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
       },
       "peerDependencies": {
-        "@randsum/display-utils": "^3.5.0",
         "@randsum/notation": "^3.5.0",
         "@randsum/roller": "^3.5.0",
         "react": ">=18",

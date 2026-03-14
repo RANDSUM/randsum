@@ -2852,8 +2852,6 @@ export interface SalvageunionRollResult {
   readonly table: Record<string, unknown>
   readonly roll: number
 }
-/** @deprecated Use {@link SalvageunionRollResult} to avoid cross-game name collisions */
-export type RollResult = SalvageunionRollResult
 
 export function roll(
   tableName: string

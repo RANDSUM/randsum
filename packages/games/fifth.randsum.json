@@ -19,6 +19,14 @@
     "dice": { "pool": { "sides": 20 }, "quantity": 1 },
     "resolve": "sum",
     "modify": [{ "add": { "$input": "modifier" } }],
+    "details": {
+      "isNatural1": {
+        "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 1 }
+      },
+      "isNatural20": {
+        "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 20 }
+      }
+    },
     "when": [
       {
         "condition": { "input": "rollingWith", "operator": "=", "value": "Advantage" },

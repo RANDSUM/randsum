@@ -229,7 +229,7 @@
         },
         "details": {
           "type": "object",
-          "description": "Named fields returned alongside the roll result. Each field is either a pass-through of an input value or a computed expression (diceTotal = sum before postResolveModifiers, total = final total).",
+          "description": "Named fields returned alongside the roll result. Each field is either a pass-through of an input value, a computed expression (diceTotal = raw sum of kept dice before arithmetic modifiers, total = final total), a pool reference, or a die check (boolean comparison on a specific die value).",
           "additionalProperties": { "$ref": "#/$defs/DetailsFieldDef" }
         }
       }
@@ -733,7 +733,7 @@
     },
 
     "DetailsLeafDef": {
-      "description": "A leaf field in the details object. Either passes through an input value, computes a pipeline expression, or references a pool total.",
+      "description": "A leaf field in the details object. Either passes through an input value, computes a pipeline expression, references a pool total, or performs a boolean die check.",
       "oneOf": [
         {
           "type": "object",
@@ -758,7 +758,7 @@
             "expr": {
               "type": "string",
               "enum": ["diceTotal", "total"],
-              "description": "Computed expression: 'diceTotal' = sum before postResolveModifiers, 'total' = final total"
+              "description": "Computed expression: 'diceTotal' = raw sum of kept dice before arithmetic modifiers, 'total' = final total"
             }
           }
         },
@@ -791,6 +791,45 @@
               "type": "string",
               "enum": ["total"],
               "description": "Which value from the conditional pool result (currently only 'total')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$dieCheck"],
+          "additionalProperties": false,
+          "properties": {
+            "$dieCheck": {
+              "type": "object",
+              "description": "Boolean check on a specific die value. Produces true/false based on comparing a die's rolled value against a target.",
+              "required": ["pool", "field", "die", "operator", "value"],
+              "additionalProperties": false,
+              "properties": {
+                "pool": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Zero-indexed roll record (pool) to check"
+                },
+                "field": {
+                  "type": "string",
+                  "enum": ["final", "initial"],
+                  "description": "Whether to check the final (after keep/drop) or initial (before modifiers) die value"
+                },
+                "die": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Zero-indexed die within the pool's rolls array"
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": ["=", ">", ">=", "<", "<="],
+                  "description": "Comparison operator"
+                },
+                "value": {
+                  "type": "integer",
+                  "description": "Target value to compare against"
+                }
+              }
             }
           }
         }

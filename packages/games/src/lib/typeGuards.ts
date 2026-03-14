@@ -20,7 +20,13 @@ export function isRollDefinition(value: unknown): value is RollDefinition {
 }
 
 export function isDetailsLeaf(def: DetailsFieldDef): def is DetailsLeafDef {
-  return '$input' in def || 'expr' in def || '$pool' in def || '$conditionalPool' in def
+  return (
+    '$input' in def ||
+    'expr' in def ||
+    '$pool' in def ||
+    '$conditionalPool' in def ||
+    '$dieCheck' in def
+  )
 }
 
 export function isConditionalDetails(def: DetailsFieldDef): def is {
