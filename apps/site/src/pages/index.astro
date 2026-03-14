@@ -1,6 +1,5 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
-import { Image } from 'astro:assets'
 import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRollerPlayground } from '../components/HeroInteractive'
@@ -31,38 +30,38 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   frontmatter={{
     title: 'RANDSUM',
     description: 'TypeScript-First Dice Notation Ecosystem. Throw Dice, Not Exceptions.',
-    template: 'splash'
+    template: 'splash',
+    head: [
+      {
+        tag: 'script',
+        attrs: { type: 'application/ld+json' },
+        content: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "@id": "https://randsum.dev/#website",
+              "name": "RANDSUM",
+              "url": "https://randsum.dev/",
+              "description": "TypeScript-first dice notation ecosystem for tabletop RPGs. Zero-dependency dice engine with full notation support and game-specific packages.",
+              "publisher": { "@id": "https://randsum.dev/#organization" }
+            },
+            {
+              "@type": "Organization",
+              "@id": "https://randsum.dev/#organization",
+              "name": "RANDSUM",
+              "url": "https://randsum.dev/",
+              "sameAs": [
+                "https://github.com/RANDSUM/randsum",
+                "https://www.npmjs.com/org/randsum"
+              ]
+            }
+          ]
+        })
+      }
+    ]
   }}
   hasSidebar={false}
-  head={[
-    {
-      tag: 'script',
-      attrs: { type: 'application/ld+json' },
-      content: JSON.stringify({
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "WebSite",
-            "@id": "https://randsum.dev/#website",
-            "name": "RANDSUM",
-            "url": "https://randsum.dev/",
-            "description": "TypeScript-first dice notation ecosystem for tabletop RPGs. Zero-dependency dice engine with full notation support and game-specific packages.",
-            "publisher": { "@id": "https://randsum.dev/#organization" }
-          },
-          {
-            "@type": "Organization",
-            "@id": "https://randsum.dev/#organization",
-            "name": "RANDSUM",
-            "url": "https://randsum.dev/",
-            "sameAs": [
-              "https://github.com/RANDSUM/randsum",
-              "https://www.npmjs.com/org/randsum"
-            ]
-          }
-        ]
-      })
-    }
-  ]}
 >
   <div class="landing">
     <!-- Hero -->

@@ -45,5 +45,7 @@
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "astro check"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@astrojs/check": "0.9.7"
+  }
 }
