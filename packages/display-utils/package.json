@@ -2,7 +2,7 @@
   "name": "@randsum/display-utils",
   "version": "3.5.0",
   "description": "Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UIs",
-  "private": false,
+  "private": true,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
