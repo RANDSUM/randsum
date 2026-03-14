@@ -1,6 +1,124 @@
 ---
 title: "@randsum/roller"
-description: Zero-dependency dice rolling engine for TypeScript.
+description: TypeScript dice engine with advanced notation, modifiers, and full input validation. Works in Node.js, Bun, Deno, and browsers.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/roller",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "description": "TypeScript dice engine. Parses and evaluates dice notation with full input validation. Ships as ESM and CommonJS.",
+        "offers": { "@type": "Offer", "price": "0" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/roller",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/roller",
+        "keywords": "dice, dice roller, dice notation, TypeScript, tabletop RPG, npm package"
+      }
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Roller", "item": "https://randsum.dev/roller/introduction/" }
+        ]
+      }
 ---
 
-Content coming soon.
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+Roll dice with a single function call — numbers, notation strings, or options objects. `@randsum/roller` is the core engine that powers the entire RANDSUM ecosystem: full TypeScript types, strict input validation, and a single dependency (`@randsum/notation`).
+
+## Features
+
+- **Three input modes** — pass a number, a notation string, or a typed options object
+- **Advanced notation** — drop/keep, reroll, exploding, compounding, penetrating, cap, replace, unique, count successes
+- **Modifier pipeline** — modifiers execute in a defined priority order, composable and predictable
+- **Multiple arguments** — combine rolls into a single total: `roll('1d20+5', '2d6')`
+- **Strict validation** — throws on invalid input; validate user strings with `isDiceNotation()` or `validateNotation()`
+- **Custom RNG** — pass a `randomFn` for seeded, deterministic, or cryptographic randomness
+- **Universal runtime** — works in Node.js, Bun, Deno, browsers, and edge functions
+
+## Argument types
+
+### Number
+
+Pass a number to roll one die with that many sides.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+const result = roll(20)
+console.log(result.total) // 1-20`} />
+
+### Notation string
+
+Pass a [Randsum Dice Notation](/notation/randsum-dice-notation/) string for complex rolls.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// 4d6, drop the lowest
+const abilityScore = roll('4d6L')
+
+// 2d20, keep highest (advantage), add 5
+const attack = roll('2d20K+5')
+
+// Exploding d6s with rerolls below 3
+const wild = roll('4d6!R{<3}')`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
+### Options object
+
+Pass a typed object for full control over the roll without notation parsing.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+const result = roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    drop: { lowest: 1 },
+    plus: 2
+  }
+})
+
+console.log(result.total)  // Sum of best 3d6 + 2`} />
+
+All three input types produce the same `RollerRollResult` — you can mix them in a single call:
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// Combine multiple arguments into one total
+const result = roll('1d20+5', '2d6')
+console.log(result.total) // d20 + 5 + 2d6`} />
+
+## Notation quick reference
+
+| Pattern | Description | Example |
+|---|---|---|
+| `NdS` | Roll N dice with S sides | `4d6` |
+| `+X` / `-X` | Add/subtract from total | `1d20+5` |
+| `L` / `H` | Drop lowest/highest | `4d6L` |
+| `K` / `kl` | Keep highest/lowest | `4d6K3` |
+| `!` | Exploding dice | `3d6!` |
+| `!!` | Compounding exploding | `3d6!!` |
+| `!p` | Penetrating exploding | `3d6!p` |
+| `U` | Unique results | `4d20U` |
+
+See the full [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for reroll conditions, caps, replacements, success counting, and multipliers.
+
+## Learn more
+
+- **[Getting Started](/roller/getting-started/)** — install, first roll, result types
+- **[Roll Options](/roller/roll-options/)** — every option the `roll()` function accepts
+- **[Modifiers](/roller/modifiers/)** — how the modifier pipeline works, priority order, and examples
+- **[Error Handling](/roller/error-handling/)** — validation patterns for user-provided input
+- **[API Reference](/roller/api-reference/)** — all exported functions and types

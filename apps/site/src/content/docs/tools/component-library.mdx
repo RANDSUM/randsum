@@ -1,6 +1,155 @@
 ---
 title: Component Library
-description: React components for dice rolling playgrounds and modifier reference.
+description: React components for embedding interactive dice rollers and modifier reference grids. RollerPlayground, ModifierReference, Overlay, and ErrorBoundary.
 ---
 
-Content coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground, ModifierReference } from '@randsum/component-library'
+
+`@randsum/component-library` ships React components for embedding interactive dice rolling UIs into any web application. Self-contained with bundled styles.
+
+## Install
+
+<Tabs>
+  <TabItem label="bun">
+    <CodeExample lang="bash" code="bun add @randsum/component-library" />
+  </TabItem>
+  <TabItem label="npm">
+    <CodeExample lang="bash" code="npm install @randsum/component-library" />
+  </TabItem>
+</Tabs>
+
+Requires `react`, `react-dom`, `@randsum/roller`, and `@randsum/notation` as peer dependencies.
+
+## RollerPlayground
+
+An interactive dice notation editor. Type a notation string, press roll, and see the total with a step-by-step breakdown panel.
+
+<div class="not-content" style="margin: 1.5rem 0;">
+  <RollerPlayground client:only="react" defaultNotation="4d6L" />
+</div>
+
+<CodeExample code={`import { RollerPlayground } from '@randsum/component-library'
+
+export default function App() {
+  return <RollerPlayground defaultNotation="4d6L" />
+}`} />
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `defaultNotation` | `string` | `'4d6L'` | Initial dice notation shown in the input |
+| `size` | `'s' \| 'm' \| 'l'` | `'l'` | Overall size — scales font, padding, and chip |
+| `stackblitz` | `boolean` | `true` | Show the **Code** button to open notation in StackBlitz |
+| `className` | `string` | — | Additional class name appended to the root element |
+
+### Size variants
+
+<div class="not-content" style="display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0;">
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">size="s"</p>
+    <RollerPlayground client:only="react" size="s" defaultNotation="1d20" stackblitz={false} />
+  </div>
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">size="m"</p>
+    <RollerPlayground client:only="react" size="m" defaultNotation="2d6+3" stackblitz={false} />
+  </div>
+  <div>
+    <p style="font-size: 0.8rem; color: var(--sl-color-gray-3); margin: 0 0 0.5rem; font-family: monospace;">size="l" (default)</p>
+    <RollerPlayground client:only="react" size="l" defaultNotation="4d6L" stackblitz={false} />
+  </div>
+</div>
+
+### Theming
+
+The component respects `prefers-color-scheme` automatically. Force a specific theme by setting `data-theme` on any ancestor:
+
+<CodeExample code={`<div data-theme="light">
+  <RollerPlayground />
+</div>
+
+<div data-theme="dark">
+  <RollerPlayground />
+</div>`} />
+
+### Astro usage
+
+In an Astro project, use the `client:only="react"` directive:
+
+<CodeExample code={`<RollerPlayground client:only="react" defaultNotation="2d6+3" />`} />
+
+## ModifierReference
+
+A compact reference grid of all supported dice notation modifiers. Useful as a help panel or notation guide.
+
+<div class="not-content" style="margin: 1.5rem 0; max-width: 480px;">
+  <ModifierReference client:only="react" />
+</div>
+
+<CodeExample code={`import { ModifierReference } from '@randsum/component-library'
+
+export default function HelpPanel() {
+  return <ModifierReference />
+}`} />
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `coreDisabled` | `boolean` | `false` | Hide (grey out) the core `xdY` row |
+| `modifiersDisabled` | `boolean` | `false` | Hide (grey out) all modifier rows |
+| `onCellClick` | `(cell: ModifierReferenceCell) => void` | — | Called when a cell is clicked |
+
+### Interactive usage
+
+Use `onCellClick` to build a notation-builder — clicking a modifier appends its notation to the input:
+
+<CodeExample code={`import { useState } from 'react'
+import { ModifierReference } from '@randsum/component-library'
+import type { ModifierReferenceCell } from '@randsum/component-library'
+
+export default function NotationBuilder() {
+  const [notation, setNotation] = useState('4d6')
+
+  function handleCellClick(cell: ModifierReferenceCell) {
+    if (cell.isCore) {
+      setNotation('NdS')
+    } else {
+      setNotation(prev => prev + cell.notation)
+    }
+  }
+
+  return (
+    <>
+      <input value={notation} onChange={e => setNotation(e.target.value)} />
+      <ModifierReference onCellClick={handleCellClick} />
+    </>
+  )
+}`} />
+
+## Overlay
+
+A portal-based overlay component used internally by the playground for tooltips and popovers.
+
+<CodeExample code={`import { Overlay } from '@randsum/component-library'
+
+<Overlay visible={isOpen} onClose={() => setOpen(false)}>
+  <div>Overlay content</div>
+</Overlay>`} />
+
+## ErrorBoundary
+
+A React error boundary that catches rendering errors in child components and displays a fallback.
+
+<CodeExample code={`import { ErrorBoundary } from '@randsum/component-library'
+
+<ErrorBoundary>
+  <RollerPlayground />
+</ErrorBoundary>`} />
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/component-library)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/component-library)

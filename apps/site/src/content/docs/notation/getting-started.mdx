@@ -1,6 +1,87 @@
 ---
 title: Getting Started with Notation
-description: Install @randsum/notation and validate your first dice notation string.
+description: Install @randsum/notation to validate and parse dice notation without the roll engine.
 ---
 
-Content coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+Install `@randsum/notation` to validate and parse dice notation strings without the roll engine.
+
+## Install
+
+<Tabs>
+  <TabItem label="bun">
+    <CodeExample lang="bash" code={`bun add @randsum/notation`} />
+  </TabItem>
+  <TabItem label="npm">
+    <CodeExample lang="bash" code={`npm install @randsum/notation`} />
+  </TabItem>
+  <TabItem label="yarn">
+    <CodeExample lang="bash" code={`yarn add @randsum/notation`} />
+  </TabItem>
+</Tabs>
+
+:::tip[Need to roll dice too?]
+If you also need `roll()`, install `@randsum/roller` instead. It re-exports `isDiceNotation`, `notation`, and `validateNotation` for convenience. Functions like `notationToOptions`, `suggestNotationFix`, and `tokenize` require a separate `@randsum/notation` install.
+:::
+
+## Check if a string is valid notation
+
+Use `isDiceNotation()` as a type guard to check user input before processing it:
+
+<CodeExample code={`import { isDiceNotation } from '@randsum/notation'
+
+isDiceNotation('4d6L')       // true
+isDiceNotation('not-valid')  // false
+
+if (isDiceNotation(userInput)) {
+  // userInput is now typed as DiceNotation
+}`} />
+
+## Validate with detailed feedback
+
+`validateNotation()` returns a result object with either the parsed structure or error details:
+
+<CodeExample code={`import { validateNotation } from '@randsum/notation'
+
+const result = validateNotation('4d6L')
+
+if (result.valid) {
+  console.log(result.notation)  // ['4d6L']
+  console.log(result.options)   // [{ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }]
+} else {
+  console.log(result.error)     // { message: '...', argument: '...' }
+}`} />
+
+## Parse notation into options
+
+Convert a notation string into structured `ParsedNotationOptions`. Returns an array (one entry per roll group):
+
+<CodeExample code={`import { isDiceNotation, notationToOptions } from '@randsum/notation'
+
+const notation = '2d6+3'
+
+if (isDiceNotation(notation)) {
+  const [options] = notationToOptions(notation)
+  console.log(options.sides)       // 6
+  console.log(options.quantity)    // 2
+  console.log(options.modifiers)   // { plus: 3 }
+}`} />
+
+## Convert options back to notation
+
+<CodeExample code={`import { optionsToNotation } from '@randsum/notation'
+
+const notation = optionsToNotation({
+  sides: 6,
+  quantity: 4,
+  modifiers: { drop: { lowest: 1 } }
+})
+console.log(notation) // '4d6L'`} />
+
+## What's next
+
+- [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) -- full syntax reference for all notation features
+- [Validation & Parsing](/notation/validation-and-parsing/) -- detailed guide to validation, suggestions, and parsing
+- [API Reference](/notation/api-reference/) -- complete list of exports from `@randsum/notation`

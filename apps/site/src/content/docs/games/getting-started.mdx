@@ -1,6 +1,114 @@
 ---
 title: Getting Started with Games
-description: Install @randsum/games and make your first game-specific roll.
+description: Install @randsum/games and make your first game-specific roll. Typed results for D&D 5e, Blades in the Dark, PbtA, and more.
 ---
 
-Content coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+Install `@randsum/games` and make your first game-specific roll in under a minute.
+
+## Install
+
+<Tabs>
+  <TabItem label="bun">
+    <CodeExample lang="bash" code={`bun add @randsum/games`} />
+  </TabItem>
+  <TabItem label="npm">
+    <CodeExample lang="bash" code={`npm install @randsum/games`} />
+  </TabItem>
+</Tabs>
+
+This installs `@randsum/roller` automatically as a dependency.
+
+## Simplest example: Blades in the Dark
+
+Import from the game's subpath and call `roll()`. That's it.
+
+<CodeExample code={`import { roll } from '@randsum/games/blades'
+
+const { result, total } = roll(3)
+console.log(result) // 'critical' | 'success' | 'partial' | 'failure'
+console.log(total)  // numeric total`} />
+
+Pass a number for the action rating (0-4). A 0-dice pool rolls 2d6 and keeps the lowest — the desperate position.
+
+<CodeExample code={`import { roll } from '@randsum/games/blades'
+
+roll(0) // Desperate: 2d6, keep lowest
+roll(1) // 1d6
+roll(4) // 4d6, keep highest`} />
+
+## Moderately complex: D&D 5e
+
+The fifth edition package accepts an options object with modifier, advantage/disadvantage, and critical hit tracking.
+
+<CodeExample code={`import { roll } from '@randsum/games/fifth'
+
+// Simple d20 roll
+const { result, total } = roll()
+console.log(result) // number (d20 roll + any modifier)
+
+// Roll with advantage and a +5 modifier
+const attack = roll({
+  modifier: 5,
+  rollingWith: 'Advantage'
+})
+console.log(attack.result) // number
+
+// Track natural 1s and 20s
+const crit = roll({
+  modifier: 3,
+  crit: true
+})
+console.log(crit.details.criticals)
+// { isNatural1: false, isNatural20: true }`} />
+
+## Every game follows the same pattern
+
+Each game subpath exports a `roll()` function that:
+
+1. Accepts game-specific input (a number, an options object, or nothing)
+2. Validates the input — throws `ValidationError` (from roller) for out-of-range numbers, or `SchemaError` for game-specific issues
+3. Calls `@randsum/roller` internally with the right dice configuration
+4. Returns a typed `GameRollResult` with `result`, `total`, `rolls`, and optionally `details`
+
+The `result` field is game-specific — a string outcome tier in Blades (`'critical' | 'success' | 'partial' | 'failure'`), a numeric total in D&D 5e, a hope/fear determination in Daggerheart.
+
+Every game subpath re-exports `SchemaError`, `GameRollResult`, and `RollRecord`. Import `ValidationError` from `@randsum/roller` if you need to catch range errors.
+
+## Error handling
+
+Game `roll()` functions can throw two types of errors:
+
+- **`ValidationError`** (from `@randsum/roller`) — for numeric validation like out-of-range values
+- **`SchemaError`** (from `@randsum/games`) — for game-specific issues like unmatched outcome tables
+
+<CodeExample code={`import { roll, SchemaError } from '@randsum/games/blades'
+import { ValidationError } from '@randsum/roller'
+
+try {
+  roll(5) // Rating must be 0-4
+} catch (e) {
+  if (e instanceof ValidationError) {
+    // Numeric input out of range
+    console.error(e.message)
+  } else if (e instanceof SchemaError) {
+    // Game-specific error (e.g., no matching outcome)
+    console.error(e.code, e.message)
+  }
+}`} />
+
+| Error | Code | When |
+|---|---|---|
+| `ValidationError` | `VALIDATION_ERROR` | Numeric input out of range or not finite |
+| `SchemaError` | `INVALID_INPUT_TYPE` | Input value is wrong type |
+| `SchemaError` | `NO_TABLE_MATCH` | Roll total doesn't match any outcome tier |
+| `SchemaError` | `INPUT_NOT_FOUND` | Required input field is missing |
+
+## What's next
+
+- **[Games Introduction](/games/introduction/)** — overview of all supported game systems
+- **[Blades in the Dark](/games/blades/)** — action rolls, position, and effect
+- **[D&D 5e](/games/fifth/)** — ability checks, attacks, and saving throws
+- **[Schema Overview](/games/schema/overview/)** — how game packages are generated from JSON specs

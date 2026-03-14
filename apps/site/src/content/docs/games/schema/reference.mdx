@@ -1,6 +1,378 @@
 ---
 title: Schema Reference
-description: Field-by-field documentation for .randsum.json game specs.
+description: Field-by-field documentation for .randsum.json game specs. Covers metadata, pools, tables, outcomes, inputs, dice, modifiers, resolve, conditionals, and details.
 ---
 
-Content coming soon.
+import CodeExample from '../../../../components/live-repl/CodeExample.astro'
+import { Aside } from '@astrojs/starlight/components'
+
+Every `.randsum.json` spec conforms to the JSON Schema at `https://randsum.dev/schemas/v1/randsum.json` (referenced via `$schema`). This page documents every field.
+
+## Top-level fields
+
+<CodeExample lang="json" code={`{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Blades in the Dark",
+  "shortcode": "blades",
+  "version": "1.0.0",
+  "game_url": "https://bladesinthedark.com",
+  "srd_url": "https://bladesinthedark.com/basics"
+}`} />
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `$schema` | `string` | Yes | JSON Schema URL for validation |
+| `name` | `string` | Yes | Human-readable game name |
+| `shortcode` | `string` | Yes | Package identifier — used for subpath exports (`@randsum/games/{shortcode}`) and generated filenames |
+| `version` | `string` | Yes | Spec version (semver) |
+| `game_url` | `string` | No | Official game website |
+| `srd_url` | `string` | No | System reference document URL |
+
+## `pools`
+
+Named dice pool definitions. Each pool describes a type of die used by the game.
+
+<CodeExample lang="json" code={`"pools": {
+  "actionDice": { "sides": 6 },
+  "hope": { "sides": 12 },
+  "fear": { "sides": 12 }
+}`} />
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `sides` | `number` | Yes | Number of sides on the die |
+
+Pools are referenced elsewhere in the spec via `{ "$ref": "#/pools/{poolName}" }`.
+
+## `tables`
+
+Lookup tables that map numeric results to string outcomes. Each table has an array of `ranges`.
+
+<CodeExample lang="json" code={`"tables": {
+  "coreMechanic": {
+    "ranges": [
+      {
+        "poolCondition": { "countWhere": { "operator": "=", "value": 6 }, "atLeast": 2 },
+        "result": "critical"
+      },
+      { "exact": 6, "result": "success" },
+      { "min": 4, "max": 5, "result": "partial" },
+      { "min": 1, "max": 3, "result": "failure" }
+    ]
+  }
+}`} />
+
+### Range entries
+
+Each entry in the `ranges` array matches a roll total (or pool condition) to a result string. Ranges are evaluated in order — the first match wins.
+
+| Field | Type | Description |
+|---|---|---|
+| `result` | `string` | The outcome string returned when this range matches |
+| `exact` | `number` | Matches when the total equals this value |
+| `min` | `number` | Matches when the total is >= this value (used with `max`) |
+| `max` | `number` | Matches when the total is <= this value (used with `min`) |
+| `poolCondition` | `object` | Matches based on individual die values instead of the total |
+
+### `poolCondition`
+
+Inspects the raw die values before modifiers, not the total. Used for mechanics like Blades criticals (two or more 6s).
+
+<CodeExample lang="json" code={`"poolCondition": {
+  "countWhere": { "operator": "=", "value": 6 },
+  "atLeast": 2
+}`} />
+
+| Field | Type | Description |
+|---|---|---|
+| `countWhere` | `object` | Condition to test each die: `{ "operator": "=" \| ">" \| "<" \| ">=" \| "<=", "value": number }` |
+| `atLeast` | `number` | Minimum number of dice that must satisfy `countWhere` |
+
+<Aside type="tip">
+  Pool conditions are checked before range conditions. In Blades, the `poolCondition` for critical (two 6s) is listed first and takes priority over the `exact: 6` success entry.
+</Aside>
+
+## `outcomes`
+
+Named outcome definitions that can be referenced by `$ref`. An outcome either delegates to a table or defines its own inline ranges.
+
+<CodeExample lang="json" code={`"outcomes": {
+  "coreMechanicOutcome": { "tableLookup": { "$ref": "#/tables/coreMechanic" } },
+  "desperateActionOutcome": {
+    "ranges": [
+      { "exact": 6, "result": "success" },
+      { "min": 4, "max": 5, "result": "partial" },
+      { "min": 1, "max": 3, "result": "failure" }
+    ]
+  }
+}`} />
+
+| Field | Type | Description |
+|---|---|---|
+| `tableLookup` | `{ "$ref": string }` | Reference to a named table |
+| `ranges` | `array` | Inline range entries (same format as `tables` ranges) |
+
+## `roll`
+
+The core of the spec. Defines inputs, dice configuration, modifiers, resolution, outcome determination, and conditional overrides.
+
+### `roll.inputs`
+
+Defines what the caller passes to the game's `roll()` function. Each key becomes a property on the input object (or a positional argument for single-input games).
+
+<CodeExample lang="json" code={`"inputs": {
+  "rating": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 4,
+    "default": 1,
+    "description": "Action rating (0-4)"
+  },
+  "rollingWith": {
+    "type": "string",
+    "enum": ["Advantage", "Disadvantage"],
+    "optional": true
+  },
+  "crit": {
+    "type": "boolean",
+    "optional": true,
+    "description": "When true, check for natural 1 and natural 20"
+  }
+}`} />
+
+| Field | Type | Description |
+|---|---|---|
+| `type` | `"integer"` \| `"string"` \| `"boolean"` | Input value type |
+| `minimum` | `number` | Minimum value (integer inputs only) |
+| `maximum` | `number` | Maximum value (integer inputs only) |
+| `default` | `any` | Default value when the input is omitted |
+| `optional` | `boolean` | Whether the input can be omitted (no default needed) |
+| `enum` | `string[]` | Allowed values (string inputs only) |
+| `description` | `string` | Human-readable description |
+
+Codegen produces `validateRange()` and `validateFinite()` calls for integer inputs with `minimum`/`maximum`, and enum validation for string inputs with `enum`.
+
+### `roll.dice`
+
+Configures the dice to roll. For single-pool games.
+
+<CodeExample lang="json" code={`"dice": {
+  "pool": { "$ref": "#/pools/actionDice" },
+  "quantity": { "$input": "rating" }
+}`} />
+
+| Field | Type | Description |
+|---|---|---|
+| `pool` | `object` | Either `{ "$ref": "#/pools/{name}" }` or inline `{ "sides": number }` |
+| `quantity` | `number` \| `{ "$input": string }` | Number of dice, or dynamic from an input value |
+
+### `roll.dicePools`
+
+For multi-pool games (e.g., Daggerheart's hope/fear dice). Each key names a pool that can be referenced in `resolve` and `details`.
+
+<CodeExample lang="json" code={`"dicePools": {
+  "hope": { "pool": { "sides": { "$input": "amplifyHope", "ifTrue": 20, "ifFalse": 12 } } },
+  "fear": { "pool": { "sides": { "$input": "amplifyFear", "ifTrue": 20, "ifFalse": 12 } } }
+}`} />
+
+Dynamic sides use `{ "$input": string, "ifTrue": number, "ifFalse": number }` for boolean-conditional values.
+
+### `roll.conditionalPools`
+
+Pools that are only rolled when a condition is met. Used for Daggerheart's advantage/disadvantage extra die.
+
+<CodeExample lang="json" code={`"conditionalPools": {
+  "advantage": {
+    "condition": { "input": "rollingWith", "operator": "=", "value": "Advantage" },
+    "pool": { "sides": 6 },
+    "arithmetic": "add"
+  }
+}`} />
+
+| Field | Type | Description |
+|---|---|---|
+| `condition` | `object` | When to include this pool (same format as `when` conditions) |
+| `pool` | `object` | Die definition (`{ "sides": number }`) |
+| `arithmetic` | `"add"` \| `"subtract"` | How to combine this pool's result with the total |
+
+### `roll.modify`
+
+Array of modifier operations applied to the dice. Modifiers run in the order specified.
+
+<CodeExample lang="json" code={`"modify": [
+  { "keepHighest": 1 },
+  { "add": { "$input": "modifier" } }
+]`} />
+
+Available modifiers:
+
+| Modifier | Value | Description |
+|---|---|---|
+| `keepHighest` | `number` | Keep the N highest dice |
+| `keepLowest` | `number` | Keep the N lowest dice |
+| `add` | `number` \| `{ "$input": string }` | Add to the total |
+
+The `{ "$input": string }` form reads the value from a named input at runtime.
+
+### `roll.resolve`
+
+How the roll total is determined.
+
+| Value | Description |
+|---|---|
+| `"sum"` | Sum all dice values after modifiers (most games) |
+| `{ "comparePoolHighest": ... }` | Compare highest values across named pools (Daggerheart) |
+| `{ "remoteTableLookup": ... }` | Look up results from an external table (Salvage Union) |
+
+#### `comparePoolHighest`
+
+<CodeExample lang="json" code={`"resolve": {
+  "comparePoolHighest": {
+    "pools": ["hope", "fear"],
+    "ties": "critical hope",
+    "outcomes": { "hope": "hope", "fear": "fear" }
+  }
+}`} />
+
+| Field | Type | Description |
+|---|---|---|
+| `pools` | `string[]` | Named pools to compare |
+| `ties` | `string` | Result string when pools tie |
+| `outcomes` | `object` | Maps winning pool name to result string |
+
+#### `remoteTableLookup`
+
+Tables are fetched at **build time** and baked into the generated code. No network calls at runtime.
+
+<CodeExample lang="json" code={`"resolve": {
+  "remoteTableLookup": {
+    "url": "https://salvageunion.io/schema/roll-tables.json",
+    "find": {
+      "field": "name",
+      "input": "tableName",
+      "errorMessage": "Invalid table name: \\"\${value}\\""
+    },
+    "tableField": "table",
+    "resultMapping": {
+      "key": { "$lookupResult": "key" },
+      "label": { "$lookupResult": "result.label", "fallback": { "$lookupResult": "key" } },
+      "description": { "$lookupResult": "result.value" },
+      "tableName": { "$input": "tableName" },
+      "table": { "$foundTable": "table" },
+      "roll": { "expr": "total" }
+    }
+  }
+}`} />
+
+### `roll.postResolveModifiers`
+
+Modifiers applied after resolution. Used when the resolve step produces a non-sum result (e.g., Daggerheart applies the stat modifier after comparing hope/fear pools).
+
+<CodeExample lang="json" code={`"postResolveModifiers": [{ "add": { "$input": "modifier" } }]`} />
+
+### `roll.outcome`
+
+Determines the string outcome from the numeric total. Either a `$ref` to a named outcome or inline ranges.
+
+<CodeExample lang="json" code={`// Reference a named outcome
+"outcome": { "$ref": "#/outcomes/coreMechanicOutcome" }
+
+// Inline ranges
+"outcome": {
+  "ranges": [
+    { "min": 10, "max": 27, "result": "strong_hit" },
+    { "min": 7, "max": 9, "result": "weak_hit" },
+    { "min": -11, "max": 6, "result": "miss" }
+  ]
+}`} />
+
+Games without an `outcome` field return a numeric `result` (like D&D 5e).
+
+### `roll.details`
+
+Additional structured data attached to the `GameRollResult.details` field. Each key becomes a property on the details object.
+
+<CodeExample lang="json" code={`"details": {
+  "criticals": {
+    "when": { "input": "crit" },
+    "value": {
+      "isNatural1": {
+        "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 1 }
+      },
+      "isNatural20": {
+        "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 20 }
+      }
+    }
+  }
+}`} />
+
+Detail values can be:
+
+| Form | Description |
+|---|---|
+| `{ "$input": string }` | Value from a named input |
+| `{ "$input": string, "default": any }` | Input value with a default |
+| `{ "$pool": string, "field": "total" }` | Total from a named pool |
+| `{ "$conditionalPool": string, "field": "total" }` | Total from a conditional pool |
+| `{ "$dieCheck": object }` | Check a specific die value |
+| `{ "expr": string }` | Expression reference (e.g., `"diceTotal"`, `"total"`) |
+| `{ "when": object, "value": object }` | Conditional detail — only present when input is truthy |
+
+#### `$dieCheck`
+
+Inspects a specific die in the roll results.
+
+| Field | Type | Description |
+|---|---|---|
+| `pool` | `number` | Pool index (0-based) |
+| `field` | `"final"` \| `"initial"` | Check the post-modifier or pre-modifier value |
+| `die` | `number` | Die index within the pool (0-based) |
+| `operator` | `"="` \| `">"` \| `"<"` \| `">="` \| `"<="` | Comparison operator |
+| `value` | `number` | Value to compare against |
+
+### `roll.when`
+
+Conditional overrides that change the roll behavior based on input values. Each entry has a `condition` and an `override` that replaces specific fields.
+
+<CodeExample lang="json" code={`"when": [
+  {
+    "condition": { "input": "rating", "operator": "=", "value": 0 },
+    "override": {
+      "dice": { "pool": { "$ref": "#/pools/actionDice" }, "quantity": 2 },
+      "modify": [{ "keepLowest": 1 }],
+      "outcome": { "$ref": "#/outcomes/desperateActionOutcome" }
+    }
+  }
+]`} />
+
+#### Condition
+
+| Field | Type | Description |
+|---|---|---|
+| `input` | `string` | Input field to check |
+| `operator` | `"="` \| `"!="` \| `">"` \| `"<"` \| `">="` \| `"<="` | Comparison operator |
+| `value` | `any` | Value to compare against |
+
+#### Override
+
+An override can replace any of `dice`, `dicePools`, `modify`, `resolve`, or `outcome`. Only the fields specified are overridden — unmentioned fields keep their default values.
+
+When multiple `when` entries match, they are evaluated in order and the first match is used.
+
+## `$ref` resolution
+
+Specs use JSON Pointer-style references (`$ref`) to avoid duplication. References always point within the same spec file using the `#/` prefix.
+
+<CodeExample lang="json" code={`{ "$ref": "#/pools/actionDice" }     // resolves to pools.actionDice
+{ "$ref": "#/tables/coreMechanic" }   // resolves to tables.coreMechanic
+{ "$ref": "#/outcomes/coreMechanicOutcome" } // resolves to outcomes.coreMechanicOutcome`} />
+
+## Complete example
+
+For a complete, working spec, see the [Blades in the Dark source](https://github.com/RANDSUM/randsum/blob/main/packages/games/blades.randsum.json) or any other game spec in the `packages/games/` directory.
+
+## Related
+
+- **[Schema Overview](/games/schema/overview/)** — philosophy and codegen pipeline
+- **[Using loadSpec()](/games/schema/using-loadspec/)** — load specs at runtime
+- **[Contributing a Game](/games/schema/contributing-a-game/)** — write and submit a new spec

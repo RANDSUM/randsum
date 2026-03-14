@@ -1,6 +1,177 @@
 ---
 title: Using loadSpec()
-description: Load and execute game specs at runtime without code generation.
+description: Load and execute game specs at runtime without code generation. Dynamic game support for custom .randsum.json specs.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Games", "item": "https://randsum.dev/games/introduction/" },
+          { "@type": "ListItem", "position": 3, "name": "Schema", "item": "https://randsum.dev/games/schema/overview/" },
+          { "@type": "ListItem", "position": 4, "name": "Using loadSpec()", "item": "https://randsum.dev/games/schema/using-loadspec/" }
+        ]
+      }
 ---
 
-Content coming soon.
+import { Aside } from '@astrojs/starlight/components'
+import CodeExample from '../../../../components/live-repl/CodeExample.astro'
+
+Load and execute game specs at runtime without code generation. Use `loadSpec()` when you want to support custom or user-provided `.randsum.json` specs that aren't part of the pre-generated game packages.
+
+## Basic usage
+
+<CodeExample code={`import { loadSpec } from '@randsum/games/schema'
+
+// Load from a spec object
+const spec = {
+  name: 'Simple d20',
+  shortcode: 'simple',
+  pools: { main: { sides: 20 } },
+  tables: {
+    outcome: {
+      ranges: [
+        { min: 15, max: 20, result: 'success' },
+        { min: 8, max: 14, result: 'partial' },
+        { min: 1, max: 7, result: 'failure' }
+      ]
+    }
+  },
+  outcomes: {
+    mainOutcome: { tableLookup: { "$ref": "#/tables/outcome" } }
+  },
+  roll: {
+    dice: { pool: { "$ref": "#/pools/main" }, quantity: 1 },
+    resolve: 'sum',
+    outcome: { "$ref": "#/outcomes/mainOutcome" }
+  }
+}
+
+const game = loadSpec(spec)
+const result = game.roll()
+console.log(result.result) // 'success' | 'partial' | 'failure'
+console.log(result.total)  // 1-20`} />
+
+## Load from a file path
+
+Pass a file path string to read and parse a `.randsum.json` file from disk:
+
+<CodeExample code={`import { loadSpec } from '@randsum/games/schema'
+
+const game = loadSpec('./my-game.randsum.json')
+const result = game.roll()
+console.log(result.result)`} />
+
+## Async loading
+
+`loadSpecAsync` supports file paths, HTTP URLs, and spec objects. Use this for loading specs from remote sources or when you need non-blocking I/O:
+
+<CodeExample code={`import { loadSpecAsync } from '@randsum/games/schema'
+
+// From a URL
+const game = await loadSpecAsync('https://example.com/my-game.randsum.json')
+const result = game.roll()
+
+// From a local file (async)
+const local = await loadSpecAsync('./my-game.randsum.json')
+
+// From a spec object (same as loadSpec but async)
+const inline = await loadSpecAsync(specObject)`} />
+
+## Validation
+
+Validate a spec before loading it. `validateSpec` returns a structured result:
+
+<CodeExample code={`import { validateSpec } from '@randsum/games/schema'
+
+const result = validateSpec(unknownData)
+
+if (!result.valid) {
+  for (const error of result.errors) {
+    console.error(error.path, error.message)
+  }
+} else {
+  console.log('Spec is valid')
+}`} />
+
+<Aside type="tip">
+`loadSpec` and `loadSpecAsync` validate internally — they throw `SchemaError` with code `'INVALID_SPEC'` if the spec is invalid. Use `validateSpec` separately when you want to show validation errors to users without throwing.
+</Aside>
+
+## Resolving external references
+
+If your spec contains `$ref` entries pointing to external URLs, resolve them before loading:
+
+<CodeExample code={`import { resolveExternalRefs, loadSpec } from '@randsum/games/schema'
+
+const spec = JSON.parse(rawJson)
+const resolved = await resolveExternalRefs(spec)
+const game = loadSpec(resolved)`} />
+
+`resolveExternalRefs` fetches any external `$ref` URLs and inlines the referenced data into the spec object.
+
+## `lookupByRange`
+
+A utility for looking up values in range-based tables. Used internally by the pipeline and available for custom integrations:
+
+<CodeExample code={`import { lookupByRange } from '@randsum/games/schema'
+
+const table = {
+  '15-20': { label: 'Success', value: 'success' },
+  '8-14': { label: 'Partial', value: 'partial' },
+  '1-7': { label: 'Failure', value: 'failure' }
+}
+
+const match = lookupByRange(table, 18)
+console.log(match.key)            // '15-20'
+console.log(match.result.label)   // 'Success'`} />
+
+## `LoadedSpec` type
+
+`loadSpec` returns a `LoadedSpec` — a record where each key is a roll definition name from the spec and each value is a callable roll function:
+
+<CodeExample code={`type LoadedSpec = Readonly<Record<
+  string,
+  (input?: RollInput) => GameRollResult<
+    string | number,
+    Readonly<Record<string, unknown>> | undefined,
+    RollRecord
+  >
+>>`} />
+
+For the built-in games, there's typically one roll definition (e.g., `roll`). Custom specs can define multiple roll definitions, each accessible as a separate function on the loaded spec.
+
+## When to use `loadSpec` vs pre-generated imports
+
+| Use case | Approach |
+|---|---|
+| Supported game (D&D 5e, Blades, etc.) | `import { roll } from '@randsum/games/fifth'` |
+| Custom game spec at build time | Run codegen, import the generated subpath |
+| User-provided specs at runtime | `loadSpec(userSpec)` |
+| Remote spec loading | `loadSpecAsync(url)` |
+
+Pre-generated imports are strongly typed and tree-shakeable. `loadSpec` is dynamic — the result type is generic (`string | number`) rather than game-specific union types. Use pre-generated imports when possible; use `loadSpec` when you need runtime flexibility.
+
+<Aside type="caution">
+`loadSpec` (sync) uses `readFileSync` and requires Node.js or Bun. For browser environments, use `loadSpecAsync` with a spec object or URL.
+</Aside>
+
+## Other exports
+
+The `@randsum/games/schema` subpath also exports codegen utilities used by the build pipeline:
+
+- **`generateCode(spec)`** — generates TypeScript source from a `RandSumSpec`. Returns a `Promise<string>` containing the generated module code. Used internally during `bun run build` to produce the `.generated.ts` files for each game.
+- **`specToFilename(name)`** — converts a game name to its generated filename (e.g., `'Blades in the Dark'` → `'blades'`). Returns a `string`.
+- **`SchemaError`** — error class thrown by spec loading and pipeline functions. Has a `code` property: `'INVALID_SPEC'`, `'EXTERNAL_REF_FAILED'`, `'NO_TABLE_MATCH'`, `'REF_NOT_FOUND'`, `'INPUT_NOT_FOUND'`, `'INVALID_INPUT_TYPE'`, or `'CONDITION_TYPE_MISMATCH'`.
+
+These are primarily for contributors building the games package itself. Most consumers only need `loadSpec` or the pre-generated subpath imports.
+
+## Learn more
+
+- **[Schema Overview](/games/schema/overview/)** — how `.randsum.json` specs work
+- **[Schema Reference](/games/schema/reference/)** — field-by-field spec documentation
+- **[Contributing a Game](/games/schema/contributing-a-game/)** — add a new game to the pre-generated packages

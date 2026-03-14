@@ -1,6 +1,131 @@
 ---
 title: Introduction
-description: What is RANDSUM and how to get started with dice rolling in TypeScript.
+description: RANDSUM is a TypeScript dice engine for tabletop RPGs. Roll dice, parse notation, and integrate game-specific mechanics with a single function call.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Introduction", "item": "https://randsum.dev/welcome/introduction/" }
+        ]
+      }
 ---
 
-Content coming soon.
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+RANDSUM is a TypeScript-first dice engine for tabletop RPGs and game development.
+
+- **`@randsum/roller`** — roll dice with a single function call, apply modifiers, get typed results
+- **`@randsum/notation`** — parse and validate [Randsum Dice Notation](/notation/randsum-dice-notation/) strings independently
+- **`@randsum/games`** — game-specific roll functions for D&D 5e, Blades in the Dark, PbtA, and more
+
+## Your first roll
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+const result = roll(20)
+console.log(result.total) // => a number between 1 and 20`} />
+
+<RollerPlayground defaultNotation="1d20" client:only="react" />
+
+`roll()` accepts numbers, [notation strings](/notation/randsum-dice-notation/), or options objects — mix and match freely:
+
+<CodeExample code={`// Notation string — 4d6, drop the lowest
+const abilityScore = roll('4d6L')
+
+// Options object — same thing
+const abilityScore2 = roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { drop: { lowest: 1 } }
+})
+
+// Multiple arguments — combine rolls into one total
+const attackDamage = roll('1d20+5', '2d6')`} />
+
+## Install the one you need
+
+<Tabs>
+  <TabItem label="Roller">
+    The core dice engine. Works everywhere.
+    <Tabs>
+      <TabItem label="bun">
+        <CodeExample lang="bash" code={`bun add @randsum/roller`} />
+      </TabItem>
+      <TabItem label="npm">
+        <CodeExample lang="bash" code={`npm install @randsum/roller`} />
+      </TabItem>
+      <TabItem label="yarn">
+        <CodeExample lang="bash" code={`yarn add @randsum/roller`} />
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem label="Games">
+    Game-specific mechanics. Installs `@randsum/roller` automatically.
+    <Tabs>
+      <TabItem label="bun">
+        <CodeExample lang="bash" code={`bun add @randsum/games`} />
+      </TabItem>
+      <TabItem label="npm">
+        <CodeExample lang="bash" code={`npm install @randsum/games`} />
+      </TabItem>
+      <TabItem label="yarn">
+        <CodeExample lang="bash" code={`yarn add @randsum/games`} />
+      </TabItem>
+    </Tabs>
+    Then import from the subpath for your game:
+    <CodeExample code={`// Pick one:
+import { roll } from '@randsum/games/fifth'   // D&D 5e
+import { roll } from '@randsum/games/blades'  // Blades in the Dark
+import { roll } from '@randsum/games/pbta'    // Powered by the Apocalypse`} />
+  </TabItem>
+  <TabItem label="Notation">
+    Parse and validate dice notation strings without the roll engine. Install this only if you don't need `roll()` — `@randsum/roller` already re-exports `validateNotation`, `isDiceNotation`, and `notation`.
+    <Tabs>
+      <TabItem label="bun">
+        <CodeExample lang="bash" code={`bun add @randsum/notation`} />
+      </TabItem>
+      <TabItem label="npm">
+        <CodeExample lang="bash" code={`npm install @randsum/notation`} />
+      </TabItem>
+      <TabItem label="yarn">
+        <CodeExample lang="bash" code={`yarn add @randsum/notation`} />
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>
+
+## Runtime support
+
+All packages ship as ESM and CJS with full type declarations. No Node.js built-ins required.
+
+| Runtime | Supported |
+|---|---|
+| Node.js 18+ | Yes |
+| Bun 1.0+ | Yes |
+| Deno | Yes |
+| Browser (ESM) | Yes |
+| Edge functions (Cloudflare, Vercel) | Yes |
+
+<Aside type="tip" title="When does roll() throw?">
+`roll()` throws on invalid input — `NotationParseError` for bad notation strings, `ValidationError` or `ModifierError` (both extending `RandsumError`) for impossible option values or unsatisfiable modifier conditions. Hardcoded notation in your source code will never throw. For user-provided strings, validate first with `validateNotation()` or `isDiceNotation()` (available from both `@randsum/roller` and `@randsum/notation`). See [Error Handling](/roller/error-handling/) for the full pattern.
+</Aside>
+
+## Where to go next
+
+- **[Roller — Getting Started](/roller/getting-started/)** — learn the `roll()` function, modifiers, and result types
+- **[Notation — Getting Started](/notation/getting-started/)** — parse and validate dice notation strings
+- **[Games — Getting Started](/games/getting-started/)** — roll with game-specific mechanics for D&D 5e, Blades, PbtA, and more
+- **[Ecosystem Overview](/welcome/ecosystem-overview/)** — how the packages fit together
+
+## Links
+
+- [GitHub Repository](https://github.com/RANDSUM/randsum)
+- [npm: @randsum/roller](https://www.npmjs.com/package/@randsum/roller)

@@ -1,6 +1,490 @@
 ---
 title: Modifiers
-description: Complete guide to dice roll modifiers — drop, keep, reroll, explode, and more.
+description: "Full TypeScript API for every RANDSUM modifier: cap, drop, keep, replace, reroll, explode, compound, penetrate, unique, count successes, and multipliers."
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Roller", "item": "https://randsum.dev/roller/introduction/" },
+          { "@type": "ListItem", "position": 3, "name": "Modifiers", "item": "https://randsum.dev/roller/modifiers/" }
+        ]
+      }
 ---
 
-Content coming soon.
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+Modifiers transform dice results after rolling. They can drop dice, reroll values, cap ranges, make dice explode, and more. Modifiers are applied in a fixed priority order to ensure consistent, predictable results.
+
+## Application order
+
+Modifiers are applied in priority order (lower number = earlier execution):
+
+| Priority | Modifier | Notation | Options key |
+|---|---|---|---|
+| 10 | Cap | C&#123;...&#125; | `cap` |
+| 20 | Drop | `H`, `L`, D&#123;...&#125; | `drop` |
+| 21 | Keep | `K`, `kl` | `keep` |
+| 30 | Replace | V&#123;...&#125; | `replace` |
+| 40 | Reroll | R&#123;...&#125; | `reroll` |
+| 50 | Explode | `!` | `explode` |
+| 51 | Compound | `!!` | `compound` |
+| 52 | Penetrate | `!p` | `penetrate` |
+| 60 | Unique | `U` | `unique` |
+| 85 | Pre-arithmetic multiply | `*N` | `multiply` |
+| 90 | Plus | `+N` | `plus` |
+| 91 | Minus | `-N` | `minus` |
+| 95 | Count successes | S&#123;...&#125; | `countSuccesses` |
+| 100 | Total multiply | `**N` | `multiplyTotal` |
+
+This means dice values are capped/constrained first, then pool size is adjusted (drop/keep), then values are replaced or rerolled, then explosive mechanics fire, and finally arithmetic is applied.
+
+## ModifierOptions interface
+
+<CodeExample code={`interface ModifierOptions {
+  cap?: ComparisonOptions
+  drop?: DropOptions
+  keep?: KeepOptions
+  replace?: ReplaceOptions | ReplaceOptions[]
+  reroll?: RerollOptions
+  unique?: boolean | UniqueOptions
+  explode?: boolean | number
+  compound?: boolean | number
+  penetrate?: boolean | number
+  countSuccesses?: SuccessCountOptions
+  multiply?: number
+  plus?: number
+  minus?: number
+  multiplyTotal?: number
+}`} />
+
+## Cap
+
+Limit roll values to a specific range. Values outside the range are clamped to the boundary.
+
+**Options key:** `cap`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d20C{>18}') // caps at 18
+roll('4d20C{<3}')      // Cap under 3 to 3
+roll('4d20C{<2,>19}')  // Cap both ends
+
+// Options object
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    cap: { greaterThan: 18 }
+  }
+})
+
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    cap: { greaterThan: 19, lessThan: 2 }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="4d20C{>18}" client:only="react" />
+
+**ComparisonOptions:**
+
+<CodeExample code={`interface ComparisonOptions {
+  greaterThan?: number
+  greaterThanOrEqual?: number
+  lessThan?: number
+  lessThanOrEqual?: number
+  exact?: number[]
+}`} />
+
+## Drop
+
+Remove dice from the result pool.
+
+**Options key:** `drop`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d6L') // 3-18
+roll('4d6L2')   // Drop lowest 2
+roll('4d6H')    // Drop highest 1
+roll('4d6H2')   // Drop highest 2
+
+// Drop by value
+roll('4d20D{>17}')   // Drop results over 17
+roll('4d20D{<5}')    // Drop results under 5
+roll('4d20D{8,12}')  // Drop exact values
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    drop: { lowest: 1 }
+  }
+})
+
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    drop: { greaterThan: 17 }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
+**DropOptions:**
+
+<CodeExample code={`interface DropOptions extends ComparisonOptions {
+  highest?: number
+  lowest?: number
+  exact?: number[]
+}`} />
+
+## Keep
+
+Keep specific dice from the result (complement of drop).
+
+**Options key:** `keep`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d6K3') // 3-18
+roll('4d6K')   // Keep highest 1
+
+// Keep lowest
+roll('4d6kl2') // Keep lowest 2
+roll('4d6kl')  // Keep lowest 1
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    keep: { highest: 3 }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="4d6K3" client:only="react" />
+
+**KeepOptions:**
+
+<CodeExample code={`interface KeepOptions {
+  highest?: number
+  lowest?: number
+}`} />
+
+:::note
+Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L`.
+:::
+
+## Replace
+
+Replace specific results with new values.
+
+**Options key:** `replace`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// Replace exact values
+roll('4d20V{8=12}')    // Replace 8s with 12s
+
+// Replace by comparison
+roll('4d20V{>17=20}')  // Replace results over 17 with 20
+roll('4d20V{<5=1}')    // Replace results under 5 with 1
+
+// Options object
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    replace: { from: 8, to: 12 }
+  }
+})
+
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    replace: { from: { greaterThan: 17 }, to: 20 }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="4d20V{8=12}" client:only="react" />
+
+**ReplaceOptions:**
+
+<CodeExample code={`interface ReplaceOptions {
+  from: number | ComparisonOptions
+  to: number
+}`} />
+
+You can pass an array of `ReplaceOptions` to perform multiple replacements.
+
+## Reroll
+
+Reroll dice matching certain conditions.
+
+**Options key:** `reroll`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d20R{<5}') // 4-20
+roll('4d20R{>17}')    // Reroll results over 17
+
+// Reroll exact values
+roll('4d20R{8,12}')   // Reroll 8s and 12s
+
+// With max attempts
+roll('4d20R{<5}3')    // Reroll under 5, max 3 attempts
+
+// Options object
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    reroll: { lessThan: 5, max: 3 }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="4d20R{<5}" client:only="react" />
+
+**RerollOptions:**
+
+<CodeExample code={`interface RerollOptions extends ComparisonOptions {
+  exact?: number[]
+  max?: number
+}`} />
+
+## Explode
+
+Roll additional dice when a die shows its maximum value.
+
+**Options key:** `explode`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d20!') // Exploding d20s
+
+// Options object
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: { explode: true }
+})
+
+roll({
+  sides: 6,
+  quantity: 3,
+  modifiers: { explode: 5 }     // Max depth 5 (options only)
+})`} />
+
+<RollerPlayground defaultNotation="4d20!" client:only="react" />
+
+When a die shows its maximum value, a new die is rolled and added as a separate result. Each new maximum continues the chain.
+
+## Compound
+
+Compounding exploding dice add to the triggering die instead of creating new dice.
+
+**Options key:** `compound`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('3d6!!')    // Compound once
+roll('3d6!!5')   // Max depth 5
+roll('3d6!!0')   // Unlimited (capped at 100)
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 3,
+  modifiers: { compound: true }
+})`} />
+
+<RollerPlayground defaultNotation="3d6!!" client:only="react" />
+
+Unlike regular exploding, compound does not create new dice -- it modifies the existing die value.
+
+## Penetrate
+
+Penetrating exploding dice subtract 1 from each subsequent explosion (Hackmaster-style).
+
+**Options key:** `penetrate`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('3d6!p')    // Penetrate once
+roll('3d6!p5')   // Max depth 5
+roll('3d6!p0')   // Unlimited (capped at 100)
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 3,
+  modifiers: { penetrate: true }
+})`} />
+
+<RollerPlayground defaultNotation="3d6!p" client:only="react" />
+
+Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
+
+## Unique
+
+Force all dice in a pool to show different values.
+
+**Options key:** `unique`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d20U') // 4-80
+roll('4d20U{5,10}')  // Unique except 5s and 10s
+
+// Options object
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: { unique: true }
+})
+
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: {
+    unique: { notUnique: [5, 10] }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="4d20U" client:only="react" />
+
+**UniqueOptions:**
+
+<CodeExample code={`interface UniqueOptions {
+  notUnique: number[]
+}`} />
+
+## Pre-arithmetic multiply
+
+Multiply the dice sum before +/- arithmetic.
+
+**Options key:** `multiply`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('2d6*2+3')  // (dice sum * 2) + 3
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 2,
+  modifiers: { multiply: 2, plus: 3 }
+})`} />
+
+<RollerPlayground defaultNotation="2d6*2+3" client:only="react" />
+
+## Plus / Minus
+
+Add or subtract a fixed value from the total.
+
+**Options keys:** `plus`, `minus`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d6+5')  // Notation
+roll('2d8-2')  // Notation
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { plus: 5 }
+})
+
+roll({
+  sides: 8,
+  quantity: 2,
+  modifiers: { minus: 2 }
+})`} />
+
+<RollerPlayground defaultNotation="4d6+5" client:only="react" />
+
+<RollerPlayground defaultNotation="2d8-2" client:only="react" />
+
+## Count successes
+
+Count dice meeting a threshold instead of summing. Used in dice pool systems (World of Darkness, Shadowrun).
+
+**Options key:** `countSuccesses`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('5d10S{7}') // 0-5
+roll('5d10S{7,1}')  // Successes >= 7, minus botches <= 1
+
+// Options object
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countSuccesses: { threshold: 7, botchThreshold: 1 }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="5d10S{7}" client:only="react" />
+
+**SuccessCountOptions:**
+
+<CodeExample code={`interface SuccessCountOptions {
+  threshold: number
+  botchThreshold?: number
+}`} />
+
+## Total multiply
+
+Multiply the entire final total after all other modifiers.
+
+**Options key:** `multiplyTotal`
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('2d6+3**2')     // (dice + 3) * 2
+roll('4d6L+2**3')    // ((drop lowest) + 2) * 3
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 2,
+  modifiers: { plus: 3, multiplyTotal: 2 }
+})`} />
+
+<RollerPlayground defaultNotation="2d6+3**2" client:only="react" />
+
+## Order of operations
+
+The full calculation order is:
+
+1. Roll all dice
+2. Apply cap (clamp values)
+3. Apply drop/keep (adjust pool)
+4. Apply replace (swap values)
+5. Apply reroll (re-roll matching dice)
+6. Apply explode/compound/penetrate (add dice or modify values)
+7. Apply unique (ensure no duplicates)
+8. Sum remaining dice
+9. Apply pre-arithmetic multiply (`*`)
+10. Apply plus/minus (`+`/`-`)
+11. Count successes if applicable (S&#123;...&#125;)
+12. Apply total multiply (`**`)
+
+<RollerPlayground defaultNotation="4d6K3!*2+3**2" client:only="react" />
+
+See the full [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for the complete syntax reference.

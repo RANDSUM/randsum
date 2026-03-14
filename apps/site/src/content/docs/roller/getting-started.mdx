@@ -1,6 +1,120 @@
 ---
 title: Getting Started with Roller
-description: Install @randsum/roller and roll your first die.
+description: Install @randsum/roller and roll your first die in under a minute.
 ---
 
-Content coming soon.
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+Install `@randsum/roller` and roll your first die in under a minute.
+
+## Install
+
+<Tabs>
+  <TabItem label="bun">
+    <CodeExample lang="bash" code={`bun add @randsum/roller`} />
+  </TabItem>
+  <TabItem label="npm">
+    <CodeExample lang="bash" code={`npm install @randsum/roller`} />
+  </TabItem>
+  <TabItem label="yarn">
+    <CodeExample lang="bash" code={`yarn add @randsum/roller`} />
+  </TabItem>
+</Tabs>
+
+## Your first roll
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+const result = roll(20)
+console.log(result.total) // a number between 1 and 20`} />
+
+Pass a number to `roll()` and it rolls one die with that many sides. The return value is a typed result object with a `total` property.
+
+<RollerPlayground defaultNotation="1d20" client:only="react" />
+
+## Notation strings
+
+RANDSUM supports standard dice notation. The format is `NdS` -- **N** dice with **S** sides.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('2d6')      // two six-sided dice
+roll('4d8')      // four eight-sided dice
+roll('1d20+5')   // one d20, add 5 to the total
+roll('4d6L')     // four d6, drop the lowest`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
+Try changing the notation in the playground above. See the [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for the full syntax.
+
+## Options object
+
+Every notation string has an equivalent options object. Use this when you need programmatic control:
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// These are equivalent:
+roll('4d6L')
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { drop: { lowest: 1 } }
+})`} />
+
+See [Roll Options](/roller/roll-options/) for the full options API.
+
+## Result object
+
+`roll()` returns a `RollerRollResult` with three key properties:
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+const result = roll('4d6L+2')
+
+result.total   // Final total after all modifiers
+result.result  // String representations of die values, e.g. ['3', '5']
+result.rolls   // Array of RollRecord objects with full history`} />
+
+Each entry in `result.rolls` is a `RollRecord` containing the original rolls, modifier logs, and final values for that dice group.
+
+<RollerPlayground defaultNotation="4d6L+2" client:only="react" />
+
+## Multiple groups
+
+Roll different dice types in a single call. The `total` sums across all groups:
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// Attack + damage in one call
+const result = roll('1d20+5', '2d6+3')
+console.log(result.total)  // combined total
+console.log(result.rolls)  // two RollRecord entries`} />
+
+## Testing your rolls
+
+Inject a custom random function to make rolls deterministic in tests:
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+function seededRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s * 1664525 + 1013904223) % 2 ** 32
+    return s / 2 ** 32
+  }
+}
+
+// Pass { randomFn } as the last argument
+const result = roll('2d6', { randomFn: seededRandom(42) })
+// Same seed always produces the same total`} />
+
+The `randomFn` must return a number in `[0, 1)` -- the same contract as `Math.random()`. Pass it as the last argument in a `RollConfig` object.
+
+## What's next
+
+- [Roll Options](/roller/roll-options/) -- all options object fields and argument types
+- [Modifiers](/roller/modifiers/) -- drop, keep, reroll, explode, cap, and more
+- [Error Handling](/roller/error-handling/) -- how `roll()` validates input and what errors to expect
+- [API Reference](/roller/api-reference/) -- complete list of exports from `@randsum/roller`

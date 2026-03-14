@@ -67,7 +67,7 @@ const result = roll({
 
 ## API
 
-### `roll(input?: { modifier?: number, rollingWith?: 'Advantage' | 'Disadvantage' })`
+### `roll(input?: { modifier?, rollingWith?, crit? })`
 
 **Input:**
 
@@ -75,14 +75,22 @@ const result = roll({
 |---|---|---|
 | `modifier` | `number` (optional) | Ability/skill modifier (-30 to +30) |
 | `rollingWith` | `'Advantage' \| 'Disadvantage' \| undefined` | Roll 2d20, keep highest or lowest |
+| `crit` | `boolean` (optional) | When set, enables natural 1/20 detection in `details.criticals` |
 
-**Returns:** `GameRollResult` with:
+**Returns:** `GameRollResult<FifthRollResult, FifthRollDetails>` with:
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `number` | Final total (d20 + modifier) |
+| `result` | `FifthRollResult` (`number`) | Final total (d20 + modifier) |
 | `total` | `number` | Same as result |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
+| `details` | `FifthRollDetails` | Contains `criticals` (see below) |
+
+**`FifthRollDetails`:**
+
+| Property | Type | Description |
+|---|---|---|
+| `criticals` | `{ isNatural1: boolean, isNatural20: boolean } \| undefined` | Present when `crit` input is set |
 
 ## Outcomes
 
@@ -108,29 +116,50 @@ roll({ modifier: -1, rollingWith: 'Disadvantage' })
 // Perception check with +3 Wisdom
 roll({ modifier: 3 })`} />
 
-:::tip
-For D&D ability score generation (4d6 drop lowest), use the core roller directly: `roll('4d6L')` from `@randsum/roller`.
-:::
+## Ability score generation
+
+The `@randsum/games/fifth` package handles d20 action rolls. For ability score generation (4d6, drop lowest), use the core roller directly:
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// Generate one ability score: 4d6, drop lowest
+const score = roll('4d6L')
+console.log(score.total) // 3-18
+
+// Generate all six scores
+const scores = Array.from({ length: 6 }, () => roll('4d6L').total)
+console.log(scores) // e.g. [14, 12, 15, 8, 10, 13]`} />
 
 ## Error handling
 
-Invalid inputs throw a `SchemaError` with a descriptive `code`:
+Game `roll()` can throw two types of errors:
+
+- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `modifier: Infinity`)
+- **`SchemaError`** (from `@randsum/games/fifth`) -- game-specific issues like invalid `rollingWith` values
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/fifth'
+import { ValidationError } from '@randsum/roller'
 
 try {
   roll({ modifier: Infinity })
 } catch (error) {
-  if (error instanceof SchemaError) {
+  if (error instanceof ValidationError) {
+    // Non-finite modifier value
+    console.log(error.code)    // 'VALIDATION_ERROR'
+  } else if (error instanceof SchemaError) {
+    // e.g., invalid rollingWith enum value
     console.log(error.code)    // 'INVALID_INPUT_TYPE'
-    console.log(error.message) // describes what went wrong
   }
 }`} />
 
 ## Types
 
-<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/games/fifth'
+<CodeExample code={`import type { FifthRollResult, FifthRollDetails, GameRollResult, RollRecord } from '@randsum/games/fifth'
 import { SchemaError } from '@randsum/games/fifth'`} />
+
+## Schema
+
+This game is powered by a `.randsum.json` spec that defines the d20 resolution, advantage/disadvantage, and modifier validation. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
 
 ## Links
 

@@ -1,6 +1,179 @@
 ---
 title: Error Handling
-description: How roll() reports errors and how to validate input before rolling.
+description: How roll() reports errors, the RandsumError hierarchy, input validation with validateNotation and isDiceNotation, and common TypeScript issues.
 ---
 
-Content coming soon.
+import { Aside } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+`roll()` throws on invalid input. Hardcoded notation like `roll('4d6L')` never throws in practice — errors only occur when input comes from outside your control.
+
+## When `roll()` throws
+
+`roll()` throws when given invalid input:
+
+- **Invalid notation** — throws `NotationParseError` (extends `Error`, not `RandsumError`) for syntactically invalid strings (`'4dX'`, `'not dice'`)
+- **Invalid options** — throws `ValidationError` (extends `RandsumError`) for bad option values (`sides: 0`, `quantity: -1`)
+- **Modifier errors** — throws `ModifierError` (extends `RandsumError`) for out-of-range modifier arguments
+
+Valid-but-unusual inputs (like `roll(1)` for a single-sided die) are not errors.
+
+## Error hierarchy
+
+`roll()` can throw two families of errors. `RandsumError` and its subclasses come from `@randsum/roller`. `NotationParseError` extends `Error` directly and comes from `@randsum/notation` (re-exported by roller).
+
+| Class | Extends | Code | When |
+|---|---|---|---|
+| `RandsumError` | `Error` | varies | Base class for roller errors |
+| `ValidationError` | `RandsumError` | `VALIDATION_ERROR` | Options object has invalid values |
+| `ModifierError` | `RandsumError` | `MODIFIER_ERROR` | A modifier receives bad arguments |
+| `RollError` | `RandsumError` | `ROLL_ERROR` | General roll execution failure |
+| `NotationParseError` | `Error` | `INVALID_NOTATION` | Notation string fails to parse. Includes a `suggestion` property when a fix can be inferred. |
+
+<CodeExample code={`import { RandsumError, NotationParseError } from '@randsum/roller'
+
+try {
+  const result = roll(userInput)
+} catch (e) {
+  if (e instanceof NotationParseError) {
+    // e.suggestion may contain a corrected notation string
+    console.error(e.message, e.suggestion)
+  } else if (e instanceof RandsumError) {
+    console.error(e.code, e.message)
+  }
+}`} />
+
+## Validate before rolling
+
+For user-facing inputs — form fields, chat commands, API parameters — validate before rolling. This avoids try/catch and gives you structured error information.
+
+### `validateNotation`
+
+Returns a structured result with either the validated notation or an error describing what failed.
+
+<CodeExample code={`import { validateNotation, roll } from '@randsum/roller'
+
+function rollUserInput(input: string) {
+  const validation = validateNotation(input)
+
+  if (!validation.valid) {
+    // validation.error.message describes what's wrong
+    return { error: validation.error.message }
+  }
+
+  // Safe to roll — validation.argument is typed as DiceNotation
+  const result = roll(validation.argument)
+  return { total: result.total }
+}`} />
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
+### `isDiceNotation`
+
+Type guard that narrows a string to `DiceNotation`. Simpler than `validateNotation` but gives no error details.
+
+<CodeExample code={`import { isDiceNotation, roll } from '@randsum/roller'
+
+function rollUserInput(input: string) {
+  if (!isDiceNotation(input)) {
+    return { error: 'Not valid dice notation' }
+  }
+
+  // input is now typed as DiceNotation
+  const result = roll(input)
+  return { total: result.total }
+}
+
+console.log(rollUserInput('4d6L'))
+console.log(rollUserInput('not-dice'))`} />
+
+`isDiceNotation` trims whitespace and strips internal spaces before testing. Common causes of false negatives:
+
+| Input | Valid? | Reason |
+|---|---|---|
+| `'4d6L'` | Yes | Standard drop-lowest |
+| `' 4d6'` | Yes | Leading/trailing whitespace is trimmed |
+| `'4d6 L'` | Yes | Internal whitespace is stripped |
+| `'4dX'` | No | Non-numeric sides |
+| `'d6'` | No | Missing quantity |
+
+<Aside type="tip">
+  `suggestNotationFix()` from `@randsum/notation` can correct common mistakes like missing quantity (`'d6'` → `'1d6'`). When `roll()` throws a `NotationParseError`, the `suggestion` property already contains the result of this function. See [Validation & Parsing](/notation/validation-and-parsing/) for details.
+</Aside>
+
+## Try/catch
+
+For cases where you need to catch errors from `roll()` directly:
+
+<CodeExample code={`import { roll, RandsumError, NotationParseError } from '@randsum/roller'
+
+try {
+  const result = roll(userProvidedNotation)
+  console.log(result.total)
+} catch (e) {
+  if (e instanceof NotationParseError) {
+    // NotationParseError extends Error directly, not RandsumError
+    console.error(e.message, e.suggestion)
+  } else if (e instanceof RandsumError) {
+    console.error(e.code, e.message)
+  } else {
+    throw e // Re-throw unexpected errors
+  }
+}`} />
+
+## Common TypeScript issues
+
+### `exactOptionalPropertyTypes`
+
+RANDSUM uses `exactOptionalPropertyTypes` in strict mode. If your `tsconfig.json` does not have this enabled, assignments to `ModifierOptions` may fail when you set optional fields to `undefined`.
+
+<CodeExample code={`import type { ModifierOptions } from '@randsum/roller'
+
+// This fails under exactOptionalPropertyTypes:
+const mods: ModifierOptions = {
+  drop: { lowest: undefined } // 'undefined' is not assignable to 'number'
+}
+
+// Correct — omit the key entirely:
+const mods: ModifierOptions = {
+  drop: { lowest: 1 }
+}`} />
+
+### Import types directly
+
+Always import types from `@randsum/roller` rather than constructing them inline without annotations. This lets TypeScript catch shape mismatches at the point of definition.
+
+<CodeExample code={`import type { RollOptions, ModifierOptions } from '@randsum/roller'
+
+const options: RollOptions = {
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    drop: { lowest: 1 }
+  }
+}`} />
+
+## Modifier execution order
+
+If notation parses but gives unexpected results, modifier execution order is usually the cause. Modifiers run in a fixed priority order — lower number means earlier execution. For example, `cap` (priority 10) runs before `drop` (priority 20).
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// cap runs first, then drop
+const result = roll('4d6C{<2}L')
+console.log(result.rolls)  // Inspect per-group roll details
+console.log(result.total)`} />
+
+See the [Modifiers](/roller/modifiers/) reference for the complete execution order.
+
+## Production checklist
+
+- **Hardcoded notation** — no error handling needed; `roll('2d6')` will never throw
+- **User-provided notation** — validate with `validateNotation()` or `isDiceNotation()` before calling `roll()`
+- **Dynamic options objects** — validate inputs before constructing options, or wrap in try/catch
+- **Game packages** — their `roll()` functions also throw on invalid input; validate at the boundary
+
+## Still stuck?
+
+[Open an issue on GitHub](https://github.com/RANDSUM/randsum/issues) with the input you passed to `roll()`, the full error message, and your `@randsum/roller` version.
