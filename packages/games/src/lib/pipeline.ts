@@ -318,7 +318,10 @@ function validateInputs(
       !decl.enum.includes(val as string)
     ) {
       const enumList = decl.enum.map(v => `'${v}'`).join(' or ')
-      throw new Error(`Invalid ${fieldName} value: ${String(val)}. Must be ${enumList}.`)
+      throw new SchemaError(
+        'INVALID_INPUT_TYPE',
+        `Invalid ${fieldName} value: ${String(val)}. Must be ${enumList}.`
+      )
     }
   }
 }

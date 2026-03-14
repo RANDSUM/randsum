@@ -8,6 +8,7 @@
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
+  "sideEffects": false,
   "homepage": "https://randsum.dev/packages/component-library/",
   "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {

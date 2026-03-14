@@ -44,7 +44,10 @@ export async function loadSpecAsync(input: RandSumSpec | string): Promise<Loaded
     if (input.startsWith('http://') || input.startsWith('https://')) {
       const response = await fetch(input)
       if (!response.ok) {
-        throw new Error(`Failed to fetch spec: ${response.status} ${response.statusText}`)
+        throw new SchemaError(
+          'EXTERNAL_REF_FAILED',
+          `Failed to fetch spec: ${response.status} ${response.statusText}`
+        )
       }
       const parsed: unknown = await response.json()
       assertValidSpec(parsed)

@@ -8,6 +8,10 @@
     "url": "https://github.com/alxjrvs"
   },
   "license": "MIT",
+  "sideEffects": [
+    "./dist/index.js",
+    "./dist/index.cjs"
+  ],
   "homepage": "https://randsum.dev/packages/roller/",
   "bugs": "https://github.com/RANDSUM/randsum/issues",
   "repository": {
@@ -63,7 +67,6 @@
   },
   "files": [
     "dist",
-    "src",
     "LICENSE",
     "README.md"
   ],
