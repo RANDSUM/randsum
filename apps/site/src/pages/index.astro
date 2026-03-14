@@ -16,7 +16,7 @@ const gameColorMap: Record<string, string> = {
 }
 
 function getCardHref(pkg: { id: string; category: string }): string {
-  if (pkg.category === 'core') return `/packages/${pkg.id}/`
+  if (pkg.category === 'core') return `/${pkg.id}/introduction/`
   if (pkg.category === 'game') return `/games/${pkg.id}/`
   return `/tools/${pkg.id}/`
 }
@@ -158,19 +158,19 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           <div class="footer-col">
             <h4>Documentation</h4>
             <ul>
-              <li><a href="/getting-started/introduction/">Introduction</a></li>
-              <li><a href="/getting-started/installation/">Installation</a></li>
-              <li><a href="/getting-started/quick-start/">Quick Start</a></li>
-              <li><a href="/reference/dice-notation/">Dice Notation</a></li>
+              <li><a href="/welcome/introduction/">Introduction</a></li>
+              <li><a href="/roller/getting-started/">Getting Started</a></li>
+              <li><a href="/notation/randsum-dice-notation/">Dice Notation</a></li>
+              <li><a href="/welcome/ecosystem-overview/">Ecosystem</a></li>
             </ul>
           </div>
           <div class="footer-col">
             <h4>Packages</h4>
             <ul>
-              <li><a href="/packages/overview/">Overview</a></li>
-              <li><a href="/packages/roller/">@randsum/roller</a></li>
-              <li><a href="/games/overview/">Game Packages</a></li>
-              <li><a href="/tools/skill/">LLM Skill</a></li>
+              <li><a href="/roller/introduction/">@randsum/roller</a></li>
+              <li><a href="/notation/introduction/">@randsum/notation</a></li>
+              <li><a href="/games/introduction/">Game Packages</a></li>
+              <li><a href="/tools/claude-code-skill/">Claude Code Skill</a></li>
             </ul>
           </div>
           <div class="footer-col">

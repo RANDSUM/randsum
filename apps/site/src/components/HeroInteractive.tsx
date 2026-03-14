@@ -223,7 +223,7 @@ export function ClickSubtitle(): React.JSX.Element {
 export function GetStartedButton(): React.JSX.Element {
   const { label, tickKey } = useSlotMachine(GET_STARTED_LABELS, [80, 180])
   return (
-    <a href="/getting-started/introduction/" className="btn btn-primary">
+    <a href="/welcome/introduction/" className="btn btn-primary">
       <BookIcon />
       <span key={tickKey} className="hero-subtitle-inner">
         {label}
