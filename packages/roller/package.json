@@ -23,6 +23,16 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./roll": {
+      "import": {
+        "types": "./dist/roll/index.d.ts",
+        "default": "./dist/roll/index.js"
+      },
+      "require": {
+        "types": "./dist/roll/index.d.cts",
+        "default": "./dist/roll/index.cjs"
+      }
+    },
     "./types": {
       "import": {
         "types": "./dist/types/index.d.ts",

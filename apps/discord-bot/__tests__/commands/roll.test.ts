@@ -90,7 +90,6 @@ const mockRoll = mock((...args: Parameters<typeof realRoll>) => realRoll(...args
 void mock.module('@randsum/roller', () => ({
   roll: mockRoll,
   notation: mockNotation,
-  // Real exports so other files aren't broken by the mock leaking
   validateFinite,
   validateRange,
   isDiceNotation,
@@ -101,6 +100,19 @@ void mock.module('@randsum/roller', () => ({
   ValidationError,
   RollError,
   ERROR_CODES
+}))
+
+// Mock subpath imports to match the narrowed imports in source
+void mock.module('@randsum/roller/roll', () => ({
+  roll: mockRoll
+}))
+
+void mock.module('@randsum/roller/validate', () => ({
+  notation: mockNotation,
+  isDiceNotation,
+  validateNotation,
+  validateFinite,
+  validateRange
 }))
 
 const { rollCommand } = await import('../../src/commands/roll.js')

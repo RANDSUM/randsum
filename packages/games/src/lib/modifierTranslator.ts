@@ -1,4 +1,4 @@
-import type { ComparisonOptions, ModifierOptions } from '@randsum/roller'
+import type { ComparisonOptions, ModifierOptions } from '@randsum/roller/types'
 
 import { bindInteger } from './inputBinder'
 import type { ModifyOperation, RollInput } from './types'

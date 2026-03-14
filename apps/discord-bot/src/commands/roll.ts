@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { notation as createNotation, roll } from '@randsum/roller'
+import { roll } from '@randsum/roller/roll'
+import { notation as createNotation } from '@randsum/roller/validate'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'

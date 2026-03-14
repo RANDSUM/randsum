@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type React from 'react'
-import { isDiceNotation } from '@randsum/roller'
+import { isDiceNotation } from '@randsum/roller/validate'
 import type { ModifierReferenceCell } from './ModifierReference'
 import { MODIFIER_DOCS } from '@randsum/display-utils'
 import './ModifierDocContent.css'

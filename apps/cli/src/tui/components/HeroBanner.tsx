@@ -1,6 +1,6 @@
 import { Box, Text, useInput } from 'ink'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { roll } from '@randsum/roller'
+import { roll } from '@randsum/roller/roll'
 import { useTerminalWidth } from '../hooks/useTerminalWidth'
 import { lerpColor } from '../helpers/gradientColor'
 import { openUrl } from '../helpers/openUrl'

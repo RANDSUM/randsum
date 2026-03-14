@@ -13,8 +13,9 @@ export {
   isRollDefinition,
   ROLL_KEY_PATTERN
 } from './typeGuards'
-export { roll as executeRoll, validateFinite, validateRange } from '@randsum/roller'
-export type { RollRecord } from '@randsum/roller'
+export { roll as executeRoll } from '@randsum/roller/roll'
+export { validateFinite, validateRange } from '@randsum/roller/validate'
+export type { RollRecord } from '@randsum/roller/types'
 export type { SchemaErrorCode } from './errors'
 export type { ValidationResult, ValidationError } from './validator'
 export type {

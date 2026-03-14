@@ -1,4 +1,4 @@
-import type { RollerRollResult } from '@randsum/roller'
+import type { RollerRollResult } from '@randsum/roller/types'
 
 export function formatCompact(result: RollerRollResult): string {
   const parts: string[] = [String(result.total)]

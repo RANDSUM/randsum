@@ -84,7 +84,7 @@ describe('remoteTableLookup codegen', () => {
   test('imports lookupByRange from shared module and roller', async () => {
     const code = await generateCode(RTL_SPEC)
     expect(code).toContain('lookupByRange')
-    expect(code).toContain("from '@randsum/roller'")
+    expect(code).toContain("from '@randsum/roller/roll'")
     expect(code).toContain("from './lib/lookupByRange'")
   })
 

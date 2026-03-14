@@ -1,5 +1,5 @@
-import type { RollArgument, RollConfig } from '@randsum/roller'
-import { roll } from '@randsum/roller'
+import type { RollArgument, RollConfig } from '@randsum/roller/types'
+import { roll } from '@randsum/roller/roll'
 import { formatCompact, formatJson, formatVerbose } from '../shared/format'
 
 interface SimpleOptions {

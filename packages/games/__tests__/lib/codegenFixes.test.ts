@@ -101,7 +101,7 @@ describe('#10: validation codegen', () => {
     const code = await generateCode(VALIDATED_SPEC)
     expect(code).toContain('validateFinite')
     expect(code).toContain('validateRange')
-    expect(code).toMatch(/import \{.*validateFinite.*\} from '@randsum\/roller'/)
+    expect(code).toMatch(/import \{.*validateFinite.*\} from '@randsum\/roller\/validate'/)
   })
 
   test('emits validateFinite call', async () => {
