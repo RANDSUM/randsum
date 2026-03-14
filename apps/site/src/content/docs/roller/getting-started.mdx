@@ -74,7 +74,7 @@ See [Roll Options](/roller/roll-options/) for the full options API.
 const result = roll('4d6L+2')
 
 result.total   // Final total after all modifiers
-result.result  // String representations of die values, e.g. ['3', '5']
+result.values  // String representations of die values, e.g. ['3', '5']
 result.rolls   // Array of RollRecord objects with full history`} />
 
 Each entry in `result.rolls` is a `RollRecord` containing the original rolls, modifier logs, and final values for that dice group.

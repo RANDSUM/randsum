@@ -141,7 +141,7 @@ The `roll()` function returns a `RollerRollResult` object.
 const result = roll('4d6L+2')
 
 console.log(result.total)    // Final total after all modifiers
-console.log(result.result)   // Array of per-group results (string[] by default)
+console.log(result.values)   // Array of per-group values (string[] by default)
 console.log(result.rolls)    // Array of RollRecord objects (one per dice group)`} />
 
 <RollerPlayground defaultNotation="4d6L+2" client:only="react" />

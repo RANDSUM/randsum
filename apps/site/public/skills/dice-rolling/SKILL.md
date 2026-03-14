@@ -85,7 +85,7 @@ roll("1d20+5", "2d6") // attack with modifier + damage
 const result = roll("2d6+3")
 console.log(result.total) // Sum of dice + modifiers
 console.log(result.rolls) // Original rolls
-console.log(result.result) // After modifiers applied
+console.log(result.values) // After modifiers applied
 ```
 
 ## Best Practices
