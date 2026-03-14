@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { format, resolveConfig } from 'prettier'
@@ -9,11 +9,23 @@ import type { RandSumSpec } from './src/lib'
 
 const packageDir = import.meta.dirname
 const srcDir = join(packageDir, 'src')
+const fixturesDir = join(packageDir, '__fixtures__')
 const checkMode = process.argv.includes('--check')
 
 async function formatCode(code: string, filepath: string): Promise<string> {
   const config = await resolveConfig(filepath)
   return format(code, { ...(config ?? {}), parser: 'typescript' })
+}
+
+function fixturePathFor(shortcode: string): string {
+  return join(fixturesDir, `${shortcode}-tables.json`)
+}
+
+function getRemoteUrl(spec: RandSumSpec): string | undefined {
+  const roll = spec.roll as Record<string, unknown> | undefined
+  const resolve = roll?.resolve as Record<string, unknown> | undefined
+  const rtl = resolve?.remoteTableLookup as Record<string, unknown> | undefined
+  return typeof rtl?.url === 'string' ? rtl.url : undefined
 }
 
 async function main(): Promise<void> {
@@ -40,10 +52,37 @@ async function main(): Promise<void> {
       process.exit(1)
     }
 
+    const remoteUrl = getRemoteUrl(spec)
+    const remoteDataCache = new Map<string, readonly unknown[]>()
+
+    if (remoteUrl && !checkMode) {
+      const response = await fetch(remoteUrl)
+      if (!response.ok) {
+        console.error(`FAIL  fetch ${remoteUrl}: HTTP ${String(response.status)}`)
+        process.exit(1)
+      }
+      const data = (await response.json()) as readonly unknown[]
+      remoteDataCache.set(remoteUrl, data)
+
+      mkdirSync(fixturesDir, { recursive: true })
+      writeFileSync(fixturePathFor(spec.shortcode), JSON.stringify(data, null, 2) + '\n', 'utf-8')
+      console.log(`  fixture: __fixtures__/${spec.shortcode}-tables.json`)
+    } else if (remoteUrl && checkMode) {
+      const fixturePath = fixturePathFor(spec.shortcode)
+      if (!existsSync(fixturePath)) {
+        console.error(
+          `FAIL  missing fixture ${fixturePath}. Run \`bun run codegen\` to generate it.`
+        )
+        process.exit(1)
+      }
+      const data = JSON.parse(readFileSync(fixturePath, 'utf-8')) as readonly unknown[]
+      remoteDataCache.set(remoteUrl, data)
+    }
+
     const entryFilename = `${spec.shortcode}.generated.ts`
     const entryFilepath = join(srcDir, entryFilename)
 
-    const code = await generateCode(spec)
+    const code = await generateCode(spec, { remoteDataCache })
     const formatted = await formatCode(code, entryFilepath)
 
     if (checkMode) {

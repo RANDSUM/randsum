@@ -1,6 +1,7 @@
 export { resolveExternalRefs } from './externalRefResolver'
 export { loadSpec, loadSpecAsync } from './loader'
 export { generateCode, specToFilename } from './codegen'
+export type { GenerateCodeOptions } from './codegen'
 export { validateSpec } from './validator'
 export { SchemaError } from './errors'
 export { lookupByRange } from './lookupByRange'

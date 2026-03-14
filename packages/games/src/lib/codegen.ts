@@ -22,7 +22,14 @@ async function fetchRemoteData(url: string, dataPath?: string): Promise<unknown[
   return traversed as unknown[]
 }
 
-async function buildCodeString(nspec: NormalizedSpec): Promise<string> {
+export interface GenerateCodeOptions {
+  readonly remoteDataCache?: ReadonlyMap<string, readonly unknown[]>
+}
+
+async function buildCodeString(
+  nspec: NormalizedSpec,
+  options?: GenerateCodeOptions
+): Promise<string> {
   // Detect remoteTableLookup and fetch data at codegen time
   const rtlDef = Object.values(nspec.rolls).find(
     (
@@ -32,7 +39,8 @@ async function buildCodeString(nspec: NormalizedSpec): Promise<string> {
     } => typeof rollDef.resolve === 'object' && 'remoteTableLookup' in rollDef.resolve
   )?.resolve.remoteTableLookup
   const remoteData: unknown[] | undefined = rtlDef
-    ? await fetchRemoteData(rtlDef.url, rtlDef.dataPath)
+    ? ((options?.remoteDataCache?.get(rtlDef.url) as unknown[] | undefined) ??
+      (await fetchRemoteData(rtlDef.url, rtlDef.dataPath)))
     : undefined
 
   const { needsFinite, needsRange } = needsValidationImports(nspec)
@@ -92,7 +100,10 @@ async function buildCodeString(nspec: NormalizedSpec): Promise<string> {
  *
  * @param spec - The parsed .randsum.json spec
  */
-export async function generateCode(spec: RandSumSpec): Promise<string> {
+export async function generateCode(
+  spec: RandSumSpec,
+  options?: GenerateCodeOptions
+): Promise<string> {
   const result = validateSpec(spec)
   if (!result.valid) {
     const summary = result.errors.map(e => `${e.path}: ${e.message}`).join('; ')
@@ -100,7 +111,7 @@ export async function generateCode(spec: RandSumSpec): Promise<string> {
   }
 
   const nspec = normalizeSpec(spec)
-  return buildCodeString(nspec)
+  return buildCodeString(nspec, options)
 }
 
 export { specToFilename }
