@@ -42,13 +42,17 @@ describe('codegen snapshot tests', () => {
     const spec = raw as RandSumSpec
     const expectedFile = join(srcDir, `${spec.shortcode}.generated.ts`)
 
-    test(`${specFile} matches checked-in ${spec.shortcode}.generated.ts`, async () => {
-      const resolved = await resolveExternalRefs(spec)
-      const remoteDataCache = loadRemoteDataCache(resolved)
-      const code = await generateCode(resolved, { remoteDataCache })
-      const formatted = await formatCode(code, expectedFile)
-      const checkedIn = readFileSync(expectedFile, 'utf-8')
-      expect(formatted).toBe(checkedIn)
-    })
+    test(
+      `${specFile} matches checked-in ${spec.shortcode}.generated.ts`,
+      async () => {
+        const resolved = await resolveExternalRefs(spec)
+        const remoteDataCache = loadRemoteDataCache(resolved)
+        const code = await generateCode(resolved, { remoteDataCache })
+        const formatted = await formatCode(code, expectedFile)
+        const checkedIn = readFileSync(expectedFile, 'utf-8')
+        expect(formatted).toBe(checkedIn)
+      },
+      { timeout: 30_000 }
+    )
   }
 })

@@ -19,8 +19,8 @@ pre-push:
     build:
       run: bun run build
       priority: 1
-    check:
-      run: bun run check
+    test:
+      run: bun test
       priority: 2
     audit:
       run: bun audit --level=high
