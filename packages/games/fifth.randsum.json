@@ -14,17 +14,27 @@
         "default": 0,
         "description": "5E modifier"
       },
-      "rollingWith": { "type": "string", "enum": ["Advantage", "Disadvantage"], "optional": true }
+      "rollingWith": { "type": "string", "enum": ["Advantage", "Disadvantage"], "optional": true },
+      "crit": {
+        "type": "boolean",
+        "optional": true,
+        "description": "When true, check for natural 1 and natural 20"
+      }
     },
     "dice": { "pool": { "sides": 20 }, "quantity": 1 },
     "resolve": "sum",
     "modify": [{ "add": { "$input": "modifier" } }],
     "details": {
-      "isNatural1": {
-        "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 1 }
-      },
-      "isNatural20": {
-        "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 20 }
+      "criticals": {
+        "when": { "input": "crit" },
+        "value": {
+          "isNatural1": {
+            "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 1 }
+          },
+          "isNatural20": {
+            "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 20 }
+          }
+        }
       }
     },
     "when": [

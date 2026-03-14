@@ -92,6 +92,30 @@ describe('roll', () => {
     })
   })
 
+  describe('crit detection', () => {
+    test('criticals is undefined when crit is not passed', () => {
+      const result = roll({ modifier: 0 })
+      expect(result.details.criticals).toBeUndefined()
+    })
+
+    test('criticals is present when crit is true', () => {
+      const result = roll({ modifier: 0, crit: true })
+      expect(result.details.criticals).toBeDefined()
+      expect(typeof result.details.criticals?.isNatural1).toBe('boolean')
+      expect(typeof result.details.criticals?.isNatural20).toBe('boolean')
+    })
+
+    test('criticals works with advantage', () => {
+      const result = roll({ modifier: 0, rollingWith: 'Advantage', crit: true })
+      expect(result.details.criticals).toBeDefined()
+    })
+
+    test('criticals works with disadvantage', () => {
+      const result = roll({ modifier: 0, rollingWith: 'Disadvantage', crit: true })
+      expect(result.details.criticals).toBeDefined()
+    })
+  })
+
   describe('input validation', () => {
     test('throws error for NaN modifier', () => {
       expect(() => roll({ modifier: NaN })).toThrow(

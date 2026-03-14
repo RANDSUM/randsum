@@ -10,13 +10,13 @@ import type { SchemaErrorCode } from './lib/errors'
 export type FifthRollResult = number
 
 export interface FifthRollDetails {
-  readonly isNatural1: boolean
-  readonly isNatural20: boolean
+  readonly criticals: { readonly isNatural1: boolean; readonly isNatural20: boolean } | undefined
 }
 
 export function roll(input?: {
   modifier?: number
   rollingWith?: 'Advantage' | 'Disadvantage'
+  crit?: boolean
 }): GameRollResult<FifthRollResult, FifthRollDetails, RollRecord> {
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
     validateFinite(input?.modifier, '5E modifier')
@@ -38,8 +38,10 @@ export function roll(input?: {
     })
     const total = r.total
     const details = {
-      isNatural1: r.rolls[0]?.rolls[0] === 1,
-      isNatural20: r.rolls[0]?.rolls[0] === 20
+      criticals:
+        input?.crit !== undefined
+          ? { isNatural1: r.rolls[0]?.rolls[0] === 1, isNatural20: r.rolls[0]?.rolls[0] === 20 }
+          : undefined
     }
     return { total, result: total, rolls: r.rolls, details }
   }
@@ -51,16 +53,20 @@ export function roll(input?: {
     })
     const total = r.total
     const details = {
-      isNatural1: r.rolls[0]?.rolls[0] === 1,
-      isNatural20: r.rolls[0]?.rolls[0] === 20
+      criticals:
+        input?.crit !== undefined
+          ? { isNatural1: r.rolls[0]?.rolls[0] === 1, isNatural20: r.rolls[0]?.rolls[0] === 20 }
+          : undefined
     }
     return { total, result: total, rolls: r.rolls, details }
   }
   const r = executeRoll({ sides: 20, quantity: 1, modifiers: { plus: input?.modifier ?? 0 } })
   const total = r.total
   const details = {
-    isNatural1: r.rolls[0]?.rolls[0] === 1,
-    isNatural20: r.rolls[0]?.rolls[0] === 20
+    criticals:
+      input?.crit !== undefined
+        ? { isNatural1: r.rolls[0]?.rolls[0] === 1, isNatural20: r.rolls[0]?.rolls[0] === 20 }
+        : undefined
   }
   return { total, result: total, rolls: r.rolls, details }
 }
