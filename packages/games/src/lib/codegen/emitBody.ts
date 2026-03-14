@@ -244,7 +244,7 @@ function generateFunctionBody(
     lines.push(`  const foundTable = REMOTE_DATA.find(t => t.${find.field} === ${keyAccessor})`)
     // Emit error message — custom template or default
     if (find.errorMessage !== undefined) {
-      const escaped = find.errorMessage.replace(/`/g, '\\`')
+      const escaped = find.errorMessage.replace(/\\/g, '\\\\').replace(/`/g, '\\`')
       const template = escaped.replace('${value}', `\${${keyAccessor}}`)
       lines.push(`  if (!foundTable) throw new SchemaError('NO_TABLE_MATCH', \`${template}\`)`)
     } else {

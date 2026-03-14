@@ -86,7 +86,9 @@ async function buildCodeString(
     const tableNames = remoteData
       .map(entry => (entry as Record<string, unknown>)['name'] as string)
       .filter((name): name is string => typeof name === 'string')
-    const namesLiteral = tableNames.map(n => `  '${n.replace(/'/g, "\\'")}'`).join(',\n')
+    const namesLiteral = tableNames
+      .map(n => `  '${n.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`)
+      .join(',\n')
     parts.push(`export const VALID_TABLE_NAMES = [\n${namesLiteral}\n] as const`)
   }
 
