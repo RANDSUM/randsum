@@ -142,7 +142,8 @@
   },
   "scripts": {
     "prepublishOnly": "bun run build",
-    "build": "bun run build.ts",
+    "build": "bun run build.ts --skip-codegen",
+    "build:full": "bun run build.ts",
     "codegen": "bun run build.ts --codegen-only",
     "test": "bun run build && bun test",
     "typecheck": "tsc --noEmit",

@@ -18,6 +18,7 @@ async function writeFormatted(code: string, filepath: string): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  const skipCodegen = process.argv.includes('--skip-codegen')
   const specFiles = readdirSync(packageDir).filter(f => f.endsWith('.randsum.json'))
 
   if (specFiles.length === 0) {
@@ -27,27 +28,36 @@ async function main(): Promise<void> {
 
   const entries: string[] = []
 
-  for (const specFile of specFiles) {
-    const absPath = join(packageDir, specFile)
-    const raw: unknown = JSON.parse(readFileSync(absPath, 'utf-8'))
-    const spec = await resolveExternalRefs(raw as RandSumSpec)
-
-    const validation = validateSpec(spec)
-    if (!validation.valid) {
-      console.error(`FAIL  ${specFile}`)
-      for (const err of validation.errors) {
-        console.error(`      ${err.path}: ${err.message}`)
-      }
-      process.exit(1)
+  if (skipCodegen) {
+    // Use existing generated files without running codegen (avoids network calls)
+    for (const specFile of specFiles) {
+      const raw: unknown = JSON.parse(readFileSync(join(packageDir, specFile), 'utf-8'))
+      const shortcode = (raw as RandSumSpec).shortcode
+      entries.push(`src/${shortcode}.generated.ts`)
     }
+  } else {
+    for (const specFile of specFiles) {
+      const absPath = join(packageDir, specFile)
+      const raw: unknown = JSON.parse(readFileSync(absPath, 'utf-8'))
+      const spec = await resolveExternalRefs(raw as RandSumSpec)
 
-    const entryFilename = `${spec.shortcode}.generated.ts`
-    const entryFilepath = join(srcDir, entryFilename)
+      const validation = validateSpec(spec)
+      if (!validation.valid) {
+        console.error(`FAIL  ${specFile}`)
+        for (const err of validation.errors) {
+          console.error(`      ${err.path}: ${err.message}`)
+        }
+        process.exit(1)
+      }
 
-    const code = await generateCode(spec)
-    await writeFormatted(code, entryFilepath)
-    entries.push(`src/${entryFilename}`)
-    console.log(`  codegen: ${specFile} → src/${entryFilename}`)
+      const entryFilename = `${spec.shortcode}.generated.ts`
+      const entryFilepath = join(srcDir, entryFilename)
+
+      const code = await generateCode(spec)
+      await writeFormatted(code, entryFilepath)
+      entries.push(`src/${entryFilename}`)
+      console.log(`  codegen: ${specFile} → src/${entryFilename}`)
+    }
   }
 
   if (process.argv.includes('--codegen-only')) {
