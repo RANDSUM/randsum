@@ -96,6 +96,17 @@
         "react-dom": ">=18",
       },
     },
+    "packages/display-utils": {
+      "name": "@randsum/display-utils",
+      "version": "3.5.0",
+      "devDependencies": {
+        "@randsum/roller": "workspace:~",
+        "typescript": "^5.8.2",
+      },
+      "peerDependencies": {
+        "@randsum/roller": "^3.5.0",
+      },
+    },
     "packages/games": {
       "name": "@randsum/games",
       "version": "3.5.0",
@@ -107,17 +118,6 @@
         "bunup": "0.16.31",
         "prettier": "3.8.1",
         "typescript": "^5.9.3",
-      },
-    },
-    "packages/internal/display-utils": {
-      "name": "@randsum/display-utils",
-      "version": "3.5.0",
-      "devDependencies": {
-        "@randsum/roller": "workspace:~",
-        "typescript": "^5.8.2",
-      },
-      "peerDependencies": {
-        "@randsum/roller": "^3.5.0",
       },
     },
     "packages/notation": {
@@ -710,7 +710,7 @@
 
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
 
-    "@randsum/display-utils": ["@randsum/display-utils@workspace:packages/internal/display-utils"],
+    "@randsum/display-utils": ["@randsum/display-utils@workspace:packages/display-utils"],
 
     "@randsum/games": ["@randsum/games@workspace:packages/games"],
 

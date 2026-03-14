@@ -5,14 +5,14 @@ on:
     paths:
       - 'packages/notation/**'
       - 'packages/roller/**'
-      - 'packages/internal/display-utils/**'
+      - 'packages/display-utils/**'
       - 'apps/cli/**'
       - '.github/workflows/ci-cli.yml'
   pull_request:
     paths:
       - 'packages/notation/**'
       - 'packages/roller/**'
-      - 'packages/internal/display-utils/**'
+      - 'packages/display-utils/**'
       - 'apps/cli/**'
       - '.github/workflows/ci-cli.yml'
 

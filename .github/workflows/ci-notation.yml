@@ -36,3 +36,5 @@ jobs:
           restore-keys: ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
       - run: bun run --filter '@randsum/notation' check
+      - name: Check bundle size
+        run: bun run --filter '@randsum/notation' size

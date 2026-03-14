@@ -39,3 +39,5 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run --filter '@randsum/notation' build
       - run: bun run --filter '@randsum/roller' check
+      - name: Check bundle size
+        run: bun run --filter '@randsum/roller' size

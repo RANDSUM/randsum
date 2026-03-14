@@ -45,3 +45,5 @@ jobs:
       - name: Verify generated files are up to date
         continue-on-error: true
         run: bun run --filter '@randsum/games' gen:check
+      - name: Check bundle size
+        run: bun run --filter '@randsum/games' size

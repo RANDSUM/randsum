@@ -111,7 +111,7 @@ export const toolPackages: PackageInfo[] = [
     displayName: 'Display Utils',
     description: 'Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UI.',
     npmPackage: '@randsum/display-utils',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/internal/display-utils',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/display-utils',
     version: '3.0.1',
     category: 'tool',
     color: '#10b981'

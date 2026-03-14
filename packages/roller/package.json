@@ -117,7 +117,7 @@
     "typecheck": "tsc --noEmit",
     "size": "size-limit",
     "check:exports": "ts-unused-exports ../../tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
-    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test && bun run size && bun run check:exports"
+    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test && bun run check:exports"
   },
   "size-limit": [
     {

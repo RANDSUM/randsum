@@ -77,7 +77,6 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "packages/internal/*",
     "apps/*"
   ],
   "overrides": {
