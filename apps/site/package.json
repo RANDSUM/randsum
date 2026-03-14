@@ -19,7 +19,7 @@
   "dependencies": {
     "@astrojs/netlify": "7.0.1",
     "@astrojs/react": "5.0.0",
-    "@astrojs/starlight": "0.38.0",
+    "@astrojs/starlight": "0.38.1",
     "@randsum/component-library": "workspace:~",
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
