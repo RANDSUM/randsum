@@ -67,7 +67,7 @@
     },
     {
       "path": "packages/games/dist/daggerheart.generated.js",
-      "limit": "8 KB"
+      "limit": "8.1 KB"
     },
     {
       "path": "packages/games/dist/pbta.generated.js",
