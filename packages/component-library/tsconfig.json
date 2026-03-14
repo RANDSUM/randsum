@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.packages.json",
+  "extends": "../../tsconfig.packages.json",
   "compilerOptions": {
     "outDir": "dist",
     "jsx": "react-jsx",
@@ -7,6 +7,5 @@
     "lib": ["ESNext", "DOM"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "references": [{ "path": "../../roller" }]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

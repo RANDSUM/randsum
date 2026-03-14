@@ -27,12 +27,5 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
-  },
-  "references": [
-    { "path": "packages/notation" },
-    { "path": "packages/roller" },
-    { "path": "packages/internal/display-utils" },
-    { "path": "packages/games" },
-    { "path": "packages/internal/component-library" }
-  ]
+  }
 }

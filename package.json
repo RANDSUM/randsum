@@ -54,7 +54,7 @@
       "limit": "20 KB"
     },
     {
-      "path": "packages/internal/component-library/dist/index.js",
+      "path": "packages/component-library/dist/index.js",
       "limit": "50 KB"
     },
     {

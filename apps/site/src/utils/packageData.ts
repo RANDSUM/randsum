@@ -122,7 +122,7 @@ export const toolPackages: PackageInfo[] = [
     displayName: 'Component Library',
     description: 'React components for embedding dice rollers in any web app.',
     npmPackage: '@randsum/component-library',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/internal/component-library',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/component-library',
     version: '3.0.0',
     category: 'tool',
     color: '#3b82f6' // blue

@@ -154,7 +154,7 @@ export default defineConfig({
       alias: {
         '@randsum/component-library': resolve(
           __dirname,
-          '../../packages/internal/component-library/src/index.ts'
+          '../../packages/component-library/src/index.ts'
         )
       }
     }

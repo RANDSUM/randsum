@@ -25,9 +25,8 @@ const ROOT = join(import.meta.dir, '..')
 const PUBLISH_ORDER: readonly string[] = [
   'packages/notation',
   'packages/roller',
-  'packages/internal/display-utils',
   'packages/games',
-  'packages/internal/component-library',
+  'packages/component-library',
   'apps/cli',
 ]
 
