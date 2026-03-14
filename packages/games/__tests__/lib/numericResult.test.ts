@@ -28,7 +28,7 @@ describe('numeric result (no outcome field)', () => {
   test('codegen emits prefixed number result type for no-outcome roll', async () => {
     const code = await generateCode(NUMERIC_SPEC)
     expect(code).toContain('TestNumRollResult = number')
-    expect(code).toContain('export type RollResult = TestNumRollResult')
+    expect(code).not.toContain('export type RollResult = TestNumRollResult')
   })
 
   test('codegen re-exports GameRollResult, RollRecord, SchemaError, and SchemaErrorCode', async () => {

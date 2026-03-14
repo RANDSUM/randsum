@@ -1,7 +1,7 @@
 import { roll, validateFinite, validateRange } from '@randsum/roller'
 import type { RollOptions, RollRecord } from '@randsum/roller'
 
-import { evaluateNormalizedWhen } from './conditionEvaluator'
+import { compareValues, evaluateNormalizedWhen } from './conditionEvaluator'
 import { SchemaError } from './errors'
 import { bindInteger } from './inputBinder'
 import { type ManualOp, translateModifiers } from './modifierTranslator'
@@ -25,23 +25,6 @@ import type {
   RollInput,
   TableRange
 } from './types'
-
-function compareNum(a: number, op: string, b: number): boolean {
-  switch (op) {
-    case '>':
-      return a > b
-    case '>=':
-      return a >= b
-    case '<':
-      return a < b
-    case '<=':
-      return a <= b
-    case '=':
-      return a === b
-    default:
-      return false
-  }
-}
 
 function applyInputDefaults(
   input: RollInput,
@@ -127,7 +110,7 @@ function applyManualModifiers(
           return acc.map(
             (die): MarkedDie => ({
               value: die.value,
-              flags: compareNum(die.value, op.operator, op.value)
+              flags: compareValues(die.value, op.operator, op.value)
                 ? new Set([...die.flags, op.flag])
                 : die.flags
             })
@@ -148,7 +131,7 @@ function evaluatePoolCondition(
 ): boolean {
   const pool = condition.pool === 'postModify' ? workingRolls : preModifyRolls
   const matchCount = pool.filter(v =>
-    compareNum(v, condition.countWhere.operator, bindInteger(condition.countWhere.value, input))
+    compareValues(v, condition.countWhere.operator, bindInteger(condition.countWhere.value, input))
   ).length
   if (condition.atLeast !== undefined) {
     return matchCount >= bindInteger(condition.atLeast, input)
@@ -217,7 +200,7 @@ function resolveTotal(
   if (typeof resolve === 'object' && 'countMatching' in resolve) {
     const { operator, value } = resolve.countMatching
     const threshold = bindInteger(value, input)
-    return rolls.filter(v => compareNum(v, operator, threshold)).length
+    return rolls.filter(v => compareValues(v, operator, threshold)).length
   }
   // tableLookup in resolve: sum the dice (lookup is handled in outcome)
   return rolls.reduce((sum, v) => sum + v, 0)
@@ -332,15 +315,30 @@ interface DetailsContext {
   readonly total: number
   readonly poolTotals: Readonly<Record<string, number>>
   readonly conditionalPoolTotals: Readonly<Record<string, number>>
+  readonly rolls: readonly RollRecord[]
 }
 
-function resolveLeaf(
-  leaf: NormalizedDetailsLeafDef,
-  ctx: DetailsContext
-): InputValue | number | undefined {
+function resolveLeaf(leaf: NormalizedDetailsLeafDef, ctx: DetailsContext): InputValue | undefined {
   if ('expr' in leaf) return leaf.expr === 'diceTotal' ? ctx.diceTotal : ctx.total
   if ('$pool' in leaf) return ctx.poolTotals[leaf.$pool] ?? 0
   if ('$conditionalPool' in leaf) return ctx.conditionalPoolTotals[leaf.$conditionalPool] ?? 0
+  if ('$dieCheck' in leaf) {
+    const dc = leaf.$dieCheck
+    const record = ctx.rolls[dc.pool]
+    if (record === undefined) return false
+    const dieValues = dc.field === 'final' ? record.rolls : record.initialRolls
+    const dieValue = dieValues[dc.die]
+    if (dieValue === undefined) return false
+    const opMap: Record<string, (a: number, b: number) => boolean> = {
+      '=': (a, b) => a === b,
+      '>': (a, b) => a > b,
+      '>=': (a, b) => a >= b,
+      '<': (a, b) => a < b,
+      '<=': (a, b) => a <= b
+    }
+    const compare = opMap[dc.operator] ?? ((a: number, b: number) => a === b)
+    return compare(dieValue, dc.value)
+  }
   const val = ctx.input[leaf.$input]
   if (val !== undefined) return val
   if (leaf.default !== undefined) return leaf.default
@@ -459,7 +457,8 @@ export function executePipeline(
         diceTotal,
         total,
         poolTotals,
-        conditionalPoolTotals
+        conditionalPoolTotals,
+        rolls: allRolls
       })
       return { total, result, rolls: allRolls, details }
     }
@@ -488,7 +487,8 @@ export function executePipeline(
       diceTotal: rawTotal,
       total,
       poolTotals: {},
-      conditionalPoolTotals: {}
+      conditionalPoolTotals: {},
+      rolls: rollerResult.rolls
     })
     return { total, result, rolls: rollerResult.rolls, details }
   }

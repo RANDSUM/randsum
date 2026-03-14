@@ -56,9 +56,9 @@ describe('degreeOfSuccess codegen', () => {
 
   test('generated Result type is NOT numeric (string union, not number)', async () => {
     const code = await generateCode(DOS_SPEC)
-    expect(code).not.toContain('RollResult = number')
-    // Should be a string union
-    expect(code).toMatch(/RollResult = '[a-zA-Z]/)
+    // Should have a prefixed result type with a string union, not number
+    expect(code).toContain("TestDosRollResult = 'criticalFailure'")
+    expect(code).not.toContain('TestDosRollResult = number')
   })
 
   test('generated code emits threshold comparisons in descending order', async () => {

@@ -106,7 +106,7 @@ describe('remoteTableLookup codegen', () => {
   test('emits prefixed RollResult interface for resultMapping', async () => {
     const code = await generateCode(RTL_SPEC)
     expect(code).toContain('export interface TestRtlRollResult {')
-    expect(code).toContain('export type RollResult = TestRtlRollResult')
+    expect(code).not.toContain('export type RollResult = TestRtlRollResult')
   })
 
   test('emits resultMapping fields', async () => {

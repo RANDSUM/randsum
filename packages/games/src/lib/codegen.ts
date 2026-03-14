@@ -528,18 +528,16 @@ function generateFunctionBody(
       rollDef.inputs,
       optional
     )
-    const branchHasPostResolve = hasEffectivePostResolveModifiers(overridePostResolve)
-    const branchDiceTotalAlias = branchHasPostResolve ? 'diceTotal' : 'total'
     lines.push(`  if (${cond}) {`)
     lines.push(`    const r = executeRoll(${diceCode})`)
     if (needsPre) lines.push(`    const preModify = r.rolls.flatMap(x => x.initialRolls)`)
     if (needsPost) lines.push(`    const postModify = r.rolls.flatMap(x => x.rolls)`)
-    if (hasDetails && needsDiceTotal && branchHasPostResolve) {
-      lines.push(`    const diceTotal = r.total`)
+    if (hasDetails && needsDiceTotal) {
+      lines.push(`    const diceTotal = r.rolls.flatMap(x => x.rolls).reduce((a, b) => a + b, 0)`)
     }
     lines.push(`    const total = ${overrideTotalExpr}`)
     if (hasDetails) {
-      lines.push(...emitDetailsObjectCode(detailsDef, optional, '    ', branchDiceTotalAlias))
+      lines.push(...emitDetailsObjectCode(detailsDef, optional, '    ', 'diceTotal'))
     }
     lines.push(
       ...generateOutcomeLines(
@@ -574,22 +572,20 @@ function generateFunctionBody(
     rollDef.inputs,
     optional
   )
-  const defaultHasPostResolve = hasEffectivePostResolveModifiers(rollDef.postResolveModifiers)
-  const defaultDiceTotalAlias = defaultHasPostResolve ? 'diceTotal' : 'total'
   lines.push(`  const r = executeRoll(${defaultDiceCode})`)
   if (needsPre) lines.push(`  const preModify = r.rolls.flatMap(x => x.initialRolls)`)
   if (needsPost) lines.push(`  const postModify = r.rolls.flatMap(x => x.rolls)`)
 
-  // Capture diceTotal before post-resolve modifiers (only when they differ)
-  if (needsDiceTotal && defaultHasPostResolve) {
-    lines.push(`  const diceTotal = r.total`)
+  // Compute raw dice sum (sum of kept dice before arithmetic modifiers like plus/minus)
+  if (needsDiceTotal) {
+    lines.push(`  const diceTotal = r.rolls.flatMap(x => x.rolls).reduce((a, b) => a + b, 0)`)
   }
 
   lines.push(`  const total = ${totalExpr}`)
 
   // Build details object if declared
   if (hasDetails) {
-    lines.push(...emitDetailsObjectCode(detailsDef, optional, '  ', defaultDiceTotalAlias))
+    lines.push(...emitDetailsObjectCode(detailsDef, optional, '  ', 'diceTotal'))
   }
 
   // Remote table lookup replaces outcome lines with a find+lookupByRange call
@@ -640,6 +636,7 @@ function normalizedLeafTsType(
   if ('expr' in leaf) return 'number'
   if ('$pool' in leaf) return 'number'
   if ('$conditionalPool' in leaf) return 'number'
+  if ('$dieCheck' in leaf) return 'boolean'
   // $input — look up the input declaration
   const decl = inputs?.[leaf.$input]
   return decl?.type === 'integer' ? 'number' : decl?.type === 'boolean' ? 'boolean' : 'string'
@@ -684,6 +681,13 @@ function normalizedLeafValueCode(
   if ('expr' in leaf) return leaf.expr === 'diceTotal' ? diceTotalAlias : leaf.expr
   if ('$pool' in leaf) return `${leaf.$pool}Total`
   if ('$conditionalPool' in leaf) return `conditionalPool_${leaf.$conditionalPool}Total`
+  if ('$dieCheck' in leaf) {
+    const dc = leaf.$dieCheck
+    const rollsField = dc.field === 'final' ? 'rolls' : 'initialRolls'
+    const opMap: Record<string, string> = { '=': '===', '>': '>', '>=': '>=', '<': '<', '<=': '<=' }
+    const op = opMap[dc.operator] ?? '==='
+    return `(r.rolls[${dc.pool}]?.${rollsField}[${dc.die}] ${op} ${dc.value})`
+  }
   const accessor = optional ? `input?.${leaf.$input}` : `input.${leaf.$input}`
   if (leaf.default !== undefined) {
     return `${accessor} ?? ${typeof leaf.default === 'string' ? `'${leaf.default}'` : String(leaf.default)}`
@@ -840,11 +844,6 @@ function generateRollParts(
       break
     }
   }
-  // Backward-compatible alias
-  parts.push(
-    `/** @deprecated Use {@link ${prefixedResultName}} to avoid cross-game name collisions */`
-  )
-  parts.push(`export type ${Key}Result = ${prefixedResultName}`)
   parts.push(``)
 
   const detailsDef = rollDef.details
@@ -854,10 +853,6 @@ function generateRollParts(
 
   if (hasDetails && prefixedDetailsName !== undefined) {
     parts.push(...emitDetailsInterface(prefixedDetailsName, detailsDef, rollDef.inputs))
-    parts.push(
-      `/** @deprecated Use {@link ${prefixedDetailsName}} to avoid cross-game name collisions */`
-    )
-    parts.push(`export type ${Key}Details = ${prefixedDetailsName}`)
     parts.push(``)
   }
 

@@ -5,7 +5,7 @@ import type { ModifyOperation, RollInput } from './types'
 
 export interface MarkDiceOp {
   readonly type: 'markDice'
-  readonly operator: string
+  readonly operator: '>' | '>=' | '<' | '<=' | '='
   readonly value: number
   readonly flag: string
 }

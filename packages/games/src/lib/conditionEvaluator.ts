@@ -2,7 +2,7 @@ import type { NormalizedPipelineOverride, NormalizedRollCase } from './normalize
 import type { InputValue, RollInput } from './types'
 import { SchemaError } from './errors'
 
-function compareValues(
+export function compareValues(
   inputVal: InputValue,
   operator: '=' | '>' | '>=' | '<' | '<=',
   condVal: InputValue
