@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { listOfNotations } from '@randsum/notation/parse'
+import { listOfNotations } from '../src/index'
 
 describe('listOfNotations', () => {
   describe('single notation', () => {

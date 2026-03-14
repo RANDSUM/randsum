@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { suggestNotationFix } from '@randsum/notation/validate'
+import { suggestNotationFix } from '../src/index'
 
 describe('suggestNotationFix', () => {
   describe('missing quantity (d6 -> 1d6)', () => {

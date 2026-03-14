@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { tokenize } from '@randsum/notation/tokenize'
+import { tokenize } from '../src/index'
 
 describe('tokenize', () => {
   test('returns empty array for empty string', () => {
@@ -174,6 +174,22 @@ describe('tokenize', () => {
     const tokens = tokenize('4d6L')
     const dropToken = tokens.find(t => t.type === 'dropLowest')
     expect(dropToken?.description).toBeTruthy()
+  })
+
+  test('describes core token with fallback when notation is invalid', () => {
+    // 1d0 matches the core regex but isDiceNotation returns false (0 sides),
+    // so describeCoreToken falls back to parsing qty/sides from the text directly
+    const tokens = tokenize('1d0')
+    expect(tokens).toHaveLength(1)
+    expect(tokens[0]?.type).toBe('core')
+    expect(tokens[0]?.description).toBe('Roll 1 0-sided die')
+  })
+
+  test('describes core token fallback with plural dice', () => {
+    const tokens = tokenize('3d0')
+    expect(tokens).toHaveLength(1)
+    expect(tokens[0]?.type).toBe('core')
+    expect(tokens[0]?.description).toBe('Roll 3 0-sided dice')
   })
 
   test('handles no core match at start', () => {

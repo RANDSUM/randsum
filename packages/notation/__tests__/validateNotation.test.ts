@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { validateNotation } from '@randsum/notation/validate'
+import { validateNotation } from '../src/index'
 
 describe('validateNotation', () => {
   describe('valid notation', () => {

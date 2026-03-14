@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test'
-import { coreNotationPattern } from '@randsum/notation/parse'
 import {
   capSchema,
   compoundSchema,
+  coreNotationPattern,
   countSuccessesSchema,
   defineNotationSchema,
   dropSchema,
@@ -16,7 +16,7 @@ import {
   replaceSchema,
   rerollSchema,
   uniqueSchema
-} from '@randsum/notation/schemas'
+} from '../src/index'
 
 describe('coreNotationPattern', () => {
   test('matches basic notation', () => {
