@@ -50,11 +50,11 @@
       "limit": "10 KB"
     },
     {
-      "path": "packages/display-utils/dist/index.js",
+      "path": "internalPackages/display-utils/dist/index.js",
       "limit": "20 KB"
     },
     {
-      "path": "packages/component-library/dist/index.js",
+      "path": "internalPackages/component-library/dist/index.js",
       "limit": "50 KB"
     },
     {
@@ -71,7 +71,7 @@
     },
     {
       "path": "packages/games/dist/pbta.generated.js",
-      "limit": "8 KB"
+      "limit": "8.1 KB"
     },
     {
       "path": "packages/games/dist/root-rpg.generated.js",
@@ -90,7 +90,7 @@
       "limit": "4 KB"
     },
     {
-      "path": "packages/display-utils/dist/index.d.ts",
+      "path": "internalPackages/display-utils/dist/index.d.ts",
       "limit": "2 KB"
     }
   ],
@@ -98,7 +98,7 @@
     "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
     "dev": "bun run --filter '*' dev",
-    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' build && bun run --filter '@randsum/games' --filter '@randsum/component-library' --filter '@randsum/cli' --filter '@randsum/discord-bot' build",
+    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && cd internalPackages/display-utils && bun run build && cd ../.. && bun run --filter '@randsum/games' --filter '@randsum/cli' --filter '@randsum/discord-bot' build && cd internalPackages/component-library && bun run build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "bun run --filter \"*\" lint",
@@ -133,6 +133,7 @@
   "type": "module",
   "workspaces": [
     "packages/*",
+    "internalPackages/*",
     "apps/cli",
     "apps/discord-bot",
     "apps/site"

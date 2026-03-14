@@ -1,30 +1,17 @@
 {
   "name": "@randsum/component-library",
-  "version": "3.5.0",
   "description": "React component library for RANDSUM dice rolling tools",
-  "private": true,
-  "author": {
-    "name": "Alex Jarvis",
-    "url": "https://github.com/alxjrvs"
-  },
-  "license": "MIT",
-  "sideEffects": false,
-  "homepage": "https://randsum.dev/packages/component-library/",
-  "bugs": "https://github.com/RANDSUM/randsum/issues",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/component-library"
-  },
+  "version": "3.5.0",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "private": true,
   "files": [
     "dist",
     "LICENSE",
     "README.md"
   ],
+  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -37,6 +24,18 @@
       }
     },
     "./package.json": "./package.json"
+  },
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://randsum.dev/packages/component-library/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "internalPackages/component-library"
   },
   "peerDependencies": {
     "react": ">=18",

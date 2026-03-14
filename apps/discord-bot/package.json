@@ -36,7 +36,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "bunup --entry src/index.ts --format esm --dts --minify --sourcemap external --target node --clean && chmod +x dist/index.js",
+    "build": "bunup && chmod +x dist/index.js",
     "dev": "bun run src/index.ts",
     "start": "node dist/index.js",
     "deploy-commands": "bun run src/deploy-commands.ts",

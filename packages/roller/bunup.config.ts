@@ -1,12 +1,13 @@
 import { defineConfig } from 'bunup'
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/types/index.ts', 'src/errors.ts', 'src/validate.ts'],
   format: ['esm', 'cjs'],
   dts: true,
-  external: ['@randsum/roller'],
+  exports: true,
+  splitting: false,
   minify: true,
   sourcemap: 'external',
-  target: 'browser',
+  target: 'node',
   clean: true
 })

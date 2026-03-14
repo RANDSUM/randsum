@@ -1,23 +1,16 @@
 {
   "name": "@randsum/notation",
-  "version": "3.5.0",
   "description": "Zero-dependency dice notation parser, validator, and type system for JavaScript and TypeScript",
+  "version": "3.5.0",
+  "type": "module",
   "private": false,
-  "author": {
-    "name": "Alex Jarvis",
-    "url": "https://github.com/alxjrvs"
-  },
-  "license": "MIT",
-  "sideEffects": false,
-  "homepage": "https://randsum.dev/packages/notation/",
-  "bugs": "https://github.com/RANDSUM/randsum/issues",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RANDSUM/randsum.git",
-    "directory": "packages/notation"
-  },
-  "main": "./dist/index.cjs",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -60,16 +53,6 @@
         "default": "./dist/transform.cjs"
       }
     },
-    "./comparison": {
-      "import": {
-        "types": "./dist/comparisonExports.d.ts",
-        "default": "./dist/comparisonExports.js"
-      },
-      "require": {
-        "types": "./dist/comparisonExports.d.cts",
-        "default": "./dist/comparisonExports.cjs"
-      }
-    },
     "./schemas": {
       "import": {
         "types": "./dist/schemas.d.ts",
@@ -82,32 +65,48 @@
     },
     "./tokenize": {
       "import": {
-        "types": "./dist/tokenizeExports.d.ts",
-        "default": "./dist/tokenizeExports.js"
+        "types": "./dist/tokenize.d.ts",
+        "default": "./dist/tokenize.js"
       },
       "require": {
-        "types": "./dist/tokenizeExports.d.cts",
-        "default": "./dist/tokenizeExports.cjs"
+        "types": "./dist/tokenize.d.cts",
+        "default": "./dist/tokenize.cjs"
+      }
+    },
+    "./comparison": {
+      "import": {
+        "types": "./dist/comparison/index.d.ts",
+        "default": "./dist/comparison/index.js"
+      },
+      "require": {
+        "types": "./dist/comparison/index.d.cts",
+        "default": "./dist/comparison/index.cjs"
       }
     },
     "./types": {
       "import": {
-        "types": "./dist/publicTypes.d.ts",
-        "default": "./dist/publicTypes.js"
+        "types": "./dist/types.d.ts",
+        "default": "./dist/types.js"
       },
       "require": {
-        "types": "./dist/publicTypes.d.cts",
-        "default": "./dist/publicTypes.cjs"
+        "types": "./dist/types.d.cts",
+        "default": "./dist/types.cjs"
       }
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
-  ],
-  "type": "module",
+  "author": {
+    "name": "Alex Jarvis",
+    "url": "https://github.com/alxjrvs"
+  },
+  "license": "MIT",
+  "homepage": "https://randsum.dev/packages/notation/",
+  "bugs": "https://github.com/RANDSUM/randsum/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RANDSUM/randsum.git",
+    "directory": "packages/notation"
+  },
   "engines": {
     "bun": ">=1.3.10",
     "node": ">=18.0.0"
@@ -132,7 +131,7 @@
   "scripts": {
     "dev": "bunup --watch",
     "prepublishOnly": "bun run build",
-    "build": "bunup --entry src/index.ts --entry src/parse.ts --entry src/validate.ts --entry src/transform.ts --entry src/comparisonExports.ts --entry src/schemas.ts --entry src/tokenizeExports.ts --entry src/publicTypes.ts --format esm,cjs --dts --no-splitting --minify --sourcemap external --target node --clean",
+    "build": "bunup",
     "test": "bun test",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
