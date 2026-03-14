@@ -24,49 +24,41 @@ A `.randsum.json` file defines:
 - **Roll** — how to assemble the dice, apply modifiers, resolve the total, and determine the outcome
 - **Conditional overrides** — alternate behavior based on input values (e.g., 0-dice desperate pools in Blades)
 
-## Example: Blades in the Dark
+## Example: Salvage Union
 
-This is the actual `blades.randsum.json` spec (simplified for readability):
+This is the actual `salvageunion.randsum.json` spec — Salvage Union's richest-in-the-ecosystem spec with multiple roll tables, range-based outcomes, and dynamic table selection:
 
 <CodeExample lang="json" code={`{
-  "name": "Blades in the Dark",
-  "shortcode": "blades",
-
-  "pools": {
-    "actionDice": { "sides": 6 }
-  },
-
-  "tables": {
-    "coreMechanic": {
-      "ranges": [
-        { "poolCondition": { "countWhere": { "operator": "=", "value": 6 }, "atLeast": 2 },
-          "result": "critical" },
-        { "exact": 6, "result": "success" },
-        { "min": 4, "max": 5, "result": "partial" },
-        { "min": 1, "max": 3, "result": "failure" }
-      ]
-    }
-  },
-
-  "outcomes": {
-    "coreMechanicOutcome": { "tableLookup": { "$ref": "#/tables/coreMechanic" } }
-  },
+  "name": "Salvage Union",
+  "shortcode": "salvageunion",
 
   "roll": {
     "inputs": {
-      "rating": { "type": "integer", "minimum": 0, "maximum": 4 }
+      "tableName": { "type": "string" }
     },
-    "dice": {
-      "pool": { "$ref": "#/pools/actionDice" },
-      "quantity": { "$input": "rating" }
-    },
-    "modify": [{ "keepHighest": 1 }],
-    "resolve": "sum",
-    "outcome": { "$ref": "#/outcomes/coreMechanicOutcome" }
+    "dice": { "pool": { "sides": 20 }, "quantity": 1 },
+    "resolve": {
+      "remoteTableLookup": {
+        "url": "https://salvageunion.io/schema/roll-tables.json",
+        "find": {
+          "field": "name",
+          "input": "tableName",
+          "errorMessage": "Invalid Salvage Union table name: \\"\${value}\\""
+        },
+        "tableField": "table",
+        "resultMapping": {
+          "key": { "$lookupResult": "key" },
+          "label": { "$lookupResult": "result.label" },
+          "description": { "$lookupResult": "result.value" },
+          "tableName": { "$input": "tableName" },
+          "roll": { "expr": "total" }
+        }
+      }
+    }
   }
 }`} />
 
-From this spec, the codegen pipeline produces a fully typed `roll()` function that accepts a rating (0-4), rolls the right number of d6s, applies keep-highest/keep-lowest, and returns `'critical' | 'success' | 'partial' | 'failure'`.
+From this spec, the codegen pipeline produces a fully typed `roll()` function that accepts a table name (like `'Core Mechanic'` or `'Critical Injury'`), rolls 1d20, looks up the result in the matching table by range, and returns a rich result with `label`, `description`, and `tableName`. The `remoteTableLookup` data is fetched at build time and baked into the generated code — zero network calls at runtime.
 
 ## How codegen works
 

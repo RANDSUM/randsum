@@ -167,13 +167,13 @@ bun install`} />
 
 <CodeExample code={`import { describe, expect, test } from 'bun:test'\nimport fc from 'fast-check'\nimport { roll } from '@randsum/games/<shortcode>'\n\ndescribe('roll property-based tests', () => {\n  test('result is always a valid outcome', () => {\n    fc.assert(\n      fc.property(fc.constant(undefined), () => {\n        const { result } = roll()\n        return ['success', 'partial', 'failure'].includes(result)\n      })\n    )\n  })\n})`} />
 
-Adapt these templates to your game's inputs and outcomes. See existing test files (e.g., `blades.test.ts`, `fifth.test.ts`) for patterns handling game-specific inputs like `rating` or `modifier`.
+Adapt these templates to your game's inputs and outcomes. See existing test files (e.g., `salvageunion.test.ts`, `fifth.test.ts`) for patterns handling game-specific inputs like `tableName` or `modifier`.
 
 ## Tips
 
 - **Start simple.** Get a basic spec working before adding inputs, conditional pools, or complex outcome trees. You can iterate in follow-up PRs.
 - **Use `loadSpec` for rapid iteration.** While developing your spec, use [`loadSpec()`](/games/schema/using-loadspec/) to test it without running codegen on every change.
-- **Check existing specs.** The six built-in game specs in `packages/games/` cover a range of mechanics — pool-based (blades), advantage/disadvantage (fifth), dual-pool (daggerheart), 2d6+stat (pbta), and large outcome tables (salvageunion). Find the one closest to your game and use it as a starting point.
+- **Check existing specs.** The six built-in game specs in `packages/games/` cover a range of mechanics — table-based with dynamic lookup (salvageunion), advantage/disadvantage (fifth), pool-based (blades), dual-pool (daggerheart), and 2d6+stat (pbta). The [Salvage Union spec](https://github.com/RANDSUM/randsum/blob/main/packages/games/salvageunion.randsum.json) is the richest example, with multiple roll tables and range-based outcomes. Find the one closest to your game and use it as a starting point.
 - **Table ranges must cover all possible values.** If your die produces 1-6, your outcome table must account for every value from 1 to 6. Gaps cause `SchemaError` with code `'NO_TABLE_MATCH'` at runtime.
 
 ## Learn more

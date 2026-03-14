@@ -1,6 +1,6 @@
 ---
 title: "@randsum/games"
-description: Game-specific dice rolling for D&D 5e, Blades in the Dark, PbtA, Daggerheart, Root RPG, and Salvage Union. Typed results with validated input.
+description: Game-specific dice rolling for Salvage Union, D&D 5e, Blades in the Dark, PbtA, Daggerheart, and Root RPG. Typed results with validated input.
 head:
   - tag: script
     attrs:
@@ -20,11 +20,16 @@ head:
 import { Card, CardGrid, Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-Roll dice for D&D, Blades in the Dark, PbtA, and more with typed, game-specific functions. Each game package validates input, rolls using the core engine, and interprets the result according to that system's rules.
+Roll dice for Salvage Union, D&D, Blades in the Dark, PbtA, and more with typed, game-specific functions. Each game package validates input, rolls using the core engine, and interprets the result according to that system's rules.
 
 ## Available games
 
 <CardGrid>
+  <Card title="Salvage Union" icon="seti:favicon">
+    `@randsum/games/salvageunion` -- D20 table-based rolls for mech combat and salvage operations.
+
+    [View documentation](/games/salvageunion/)
+  </Card>
   <Card title="D&D 5th Edition" icon="seti:favicon">
     `@randsum/games/fifth` -- Ability checks, saving throws, attack rolls with advantage/disadvantage.
 
@@ -50,27 +55,23 @@ Roll dice for D&D, Blades in the Dark, PbtA, and more with typed, game-specific 
 
     [View documentation](/games/root-rpg/)
   </Card>
-  <Card title="Salvage Union" icon="seti:favicon">
-    `@randsum/games/salvageunion` -- D20 table-based rolls for mech combat and salvage operations.
-
-    [View documentation](/games/salvageunion/)
-  </Card>
 </CardGrid>
 
 ## How they work
 
 Every game package follows a three-step pipeline: validate input, roll dice, interpret the result.
 
-<CodeExample code={`import { roll } from '@randsum/games/fifth'
+<CodeExample code={`import { roll } from '@randsum/games/salvageunion'
 
-// 1. Validate — checks modifier range and rollingWith value
+// 1. Validate — checks that tableName matches a known table
 // 2. Roll — executes the d20 roll via @randsum/roller
-// 3. Interpret — applies advantage/disadvantage, adds modifier
-const result = roll({ modifier: 5, rollingWith: 'Advantage' })
+// 3. Interpret — looks up the result in the matching table by range
+const result = roll('Core Mechanic')
 
-console.log(result.result) // numeric total (d20 + modifier)
-console.log(result.total)  // same as result.result for D&D 5e
-console.log(result.rolls)  // raw RollRecord[] from the roller`} />
+console.log(result.result.label)       // 'Success' | 'Tough Choice' | 'Failure' | ...
+console.log(result.result.description) // full outcome text
+console.log(result.total)              // d20 roll
+console.log(result.rolls)              // raw RollRecord[] from the roller`} />
 
 ## Common patterns
 
@@ -87,12 +88,12 @@ All game packages share these characteristics:
 
 | Game | Dice | Input | Outcomes |
 |---|---|---|---|
+| `salvageunion` | 1d20 | `tableName` (string) | Table result with label + description |
 | `fifth` | 1d20 or 2d20 | `modifier`, `rollingWith`, `crit` | Numeric total |
 | `blades` | Nd6 pool | `rating` (number, 0-4) | `critical`, `success`, `partial`, `failure` |
 | `pbta` | 2d6 | `stat`, `forward`, `ongoing`, `rollingWith` | `strong_hit`, `weak_hit`, `miss` |
 | `daggerheart` | Hope/Fear dice | `modifier`, `amplifyHope`, `amplifyFear`, `rollingWith` | `critical hope`, `hope`, `fear` |
 | `root-rpg` | 2d6 | `bonus` (number) | `Strong Hit`, `Weak Hit`, `Miss` |
-| `salvageunion` | 1d20 | `tableName` (string) | Table result with label + description |
 
 ## Installation
 
@@ -100,12 +101,12 @@ Install `@randsum/games` once, then import the game you need via subpath exports
 
 <CodeExample lang="bash" code={`bun add @randsum/games`} />
 
-<CodeExample code={`import { roll } from '@randsum/games/blades'
+<CodeExample code={`import { roll } from '@randsum/games/salvageunion'
 import { roll } from '@randsum/games/fifth'
+import { roll } from '@randsum/games/blades'
 import { roll } from '@randsum/games/pbta'
 import { roll } from '@randsum/games/daggerheart'
-import { roll } from '@randsum/games/root-rpg'
-import { roll } from '@randsum/games/salvageunion'`} />
+import { roll } from '@randsum/games/root-rpg'`} />
 
 <Aside type="note" title="Games are data, not code">
 Every game package is code-generated from a `.randsum.json` spec — a declarative description of the game's dice mechanics, input validation, and outcome interpretation. The TypeScript you import is produced by a build-time codegen pipeline, not hand-written. See the [Schema Overview](/games/schema/overview/) for how this works.

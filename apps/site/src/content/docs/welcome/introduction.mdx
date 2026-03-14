@@ -24,7 +24,7 @@ RANDSUM is a TypeScript-first dice engine for tabletop RPGs and game development
 
 - **`@randsum/roller`** — roll dice with a single function call, apply modifiers, get typed results
 - **`@randsum/notation`** — parse and validate [Randsum Dice Notation](/notation/randsum-dice-notation/) strings independently
-- **`@randsum/games`** — game-specific roll functions for D&D 5e, Blades in the Dark, PbtA, and more
+- **`@randsum/games`** — game-specific roll functions for Salvage Union, D&D 5e, PbtA, and more
 
 ## Your first roll
 
@@ -82,9 +82,9 @@ const attackDamage = roll('1d20+5', '2d6')`} />
     </Tabs>
     Then import from the subpath for your game:
     <CodeExample code={`// Pick one:
-import { roll } from '@randsum/games/fifth'   // D&D 5e
-import { roll } from '@randsum/games/blades'  // Blades in the Dark
-import { roll } from '@randsum/games/pbta'    // Powered by the Apocalypse`} />
+import { roll } from '@randsum/games/salvageunion' // Salvage Union
+import { roll } from '@randsum/games/fifth'        // D&D 5e
+import { roll } from '@randsum/games/pbta'         // Powered by the Apocalypse`} />
   </TabItem>
   <TabItem label="Notation">
     Parse and validate dice notation strings without the roll engine. Install this only if you don't need `roll()` — `@randsum/roller` already re-exports `validateNotation`, `isDiceNotation`, and `notation`.
@@ -122,7 +122,7 @@ All packages ship as ESM and CJS with full type declarations. No Node.js built-i
 
 - **[Roller — Getting Started](/roller/getting-started/)** — learn the `roll()` function, modifiers, and result types
 - **[Notation — Getting Started](/notation/getting-started/)** — parse and validate dice notation strings
-- **[Games — Getting Started](/games/getting-started/)** — roll with game-specific mechanics for D&D 5e, Blades, PbtA, and more
+- **[Games — Getting Started](/games/getting-started/)** — roll with game-specific mechanics for Salvage Union, D&D 5e, PbtA, and more
 - **[Ecosystem Overview](/welcome/ecosystem-overview/)** — how the packages fit together
 
 ## Links
