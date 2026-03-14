@@ -8,42 +8,43 @@
  *   bun run publish -- --dry-run     # simulate without publishing
  *   bun run publish -- --otp=123456  # provide 2FA OTP
  *
- * Iterates all workspace packages, skips private ones, runs `bun publish` in each.
+ * Publishes workspace packages in dependency order, skips private ones.
  * workspace: protocol references are replaced with real versions by bun publish.
  */
 
-import { dirname, join } from 'path'
+import { join } from 'path'
 import { $ } from 'bun'
 
 const ROOT = join(import.meta.dir, '..')
 
-async function getPublishablePackages(): Promise<{ name: string; dir: string }[]> {
-  const rootPkg = (await Bun.file(join(ROOT, 'package.json')).json()) as {
-    workspaces: string[]
-  }
+/**
+ * Hardcoded topological publish order.
+ * Packages must be published in dependency order so that downstream
+ * packages can resolve their dependencies on the registry.
+ */
+const PUBLISH_ORDER: readonly string[] = [
+  'packages/notation',
+  'packages/roller',
+  'packages/display-utils',
+  'packages/games',
+  'packages/component-library',
+  'apps/cli',
+]
+
+async function getPublishablePackages(): Promise<
+  { name: string; dir: string }[]
+> {
   const packages: { name: string; dir: string }[] = []
 
-  for (const pattern of rootPkg.workspaces) {
-    if (pattern.endsWith('/*')) {
-      const baseDir = pattern.slice(0, -2)
-      const glob = new Bun.Glob('*/package.json')
-      for await (const file of glob.scan({ cwd: join(ROOT, baseDir) })) {
-        const pkg = (await Bun.file(join(ROOT, baseDir, file)).json()) as {
-          name: string
-          private?: boolean
-        }
-        if (!pkg.private) {
-          packages.push({ name: pkg.name, dir: join(ROOT, baseDir, dirname(file)) })
-        }
-      }
-    } else {
-      const pkgFile = Bun.file(join(ROOT, pattern, 'package.json'))
-      if (await pkgFile.exists()) {
-        const pkg = (await pkgFile.json()) as { name: string; private?: boolean }
-        if (!pkg.private) {
-          packages.push({ name: pkg.name, dir: join(ROOT, pattern) })
-        }
-      }
+  for (const relDir of PUBLISH_ORDER) {
+    const pkgPath = join(ROOT, relDir, 'package.json')
+    const pkgFile = Bun.file(pkgPath)
+    if (!(await pkgFile.exists())) {
+      continue
+    }
+    const pkg = (await pkgFile.json()) as { name: string; private?: boolean }
+    if (!pkg.private) {
+      packages.push({ name: pkg.name, dir: join(ROOT, relDir) })
     }
   }
 
@@ -56,7 +57,9 @@ const publishArgs = ['--access=public', ...extraArgs]
 
 const packages = await getPublishablePackages()
 
-console.log(`\nPublishing ${packages.length} packages${dryRun ? ' (dry run)' : ''}:\n`)
+console.log(
+  `\nPublishing ${packages.length} packages${dryRun ? ' (dry run)' : ''}:\n`
+)
 for (const { name } of packages) {
   console.log(`  ${name}`)
 }

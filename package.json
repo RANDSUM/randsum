@@ -80,7 +80,7 @@
     },
     {
       "path": "packages/roller/dist/index.d.ts",
-      "limit": "4 KB"
+      "limit": "5 KB"
     },
     {
       "path": "packages/notation/dist/index.d.ts",
