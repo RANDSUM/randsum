@@ -31,8 +31,8 @@
   "references": [
     { "path": "packages/notation" },
     { "path": "packages/roller" },
-    { "path": "internalPackages/display-utils" },
+    { "path": "packages/internal/display-utils" },
     { "path": "packages/games" },
-    { "path": "internalPackages/component-library" }
+    { "path": "packages/internal/component-library" }
   ]
 }

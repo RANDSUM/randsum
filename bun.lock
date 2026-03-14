@@ -75,7 +75,20 @@
         "react-dom": "catalog:",
       },
     },
-    "internalPackages/component-library": {
+    "packages/games": {
+      "name": "@randsum/games",
+      "version": "3.5.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+      "devDependencies": {
+        "ajv": "8.18.0",
+        "bunup": "0.16.31",
+        "prettier": "3.8.1",
+        "typescript": "^5.9.3",
+      },
+    },
+    "packages/internal/component-library": {
       "name": "@randsum/component-library",
       "version": "3.5.0",
       "devDependencies": {
@@ -93,7 +106,7 @@
         "react-dom": ">=18",
       },
     },
-    "internalPackages/display-utils": {
+    "packages/internal/display-utils": {
       "name": "@randsum/display-utils",
       "version": "3.5.0",
       "devDependencies": {
@@ -102,19 +115,6 @@
       },
       "peerDependencies": {
         "@randsum/roller": "^3.5.0",
-      },
-    },
-    "packages/games": {
-      "name": "@randsum/games",
-      "version": "3.5.0",
-      "dependencies": {
-        "@randsum/roller": "workspace:~",
-      },
-      "devDependencies": {
-        "ajv": "8.18.0",
-        "bunup": "0.16.31",
-        "prettier": "3.8.1",
-        "typescript": "^5.9.3",
       },
     },
     "packages/notation": {
@@ -683,11 +683,11 @@
 
     "@randsum/cli": ["@randsum/cli@workspace:apps/cli"],
 
-    "@randsum/component-library": ["@randsum/component-library@workspace:internalPackages/component-library"],
+    "@randsum/component-library": ["@randsum/component-library@workspace:packages/internal/component-library"],
 
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
 
-    "@randsum/display-utils": ["@randsum/display-utils@workspace:internalPackages/display-utils"],
+    "@randsum/display-utils": ["@randsum/display-utils@workspace:packages/internal/display-utils"],
 
     "@randsum/games": ["@randsum/games@workspace:packages/games"],
 

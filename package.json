@@ -50,11 +50,11 @@
       "limit": "10 KB"
     },
     {
-      "path": "internalPackages/display-utils/dist/index.js",
+      "path": "packages/internal/display-utils/dist/index.js",
       "limit": "20 KB"
     },
     {
-      "path": "internalPackages/component-library/dist/index.js",
+      "path": "packages/internal/component-library/dist/index.js",
       "limit": "50 KB"
     },
     {
@@ -90,7 +90,7 @@
       "limit": "4 KB"
     },
     {
-      "path": "internalPackages/display-utils/dist/index.d.ts",
+      "path": "packages/internal/display-utils/dist/index.d.ts",
       "limit": "2 KB"
     }
   ],
@@ -98,7 +98,7 @@
     "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
     "dev": "bun run --filter '*' dev",
-    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && cd internalPackages/display-utils && bun run build && cd ../.. && bun run --filter '@randsum/games' --filter '@randsum/cli' --filter '@randsum/discord-bot' build && cd internalPackages/component-library && bun run build",
+    "build": "bun run --filter '@randsum/roller' --filter '@randsum/notation' build && bun run --filter '@randsum/display-utils' build && bun run --filter '@randsum/games' --filter '@randsum/component-library' --filter '@randsum/cli' --filter '@randsum/discord-bot' build",
     "test": "bun test --recursive",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "bun run --filter \"*\" lint",
@@ -132,11 +132,8 @@
   },
   "type": "module",
   "workspaces": [
-    "packages/*",
-    "internalPackages/*",
-    "apps/cli",
-    "apps/discord-bot",
-    "apps/site"
+    "packages/**",
+    "apps/*"
   ],
   "overrides": {
     "lodash": "4.17.23",

@@ -111,7 +111,7 @@ export const toolPackages: PackageInfo[] = [
     displayName: 'Display Utils',
     description: 'Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UI.',
     npmPackage: '@randsum/display-utils',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/internalPackages/display-utils',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/internal/display-utils',
     version: '3.0.1',
     category: 'tool',
     color: '#10b981'
@@ -122,7 +122,7 @@ export const toolPackages: PackageInfo[] = [
     displayName: 'Component Library',
     description: 'React components for embedding dice rollers in any web app.',
     npmPackage: '@randsum/component-library',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/internalPackages/component-library',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/internal/component-library',
     version: '3.0.0',
     category: 'tool',
     color: '#3b82f6' // blue
