@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
-import { loadSpec } from '../../src/lib/loader'
 import type { RandSumSpec } from '../../src/lib/types'
 
 describe('emitHelpers: specToFilename', () => {

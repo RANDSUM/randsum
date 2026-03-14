@@ -1,7 +1,13 @@
 import { afterEach, describe, expect, spyOn, test } from 'bun:test'
+import type { Mock } from 'bun:test'
 import { SchemaError } from '../../src/lib/errors'
 import { loadSpec, loadSpecAsync } from '../../src/lib/loader'
 import type { RandSumSpec } from '../../src/lib/types'
+
+// Cast an arbitrary object to RandSumSpec for negative-path testing
+function invalidSpec(obj: Record<string, unknown>): RandSumSpec {
+  return obj as RandSumSpec
+}
 
 const VALID_SPEC: RandSumSpec = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -16,7 +22,7 @@ const VALID_SPEC: RandSumSpec = {
 
 describe('loadSpec with invalid spec', () => {
   test('throws SchemaError for invalid spec object', () => {
-    const badSpec = { name: 'bad' } as unknown as RandSumSpec
+    const badSpec = invalidSpec({ name: 'bad' })
     expect(() => loadSpec(badSpec)).toThrow(SchemaError)
     expect(() => loadSpec(badSpec)).toThrow('Invalid spec')
   })
@@ -27,7 +33,7 @@ describe('loadSpec with invalid spec', () => {
 })
 
 describe('loadSpecAsync with HTTP URLs', () => {
-  const fetchSpyRef: { current: ReturnType<typeof spyOn> | null } = { current: null }
+  const fetchSpyRef: { current: Mock<typeof fetch> | null } = { current: null }
 
   afterEach(() => {
     fetchSpyRef.current?.mockRestore()
@@ -116,7 +122,7 @@ describe('loadSpecAsync with spec object', () => {
   })
 
   test('throws for invalid spec object', async () => {
-    const badSpec = { name: 'bad' } as unknown as RandSumSpec
+    const badSpec = invalidSpec({ name: 'bad' })
     try {
       await loadSpecAsync(badSpec)
       expect(true).toBe(false)

@@ -1,7 +1,13 @@
-import { afterEach, beforeEach, describe, expect, spyOn, test } from 'bun:test'
+import { afterEach, describe, expect, spyOn, test } from 'bun:test'
+import type { Mock } from 'bun:test'
 import { SchemaError } from '../../src/lib/errors'
 import { resolveExternalRefs } from '../../src/lib/externalRefResolver'
 import type { RandSumSpec } from '../../src/lib/types'
+
+// Helper to create test specs with extra properties without `as unknown as T`
+function specWith(extra: Record<string, unknown>): RandSumSpec {
+  return { ...PLAIN_SPEC, ...extra } as RandSumSpec
+}
 
 const PLAIN_SPEC: RandSumSpec = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -15,7 +21,7 @@ const PLAIN_SPEC: RandSumSpec = {
 }
 
 describe('fetchJson error paths', () => {
-  const fetchSpyRef: { current: ReturnType<typeof spyOn> | null } = { current: null }
+  const fetchSpyRef: { current: Mock<typeof fetch> | null } = { current: null }
 
   afterEach(() => {
     fetchSpyRef.current?.mockRestore()
@@ -66,7 +72,7 @@ describe('fetchJson error paths', () => {
 
   test('throws SchemaError for non-Error rejection', async () => {
     fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.reject('string error')
+      Promise.reject(new Error('string error'))
     )
     const specWithRef = {
       ...PLAIN_SPEC,
@@ -85,7 +91,7 @@ describe('fetchJson error paths', () => {
 })
 
 describe('resolvePointer edge cases', () => {
-  const fetchSpyRef: { current: ReturnType<typeof spyOn> | null } = { current: null }
+  const fetchSpyRef: { current: Mock<typeof fetch> | null } = { current: null }
 
   afterEach(() => {
     fetchSpyRef.current?.mockRestore()
@@ -172,7 +178,7 @@ describe('resolvePointer edge cases', () => {
 })
 
 describe('inlineRefs with arrays', () => {
-  const fetchSpyRef: { current: ReturnType<typeof spyOn> | null } = { current: null }
+  const fetchSpyRef: { current: Mock<typeof fetch> | null } = { current: null }
 
   afterEach(() => {
     fetchSpyRef.current?.mockRestore()
@@ -186,11 +192,9 @@ describe('inlineRefs with arrays', () => {
         json: () => Promise.resolve(resolved)
       } as Response)
     )
-    const specWithArrayRef = {
-      ...PLAIN_SPEC,
-      customList: [{ $ref: 'https://example.com/data.json' }, 'plain-string', 42]
-    }
-    const result = await resolveExternalRefs(specWithArrayRef as unknown as RandSumSpec)
+    const result = await resolveExternalRefs(
+      specWith({ customList: [{ $ref: 'https://example.com/data.json' }, 'plain-string', 42] })
+    )
     const list = (result as Record<string, unknown>).customList as unknown[]
     expect(list[0]).toEqual(resolved)
     expect(list[1]).toBe('plain-string')
@@ -205,15 +209,9 @@ describe('inlineRefs with arrays', () => {
         json: () => Promise.resolve(resolved)
       } as Response)
     )
-    const specWithNested = {
-      ...PLAIN_SPEC,
-      nested: {
-        deep: {
-          ref: { $ref: 'https://example.com/data.json' }
-        }
-      }
-    }
-    const result = await resolveExternalRefs(specWithNested as unknown as RandSumSpec)
+    const result = await resolveExternalRefs(
+      specWith({ nested: { deep: { ref: { $ref: 'https://example.com/data.json' } } } })
+    )
     const nested = (result as Record<string, unknown>).nested as Record<
       string,
       Record<string, unknown>
@@ -223,7 +221,7 @@ describe('inlineRefs with arrays', () => {
 })
 
 describe('collectExternalRefs with nested objects', () => {
-  const fetchSpyRef: { current: ReturnType<typeof spyOn> | null } = { current: null }
+  const fetchSpyRef: { current: Mock<typeof fetch> | null } = { current: null }
 
   afterEach(() => {
     fetchSpyRef.current?.mockRestore()
@@ -237,15 +235,9 @@ describe('collectExternalRefs with nested objects', () => {
         json: () => Promise.resolve(data)
       } as Response)
     )
-    const specWithDeep = {
-      ...PLAIN_SPEC,
-      level1: {
-        level2: {
-          level3: { $ref: 'https://example.com/deep.json' }
-        }
-      }
-    }
-    const result = await resolveExternalRefs(specWithDeep as unknown as RandSumSpec)
+    const result = await resolveExternalRefs(
+      specWith({ level1: { level2: { level3: { $ref: 'https://example.com/deep.json' } } } })
+    )
     const level1 = (result as Record<string, unknown>).level1 as Record<
       string,
       Record<string, unknown>

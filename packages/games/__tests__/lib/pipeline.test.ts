@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { loadSpec } from '../../src/lib/loader'
 import { executePipeline } from '../../src/lib/pipeline'
 import { normalizeSpec } from '../../src/lib/normalizer'
-import { SchemaError } from '../../src/lib/errors'
+import type { NormalizedRollDefinition } from '../../src/lib/normalizedTypes'
 import type { RandSumSpec } from '../../src/lib/types'
 
 function makeSpec(rollDef: Record<string, unknown>): RandSumSpec {
@@ -15,7 +15,7 @@ function makeSpec(rollDef: Record<string, unknown>): RandSumSpec {
   } as RandSumSpec
 }
 
-function getNormalized(spec: RandSumSpec) {
+function getNormalized(spec: RandSumSpec): NormalizedRollDefinition {
   const nspec = normalizeSpec(spec)
   return nspec.rolls['roll']!
 }
