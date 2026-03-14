@@ -1,3 +1,4 @@
+import type { Mock } from 'bun:test'
 import { afterEach, describe, expect, spyOn, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
 import { SchemaError } from '../../src/lib/errors'
@@ -17,7 +18,7 @@ describe('generateCode with invalid spec', () => {
 })
 
 describe('fetchRemoteData', () => {
-  const fetchSpyRef: { current: ReturnType<typeof spyOn> | null } = { current: null }
+  const fetchSpyRef: { current: Mock<typeof fetch> | null } = { current: null }
 
   afterEach(() => {
     fetchSpyRef.current?.mockRestore()
