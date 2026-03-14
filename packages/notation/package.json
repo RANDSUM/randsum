@@ -136,6 +136,19 @@
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "typecheck": "tsc --noEmit"
-  }
+    "typecheck": "tsc --noEmit",
+    "size": "size-limit",
+    "check:exports": "ts-unused-exports ../../tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
+    "check": "bun run typecheck && bun run format:check && bun run lint && bun run build && bun run test && bun run size && bun run check:exports"
+  },
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "13 KB"
+    },
+    {
+      "path": "dist/index.d.ts",
+      "limit": "4 KB"
+    }
+  ]
 }

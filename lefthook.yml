@@ -19,14 +19,8 @@ pre-push:
     build:
       run: bun run build
       priority: 1
-    exports:
-      run: bun run check:exports
+    check:
+      run: bun run check
       priority: 2
-    test:
-      run: bun test
-    gen-check:
-      run: bun run --filter '@randsum/games' gen:check
-    skill-verify:
-      run: npx skills-ref validate skills/dice-rolling/SKILL.md
     audit:
       run: bun audit --level=high

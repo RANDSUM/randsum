@@ -40,60 +40,6 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0"
   },
-  "size-limit": [
-    {
-      "path": "packages/notation/dist/index.js",
-      "limit": "13 KB"
-    },
-    {
-      "path": "packages/roller/dist/index.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "packages/internal/display-utils/dist/index.js",
-      "limit": "20 KB"
-    },
-    {
-      "path": "packages/component-library/dist/index.js",
-      "limit": "50 KB"
-    },
-    {
-      "path": "packages/games/dist/blades.generated.js",
-      "limit": "8 KB"
-    },
-    {
-      "path": "packages/games/dist/fifth.generated.js",
-      "limit": "8 KB"
-    },
-    {
-      "path": "packages/games/dist/daggerheart.generated.js",
-      "limit": "8.1 KB"
-    },
-    {
-      "path": "packages/games/dist/pbta.generated.js",
-      "limit": "8.2 KB"
-    },
-    {
-      "path": "packages/games/dist/root-rpg.generated.js",
-      "limit": "8 KB"
-    },
-    {
-      "path": "packages/games/dist/salvageunion.generated.js",
-      "limit": "100 KB"
-    },
-    {
-      "path": "packages/roller/dist/index.d.ts",
-      "limit": "5 KB"
-    },
-    {
-      "path": "packages/notation/dist/index.d.ts",
-      "limit": "4 KB"
-    },
-    {
-      "path": "packages/internal/display-utils/dist/index.d.ts",
-      "limit": "2 KB"
-    }
-  ],
   "scripts": {
     "prepare": "[ -d .git ] && lefthook install || true",
     "help": "bun scripts/help.ts",
@@ -105,14 +51,12 @@
     "format": "bun run --filter \"*\" format",
     "format:check": "bun run --filter \"*\" format:check",
     "typecheck": "bun run --filter \"*\" typecheck",
-    "size": "size-limit",
-    "size:check": "size-limit --json",
-    "check:exports": "ts-unused-exports tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
+    "check": "bun run --filter '*' check",
     "bench": "bun run packages/roller/__benchmarks__/roll.bench.ts",
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
-    "check:all": "bun run lint && bun run format:check && bun run typecheck && bun test && bun run build && bun run size && bun run check:exports && bun run site:build",
+    "check:all": "bun run check",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/component-library dev & bun run --filter @randsum/site dev",
@@ -128,7 +72,7 @@
     "version:patch": "bun pm version patch",
     "version:minor": "bun pm version minor",
     "version:major": "bun pm version major",
-    "publish": "bun run lint && bun run format:check && bun run typecheck && bun run test && bun run build && bun run size && bun run check:exports && bun scripts/publish.ts"
+    "publish": "bun run build && bun run check && bun scripts/publish.ts"
   },
   "type": "module",
   "workspaces": [

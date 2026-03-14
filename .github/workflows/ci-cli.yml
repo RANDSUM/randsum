@@ -1,0 +1,47 @@
+name: CI - CLI
+
+on:
+  push:
+    paths:
+      - 'packages/notation/**'
+      - 'packages/roller/**'
+      - 'packages/internal/display-utils/**'
+      - 'apps/cli/**'
+      - '.github/workflows/ci-cli.yml'
+  pull_request:
+    paths:
+      - 'packages/notation/**'
+      - 'packages/roller/**'
+      - 'packages/internal/display-utils/**'
+      - 'apps/cli/**'
+      - '.github/workflows/ci-cli.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: cli
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> $GITHUB_OUTPUT
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter '@randsum/notation' build
+      - run: bun run --filter '@randsum/roller' build
+      - run: bun run --filter '@randsum/display-utils' build
+      - run: bun run --filter '@randsum/cli' check

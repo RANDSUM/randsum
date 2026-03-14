@@ -1,0 +1,32 @@
+name: CI - Skill
+
+on:
+  push:
+    paths:
+      - 'skills/**'
+      - '.github/workflows/ci-skill.yml'
+  pull_request:
+    paths:
+      - 'skills/**'
+      - '.github/workflows/ci-skill.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: skill-verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> $GITHUB_OUTPUT
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - run: npx skills-ref validate skills/dice-rolling/SKILL.md

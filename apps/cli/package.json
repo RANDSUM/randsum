@@ -58,7 +58,9 @@
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "prepublishOnly": "bun run build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:exports": "ts-unused-exports ../../tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
+    "check": "bun run typecheck && bun run format:check && bun run lint && bun run build && bun run test && bun run check:exports"
   },
   "engines": {
     "bun": ">=1.3.10",
