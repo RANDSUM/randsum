@@ -2,6 +2,7 @@ name: CI - Notation
 
 on:
   push:
+    branches: [main]
     paths:
       - 'packages/notation/**'
       - '.github/workflows/ci-notation.yml'

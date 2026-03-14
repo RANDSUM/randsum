@@ -2,6 +2,7 @@ name: CI - Games
 
 on:
   push:
+    branches: [main]
     paths:
       - 'packages/notation/**'
       - 'packages/roller/**'

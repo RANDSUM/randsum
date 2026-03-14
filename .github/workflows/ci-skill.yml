@@ -2,6 +2,7 @@ name: CI - Skill
 
 on:
   push:
+    branches: [main]
     paths:
       - 'skills/**'
       - '.github/workflows/ci-skill.yml'
