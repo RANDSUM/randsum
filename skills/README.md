@@ -7,6 +7,8 @@ This directory contains [Claude Code skills](https://docs.anthropic.com/en/docs/
 | Skill | Description |
 |---|---|
 | [`dice-rolling`](./dice-rolling/SKILL.md) | Roll dice, interpret results, and answer questions about RANDSUM notation and supported game systems |
+| [`dice-probability`](./dice-probability/SKILL.md) | Analyze probability distributions, expected values, and outcome comparisons for dice notation and game systems |
+| [`game-spec-creator`](./game-spec-creator/SKILL.md) | Create `.randsum.json` specs for custom TTRPG dice mechanics, translate game rules into declarative specs |
 
 ## Installation
 
