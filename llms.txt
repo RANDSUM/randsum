@@ -27,6 +27,20 @@ roll("2d20L+5") // Advantage attack roll
 roll("2d6+3")   // PbtA / 2d6 + stat
 roll("1d20", "2d6", "+5")  // Multiple: attack + damage + modifier
 
+## Game Specs (.randsum.json)
+
+Game packages are declarative — each game is defined as a `.randsum.json` spec that generates TypeScript via codegen (`bun run --filter @randsum/games gen`).
+
+Specs live at `packages/games/*.randsum.json`. The meta-schema is at `packages/games/randsum.json`.
+
+Each spec declares a four-stage pipeline:
+1. **Dice** — pool definitions (sides, quantity, inputs)
+2. **Modify** — modifier chain (keepHighest, keepLowest, reroll, etc.)
+3. **Resolve** — resolution strategy (sum, table lookup)
+4. **Outcome** — result classification (success/failure, named outcomes)
+
+`salvageunion.randsum.json` is the richest example, using remote table lookups, multiple inputs, and range-based outcome tables.
+
 ## Documentation
 
 - skills/dice-rolling/SKILL.md - AI agent skill (agentskills.io format)

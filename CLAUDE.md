@@ -54,6 +54,10 @@ bun run help                             # Quick command reference
 - No `as unknown as T` — banned by ESLint AST selector
 - `prefer-readonly` enabled
 - No semicolons, single quotes, no trailing commas (Prettier)
+- Discriminated unions use `kind` or `type` as the discriminant field (e.g., `CollectedResults` with `kind: 'union' | 'numeric' | 'opaque' | 'result-mapping'`)
+- Literal types for API inputs: `roll()` accepts plain numbers and notation strings, not branded/opaque types
+- Error hierarchy: `ValidationError` (roller, numeric range) vs `SchemaError` (games, game-specific). Both extend `Error` — catch them distinctly
+- Re-export conventions: game subpaths re-export `GameRollResult`, `RollRecord`, and `SchemaError`. Internal types stay internal. Use `export type` for type-only re-exports
 
 ## Testing
 
