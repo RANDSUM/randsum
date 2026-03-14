@@ -45,3 +45,5 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/display-utils' build
       - run: bun run --filter '@randsum/cli' check
+      - name: Check unused exports
+        run: bun run --filter '@randsum/cli' check:exports

@@ -41,3 +41,5 @@ jobs:
       - run: bun run --filter '@randsum/roller' check
       - name: Check bundle size
         run: bun run --filter '@randsum/roller' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/roller' check:exports

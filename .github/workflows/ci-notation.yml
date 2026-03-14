@@ -38,3 +38,5 @@ jobs:
       - run: bun run --filter '@randsum/notation' check
       - name: Check bundle size
         run: bun run --filter '@randsum/notation' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/notation' check:exports

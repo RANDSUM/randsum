@@ -47,3 +47,5 @@ jobs:
       - run: bun run --filter '@randsum/component-library' check
       - name: Check bundle size
         run: bun run --filter '@randsum/component-library' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/component-library' check:exports

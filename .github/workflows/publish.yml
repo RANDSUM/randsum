@@ -33,6 +33,8 @@ jobs:
         run: bun run check
       - name: Check bundle sizes
         run: bun run --filter '@randsum/notation' size && bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size && bun run --filter '@randsum/component-library' size
+      - name: Check unused exports
+        run: bun run --filter '@randsum/notation' check:exports
       - name: Security audit
         run: bun audit --audit-level high
 

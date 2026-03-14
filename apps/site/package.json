@@ -45,7 +45,7 @@
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "astro check",
     "check:exports": "ts-unused-exports ../../tsconfig.json --ignoreFiles='__tests__|test-utils|[\\\\/]dist[\\\\/]' --maxIssues=50",
-    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test && bun run check:exports"
+    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.7"
