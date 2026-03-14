@@ -45,6 +45,6 @@
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit",
-    "check": "bun run typecheck && bun run format:check && bun run lint && bun run build && bun run test"
+    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
   }
 }
