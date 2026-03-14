@@ -43,6 +43,9 @@ jobs:
       - name: Build packages
         run: bun run build
 
+      - name: Sync Astro types
+        run: cd apps/site && bunx astro sync
+
       - name: Typecheck
         run: bun run typecheck
 
