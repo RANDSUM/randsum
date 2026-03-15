@@ -6,6 +6,8 @@ import type { DiceNotation, ReplaceOptions } from '../types'
 import type { RollArgument, RollOptions, RollParams } from '../types'
 
 const FATE_DIE_PATTERN = /^(\d*)[Dd][Ff](?:\.([12]))?$/
+const ZERO_BIAS_PATTERN = /^(\d*)[Zz](\d+)$/
+const CUSTOM_FACES_PATTERN = /^(\d*)[Dd]\{(-?\d+(?:,-?\d+)*)\}$/
 
 const FATE_STANDARD_REPLACE: ReplaceOptions[] = [
   { from: 1, to: -1 },
@@ -33,6 +35,63 @@ function parseFateDieParams(arg: string, position: number): RollParams<never>[] 
   const variantSuffix = isExtended ? '.2' : ''
   const notation = `${quantity}dF${variantSuffix}` as DiceNotation
   const description = [`Roll ${quantity}dF${variantSuffix}`]
+
+  return [
+    {
+      quantity,
+      sides,
+      arithmetic: 'add',
+      modifiers: { replace },
+      key: `Roll ${position}`,
+      argument: arg as DiceNotation,
+      notation,
+      description
+    }
+  ]
+}
+
+function parseZeroBiasDieParams(arg: string, position: number): RollParams<never>[] | null {
+  const match = ZERO_BIAS_PATTERN.exec(arg)
+  if (!match) return null
+
+  const quantity = match[1] ? Number(match[1]) : 1
+  const sides = Number(match[2])
+  const replace: ReplaceOptions[] = Array.from({ length: sides }, (_, i) => ({
+    from: i + 1,
+    to: i
+  }))
+  const notation = `${quantity > 1 ? quantity : ''}z${sides}` as DiceNotation
+  const description = [`Roll ${quantity}z${sides}`]
+
+  return [
+    {
+      quantity,
+      sides,
+      arithmetic: 'add',
+      modifiers: { replace },
+      key: `Roll ${position}`,
+      argument: arg as DiceNotation,
+      notation,
+      description
+    }
+  ]
+}
+
+function parseCustomFacesDieParams(arg: string, position: number): RollParams<never>[] | null {
+  const match = CUSTOM_FACES_PATTERN.exec(arg)
+  if (!match) return null
+
+  const quantity = match[1] ? Number(match[1]) : 1
+  const facesStr = match[2]
+  if (!facesStr) return null
+  const faces = facesStr.split(',').map(Number)
+  const sides = faces.length
+  const replace: ReplaceOptions[] = faces.map((face, i) => ({
+    from: i + 1,
+    to: face
+  }))
+  const notation = `${quantity > 1 ? quantity : ''}d{${facesStr}}` as DiceNotation
+  const description = [`Roll ${quantity}d{${facesStr}}`]
 
   return [
     {
@@ -90,6 +149,12 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
   if (typeof argument === 'string') {
     const fateParams = parseFateDieParams(argument, position)
     if (fateParams) return fateParams as RollParams<T>[]
+
+    const zeroBiasParams = parseZeroBiasDieParams(argument, position)
+    if (zeroBiasParams) return zeroBiasParams as RollParams<T>[]
+
+    const customFacesParams = parseCustomFacesDieParams(argument, position)
+    if (customFacesParams) return customFacesParams as RollParams<T>[]
   }
 
   const allOptions = optionsFromArgument(argument)

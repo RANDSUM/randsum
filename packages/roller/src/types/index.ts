@@ -1,4 +1,5 @@
 export type {
+  CustomFacesNotation,
   DiceNotation,
   FateDieNotation,
   PercentileDie,
@@ -6,7 +7,8 @@ export type {
   RollOptions,
   RequiredNumericRollParameters,
   RollArgument,
-  RollConfig
+  RollConfig,
+  ZeroBiasNotation
 } from './core'
 
 export type {
