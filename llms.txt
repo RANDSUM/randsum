@@ -27,6 +27,9 @@ roll("2d20L+5") // Advantage attack roll
 roll("2d6+3")   // PbtA / 2d6 + stat
 roll("d%")      // Percentile: 1d100
 roll("4dF")     // Fate Core: 4 Fate dice (-4 to +4)
+roll("z6")      // Zero-bias: faces 0-5
+roll("d{2,3,5,7}")  // Custom numeric faces
+roll("d{fire,ice}") // Custom string faces
 roll("1d20", "2d6", "+5")  // Multiple: attack + damage + modifier
 
 ## Documentation

@@ -24,6 +24,9 @@ roll({ sides: 6, quantity: 2, modifiers: { plus: 3 } }) // same
 roll("1d20", "2d6") // attack + damage, combined total
 roll("d%") // percentile (1d100)
 roll("4dF") // Fate Core roll
+roll("z6") // Zero-bias: faces 0-5
+roll("d{2,3,5,7}") // Custom numeric faces
+roll("d{fire,ice}") // Custom string faces
 ```
 
 ### `validateNotation(notation: string): ValidationResult`
@@ -50,6 +53,13 @@ Key patterns:
 - `NdSC{conditions}` - Cap values
 - `d%` - Percentile die (1d100)
 - `dF` / `dF.1` / `dF.2` - Fate/Fudge dice
+- `zN` - Zero-bias die (faces 0 to N-1, e.g. `z6` = 0-5)
+- `d{2,3,5,7}` - Custom numeric faces
+- `d{fire,ice,lightning}` - Custom string faces
+- `NdSro{conditions}` - Reroll once (sugar for `R{conditions}1`)
+- `NdSKM` / `NdSKMN` - Keep middle (drop lowest N + drop highest N)
+- `NdSms{N}` - Margin of success (sugar for `-N`)
+- `NdSs` / `NdSsa` / `NdSsd` - Sort rolls ascending/descending (display-only)
 
 ## Modifier System
 
@@ -69,6 +79,7 @@ Modifiers are applied in priority order (lower number = earlier execution):
 | 85       | multiply       | Multiply dice sum (pre-arithmetic) |
 | 90       | plus           | Add to total                       |
 | 91       | minus          | Subtract from total                |
+| 92       | sort           | Sort rolls (display-only)          |
 | 95       | countSuccesses | Count dice meeting threshold       |
 | 100      | multiplyTotal  | Multiply entire final total        |
 
@@ -84,6 +95,8 @@ All types are exported with `export type`:
 - `ModifierOptions` - Modifier configuration
 - `ValidationResult` - Validation output
 - `DiceNotation` - Notation string type
+- `ZeroBiasNotation` - Zero-bias dice notation (`zN`, faces 0 to N-1)
+- `CustomFacesNotation` - Custom face values notation (`d{2,3,5,7}`, `d{fire,ice}`)
 
 ## Internal Architecture
 

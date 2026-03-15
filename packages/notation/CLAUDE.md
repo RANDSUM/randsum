@@ -32,7 +32,7 @@ Zero-dependency package providing dice notation parsing, validation, and the sha
 
 ### Modifier Schemas
 
-14 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, unique, countSuccesses, multiply, plus, minus, multiplyTotal). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry.
+15 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, unique, countSuccesses, multiply, plus, minus, multiplyTotal, sort). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry. Sugar notations like `ms{N}` (margin of success, desugared to `-N`) and `ro{...}` (reroll once, desugared to `R{...}1`) are pre-processed in `parseModifiers` before schema matching.
 
 ### Tokenization
 
@@ -47,7 +47,7 @@ All shared types: `DiceNotation`, `RollOptions`, `ParsedNotationOptions`, `Modif
 ## Internal Structure
 
 - `schema.ts` - `NotationSchema` type and `defineNotationSchema` helper
-- `definitions/` - All 14 modifier schema definitions
+- `definitions/` - All 15 modifier schema definitions (includes `sortSchema`)
 - `parse/` - `notationToOptions` and `listOfNotations` parsing logic
 - `comparison/` - Comparison notation parsing and formatting (`{<3,>18}` syntax)
 - `transformers/` - Options-to-notation and options-to-description converters

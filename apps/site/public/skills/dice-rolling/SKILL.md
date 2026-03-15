@@ -27,17 +27,27 @@ RANDSUM uses an extended dice notation system. All notation is case-insensitive.
 
 **Basic Syntax**: `NdS` where N = quantity, S = sides
 
-| Notation     | Description              | Example                      |
-| ------------ | ------------------------ | ---------------------------- |
-| `2d6`        | Roll 2 six-sided dice    | Standard damage roll         |
-| `1d20+5`     | Roll d20, add 5          | Attack roll with modifier    |
-| `4d6L`       | Roll 4d6, drop lowest    | D&D ability score generation |
-| `2d20L`      | Roll 2d20, drop lowest   | Advantage (keep highest)     |
-| `2d20H`      | Roll 2d20, drop highest  | Disadvantage (keep lowest)   |
-| `3d6!`       | Exploding dice           | Reroll and add on max result |
-| `4d6R{1}`    | Reroll 1s                | Avoid minimum results        |
-| `4d20U`      | Unique results only      | No duplicate values          |
-| `4d20C{>18}` | Cap values over 18 to 18 | Limit maximum results        |
+| Notation         | Description                 | Example                      |
+| ---------------- | --------------------------- | ---------------------------- |
+| `2d6`            | Roll 2 six-sided dice       | Standard damage roll         |
+| `1d20+5`         | Roll d20, add 5             | Attack roll with modifier    |
+| `4d6L`           | Roll 4d6, drop lowest       | D&D ability score generation |
+| `2d20L`          | Roll 2d20, drop lowest      | Advantage (keep highest)     |
+| `2d20H`          | Roll 2d20, drop highest     | Disadvantage (keep lowest)   |
+| `3d6!`           | Exploding dice              | Reroll and add on max result |
+| `4d6R{1}`        | Reroll 1s                   | Avoid minimum results        |
+| `4d20U`          | Unique results only         | No duplicate values          |
+| `4d20C{>18}`     | Cap values over 18 to 18    | Limit maximum results        |
+| `4d6ro{1}`       | Reroll 1s once only         | Sugar for `R{1}1`            |
+| `5d6KM`          | Keep middle dice            | Drop lowest + highest        |
+| `1d20ms{12}`     | Margin of success           | Sugar for `-12`              |
+| `z6`             | Zero-bias d6 (0-5)          | Faces start at 0             |
+| `d{2,3,5,7}`     | Custom numeric faces        | Explicit face values         |
+| `4d6s` / `4d6sd` | Sort ascending / descending | Display-only ordering        |
+
+**Sugar modifiers**: `ro{1}` (reroll once), `KM` (keep middle), `ms{12}` (margin of success)
+
+**Special dice**: `z6` (zero-bias, faces 0-5), `d{2,3,5,7}` (custom numeric), `d{fire,ice}` (custom string)
 
 **Multiple dice groups**: `1d20+2d6+3` (attack plus damage), `2d12-1d6`
 
@@ -81,6 +91,9 @@ roll({ sides: 6, quantity: 2, modifiers: { plus: 3 } })
 
 // Multiple arguments: combined total
 roll("1d20+5", "2d6") // attack with modifier + damage
+roll("z6") // zero-bias d6 (faces 0-5)
+roll("d{2,3,5,7}") // custom numeric faces
+roll("d{fire,ice}") // custom string faces
 
 const result = roll("2d6+3")
 console.log(result.total) // Sum of dice + modifiers

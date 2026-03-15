@@ -282,6 +282,101 @@ roll({
 
 **Note:** Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L1`.
 
+### Keep Middle
+
+Keep the middle dice by dropping both the lowest and highest:
+
+```typescript
+roll("5d6KM") // Keep middle (drop 1 lowest + 1 highest)
+roll({
+  sides: 6,
+  quantity: 5,
+  modifiers: { drop: { lowest: 1, highest: 1 } }
+})
+
+roll("7d6KM2") // Keep middle (drop 2 lowest + 2 highest)
+roll({
+  sides: 6,
+  quantity: 7,
+  modifiers: { drop: { lowest: 2, highest: 2 } }
+})
+```
+
+**How it works:** `KM` is sugar for dropping 1 lowest and 1 highest. `KMN` drops N lowest and N highest. Useful for averaging rolls by removing extremes.
+
+### Reroll Once
+
+Reroll dice once only (sugar for `R{...}1`):
+
+```typescript
+roll("4d6ro{1}") // Reroll 1s once only
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { reroll: { exact: [1], max: 1 } }
+})
+
+roll("4d20ro{<5}") // Reroll under 5 once only
+roll({
+  sides: 20,
+  quantity: 4,
+  modifiers: { reroll: { lessThan: 5, max: 1 } }
+})
+```
+
+**How it works:** `ro{...}` is syntactic sugar for `R{...}1`. The die is rerolled at most once, even if the new result still matches the condition.
+
+### Margin of Success
+
+Subtract a target number from the total (sugar for `-N`):
+
+```typescript
+roll("1d20ms{12}") // Margin of success against DC 12
+roll({
+  sides: 20,
+  quantity: 1,
+  modifiers: { minus: 12 }
+})
+```
+
+**How it works:** `ms{N}` is syntactic sugar for `-N`. Useful for expressing "how much did I beat the target by" in systems that care about margins.
+
+### Zero-Bias Dice
+
+Dice with faces starting at 0 instead of 1:
+
+```typescript
+roll("z6") // d6 with faces 0-5
+roll("z10") // d10 with faces 0-9
+roll("z100") // d100 with faces 0-99
+```
+
+**How it works:** `zN` creates a die with N faces numbered 0 to N-1. Useful for index-based lookups, percentile systems that include 0, or any mechanic where zero is a valid result.
+
+### Custom Dice Faces
+
+Dice with explicitly defined face values:
+
+```typescript
+roll("d{2,3,5,7}") // Die with faces 2, 3, 5, 7
+roll("d{fire,ice,lightning}") // Die with string faces
+roll("3d{1,2,3,4,5,10}") // Three dice with custom numeric faces
+```
+
+**How it works:** `d{...}` defines a die with explicit face values. Numeric values (e.g. `d{2,3,5,7}`) produce numeric results. String values (e.g. `d{fire,ice}`) produce string results. Mixed values are treated as strings.
+
+### Sorting
+
+Sort the rolled values for display:
+
+```typescript
+roll("4d6s") // Sort ascending
+roll("4d6sa") // Sort ascending (explicit)
+roll("4d6sd") // Sort descending
+```
+
+**How it works:** Sort is a display-only modifier at priority 92. It reorders the rolls array but does not affect the total. Useful for presenting results in order (e.g. showing ability scores sorted).
+
 ### Exploding Dice
 
 Roll additional dice on maximum results:
@@ -473,10 +568,11 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 4. Reroll
 5. Explode / Compound / Penetrate
 6. Unique
-7. Success Count
-8. Pre-Arithmetic Multiply (`*`)
-9. Plus / Minus
-10. Total Multiply (`**`)
+7. Pre-Arithmetic Multiply (`*`)
+8. Plus / Minus
+9. Sort (display-only)
+10. Count Successes
+11. Total Multiply (`**`)
 
 ```typescript
 roll("4d6L+2") // Drop lowest, add 2

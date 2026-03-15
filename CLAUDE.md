@@ -91,7 +91,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-Modifiers (cap, drop, keep, reroll, explode, etc.) are self-registering definitions in `packages/roller/src/lib/modifiers/definitions/`. Each has a priority determining execution order (10=cap through 100=multiplyTotal).
+Modifiers (cap, drop, keep, reroll, explode, sort, etc.) are self-registering definitions in `packages/roller/src/lib/modifiers/definitions/`. Each has a priority determining execution order (10=cap through 100=multiplyTotal). Sort is at priority 92 (display-only, does not affect totals).
 
 ### `roll()` Argument Types
 
@@ -103,6 +103,9 @@ roll("1d20+5", "2d6")       // Multiple arguments combined
 roll("d%")                  // Percentile: 1d100
 roll("4dF")                 // Fate Core: 4 Fate dice (-4 to +4)
 roll("dF.2")                // Extended Fudge die (-2 to +2)
+roll("z6")                  // Zero-bias: 1d6 with faces 0-5
+roll("d{2,3,5,7}")          // Custom numeric faces
+roll("d{fire,ice}")         // Custom string faces
 ```
 
 ## Git Hooks (Lefthook)
@@ -137,4 +140,4 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 Full spec: `packages/roller/RANDSUM_DICE_NOTATION.md`
 
-Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge)
+Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `ro{<3}` (reroll once), `!` (explode), `U` (unique), `C{<1,>6}` (cap), `KM` (keep middle), `ms{N}` (margin of success, sugar for `-N`), `s`/`sa`/`sd` (sort ascending/descending), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `zN` (zero-bias, faces 0 to N-1), `d{2,3,5,7}` (custom faces)

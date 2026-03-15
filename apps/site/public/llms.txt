@@ -60,6 +60,12 @@ RANDSUM uses extended standard dice notation (case-insensitive):
 | `S{N}` | Count successes >= N | `5d10S{7}` |
 | `*N` | Pre-arithmetic multiply | `2d6*2+3` |
 | `**N` | Total multiply | `2d6+3**2` |
+| `ro{...}` | Reroll once (sugar for `R{...}1`) | `4d6ro{1}` |
+| `KM` / `KMN` | Keep middle (drop N lowest + N highest) | `5d6KM` |
+| `ms{N}` | Margin of success (sugar for `-N`) | `1d20ms{12}` |
+| `s` / `sa` / `sd` | Sort ascending / descending (display-only) | `4d6s` |
+| `zN` | Zero-bias die (faces 0 to N-1) | `z6` |
+| `d{...}` | Custom faces (numeric or string) | `d{2,3,5,7}` |
 
 ### Special Dice (roller-level, not notation)
 
@@ -93,6 +99,9 @@ roll('2d20H')         // advantage
 roll('2d20L')         // disadvantage
 roll('d%')            // percentile (1d100)
 roll('4dF')           // Fate Core (-4 to +4)
+roll('z6')            // zero-bias (faces 0-5)
+roll('d{2,3,5,7}')    // custom numeric faces
+roll('d{fire,ice}')   // custom string faces
 
 // Options object
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
