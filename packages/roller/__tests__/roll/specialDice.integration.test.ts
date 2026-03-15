@@ -31,7 +31,7 @@ describe('Special Dice Integration Tests', () => {
 
       test('roll("d%") result array has 1 entry', () => {
         const result = roll('d%' as string)
-        expect(result.result).toHaveLength(1)
+        expect(result.values).toHaveLength(1)
       })
     })
 
