@@ -52,6 +52,8 @@ export interface SuccessCountOptions {
 export type ModifierConfig =
   | number
   | boolean
+  | 'asc'
+  | 'desc'
   | ComparisonOptions
   | DropOptions
   | KeepOptions
@@ -88,6 +90,8 @@ export interface ModifierOptions {
   plus?: number
   /** Subtract a fixed value from the total */
   minus?: number
+  /** Sort the rolls array (display-only, does not affect total) */
+  sort?: 'asc' | 'desc'
   /** Multiply final total (after all other modifiers) */
   multiplyTotal?: number
 }

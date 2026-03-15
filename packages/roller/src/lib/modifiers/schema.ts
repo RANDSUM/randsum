@@ -203,6 +203,7 @@ export interface ModifierOptionTypes {
   multiply: number
   plus: number
   minus: number
+  sort: 'asc' | 'desc'
   multiplyTotal: number
 }
 

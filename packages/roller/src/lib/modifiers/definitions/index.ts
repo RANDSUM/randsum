@@ -12,6 +12,7 @@ import { penetrateModifier } from './penetrate'
 import { plusModifier } from './plus'
 import { replaceModifier } from './replace'
 import { rerollModifier } from './reroll'
+import { sortModifier } from './sort'
 import { uniqueModifier } from './unique'
 
 export { capModifier }
@@ -27,6 +28,7 @@ export { penetrateModifier }
 export { plusModifier }
 export { replaceModifier }
 export { rerollModifier }
+export { sortModifier }
 export { uniqueModifier }
 
 /**
@@ -46,6 +48,7 @@ export const ALL_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   multiplyModifier as ModifierDefinition,
   plusModifier as ModifierDefinition,
   minusModifier as ModifierDefinition,
+  sortModifier as ModifierDefinition,
   countSuccessesModifier as ModifierDefinition,
   multiplyTotalModifier as ModifierDefinition
 ])

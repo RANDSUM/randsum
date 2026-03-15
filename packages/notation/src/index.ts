@@ -30,7 +30,8 @@ export {
   multiplySchema,
   plusSchema,
   minusSchema,
-  multiplyTotalSchema
+  multiplyTotalSchema,
+  sortSchema
 } from './definitions'
 export { tokenize } from './tokenize'
 export type { Token, TokenType } from './tokenize'

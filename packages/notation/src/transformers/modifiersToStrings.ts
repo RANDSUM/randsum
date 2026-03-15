@@ -13,6 +13,7 @@ import {
   plusSchema,
   replaceSchema,
   rerollSchema,
+  sortSchema,
   uniqueSchema
 } from '../definitions'
 
@@ -72,6 +73,10 @@ export function modifiersToNotation(modifiers: ModifierOptions | undefined): str
     const n = minusSchema.toNotation(modifiers.minus)
     if (n !== undefined) parts.push(n)
   }
+  if (modifiers.sort !== undefined) {
+    const n = sortSchema.toNotation(modifiers.sort)
+    if (n !== undefined) parts.push(n)
+  }
   if (modifiers.countSuccesses !== undefined) {
     const n = countSuccessesSchema.toNotation(modifiers.countSuccesses)
     if (n !== undefined) parts.push(n)
@@ -107,6 +112,7 @@ export function modifiersToDescription(modifiers: ModifierOptions | undefined): 
     parts.push(...multiplySchema.toDescription(modifiers.multiply))
   if (modifiers.plus !== undefined) parts.push(...plusSchema.toDescription(modifiers.plus))
   if (modifiers.minus !== undefined) parts.push(...minusSchema.toDescription(modifiers.minus))
+  if (modifiers.sort !== undefined) parts.push(...sortSchema.toDescription(modifiers.sort))
   if (modifiers.countSuccesses !== undefined)
     parts.push(...countSuccessesSchema.toDescription(modifiers.countSuccesses))
   if (modifiers.multiplyTotal !== undefined)

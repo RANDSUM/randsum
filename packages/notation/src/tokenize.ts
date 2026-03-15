@@ -7,8 +7,7 @@ export type TokenType =
   | 'dropCondition' // D{...}
   | 'keepHighest' // K, KN
   | 'keepLowest' // kl, klN
-  | 'keepMiddle' // KM, KMN
-  | 'reroll' // R{...}, ro{...}
+  | 'reroll' // R{...}
   | 'explode' // !
   | 'compound' // !!
   | 'penetrate' // !p
@@ -18,6 +17,8 @@ export type TokenType =
   | 'countSuccesses' // S{...}
   | 'plus' // +N
   | 'minus' // -N
+  | 'marginOfSuccess' // ms{N}
+  | 'sort' // s, sa, sd
   | 'multiply' // *N
   | 'multiplyTotal' // **N
   | 'unknown'
@@ -67,17 +68,19 @@ const MODIFIERS: readonly ModifierEntry[] = [
   { type: 'dropHighest', pattern: /^[Hh]\d*/ },
   { type: 'dropLowest', pattern: /^[Ll]\d*/ },
   { type: 'dropCondition', pattern: /^[Dd]\{[^}]+\}/ },
-  // Keep: kl and km before K to avoid K matching first char
+  // Keep: kl before K to avoid K matching first char of kl
   { type: 'keepLowest', pattern: /^[Kk][Ll]\d*/ },
-  { type: 'keepMiddle', pattern: /^[Kk][Mm]\d*/ },
   { type: 'keepHighest', pattern: /^[Kk]\d*/ },
   // Brace-based modifiers — closing } required; partial input stays unknown
-  { type: 'reroll', pattern: /^[Rr][Oo]\{[^}]+\}/ },
   { type: 'reroll', pattern: /^[Rr]\{[^}]+\}\d*/ },
   { type: 'cap', pattern: /^[Cc]\{[^}]+\}/ },
   { type: 'replace', pattern: /^[Vv]\{[^}]+\}/ },
   { type: 'unique', pattern: /^[Uu](?:\{[^}]+\})?/ },
+  // Margin of success — must come before countSuccesses and sort
+  { type: 'marginOfSuccess', pattern: /^[Mm][Ss]\{\d+\}/ },
   { type: 'countSuccesses', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
+  // Sort — must come after countSuccesses (S{N}) to avoid conflicts
+  { type: 'sort', pattern: /^[Ss](?:[Aa]|[Dd])?(?![{\d])/ },
   // Arithmetic — only meaningful after a core token
   { type: 'plus', pattern: /^\+\d+/ },
   { type: 'minus', pattern: /^-\d+/ }
