@@ -1,7 +1,7 @@
 # ADR-005: Merge @randsum/notation back into @randsum/roller
 
 ## Status
-Proposed
+Rejected
 
 ## Context
 
@@ -53,6 +53,12 @@ Merge `@randsum/notation` back into `@randsum/roller`. Use subpath exports to pr
 5. Publish new roller version with notation included
 6. Deprecate `@randsum/notation` on npm with deprecation message pointing to roller
 7. Remove `packages/notation/` directory
+
+## Rejection Rationale
+
+The four-panel audit (2026-03-14) reached consensus that the notation split is "architecturally correct." Three of four auditors (NPM specialist, Bun specialist, and Senior SWE) endorsed maintaining `@randsum/notation` as a separate zero-dependency package. The split enables independent consumption of notation parsing without the roller's runtime, supports the bundle size strategy, and aligns with the ecosystem's dependency graph (notation -> roller -> games).
+
+ADR-003 (Notation as separate package) remains the governing decision.
 
 ## References
 - ADR-003: Notation as Separate Package (this reverses that decision based on new evidence)

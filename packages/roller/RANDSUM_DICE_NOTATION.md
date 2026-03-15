@@ -715,7 +715,7 @@ roll({
 })
 ```
 
-**How it works:** When a die shows its maximum value, it "explodes" - a new die is rolled and added to the result. This continues for each new maximum value rolled, creating additional dice in the result.
+**How it works:** When a die shows its maximum value, a new die is rolled and added to the pool. This is a single pass — newly added dice are not checked for further explosions. Use compound (`!!`) or penetrate (`!p`) for recursive chaining.
 
 **Example:** `3d6!` rolls [6, 4, 6]. The two 6s explode, adding [5, 3]. Final result: [6, 4, 6, 5, 3] = 24.
 
@@ -796,7 +796,7 @@ roll({
 })
 ```
 
-**How it works:** When a die shows its maximum value, it penetrates - a new roll is made, but 1 is subtracted from the result before adding. Each subsequent penetration also subtracts 1. This creates a diminishing return effect.
+**How it works:** When a die shows its maximum value, it penetrates - a new roll is made, but 1 is subtracted from the result before adding. Each subsequent penetration also subtracts 1. The subtracted value has a minimum of 1 (a roll of 1 becomes 1, not 0), preventing negative contributions. This creates a diminishing return effect.
 
 **Example:** `1d6!p` rolls 6. This penetrates, rolling 5. The value added is 5 - 1 = 4, so the die becomes 6 + 4 = 10. If that roll had been a 6, it would penetrate again: roll 3, subtract 1 = 2, so the die becomes 6 + 4 + 2 = 12.
 
