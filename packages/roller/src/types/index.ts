@@ -2,6 +2,7 @@ export type {
   CustomFacesNotation,
   DiceNotation,
   DrawDieNotation,
+  GeometricDieNotation,
   FateDieNotation,
   PercentileDie,
   RandomFn,

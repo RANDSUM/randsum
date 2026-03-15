@@ -49,6 +49,11 @@ export interface SuccessCountOptions {
   botchThreshold?: number
 }
 
+export interface FailureCountOptions {
+  /** Threshold for counting failures (rolls <= this value) */
+  threshold: number
+}
+
 export type ModifierConfig =
   | number
   | boolean
@@ -62,6 +67,7 @@ export type ModifierConfig =
   | RerollOptions
   | UniqueOptions
   | SuccessCountOptions
+  | FailureCountOptions
 
 export interface ModifierOptions {
   /** Cap roll values to a range */
@@ -84,6 +90,8 @@ export interface ModifierOptions {
   penetrate?: boolean | number
   /** Count successes instead of summing (for dice pool systems) */
   countSuccesses?: SuccessCountOptions
+  /** Count failures (dice at or below threshold) */
+  countFailures?: FailureCountOptions
   /** Multiply dice result (before +/- arithmetic) */
   multiply?: number
   /** Add a fixed value to the total */

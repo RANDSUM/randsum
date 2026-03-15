@@ -79,6 +79,15 @@ export type DrawDieNotation =
   | `${number}${'dd' | 'DD' | 'Dd' | 'dD'}${number}`
 
 /**
+ * Geometric die notation — roll until first 1, count attempts.
+ * `g6` rolls d6 repeatedly until a 1 appears, result is the attempt count.
+ * Supports quantity prefix: `3g6` performs 3 independent geometric rolls.
+ *
+ * Case-insensitive: g6 and G6 are equivalent.
+ */
+export type GeometricDieNotation = `${'g' | 'G'}${number}` | `${number}${'g' | 'G'}${number}`
+
+/**
  * Valid input types for the roll() function.
  *
  * @template T - Type for custom dice faces
@@ -103,6 +112,7 @@ export type RollArgument<T = string> =
   | ZeroBiasNotation
   | CustomFacesNotation
   | DrawDieNotation
+  | GeometricDieNotation
   | number
 
 /**

@@ -2,6 +2,7 @@ import type { ModifierOptions } from '../types'
 import {
   capSchema,
   compoundSchema,
+  countFailuresSchema,
   countSuccessesSchema,
   dropSchema,
   explodeSchema,
@@ -39,6 +40,7 @@ const allSchemas: readonly ParseableSchema[] = [
   penetrateSchema,
   uniqueSchema,
   countSuccessesSchema,
+  countFailuresSchema,
   multiplySchema,
   plusSchema,
   minusSchema,

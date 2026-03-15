@@ -1,6 +1,7 @@
 import type {
   ComparisonOptions,
   DropOptions,
+  FailureCountOptions,
   KeepOptions,
   ModifierLog,
   ModifierOptions,
@@ -200,6 +201,7 @@ export interface ModifierOptionTypes {
   compound: boolean | number
   penetrate: boolean | number
   countSuccesses: SuccessCountOptions
+  countFailures: FailureCountOptions
   multiply: number
   plus: number
   minus: number

@@ -2,6 +2,7 @@ import type { ModifierOptions } from '../types'
 import {
   capSchema,
   compoundSchema,
+  countFailuresSchema,
   countSuccessesSchema,
   dropSchema,
   explodeSchema,
@@ -81,6 +82,10 @@ export function modifiersToNotation(modifiers: ModifierOptions | undefined): str
     const n = countSuccessesSchema.toNotation(modifiers.countSuccesses)
     if (n !== undefined) parts.push(n)
   }
+  if (modifiers.countFailures !== undefined) {
+    const n = countFailuresSchema.toNotation(modifiers.countFailures)
+    if (n !== undefined) parts.push(n)
+  }
   if (modifiers.multiplyTotal !== undefined) {
     const n = multiplyTotalSchema.toNotation(modifiers.multiplyTotal)
     if (n !== undefined) parts.push(n)
@@ -115,6 +120,8 @@ export function modifiersToDescription(modifiers: ModifierOptions | undefined): 
   if (modifiers.sort !== undefined) parts.push(...sortSchema.toDescription(modifiers.sort))
   if (modifiers.countSuccesses !== undefined)
     parts.push(...countSuccessesSchema.toDescription(modifiers.countSuccesses))
+  if (modifiers.countFailures !== undefined)
+    parts.push(...countFailuresSchema.toDescription(modifiers.countFailures))
   if (modifiers.multiplyTotal !== undefined)
     parts.push(...multiplyTotalSchema.toDescription(modifiers.multiplyTotal))
 

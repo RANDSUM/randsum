@@ -4,6 +4,7 @@ import type { ModifierConfig as _ModifierConfig } from '@randsum/notation'
 export type {
   ComparisonOptions,
   DropOptions,
+  FailureCountOptions,
   KeepOptions,
   RerollOptions,
   ReplaceOptions,

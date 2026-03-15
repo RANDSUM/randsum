@@ -41,12 +41,27 @@ export class RollPipeline<T = string> {
    * Generate the initial dice rolls before any modifiers are applied.
    */
   public generateInitialRolls(): this {
-    const { sides, quantity, draw } = this.params
-    this.initialRolls =
-      draw === true
-        ? this.drawWithoutReplacement(quantity, sides)
-        : coreSpreadRolls(quantity, sides, this.rng)
+    const { sides, quantity, draw, geometric } = this.params
+    if (draw === true) {
+      this.initialRolls = this.drawWithoutReplacement(quantity, sides)
+    } else if (geometric === true) {
+      this.initialRolls = Array.from({ length: quantity }, () => this.geometricRoll(sides))
+    } else {
+      this.initialRolls = coreSpreadRolls(quantity, sides, this.rng)
+    }
     return this
+  }
+
+  /**
+   * Perform a single geometric roll: roll dN until a 1 appears.
+   * Returns the number of rolls it took (including the final 1).
+   * Capped at 1000 to prevent infinite loops.
+   */
+  private geometricRoll(sides: number, count = 1): number {
+    if (count > 1000) return 1000
+    const value = coreRandom(sides, this.rng) + 1
+    if (value === 1) return count
+    return this.geometricRoll(sides, count + 1)
   }
 
   /**

@@ -1,6 +1,7 @@
 import type { ModifierDefinition } from '../schema'
 import { capModifier } from './cap'
 import { compoundModifier } from './compound'
+import { countFailuresModifier } from './countFailures'
 import { countSuccessesModifier } from './countSuccesses'
 import { dropModifier } from './drop'
 import { explodeModifier } from './explode'
@@ -17,6 +18,7 @@ import { uniqueModifier } from './unique'
 
 export { capModifier }
 export { compoundModifier }
+export { countFailuresModifier }
 export { countSuccessesModifier }
 export { dropModifier }
 export { explodeModifier }
@@ -50,5 +52,6 @@ export const ALL_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   minusModifier as ModifierDefinition,
   sortModifier as ModifierDefinition,
   countSuccessesModifier as ModifierDefinition,
+  countFailuresModifier as ModifierDefinition,
   multiplyTotalModifier as ModifierDefinition
 ])
