@@ -2,6 +2,12 @@ import { validateNotation } from './validateNotation'
 
 export type TokenType =
   | 'core'
+  | 'percentile' // d%
+  | 'fate' // dF, dF.1, dF.2
+  | 'zeroBias' // zN
+  | 'geometric' // gN
+  | 'draw' // DDN
+  | 'customFaces' // d{...}
   | 'dropLowest' // L, LN
   | 'dropHighest' // H, HN
   | 'dropCondition' // D{...}
@@ -37,6 +43,22 @@ export interface Token {
   readonly end: number
   readonly description: string
 }
+
+interface SpecialDieEntry {
+  readonly type: TokenType
+  readonly pattern: RegExp
+  readonly describe: (text: string) => string
+}
+
+// Order matters — draw (DDN) before standard core (NdS), fate (dF) before standard, etc.
+const SPECIAL_DIE_PATTERNS: readonly SpecialDieEntry[] = [
+  { type: 'draw', pattern: /^(\d*)[Dd][Dd](\d+)/, describe: t => `Draw die: ${t}` },
+  { type: 'geometric', pattern: /^(\d*)[Gg](\d+)/, describe: t => `Geometric die: ${t}` },
+  { type: 'fate', pattern: /^(\d*)[Dd][Ff](?:\.([12]))?/, describe: t => `Fate die: ${t}` },
+  { type: 'zeroBias', pattern: /^(\d*)[Zz](\d+)/, describe: t => `Zero-bias die: ${t}` },
+  { type: 'customFaces', pattern: /^(\d*)[Dd]\{([^}]+)\}/, describe: t => `Custom faces: ${t}` },
+  { type: 'percentile', pattern: /^[Dd]%/, describe: () => 'Percentile die (d100)' }
+]
 
 interface ModifierEntry {
   readonly type: Exclude<TokenType, 'core' | 'unknown'>
@@ -161,6 +183,23 @@ export function tokenize(notation: string): readonly Token[] {
   if (notation.length === 0) return []
 
   const tokens: Token[] = []
+
+  // Check special die patterns before standard NdS core match
+  for (const entry of SPECIAL_DIE_PATTERNS) {
+    const m = entry.pattern.exec(notation)
+    if (m) {
+      const text = m[0]
+      tokens.push({
+        text,
+        type: entry.type,
+        start: 0,
+        end: text.length,
+        description: entry.describe(text)
+      })
+      return parseFrom(notation, text.length, tokens)
+    }
+  }
+
   const coreMatch = /^[+-]?\d+[Dd]\d+/.exec(notation)
 
   if (coreMatch) {

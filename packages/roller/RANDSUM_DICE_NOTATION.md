@@ -39,6 +39,8 @@ roll({
 
 ## Special Dice
 
+> **Important:** Special dice (`d%`, `dF`, `zN`, `gN`, `DDN`, `d{...}`) are handled by the roller's `roll()` function directly. They are NOT recognized by the notation package's `isDiceNotation()`, `notationToOptions()`, or `tokenize()` functions -- those only process standard `NdS` notation with modifiers. This means `isDiceNotation('4dF')` returns `false`, and `tokenize('d%')` produces `unknown` tokens. Use `roll()` for special dice.
+
 In addition to standard `NdS` notation, `roll()` accepts shorthand string arguments for common special dice. These are standalone argument types — they cannot be combined with notation modifiers inline (use the options object form for modified rolls). Geometric dice (`gN`) and draw dice (`DDN`) are also available as special notation-level die types.
 
 ### Custom Dice Faces (`d{...}`)
@@ -96,28 +98,13 @@ Zero-indexed dice that roll 0 to N-1 instead of 1 to N. All notation in randsum 
 
 ```typescript
 roll("z6") // Roll 0-5
-roll({
-  sides: 6,
-  quantity: 1,
-  zeroBias: true
-})
-
 roll("3z10") // Three dice, each 0-9
-roll({
-  sides: 10,
-  quantity: 3,
-  zeroBias: true
-})
-
 roll("z100") // Zero-indexed percentile: 0-99
-roll({
-  sides: 100,
-  quantity: 1,
-  zeroBias: true
-})
 ```
 
-**How it works:** A zero-bias die with N sides produces values from 0 to N-1 instead of the standard 1 to N. This is equivalent to rolling a standard die and subtracting 1, but expressed as a first-class notation for clarity.
+> **Note:** Zero-bias dice are notation-only -- there is no options object equivalent. Use the notation string form `roll('z6')` or construct faces manually: `roll({ sides: [0, 1, 2, 3, 4, 5] })`.
+
+**How it works:** A zero-bias die with N sides produces values from 0 to N-1 instead of the standard 1 to N. Internally, the roller maps this to a standard die with replace modifiers. This is equivalent to rolling a standard die and subtracting 1, but expressed as a first-class notation for clarity.
 
 **Use cases:** Zero-indexed random table lookups, percentile systems that use 0-99, programming-friendly dice for array index selection, or any system where a 0-based range is more natural.
 
@@ -951,14 +938,14 @@ roll("4d6sa") // Sort results ascending
 roll({
   sides: 6,
   quantity: 4,
-  modifiers: { sort: "ascending" }
+  modifiers: { sort: "asc" }
 })
 
 roll("4d6sd") // Sort results descending
 roll({
   sides: 6,
   quantity: 4,
-  modifiers: { sort: "descending" }
+  modifiers: { sort: "desc" }
 })
 ```
 
