@@ -46,7 +46,7 @@ const allSchemas: readonly ParseableSchema[] = [
 
 /**
  * Parse notation string into ModifierOptions using all known notation schemas.
- * This is the standalone equivalent of roller's parseModifiersFromRegistry.
+ * This is the standalone equivalent of roller's parseModifiers.
  */
 export function parseModifiers(notation: string): ModifierOptions {
   const result: ModifierOptions = {}

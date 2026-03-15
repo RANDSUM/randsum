@@ -1,14 +1,14 @@
 import { describe, expect, test } from 'bun:test'
+import type { ModifierContext } from '../../../src/lib/modifiers/schema'
 import {
-  type ModifierContext,
-  applyAllModifiersFromRegistry,
-  applyModifierFromRegistry,
+  applyAllModifiers,
+  applyModifier,
   getModifier,
-  modifierToDescriptionFromRegistry,
-  modifierToNotationFromRegistry,
-  parseModifiersFromRegistry,
-  validateModifiersFromRegistry
-} from '../../../src/lib/modifiers'
+  modifierToDescription,
+  modifierToNotation,
+  parseModifiers,
+  validateModifiers
+} from '../../../src/lib/modifiers/registry'
 
 const mockRollOne = (): number => Math.floor(Math.random() * 6) + 1
 const mockContext: ModifierContext = {
@@ -16,10 +16,10 @@ const mockContext: ModifierContext = {
   parameters: { sides: 6, quantity: 4 }
 }
 
-describe('applyModifierFromRegistry', () => {
+describe('applyModifier', () => {
   describe('arithmetic modifiers', () => {
     test('applies plus modifier correctly', () => {
-      const result = applyModifierFromRegistry('plus', 5, [3, 4, 5], mockContext)
+      const result = applyModifier('plus', 5, [3, 4, 5], mockContext)
 
       expect(result.rolls).toEqual([3, 4, 5])
       // Plus now uses transformTotal - verify it transforms correctly
@@ -32,7 +32,7 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('applies minus modifier correctly', () => {
-      const result = applyModifierFromRegistry('minus', 3, [3, 4, 5], mockContext)
+      const result = applyModifier('minus', 3, [3, 4, 5], mockContext)
 
       expect(result.rolls).toEqual([3, 4, 5])
       // Minus now uses transformTotal - verify it transforms correctly
@@ -45,7 +45,7 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('handles undefined arithmetic modifiers', () => {
-      const result = applyModifierFromRegistry('plus', undefined, [3, 4, 5], mockContext)
+      const result = applyModifier('plus', undefined, [3, 4, 5], mockContext)
 
       expect(result.rolls).toEqual([3, 4, 5])
       expect(result.transformTotal).toBeUndefined()
@@ -55,7 +55,7 @@ describe('applyModifierFromRegistry', () => {
 
   describe('cap modifier', () => {
     test('caps values greater than limit', () => {
-      const result = applyModifierFromRegistry('cap', { greaterThan: 5 }, [1, 6, 3, 6], mockContext)
+      const result = applyModifier('cap', { greaterThan: 5 }, [1, 6, 3, 6], mockContext)
 
       expect(result.rolls).toEqual([1, 5, 3, 5])
       expect(result.log).not.toBeNull()
@@ -63,14 +63,14 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('caps values less than limit', () => {
-      const result = applyModifierFromRegistry('cap', { lessThan: 2 }, [1, 6, 3, 1], mockContext)
+      const result = applyModifier('cap', { lessThan: 2 }, [1, 6, 3, 1], mockContext)
 
       expect(result.rolls).toEqual([2, 6, 3, 2])
       expect(result.log).not.toBeNull()
     })
 
     test('caps values with both limits', () => {
-      const result = applyModifierFromRegistry(
+      const result = applyModifier(
         'cap',
         { greaterThan: 5, lessThan: 2 },
         [1, 6, 3, 4],
@@ -83,7 +83,7 @@ describe('applyModifierFromRegistry', () => {
 
   describe('drop modifier', () => {
     test('drops lowest values', () => {
-      const result = applyModifierFromRegistry('drop', { lowest: 1 }, [1, 6, 3, 4], mockContext)
+      const result = applyModifier('drop', { lowest: 1 }, [1, 6, 3, 4], mockContext)
 
       expect(result.rolls).toEqual([3, 4, 6])
       expect(result.log).not.toBeNull()
@@ -91,24 +91,19 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('drops highest values', () => {
-      const result = applyModifierFromRegistry('drop', { highest: 1 }, [1, 6, 3, 4], mockContext)
+      const result = applyModifier('drop', { highest: 1 }, [1, 6, 3, 4], mockContext)
 
       expect(result.rolls).toEqual([1, 3, 4])
     })
 
     test('drops exact values', () => {
-      const result = applyModifierFromRegistry('drop', { exact: [1] }, [1, 6, 3, 1], mockContext)
+      const result = applyModifier('drop', { exact: [1] }, [1, 6, 3, 1], mockContext)
 
       expect(result.rolls).toEqual([6, 3])
     })
 
     test('drops values greater than limit', () => {
-      const result = applyModifierFromRegistry(
-        'drop',
-        { greaterThan: 4 },
-        [1, 6, 3, 4],
-        mockContext
-      )
+      const result = applyModifier('drop', { greaterThan: 4 }, [1, 6, 3, 4], mockContext)
 
       expect(result.rolls).toEqual([1, 3, 4])
     })
@@ -116,7 +111,7 @@ describe('applyModifierFromRegistry', () => {
 
   describe('keep modifier', () => {
     test('keeps highest values', () => {
-      const result = applyModifierFromRegistry('keep', { highest: 2 }, [1, 6, 3, 4], mockContext)
+      const result = applyModifier('keep', { highest: 2 }, [1, 6, 3, 4], mockContext)
 
       // Order is preserved from original array after filtering
       expect(result.rolls).toEqual([6, 4])
@@ -125,61 +120,51 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('keeps lowest values', () => {
-      const result = applyModifierFromRegistry('keep', { lowest: 2 }, [1, 6, 3, 4], mockContext)
+      const result = applyModifier('keep', { lowest: 2 }, [1, 6, 3, 4], mockContext)
 
       expect(result.rolls).toEqual([1, 3])
     })
 
     test('keeps highest 1 by default', () => {
-      const result = applyModifierFromRegistry('keep', { highest: 1 }, [1, 6, 3, 4], mockContext)
+      const result = applyModifier('keep', { highest: 1 }, [1, 6, 3, 4], mockContext)
 
       expect(result.rolls).toEqual([6])
     })
 
     test('keeps lowest 1 by default', () => {
-      const result = applyModifierFromRegistry('keep', { lowest: 1 }, [1, 6, 3, 4], mockContext)
+      const result = applyModifier('keep', { lowest: 1 }, [1, 6, 3, 4], mockContext)
 
       expect(result.rolls).toEqual([1])
     })
 
     test('keep highest 3 from 4 is equivalent to drop lowest 1', () => {
-      const keepResult = applyModifierFromRegistry(
-        'keep',
-        { highest: 3 },
-        [1, 6, 3, 4],
-        mockContext
-      )
-      const dropResult = applyModifierFromRegistry('drop', { lowest: 1 }, [1, 6, 3, 4], mockContext)
+      const keepResult = applyModifier('keep', { highest: 3 }, [1, 6, 3, 4], mockContext)
+      const dropResult = applyModifier('drop', { lowest: 1 }, [1, 6, 3, 4], mockContext)
 
       expect(keepResult.rolls.sort()).toEqual(dropResult.rolls.sort())
     })
 
     test('keep lowest 2 from 4 is equivalent to drop highest 2', () => {
-      const keepResult = applyModifierFromRegistry('keep', { lowest: 2 }, [1, 6, 3, 4], mockContext)
-      const dropResult = applyModifierFromRegistry(
-        'drop',
-        { highest: 2 },
-        [1, 6, 3, 4],
-        mockContext
-      )
+      const keepResult = applyModifier('keep', { lowest: 2 }, [1, 6, 3, 4], mockContext)
+      const dropResult = applyModifier('drop', { highest: 2 }, [1, 6, 3, 4], mockContext)
 
       expect(keepResult.rolls.sort()).toEqual(dropResult.rolls.sort())
     })
 
     test('returns unchanged rolls when keeping more than available (highest)', () => {
-      const result = applyModifierFromRegistry('keep', { highest: 10 }, [1, 2, 3], mockContext)
+      const result = applyModifier('keep', { highest: 10 }, [1, 2, 3], mockContext)
 
       expect(result.rolls).toEqual([1, 2, 3])
     })
 
     test('returns unchanged rolls when keeping more than available (lowest)', () => {
-      const result = applyModifierFromRegistry('keep', { lowest: 10 }, [1, 2, 3], mockContext)
+      const result = applyModifier('keep', { lowest: 10 }, [1, 2, 3], mockContext)
 
       expect(result.rolls).toEqual([1, 2, 3])
     })
 
     test('returns unchanged rolls when neither highest nor lowest specified', () => {
-      const result = applyModifierFromRegistry('keep', {}, [1, 2, 3, 4], mockContext)
+      const result = applyModifier('keep', {}, [1, 2, 3, 4], mockContext)
 
       expect(result.rolls).toEqual([1, 2, 3, 4])
     })
@@ -189,7 +174,7 @@ describe('applyModifierFromRegistry', () => {
     test('rerolls exact values', () => {
       const fixedRollOne = (): number => 5
       const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
-      const result = applyModifierFromRegistry('reroll', { exact: [1] }, [1, 6, 1, 4], ctx)
+      const result = applyModifier('reroll', { exact: [1] }, [1, 6, 1, 4], ctx)
 
       expect(result.rolls).toEqual([5, 6, 5, 4])
       expect(result.log).not.toBeNull()
@@ -199,7 +184,7 @@ describe('applyModifierFromRegistry', () => {
     test('rerolls values greater than threshold', () => {
       const fixedRollOne = (): number => 4
       const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
-      const result = applyModifierFromRegistry('reroll', { greaterThan: 5 }, [1, 6, 3, 6], ctx)
+      const result = applyModifier('reroll', { greaterThan: 5 }, [1, 6, 3, 6], ctx)
 
       expect(result.rolls).toEqual([1, 4, 3, 4])
     })
@@ -214,7 +199,7 @@ describe('applyModifierFromRegistry', () => {
         rollOne: limitedRollOne,
         parameters: { sides: 6, quantity: 4 }
       }
-      const result = applyModifierFromRegistry('reroll', { exact: [1], max: 2 }, [1, 1, 1, 1], ctx)
+      const result = applyModifier('reroll', { exact: [1], max: 2 }, [1, 1, 1, 1], ctx)
 
       expect(result.rolls).toEqual([5, 5, 1, 1]) // Only first 2 get rerolled to completion
     })
@@ -222,7 +207,7 @@ describe('applyModifierFromRegistry', () => {
     test('throws error when rollOne is missing', () => {
       const ctx: ModifierContext = { parameters: { sides: 6, quantity: 4 } }
       expect(() => {
-        applyModifierFromRegistry('reroll', { exact: [1] }, [1, 2, 3], ctx)
+        applyModifier('reroll', { exact: [1] }, [1, 2, 3], ctx)
       }).toThrow('rollOne function required for reroll modifier')
     })
   })
@@ -231,7 +216,7 @@ describe('applyModifierFromRegistry', () => {
     test('adds additional rolls for maximum values', () => {
       const fixedRollOne = (): number => 2
       const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
-      const result = applyModifierFromRegistry('explode', true, [6, 3, 6, 4], ctx)
+      const result = applyModifier('explode', true, [6, 3, 6, 4], ctx)
 
       expect(result.rolls).toEqual([6, 3, 6, 4, 2, 2]) // Two 6s exploded
       expect(result.log).not.toBeNull()
@@ -241,7 +226,7 @@ describe('applyModifierFromRegistry', () => {
     test('throws error when context is incomplete', () => {
       const ctx: ModifierContext = {}
       expect(() => {
-        applyModifierFromRegistry('explode', true, [6, 3, 4], ctx)
+        applyModifier('explode', true, [6, 3, 4], ctx)
       }).toThrow('rollOne function required for explode modifier')
     })
   })
@@ -254,7 +239,7 @@ describe('applyModifierFromRegistry', () => {
         return counter.value === 1 ? 2 : 5 // First call returns 2, then 5
       }
       const ctx: ModifierContext = { rollOne: uniqueRollOne, parameters: { sides: 6, quantity: 4 } }
-      const result = applyModifierFromRegistry('unique', true, [1, 3, 1, 4], ctx)
+      const result = applyModifier('unique', true, [1, 3, 1, 4], ctx)
 
       expect(result.rolls).toEqual([1, 3, 2, 4])
       expect(result.log).not.toBeNull()
@@ -262,7 +247,7 @@ describe('applyModifierFromRegistry', () => {
 
     test('allows specified values to be duplicated', () => {
       const ctx: ModifierContext = { rollOne: mockRollOne, parameters: { sides: 6, quantity: 4 } }
-      const result = applyModifierFromRegistry('unique', { notUnique: [1] }, [1, 3, 1, 4], ctx)
+      const result = applyModifier('unique', { notUnique: [1] }, [1, 3, 1, 4], ctx)
 
       expect(result.rolls).toEqual([1, 3, 1, 4]) // 1s are allowed to duplicate
     })
@@ -270,7 +255,7 @@ describe('applyModifierFromRegistry', () => {
     test('throws when more rolls than sides', () => {
       const ctx: ModifierContext = { rollOne: mockRollOne, parameters: { sides: 6, quantity: 7 } }
       expect(() => {
-        applyModifierFromRegistry('unique', true, [1, 2, 3, 4, 5, 6, 1], ctx)
+        applyModifier('unique', true, [1, 2, 3, 4, 5, 6, 1], ctx)
       }).toThrow('Cannot have more rolls than sides when unique is enabled')
     })
   })
@@ -279,7 +264,7 @@ describe('applyModifierFromRegistry', () => {
     test('adds rerolled value to triggering die', () => {
       const fixedRollOne = (): number => 3
       const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
-      const result = applyModifierFromRegistry('compound', true, [6, 3, 4], ctx)
+      const result = applyModifier('compound', true, [6, 3, 4], ctx)
 
       // The 6 compounds to 6 + 3 = 9
       expect(result.rolls).toEqual([9, 3, 4])
@@ -297,7 +282,7 @@ describe('applyModifierFromRegistry', () => {
         rollOne: sequenceRollOne,
         parameters: { sides: 6, quantity: 2 }
       }
-      const result = applyModifierFromRegistry('compound', 5, [6, 4], ctx)
+      const result = applyModifier('compound', 5, [6, 4], ctx)
 
       // The 6 compounds: 6 + 6 + 2 = 14
       expect(result.rolls).toEqual([14, 4])
@@ -306,7 +291,7 @@ describe('applyModifierFromRegistry', () => {
     test('respects max depth limit', () => {
       const alwaysMaxRoll = (): number => 6
       const ctx: ModifierContext = { rollOne: alwaysMaxRoll, parameters: { sides: 6, quantity: 1 } }
-      const result = applyModifierFromRegistry('compound', 2, [6], ctx)
+      const result = applyModifier('compound', 2, [6], ctx)
 
       // Depth 2: 6 + 6 + 6 = 18 (stops after 2 compounds)
       expect(result.rolls).toEqual([18])
@@ -315,7 +300,7 @@ describe('applyModifierFromRegistry', () => {
     test('does not compound non-max values', () => {
       const fixedRollOne = (): number => 6
       const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
-      const result = applyModifierFromRegistry('compound', true, [5, 3, 4], ctx)
+      const result = applyModifier('compound', true, [5, 3, 4], ctx)
 
       // No dice show max (6), so no compounding
       expect(result.rolls).toEqual([5, 3, 4])
@@ -324,7 +309,7 @@ describe('applyModifierFromRegistry', () => {
     test('throws error when context is incomplete', () => {
       const ctx: ModifierContext = {}
       expect(() => {
-        applyModifierFromRegistry('compound', true, [6, 3, 4], ctx)
+        applyModifier('compound', true, [6, 3, 4], ctx)
       }).toThrow('rollOne function required for compound modifier')
     })
   })
@@ -333,7 +318,7 @@ describe('applyModifierFromRegistry', () => {
     test('adds rerolled value minus 1 to triggering die', () => {
       const fixedRollOne = (): number => 4
       const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
-      const result = applyModifierFromRegistry('penetrate', true, [6, 3, 4], ctx)
+      const result = applyModifier('penetrate', true, [6, 3, 4], ctx)
 
       // The 6 penetrates: 6 + (4 - 1) = 9
       expect(result.rolls).toEqual([9, 3, 4])
@@ -351,7 +336,7 @@ describe('applyModifierFromRegistry', () => {
         rollOne: sequenceRollOne,
         parameters: { sides: 6, quantity: 2 }
       }
-      const result = applyModifierFromRegistry('penetrate', 5, [6, 4], ctx)
+      const result = applyModifier('penetrate', 5, [6, 4], ctx)
 
       // The 6 penetrates: 6 + (6 - 1) + (3 - 1) = 6 + 5 + 2 = 13
       expect(result.rolls).toEqual([13, 4])
@@ -360,7 +345,7 @@ describe('applyModifierFromRegistry', () => {
     test('respects max depth limit', () => {
       const alwaysMaxRoll = (): number => 6
       const ctx: ModifierContext = { rollOne: alwaysMaxRoll, parameters: { sides: 6, quantity: 1 } }
-      const result = applyModifierFromRegistry('penetrate', 2, [6], ctx)
+      const result = applyModifier('penetrate', 2, [6], ctx)
 
       // Depth 2: 6 + (6-1) + (6-1) = 6 + 5 + 5 = 16
       expect(result.rolls).toEqual([16])
@@ -369,7 +354,7 @@ describe('applyModifierFromRegistry', () => {
     test('does not penetrate non-max values', () => {
       const fixedRollOne = (): number => 6
       const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 3 } }
-      const result = applyModifierFromRegistry('penetrate', true, [5, 3, 4], ctx)
+      const result = applyModifier('penetrate', true, [5, 3, 4], ctx)
 
       // No dice show max (6), so no penetrating
       expect(result.rolls).toEqual([5, 3, 4])
@@ -378,7 +363,7 @@ describe('applyModifierFromRegistry', () => {
     test('minimum penetrated value is 1', () => {
       const rollsOne = (): number => 1
       const ctx: ModifierContext = { rollOne: rollsOne, parameters: { sides: 6, quantity: 1 } }
-      const result = applyModifierFromRegistry('penetrate', true, [6], ctx)
+      const result = applyModifier('penetrate', true, [6], ctx)
 
       // The 6 penetrates: 6 + max(1, 1 - 1) = 6 + 1 = 7 (not 6 + 0)
       expect(result.rolls).toEqual([7])
@@ -387,19 +372,14 @@ describe('applyModifierFromRegistry', () => {
     test('throws error when context is incomplete', () => {
       const ctx: ModifierContext = {}
       expect(() => {
-        applyModifierFromRegistry('penetrate', true, [6, 3, 4], ctx)
+        applyModifier('penetrate', true, [6, 3, 4], ctx)
       }).toThrow('rollOne function required for penetrate modifier')
     })
   })
 
   describe('replace modifier', () => {
     test('replaces exact values', () => {
-      const result = applyModifierFromRegistry(
-        'replace',
-        { from: 1, to: 5 },
-        [1, 6, 1, 4],
-        mockContext
-      )
+      const result = applyModifier('replace', { from: 1, to: 5 }, [1, 6, 1, 4], mockContext)
 
       expect(result.rolls).toEqual([5, 6, 5, 4])
       expect(result.log).not.toBeNull()
@@ -407,7 +387,7 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('handles array of replace rules', () => {
-      const result = applyModifierFromRegistry(
+      const result = applyModifier(
         'replace',
         [
           { from: 1, to: 5 },
@@ -421,7 +401,7 @@ describe('applyModifierFromRegistry', () => {
     })
 
     test('replaces values based on comparison', () => {
-      const result = applyModifierFromRegistry(
+      const result = applyModifier(
         'replace',
         { from: { greaterThan: 5 }, to: 5 },
         [1, 6, 3, 4],
@@ -433,241 +413,233 @@ describe('applyModifierFromRegistry', () => {
   })
 })
 
-describe('modifierToDescriptionFromRegistry', () => {
+describe('modifierToDescription', () => {
   test('generates description for plus modifier', () => {
-    expect(modifierToDescriptionFromRegistry('plus', 5)).toEqual(['Add 5'])
+    expect(modifierToDescription('plus', 5)).toEqual(['Add 5'])
   })
 
   test('generates description for minus modifier', () => {
-    expect(modifierToDescriptionFromRegistry('minus', 3)).toEqual(['Subtract 3'])
+    expect(modifierToDescription('minus', 3)).toEqual(['Subtract 3'])
   })
 
   test('generates description for cap modifier', () => {
-    const result = modifierToDescriptionFromRegistry('cap', { greaterThan: 5 })
+    const result = modifierToDescription('cap', { greaterThan: 5 })
     expect(result).toEqual(['No Rolls greater than 5'])
   })
 
   test('generates description for drop modifier', () => {
-    const result = modifierToDescriptionFromRegistry('drop', { lowest: 1 })
+    const result = modifierToDescription('drop', { lowest: 1 })
     expect(result).toEqual(['Drop lowest'])
   })
 
   test('generates description for keep highest modifier', () => {
-    const result = modifierToDescriptionFromRegistry('keep', { highest: 3 })
+    const result = modifierToDescription('keep', { highest: 3 })
     expect(result).toEqual(['Keep highest 3'])
   })
 
   test('generates description for keep highest 1 modifier', () => {
-    const result = modifierToDescriptionFromRegistry('keep', { highest: 1 })
+    const result = modifierToDescription('keep', { highest: 1 })
     expect(result).toEqual(['Keep highest'])
   })
 
   test('generates description for keep lowest modifier', () => {
-    const result = modifierToDescriptionFromRegistry('keep', { lowest: 2 })
+    const result = modifierToDescription('keep', { lowest: 2 })
     expect(result).toEqual(['Keep lowest 2'])
   })
 
   test('generates description for keep lowest 1 modifier', () => {
-    const result = modifierToDescriptionFromRegistry('keep', { lowest: 1 })
+    const result = modifierToDescription('keep', { lowest: 1 })
     expect(result).toEqual(['Keep lowest'])
   })
 
   test('generates description for reroll modifier', () => {
-    const result = modifierToDescriptionFromRegistry('reroll', { exact: [1, 2] })
+    const result = modifierToDescription('reroll', { exact: [1, 2] })
     expect(result).toEqual(['Reroll 1 and 2'])
   })
 
   test('generates description for explode modifier', () => {
-    const result = modifierToDescriptionFromRegistry('explode', true)
+    const result = modifierToDescription('explode', true)
     expect(result).toEqual(['Exploding Dice'])
   })
 
   test('generates description for unique modifier', () => {
-    const result = modifierToDescriptionFromRegistry('unique', true)
+    const result = modifierToDescription('unique', true)
     expect(result).toEqual(['No Duplicate Rolls'])
   })
 
   test('generates description for unique modifier with exceptions', () => {
-    const result = modifierToDescriptionFromRegistry('unique', { notUnique: [1, 2] })
+    const result = modifierToDescription('unique', { notUnique: [1, 2] })
     expect(result).toEqual(['No Duplicates (except 1 and 2)'])
   })
 
   test('generates description for replace modifier', () => {
-    const result = modifierToDescriptionFromRegistry('replace', { from: 1, to: 6 })
+    const result = modifierToDescription('replace', { from: 1, to: 6 })
     expect(result).toEqual(['Replace 1 with 6'])
   })
 
   test('returns undefined for undefined options', () => {
-    const result = modifierToDescriptionFromRegistry('plus', undefined)
+    const result = modifierToDescription('plus', undefined)
     expect(result).toBeUndefined()
   })
 
   test('generates description for compound modifier', () => {
-    expect(modifierToDescriptionFromRegistry('compound', true)).toEqual(['Compounding Dice'])
+    expect(modifierToDescription('compound', true)).toEqual(['Compounding Dice'])
   })
 
   test('generates description for compound modifier with depth', () => {
-    expect(modifierToDescriptionFromRegistry('compound', 3)).toEqual([
-      'Compounding Dice (max 3 times)'
-    ])
+    expect(modifierToDescription('compound', 3)).toEqual(['Compounding Dice (max 3 times)'])
   })
 
   test('generates description for compound modifier unlimited', () => {
-    expect(modifierToDescriptionFromRegistry('compound', 0)).toEqual([
-      'Compounding Dice (unlimited)'
-    ])
+    expect(modifierToDescription('compound', 0)).toEqual(['Compounding Dice (unlimited)'])
   })
 
   test('generates description for penetrate modifier', () => {
-    expect(modifierToDescriptionFromRegistry('penetrate', true)).toEqual(['Penetrating Dice'])
+    expect(modifierToDescription('penetrate', true)).toEqual(['Penetrating Dice'])
   })
 
   test('generates description for penetrate modifier with depth', () => {
-    expect(modifierToDescriptionFromRegistry('penetrate', 3)).toEqual([
-      'Penetrating Dice (max 3 times)'
-    ])
+    expect(modifierToDescription('penetrate', 3)).toEqual(['Penetrating Dice (max 3 times)'])
   })
 
   test('generates description for penetrate modifier unlimited', () => {
-    expect(modifierToDescriptionFromRegistry('penetrate', 0)).toEqual([
-      'Penetrating Dice (unlimited)'
-    ])
+    expect(modifierToDescription('penetrate', 0)).toEqual(['Penetrating Dice (unlimited)'])
   })
 })
 
-describe('modifierToNotationFromRegistry', () => {
+describe('modifierToNotation', () => {
   test('generates notation for plus modifier', () => {
-    const result = modifierToNotationFromRegistry('plus', 5)
+    const result = modifierToNotation('plus', 5)
     expect(result).toBe('+5')
   })
 
   test('handles negative plus modifier', () => {
-    const result = modifierToNotationFromRegistry('plus', -3)
+    const result = modifierToNotation('plus', -3)
     expect(result).toBe('-3')
   })
 
   test('generates notation for minus modifier', () => {
-    const result = modifierToNotationFromRegistry('minus', 3)
+    const result = modifierToNotation('minus', 3)
     expect(result).toBe('-3')
   })
 
   test('generates notation for cap modifier', () => {
-    const result = modifierToNotationFromRegistry('cap', { greaterThan: 5 })
+    const result = modifierToNotation('cap', { greaterThan: 5 })
     expect(result).toBe('C{>5}')
   })
 
   test('generates notation for drop modifier', () => {
-    const result = modifierToNotationFromRegistry('drop', { lowest: 1 })
+    const result = modifierToNotation('drop', { lowest: 1 })
     expect(result).toBe('L')
   })
 
   test('generates notation for keep highest modifier', () => {
-    const result = modifierToNotationFromRegistry('keep', { highest: 3 })
+    const result = modifierToNotation('keep', { highest: 3 })
     expect(result).toBe('K3')
   })
 
   test('generates notation for keep highest 1 modifier', () => {
-    const result = modifierToNotationFromRegistry('keep', { highest: 1 })
+    const result = modifierToNotation('keep', { highest: 1 })
     expect(result).toBe('K')
   })
 
   test('generates notation for keep lowest modifier', () => {
-    const result = modifierToNotationFromRegistry('keep', { lowest: 2 })
+    const result = modifierToNotation('keep', { lowest: 2 })
     expect(result).toBe('kl2')
   })
 
   test('generates notation for keep lowest 1 modifier', () => {
-    const result = modifierToNotationFromRegistry('keep', { lowest: 1 })
+    const result = modifierToNotation('keep', { lowest: 1 })
     expect(result).toBe('kl')
   })
 
   test('generates notation for reroll modifier', () => {
-    const result = modifierToNotationFromRegistry('reroll', { exact: [1, 2] })
+    const result = modifierToNotation('reroll', { exact: [1, 2] })
     expect(result).toBe('R{1,2}')
   })
 
   test('generates notation for explode modifier', () => {
-    const result = modifierToNotationFromRegistry('explode', true)
+    const result = modifierToNotation('explode', true)
     expect(result).toBe('!')
   })
 
   test('returns undefined for explode modifier when false', () => {
-    const result = modifierToNotationFromRegistry('explode', false)
+    const result = modifierToNotation('explode', false)
     expect(result).toBeUndefined()
   })
 
   test('generates notation for unique modifier', () => {
-    const result = modifierToNotationFromRegistry('unique', true)
+    const result = modifierToNotation('unique', true)
     expect(result).toBe('U')
   })
 
   test('generates notation for unique modifier with notUnique array', () => {
-    const result = modifierToNotationFromRegistry('unique', { notUnique: [1, 6] })
+    const result = modifierToNotation('unique', { notUnique: [1, 6] })
     expect(result).toBe('U{1,6}')
   })
 
   test('returns undefined for unique modifier when false', () => {
-    const result = modifierToNotationFromRegistry('unique', false)
+    const result = modifierToNotation('unique', false)
     expect(result).toBeUndefined()
   })
 
   test('generates notation for replace modifier', () => {
-    const result = modifierToNotationFromRegistry('replace', { from: 1, to: 6 })
+    const result = modifierToNotation('replace', { from: 1, to: 6 })
     expect(result).toBe('V{1=6}')
   })
 
   test('returns undefined for undefined options', () => {
-    const result = modifierToNotationFromRegistry('plus', undefined)
+    const result = modifierToNotation('plus', undefined)
     expect(result).toBeUndefined()
   })
 
   test('generates notation for compound modifier', () => {
-    const result = modifierToNotationFromRegistry('compound', true)
+    const result = modifierToNotation('compound', true)
     expect(result).toBe('!!')
   })
 
   test('generates notation for compound modifier with depth', () => {
-    const result = modifierToNotationFromRegistry('compound', 3)
+    const result = modifierToNotation('compound', 3)
     expect(result).toBe('!!3')
   })
 
   test('generates notation for compound modifier unlimited', () => {
-    const result = modifierToNotationFromRegistry('compound', 0)
+    const result = modifierToNotation('compound', 0)
     expect(result).toBe('!!0')
   })
 
   test('generates notation for penetrate modifier', () => {
-    const result = modifierToNotationFromRegistry('penetrate', true)
+    const result = modifierToNotation('penetrate', true)
     expect(result).toBe('!p')
   })
 
   test('generates notation for penetrate modifier with depth', () => {
-    const result = modifierToNotationFromRegistry('penetrate', 3)
+    const result = modifierToNotation('penetrate', 3)
     expect(result).toBe('!p3')
   })
 
   test('generates notation for penetrate modifier unlimited', () => {
-    const result = modifierToNotationFromRegistry('penetrate', 0)
+    const result = modifierToNotation('penetrate', 0)
     expect(result).toBe('!p0')
   })
 
   test('generates notation for multiply modifier', () => {
-    const result = modifierToNotationFromRegistry('multiply', 2)
+    const result = modifierToNotation('multiply', 2)
     expect(result).toBe('*2')
   })
 
   test('generates notation for multiplyTotal modifier', () => {
-    const result = modifierToNotationFromRegistry('multiplyTotal', 3)
+    const result = modifierToNotation('multiplyTotal', 3)
     expect(result).toBe('**3')
   })
 
   test('generates notation for countSuccesses modifier', () => {
-    const result = modifierToNotationFromRegistry('countSuccesses', { threshold: 7 })
+    const result = modifierToNotation('countSuccesses', { threshold: 7 })
     expect(result).toBe('S{7}')
   })
 
   test('generates notation for countSuccesses modifier with botch', () => {
-    const result = modifierToNotationFromRegistry('countSuccesses', {
+    const result = modifierToNotation('countSuccesses', {
       threshold: 7,
       botchThreshold: 1
     })
@@ -675,41 +647,41 @@ describe('modifierToNotationFromRegistry', () => {
   })
 })
 
-describe('modifierToDescriptionFromRegistry', () => {
+describe('modifierToDescription', () => {
   test('generates description for explode modifier', () => {
-    const result = modifierToDescriptionFromRegistry('explode', true)
+    const result = modifierToDescription('explode', true)
     expect(result).toContain('Exploding Dice')
   })
 
   test('returns empty array for explode when false', () => {
-    const result = modifierToDescriptionFromRegistry('explode', false)
+    const result = modifierToDescription('explode', false)
     expect(result).toEqual([])
   })
 
   test('generates description for unique modifier', () => {
-    const result = modifierToDescriptionFromRegistry('unique', true)
+    const result = modifierToDescription('unique', true)
     expect(result).toContain('No Duplicate Rolls')
   })
 
   test('generates description for unique with notUnique array', () => {
-    const result = modifierToDescriptionFromRegistry('unique', { notUnique: [1] })
+    const result = modifierToDescription('unique', { notUnique: [1] })
     expect(result[0]).toContain('No Duplicates')
     expect(result[0]).toContain('except')
   })
 
   test('generates description for drop lowest', () => {
-    const result = modifierToDescriptionFromRegistry('drop', { lowest: 1 })
+    const result = modifierToDescription('drop', { lowest: 1 })
     expect(result[0]).toContain('Drop')
     expect(result[0]).toContain('lowest')
   })
 
   test('returns undefined result for undefined options', () => {
-    const result = modifierToDescriptionFromRegistry('plus', undefined)
+    const result = modifierToDescription('plus', undefined)
     expect(result).toBeUndefined()
   })
 
   test('returns empty array for unique when false', () => {
-    const result = modifierToDescriptionFromRegistry('unique', false)
+    const result = modifierToDescription('unique', false)
     expect(result).toEqual([])
   })
 })
@@ -758,9 +730,9 @@ describe('direct modifier definition edge cases', () => {
   })
 })
 
-describe('applyModifierFromRegistry - multiply modifiers', () => {
+describe('applyModifier - multiply modifiers', () => {
   test('applies multiply modifier correctly', () => {
-    const result = applyModifierFromRegistry('multiply', 2, [3, 4, 5], mockContext)
+    const result = applyModifier('multiply', 2, [3, 4, 5], mockContext)
 
     expect(result.rolls).toEqual([3, 4, 5])
     expect(result.transformTotal).toBeDefined()
@@ -772,7 +744,7 @@ describe('applyModifierFromRegistry - multiply modifiers', () => {
   })
 
   test('applies multiplyTotal modifier correctly', () => {
-    const result = applyModifierFromRegistry('multiplyTotal', 3, [3, 4, 5], mockContext)
+    const result = applyModifier('multiplyTotal', 3, [3, 4, 5], mockContext)
 
     expect(result.rolls).toEqual([3, 4, 5])
     expect(result.transformTotal).toBeDefined()
@@ -784,7 +756,7 @@ describe('applyModifierFromRegistry - multiply modifiers', () => {
   })
 
   test('handles undefined multiply modifier', () => {
-    const result = applyModifierFromRegistry('multiply', undefined, [3, 4, 5], mockContext)
+    const result = applyModifier('multiply', undefined, [3, 4, 5], mockContext)
 
     expect(result.rolls).toEqual([3, 4, 5])
     expect(result.transformTotal).toBeUndefined()
@@ -792,16 +764,11 @@ describe('applyModifierFromRegistry - multiply modifiers', () => {
   })
 })
 
-describe('applyModifierFromRegistry - countSuccesses modifier', () => {
+describe('applyModifier - countSuccesses modifier', () => {
   const ctx: ModifierContext = { parameters: { sides: 10, quantity: 5 } }
 
   test('counts successes above threshold', () => {
-    const result = applyModifierFromRegistry(
-      'countSuccesses',
-      { threshold: 7 },
-      [5, 7, 8, 3, 10],
-      ctx
-    )
+    const result = applyModifier('countSuccesses', { threshold: 7 }, [5, 7, 8, 3, 10], ctx)
 
     expect(result.rolls).toEqual([5, 7, 8, 3, 10])
     expect(result.transformTotal).toBeDefined()
@@ -814,7 +781,7 @@ describe('applyModifierFromRegistry - countSuccesses modifier', () => {
   })
 
   test('counts successes with botch threshold', () => {
-    const result = applyModifierFromRegistry(
+    const result = applyModifier(
       'countSuccesses',
       { threshold: 7, botchThreshold: 1 },
       [1, 7, 8, 1, 10],
@@ -830,7 +797,7 @@ describe('applyModifierFromRegistry - countSuccesses modifier', () => {
   })
 
   test('botches can make total negative', () => {
-    const result = applyModifierFromRegistry(
+    const result = applyModifier(
       'countSuccesses',
       { threshold: 10, botchThreshold: 3 },
       [1, 2, 3, 4, 5],
@@ -845,12 +812,7 @@ describe('applyModifierFromRegistry - countSuccesses modifier', () => {
   })
 
   test('returns 0 when no successes and no botches', () => {
-    const result = applyModifierFromRegistry(
-      'countSuccesses',
-      { threshold: 10 },
-      [1, 2, 3, 4, 5],
-      ctx
-    )
+    const result = applyModifier('countSuccesses', { threshold: 10 }, [1, 2, 3, 4, 5], ctx)
 
     expect(result.transformTotal).toBeDefined()
     if (result.transformTotal) {
@@ -859,24 +821,24 @@ describe('applyModifierFromRegistry - countSuccesses modifier', () => {
   })
 })
 
-describe('modifierToDescriptionFromRegistry - additional modifiers', () => {
+describe('modifierToDescription - additional modifiers', () => {
   test('generates description for multiply modifier', () => {
-    const result = modifierToDescriptionFromRegistry('multiply', 2)
+    const result = modifierToDescription('multiply', 2)
     expect(result).toEqual(['Multiply dice by 2'])
   })
 
   test('generates description for multiplyTotal modifier', () => {
-    const result = modifierToDescriptionFromRegistry('multiplyTotal', 3)
+    const result = modifierToDescription('multiplyTotal', 3)
     expect(result).toEqual(['Multiply total by 3'])
   })
 
   test('generates description for countSuccesses modifier', () => {
-    const result = modifierToDescriptionFromRegistry('countSuccesses', { threshold: 7 })
+    const result = modifierToDescription('countSuccesses', { threshold: 7 })
     expect(result).toEqual(['Count successes >= 7'])
   })
 
   test('generates description for countSuccesses modifier with botch', () => {
-    const result = modifierToDescriptionFromRegistry('countSuccesses', {
+    const result = modifierToDescription('countSuccesses', {
       threshold: 7,
       botchThreshold: 1
     })
@@ -884,110 +846,106 @@ describe('modifierToDescriptionFromRegistry - additional modifiers', () => {
   })
 })
 
-describe('parseModifiersFromRegistry', () => {
+describe('parseModifiers', () => {
   test('parses plus modifier from notation', () => {
-    const result = parseModifiersFromRegistry('2d6+5')
+    const result = parseModifiers('2d6+5')
     expect(result.plus).toBe(5)
   })
 
   test('parses minus modifier from notation', () => {
-    const result = parseModifiersFromRegistry('2d6-3')
+    const result = parseModifiers('2d6-3')
     expect(result.minus).toBe(3)
   })
 
   test('parses drop lowest from notation', () => {
-    const result = parseModifiersFromRegistry('4d6L')
+    const result = parseModifiers('4d6L')
     expect(result.drop).toEqual({ lowest: 1 })
   })
 
   test('parses drop highest from notation', () => {
-    const result = parseModifiersFromRegistry('2d20H')
+    const result = parseModifiers('2d20H')
     expect(result.drop).toEqual({ highest: 1 })
   })
 
   test('parses keep highest from notation', () => {
-    const result = parseModifiersFromRegistry('2d20K')
+    const result = parseModifiers('2d20K')
     expect(result.keep).toEqual({ highest: 1 })
   })
 
   test('parses explode from notation', () => {
-    const result = parseModifiersFromRegistry('3d6!')
+    const result = parseModifiers('3d6!')
     expect(result.explode).toBe(true)
   })
 
   test('parses unique from notation', () => {
-    const result = parseModifiersFromRegistry('4d6U')
+    const result = parseModifiers('4d6U')
     expect(result.unique).toBe(true)
   })
 
   test('parses reroll from notation', () => {
-    const result = parseModifiersFromRegistry('4d6R{1}')
+    const result = parseModifiers('4d6R{1}')
     expect(result.reroll).toEqual({ exact: [1] })
   })
 
   test('parses cap from notation', () => {
-    const result = parseModifiersFromRegistry('3d6C{>5}')
+    const result = parseModifiers('3d6C{>5}')
     expect(result.cap).toEqual({ greaterThan: 5 })
   })
 
   test('parses replace from notation', () => {
-    const result = parseModifiersFromRegistry('4d6V{1=6}')
+    const result = parseModifiers('4d6V{1=6}')
     // Replace modifier returns an array of rules
     expect(result.replace).toEqual([{ from: 1, to: 6 }])
   })
 
   test('parses compound from notation', () => {
-    const result = parseModifiersFromRegistry('3d6!!')
+    const result = parseModifiers('3d6!!')
     expect(result.compound).toBe(true)
   })
 
   test('parses penetrate from notation', () => {
-    const result = parseModifiersFromRegistry('3d6!p')
+    const result = parseModifiers('3d6!p')
     expect(result.penetrate).toBe(true)
   })
 
   test('parses multiply from notation', () => {
-    const result = parseModifiersFromRegistry('2d6*2')
+    const result = parseModifiers('2d6*2')
     expect(result.multiply).toBe(2)
   })
 
   test('parses multiplyTotal from notation', () => {
-    const result = parseModifiersFromRegistry('2d6**3')
+    const result = parseModifiers('2d6**3')
     expect(result.multiplyTotal).toBe(3)
   })
 
   test('parses countSuccesses from notation', () => {
-    const result = parseModifiersFromRegistry('5d10S{7}')
+    const result = parseModifiers('5d10S{7}')
     expect(result.countSuccesses).toEqual({ threshold: 7 })
   })
 
   test('parses countSuccesses with botch from notation', () => {
-    const result = parseModifiersFromRegistry('5d10S{7,1}')
+    const result = parseModifiers('5d10S{7,1}')
     expect(result.countSuccesses).toEqual({ threshold: 7, botchThreshold: 1 })
   })
 
   test('parses multiple modifiers from notation', () => {
-    const result = parseModifiersFromRegistry('4d6L+5')
+    const result = parseModifiers('4d6L+5')
     expect(result.drop).toEqual({ lowest: 1 })
     expect(result.plus).toBe(5)
   })
 
   test('returns empty object for notation without modifiers', () => {
-    const result = parseModifiersFromRegistry('2d6')
+    const result = parseModifiers('2d6')
     expect(Object.keys(result).length).toBe(0)
   })
 })
 
-describe('applyAllModifiersFromRegistry', () => {
+describe('applyAllModifiers', () => {
   test('applies multiple modifiers in priority order', () => {
     const fixedRollOne = (): number => 5
     const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
 
-    const result = applyAllModifiersFromRegistry(
-      { drop: { lowest: 1 }, plus: 3 },
-      [1, 3, 4, 5],
-      ctx
-    )
+    const result = applyAllModifiers({ drop: { lowest: 1 }, plus: 3 }, [1, 3, 4, 5], ctx)
 
     // Drop lowest (1) first, then plus 3 via transformTotal
     expect(result.rolls).toEqual([3, 4, 5])
@@ -1002,7 +960,7 @@ describe('applyAllModifiersFromRegistry', () => {
     const fixedRollOne = (): number => 5
     const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
 
-    const result = applyAllModifiersFromRegistry(
+    const result = applyAllModifiers(
       { reroll: { exact: [1] }, drop: { lowest: 1 } },
       [1, 3, 4, 6],
       ctx
@@ -1017,7 +975,7 @@ describe('applyAllModifiersFromRegistry', () => {
   test('collects totalTransformers from multiple modifiers', () => {
     const ctx: ModifierContext = { parameters: { sides: 6, quantity: 2 } }
 
-    const result = applyAllModifiersFromRegistry({ plus: 2, multiply: 3 }, [3, 4], ctx)
+    const result = applyAllModifiers({ plus: 2, multiply: 3 }, [3, 4], ctx)
 
     // Both plus and multiply use transformTotal
     expect(result.totalTransformers.length).toBe(2)
@@ -1027,7 +985,7 @@ describe('applyAllModifiersFromRegistry', () => {
   test('handles empty modifiers object', () => {
     const ctx: ModifierContext = { parameters: { sides: 6, quantity: 3 } }
 
-    const result = applyAllModifiersFromRegistry({}, [1, 2, 3], ctx)
+    const result = applyAllModifiers({}, [1, 2, 3], ctx)
 
     expect(result.rolls).toEqual([1, 2, 3])
     expect(result.logs.length).toBe(0)
@@ -1035,85 +993,82 @@ describe('applyAllModifiersFromRegistry', () => {
   })
 })
 
-describe('validateModifiersFromRegistry', () => {
+describe('validateModifiers', () => {
   test('validates drop modifier - throws when dropping all dice', () => {
     expect(() => {
-      validateModifiersFromRegistry({ drop: { lowest: 4 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ drop: { lowest: 4 } }, { sides: 6, quantity: 4 })
     }).toThrow('Cannot drop 4 dice from a pool of 4')
   })
 
   test('validates drop modifier - throws when dropping more than available', () => {
     expect(() => {
-      validateModifiersFromRegistry({ drop: { highest: 3, lowest: 2 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ drop: { highest: 3, lowest: 2 } }, { sides: 6, quantity: 4 })
     }).toThrow('Cannot drop 5 dice from a pool of 4')
   })
 
   test('validates drop modifier - passes for valid drop count', () => {
     expect(() => {
-      validateModifiersFromRegistry({ drop: { lowest: 1 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ drop: { lowest: 1 } }, { sides: 6, quantity: 4 })
     }).not.toThrow()
   })
 
   test('validates unique modifier - throws when quantity exceeds sides', () => {
     expect(() => {
-      validateModifiersFromRegistry({ unique: true }, { sides: 4, quantity: 5 })
+      validateModifiers({ unique: true }, { sides: 4, quantity: 5 })
     }).toThrow('Cannot have 5 unique values with only 4 sides')
   })
 
   test('validates unique modifier - passes when quantity equals sides', () => {
     expect(() => {
-      validateModifiersFromRegistry({ unique: true }, { sides: 6, quantity: 6 })
+      validateModifiers({ unique: true }, { sides: 6, quantity: 6 })
     }).not.toThrow()
   })
 
   test('validates unique modifier - passes when quantity less than sides', () => {
     expect(() => {
-      validateModifiersFromRegistry({ unique: true }, { sides: 6, quantity: 4 })
+      validateModifiers({ unique: true }, { sides: 6, quantity: 4 })
     }).not.toThrow()
   })
 
   test('validates keep modifier - throws when keeping more highest than available', () => {
     expect(() => {
-      validateModifiersFromRegistry({ keep: { highest: 5 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ keep: { highest: 5 } }, { sides: 6, quantity: 4 })
     }).toThrow('Cannot keep 5 highest dice from a pool of 4')
   })
 
   test('validates keep modifier - throws when keeping less than 1 highest', () => {
     expect(() => {
-      validateModifiersFromRegistry({ keep: { highest: 0 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ keep: { highest: 0 } }, { sides: 6, quantity: 4 })
     }).toThrow('Cannot keep 0 highest dice from a pool of 4')
   })
 
   test('validates keep modifier - throws when keeping more lowest than available', () => {
     expect(() => {
-      validateModifiersFromRegistry({ keep: { lowest: 5 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ keep: { lowest: 5 } }, { sides: 6, quantity: 4 })
     }).toThrow('Cannot keep 5 lowest dice from a pool of 4')
   })
 
   test('validates keep modifier - throws when keeping less than 1 lowest', () => {
     expect(() => {
-      validateModifiersFromRegistry({ keep: { lowest: 0 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ keep: { lowest: 0 } }, { sides: 6, quantity: 4 })
     }).toThrow('Cannot keep 0 lowest dice from a pool of 4')
   })
 
   test('validates keep modifier - passes for valid keep count', () => {
     expect(() => {
-      validateModifiersFromRegistry({ keep: { highest: 3 } }, { sides: 6, quantity: 4 })
+      validateModifiers({ keep: { highest: 3 } }, { sides: 6, quantity: 4 })
     }).not.toThrow()
   })
 
   test('validates multiple modifiers together', () => {
     expect(() => {
-      validateModifiersFromRegistry(
-        { drop: { lowest: 1 }, unique: true },
-        { sides: 6, quantity: 4 }
-      )
+      validateModifiers({ drop: { lowest: 1 }, unique: true }, { sides: 6, quantity: 4 })
     }).not.toThrow()
   })
 
   test('handles modifiers without validate function', () => {
     expect(() => {
-      validateModifiersFromRegistry({ plus: 5, minus: 3 }, { sides: 6, quantity: 2 })
+      validateModifiers({ plus: 5, minus: 3 }, { sides: 6, quantity: 2 })
     }).not.toThrow()
   })
 })

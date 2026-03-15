@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink'
-import type { RollRecord } from '@randsum/roller/types'
+import type { RollRecord } from '@randsum/roller'
 import { computeSteps, formatAsMath } from '@randsum/display-utils'
 import { useTerminalWidth } from '../hooks/useTerminalWidth'
 

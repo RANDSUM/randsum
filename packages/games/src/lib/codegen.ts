@@ -1,7 +1,7 @@
 import { SchemaError } from './errors'
 import type { NormalizedRollDefinition, NormalizedSpec } from './normalizedTypes'
 import { normalizeSpec } from './normalizer'
-import type { RandSumSpec, RemoteTableLookupOperation } from './types'
+import type { RandSumSpec, RemoteTableLookupOperation, ResultMappingLeaf } from './types'
 import { validateSpec } from './validator'
 import { generateRollParts } from './codegen/emitBody'
 import { needsValidationImports, specToFilename } from './codegen/emitHelpers'
@@ -24,6 +24,56 @@ async function fetchRemoteData(url: string, dataPath?: string): Promise<unknown[
 
 export interface GenerateCodeOptions {
   readonly remoteDataCache?: ReadonlyMap<string, readonly unknown[]>
+}
+
+/**
+ * Recursively collect top-level field names referenced by `$foundTable`
+ * in a result mapping leaf (including fallbacks).
+ */
+function collectFoundTableFields(leaf: ResultMappingLeaf, fields: Set<string>): void {
+  if ('$foundTable' in leaf) {
+    const topLevel = leaf.$foundTable.split('.')[0]
+    if (topLevel !== undefined) fields.add(topLevel)
+  }
+  if ('$lookupResult' in leaf && leaf.fallback !== undefined) {
+    collectFoundTableFields(leaf.fallback, fields)
+  }
+}
+
+/**
+ * Derive the set of top-level field names that the generated code actually
+ * accesses from each remote data entry. Derived from the spec's `find.field`,
+ * `tableField`, and any `$foundTable` references in `resultMapping`.
+ * The `name` field is always included because `VALID_TABLE_NAMES` reads it
+ * from every entry.
+ */
+function collectRequiredRemoteFields(rtl: RemoteTableLookupOperation): ReadonlySet<string> {
+  const fields = new Set<string>(['name', rtl.find.field, rtl.tableField])
+  for (const leaf of Object.values(rtl.resultMapping)) {
+    collectFoundTableFields(leaf, fields)
+  }
+  return fields
+}
+
+/**
+ * Strip each remote data entry down to only the fields the generated code
+ * needs, removing metadata that would otherwise bloat the output.
+ */
+function stripRemoteEntries(
+  data: readonly unknown[],
+  requiredFields: ReadonlySet<string>
+): unknown[] {
+  return data.map(entry => {
+    if (typeof entry !== 'object' || entry === null) return entry
+    const source = entry as Record<string, unknown>
+    const stripped: Record<string, unknown> = {}
+    for (const field of requiredFields) {
+      if (field in source) {
+        stripped[field] = source[field]
+      }
+    }
+    return stripped
+  })
 }
 
 async function buildCodeString(
@@ -56,7 +106,7 @@ async function buildCodeString(
     ...(validationImports.length > 0
       ? [`import { ${validationImports.join(', ')} } from '@randsum/roller/validate'`]
       : []),
-    `import type { RollRecord } from '@randsum/roller/types'`,
+    `import type { RollRecord } from '@randsum/roller'`,
     `import type { GameRollResult } from './types'`,
     `import { SchemaError } from './lib/errors'`,
     `import type { SchemaErrorCode } from './lib/errors'`
@@ -68,8 +118,9 @@ async function buildCodeString(
 
   parts.push(``)
 
-  if (remoteData !== undefined) {
-    parts.push(`const REMOTE_DATA = ${JSON.stringify(remoteData)} as const`)
+  if (remoteData !== undefined && rtlDef !== undefined) {
+    const strippedData = stripRemoteEntries(remoteData, collectRequiredRemoteFields(rtlDef))
+    parts.push(`const REMOTE_DATA = ${JSON.stringify(strippedData)} as const`)
     parts.push(``)
   }
 

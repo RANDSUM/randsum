@@ -146,10 +146,10 @@ import { roll } from "@randsum/roller"
 roll(20)                    // 1d20
 roll("4d6L")                // notation string
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
-roll("1d20", "2d6", "+5")  // multiple args, combined total
+roll("1d20+5", "2d6")      // multiple args, combined total
 
 const result = roll("2d6+3")
 result.total   // final sum
 result.rolls   // RollRecord[] — full roll data per dice group
-result.result  // string[] — rolled values as strings
+result.values  // string[] — rolled values as strings
 ```

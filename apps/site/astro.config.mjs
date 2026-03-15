@@ -66,82 +66,74 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css'],
       sidebar: [
         {
-          label: 'Getting Started',
+          label: 'RANDSUM',
           items: [
-            { label: 'Introduction', slug: 'getting-started/introduction' },
-            { label: 'Installation', slug: 'getting-started/installation' },
-            { label: 'Quick Start', slug: 'getting-started/quick-start' },
-            { label: 'FAQ', slug: 'getting-started/faq' }
+            { label: 'Introduction', slug: 'welcome/introduction' },
+            { label: 'Ecosystem Overview', slug: 'welcome/ecosystem-overview' }
           ]
         },
         {
-          label: 'Reference',
+          label: 'Roller',
           items: [
-            { label: 'Dice Notation', slug: 'reference/dice-notation' },
-            { label: 'Roll Options', slug: 'reference/roll-options' },
-            { label: 'Modifiers', slug: 'reference/modifiers' },
-            { label: 'Changelog', slug: 'reference/changelog' }
+            { label: 'Introduction', slug: 'roller/introduction' },
+            { label: 'Getting Started', slug: 'roller/getting-started' },
+            { label: 'Roll Options', slug: 'roller/roll-options' },
+            { label: 'Modifiers', slug: 'roller/modifiers' },
+            { label: 'Error Handling', slug: 'roller/error-handling' },
+            { label: 'API Reference', slug: 'roller/api-reference' }
           ]
         },
         {
-          label: 'Guides',
+          label: 'Notation',
           items: [
-            { label: 'Error Handling', slug: 'guides/error-handling' },
-            { label: 'Recipes', slug: 'guides/recipes' },
-            { label: 'Testing', slug: 'guides/testing' },
-            { label: 'Troubleshooting', slug: 'guides/troubleshooting' },
-            { label: 'Migrating from v2', slug: 'guides/migrating-from-v2' }
-          ]
-        },
-        {
-          label: 'Core',
-          items: [
-            { label: 'Overview', slug: 'packages/overview' },
-            { label: '@randsum/notation', slug: 'packages/notation' },
-            { label: '@randsum/roller', slug: 'packages/roller' }
+            { label: 'Introduction', slug: 'notation/introduction' },
+            { label: 'Getting Started', slug: 'notation/getting-started' },
+            {
+              label: 'Randsum Dice Notation Spec',
+              slug: 'notation/randsum-dice-notation'
+            },
+            { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
+            { label: 'API Reference', slug: 'notation/api-reference' }
           ]
         },
         {
           label: 'Games',
           items: [
-            { label: 'Overview', slug: 'games/overview' },
-            { label: 'Comparison', slug: 'games/comparison' },
-            { label: 'Blades in the Dark', slug: 'games/blades' },
-            { label: 'Daggerheart', slug: 'games/daggerheart' },
-            { label: 'D&D 5e', slug: 'games/fifth' },
-            { label: 'Powered by the Apocalypse', slug: 'games/pbta' },
-            { label: 'Root RPG', slug: 'games/root-rpg' },
-            { label: 'Salvage Union', slug: 'games/salvageunion' }
+            { label: 'Introduction', slug: 'games/introduction' },
+            { label: 'Getting Started', slug: 'games/getting-started' },
+            {
+              label: 'Schema',
+              items: [
+                { label: 'Overview', slug: 'games/schema/overview' },
+                { label: 'Schema Reference', slug: 'games/schema/reference' },
+                { label: 'Using loadSpec()', slug: 'games/schema/using-loadspec' },
+                {
+                  label: 'Contributing a Game',
+                  slug: 'games/schema/contributing-a-game'
+                }
+              ]
+            },
+            {
+              label: 'Game Systems',
+              items: [
+                { label: 'Blades in the Dark', slug: 'games/blades' },
+                { label: 'D&D 5e', slug: 'games/fifth' },
+                { label: 'Daggerheart', slug: 'games/daggerheart' },
+                { label: 'Powered by the Apocalypse', slug: 'games/pbta' },
+                { label: 'Root RPG', slug: 'games/root-rpg' },
+                { label: 'Salvage Union', slug: 'games/salvageunion' }
+              ]
+            }
           ]
         },
         {
-          label: 'LLM Skill',
+          label: 'Tools',
           items: [
-            { label: 'Overview', slug: 'tools/skill' },
-            { label: 'Skill Definition', slug: 'tools/skill/dice-rolling' },
-            { label: 'Notation Reference', slug: 'tools/skill/notation' },
-            { label: 'Game Systems', slug: 'tools/skill/game-systems' }
+            { label: 'Component Library', slug: 'tools/component-library' },
+            { label: 'Display Utils', slug: 'tools/display-utils' },
+            { label: 'Discord Bot', slug: 'tools/discord-bot' },
+            { label: 'Claude Code Skill', slug: 'tools/claude-code-skill' }
           ]
-        },
-        {
-          label: 'Components',
-          items: [
-            { label: 'Overview', slug: 'tools/components' },
-            { label: 'RollerPlayground', slug: 'tools/components/roller-playground' },
-            { label: 'ModifierReference', slug: 'tools/components/modifier-reference' }
-          ]
-        },
-        {
-          label: 'CLI',
-          items: [{ label: 'Overview', slug: 'tools/cli' }]
-        },
-        {
-          label: 'Discord Bot',
-          items: [{ label: 'Overview', slug: 'tools/discord-bot' }]
-        },
-        {
-          label: 'Display Utils',
-          items: [{ label: 'Overview', slug: 'tools/display-utils' }]
         }
       ]
     }),

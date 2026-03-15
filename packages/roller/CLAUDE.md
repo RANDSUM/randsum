@@ -13,13 +13,17 @@ Main entry point for rolling dice. Accepts number, notation string, options obje
 - **Number**: `roll(20)` - Roll 1d20 (quantity 1, sides = number)
 - **Notation**: `roll("4d6L")` - Parse notation string
 - **Options object**: `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })` - Same as 4d6L
-- **Multiple arguments**: `roll("1d20", "2d6", "+5")` - Combine rolls into one total
+- **Multiple arguments**: `roll("1d20+5", "2d6")` - Combine rolls into one total
+- **Percentile**: `roll("d%")` - Roll 1d100 (no quantity prefix; use `roll("d%", "d%")` for multiple)
+- **Fate/Fudge**: `roll("4dF")` - Four Fate dice (-4 to +4), `roll("dF.2")` - Extended variant (supports quantity prefix)
 
 ```typescript
 roll(20) // 1d20
 roll("2d6+3") // 2d6 with +3
 roll({ sides: 6, quantity: 2, modifiers: { plus: 3 } }) // same
 roll("1d20", "2d6") // attack + damage, combined total
+roll("d%") // percentile (1d100)
+roll("4dF") // Fate Core roll
 ```
 
 ### `validateNotation(notation: string): ValidationResult`
@@ -44,6 +48,8 @@ Key patterns:
 - `NdS!` - Exploding dice
 - `NdSU` - Unique results
 - `NdSC{conditions}` - Cap values
+- `d%` - Percentile die (1d100)
+- `dF` / `dF.1` / `dF.2` - Fate/Fudge dice
 
 ## Modifier System
 
@@ -72,7 +78,7 @@ Modifier options are defined in `ModifierOptions` type. See `RANDSUM_DICE_NOTATI
 
 All types are exported with `export type`:
 
-- `RollArgument<T>` - Input type
+- `RollArgument<T>` - Input type (includes `PercentileDie`, `FateDieNotation`)
 - `RollerRollResult<T>` - Return type
 - `RollOptions<T>` - Configuration options
 - `ModifierOptions` - Modifier configuration
@@ -85,5 +91,4 @@ All types are exported with `export type`:
 - `lib/notation/` - Notation parsing
 - `lib/modifiers/` - Modifier application logic
 - `lib/random/` - Random number generation
-- `lib/patterns/` - Regex patterns for parsing
 - `lib/transformers/` - Options ↔ notation conversion

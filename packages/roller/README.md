@@ -57,7 +57,7 @@ The main function accepts numbers, notation strings, or options objects.
 const result = roll("2d6+3")
 
 result.total // Final total after all modifiers
-result.result // Array of individual die values
+result.values // Array of individual die values
 result.rolls // Full roll records with modifier history
 ```
 

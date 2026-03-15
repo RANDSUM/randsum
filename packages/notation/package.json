@@ -6,91 +6,35 @@
   "private": false,
   "files": [
     "dist",
+    "!dist/**/*.map",
     "LICENSE",
     "README.md"
   ],
   "module": "./dist/index.js",
-  "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
       }
     },
-    "./parse": {
+    "./validateNotation": {
       "import": {
-        "types": "./dist/parse.d.ts",
-        "default": "./dist/parse.js"
-      },
-      "require": {
-        "types": "./dist/parse.d.cts",
-        "default": "./dist/parse.cjs"
-      }
-    },
-    "./validate": {
-      "import": {
-        "types": "./dist/validate.d.ts",
-        "default": "./dist/validate.js"
-      },
-      "require": {
-        "types": "./dist/validate.d.cts",
-        "default": "./dist/validate.cjs"
-      }
-    },
-    "./transform": {
-      "import": {
-        "types": "./dist/transform.d.ts",
-        "default": "./dist/transform.js"
-      },
-      "require": {
-        "types": "./dist/transform.d.cts",
-        "default": "./dist/transform.cjs"
-      }
-    },
-    "./schemas": {
-      "import": {
-        "types": "./dist/schemas.d.ts",
-        "default": "./dist/schemas.js"
-      },
-      "require": {
-        "types": "./dist/schemas.d.cts",
-        "default": "./dist/schemas.cjs"
+        "types": "./dist/validateNotation.d.ts",
+        "default": "./dist/validateNotation.js"
       }
     },
     "./tokenize": {
       "import": {
         "types": "./dist/tokenize.d.ts",
         "default": "./dist/tokenize.js"
-      },
-      "require": {
-        "types": "./dist/tokenize.d.cts",
-        "default": "./dist/tokenize.cjs"
       }
     },
     "./comparison": {
       "import": {
         "types": "./dist/comparison/index.d.ts",
         "default": "./dist/comparison/index.js"
-      },
-      "require": {
-        "types": "./dist/comparison/index.d.cts",
-        "default": "./dist/comparison/index.cjs"
-      }
-    },
-    "./types": {
-      "import": {
-        "types": "./dist/types.d.ts",
-        "default": "./dist/types.js"
-      },
-      "require": {
-        "types": "./dist/types.d.cts",
-        "default": "./dist/types.cjs"
       }
     },
     "./package.json": "./package.json"

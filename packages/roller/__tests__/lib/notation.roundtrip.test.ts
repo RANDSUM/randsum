@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import * as fc from 'fast-check'
 import { optionsToNotation } from '../../src/lib/transformers'
-import { notationToOptions } from '@randsum/notation/parse'
+import { notationToOptions } from '@randsum/notation'
 import type { ModifierOptions, RollOptions } from '../../src'
 
 /**

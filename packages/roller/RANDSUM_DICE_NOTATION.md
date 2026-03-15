@@ -37,6 +37,64 @@ roll({
 })
 ```
 
+## Special Dice
+
+In addition to standard `NdS` notation, `roll()` accepts shorthand string arguments for common special dice. These are standalone argument types — they cannot be combined with notation modifiers inline (use the options object form for modified rolls).
+
+### Percentile Die (`d%`)
+
+A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution.
+
+| Argument | Equivalent  | Description   |
+| -------- | ----------- | ------------- |
+| `'d%'`   | `roll(100)` | Roll one d100 |
+
+```typescript
+roll("d%") // Roll 1d100
+roll("D%") // Case-insensitive
+roll(100) // Equivalent numeric form
+roll("1d100") // Equivalent notation form
+```
+
+Internally, `'d%'` maps to `{ quantity: 1, sides: 100 }`.
+
+`d%` does not support a quantity prefix. To roll multiple percentile dice, pass multiple arguments:
+
+```typescript
+roll("d%", "d%") // Two percentile dice
+```
+
+### Fate/Fudge Dice (`dF`)
+
+Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2.
+
+| Argument  | Faces             | Range per die | Description               |
+| --------- | ----------------- | ------------- | ------------------------- |
+| `'dF'`    | -1, 0, +1         | -1 to +1      | Standard Fate/Fudge die   |
+| `'dF.1'`  | -1, 0, +1         | -1 to +1      | Explicit standard variant |
+| `'dF.2'`  | -2, -1, 0, +1, +2 | -2 to +2      | Extended Fudge die        |
+| `'4dF'`   | -1, 0, +1         | -4 to +4      | Standard Fate Core roll   |
+| `'4dF.2'` | -2, -1, 0, +1, +2 | -8 to +8      | Four extended dice        |
+
+```typescript
+roll("dF") // One Fate die: -1, 0, or +1
+roll("4dF") // Standard Fate Core roll (4 dice, range -4 to +4)
+roll("dF.1") // Same as 'dF' — explicit standard variant
+roll("dF.2") // Extended Fudge die: -2, -1, 0, +1, or +2
+roll("4dF.2") // Four extended dice (range -8 to +8)
+roll("Df") // Case-insensitive
+```
+
+Fate dice can be mixed with other roll arguments:
+
+```typescript
+roll("4dF", "2d6", 20) // Fate dice + 2d6 + 1d20, totals combined
+```
+
+Internally, `dF` uses the replace modifier to map die faces to negative and zero values. `'dF'` rolls a d3 with replacements `{ 1 -> -1, 2 -> 0, 3 -> 1 }`. `'dF.2'` rolls a d5 with replacements `{ 1 -> -2, 2 -> -1, 3 -> 0, 4 -> 1, 5 -> 2 }`. The `notation` field on the resulting `RollRecord` preserves the original `dF` form (e.g., `"4dF"`) rather than the expanded d3/d5 notation.
+
+**Note:** To apply modifiers to Fate dice (e.g., keep highest), use the options object form directly rather than appending modifiers to the `'dF'` string. Neither `d%` nor `dF` support inline notation modifiers — there is no `d%L` or `4dFkh3`.
+
 ## Modifiers
 
 ### Basic Arithmetic

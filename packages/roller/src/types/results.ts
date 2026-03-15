@@ -55,14 +55,14 @@ export interface RollRecord<T = string> {
 /**
  * Generic roll result container.
  *
- * @template TResult - Type of the overall result
+ * @template TValues - Type of the overall values
  * @template TRollRecord - Type of individual roll records
  */
-export interface RollResult<TResult = number, TRollRecord = RollRecord> {
+export interface RollResult<TValues = number, TRollRecord = RollRecord> {
   /** Individual roll records */
   rolls: TRollRecord[]
-  /** Aggregate result */
-  result: TResult
+  /** Aggregate values */
+  values: TValues
 }
 
 /**
@@ -76,7 +76,7 @@ export interface RollResult<TResult = number, TRollRecord = RollRecord> {
  * ```ts
  * const result = roll("4d6L")
  * result.total   // => Sum of kept dice
- * result.result  // => Array of individual die values
+ * result.values  // => Array of individual die values
  * result.rolls   // => Full roll records with history
  * ```
  */

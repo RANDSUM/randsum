@@ -1,46 +1,51 @@
+import type { ModifierDefinition } from '../schema'
 import { capModifier } from './cap'
+import { compoundModifier } from './compound'
+import { countSuccessesModifier } from './countSuccesses'
 import { dropModifier } from './drop'
+import { explodeModifier } from './explode'
 import { keepModifier } from './keep'
+import { minusModifier } from './minus'
+import { multiplyModifier } from './multiply'
+import { multiplyTotalModifier } from './multiplyTotal'
+import { penetrateModifier } from './penetrate'
+import { plusModifier } from './plus'
 import { replaceModifier } from './replace'
 import { rerollModifier } from './reroll'
-import { explodeModifier } from './explode'
-import { compoundModifier } from './compound'
-import { penetrateModifier } from './penetrate'
 import { uniqueModifier } from './unique'
-import { countSuccessesModifier } from './countSuccesses'
-import { multiplyModifier } from './multiply'
-import { plusModifier } from './plus'
-import { minusModifier } from './minus'
-import { multiplyTotalModifier } from './multiplyTotal'
 
 export { capModifier }
+export { compoundModifier }
+export { countSuccessesModifier }
 export { dropModifier }
+export { explodeModifier }
 export { keepModifier }
+export { minusModifier }
+export { multiplyModifier }
+export { multiplyTotalModifier }
+export { penetrateModifier }
+export { plusModifier }
 export { replaceModifier }
 export { rerollModifier }
-export { explodeModifier }
-export { compoundModifier }
-export { penetrateModifier }
 export { uniqueModifier }
-export { countSuccessesModifier }
-export { multiplyModifier }
-export { plusModifier }
-export { minusModifier }
-export { multiplyTotalModifier }
 
-export {
-  defineModifier,
-  getModifier,
-  hasModifier,
-  getAllModifiers,
-  getModifierOrder,
-  buildCombinedPattern,
-  parseModifiersFromRegistry,
-  applyModifierFromRegistry,
-  applyAllModifiersFromRegistry,
-  modifierToNotationFromRegistry,
-  modifierToDescriptionFromRegistry,
-  processModifierNotationsFromRegistry,
-  processModifierDescriptionsFromRegistry,
-  validateModifiersFromRegistry
-} from '../registry'
+/**
+ * All modifier definitions in priority order (lowest priority number runs first).
+ * This is the single source of truth for which modifiers exist and their execution order.
+ */
+export const ALL_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
+  capModifier as ModifierDefinition,
+  dropModifier as ModifierDefinition,
+  keepModifier as ModifierDefinition,
+  replaceModifier as ModifierDefinition,
+  rerollModifier as ModifierDefinition,
+  explodeModifier as ModifierDefinition,
+  compoundModifier as ModifierDefinition,
+  penetrateModifier as ModifierDefinition,
+  uniqueModifier as ModifierDefinition,
+  multiplyModifier as ModifierDefinition,
+  plusModifier as ModifierDefinition,
+  minusModifier as ModifierDefinition,
+  countSuccessesModifier as ModifierDefinition,
+  multiplyTotalModifier as ModifierDefinition
+])

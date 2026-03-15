@@ -1,5 +1,1 @@
-export {
-  optionsToDescription,
-  optionsToNotation,
-  optionsToSidesFaces
-} from '@randsum/notation/transform'
+export { optionsToDescription, optionsToNotation, optionsToSidesFaces } from '@randsum/notation'

@@ -59,6 +59,10 @@ typings/
 # dotenv environment variables file
 .env
 
+# Environment overrides
+*.local
+.env.*.local
+
 .DS_Store
 
 # Benchmark

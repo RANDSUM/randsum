@@ -3,21 +3,9 @@ title: "@randsum/display-utils — UI Utilities"
 description: Utilities for building RANDSUM-based UIs. Provides computeSteps for tooltip breakdowns, MODIFIER_DOCS for reference UIs, and buildStackBlitzProject for live playground scaffolding.
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-`@randsum/display-utils` is a collection of helper utilities for building UIs on top of `@randsum/roller`. It powers the RANDSUM CLI's modifier reference panel, the site's interactive playground, and the StackBlitz "open in editor" feature.
-
-## Installation
-
-<Tabs>
-  <TabItem label="npm">
-    <CodeExample lang="bash" code={`npm install @randsum/display-utils`} />
-  </TabItem>
-  <TabItem label="bun">
-    <CodeExample lang="bash" code={`bun add @randsum/display-utils`} />
-  </TabItem>
-</Tabs>
+`@randsum/display-utils` is an internal package that provides helper utilities for building UIs on top of `@randsum/roller`. It powers the site's interactive playground, the component library's modifier reference panel, and the StackBlitz "open in editor" feature. It is consumed by `@randsum/component-library` and is not published to npm separately.
 
 ## `computeSteps`
 
@@ -66,7 +54,7 @@ formatAsMath([3, 4, 5], -2)   // "3 + 4 + 5 - 2"`} />
 
 ## `MODIFIER_DOCS`
 
-A structured reference for all RANDSUM dice notation modifiers. Each key is a modifier notation symbol. Used to power modifier reference UIs like the CLI's interactive panel and the site's modifier reference page.
+A structured reference for all RANDSUM dice notation modifiers. Each key is a modifier notation symbol. Used to power modifier reference UIs like the component library's reference panel.
 
 ### Signature
 
@@ -106,4 +94,3 @@ The notation string is safely escaped using `JSON.stringify` — backticks and i
 ## Links
 
 - [Source on GitHub](https://github.com/RANDSUM/randsum/tree/main/packages/display-utils)
-- [npm package](https://www.npmjs.com/package/@randsum/display-utils)

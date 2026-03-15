@@ -61,11 +61,23 @@ RANDSUM uses extended standard dice notation (case-insensitive):
 | `*N` | Pre-arithmetic multiply | `2d6*2+3` |
 | `**N` | Total multiply | `2d6+3**2` |
 
+### Special Dice (roller-level, not notation)
+
+These are special argument types handled by `@randsum/roller`, not parsed by `@randsum/notation`:
+
+| Argument | Description | Notes |
+|----------|-------------|-------|
+| `d%` | Percentile die (1d100) | No quantity prefix (`2d%` is invalid, use `roll('d%', 'd%')`) |
+| `dF` / `dF.1` | Fate/Fudge die (-1, 0, +1) | Supports quantity prefix: `4dF` |
+| `dF.2` | Extended Fudge die (-2, -1, 0, +1, +2) | Supports quantity prefix: `4dF.2` |
+
 Common patterns:
 - `roll('4d6L')` — D&D ability score (drop lowest)
 - `roll('2d20H')` — advantage (keep highest)
 - `roll('2d20L')` — disadvantage (keep lowest)
 - `roll('4d6L', '4d6L', '4d6L', '4d6L', '4d6L', '4d6L')` — full 6-stat character generation
+- `roll('d%')` — percentile roll (Call of Cthulhu, Warhammer)
+- `roll('4dF')` — standard Fate Core roll
 
 ## TypeScript Usage
 
@@ -79,6 +91,8 @@ roll(20)              // 1d20
 roll('4d6L')          // 4d6, drop lowest
 roll('2d20H')         // advantage
 roll('2d20L')         // disadvantage
+roll('d%')            // percentile (1d100)
+roll('4dF')           // Fate Core (-4 to +4)
 
 // Options object
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })

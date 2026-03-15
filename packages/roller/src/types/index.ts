@@ -1,5 +1,7 @@
 export type {
   DiceNotation,
+  FateDieNotation,
+  PercentileDie,
   RandomFn,
   RollOptions,
   RequiredNumericRollParameters,
@@ -28,4 +30,4 @@ export type {
   InvalidValidationResult,
   ValidationErrorInfo,
   ValidationResult
-} from '@randsum/notation/types'
+} from '@randsum/notation'

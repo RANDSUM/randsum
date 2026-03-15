@@ -85,7 +85,7 @@ roll(-1)  // Penalty`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `RollResult` | `'Strong Hit' \| 'Weak Hit' \| 'Miss'` |
+| `result` | `RootRpgRollResult` | `'Strong Hit' \| 'Weak Hit' \| 'Miss'` |
 | `total` | `number` | Sum of 2d6 + bonus |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
@@ -99,23 +99,34 @@ roll(-1)  // Penalty`} />
 
 ## Error handling
 
-Invalid inputs throw a `SchemaError` with a descriptive `code`:
+Game `roll()` can throw two types of errors:
+
+- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `bonus: 999` when max is 20)
+- **`SchemaError`** (from `@randsum/games/root-rpg`) -- game-specific issues like unmatched outcome tables
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/root-rpg'
+import { ValidationError } from '@randsum/roller'
 
 try {
   roll(999)
 } catch (error) {
-  if (error instanceof SchemaError) {
-    console.log(error.code)    // 'INVALID_INPUT_TYPE'
-    console.log(error.message) // describes what went wrong
+  if (error instanceof ValidationError) {
+    // Out-of-range bonus (must be -20 to 20)
+    console.log(error.code)    // 'VALIDATION_ERROR'
+  } else if (error instanceof SchemaError) {
+    // Game-specific error
+    console.log(error.code)    // 'NO_TABLE_MATCH'
   }
 }`} />
 
 ## Types
 
-<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/games/root-rpg'
+<CodeExample code={`import type { RootRpgRollResult, GameRollResult, RollRecord } from '@randsum/games/root-rpg'
 import { SchemaError } from '@randsum/games/root-rpg'`} />
+
+## Schema
+
+This game is powered by a `.randsum.json` spec that defines the 2d6+bonus resolution and outcome tiers. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
 
 ## Links
 

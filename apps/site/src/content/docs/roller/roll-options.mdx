@@ -1,0 +1,176 @@
+---
+title: Roll Options
+description: Full reference for roll() argument types, the RollOptions interface, RollConfig, custom random functions, result objects, and input validation.
+---
+
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import { RollerPlayground } from '@randsum/component-library'
+
+Configure dice rolls with numbers, notation strings, options objects, or any combination.
+
+## Argument types
+
+### Number
+
+Pass a number to roll a single die with that many sides.
+
+<RollerPlayground defaultNotation="1d20" client:only="react" />
+
+### Notation string
+
+Pass a dice notation string. See the [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for full syntax.
+
+<RollerPlayground defaultNotation="4d6L" client:only="react" />
+
+### Options object
+
+Pass a `RollOptions` object for full programmatic control.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    drop: { lowest: 1 }
+  }
+})`} />
+
+### Multiple arguments
+
+Pass multiple arguments to combine rolls into a single total.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// Attack + damage
+roll('1d20+5', '2d6+3')
+
+// Mix argument types
+roll(20, '2d6', { sides: 8, quantity: 1, modifiers: { plus: 3 } })`} />
+
+## RollOptions
+
+The `RollOptions` interface provides full control over a roll.
+
+<CodeExample code={`interface RollOptions<T = string> {
+  sides: number | T[]   // required
+  quantity?: number
+  arithmetic?: 'add' | 'subtract'
+  modifiers?: ModifierOptions
+  key?: string | undefined
+}`} />
+
+### `sides` (required)
+
+Number of sides on each die, or an array of custom face values.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// Numeric sides
+roll({ sides: 20 })
+
+// Custom faces (e.g., Fate dice)
+roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })`} />
+
+### `quantity`
+
+Number of dice to roll. Defaults to `1`.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll({ sides: 6, quantity: 4 }) // 4d6`} />
+
+### `arithmetic`
+
+How this roll combines with others in a multi-roll expression. Either `'add'` (default) or `'subtract'`.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// 2d12 minus 1d6
+roll(
+  { sides: 12, quantity: 2 },
+  { sides: 6, quantity: 1, arithmetic: 'subtract' }
+)`} />
+
+### `modifiers`
+
+An object containing modifier options. See the [Modifiers](/roller/modifiers/) reference for all available modifiers.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: {
+    drop: { lowest: 1 },
+    reroll: { exact: [1] },
+    plus: 5
+  }
+})`} />
+
+### `key`
+
+Optional string identifier for this roll in multi-roll expressions. Used by game packages to identify individual dice (e.g., hope/fear dice in Daggerheart).
+
+## RollConfig
+
+An optional final argument to `roll()` that configures execution behavior.
+
+<CodeExample code={`interface RollConfig {
+  randomFn?: RandomFn
+}`} />
+
+### Custom RNG
+
+Override `Math.random` with your own random number generator. Must return a number in the range `[0, 1)`.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+// Crypto-based randomness
+const cryptoRandom = () =>
+  crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+
+roll('2d6', { randomFn: cryptoRandom })`} />
+
+## Result object
+
+The `roll()` function returns a `RollerRollResult` object.
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+const result = roll('4d6L+2')
+
+console.log(result.total)    // Final total after all modifiers
+console.log(result.values)   // Array of per-group values (string[] by default)
+console.log(result.rolls)    // Array of RollRecord objects (one per dice group)`} />
+
+<RollerPlayground defaultNotation="4d6L+2" client:only="react" />
+
+### `total`
+
+The final numeric total after all modifiers, drops, and arithmetic have been applied.
+
+### `result`
+
+An array of per-group results. For numeric dice this is `string[]`; for custom-face dice it matches the face type.
+
+### `rolls`
+
+An array of `RollRecord` objects, one for each dice group in the roll.
+
+<CodeExample code={`interface RollRecord<T = string> {
+  rolls: number[]           // die values after modifiers
+  initialRolls: number[]    // die values before modifiers
+  modifierLogs: ModifierLog[] // logs from each modifier application
+  notation: DiceNotation    // dice notation string
+  parameters: RollParams<T> // full resolved roll parameters
+  total: number             // total for this individual group
+}`} />
+
+See the [API Reference](/roller/api-reference/) for the full `RollRecord` and `RollParams` types.
+
+## Error handling
+
+`roll()` throws a `RandsumError` on invalid input. Hardcoded notation like `roll('4d6L')` will never throw in practice — only validate when input comes from outside your control.
+
+See [Error Handling](/roller/error-handling/) for validation patterns and the full error hierarchy, or the [API Reference](/roller/api-reference/) for `isDiceNotation()` and `validateNotation()` signatures.

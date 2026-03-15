@@ -5,4 +5,4 @@ export {
   formatComparisonNotation,
   parseComparisonNotation,
   hasConditions
-} from '@randsum/notation/comparison'
+} from '@randsum/notation'

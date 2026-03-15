@@ -1,0 +1,86 @@
+---
+title: Schema Overview
+description: How .randsum.json specs define game mechanics declaratively. Games are data, not code.
+---
+
+import CodeExample from '../../../../components/live-repl/CodeExample.astro'
+
+Every game package is generated from a `.randsum.json` spec — a declarative description of a game's dice mechanics. You never write TypeScript for a game. You write a JSON spec, and the codegen pipeline produces a fully typed, tested package.
+
+## Games are data, not code
+
+Traditional game integrations require writing custom TypeScript for each system — dice logic, input validation, result interpretation, type definitions. This leads to inconsistent APIs, duplicated patterns, and maintenance burden that scales with each new game.
+
+RANDSUM takes a different approach: every game is a JSON spec. The spec describes what the game's dice mechanics do, not how to implement them. A build-time codegen pipeline reads these specs and produces identical TypeScript for every game — same API shape, same error handling, same types.
+
+## What a spec describes
+
+A `.randsum.json` file defines:
+
+- **Pools** — the dice used (sides, quantity)
+- **Tables** — outcome lookup tables mapping numeric ranges to result strings
+- **Outcomes** — how to interpret a roll result (table lookup, range matching, pool conditions)
+- **Inputs** — what the caller provides (action rating, modifier, advantage mode) with types and validation
+- **Roll** — how to assemble the dice, apply modifiers, resolve the total, and determine the outcome
+- **Conditional overrides** — alternate behavior based on input values (e.g., 0-dice desperate pools in Blades)
+
+## Example: Salvage Union
+
+This is the actual `salvageunion.randsum.json` spec — Salvage Union's richest-in-the-ecosystem spec with multiple roll tables, range-based outcomes, and dynamic table selection:
+
+<CodeExample lang="json" code={`{
+  "name": "Salvage Union",
+  "shortcode": "salvageunion",
+
+  "roll": {
+    "inputs": {
+      "tableName": { "type": "string" }
+    },
+    "dice": { "pool": { "sides": 20 }, "quantity": 1 },
+    "resolve": {
+      "remoteTableLookup": {
+        "url": "https://salvageunion.io/schema/roll-tables.json",
+        "find": {
+          "field": "name",
+          "input": "tableName",
+          "errorMessage": "Invalid Salvage Union table name: \\"\${value}\\""
+        },
+        "tableField": "table",
+        "resultMapping": {
+          "key": { "$lookupResult": "key" },
+          "label": { "$lookupResult": "result.label" },
+          "description": { "$lookupResult": "result.value" },
+          "tableName": { "$input": "tableName" },
+          "roll": { "expr": "total" }
+        }
+      }
+    }
+  }
+}`} />
+
+From this spec, the codegen pipeline produces a fully typed `roll()` function that accepts a table name (like `'Core Mechanic'` or `'Critical Injury'`), rolls 1d20, looks up the result in the matching table by range, and returns a rich result with `label`, `description`, and `tableName`. The `remoteTableLookup` data is fetched at build time and baked into the generated code — zero network calls at runtime.
+
+## How codegen works
+
+The pipeline is internal to the `@randsum/games` build. It runs at build time, not at runtime.
+
+1. **Read** — each `.randsum.json` spec is loaded and validated against the JSON Schema
+2. **Normalize** — the spec is transformed into a semantic intermediate representation
+3. **Generate** — TypeScript source is produced: input types, roll function, result types, error handling
+4. **Write** — the generated `.ts` file is written to `src/` and checked into git
+
+The generated code calls `roll()` from `@randsum/roller` directly — no schema runtime, no spec parsing at execution time. Game packages are just TypeScript with zero overhead.
+
+## Why this approach
+
+- **Consistency** — every game has the same API shape: `roll(input) -> { result, total, rolls }`
+- **Type safety** — input types, result types, and error codes are generated from the spec
+- **Easy to add games** — write a JSON spec, run codegen, submit a PR
+- **Human-readable** — anyone can read a `.randsum.json` and understand a game's dice mechanics
+- **No runtime cost** — specs are compiled away; published packages are plain TypeScript
+
+## Learn more
+
+- **[Schema Reference](/games/schema/reference/)** — field-by-field documentation for `.randsum.json` specs
+- **[Using loadSpec()](/games/schema/using-loadspec/)** — load specs at runtime for dynamic game support
+- **[Contributing a Game](/games/schema/contributing-a-game/)** — step-by-step guide to adding a new game system

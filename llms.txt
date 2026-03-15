@@ -25,6 +25,8 @@ roll("4d6L")   // Notation: D&D ability score (4d6, drop lowest)
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })  // Object: same as 4d6L
 roll("2d20L+5") // Advantage attack roll
 roll("2d6+3")   // PbtA / 2d6 + stat
+roll("d%")      // Percentile: 1d100
+roll("4dF")     // Fate Core: 4 Fate dice (-4 to +4)
 roll("1d20", "2d6", "+5")  // Multiple: attack + damage + modifier
 
 ## Documentation

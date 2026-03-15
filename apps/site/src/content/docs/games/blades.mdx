@@ -1,6 +1,6 @@
 ---
 title: Blades in the Dark Dice Library — @randsum/games/blades
-description: TypeScript package for Blades in the Dark dice pools. Handles 0–10 dice, desperate position (0 dice), and returns critical, success, partial, or failure.
+description: TypeScript package for Blades in the Dark dice pools. Handles 0–4 dice, desperate position (0 dice), and returns critical, success, partial, or failure.
 head:
   - tag: script
     attrs:
@@ -90,7 +90,7 @@ switch (result) {
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `RollResult` | `'critical' \| 'success' \| 'partial' \| 'failure'` |
+| `result` | `BladesRollResult` | `'critical' \| 'success' \| 'partial' \| 'failure'` |
 | `total` | `number` | Sum of kept dice after modifiers |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
@@ -109,23 +109,34 @@ When the dice pool is 0, the system rolls 2d6 and keeps only the lowest die. Thi
 
 ## Error handling
 
-Invalid inputs throw a `SchemaError` with a descriptive `code`:
+Game `roll()` can throw two types of errors:
+
+- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., rating of 5 when max is 4)
+- **`SchemaError`** (from `@randsum/games/blades`) -- game-specific issues like unmatched outcome tables
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/blades'
+import { ValidationError } from '@randsum/roller'
 
 try {
   roll(99)
 } catch (error) {
-  if (error instanceof SchemaError) {
-    console.log(error.code)    // 'INVALID_INPUT_TYPE'
-    console.log(error.message) // describes what went wrong
+  if (error instanceof ValidationError) {
+    // Out-of-range rating (must be 0–4)
+    console.log(error.code)    // 'VALIDATION_ERROR'
+  } else if (error instanceof SchemaError) {
+    // Game-specific error
+    console.log(error.code)    // 'NO_TABLE_MATCH'
   }
 }`} />
 
 ## Types
 
-<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/games/blades'
+<CodeExample code={`import type { BladesRollResult, GameRollResult, RollRecord } from '@randsum/games/blades'
 import { SchemaError } from '@randsum/games/blades'`} />
+
+## Schema
+
+This game is powered by a `.randsum.json` spec that defines the dice pool, outcome tiers, and validation rules. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
 
 ## Links
 

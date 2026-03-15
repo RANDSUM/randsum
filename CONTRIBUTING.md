@@ -1,270 +1,77 @@
 # Contributing to RANDSUM
 
-Thank you for your interest in contributing to RANDSUM! This guide will help you get started.
+Thanks for your interest in contributing! This guide covers everything you need to get started.
 
-## Development Setup
+## Prerequisites
 
-### Prerequisites
+- [Bun](https://bun.sh) v1.0+
+- [Node.js](https://nodejs.org) v18+ (for compatibility)
+- Git
 
-- **Bun**: Version 1.0.0 or higher ([Install Bun](https://bun.sh))
-- **Node.js**: Version 18.0.0 or higher (for compatibility)
-- **Git**: For version control
+## Setup
 
-### Initial Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/RANDSUM/randsum.git
-   cd randsum
-   ```
-
-2. **Install dependencies**
-   ```bash
-   bun install
-   ```
-
-3. **Verify setup**
-   ```bash
-   bun run check:all
-   ```
-
-This runs the full CI pipeline: lint, format check, typecheck, test, build, and site build.
+```bash
+git clone https://github.com/RANDSUM/randsum.git
+cd randsum
+bun install
+bun run check:all  # Verify everything works
+```
 
 ## Project Structure
 
-### Monorepo Architecture
+- `packages/roller/` -- Core dice engine (all packages depend on this)
+- `packages/notation/` -- Dice notation parser (zero dependencies)
+- `packages/games/` -- Game system packages (subpath exports per game)
+- `packages/display-utils/` -- Browser utilities for step visualization and StackBlitz integration
+- `apps/site/` -- Documentation site (Astro)
 
-RANDSUM is a Bun workspace monorepo with the following structure:
+## Adding a New Game
 
-```
-packages/
-  roller/              # Core dice rolling engine (all other packages depend on this)
-  notation/            # Dice notation parser
-  display-utils/       # Display formatting utilities
-  component-library/   # React UI components
-  games/               # All game system packages (subpath exports per game)
-  gameSchema/          # Dice mechanic spec format and codegen tools
-apps/
-  cli/                 # Command-line interface
-  discord-bot/         # Discord bot (discord.js + Bun)
-  site/                # Documentation website (Astro)
-```
+Game packages are code-generated from `.randsum.json` specs. To add a game:
 
-### Package Patterns
+1. Create `packages/games/<shortcode>.randsum.json` with the game spec
+2. Run `bun run --filter @randsum/games gen` to generate the TypeScript module
+3. Add tests in `packages/games/__tests__/<shortcode>.test.ts`
+4. Add a subpath export to `packages/games/package.json`
 
-Each package follows a consistent structure:
+See `packages/games/CLAUDE.md` for detailed patterns and conventions.
 
-```
-packages/{package-name}/
-  src/
-    index.ts           # Main exports
-    types.ts           # Type definitions
-    {feature}/         # Feature implementations
-  __tests__/           # Test files
-  dist/                # Build output (gitignored)
-  package.json
-  tsconfig.json        # Extends ../../tsconfig.packages.json
-```
+## Testing
 
-## Coding Conventions
+- Framework: `bun:test` (`import { describe, expect, test } from 'bun:test'`)
+- Tests go in `__tests__/` directories
+- Property-based tests use `fast-check` (suffix: `.property.test.ts`)
+- Coverage target: 80% project, 70% patch
+- Run all tests: `bun run test`
+- Run one package: `bun run --filter @randsum/roller test`
 
-### TypeScript
+## Code Style
 
-- **Strict mode**: Enabled globally - all code must pass strict type checking
-- **Type imports**: Use `import type { X } from 'package'` for type-only imports
-- **Explicit return types**: All exported functions must have explicit return types
-- **Naming**: PascalCase for types/interfaces, camelCase for functions
-- **No `any`**: Use `unknown` if type is truly unknown, then narrow with type guards
+- TypeScript strict mode with `isolatedDeclarations` and `exactOptionalPropertyTypes`
+- `const` only (no `let`), `import type` for type-only imports
+- No `any`, no `as unknown as T` -- use type guards
+- Explicit return types on exported functions
+- Prettier: no semicolons, single quotes, no trailing commas
 
-### Type Safety Best Practices
+See the root `CLAUDE.md` for the full TypeScript conventions reference.
 
-- **Prefer type guards over `as` assertions**: Use `is` type predicates instead of `as` casts
-- **Avoid `as unknown as T`**: This pattern is banned by ESLint - use proper type guards
-- **Use switch statements for type narrowing**: When handling union types, use switch statements that TypeScript can narrow
+Run `bun run fix:all` to auto-fix lint and format issues.
 
-**Good:**
-```typescript
-function isRollConfig(arg: unknown): arg is RollConfig {
-  return (
-    arg !== null &&
-    typeof arg === 'object' &&
-    'randomFn' in arg &&
-    !('sides' in arg)
-  )
-}
-```
+## Pull Request Process
 
-**Bad:**
-```typescript
-const config = arg as unknown as RollConfig  // ❌ Banned by ESLint
-```
-
-### Code Style
-
-- **Formatting**: Prettier is configured - run `bun run format` before committing
-- **Linting**: ESLint with TypeScript rules - run `bun run lint` to check
-- **Imports**: Sort imports according to ESLint rules (type imports separate)
-
-### Testing
-
-- **Test framework**: Use `bun:test` (describe, expect, test)
-- **Test location**: Place tests in `__tests__/` directories
-- **Property-based testing**: Use `fast-check` for property-based tests (see `roll.property.test.ts`)
-- **Coverage**: Aim for high test coverage, especially for core `roller` package
-- **Stress tests**: Use 9999 iterations for stress tests
-- **Boundary conditions**: Always test edge cases and error conditions
-
-**Example test structure:**
-```typescript
-import { describe, test, expect } from 'bun:test'
-import { roll } from '../src/roll'
-
-describe('roll()', () => {
-  test('rolls dice within valid range', () => {
-    const result = roll({ sides: 20, quantity: 1 })
-    expect(result.total).toBeGreaterThanOrEqual(1)
-    expect(result.total).toBeLessThanOrEqual(20)
-  })
-})
-```
-
-## Development Workflow
-
-### Making Changes
-
-1. **Create a feature branch**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make your changes**
-   - Follow coding conventions above
-   - Add tests for new functionality
-   - Update documentation as needed
-
-3. **Run checks locally**
-   ```bash
-   bun run check:all
-   ```
-
-4. **Commit your changes**
-   ```bash
-   git add .
-   git commit -m "feat: add your feature description"
-   ```
-
-   Use conventional commit messages:
-   - `feat:` - New feature
-   - `fix:` - Bug fix
-   - `docs:` - Documentation changes
-   - `refactor:` - Code refactoring
-   - `test:` - Test changes
-   - `chore:` - Build/tooling changes
-
-5. **Push and create PR**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+1. Branch from `main`
+2. Make focused changes with tests
+3. Run `bun run check:all` before pushing
+4. Use conventional commit messages (`feat:`, `fix:`, `docs:`, `chore:`, `test:`, `refactor:`)
+5. Open a PR with a clear description of what and why
 
 ### Pre-commit Hooks
 
-Lefthook runs automatically on commit:
-- **Lint**: Auto-fixes linting issues
-- **Format**: Formats code with Prettier
-- **Typecheck**: Runs TypeScript type checking
+Lefthook runs on commit: ESLint, Prettier, and typecheck. If hooks fail, run `bun run fix:all`.
 
-These hooks will stage fixed files automatically.
+## Resources
 
-### Package-Specific Development
-
-**Working on a single package:**
-```bash
-# Run tests for one package
-bun run --filter @randsum/roller test
-
-# Build one package
-bun run --filter @randsum/roller build
-
-# Type check one package
-bun run --filter @randsum/roller typecheck
-```
-
-**Working on the core `roller` package:**
-- This is the foundation - changes here affect all game packages
-- Ensure backward compatibility when possible
-- Add comprehensive tests
-- Update documentation for new features
-
-**Working on a game package:**
-- Game packages are code-generated from `.randsum.json` specs via `@randsum/gameSchema`
-- Edit the spec file, then run `bun run codegen` to regenerate
-- Keep game-specific logic isolated
-
-## Pull Request Checklist
-
-Before submitting a PR, ensure:
-
-- [ ] All tests pass (`bun run test`)
-- [ ] Type checking passes (`bun run typecheck`)
-- [ ] Linting passes (`bun run lint`)
-- [ ] Code is formatted (`bun run format:check`)
-- [ ] All packages build successfully (`bun run build`)
-- [ ] New features have tests
-- [ ] Documentation is updated (if needed)
-- [ ] Commit messages follow conventional format
-- [ ] No `as unknown as` type assertions (use type guards instead)
-
-## Adding a New Game Package
-
-Game packages live in `packages/games/` as subpath exports of `@randsum/games`. Each game is defined by a `.randsum.json` spec and a generated `.ts` file.
-
-To add a new game:
-
-1. **Create a spec file** `packages/games/src/<shortcode>.randsum.json`
-2. **Run codegen** `bun run codegen` to generate `packages/games/src/<shortcode>.generated.ts`
-3. **Add tests** in `packages/games/__tests__/<shortcode>.test.ts`
-4. **Add a subpath export** to `packages/games/package.json`
-5. **Update root `CLAUDE.md`** to list the new game
-
-For detailed patterns, see `packages/games/CLAUDE.md` and `packages/gameSchema/README.md`.
-
-## Common Tasks
-
-### Running Benchmarks
-
-```bash
-bun run bench
-```
-
-### Checking Bundle Sizes
-
-```bash
-bun run size
-```
-
-### Building the Documentation Site
-
-```bash
-bun run site:build
-bun run site:dev  # Development server
-```
-
-### Checking for Unused Exports
-
-```bash
-bun run check:exports
-```
-
-## Getting Help
-
-- **Issues**: Open an issue on GitHub for bugs or feature requests
-- **Discussions**: Use GitHub Discussions for questions
-- **Documentation**: Check package README files and the main README
-
-## Code of Conduct
-
-Please be respectful and constructive in all interactions. We're all here to build something great together.
-
----
-
-Thank you for contributing to RANDSUM! 🎲
+- [GitHub Issues](https://github.com/RANDSUM/randsum/issues) -- bugs and feature requests
+- [Project Board](https://github.com/orgs/RANDSUM/projects/2/views/1) -- roadmap and priorities
+- [Dice Notation Spec](packages/roller/RANDSUM_DICE_NOTATION.md) -- notation syntax reference
+- [Architecture Decisions](docs/adr/) -- key design decisions and rationale

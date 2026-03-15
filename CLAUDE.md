@@ -54,6 +54,10 @@ bun run help                             # Quick command reference
 - No `as unknown as T` — banned by ESLint AST selector
 - `prefer-readonly` enabled
 - No semicolons, single quotes, no trailing commas (Prettier)
+- Discriminated unions use `kind` or `type` as the discriminant field (e.g., `CollectedResults` with `kind: 'union' | 'numeric' | 'opaque' | 'result-mapping'`)
+- Literal types for API inputs: `roll()` accepts plain numbers and notation strings, not branded/opaque types
+- Error hierarchy: `ValidationError` (roller, numeric range) vs `SchemaError` (games, game-specific). Both extend `Error` — catch them distinctly
+- Re-export conventions: game subpaths re-export `GameRollResult`, `RollRecord`, and `SchemaError`. Internal types stay internal. Use `export type` for type-only re-exports
 
 ## Testing
 
@@ -79,7 +83,7 @@ When a core package (`@randsum/roller`, or in future `@randsum/notation`) receiv
 
 ### Code-Generated Game Packages
 
-Game packages are generated from `.randsum.json` specs via `@randsum/gameSchema` codegen. Each spec defines dice pools, modifiers, outcome tables, and input validation. The generated TypeScript calls `roll()` from `@randsum/roller` directly.
+Game packages are generated from `.randsum.json` specs via the codegen pipeline in `packages/games/codegen.ts`. Each spec defines dice pools, modifiers, outcome tables, and input validation. The generated TypeScript calls `roll()` from `@randsum/roller` directly.
 
 ### Error Handling
 
@@ -95,7 +99,10 @@ Modifiers (cap, drop, keep, reroll, explode, etc.) are self-registering definiti
 roll(20)                    // Number: 1d20
 roll("4d6L")                // Notation string
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })  // Options object
-roll("1d20", "2d6", "+5")   // Multiple arguments combined
+roll("1d20+5", "2d6")       // Multiple arguments combined
+roll("d%")                  // Percentile: 1d100
+roll("4dF")                 // Fate Core: 4 Fate dice (-4 to +4)
+roll("dF.2")                // Extended Fudge die (-2 to +2)
 ```
 
 ## Git Hooks (Lefthook)
@@ -109,8 +116,25 @@ If hooks fail, run `bun run fix:all`.
 
 Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps/*/` directory for detailed guidance on each component.
 
+## Debugging & Troubleshooting
+
+**Test failures**: Isolate with `bun test packages/roller/__tests__/roll/roll.test.ts`. Use `--bail` to stop on the first failure: `bun test --bail`. Filter by package: `bun run --filter @randsum/roller test`.
+
+**ESLint failures**: Common violations: `no-let` (use `const`), `consistent-type-imports` (use `import type`), `prefer-readonly`, and the AST selector banning `as unknown as T`. Auto-fix with `bun run fix:all` or target lint only: `bun run lint -- --fix`.
+
+**Type errors**: Run `bun run typecheck`. Common strict-mode issues:
+- `isolatedDeclarations` — exported functions need explicit return types
+- `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
+- `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
+
+**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. Check with `bun run size` or per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 8KB, salvageunion: 300KB).
+
+**Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
+
+**Hook failures**: Pre-commit runs install, lint --fix, format, and typecheck in parallel. Pre-push runs build (priority 1), then test (priority 2), then `bun audit --level=high`. Recovery: `bun run fix:all`, then retry. See `lefthook.yml` for full config.
+
 ## Dice Notation Reference
 
 Full spec: `packages/roller/RANDSUM_DICE_NOTATION.md`
 
-Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap)
+Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge)

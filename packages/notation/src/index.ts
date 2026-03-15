@@ -1,8 +1,55 @@
-// Re-export everything from subpaths for backward compatibility
-export * from './parse'
-export * from './validate'
-export * from './transform'
-export * from './comparison'
-export * from './schemas'
-export * from './tokenize'
-export type * from './types'
+export { coreNotationPattern } from './coreNotationPattern'
+export { listOfNotations } from './parse/listOfNotations'
+export { notationToOptions } from './parse/notationToOptions'
+export { isDiceNotation, NotationParseError, notation } from './isDiceNotation'
+export { validateNotation } from './validateNotation'
+export { suggestNotationFix } from './suggestions'
+export { formatHumanList } from './formatHumanList'
+export { modifiersToNotation, modifiersToDescription } from './transformers/modifiersToStrings'
+export { optionsToSidesFaces } from './transformers/optionsToSidesFaces'
+export { optionsToNotation } from './transformers/optionsToNotation'
+export { optionsToDescription } from './transformers/optionsToDescription'
+export {
+  parseComparisonNotation,
+  hasConditions,
+  formatComparisonDescription,
+  formatComparisonNotation
+} from './comparison'
+export { defineNotationSchema } from './schema'
+export {
+  capSchema,
+  dropSchema,
+  keepSchema,
+  replaceSchema,
+  rerollSchema,
+  explodeSchema,
+  compoundSchema,
+  penetrateSchema,
+  uniqueSchema,
+  countSuccessesSchema,
+  multiplySchema,
+  plusSchema,
+  minusSchema,
+  multiplyTotalSchema
+} from './definitions'
+export { tokenize } from './tokenize'
+export type { Token, TokenType } from './tokenize'
+export type { NotationSchema } from './schema'
+export type {
+  ComparisonOptions,
+  DiceNotation,
+  DropOptions,
+  InvalidValidationResult,
+  KeepOptions,
+  ModifierConfig,
+  ModifierOptions,
+  ParsedNotationOptions,
+  ReplaceOptions,
+  RerollOptions,
+  RollOptions,
+  SuccessCountOptions,
+  UniqueOptions,
+  ValidValidationResult,
+  ValidationErrorInfo,
+  ValidationResult
+} from './types'

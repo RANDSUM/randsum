@@ -16,7 +16,7 @@ export {
 } from './typeGuards'
 export { roll as executeRoll } from '@randsum/roller/roll'
 export { validateFinite, validateRange } from '@randsum/roller/validate'
-export type { RollRecord } from '@randsum/roller/types'
+export type { RollRecord } from '@randsum/roller'
 export type { SchemaErrorCode } from './errors'
 export type { ValidationResult, ValidationError } from './validator'
 export type {

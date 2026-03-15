@@ -1,14 +1,14 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
-import type { RollRecord } from '@randsum/roller/types'
+import type { RollRecord } from '@randsum/roller'
 import { buildStackBlitzProject, computeSteps, formatAsMath } from '@randsum/display-utils'
 import { ModifierReference } from '../ModifierReference'
 import type { ModifierReferenceCell } from '../ModifierReference'
 import { ModifierDocContent } from '../ModifierReference'
 import { Overlay } from '../Overlay'
 import { ErrorBoundary } from '../ErrorBoundary'
-import { tokenize } from '@randsum/notation/tokenize'
+import { tokenize } from '@randsum/notation'
 import './RollerPlayground.css'
 
 type PlaygroundState =

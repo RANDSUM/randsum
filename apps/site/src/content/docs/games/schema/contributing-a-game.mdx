@@ -1,0 +1,183 @@
+---
+title: Contributing a Game
+description: Step-by-step guide to adding a new game system to @randsum/games. Write a .randsum.json spec, run codegen, add tests, and submit a PR.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://randsum.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Games", "item": "https://randsum.dev/games/introduction/" },
+          { "@type": "ListItem", "position": 3, "name": "Schema", "item": "https://randsum.dev/games/schema/overview/" },
+          { "@type": "ListItem", "position": 4, "name": "Contributing a Game", "item": "https://randsum.dev/games/schema/contributing-a-game/" }
+        ]
+      }
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components'
+import CodeExample from '../../../../components/live-repl/CodeExample.astro'
+
+This guide walks through adding a new game system to `@randsum/games`. Every game in the package follows the same path: write a `.randsum.json` spec, generate TypeScript from it, test it, and submit a PR.
+
+## Prerequisites
+
+- [Bun](https://bun.sh) installed (v1.3.10+)
+- The RANDSUM repo cloned and dependencies installed:
+
+<CodeExample code={`git clone https://github.com/RANDSUM/randsum.git
+cd randsum
+bun install`} />
+
+## The process
+
+<Steps>
+
+1. **Write a `.randsum.json` spec**
+
+    Create a spec file in the games package root. The filename must be `<shortcode>.randsum.json`, where `<shortcode>` is a short, lowercase identifier for the game (e.g., `fate`, `ironsworn`).
+
+    ```
+    packages/games/<shortcode>.randsum.json
+    ```
+
+    Here's a minimal skeleton to start from:
+
+    <CodeExample code={`{
+      "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+      "name": "My Game",
+      "shortcode": "mygame",
+      "version": "1.0.0",
+      "game_url": "https://example.com/mygame",
+
+      "pools": {
+        "main": { "sides": 6 }
+      },
+
+      "tables": {
+        "outcome": {
+          "ranges": [
+            { "min": 5, "max": 6, "result": "success" },
+            { "min": 3, "max": 4, "result": "partial" },
+            { "min": 1, "max": 2, "result": "failure" }
+          ]
+        }
+      },
+
+      "outcomes": {
+        "mainOutcome": {
+          "tableLookup": { "$ref": "#/tables/outcome" }
+        }
+      },
+
+      "roll": {
+        "dice": {
+          "pool": { "$ref": "#/pools/main" },
+          "quantity": 1
+        },
+        "resolve": "sum",
+        "outcome": { "$ref": "#/outcomes/mainOutcome" }
+      }
+    }`} />
+
+    The `$schema` field enables validation in editors that support JSON Schema.
+
+    For the full field reference, see the [Schema Reference](/games/schema/reference/).
+
+2. **Validate the spec**
+
+    Run the validation check to ensure your spec conforms to the JSON Schema:
+
+    <CodeExample code={`bun run --filter @randsum/games gen:check`} />
+
+    This runs `codegen.ts --check`, which parses all `.randsum.json` files in the package root and reports validation errors without writing any files.
+
+    Fix any errors before proceeding. Common issues:
+    - Missing required fields (`name`, `shortcode`, `pools`, `roll`)
+    - `$ref` pointing to a pool, table, or outcome that doesn't exist
+    - Table ranges with gaps or overlaps
+    - Input constraints missing `type` or `default`
+
+3. **Run codegen**
+
+    Generate the TypeScript module from your spec:
+
+    <CodeExample code={`bun run --filter @randsum/games gen`} />
+
+    This creates `packages/games/src/<shortcode>.generated.ts`. The generated file:
+    - Imports `roll as executeRoll` from `@randsum/roller`
+    - Exports a typed `roll()` function specific to your game
+    - Exports `GameRollResult` and `RollRecord` types
+    - Bakes outcome tables directly into the code (no runtime fetching)
+
+    <Aside type="tip">
+    The codegen output is checked into git. Review the generated file to verify it matches your expectations before continuing.
+    </Aside>
+
+4. **Add a subpath export**
+
+    Add an entry for your game in `packages/games/package.json` under the `exports` field. Follow the pattern of existing games:
+
+    <CodeExample code={`"./<shortcode>": {
+      "import": {
+        "types": "./dist/<shortcode>.generated.d.ts",
+        "default": "./dist/<shortcode>.generated.js"
+      },
+      "require": {
+        "types": "./dist/<shortcode>.generated.d.cts",
+        "default": "./dist/<shortcode>.generated.cjs"
+      }
+    }`} />
+
+    Also add a size-limit entry in the same file:
+
+    <CodeExample code={`{
+      "path": "dist/<shortcode>.generated.js",
+      "limit": "8 KB"
+    }`} />
+
+5. **Write tests** — Create two test files in `packages/games/__tests__/`. See test templates below the steps.
+
+6. **Build and test**
+
+    <CodeExample code={`# Build the games package (includes your new generated file)\nbun run --filter @randsum/games build\n\n# Run tests\nbun run --filter @randsum/games test\n\n# Run the full check suite\nbun run --filter @randsum/games check`} />
+
+7. **Submit a PR**
+
+    Once all checks pass, commit and open a pull request. Include:
+    - The `.randsum.json` spec
+    - The generated `.ts` file
+    - Both test files
+    - The `package.json` changes (export + size-limit)
+
+    In the PR description, link to the game's SRD or rules reference so reviewers can verify the outcome tables.
+
+</Steps>
+
+## Test templates
+
+**`<shortcode>.test.ts`** — behavioral tests:
+
+<CodeExample code={`import { describe, expect, test } from 'bun:test'\nimport { roll } from '@randsum/games/<shortcode>'\n\ndescribe('roll', () => {\n  test('returns a valid outcome', () => {\n    const { result } = roll()\n    expect(['success', 'partial', 'failure']).toContain(result)\n  })\n\n  test('total is within die bounds', () => {\n    const { rolls } = roll()\n    const total = rolls[0]?.total ?? 0\n    expect(total).toBeGreaterThanOrEqual(1)\n    expect(total).toBeLessThanOrEqual(6)\n  })\n})`} />
+
+**`<shortcode>.property.test.ts`** — property-based tests with `fast-check`:
+
+<CodeExample code={`import { describe, expect, test } from 'bun:test'\nimport fc from 'fast-check'\nimport { roll } from '@randsum/games/<shortcode>'\n\ndescribe('roll property-based tests', () => {\n  test('result is always a valid outcome', () => {\n    fc.assert(\n      fc.property(fc.constant(undefined), () => {\n        const { result } = roll()\n        return ['success', 'partial', 'failure'].includes(result)\n      })\n    )\n  })\n})`} />
+
+Adapt these templates to your game's inputs and outcomes. See existing test files (e.g., `salvageunion.test.ts`, `fifth.test.ts`) for patterns handling game-specific inputs like `tableName` or `modifier`.
+
+## Tips
+
+- **Start simple.** Get a basic spec working before adding inputs, conditional pools, or complex outcome trees. You can iterate in follow-up PRs.
+- **Use `loadSpec` for rapid iteration.** While developing your spec, use [`loadSpec()`](/games/schema/using-loadspec/) to test it without running codegen on every change.
+- **Check existing specs.** The six built-in game specs in `packages/games/` cover a range of mechanics — table-based with dynamic lookup (salvageunion), advantage/disadvantage (fifth), pool-based (blades), dual-pool (daggerheart), and 2d6+stat (pbta). The [Salvage Union spec](https://github.com/RANDSUM/randsum/blob/main/packages/games/salvageunion.randsum.json) is the richest example, with multiple roll tables and range-based outcomes. Find the one closest to your game and use it as a starting point.
+- **Table ranges must cover all possible values.** If your die produces 1-6, your outcome table must account for every value from 1 to 6. Gaps cause `SchemaError` with code `'NO_TABLE_MATCH'` at runtime.
+
+## Learn more
+
+- **[Schema Overview](/games/schema/overview/)** — how `.randsum.json` specs work
+- **[Schema Reference](/games/schema/reference/)** — field-by-field spec documentation
+- **[Using loadSpec()](/games/schema/using-loadspec/)** — runtime spec loading for development and custom games

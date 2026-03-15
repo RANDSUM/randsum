@@ -108,9 +108,9 @@ const { hope, fear, extraDie, modifier } = details`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `RollResult` | Hope/Fear/Critical Hope outcome |
+| `result` | `DaggerheartRollResult` | `'hope' \| 'fear' \| 'critical hope'` |
 | `total` | `number` | Sum of all dice + modifier |
-| `details` | `RollDetails` | Detailed breakdown |
+| `details` | `DaggerheartRollDetails` | Detailed breakdown (see below) |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ## Outcomes
@@ -136,23 +136,34 @@ The `details` object provides full visibility into each component:
 
 ## Error handling
 
-Invalid inputs throw a `SchemaError` with a descriptive `code`:
+Game `roll()` can throw two types of errors:
+
+- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., `modifier: Infinity`)
+- **`SchemaError`** (from `@randsum/games/daggerheart`) -- game-specific issues like invalid `rollingWith` values
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/daggerheart'
+import { ValidationError } from '@randsum/roller'
 
 try {
   roll({ modifier: Infinity })
 } catch (error) {
-  if (error instanceof SchemaError) {
+  if (error instanceof ValidationError) {
+    // Non-finite modifier value
+    console.log(error.code)    // 'VALIDATION_ERROR'
+  } else if (error instanceof SchemaError) {
+    // e.g., invalid rollingWith enum value
     console.log(error.code)    // 'INVALID_INPUT_TYPE'
-    console.log(error.message) // describes what went wrong
   }
 }`} />
 
 ## Types
 
-<CodeExample code={`import type { RollResult, RollDetails, GameRollResult, RollRecord } from '@randsum/games/daggerheart'
+<CodeExample code={`import type { DaggerheartRollResult, DaggerheartRollDetails, GameRollResult, RollRecord } from '@randsum/games/daggerheart'
 import { SchemaError } from '@randsum/games/daggerheart'`} />
+
+## Schema
+
+This game is powered by a `.randsum.json` spec that defines the duality dice, amplification rules, and outcome logic. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
 
 ## Links
 

@@ -10,7 +10,10 @@ export const rollCommand: Command = {
     .setName('roll')
     .setDescription('Test your luck with a roll of the dice')
     .addStringOption(option =>
-      option.setName('notation').setDescription('Dice notation (e.g., 2d6+3)').setRequired(true)
+      option
+        .setName('notation')
+        .setDescription('Dice notation (e.g., 2d6+3, d%, 4dF)')
+        .setRequired(true)
     ),
 
   async execute(interaction) {

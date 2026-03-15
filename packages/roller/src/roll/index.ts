@@ -25,14 +25,14 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * Throws on invalid input (bad notation, nonsensical options).
  *
  * @typeParam T - Type for custom dice faces. Defaults to `string`.
- *   - For standard numeric dice (notation strings or numbers), `result` contains
+ *   - For standard numeric dice (notation strings or numbers), `values` contains
  *     string representations of the roll values (e.g., `["5", "3", "6"]`).
- *   - For custom faces (options with `sides: T[]`), `result` contains the actual
+ *   - For custom faces (options with `sides: T[]`), `values` contains the actual
  *     face values of type T.
  *
  * @param args - One or more roll arguments (notation strings, numbers, or options objects),
  *               optionally followed by a RollConfig object
- * @returns Roll result containing individual rolls, total, result array, and error (if any)
+ * @returns Roll result containing individual rolls, total, values array, and error (if any)
  *
  * @example Number (1 die, sides = number)
  * ```ts
@@ -43,7 +43,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * ```ts
  * const result = roll("2d6")
  * result.total // => Sum of 2d6
- * result.result // => ["3", "5"] - string representations
+ * result.values // => ["3", "5"] - string representations
  * ```
  *
  * @example Options object
@@ -51,10 +51,23 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * const result = roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // same as 4d6L
  * ```
  *
- * @example Custom faces (Fate dice)
+ * @example Percentile die (d%)
+ * ```ts
+ * const result = roll('d%')  // equivalent to roll('1d100')
+ * result.total // => 1-100
+ * ```
+ *
+ * @example Fate/Fudge dice (dF)
+ * ```ts
+ * const result = roll('4dF')   // 4 standard Fate dice (faces: -1, 0, 1)
+ * const wide = roll('4dF.2')   // 4 wide Fate dice (faces: -2, -1, 0, 1, 2)
+ * result.total // => -4 to +4
+ * ```
+ *
+ * @example Custom faces
  * ```ts
  * const result = roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })
- * result.result // => ["+", "-", " ", "+"] - actual face values
+ * result.values // => ["+", "-", " ", "+"] - actual face values
  * ```
  *
  * @example With custom RNG
@@ -106,7 +119,7 @@ export function roll<T = string>(
     return acc + cur.total * factor
   }, 0)
 
-  const result = rolls.flatMap<T>(r => {
+  const values = rolls.flatMap<T>(r => {
     if (r.customResults) {
       return r.customResults
     }
@@ -115,7 +128,7 @@ export function roll<T = string>(
 
   return {
     rolls,
-    result,
+    values,
     total
   }
 }

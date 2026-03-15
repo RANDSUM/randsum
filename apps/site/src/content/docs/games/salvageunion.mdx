@@ -94,13 +94,13 @@ switch (result.key) {
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `RollResult` | Table result with metadata |
+| `result` | `SalvageunionRollResult` | Table result with metadata |
 | `total` | `number` | D20 roll result (1-20) |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
 ### Result structure
 
-The `RollResult` interface includes:
+The `SalvageunionRollResult` interface includes:
 
 | Property | Type | Description |
 |---|---|---|
@@ -153,8 +153,12 @@ try {
 
 ## Types
 
-<CodeExample code={`import type { RollResult, GameRollResult, RollRecord } from '@randsum/games/salvageunion'
+<CodeExample code={`import type { SalvageunionRollResult, GameRollResult, RollRecord } from '@randsum/games/salvageunion'
 import { VALID_TABLE_NAMES, ROLL_TABLE_ENTRIES, SchemaError } from '@randsum/games/salvageunion'`} />
+
+## Schema
+
+This game is powered by a `.randsum.json` spec that defines the d20 resolution, outcome tables, and table lookup logic. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
 
 ## Links
 

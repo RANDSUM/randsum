@@ -1,0 +1,306 @@
+---
+title: Notation API Reference
+description: All exported functions, types, and schemas from @randsum/notation.
+---
+
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+All public exports from `@randsum/notation`. Some internal helpers (like `listOfNotations`) are omitted. Three functions (`isDiceNotation`, `notation`, `validateNotation`), `NotationParseError`, and all types are also re-exported from `@randsum/roller`. All other functions require importing from `@randsum/notation` directly.
+
+## Parse functions
+
+### `isDiceNotation(value)`
+
+Type guard that returns `true` if the string is valid dice notation.
+
+<CodeExample code={`import { isDiceNotation } from '@randsum/notation'
+
+isDiceNotation('4d6L')   // true — value is typed as DiceNotation
+isDiceNotation('hello')  // false`} />
+
+**Signature:**
+
+```typescript
+function isDiceNotation(value: string): value is DiceNotation
+```
+
+### `notation(value)`
+
+Assert a string is valid notation or throw `NotationParseError`.
+
+```typescript
+function notation(value: string): DiceNotation
+```
+
+### `notationToOptions(notation)`
+
+Parse a notation string into structured options. Accepts any string (validate first with `isDiceNotation` for safety). Returns an array (one entry per roll group).
+
+<CodeExample code={`import { notationToOptions, isDiceNotation } from '@randsum/notation'
+
+if (isDiceNotation('4d6L+2')) {
+  const [options] = notationToOptions('4d6L+2')
+  // { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, plus: 2 } }
+}`} />
+
+**Signature:**
+
+```typescript
+function notationToOptions(notation: string): ParsedNotationOptions[]
+```
+
+### `validateNotation(notation)`
+
+Validate with detailed result. Returns `ValidValidationResult` or `InvalidValidationResult`.
+
+<CodeExample code={`import { validateNotation } from '@randsum/notation'
+
+const result = validateNotation('4d6L')
+if (result.valid) {
+  result.notation   // DiceNotation[]
+  result.options    // ParsedNotationOptions[]
+} else {
+  result.error      // ValidationErrorInfo
+}`} />
+
+**Signature:**
+
+```typescript
+function validateNotation(notation: string): ValidationResult
+```
+
+### `suggestNotationFix(notation)`
+
+Suggest a corrected version of invalid notation. Returns `undefined` if no fix is available.
+
+<CodeExample code={`import { suggestNotationFix } from '@randsum/notation'
+
+suggestNotationFix('d6')    // '1d6'
+suggestNotationFix('46')    // '4d6'
+suggestNotationFix('xyz')   // undefined`} />
+
+**Signature:**
+
+```typescript
+function suggestNotationFix(notation: string): string | undefined
+```
+
+### `coreNotationPattern`
+
+The base regex pattern for matching `NdS` notation. Exported for tooling that needs to detect dice notation in arbitrary text.
+
+```typescript
+const coreNotationPattern: RegExp
+```
+
+## Transform functions
+
+### `optionsToNotation(options)`
+
+Convert a `RollOptions` object to a notation string.
+
+<CodeExample code={`import { optionsToNotation } from '@randsum/notation'
+
+optionsToNotation({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
+// '4d6L'`} />
+
+```typescript
+function optionsToNotation(options: RollOptions): DiceNotation
+```
+
+### `optionsToDescription(options)`
+
+Generate a human-readable description. Returns an array of description strings.
+
+```typescript
+function optionsToDescription<T = string>(options: RollOptions<T>): string[]
+```
+
+### `optionsToSidesFaces(options)`
+
+Resolve a die configuration's sides to a numeric value and optional custom faces array.
+
+```typescript
+function optionsToSidesFaces<T>(options: RollOptions<T>): { sides: number; faces?: T[] }
+```
+
+### `modifiersToNotation(modifiers)`
+
+Convert modifier options to their notation suffix.
+
+```typescript
+function modifiersToNotation(modifiers: ModifierOptions | undefined): string
+```
+
+### `modifiersToDescription(modifiers)`
+
+Convert modifier options to an array of human-readable description strings.
+
+```typescript
+function modifiersToDescription(modifiers: ModifierOptions | undefined): string[]
+```
+
+### `formatHumanList(values)`
+
+Join an array of numbers into a human-readable list (e.g. `"1, 2, and 3"`).
+
+```typescript
+function formatHumanList(values: number[]): string
+```
+
+## Comparison functions
+
+Utilities for working with the `{<3,>18}` comparison syntax used in modifiers.
+
+### `parseComparisonNotation(conditionString)`
+
+Parse a condition string into a `ComparisonOptions` object.
+
+```typescript
+function parseComparisonNotation(conditionString: string): ComparisonOptions
+```
+
+### `hasConditions(options)`
+
+Check if a `ComparisonOptions` has any active conditions.
+
+```typescript
+function hasConditions(options: ComparisonOptions): boolean
+```
+
+### `formatComparisonNotation(options)`
+
+Format a `ComparisonOptions` back into notation fragments.
+
+```typescript
+function formatComparisonNotation(options: ComparisonOptions): string[]
+```
+
+### `formatComparisonDescription(options)`
+
+Format a `ComparisonOptions` as human-readable description fragments.
+
+```typescript
+function formatComparisonDescription(options: ComparisonOptions): string[]
+```
+
+## Tokenization
+
+### `tokenize(notation)`
+
+Parse notation into typed tokens for syntax highlighting or UI display.
+
+```typescript
+function tokenize(notation: string): readonly Token[]
+```
+
+### `Token`
+
+```typescript
+interface Token {
+  readonly text: string
+  readonly type: TokenType
+  readonly start: number
+  readonly end: number
+  readonly description: string
+}
+```
+
+### `TokenType`
+
+```typescript
+type TokenType =
+  | 'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest'
+  | 'reroll' | 'explode' | 'compound' | 'penetrate' | 'cap' | 'replace'
+  | 'unique' | 'countSuccesses' | 'dropCondition' | 'plus' | 'minus'
+  | 'multiply' | 'multiplyTotal' | 'unknown'
+```
+
+## Modifier schemas
+
+Each schema is a `NotationSchema` defining the regex pattern, parser, and formatter for one modifier type. Used by the roller's modifier registry.
+
+| Export | Name | Notation | Example |
+|---|---|---|---|
+| `capSchema` | `cap` | `C{...}` | `C{<1,>6}` |
+| `dropSchema` | `drop` | `L` / `H` / `D{...}` | `4d6L` |
+| `keepSchema` | `keep` | `K` / `kl` | `4d6K3` |
+| `replaceSchema` | `replace` | `V{...}` | `V{1=6}` |
+| `rerollSchema` | `reroll` | `R{...}` | `R{<3}` |
+| `explodeSchema` | `explode` | `!` | `3d6!` |
+| `compoundSchema` | `compound` | `!!` | `3d6!!` |
+| `penetrateSchema` | `penetrate` | `!p` | `3d6!p` |
+| `uniqueSchema` | `unique` | `U` | `4d20U` |
+| `countSuccessesSchema` | `countSuccesses` | `S{...}` | `5d10S{>7}` |
+| `multiplySchema` | `multiply` | `*N` | `2d6*2` |
+| `plusSchema` | `plus` | `+N` | `1d20+5` |
+| `minusSchema` | `minus` | `-N` | `1d20-2` |
+| `multiplyTotalSchema` | `multiplyTotal` | `**N` | `2d6+3**2` |
+
+### `NotationSchema<TOptions>`
+
+```typescript
+interface NotationSchema<TOptions = unknown> {
+  name: keyof ModifierOptions
+  priority: number
+  pattern: RegExp
+  parse: (notation: string) => Partial<ModifierOptions>
+  toNotation: (options: TOptions) => string | undefined
+  toDescription: (options: TOptions) => string[]
+}
+```
+
+### `defineNotationSchema(schema)`
+
+Type-safe factory for creating custom notation schemas.
+
+```typescript
+function defineNotationSchema<TOptions>(
+  schema: NotationSchema<TOptions>
+): NotationSchema<TOptions>
+```
+
+## Error classes
+
+### `NotationParseError`
+
+Thrown by `notation()` when a string is not valid dice notation. Extends `Error` (not `RandsumError`).
+
+| Property | Type | Description |
+|---|---|---|
+| `code` | `'INVALID_NOTATION'` | Always `'INVALID_NOTATION'` |
+| `suggestion` | `string \| undefined` | A corrected notation string, when one can be inferred |
+| `message` | `string` | Human-readable error message including the invalid input |
+
+## Types
+
+### Core types
+
+| Type | Description |
+|---|---|
+| `DiceNotation` | Branded template literal type for valid notation strings |
+| `RollOptions<T>` | Configuration object for a roll (`sides`, `quantity`, `modifiers`, `key`, `arithmetic`) |
+| `ParsedNotationOptions` | Result of parsing notation (always numeric `sides`, required `quantity` and `arithmetic`) |
+| `ModifierOptions` | Top-level modifier configuration with all 14 modifier keys |
+| `ModifierConfig` | Union of all individual modifier config value types |
+
+### Modifier option types
+
+| Type | Description |
+|---|---|
+| `ComparisonOptions` | `{ greaterThan?, greaterThanOrEqual?, lessThan?, lessThanOrEqual?, exact? }` |
+| `DropOptions` | Extends `ComparisonOptions` with `{ highest?, lowest? }` |
+| `KeepOptions` | `{ highest?, lowest? }` |
+| `RerollOptions` | Extends `ComparisonOptions` with `{ max? }` |
+| `ReplaceOptions` | `{ from: number \| ComparisonOptions, to: number }` |
+| `UniqueOptions` | `{ notUnique: number[] }` |
+| `SuccessCountOptions` | `{ threshold: number, botchThreshold? }` |
+
+### Validation types
+
+| Type | Description |
+|---|---|
+| `ValidationResult` | `ValidValidationResult \| InvalidValidationResult` |
+| `ValidValidationResult` | `{ valid: true, argument, description, options, notation, error: null }` |
+| `InvalidValidationResult` | `{ valid: false, argument, error: ValidationErrorInfo }` |
+| `ValidationErrorInfo` | `{ message: string, argument: string }` |

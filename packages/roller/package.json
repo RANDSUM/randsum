@@ -6,61 +6,35 @@
   "private": false,
   "files": [
     "dist",
+    "!dist/**/*.map",
     "LICENSE",
     "README.md"
   ],
   "module": "./dist/index.js",
-  "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
       }
     },
     "./roll": {
       "import": {
         "types": "./dist/roll/index.d.ts",
         "default": "./dist/roll/index.js"
-      },
-      "require": {
-        "types": "./dist/roll/index.d.cts",
-        "default": "./dist/roll/index.cjs"
-      }
-    },
-    "./types": {
-      "import": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/types/index.js"
-      },
-      "require": {
-        "types": "./dist/types/index.d.cts",
-        "default": "./dist/types/index.cjs"
-      }
-    },
-    "./validate": {
-      "import": {
-        "types": "./dist/validate.d.ts",
-        "default": "./dist/validate.js"
-      },
-      "require": {
-        "types": "./dist/validate.d.cts",
-        "default": "./dist/validate.cjs"
       }
     },
     "./errors": {
       "import": {
         "types": "./dist/errors.d.ts",
         "default": "./dist/errors.js"
-      },
-      "require": {
-        "types": "./dist/errors.d.cts",
-        "default": "./dist/errors.cjs"
+      }
+    },
+    "./validate": {
+      "import": {
+        "types": "./dist/validate.d.ts",
+        "default": "./dist/validate.js"
       }
     },
     "./package.json": "./package.json"
