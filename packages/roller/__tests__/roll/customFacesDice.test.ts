@@ -94,6 +94,65 @@ describe('Custom faces dice (d{...})', () => {
     })
   })
 
+  describe('string faces', () => {
+    test('roll("d{fire,ice,lightning}") returns a customResults entry', () => {
+      const result = roll('d{fire,ice,lightning}')
+      expect(result.rolls).toHaveLength(1)
+      const record = result.rolls[0]!
+      expect(record.customResults).toBeDefined()
+      expect(record.customResults).toHaveLength(1)
+      expect(['fire', 'ice', 'lightning']).toContain(record.customResults![0])
+    })
+
+    test('stress test: all string face values are valid', () => {
+      const validFaces = ['fire', 'ice', 'lightning']
+      Array.from({ length: 999 }, () => roll('d{fire,ice,lightning}')).forEach(({ rolls }) => {
+        const record = rolls[0]!
+        expect(validFaces).toContain(record.customResults![0])
+      })
+    })
+
+    test('roll("3d{hit,miss}") returns 3 customResults', () => {
+      const result = roll('3d{hit,miss}')
+      const record = result.rolls[0]!
+      expect(record.customResults).toHaveLength(3)
+      record.customResults!.forEach(face => {
+        expect(['hit', 'miss']).toContain(face)
+      })
+    })
+
+    test('case-insensitive on d: D{fire,ice}', () => {
+      const result = roll('D{fire,ice}')
+      const record = result.rolls[0]!
+      expect(record.customResults).toBeDefined()
+      expect(['fire', 'ice']).toContain(record.customResults![0])
+    })
+
+    test('total is sum of raw die indices (not meaningful for strings)', () => {
+      const result = roll('d{fire,ice,lightning}')
+      // Internal die is d3, so total is 1, 2, or 3
+      expect(result.total).toBeGreaterThanOrEqual(1)
+      expect(result.total).toBeLessThanOrEqual(3)
+    })
+  })
+
+  describe('mixed faces (numbers and strings)', () => {
+    test('mixed faces are all treated as strings', () => {
+      const result = roll('d{1,fire,3}')
+      const record = result.rolls[0]!
+      expect(record.customResults).toBeDefined()
+      expect(['1', 'fire', '3']).toContain(record.customResults![0])
+    })
+
+    test('stress test: mixed face values are all strings', () => {
+      const validFaces = ['1', 'fire', '3']
+      Array.from({ length: 999 }, () => roll('d{1,fire,3}')).forEach(({ rolls }) => {
+        const record = rolls[0]!
+        expect(validFaces).toContain(record.customResults![0])
+      })
+    })
+  })
+
   describe('mixed with other arguments', () => {
     test('custom faces mixed with numeric argument', () => {
       const result = roll('d{2,3,5,7}', 6)

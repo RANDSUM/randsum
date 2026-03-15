@@ -57,9 +57,11 @@ export type ZeroBiasNotation = `${number | ''}${'z' | 'Z'}${number}`
 
 /**
  * Custom faces dice notation.
- * `d{2,3,5,7}` rolls a die with explicit face values [2,3,5,7].
+ * `d{2,3,5,7}` rolls a die with explicit numeric face values [2,3,5,7].
+ * `d{fire,ice,lightning}` rolls a die with string face values.
+ * Mixed faces like `d{1,fire,3}` are treated as all strings.
  * Supports optional quantity prefix: `3d{1,1,2,2,3,3}`.
- * Faces can include 0 and negative numbers: `d{-1,0,1}`.
+ * Numeric faces can include 0 and negative numbers: `d{-1,0,1}`.
  *
  * Case-insensitive on the `d`.
  */

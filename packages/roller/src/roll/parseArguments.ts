@@ -7,34 +7,33 @@ import type { RollArgument, RollOptions, RollParams } from '../types'
 
 const FATE_DIE_PATTERN = /^(\d*)[Dd][Ff](?:\.([12]))?$/
 const ZERO_BIAS_PATTERN = /^(\d*)[Zz](\d+)$/
-const CUSTOM_FACES_PATTERN = /^(\d*)[Dd]\{(-?\d+(?:,-?\d+)*)\}$/
+const CUSTOM_FACES_PATTERN = /^(\d*)[Dd]\{([^}]+)\}$/
 
-const FATE_STANDARD_REPLACE: ReplaceOptions[] = [
-  { from: 1, to: -1 },
-  { from: 2, to: 0 },
-  { from: 3, to: 1 }
-]
+const FATE_STANDARD_FACES = [-1, 0, 1]
+const FATE_EXTENDED_FACES = [-2, -1, 0, 1, 2]
 
-const FATE_EXTENDED_REPLACE: ReplaceOptions[] = [
-  { from: 1, to: -2 },
-  { from: 2, to: -1 },
-  { from: 3, to: 0 },
-  { from: 4, to: 1 },
-  { from: 5, to: 2 }
-]
+function isAllNumeric(values: readonly string[]): boolean {
+  return values.every(v => /^-?\d+$/.test(v.trim()))
+}
 
-function parseFateDieParams(arg: string, position: number): RollParams<never>[] | null {
-  const match = FATE_DIE_PATTERN.exec(arg)
-  if (!match) return null
-
-  const quantity = match[1] ? Number(match[1]) : 1
-  const variant = match[2]
-  const isExtended = variant === '2'
-  const sides = isExtended ? 5 : 3
-  const replace = isExtended ? FATE_EXTENDED_REPLACE : FATE_STANDARD_REPLACE
-  const variantSuffix = isExtended ? '.2' : ''
-  const notation = `${quantity}dF${variantSuffix}` as DiceNotation
-  const description = [`Roll ${quantity}dF${variantSuffix}`]
+/**
+ * Build RollParams for a die with known numeric faces.
+ * Used by custom faces (d{...}), Fate dice (dF), and zero-bias (zN).
+ * Internally rolls a dN and uses the replace modifier to map indices to face values.
+ */
+function buildNumericFaceParams<T>(
+  faces: readonly number[],
+  quantity: number,
+  arg: string,
+  notation: DiceNotation,
+  description: string[],
+  position: number
+): RollParams<T>[] {
+  const sides = faces.length
+  const replace: ReplaceOptions[] = faces.map((face, i) => ({
+    from: i + 1,
+    to: face
+  }))
 
   return [
     {
@@ -46,64 +45,75 @@ function parseFateDieParams(arg: string, position: number): RollParams<never>[] 
       argument: arg as DiceNotation,
       notation,
       description
-    }
+    } as RollParams<T>
   ]
 }
 
-function parseZeroBiasDieParams(arg: string, position: number): RollParams<never>[] | null {
+function parseFateDieParams<T>(arg: string, position: number): RollParams<T>[] | null {
+  const match = FATE_DIE_PATTERN.exec(arg)
+  if (!match) return null
+
+  const quantity = match[1] ? Number(match[1]) : 1
+  const isExtended = match[2] === '2'
+  const faces = isExtended ? FATE_EXTENDED_FACES : FATE_STANDARD_FACES
+  const variantSuffix = isExtended ? '.2' : ''
+  const notation = `${quantity}dF${variantSuffix}` as DiceNotation
+  const description = [`Roll ${quantity}dF${variantSuffix}`]
+
+  return buildNumericFaceParams(faces, quantity, arg, notation, description, position)
+}
+
+function parseZeroBiasDieParams<T>(arg: string, position: number): RollParams<T>[] | null {
   const match = ZERO_BIAS_PATTERN.exec(arg)
   if (!match) return null
 
   const quantity = match[1] ? Number(match[1]) : 1
   const sides = Number(match[2])
-  const replace: ReplaceOptions[] = Array.from({ length: sides }, (_, i) => ({
-    from: i + 1,
-    to: i
-  }))
+  const faces = Array.from({ length: sides }, (_, i) => i)
   const notation = `${quantity > 1 ? quantity : ''}z${sides}` as DiceNotation
   const description = [`Roll ${quantity}z${sides}`]
 
-  return [
-    {
-      quantity,
-      sides,
-      arithmetic: 'add',
-      modifiers: { replace },
-      key: `Roll ${position}`,
-      argument: arg as DiceNotation,
-      notation,
-      description
-    }
-  ]
+  return buildNumericFaceParams(faces, quantity, arg, notation, description, position)
 }
 
-function parseCustomFacesDieParams(arg: string, position: number): RollParams<never>[] | null {
+function parseCustomFacesDieParams<T>(arg: string, position: number): RollParams<T>[] | null {
   const match = CUSTOM_FACES_PATTERN.exec(arg)
   if (!match) return null
 
   const quantity = match[1] ? Number(match[1]) : 1
   const facesStr = match[2]
   if (!facesStr) return null
-  const faces = facesStr.split(',').map(Number)
-  const sides = faces.length
-  const replace: ReplaceOptions[] = faces.map((face, i) => ({
-    from: i + 1,
-    to: face
-  }))
+  const rawFaces = facesStr.split(',').map(f => f.trim())
   const notation = `${quantity > 1 ? quantity : ''}d{${facesStr}}` as DiceNotation
   const description = [`Roll ${quantity}d{${facesStr}}`]
+
+  if (isAllNumeric(rawFaces)) {
+    return buildNumericFaceParams(
+      rawFaces.map(Number),
+      quantity,
+      arg,
+      notation,
+      description,
+      position
+    )
+  }
+
+  // String or mixed faces: use the faces[] path
+  // rawFaces are always string[] here; T is the consumer's face type
+  const faces: T[] = rawFaces.map(f => f as T)
 
   return [
     {
       quantity,
-      sides,
+      sides: faces.length,
+      faces,
       arithmetic: 'add',
-      modifiers: { replace },
+      modifiers: {},
       key: `Roll ${position}`,
       argument: arg as DiceNotation,
       notation,
       description
-    }
+    } as RollParams<T>
   ]
 }
 
