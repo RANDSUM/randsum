@@ -359,6 +359,47 @@ Multiply the entire final total after all other modifiers.
 - **Pre-arithmetic (`*`)**: `2d6*2+3` = (sum x 2) + 3
 - **Total (`**`)**: `2d6+3**2` = (sum + 3) x 2
 
+## Special dice
+
+### Percentile die (`d%`)
+
+A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution.
+
+| Argument | Equivalent | Description |
+|---|---|---|
+| `d%` | `roll(100)` | Roll one d100 |
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('d%')   // Roll 1d100
+roll('D%')   // Case-insensitive
+roll(100)    // Equivalent numeric form`} />
+
+`d%` does not support a quantity prefix. To roll multiple percentile dice, pass multiple arguments: `roll('d%', 'd%')`.
+
+### Fate/Fudge dice (`dF`)
+
+Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2.
+
+| Argument | Faces | Range per die | Description |
+|---|---|---|---|
+| `dF` | -1, 0, +1 | -1 to +1 | Standard Fate/Fudge die |
+| `dF.1` | -1, 0, +1 | -1 to +1 | Explicit standard variant |
+| `dF.2` | -2, -1, 0, +1, +2 | -2 to +2 | Extended Fudge die |
+| `4dF` | -1, 0, +1 | -4 to +4 | Standard Fate Core roll |
+| `4dF.2` | -2, -1, 0, +1, +2 | -8 to +8 | Four extended dice |
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('dF')     // One Fate die: -1, 0, or +1
+roll('4dF')    // Standard Fate Core roll (4 dice, range -4 to +4)
+roll('dF.2')   // Extended Fudge die: -2, -1, 0, +1, or +2
+roll('4dF.2')  // Four extended dice (range -8 to +8)`} />
+
+:::note
+Neither `d%` nor `dF` support inline notation modifiers -- there is no `d%L` or `4dFkh3`. To apply modifiers to these dice, use the options object form.
+:::
+
 ## Combining modifiers
 
 Modifiers can be chained together. They are applied in a fixed priority order:

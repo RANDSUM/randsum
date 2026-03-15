@@ -6,7 +6,7 @@ RANDSUM provides TypeScript packages for dice rolling in tabletop RPG applicatio
 
 ## Core Package
 
-- [roller](https://randsum.dev/packages/roller/): `@randsum/roller` — core dice engine, zero dependencies, full notation support
+- [roller](https://randsum.dev/roller/introduction/): `@randsum/roller` — core dice engine, zero dependencies, full notation support
   - Install: `bun add @randsum/roller` or `npm install @randsum/roller`
   - [npm](https://www.npmjs.com/package/@randsum/roller) | [source](https://github.com/RANDSUM/randsum/tree/main/packages/roller)
 
@@ -23,18 +23,18 @@ All game systems are available via `@randsum/games` with subpath exports (`bun a
 
 ## Tools
 
-- [Component Library](https://randsum.dev/tools/components/): `@randsum/component-library` — React dice roller UI components
+- [Component Library](https://randsum.dev/tools/component-library/): `@randsum/component-library` — React dice roller UI components
 - [Discord Bot](https://randsum.dev/tools/discord-bot/): slash commands for all RANDSUM packages
-- [LLM Skill](https://randsum.dev/tools/skill/): prompt file for teaching RANDSUM dice notation to any LLM
+- [Claude Code Skill](https://randsum.dev/tools/claude-code-skill/): prompt file for teaching RANDSUM dice notation to any LLM
 
 ## Documentation
 
-- [Getting Started](https://randsum.dev/getting-started/introduction/)
-- [Dice Notation Reference](https://randsum.dev/reference/dice-notation/)
-- [Roll Options Reference](https://randsum.dev/reference/roll-options/)
-- [Modifiers Reference](https://randsum.dev/reference/modifiers/)
-- [FAQ](https://randsum.dev/getting-started/faq/)
-- [Recipes](https://randsum.dev/guides/recipes/)
+- [Introduction](https://randsum.dev/welcome/introduction/)
+- [Ecosystem Overview](https://randsum.dev/welcome/ecosystem-overview/)
+- [Dice Notation Reference](https://randsum.dev/notation/randsum-dice-notation/)
+- [Roll Options Reference](https://randsum.dev/roller/roll-options/)
+- [Modifiers Reference](https://randsum.dev/roller/modifiers/)
+- [Error Handling](https://randsum.dev/roller/error-handling/)
 
 ## Dice Notation Quick Reference
 
@@ -119,5 +119,5 @@ roll('1d20+5', '2d6+3')  // attack + damage
 
 ## Optional
 
-- [Game Systems Comparison](https://randsum.dev/games/comparison/)
-- [Quick Start Guide](https://randsum.dev/getting-started/quick-start/)
+- [Games Introduction](https://randsum.dev/games/introduction/)
+- [Games Getting Started](https://randsum.dev/games/getting-started/)

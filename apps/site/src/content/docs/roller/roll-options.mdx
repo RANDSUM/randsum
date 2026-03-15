@@ -172,9 +172,9 @@ console.log(result.rolls)    // Array of RollRecord objects (one per dice group)
 
 The final numeric total after all modifiers, drops, and arithmetic have been applied.
 
-### `result`
+### `values`
 
-An array of per-group results. For numeric dice this is `string[]`; for custom-face dice it matches the face type.
+An array of individual die values across all groups. For standard numeric dice this is `string[]` (e.g., `["3", "5", "6"]`); for custom-face dice it matches the face type.
 
 ### `rolls`
 

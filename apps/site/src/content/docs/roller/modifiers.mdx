@@ -292,7 +292,7 @@ roll({
 
 <RollerPlayground defaultNotation="4d20!" client:only="react" />
 
-When a die shows its maximum value, a new die is rolled and added as a separate result. Each new maximum continues the chain.
+When a die shows its maximum value, a new die is rolled and added as a separate result. This is a single pass -- newly added dice are not checked for further explosions. Use compound (`!!`) or penetrate (`!p`) for recursive chaining.
 
 ## Compound
 
@@ -304,7 +304,7 @@ Compounding exploding dice add to the triggering die instead of creating new dic
 
 roll('3d6!!')    // Compound once
 roll('3d6!!5')   // Max depth 5
-roll('3d6!!0')   // Unlimited (capped at 100)
+roll('3d6!!0')   // Unlimited (capped at 1000)
 
 // Options object
 roll({
@@ -327,7 +327,7 @@ Penetrating exploding dice subtract 1 from each subsequent explosion (Hackmaster
 
 roll('3d6!p')    // Penetrate once
 roll('3d6!p5')   // Max depth 5
-roll('3d6!p0')   // Unlimited (capped at 100)
+roll('3d6!p0')   // Unlimited (capped at 1000)
 
 // Options object
 roll({
