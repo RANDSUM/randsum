@@ -1,6 +1,6 @@
 ---
 title: Modifiers
-description: "Full TypeScript API for every RANDSUM modifier: cap, drop, keep, replace, reroll, explode, compound, penetrate, explode sequence, unique, count successes, and multipliers."
+description: "Full TypeScript API for every RANDSUM modifier: cap, drop, keep, replace, reroll, explode, compound, penetrate, wild die, unique, count successes, count failures, sort, integer divide, modulo, and multipliers."
 head:
   - tag: script
     attrs:
@@ -36,15 +36,19 @@ Modifiers are applied in priority order (lower number = earlier execution):
 | 50 | Explode | `!` | `explode` |
 | 51 | Compound | `!!` | `compound` |
 | 52 | Penetrate | `!p` | `penetrate` |
-| 53 | Explode Sequence | `!s&#123;...&#125;` | `explodeSequence` |
+| 55 | Wild Die | `W` | `wildDie` |
 | 60 | Unique | `U` | `unique` |
 | 85 | Pre-arithmetic multiply | `*N` | `multiply` |
 | 90 | Plus | `+N` | `plus` |
 | 91 | Minus | `-N` | `minus` |
+| 92 | Sort | `sa`/`sd` | `sort` |
+| 93 | Integer divide | `//N` | `integerDivide` |
+| 94 | Modulo | `%N` | `modulo` |
 | 95 | Count successes | S&#123;...&#125; | `countSuccesses` |
+| 96 | Count failures | F&#123;...&#125; | `countFailures` |
 | 100 | Total multiply | `**N` | `multiplyTotal` |
 
-This means dice values are capped/constrained first, then pool size is adjusted (drop/keep), then values are replaced or rerolled, then explosive mechanics fire (including sequence explosions), and finally arithmetic is applied.
+This means dice values are capped/constrained first, then pool size is adjusted (drop/keep), then values are replaced or rerolled, then explosive mechanics fire, and finally arithmetic is applied.
 
 ## ModifierOptions interface
 
@@ -58,11 +62,15 @@ This means dice values are capped/constrained first, then pool size is adjusted 
   explode?: boolean | number
   compound?: boolean | number
   penetrate?: boolean | number
-  explodeSequence?: ExplodeSequenceOptions
+  wildDie?: boolean
   countSuccesses?: SuccessCountOptions
+  countFailures?: FailureCountOptions
   multiply?: number
   plus?: number
   minus?: number
+  sort?: 'ascending' | 'descending'
+  integerDivide?: number
+  modulo?: number
   multiplyTotal?: number
 }`} />
 
@@ -292,7 +300,7 @@ roll({
 
 <RollerPlayground defaultNotation="4d20!" client:only="react" />
 
-When a die shows its maximum value, a new die is rolled and added as a separate result. This is a single pass -- newly added dice are not checked for further explosions. Use compound (`!!`) or penetrate (`!p`) for recursive chaining.
+When a die shows its maximum value, a new die is rolled and added as a separate result. Each new maximum continues the chain.
 
 ## Compound
 
@@ -304,7 +312,7 @@ Compounding exploding dice add to the triggering die instead of creating new dic
 
 roll('3d6!!')    // Compound once
 roll('3d6!!5')   // Max depth 5
-roll('3d6!!0')   // Unlimited (capped at 1000)
+roll('3d6!!0')   // Unlimited (capped at 100)
 
 // Options object
 roll({
@@ -327,7 +335,7 @@ Penetrating exploding dice subtract 1 from each subsequent explosion (Hackmaster
 
 roll('3d6!p')    // Penetrate once
 roll('3d6!p5')   // Max depth 5
-roll('3d6!p0')   // Unlimited (capped at 1000)
+roll('3d6!p0')   // Unlimited (capped at 100)
 
 // Options object
 roll({
@@ -340,61 +348,38 @@ roll({
 
 Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
 
-## Explode sequence
+## Wild Die
 
-Explode through a sequence of progressively different die sizes instead of re-rolling the same die.
+The D6 System wild die modifier (West End Games). The last die in the pool is designated as the "wild die" with special behavior. All notation is **case-insensitive**.
 
-**Options key:** `explodeSequence`
+**Options key:** `wildDie`
+
+| Notation | Description |
+|---|---|
+| `W` | Last die is the "wild die" |
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-// Explode through d4 -> d6 -> d8 (d8 repeats)
-roll('1d4!s{4,6,8}')
-
-// Inflation: explode UP through TTRPG standard set
-roll('1d6!i')
-
-// Reduction: explode DOWN through TTRPG standard set
-roll('1d20!r')
+roll('5d6W') // Last die is wild
 
 // Options object
 roll({
-  sides: 4,
-  quantity: 1,
-  modifiers: {
-    explodeSequence: { sequence: [4, 6, 8] }
-  }
-})
-
-roll({
   sides: 6,
-  quantity: 1,
-  modifiers: {
-    explodeSequence: { inflation: true }
-  }
-})
-
-roll({
-  sides: 20,
-  quantity: 1,
-  modifiers: {
-    explodeSequence: { reduction: true }
-  }
+  quantity: 5,
+  modifiers: { wildDie: true }
 })`} />
 
-<RollerPlayground defaultNotation="1d4!s{4,6,8}" client:only="react" />
+<RollerPlayground defaultNotation="5d6W" client:only="react" />
 
-When a die shows its maximum value, the next die in the sequence is rolled and added. The final die in the sequence repeats indefinitely (safety capped). The TTRPG standard die set is `[4, 6, 8, 10, 12, 20, 100]`.
+**Wild die behavior:**
 
-All notation is **case-insensitive** (`!s` = `!S`, `!i` = `!I`, `!r` = `!R`).
+- **Wild die = max value (6):** The wild die compound-explodes -- keep rolling and adding while the maximum is rolled.
+- **Wild die = 1:** Remove the wild die AND the highest non-wild die from the pool.
+- **Otherwise:** No special effect, the wild die acts as a normal die.
 
-**ExplodeSequenceOptions:**
+**Example:** `5d6W` rolls [4, 3, 5, 2, 6]. The wild die (6) compound-explodes: rolls 4, so wild die becomes 10. Result: [4, 3, 5, 2, 10] = 24.
 
-<CodeExample code={`interface ExplodeSequenceOptions {
-  sequence?: number[]
-  inflation?: boolean
-  reduction?: boolean
-}`} />
+**Example (wild 1):** `5d6W` rolls [4, 3, 5, 2, 1]. The wild die (1) triggers removal: remove the 1 (wild) and the 5 (highest non-wild). Result: [4, 3, 2] = 9.
 
 ## Unique
 
@@ -477,6 +462,95 @@ roll({
 
 <RollerPlayground defaultNotation="2d8-2" client:only="react" />
 
+## Sort
+
+Sort dice results for display purposes without changing the total. All notation is **case-insensitive**.
+
+**Options key:** `sort`
+
+| Notation | Description |
+|---|---|
+| `sa` | Sort ascending |
+| `sd` | Sort descending |
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d6sa') // Sort results ascending
+roll('4d6sd') // Sort results descending
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { sort: 'ascending' }
+})
+
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { sort: 'descending' }
+})`} />
+
+<RollerPlayground defaultNotation="4d6sa" client:only="react" />
+
+Sort reorders the dice results for display without changing the total. Useful for readability when reviewing large pools.
+
+## Integer divide
+
+Integer divide the total, truncating toward zero. All notation is **case-insensitive**.
+
+**Options key:** `integerDivide`
+
+| Notation | Description |
+|---|---|
+| `//N` | Integer divide total by N (truncates via `Math.trunc`) |
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d6//2') // Integer divide total by 2
+roll('10d10//3') // Integer divide total by 3
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { integerDivide: 2 }
+})`} />
+
+<RollerPlayground defaultNotation="4d6//2" client:only="react" />
+
+**Example:** `4d6//2` rolls [3, 5, 4, 2] = 14. Integer divided by 2 = 7.
+
+**Use cases:** Halving damage (e.g., resistance in D&D), averaging mechanics, systems that use integer math for resource calculation.
+
+## Modulo
+
+Apply modulo to the total. All notation is **case-insensitive**.
+
+**Options key:** `modulo`
+
+| Notation | Description |
+|---|---|
+| `%N` | Total modulo N |
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('4d6%3') // Total modulo 3
+roll('1d20%5') // Total modulo 5
+
+// Options object
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { modulo: 3 }
+})`} />
+
+<RollerPlayground defaultNotation="4d6%3" client:only="react" />
+
+**Example:** `4d6%3` rolls [3, 5, 4, 2] = 14. 14 % 3 = 2.
+
+**Use cases:** Wrapping values into ranges, clock mechanics, cyclic resource systems.
+
 ## Count successes
 
 Count dice meeting a threshold instead of summing. Used in dice pool systems (World of Darkness, Shadowrun).
@@ -504,6 +578,45 @@ roll({
 <CodeExample code={`interface SuccessCountOptions {
   threshold: number
   botchThreshold?: number
+}`} />
+
+## Count failures
+
+Count how many dice rolled at or below a threshold. The total becomes the failure count. All notation is **case-insensitive**.
+
+**Options key:** `countFailures`
+
+| Notation | Description |
+|---|---|
+| `F{N}` | Count dice that rolled &lt;= N |
+
+:::note
+`F` requires curly braces (`F{N}`) to avoid conflict with Fate dice notation (`dF`).
+:::
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('5d10F{3}') // Count how many dice rolled <= 3
+
+// Options object
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countFailures: { threshold: 3 }
+  }
+})`} />
+
+<RollerPlayground defaultNotation="5d10F{3}" client:only="react" />
+
+**Example:** `5d10F{3}` rolls [8, 2, 10, 1, 9]. Failures <= 3: [2, 1] = 2 failures.
+
+**Use cases:** Dice pool systems where you need to count both successes and failures separately, risk assessment mechanics, World of Darkness botch counting.
+
+**FailureCountOptions:**
+
+<CodeExample code={`interface FailureCountOptions {
+  threshold: number
 }`} />
 
 ## Total multiply
@@ -536,13 +649,16 @@ The full calculation order is:
 4. Apply replace (swap values)
 5. Apply reroll (re-roll matching dice)
 6. Apply explode/compound/penetrate (add dice or modify values)
-7. Apply explode sequence (chain through die sizes)
+7. Apply wild die behavior (compound on max, remove on 1)
 8. Apply unique (ensure no duplicates)
 9. Sum remaining dice
 10. Apply pre-arithmetic multiply (`*`)
 11. Apply plus/minus (`+`/`-`)
-12. Count successes if applicable (S&#123;...&#125;)
-13. Apply total multiply (`**`)
+12. Sort results if applicable (`sa`/`sd`)
+13. Apply integer divide (`//N`)
+14. Apply modulo (`%N`)
+15. Count successes/failures if applicable (S&#123;...&#125;/F&#123;...&#125;)
+16. Apply total multiply (`**`)
 
 <RollerPlayground defaultNotation="4d6K3!*2+3**2" client:only="react" />
 

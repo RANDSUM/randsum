@@ -30,47 +30,38 @@ The core format is `NdS` where **N** is the number of dice and **S** is the numb
 <RollerPlayground defaultNotation="4d6" client:only="react" />
 <RollerPlayground defaultNotation="2d12" client:only="react" />
 
-## Custom dice faces
+## Special dice
 
-Define a die with explicit face values using curly braces. Faces can be numeric (including negative and zero) or strings.
+### Geometric die
 
-| Notation | Description |
-|---|---|
-| `d{2,3,5,7}` | Die with faces 2, 3, 5, 7 |
-| `d{-1,0,1}` | Die with negative, zero, and positive faces |
-| `d{fire,ice,lightning}` | Die with string faces |
-| `3d{1,1,2}` | Three dice with weighted faces (1 appears twice) |
-
-All notation is **case-insensitive**.
-
-<RollerPlayground defaultNotation="d{2,3,5,7}" client:only="react" />
-<RollerPlayground defaultNotation="3d{-1,0,1}" client:only="react" />
-<RollerPlayground defaultNotation="d{fire,ice,lightning}" client:only="react" />
-
-Custom faces are useful for non-standard dice like direction dice, hit location dice, or any die where the faces are not a simple 1-to-N range. Weighted distributions are achieved by repeating face values (e.g., `d{1,1,2}` has a 2/3 chance of rolling 1).
-
-:::note
-String-face dice produce string results. Arithmetic modifiers (`+N`, `-N`, `*N`, `**N`) and numeric comparisons (`C{>N}`, `S{N}`, etc.) are not applicable to string-face dice. Use numeric faces when you need mathematical operations on the results.
-:::
-
-## Zero-bias dice
-
-A zero-bias die rolls 0 to S-1 instead of 1 to S. Useful for zero-indexed systems and probability calculations.
+A geometric die rolls dN repeatedly until a 1 appears, and the result is the number of rolls it took. All notation is **case-insensitive**.
 
 | Notation | Description |
 |---|---|
-| `z6` | Roll 0-5 (zero-bias d6) |
-| `z10` | Roll 0-9 (zero-bias d10) |
-| `3z10` | Three zero-bias d10s |
+| `gN` | Roll dN until 1 appears, result = count |
+| `3gN` | Three independent geometric rolls |
 
-All notation is **case-insensitive** (`z6` = `Z6`).
+<RollerPlayground defaultNotation="g6" client:only="react" />
+<RollerPlayground defaultNotation="3g6" client:only="react" />
 
-<RollerPlayground defaultNotation="z6" client:only="react" />
-<RollerPlayground defaultNotation="3z10" client:only="react" />
+A safety cap of 1000 iterations prevents infinite loops. Use cases include resource depletion tracking, chase mechanics, and survival countdowns.
 
-:::note
-`zN` is sugar for rolling a dN with `minus: 1` applied. `z6` produces the same distribution as `1d6-1`. Zero-bias dice support all standard modifiers.
-:::
+### Draw die
+
+A draw die samples without replacement from a pool of faces -- like drawing cards from a deck. Each face value can only appear once until the pool is exhausted, at which point it reshuffles. All notation is **case-insensitive** (`DD`, `dd`, `Dd`, `dD` all work).
+
+| Notation | Description |
+|---|---|
+| `DDN` | Draw one unique value from [1..N] |
+| `3DDN` | Draw 3 unique values from [1..N] |
+| `6DD6` | Always a permutation of [1,2,3,4,5,6] |
+| `8DD6` | Full permutation of [1..6] + 2 more (reshuffles) |
+
+<RollerPlayground defaultNotation="DD6" client:only="react" />
+<RollerPlayground defaultNotation="3DD6" client:only="react" />
+<RollerPlayground defaultNotation="6DD6" client:only="react" />
+
+Use cases include card-deck mechanics, random encounter tables without repeats, draft picks, and Catan-style resource distribution.
 
 ## Arithmetic
 
@@ -126,24 +117,6 @@ Keep specific dice from the result (complement of drop).
 Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L`.
 :::
 
-## Keep middle
-
-Drop dice from both ends of the sorted pool. Sugar for combining drop lowest + drop highest.
-
-| Notation | Description |
-|---|---|
-| `KM` | Keep middle (drop 1 lowest and 1 highest) |
-| `KMN` | Keep middle, dropping N from each end |
-
-All notation is **case-insensitive** (`km` = `KM`).
-
-<RollerPlayground defaultNotation="6d6KM" client:only="react" />
-<RollerPlayground defaultNotation="8d6KM2" client:only="react" />
-
-:::note
-`KM` is sugar over drop. `6d6KM` is equivalent to `6d6LH` (drop lowest 1 and highest 1). `8d6KM2` drops 2 from each end, keeping the middle 4.
-:::
-
 ## Cap
 
 Limit roll values to a specific range.
@@ -175,27 +148,6 @@ Reroll dice matching certain conditions.
 <RollerPlayground defaultNotation="4d20R{<5}" client:only="react" />
 <RollerPlayground defaultNotation="4d20R{8,12}" client:only="react" />
 <RollerPlayground defaultNotation="4d20R{<5}3" client:only="react" />
-
-## Reroll once
-
-Reroll dice matching a condition, but only attempt one reroll per die. Sugar for `R{...}1` (reroll with max 1 attempt).
-
-| Notation | Description |
-|---|---|
-| `ro{>N}` | Reroll once if over N |
-| `ro{>=N}` | Reroll once if at or over N |
-| `ro{<N}` | Reroll once if under N |
-| `ro{<=N}` | Reroll once if at or under N |
-| `ro{X,Y}` | Reroll once if exact value X or Y |
-
-All notation is **case-insensitive** (`ro` = `RO`).
-
-<RollerPlayground defaultNotation="4d20ro{<5}" client:only="react" />
-<RollerPlayground defaultNotation="2d6ro{1}" client:only="react" />
-
-:::note
-`ro{<5}` is exactly equivalent to `R{<5}1`. Use `ro` when you want to make the single-attempt intent explicit, which is common in D&D 5e features like the Halfling Lucky trait or Great Weapon Fighting.
-:::
 
 ## Replace
 
@@ -271,32 +223,25 @@ Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style).
 
 **Example:** `1d6!p` rolls 6. This penetrates, rolling 5. The value added is 5 - 1 = 4, so the die becomes 6 + 4 = 10.
 
-## Explode sequence
+## Wild Die
 
-Explode through a sequence of die sizes instead of re-rolling the same die. When a die shows its maximum, the next die in the sequence is rolled and added. The final die in the sequence repeats indefinitely (safety capped).
+The D6 System wild die modifier (West End Games). The last die in the pool is designated as the "wild die" with special behavior. All notation is **case-insensitive**.
 
 | Notation | Description |
 |---|---|
-| `!s{4,6,8}` | Explode through d4, then d6, then d8 (d8 repeats) |
-| `!i` | Inflation: explode UP through the TTRPG standard set |
-| `!r` | Reduction: explode DOWN through the TTRPG standard set |
+| `W` | Last die is the "wild die" |
 
-All notation is **case-insensitive** (`!s` = `!S`, `!i` = `!I`, `!r` = `!R`).
+<RollerPlayground defaultNotation="5d6W" client:only="react" />
 
-<RollerPlayground defaultNotation="1d4!s{4,6,8}" client:only="react" />
-<RollerPlayground defaultNotation="1d6!i" client:only="react" />
-<RollerPlayground defaultNotation="1d20!r" client:only="react" />
+**Wild die behavior:**
 
-**Example walkthrough:** `1d4!s{4,6,8}` rolls a d4 and gets 4 (max). This triggers the next die in the sequence: roll a d6, getting 6 (max). Next in sequence: roll a d8, getting 5. Final result: 4 + 6 + 5 = 15. If the d8 had also been max (8), it would roll another d8 (the final die repeats).
+- **Wild die = max value (6):** The wild die compound-explodes -- keep rolling and adding while the maximum is rolled.
+- **Wild die = 1:** Remove the wild die AND the highest non-wild die from the pool.
+- **Otherwise:** No special effect, the wild die acts as a normal die.
 
-**TTRPG Standard Die Set:** `[4, 6, 8, 10, 12, 20, 100]`
+**Example:** `5d6W` rolls [4, 3, 5, 2, 6]. The wild die (6) compound-explodes: rolls 4, so wild die becomes 10. Result: [4, 3, 5, 2, 10] = 24.
 
-- **Inflation (`!i`)**: Starting from the current die size, explode upward through the standard set. A d6 with `!i` would sequence through d8, d10, d12, d20, d100, then repeat d100.
-- **Reduction (`!r`)**: Starting from the current die size, explode downward through the standard set. A d20 with `!r` would sequence through d12, d10, d8, d6, d4, then repeat d4.
-
-:::note
-`!i` and `!r` are sugar for `!s{...}` with the TTRPG standard die set. Non-standard starting die sizes snap to the nearest value in the set in the appropriate direction.
-:::
+**Example (wild 1):** `5d6W` rolls [4, 3, 5, 2, 1]. The wild die (1) triggers removal: remove the 1 (wild) and the 5 (highest non-wild). Result: [4, 3, 2] = 9.
 
 ## Pre-Arithmetic Multiply
 
@@ -325,24 +270,63 @@ Count dice meeting a threshold instead of summing values. Used in dice pool syst
 
 **Example:** `5d10S{7}` rolls `[8, 3, 10, 6, 9]`. Successes >= 7: `[8, 10, 9]` = 3 successes.
 
-## Margin of success
+## Count failures
 
-Calculate how far above or below a target number the roll landed. Sugar for subtracting a fixed value.
+Count how many dice rolled at or below a threshold. The total becomes the failure count. All notation is **case-insensitive**.
 
 | Notation | Description |
 |---|---|
-| `ms{N}` | Subtract N from the total (margin relative to target N) |
+| `F{N}` | Count dice that rolled &lt;= N |
 
-All notation is **case-insensitive** (`ms` = `MS`).
-
-<RollerPlayground defaultNotation="1d20+5ms{15}" client:only="react" />
-<RollerPlayground defaultNotation="3d6ms{10}" client:only="react" />
-
-A positive result means the roll exceeded the target; zero means exactly met; negative means the roll fell short. This is commonly used in systems with Difficulty Classes (DCs) or Target Numbers (TNs).
+<RollerPlayground defaultNotation="5d10F{3}" client:only="react" />
 
 :::note
-`ms{N}` is sugar for `-N` (the `minus` modifier). `1d20+5ms{15}` is equivalent to `1d20+5-15`, which simplifies to `1d20-10`. The `ms` form makes the intent clearer when checking against a specific target.
+`F` requires curly braces (`F{N}`) to avoid conflict with Fate dice notation (`dF`).
 :::
+
+**Example:** `5d10F{3}` rolls [8, 2, 10, 1, 9]. Failures &lt;= 3: [2, 1] = 2 failures.
+
+## Sort
+
+Sort dice results for display purposes without changing the total. All notation is **case-insensitive**.
+
+| Notation | Description |
+|---|---|
+| `sa` | Sort ascending |
+| `sd` | Sort descending |
+
+<RollerPlayground defaultNotation="4d6sa" client:only="react" />
+<RollerPlayground defaultNotation="4d6sd" client:only="react" />
+
+Sort reorders the dice results for display without changing the total. Useful for readability when reviewing large pools.
+
+## Integer divide
+
+Integer divide the total, truncating toward zero. All notation is **case-insensitive**.
+
+| Notation | Description |
+|---|---|
+| `//N` | Integer divide total by N (truncates via `Math.trunc`) |
+
+<RollerPlayground defaultNotation="4d6//2" client:only="react" />
+
+**Example:** `4d6//2` rolls [3, 5, 4, 2] = 14. Integer divided by 2 = 7.
+
+**Use cases:** Halving damage (e.g., resistance in D&D), averaging mechanics, systems that use integer math for resource calculation.
+
+## Modulo
+
+Apply modulo to the total. All notation is **case-insensitive**.
+
+| Notation | Description |
+|---|---|
+| `%N` | Total modulo N |
+
+<RollerPlayground defaultNotation="4d6%3" client:only="react" />
+
+**Example:** `4d6%3` rolls [3, 5, 4, 2] = 14. 14 % 3 = 2.
+
+**Use cases:** Wrapping values into ranges, clock mechanics, cyclic resource systems.
 
 ## Total Multiply
 
@@ -359,46 +343,36 @@ Multiply the entire final total after all other modifiers.
 - **Pre-arithmetic (`*`)**: `2d6*2+3` = (sum x 2) + 3
 - **Total (`**`)**: `2d6+3**2` = (sum + 3) x 2
 
-## Special dice
+## Repeat operator
 
-### Percentile die (`d%`)
+Notation sugar that repeats a roll expression N times. All notation is **case-insensitive**.
 
-A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution.
+| Notation | Description |
+|---|---|
+| `xN` | Repeat the preceding notation N times |
 
-| Argument | Equivalent | Description |
-|---|---|---|
-| `d%` | `roll(100)` | Roll one d100 |
+<RollerPlayground defaultNotation="4d6Lx6" client:only="react" />
 
-<CodeExample code={`import { roll } from '@randsum/roller'
+The `xN` suffix is detected during notation parsing. It strips the suffix, then repeats the base notation N times as separate roll groups. N must be >= 1.
 
-roll('d%')   // Roll 1d100
-roll('D%')   // Case-insensitive
-roll(100)    // Equivalent numeric form`} />
+**Example:** `4d6Lx6` expands to six separate `4d6L` rolls -- perfect for generating all six D&D ability scores in a single call.
 
-`d%` does not support a quantity prefix. To roll multiple percentile dice, pass multiple arguments: `roll('d%', 'd%')`.
+**Use cases:** D&D ability score generation (`4d6Lx6`), rolling multiple identical damage dice groups, batch stat generation.
 
-### Fate/Fudge dice (`dF`)
+## Annotations
 
-Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2.
+Attach metadata labels to dice terms. Labels are flavor text with no mechanical effect. All notation is **case-insensitive**.
 
-| Argument | Faces | Range per die | Description |
-|---|---|---|---|
-| `dF` | -1, 0, +1 | -1 to +1 | Standard Fate/Fudge die |
-| `dF.1` | -1, 0, +1 | -1 to +1 | Explicit standard variant |
-| `dF.2` | -2, -1, 0, +1, +2 | -2 to +2 | Extended Fudge die |
-| `4dF` | -1, 0, +1 | -4 to +4 | Standard Fate Core roll |
-| `4dF.2` | -2, -1, 0, +1, +2 | -8 to +8 | Four extended dice |
+| Notation | Description |
+|---|---|
+| `[text]` | Label attached to a roll group |
+| `2d6+3[fire]+1d4[cold]` | Labels on specific dice groups |
 
-<CodeExample code={`import { roll } from '@randsum/roller'
+<RollerPlayground defaultNotation="2d6+3[fire]" client:only="react" />
 
-roll('dF')     // One Fate die: -1, 0, or +1
-roll('4dF')    // Standard Fate Core roll (4 dice, range -4 to +4)
-roll('dF.2')   // Extended Fudge die: -2, -1, 0, +1, or +2
-roll('4dF.2')  // Four extended dice (range -8 to +8)`} />
+Labels are enclosed in square brackets and attached to the preceding dice term. They are stripped before modifier parsing and stored in the roll result. Labels are valid notation -- `isDiceNotation` accepts notation with labels.
 
-:::note
-Neither `d%` nor `dF` support inline notation modifiers -- there is no `d%L` or `4dFkh3`. To apply modifiers to these dice, use the options object form.
-:::
+**Use cases:** Tracking damage types in D&D, labeling ability score rolls, annotating complex multi-group rolls for display purposes.
 
 ## Combining modifiers
 
@@ -414,12 +388,16 @@ Modifiers can be chained together. They are applied in a fixed priority order:
 | 50 | Explode | `!` | Roll additional dice on max |
 | 51 | Compound | `!!` | Add explosion to existing die |
 | 52 | Penetrate | `!p` | Add explosion minus 1 to die |
-| 53 | Explode Sequence | `!s{...}` | Explode through die size sequence |
+| 55 | Wild Die | `W` | D6 System wild die behavior |
 | 60 | Unique | `U` | Ensure no duplicate values |
 | 85 | Multiply | `*N` | Multiply dice sum (pre-arithmetic) |
 | 90 | Plus | `+N` | Add to total |
 | 91 | Minus | `-N` | Subtract from total |
+| 92 | Sort | `sa`/`sd` | Sort results for display |
+| 93 | Integer Divide | `//N` | Integer divide total |
+| 94 | Modulo | `%N` | Total modulo N |
 | 95 | Count Successes | `S{...}` | Count dice meeting threshold |
+| 96 | Count Failures | `F{...}` | Count dice at or below threshold |
 | 100 | Total Multiply | `**N` | Multiply entire final total |
 
 <RollerPlayground defaultNotation="4d6R{<3}L" client:only="react" />
@@ -456,15 +434,6 @@ roll('2d12-1d6') // Roll 2d12, subtract 1d6`} />
 ### Hackmaster penetrating dice
 <RollerPlayground defaultNotation="1d6!p" client:only="react" />
 <RollerPlayground defaultNotation="2d6!p+3" client:only="react" />
-
-### Halfling Lucky trait (reroll once)
-<RollerPlayground defaultNotation="1d20ro{1}" client:only="react" />
-
-### Skill check margin of success
-<RollerPlayground defaultNotation="1d20+5ms{15}" client:only="react" />
-
-### Savage Worlds-style exploding chain
-<RollerPlayground defaultNotation="1d6!i" client:only="react" />
 
 ### World of Darkness / Shadowrun dice pools
 <RollerPlayground defaultNotation="5d10S{7}" client:only="react" />
