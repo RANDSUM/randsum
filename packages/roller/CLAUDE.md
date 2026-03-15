@@ -61,7 +61,7 @@ Key patterns:
 
 ## Modifier System
 
-Modifiers are applied in priority order (lower number = earlier execution):
+The `ALL_MODIFIERS` array in `src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each entry combines a `NotationSchema` (parsing, from `@randsum/notation`) with a `ModifierBehavior` (dice manipulation). Applied in priority order (lower = earlier):
 
 | Priority | Modifier        | Description                        |
 | -------- | --------------- | ---------------------------------- |
