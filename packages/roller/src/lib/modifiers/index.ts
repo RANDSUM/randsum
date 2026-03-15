@@ -1,22 +1,20 @@
-import './definitions'
+export { ALL_MODIFIERS } from './definitions'
 
 export {
-  defineModifier,
-  registerNotationSchema,
   getModifier,
   hasModifier,
   getAllModifiers,
   getModifierOrder,
   buildCombinedPattern,
   getCachedCombinedPattern,
-  parseModifiersFromRegistry,
-  applyModifierFromRegistry,
-  applyAllModifiersFromRegistry,
-  modifierToNotationFromRegistry,
-  modifierToDescriptionFromRegistry,
-  processModifierNotationsFromRegistry,
-  processModifierDescriptionsFromRegistry,
-  validateModifiersFromRegistry
+  parseModifiers,
+  applyModifier,
+  applyAllModifiers,
+  modifierToNotation,
+  modifierToDescription,
+  processModifierNotations,
+  processModifierDescriptions,
+  validateModifiers
 } from './registry'
 
 export type {

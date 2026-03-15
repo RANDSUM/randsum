@@ -3,6 +3,7 @@
   "version": "3.5.0",
   "description": "TTRPG game packages for the RANDSUM dice ecosystem",
   "private": false,
+  "sideEffects": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"

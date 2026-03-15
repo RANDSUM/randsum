@@ -1,6 +1,6 @@
 import { validateGreaterThan, validateInteger } from './utils'
 import type { RollOptions } from '../types'
-import { validateModifiersFromRegistry } from './modifiers'
+import { validateModifiers } from './modifiers'
 import { ValidationError } from '../errors'
 
 /**
@@ -37,6 +37,6 @@ export function validateRollOptions<T>(options: RollOptions<T>): void {
   if (options.modifiers) {
     const sides = typeof options.sides === 'number' ? options.sides : options.sides.length
     const quantity = options.quantity ?? 1
-    validateModifiersFromRegistry(options.modifiers, { sides, quantity })
+    validateModifiers(options.modifiers, { sides, quantity })
   }
 }

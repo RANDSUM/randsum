@@ -1,60 +1,23 @@
 import { describe, expect, test } from 'bun:test'
-import '../../../src/lib/modifiers/definitions/index.js'
 import { MODIFIER_PRIORITIES } from '../../../src/lib/modifiers/priorities'
 import {
-  applyModifierFromRegistry,
-  clearRegistry,
-  defineModifier,
+  applyModifier,
   getAllModifiers,
   getModifier,
   hasModifier,
-  modifierToDescriptionFromRegistry,
-  modifierToNotationFromRegistry,
-  parseModifiersFromRegistry,
-  processModifierDescriptionsFromRegistry,
-  processModifierNotationsFromRegistry,
-  registerDefaultModifiers,
-  registerNotationSchema
+  modifierToDescription,
+  modifierToNotation,
+  parseModifiers,
+  processModifierDescriptions,
+  processModifierNotations
 } from '../../../src/lib/modifiers/registry'
 import { ModifierError } from '../../../src/errors'
 import type { ModifierContext } from '../../../src/lib/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'
 
-/**
- * Run a callback with an empty registry, then unconditionally restore.
- * Keeps the global registry mutation window as small as possible and
- * guarantees restoration even when the callback throws.
- */
-function withEmptyRegistry(fn: () => void): void {
-  const saved = getAllModifiers()
-  clearRegistry()
-  try {
-    fn()
-  } finally {
-    clearRegistry()
-    registerDefaultModifiers(saved)
-  }
-}
-
-/**
- * Run a callback that may mutate the registry, then unconditionally restore.
- * Unlike withEmptyRegistry, this does NOT clear before calling fn —
- * it only snapshots and restores.
- */
-function withRegistrySnapshot(fn: () => void): void {
-  const saved = getAllModifiers()
-  try {
-    fn()
-  } finally {
-    clearRegistry()
-    registerDefaultModifiers(saved)
-  }
-}
-
 describe('registry functions', () => {
-  describe('registry populated on import', () => {
+  describe('registry populated at module init', () => {
     test('has modifiers registered', () => {
-      // Modifiers are registered on import
       expect(getAllModifiers().length).toBeGreaterThan(0)
     })
   })
@@ -143,34 +106,26 @@ describe('registry functions', () => {
         expect(typeof modifier.toDescription).toBe('function')
       }
     })
-  })
 
-  describe('clearRegistry', () => {
-    test('clears all modifiers from registry', () => {
-      withEmptyRegistry(() => {
-        expect(getAllModifiers().length).toBe(0)
-      })
-      // After restore, modifiers should be back
-      expect(getAllModifiers().length).toBeGreaterThan(0)
+    test('returns exactly 14 modifiers', () => {
+      expect(getAllModifiers().length).toBe(14)
     })
   })
 
-  describe('modifierToNotationFromRegistry and modifierToDescriptionFromRegistry', () => {
-    test('return undefined when modifier not in registry', () => {
-      withEmptyRegistry(() => {
-        expect(modifierToNotationFromRegistry('plus', 5)).toBeUndefined()
-        expect(modifierToDescriptionFromRegistry('plus', 5)).toBeUndefined()
-      })
+  describe('modifierToNotation and modifierToDescription', () => {
+    test('return undefined when modifier not in map', () => {
+      expect(modifierToNotation('nonexistent' as keyof ModifierOptions, 5)).toBeUndefined()
+      expect(modifierToDescription('nonexistent' as keyof ModifierOptions, 5)).toBeUndefined()
     })
   })
 
-  describe('applyModifierFromRegistry error cases', () => {
+  describe('applyModifier error cases', () => {
     test('throws ModifierError when modifier requires rollFn but none provided', () => {
       // reroll requires rollFn — no registry mutation needed
       const ctx: ModifierContext = { parameters: { sides: 6, quantity: 4 } }
 
       expect(() => {
-        applyModifierFromRegistry('reroll', { exact: [1] }, [1, 2, 3, 4], ctx)
+        applyModifier('reroll', { exact: [1] }, [1, 2, 3, 4], ctx)
       }).toThrow(ModifierError)
     })
 
@@ -180,52 +135,17 @@ describe('registry functions', () => {
       const ctx: ModifierContext = { rollOne }
 
       expect(() => {
-        applyModifierFromRegistry('unique', true, [1, 1, 2, 3], ctx)
+        applyModifier('unique', true, [1, 1, 2, 3], ctx)
       }).toThrow(ModifierError)
     })
 
     test('throws ModifierError for unknown modifier type', () => {
       expect(() => {
-        applyModifierFromRegistry('nonexistent' as keyof ModifierOptions, {}, [1, 2, 3], {
+        applyModifier('nonexistent' as keyof ModifierOptions, {}, [1, 2, 3], {
           rollOne: (): number => 5,
           parameters: { sides: 6, quantity: 4 }
         })
       }).toThrow(ModifierError)
-    })
-
-    test('wraps non-Error throws in ModifierError with Unknown error message', () => {
-      withRegistrySnapshot(() => {
-        defineModifier(
-          {
-            name: 'plus',
-            priority: 90,
-            pattern: /\+/,
-            parse: () => ({}),
-            toNotation: () => '+',
-            toDescription: () => []
-          },
-          {
-            apply: () => {
-              // eslint-disable-next-line @typescript-eslint/only-throw-error -- intentionally non-Error to test Unknown error branch
-              throw 42
-            }
-          }
-        )
-
-        const ctx: ModifierContext = {
-          rollOne: (): number => 5,
-          parameters: { sides: 6, quantity: 4 }
-        }
-
-        const caught: { value?: unknown } = {}
-        try {
-          applyModifierFromRegistry('plus', 5, [1, 2, 3], ctx)
-        } catch (e) {
-          caught.value = e
-        }
-        expect(caught.value).toBeInstanceOf(ModifierError)
-        expect((caught.value as ModifierError).message).toContain('Unknown error: 42')
-      })
     })
   })
 })
@@ -250,42 +170,19 @@ describe('MODIFIER_PRIORITIES', () => {
   })
 })
 
-describe('registerNotationSchema', () => {
-  test('registers a minimal ParseableSchema to the notation registry', () => {
-    withRegistrySnapshot(() => {
-      const schema = {
-        name: 'plus' as const,
-        priority: 90,
-        pattern: /\+(\d+)/,
-        parse: (notation: string): Partial<ModifierOptions> => {
-          const match = /\+(\d+)/.exec(notation)
-          return match ? { plus: Number(match[1]) } : {}
-        }
-      }
-
-      // Should not throw
-      registerNotationSchema(schema)
-
-      // Verify it works by parsing notation that uses the registered schema
-      const result = parseModifiersFromRegistry('2d6+5')
-      expect(result.plus).toBe(5)
-    })
-  })
-})
-
-describe('processModifierNotationsFromRegistry', () => {
+describe('processModifierNotations', () => {
   test('returns empty string when modifiers is undefined', () => {
-    expect(processModifierNotationsFromRegistry(undefined)).toBe('')
+    expect(processModifierNotations(undefined)).toBe('')
   })
 
   test('returns notation string for populated modifiers', () => {
-    const result = processModifierNotationsFromRegistry({ plus: 3 })
+    const result = processModifierNotations({ plus: 3 })
     expect(typeof result).toBe('string')
     expect(result).toContain('+3')
   })
 
   test('returns combined notation for multiple modifiers', () => {
-    const result = processModifierNotationsFromRegistry({
+    const result = processModifierNotations({
       drop: { lowest: 1 },
       plus: 5
     })
@@ -295,19 +192,19 @@ describe('processModifierNotationsFromRegistry', () => {
   })
 })
 
-describe('processModifierDescriptionsFromRegistry', () => {
+describe('processModifierDescriptions', () => {
   test('returns empty array when modifiers is undefined', () => {
-    expect(processModifierDescriptionsFromRegistry(undefined)).toEqual([])
+    expect(processModifierDescriptions(undefined)).toEqual([])
   })
 
   test('returns descriptions for populated modifiers', () => {
-    const result = processModifierDescriptionsFromRegistry({ plus: 3 })
+    const result = processModifierDescriptions({ plus: 3 })
     expect(Array.isArray(result)).toBe(true)
     expect(result.length).toBeGreaterThan(0)
   })
 
   test('returns descriptions for multiple modifiers', () => {
-    const result = processModifierDescriptionsFromRegistry({
+    const result = processModifierDescriptions({
       drop: { lowest: 1 },
       plus: 5
     })
@@ -316,12 +213,12 @@ describe('processModifierDescriptionsFromRegistry', () => {
   })
 })
 
-describe('parseModifiersFromRegistry - stateful regex safety', () => {
+describe('parseModifiers - stateful regex safety', () => {
   test('returns identical results on repeated calls with same notation', () => {
     const notation = '4d6L+3'
-    const result1 = parseModifiersFromRegistry(notation)
-    const result2 = parseModifiersFromRegistry(notation)
-    const result3 = parseModifiersFromRegistry(notation)
+    const result1 = parseModifiers(notation)
+    const result2 = parseModifiers(notation)
+    const result3 = parseModifiers(notation)
     expect(result1).toEqual(result2)
     expect(result2).toEqual(result3)
   })
@@ -330,8 +227,8 @@ describe('parseModifiersFromRegistry - stateful regex safety', () => {
     const a = '2d6R{<2}'
     const b = '4d6L'
     Array.from({ length: 20 }).forEach(() => {
-      const resultA = parseModifiersFromRegistry(a)
-      const resultB = parseModifiersFromRegistry(b)
+      const resultA = parseModifiers(a)
+      const resultB = parseModifiers(b)
       expect(resultA.reroll).toBeDefined()
       expect(resultA.drop).toBeUndefined()
       expect(resultB.drop).toBeDefined()

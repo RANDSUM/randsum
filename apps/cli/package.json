@@ -3,6 +3,7 @@
   "version": "3.5.0",
   "description": "Dice rolling CLI and interactive TUI powered by RANDSUM",
   "private": false,
+  "sideEffects": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
