@@ -24,13 +24,13 @@ The core notation engine (`@randsum/roller`) will **not** support multi-expressi
 
 These features belong in **higher-level tooling** — an Obsidian plugin, a scratchpad/playground application, a scripting layer, or a game-specific pipeline — where the orchestration logic can call `roll()` multiple times and compose results in application code.
 
-### Grouped/Pool Rolls: Deferred, Not Rejected
+### Grouped/Pool Rolls: Out of Scope
 
-Grouped rolls (`{4d6, 3d8}kh`) sit at the boundary. They compose multiple dice definitions but produce a single result — which is within the spirit of "a single roll." They also have 3-platform precedent. This feature is **deferred for future evaluation** rather than explicitly excluded. If implemented, it would extend the argument parsing to merge pools before modifier application, not introduce variable binding or conditional logic.
+Grouped rolls (`{4d6, 3d8}kh`) merge dice from multiple expressions into a shared pool. Despite 3-platform precedent, this is multi-expression composition — it requires a pool-merging evaluation step that doesn't exist in the current pipeline. Applications that need shared pools can roll multiple expressions and merge results in application code.
 
-### Dynamic Dice: Under Consideration
+### Dynamic Dice: Out of Scope
 
-Dynamic dice (`(2d4)d8`) — where one roll's result parameterizes another — is also at the boundary. It's a single expression that happens to require two-phase evaluation. This is closer to "a single roll with a computed parameter" than "composing multiple expressions." No decision is made here; it will be evaluated separately based on demand and implementation complexity.
+Dynamic dice (`(2d4)d8`) — where one roll's result parameterizes another — requires two-phase evaluation with computed parameters. This crosses the line from "describe a roll" to "describe a program." Applications can achieve this by calling `roll()` twice and using the first result to parameterize the second.
 
 ## Consequences
 
@@ -64,13 +64,8 @@ This keeps the core engine simple, fast, and focused while allowing unlimited co
 | Named results (`a=4d6`) | Multi-expression composition | Scratchpad plugin, Obsidian plugin |
 | Sub-expressions (`!{20=[4d8]}`) | Conditional branching | Game package pipelines, application code |
 | Expression variables | Symbol table / DSL scope | Scripting layer above the engine |
-
-### Features Still Under Consideration
-
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Grouped/pool rolls (`{4d6, 3d8}kh`) | Deferred | Single result, 3-platform precedent |
-| Dynamic dice (`(2d4)d8`) | Under consideration | Single expression, two-phase evaluation |
+| Grouped/pool rolls (`{4d6, 3d8}kh`) | Multi-expression pool merging | Application code, game pipelines |
+| Dynamic dice (`(2d4)d8`) | Two-phase evaluation, computed parameters | Application code |
 
 ## References
 - Notation gap research (2026-03-14): `memory/notation-gaps.md`
