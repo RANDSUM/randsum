@@ -39,61 +39,7 @@ roll({
 
 ## Special Dice
 
-In addition to standard `NdS` notation, `roll()` accepts shorthand string arguments for common special dice. These are standalone argument types — they cannot be combined with notation modifiers inline (use the options object form for modified rolls).
-
-### Percentile Die (`d%`)
-
-A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution.
-
-| Argument | Equivalent  | Description   |
-| -------- | ----------- | ------------- |
-| `'d%'`   | `roll(100)` | Roll one d100 |
-
-```typescript
-roll("d%") // Roll 1d100
-roll("D%") // Case-insensitive
-roll(100) // Equivalent numeric form
-roll("1d100") // Equivalent notation form
-```
-
-Internally, `'d%'` maps to `{ quantity: 1, sides: 100 }`.
-
-`d%` does not support a quantity prefix. To roll multiple percentile dice, pass multiple arguments:
-
-```typescript
-roll("d%", "d%") // Two percentile dice
-```
-
-### Fate/Fudge Dice (`dF`)
-
-Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2.
-
-| Argument  | Faces             | Range per die | Description               |
-| --------- | ----------------- | ------------- | ------------------------- |
-| `'dF'`    | -1, 0, +1         | -1 to +1      | Standard Fate/Fudge die   |
-| `'dF.1'`  | -1, 0, +1         | -1 to +1      | Explicit standard variant |
-| `'dF.2'`  | -2, -1, 0, +1, +2 | -2 to +2      | Extended Fudge die        |
-| `'4dF'`   | -1, 0, +1         | -4 to +4      | Standard Fate Core roll   |
-| `'4dF.2'` | -2, -1, 0, +1, +2 | -8 to +8      | Four extended dice        |
-
-```typescript
-roll("dF") // One Fate die: -1, 0, or +1
-roll("4dF") // Standard Fate Core roll (4 dice, range -4 to +4)
-roll("dF.1") // Same as 'dF' — explicit standard variant
-roll("dF.2") // Extended Fudge die: -2, -1, 0, +1, or +2
-roll("4dF.2") // Four extended dice (range -8 to +8)
-roll("Df") // Case-insensitive
-```
-
-Fate dice can be mixed with other roll arguments:
-
-```typescript
-roll("4dF", "2d6", 20) // Fate dice + 2d6 + 1d20, totals combined
-```
-
-Internally, `dF` uses the replace modifier to map die faces to negative and zero values. `'dF'` rolls a d3 with replacements `{ 1 -> -1, 2 -> 0, 3 -> 1 }`. `'dF.2'` rolls a d5 with replacements `{ 1 -> -2, 2 -> -1, 3 -> 0, 4 -> 1, 5 -> 2 }`. The `notation` field on the resulting `RollRecord` preserves the original `dF` form (e.g., `"4dF"`) rather than the expanded d3/d5 notation.
-
-**Note:** To apply modifiers to Fate dice (e.g., keep highest), use the options object form directly rather than appending modifiers to the `'dF'` string. Neither `d%` nor `dF` support inline notation modifiers — there is no `d%L` or `4dFkh3`.
+In addition to standard `NdS` notation, `roll()` accepts shorthand string arguments for common special dice. These are standalone argument types — they cannot be combined with notation modifiers inline (use the options object form for modified rolls). Geometric dice (`gN`) and draw dice (`DDN`) are also available as special notation-level die types.
 
 ### Custom Dice Faces (`d{...}`)
 
@@ -174,6 +120,102 @@ roll({
 **How it works:** A zero-bias die with N sides produces values from 0 to N-1 instead of the standard 1 to N. This is equivalent to rolling a standard die and subtracting 1, but expressed as a first-class notation for clarity.
 
 **Use cases:** Zero-indexed random table lookups, percentile systems that use 0-99, programming-friendly dice for array index selection, or any system where a 0-based range is more natural.
+
+### Geometric Die (`gN`)
+
+A geometric die rolls dN repeatedly until a 1 appears, and the result is the number of rolls it took. This models waiting times and geometric distributions.
+
+| Notation | Description                             |
+| -------- | --------------------------------------- |
+| `gN`     | Roll dN until 1 appears, result = count |
+| `3gN`    | Three independent geometric rolls       |
+
+```typescript
+roll("g6") // Roll d6 until 1 appears, return attempt count (average: 6)
+roll("3g6") // Three independent geometric d6 rolls
+roll("G6") // Case-insensitive
+```
+
+Internally, `gN` sets the `geometric: true` flag on `RollParams`. A safety cap of 1000 iterations prevents infinite loops.
+
+**Use cases:** Resource depletion tracking, chase mechanics, random encounter distance, survival countdowns.
+
+### Draw Die (`DDN`)
+
+A draw die samples without replacement from a pool of faces — like drawing cards from a deck. Each face value can only appear once until the pool is exhausted, at which point it reshuffles.
+
+| Notation | Description                                      |
+| -------- | ------------------------------------------------ |
+| `DDN`    | Draw one unique value from [1..N]                |
+| `3DDN`   | Draw 3 unique values from [1..N]                 |
+| `6DD6`   | Always a permutation of [1,2,3,4,5,6]            |
+| `8DD6`   | Full permutation of [1..6] + 2 more (reshuffles) |
+
+```typescript
+roll("DD6") // Draw one from d6 pool (1-6, each face unique)
+roll("3DD6") // Draw 3 unique values from [1..6]
+roll("6DD6") // Always a permutation of [1,2,3,4,5,6]
+roll("8DD6") // Full permutation + 2 more (reshuffles after exhaustion)
+roll("dd6") // Case-insensitive: DD, dd, Dd, dD all work
+```
+
+Internally, `DDN` sets the `draw: true` flag on `RollParams` and uses Fisher-Yates shuffle for uniform distribution.
+
+**Use cases:** Card-deck mechanics, random encounter tables without repeats, draft picks, Catan-style resource distribution.
+
+### Percentile Die (`d%`)
+
+A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution.
+
+| Argument | Equivalent  | Description   |
+| -------- | ----------- | ------------- |
+| `'d%'`   | `roll(100)` | Roll one d100 |
+
+```typescript
+roll("d%") // Roll 1d100
+roll("D%") // Case-insensitive
+roll(100) // Equivalent numeric form
+roll("1d100") // Equivalent notation form
+```
+
+Internally, `'d%'` maps to `{ quantity: 1, sides: 100 }`.
+
+`d%` does not support a quantity prefix. To roll multiple percentile dice, pass multiple arguments:
+
+```typescript
+roll("d%", "d%") // Two percentile dice
+```
+
+### Fate/Fudge Dice (`dF`)
+
+Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2.
+
+| Argument  | Faces             | Range per die | Description               |
+| --------- | ----------------- | ------------- | ------------------------- |
+| `'dF'`    | -1, 0, +1         | -1 to +1      | Standard Fate/Fudge die   |
+| `'dF.1'`  | -1, 0, +1         | -1 to +1      | Explicit standard variant |
+| `'dF.2'`  | -2, -1, 0, +1, +2 | -2 to +2      | Extended Fudge die        |
+| `'4dF'`   | -1, 0, +1         | -4 to +4      | Standard Fate Core roll   |
+| `'4dF.2'` | -2, -1, 0, +1, +2 | -8 to +8      | Four extended dice        |
+
+```typescript
+roll("dF") // One Fate die: -1, 0, or +1
+roll("4dF") // Standard Fate Core roll (4 dice, range -4 to +4)
+roll("dF.1") // Same as 'dF' — explicit standard variant
+roll("dF.2") // Extended Fudge die: -2, -1, 0, +1, or +2
+roll("4dF.2") // Four extended dice (range -8 to +8)
+roll("Df") // Case-insensitive
+```
+
+Fate dice can be mixed with other roll arguments:
+
+```typescript
+roll("4dF", "2d6", 20) // Fate dice + 2d6 + 1d20, totals combined
+```
+
+Internally, `dF` uses the replace modifier to map die faces to negative and zero values. `'dF'` rolls a d3 with replacements `{ 1 -> -1, 2 -> 0, 3 -> 1 }`. `'dF.2'` rolls a d5 with replacements `{ 1 -> -2, 2 -> -1, 3 -> 0, 4 -> 1, 5 -> 2 }`. The `notation` field on the resulting `RollRecord` preserves the original `dF` form (e.g., `"4dF"`) rather than the expanded d3/d5 notation.
+
+**Note:** To apply modifiers to Fate dice (e.g., keep highest), use the options object form directly rather than appending modifiers to the `'dF'` string. Neither `d%` nor `dF` support inline notation modifiers — there is no `d%L` or `4dFkh3`.
 
 ## Modifiers
 
@@ -784,25 +826,25 @@ roll({
   sides: 6,
   quantity: 1,
   modifiers: {
-    explodeSequence: { sequence: [4, 6, 8, 10] }
+    explodeSequence: [4, 6, 8, 10]
   }
 })
 
-roll("1d6!i") // Inflation: explode UP through [4, 6, 8, 10, 12, 20, 100]
+roll("1d6!i") // Inflation: on d6, start at next size up (d8, d10, d12, d20, d100)
 roll({
   sides: 6,
   quantity: 1,
   modifiers: {
-    explodeSequence: { inflation: true }
+    explodeSequence: [8, 10, 12, 20, 100]
   }
 })
 
-roll("1d20!r") // Reduction: explode DOWN through [100, 20, 12, 10, 8, 6, 4]
+roll("1d20!r") // Reduction: on d20, start at next size down (d12, d10, d8, d6, d4)
 roll({
   sides: 20,
   quantity: 1,
   modifiers: {
-    explodeSequence: { reduction: true }
+    explodeSequence: [12, 10, 8, 6, 4]
   }
 })
 ```
@@ -811,39 +853,11 @@ roll({
 
 **Example:** `1d6!s{4,8,12}` rolls a d6 and gets 6 (max). This explodes as a d4, rolling 4 (max). That explodes as a d8, rolling 5. Final result: 6 + 4 + 5 = 15. If the d8 had also been max (8), it would explode as a d12 (the final die), and d12 would repeat for any further explosions.
 
-**Inflation (`!i`):** Starts at the smallest standard die (d4) and works upward: d4, d6, d8, d10, d12, d20, d100. Each explosion steps to the next larger die.
+**Inflation (`!i`):** Starts at the next TTRPG standard die size above the current die and works upward. For a d6, the sequence is d8, d10, d12, d20, d100. Each explosion steps to the next larger die.
 
-**Reduction (`!r`):** Starts at the largest standard die (d100) and works downward: d100, d20, d12, d10, d8, d6, d4. Each explosion steps to the next smaller die.
+**Reduction (`!r`):** Starts at the next TTRPG standard die size below the current die and works downward. For a d20, the sequence is d12, d10, d8, d6, d4. Each explosion steps to the next smaller die.
 
 **Use cases:** Rifts Mega-Damage, stepladder explosion systems, or any homebrew where escalating (or de-escalating) die sizes on explosions adds dramatic tension.
-
-### Margin of Success (Notation Sugar)
-
-Calculate the margin above or below a target number. All notation in randsum is case-insensitive.
-
-| Notation | Description                               |
-| -------- | ----------------------------------------- |
-| `ms{N}`  | Subtract N from total (margin of success) |
-
-```typescript
-roll("1d20ms{15}") // How far above/below DC 15?
-roll({
-  sides: 20,
-  quantity: 1,
-  modifiers: { minus: 15 }
-})
-
-roll("1d20+5ms{15}") // With modifier, margin against DC 15
-roll({
-  sides: 20,
-  quantity: 1,
-  modifiers: { plus: 5, minus: 15 }
-})
-```
-
-**Sugar equivalence:** `ms{N}` is sugar for `-N`. For example, `1d20ms{15}` is identical to `1d20-15`. The `ms` form exists for readability when calculating margins of success or failure against a difficulty class or target number.
-
-**Use cases:** Checking how far above or below a DC a roll lands, degree-of-success systems, or any context where the margin matters more than the raw total.
 
 ### Pre-Arithmetic Multiplier (\*)
 
@@ -923,6 +937,179 @@ roll({
 
 **Use cases:** World of Darkness, Shadowrun, and other dice pool systems where you count successes rather than sum values.
 
+### Sort (sa/sd)
+
+Sort dice results for display purposes:
+
+| Notation | Description     |
+| -------- | --------------- |
+| `sa`     | Sort ascending  |
+| `sd`     | Sort descending |
+
+```typescript
+roll("4d6sa") // Sort results ascending
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { sort: "ascending" }
+})
+
+roll("4d6sd") // Sort results descending
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { sort: "descending" }
+})
+```
+
+**How it works:** Sort reorders the dice results for display without changing the total. Useful for readability when reviewing large pools.
+
+### Integer Division (//N)
+
+Integer divide the total, truncating toward zero:
+
+| Notation | Description                                            |
+| -------- | ------------------------------------------------------ |
+| `//N`    | Integer divide total by N (truncates via `Math.trunc`) |
+
+```typescript
+roll("4d6//2") // Integer divide total by 2
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { integerDivide: 2 }
+})
+
+roll("10d10//3") // Integer divide total by 3
+roll({
+  sides: 10,
+  quantity: 10,
+  modifiers: { integerDivide: 3 }
+})
+```
+
+**How it works:** The integer division modifier divides the total by N and truncates toward zero using `Math.trunc`. It operates at priority 93, after sort but before modulo.
+
+**Example:** `4d6//2` rolls [3, 5, 4, 2] = 14. Integer divided by 2 = 7.
+
+**Use cases:** Halving damage (e.g., resistance in D&D), averaging mechanics, systems that use integer math for resource calculation.
+
+### Modulo (%N)
+
+Apply modulo to the total:
+
+| Notation | Description    |
+| -------- | -------------- |
+| `%N`     | Total modulo N |
+
+```typescript
+roll("4d6%3") // Total modulo 3
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { modulo: 3 }
+})
+
+roll("1d20%5") // Total modulo 5
+roll({
+  sides: 20,
+  quantity: 1,
+  modifiers: { modulo: 5 }
+})
+```
+
+**How it works:** The modulo modifier applies the `%` operator to the total. It operates at priority 94, after integer division but before count successes.
+
+**Example:** `4d6%3` rolls [3, 5, 4, 2] = 14. 14 % 3 = 2.
+
+**Use cases:** Wrapping values into ranges, clock mechanics, cyclic resource systems.
+
+### Count Failures (F{N})
+
+Count how many dice rolled at or below a threshold. The total becomes the failure count:
+
+| Notation | Description                 |
+| -------- | --------------------------- |
+| `F{N}`   | Count dice that rolled <= N |
+
+**Important:** `F` requires curly braces (`F{N}`) to avoid conflict with Fate dice notation (`dF`). The pattern is case-insensitive.
+
+```typescript
+roll("5d10F{3}") // Count how many dice rolled <= 3
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countFailures: { threshold: 3 }
+  }
+})
+```
+
+**How it works:** Instead of summing dice values, the total becomes a count of dice that are at or below the threshold. This is a total transformer like `countSuccesses`.
+
+**Example:** `5d10F{3}` rolls [8, 2, 10, 1, 9]. Failures <= 3: [2, 1] = 2 failures.
+
+**Use cases:** Dice pool systems where you need to count both successes and failures separately, risk assessment mechanics, World of Darkness botch counting.
+
+### Margin of Success (Notation Sugar)
+
+Calculate the margin above or below a target number. All notation in randsum is case-insensitive.
+
+| Notation | Description                               |
+| -------- | ----------------------------------------- |
+| `ms{N}`  | Subtract N from total (margin of success) |
+
+```typescript
+roll("1d20ms{15}") // How far above/below DC 15?
+roll({
+  sides: 20,
+  quantity: 1,
+  modifiers: { minus: 15 }
+})
+
+roll("1d20+5ms{15}") // With modifier, margin against DC 15
+roll({
+  sides: 20,
+  quantity: 1,
+  modifiers: { plus: 5, minus: 15 }
+})
+```
+
+**Sugar equivalence:** `ms{N}` is sugar for `-N`. For example, `1d20ms{15}` is identical to `1d20-15`. The `ms` form exists for readability when calculating margins of success or failure against a difficulty class or target number.
+
+**Use cases:** Checking how far above or below a DC a roll lands, degree-of-success systems, or any context where the margin matters more than the raw total.
+
+### Wild Die (W)
+
+The D6 System wild die modifier (West End Games):
+
+| Notation | Description                |
+| -------- | -------------------------- |
+| `W`      | Last die is the "wild die" |
+
+```typescript
+roll("5d6W") // Last die is wild
+roll({
+  sides: 6,
+  quantity: 5,
+  modifiers: { wildDie: true }
+})
+```
+
+**How it works:** The last die in the pool is designated as the "wild die" with special behavior:
+
+- **Wild die = max value (6):** The wild die compound-explodes — keep rolling and adding while the maximum is rolled.
+- **Wild die = 1:** Remove the wild die AND the highest non-wild die from the pool.
+- **Otherwise:** No special effect, the wild die acts as a normal die.
+
+The wild die modifier operates at priority 55, after explode/compound/penetrate.
+
+**Example:** `5d6W` rolls [4, 3, 5, 2, 6]. The wild die (6) compound-explodes: rolls 4, so wild die becomes 10. Result: [4, 3, 5, 2, 10] = 24.
+
+**Example (wild 1):** `5d6W` rolls [4, 3, 5, 2, 1]. The wild die (1) triggers removal: remove the 1 (wild) and the 5 (highest non-wild). Result: [4, 3, 2] = 9.
+
+**Use cases:** West End Games D6 System (Star Wars D6, Ghostbusters, Indiana Jones RPG).
+
 ### Total Multiplier (\*\*)
 
 Multiply the entire final total after all other modifiers:
@@ -967,6 +1154,44 @@ roll({
 - **Pre-Arithmetic (`*`)**: `2d6*2+3` = (9 × 2) + 3 = 21
 - **Total (`**`)**: `2d6+3\*\*2` = (9 + 3) × 2 = 24
 
+### Annotations/Labels ([text])
+
+Attach metadata labels to dice terms. Labels are flavor text with no mechanical effect:
+
+| Notation                | Description                    |
+| ----------------------- | ------------------------------ |
+| `[text]`                | Label attached to a roll group |
+| `2d6+3[fire]+1d4[cold]` | Labels on specific dice groups |
+
+```typescript
+roll("2d6+3[fire]+1d4[cold]") // Labels attach to specific roll groups
+roll("4d6L[strength]") // Label the roll purpose
+```
+
+**How it works:** Labels are enclosed in square brackets and attached to the preceding dice term. They are stripped before modifier parsing and stored in `RollParams.label` and `RollRecord.label`. Labels are validated by `isDiceNotation` — notation with labels is valid notation.
+
+**Use cases:** Tracking damage types in D&D, labeling ability score rolls, annotating complex multi-group rolls for display purposes.
+
+### Repeat Operator (xN)
+
+Notation sugar that repeats a roll expression N times:
+
+| Notation | Description                           |
+| -------- | ------------------------------------- |
+| `xN`     | Repeat the preceding notation N times |
+
+```typescript
+roll("4d6Lx6") // Equivalent to roll("4d6L", "4d6L", "4d6L", "4d6L", "4d6L", "4d6L")
+roll("2d6+3x4") // Roll 2d6+3 four times, sum all totals
+roll("1d20X3") // Case-insensitive
+```
+
+**How it works:** The `xN` suffix is detected during notation parsing. It strips the suffix, then repeats the base notation N times as separate roll groups. N must be >= 1.
+
+**Example:** `4d6Lx6` expands to six separate `4d6L` rolls — perfect for generating all six D&D ability scores in a single call.
+
+**Use cases:** D&D ability score generation (`4d6Lx6`), rolling multiple identical damage dice groups, batch stat generation.
+
 ### Combining Modifiers
 
 Modifiers can be chained together. They are applied in a specific order to ensure consistent results:
@@ -984,11 +1209,16 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 | 51       | Compound         | `!!`      | Add explosion to existing die      |
 | 52       | Penetrate        | `!p`      | Add explosion minus 1 to die       |
 | 53       | Explode Sequence | `!s{...}` | Explode through die size sequence  |
+| 55       | Wild Die         | `W`       | D6 System wild die behavior        |
 | 60       | Unique           | `U`       | Ensure no duplicate values         |
 | 85       | Multiply         | `*N`      | Multiply dice sum (pre-arithmetic) |
 | 90       | Plus             | `+N`      | Add to total                       |
 | 91       | Minus            | `-N`      | Subtract from total                |
+| 92       | Sort             | `sa`/`sd` | Sort results for display           |
+| 93       | Integer Divide   | `//N`     | Integer divide total               |
+| 94       | Modulo           | `%N`      | Total modulo N                     |
 | 95       | Count Successes  | `S{...}`  | Count dice meeting threshold       |
+| 96       | Count Failures   | `F{...}`  | Count dice at or below threshold   |
 | 100      | Total Multiply   | `**N`     | Multiply entire final total        |
 
 Lower priority numbers execute first. This order ensures predictable behavior:
@@ -996,11 +1226,14 @@ Lower priority numbers execute first. This order ensures predictable behavior:
 - Dice values are capped/constrained first
 - Pool size is adjusted (drop/keep)
 - Values are replaced or rerolled
-- Explosive mechanics add dice (explode adds new dice, compound/penetrate modify existing)
+- Explosive mechanics add dice (explode adds new dice, compound/penetrate modify existing, explode sequence steps through die sizes)
+- Wild die behavior is applied (after explosive mechanics)
 - Uniqueness is enforced
 - Dice sum is multiplied (pre-arithmetic)
 - Arithmetic modifiers (+/-) apply
-- Successes are counted (if using dice pool systems)
+- Results are sorted (if requested)
+- Integer division and modulo are applied
+- Successes/failures are counted (if using dice pool systems)
 - Final total is multiplied (if using total multiplier)
 
 ```typescript
@@ -1262,6 +1495,40 @@ roll("4d6K3!") // Keep highest 3, then explode
 roll("3d6!pL+1") // Penetrate explode, drop lowest, add 1
 ```
 
+### D&D Ability Score Generation (Repeat Operator)
+
+```typescript
+roll("4d6Lx6") // Generate all 6 ability scores in one call
+```
+
+### Star Wars D6 System (Wild Die)
+
+```typescript
+roll("5d6W") // 5d6 with wild die
+roll("3d6W+2") // 3d6 with wild die and +2 modifier
+```
+
+### Labeled Damage Rolls
+
+```typescript
+roll("2d6+3[fire]+1d4[cold]") // Track damage types
+roll("1d20+7[attack]") // Label the roll purpose
+```
+
+### Geometric Survival Rolls
+
+```typescript
+roll("g6") // How many turns until resource depletion?
+roll("3g6") // Three independent geometric rolls
+```
+
+### Card-Deck Draw Mechanics
+
+```typescript
+roll("3DD6") // Draw 3 unique values from a d6 pool
+roll("6DD6") // Full permutation of [1,2,3,4,5,6]
+```
+
 ### D&D 5e Great Weapon Fighting (Reroll Once)
 
 ```typescript
@@ -1302,6 +1569,10 @@ All explosive modifiers (explode, compound, penetrate, explode sequence) have bu
 - **Explode sequence**: `!s{...}`, `!i`, `!r` - Capped by sequence length; final die repeats with safety cap
 
 These limits prevent infinite loops and ensure performance remains predictable.
+
+### Geometric Die Safety
+
+Geometric dice (`gN`) have a built-in safety cap of 1000 iterations per die to prevent infinite loops in unlikely but possible long-running sequences.
 
 ### Best Practices
 

@@ -91,7 +91,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-Modifiers (cap, drop, keep, reroll, explode, etc.) are self-registering definitions in `packages/roller/src/lib/modifiers/definitions/`. Each has a priority determining execution order (10=cap through 100=multiplyTotal). There are 19 modifiers total.
+Modifiers (cap, drop, keep, reroll, explode, etc.) are self-registering definitions in `packages/roller/src/lib/modifiers/definitions/`. Each has a priority determining execution order (10=cap through 100=multiplyTotal). There are 20 modifiers total.
 
 ### `roll()` Argument Types
 

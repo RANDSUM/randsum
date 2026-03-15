@@ -44,7 +44,7 @@ The `explodeSequence` schema handles three notation forms:
 
 - `tokenize(notation: string): readonly Token[]` — Parse notation into typed tokens for UI display. Returns tokens with `text`, `type`, `start`, `end`, `description` for each segment.
 - `Token` — Interface: `{ text, type: TokenType, start, end, description }`
-- `TokenType` — Union of all token types: `'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest' | 'explode' | 'compound' | 'penetrate' | 'explodeSequence' | 'wildDie' | 'reroll' | 'cap' | 'replace' | 'unique' | 'countSuccesses' | 'countFailures' | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal' | 'integerDivide' | 'modulo' | 'sort' | 'label' | 'unknown'`
+- `TokenType` — Union of all token types: `'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest' | 'explode' | 'compound' | 'penetrate' | 'explodeSequence' | 'wildDie' | 'reroll' | 'cap' | 'replace' | 'unique' | 'countSuccesses' | 'countFailures' | 'marginOfSuccess' | 'repeat' | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal' | 'integerDivide' | 'modulo' | 'sort' | 'label' | 'unknown'`
 
 ### Types
 
