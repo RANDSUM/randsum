@@ -1,5 +1,7 @@
 import type { ModifierBehavior } from '../schema'
 import { assertRequiredContext } from '../schema'
+import { DEFAULT_EXPLOSION_DEPTH } from '../../constants'
+import { ExplosionStrategies, applyAccumulatingExplosion } from '../definitions/explosion'
 
 export const wildDieBehavior: ModifierBehavior<boolean> = {
   requiresRollFn: true,
@@ -16,18 +18,16 @@ export const wildDieBehavior: ModifierBehavior<boolean> = {
 
     if (wildValue === undefined) return { rolls }
 
-    // Wild die shows max: compound explode
+    // Wild die shows max: compound explode via shared utility
     if (wildValue === sides) {
       const result = [...rolls]
-      // eslint-disable-next-line no-restricted-syntax
-      let compoundTotal = wildValue
-      // eslint-disable-next-line no-restricted-syntax
-      let nextRoll = rollOne()
-      while (nextRoll === sides) {
-        compoundTotal += nextRoll
-        nextRoll = rollOne()
-      }
-      compoundTotal += nextRoll
+      const compoundTotal = applyAccumulatingExplosion(
+        wildValue,
+        sides,
+        rollOne,
+        DEFAULT_EXPLOSION_DEPTH,
+        ExplosionStrategies.compound
+      )
       result[wildIndex] = compoundTotal
       return { rolls: result }
     }

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { wildDieBehavior } from '../../../src/lib/modifiers/behaviors/wildDie'
+import { DEFAULT_EXPLOSION_DEPTH } from '../../../src/lib/constants'
 
 describe('wildDie modifier behavior', () => {
   describe('normal roll (wild die is not 1 or max)', () => {
@@ -94,6 +95,20 @@ describe('wildDie modifier behavior', () => {
 
       // 8 + 2 = 10 (compound)
       expect(result.rolls).toEqual([4, 3, 10])
+    })
+
+    test('compound explosion is depth-capped via shared utility', () => {
+      // rollOne always returns max (sides), which would infinite-loop
+      // without a depth cap. The shared applyAccumulatingExplosion caps
+      // at DEFAULT_EXPLOSION_DEPTH.
+      const rolls = [6] // wild die is 6 (max for d6)
+      const rollOne = (): number => 6 // always returns max
+      const ctx = { rollOne, parameters: { sides: 6, quantity: 1 } }
+      const result = wildDieBehavior.apply(rolls, true, ctx)
+
+      // Initial 6 + (DEFAULT_EXPLOSION_DEPTH * 6)
+      const expected = 6 + DEFAULT_EXPLOSION_DEPTH * 6
+      expect(result.rolls).toEqual([expected])
     })
   })
 })
