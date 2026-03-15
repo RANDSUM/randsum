@@ -58,14 +58,21 @@ RANDSUM uses extended standard dice notation (case-insensitive):
 | `C{<N}` | Cap under N | `4d20C{<3}` |
 | `V{X=Y}` | Replace X with Y | `4d20V{1=20}` |
 | `S{N}` | Count successes >= N | `5d10S{7}` |
+| `F{N}` | Count failures <= N | `5d10F{3}` |
+| `W` | Wild die (D6 System) | `5d6W` |
+| `//N` | Integer divide total | `4d6//2` |
+| `%N` | Total modulo N | `4d6%3` |
 | `*N` | Pre-arithmetic multiply | `2d6*2+3` |
 | `**N` | Total multiply | `2d6+3**2` |
-| `ro{...}` | Reroll once (sugar for `R{...}1`) | `4d6ro{1}` |
-| `KM` / `KMN` | Keep middle (drop N lowest + N highest) | `5d6KM` |
-| `ms{N}` | Margin of success (sugar for `-N`) | `1d20ms{12}` |
-| `s` / `sa` / `sd` | Sort ascending / descending (display-only) | `4d6s` |
-| `zN` | Zero-bias die (faces 0 to N-1) | `z6` |
-| `d{...}` | Custom faces (numeric or string) | `d{2,3,5,7}` |
+| `[text]` | Annotation/label | `2d6[fire]` |
+| `xN` | Repeat notation N times | `4d6Lx6` |
+
+### Special Dice (notation-level)
+
+| Argument | Description | Notes |
+|----------|-------------|-------|
+| `gN` | Geometric die (roll dN until 1, return count) | Supports quantity prefix: `3g6` |
+| `DDN` | Draw die (sample without replacement) | Supports quantity prefix: `3DD6` |
 
 ### Special Dice (roller-level, not notation)
 
@@ -81,9 +88,12 @@ Common patterns:
 - `roll('4d6L')` — D&D ability score (drop lowest)
 - `roll('2d20H')` — advantage (keep highest)
 - `roll('2d20L')` — disadvantage (keep lowest)
-- `roll('4d6L', '4d6L', '4d6L', '4d6L', '4d6L', '4d6L')` — full 6-stat character generation
+- `roll('4d6Lx6')` — full 6-stat character generation (repeat operator)
 - `roll('d%')` — percentile roll (Call of Cthulhu, Warhammer)
 - `roll('4dF')` — standard Fate Core roll
+- `roll('5d6W')` — Star Wars D6 wild die roll
+- `roll('g6')` — geometric die (resource depletion)
+- `roll('3DD6')` — draw 3 unique values from d6 pool
 
 ## TypeScript Usage
 
@@ -99,9 +109,6 @@ roll('2d20H')         // advantage
 roll('2d20L')         // disadvantage
 roll('d%')            // percentile (1d100)
 roll('4dF')           // Fate Core (-4 to +4)
-roll('z6')            // zero-bias (faces 0-5)
-roll('d{2,3,5,7}')    // custom numeric faces
-roll('d{fire,ice}')   // custom string faces
 
 // Options object
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })

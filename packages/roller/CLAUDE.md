@@ -24,9 +24,11 @@ roll({ sides: 6, quantity: 2, modifiers: { plus: 3 } }) // same
 roll("1d20", "2d6") // attack + damage, combined total
 roll("d%") // percentile (1d100)
 roll("4dF") // Fate Core roll
-roll("z6") // Zero-bias: faces 0-5
-roll("d{2,3,5,7}") // Custom numeric faces
-roll("d{fire,ice}") // Custom string faces
+roll("5d6W") // D6 System wild die
+roll("g6") // geometric die (roll until 1)
+roll("3DD6") // draw 3 unique from d6 pool
+roll("4d6Lx6") // repeat: 6 ability scores
+roll("2d6+3[fire]") // annotation/label
 ```
 
 ### `validateNotation(notation: string): ValidationResult`
@@ -51,19 +53,20 @@ Key patterns:
 - `NdS!` - Exploding dice
 - `NdSU` - Unique results
 - `NdSC{conditions}` - Cap values
+- `NdSW` - Wild die (D6 System)
+- `NdSF{N}` - Count failures <= N
+- `NdS//N` - Integer divide total
+- `NdS%N` - Total modulo N
+- `NdS[text]` - Annotation/label
+- `NdSxN` - Repeat notation N times
+- `gN` - Geometric die (roll until 1)
+- `DDN` - Draw die (no replacement)
 - `d%` - Percentile die (1d100)
 - `dF` / `dF.1` / `dF.2` - Fate/Fudge dice
-- `zN` - Zero-bias die (faces 0 to N-1, e.g. `z6` = 0-5)
-- `d{2,3,5,7}` - Custom numeric faces
-- `d{fire,ice,lightning}` - Custom string faces
-- `NdSro{conditions}` - Reroll once (sugar for `R{conditions}1`)
-- `NdSKM` / `NdSKMN` - Keep middle (drop lowest N + drop highest N)
-- `NdSms{N}` - Margin of success (sugar for `-N`)
-- `NdSs` / `NdSsa` / `NdSsd` - Sort rolls ascending/descending (display-only)
 
 ## Modifier System
 
-Modifiers are applied in priority order (lower number = earlier execution):
+19 modifiers applied in priority order (lower number = earlier execution):
 
 | Priority | Modifier       | Description                        |
 | -------- | -------------- | ---------------------------------- |
@@ -75,12 +78,16 @@ Modifiers are applied in priority order (lower number = earlier execution):
 | 50       | explode        | Roll additional dice on max        |
 | 51       | compound       | Add explosion to existing die      |
 | 52       | penetrate      | Add explosion minus 1 to die       |
+| 55       | wildDie        | D6 System wild die behavior        |
 | 60       | unique         | Ensure no duplicate values         |
 | 85       | multiply       | Multiply dice sum (pre-arithmetic) |
 | 90       | plus           | Add to total                       |
 | 91       | minus          | Subtract from total                |
-| 92       | sort           | Sort rolls (display-only)          |
+| 92       | sort           | Sort results for display           |
+| 93       | integerDivide  | Integer divide total               |
+| 94       | modulo         | Total modulo N                     |
 | 95       | countSuccesses | Count dice meeting threshold       |
+| 96       | countFailures  | Count dice at or below threshold   |
 | 100      | multiplyTotal  | Multiply entire final total        |
 
 Modifier options are defined in `ModifierOptions` type. See `RANDSUM_DICE_NOTATION.md` for full syntax reference.
@@ -95,8 +102,6 @@ All types are exported with `export type`:
 - `ModifierOptions` - Modifier configuration
 - `ValidationResult` - Validation output
 - `DiceNotation` - Notation string type
-- `ZeroBiasNotation` - Zero-bias dice notation (`zN`, faces 0 to N-1)
-- `CustomFacesNotation` - Custom face values notation (`d{2,3,5,7}`, `d{fire,ice}`)
 
 ## Internal Architecture
 

@@ -32,22 +32,22 @@ Zero-dependency package providing dice notation parsing, validation, and the sha
 
 ### Modifier Schemas
 
-15 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, unique, countSuccesses, multiply, plus, minus, multiplyTotal, sort). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry. Sugar notations like `ms{N}` (margin of success, desugared to `-N`) and `ro{...}` (reroll once, desugared to `R{...}1`) are pre-processed in `parseModifiers` before schema matching.
+19 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, wildDie, unique, multiply, plus, minus, sort, integerDivide, modulo, countSuccesses, countFailures, multiplyTotal). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry.
 
 ### Tokenization
 
 - `tokenize(notation: string): readonly Token[]` — Parse notation into typed tokens for UI display. Returns tokens with `text`, `type`, `start`, `end`, `description` for each segment.
 - `Token` — Interface: `{ text, type: TokenType, start, end, description }`
-- `TokenType` — Union of all token types: `'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest' | 'explode' | 'compound' | 'penetrate' | 'reroll' | 'cap' | 'replace' | 'unique' | 'countSuccesses' | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal' | 'unknown'`
+- `TokenType` — Union of all token types: `'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest' | 'explode' | 'compound' | 'penetrate' | 'wildDie' | 'reroll' | 'cap' | 'replace' | 'unique' | 'countSuccesses' | 'countFailures' | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal' | 'integerDivide' | 'modulo' | 'sort' | 'label' | 'unknown'`
 
 ### Types
 
-All shared types: `DiceNotation`, `RollOptions`, `ParsedNotationOptions`, `ModifierOptions`, `ModifierConfig`, `ComparisonOptions`, `DropOptions`, `KeepOptions`, `RerollOptions`, `ReplaceOptions`, `UniqueOptions`, `SuccessCountOptions`, `ValidationResult`, `ValidValidationResult`, `InvalidValidationResult`, `ValidationErrorInfo`, `NotationSchema`
+All shared types: `DiceNotation`, `RollOptions`, `ParsedNotationOptions`, `ModifierOptions`, `ModifierConfig`, `ComparisonOptions`, `DropOptions`, `KeepOptions`, `RerollOptions`, `ReplaceOptions`, `UniqueOptions`, `SuccessCountOptions`, `FailureCountOptions`, `ValidationResult`, `ValidValidationResult`, `InvalidValidationResult`, `ValidationErrorInfo`, `NotationSchema`, `GeometricDieNotation`, `DrawDieNotation`
 
 ## Internal Structure
 
 - `schema.ts` - `NotationSchema` type and `defineNotationSchema` helper
-- `definitions/` - All 15 modifier schema definitions (includes `sortSchema`)
+- `definitions/` - All 14 modifier schema definitions
 - `parse/` - `notationToOptions` and `listOfNotations` parsing logic
 - `comparison/` - Comparison notation parsing and formatting (`{<3,>18}` syntax)
 - `transformers/` - Options-to-notation and options-to-description converters

@@ -34,7 +34,7 @@ head:
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-Parse, validate, and transform dice notation strings without a roll engine. `@randsum/notation` is the type foundation of the RANDSUM ecosystem — zero runtime dependencies.
+Parse, validate, and transform dice notation strings without a roll engine. `@randsum/notation` is the type foundation of the RANDSUM ecosystem — zero runtime dependencies. Supports 19 modifier schemas, special dice types (geometric, draw), annotations, and the repeat operator.
 
 ## When to use notation vs roller
 
@@ -48,8 +48,6 @@ Use `@randsum/notation` when you need notation utilities but not `roll()`:
 If you also need to roll dice, use [`@randsum/roller`](/roller/introduction/) instead — it re-exports `validateNotation`, `isDiceNotation`, and `notation` for convenience. Functions like `notationToOptions`, `suggestNotationFix`, and `tokenize` require `@randsum/notation` directly.
 
 ## What it does
-
-**Special dice types** — zero-bias dice (`z6` = faces 0-5) and custom faces (`d{fire,ice,lightning}`) for non-standard dice.
 
 **Validation** — check if a string is valid dice notation, with type narrowing or structured error details.
 

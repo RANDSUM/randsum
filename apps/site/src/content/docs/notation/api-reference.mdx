@@ -211,9 +211,10 @@ interface Token {
 ```typescript
 type TokenType =
   | 'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest'
-  | 'reroll' | 'explode' | 'compound' | 'penetrate' | 'cap' | 'replace'
-  | 'unique' | 'countSuccesses' | 'dropCondition' | 'plus' | 'minus'
-  | 'multiply' | 'multiplyTotal' | 'unknown'
+  | 'reroll' | 'explode' | 'compound' | 'penetrate' | 'wildDie' | 'cap'
+  | 'replace' | 'unique' | 'countSuccesses' | 'countFailures'
+  | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal'
+  | 'integerDivide' | 'modulo' | 'sort' | 'label' | 'unknown'
 ```
 
 ## Modifier schemas
@@ -236,6 +237,11 @@ Each schema is a `NotationSchema` defining the regex pattern, parser, and format
 | `plusSchema` | `plus` | `+N` | `1d20+5` |
 | `minusSchema` | `minus` | `-N` | `1d20-2` |
 | `multiplyTotalSchema` | `multiplyTotal` | `**N` | `2d6+3**2` |
+| `wildDieSchema` | `wildDie` | `W` | `5d6W` |
+| `countFailuresSchema` | `countFailures` | `F{...}` | `5d10F{3}` |
+| `integerDivideSchema` | `integerDivide` | `//N` | `4d6//2` |
+| `moduloSchema` | `modulo` | `%N` | `4d6%3` |
+| `sortSchema` | `sort` | `sa`/`sd` | `4d6sa` |
 
 ### `NotationSchema<TOptions>`
 
@@ -281,7 +287,7 @@ Thrown by `notation()` when a string is not valid dice notation. Extends `Error`
 | `DiceNotation` | Branded template literal type for valid notation strings |
 | `RollOptions<T>` | Configuration object for a roll (`sides`, `quantity`, `modifiers`, `key`, `arithmetic`) |
 | `ParsedNotationOptions` | Result of parsing notation (always numeric `sides`, required `quantity` and `arithmetic`) |
-| `ModifierOptions` | Top-level modifier configuration with all 14 modifier keys |
+| `ModifierOptions` | Top-level modifier configuration with all 19 modifier keys |
 | `ModifierConfig` | Union of all individual modifier config value types |
 
 ### Modifier option types
@@ -295,6 +301,7 @@ Thrown by `notation()` when a string is not valid dice notation. Extends `Error`
 | `ReplaceOptions` | `{ from: number \| ComparisonOptions, to: number }` |
 | `UniqueOptions` | `{ notUnique: number[] }` |
 | `SuccessCountOptions` | `{ threshold: number, botchThreshold? }` |
+| `FailureCountOptions` | `{ threshold: number }` |
 
 ### Validation types
 

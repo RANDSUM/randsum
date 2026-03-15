@@ -4,6 +4,9 @@
 
 - [Overview](#overview)
 - [Basic Syntax](#basic-syntax)
+- [Special Dice](#special-dice)
+  - [Geometric Die](#geometric-die-gn)
+  - [Draw Die](#draw-die-ddn)
 - [Modifiers](#modifiers)
   - [Basic Arithmetic](#basic-arithmetic)
   - [Cap Modifiers](#cap-modifiers)
@@ -12,18 +15,18 @@
   - [Replace Modifiers](#replace-modifiers)
   - [Unique Results](#unique-results)
   - [Keep Modifiers](#keep-modifiers)
-  - [Keep Middle](#keep-middle)
-  - [Reroll Once](#reroll-once)
-  - [Margin of Success](#margin-of-success)
-  - [Zero-Bias Dice](#zero-bias-dice)
-  - [Custom Dice Faces](#custom-dice-faces)
-  - [Sorting](#sorting)
   - [Exploding Dice](#exploding-dice)
   - [Compounding Exploding](#compounding-exploding-)
   - [Penetrating Exploding](#penetrating-exploding-p)
   - [Pre-Arithmetic Multiplier](#pre-arithmetic-multiplier-)
-  - [Total Multiplier](#total-multiplier-)
   - [Count Successes](#count-successes-s)
+  - [Integer Division](#integer-division-n)
+  - [Modulo](#modulo-n)
+  - [Count Failures](#count-failures-fn)
+  - [Wild Die](#wild-die-w)
+  - [Annotations/Labels](#annotationslabels-text)
+  - [Repeat Operator](#repeat-operator-xn)
+  - [Total Multiplier](#total-multiplier-)
   - [Combining Modifiers](#combining-modifiers)
 - [Multiple Dice Groups](#multiple-dice-sides-in-a-single-roll)
 - [Common Use Cases](#common-use-cases)
@@ -60,6 +63,28 @@ roll({
   sides: 6,
   quantity: 4
 })
+```
+
+## Special Dice
+
+### Geometric Die (`gN`)
+
+Roll dN until a 1 appears, result = attempt count. Safety cap at 1000 iterations.
+
+```typescript
+roll("g6")   // Roll d6 until 1 appears (average: 6 rolls)
+roll("3g6")  // Three independent geometric rolls
+```
+
+### Draw Die (`DDN`)
+
+Sampling without replacement — like drawing from a deck. Uses Fisher-Yates shuffle.
+
+```typescript
+roll("DD6")   // Draw one unique value from [1..6]
+roll("3DD6")  // Draw 3 unique values
+roll("6DD6")  // Full permutation of [1,2,3,4,5,6]
+roll("8DD6")  // Full permutation + 2 more (reshuffles after exhaustion)
 ```
 
 ## Modifiers
@@ -320,101 +345,6 @@ roll({
 
 **Note:** Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L1`.
 
-### Keep Middle
-
-Keep the middle dice by dropping both the lowest and highest:
-
-```typescript
-roll("5d6KM") // Keep middle (drop 1 lowest + 1 highest)
-roll({
-  sides: 6,
-  quantity: 5,
-  modifiers: { drop: { lowest: 1, highest: 1 } }
-})
-
-roll("7d6KM2") // Keep middle (drop 2 lowest + 2 highest)
-roll({
-  sides: 6,
-  quantity: 7,
-  modifiers: { drop: { lowest: 2, highest: 2 } }
-})
-```
-
-**How it works:** `KM` is sugar for dropping 1 lowest and 1 highest. `KMN` drops N lowest and N highest. Useful for averaging rolls by removing extremes.
-
-### Reroll Once
-
-Reroll dice once only (sugar for `R{...}1`):
-
-```typescript
-roll("4d6ro{1}") // Reroll 1s once only
-roll({
-  sides: 6,
-  quantity: 4,
-  modifiers: { reroll: { exact: [1], max: 1 } }
-})
-
-roll("4d20ro{<5}") // Reroll under 5 once only
-roll({
-  sides: 20,
-  quantity: 4,
-  modifiers: { reroll: { lessThan: 5, max: 1 } }
-})
-```
-
-**How it works:** `ro{...}` is syntactic sugar for `R{...}1`. The die is rerolled at most once, even if the new result still matches the condition.
-
-### Margin of Success
-
-Subtract a target number from the total (sugar for `-N`):
-
-```typescript
-roll("1d20ms{12}") // Margin of success against DC 12
-roll({
-  sides: 20,
-  quantity: 1,
-  modifiers: { minus: 12 }
-})
-```
-
-**How it works:** `ms{N}` is syntactic sugar for `-N`. Useful for expressing "how much did I beat the target by" in systems that care about margins.
-
-### Zero-Bias Dice
-
-Dice with faces starting at 0 instead of 1:
-
-```typescript
-roll("z6") // d6 with faces 0-5
-roll("z10") // d10 with faces 0-9
-roll("z100") // d100 with faces 0-99
-```
-
-**How it works:** `zN` creates a die with N faces numbered 0 to N-1. Useful for index-based lookups, percentile systems that include 0, or any mechanic where zero is a valid result.
-
-### Custom Dice Faces
-
-Dice with explicitly defined face values:
-
-```typescript
-roll("d{2,3,5,7}") // Die with faces 2, 3, 5, 7
-roll("d{fire,ice,lightning}") // Die with string faces
-roll("3d{1,2,3,4,5,10}") // Three dice with custom numeric faces
-```
-
-**How it works:** `d{...}` defines a die with explicit face values. Numeric values (e.g. `d{2,3,5,7}`) produce numeric results. String values (e.g. `d{fire,ice}`) produce string results. Mixed values are treated as strings.
-
-### Sorting
-
-Sort the rolled values for display:
-
-```typescript
-roll("4d6s") // Sort ascending
-roll("4d6sa") // Sort ascending (explicit)
-roll("4d6sd") // Sort descending
-```
-
-**How it works:** Sort is a display-only modifier at priority 92. It reorders the rolls array but does not affect the total. Useful for presenting results in order (e.g. showing ability scores sorted).
-
 ### Exploding Dice
 
 Roll additional dice on maximum results:
@@ -628,6 +558,82 @@ roll({
 
 **Example with botch:** `5d10S{7,1}` rolls [8, 1, 10, 1, 9]. Successes: 3, Botches: 2. Result = 1.
 
+### Integer Division (//N)
+
+Integer divide the total (truncates toward zero via `Math.trunc`):
+
+```typescript
+roll("4d6//2") // Integer divide total by 2
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { integerDivide: 2 }
+})
+```
+
+### Modulo (%N)
+
+Apply modulo to the total:
+
+```typescript
+roll("4d6%3") // Total modulo 3
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { modulo: 3 }
+})
+```
+
+### Count Failures (F{N})
+
+Count how many dice rolled at or below a threshold. Requires curly braces to avoid conflict with Fate dice:
+
+```typescript
+roll("5d10F{3}") // Count dice that rolled <= 3
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countFailures: { threshold: 3 }
+  }
+})
+```
+
+### Wild Die (W)
+
+D6 System wild die (West End Games). Last die is "wild":
+
+- Wild = max (6): compound explode (keep rolling and adding while max)
+- Wild = 1: remove wild die AND highest non-wild die
+- Otherwise: no change
+
+```typescript
+roll("5d6W") // Last die is wild
+roll({
+  sides: 6,
+  quantity: 5,
+  modifiers: { wildDie: true }
+})
+```
+
+### Annotations/Labels ([text])
+
+Attach metadata labels to dice terms — flavor text with no mechanical effect:
+
+```typescript
+roll("2d6+3[fire]+1d4[cold]") // Labels on roll groups
+roll("4d6L[strength]")        // Label the roll purpose
+```
+
+### Repeat Operator (xN)
+
+Repeat a roll expression N times (notation sugar):
+
+```typescript
+roll("4d6Lx6")  // Equivalent to six separate 4d6L rolls
+roll("2d6+3x4") // Roll 2d6+3 four times
+```
+
 ### Combining Modifiers
 
 Modifiers can be chained together. They are applied in a specific order to ensure consistent results:
@@ -639,12 +645,14 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 3. Replace
 4. Reroll
 5. Explode / Compound / Penetrate
-6. Unique
-7. Pre-Arithmetic Multiply (`*`)
-8. Plus / Minus
-9. Sort (display-only)
-10. Count Successes
-11. Total Multiply (`**`)
+6. Wild Die
+7. Unique
+8. Pre-Arithmetic Multiply (`*`)
+9. Plus / Minus
+10. Sort
+11. Integer Divide / Modulo
+12. Count Successes / Count Failures
+13. Total Multiply (`**`)
 
 ```typescript
 roll("4d6L+2") // Drop lowest, add 2
@@ -654,6 +662,8 @@ roll("3d6!!*2+3") // Compound explode, multiply by 2, add 3
 roll("2d6*2+3**2") // Multiply dice by 2, add 3, multiply total by 2
 roll("4d6K3!+2") // Keep highest 3, explode, add 2
 roll("3d6!pL+1") // Penetrate explode, drop lowest, add 1
+roll("5d6W+2") // Wild die with modifier
+roll("4d6Lx6") // Six ability score rolls
 ```
 
 **Important Notes:**

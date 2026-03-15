@@ -19,7 +19,12 @@ roll(20)                    // number: 1d20
 roll('4d6L')                // notation string
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
 roll('1d20+5', '2d6+3')    // multiple groups
-roll('2d6', { randomFn: () => 0.5 })  // custom RNG`} />
+roll('2d6', { randomFn: () => 0.5 })  // custom RNG
+roll('5d6W')                // D6 System wild die
+roll('g6')                  // geometric die
+roll('3DD6')                // draw die
+roll('4d6Lx6')              // repeat operator
+roll('2d6+3[fire]')         // annotation`} />
 
 **Signature:**
 
@@ -139,6 +144,7 @@ Detailed record of a single roll group.
 | `modifierLogs` | `ModifierLog[]` | Log of each modifier application |
 | `appliedTotal` | `number` | Total including arithmetic modifiers |
 | `total` | `number` | Final total for this group |
+| `label` | `string` (optional) | Annotation label from notation |
 | `customResults` | `T[]` (optional) | Custom face results for non-numeric dice |
 
 ### `RollResult<TResult, TRollRecord>`
@@ -154,13 +160,11 @@ Generic base type.
 
 | Type | Description |
 |---|---|
-| `RollArgument<T>` | `RollOptions<T> \| DiceNotation \| ZeroBiasNotation \| CustomFacesNotation \| number` |
+| `RollArgument<T>` | `RollOptions<T> \| DiceNotation \| number` |
 | `RollOptions<T>` | Options object with `sides`, `quantity`, `modifiers` (re-export) |
 | `RollConfig` | `{ randomFn?: RandomFn }` -- pass as last argument to `roll()` |
 | `RandomFn` | `() => number` -- must return `[0, 1)` |
 | `DiceNotation` | Branded string type for valid notation (re-export) |
-| `ZeroBiasNotation` | Branded string type for zero-bias notation (`zN`, `4z6`) |
-| `CustomFacesNotation` | Branded string type for custom faces notation (`d{2,3,5,7}`, `d{fire,ice}`) |
 
 ## Modifier types (re-exports)
 
@@ -177,6 +181,7 @@ All modifier option types are re-exported from `@randsum/notation`.
 | `ReplaceOptions` | Value replacement rules |
 | `UniqueOptions` | Unique constraint config |
 | `SuccessCountOptions` | Count dice meeting a threshold |
+| `FailureCountOptions` | Count dice at or below a threshold |
 
 ## Internal types
 

@@ -27,10 +27,14 @@ roll("2d20L+5") // Advantage attack roll
 roll("2d6+3")   // PbtA / 2d6 + stat
 roll("d%")      // Percentile: 1d100
 roll("4dF")     // Fate Core: 4 Fate dice (-4 to +4)
-roll("z6")      // Zero-bias: faces 0-5
-roll("d{2,3,5,7}")  // Custom numeric faces
-roll("d{fire,ice}") // Custom string faces
 roll("1d20", "2d6", "+5")  // Multiple: attack + damage + modifier
+roll("5d6W")   // D6 System wild die (Star Wars D6)
+roll("g6")     // Geometric die: roll until 1, return count
+roll("3DD6")   // Draw die: 3 unique values from d6 pool
+roll("4d6Lx6") // Repeat: generate 6 ability scores
+roll("2d6+3[fire]+1d4[cold]")  // Annotations: label damage types
+roll("4d6//2") // Integer division
+roll("5d10F{3}") // Count failures <= 3
 
 ## Documentation
 
