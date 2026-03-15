@@ -16,6 +16,7 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   readonly explode: 50
   readonly compound: 51
   readonly penetrate: 52
+  readonly wildDie: 55
   readonly unique: 60
   readonly multiply: 85
   readonly plus: 90
@@ -35,6 +36,7 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   explode: 50,
   compound: 51,
   penetrate: 52,
+  wildDie: 55,
   unique: 60,
   multiply: 85,
   plus: 90,

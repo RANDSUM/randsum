@@ -22,6 +22,8 @@ export type TokenType =
   | 'integerDivide' // //N
   | 'modulo' // %N
   | 'repeat' // xN
+  | 'wildDie' // W
+  | 'label' // [text]
   | 'multiply' // *N
   | 'multiplyTotal' // **N
   | 'unknown'
@@ -83,6 +85,8 @@ const MODIFIERS: readonly ModifierEntry[] = [
   { type: 'cap', pattern: /^[Cc]\{[^}]+\}/ },
   { type: 'replace', pattern: /^[Vv]\{[^}]+\}/ },
   { type: 'unique', pattern: /^[Uu](?:\{[^}]+\})?/ },
+  // Wild Die — must come before margin of success and sort
+  { type: 'wildDie', pattern: /^[Ww](?![{])/ },
   // Margin of success — must come before countSuccesses and sort
   { type: 'marginOfSuccess', pattern: /^[Mm][Ss]\{\d+\}/ },
   { type: 'countSuccesses', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
@@ -92,7 +96,9 @@ const MODIFIERS: readonly ModifierEntry[] = [
   { type: 'plus', pattern: /^\+\d+/ },
   { type: 'minus', pattern: /^-\d+/ },
   // Repeat operator — xN at the end (N >= 1)
-  { type: 'repeat', pattern: /^[Xx][1-9]\d*/ }
+  { type: 'repeat', pattern: /^[Xx][1-9]\d*/ },
+  // Annotation/label — metadata, does not affect mechanics
+  { type: 'label', pattern: /^\[[^\]]+\]/ }
 ]
 
 function appendUnknown(tokens: Token[], char: string, cursor: number): void {

@@ -17,7 +17,8 @@ import {
   replaceSchema,
   rerollSchema,
   sortSchema,
-  uniqueSchema
+  uniqueSchema,
+  wildDieSchema
 } from '../definitions'
 
 /**
@@ -47,6 +48,7 @@ const allSchemas: readonly ParseableSchema[] = [
   plusSchema,
   minusSchema,
   sortSchema,
+  wildDieSchema,
   integerDivideSchema,
   moduloSchema,
   multiplyTotalSchema
@@ -91,6 +93,8 @@ export function buildNotationPattern(): RegExp {
   sources.push(marginOfSuccessPattern.source)
   // Repeat operator (xN) — handled in notationToOptions, but needed for isDiceNotation validation
   sources.push('[Xx][1-9]\\d*')
+  // Annotation labels [text] — stripped before parsing, needed for isDiceNotation validation
+  sources.push('\\[[^\\]]+\\]')
 
   return new RegExp(sources.join('|'), 'g')
 }

@@ -2,6 +2,7 @@ import type { ModifierOptions } from '../types'
 import {
   capSchema,
   compoundSchema,
+  countFailuresSchema,
   countSuccessesSchema,
   dropSchema,
   explodeSchema,
@@ -16,7 +17,8 @@ import {
   replaceSchema,
   rerollSchema,
   sortSchema,
-  uniqueSchema
+  uniqueSchema,
+  wildDieSchema
 } from '../definitions'
 
 /**
@@ -87,8 +89,16 @@ export function modifiersToNotation(modifiers: ModifierOptions | undefined): str
     const n = moduloSchema.toNotation(modifiers.modulo)
     if (n !== undefined) parts.push(n)
   }
+  if (modifiers.wildDie !== undefined) {
+    const n = wildDieSchema.toNotation(modifiers.wildDie)
+    if (n !== undefined) parts.push(n)
+  }
   if (modifiers.countSuccesses !== undefined) {
     const n = countSuccessesSchema.toNotation(modifiers.countSuccesses)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.countFailures !== undefined) {
+    const n = countFailuresSchema.toNotation(modifiers.countFailures)
     if (n !== undefined) parts.push(n)
   }
   if (modifiers.multiplyTotal !== undefined) {
@@ -126,8 +136,11 @@ export function modifiersToDescription(modifiers: ModifierOptions | undefined): 
   if (modifiers.integerDivide !== undefined)
     parts.push(...integerDivideSchema.toDescription(modifiers.integerDivide))
   if (modifiers.modulo !== undefined) parts.push(...moduloSchema.toDescription(modifiers.modulo))
+  if (modifiers.wildDie !== undefined) parts.push(...wildDieSchema.toDescription(modifiers.wildDie))
   if (modifiers.countSuccesses !== undefined)
     parts.push(...countSuccessesSchema.toDescription(modifiers.countSuccesses))
+  if (modifiers.countFailures !== undefined)
+    parts.push(...countFailuresSchema.toDescription(modifiers.countFailures))
   if (modifiers.multiplyTotal !== undefined)
     parts.push(...multiplyTotalSchema.toDescription(modifiers.multiplyTotal))
 

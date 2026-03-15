@@ -17,6 +17,7 @@ import { replaceModifier } from './replace'
 import { rerollModifier } from './reroll'
 import { sortModifier } from './sort'
 import { uniqueModifier } from './unique'
+import { wildDieModifier } from './wildDie'
 
 export { capModifier }
 export { compoundModifier }
@@ -36,6 +37,7 @@ export { replaceModifier }
 export { rerollModifier }
 export { sortModifier }
 export { uniqueModifier }
+export { wildDieModifier }
 
 /**
  * All modifier definitions in priority order (lowest priority number runs first).
@@ -51,6 +53,7 @@ export const ALL_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   compoundModifier as ModifierDefinition,
   penetrateModifier as ModifierDefinition,
   uniqueModifier as ModifierDefinition,
+  wildDieModifier as ModifierDefinition,
   multiplyModifier as ModifierDefinition,
   plusModifier as ModifierDefinition,
   minusModifier as ModifierDefinition,

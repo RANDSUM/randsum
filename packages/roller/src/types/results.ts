@@ -23,6 +23,8 @@ export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 's
   description: string[]
   /** Dice notation string */
   notation: DiceNotation
+  /** Annotation label (e.g., "fire" from [fire]) */
+  label?: string
 }
 
 /**
@@ -52,6 +54,8 @@ export interface RollRecord<T = string> {
   appliedTotal: number
   /** Custom face results (for non-numeric dice) */
   customResults?: T[]
+  /** Annotation label (e.g., "fire" from [fire]) */
+  label?: string
   /** Final total for this roll */
   total: number
 }

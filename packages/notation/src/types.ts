@@ -104,6 +104,8 @@ export interface ModifierOptions {
   integerDivide?: number
   /** Modulo the total */
   modulo?: number
+  /** Wild die: compound on max, remove wild + highest on 1 (D6 System) */
+  wildDie?: boolean
   /** Multiply final total (after all other modifiers) */
   multiplyTotal?: number
 }
@@ -122,6 +124,8 @@ export interface ParsedNotationOptions {
   sides: number
   /** Modifiers to apply to the roll */
   modifiers?: ModifierOptions
+  /** Annotation label (e.g., [fire]) */
+  label?: string
 }
 
 /**

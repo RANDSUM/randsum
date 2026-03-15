@@ -34,7 +34,8 @@ export {
   plusSchema,
   minusSchema,
   multiplyTotalSchema,
-  sortSchema
+  sortSchema,
+  wildDieSchema
 } from './definitions'
 export { tokenize } from './tokenize'
 export type { Token, TokenType } from './tokenize'

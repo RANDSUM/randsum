@@ -232,6 +232,10 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
       modifiers = {},
       key = `Roll ${position}${indexLabel}`
     } = options
+    const label =
+      'label' in options
+        ? ((options as Record<string, unknown>).label as string | undefined)
+        : undefined
     return {
       ...options,
       ...optionsToSidesFaces(options),
@@ -240,6 +244,7 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
       quantity,
       arithmetic,
       argument,
+      ...(label !== undefined ? { label } : {}),
       notation: optionsToNotation(options),
       description: optionsToDescription(options)
     }
