@@ -7,7 +7,8 @@ export type TokenType =
   | 'dropCondition' // D{...}
   | 'keepHighest' // K, KN
   | 'keepLowest' // kl, klN
-  | 'reroll' // R{...}
+  | 'keepMiddle' // KM, KMN
+  | 'reroll' // R{...}, ro{...}
   | 'explode' // !
   | 'compound' // !!
   | 'penetrate' // !p
@@ -66,10 +67,12 @@ const MODIFIERS: readonly ModifierEntry[] = [
   { type: 'dropHighest', pattern: /^[Hh]\d*/ },
   { type: 'dropLowest', pattern: /^[Ll]\d*/ },
   { type: 'dropCondition', pattern: /^[Dd]\{[^}]+\}/ },
-  // Keep: kl before K to avoid K matching first char of kl
+  // Keep: kl and km before K to avoid K matching first char
   { type: 'keepLowest', pattern: /^[Kk][Ll]\d*/ },
+  { type: 'keepMiddle', pattern: /^[Kk][Mm]\d*/ },
   { type: 'keepHighest', pattern: /^[Kk]\d*/ },
   // Brace-based modifiers — closing } required; partial input stays unknown
+  { type: 'reroll', pattern: /^[Rr][Oo]\{[^}]+\}/ },
   { type: 'reroll', pattern: /^[Rr]\{[^}]+\}\d*/ },
   { type: 'cap', pattern: /^[Cc]\{[^}]+\}/ },
   { type: 'replace', pattern: /^[Vv]\{[^}]+\}/ },

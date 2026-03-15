@@ -311,6 +311,44 @@ describe('keepSchema', () => {
       expect(keepSchema.toDescription({ lowest: 2 })).toEqual(['Keep lowest 2'])
     })
   })
+
+  describe('keep middle (KM) parsing', () => {
+    test('parses KM (keep middle, drop 1 from each end)', () => {
+      expect(keepSchema.parse('KM')).toEqual({
+        drop: { lowest: 1, highest: 1 }
+      })
+    })
+
+    test('parses KM2 (keep middle, drop 2 from each end)', () => {
+      expect(keepSchema.parse('KM2')).toEqual({
+        drop: { lowest: 2, highest: 2 }
+      })
+    })
+
+    test('parses km (lowercase)', () => {
+      expect(keepSchema.parse('km')).toEqual({
+        drop: { lowest: 1, highest: 1 }
+      })
+    })
+
+    test('parses Km (mixed case)', () => {
+      expect(keepSchema.parse('Km')).toEqual({
+        drop: { lowest: 1, highest: 1 }
+      })
+    })
+
+    test('parses kM (mixed case)', () => {
+      expect(keepSchema.parse('kM')).toEqual({
+        drop: { lowest: 1, highest: 1 }
+      })
+    })
+
+    test('parses km3 (lowercase with count)', () => {
+      expect(keepSchema.parse('km3')).toEqual({
+        drop: { lowest: 3, highest: 3 }
+      })
+    })
+  })
 })
 
 describe('replaceSchema', () => {
@@ -510,6 +548,74 @@ describe('rerollSchema', () => {
       expect(rerollSchema.toDescription({ greaterThanOrEqual: 4 })).toEqual([
         'Reroll greater than or equal to 4'
       ])
+    })
+
+    test('describes reroll once (max 1)', () => {
+      expect(rerollSchema.toDescription({ exact: [1], max: 1 })).toEqual(['Reroll once 1'])
+    })
+
+    test('describes reroll once with comparison', () => {
+      expect(rerollSchema.toDescription({ lessThan: 3, max: 1 })).toEqual([
+        'Reroll once less than 3'
+      ])
+    })
+  })
+
+  describe('reroll once (ro) parsing', () => {
+    test('parses ro{1} (reroll once exact 1)', () => {
+      expect(rerollSchema.parse('ro{1}')).toEqual({
+        reroll: { exact: [1], max: 1 }
+      })
+    })
+
+    test('parses RO{<3} (reroll once less than, uppercase)', () => {
+      expect(rerollSchema.parse('RO{<3}')).toEqual({
+        reroll: { lessThan: 3, max: 1 }
+      })
+    })
+
+    test('parses Ro{>5} (reroll once greater than, mixed case)', () => {
+      expect(rerollSchema.parse('Ro{>5}')).toEqual({
+        reroll: { greaterThan: 5, max: 1 }
+      })
+    })
+
+    test('parses rO{>=4} (reroll once greater than or equal)', () => {
+      expect(rerollSchema.parse('rO{>=4}')).toEqual({
+        reroll: { greaterThanOrEqual: 4, max: 1 }
+      })
+    })
+
+    test('parses ro{<=2} (reroll once less than or equal)', () => {
+      expect(rerollSchema.parse('ro{<=2}')).toEqual({
+        reroll: { lessThanOrEqual: 2, max: 1 }
+      })
+    })
+
+    test('parses ro{=5} (reroll once exact with = prefix)', () => {
+      expect(rerollSchema.parse('ro{=5}')).toEqual({
+        reroll: { exact: [5], max: 1 }
+      })
+    })
+
+    test('parses ro{1,2} (reroll once multiple exact values)', () => {
+      expect(rerollSchema.parse('ro{1,2}')).toEqual({
+        reroll: { exact: [1, 2], max: 1 }
+      })
+    })
+  })
+
+  describe('reroll once (ro) toNotation', () => {
+    test('formats max 1 as ro notation', () => {
+      expect(rerollSchema.toNotation({ exact: [1], max: 1 })).toBe('ro{1}')
+    })
+
+    test('formats max 1 with comparison as ro notation', () => {
+      expect(rerollSchema.toNotation({ lessThan: 3, max: 1 })).toBe('ro{<3}')
+    })
+
+    test('formats max > 1 as R notation (not ro)', () => {
+      expect(rerollSchema.toNotation({ exact: [1], max: 3 })).toBe('R{1}3')
     })
   })
 })
