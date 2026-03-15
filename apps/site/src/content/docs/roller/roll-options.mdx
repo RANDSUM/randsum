@@ -70,7 +70,15 @@ Number of sides on each die, or an array of custom face values.
 roll({ sides: 20 })
 
 // Custom faces (e.g., Fate dice)
-roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })`} />
+roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })
+
+// Custom faces via notation
+roll('d{fire,ice,lightning}')  // string faces
+roll('d{2,3,5,7}')             // specific numeric faces
+
+// Zero-bias dice via notation (faces 0 to N-1)
+roll('z6')    // faces 0-5
+roll('4z10')  // four dice with faces 0-9`} />
 
 ### `quantity`
 
@@ -94,7 +102,7 @@ roll(
 
 ### `modifiers`
 
-An object containing modifier options. See the [Modifiers](/roller/modifiers/) reference for all available modifiers.
+An object containing modifier options. See the [Modifiers](/roller/modifiers/) reference for all 15 available modifiers.
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
@@ -106,6 +114,13 @@ roll({
     reroll: { exact: [1] },
     plus: 5
   }
+})
+
+// Sort modifier (display-only, does not affect total)
+roll({
+  sides: 6,
+  quantity: 6,
+  modifiers: { sort: 'desc' }
 })`} />
 
 ### `key`

@@ -40,7 +40,8 @@ Roll dice with a single function call — numbers, notation strings, or options 
 ## Features
 
 - **Three input modes** — pass a number, a notation string, or a typed options object
-- **Advanced notation** — drop/keep, reroll, exploding, compounding, penetrating, cap, replace, unique, count successes
+- **Advanced notation** — drop/keep (including keep middle), reroll (including reroll once), exploding, compounding, penetrating, cap, replace, unique, count successes, sorting, margin of success
+- **Special dice** — zero-bias dice (`z6` = faces 0-5), custom faces (`d{fire,ice,lightning}`), plus percentile (`d%`) and Fate dice (`dF`)
 - **Modifier pipeline** — modifiers execute in a defined priority order, composable and predictable
 - **Multiple arguments** — combine rolls into a single total: `roll('1d20+5', '2d6')`
 - **Strict validation** — throws on invalid input; validate user strings with `isDiceNotation()` or `validateNotation()`
@@ -105,9 +106,14 @@ console.log(result.total) // d20 + 5 + 2d6`} />
 | Pattern | Description | Example |
 |---|---|---|
 | `NdS` | Roll N dice with S sides | `4d6` |
+| `zN` | Zero-bias die (faces 0 to N-1) | `z6` |
+| `d{...}` | Custom faces | `d{fire,ice}` |
 | `+X` / `-X` | Add/subtract from total | `1d20+5` |
 | `L` / `H` | Drop lowest/highest | `4d6L` |
-| `K` / `kl` | Keep highest/lowest | `4d6K3` |
+| `K` / `kl` / `KM` | Keep highest/lowest/middle | `4d6K3` |
+| `ro{...}` | Reroll once | `4d20ro{<5}` |
+| `ms{N}` | Margin of success (sugar for `-N`) | `1d20ms{15}` |
+| `s` / `sd` | Sort ascending/descending | `6d6sd` |
 | `!` | Exploding dice | `3d6!` |
 | `!!` | Compounding exploding | `3d6!!` |
 | `!p` | Penetrating exploding | `3d6!p` |

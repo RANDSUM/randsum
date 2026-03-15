@@ -154,11 +154,13 @@ Generic base type.
 
 | Type | Description |
 |---|---|
-| `RollArgument<T>` | `RollOptions<T> \| DiceNotation \| number` |
+| `RollArgument<T>` | `RollOptions<T> \| DiceNotation \| ZeroBiasNotation \| CustomFacesNotation \| number` |
 | `RollOptions<T>` | Options object with `sides`, `quantity`, `modifiers` (re-export) |
 | `RollConfig` | `{ randomFn?: RandomFn }` -- pass as last argument to `roll()` |
 | `RandomFn` | `() => number` -- must return `[0, 1)` |
 | `DiceNotation` | Branded string type for valid notation (re-export) |
+| `ZeroBiasNotation` | Branded string type for zero-bias notation (`zN`, `4z6`) |
+| `CustomFacesNotation` | Branded string type for custom faces notation (`d{2,3,5,7}`, `d{fire,ice}`) |
 
 ## Modifier types (re-exports)
 
