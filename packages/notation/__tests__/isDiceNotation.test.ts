@@ -165,10 +165,7 @@ describe('isDiceNotation', () => {
     })
 
     test('returns false for malformed dice notation', () => {
-      expect(isDiceNotation('dd6')).toBe(false)
-      expect(isDiceNotation('2dd6')).toBe(false)
       expect(isDiceNotation('2d6d')).toBe(false)
-      expect(isDiceNotation('1d{6}')).toBe(false)
       expect(isDiceNotation('1d}')).toBe(false)
     })
 
@@ -184,6 +181,76 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('1d6 damage')).toBe(false)
       expect(isDiceNotation('prefix1d6')).toBe(false)
       expect(isDiceNotation('1d6suffix')).toBe(false)
+    })
+  })
+
+  describe('special die types', () => {
+    test('d% is valid', () => {
+      expect(isDiceNotation('d%')).toBe(true)
+    })
+    test('D% is valid', () => {
+      expect(isDiceNotation('D%')).toBe(true)
+    })
+    test('dF is valid', () => {
+      expect(isDiceNotation('dF')).toBe(true)
+    })
+    test('4dF is valid', () => {
+      expect(isDiceNotation('4dF')).toBe(true)
+    })
+    test('dF.1 is valid', () => {
+      expect(isDiceNotation('dF.1')).toBe(true)
+    })
+    test('dF.2 is valid', () => {
+      expect(isDiceNotation('dF.2')).toBe(true)
+    })
+    test('4dF.2 is valid', () => {
+      expect(isDiceNotation('4dF.2')).toBe(true)
+    })
+    test('z6 is valid', () => {
+      expect(isDiceNotation('z6')).toBe(true)
+    })
+    test('3z10 is valid', () => {
+      expect(isDiceNotation('3z10')).toBe(true)
+    })
+    test('Z6 is valid', () => {
+      expect(isDiceNotation('Z6')).toBe(true)
+    })
+    test('g6 is valid', () => {
+      expect(isDiceNotation('g6')).toBe(true)
+    })
+    test('3g6 is valid', () => {
+      expect(isDiceNotation('3g6')).toBe(true)
+    })
+    test('G6 is valid', () => {
+      expect(isDiceNotation('G6')).toBe(true)
+    })
+    test('DD6 is valid', () => {
+      expect(isDiceNotation('DD6')).toBe(true)
+    })
+    test('3DD6 is valid', () => {
+      expect(isDiceNotation('3DD6')).toBe(true)
+    })
+    test('dd6 is valid', () => {
+      expect(isDiceNotation('dd6')).toBe(true)
+    })
+    test('d{2,3,5} is valid', () => {
+      expect(isDiceNotation('d{2,3,5}')).toBe(true)
+    })
+    test('d{fire,ice} is valid', () => {
+      expect(isDiceNotation('d{fire,ice}')).toBe(true)
+    })
+    test('3d{1,1,2} is valid', () => {
+      expect(isDiceNotation('3d{1,1,2}')).toBe(true)
+    })
+
+    test('z6 with modifiers is valid', () => {
+      expect(isDiceNotation('3z10L')).toBe(true)
+    })
+    test('g6 with modifiers is valid', () => {
+      expect(isDiceNotation('g6+3')).toBe(true)
+    })
+    test('DD6 with modifiers is valid', () => {
+      expect(isDiceNotation('3DD6H')).toBe(true)
     })
   })
 
