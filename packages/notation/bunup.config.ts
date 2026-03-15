@@ -15,7 +15,6 @@ export default defineConfig({
   dts: true,
   exports: true,
   splitting: false,
-  minify: true,
   sourcemap: 'external',
   target: 'node',
   clean: true
