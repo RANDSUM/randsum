@@ -32,13 +32,19 @@ Zero-dependency package providing dice notation parsing, validation, and the sha
 
 ### Modifier Schemas
 
-19 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, wildDie, unique, multiply, plus, minus, sort, integerDivide, modulo, countSuccesses, countFailures, multiplyTotal). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry.
+20 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, explodeSequence, wildDie, unique, multiply, plus, minus, sort, integerDivide, modulo, countSuccesses, countFailures, multiplyTotal). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry.
+
+The `explodeSequence` schema handles three notation forms:
+
+- `!s{4,6,8}` — explicit die size sequence
+- `!i` — inflation (explode UP through TTRPG standard set: 4, 6, 8, 10, 12, 20, 100)
+- `!r` — reduction (explode DOWN through TTRPG standard set)
 
 ### Tokenization
 
 - `tokenize(notation: string): readonly Token[]` — Parse notation into typed tokens for UI display. Returns tokens with `text`, `type`, `start`, `end`, `description` for each segment.
 - `Token` — Interface: `{ text, type: TokenType, start, end, description }`
-- `TokenType` — Union of all token types: `'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest' | 'explode' | 'compound' | 'penetrate' | 'wildDie' | 'reroll' | 'cap' | 'replace' | 'unique' | 'countSuccesses' | 'countFailures' | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal' | 'integerDivide' | 'modulo' | 'sort' | 'label' | 'unknown'`
+- `TokenType` — Union of all token types: `'core' | 'dropLowest' | 'dropHighest' | 'keepHighest' | 'keepLowest' | 'explode' | 'compound' | 'penetrate' | 'explodeSequence' | 'wildDie' | 'reroll' | 'cap' | 'replace' | 'unique' | 'countSuccesses' | 'countFailures' | 'dropCondition' | 'plus' | 'minus' | 'multiply' | 'multiplyTotal' | 'integerDivide' | 'modulo' | 'sort' | 'label' | 'unknown'`
 
 ### Types
 

@@ -24,11 +24,6 @@ roll({ sides: 6, quantity: 2, modifiers: { plus: 3 } }) // same
 roll("1d20", "2d6") // attack + damage, combined total
 roll("d%") // percentile (1d100)
 roll("4dF") // Fate Core roll
-roll("5d6W") // D6 System wild die
-roll("g6") // geometric die (roll until 1)
-roll("3DD6") // draw 3 unique from d6 pool
-roll("4d6Lx6") // repeat: 6 ability scores
-roll("2d6+3[fire]") // annotation/label
 ```
 
 ### `validateNotation(notation: string): ValidationResult`
@@ -51,44 +46,45 @@ Key patterns:
 - `NdSH` - Drop highest
 - `NdSR{conditions}` - Reroll conditions
 - `NdS!` - Exploding dice
+- `NdS!s{4,6,8}` - Explode through die size sequence
+- `NdS!i` / `NdS!r` - Inflation/reduction explode (standard TTRPG set)
 - `NdSU` - Unique results
 - `NdSC{conditions}` - Cap values
-- `NdSW` - Wild die (D6 System)
-- `NdSF{N}` - Count failures <= N
-- `NdS//N` - Integer divide total
-- `NdS%N` - Total modulo N
-- `NdS[text]` - Annotation/label
-- `NdSxN` - Repeat notation N times
-- `gN` - Geometric die (roll until 1)
-- `DDN` - Draw die (no replacement)
+- `NdSro{conditions}` - Reroll once (sugar for `R{...}1`)
+- `NdSKM` / `NdSKMN` - Keep middle (sugar for drop lowest + highest)
+- `NdSms{N}` - Margin of success (sugar for `-N`)
+- `d{2,3,5,7}` - Custom dice faces
+- `d{fire,ice,lightning}` - String-faced dice
+- `zN` - Zero-bias die (0 to N-1)
 - `d%` - Percentile die (1d100)
 - `dF` / `dF.1` / `dF.2` - Fate/Fudge dice
 
 ## Modifier System
 
-19 modifiers applied in priority order (lower number = earlier execution):
+Modifiers are applied in priority order (lower number = earlier execution):
 
-| Priority | Modifier       | Description                        |
-| -------- | -------------- | ---------------------------------- |
-| 10       | cap            | Limit roll values to a range       |
-| 20       | drop           | Remove dice from pool              |
-| 21       | keep           | Keep dice in pool                  |
-| 30       | replace        | Replace specific values            |
-| 40       | reroll         | Reroll dice matching conditions    |
-| 50       | explode        | Roll additional dice on max        |
-| 51       | compound       | Add explosion to existing die      |
-| 52       | penetrate      | Add explosion minus 1 to die       |
-| 55       | wildDie        | D6 System wild die behavior        |
-| 60       | unique         | Ensure no duplicate values         |
-| 85       | multiply       | Multiply dice sum (pre-arithmetic) |
-| 90       | plus           | Add to total                       |
-| 91       | minus          | Subtract from total                |
-| 92       | sort           | Sort results for display           |
-| 93       | integerDivide  | Integer divide total               |
-| 94       | modulo         | Total modulo N                     |
-| 95       | countSuccesses | Count dice meeting threshold       |
-| 96       | countFailures  | Count dice at or below threshold   |
-| 100      | multiplyTotal  | Multiply entire final total        |
+| Priority | Modifier        | Description                        |
+| -------- | --------------- | ---------------------------------- |
+| 10       | cap             | Limit roll values to a range       |
+| 20       | drop            | Remove dice from pool              |
+| 21       | keep            | Keep dice in pool                  |
+| 30       | replace         | Replace specific values            |
+| 40       | reroll          | Reroll dice matching conditions    |
+| 50       | explode         | Roll additional dice on max        |
+| 51       | compound        | Add explosion to existing die      |
+| 52       | penetrate       | Add explosion minus 1 to die       |
+| 53       | explodeSequence | Explode through die size sequence  |
+| 55       | wildDie         | D6 System wild die behavior        |
+| 60       | unique          | Ensure no duplicate values         |
+| 85       | multiply        | Multiply dice sum (pre-arithmetic) |
+| 90       | plus            | Add to total                       |
+| 91       | minus           | Subtract from total                |
+| 92       | sort            | Sort results for display           |
+| 93       | integerDivide   | Integer divide total               |
+| 94       | modulo          | Total modulo N                     |
+| 95       | countSuccesses  | Count dice meeting threshold       |
+| 96       | countFailures   | Count dice at or below threshold   |
+| 100      | multiplyTotal   | Multiply entire final total        |
 
 Modifier options are defined in `ModifierOptions` type. See `RANDSUM_DICE_NOTATION.md` for full syntax reference.
 
