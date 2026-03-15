@@ -2,7 +2,7 @@
 
 ## Overview
 
-Internal package providing UI display utilities for the RANDSUM ecosystem. Consumed by `@randsum/component-library` (React browser code) and the RANDSUM CLI. Not a general-purpose library — it exists to share display logic across RANDSUM UI surfaces without duplicating it.
+Published npm package (`@randsum/display-utils`) providing UI display utilities for the RANDSUM ecosystem. Consumed by `@randsum/component-library` (React browser code) and the RANDSUM CLI. Not a general-purpose library — it exists to share display logic across RANDSUM UI surfaces without duplicating it.
 
 Built targeting the browser environment (`bunup` target: `browser`). Externals `@randsum/roller` — consumers must have it installed.
 

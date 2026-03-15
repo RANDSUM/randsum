@@ -3,7 +3,6 @@
   "description": "Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UIs",
   "version": "3.5.0",
   "type": "module",
-  "private": true,
   "sideEffects": false,
   "files": [
     "dist",

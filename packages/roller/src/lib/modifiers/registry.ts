@@ -15,8 +15,6 @@ const modifierMap: ReadonlyMap<keyof ModifierOptions, ModifierDefinition> = new 
   ALL_MODIFIERS.map(m => [m.name, m])
 )
 
-const COMBINED_PATTERN = new RegExp(ALL_MODIFIERS.map(m => m.pattern.source).join('|'), 'g')
-
 /**
  * Get a modifier definition by name.
  */
@@ -47,21 +45,6 @@ export function getAllModifiers(): ModifierDefinition[] {
  */
 export function getModifierOrder(): (keyof ModifierOptions)[] {
   return ALL_MODIFIERS.map(m => m.name)
-}
-
-/**
- * Build combined regex pattern from all modifiers.
- * Patterns are joined in priority order.
- */
-export function buildCombinedPattern(): RegExp {
-  return new RegExp(ALL_MODIFIERS.map(m => m.pattern.source).join('|'), 'g')
-}
-
-/**
- * Get the combined modifier pattern.
- */
-export function getCachedCombinedPattern(): RegExp {
-  return COMBINED_PATTERN
 }
 
 /**
