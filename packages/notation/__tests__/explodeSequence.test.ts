@@ -200,3 +200,17 @@ describe('modifiersToDescription', () => {
     expect(desc).toEqual(['Explode through sequence: d4, d6, d8'])
   })
 })
+
+describe('explodeSequence round-trip', () => {
+  test('modifiersToNotation round-trips through notationToOptions', () => {
+    const notationSuffix = modifiersToNotation({ explodeSequence: [4, 6, 8] })
+    expect(notationSuffix).toBeDefined()
+    expect(notationSuffix.length).toBeGreaterThan(0)
+
+    const fullNotation = `2d4${notationSuffix}` as DiceNotation
+    const parsed = notationToOptions(fullNotation)
+
+    expect(parsed[0]?.modifiers).toBeDefined()
+    expect(parsed[0]?.modifiers?.explodeSequence).toEqual([4, 6, 8])
+  })
+})

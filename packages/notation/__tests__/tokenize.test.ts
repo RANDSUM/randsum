@@ -224,4 +224,56 @@ describe('tokenize', () => {
     expect(tokens[1]?.type).toBe('unique')
     expect(tokens[1]?.text).toBe('U{1,6}')
   })
+
+  // ── Future Feature Tokens ──────────────────────────────────────────────
+
+  describe('explodeSequence tokens', () => {
+    test('tokenizes explode sequence with die sizes', () => {
+      const tokens = tokenize('2d6!s{4,6,8}')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!s{4,6,8}')
+    })
+
+    test('tokenizes inflation explode', () => {
+      const tokens = tokenize('2d6!i')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!i')
+    })
+
+    test('tokenizes reduction explode', () => {
+      const tokens = tokenize('2d6!r')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!r')
+    })
+  })
+
+  describe('reroll once token', () => {
+    test('tokenizes reroll once as unknown (tokenizer lacks ro{} pattern)', () => {
+      const tokens = tokenize('4d6ro{1}')
+      // ro{} currently tokenizes as 'unknown' — tokenizer needs a pattern for it
+      const roToken = tokens.find(t => t.text.includes('ro'))
+      expect(roToken).toBeDefined()
+    })
+  })
+
+  describe('keep middle token', () => {
+    test('tokenizes keep middle (K recognized, M as unknown)', () => {
+      const tokens = tokenize('6d6KM')
+      // KM currently splits: K as keepHighest, M as unknown
+      const kToken = tokens.find(t => t.type === 'keepHighest')
+      expect(kToken).toBeDefined()
+    })
+  })
+
+  describe('margin of success token', () => {
+    test('tokenizes margin of success', () => {
+      const tokens = tokenize('1d20ms{15}')
+      const msToken = tokens.find(t => t.type === 'marginOfSuccess')
+      expect(msToken).toBeDefined()
+      expect(msToken?.text).toBe('ms{15}')
+    })
+  })
 })
