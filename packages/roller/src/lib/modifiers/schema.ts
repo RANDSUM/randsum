@@ -21,6 +21,8 @@ export interface ModifierContext {
   rollOne?: () => number
   /** Roll parameters (sides, quantity) */
   parameters?: RequiredNumericRollParameters
+  /** Raw random function for modifiers that need to roll dice of different sizes */
+  randomFn?: () => number
 }
 
 /**
@@ -200,6 +202,7 @@ export interface ModifierOptionTypes {
   explode: boolean | number
   compound: boolean | number
   penetrate: boolean | number
+  explodeSequence: number[]
   countSuccesses: SuccessCountOptions
   countFailures: FailureCountOptions
   multiply: number

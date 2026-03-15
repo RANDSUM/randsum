@@ -11,6 +11,7 @@ import { minusModifier } from './minus'
 import { moduloModifier } from './modulo'
 import { multiplyModifier } from './multiply'
 import { multiplyTotalModifier } from './multiplyTotal'
+import { explodeSequenceModifier } from './explodeSequence'
 import { penetrateModifier } from './penetrate'
 import { plusModifier } from './plus'
 import { replaceModifier } from './replace'
@@ -22,6 +23,7 @@ import { wildDieModifier } from './wildDie'
 export { capModifier }
 export { compoundModifier }
 export { countFailuresModifier }
+export { explodeSequenceModifier }
 export { countSuccessesModifier }
 export { dropModifier }
 export { explodeModifier }
@@ -52,6 +54,7 @@ export const ALL_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   explodeModifier as ModifierDefinition,
   compoundModifier as ModifierDefinition,
   penetrateModifier as ModifierDefinition,
+  explodeSequenceModifier as ModifierDefinition,
   uniqueModifier as ModifierDefinition,
   wildDieModifier as ModifierDefinition,
   multiplyModifier as ModifierDefinition,

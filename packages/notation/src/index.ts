@@ -25,6 +25,7 @@ export {
   explodeSchema,
   compoundSchema,
   penetrateSchema,
+  explodeSequenceSchema,
   uniqueSchema,
   countSuccessesSchema,
   countFailuresSchema,
@@ -37,6 +38,7 @@ export {
   sortSchema,
   wildDieSchema
 } from './definitions'
+export { TTRPG_STANDARD_DIE_SET } from './constants'
 export { tokenize } from './tokenize'
 export type { Token, TokenType } from './tokenize'
 export type { NotationSchema } from './schema'

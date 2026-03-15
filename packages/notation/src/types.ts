@@ -56,6 +56,7 @@ export interface FailureCountOptions {
 
 export type ModifierConfig =
   | number
+  | number[]
   | boolean
   | 'asc'
   | 'desc'
@@ -108,6 +109,8 @@ export interface ModifierOptions {
   wildDie?: boolean
   /** Multiply final total (after all other modifiers) */
   multiplyTotal?: number
+  /** Explode through a sequence of die sizes */
+  explodeSequence?: number[]
 }
 
 /**

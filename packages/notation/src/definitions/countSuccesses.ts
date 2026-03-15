@@ -1,6 +1,6 @@
 import type { SuccessCountOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-const countSuccessesPattern = /[Ss]\{(\d+)(?:,(\d+))?\}/
+const countSuccessesPattern = /(?<!!)[Ss]\{(\d+)(?:,(\d+))?\}/
 
 export const countSuccessesSchema: NotationSchema<SuccessCountOptions> =
   defineNotationSchema<SuccessCountOptions>({

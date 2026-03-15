@@ -120,7 +120,8 @@ export class RollPipeline<T = string> {
     const rollOne = (): number => coreRandom(sides, this.rng) + 1
     const ctx: ModifierContext = {
       rollOne,
-      parameters: { sides, quantity }
+      parameters: { sides, quantity },
+      randomFn: this.rng
     }
 
     this.modifierResult = applyAllModifiers(modifiers, this.initialRolls, ctx)

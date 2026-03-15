@@ -11,6 +11,7 @@ export type TokenType =
   | 'explode' // !
   | 'compound' // !!
   | 'penetrate' // !p
+  | 'explodeSequence' // !s{...}, !i, !r
   | 'cap' // C{...}
   | 'replace' // V{...}
   | 'unique' // U, U{...}
@@ -69,9 +70,12 @@ const MODIFIERS: readonly ModifierEntry[] = [
   // ** before * to avoid partial match
   { type: 'multiplyTotal', pattern: /^\*\*\d+/ },
   { type: 'multiply', pattern: /^\*\d+/ },
-  // !! and !p before ! to avoid partial match
+  // !! and !p and !s{} and !i and !r before ! to avoid partial match
   { type: 'compound', pattern: /^!!\d*/ },
   { type: 'penetrate', pattern: /^!p\d*/i },
+  { type: 'explodeSequence', pattern: /^![sS]\{[\d,]+\}/ },
+  { type: 'explodeSequence', pattern: /^![iI]/ },
+  { type: 'explodeSequence', pattern: /^![rR]/ },
   { type: 'explode', pattern: /^!/ },
   // Drop variants
   { type: 'dropHighest', pattern: /^[Hh]\d*/ },

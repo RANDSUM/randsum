@@ -787,9 +787,9 @@ describe('explodeSchema', () => {
       expect(explodeSchema.parse('!!')).toEqual({})
     })
 
-    test('matches !p (parse uses simpler pattern than schema pattern)', () => {
-      // The parse function uses (?<!!)!(?!!) which matches the ! in !p
-      expect(explodeSchema.parse('!p')).toEqual({ explode: true })
+    test('does not match !p (penetrate)', () => {
+      // The pattern excludes !p since p is reserved for penetrate
+      expect(explodeSchema.parse('!p')).toEqual({})
     })
 
     test('returns empty for no match', () => {

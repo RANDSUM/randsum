@@ -6,6 +6,7 @@ import {
   countSuccessesSchema,
   dropSchema,
   explodeSchema,
+  explodeSequenceSchema,
   integerDivideSchema,
   keepSchema,
   minusSchema,
@@ -59,6 +60,10 @@ export function modifiersToNotation(modifiers: ModifierOptions | undefined): str
   }
   if (modifiers.penetrate !== undefined) {
     const n = penetrateSchema.toNotation(modifiers.penetrate)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.explodeSequence !== undefined) {
+    const n = explodeSequenceSchema.toNotation(modifiers.explodeSequence)
     if (n !== undefined) parts.push(n)
   }
   if (modifiers.unique !== undefined) {
@@ -127,6 +132,8 @@ export function modifiersToDescription(modifiers: ModifierOptions | undefined): 
     parts.push(...compoundSchema.toDescription(modifiers.compound))
   if (modifiers.penetrate !== undefined)
     parts.push(...penetrateSchema.toDescription(modifiers.penetrate))
+  if (modifiers.explodeSequence !== undefined)
+    parts.push(...explodeSequenceSchema.toDescription(modifiers.explodeSequence))
   if (modifiers.unique !== undefined) parts.push(...uniqueSchema.toDescription(modifiers.unique))
   if (modifiers.multiply !== undefined)
     parts.push(...multiplySchema.toDescription(modifiers.multiply))
