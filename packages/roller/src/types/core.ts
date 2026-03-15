@@ -1,7 +1,7 @@
-import type { DiceNotation, RollOptions } from '@randsum/notation/types'
+import type { DiceNotation, RollOptions } from '@randsum/notation'
 
 // Re-export notation types for backward compatibility
-export type { DiceNotation, RollOptions } from '@randsum/notation/types'
+export type { DiceNotation, RollOptions } from '@randsum/notation'
 
 /**
  * RollOptions with required numeric fields.

@@ -3,7 +3,6 @@
   "version": "3.5.0",
   "description": "TTRPG game packages for the RANDSUM dice ecosystem",
   "private": false,
-  "sideEffects": false,
   "author": {
     "name": "Alex Jarvis",
     "url": "https://github.com/alxjrvs"
@@ -143,7 +142,7 @@
   },
   "scripts": {
     "prepublishOnly": "bun run build",
-    "build": "bun run build.ts",
+    "build": "bunup",
     "gen": "bun run codegen.ts",
     "gen:check": "bun run codegen.ts --check",
     "test": "bun run build && bun test",

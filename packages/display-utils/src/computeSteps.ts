@@ -1,4 +1,4 @@
-import type { RollRecord } from '@randsum/roller/types'
+import type { RollRecord } from '@randsum/roller'
 
 export type TooltipStep =
   | {

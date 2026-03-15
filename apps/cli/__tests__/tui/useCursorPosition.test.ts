@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { tokenCursorIndex } from '../../src/tui/hooks/useCursorPosition'
-import { tokenize } from '@randsum/notation/tokenize'
+import { tokenize } from '@randsum/notation'
 
 describe('tokenCursorIndex', () => {
   test('returns -1 for empty tokens', () => {

@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { multiplySchema } from '@randsum/notation/schemas'
+import { multiplySchema } from '@randsum/notation'
 import { multiplyBehavior } from '../behaviors/multiply'
 
 export const multiplyModifier: ModifierDefinition<number> = {

@@ -1,6 +1,6 @@
 import { roll } from '@randsum/roller/roll'
 import { validateFinite, validateRange } from '@randsum/roller/validate'
-import type { RollOptions, RollRecord } from '@randsum/roller/types'
+import type { RollOptions, RollRecord } from '@randsum/roller'
 
 import { compareValues, evaluateNormalizedWhen } from './conditionEvaluator'
 import { SchemaError } from './errors'

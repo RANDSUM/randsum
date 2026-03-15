@@ -1,7 +1,12 @@
+import { readdirSync } from 'node:fs'
 import { defineConfig } from 'bunup'
 
+const generatedEntries = readdirSync('src')
+  .filter(f => f.endsWith('.generated.ts'))
+  .map(f => `src/${f}`)
+
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: [...generatedEntries, 'src/index.ts', 'src/schema.ts'],
   format: ['esm', 'cjs'],
   dts: true,
   exports: true,
@@ -9,6 +14,6 @@ export default defineConfig({
   splitting: false,
   minify: true,
   sourcemap: 'external',
-  target: 'browser',
+  target: 'node',
   clean: true
 })

@@ -106,7 +106,7 @@ async function buildCodeString(
     ...(validationImports.length > 0
       ? [`import { ${validationImports.join(', ')} } from '@randsum/roller/validate'`]
       : []),
-    `import type { RollRecord } from '@randsum/roller/types'`,
+    `import type { RollRecord } from '@randsum/roller'`,
     `import type { GameRollResult } from './types'`,
     `import { SchemaError } from './lib/errors'`,
     `import type { SchemaErrorCode } from './lib/errors'`

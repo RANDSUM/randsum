@@ -30,4 +30,4 @@ export type {
   InvalidValidationResult,
   ValidationErrorInfo,
   ValidationResult
-} from '@randsum/notation/types'
+} from '@randsum/notation'

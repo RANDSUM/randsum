@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { penetrateSchema } from '@randsum/notation/schemas'
+import { penetrateSchema } from '@randsum/notation'
 import { penetrateBehavior } from '../behaviors/penetrate'
 
 export const penetrateModifier: ModifierDefinition<boolean | number> = {

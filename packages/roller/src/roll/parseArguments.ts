@@ -1,4 +1,4 @@
-import { isDiceNotation, notationToOptions } from '@randsum/notation/parse'
+import { isDiceNotation, notationToOptions } from '@randsum/notation'
 import { optionsToDescription, optionsToNotation, optionsToSidesFaces } from '../lib/transformers'
 import { validateRollOptions } from '../lib/optionsValidation'
 import { ValidationError } from '../errors'
