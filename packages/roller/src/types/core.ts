@@ -68,6 +68,17 @@ export type ZeroBiasNotation = `${number | ''}${'z' | 'Z'}${number}`
 export type CustomFacesNotation = `${'d' | 'D'}{${string}}` | `${number}${'d' | 'D'}{${string}}`
 
 /**
+ * Draw die notation — sampling without replacement.
+ * `DD6` draws from a d6 pool (faces 1-6, no repeats until exhausted).
+ * Supports quantity prefix: `3DD6` draws 3 unique values.
+ *
+ * Case-insensitive: DD, dd, Dd, dD all work.
+ */
+export type DrawDieNotation =
+  | `${'dd' | 'DD' | 'Dd' | 'dD'}${number}`
+  | `${number}${'dd' | 'DD' | 'Dd' | 'dD'}${number}`
+
+/**
  * Valid input types for the roll() function.
  *
  * @template T - Type for custom dice faces
@@ -81,6 +92,7 @@ export type CustomFacesNotation = `${'d' | 'D'}{${string}}` | `${number}${'d' | 
  * roll("4dF")           // four Fate/Fudge dice
  * roll("z6")            // zero-bias d6 (0-5)
  * roll("d{2,3,5,7}")    // custom faces
+ * roll("DD6")           // draw die (no replacement)
  * ```
  */
 export type RollArgument<T = string> =
@@ -90,6 +102,7 @@ export type RollArgument<T = string> =
   | PercentileDie
   | ZeroBiasNotation
   | CustomFacesNotation
+  | DrawDieNotation
   | number
 
 /**

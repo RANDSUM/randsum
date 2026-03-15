@@ -41,9 +41,48 @@ export class RollPipeline<T = string> {
    * Generate the initial dice rolls before any modifiers are applied.
    */
   public generateInitialRolls(): this {
-    const { sides, quantity } = this.params
-    this.initialRolls = coreSpreadRolls(quantity, sides, this.rng)
+    const { sides, quantity, draw } = this.params
+    this.initialRolls =
+      draw === true
+        ? this.drawWithoutReplacement(quantity, sides)
+        : coreSpreadRolls(quantity, sides, this.rng)
     return this
+  }
+
+  /**
+   * Draw values without replacement from a pool of [1..sides].
+   * If quantity exceeds sides, the pool reshuffles after exhaustion.
+   */
+  private drawWithoutReplacement(quantity: number, sides: number): number[] {
+    const result: number[] = []
+    const fullBatches = Math.floor(quantity / sides)
+    const remainder = quantity % sides
+
+    for (const _batch of Array.from({ length: fullBatches })) {
+      result.push(...this.shuffledPool(sides))
+    }
+
+    if (remainder > 0) {
+      result.push(...this.shuffledPool(sides).slice(0, remainder))
+    }
+
+    return result
+  }
+
+  /**
+   * Create a shuffled pool of [1..sides] using Fisher-Yates.
+   */
+  private shuffledPool(sides: number): number[] {
+    const pool = Array.from({ length: sides }, (_, i) => i + 1)
+
+    for (const i of Array.from({ length: sides - 1 }, (_, k) => sides - 1 - k)) {
+      const j = Math.floor(this.rng() * (i + 1))
+      const temp = pool[i]!
+      pool[i] = pool[j]!
+      pool[j] = temp
+    }
+
+    return pool
   }
 
   /**

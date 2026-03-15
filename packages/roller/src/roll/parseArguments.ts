@@ -5,6 +5,7 @@ import { ValidationError } from '../errors'
 import type { DiceNotation, ReplaceOptions } from '../types'
 import type { RollArgument, RollOptions, RollParams } from '../types'
 
+const DRAW_DIE_PATTERN = /^(\d*)[Dd][Dd](\d+)$/
 const FATE_DIE_PATTERN = /^(\d*)[Dd][Ff](?:\.([12]))?$/
 const ZERO_BIAS_PATTERN = /^(\d*)[Zz](\d+)$/
 const CUSTOM_FACES_PATTERN = /^(\d*)[Dd]\{([^}]+)\}$/
@@ -117,6 +118,30 @@ function parseCustomFacesDieParams<T>(arg: string, position: number): RollParams
   ]
 }
 
+function parseDrawDieParams<T>(arg: string, position: number): RollParams<T>[] | null {
+  const match = DRAW_DIE_PATTERN.exec(arg)
+  if (!match) return null
+
+  const quantity = match[1] ? Number(match[1]) : 1
+  const sides = Number(match[2])
+  const notation = `${quantity > 1 ? quantity : ''}DD${sides}` as DiceNotation
+  const description = [`Draw ${quantity} from d${sides}`]
+
+  return [
+    {
+      quantity,
+      sides,
+      draw: true,
+      arithmetic: 'add',
+      modifiers: {},
+      key: `Roll ${position}`,
+      argument: arg as DiceNotation,
+      notation,
+      description
+    } as RollParams<T>
+  ]
+}
+
 function isPercentileDie(argument: unknown): argument is 'd%' | 'D%' {
   return argument === 'd%' || argument === 'D%'
 }
@@ -157,6 +182,9 @@ function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
  */
 export function parseArguments<T>(argument: RollArgument<T>, position: number): RollParams<T>[] {
   if (typeof argument === 'string') {
+    const drawParams = parseDrawDieParams<T>(argument, position)
+    if (drawParams) return drawParams
+
     const fateParams = parseFateDieParams(argument, position)
     if (fateParams) return fateParams as RollParams<T>[]
 

@@ -13,6 +13,8 @@ export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 's
   sides: number
   /** Custom face values if using non-numeric dice */
   faces?: T[]
+  /** Draw without replacement (DD notation) */
+  draw?: true
   /** Original input argument */
   argument: RollArgument<T>
   /** Human-readable description of the roll */

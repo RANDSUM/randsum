@@ -1,6 +1,7 @@
 export type {
   CustomFacesNotation,
   DiceNotation,
+  DrawDieNotation,
   FateDieNotation,
   PercentileDie,
   RandomFn,
