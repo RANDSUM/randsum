@@ -1,7 +1,8 @@
 import { isDiceNotation } from './isDiceNotation'
 import { notationToOptions } from './parse/notationToOptions'
 import type { InvalidValidationResult, ValidValidationResult, ValidationResult } from './types'
-import { optionsToDescription, optionsToNotation } from './transform'
+import { optionsToDescription } from './transformers/optionsToDescription'
+import { optionsToNotation } from './transformers/optionsToNotation'
 
 /**
  * Validates dice notation and returns parsed information.

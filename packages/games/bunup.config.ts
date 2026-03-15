@@ -7,7 +7,7 @@ const generatedEntries = readdirSync('src')
 
 export default defineConfig({
   entry: [...generatedEntries, 'src/index.ts', 'src/schema.ts'],
-  format: ['esm', 'cjs'],
+  format: ['esm'],
   dts: true,
   exports: true,
   external: ['@randsum/roller'],

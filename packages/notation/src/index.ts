@@ -15,7 +15,7 @@ export {
   formatComparisonDescription,
   formatComparisonNotation
 } from './comparison'
-export { defineNotationSchema } from './schemas'
+export { defineNotationSchema } from './schema'
 export {
   capSchema,
   dropSchema,
