@@ -10,19 +10,7 @@ import { lookupByRange } from './lib/lookupByRange'
 
 const REMOTE_DATA = [
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "When a player declares an action within the game that has an uncertain, risky, or potentially inter- esting outcome, they roll a 20-sided die. This is referred to as a d20, or 'the die'. Salvage Union only uses this one die, and it is all you need to resolve situations in the game."
-      }
-    ],
-    id: 'fa9860bb-83c2-4d8c-b100-40708948257d',
-    indexable: true,
-    blackMarket: false,
     name: 'Core Mechanic',
-    source: 'Salvage Union Workshop Manual',
-    page: 2,
     table: {
       '1': {
         label: 'Cascade Failure',
@@ -50,23 +38,10 @@ const REMOTE_DATA = [
         value:
           "You have failed at what you were attempting to do. You face a Setback of the Mediator's choice. When attacking, you miss the target."
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'When the group finds themselves in a combat or similar tense situation, the Mediator can decide which group in the action scene acts first.  If in doubt, one of the Pilots in the group can roll the die. This roll can be Pushed as normal. The Pilot can be chosen by the Mediator, or is whoever in the group initiated the altercation. Then check the table below to see who acts first and also determine the Group Initiative Order.'
-      }
-    ],
-    id: 'cdbc20d9-ff63-4272-805b-f148f0c01752',
-    indexable: true,
-    blackMarket: false,
     name: 'Group Initiative',
-    source: 'Salvage Union Workshop Manual',
-    page: 330,
     table: {
       '1': {
         label: 'Ambush',
@@ -94,23 +69,10 @@ const REMOTE_DATA = [
         value:
           'One NPC chosen by the Mediator acts first. Play then passes to the player group and one Pilot chosen by the players acts.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'This table determines what happens to your Pilot when they are reduced to 0 Hit Points or suffer a severe injury during play.'
-      }
-    ],
-    id: 'dcd888a2-dc2d-4f45-94eb-ae6138761931',
-    indexable: true,
-    blackMarket: false,
     name: 'Critical Injury',
-    source: 'Salvage Union Workshop Manual',
-    page: 323,
     table: {
       '1': { label: 'Fatal Injury', value: 'Your Pilot suffers a fatal injury and dies.' },
       '20': {
@@ -133,23 +95,10 @@ const REMOTE_DATA = [
         value:
           'You suffer a Major Injury such as permanent scarring, broken ribs, or internal injuries. Your Max HP is reduced by 2 until healed in a Tech 5-6 Med Bay. In addition, you are Unconscious. Apply the result of 11-19.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Roll on this table when your Mech reaches 0 Structure Points. In addition, you can roll on this table to see what happens if a Mech suffers significant critical damage within a narrative situation in game.'
-      }
-    ],
-    id: 'aa54dcd4-efd0-4cbb-83dc-4cf6f0411066',
-    indexable: true,
-    blackMarket: false,
     name: 'Critical Damage',
-    source: 'Salvage Union Workshop Manual',
-    page: 338,
     table: {
       '1': {
         label: 'Catastrophic Damage',
@@ -177,16 +126,10 @@ const REMOTE_DATA = [
         value:
           'A System mounted on your Mech is destroyed. This is chosen by the Mediator or at random. Your Mech Chassis is damaged and inoperable until repaired. Your Pilot is unharmed.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '0050af76-7d88-43e7-b098-1a6af7656353',
-    indexable: true,
-    blackMarket: false,
     name: 'Reactor Overload',
-    source: 'Salvage Union Workshop Manual',
-    page: 235,
     table: {
       '1': {
         label: 'Reactor Overload',
@@ -212,16 +155,10 @@ const REMOTE_DATA = [
         label: 'System Overload',
         value: "One of your Mech's Systems chosen at random or by the Mediator is destroyed."
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'abca780b-da93-47b0-91e6-290da910e2fd',
-    indexable: true,
-    blackMarket: false,
     name: 'Area Salvage',
-    source: 'Salvage Union Workshop Manual',
-    page: 248,
     table: {
       '1': { label: 'Nothing', value: 'You find nothing in this area.' },
       '20': {
@@ -236,16 +173,10 @@ const REMOTE_DATA = [
         label: 'Better than Nothing',
         value: 'You find 1 Scrap of the Tech Level of the area.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'acdc85ee-056c-4edc-95be-e25f0ab9b319',
-    indexable: true,
-    blackMarket: false,
     name: 'Mech Salvage',
-    source: 'Salvage Union Workshop Manual',
-    page: 2,
     table: {
       '1': {
         label: 'Ashes and Dust',
@@ -273,23 +204,10 @@ const REMOTE_DATA = [
         value:
           'You salvage half of the Salvage Value of the Mech Chassis in Scrap of its Tech Level, to a minimum of 1. Everything else is considered destroyed.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Roll a d20 on this table when your Pilots meet a group of NPCs to determine how they react to them.  This sets the initial Reaction, and the rest of the scene can be roleplayed out from that point.'
-      }
-    ],
-    id: '2bdb98de-31a2-4eb1-b8f5-cf42f44ff618',
-    indexable: true,
-    blackMarket: false,
     name: 'Reaction Roll',
-    source: 'Salvage Union Workshop Manual',
-    page: 268,
     table: {
       '1': {
         label: 'Actively Hostile',
@@ -317,23 +235,10 @@ const REMOTE_DATA = [
         value:
           'The NPCs are actively hostile to the group. They will defend their area, make motions to attack, gesture and threaten, and be unwilling to help in any way.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'When the Pilots encounter a meteor, roll on the below table to see the situation on their arrival.'
-      }
-    ],
-    id: '8803b3dd-6b7b-49a3-b95c-a77082867b12',
-    indexable: true,
-    blackMarket: false,
     name: 'Meteor Encounter',
-    source: 'We Were Here First!',
-    page: 9,
     table: {
       '1': { value: 'The Chimerid Meteor has burned up in orbit leaving nothing to salvage.' },
       '20': {
@@ -350,39 +255,10 @@ const REMOTE_DATA = [
         value:
           'A random faction has arrived before the Pilots and has finished salvaging the Chimerid Meteor.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Harvesting from Bio-Salvage spots: When harvesting Chimerium from an area marked as a Bio-Salvage spot, standard Area Salvaging rules apply. For each Bio-Salvage harvested, a d20 is rolled. A roll of 20 means that Bio-Salvage counts as 1 Chimerium.'
-      },
-      { type: 'paragraph', value: 'Cargo Slot: 1 Chimerium occupies 1 Cargo Slot.' },
-      {
-        type: 'paragraph',
-        value:
-          'Trading: Chimerium can be traded as Tech 6 Scrap on the Union Crawler. Some factions may offer double this value or more.'
-      },
-      {
-        type: 'paragraph',
-        value:
-          'Harvesting from a Chimerid Meteor (Actions): Harvesting Chimerium from a Chimerid Meteor requires a Mech to spend a Short Action and a Pilot to spend a Long Action.'
-      },
-      {
-        type: 'paragraph',
-        value:
-          'Harvesting from a Chimerid Meteor (Costs & Traits): It costs 1 EP (Energy Point) or 1 AP (Action Point) to harvest from a Chimerid Meteor. The Mech or Pilot must possess an item or ability with the "Salvaging Trait." Each Chimerium Meteor can only be harvested once.'
-      }
-    ],
-    id: '5dae32bc-8e38-4c3d-8c6c-dae2ed6939f2',
-    indexable: true,
-    blackMarket: false,
     name: 'Harvesting Chimerium',
-    source: 'We Were Here First!',
-    page: 9,
     table: {
       '1': { value: 'There is no Chimerium to harvest.' },
       '20': { value: 'You harvest 5 Chimerium.' },
@@ -390,34 +266,10 @@ const REMOTE_DATA = [
       '11-19': { value: 'You harvest 3 Chimerium.' },
       '6-10': { value: 'You harvest 2 Chimerium.' },
       '2-5': { value: 'You harvest 1 Chimerium.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Chimerium is allegedly safe in short stints, but long-term exposure can cause an array of mutations.'
-      },
-      {
-        type: 'paragraph',
-        value:
-          'If a Pilot is exposed to high levels of Chimerium, they must roll on the table below. They must do this each time they are exposed.'
-      },
-      { type: 'paragraph', value: 'There is no known cure for Chimerium Mutation.' },
-      {
-        type: 'paragraph',
-        value:
-          'Sakura is developing a cure for Chimerium Mutation, but requires Chimerium Samples to research it. (See p. 42)'
-      }
-    ],
-    id: '9b96bc47-106b-4cb5-8e9d-e42299764c96',
-    indexable: true,
-    blackMarket: false,
     name: 'Chimerium Exposure',
-    source: 'We Were Here First!',
-    page: 10,
     table: {
       '1': {
         value:
@@ -437,16 +289,10 @@ const REMOTE_DATA = [
         value:
           'You are feeling bad. Your scalp is peeling and you are spitting blood and teeth. Roll on the Chimerium Mutation Table. This mutation will develop within a week or during the next Downtime.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'baba591d-eb31-4fcb-bd80-d6d6ed9193af',
-    indexable: true,
-    blackMarket: false,
     name: 'Chimerium Mutation',
-    source: 'We Were Here First!',
-    page: 11,
     table: {
       '1': {
         value:
@@ -518,23 +364,10 @@ const REMOTE_DATA = [
           'Your skin peels like a snake and new irradiated flesh grows on you. You no longer suffer negative effects from Radiation.'
       },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'When an NPC takes an action in the game, the Mediator rolls on their own table below. This table is similar to the player table, but reframes many of the options.'
-      }
-    ],
-    id: '3b30af52-8e82-4b55-bda8-e46e64bf141f',
-    indexable: true,
-    blackMarket: false,
     name: 'NPC Action',
-    source: 'Salvage Union Workshop Manual',
-    page: 336,
     table: {
       '1': {
         label: 'Cascade Failure',
@@ -562,23 +395,10 @@ const REMOTE_DATA = [
         value:
           'The NPC has failed at their action. The players choose an appropriate Setback for failure. In combat, a weapon attack misses.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "These rules cover whether or not NPCs in the game choose to retreat. The Pilots never roll Morale, and it is always the player's choice whether their Pilots retreat or not. NPCs include both those the Pilots are actively fighting as well as any allied NPCs they may have with them.  • When an NPC Mech is reduced to 50% or less of its Structure Points, make a Morale check to determine if it stays in the fight.  • When a Creature is reduced to 50% or less of its Hit Points, make a Morale check to determine if it stays in the fight. You can also apply this to an entire group rather than individual creatures or Mechs.  • When a group of NPCs suffers 50% or more overall deaths or the destruction of 50% or more Mechs, make a Morale check to determine if the entire group stays in the fight."
-      }
-    ],
-    id: '30b5379a-45d5-4e7b-9dfa-45b2ecead926',
-    indexable: true,
-    blackMarket: false,
     name: 'Morale',
-    source: 'Salvage Union Workshop Manual',
-    page: 167,
     table: {
       '1': {
         label: 'Surrender',
@@ -604,23 +424,10 @@ const REMOTE_DATA = [
         label: 'Retreat',
         value: 'The NPCs flee the fight as quickly and safely as possible.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "Sometimes things go wrong and retreat becomes the only option. If the Pilots or a Group of NPCs choose to retreat, roll the die on the table below to find out what happens. If using Group Initiative, retreat may be chosen at the start of anyone in the group's turn. The entire group must agree to retreat."
-      }
-    ],
-    id: '70f6e979-f511-4407-a276-11b3e63f6758',
-    indexable: true,
-    blackMarket: false,
     name: 'Retreat',
-    source: 'Salvage Union Workshop Manual',
-    page: 42,
     table: {
       '1': {
         label: 'Disastrous Escape',
@@ -648,16 +455,10 @@ const REMOTE_DATA = [
         value:
           'The group fails to retreat from the situation and are pinned down. They cannot retreat and must fight it out to the end.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '044f3890-2d62-4bbe-b851-cc978a68ae8e',
-    indexable: true,
-    blackMarket: false,
     name: 'Crawler Deterioration',
-    source: 'Salvage Union Workshop Manual',
-    page: 7,
     table: {
       '1': {
         value:
@@ -674,16 +475,10 @@ const REMOTE_DATA = [
         value:
           'A Bay chosen at random on your Union Crawler is Damaged and inoperable. You no longer benefit from any of its functions until it is repaired to the Intact Condition.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'f4e866be-1092-4760-896c-fa3571b983d6',
-    indexable: true,
-    blackMarket: false,
     name: 'Crawler Damage',
-    source: 'Salvage Union Workshop Manual',
-    page: 219,
     table: {
       '1': {
         value:
@@ -703,16 +498,10 @@ const REMOTE_DATA = [
         value:
           'A Bay chosen at random on your Union Crawler is Damaged and inoperable. You no longer benefit from any of its functions until it is repaired to the Intact Condition.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '50f0dcca-d2ac-408d-a916-55027485299b',
-    indexable: true,
-    blackMarket: false,
     name: 'Crawler Destruction',
-    source: 'Salvage Union Workshop Manual',
-    page: 220,
     table: {
       '1': {
         value:
@@ -735,23 +524,10 @@ const REMOTE_DATA = [
         value:
           'The Union Crawler is destroyed, and the majority of its population are killed or severely injured. The Salvager Pilots must roll on the Critical Injury Table. Any survivors must find a way to rebuild.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "Your Pilot's Keepsake is an item that is personal and important to them. It could be an old photograph, a childhood bobblehead toy, or a music mixtape from an old sweetheart. Consider why this Keepsake is important and what it means to your Pilot. If a Pilot takes an action that aligns with why their Keepsake is important to them, they may re-roll the dice on the action, accepting the second result. This Ability can be used once, a Pilot regains the use of this Ability following Downtime."
-      }
-    ],
-    id: 'a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6',
-    indexable: true,
-    blackMarket: false,
     name: 'Keepsake',
-    source: 'Salvage Union Workshop Manual',
-    page: 24,
     table: {
       '1': { value: 'Stuffed Toy' },
       '2': { value: 'Pre-War Handheld Console' },
@@ -774,23 +550,10 @@ const REMOTE_DATA = [
       '19': { value: 'Pack of Smokes' },
       '20': { value: 'Peach Lipstick' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "Your Pilot's Motto is a phrase they happen to be fond of using. They may say this phrase, as a Free Action or Reaction, at a time during the game that feels appropriate, and another Pilot may re-roll the dice, accepting the second result. This Ability can be used once, a Pilot regains the use of this Ability following Downtime."
-      }
-    ],
-    id: 'e5317ec5-241c-4bed-97cc-b8d9764e011f',
-    indexable: true,
-    blackMarket: false,
     name: 'Motto',
-    source: 'Salvage Union Workshop Manual',
-    page: 24,
     table: {
       '1': { value: 'Live and let live.' },
       '2': { value: 'The early bird gets the worm.' },
@@ -813,23 +576,10 @@ const REMOTE_DATA = [
       '19': { value: 'The grass is greener where you water it.' },
       '20': { value: 'Feel the fear and do it anyway.' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Briefly describe the appearance of your Pilot, and consider their gender and pronouns. Are they alluring, fancy, glamorous, tall, stocky, sloppy, or intimidating? Do they have any iconic features such as scars, wildly spiked hair, a mischievous grin, or crooked teeth? What type of clothing do they wear? Do they go by she, he, they, or something else?'
-      }
-    ],
-    id: 'd07e8fbf-0750-45ad-9cb8-faa95d8cbaf3',
-    indexable: true,
-    blackMarket: false,
     name: 'Pilot Appearance',
-    source: 'Salvage Union Workshop Manual',
-    page: 332,
     table: {
       '1': { value: 'Stocky' },
       '2': { value: 'Alluring' },
@@ -852,16 +602,10 @@ const REMOTE_DATA = [
       '19': { value: 'Cute' },
       '20': { value: 'Quaint' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'd65de78f-3131-40fd-bd40-018e858c723b',
-    indexable: true,
-    blackMarket: false,
     name: 'A.I. Personality',
-    source: 'Salvage Union Workshop Manual',
-    page: 208,
     table: {
       '1': { value: 'Megalomaniacal to a fault.' },
       '2': { value: 'Asks far too many questions.' },
@@ -884,23 +628,10 @@ const REMOTE_DATA = [
       '19': { value: 'Loving and thoughtful.' },
       '20': { value: 'Hopeful and idealistic.' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'In addition to the Systems and Modules you have installed in your Mech, you can also give it a unique Quirk that will make it stand out from other Mechs. For example, their comms and sensor array could look like rabbit ears or they might make beeping noises when being operated. Either roll on the Quirks Table below or create one yourself.'
-      }
-    ],
-    id: '3ba3c58c-4f75-454f-be16-6bd3236b79d8',
-    indexable: true,
-    blackMarket: false,
     name: 'Quirks',
-    source: 'Salvage Union Workshop Manual',
-    page: 208,
     table: {
       '1': { value: 'Flashing RGB lights' },
       '2': { value: 'Fumes smoke' },
@@ -923,23 +654,10 @@ const REMOTE_DATA = [
       '19': { value: "'Falcon Wing' door design" },
       '20': { value: 'Hydropneumatic suspension system for a smooth ride' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Describe the appearance of your Mech. The Mech Chassis is simply an example of the Mech in its stock form before a salvager gets their hands on it. Your Mech can take on any appearance that you can imagine.'
-      }
-    ],
-    id: 'f6a7b8c9-daeb-4cfd-a4b5-c6d7e8f9a0b1',
-    indexable: true,
-    blackMarket: false,
     name: 'Mech Appearance',
-    source: 'Salvage Union Workshop Manual',
-    page: 94,
     table: {
       '1': { value: 'Flashy, bright, vibrant, paint job' },
       '2': { value: 'Grizzly, bloody markings' },
@@ -962,23 +680,10 @@ const REMOTE_DATA = [
       '19': { value: 'Radioactive green exterior' },
       '20': { value: 'The Meld, sleek, oily black' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "Finally give your Mech a unique pattern name that marks it as your own creation. This could be something like 'Butcher', 'Slinky', 'Bullseye', or 'Roach'. For example: if you built a Mule with Zoom Optics and a Red Laser, you might want to call it a 'Bullseye Pattern Mule'."
-      }
-    ],
-    id: 'a7b8c9da-ebfc-4dfe-b5c6-d7e8f9a0b1c2',
-    indexable: true,
-    blackMarket: false,
     name: 'Mech Pattern Names',
-    source: 'Salvage Union Workshop Manual',
-    page: 209,
     table: {
       '1': { value: 'Bullseye' },
       '2': { value: 'Moonbeam' },
@@ -1001,16 +706,10 @@ const REMOTE_DATA = [
       '19': { value: 'Technicolour Dream Warrior' },
       '20': { value: 'Queen Bee' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'ea4227a6-8c57-4018-86b0-338bbf5a151f',
-    indexable: true,
-    blackMarket: false,
     name: 'Crawler Name',
-    source: 'Salvage Union Workshop Manual',
-    page: 226,
     table: {
       '1': { value: 'Big Smoke' },
       '2': { value: 'Juggernaut' },
@@ -1033,23 +732,10 @@ const REMOTE_DATA = [
       '19': { value: 'Perseverance' },
       '20': { value: 'Junker' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Roll on this table when the Pilots encounter another faction in Gehenna. For example: at a meteor site; when travelling between locations; or when appropriate in play.'
-      }
-    ],
-    id: 'ba70ae70-e955-45af-af31-b4ca98ae223e',
-    indexable: true,
-    blackMarket: false,
     name: 'Faction Encounter Table',
-    source: 'We Were Here First!',
-    page: 22,
     table: {
       type: 'duos',
       '1-2': { value: 'BOLZA Corp 1st Lance' },
@@ -1062,16 +748,10 @@ const REMOTE_DATA = [
       '15-16': { value: 'Crawler #693 Salvagers' },
       '17-18': { value: "Wolf Z' Traders" },
       '19-20': { value: 'Wagon Wasters' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '8b0c74d6-4358-4191-86cc-615a51639a40',
-    indexable: true,
-    blackMarket: false,
     name: 'Salvage Cache Table',
-    source: 'We Were Here First!',
-    page: 23,
     table: {
       '1': { value: 'd20 Bio-Salvage' },
       '2': { value: '5 Bio-Rifles' },
@@ -1094,23 +774,10 @@ const REMOTE_DATA = [
       '19': { value: 'An Impaler Mech Chassis' },
       '20': { value: 'A Chimerium Meteor' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'Roll on this table to determine what Chimerium Mutation a subject gains. Abilities rolled twice may double their effects. If not applicable, re-roll.'
-      }
-    ],
-    id: 'e213dd70-6ece-4950-8036-e4b495e6dd34',
-    indexable: true,
-    blackMarket: false,
     name: 'Chimerium Mutant Ability Table',
-    source: 'We Were Here First!',
-    page: 59,
     table: {
       type: 'duos',
       '1-2': {
@@ -1158,19 +825,10 @@ const REMOTE_DATA = [
           "The subject's body elongates and they grow sharpened tunnelling claws. Gains the Burrower Trait."
       },
       '19-20': { label: 'Chimeric Wings', value: 'The subject sprouts wings. Gains the Fly Trait.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      { type: 'paragraph', value: 'Roll on this table when a Bio-Chassis is reduced to 0 SP.' }
-    ],
-    id: '12862a65-5609-4fd0-8167-a8ee64bbad6a',
-    indexable: true,
-    blackMarket: false,
     name: 'Bio-Chassis Damage Table',
-    source: 'We Were Here First!',
-    page: 78,
     table: {
       '1': {
         label: 'DEATH THROES',
@@ -1208,19 +866,10 @@ const REMOTE_DATA = [
         value:
           'Your Bio-Chassis is damaged and inoperable until repaired. All mounted Systems and Modules remain Intact. Your Pilot is reduced to 0 HP unless they have some means of escape.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      { type: 'paragraph', value: 'Roll on this table when a Bio-Chassis fails a Heat Check.' }
-    ],
-    id: '2f4a4871-571e-4aad-95da-d83f32f2ea5d',
-    indexable: true,
-    blackMarket: false,
     name: 'Bio-Chassis Overload Table',
-    source: 'We Were Here First!',
-    page: 79,
     table: {
       '1': {
         label: 'DEATH THROES',
@@ -1248,16 +897,10 @@ const REMOTE_DATA = [
         value:
           "Your Bio-Chassis burns out, threatening to liquify you in its amniotic sac. Your Pilot is unconscious for 1 Turn, in which time your Bio-Chassis cannot act and gains the Vulnerable Trait. Your Pilot takes HP damage equal to your Bio-Chassis' current Heat."
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'a8b9c0d1-e2f3-4a5b-b6c7-d8e9f0a1b2c3',
-    indexable: true,
-    blackMarket: false,
     name: 'Rumour',
-    source: 'False Flag',
-    page: 8,
     table: {
       '1': { value: 'Vornaya is gathering dirt on the other corpos.' },
       '2': { value: 'Novosrik has been dead for years, and they blame the Vornayans for it.' },
@@ -1289,23 +932,10 @@ const REMOTE_DATA = [
       '19': { value: 'An exec living up in Isston has a high tech Medbay.' },
       '20': { value: 'The Meld wants to destroy us all and become one again.' },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'If you want to randomise an encounter with Meld, or at points when this Module prompts you to, roll on this table to determine what Meld are in the area.'
-      }
-    ],
-    id: 'c2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f',
-    indexable: true,
-    blackMarket: false,
     name: 'Meld Encounter',
-    source: 'False Flag',
-    page: 9,
     table: {
       '1': { value: 'Meld Behemoth' },
       '20': { value: '4x Active Meld Nanites' },
@@ -1313,23 +943,10 @@ const REMOTE_DATA = [
       '11-19': { value: '6x Meld Nanoids' },
       '6-10': { value: '5x Meld Drone Swarm' },
       '2-5': { value: '3x Meld Splitter' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          'When Pilots are in an Anomalous Zone, roll on the Anomaly Table below for each journey or each hour spent in the area as appropriate.'
-      }
-    ],
-    id: '98a883c5-1fb9-4240-b299-5cd000723566',
-    indexable: true,
-    blackMarket: false,
     name: 'Anomalous Zone',
-    source: 'False Flag',
-    page: 10,
     table: {
       '1': {
         label: 'MELD DUST SWARM',
@@ -1432,16 +1049,10 @@ const REMOTE_DATA = [
           'A Meld Behemoth rises from the ground. The anomaly is strewn with rotting, kelp-covered carcasses of broken mechs. It infects Mechs, Vehicles, Pilots, Creatures, and pools of water.'
       },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '0bc689ca-057d-406e-bb17-ade21e4199bd',
-    indexable: true,
-    blackMarket: false,
     name: 'Aardvarks Tongue',
-    source: 'Salvage Union Workshop Manual',
-    page: 202,
     table: {
       '1': {
         value: 'THE TONGUE REPLICATES IN YOUR SYSTEM. YOU GAIN THE IMMOBILE TRAIT FOR 10 MINUTES'
@@ -1453,16 +1064,10 @@ const REMOTE_DATA = [
       '11-19': { value: 'CHOOSE 2 TARGETS IN RANGE THEY GAIN THE IMMOBILE TRAIT FOR 10 MINUTES.' },
       '6-10': { value: 'CHOOSE 1 TARGET IN RANGE, IT GAINS THE IMMOBILE TRAIT FOR 10 MINUTES.' },
       '2-5': { value: 'THE MODULE FAILS TO ACTIVATE' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'ff63e8a7-35db-40f3-b270-7c2246597760',
-    indexable: true,
-    blackMarket: false,
     name: 'Adv. Reactor Safety Protocols',
-    source: 'Salvage Union Workshop Manual',
-    page: 202,
     table: {
       '1': {
         label: 'Reactor Disabled',
@@ -1490,16 +1095,10 @@ const REMOTE_DATA = [
         value:
           "One of the Mech's Systems, chosen at random or by the Mediator, has overheated and is inoperable for 10 minutes."
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '9b341b6c-6df1-4851-aafe-cfde86547c97',
-    indexable: true,
-    blackMarket: false,
     name: 'Anti-Mech Mine Layer',
-    source: 'Salvage Union Workshop Manual',
-    page: 178,
     table: {
       '1': {
         value:
@@ -1510,16 +1109,10 @@ const REMOTE_DATA = [
       '11-19': { value: 'Deal 5 SP damage to everything in the area.' },
       '6-10': { value: 'Deal 5 SP damage to one target in the area. The rest get clear unharmed.' },
       '2-5': { value: 'The targets avoid the mines and they explode to no effect.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '9da02a5a-3769-4410-8e49-a12aca8731b7',
-    indexable: true,
-    blackMarket: false,
     name: 'Armoured Shield',
-    source: 'Salvage Union Workshop Manual',
-    page: 168,
     table: {
       '1': {
         value:
@@ -1539,16 +1132,10 @@ const REMOTE_DATA = [
         value:
           'The attack breaks through your Armoured Shield, it hits as normal, and your Armoured Shield is damaged.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'fde7907f-1ea4-44cf-be1a-d84cb6209bfc',
-    indexable: true,
-    blackMarket: false,
     name: 'Behemoth',
-    source: 'Salvage Union Workshop Manual',
-    page: 41,
     table: {
       '1': {
         value:
@@ -1568,29 +1155,17 @@ const REMOTE_DATA = [
         value:
           'They stand strong in the face of you, ready to fight, and do not retreat or acquiesce.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'ae120942-4723-455c-9413-d12d86bdd7a7',
-    indexable: true,
-    blackMarket: false,
     name: 'Blinding Blue Laser Rifle',
-    source: 'Salvage Union Workshop Manual',
-    page: 71,
     table: {
       '20': { value: 'The target suffers a Major Injury of permanent blindness.' },
       type: 'dramatic'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '76535e17-f868-470f-86ec-72675281d90f',
-    indexable: true,
-    blackMarket: false,
     name: 'Counter-Hacking',
-    source: 'Salvage Union Workshop Manual',
-    page: 36,
     table: {
       '1': {
         value:
@@ -1610,16 +1185,10 @@ const REMOTE_DATA = [
           'You can choose to stop the hacking attempt, or activate one of your Abilities with the [[Hacking]] Trait in response.'
       },
       '2-5': { value: 'Your counter hacking attempt fails' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'd84c92a6-b75d-4ea4-86d0-8623a241e2bb',
-    indexable: true,
-    blackMarket: false,
     name: 'Denial of Service Attack',
-    source: 'Salvage Union Workshop Manual',
-    page: 34,
     table: {
       '1': {
         value:
@@ -1635,16 +1204,10 @@ const REMOTE_DATA = [
         value: 'All targets must choose to either move or take an action during its next turn.'
       },
       '2-5': { value: 'The hacking attempt fails.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '941a7496-50a0-4c78-811e-fa6f756d5e4b',
-    indexable: true,
-    blackMarket: false,
     name: 'Eggs Mayhem',
-    source: 'Salvage Union Workshop Manual',
-    page: 190,
     table: {
       '1': {
         value:
@@ -1664,16 +1227,10 @@ const REMOTE_DATA = [
           'Your hack produces a mix of confused data. You are able to ask the Mediator 2 questions about it. One of the answers they give must be true, but the other contains false information as decided by the Mediator.'
       },
       '2-5': { value: 'The hacking attempt fails. The Mediator may choose an appropriate Setback.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '43baa6cc-7a80-4c2b-bbc4-78d9a7b1b79d',
-    indexable: true,
-    blackMarket: false,
     name: 'Ejection System',
-    source: 'Salvage Union Workshop Manual',
-    page: 173,
     table: {
       '1': {
         value:
@@ -1692,16 +1249,10 @@ const REMOTE_DATA = [
           'You eject, but suffer injury in the process. You land within Medium Range of your Mech and must roll on the Critical Injury Table for your Pilot.'
       },
       '2-5': { value: 'The Ejection System fails to trigger and is damaged in the process.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '7edaefa5-e0d7-466d-aa8f-8b6681c8cd2c',
-    indexable: true,
-    blackMarket: false,
     name: 'Ejector Pod',
-    source: 'Salvage Union Workshop Manual',
-    page: 182,
     table: {
       '1': {
         value:
@@ -1720,16 +1271,10 @@ const REMOTE_DATA = [
         value:
           'The Ejector Pod fails to trigger. You may not attempt to use it again until your next turn.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '09dee811-d665-4529-89fe-7cf16dba42c0',
-    indexable: true,
-    blackMarket: false,
     name: 'Electro-Magnetic Shield Projector',
-    source: 'Salvage Union Workshop Manual',
-    page: 174,
     table: {
       '1': {
         value:
@@ -1746,16 +1291,10 @@ const REMOTE_DATA = [
           'You may choose to gain Heat equal to the damage of the weapon that attacked you. If you do the attack misses and deals no damage. if you do not, the attack deals damage as normal.'
       },
       '2-5': { value: 'The attack hits as normal.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'c5657a7a-e877-4158-8472-3701643e5dd4',
-    indexable: true,
-    blackMarket: false,
     name: 'Escape Hatch',
-    source: 'Salvage Union Workshop Manual',
-    page: 164,
     table: {
       '1': {
         value:
@@ -1772,16 +1311,10 @@ const REMOTE_DATA = [
         value:
           'The Escape Hatch fails to trigger and is damaged in the process, it must be repaired to Intact Condition to be used again.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '6fa35aec-3691-4f64-afad-f184984515d2',
-    indexable: true,
-    blackMarket: false,
     name: 'Experimental Teleportation Hold',
-    source: 'Salvage Union Workshop Manual',
-    page: 185,
     table: {
       '1': { value: 'Everything you are attempting to teleport is destroyed or killed.' },
       '20': {
@@ -1792,16 +1325,10 @@ const REMOTE_DATA = [
       '11-19': { value: 'Teleport Successful!' },
       '6-10': { value: 'Teleport Successful!' },
       '2-5': { value: 'Teleport Successful!' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'e2956852-d8b0-4aa2-9e5e-616f1139f5c3',
-    indexable: true,
-    blackMarket: false,
     name: 'Firewall',
-    source: 'Salvage Union Workshop Manual',
-    page: 191,
     table: {
       '1': {
         value:
@@ -1820,16 +1347,10 @@ const REMOTE_DATA = [
           'The Mediator offers you a Tough Choice in relation to the hack. This could be partially nullifying its effects, an additional EP cost, or damage to your Module.'
       },
       '2-5': { value: 'You fail to block the hack, and it has full effect.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'cce68e98-6a69-4ce5-b480-f195be845579',
-    indexable: true,
-    blackMarket: false,
     name: 'Glanded Stims',
-    source: 'Salvage Union Workshop Manual',
-    page: 60,
     table: {
       '1': {
         value:
@@ -1849,16 +1370,10 @@ const REMOTE_DATA = [
         value:
           'Everything slows to a crawl. For the next 10 minutes you must choose between moving or taking an action on your turn. You also cannot Push rolls.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'e1b0a8d8-59a5-4436-98a0-e2fe52924475',
-    indexable: true,
-    blackMarket: false,
     name: 'Improved Trading Bay',
-    source: 'Salvage Union Workshop Manual',
-    page: 217,
     table: {
       '1': {
         value:
@@ -1869,16 +1384,10 @@ const REMOTE_DATA = [
       '11-19': { value: 'An Intact Mech Chassis and an Intact System are available for trade.' },
       '6-10': { value: 'An Intact Mech Chassis and an Intact Module are available for trade.' },
       '2-5': { value: 'An Intact System and an Intact Module are available for trade.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '952a9c83-0812-471f-8af3-6e9f5324e51e',
-    indexable: true,
-    blackMarket: false,
     name: 'Knife Missile',
-    source: 'Salvage Union Workshop Manual',
-    page: 331,
     table: {
       '1': {
         value:
@@ -1898,16 +1407,10 @@ const REMOTE_DATA = [
         value:
           'The target narrowly avoids being killed, but is reduced to 0 HP and must roll on the Critical Injury Table.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '579d82ab-fb44-4c4e-9b30-6ecf97df9f76',
-    indexable: true,
-    blackMarket: false,
     name: "Let's Make a Deal",
-    source: 'Salvage Union Workshop Manual',
-    page: 40,
     table: {
       '1': {
         value:
@@ -1921,16 +1424,10 @@ const REMOTE_DATA = [
           'The deal is accepted, but you must offer your leverage now. If it was scrap they want the payment in advance, if it was a threat you have to follow through on the threat immediately, if it was your reputation you must find a way to flex it now.'
       },
       '2-5': { value: 'The deal is rejected.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'e29fa949-f62f-4d5d-98b8-3862c25a264f',
-    indexable: true,
-    blackMarket: false,
     name: 'Mech Scrambler',
-    source: 'Salvage Union Workshop Manual',
-    page: 204,
     table: {
       '1': {
         value:
@@ -1953,16 +1450,10 @@ const REMOTE_DATA = [
         value:
           'The target activates a random Module. You decide a Tough Choice related to it that the target must resolve.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '06d27b02-4bf4-42ad-83c8-3eef0c9fec7c',
-    indexable: true,
-    blackMarket: false,
     name: 'Mechapult',
-    source: 'Salvage Union Workshop Manual',
-    page: 166,
     table: {
       '1': {
         value:
@@ -2045,16 +1536,10 @@ const REMOTE_DATA = [
           'A dense ball of concentrated scrap hits the target with catastrophic force dealing SP damage equal to 6× the Tech Level of the Scrap.'
       },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'cb215f2c-31c2-4c25-a3e9-5456b52565dc',
-    indexable: true,
-    blackMarket: false,
     name: 'Multi-Phase Shield',
-    source: 'Salvage Union Workshop Manual',
-    page: 184,
     table: {
       '1': {
         value:
@@ -2071,16 +1556,10 @@ const REMOTE_DATA = [
           'You may choose to gain Heat equal to the damage of the weapon. If you do so, the attack deals no damage. If you do not, the attack deals damage as normal.'
       },
       '2-5': { value: 'The attack hits as normal.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '6b9d2fdf-89ff-431b-9650-7b9245f8584b',
-    indexable: true,
-    blackMarket: false,
     name: 'Panda Sneeze',
-    source: 'Salvage Union Workshop Manual',
-    page: 201,
     table: {
       '1': {
         value:
@@ -2094,16 +1573,10 @@ const REMOTE_DATA = [
           'You may change or manipulate up to 2 pieces of data within the target. One of these manipulations will have a Setback attached as decided by the Mediator.'
       },
       '2-5': { value: 'The hacking attempt fails. The Mediator may choose an appropriate Setback.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '92e68ef8-fd6b-4312-9715-1fa13845bda8',
-    indexable: true,
-    blackMarket: false,
     name: 'Portable Multi-Phase Shield',
-    source: 'Salvage Union Workshop Manual',
-    page: 85,
     table: {
       '1': {
         value:
@@ -2120,16 +1593,10 @@ const REMOTE_DATA = [
           'The forcefield absorbs the blow, but is destroyed. You take no damage from the attack and your Portable Multi-Phase Shield is destroyed.'
       },
       '2-5': { value: 'The force field fails and the attack hits as normal.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '958972ab-3236-41e7-a544-adbaa353fe84',
-    indexable: true,
-    blackMarket: false,
     name: 'Prawn Sifter',
-    source: 'Salvage Union Workshop Manual',
-    page: 175,
     table: {
       '1': { value: 'You find 1 Scrap of the Tech Level of the area.' },
       '20': {
@@ -2146,16 +1613,10 @@ const REMOTE_DATA = [
           'You find a damaged Module of the Tech Level of the area. This can be determined randomly or chosen by the Mediator.'
       },
       '2-5': { value: 'You find 2 Scrap of the Tech Level of the area.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'c93113c2-ac19-4c1b-abf3-76513366f6ad',
-    indexable: true,
-    blackMarket: false,
     name: 'Probing Proboscis',
-    source: 'Salvage Union Workshop Manual',
-    page: 70,
     table: {
       '1': {
         value:
@@ -2175,16 +1636,10 @@ const REMOTE_DATA = [
           'You may ask the Mediator 2 questions and they will answer based on what the creature would know. One of these answers will contain some false information. The target creature rolls on the Critical Damage Table.'
       },
       '2-5': { value: 'The Probing Proboscis fails to penetrate the target.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'b682a43f-e853-4e59-86cb-304eac9c338f',
-    indexable: true,
-    blackMarket: false,
     name: 'Reactor Safety Protocols',
-    source: 'Salvage Union Workshop Manual',
-    page: 197,
     table: {
       '1': {
         label: 'Reactor Damage',
@@ -2210,16 +1665,10 @@ const REMOTE_DATA = [
         value:
           'One of the Systems on your Mech, chosen at random or by the Mediator, has overheated and is damaged.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '8bd4dcf0-43a4-4ef8-9195-2c51e2b8d563',
-    indexable: true,
-    blackMarket: false,
     name: 'Reflective Shielding',
-    source: 'Salvage Union Workshop Manual',
-    page: 184,
     table: {
       '1': {
         value:
@@ -2239,16 +1688,10 @@ const REMOTE_DATA = [
           'The attack deals full damage and is reflected back at the attacker dealing half damage to them of the weapon they attacked with.'
       },
       '2-5': { value: 'The shielding fails and you are hit by the attack as normal.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '9460c816-0113-48dd-8911-463c0969c65b',
-    indexable: true,
-    blackMarket: false,
     name: 'Refractive Shield Projector',
-    source: 'Salvage Union Workshop Manual',
-    page: 171,
     table: {
       '1': {
         value:
@@ -2265,16 +1708,10 @@ const REMOTE_DATA = [
           'You may choose to gain Heat equal to the damage of the weapon that attacked you. If you do the attack misses and deals no damage. if you do not, the attack deals damage as normal.'
       },
       '2-5': { value: 'The attack hits as normal.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '38b46715-4f82-493f-9a9a-17594f0b56ef',
-    indexable: true,
-    blackMarket: false,
     name: 'Reinforced Chassis',
-    source: 'Salvage Union Workshop Manual',
-    page: 116,
     table: {
       '1': {
         value:
@@ -2288,16 +1725,10 @@ const REMOTE_DATA = [
       },
       '6-10': { value: 'As per 11-19, but a random Module on the Jackhammer is also Damaged.' },
       '2-5': { value: 'As per 11-19, but a random System on the Jackhammer is also Damaged.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '7422a070-9b49-46df-969f-65ad7985839d',
-    indexable: true,
-    blackMarket: false,
     name: 'Shield',
-    source: 'Salvage Union Workshop Manual',
-    page: 186,
     table: {
       '1': {
         value:
@@ -2317,16 +1748,10 @@ const REMOTE_DATA = [
           'The attack hits and deals half damage. If the weapon that made the attack had the [[Melee]] Trait, it is destroyed.'
       },
       '2-5': { value: 'The shield fails and the attack hits as normal.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '77662019-6419-497b-9b5b-9dd9836e09cf',
-    indexable: true,
-    blackMarket: false,
     name: 'Sonic Screecher',
-    source: 'Salvage Union Workshop Manual',
-    page: 201,
     table: {
       '1': {
         value:
@@ -2345,16 +1770,10 @@ const REMOTE_DATA = [
       '2-5': {
         value: 'The targets manage to resist the effect and are unharmed beyond some mild nausea.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '34b27d48-9b19-4a74-9884-6a7c897ce026',
-    indexable: true,
-    blackMarket: false,
     name: 'Survey Scanner',
-    source: 'Salvage Union Workshop Manual',
-    page: 194,
     table: {
       '1': {
         value:
@@ -2374,16 +1793,10 @@ const REMOTE_DATA = [
           'You partially scan the area and return messy results. You may ask the Mediator 2 questions about the area. One of the answers they give must be true, but the other answer contains false information as decided by the Mediator.'
       },
       '2-5': { value: 'Your scan fails to find any useful information about the area.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '117faf24-a910-4625-93bb-71572ff32cf6',
-    indexable: true,
-    blackMarket: false,
     name: 'System and Software Hacker',
-    source: 'Salvage Union Workshop Manual',
-    page: 34,
     table: {
       '1': {
         value:
@@ -2397,16 +1810,10 @@ const REMOTE_DATA = [
           'The System or Module is inoperable and cannot be used until the end of the next turn.'
       },
       '2-5': { value: 'The hacking attempt fails.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'f82a16a7-3d51-45e9-8c07-0750a725b94e',
-    indexable: true,
-    blackMarket: false,
     name: 'Teleportation Pod',
-    source: 'Salvage Union Workshop Manual',
-    page: 187,
     table: {
       '1': {
         value:
@@ -2423,16 +1830,10 @@ const REMOTE_DATA = [
           'You teleport to your destination, but suffer a teleportation mishap. Roll on the Critical Injury Table.'
       },
       '2-5': { value: 'The teleporter fails to trigger. You may try again on your next turn.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '3cbe87a9-1c80-4209-bb85-af089d3e7542',
-    indexable: true,
-    blackMarket: false,
     name: 'Union Call',
-    source: 'Salvage Union Workshop Manual',
-    page: 75,
     table: {
       '1': {
         value:
@@ -2453,16 +1854,10 @@ const REMOTE_DATA = [
         value:
           'You wait two weeks and realise the mission is not completed. You may post the mission offer again or choose a different one.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '8b64a87b-258a-4917-acbb-3ad6c349d3fd',
-    indexable: true,
-    blackMarket: false,
     name: 'Well actually...',
-    source: 'Salvage Union Workshop Manual',
-    page: 34,
     table: {
       '1': { value: 'You do not know the answer, and everyone realises this.' },
       '20': {
@@ -2481,16 +1876,10 @@ const REMOTE_DATA = [
       '2-5': {
         value: 'You do not actually know, and must make up a convincing answer to save your pride.'
       }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '28e23b1b-3529-4188-b494-91e20fffb30e',
-    indexable: true,
-    blackMarket: false,
     name: 'Whirlwind Strike',
-    source: 'Salvage Union Workshop Manual',
-    page: 56,
     table: {
       '1': { value: 'Your attacks miss. You spin wildly and then collapse, falling Prone.' },
       type: 'alternate',
@@ -2503,16 +1892,10 @@ const REMOTE_DATA = [
           'You hit all enemies within Range of the weapon. Choose one: you deal half damage to all targets or you deal full damage, but your weapon is damaged after finishing the attack.'
       },
       '2-5': { value: 'You hit one enemy in Range of the weapon, then your weapon is damaged.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '0ae408ae-f7c1-4a5f-8220-ce083c2ea61d',
-    indexable: true,
-    blackMarket: false,
     name: 'Worm',
-    source: 'Salvage Union Workshop Manual',
-    page: 36,
     table: {
       '1': { value: 'The Worm fails to upload to the targets and has no effect.' },
       '20': {
@@ -2522,29 +1905,17 @@ const REMOTE_DATA = [
       '11-19': { value: 'A System and Module of your choice on each Mech is damaged.' },
       '6-10': { value: 'A System or Module of your choice on each Mech is damaged.' },
       '2-5': { value: 'A System or Module on one targeted Mech of your choice is damaged.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'cc5aed4e-c782-4996-9472-ffb35e64d66c',
-    indexable: true,
-    blackMarket: false,
     name: 'Bio-Talon',
-    source: 'Salvage Union Workshop Manual',
-    page: 74,
     table: {
       '20': { value: 'A System or Appendage on the target is destroyed.' },
       type: 'dramatic'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '8c107425-8ddf-49dd-9882-7559a4fda62b',
-    indexable: true,
-    blackMarket: false,
     name: 'Nanite Reconstruction',
-    source: 'Salvage Union Workshop Manual',
-    page: 70,
     table: {
       '1': {
         label: 'Awakening',
@@ -2566,16 +1937,10 @@ const REMOTE_DATA = [
           'A System of your choice on your Mech is destroyed. However, your Mech Chassis is Intact, and gains an amount of SP equal to the Salvage Value of the destroyed System.'
       },
       '2-5': { label: 'Failed Restoration', value: 'Roll on the Critical Damage Table as normal.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: 'b2eb603f-036a-4984-b79b-330e745554d3',
-    indexable: true,
-    blackMarket: false,
     name: 'Meld Distorter',
-    source: 'Salvage Union Workshop Manual',
-    page: 70,
     table: {
       '1': {
         value: 'It transforms into a Meld Nanoid, controlled by the Meld and hostile to you.'
@@ -2587,16 +1952,10 @@ const REMOTE_DATA = [
       '11-19': { value: 'It morphs into a random System or Module of its Tech Level.' },
       '6-10': { value: 'It morphs into a Tech 1 System or Module of your choice.' },
       '2-5': { value: "It's mangled beyond comprehension and considered destroyed." }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    id: '12a6fcf2-2eda-492e-b9f5-f86a340c9fb3',
-    indexable: true,
-    blackMarket: false,
     name: 'Trading Bay',
-    source: 'Salvage Union Workshop Manual',
-    page: 222,
     table: {
       '1': { value: 'Nothing is available for trade during this Downtime.' },
       '20': { value: 'An Intact Mech Chassis is available for trade.' },
@@ -2604,23 +1963,10 @@ const REMOTE_DATA = [
       '11-19': { value: 'An Intact System and an Intact Module are available for trade.' },
       '6-10': { value: 'An Intact System is available for trade.' },
       '2-5': { value: 'An Intact Module is available for trade.' }
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "Your Pilot's Background is where they came from before they joined the Union Crawler. They may have been a wastelander, a member of the corpos, a wanderer, or even a born salvager. If a Pilot takes an action that aligns with their Background they may re-roll the dice on the action, accepting the second result. This Ability can be used once. A Pilot regains the use of this Ability following Downtime."
-      }
-    ],
-    id: '3ea86f23-1c17-4236-a772-47d0e0f7c165',
-    indexable: true,
-    blackMarket: false,
     name: 'Background',
-    source: 'Salvage Union Workshop Manual',
-    page: 89,
     table: {
       '1': {
         label: 'Wastelander',
@@ -2710,23 +2056,10 @@ const REMOTE_DATA = [
           'You were blessed at a young age with exceptional skill and talent, and have chosen to offer that to the Union.'
       },
       type: 'flat'
-    },
-    schemaName: 'roll-tables'
+    }
   },
   {
-    content: [
-      {
-        type: 'paragraph',
-        value:
-          "Your Pilot's Callsign is the name everyone on the Union Crawler refers to them as. It's how you are known to the world. You might pick your own Callsign or you might earn one through some memorable act. Roll on the Column first (d20 to select a column), then roll within that column (d20 to select a Callsign), or pick any Callsign you like."
-      }
-    ],
-    id: 'c4e7a1d2-9f3b-4e8c-b5a6-2d1f0e3c7b9a',
-    indexable: true,
-    blackMarket: false,
     name: 'Callsign Table',
-    source: 'Salvage Union Workshop Manual',
-    page: 88,
     table: {
       type: 'columns',
       '1-4': {
@@ -2839,8 +2172,7 @@ const REMOTE_DATA = [
         '19': { value: 'Neutron' },
         '20': { value: 'Iceman' }
       }
-    },
-    schemaName: 'roll-tables'
+    }
   }
 ] as const
 

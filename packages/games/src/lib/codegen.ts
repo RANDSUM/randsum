@@ -26,41 +26,50 @@ export interface GenerateCodeOptions {
   readonly remoteDataCache?: ReadonlyMap<string, readonly unknown[]>
 }
 
-function collectFoundTableFields(leaf: ResultMappingLeaf): readonly string[] {
-  if ('$foundTable' in leaf) return [leaf.$foundTable]
-  if ('$lookupResult' in leaf && leaf.fallback !== undefined) {
-    return collectFoundTableFields(leaf.fallback)
+/**
+ * Recursively collect top-level field names referenced by `$foundTable`
+ * in a result mapping leaf (including fallbacks).
+ */
+function collectFoundTableFields(leaf: ResultMappingLeaf, fields: Set<string>): void {
+  if ('$foundTable' in leaf) {
+    const topLevel = leaf.$foundTable.split('.')[0]
+    if (topLevel !== undefined) fields.add(topLevel)
   }
-  return []
+  if ('$lookupResult' in leaf && leaf.fallback !== undefined) {
+    collectFoundTableFields(leaf.fallback, fields)
+  }
 }
 
+/**
+ * Derive the set of top-level field names that the generated code actually
+ * accesses from each remote data entry. Derived from the spec's `find.field`,
+ * `tableField`, and any `$foundTable` references in `resultMapping`.
+ * The `name` field is always included because `VALID_TABLE_NAMES` reads it
+ * from every entry.
+ */
 function collectRequiredRemoteFields(rtl: RemoteTableLookupOperation): ReadonlySet<string> {
-  const fields = new Set<string>()
-  // find.field is used to match entries (e.g. t.name === input.tableName)
-  fields.add(rtl.find.field)
-  // 'name' is always needed for VALID_TABLE_NAMES
-  fields.add('name')
-  // tableField is the field passed to lookupByRange
-  fields.add(rtl.tableField)
-  // Walk resultMapping for $foundTable references
+  const fields = new Set<string>(['name', rtl.find.field, rtl.tableField])
   for (const leaf of Object.values(rtl.resultMapping)) {
-    for (const field of collectFoundTableFields(leaf)) {
-      fields.add(field)
-    }
+    collectFoundTableFields(leaf, fields)
   }
   return fields
 }
 
+/**
+ * Strip each remote data entry down to only the fields the generated code
+ * needs, removing metadata that would otherwise bloat the output.
+ */
 function stripRemoteEntries(
   data: readonly unknown[],
   requiredFields: ReadonlySet<string>
 ): unknown[] {
   return data.map(entry => {
-    const record = entry as Record<string, unknown>
+    if (typeof entry !== 'object' || entry === null) return entry
+    const source = entry as Record<string, unknown>
     const stripped: Record<string, unknown> = {}
     for (const field of requiredFields) {
-      if (field in record) {
-        stripped[field] = record[field]
+      if (field in source) {
+        stripped[field] = source[field]
       }
     }
     return stripped
@@ -110,8 +119,7 @@ async function buildCodeString(
   parts.push(``)
 
   if (remoteData !== undefined && rtlDef !== undefined) {
-    const requiredFields = collectRequiredRemoteFields(rtlDef)
-    const strippedData = stripRemoteEntries(remoteData, requiredFields)
+    const strippedData = stripRemoteEntries(remoteData, collectRequiredRemoteFields(rtlDef))
     parts.push(`const REMOTE_DATA = ${JSON.stringify(strippedData)} as const`)
     parts.push(``)
   }
