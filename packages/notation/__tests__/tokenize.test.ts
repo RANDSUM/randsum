@@ -251,20 +251,20 @@ describe('tokenize', () => {
   })
 
   describe('reroll once token', () => {
-    test('tokenizes reroll once as unknown (tokenizer lacks ro{} pattern)', () => {
+    test('tokenizes reroll once as reroll type', () => {
       const tokens = tokenize('4d6ro{1}')
-      // ro{} currently tokenizes as 'unknown' — tokenizer needs a pattern for it
-      const roToken = tokens.find(t => t.text.includes('ro'))
+      const roToken = tokens.find(t => t.type === 'reroll')
       expect(roToken).toBeDefined()
+      expect(roToken?.text).toBe('ro{1}')
     })
   })
 
   describe('keep middle token', () => {
-    test('tokenizes keep middle (K recognized, M as unknown)', () => {
+    test('tokenizes keep middle', () => {
       const tokens = tokenize('6d6KM')
-      // KM currently splits: K as keepHighest, M as unknown
-      const kToken = tokens.find(t => t.type === 'keepHighest')
-      expect(kToken).toBeDefined()
+      const kmToken = tokens.find(t => t.type === 'keepMiddle')
+      expect(kmToken).toBeDefined()
+      expect(kmToken?.text).toBe('KM')
     })
   })
 
