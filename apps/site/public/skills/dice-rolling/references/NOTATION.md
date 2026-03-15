@@ -38,8 +38,8 @@ roll({
 Roll dN until a 1 appears, result = attempt count. Safety cap at 1000 iterations.
 
 ```typescript
-roll("g6")   // Roll d6 until 1 appears (average: 6 rolls)
-roll("3g6")  // Three independent geometric rolls
+roll("g6") // Roll d6 until 1 appears (average: 6 rolls)
+roll("3g6") // Three independent geometric rolls
 ```
 
 ### Draw Die (`DDN`)
@@ -47,10 +47,10 @@ roll("3g6")  // Three independent geometric rolls
 Sampling without replacement — like drawing from a deck. Uses Fisher-Yates shuffle.
 
 ```typescript
-roll("DD6")   // Draw one unique value from [1..6]
-roll("3DD6")  // Draw 3 unique values
-roll("6DD6")  // Full permutation of [1,2,3,4,5,6]
-roll("8DD6")  // Full permutation + 2 more (reshuffles after exhaustion)
+roll("DD6") // Draw one unique value from [1..6]
+roll("3DD6") // Draw 3 unique values
+roll("6DD6") // Full permutation of [1,2,3,4,5,6]
+roll("8DD6") // Full permutation + 2 more (reshuffles after exhaustion)
 ```
 
 ## Modifiers
@@ -547,7 +547,7 @@ Attach metadata labels to dice terms — flavor text with no mechanical effect:
 
 ```typescript
 roll("2d6+3[fire]+1d4[cold]") // Labels on roll groups
-roll("4d6L[strength]")        // Label the roll purpose
+roll("4d6L[strength]") // Label the roll purpose
 ```
 
 ### Repeat Operator (xN)
@@ -555,7 +555,7 @@ roll("4d6L[strength]")        // Label the roll purpose
 Repeat a roll expression N times (notation sugar):
 
 ```typescript
-roll("4d6Lx6")  // Equivalent to six separate 4d6L rolls
+roll("4d6Lx6") // Equivalent to six separate 4d6L rolls
 roll("2d6+3x4") // Roll 2d6+3 four times
 ```
 

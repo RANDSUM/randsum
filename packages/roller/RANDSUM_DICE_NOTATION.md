@@ -45,15 +45,15 @@ In addition to standard `NdS` notation, `roll()` accepts shorthand string argume
 
 A geometric die rolls dN repeatedly until a 1 appears, and the result is the number of rolls it took. This models waiting times and geometric distributions.
 
-| Notation | Description                              |
-| -------- | ---------------------------------------- |
-| `gN`     | Roll dN until 1 appears, result = count  |
-| `3gN`    | Three independent geometric rolls        |
+| Notation | Description                             |
+| -------- | --------------------------------------- |
+| `gN`     | Roll dN until 1 appears, result = count |
+| `3gN`    | Three independent geometric rolls       |
 
 ```typescript
-roll("g6")   // Roll d6 until 1 appears, return attempt count (average: 6)
-roll("3g6")  // Three independent geometric d6 rolls
-roll("G6")   // Case-insensitive
+roll("g6") // Roll d6 until 1 appears, return attempt count (average: 6)
+roll("3g6") // Three independent geometric d6 rolls
+roll("G6") // Case-insensitive
 ```
 
 Internally, `gN` sets the `geometric: true` flag on `RollParams`. A safety cap of 1000 iterations prevents infinite loops.
@@ -64,19 +64,19 @@ Internally, `gN` sets the `geometric: true` flag on `RollParams`. A safety cap o
 
 A draw die samples without replacement from a pool of faces — like drawing cards from a deck. Each face value can only appear once until the pool is exhausted, at which point it reshuffles.
 
-| Notation | Description                                    |
-| -------- | ---------------------------------------------- |
-| `DDN`    | Draw one unique value from [1..N]              |
-| `3DDN`   | Draw 3 unique values from [1..N]               |
-| `6DD6`   | Always a permutation of [1,2,3,4,5,6]          |
+| Notation | Description                                      |
+| -------- | ------------------------------------------------ |
+| `DDN`    | Draw one unique value from [1..N]                |
+| `3DDN`   | Draw 3 unique values from [1..N]                 |
+| `6DD6`   | Always a permutation of [1,2,3,4,5,6]            |
 | `8DD6`   | Full permutation of [1..6] + 2 more (reshuffles) |
 
 ```typescript
-roll("DD6")   // Draw one from d6 pool (1-6, each face unique)
-roll("3DD6")  // Draw 3 unique values from [1..6]
-roll("6DD6")  // Always a permutation of [1,2,3,4,5,6]
-roll("8DD6")  // Full permutation + 2 more (reshuffles after exhaustion)
-roll("dd6")   // Case-insensitive: DD, dd, Dd, dD all work
+roll("DD6") // Draw one from d6 pool (1-6, each face unique)
+roll("3DD6") // Draw 3 unique values from [1..6]
+roll("6DD6") // Always a permutation of [1,2,3,4,5,6]
+roll("8DD6") // Full permutation + 2 more (reshuffles after exhaustion)
+roll("dd6") // Case-insensitive: DD, dd, Dd, dD all work
 ```
 
 Internally, `DDN` sets the `draw: true` flag on `RollParams` and uses Fisher-Yates shuffle for uniform distribution.
@@ -741,24 +741,24 @@ roll({
 
 Sort dice results for display purposes:
 
-| Notation | Description       |
-| -------- | ----------------- |
-| `sa`     | Sort ascending    |
-| `sd`     | Sort descending   |
+| Notation | Description     |
+| -------- | --------------- |
+| `sa`     | Sort ascending  |
+| `sd`     | Sort descending |
 
 ```typescript
 roll("4d6sa") // Sort results ascending
 roll({
   sides: 6,
   quantity: 4,
-  modifiers: { sort: 'ascending' }
+  modifiers: { sort: "ascending" }
 })
 
 roll("4d6sd") // Sort results descending
 roll({
   sides: 6,
   quantity: 4,
-  modifiers: { sort: 'descending' }
+  modifiers: { sort: "descending" }
 })
 ```
 
@@ -768,8 +768,8 @@ roll({
 
 Integer divide the total, truncating toward zero:
 
-| Notation | Description                                  |
-| -------- | -------------------------------------------- |
+| Notation | Description                                            |
+| -------- | ------------------------------------------------------ |
 | `//N`    | Integer divide total by N (truncates via `Math.trunc`) |
 
 ```typescript
@@ -798,9 +798,9 @@ roll({
 
 Apply modulo to the total:
 
-| Notation | Description       |
-| -------- | ----------------- |
-| `%N`     | Total modulo N    |
+| Notation | Description    |
+| -------- | -------------- |
+| `%N`     | Total modulo N |
 
 ```typescript
 roll("4d6%3") // Total modulo 3
@@ -828,9 +828,9 @@ roll({
 
 Count how many dice rolled at or below a threshold. The total becomes the failure count:
 
-| Notation | Description                    |
-| -------- | ------------------------------ |
-| `F{N}`   | Count dice that rolled <= N    |
+| Notation | Description                 |
+| -------- | --------------------------- |
+| `F{N}`   | Count dice that rolled <= N |
 
 **Important:** `F` requires curly braces (`F{N}`) to avoid conflict with Fate dice notation (`dF`). The pattern is case-insensitive.
 
@@ -855,9 +855,9 @@ roll({
 
 The D6 System wild die modifier (West End Games):
 
-| Notation | Description                     |
-| -------- | ------------------------------- |
-| `W`      | Last die is the "wild die"      |
+| Notation | Description                |
+| -------- | -------------------------- |
+| `W`      | Last die is the "wild die" |
 
 ```typescript
 roll("5d6W") // Last die is wild
@@ -930,14 +930,14 @@ roll({
 
 Attach metadata labels to dice terms. Labels are flavor text with no mechanical effect:
 
-| Notation              | Description                          |
-| --------------------- | ------------------------------------ |
-| `[text]`              | Label attached to a roll group       |
-| `2d6+3[fire]+1d4[cold]` | Labels on specific dice groups     |
+| Notation                | Description                    |
+| ----------------------- | ------------------------------ |
+| `[text]`                | Label attached to a roll group |
+| `2d6+3[fire]+1d4[cold]` | Labels on specific dice groups |
 
 ```typescript
 roll("2d6+3[fire]+1d4[cold]") // Labels attach to specific roll groups
-roll("4d6L[strength]")        // Label the roll purpose
+roll("4d6L[strength]") // Label the roll purpose
 ```
 
 **How it works:** Labels are enclosed in square brackets and attached to the preceding dice term. They are stripped before modifier parsing and stored in `RollParams.label` and `RollRecord.label`. Labels are validated by `isDiceNotation` — notation with labels is valid notation.
@@ -948,14 +948,14 @@ roll("4d6L[strength]")        // Label the roll purpose
 
 Notation sugar that repeats a roll expression N times:
 
-| Notation   | Description                           |
-| ---------- | ------------------------------------- |
-| `xN`       | Repeat the preceding notation N times |
+| Notation | Description                           |
+| -------- | ------------------------------------- |
+| `xN`     | Repeat the preceding notation N times |
 
 ```typescript
-roll("4d6Lx6")  // Equivalent to roll("4d6L", "4d6L", "4d6L", "4d6L", "4d6L", "4d6L")
+roll("4d6Lx6") // Equivalent to roll("4d6L", "4d6L", "4d6L", "4d6L", "4d6L", "4d6L")
 roll("2d6+3x4") // Roll 2d6+3 four times, sum all totals
-roll("1d20X3")   // Case-insensitive
+roll("1d20X3") // Case-insensitive
 ```
 
 **How it works:** The `xN` suffix is detected during notation parsing. It strips the suffix, then repeats the base notation N times as separate roll groups. N must be >= 1.
