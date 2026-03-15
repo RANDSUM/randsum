@@ -2,21 +2,37 @@ import { validateNotation } from './validateNotation'
 
 export type TokenType =
   | 'core'
+  | 'percentile' // d%
+  | 'fate' // dF, dF.1, dF.2
+  | 'zeroBias' // zN
+  | 'geometric' // gN
+  | 'draw' // DDN
+  | 'customFaces' // d{...}
   | 'dropLowest' // L, LN
   | 'dropHighest' // H, HN
   | 'dropCondition' // D{...}
   | 'keepHighest' // K, KN
+  | 'keepMiddle' // KM, KMN
   | 'keepLowest' // kl, klN
-  | 'reroll' // R{...}
+  | 'reroll' // R{...}, ro{...}
   | 'explode' // !
   | 'compound' // !!
   | 'penetrate' // !p
+  | 'explodeSequence' // !s{...}, !i, !r
   | 'cap' // C{...}
   | 'replace' // V{...}
   | 'unique' // U, U{...}
+  | 'count' // #{...}
   | 'countSuccesses' // S{...}
   | 'plus' // +N
   | 'minus' // -N
+  | 'marginOfSuccess' // ms{N}
+  | 'sort' // s, sa, sd
+  | 'integerDivide' // //N
+  | 'modulo' // %N
+  | 'repeat' // xN
+  | 'wildDie' // W
+  | 'label' // [text]
   | 'multiply' // *N
   | 'multiplyTotal' // **N
   | 'unknown'
@@ -28,6 +44,22 @@ export interface Token {
   readonly end: number
   readonly description: string
 }
+
+interface SpecialDieEntry {
+  readonly type: TokenType
+  readonly pattern: RegExp
+  readonly describe: (text: string) => string
+}
+
+// Order matters — draw (DDN) before standard core (NdS), fate (dF) before standard, etc.
+const SPECIAL_DIE_PATTERNS: readonly SpecialDieEntry[] = [
+  { type: 'draw', pattern: /^(\d*)[Dd][Dd](\d+)/, describe: t => `Draw die: ${t}` },
+  { type: 'geometric', pattern: /^(\d*)[Gg](\d+)/, describe: t => `Geometric die: ${t}` },
+  { type: 'fate', pattern: /^(\d*)[Dd][Ff](?:\.([12]))?/, describe: t => `Fate die: ${t}` },
+  { type: 'zeroBias', pattern: /^(\d*)[Zz](\d+)/, describe: t => `Zero-bias die: ${t}` },
+  { type: 'customFaces', pattern: /^(\d*)[Dd]\{([^}]+)\}/, describe: t => `Custom faces: ${t}` },
+  { type: 'percentile', pattern: /^[Dd]%/, describe: () => 'Percentile die (d100)' }
+]
 
 interface ModifierEntry {
   readonly type: Exclude<TokenType, 'core' | 'unknown'>
@@ -55,29 +87,51 @@ function describeModifierToken(tokenText: string): string {
 
 // Order matters — more specific patterns must come before ambiguous ones
 const MODIFIERS: readonly ModifierEntry[] = [
+  // // before other patterns to avoid partial match
+  { type: 'integerDivide', pattern: /^\/\/\d+/ },
+  // %N (modulo)
+  { type: 'modulo', pattern: /^%\d+/ },
   // ** before * to avoid partial match
   { type: 'multiplyTotal', pattern: /^\*\*\d+/ },
   { type: 'multiply', pattern: /^\*\d+/ },
-  // !! and !p before ! to avoid partial match
+  // !! and !p and !s{} and !i and !r before ! to avoid partial match
   { type: 'compound', pattern: /^!!\d*/ },
   { type: 'penetrate', pattern: /^!p\d*/i },
+  { type: 'explodeSequence', pattern: /^![sS]\{[\d,]+\}/ },
+  { type: 'explodeSequence', pattern: /^![iI]/ },
+  { type: 'explodeSequence', pattern: /^![rR]/ },
   { type: 'explode', pattern: /^!/ },
   // Drop variants
   { type: 'dropHighest', pattern: /^[Hh]\d*/ },
   { type: 'dropLowest', pattern: /^[Ll]\d*/ },
   { type: 'dropCondition', pattern: /^[Dd]\{[^}]+\}/ },
-  // Keep: kl before K to avoid K matching first char of kl
+  // Keep: KM before kl before K to avoid K matching first char of KM/kl
+  { type: 'keepMiddle', pattern: /^[Kk][Mm]\d*/ },
   { type: 'keepLowest', pattern: /^[Kk][Ll]\d*/ },
   { type: 'keepHighest', pattern: /^[Kk]\d*/ },
   // Brace-based modifiers — closing } required; partial input stays unknown
+  // ro{} (reroll once) before R{} to avoid R matching first char of ro
+  { type: 'reroll', pattern: /^[Rr][Oo]\{[^}]+\}/ },
   { type: 'reroll', pattern: /^[Rr]\{[^}]+\}\d*/ },
   { type: 'cap', pattern: /^[Cc]\{[^}]+\}/ },
   { type: 'replace', pattern: /^[Vv]\{[^}]+\}/ },
   { type: 'unique', pattern: /^[Uu](?:\{[^}]+\})?/ },
+  // Wild Die — must come before margin of success and sort
+  { type: 'wildDie', pattern: /^[Ww](?![{])/ },
+  // Count — must come before countSuccesses and sort
+  { type: 'count', pattern: /^#\{[^}]+\}/ },
+  // Margin of success — must come before countSuccesses and sort
+  { type: 'marginOfSuccess', pattern: /^[Mm][Ss]\{\d+\}/ },
   { type: 'countSuccesses', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
+  // Sort — must come after countSuccesses (S{N}) to avoid conflicts
+  { type: 'sort', pattern: /^[Ss](?:[Aa]|[Dd])?(?![{\d])/ },
   // Arithmetic — only meaningful after a core token
   { type: 'plus', pattern: /^\+\d+/ },
-  { type: 'minus', pattern: /^-\d+/ }
+  { type: 'minus', pattern: /^-\d+/ },
+  // Repeat operator — xN at the end (N >= 1)
+  { type: 'repeat', pattern: /^[Xx][1-9]\d*/ },
+  // Annotation/label — metadata, does not affect mechanics
+  { type: 'label', pattern: /^\[[^\]]+\]/ }
 ]
 
 function appendUnknown(tokens: Token[], char: string, cursor: number): void {
@@ -132,6 +186,23 @@ export function tokenize(notation: string): readonly Token[] {
   if (notation.length === 0) return []
 
   const tokens: Token[] = []
+
+  // Check special die patterns before standard NdS core match
+  for (const entry of SPECIAL_DIE_PATTERNS) {
+    const m = entry.pattern.exec(notation)
+    if (m) {
+      const text = m[0]
+      tokens.push({
+        text,
+        type: entry.type,
+        start: 0,
+        end: text.length,
+        description: entry.describe(text)
+      })
+      return parseFrom(notation, text.length, tokens)
+    }
+  }
+
   const coreMatch = /^[+-]?\d+[Dd]\d+/.exec(notation)
 
   if (coreMatch) {

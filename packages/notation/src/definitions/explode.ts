@@ -1,13 +1,11 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
-const explodePattern = /(?<!!)!(?!!)/
+const explodePattern = /(?<!!)!(?!!|[pPsSiIrR])/
 
-export const explodeSchema: NotationSchema<boolean | number> = defineNotationSchema<
-  boolean | number
->({
+export const explodeSchema: NotationSchema<boolean> = defineNotationSchema<boolean>({
   name: 'explode',
   priority: 50,
 
-  pattern: /(?<!!)!(?!!|p)/,
+  pattern: /(?<!!)!(?!!|[pPsSiIrR])/,
 
   parse: notation => {
     if (explodePattern.test(notation)) {

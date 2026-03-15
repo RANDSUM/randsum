@@ -2,18 +2,25 @@ import type { ModifierOptions } from '../types'
 import {
   capSchema,
   compoundSchema,
+  countFailuresSchema,
+  countSchema,
   countSuccessesSchema,
   dropSchema,
   explodeSchema,
+  explodeSequenceSchema,
+  integerDivideSchema,
   keepSchema,
   minusSchema,
+  moduloSchema,
   multiplySchema,
   multiplyTotalSchema,
   penetrateSchema,
   plusSchema,
   replaceSchema,
   rerollSchema,
-  uniqueSchema
+  sortSchema,
+  uniqueSchema,
+  wildDieSchema
 } from '../definitions'
 
 /**
@@ -36,13 +43,30 @@ const allSchemas: readonly ParseableSchema[] = [
   explodeSchema,
   compoundSchema,
   penetrateSchema,
+  explodeSequenceSchema,
   uniqueSchema,
+  countSchema,
   countSuccessesSchema,
+  countFailuresSchema,
   multiplySchema,
   plusSchema,
   minusSchema,
+  sortSchema,
+  wildDieSchema,
+  integerDivideSchema,
+  moduloSchema,
   multiplyTotalSchema
 ]
+
+/**
+ * Pre-process syntactic sugar in notation before schema parsing.
+ * - `ms{N}` (margin of success) → `-N` (case-insensitive)
+ */
+const marginOfSuccessPattern = /[Mm][Ss]\{(\d+)\}/g
+
+function preprocessNotation(notation: string): string {
+  return notation.replace(marginOfSuccessPattern, (_match, n: string) => `-${n}`)
+}
 
 /**
  * Parse notation string into ModifierOptions using all known notation schemas.
@@ -50,11 +74,12 @@ const allSchemas: readonly ParseableSchema[] = [
  */
 export function parseModifiers(notation: string): ModifierOptions {
   const result: ModifierOptions = {}
+  const processed = preprocessNotation(notation)
 
   for (const schema of allSchemas) {
-    if (schema.pattern.test(notation)) {
+    if (schema.pattern.test(processed)) {
       schema.pattern.lastIndex = 0
-      Object.assign(result, schema.parse(notation))
+      Object.assign(result, schema.parse(processed))
     }
   }
 
@@ -63,10 +88,17 @@ export function parseModifiers(notation: string): ModifierOptions {
 
 /**
  * Build a combined regex pattern from all known notation schemas.
- * Patterns are joined in priority order.
+ * Patterns are joined in priority order, plus syntactic sugar patterns.
  */
 export function buildNotationPattern(): RegExp {
   const sources = [...allSchemas].sort((a, b) => a.priority - b.priority).map(s => s.pattern.source)
+
+  // Add syntactic sugar patterns that are pre-processed before schema parsing
+  sources.push(marginOfSuccessPattern.source)
+  // Repeat operator (xN) — handled in notationToOptions, but needed for isDiceNotation validation
+  sources.push('[Xx][1-9]\\d*')
+  // Annotation labels [text] — stripped before parsing, needed for isDiceNotation validation
+  sources.push('\\[[^\\]]+\\]')
 
   return new RegExp(sources.join('|'), 'g')
 }

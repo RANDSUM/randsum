@@ -1,7 +1,7 @@
 import type { ModifierBehavior } from '../schema'
 import { assertRequiredContext } from '../schema'
 
-export const explodeBehavior: ModifierBehavior<boolean | number> = {
+export const explodeBehavior: ModifierBehavior<boolean> = {
   requiresRollFn: true,
   requiresParameters: true,
 

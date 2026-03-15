@@ -57,9 +57,9 @@ describe('parseModifiers', () => {
     expect(parseModifiers('**3')).toEqual({ multiplyTotal: 3 })
   })
 
-  test('parses countSuccesses modifier', () => {
+  test('parses countSuccesses modifier (desugars to count)', () => {
     expect(parseModifiers('S{5}')).toEqual({
-      countSuccesses: { threshold: 5 }
+      count: { greaterThanOrEqual: 5 }
     })
   })
 })

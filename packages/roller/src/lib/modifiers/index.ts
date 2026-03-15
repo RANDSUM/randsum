@@ -1,4 +1,4 @@
-export { ALL_MODIFIERS } from './definitions'
+export { RANDSUM_MODIFIERS } from './definitions'
 
 export { getModifierOrder, applyAllModifiers, validateModifiers } from './registry'
 

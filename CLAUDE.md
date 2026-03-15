@@ -91,7 +91,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-Modifiers (cap, drop, keep, reroll, explode, etc.) are self-registering definitions in `packages/roller/src/lib/modifiers/definitions/`. Each has a priority determining execution order (10=cap through 100=multiplyTotal).
+The `RANDSUM_MODIFIERS` array in `packages/roller/src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier combines a `NotationSchema` (from `@randsum/notation`) with a `ModifierBehavior` (from `@randsum/roller`). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
 
 ### `roll()` Argument Types
 
@@ -103,6 +103,13 @@ roll("1d20+5", "2d6")       // Multiple arguments combined
 roll("d%")                  // Percentile: 1d100
 roll("4dF")                 // Fate Core: 4 Fate dice (-4 to +4)
 roll("dF.2")                // Extended Fudge die (-2 to +2)
+roll("5d6W")                // D6 System wild die
+roll("g6")                  // Geometric die (roll until 1)
+roll("3DD6")                // Draw die (no replacement)
+roll("4d6Lx6")              // Repeat operator (6 ability scores)
+roll("2d6+3[fire]")         // Annotation/label
+roll("4d6//2")              // Integer division
+roll("5d10F{3}")            // Count failures <= 3
 ```
 
 ## Git Hooks (Lefthook)
@@ -137,4 +144,4 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 Full spec: `packages/roller/RANDSUM_DICE_NOTATION.md`
 
-Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge)
+Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)

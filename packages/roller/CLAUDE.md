@@ -32,47 +32,15 @@ Validates dice notation syntax and returns parsed structure or error.
 
 ### `isDiceNotation(value: string): value is DiceNotation`
 
-Type guard to check if string is valid dice notation.
+Type guard to check if string is valid dice notation. Recognizes all die types including special dice (`d%`, `dF`, `zN`, `gN`, `DDN`, `d{...}`).
 
 ## Dice Notation Reference
 
-See `RANDSUM_DICE_NOTATION.md` in this package for complete syntax.
-
-Key patterns:
-
-- `NdS` - Basic roll (N dice, S sides)
-- `NdS+X` - Add modifier
-- `NdSL` - Drop lowest
-- `NdSH` - Drop highest
-- `NdSR{conditions}` - Reroll conditions
-- `NdS!` - Exploding dice
-- `NdSU` - Unique results
-- `NdSC{conditions}` - Cap values
-- `d%` - Percentile die (1d100)
-- `dF` / `dF.1` / `dF.2` - Fate/Fudge dice
+Full spec: `RANDSUM_DICE_NOTATION.md` in this package. That file is the canonical reference for all notation syntax, modifier behavior, and options-object forms.
 
 ## Modifier System
 
-Modifiers are applied in priority order (lower number = earlier execution):
-
-| Priority | Modifier       | Description                        |
-| -------- | -------------- | ---------------------------------- |
-| 10       | cap            | Limit roll values to a range       |
-| 20       | drop           | Remove dice from pool              |
-| 21       | keep           | Keep dice in pool                  |
-| 30       | replace        | Replace specific values            |
-| 40       | reroll         | Reroll dice matching conditions    |
-| 50       | explode        | Roll additional dice on max        |
-| 51       | compound       | Add explosion to existing die      |
-| 52       | penetrate      | Add explosion minus 1 to die       |
-| 60       | unique         | Ensure no duplicate values         |
-| 85       | multiply       | Multiply dice sum (pre-arithmetic) |
-| 90       | plus           | Add to total                       |
-| 91       | minus          | Subtract from total                |
-| 95       | countSuccesses | Count dice meeting threshold       |
-| 100      | multiplyTotal  | Multiply entire final total        |
-
-Modifier options are defined in `ModifierOptions` type. See `RANDSUM_DICE_NOTATION.md` for full syntax reference.
+The `RANDSUM_MODIFIERS` array in `src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each entry combines a `NotationSchema` (parsing, from `@randsum/notation`) with a `ModifierBehavior` (dice manipulation). See `RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
 
 ## Type Exports
 
@@ -88,7 +56,6 @@ All types are exported with `export type`:
 ## Internal Architecture
 
 - `roll/` - Main roll function and argument parsing
-- `lib/notation/` - Notation parsing
-- `lib/modifiers/` - Modifier application logic
+- `lib/modifiers/` - Modifier definitions (schema + behavior) and registry
 - `lib/random/` - Random number generation
 - `lib/transformers/` - Options ↔ notation conversion

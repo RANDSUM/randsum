@@ -106,6 +106,28 @@ roll({
     reroll: { exact: [1] },
     plus: 5
   }
+})
+
+// New modifiers
+roll({
+  sides: 6,
+  quantity: 5,
+  modifiers: { wildDie: true }              // D6 System wild die
+})
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { integerDivide: 2 }           // Integer divide total
+})
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { modulo: 3 }                  // Total modulo 3
+})
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: { countFailures: { threshold: 3 } }  // Count failures <= 3
 })`} />
 
 ### `key`
@@ -150,9 +172,9 @@ console.log(result.rolls)    // Array of RollRecord objects (one per dice group)
 
 The final numeric total after all modifiers, drops, and arithmetic have been applied.
 
-### `result`
+### `values`
 
-An array of per-group results. For numeric dice this is `string[]`; for custom-face dice it matches the face type.
+An array of individual die values across all groups. For standard numeric dice this is `string[]` (e.g., `["3", "5", "6"]`); for custom-face dice it matches the face type.
 
 ### `rolls`
 

@@ -43,7 +43,10 @@ RANDSUM supports standard dice notation. The format is `NdS` -- **N** dice with 
 roll('2d6')      // two six-sided dice
 roll('4d8')      // four eight-sided dice
 roll('1d20+5')   // one d20, add 5 to the total
-roll('4d6L')     // four d6, drop the lowest`} />
+roll('4d6L')     // four d6, drop the lowest
+roll('5d6W')     // D6 System wild die
+roll('4d6Lx6')   // six ability scores (repeat operator)
+roll('g6')       // geometric die (roll until 1)`} />
 
 <RollerPlayground defaultNotation="4d6L" client:only="react" />
 

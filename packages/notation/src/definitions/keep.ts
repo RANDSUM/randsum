@@ -1,15 +1,22 @@
 import type { KeepOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-const keepHighestPattern = /[Kk](?![Ll])(\d+)?/
+const keepMiddlePattern = /[Kk][Mm](\d+)?/
+const keepHighestPattern = /[Kk](?![LlMm])(\d+)?/
 const keepLowestPattern = /[Kk][Ll](\d+)?/i
 
 export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<KeepOptions>({
   name: 'keep',
   priority: 21,
 
-  pattern: /[Kk]([Ll])?(\d+)?/,
+  pattern: /[Kk]([LlMm])?(\d+)?/,
 
   parse: notation => {
+    const middleMatch = keepMiddlePattern.exec(notation)
+    if (middleMatch) {
+      const count = middleMatch[1] ? Number(middleMatch[1]) : 1
+      return { drop: { lowest: count, highest: count } }
+    }
+
     const keep: KeepOptions = {}
 
     const lowestMatch = keepLowestPattern.exec(notation)

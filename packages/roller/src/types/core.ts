@@ -47,6 +47,47 @@ type FateDieLiteral =
 export type FateDieNotation = FateDieLiteral | `${number}${FateDieLiteral}`
 
 /**
+ * Zero-bias dice notation.
+ * `zN` rolls a dN with faces 0 to N-1 instead of 1 to N.
+ * Supports optional quantity prefix: `4z6` = four zero-biased d6s.
+ *
+ * Case-insensitive (z6 and Z6 are equivalent).
+ */
+export type ZeroBiasNotation = `${number | ''}${'z' | 'Z'}${number}`
+
+/**
+ * Custom faces dice notation.
+ * `d{2,3,5,7}` rolls a die with explicit numeric face values [2,3,5,7].
+ * `d{fire,ice,lightning}` rolls a die with string face values.
+ * Mixed faces like `d{1,fire,3}` are treated as all strings.
+ * Supports optional quantity prefix: `3d{1,1,2,2,3,3}`.
+ * Numeric faces can include 0 and negative numbers: `d{-1,0,1}`.
+ *
+ * Case-insensitive on the `d`.
+ */
+export type CustomFacesNotation = `${'d' | 'D'}{${string}}` | `${number}${'d' | 'D'}{${string}}`
+
+/**
+ * Draw die notation — sampling without replacement.
+ * `DD6` draws from a d6 pool (faces 1-6, no repeats until exhausted).
+ * Supports quantity prefix: `3DD6` draws 3 unique values.
+ *
+ * Case-insensitive: DD, dd, Dd, dD all work.
+ */
+export type DrawDieNotation =
+  | `${'dd' | 'DD' | 'Dd' | 'dD'}${number}`
+  | `${number}${'dd' | 'DD' | 'Dd' | 'dD'}${number}`
+
+/**
+ * Geometric die notation — roll until first 1, count attempts.
+ * `g6` rolls d6 repeatedly until a 1 appears, result is the attempt count.
+ * Supports quantity prefix: `3g6` performs 3 independent geometric rolls.
+ *
+ * Case-insensitive: g6 and G6 are equivalent.
+ */
+export type GeometricDieNotation = `${'g' | 'G'}${number}` | `${number}${'g' | 'G'}${number}`
+
+/**
  * Valid input types for the roll() function.
  *
  * @template T - Type for custom dice faces
@@ -58,6 +99,9 @@ export type FateDieNotation = FateDieLiteral | `${number}${FateDieLiteral}`
  * roll({ sides: 6, quantity: 4 })  // options object
  * roll("d%")            // percentile (1d100)
  * roll("4dF")           // four Fate/Fudge dice
+ * roll("z6")            // zero-bias d6 (0-5)
+ * roll("d{2,3,5,7}")    // custom faces
+ * roll("DD6")           // draw die (no replacement)
  * ```
  */
 export type RollArgument<T = string> =
@@ -65,6 +109,10 @@ export type RollArgument<T = string> =
   | DiceNotation
   | FateDieNotation
   | PercentileDie
+  | ZeroBiasNotation
+  | CustomFacesNotation
+  | DrawDieNotation
+  | GeometricDieNotation
   | number
 
 /**

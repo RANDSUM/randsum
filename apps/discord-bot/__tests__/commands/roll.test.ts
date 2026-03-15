@@ -6,8 +6,8 @@ const { roll: realRoll } = await import('../../../../packages/roller/src/roll/in
 const { validateFinite, validateRange } =
   await import('../../../../packages/roller/src/lib/utils/validation')
 const { isDiceNotation, notation: realNotation } =
-  await import('../../../../packages/notation/src/parse')
-const { validateNotation } = await import('../../../../packages/notation/src/validate')
+  await import('../../../../packages/notation/src/isDiceNotation')
+const { validateNotation } = await import('../../../../packages/notation/src/validateNotation')
 const { RandsumError, NotationParseError, ModifierError, ValidationError, RollError, ERROR_CODES } =
   await import('../../../../packages/roller/src/errors')
 

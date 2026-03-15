@@ -13,12 +13,18 @@ export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 's
   sides: number
   /** Custom face values if using non-numeric dice */
   faces?: T[]
+  /** Draw without replacement (DD notation) */
+  draw?: true
+  /** Geometric die — roll until 1, count attempts */
+  geometric?: true
   /** Original input argument */
   argument: RollArgument<T>
   /** Human-readable description of the roll */
   description: string[]
   /** Dice notation string */
   notation: DiceNotation
+  /** Annotation label (e.g., "fire" from [fire]) */
+  label?: string
 }
 
 /**
@@ -48,6 +54,8 @@ export interface RollRecord<T = string> {
   appliedTotal: number
   /** Custom face results (for non-numeric dice) */
   customResults?: T[]
+  /** Annotation label (e.g., "fire" from [fire]) */
+  label?: string
   /** Final total for this roll */
   total: number
 }

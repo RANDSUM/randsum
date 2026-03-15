@@ -61,8 +61,8 @@ describe('modifiersToNotation', () => {
     expect(modifiersToNotation({ minus: 3 })).toBe('-3')
   })
 
-  test('formats countSuccesses modifier', () => {
-    expect(modifiersToNotation({ countSuccesses: { threshold: 5 } })).toBe('S{5}')
+  test('formats count modifier (successes)', () => {
+    expect(modifiersToNotation({ count: { greaterThanOrEqual: 5 } })).toBe('#{>=5}')
   })
 
   test('formats multiplyTotal modifier', () => {
@@ -135,9 +135,9 @@ describe('modifiersToDescription', () => {
     expect(modifiersToDescription({ minus: 3 })).toEqual(['Subtract 3'])
   })
 
-  test('describes countSuccesses modifier', () => {
-    expect(modifiersToDescription({ countSuccesses: { threshold: 5 } })).toEqual([
-      'Count successes >= 5'
+  test('describes count modifier (successes)', () => {
+    expect(modifiersToDescription({ count: { greaterThanOrEqual: 5 } })).toEqual([
+      'Count dice greater than or equal to 5'
     ])
   })
 

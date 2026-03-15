@@ -42,24 +42,35 @@ export interface UniqueOptions {
   notUnique: number[]
 }
 
-export interface SuccessCountOptions {
-  /** Threshold for counting successes (rolls >= this value) */
-  threshold: number
-  /** Optional: threshold for counting botches/failures (rolls <= this value) */
-  botchThreshold?: number
+export interface CountOptions {
+  /** Count dice greater than N */
+  greaterThan?: number
+  /** Count dice greater than or equal to N */
+  greaterThanOrEqual?: number
+  /** Count dice less than N */
+  lessThan?: number
+  /** Count dice less than or equal to N */
+  lessThanOrEqual?: number
+  /** Count dice matching exact values */
+  exact?: number[]
+  /** If true, below-threshold count subtracts from above-threshold count */
+  deduct?: boolean
 }
 
 export type ModifierConfig =
   | number
+  | number[]
   | boolean
+  | 'asc'
+  | 'desc'
   | ComparisonOptions
+  | CountOptions
   | DropOptions
   | KeepOptions
   | ReplaceOptions
   | ReplaceOptions[]
   | RerollOptions
   | UniqueOptions
-  | SuccessCountOptions
 
 export interface ModifierOptions {
   /** Cap roll values to a range */
@@ -74,22 +85,32 @@ export interface ModifierOptions {
   reroll?: RerollOptions
   /** Ensure unique values (true or options) */
   unique?: boolean | UniqueOptions
-  /** Exploding dice: reroll and add on max value */
-  explode?: boolean | number
+  /** Exploding dice: reroll and add on max value (single pass) */
+  explode?: boolean
   /** Compounding exploding: add to triggering die instead of creating new dice */
   compound?: boolean | number
   /** Penetrating exploding: subtract 1 from each subsequent explosion */
   penetrate?: boolean | number
-  /** Count successes instead of summing (for dice pool systems) */
-  countSuccesses?: SuccessCountOptions
+  /** Count dice matching conditions instead of summing */
+  count?: CountOptions
   /** Multiply dice result (before +/- arithmetic) */
   multiply?: number
   /** Add a fixed value to the total */
   plus?: number
   /** Subtract a fixed value from the total */
   minus?: number
+  /** Sort the rolls array (display-only, does not affect total) */
+  sort?: 'asc' | 'desc'
+  /** Integer divide the total (truncates toward zero) */
+  integerDivide?: number
+  /** Modulo the total */
+  modulo?: number
+  /** Wild die: compound on max, remove wild + highest on 1 (D6 System) */
+  wildDie?: boolean
   /** Multiply final total (after all other modifiers) */
   multiplyTotal?: number
+  /** Explode through a sequence of die sizes */
+  explodeSequence?: number[]
 }
 
 /**
@@ -106,6 +127,8 @@ export interface ParsedNotationOptions {
   sides: number
   /** Modifiers to apply to the roll */
   modifiers?: ModifierOptions
+  /** Annotation label (e.g., [fire]) */
+  label?: string
 }
 
 /**

@@ -2,18 +2,23 @@ import type { ModifierOptions } from '../types'
 import {
   capSchema,
   compoundSchema,
-  countSuccessesSchema,
+  countSchema,
   dropSchema,
   explodeSchema,
+  explodeSequenceSchema,
+  integerDivideSchema,
   keepSchema,
   minusSchema,
+  moduloSchema,
   multiplySchema,
   multiplyTotalSchema,
   penetrateSchema,
   plusSchema,
   replaceSchema,
   rerollSchema,
-  uniqueSchema
+  sortSchema,
+  uniqueSchema,
+  wildDieSchema
 } from '../definitions'
 
 /**
@@ -56,6 +61,10 @@ export function modifiersToNotation(modifiers: ModifierOptions | undefined): str
     const n = penetrateSchema.toNotation(modifiers.penetrate)
     if (n !== undefined) parts.push(n)
   }
+  if (modifiers.explodeSequence !== undefined) {
+    const n = explodeSequenceSchema.toNotation(modifiers.explodeSequence)
+    if (n !== undefined) parts.push(n)
+  }
   if (modifiers.unique !== undefined) {
     const n = uniqueSchema.toNotation(modifiers.unique)
     if (n !== undefined) parts.push(n)
@@ -72,8 +81,24 @@ export function modifiersToNotation(modifiers: ModifierOptions | undefined): str
     const n = minusSchema.toNotation(modifiers.minus)
     if (n !== undefined) parts.push(n)
   }
-  if (modifiers.countSuccesses !== undefined) {
-    const n = countSuccessesSchema.toNotation(modifiers.countSuccesses)
+  if (modifiers.sort !== undefined) {
+    const n = sortSchema.toNotation(modifiers.sort)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.integerDivide !== undefined) {
+    const n = integerDivideSchema.toNotation(modifiers.integerDivide)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.modulo !== undefined) {
+    const n = moduloSchema.toNotation(modifiers.modulo)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.wildDie !== undefined) {
+    const n = wildDieSchema.toNotation(modifiers.wildDie)
+    if (n !== undefined) parts.push(n)
+  }
+  if (modifiers.count !== undefined) {
+    const n = countSchema.toNotation(modifiers.count)
     if (n !== undefined) parts.push(n)
   }
   if (modifiers.multiplyTotal !== undefined) {
@@ -102,13 +127,19 @@ export function modifiersToDescription(modifiers: ModifierOptions | undefined): 
     parts.push(...compoundSchema.toDescription(modifiers.compound))
   if (modifiers.penetrate !== undefined)
     parts.push(...penetrateSchema.toDescription(modifiers.penetrate))
+  if (modifiers.explodeSequence !== undefined)
+    parts.push(...explodeSequenceSchema.toDescription(modifiers.explodeSequence))
   if (modifiers.unique !== undefined) parts.push(...uniqueSchema.toDescription(modifiers.unique))
   if (modifiers.multiply !== undefined)
     parts.push(...multiplySchema.toDescription(modifiers.multiply))
   if (modifiers.plus !== undefined) parts.push(...plusSchema.toDescription(modifiers.plus))
   if (modifiers.minus !== undefined) parts.push(...minusSchema.toDescription(modifiers.minus))
-  if (modifiers.countSuccesses !== undefined)
-    parts.push(...countSuccessesSchema.toDescription(modifiers.countSuccesses))
+  if (modifiers.sort !== undefined) parts.push(...sortSchema.toDescription(modifiers.sort))
+  if (modifiers.integerDivide !== undefined)
+    parts.push(...integerDivideSchema.toDescription(modifiers.integerDivide))
+  if (modifiers.modulo !== undefined) parts.push(...moduloSchema.toDescription(modifiers.modulo))
+  if (modifiers.wildDie !== undefined) parts.push(...wildDieSchema.toDescription(modifiers.wildDie))
+  if (modifiers.count !== undefined) parts.push(...countSchema.toDescription(modifiers.count))
   if (modifiers.multiplyTotal !== undefined)
     parts.push(...multiplyTotalSchema.toDescription(modifiers.multiplyTotal))
 

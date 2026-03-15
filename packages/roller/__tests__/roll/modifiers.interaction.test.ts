@@ -35,21 +35,21 @@ describe('modifier interactions', () => {
     })
   })
 
-  describe('countSuccesses + arithmetic', () => {
-    test('countSuccesses (priority 95) overwrites plus (priority 90) total', () => {
+  describe('count + arithmetic', () => {
+    test('count (priority 95) overwrites plus (priority 90) total', () => {
       const result = roll({
         sides: 1,
         quantity: 4,
-        modifiers: { countSuccesses: { threshold: 1 }, plus: 2 }
+        modifiers: { count: { greaterThanOrEqual: 1 }, plus: 2 }
       })
       expect(result.total).toBe(4)
     })
 
-    test('countSuccesses with botchThreshold subtracts botches', () => {
+    test('count with deduct subtracts botches', () => {
       const result = roll({
         sides: 1,
         quantity: 4,
-        modifiers: { countSuccesses: { threshold: 6, botchThreshold: 1 } }
+        modifiers: { count: { greaterThanOrEqual: 6, lessThanOrEqual: 1, deduct: true } }
       })
       expect(result.total).toBe(-4)
     })

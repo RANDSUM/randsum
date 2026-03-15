@@ -41,9 +41,63 @@ export class RollPipeline<T = string> {
    * Generate the initial dice rolls before any modifiers are applied.
    */
   public generateInitialRolls(): this {
-    const { sides, quantity } = this.params
-    this.initialRolls = coreSpreadRolls(quantity, sides, this.rng)
+    const { sides, quantity, draw, geometric } = this.params
+    if (draw === true) {
+      this.initialRolls = this.drawWithoutReplacement(quantity, sides)
+    } else if (geometric === true) {
+      this.initialRolls = Array.from({ length: quantity }, () => this.geometricRoll(sides))
+    } else {
+      this.initialRolls = coreSpreadRolls(quantity, sides, this.rng)
+    }
     return this
+  }
+
+  /**
+   * Perform a single geometric roll: roll dN until a 1 appears.
+   * Returns the number of rolls it took (including the final 1).
+   * Capped at 1000 to prevent infinite loops.
+   */
+  private geometricRoll(sides: number, count = 1): number {
+    if (count > 1000) return 1000
+    const value = coreRandom(sides, this.rng) + 1
+    if (value === 1) return count
+    return this.geometricRoll(sides, count + 1)
+  }
+
+  /**
+   * Draw values without replacement from a pool of [1..sides].
+   * If quantity exceeds sides, the pool reshuffles after exhaustion.
+   */
+  private drawWithoutReplacement(quantity: number, sides: number): number[] {
+    const result: number[] = []
+    const fullBatches = Math.floor(quantity / sides)
+    const remainder = quantity % sides
+
+    for (const _batch of Array.from({ length: fullBatches })) {
+      result.push(...this.shuffledPool(sides))
+    }
+
+    if (remainder > 0) {
+      result.push(...this.shuffledPool(sides).slice(0, remainder))
+    }
+
+    return result
+  }
+
+  /**
+   * Create a shuffled pool of [1..sides] using Fisher-Yates.
+   */
+  private shuffledPool(sides: number): number[] {
+    const pool = Array.from({ length: sides }, (_, i) => i + 1)
+
+    for (const i of Array.from({ length: sides - 1 }, (_, k) => sides - 1 - k)) {
+      const j = Math.floor(this.rng() * (i + 1))
+      const temp = pool[i] ?? 0
+      pool[i] = pool[j] ?? 0
+      pool[j] = temp
+    }
+
+    return pool
   }
 
   /**
@@ -66,7 +120,8 @@ export class RollPipeline<T = string> {
     const rollOne = (): number => coreRandom(sides, this.rng) + 1
     const ctx: ModifierContext = {
       rollOne,
-      parameters: { sides, quantity }
+      parameters: { sides, quantity },
+      randomFn: this.rng
     }
 
     this.modifierResult = applyAllModifiers(modifiers, this.initialRolls, ctx)
@@ -107,7 +162,7 @@ export class RollPipeline<T = string> {
       throw new RollError('Must call applyModifiers() before building')
     }
 
-    const { faces, arithmetic, description, argument, notation } = this.params
+    const { faces, arithmetic, description, argument, notation, label } = this.params
     const total = this.calculateTotal()
     const isNegative = arithmetic === 'subtract'
 
@@ -121,6 +176,7 @@ export class RollPipeline<T = string> {
       argument,
       notation,
       description,
+      ...(label !== undefined ? { label } : {}),
       initialRolls: this.initialRolls,
       modifierLogs: this.modifierResult.logs,
       rolls: this.modifierResult.rolls,

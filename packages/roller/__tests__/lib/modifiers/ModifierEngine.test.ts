@@ -633,17 +633,18 @@ describe('modifierToNotation', () => {
     expect(result).toBe('**3')
   })
 
-  test('generates notation for countSuccesses modifier', () => {
-    const result = modifierToNotation('countSuccesses', { threshold: 7 })
-    expect(result).toBe('S{7}')
+  test('generates notation for count modifier', () => {
+    const result = modifierToNotation('count', { greaterThanOrEqual: 7 })
+    expect(result).toBe('#{>=7}')
   })
 
-  test('generates notation for countSuccesses modifier with botch', () => {
-    const result = modifierToNotation('countSuccesses', {
-      threshold: 7,
-      botchThreshold: 1
+  test('generates notation for count modifier with deduct', () => {
+    const result = modifierToNotation('count', {
+      greaterThanOrEqual: 7,
+      lessThanOrEqual: 1,
+      deduct: true
     })
-    expect(result).toBe('S{7,1}')
+    expect(result).toBe('#{>=7,<=1}')
   })
 })
 
@@ -764,11 +765,11 @@ describe('applyModifier - multiply modifiers', () => {
   })
 })
 
-describe('applyModifier - countSuccesses modifier', () => {
+describe('applyModifier - count modifier', () => {
   const ctx: ModifierContext = { parameters: { sides: 10, quantity: 5 } }
 
-  test('counts successes above threshold', () => {
-    const result = applyModifier('countSuccesses', { threshold: 7 }, [5, 7, 8, 3, 10], ctx)
+  test('counts dice above threshold', () => {
+    const result = applyModifier('count', { greaterThanOrEqual: 7 }, [5, 7, 8, 3, 10], ctx)
 
     expect(result.rolls).toEqual([5, 7, 8, 3, 10])
     expect(result.transformTotal).toBeDefined()
@@ -777,13 +778,13 @@ describe('applyModifier - countSuccesses modifier', () => {
       expect(result.transformTotal(33, [5, 7, 8, 3, 10])).toBe(3)
     }
     expect(result.log).not.toBeNull()
-    expect(result.log?.modifier).toBe('countSuccesses')
+    expect(result.log?.modifier).toBe('count')
   })
 
-  test('counts successes with botch threshold', () => {
+  test('counts with deduct (above minus below)', () => {
     const result = applyModifier(
-      'countSuccesses',
-      { threshold: 7, botchThreshold: 1 },
+      'count',
+      { greaterThanOrEqual: 7, lessThanOrEqual: 1, deduct: true },
       [1, 7, 8, 1, 10],
       ctx
     )
@@ -796,10 +797,10 @@ describe('applyModifier - countSuccesses modifier', () => {
     }
   })
 
-  test('botches can make total negative', () => {
+  test('deduct can make total negative', () => {
     const result = applyModifier(
-      'countSuccesses',
-      { threshold: 10, botchThreshold: 3 },
+      'count',
+      { greaterThanOrEqual: 10, lessThanOrEqual: 3, deduct: true },
       [1, 2, 3, 4, 5],
       ctx
     )
@@ -811,8 +812,8 @@ describe('applyModifier - countSuccesses modifier', () => {
     }
   })
 
-  test('returns 0 when no successes and no botches', () => {
-    const result = applyModifier('countSuccesses', { threshold: 10 }, [1, 2, 3, 4, 5], ctx)
+  test('returns 0 when no dice match', () => {
+    const result = applyModifier('count', { greaterThanOrEqual: 10 }, [1, 2, 3, 4, 5], ctx)
 
     expect(result.transformTotal).toBeDefined()
     if (result.transformTotal) {
@@ -832,17 +833,20 @@ describe('modifierToDescription - additional modifiers', () => {
     expect(result).toEqual(['Multiply total by 3'])
   })
 
-  test('generates description for countSuccesses modifier', () => {
-    const result = modifierToDescription('countSuccesses', { threshold: 7 })
-    expect(result).toEqual(['Count successes >= 7'])
+  test('generates description for count modifier', () => {
+    const result = modifierToDescription('count', { greaterThanOrEqual: 7 })
+    expect(result).toEqual(['Count dice greater than or equal to 7'])
   })
 
-  test('generates description for countSuccesses modifier with botch', () => {
-    const result = modifierToDescription('countSuccesses', {
-      threshold: 7,
-      botchThreshold: 1
+  test('generates description for count modifier with deduct', () => {
+    const result = modifierToDescription('count', {
+      greaterThanOrEqual: 7,
+      lessThanOrEqual: 1,
+      deduct: true
     })
-    expect(result).toEqual(['Count successes >= 7, botches <= 1'])
+    expect(result).toEqual([
+      'Count dice greater than or equal to 7, deduct dice less than or equal to 1'
+    ])
   })
 })
 
@@ -918,14 +922,14 @@ describe('parseModifiers', () => {
     expect(result.multiplyTotal).toBe(3)
   })
 
-  test('parses countSuccesses from notation', () => {
-    const result = parseModifiers('5d10S{7}')
-    expect(result.countSuccesses).toEqual({ threshold: 7 })
+  test('parses count from notation (#{} syntax)', () => {
+    const result = parseModifiers('5d10#{>=7}')
+    expect(result.count).toEqual({ greaterThanOrEqual: 7 })
   })
 
-  test('parses countSuccesses with botch from notation', () => {
-    const result = parseModifiers('5d10S{7,1}')
-    expect(result.countSuccesses).toEqual({ threshold: 7, botchThreshold: 1 })
+  test('parses count with deduct from notation', () => {
+    const result = parseModifiers('5d10#{>=7,<=1}')
+    expect(result.count).toEqual({ greaterThanOrEqual: 7, lessThanOrEqual: 1, deduct: true })
   })
 
   test('parses multiple modifiers from notation', () => {

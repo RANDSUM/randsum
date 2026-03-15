@@ -1,5 +1,6 @@
 import type {
   ComparisonOptions,
+  CountOptions,
   DropOptions,
   KeepOptions,
   ModifierLog,
@@ -7,7 +8,6 @@ import type {
   ReplaceOptions,
   RequiredNumericRollParameters,
   RerollOptions,
-  SuccessCountOptions,
   UniqueOptions
 } from '../../types'
 import type { NotationSchema } from '@randsum/notation'
@@ -20,6 +20,8 @@ export interface ModifierContext {
   rollOne?: () => number
   /** Roll parameters (sides, quantity) */
   parameters?: RequiredNumericRollParameters
+  /** Raw random function for modifiers that need to roll dice of different sizes */
+  randomFn?: () => number
 }
 
 /**
@@ -121,7 +123,7 @@ export interface ModifierApplyResult {
    * Optional function to transform the running total.
    * Called in priority order during total calculation.
    * Use this for modifiers that affect how the total is computed
-   * (e.g., multiply, countSuccesses, plus/minus).
+   * (e.g., multiply, count, plus/minus).
    */
   transformTotal?: TotalTransformer
 }
@@ -175,7 +177,7 @@ export interface ModifierBehavior<TOptions = unknown> {
  * - 40-49: Rerolling (reroll)
  * - 50-59: Explosions (explode, compound, penetrate)
  * - 60-69: Uniqueness (unique)
- * - 70-79: Counting (countSuccesses)
+ * - 70-79: Counting (count)
  * - 80-89: Multiplication (multiply)
  * - 90-99: Arithmetic (plus, minus)
  * - 100+: Final (multiplyTotal)
@@ -191,18 +193,23 @@ export type ModifierDefinition<TOptions = unknown> = NotationSchema<TOptions> &
  */
 export interface ModifierOptionTypes {
   cap: ComparisonOptions
+  count: CountOptions
   drop: DropOptions
   keep: KeepOptions
   replace: ReplaceOptions | ReplaceOptions[]
   reroll: RerollOptions
   unique: boolean | UniqueOptions
-  explode: boolean | number
+  explode: boolean
   compound: boolean | number
   penetrate: boolean | number
-  countSuccesses: SuccessCountOptions
+  explodeSequence: number[]
   multiply: number
   plus: number
   minus: number
+  sort: 'asc' | 'desc'
+  wildDie: boolean
+  integerDivide: number
+  modulo: number
   multiplyTotal: number
 }
 

@@ -27,17 +27,26 @@ RANDSUM uses an extended dice notation system. All notation is case-insensitive.
 
 **Basic Syntax**: `NdS` where N = quantity, S = sides
 
-| Notation     | Description              | Example                      |
-| ------------ | ------------------------ | ---------------------------- |
-| `2d6`        | Roll 2 six-sided dice    | Standard damage roll         |
-| `1d20+5`     | Roll d20, add 5          | Attack roll with modifier    |
-| `4d6L`       | Roll 4d6, drop lowest    | D&D ability score generation |
-| `2d20L`      | Roll 2d20, drop lowest   | Advantage (keep highest)     |
-| `2d20H`      | Roll 2d20, drop highest  | Disadvantage (keep lowest)   |
-| `3d6!`       | Exploding dice           | Reroll and add on max result |
-| `4d6R{1}`    | Reroll 1s                | Avoid minimum results        |
-| `4d20U`      | Unique results only      | No duplicate values          |
-| `4d20C{>18}` | Cap values over 18 to 18 | Limit maximum results        |
+| Notation     | Description               | Example                      |
+| ------------ | ------------------------- | ---------------------------- |
+| `2d6`        | Roll 2 six-sided dice     | Standard damage roll         |
+| `1d20+5`     | Roll d20, add 5           | Attack roll with modifier    |
+| `4d6L`       | Roll 4d6, drop lowest     | D&D ability score generation |
+| `2d20L`      | Roll 2d20, drop lowest    | Advantage (keep highest)     |
+| `2d20H`      | Roll 2d20, drop highest   | Disadvantage (keep lowest)   |
+| `3d6!`       | Exploding dice            | Reroll and add on max result |
+| `4d6R{1}`    | Reroll 1s                 | Avoid minimum results        |
+| `4d20U`      | Unique results only       | No duplicate values          |
+| `4d20C{>18}` | Cap values over 18 to 18  | Limit maximum results        |
+| `5d10S{7}`   | Count successes >= 7      | World of Darkness dice pools |
+| `5d10F{3}`   | Count failures <= 3       | Failure counting             |
+| `5d6W`       | Wild die (D6 System)      | Star Wars D6, Ghostbusters   |
+| `4d6//2`     | Integer divide total      | Halving damage               |
+| `4d6%3`      | Total modulo 3            | Cyclic mechanics             |
+| `g6`         | Geometric die             | Roll until 1, count attempts |
+| `DD6`        | Draw die (no replacement) | Card-deck mechanics          |
+| `4d6Lx6`     | Repeat notation 6 times   | D&D ability score generation |
+| `2d6[fire]`  | Annotation/label          | Track damage types           |
 
 **Multiple dice groups**: `1d20+2d6+3` (attack plus damage), `2d12-1d6`
 

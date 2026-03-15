@@ -109,8 +109,33 @@ Conditions use comparison operators: `>N` (greater than), `<N` (less than), `>=N
 
 | Notation | Description |
 |---|---|
-| `5d10S{7}` | Count dice ≥ 7 (successes) |
-| `5d10S{7,1}` | Successes ≥ 7, subtract botches ≤ 1 |
+| `5d10S{7}` | Count dice >= 7 (successes) |
+| `5d10S{7,1}` | Successes >= 7, subtract botches <= 1 |
+| `5d10F{3}` | Count dice <= 3 (failures) |
+
+### Wild Die, Integer Division, Modulo
+
+| Notation | Description |
+|---|---|
+| `5d6W` | D6 System wild die (last die is wild) |
+| `4d6//2` | Integer divide total by 2 |
+| `4d6%3` | Total modulo 3 |
+
+### Special Dice
+
+| Notation | Description |
+|---|---|
+| `g6` | Geometric die: roll d6 until 1, return count |
+| `3g6` | Three independent geometric rolls |
+| `DD6` | Draw die: sample without replacement from d6 |
+| `3DD6` | Draw 3 unique values from d6 pool |
+
+### Annotations and Repeat
+
+| Notation | Description |
+|---|---|
+| `2d6+3[fire]` | Label a roll group (no mechanical effect) |
+| `4d6Lx6` | Repeat notation 6 times (ability score gen) |
 
 ### Multiple Groups
 
@@ -119,7 +144,7 @@ Conditions use comparison operators: `>N` (greater than), `<N` (less than), `>=N
 2d12-1d6          # roll 2d12, subtract 1d6
 ```
 
-**Modifier order** (lower = earlier): Cap (10) → Drop/Keep (20/21) → Replace (30) → Reroll (40) → Explode (50-52) → Unique (60) → Multiply (85) → Plus/Minus (90/91) → Count Successes (95) → Total Multiply (100)
+**Modifier order** (lower = earlier): Cap (10) → Drop/Keep (20/21) → Replace (30) → Reroll (40) → Explode (50-52) → Wild Die (55) → Unique (60) → Multiply (85) → Plus/Minus (90/91) → Sort (92) → Integer Divide (93) → Modulo (94) → Count Successes (95) → Count Failures (96) → Total Multiply (100)
 
 Full notation reference: [references/NOTATION.md](references/NOTATION.md)
 

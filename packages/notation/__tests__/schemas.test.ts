@@ -464,13 +464,13 @@ describe('uniqueSchema', () => {
 describe('countSuccessesSchema', () => {
   test('parses count successes', () => {
     expect(countSuccessesSchema.parse('S{5}')).toEqual({
-      countSuccesses: { threshold: 5 }
+      count: { greaterThanOrEqual: 5 }
     })
   })
 
   test('parses count successes with botch', () => {
     expect(countSuccessesSchema.parse('S{5,1}')).toEqual({
-      countSuccesses: { threshold: 5, botchThreshold: 1 }
+      count: { greaterThanOrEqual: 5, lessThanOrEqual: 1, deduct: true }
     })
   })
 
@@ -479,15 +479,23 @@ describe('countSuccessesSchema', () => {
   })
 
   test('toNotation formats count successes', () => {
-    expect(countSuccessesSchema.toNotation({ threshold: 5 })).toBe('S{5}')
-    expect(countSuccessesSchema.toNotation({ threshold: 5, botchThreshold: 1 })).toBe('S{5,1}')
+    expect(countSuccessesSchema.toNotation({ greaterThanOrEqual: 5 })).toBe('S{5}')
+    expect(
+      countSuccessesSchema.toNotation({ greaterThanOrEqual: 5, lessThanOrEqual: 1, deduct: true })
+    ).toBe('S{5,1}')
   })
 
   test('toDescription describes count successes', () => {
-    expect(countSuccessesSchema.toDescription({ threshold: 5 })).toEqual(['Count successes >= 5'])
-    expect(countSuccessesSchema.toDescription({ threshold: 5, botchThreshold: 1 })).toEqual([
-      'Count successes >= 5, botches <= 1'
+    expect(countSuccessesSchema.toDescription({ greaterThanOrEqual: 5 })).toEqual([
+      'Count successes >= 5'
     ])
+    expect(
+      countSuccessesSchema.toDescription({
+        greaterThanOrEqual: 5,
+        lessThanOrEqual: 1,
+        deduct: true
+      })
+    ).toEqual(['Count successes >= 5, botches <= 1'])
   })
 })
 

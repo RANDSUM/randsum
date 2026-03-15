@@ -4,6 +4,9 @@
 
 - [Overview](#overview)
 - [Basic Syntax](#basic-syntax)
+- [Special Dice](#special-dice)
+  - [Geometric Die](#geometric-die-gn)
+  - [Draw Die](#draw-die-ddn)
 - [Modifiers](#modifiers)
   - [Basic Arithmetic](#basic-arithmetic)
   - [Cap Modifiers](#cap-modifiers)
@@ -16,8 +19,14 @@
   - [Compounding Exploding](#compounding-exploding-)
   - [Penetrating Exploding](#penetrating-exploding-p)
   - [Pre-Arithmetic Multiplier](#pre-arithmetic-multiplier-)
-  - [Total Multiplier](#total-multiplier-)
   - [Count Successes](#count-successes-s)
+  - [Integer Division](#integer-division-n)
+  - [Modulo](#modulo-n)
+  - [Count Failures](#count-failures-fn)
+  - [Wild Die](#wild-die-w)
+  - [Annotations/Labels](#annotationslabels-text)
+  - [Repeat Operator](#repeat-operator-xn)
+  - [Total Multiplier](#total-multiplier-)
   - [Combining Modifiers](#combining-modifiers)
 - [Multiple Dice Groups](#multiple-dice-sides-in-a-single-roll)
 - [Common Use Cases](#common-use-cases)
@@ -54,6 +63,28 @@ roll({
   sides: 6,
   quantity: 4
 })
+```
+
+## Special Dice
+
+### Geometric Die (`gN`)
+
+Roll dN until a 1 appears, result = attempt count. Safety cap at 1000 iterations.
+
+```typescript
+roll("g6")   // Roll d6 until 1 appears (average: 6 rolls)
+roll("3g6")  // Three independent geometric rolls
+```
+
+### Draw Die (`DDN`)
+
+Sampling without replacement — like drawing from a deck. Uses Fisher-Yates shuffle.
+
+```typescript
+roll("DD6")   // Draw one unique value from [1..6]
+roll("3DD6")  // Draw 3 unique values
+roll("6DD6")  // Full permutation of [1,2,3,4,5,6]
+roll("8DD6")  // Full permutation + 2 more (reshuffles after exhaustion)
 ```
 
 ## Modifiers
@@ -527,6 +558,82 @@ roll({
 
 **Example with botch:** `5d10S{7,1}` rolls [8, 1, 10, 1, 9]. Successes: 3, Botches: 2. Result = 1.
 
+### Integer Division (//N)
+
+Integer divide the total (truncates toward zero via `Math.trunc`):
+
+```typescript
+roll("4d6//2") // Integer divide total by 2
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { integerDivide: 2 }
+})
+```
+
+### Modulo (%N)
+
+Apply modulo to the total:
+
+```typescript
+roll("4d6%3") // Total modulo 3
+roll({
+  sides: 6,
+  quantity: 4,
+  modifiers: { modulo: 3 }
+})
+```
+
+### Count Failures (F{N})
+
+Count how many dice rolled at or below a threshold. Requires curly braces to avoid conflict with Fate dice:
+
+```typescript
+roll("5d10F{3}") // Count dice that rolled <= 3
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    countFailures: { threshold: 3 }
+  }
+})
+```
+
+### Wild Die (W)
+
+D6 System wild die (West End Games). Last die is "wild":
+
+- Wild = max (6): compound explode (keep rolling and adding while max)
+- Wild = 1: remove wild die AND highest non-wild die
+- Otherwise: no change
+
+```typescript
+roll("5d6W") // Last die is wild
+roll({
+  sides: 6,
+  quantity: 5,
+  modifiers: { wildDie: true }
+})
+```
+
+### Annotations/Labels ([text])
+
+Attach metadata labels to dice terms — flavor text with no mechanical effect:
+
+```typescript
+roll("2d6+3[fire]+1d4[cold]") // Labels on roll groups
+roll("4d6L[strength]")        // Label the roll purpose
+```
+
+### Repeat Operator (xN)
+
+Repeat a roll expression N times (notation sugar):
+
+```typescript
+roll("4d6Lx6")  // Equivalent to six separate 4d6L rolls
+roll("2d6+3x4") // Roll 2d6+3 four times
+```
+
 ### Combining Modifiers
 
 Modifiers can be chained together. They are applied in a specific order to ensure consistent results:
@@ -538,11 +645,14 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 3. Replace
 4. Reroll
 5. Explode / Compound / Penetrate
-6. Unique
-7. Count Successes
+6. Wild Die
+7. Unique
 8. Pre-Arithmetic Multiply (`*`)
 9. Plus / Minus
-10. Total Multiply (`**`)
+10. Sort
+11. Integer Divide / Modulo
+12. Count Successes / Count Failures
+13. Total Multiply (`**`)
 
 ```typescript
 roll("4d6L+2") // Drop lowest, add 2
@@ -552,6 +662,8 @@ roll("3d6!!*2+3") // Compound explode, multiply by 2, add 3
 roll("2d6*2+3**2") // Multiply dice by 2, add 3, multiply total by 2
 roll("4d6K3!+2") // Keep highest 3, explode, add 2
 roll("3d6!pL+1") // Penetrate explode, drop lowest, add 1
+roll("5d6W+2") // Wild die with modifier
+roll("4d6Lx6") // Six ability score rolls
 ```
 
 **Important Notes:**

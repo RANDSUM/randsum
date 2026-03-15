@@ -224,4 +224,191 @@ describe('tokenize', () => {
     expect(tokens[1]?.type).toBe('unique')
     expect(tokens[1]?.text).toBe('U{1,6}')
   })
+
+  // ── Special Die Type Tokens ────────────────────────────────────────────
+
+  describe('special die type tokens', () => {
+    test('tokenizes d% as percentile', () => {
+      const tokens = tokenize('d%')
+      expect(tokens[0]?.type).toBe('percentile')
+    })
+
+    test('tokenizes D% as percentile (case-insensitive)', () => {
+      const tokens = tokenize('D%')
+      expect(tokens[0]?.type).toBe('percentile')
+    })
+
+    test('tokenizes dF as fate', () => {
+      const tokens = tokenize('dF')
+      expect(tokens[0]?.type).toBe('fate')
+    })
+
+    test('tokenizes 4dF as fate', () => {
+      const tokens = tokenize('4dF')
+      expect(tokens[0]?.type).toBe('fate')
+    })
+
+    test('tokenizes dF.2 as fate', () => {
+      const tokens = tokenize('dF.2')
+      expect(tokens[0]?.type).toBe('fate')
+    })
+
+    test('tokenizes df as fate (case-insensitive)', () => {
+      const tokens = tokenize('df')
+      expect(tokens[0]?.type).toBe('fate')
+    })
+
+    test('tokenizes z6 as zeroBias', () => {
+      const tokens = tokenize('z6')
+      expect(tokens[0]?.type).toBe('zeroBias')
+    })
+
+    test('tokenizes 3z10 as zeroBias', () => {
+      const tokens = tokenize('3z10')
+      expect(tokens[0]?.type).toBe('zeroBias')
+    })
+
+    test('tokenizes Z6 as zeroBias (case-insensitive)', () => {
+      const tokens = tokenize('Z6')
+      expect(tokens[0]?.type).toBe('zeroBias')
+    })
+
+    test('tokenizes g6 as geometric', () => {
+      const tokens = tokenize('g6')
+      expect(tokens[0]?.type).toBe('geometric')
+    })
+
+    test('tokenizes 3g6 as geometric', () => {
+      const tokens = tokenize('3g6')
+      expect(tokens[0]?.type).toBe('geometric')
+    })
+
+    test('tokenizes G6 as geometric (case-insensitive)', () => {
+      const tokens = tokenize('G6')
+      expect(tokens[0]?.type).toBe('geometric')
+    })
+
+    test('tokenizes DD6 as draw', () => {
+      const tokens = tokenize('DD6')
+      expect(tokens[0]?.type).toBe('draw')
+    })
+
+    test('tokenizes 3DD6 as draw', () => {
+      const tokens = tokenize('3DD6')
+      expect(tokens[0]?.type).toBe('draw')
+    })
+
+    test('tokenizes dd6 as draw (case-insensitive)', () => {
+      const tokens = tokenize('dd6')
+      expect(tokens[0]?.type).toBe('draw')
+    })
+
+    test('tokenizes d{2,3,5,7} as customFaces', () => {
+      const tokens = tokenize('d{2,3,5,7}')
+      expect(tokens[0]?.type).toBe('customFaces')
+    })
+
+    test('tokenizes d{fire,ice} as customFaces', () => {
+      const tokens = tokenize('d{fire,ice}')
+      expect(tokens[0]?.type).toBe('customFaces')
+    })
+
+    test('tokenizes 3d{1,1,2} as customFaces', () => {
+      const tokens = tokenize('3d{1,1,2}')
+      expect(tokens[0]?.type).toBe('customFaces')
+    })
+
+    test('percentile token has correct description', () => {
+      const tokens = tokenize('d%')
+      expect(tokens[0]?.description).toBe('Percentile die (d100)')
+    })
+
+    test('fate token has correct description', () => {
+      const tokens = tokenize('4dF')
+      expect(tokens[0]?.description).toBe('Fate die: 4dF')
+    })
+
+    test('draw token has correct description', () => {
+      const tokens = tokenize('DD6')
+      expect(tokens[0]?.description).toBe('Draw die: DD6')
+    })
+
+    test('geometric token has correct description', () => {
+      const tokens = tokenize('g6')
+      expect(tokens[0]?.description).toBe('Geometric die: g6')
+    })
+
+    test('zeroBias token has correct description', () => {
+      const tokens = tokenize('z6')
+      expect(tokens[0]?.description).toBe('Zero-bias die: z6')
+    })
+
+    test('customFaces token has correct description', () => {
+      const tokens = tokenize('d{2,3,5,7}')
+      expect(tokens[0]?.description).toBe('Custom faces: d{2,3,5,7}')
+    })
+
+    test('special die tokens have correct start/end positions', () => {
+      const tokens = tokenize('DD6')
+      expect(tokens[0]?.start).toBe(0)
+      expect(tokens[0]?.end).toBe(3)
+    })
+
+    test('special die tokens have correct text', () => {
+      const tokens = tokenize('3DD6')
+      expect(tokens[0]?.text).toBe('3DD6')
+    })
+  })
+
+  // ── Future Feature Tokens ──────────────────────────────────────────────
+
+  describe('explodeSequence tokens', () => {
+    test('tokenizes explode sequence with die sizes', () => {
+      const tokens = tokenize('2d6!s{4,6,8}')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!s{4,6,8}')
+    })
+
+    test('tokenizes inflation explode', () => {
+      const tokens = tokenize('2d6!i')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!i')
+    })
+
+    test('tokenizes reduction explode', () => {
+      const tokens = tokenize('2d6!r')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!r')
+    })
+  })
+
+  describe('reroll once token', () => {
+    test('tokenizes reroll once as reroll type', () => {
+      const tokens = tokenize('4d6ro{1}')
+      const roToken = tokens.find(t => t.type === 'reroll')
+      expect(roToken).toBeDefined()
+      expect(roToken?.text).toBe('ro{1}')
+    })
+  })
+
+  describe('keep middle token', () => {
+    test('tokenizes keep middle', () => {
+      const tokens = tokenize('6d6KM')
+      const kmToken = tokens.find(t => t.type === 'keepMiddle')
+      expect(kmToken).toBeDefined()
+      expect(kmToken?.text).toBe('KM')
+    })
+  })
+
+  describe('margin of success token', () => {
+    test('tokenizes margin of success', () => {
+      const tokens = tokenize('1d20ms{15}')
+      const msToken = tokens.find(t => t.type === 'marginOfSuccess')
+      expect(msToken).toBeDefined()
+      expect(msToken?.text).toBe('ms{15}')
+    })
+  })
 })

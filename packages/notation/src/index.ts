@@ -18,6 +18,7 @@ export {
 export { defineNotationSchema } from './schema'
 export {
   capSchema,
+  countSchema,
   dropSchema,
   keepSchema,
   replaceSchema,
@@ -25,18 +26,26 @@ export {
   explodeSchema,
   compoundSchema,
   penetrateSchema,
+  explodeSequenceSchema,
   uniqueSchema,
   countSuccessesSchema,
+  countFailuresSchema,
+  integerDivideSchema,
+  moduloSchema,
   multiplySchema,
   plusSchema,
   minusSchema,
-  multiplyTotalSchema
+  multiplyTotalSchema,
+  sortSchema,
+  wildDieSchema
 } from './definitions'
+export { TTRPG_STANDARD_DIE_SET } from './constants'
 export { tokenize } from './tokenize'
 export type { Token, TokenType } from './tokenize'
 export type { NotationSchema } from './schema'
 export type {
   ComparisonOptions,
+  CountOptions,
   DiceNotation,
   DropOptions,
   InvalidValidationResult,
@@ -47,7 +56,6 @@ export type {
   ReplaceOptions,
   RerollOptions,
   RollOptions,
-  SuccessCountOptions,
   UniqueOptions,
   ValidValidationResult,
   ValidationErrorInfo,

@@ -406,6 +406,66 @@ describe('notationToOptions', () => {
     })
   })
 
+  describe('reroll once (ro) modifier', () => {
+    test('parses reroll once with exact value', () => {
+      const [result] = notationToOptions('4d6ro{1}')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.reroll?.exact).toContain(1)
+      expect(result?.modifiers?.reroll?.max).toBe(1)
+    })
+
+    test('parses reroll once with less than', () => {
+      const [result] = notationToOptions('2d10ro{<3}')
+
+      expect(result?.quantity).toBe(2)
+      expect(result?.sides).toBe(10)
+      expect(result?.modifiers?.reroll?.lessThan).toBe(3)
+      expect(result?.modifiers?.reroll?.max).toBe(1)
+    })
+
+    test('parses reroll once with other modifiers', () => {
+      const [result] = notationToOptions('4d6ro{1}+3')
+
+      expect(result?.quantity).toBe(4)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.reroll?.exact).toContain(1)
+      expect(result?.modifiers?.reroll?.max).toBe(1)
+      expect(result?.modifiers?.plus).toBe(3)
+    })
+  })
+
+  describe('keep middle (KM) modifier', () => {
+    test('parses keep middle (drop 1 from each end)', () => {
+      const [result] = notationToOptions('6d6KM')
+
+      expect(result?.quantity).toBe(6)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.drop?.lowest).toBe(1)
+      expect(result?.modifiers?.drop?.highest).toBe(1)
+    })
+
+    test('parses keep middle with count', () => {
+      const [result] = notationToOptions('8d6KM2')
+
+      expect(result?.quantity).toBe(8)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.drop?.lowest).toBe(2)
+      expect(result?.modifiers?.drop?.highest).toBe(2)
+    })
+
+    test('parses keep middle with other modifiers', () => {
+      const [result] = notationToOptions('6d6KM+3')
+
+      expect(result?.quantity).toBe(6)
+      expect(result?.sides).toBe(6)
+      expect(result?.modifiers?.drop?.lowest).toBe(1)
+      expect(result?.modifiers?.drop?.highest).toBe(1)
+      expect(result?.modifiers?.plus).toBe(3)
+    })
+  })
+
   describe('edge cases', () => {
     test('handles notation with no modifiers', () => {
       const [result] = notationToOptions('1d1')

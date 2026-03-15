@@ -1,22 +1,26 @@
 export type {
+  CustomFacesNotation,
   DiceNotation,
+  DrawDieNotation,
+  GeometricDieNotation,
   FateDieNotation,
   PercentileDie,
   RandomFn,
   RollOptions,
   RequiredNumericRollParameters,
   RollArgument,
-  RollConfig
+  RollConfig,
+  ZeroBiasNotation
 } from './core'
 
 export type {
   ComparisonOptions,
+  CountOptions,
   DropOptions,
   KeepOptions,
   RerollOptions,
   ReplaceOptions,
   UniqueOptions,
-  SuccessCountOptions,
   ModifierConfig,
   ModifierOptions,
   ModifierLog,

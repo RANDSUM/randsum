@@ -40,8 +40,9 @@ Roll dice with a single function call — numbers, notation strings, or options 
 ## Features
 
 - **Three input modes** — pass a number, a notation string, or a typed options object
-- **Advanced notation** — drop/keep, reroll, exploding, compounding, penetrating, cap, replace, unique, count successes
-- **Modifier pipeline** — modifiers execute in a defined priority order, composable and predictable
+- **Advanced notation** — drop/keep, reroll, exploding, compounding, penetrating, cap, replace, unique, count successes/failures, wild die, integer division, modulo, annotations, and repeat
+- **Special dice** — geometric die (`gN`), draw die (`DDN`), percentile (`d%`), and Fate/Fudge (`dF`)
+- **Modifier pipeline** — 19 modifiers execute in a defined priority order, composable and predictable
 - **Multiple arguments** — combine rolls into a single total: `roll('1d20+5', '2d6')`
 - **Strict validation** — throws on invalid input; validate user strings with `isDiceNotation()` or `validateNotation()`
 - **Custom RNG** — pass a `randomFn` for seeded, deterministic, or cryptographic randomness
@@ -112,6 +113,14 @@ console.log(result.total) // d20 + 5 + 2d6`} />
 | `!!` | Compounding exploding | `3d6!!` |
 | `!p` | Penetrating exploding | `3d6!p` |
 | `U` | Unique results | `4d20U` |
+| `W` | Wild die (D6 System) | `5d6W` |
+| `F{N}` | Count failures | `5d10F{3}` |
+| `//N` | Integer divide total | `4d6//2` |
+| `%N` | Total modulo | `4d6%3` |
+| `gN` | Geometric die | `g6` |
+| `DDN` | Draw die (no replacement) | `3DD6` |
+| `[text]` | Annotation/label | `2d6[fire]` |
+| `xN` | Repeat notation | `4d6Lx6` |
 
 See the full [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for reroll conditions, caps, replacements, success counting, and multipliers.
 

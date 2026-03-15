@@ -3,12 +3,12 @@ import type { ModifierConfig as _ModifierConfig } from '@randsum/notation'
 // Re-export modifier option types from notation for backward compatibility
 export type {
   ComparisonOptions,
+  CountOptions,
   DropOptions,
   KeepOptions,
   RerollOptions,
   ReplaceOptions,
   UniqueOptions,
-  SuccessCountOptions,
   ModifierConfig,
   ModifierOptions
 } from '@randsum/notation'
