@@ -28,6 +28,8 @@ export {
   uniqueSchema,
   countSuccessesSchema,
   countFailuresSchema,
+  integerDivideSchema,
+  moduloSchema,
   multiplySchema,
   plusSchema,
   minusSchema,

@@ -206,6 +206,8 @@ export interface ModifierOptionTypes {
   plus: number
   minus: number
   sort: 'asc' | 'desc'
+  integerDivide: number
+  modulo: number
   multiplyTotal: number
 }
 

@@ -6,8 +6,10 @@ import {
   countSuccessesSchema,
   dropSchema,
   explodeSchema,
+  integerDivideSchema,
   keepSchema,
   minusSchema,
+  moduloSchema,
   multiplySchema,
   multiplyTotalSchema,
   penetrateSchema,
@@ -45,6 +47,8 @@ const allSchemas: readonly ParseableSchema[] = [
   plusSchema,
   minusSchema,
   sortSchema,
+  integerDivideSchema,
+  moduloSchema,
   multiplyTotalSchema
 ]
 
@@ -85,6 +89,8 @@ export function buildNotationPattern(): RegExp {
 
   // Add syntactic sugar patterns that are pre-processed before schema parsing
   sources.push(marginOfSuccessPattern.source)
+  // Repeat operator (xN) — handled in notationToOptions, but needed for isDiceNotation validation
+  sources.push('[Xx][1-9]\\d*')
 
   return new RegExp(sources.join('|'), 'g')
 }

@@ -100,6 +100,10 @@ export interface ModifierOptions {
   minus?: number
   /** Sort the rolls array (display-only, does not affect total) */
   sort?: 'asc' | 'desc'
+  /** Integer divide the total (truncates toward zero) */
+  integerDivide?: number
+  /** Modulo the total */
+  modulo?: number
   /** Multiply final total (after all other modifiers) */
   multiplyTotal?: number
 }

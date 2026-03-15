@@ -21,6 +21,8 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   readonly plus: 90
   readonly minus: 91
   readonly sort: 92
+  readonly integerDivide: 93
+  readonly modulo: 94
   readonly countSuccesses: 95
   readonly countFailures: 96
   readonly multiplyTotal: 100
@@ -38,6 +40,8 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   plus: 90,
   minus: 91,
   sort: 92,
+  integerDivide: 93,
+  modulo: 94,
   countSuccesses: 95,
   countFailures: 96,
   multiplyTotal: 100

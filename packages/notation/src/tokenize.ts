@@ -19,6 +19,9 @@ export type TokenType =
   | 'minus' // -N
   | 'marginOfSuccess' // ms{N}
   | 'sort' // s, sa, sd
+  | 'integerDivide' // //N
+  | 'modulo' // %N
+  | 'repeat' // xN
   | 'multiply' // *N
   | 'multiplyTotal' // **N
   | 'unknown'
@@ -57,6 +60,10 @@ function describeModifierToken(tokenText: string): string {
 
 // Order matters — more specific patterns must come before ambiguous ones
 const MODIFIERS: readonly ModifierEntry[] = [
+  // // before other patterns to avoid partial match
+  { type: 'integerDivide', pattern: /^\/\/\d+/ },
+  // %N (modulo)
+  { type: 'modulo', pattern: /^%\d+/ },
   // ** before * to avoid partial match
   { type: 'multiplyTotal', pattern: /^\*\*\d+/ },
   { type: 'multiply', pattern: /^\*\d+/ },
@@ -83,7 +90,9 @@ const MODIFIERS: readonly ModifierEntry[] = [
   { type: 'sort', pattern: /^[Ss](?:[Aa]|[Dd])?(?![{\d])/ },
   // Arithmetic — only meaningful after a core token
   { type: 'plus', pattern: /^\+\d+/ },
-  { type: 'minus', pattern: /^-\d+/ }
+  { type: 'minus', pattern: /^-\d+/ },
+  // Repeat operator — xN at the end (N >= 1)
+  { type: 'repeat', pattern: /^[Xx][1-9]\d*/ }
 ]
 
 function appendUnknown(tokens: Token[], char: string, cursor: number): void {

@@ -5,8 +5,10 @@ import { countFailuresModifier } from './countFailures'
 import { countSuccessesModifier } from './countSuccesses'
 import { dropModifier } from './drop'
 import { explodeModifier } from './explode'
+import { integerDivideModifier } from './integerDivide'
 import { keepModifier } from './keep'
 import { minusModifier } from './minus'
+import { moduloModifier } from './modulo'
 import { multiplyModifier } from './multiply'
 import { multiplyTotalModifier } from './multiplyTotal'
 import { penetrateModifier } from './penetrate'
@@ -22,8 +24,10 @@ export { countFailuresModifier }
 export { countSuccessesModifier }
 export { dropModifier }
 export { explodeModifier }
+export { integerDivideModifier }
 export { keepModifier }
 export { minusModifier }
+export { moduloModifier }
 export { multiplyModifier }
 export { multiplyTotalModifier }
 export { penetrateModifier }
@@ -51,6 +55,8 @@ export const ALL_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   plusModifier as ModifierDefinition,
   minusModifier as ModifierDefinition,
   sortModifier as ModifierDefinition,
+  integerDivideModifier as ModifierDefinition,
+  moduloModifier as ModifierDefinition,
   countSuccessesModifier as ModifierDefinition,
   countFailuresModifier as ModifierDefinition,
   multiplyTotalModifier as ModifierDefinition
