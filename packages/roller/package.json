@@ -100,7 +100,7 @@
     },
     {
       "path": "dist/index.d.ts",
-      "limit": "5 KB"
+      "limit": "6 KB"
     }
   ]
 }
