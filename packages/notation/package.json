@@ -17,18 +17,18 @@
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
-      },
-    },
-    "./tokenize": {
-      "import": {
-        "types": "./dist/tokenize.d.ts",
-        "default": "./dist/tokenize.js"
       }
     },
     "./validateNotation": {
       "import": {
         "types": "./dist/validateNotation.d.ts",
         "default": "./dist/validateNotation.js"
+      }
+    },
+    "./tokenize": {
+      "import": {
+        "types": "./dist/tokenize.d.ts",
+        "default": "./dist/tokenize.js"
       }
     },
     "./comparison": {

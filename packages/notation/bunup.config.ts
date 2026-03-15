@@ -5,7 +5,6 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   exports: true,
-  splitting: false,
   minify: true,
   sourcemap: 'external',
   target: 'node',

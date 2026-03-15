@@ -17,7 +17,7 @@
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
-      },
+      }
     },
     "./roll": {
       "import": {
@@ -25,16 +25,16 @@
         "default": "./dist/roll/index.js"
       }
     },
-    "./validate": {
-      "import": {
-        "types": "./dist/validate.d.ts",
-        "default": "./dist/validate.js"
-      }
-    },
     "./errors": {
       "import": {
         "types": "./dist/errors.d.ts",
         "default": "./dist/errors.js"
+      }
+    },
+    "./validate": {
+      "import": {
+        "types": "./dist/validate.d.ts",
+        "default": "./dist/validate.js"
       }
     },
     "./package.json": "./package.json"

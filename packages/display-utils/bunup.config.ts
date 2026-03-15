@@ -6,9 +6,8 @@ export default defineConfig({
   dts: true,
   exports: true,
   external: ['@randsum/roller'],
-  splitting: false,
   minify: true,
   sourcemap: 'external',
-  target: 'browser',
+  target: 'node',
   clean: true
 })

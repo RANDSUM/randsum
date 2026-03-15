@@ -14,7 +14,6 @@ export default defineConfig({
     '@randsum/display-utils',
     '@randsum/notation'
   ],
-  splitting: false,
   minify: true,
   sourcemap: 'external',
   target: 'browser',
