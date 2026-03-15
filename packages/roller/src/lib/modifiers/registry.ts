@@ -7,12 +7,12 @@ import type {
   TotalTransformer
 } from './schema'
 import { ModifierError } from '../../errors'
-import { ALL_MODIFIERS } from './definitions'
+import { RANDSUM_MODIFIERS } from './definitions'
 import { createModifierLog } from './log'
 
 // Built once at module init — no mutation
 const modifierMap: ReadonlyMap<keyof ModifierOptions, ModifierDefinition> = new Map(
-  ALL_MODIFIERS.map(m => [m.name, m])
+  RANDSUM_MODIFIERS.map(m => [m.name, m])
 )
 
 /**
@@ -37,14 +37,14 @@ export function hasModifier(name: keyof ModifierOptions): boolean {
  * Get all modifier definitions in priority order.
  */
 export function getAllModifiers(): ModifierDefinition[] {
-  return Array.from(ALL_MODIFIERS)
+  return Array.from(RANDSUM_MODIFIERS)
 }
 
 /**
  * Get modifier execution order (sorted by priority).
  */
 export function getModifierOrder(): (keyof ModifierOptions)[] {
-  return ALL_MODIFIERS.map(m => m.name)
+  return RANDSUM_MODIFIERS.map(m => m.name)
 }
 
 /**
@@ -53,7 +53,7 @@ export function getModifierOrder(): (keyof ModifierOptions)[] {
 export function parseModifiers(notation: string): ModifierOptions {
   const result: ModifierOptions = {}
 
-  for (const modifier of ALL_MODIFIERS) {
+  for (const modifier of RANDSUM_MODIFIERS) {
     if (modifier.pattern.test(notation)) {
       modifier.pattern.lastIndex = 0
       Object.assign(result, modifier.parse(notation))
@@ -210,7 +210,7 @@ export function validateModifiers(
   modifiers: ModifierOptions,
   rollContext: RequiredNumericRollParameters
 ): void {
-  for (const modifier of ALL_MODIFIERS) {
+  for (const modifier of RANDSUM_MODIFIERS) {
     const options = modifiers[modifier.name]
     if (options !== undefined && modifier.validate) {
       modifier.validate(options, rollContext)

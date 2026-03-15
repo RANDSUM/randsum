@@ -45,7 +45,7 @@ export { wildDieModifier }
  * All modifier definitions in priority order (lowest priority number runs first).
  * This is the single source of truth for which modifiers exist and their execution order.
  */
-export const ALL_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
+export const RANDSUM_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   capModifier as ModifierDefinition,
   dropModifier as ModifierDefinition,
   keepModifier as ModifierDefinition,

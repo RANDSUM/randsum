@@ -91,7 +91,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-Modifiers (cap, drop, keep, reroll, explode, etc.) are defined in `packages/roller/src/lib/modifiers/definitions/`. The `ALL_MODIFIERS` array in that directory's `index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier combines a `NotationSchema` (from `@randsum/notation`, defines parsing and priority) with a `ModifierBehavior` (from `@randsum/roller`, implements dice manipulation). There are 20 modifiers total, with priorities from 10 (cap) through 100 (multiplyTotal).
+The `RANDSUM_MODIFIERS` array in `packages/roller/src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier combines a `NotationSchema` (from `@randsum/notation`) with a `ModifierBehavior` (from `@randsum/roller`). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
 
 ### `roll()` Argument Types
 

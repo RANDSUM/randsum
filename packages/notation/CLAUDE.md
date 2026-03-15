@@ -32,13 +32,7 @@ Zero-dependency package providing dice notation parsing, validation, and the sha
 
 ### Modifier Schemas
 
-20 `NotationSchema` definitions (cap, drop, keep, replace, reroll, explode, compound, penetrate, explodeSequence, wildDie, unique, multiply, plus, minus, sort, integerDivide, modulo, countSuccesses, countFailures, multiplyTotal). Each schema defines the regex pattern and parse/format logic for one modifier type. The roller uses these to build its modifier registry.
-
-The `explodeSequence` schema handles three notation forms:
-
-- `!s{4,6,8}` — explicit die size sequence
-- `!i` — inflation (explode UP through TTRPG standard set: 4, 6, 8, 10, 12, 20, 100)
-- `!r` — reduction (explode DOWN through TTRPG standard set)
+`NotationSchema` definitions in `definitions/` — one per modifier. Each defines the regex pattern, parse/format logic, and priority for one modifier type. The roller combines these with behaviors to build `RANDSUM_MODIFIERS`. See `@randsum/roller/RANDSUM_DICE_NOTATION.md` for the full modifier list and syntax.
 
 ### Tokenization
 
@@ -53,7 +47,7 @@ All shared types: `DiceNotation`, `RollOptions`, `ParsedNotationOptions`, `Modif
 ## Internal Structure
 
 - `schema.ts` - `NotationSchema` type and `defineNotationSchema` helper
-- `definitions/` - All 14 modifier schema definitions
+- `definitions/` - Modifier schema definitions (one file per modifier)
 - `parse/` - `notationToOptions` and `listOfNotations` parsing logic
 - `comparison/` - Comparison notation parsing and formatting (`{<3,>18}` syntax)
 - `transformers/` - Options-to-notation and options-to-description converters
