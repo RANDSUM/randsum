@@ -8,6 +8,87 @@ Randsum extends standard dice notation with powerful modifiers like dropping low
 
 The core `roll()` function accepts several argument types: a **number** (sides for a single die, e.g. `roll(20)` for 1d20), a **notation string** (e.g. `roll("4d6L")`), an **options object** (e.g. `roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })`), or **multiple arguments** combined into one total (e.g. `roll("1d20", "2d6")`).
 
+## Taxonomy
+
+Every notation feature is classified as a **primitive**, **sugar**, or **macro**:
+
+- **Primitive** — irreducible behavior that cannot be expressed as a composition of other features
+- **Sugar** — notation convenience that maps to one or more primitives with identical observable behavior
+- **Macro** — conditional dispatch to multiple primitives based on runtime state
+
+Sugar features are documented alongside the primitive they desugar to. Each sugar section traces the exact desugaring.
+
+### Dice Types
+
+| Die          | Notation | Classification                           |
+| ------------ | -------- | ---------------------------------------- |
+| Standard     | `NdS`    | Primitive                                |
+| Custom Faces | `d{...}` | Primitive                                |
+| Geometric    | `gN`     | Primitive (unique generation model)      |
+| Draw         | `DDN`    | Primitive (sampling without replacement) |
+| Percentile   | `d%`     | Sugar → `1d100`                          |
+| Fate/Fudge   | `dF`     | Sugar → `d3` + Replace                   |
+| Zero-Bias    | `zN`     | Sugar → `d{0..N-1}`                      |
+
+### Modifiers (14 primitives, 6 sugar, 1 macro)
+
+**Value Modifiers** — transform individual die values in-place:
+
+| Modifier | Notation | Priority | Classification |
+| -------- | -------- | -------- | -------------- |
+| Cap      | `C{...}` | 10       | Primitive      |
+| Replace  | `V{...}` | 30       | Primitive      |
+
+**Pool Modifiers** — change which dice remain in the pool:
+
+| Modifier    | Notation           | Priority | Classification                     |
+| ----------- | ------------------ | -------- | ---------------------------------- |
+| Drop        | `L`, `H`, `D{...}` | 20       | Primitive                          |
+| Keep        | `K`, `kl`          | 21       | Sugar → inverse of Drop            |
+| Keep Middle | `KM`               | 21       | Sugar → Drop lowest + Drop highest |
+| Reroll      | `R{...}`           | 40       | Primitive                          |
+| Reroll Once | `ro{...}`          | 40       | Sugar → `R{...}` with `max: 1`     |
+| Unique      | `U`                | 60       | Primitive                          |
+
+**Explosion Family** — add dice or accumulate values on max:
+
+| Modifier         | Notation  | Priority | Classification                                                 |
+| ---------------- | --------- | -------- | -------------------------------------------------------------- |
+| Explode          | `!`       | 50       | Primitive (single-pass, adds dice to pool)                     |
+| Compound         | `!!`      | 51       | Primitive (accumulates into existing die, pool size preserved) |
+| Penetrate        | `!p`      | 52       | Primitive (accumulates roll-1 into die)                        |
+| Explode Sequence | `!s{...}` | 53       | Primitive (steps through die sizes)                            |
+| Inflation        | `!i`      | 53       | Sugar → `!s{...}` going up TTRPG standard set                  |
+| Reduction        | `!r`      | 53       | Sugar → `!s{...}` going down TTRPG standard set                |
+| Wild Die         | `W`       | 55       | Macro → compound on max, drop on 1, noop otherwise             |
+
+**Total Modifiers** — arithmetic applied to the final number:
+
+| Modifier          | Notation | Priority | Classification                            |
+| ----------------- | -------- | -------- | ----------------------------------------- |
+| Multiply          | `*N`     | 85       | Primitive (pre-arithmetic)                |
+| Plus              | `+N`     | 90       | Primitive                                 |
+| Minus             | `-N`     | 91       | Sugar → negative Plus                     |
+| Margin of Success | `ms{N}`  | 91       | Sugar → Minus N                           |
+| Integer Divide    | `//N`    | 93       | Primitive                                 |
+| Modulo            | `%N`     | 94       | Primitive                                 |
+| Multiply Total    | `**N`    | 100      | Sugar → Multiply at post-arithmetic phase |
+
+**Counting Modifiers** — change the result model from sum to count:
+
+| Modifier        | Notation | Priority | Classification |
+| --------------- | -------- | -------- | -------------- |
+| Count Successes | `S{N}`   | 95       | Primitive      |
+| Count Failures  | `F{N}`   | 96       | Primitive      |
+
+**Display & Meta** — presentation and notation-level features:
+
+| Feature     | Notation  | Priority | Classification                                 |
+| ----------- | --------- | -------- | ---------------------------------------------- |
+| Sort        | `sa`/`sd` | 92       | Primitive (display only, no effect on total)   |
+| Annotations | `[text]`  | —        | Primitive (metadata)                           |
+| Repeat      | `xN`      | —        | Sugar → parser expansion into N roll arguments |
+
 ## Basic Syntax
 
 All notation in randsum is case-insensitive (`2d8` = `2D8`).
@@ -43,7 +124,7 @@ All special dice are valid dice notation — `isDiceNotation('4dF')`, `isDiceNot
 
 In addition to standard `NdS` notation, `roll()` accepts shorthand string arguments for common special dice. Geometric dice (`gN`), draw dice (`DDN`), and zero-bias dice (`zN`) support inline modifiers. Percentile (`d%`), Fate (`dF`), and custom faces (`d{...}`) do not support inline notation modifiers — use the options object form for modified rolls.
 
-### Custom Dice Faces (`d{...}`)
+### Custom Dice Faces (`d{...}`) — _primitive_
 
 Define dice with arbitrary face values. All notation in randsum is case-insensitive.
 
@@ -86,7 +167,7 @@ roll({
 
 **Use cases:** Custom damage type dice (fire/ice/lightning), narrative dice (success/failure/complication), weighted probability dice, or any die with non-standard faces.
 
-### Zero-Bias Dice (`zN`)
+### Zero-Bias Dice (`zN`) — _sugar → d{0..N-1}_
 
 Zero-indexed dice that roll 0 to N-1 instead of 1 to N. All notation in randsum is case-insensitive.
 
@@ -108,7 +189,7 @@ roll("z100") // Zero-indexed percentile: 0-99
 
 **Use cases:** Zero-indexed random table lookups, percentile systems that use 0-99, programming-friendly dice for array index selection, or any system where a 0-based range is more natural.
 
-### Geometric Die (`gN`)
+### Geometric Die (`gN`) — _primitive_
 
 A geometric die rolls dN repeatedly until a 1 appears, and the result is the number of rolls it took. This models waiting times and geometric distributions.
 
@@ -127,7 +208,7 @@ Internally, `gN` sets the `geometric: true` flag on `RollParams`. A safety cap o
 
 **Use cases:** Resource depletion tracking, chase mechanics, random encounter distance, survival countdowns.
 
-### Draw Die (`DDN`)
+### Draw Die (`DDN`) — _primitive_
 
 A draw die samples without replacement from a pool of faces — like drawing cards from a deck. Each face value can only appear once until the pool is exhausted, at which point it reshuffles.
 
@@ -150,7 +231,7 @@ Internally, `DDN` sets the `draw: true` flag on `RollParams` and uses Fisher-Yat
 
 **Use cases:** Card-deck mechanics, random encounter tables without repeats, draft picks, Catan-style resource distribution.
 
-### Percentile Die (`d%`)
+### Percentile Die (`d%`) — _sugar → 1d100_
 
 A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution.
 
@@ -173,7 +254,7 @@ Internally, `'d%'` maps to `{ quantity: 1, sides: 100 }`.
 roll("d%", "d%") // Two percentile dice
 ```
 
-### Fate/Fudge Dice (`dF`)
+### Fate/Fudge Dice (`dF`) — _sugar → d3 + Replace_
 
 Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2.
 
@@ -206,7 +287,7 @@ Internally, `dF` uses the replace modifier to map die faces to negative and zero
 
 ## Modifiers
 
-### Basic Arithmetic
+### Basic Arithmetic — _primitive (Plus), sugar (Minus)_
 
 | Notation | Description           |
 | -------- | --------------------- |
@@ -229,7 +310,7 @@ roll({
 })
 ```
 
-### Cap Modifiers
+### Cap Modifiers — _primitive_
 
 Limit roll values to specific ranges:
 
@@ -312,7 +393,7 @@ roll({
 })
 ```
 
-### Drop Modifiers
+### Drop Modifiers — _primitive_
 
 Drop specific dice from the results:
 
@@ -401,7 +482,7 @@ roll({
 
 **Note:** `L` and `H` can be combined in one notation string. `4d6LH` drops the lowest die and the highest die, leaving 2 of the original 4.
 
-### Reroll Modifiers
+### Reroll Modifiers — _primitive_
 
 Reroll dice matching certain conditions:
 
@@ -467,7 +548,7 @@ roll({
 
 **Note:** The max count in `R{<N}M` caps the total number of rerolls across the entire dice pool, not per die.
 
-### Reroll Once (Notation Sugar)
+### Reroll Once — _sugar → Reroll with max=1_
 
 Reroll once is shorthand for rerolling with a maximum of 1 attempt. All notation in randsum is case-insensitive.
 
@@ -503,7 +584,7 @@ roll({
 
 **Use cases:** D&D 5e Savage Attacker feat, Great Weapon Fighting (reroll 1s and 2s once per die), or any system where you want a single reroll chance without unlimited retries.
 
-### Replace Modifiers
+### Replace Modifiers — _primitive_
 
 Replace specific results with new values:
 
@@ -582,7 +663,7 @@ roll("4d20V{1=6,2=5}") // Replace 1s with 6s and 2s with 5s
 
 **Note:** Multiple replacement rules can be specified in a single `V{}` block by comma-separating them. Rules are applied in order.
 
-### Unique Results
+### Unique Results — _primitive_
 
 Force unique rolls within a pool:
 
@@ -609,7 +690,7 @@ roll({
 })
 ```
 
-### Keep Modifiers
+### Keep Modifiers — _sugar → inverse of Drop_
 
 Keep specific dice from the result (complement to drop):
 
@@ -652,7 +733,7 @@ roll({
 
 **Note:** Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L1`.
 
-### Keep Middle (Notation Sugar)
+### Keep Middle — _sugar → Drop lowest + Drop highest_
 
 Keep middle dice by dropping equal numbers from both ends. All notation in randsum is case-insensitive.
 
@@ -685,7 +766,7 @@ roll({
 
 **Use cases:** Systems that want a median-biased result, trimming outliers from both ends of the roll.
 
-### Exploding Dice
+### Exploding Dice — _primitive_
 
 Roll additional dice on maximum results:
 
@@ -706,7 +787,7 @@ roll({
 
 **Example:** `3d6!` rolls [6, 4, 6]. The two 6s explode, adding [5, 3]. Final result: [6, 4, 6, 5, 3] = 24.
 
-### Compounding Exploding (!!)
+### Compounding Exploding (!!) — _primitive_
 
 Exploding dice that add to the triggering die instead of creating new dice:
 
@@ -750,7 +831,7 @@ roll({
 - **Explode (`!`)**: Creates new dice → `[6, 4, 6]` becomes `[6, 4, 6, 5, 3]` (5 dice)
 - **Compound (`!!`)**: Modifies existing die → `[6, 4, 6]` becomes `[15, 4, 12]` (still 3 dice)
 
-### Penetrating Exploding (!p)
+### Penetrating Exploding (!p) — _primitive_
 
 Exploding dice where each subsequent explosion subtracts 1 (Hackmaster-style):
 
@@ -795,7 +876,7 @@ roll({
 - **Compound (`!!`)**: `[6]` → `[16]` = 16 (die value modified)
 - **Penetrate (`!p`)**: `[6]` → `[12]` = 12 (6 + (6-1) + (3-1) if it keeps penetrating, die value modified with -1 on each subsequent roll)
 
-### Explode Sequence
+### Explode Sequence — _primitive_
 
 Explode through a sequence of die sizes rather than reusing the same die. All notation in randsum is case-insensitive.
 
@@ -846,7 +927,7 @@ roll({
 
 **Use cases:** Rifts Mega-Damage, stepladder explosion systems, or any homebrew where escalating (or de-escalating) die sizes on explosions adds dramatic tension.
 
-### Pre-Arithmetic Multiplier (\*)
+### Pre-Arithmetic Multiplier (*) — *primitive\*
 
 Multiply the dice sum before adding/subtracting arithmetic modifiers:
 
@@ -881,7 +962,7 @@ roll({
 
 **Use cases:** Critical hits that double or triple base damage before modifiers. Or systems where dice are multiplied before bonuses are added.
 
-### Count Successes (S{N})
+### Count Successes (S{N}) — _primitive_
 
 Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
 
@@ -924,7 +1005,7 @@ roll({
 
 **Use cases:** World of Darkness, Shadowrun, and other dice pool systems where you count successes rather than sum values.
 
-### Sort (sa/sd)
+### Sort (sa/sd) — _primitive (display only)_
 
 Sort dice results for display purposes:
 
@@ -951,7 +1032,7 @@ roll({
 
 **How it works:** Sort reorders the dice results for display without changing the total. Useful for readability when reviewing large pools.
 
-### Integer Division (//N)
+### Integer Division (//N) — _primitive_
 
 Integer divide the total, truncating toward zero:
 
@@ -981,7 +1062,7 @@ roll({
 
 **Use cases:** Halving damage (e.g., resistance in D&D), averaging mechanics, systems that use integer math for resource calculation.
 
-### Modulo (%N)
+### Modulo (%N) — _primitive_
 
 Apply modulo to the total:
 
@@ -1011,7 +1092,7 @@ roll({
 
 **Use cases:** Wrapping values into ranges, clock mechanics, cyclic resource systems.
 
-### Count Failures (F{N})
+### Count Failures (F{N}) — _primitive_
 
 Count how many dice rolled at or below a threshold. The total becomes the failure count:
 
@@ -1038,7 +1119,7 @@ roll({
 
 **Use cases:** Dice pool systems where you need to count both successes and failures separately, risk assessment mechanics, World of Darkness botch counting.
 
-### Margin of Success (Notation Sugar)
+### Margin of Success — _sugar → Minus N_
 
 Calculate the margin above or below a target number. All notation in randsum is case-insensitive.
 
@@ -1066,7 +1147,7 @@ roll({
 
 **Use cases:** Checking how far above or below a DC a roll lands, degree-of-success systems, or any context where the margin matters more than the raw total.
 
-### Wild Die (W)
+### Wild Die (W) — _macro_
 
 The D6 System wild die modifier (West End Games):
 
@@ -1097,7 +1178,7 @@ The wild die modifier operates at priority 55, after explode/compound/penetrate.
 
 **Use cases:** West End Games D6 System (Star Wars D6, Ghostbusters, Indiana Jones RPG).
 
-### Total Multiplier (\*\*)
+### Total Multiplier (\*\*) — _sugar → Multiply at post-arithmetic phase_
 
 Multiply the entire final total after all other modifiers:
 
@@ -1141,7 +1222,7 @@ roll({
 - **Pre-Arithmetic (`*`)**: `2d6*2+3` = (9 × 2) + 3 = 21
 - **Total (`**`)**: `2d6+3\*\*2` = (9 + 3) × 2 = 24
 
-### Annotations/Labels ([text])
+### Annotations/Labels ([text]) — _primitive (metadata)_
 
 Attach metadata labels to dice terms. Labels are flavor text with no mechanical effect:
 
@@ -1159,7 +1240,7 @@ roll("4d6L[strength]") // Label the roll purpose
 
 **Use cases:** Tracking damage types in D&D, labeling ability score rolls, annotating complex multi-group rolls for display purposes.
 
-### Repeat Operator (xN)
+### Repeat Operator (xN) — _sugar → parser expansion_
 
 Notation sugar that repeats a roll expression N times:
 
