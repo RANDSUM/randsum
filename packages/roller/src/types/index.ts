@@ -16,6 +16,7 @@ export type {
 export type {
   ComparisonOptions,
   DropOptions,
+  FailureCountOptions,
   KeepOptions,
   RerollOptions,
   ReplaceOptions,

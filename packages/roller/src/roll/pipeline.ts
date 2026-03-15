@@ -92,8 +92,8 @@ export class RollPipeline<T = string> {
 
     for (const i of Array.from({ length: sides - 1 }, (_, k) => sides - 1 - k)) {
       const j = Math.floor(this.rng() * (i + 1))
-      const temp = pool[i]!
-      pool[i] = pool[j]!
+      const temp = pool[i] ?? 0
+      pool[i] = pool[j] ?? 0
       pool[j] = temp
     }
 

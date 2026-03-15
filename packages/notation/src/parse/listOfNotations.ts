@@ -7,12 +7,20 @@ function calculateStartPos(
   if (index === 0) return 0
   if (currentMatch.index === undefined) return 0
 
+  const matchText = currentMatch[0]
+  if (matchText.startsWith('+') || matchText.startsWith('-')) {
+    return currentMatch.index
+  }
+
   const prevEndPos = prevMatch ? Number(prevMatch.index) + prevMatch[0].length : 0
   const textBetween = notationString.slice(prevEndPos, currentMatch.index)
-  const arithmeticMatch = /([+-])/.exec(textBetween)
 
-  if (arithmeticMatch?.[1]) {
-    return prevEndPos + textBetween.indexOf(arithmeticMatch[1])
+  const lastPlus = textBetween.lastIndexOf('+')
+  const lastMinus = textBetween.lastIndexOf('-')
+  const separatorIdx = Math.max(lastPlus, lastMinus)
+
+  if (separatorIdx >= 0) {
+    return prevEndPos + separatorIdx
   }
   return currentMatch.index
 }

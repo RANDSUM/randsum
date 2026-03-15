@@ -107,8 +107,8 @@ describe('registry functions', () => {
       }
     })
 
-    test('returns exactly 15 modifiers', () => {
-      expect(getAllModifiers().length).toBe(15)
+    test('returns exactly 19 modifiers', () => {
+      expect(getAllModifiers().length).toBe(19)
     })
   })
 
@@ -151,8 +151,8 @@ describe('registry functions', () => {
 })
 
 describe('MODIFIER_PRIORITIES', () => {
-  test('exports all 14 modifier names', () => {
-    expect(Object.keys(MODIFIER_PRIORITIES).length).toBe(15)
+  test('exports all 19 modifier names', () => {
+    expect(Object.keys(MODIFIER_PRIORITIES).length).toBe(19)
   })
 
   test('cap has lower priority than drop', () => {

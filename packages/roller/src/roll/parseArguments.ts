@@ -234,7 +234,7 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
     } = options
     const label =
       'label' in options
-        ? ((options as Record<string, unknown>).label as string | undefined)
+        ? ((options as Record<string, unknown>)['label'] as string | undefined)
         : undefined
     return {
       ...options,
