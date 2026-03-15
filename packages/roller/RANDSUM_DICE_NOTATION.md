@@ -30,7 +30,7 @@ Sugar features are documented alongside the primitive they desugar to. Each suga
 | Fate/Fudge   | `dF`     | Sugar → `d3` + Replace                   |
 | Zero-Bias    | `zN`     | Sugar → `d{0..N-1}`                      |
 
-### Modifiers (14 primitives, 6 sugar, 1 macro)
+### Modifiers (13 primitives, 8 sugar, 1 macro)
 
 **Value Modifiers** — transform individual die values in-place:
 
@@ -76,10 +76,11 @@ Sugar features are documented alongside the primitive they desugar to. Each suga
 
 **Counting Modifiers** — change the result model from sum to count:
 
-| Modifier        | Notation | Priority | Classification |
-| --------------- | -------- | -------- | -------------- |
-| Count Successes | `S{N}`   | 95       | Primitive      |
-| Count Failures  | `F{N}`   | 96       | Primitive      |
+| Modifier        | Notation | Priority | Classification                          |
+| --------------- | -------- | -------- | --------------------------------------- |
+| Count           | `#{...}` | 95       | Primitive                               |
+| Count Successes | `S{N}`   | 95       | Sugar → Count with `greaterThanOrEqual` |
+| Count Failures  | `F{N}`   | 95       | Sugar → Count with `lessThanOrEqual`    |
 
 **Display & Meta** — presentation and notation-level features:
 
@@ -962,7 +963,9 @@ roll({
 
 **Use cases:** Critical hits that double or triple base damage before modifiers. Or systems where dice are multiplied before bonuses are added.
 
-### Count Successes (S{N}) — _primitive_
+### Count Successes (S{N}) — _sugar → Count with greaterThanOrEqual_
+
+> **Sugar equivalence:** `S{7}` is sugar for `#{>=7}`. `S{7,1}` is sugar for `#{>=7,<=1}` with deduct mode.
 
 Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
 
@@ -1092,7 +1095,53 @@ roll({
 
 **Use cases:** Wrapping values into ranges, clock mechanics, cyclic resource systems.
 
-### Count Failures (F{N}) — _primitive_
+### Count (`#{...}`) — _primitive_
+
+Count dice matching conditions instead of summing values. This changes the result model from a sum to a count. The `#` modifier uses the same comparison operators as cap, drop, and reroll. All notation in randsum is case-insensitive.
+
+| Notation     | Description                                   |
+| ------------ | --------------------------------------------- |
+| `#{>=N}`     | Count dice >= N (successes)                   |
+| `#{<=N}`     | Count dice <= N (failures)                    |
+| `#{>N}`      | Count dice strictly greater than N            |
+| `#{<N}`      | Count dice strictly less than N               |
+| `#{=N}`      | Count dice exactly equal to N                 |
+| `#{>=N,<=M}` | Count >= N, subtract count <= M (deduct mode) |
+
+```typescript
+roll("5d10#{>=7}") // Count dice >= 7
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: { count: { greaterThanOrEqual: 7 } }
+})
+
+roll("5d10#{<=3}") // Count dice <= 3
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: { count: { lessThanOrEqual: 3 } }
+})
+
+roll("5d10#{>=7,<=1}") // Successes minus botches (deduct mode)
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: { count: { greaterThanOrEqual: 7, lessThanOrEqual: 1, deduct: true } }
+})
+```
+
+**How it works:** Instead of summing dice values, the total becomes a count of dice matching the specified condition. When a single condition is given, the total equals the number of dice that match. When two conditions are given (e.g., `#{>=7,<=1}`), deduct mode is activated: the count of dice matching the second condition is subtracted from the count matching the first.
+
+**Example:** `5d10#{>=7}` rolls [8, 3, 10, 6, 9]. Dice >= 7: [8, 10, 9] = 3.
+
+**Example with deduct:** `5d10#{>=7,<=1}` rolls [8, 1, 10, 1, 9]. Dice >= 7: 3. Dice <= 1: 2. Result = 3 - 2 = 1.
+
+**Use cases:** World of Darkness, Shadowrun, and any dice pool system that counts hits or failures instead of summing values. The deduct form handles WoD-style botch subtraction natively.
+
+### Count Failures (F{N}) — _sugar → Count with lessThanOrEqual_
+
+> **Sugar equivalence:** `F{3}` is sugar for `#{<=3}`.
 
 Count how many dice rolled at or below a threshold. The total becomes the failure count:
 
@@ -1285,9 +1334,10 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 | 92       | Sort             | `sa`/`sd` | Sort results for display           |
 | 93       | Integer Divide   | `//N`     | Integer divide total               |
 | 94       | Modulo           | `%N`      | Total modulo N                     |
-| 95       | Count Successes  | `S{...}`  | Count dice meeting threshold       |
-| 96       | Count Failures   | `F{...}`  | Count dice at or below threshold   |
+| 95       | Count            | `#{...}`  | Count dice matching conditions     |
 | 100      | Total Multiply   | `**N`     | Multiply entire final total        |
+
+> **Note:** `S{N}` and `F{N}` are sugar for `#{>=N}` and `#{<=N}` respectively. They share priority 95 with Count.
 
 Lower priority numbers execute first. This order ensures predictable behavior:
 
@@ -1301,7 +1351,7 @@ Lower priority numbers execute first. This order ensures predictable behavior:
 - Arithmetic modifiers (+/-) apply
 - Results are sorted (if requested)
 - Integer division and modulo are applied
-- Successes/failures are counted (if using dice pool systems)
+- Dice are counted instead of summed (if using dice pool systems)
 - Final total is multiplied (if using total multiplier)
 
 ```typescript
@@ -1574,6 +1624,20 @@ roll("4d6Lx6") // Generate all 6 ability scores in one call
 ```typescript
 roll("5d6W") // 5d6 with wild die
 roll("3d6W+2") // 3d6 with wild die and +2 modifier
+```
+
+### World of Darkness Dice Pool
+
+```typescript
+roll("8d10#{>=8,<=1}") // WoD: successes on 8+, botch on 1
+roll("8d10S{8,1}") // Sugar: same as above
+```
+
+### Shadowrun Hits
+
+```typescript
+roll("12d6#{>=5}") // Count hits (5 or 6)
+roll("12d6S{5}") // Sugar: same as above
 ```
 
 ### Labeled Damage Rolls

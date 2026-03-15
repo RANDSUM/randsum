@@ -1,10 +1,10 @@
-import type { SuccessCountOptions } from '../types'
+import type { CountOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 const countSuccessesPattern = /(?<!!)[Ss]\{(\d+)(?:,(\d+))?\}/
 
-export const countSuccessesSchema: NotationSchema<SuccessCountOptions> =
-  defineNotationSchema<SuccessCountOptions>({
-    name: 'countSuccesses',
+export const countSuccessesSchema: NotationSchema<CountOptions> =
+  defineNotationSchema<CountOptions>({
+    name: 'count',
     priority: 95,
 
     pattern: countSuccessesPattern,
@@ -17,23 +17,29 @@ export const countSuccessesSchema: NotationSchema<SuccessCountOptions> =
       const botchThreshold = match[2] ? Number(match[2]) : undefined
 
       if (botchThreshold !== undefined) {
-        return { countSuccesses: { threshold, botchThreshold } }
+        return {
+          count: { greaterThanOrEqual: threshold, lessThanOrEqual: botchThreshold, deduct: true }
+        }
       }
 
-      return { countSuccesses: { threshold } }
+      return { count: { greaterThanOrEqual: threshold } }
     },
 
     toNotation: options => {
-      if (options.botchThreshold !== undefined) {
-        return `S{${options.threshold},${options.botchThreshold}}`
+      if (options.greaterThanOrEqual === undefined) return undefined
+      if (options.deduct && options.lessThanOrEqual !== undefined) {
+        return `S{${options.greaterThanOrEqual},${options.lessThanOrEqual}}`
       }
-      return `S{${options.threshold}}`
+      return `S{${options.greaterThanOrEqual}}`
     },
 
     toDescription: options => {
-      if (options.botchThreshold !== undefined) {
-        return [`Count successes >= ${options.threshold}, botches <= ${options.botchThreshold}`]
+      if (options.greaterThanOrEqual === undefined) return []
+      if (options.deduct && options.lessThanOrEqual !== undefined) {
+        return [
+          `Count successes >= ${options.greaterThanOrEqual}, botches <= ${options.lessThanOrEqual}`
+        ]
       }
-      return [`Count successes >= ${options.threshold}`]
+      return [`Count successes >= ${options.greaterThanOrEqual}`]
     }
   })

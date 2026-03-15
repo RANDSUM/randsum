@@ -15,13 +15,12 @@ export type {
 
 export type {
   ComparisonOptions,
+  CountOptions,
   DropOptions,
-  FailureCountOptions,
   KeepOptions,
   RerollOptions,
   ReplaceOptions,
   UniqueOptions,
-  SuccessCountOptions,
   ModifierConfig,
   ModifierOptions,
   ModifierLog,

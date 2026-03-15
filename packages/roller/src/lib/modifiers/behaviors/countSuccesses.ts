@@ -1,13 +1,18 @@
-import type { SuccessCountOptions } from '../../../types'
+import type { CountOptions } from '../../../types'
 import { ModifierError } from '../../../errors'
 import type { ModifierBehavior } from '../schema'
 
-export const countSuccessesBehavior: ModifierBehavior<SuccessCountOptions> = {
+export const countSuccessesBehavior: ModifierBehavior<CountOptions> = {
   validate: options => {
-    if (options.botchThreshold !== undefined && options.botchThreshold >= options.threshold) {
+    if (
+      options.deduct &&
+      options.lessThanOrEqual !== undefined &&
+      options.greaterThanOrEqual !== undefined &&
+      options.lessThanOrEqual >= options.greaterThanOrEqual
+    ) {
       throw new ModifierError(
         'countSuccesses',
-        `botchThreshold (${options.botchThreshold}) must be less than threshold (${options.threshold})`
+        `botchThreshold (${options.lessThanOrEqual}) must be less than threshold (${options.greaterThanOrEqual})`
       )
     }
   },
@@ -16,8 +21,10 @@ export const countSuccessesBehavior: ModifierBehavior<SuccessCountOptions> = {
     return {
       rolls,
       transformTotal: (_total, currentRolls) => {
-        const successCount = currentRolls.filter(roll => roll >= options.threshold).length
-        const { botchThreshold } = options
+        const threshold = options.greaterThanOrEqual
+        const successCount =
+          threshold !== undefined ? currentRolls.filter(roll => roll >= threshold).length : 0
+        const botchThreshold = options.deduct ? options.lessThanOrEqual : undefined
         const botchCount =
           botchThreshold !== undefined
             ? currentRolls.filter(roll => roll <= botchThreshold).length

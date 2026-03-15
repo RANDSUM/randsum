@@ -18,6 +18,7 @@ export {
 export { defineNotationSchema } from './schema'
 export {
   capSchema,
+  countSchema,
   dropSchema,
   keepSchema,
   replaceSchema,
@@ -44,6 +45,7 @@ export type { Token, TokenType } from './tokenize'
 export type { NotationSchema } from './schema'
 export type {
   ComparisonOptions,
+  CountOptions,
   DiceNotation,
   DropOptions,
   InvalidValidationResult,
@@ -54,8 +56,6 @@ export type {
   ReplaceOptions,
   RerollOptions,
   RollOptions,
-  SuccessCountOptions,
-  FailureCountOptions,
   UniqueOptions,
   ValidValidationResult,
   ValidationErrorInfo,

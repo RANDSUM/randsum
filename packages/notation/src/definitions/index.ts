@@ -1,4 +1,5 @@
 export { capSchema } from './cap'
+export { countSchema } from './count'
 export { dropSchema } from './drop'
 export { keepSchema } from './keep'
 export { replaceSchema } from './replace'

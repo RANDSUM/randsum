@@ -1,11 +1,11 @@
-import type { FailureCountOptions } from '../types'
+import type { CountOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
 const countFailuresPattern = /[Ff]\{(\d+)\}/
 
-export const countFailuresSchema: NotationSchema<FailureCountOptions> =
-  defineNotationSchema<FailureCountOptions>({
-    name: 'countFailures',
+export const countFailuresSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>(
+  {
+    name: 'count',
     priority: 96,
 
     pattern: countFailuresPattern,
@@ -16,14 +16,17 @@ export const countFailuresSchema: NotationSchema<FailureCountOptions> =
 
       const threshold = Number(match[1])
 
-      return { countFailures: { threshold } }
+      return { count: { lessThanOrEqual: threshold } }
     },
 
     toNotation: options => {
-      return `F{${options.threshold}}`
+      if (options.lessThanOrEqual === undefined) return undefined
+      return `F{${options.lessThanOrEqual}}`
     },
 
     toDescription: options => {
-      return [`Count failures at or below ${options.threshold}`]
+      if (options.lessThanOrEqual === undefined) return []
+      return [`Count failures at or below ${options.lessThanOrEqual}`]
     }
-  })
+  }
+)

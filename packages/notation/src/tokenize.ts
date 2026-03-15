@@ -22,6 +22,7 @@ export type TokenType =
   | 'cap' // C{...}
   | 'replace' // V{...}
   | 'unique' // U, U{...}
+  | 'count' // #{...}
   | 'countSuccesses' // S{...}
   | 'plus' // +N
   | 'minus' // -N
@@ -117,6 +118,8 @@ const MODIFIERS: readonly ModifierEntry[] = [
   { type: 'unique', pattern: /^[Uu](?:\{[^}]+\})?/ },
   // Wild Die — must come before margin of success and sort
   { type: 'wildDie', pattern: /^[Ww](?![{])/ },
+  // Count — must come before countSuccesses and sort
+  { type: 'count', pattern: /^#\{[^}]+\}/ },
   // Margin of success — must come before countSuccesses and sort
   { type: 'marginOfSuccess', pattern: /^[Mm][Ss]\{\d+\}/ },
   { type: 'countSuccesses', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },

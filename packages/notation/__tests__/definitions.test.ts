@@ -820,15 +820,15 @@ describe('explodeSchema', () => {
 
 describe('countSuccessesSchema', () => {
   describe('parse', () => {
-    test('parses S{5} (threshold only)', () => {
+    test('parses S{5} (threshold only, desugars to count)', () => {
       expect(countSuccessesSchema.parse('S{5}')).toEqual({
-        countSuccesses: { threshold: 5 }
+        count: { greaterThanOrEqual: 5 }
       })
     })
 
-    test('parses S{5,2} (threshold and botch)', () => {
+    test('parses S{5,2} (threshold and botch, desugars to count)', () => {
       expect(countSuccessesSchema.parse('S{5,2}')).toEqual({
-        countSuccesses: { threshold: 5, botchThreshold: 2 }
+        count: { greaterThanOrEqual: 5, lessThanOrEqual: 2, deduct: true }
       })
     })
 
@@ -839,14 +839,15 @@ describe('countSuccessesSchema', () => {
 
   describe('toNotation', () => {
     test('formats threshold only', () => {
-      expect(countSuccessesSchema.toNotation({ threshold: 5 })).toBe('S{5}')
+      expect(countSuccessesSchema.toNotation({ greaterThanOrEqual: 5 })).toBe('S{5}')
     })
 
     test('formats threshold and botch', () => {
       expect(
         countSuccessesSchema.toNotation({
-          threshold: 5,
-          botchThreshold: 2
+          greaterThanOrEqual: 5,
+          lessThanOrEqual: 2,
+          deduct: true
         })
       ).toBe('S{5,2}')
     })
@@ -854,14 +855,17 @@ describe('countSuccessesSchema', () => {
 
   describe('toDescription', () => {
     test('describes threshold only', () => {
-      expect(countSuccessesSchema.toDescription({ threshold: 5 })).toEqual(['Count successes >= 5'])
+      expect(countSuccessesSchema.toDescription({ greaterThanOrEqual: 5 })).toEqual([
+        'Count successes >= 5'
+      ])
     })
 
     test('describes threshold and botch', () => {
       expect(
         countSuccessesSchema.toDescription({
-          threshold: 5,
-          botchThreshold: 2
+          greaterThanOrEqual: 5,
+          lessThanOrEqual: 2,
+          deduct: true
         })
       ).toEqual(['Count successes >= 5, botches <= 2'])
     })

@@ -73,9 +73,9 @@ describe('Sort in parseModifiers', () => {
     expect(parseModifiers('4d6sd')).toEqual({ sort: 'desc' })
   })
 
-  test('does not conflict with S{7} (count successes)', () => {
+  test('does not conflict with S{7} (count successes desugars to count)', () => {
     const result = parseModifiers('4d6S{7}')
-    expect(result.countSuccesses).toEqual({ threshold: 7 })
+    expect(result.count).toEqual({ greaterThanOrEqual: 7 })
     expect(result.sort).toBeUndefined()
   })
 

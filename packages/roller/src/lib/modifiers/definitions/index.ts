@@ -1,6 +1,7 @@
 import type { ModifierDefinition } from '../schema'
 import { capModifier } from './cap'
 import { compoundModifier } from './compound'
+import { countModifier } from './count'
 import { countFailuresModifier } from './countFailures'
 import { countSuccessesModifier } from './countSuccesses'
 import { dropModifier } from './drop'
@@ -22,6 +23,7 @@ import { wildDieModifier } from './wildDie'
 
 export { capModifier }
 export { compoundModifier }
+export { countModifier }
 export { countFailuresModifier }
 export { explodeSequenceModifier }
 export { countSuccessesModifier }
@@ -63,7 +65,6 @@ export const RANDSUM_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   sortModifier as ModifierDefinition,
   integerDivideModifier as ModifierDefinition,
   moduloModifier as ModifierDefinition,
-  countSuccessesModifier as ModifierDefinition,
-  countFailuresModifier as ModifierDefinition,
+  countModifier as ModifierDefinition,
   multiplyTotalModifier as ModifierDefinition
 ])

@@ -42,16 +42,19 @@ export interface UniqueOptions {
   notUnique: number[]
 }
 
-export interface SuccessCountOptions {
-  /** Threshold for counting successes (rolls >= this value) */
-  threshold: number
-  /** Optional: threshold for counting botches/failures (rolls <= this value) */
-  botchThreshold?: number
-}
-
-export interface FailureCountOptions {
-  /** Threshold for counting failures (rolls <= this value) */
-  threshold: number
+export interface CountOptions {
+  /** Count dice greater than N */
+  greaterThan?: number
+  /** Count dice greater than or equal to N */
+  greaterThanOrEqual?: number
+  /** Count dice less than N */
+  lessThan?: number
+  /** Count dice less than or equal to N */
+  lessThanOrEqual?: number
+  /** Count dice matching exact values */
+  exact?: number[]
+  /** If true, below-threshold count subtracts from above-threshold count */
+  deduct?: boolean
 }
 
 export type ModifierConfig =
@@ -61,14 +64,13 @@ export type ModifierConfig =
   | 'asc'
   | 'desc'
   | ComparisonOptions
+  | CountOptions
   | DropOptions
   | KeepOptions
   | ReplaceOptions
   | ReplaceOptions[]
   | RerollOptions
   | UniqueOptions
-  | SuccessCountOptions
-  | FailureCountOptions
 
 export interface ModifierOptions {
   /** Cap roll values to a range */
@@ -89,10 +91,8 @@ export interface ModifierOptions {
   compound?: boolean | number
   /** Penetrating exploding: subtract 1 from each subsequent explosion */
   penetrate?: boolean | number
-  /** Count successes instead of summing (for dice pool systems) */
-  countSuccesses?: SuccessCountOptions
-  /** Count failures (dice at or below threshold) */
-  countFailures?: FailureCountOptions
+  /** Count dice matching conditions instead of summing */
+  count?: CountOptions
   /** Multiply dice result (before +/- arithmetic) */
   multiply?: number
   /** Add a fixed value to the total */

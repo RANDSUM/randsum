@@ -32,16 +32,16 @@ describe('countFailures notation', () => {
   })
 
   describe('parse', () => {
-    test('parses F{3} correctly', async () => {
+    test('parses F{3} correctly (desugars to count)', async () => {
       const { countFailuresSchema } = await import('../src/definitions/countFailures')
       const result = countFailuresSchema.parse('5d10F{3}')
-      expect(result).toEqual({ countFailures: { threshold: 3 } })
+      expect(result).toEqual({ count: { lessThanOrEqual: 3 } })
     })
 
-    test('parses f{7} correctly', async () => {
+    test('parses f{7} correctly (desugars to count)', async () => {
       const { countFailuresSchema } = await import('../src/definitions/countFailures')
       const result = countFailuresSchema.parse('10d6f{7}')
-      expect(result).toEqual({ countFailures: { threshold: 7 } })
+      expect(result).toEqual({ count: { lessThanOrEqual: 7 } })
     })
 
     test('returns empty when no match', async () => {
@@ -54,14 +54,14 @@ describe('countFailures notation', () => {
   describe('toNotation', () => {
     test('generates F{N} notation', async () => {
       const { countFailuresSchema } = await import('../src/definitions/countFailures')
-      expect(countFailuresSchema.toNotation({ threshold: 3 })).toBe('F{3}')
+      expect(countFailuresSchema.toNotation({ lessThanOrEqual: 3 })).toBe('F{3}')
     })
   })
 
   describe('toDescription', () => {
     test('generates readable description', async () => {
       const { countFailuresSchema } = await import('../src/definitions/countFailures')
-      const desc = countFailuresSchema.toDescription({ threshold: 3 })
+      const desc = countFailuresSchema.toDescription({ lessThanOrEqual: 3 })
       expect(desc).toEqual(['Count failures at or below 3'])
     })
   })
