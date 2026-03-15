@@ -63,6 +63,74 @@ A draw die samples without replacement from a pool of faces -- like drawing card
 
 Use cases include card-deck mechanics, random encounter tables without repeats, draft picks, and Catan-style resource distribution.
 
+### Percentile die
+
+A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution. All notation is **case-insensitive**.
+
+| Argument | Equivalent | Description |
+|---|---|---|
+| `d%` | `roll(100)` | Roll one d100 |
+
+<RollerPlayground defaultNotation="d%" client:only="react" />
+
+`d%` maps internally to `{ quantity: 1, sides: 100 }`. It does not support a quantity prefix. To roll multiple percentile dice, pass multiple arguments: `roll('d%', 'd%')`.
+
+`d%` does not support inline notation modifiers -- use the options object form for modified percentile rolls.
+
+### Fate/Fudge dice
+
+Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2. All notation is **case-insensitive**.
+
+| Argument | Faces | Range per die | Description |
+|---|---|---|---|
+| `dF` | -1, 0, +1 | -1 to +1 | Standard Fate/Fudge die |
+| `dF.1` | -1, 0, +1 | -1 to +1 | Explicit standard variant |
+| `dF.2` | -2, -1, 0, +1, +2 | -2 to +2 | Extended Fudge die |
+| `4dF` | -1, 0, +1 | -4 to +4 | Standard Fate Core roll |
+| `4dF.2` | -2, -1, 0, +1, +2 | -8 to +8 | Four extended dice |
+
+<RollerPlayground defaultNotation="4dF" client:only="react" />
+<RollerPlayground defaultNotation="dF.2" client:only="react" />
+
+Internally, `dF` uses the replace modifier to map die faces to negative and zero values. `dF` does not support inline notation modifiers -- use the options object form for modified Fate rolls.
+
+### Zero-bias dice
+
+Zero-indexed dice that roll 0 to N-1 instead of 1 to N. All notation is **case-insensitive**.
+
+| Notation | Description |
+|---|---|
+| `zN` | Zero-indexed die (0 to N-1) |
+| `z6` | Roll 0-5 instead of 1-6 |
+| `3z10` | Three zero-bias d10s (0-9) |
+
+<RollerPlayground defaultNotation="z6" client:only="react" />
+<RollerPlayground defaultNotation="3z10" client:only="react" />
+
+Zero-bias dice are notation-only -- there is no options object equivalent. Use the notation string form `roll('z6')` or construct faces manually: `roll({ sides: [0, 1, 2, 3, 4, 5] })`.
+
+**Use cases:** Zero-indexed random table lookups, percentile systems that use 0-99, programming-friendly dice for array index selection.
+
+### Custom dice faces
+
+Define dice with arbitrary face values. All notation is **case-insensitive**.
+
+| Notation | Description |
+|---|---|
+| `d{2,3,5,7}` | Die with faces 2, 3, 5, 7 |
+| `d{-1,0,1}` | Die with negative/zero faces |
+| `d{fire,ice,lightning}` | Die with string faces |
+| `3d{1,1,2}` | 3 dice with weighted faces |
+
+<RollerPlayground defaultNotation="d{2,3,5,7}" client:only="react" />
+<RollerPlayground defaultNotation="d{fire,ice,lightning}" client:only="react" />
+
+Duplicate values create weighted distributions -- `d{1,1,2}` has a 2/3 chance of rolling 1 and a 1/3 chance of rolling 2. When faces are non-numeric strings, the roll result contains string values rather than numbers.
+
+Custom faces dice do not support inline notation modifiers -- use the options object form for modified custom dice rolls.
+
+**Use cases:** Custom damage type dice (fire/ice/lightning), narrative dice (success/failure/complication), weighted probability dice, or any die with non-standard faces.
+
 ## Arithmetic
 
 Add or subtract a fixed value from the total.
@@ -388,6 +456,7 @@ Modifiers can be chained together. They are applied in a fixed priority order:
 | 50 | Explode | `!` | Roll additional dice on max |
 | 51 | Compound | `!!` | Add explosion to existing die |
 | 52 | Penetrate | `!p` | Add explosion minus 1 to die |
+| 53 | Explode Sequence | `!s{...}`, `!i`, `!r` | Explode through die size sequence |
 | 55 | Wild Die | `W` | D6 System wild die behavior |
 | 60 | Unique | `U` | Ensure no duplicate values |
 | 85 | Multiply | `*N` | Multiply dice sum (pre-arithmetic) |
