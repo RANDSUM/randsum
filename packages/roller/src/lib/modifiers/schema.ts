@@ -199,7 +199,7 @@ export interface ModifierOptionTypes {
   replace: ReplaceOptions | ReplaceOptions[]
   reroll: RerollOptions
   unique: boolean | UniqueOptions
-  explode: boolean | number
+  explode: boolean
   compound: boolean | number
   penetrate: boolean | number
   explodeSequence: number[]

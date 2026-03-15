@@ -152,14 +152,9 @@ describe('edge cases', () => {
       expect(result.rolls[0]?.rolls.length).toBeGreaterThanOrEqual(3)
     })
 
-    test('explode unlimited can produce many dice', () => {
-      const result = roll({ sides: 6, quantity: 1, modifiers: { explode: 0 } })
+    test('explode accepts boolean only (not number)', () => {
+      const result = roll({ sides: 6, quantity: 1, modifiers: { explode: true } })
       expect(result.rolls[0]?.rolls.length).toBeGreaterThanOrEqual(1)
-    })
-
-    test('explode with depth limit respects limit', () => {
-      const result = roll({ sides: 6, quantity: 1, modifiers: { explode: 3 } })
-      expect(result.rolls[0]?.rolls.length).toBeLessThanOrEqual(4)
     })
   })
 

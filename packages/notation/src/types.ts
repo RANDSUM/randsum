@@ -83,8 +83,8 @@ export interface ModifierOptions {
   reroll?: RerollOptions
   /** Ensure unique values (true or options) */
   unique?: boolean | UniqueOptions
-  /** Exploding dice: reroll and add on max value */
-  explode?: boolean | number
+  /** Exploding dice: reroll and add on max value (single pass) */
+  explode?: boolean
   /** Compounding exploding: add to triggering die instead of creating new dice */
   compound?: boolean | number
   /** Penetrating exploding: subtract 1 from each subsequent explosion */
