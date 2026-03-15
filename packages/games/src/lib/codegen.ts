@@ -1,7 +1,7 @@
 import { SchemaError } from './errors'
 import type { NormalizedRollDefinition, NormalizedSpec } from './normalizedTypes'
 import { normalizeSpec } from './normalizer'
-import type { RandSumSpec, RemoteTableLookupOperation } from './types'
+import type { RandSumSpec, RemoteTableLookupOperation, ResultMappingLeaf } from './types'
 import { validateSpec } from './validator'
 import { generateRollParts } from './codegen/emitBody'
 import { needsValidationImports, specToFilename } from './codegen/emitHelpers'
@@ -24,6 +24,47 @@ async function fetchRemoteData(url: string, dataPath?: string): Promise<unknown[
 
 export interface GenerateCodeOptions {
   readonly remoteDataCache?: ReadonlyMap<string, readonly unknown[]>
+}
+
+function collectFoundTableFields(leaf: ResultMappingLeaf): readonly string[] {
+  if ('$foundTable' in leaf) return [leaf.$foundTable]
+  if ('$lookupResult' in leaf && leaf.fallback !== undefined) {
+    return collectFoundTableFields(leaf.fallback)
+  }
+  return []
+}
+
+function collectRequiredRemoteFields(rtl: RemoteTableLookupOperation): ReadonlySet<string> {
+  const fields = new Set<string>()
+  // find.field is used to match entries (e.g. t.name === input.tableName)
+  fields.add(rtl.find.field)
+  // 'name' is always needed for VALID_TABLE_NAMES
+  fields.add('name')
+  // tableField is the field passed to lookupByRange
+  fields.add(rtl.tableField)
+  // Walk resultMapping for $foundTable references
+  for (const leaf of Object.values(rtl.resultMapping)) {
+    for (const field of collectFoundTableFields(leaf)) {
+      fields.add(field)
+    }
+  }
+  return fields
+}
+
+function stripRemoteEntries(
+  data: readonly unknown[],
+  requiredFields: ReadonlySet<string>
+): unknown[] {
+  return data.map(entry => {
+    const record = entry as Record<string, unknown>
+    const stripped: Record<string, unknown> = {}
+    for (const field of requiredFields) {
+      if (field in record) {
+        stripped[field] = record[field]
+      }
+    }
+    return stripped
+  })
 }
 
 async function buildCodeString(
@@ -68,8 +109,10 @@ async function buildCodeString(
 
   parts.push(``)
 
-  if (remoteData !== undefined) {
-    parts.push(`const REMOTE_DATA = ${JSON.stringify(remoteData)} as const`)
+  if (remoteData !== undefined && rtlDef !== undefined) {
+    const requiredFields = collectRequiredRemoteFields(rtlDef)
+    const strippedData = stripRemoteEntries(remoteData, requiredFields)
+    parts.push(`const REMOTE_DATA = ${JSON.stringify(strippedData)} as const`)
     parts.push(``)
   }
 

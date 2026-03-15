@@ -100,6 +100,9 @@ roll(20)                    // Number: 1d20
 roll("4d6L")                // Notation string
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })  // Options object
 roll("1d20+5", "2d6")       // Multiple arguments combined
+roll("d%")                  // Percentile: 1d100
+roll("4dF")                 // Fate Core: 4 Fate dice (-4 to +4)
+roll("dF.2")                // Extended Fudge die (-2 to +2)
 ```
 
 ## Git Hooks (Lefthook)
@@ -134,4 +137,4 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 Full spec: `packages/roller/RANDSUM_DICE_NOTATION.md`
 
-Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap)
+Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge)

@@ -126,7 +126,7 @@
   "files": [
     "dist",
     "!dist/bin*",
-    "!dist/*.map",
+    "!dist/**/*.map",
     "*.randsum.json",
     "randsum.json",
     "LICENSE",

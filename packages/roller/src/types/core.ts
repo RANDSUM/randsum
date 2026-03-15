@@ -13,6 +13,40 @@ export interface RequiredNumericRollParameters {
 }
 
 /**
+ * String literal type for percentile dice (d%).
+ * Equivalent to rolling 1d100.
+ */
+export type PercentileDie = 'd%' | 'D%'
+
+/**
+ * Fate/Fudge dice notation variants.
+ *
+ * - `dF` / `dF.1` — standard Fudge die: faces [-1, 0, 1]
+ * - `dF.2` — extended Fudge die: faces [-2, -1, 0, 1, 2]
+ *
+ * Case-insensitive (dF and DF are equivalent).
+ */
+type FateDieLiteral =
+  | 'dF'
+  | 'DF'
+  | 'df'
+  | 'Df'
+  | 'dF.1'
+  | 'DF.1'
+  | 'df.1'
+  | 'Df.1'
+  | 'dF.2'
+  | 'DF.2'
+  | 'df.2'
+  | 'Df.2'
+
+/**
+ * Fate/Fudge dice notation with optional quantity prefix.
+ * Matches patterns like `dF`, `4dF`, `dF.1`, `4dF.2`, etc.
+ */
+export type FateDieNotation = FateDieLiteral | `${number}${FateDieLiteral}`
+
+/**
  * Valid input types for the roll() function.
  *
  * @template T - Type for custom dice faces
@@ -22,9 +56,16 @@ export interface RequiredNumericRollParameters {
  * roll(20)              // number - d20
  * roll("4d6L")          // notation string
  * roll({ sides: 6, quantity: 4 })  // options object
+ * roll("d%")            // percentile (1d100)
+ * roll("4dF")           // four Fate/Fudge dice
  * ```
  */
-export type RollArgument<T = string> = RollOptions<T> | DiceNotation | number
+export type RollArgument<T = string> =
+  | RollOptions<T>
+  | DiceNotation
+  | FateDieNotation
+  | PercentileDie
+  | number
 
 /**
  * Type for custom random number generators.

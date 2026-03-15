@@ -51,7 +51,20 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * const result = roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // same as 4d6L
  * ```
  *
- * @example Custom faces (Fate dice)
+ * @example Percentile die (d%)
+ * ```ts
+ * const result = roll('d%')  // equivalent to roll('1d100')
+ * result.total // => 1-100
+ * ```
+ *
+ * @example Fate/Fudge dice (dF)
+ * ```ts
+ * const result = roll('4dF')   // 4 standard Fate dice (faces: -1, 0, 1)
+ * const wide = roll('4dF.2')   // 4 wide Fate dice (faces: -2, -1, 0, 1, 2)
+ * result.total // => -4 to +4
+ * ```
+ *
+ * @example Custom faces
  * ```ts
  * const result = roll({ sides: ['+', '+', ' ', ' ', '-', '-'], quantity: 4 })
  * result.values // => ["+", "-", " ", "+"] - actual face values

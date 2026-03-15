@@ -25,21 +25,9 @@ roll("4d6L")   // Notation: D&D ability score (4d6, drop lowest)
 roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })  // Object: same as 4d6L
 roll("2d20L+5") // Advantage attack roll
 roll("2d6+3")   // PbtA / 2d6 + stat
+roll("d%")      // Percentile: 1d100
+roll("4dF")     // Fate Core: 4 Fate dice (-4 to +4)
 roll("1d20", "2d6", "+5")  // Multiple: attack + damage + modifier
-
-## Game Specs (.randsum.json)
-
-Game packages are declarative — each game is defined as a `.randsum.json` spec that generates TypeScript via codegen (`bun run --filter @randsum/games gen`).
-
-Specs live at `packages/games/*.randsum.json`. The meta-schema is at `packages/games/randsum.json`.
-
-Each spec declares a four-stage pipeline:
-1. **Dice** — pool definitions (sides, quantity, inputs)
-2. **Modify** — modifier chain (keepHighest, keepLowest, reroll, etc.)
-3. **Resolve** — resolution strategy (sum, table lookup)
-4. **Outcome** — result classification (success/failure, named outcomes)
-
-`salvageunion.randsum.json` is the richest example, using remote table lookups, multiple inputs, and range-based outcome tables.
 
 ## Documentation
 

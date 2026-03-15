@@ -1,5 +1,7 @@
 export type {
   DiceNotation,
+  FateDieNotation,
+  PercentileDie,
   RandomFn,
   RollOptions,
   RequiredNumericRollParameters,
