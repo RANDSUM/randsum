@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All packages are TypeScript, published to npm under `@randsum`.
 
-**Core**: `@randsum/roller` — zero-dependency dice engine. Every other package depends on it via `workspace:~`.
+**Core**: `@randsum/roller` — zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
 
 **Game packages** live in `games/` — each wraps roller with game-specific interpretation:
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
@@ -73,11 +73,11 @@ bun run help                             # Quick command reference
 All packages use `bunup` producing identical structure:
 - `dist/index.js` (ESM), `dist/index.cjs` (CJS)
 - `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
-- Bundle size limits enforced: roller 10KB, notation 8KB, display-utils 20KB, game packages 8KB, salvageunion 300KB
+- Bundle size limits enforced: roller 20KB (includes notation), display-utils 20KB, game packages 8KB, salvageunion 300KB
 
 ## Versioning
 
-When a core package (`@randsum/roller`, or in future `@randsum/notation`) receives a minor version bump, dependent packages (game packages, component-library) should also receive a corresponding minor version bump to keep the ecosystem in sync. This applies to minor and major releases — patch bumps in core do not require dependents to bump.
+When `@randsum/roller` receives a minor version bump, dependent packages (game packages, component-library) should also receive a corresponding minor version bump to keep the ecosystem in sync. This applies to minor and major releases — patch bumps in core do not require dependents to bump.
 
 ## Key Patterns
 
@@ -91,7 +91,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-The `RANDSUM_MODIFIERS` array in `packages/roller/src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier combines a `NotationSchema` (from `@randsum/notation`) with a `ModifierBehavior` (from `@randsum/roller`). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
+The `RANDSUM_MODIFIERS` array in `packages/roller/src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier combines a `NotationSchema` (from `packages/roller/src/notation/definitions/`) with a `ModifierBehavior` (from `packages/roller/src/lib/modifiers/behaviors/`). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
 
 ### `roll()` Argument Types
 
