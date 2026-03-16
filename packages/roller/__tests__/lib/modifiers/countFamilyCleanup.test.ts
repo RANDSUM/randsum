@@ -13,12 +13,12 @@ import { createSeededRandom } from '../../../test-utils/src/seededRandom'
 describe('count family cleanup (Story 9)', () => {
   describe('dead exports removed from definitions/index', () => {
     test('countSuccessesModifier is not exported from definitions', async () => {
-      const definitions = await import('../../../src/lib/modifiers/definitions')
+      const definitions = await import('../../../src/modifiers/definitions')
       expect((definitions as Record<string, unknown>)['countSuccessesModifier']).toBeUndefined()
     })
 
     test('countFailuresModifier is not exported from definitions', async () => {
-      const definitions = await import('../../../src/lib/modifiers/definitions')
+      const definitions = await import('../../../src/modifiers/definitions')
       expect((definitions as Record<string, unknown>)['countFailuresModifier']).toBeUndefined()
     })
   })
