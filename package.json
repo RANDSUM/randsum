@@ -24,7 +24,7 @@
     "ts-unused-exports": "11.0.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.0",
-    "undici": "6.24.0"
+    "undici": "7.24.4"
   },
   "engines": {
     "node": ">=18.0.0",
