@@ -5,7 +5,7 @@ description: All exported functions, types, and error classes from @randsum/roll
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-Everything exported from `@randsum/roller`. Items marked **re-export** originate from `@randsum/notation` and are re-exported for convenience -- see the [Notation API Reference](/notation/api-reference/) for full details.
+Everything exported from `@randsum/roller`. All functions and types below are exported directly from roller — notation parsing is built in with no separate package required.
 
 ## Functions
 
@@ -34,7 +34,7 @@ function roll<T = string>(
 ): RollerRollResult<T>
 ```
 
-### `validateNotation(notation)` (re-export)
+### `validateNotation(notation)`
 
 Validate a dice notation string and return a detailed result with parsed structure or error.
 
@@ -54,7 +54,7 @@ if (result.valid) {
 function validateNotation(notation: string): ValidationResult
 ```
 
-### `isDiceNotation(value)` (re-export)
+### `isDiceNotation(value)`
 
 Type guard that checks whether a string is valid dice notation.
 
@@ -71,7 +71,7 @@ if (isDiceNotation(userInput)) {
 function isDiceNotation(value: string): value is DiceNotation
 ```
 
-### `notation(value)` (re-export)
+### `notation(value)`
 
 Assert a string is valid dice notation or throw `NotationParseError`.
 
@@ -94,7 +94,7 @@ Validators for numeric input. Used by the roller engine and game packages. Each 
 
 ## Error classes
 
-`RandsumError` extends `Error` and adds a `code` property. `ValidationError`, `ModifierError`, and `RollError` all extend `RandsumError`. `NotationParseError` extends `Error` directly (it is re-exported from `@randsum/notation`).
+`RandsumError` extends `Error` and adds a `code` property. `ValidationError`, `ModifierError`, and `RollError` all extend `RandsumError`. `NotationParseError` extends `Error` directly and is part of `@randsum/roller`.
 
 | Class | Extends | Code | Thrown when |
 |---|---|---|---|
@@ -102,7 +102,7 @@ Validators for numeric input. Used by the roller engine and game packages. Each 
 | `ValidationError` | `RandsumError` | `VALIDATION_ERROR` | Invalid input (zero sides, negative quantity, etc.) |
 | `ModifierError` | `RandsumError` | `MODIFIER_ERROR` | Modifier produces invalid state (e.g. dropping all dice) |
 | `RollError` | `RandsumError` | `ROLL_ERROR` | General roll execution failure |
-| `NotationParseError` (re-export) | `Error` | `INVALID_NOTATION` | Invalid dice notation string |
+| `NotationParseError` | `Error` | `INVALID_NOTATION` | Invalid dice notation string |
 
 ### `ERROR_CODES`
 
@@ -161,14 +161,14 @@ Generic base type.
 | Type | Description |
 |---|---|
 | `RollArgument<T>` | `RollOptions<T> \| DiceNotation \| number` |
-| `RollOptions<T>` | Options object with `sides`, `quantity`, `modifiers` (re-export) |
+| `RollOptions<T>` | Options object with `sides`, `quantity`, `modifiers` |
 | `RollConfig` | `{ randomFn?: RandomFn }` -- pass as last argument to `roll()` |
 | `RandomFn` | `() => number` -- must return `[0, 1)` |
-| `DiceNotation` | Branded string type for valid notation (re-export) |
+| `DiceNotation` | Branded string type for valid notation |
 
-## Modifier types (re-exports)
+## Modifier types
 
-All modifier option types are re-exported from `@randsum/notation`.
+All modifier option types are exported from `@randsum/roller`.
 
 | Type | Description |
 |---|---|
@@ -192,7 +192,7 @@ All modifier option types are re-exported from `@randsum/notation`.
 | `ModifierLog` | `{ modifier, options, added, removed }` -- log entry for one modifier |
 | `NumericRollBonus` | `{ rolls: number[], logs: ModifierLog[] }` -- intermediate modifier state |
 
-## Validation result types (re-exports)
+## Validation result types
 
 | Type | Description |
 |---|---|
