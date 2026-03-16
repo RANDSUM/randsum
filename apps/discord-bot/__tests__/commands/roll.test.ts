@@ -1,15 +1,22 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-// Import the real roll function directly from source (bypasses @randsum/roller package name).
-// This gives us a reference to the real implementation that's unaffected by mock.module.
-const { roll: realRoll } = await import('../../../../packages/roller/src/roll/index')
-const { validateFinite, validateRange } =
-  await import('../../../../packages/roller/src/lib/utils/validation')
-const { isDiceNotation, notation: realNotation } =
-  await import('../../../../packages/notation/src/isDiceNotation')
-const { validateNotation } = await import('../../../../packages/notation/src/validateNotation')
-const { RandsumError, NotationParseError, ModifierError, ValidationError, RollError, ERROR_CODES } =
-  await import('../../../../packages/roller/src/errors')
+// @randsum/roller is mocked via mock.module below, so we import from its source entry
+// to get real implementations that bypass the mock. This single import replaces what were
+// previously 5 deep relative imports into roller/notation internals.
+const {
+  roll: realRoll,
+  isDiceNotation,
+  notation: realNotation,
+  validateNotation,
+  validateFinite,
+  validateRange,
+  RandsumError,
+  NotationParseError,
+  ModifierError,
+  ValidationError,
+  RollError,
+  ERROR_CODES
+} = await import('../../../../packages/roller/src/index')
 
 const mockEmbed = {
   setColor: mock(() => {
