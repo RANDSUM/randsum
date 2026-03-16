@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { moduloSchema } from '@randsum/notation'
+import { moduloSchema } from '../../../notation/definitions/modulo'
 import { moduloBehavior } from '../behaviors/modulo'
 
 export const moduloModifier: ModifierDefinition<number> = {

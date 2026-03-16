@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { minusSchema } from '@randsum/notation'
+import { minusSchema } from '../../../notation/definitions/minus'
 import { minusBehavior } from '../behaviors/arithmetic'
 
 export const minusModifier: ModifierDefinition<number> = {

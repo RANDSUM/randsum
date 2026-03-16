@@ -1,5 +1,5 @@
 import type { ModifierDefinition } from '../schema'
-import { explodeSequenceSchema } from '@randsum/notation'
+import { explodeSequenceSchema } from '../../../notation/definitions/explodeSequence'
 import { explodeSequenceBehavior } from '../behaviors/explodeSequence'
 
 export const explodeSequenceModifier: ModifierDefinition<number[]> = {
