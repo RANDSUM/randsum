@@ -8,11 +8,19 @@ import type {
 } from './schema'
 import { ModifierError } from '../../errors'
 import { RANDSUM_MODIFIERS } from './definitions'
-import { createModifierLog } from './log'
+import { createArithmeticLog, createModifierLog } from './log'
 
 // Built once at module init — no mutation
 const modifierMap: ReadonlyMap<keyof ModifierOptions, ModifierDefinition> = new Map(
   RANDSUM_MODIFIERS.map(m => [m.name, m])
+)
+
+/**
+ * Modifier execution order — computed once at module init, never reallocated.
+ * Use this instead of calling getModifierOrder() in hot paths.
+ */
+export const MODIFIER_ORDER: readonly (keyof ModifierOptions)[] = Object.freeze(
+  RANDSUM_MODIFIERS.map(m => m.name)
 )
 
 /**
@@ -42,9 +50,10 @@ export function getAllModifiers(): ModifierDefinition[] {
 
 /**
  * Get modifier execution order (sorted by priority).
+ * @deprecated Use the MODIFIER_ORDER constant directly for better performance.
  */
-export function getModifierOrder(): (keyof ModifierOptions)[] {
-  return RANDSUM_MODIFIERS.map(m => m.name)
+export function getModifierOrder(): readonly (keyof ModifierOptions)[] {
+  return MODIFIER_ORDER
 }
 
 /**
@@ -92,7 +101,10 @@ export function applyModifier(
 
   try {
     const applied = modifier.apply(rolls, options, ctx)
-    const log = createModifierLog(name, options, initialRolls, applied.rolls)
+    const log =
+      modifier.mutatesRolls === false
+        ? createArithmeticLog(name, options)
+        : createModifierLog(name, options, initialRolls, applied.rolls)
 
     if (applied.transformTotal) {
       return {
@@ -122,14 +134,13 @@ export function applyAllModifiers(
   initialRolls: number[],
   ctx: ModifierContext
 ): RegistryProcessResult {
-  const order = getModifierOrder()
   const initialState: RegistryProcessResult = {
     rolls: [...initialRolls],
     logs: [],
     totalTransformers: []
   }
 
-  return order.reduce((state, name) => {
+  return MODIFIER_ORDER.reduce((state, name) => {
     const options = modifiers[name]
     if (options === undefined) {
       return state
@@ -182,9 +193,7 @@ export function modifierToDescription(
 export function processModifierNotations(modifiers: ModifierOptions | undefined): string {
   if (!modifiers) return ''
 
-  const order = getModifierOrder()
-  return order
-    .map(name => modifierToNotation(name, modifiers[name]))
+  return MODIFIER_ORDER.map(name => modifierToNotation(name, modifiers[name]))
     .filter((notation): notation is string => typeof notation === 'string')
     .join('')
 }
@@ -195,9 +204,7 @@ export function processModifierNotations(modifiers: ModifierOptions | undefined)
 export function processModifierDescriptions(modifiers: ModifierOptions | undefined): string[] {
   if (!modifiers) return []
 
-  const order = getModifierOrder()
-  return order
-    .map(name => modifierToDescription(name, modifiers[name]))
+  return MODIFIER_ORDER.map(name => modifierToDescription(name, modifiers[name]))
     .flat()
     .filter((desc): desc is string => typeof desc === 'string')
     .filter(desc => desc.length > 0)
