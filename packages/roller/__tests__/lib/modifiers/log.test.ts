@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { createArithmeticLog, createModifierLog } from '../../../src/lib/modifiers/log'
+import { createArithmeticLog, createModifierLog } from '../../../src/modifiers/log'
 
 describe('createArithmeticLog', () => {
   test('creates log with modifier name and options', () => {

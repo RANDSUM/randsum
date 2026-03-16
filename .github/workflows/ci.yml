@@ -17,7 +17,6 @@ jobs:
     name: detect changes
     runs-on: ubuntu-latest
     outputs:
-      notation: ${{ steps.filter.outputs.notation }}
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
       cli: ${{ steps.filter.outputs.cli }}
@@ -30,26 +29,19 @@ jobs:
         id: filter
         with:
           filters: |
-            notation:
-              - 'packages/notation/**'
-              - '.github/workflows/ci.yml'
             roller:
-              - 'packages/notation/**'
               - 'packages/roller/**'
               - '.github/workflows/ci.yml'
             games:
-              - 'packages/notation/**'
               - 'packages/roller/**'
               - 'packages/games/**'
               - '.github/workflows/ci.yml'
             cli:
-              - 'packages/notation/**'
               - 'packages/roller/**'
               - 'packages/display-utils/**'
               - 'apps/cli/**'
               - '.github/workflows/ci.yml'
             component-library:
-              - 'packages/notation/**'
               - 'packages/roller/**'
               - 'packages/display-utils/**'
               - 'packages/component-library/**'
@@ -61,31 +53,6 @@ jobs:
             skill:
               - 'skills/**'
               - '.github/workflows/ci.yml'
-
-  notation:
-    name: notation
-    needs: changes
-    if: needs.changes.outputs.notation == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
-      - run: bun run --filter '@randsum/notation' check
-      - name: Check bundle size
-        run: bun run --filter '@randsum/notation' size
-      - name: Check unused exports
-        run: bun run --filter '@randsum/notation' check:exports
 
   roller:
     name: roller
@@ -106,12 +73,9 @@ jobs:
           key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
-      - run: bun run --filter '@randsum/notation' build
       - run: bun run --filter '@randsum/roller' check
       - name: Check bundle size
         run: bun run --filter '@randsum/roller' size
-      - name: Check unused exports
-        run: bun run --filter '@randsum/roller' check:exports
 
   games:
     name: games
@@ -132,7 +96,6 @@ jobs:
           key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
-      - run: bun run --filter '@randsum/notation' build
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/games' check
       - name: Verify generated files are up to date
@@ -140,8 +103,6 @@ jobs:
         run: bun run --filter '@randsum/games' gen:check
       - name: Check bundle size
         run: bun run --filter '@randsum/games' size
-      - name: Check unused exports
-        run: bun run --filter '@randsum/games' check:exports
 
   cli:
     name: cli
@@ -162,12 +123,9 @@ jobs:
           key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
-      - run: bun run --filter '@randsum/notation' build
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/display-utils' build
       - run: bun run --filter '@randsum/cli' check
-      - name: Check unused exports
-        run: bun run --filter '@randsum/cli' check:exports
 
   component-library:
     name: component-library
@@ -188,14 +146,11 @@ jobs:
           key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
-      - run: bun run --filter '@randsum/notation' build
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/display-utils' build
       - run: bun run --filter '@randsum/component-library' check
       - name: Check bundle size
         run: bun run --filter '@randsum/component-library' size
-      - name: Check unused exports
-        run: bun run --filter '@randsum/component-library' check:exports
 
   site:
     name: site
@@ -221,8 +176,6 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run --filter '@randsum/site' check
-      - name: Check unused exports
-        run: bun run --filter '@randsum/site' check:exports
 
   skill:
     name: skill-verify
@@ -242,7 +195,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [notation, roller, games, cli, component-library, site, skill]
+    needs: [roller, games, cli, component-library, site, skill]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

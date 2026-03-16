@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { optionsToNotation } from '../../src/lib/transformers'
+import { optionsToNotation } from '../../src/notation/transformers/optionsToNotation'
 import { createRollOptions } from '../support/fixtures'
 
 describe(optionsToNotation, () => {

@@ -36,7 +36,7 @@ export class RandsumError extends Error {
   }
 }
 
-export { NotationParseError } from '@randsum/notation'
+export { NotationParseError } from './notation/isDiceNotation'
 
 export class ModifierError extends RandsumError {
   constructor(modifierType: string, reason: string) {

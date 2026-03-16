@@ -12,21 +12,10 @@ export interface PackageInfo {
 
 export const corePackages: PackageInfo[] = [
   {
-    id: 'notation',
-    name: 'notation',
-    displayName: 'Notation',
-    description: 'Zero-dependency dice notation parser and type foundation.',
-    npmPackage: '@randsum/notation',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/notation',
-    version: '3.0.0',
-    category: 'core',
-    color: '#e2e8f0' // slate-200 — neutral, foundational
-  },
-  {
     id: 'roller',
     name: 'roller',
     displayName: 'Roller',
-    description: 'Zero-dependency dice engine with full notation support.',
+    description: 'Zero-dependency dice engine with built-in notation parsing and validation.',
     npmPackage: '@randsum/roller',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/roller',
     version: '3.0.0',

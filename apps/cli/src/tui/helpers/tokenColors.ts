@@ -1,4 +1,4 @@
-import type { Token } from '@randsum/notation'
+import type { Token } from '@randsum/roller/tokenize'
 
 export const TOKEN_COLORS: Partial<Record<Token['type'], string>> = {
   core: 'blue', // #60a5fa

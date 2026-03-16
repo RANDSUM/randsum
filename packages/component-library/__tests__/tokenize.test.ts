@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { tokenize } from '@randsum/notation'
+import { tokenize } from '@randsum/roller/tokenize'
 
 describe('tokenize — compound notation', () => {
   test('1d6+1d20 produces two core tokens', () => {

@@ -1,6 +1,6 @@
 import { Box, Text } from 'ink'
 import { useEffect, useState } from 'react'
-import type { Token } from '@randsum/notation'
+import type { Token } from '@randsum/roller/tokenize'
 import { TOKEN_COLORS } from '../helpers/tokenColors'
 
 function useCursorBlink(active: boolean): boolean {

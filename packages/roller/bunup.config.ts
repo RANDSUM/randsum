@@ -1,7 +1,13 @@
 import { defineConfig } from 'bunup'
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/roll/index.ts', 'src/errors.ts', 'src/validate.ts'],
+  entry: [
+    'src/index.ts',
+    'src/roll/index.ts',
+    'src/errors.ts',
+    'src/validate.ts',
+    'src/tokenize.ts'
+  ],
   format: ['esm'],
   dts: true,
   exports: true,
