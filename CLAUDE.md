@@ -70,10 +70,14 @@ bun run help                             # Quick command reference
 
 ## Package Build Output
 
-All packages use `bunup` producing identical structure:
-- `dist/index.js` (ESM), `dist/index.cjs` (CJS)
-- `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
+All publishable packages produce ESM only:
+- `dist/index.js` (ESM)
+- `dist/index.d.ts` (TypeScript declarations)
+- Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`
+- No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
 - Bundle size limits enforced: roller 20KB (includes notation), display-utils 20KB, game packages 8KB, salvageunion 300KB
+
+CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
 
 ## Versioning
 
