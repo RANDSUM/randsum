@@ -2,8 +2,6 @@ import type { ModifierDefinition } from '../schema'
 import { capModifier } from './cap'
 import { compoundModifier } from './compound'
 import { countModifier } from './count'
-import { countFailuresModifier } from './countFailures'
-import { countSuccessesModifier } from './countSuccesses'
 import { dropModifier } from './drop'
 import { explodeModifier } from './explode'
 import { integerDivideModifier } from './integerDivide'
@@ -24,9 +22,7 @@ import { wildDieModifier } from './wildDie'
 export { capModifier }
 export { compoundModifier }
 export { countModifier }
-export { countFailuresModifier }
 export { explodeSequenceModifier }
-export { countSuccessesModifier }
 export { dropModifier }
 export { explodeModifier }
 export { integerDivideModifier }

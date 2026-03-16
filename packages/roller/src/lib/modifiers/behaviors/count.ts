@@ -1,4 +1,5 @@
 import type { CountOptions } from '../../../types'
+import { ModifierError } from '../../../errors'
 import type { ModifierBehavior } from '../schema'
 
 function matchesAbove(roll: number, options: CountOptions): boolean {
@@ -19,6 +20,20 @@ function matchesExact(roll: number, options: CountOptions): boolean {
 }
 
 export const countBehavior: ModifierBehavior<CountOptions> = {
+  validate: options => {
+    if (
+      options.deduct &&
+      options.lessThanOrEqual !== undefined &&
+      options.greaterThanOrEqual !== undefined &&
+      options.lessThanOrEqual >= options.greaterThanOrEqual
+    ) {
+      throw new ModifierError(
+        'count',
+        `botchThreshold (${options.lessThanOrEqual}) must be less than threshold (${options.greaterThanOrEqual})`
+      )
+    }
+  },
+
   apply: (rolls, options) => {
     return {
       rolls,
