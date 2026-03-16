@@ -43,12 +43,6 @@
         "default": "./dist/tokenize.js"
       }
     },
-    "./comparison": {
-      "import": {
-        "types": "./dist/comparison.d.ts",
-        "default": "./dist/comparison.js"
-      }
-    },
     "./package.json": "./package.json"
   },
   "author": {
@@ -115,10 +109,6 @@
     {
       "path": "dist/tokenize.js",
       "limit": "6 KB"
-    },
-    {
-      "path": "dist/comparison.js",
-      "limit": "3 KB"
     }
   ]
 }

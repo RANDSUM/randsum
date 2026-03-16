@@ -1,11 +1,36 @@
-// Re-export everything from subpaths for backward compatibility
 export { roll } from './roll'
 
 export * from './validate'
 export * from './errors'
-export type * from './types'
+export type {
+  CustomFacesNotation,
+  DiceNotation,
+  DrawDieNotation,
+  GeometricDieNotation,
+  FateDieNotation,
+  PercentileDie,
+  RandomFn,
+  RollOptions,
+  RollArgument,
+  RollConfig,
+  ZeroBiasNotation
+} from './types/core'
 
-// Re-export notation functions for main barrel consumers
+export type {
+  ComparisonOptions,
+  CountOptions,
+  DropOptions,
+  KeepOptions,
+  RerollOptions,
+  ReplaceOptions,
+  UniqueOptions,
+  ModifierOptions
+} from './types/modifiers'
+
+export type { RollRecord, RollerRollResult } from './types/results'
+
+export type { ValidationErrorInfo, ValidationResult } from './notation/types'
+
 export { notationToOptions } from './notation/parse/notationToOptions'
 export { listOfNotations } from './notation/parse/listOfNotations'
 export { optionsToNotation } from './notation/transformers/optionsToNotation'

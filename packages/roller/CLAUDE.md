@@ -44,10 +44,11 @@ import { roll } from "@randsum/roller/roll" // roll function only
 import { ValidationError } from "@randsum/roller/errors"
 import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
 import { tokenize } from "@randsum/roller/tokenize" // notation tokenizer, no roll engine
-import { parseComparisonNotation } from "@randsum/roller/comparison" // comparison parsing only
 ```
 
-`@randsum/roller/tokenize` and `@randsum/roller/comparison` are isolated — they do not pull in the roll engine, random number generation, or modifier registry. Use these subpaths in UI components and form validators that need notation parsing without the full engine.
+`@randsum/roller/tokenize` is isolated — it does not pull in the roll engine, random number generation, or modifier registry. Use this subpath in UI components and form validators that need notation parsing without the full engine.
+
+Comparison utilities (`parseComparisonNotation`, `hasConditions`, `formatComparisonNotation`, `formatComparisonDescription`) are available from the main barrel.
 
 ## Dice Notation Reference
 
@@ -82,8 +83,8 @@ All notation functions are native to this package (`src/notation/`):
 
 - `parseComparisonNotation(notation: string): ComparisonOptions` — parse `{<3,>18}` syntax
 - `hasConditions(options: ComparisonOptions): boolean` — check for active conditions
-- `formatComparisonNotation(options: ComparisonOptions): string` — format as notation
-- `formatComparisonDescription(options: ComparisonOptions): string` — format as text
+- `formatComparisonNotation(options: ComparisonOptions): string[]` — format as notation parts array
+- `formatComparisonDescription(options: ComparisonOptions): string[]` — format as text parts array
 
 ## Modifier System
 
@@ -113,11 +114,18 @@ All types are exported with `export type`:
 - `RollerRollResult<T>` - Return type
 - `RollOptions<T>` - Configuration options
 - `ModifierOptions` - Modifier configuration
-- `ValidationResult` - Validation output
+- `ValidationResult` - Validation output (discriminated union on `valid: boolean`)
+- `ValidationErrorInfo` - Error details when validation fails
 - `DiceNotation` - Notation string type
 - `Token`, `TokenType` - Tokenizer output types
 - `NotationSchema` - Modifier schema interface (from `src/notation/schema.ts`)
 - `ComparisonOptions` - Comparison condition type
+- `CountOptions`, `DropOptions`, `KeepOptions`, `RerollOptions`, `ReplaceOptions`, `UniqueOptions` - Modifier option types
+- `RollRecord` - Individual roll record with full history
+- `RandomFn`, `RollConfig` - Custom random function types
+- `CustomFacesNotation`, `DrawDieNotation`, `FateDieNotation`, `GeometricDieNotation`, `PercentileDie`, `ZeroBiasNotation` — special die notation types
+
+> Consumers who previously imported `RollResult` should use `RollerRollResult`. Consumers who previously imported `ValidValidationResult` or `InvalidValidationResult` should use `ValidationResult` (discriminated union on `valid: boolean`). Consumers who previously imported `RollParams`, `RequiredNumericRollParameters`, `ModifierLog`, `NumericRollBonus`, or `ModifierConfig` should use `ReturnType<typeof roll>` or construct the relevant types from the public surface.
 
 ## Internal Architecture
 
