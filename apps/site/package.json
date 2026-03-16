@@ -48,6 +48,6 @@
     "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.7"
+    "@astrojs/check": "0.9.8"
   }
 }
