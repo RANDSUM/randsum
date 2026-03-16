@@ -1,7 +1,7 @@
 import { Box, Text } from 'ink'
 import { useInput } from 'ink'
 import { useEffect, useState } from 'react'
-import type { Token } from '@randsum/notation'
+import type { Token } from '@randsum/roller/tokenize'
 import { TOKEN_COLORS } from '../helpers/tokenColors'
 
 const EXAMPLES = ['4d6L', '1d20+5', '2d12+1d6', '4d6LR{<3}!C{>5}+2d8!UR{1}C{<2,>7}+1d12V{12=10}-3']

@@ -11,8 +11,7 @@ export default defineConfig({
     'react/jsx-runtime',
     'react/jsx-dev-runtime',
     '@randsum/roller',
-    '@randsum/display-utils',
-    '@randsum/notation'
+    '@randsum/display-utils'
   ],
   minify: true,
   sourcemap: 'external',
