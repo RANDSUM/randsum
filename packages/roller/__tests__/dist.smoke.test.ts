@@ -42,4 +42,45 @@ describe('@randsum/roller (dist)', () => {
     expect(typeof mod.ValidationError).toBe('function')
     expect(typeof mod.ModifierError).toBe('function')
   })
+
+  test('notation functions exported from main entry', async () => {
+    const mod = await import('../../roller/dist/index.js')
+    expect(typeof mod.isDiceNotation).toBe('function')
+    expect(typeof mod.notationToOptions).toBe('function')
+    expect(typeof mod.optionsToNotation).toBe('function')
+    expect(typeof mod.tokenize).toBe('function')
+  })
+
+  test('isDiceNotation works from dist', async () => {
+    const { isDiceNotation } = await import('../../roller/dist/index.js')
+    expect(isDiceNotation('4d6')).toBe(true)
+    expect(isDiceNotation('not dice')).toBe(false)
+  })
+
+  test('notationToOptions parses notation from dist', async () => {
+    const { notationToOptions } = await import('../../roller/dist/index.js')
+    const options = notationToOptions('4d6L')
+    expect(Array.isArray(options)).toBe(true)
+    expect(options.length).toBeGreaterThan(0)
+  })
+
+  test('tokenize returns tokens from dist', async () => {
+    const { tokenize } = await import('../../roller/dist/index.js')
+    const tokens = tokenize('4d6L+2')
+    expect(Array.isArray(tokens)).toBe(true)
+    expect(tokens.length).toBeGreaterThan(0)
+    const first = tokens[0]
+    expect(first).toHaveProperty('text')
+    expect(first).toHaveProperty('type')
+  })
+
+  test('tokenize subpath exports work from dist', async () => {
+    const mod = await import('../../roller/dist/tokenize.js')
+    expect(typeof mod.tokenize).toBe('function')
+  })
+
+  test('comparison subpath exports work from dist', async () => {
+    const mod = await import('../../roller/dist/comparison/index.js')
+    expect(typeof mod.parseComparisonNotation).toBe('function')
+  })
 })
