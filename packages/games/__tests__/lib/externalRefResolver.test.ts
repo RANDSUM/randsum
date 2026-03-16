@@ -40,18 +40,27 @@ describe('resolveExternalRefs', () => {
   })
 
   test('throws SchemaError with helpful message for HTTP error', async () => {
-    const specWithBadRef = {
-      ...PLAIN_SPEC,
-      tables: {
-        myTable: { $ref: 'https://httpbin.org/status/404#/foo' }
-      }
-    }
+    const originalFetch = globalThis.fetch
+    globalThis.fetch = () =>
+      Promise.resolve(new Response(null, { status: 404, statusText: 'Not Found' }))
     try {
-      await resolveExternalRefs(specWithBadRef as RandSumSpec)
-      expect(true).toBe(false) // should not reach here
-    } catch (e) {
-      expect(e).toBeInstanceOf(SchemaError)
-      expect((e as SchemaError).message).toContain('Failed to fetch external ref')
+      const specWithBadRef = {
+        ...PLAIN_SPEC,
+        tables: {
+          myTable: {
+            $ref: 'https://example.com/nonexistent#/foo'
+          }
+        }
+      }
+      try {
+        await resolveExternalRefs(specWithBadRef as RandSumSpec)
+        expect(true).toBe(false) // should not reach here
+      } catch (e) {
+        expect(e).toBeInstanceOf(SchemaError)
+        expect((e as SchemaError).message).toContain('Failed to fetch external ref')
+      }
+    } finally {
+      globalThis.fetch = originalFetch
     }
   })
 })

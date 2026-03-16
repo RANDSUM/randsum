@@ -21,7 +21,6 @@
     "prettier": "3.8.1",
     "prettier-plugin-astro": "0.14.1",
     "size-limit": "12.0.1",
-    "ts-unused-exports": "11.0.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.0",
     "undici": "6.24.0"
