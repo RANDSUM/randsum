@@ -60,7 +60,9 @@ export function parseModifiers(notation: string): ModifierOptions {
  * Patterns are joined in priority order, plus syntactic sugar patterns.
  */
 export function buildNotationPattern(): RegExp {
-  const sources = [...PARSE_SCHEMAS].sort((a, b) => a.priority - b.priority).map(s => s.pattern.source)
+  const sources = [...PARSE_SCHEMAS]
+    .sort((a, b) => a.priority - b.priority)
+    .map(s => s.pattern.source)
 
   // Add syntactic sugar patterns that are pre-processed before schema parsing
   sources.push(marginOfSuccessPattern.source)

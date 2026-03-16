@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import {
   modifiersToDescription,
-  modifiersToNotation,
-  optionsToDescription,
-  optionsToNotation,
-  optionsToSidesFaces
-} from '../../src/notation'
+  modifiersToNotation
+} from '../../src/notation/transformers/modifiersToStrings'
+import { optionsToDescription } from '../../src/notation/transformers/optionsToDescription'
+import { optionsToNotation } from '../../src/notation/transformers/optionsToNotation'
+import { optionsToSidesFaces } from '../../src/notation/transformers/optionsToSidesFaces'
 
 describe('optionsToSidesFaces', () => {
   test('returns sides for numeric sides', () => {

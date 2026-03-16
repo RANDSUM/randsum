@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { listOfNotations } from '../../src/notation'
+import { listOfNotations } from '../../src/notation/parse/listOfNotations'
 
 describe('listOfNotations', () => {
   describe('single notation', () => {

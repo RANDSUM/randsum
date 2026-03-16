@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { formatHumanList } from '../../src/notation'
+import { formatHumanList } from '../../src/notation/formatHumanList'
 
 describe('formatHumanList', () => {
   test('returns empty string for empty array', () => {

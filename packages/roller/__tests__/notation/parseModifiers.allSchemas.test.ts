@@ -1,9 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { RANDSUM_MODIFIERS } from '../../src/lib/modifiers/definitions'
-import {
-  buildNotationPattern,
-  parseModifiers
-} from '../../src/notation/parse/parseModifiers'
+import { buildNotationPattern, parseModifiers } from '../../src/notation/parse/parseModifiers'
 
 /**
  * Tests that verify parseModifiers and buildNotationPattern use RANDSUM_MODIFIERS

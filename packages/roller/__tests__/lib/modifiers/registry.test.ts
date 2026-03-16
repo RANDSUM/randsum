@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import { describe, expect, test } from 'bun:test'
 import { MODIFIER_PRIORITIES } from '../../../src/lib/modifiers/priorities'
 import {

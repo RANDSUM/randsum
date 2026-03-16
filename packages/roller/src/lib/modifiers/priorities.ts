@@ -1,10 +1,15 @@
 /**
  * Modifier execution priorities. Lower number = applied earlier.
  *
+ * @deprecated Use `RANDSUM_MODIFIERS` directly. Each entry in the array has a `priority` field
+ * and `name` field. This constant is kept for backwards compatibility but may drift from the
+ * source of truth in `RANDSUM_MODIFIERS`.
+ *
  * @example
  * ```ts
- * import { MODIFIER_PRIORITIES } from '@randsum/roller'
+ * import { RANDSUM_MODIFIERS } from '@randsum/roller'
  * // Use to determine execution order when building custom game logic
+ * const capPriority = RANDSUM_MODIFIERS.find(m => m.name === 'cap')?.priority
  * ```
  */
 export const MODIFIER_PRIORITIES: Record<string, number> & {
@@ -49,4 +54,5 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   multiplyTotal: 100
 } as const satisfies Record<string, number>
 
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 export type ModifierPriorityName = keyof typeof MODIFIER_PRIORITIES
