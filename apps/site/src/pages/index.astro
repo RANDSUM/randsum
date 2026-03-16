@@ -6,7 +6,6 @@ import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRoller
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--core-roller)',
-  notation: 'var(--core-notation)',
   fifth: 'var(--game-fifth)',
   blades: 'var(--game-blades)',
   daggerheart: 'var(--game-daggerheart)',
@@ -128,7 +127,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
         RANDSUM is a TypeScript dice rolling library built for tabletop RPG developers. At its core is
         <code>@randsum/roller</code> — a zero-dependency npm package that parses and evaluates dice notation
-        with no external runtime requirements. It ships as both ESM and CommonJS and is fully typed.
+        with no external runtime requirements. It ships as ESM and is fully typed.
       </p>
       <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
         The ecosystem includes game-specific packages layered on top of the core engine.
@@ -168,7 +167,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
             <h4>Packages</h4>
             <ul>
               <li><a href="/roller/introduction/">@randsum/roller</a></li>
-              <li><a href="/notation/introduction/">@randsum/notation</a></li>
+              <li><a href="/notation/introduction/">Dice Notation</a></li>
               <li><a href="/games/introduction/">Game Packages</a></li>
               <li><a href="/tools/claude-code-skill/">Claude Code Skill</a></li>
             </ul>
