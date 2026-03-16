@@ -1,7 +1,7 @@
 import type { RandomFn } from '../lib/random'
 import { coreRandom, coreSpreadRolls } from '../lib/random'
-import { MODIFIER_ORDER, type ModifierContext, applyAllModifiers } from '../lib/modifiers'
-import type { RegistryProcessResult } from '../lib/modifiers/schema'
+import { MODIFIER_ORDER, type ModifierContext, applyAllModifiers } from '../modifiers'
+import type { RegistryProcessResult } from '../modifiers/schema'
 import type { RollParams, RollRecord } from '../types'
 import { RollError } from '../errors'
 

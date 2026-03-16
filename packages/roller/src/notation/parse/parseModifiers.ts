@@ -1,7 +1,26 @@
 import type { ModifierOptions } from '../types'
+import type { NotationSchema } from '../schema'
 import { countFailuresSchema } from '../definitions/countFailures'
 import { countSuccessesSchema } from '../definitions/countSuccesses'
-import { RANDSUM_MODIFIERS } from '../../lib/modifiers/definitions'
+import { capSchema } from '../definitions/cap'
+import { dropSchema } from '../definitions/drop'
+import { keepSchema } from '../definitions/keep'
+import { replaceSchema } from '../definitions/replace'
+import { rerollSchema } from '../definitions/reroll'
+import { explodeSchema } from '../definitions/explode'
+import { compoundSchema } from '../definitions/compound'
+import { penetrateSchema } from '../definitions/penetrate'
+import { explodeSequenceSchema } from '../definitions/explodeSequence'
+import { uniqueSchema } from '../definitions/unique'
+import { wildDieSchema } from '../definitions/wildDie'
+import { multiplySchema } from '../definitions/multiply'
+import { plusSchema } from '../definitions/plus'
+import { minusSchema } from '../definitions/minus'
+import { sortSchema } from '../definitions/sort'
+import { integerDivideSchema } from '../definitions/integerDivide'
+import { moduloSchema } from '../definitions/modulo'
+import { countSchema } from '../definitions/count'
+import { multiplyTotalSchema } from '../definitions/multiplyTotal'
 
 /**
  * Minimal schema fields needed for notation parsing.
@@ -15,6 +34,33 @@ interface ParseableSchema {
 }
 
 /**
+ * All modifier schemas in priority order (schema-only, no behavior code).
+ * These are the notation/definitions schemas, NOT the co-located modifiers,
+ * to keep behavior code out of the tokenize bundle.
+ */
+const MODIFIER_SCHEMAS: readonly NotationSchema[] = [
+  capSchema as NotationSchema,
+  dropSchema as NotationSchema,
+  keepSchema as NotationSchema,
+  replaceSchema as NotationSchema,
+  rerollSchema as NotationSchema,
+  explodeSchema as NotationSchema,
+  compoundSchema as NotationSchema,
+  penetrateSchema as NotationSchema,
+  explodeSequenceSchema as NotationSchema,
+  uniqueSchema as NotationSchema,
+  wildDieSchema as NotationSchema,
+  multiplySchema as NotationSchema,
+  plusSchema as NotationSchema,
+  minusSchema as NotationSchema,
+  sortSchema as NotationSchema,
+  integerDivideSchema as NotationSchema,
+  moduloSchema as NotationSchema,
+  countSchema as NotationSchema,
+  multiplyTotalSchema as NotationSchema
+]
+
+/**
  * Count-family sugar schemas that translate S{N} and F{N} notation to count options.
  * These are notation-only and not yet registered in RANDSUM_MODIFIERS (see Story 9).
  */
@@ -22,7 +68,7 @@ const COUNT_FAMILY_SUGAR: readonly ParseableSchema[] = [countSuccessesSchema, co
 
 /**
  * Pre-process syntactic sugar in notation before schema parsing.
- * - `ms{N}` (margin of success) → `-N` (case-insensitive)
+ * - `ms{N}` (margin of success) -> `-N` (case-insensitive)
  */
 const marginOfSuccessPattern = /[Mm][Ss]\{(\d+)\}/g
 
@@ -31,14 +77,14 @@ function preprocessNotation(notation: string): string {
 }
 
 /**
- * All schemas used for parsing: RANDSUM_MODIFIERS plus count-family sugar.
+ * All schemas used for parsing: modifier schemas plus count-family sugar.
  * Evaluated once at module load.
  */
-const PARSE_SCHEMAS: readonly ParseableSchema[] = [...RANDSUM_MODIFIERS, ...COUNT_FAMILY_SUGAR]
+const PARSE_SCHEMAS: readonly ParseableSchema[] = [...MODIFIER_SCHEMAS, ...COUNT_FAMILY_SUGAR]
 
 /**
  * Parse notation string into ModifierOptions using all known notation schemas.
- * Uses RANDSUM_MODIFIERS as the single source of truth, supplemented by
+ * Uses notation/definitions schemas as the schema source, supplemented by
  * count-family sugar schemas (S{N}, F{N}) pending Story 9 resolution.
  */
 export function parseModifiers(notation: string): ModifierOptions {
@@ -66,9 +112,9 @@ export function buildNotationPattern(): RegExp {
 
   // Add syntactic sugar patterns that are pre-processed before schema parsing
   sources.push(marginOfSuccessPattern.source)
-  // Repeat operator (xN) — handled in notationToOptions, but needed for isDiceNotation validation
+  // Repeat operator (xN) -- handled in notationToOptions, but needed for isDiceNotation validation
   sources.push('[Xx][1-9]\\d*')
-  // Annotation labels [text] — stripped before parsing, needed for isDiceNotation validation
+  // Annotation labels [text] -- stripped before parsing, needed for isDiceNotation validation
   sources.push('\\[[^\\]]+\\]')
 
   return new RegExp(sources.join('|'), 'g')
