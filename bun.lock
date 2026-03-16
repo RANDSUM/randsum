@@ -118,10 +118,6 @@
         "typescript": "^5.9.3",
       },
     },
-    "packages/notation": {
-      "name": "@randsum/notation",
-      "version": "3.5.0",
-    },
     "packages/roller": {
       "name": "@randsum/roller",
       "version": "3.5.0",
@@ -708,8 +704,6 @@
     "@randsum/display-utils": ["@randsum/display-utils@workspace:packages/display-utils"],
 
     "@randsum/games": ["@randsum/games@workspace:packages/games"],
-
-    "@randsum/notation": ["@randsum/notation@workspace:packages/notation"],
 
     "@randsum/roller": ["@randsum/roller@workspace:packages/roller"],
 

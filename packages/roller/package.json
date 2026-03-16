@@ -39,14 +39,14 @@
     },
     "./tokenize": {
       "import": {
-        "types": "./dist/notation/tokenize.d.ts",
-        "default": "./dist/notation/tokenize.js"
+        "types": "./dist/tokenize.d.ts",
+        "default": "./dist/tokenize.js"
       }
     },
     "./comparison": {
       "import": {
-        "types": "./dist/notation/comparison/index.d.ts",
-        "default": "./dist/notation/comparison/index.js"
+        "types": "./dist/comparison.d.ts",
+        "default": "./dist/comparison.js"
       }
     },
     "./package.json": "./package.json"
@@ -113,11 +113,11 @@
       "limit": "10 KB"
     },
     {
-      "path": "dist/notation/tokenize.js",
+      "path": "dist/tokenize.js",
       "limit": "6 KB"
     },
     {
-      "path": "dist/notation/comparison/index.js",
+      "path": "dist/comparison.js",
       "limit": "3 KB"
     }
   ]

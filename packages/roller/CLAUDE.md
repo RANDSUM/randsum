@@ -39,12 +39,12 @@ Type guard to check if string is valid dice notation. Recognizes all die types i
 ## Subpath Exports
 
 ```typescript
-import { roll } from '@randsum/roller'                  // main barrel — roll + all notation API
-import { roll } from '@randsum/roller/roll'             // roll function only
-import { ValidationError } from '@randsum/roller/errors'
-import { validateNotation, isDiceNotation } from '@randsum/roller/validate'
-import { tokenize } from '@randsum/roller/tokenize'     // notation tokenizer, no roll engine
-import { parseComparisonNotation } from '@randsum/roller/comparison'  // comparison parsing only
+import { roll } from "@randsum/roller" // main barrel — roll + all notation API
+import { roll } from "@randsum/roller/roll" // roll function only
+import { ValidationError } from "@randsum/roller/errors"
+import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
+import { tokenize } from "@randsum/roller/tokenize" // notation tokenizer, no roll engine
+import { parseComparisonNotation } from "@randsum/roller/comparison" // comparison parsing only
 ```
 
 `@randsum/roller/tokenize` and `@randsum/roller/comparison` are isolated — they do not pull in the roll engine, random number generation, or modifier registry. Use these subpaths in UI components and form validators that need notation parsing without the full engine.
@@ -58,6 +58,7 @@ Full spec: `RANDSUM_DICE_NOTATION.md` in this package. That file is the canonica
 All notation functions are native to this package (`src/notation/`):
 
 ### Parsing
+
 - `isDiceNotation(value: string): value is DiceNotation` — type guard
 - `notation(value: string): DiceNotation` — assert valid notation or throw `NotationParseError`
 - `validateNotation(notation: string): ValidationResult` — validate with detailed result/errors
@@ -66,6 +67,7 @@ All notation functions are native to this package (`src/notation/`):
 - `suggestNotationFix(notation: string): string | undefined` — suggest corrections for invalid input
 
 ### Transformers
+
 - `optionsToNotation(options: RollOptions): DiceNotation` — options to notation string
 - `optionsToDescription(options: RollOptions): string` — options to human-readable text
 - `optionsToSidesFaces(options: RollOptions): number[]` — options to array of face values
@@ -73,9 +75,11 @@ All notation functions are native to this package (`src/notation/`):
 - `modifiersToDescription(modifiers: ModifierOptions): string` — modifiers to readable text
 
 ### Tokenization
+
 - `tokenize(notation: string): readonly Token[]` — parse notation into typed tokens for UI display
 
 ### Comparison Utilities
+
 - `parseComparisonNotation(notation: string): ComparisonOptions` — parse `{<3,>18}` syntax
 - `hasConditions(options: ComparisonOptions): boolean` — check for active conditions
 - `formatComparisonNotation(options: ComparisonOptions): string` — format as notation
@@ -92,6 +96,7 @@ Each modifier is split into two parts, both living within this package:
 - **Combined** (`src/lib/modifiers/definitions/<mod>.ts`) — spreads schema and behavior into a `ModifierDefinition`.
 
 To add a modifier:
+
 1. Add the schema file in `src/notation/definitions/`
 2. Add the behavior file in `src/lib/modifiers/behaviors/`
 3. Add the combined definition in `src/lib/modifiers/definitions/`
