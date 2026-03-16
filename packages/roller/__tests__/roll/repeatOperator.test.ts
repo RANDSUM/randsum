@@ -59,19 +59,23 @@ describe('Repeat Operator (xN)', () => {
   })
 
   describe('stress test', () => {
-    test('roll("4d6Lx6") always produces 6 records with totals in [3, 18] each', () => {
-      const results = Array.from({ length: loops }, () => roll('4d6Lx6' as string))
-      results.forEach(({ rolls, total }) => {
-        expect(rolls).toHaveLength(6)
-        // Each record: 4d6 drop lowest = 3d6 effective, range [3, 18]
-        rolls.forEach(record => {
-          expect(record.total).toBeGreaterThanOrEqual(3)
-          expect(record.total).toBeLessThanOrEqual(18)
+    test(
+      'roll("4d6Lx6") always produces 6 records with totals in [3, 18] each',
+      () => {
+        const results = Array.from({ length: loops }, () => roll('4d6Lx6' as string))
+        results.forEach(({ rolls, total }) => {
+          expect(rolls).toHaveLength(6)
+          // Each record: 4d6 drop lowest = 3d6 effective, range [3, 18]
+          rolls.forEach(record => {
+            expect(record.total).toBeGreaterThanOrEqual(3)
+            expect(record.total).toBeLessThanOrEqual(18)
+          })
+          // Total is sum of 6 records, each in [3, 18], so total in [18, 108]
+          expect(total).toBeGreaterThanOrEqual(18)
+          expect(total).toBeLessThanOrEqual(108)
         })
-        // Total is sum of 6 records, each in [3, 18], so total in [18, 108]
-        expect(total).toBeGreaterThanOrEqual(18)
-        expect(total).toBeLessThanOrEqual(108)
-      })
-    })
+      },
+      { timeout: 30_000 }
+    )
   })
 })

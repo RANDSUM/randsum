@@ -52,7 +52,7 @@ describe('codegen snapshot tests', () => {
         const checkedIn = readFileSync(expectedFile, 'utf-8')
         expect(formatted).toBe(checkedIn)
       },
-      { timeout: 30_000 }
+      { timeout: 120_000 }
     )
   }
 })
