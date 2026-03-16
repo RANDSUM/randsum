@@ -37,6 +37,18 @@
         "default": "./dist/validate.js"
       }
     },
+    "./tokenize": {
+      "import": {
+        "types": "./dist/notation/tokenize.d.ts",
+        "default": "./dist/notation/tokenize.js"
+      }
+    },
+    "./comparison": {
+      "import": {
+        "types": "./dist/notation/comparison/index.d.ts",
+        "default": "./dist/notation/comparison/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "author": {
@@ -74,9 +86,7 @@
     "simulation",
     "randsum"
   ],
-  "dependencies": {
-    "@randsum/notation": "workspace:~"
-  },
+  "dependencies": {},
   "devDependencies": {
     "fast-check": "catalog:"
   },
@@ -96,11 +106,19 @@
   "size-limit": [
     {
       "path": "dist/index.js",
-      "limit": "10 KB"
+      "limit": "20 KB"
     },
     {
       "path": "dist/index.d.ts",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/notation/tokenize.js",
       "limit": "6 KB"
+    },
+    {
+      "path": "dist/notation/comparison/index.js",
+      "limit": "3 KB"
     }
   ]
 }
