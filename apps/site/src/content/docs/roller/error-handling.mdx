@@ -21,7 +21,7 @@ Valid-but-unusual inputs (like `roll(1)` for a single-sided die) are not errors.
 
 ## Error hierarchy
 
-`roll()` can throw two families of errors. `RandsumError` and its subclasses come from `@randsum/roller`. `NotationParseError` extends `Error` directly and comes from `@randsum/notation` (re-exported by roller).
+`roll()` can throw two families of errors. `RandsumError` and its subclasses come from `@randsum/roller`. `NotationParseError` extends `Error` directly and is part of `@randsum/roller`.
 
 | Class | Extends | Code | When |
 |---|---|---|---|
@@ -99,7 +99,7 @@ console.log(rollUserInput('not-dice'))`} />
 | `'d6'` | No | Missing quantity |
 
 <Aside type="tip">
-  `suggestNotationFix()` from `@randsum/notation` can correct common mistakes like missing quantity (`'d6'` → `'1d6'`). When `roll()` throws a `NotationParseError`, the `suggestion` property already contains the result of this function. See [Validation & Parsing](/notation/validation-and-parsing/) for details.
+  `suggestNotationFix()` from `@randsum/roller` can correct common mistakes like missing quantity (`'d6'` → `'1d6'`). When `roll()` throws a `NotationParseError`, the `suggestion` property already contains the result of this function. See [Validation & Parsing](/notation/validation-and-parsing/) for details.
 </Aside>
 
 ## Try/catch

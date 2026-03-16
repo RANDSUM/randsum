@@ -1,11 +1,11 @@
 ---
 title: Notation API Reference
-description: All exported functions, types, and schemas from @randsum/notation.
+description: All exported functions, types, and schemas from @randsum/roller.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-All public exports from `@randsum/notation`. Some internal helpers (like `listOfNotations`) are omitted. Three functions (`isDiceNotation`, `notation`, `validateNotation`), `NotationParseError`, and all types are also re-exported from `@randsum/roller`. All other functions require importing from `@randsum/notation` directly.
+All functions on this page are exported from `@randsum/roller`. Some internal helpers (like `listOfNotations`) are omitted. The `tokenize` function is also available from `@randsum/roller/tokenize` for lightweight use.
 
 ## Parse functions
 
@@ -13,7 +13,7 @@ All public exports from `@randsum/notation`. Some internal helpers (like `listOf
 
 Type guard that returns `true` if the string is valid dice notation.
 
-<CodeExample code={`import { isDiceNotation } from '@randsum/notation'
+<CodeExample code={`import { isDiceNotation } from '@randsum/roller'
 
 isDiceNotation('4d6L')   // true — value is typed as DiceNotation
 isDiceNotation('hello')  // false`} />
@@ -36,7 +36,7 @@ function notation(value: string): DiceNotation
 
 Parse a notation string into structured options. Accepts any string (validate first with `isDiceNotation` for safety). Returns an array (one entry per roll group).
 
-<CodeExample code={`import { notationToOptions, isDiceNotation } from '@randsum/notation'
+<CodeExample code={`import { notationToOptions, isDiceNotation } from '@randsum/roller'
 
 if (isDiceNotation('4d6L+2')) {
   const [options] = notationToOptions('4d6L+2')
@@ -53,7 +53,7 @@ function notationToOptions(notation: string): ParsedNotationOptions[]
 
 Validate with detailed result. Returns `ValidValidationResult` or `InvalidValidationResult`.
 
-<CodeExample code={`import { validateNotation } from '@randsum/notation'
+<CodeExample code={`import { validateNotation } from '@randsum/roller'
 
 const result = validateNotation('4d6L')
 if (result.valid) {
@@ -73,7 +73,7 @@ function validateNotation(notation: string): ValidationResult
 
 Suggest a corrected version of invalid notation. Returns `undefined` if no fix is available.
 
-<CodeExample code={`import { suggestNotationFix } from '@randsum/notation'
+<CodeExample code={`import { suggestNotationFix } from '@randsum/roller'
 
 suggestNotationFix('d6')    // '1d6'
 suggestNotationFix('46')    // '4d6'
@@ -99,7 +99,7 @@ const coreNotationPattern: RegExp
 
 Convert a `RollOptions` object to a notation string.
 
-<CodeExample code={`import { optionsToNotation } from '@randsum/notation'
+<CodeExample code={`import { optionsToNotation } from '@randsum/roller'
 
 optionsToNotation({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
 // '4d6L'`} />

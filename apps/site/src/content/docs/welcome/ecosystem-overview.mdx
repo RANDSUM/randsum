@@ -5,47 +5,35 @@ description: How RANDSUM packages relate to each other and where to start.
 
 import { Card, CardGrid } from '@astrojs/starlight/components'
 
-RANDSUM is a monorepo with three layers: a notation parser, a dice engine, and game-specific packages. Every package is TypeScript-first, ships ESM + CJS with full type declarations, and is published to npm under `@randsum`.
+RANDSUM is a monorepo with three layers: a dice engine (with built-in notation parsing), and game-specific packages. Every package is TypeScript-first, ships ESM with full type declarations, and is published to npm under `@randsum`.
 
 ## Dependency diagram
 
 ```
-@randsum/notation              (zero dependencies)
+@randsum/roller              (zero dependencies — includes notation)
   |
-  +-- @randsum/roller          (core dice engine)
-  |     |
-  |     +-- @randsum/games     (TTRPG game packages)
-  |     |     +-- /blades        (Blades in the Dark)
-  |     |     +-- /daggerheart   (Daggerheart)
-  |     |     +-- /fifth         (D&D 5e)
-  |     |     +-- /pbta          (Powered by the Apocalypse)
-  |     |     +-- /root-rpg      (Root RPG)
-  |     |     +-- /salvageunion  (Salvage Union)
-  |     |
-  |     +-- @randsum/display-utils       (UI helpers, peers on roller)
-  |           |
-  |           +-- @randsum/component-library (React components, also peers on notation + react)
+  +-- @randsum/games         (TTRPG game packages)
+  |     +-- /blades            (Blades in the Dark)
+  |     +-- /daggerheart       (Daggerheart)
+  |     +-- /fifth             (D&D 5e)
+  |     +-- /pbta              (Powered by the Apocalypse)
+  |     +-- /root-rpg          (Root RPG)
+  |     +-- /salvageunion      (Salvage Union)
+  |
+  +-- @randsum/display-utils       (UI helpers, peers on roller)
+        |
+        +-- @randsum/component-library (React components, also peers on roller + react)
 ```
 
-Every package depends only on packages above it in the tree. Game packages never depend on each other. The component library depends on display-utils (dev), and peers on notation, roller, and react.
+Every package depends only on packages above it in the tree. Game packages never depend on each other.
 
 ## Packages by layer
-
-### Foundation: Notation
-
-<CardGrid>
-  <Card title="@randsum/notation" icon="pencil">
-    Zero-dependency dice notation parser, validator, and type system. Parses strings like `"4d6L"` into structured options, validates user input, and provides the shared types that the rest of the ecosystem builds on.
-
-    [Learn more](/notation/introduction/)
-  </Card>
-</CardGrid>
 
 ### Core: Roller
 
 <CardGrid>
   <Card title="@randsum/roller" icon="rocket">
-    The dice rolling engine. Accepts numbers, notation strings, or options objects and returns typed roll results with full modifier support. Re-exports three notation functions (`isDiceNotation`, `notation`, `validateNotation`) for convenience -- most projects only need this package.
+    The zero-dependency dice rolling engine with built-in notation parsing and validation. Accepts numbers, notation strings, or options objects and returns typed roll results with full modifier support. Includes `isDiceNotation`, `notation`, `validateNotation`, `notationToOptions`, `optionsToNotation`, `tokenize`, and more — most projects only need this package.
 
     [Learn more](/roller/introduction/)
   </Card>
@@ -72,7 +60,7 @@ Currently supported games: **Blades in the Dark**, **D&D 5e**, **Daggerheart**, 
     [Learn more](/tools/display-utils/)
   </Card>
   <Card title="@randsum/component-library" icon="puzzle">
-    React component library providing interactive dice rolling UI elements. Depends on roller, notation, and display-utils.
+    React component library providing interactive dice rolling UI elements. Depends on roller and display-utils.
 
     [Learn more](/tools/component-library/)
   </Card>
@@ -90,16 +78,16 @@ Pick the package that matches your use case:
 | Use case | Install | Start here |
 |---|---|---|
 | **Roll dice in any JS/TS project** | `bun add @randsum/roller` | [Roller Getting Started](/roller/getting-started/) |
-| **Parse or validate notation strings without rolling** | `bun add @randsum/notation` | [Notation Getting Started](/notation/getting-started/) |
+| **Parse or validate notation strings** | `bun add @randsum/roller` | [Roller Getting Started](/roller/getting-started/) |
 | **Build a TTRPG app with game-specific mechanics** | `bun add @randsum/games` | [Games Getting Started](/games/getting-started/) |
 | **Add dice UI components to a React app** | `bun add @randsum/component-library` | [Component Library](/tools/component-library/) |
 
-Most developers should start with `@randsum/roller`. It re-exports the three most common notation functions (`isDiceNotation`, `notation`, `validateNotation`) plus all types, so most projects only need one install. Add `@randsum/notation` if you need `notationToOptions`, `optionsToNotation`, `tokenize`, or other transform functions.
+Most developers should start with `@randsum/roller`. It includes the full notation parser and validator along with all rolling functionality and types, so most projects only need one install. Notation functions like `isDiceNotation`, `validateNotation`, `notationToOptions`, `optionsToNotation`, `tokenize`, and others are all exported directly from `@randsum/roller`.
 
 ## Design principles
 
-- **Zero core dependencies** -- `@randsum/notation` has no runtime dependencies; `@randsum/roller` depends only on notation
+- **Zero core dependencies** -- `@randsum/roller` has no runtime dependencies and includes the full notation parser and validator
 - **Throws on invalid input** -- `roll()` throws typed errors on bad input (`ValidationError`, `ModifierError`, or `NotationParseError`); validate user-provided strings with `isDiceNotation()` or `validateNotation()` before rolling
 - **Game packages are code-generated** -- every game is defined as a `.randsum.json` spec and transformed into TypeScript by an internal codegen pipeline
 - **Strict TypeScript** -- `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, no `any`
-- **Bundle size enforced** -- roller under 10KB, notation under 13KB, game packages under 8KB each
+- **Bundle size enforced** -- roller 20KB (includes notation), display-utils 20KB, game packages under 8KB each

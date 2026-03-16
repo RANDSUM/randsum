@@ -1,6 +1,6 @@
 ---
-title: "@randsum/notation"
-description: Parse, validate, and transform dice notation strings without a roll engine. Zero-dependency TypeScript package for notation utilities, type guards, and structured options.
+title: "Dice Notation"
+description: Parse, validate, and transform dice notation strings with @randsum/roller. Zero-dependency TypeScript utilities for notation validation, type guards, and structured options.
 head:
   - tag: script
     attrs:
@@ -9,14 +9,14 @@ head:
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "@randsum/notation",
+        "name": "Dice Notation",
         "applicationCategory": "DeveloperApplication",
         "programmingLanguage": "TypeScript",
-        "description": "Zero-dependency dice notation parser for the RANDSUM ecosystem. Parses dice notation strings into structured options.",
+        "description": "Zero-dependency dice notation parser built into @randsum/roller. Parses dice notation strings into structured options.",
         "offers": { "@type": "Offer", "price": "0" },
-        "downloadUrl": "https://www.npmjs.com/package/@randsum/notation",
-        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/notation",
-        "keywords": "dice notation parser, TypeScript, dice, tabletop RPG, npm package"
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/roller",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/roller",
+        "keywords": "dice notation parser, TypeScript, dice, tabletop RPG, randsum roller"
       }
   - tag: script
     attrs:
@@ -34,24 +34,13 @@ head:
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
-Parse, validate, and transform dice notation strings without a roll engine. `@randsum/notation` is the type foundation of the RANDSUM ecosystem — zero runtime dependencies. Supports 19 modifier schemas, special dice types (geometric, draw), annotations, and the repeat operator.
-
-## When to use notation vs roller
-
-Use `@randsum/notation` when you need notation utilities but not `roll()`:
-
-- Validating user-provided dice strings in a form or chat command
-- Building a notation editor or input component
-- Converting between notation strings and structured options
-- Tokenizing notation for syntax highlighting
-
-If you also need to roll dice, use [`@randsum/roller`](/roller/introduction/) instead — it re-exports `validateNotation`, `isDiceNotation`, and `notation` for convenience. Functions like `notationToOptions`, `suggestNotationFix`, and `tokenize` require `@randsum/notation` directly.
+Parse, validate, and transform dice notation strings — all built into `@randsum/roller`. Notation is a core capability of the roller, not a separate package. It supports 19 modifier schemas, special dice types (geometric, draw), annotations, and the repeat operator, with zero runtime dependencies.
 
 ## What it does
 
 **Validation** — check if a string is valid dice notation, with type narrowing or structured error details.
 
-<CodeExample code={`import { isDiceNotation, validateNotation } from '@randsum/notation'
+<CodeExample code={`import { isDiceNotation, validateNotation } from '@randsum/roller'
 
 // Type guard — narrows to DiceNotation
 if (isDiceNotation(userInput)) {
@@ -66,14 +55,14 @@ if (!result.valid) {
 
 **Parsing** — convert notation strings into structured `ParsedNotationOptions` arrays.
 
-<CodeExample code={`import { notationToOptions } from '@randsum/notation'
+<CodeExample code={`import { notationToOptions } from '@randsum/roller'
 
 const options = notationToOptions('4d6L')
 // [{ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }]`} />
 
 **Transformation** — convert structured options back to notation strings or human-readable descriptions.
 
-<CodeExample code={`import { optionsToNotation, optionsToDescription } from '@randsum/notation'
+<CodeExample code={`import { optionsToNotation, optionsToDescription } from '@randsum/roller'
 
 const options = {
   sides: 6,
@@ -86,13 +75,13 @@ optionsToDescription(options)  // ['Roll 4 6-sided dice', 'Drop lowest']`} />
 
 **Suggestion** — offer corrected notation for invalid input.
 
-<CodeExample code={`import { suggestNotationFix } from '@randsum/notation'
+<CodeExample code={`import { suggestNotationFix } from '@randsum/roller'
 
 suggestNotationFix('d20')  // '1d20' — adds missing quantity`} />
 
 **Tokenization** — break notation into typed tokens for syntax highlighting or UI display.
 
-<CodeExample code={`import { tokenize } from '@randsum/notation'
+<CodeExample code={`import { tokenize } from '@randsum/roller'
 
 const tokens = tokenize('4d6L+5')
 // Each token has: text, type, start, end, description`} />
@@ -106,5 +95,5 @@ const tokens = tokenize('4d6L+5')
 
 ## Links
 
-- [npm package](https://www.npmjs.com/package/@randsum/notation)
-- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/notation)
+- [npm package](https://www.npmjs.com/package/@randsum/roller)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/roller)
