@@ -75,12 +75,12 @@ describe('@randsum/roller (dist)', () => {
   })
 
   test('tokenize subpath exports work from dist', async () => {
-    const mod = await import('../../roller/dist/notation/tokenize.js')
+    const mod = await import('../../roller/dist/tokenize.js')
     expect(typeof mod.tokenize).toBe('function')
   })
 
   test('comparison subpath exports work from dist', async () => {
-    const mod = await import('../../roller/dist/notation/comparison/index.js')
+    const mod = await import('../../roller/dist/comparison.js')
     expect(typeof mod.parseComparisonNotation).toBe('function')
   })
 })

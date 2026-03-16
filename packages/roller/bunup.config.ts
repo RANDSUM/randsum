@@ -6,12 +6,12 @@ export default defineConfig({
     'src/roll/index.ts',
     'src/errors.ts',
     'src/validate.ts',
-    'src/notation/tokenize.ts',
-    'src/notation/comparison/index.ts'
+    'src/tokenize.ts',
+    'src/comparison.ts'
   ],
   format: ['esm'],
   dts: true,
-  exports: false,
+  exports: true,
   minify: true,
   sourcemap: 'external',
   target: 'node',
