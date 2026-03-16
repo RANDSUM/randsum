@@ -2,6 +2,7 @@ import type { ModifierBehavior } from '../schema'
 
 function createArithmeticBehavior(operator: '+' | '-'): ModifierBehavior<number> {
   return {
+    mutatesRolls: false,
     apply: (rolls, options) => {
       return {
         rolls,

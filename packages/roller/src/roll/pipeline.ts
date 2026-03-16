@@ -1,6 +1,6 @@
 import type { RandomFn } from '../lib/random'
 import { coreRandom, coreSpreadRolls } from '../lib/random'
-import { type ModifierContext, applyAllModifiers, getModifierOrder } from '../lib/modifiers'
+import { MODIFIER_ORDER, type ModifierContext, applyAllModifiers } from '../lib/modifiers'
 import type { RegistryProcessResult } from '../lib/modifiers/schema'
 import type { RollParams, RollRecord } from '../types'
 import { RollError } from '../errors'
@@ -105,8 +105,7 @@ export class RollPipeline<T = string> {
    */
   public applyModifiers(): this {
     const { sides, quantity, modifiers } = this.params
-    const modifierOrder = getModifierOrder()
-    const hasModifiers = modifierOrder.some(key => modifiers[key] !== undefined)
+    const hasModifiers = MODIFIER_ORDER.some(key => modifiers[key] !== undefined)
 
     if (!hasModifiers) {
       this.modifierResult = {

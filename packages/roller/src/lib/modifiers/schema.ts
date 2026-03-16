@@ -162,6 +162,15 @@ export interface ModifierBehavior<TOptions = unknown> {
    * If true, ctx.parameters must be provided when applying.
    */
   requiresParameters?: boolean
+
+  /**
+   * Whether apply() may return a different rolls array reference.
+   * When false, apply() returns a reference-equal rolls array and only uses transformTotal.
+   * The registry calls createArithmeticLog() instead of createModifierLog() when false,
+   * skipping the frequency-diff computation.
+   * Misannotation degrades to an empty diff log entry, not a corrupted result.
+   */
+  readonly mutatesRolls?: boolean
 }
 
 /**
