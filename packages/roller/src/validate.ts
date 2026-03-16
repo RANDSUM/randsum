@@ -1,5 +1,5 @@
-export { isDiceNotation, notation } from '@randsum/notation'
-export { validateNotation } from '@randsum/notation'
+export { isDiceNotation, notation } from './notation/isDiceNotation'
+export { validateNotation } from './notation/validateNotation'
 
 import { ValidationError } from './errors'
 

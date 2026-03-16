@@ -10,7 +10,7 @@ import type {
   RerollOptions,
   UniqueOptions
 } from '../../types'
-import type { NotationSchema } from '@randsum/notation'
+import type { NotationSchema } from '../../notation/schema'
 
 /**
  * Context passed to modifier handlers that may need dice rolling or roll info.
