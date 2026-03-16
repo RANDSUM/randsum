@@ -70,10 +70,14 @@ bun run help                             # Quick command reference
 
 ## Package Build Output
 
-All packages use `bunup` producing identical structure:
-- `dist/index.js` (ESM), `dist/index.cjs` (CJS)
-- `dist/index.d.ts`, `dist/index.d.cts` (type declarations)
+All publishable packages produce ESM only:
+- `dist/index.js` (ESM)
+- `dist/index.d.ts` (TypeScript declarations)
+- Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`
+- No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
 - Bundle size limits enforced: roller 20KB (includes notation), display-utils 20KB, game packages 8KB, salvageunion 300KB
+
+CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
 
 ## Versioning
 
@@ -91,7 +95,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-The `RANDSUM_MODIFIERS` array in `packages/roller/src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier combines a `NotationSchema` (from `packages/roller/src/notation/definitions/`) with a `ModifierBehavior` (from `packages/roller/src/lib/modifiers/behaviors/`). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
+The `RANDSUM_MODIFIERS` array in `packages/roller/src/modifiers/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
 
 ### `roll()` Argument Types
 

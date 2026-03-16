@@ -4,7 +4,7 @@ import {
   assertParameters,
   assertRequiredContext,
   assertRollFn
-} from '../../../src/lib/modifiers/schema'
+} from '../../../src/modifiers/schema'
 
 describe('assertRollFn', () => {
   test('returns context with rollOne when provided', () => {

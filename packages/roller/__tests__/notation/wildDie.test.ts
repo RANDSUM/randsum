@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'bun:test'
-import { isDiceNotation, notationToOptions, tokenize, validateNotation } from '../../src/notation'
+import { isDiceNotation } from '../../src/notation/isDiceNotation'
+import { notationToOptions } from '../../src/notation/parse/notationToOptions'
+import { tokenize } from '../../src/notation/tokenize'
+import { validateNotation } from '../../src/notation/validateNotation'
 
 describe('Wild Die (W) notation', () => {
   describe('isDiceNotation', () => {

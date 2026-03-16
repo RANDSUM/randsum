@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test'
+import { coreNotationPattern } from '../../src/notation/coreNotationPattern'
+import { defineNotationSchema } from '../../src/notation/schema'
 import {
   capSchema,
   compoundSchema,
-  coreNotationPattern,
   countSuccessesSchema,
-  defineNotationSchema,
   dropSchema,
   explodeSchema,
   keepSchema,
@@ -16,7 +16,7 @@ import {
   replaceSchema,
   rerollSchema,
   uniqueSchema
-} from '../../src/notation'
+} from '../../src/notation/definitions'
 
 describe('coreNotationPattern', () => {
   test('matches basic notation', () => {

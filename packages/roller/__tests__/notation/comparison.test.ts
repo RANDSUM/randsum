@@ -4,7 +4,7 @@ import {
   formatComparisonNotation,
   hasConditions,
   parseComparisonNotation
-} from '../../src/notation'
+} from '../../src/notation/comparison'
 
 describe('parseComparisonNotation', () => {
   test('parses greater than', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { parseComparisonNotation } from '../../src/lib/comparison'
+import { parseComparisonNotation } from '../../src/notation/comparison'
 
 describe('parseComparisonNotation — >= and <=', () => {
   test('parses >= alone', () => {

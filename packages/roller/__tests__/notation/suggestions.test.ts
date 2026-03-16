@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { suggestNotationFix } from '../../src/notation'
+import { suggestNotationFix } from '../../src/notation/suggestions'
 
 describe('suggestNotationFix', () => {
   describe('missing quantity (d6 -> 1d6)', () => {

@@ -965,7 +965,9 @@ roll({
 
 ### Count Successes (S{N}) — _sugar → Count with greaterThanOrEqual_
 
-> **Sugar equivalence:** `S{7}` is sugar for `#{>=7}`. `S{7,1}` is sugar for `#{>=7,<=1}` with deduct mode.
+> **Sugar equivalence:** `S{7}` is identical to `#{>=7}`. `S{7,1}` is identical to `#{>=7,<=1}` with deduct mode.
+>
+> **Implementation note:** `S{N}` parses directly into `{ count: { greaterThanOrEqual: N } }` — the same `count` key used by the `#{}` primitive. The `countSuccessesBehavior` defined in `src/lib/modifiers/behaviors/countSuccesses.ts` is dead code: `countSuccessesModifier` is never registered in `RANDSUM_MODIFIERS`. All execution flows through `countBehavior`.
 
 Count dice meeting a threshold instead of summing values. Used in dice pool systems like World of Darkness and Shadowrun:
 
@@ -978,29 +980,28 @@ Count dice meeting a threshold instead of summing values. Used in dice pool syst
 
 ```typescript
 roll("5d10S{7}") // Count how many dice rolled >= 7
+// Equivalent options-object form (S{N} is sugar — use the count key):
 roll({
   sides: 10,
   quantity: 5,
   modifiers: {
-    countSuccesses: { threshold: 7 }
+    count: { greaterThanOrEqual: 7 }
   }
 })
 
 // With botch threshold (successes - botches)
 roll("5d10S{7,1}") // Count successes >= 7, subtract botches <= 1
+// Equivalent options-object form:
 roll({
   sides: 10,
   quantity: 5,
   modifiers: {
-    countSuccesses: {
-      threshold: 7,
-      botchThreshold: 1
-    }
+    count: { greaterThanOrEqual: 7, lessThanOrEqual: 1, deduct: true }
   }
 })
 ```
 
-**How it works:** Instead of summing dice values, the total becomes a count of dice that meet or exceed the threshold. If a botch threshold is specified, dice at or below that value are counted as botches and subtracted from the success count.
+**How it works:** Instead of summing dice values, the total becomes a count of dice that meet or exceed the threshold. If a botch threshold is specified, dice at or below that value are counted as botches and subtracted from the success count. Execution is handled entirely by the `count` modifier (`countBehavior`) — `S{N}` is parse-time sugar only.
 
 **Example:** `5d10S{7}` rolls [8, 3, 10, 6, 9]. Successes >= 7: [8, 10, 9] = 3 successes.
 
@@ -1141,7 +1142,9 @@ roll({
 
 ### Count Failures (F{N}) — _sugar → Count with lessThanOrEqual_
 
-> **Sugar equivalence:** `F{3}` is sugar for `#{<=3}`.
+> **Sugar equivalence:** `F{3}` is identical to `#{<=3}`.
+>
+> **Implementation note:** `F{N}` parses directly into `{ count: { lessThanOrEqual: N } }` — the same `count` key used by the `#{}` primitive. The `countFailuresBehavior` defined in `src/lib/modifiers/behaviors/countFailures.ts` is dead code: `countFailuresModifier` is never registered in `RANDSUM_MODIFIERS`. All execution flows through `countBehavior`.
 
 Count how many dice rolled at or below a threshold. The total becomes the failure count:
 
@@ -1153,16 +1156,17 @@ Count how many dice rolled at or below a threshold. The total becomes the failur
 
 ```typescript
 roll("5d10F{3}") // Count how many dice rolled <= 3
+// Equivalent options-object form (F{N} is sugar — use the count key):
 roll({
   sides: 10,
   quantity: 5,
   modifiers: {
-    countFailures: { threshold: 3 }
+    count: { lessThanOrEqual: 3 }
   }
 })
 ```
 
-**How it works:** Instead of summing dice values, the total becomes a count of dice that are at or below the threshold. This is a total transformer like `countSuccesses`.
+**How it works:** Instead of summing dice values, the total becomes a count of dice that are at or below the threshold. Execution is handled entirely by the `count` modifier (`countBehavior`) — `F{N}` is parse-time sugar only.
 
 **Example:** `5d10F{3}` rolls [8, 2, 10, 1, 9]. Failures <= 3: [2, 1] = 2 failures.
 

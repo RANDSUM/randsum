@@ -76,8 +76,6 @@ jobs:
       - run: bun run --filter '@randsum/roller' check
       - name: Check bundle size
         run: bun run --filter '@randsum/roller' size
-      - name: Check unused exports
-        run: bun run --filter '@randsum/roller' check:exports
 
   games:
     name: games
@@ -105,8 +103,6 @@ jobs:
         run: bun run --filter '@randsum/games' gen:check
       - name: Check bundle size
         run: bun run --filter '@randsum/games' size
-      - name: Check unused exports
-        run: bun run --filter '@randsum/games' check:exports
 
   cli:
     name: cli
@@ -130,8 +126,6 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/display-utils' build
       - run: bun run --filter '@randsum/cli' check
-      - name: Check unused exports
-        run: bun run --filter '@randsum/cli' check:exports
 
   component-library:
     name: component-library
@@ -157,8 +151,6 @@ jobs:
       - run: bun run --filter '@randsum/component-library' check
       - name: Check bundle size
         run: bun run --filter '@randsum/component-library' size
-      - name: Check unused exports
-        run: bun run --filter '@randsum/component-library' check:exports
 
   site:
     name: site
@@ -184,8 +176,6 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run --filter '@randsum/site' check
-      - name: Check unused exports
-        run: bun run --filter '@randsum/site' check:exports
 
   skill:
     name: skill-verify

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { NotationParseError, notation } from '../../src/notation'
+import { NotationParseError, notation } from '../../src/notation/isDiceNotation'
 
 describe('notation', () => {
   describe('valid notation', () => {

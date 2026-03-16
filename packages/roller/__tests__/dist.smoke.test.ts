@@ -79,8 +79,11 @@ describe('@randsum/roller (dist)', () => {
     expect(typeof mod.tokenize).toBe('function')
   })
 
-  test('comparison subpath exports work from dist', async () => {
-    const mod = await import('../../roller/dist/comparison.js')
+  test('comparison functions exported from main entry', async () => {
+    const mod = await import('../../roller/dist/index.js')
     expect(typeof mod.parseComparisonNotation).toBe('function')
+    expect(typeof mod.hasConditions).toBe('function')
+    expect(typeof mod.formatComparisonNotation).toBe('function')
+    expect(typeof mod.formatComparisonDescription).toBe('function')
   })
 })

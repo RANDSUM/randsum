@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import { describe, expect, test } from 'bun:test'
 import { MODIFIER_PRIORITIES } from '../../../src/lib/modifiers/priorities'
 import {
@@ -10,9 +11,9 @@ import {
   parseModifiers,
   processModifierDescriptions,
   processModifierNotations
-} from '../../../src/lib/modifiers/registry'
+} from '../../../src/modifiers/registry'
 import { ModifierError } from '../../../src/errors'
-import type { ModifierContext } from '../../../src/lib/modifiers/schema'
+import type { ModifierContext } from '../../../src/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'
 
 describe('registry functions', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import type { ModifierContext } from '../../../src/lib/modifiers/schema'
+import type { ModifierContext } from '../../../src/modifiers/schema'
 import {
   applyAllModifiers,
   applyModifier,
@@ -8,7 +8,7 @@ import {
   modifierToNotation,
   parseModifiers,
   validateModifiers
-} from '../../../src/lib/modifiers/registry'
+} from '../../../src/modifiers/registry'
 
 const mockRollOne = (): number => Math.floor(Math.random() * 6) + 1
 const mockContext: ModifierContext = {

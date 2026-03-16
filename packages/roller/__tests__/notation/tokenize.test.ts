@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { tokenize } from '../../src/notation'
+import { tokenize } from '../../src/notation/tokenize'
 
 describe('tokenize', () => {
   test('returns empty array for empty string', () => {

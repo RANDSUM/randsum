@@ -44,10 +44,11 @@ import { roll } from "@randsum/roller/roll" // roll function only
 import { ValidationError } from "@randsum/roller/errors"
 import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
 import { tokenize } from "@randsum/roller/tokenize" // notation tokenizer, no roll engine
-import { parseComparisonNotation } from "@randsum/roller/comparison" // comparison parsing only
 ```
 
-`@randsum/roller/tokenize` and `@randsum/roller/comparison` are isolated — they do not pull in the roll engine, random number generation, or modifier registry. Use these subpaths in UI components and form validators that need notation parsing without the full engine.
+`@randsum/roller/tokenize` is isolated — it does not pull in the roll engine, random number generation, or modifier registry. Use this subpath in UI components and form validators that need notation parsing without the full engine.
+
+Comparison utilities (`parseComparisonNotation`, `hasConditions`, `formatComparisonNotation`, `formatComparisonDescription`) are available from the main barrel.
 
 ## Dice Notation Reference
 
@@ -82,28 +83,48 @@ All notation functions are native to this package (`src/notation/`):
 
 - `parseComparisonNotation(notation: string): ComparisonOptions` — parse `{<3,>18}` syntax
 - `hasConditions(options: ComparisonOptions): boolean` — check for active conditions
-- `formatComparisonNotation(options: ComparisonOptions): string` — format as notation
-- `formatComparisonDescription(options: ComparisonOptions): string` — format as text
+- `formatComparisonNotation(options: ComparisonOptions): string[]` — format as notation parts array
+- `formatComparisonDescription(options: ComparisonOptions): string[]` — format as text parts array
 
 ## Modifier System
 
-The `RANDSUM_MODIFIERS` array in `src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order.
+The `RANDSUM_MODIFIERS` array in `src/modifiers/index.ts` is the single source of truth for which modifiers exist and their execution order.
 
-Each modifier is split into two parts, both living within this package:
+Each modifier lives in a single co-located file under `src/modifiers/<mod>.ts`. Each file exports two named symbols:
 
-- **Schema** (`src/notation/definitions/<mod>.ts`) — regex pattern, parse/format logic, priority. Defined using `defineNotationSchema`.
-- **Behavior** (`src/lib/modifiers/behaviors/<mod>.ts`) — applies the modifier to dice rolls. Implements `ModifierBehavior`.
-- **Combined** (`src/lib/modifiers/definitions/<mod>.ts`) — spreads schema and behavior into a `ModifierDefinition`.
+- **`<mod>Schema`** (`NotationSchema`) — regex pattern, parse/format logic, priority. Used by the tokenize path and the roll path.
+- **`<mod>Modifier`** (`ModifierDefinition`) — full modifier combining schema and dice pool behavior. Used only by the roll path.
 
 To add a modifier:
 
-1. Add the schema file in `src/notation/definitions/`
-2. Add the behavior file in `src/lib/modifiers/behaviors/`
-3. Add the combined definition in `src/lib/modifiers/definitions/`
-4. Register it in `RANDSUM_MODIFIERS` in `src/lib/modifiers/definitions/index.ts`
-5. Add the notation to `RANDSUM_DICE_NOTATION.md`
+1. Create `src/modifiers/<mod>.ts` — export `<mod>Schema` and `<mod>Modifier`
+2. Register `<mod>Modifier` in `RANDSUM_MODIFIERS` in `src/modifiers/index.ts`
+3. Add the notation to `RANDSUM_DICE_NOTATION.md`
+
+See `docs/adr/ADR-007-modifier-co-location.md` for the architectural rationale.
 
 See `RANDSUM_DICE_NOTATION.md` for the full modifier priority table.
+
+### Tokenize Isolation Invariant
+
+The `@randsum/roller/tokenize` subpath must never import modifier behaviors. Behaviors are dice pool manipulation functions meaningless in a UI context; importing them into the tokenize bundle wastes bytes and couples a stateless parsing tool to the full roll engine.
+
+Post-co-location, isolation is maintained by ESM tree-shaking rather than directory structure:
+
+- Each modifier file in `src/modifiers/` exports two symbols: `<mod>Schema` (used by tokenize path) and `<mod>Modifier` (used only by roll path).
+- The tokenize import graph reaches `<mod>Schema` by name and never references `<mod>Modifier`.
+- ESM bundlers (esbuild, rollup, webpack 5+, Bun) statically eliminate `<mod>Modifier` from the tokenize bundle.
+- The `size-limit` CI check on `dist/tokenize.js` is the enforcement gate. After any modifier addition or co-location refactor, verify the tokenize bundle size has not grown unexpectedly.
+
+**The invariant:** `<mod>Schema` exports must not reference any behavior-only symbols at module initialization time. If a schema export imports from a behavior export within the same file, the module-level reference defeats tree-shaking and leaks the behavior into the tokenize bundle.
+
+To verify isolation after a modifier change:
+
+```bash
+bun run --filter @randsum/roller size
+```
+
+If the `dist/tokenize.js` size entry fails, a behavior has leaked into the tokenize path. Trace the import graph from `src/tokenize.ts` to find the leak.
 
 ## Type Exports
 
@@ -113,19 +134,34 @@ All types are exported with `export type`:
 - `RollerRollResult<T>` - Return type
 - `RollOptions<T>` - Configuration options
 - `ModifierOptions` - Modifier configuration
-- `ValidationResult` - Validation output
+- `ValidationResult` - Validation output (discriminated union on `valid: boolean`)
+- `ValidationErrorInfo` - Error details when validation fails
 - `DiceNotation` - Notation string type
 - `Token`, `TokenType` - Tokenizer output types
 - `NotationSchema` - Modifier schema interface (from `src/notation/schema.ts`)
 - `ComparisonOptions` - Comparison condition type
+- `CountOptions`, `DropOptions`, `KeepOptions`, `RerollOptions`, `ReplaceOptions`, `UniqueOptions` - Modifier option types
+- `RollRecord` - Individual roll record with full history
+- `RandomFn`, `RollConfig` - Custom random function types
+- `CustomFacesNotation`, `DrawDieNotation`, `FateDieNotation`, `GeometricDieNotation`, `PercentileDie`, `ZeroBiasNotation` — special die notation types
+
+> Consumers who previously imported `RollResult` should use `RollerRollResult`. Consumers who previously imported `ValidValidationResult` or `InvalidValidationResult` should use `ValidationResult` (discriminated union on `valid: boolean`). Consumers who previously imported `RollParams`, `RequiredNumericRollParameters`, `ModifierLog`, `NumericRollBonus`, or `ModifierConfig` should use `ReturnType<typeof roll>` or construct the relevant types from the public surface.
 
 ## Internal Architecture
 
 ```
 src/
-  notation/          # Notation parsing, validation, tokenization, modifier schemas
+  modifiers/         # Modifier system — one file per modifier, co-located schema + behavior
+    shared/
+      explosion.ts   # createAccumulatingExplosionBehavior(strategy) factory
+    index.ts         # RANDSUM_MODIFIERS array — the single source of truth
+    cap.ts           # exports capSchema, capModifier
+    drop.ts          # exports dropSchema, dropModifier
+    explode.ts       # exports explodeSchema, explodeModifier
+    ...              # one file per modifier
+  notation/          # Notation parsing, validation, tokenization
     comparison/      # Comparison notation ({<3,>18} syntax)
-    definitions/     # NotationSchema definitions — one per modifier
+    definitions/     # NotationSchema definitions — schema-only, tokenize-safe source
     parse/           # notationToOptions, listOfNotations
     transformers/    # Options-to-notation and options-to-description converters
     constants.ts     # TTRPG_STANDARD_DIE_SET
@@ -138,9 +174,6 @@ src/
     types.ts         # All shared notation/roll types
     validateNotation.ts
   lib/
-    modifiers/       # Modifier system (schema + behavior + registry)
-      behaviors/     # ModifierBehavior implementations — one per modifier
-      definitions/   # Combined ModifierDefinition — spreads schema + behavior
     random/          # Random number generation
     transformers/    # Options <-> notation conversion used at roll time
     utils/           # Internal utilities
