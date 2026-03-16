@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { RANDSUM_MODIFIERS } from '../../src/lib/modifiers/definitions'
+import { RANDSUM_MODIFIERS } from '../../src/modifiers'
 import { buildNotationPattern, parseModifiers } from '../../src/notation/parse/parseModifiers'
 
 /**

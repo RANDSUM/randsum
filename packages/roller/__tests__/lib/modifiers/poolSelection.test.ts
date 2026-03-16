@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { indicesByRank } from '../../../src/lib/modifiers/behaviors/poolSelection'
+import { indicesByRank } from '../../../src/modifiers/poolSelection'
 
 describe('indicesByRank', () => {
   describe('direction: lowest', () => {

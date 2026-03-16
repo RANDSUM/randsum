@@ -1,7 +1,12 @@
 import type { RerollOptions } from '../notation/types'
-import { formatComparisonNotation, hasConditions, parseComparisonNotation } from '../notation/comparison'
+import {
+  formatComparisonNotation,
+  hasConditions,
+  parseComparisonNotation
+} from '../notation/comparison'
 import { formatHumanList } from '../notation/formatHumanList'
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import { matchesComparison, validateComparisonOptions } from '../lib/comparison'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
@@ -14,7 +19,7 @@ const rerollPattern = new RegExp(
   'g'
 )
 
-export const rerollSchema = defineNotationSchema<RerollOptions>({
+export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<RerollOptions>({
   name: 'reroll',
   priority: 40,
 

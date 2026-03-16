@@ -1,9 +1,10 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 
 const moduloPattern = /%(\d+)/
 
-export const moduloSchema = defineNotationSchema<number>({
+export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'modulo',
   priority: 94,
 

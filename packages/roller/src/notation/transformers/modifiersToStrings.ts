@@ -54,12 +54,11 @@ const MODIFIER_SCHEMAS: readonly NotationSchema[] = [
 export function modifiersToNotation(modifiers: ModifierOptions | undefined): string {
   if (!modifiers) return ''
 
-  return MODIFIER_SCHEMAS
-    .map(schema => {
-      const options = modifiers[schema.name]
-      if (options === undefined) return undefined
-      return schema.toNotation(options)
-    })
+  return MODIFIER_SCHEMAS.map(schema => {
+    const options = modifiers[schema.name]
+    if (options === undefined) return undefined
+    return schema.toNotation(options)
+  })
     .filter((notation): notation is string => typeof notation === 'string')
     .join('')
 }
@@ -71,11 +70,9 @@ export function modifiersToNotation(modifiers: ModifierOptions | undefined): str
 export function modifiersToDescription(modifiers: ModifierOptions | undefined): string[] {
   if (!modifiers) return []
 
-  return MODIFIER_SCHEMAS
-    .flatMap(schema => {
-      const options = modifiers[schema.name]
-      if (options === undefined) return []
-      return schema.toDescription(options)
-    })
-    .filter((desc): desc is string => typeof desc === 'string' && desc.length > 0)
+  return MODIFIER_SCHEMAS.flatMap(schema => {
+    const options = modifiers[schema.name]
+    if (options === undefined) return []
+    return schema.toDescription(options)
+  }).filter((desc): desc is string => typeof desc === 'string' && desc.length > 0)
 }

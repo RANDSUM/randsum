@@ -95,7 +95,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-The `RANDSUM_MODIFIERS` array in `packages/roller/src/lib/modifiers/definitions/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier combines a `NotationSchema` (from `packages/roller/src/notation/definitions/`) with a `ModifierBehavior` (from `packages/roller/src/lib/modifiers/behaviors/`). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
+The `RANDSUM_MODIFIERS` array in `packages/roller/src/modifiers/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
 
 ### `roll()` Argument Types
 

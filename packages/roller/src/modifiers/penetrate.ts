@@ -1,10 +1,13 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 import { ExplosionStrategies, createAccumulatingExplosionBehavior } from './shared/explosion'
 
 const penetratePattern = /!p(\d+)?/i
 
-export const penetrateSchema = defineNotationSchema<boolean | number>({
+export const penetrateSchema: NotationSchema<boolean | number> = defineNotationSchema<
+  boolean | number
+>({
   name: 'penetrate',
   priority: 52,
 

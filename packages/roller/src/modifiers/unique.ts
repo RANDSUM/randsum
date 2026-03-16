@@ -1,6 +1,7 @@
 import type { UniqueOptions } from '../notation/types'
 import { formatHumanList } from '../notation/formatHumanList'
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
@@ -8,7 +9,9 @@ import { assertRequiredContext } from './schema'
 
 const uniquePattern = /[Uu](?:\{([^}]{1,50})\})?/
 
-export const uniqueSchema = defineNotationSchema<boolean | UniqueOptions>({
+export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotationSchema<
+  boolean | UniqueOptions
+>({
   name: 'unique',
   priority: 60,
 

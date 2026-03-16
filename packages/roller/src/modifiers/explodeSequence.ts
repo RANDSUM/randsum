@@ -1,4 +1,5 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import { coreRandom } from '../lib/random'
 import type { ModifierDefinition } from './schema'
@@ -6,7 +7,7 @@ import { assertRequiredContext } from './schema'
 
 const explodeSequencePattern = /![sS]\{[\d,]+\}/
 
-export const explodeSequenceSchema = defineNotationSchema<number[]>({
+export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSchema<number[]>({
   name: 'explodeSequence',
   priority: 53,
 

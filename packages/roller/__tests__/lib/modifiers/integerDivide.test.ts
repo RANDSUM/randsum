@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { integerDivideModifier } from '../../../src/lib/modifiers/definitions/integerDivide'
+import { integerDivideModifier } from '../../../src/modifiers/integerDivide'
 
 describe('integerDivideModifier', () => {
   describe('apply', () => {

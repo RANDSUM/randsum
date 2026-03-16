@@ -2,6 +2,7 @@ import type { DropOptions } from '../notation/types'
 import { hasConditions, parseComparisonNotation } from '../notation/comparison'
 import { formatHumanList } from '../notation/formatHumanList'
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import { matchesComparison } from '../lib/comparison/matchesComparison'
 import type { ModifierDefinition } from './schema'
@@ -10,7 +11,7 @@ const dropHighestPattern = /[Hh](\d+)?/g
 const dropLowestPattern = /(?<![Kk])[Ll](\d+)?/g
 const dropConstraintsPattern = /[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
-export const dropSchema = defineNotationSchema<DropOptions>({
+export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<DropOptions>({
   name: 'drop',
   priority: 20,
 

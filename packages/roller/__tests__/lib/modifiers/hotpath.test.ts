@@ -1,18 +1,12 @@
 import { describe, expect, test } from 'bun:test'
-import { RANDSUM_MODIFIERS } from '../../../src/lib/modifiers/definitions'
-import { MODIFIER_ORDER } from '../../../src/lib/modifiers/registry'
-import { minusBehavior, plusBehavior } from '../../../src/lib/modifiers/behaviors/arithmetic'
-import { multiplyBehavior } from '../../../src/lib/modifiers/behaviors/multiply'
-import { integerDivideBehavior } from '../../../src/lib/modifiers/behaviors/integerDivide'
-import { moduloBehavior } from '../../../src/lib/modifiers/behaviors/modulo'
-import {
-  integerDivideModifier,
-  minusModifier,
-  moduloModifier,
-  multiplyModifier,
-  multiplyTotalModifier,
-  plusModifier
-} from '../../../src/lib/modifiers/definitions'
+import { RANDSUM_MODIFIERS } from '../../../src/modifiers'
+import { MODIFIER_ORDER } from '../../../src/modifiers/registry'
+import { integerDivideModifier } from '../../../src/modifiers/integerDivide'
+import { minusModifier } from '../../../src/modifiers/minus'
+import { moduloModifier } from '../../../src/modifiers/modulo'
+import { multiplyModifier } from '../../../src/modifiers/multiply'
+import { multiplyTotalModifier } from '../../../src/modifiers/multiplyTotal'
+import { plusModifier } from '../../../src/modifiers/plus'
 import { roll } from '../../../src/roll'
 
 describe('MODIFIER_ORDER constant', () => {
@@ -47,25 +41,25 @@ describe('MODIFIER_ORDER constant', () => {
   })
 })
 
-describe('mutatesRolls flag on arithmetic behaviors', () => {
-  test('plusBehavior has mutatesRolls: false', () => {
-    expect(plusBehavior.mutatesRolls).toBe(false)
+describe('mutatesRolls flag on arithmetic modifiers', () => {
+  test('plusModifier has mutatesRolls: false', () => {
+    expect(plusModifier.mutatesRolls).toBe(false)
   })
 
-  test('minusBehavior has mutatesRolls: false', () => {
-    expect(minusBehavior.mutatesRolls).toBe(false)
+  test('minusModifier has mutatesRolls: false', () => {
+    expect(minusModifier.mutatesRolls).toBe(false)
   })
 
-  test('multiplyBehavior has mutatesRolls: false', () => {
-    expect(multiplyBehavior.mutatesRolls).toBe(false)
+  test('multiplyModifier has mutatesRolls: false', () => {
+    expect(multiplyModifier.mutatesRolls).toBe(false)
   })
 
-  test('integerDivideBehavior has mutatesRolls: false', () => {
-    expect(integerDivideBehavior.mutatesRolls).toBe(false)
+  test('integerDivideModifier has mutatesRolls: false', () => {
+    expect(integerDivideModifier.mutatesRolls).toBe(false)
   })
 
-  test('moduloBehavior has mutatesRolls: false', () => {
-    expect(moduloBehavior.mutatesRolls).toBe(false)
+  test('moduloModifier has mutatesRolls: false', () => {
+    expect(moduloModifier.mutatesRolls).toBe(false)
   })
 })
 

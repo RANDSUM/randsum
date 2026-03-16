@@ -1,9 +1,10 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 
 const multiplyPattern = /(?<!\*)\*(?!\*)(\d+)/
 
-export const multiplySchema = defineNotationSchema<number>({
+export const multiplySchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'multiply',
   priority: 85,
 

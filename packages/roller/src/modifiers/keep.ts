@@ -1,5 +1,6 @@
 import type { KeepOptions } from '../notation/types'
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import type { ModifierDefinition } from './schema'
 import { indicesByRank } from './poolSelection'
@@ -8,7 +9,7 @@ const keepMiddlePattern = /[Kk][Mm](\d+)?/
 const keepHighestPattern = /[Kk](?![LlMm])(\d+)?/
 const keepLowestPattern = /[Kk][Ll](\d+)?/i
 
-export const keepSchema = defineNotationSchema<KeepOptions>({
+export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<KeepOptions>({
   name: 'keep',
   priority: 21,
 

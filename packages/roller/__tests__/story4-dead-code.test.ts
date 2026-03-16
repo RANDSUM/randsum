@@ -19,8 +19,7 @@ import {
   validateNonNegative as libValidateNonNegative,
   validateRange as libValidateRange
 } from '../src/lib/utils/validation'
-import { RANDSUM_MODIFIERS } from '../src/lib/modifiers/definitions'
-import { MODIFIER_PRIORITIES } from '../src/lib/modifiers/priorities'
+import { MODIFIER_PRIORITIES, RANDSUM_MODIFIERS } from '../src/modifiers'
 
 describe('validate.ts is a re-export, not a copy', () => {
   test('validateInteger from validate.ts is the same function as from lib/utils/validation.ts', () => {

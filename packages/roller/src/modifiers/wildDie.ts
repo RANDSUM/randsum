@@ -1,4 +1,5 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
 import { assertRequiredContext } from './schema'
@@ -6,7 +7,7 @@ import { ExplosionStrategies, applyAccumulatingExplosion } from './shared/explos
 
 const wildDiePattern = /[Ww](?![{])/
 
-export const wildDieSchema = defineNotationSchema<boolean>({
+export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boolean>({
   name: 'wildDie',
   priority: 55,
 

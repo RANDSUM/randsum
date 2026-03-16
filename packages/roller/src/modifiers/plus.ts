@@ -1,11 +1,12 @@
 import type { ModifierOptions } from '../notation/types'
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 
 const plusPattern = /\+(\d+)/
 const plusGlobalPattern = /\+(\d+)/g
 
-export const plusSchema = defineNotationSchema<number>({
+export const plusSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'plus',
   priority: 90,
 

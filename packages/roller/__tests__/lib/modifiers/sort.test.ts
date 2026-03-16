@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { sortModifier } from '../../../src/lib/modifiers/definitions/sort'
+import { sortModifier } from '../../../src/modifiers/sort'
 
 describe('sortModifier', () => {
   describe('apply', () => {

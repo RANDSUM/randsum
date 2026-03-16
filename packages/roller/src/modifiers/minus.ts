@@ -1,11 +1,12 @@
 import type { ModifierOptions } from '../notation/types'
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 
 const minusPattern = /-(\d+)/
 const minusGlobalPattern = /-(\d+)/g
 
-export const minusSchema = defineNotationSchema<number>({
+export const minusSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'minus',
   priority: 91,
 

@@ -128,9 +128,7 @@ export function createAccumulatingExplosionBehavior(
     const maxDepth = resolveExplosionDepth(options)
 
     const result = rolls.map(roll =>
-      roll === sides
-        ? applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy)
-        : roll
+      roll === sides ? applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy) : roll
     )
 
     return { rolls: result }

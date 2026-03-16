@@ -1,5 +1,10 @@
 // Re-export from new location for backward compatibility
-export { RANDSUM_MODIFIERS, MODIFIER_ORDER, applyAllModifiers, validateModifiers } from '../../modifiers'
+export {
+  RANDSUM_MODIFIERS,
+  MODIFIER_ORDER,
+  applyAllModifiers,
+  validateModifiers
+} from '../../modifiers'
 
 export type { ModifierContext } from '../../modifiers/schema'
 

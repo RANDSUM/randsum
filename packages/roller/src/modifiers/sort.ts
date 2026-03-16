@@ -1,4 +1,5 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 
 type SortDirection = 'asc' | 'desc'
@@ -6,7 +7,7 @@ type SortDirection = 'asc' | 'desc'
 // Matches s, sa, sd (case-insensitive) but NOT S{ (count successes)
 const sortPattern = /[Ss]([Aa]|[Dd])?(?![{\d])/
 
-export const sortSchema = defineNotationSchema<SortDirection>({
+export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<SortDirection>({
   name: 'sort',
   priority: 92,
 

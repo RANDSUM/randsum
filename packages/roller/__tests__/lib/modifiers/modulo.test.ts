@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { moduloModifier } from '../../../src/lib/modifiers/definitions/modulo'
+import { moduloModifier } from '../../../src/modifiers/modulo'
 
 describe('moduloModifier', () => {
   describe('apply', () => {

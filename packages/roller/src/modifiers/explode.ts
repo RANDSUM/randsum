@@ -1,10 +1,11 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 import { assertRequiredContext } from './schema'
 
 const explodePattern = /(?<!!)!(?!!|[pPsSiIrR])/
 
-export const explodeSchema = defineNotationSchema<boolean>({
+export const explodeSchema: NotationSchema<boolean> = defineNotationSchema<boolean>({
   name: 'explode',
   priority: 50,
 

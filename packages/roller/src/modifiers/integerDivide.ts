@@ -1,9 +1,10 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 
 const integerDividePattern = /\/\/(\d+)/
 
-export const integerDivideSchema = defineNotationSchema<number>({
+export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'integerDivide',
   priority: 93,
 

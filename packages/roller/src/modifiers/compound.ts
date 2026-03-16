@@ -1,10 +1,13 @@
 import { defineNotationSchema } from '../notation/schema'
+import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
 import { ExplosionStrategies, createAccumulatingExplosionBehavior } from './shared/explosion'
 
 const compoundPattern = /!!(\d+)?/
 
-export const compoundSchema = defineNotationSchema<boolean | number>({
+export const compoundSchema: NotationSchema<boolean | number> = defineNotationSchema<
+  boolean | number
+>({
   name: 'compound',
   priority: 51,
 

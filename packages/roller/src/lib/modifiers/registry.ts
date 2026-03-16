@@ -7,7 +7,7 @@ import type {
   TotalTransformer
 } from './schema'
 import { ModifierError } from '../../errors'
-import { RANDSUM_MODIFIERS } from './definitions'
+import { RANDSUM_MODIFIERS } from '../../modifiers/definitions'
 import { createArithmeticLog, createModifierLog } from './log'
 
 // Built once at module init — no mutation
