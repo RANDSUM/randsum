@@ -2,6 +2,7 @@ import type { CountOptions } from '../notation/types'
 import { parseComparisonNotation } from '../notation/comparison'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
+import { ModifierError } from '../errors'
 import type { ModifierDefinition } from './schema'
 
 const countPattern = /#\{([^}]+)\}/
@@ -114,6 +115,20 @@ function matchesExact(roll: number, options: CountOptions): boolean {
 
 export const countModifier: ModifierDefinition<CountOptions> = {
   ...countSchema,
+
+  validate: options => {
+    if (
+      options.deduct &&
+      options.lessThanOrEqual !== undefined &&
+      options.greaterThanOrEqual !== undefined &&
+      options.lessThanOrEqual >= options.greaterThanOrEqual
+    ) {
+      throw new ModifierError(
+        'count',
+        `botchThreshold (${options.lessThanOrEqual}) must be less than threshold (${options.greaterThanOrEqual})`
+      )
+    }
+  },
 
   apply: (rolls, options) => {
     return {
