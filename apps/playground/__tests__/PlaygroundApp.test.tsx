@@ -13,7 +13,9 @@ import {
   applyEscape,
   applyNotationChange,
   applySubmit,
-  buildInitialState
+  buildInitialState,
+  buildNotationUrl,
+  clearNotationUrl
 } from '../src/components/PlaygroundApp'
 
 function fakeRollResult(): RollerRollResult {
@@ -215,6 +217,70 @@ describe('PlaygroundApp state', () => {
         selectedEntry: null
       }
       const next = applyEscape(prev)
+      expect(next.rollResult).toBeNull()
+    })
+  })
+
+  describe('buildNotationUrl', () => {
+    test('returns ?n= query string with notation', () => {
+      expect(buildNotationUrl('4d6')).toBe('?n=4d6')
+    })
+
+    test('percent-encodes special characters', () => {
+      expect(buildNotationUrl('4d6L')).toBe('?n=4d6L')
+      expect(buildNotationUrl('2d6+3')).toBe('?n=2d6%2B3')
+      expect(buildNotationUrl('4d6R{<3}')).toBe('?n=4d6R%7B%3C3%7D')
+      expect(buildNotationUrl('d%')).toBe('?n=d%25')
+    })
+
+    test('handles empty string', () => {
+      expect(buildNotationUrl('')).toBe('?n=')
+    })
+  })
+
+  describe('clearNotationUrl', () => {
+    test('returns the pathname without query string', () => {
+      expect(clearNotationUrl('/playground')).toBe('/playground')
+    })
+
+    test('returns / for root pathname', () => {
+      expect(clearNotationUrl('/')).toBe('/')
+    })
+
+    test('returns arbitrary pathname unchanged', () => {
+      expect(clearNotationUrl('/foo/bar')).toBe('/foo/bar')
+    })
+  })
+
+  describe('URL state contract', () => {
+    test('buildInitialState does not auto-roll even for valid notation', () => {
+      const state = buildInitialState('4d6')
+      expect(state.rollResult).toBeNull()
+    })
+
+    test('buildInitialState treats empty string as no notation', () => {
+      const state = buildInitialState('')
+      expect(state.notation).toBe('')
+      expect(state.validationState).toBe<ValidationState>('empty')
+    })
+
+    test('buildInitialState treats null as no notation', () => {
+      const state = buildInitialState(null)
+      expect(state.notation).toBe('')
+      expect(state.validationState).toBe<ValidationState>('empty')
+    })
+
+    test('applyEscape preserves notation (URL clear is a side effect in the handler)', () => {
+      const prev: PlaygroundState = {
+        notation: '4d6',
+        validationState: 'valid',
+        validationResult: null,
+        rollResult: fakeRollResult(),
+        selectedEntry: null
+      }
+      const next = applyEscape(prev)
+      // The pure function clears rollResult — URL side effect is separate
+      expect(next.notation).toBe('4d6')
       expect(next.rollResult).toBeNull()
     })
   })

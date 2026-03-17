@@ -84,6 +84,16 @@ export function applyEscape(prev: PlaygroundState): PlaygroundState {
   return { ...prev, rollResult: null }
 }
 
+// ---- URL helpers (exported for testing) ----
+
+export function buildNotationUrl(notation: string): string {
+  return `?n=${encodeURIComponent(notation)}`
+}
+
+export function clearNotationUrl(pathname: string): string {
+  return pathname
+}
+
 // ---- Component ----
 
 export function PlaygroundApp(): React.ReactElement {
@@ -108,7 +118,7 @@ export function PlaygroundApp(): React.ReactElement {
       if (prev.validationState !== 'valid') return prev
       const next = applySubmit(prev)
       if (next.rollResult !== null && typeof window !== 'undefined') {
-        history.replaceState({}, '', `?n=${encodeURIComponent(prev.notation)}`)
+        history.replaceState({}, '', buildNotationUrl(prev.notation))
       }
       return next
     })
@@ -116,6 +126,9 @@ export function PlaygroundApp(): React.ReactElement {
 
   const handleEscape = useCallback(() => {
     setState(prev => applyEscape(prev))
+    if (typeof window !== 'undefined') {
+      history.replaceState({}, '', clearNotationUrl(window.location.pathname))
+    }
     inputRef.current?.focus()
   }, [])
 
