@@ -1,0 +1,14 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--pg-color-bg);
+  color: var(--pg-color-text);
+  font-family: var(--pg-font-body);
+}
