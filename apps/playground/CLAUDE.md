@@ -54,7 +54,7 @@ apps/playground/
       RollResult.tsx        # Step-by-step roll visualization
       ReferenceSidebar.tsx  # Layout wrapper for the reference panel
       QuickReferenceGrid.tsx   # Two-column modifier reference grid
-      ModifierDetail.tsx    # Expandable docs for a selected modifier
+      ReferenceDetail.tsx    # Expandable docs for a selected notation entry
       ReferenceDisclosure.tsx  # Mobile: wraps sidebar in <details>/<summary>
     styles/
       tokens.css            # --pg-* CSS custom properties (design tokens)
@@ -81,12 +81,12 @@ PlaygroundPage (Astro, index.astro)
        |     |
        |     +-- ReferenceSidebar  [desktop only — always visible]
        |           +-- QuickReferenceGrid
-       |           +-- ModifierDetail (conditional — renders when entry selected)
+       |           +-- ReferenceDetail (conditional — renders when entry selected)
        |
        +-- ReferenceDisclosure  [mobile only — <details>/<summary>]
              +-- ReferenceSidebar
                    +-- QuickReferenceGrid
-                   +-- ModifierDetail
+                   +-- ReferenceDetail
 ```
 
 `PlaygroundApp` is the only stateful component. All child components are either pure display or controlled via props. No child component calls `roll()` or `validateNotation()` directly.
@@ -108,7 +108,9 @@ interface PlaygroundState {
   rollResult: RollerRollResult | null
 
   // Reference sidebar
-  selectedModifier: string | null  // Key into MODIFIER_DOCS (e.g. 'L', '!', 'R{..}')
+  selectedEntry: string | null  // Key for any reference entry (modifier, die type, or operator)
+                                   // Modifier keys match MODIFIER_DOCS (e.g. 'L', '!', 'R{..}')
+                                   // Die/operator keys are hardcoded (e.g. 'NdS', 'd%', 'xN')
                                    // null when no entry is selected
 }
 ```
@@ -118,7 +120,7 @@ State transitions:
 - **notation changes** (user types): runs `validateNotation(notation)` synchronously; updates `notation`, `validationState`, and `validationResult`. Clears `rollResult` only if the new notation is invalid.
 - **roll triggered** (Enter or Go button, guard: `validationState === 'valid'`): calls `roll(notation)` inside a try/catch; updates `rollResult` on success; sets an error banner on catch. The URL query param `?n=<notation>` is written via `history.replaceState`.
 - **Escape pressed**: sets `rollResult = null`; returns focus to the input.
-- **modifier selected** (QuickReferenceGrid `onSelect`): sets `selectedModifier`; inserts the modifier's `displayBase` token at the input cursor position.
+- **modifier selected** (QuickReferenceGrid `onSelect`): sets `selectedEntry`; inserts the modifier's `displayBase` token at the input cursor position.
 - **page load**: reads `?n=` from `window.location.search`; if present and non-empty, sets `notation` and runs validation. Does not auto-roll on load.
 
 ## Components
@@ -266,12 +268,12 @@ When `result.rolls` has more than one entry (multi-pool roll), each pool is rend
 
 ```typescript
 interface ReferenceSidebarProps {
-  selectedModifier: string | null
+  selectedEntry: string | null
   onSelect: (modifierKey: string) => void
 }
 ```
 
-Layout wrapper. Always visible on desktop (sticky, `overflow-y: auto`, `max-height: 100vh`). Renders `QuickReferenceGrid` and, when `selectedModifier` is non-null, `ModifierDetail`.
+Layout wrapper. Always visible on desktop (sticky, `overflow-y: auto`, `max-height: 100vh`). Renders `QuickReferenceGrid` and, when `selectedEntry` is non-null, `ReferenceDetail`.
 
 ---
 
@@ -279,25 +281,46 @@ Layout wrapper. Always visible on desktop (sticky, `overflow-y: auto`, `max-heig
 
 ```typescript
 interface QuickReferenceGridProps {
-  selectedModifier: string | null
-  onSelect: (modifierKey: string) => void
+  selectedEntry: string | null
+  onSelect: (entryKey: string) => void
 }
 ```
 
-Renders a two-column grid using `MODIFIER_DOCS` from `@randsum/display-utils`. Each entry shows `doc.displayBase` (notation shorthand) in the left column and `doc.title` in the right column.
+Renders a two-column grid covering the **complete** RANDSUM dice notation — not just modifiers. The reference is organized into sections:
 
-Clicking an entry calls `onSelect(key)`. The selected entry is highlighted using `--pg-color-surface-alt`.
+**1. Core Dice**
+
+| Notation | Description |
+|----------|-------------|
+| `NdS` | Roll N dice with S sides |
+| `d%` | Percentile die (1-100) |
+| `dF` / `dF.2` | Fate / Extended Fudge die |
+| `gN` | Geometric die (roll until 1) |
+| `DDN` | Draw die (no replacement) |
+| `zN` | Zero-bias die (0 to N-1) |
+| `d{a,b,c}` | Custom faces die |
+
+**2. Modifiers** — rendered from `MODIFIER_DOCS` (`@randsum/display-utils`). Each entry shows `doc.displayBase` in the left column and `doc.title` in the right. This covers all 19+ modifiers: drop, keep, cap, reroll, replace, explode, compound, penetrate, unique, wild die, count successes, count failures, plus, minus, multiply, multiply total, integer divide, modulo, sort.
+
+**3. Operators**
+
+| Notation | Description |
+|----------|-------------|
+| `xN` | Repeat operator (roll N times) |
+| `[text]` | Annotation / label |
+
+The core dice and operators sections are hardcoded in the component (not from `MODIFIER_DOCS`). Modifier entries come from `MODIFIER_DOCS`.
+
+Clicking any entry calls `onSelect(key)`. The selected entry is highlighted using `--pg-color-surface-alt`. Section headers are non-interactive.
 
 On desktop: two-column table layout. Below 480px: single-column list.
 
-`MODIFIER_DOCS` is `Readonly<Record<string, ModifierDoc>>`. Render entries in insertion order (the order they appear in `MODIFIER_DOCS`).
-
 ---
 
-### `ModifierDetail`
+### `ReferenceDetail`
 
 ```typescript
-interface ModifierDetailProps {
+interface ReferenceDetailProps {
   modifierKey: string          // Key into MODIFIER_DOCS
   doc: ModifierDoc             // Pre-looked-up doc entry
 }
@@ -465,7 +488,7 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 - `computeSteps` — converts a `RollRecord` to `readonly TooltipStep[]` for step visualization
 - `formatAsMath` — formats number arrays as math expression strings
 - `TooltipStep` — type for step rendering
-- `MODIFIER_DOCS` — static modifier documentation for `QuickReferenceGrid` and `ModifierDetail`
+- `MODIFIER_DOCS` — static modifier documentation for `QuickReferenceGrid` and `ReferenceDetail`
 - `ModifierDoc` — type for modifier doc entries
 - `buildStackBlitzProject` — generates a StackBlitz project object for `PlaygroundHeader`
 - `StackBlitzProject` — type for StackBlitz integration
