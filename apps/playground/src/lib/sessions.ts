@@ -36,7 +36,41 @@ function getClientWithClaimToken(claimToken: string): Client {
   )
 }
 
-export async function createSession(notation: string): Promise<CreateSessionResult> {
+// Retry helper: retries fn up to maxAttempts times with exponential backoff.
+// baseMs = 0 disables delays (useful in tests).
+async function delay(ms: number): Promise<void> {
+  return new Promise<void>(resolve => {
+    setTimeout(resolve, ms)
+  })
+}
+
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxAttempts: number,
+  baseMs: number
+): Promise<T> {
+  return withRetryFrom(fn, maxAttempts, baseMs, 0, undefined)
+}
+
+async function withRetryFrom<T>(
+  fn: () => Promise<T>,
+  maxAttempts: number,
+  baseMs: number,
+  attempt: number,
+  lastError: unknown
+): Promise<T> {
+  if (attempt >= maxAttempts) throw lastError
+  if (attempt > 0 && baseMs > 0) {
+    await delay(baseMs * 4 ** (attempt - 1))
+  }
+  try {
+    return await fn()
+  } catch (err) {
+    return withRetryFrom(fn, maxAttempts, baseMs, attempt + 1, err)
+  }
+}
+
+async function createSessionOnce(notation: string): Promise<CreateSessionResult> {
   const id = nanoid(8)
   const claimToken = nanoid(32)
   const supabase = getClient()
@@ -51,6 +85,19 @@ export async function createSession(notation: string): Promise<CreateSessionResu
   if (error) throw new Error(error.message)
 
   return { session: data as Session, claimToken }
+}
+
+export async function createSession(notation: string): Promise<CreateSessionResult> {
+  return withRetry(() => createSessionOnce(notation), 3, 100)
+}
+
+// Returns null if all retries are exhausted instead of throwing.
+export async function createSessionSafe(notation: string): Promise<CreateSessionResult | null> {
+  try {
+    return await createSession(notation)
+  } catch {
+    return null
+  }
 }
 
 export async function fetchSession(id: string): Promise<Session | null> {

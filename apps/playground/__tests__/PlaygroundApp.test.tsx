@@ -99,7 +99,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyNotationChange(prev, '')
       expect(next.notation).toBe('')
@@ -115,7 +117,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyNotationChange(prev, '2d6')
       expect(next.notation).toBe('2d6')
@@ -131,7 +135,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyNotationChange(prev, 'xyz123')
       expect(next.notation).toBe('xyz123')
@@ -147,7 +153,9 @@ describe('PlaygroundApp state', () => {
         rollResult: fakeRollResult(),
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyNotationChange(prev, 'bad!!!')
       expect(next.rollResult).toBeNull()
@@ -162,7 +170,9 @@ describe('PlaygroundApp state', () => {
         rollResult: fakeResult,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyNotationChange(prev, '2d6')
       expect(next.rollResult).toBe(fakeResult)
@@ -178,7 +188,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applySubmit(prev)
       expect(next.rollResult).not.toBeNull()
@@ -193,7 +205,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applySubmit(prev)
       expect(next.rollResult).toBeNull()
@@ -207,7 +221,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applySubmit(prev)
       expect(next.rollResult).toBeNull()
@@ -221,7 +237,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const afterFirst = applySubmit(first)
       const afterSecond = applySubmit(afterFirst)
@@ -238,7 +256,9 @@ describe('PlaygroundApp state', () => {
         rollResult: fakeRollResult(),
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyEscape(prev)
       expect(next.rollResult).toBeNull()
@@ -252,7 +272,9 @@ describe('PlaygroundApp state', () => {
         rollResult: fakeRollResult(),
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyEscape(prev)
       expect(next.notation).toBe('4d6')
@@ -267,7 +289,9 @@ describe('PlaygroundApp state', () => {
         rollResult: null,
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyEscape(prev)
       expect(next.rollResult).toBeNull()
@@ -363,7 +387,9 @@ describe('PlaygroundApp state', () => {
         rollResult: fakeRollResult(),
         selectedEntry: null,
         sessionId: null,
-        readOnly: false
+        readOnly: false,
+        loading: false,
+        sessionError: null
       }
       const next = applyEscape(prev)
       // The pure function clears rollResult — URL side effect is separate

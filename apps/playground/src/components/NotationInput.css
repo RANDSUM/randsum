@@ -540,6 +540,18 @@
   }
 }
 
+/* Read-only frame */
+.notation-input-frame--readonly {
+  opacity: 0.8;
+}
+
+/* Read-only input field */
+.notation-input-field--readonly {
+  cursor: default;
+  color: var(--pg-color-text-dim);
+  caret-color: transparent;
+}
+
 /* Go button */
 .notation-input-go {
   flex-shrink: 0;
@@ -559,4 +571,38 @@
   background-color: var(--pg-color-accent);
   color: var(--pg-color-text);
   cursor: pointer;
+}
+
+/* Fork button — distinct color from Roll */
+.notation-input-go--fork {
+  background-color: var(--pg-color-accent-high);
+  color: var(--pg-color-bg);
+  cursor: pointer;
+}
+
+/* Share button */
+.notation-input-share {
+  flex-shrink: 0;
+  padding: var(--pg-space-xs) var(--pg-space-sm);
+  border: 1px solid var(--pg-color-border);
+  border-radius: var(--pg-radius-sm);
+  font-family: var(--pg-font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--pg-color-text-muted);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.notation-input-share:hover {
+  color: var(--pg-color-text);
+  border-color: var(--pg-color-text-muted);
+}
+
+.notation-input-share--copied {
+  color: var(--pg-color-success);
+  border-color: var(--pg-color-success);
 }

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roll, validateNotation } from '@randsum/roller'
 import type { DiceNotation, RollerRollResult, ValidationResult } from '@randsum/roller'
 import { tokenize } from '@randsum/roller/tokenize'
-import { createSession, fetchSession, updateSession } from '../lib/sessions'
+import { createSessionSafe, fetchSession, forkSession, updateSession } from '../lib/sessions'
 import { PlaygroundHeader } from './PlaygroundHeader'
 import { NotationInput } from './NotationInput'
 import { NotationDescription } from './NotationDescription'
@@ -21,11 +21,14 @@ export interface PlaygroundState {
   readonly selectedEntry: string | null
   readonly sessionId: string | null
   readonly readOnly: boolean
+  readonly loading: boolean
+  readonly sessionError: string | null
 }
 
 export interface BuildInitialStateOptions {
   readonly sessionId?: string
   readonly readOnly?: boolean
+  readonly loading?: boolean
 }
 
 // ---- Pure state transition helpers (exported for testing) ----
@@ -43,6 +46,7 @@ export function buildInitialState(
   const notation = initialNotation ?? ''
   const sessionId = options?.sessionId ?? null
   const readOnly = options?.readOnly ?? false
+  const loading = options?.loading ?? false
 
   if (notation === '') {
     return {
@@ -52,7 +56,9 @@ export function buildInitialState(
       rollResult: null,
       selectedEntry: null,
       sessionId,
-      readOnly
+      readOnly,
+      loading,
+      sessionError: null
     }
   }
 
@@ -64,7 +70,28 @@ export function buildInitialState(
     rollResult: null,
     selectedEntry: null,
     sessionId,
-    readOnly
+    readOnly,
+    loading,
+    sessionError: null
+  }
+}
+
+export function applySessionError(prev: PlaygroundState, message: string): PlaygroundState {
+  return { ...prev, loading: false, sessionError: message }
+}
+
+export function applySessionLoaded(prev: PlaygroundState, notation: string): PlaygroundState {
+  const updated = applyNotationChange({ ...prev, loading: false, sessionError: null }, notation)
+  return updated
+}
+
+export function applySessionNotFound(prev: PlaygroundState): PlaygroundState {
+  return {
+    ...prev,
+    loading: false,
+    sessionError: 'Session not found',
+    sessionId: null,
+    readOnly: false
   }
 }
 
@@ -147,7 +174,8 @@ export function PlaygroundApp(): React.ReactElement {
       claimTokenRef.current = claimToken
       return buildInitialState('', {
         sessionId,
-        readOnly: claimToken === null
+        readOnly: claimToken === null,
+        loading: true
       })
     }
 
@@ -167,13 +195,16 @@ export function PlaygroundApp(): React.ReactElement {
     const controller = new AbortController()
     fetchSession(state.sessionId)
       .then(session => {
-        if (controller.signal.aborted || session === null) return
-        setState(prev => applyNotationChange(prev, session.notation))
+        if (controller.signal.aborted) return
+        if (session === null) {
+          setState(prev => applySessionNotFound(prev))
+        } else {
+          setState(prev => applySessionLoaded(prev, session.notation))
+        }
       })
       .catch(() => {
-        // Session not found — clear sessionId
         if (!controller.signal.aborted) {
-          setState(prev => ({ ...prev, sessionId: null, readOnly: false }))
+          setState(prev => applySessionNotFound(prev))
         }
       })
     return () => {
@@ -197,17 +228,19 @@ export function PlaygroundApp(): React.ReactElement {
     // Guard prevents duplicate INSERTs while createSession is in-flight
     if (stateRef.current.sessionId === null && notation.length > 0 && !creatingRef.current) {
       creatingRef.current = true
-      createSession(notation)
-        .then(({ session, claimToken }) => {
-          creatingRef.current = false
-          claimTokenRef.current = claimToken
-          localStorage.setItem(`pg-claim:${session.id}`, claimToken)
-          history.pushState({}, '', buildSessionUrl(session.id))
-          setState(s => ({ ...s, sessionId: session.id }))
-        })
-        .catch(() => {
-          creatingRef.current = false
-        })
+      void createSessionSafe(notation).then(result => {
+        creatingRef.current = false
+        if (result === null) {
+          // All retries exhausted — continue in local-only mode, URL unchanged
+          console.warn('[randsum/playground] Session creation failed, continuing local-only')
+          return
+        }
+        const { session, claimToken } = result
+        claimTokenRef.current = claimToken
+        localStorage.setItem(`pg-claim:${session.id}`, claimToken)
+        history.pushState({}, '', buildSessionUrl(session.id))
+        setState(s => ({ ...s, sessionId: session.id }))
+      })
       return
     }
 
@@ -226,7 +259,9 @@ export function PlaygroundApp(): React.ReactElement {
         const token = claimTokenRef.current
         const pending = pendingNotationRef.current
         if (sid !== null && token !== null && pending !== null) {
-          void updateSession(sid, pending, token)
+          void updateSession(sid, pending, token).catch((err: unknown) => {
+            console.warn('[randsum/playground] updateSession failed:', err)
+          })
           pendingNotationRef.current = null
         }
       }, DEBOUNCE_MS)
@@ -247,6 +282,21 @@ export function PlaygroundApp(): React.ReactElement {
       ...prev,
       selectedEntry: prev.selectedEntry === entryKey ? null : entryKey
     }))
+  }, [])
+
+  const handleFork = useCallback(() => {
+    const notation = stateRef.current.notation
+    void forkSession(notation)
+      .then(({ session, claimToken }) => {
+        claimTokenRef.current = claimToken
+        localStorage.setItem(`pg-claim:${session.id}`, claimToken)
+        history.pushState({}, '', buildSessionUrl(session.id))
+        setState(prev => ({ ...prev, sessionId: session.id, readOnly: false }))
+        inputRef.current?.focus()
+      })
+      .catch((_: unknown) => {
+        // Fork failed silently — user stays in read-only mode
+      })
   }, [])
 
   // Flush pending debounced save on beforeunload via sendBeacon
@@ -333,7 +383,49 @@ export function PlaygroundApp(): React.ReactElement {
           onHoverToken={setHoveredTokenIdx}
           onChange={handleChange}
           onSubmit={handleSubmit}
+          readOnly={state.readOnly}
+          onFork={handleFork}
+          sessionId={state.sessionId}
         />
+        {state.loading && (
+          <p
+            style={{
+              margin: 'var(--pg-space-sm) 0 0',
+              fontSize: '0.85rem',
+              color: 'var(--pg-color-text-muted)'
+            }}
+          >
+            Loading session...
+          </p>
+        )}
+        {state.sessionError !== null && !state.loading && (
+          <p
+            style={{
+              margin: 'var(--pg-space-sm) 0 0',
+              fontSize: '0.85rem',
+              color: 'var(--pg-color-error)'
+            }}
+          >
+            {state.sessionError}.{' '}
+            <button
+              type="button"
+              onClick={() => {
+                setState(prev => ({ ...prev, sessionError: null }))
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                color: 'var(--pg-color-accent)',
+                cursor: 'pointer',
+                fontSize: 'inherit',
+                textDecoration: 'underline'
+              }}
+            >
+              Start fresh
+            </button>
+          </p>
+        )}
         <NotationDescription
           validationResult={state.validationResult}
           tokens={tokens}

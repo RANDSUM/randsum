@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback } from 'react'
+import React, { forwardRef, useCallback, useState } from 'react'
 import type { Token } from '@randsum/roller/tokenize'
 import type { ValidationState } from './PlaygroundApp'
 import { validationStateToBorderColor } from './notationInputUtils'
@@ -14,13 +14,28 @@ interface NotationInputProps {
   readonly onHoverToken: (idx: number | null) => void
   readonly onChange: (notation: string) => void
   readonly onSubmit: () => void
+  readonly readOnly: boolean
+  readonly onFork: () => void
+  readonly sessionId: string | null
 }
 
 export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
   (
-    { value, validationState, tokens, hoveredTokenIdx, onHoverToken, onChange, onSubmit },
+    {
+      value,
+      validationState,
+      tokens,
+      hoveredTokenIdx,
+      onHoverToken,
+      onChange,
+      onSubmit,
+      readOnly,
+      onFork,
+      sessionId
+    },
     ref
   ): React.ReactElement => {
+    const [shareCopied, setShareCopied] = useState(false)
     const borderColor = validationStateToBorderColor(validationState)
     const isValid = validationState === 'valid'
     const inputRef = ref as React.RefObject<HTMLInputElement> | null
@@ -43,8 +58,20 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
       onHoverToken(null)
     }, [onHoverToken])
 
+    const handleShare = useCallback(() => {
+      void navigator.clipboard.writeText(window.location.href).then(() => {
+        setShareCopied(true)
+        setTimeout(() => {
+          setShareCopied(false)
+        }, 2000)
+      })
+    }, [])
+
     return (
-      <div className="notation-input-frame" style={{ borderColor }}>
+      <div
+        className={`notation-input-frame${readOnly ? ' notation-input-frame--readonly' : ''}`}
+        style={{ borderColor }}
+      >
         <span className="notation-input-prefix">
           <span className="notation-input-fn">roll</span>
           <span className="notation-input-paren">(</span>
@@ -73,11 +100,12 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
           <input
             ref={ref}
             type="text"
-            className={`notation-input-field${tokens.length > 0 ? ' notation-input-field--highlighted' : ''}`}
+            className={`notation-input-field${tokens.length > 0 ? ' notation-input-field--highlighted' : ''}${readOnly ? ' notation-input-field--readonly' : ''}`}
             style={{ width: `${Math.max(value.length, 4)}ch` }}
-            autoFocus
+            autoFocus={!readOnly}
             value={value}
             placeholder="4d6L"
+            disabled={readOnly}
             onChange={e => {
               onChange(e.target.value)
             }}
@@ -91,6 +119,7 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
             spellCheck={false}
             autoComplete="off"
             aria-label="Dice notation"
+            aria-readonly={readOnly}
           />
         </div>
 
@@ -99,14 +128,35 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
           <span className="notation-input-paren">)</span>
         </span>
 
-        <button
-          type="submit"
-          className={`notation-input-go${isValid ? ' notation-input-go--active' : ''}`}
-          disabled={!isValid}
-          onClick={onSubmit}
-        >
-          Roll
-        </button>
+        {sessionId !== null && (
+          <button
+            type="button"
+            className={`notation-input-share${shareCopied ? ' notation-input-share--copied' : ''}`}
+            onClick={handleShare}
+            aria-label="Copy share link"
+          >
+            {shareCopied ? 'Copied!' : 'Share'}
+          </button>
+        )}
+
+        {readOnly ? (
+          <button
+            type="button"
+            className="notation-input-go notation-input-go--fork"
+            onClick={onFork}
+          >
+            Fork
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className={`notation-input-go${isValid ? ' notation-input-go--active' : ''}`}
+            disabled={!isValid}
+            onClick={onSubmit}
+          >
+            Roll
+          </button>
+        )}
       </div>
     )
   }
