@@ -411,6 +411,34 @@ export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
       }
     ]
   },
+  '//': {
+    title: 'Integer Divide',
+    description: 'Divide the total by a number and round down (floor division).',
+    displayBase: '//',
+    displayOptional: 'n',
+    forms: [{ notation: '//n', note: 'Divide total by n, round down' }],
+    examples: [
+      { notation: '2d6//2', description: 'Roll 2d6, halve (round down)' },
+      {
+        notation: '4d6L//3',
+        description: 'Drop lowest, then divide by 3'
+      }
+    ]
+  },
+  '%': {
+    title: 'Modulo',
+    description: 'Take the remainder after dividing the total by a number.',
+    displayBase: '%',
+    displayOptional: 'n',
+    forms: [{ notation: '%n', note: 'Total modulo n' }],
+    examples: [
+      { notation: '1d20%5', description: 'Roll 1d20, result mod 5' },
+      {
+        notation: '2d6%3',
+        description: 'Roll 2d6, remainder after dividing by 3'
+      }
+    ]
+  },
   'R{..}': {
     title: 'Reroll',
     description:

@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roll, validateNotation } from '@randsum/roller'
 import type { DiceNotation, RollerRollResult, ValidationResult } from '@randsum/roller'
+import { tokenize } from '@randsum/roller/tokenize'
 import { PlaygroundHeader } from './PlaygroundHeader'
 import { NotationInput } from './NotationInput'
 import { NotationDescription } from './NotationDescription'
@@ -113,8 +114,20 @@ export function PlaygroundApp(): React.ReactElement {
     return buildInitialState(null)
   })
 
+  const [hoveredTokenIdx, setHoveredTokenIdx] = useState<number | null>(null)
+
+  const tokens = useMemo(() => tokenize(state.notation), [state.notation])
+
   const handleChange = useCallback((notation: string) => {
     setState(prev => applyNotationChange(prev, notation))
+    setHoveredTokenIdx(null)
+    if (typeof window !== 'undefined') {
+      if (notation.length > 0) {
+        history.replaceState({}, '', buildNotationUrl(notation))
+      } else {
+        history.replaceState({}, '', clearNotationUrl(window.location.pathname))
+      }
+    }
   }, [])
 
   const handleSubmit = useCallback(() => {
@@ -137,7 +150,10 @@ export function PlaygroundApp(): React.ReactElement {
   }, [])
 
   const handleSelect = useCallback((entryKey: string) => {
-    setState(prev => ({ ...prev, selectedEntry: entryKey }))
+    setState(prev => ({
+      ...prev,
+      selectedEntry: prev.selectedEntry === entryKey ? null : entryKey
+    }))
   }, [])
 
   // Global keyboard handler for Enter/Escape
@@ -176,12 +192,21 @@ export function PlaygroundApp(): React.ReactElement {
         }}
       >
         <NotationInput
+          ref={inputRef}
           value={state.notation}
           validationState={state.validationState}
+          tokens={tokens}
+          hoveredTokenIdx={hoveredTokenIdx}
+          onHoverToken={setHoveredTokenIdx}
           onChange={handleChange}
           onSubmit={handleSubmit}
         />
-        <NotationDescription validationResult={state.validationResult} />
+        <NotationDescription
+          validationResult={state.validationResult}
+          tokens={tokens}
+          hoveredTokenIdx={hoveredTokenIdx}
+          onHoverToken={setHoveredTokenIdx}
+        />
         {state.rollResult !== null && <RollResult result={state.rollResult} />}
 
         <div style={{ marginTop: 'var(--pg-space-lg)' }}>

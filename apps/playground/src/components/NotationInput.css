@@ -10,7 +10,13 @@
   font-size: 1rem;
 }
 
-.notation-input-prefix,
+.notation-input-prefix {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  flex-shrink: 0;
+}
+
 .notation-input-suffix {
   display: flex;
   align-items: center;
@@ -32,7 +38,6 @@
 
 .notation-input-wrap {
   position: relative;
-  flex: 1;
   min-width: 0;
 }
 
@@ -67,42 +72,478 @@
   color: var(--pg-color-text-dim);
 }
 
-/* Token color classes */
-.token-core {
-  color: var(--pg-color-text);
+/* ===== Token spans (input overlay) ===== */
+.pg-token {
+  transition:
+    color 0.12s ease,
+    opacity 0.12s ease;
 }
 
-.token-special {
-  color: var(--pg-color-accent-high);
+.pg-token--dim {
+  opacity: 0.35;
 }
 
-.token-pool {
-  color: var(--pg-color-accent);
+.pg-token--active {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
 }
 
-.token-modifier {
+/* ===== Description chips ===== */
+.pg-desc-chip {
+  font-size: 0.875rem;
+  padding: 0.05em 0.25em;
+  border-radius: 0.2rem;
+  cursor: default;
+  user-select: none;
+  color: inherit;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    opacity 0.15s ease;
+  line-height: 1.5;
+}
+
+.pg-desc-chip:hover,
+.pg-desc-chip--active {
+  color: var(--chip-color, inherit);
+  background: var(--chip-bg, transparent);
+}
+
+.pg-desc-chip--dim {
+  opacity: 0.35;
+}
+
+/* ===== Per-type token + chip colors — dark mode ===== */
+/* Core: blue */
+.pg-token--core {
+  color: #60a5fa;
+}
+.pg-desc-chip--core {
+  --chip-color: #60a5fa;
+  --chip-bg: rgba(96, 165, 250, 0.12);
+}
+
+/* Special dice: accent-high (same family as core) */
+.pg-token--percentile,
+.pg-token--fate,
+.pg-token--geometric,
+.pg-token--draw,
+.pg-token--zeroBias,
+.pg-token--customFaces {
+  color: #93c5fd;
+}
+.pg-desc-chip--percentile,
+.pg-desc-chip--fate,
+.pg-desc-chip--geometric,
+.pg-desc-chip--draw,
+.pg-desc-chip--zeroBias,
+.pg-desc-chip--customFaces {
+  --chip-color: #93c5fd;
+  --chip-bg: rgba(147, 197, 253, 0.12);
+}
+
+/* Drop family: fuchsia */
+.pg-token--dropHighest {
+  color: #b858b0;
+}
+.pg-desc-chip--dropHighest {
+  --chip-color: #b858b0;
+  --chip-bg: rgba(184, 88, 176, 0.12);
+}
+.pg-token--dropLowest {
+  color: #f060d0;
+}
+.pg-desc-chip--dropLowest {
+  --chip-color: #f060d0;
+  --chip-bg: rgba(240, 96, 208, 0.12);
+}
+.pg-token--dropCondition {
+  color: #d860c0;
+}
+.pg-desc-chip--dropCondition {
+  --chip-color: #d860c0;
+  --chip-bg: rgba(216, 96, 192, 0.12);
+}
+
+/* Keep family: oranges */
+.pg-token--keepHighest {
+  color: #ffab70;
+}
+.pg-desc-chip--keepHighest {
+  --chip-color: #ffab70;
+  --chip-bg: rgba(255, 171, 112, 0.12);
+}
+.pg-token--keepLowest {
+  color: #d4845a;
+}
+.pg-desc-chip--keepLowest {
+  --chip-color: #d4845a;
+  --chip-bg: rgba(212, 132, 90, 0.12);
+}
+.pg-token--keepMiddle {
+  color: #e09060;
+}
+.pg-desc-chip--keepMiddle {
+  --chip-color: #e09060;
+  --chip-bg: rgba(224, 144, 96, 0.12);
+}
+
+/* Explode family: gold/orange/lime */
+.pg-token--explode {
+  color: #e5c07b;
+}
+.pg-desc-chip--explode {
+  --chip-color: #e5c07b;
+  --chip-bg: rgba(229, 192, 123, 0.12);
+}
+.pg-token--compound {
+  color: #e08040;
+}
+.pg-desc-chip--compound {
+  --chip-color: #e08040;
+  --chip-bg: rgba(224, 128, 64, 0.12);
+}
+.pg-token--penetrate {
+  color: #b8d858;
+}
+.pg-desc-chip--penetrate {
+  --chip-color: #b8d858;
+  --chip-bg: rgba(184, 216, 88, 0.12);
+}
+.pg-token--explodeSequence {
+  color: #d0b040;
+}
+.pg-desc-chip--explodeSequence {
+  --chip-color: #d0b040;
+  --chip-bg: rgba(208, 176, 64, 0.12);
+}
+
+/* Reroll: purple */
+.pg-token--reroll {
+  color: #c792ea;
+}
+.pg-desc-chip--reroll {
+  --chip-color: #c792ea;
+  --chip-bg: rgba(199, 146, 234, 0.12);
+}
+
+/* Cap: cyan */
+.pg-token--cap {
+  color: #89ddff;
+}
+.pg-desc-chip--cap {
+  --chip-color: #89ddff;
+  --chip-bg: rgba(137, 221, 255, 0.12);
+}
+
+/* Replace: lime */
+.pg-token--replace {
+  color: #c3e88d;
+}
+.pg-desc-chip--replace {
+  --chip-color: #c3e88d;
+  --chip-bg: rgba(195, 232, 141, 0.12);
+}
+
+/* Unique: teal */
+.pg-token--unique {
+  color: #80cbc4;
+}
+.pg-desc-chip--unique {
+  --chip-color: #80cbc4;
+  --chip-bg: rgba(128, 203, 196, 0.12);
+}
+
+/* Count family: blue-violet */
+.pg-token--countSuccesses,
+.pg-token--countFailures,
+.pg-token--count {
+  color: #82aaff;
+}
+.pg-desc-chip--countSuccesses,
+.pg-desc-chip--countFailures,
+.pg-desc-chip--count {
+  --chip-color: #82aaff;
+  --chip-bg: rgba(130, 170, 255, 0.12);
+}
+
+/* Margin of success */
+.pg-token--marginOfSuccess {
+  color: #a0c4ff;
+}
+.pg-desc-chip--marginOfSuccess {
+  --chip-color: #a0c4ff;
+  --chip-bg: rgba(160, 196, 255, 0.12);
+}
+
+/* Arithmetic: greens */
+.pg-token--plus {
+  color: #98c379;
+}
+.pg-desc-chip--plus {
+  --chip-color: #98c379;
+  --chip-bg: rgba(152, 195, 121, 0.12);
+}
+.pg-token--minus {
+  color: #6b9e52;
+}
+.pg-desc-chip--minus {
+  --chip-color: #6b9e52;
+  --chip-bg: rgba(107, 158, 82, 0.12);
+}
+
+/* Multiplier: warm yellows */
+.pg-token--multiply {
+  color: #ffcb6b;
+}
+.pg-desc-chip--multiply {
+  --chip-color: #ffcb6b;
+  --chip-bg: rgba(255, 203, 107, 0.12);
+}
+.pg-token--multiplyTotal {
+  color: #e8a93a;
+}
+.pg-desc-chip--multiplyTotal {
+  --chip-color: #e8a93a;
+  --chip-bg: rgba(232, 169, 58, 0.12);
+}
+
+/* Integer divide / modulo */
+.pg-token--integerDivide {
+  color: #a8c060;
+}
+.pg-desc-chip--integerDivide {
+  --chip-color: #a8c060;
+  --chip-bg: rgba(168, 192, 96, 0.12);
+}
+.pg-token--modulo {
+  color: #90b848;
+}
+.pg-desc-chip--modulo {
+  --chip-color: #90b848;
+  --chip-bg: rgba(144, 184, 72, 0.12);
+}
+
+/* Sort */
+.pg-token--sort {
+  color: #80cbc4;
+}
+.pg-desc-chip--sort {
+  --chip-color: #80cbc4;
+  --chip-bg: rgba(128, 203, 196, 0.12);
+}
+
+/* Wild die */
+.pg-token--wildDie {
+  color: #ff8a65;
+}
+.pg-desc-chip--wildDie {
+  --chip-color: #ff8a65;
+  --chip-bg: rgba(255, 138, 101, 0.12);
+}
+
+/* Repeat: muted */
+.pg-token--repeat {
   color: var(--pg-color-text-muted);
 }
-
-.token-arithmetic {
-  color: var(--pg-color-accent);
+.pg-desc-chip--repeat {
+  --chip-color: var(--pg-color-text-muted);
+  --chip-bg: transparent;
 }
 
-.token-repeat {
-  color: var(--pg-color-text-muted);
-}
-
-.token-label {
+/* Label: dim */
+.pg-token--label {
   color: var(--pg-color-text-dim);
 }
+.pg-desc-chip--label {
+  --chip-color: var(--pg-color-text-dim);
+  --chip-bg: transparent;
+}
 
-.token-unknown {
-  color: var(--pg-color-error);
+/* Unknown: error */
+.pg-token--unknown {
+  color: #f97583;
+}
+.pg-desc-chip--unknown {
+  --chip-color: #f97583;
+  --chip-bg: rgba(249, 117, 131, 0.12);
+}
+
+/* ===== Light mode overrides ===== */
+@media (prefers-color-scheme: light) {
+  .pg-token--core {
+    color: #2563eb;
+  }
+  .pg-desc-chip--core {
+    --chip-color: #2563eb;
+    --chip-bg: rgba(37, 99, 235, 0.08);
+  }
+
+  .pg-token--percentile,
+  .pg-token--fate,
+  .pg-token--geometric,
+  .pg-token--draw,
+  .pg-token--zeroBias,
+  .pg-token--customFaces {
+    color: #1e40af;
+  }
+  .pg-desc-chip--percentile,
+  .pg-desc-chip--fate,
+  .pg-desc-chip--geometric,
+  .pg-desc-chip--draw,
+  .pg-desc-chip--zeroBias,
+  .pg-desc-chip--customFaces {
+    --chip-color: #1e40af;
+    --chip-bg: rgba(30, 64, 175, 0.08);
+  }
+
+  .pg-token--dropHighest {
+    color: #802090;
+  }
+  .pg-desc-chip--dropHighest {
+    --chip-color: #802090;
+    --chip-bg: rgba(128, 32, 144, 0.08);
+  }
+  .pg-token--dropLowest {
+    color: #b028a8;
+  }
+  .pg-desc-chip--dropLowest {
+    --chip-color: #b028a8;
+    --chip-bg: rgba(176, 40, 168, 0.08);
+  }
+  .pg-token--dropCondition {
+    color: #9020a0;
+  }
+  .pg-desc-chip--dropCondition {
+    --chip-color: #9020a0;
+    --chip-bg: rgba(144, 32, 160, 0.08);
+  }
+
+  .pg-token--keepHighest {
+    color: #c2620a;
+  }
+  .pg-desc-chip--keepHighest {
+    --chip-color: #c2620a;
+    --chip-bg: rgba(194, 98, 10, 0.08);
+  }
+  .pg-token--keepLowest {
+    color: #9e4e20;
+  }
+  .pg-desc-chip--keepLowest {
+    --chip-color: #9e4e20;
+    --chip-bg: rgba(158, 78, 32, 0.08);
+  }
+
+  .pg-token--explode {
+    color: #9a7c1a;
+  }
+  .pg-desc-chip--explode {
+    --chip-color: #9a7c1a;
+    --chip-bg: rgba(154, 124, 26, 0.08);
+  }
+  .pg-token--compound {
+    color: #c05818;
+  }
+  .pg-desc-chip--compound {
+    --chip-color: #c05818;
+    --chip-bg: rgba(192, 88, 24, 0.08);
+  }
+  .pg-token--penetrate {
+    color: #5a8018;
+  }
+  .pg-desc-chip--penetrate {
+    --chip-color: #5a8018;
+    --chip-bg: rgba(90, 128, 24, 0.08);
+  }
+
+  .pg-token--reroll {
+    color: #7c4dab;
+  }
+  .pg-desc-chip--reroll {
+    --chip-color: #7c4dab;
+    --chip-bg: rgba(124, 77, 171, 0.08);
+  }
+
+  .pg-token--cap {
+    color: #0082a5;
+  }
+  .pg-desc-chip--cap {
+    --chip-color: #0082a5;
+    --chip-bg: rgba(0, 130, 165, 0.08);
+  }
+
+  .pg-token--replace {
+    color: #4a8020;
+  }
+  .pg-desc-chip--replace {
+    --chip-color: #4a8020;
+    --chip-bg: rgba(74, 128, 32, 0.08);
+  }
+
+  .pg-token--unique {
+    color: #1a7a72;
+  }
+  .pg-desc-chip--unique {
+    --chip-color: #1a7a72;
+    --chip-bg: rgba(26, 122, 114, 0.08);
+  }
+
+  .pg-token--countSuccesses,
+  .pg-token--countFailures,
+  .pg-token--count {
+    color: #3a60c8;
+  }
+  .pg-desc-chip--countSuccesses,
+  .pg-desc-chip--countFailures,
+  .pg-desc-chip--count {
+    --chip-color: #3a60c8;
+    --chip-bg: rgba(58, 96, 200, 0.08);
+  }
+
+  .pg-token--plus {
+    color: #3a7d20;
+  }
+  .pg-desc-chip--plus {
+    --chip-color: #3a7d20;
+    --chip-bg: rgba(58, 125, 32, 0.08);
+  }
+  .pg-token--minus {
+    color: #2a6018;
+  }
+  .pg-desc-chip--minus {
+    --chip-color: #2a6018;
+    --chip-bg: rgba(42, 96, 24, 0.08);
+  }
+
+  .pg-token--multiply {
+    color: #8a6a00;
+  }
+  .pg-desc-chip--multiply {
+    --chip-color: #8a6a00;
+    --chip-bg: rgba(138, 106, 0, 0.08);
+  }
+  .pg-token--multiplyTotal {
+    color: #7a5800;
+  }
+  .pg-desc-chip--multiplyTotal {
+    --chip-color: #7a5800;
+    --chip-bg: rgba(122, 88, 0, 0.08);
+  }
+
+  .pg-token--unknown {
+    color: #c0394a;
+  }
+  .pg-desc-chip--unknown {
+    --chip-color: #c0394a;
+    --chip-bg: rgba(192, 57, 74, 0.08);
+  }
 }
 
 /* Go button */
 .notation-input-go {
   flex-shrink: 0;
+  margin-left: auto;
   padding: var(--pg-space-xs) var(--pg-space-md);
   border: none;
   border-radius: var(--pg-radius-sm);
