@@ -1,0 +1,121 @@
+.notation-input-frame {
+  display: flex;
+  align-items: center;
+  gap: var(--pg-space-xs);
+  padding: var(--pg-space-sm) var(--pg-space-md);
+  background-color: var(--pg-color-surface);
+  border: 2px solid var(--pg-color-border);
+  border-radius: var(--pg-radius-md);
+  font-family: var(--pg-font-mono);
+  font-size: 1rem;
+}
+
+.notation-input-prefix,
+.notation-input-suffix {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.notation-input-fn {
+  color: var(--pg-color-accent);
+}
+
+.notation-input-paren {
+  color: var(--pg-color-text-dim);
+}
+
+.notation-input-quote {
+  color: var(--pg-color-text-dim);
+}
+
+.notation-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.notation-input-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  white-space: pre;
+  font: inherit;
+  line-height: inherit;
+  padding: 0;
+}
+
+.notation-input-field {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--pg-color-text);
+  font: inherit;
+  line-height: inherit;
+  padding: 0;
+  caret-color: var(--pg-color-text);
+}
+
+.notation-input-field--highlighted {
+  color: transparent;
+}
+
+.notation-input-field::placeholder {
+  color: var(--pg-color-text-dim);
+}
+
+/* Token color classes */
+.token-core {
+  color: var(--pg-color-text);
+}
+
+.token-special {
+  color: var(--pg-color-accent-high);
+}
+
+.token-pool {
+  color: var(--pg-color-accent);
+}
+
+.token-modifier {
+  color: var(--pg-color-text-muted);
+}
+
+.token-arithmetic {
+  color: var(--pg-color-accent);
+}
+
+.token-repeat {
+  color: var(--pg-color-text-muted);
+}
+
+.token-label {
+  color: var(--pg-color-text-dim);
+}
+
+.token-unknown {
+  color: var(--pg-color-error);
+}
+
+/* Go button */
+.notation-input-go {
+  flex-shrink: 0;
+  padding: var(--pg-space-xs) var(--pg-space-md);
+  border: none;
+  border-radius: var(--pg-radius-sm);
+  font-family: var(--pg-font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: not-allowed;
+  background-color: var(--pg-color-border);
+  color: var(--pg-color-text-dim);
+}
+
+.notation-input-go--active {
+  background-color: var(--pg-color-accent);
+  color: var(--pg-color-text);
+  cursor: pointer;
+}
