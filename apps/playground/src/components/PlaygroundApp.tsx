@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roll, validateNotation } from '@randsum/roller'
 import type { DiceNotation, RollerRollResult, ValidationResult } from '@randsum/roller'
 import { tokenize } from '@randsum/roller/tokenize'
+import { createSession, fetchSession, updateSession } from '../lib/sessions'
 import { PlaygroundHeader } from './PlaygroundHeader'
 import { NotationInput } from './NotationInput'
 import { NotationDescription } from './NotationDescription'
@@ -18,6 +19,13 @@ export interface PlaygroundState {
   readonly validationResult: ValidationResult | null
   readonly rollResult: RollerRollResult | null
   readonly selectedEntry: string | null
+  readonly sessionId: string | null
+  readonly readOnly: boolean
+}
+
+export interface BuildInitialStateOptions {
+  readonly sessionId?: string
+  readonly readOnly?: boolean
 }
 
 // ---- Pure state transition helpers (exported for testing) ----
@@ -28,8 +36,13 @@ function deriveValidationState(notation: string, result: ValidationResult | null
   return result.valid ? 'valid' : 'invalid'
 }
 
-export function buildInitialState(initialNotation: string | null): PlaygroundState {
+export function buildInitialState(
+  initialNotation: string | null,
+  options?: BuildInitialStateOptions
+): PlaygroundState {
   const notation = initialNotation ?? ''
+  const sessionId = options?.sessionId ?? null
+  const readOnly = options?.readOnly ?? false
 
   if (notation === '') {
     return {
@@ -37,7 +50,9 @@ export function buildInitialState(initialNotation: string | null): PlaygroundSta
       validationState: 'empty',
       validationResult: null,
       rollResult: null,
-      selectedEntry: null
+      selectedEntry: null,
+      sessionId,
+      readOnly
     }
   }
 
@@ -47,7 +62,9 @@ export function buildInitialState(initialNotation: string | null): PlaygroundSta
     validationState: deriveValidationState(notation, validationResult),
     validationResult,
     rollResult: null,
-    selectedEntry: null
+    selectedEntry: null,
+    sessionId,
+    readOnly
   }
 }
 
@@ -91,6 +108,15 @@ export function applyEscape(prev: PlaygroundState): PlaygroundState {
 
 // ---- URL helpers (exported for testing) ----
 
+export function parseSessionIdFromPath(pathname: string): string | null {
+  const match = /^\/s\/([A-Za-z0-9_-]+)$/.exec(pathname)
+  return match?.[1] ?? null
+}
+
+export function buildSessionUrl(sessionId: string): string {
+  return `/s/${sessionId}`
+}
+
 export function buildNotationUrl(notation: string): string {
   return `?n=${encodeURIComponent(notation)}`
 }
@@ -101,51 +127,99 @@ export function clearNotationUrl(pathname: string): string {
 
 // ---- Component ----
 
+const DEBOUNCE_MS = 500
+
 export function PlaygroundApp(): React.ReactElement {
   const inputRef = useRef<HTMLInputElement>(null)
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const claimTokenRef = useRef<string | null>(null)
 
   const [state, setState] = useState<PlaygroundState>(() => {
-    // Read ?n= from URL on mount (safe: only runs client-side)
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const n = params.get('n')
-      return buildInitialState(n && n.length > 0 ? n : null)
+    if (typeof window === 'undefined') return buildInitialState(null)
+
+    // Check for session ID in URL path
+    const sessionId = parseSessionIdFromPath(window.location.pathname)
+    if (sessionId) {
+      const claimToken = localStorage.getItem(`pg-claim:${sessionId}`)
+      claimTokenRef.current = claimToken
+      return buildInitialState('', {
+        sessionId,
+        readOnly: claimToken === null
+      })
     }
-    return buildInitialState(null)
+
+    // Legacy ?n= param seeds notation but doesn't create a session
+    const params = new URLSearchParams(window.location.search)
+    const n = params.get('n')
+    return buildInitialState(n && n.length > 0 ? n : null)
   })
+
+  // On mount: if sessionId in URL, fetch session and populate notation
+  useEffect(() => {
+    if (state.sessionId === null) return
+
+    const controller = new AbortController()
+    fetchSession(state.sessionId)
+      .then(session => {
+        if (controller.signal.aborted || session === null) return
+        setState(prev => applyNotationChange(prev, session.notation))
+      })
+      .catch(() => {
+        // Session not found — clear sessionId
+        if (!controller.signal.aborted) {
+          setState(prev => ({ ...prev, sessionId: null, readOnly: false }))
+        }
+      })
+    return () => {
+      controller.abort()
+    }
+  }, [])
 
   const [hoveredTokenIdx, setHoveredTokenIdx] = useState<number | null>(null)
 
   const tokens = useMemo(() => tokenize(state.notation), [state.notation])
 
   const handleChange = useCallback((notation: string) => {
-    setState(prev => applyNotationChange(prev, notation))
-    setHoveredTokenIdx(null)
-    if (typeof window !== 'undefined') {
-      if (notation.length > 0) {
-        history.replaceState({}, '', buildNotationUrl(notation))
-      } else {
-        history.replaceState({}, '', clearNotationUrl(window.location.pathname))
+    setState(prev => {
+      const next = applyNotationChange(prev, notation)
+
+      // If we already have a session and we own it, schedule debounced save
+      if (prev.sessionId !== null && !prev.readOnly && claimTokenRef.current !== null) {
+        if (debounceTimerRef.current !== null) {
+          clearTimeout(debounceTimerRef.current)
+        }
+        debounceTimerRef.current = setTimeout(() => {
+          debounceTimerRef.current = null
+          if (claimTokenRef.current !== null && prev.sessionId !== null) {
+            void updateSession(prev.sessionId, notation, claimTokenRef.current)
+          }
+        }, DEBOUNCE_MS)
+        return next
       }
-    }
+
+      // No session yet — create one on first non-empty keystroke
+      if (prev.sessionId === null && notation.length > 0) {
+        createSession(notation)
+          .then(({ session, claimToken }) => {
+            claimTokenRef.current = claimToken
+            localStorage.setItem(`pg-claim:${session.id}`, claimToken)
+            history.pushState({}, '', buildSessionUrl(session.id))
+            setState(s => ({ ...s, sessionId: session.id }))
+          })
+          .catch(() => undefined) // Fall back to no-session mode
+      }
+
+      return next
+    })
+    setHoveredTokenIdx(null)
   }, [])
 
   const handleSubmit = useCallback(() => {
-    setState(prev => {
-      if (prev.validationState !== 'valid') return prev
-      const next = applySubmit(prev)
-      if (next.rollResult !== null && typeof window !== 'undefined') {
-        history.replaceState({}, '', buildNotationUrl(prev.notation))
-      }
-      return next
-    })
+    setState(prev => applySubmit(prev))
   }, [])
 
   const handleEscape = useCallback(() => {
     setState(prev => applyEscape(prev))
-    if (typeof window !== 'undefined') {
-      history.replaceState({}, '', clearNotationUrl(window.location.pathname))
-    }
     inputRef.current?.focus()
   }, [])
 
@@ -154,6 +228,20 @@ export function PlaygroundApp(): React.ReactElement {
       ...prev,
       selectedEntry: prev.selectedEntry === entryKey ? null : entryKey
     }))
+  }, [])
+
+  // Flush pending debounced save on beforeunload
+  useEffect(() => {
+    function onBeforeUnload(): void {
+      if (debounceTimerRef.current !== null) {
+        clearTimeout(debounceTimerRef.current)
+        debounceTimerRef.current = null
+      }
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload)
+    }
   }, [])
 
   // Global keyboard handler for Enter/Escape

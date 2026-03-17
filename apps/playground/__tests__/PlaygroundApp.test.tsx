@@ -15,7 +15,9 @@ import {
   applySubmit,
   buildInitialState,
   buildNotationUrl,
-  clearNotationUrl
+  buildSessionUrl,
+  clearNotationUrl,
+  parseSessionIdFromPath
 } from '../src/components/PlaygroundApp'
 
 function fakeRollResult(): RollerRollResult {
@@ -59,6 +61,33 @@ describe('PlaygroundApp state', () => {
       const state = buildInitialState('4d6')
       expect(state.rollResult).toBeNull()
     })
+
+    test('includes sessionId null and readOnly false by default', () => {
+      const state = buildInitialState(null)
+      expect(state.sessionId).toBeNull()
+      expect(state.readOnly).toBe(false)
+    })
+
+    test('includes sessionId null when notation is provided', () => {
+      const state = buildInitialState('4d6')
+      expect(state.sessionId).toBeNull()
+      expect(state.readOnly).toBe(false)
+    })
+
+    test('accepts sessionId option to populate session state', () => {
+      const state = buildInitialState('4d6', { sessionId: 'abc123' })
+      expect(state.sessionId).toBe('abc123')
+      expect(state.notation).toBe('4d6')
+    })
+
+    test('sets readOnly true when sessionId provided with readOnly option', () => {
+      const state = buildInitialState('4d6', {
+        sessionId: 'abc123',
+        readOnly: true
+      })
+      expect(state.sessionId).toBe('abc123')
+      expect(state.readOnly).toBe(true)
+    })
   })
 
   describe('applyNotationChange', () => {
@@ -68,7 +97,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyNotationChange(prev, '')
       expect(next.notation).toBe('')
@@ -82,7 +113,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'empty',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyNotationChange(prev, '2d6')
       expect(next.notation).toBe('2d6')
@@ -96,7 +129,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'empty',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyNotationChange(prev, 'xyz123')
       expect(next.notation).toBe('xyz123')
@@ -110,7 +145,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: fakeRollResult(),
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyNotationChange(prev, 'bad!!!')
       expect(next.rollResult).toBeNull()
@@ -123,7 +160,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: fakeResult,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyNotationChange(prev, '2d6')
       expect(next.rollResult).toBe(fakeResult)
@@ -137,7 +176,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applySubmit(prev)
       expect(next.rollResult).not.toBeNull()
@@ -150,7 +191,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'invalid',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applySubmit(prev)
       expect(next.rollResult).toBeNull()
@@ -162,7 +205,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'empty',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applySubmit(prev)
       expect(next.rollResult).toBeNull()
@@ -174,7 +219,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const afterFirst = applySubmit(first)
       const afterSecond = applySubmit(afterFirst)
@@ -189,7 +236,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: fakeRollResult(),
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyEscape(prev)
       expect(next.rollResult).toBeNull()
@@ -201,7 +250,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: fakeRollResult(),
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyEscape(prev)
       expect(next.notation).toBe('4d6')
@@ -214,10 +265,44 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyEscape(prev)
       expect(next.rollResult).toBeNull()
+    })
+  })
+
+  describe('parseSessionIdFromPath', () => {
+    test('returns session ID from /s/{id} path', () => {
+      expect(parseSessionIdFromPath('/s/abc123')).toBe('abc123')
+    })
+
+    test('returns null for bare root path', () => {
+      expect(parseSessionIdFromPath('/')).toBeNull()
+    })
+
+    test('returns null for non-session path', () => {
+      expect(parseSessionIdFromPath('/about')).toBeNull()
+    })
+
+    test('returns null for /s/ with no ID', () => {
+      expect(parseSessionIdFromPath('/s/')).toBeNull()
+    })
+
+    test('handles URL-safe characters in session ID', () => {
+      expect(parseSessionIdFromPath('/s/aB3_-xY')).toBe('aB3_-xY')
+    })
+
+    test('returns null for path with extra segments after session ID', () => {
+      expect(parseSessionIdFromPath('/s/abc123/extra')).toBeNull()
+    })
+  })
+
+  describe('buildSessionUrl', () => {
+    test('returns /s/{id} path', () => {
+      expect(buildSessionUrl('abc123')).toBe('/s/abc123')
     })
   })
 
@@ -276,7 +361,9 @@ describe('PlaygroundApp state', () => {
         validationState: 'valid',
         validationResult: null,
         rollResult: fakeRollResult(),
-        selectedEntry: null
+        selectedEntry: null,
+        sessionId: null,
+        readOnly: false
       }
       const next = applyEscape(prev)
       // The pure function clears rollResult — URL side effect is separate
