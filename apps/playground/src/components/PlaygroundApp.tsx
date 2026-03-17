@@ -2,6 +2,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { roll, validateNotation } from '@randsum/roller'
 import type { DiceNotation, RollerRollResult, ValidationResult } from '@randsum/roller'
 import { PlaygroundHeader } from './PlaygroundHeader'
+import { PlaygroundLayout } from './PlaygroundLayout'
+import { MainColumn } from './MainColumn'
+import { NotationInput } from './NotationInput'
+import { NotationDescription } from './NotationDescription'
+import { RollResult } from './RollResult'
+import { ReferenceSidebar } from './ReferenceSidebar'
+import { ReferenceDisclosure } from './ReferenceDisclosure'
 
 // ---- Types (exported for testing) ----
 
@@ -163,85 +170,28 @@ export function PlaygroundApp(): React.ReactElement {
     >
       <PlaygroundHeader notation={state.notation} />
 
-      {/* Notation input area — NotationInput component wired in later story */}
-      <div data-area="notation-input" style={{ padding: 'var(--pg-space-lg)' }}>
-        <input
-          ref={inputRef}
-          type="text"
-          autoFocus
-          value={state.notation}
-          placeholder="4d6L"
-          onChange={e => {
-            handleChange(e.target.value)
-          }}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && state.validationState === 'valid') {
-              handleSubmit()
-            } else if (e.key === 'Escape') {
-              handleEscape()
-            }
-          }}
-          style={{
-            width: '100%',
-            padding: 'var(--pg-space-sm) var(--pg-space-md)',
-            fontFamily: 'var(--pg-font-mono)',
-            fontSize: '1rem',
-            backgroundColor: 'var(--pg-color-surface)',
-            color: 'var(--pg-color-text)',
-            border: `1px solid ${
-              state.validationState === 'valid'
-                ? 'var(--pg-color-accent)'
-                : state.validationState === 'invalid'
-                  ? 'var(--pg-color-error)'
-                  : 'var(--pg-color-border)'
-            }`,
-            borderRadius: 'var(--pg-radius-sm)',
-            outline: 'none'
-          }}
-        />
-        <button
-          type="submit"
-          disabled={state.validationState !== 'valid'}
-          onClick={handleSubmit}
-          style={{
-            marginTop: 'var(--pg-space-sm)',
-            padding: 'var(--pg-space-xs) var(--pg-space-md)',
-            backgroundColor:
-              state.validationState === 'valid'
-                ? 'var(--pg-color-accent)'
-                : 'var(--pg-color-border)',
-            color: 'var(--pg-color-text)',
-            border: 'none',
-            borderRadius: 'var(--pg-radius-sm)',
-            fontFamily: 'var(--pg-font-mono)',
-            cursor: state.validationState === 'valid' ? 'pointer' : 'not-allowed'
-          }}
-        >
-          Go
-        </button>
-      </div>
+      <PlaygroundLayout>
+        <MainColumn>
+          <NotationInput
+            value={state.notation}
+            validationState={state.validationState}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+          />
+          <NotationDescription validationResult={state.validationResult} />
+          {state.rollResult !== null && <RollResult result={state.rollResult} />}
+        </MainColumn>
 
-      {/* Description area — NotationDescription component wired in later story */}
-      <div data-area="notation-description" style={{ padding: '0 var(--pg-space-lg)' }} />
-
-      {/* Result area — RollResult component wired in later story */}
-      {state.rollResult !== null && (
-        <div data-area="roll-result" style={{ padding: 'var(--pg-space-lg)' }}>
-          <span style={{ fontSize: '3rem', color: 'var(--pg-color-total)' }}>
-            {state.rollResult.total}
-          </span>
+        <div className="pg-desktop-only">
+          <ReferenceSidebar selectedEntry={state.selectedEntry} onSelect={handleSelect} />
         </div>
-      )}
+      </PlaygroundLayout>
 
-      {/* Reference sidebar placeholder — ReferenceSidebar wired in later story */}
-      <div
-        data-area="reference-sidebar"
-        style={{ display: 'none' }}
-        aria-hidden="true"
-        onClick={() => {
-          handleSelect('')
-        }}
-      />
+      <div className="pg-mobile-only">
+        <ReferenceDisclosure>
+          <ReferenceSidebar selectedEntry={state.selectedEntry} onSelect={handleSelect} />
+        </ReferenceDisclosure>
+      </div>
     </div>
   )
 }

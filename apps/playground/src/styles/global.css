@@ -12,3 +12,23 @@ body {
   color: var(--pg-color-text);
   font-family: var(--pg-font-body);
 }
+
+/* Responsive visibility */
+.pg-desktop-only {
+  display: none;
+}
+
+.pg-mobile-only {
+  display: block;
+  padding: 0 var(--pg-space-md);
+}
+
+@media (min-width: 768px) {
+  .pg-desktop-only {
+    display: block;
+  }
+
+  .pg-mobile-only {
+    display: none;
+  }
+}
