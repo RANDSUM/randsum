@@ -69,6 +69,8 @@ export function RollerPlayground({
   const [state, setState] = useState<PlaygroundState>({ status: 'idle' })
   const [expanded, setExpanded] = useState(false)
   const [overlayContent, setOverlayContent] = useState<OverlayContent | null>(null)
+  const [collapsing, setCollapsing] = useState(false)
+  const staleOverlayRef = useRef<OverlayContent | null>(null)
   const [dismissing, setDismissing] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -106,8 +108,11 @@ export function RollerPlayground({
 
   const handleRoll = useCallback(() => {
     if (!isValid) return
+    const wasExpanded = expandedProp || expanded || overlayContent !== null
     setState({ status: 'rolling' })
-    setOverlayContent({ kind: 'rolling' })
+    if (wasExpanded) {
+      setOverlayContent({ kind: 'rolling' })
+    }
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
       try {
@@ -118,12 +123,14 @@ export function RollerPlayground({
           return
         }
         setState({ status: 'result', total: result.total, records: result.rolls })
-        setOverlayContent({ kind: 'result' })
+        if (wasExpanded) {
+          setOverlayContent({ kind: 'result' })
+        }
       } catch {
         // invalid notation — isDiceNotation guard above should prevent this
       }
     }, 300)
-  }, [notation, isValid])
+  }, [notation, isValid, expandedProp, expanded, overlayContent])
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {
@@ -199,17 +206,7 @@ export function RollerPlayground({
           <div className="roller-playground-row">
             <div className="roller-playground-code-wrap">
               <span className="roller-playground-code-prefix">
-                <button
-                  className="roller-playground-code-fn"
-                  onClick={e => {
-                    e.stopPropagation()
-                    handleRoll()
-                  }}
-                  disabled={!isValid || state.status === 'rolling'}
-                  aria-label="Roll"
-                >
-                  roll
-                </button>
+                <span className="roller-playground-code-fn">roll</span>
                 <span className="roller-playground-code-paren">(</span>
                 <span className="roller-playground-code-str-delim">&#39;</span>
               </span>
@@ -291,8 +288,12 @@ export function RollerPlayground({
                     : () => {
                         if (state.status === 'result') {
                           if (overlayContent) {
+                            staleOverlayRef.current = overlayContent
+                            setCollapsing(true)
                             setOverlayContent(null)
                           } else {
+                            setCollapsing(false)
+                            staleOverlayRef.current = null
                             setOverlayContent({ kind: 'result' })
                           }
                         } else {
@@ -310,8 +311,12 @@ export function RollerPlayground({
                           e.preventDefault()
                           if (state.status === 'result') {
                             if (overlayContent) {
+                              staleOverlayRef.current = overlayContent
+                              setCollapsing(true)
                               setOverlayContent(null)
                             } else {
+                              setCollapsing(false)
+                              staleOverlayRef.current = null
                               setOverlayContent({ kind: 'result' })
                             }
                           } else {
@@ -360,11 +365,7 @@ export function RollerPlayground({
                           <polyline points="18 15 12 9 6 15" />
                         </svg>
                       </span>
-                    ) : (
-                      <span className="roller-playground-chip-hint" aria-hidden="true">
-                        ↓
-                      </span>
-                    )}
+                    ) : null}
                   </>
                 ) : expanded ? (
                   <span className="roller-playground-chip-collapse" aria-hidden="true">
@@ -388,6 +389,17 @@ export function RollerPlayground({
                 )}
               </div>
             )}
+
+            <button
+              className="roller-playground-roll-btn"
+              onClick={e => {
+                e.stopPropagation()
+                handleRoll()
+              }}
+              disabled={!isValid || state.status === 'rolling'}
+            >
+              {state.status === 'result' ? 'Re-Roll' : 'Roll'}
+            </button>
           </div>
           <div className="roller-playground-desc-row">
             {notation.length === 0 ? (
@@ -440,12 +452,18 @@ export function RollerPlayground({
           </div>
           <div
             className={`roller-playground-expand${expandedProp || expanded || overlayContent !== null ? ' roller-playground-expand--open' : ''}`}
+            onTransitionEnd={e => {
+              if (e.propertyName === 'grid-template-rows' && collapsing) {
+                setCollapsing(false)
+                staleOverlayRef.current = null
+              }
+            }}
           >
             <div className="roller-playground-expand-inner">
               <div className="roller-playground-expand-reference">
                 <ModifierReference modifiersDisabled={!isValid} onCellClick={handleCellClick} />
                 <Overlay
-                  visible={overlayContent !== null}
+                  visible={overlayContent !== null || collapsing}
                   dismissing={dismissing}
                   dismissible={
                     overlayContent?.kind === 'result' ||
@@ -459,38 +477,47 @@ export function RollerPlayground({
                       : dismiss
                   }
                 >
-                  {overlayContent?.kind === 'rolling' && (
-                    <div className="roller-playground-result-loading">
-                      <div className="roller-playground-expand-loading-spinner" />
-                    </div>
-                  )}
-                  {overlayContent?.kind === 'result' && state.status === 'result' && (
-                    <>
-                      <div className="roller-playground-result-total-hero">{state.total}</div>
-                      <RollResult records={state.records} />
-                      <div className="roller-playground-expand-total">
-                        <span>Total</span>
-                        <span className="roller-playground-expand-total-chip">{state.total}</span>
-                      </div>
-                    </>
-                  )}
-                  {overlayContent?.kind === 'modifier-doc' &&
-                    (overlayContent.returnTo === 'result' ? (
-                      <ModifierDocContent
-                        cell={overlayContent.cell}
-                        onBack={() => {
-                          setOverlayContent({ kind: 'result' })
-                        }}
-                        onAdd={handleAddModifier}
-                        notationHasCore={notationHasCore}
-                      />
-                    ) : (
-                      <ModifierDocContent
-                        cell={overlayContent.cell}
-                        onAdd={handleAddModifier}
-                        notationHasCore={notationHasCore}
-                      />
-                    ))}
+                  {(() => {
+                    const active = overlayContent ?? (collapsing ? staleOverlayRef.current : null)
+                    return (
+                      <>
+                        {active?.kind === 'rolling' && (
+                          <div className="roller-playground-result-loading">
+                            <div className="roller-playground-expand-loading-spinner" />
+                          </div>
+                        )}
+                        {active?.kind === 'result' && state.status === 'result' && (
+                          <>
+                            <div className="roller-playground-result-total-hero">{state.total}</div>
+                            <RollResult records={state.records} />
+                            <div className="roller-playground-expand-total">
+                              <span>Total</span>
+                              <span className="roller-playground-expand-total-chip">
+                                {state.total}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                        {active?.kind === 'modifier-doc' &&
+                          (active.returnTo === 'result' ? (
+                            <ModifierDocContent
+                              cell={active.cell}
+                              onBack={() => {
+                                setOverlayContent({ kind: 'result' })
+                              }}
+                              onAdd={handleAddModifier}
+                              notationHasCore={notationHasCore}
+                            />
+                          ) : (
+                            <ModifierDocContent
+                              cell={active.cell}
+                              onAdd={handleAddModifier}
+                              notationHasCore={notationHasCore}
+                            />
+                          ))}
+                      </>
+                    )
+                  })()}
                 </Overlay>
               </div>
             </div>
