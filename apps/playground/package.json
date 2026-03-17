@@ -20,9 +20,11 @@
     "@randsum/display-utils": "workspace:~",
     "@astrojs/react": "5.0.0",
     "@stackblitz/sdk": "latest",
+    "@supabase/supabase-js": "^2.49.4",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "astro": "6.0.2",
+    "nanoid": "^5.1.5",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
