@@ -133,6 +133,8 @@ export function PlaygroundApp(): React.ReactElement {
   const inputRef = useRef<HTMLInputElement>(null)
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const claimTokenRef = useRef<string | null>(null)
+  const pendingNotationRef = useRef<string | null>(null)
+  const stateRef = useRef<PlaygroundState>(buildInitialState(null))
 
   const [state, setState] = useState<PlaygroundState>(() => {
     if (typeof window === 'undefined') return buildInitialState(null)
@@ -153,6 +155,9 @@ export function PlaygroundApp(): React.ReactElement {
     const n = params.get('n')
     return buildInitialState(n && n.length > 0 ? n : null)
   })
+
+  // Keep stateRef in sync on every render
+  stateRef.current = state
 
   // On mount: if sessionId in URL, fetch session and populate notation
   useEffect(() => {
@@ -180,38 +185,46 @@ export function PlaygroundApp(): React.ReactElement {
   const tokens = useMemo(() => tokenize(state.notation), [state.notation])
 
   const handleChange = useCallback((notation: string) => {
-    setState(prev => {
-      const next = applyNotationChange(prev, notation)
-
-      // If we already have a session and we own it, schedule debounced save
-      if (prev.sessionId !== null && !prev.readOnly && claimTokenRef.current !== null) {
-        if (debounceTimerRef.current !== null) {
-          clearTimeout(debounceTimerRef.current)
-        }
-        debounceTimerRef.current = setTimeout(() => {
-          debounceTimerRef.current = null
-          if (claimTokenRef.current !== null && prev.sessionId !== null) {
-            void updateSession(prev.sessionId, notation, claimTokenRef.current)
-          }
-        }, DEBOUNCE_MS)
-        return next
-      }
-
-      // No session yet — create one on first non-empty keystroke
-      if (prev.sessionId === null && notation.length > 0) {
-        createSession(notation)
-          .then(({ session, claimToken }) => {
-            claimTokenRef.current = claimToken
-            localStorage.setItem(`pg-claim:${session.id}`, claimToken)
-            history.pushState({}, '', buildSessionUrl(session.id))
-            setState(s => ({ ...s, sessionId: session.id }))
-          })
-          .catch(() => undefined) // Fall back to no-session mode
-      }
-
-      return next
-    })
+    // Pure state update — no async side effects inside the updater
+    setState(prev => applyNotationChange(prev, notation))
     setHoveredTokenIdx(null)
+
+    // Track pending notation for debounce flush
+    pendingNotationRef.current = notation
+
+    // No session yet — create one on first non-empty keystroke
+    if (stateRef.current.sessionId === null && notation.length > 0) {
+      createSession(notation)
+        .then(({ session, claimToken }) => {
+          claimTokenRef.current = claimToken
+          localStorage.setItem(`pg-claim:${session.id}`, claimToken)
+          history.pushState({}, '', buildSessionUrl(session.id))
+          setState(s => ({ ...s, sessionId: session.id }))
+        })
+        .catch(() => undefined) // Fall back to no-session mode
+      return
+    }
+
+    // Schedule debounced save — reads from refs at fire time to avoid stale closures
+    if (
+      stateRef.current.sessionId !== null &&
+      !stateRef.current.readOnly &&
+      claimTokenRef.current !== null
+    ) {
+      if (debounceTimerRef.current !== null) {
+        clearTimeout(debounceTimerRef.current)
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        debounceTimerRef.current = null
+        const sid = stateRef.current.sessionId
+        const token = claimTokenRef.current
+        const pending = pendingNotationRef.current
+        if (sid !== null && token !== null && pending !== null) {
+          void updateSession(sid, pending, token)
+          pendingNotationRef.current = null
+        }
+      }, DEBOUNCE_MS)
+    }
   }, [])
 
   const handleSubmit = useCallback(() => {
@@ -230,13 +243,39 @@ export function PlaygroundApp(): React.ReactElement {
     }))
   }, [])
 
-  // Flush pending debounced save on beforeunload
+  // Flush pending debounced save on beforeunload via sendBeacon
   useEffect(() => {
     function onBeforeUnload(): void {
       if (debounceTimerRef.current !== null) {
         clearTimeout(debounceTimerRef.current)
         debounceTimerRef.current = null
       }
+      const sid = stateRef.current.sessionId
+      const token = claimTokenRef.current
+      const pending = pendingNotationRef.current
+      if (sid === null || token === null || pending === null) return
+
+      const url = `${String(import.meta.env.PUBLIC_SUPABASE_URL)}/rest/v1/sessions?id=eq.${encodeURIComponent(sid)}`
+      const body = JSON.stringify({
+        notation: pending,
+        updated_at: new Date().toISOString()
+      })
+      const blob = new Blob([body], { type: 'application/json' })
+
+      // sendBeacon cannot set custom headers, so we fall back to keepalive fetch
+      void fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY),
+          Authorization: `Bearer ${String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY)}`,
+          'x-claim-token': token,
+          Prefer: 'return=minimal'
+        },
+        body: blob,
+        keepalive: true
+      })
+      pendingNotationRef.current = null
     }
     window.addEventListener('beforeunload', onBeforeUnload)
     return () => {
