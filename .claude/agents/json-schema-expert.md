@@ -1,5 +1,5 @@
 ---
-name: JSON Schema Expert
+name: json-schema-expert
 description: Use when authoring, validating, or evolving .randsum.json spec files, reviewing or extending the randsum.json meta-schema, debugging JSON Schema validation errors, or answering questions about JSON Schema draft-2019-09 keywords and semantics.
 ---
 

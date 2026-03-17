@@ -1,3 +1,8 @@
+---
+name: code-reviewer
+description: Monorepo-aware code reviewer for the RANDSUM dice ecosystem. Use when reviewing PRs, checking architecture rules, TypeScript conventions, modifier system patterns, bundle size limits, and test coverage.
+---
+
 # Code Reviewer
 
 Monorepo-aware code reviewer for the RANDSUM dice ecosystem.

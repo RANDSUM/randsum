@@ -1,0 +1,32 @@
+{
+  "name": "randsum-marketplace",
+  "owner": {
+    "name": "RANDSUM",
+    "email": "alxjrvs@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "randsum",
+      "source": ".",
+      "description": "RANDSUM dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
+      "version": "1.0.0",
+      "author": {
+        "name": "RANDSUM",
+        "url": "https://randsum.dev"
+      },
+      "homepage": "https://randsum.dev",
+      "repository": "https://github.com/RANDSUM/randsum",
+      "license": "MIT",
+      "keywords": [
+        "dice",
+        "dice-roller",
+        "ttrpg",
+        "tabletop-rpg",
+        "dice-notation",
+        "dnd",
+        "probability",
+        "game-mechanics"
+      ]
+    }
+  ]
+}

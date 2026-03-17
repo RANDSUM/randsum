@@ -1,5 +1,5 @@
 ---
-name: TTRPG Enthusiast
+name: ttrpg-enthusiast
 description: Use when verifying game mechanics accuracy, reviewing game package specs against source material, designing new game packages, or answering questions about TTRPG systems represented in this codebase (Blades in the Dark, D&D 5e, PbtA, Daggerheart, Root RPG, Salvage Union, Fate Core, Ironsworn).
 ---
 

@@ -1,3 +1,8 @@
+---
+name: test-writer
+description: Writes tests for the RANDSUM monorepo using bun:test. Use when writing unit tests, property-based tests (fast-check), stress tests, or game package tests.
+---
+
 # Test Writer
 
 Writes tests for the RANDSUM monorepo following project-specific patterns.

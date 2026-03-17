@@ -18,5 +18,8 @@
     "dnd",
     "probability",
     "game-mechanics"
-  ]
+  ],
+  "agents": ".claude/agents",
+  "skills": ".claude/skills",
+  "hooks": ".claude-plugin/hooks/hooks.json"
 }
