@@ -1,0 +1,32 @@
+.pg-reference-disclosure {
+  font-family: var(--pg-font-body);
+}
+
+.pg-reference-disclosure__summary {
+  cursor: pointer;
+  padding: var(--pg-space-sm) var(--pg-space-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--pg-color-text-muted);
+  background-color: var(--pg-color-surface);
+  border: 1px solid var(--pg-color-border);
+  border-radius: var(--pg-radius-md);
+  user-select: none;
+  list-style: none;
+}
+
+.pg-reference-disclosure__summary::-webkit-details-marker {
+  display: none;
+}
+
+.pg-reference-disclosure[open] .pg-reference-disclosure__summary {
+  border-radius: var(--pg-radius-md) var(--pg-radius-md) 0 0;
+  border-bottom-color: transparent;
+}
+
+.pg-reference-disclosure__content {
+  border: 1px solid var(--pg-color-border);
+  border-top: none;
+  border-radius: 0 0 var(--pg-radius-md) var(--pg-radius-md);
+  padding: var(--pg-space-sm);
+}
