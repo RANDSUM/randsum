@@ -55,19 +55,28 @@ describe('MODIFIER_DOCS', () => {
       'H',
       'K',
       'KL',
+      'KM',
       '!',
       '!!',
       '!p',
+      '!s{..}',
+      '!i',
+      '!r',
       'U',
       'R{..}',
+      'ro{..}',
       'D{..}',
       'V{..}',
       'S{..}',
+      '#{..}',
+      'F{..}',
       '+',
       '-',
+      'ms{..}',
       '*',
       '**',
-      'C{..}'
+      'C{..}',
+      'W'
     ]
     for (const key of expectedKeys) {
       expect(key in MODIFIER_DOCS).toBe(true)
