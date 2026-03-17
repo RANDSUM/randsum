@@ -134,6 +134,7 @@ export function PlaygroundApp(): React.ReactElement {
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const claimTokenRef = useRef<string | null>(null)
   const pendingNotationRef = useRef<string | null>(null)
+  const creatingRef = useRef(false)
   const stateRef = useRef<PlaygroundState>(buildInitialState(null))
 
   const [state, setState] = useState<PlaygroundState>(() => {
@@ -193,15 +194,20 @@ export function PlaygroundApp(): React.ReactElement {
     pendingNotationRef.current = notation
 
     // No session yet — create one on first non-empty keystroke
-    if (stateRef.current.sessionId === null && notation.length > 0) {
+    // Guard prevents duplicate INSERTs while createSession is in-flight
+    if (stateRef.current.sessionId === null && notation.length > 0 && !creatingRef.current) {
+      creatingRef.current = true
       createSession(notation)
         .then(({ session, claimToken }) => {
+          creatingRef.current = false
           claimTokenRef.current = claimToken
           localStorage.setItem(`pg-claim:${session.id}`, claimToken)
           history.pushState({}, '', buildSessionUrl(session.id))
           setState(s => ({ ...s, sessionId: session.id }))
         })
-        .catch(() => undefined) // Fall back to no-session mode
+        .catch(() => {
+          creatingRef.current = false
+        })
       return
     }
 
