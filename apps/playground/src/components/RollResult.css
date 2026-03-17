@@ -1,0 +1,106 @@
+.pg-roll-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pg-space-md);
+  padding: var(--pg-space-md);
+  background: var(--pg-color-surface);
+  border-radius: var(--pg-radius-md);
+  border: 1px solid var(--pg-color-border);
+}
+
+.pg-grand-total {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--pg-color-total);
+  text-align: center;
+  font-family: var(--pg-font-mono);
+  line-height: 1;
+}
+
+.pg-steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pg-space-sm);
+}
+
+.pg-pool-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pg-space-xs);
+}
+
+.pg-pool-heading {
+  font-family: var(--pg-font-mono);
+  font-size: 0.875rem;
+  color: var(--pg-color-text-muted);
+  margin: 0;
+  padding-bottom: var(--pg-space-xs);
+  border-bottom: 1px solid var(--pg-color-border);
+}
+
+.pg-step-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pg-space-sm);
+  padding: var(--pg-space-xs) 0;
+}
+
+.pg-step-row--final {
+  border-top: 1px solid var(--pg-color-border);
+  padding-top: var(--pg-space-sm);
+  margin-top: var(--pg-space-xs);
+}
+
+.pg-step-label {
+  font-size: 0.8125rem;
+  color: var(--pg-color-text-muted);
+  flex-shrink: 0;
+}
+
+.pg-step-arithmetic {
+  font-family: var(--pg-font-mono);
+  color: var(--pg-color-accent);
+  font-weight: 600;
+}
+
+.pg-step-final-math {
+  font-family: var(--pg-font-mono);
+  color: var(--pg-color-text);
+}
+
+.pg-step-divider {
+  border: none;
+  border-top: 1px solid var(--pg-color-border);
+  margin: var(--pg-space-xs) 0;
+}
+
+.pg-die-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pg-space-xs);
+  align-items: center;
+}
+
+.pg-die-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--pg-radius-sm);
+  font-family: var(--pg-font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--pg-color-surface-alt);
+  color: var(--pg-color-text);
+}
+
+.pg-die-badge--removed {
+  color: var(--pg-color-removed);
+  opacity: 0.7;
+}
+
+.pg-die-badge--added {
+  color: var(--pg-color-added);
+}

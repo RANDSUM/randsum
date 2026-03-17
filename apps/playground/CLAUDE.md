@@ -7,6 +7,7 @@ A single-page interactive app deployed at `playground.randsum.dev`. Users type R
 Private workspace package (`"private": true`). Never published to npm.
 
 Architectural decisions are documented in:
+
 - `docs/adr/ADR-011-playground-layout-design.md` — layout, component tree, interaction model, design tokens
 - `docs/adr/ADR-012-playground-app-infrastructure.md` — Astro config, Netlify deployment, CI scope, workspace integration
 
@@ -25,9 +26,11 @@ bun run typecheck               # TypeScript strict check (tsc --noEmit)
 ```
 
 The `playground:dev` root script runs three processes in parallel:
+
 ```
 bun run --filter @randsum/roller dev & bun run --filter @randsum/display-utils dev & bun run --filter @randsum/playground dev
 ```
+
 Workspace dependencies must be built (or in watch mode) before the Astro dev server starts.
 
 ## File Structure
@@ -96,22 +99,22 @@ PlaygroundPage (Astro, index.astro)
 `PlaygroundApp` owns the complete application state. The shape:
 
 ```typescript
-type ValidationState = 'empty' | 'valid' | 'invalid'
+type ValidationState = "empty" | "valid" | "invalid"
 
 interface PlaygroundState {
   // Input
-  notation: string              // Current value of the text input
+  notation: string // Current value of the text input
   validationState: ValidationState
-  validationResult: ValidationResult | null  // null when notation is empty
+  validationResult: ValidationResult | null // null when notation is empty
 
   // Roll result — null before the first roll or after Escape
   rollResult: RollerRollResult | null
 
   // Reference sidebar
-  selectedEntry: string | null  // Key for any reference entry (modifier, die type, or operator)
-                                   // Modifier keys match MODIFIER_DOCS (e.g. 'L', '!', 'R{..}')
-                                   // Die/operator keys are hardcoded (e.g. 'NdS', 'd%', 'xN')
-                                   // null when no entry is selected
+  selectedEntry: string | null // Key for any reference entry (modifier, die type, or operator)
+  // Modifier keys match MODIFIER_DOCS (e.g. 'L', '!', 'R{..}')
+  // Die/operator keys are hardcoded (e.g. 'NdS', 'd%', 'xN')
+  // null when no entry is selected
 }
 ```
 
@@ -130,6 +133,7 @@ State transitions:
 Root React island. Mounted with `client:load` in `index.astro`.
 
 Responsibilities:
+
 - Owns all `PlaygroundState`
 - Reads initial notation from `?n=` query param on mount
 - Handles keyboard events: `Enter` (roll), `Escape` (clear result)
@@ -144,11 +148,12 @@ No props (reads from URL on mount).
 
 ```typescript
 interface PlaygroundHeaderProps {
-  notation: string  // passed to buildStackBlitzProject for the StackBlitz button
+  notation: string // passed to buildStackBlitzProject for the StackBlitz button
 }
 ```
 
 Renders:
+
 - RANDSUM logo wordmark (SVG or text) linking to `https://randsum.dev`
 - Link to `https://randsum.dev` labeled "docs" or "randsum.dev"
 - StackBlitz button: calls `buildStackBlitzProject(notation)` from `@randsum/display-utils` and opens the project using `@stackblitz/sdk`. Button is disabled when `notation` is empty.
@@ -184,7 +189,7 @@ Layout wrapper. No logic.
 ```typescript
 interface NotationInputProps {
   value: string
-  validationState: ValidationState  // 'empty' | 'valid' | 'invalid'
+  validationState: ValidationState // 'empty' | 'valid' | 'invalid'
   onChange: (notation: string) => void
   onSubmit: () => void
 }
@@ -193,6 +198,7 @@ interface NotationInputProps {
 Renders an `<input type="text">` wrapped in a code-frame affordance that displays `roll('...')`. The input is auto-focused on mount (`autoFocus`).
 
 Validation state maps to input border color:
+
 - `'empty'`: `--pg-color-border` (default)
 - `'valid'`: `--pg-color-accent`
 - `'invalid'`: `--pg-color-error`
@@ -201,16 +207,16 @@ Placeholder text: `4d6L`
 
 The input uses `@randsum/roller`'s `tokenize()` function (from `@randsum/roller/tokenize` subpath — no roll engine imported) to apply syntax highlighting to the typed text. Each `Token` is rendered as a `<span>` with a class derived from its `TokenType`. CSS colors for token types:
 
-| Token category | CSS class | Color token |
-|---|---|---|
-| `core` die (NdS) | `token-core` | `--pg-color-text` |
-| Special die (`percentile`, `fate`, `geometric`, `draw`, `zeroBias`, `customFaces`) | `token-special` | `--pg-color-accent-high` |
-| Drop/keep (`dropLowest`, `dropHighest`, `keepHighest`, `keepLowest`, `keepMiddle`) | `token-pool` | `--pg-color-accent` |
-| Reroll/explode/unique/cap/replace | `token-modifier` | `--pg-color-text-muted` |
-| Arithmetic (`plus`, `minus`, `multiply`, `multiplyTotal`) | `token-arithmetic` | `--pg-color-accent` |
-| `repeat` | `token-repeat` | `--pg-color-text-muted` |
-| `label` | `token-label` | `--pg-color-text-dim` |
-| `unknown` | `token-unknown` | `--pg-color-error` |
+| Token category                                                                     | CSS class          | Color token              |
+| ---------------------------------------------------------------------------------- | ------------------ | ------------------------ |
+| `core` die (NdS)                                                                   | `token-core`       | `--pg-color-text`        |
+| Special die (`percentile`, `fate`, `geometric`, `draw`, `zeroBias`, `customFaces`) | `token-special`    | `--pg-color-accent-high` |
+| Drop/keep (`dropLowest`, `dropHighest`, `keepHighest`, `keepLowest`, `keepMiddle`) | `token-pool`       | `--pg-color-accent`      |
+| Reroll/explode/unique/cap/replace                                                  | `token-modifier`   | `--pg-color-text-muted`  |
+| Arithmetic (`plus`, `minus`, `multiply`, `multiplyTotal`)                          | `token-arithmetic` | `--pg-color-accent`      |
+| `repeat`                                                                           | `token-repeat`     | `--pg-color-text-muted`  |
+| `label`                                                                            | `token-label`      | `--pg-color-text-dim`    |
+| `unknown`                                                                          | `token-unknown`    | `--pg-color-error`       |
 
 The Go button sits inline with the input (right-aligned). Its `type="submit"` triggers `onSubmit`. It is disabled when `validationState !== 'valid'`. Disabled style uses `--pg-color-border`. Active style uses `--pg-color-accent`.
 
@@ -232,6 +238,7 @@ interface NotationDescriptionProps {
 Renders the human-readable description of the current notation. The description text comes from `validationResult.description` when `validationResult.valid === true`. When `validationResult.valid === false`, renders the `validationResult.error.message` in `--pg-color-error`. When `validationResult` is null (empty input), renders nothing but preserves layout height to prevent content shift.
 
 `ValidationResult` is a discriminated union on `valid: boolean`:
+
 - `{ valid: true; description: string[][]; ... }` — `description` is an array of arrays; join each inner array with `', '` and the outer array with `' + '` for display
 - `{ valid: false; error: { message: string; argument: string } }` — display `error.message`
 
@@ -249,12 +256,12 @@ Pure display component. Renders nothing if the component is not mounted (caller 
 
 For each `RollRecord` in `result.rolls`, calls `computeSteps(record)` from `@randsum/display-utils` to get an ordered `readonly TooltipStep[]`. Renders each step:
 
-| `TooltipStep` kind | Rendering |
-|---|---|
-| `'rolls'` | Row: label on left, die badges on right. Badges: unchanged in `--pg-color-text`, removed in `--pg-color-removed` with strikethrough, added in `--pg-color-added` |
-| `'arithmetic'` | Row: `label` on left, `display` (`+5`, `×2`, etc.) on right in `--pg-color-accent` |
-| `'divider'` | `<hr>` separator |
-| `'finalRolls'` | Row: "Final" label, die badges, then `formatAsMath(rolls, arithmeticDelta)` from `@randsum/display-utils` |
+| `TooltipStep` kind | Rendering                                                                                                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'rolls'`          | Row: label on left, die badges on right. Badges: unchanged in `--pg-color-text`, removed in `--pg-color-removed` with strikethrough, added in `--pg-color-added` |
+| `'arithmetic'`     | Row: `label` on left, `display` (`+5`, `×2`, etc.) on right in `--pg-color-accent`                                                                               |
+| `'divider'`        | `<hr>` separator                                                                                                                                                 |
+| `'finalRolls'`     | Row: "Final" label, die badges, then `formatAsMath(rolls, arithmeticDelta)` from `@randsum/display-utils`                                                        |
 
 The grand total (`result.total`) is displayed as a large number in `--pg-color-total` above the step breakdown.
 
@@ -290,24 +297,24 @@ Renders a two-column grid covering the **complete** RANDSUM dice notation — no
 
 **1. Core Dice**
 
-| Notation | Description |
-|----------|-------------|
-| `NdS` | Roll N dice with S sides |
-| `d%` | Percentile die (1-100) |
-| `dF` / `dF.2` | Fate / Extended Fudge die |
-| `gN` | Geometric die (roll until 1) |
-| `DDN` | Draw die (no replacement) |
-| `zN` | Zero-bias die (0 to N-1) |
-| `d{a,b,c}` | Custom faces die |
+| Notation      | Description                  |
+| ------------- | ---------------------------- |
+| `NdS`         | Roll N dice with S sides     |
+| `d%`          | Percentile die (1-100)       |
+| `dF` / `dF.2` | Fate / Extended Fudge die    |
+| `gN`          | Geometric die (roll until 1) |
+| `DDN`         | Draw die (no replacement)    |
+| `zN`          | Zero-bias die (0 to N-1)     |
+| `d{a,b,c}`    | Custom faces die             |
 
 **2. Modifiers** — rendered from `MODIFIER_DOCS` (`@randsum/display-utils`). Each entry shows `doc.displayBase` in the left column and `doc.title` in the right. This covers all 19+ modifiers: drop, keep, cap, reroll, replace, explode, compound, penetrate, unique, wild die, count successes, count failures, plus, minus, multiply, multiply total, integer divide, modulo, sort.
 
 **3. Operators**
 
-| Notation | Description |
-|----------|-------------|
-| `xN` | Repeat operator (roll N times) |
-| `[text]` | Annotation / label |
+| Notation | Description                    |
+| -------- | ------------------------------ |
+| `xN`     | Repeat operator (roll N times) |
+| `[text]` | Annotation / label             |
 
 The core dice and operators sections are hardcoded in the component (not from `MODIFIER_DOCS`). Modifier entries come from `MODIFIER_DOCS`.
 
@@ -321,12 +328,13 @@ On desktop: two-column table layout. Below 480px: single-column list.
 
 ```typescript
 interface ReferenceDetailProps {
-  modifierKey: string          // Key into MODIFIER_DOCS
-  doc: ModifierDoc             // Pre-looked-up doc entry
+  modifierKey: string // Key into MODIFIER_DOCS
+  doc: ModifierDoc // Pre-looked-up doc entry
 }
 ```
 
 Renders full documentation for the selected modifier using `ModifierDoc` fields:
+
 - `doc.title` — heading
 - `doc.description` — prose description
 - `doc.forms` — table of notation variants and their notes
@@ -354,6 +362,7 @@ The single supported query parameter is `?n=` (notation).
 ## Interaction Model
 
 **Type.** Input is auto-focused on load. As the user types:
+
 1. `PlaygroundApp.onChange` fires
 2. `validateNotation(notation)` runs synchronously
 3. `validationState` and `validationResult` update
@@ -361,6 +370,7 @@ The single supported query parameter is `?n=` (notation).
 5. `NotationDescription` updates with the new description or error
 
 **Roll.** Triggered by pressing `Enter` (when `validationState === 'valid'`) or clicking the Go button:
+
 1. `PlaygroundApp.onSubmit` fires
 2. `roll(notation)` is called inside a try/catch
 3. On success: `rollResult` is set; URL is updated via `history.replaceState`
@@ -370,6 +380,7 @@ The single supported query parameter is `?n=` (notation).
 **Explore.** After a roll, the result panel replaces any previous result. The user can type new notation immediately; the result panel stays visible until the notation changes to invalid or Escape is pressed.
 
 **Keyboard shortcuts:**
+
 - `Enter` — roll (guard: `validationState === 'valid'`)
 - `Escape` — set `rollResult = null`; return focus to input
 - `Tab` — standard focus order: input, Go button, reference panel entries, StackBlitz button
@@ -392,7 +403,7 @@ Defined in `src/styles/tokens.css`. All custom properties use the `--pg-` prefix
 :root {
   /* Typography */
   --pg-font-body: ui-sans-serif, system-ui, sans-serif;
-  --pg-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --pg-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   /* Scale — dark mode defaults */
   --pg-color-bg: #020617;
@@ -475,16 +486,19 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 ### What is imported from each package
 
 **`@randsum/roller`** (main barrel):
+
 - `roll` — executes dice rolls
 - `validateNotation` — live input validation; returns `ValidationResult`
 - `ValidationResult`, `ValidValidationResult`, `InvalidValidationResult` — types for validation state
 - `RollerRollResult`, `RollRecord` — types for roll output
 
 **`@randsum/roller/tokenize`** (isolated subpath — no roll engine):
+
 - `tokenize` — converts notation string to `readonly Token[]` for syntax highlighting in `NotationInput`
 - `Token`, `TokenType` — types for token rendering
 
 **`@randsum/display-utils`**:
+
 - `computeSteps` — converts a `RollRecord` to `readonly TooltipStep[]` for step visualization
 - `formatAsMath` — formats number arrays as math expression strings
 - `TooltipStep` — type for step rendering
@@ -494,11 +508,13 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 - `StackBlitzProject` — type for StackBlitz integration
 
 **`@stackblitz/sdk`**:
+
 - Used in `PlaygroundHeader` only; call `sdk.openProject(buildStackBlitzProject(notation))`
 
 ## Astro Configuration
 
 `astro.config.mjs` key settings:
+
 - `output: 'static'` — static site generation
 - Integrations: `@astrojs/react()`, `@astrojs/netlify()` (production only)
 - `site: 'https://playground.randsum.dev'`
@@ -507,6 +523,7 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 ## Netlify Deployment
 
 `netlify.toml`:
+
 ```toml
 [build]
   base = "."
