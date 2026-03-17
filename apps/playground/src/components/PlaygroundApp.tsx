@@ -284,6 +284,17 @@ export function PlaygroundApp(): React.ReactElement {
     }))
   }, [])
 
+  const [shareCopied, setShareCopied] = useState(false)
+
+  const handleShare = useCallback(() => {
+    void navigator.clipboard.writeText(window.location.href).then(() => {
+      setShareCopied(true)
+      setTimeout(() => {
+        setShareCopied(false)
+      }, 2000)
+    })
+  }, [])
+
   const handleFork = useCallback(() => {
     const notation = stateRef.current.notation
     void forkSession(notation)
@@ -385,6 +396,8 @@ export function PlaygroundApp(): React.ReactElement {
           onSubmit={handleSubmit}
           readOnly={state.readOnly}
           onFork={handleFork}
+          onShare={handleShare}
+          shareCopied={shareCopied}
           sessionId={state.sessionId}
         />
         {state.loading && (

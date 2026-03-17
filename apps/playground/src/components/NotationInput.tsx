@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useState } from 'react'
+import React, { forwardRef, useCallback } from 'react'
 import type { Token } from '@randsum/roller/tokenize'
 import type { ValidationState } from './PlaygroundApp'
 import { validationStateToBorderColor } from './notationInputUtils'
@@ -16,6 +16,8 @@ interface NotationInputProps {
   readonly onSubmit: () => void
   readonly readOnly: boolean
   readonly onFork: () => void
+  readonly onShare: () => void
+  readonly shareCopied: boolean
   readonly sessionId: string | null
 }
 
@@ -31,11 +33,12 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
       onSubmit,
       readOnly,
       onFork,
+      onShare,
+      shareCopied,
       sessionId
     },
     ref
   ): React.ReactElement => {
-    const [shareCopied, setShareCopied] = useState(false)
     const borderColor = validationStateToBorderColor(validationState)
     const isValid = validationState === 'valid'
     const inputRef = ref as React.RefObject<HTMLInputElement> | null
@@ -57,15 +60,6 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
     const handleMouseLeave = useCallback(() => {
       onHoverToken(null)
     }, [onHoverToken])
-
-    const handleShare = useCallback(() => {
-      void navigator.clipboard.writeText(window.location.href).then(() => {
-        setShareCopied(true)
-        setTimeout(() => {
-          setShareCopied(false)
-        }, 2000)
-      })
-    }, [])
 
     return (
       <div
@@ -132,7 +126,7 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
           <button
             type="button"
             className={`notation-input-share${shareCopied ? ' notation-input-share--copied' : ''}`}
-            onClick={handleShare}
+            onClick={onShare}
             aria-label="Copy share link"
           >
             {shareCopied ? 'Copied!' : 'Share'}
