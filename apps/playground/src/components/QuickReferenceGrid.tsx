@@ -11,22 +11,36 @@ interface ReferenceEntry {
   readonly description: string
 }
 
-const CORE_DICE_ENTRIES: readonly ReferenceEntry[] = [
+// ---- Sections matching the notation spec taxonomy ----
+
+const DICE_TYPES: readonly ReferenceEntry[] = [
   { key: 'NdS', notation: 'NdS', description: 'Roll N dice with S sides' },
-  { key: 'd%', notation: 'd%', description: 'Percentile die (1-100)' },
-  { key: 'dF', notation: 'dF / dF.2', description: 'Fate / Extended Fudge die' },
-  { key: 'gN', notation: 'gN', description: 'Geometric die (roll until 1)' },
-  { key: 'DDN', notation: 'DDN', description: 'Draw die (no replacement)' },
-  { key: 'zN', notation: 'zN', description: 'Zero-bias die (0 to N-1)' },
-  { key: 'd{...}', notation: 'd{a,b,c}', description: 'Custom faces die' }
+  { key: 'd%', notation: 'd%', description: 'Percentile (1d100)' },
+  { key: 'dF', notation: 'dF / dF.2', description: 'Fate / Fudge die' },
+  { key: 'gN', notation: 'gN', description: 'Geometric (roll until 1)' },
+  { key: 'DDN', notation: 'DDN', description: 'Draw (no replacement)' },
+  { key: 'zN', notation: 'zN', description: 'Zero-bias (0 to N-1)' },
+  { key: 'd{...}', notation: 'd{a,b,c}', description: 'Custom faces' }
 ]
 
-const OPERATOR_ENTRIES: readonly ReferenceEntry[] = [
-  { key: 'xN', notation: 'xN', description: 'Repeat (roll N times)' },
-  { key: '[text]', notation: '[text]', description: 'Annotation / label' }
+const VALUE_MODIFIERS: readonly string[] = ['C{..}', 'V{..}']
+
+const POOL_MODIFIERS: readonly string[] = ['L', 'H', 'D{..}', 'K', 'KL', 'R{..}', 'U']
+
+const EXPLOSION_FAMILY: readonly string[] = ['!', '!!', '!p']
+
+const TOTAL_MODIFIERS: readonly string[] = ['*', '+', '-', '//', '%', '**']
+
+const COUNTING_MODIFIERS: readonly string[] = ['S{..}']
+
+const DISPLAY_META: readonly ReferenceEntry[] = [
+  { key: 'sa/sd', notation: 'sa / sd', description: 'Sort ascending / descending' },
+  { key: '[text]', notation: '[text]', description: 'Annotation / label' },
+  { key: 'xN', notation: 'xN', description: 'Repeat N times' }
 ]
 
-// Scoped responsive styles — class names are local to QuickReferenceGrid
+// ---- Styles ----
+
 const RESPONSIVE_STYLES = `
   .qrg-entry-row {
     display: grid;
@@ -51,7 +65,7 @@ const RESPONSIVE_STYLES = `
 `
 
 const sectionHeaderStyle: React.CSSProperties = {
-  padding: 'var(--pg-space-xs) var(--pg-space-sm)',
+  padding: '2px var(--pg-space-sm)',
   paddingTop: 'var(--pg-space-sm)',
   fontSize: '0.7rem',
   fontFamily: 'var(--pg-font-body)',
@@ -74,12 +88,15 @@ const descriptionCellStyle: React.CSSProperties = {
   color: 'var(--pg-color-text-muted)'
 }
 
-interface SectionProps {
+// ---- Sub-components ----
+
+function Section({
+  label,
+  children
+}: {
   readonly label: string
   readonly children: React.ReactNode
-}
-
-function Section({ label, children }: SectionProps): React.ReactElement {
+}): React.ReactElement {
   return (
     <div>
       <div style={sectionHeaderStyle}>{label}</div>
@@ -88,21 +105,19 @@ function Section({ label, children }: SectionProps): React.ReactElement {
   )
 }
 
-interface EntryRowProps {
-  readonly entryKey: string
-  readonly notation: string
-  readonly description: string
-  readonly isSelected: boolean
-  readonly onSelect: (key: string) => void
-}
-
 function EntryRow({
   entryKey,
   notation,
   description,
   isSelected,
   onSelect
-}: EntryRowProps): React.ReactElement {
+}: {
+  readonly entryKey: string
+  readonly notation: string
+  readonly description: string
+  readonly isSelected: boolean
+  readonly onSelect: (key: string) => void
+}): React.ReactElement {
   const selectedStyle: React.CSSProperties = isSelected
     ? { backgroundColor: 'var(--pg-color-surface-alt)' }
     : {}
@@ -131,20 +146,43 @@ function EntryRow({
   )
 }
 
+function ModifierEntries({
+  keys,
+  selectedEntry,
+  onSelect
+}: {
+  readonly keys: readonly string[]
+  readonly selectedEntry: string | null
+  readonly onSelect: (key: string) => void
+}): React.ReactElement {
+  return (
+    <>
+      {keys.map(key => (
+        <EntryRow
+          key={key}
+          entryKey={key}
+          notation={MODIFIER_DOCS[key].displayBase}
+          description={MODIFIER_DOCS[key].title}
+          isSelected={selectedEntry === key}
+          onSelect={onSelect}
+        />
+      ))}
+    </>
+  )
+}
+
+// ---- Main component ----
+
 export function QuickReferenceGrid({
   selectedEntry,
   onSelect
 }: QuickReferenceGridProps): React.ReactElement {
   return (
-    <div
-      style={{
-        fontFamily: 'var(--pg-font-body)'
-      }}
-    >
+    <div style={{ fontFamily: 'var(--pg-font-body)' }}>
       <style>{RESPONSIVE_STYLES}</style>
 
-      <Section label="Core Dice">
-        {CORE_DICE_ENTRIES.map(entry => (
+      <Section label="Dice Types">
+        {DICE_TYPES.map(entry => (
           <EntryRow
             key={entry.key}
             entryKey={entry.key}
@@ -156,21 +194,36 @@ export function QuickReferenceGrid({
         ))}
       </Section>
 
-      <Section label="Modifiers">
-        {Object.entries(MODIFIER_DOCS).map(([key, doc]) => (
-          <EntryRow
-            key={key}
-            entryKey={key}
-            notation={doc.displayBase}
-            description={doc.title}
-            isSelected={selectedEntry === key}
-            onSelect={onSelect}
-          />
-        ))}
+      <Section label="Value Modifiers">
+        <ModifierEntries keys={VALUE_MODIFIERS} selectedEntry={selectedEntry} onSelect={onSelect} />
       </Section>
 
-      <Section label="Operators">
-        {OPERATOR_ENTRIES.map(entry => (
+      <Section label="Pool Modifiers">
+        <ModifierEntries keys={POOL_MODIFIERS} selectedEntry={selectedEntry} onSelect={onSelect} />
+      </Section>
+
+      <Section label="Explosion">
+        <ModifierEntries
+          keys={EXPLOSION_FAMILY}
+          selectedEntry={selectedEntry}
+          onSelect={onSelect}
+        />
+      </Section>
+
+      <Section label="Arithmetic">
+        <ModifierEntries keys={TOTAL_MODIFIERS} selectedEntry={selectedEntry} onSelect={onSelect} />
+      </Section>
+
+      <Section label="Counting">
+        <ModifierEntries
+          keys={COUNTING_MODIFIERS}
+          selectedEntry={selectedEntry}
+          onSelect={onSelect}
+        />
+      </Section>
+
+      <Section label="Display &amp; Meta">
+        {DISPLAY_META.map(entry => (
           <EntryRow
             key={entry.key}
             entryKey={entry.key}
