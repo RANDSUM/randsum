@@ -24,6 +24,7 @@ export type TokenType =
   | 'unique' // U, U{...}
   | 'count' // #{...}
   | 'countSuccesses' // S{...}
+  | 'countFailures' // F{...}
   | 'plus' // +N
   | 'minus' // -N
   | 'marginOfSuccess' // ms{N}
@@ -123,6 +124,7 @@ const MODIFIERS: readonly ModifierEntry[] = [
   // Margin of success — must come before countSuccesses and sort
   { type: 'marginOfSuccess', pattern: /^[Mm][Ss]\{\d+\}/ },
   { type: 'countSuccesses', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
+  { type: 'countFailures', pattern: /^[Ff]\{\d+\}/ },
   // Sort — must come after countSuccesses (S{N}) to avoid conflicts
   { type: 'sort', pattern: /^[Ss](?:[Aa]|[Dd])?(?![{\d])/ },
   // Arithmetic — only meaningful after a core token

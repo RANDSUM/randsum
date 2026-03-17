@@ -1,0 +1,9 @@
+.pg-reference-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pg-space-md);
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  max-height: 100vh;
+}

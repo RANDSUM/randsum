@@ -411,4 +411,86 @@ describe('tokenize', () => {
       expect(msToken?.text).toBe('ms{15}')
     })
   })
+
+  // ── Missing Notation Coverage ────────────────────────────────────────
+
+  describe('missing notation coverage', () => {
+    test('tokenizes F{3} as countFailures', () => {
+      const tokens = tokenize('5d10F{3}')
+      const fToken = tokens.find(t => t.type === 'countFailures')
+      expect(fToken).toBeDefined()
+      expect(fToken?.text).toBe('F{3}')
+      expect(fToken?.type).not.toBe('unknown')
+    })
+
+    test('tokenizes lowercase f{5} as countFailures', () => {
+      const tokens = tokenize('5d10f{5}')
+      const fToken = tokens.find(t => t.type === 'countFailures')
+      expect(fToken).toBeDefined()
+      expect(fToken?.text).toBe('f{5}')
+    })
+
+    test('tokenizes #{>=7} as count', () => {
+      const tokens = tokenize('5d10#{>=7}')
+      const countToken = tokens.find(t => t.type === 'count')
+      expect(countToken).toBeDefined()
+      expect(countToken?.text).toBe('#{>=7}')
+    })
+
+    test('tokenizes KM as keepMiddle', () => {
+      const tokens = tokenize('6d6KM')
+      const kmToken = tokens.find(t => t.type === 'keepMiddle')
+      expect(kmToken).toBeDefined()
+      expect(kmToken?.text).toBe('KM')
+    })
+
+    test('tokenizes KM3 as keepMiddle', () => {
+      const tokens = tokenize('6d6KM3')
+      const kmToken = tokens.find(t => t.type === 'keepMiddle')
+      expect(kmToken).toBeDefined()
+      expect(kmToken?.text).toBe('KM3')
+    })
+
+    test('tokenizes ro{1} as reroll', () => {
+      const tokens = tokenize('4d6ro{1}')
+      const roToken = tokens.find(t => t.type === 'reroll')
+      expect(roToken).toBeDefined()
+      expect(roToken?.text).toBe('ro{1}')
+    })
+
+    test('tokenizes !s{4,6,8} as explodeSequence', () => {
+      const tokens = tokenize('2d6!s{4,6,8}')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!s{4,6,8}')
+    })
+
+    test('tokenizes !i as explodeSequence', () => {
+      const tokens = tokenize('2d6!i')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!i')
+    })
+
+    test('tokenizes !r as explodeSequence', () => {
+      const tokens = tokenize('2d6!r')
+      const esToken = tokens.find(t => t.type === 'explodeSequence')
+      expect(esToken).toBeDefined()
+      expect(esToken?.text).toBe('!r')
+    })
+
+    test('tokenizes ms{15} as marginOfSuccess', () => {
+      const tokens = tokenize('1d20ms{15}')
+      const msToken = tokens.find(t => t.type === 'marginOfSuccess')
+      expect(msToken).toBeDefined()
+      expect(msToken?.text).toBe('ms{15}')
+    })
+
+    test('tokenizes W as wildDie', () => {
+      const tokens = tokenize('5d6W')
+      const wToken = tokens.find(t => t.type === 'wildDie')
+      expect(wToken).toBeDefined()
+      expect(wToken?.text).toBe('W')
+    })
+  })
 })
