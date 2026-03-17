@@ -2,13 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { roll, validateNotation } from '@randsum/roller'
 import type { DiceNotation, RollerRollResult, ValidationResult } from '@randsum/roller'
 import { PlaygroundHeader } from './PlaygroundHeader'
-import { PlaygroundLayout } from './PlaygroundLayout'
-import { MainColumn } from './MainColumn'
 import { NotationInput } from './NotationInput'
 import { NotationDescription } from './NotationDescription'
 import { RollResult } from './RollResult'
-import { ReferenceSidebar } from './ReferenceSidebar'
-import { ReferenceDisclosure } from './ReferenceDisclosure'
+import { QuickReferenceGrid } from './QuickReferenceGrid'
 
 // ---- Types (exported for testing) ----
 
@@ -170,27 +167,39 @@ export function PlaygroundApp(): React.ReactElement {
     >
       <PlaygroundHeader notation={state.notation} />
 
-      <PlaygroundLayout>
-        <MainColumn>
-          <NotationInput
-            value={state.notation}
-            validationState={state.validationState}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-          />
-          <NotationDescription validationResult={state.validationResult} />
-          {state.rollResult !== null && <RollResult result={state.rollResult} />}
-        </MainColumn>
+      <div
+        style={{
+          maxWidth: '52rem',
+          width: '100%',
+          margin: '0 auto',
+          padding: 'var(--pg-space-md) var(--pg-space-lg)'
+        }}
+      >
+        <NotationInput
+          value={state.notation}
+          validationState={state.validationState}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+        />
+        <NotationDescription validationResult={state.validationResult} />
+        {state.rollResult !== null && <RollResult result={state.rollResult} />}
 
-        <div className="pg-desktop-only">
-          <ReferenceSidebar selectedEntry={state.selectedEntry} onSelect={handleSelect} />
+        <div style={{ marginTop: 'var(--pg-space-lg)' }}>
+          <h3
+            style={{
+              fontSize: '0.85rem',
+              fontFamily: 'var(--pg-font-body)',
+              fontWeight: 600,
+              color: 'var(--pg-color-text-muted)',
+              margin: '0 0 var(--pg-space-sm)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}
+          >
+            Notation quick reference
+          </h3>
+          <QuickReferenceGrid selectedEntry={state.selectedEntry} onSelect={handleSelect} />
         </div>
-      </PlaygroundLayout>
-
-      <div className="pg-mobile-only">
-        <ReferenceDisclosure>
-          <ReferenceSidebar selectedEntry={state.selectedEntry} onSelect={handleSelect} />
-        </ReferenceDisclosure>
       </div>
     </div>
   )

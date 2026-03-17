@@ -30,15 +30,15 @@ const OPERATOR_ENTRIES: readonly ReferenceEntry[] = [
 const RESPONSIVE_STYLES = `
   .qrg-entry-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--pg-space-sm);
-    padding: var(--pg-space-xs) var(--pg-space-sm);
+    grid-template-columns: minmax(80px, auto) 1fr;
+    gap: var(--pg-space-xs);
+    padding: 2px var(--pg-space-sm);
     cursor: pointer;
-    border-bottom: 1px solid var(--pg-color-border);
-    align-items: center;
+    align-items: baseline;
+    line-height: 1.4;
   }
-  .qrg-entry-row:last-child {
-    border-bottom: none;
+  .qrg-entry-row:hover {
+    background-color: var(--pg-color-surface-alt);
   }
   @media (max-width: 480px) {
     .qrg-entry-row {
@@ -52,32 +52,26 @@ const RESPONSIVE_STYLES = `
 
 const sectionHeaderStyle: React.CSSProperties = {
   padding: 'var(--pg-space-xs) var(--pg-space-sm)',
+  paddingTop: 'var(--pg-space-sm)',
   fontSize: '0.7rem',
-  fontFamily: 'var(--pg-font-mono)',
-  letterSpacing: '0.08em',
+  fontFamily: 'var(--pg-font-body)',
+  fontWeight: 600,
+  letterSpacing: '0.06em',
   textTransform: 'uppercase',
   color: 'var(--pg-color-text-dim)',
-  backgroundColor: 'var(--pg-color-surface)',
-  borderBottom: '1px solid var(--pg-color-border)',
   cursor: 'default',
   userSelect: 'none'
 }
 
 const notationCellStyle: React.CSSProperties = {
   fontFamily: 'var(--pg-font-mono)',
-  fontSize: '0.8rem',
-  color: 'var(--pg-color-accent-high)',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap'
+  fontSize: '0.78rem',
+  color: 'var(--pg-color-accent-high)'
 }
 
 const descriptionCellStyle: React.CSSProperties = {
-  fontSize: '0.8rem',
-  color: 'var(--pg-color-text-muted)',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap'
+  fontSize: '0.78rem',
+  color: 'var(--pg-color-text-muted)'
 }
 
 interface SectionProps {
@@ -144,11 +138,7 @@ export function QuickReferenceGrid({
   return (
     <div
       style={{
-        fontFamily: 'var(--pg-font-body)',
-        border: '1px solid var(--pg-color-border)',
-        borderRadius: 'var(--pg-radius-md)',
-        overflow: 'hidden',
-        backgroundColor: 'var(--pg-color-surface)'
+        fontFamily: 'var(--pg-font-body)'
       }}
     >
       <style>{RESPONSIVE_STYLES}</style>
