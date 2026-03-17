@@ -59,6 +59,8 @@
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/component-library dev & bun run --filter @randsum/site dev",
+    "playground:build": "bun run --filter @randsum/playground build",
+    "playground:dev": "bun run --filter @randsum/roller dev & bun run --filter @randsum/display-utils dev & bun run --filter @randsum/playground dev",
     "stories": "bun run --filter @randsum/component-library ladle",
     "discord:dev": "cd apps/discord-bot && bun run dev",
     "discord:deploy": "cd apps/discord-bot && bun run deploy-commands",
