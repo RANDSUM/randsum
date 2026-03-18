@@ -1,6 +1,2 @@
 export { NotationRoller } from './components/NotationRoller'
-export { RollerPlayground } from './components/RollerPlayground'
-export { ModifierReference } from './components/ModifierReference'
-export type { ModifierReferenceCell } from './components/ModifierReference'
-export { Overlay } from './components/Overlay'
 export { ErrorBoundary } from './components/ErrorBoundary'
