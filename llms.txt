@@ -4,8 +4,7 @@
 
 ## Packages
 
-- @randsum/notation - Dice notation parser and type foundation
-- @randsum/roller - Core dice engine
+- @randsum/roller - Core dice engine with built-in notation parser
 - @randsum/games - Unified game package with subpath exports:
   - @randsum/games/fifth - D&D 5th Edition
   - @randsum/games/blades - Blades in the Dark

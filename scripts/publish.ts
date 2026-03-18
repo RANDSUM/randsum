@@ -23,7 +23,6 @@ const ROOT = join(import.meta.dir, '..')
  * packages can resolve their dependencies on the registry.
  */
 const PUBLISH_ORDER: readonly string[] = [
-  'packages/notation',
   'packages/roller',
   'packages/games',
   'packages/component-library',

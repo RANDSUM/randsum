@@ -75,7 +75,7 @@ All publishable packages produce ESM only:
 - `dist/index.d.ts` (TypeScript declarations)
 - Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`
 - No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
-- Bundle size limits enforced: roller 20KB (includes notation), display-utils 20KB, game packages 8KB, salvageunion 300KB
+- Bundle size limits enforced: roller 20KB (includes notation), game packages 10KB, salvageunion 100KB
 
 CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
 
@@ -138,7 +138,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 - `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
 - `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
 
-**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. Check with `bun run size` or per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 8KB, salvageunion: 300KB).
+**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. Check with `bun run size` or per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 10KB, salvageunion: 100KB).
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 
