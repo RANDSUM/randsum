@@ -49,19 +49,17 @@
 /* ===== Main content row ===== */
 .notation-roller-row {
   position: relative;
-  display: flex;
-  align-items: flex-start;
   min-height: 3rem;
 }
 
 /* ===== Input wrap (holds the textarea and overlay) ===== */
 .notation-roller-input-wrap {
-  flex: 1;
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   min-width: 0;
-  padding: 0.5rem 0.25rem 0.5rem 0.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   overflow: hidden;
   position: relative;
 }
@@ -93,6 +91,14 @@
   word-break: break-all;
   white-space: pre-wrap;
   overflow: hidden;
+}
+
+/* First-line spacer matches textarea text-indent so overlay tokens align */
+.nr-first-line-spacer {
+  display: inline-block;
+  width: 4rem;
+  height: 0;
+  flex-shrink: 0;
 }
 
 /* ===== Token spans ===== */
@@ -538,6 +544,7 @@
 /* ===== Textarea input ===== */
 .notation-roller-input {
   padding: 0;
+  text-indent: 4rem;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 1.25rem;
   line-height: 1.4;
@@ -573,11 +580,13 @@
 
 /* ===== Buttons area (top-right) ===== */
 .notation-roller-buttons {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
   display: flex;
   align-items: flex-start;
   gap: 0.25rem;
-  padding: 0.5rem 0.5rem 0.5rem 0;
-  flex-shrink: 0;
+  z-index: 2;
 }
 
 /* ===== Roll button ===== */

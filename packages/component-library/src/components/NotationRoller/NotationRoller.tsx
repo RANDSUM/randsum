@@ -107,6 +107,7 @@ export function NotationRoller({
               <div className="nr-input-wrap">
                 {tokens.length > 0 && (
                   <div className="nr-notation-overlay" aria-hidden="true">
+                    <span className="nr-first-line-spacer" />
                     {tokens.map((token, i) => (
                       <span
                         key={i}
