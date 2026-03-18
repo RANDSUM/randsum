@@ -118,7 +118,7 @@ export function NotationRoller({
         <div className={`notation-roller-shell notation-roller-shell--${shellVariant}`}>
           <div className="notation-roller-row">
             <div className="notation-roller-input-wrap">
-              <div className={`nr-input-wrap${resultState ? ' nr-input-wrap--blurred' : ''}`}>
+              <div className="nr-input-wrap">
                 {tokens.length > 0 && (
                   <div className="nr-notation-overlay" aria-hidden="true">
                     {tokens.map((token, i) => (
@@ -167,23 +167,6 @@ export function NotationRoller({
                   autoComplete="off"
                   aria-label="Dice notation"
                 />
-                {resultState && (
-                  <div ref={tooltipRef} className="notation-roller-result-overlay">
-                    <div className="nr-tooltip-total-pane">
-                      <div className="nr-tooltip-total-value">{resultState.total}</div>
-                    </div>
-                    <div className="nr-tooltip-right">
-                      <div className="nr-tooltip-header-line">
-                        <span className="nr-tooltip-notation">{notation}</span>
-                        <span className="nr-tooltip-sep">|</span>
-                        <span className="nr-tooltip-desc">
-                          {resultState.records.map(r => r.description.join(', ')).join(' + ')}
-                        </span>
-                      </div>
-                      <RollResult records={resultState.records} total={resultState.total} />
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -250,6 +233,51 @@ export function NotationRoller({
               </span>
             )}
           </div>
+          {resultState && (
+            <>
+              {/* Invisible spacer — in normal flow to grow the shell */}
+              <div className="nr-result-spacer" aria-hidden="true">
+                <div className="nr-tooltip-total-pane">
+                  <div className="nr-tooltip-total-value">{resultState.total}</div>
+                </div>
+                <div className="nr-tooltip-right">
+                  <div className="nr-tooltip-header-line">
+                    <span className="nr-tooltip-notation">{notation}</span>
+                    <span className="nr-tooltip-sep">|</span>
+                    <span className="nr-tooltip-desc">
+                      {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                    </span>
+                  </div>
+                  <RollResult records={resultState.records} total={resultState.total} />
+                </div>
+              </div>
+              {/* Visible overlay — absolute positioned on top */}
+              <div ref={tooltipRef} className="notation-roller-result-overlay">
+                <button
+                  className="nr-tooltip-close"
+                  onClick={() => {
+                    setState({ status: 'idle' })
+                  }}
+                  aria-label="Close result"
+                >
+                  &times;
+                </button>
+                <div className="nr-tooltip-total-pane">
+                  <div className="nr-tooltip-total-value">{resultState.total}</div>
+                </div>
+                <div className="nr-tooltip-right">
+                  <div className="nr-tooltip-header-line">
+                    <span className="nr-tooltip-notation">{notation}</span>
+                    <span className="nr-tooltip-sep">|</span>
+                    <span className="nr-tooltip-desc">
+                      {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                    </span>
+                  </div>
+                  <RollResult records={resultState.records} total={resultState.total} />
+                </div>
+              </div>
+            </>
+          )}
           {notation.length > 0 && (
             <a
               className="notation-roller-playground-btn"
