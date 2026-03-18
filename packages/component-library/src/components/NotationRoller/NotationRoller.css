@@ -49,19 +49,17 @@
 /* ===== Main content row ===== */
 .notation-roller-row {
   position: relative;
-  display: flex;
-  align-items: flex-start;
   min-height: 3rem;
 }
 
 /* ===== Input wrap (holds the textarea and overlay) ===== */
 .notation-roller-input-wrap {
-  flex: 1;
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   min-width: 0;
-  padding: 0.5rem 0.25rem 0.5rem 0.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   overflow: hidden;
   position: relative;
 }
@@ -573,11 +571,13 @@
 
 /* ===== Buttons area (top-right) ===== */
 .notation-roller-buttons {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
   display: flex;
   align-items: flex-start;
   gap: 0.25rem;
-  padding: 0.5rem 0.5rem 0.5rem 0;
-  flex-shrink: 0;
+  z-index: 2;
 }
 
 /* ===== Roll button ===== */
