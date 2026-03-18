@@ -324,15 +324,13 @@ export function HeroRollerPlayground(): React.JSX.Element {
       setSelectedChip(null)
       if (timerRef.current) clearTimeout(timerRef.current)
 
-      const finalNotation =
-        HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1] ?? HERO_NOTATIONS[0] ?? ''
+      const pickNotation = (): string => HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1] ?? ''
+      const finalNotation = pickNotation()
       const stepRef = { current: 0 }
 
       const tick = (): void => {
         if (stepRef.current < SLOT_INTERVALS.length - 1) {
-          setNotation(
-            HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1] ?? HERO_NOTATIONS[0] ?? ''
-          )
+          setNotation(pickNotation())
           stepRef.current++
           timerRef.current = setTimeout(tick, SLOT_INTERVALS[stepRef.current])
         } else {

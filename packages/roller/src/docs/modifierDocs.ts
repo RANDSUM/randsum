@@ -9,6 +9,7 @@ export interface NotationDoc {
   readonly displayBase: string
   readonly displayOptional?: string
   readonly color: string
+  readonly colorLight: string
   readonly forms: readonly {
     readonly notation: string
     readonly note: string

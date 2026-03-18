@@ -59,6 +59,7 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
         key: 'C{..}',
         category: 'Pool',
         color: '#67e8f9',
+        colorLight: '#0891b2',
         title: 'Cap',
         description:
           'Clamp individual die values to a range \u2014 dice outside the boundary are moved to it.',

@@ -37,6 +37,7 @@ export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<So
       key: 'sort',
       category: 'Order',
       color: '#94a3b8',
+      colorLight: '#475569',
       title: 'Sort',
       description:
         'Sort the dice pool in ascending or descending order. Does not affect the total \u2014 only the presentation order of dice.',

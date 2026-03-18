@@ -30,6 +30,7 @@ export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<
       key: '//',
       category: 'Arithmetic',
       color: '#34d399',
+      colorLight: '#059669',
       title: 'Integer Divide',
       description: 'Divide the total by a number and round down (floor division).',
       displayBase: '//',

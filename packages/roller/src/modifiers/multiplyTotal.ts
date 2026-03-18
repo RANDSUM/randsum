@@ -30,6 +30,7 @@ export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<
       key: '**',
       category: 'Arithmetic',
       color: '#84cc16',
+      colorLight: '#3f6212',
       title: 'Multiply Total',
       description: 'Multiply the entire final total after all other modifiers have been applied.',
       displayBase: '**',

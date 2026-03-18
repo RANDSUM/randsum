@@ -42,6 +42,7 @@ export const compoundSchema: NotationSchema<boolean | number> = defineNotationSc
       key: '!!',
       category: 'Explode',
       color: '#f59e0b',
+      colorLight: '#b45309',
       title: 'Compound Explode',
       description:
         'Like explode, but extra rolls add to the triggering die rather than creating new dice.',
