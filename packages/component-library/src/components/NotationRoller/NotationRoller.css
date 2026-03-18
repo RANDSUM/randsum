@@ -787,78 +787,57 @@
   line-height: 1;
 }
 
-.nr-tooltip-right {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding-left: 0.5rem;
-}
-
-.nr-tooltip-right-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.25rem;
-  padding-bottom: 0.35rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 0.35rem;
-  flex-shrink: 0;
-}
-
-.nr-tooltip-header-text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.nr-tooltip-notation {
-  font-weight: 700;
-  color: #a855f7;
-  white-space: nowrap;
-}
-
-.nr-tooltip-desc {
-  color: #71717a;
-  font-size: 0.6rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .nr-tooltip-close {
-  flex-shrink: 0;
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
   background: none;
   border: none;
   color: #71717a;
   font-size: 1rem;
   line-height: 1;
-  padding: 0 0.15rem;
+  padding: 0.1rem 0.25rem;
   cursor: pointer;
   transition: color 0.15s ease;
+  z-index: 1;
 }
 
 .nr-tooltip-close:hover {
   color: #e4e4e7;
 }
 
-.nr-tooltip-steps-pane {
+.nr-tooltip-right {
   flex: 1;
   min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  padding-left: 0.5rem;
+  padding-right: 1rem;
+}
+
+.nr-tooltip-notation {
+  font-weight: 700;
+  color: #a855f7;
+  white-space: nowrap;
+  margin-bottom: 0.1rem;
+}
+
+.nr-tooltip-desc {
+  color: #71717a;
+  font-size: 0.6rem;
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @media (prefers-color-scheme: light) {
   .nr-tooltip-total-pane {
-    border-right-color: rgba(147, 51, 234, 0.3);
+    border-color: rgba(147, 51, 234, 0.3);
   }
   .nr-tooltip-total-value {
     color: #18181b;
   }
-  .nr-tooltip-right-header {
+  .nr-tooltip-desc {
     border-bottom-color: rgba(0, 0, 0, 0.1);
   }
   .nr-tooltip-close:hover {
@@ -866,12 +845,12 @@
   }
 }
 [data-theme='light'] .nr-tooltip-total-pane {
-  border-right-color: rgba(147, 51, 234, 0.3);
+  border-color: rgba(147, 51, 234, 0.3);
 }
 [data-theme='light'] .nr-tooltip-total-value {
   color: #18181b;
 }
-[data-theme='light'] .nr-tooltip-right-header {
+[data-theme='light'] .nr-tooltip-desc {
   border-bottom-color: rgba(0, 0, 0, 0.1);
 }
 [data-theme='light'] .nr-tooltip-close:hover {
