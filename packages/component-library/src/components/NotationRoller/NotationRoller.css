@@ -784,8 +784,6 @@
   }
 }
 
-@media (prefers-color-scheme: light) {
-
 /* --- Tooltip layout: total (left) | right column (header + scrollable steps) --- */
 .nr-tooltip-total-pane {
   display: flex !important;
