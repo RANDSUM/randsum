@@ -49,6 +49,12 @@
         "default": "./dist/docs/index.js"
       }
     },
+    "./trace": {
+      "import": {
+        "types": "./dist/trace/index.d.ts",
+        "default": "./dist/trace/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "author": {
@@ -118,6 +124,10 @@
     {
       "path": "dist/docs/index.js",
       "limit": "20 KB"
+    },
+    {
+      "path": "dist/trace/index.js",
+      "limit": "5 KB"
     }
   ]
 }

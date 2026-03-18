@@ -7,7 +7,8 @@ export default defineConfig({
     'src/errors.ts',
     'src/validate.ts',
     'src/tokenize.ts',
-    'src/docs/index.ts'
+    'src/docs/index.ts',
+    'src/trace/index.ts'
   ],
   format: ['esm'],
   dts: true,
