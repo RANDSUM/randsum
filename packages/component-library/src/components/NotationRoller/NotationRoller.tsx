@@ -326,6 +326,7 @@ function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Eleme
   )
 }
 
+/** @internal — exported for testing only, not part of the public API */
 export function RollResult({
   records
 }: {
