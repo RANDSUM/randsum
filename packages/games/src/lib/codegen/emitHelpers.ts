@@ -34,7 +34,7 @@ export function toDiceConfig(
 ): NormalizedDiceConfig {
   if ('pool' in dice) return dice
   const [first] = dice
-  if (first === undefined) throw new SchemaError('INVALID_SPEC', 'dice array is empty')
+  if (first === undefined) throw new SchemaError('dice array is empty', 'INVALID_SPEC')
   return first
 }
 
@@ -241,7 +241,7 @@ export function generateValidationLines(
       const enumValues = decl.enum.map(v => `'${v}'`).join(', ')
       const enumList = decl.enum.map(v => `'${v}'`).join(' or ')
       lines.push(
-        `${indent}if (${guard}![${enumValues}].includes(${accessor} as string)) throw new SchemaError('INVALID_INPUT_TYPE', \`Invalid ${fieldName} value: \${String(${accessor})}. Must be ${enumList}.\`)`
+        `${indent}if (${guard}![${enumValues}].includes(${accessor} as string)) throw new SchemaError(\`Invalid ${fieldName} value: \${String(${accessor})}. Must be ${enumList}.\`, 'INVALID_INPUT_TYPE')`
       )
     }
   }

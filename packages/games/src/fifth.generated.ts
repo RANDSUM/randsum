@@ -28,8 +28,8 @@ export function roll(input?: {
     !['Advantage', 'Disadvantage'].includes(input?.rollingWith as string)
   )
     throw new SchemaError(
-      'INVALID_INPUT_TYPE',
-      `Invalid rollingWith value: ${String(input?.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`
+      `Invalid rollingWith value: ${String(input?.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`,
+      'INVALID_INPUT_TYPE'
     )
   if (input?.rollingWith === 'Advantage') {
     const r = executeRoll({

@@ -37,7 +37,7 @@ export function roll(
     if (total === 6) return { total, result: 'success', rolls: r.rolls }
     if (total >= 4 && total <= 5) return { total, result: 'partial', rolls: r.rolls }
     if (total >= 1 && total <= 3) return { total, result: 'failure', rolls: r.rolls }
-    throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+    throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
   }
   const r = executeRoll({
     sides: 6,
@@ -51,7 +51,7 @@ export function roll(
   if (total === 6) return { total, result: 'success', rolls: r.rolls }
   if (total >= 4 && total <= 5) return { total, result: 'partial', rolls: r.rolls }
   if (total >= 1 && total <= 3) return { total, result: 'failure', rolls: r.rolls }
-  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+  throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
 export { SchemaError }

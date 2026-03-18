@@ -1,3 +1,5 @@
+import { RandsumError } from '@randsum/roller/errors'
+
 export type SchemaErrorCode =
   | 'REF_NOT_FOUND'
   | 'INPUT_NOT_FOUND'
@@ -7,11 +9,11 @@ export type SchemaErrorCode =
   | 'INVALID_SPEC'
   | 'EXTERNAL_REF_FAILED'
 
-export class SchemaError extends Error {
-  public readonly code: SchemaErrorCode
+export class SchemaError extends RandsumError {
+  public override readonly code: SchemaErrorCode
 
-  constructor(code: SchemaErrorCode, message: string) {
-    super(message)
+  constructor(message: string, code: SchemaErrorCode) {
+    super(message, code)
     this.name = 'SchemaError'
     this.code = code
   }

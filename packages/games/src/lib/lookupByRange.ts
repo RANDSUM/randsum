@@ -39,5 +39,5 @@ export function lookupByRange(
       if (value >= min && value <= max) return { key, result: toEntry(rawEntry) }
     }
   }
-  throw new SchemaError('NO_TABLE_MATCH', `No range found for value ${value}`)
+  throw new SchemaError(`No range found for value ${value}`, 'NO_TABLE_MATCH')
 }

@@ -26,7 +26,7 @@ export function roll(
   const total = r.total
   if (total === 6) return { total, result: 'high', rolls: r.rolls }
   if (total >= 1 && total <= 5) return { total, result: 'low', rolls: r.rolls }
-  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+  throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
 export type RollBonusResult = 'done'
@@ -45,7 +45,7 @@ export function rollBonus(
   const r = executeRoll({ sides: input?.sides ?? 6, quantity: 1 })
   const total = r.total
   if (total >= 1 && total <= 20) return { total, result: 'done', rolls: r.rolls }
-  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+  throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
 export type { GameRollResult, RollRecord }

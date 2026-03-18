@@ -10,8 +10,8 @@ async function fetchRemoteData(url: string, dataPath?: string): Promise<unknown[
   const response = await fetch(url)
   if (!response.ok) {
     throw new SchemaError(
-      'INVALID_SPEC',
-      `Failed to fetch remote table data from ${url}: ${String(response.status)}`
+      `Failed to fetch remote table data from ${url}: ${String(response.status)}`,
+      'INVALID_SPEC'
     )
   }
   const json: unknown = await response.json()
@@ -160,7 +160,7 @@ export async function generateCode(
   const result = validateSpec(spec)
   if (!result.valid) {
     const summary = result.errors.map(e => `${e.path}: ${e.message}`).join('; ')
-    throw new SchemaError('INVALID_SPEC', `Invalid spec: ${summary}`)
+    throw new SchemaError(`Invalid spec: ${summary}`, 'INVALID_SPEC')
   }
 
   const nspec = normalizeSpec(spec)

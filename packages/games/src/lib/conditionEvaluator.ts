@@ -10,8 +10,8 @@ export function compareValues(
   if (operator === '=') return inputVal === condVal
   if (typeof inputVal !== 'number' || typeof condVal !== 'number') {
     throw new SchemaError(
-      'CONDITION_TYPE_MISMATCH',
-      `Operator "${operator}" requires numeric values`
+      `Operator "${operator}" requires numeric values`,
+      'CONDITION_TYPE_MISMATCH'
     )
   }
   switch (operator) {

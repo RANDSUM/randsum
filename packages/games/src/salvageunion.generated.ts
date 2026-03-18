@@ -334,9 +334,8 @@ const REMOTE_DATA = [
         value: 'Your legs and arms fuse, and many more grow out of you. You gain the Climb Trait.'
       },
       '13': {
-        label:
-          'Your jaw distends and stretches out into a maw. Your teeth grow jagged. You can make a Bite attack. Range',
-        value: 'Close // Damage: 3 HP // Deadly (Non-Bio-Titan Creatures only) // Melee'
+        value:
+          'Your jaw distends and stretches out into a maw. Your teeth grow jagged. You can make a Bite attack. Range: Close // Damage: 3 HP // Deadly (Non-Bio-Titan Creatures only) // Melee'
       },
       '14': {
         value:
@@ -757,7 +756,7 @@ const REMOTE_DATA = [
       '2': { value: '5 Bio-Rifles' },
       '3': { value: '5 Chimerium Salvaging Tools and 5 Bio-Scanners' },
       '4': { value: 'A Chimerium Harvester System' },
-      '5': { value: 'An Acid Spitter' },
+      '5': { value: 'An Acid Spitter Mule' },
       '6': { value: 'A Mutant Pattern Thresher' },
       '7': { value: 'A Bio-Wings Bio-System' },
       '8': { value: 'An Olfactory Glands Module' },
@@ -2201,8 +2200,8 @@ export function roll(
   const foundTable = REMOTE_DATA.find(t => t.name === input.tableName)
   if (!foundTable)
     throw new SchemaError(
-      'NO_TABLE_MATCH',
-      `Invalid Salvage Union table name: "${input.tableName}"`
+      `Invalid Salvage Union table name: "${input.tableName}"`,
+      'NO_TABLE_MATCH'
     )
   const lookupResult = lookupByRange(foundTable.table, total)
   return {

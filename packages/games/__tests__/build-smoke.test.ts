@@ -21,7 +21,7 @@ describe('schema build smoke test', () => {
 
   test('SchemaError is a constructable class', () => {
     expect(typeof SchemaError).toBe('function')
-    const err = new SchemaError('INVALID_SPEC', 'test message')
+    const err = new SchemaError('test message', 'INVALID_SPEC')
     expect(err).toBeInstanceOf(Error)
     expect(err.message).toBe('test message')
   })

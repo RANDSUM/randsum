@@ -163,7 +163,7 @@ function lookupRanges(
       (range.poolCondition !== undefined && range.exact === undefined && range.min === undefined)
     if (poolMatch && valueMatch) return range.result
   }
-  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+  throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
 function applyDegreeOfSuccess(total: number, degrees: DegreeOfSuccessOperation): string {
@@ -187,7 +187,7 @@ function applyDegreeOfSuccess(total: number, degrees: DegreeOfSuccessOperation):
     if (total >= threshold) return name
   }
 
-  throw new SchemaError('NO_TABLE_MATCH', `No degree of success matches total ${total}`)
+  throw new SchemaError(`No degree of success matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
 function resolveTotal(
@@ -303,8 +303,8 @@ function validateInputs(
     ) {
       const enumList = decl.enum.map(v => `'${v}'`).join(' or ')
       throw new SchemaError(
-        'INVALID_INPUT_TYPE',
-        `Invalid ${fieldName} value: ${String(val)}. Must be ${enumList}.`
+        `Invalid ${fieldName} value: ${String(val)}. Must be ${enumList}.`,
+        'INVALID_INPUT_TYPE'
       )
     }
   }
@@ -389,8 +389,8 @@ export function executePipeline(
 ): GameRollResult<string | number, Readonly<Record<string, unknown>> | undefined, RollRecord> {
   if (typeof rollDef.resolve === 'object' && 'remoteTableLookup' in rollDef.resolve) {
     throw new SchemaError(
-      'INVALID_SPEC',
-      'Spec uses remoteTableLookup which requires async execution. Use loadSpecAsync() instead.'
+      'Spec uses remoteTableLookup which requires async execution. Use loadSpecAsync() instead.',
+      'INVALID_SPEC'
     )
   }
   validateInputs(rollDef, input, specName)
@@ -468,8 +468,8 @@ export function executePipeline(
 
   if (effectiveDice === undefined) {
     throw new SchemaError(
-      'INVALID_SPEC',
-      'executePipeline: dice is required when dicePools is absent'
+      'executePipeline: dice is required when dicePools is absent',
+      'INVALID_SPEC'
     )
   }
   const optionsArray = buildRollOptionsArray(effectiveDice, mergedInput, rollerOptions)

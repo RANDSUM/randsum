@@ -12,12 +12,12 @@ export function bindInteger(value: IntegerOrInput, input: RollInput): number {
     return resolved ? value.ifTrue : value.ifFalse
   }
   if (resolved === undefined) {
-    throw new SchemaError('INPUT_NOT_FOUND', `Required input "${key}" was not provided`)
+    throw new SchemaError(`Required input "${key}" was not provided`, 'INPUT_NOT_FOUND')
   }
   if (typeof resolved !== 'number') {
     throw new SchemaError(
-      'INVALID_INPUT_TYPE',
-      `Input "${key}" must be a number, got ${typeof resolved}`
+      `Input "${key}" must be a number, got ${typeof resolved}`,
+      'INVALID_INPUT_TYPE'
     )
   }
   return resolved

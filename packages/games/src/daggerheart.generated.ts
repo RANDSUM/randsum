@@ -34,8 +34,8 @@ export function roll(input?: {
     !['Advantage', 'Disadvantage'].includes(input?.rollingWith as string)
   )
     throw new SchemaError(
-      'INVALID_INPUT_TYPE',
-      `Invalid rollingWith value: ${String(input?.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`
+      `Invalid rollingWith value: ${String(input?.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`,
+      'INVALID_INPUT_TYPE'
     )
   const hopeResult = executeRoll({ sides: input?.amplifyHope ? 20 : 12, quantity: 1 })
   const hopeTotal = hopeResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)

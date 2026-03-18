@@ -11,7 +11,7 @@ function assertValidSpec(spec: unknown): asserts spec is RandSumSpec {
   const result = validateSpec(spec)
   if (!result.valid) {
     const summary = result.errors.map(e => `${e.path}: ${e.message}`).join('; ')
-    throw new SchemaError('INVALID_SPEC', `Invalid spec: ${summary}`)
+    throw new SchemaError(`Invalid spec: ${summary}`, 'INVALID_SPEC')
   }
 }
 
@@ -45,8 +45,8 @@ export async function loadSpecAsync(input: RandSumSpec | string): Promise<Loaded
       const response = await fetch(input)
       if (!response.ok) {
         throw new SchemaError(
-          'EXTERNAL_REF_FAILED',
-          `Failed to fetch spec: ${response.status} ${response.statusText}`
+          `Failed to fetch spec: ${response.status} ${response.statusText}`,
+          'EXTERNAL_REF_FAILED'
         )
       }
       const parsed: unknown = await response.json()

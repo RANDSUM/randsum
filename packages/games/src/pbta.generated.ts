@@ -39,8 +39,8 @@ export function roll(input: {
     !['Advantage', 'Disadvantage'].includes(input.rollingWith as string)
   )
     throw new SchemaError(
-      'INVALID_INPUT_TYPE',
-      `Invalid rollingWith value: ${String(input.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`
+      `Invalid rollingWith value: ${String(input.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`,
+      'INVALID_INPUT_TYPE'
     )
   if (input.rollingWith === 'Advantage') {
     const r = executeRoll({
@@ -62,7 +62,7 @@ export function roll(input: {
     if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
     if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
-    throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+    throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
   }
   if (input.rollingWith === 'Disadvantage') {
     const r = executeRoll({
@@ -84,7 +84,7 @@ export function roll(input: {
     if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
     if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
-    throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+    throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
   }
   const r = executeRoll({
     sides: 6,
@@ -102,7 +102,7 @@ export function roll(input: {
   if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
   if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
   if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
-  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+  throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
 export { SchemaError }

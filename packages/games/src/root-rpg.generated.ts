@@ -25,7 +25,7 @@ export function roll(
   if (total >= 10 && total <= 32) return { total, result: 'Strong Hit', rolls: r.rolls }
   if (total >= 7 && total <= 9) return { total, result: 'Weak Hit', rolls: r.rolls }
   if (total >= -18 && total <= 6) return { total, result: 'Miss', rolls: r.rolls }
-  throw new SchemaError('NO_TABLE_MATCH', `No table entry matches total ${total}`)
+  throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
 export { SchemaError }

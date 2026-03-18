@@ -130,9 +130,7 @@ describe('remoteTableLookup codegen', () => {
 
   test('emits default error message when errorMessage not specified', async () => {
     const code = await generateCode(RTL_SPEC)
-    expect(code).toContain(
-      "if (!foundTable) throw new SchemaError('NO_TABLE_MATCH', `No table found:"
-    )
+    expect(code).toContain('if (!foundTable) throw new SchemaError(`No table found:')
   })
 })
 
@@ -182,9 +180,7 @@ describe('remoteTableLookup errorMessage', () => {
 
   test('codegen emits custom error message template', async () => {
     const code = await generateCode(ERROR_MSG_SPEC)
-    expect(code).toContain(
-      "if (!foundTable) throw new SchemaError('NO_TABLE_MATCH', `Invalid table name: \""
-    )
+    expect(code).toContain('if (!foundTable) throw new SchemaError(`Invalid table name: "')
     expect(code).toContain('${input.tableName}')
   })
 })

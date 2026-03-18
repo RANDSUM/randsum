@@ -18,16 +18,16 @@ async function fetchJson(url: string): Promise<unknown> {
     const response = await fetch(url)
     if (!response.ok) {
       throw new SchemaError(
-        'EXTERNAL_REF_FAILED',
-        `Failed to fetch external ref "${url}": HTTP ${response.status}`
+        `Failed to fetch external ref "${url}": HTTP ${response.status}`,
+        'EXTERNAL_REF_FAILED'
       )
     }
     return await response.json()
   } catch (e) {
     if (e instanceof SchemaError) throw e
     throw new SchemaError(
-      'EXTERNAL_REF_FAILED',
-      `Failed to fetch external ref "${url}": ${e instanceof Error ? e.message : String(e)}`
+      `Failed to fetch external ref "${url}": ${e instanceof Error ? e.message : String(e)}`,
+      'EXTERNAL_REF_FAILED'
     )
   }
 }
@@ -38,15 +38,15 @@ function resolvePointer(data: unknown, pointer: string, url: string): unknown {
   return segments.reduce<unknown>((cur, seg) => {
     if (cur === null || typeof cur !== 'object') {
       throw new SchemaError(
-        'EXTERNAL_REF_FAILED',
-        `Cannot resolve pointer "${pointer}" in "${url}": hit non-object at "${seg}"`
+        `Cannot resolve pointer "${pointer}" in "${url}": hit non-object at "${seg}"`,
+        'EXTERNAL_REF_FAILED'
       )
     }
     const record = cur as Record<string, unknown>
     if (!(seg in record)) {
       throw new SchemaError(
-        'EXTERNAL_REF_FAILED',
-        `Cannot resolve pointer "${pointer}" in "${url}": segment "${seg}" not found`
+        `Cannot resolve pointer "${pointer}" in "${url}": segment "${seg}" not found`,
+        'EXTERNAL_REF_FAILED'
       )
     }
     return record[seg]

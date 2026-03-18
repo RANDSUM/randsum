@@ -28,7 +28,7 @@ function generateDegreeLines(
   const defaultLine =
     last !== undefined
       ? `${indent}return { total, result: '${last[0]}', rolls: ${rollsExpr}${detailsPart} }`
-      : `${indent}throw new SchemaError('NO_TABLE_MATCH', \`No degree of success matches total \${total}\`)`
+      : `${indent}throw new SchemaError(\`No degree of success matches total \${total}\`, 'NO_TABLE_MATCH')`
   return [...ifLines, defaultLine]
 }
 
@@ -110,7 +110,7 @@ export function generateOutcomeLines(
     if (check) lines.push(check)
   }
   lines.push(
-    `${indent}throw new SchemaError('NO_TABLE_MATCH', \`No table entry matches total \${total}\`)`
+    `${indent}throw new SchemaError(\`No table entry matches total \${total}\`, 'NO_TABLE_MATCH')`
   )
   return lines
 }

@@ -161,7 +161,7 @@ function generateFunctionBody(
     const overrideOutcome = rollCase.override.outcome ?? rollDef.outcome
     const overrideRanges = getOutcomeRanges(overrideOutcome)
     if (overrideDice === undefined) {
-      throw new SchemaError('INVALID_SPEC', 'when branch has no dice and no override.dice')
+      throw new SchemaError('when branch has no dice and no override.dice', 'INVALID_SPEC')
     }
     const diceCode = buildDiceOptionsCode(overrideDice, overrideMod, rollDef.inputs, optional)
     const needsPre = overrideRanges.some(
@@ -201,7 +201,7 @@ function generateFunctionBody(
   }
 
   if (rollDef.dice === undefined) {
-    throw new SchemaError('INVALID_SPEC', 'rollDef.dice is required for single-pool roll')
+    throw new SchemaError('rollDef.dice is required for single-pool roll', 'INVALID_SPEC')
   }
   const defaultDiceCode = buildDiceOptionsCode(
     rollDef.dice,
@@ -246,10 +246,10 @@ function generateFunctionBody(
     if (find.errorMessage !== undefined) {
       const escaped = find.errorMessage.replace(/\\/g, '\\\\').replace(/`/g, '\\`')
       const template = escaped.replace('${value}', `\${${keyAccessor}}`)
-      lines.push(`  if (!foundTable) throw new SchemaError('NO_TABLE_MATCH', \`${template}\`)`)
+      lines.push(`  if (!foundTable) throw new SchemaError(\`${template}\`, 'NO_TABLE_MATCH')`)
     } else {
       lines.push(
-        `  if (!foundTable) throw new SchemaError('NO_TABLE_MATCH', \`No table found: \${${keyAccessor}}\`)`
+        `  if (!foundTable) throw new SchemaError(\`No table found: \${${keyAccessor}}\`, 'NO_TABLE_MATCH')`
       )
     }
     lines.push(`  const lookupResult = lookupByRange(foundTable.${tableField}, total)`)
