@@ -58,12 +58,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Build all packages
         run: bun run build
-      - name: Publish packages
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bun scripts/publish.ts
 
-      # ── GitHub Releases ────────────────────────────────────────────────
+      # ── Pre-publish version checks (must run before publish) ───────────
 
       - name: Check roller version
         id: roller
@@ -77,15 +73,6 @@ jobs:
             echo "was_published=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Release @randsum/roller
-        if: steps.roller.outputs.was_published == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "roller-${{ steps.roller.outputs.version }}" \
-            --title "roller v${{ steps.roller.outputs.version }}" \
-            --generate-notes
-
       - name: Check games version
         id: games
         run: |
@@ -97,15 +84,6 @@ jobs:
           else
             echo "was_published=true" >> $GITHUB_OUTPUT
           fi
-
-      - name: Release @randsum/games
-        if: steps.games.outputs.was_published == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "games-${{ steps.games.outputs.version }}" \
-            --title "games v${{ steps.games.outputs.version }}" \
-            --generate-notes
 
       - name: Check component-library version
         id: component-library
@@ -119,15 +97,6 @@ jobs:
             echo "was_published=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Release @randsum/component-library
-        if: steps.component-library.outputs.was_published == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "component-library-${{ steps.component-library.outputs.version }}" \
-            --title "component-library v${{ steps.component-library.outputs.version }}" \
-            --generate-notes
-
       - name: Check cli version
         id: cli
         run: |
@@ -139,6 +108,40 @@ jobs:
           else
             echo "was_published=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Publish packages
+        env:
+          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun scripts/publish.ts
+
+      # ── GitHub Releases ────────────────────────────────────────────────
+
+      - name: Release @randsum/roller
+        if: steps.roller.outputs.was_published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "roller-${{ steps.roller.outputs.version }}" \
+            --title "roller v${{ steps.roller.outputs.version }}" \
+            --generate-notes
+
+      - name: Release @randsum/games
+        if: steps.games.outputs.was_published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "games-${{ steps.games.outputs.version }}" \
+            --title "games v${{ steps.games.outputs.version }}" \
+            --generate-notes
+
+      - name: Release @randsum/component-library
+        if: steps.component-library.outputs.was_published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "component-library-${{ steps.component-library.outputs.version }}" \
+            --title "component-library v${{ steps.component-library.outputs.version }}" \
+            --generate-notes
 
       - name: Release @randsum/cli
         if: steps.cli.outputs.was_published == 'true'
