@@ -5,14 +5,7 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   exports: true,
-  external: [
-    'react',
-    'react-dom',
-    'react/jsx-runtime',
-    'react/jsx-dev-runtime',
-    '@randsum/roller',
-    '@randsum/display-utils'
-  ],
+  external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime', '@randsum/roller'],
   minify: true,
   sourcemap: 'external',
   target: 'browser',
