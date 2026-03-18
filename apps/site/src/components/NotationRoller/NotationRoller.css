@@ -1,0 +1,1328 @@
+/* ===== Container ===== */
+.notation-roller {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ===== Shell (the visible "input box") ===== */
+.notation-roller-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+  overflow: visible;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-shell {
+    background: #f4f4f5;
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+}
+[data-theme='light'] .notation-roller-shell {
+  background: #f4f4f5;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.notation-roller-shell--valid {
+  border-color: #a855f7;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-shell--valid {
+    border-color: #9333ea;
+  }
+}
+[data-theme='light'] .notation-roller-shell--valid {
+  border-color: #9333ea;
+}
+
+.notation-roller-shell--invalid {
+  border-color: #f97583;
+}
+
+/* ===== Main content row ===== */
+.notation-roller-row {
+  position: relative;
+  min-height: 3rem;
+}
+
+/* ===== Input wrap (holds the textarea and overlay) ===== */
+.notation-roller-input-wrap {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== nr-input-wrap (positions overlay over the textarea) ===== */
+.nr-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ===== Notation overlay (colored token spans, sits above transparent textarea text) ===== */
+.nr-notation-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  pointer-events: none;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  word-break: break-all;
+  white-space: pre-wrap;
+  overflow: hidden;
+}
+
+/* First-line spacer matches textarea text-indent so overlay tokens align */
+.nr-first-line-spacer {
+  display: inline-block;
+  width: 3.25rem;
+  height: 0;
+  flex-shrink: 0;
+}
+
+/* ===== Token spans ===== */
+.nr-token {
+  transition: color 0.12s ease;
+}
+
+.nr-token--dim {
+  color: inherit !important;
+}
+
+.nr-token--active {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+/* Token color families — dark mode */
+.nr-token--core {
+  color: #d8b4fe;
+}
+.nr-token--dropHighest {
+  color: #b858b0;
+}
+.nr-token--dropLowest {
+  color: #f060d0;
+}
+.nr-token--dropCondition {
+  color: #d860c0;
+}
+.nr-token--keepHighest {
+  color: #ffab70;
+}
+.nr-token--keepLowest {
+  color: #d4845a;
+}
+.nr-token--explode {
+  color: #e5c07b;
+}
+.nr-token--compound {
+  color: #e08040;
+}
+.nr-token--penetrate {
+  color: #b8d858;
+}
+.nr-token--reroll {
+  color: #c792ea;
+}
+.nr-token--cap {
+  color: #89ddff;
+}
+.nr-token--replace {
+  color: #c3e88d;
+}
+.nr-token--unique {
+  color: #80cbc4;
+}
+.nr-token--countSuccesses {
+  color: #82aaff;
+}
+.nr-token--plus {
+  color: #98c379;
+}
+.nr-token--minus {
+  color: #6b9e52;
+}
+.nr-token--multiply {
+  color: #ffcb6b;
+}
+.nr-token--multiplyTotal {
+  color: #e8a93a;
+}
+.nr-token--unknown {
+  color: #f97583;
+}
+
+/* Token colors — light mode */
+@media (prefers-color-scheme: light) {
+  .nr-token--core {
+    color: #9333ea;
+  }
+  .nr-token--dropHighest {
+    color: #802090;
+  }
+  .nr-token--dropLowest {
+    color: #b028a8;
+  }
+  .nr-token--dropCondition {
+    color: #9020a0;
+  }
+  .nr-token--keepHighest {
+    color: #c2620a;
+  }
+  .nr-token--keepLowest {
+    color: #9e4e20;
+  }
+  .nr-token--explode {
+    color: #9a7c1a;
+  }
+  .nr-token--compound {
+    color: #c05818;
+  }
+  .nr-token--penetrate {
+    color: #5a8018;
+  }
+  .nr-token--reroll {
+    color: #7c4dab;
+  }
+  .nr-token--cap {
+    color: #0082a5;
+  }
+  .nr-token--replace {
+    color: #4a8020;
+  }
+  .nr-token--unique {
+    color: #1a7a72;
+  }
+  .nr-token--countSuccesses {
+    color: #3a60c8;
+  }
+  .nr-token--plus {
+    color: #3a7d20;
+  }
+  .nr-token--minus {
+    color: #2a6018;
+  }
+  .nr-token--multiply {
+    color: #8a6a00;
+  }
+  .nr-token--multiplyTotal {
+    color: #7a5800;
+  }
+  .nr-token--unknown {
+    color: #c0394a;
+  }
+}
+[data-theme='light'] .nr-token--core {
+  color: #9333ea;
+}
+[data-theme='light'] .nr-token--dropHighest {
+  color: #802090;
+}
+[data-theme='light'] .nr-token--dropLowest {
+  color: #b028a8;
+}
+[data-theme='light'] .nr-token--dropCondition {
+  color: #9020a0;
+}
+[data-theme='light'] .nr-token--keepHighest {
+  color: #c2620a;
+}
+[data-theme='light'] .nr-token--keepLowest {
+  color: #9e4e20;
+}
+[data-theme='light'] .nr-token--explode {
+  color: #9a7c1a;
+}
+[data-theme='light'] .nr-token--compound {
+  color: #c05818;
+}
+[data-theme='light'] .nr-token--penetrate {
+  color: #5a8018;
+}
+[data-theme='light'] .nr-token--reroll {
+  color: #7c4dab;
+}
+[data-theme='light'] .nr-token--cap {
+  color: #0082a5;
+}
+[data-theme='light'] .nr-token--replace {
+  color: #4a8020;
+}
+[data-theme='light'] .nr-token--unique {
+  color: #1a7a72;
+}
+[data-theme='light'] .nr-token--countSuccesses {
+  color: #3a60c8;
+}
+[data-theme='light'] .nr-token--plus {
+  color: #3a7d20;
+}
+[data-theme='light'] .nr-token--minus {
+  color: #2a6018;
+}
+[data-theme='light'] .nr-token--multiply {
+  color: #8a6a00;
+}
+[data-theme='light'] .nr-token--multiplyTotal {
+  color: #7a5800;
+}
+[data-theme='light'] .nr-token--unknown {
+  color: #c0394a;
+}
+
+/* ===== Description chips ===== */
+.nr-desc-chip {
+  font-size: 0.7rem;
+  padding: 0.05em 0.25em;
+  border-radius: 0.2rem;
+  cursor: default;
+  user-select: none;
+  color: inherit;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+  line-height: 1.5;
+}
+
+.nr-desc-chip:hover,
+.nr-desc-chip--active {
+  color: var(--chip-color, inherit);
+  background: var(--chip-bg, transparent);
+}
+
+.nr-desc-sep {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  user-select: none;
+}
+
+/* Chip colors + active backgrounds — dark mode */
+/* --- Dice types (purple family) --- */
+.nr-desc-chip--core {
+  --chip-color: #c084fc;
+  --chip-bg: rgba(192, 132, 252, 0.12);
+}
+.nr-desc-chip--percentile {
+  --chip-color: #a78bfa;
+  --chip-bg: rgba(167, 139, 250, 0.12);
+}
+.nr-desc-chip--fate {
+  --chip-color: #e879f9;
+  --chip-bg: rgba(232, 121, 249, 0.12);
+}
+.nr-desc-chip--zeroBias {
+  --chip-color: #d946ef;
+  --chip-bg: rgba(217, 70, 239, 0.12);
+}
+.nr-desc-chip--geometric {
+  --chip-color: #818cf8;
+  --chip-bg: rgba(129, 140, 248, 0.12);
+}
+.nr-desc-chip--draw {
+  --chip-color: #c4b5fd;
+  --chip-bg: rgba(196, 181, 253, 0.12);
+}
+.nr-desc-chip--customFaces {
+  --chip-color: #f0abfc;
+  --chip-bg: rgba(240, 171, 252, 0.12);
+}
+/* --- Pool modifiers (warm tones) --- */
+.nr-desc-chip--dropHighest {
+  --chip-color: #fb7185;
+  --chip-bg: rgba(251, 113, 133, 0.12);
+}
+.nr-desc-chip--dropLowest {
+  --chip-color: #f43f5e;
+  --chip-bg: rgba(244, 63, 94, 0.12);
+}
+.nr-desc-chip--dropCondition {
+  --chip-color: #e11d48;
+  --chip-bg: rgba(225, 29, 72, 0.12);
+}
+.nr-desc-chip--keepHighest {
+  --chip-color: #fb923c;
+  --chip-bg: rgba(251, 146, 60, 0.12);
+}
+.nr-desc-chip--keepLowest {
+  --chip-color: #f97316;
+  --chip-bg: rgba(249, 115, 22, 0.12);
+}
+.nr-desc-chip--keepMiddle {
+  --chip-color: #fdba74;
+  --chip-bg: rgba(253, 186, 116, 0.12);
+}
+.nr-desc-chip--reroll {
+  --chip-color: #f472b6;
+  --chip-bg: rgba(244, 114, 182, 0.12);
+}
+.nr-desc-chip--cap {
+  --chip-color: #67e8f9;
+  --chip-bg: rgba(103, 232, 249, 0.12);
+}
+.nr-desc-chip--replace {
+  --chip-color: #2dd4bf;
+  --chip-bg: rgba(45, 212, 191, 0.12);
+}
+.nr-desc-chip--unique {
+  --chip-color: #5eead4;
+  --chip-bg: rgba(94, 234, 212, 0.12);
+}
+/* --- Explode modifiers (yellow/amber) --- */
+.nr-desc-chip--explode {
+  --chip-color: #fbbf24;
+  --chip-bg: rgba(251, 191, 36, 0.12);
+}
+.nr-desc-chip--compound {
+  --chip-color: #f59e0b;
+  --chip-bg: rgba(245, 158, 11, 0.12);
+}
+.nr-desc-chip--penetrate {
+  --chip-color: #d97706;
+  --chip-bg: rgba(217, 119, 6, 0.12);
+}
+.nr-desc-chip--explodeSequence {
+  --chip-color: #fcd34d;
+  --chip-bg: rgba(252, 211, 77, 0.12);
+}
+/* --- Counting modifiers (blue family) --- */
+.nr-desc-chip--count {
+  --chip-color: #60a5fa;
+  --chip-bg: rgba(96, 165, 250, 0.12);
+}
+.nr-desc-chip--countSuccesses {
+  --chip-color: #3b82f6;
+  --chip-bg: rgba(59, 130, 246, 0.12);
+}
+.nr-desc-chip--countFailures {
+  --chip-color: #93c5fd;
+  --chip-bg: rgba(147, 197, 253, 0.12);
+}
+.nr-desc-chip--marginOfSuccess {
+  --chip-color: #6366f1;
+  --chip-bg: rgba(99, 102, 241, 0.12);
+}
+/* --- Arithmetic modifiers (green family) --- */
+.nr-desc-chip--plus {
+  --chip-color: #4ade80;
+  --chip-bg: rgba(74, 222, 128, 0.12);
+}
+.nr-desc-chip--minus {
+  --chip-color: #f87171;
+  --chip-bg: rgba(248, 113, 113, 0.12);
+}
+.nr-desc-chip--multiply {
+  --chip-color: #a3e635;
+  --chip-bg: rgba(163, 230, 53, 0.12);
+}
+.nr-desc-chip--multiplyTotal {
+  --chip-color: #84cc16;
+  --chip-bg: rgba(132, 204, 22, 0.12);
+}
+.nr-desc-chip--integerDivide {
+  --chip-color: #34d399;
+  --chip-bg: rgba(52, 211, 153, 0.12);
+}
+.nr-desc-chip--modulo {
+  --chip-color: #10b981;
+  --chip-bg: rgba(16, 185, 129, 0.12);
+}
+/* --- Special modifiers --- */
+.nr-desc-chip--wildDie {
+  --chip-color: #facc15;
+  --chip-bg: rgba(250, 204, 21, 0.12);
+}
+.nr-desc-chip--sort {
+  --chip-color: #94a3b8;
+  --chip-bg: rgba(148, 163, 184, 0.12);
+}
+.nr-desc-chip--repeat {
+  --chip-color: #cbd5e1;
+  --chip-bg: rgba(203, 213, 225, 0.12);
+}
+.nr-desc-chip--label {
+  --chip-color: #a1a1aa;
+  --chip-bg: rgba(161, 161, 170, 0.12);
+}
+
+/* Chip colors — light mode */
+@media (prefers-color-scheme: light) {
+  /* Dice types */
+  .nr-desc-chip--core {
+    --chip-color: #7c3aed;
+    --chip-bg: rgba(124, 58, 237, 0.08);
+  }
+  .nr-desc-chip--percentile {
+    --chip-color: #6d28d9;
+    --chip-bg: rgba(109, 40, 217, 0.08);
+  }
+  .nr-desc-chip--fate {
+    --chip-color: #a21caf;
+    --chip-bg: rgba(162, 28, 175, 0.08);
+  }
+  .nr-desc-chip--zeroBias {
+    --chip-color: #86198f;
+    --chip-bg: rgba(134, 25, 143, 0.08);
+  }
+  .nr-desc-chip--geometric {
+    --chip-color: #4f46e5;
+    --chip-bg: rgba(79, 70, 229, 0.08);
+  }
+  .nr-desc-chip--draw {
+    --chip-color: #7e22ce;
+    --chip-bg: rgba(126, 34, 206, 0.08);
+  }
+  .nr-desc-chip--customFaces {
+    --chip-color: #c026d3;
+    --chip-bg: rgba(192, 38, 211, 0.08);
+  }
+  /* Pool modifiers */
+  .nr-desc-chip--dropHighest {
+    --chip-color: #e11d48;
+    --chip-bg: rgba(225, 29, 72, 0.08);
+  }
+  .nr-desc-chip--dropLowest {
+    --chip-color: #be123c;
+    --chip-bg: rgba(190, 18, 60, 0.08);
+  }
+  .nr-desc-chip--dropCondition {
+    --chip-color: #9f1239;
+    --chip-bg: rgba(159, 18, 57, 0.08);
+  }
+  .nr-desc-chip--keepHighest {
+    --chip-color: #c2410c;
+    --chip-bg: rgba(194, 65, 12, 0.08);
+  }
+  .nr-desc-chip--keepLowest {
+    --chip-color: #9a3412;
+    --chip-bg: rgba(154, 52, 18, 0.08);
+  }
+  .nr-desc-chip--keepMiddle {
+    --chip-color: #ea580c;
+    --chip-bg: rgba(234, 88, 12, 0.08);
+  }
+  .nr-desc-chip--reroll {
+    --chip-color: #db2777;
+    --chip-bg: rgba(219, 39, 119, 0.08);
+  }
+  .nr-desc-chip--cap {
+    --chip-color: #0891b2;
+    --chip-bg: rgba(8, 145, 178, 0.08);
+  }
+  .nr-desc-chip--replace {
+    --chip-color: #0d9488;
+    --chip-bg: rgba(13, 148, 136, 0.08);
+  }
+  .nr-desc-chip--unique {
+    --chip-color: #0f766e;
+    --chip-bg: rgba(15, 118, 110, 0.08);
+  }
+  /* Explode modifiers */
+  .nr-desc-chip--explode {
+    --chip-color: #d97706;
+    --chip-bg: rgba(217, 119, 6, 0.08);
+  }
+  .nr-desc-chip--compound {
+    --chip-color: #b45309;
+    --chip-bg: rgba(180, 83, 9, 0.08);
+  }
+  .nr-desc-chip--penetrate {
+    --chip-color: #92400e;
+    --chip-bg: rgba(146, 64, 14, 0.08);
+  }
+  .nr-desc-chip--explodeSequence {
+    --chip-color: #ca8a04;
+    --chip-bg: rgba(202, 138, 4, 0.08);
+  }
+  /* Counting modifiers */
+  .nr-desc-chip--count {
+    --chip-color: #2563eb;
+    --chip-bg: rgba(37, 99, 235, 0.08);
+  }
+  .nr-desc-chip--countSuccesses {
+    --chip-color: #1d4ed8;
+    --chip-bg: rgba(29, 78, 216, 0.08);
+  }
+  .nr-desc-chip--countFailures {
+    --chip-color: #3b82f6;
+    --chip-bg: rgba(59, 130, 246, 0.08);
+  }
+  .nr-desc-chip--marginOfSuccess {
+    --chip-color: #4338ca;
+    --chip-bg: rgba(67, 56, 202, 0.08);
+  }
+  /* Arithmetic modifiers */
+  .nr-desc-chip--plus {
+    --chip-color: #16a34a;
+    --chip-bg: rgba(22, 163, 74, 0.08);
+  }
+  .nr-desc-chip--minus {
+    --chip-color: #dc2626;
+    --chip-bg: rgba(220, 38, 38, 0.08);
+  }
+  .nr-desc-chip--multiply {
+    --chip-color: #4d7c0f;
+    --chip-bg: rgba(77, 124, 15, 0.08);
+  }
+  .nr-desc-chip--multiplyTotal {
+    --chip-color: #3f6212;
+    --chip-bg: rgba(63, 98, 18, 0.08);
+  }
+  .nr-desc-chip--integerDivide {
+    --chip-color: #059669;
+    --chip-bg: rgba(5, 150, 105, 0.08);
+  }
+  .nr-desc-chip--modulo {
+    --chip-color: #047857;
+    --chip-bg: rgba(4, 120, 87, 0.08);
+  }
+  /* Special */
+  .nr-desc-chip--wildDie {
+    --chip-color: #a16207;
+    --chip-bg: rgba(161, 98, 7, 0.08);
+  }
+  .nr-desc-chip--sort {
+    --chip-color: #475569;
+    --chip-bg: rgba(71, 85, 105, 0.08);
+  }
+  .nr-desc-chip--repeat {
+    --chip-color: #64748b;
+    --chip-bg: rgba(100, 116, 139, 0.08);
+  }
+  .nr-desc-chip--label {
+    --chip-color: #71717a;
+    --chip-bg: rgba(113, 113, 122, 0.08);
+  }
+}
+/* Dice types */
+[data-theme='light'] .nr-desc-chip--core {
+  --chip-color: #7c3aed;
+  --chip-bg: rgba(124, 58, 237, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--percentile {
+  --chip-color: #6d28d9;
+  --chip-bg: rgba(109, 40, 217, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--fate {
+  --chip-color: #a21caf;
+  --chip-bg: rgba(162, 28, 175, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--zeroBias {
+  --chip-color: #86198f;
+  --chip-bg: rgba(134, 25, 143, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--geometric {
+  --chip-color: #4f46e5;
+  --chip-bg: rgba(79, 70, 229, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--draw {
+  --chip-color: #7e22ce;
+  --chip-bg: rgba(126, 34, 206, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--customFaces {
+  --chip-color: #c026d3;
+  --chip-bg: rgba(192, 38, 211, 0.08);
+}
+/* Pool modifiers */
+[data-theme='light'] .nr-desc-chip--dropHighest {
+  --chip-color: #e11d48;
+  --chip-bg: rgba(225, 29, 72, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--dropLowest {
+  --chip-color: #be123c;
+  --chip-bg: rgba(190, 18, 60, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--dropCondition {
+  --chip-color: #9f1239;
+  --chip-bg: rgba(159, 18, 57, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--keepHighest {
+  --chip-color: #c2410c;
+  --chip-bg: rgba(194, 65, 12, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--keepLowest {
+  --chip-color: #9a3412;
+  --chip-bg: rgba(154, 52, 18, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--keepMiddle {
+  --chip-color: #ea580c;
+  --chip-bg: rgba(234, 88, 12, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--reroll {
+  --chip-color: #db2777;
+  --chip-bg: rgba(219, 39, 119, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--cap {
+  --chip-color: #0891b2;
+  --chip-bg: rgba(8, 145, 178, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--replace {
+  --chip-color: #0d9488;
+  --chip-bg: rgba(13, 148, 136, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--unique {
+  --chip-color: #0f766e;
+  --chip-bg: rgba(15, 118, 110, 0.08);
+}
+/* Explode modifiers */
+[data-theme='light'] .nr-desc-chip--explode {
+  --chip-color: #d97706;
+  --chip-bg: rgba(217, 119, 6, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--compound {
+  --chip-color: #b45309;
+  --chip-bg: rgba(180, 83, 9, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--penetrate {
+  --chip-color: #92400e;
+  --chip-bg: rgba(146, 64, 14, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--explodeSequence {
+  --chip-color: #ca8a04;
+  --chip-bg: rgba(202, 138, 4, 0.08);
+}
+/* Counting modifiers */
+[data-theme='light'] .nr-desc-chip--count {
+  --chip-color: #2563eb;
+  --chip-bg: rgba(37, 99, 235, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--countSuccesses {
+  --chip-color: #1d4ed8;
+  --chip-bg: rgba(29, 78, 216, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--countFailures {
+  --chip-color: #3b82f6;
+  --chip-bg: rgba(59, 130, 246, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--marginOfSuccess {
+  --chip-color: #4338ca;
+  --chip-bg: rgba(67, 56, 202, 0.08);
+}
+/* Arithmetic modifiers */
+[data-theme='light'] .nr-desc-chip--plus {
+  --chip-color: #16a34a;
+  --chip-bg: rgba(22, 163, 74, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--minus {
+  --chip-color: #dc2626;
+  --chip-bg: rgba(220, 38, 38, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--multiply {
+  --chip-color: #4d7c0f;
+  --chip-bg: rgba(77, 124, 15, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--multiplyTotal {
+  --chip-color: #3f6212;
+  --chip-bg: rgba(63, 98, 18, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--integerDivide {
+  --chip-color: #059669;
+  --chip-bg: rgba(5, 150, 105, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--modulo {
+  --chip-color: #047857;
+  --chip-bg: rgba(4, 120, 87, 0.08);
+}
+/* Special */
+[data-theme='light'] .nr-desc-chip--wildDie {
+  --chip-color: #a16207;
+  --chip-bg: rgba(161, 98, 7, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--sort {
+  --chip-color: #475569;
+  --chip-bg: rgba(71, 85, 105, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--repeat {
+  --chip-color: #64748b;
+  --chip-bg: rgba(100, 116, 139, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--label {
+  --chip-color: #71717a;
+  --chip-bg: rgba(113, 113, 122, 0.08);
+}
+
+/* ===== Textarea input ===== */
+.notation-roller-input {
+  padding: 0;
+  text-indent: 3.25rem;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #98c379;
+  caret-color: #a855f7;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  resize: none;
+  overflow: hidden;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* When overlay is active, input text is hidden (caret and selection remain visible) */
+.notation-roller-input--highlight {
+  color: transparent;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-input {
+    color: #417e38;
+    caret-color: #9333ea;
+  }
+}
+[data-theme='light'] .notation-roller-input {
+  color: #417e38;
+  caret-color: #9333ea;
+}
+
+/* ===== Buttons area (top-right) ===== */
+.notation-roller-buttons {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+  z-index: 2;
+}
+
+/* ===== Roll button ===== */
+.notation-roller-roll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75em;
+  height: 2rem;
+  background: #a855f7;
+  border: none;
+  border-radius: 0.35rem;
+  color: #fff;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+  line-height: 1;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.notation-roller-roll-btn:hover {
+  background: #9333ea;
+}
+
+.notation-roller-roll-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.notation-roller-roll-btn:disabled:hover {
+  background: #a855f7;
+}
+
+/* ===== Description row ===== */
+.notation-roller-desc-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 0.75rem 0.75rem;
+  min-height: calc(4 * 0.7rem * 1.4 + 0.5rem + 0.75rem);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-desc-row {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .notation-roller-desc-row {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.notation-roller-desc {
+  flex: 1;
+  text-align: left;
+}
+
+.notation-roller-desc--hint {
+  color: rgba(230, 237, 243, 0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-desc--hint {
+    color: rgba(31, 35, 40, 0.4);
+  }
+}
+[data-theme='light'] .notation-roller-desc--hint {
+  color: rgba(31, 35, 40, 0.4);
+}
+
+.notation-roller-desc--valid {
+  color: #9ca3af;
+}
+
+.notation-roller-desc--invalid {
+  color: #f97583;
+}
+
+/* ===== Result overlay (covers entire shell content) ===== */
+.notation-roller-result-overlay {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 66.67% !important;
+  max-height: 200% !important;
+  z-index: 50 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  padding: 0.5rem !important;
+  padding-right: 1.5rem !important;
+  background: #18181b !important;
+  border-radius: 0.5rem !important;
+  border: 1.5px solid #a855f7 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace !important;
+  font-size: 0.75rem !important;
+  animation: nr-tooltip-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto !important;
+  gap: 0.5rem !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+/* Backdrop blur behind the overlay */
+.notation-roller-result-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 49 !important;
+  backdrop-filter: blur(4px) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 0.5rem !important;
+  pointer-events: auto !important;
+  animation: nr-backdrop-in 0.2s ease !important;
+}
+
+.nr-tooltip-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  background: none;
+  border: none;
+  color: #71717a;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.1rem 0.25rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  z-index: 1;
+}
+
+.nr-tooltip-close:hover {
+  color: #e4e4e7;
+}
+
+@keyframes nr-tooltip-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes nr-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- Tooltip layout: total (left) | right column (header + scrollable steps) --- */
+.nr-tooltip-total-pane {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 2ch !important;
+  padding: 0.5rem 0.75rem !important;
+  border: 1px solid rgba(168, 85, 247, 0.4) !important;
+  border-radius: 0.375rem !important;
+  flex-shrink: 0 !important;
+  align-self: flex-start !important;
+  height: fit-content !important;
+}
+
+.nr-tooltip-total-value {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.nr-tooltip-right {
+  flex: 1 !important;
+  min-width: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-left: 0.5rem !important;
+  padding-right: 1rem !important;
+}
+
+.nr-tooltip-header-line {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: baseline !important;
+  gap: 0.25rem !important;
+  margin-bottom: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.nr-tooltip-notation {
+  font-weight: 700;
+  color: #a855f7;
+  white-space: nowrap;
+}
+
+.nr-tooltip-sep {
+  color: #3f3f46;
+}
+
+.nr-tooltip-desc {
+  color: #71717a;
+  font-size: 0.65rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-tooltip-total-pane {
+    border-color: rgba(147, 51, 234, 0.3);
+  }
+  .nr-tooltip-total-value {
+    color: #18181b;
+  }
+  .nr-tooltip-header-line {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .nr-tooltip-total-pane {
+  border-color: rgba(147, 51, 234, 0.3);
+}
+[data-theme='light'] .nr-tooltip-total-value {
+  color: #18181b;
+}
+[data-theme='light'] .nr-tooltip-header-line {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-result-overlay {
+    background: #f4f4f5;
+    border-color: #9333ea;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+  .notation-roller-result-backdrop {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .nr-tooltip-close:hover {
+    color: #27272a;
+  }
+}
+[data-theme='light'] .notation-roller-result-overlay {
+  background: #f4f4f5;
+  border-color: #9333ea;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+[data-theme='light'] .nr-tooltip-close:hover {
+  color: #27272a;
+}
+
+/* ===== Embedded RollResult styles ===== */
+.nr-result-inner {
+  background: transparent;
+  padding: 0;
+}
+
+.nr-result-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0.1rem 0;
+}
+
+.nr-result-pool-header {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  padding: 0.15rem 0;
+  letter-spacing: 0.02em;
+}
+
+.nr-result-pool-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.35rem 0;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-result-divider {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .nr-result-divider {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.nr-result-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 1.5rem !important;
+  padding: 0.2rem 0.25rem !important;
+  line-height: 1.4 !important;
+}
+
+.nr-result-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.2rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-result-row:nth-child(even) {
+    background: rgba(0, 0, 0, 0.03);
+  }
+}
+[data-theme='light'] .nr-result-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.nr-result-label {
+  color: #9ca3af;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nr-result-dice-group {
+  display: block;
+  text-align: right;
+}
+
+.nr-result-dice-group > * + * {
+  margin-left: 0.2em;
+}
+
+.nr-result-dice {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  letter-spacing: 0;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.nr-result-dice-sep {
+  color: rgba(255, 255, 255, 0.1);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+}
+
+.nr-result-dice--removed {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: line-through;
+  text-decoration-color: #9ca3af;
+}
+
+.nr-result-dice--added {
+  color: #d8b4fe;
+}
+
+.nr-result-dice--arithmetic {
+  color: #d8b4fe;
+  font-weight: 600;
+}
+
+.nr-result-row--final {
+  padding-bottom: 0.3rem;
+}
+
+.nr-result-row--total {
+  background: transparent !important;
+}
+
+.nr-result-label--total {
+  font-weight: 700;
+  color: #e4e4e7;
+}
+
+.nr-result-dice--total {
+  font-weight: 700;
+  color: #e4e4e7;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-result-label--total,
+  .nr-result-dice--total {
+    color: #18181b;
+  }
+}
+[data-theme='light'] .nr-result-label--total,
+[data-theme='light'] .nr-result-dice--total {
+  color: #18181b;
+}
+
+.nr-result-row--final .nr-result-dice {
+  word-spacing: -0.2em;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-result-label {
+    color: #6b7280;
+  }
+  .nr-result-dice--removed {
+    color: rgba(0, 0, 0, 0.35);
+    text-decoration-color: #6b7280;
+  }
+  .nr-result-dice-sep {
+    color: rgba(0, 0, 0, 0.2);
+  }
+  .nr-result-dice--added,
+  .nr-result-dice--arithmetic {
+    color: #9333ea;
+  }
+}
+[data-theme='light'] .nr-result-label {
+  color: #6b7280;
+}
+[data-theme='light'] .nr-result-dice--removed {
+  color: rgba(0, 0, 0, 0.35);
+  text-decoration-color: #6b7280;
+}
+[data-theme='light'] .nr-result-dice-sep {
+  color: rgba(0, 0, 0, 0.2);
+}
+[data-theme='light'] .nr-result-dice--added,
+[data-theme='light'] .nr-result-dice--arithmetic {
+  color: #9333ea;
+}
+
+/* ===== Desc-row action icons (right-aligned) ===== */
+.nr-code-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.nr-code-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  color: #52525b;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+  text-decoration: none;
+}
+
+.nr-code-action-btn:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #a855f7;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-code-preview {
+    background: #f8f8fa;
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  .nr-code-block {
+    color: #1f2937;
+  }
+  .nr-code-keyword {
+    color: #7c4dab;
+  }
+  .nr-code-fn {
+    color: #3a60c8;
+  }
+  .nr-code-string {
+    color: #4a8020;
+  }
+  .nr-code-action-btn {
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #9ca3af;
+  }
+  .nr-code-action-btn:hover {
+    border-color: rgba(147, 51, 234, 0.4);
+    color: #9333ea;
+  }
+}
+[data-theme='light'] .notation-roller-code-preview {
+  background: #f8f8fa;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme='light'] .nr-code-block {
+  color: #1f2937;
+}
+[data-theme='light'] .nr-code-keyword {
+  color: #7c4dab;
+}
+[data-theme='light'] .nr-code-fn {
+  color: #3a60c8;
+}
+[data-theme='light'] .nr-code-string {
+  color: #4a8020;
+}
+[data-theme='light'] .nr-code-action-btn {
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #9ca3af;
+}
+[data-theme='light'] .nr-code-action-btn:hover {
+  border-color: rgba(147, 51, 234, 0.4);
+  color: #9333ea;
+}
