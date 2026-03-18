@@ -256,7 +256,7 @@ export function NotationRoller({
                     {resultState.records.map(r => r.description.join(', ')).join(' + ')}
                   </span>
                 </div>
-                <RollResult records={resultState.records} />
+                <RollResult records={resultState.records} total={resultState.total} />
               </div>
             </div>
           )}
@@ -347,9 +347,11 @@ function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Eleme
 
 /** @internal — exported for testing only, not part of the public API */
 export function RollResult({
-  records
+  records,
+  total
 }: {
   readonly records: readonly RollRecord[]
+  readonly total?: number
 }): React.JSX.Element {
   const multiPool = records.length > 1
 
@@ -362,6 +364,15 @@ export function RollResult({
           {multiPool && i < records.length - 1 && <div className="nr-result-pool-divider" />}
         </Fragment>
       ))}
+      {total !== undefined && (
+        <>
+          <div className="nr-result-divider" />
+          <div className="nr-result-row nr-result-row--total">
+            <span className="nr-result-label nr-result-label--total">Total</span>
+            <span className="nr-result-dice nr-result-dice--total">{total}</span>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -976,6 +976,31 @@
   padding-bottom: 0.3rem;
 }
 
+.nr-result-row--total {
+  background: transparent !important;
+}
+
+.nr-result-label--total {
+  font-weight: 700;
+  color: #e4e4e7;
+}
+
+.nr-result-dice--total {
+  font-weight: 700;
+  color: #e4e4e7;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-result-label--total,
+  .nr-result-dice--total {
+    color: #18181b;
+  }
+}
+[data-theme='light'] .nr-result-label--total,
+[data-theme='light'] .nr-result-dice--total {
+  color: #18181b;
+}
+
 .nr-result-row--final .nr-result-dice {
   word-spacing: -0.2em;
 }
