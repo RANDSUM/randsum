@@ -1,6 +1,6 @@
 import sdk from '@stackblitz/sdk'
 import type { ProjectTemplate } from '@stackblitz/sdk'
-import { buildStackBlitzProject } from '@randsum/display-utils'
+import { buildStackBlitzProject } from '../helpers/stackblitz'
 
 interface PlaygroundHeaderProps {
   readonly notation: string

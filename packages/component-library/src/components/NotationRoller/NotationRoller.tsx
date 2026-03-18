@@ -2,7 +2,8 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import type { RollRecord } from '@randsum/roller'
-import { buildStackBlitzProject, computeSteps, formatAsMath } from '@randsum/display-utils'
+import { traceRoll, formatAsMath } from '@randsum/roller/trace'
+import { buildStackBlitzProject } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
 import './NotationRoller.css'
@@ -368,7 +369,7 @@ function DiceGroup({
 }
 
 function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Element {
-  const steps = computeSteps(record)
+  const steps = traceRoll(record)
   return (
     <>
       {steps.map((step, i) => {

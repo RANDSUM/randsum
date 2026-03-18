@@ -1,7 +1,7 @@
 import { unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { buildStackBlitzProject } from '@randsum/display-utils'
+import { buildStackBlitzProject } from './stackblitz'
 import { openUrl } from './openUrl'
 
 function esc(s: string): string {
