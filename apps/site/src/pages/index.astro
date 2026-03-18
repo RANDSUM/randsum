@@ -179,6 +179,11 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 </StarlightPage>
 
 <style>
+  /* Hide Starlight's auto-generated title panel on the landing page */
+  :global(.content-panel:has(#_top)) {
+    display: none !important;
+  }
+
   /* ===== Layout ===== */
   .landing {
     max-width: 100%;
