@@ -35,7 +35,7 @@ This repository contains multiple packages and applications for dice rolling and
 - **[@randsum/cli](apps/cli)** - CLI and interactive TUI for rolling dice from the terminal
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot with dice rolling capabilities using discord.js and Bun
 - **[@randsum/site](apps/site)** - Documentation and marketing website built with Astro
-- **[@randsum/component-library](packages/component-library)** - React component library for RANDSUM dice rolling tools
+
 All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.
 
 ## 🚀 Quick Example
@@ -126,7 +126,7 @@ bun run --filter @randsum/games build      # Build @randsum/games only
 
 ```bash
 bun run site:build    # Build the documentation site
-bun run site:dev      # Start the dev server (site + component-library)
+bun run site:dev      # Start the documentation site dev server
 ```
 
 Bun automatically handles inter-package dependencies through workspace linking, ensuring packages are built in the correct order.

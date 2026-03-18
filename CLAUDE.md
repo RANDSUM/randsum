@@ -13,7 +13,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 **Display & UI Utilities**: `@randsum/display-utils` — browser-targeted utilities for step visualization, modifier docs, and StackBlitz integration (published to npm, consumed by CLI and component-library)
 
-**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/component-library` (React UI components, published to npm)
+**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
@@ -81,7 +81,7 @@ CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates E
 
 ## Versioning
 
-When `@randsum/roller` receives a minor version bump, dependent packages (game packages, component-library) should also receive a corresponding minor version bump to keep the ecosystem in sync. This applies to minor and major releases — patch bumps in core do not require dependents to bump.
+When `@randsum/roller` receives a minor version bump, dependent packages (game packages) should also receive a corresponding minor version bump to keep the ecosystem in sync. This applies to minor and major releases — patch bumps in core do not require dependents to bump.
 
 ## Key Patterns
 
