@@ -10,4 +10,24 @@ describe('@randsum/component-library (dist)', () => {
     const mod = await import('../../component-library/dist/index.js')
     expect(typeof mod.NotationRoller).toBe('function')
   })
+
+  test('does NOT export RollerPlayground', async () => {
+    const mod = await import('../../component-library/dist/index.js')
+    expect(mod.RollerPlayground).toBeUndefined()
+  })
+
+  test('does NOT export ModifierReference', async () => {
+    const mod = await import('../../component-library/dist/index.js')
+    expect(mod.ModifierReference).toBeUndefined()
+  })
+
+  test('does NOT export Overlay', async () => {
+    const mod = await import('../../component-library/dist/index.js')
+    expect(mod.Overlay).toBeUndefined()
+  })
+
+  test('exports ErrorBoundary', async () => {
+    const mod = await import('../../component-library/dist/index.js')
+    expect(typeof mod.ErrorBoundary).toBe('function')
+  })
 })
