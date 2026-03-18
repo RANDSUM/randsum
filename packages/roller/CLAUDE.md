@@ -44,9 +44,134 @@ import { roll } from "@randsum/roller/roll" // roll function only
 import { ValidationError } from "@randsum/roller/errors"
 import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
 import { tokenize } from "@randsum/roller/tokenize" // notation tokenizer, no roll engine
+import { MODIFIER_DOCS } from "@randsum/roller/docs"
+import type { ModifierDoc } from "@randsum/roller/docs"
+import { traceRoll, formatAsMath } from "@randsum/roller/trace"
+import type { RollTraceStep } from "@randsum/roller/trace"
 ```
 
 `@randsum/roller/tokenize` is isolated — it does not pull in the roll engine, random number generation, or modifier registry. Use this subpath in UI components and form validators that need notation parsing without the full engine.
+
+### `@randsum/roller/docs` — Static modifier documentation
+
+Exports static documentation data describing every RANDSUM dice modifier. Pure static data with zero imports and zero side effects. Safe for any bundling context (browser, Node, edge).
+
+**Exports:**
+
+- `MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>>` — documentation for every modifier, keyed by notation shorthand (e.g. `'L'`, `'H'`, `'!'`, `'R{..}'`, `'xDN'`, `'+'/'-'`)
+- `ModifierDoc` type
+
+**`ModifierDoc` shape:**
+
+```typescript
+interface ModifierDoc {
+  readonly title: string
+  readonly description: string
+  readonly displayBase: string // primary notation symbol(s), e.g. 'L', 'R{..}'
+  readonly displayOptional?: string // optional suffix, e.g. 'n', '{..}'
+  readonly forms: readonly {
+    readonly notation: string
+    readonly note: string
+  }[]
+  readonly comparisons?: readonly {
+    // present for condition-based modifiers
+    readonly operator: string
+    readonly note: string
+  }[]
+  readonly examples: readonly {
+    readonly notation: string
+    readonly description: string
+  }[]
+}
+```
+
+Every entry in `MODIFIER_DOCS` has at least one `forms` entry and at least one `examples` entry. Keys match the modifier's canonical notation shorthand — use these keys as stable identifiers for display routing, filtering, and reference panels. Keys are case-sensitive; the underlying notation parser is case-insensitive, but `MODIFIER_DOCS` keys use uppercase shorthand to match the notation spec (`'L'` not `'l'`).
+
+**Example:**
+
+```typescript
+import { MODIFIER_DOCS } from "@randsum/roller/docs"
+
+const dropLowest = MODIFIER_DOCS["L"]
+// { title: 'Drop Lowest', description: '...', displayBase: 'L', ... }
+
+Object.entries(MODIFIER_DOCS).forEach(([key, doc]) => {
+  console.log(key, doc.title) // 'L' → 'Drop Lowest', etc.
+})
+```
+
+Bundle size limit: 20 KB (`dist/docs/index.js`).
+
+### `@randsum/roller/trace` — Roll result trace visualization
+
+Exports utilities for transforming a `RollRecord` (from `roll().rolls[n]`) into a step-by-step trace of how modifiers transformed the dice pool. Intended for display surfaces (tooltips, step-by-step result panels, roll histories).
+
+**Exports:**
+
+- `traceRoll(record: RollRecord): readonly RollTraceStep[]` — walk a single roll record's modifier history and return an ordered array of display steps
+- `formatAsMath(rolls: readonly number[], delta?: number): string` — format a number array as a human-readable math expression (e.g. `"3 + 4 + 5 - 1"`)
+- `RollTraceStep` type
+
+**`RollTraceStep` discriminated union (discriminant: `kind`):**
+
+```typescript
+type RollTraceStep =
+  | {
+      kind: "rolls"
+      label: string // human-readable modifier label, e.g. "Drop Lowest 1"
+      unchanged: readonly number[] // dice that were not affected
+      removed: readonly number[] // dice that were removed from the pool
+      added: readonly number[] // dice that were added to the pool
+    }
+  | { kind: "divider" }
+  | {
+      kind: "arithmetic"
+      label: string // e.g. "Add", "Subtract", "Multiply"
+      display: string // e.g. "+5", "-2", "×3"
+    }
+  | {
+      kind: "finalRolls"
+      rolls: readonly number[] // the final dice pool after all pool modifiers
+      arithmeticDelta: number // net arithmetic offset applied to the total
+    }
+```
+
+**`traceRoll` step sequence rules:**
+
+1. Always starts with a `kind: 'rolls'` step labeled `'Rolled'` showing the initial dice pool
+2. For each modifier log entry in `record.modifierLogs`:
+   - Arithmetic modifiers (`plus`, `minus`, `multiply`, `multiplyTotal`) produce a `kind: 'arithmetic'` step
+   - `drop`/`keep` logs with both `lowest` and `highest` keys are split into two separate `kind: 'rolls'` steps
+   - All other modifiers produce a single `kind: 'rolls'` step
+3. If any modifier steps were produced, a `kind: 'finalRolls'` step is appended as the last step
+4. If no modifiers were applied, the result is a single-element array containing only the initial `kind: 'rolls'` step
+
+**`formatAsMath` behavior:**
+
+- First element is emitted as a plain number string
+- Subsequent elements are prefixed with `+ ` (positive) or `- ` (using the absolute value)
+- `delta > 0` appends `+ delta` at the end
+- `delta < 0` appends `- Math.abs(delta)` at the end
+- `delta === 0` or omitted: no delta term appended
+
+**Example:**
+
+```typescript
+import { roll } from "@randsum/roller"
+import { traceRoll, formatAsMath } from "@randsum/roller/trace"
+
+const result = roll("4d6L")
+const steps = traceRoll(result.rolls[0]!)
+// steps[0]: { kind: 'rolls', label: 'Rolled', unchanged: [3,4,2,5], removed: [], added: [] }
+// steps[1]: { kind: 'rolls', label: 'Drop Lowest 1', unchanged: [3,4,5], removed: [2], added: [] }
+// steps[2]: { kind: 'finalRolls', rolls: [3,4,5], arithmeticDelta: 0 }
+
+formatAsMath([3, 4, 5]) // "3 + 4 + 5"
+formatAsMath([3, 4, 5], -1) // "3 + 4 + 5 - 1"
+formatAsMath([3, 4, 5], 2) // "3 + 4 + 5 + 2"
+```
+
+Bundle size limit: 5 KB (`dist/trace/index.js`). The trace subpath has no Node.js-specific APIs and works in browser contexts despite roller's `target: 'node'` bunup config.
 
 Comparison utilities (`parseComparisonNotation`, `hasConditions`, `formatComparisonNotation`, `formatComparisonDescription`) are available from the main barrel.
 
@@ -192,6 +317,8 @@ Everything related to dice notation and dice rolling belongs in this package:
 - Modifier behaviors (dice pool manipulation)
 - Random number generation
 - Roll execution
+- Modifier documentation (static data describing notation syntax and examples)
+- Roll result visualization (transforming `RollRecord` into display-friendly traces)
 
 Game-specific interpretation (outcome tables, pool conditions, critical thresholds) belongs in `packages/games/`.
 

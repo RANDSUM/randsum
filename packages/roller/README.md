@@ -112,6 +112,54 @@ import {
 } from "@randsum/roller"
 ```
 
+### Subpath Exports
+
+Use these subpaths to import only what you need without pulling in the full roll engine.
+
+**`@randsum/roller/docs`** — Static modifier documentation. Zero dependencies, safe for any environment.
+
+```typescript
+import { MODIFIER_DOCS } from "@randsum/roller/docs"
+import type { ModifierDoc } from "@randsum/roller/docs"
+
+// Keyed by notation shorthand
+const doc = MODIFIER_DOCS["L"] // Drop Lowest
+const doc = MODIFIER_DOCS["!"] // Explode
+const doc = MODIFIER_DOCS["R{..}"] // Reroll
+```
+
+**`@randsum/roller/trace`** — Transform a `RollRecord` into a step-by-step display trace.
+
+```typescript
+import { traceRoll, formatAsMath } from "@randsum/roller/trace"
+import type { RollTraceStep } from "@randsum/roller/trace"
+
+const result = roll("4d6L")
+const steps = traceRoll(result.rolls[0]!)
+// [
+//   { kind: 'rolls', label: 'Rolled', unchanged: [...], removed: [], added: [] },
+//   { kind: 'rolls', label: 'Drop Lowest 1', unchanged: [...], removed: [2], added: [] },
+//   { kind: 'finalRolls', rolls: [...], arithmeticDelta: 0 }
+// ]
+
+formatAsMath([3, 4, 5]) // "3 + 4 + 5"
+formatAsMath([3, 4, 5], -1) // "3 + 4 + 5 - 1"
+```
+
+`RollTraceStep` is a discriminated union on `kind`: `'rolls'` | `'divider'` | `'arithmetic'` | `'finalRolls'`.
+
+**`@randsum/roller/tokenize`** — Notation tokenizer without the roll engine.
+
+```typescript
+import { tokenize } from "@randsum/roller/tokenize"
+```
+
+**`@randsum/roller/validate`** — Validation utilities only.
+
+```typescript
+import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
+```
+
 ## Related Packages
 
 - [@randsum/games/blades](../../packages/games) - Blades in the Dark
