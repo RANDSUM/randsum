@@ -724,17 +724,6 @@
   color: #f97583;
 }
 
-/* ===== Result spacer (invisible, in-flow, grows the shell) ===== */
-.nr-result-spacer {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 0.5rem;
-  visibility: hidden;
-  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-  font-size: 0.75rem;
-}
-
 /* ===== Result overlay (covers entire shell content) ===== */
 .notation-roller-result-overlay {
   position: absolute !important;
@@ -754,6 +743,7 @@
   animation: nr-tooltip-in 0.15s ease;
   pointer-events: auto !important;
   gap: 0.5rem !important;
+  overflow: hidden !important;
 }
 
 .nr-tooltip-close {
