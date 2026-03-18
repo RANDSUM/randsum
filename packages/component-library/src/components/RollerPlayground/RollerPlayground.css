@@ -49,12 +49,12 @@
 
 @media (prefers-color-scheme: light) {
   .roller-playground-shell {
-    background: #f6f8fa;
+    background: #f4f4f5;
     border-color: rgba(0, 0, 0, 0.12);
   }
 }
 [data-theme='light'] .roller-playground-shell {
-  background: #f6f8fa;
+  background: #f4f4f5;
   border-color: rgba(0, 0, 0, 0.12);
 }
 
@@ -784,7 +784,7 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.25rem;
-  color: #8b949e;
+  color: #a1a1aa;
   font-family:
     system-ui,
     -apple-system,
@@ -802,7 +802,7 @@
 .roller-playground-stackblitz:hover {
   border-color: #a855f7;
   color: #a855f7;
-  background: #161b22;
+  background: #18181b;
 }
 
 .roller-playground-stackblitz--corner {
@@ -819,13 +819,13 @@
   .roller-playground-stackblitz:hover {
     border-color: #9333ea;
     color: #9333ea;
-    background: #f6f8fa;
+    background: #f4f4f5;
   }
 }
 [data-theme='light'] .roller-playground-stackblitz:hover {
   border-color: #9333ea;
   color: #9333ea;
-  background: #f6f8fa;
+  background: #f4f4f5;
 }
 
 .roller-playground-stackblitz-icon {
@@ -861,10 +861,10 @@
     border-color: #9333ea;
   }
   .roller-playground-chip-value {
-    color: #1f2328;
+    color: #18181b;
   }
   .roller-playground-chip-collapse {
-    color: #1f2328;
+    color: #18181b;
   }
   .roller-playground-chip-hint {
     color: #9333ea;
@@ -875,10 +875,10 @@
   border-color: #9333ea;
 }
 [data-theme='light'] .roller-playground-chip-value {
-  color: #1f2328;
+  color: #18181b;
 }
 [data-theme='light'] .roller-playground-chip-collapse {
-  color: #1f2328;
+  color: #18181b;
 }
 [data-theme='light'] .roller-playground-chip-hint {
   color: #9333ea;
@@ -998,18 +998,18 @@
     system-ui,
     -apple-system,
     sans-serif;
-  color: #e6edf3;
+  color: #e4e4e7;
 }
 
 @media (prefers-color-scheme: light) {
   .roller-playground-expand-content {
     border-top-color: rgba(0, 0, 0, 0.1);
-    color: #1f2328;
+    color: #18181b;
   }
 }
 [data-theme='light'] .roller-playground-expand-content {
   border-top-color: rgba(0, 0, 0, 0.1);
-  color: #1f2328;
+  color: #18181b;
 }
 
 /* ===== Total row at bottom of expand panel ===== */
@@ -1028,18 +1028,18 @@
     system-ui,
     -apple-system,
     sans-serif;
-  color: #e6edf3;
+  color: #e4e4e7;
 }
 
 @media (prefers-color-scheme: light) {
   .roller-playground-expand-total {
     border-top-color: rgba(0, 0, 0, 0.1);
-    color: #1f2328;
+    color: #18181b;
   }
 }
 [data-theme='light'] .roller-playground-expand-total {
   border-top-color: rgba(0, 0, 0, 0.1);
-  color: #1f2328;
+  color: #18181b;
 }
 
 /* ===== Total value chip in expand panel ===== */
@@ -1059,11 +1059,11 @@
 
 @media (prefers-color-scheme: light) {
   .roller-playground-expand-total-chip {
-    color: #1f2328;
+    color: #18181b;
   }
 }
 [data-theme='light'] .roller-playground-expand-total-chip {
-  color: #1f2328;
+  color: #18181b;
 }
 
 /* ===== Embedded RollResult styles ===== */
@@ -1275,7 +1275,7 @@
     sans-serif;
   font-size: 0.65rem;
   font-weight: 600;
-  color: #8b949e;
+  color: #a1a1aa;
   white-space: nowrap;
 }
 

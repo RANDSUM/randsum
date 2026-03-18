@@ -4,7 +4,7 @@
     system-ui,
     -apple-system,
     sans-serif;
-  color: #e6edf3;
+  color: #e4e4e7;
   min-width: 260px;
   display: flex;
   flex-direction: column;
@@ -60,7 +60,7 @@
 .modifier-doc-title {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #e6edf3;
+  color: #e4e4e7;
   line-height: 1.2;
 }
 
@@ -116,7 +116,7 @@
 .modifier-doc-comparison-chip {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.8rem;
-  color: #e6edf3;
+  color: #e4e4e7;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.25rem;
@@ -333,7 +333,7 @@
 /* ===== Light mode ===== */
 @media (prefers-color-scheme: light) {
   .modifier-doc {
-    color: #1f2328;
+    color: #18181b;
   }
   .modifier-doc-top {
     background: #ffffff;
@@ -343,7 +343,7 @@
     border-top-color: rgba(0, 0, 0, 0.08);
   }
   .modifier-doc-notation-base {
-    color: #1f2328;
+    color: #18181b;
   }
   .modifier-doc-notation-box {
     border-color: #9333ea;
@@ -355,7 +355,7 @@
     color: rgba(31, 35, 40, 0.2);
   }
   .modifier-doc-notation-input {
-    color: #1f2328;
+    color: #18181b;
     border-bottom-color: rgba(31, 35, 40, 0.3);
   }
   .modifier-doc-notation-input::placeholder {
@@ -369,11 +369,11 @@
     border-bottom-color: rgba(31, 35, 40, 0.15);
   }
   .modifier-doc-notation-input--muted:focus {
-    color: #1f2328;
+    color: #18181b;
     border-bottom-color: #9333ea;
   }
   .modifier-doc-title {
-    color: #1f2328;
+    color: #18181b;
   }
   .modifier-doc-example-notation {
     color: #9333ea;
@@ -402,7 +402,7 @@
 }
 
 [data-theme='light'] .modifier-doc {
-  color: #1f2328;
+  color: #18181b;
 }
 [data-theme='light'] .modifier-doc-top {
   background: #ffffff;
@@ -412,7 +412,7 @@
   border-top-color: rgba(0, 0, 0, 0.08);
 }
 [data-theme='light'] .modifier-doc-notation-base {
-  color: #1f2328;
+  color: #18181b;
 }
 [data-theme='light'] .modifier-doc-notation-box {
   border-color: #9333ea;
@@ -421,7 +421,7 @@
   border-color: #cf222e;
 }
 [data-theme='light'] .modifier-doc-notation-input {
-  color: #1f2328;
+  color: #18181b;
   border-bottom-color: rgba(31, 35, 40, 0.3);
 }
 [data-theme='light'] .modifier-doc-notation-input::placeholder {
@@ -435,7 +435,7 @@
   border-bottom-color: rgba(31, 35, 40, 0.15);
 }
 [data-theme='light'] .modifier-doc-notation-input--muted:focus {
-  color: #1f2328;
+  color: #18181b;
   border-bottom-color: #9333ea;
 }
 [data-theme='light'] .modifier-doc-example-row--clickable:hover {
@@ -445,7 +445,7 @@
   color: rgba(31, 35, 40, 0.2);
 }
 [data-theme='light'] .modifier-doc-title {
-  color: #1f2328;
+  color: #18181b;
 }
 [data-theme='light'] .modifier-doc-example-notation {
   color: #9333ea;

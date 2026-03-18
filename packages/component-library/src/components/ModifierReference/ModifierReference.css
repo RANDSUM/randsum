@@ -1,6 +1,6 @@
 /* ===== Container ===== */
 .modifier-reference {
-  background: #0d1117;
+  background: #18181b;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.5rem;
   overflow: hidden;
@@ -14,12 +14,12 @@
 
 @media (prefers-color-scheme: light) {
   .modifier-reference {
-    background: #f6f8fa;
+    background: #f4f4f5;
     border-color: rgba(0, 0, 0, 0.12);
   }
 }
 [data-theme='light'] .modifier-reference {
-  background: #f6f8fa;
+  background: #f4f4f5;
   border-color: rgba(0, 0, 0, 0.12);
 }
 
@@ -152,11 +152,11 @@
 
 @media (prefers-color-scheme: light) {
   .modifier-reference-notation {
-    color: #1f2328;
+    color: #18181b;
   }
 }
 [data-theme='light'] .modifier-reference-notation {
-  color: #1f2328;
+  color: #18181b;
 }
 
 .modifier-reference-notation-suffix--required {
