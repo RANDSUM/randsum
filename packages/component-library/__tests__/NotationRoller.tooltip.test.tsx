@@ -56,38 +56,38 @@ describe('RollResult component', () => {
 })
 
 describe('Tooltip container structure', () => {
-  test('tooltip CSS class notation-roller-tooltip is defined in CSS', async () => {
+  test('result overlay CSS class is defined in CSS', async () => {
     const css = await Bun.file(
       new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
     ).text()
-    expect(css).toContain('.notation-roller-tooltip')
+    expect(css).toContain('.notation-roller-result-overlay')
   })
 
-  test('input blur CSS class notation-roller-input--blurred is defined in CSS', async () => {
+  test('result backdrop CSS class is defined in CSS', async () => {
     const css = await Bun.file(
       new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
     ).text()
-    expect(css).toContain('.notation-roller-input--blurred')
+    expect(css).toContain('.notation-roller-result-backdrop')
   })
 
-  test('tooltip CSS uses absolute positioning', async () => {
+  test('result overlay CSS uses absolute positioning', async () => {
     const css = await Bun.file(
       new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
     ).text()
-    const tooltipIdx = css.indexOf('.notation-roller-tooltip')
-    const blockEnd = css.indexOf('}', tooltipIdx)
-    const tooltipBlock = css.slice(tooltipIdx, blockEnd)
-    expect(tooltipBlock).toContain('position: absolute')
+    const overlayIdx = css.indexOf('.notation-roller-result-overlay')
+    const blockEnd = css.indexOf('}', overlayIdx)
+    const overlayBlock = css.slice(overlayIdx, blockEnd)
+    expect(overlayBlock).toContain('position: absolute')
   })
 
-  test('input blur CSS uses filter: blur()', async () => {
+  test('result backdrop CSS uses backdrop-filter: blur()', async () => {
     const css = await Bun.file(
       new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
     ).text()
-    const blurIdx = css.indexOf('.notation-roller-input--blurred')
-    const blockEnd = css.indexOf('}', blurIdx)
-    const blurBlock = css.slice(blurIdx, blockEnd)
-    expect(blurBlock).toContain('filter:')
-    expect(blurBlock).toContain('blur(')
+    const backdropIdx = css.indexOf('.notation-roller-result-backdrop')
+    const blockEnd = css.indexOf('}', backdropIdx)
+    const backdropBlock = css.slice(backdropIdx, blockEnd)
+    expect(backdropBlock).toContain('backdrop-filter:')
+    expect(backdropBlock).toContain('blur(')
   })
 })
