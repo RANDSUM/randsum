@@ -119,6 +119,7 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     {
       key: 'L',
       category: 'Pool',
+      color: '#fb7185',
       title: 'Drop Lowest',
       description: 'Remove the lowest-valued dice from the pool before summing.',
       displayBase: 'L',
@@ -135,6 +136,7 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     {
       key: 'H',
       category: 'Pool',
+      color: '#fb7185',
       title: 'Drop Highest',
       description: 'Remove the highest-valued dice from the pool before summing.',
       displayBase: 'H',
@@ -151,6 +153,7 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     {
       key: 'D{..}',
       category: 'Pool',
+      color: '#e11d48',
       title: 'Drop by Condition',
       description:
         'Drop any dice matching a condition \u2014 more flexible than L/H for arbitrary thresholds.',

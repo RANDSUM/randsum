@@ -106,6 +106,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
     {
       key: 'R{..}',
       category: 'Pool',
+      color: '#f472b6',
       title: 'Reroll',
       description:
         'Reroll dice that match a condition. The new result stands (may reroll again if still matching).',
@@ -148,6 +149,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
     {
       key: 'ro{..}',
       category: 'Pool',
+      color: '#f472b6',
       title: 'Reroll Once',
       description:
         'Reroll dice matching a condition with a maximum of 1 attempt. Sugar for Reroll with max=1.',

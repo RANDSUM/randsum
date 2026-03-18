@@ -29,6 +29,7 @@ export const multiplySchema: NotationSchema<number> = defineNotationSchema<numbe
     {
       key: '*',
       category: 'Arithmetic',
+      color: '#a3e635',
       title: 'Multiply Dice',
       description: 'Multiply the dice sum before applying +/\u2212 arithmetic modifiers.',
       displayBase: '*',

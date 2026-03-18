@@ -27,7 +27,7 @@ describe('tokenize', () => {
     expect(tokens).toHaveLength(2)
     expect(tokens[0]?.category).toBe('Core')
     expect(tokens[1]?.category).toBe('Arithmetic')
-    expect(tokens[1]?.key).toBe('+N')
+    expect(tokens[1]?.key).toBe('+')
   })
 
   test('each token has start/end positions', () => {

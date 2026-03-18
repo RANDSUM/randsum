@@ -31,6 +31,7 @@ export const explodeSchema: NotationSchema<boolean> = defineNotationSchema<boole
     {
       key: '!',
       category: 'Explode',
+      color: '#fbbf24',
       title: 'Explode',
       description:
         'Each die showing its maximum value triggers an extra die roll. Continues if new dice also max.',

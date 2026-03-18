@@ -11,6 +11,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
     doc: {
       key: 'xDN',
       category: 'Core',
+      color: '#c084fc',
       title: 'Core Roll',
       description: 'Roll x dice with N sides each. The foundation of every notation string.',
       displayBase: 'xDN',
@@ -27,6 +28,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
     doc: {
       key: 'd%',
       category: 'Special',
+      color: '#a78bfa',
       title: 'Percentile Die',
       description: 'Shorthand for a 100-sided die. Equivalent to 1d100.',
       displayBase: 'd%',
@@ -39,6 +41,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
     doc: {
       key: 'dF',
       category: 'Special',
+      color: '#e879f9',
       title: 'Fate / Fudge Die',
       description: 'Fate dice show -1, 0, or +1. dF.2 is the extended Fudge variant (-2 to +2).',
       displayBase: 'dF',
@@ -57,6 +60,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
     doc: {
       key: 'zN',
       category: 'Special',
+      color: '#d946ef',
       title: 'Zero-Bias Die',
       description: 'A zero-indexed die that rolls 0 through N-1 instead of 1 through N.',
       displayBase: 'zN',
@@ -69,6 +73,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
     doc: {
       key: 'gN',
       category: 'Special',
+      color: '#818cf8',
       title: 'Geometric Die',
       description: 'Roll an N-sided die repeatedly until a 1 appears. Total is the count of rolls.',
       displayBase: 'gN',
@@ -81,6 +86,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
     doc: {
       key: 'DDN',
       category: 'Special',
+      color: '#c4b5fd',
       title: 'Draw Die',
       description: 'Draw dice from a pool without replacement — each value can only appear once.',
       displayBase: 'DDN',
@@ -93,6 +99,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
     doc: {
       key: 'd{...}',
       category: 'Special',
+      color: '#f0abfc',
       title: 'Custom Faces Die',
       description: 'A die with custom face values. Faces can be any values.',
       displayBase: 'd{...}',

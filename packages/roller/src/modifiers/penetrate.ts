@@ -41,6 +41,7 @@ export const penetrateSchema: NotationSchema<boolean | number> = defineNotationS
     {
       key: '!p',
       category: 'Explode',
+      color: '#d97706',
       title: 'Penetrating Explode',
       description:
         'Like explode, but each subsequent explosion subtracts 1 from the result (Hackmaster-style).',

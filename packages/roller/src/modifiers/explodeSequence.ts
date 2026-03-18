@@ -37,6 +37,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     {
       key: '!s{..}',
       category: 'Explode',
+      color: '#fcd34d',
       title: 'Explode Sequence',
       description:
         'On max, re-roll with the next die size in a custom sequence rather than reusing the same die.',
@@ -50,6 +51,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     {
       key: '!i',
       category: 'Explode',
+      color: '#fcd34d',
       title: 'Inflation',
       description:
         'Explode upward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going up.',
@@ -60,6 +62,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     {
       key: '!r',
       category: 'Explode',
+      color: '#fcd34d',
       title: 'Reduction',
       description:
         'Explode downward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going down.',

@@ -99,6 +99,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     {
       key: '#{..}',
       category: 'Counting',
+      color: '#60a5fa',
       title: 'Count',
       description:
         'Count dice matching comparison conditions instead of summing values. More powerful than S{}/F{} sugar.',
@@ -119,6 +120,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     {
       key: 'S{..}',
       category: 'Counting',
+      color: '#3b82f6',
       title: 'Count Successes',
       description:
         'Count dice that meet a threshold instead of summing values \u2014 used in dice pool systems.',
@@ -135,6 +137,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     {
       key: 'F{..}',
       category: 'Counting',
+      color: '#93c5fd',
       title: 'Count Failures',
       description:
         'Count dice at or below a threshold instead of summing values. Sugar for Count with lessThanOrEqual.',
@@ -145,6 +148,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     {
       key: 'ms{..}',
       category: 'Counting',
+      color: '#6366f1',
       title: 'Margin of Success',
       description:
         'Subtract a target number from the total to get the margin of success or failure. Sugar for Minus N.',

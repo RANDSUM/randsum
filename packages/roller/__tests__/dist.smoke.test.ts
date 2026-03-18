@@ -71,7 +71,7 @@ describe('@randsum/roller (dist)', () => {
     expect(tokens.length).toBeGreaterThan(0)
     const first = tokens[0]
     expect(first).toHaveProperty('text')
-    expect(first).toHaveProperty('type')
+    expect(first).toHaveProperty('category')
   })
 
   test('tokenize subpath exports work from dist', async () => {

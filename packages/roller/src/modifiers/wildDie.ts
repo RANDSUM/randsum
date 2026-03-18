@@ -33,6 +33,7 @@ export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boole
     {
       key: 'W',
       category: 'Special',
+      color: '#facc15',
       title: 'Wild Die',
       description:
         'D6 System wild die: compound-explode on max, drop wild die and highest on 1, no effect otherwise. A macro that dispatches to multiple primitives based on runtime state.',

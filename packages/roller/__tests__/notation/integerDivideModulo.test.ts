@@ -161,14 +161,14 @@ describe('modifiersToDescription with integer divide and modulo', () => {
 describe('tokenize with integer divide and modulo', () => {
   test('tokenizes //N as integerDivide', () => {
     const tokens = tokenize('2d6//3')
-    const divToken = tokens.find(t => t.type === 'integerDivide')
+    const divToken = tokens.find(t => t.category === 'Arithmetic')
     expect(divToken).toBeDefined()
     expect(divToken?.text).toBe('//3')
   })
 
   test('tokenizes %N as modulo', () => {
     const tokens = tokenize('1d20%5')
-    const modToken = tokens.find(t => t.type === 'modulo')
+    const modToken = tokens.find(t => t.category === 'Arithmetic')
     expect(modToken).toBeDefined()
     expect(modToken?.text).toBe('%5')
   })
