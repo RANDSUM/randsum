@@ -87,13 +87,9 @@ h6 {
   letter-spacing: -0.02em;
 }
 
-/* ===== RollerPlayground spacing ===== */
-.roller-playground + .roller-playground {
+/* ===== NotationRoller spacing ===== */
+.notation-roller + .notation-roller {
   margin-top: 1.5rem;
-}
-
-.sl-markdown-content .roller-playground.roller-playground--size-l:not(:where(.not-content *)) {
-  margin: 2rem 0;
 }
 
 /* ===== Header layout ===== */

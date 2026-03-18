@@ -5,7 +5,7 @@ description: How roll() reports errors, the RandsumError hierarchy, input valida
 
 import { Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { RollerPlayground } from '@randsum/component-library'
+import { NotationRoller } from '@randsum/component-library'
 
 `roll()` throws on invalid input. Hardcoded notation like `roll('4d6L')` never throws in practice — errors only occur when input comes from outside your control.
 
@@ -67,7 +67,7 @@ function rollUserInput(input: string) {
   return { total: result.total }
 }`} />
 
-<RollerPlayground defaultNotation="4d6L" client:only="react" />
+<NotationRoller defaultNotation="4d6L" client:only="react" />
 
 ### `isDiceNotation`
 
