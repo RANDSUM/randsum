@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import type { RollRecord } from '@randsum/roller'
-import { traceRoll, formatAsMath } from '@randsum/roller/trace'
+import { formatAsMath, traceRoll } from '@randsum/roller/trace'
 import { buildStackBlitzProject } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
