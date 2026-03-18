@@ -320,225 +320,447 @@
 }
 
 /* Chip colors + active backgrounds — dark mode */
+/* --- Dice types (purple family) --- */
 .nr-desc-chip--core {
-  --chip-color: #d8b4fe;
-  --chip-bg: rgba(216, 180, 254, 0.12);
+  --chip-color: #c084fc;
+  --chip-bg: rgba(192, 132, 252, 0.12);
 }
+.nr-desc-chip--percentile {
+  --chip-color: #a78bfa;
+  --chip-bg: rgba(167, 139, 250, 0.12);
+}
+.nr-desc-chip--fate {
+  --chip-color: #e879f9;
+  --chip-bg: rgba(232, 121, 249, 0.12);
+}
+.nr-desc-chip--zeroBias {
+  --chip-color: #d946ef;
+  --chip-bg: rgba(217, 70, 239, 0.12);
+}
+.nr-desc-chip--geometric {
+  --chip-color: #818cf8;
+  --chip-bg: rgba(129, 140, 248, 0.12);
+}
+.nr-desc-chip--draw {
+  --chip-color: #c4b5fd;
+  --chip-bg: rgba(196, 181, 253, 0.12);
+}
+.nr-desc-chip--customFaces {
+  --chip-color: #f0abfc;
+  --chip-bg: rgba(240, 171, 252, 0.12);
+}
+/* --- Pool modifiers (warm tones) --- */
 .nr-desc-chip--dropHighest {
-  --chip-color: #b858b0;
-  --chip-bg: rgba(184, 88, 176, 0.12);
+  --chip-color: #fb7185;
+  --chip-bg: rgba(251, 113, 133, 0.12);
 }
 .nr-desc-chip--dropLowest {
-  --chip-color: #f060d0;
-  --chip-bg: rgba(240, 96, 208, 0.12);
+  --chip-color: #f43f5e;
+  --chip-bg: rgba(244, 63, 94, 0.12);
 }
 .nr-desc-chip--dropCondition {
-  --chip-color: #d860c0;
-  --chip-bg: rgba(216, 96, 192, 0.12);
+  --chip-color: #e11d48;
+  --chip-bg: rgba(225, 29, 72, 0.12);
 }
 .nr-desc-chip--keepHighest {
-  --chip-color: #ffab70;
-  --chip-bg: rgba(255, 171, 112, 0.12);
+  --chip-color: #fb923c;
+  --chip-bg: rgba(251, 146, 60, 0.12);
 }
 .nr-desc-chip--keepLowest {
-  --chip-color: #d4845a;
-  --chip-bg: rgba(212, 132, 90, 0.12);
+  --chip-color: #f97316;
+  --chip-bg: rgba(249, 115, 22, 0.12);
 }
-.nr-desc-chip--explode {
-  --chip-color: #e5c07b;
-  --chip-bg: rgba(229, 192, 123, 0.12);
-}
-.nr-desc-chip--compound {
-  --chip-color: #e08040;
-  --chip-bg: rgba(224, 128, 64, 0.12);
-}
-.nr-desc-chip--penetrate {
-  --chip-color: #b8d858;
-  --chip-bg: rgba(184, 216, 88, 0.12);
+.nr-desc-chip--keepMiddle {
+  --chip-color: #fdba74;
+  --chip-bg: rgba(253, 186, 116, 0.12);
 }
 .nr-desc-chip--reroll {
-  --chip-color: #c792ea;
-  --chip-bg: rgba(199, 146, 234, 0.12);
+  --chip-color: #f472b6;
+  --chip-bg: rgba(244, 114, 182, 0.12);
 }
 .nr-desc-chip--cap {
-  --chip-color: #89ddff;
-  --chip-bg: rgba(137, 221, 255, 0.12);
+  --chip-color: #67e8f9;
+  --chip-bg: rgba(103, 232, 249, 0.12);
 }
 .nr-desc-chip--replace {
-  --chip-color: #c3e88d;
-  --chip-bg: rgba(195, 232, 141, 0.12);
+  --chip-color: #2dd4bf;
+  --chip-bg: rgba(45, 212, 191, 0.12);
 }
 .nr-desc-chip--unique {
-  --chip-color: #80cbc4;
-  --chip-bg: rgba(128, 203, 196, 0.12);
+  --chip-color: #5eead4;
+  --chip-bg: rgba(94, 234, 212, 0.12);
+}
+/* --- Explode modifiers (yellow/amber) --- */
+.nr-desc-chip--explode {
+  --chip-color: #fbbf24;
+  --chip-bg: rgba(251, 191, 36, 0.12);
+}
+.nr-desc-chip--compound {
+  --chip-color: #f59e0b;
+  --chip-bg: rgba(245, 158, 11, 0.12);
+}
+.nr-desc-chip--penetrate {
+  --chip-color: #d97706;
+  --chip-bg: rgba(217, 119, 6, 0.12);
+}
+.nr-desc-chip--explodeSequence {
+  --chip-color: #fcd34d;
+  --chip-bg: rgba(252, 211, 77, 0.12);
+}
+/* --- Counting modifiers (blue family) --- */
+.nr-desc-chip--count {
+  --chip-color: #60a5fa;
+  --chip-bg: rgba(96, 165, 250, 0.12);
 }
 .nr-desc-chip--countSuccesses {
-  --chip-color: #82aaff;
-  --chip-bg: rgba(130, 170, 255, 0.12);
+  --chip-color: #3b82f6;
+  --chip-bg: rgba(59, 130, 246, 0.12);
 }
+.nr-desc-chip--countFailures {
+  --chip-color: #93c5fd;
+  --chip-bg: rgba(147, 197, 253, 0.12);
+}
+.nr-desc-chip--marginOfSuccess {
+  --chip-color: #6366f1;
+  --chip-bg: rgba(99, 102, 241, 0.12);
+}
+/* --- Arithmetic modifiers (green family) --- */
 .nr-desc-chip--plus {
-  --chip-color: #98c379;
-  --chip-bg: rgba(152, 195, 121, 0.12);
+  --chip-color: #4ade80;
+  --chip-bg: rgba(74, 222, 128, 0.12);
 }
 .nr-desc-chip--minus {
-  --chip-color: #6b9e52;
-  --chip-bg: rgba(107, 158, 82, 0.12);
+  --chip-color: #f87171;
+  --chip-bg: rgba(248, 113, 113, 0.12);
 }
 .nr-desc-chip--multiply {
-  --chip-color: #ffcb6b;
-  --chip-bg: rgba(255, 203, 107, 0.12);
+  --chip-color: #a3e635;
+  --chip-bg: rgba(163, 230, 53, 0.12);
 }
 .nr-desc-chip--multiplyTotal {
-  --chip-color: #e8a93a;
-  --chip-bg: rgba(232, 169, 58, 0.12);
+  --chip-color: #84cc16;
+  --chip-bg: rgba(132, 204, 22, 0.12);
+}
+.nr-desc-chip--integerDivide {
+  --chip-color: #34d399;
+  --chip-bg: rgba(52, 211, 153, 0.12);
+}
+.nr-desc-chip--modulo {
+  --chip-color: #10b981;
+  --chip-bg: rgba(16, 185, 129, 0.12);
+}
+/* --- Special modifiers --- */
+.nr-desc-chip--wildDie {
+  --chip-color: #facc15;
+  --chip-bg: rgba(250, 204, 21, 0.12);
+}
+.nr-desc-chip--sort {
+  --chip-color: #94a3b8;
+  --chip-bg: rgba(148, 163, 184, 0.12);
+}
+.nr-desc-chip--repeat {
+  --chip-color: #cbd5e1;
+  --chip-bg: rgba(203, 213, 225, 0.12);
+}
+.nr-desc-chip--label {
+  --chip-color: #a1a1aa;
+  --chip-bg: rgba(161, 161, 170, 0.12);
 }
 
 /* Chip colors — light mode */
 @media (prefers-color-scheme: light) {
+  /* Dice types */
   .nr-desc-chip--core {
-    --chip-color: #9333ea;
-    --chip-bg: rgba(147, 51, 234, 0.08);
+    --chip-color: #7c3aed;
+    --chip-bg: rgba(124, 58, 237, 0.08);
   }
+  .nr-desc-chip--percentile {
+    --chip-color: #6d28d9;
+    --chip-bg: rgba(109, 40, 217, 0.08);
+  }
+  .nr-desc-chip--fate {
+    --chip-color: #a21caf;
+    --chip-bg: rgba(162, 28, 175, 0.08);
+  }
+  .nr-desc-chip--zeroBias {
+    --chip-color: #86198f;
+    --chip-bg: rgba(134, 25, 143, 0.08);
+  }
+  .nr-desc-chip--geometric {
+    --chip-color: #4f46e5;
+    --chip-bg: rgba(79, 70, 229, 0.08);
+  }
+  .nr-desc-chip--draw {
+    --chip-color: #7e22ce;
+    --chip-bg: rgba(126, 34, 206, 0.08);
+  }
+  .nr-desc-chip--customFaces {
+    --chip-color: #c026d3;
+    --chip-bg: rgba(192, 38, 211, 0.08);
+  }
+  /* Pool modifiers */
   .nr-desc-chip--dropHighest {
-    --chip-color: #802090;
-    --chip-bg: rgba(128, 32, 144, 0.08);
+    --chip-color: #e11d48;
+    --chip-bg: rgba(225, 29, 72, 0.08);
   }
   .nr-desc-chip--dropLowest {
-    --chip-color: #b028a8;
-    --chip-bg: rgba(176, 40, 168, 0.08);
+    --chip-color: #be123c;
+    --chip-bg: rgba(190, 18, 60, 0.08);
   }
   .nr-desc-chip--dropCondition {
-    --chip-color: #9020a0;
-    --chip-bg: rgba(144, 32, 160, 0.08);
+    --chip-color: #9f1239;
+    --chip-bg: rgba(159, 18, 57, 0.08);
   }
   .nr-desc-chip--keepHighest {
-    --chip-color: #c2620a;
-    --chip-bg: rgba(194, 98, 10, 0.08);
+    --chip-color: #c2410c;
+    --chip-bg: rgba(194, 65, 12, 0.08);
   }
   .nr-desc-chip--keepLowest {
-    --chip-color: #9e4e20;
-    --chip-bg: rgba(158, 78, 32, 0.08);
+    --chip-color: #9a3412;
+    --chip-bg: rgba(154, 52, 18, 0.08);
   }
-  .nr-desc-chip--explode {
-    --chip-color: #9a7c1a;
-    --chip-bg: rgba(154, 124, 26, 0.08);
-  }
-  .nr-desc-chip--compound {
-    --chip-color: #c05818;
-    --chip-bg: rgba(192, 88, 24, 0.08);
-  }
-  .nr-desc-chip--penetrate {
-    --chip-color: #5a8018;
-    --chip-bg: rgba(90, 128, 24, 0.08);
+  .nr-desc-chip--keepMiddle {
+    --chip-color: #ea580c;
+    --chip-bg: rgba(234, 88, 12, 0.08);
   }
   .nr-desc-chip--reroll {
-    --chip-color: #7c4dab;
-    --chip-bg: rgba(124, 77, 171, 0.08);
+    --chip-color: #db2777;
+    --chip-bg: rgba(219, 39, 119, 0.08);
   }
   .nr-desc-chip--cap {
-    --chip-color: #0082a5;
-    --chip-bg: rgba(0, 130, 165, 0.08);
+    --chip-color: #0891b2;
+    --chip-bg: rgba(8, 145, 178, 0.08);
   }
   .nr-desc-chip--replace {
-    --chip-color: #4a8020;
-    --chip-bg: rgba(74, 128, 32, 0.08);
+    --chip-color: #0d9488;
+    --chip-bg: rgba(13, 148, 136, 0.08);
   }
   .nr-desc-chip--unique {
-    --chip-color: #1a7a72;
-    --chip-bg: rgba(26, 122, 114, 0.08);
+    --chip-color: #0f766e;
+    --chip-bg: rgba(15, 118, 110, 0.08);
+  }
+  /* Explode modifiers */
+  .nr-desc-chip--explode {
+    --chip-color: #d97706;
+    --chip-bg: rgba(217, 119, 6, 0.08);
+  }
+  .nr-desc-chip--compound {
+    --chip-color: #b45309;
+    --chip-bg: rgba(180, 83, 9, 0.08);
+  }
+  .nr-desc-chip--penetrate {
+    --chip-color: #92400e;
+    --chip-bg: rgba(146, 64, 14, 0.08);
+  }
+  .nr-desc-chip--explodeSequence {
+    --chip-color: #ca8a04;
+    --chip-bg: rgba(202, 138, 4, 0.08);
+  }
+  /* Counting modifiers */
+  .nr-desc-chip--count {
+    --chip-color: #2563eb;
+    --chip-bg: rgba(37, 99, 235, 0.08);
   }
   .nr-desc-chip--countSuccesses {
-    --chip-color: #3a60c8;
-    --chip-bg: rgba(58, 96, 200, 0.08);
+    --chip-color: #1d4ed8;
+    --chip-bg: rgba(29, 78, 216, 0.08);
   }
+  .nr-desc-chip--countFailures {
+    --chip-color: #3b82f6;
+    --chip-bg: rgba(59, 130, 246, 0.08);
+  }
+  .nr-desc-chip--marginOfSuccess {
+    --chip-color: #4338ca;
+    --chip-bg: rgba(67, 56, 202, 0.08);
+  }
+  /* Arithmetic modifiers */
   .nr-desc-chip--plus {
-    --chip-color: #3a7d20;
-    --chip-bg: rgba(58, 125, 32, 0.08);
+    --chip-color: #16a34a;
+    --chip-bg: rgba(22, 163, 74, 0.08);
   }
   .nr-desc-chip--minus {
-    --chip-color: #2a6018;
-    --chip-bg: rgba(42, 96, 24, 0.08);
+    --chip-color: #dc2626;
+    --chip-bg: rgba(220, 38, 38, 0.08);
   }
   .nr-desc-chip--multiply {
-    --chip-color: #8a6a00;
-    --chip-bg: rgba(138, 106, 0, 0.08);
+    --chip-color: #4d7c0f;
+    --chip-bg: rgba(77, 124, 15, 0.08);
   }
   .nr-desc-chip--multiplyTotal {
-    --chip-color: #7a5800;
-    --chip-bg: rgba(122, 88, 0, 0.08);
+    --chip-color: #3f6212;
+    --chip-bg: rgba(63, 98, 18, 0.08);
+  }
+  .nr-desc-chip--integerDivide {
+    --chip-color: #059669;
+    --chip-bg: rgba(5, 150, 105, 0.08);
+  }
+  .nr-desc-chip--modulo {
+    --chip-color: #047857;
+    --chip-bg: rgba(4, 120, 87, 0.08);
+  }
+  /* Special */
+  .nr-desc-chip--wildDie {
+    --chip-color: #a16207;
+    --chip-bg: rgba(161, 98, 7, 0.08);
+  }
+  .nr-desc-chip--sort {
+    --chip-color: #475569;
+    --chip-bg: rgba(71, 85, 105, 0.08);
+  }
+  .nr-desc-chip--repeat {
+    --chip-color: #64748b;
+    --chip-bg: rgba(100, 116, 139, 0.08);
+  }
+  .nr-desc-chip--label {
+    --chip-color: #71717a;
+    --chip-bg: rgba(113, 113, 122, 0.08);
   }
 }
+/* Dice types */
 [data-theme='light'] .nr-desc-chip--core {
-  --chip-color: #9333ea;
-  --chip-bg: rgba(147, 51, 234, 0.08);
+  --chip-color: #7c3aed;
+  --chip-bg: rgba(124, 58, 237, 0.08);
 }
+[data-theme='light'] .nr-desc-chip--percentile {
+  --chip-color: #6d28d9;
+  --chip-bg: rgba(109, 40, 217, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--fate {
+  --chip-color: #a21caf;
+  --chip-bg: rgba(162, 28, 175, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--zeroBias {
+  --chip-color: #86198f;
+  --chip-bg: rgba(134, 25, 143, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--geometric {
+  --chip-color: #4f46e5;
+  --chip-bg: rgba(79, 70, 229, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--draw {
+  --chip-color: #7e22ce;
+  --chip-bg: rgba(126, 34, 206, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--customFaces {
+  --chip-color: #c026d3;
+  --chip-bg: rgba(192, 38, 211, 0.08);
+}
+/* Pool modifiers */
 [data-theme='light'] .nr-desc-chip--dropHighest {
-  --chip-color: #802090;
-  --chip-bg: rgba(128, 32, 144, 0.08);
+  --chip-color: #e11d48;
+  --chip-bg: rgba(225, 29, 72, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--dropLowest {
-  --chip-color: #b028a8;
-  --chip-bg: rgba(176, 40, 168, 0.08);
+  --chip-color: #be123c;
+  --chip-bg: rgba(190, 18, 60, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--dropCondition {
-  --chip-color: #9020a0;
-  --chip-bg: rgba(144, 32, 160, 0.08);
+  --chip-color: #9f1239;
+  --chip-bg: rgba(159, 18, 57, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--keepHighest {
-  --chip-color: #c2620a;
-  --chip-bg: rgba(194, 98, 10, 0.08);
+  --chip-color: #c2410c;
+  --chip-bg: rgba(194, 65, 12, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--keepLowest {
-  --chip-color: #9e4e20;
-  --chip-bg: rgba(158, 78, 32, 0.08);
+  --chip-color: #9a3412;
+  --chip-bg: rgba(154, 52, 18, 0.08);
 }
-[data-theme='light'] .nr-desc-chip--explode {
-  --chip-color: #9a7c1a;
-  --chip-bg: rgba(154, 124, 26, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--compound {
-  --chip-color: #c05818;
-  --chip-bg: rgba(192, 88, 24, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--penetrate {
-  --chip-color: #5a8018;
-  --chip-bg: rgba(90, 128, 24, 0.08);
+[data-theme='light'] .nr-desc-chip--keepMiddle {
+  --chip-color: #ea580c;
+  --chip-bg: rgba(234, 88, 12, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--reroll {
-  --chip-color: #7c4dab;
-  --chip-bg: rgba(124, 77, 171, 0.08);
+  --chip-color: #db2777;
+  --chip-bg: rgba(219, 39, 119, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--cap {
-  --chip-color: #0082a5;
-  --chip-bg: rgba(0, 130, 165, 0.08);
+  --chip-color: #0891b2;
+  --chip-bg: rgba(8, 145, 178, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--replace {
-  --chip-color: #4a8020;
-  --chip-bg: rgba(74, 128, 32, 0.08);
+  --chip-color: #0d9488;
+  --chip-bg: rgba(13, 148, 136, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--unique {
-  --chip-color: #1a7a72;
-  --chip-bg: rgba(26, 122, 114, 0.08);
+  --chip-color: #0f766e;
+  --chip-bg: rgba(15, 118, 110, 0.08);
+}
+/* Explode modifiers */
+[data-theme='light'] .nr-desc-chip--explode {
+  --chip-color: #d97706;
+  --chip-bg: rgba(217, 119, 6, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--compound {
+  --chip-color: #b45309;
+  --chip-bg: rgba(180, 83, 9, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--penetrate {
+  --chip-color: #92400e;
+  --chip-bg: rgba(146, 64, 14, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--explodeSequence {
+  --chip-color: #ca8a04;
+  --chip-bg: rgba(202, 138, 4, 0.08);
+}
+/* Counting modifiers */
+[data-theme='light'] .nr-desc-chip--count {
+  --chip-color: #2563eb;
+  --chip-bg: rgba(37, 99, 235, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--countSuccesses {
-  --chip-color: #3a60c8;
-  --chip-bg: rgba(58, 96, 200, 0.08);
+  --chip-color: #1d4ed8;
+  --chip-bg: rgba(29, 78, 216, 0.08);
 }
+[data-theme='light'] .nr-desc-chip--countFailures {
+  --chip-color: #3b82f6;
+  --chip-bg: rgba(59, 130, 246, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--marginOfSuccess {
+  --chip-color: #4338ca;
+  --chip-bg: rgba(67, 56, 202, 0.08);
+}
+/* Arithmetic modifiers */
 [data-theme='light'] .nr-desc-chip--plus {
-  --chip-color: #3a7d20;
-  --chip-bg: rgba(58, 125, 32, 0.08);
+  --chip-color: #16a34a;
+  --chip-bg: rgba(22, 163, 74, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--minus {
-  --chip-color: #2a6018;
-  --chip-bg: rgba(42, 96, 24, 0.08);
+  --chip-color: #dc2626;
+  --chip-bg: rgba(220, 38, 38, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--multiply {
-  --chip-color: #8a6a00;
-  --chip-bg: rgba(138, 106, 0, 0.08);
+  --chip-color: #4d7c0f;
+  --chip-bg: rgba(77, 124, 15, 0.08);
 }
 [data-theme='light'] .nr-desc-chip--multiplyTotal {
-  --chip-color: #7a5800;
-  --chip-bg: rgba(122, 88, 0, 0.08);
+  --chip-color: #3f6212;
+  --chip-bg: rgba(63, 98, 18, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--integerDivide {
+  --chip-color: #059669;
+  --chip-bg: rgba(5, 150, 105, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--modulo {
+  --chip-color: #047857;
+  --chip-bg: rgba(4, 120, 87, 0.08);
+}
+/* Special */
+[data-theme='light'] .nr-desc-chip--wildDie {
+  --chip-color: #a16207;
+  --chip-bg: rgba(161, 98, 7, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--sort {
+  --chip-color: #475569;
+  --chip-bg: rgba(71, 85, 105, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--repeat {
+  --chip-color: #64748b;
+  --chip-bg: rgba(100, 116, 139, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--label {
+  --chip-color: #71717a;
+  --chip-bg: rgba(113, 113, 122, 0.08);
 }
 
 /* ===== Textarea input ===== */
@@ -629,12 +851,12 @@
 .notation-roller-desc-row {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0.5rem 0.75rem 0.75rem;
-  min-height: 2rem;
+  min-height: calc(4 * 0.7rem * 1.4 + 0.5rem + 0.75rem);
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.7rem;
   line-height: 1.4;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   gap: 0.75rem;
   box-sizing: border-box;
