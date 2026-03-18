@@ -73,6 +73,7 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
         key: 'V{..}',
         category: 'Pool',
         color: '#2dd4bf',
+        colorLight: '#0d9488',
         title: 'Replace',
         description: 'Replace dice showing specific values with a new value.',
         displayBase: 'V{..}',

@@ -54,6 +54,7 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
       key: 'U',
       category: 'Pool',
       color: '#5eead4',
+      colorLight: '#0f766e',
       title: 'Unique',
       description: 'Force all dice in the pool to show different values by rerolling duplicates.',
       displayBase: 'U',

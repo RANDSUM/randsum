@@ -37,6 +37,7 @@ export const plusSchema: NotationSchema<number> = defineNotationSchema<number>({
       key: '+',
       category: 'Arithmetic',
       color: '#4ade80',
+      colorLight: '#16a34a',
       title: 'Add',
       description: 'Add a fixed number to the total after all dice are rolled.',
       displayBase: '+',

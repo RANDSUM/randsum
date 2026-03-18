@@ -74,6 +74,7 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
       key: 'K',
       category: 'Pool',
       color: '#fb923c',
+      colorLight: '#c2410c',
       title: 'Keep Highest',
       description: 'Keep only the n highest-valued dice; discard the rest.',
       displayBase: 'K',
@@ -91,6 +92,7 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
       key: 'KL',
       category: 'Pool',
       color: '#f97316',
+      colorLight: '#9a3412',
       title: 'Keep Lowest',
       description: 'Keep only the n lowest-valued dice; discard the rest.',
       displayBase: 'KL',
@@ -108,6 +110,7 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
       key: 'KM',
       category: 'Pool',
       color: '#fdba74',
+      colorLight: '#ea580c',
       title: 'Keep Middle',
       description:
         'Keep N dice closest to the middle of the pool by dropping equal numbers from both ends. Sugar for Drop lowest + Drop highest.',

@@ -30,6 +30,7 @@ export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>
       key: '%',
       category: 'Arithmetic',
       color: '#10b981',
+      colorLight: '#047857',
       title: 'Modulo',
       description: 'Take the remainder after dividing the total by a number.',
       displayBase: '%',

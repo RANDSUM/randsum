@@ -34,6 +34,7 @@ export const minusSchema: NotationSchema<number> = defineNotationSchema<number>(
       key: '-',
       category: 'Arithmetic',
       color: '#f87171',
+      colorLight: '#dc2626',
       title: 'Subtract',
       description: 'Subtract a fixed number from the total after all dice are rolled.',
       displayBase: '\u2212',

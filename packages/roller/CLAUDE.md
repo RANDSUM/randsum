@@ -73,6 +73,8 @@ interface NotationDoc {
   readonly category: string // display category (see categories below)
   readonly title: string
   readonly description: string
+  readonly color: string // dark-mode accent color (hex), e.g. '#fb7185'
+  readonly colorLight: string // light-mode accent color (hex), e.g. '#e11d48'
   readonly displayBase: string // primary notation symbol(s), e.g. 'L', 'R{..}'
   readonly displayOptional?: string // optional suffix, e.g. 'n', '{..}'
   readonly forms: readonly {

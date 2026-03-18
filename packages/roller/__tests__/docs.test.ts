@@ -12,6 +12,8 @@ function checkNotationDocShape(doc: NotationDoc, key: string): void {
   expect(doc.category.length).toBeGreaterThan(0)
   expect(typeof doc.color).toBe('string')
   expect(doc.color.length).toBeGreaterThan(0)
+  expect(typeof doc.colorLight).toBe('string')
+  expect(doc.colorLight.length).toBeGreaterThan(0)
   expect(typeof doc.title).toBe('string')
   expect(typeof doc.description).toBe('string')
   expect(typeof doc.displayBase).toBe('string')
@@ -73,6 +75,7 @@ describe('NotationDoc', () => {
       key: 'L',
       category: 'Pool',
       color: '#fb7185',
+      colorLight: '#e11d48',
       title: 'Drop Lowest',
       description: 'Remove the lowest die',
       displayBase: 'L',
@@ -89,6 +92,7 @@ describe('NotationDoc', () => {
       key: 'H',
       category: 'Pool',
       color: '#fb7185',
+      colorLight: '#e11d48',
       title: 'Drop Highest',
       description: 'Remove the highest die',
       displayBase: 'H',
@@ -113,6 +117,7 @@ describe('NotationSchema.docs', () => {
       key: '!',
       category: 'Explode',
       color: '#fbbf24',
+      colorLight: '#d97706',
       title: 'Explode',
       description: 'Explode on max',
       displayBase: '!',
