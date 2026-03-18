@@ -780,7 +780,7 @@
   border: 1px solid rgba(168, 85, 247, 0.4);
   border-radius: 0.375rem;
   flex-shrink: 0;
-  align-self: stretch;
+  align-self: flex-start;
   margin-right: 0.5rem;
 }
 
