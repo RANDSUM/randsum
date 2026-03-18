@@ -18,7 +18,7 @@ head:
 
 import { Tabs, TabItem, Aside } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { RollerPlayground } from '@randsum/component-library'
+import { NotationRoller } from '@randsum/component-library'
 
 RANDSUM is a TypeScript-first dice engine for tabletop RPGs and game development.
 
@@ -32,7 +32,7 @@ RANDSUM is a TypeScript-first dice engine for tabletop RPGs and game development
 const result = roll(20)
 console.log(result.total) // => a number between 1 and 20`} />
 
-<RollerPlayground defaultNotation="1d20" client:only="react" />
+<NotationRoller defaultNotation="1d20" client:only="react" />
 
 `roll()` accepts numbers, [notation strings](/notation/randsum-dice-notation/), or options objects — mix and match freely:
 
