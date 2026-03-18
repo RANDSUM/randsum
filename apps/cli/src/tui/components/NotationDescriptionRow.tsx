@@ -2,7 +2,7 @@ import { Box, Text } from 'ink'
 import { useInput } from 'ink'
 import { useEffect, useState } from 'react'
 import type { Token } from '@randsum/roller/tokenize'
-import { TOKEN_COLORS } from '../helpers/tokenColors'
+import { getTokenColor } from '../helpers/tokenColors'
 
 const EXAMPLES = ['4d6L', '1d20+5', '2d12+1d6', '4d6LR{<3}!C{>5}+2d8!UR{1}C{<2,>7}+1d12V{12=10}-3']
 
@@ -100,15 +100,15 @@ export function NotationDescriptionRow({
         const sep =
           i === 0
             ? null
-            : token.type === 'core'
+            : token.category === 'Core'
               ? token.text.startsWith('-')
                 ? ' − '
                 : ' + '
               : ', '
-        const color = TOKEN_COLORS[token.type] ?? 'gray'
+        const color = getTokenColor(token.category) ?? 'gray'
         const isActive = isFocused ? i === selectedDescIdx : tokenIdx === activeTokenIdx
         return (
-          <Box key={`${token.type}-${token.start}`} flexDirection="row">
+          <Box key={`${token.category}-${token.start}`} flexDirection="row">
             {sep !== null && <Text dimColor>{sep}</Text>}
             <Text color={color} bold={isActive} inverse={isActive}>
               {token.description}

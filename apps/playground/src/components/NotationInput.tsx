@@ -79,7 +79,7 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
                 <span
                   key={i}
                   className={[
-                    `pg-token pg-token--${token.type}`,
+                    `pg-token pg-token--${token.category}`,
                     hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'pg-token--dim' : '',
                     hoveredTokenIdx === i ? 'pg-token--active' : ''
                   ]

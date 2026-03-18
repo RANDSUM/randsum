@@ -137,6 +137,7 @@ describe('ReferenceDetail data contract', () => {
         title: 'Test',
         description: 'A test doc',
         displayBase: 'T',
+        color: '#000000',
         forms: [{ notation: 'T', note: 'test form' }],
         examples: [{ notation: '1dT', description: 'test example' }]
       }

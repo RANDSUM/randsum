@@ -123,7 +123,7 @@ export function NotationRoller({
                         key={i}
                         className={[
                           'nr-token',
-                          `nr-token--${token.type}`,
+                          `nr-token--${token.category}`,
                           hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'nr-token--dim' : '',
                           hoveredTokenIdx === i ? 'nr-token--active' : ''
                         ]
@@ -199,7 +199,7 @@ export function NotationRoller({
                     const sep =
                       i === 0
                         ? null
-                        : token.type === 'core'
+                        : token.category === 'Core'
                           ? token.text.startsWith('-')
                             ? ' − '
                             : ' + '
@@ -210,7 +210,7 @@ export function NotationRoller({
                         <span
                           className={[
                             'nr-desc-chip',
-                            `nr-desc-chip--${token.type}`,
+                            `nr-desc-chip--${token.category}`,
                             hoveredTokenIdx === tokenIdx ? 'nr-desc-chip--active' : ''
                           ]
                             .filter(Boolean)
