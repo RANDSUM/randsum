@@ -1,4 +1,4 @@
-import type { ModifierDoc } from '@randsum/display-utils'
+import type { ModifierDoc } from '@randsum/roller/docs'
 
 interface ReferenceDetailProps {
   readonly modifierKey: string

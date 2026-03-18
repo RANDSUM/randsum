@@ -1,5 +1,5 @@
-import { MODIFIER_DOCS } from '@randsum/display-utils'
-import type { ModifierDoc } from '@randsum/display-utils'
+import { MODIFIER_DOCS } from '@randsum/roller/docs'
+import type { ModifierDoc } from '@randsum/roller/docs'
 
 interface QuickReferenceGridProps {
   readonly selectedEntry: string | null

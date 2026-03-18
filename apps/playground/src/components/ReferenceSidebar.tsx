@@ -1,4 +1,4 @@
-import { MODIFIER_DOCS } from '@randsum/display-utils'
+import { MODIFIER_DOCS } from '@randsum/roller/docs'
 import { QuickReferenceGrid } from './QuickReferenceGrid'
 import { ReferenceDetail } from './ReferenceDetail'
 import './ReferenceSidebar.css'

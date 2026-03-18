@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import type { ModifierDoc } from '@randsum/display-utils'
-import { MODIFIER_DOCS } from '@randsum/display-utils'
+import type { ModifierDoc } from '@randsum/roller/docs'
+import { MODIFIER_DOCS } from '@randsum/roller/docs'
 
 // Tests verify the data contract that ReferenceDetail must render.
 // The component is a React TSX component; structural correctness is gated by the Astro build.

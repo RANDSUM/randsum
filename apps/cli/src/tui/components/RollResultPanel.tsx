@@ -1,6 +1,6 @@
 import { Box, Text } from 'ink'
 import type { RollRecord } from '@randsum/roller'
-import { computeSteps, formatAsMath } from '@randsum/display-utils'
+import { formatAsMath, traceRoll } from '@randsum/roller/trace'
 import { useTerminalWidth } from '../hooks/useTerminalWidth'
 
 const GOLD = '#c9a227'
@@ -58,7 +58,7 @@ function RecordPanel({
   readonly isSubPanel: boolean
   readonly omitTotal?: boolean
 }): React.JSX.Element {
-  const steps = computeSteps(record)
+  const steps = traceRoll(record)
   const hasModifiers = steps.length > 1
   const rows: React.JSX.Element[] = []
   const totalKind: TotalKind = isSubPanel ? 'sub' : 'final'

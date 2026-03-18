@@ -13,7 +13,7 @@ import { RollResultPanel } from './components/RollResultPanel'
 import { HeroBanner } from './components/HeroBanner'
 import { Spinner } from './components/Spinner'
 import { useCursorPosition } from './hooks/useCursorPosition'
-import type { ModifierDoc } from '@randsum/display-utils'
+import type { ModifierDoc } from '@randsum/roller/docs'
 import type { GridPosition } from './helpers/modifierGrid'
 
 type FocusZone = 'input' | 'reference' | 'roll' | 'description' | 'banner' | 'stackblitz'

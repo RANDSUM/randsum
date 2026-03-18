@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { MODIFIER_DOCS } from '@randsum/display-utils'
+import { MODIFIER_DOCS } from '@randsum/roller/docs'
 
 // ReferenceSidebar is a React TSX component; structural correctness is gated by the build.
 // These tests verify the data contract and lookup logic it relies on.

@@ -1,6 +1,6 @@
 import type { RollRecord, RollerRollResult } from '@randsum/roller'
-import { computeSteps, formatAsMath } from '@randsum/display-utils'
-import type { TooltipStep } from '@randsum/display-utils'
+import { formatAsMath, traceRoll } from '@randsum/roller/trace'
+import type { RollTraceStep } from '@randsum/roller/trace'
 import './RollResult.css'
 
 export function DieBadge({
@@ -27,7 +27,7 @@ export function DieBadge({
   )
 }
 
-export function StepRow({ step }: { readonly step: TooltipStep }): React.JSX.Element {
+export function StepRow({ step }: { readonly step: RollTraceStep }): React.JSX.Element {
   if (step.kind === 'divider') {
     return <hr className="pg-step-divider" />
   }
@@ -76,7 +76,7 @@ export function PoolSection({
   readonly record: RollRecord
   readonly showHeading?: boolean
 }): React.JSX.Element {
-  const steps = computeSteps(record)
+  const steps = traceRoll(record)
 
   return (
     <div className="pg-pool-section">
