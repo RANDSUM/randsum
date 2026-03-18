@@ -54,7 +54,15 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
   lines.push(
     `  const rolls: RollRecord[] = [${poolNames.map(n => `...${n}Result.rolls`).join(', ')}]`
   )
-  lines.push(`  let total = ${poolNames.map(n => `${n}Total`).join(' + ')}`)
+  const hasMutableTotal =
+    (rollDef.conditionalPools !== undefined && Object.keys(rollDef.conditionalPools).length > 0) ||
+    hasEffectivePostResolveModifiers(rollDef.postResolveModifiers)
+
+  if (hasMutableTotal) {
+    lines.push(`  const acc = { total: ${poolNames.map(n => `${n}Total`).join(' + ')} }`)
+  } else {
+    lines.push(`  const total = ${poolNames.map(n => `${n}Total`).join(' + ')}`)
+  }
 
   // Emit conditional pools (track totals by name for $conditionalPool details refs)
   const detailsDef = rollDef.details
@@ -62,9 +70,8 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
   const cpNamesNeeded = hasDetails ? detailsNeedsConditionalPool(detailsDef) : new Set<string>()
 
   if (rollDef.conditionalPools !== undefined && Object.keys(rollDef.conditionalPools).length > 0) {
-    // Pre-declare conditionalPool_<name>Total variables for details refs
-    for (const name of cpNamesNeeded) {
-      lines.push(`  let conditionalPool_${name}Total = 0`)
+    if (cpNamesNeeded.size > 0) {
+      lines.push(`  const conditionalPoolTotals: Record<string, number> = {}`)
     }
     for (const [name, cp] of Object.entries(rollDef.conditionalPools)) {
       const cond = conditionCodeFromCondition(cp.condition, optional)
@@ -81,9 +88,9 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
         `    const cpTotal = cpResult.rolls.flatMap(r => r.rolls).reduce((s, v) => s + v, 0)`
       )
       if (cpNamesNeeded.has(name)) {
-        lines.push(`    conditionalPool_${name}Total = cpTotal`)
+        lines.push(`    conditionalPoolTotals['${name}'] = cpTotal`)
       }
-      lines.push(`    total ${sign} cpTotal`)
+      lines.push(`    acc.total ${sign} cpTotal`)
       lines.push(`    rolls.push(...cpResult.rolls)`)
       lines.push(`  }`)
     }
@@ -94,16 +101,21 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
   const multiPoolHasPostResolve = hasEffectivePostResolveModifiers(rollDef.postResolveModifiers)
   const multiPoolDiceTotalAlias = multiPoolHasPostResolve ? 'diceTotal' : 'total'
   if (needsDiceTotal && multiPoolHasPostResolve) {
-    lines.push(`  const diceTotal = total`)
+    lines.push(`  const diceTotal = acc.total`)
   }
 
   // Emit postResolveModifiers for multi-pool
   if (rollDef.postResolveModifiers !== undefined && rollDef.postResolveModifiers.length > 0) {
     for (const op of rollDef.postResolveModifiers) {
       if (op.add !== undefined) {
-        lines.push(`  total += ${integerOrInputCode(op.add, rollDef.inputs, optional)}`)
+        lines.push(`  acc.total += ${integerOrInputCode(op.add, rollDef.inputs, optional)}`)
       }
     }
+  }
+
+  // Extract final total from accumulator before use
+  if (hasMutableTotal) {
+    lines.push(`  const total = acc.total`)
   }
 
   // Build details object if declared

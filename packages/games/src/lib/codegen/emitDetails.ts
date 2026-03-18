@@ -55,7 +55,7 @@ function normalizedLeafValueCode(
 ): string {
   if ('expr' in leaf) return leaf.expr === 'diceTotal' ? diceTotalAlias : leaf.expr
   if ('$pool' in leaf) return `${leaf.$pool}Total`
-  if ('$conditionalPool' in leaf) return `conditionalPool_${leaf.$conditionalPool}Total`
+  if ('$conditionalPool' in leaf) return `conditionalPoolTotals['${leaf.$conditionalPool}'] ?? 0`
   if ('$dieCheck' in leaf) {
     const dc = leaf.$dieCheck
     const rollsField = dc.field === 'final' ? 'rolls' : 'initialRolls'

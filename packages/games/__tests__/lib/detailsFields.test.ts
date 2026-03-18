@@ -283,9 +283,9 @@ describe('$conditionalPool ref details (#992)', () => {
 
   test('codegen tracks conditional pool total by name', async () => {
     const code = await generateCode(CONDITIONAL_POOL_DETAILS_SPEC)
-    expect(code).toContain('let conditionalPool_bonusTotal = 0')
-    expect(code).toContain('conditionalPool_bonusTotal = cpTotal')
-    expect(code).toContain('bonusPool: conditionalPool_bonusTotal')
+    expect(code).toContain('const conditionalPoolTotals: Record<string, number> = {}')
+    expect(code).toContain("conditionalPoolTotals['bonus'] = cpTotal")
+    expect(code).toContain("bonusPool: conditionalPoolTotals['bonus'] ?? 0")
   })
 
   test('runtime returns 0 for conditional pool when condition not met', () => {

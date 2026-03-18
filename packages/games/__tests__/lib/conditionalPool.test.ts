@@ -122,8 +122,9 @@ describe('conditionalPools codegen', () => {
     expect(code).toContain('-= cpTotal')
   })
 
-  test('generated code has let total (mutable)', async () => {
+  test('generated code uses const accumulator for mutable total', async () => {
     const code = await generateCode(COND_POOL_SPEC)
-    expect(code).toContain('let total')
+    expect(code).toContain('const acc = { total:')
+    expect(code).toContain('const total = acc.total')
   })
 })

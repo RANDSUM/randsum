@@ -253,7 +253,7 @@ describe('emitBody: multi-pool with postResolve and diceTotal', () => {
       }
     }
     const code = await generateCode(spec)
-    expect(code).toContain('const diceTotal = total')
+    expect(code).toContain('const diceTotal = acc.total')
     expect(code).toContain('diceTotal: diceTotal')
   })
 })
