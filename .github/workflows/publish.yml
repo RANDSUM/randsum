@@ -35,6 +35,8 @@ jobs:
         run: bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size && bun run --filter '@randsum/component-library' size
       - name: Security audit
         run: bun audit --audit-level high
+      - name: Dry-run publish preflight
+        run: bun run publish -- --dry-run
 
   publish:
     name: Publish to npm
@@ -56,30 +58,27 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Build all packages
         run: bun run build
+      - name: Publish packages
+        env:
+          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun scripts/publish.ts
 
-      # ── @randsum/roller ────────────────────────────────────────────────
+      # ── GitHub Releases ────────────────────────────────────────────────
 
       - name: Check roller version
         id: roller
         run: |
-          PACKAGE_VERSION=$(node -p "require('./packages/roller/package.json').version")
+          PACKAGE_VERSION=$(jq -r '.version' packages/roller/package.json)
           NPM_VERSION=$(npm view @randsum/roller version 2>/dev/null || echo "0.0.0")
           echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           if [ "$PACKAGE_VERSION" = "$NPM_VERSION" ]; then
-            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "was_published=false" >> $GITHUB_OUTPUT
           else
-            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "was_published=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish @randsum/roller
-        if: steps.roller.outputs.should_publish == 'true'
-        working-directory: packages/roller
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bun publish --access public
-
       - name: Release @randsum/roller
-        if: steps.roller.outputs.should_publish == 'true'
+        if: steps.roller.outputs.was_published == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -87,29 +86,20 @@ jobs:
             --title "roller v${{ steps.roller.outputs.version }}" \
             --generate-notes
 
-      # ── @randsum/games ─────────────────────────────────────────────────
-
       - name: Check games version
         id: games
         run: |
-          PACKAGE_VERSION=$(node -p "require('./packages/games/package.json').version")
+          PACKAGE_VERSION=$(jq -r '.version' packages/games/package.json)
           NPM_VERSION=$(npm view @randsum/games version 2>/dev/null || echo "0.0.0")
           echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           if [ "$PACKAGE_VERSION" = "$NPM_VERSION" ]; then
-            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "was_published=false" >> $GITHUB_OUTPUT
           else
-            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "was_published=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish @randsum/games
-        if: steps.games.outputs.should_publish == 'true'
-        working-directory: packages/games
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bun publish --access public
-
       - name: Release @randsum/games
-        if: steps.games.outputs.should_publish == 'true'
+        if: steps.games.outputs.was_published == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -117,29 +107,20 @@ jobs:
             --title "games v${{ steps.games.outputs.version }}" \
             --generate-notes
 
-      # ── @randsum/component-library ─────────────────────────────────────
-
       - name: Check component-library version
         id: component-library
         run: |
-          PACKAGE_VERSION=$(node -p "require('./packages/component-library/package.json').version")
+          PACKAGE_VERSION=$(jq -r '.version' packages/component-library/package.json)
           NPM_VERSION=$(npm view @randsum/component-library version 2>/dev/null || echo "0.0.0")
           echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           if [ "$PACKAGE_VERSION" = "$NPM_VERSION" ]; then
-            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "was_published=false" >> $GITHUB_OUTPUT
           else
-            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "was_published=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish @randsum/component-library
-        if: steps.component-library.outputs.should_publish == 'true'
-        working-directory: packages/component-library
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bun publish --access public
-
       - name: Release @randsum/component-library
-        if: steps.component-library.outputs.should_publish == 'true'
+        if: steps.component-library.outputs.was_published == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -147,29 +128,20 @@ jobs:
             --title "component-library v${{ steps.component-library.outputs.version }}" \
             --generate-notes
 
-      # ── @randsum/cli ───────────────────────────────────────────────────
-
       - name: Check cli version
         id: cli
         run: |
-          PACKAGE_VERSION=$(node -p "require('./apps/cli/package.json').version")
+          PACKAGE_VERSION=$(jq -r '.version' apps/cli/package.json)
           NPM_VERSION=$(npm view @randsum/cli version 2>/dev/null || echo "0.0.0")
           echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           if [ "$PACKAGE_VERSION" = "$NPM_VERSION" ]; then
-            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "was_published=false" >> $GITHUB_OUTPUT
           else
-            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "was_published=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish @randsum/cli
-        if: steps.cli.outputs.should_publish == 'true'
-        working-directory: apps/cli
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bun publish --access public
-
       - name: Release @randsum/cli
-        if: steps.cli.outputs.should_publish == 'true'
+        if: steps.cli.outputs.was_published == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
