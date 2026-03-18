@@ -80,7 +80,16 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
               <GetStartedButton client:load />
               <GithubButton client:load />
             </div>
-            <p class="hero-install"><code>npm install @randsum/roller</code></p>
+            <div class="hero-install-tabs">
+              <button class="install-tab is-active" data-pm="bun">bun</button>
+              <button class="install-tab" data-pm="npm">npm</button>
+            </div>
+            <div class="hero-install">
+              <code class="install-cmd" data-cmd-bun="bun add @randsum/roller" data-cmd-npm="npm install @randsum/roller">bun add @randsum/roller</code>
+              <button class="install-copy" aria-label="Copy install command" title="Copy to clipboard">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         <div class="roller-playground-wrap not-content">
@@ -214,7 +223,8 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   .hero-tagline {
-    white-space: nowrap;
+    white-space: normal;
+    text-wrap: balance;
   }
 
   .hero-logo-wrap {
@@ -228,6 +238,20 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     animation: go-to-apex 0.4s ease-out forwards;
   }
 
+  .hero-logo-wrap::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1;
+  }
+
   .hero-logo-wrap::after {
     content: '';
     position: absolute;
@@ -236,7 +260,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     transform: translateX(-50%);
     width: 90px;
     height: 20px;
-    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.6) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
     border-radius: 50%;
     filter: blur(6px);
     animation: glow-pulse 3s ease-in-out infinite;
@@ -344,8 +368,39 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     margin-top: 1rem;
   }
 
-  .hero-install {
+  .hero-install-tabs {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
     margin-top: 0.75rem;
+  }
+
+  .install-tab {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.375rem 0.375rem 0 0;
+    padding: 0.2rem 0.75rem;
+    font-size: 0.75rem;
+    font-family: var(--sl-font-mono);
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .install-tab.is-active {
+    background: var(--sl-color-gray-6);
+    border-color: var(--sl-color-gray-5);
+    border-bottom-color: var(--sl-color-gray-6);
+    color: var(--sl-color-accent-high);
+  }
+
+  .hero-install {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0;
     font-size: 0.85rem;
     color: var(--sl-color-gray-3);
   }
@@ -354,9 +409,27 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
     background: var(--sl-color-gray-6);
     border: 1px solid var(--sl-color-gray-5);
-    border-radius: 0.375rem;
+    border-radius: 0 0 0.375rem 0.375rem;
     padding: 0.25rem 0.6rem;
     color: var(--sl-color-accent-high);
+  }
+
+  .install-copy {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.375rem;
+    padding: 0.3rem;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .install-copy:hover {
+    color: var(--sl-color-accent-high);
+    border-color: var(--sl-color-accent);
   }
 
   /* ===== Playground ===== */
@@ -403,7 +476,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   :global(.btn-primary:hover) {
     filter: brightness(1.1);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3);
   }
 
   :global(.btn-secondary) {
@@ -485,7 +558,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   .pkg-filter-chip.is-active {
     border-color: var(--sl-color-accent);
     color: var(--sl-color-white);
-    background: rgba(59, 130, 246, 0.08);
+    background: rgba(168, 85, 247, 0.08);
   }
 
   .pkg-grid {
@@ -688,6 +761,30 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 </style>
 
 <script>
+  // Install command tabs
+  const installTabs = document.querySelectorAll<HTMLButtonElement>('.install-tab')
+  const installCmd = document.querySelector<HTMLElement>('.install-cmd')
+
+  installTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      installTabs.forEach(t => t.classList.remove('is-active'))
+      tab.classList.add('is-active')
+      const pm = tab.dataset['pm'] ?? 'bun'
+      if (installCmd) {
+        installCmd.textContent = installCmd.dataset[`cmd${pm.charAt(0).toUpperCase() + pm.slice(1)}`] ?? ''
+      }
+    })
+  })
+
+  // Copy to clipboard
+  const copyBtn = document.querySelector<HTMLButtonElement>('.install-copy')
+  copyBtn?.addEventListener('click', async () => {
+    const text = installCmd?.textContent ?? ''
+    await navigator.clipboard.writeText(text)
+    copyBtn.style.color = 'var(--sl-color-accent-high)'
+    setTimeout(() => { copyBtn.style.color = '' }, 1500)
+  })
+
   // Fetch npm versions live and update version badges
   ;(async () => {
     const versionEls = Array.from(document.querySelectorAll<HTMLElement>('[data-npm-version]'))

@@ -2,10 +2,10 @@
 
 /* ===== Dark mode (default in Starlight) ===== */
 :root {
-  /* Accent - blue-500 (#3b82f6) based */
-  --sl-color-accent-low: #1e3a5f;
-  --sl-color-accent: #3b82f6;
-  --sl-color-accent-high: #93c5fd;
+  /* Accent - purple-500 (#a855f7) based */
+  --sl-color-accent-low: #2e1065;
+  --sl-color-accent: #a855f7;
+  --sl-color-accent-high: #d8b4fe;
 
   /* Slate gray scale (dark mode: gray-1 = lightest, gray-6 = darkest) */
   --sl-color-white: #f8fafc; /* slate-50 */
@@ -40,10 +40,10 @@
 
 /* ===== Light mode ===== */
 :root[data-theme='light'] {
-  /* Accent - blue-500 based, adjusted for light backgrounds */
-  --sl-color-accent-low: #dbeafe; /* blue-100 */
-  --sl-color-accent: #2563eb; /* blue-600 */
-  --sl-color-accent-high: #1e40af; /* blue-800 */
+  /* Accent - purple-500 based, adjusted for light backgrounds */
+  --sl-color-accent-low: #f3e8ff; /* purple-100 */
+  --sl-color-accent: #9333ea; /* purple-600 */
+  --sl-color-accent-high: #6b21a8; /* purple-800 */
 
   /* Slate gray scale (light mode: gray-1 = darkest, gray-6 = lightest) */
   --sl-color-white: #0f172a; /* slate-900 */
