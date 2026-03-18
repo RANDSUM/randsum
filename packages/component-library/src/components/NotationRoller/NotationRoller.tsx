@@ -168,13 +168,6 @@ export function NotationRoller({
                   autoComplete="off"
                   aria-label="Dice notation"
                 />
-
-                {resultState && (
-                  <div ref={tooltipRef} className="notation-roller-tooltip">
-                    <div className="notation-roller-tooltip-total">{resultState.total}</div>
-                    <RollResult records={resultState.records} />
-                  </div>
-                )}
               </div>
             </div>
 
@@ -189,16 +182,6 @@ export function NotationRoller({
               >
                 {resultState ? 'Re-Roll' : 'Roll'}
               </button>
-              {notation.length > 0 && (
-                <a
-                  className="notation-roller-playground-btn"
-                  href={`https://playground.randsum.dev?notation=${encodeURIComponent(notation)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  See in Playground
-                </a>
-              )}
             </div>
           </div>
 
@@ -251,6 +234,22 @@ export function NotationRoller({
               </span>
             )}
           </div>
+          {resultState && (
+            <div ref={tooltipRef} className="notation-roller-tooltip">
+              <div className="notation-roller-tooltip-total">{resultState.total}</div>
+              <RollResult records={resultState.records} />
+            </div>
+          )}
+          {notation.length > 0 && (
+            <a
+              className="notation-roller-playground-btn"
+              href={`https://playground.randsum.dev?notation=${encodeURIComponent(notation)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              See in Playground
+            </a>
+          )}
         </div>
       </div>
     </ErrorBoundary>
