@@ -38,12 +38,10 @@ jobs:
               - '.github/workflows/ci.yml'
             cli:
               - 'packages/roller/**'
-              - 'packages/display-utils/**'
               - 'apps/cli/**'
               - '.github/workflows/ci.yml'
             component-library:
               - 'packages/roller/**'
-              - 'packages/display-utils/**'
               - 'packages/component-library/**'
               - '.github/workflows/ci.yml'
             site:
@@ -123,7 +121,6 @@ jobs:
           restore-keys: ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
       - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/display-utils' build
       - run: bun run --filter '@randsum/cli' check
 
   component-library:
@@ -146,7 +143,6 @@ jobs:
           restore-keys: ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
       - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/display-utils' build
       - run: bun run --filter '@randsum/component-library' check
       - name: Check bundle size
         run: bun run --filter '@randsum/component-library' size

@@ -95,17 +95,6 @@ export const gamePackages: PackageInfo[] = [
 
 export const toolPackages: PackageInfo[] = [
   {
-    id: 'display-utils',
-    name: 'display-utils',
-    displayName: 'Display Utils',
-    description: 'Tooltip steps, modifier docs, and StackBlitz scaffolding for RANDSUM UI.',
-    npmPackage: '@randsum/display-utils',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/display-utils',
-    version: '3.0.1',
-    category: 'tool',
-    color: '#f472b6' // pink-400 — distinct from all game colors
-  },
-  {
     id: 'component-library',
     name: 'component-library',
     displayName: 'Component Library',

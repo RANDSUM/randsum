@@ -17,7 +17,6 @@
   "type": "module",
   "dependencies": {
     "@randsum/roller": "workspace:~",
-    "@randsum/display-utils": "workspace:~",
     "@astrojs/react": "5.0.0",
     "@stackblitz/sdk": "latest",
     "@supabase/supabase-js": "^2.49.4",

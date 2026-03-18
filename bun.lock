@@ -41,7 +41,6 @@
         "react": "^19.2.0",
       },
       "devDependencies": {
-        "@randsum/display-utils": "workspace:~",
         "@randsum/roller": "workspace:~",
         "@types/react": "^19.0.0",
       },
@@ -60,7 +59,6 @@
       "version": "1.0.0",
       "dependencies": {
         "@astrojs/react": "5.0.0",
-        "@randsum/display-utils": "workspace:~",
         "@randsum/roller": "workspace:~",
         "@stackblitz/sdk": "latest",
         "@supabase/supabase-js": "^2.49.4",
@@ -101,7 +99,6 @@
       "version": "3.5.0",
       "devDependencies": {
         "@ladle/react": "5.1.1",
-        "@randsum/display-utils": "workspace:~",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
         "react": "catalog:",
@@ -111,17 +108,6 @@
         "@randsum/roller": "^3.5.0",
         "react": ">=18",
         "react-dom": ">=18",
-      },
-    },
-    "packages/display-utils": {
-      "name": "@randsum/display-utils",
-      "version": "3.5.0",
-      "devDependencies": {
-        "@randsum/roller": "workspace:~",
-        "typescript": "^5.8.2",
-      },
-      "peerDependencies": {
-        "@randsum/roller": "^3.5.0",
       },
     },
     "packages/games": {
@@ -719,8 +705,6 @@
     "@randsum/component-library": ["@randsum/component-library@workspace:packages/component-library"],
 
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
-
-    "@randsum/display-utils": ["@randsum/display-utils@workspace:packages/display-utils"],
 
     "@randsum/games": ["@randsum/games@workspace:packages/games"],
 

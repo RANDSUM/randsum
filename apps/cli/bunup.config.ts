@@ -8,5 +8,5 @@ export default defineConfig({
   sourcemap: 'external',
   target: 'node',
   clean: true,
-  noExternal: ['@randsum/roller', '@randsum/display-utils']
+  noExternal: ['@randsum/roller']
 })

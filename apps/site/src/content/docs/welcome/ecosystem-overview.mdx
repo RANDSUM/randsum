@@ -20,9 +20,7 @@ RANDSUM is a monorepo with three layers: a dice engine (with built-in notation p
   |     +-- /root-rpg          (Root RPG)
   |     +-- /salvageunion      (Salvage Union)
   |
-  +-- @randsum/display-utils       (UI helpers, peers on roller)
-        |
-        +-- @randsum/component-library (React components, also peers on roller + react)
+  +-- @randsum/component-library (React components, peers on roller + react)
 ```
 
 Every package depends only on packages above it in the tree. Game packages never depend on each other.
@@ -54,13 +52,8 @@ Currently supported games: **Blades in the Dark**, **D&D 5e**, **Daggerheart**, 
 ### Tools
 
 <CardGrid>
-  <Card title="@randsum/display-utils" icon="setting">
-    Internal package for step visualization, modifier documentation, and StackBlitz integration. Not installed directly -- consumed by the component library to share display logic across RANDSUM UI surfaces.
-
-    [Learn more](/tools/display-utils/)
-  </Card>
   <Card title="@randsum/component-library" icon="puzzle">
-    React component library providing interactive dice rolling UI elements. Depends on roller and display-utils.
+    React component library providing interactive dice rolling UI elements. Depends on roller.
 
     [Learn more](/tools/component-library/)
   </Card>
@@ -90,4 +83,4 @@ Most developers should start with `@randsum/roller`. It includes the full notati
 - **Throws on invalid input** -- `roll()` throws typed errors on bad input (`ValidationError`, `ModifierError`, or `NotationParseError`); validate user-provided strings with `isDiceNotation()` or `validateNotation()` before rolling
 - **Game packages are code-generated** -- every game is defined as a `.randsum.json` spec and transformed into TypeScript by an internal codegen pipeline
 - **Strict TypeScript** -- `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, no `any`
-- **Bundle size enforced** -- roller 20KB (includes notation), display-utils 20KB, game packages under 8KB each
+- **Bundle size enforced** -- roller 20KB (includes notation), game packages under 10KB each

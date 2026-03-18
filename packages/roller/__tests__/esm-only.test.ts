@@ -12,7 +12,6 @@ const WORKTREE_ROOT = join(import.meta.dir, '../../..')
 const PUBLISHABLE_PACKAGES = [
   'packages/roller',
   'packages/games',
-  'packages/display-utils',
   'packages/component-library'
 ] as const
 
