@@ -249,9 +249,12 @@ export function NotationRoller({
                 &times;
               </button>
               <div className="nr-tooltip-right">
-                <div className="nr-tooltip-notation">{notation}</div>
-                <div className="nr-tooltip-desc">
-                  {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                <div className="nr-tooltip-header-line">
+                  <span className="nr-tooltip-notation">{notation}</span>
+                  <span className="nr-tooltip-sep">|</span>
+                  <span className="nr-tooltip-desc">
+                    {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                  </span>
                 </div>
                 <RollResult records={resultState.records} />
               </div>
