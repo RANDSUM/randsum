@@ -25,6 +25,7 @@ export function NotationRoller({
   const [state, setState] = useState<RollerState>({ status: 'idle' })
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const tooltipRef = useRef<HTMLDivElement>(null)
   const [hoveredTokenIdx, setHoveredTokenIdx] = useState<number | null>(null)
   const tokens = useMemo(() => tokenize(notation), [notation])
 
@@ -41,8 +42,25 @@ export function NotationRoller({
     setHoveredTokenIdx(null)
   }, [controlledNotation])
 
+  // Click-outside dismiss for tooltip
+  useEffect(() => {
+    if (state.status !== 'result') return
+
+    const handleClickOutside = (e: MouseEvent): void => {
+      if (tooltipRef.current && !tooltipRef.current.contains(e.target as Node)) {
+        setState({ status: 'idle' })
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [state.status])
+
   const isValid = notation.length > 0 && isDiceNotation(notation)
   const shellVariant = notation.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'
+  const resultState = state.status === 'result' ? state : null
 
   const handleRoll = useCallback(() => {
     if (!isValid) return
@@ -124,7 +142,8 @@ export function NotationRoller({
                   ref={inputRef}
                   className={[
                     'notation-roller-input',
-                    tokens.length > 0 ? 'notation-roller-input--highlight' : ''
+                    tokens.length > 0 ? 'notation-roller-input--highlight' : '',
+                    resultState ? 'notation-roller-input--blurred' : ''
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -149,6 +168,13 @@ export function NotationRoller({
                   autoComplete="off"
                   aria-label="Dice notation"
                 />
+
+                {resultState && (
+                  <div ref={tooltipRef} className="notation-roller-tooltip">
+                    <div className="notation-roller-tooltip-total">{resultState.total}</div>
+                    <RollResult records={resultState.records} />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -161,7 +187,7 @@ export function NotationRoller({
                 }}
                 disabled={!isValid || state.status === 'rolling'}
               >
-                {state.status === 'result' ? 'Re-Roll' : 'Roll'}
+                {resultState ? 'Re-Roll' : 'Roll'}
               </button>
             </div>
           </div>
@@ -215,12 +241,6 @@ export function NotationRoller({
               </span>
             )}
           </div>
-
-          {state.status === 'result' && (
-            <div className="notation-roller-result-placeholder">
-              <span className="notation-roller-result-total">{state.total}</span>
-            </div>
-          )}
         </div>
       </div>
     </ErrorBoundary>

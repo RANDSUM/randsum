@@ -666,38 +666,71 @@
   color: #f97583;
 }
 
-/* ===== Result placeholder (Story 2 will replace with tooltip) ===== */
-.notation-roller-result-placeholder {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ===== Input blur when tooltip is showing ===== */
+.notation-roller-input--blurred {
+  filter: blur(2px);
+  transition: filter 0.15s ease;
+}
+
+/* ===== Floating tooltip ===== */
+.notation-roller-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background: #18181b;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.75rem;
+  min-width: 8rem;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  animation: nr-tooltip-in 0.15s ease;
+  pointer-events: auto;
+}
+
+@keyframes nr-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-color-scheme: light) {
-  .notation-roller-result-placeholder {
-    border-top-color: rgba(0, 0, 0, 0.1);
+  .notation-roller-tooltip {
+    background: #f4f4f5;
+    border-color: rgba(147, 51, 234, 0.3);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   }
 }
-[data-theme='light'] .notation-roller-result-placeholder {
-  border-top-color: rgba(0, 0, 0, 0.1);
+[data-theme='light'] .notation-roller-tooltip {
+  background: #f4f4f5;
+  border-color: rgba(147, 51, 234, 0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
-.notation-roller-result-total {
+.notation-roller-tooltip-total {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #ffffff;
   line-height: 1;
+  margin-bottom: 0.35rem;
 }
 
 @media (prefers-color-scheme: light) {
-  .notation-roller-result-total {
+  .notation-roller-tooltip-total {
     color: #18181b;
   }
 }
-[data-theme='light'] .notation-roller-result-total {
+[data-theme='light'] .notation-roller-tooltip-total {
   color: #18181b;
 }
 
