@@ -63,6 +63,7 @@
   min-width: 0;
   padding: 0.5rem 0.25rem 0.5rem 0.5rem;
   overflow: hidden;
+  position: relative;
 }
 
 /* ===== nr-input-wrap (positions overlay over the textarea) ===== */
@@ -723,14 +724,24 @@
   color: #f97583;
 }
 
-/* ===== Input blur when tooltip is showing ===== */
-/* ===== Result section (grows the shell) ===== */
-.notation-roller-result-section {
+/* ===== Blur when result is showing ===== */
+.nr-input-wrap--blurred > .nr-notation-overlay,
+.nr-input-wrap--blurred > .notation-roller-input {
+  filter: blur(3px);
+  opacity: 0.4;
+  transition:
+    filter 0.15s ease,
+    opacity 0.15s ease;
+}
+
+/* ===== Result overlay (covers input area, grows shell) ===== */
+.notation-roller-result-overlay {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 0.5rem;
-  border-top: 1px solid rgba(168, 85, 247, 0.25);
+  width: 100%;
+  padding: 0.25rem 0;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.75rem;
   animation: nr-tooltip-in 0.15s ease;
@@ -746,13 +757,6 @@
 }
 
 @media (prefers-color-scheme: light) {
-  .notation-roller-result-section {
-    border-top-color: rgba(147, 51, 234, 0.2);
-  }
-}
-[data-theme='light'] .notation-roller-result-section {
-  border-top-color: rgba(147, 51, 234, 0.2);
-}
 
 /* --- Tooltip layout: total (left) | right column (header + scrollable steps) --- */
 .nr-tooltip-total-pane {

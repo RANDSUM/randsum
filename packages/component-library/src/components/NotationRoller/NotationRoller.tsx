@@ -118,7 +118,7 @@ export function NotationRoller({
         <div className={`notation-roller-shell notation-roller-shell--${shellVariant}`}>
           <div className="notation-roller-row">
             <div className="notation-roller-input-wrap">
-              <div className="nr-input-wrap">
+              <div className={`nr-input-wrap${resultState ? ' nr-input-wrap--blurred' : ''}`}>
                 {tokens.length > 0 && (
                   <div className="nr-notation-overlay" aria-hidden="true">
                     {tokens.map((token, i) => (
@@ -167,6 +167,23 @@ export function NotationRoller({
                   autoComplete="off"
                   aria-label="Dice notation"
                 />
+                {resultState && (
+                  <div ref={tooltipRef} className="notation-roller-result-overlay">
+                    <div className="nr-tooltip-total-pane">
+                      <div className="nr-tooltip-total-value">{resultState.total}</div>
+                    </div>
+                    <div className="nr-tooltip-right">
+                      <div className="nr-tooltip-header-line">
+                        <span className="nr-tooltip-notation">{notation}</span>
+                        <span className="nr-tooltip-sep">|</span>
+                        <span className="nr-tooltip-desc">
+                          {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                        </span>
+                      </div>
+                      <RollResult records={resultState.records} total={resultState.total} />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -233,23 +250,6 @@ export function NotationRoller({
               </span>
             )}
           </div>
-          {resultState && (
-            <div ref={tooltipRef} className="notation-roller-result-section">
-              <div className="nr-tooltip-total-pane">
-                <div className="nr-tooltip-total-value">{resultState.total}</div>
-              </div>
-              <div className="nr-tooltip-right">
-                <div className="nr-tooltip-header-line">
-                  <span className="nr-tooltip-notation">{notation}</span>
-                  <span className="nr-tooltip-sep">|</span>
-                  <span className="nr-tooltip-desc">
-                    {resultState.records.map(r => r.description.join(', ')).join(' + ')}
-                  </span>
-                </div>
-                <RollResult records={resultState.records} total={resultState.total} />
-              </div>
-            </div>
-          )}
           {notation.length > 0 && (
             <a
               className="notation-roller-playground-btn"
