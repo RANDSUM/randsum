@@ -74,7 +74,7 @@ export function RollerPlayground({
   const [dismissing, setDismissing] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const [hoveredTokenIdx, setHoveredTokenIdx] = useState<number | null>(null)
   const tokens = useMemo(() => tokenize(notation), [notation])
 
@@ -133,7 +133,7 @@ export function RollerPlayground({
   }, [notation, isValid, expandedProp, expanded, overlayContent])
 
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLInputElement>) => {
+    (e: React.MouseEvent<HTMLTextAreaElement>) => {
       if (tokens.length === 0 || notation.length === 0) return
       const input = inputRef.current
       if (!input) return
@@ -150,7 +150,7 @@ export function RollerPlayground({
     setHoveredTokenIdx(null)
   }, [])
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNotation(e.target.value)
     setState({ status: 'idle' })
     setExpanded(false)
@@ -230,20 +230,27 @@ export function RollerPlayground({
                     ))}
                   </div>
                 )}
-                <input
+                <textarea
                   ref={inputRef}
-                  type="text"
                   className={[
                     'roller-playground-input',
                     tokens.length > 0 ? 'roller-playground-input--highlight' : ''
                   ]
                     .filter(Boolean)
                     .join(' ')}
-                  style={{ width: `${notation.length || 4}ch` }}
+                  rows={1}
                   value={notation}
                   onChange={handleChange}
                   onKeyDown={e => {
-                    if (e.key === 'Enter') handleRoll()
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleRoll()
+                    }
+                  }}
+                  onInput={e => {
+                    const target = e.target as HTMLTextAreaElement
+                    target.style.height = 'auto'
+                    target.style.height = `${target.scrollHeight}px`
                   }}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}

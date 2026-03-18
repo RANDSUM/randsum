@@ -235,16 +235,19 @@
   position: absolute;
   left: 0;
   top: 0;
-  bottom: 0;
   right: 0;
   display: flex;
-  align-items: center;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
   pointer-events: none;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: var(--rp-font-size-input);
-  line-height: 1;
+  line-height: 1.4;
+  word-break: break-all;
+  white-space: pre-wrap;
   overflow: hidden;
+  padding-top: 0.35rem;
 }
 
 /* ===== Token spans ===== */
@@ -715,7 +718,7 @@
   padding: 0;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: var(--rp-font-size-input);
-  line-height: 1;
+  line-height: 1.4;
   background: transparent;
   border: none;
   outline: none;
@@ -724,6 +727,10 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
+  resize: none;
+  overflow: hidden;
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 
 /* When overlay is active, input text is hidden (caret and selection remain visible) */
