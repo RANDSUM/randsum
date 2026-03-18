@@ -336,9 +336,13 @@ export function ClickableTagline(): React.JSX.Element {
         }
       }}
     >
-      Throw Dice,
+      <span className="tagline-plain">Throw </span>
+      <span className="tagline-dice">Dice</span>
+      <span className="tagline-plain">,</span>
       <br />
-      Not Exceptions.
+      <span className="tagline-plain">Not </span>
+      <span className="tagline-exceptions">Exceptions</span>
+      <span className="tagline-plain">.</span>
     </h1>
   )
 }
