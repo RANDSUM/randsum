@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { roll } from '@randsum/roller'
 import { NotationRoller } from '@randsum/component-library'
 
@@ -269,17 +269,59 @@ export function PlaygroundButton(): React.JSX.Element {
   )
 }
 
-export function HeroRollerPlayground(): React.JSX.Element {
-  const [notation, setNotation] = useState<string>(HERO_NOTATIONS[0])
-  const targetIndexRef = useRef(0)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+const CHIP_PRESETS = [
+  { label: 'Your Drop Stat', notation: '1d20-1' },
+  { label: 'Fudge', notation: '4dF' },
+  { label: 'Something Really Fancy', notation: '6d8L2H1R{1,2}U!C{>7}+5-2' },
+  { label: 'Advantage', notation: '2d20H' },
+  { label: 'Exploding Pool', notation: '8d8!U+5' },
+  { label: 'Wild Die', notation: '5d6W' },
+  { label: 'Reroll Ones', notation: '4d6R{1}' },
+  { label: 'Percentile', notation: 'd%' },
+  { label: 'Keep Three', notation: '4d6K3' },
+  { label: 'Escalating', notation: '1d4+1d6+1d8+1d10+1d12+1d20' }
+] as const
 
+export function HeroRollerPlayground(): React.JSX.Element {
+  const [notation, setNotation] = useState<string>(CHIP_PRESETS[0].notation)
+  const [selectedChip, setSelectedChip] = useState<number | null>(0)
+  const [resetToken, setResetToken] = useState(0)
+  const autoCyclingRef = useRef(true)
+  const cycleRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const cycleIdxRef = useRef(0)
+
+  const stopCycle = useCallback((): void => {
+    autoCyclingRef.current = false
+    if (cycleRef.current) {
+      clearInterval(cycleRef.current)
+      cycleRef.current = undefined
+    }
+  }, [])
+
+  // Auto-cycle chips every 5 seconds
+  useEffect(() => {
+    cycleIdxRef.current = 0
+    cycleRef.current = setInterval(() => {
+      if (!autoCyclingRef.current) return
+      cycleIdxRef.current = (cycleIdxRef.current + 1) % CHIP_PRESETS.length
+      setSelectedChip(cycleIdxRef.current)
+      setNotation(CHIP_PRESETS[cycleIdxRef.current].notation)
+      setResetToken(t => t + 1)
+    }, 5000)
+    return () => {
+      if (cycleRef.current) clearInterval(cycleRef.current)
+    }
+  }, [])
+
+  // Slot machine on die-rolled
   useEffect(() => {
     const handler = (): void => {
+      stopCycle()
+      setSelectedChip(null)
       if (timerRef.current) clearTimeout(timerRef.current)
 
-      targetIndexRef.current = roll(HERO_NOTATIONS.length).total - 1
-      const finalNotation = HERO_NOTATIONS[targetIndexRef.current]
+      const finalNotation = HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1]
       const stepRef = { current: 0 }
 
       const tick = (): void => {
@@ -289,6 +331,7 @@ export function HeroRollerPlayground(): React.JSX.Element {
           timerRef.current = setTimeout(tick, SLOT_INTERVALS[stepRef.current])
         } else {
           setNotation(finalNotation)
+          setResetToken(t => t + 1)
         }
       }
 
@@ -300,9 +343,44 @@ export function HeroRollerPlayground(): React.JSX.Element {
       window.removeEventListener(DIE_ROLLED, handler)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [])
+  }, [stopCycle])
 
-  return <NotationRoller notation={notation} />
+  const handleChipClick = useCallback(
+    (idx: number): void => {
+      stopCycle()
+      setSelectedChip(idx)
+      setNotation(CHIP_PRESETS[idx].notation)
+      setResetToken(t => t + 1)
+    },
+    [stopCycle]
+  )
+
+  const handleUserType = useCallback((): void => {
+    stopCycle()
+    setSelectedChip(null)
+    // Intentionally does not update notation — NotationRoller owns its textarea state
+  }, [stopCycle])
+
+  return (
+    <>
+      <div className="hero-chips">
+        {CHIP_PRESETS.map((chip, i) => (
+          <button
+            key={i}
+            className={['hero-chip', selectedChip === i ? 'hero-chip--active' : '']
+              .filter(Boolean)
+              .join(' ')}
+            onClick={() => {
+              handleChipClick(i)
+            }}
+          >
+            {chip.label}
+          </button>
+        ))}
+      </div>
+      <NotationRoller notation={notation} resetToken={resetToken} onChange={handleUserType} />
+    </>
+  )
 }
 
 export function GithubButton(): React.JSX.Element {

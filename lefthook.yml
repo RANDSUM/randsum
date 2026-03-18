@@ -1,5 +1,8 @@
 pre-commit:
   parallel: true
+  output:
+    - summary
+    - failure
   commands:
     install:
       run: bun install --frozen-lockfile

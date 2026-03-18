@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import type { RollRecord } from '@randsum/roller'
-import { computeSteps, formatAsMath, buildStackBlitzProject } from '@randsum/display-utils'
+import { buildStackBlitzProject, computeSteps, formatAsMath } from '@randsum/display-utils'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
 import './NotationRoller.css'
@@ -15,11 +15,15 @@ type RollerState =
 export function NotationRoller({
   defaultNotation = '4d6L',
   notation: controlledNotation,
-  className
+  className,
+  onChange,
+  resetToken
 }: {
   readonly defaultNotation?: string
   readonly notation?: string
   readonly className?: string
+  readonly onChange?: (notation: string) => void
+  readonly resetToken?: number
 } = {}): React.JSX.Element {
   const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
   const [state, setState] = useState<RollerState>({ status: 'idle' })
@@ -40,7 +44,8 @@ export function NotationRoller({
     setNotation(controlledNotation)
     setState({ status: 'idle' })
     setHoveredTokenIdx(null)
-  }, [controlledNotation])
+    // resetToken intentionally included: incrementing it forces re-sync even when notation hasn't changed
+  }, [controlledNotation, resetToken])
 
   // Click-outside dismiss for tooltip
 
@@ -84,11 +89,15 @@ export function NotationRoller({
     setHoveredTokenIdx(null)
   }, [])
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNotation(e.target.value)
-    setState({ status: 'idle' })
-    setHoveredTokenIdx(null)
-  }, [])
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setNotation(e.target.value)
+      setState({ status: 'idle' })
+      setHoveredTokenIdx(null)
+      onChange?.(e.target.value)
+    },
+    [onChange]
+  )
 
   const rootClass = ['notation-roller', 'not-content', className].filter(Boolean).join(' ')
 
@@ -219,6 +228,70 @@ export function NotationRoller({
                   })}
               </span>
             )}
+            {notation.length > 0 && (
+              <div className="nr-code-actions">
+                <a
+                  className="nr-code-action-btn"
+                  href={`https://playground.randsum.dev?notation=${encodeURIComponent(notation)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Open in Playground"
+                  aria-label="Open this notation in the RANDSUM Playground"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+                <button
+                  className="nr-code-action-btn"
+                  title="Edit in StackBlitz"
+                  aria-label="Open and edit this notation in StackBlitz"
+                  onClick={() => {
+                    const project = buildStackBlitzProject(notation)
+                    const params = new URLSearchParams({
+                      title: project.title,
+                      description: project.description,
+                      template: project.template
+                    })
+                    for (const [name, content] of Object.entries(project.files)) {
+                      params.set(`file[${name}]`, content)
+                    }
+                    window.open(
+                      `https://stackblitz.com/run?${params.toString()}`,
+                      '_blank',
+                      'noopener,noreferrer'
+                    )
+                  }}
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
           {resultState && (
             <>
@@ -254,59 +327,7 @@ export function NotationRoller({
               </div>
             </>
           )}
-          {notation.length > 0 && (
-            <a
-              className="notation-roller-playground-btn"
-              href={`https://playground.randsum.dev?notation=${encodeURIComponent(notation)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              See in Playground
-            </a>
-          )}
         </div>
-        {notation.length > 0 && (
-          <div className="notation-roller-code-preview">
-            <pre className="nr-code-block">
-              <code>
-                <span className="nr-code-keyword">import</span>
-                {' { '}
-                <span className="nr-code-fn">roll</span>
-                {' } '}
-                <span className="nr-code-keyword">from</span>{' '}
-                <span className="nr-code-string">'@randsum/roller'</span>
-                {'\n\n'}
-                <span className="nr-code-keyword">const</span>
-                {' result = '}
-                <span className="nr-code-fn">roll</span>
-                {'('}
-                <span className="nr-code-string">{`'${notation}'`}</span>
-                {')'}
-              </code>
-            </pre>
-            <button
-              className="nr-code-stackblitz"
-              onClick={() => {
-                const project = buildStackBlitzProject(notation)
-                const params = new URLSearchParams({
-                  title: project.title,
-                  description: project.description,
-                  template: project.template
-                })
-                for (const [name, content] of Object.entries(project.files)) {
-                  params.set(`file[${name}]`, content)
-                }
-                window.open(
-                  `https://stackblitz.com/run?${params.toString()}`,
-                  '_blank',
-                  'noopener,noreferrer'
-                )
-              }}
-            >
-              Edit in StackBlitz
-            </button>
-          </div>
-        )}
       </div>
     </ErrorBoundary>
   )
