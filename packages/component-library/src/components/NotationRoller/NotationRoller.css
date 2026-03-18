@@ -96,7 +96,7 @@
 /* First-line spacer matches textarea text-indent so overlay tokens align */
 .nr-first-line-spacer {
   display: inline-block;
-  width: 4rem;
+  width: 3.25rem;
   height: 0;
   flex-shrink: 0;
 }
@@ -544,7 +544,7 @@
 /* ===== Textarea input ===== */
 .notation-roller-input {
   padding: 0;
-  text-indent: 4rem;
+  text-indent: 3.25rem;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 1.25rem;
   line-height: 1.4;
