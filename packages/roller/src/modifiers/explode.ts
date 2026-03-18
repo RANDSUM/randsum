@@ -25,7 +25,29 @@ export const explodeSchema: NotationSchema<boolean> = defineNotationSchema<boole
   toDescription: options => {
     if (!options) return []
     return ['Exploding Dice']
-  }
+  },
+
+  docs: [
+    {
+      key: '!',
+      category: 'Explode',
+      title: 'Explode',
+      description:
+        'Each die showing its maximum value triggers an extra die roll. Continues if new dice also max.',
+      displayBase: '!',
+      forms: [{ notation: '!', note: 'Explode on max value' }],
+      examples: [
+        {
+          notation: '3d6!',
+          description: 'Roll 3d6; any 6 adds another d6'
+        },
+        {
+          notation: '4d6L!',
+          description: 'Roll 4d6, explode, then drop lowest'
+        }
+      ]
+    }
+  ]
 })
 
 export const explodeModifier: ModifierDefinition<boolean> = {

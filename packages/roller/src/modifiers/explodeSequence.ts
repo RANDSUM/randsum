@@ -31,7 +31,74 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     if (!Array.isArray(options) || options.length === 0) return []
     const parts = options.map(s => `d${s}`)
     return [`Explode through sequence: ${parts.join(', ')}`]
-  }
+  },
+
+  docs: [
+    {
+      key: '!s{..}',
+      category: 'Explode',
+      title: 'Explode Sequence',
+      description:
+        'On max, re-roll with the next die size in a custom sequence rather than reusing the same die.',
+      displayBase: '!s{..}',
+      forms: [
+        {
+          notation: '!s{N1,N2,...}',
+          note: 'Step through die sizes on each explosion'
+        }
+      ],
+      examples: [
+        {
+          notation: '1d4!s{4,6,8,10}',
+          description: 'Explode through d4, d6, d8, d10'
+        },
+        {
+          notation: '1d6!s{8,12}',
+          description: 'Explode to d8, then d12'
+        }
+      ]
+    },
+    {
+      key: '!i',
+      category: 'Explode',
+      title: 'Inflation',
+      description:
+        'Explode upward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going up.',
+      displayBase: '!i',
+      forms: [
+        {
+          notation: '!i',
+          note: 'Inflate through standard dice sizes'
+        }
+      ],
+      examples: [
+        {
+          notation: '1d4!i',
+          description: 'Explode d4 through d6, d8, d10, d12, d20'
+        }
+      ]
+    },
+    {
+      key: '!r',
+      category: 'Explode',
+      title: 'Reduction',
+      description:
+        'Explode downward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going down.',
+      displayBase: '!r',
+      forms: [
+        {
+          notation: '!r',
+          note: 'Reduce through standard dice sizes'
+        }
+      ],
+      examples: [
+        {
+          notation: '1d20!r',
+          description: 'Explode d20 through d12, d10, d8, d6, d4'
+        }
+      ]
+    }
+  ]
 })
 
 /**
