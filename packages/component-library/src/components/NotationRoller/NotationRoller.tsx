@@ -236,15 +236,26 @@ export function NotationRoller({
           </div>
           {resultState && (
             <div ref={tooltipRef} className="notation-roller-tooltip">
-              <div className="nr-tooltip-header">
-                <span className="nr-tooltip-notation">{notation}</span>
-                <span className="nr-tooltip-desc">
-                  {resultState.records.map(r => r.description.join(', ')).join(' + ')}
-                </span>
+              <div className="nr-tooltip-total-pane">
+                <div className="nr-tooltip-total-value">{resultState.total}</div>
               </div>
-              <div className="nr-tooltip-body">
-                <div className="nr-tooltip-total-pane">
-                  <div className="nr-tooltip-total-value">{resultState.total}</div>
+              <div className="nr-tooltip-right">
+                <div className="nr-tooltip-right-header">
+                  <div className="nr-tooltip-header-text">
+                    <span className="nr-tooltip-notation">{notation}</span>
+                    <span className="nr-tooltip-desc">
+                      {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                    </span>
+                  </div>
+                  <button
+                    className="nr-tooltip-close"
+                    onClick={() => {
+                      setState({ status: 'idle' })
+                    }}
+                    aria-label="Close result"
+                  >
+                    &times;
+                  </button>
                 </div>
                 <div className="nr-tooltip-steps-pane">
                   <RollResult records={resultState.records} />
