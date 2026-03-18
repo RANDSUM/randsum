@@ -93,7 +93,66 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     }
 
     return descriptions
-  }
+  },
+
+  docs: [
+    {
+      key: '#{..}',
+      category: 'Counting',
+      title: 'Count',
+      description:
+        'Count dice matching comparison conditions instead of summing values. More powerful than S{}/F{} sugar.',
+      displayBase: '#{..}',
+      comparisons: [
+        { operator: '>=n', note: 'count dice showing n or more' },
+        { operator: '>n', note: 'count dice showing more than n' },
+        { operator: '<n', note: 'count dice showing less than n' },
+        { operator: '<=n', note: 'count dice showing n or less' },
+        { operator: '=n', note: 'count dice showing exactly n' }
+      ],
+      forms: [{ notation: '#{...}', note: 'Comma-separate multiple conditions' }],
+      examples: [
+        { notation: '5d10#{>=7}', description: 'Count dice >= 7' },
+        { notation: '5d10#{>3,<1}', description: 'Count >3, deduct <1' }
+      ]
+    },
+    {
+      key: 'S{..}',
+      category: 'Counting',
+      title: 'Count Successes',
+      description:
+        'Count dice that meet a threshold instead of summing values \u2014 used in dice pool systems.',
+      displayBase: 'S{..}',
+      forms: [
+        { notation: 'S{n}', note: 'Single success threshold' },
+        { notation: 'S{n,b}', note: 'Threshold + botch threshold' }
+      ],
+      examples: [
+        { notation: '5d10S{7}', description: 'Count dice that rolled 7 or higher' },
+        { notation: '5d10S{7,1}', description: 'Successes \u2265 7, subtract botches \u2264 1' }
+      ]
+    },
+    {
+      key: 'F{..}',
+      category: 'Counting',
+      title: 'Count Failures',
+      description:
+        'Count dice at or below a threshold instead of summing values. Sugar for Count with lessThanOrEqual.',
+      displayBase: 'F{..}',
+      forms: [{ notation: 'F{N}', note: 'Count failures <= N' }],
+      examples: [{ notation: '5d10F{3}', description: 'Count dice <= 3' }]
+    },
+    {
+      key: 'ms{..}',
+      category: 'Counting',
+      title: 'Margin of Success',
+      description:
+        'Subtract a target number from the total to get the margin of success or failure. Sugar for Minus N.',
+      displayBase: 'ms{..}',
+      forms: [{ notation: 'ms{N}', note: 'Subtract N from total' }],
+      examples: [{ notation: '1d20ms{15}', description: 'Margin of success vs DC 15' }]
+    }
+  ]
 })
 
 function matchesAbove(roll: number, options: CountOptions): boolean {
