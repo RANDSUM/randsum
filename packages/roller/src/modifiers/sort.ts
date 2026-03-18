@@ -30,7 +30,28 @@ export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<So
 
   toDescription: options => {
     return [options === 'desc' ? 'Sort descending' : 'Sort ascending']
-  }
+  },
+
+  docs: [
+    {
+      key: 'sort',
+      category: 'Order',
+      title: 'Sort',
+      description:
+        'Sort the dice pool in ascending or descending order. Does not affect the total \u2014 only the presentation order of dice.',
+      displayBase: 's',
+      displayOptional: 'a/d',
+      forms: [
+        { notation: 's', note: 'Sort ascending (default)' },
+        { notation: 'sa', note: 'Sort ascending explicitly' },
+        { notation: 'sd', note: 'Sort descending' }
+      ],
+      examples: [
+        { notation: '4d6sa', description: 'Roll 4d6, display sorted low to high' },
+        { notation: '4d6sd', description: 'Roll 4d6, display sorted high to low' }
+      ]
+    }
+  ]
 })
 
 export const sortModifier: ModifierDefinition<SortDirection> = {
