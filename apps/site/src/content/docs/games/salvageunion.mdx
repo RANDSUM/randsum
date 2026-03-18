@@ -21,14 +21,12 @@ head:
       }
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkCard } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/games/salvageunion` subpath provides mechanics for [Salvage Union](https://leyline.press/pages/salvage-union), a post-apocalyptic mech-based tabletop RPG that uses table-based d20 mechanics.
 
-## The d20 Table
-
-Salvage Union uses a **single d20** roll against a fixed outcome table. Every roll maps to one of five labeled results: **Nailed It** (20), **Success** (11–19), **Tough Choice** (6–10), **Failure** (2–5), and **Cascade Failure** (1). There are no modifiers — the d20 roll is read directly against the table. Different in-game situations use different named tables (Core Mechanic, Morale, and others), each with the same five tiers but different narrative descriptions. The `@randsum/games/salvageunion` package rolls a d20, performs the table lookup, and returns the hit type, table label, narrative description, and raw roll value.
+<LinkCard title="Official Site" href="https://leyline.press/pages/salvage-union" description="Salvage Union by Leyline Press" />
 
 ## Installation
 

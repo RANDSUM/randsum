@@ -21,14 +21,12 @@ head:
       }
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkCard } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/games/blades` subpath provides mechanics for [Blades in the Dark](https://www.evilhat.com/home/blades-in-the-dark/), a tabletop RPG about a crew of daring scoundrels seeking their fortunes on the haunted streets of an industrial-fantasy city.
 
-## The Action Roll
-
-Blades in the Dark uses a **dice pool** system built around six-sided dice. You assemble a pool of dice based on your action rating plus any bonus dice (from pushing yourself, assistance, or devil's bargains), roll them all, and read only the single highest result: a 6 is a full success, 4–5 is a partial success with a consequence, and 1–3 is a failure. Rolling zero dice (when your effective pool is 0) means rolling two dice and keeping the *lowest*. A **critical** result — two or more 6s — means an exceptional outcome. The `@randsum/games/blades` package handles all pool assembly, the two-dice-lowest rule for zero-dice rolls, and the outcome tier logic.
+<LinkCard title="Official Site" href="https://www.evilhat.com/home/blades-in-the-dark/" description="Blades in the Dark by Evil Hat" />
 
 ## Installation
 

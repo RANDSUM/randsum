@@ -21,14 +21,12 @@ head:
       }
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkCard } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/games/daggerheart` subpath provides mechanics for [Daggerheart](https://www.darringtonpress.com/daggerheart), a fantasy tabletop RPG featuring the unique hope and fear dice system.
 
-## Hope & Fear
-
-Daggerheart's action rolls use two twelve-sided dice called the **Duality Dice** — one Hope die and one Fear die. You roll both, add a modifier, and compare the total to a difficulty threshold. If the Hope die shows higher than the Fear die, you act *with Hope* (a positive narrative currency). If Fear is higher, you succeed *with Fear* (the GM gains a resource). A **critical** occurs when both dice show the same value. Advantage adds a d6 to the total; disadvantage subtracts a d6. Either die can be **amplified** from d12 to d20 for greater range. The `@randsum/games/daggerheart` package returns the full breakdown: totals, individual die values, Hope/Fear comparison, and whether a critical occurred.
+<LinkCard title="Official Site" href="https://www.darringtonpress.com/daggerheart" description="Daggerheart by Darrington Press" />
 
 ## Installation
 

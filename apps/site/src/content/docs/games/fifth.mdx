@@ -21,14 +21,12 @@ head:
       }
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkCard } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/games/fifth` subpath provides [Dungeons & Dragons 5th Edition](https://www.dndbeyond.com/) mechanics including ability checks, saving throws, and attack rolls with full support for advantage and disadvantage.
 
-## The d20 System
-
-In Dungeons & Dragons 5th Edition, most action resolution uses a single twenty-sided die (d20). You roll the die, add an ability modifier (typically −4 to +10), and compare the result against a target number called a Difficulty Class. Rolling with **advantage** means rolling two d20s and keeping the higher result — mechanically reflecting favorable circumstances like a spell, high ground, or helping ally. **Disadvantage** is the reverse: roll two d20s and keep the lower. The `@randsum/games/fifth` package implements these mechanics exactly, handling the 2d20 rolls, modifier application, and advantage/disadvantage resolution with full TypeScript types.
+<LinkCard title="Official Site &amp; SRD" href="https://www.dndbeyond.com/" description="D&amp;D Beyond — Rules, SRD, and Character Builder" />
 
 ## Installation
 

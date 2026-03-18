@@ -21,14 +21,12 @@ head:
       }
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
+import { Tabs, TabItem, LinkCard } from '@astrojs/starlight/components'
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 The `@randsum/games/pbta` subpath provides generic [Powered by the Apocalypse](https://apocalypse-world.com/) (PbtA) mechanics that work with any PbtA game, including Dungeon World, Monster of the Week, Apocalypse World, Masks, and many others.
 
-## The 2d6 Tiers
-
-Powered by the Apocalypse games use a **2d6 + stat** roll. You roll two six-sided dice, add a stat modifier (usually −1 to +3), and the total determines your outcome tier: 10+ is a strong hit (full success), 7–9 is a weak hit (success with a complication), and 6 or lower is a miss (the GM makes a move). Some moves allow **advantage** (roll 3d6, keep the two highest) or **disadvantage** (roll 3d6, keep the two lowest). Bonuses like *forward* (a one-time +1) and *ongoing* (a persistent modifier) stack on top. The `@randsum/games/pbta` package covers all of this with a single typed function call.
+<LinkCard title="Official Site" href="https://apocalypse-world.com/" description="Apocalypse World by D. Vincent Baker" />
 
 ## Installation
 
