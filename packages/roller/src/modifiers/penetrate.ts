@@ -35,7 +35,27 @@ export const penetrateSchema: NotationSchema<boolean | number> = defineNotationS
     if (options === 0) return ['Penetrating Dice (unlimited)']
     if (typeof options === 'number') return [`Penetrating Dice (max ${options} times)`]
     return []
-  }
+  },
+
+  docs: [
+    {
+      key: '!p',
+      category: 'Explode',
+      title: 'Penetrating Explode',
+      description:
+        'Like explode, but each subsequent explosion subtracts 1 from the result (Hackmaster-style).',
+      displayBase: '!p',
+      displayOptional: 'n',
+      forms: [
+        { notation: '!p(n)', note: 'Penetrate up to n times (default: once)' },
+        { notation: '!p0', note: 'Unlimited depth (capped at 100)' }
+      ],
+      examples: [
+        { notation: '1d6!p', description: 'Roll 1d6; max penetrates with -1 per chain' },
+        { notation: '2d6!pL', description: 'Penetrate, then drop lowest' }
+      ]
+    }
+  ]
 })
 
 export const penetrateModifier: ModifierDefinition<boolean | number> = {
