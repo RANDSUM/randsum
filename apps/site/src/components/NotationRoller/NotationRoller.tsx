@@ -6,11 +6,8 @@ import { formatAsMath, traceRoll } from '@randsum/roller/trace'
 import { buildStackBlitzProject } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
-import type { NotationDoc } from '@randsum/roller/docs'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import './NotationRoller.css'
-
-const notationDocs = NOTATION_DOCS as Readonly<Record<string, NotationDoc | undefined>>
 
 type RollerState =
   | { status: 'idle' }
@@ -133,7 +130,7 @@ export function NotationRoller({
                         ]
                           .filter(Boolean)
                           .join(' ')}
-                        style={{ color: notationDocs[token.key]?.color }}
+                        style={{ color: NOTATION_DOCS[token.key]?.color }}
                       >
                         {token.text}
                       </span>
@@ -222,7 +219,7 @@ export function NotationRoller({
                             .join(' ')}
                           style={
                             {
-                              '--chip-color': notationDocs[token.key]?.color
+                              '--chip-color': NOTATION_DOCS[token.key]?.color
                             } as React.CSSProperties
                           }
                           onMouseEnter={() => {
