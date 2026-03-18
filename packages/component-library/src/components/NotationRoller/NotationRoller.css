@@ -727,7 +727,11 @@
 /* ===== Result overlay (covers entire shell content) ===== */
 .notation-roller-result-overlay {
   position: absolute !important;
-  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  min-height: 100% !important;
+  max-height: 150% !important;
   z-index: 50 !important;
   display: flex !important;
   flex-direction: row !important;
