@@ -740,14 +740,15 @@
   padding-right: 1.5rem !important;
   background: #18181b !important;
   border-radius: 0.5rem !important;
-  border: 2px solid #a855f7 !important;
+  border: 1.5px solid #a855f7 !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace !important;
   font-size: 0.75rem !important;
   animation: nr-tooltip-in 0.15s ease;
   pointer-events: auto !important;
   gap: 0.5rem !important;
-  overflow: hidden !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
 }
 
 /* Backdrop blur behind the overlay */
