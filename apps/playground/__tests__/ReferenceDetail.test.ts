@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'bun:test'
-import type { ModifierDoc } from '@randsum/roller/docs'
+import type { NotationDoc } from '@randsum/roller/docs'
 import { MODIFIER_DOCS } from '@randsum/roller/docs'
 
 // Tests verify the data contract that ReferenceDetail must render.
 // The component is a React TSX component; structural correctness is gated by the Astro build.
-// These tests confirm the ModifierDoc shape is stable and the component module exports correctly.
+// These tests confirm the NotationDoc shape is stable and the component module exports correctly.
 
 describe('ReferenceDetail data contract', () => {
-  describe('ModifierDoc shape', () => {
+  describe('NotationDoc shape', () => {
     test('each doc has a title string', () => {
       for (const doc of Object.values(MODIFIER_DOCS)) {
         expect(typeof doc.title).toBe('string')
@@ -110,7 +110,7 @@ describe('ReferenceDetail data contract', () => {
   describe('ReferenceDetail rendering logic (pure helpers)', () => {
     // Test a pure helper that the component would use: checking whether
     // comparisons should be rendered.
-    function hasComparisons(doc: ModifierDoc): boolean {
+    function hasComparisons(doc: NotationDoc): boolean {
       return doc.comparisons !== undefined && doc.comparisons.length > 0
     }
 
@@ -131,7 +131,9 @@ describe('ReferenceDetail data contract', () => {
     })
 
     test('hasComparisons returns false for docs with undefined comparisons', () => {
-      const doc: ModifierDoc = {
+      const doc: NotationDoc = {
+        key: 'T',
+        category: 'test',
         title: 'Test',
         description: 'A test doc',
         displayBase: 'T',

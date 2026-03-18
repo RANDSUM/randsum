@@ -1,5 +1,5 @@
 import { MODIFIER_DOCS } from '@randsum/roller/docs'
-import type { ModifierDoc } from '@randsum/roller/docs'
+import type { NotationDoc } from '@randsum/roller/docs'
 
 interface QuickReferenceGridProps {
   readonly selectedEntry: string | null
@@ -335,7 +335,7 @@ function Section({
   )
 }
 
-function InlineModifierDetail({ doc }: { readonly doc: ModifierDoc }): React.ReactElement {
+function InlineModifierDetail({ doc }: { readonly doc: NotationDoc }): React.ReactElement {
   return (
     <div style={detailContainerStyle}>
       <p style={detailDescStyle}>{doc.description}</p>
