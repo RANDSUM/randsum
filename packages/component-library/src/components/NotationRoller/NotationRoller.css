@@ -732,45 +732,38 @@
 /* ===== Floating tooltip ===== */
 .notation-roller-tooltip {
   position: absolute;
-  bottom: 100%;
-  left: 0;
+  inset: 0;
   z-index: 50;
-  background: #18181b;
-  border: 1px solid rgba(168, 85, 247, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  background: #18181bee;
+  backdrop-filter: blur(8px);
   border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.35rem;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.75rem;
-  width: max-content;
-  max-width: 100%;
   animation: nr-tooltip-in 0.15s ease;
   pointer-events: auto;
+  overflow: auto;
 }
 
 @keyframes nr-tooltip-in {
   from {
     opacity: 0;
-    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 @media (prefers-color-scheme: light) {
   .notation-roller-tooltip {
-    background: #f4f4f5;
-    border-color: rgba(147, 51, 234, 0.3);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    background: #f4f4f5ee;
   }
 }
 [data-theme='light'] .notation-roller-tooltip {
-  background: #f4f4f5;
-  border-color: rgba(147, 51, 234, 0.3);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  background: #f4f4f5ee;
 }
 
 .notation-roller-tooltip-total {
