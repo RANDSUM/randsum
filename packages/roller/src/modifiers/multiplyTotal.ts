@@ -23,7 +23,23 @@ export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<
 
   toDescription: options => {
     return [`Multiply total by ${options}`]
-  }
+  },
+
+  docs: [
+    {
+      key: '**',
+      category: 'Arithmetic',
+      title: 'Multiply Total',
+      description: 'Multiply the entire final total after all other modifiers have been applied.',
+      displayBase: '**',
+      displayOptional: 'n',
+      forms: [{ notation: '**n', note: 'Multiply final total by n' }],
+      examples: [
+        { notation: '2d6+3**2', description: '(roll + 3) \u00d7 2' },
+        { notation: '4d6L**3', description: '(drop-lowest sum) \u00d7 3' }
+      ]
+    }
+  ]
 })
 
 export const multiplyTotalModifier: ModifierDefinition<number> = {
