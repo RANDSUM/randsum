@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { MODIFIER_DOCS } from '../src/docs/index'
+import { DICE_DOCS, MODIFIER_DOCS } from '../src/docs/index'
 import type { ModifierDoc, NotationDoc } from '../src/docs/index'
 import type { NotationSchema } from '../src/notation/schema'
 
@@ -42,7 +42,11 @@ describe('MODIFIER_DOCS', () => {
     expect(MODIFIER_DOCS['H']).toBeDefined()
     expect(MODIFIER_DOCS['!']).toBeDefined()
     expect(MODIFIER_DOCS['R{..}']).toBeDefined()
-    expect(MODIFIER_DOCS['xDN']).toBeDefined()
+    // xDN moved to DICE_DOCS after nd4 (was in static MODIFIER_DOCS before)
+    expect(MODIFIER_DOCS['xDN']).toBeUndefined()
+    expect(DICE_DOCS['xDN']).toBeDefined()
+    // sort is now present (was missing from old static MODIFIER_DOCS)
+    expect(MODIFIER_DOCS['sort']).toBeDefined()
   })
 
   test('ModifierDoc type is usable', () => {
