@@ -683,8 +683,8 @@
 /* ===== Description row ===== */
 .notation-roller-desc-row {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.25rem 0.5rem 0.5rem;
-  min-height: 1.75rem;
+  padding: 0.5rem 0.75rem 0.75rem;
+  min-height: 2rem;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.7rem;
   line-height: 1.4;
@@ -1082,8 +1082,8 @@
   position: relative;
   margin-top: 0.5rem;
   background: #0d0d0f;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
   overflow: hidden;
 }
 
