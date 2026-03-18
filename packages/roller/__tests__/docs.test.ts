@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { MODIFIER_DOCS } from '../src/docs/index'
-import type { ModifierDoc } from '../src/docs/index'
+import type { ModifierDoc, NotationDoc } from '../src/docs/index'
+import type { NotationSchema } from '../src/notation/schema'
 
 describe('MODIFIER_DOCS', () => {
   test('is a non-empty record', () => {
@@ -47,5 +48,62 @@ describe('MODIFIER_DOCS', () => {
   test('ModifierDoc type is usable', () => {
     const doc: ModifierDoc = MODIFIER_DOCS['L']!
     expect(doc.title).toBe('Drop Lowest')
+  })
+})
+
+describe('NotationDoc', () => {
+  test('NotationDoc type is exported and assignable from ModifierDoc', () => {
+    // ModifierDoc is a type alias for NotationDoc — they are structurally identical
+    const doc: NotationDoc = {
+      key: 'L',
+      category: 'Pool',
+      title: 'Drop Lowest',
+      description: 'Remove the lowest die',
+      displayBase: 'L',
+      forms: [{ notation: 'L', note: 'Drop 1 lowest' }],
+      examples: [{ notation: '4d6L', description: 'Drop lowest' }]
+    }
+    expect(doc.key).toBe('L')
+    expect(doc.category).toBe('Pool')
+    expect(doc.title).toBe('Drop Lowest')
+  })
+
+  test('ModifierDoc is a backwards-compatible alias for NotationDoc', () => {
+    const doc: ModifierDoc = {
+      key: 'H',
+      category: 'Pool',
+      title: 'Drop Highest',
+      description: 'Remove the highest die',
+      displayBase: 'H',
+      forms: [{ notation: 'H', note: 'Drop 1 highest' }],
+      examples: [{ notation: '2d20H', description: 'Drop highest' }]
+    }
+    expect(doc.key).toBe('H')
+    expect(doc.category).toBe('Pool')
+  })
+})
+
+describe('NotationSchema.docs', () => {
+  test('NotationSchema accepts optional docs field', () => {
+    const doc: NotationDoc = {
+      key: '!',
+      category: 'Explode',
+      title: 'Explode',
+      description: 'Explode on max',
+      displayBase: '!',
+      forms: [{ notation: '!', note: 'Explode on max' }],
+      examples: [{ notation: '3d6!', description: 'Explode' }]
+    }
+    // Type-level check: NotationSchema should accept a docs array
+    const schemaWithDocs: Pick<NotationSchema, 'docs'> = {
+      docs: [doc]
+    }
+    expect(schemaWithDocs.docs).toHaveLength(1)
+    expect(schemaWithDocs.docs![0]!.key).toBe('!')
+  })
+
+  test('NotationSchema docs field is optional', () => {
+    const schemaWithoutDocs: Pick<NotationSchema, 'docs'> = {}
+    expect(schemaWithoutDocs.docs).toBeUndefined()
   })
 })
