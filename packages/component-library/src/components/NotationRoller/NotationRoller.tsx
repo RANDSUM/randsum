@@ -142,8 +142,7 @@ export function NotationRoller({
                   ref={inputRef}
                   className={[
                     'notation-roller-input',
-                    tokens.length > 0 ? 'notation-roller-input--highlight' : '',
-                    resultState ? 'notation-roller-input--blurred' : ''
+                    tokens.length > 0 ? 'notation-roller-input--highlight' : ''
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -235,19 +234,10 @@ export function NotationRoller({
             )}
           </div>
           {resultState && (
-            <div ref={tooltipRef} className="notation-roller-tooltip">
+            <div ref={tooltipRef} className="notation-roller-result-section">
               <div className="nr-tooltip-total-pane">
                 <div className="nr-tooltip-total-value">{resultState.total}</div>
               </div>
-              <button
-                className="nr-tooltip-close"
-                onClick={() => {
-                  setState({ status: 'idle' })
-                }}
-                aria-label="Close result"
-              >
-                &times;
-              </button>
               <div className="nr-tooltip-right">
                 <div className="nr-tooltip-header-line">
                   <span className="nr-tooltip-notation">{notation}</span>

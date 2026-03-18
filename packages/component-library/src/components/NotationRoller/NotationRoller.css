@@ -724,33 +724,16 @@
 }
 
 /* ===== Input blur when tooltip is showing ===== */
-.notation-roller-input--blurred {
-  filter: blur(2px);
-  transition: filter 0.15s ease;
-}
-
-/* ===== Floating tooltip ===== */
-.notation-roller-tooltip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  min-height: 100%;
-  max-height: 200%;
-  z-index: 50;
+/* ===== Result section (grows the shell) ===== */
+.notation-roller-result-section {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: flex-start;
   padding: 0.5rem;
-  background: #18181bee;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(168, 85, 247, 0.4);
-  border-radius: 0.5rem;
+  border-top: 1px solid rgba(168, 85, 247, 0.25);
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.75rem;
   animation: nr-tooltip-in 0.15s ease;
-  pointer-events: auto;
-  overflow: hidden;
 }
 
 @keyframes nr-tooltip-in {
@@ -763,13 +746,12 @@
 }
 
 @media (prefers-color-scheme: light) {
-  .notation-roller-tooltip {
-    background: #f4f4f5ee;
+  .notation-roller-result-section {
+    border-top-color: rgba(147, 51, 234, 0.2);
   }
 }
-[data-theme='light'] .notation-roller-tooltip {
-  background: #f4f4f5ee;
-  border-color: rgba(147, 51, 234, 0.3);
+[data-theme='light'] .notation-roller-result-section {
+  border-top-color: rgba(147, 51, 234, 0.2);
 }
 
 /* --- Tooltip layout: total (left) | right column (header + scrollable steps) --- */
@@ -792,25 +774,6 @@
   font-weight: 700;
   color: #ffffff;
   line-height: 1;
-}
-
-.nr-tooltip-close {
-  position: absolute;
-  top: 0.35rem;
-  right: 0.35rem;
-  background: none;
-  border: none;
-  color: #71717a;
-  font-size: 1rem;
-  line-height: 1;
-  padding: 0.1rem 0.25rem;
-  cursor: pointer;
-  transition: color 0.15s ease;
-  z-index: 1;
-}
-
-.nr-tooltip-close:hover {
-  color: #e4e4e7;
 }
 
 .nr-tooltip-right {
@@ -857,9 +820,6 @@
   .nr-tooltip-header-line {
     border-bottom-color: rgba(0, 0, 0, 0.1);
   }
-  .nr-tooltip-close:hover {
-    color: #27272a;
-  }
 }
 [data-theme='light'] .nr-tooltip-total-pane {
   border-color: rgba(147, 51, 234, 0.3);
@@ -869,9 +829,6 @@
 }
 [data-theme='light'] .nr-tooltip-header-line {
   border-bottom-color: rgba(0, 0, 0, 0.1);
-}
-[data-theme='light'] .nr-tooltip-close:hover {
-  color: #27272a;
 }
 
 /* ===== Embedded RollResult styles ===== */
