@@ -16,15 +16,20 @@ export function parseComparisonNotation(conditionString: string): ComparisonOpti
 
   for (const part of parts) {
     if (part.startsWith('>=')) {
-      result.greaterThanOrEqual = Number(part.slice(2))
+      const num = Number(part.slice(2))
+      if (!isNaN(num)) result.greaterThanOrEqual = num
     } else if (part.startsWith('<=')) {
-      result.lessThanOrEqual = Number(part.slice(2))
+      const num = Number(part.slice(2))
+      if (!isNaN(num)) result.lessThanOrEqual = num
     } else if (part.startsWith('>')) {
-      result.greaterThan = Number(part.slice(1))
+      const num = Number(part.slice(1))
+      if (!isNaN(num)) result.greaterThan = num
     } else if (part.startsWith('<')) {
-      result.lessThan = Number(part.slice(1))
+      const num = Number(part.slice(1))
+      if (!isNaN(num)) result.lessThan = num
     } else if (part.startsWith('=')) {
-      exact.push(Number(part.slice(1)))
+      const num = Number(part.slice(1))
+      if (!isNaN(num)) exact.push(num)
     } else {
       const num = Number(part)
       if (!isNaN(num)) {

@@ -5,7 +5,7 @@ import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import type { ModifierDefinition } from './schema'
 
-const countPattern = /#\{([^}]+)\}/
+const countPattern = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
 export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>({
   name: 'count',

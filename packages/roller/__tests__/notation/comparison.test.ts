@@ -60,9 +60,26 @@ describe('parseComparisonNotation', () => {
     expect(result.greaterThan).toBe(5)
   })
 
-  test('ignores NaN values', () => {
+  test('ignores NaN values in bare numbers', () => {
     const result = parseComparisonNotation('abc')
     expect(result.exact).toBeUndefined()
+  })
+
+  test('ignores NaN values in comparison operators', () => {
+    const gt = parseComparisonNotation('>!')
+    expect(gt.greaterThan).toBeUndefined()
+
+    const lt = parseComparisonNotation('<abc')
+    expect(lt.lessThan).toBeUndefined()
+
+    const gte = parseComparisonNotation('>=xyz')
+    expect(gte.greaterThanOrEqual).toBeUndefined()
+
+    const lte = parseComparisonNotation('<=!')
+    expect(lte.lessThanOrEqual).toBeUndefined()
+
+    const eq = parseComparisonNotation('=!')
+    expect(eq.exact).toBeUndefined()
   })
 })
 

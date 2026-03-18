@@ -2,7 +2,7 @@ import type { CountOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 import { parseComparisonNotation } from '../comparison'
 
-const countPattern = /#\{([^}]+)\}/
+const countPattern = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
 export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>({
   name: 'count',
