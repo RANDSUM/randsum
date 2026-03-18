@@ -6,8 +6,8 @@
 import { describe, expect, test } from 'bun:test'
 
 describe('@randsum/component-library (dist)', () => {
-  test('main entry exports React components', async () => {
+  test('exports NotationRoller', async () => {
     const mod = await import('../../component-library/dist/index.js')
-    expect(typeof mod.RollerPlayground).toBe('function')
+    expect(typeof mod.NotationRoller).toBe('function')
   })
 })
