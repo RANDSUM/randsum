@@ -13,9 +13,9 @@
   --sl-color-gray-2: #a1a1aa; /* zinc-400 */
   --sl-color-gray-3: #71717a; /* zinc-500 */
   --sl-color-gray-4: #52525b; /* zinc-600 */
-  --sl-color-gray-5: #27272a; /* zinc-800 */
-  --sl-color-gray-6: #18181b; /* zinc-900 */
-  --sl-color-black: #09090b; /* zinc-950 */
+  --sl-color-gray-5: #2e2e35; /* zinc-800 */
+  --sl-color-gray-6: #222228; /* zinc-900 */
+  --sl-color-black: #1a1a1f; /* zinc-950 */
 
   /* Fonts */
   --sl-font: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
