@@ -1,7 +1,0 @@
-.randsum-error-boundary {
-  color: var(--randsum-error-color, #ef4444);
-  padding: 1rem;
-  border: 1px solid var(--randsum-error-color, #ef4444);
-  border-radius: 0.375rem;
-  font-family: monospace;
-}

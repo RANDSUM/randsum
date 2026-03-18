@@ -32,7 +32,7 @@ jobs:
       - name: Run all package checks
         run: bun run check
       - name: Check bundle sizes
-        run: bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size && bun run --filter '@randsum/component-library' size
+        run: bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size
       - name: Security audit
         run: bun audit --audit-level high
       - name: Dry-run publish preflight
@@ -85,17 +85,6 @@ jobs:
             echo "was_published=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check component-library version
-        id: component-library
-        run: |
-          PACKAGE_VERSION=$(jq -r '.version' packages/component-library/package.json)
-          NPM_VERSION=$(npm view @randsum/component-library version 2>/dev/null || echo "0.0.0")
-          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-          if [ "$PACKAGE_VERSION" = "$NPM_VERSION" ]; then
-            echo "was_published=false" >> $GITHUB_OUTPUT
-          else
-            echo "was_published=true" >> $GITHUB_OUTPUT
-          fi
 
       - name: Check cli version
         id: cli
@@ -132,15 +121,6 @@ jobs:
         run: |
           gh release create "games-${{ steps.games.outputs.version }}" \
             --title "games v${{ steps.games.outputs.version }}" \
-            --generate-notes
-
-      - name: Release @randsum/component-library
-        if: steps.component-library.outputs.was_published == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "component-library-${{ steps.component-library.outputs.version }}" \
-            --title "component-library v${{ steps.component-library.outputs.version }}" \
             --generate-notes
 
       - name: Release @randsum/cli
