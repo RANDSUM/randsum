@@ -69,7 +69,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         <div class="hero-lockup">
           <div class="hero-text">
             <ClickableTagline client:load />
-            <p class="hero-tagline">A Zero-Dependency, TypeScript-First, Bun-Native Dice Notation and Rolling Engine</p>
+            <p class="hero-tagline">A Zero-Dependency, TypeScript-First, Bun-Native Dice Notation Parsing and Rolling Engine</p>
             <div class="hero-actions">
               <PlaygroundButton client:load />
               <GetStartedButton client:load />
@@ -236,7 +236,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    justify-content: space-between;
+    justify-content: space-evenly;
   }
 
   :global(.hero-chip) {
@@ -244,9 +244,8 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex: 1 1 0;
     height: 1.6rem;
-    padding: 0 0.4rem;
+    padding: 0 0.6rem;
     background: transparent;
     border: 1px solid rgba(168, 85, 247, 0.3);
     border-radius: 999px;
@@ -410,7 +409,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 
   :global(.btn-primary) {
     background: var(--sl-color-accent);
-    color: var(--sl-color-white);
+    color: #fafafa;
   }
 
   :global(.btn-primary:hover) {

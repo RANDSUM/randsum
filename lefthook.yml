@@ -12,7 +12,7 @@ pre-commit:
       stage_fixed: true
     format:
       glob: "*.{ts,tsx,js,json,md,astro,css}"
-      run: bun run format
+      run: bunx prettier --write --ignore-path .prettierignore --config .prettierrc {staged_files}
       stage_fixed: true
     typecheck:
       run: bun run typecheck

@@ -319,10 +319,10 @@ export function NotationRoller({
                 >
                   &times;
                 </button>
-                <div className="nr-tooltip-total-pane">
-                  <div className="nr-tooltip-total-value">{resultState.total}</div>
-                </div>
-                <div className="nr-tooltip-right">
+                <div className="nr-tooltip-flow">
+                  <div className="nr-tooltip-total-pane">
+                    <div className="nr-tooltip-total-value">{resultState.total}</div>
+                  </div>
                   <div className="nr-tooltip-header-line">
                     <span className="nr-tooltip-notation">{notation}</span>
                     <span className="nr-tooltip-sep">|</span>

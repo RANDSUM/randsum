@@ -58,7 +58,8 @@ export default defineConfig({
       ],
       components: {
         Header: './src/components/Header.astro',
-        SiteTitle: './src/components/SiteTitle.astro'
+        SiteTitle: './src/components/SiteTitle.astro',
+        ThemeSelect: './src/components/ThemeSelect.astro'
       },
       customCss: ['./src/styles/custom.css'],
       sidebar: [
