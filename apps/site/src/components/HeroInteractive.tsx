@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { roll } from '@randsum/roller'
-import { NotationRoller } from '@randsum/component-library'
+import { NotationRoller } from './NotationRoller'
 
 const TAGLINES = [
   'Very Specific Random Numbers',
