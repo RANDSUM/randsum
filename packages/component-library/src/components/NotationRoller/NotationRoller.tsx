@@ -189,6 +189,16 @@ export function NotationRoller({
               >
                 {resultState ? 'Re-Roll' : 'Roll'}
               </button>
+              {notation.length > 0 && (
+                <a
+                  className="notation-roller-playground-btn"
+                  href={`https://playground.randsum.dev?notation=${encodeURIComponent(notation)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  See in Playground
+                </a>
+              )}
             </div>
           </div>
 
