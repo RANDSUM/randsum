@@ -297,6 +297,11 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   :global(.tagline-exceptions) {
+    color: #f87171;
+    -webkit-text-fill-color: #f87171;
+  }
+
+  :global(:root[data-theme='light'] .tagline-exceptions) {
     color: #dc2626;
     -webkit-text-fill-color: #dc2626;
   }
