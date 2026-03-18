@@ -744,6 +744,7 @@
   padding: 0.5rem;
   background: #18181bee;
   backdrop-filter: blur(8px);
+  border: 1px solid rgba(168, 85, 247, 0.4);
   border-radius: 0.5rem;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.75rem;
@@ -768,6 +769,7 @@
 }
 [data-theme='light'] .notation-roller-tooltip {
   background: #f4f4f5ee;
+  border-color: rgba(147, 51, 234, 0.3);
 }
 
 /* --- Tooltip layout: total (left) | right column (header + scrollable steps) --- */
