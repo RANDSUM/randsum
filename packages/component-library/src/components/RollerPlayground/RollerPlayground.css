@@ -62,7 +62,7 @@
 .roller-playground-row {
   display: flex;
   align-items: stretch;
-  height: var(--rp-row-height);
+  min-height: var(--rp-row-height);
 }
 
 /* ===== Description row ===== */
@@ -141,6 +141,7 @@
   align-items: stretch;
   min-width: 0;
   padding: 0 0.5rem 0 var(--rp-margin);
+  overflow: hidden;
 }
 
 /* ===== Syntax token colors ===== */
@@ -222,8 +223,11 @@
 /* ===== Input wrapper (positions overlay over the input) ===== */
 .rp-input-wrap {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* ===== Notation overlay (colored token spans, sits above transparent input text) ===== */
@@ -232,6 +236,7 @@
   left: 0;
   top: 0;
   bottom: 0;
+  right: 0;
   display: flex;
   align-items: center;
   white-space: nowrap;
@@ -717,6 +722,8 @@
   color: #98c379;
   caret-color: #a855f7;
   box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
 }
 
 /* When overlay is active, input text is hidden (caret and selection remain visible) */
