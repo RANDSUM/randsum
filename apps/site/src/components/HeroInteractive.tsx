@@ -3,18 +3,13 @@ import { roll } from '@randsum/roller'
 import { RollerPlayground } from '@randsum/component-library'
 
 const TAGLINES = [
-  'Throw Dice, Not Exceptions.',
-  'Spend 13+ years building this library and all I got was this stupid website',
   'Very Specific Random Numbers',
-  'Living Comfortably in the Bike Shed.',
   'Zero dependencies. Infinite regrets.',
   'We have types for that.',
   'Probability as a Service.',
-  'Just roll with it.',
   "It's not gambling if you have types.",
   'Dice notation: surprisingly controversial.',
-  "The first dice library you'll ever want.",
-  'Fuck ICE'
+  "The first dice library you'll ever want."
 ] as const
 
 const GET_STARTED_LABELS = [
@@ -324,5 +319,24 @@ export function GithubButton(): React.JSX.Element {
         {label}
       </span>
     </a>
+  )
+}
+
+export function ClickableTagline(): React.JSX.Element {
+  return (
+    <h1
+      className="clickable-tagline"
+      onClick={() => window.dispatchEvent(new CustomEvent('die-rolled'))}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          window.dispatchEvent(new CustomEvent('die-rolled'))
+        }
+      }}
+    >
+      Throw Dice, Not Exceptions.
+    </h1>
   )
 }

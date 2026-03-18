@@ -1,8 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
-import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
-import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
+import { ClickableTagline, ClickSubtitle, GetStartedButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
 import FeatureBand from '../components/FeatureBand.astro'
 
 const gameColorMap: Record<string, string> = {
@@ -68,17 +67,13 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-lockup">
-          <div class="hero-logo-wrap">
-            <SpinningLogo logoSrc={logo.src} client:load />
-          </div>
           <div class="hero-text">
-            <h1 class="hero-title">RANDSUM</h1>
-            <p class="hero-tagline">TypeScript-First Dice Notation Ecosystem</p>
+            <ClickableTagline client:load />
+            <p class="hero-tagline">A zero-dependency TypeScript dice engine for tabletop RPGs</p>
             <ClickSubtitle client:load />
             <div class="hero-actions">
               <PlaygroundButton client:load />
               <GetStartedButton client:load />
-              <GithubButton client:load />
             </div>
             <div class="hero-install-tabs">
               <button class="install-tab is-active" data-pm="bun">bun</button>
@@ -232,95 +227,23 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     text-wrap: balance;
   }
 
-  .hero-logo-wrap {
-    position: relative;
-    display: inline-flex;
-    flex-shrink: 0;
-    animation: levitate 3s ease-in-out infinite;
+  :global(.clickable-tagline) {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.25rem;
+    background: linear-gradient(135deg, var(--sl-color-accent-high), var(--sl-color-accent), var(--sl-color-accent-high));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    cursor: pointer;
+    transition: filter 0.15s ease;
   }
 
-  .hero-logo-wrap:hover {
-    animation: go-to-apex 0.4s ease-out forwards;
-  }
-
-  .hero-logo-wrap::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  .hero-logo-wrap::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90px;
-    height: 20px;
-    background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(6px);
-    animation: glow-pulse 3s ease-in-out infinite;
-  }
-
-  .hero-logo-wrap:hover::after {
-    animation: glow-to-full 0.4s ease-out forwards;
-  }
-
-  @keyframes go-to-apex {
-    to { transform: translateY(-8px); }
-  }
-
-  @keyframes glow-to-full {
-    to { opacity: 1; transform: translateX(-50%) scaleX(1); }
-  }
-
-  @keyframes levitate {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 1; transform: translateX(-50%) scaleX(1); }
-    50% { opacity: 0.4; transform: translateX(-50%) scaleX(0.7); }
-  }
-
-  .hero-logo {
-    display: block;
-    width: 104px;
-    height: auto;
-  }
-
-  :global(.hero-logo--spinning) {
-    animation: die-spin var(--spin-duration, 3.2s) linear both !important;
-  }
-
-  :global(.hero-logo--nudge) {
-    animation: logo-nudge 0.55s ease-in-out both;
-  }
-
-  @keyframes die-spin {
-    0%   { transform: rotate(0deg); }
-    15%  { transform: rotate(1800deg); }
-    70%  { transform: rotate(3420deg); }
-    85%  { transform: rotate(3555deg); }
-    100% { transform: rotate(3600deg); }
-  }
-
-  @keyframes logo-nudge {
-    0%   { transform: translateY(0)    rotate(0deg); }
-    22%  { transform: translateY(-7px) rotate(-3deg); }
-    44%  { transform: translateY(0)    rotate(0deg); }
-    66%  { transform: translateY(-4px) rotate(2deg); }
-    100% { transform: translateY(0)    rotate(0deg); }
+  :global(.clickable-tagline:hover) {
+    filter: brightness(1.2);
   }
 
   :global(.hero-subtitle-inner) {
@@ -338,24 +261,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     line-height: 1.6;
     color: var(--sl-color-gray-2);
     margin: 0;
-  }
-
-  .hero-title {
-    font-family: var(--sl-font-heading, var(--sl-font));
-    font-size: 5rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin: 0 0 0.25rem;
-    background: linear-gradient(
-      135deg,
-      var(--sl-color-accent-high),
-      var(--sl-color-accent),
-      var(--sl-color-accent-high)
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
   }
 
   .hero-tagline {
@@ -729,8 +634,8 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       gap: 1rem;
     }
 
-    .hero-title {
-      font-size: 3rem;
+    :global(.clickable-tagline) {
+      font-size: 1.8rem;
     }
 
     .hero-tagline {
