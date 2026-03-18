@@ -1,0 +1,34 @@
+---
+import Default from '@astrojs/starlight/components/SiteTitle.astro'
+---
+
+<div class="site-title-wrap">
+  <Default><slot /></Default>
+  <span class="site-title-text" translate="no">RANDSUM</span>
+</div>
+
+<style>
+  .site-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .site-title-text {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: var(--sl-text-h4);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(
+      135deg,
+      var(--sl-color-accent-high),
+      var(--sl-color-accent),
+      var(--sl-color-accent-high)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+  }
+</style>
