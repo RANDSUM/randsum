@@ -3,6 +3,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
+import FeatureBand from '../components/FeatureBand.astro'
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--core-roller)',
@@ -86,11 +87,13 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           <HeroRollerPlayground client:only="react" />
         </div>
       </div>
-      <h2 class="pkg-section-label">Packages</h2>
     </section>
+
+    <FeatureBand />
 
     <!-- Packages -->
     <div class="pkg-grid-wrap">
+      <h2 class="pkg-section-label">Packages</h2>
       <div class="pkg-filter-chips">
         <button class="pkg-filter-chip is-active" data-filter="all">All</button>
         <button class="pkg-filter-chip" data-filter="core">Core</button>
@@ -121,35 +124,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         ))}
       </div>
     </div>
-
-    <!-- What is RANDSUM? -->
-    <section class="not-content" style="max-width: 860px; margin: 4rem auto; padding: 0 1.5rem;">
-      <h2 class="section-heading">What is RANDSUM?</h2>
-      <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
-        RANDSUM is a TypeScript dice rolling library built for tabletop RPG developers. At its core is
-        <code>@randsum/roller</code> — a zero-dependency npm package that parses and evaluates dice notation
-        with no external runtime requirements. It ships as ESM and is fully typed.
-      </p>
-      <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
-        The ecosystem includes game-specific packages layered on top of the core engine.
-        <code>@randsum/games/salvageunion</code> rolls against any of Salvage Union's d20 tables — core
-        mechanics, critical injuries, salvage operations — returning rich results with labels and descriptions.
-        <code>@randsum/games/fifth</code> handles d20 roll resolution for D&amp;D 5e, including advantage,
-        disadvantage, and modifier arithmetic. <code>@randsum/games/pbta</code> covers 2d6 roll resolution
-        for any Powered by the Apocalypse system, with support for stat modifiers, forward, and ongoing bonuses.
-      </p>
-      <p style="margin-bottom: 1rem; line-height: 1.7; color: var(--sl-color-text);">
-        RANDSUM dice notation is an extended superset of standard dice notation. Expressions like
-        <code>4d6L</code> (roll 4d6, drop lowest), <code>2d20H</code> (keep highest of 2d20), and
-        <code>4d6R&#123;&lt;3&#125;!</code> (reroll below 3, explode on max) are parsed into structured roll
-        options and evaluated with consistent, well-defined semantics.
-      </p>
-      <p style="line-height: 1.7; color: var(--sl-color-text);">
-        Whether you're building a character sheet app, a Discord bot, a virtual tabletop, or any
-        tabletop RPG tool, RANDSUM gives you a composable, type-safe foundation for dice mechanics
-        without the overhead of a larger game engine.
-      </p>
-    </section>
 
     <!-- Footer Links -->
     <footer class="landing-footer">
@@ -758,7 +732,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     } else {
       grid.classList.add('has-filter')
       cards.forEach(card => {
-        const match = card.dataset['category'] === filter
+        const match = card.dataset['category'] === filter || card.dataset['category'] === 'core'
         card.classList.toggle('is-highlighted', match)
         card.classList.toggle('is-dimmed', !match)
         card.style.order = match ? '0' : '1'

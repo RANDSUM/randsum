@@ -1,0 +1,90 @@
+---
+---
+
+<section class="feature-band not-content">
+  <div class="feature-band-inner">
+    <div class="feature-col">
+      <h3 class="feature-heading">Zero Dependencies</h3>
+      <p class="feature-body">A pure TypeScript dice engine. No runtime requirements, no bloat.</p>
+      <pre class="feature-code"><code>roll('4d6L')  // Drop lowest</code></pre>
+    </div>
+    <div class="feature-col">
+      <h3 class="feature-heading">Full Notation</h3>
+      <p class="feature-body">An extended superset of standard dice notation with 19+ modifiers.</p>
+      <pre class="feature-code"><code>roll('2d20H+5')  // Advantage + mod</code></pre>
+    </div>
+    <div class="feature-col">
+      <h3 class="feature-heading">Game Ready</h3>
+      <p class="feature-body">Pre-built packages for D&D 5e, Blades, Daggerheart, PbtA, and more.</p>
+      <pre class="feature-code"><code>import &#123; roll &#125; from '@randsum/games/fifth'</code></pre>
+    </div>
+  </div>
+</section>
+
+<style>
+  .feature-band {
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .feature-band-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .feature-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .feature-heading {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--sl-color-white);
+    letter-spacing: -0.01em;
+  }
+
+  .feature-body {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+  }
+
+  .feature-code {
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    font-family: var(--sl-font-mono, 'Menlo', 'Consolas', 'Monaco', monospace);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--sl-color-accent-high);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .feature-code code {
+    background: none;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  @media (max-width: 768px) {
+    .feature-band-inner {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem 1rem;
+    }
+  }
+</style>
