@@ -36,6 +36,8 @@ const GITHUB_LABELS = [
   'TRUTH'
 ] as const
 
+const PLAYGROUND_LABELS = ['Playground', 'Try It', 'Roll Dice', 'Open Playground'] as const
+
 // Slot machine tick intervals in ms — fast start, slows to a stop (~2.5s total)
 const SLOT_INTERVALS = [
   45, 50, 55, 60, 70, 80, 95, 115, 140, 170, 210, 260, 325, 410, 510, 640, 860
@@ -223,8 +225,48 @@ export function ClickSubtitle(): React.JSX.Element {
 export function GetStartedButton(): React.JSX.Element {
   const { label, tickKey } = useSlotMachine(GET_STARTED_LABELS, [80, 180])
   return (
-    <a href="/welcome/introduction/" className="btn btn-primary">
+    <a href="/welcome/introduction/" className="btn btn-secondary">
       <BookIcon />
+      <span key={tickKey} className="hero-subtitle-inner">
+        {label}
+      </span>
+    </a>
+  )
+}
+
+function DiceIcon(): React.JSX.Element {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ flexShrink: 0 }}
+    >
+      <rect x="2" y="2" width="20" height="20" rx="3" ry="3" />
+      <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function PlaygroundButton(): React.JSX.Element {
+  const { label, tickKey } = useSlotMachine(PLAYGROUND_LABELS, [0, 80])
+  return (
+    <a
+      href="https://playground.randsum.dev"
+      className="btn btn-primary"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <DiceIcon />
       <span key={tickKey} className="hero-subtitle-inner">
         {label}
       </span>

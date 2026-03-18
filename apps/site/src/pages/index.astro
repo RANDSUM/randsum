@@ -2,7 +2,7 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import logo from '../assets/randsum-logo.png'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
-import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRollerPlayground } from '../components/HeroInteractive'
+import { SpinningLogo, ClickSubtitle, GetStartedButton, GithubButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--core-roller)',
@@ -75,6 +75,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
             <p class="hero-tagline">TypeScript-First Dice Notation Ecosystem</p>
             <ClickSubtitle client:load />
             <div class="hero-actions">
+              <PlaygroundButton client:load />
               <GetStartedButton client:load />
               <GithubButton client:load />
             </div>
@@ -175,6 +176,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           <div class="footer-col">
             <h4>Community</h4>
             <ul>
+              <li><a href="https://playground.randsum.dev" target="_blank" rel="noopener noreferrer">Playground</a></li>
               <li>
                 <a href="https://github.com/RANDSUM/randsum" target="_blank" rel="noopener noreferrer">
                   GitHub
@@ -194,28 +196,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 </StarlightPage>
 
 <style>
-  /* Hide Starlight's auto-generated title on the landing page only */
-  :global(.content-panel:has(#_top)) {
-    display: none !important;
-  }
-
-  /* Hide the blank nav header wrapper on the landing page */
-  :global(.header) {
-    display: none !important;
-  }
-
-  /* Remove padding reserved for sticky nav height */
-  :global(.page) {
-    --sl-nav-height: 0px !important;
-  }
-
-  /* Remove top padding on Starlight's content wrappers */
-  :global(.main-frame),
-  :global(.content-panel) {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-  }
-
   /* ===== Layout ===== */
   .landing {
     max-width: 100%;
