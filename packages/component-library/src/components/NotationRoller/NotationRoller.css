@@ -727,27 +727,38 @@
 /* ===== Result overlay (covers entire shell content) ===== */
 .notation-roller-result-overlay {
   position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  min-height: 100% !important;
-  max-height: 150% !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 66.67% !important;
+  max-height: 200% !important;
   z-index: 50 !important;
   display: flex !important;
   flex-direction: row !important;
   align-items: stretch !important;
   padding: 0.5rem !important;
   padding-right: 1.5rem !important;
-  background: #18181bee !important;
-  backdrop-filter: blur(8px) !important;
+  background: #18181b !important;
   border-radius: 0.5rem !important;
-  border: none !important;
+  border: 2px solid #a855f7 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace !important;
   font-size: 0.75rem !important;
   animation: nr-tooltip-in 0.15s ease;
   pointer-events: auto !important;
   gap: 0.5rem !important;
   overflow: hidden !important;
+}
+
+/* Backdrop blur behind the overlay */
+.notation-roller-result-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 49 !important;
+  backdrop-filter: blur(4px) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 0.5rem !important;
+  pointer-events: auto !important;
 }
 
 .nr-tooltip-close {
@@ -857,14 +868,21 @@
 
 @media (prefers-color-scheme: light) {
   .notation-roller-result-overlay {
-    background: #f4f4f5ee;
+    background: #f4f4f5;
+    border-color: #9333ea;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+  .notation-roller-result-backdrop {
+    background: rgba(255, 255, 255, 0.3);
   }
   .nr-tooltip-close:hover {
     color: #27272a;
   }
 }
 [data-theme='light'] .notation-roller-result-overlay {
-  background: #f4f4f5ee;
+  background: #f4f4f5;
+  border-color: #9333ea;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 [data-theme='light'] .nr-tooltip-close:hover {
   color: #27272a;

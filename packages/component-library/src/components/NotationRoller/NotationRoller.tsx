@@ -43,20 +43,6 @@ export function NotationRoller({
   }, [controlledNotation])
 
   // Click-outside dismiss for tooltip
-  useEffect(() => {
-    if (state.status !== 'result') return
-
-    const handleClickOutside = (e: MouseEvent): void => {
-      if (tooltipRef.current && !tooltipRef.current.contains(e.target as Node)) {
-        setState({ status: 'idle' })
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [state.status])
 
   const isValid = notation.length > 0 && isDiceNotation(notation)
   const shellVariant = notation.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'
@@ -234,30 +220,38 @@ export function NotationRoller({
             )}
           </div>
           {resultState && (
-            <div ref={tooltipRef} className="notation-roller-result-overlay">
-              <button
-                className="nr-tooltip-close"
+            <>
+              <div
+                className="notation-roller-result-backdrop"
                 onClick={() => {
                   setState({ status: 'idle' })
                 }}
-                aria-label="Close result"
-              >
-                &times;
-              </button>
-              <div className="nr-tooltip-total-pane">
-                <div className="nr-tooltip-total-value">{resultState.total}</div>
-              </div>
-              <div className="nr-tooltip-right">
-                <div className="nr-tooltip-header-line">
-                  <span className="nr-tooltip-notation">{notation}</span>
-                  <span className="nr-tooltip-sep">|</span>
-                  <span className="nr-tooltip-desc">
-                    {resultState.records.map(r => r.description.join(', ')).join(' + ')}
-                  </span>
+              />
+              <div ref={tooltipRef} className="notation-roller-result-overlay">
+                <button
+                  className="nr-tooltip-close"
+                  onClick={() => {
+                    setState({ status: 'idle' })
+                  }}
+                  aria-label="Close result"
+                >
+                  &times;
+                </button>
+                <div className="nr-tooltip-total-pane">
+                  <div className="nr-tooltip-total-value">{resultState.total}</div>
                 </div>
-                <RollResult records={resultState.records} total={resultState.total} />
+                <div className="nr-tooltip-right">
+                  <div className="nr-tooltip-header-line">
+                    <span className="nr-tooltip-notation">{notation}</span>
+                    <span className="nr-tooltip-sep">|</span>
+                    <span className="nr-tooltip-desc">
+                      {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                    </span>
+                  </div>
+                  <RollResult records={resultState.records} total={resultState.total} />
+                </div>
               </div>
-            </div>
+            </>
           )}
           {notation.length > 0 && (
             <a
