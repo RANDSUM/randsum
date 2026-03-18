@@ -80,12 +80,14 @@ const HERO_NOTATIONS = [
 function useSlotMachine<T extends string>(
   labels: readonly T[],
   delayRange: readonly [number, number] = [0, 0]
-): { label: T; tickKey: number } {
-  const [label, setLabel] = useState(labels[0])
+): { label: T | undefined; tickKey: number } {
+  const [label, setLabel] = useState<T | undefined>(labels[0])
   const [tickKey, setTickKey] = useState(0)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
+    const pick = (): T | undefined => labels[roll(labels.length).total - 1] ?? labels[0]
+
     const handler = (): void => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
 
@@ -93,12 +95,12 @@ function useSlotMachine<T extends string>(
       const range = maxDelay - minDelay
       const startDelay = range > 0 ? minDelay + (roll(range + 1).total - 1) : minDelay
 
-      const finalLabel = labels[roll(labels.length).total - 1]
+      const finalLabel = pick()
       const stepRef = { current: 0 }
 
       const tick = (): void => {
         if (stepRef.current < SLOT_INTERVALS.length - 1) {
-          setLabel(labels[roll(labels.length).total - 1])
+          setLabel(pick())
           setTickKey(k => k + 1)
           stepRef.current++
           timeoutRef.current = setTimeout(tick, SLOT_INTERVALS[stepRef.current])
@@ -306,7 +308,8 @@ export function HeroRollerPlayground(): React.JSX.Element {
       if (!autoCyclingRef.current) return
       cycleIdxRef.current = (cycleIdxRef.current + 1) % CHIP_PRESETS.length
       setSelectedChip(cycleIdxRef.current)
-      setNotation(CHIP_PRESETS[cycleIdxRef.current].notation)
+      const preset = CHIP_PRESETS[cycleIdxRef.current]
+      if (preset) setNotation(preset.notation)
       setResetToken(t => t + 1)
     }, 5000)
     return () => {
@@ -321,12 +324,15 @@ export function HeroRollerPlayground(): React.JSX.Element {
       setSelectedChip(null)
       if (timerRef.current) clearTimeout(timerRef.current)
 
-      const finalNotation = HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1]
+      const finalNotation =
+        HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1] ?? HERO_NOTATIONS[0] ?? ''
       const stepRef = { current: 0 }
 
       const tick = (): void => {
         if (stepRef.current < SLOT_INTERVALS.length - 1) {
-          setNotation(HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1])
+          setNotation(
+            HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1] ?? HERO_NOTATIONS[0] ?? ''
+          )
           stepRef.current++
           timerRef.current = setTimeout(tick, SLOT_INTERVALS[stepRef.current])
         } else {
@@ -349,7 +355,8 @@ export function HeroRollerPlayground(): React.JSX.Element {
     (idx: number): void => {
       stopCycle()
       setSelectedChip(idx)
-      setNotation(CHIP_PRESETS[idx].notation)
+      const preset = CHIP_PRESETS[idx]
+      if (preset) setNotation(preset.notation)
       setResetToken(t => t + 1)
     },
     [stopCycle]
