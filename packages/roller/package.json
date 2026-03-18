@@ -43,6 +43,12 @@
         "default": "./dist/tokenize.js"
       }
     },
+    "./docs": {
+      "import": {
+        "types": "./dist/docs/index.d.ts",
+        "default": "./dist/docs/index.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "author": {
@@ -108,6 +114,10 @@
     {
       "path": "dist/tokenize.js",
       "limit": "5.8 KB"
+    },
+    {
+      "path": "dist/docs/index.js",
+      "limit": "20 KB"
     }
   ]
 }

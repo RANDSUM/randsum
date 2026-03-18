@@ -6,7 +6,8 @@ export default defineConfig({
     'src/roll/index.ts',
     'src/errors.ts',
     'src/validate.ts',
-    'src/tokenize.ts'
+    'src/tokenize.ts',
+    'src/docs/index.ts'
   ],
   format: ['esm'],
   dts: true,
