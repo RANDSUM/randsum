@@ -70,20 +70,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           <div class="hero-text">
             <ClickableTagline client:load />
             <p class="hero-tagline">A Zero-Dependency, TypeScript-First, Bun-Native Dice Notation and Rolling Engine</p>
-            <div class="hero-install-stack">
-              <button class="install-cmd" data-cmd="bun add @randsum/roller" aria-label="Copy bun install command">
-                <code>bun add @randsum/roller</code>
-                <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
-              </button>
-              <button class="install-cmd" data-cmd="npm i @randsum/roller" aria-label="Copy npm install command">
-                <code>npm i @randsum/roller</code>
-                <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
-              </button>
-              <button class="install-cmd" data-cmd="yarn add @randsum/roller" aria-label="Copy yarn install command">
-                <code>yarn add @randsum/roller</code>
-                <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
-              </button>
-            </div>
             <div class="hero-actions">
               <PlaygroundButton client:load />
               <GetStartedButton client:load />
@@ -95,6 +81,21 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         </div>
       </div>
     </section>
+
+    <div class="hero-install-row">
+      <button class="install-cmd" data-cmd="bun add @randsum/roller" aria-label="Copy bun install command">
+        <code>bun add @randsum/roller</code>
+        <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+      </button>
+      <button class="install-cmd" data-cmd="npm i @randsum/roller" aria-label="Copy npm install command">
+        <code>npm i @randsum/roller</code>
+        <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+      </button>
+      <button class="install-cmd" data-cmd="yarn add @randsum/roller" aria-label="Copy yarn install command">
+        <code>yarn add @randsum/roller</code>
+        <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+      </button>
+    </div>
 
     <FeatureBand />
 
@@ -292,12 +293,18 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     flex-wrap: wrap;
   }
 
-  .hero-install-stack {
+  .hero-install-row {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.1rem;
-    margin-bottom: 0.75rem;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 2rem;
+  }
+
+  .hero-install-row .install-cmd {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.8rem;
   }
 
   .install-cmd {
@@ -606,6 +613,12 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       flex: none;
     }
 
+
+    .hero-install-row {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem;
+    }
 
     :global(.clickable-tagline) {
       font-size: 1.8rem;
