@@ -236,8 +236,20 @@ export function NotationRoller({
           </div>
           {resultState && (
             <div ref={tooltipRef} className="notation-roller-tooltip">
-              <div className="notation-roller-tooltip-total">{resultState.total}</div>
-              <RollResult records={resultState.records} />
+              <div className="nr-tooltip-header">
+                <span className="nr-tooltip-notation">{notation}</span>
+                <span className="nr-tooltip-desc">
+                  {resultState.records.map(r => r.description.join(', ')).join(' + ')}
+                </span>
+              </div>
+              <div className="nr-tooltip-body">
+                <div className="nr-tooltip-total-pane">
+                  <div className="nr-tooltip-total-value">{resultState.total}</div>
+                </div>
+                <div className="nr-tooltip-steps-pane">
+                  <RollResult records={resultState.records} />
+                </div>
+              </div>
             </div>
           )}
           {notation.length > 0 && (
