@@ -11,7 +11,7 @@
     "blackMarket": false,
     "name": "Core Mechanic",
     "source": "Salvage Union Workshop Manual",
-    "page": 2,
+    "page": 232,
     "table": {
       "1": {
         "label": "Cascade Failure",
@@ -49,7 +49,7 @@
     "blackMarket": false,
     "name": "Group Initiative",
     "source": "Salvage Union Workshop Manual",
-    "page": 330,
+    "page": 236,
     "table": {
       "1": {
         "label": "Ambush",
@@ -87,7 +87,7 @@
     "blackMarket": false,
     "name": "Critical Injury",
     "source": "Salvage Union Workshop Manual",
-    "page": 323,
+    "page": 241,
     "table": {
       "1": {
         "label": "Fatal Injury",
@@ -125,7 +125,7 @@
     "blackMarket": false,
     "name": "Critical Damage",
     "source": "Salvage Union Workshop Manual",
-    "page": 338,
+    "page": 240,
     "table": {
       "1": {
         "label": "Catastrophic Damage",
@@ -221,7 +221,7 @@
     "blackMarket": false,
     "name": "Mech Salvage",
     "source": "Salvage Union Workshop Manual",
-    "page": 2,
+    "page": 248,
     "table": {
       "1": {
         "label": "Ashes and Dust",
@@ -457,8 +457,7 @@
         "value": "Your legs and arms fuse, and many more grow out of you. You gain the Climb Trait."
       },
       "13": {
-        "label": "Your jaw distends and stretches out into a maw. Your teeth grow jagged. You can make a Bite attack. Range",
-        "value": "Close // Damage: 3 HP // Deadly (Non-Bio-Titan Creatures only) // Melee"
+        "value": "Your jaw distends and stretches out into a maw. Your teeth grow jagged. You can make a Bite attack. Range: Close // Damage: 3 HP // Deadly (Non-Bio-Titan Creatures only) // Melee"
       },
       "14": {
         "value": "Your larynx distorts. You can produce a beautiful melody that hums at a frequency that only animals can hear."
@@ -497,7 +496,7 @@
     "blackMarket": false,
     "name": "NPC Action",
     "source": "Salvage Union Workshop Manual",
-    "page": 336,
+    "page": 267,
     "table": {
       "1": {
         "label": "Cascade Failure",
@@ -535,7 +534,7 @@
     "blackMarket": false,
     "name": "Morale",
     "source": "Salvage Union Workshop Manual",
-    "page": 167,
+    "page": 268,
     "table": {
       "1": {
         "label": "Surrender",
@@ -573,7 +572,7 @@
     "blackMarket": false,
     "name": "Retreat",
     "source": "Salvage Union Workshop Manual",
-    "page": 42,
+    "page": 268,
     "table": {
       "1": {
         "label": "Disastrous Escape",
@@ -605,7 +604,7 @@
     "blackMarket": false,
     "name": "Crawler Deterioration",
     "source": "Salvage Union Workshop Manual",
-    "page": 7,
+    "page": 219,
     "table": {
       "1": {
         "value": "Your Union Crawler loses 5 Structure Points and a Bay chosen at random is Damaged until repaired to the Intact Condition."
@@ -692,7 +691,7 @@
     "blackMarket": false,
     "name": "Keepsake",
     "source": "Salvage Union Workshop Manual",
-    "page": 24,
+    "page": 90,
     "table": {
       "1": {
         "value": "Stuffed Toy"
@@ -770,7 +769,7 @@
     "blackMarket": false,
     "name": "Motto",
     "source": "Salvage Union Workshop Manual",
-    "page": 24,
+    "page": 90,
     "table": {
       "1": {
         "value": "Live and let live."
@@ -848,7 +847,7 @@
     "blackMarket": false,
     "name": "Pilot Appearance",
     "source": "Salvage Union Workshop Manual",
-    "page": 332,
+    "page": 91,
     "table": {
       "1": {
         "value": "Stocky"
@@ -1076,7 +1075,7 @@
     "blackMarket": false,
     "name": "Mech Appearance",
     "source": "Salvage Union Workshop Manual",
-    "page": 94,
+    "page": 208,
     "table": {
       "1": {
         "value": "Flashy, bright, vibrant, paint job"
@@ -1361,7 +1360,7 @@
         "value": "A Chimerium Harvester System"
       },
       "5": {
-        "value": "An Acid Spitter"
+        "value": "An Acid Spitter Mule"
       },
       "6": {
         "value": "A Mutant Pattern Thresher"
