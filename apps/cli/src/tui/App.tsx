@@ -13,7 +13,7 @@ import { RollResultPanel } from './components/RollResultPanel'
 import { HeroBanner } from './components/HeroBanner'
 import { Spinner } from './components/Spinner'
 import { useCursorPosition } from './hooks/useCursorPosition'
-import type { ModifierDoc } from '@randsum/roller/docs'
+import type { NotationDoc } from '@randsum/roller/docs'
 import type { GridPosition } from './helpers/modifierGrid'
 
 type FocusZone = 'input' | 'reference' | 'roll' | 'description' | 'banner' | 'stackblitz'
@@ -27,7 +27,7 @@ function App(): React.JSX.Element {
   } | null>(null)
   const [descSelTokenIdx, setDescSelTokenIdx] = useState<number | undefined>(undefined)
   const [cursorPos, setCursorPos] = useState(0)
-  const [activeDoc, setActiveDoc] = useState<ModifierDoc | undefined>(undefined)
+  const [activeDoc, setActiveDoc] = useState<NotationDoc | undefined>(undefined)
   const [bannerItemIdx, setBannerItemIdx] = useState<0 | 1 | 2>(0)
   const [refSelectedPos, setRefSelectedPos] = useState<GridPosition>({ row: 0, col: 0 })
   const [preFocusBeforeRoll, setPreFocusBeforeRoll] = useState<FocusZone>('input')
@@ -194,7 +194,7 @@ function App(): React.JSX.Element {
     setFocus('input')
   }
 
-  const handleDocChange = (doc: ModifierDoc | undefined): void => {
+  const handleDocChange = (doc: NotationDoc | undefined): void => {
     if (doc === undefined) return
     setActiveDoc(doc)
     setLastResult(null)

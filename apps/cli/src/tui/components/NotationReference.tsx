@@ -6,8 +6,8 @@ import { useTerminalWidth } from '../hooks/useTerminalWidth'
 const TWO_COL_THRESHOLD = 80
 import type { GridPosition } from '../helpers/modifierGrid'
 import { navigateGrid } from '../helpers/modifierGrid'
-import { MODIFIER_DOCS } from '@randsum/roller/docs'
-import type { ModifierDoc } from '@randsum/roller/docs'
+import { NOTATION_DOCS } from '@randsum/roller/docs'
+import type { NotationDoc } from '@randsum/roller/docs'
 
 interface ModifierEntry {
   readonly notation: string
@@ -68,7 +68,7 @@ export function NotationReference({
   readonly onAddModifier: (notation: string) => void
   readonly onTopExit?: () => void
   readonly onBottomExit?: () => void
-  readonly onDocChange?: (doc: ModifierDoc | undefined) => void
+  readonly onDocChange?: (doc: NotationDoc | undefined) => void
   readonly selectedPos: GridPosition
   readonly onSelectedPosChange: (pos: GridPosition) => void
 }): React.JSX.Element {
@@ -81,7 +81,7 @@ export function NotationReference({
         ? selectedRow[0]
         : selectedRow[1]
       : undefined
-  const selectedDoc = selectedCell !== undefined ? MODIFIER_DOCS[selectedCell.notation] : undefined
+  const selectedDoc = selectedCell !== undefined ? NOTATION_DOCS[selectedCell.notation] : undefined
 
   useInput(
     (_input, key) => {
