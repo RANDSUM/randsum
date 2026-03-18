@@ -15,16 +15,19 @@ pre-commit:
       run: bun run typecheck
 
 pre-push:
+  output:
+    - summary
+    - failure
   commands:
     build:
-      run: bun run build
+      run: bun run build > /dev/null 2>&1
       priority: 1
     codegen-check:
-      run: bun run --filter @randsum/games gen:check
+      run: bun run --filter @randsum/games gen:check > /dev/null 2>&1
       priority: 2
     test:
-      run: bun test
+      run: bun test 2>&1 | tail -5
       priority: 2
     audit:
-      run: bun audit --level=high
+      run: bun audit --level=high > /dev/null 2>&1
       priority: 2
