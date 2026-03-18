@@ -1,4 +1,6 @@
-export interface ModifierDoc {
+export interface NotationDoc {
+  readonly key: string
+  readonly category: string
   readonly title: string
   readonly description: string
   readonly displayBase: string
@@ -17,7 +19,9 @@ export interface ModifierDoc {
   }[]
 }
 
-export const MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>> = {
+export type ModifierDoc = NotationDoc
+
+export const MODIFIER_DOCS: Readonly<Record<string, Omit<NotationDoc, 'key' | 'category'>>> = {
   'D{..}': {
     title: 'Drop by Condition',
     description:
