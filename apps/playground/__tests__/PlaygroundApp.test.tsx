@@ -17,7 +17,8 @@ import {
   buildNotationUrl,
   buildSessionUrl,
   clearNotationUrl,
-  parseSessionIdFromPath
+  parseSessionIdFromPath,
+  resolveInitialNotation
 } from '../src/components/PlaygroundApp'
 
 function fakeRollResult(): RollerRollResult {
@@ -396,5 +397,55 @@ describe('PlaygroundApp state', () => {
       expect(next.notation).toBe('4d6')
       expect(next.rollResult).toBeNull()
     })
+  })
+})
+
+describe('resolveInitialNotation', () => {
+  test('returns notation value when ?notation= param is present', () => {
+    const params = new URLSearchParams('notation=4d6L')
+    expect(resolveInitialNotation(params)).toStrictEqual({
+      notation: '4d6L',
+      isSessionSource: false
+    })
+  })
+
+  test('returns null notation when ?notation= param is empty string', () => {
+    const params = new URLSearchParams('notation=')
+    expect(resolveInitialNotation(params)).toStrictEqual({ notation: null, isSessionSource: false })
+  })
+
+  test('?notation= takes precedence over ?n= when both are present', () => {
+    const params = new URLSearchParams('notation=4d6L&n=2d8')
+    expect(resolveInitialNotation(params)).toStrictEqual({
+      notation: '4d6L',
+      isSessionSource: false
+    })
+  })
+
+  test('returns isSessionSource false when ?notation= is the source', () => {
+    const params = new URLSearchParams('notation=4d6L')
+    const result = resolveInitialNotation(params)
+    expect(result.isSessionSource).toBe(false)
+  })
+
+  test('falls back to ?n= param when ?notation= is absent', () => {
+    const params = new URLSearchParams('n=2d8')
+    expect(resolveInitialNotation(params)).toStrictEqual({ notation: '2d8', isSessionSource: true })
+  })
+
+  test('returns isSessionSource true when ?n= is the source', () => {
+    const params = new URLSearchParams('n=2d8')
+    const result = resolveInitialNotation(params)
+    expect(result.isSessionSource).toBe(true)
+  })
+
+  test('returns null notation when no params present', () => {
+    const params = new URLSearchParams('')
+    expect(resolveInitialNotation(params)).toStrictEqual({ notation: null, isSessionSource: false })
+  })
+
+  test('returns null notation when ?n= is empty string', () => {
+    const params = new URLSearchParams('n=')
+    expect(resolveInitialNotation(params)).toStrictEqual({ notation: null, isSessionSource: true })
   })
 })
