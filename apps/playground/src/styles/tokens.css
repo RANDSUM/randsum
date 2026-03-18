@@ -3,14 +3,14 @@
   --pg-font-body: ui-sans-serif, system-ui, sans-serif;
   --pg-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* Scale — dark mode defaults */
-  --pg-color-bg: #020617;
-  --pg-color-surface: #0f172a;
-  --pg-color-surface-alt: #1e293b;
-  --pg-color-border: #475569;
-  --pg-color-text: #f8fafc;
-  --pg-color-text-muted: #94a3b8;
-  --pg-color-text-dim: #64748b;
+  /* Scale — dark mode defaults (zinc) */
+  --pg-color-bg: #09090b;
+  --pg-color-surface: #18181b;
+  --pg-color-surface-alt: #27272a;
+  --pg-color-border: #52525b;
+  --pg-color-text: #fafafa;
+  --pg-color-text-muted: #a1a1aa;
+  --pg-color-text-dim: #71717a;
 
   /* Accent */
   --pg-color-accent: #a855f7;
@@ -39,12 +39,12 @@
 @media (prefers-color-scheme: light) {
   :root {
     --pg-color-bg: #ffffff;
-    --pg-color-surface: #f1f5f9;
-    --pg-color-surface-alt: #e2e8f0;
-    --pg-color-border: #94a3b8;
-    --pg-color-text: #0f172a;
-    --pg-color-text-muted: #334155;
-    --pg-color-text-dim: #64748b;
+    --pg-color-surface: #f4f4f5;
+    --pg-color-surface-alt: #e4e4e7;
+    --pg-color-border: #a1a1aa;
+    --pg-color-text: #18181b;
+    --pg-color-text-muted: #3f3f46;
+    --pg-color-text-dim: #71717a;
     --pg-color-accent: #9333ea;
     --pg-color-accent-high: #6b21a8;
     --pg-color-accent-low: #f3e8ff;

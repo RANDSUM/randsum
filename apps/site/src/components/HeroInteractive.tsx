@@ -336,7 +336,9 @@ export function ClickableTagline(): React.JSX.Element {
         }
       }}
     >
-      Throw Dice, Not Exceptions.
+      Throw Dice,
+      <br />
+      Not Exceptions.
     </h1>
   )
 }

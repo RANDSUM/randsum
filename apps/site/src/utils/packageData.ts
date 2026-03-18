@@ -34,7 +34,7 @@ export const gamePackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
     category: 'game',
-    color: '#f97316' // orange
+    color: '#64748b' // slate-500 — noir, shadowy
   },
   {
     id: 'daggerheart',
@@ -45,7 +45,7 @@ export const gamePackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
     category: 'game',
-    color: '#9333ea' // purple
+    color: '#eab308' // yellow-500 — gold
   },
   {
     id: 'fifth',
@@ -78,7 +78,7 @@ export const gamePackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
     category: 'game',
-    color: '#60a5fa' // lightblue
+    color: '#f59e0b' // amber — industrial/salvage aesthetic
   },
   {
     id: 'pbta',
@@ -103,7 +103,7 @@ export const toolPackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/display-utils',
     version: '3.0.1',
     category: 'tool',
-    color: '#10b981'
+    color: '#f472b6' // pink-400 — distinct from all game colors
   },
   {
     id: 'component-library',
@@ -114,7 +114,7 @@ export const toolPackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/component-library',
     version: '3.0.0',
     category: 'tool',
-    color: '#3b82f6' // blue
+    color: '#38bdf8' // sky-400 — React/UI association
   },
   {
     id: 'skill',

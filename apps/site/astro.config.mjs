@@ -141,6 +141,7 @@ export default defineConfig({
     }),
     react()
   ],
+  prefetch: false,
   output: 'static',
   adapter: isDev ? undefined : netlify(),
   vite: {

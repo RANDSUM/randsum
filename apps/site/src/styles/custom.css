@@ -7,15 +7,15 @@
   --sl-color-accent: #a855f7;
   --sl-color-accent-high: #d8b4fe;
 
-  /* Slate gray scale (dark mode: gray-1 = lightest, gray-6 = darkest) */
-  --sl-color-white: #f8fafc; /* slate-50 */
-  --sl-color-gray-1: #e2e8f0; /* slate-200 */
-  --sl-color-gray-2: #94a3b8; /* slate-400 */
-  --sl-color-gray-3: #64748b; /* slate-500 */
-  --sl-color-gray-4: #475569; /* slate-600 */
-  --sl-color-gray-5: #1e293b; /* slate-800 */
-  --sl-color-gray-6: #0f172a; /* slate-900 */
-  --sl-color-black: #020617; /* slate-950 */
+  /* Zinc gray scale (dark mode: gray-1 = lightest, gray-6 = darkest) */
+  --sl-color-white: #fafafa; /* zinc-50 */
+  --sl-color-gray-1: #e4e4e7; /* zinc-200 */
+  --sl-color-gray-2: #a1a1aa; /* zinc-400 */
+  --sl-color-gray-3: #71717a; /* zinc-500 */
+  --sl-color-gray-4: #52525b; /* zinc-600 */
+  --sl-color-gray-5: #27272a; /* zinc-800 */
+  --sl-color-gray-6: #18181b; /* zinc-900 */
+  --sl-color-black: #09090b; /* zinc-950 */
 
   /* Fonts */
   --sl-font: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -23,14 +23,14 @@
 
   /* Game package colors */
   --game-fifth: #ef4444; /* red-500 */
-  --game-salvageunion: #3b82f6; /* blue-500 */
-  --game-daggerheart: #8b5cf6; /* violet-500 */
+  --game-salvageunion: #f59e0b; /* amber-500 — industrial/salvage aesthetic */
+  --game-daggerheart: #eab308; /* yellow-500 — gold */
   --game-root-rpg: #10b981; /* emerald-500 */
-  --game-blades: #f59e0b; /* amber-500 */
+  --game-blades: #64748b; /* slate-500 — noir aesthetic */
   --game-pbta: #6b7280; /* gray-500 */
 
   /* Core package colors */
-  --core-roller: #a5b4fc; /* indigo-300 — pastel periwinkle */
+  --core-roller: #a855f7; /* purple-500 — matches site accent */
   --core-notation: #f9a8d4; /* rose-300 — pastel pink */
 
   /* Tool package colors */
@@ -45,27 +45,27 @@
   --sl-color-accent: #9333ea; /* purple-600 */
   --sl-color-accent-high: #6b21a8; /* purple-800 */
 
-  /* Slate gray scale (light mode: gray-1 = darkest, gray-6 = lightest) */
-  --sl-color-white: #0f172a; /* slate-900 */
-  --sl-color-gray-1: #1e293b; /* slate-800 */
-  --sl-color-gray-2: #334155; /* slate-700 */
-  --sl-color-gray-3: #64748b; /* slate-500 */
-  --sl-color-gray-4: #94a3b8; /* slate-400 */
-  --sl-color-gray-5: #e2e8f0; /* slate-200 */
-  --sl-color-gray-6: #f1f5f9; /* slate-100 */
-  --sl-color-gray-7: #f8fafc; /* slate-50 */
+  /* Zinc gray scale (light mode: gray-1 = darkest, gray-6 = lightest) */
+  --sl-color-white: #18181b; /* zinc-900 */
+  --sl-color-gray-1: #27272a; /* zinc-800 */
+  --sl-color-gray-2: #3f3f46; /* zinc-700 */
+  --sl-color-gray-3: #71717a; /* zinc-500 */
+  --sl-color-gray-4: #a1a1aa; /* zinc-400 */
+  --sl-color-gray-5: #e4e4e7; /* zinc-200 */
+  --sl-color-gray-6: #f4f4f5; /* zinc-100 */
+  --sl-color-gray-7: #fafafa; /* zinc-50 */
   --sl-color-black: #ffffff;
 
   /* Game package colors - slightly deeper for light backgrounds */
   --game-fifth: #dc2626; /* red-600 */
-  --game-salvageunion: #2563eb; /* blue-600 */
-  --game-daggerheart: #7c3aed; /* violet-600 */
+  --game-salvageunion: #d97706; /* amber-600 */
+  --game-daggerheart: #a16207; /* yellow-700 — gold for light bg */
   --game-root-rpg: #059669; /* emerald-600 */
-  --game-blades: #d97706; /* amber-600 */
+  --game-blades: #475569; /* slate-600 */
   --game-pbta: #4b5563; /* gray-600 */
 
   /* Core package colors */
-  --core-roller: #4338ca; /* indigo-700 — pastel indigo for light bg */
+  --core-roller: #9333ea; /* purple-600 — matches site accent for light bg */
   --core-notation: #be185d; /* pink-700 — pastel rose for light bg */
 
   /* Tool package colors */
