@@ -4,7 +4,7 @@ description: Full reference for roll() argument types, the RollOptions interface
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
-import { RollerPlayground } from '@randsum/component-library'
+import { NotationRoller } from '@randsum/component-library'
 
 Configure dice rolls with numbers, notation strings, options objects, or any combination.
 
@@ -14,13 +14,13 @@ Configure dice rolls with numbers, notation strings, options objects, or any com
 
 Pass a number to roll a single die with that many sides.
 
-<RollerPlayground defaultNotation="1d20" client:only="react" />
+<NotationRoller defaultNotation="1d20" client:only="react" />
 
 ### Notation string
 
 Pass a dice notation string. See the [Randsum Dice Notation Spec](/notation/randsum-dice-notation/) for full syntax.
 
-<RollerPlayground defaultNotation="4d6L" client:only="react" />
+<NotationRoller defaultNotation="4d6L" client:only="react" />
 
 ### Options object
 
@@ -166,7 +166,7 @@ console.log(result.total)    // Final total after all modifiers
 console.log(result.values)   // Array of per-group values (string[] by default)
 console.log(result.rolls)    // Array of RollRecord objects (one per dice group)`} />
 
-<RollerPlayground defaultNotation="4d6L+2" client:only="react" />
+<NotationRoller defaultNotation="4d6L+2" client:only="react" />
 
 ### `total`
 

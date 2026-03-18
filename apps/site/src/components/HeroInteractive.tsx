@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { roll } from '@randsum/roller'
-import { RollerPlayground } from '@randsum/component-library'
+import { NotationRoller } from '@randsum/component-library'
 
 const TAGLINES = [
   'Very Specific Random Numbers',
@@ -302,7 +302,7 @@ export function HeroRollerPlayground(): React.JSX.Element {
     }
   }, [])
 
-  return <RollerPlayground notation={notation} />
+  return <NotationRoller notation={notation} />
 }
 
 export function GithubButton(): React.JSX.Element {

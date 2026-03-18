@@ -140,6 +140,32 @@ export function parseSessionIdFromPath(pathname: string): string | null {
   return match?.[1] ?? null
 }
 
+export interface ResolvedInitialNotation {
+  readonly notation: string | null
+  readonly isSessionSource: boolean
+}
+
+/**
+ * Resolves the initial notation from URL query params.
+ * ?notation= takes precedence over ?n= and does not trigger session creation.
+ * ?n= falls back as the session-source param.
+ */
+export function resolveInitialNotation(params: URLSearchParams): ResolvedInitialNotation {
+  const notationParam = params.get('notation')
+  if (notationParam !== null) {
+    return {
+      notation: notationParam.length > 0 ? notationParam : null,
+      isSessionSource: false
+    }
+  }
+
+  const nParam = params.get('n')
+  return {
+    notation: nParam !== null && nParam.length > 0 ? nParam : null,
+    isSessionSource: nParam !== null
+  }
+}
+
 export function buildSessionUrl(sessionId: string): string {
   return `/s/${sessionId}`
 }
@@ -179,10 +205,12 @@ export function PlaygroundApp(): React.ReactElement {
       })
     }
 
-    // Legacy ?n= param seeds notation but doesn't create a session
+    // ?notation= seeds notation without session creation (isSessionSource=false).
+    // ?n= also seeds notation; session creation is gated in handleChange on first keystroke.
+    // In both cases, buildInitialState with no sessionId is the correct initial state.
     const params = new URLSearchParams(window.location.search)
-    const n = params.get('n')
-    return buildInitialState(n && n.length > 0 ? n : null)
+    const { notation } = resolveInitialNotation(params)
+    return buildInitialState(notation)
   })
 
   // Keep stateRef in sync on every render

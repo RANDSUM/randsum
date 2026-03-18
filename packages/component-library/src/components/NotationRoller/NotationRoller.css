@@ -1,0 +1,910 @@
+/* ===== Container ===== */
+.notation-roller {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ===== Shell (the visible "input box") ===== */
+.notation-roller-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+  overflow: visible;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-shell {
+    background: #f4f4f5;
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+}
+[data-theme='light'] .notation-roller-shell {
+  background: #f4f4f5;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.notation-roller-shell--valid {
+  border-color: #a855f7;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-shell--valid {
+    border-color: #9333ea;
+  }
+}
+[data-theme='light'] .notation-roller-shell--valid {
+  border-color: #9333ea;
+}
+
+.notation-roller-shell--invalid {
+  border-color: #f97583;
+}
+
+/* ===== Main content row ===== */
+.notation-roller-row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-height: 3rem;
+}
+
+/* ===== Input wrap (holds the textarea and overlay) ===== */
+.notation-roller-input-wrap {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 0.5rem 0.25rem 0.5rem 0.5rem;
+  overflow: hidden;
+}
+
+/* ===== nr-input-wrap (positions overlay over the textarea) ===== */
+.nr-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ===== Notation overlay (colored token spans, sits above transparent textarea text) ===== */
+.nr-notation-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  pointer-events: none;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  word-break: break-all;
+  white-space: pre-wrap;
+  overflow: hidden;
+  padding-top: 0.35rem;
+}
+
+/* ===== Token spans ===== */
+.nr-token {
+  transition: color 0.12s ease;
+}
+
+.nr-token--dim {
+  color: inherit !important;
+}
+
+.nr-token--active {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+/* Token color families — dark mode */
+.nr-token--core {
+  color: #d8b4fe;
+}
+.nr-token--dropHighest {
+  color: #b858b0;
+}
+.nr-token--dropLowest {
+  color: #f060d0;
+}
+.nr-token--dropCondition {
+  color: #d860c0;
+}
+.nr-token--keepHighest {
+  color: #ffab70;
+}
+.nr-token--keepLowest {
+  color: #d4845a;
+}
+.nr-token--explode {
+  color: #e5c07b;
+}
+.nr-token--compound {
+  color: #e08040;
+}
+.nr-token--penetrate {
+  color: #b8d858;
+}
+.nr-token--reroll {
+  color: #c792ea;
+}
+.nr-token--cap {
+  color: #89ddff;
+}
+.nr-token--replace {
+  color: #c3e88d;
+}
+.nr-token--unique {
+  color: #80cbc4;
+}
+.nr-token--countSuccesses {
+  color: #82aaff;
+}
+.nr-token--plus {
+  color: #98c379;
+}
+.nr-token--minus {
+  color: #6b9e52;
+}
+.nr-token--multiply {
+  color: #ffcb6b;
+}
+.nr-token--multiplyTotal {
+  color: #e8a93a;
+}
+.nr-token--unknown {
+  color: #f97583;
+}
+
+/* Token colors — light mode */
+@media (prefers-color-scheme: light) {
+  .nr-token--core {
+    color: #9333ea;
+  }
+  .nr-token--dropHighest {
+    color: #802090;
+  }
+  .nr-token--dropLowest {
+    color: #b028a8;
+  }
+  .nr-token--dropCondition {
+    color: #9020a0;
+  }
+  .nr-token--keepHighest {
+    color: #c2620a;
+  }
+  .nr-token--keepLowest {
+    color: #9e4e20;
+  }
+  .nr-token--explode {
+    color: #9a7c1a;
+  }
+  .nr-token--compound {
+    color: #c05818;
+  }
+  .nr-token--penetrate {
+    color: #5a8018;
+  }
+  .nr-token--reroll {
+    color: #7c4dab;
+  }
+  .nr-token--cap {
+    color: #0082a5;
+  }
+  .nr-token--replace {
+    color: #4a8020;
+  }
+  .nr-token--unique {
+    color: #1a7a72;
+  }
+  .nr-token--countSuccesses {
+    color: #3a60c8;
+  }
+  .nr-token--plus {
+    color: #3a7d20;
+  }
+  .nr-token--minus {
+    color: #2a6018;
+  }
+  .nr-token--multiply {
+    color: #8a6a00;
+  }
+  .nr-token--multiplyTotal {
+    color: #7a5800;
+  }
+  .nr-token--unknown {
+    color: #c0394a;
+  }
+}
+[data-theme='light'] .nr-token--core {
+  color: #9333ea;
+}
+[data-theme='light'] .nr-token--dropHighest {
+  color: #802090;
+}
+[data-theme='light'] .nr-token--dropLowest {
+  color: #b028a8;
+}
+[data-theme='light'] .nr-token--dropCondition {
+  color: #9020a0;
+}
+[data-theme='light'] .nr-token--keepHighest {
+  color: #c2620a;
+}
+[data-theme='light'] .nr-token--keepLowest {
+  color: #9e4e20;
+}
+[data-theme='light'] .nr-token--explode {
+  color: #9a7c1a;
+}
+[data-theme='light'] .nr-token--compound {
+  color: #c05818;
+}
+[data-theme='light'] .nr-token--penetrate {
+  color: #5a8018;
+}
+[data-theme='light'] .nr-token--reroll {
+  color: #7c4dab;
+}
+[data-theme='light'] .nr-token--cap {
+  color: #0082a5;
+}
+[data-theme='light'] .nr-token--replace {
+  color: #4a8020;
+}
+[data-theme='light'] .nr-token--unique {
+  color: #1a7a72;
+}
+[data-theme='light'] .nr-token--countSuccesses {
+  color: #3a60c8;
+}
+[data-theme='light'] .nr-token--plus {
+  color: #3a7d20;
+}
+[data-theme='light'] .nr-token--minus {
+  color: #2a6018;
+}
+[data-theme='light'] .nr-token--multiply {
+  color: #8a6a00;
+}
+[data-theme='light'] .nr-token--multiplyTotal {
+  color: #7a5800;
+}
+[data-theme='light'] .nr-token--unknown {
+  color: #c0394a;
+}
+
+/* ===== Description chips ===== */
+.nr-desc-chip {
+  font-size: 0.7rem;
+  padding: 0.05em 0.25em;
+  border-radius: 0.2rem;
+  cursor: default;
+  user-select: none;
+  color: inherit;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+  line-height: 1.5;
+}
+
+.nr-desc-chip:hover,
+.nr-desc-chip--active {
+  color: var(--chip-color, inherit);
+  background: var(--chip-bg, transparent);
+}
+
+.nr-desc-sep {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  user-select: none;
+}
+
+/* Chip colors + active backgrounds — dark mode */
+.nr-desc-chip--core {
+  --chip-color: #d8b4fe;
+  --chip-bg: rgba(216, 180, 254, 0.12);
+}
+.nr-desc-chip--dropHighest {
+  --chip-color: #b858b0;
+  --chip-bg: rgba(184, 88, 176, 0.12);
+}
+.nr-desc-chip--dropLowest {
+  --chip-color: #f060d0;
+  --chip-bg: rgba(240, 96, 208, 0.12);
+}
+.nr-desc-chip--dropCondition {
+  --chip-color: #d860c0;
+  --chip-bg: rgba(216, 96, 192, 0.12);
+}
+.nr-desc-chip--keepHighest {
+  --chip-color: #ffab70;
+  --chip-bg: rgba(255, 171, 112, 0.12);
+}
+.nr-desc-chip--keepLowest {
+  --chip-color: #d4845a;
+  --chip-bg: rgba(212, 132, 90, 0.12);
+}
+.nr-desc-chip--explode {
+  --chip-color: #e5c07b;
+  --chip-bg: rgba(229, 192, 123, 0.12);
+}
+.nr-desc-chip--compound {
+  --chip-color: #e08040;
+  --chip-bg: rgba(224, 128, 64, 0.12);
+}
+.nr-desc-chip--penetrate {
+  --chip-color: #b8d858;
+  --chip-bg: rgba(184, 216, 88, 0.12);
+}
+.nr-desc-chip--reroll {
+  --chip-color: #c792ea;
+  --chip-bg: rgba(199, 146, 234, 0.12);
+}
+.nr-desc-chip--cap {
+  --chip-color: #89ddff;
+  --chip-bg: rgba(137, 221, 255, 0.12);
+}
+.nr-desc-chip--replace {
+  --chip-color: #c3e88d;
+  --chip-bg: rgba(195, 232, 141, 0.12);
+}
+.nr-desc-chip--unique {
+  --chip-color: #80cbc4;
+  --chip-bg: rgba(128, 203, 196, 0.12);
+}
+.nr-desc-chip--countSuccesses {
+  --chip-color: #82aaff;
+  --chip-bg: rgba(130, 170, 255, 0.12);
+}
+.nr-desc-chip--plus {
+  --chip-color: #98c379;
+  --chip-bg: rgba(152, 195, 121, 0.12);
+}
+.nr-desc-chip--minus {
+  --chip-color: #6b9e52;
+  --chip-bg: rgba(107, 158, 82, 0.12);
+}
+.nr-desc-chip--multiply {
+  --chip-color: #ffcb6b;
+  --chip-bg: rgba(255, 203, 107, 0.12);
+}
+.nr-desc-chip--multiplyTotal {
+  --chip-color: #e8a93a;
+  --chip-bg: rgba(232, 169, 58, 0.12);
+}
+
+/* Chip colors — light mode */
+@media (prefers-color-scheme: light) {
+  .nr-desc-chip--core {
+    --chip-color: #9333ea;
+    --chip-bg: rgba(147, 51, 234, 0.08);
+  }
+  .nr-desc-chip--dropHighest {
+    --chip-color: #802090;
+    --chip-bg: rgba(128, 32, 144, 0.08);
+  }
+  .nr-desc-chip--dropLowest {
+    --chip-color: #b028a8;
+    --chip-bg: rgba(176, 40, 168, 0.08);
+  }
+  .nr-desc-chip--dropCondition {
+    --chip-color: #9020a0;
+    --chip-bg: rgba(144, 32, 160, 0.08);
+  }
+  .nr-desc-chip--keepHighest {
+    --chip-color: #c2620a;
+    --chip-bg: rgba(194, 98, 10, 0.08);
+  }
+  .nr-desc-chip--keepLowest {
+    --chip-color: #9e4e20;
+    --chip-bg: rgba(158, 78, 32, 0.08);
+  }
+  .nr-desc-chip--explode {
+    --chip-color: #9a7c1a;
+    --chip-bg: rgba(154, 124, 26, 0.08);
+  }
+  .nr-desc-chip--compound {
+    --chip-color: #c05818;
+    --chip-bg: rgba(192, 88, 24, 0.08);
+  }
+  .nr-desc-chip--penetrate {
+    --chip-color: #5a8018;
+    --chip-bg: rgba(90, 128, 24, 0.08);
+  }
+  .nr-desc-chip--reroll {
+    --chip-color: #7c4dab;
+    --chip-bg: rgba(124, 77, 171, 0.08);
+  }
+  .nr-desc-chip--cap {
+    --chip-color: #0082a5;
+    --chip-bg: rgba(0, 130, 165, 0.08);
+  }
+  .nr-desc-chip--replace {
+    --chip-color: #4a8020;
+    --chip-bg: rgba(74, 128, 32, 0.08);
+  }
+  .nr-desc-chip--unique {
+    --chip-color: #1a7a72;
+    --chip-bg: rgba(26, 122, 114, 0.08);
+  }
+  .nr-desc-chip--countSuccesses {
+    --chip-color: #3a60c8;
+    --chip-bg: rgba(58, 96, 200, 0.08);
+  }
+  .nr-desc-chip--plus {
+    --chip-color: #3a7d20;
+    --chip-bg: rgba(58, 125, 32, 0.08);
+  }
+  .nr-desc-chip--minus {
+    --chip-color: #2a6018;
+    --chip-bg: rgba(42, 96, 24, 0.08);
+  }
+  .nr-desc-chip--multiply {
+    --chip-color: #8a6a00;
+    --chip-bg: rgba(138, 106, 0, 0.08);
+  }
+  .nr-desc-chip--multiplyTotal {
+    --chip-color: #7a5800;
+    --chip-bg: rgba(122, 88, 0, 0.08);
+  }
+}
+[data-theme='light'] .nr-desc-chip--core {
+  --chip-color: #9333ea;
+  --chip-bg: rgba(147, 51, 234, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--dropHighest {
+  --chip-color: #802090;
+  --chip-bg: rgba(128, 32, 144, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--dropLowest {
+  --chip-color: #b028a8;
+  --chip-bg: rgba(176, 40, 168, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--dropCondition {
+  --chip-color: #9020a0;
+  --chip-bg: rgba(144, 32, 160, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--keepHighest {
+  --chip-color: #c2620a;
+  --chip-bg: rgba(194, 98, 10, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--keepLowest {
+  --chip-color: #9e4e20;
+  --chip-bg: rgba(158, 78, 32, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--explode {
+  --chip-color: #9a7c1a;
+  --chip-bg: rgba(154, 124, 26, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--compound {
+  --chip-color: #c05818;
+  --chip-bg: rgba(192, 88, 24, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--penetrate {
+  --chip-color: #5a8018;
+  --chip-bg: rgba(90, 128, 24, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--reroll {
+  --chip-color: #7c4dab;
+  --chip-bg: rgba(124, 77, 171, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--cap {
+  --chip-color: #0082a5;
+  --chip-bg: rgba(0, 130, 165, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--replace {
+  --chip-color: #4a8020;
+  --chip-bg: rgba(74, 128, 32, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--unique {
+  --chip-color: #1a7a72;
+  --chip-bg: rgba(26, 122, 114, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--countSuccesses {
+  --chip-color: #3a60c8;
+  --chip-bg: rgba(58, 96, 200, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--plus {
+  --chip-color: #3a7d20;
+  --chip-bg: rgba(58, 125, 32, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--minus {
+  --chip-color: #2a6018;
+  --chip-bg: rgba(42, 96, 24, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--multiply {
+  --chip-color: #8a6a00;
+  --chip-bg: rgba(138, 106, 0, 0.08);
+}
+[data-theme='light'] .nr-desc-chip--multiplyTotal {
+  --chip-color: #7a5800;
+  --chip-bg: rgba(122, 88, 0, 0.08);
+}
+
+/* ===== Textarea input ===== */
+.notation-roller-input {
+  padding: 0;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #98c379;
+  caret-color: #a855f7;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  resize: none;
+  overflow: hidden;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* When overlay is active, input text is hidden (caret and selection remain visible) */
+.notation-roller-input--highlight {
+  color: transparent;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-input {
+    color: #417e38;
+    caret-color: #9333ea;
+  }
+}
+[data-theme='light'] .notation-roller-input {
+  color: #417e38;
+  caret-color: #9333ea;
+}
+
+/* ===== Buttons area (top-right) ===== */
+.notation-roller-buttons {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.5rem 0.5rem 0.5rem 0;
+  flex-shrink: 0;
+}
+
+/* ===== Roll button ===== */
+.notation-roller-roll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75em;
+  height: 2rem;
+  background: #a855f7;
+  border: none;
+  border-radius: 0.35rem;
+  color: #fff;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+  line-height: 1;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.notation-roller-roll-btn:hover {
+  background: #9333ea;
+}
+
+.notation-roller-roll-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.notation-roller-roll-btn:disabled:hover {
+  background: #a855f7;
+}
+
+/* ===== Playground link ===== */
+.notation-roller-playground-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75em;
+  height: 2rem;
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 0.35rem;
+  color: #a1a1aa;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  line-height: 1;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.notation-roller-playground-btn:hover {
+  background: #3f3f46;
+  color: #e4e4e7;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-playground-btn {
+    background: #e4e4e7;
+    border-color: #d4d4d8;
+    color: #52525b;
+  }
+  .notation-roller-playground-btn:hover {
+    background: #d4d4d8;
+    color: #27272a;
+  }
+}
+[data-theme='light'] .notation-roller-playground-btn {
+  background: #e4e4e7;
+  border-color: #d4d4d8;
+  color: #52525b;
+}
+[data-theme='light'] .notation-roller-playground-btn:hover {
+  background: #d4d4d8;
+  color: #27272a;
+}
+
+/* ===== Description row ===== */
+.notation-roller-desc-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+  min-height: 1.75rem;
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-desc-row {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .notation-roller-desc-row {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.notation-roller-desc {
+  flex: 1;
+  text-align: left;
+}
+
+.notation-roller-desc--hint {
+  color: rgba(230, 237, 243, 0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-desc--hint {
+    color: rgba(31, 35, 40, 0.4);
+  }
+}
+[data-theme='light'] .notation-roller-desc--hint {
+  color: rgba(31, 35, 40, 0.4);
+}
+
+.notation-roller-desc--valid {
+  color: #9ca3af;
+}
+
+.notation-roller-desc--invalid {
+  color: #f97583;
+}
+
+/* ===== Input blur when tooltip is showing ===== */
+.notation-roller-input--blurred {
+  filter: blur(2px);
+  transition: filter 0.15s ease;
+}
+
+/* ===== Floating tooltip ===== */
+.notation-roller-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background: #18181b;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.75rem;
+  min-width: 8rem;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  animation: nr-tooltip-in 0.15s ease;
+  pointer-events: auto;
+}
+
+@keyframes nr-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-tooltip {
+    background: #f4f4f5;
+    border-color: rgba(147, 51, 234, 0.3);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+[data-theme='light'] .notation-roller-tooltip {
+  background: #f4f4f5;
+  border-color: rgba(147, 51, 234, 0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.notation-roller-tooltip-total {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-tooltip-total {
+    color: #18181b;
+  }
+}
+[data-theme='light'] .notation-roller-tooltip-total {
+  color: #18181b;
+}
+
+/* ===== Embedded RollResult styles ===== */
+.nr-result-inner {
+  background: transparent;
+  padding: 0;
+}
+
+.nr-result-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0.1rem 0;
+}
+
+.nr-result-pool-header {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  padding: 0.15rem 0;
+  letter-spacing: 0.02em;
+}
+
+.nr-result-pool-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.35rem 0;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-result-divider {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .nr-result-divider {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.nr-result-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.2rem 0;
+  line-height: 1.4;
+}
+
+.nr-result-label {
+  color: #9ca3af;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nr-result-dice-group {
+  display: block;
+  text-align: right;
+}
+
+.nr-result-dice-group > * + * {
+  margin-left: 0.2em;
+}
+
+.nr-result-dice {
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+  letter-spacing: 0;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.nr-result-dice-sep {
+  color: rgba(255, 255, 255, 0.1);
+  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+}
+
+.nr-result-dice--removed {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: line-through;
+  text-decoration-color: #9ca3af;
+}
+
+.nr-result-dice--added {
+  color: #d8b4fe;
+}
+
+.nr-result-dice--arithmetic {
+  color: #d8b4fe;
+  font-weight: 600;
+}
+
+.nr-result-row--final {
+  padding-bottom: 0.3rem;
+}
+
+.nr-result-row--final .nr-result-dice {
+  word-spacing: -0.2em;
+}
+
+@media (prefers-color-scheme: light) {
+  .nr-result-label {
+    color: #6b7280;
+  }
+  .nr-result-dice--removed {
+    color: rgba(0, 0, 0, 0.35);
+    text-decoration-color: #6b7280;
+  }
+  .nr-result-dice-sep {
+    color: rgba(0, 0, 0, 0.2);
+  }
+  .nr-result-dice--added,
+  .nr-result-dice--arithmetic {
+    color: #9333ea;
+  }
+}
+[data-theme='light'] .nr-result-label {
+  color: #6b7280;
+}
+[data-theme='light'] .nr-result-dice--removed {
+  color: rgba(0, 0, 0, 0.35);
+  text-decoration-color: #6b7280;
+}
+[data-theme='light'] .nr-result-dice-sep {
+  color: rgba(0, 0, 0, 0.2);
+}
+[data-theme='light'] .nr-result-dice--added,
+[data-theme='light'] .nr-result-dice--arithmetic {
+  color: #9333ea;
+}
