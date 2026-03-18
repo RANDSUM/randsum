@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import type { RollRecord } from '@randsum/roller'
-import { computeSteps, formatAsMath } from '@randsum/display-utils'
+import { computeSteps, formatAsMath, buildStackBlitzProject } from '@randsum/display-utils'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
 import './NotationRoller.css'
@@ -265,6 +265,48 @@ export function NotationRoller({
             </a>
           )}
         </div>
+        {notation.length > 0 && (
+          <div className="notation-roller-code-preview">
+            <pre className="nr-code-block">
+              <code>
+                <span className="nr-code-keyword">import</span>
+                {' { '}
+                <span className="nr-code-fn">roll</span>
+                {' } '}
+                <span className="nr-code-keyword">from</span>{' '}
+                <span className="nr-code-string">'@randsum/roller'</span>
+                {'\n\n'}
+                <span className="nr-code-keyword">const</span>
+                {' result = '}
+                <span className="nr-code-fn">roll</span>
+                {'('}
+                <span className="nr-code-string">{`'${notation}'`}</span>
+                {')'}
+              </code>
+            </pre>
+            <button
+              className="nr-code-stackblitz"
+              onClick={() => {
+                const project = buildStackBlitzProject(notation)
+                const params = new URLSearchParams({
+                  title: project.title,
+                  description: project.description,
+                  template: project.template
+                })
+                for (const [name, content] of Object.entries(project.files)) {
+                  params.set(`file[${name}]`, content)
+                }
+                window.open(
+                  `https://stackblitz.com/run?${params.toString()}`,
+                  '_blank',
+                  'noopener,noreferrer'
+                )
+              }}
+            >
+              Edit in StackBlitz
+            </button>
+          </div>
+        )}
       </div>
     </ErrorBoundary>
   )

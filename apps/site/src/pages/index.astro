@@ -70,20 +70,23 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           <div class="hero-text">
             <ClickableTagline client:load />
             <p class="hero-tagline">A Zero-Dependency, TypeScript-First, Bun-Native Dice Notation and Rolling Engine</p>
+            <div class="hero-install-stack">
+              <button class="install-cmd" data-cmd="bun add @randsum/roller" aria-label="Copy bun install command">
+                <code>bun add @randsum/roller</code>
+                <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+              </button>
+              <button class="install-cmd" data-cmd="npm i @randsum/roller" aria-label="Copy npm install command">
+                <code>npm i @randsum/roller</code>
+                <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+              </button>
+              <button class="install-cmd" data-cmd="yarn add @randsum/roller" aria-label="Copy yarn install command">
+                <code>yarn add @randsum/roller</code>
+                <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+              </button>
+            </div>
             <div class="hero-actions">
               <PlaygroundButton client:load />
               <GetStartedButton client:load />
-            </div>
-            <div class="hero-install">
-              <div class="install-chips">
-                <button class="install-chip is-active" data-pm="bun">bun</button>
-                <button class="install-chip" data-pm="npm">npm</button>
-                <button class="install-chip" data-pm="yarn">yarn</button>
-              </div>
-              <button class="install-cmd" aria-label="Copy install command">
-                <code class="install-text" data-cmd-bun="bun add @randsum/roller" data-cmd-npm="npm i @randsum/roller" data-cmd-yarn="yarn add @randsum/roller">bun add @randsum/roller</code>
-                <span class="install-copy-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
-              </button>
             </div>
           </div>
           <div class="hero-playground not-content">
@@ -285,59 +288,16 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   .hero-actions {
     display: flex;
     gap: 0.75rem;
-    justify-content: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    margin-top: 1rem;
   }
 
-  .hero-install {
+  .hero-install-stack {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.35rem;
-    margin-top: 0.75rem;
-    font-size: 0.85rem;
-  }
-
-  .install-chips {
-    display: flex;
-    flex-direction: row;
-    gap: 0.25rem;
-    align-items: center;
-    flex-wrap: nowrap;
-  }
-
-  .install-chip {
-    appearance: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(168, 85, 247, 0.04);
-    border: 1px solid rgba(168, 85, 247, 0.15);
-    border-radius: 999px;
-    padding: 0 0.75rem;
-    font-size: 0.75rem;
-    font-family: var(--sl-font-mono);
-    color: var(--sl-color-gray-3);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    line-height: 1;
-    height: 1.6rem;
-    box-sizing: border-box;
-    vertical-align: middle;
-    margin: 0;
-  }
-
-  .install-chip:hover {
-    border-color: rgba(168, 85, 247, 0.4);
-    color: var(--sl-color-accent-high);
-    background: rgba(168, 85, 247, 0.08);
-  }
-
-  .install-chip.is-active {
-    border-color: var(--sl-color-accent);
-    color: var(--sl-color-accent-high);
-    background: rgba(168, 85, 247, 0.12);
+    align-items: flex-start;
+    gap: 0.1rem;
+    margin-bottom: 0.75rem;
   }
 
   .install-cmd {
@@ -683,30 +643,17 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
 </style>
 
 <script>
-  // Install chip switching + copy
-  const installChips = document.querySelectorAll<HTMLButtonElement>('.install-chip')
-  const installText = document.querySelector<HTMLElement>('.install-text')
-  const installCmdBtn = document.querySelector<HTMLButtonElement>('.install-cmd')
-
-  installChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      installChips.forEach(c => c.classList.remove('is-active'))
-      chip.classList.add('is-active')
-      const pm = chip.dataset['pm'] ?? 'bun'
-      if (installText) {
-        installText.textContent = installText.dataset[`cmd${pm.charAt(0).toUpperCase() + pm.slice(1)}`] ?? ''
+  // Install copy-to-clipboard
+  document.querySelectorAll<HTMLButtonElement>('.install-cmd').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const cmd = btn.dataset['cmd'] ?? btn.textContent?.trim() ?? ''
+      await navigator.clipboard.writeText(cmd)
+      const icon = btn.querySelector('.install-copy-icon')
+      if (icon) {
+        (icon as HTMLElement).style.color = 'var(--sl-color-accent-high)'
+        setTimeout(() => { (icon as HTMLElement).style.color = '' }, 1500)
       }
     })
-  })
-
-  installCmdBtn?.addEventListener('click', async () => {
-    const text = installText?.textContent ?? ''
-    await navigator.clipboard.writeText(text)
-    const icon = installCmdBtn.querySelector('.install-copy-icon')
-    if (icon) {
-      (icon as HTMLElement).style.color = 'var(--sl-color-accent-high)'
-      setTimeout(() => { (icon as HTMLElement).style.color = '' }, 1500)
-    }
   })
 
   // Fetch npm versions live and update version badges
