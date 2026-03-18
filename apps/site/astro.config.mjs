@@ -1,13 +1,9 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config'
-import { fileURLToPath } from 'url'
-import { dirname, resolve } from 'path'
 
 import starlight from '@astrojs/starlight'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
@@ -131,7 +127,6 @@ export default defineConfig({
           label: 'Tools',
           items: [
             { label: 'Playground', link: 'https://playground.randsum.dev' },
-            { label: 'Component Library', slug: 'tools/component-library' },
             { label: 'Discord Bot', slug: 'tools/discord-bot' },
             { label: 'Claude Code Skill', slug: 'tools/claude-code-skill' }
           ]
@@ -142,15 +137,5 @@ export default defineConfig({
   ],
   prefetch: false,
   output: 'static',
-  adapter: isDev ? undefined : netlify(),
-  vite: {
-    resolve: {
-      alias: {
-        '@randsum/component-library': resolve(
-          __dirname,
-          '../../packages/component-library/src/index.ts'
-        )
-      }
-    }
-  }
+  adapter: isDev ? undefined : netlify()
 })

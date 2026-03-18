@@ -95,17 +95,6 @@ export const gamePackages: PackageInfo[] = [
 
 export const toolPackages: PackageInfo[] = [
   {
-    id: 'component-library',
-    name: 'component-library',
-    displayName: 'Component Library',
-    description: 'React components for embedding dice rollers in any web app.',
-    npmPackage: '@randsum/component-library',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/component-library',
-    version: '3.0.0',
-    category: 'tool',
-    color: '#38bdf8' // sky-400 — React/UI association
-  },
-  {
     id: 'skill',
     name: 'skill',
     displayName: 'LLM Skill',
