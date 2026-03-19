@@ -1,0 +1,134 @@
+---
+interface Props {
+  label: string
+  labelSide?: 'left' | 'right'
+}
+
+const { label, labelSide = 'left' } = Astro.props
+---
+
+<section class:list={['labeled-section', `label-${labelSide}`]}>
+  <div class="labeled-section-inner">
+    <div class="label-column">
+      <span class="label-text">{label}</span>
+    </div>
+    <div class="bar" aria-hidden="true"></div>
+    <div class="content-column">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .labeled-section {
+    padding: 3rem 0;
+  }
+
+  .labeled-section-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 0.5rem;
+    display: grid;
+    grid-template-columns: 3rem 1px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* When label is on the right, reverse column order */
+  .label-right .labeled-section-inner {
+    grid-template-columns: 1fr 1px 3rem;
+  }
+
+  .label-right .label-column {
+    order: 3;
+  }
+
+  .label-right .bar {
+    order: 2;
+  }
+
+  .label-right .content-column {
+    order: 1;
+  }
+
+  .label-column {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 0.25rem;
+  }
+
+  .label-text {
+    display: block;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', var(--sl-font-mono), monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--sl-color-accent);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* When label is on the right, flip rotation so text reads top-to-bottom */
+  .label-right .label-text {
+    writing-mode: vertical-lr;
+    transform: none;
+  }
+
+  .bar {
+    width: 1px;
+    align-self: stretch;
+    min-height: 4rem;
+    background: var(--sl-color-accent);
+    opacity: 0.25;
+  }
+
+  .content-column {
+    min-width: 0;
+  }
+
+  /* Tablet: 2-col grid, keep bar and label visible */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .labeled-section-inner {
+      grid-template-columns: 2.5rem 1px 1fr;
+      gap: 1rem;
+    }
+
+    .label-right .labeled-section-inner {
+      grid-template-columns: 1fr 1px 2.5rem;
+    }
+  }
+
+  /* Mobile: stack label above content, hide bar */
+  @media (max-width: 768px) {
+    .labeled-section-inner {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .label-right .labeled-section-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .label-column {
+      order: 1 !important;
+      justify-content: flex-start;
+    }
+
+    .bar {
+      display: none;
+    }
+
+    .content-column {
+      order: 2 !important;
+    }
+
+    .label-text {
+      writing-mode: horizontal-tb;
+      transform: none;
+    }
+  }
+</style>
