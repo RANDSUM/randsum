@@ -2,9 +2,11 @@
 import { defineConfig, fontProviders } from 'astro/config'
 
 import starlight from '@astrojs/starlight'
+import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
+import { copyMarkdownToDist } from './src/integrations/copy-markdown-to-dist'
 
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
@@ -60,10 +62,19 @@ export default defineConfig({
       components: {
         Header: './src/components/Header.astro',
         SiteTitle: './src/components/SiteTitle.astro',
-        ThemeSelect: './src/components/ThemeSelect.astro',
-        PageTitle: './src/components/PageTitle.astro'
+        ThemeSelect: './src/components/ThemeSelect.astro'
       },
       plugins: [
+        starlightPageActions({
+          baseUrl: 'https://randsum.dev',
+          actions: {
+            chatgpt: true,
+            claude: true,
+            t3chat: true,
+            v0: true,
+            markdown: true
+          }
+        }),
         starlightSidebarTopics([
           {
             label: 'Start',
@@ -148,7 +159,8 @@ export default defineConfig({
       ],
       customCss: ['./src/styles/custom.css']
     }),
-    react()
+    react(),
+    copyMarkdownToDist()
   ],
   prefetch: false,
   output: 'static',
