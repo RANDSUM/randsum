@@ -96,6 +96,17 @@
         "starlight-sidebar-topics": "0.7.1",
       },
     },
+    "packages/dice-ui": {
+      "name": "@randsum/dice-ui",
+      "version": "0.1.0",
+      "dependencies": {
+        "@randsum/roller": "workspace:~",
+      },
+      "peerDependencies": {
+        "react": "catalog:",
+        "react-dom": "catalog:",
+      },
+    },
     "packages/games": {
       "name": "@randsum/games",
       "version": "1.1.2",
@@ -663,6 +674,8 @@
     "@pkgr/core": ["@pkgr/core@0.2.9", "", {}, "sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA=="],
 
     "@randsum/cli": ["@randsum/cli@workspace:apps/cli"],
+
+    "@randsum/dice-ui": ["@randsum/dice-ui@workspace:packages/dice-ui"],
 
     "@randsum/discord-bot": ["@randsum/discord-bot@workspace:apps/discord-bot"],
 
