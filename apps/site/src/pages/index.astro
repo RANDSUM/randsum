@@ -278,7 +278,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
     text-align: left;
     min-width: 0;
@@ -591,6 +591,18 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     letter-spacing: 0.01em;
   }
 
+  /* Feature cards are non-interactive divs */
+  .pkg-card--feature {
+    min-height: auto;
+    cursor: default;
+  }
+
+  .pkg-card--feature:hover {
+    border-color: rgba(168, 85, 247, 0.18);
+    border-top-color: var(--card-accent, rgba(168, 85, 247, 0.3));
+    box-shadow: none;
+    transform: none;
+  }
 
   /* ===== Footer ===== */
   .landing-footer {

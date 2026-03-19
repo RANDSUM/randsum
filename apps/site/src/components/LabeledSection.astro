@@ -90,6 +90,18 @@ const { label, labelSide = 'left' } = Astro.props
     min-width: 0;
   }
 
+  /* Tablet: 2-col grid, keep bar and label visible */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .labeled-section-inner {
+      grid-template-columns: 2.5rem 1px 1fr;
+      gap: 1rem;
+    }
+
+    .label-right .labeled-section-inner {
+      grid-template-columns: 1fr 1px 2.5rem;
+    }
+  }
+
   /* Mobile: stack label above content, hide bar */
   @media (max-width: 768px) {
     .labeled-section-inner {
