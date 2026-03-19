@@ -71,11 +71,12 @@ bun run help                             # Quick command reference
 ## Package Build Output
 
 All publishable packages produce ESM only:
+
 - `dist/index.js` (ESM)
 - `dist/index.d.ts` (TypeScript declarations)
 - Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`
 - No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
-- Bundle size limits enforced: roller 20KB (includes notation), game packages 10KB, salvageunion 100KB
+- Bundle size limits enforced: roller 20KB (includes notation), game packages 15KB, salvageunion 35KB
 
 CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
 
@@ -100,20 +101,20 @@ The `RANDSUM_MODIFIERS` array in `packages/roller/src/modifiers/index.ts` is the
 ### `roll()` Argument Types
 
 ```typescript
-roll(20)                    // Number: 1d20
-roll("4d6L")                // Notation string
-roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })  // Options object
-roll("1d20+5", "2d6")       // Multiple arguments combined
-roll("d%")                  // Percentile: 1d100
-roll("4dF")                 // Fate Core: 4 Fate dice (-4 to +4)
-roll("dF.2")                // Extended Fudge die (-2 to +2)
-roll("5d6W")                // D6 System wild die
-roll("g6")                  // Geometric die (roll until 1)
-roll("3DD6")                // Draw die (no replacement)
-roll("4d6Lx6")              // Repeat operator (6 ability scores)
-roll("2d6+3[fire]")         // Annotation/label
-roll("4d6//2")              // Integer division
-roll("5d10F{3}")            // Count failures <= 3
+roll(20) // Number: 1d20
+roll("4d6L") // Notation string
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }) // Options object
+roll("1d20+5", "2d6") // Multiple arguments combined
+roll("d%") // Percentile: 1d100
+roll("4dF") // Fate Core: 4 Fate dice (-4 to +4)
+roll("dF.2") // Extended Fudge die (-2 to +2)
+roll("5d6W") // D6 System wild die
+roll("g6") // Geometric die (roll until 1)
+roll("3DD6") // Draw die (no replacement)
+roll("4d6Lx6") // Repeat operator (6 ability scores)
+roll("2d6+3[fire]") // Annotation/label
+roll("4d6//2") // Integer division
+roll("5d10F{3}") // Count failures <= 3
 ```
 
 ## Git Hooks (Lefthook)
@@ -134,6 +135,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 **ESLint failures**: Common violations: `no-let` (use `const`), `consistent-type-imports` (use `import type`), `prefer-readonly`, and the AST selector banning `as unknown as T`. Auto-fix with `bun run fix:all` or target lint only: `bun run lint -- --fix`.
 
 **Type errors**: Run `bun run typecheck`. Common strict-mode issues:
+
 - `isolatedDeclarations` — exported functions need explicit return types
 - `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
 - `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
