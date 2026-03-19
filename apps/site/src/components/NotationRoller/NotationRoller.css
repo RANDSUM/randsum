@@ -12,7 +12,7 @@
   flex-direction: column;
   background: transparent;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius, 5px);
   box-sizing: border-box;
   overflow: visible;
 }
@@ -24,7 +24,7 @@
   min-height: 3rem;
   background: #222228;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.5rem;
+  border-radius: var(--radius, 5px);
   box-sizing: border-box;
   transition: border-color 0.15s ease;
 }
@@ -137,7 +137,7 @@
 .nr-desc-chip {
   font-size: 0.7rem;
   padding: 0.05em 0.25em;
-  border-radius: 0.2rem;
+  border-radius: var(--radius, 5px);
   cursor: default;
   user-select: none;
   color: inherit;
@@ -217,7 +217,7 @@
   padding: 0 0.6rem;
   background: #a855f7;
   border: none;
-  border-radius: 0.35rem;
+  border-radius: var(--radius, 5px);
   color: #fff;
   font-family: 'JetBrains Mono', var(--sl-font-mono), monospace;
   font-size: 0.65rem;
@@ -309,7 +309,7 @@
   padding: 0.5rem !important;
   padding-right: 1.5rem !important;
   background: #18181b !important;
-  border-radius: 0.5rem !important;
+  border-radius: var(--radius, 5px) !important;
   border: 1.5px solid #a855f7 !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace !important;
@@ -327,7 +327,7 @@
   z-index: 49 !important;
   backdrop-filter: blur(4px) !important;
   background: rgba(0, 0, 0, 0.3) !important;
-  border-radius: 0.5rem !important;
+  border-radius: var(--radius, 5px) !important;
   pointer-events: auto !important;
   animation: nr-backdrop-in 0.2s ease !important;
 }
@@ -391,7 +391,7 @@
   padding: 0.5rem 0.75rem;
   margin: 0 0.75rem 0.5rem 0;
   border: 1px solid rgba(168, 85, 247, 0.4);
-  border-radius: 0.375rem;
+  border-radius: var(--radius, 5px);
 }
 
 .nr-tooltip-total-value {
@@ -516,7 +516,7 @@
 
 .nr-result-row:nth-child(even) {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 0.2rem;
+  border-radius: var(--radius, 5px);
 }
 
 @media (prefers-color-scheme: light) {
@@ -652,7 +652,7 @@
   padding: 0;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.25rem;
+  border-radius: var(--radius, 5px);
   color: #52525b;
   cursor: pointer;
   transition:

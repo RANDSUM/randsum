@@ -27,6 +27,20 @@ function getToolCardHref(pkg: { id: string }): string {
 function getAccentColor(pkg: { id: string; color?: string }): string {
   return gameColorMap[pkg.id] ?? pkg.color ?? 'var(--sl-color-accent)'
 }
+
+// Light accent colors need dark text on hover
+const darkTextOnAccent = new Set(['daggerheart', 'cli'])
+
+// Cards that get the RANDSUM gradient instead of a flat color
+const gradientAccent = new Set(['roller'])
+const randsumGradient = 'linear-gradient(135deg, #c084fc, #a855f7, #7c3aed)'
+
+function getCardStyle(pkg: { id: string; color?: string }): string {
+  const accent = getAccentColor(pkg)
+  const textColor = darkTextOnAccent.has(pkg.id) ? '#18181b' : '#fff'
+  const gradientBg = gradientAccent.has(pkg.id) ? `; --card-accent-bg: ${randsumGradient}` : ''
+  return `--card-accent: ${accent}; --card-hover-text: ${textColor}${gradientBg}`
+}
 ---
 
 <StarlightPage
@@ -97,34 +111,36 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     </section>
 
     <!-- Features -->
-    <LabeledSection label="Features" labelSide="left">
-      <div class="pkg-grid pkg-grid--4">
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+    <section class="features-section">
+      <div class="section-inner">
+        <div class="pkg-grid pkg-grid--4">
+        <div class="pkg-card pkg-card--feature" style="--card-accent: #a855f7; --card-accent-bg: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed); --card-hover-text: #fff">
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Zero Dependencies</h3>
           </div>
           <p class="pkg-card-desc">A pure TypeScript dice engine. No runtime requirements, no bloat.</p>
         </div>
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+        <div class="pkg-card pkg-card--feature" style="--card-accent: #a855f7; --card-accent-bg: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed); --card-hover-text: #fff">
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Notation Parser</h3>
           </div>
           <p class="pkg-card-desc">An extended superset of standard dice notation with 19+ modifiers.</p>
         </div>
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+        <div class="pkg-card pkg-card--feature" style="--card-accent: #a855f7; --card-accent-bg: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed); --card-hover-text: #fff">
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Game Ready</h3>
           </div>
           <p class="pkg-card-desc">Pre-built packages for D&D 5e, Blades, Daggerheart, PbtA, and more.</p>
         </div>
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+        <div class="pkg-card pkg-card--feature" style="--card-accent: #a855f7; --card-accent-bg: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed); --card-hover-text: #fff">
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Written in Bun</h3>
           </div>
           <p class="pkg-card-desc">Built and tested with Bun. Fast builds, fast tests, fast installs.</p>
         </div>
+        </div>
       </div>
-    </LabeledSection>
+    </section>
 
     <!-- Packages -->
     <LabeledSection label="Packages" labelSide="right">
@@ -132,7 +148,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         {corePackages.map((pkg) => (
           <a
             class="pkg-card"
-            style={`--card-accent: ${getAccentColor(pkg)}`}
+            style={getCardStyle(pkg)}
             href={getCoreCardHref(pkg)}
           >
             <div class="pkg-card-header">
@@ -156,7 +172,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         {gamePackages.map((pkg) => (
           <a
             class="pkg-card"
-            style={`--card-accent: ${getAccentColor(pkg)}`}
+            style={getCardStyle(pkg)}
             href={`/games/${pkg.id}/`}
           >
             <div class="pkg-card-header">
@@ -175,7 +191,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
         {toolPackages.map((pkg) => (
           <a
             class="pkg-card"
-            style={`--card-accent: ${getAccentColor(pkg)}`}
+            style={getCardStyle(pkg)}
             href={getToolCardHref(pkg)}
           >
             <div class="pkg-card-header">
@@ -253,6 +269,10 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     max-width: 72rem;
     margin: 0 auto;
     padding: 0 0.5rem;
+  }
+
+  .features-section {
+    padding: 1.5rem 0;
   }
 
   /* ===== Hero ===== */
@@ -423,7 +443,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     overflow: hidden;
     background: rgba(168, 85, 247, 0.08);
     border: 1px solid rgba(168, 85, 247, 0.15);
-    border-radius: 0.375rem;
+    border-radius: var(--radius, 5px);
     padding: 0 0.5rem;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -466,7 +486,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     align-items: center;
     gap: 0.5rem;
     padding: 0.65rem 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: var(--radius, 5px);
     font-weight: 600;
     font-size: 0.95rem;
     text-decoration: none;
@@ -522,6 +542,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   .pkg-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-self: stretch;
@@ -529,11 +550,11 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     margin-top: 0;
     padding: 1.25rem 1.5rem;
     border: 1px solid rgba(168, 85, 247, 0.18);
-    border-radius: 0.75rem;
+    border-radius: var(--radius, 5px);
     background: rgba(168, 85, 247, 0.04);
     text-decoration: none;
     color: inherit;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.25s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.25s ease, border-radius 0.15s ease;
     border-top: 3px solid var(--card-accent, rgba(168, 85, 247, 0.3));
   }
 
@@ -547,13 +568,33 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   .pkg-card-header {
+    position: relative;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 0.5rem;
-    margin: 0 0 0.75rem;
-    padding-bottom: 0.5rem;
+    margin: -1.25rem -1.5rem 0.75rem;
+    padding: 0.75rem 1.5rem;
     border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+    z-index: 0;
+  }
+
+  .pkg-card-header::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -1px;
+    right: -1px;
+    bottom: 0;
+    background: var(--card-accent-bg, var(--card-accent, var(--sl-color-accent)));
+    border-radius: var(--radius, 5px) var(--radius, 5px) 0 0;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.2s ease;
+  }
+
+  .pkg-card:hover .pkg-card-header::before {
+    opacity: 1;
   }
 
   .pkg-card-name {
@@ -562,6 +603,11 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     font-weight: 700;
     margin: 0;
     letter-spacing: -0.01em;
+    transition: color 0.2s ease;
+  }
+
+  .pkg-card:hover .pkg-card-name {
+    color: var(--card-hover-text, #fff);
   }
 
   .pkg-card-version {
@@ -569,6 +615,16 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     font-size: 0.75rem;
     color: var(--sl-color-gray-3);
     flex-shrink: 0;
+    transition: color 0.2s ease;
+  }
+
+  .pkg-card:hover .pkg-card-version {
+    color: var(--card-hover-text, #fff);
+    opacity: 0.7;
+  }
+
+  .pkg-card:hover .pkg-card-header {
+    border-bottom-color: transparent;
   }
 
   .pkg-card-desc {
@@ -591,17 +647,46 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     letter-spacing: 0.01em;
   }
 
-  /* Feature cards are non-interactive divs */
+  /* Feature cards — header-only, description overlays on hover */
   .pkg-card--feature {
     min-height: auto;
-    cursor: default;
+    align-self: start;
+  }
+
+  .pkg-card--feature .pkg-card-header {
+    margin: calc(-1.25rem - 3px) -1.5rem;
+    padding: calc(0.75rem + 3px) 1.5rem 0.75rem;
+    justify-content: center;
+    border-bottom: none;
+  }
+
+  .pkg-card--feature .pkg-card-desc {
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: 100%;
+    margin: 0;
+    padding: 0.75rem 1.5rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid rgba(168, 85, 247, 0.18);
+    border-top: none;
+    border-radius: 0 0 var(--radius, 5px) var(--radius, 5px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
   .pkg-card--feature:hover {
-    border-color: rgba(168, 85, 247, 0.18);
-    border-top-color: var(--card-accent, rgba(168, 85, 247, 0.3));
-    box-shadow: none;
-    transform: none;
+    z-index: 10;
+    border-radius: var(--radius, 5px) var(--radius, 5px) 0 0;
+    border-bottom-color: transparent;
+  }
+
+  .pkg-card--feature:hover .pkg-card-desc {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
   }
 
   /* ===== Light mode softening ===== */
@@ -622,10 +707,6 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     border-bottom-color: rgba(124, 58, 237, 0.08);
   }
 
-  :global(:root[data-theme='light']) .pkg-card--feature:hover {
-    border-color: rgba(124, 58, 237, 0.12);
-    border-top-color: var(--card-accent, rgba(124, 58, 237, 0.2));
-  }
 
   :global(:root[data-theme='light']) .install-cmd {
     background: rgba(124, 58, 237, 0.04);

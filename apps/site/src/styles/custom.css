@@ -17,13 +17,16 @@
   --sl-color-gray-6: #222228; /* zinc-900 */
   --sl-color-black: #1a1a1f; /* zinc-950 */
 
+  /* Border radius */
+  --radius: 5px;
+
   /* Fonts */
   --sl-font: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --sl-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 
   /* Game package colors */
   --game-fifth: #ef4444; /* red-500 */
-  --game-salvageunion: #f59e0b; /* amber-500 — industrial/salvage aesthetic */
+  --game-salvageunion: #7a9baa; /* steel blue — industrial/salvage aesthetic */
   --game-daggerheart: #eab308; /* yellow-500 — gold */
   --game-root-rpg: #10b981; /* emerald-500 */
   --game-blades: #64748b; /* slate-500 — noir aesthetic */
@@ -58,7 +61,7 @@
 
   /* Game package colors - slightly deeper for light backgrounds */
   --game-fifth: #dc2626; /* red-600 */
-  --game-salvageunion: #d97706; /* amber-600 */
+  --game-salvageunion: #5a7f8f; /* steel blue — darker for light bg */
   --game-daggerheart: #a16207; /* yellow-700 — gold for light bg */
   --game-root-rpg: #059669; /* emerald-600 */
   --game-blades: #475569; /* slate-600 */
