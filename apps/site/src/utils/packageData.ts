@@ -32,16 +32,6 @@ export const corePackages: PackageInfo[] = [
     version: '1.0.0',
     category: 'core',
     color: '#a855f7' // purple accent
-  },
-  {
-    id: 'cli',
-    name: 'cli',
-    displayName: 'CLI',
-    description: 'Command-line dice roller and notation validator.',
-    npmPackage: '@randsum/cli',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/cli',
-    category: 'core',
-    color: '#84cc16' // lime-500 — terminal/dev feel
   }
 ]
 
@@ -50,7 +40,8 @@ export const gamePackages: PackageInfo[] = [
     id: 'blades',
     name: 'blades',
     displayName: 'Blades in the Dark',
-    description: 'Action roll resolution for Blades in the Dark.',
+    description:
+      'Roll action dice. Resolve critical, success, partial, or failure for Blades in the Dark.',
     npmPackage: '@randsum/games/blades',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
@@ -61,7 +52,8 @@ export const gamePackages: PackageInfo[] = [
     id: 'daggerheart',
     name: 'daggerheart',
     displayName: 'Daggerheart',
-    description: 'Hope and fear roll resolution for Daggerheart.',
+    description:
+      'Roll hope and fear dice, see which dominates, detect critical hope for Daggerheart.',
     npmPackage: '@randsum/games/daggerheart',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
@@ -83,7 +75,7 @@ export const gamePackages: PackageInfo[] = [
     id: 'root-rpg',
     name: 'root-rpg',
     displayName: 'Root RPG',
-    description: '2d6 roll resolution for Root RPG.',
+    description: 'Roll 2d6+bonus. Strong hit, weak hit, or miss for Root: The RPG.',
     npmPackage: '@randsum/games/root-rpg',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
@@ -105,7 +97,8 @@ export const gamePackages: PackageInfo[] = [
     id: 'pbta',
     name: 'pbta',
     displayName: 'Powered by the Apocalypse',
-    description: '2d6 roll resolution for any PbtA system.',
+    description:
+      'Roll 2d6+stat. Miss, weak hit, or strong hit for any Powered by the Apocalypse game.',
     npmPackage: '@randsum/games/pbta',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
