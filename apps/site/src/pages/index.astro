@@ -2,7 +2,7 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { ClickableTagline, GetStartedButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
-import FeatureBand from '../components/FeatureBand.astro'
+import LabeledSection from '../components/LabeledSection.astro'
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--core-roller)',
@@ -14,9 +14,13 @@ const gameColorMap: Record<string, string> = {
   pbta: 'var(--game-pbta)'
 }
 
-function getCardHref(pkg: { id: string; category: string }): string {
-  if (pkg.category === 'core') return `/${pkg.id}/introduction/`
-  if (pkg.category === 'game') return `/games/${pkg.id}/`
+function getCoreCardHref(pkg: { id: string }): string {
+  if (pkg.id === 'games') return '/games/introduction/'
+  if (pkg.id === 'cli') return '/tools/cli/'
+  return `/${pkg.id}/introduction/`
+}
+
+function getToolCardHref(pkg: { id: string }): string {
   return `/tools/${pkg.id}/`
 }
 
@@ -92,24 +96,44 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       </div>
     </section>
 
-    <FeatureBand />
+    <!-- Features -->
+    <LabeledSection label="Features" labelSide="left">
+      <div class="pkg-grid pkg-grid--4">
+        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+          <div class="pkg-card-header">
+            <h3 class="pkg-card-name">Zero Dependencies</h3>
+          </div>
+          <p class="pkg-card-desc">A pure TypeScript dice engine. No runtime requirements, no bloat.</p>
+        </div>
+        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+          <div class="pkg-card-header">
+            <h3 class="pkg-card-name">Notation Parser</h3>
+          </div>
+          <p class="pkg-card-desc">An extended superset of standard dice notation with 19+ modifiers.</p>
+        </div>
+        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+          <div class="pkg-card-header">
+            <h3 class="pkg-card-name">Game Ready</h3>
+          </div>
+          <p class="pkg-card-desc">Pre-built packages for D&D 5e, Blades, Daggerheart, PbtA, and more.</p>
+        </div>
+        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent)">
+          <div class="pkg-card-header">
+            <h3 class="pkg-card-name">Written in Bun</h3>
+          </div>
+          <p class="pkg-card-desc">Built and tested with Bun. Fast builds, fast tests, fast installs.</p>
+        </div>
+      </div>
+    </LabeledSection>
 
     <!-- Packages -->
-    <div class="pkg-grid-wrap">
-      <h2 class="pkg-section-label">Packages</h2>
-      <div class="pkg-filter-chips">
-        <button class="pkg-filter-chip is-active" data-filter="all">All</button>
-        <button class="pkg-filter-chip" data-filter="core">Core</button>
-        <button class="pkg-filter-chip" data-filter="game">Games</button>
-        <button class="pkg-filter-chip" data-filter="tool">Tools</button>
-      </div>
-      <div class="pkg-grid">
-        {[...corePackages, ...gamePackages, ...toolPackages].map((pkg) => (
+    <LabeledSection label="Packages" labelSide="right">
+      <div class="pkg-grid pkg-grid--3">
+        {corePackages.map((pkg) => (
           <a
             class="pkg-card"
-            data-category={pkg.category}
             style={`--card-accent: ${getAccentColor(pkg)}`}
-            href={getCardHref(pkg)}
+            href={getCoreCardHref(pkg)}
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
@@ -124,7 +148,50 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
           </a>
         ))}
       </div>
-    </div>
+    </LabeledSection>
+
+    <!-- Games -->
+    <LabeledSection label="Games" labelSide="left">
+      <div class="pkg-grid">
+        {gamePackages.map((pkg) => (
+          <a
+            class="pkg-card"
+            style={`--card-accent: ${getAccentColor(pkg)}`}
+            href={`/games/${pkg.id}/`}
+          >
+            <div class="pkg-card-header">
+              <h3 class="pkg-card-name">{pkg.displayName}</h3>
+            </div>
+            <p class="pkg-card-desc">{pkg.description}</p>
+            <span class="pkg-card-link">View docs &rarr;</span>
+          </a>
+        ))}
+      </div>
+    </LabeledSection>
+
+    <!-- Tools -->
+    <LabeledSection label="Tools" labelSide="right">
+      <div class="pkg-grid pkg-grid--3">
+        {toolPackages.map((pkg) => (
+          <a
+            class="pkg-card"
+            style={`--card-accent: ${getAccentColor(pkg)}`}
+            href={getToolCardHref(pkg)}
+          >
+            <div class="pkg-card-header">
+              <h3 class="pkg-card-name">{pkg.displayName}</h3>
+              {pkg.npmPackage.startsWith('@') && (
+                <span class="pkg-card-version" data-npm-version={pkg.npmPackage}>
+                  {pkg.version ? `v${pkg.version}` : ''}
+                </span>
+              )}
+            </div>
+            <p class="pkg-card-desc">{pkg.description}</p>
+            <span class="pkg-card-link">View docs &rarr;</span>
+          </a>
+        ))}
+      </div>
+    </LabeledSection>
 
     <!-- Footer Links -->
     <footer class="landing-footer">
@@ -438,67 +505,7 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     border-color: var(--sl-color-gray-3);
   }
 
-  .pkg-section-label {
-    padding: 1.5rem 0 0.6rem;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--sl-color-gray-2);
-  }
-
   /* ===== Package Grid ===== */
-  .pkg-grid-wrap {
-    padding: 0 0.5rem 2.5rem;
-  }
-
-  .pkg-filter-chips {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-  }
-
-  .pkg-filter-chip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 2.625rem;
-    padding: 0 1rem;
-    min-width: 6.75rem;
-    flex: 1 1 auto;
-    border-radius: 999px;
-    border: 1px solid var(--sl-color-gray-5);
-    background: transparent;
-    color: var(--sl-color-gray-3);
-    font-size: 1.05rem;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-sizing: border-box;
-    appearance: none;
-    -webkit-appearance: none;
-    align-self: center;
-    vertical-align: middle;
-    margin-top: 0;
-    transition: all 0.15s ease;
-  }
-
-  .pkg-filter-chip:hover {
-    border-color: var(--sl-color-gray-3);
-    color: var(--sl-color-gray-1);
-  }
-
-  .pkg-filter-chip.is-active {
-    border-color: var(--sl-color-accent);
-    color: var(--sl-color-white);
-    background: rgba(168, 85, 247, 0.12);
-  }
-
   .pkg-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -506,8 +513,12 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     gap: 1rem;
   }
 
-  .pkg-grid.has-filter .pkg-card.is-dimmed {
-    opacity: 0.25;
+  .pkg-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pkg-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .pkg-card {
@@ -683,7 +694,9 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
       font-size: 1.6rem;
     }
 
-    .pkg-grid {
+    .pkg-grid,
+    .pkg-grid--3,
+    .pkg-grid--4 {
       grid-template-columns: 1fr;
     }
 
@@ -694,7 +707,9 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
-    .pkg-grid {
+    .pkg-grid,
+    .pkg-grid--3,
+    .pkg-grid--4 {
       grid-template-columns: repeat(2, 1fr);
     }
   }
@@ -739,85 +754,4 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     })
   })()
 
-  const chips = document.querySelectorAll<HTMLButtonElement>('.pkg-filter-chip')
-  const cards = Array.from(document.querySelectorAll<HTMLElement>('.pkg-card[data-category]'))
-  const grid = document.querySelector<HTMLElement>('.pkg-grid')
-
-  function applyFilter(filter: string) {
-    if (!grid) return
-
-    // Record positions before reorder (FLIP: first)
-    const before = cards.map(c => c.getBoundingClientRect())
-
-    // Apply order + classes
-    if (filter === 'all') {
-      grid.classList.remove('has-filter')
-      cards.forEach(card => {
-        card.style.order = ''
-        card.classList.remove('is-highlighted', 'is-dimmed')
-      })
-    } else {
-      grid.classList.add('has-filter')
-      cards.forEach(card => {
-        const match = card.dataset['category'] === filter || card.dataset['category'] === 'core'
-        card.classList.toggle('is-highlighted', match)
-        card.classList.toggle('is-dimmed', !match)
-        card.style.order = match ? '0' : '1'
-      })
-    }
-
-    // FLIP: invert + play
-    cards.forEach((card, i) => {
-      const after = card.getBoundingClientRect()
-      const dx = before[i]!.left - after.left
-      const dy = before[i]!.top - after.top
-      if (dx === 0 && dy === 0) return
-      card.style.transition = 'opacity 0.25s ease'
-      card.style.transform = `translate(${dx}px, ${dy}px)`
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        card.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, border-color 0.15s ease, box-shadow 0.15s ease'
-        card.style.transform = ''
-      }))
-    })
-  }
-
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('is-active'))
-      chip.classList.add('is-active')
-      applyFilter(chip.dataset['filter'] ?? 'all')
-    })
-  })
-
-  // --- Slot machine filter on die roll ---
-  const FILTER_SLOT_INTERVALS = [45, 50, 55, 60, 70, 80, 95, 115, 140, 170, 210, 260, 325, 410, 510, 640, 860]
-
-  let filterSlotTimeout: ReturnType<typeof setTimeout> | undefined = undefined
-
-  window.addEventListener('die-rolled', () => {
-    if (filterSlotTimeout !== undefined) {
-      clearTimeout(filterSlotTimeout)
-      filterSlotTimeout = undefined
-    }
-
-    const filterValues = Array.from(chips).map(chip => chip.dataset['filter'] ?? 'all')
-    const finalFilter = filterValues[Math.floor(Math.random() * filterValues.length)] ?? 'all'
-    let step = 0
-
-    const tick = () => {
-      if (step < FILTER_SLOT_INTERVALS.length - 1) {
-        const randomFilter = filterValues[Math.floor(Math.random() * filterValues.length)] ?? 'all'
-        chips.forEach(chip => {
-          chip.classList.toggle('is-active', chip.dataset['filter'] === randomFilter)
-        })
-        step++
-        filterSlotTimeout = setTimeout(tick, FILTER_SLOT_INTERVALS[step])
-      } else {
-        filterSlotTimeout = undefined
-        applyFilter(finalFilter)
-      }
-    }
-
-    filterSlotTimeout = setTimeout(tick, FILTER_SLOT_INTERVALS[0] ?? 45)
-  })
 </script>
