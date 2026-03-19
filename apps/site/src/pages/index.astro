@@ -1363,7 +1363,11 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     }
 
     .features-playground-row {
-      flex-direction: column;
+      flex-direction: column-reverse;
+    }
+
+    .playground-col {
+      flex: none;
     }
 
     .playground-pitch {
@@ -1388,6 +1392,10 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
       flex: none;
       text-align: center;
       align-items: center;
+    }
+
+    .game-schema-viewer-col {
+      flex: none;
     }
 
     .integrations-row {

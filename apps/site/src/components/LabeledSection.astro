@@ -98,6 +98,16 @@ const { label, labelSide = 'left' } = Astro.props
       gap: 0.75rem;
     }
 
+    /* Reset right-aligned grid overrides on mobile */
+    .label-right .content-column :global(.pkg-grid) {
+      display: grid;
+      justify-content: initial;
+    }
+
+    .label-right .content-column :global(.pkg-grid > *) {
+      flex: none;
+    }
+
     .label-text {
       order: 1 !important;
       flex: none;
