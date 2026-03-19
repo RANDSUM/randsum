@@ -1,41 +1,13 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore
-} from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import type { RollRecord } from '@randsum/roller'
-import { formatAsMath, traceRoll } from '@randsum/roller/trace'
 import { buildStackBlitzProject } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
+import { RollSteps, TokenOverlayInput, useTheme } from '@randsum/dice-ui'
 import './NotationRoller.css'
-
-function getTheme(): 'light' | 'dark' {
-  if (typeof document === 'undefined') return 'dark'
-  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
-}
-
-function subscribeTheme(callback: () => void): () => void {
-  const observer = new MutationObserver(callback)
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme']
-  })
-  return () => {
-    observer.disconnect()
-  }
-}
-
-function useTheme(): 'light' | 'dark' {
-  return useSyncExternalStore(subscribeTheme, getTheme, () => 'dark' as const)
-}
 
 function tokenColor(
   doc: { readonly color: string; readonly colorLight: string } | undefined,
@@ -159,56 +131,37 @@ export function NotationRoller({
           <div className="notation-roller-row">
             <div className="notation-roller-input-wrap">
               <div className="nr-input-wrap">
-                {tokens.length > 0 && (
-                  <div className="nr-notation-overlay" aria-hidden="true">
-                    <span className="nr-first-line-spacer" />
-                    {tokens.map((token, i) => (
-                      <span
-                        key={i}
-                        className={[
-                          'nr-token',
-                          `nr-token--${token.category}`,
-                          hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'nr-token--dim' : '',
-                          hoveredTokenIdx === i ? 'nr-token--active' : ''
-                        ]
-                          .filter(Boolean)
-                          .join(' ')}
-                        style={{ color: tokenColor(NOTATION_DOCS[token.key], theme) }}
-                      >
-                        {token.text}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <textarea
-                  ref={inputRef}
-                  className={[
-                    'notation-roller-input',
-                    tokens.length > 0 ? 'notation-roller-input--highlight' : ''
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  rows={1}
-                  value={notation}
-                  onChange={handleChange}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      handleRoll()
-                    }
-                  }}
-                  onInput={e => {
-                    const target = e.target as HTMLTextAreaElement
-                    target.style.height = 'auto'
-                    target.style.height = `${target.scrollHeight}px`
-                  }}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                  placeholder="1d20"
-                  spellCheck={false}
-                  autoComplete="off"
-                  aria-label="Dice notation"
-                />
+                <TokenOverlayInput tokens={tokens} hoveredTokenIdx={hoveredTokenIdx} theme={theme}>
+                  <textarea
+                    ref={inputRef}
+                    className={[
+                      'notation-roller-input',
+                      tokens.length > 0 ? 'notation-roller-input--highlight' : ''
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    rows={1}
+                    value={notation}
+                    onChange={handleChange}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleRoll()
+                      }
+                    }}
+                    onInput={e => {
+                      const target = e.target as HTMLTextAreaElement
+                      target.style.height = 'auto'
+                      target.style.height = `${target.scrollHeight}px`
+                    }}
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                    placeholder="1d20"
+                    spellCheck={false}
+                    autoComplete="off"
+                    aria-label="Dice notation"
+                  />
+                </TokenOverlayInput>
               </div>
             </div>
 
@@ -386,75 +339,6 @@ export function NotationRoller({
   )
 }
 
-const MAX_DICE_SHOWN = 10
-
-function DiceGroup({
-  unchanged,
-  removed,
-  added
-}: {
-  readonly unchanged: readonly number[]
-  readonly removed: readonly number[]
-  readonly added: readonly number[]
-}): React.JSX.Element {
-  const hasModified = removed.length > 0 || added.length > 0
-  const shown = unchanged.slice(0, MAX_DICE_SHOWN)
-  const truncated = unchanged.length > MAX_DICE_SHOWN
-
-  return (
-    <span className="nr-result-dice-group">
-      {removed.length > 0 && (
-        <span className="nr-result-dice nr-result-dice--removed">{removed.join(', ')}</span>
-      )}
-      {added.length > 0 && (
-        <span className="nr-result-dice nr-result-dice--added">{added.join(', ')}</span>
-      )}
-      {hasModified && shown.length > 0 && <span className="nr-result-dice-sep">|</span>}
-      {shown.length > 0 && (
-        <span className="nr-result-dice">
-          {shown.join(', ')}
-          {truncated ? ' …' : ''}
-        </span>
-      )}
-    </span>
-  )
-}
-
-function PoolSteps({ record }: { readonly record: RollRecord }): React.JSX.Element {
-  const steps = traceRoll(record)
-  return (
-    <>
-      {steps.map((step, i) => {
-        if (step.kind === 'divider') {
-          return <div key={`div-${i}`} className="nr-result-divider" />
-        }
-        if (step.kind === 'arithmetic') {
-          return (
-            <div key={i} className="nr-result-row">
-              <span className="nr-result-label">{step.label}</span>
-              <span className="nr-result-dice nr-result-dice--arithmetic">{step.display}</span>
-            </div>
-          )
-        }
-        if (step.kind === 'rolls') {
-          return (
-            <div key={i} className="nr-result-row">
-              <span className="nr-result-label">{step.label}</span>
-              <DiceGroup unchanged={step.unchanged} removed={step.removed} added={step.added} />
-            </div>
-          )
-        }
-        return (
-          <div key="finalRolls" className="nr-result-row nr-result-row--final">
-            <span className="nr-result-label">Final rolls</span>
-            <span className="nr-result-dice">{formatAsMath(step.rolls, step.arithmeticDelta)}</span>
-          </div>
-        )
-      })}
-    </>
-  )
-}
-
 /** @internal — exported for testing only, not part of the public API */
 export function RollResult({
   records,
@@ -469,8 +353,7 @@ export function RollResult({
     <div className="nr-result-inner">
       {records.map((record, i) => (
         <Fragment key={i}>
-          {multiPool && <div className="nr-result-pool-header">{record.notation}</div>}
-          <PoolSteps record={record} />
+          <RollSteps record={record} showHeading={multiPool} />
           {multiPool && i < records.length - 1 && <div className="nr-result-pool-divider" />}
         </Fragment>
       ))}

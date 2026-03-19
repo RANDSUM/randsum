@@ -1,3 +1,16 @@
+/* ===== Bridge: map --dui-* tokens → Starlight (--sl-*) equivalents ===== */
+.notation-roller,
+.notation-roller * {
+  --dui-color-accent: var(--sl-color-accent, #a855f7);
+  --dui-color-bg: var(--sl-color-black, #09090b);
+  --dui-color-surface: var(--sl-color-gray-6, #18181b);
+  --dui-color-surface-alt: var(--sl-color-gray-5, #27272a);
+  --dui-color-border: var(--sl-color-gray-4, #52525b);
+  --dui-color-text: var(--sl-color-white, #fafafa);
+  --dui-color-text-muted: var(--sl-color-gray-2, #a1a1aa);
+  --dui-color-text-dim: var(--sl-color-gray-3, #71717a);
+}
+
 /* ===== Container ===== */
 .notation-roller {
   position: relative;
@@ -77,60 +90,6 @@
   flex: 1;
   min-width: 0;
   overflow: hidden;
-}
-
-/* ===== Notation overlay (colored token spans, sits above transparent textarea text) ===== */
-.nr-notation-overlay {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  align-content: flex-start;
-  pointer-events: none;
-  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-  font-size: 1.25rem;
-  line-height: 1.4;
-  word-break: break-all;
-  white-space: pre-wrap;
-  overflow: hidden;
-}
-
-/* First-line spacer (no longer needed — Roll button moved to right column) */
-.nr-first-line-spacer {
-  display: none;
-}
-
-/* ===== Token spans ===== */
-.nr-token {
-  transition: color 0.12s ease;
-}
-
-.nr-token--dim {
-  color: inherit !important;
-}
-
-.nr-token--active {
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-thickness: 1px;
-}
-
-/* Token colors are applied inline via NOTATION_DOCS[token.key]?.color */
-/* Only the unknown fallback needs a CSS rule */
-.nr-token--unknown {
-  color: #f97583;
-}
-
-@media (prefers-color-scheme: light) {
-  .nr-token--unknown {
-    color: #c0394a;
-  }
-}
-[data-theme='light'] .nr-token--unknown {
-  color: #c0394a;
 }
 
 /* ===== Description chips ===== */
@@ -505,75 +464,6 @@
   background: rgba(0, 0, 0, 0.1);
 }
 
-.nr-result-row {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 1.5rem !important;
-  padding: 0.2rem 0.25rem !important;
-  line-height: 1.4 !important;
-}
-
-.nr-result-row:nth-child(even) {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius, 5px);
-}
-
-@media (prefers-color-scheme: light) {
-  .nr-result-row:nth-child(even) {
-    background: rgba(0, 0, 0, 0.03);
-  }
-}
-[data-theme='light'] .nr-result-row:nth-child(even) {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-.nr-result-label {
-  color: #9ca3af;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.nr-result-dice-group {
-  display: block;
-  text-align: right;
-}
-
-.nr-result-dice-group > * + * {
-  margin-left: 0.2em;
-}
-
-.nr-result-dice {
-  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-  letter-spacing: 0;
-  white-space: normal;
-  word-break: break-word;
-}
-
-.nr-result-dice-sep {
-  color: rgba(255, 255, 255, 0.1);
-  font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-}
-
-.nr-result-dice--removed {
-  color: rgba(255, 255, 255, 0.3);
-  text-decoration: line-through;
-  text-decoration-color: #9ca3af;
-}
-
-.nr-result-dice--added {
-  color: #d8b4fe;
-}
-
-.nr-result-dice--arithmetic {
-  color: #d8b4fe;
-  font-weight: 600;
-}
-
-.nr-result-row--final {
-  padding-bottom: 0.3rem;
-}
-
 .nr-result-row--total {
   background: transparent !important;
 }
@@ -597,41 +487,6 @@
 [data-theme='light'] .nr-result-label--total,
 [data-theme='light'] .nr-result-dice--total {
   color: #18181b;
-}
-
-.nr-result-row--final .nr-result-dice {
-  word-spacing: -0.2em;
-}
-
-@media (prefers-color-scheme: light) {
-  .nr-result-label {
-    color: #6b7280;
-  }
-  .nr-result-dice--removed {
-    color: rgba(0, 0, 0, 0.35);
-    text-decoration-color: #6b7280;
-  }
-  .nr-result-dice-sep {
-    color: rgba(0, 0, 0, 0.2);
-  }
-  .nr-result-dice--added,
-  .nr-result-dice--arithmetic {
-    color: #9333ea;
-  }
-}
-[data-theme='light'] .nr-result-label {
-  color: #6b7280;
-}
-[data-theme='light'] .nr-result-dice--removed {
-  color: rgba(0, 0, 0, 0.35);
-  text-decoration-color: #6b7280;
-}
-[data-theme='light'] .nr-result-dice-sep {
-  color: rgba(0, 0, 0, 0.2);
-}
-[data-theme='light'] .nr-result-dice--added,
-[data-theme='light'] .nr-result-dice--arithmetic {
-  color: #9333ea;
 }
 
 /* ===== Desc-row action icons (right-aligned) ===== */

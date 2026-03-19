@@ -1,5 +1,7 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config'
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
 
 import starlight from '@astrojs/starlight'
 import starlightPageActions from 'starlight-page-actions'
@@ -7,6 +9,8 @@ import starlightSidebarTopics from 'starlight-sidebar-topics'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
 import { copyMarkdownToDist } from './src/integrations/copy-markdown-to-dist'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
@@ -163,6 +167,13 @@ export default defineConfig({
     copyMarkdownToDist()
   ],
   prefetch: false,
+  vite: {
+    resolve: {
+      alias: {
+        '@randsum/dice-ui': resolve(__dirname, '../../packages/dice-ui/src/index.ts')
+      }
+    }
+  },
   output: 'static',
   adapter: isDev ? undefined : netlify()
 })
