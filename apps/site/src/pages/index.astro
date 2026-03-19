@@ -1,7 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
-import { ClickableTagline, ClickSubtitle, GetStartedButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
+import { ClickableTagline, HeroRollerPlayground } from '../components/HeroInteractive'
 import LabeledSection from '../components/LabeledSection.astro'
 
 const gameColorMap: Record<string, string> = {
@@ -87,10 +87,16 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
         <div class="hero-lockup">
           <div class="hero-text">
             <ClickableTagline client:load />
-            <ClickSubtitle client:load />
+            <p class="hero-subtitle">A Zero-Dependency, TypeScript-First Dice Notation Engine.</p>
             <div class="hero-actions">
-              <PlaygroundButton client:load />
-              <GetStartedButton client:load />
+              <a href="/welcome/introduction/" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Get Started
+              </a>
+              <a href="https://playground.randsum.dev" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" ry="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"/></svg>
+                Try the Playground
+              </a>
             </div>
           </div>
           <div class="hero-playground not-content">
