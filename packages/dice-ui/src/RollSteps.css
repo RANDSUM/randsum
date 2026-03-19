@@ -1,0 +1,81 @@
+.du-roll-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dui-space-xs);
+}
+
+.du-pool-heading {
+  font-family: var(--dui-font-mono);
+  font-size: 0.875rem;
+  color: var(--dui-color-text-muted);
+  margin: 0;
+  padding-bottom: var(--dui-space-xs);
+  border-bottom: 1px solid var(--dui-color-border);
+}
+
+.du-step-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dui-space-sm);
+  padding: var(--dui-space-xs) 0;
+}
+
+.du-step-row--final {
+  border-top: 1px solid var(--dui-color-border);
+  padding-top: var(--dui-space-sm);
+  margin-top: var(--dui-space-xs);
+}
+
+.du-step-label {
+  font-size: 0.8125rem;
+  color: var(--dui-color-text-muted);
+  flex-shrink: 0;
+}
+
+.du-step-arithmetic {
+  font-family: var(--dui-font-mono);
+  color: var(--dui-color-accent);
+  font-weight: 600;
+}
+
+.du-step-final-math {
+  font-family: var(--dui-font-mono);
+  color: var(--dui-color-text);
+}
+
+.du-step-divider {
+  border: none;
+  border-top: 1px solid var(--dui-color-border);
+  margin: var(--dui-space-xs) 0;
+}
+
+.du-die-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dui-space-xs);
+  align-items: center;
+}
+
+.du-die-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--dui-radius-sm);
+  font-family: var(--dui-font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--dui-color-surface-alt);
+  color: var(--dui-color-text);
+}
+
+.du-die-badge--removed {
+  color: var(--dui-color-removed);
+  opacity: 0.7;
+}
+
+.du-die-badge--added {
+  color: var(--dui-color-added);
+}

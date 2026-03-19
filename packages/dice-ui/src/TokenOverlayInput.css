@@ -1,0 +1,322 @@
+/* ===== Token overlay wrapper ===== */
+.du-input-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+/* ===== Notation overlay (colored token spans, sits above transparent input text) ===== */
+.du-notation-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  white-space: pre;
+  font: inherit;
+  line-height: inherit;
+  padding: 0;
+}
+
+/* ===== Token spans ===== */
+.du-token {
+  transition:
+    color 0.12s ease,
+    opacity 0.12s ease;
+}
+
+.du-token--dim {
+  opacity: 0.35;
+}
+
+.du-token--active {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+/* Unknown token fallback — no doc entry */
+.du-token--unknown {
+  color: var(--dui-color-error, #f97583);
+}
+
+/* ===== Per-category token colors — dark mode ===== */
+/* Colors applied inline via NOTATION_DOCS when a doc entry exists.
+   CSS classes here act as fallbacks for categories not covered by docs. */
+
+/* Core: blue */
+.du-token--core {
+  color: #60a5fa;
+}
+
+/* Special dice: accent-high (same family as core) */
+.du-token--percentile,
+.du-token--fate,
+.du-token--geometric,
+.du-token--draw,
+.du-token--zeroBias,
+.du-token--customFaces {
+  color: #93c5fd;
+}
+
+/* Drop family: fuchsia */
+.du-token--dropHighest {
+  color: #b858b0;
+}
+.du-token--dropLowest {
+  color: #f060d0;
+}
+.du-token--dropCondition {
+  color: #d860c0;
+}
+
+/* Keep family: oranges */
+.du-token--keepHighest {
+  color: #ffab70;
+}
+.du-token--keepLowest {
+  color: #d4845a;
+}
+.du-token--keepMiddle {
+  color: #e09060;
+}
+
+/* Explode family: gold/orange/lime */
+.du-token--explode {
+  color: #e5c07b;
+}
+.du-token--compound {
+  color: #e08040;
+}
+.du-token--penetrate {
+  color: #b8d858;
+}
+.du-token--explodeSequence {
+  color: #d0b040;
+}
+
+/* Reroll: purple */
+.du-token--reroll {
+  color: #c792ea;
+}
+
+/* Cap: cyan */
+.du-token--cap {
+  color: #89ddff;
+}
+
+/* Replace: lime */
+.du-token--replace {
+  color: #c3e88d;
+}
+
+/* Unique: teal */
+.du-token--unique {
+  color: #80cbc4;
+}
+
+/* Count family: blue-violet */
+.du-token--countSuccesses,
+.du-token--countFailures,
+.du-token--count {
+  color: #82aaff;
+}
+
+/* Margin of success */
+.du-token--marginOfSuccess {
+  color: #a0c4ff;
+}
+
+/* Arithmetic: greens */
+.du-token--plus {
+  color: #98c379;
+}
+.du-token--minus {
+  color: #6b9e52;
+}
+
+/* Multiplier: warm yellows */
+.du-token--multiply {
+  color: #ffcb6b;
+}
+.du-token--multiplyTotal {
+  color: #e8a93a;
+}
+
+/* Integer divide / modulo */
+.du-token--integerDivide {
+  color: #a8c060;
+}
+.du-token--modulo {
+  color: #90b848;
+}
+
+/* Sort */
+.du-token--sort {
+  color: #80cbc4;
+}
+
+/* Wild die */
+.du-token--wildDie {
+  color: #ff8a65;
+}
+
+/* Repeat: muted */
+.du-token--repeat {
+  color: var(--dui-color-text-muted, #a1a1aa);
+}
+
+/* Label: dim */
+.du-token--label {
+  color: var(--dui-color-text-dim, #71717a);
+}
+
+/* ===== Light mode overrides ===== */
+@media (prefers-color-scheme: light) {
+  .du-token--unknown {
+    color: var(--dui-color-error, #c0394a);
+  }
+
+  .du-token--core {
+    color: #2563eb;
+  }
+
+  .du-token--percentile,
+  .du-token--fate,
+  .du-token--geometric,
+  .du-token--draw,
+  .du-token--zeroBias,
+  .du-token--customFaces {
+    color: #1e40af;
+  }
+
+  .du-token--dropHighest {
+    color: #802090;
+  }
+  .du-token--dropLowest {
+    color: #b028a8;
+  }
+  .du-token--dropCondition {
+    color: #9020a0;
+  }
+
+  .du-token--keepHighest {
+    color: #c2620a;
+  }
+  .du-token--keepLowest {
+    color: #9e4e20;
+  }
+
+  .du-token--explode {
+    color: #9a7c1a;
+  }
+  .du-token--compound {
+    color: #c05818;
+  }
+  .du-token--penetrate {
+    color: #5a8018;
+  }
+
+  .du-token--reroll {
+    color: #7c4dab;
+  }
+
+  .du-token--cap {
+    color: #0082a5;
+  }
+
+  .du-token--replace {
+    color: #4a8020;
+  }
+
+  .du-token--unique {
+    color: #1a7a72;
+  }
+
+  .du-token--countSuccesses,
+  .du-token--countFailures,
+  .du-token--count {
+    color: #3a60c8;
+  }
+
+  .du-token--plus {
+    color: #3a7d20;
+  }
+  .du-token--minus {
+    color: #2a6018;
+  }
+
+  .du-token--multiply {
+    color: #8a6a00;
+  }
+  .du-token--multiplyTotal {
+    color: #7a5800;
+  }
+}
+
+[data-theme='light'] .du-token--unknown {
+  color: var(--dui-color-error, #c0394a);
+}
+[data-theme='light'] .du-token--core {
+  color: #2563eb;
+}
+[data-theme='light'] .du-token--percentile,
+[data-theme='light'] .du-token--fate,
+[data-theme='light'] .du-token--geometric,
+[data-theme='light'] .du-token--draw,
+[data-theme='light'] .du-token--zeroBias,
+[data-theme='light'] .du-token--customFaces {
+  color: #1e40af;
+}
+[data-theme='light'] .du-token--dropHighest {
+  color: #802090;
+}
+[data-theme='light'] .du-token--dropLowest {
+  color: #b028a8;
+}
+[data-theme='light'] .du-token--dropCondition {
+  color: #9020a0;
+}
+[data-theme='light'] .du-token--keepHighest {
+  color: #c2620a;
+}
+[data-theme='light'] .du-token--keepLowest {
+  color: #9e4e20;
+}
+[data-theme='light'] .du-token--explode {
+  color: #9a7c1a;
+}
+[data-theme='light'] .du-token--compound {
+  color: #c05818;
+}
+[data-theme='light'] .du-token--penetrate {
+  color: #5a8018;
+}
+[data-theme='light'] .du-token--reroll {
+  color: #7c4dab;
+}
+[data-theme='light'] .du-token--cap {
+  color: #0082a5;
+}
+[data-theme='light'] .du-token--replace {
+  color: #4a8020;
+}
+[data-theme='light'] .du-token--unique {
+  color: #1a7a72;
+}
+[data-theme='light'] .du-token--countSuccesses,
+[data-theme='light'] .du-token--countFailures,
+[data-theme='light'] .du-token--count {
+  color: #3a60c8;
+}
+[data-theme='light'] .du-token--plus {
+  color: #3a7d20;
+}
+[data-theme='light'] .du-token--minus {
+  color: #2a6018;
+}
+[data-theme='light'] .du-token--multiply {
+  color: #8a6a00;
+}
+[data-theme='light'] .du-token--multiplyTotal {
+  color: #7a5800;
+}
