@@ -1,7 +1,7 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
-import { ClickableTagline, GetStartedButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
+import { ClickableTagline, ClickSubtitle, GetStartedButton, HeroRollerPlayground, PlaygroundButton } from '../components/HeroInteractive'
 import LabeledSection from '../components/LabeledSection.astro'
 
 const gameColorMap: Record<string, string> = {
@@ -87,7 +87,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
         <div class="hero-lockup">
           <div class="hero-text">
             <ClickableTagline client:load />
-            <p class="hero-tagline">A Zero-Dependency, TypeScript-First, Bun-Native Dice Notation Parsing and Rolling Engine</p>
+            <ClickSubtitle client:load />
             <div class="hero-actions">
               <PlaygroundButton client:load />
               <GetStartedButton client:load />
@@ -314,7 +314,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     padding-top: 0;
   }
 
-  .hero-tagline {
+  :global(.hero-subtitle) {
     white-space: normal;
     text-wrap: balance;
   }
@@ -376,10 +376,18 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   }
 
   :global(.tagline-dice) {
+    display: inline-block;
     background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: levitate 3s ease-in-out infinite;
+    cursor: pointer;
+  }
+
+  @keyframes levitate {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
   }
 
   :global(.tagline-exceptions) {
@@ -402,12 +410,13 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     100% { transform: translateY(0);   opacity: 1; }
   }
 
-  .hero-tagline {
-    font-size: 0.85rem;
+  :global(.hero-subtitle) {
+    font-size: 1rem;
     font-weight: 400;
     color: var(--sl-color-gray-2);
     margin: 0 0 0.5rem;
     letter-spacing: 0.01em;
+    min-height: 1.4em;
   }
 
 
@@ -813,8 +822,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
       font-size: 1.8rem;
     }
 
-    .hero-tagline {
-      font-size: 1rem;
+    :global(.hero-subtitle) {
+      font-size: 0.8rem;
     }
 
 

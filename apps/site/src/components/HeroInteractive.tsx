@@ -2,14 +2,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { roll } from '@randsum/roller'
 import { NotationRoller } from './NotationRoller'
 
+const DEFAULT_SUBTITLE = 'A Zero-Dependency, TypeScript-First Dice Notation Engine'
+
 const TAGLINES = [
+  DEFAULT_SUBTITLE,
   'Very Specific Random Numbers',
   'Zero dependencies. Infinite regrets.',
-  'We have types for that.',
   'Probability as a Service.',
-  "It's not gambling if you have types.",
-  'Dice notation: surprisingly controversial.',
-  "The first dice library you'll ever want."
+  'Gamble with numbers, not code.',
+  "The first dice library you'll ever want.",
+  'RAND for the rest of us.'
 ] as const
 
 const GET_STARTED_LABELS = [
@@ -39,43 +41,6 @@ const SLOT_INTERVALS = [
 ]
 
 const DIE_ROLLED = 'die-rolled'
-
-// Curated progression from simplest to most complex, drawn from the roller test suite
-const HERO_NOTATIONS = [
-  '1d6',
-  '1d20',
-  '2d6',
-  '2d8+3',
-  '1d12+5',
-  '4d6',
-  '4d6L',
-  '2d20H',
-  '2d12H',
-  '5d6L',
-  '3d6!',
-  '4d6R{1}',
-  '2d10R{<3}',
-  '4d6K3',
-  '3d10!+3',
-  '4d6LR{1}!+3',
-  '1d4+1d6+1d8+1d10+1d12+1d20',
-  '2d4+2d6+2d8',
-  '3d4+2d6+1d8',
-  '1d6+1d20',
-  '4d6L+1d20',
-  '2d8+1d6+5',
-  '4d6L+2d20H',
-  '3d20R{<5}H+2d6L',
-  '10d6R{<3}K5',
-  '8d8!U+5',
-  '6d6C{<2,>5}R{1}+3',
-  '6d8L2H1R{1,2}U!C{>7}+5-2',
-  '4d6C{>5,<2}LD{>2,<6,2,3}V{6=1}!U{1,2}+2-1',
-  '8d10R{<3}K5C{>9}!S{7}+2d6L',
-  '6d8!!H2R{1,2}C{<2,>7}U{1,8}V{8=6}+3d4L-2',
-  '10d12R{<4}K6D{>10,<2}!C{<3,>11}U{1,12}V{12=10}S{8}+2d6-1d4',
-  '4d6LR{<3}!C{>5}+2d8!UR{1}C{<2,>7}+1d12V{12=10}-3'
-] as const
 
 function useSlotMachine<T extends string>(
   labels: readonly T[],
@@ -209,11 +174,23 @@ function GitHubIcon(): React.JSX.Element {
 }
 
 export function ClickSubtitle(): React.JSX.Element {
+  const [activated, setActivated] = useState(false)
   const { label, tickKey } = useSlotMachine(TAGLINES)
+
+  useEffect(() => {
+    const handler = (): void => {
+      setActivated(true)
+    }
+    window.addEventListener(DIE_ROLLED, handler)
+    return () => {
+      window.removeEventListener(DIE_ROLLED, handler)
+    }
+  }, [])
+
   return (
     <p className="hero-subtitle">
-      <span key={tickKey} className="hero-subtitle-inner">
-        {label}
+      <span key={activated ? tickKey : 'default'} className="hero-subtitle-inner">
+        {activated ? label : DEFAULT_SUBTITLE}
       </span>
     </p>
   )
@@ -317,24 +294,28 @@ export function HeroRollerPlayground(): React.JSX.Element {
     }
   }, [])
 
-  // Slot machine on die-rolled
+  // Cycle through chip presets on die-rolled
   useEffect(() => {
     const handler = (): void => {
       stopCycle()
-      setSelectedChip(null)
       if (timerRef.current) clearTimeout(timerRef.current)
 
-      const pickNotation = (): string => HERO_NOTATIONS[roll(HERO_NOTATIONS.length).total - 1] ?? ''
-      const finalNotation = pickNotation()
+      const pickChip = (): number => roll(CHIP_PRESETS.length).total - 1
+      const finalIdx = pickChip()
       const stepRef = { current: 0 }
 
       const tick = (): void => {
         if (stepRef.current < SLOT_INTERVALS.length - 1) {
-          setNotation(pickNotation())
+          const idx = pickChip()
+          setSelectedChip(idx)
+          const preset = CHIP_PRESETS[idx]
+          if (preset) setNotation(preset.notation)
           stepRef.current++
           timerRef.current = setTimeout(tick, SLOT_INTERVALS[stepRef.current])
         } else {
-          setNotation(finalNotation)
+          setSelectedChip(finalIdx)
+          const preset = CHIP_PRESETS[finalIdx]
+          if (preset) setNotation(preset.notation)
           setResetToken(t => t + 1)
         }
       }
