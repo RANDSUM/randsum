@@ -8,12 +8,13 @@ const githubUrl = `https://github.com/RANDSUM/randsum/tree/main/apps/site/src/co
 const pageUrl = `https://randsum.dev/${slug.replace(/\/$/, '')}/`
 ---
 
-<Default {...Astro.props}><slot /></Default>
-
-<div class="page-header-row">
-  {description && (
-    <p class="page-description">{description}</p>
-  )}
+<div class="page-title-row">
+  <div class="page-title-text">
+    <Default {...Astro.props}><slot /></Default>
+    {description && (
+      <p class="page-description">{description}</p>
+    )}
+  </div>
   <div class="page-toolbar">
   <button class="toolbar-btn toolbar-copy-md" aria-label="Copy as Markdown">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -53,23 +54,30 @@ const pageUrl = `https://randsum.dev/${slug.replace(/\/$/, '')}/`
     </div>
   </div>
 </div>
-</div>
 
 <style>
-  .page-header-row {
+  .page-title-row {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    margin: -0.5rem 0 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-title-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .page-title-text :global(h1) {
+    margin-bottom: 0.25rem;
   }
 
   .page-description {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--sl-color-gray-2);
     margin: 0;
     line-height: 1.5;
-    flex: 1;
   }
 
   .page-toolbar {
