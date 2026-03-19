@@ -21,6 +21,27 @@ export const corePackages: PackageInfo[] = [
     version: '3.0.0',
     category: 'core',
     color: '#f8fafc' // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
+  },
+  {
+    id: 'games',
+    name: 'games',
+    displayName: 'Games',
+    description: 'Pre-built dice resolvers for popular tabletop RPGs. One package, six systems.',
+    npmPackage: '@randsum/games',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
+    version: '1.0.0',
+    category: 'core',
+    color: '#a855f7' // purple accent
+  },
+  {
+    id: 'cli',
+    name: 'cli',
+    displayName: 'CLI',
+    description: 'Command-line dice roller and notation validator.',
+    npmPackage: '@randsum/cli',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/cli',
+    category: 'core',
+    color: '#84cc16' // lime-500 — terminal/dev feel
   }
 ]
 
@@ -115,5 +136,16 @@ export const toolPackages: PackageInfo[] = [
     version: '1.0.0',
     category: 'tool',
     color: '#5865F2' // Discord purple
+  },
+  {
+    id: 'cli',
+    name: 'cli',
+    displayName: 'CLI',
+    description:
+      'Command-line interface for rolling dice and exploring notation from your terminal.',
+    npmPackage: '@randsum/cli',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/cli',
+    category: 'tool',
+    color: '#84cc16' // lime-500 — terminal/dev feel
   }
 ]
