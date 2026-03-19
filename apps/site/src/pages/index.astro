@@ -436,13 +436,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: levitate 3s ease-in-out infinite;
     cursor: pointer;
-  }
-
-  @keyframes levitate {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
   }
 
   :global(.tagline-exceptions) {
