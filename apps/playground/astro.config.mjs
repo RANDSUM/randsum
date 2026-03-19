@@ -16,8 +16,9 @@ export default defineConfig({
     resolve: {
       alias: {
         '@randsum/roller/tokenize': resolve(__dirname, '../../packages/roller/src/tokenize.ts'),
-        '@randsum/roller': resolve(__dirname, '../../packages/roller/src/index.ts'),
-        '@randsum/display-utils': resolve(__dirname, '../../packages/display-utils/src/index.ts')
+        '@randsum/roller/docs': resolve(__dirname, '../../packages/roller/src/docs/index.ts'),
+        '@randsum/roller/trace': resolve(__dirname, '../../packages/roller/src/trace/index.ts'),
+        '@randsum/roller': resolve(__dirname, '../../packages/roller/src/index.ts')
       }
     }
   }

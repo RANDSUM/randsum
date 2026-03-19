@@ -1,0 +1,126 @@
+---
+interface Props {
+  label: string
+  labelSide?: 'left' | 'right'
+}
+
+const { label, labelSide = 'left' } = Astro.props
+---
+
+<section class:list={['labeled-section', `label-${labelSide}`]}>
+  <div class="labeled-section-inner">
+    <span class="label-text">{label}</span>
+    <div class="content-column">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .labeled-section {
+    padding: 1.5rem 0;
+  }
+
+  .labeled-section + .labeled-section {
+    border-top: 1px solid var(--sl-color-gray-5, rgba(255, 255, 255, 0.08));
+  }
+
+  .labeled-section-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 0.5rem;
+    display: flex;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .label-text {
+    flex: 0 0 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', var(--sl-font-mono), monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #fafafa;
+    background: var(--sl-color-accent);
+    border-radius: var(--radius, 5px);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* When label is on the right, reverse order */
+  .label-right .label-text {
+    order: 2;
+    writing-mode: vertical-lr;
+    transform: none;
+  }
+
+  .label-right .content-column {
+    order: 1;
+  }
+
+  .label-right .content-column :global(.pkg-grid) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .label-right .content-column :global(.pkg-grid > *) {
+    flex: 0 1 calc((100% - 2rem) / 3);
+    min-width: 0;
+  }
+
+  .content-column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Tablet */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .labeled-section-inner {
+      gap: 1rem;
+    }
+
+    .label-text {
+      flex: 0 0 2.5rem;
+    }
+  }
+
+  /* Mobile: stack label above content */
+  @media (max-width: 768px) {
+    .labeled-section-inner {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* Reset right-aligned grid overrides on mobile */
+    .label-right .content-column :global(.pkg-grid) {
+      display: grid;
+      justify-content: initial;
+    }
+
+    .label-right .content-column :global(.pkg-grid > *) {
+      flex: none;
+    }
+
+    .label-text,
+    .label-right .label-text {
+      order: 1 !important;
+      flex: none;
+      writing-mode: horizontal-tb;
+      transform: none;
+      width: auto;
+      align-self: flex-start;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .content-column {
+      order: 2 !important;
+    }
+  }
+</style>

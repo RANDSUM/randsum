@@ -113,7 +113,73 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     }
 
     return descriptions
-  }
+  },
+
+  docs: [
+    {
+      key: 'L',
+      category: 'Pool',
+      color: '#fb7185',
+      colorLight: '#e11d48',
+      title: 'Drop Lowest',
+      description: 'Remove the lowest-valued dice from the pool before summing.',
+      displayBase: 'L',
+      displayOptional: 'n',
+      forms: [{ notation: 'L(n)', note: 'Drop n lowest (default: 1)' }],
+      examples: [
+        {
+          notation: '4d6L',
+          description: 'Roll 4d6, drop lowest (ability scores)'
+        },
+        { notation: '5d6L2', description: 'Roll 5d6, drop 2 lowest' }
+      ]
+    },
+    {
+      key: 'H',
+      category: 'Pool',
+      color: '#fb7185',
+      colorLight: '#e11d48',
+      title: 'Drop Highest',
+      description: 'Remove the highest-valued dice from the pool before summing.',
+      displayBase: 'H',
+      displayOptional: 'n',
+      forms: [{ notation: 'H(n)', note: 'Drop n highest (default: 1)' }],
+      examples: [
+        {
+          notation: '2d20H',
+          description: 'Roll 2d20, drop highest (disadvantage)'
+        },
+        { notation: '4d6H', description: 'Roll 4d6, drop highest' }
+      ]
+    },
+    {
+      key: 'D{..}',
+      category: 'Pool',
+      color: '#e11d48',
+      colorLight: '#9f1239',
+      title: 'Drop by Condition',
+      description:
+        'Drop any dice matching a condition \u2014 more flexible than L/H for arbitrary thresholds.',
+      displayBase: 'D{..}',
+      forms: [{ notation: 'D{...}', note: 'Comma-separate multiple conditions' }],
+      comparisons: [
+        { operator: 'n', note: 'drop dice showing exactly n' },
+        { operator: '>n', note: 'drop dice showing more than n' },
+        { operator: '>=n', note: 'drop dice showing n or more' },
+        { operator: '<n', note: 'drop dice showing less than n' },
+        { operator: '<=n', note: 'drop dice showing n or less' }
+      ],
+      examples: [
+        { notation: '4d6D{1}', description: 'Drop all 1s' },
+        { notation: '4d6D{>=5}', description: 'Drop all 5s and above' },
+        {
+          notation: '4d6D{<=2}',
+          description: 'Drop any result of 2 or lower'
+        },
+        { notation: '4d6D{1,6}', description: 'Drop multiple' }
+      ]
+    }
+  ]
 })
 
 export const dropModifier: ModifierDefinition<DropOptions> = {

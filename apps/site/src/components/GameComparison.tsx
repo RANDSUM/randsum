@@ -217,7 +217,7 @@ const styles = `
     display: none;
     overflow-x: auto;
     border: 1px solid var(--sl-color-gray-4);
-    border-radius: 8px;
+    border-radius: var(--radius, 5px);
     background: var(--sl-color-gray-6);
   }
 
@@ -308,7 +308,7 @@ const styles = `
   .gc-card {
     border: 1px solid var(--sl-color-gray-4);
     border-top: 3px solid;
-    border-radius: 8px;
+    border-radius: var(--radius, 5px);
     padding: 1.25rem;
     background: var(--sl-color-gray-6);
   }
@@ -373,7 +373,7 @@ const styles = `
     color: var(--sl-color-accent-high);
     background: var(--sl-color-gray-5);
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--radius, 5px);
     display: inline-block;
     word-break: break-all;
   }

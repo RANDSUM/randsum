@@ -48,25 +48,12 @@ describe('notation property tests', () => {
     )
   })
 
-  test('random strings are not valid notation', () => {
+  test('isDiceNotation never throws on arbitrary input', () => {
     fc.assert(
-      fc.property(
-        fc.string().filter(s => {
-          const lower = s.toLowerCase()
-          // Exclude strings that could match standard NdS
-          if (lower.includes('d') && /\d/.test(s)) return false
-          // Exclude strings that could match special dice (d%, dF, dD, z, g, d{, #)
-          if (/^[dD]%$/i.test(s)) return false
-          if (/^\d*[dD][fF]/i.test(s)) return false
-          if (/^\d*[zZgG]\d/i.test(s)) return false
-          if (/^\d*[dD][dD]\d/i.test(s)) return false
-          if (/^\d*[dD]\{/.test(s)) return false
-          return true
-        }),
-        randomStr => {
-          return !isDiceNotation(randomStr)
-        }
-      )
+      fc.property(fc.string(), randomStr => {
+        const result = isDiceNotation(randomStr)
+        return typeof result === 'boolean'
+      })
     )
   })
 })

@@ -1,7 +1,7 @@
 import { Box, Text } from 'ink'
 import { useEffect, useState } from 'react'
 import type { Token } from '@randsum/roller/tokenize'
-import { TOKEN_COLORS } from '../helpers/tokenColors'
+import { getTokenColor } from '../helpers/tokenColors'
 
 function useCursorBlink(active: boolean): boolean {
   const [visible, setVisible] = useState(true)
@@ -22,7 +22,7 @@ function useCursorBlink(active: boolean): boolean {
 
 interface Part {
   text: string
-  tokenType?: Token['type']
+  tokenType?: Token['category']
   isActive: boolean
   startPos: number
 }
@@ -47,7 +47,7 @@ function renderPart(
       </Text>
     )
   }
-  const color = part.tokenType !== undefined ? TOKEN_COLORS[part.tokenType] : undefined
+  const color = part.tokenType !== undefined ? getTokenColor(part.tokenType) : undefined
   if (color !== undefined) {
     return (
       <Text key={key} color={color} bold={part.isActive} inverse={part.isActive}>
@@ -103,7 +103,7 @@ export function NotationHighlight({
       }
       acc.parts.push({
         text: token.text,
-        tokenType: token.type,
+        tokenType: token.category,
         isActive: highlightAll || token === activeToken,
         startPos: token.start
       })

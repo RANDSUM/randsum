@@ -9,11 +9,7 @@ import { join } from 'node:path'
 
 const WORKTREE_ROOT = join(import.meta.dir, '../../..')
 
-const PUBLISHABLE_PACKAGES = [
-  'packages/roller',
-  'packages/games',
-  'packages/component-library'
-] as const
+const PUBLISHABLE_PACKAGES = ['packages/roller', 'packages/games'] as const
 
 function collectDistFiles(pkgPath: string): string[] {
   const distPath = join(WORKTREE_ROOT, pkgPath, 'dist')

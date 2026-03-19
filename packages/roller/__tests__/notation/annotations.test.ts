@@ -101,7 +101,7 @@ describe('Annotations/Labels ([text])', () => {
   describe('tokenize', () => {
     test('produces a label token', () => {
       const tokens = tokenize('2d6+3[fire]')
-      const labelToken = tokens.find(t => t.type === 'label')
+      const labelToken = tokens.find(t => t.category === 'Special')
 
       expect(labelToken).toBeDefined()
       expect(labelToken?.text).toBe('[fire]')
@@ -109,7 +109,7 @@ describe('Annotations/Labels ([text])', () => {
 
     test('produces multiple label tokens', () => {
       const tokens = tokenize('2d6[fire]+1d4[cold]')
-      const labelTokens = tokens.filter(t => t.type === 'label')
+      const labelTokens = tokens.filter(t => t.category === 'Special')
 
       expect(labelTokens).toHaveLength(2)
       expect(labelTokens[0]?.text).toBe('[fire]')

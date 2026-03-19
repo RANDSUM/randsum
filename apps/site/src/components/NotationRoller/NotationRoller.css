@@ -5,51 +5,56 @@
   width: 100%;
 }
 
-/* ===== Shell (the visible "input box") ===== */
+/* ===== Shell (wrapper — no border/background, just layout) ===== */
 .notation-roller-shell {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: #18181b;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius, 5px);
   box-sizing: border-box;
-  transition: border-color 0.15s ease;
   overflow: visible;
 }
 
-@media (prefers-color-scheme: light) {
-  .notation-roller-shell {
-    background: #f4f4f5;
-    border-color: rgba(0, 0, 0, 0.12);
-  }
-}
-[data-theme='light'] .notation-roller-shell {
-  background: #f4f4f5;
-  border-color: rgba(0, 0, 0, 0.12);
+/* ===== Main content row (the visible "input box") ===== */
+.notation-roller-row {
+  display: flex;
+  align-items: stretch;
+  min-height: 3rem;
+  background: #222228;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius, 5px);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
 }
 
-.notation-roller-shell--valid {
+@media (prefers-color-scheme: light) {
+  .notation-roller-row {
+    background: #eeeef0;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .notation-roller-row {
+  background: #eeeef0;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.notation-roller-shell--valid .notation-roller-row {
   border-color: #a855f7;
 }
 
 @media (prefers-color-scheme: light) {
-  .notation-roller-shell--valid {
-    border-color: #9333ea;
+  .notation-roller-shell--valid .notation-roller-row {
+    border-color: #7c3aed;
   }
 }
-[data-theme='light'] .notation-roller-shell--valid {
+[data-theme='light'] .notation-roller-shell--valid .notation-roller-row {
   border-color: #9333ea;
 }
 
-.notation-roller-shell--invalid {
+.notation-roller-shell--invalid .notation-roller-row {
   border-color: #f97583;
-}
-
-/* ===== Main content row ===== */
-.notation-roller-row {
-  position: relative;
-  min-height: 3rem;
 }
 
 /* ===== Input wrap (holds the textarea and overlay) ===== */
@@ -93,12 +98,9 @@
   overflow: hidden;
 }
 
-/* First-line spacer matches textarea text-indent so overlay tokens align */
+/* First-line spacer (no longer needed — Roll button moved to right column) */
 .nr-first-line-spacer {
-  display: inline-block;
-  width: 3.25rem;
-  height: 0;
-  flex-shrink: 0;
+  display: none;
 }
 
 /* ===== Token spans ===== */
@@ -116,178 +118,16 @@
   text-decoration-thickness: 1px;
 }
 
-/* Token color families — dark mode */
-.nr-token--core {
-  color: #d8b4fe;
-}
-.nr-token--dropHighest {
-  color: #b858b0;
-}
-.nr-token--dropLowest {
-  color: #f060d0;
-}
-.nr-token--dropCondition {
-  color: #d860c0;
-}
-.nr-token--keepHighest {
-  color: #ffab70;
-}
-.nr-token--keepLowest {
-  color: #d4845a;
-}
-.nr-token--explode {
-  color: #e5c07b;
-}
-.nr-token--compound {
-  color: #e08040;
-}
-.nr-token--penetrate {
-  color: #b8d858;
-}
-.nr-token--reroll {
-  color: #c792ea;
-}
-.nr-token--cap {
-  color: #89ddff;
-}
-.nr-token--replace {
-  color: #c3e88d;
-}
-.nr-token--unique {
-  color: #80cbc4;
-}
-.nr-token--countSuccesses {
-  color: #82aaff;
-}
-.nr-token--plus {
-  color: #98c379;
-}
-.nr-token--minus {
-  color: #6b9e52;
-}
-.nr-token--multiply {
-  color: #ffcb6b;
-}
-.nr-token--multiplyTotal {
-  color: #e8a93a;
-}
+/* Token colors are applied inline via NOTATION_DOCS[token.key]?.color */
+/* Only the unknown fallback needs a CSS rule */
 .nr-token--unknown {
   color: #f97583;
 }
 
-/* Token colors — light mode */
 @media (prefers-color-scheme: light) {
-  .nr-token--core {
-    color: #9333ea;
-  }
-  .nr-token--dropHighest {
-    color: #802090;
-  }
-  .nr-token--dropLowest {
-    color: #b028a8;
-  }
-  .nr-token--dropCondition {
-    color: #9020a0;
-  }
-  .nr-token--keepHighest {
-    color: #c2620a;
-  }
-  .nr-token--keepLowest {
-    color: #9e4e20;
-  }
-  .nr-token--explode {
-    color: #9a7c1a;
-  }
-  .nr-token--compound {
-    color: #c05818;
-  }
-  .nr-token--penetrate {
-    color: #5a8018;
-  }
-  .nr-token--reroll {
-    color: #7c4dab;
-  }
-  .nr-token--cap {
-    color: #0082a5;
-  }
-  .nr-token--replace {
-    color: #4a8020;
-  }
-  .nr-token--unique {
-    color: #1a7a72;
-  }
-  .nr-token--countSuccesses {
-    color: #3a60c8;
-  }
-  .nr-token--plus {
-    color: #3a7d20;
-  }
-  .nr-token--minus {
-    color: #2a6018;
-  }
-  .nr-token--multiply {
-    color: #8a6a00;
-  }
-  .nr-token--multiplyTotal {
-    color: #7a5800;
-  }
   .nr-token--unknown {
     color: #c0394a;
   }
-}
-[data-theme='light'] .nr-token--core {
-  color: #9333ea;
-}
-[data-theme='light'] .nr-token--dropHighest {
-  color: #802090;
-}
-[data-theme='light'] .nr-token--dropLowest {
-  color: #b028a8;
-}
-[data-theme='light'] .nr-token--dropCondition {
-  color: #9020a0;
-}
-[data-theme='light'] .nr-token--keepHighest {
-  color: #c2620a;
-}
-[data-theme='light'] .nr-token--keepLowest {
-  color: #9e4e20;
-}
-[data-theme='light'] .nr-token--explode {
-  color: #9a7c1a;
-}
-[data-theme='light'] .nr-token--compound {
-  color: #c05818;
-}
-[data-theme='light'] .nr-token--penetrate {
-  color: #5a8018;
-}
-[data-theme='light'] .nr-token--reroll {
-  color: #7c4dab;
-}
-[data-theme='light'] .nr-token--cap {
-  color: #0082a5;
-}
-[data-theme='light'] .nr-token--replace {
-  color: #4a8020;
-}
-[data-theme='light'] .nr-token--unique {
-  color: #1a7a72;
-}
-[data-theme='light'] .nr-token--countSuccesses {
-  color: #3a60c8;
-}
-[data-theme='light'] .nr-token--plus {
-  color: #3a7d20;
-}
-[data-theme='light'] .nr-token--minus {
-  color: #2a6018;
-}
-[data-theme='light'] .nr-token--multiply {
-  color: #8a6a00;
-}
-[data-theme='light'] .nr-token--multiplyTotal {
-  color: #7a5800;
 }
 [data-theme='light'] .nr-token--unknown {
   color: #c0394a;
@@ -297,20 +137,17 @@
 .nr-desc-chip {
   font-size: 0.7rem;
   padding: 0.05em 0.25em;
-  border-radius: 0.2rem;
+  border-radius: var(--radius, 5px);
   cursor: default;
   user-select: none;
   color: inherit;
-  transition:
-    color 0.15s ease,
-    background 0.15s ease;
+  transition: color 0.15s ease;
   line-height: 1.5;
 }
 
 .nr-desc-chip:hover,
 .nr-desc-chip--active {
   color: var(--chip-color, inherit);
-  background: var(--chip-bg, transparent);
 }
 
 .nr-desc-sep {
@@ -319,232 +156,13 @@
   user-select: none;
 }
 
-/* Chip colors + active backgrounds — dark mode */
-.nr-desc-chip--core {
-  --chip-color: #d8b4fe;
-  --chip-bg: rgba(216, 180, 254, 0.12);
-}
-.nr-desc-chip--dropHighest {
-  --chip-color: #b858b0;
-  --chip-bg: rgba(184, 88, 176, 0.12);
-}
-.nr-desc-chip--dropLowest {
-  --chip-color: #f060d0;
-  --chip-bg: rgba(240, 96, 208, 0.12);
-}
-.nr-desc-chip--dropCondition {
-  --chip-color: #d860c0;
-  --chip-bg: rgba(216, 96, 192, 0.12);
-}
-.nr-desc-chip--keepHighest {
-  --chip-color: #ffab70;
-  --chip-bg: rgba(255, 171, 112, 0.12);
-}
-.nr-desc-chip--keepLowest {
-  --chip-color: #d4845a;
-  --chip-bg: rgba(212, 132, 90, 0.12);
-}
-.nr-desc-chip--explode {
-  --chip-color: #e5c07b;
-  --chip-bg: rgba(229, 192, 123, 0.12);
-}
-.nr-desc-chip--compound {
-  --chip-color: #e08040;
-  --chip-bg: rgba(224, 128, 64, 0.12);
-}
-.nr-desc-chip--penetrate {
-  --chip-color: #b8d858;
-  --chip-bg: rgba(184, 216, 88, 0.12);
-}
-.nr-desc-chip--reroll {
-  --chip-color: #c792ea;
-  --chip-bg: rgba(199, 146, 234, 0.12);
-}
-.nr-desc-chip--cap {
-  --chip-color: #89ddff;
-  --chip-bg: rgba(137, 221, 255, 0.12);
-}
-.nr-desc-chip--replace {
-  --chip-color: #c3e88d;
-  --chip-bg: rgba(195, 232, 141, 0.12);
-}
-.nr-desc-chip--unique {
-  --chip-color: #80cbc4;
-  --chip-bg: rgba(128, 203, 196, 0.12);
-}
-.nr-desc-chip--countSuccesses {
-  --chip-color: #82aaff;
-  --chip-bg: rgba(130, 170, 255, 0.12);
-}
-.nr-desc-chip--plus {
-  --chip-color: #98c379;
-  --chip-bg: rgba(152, 195, 121, 0.12);
-}
-.nr-desc-chip--minus {
-  --chip-color: #6b9e52;
-  --chip-bg: rgba(107, 158, 82, 0.12);
-}
-.nr-desc-chip--multiply {
-  --chip-color: #ffcb6b;
-  --chip-bg: rgba(255, 203, 107, 0.12);
-}
-.nr-desc-chip--multiplyTotal {
-  --chip-color: #e8a93a;
-  --chip-bg: rgba(232, 169, 58, 0.12);
-}
-
-/* Chip colors — light mode */
-@media (prefers-color-scheme: light) {
-  .nr-desc-chip--core {
-    --chip-color: #9333ea;
-    --chip-bg: rgba(147, 51, 234, 0.08);
-  }
-  .nr-desc-chip--dropHighest {
-    --chip-color: #802090;
-    --chip-bg: rgba(128, 32, 144, 0.08);
-  }
-  .nr-desc-chip--dropLowest {
-    --chip-color: #b028a8;
-    --chip-bg: rgba(176, 40, 168, 0.08);
-  }
-  .nr-desc-chip--dropCondition {
-    --chip-color: #9020a0;
-    --chip-bg: rgba(144, 32, 160, 0.08);
-  }
-  .nr-desc-chip--keepHighest {
-    --chip-color: #c2620a;
-    --chip-bg: rgba(194, 98, 10, 0.08);
-  }
-  .nr-desc-chip--keepLowest {
-    --chip-color: #9e4e20;
-    --chip-bg: rgba(158, 78, 32, 0.08);
-  }
-  .nr-desc-chip--explode {
-    --chip-color: #9a7c1a;
-    --chip-bg: rgba(154, 124, 26, 0.08);
-  }
-  .nr-desc-chip--compound {
-    --chip-color: #c05818;
-    --chip-bg: rgba(192, 88, 24, 0.08);
-  }
-  .nr-desc-chip--penetrate {
-    --chip-color: #5a8018;
-    --chip-bg: rgba(90, 128, 24, 0.08);
-  }
-  .nr-desc-chip--reroll {
-    --chip-color: #7c4dab;
-    --chip-bg: rgba(124, 77, 171, 0.08);
-  }
-  .nr-desc-chip--cap {
-    --chip-color: #0082a5;
-    --chip-bg: rgba(0, 130, 165, 0.08);
-  }
-  .nr-desc-chip--replace {
-    --chip-color: #4a8020;
-    --chip-bg: rgba(74, 128, 32, 0.08);
-  }
-  .nr-desc-chip--unique {
-    --chip-color: #1a7a72;
-    --chip-bg: rgba(26, 122, 114, 0.08);
-  }
-  .nr-desc-chip--countSuccesses {
-    --chip-color: #3a60c8;
-    --chip-bg: rgba(58, 96, 200, 0.08);
-  }
-  .nr-desc-chip--plus {
-    --chip-color: #3a7d20;
-    --chip-bg: rgba(58, 125, 32, 0.08);
-  }
-  .nr-desc-chip--minus {
-    --chip-color: #2a6018;
-    --chip-bg: rgba(42, 96, 24, 0.08);
-  }
-  .nr-desc-chip--multiply {
-    --chip-color: #8a6a00;
-    --chip-bg: rgba(138, 106, 0, 0.08);
-  }
-  .nr-desc-chip--multiplyTotal {
-    --chip-color: #7a5800;
-    --chip-bg: rgba(122, 88, 0, 0.08);
-  }
-}
-[data-theme='light'] .nr-desc-chip--core {
-  --chip-color: #9333ea;
-  --chip-bg: rgba(147, 51, 234, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--dropHighest {
-  --chip-color: #802090;
-  --chip-bg: rgba(128, 32, 144, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--dropLowest {
-  --chip-color: #b028a8;
-  --chip-bg: rgba(176, 40, 168, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--dropCondition {
-  --chip-color: #9020a0;
-  --chip-bg: rgba(144, 32, 160, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--keepHighest {
-  --chip-color: #c2620a;
-  --chip-bg: rgba(194, 98, 10, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--keepLowest {
-  --chip-color: #9e4e20;
-  --chip-bg: rgba(158, 78, 32, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--explode {
-  --chip-color: #9a7c1a;
-  --chip-bg: rgba(154, 124, 26, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--compound {
-  --chip-color: #c05818;
-  --chip-bg: rgba(192, 88, 24, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--penetrate {
-  --chip-color: #5a8018;
-  --chip-bg: rgba(90, 128, 24, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--reroll {
-  --chip-color: #7c4dab;
-  --chip-bg: rgba(124, 77, 171, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--cap {
-  --chip-color: #0082a5;
-  --chip-bg: rgba(0, 130, 165, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--replace {
-  --chip-color: #4a8020;
-  --chip-bg: rgba(74, 128, 32, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--unique {
-  --chip-color: #1a7a72;
-  --chip-bg: rgba(26, 122, 114, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--countSuccesses {
-  --chip-color: #3a60c8;
-  --chip-bg: rgba(58, 96, 200, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--plus {
-  --chip-color: #3a7d20;
-  --chip-bg: rgba(58, 125, 32, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--minus {
-  --chip-color: #2a6018;
-  --chip-bg: rgba(42, 96, 24, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--multiply {
-  --chip-color: #8a6a00;
-  --chip-bg: rgba(138, 106, 0, 0.08);
-}
-[data-theme='light'] .nr-desc-chip--multiplyTotal {
-  --chip-color: #7a5800;
-  --chip-bg: rgba(122, 88, 0, 0.08);
-}
+/* Chip colors are applied inline via NOTATION_DOCS[token.key]?.color as --chip-color */
+/* --chip-bg is derived from --chip-color with alpha in the hover/active rules above */
 
 /* ===== Textarea input ===== */
 .notation-roller-input {
   padding: 0;
-  text-indent: 3.25rem;
+  text-indent: 0;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 1.25rem;
   line-height: 1.4;
@@ -570,23 +188,24 @@
 @media (prefers-color-scheme: light) {
   .notation-roller-input {
     color: #417e38;
-    caret-color: #9333ea;
+    caret-color: #7c3aed;
   }
 }
 [data-theme='light'] .notation-roller-input {
   color: #417e38;
-  caret-color: #9333ea;
+  caret-color: #7c3aed;
 }
 
-/* ===== Buttons area (top-right) ===== */
+/* ===== Buttons area (top-right, sticky) ===== */
 .notation-roller-buttons {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: flex-start;
-  gap: 0.25rem;
-  z-index: 2;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0.5rem;
+  align-self: flex-start;
 }
 
 /* ===== Roll button ===== */
@@ -594,15 +213,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 0.75em;
-  height: 2rem;
+  height: calc(1.25rem * 1.4);
+  padding: 0 0.6rem;
   background: #a855f7;
   border: none;
-  border-radius: 0.35rem;
+  border-radius: var(--radius, 5px);
   color: #fff;
-  font: inherit;
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-family: 'JetBrains Mono', var(--sl-font-mono), monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -627,26 +247,18 @@
 
 /* ===== Description row ===== */
 .notation-roller-desc-row {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.5rem 0.75rem 0.75rem;
-  min-height: 2rem;
+  border-top: none;
+  background: transparent;
+  padding: 0.35rem 0.5rem 0.5rem;
+  min-height: 0;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.7rem;
   line-height: 1.4;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   gap: 0.75rem;
   box-sizing: border-box;
-}
-
-@media (prefers-color-scheme: light) {
-  .notation-roller-desc-row {
-    border-top-color: rgba(0, 0, 0, 0.1);
-  }
-}
-[data-theme='light'] .notation-roller-desc-row {
-  border-top-color: rgba(0, 0, 0, 0.1);
 }
 
 .notation-roller-desc {
@@ -660,15 +272,24 @@
 
 @media (prefers-color-scheme: light) {
   .notation-roller-desc--hint {
-    color: rgba(31, 35, 40, 0.4);
+    color: rgba(31, 35, 40, 0.5);
   }
 }
 [data-theme='light'] .notation-roller-desc--hint {
-  color: rgba(31, 35, 40, 0.4);
+  color: rgba(31, 35, 40, 0.5);
 }
 
 .notation-roller-desc--valid {
   color: #9ca3af;
+}
+
+@media (prefers-color-scheme: light) {
+  .notation-roller-desc--valid {
+    color: #52525b;
+  }
+}
+[data-theme='light'] .notation-roller-desc--valid {
+  color: #52525b;
 }
 
 .notation-roller-desc--invalid {
@@ -684,20 +305,17 @@
   width: 66.67% !important;
   max-height: 200% !important;
   z-index: 50 !important;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: stretch !important;
+  display: block !important;
   padding: 0.5rem !important;
   padding-right: 1.5rem !important;
   background: #18181b !important;
-  border-radius: 0.5rem !important;
+  border-radius: var(--radius, 5px) !important;
   border: 1.5px solid #a855f7 !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace !important;
   font-size: 0.75rem !important;
   animation: nr-tooltip-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: auto !important;
-  gap: 0.5rem !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
 }
@@ -709,7 +327,7 @@
   z-index: 49 !important;
   backdrop-filter: blur(4px) !important;
   background: rgba(0, 0, 0, 0.3) !important;
-  border-radius: 0.5rem !important;
+  border-radius: var(--radius, 5px) !important;
   pointer-events: auto !important;
   animation: nr-backdrop-in 0.2s ease !important;
 }
@@ -759,18 +377,21 @@
   }
 }
 
-/* --- Tooltip layout: total (left) | right column (header + scrollable steps) --- */
+/* --- Tooltip layout: float total, text flows around it --- */
+.nr-tooltip-flow {
+  width: 100%;
+}
+
 .nr-tooltip-total-pane {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 2ch !important;
-  padding: 0.5rem 0.75rem !important;
-  border: 1px solid rgba(168, 85, 247, 0.4) !important;
-  border-radius: 0.375rem !important;
-  flex-shrink: 0 !important;
-  align-self: flex-start !important;
-  height: fit-content !important;
+  float: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2ch;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0.75rem 0.5rem 0;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: var(--radius, 5px);
 }
 
 .nr-tooltip-total-value {
@@ -779,15 +400,6 @@
   font-weight: 700;
   color: #ffffff;
   line-height: 1;
-}
-
-.nr-tooltip-right {
-  flex: 1 !important;
-  min-width: 0 !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding-left: 0.5rem !important;
-  padding-right: 1rem !important;
 }
 
 .nr-tooltip-header-line {
@@ -838,9 +450,9 @@
 
 @media (prefers-color-scheme: light) {
   .notation-roller-result-overlay {
-    background: #f4f4f5;
-    border-color: #9333ea;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    background: #eeeef0;
+    border-color: #7c3aed;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   }
   .notation-roller-result-backdrop {
     background: rgba(255, 255, 255, 0.3);
@@ -850,9 +462,9 @@
   }
 }
 [data-theme='light'] .notation-roller-result-overlay {
-  background: #f4f4f5;
+  background: #eeeef0;
   border-color: #9333ea;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 [data-theme='light'] .nr-tooltip-close:hover {
   color: #27272a;
@@ -904,7 +516,7 @@
 
 .nr-result-row:nth-child(even) {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 0.2rem;
+  border-radius: var(--radius, 5px);
 }
 
 @media (prefers-color-scheme: light) {
@@ -1040,7 +652,7 @@
   padding: 0;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.25rem;
+  border-radius: var(--radius, 5px);
   color: #52525b;
   cursor: pointer;
   transition:

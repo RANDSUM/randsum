@@ -32,8 +32,8 @@
   --pg-space-xl: 2rem;
 
   /* Radii */
-  --pg-radius-sm: 4px;
-  --pg-radius-md: 8px;
+  --pg-radius-sm: 5px;
+  --pg-radius-md: 5px;
 }
 
 @media (prefers-color-scheme: light) {

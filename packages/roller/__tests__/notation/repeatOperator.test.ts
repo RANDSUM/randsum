@@ -92,14 +92,14 @@ describe('Repeat Operator (xN)', () => {
   describe('tokenize', () => {
     test('tokenizes xN suffix as repeat token', () => {
       const tokens = tokenize('1d6x3')
-      const repeatToken = tokens.find(t => t.type === 'repeat')
+      const repeatToken = tokens.find(t => t.category === 'Special')
       expect(repeatToken).toBeDefined()
       expect(repeatToken?.text).toBe('x3')
     })
 
     test('tokenizes XN suffix (uppercase)', () => {
       const tokens = tokenize('2d8X4')
-      const repeatToken = tokens.find(t => t.type === 'repeat')
+      const repeatToken = tokens.find(t => t.category === 'Special')
       expect(repeatToken).toBeDefined()
       expect(repeatToken?.text).toBe('X4')
     })

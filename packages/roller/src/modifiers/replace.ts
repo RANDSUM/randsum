@@ -66,7 +66,38 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
         }
         return `Replace ${from} with ${to}`
       })
-    }
+    },
+
+    docs: [
+      {
+        key: 'V{..}',
+        category: 'Pool',
+        color: '#2dd4bf',
+        colorLight: '#0d9488',
+        title: 'Replace',
+        description: 'Replace dice showing specific values with a new value.',
+        displayBase: 'V{..}',
+        forms: [{ notation: 'V{...}', note: 'Comma-separate multiple rules' }],
+        comparisons: [
+          { operator: 'n=y', note: 'replace exact match n with y' },
+          { operator: '>n=y', note: 'replace anything above n with y' },
+          { operator: '>=n=y', note: 'replace n or higher with y' },
+          { operator: '<n=y', note: 'replace anything below n with y' },
+          { operator: '<=n=y', note: 'replace n or lower with y' }
+        ],
+        examples: [
+          { notation: '4d6V{1=2}', description: 'Replace 1s with 2' },
+          {
+            notation: '4d20V{>18=20}',
+            description: 'Cap 19s and 20s to 20'
+          },
+          {
+            notation: '4d6V{1=2,6=5}',
+            description: 'Replace multiple'
+          }
+        ]
+      }
+    ]
   })
 
 export const replaceModifier: ModifierDefinition<ReplaceOptions | ReplaceOptions[]> = {

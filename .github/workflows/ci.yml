@@ -20,7 +20,6 @@ jobs:
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
       cli: ${{ steps.filter.outputs.cli }}
-      component-library: ${{ steps.filter.outputs.component-library }}
       site: ${{ steps.filter.outputs.site }}
       skill: ${{ steps.filter.outputs.skill }}
     steps:
@@ -39,10 +38,6 @@ jobs:
             cli:
               - 'packages/roller/**'
               - 'apps/cli/**'
-              - '.github/workflows/ci.yml'
-            component-library:
-              - 'packages/roller/**'
-              - 'packages/component-library/**'
               - '.github/workflows/ci.yml'
             site:
               - 'packages/**'
@@ -123,30 +118,6 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/cli' check
 
-  component-library:
-    name: component-library
-    needs: changes
-    if: needs.changes.outputs.component-library == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
-      - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/component-library' check
-      - name: Check bundle size
-        run: bun run --filter '@randsum/component-library' size
-
   site:
     name: site
     needs: changes
@@ -187,30 +158,10 @@ jobs:
           bun-version: ${{ steps.bun-version.outputs.version }}
       - run: npx skills-ref validate skills/dice-rolling/SKILL.md
 
-  publish-preflight:
-    name: publish preflight
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
-      - name: Dry-run publish preflight
-        run: bun run publish -- --dry-run
-
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, component-library, site, skill, publish-preflight]
+    needs: [roller, games, cli, site, skill]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

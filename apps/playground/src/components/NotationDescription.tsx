@@ -55,7 +55,7 @@ export function NotationDescription({
         const sep =
           i === 0
             ? null
-            : token.type === 'core'
+            : token.category === 'Core'
               ? token.text.startsWith('-')
                 ? ' \u2212 '
                 : ' + '
@@ -66,7 +66,7 @@ export function NotationDescription({
             {sep !== null && <span style={{ opacity: 0.5, userSelect: 'none' }}>{sep}</span>}
             <span
               className={[
-                `pg-desc-chip pg-desc-chip--${token.type}`,
+                `pg-desc-chip pg-desc-chip--${token.category}`,
                 hoveredTokenIdx === tokenIdx ? 'pg-desc-chip--active' : '',
                 hoveredTokenIdx !== null && hoveredTokenIdx !== tokenIdx ? 'pg-desc-chip--dim' : ''
               ]

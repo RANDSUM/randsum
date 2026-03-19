@@ -19,8 +19,6 @@ RANDSUM is a monorepo with three layers: a dice engine (with built-in notation p
   |     +-- /pbta              (Powered by the Apocalypse)
   |     +-- /root-rpg          (Root RPG)
   |     +-- /salvageunion      (Salvage Union)
-  |
-  +-- @randsum/component-library (React components, peers on roller + react)
 ```
 
 Every package depends only on packages above it in the tree. Game packages never depend on each other.
@@ -52,11 +50,6 @@ Currently supported games: **Blades in the Dark**, **D&D 5e**, **Daggerheart**, 
 ### Tools
 
 <CardGrid>
-  <Card title="@randsum/component-library" icon="puzzle">
-    React component library providing interactive dice rolling UI elements. Depends on roller.
-
-    [Learn more](/tools/component-library/)
-  </Card>
   <Card title="Discord Bot" icon="discord">
     Roll dice directly in Discord with slash commands. Supports all game packages with rich embeds.
 
@@ -73,7 +66,6 @@ Pick the package that matches your use case:
 | **Roll dice in any JS/TS project** | `bun add @randsum/roller` | [Roller Getting Started](/roller/getting-started/) |
 | **Parse or validate notation strings** | `bun add @randsum/roller` | [Roller Getting Started](/roller/getting-started/) |
 | **Build a TTRPG app with game-specific mechanics** | `bun add @randsum/games` | [Games Getting Started](/games/getting-started/) |
-| **Add dice UI components to a React app** | `bun add @randsum/component-library` | [Component Library](/tools/component-library/) |
 
 Most developers should start with `@randsum/roller`. It includes the full notation parser and validator along with all rolling functionality and types, so most projects only need one install. Notation functions like `isDiceNotation`, `validateNotation`, `notationToOptions`, `optionsToNotation`, `tokenize`, and others are all exported directly from `@randsum/roller`.
 

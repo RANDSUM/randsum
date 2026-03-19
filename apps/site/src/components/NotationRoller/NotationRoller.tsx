@@ -1,12 +1,49 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore
+} from 'react'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import type { RollRecord } from '@randsum/roller'
-import { traceRoll, formatAsMath } from '@randsum/roller/trace'
+import { formatAsMath, traceRoll } from '@randsum/roller/trace'
 import { buildStackBlitzProject } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
+import { NOTATION_DOCS } from '@randsum/roller/docs'
 import './NotationRoller.css'
+
+function getTheme(): 'light' | 'dark' {
+  if (typeof document === 'undefined') return 'dark'
+  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
+}
+
+function subscribeTheme(callback: () => void): () => void {
+  const observer = new MutationObserver(callback)
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  })
+  return () => {
+    observer.disconnect()
+  }
+}
+
+function useTheme(): 'light' | 'dark' {
+  return useSyncExternalStore(subscribeTheme, getTheme, () => 'dark' as const)
+}
+
+function tokenColor(
+  doc: { readonly color: string; readonly colorLight: string } | undefined,
+  theme: 'light' | 'dark'
+): string | undefined {
+  if (!doc) return undefined
+  return theme === 'light' ? doc.colorLight : doc.color
+}
 
 type RollerState =
   | { status: 'idle' }
@@ -26,6 +63,7 @@ export function NotationRoller({
   readonly onChange?: (notation: string) => void
   readonly resetToken?: number
 } = {}): React.JSX.Element {
+  const theme = useTheme()
   const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
   const [state, setState] = useState<RollerState>({ status: 'idle' })
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -78,8 +116,14 @@ export function NotationRoller({
       const input = inputRef.current
       if (!input) return
       const rect = input.getBoundingClientRect()
-      const chWidth = input.offsetWidth / notation.length
-      const charIdx = Math.floor((e.clientX - rect.left) / chWidth)
+      const style = getComputedStyle(input)
+      const padLeft = parseFloat(style.paddingLeft) || 0
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      ctx.font = style.font
+      const chWidth = ctx.measureText('0').width
+      const charIdx = Math.floor((e.clientX - rect.left - padLeft) / chWidth)
       const tokenIdx = tokens.findIndex(t => charIdx >= t.start && charIdx < t.end)
       setHoveredTokenIdx(tokenIdx === -1 ? null : tokenIdx)
     },
@@ -123,12 +167,13 @@ export function NotationRoller({
                         key={i}
                         className={[
                           'nr-token',
-                          `nr-token--${token.type}`,
+                          `nr-token--${token.category}`,
                           hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'nr-token--dim' : '',
                           hoveredTokenIdx === i ? 'nr-token--active' : ''
                         ]
                           .filter(Boolean)
                           .join(' ')}
+                        style={{ color: tokenColor(NOTATION_DOCS[token.key], theme) }}
                       >
                         {token.text}
                       </span>
@@ -175,8 +220,10 @@ export function NotationRoller({
                   handleRoll()
                 }}
                 disabled={!isValid || state.status === 'rolling'}
+                aria-label="Roll the dice"
+                title="Roll the dice"
               >
-                {resultState ? 'Re-Roll' : 'Roll'}
+                ROLL
               </button>
             </div>
           </div>
@@ -199,7 +246,7 @@ export function NotationRoller({
                     const sep =
                       i === 0
                         ? null
-                        : token.type === 'core'
+                        : token.category === 'Core'
                           ? token.text.startsWith('-')
                             ? ' − '
                             : ' + '
@@ -210,11 +257,16 @@ export function NotationRoller({
                         <span
                           className={[
                             'nr-desc-chip',
-                            `nr-desc-chip--${token.type}`,
+                            `nr-desc-chip--${token.category}`,
                             hoveredTokenIdx === tokenIdx ? 'nr-desc-chip--active' : ''
                           ]
                             .filter(Boolean)
                             .join(' ')}
+                          style={
+                            {
+                              '--chip-color': tokenColor(NOTATION_DOCS[token.key], theme)
+                            } as React.CSSProperties
+                          }
                           onMouseEnter={() => {
                             setHoveredTokenIdx(tokenIdx)
                           }}
@@ -312,10 +364,10 @@ export function NotationRoller({
                 >
                   &times;
                 </button>
-                <div className="nr-tooltip-total-pane">
-                  <div className="nr-tooltip-total-value">{resultState.total}</div>
-                </div>
-                <div className="nr-tooltip-right">
+                <div className="nr-tooltip-flow">
+                  <div className="nr-tooltip-total-pane">
+                    <div className="nr-tooltip-total-value">{resultState.total}</div>
+                  </div>
                   <div className="nr-tooltip-header-line">
                     <span className="nr-tooltip-notation">{notation}</span>
                     <span className="nr-tooltip-sep">|</span>

@@ -44,29 +44,37 @@ import { roll } from "@randsum/roller/roll" // roll function only
 import { ValidationError } from "@randsum/roller/errors"
 import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
 import { tokenize } from "@randsum/roller/tokenize" // notation tokenizer, no roll engine
-import { MODIFIER_DOCS } from "@randsum/roller/docs"
-import type { ModifierDoc } from "@randsum/roller/docs"
+import { NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS } from "@randsum/roller/docs"
+import type { NotationDoc } from "@randsum/roller/docs"
+import type { ModifierDoc } from "@randsum/roller/docs" // deprecated alias for NotationDoc
 import { traceRoll, formatAsMath } from "@randsum/roller/trace"
 import type { RollTraceStep } from "@randsum/roller/trace"
 ```
 
 `@randsum/roller/tokenize` is isolated — it does not pull in the roll engine, random number generation, or modifier registry. Use this subpath in UI components and form validators that need notation parsing without the full engine.
 
-### `@randsum/roller/docs` — Static modifier documentation
+### `@randsum/roller/docs` — Static notation documentation
 
-Exports static documentation data describing every RANDSUM dice modifier. Pure static data with zero imports and zero side effects. Safe for any bundling context (browser, Node, edge).
+Exports static documentation data describing every RANDSUM dice type and modifier. Pure static data derived from the modifier and dice schema registries. Safe for any bundling context (browser, Node, edge).
 
 **Exports:**
 
-- `MODIFIER_DOCS: Readonly<Record<string, ModifierDoc>>` — documentation for every modifier, keyed by notation shorthand (e.g. `'L'`, `'H'`, `'!'`, `'R{..}'`, `'xDN'`, `'+'/'-'`)
-- `ModifierDoc` type
+- `NOTATION_DOCS: Readonly<Record<string, NotationDoc>>` — documentation for every dice type and modifier, keyed by stable notation shorthand (e.g. `'xDN'`, `'d%'`, `'dF'`, `'L'`, `'H'`, `'!'`, `'R{..}'`)
+- `MODIFIER_DOCS: Readonly<Record<string, NotationDoc>>` — modifier-only subset of `NOTATION_DOCS` (excludes dice types)
+- `DICE_DOCS: Readonly<Record<string, NotationDoc>>` — dice-type-only subset of `NOTATION_DOCS` (excludes modifiers)
+- `NotationDoc` type — primary type for all documentation entries
+- `ModifierDoc` type — **deprecated alias for `NotationDoc`**; removed in the next major version
 
-**`ModifierDoc` shape:**
+**`NotationDoc` shape:**
 
 ```typescript
-interface ModifierDoc {
+interface NotationDoc {
+  readonly key: string // stable record identifier (e.g. 'L', 'R{..}', 'xDN')
+  readonly category: string // display category (see categories below)
   readonly title: string
   readonly description: string
+  readonly color: string // dark-mode accent color (hex), e.g. '#fb7185'
+  readonly colorLight: string // light-mode accent color (hex), e.g. '#e11d48'
   readonly displayBase: string // primary notation symbol(s), e.g. 'L', 'R{..}'
   readonly displayOptional?: string // optional suffix, e.g. 'n', '{..}'
   readonly forms: readonly {
@@ -85,18 +93,40 @@ interface ModifierDoc {
 }
 ```
 
-Every entry in `MODIFIER_DOCS` has at least one `forms` entry and at least one `examples` entry. Keys match the modifier's canonical notation shorthand — use these keys as stable identifiers for display routing, filtering, and reference panels. Keys are case-sensitive; the underlying notation parser is case-insensitive, but `MODIFIER_DOCS` keys use uppercase shorthand to match the notation spec (`'L'` not `'l'`).
+**Category values:**
+
+Dice types use:
+
+- `'Core'` — the fundamental `xDN` notation
+- `'Special'` — special dice types (`d%`, `dF`, `zN`, `gN`, `DDN`, `d{...}`)
+
+Modifiers use:
+
+- `'Pool'` — dice pool manipulation (drop, keep, reroll, replace, cap, unique)
+- `'Explode'` — explosion mechanics (explode, compound, penetrate, explodeSequence)
+- `'Arithmetic'` — numeric operations (plus, minus, multiply, multiplyTotal, integerDivide, modulo)
+- `'Counting'` — count-based operations (count successes/failures)
+- `'Order'` — ordering operations (sort)
+- `'Special'` — special modifier behaviors (wildDie)
+
+Every entry in `NOTATION_DOCS` has at least one `forms` entry and at least one `examples` entry. The `key` field is the stable identifier for display routing, filtering, and reference panels — use it instead of the record key (they match, but `key` is explicit). Keys are case-sensitive; the underlying notation parser is case-insensitive, but doc keys use the canonical shorthand from the notation spec (`'L'` not `'l'`).
 
 **Example:**
 
 ```typescript
-import { MODIFIER_DOCS } from "@randsum/roller/docs"
+import { NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS } from "@randsum/roller/docs"
 
-const dropLowest = MODIFIER_DOCS["L"]
-// { title: 'Drop Lowest', description: '...', displayBase: 'L', ... }
+const dropLowest = NOTATION_DOCS["L"]
+// { key: 'L', category: 'Pool', title: 'Drop Lowest', ... }
 
+// All modifier docs
 Object.entries(MODIFIER_DOCS).forEach(([key, doc]) => {
-  console.log(key, doc.title) // 'L' → 'Drop Lowest', etc.
+  console.log(key, doc.category, doc.title) // 'L' → 'Pool' → 'Drop Lowest', etc.
+})
+
+// All dice type docs
+Object.entries(DICE_DOCS).forEach(([key, doc]) => {
+  console.log(key, doc.category, doc.title) // 'xDN' → 'Core' → 'Core Roll', etc.
 })
 ```
 
@@ -243,6 +273,8 @@ Post-co-location, isolation is maintained by ESM tree-shaking rather than direct
 
 **The invariant:** `<mod>Schema` exports must not reference any behavior-only symbols at module initialization time. If a schema export imports from a behavior export within the same file, the module-level reference defeats tree-shaking and leaks the behavior into the tokenize bundle.
 
+**Static display data (`docs`) does not violate the invariant.** Modifier schemas may carry a `docs` field containing static `NotationDoc` entries (string literals and plain objects). This is display metadata, not behavior — it contains no dice pool manipulation functions and has no runtime side effects. Because `docs` arrays are static content rather than behavior-only symbols, their presence in a `<mod>Schema` does not defeat tree-shaking and does not leak the roll engine into the tokenize bundle. The `size-limit` gate on `dist/tokenize.js` remains the authoritative check.
+
 To verify isolation after a modifier change:
 
 ```bash
@@ -270,6 +302,8 @@ All types are exported with `export type`:
 - `RandomFn`, `RollConfig` - Custom random function types
 - `CustomFacesNotation`, `DrawDieNotation`, `FateDieNotation`, `GeometricDieNotation`, `PercentileDie`, `ZeroBiasNotation` — special die notation types
 
+> `ModifierDoc` is a deprecated type alias for `NotationDoc`. Use `NotationDoc` in all new code; `ModifierDoc` will be removed in the next major version. `DiceSchema` is an internal type in `src/dice/index.ts` and is not exported from any public subpath.
+
 > Consumers who previously imported `RollResult` should use `RollerRollResult`. Consumers who previously imported `ValidValidationResult` or `InvalidValidationResult` should use `ValidationResult` (discriminated union on `valid: boolean`). Consumers who previously imported `RollParams`, `RequiredNumericRollParameters`, `ModifierLog`, `NumericRollBonus`, or `ModifierConfig` should use `ReturnType<typeof roll>` or construct the relevant types from the public surface.
 
 ## Internal Architecture
@@ -284,6 +318,12 @@ src/
     drop.ts          # exports dropSchema, dropModifier
     explode.ts       # exports explodeSchema, explodeModifier
     ...              # one file per modifier
+  dice/
+    index.ts         # RANDSUM_DICE_SCHEMAS — internal registry of DiceSchema entries
+                     # DiceSchema is an internal type (not exported); each entry carries a NotationDoc
+  docs/
+    modifierDocs.ts  # derives NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS from registries; exports NotationDoc
+    index.ts         # re-exports from modifierDocs.ts
   notation/          # Notation parsing, validation, tokenization
     comparison/      # Comparison notation ({<3,>18} syntax)
     definitions/     # NotationSchema definitions — schema-only, tokenize-safe source

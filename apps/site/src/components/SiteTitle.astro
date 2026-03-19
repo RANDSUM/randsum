@@ -4,7 +4,7 @@ import Default from '@astrojs/starlight/components/SiteTitle.astro'
 
 <div class="site-title-wrap">
   <Default><slot /></Default>
-  <span class="site-title-text" translate="no">RANDSUM</span>
+  <a href="/" class="site-title-link"><span class="site-title-text" translate="no">RANDSUM</span></a>
 </div>
 
 <style>
@@ -13,6 +13,10 @@ import Default from '@astrojs/starlight/components/SiteTitle.astro'
     align-items: center;
     gap: 0.5rem;
     min-width: 0;
+  }
+
+  .site-title-link {
+    text-decoration: none;
   }
 
   .site-title-text {

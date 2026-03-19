@@ -1,69 +1,72 @@
 import { validateNotation } from './validateNotation'
 
-export type TokenType =
-  | 'core'
-  | 'percentile' // d%
-  | 'fate' // dF, dF.1, dF.2
-  | 'zeroBias' // zN
-  | 'geometric' // gN
-  | 'draw' // DDN
-  | 'customFaces' // d{...}
-  | 'dropLowest' // L, LN
-  | 'dropHighest' // H, HN
-  | 'dropCondition' // D{...}
-  | 'keepHighest' // K, KN
-  | 'keepMiddle' // KM, KMN
-  | 'keepLowest' // kl, klN
-  | 'reroll' // R{...}, ro{...}
-  | 'explode' // !
-  | 'compound' // !!
-  | 'penetrate' // !p
-  | 'explodeSequence' // !s{...}, !i, !r
-  | 'cap' // C{...}
-  | 'replace' // V{...}
-  | 'unique' // U, U{...}
-  | 'count' // #{...}
-  | 'countSuccesses' // S{...}
-  | 'countFailures' // F{...}
-  | 'plus' // +N
-  | 'minus' // -N
-  | 'marginOfSuccess' // ms{N}
-  | 'sort' // s, sa, sd
-  | 'integerDivide' // //N
-  | 'modulo' // %N
-  | 'repeat' // xN
-  | 'wildDie' // W
-  | 'label' // [text]
-  | 'multiply' // *N
-  | 'multiplyTotal' // **N
+// TokenType kept for backwards compatibility; will be removed when S5/S6 complete
+export type TokenType = string
+
+export type TokenCategory =
+  | 'Core'
+  | 'Special'
+  | 'Pool'
+  | 'Explode'
+  | 'Arithmetic'
+  | 'Counting'
+  | 'Order'
   | 'unknown'
 
 export interface Token {
   readonly text: string
-  readonly type: TokenType
+  readonly key: string
+  readonly category: string
   readonly start: number
   readonly end: number
   readonly description: string
 }
 
 interface SpecialDieEntry {
-  readonly type: TokenType
+  readonly key: string
+  readonly category: TokenCategory
   readonly pattern: RegExp
   readonly describe: (text: string) => string
 }
 
 // Order matters — draw (DDN) before standard core (NdS), fate (dF) before standard, etc.
 const SPECIAL_DIE_PATTERNS: readonly SpecialDieEntry[] = [
-  { type: 'draw', pattern: /^(\d*)[Dd][Dd](\d+)/, describe: t => `Draw die: ${t}` },
-  { type: 'geometric', pattern: /^(\d*)[Gg](\d+)/, describe: t => `Geometric die: ${t}` },
-  { type: 'fate', pattern: /^(\d*)[Dd][Ff](?:\.([12]))?/, describe: t => `Fate die: ${t}` },
-  { type: 'zeroBias', pattern: /^(\d*)[Zz](\d+)/, describe: t => `Zero-bias die: ${t}` },
-  { type: 'customFaces', pattern: /^(\d*)[Dd]\{([^}]+)\}/, describe: t => `Custom faces: ${t}` },
-  { type: 'percentile', pattern: /^[Dd]%/, describe: () => 'Percentile die (d100)' }
+  {
+    key: 'DDN',
+    category: 'Special',
+    pattern: /^(\d*)[Dd][Dd](\d+)/,
+    describe: t => `Draw die: ${t}`
+  },
+  {
+    key: 'gN',
+    category: 'Special',
+    pattern: /^(\d*)[Gg](\d+)/,
+    describe: t => `Geometric die: ${t}`
+  },
+  {
+    key: 'dF',
+    category: 'Special',
+    pattern: /^(\d*)[Dd][Ff](?:\.([12]))?/,
+    describe: t => `Fate die: ${t}`
+  },
+  {
+    key: 'zN',
+    category: 'Special',
+    pattern: /^(\d*)[Zz](\d+)/,
+    describe: t => `Zero-bias die: ${t}`
+  },
+  {
+    key: 'd{...}',
+    category: 'Special',
+    pattern: /^(\d*)[Dd]\{([^}]+)\}/,
+    describe: t => `Custom faces: ${t}`
+  },
+  { key: 'd%', category: 'Special', pattern: /^[Dd]%/, describe: () => 'Percentile die (d100)' }
 ]
 
 interface ModifierEntry {
-  readonly type: Exclude<TokenType, 'core' | 'unknown'>
+  readonly key: string
+  readonly category: TokenCategory
   readonly pattern: RegExp
 }
 
@@ -89,59 +92,66 @@ function describeModifierToken(tokenText: string): string {
 // Order matters — more specific patterns must come before ambiguous ones
 const MODIFIERS: readonly ModifierEntry[] = [
   // // before other patterns to avoid partial match
-  { type: 'integerDivide', pattern: /^\/\/\d+/ },
+  { key: '//', category: 'Arithmetic', pattern: /^\/\/\d+/ },
   // %N (modulo)
-  { type: 'modulo', pattern: /^%\d+/ },
+  { key: '%', category: 'Arithmetic', pattern: /^%\d+/ },
   // ** before * to avoid partial match
-  { type: 'multiplyTotal', pattern: /^\*\*\d+/ },
-  { type: 'multiply', pattern: /^\*\d+/ },
+  { key: '**', category: 'Arithmetic', pattern: /^\*\*\d+/ },
+  { key: '*', category: 'Arithmetic', pattern: /^\*\d+/ },
   // !! and !p and !s{} and !i and !r before ! to avoid partial match
-  { type: 'compound', pattern: /^!!\d*/ },
-  { type: 'penetrate', pattern: /^!p\d*/i },
-  { type: 'explodeSequence', pattern: /^![sS]\{[\d,]+\}/ },
-  { type: 'explodeSequence', pattern: /^![iI]/ },
-  { type: 'explodeSequence', pattern: /^![rR]/ },
-  { type: 'explode', pattern: /^!/ },
+  { key: '!!', category: 'Explode', pattern: /^!!\d*/ },
+  { key: '!p', category: 'Explode', pattern: /^!p\d*/i },
+  { key: '!s{..}', category: 'Explode', pattern: /^![sS]\{[\d,]+\}/ },
+  { key: '!i', category: 'Explode', pattern: /^![iI]/ },
+  { key: '!r', category: 'Explode', pattern: /^![rR]/ },
+  { key: '!', category: 'Explode', pattern: /^!/ },
   // Drop variants
-  { type: 'dropHighest', pattern: /^[Hh]\d*/ },
-  { type: 'dropLowest', pattern: /^[Ll]\d*/ },
-  { type: 'dropCondition', pattern: /^[Dd]\{[^}]+\}/ },
-  // Keep: KM before kl before K to avoid K matching first char of KM/kl
-  { type: 'keepMiddle', pattern: /^[Kk][Mm]\d*/ },
-  { type: 'keepLowest', pattern: /^[Kk][Ll]\d*/ },
-  { type: 'keepHighest', pattern: /^[Kk]\d*/ },
+  { key: 'H', category: 'Pool', pattern: /^[Hh]\d*/ },
+  { key: 'L', category: 'Pool', pattern: /^[Ll]\d*/ },
+  { key: 'D{..}', category: 'Pool', pattern: /^[Dd]\{[^}]+\}/ },
+  // Keep: KM before KL before K to avoid K matching first char of KM/KL
+  { key: 'KM', category: 'Pool', pattern: /^[Kk][Mm]\d*/ },
+  { key: 'KL', category: 'Pool', pattern: /^[Kk][Ll]\d*/ },
+  { key: 'K', category: 'Pool', pattern: /^[Kk]\d*/ },
   // Brace-based modifiers — closing } required; partial input stays unknown
   // ro{} (reroll once) before R{} to avoid R matching first char of ro
-  { type: 'reroll', pattern: /^[Rr][Oo]\{[^}]+\}/ },
-  { type: 'reroll', pattern: /^[Rr]\{[^}]+\}\d*/ },
-  { type: 'cap', pattern: /^[Cc]\{[^}]+\}/ },
-  { type: 'replace', pattern: /^[Vv]\{[^}]+\}/ },
-  { type: 'unique', pattern: /^[Uu](?:\{[^}]+\})?/ },
+  { key: 'ro{..}', category: 'Pool', pattern: /^[Rr][Oo]\{[^}]+\}/ },
+  { key: 'R{..}', category: 'Pool', pattern: /^[Rr]\{[^}]+\}\d*/ },
+  { key: 'C{..}', category: 'Pool', pattern: /^[Cc]\{[^}]+\}/ },
+  { key: 'V{..}', category: 'Pool', pattern: /^[Vv]\{[^}]+\}/ },
+  { key: 'U', category: 'Pool', pattern: /^[Uu](?:\{[^}]+\})?/ },
   // Wild Die — must come before margin of success and sort
-  { type: 'wildDie', pattern: /^[Ww](?![{])/ },
+  { key: 'W', category: 'Special', pattern: /^[Ww](?![{])/ },
   // Count — must come before countSuccesses and sort
-  { type: 'count', pattern: /^#\{[^}]+\}/ },
+  { key: '#{..}', category: 'Counting', pattern: /^#\{[^}]+\}/ },
   // Margin of success — must come before countSuccesses and sort
-  { type: 'marginOfSuccess', pattern: /^[Mm][Ss]\{\d+\}/ },
-  { type: 'countSuccesses', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
-  { type: 'countFailures', pattern: /^[Ff]\{\d+\}/ },
+  { key: 'ms{..}', category: 'Counting', pattern: /^[Mm][Ss]\{\d+\}/ },
+  { key: 'S{..}', category: 'Counting', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
+  { key: 'F{..}', category: 'Counting', pattern: /^[Ff]\{\d+\}/ },
   // Sort — must come after countSuccesses (S{N}) to avoid conflicts
-  { type: 'sort', pattern: /^[Ss](?:[Aa]|[Dd])?(?![{\d])/ },
+  { key: 'sort', category: 'Order', pattern: /^[Ss](?:[Aa]|[Dd])?(?![{\d])/ },
   // Arithmetic — only meaningful after a core token
-  { type: 'plus', pattern: /^\+\d+/ },
-  { type: 'minus', pattern: /^-\d+/ },
+  { key: '+', category: 'Arithmetic', pattern: /^\+\d+/ },
+  { key: '-', category: 'Arithmetic', pattern: /^-\d+/ },
   // Repeat operator — xN at the end (N >= 1)
-  { type: 'repeat', pattern: /^[Xx][1-9]\d*/ },
+  { key: 'xN', category: 'Special', pattern: /^[Xx][1-9]\d*/ },
   // Annotation/label — metadata, does not affect mechanics
-  { type: 'label', pattern: /^\[[^\]]+\]/ }
+  { key: 'label', category: 'Special', pattern: /^\[[^\]]+\]/ }
 ]
 
 function appendUnknown(tokens: Token[], char: string, cursor: number): void {
   const last = tokens[tokens.length - 1]
-  if (last?.type === 'unknown') {
+  if (last?.category === 'unknown') {
     tokens[tokens.length - 1] = { ...last, text: last.text + char, end: cursor + 1 }
   } else {
-    tokens.push({ text: char, type: 'unknown', start: cursor, end: cursor + 1, description: '' })
+    tokens.push({
+      text: char,
+      key: 'unknown',
+      category: 'unknown',
+      start: cursor,
+      end: cursor + 1,
+      description: ''
+    })
   }
 }
 
@@ -157,7 +167,8 @@ function parseFrom(notation: string, cursor: number, tokens: Token[]): readonly 
     const text = newPoolMatch[0]
     tokens.push({
       text,
-      type: 'core',
+      key: 'xDN',
+      category: 'Core',
       start: cursor,
       end: cursor + text.length,
       description: describeCoreToken(text)
@@ -171,7 +182,8 @@ function parseFrom(notation: string, cursor: number, tokens: Token[]): readonly 
       const text = m[0]
       tokens.push({
         text,
-        type: entry.type,
+        key: entry.key,
+        category: entry.category,
         start: cursor,
         end: cursor + text.length,
         description: describeModifierToken(text)
@@ -196,7 +208,8 @@ export function tokenize(notation: string): readonly Token[] {
       const text = m[0]
       tokens.push({
         text,
-        type: entry.type,
+        key: entry.key,
+        category: entry.category,
         start: 0,
         end: text.length,
         description: entry.describe(text)
@@ -211,7 +224,8 @@ export function tokenize(notation: string): readonly Token[] {
     const text = coreMatch[0]
     tokens.push({
       text,
-      type: 'core',
+      key: 'xDN',
+      category: 'Core',
       start: 0,
       end: text.length,
       description: describeCoreToken(text)

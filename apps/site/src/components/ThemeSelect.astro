@@ -1,0 +1,162 @@
+---
+---
+
+<starlight-theme-select>
+  <button
+    class="theme-toggle"
+    aria-label="Toggle dark/light mode"
+    type="button"
+  >
+    <svg class="theme-icon theme-icon--sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    </svg>
+    <span class="theme-toggle-track">
+      <span class="theme-toggle-thumb"></span>
+    </span>
+    <svg class="theme-icon theme-icon--moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  </button>
+</starlight-theme-select>
+
+{/* Inlined to avoid FOUC. Uses global scope from ThemeProvider.astro */}
+<script is:inline>
+  StarlightThemeProvider.updatePickers();
+</script>
+
+<script>
+  declare const StarlightThemeProvider: { updatePickers(theme?: string): void };
+
+  type Theme = 'auto' | 'dark' | 'light';
+
+  const storageKey = 'starlight-theme';
+
+  const parseTheme = (theme: unknown): Theme =>
+    theme === 'auto' || theme === 'dark' || theme === 'light' ? theme : 'auto';
+
+  const loadTheme = (): Theme =>
+    parseTheme(typeof localStorage !== 'undefined' && localStorage.getItem(storageKey));
+
+  function storeTheme(theme: Theme): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(storageKey, theme === 'light' || theme === 'dark' ? theme : '');
+    }
+  }
+
+  const getPreferredColorScheme = (): Theme =>
+    matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+
+  function getEffectiveTheme(theme: Theme): 'dark' | 'light' {
+    return theme === 'auto' ? getPreferredColorScheme() as 'dark' | 'light' : theme;
+  }
+
+  function onThemeChange(theme: Theme): void {
+    StarlightThemeProvider.updatePickers(theme);
+    const effective = getEffectiveTheme(theme);
+    document.documentElement.dataset['theme'] = effective;
+    storeTheme(theme);
+    updateToggleState(effective);
+  }
+
+  function updateToggleState(effective: 'dark' | 'light'): void {
+    document.querySelectorAll<HTMLElement>('.theme-toggle').forEach(toggle => {
+      toggle.setAttribute('aria-checked', String(effective === 'dark'));
+      toggle.dataset['theme'] = effective;
+    });
+  }
+
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+    if (loadTheme() === 'auto') onThemeChange('auto');
+  });
+
+  class StarlightThemeSelect extends HTMLElement {
+    constructor() {
+      super();
+      const stored = loadTheme();
+      onThemeChange(stored);
+
+      this.querySelector('.theme-toggle')?.addEventListener('click', () => {
+        const current = getEffectiveTheme(loadTheme());
+        const next: Theme = current === 'dark' ? 'light' : 'dark';
+        onThemeChange(next);
+      });
+    }
+  }
+  customElements.define('starlight-theme-select', StarlightThemeSelect);
+</script>
+
+<style>
+  .theme-toggle {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--sl-color-gray-3);
+    transition: color 0.15s ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--sl-color-gray-1);
+  }
+
+  .theme-icon {
+    flex-shrink: 0;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+  }
+
+  .theme-toggle[data-theme='light'] .theme-icon--sun {
+    opacity: 1;
+    color: var(--sl-color-accent);
+  }
+
+  .theme-toggle[data-theme='dark'] .theme-icon--moon {
+    opacity: 1;
+    color: var(--sl-color-accent);
+  }
+
+  .theme-toggle-track {
+    position: relative;
+    width: 2rem;
+    height: 1.1rem;
+    background: var(--sl-color-gray-5);
+    border-radius: 999px;
+    border: 1px solid var(--sl-color-gray-4);
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .theme-toggle:hover .theme-toggle-track {
+    border-color: var(--sl-color-gray-3);
+  }
+
+  .theme-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 0.7rem;
+    height: 0.7rem;
+    background: var(--sl-color-accent);
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+  }
+
+  .theme-toggle[data-theme='light'] .theme-toggle-thumb {
+    transform: translateX(0);
+  }
+
+  .theme-toggle[data-theme='dark'] .theme-toggle-thumb {
+    transform: translateX(0.8rem);
+  }
+</style>

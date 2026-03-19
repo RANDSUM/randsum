@@ -23,9 +23,8 @@ All game systems are available via `@randsum/games` with subpath exports (`bun a
 
 ## Tools
 
-- [Component Library](https://randsum.dev/tools/component-library/): `@randsum/component-library` — React dice roller UI components
 - [Discord Bot](https://randsum.dev/tools/discord-bot/): slash commands for all RANDSUM packages
-- [Claude Code Skill](https://randsum.dev/tools/claude-code-skill/): prompt file for teaching RANDSUM dice notation to any LLM
+- [Claude Skills](https://randsum.dev/tools/claude-code-skill/): three skills for dice rolling, probability analysis, and game spec authoring
 
 ## Documentation
 

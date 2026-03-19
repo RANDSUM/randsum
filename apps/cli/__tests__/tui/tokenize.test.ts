@@ -9,22 +9,25 @@ describe('tokenize', () => {
   test('basic notation produces core token', () => {
     const tokens = tokenize('4d6')
     expect(tokens).toHaveLength(1)
-    expect(tokens[0]?.type).toBe('core')
+    expect(tokens[0]?.category).toBe('Core')
+    expect(tokens[0]?.key).toBe('xDN')
     expect(tokens[0]?.text).toBe('4d6')
   })
 
   test('notation with drop lowest produces two tokens', () => {
     const tokens = tokenize('4d6L')
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]?.type).toBe('core')
-    expect(tokens[1]?.type).toBe('dropLowest')
+    expect(tokens[0]?.category).toBe('Core')
+    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.key).toBe('L')
   })
 
   test('notation with plus produces arithmetic token', () => {
     const tokens = tokenize('1d20+5')
     expect(tokens).toHaveLength(2)
-    expect(tokens[0]?.type).toBe('core')
-    expect(tokens[1]?.type).toBe('plus')
+    expect(tokens[0]?.category).toBe('Core')
+    expect(tokens[1]?.category).toBe('Arithmetic')
+    expect(tokens[1]?.key).toBe('+')
   })
 
   test('each token has start/end positions', () => {
@@ -38,7 +41,7 @@ describe('tokenize', () => {
   test('valid tokens have descriptions', () => {
     const tokens = tokenize('4d6L')
     for (const token of tokens) {
-      if (token.type !== 'unknown') {
+      if (token.category !== 'unknown') {
         expect(token.description.length).toBeGreaterThan(0)
       }
     }

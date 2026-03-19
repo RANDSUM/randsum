@@ -1,13 +1,10 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config'
-import { fileURLToPath } from 'url'
-import { dirname, resolve } from 'path'
 
 import starlight from '@astrojs/starlight'
+import starlightSidebarTopics from 'starlight-sidebar-topics'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
@@ -62,96 +59,98 @@ export default defineConfig({
       ],
       components: {
         Header: './src/components/Header.astro',
-        SiteTitle: './src/components/SiteTitle.astro'
+        SiteTitle: './src/components/SiteTitle.astro',
+        ThemeSelect: './src/components/ThemeSelect.astro',
+        PageTitle: './src/components/PageTitle.astro'
       },
-      customCss: ['./src/styles/custom.css'],
-      sidebar: [
-        {
-          label: 'RANDSUM',
-          items: [
-            { label: 'Introduction', slug: 'welcome/introduction' },
-            { label: 'Ecosystem Overview', slug: 'welcome/ecosystem-overview' }
-          ]
-        },
-        {
-          label: 'Roller',
-          items: [
-            { label: 'Introduction', slug: 'roller/introduction' },
-            { label: 'Getting Started', slug: 'roller/getting-started' },
-            { label: 'Roll Options', slug: 'roller/roll-options' },
-            { label: 'Modifiers', slug: 'roller/modifiers' },
-            { label: 'Error Handling', slug: 'roller/error-handling' },
-            { label: 'API Reference', slug: 'roller/api-reference' }
-          ]
-        },
-        {
-          label: 'Notation',
-          items: [
-            { label: 'Introduction', slug: 'notation/introduction' },
-            { label: 'Getting Started', slug: 'notation/getting-started' },
-            {
-              label: 'Randsum Dice Notation Spec',
-              slug: 'notation/randsum-dice-notation'
-            },
-            { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
-            { label: 'API Reference', slug: 'notation/api-reference' }
-          ]
-        },
-        {
-          label: 'Games',
-          items: [
-            { label: 'Introduction', slug: 'games/introduction' },
-            { label: 'Getting Started', slug: 'games/getting-started' },
-            {
-              label: 'Schema',
-              items: [
-                { label: 'Overview', slug: 'games/schema/overview' },
-                { label: 'Schema Reference', slug: 'games/schema/reference' },
-                { label: 'Using loadSpec()', slug: 'games/schema/using-loadspec' },
-                {
-                  label: 'Contributing a Game',
-                  slug: 'games/schema/contributing-a-game'
-                }
-              ]
-            },
-            {
-              label: 'Game Systems',
-              items: [
-                { label: 'Blades in the Dark', slug: 'games/blades' },
-                { label: 'D&D 5e', slug: 'games/fifth' },
-                { label: 'Daggerheart', slug: 'games/daggerheart' },
-                { label: 'Powered by the Apocalypse', slug: 'games/pbta' },
-                { label: 'Root RPG', slug: 'games/root-rpg' },
-                { label: 'Salvage Union', slug: 'games/salvageunion' }
-              ]
-            }
-          ]
-        },
-        {
-          label: 'Tools',
-          items: [
-            { label: 'Playground', link: 'https://playground.randsum.dev' },
-            { label: 'Component Library', slug: 'tools/component-library' },
-            { label: 'Display Utils', slug: 'tools/display-utils' },
-            { label: 'Discord Bot', slug: 'tools/discord-bot' },
-            { label: 'Claude Code Skill', slug: 'tools/claude-code-skill' }
-          ]
-        }
-      ]
+      plugins: [
+        starlightSidebarTopics([
+          {
+            label: 'Start',
+            link: '/welcome/introduction/',
+            icon: 'open-book',
+            items: [
+              { label: 'Introduction', slug: 'welcome/introduction' },
+              { label: 'Ecosystem Overview', slug: 'welcome/ecosystem-overview' }
+            ]
+          },
+          {
+            label: 'Roller',
+            link: '/roller/introduction/',
+            icon: 'random',
+            items: [
+              { label: 'Introduction', slug: 'roller/introduction' },
+              { label: 'Getting Started', slug: 'roller/getting-started' },
+              { label: 'Roll Options', slug: 'roller/roll-options' },
+              { label: 'Modifiers', slug: 'roller/modifiers' },
+              { label: 'Error Handling', slug: 'roller/error-handling' },
+              { label: 'API Reference', slug: 'roller/api-reference' }
+            ]
+          },
+          {
+            label: 'Notation',
+            link: '/notation/introduction/',
+            icon: 'document',
+            items: [
+              { label: 'Introduction', slug: 'notation/introduction' },
+              { label: 'Getting Started', slug: 'notation/getting-started' },
+              {
+                label: 'Randsum Dice Notation Spec',
+                slug: 'notation/randsum-dice-notation'
+              },
+              { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
+              { label: 'API Reference', slug: 'notation/api-reference' }
+            ]
+          },
+          {
+            label: 'Games',
+            link: '/games/introduction/',
+            icon: 'puzzle',
+            items: [
+              { label: 'Introduction', slug: 'games/introduction' },
+              { label: 'Getting Started', slug: 'games/getting-started' },
+              {
+                label: 'Schema',
+                items: [
+                  { label: 'Overview', slug: 'games/schema/overview' },
+                  { label: 'Schema Reference', slug: 'games/schema/reference' },
+                  { label: 'Using loadSpec()', slug: 'games/schema/using-loadspec' },
+                  {
+                    label: 'Contributing a Game',
+                    slug: 'games/schema/contributing-a-game'
+                  }
+                ]
+              },
+              {
+                label: 'Game Systems',
+                items: [
+                  { label: 'Blades in the Dark', slug: 'games/blades' },
+                  { label: 'D&D 5e', slug: 'games/fifth' },
+                  { label: 'Daggerheart', slug: 'games/daggerheart' },
+                  { label: 'Powered by the Apocalypse', slug: 'games/pbta' },
+                  { label: 'Root RPG', slug: 'games/root-rpg' },
+                  { label: 'Salvage Union', slug: 'games/salvageunion' }
+                ]
+              }
+            ]
+          },
+          {
+            label: 'Tools',
+            link: '/tools/discord-bot/',
+            icon: 'setting',
+            items: [
+              { label: 'Playground', link: 'https://playground.randsum.dev' },
+              { label: 'Discord Bot', slug: 'tools/discord-bot' },
+              { label: 'Claude Skills', slug: 'tools/claude-code-skill' }
+            ]
+          }
+        ])
+      ],
+      customCss: ['./src/styles/custom.css']
     }),
     react()
   ],
   prefetch: false,
   output: 'static',
-  adapter: isDev ? undefined : netlify(),
-  vite: {
-    resolve: {
-      alias: {
-        '@randsum/component-library': resolve(
-          __dirname,
-          '../../packages/component-library/src/index.ts'
-        )
-      }
-    }
-  }
+  adapter: isDev ? undefined : netlify()
 })

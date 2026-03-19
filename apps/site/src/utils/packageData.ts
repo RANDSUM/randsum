@@ -21,6 +21,17 @@ export const corePackages: PackageInfo[] = [
     version: '3.0.0',
     category: 'core',
     color: '#f8fafc' // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
+  },
+  {
+    id: 'games',
+    name: 'games',
+    displayName: 'Games',
+    description: 'Pre-built dice resolvers for popular tabletop RPGs. One package, six systems.',
+    npmPackage: '@randsum/games',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
+    version: '1.0.0',
+    category: 'core',
+    color: '#a855f7' // purple accent
   }
 ]
 
@@ -29,7 +40,8 @@ export const gamePackages: PackageInfo[] = [
     id: 'blades',
     name: 'blades',
     displayName: 'Blades in the Dark',
-    description: 'Action roll resolution for Blades in the Dark.',
+    description:
+      'Roll action dice. Resolve critical, success, partial, or failure for Blades in the Dark.',
     npmPackage: '@randsum/games/blades',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
@@ -40,7 +52,8 @@ export const gamePackages: PackageInfo[] = [
     id: 'daggerheart',
     name: 'daggerheart',
     displayName: 'Daggerheart',
-    description: 'Hope and fear roll resolution for Daggerheart.',
+    description:
+      'Roll hope and fear dice, see which dominates, detect critical hope for Daggerheart.',
     npmPackage: '@randsum/games/daggerheart',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
@@ -62,7 +75,7 @@ export const gamePackages: PackageInfo[] = [
     id: 'root-rpg',
     name: 'root-rpg',
     displayName: 'Root RPG',
-    description: '2d6 roll resolution for Root RPG.',
+    description: 'Roll 2d6+bonus. Strong hit, weak hit, or miss for Root: The RPG.',
     npmPackage: '@randsum/games/root-rpg',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
@@ -84,7 +97,8 @@ export const gamePackages: PackageInfo[] = [
     id: 'pbta',
     name: 'pbta',
     displayName: 'Powered by the Apocalypse',
-    description: '2d6 roll resolution for any PbtA system.',
+    description:
+      'Roll 2d6+stat. Miss, weak hit, or strong hit for any Powered by the Apocalypse game.',
     npmPackage: '@randsum/games/pbta',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
     version: '3.0.0',
@@ -95,23 +109,13 @@ export const gamePackages: PackageInfo[] = [
 
 export const toolPackages: PackageInfo[] = [
   {
-    id: 'component-library',
-    name: 'component-library',
-    displayName: 'Component Library',
-    description: 'React components for embedding dice rollers in any web app.',
-    npmPackage: '@randsum/component-library',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/component-library',
-    version: '3.0.0',
-    category: 'tool',
-    color: '#38bdf8' // sky-400 — React/UI association
-  },
-  {
     id: 'skill',
     name: 'skill',
-    displayName: 'LLM Skill',
-    description: 'Prompt file for teaching RANDSUM dice notation to any LLM.',
+    displayName: 'Claude Skills',
+    description:
+      'Three skills that give AI agents dice rolling, probability analysis, and game spec authoring.',
     npmPackage: 'skills/dice-rolling/SKILL.md',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills/dice-rolling',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills',
     category: 'tool',
     color: '#06b6d4' // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
   },
@@ -125,5 +129,16 @@ export const toolPackages: PackageInfo[] = [
     version: '1.0.0',
     category: 'tool',
     color: '#5865F2' // Discord purple
+  },
+  {
+    id: 'cli',
+    name: 'cli',
+    displayName: 'CLI',
+    description:
+      'Command-line interface for rolling dice and exploring notation from your terminal.',
+    npmPackage: '@randsum/cli',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/cli',
+    category: 'tool',
+    color: '#84cc16' // lime-500 — terminal/dev feel
   }
 ]

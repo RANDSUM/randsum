@@ -117,7 +117,7 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + f
 - All game logic lives in the `.randsum.json` spec. Never hand-write game logic in generated `.ts` files.
 - Generated files are checked in but must not be manually edited. Always regenerate via codegen.
 - Games depend only on `@randsum/roller`. Games never depend on each other.
-- Bundle size limit: 8 KB per game (300 KB for salvageunion due to baked-in tables).
+- Bundle size limit: 15 KB per game (35 KB for salvageunion due to baked-in tables).
 - Remote data (e.g., Salvage Union tables) is fetched at codegen time and baked into generated code. Zero runtime network calls.
 
 See the root `CLAUDE.md` for monorepo-wide conventions (TypeScript style, testing framework, build output).

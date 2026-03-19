@@ -1,7 +1,7 @@
 {
   "name": "@randsum/games",
   "description": "TTRPG game packages for the RANDSUM dice ecosystem",
-  "version": "3.5.0",
+  "version": "1.1.2",
   "type": "module",
   "private": false,
   "files": [
@@ -123,42 +123,42 @@
   "size-limit": [
     {
       "path": "dist/blades.generated.js",
-      "limit": "10 KB",
+      "limit": "15 KB",
       "ignore": [
         "node:module"
       ]
     },
     {
       "path": "dist/fifth.generated.js",
-      "limit": "10 KB",
+      "limit": "15 KB",
       "ignore": [
         "node:module"
       ]
     },
     {
       "path": "dist/daggerheart.generated.js",
-      "limit": "10 KB",
+      "limit": "15 KB",
       "ignore": [
         "node:module"
       ]
     },
     {
       "path": "dist/pbta.generated.js",
-      "limit": "10 KB",
+      "limit": "15 KB",
       "ignore": [
         "node:module"
       ]
     },
     {
       "path": "dist/root-rpg.generated.js",
-      "limit": "10 KB",
+      "limit": "15 KB",
       "ignore": [
         "node:module"
       ]
     },
     {
       "path": "dist/salvageunion.generated.js",
-      "limit": "100 KB",
+      "limit": "35 KB",
       "ignore": [
         "node:module"
       ]

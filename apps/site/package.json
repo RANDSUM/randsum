@@ -1,6 +1,6 @@
 {
   "name": "@randsum/site",
-  "version": "3.5.0",
+  "version": "1.1.2",
   "description": "RANDSUM documentation and marketing website built with Astro",
   "private": true,
   "sideEffects": false,
@@ -20,7 +20,6 @@
     "@astrojs/netlify": "7.0.1",
     "@astrojs/react": "5.0.0",
     "@astrojs/starlight": "0.38.0",
-    "@randsum/component-library": "workspace:~",
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@stackblitz/sdk": "latest",
@@ -47,6 +46,7 @@
     "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.7"
+    "@astrojs/check": "0.9.7",
+    "starlight-sidebar-topics": "0.7.1"
   }
 }

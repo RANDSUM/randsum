@@ -13,9 +13,12 @@
   --sl-color-gray-2: #a1a1aa; /* zinc-400 */
   --sl-color-gray-3: #71717a; /* zinc-500 */
   --sl-color-gray-4: #52525b; /* zinc-600 */
-  --sl-color-gray-5: #27272a; /* zinc-800 */
-  --sl-color-gray-6: #18181b; /* zinc-900 */
-  --sl-color-black: #09090b; /* zinc-950 */
+  --sl-color-gray-5: #2e2e35; /* zinc-800 */
+  --sl-color-gray-6: #222228; /* zinc-900 */
+  --sl-color-black: #1a1a1f; /* zinc-950 */
+
+  /* Border radius */
+  --radius: 5px;
 
   /* Fonts */
   --sl-font: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -23,7 +26,7 @@
 
   /* Game package colors */
   --game-fifth: #ef4444; /* red-500 */
-  --game-salvageunion: #f59e0b; /* amber-500 — industrial/salvage aesthetic */
+  --game-salvageunion: #7a9baa; /* steel blue — industrial/salvage aesthetic */
   --game-daggerheart: #eab308; /* yellow-500 — gold */
   --game-root-rpg: #10b981; /* emerald-500 */
   --game-blades: #64748b; /* slate-500 — noir aesthetic */
@@ -40,10 +43,10 @@
 
 /* ===== Light mode ===== */
 :root[data-theme='light'] {
-  /* Accent - purple-500 based, adjusted for light backgrounds */
-  --sl-color-accent-low: #f3e8ff; /* purple-100 */
-  --sl-color-accent: #9333ea; /* purple-600 */
-  --sl-color-accent-high: #6b21a8; /* purple-800 */
+  /* Accent - purple, softened for light backgrounds */
+  --sl-color-accent-low: #f5f0ff; /* purple-50 tinted */
+  --sl-color-accent: #7c3aed; /* purple-600 desaturated */
+  --sl-color-accent-high: #5b21b6; /* purple-700 */
 
   /* Zinc gray scale (light mode: gray-1 = darkest, gray-6 = lightest) */
   --sl-color-white: #18181b; /* zinc-900 */
@@ -52,13 +55,13 @@
   --sl-color-gray-3: #71717a; /* zinc-500 */
   --sl-color-gray-4: #a1a1aa; /* zinc-400 */
   --sl-color-gray-5: #e4e4e7; /* zinc-200 */
-  --sl-color-gray-6: #f4f4f5; /* zinc-100 */
-  --sl-color-gray-7: #fafafa; /* zinc-50 */
-  --sl-color-black: #ffffff;
+  --sl-color-gray-6: #ebebed; /* zinc-100 warmer */
+  --sl-color-gray-7: #f0f0f2; /* zinc-50 warmer */
+  --sl-color-black: #f4f4f6; /* warm off-white */
 
   /* Game package colors - slightly deeper for light backgrounds */
   --game-fifth: #dc2626; /* red-600 */
-  --game-salvageunion: #d97706; /* amber-600 */
+  --game-salvageunion: #5a7f8f; /* steel blue — darker for light bg */
   --game-daggerheart: #a16207; /* yellow-700 — gold for light bg */
   --game-root-rpg: #059669; /* emerald-600 */
   --game-blades: #475569; /* slate-600 */
