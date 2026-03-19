@@ -1,6 +1,6 @@
 {
   "name": "@randsum/cli",
-  "version": "3.5.0",
+  "version": "1.1.2",
   "description": "Dice rolling CLI and interactive TUI powered by RANDSUM",
   "private": false,
   "author": {
