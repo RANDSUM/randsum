@@ -363,7 +363,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     </LabeledSection>
 
     <!-- Footer Links -->
-    <footer class="landing-footer">
+    <footer class="landing-footer not-content">
       <div class="section-inner">
         <div class="footer-links">
           <div class="footer-col">
@@ -1278,13 +1278,18 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     margin: 0 auto;
   }
 
+  .footer-col {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
   .footer-col h4 {
     font-family: var(--sl-font-heading, var(--sl-font));
     font-size: 0.9rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-top: 0;
+    margin-top: 0 !important;
     margin: 0 0 0.75rem;
     color: var(--sl-color-white);
   }
