@@ -1,8 +1,15 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { Code } from 'astro:components'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { ClickableTagline, HeroRollerPlayground } from '../components/HeroInteractive'
 import LabeledSection from '../components/LabeledSection.astro'
+
+const codeExample = `import { roll } from '@randsum/roller'
+
+const attack = roll('2d20H')     // advantage
+const damage = roll('2d6+3')     // greatsword + STR
+const stats  = roll('4d6Lx6')    // ability scores`
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--core-roller)',
@@ -46,7 +53,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 <StarlightPage
   frontmatter={{
     title: 'RANDSUM',
-    description: 'TypeScript-First Dice Notation Ecosystem. Throw Dice, Not Exceptions.',
+    description: 'Zero-dependency TypeScript dice engine. Parse and roll 4d6L, 2d20H, exploding dice, and more. Pre-built for D&D 5e, Blades, and 4 more systems.',
     template: 'splash',
     head: [
       {
@@ -116,6 +123,13 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
       </div>
     </section>
 
+    <!-- Code Example -->
+    <section class="code-example-section">
+      <div class="code-example not-content">
+        <Code code={codeExample} lang="typescript" />
+      </div>
+    </section>
+
     <!-- Features -->
     <section class="features-section">
       <div class="section-inner">
@@ -124,13 +138,13 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Zero Dependencies</h3>
           </div>
-          <p class="pkg-card-desc">A pure TypeScript dice engine. No runtime requirements, no bloat.</p>
+          <p class="pkg-card-desc">No transitive deps. One package, zero supply chain surface, under 20KB.</p>
         </div>
         <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Notation Parser</h3>
           </div>
-          <p class="pkg-card-desc">An extended superset of standard dice notation with 19+ modifiers.</p>
+          <p class="pkg-card-desc">Write <code>4d6L</code> and get typed results. Exploding dice, rerolls, drop/keep, caps &mdash; the full notation spec, parsed and validated.</p>
         </div>
         <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
@@ -140,11 +154,46 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
         </div>
         <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Written in Bun</h3>
+            <h3 class="pkg-card-name">Type-Safe</h3>
           </div>
-          <p class="pkg-card-desc">Built and tested with Bun. Fast builds, fast tests, fast installs.</p>
+          <p class="pkg-card-desc">Hover any <code>roll('4d6L')</code> call and see the full result shape. No type assertions, no <code>any</code>.</p>
         </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Notation -->
+    <section class="notation-section">
+      <div class="section-inner">
+        <h2 class="notation-heading">The Notation</h2>
+        <p class="notation-intro">RANDSUM uses a documented notation that extends standard dice syntax with modifiers for every common rolling pattern. Write what you mean, get typed results back.</p>
+        <div class="notation-examples">
+          <div class="notation-row">
+            <code class="notation-code">2d20H</code>
+            <span class="notation-desc">Roll two d20s, keep the highest (advantage)</span>
+          </div>
+          <div class="notation-row">
+            <code class="notation-code">4d6L</code>
+            <span class="notation-desc">Roll four d6s, drop the lowest (ability scores)</span>
+          </div>
+          <div class="notation-row">
+            <code class="notation-code">8d6!</code>
+            <span class="notation-desc">Roll eight d6s, exploding on max</span>
+          </div>
+          <div class="notation-row">
+            <code class="notation-code">{'4d6R{1,2}'}</code>
+            <span class="notation-desc">Roll four d6s, reroll any 1s or 2s</span>
+          </div>
+          <div class="notation-row">
+            <code class="notation-code">2d6+3</code>
+            <span class="notation-desc">Roll two d6s plus three</span>
+          </div>
+          <div class="notation-row">
+            <code class="notation-code">d%</code>
+            <span class="notation-desc">Percentile die (1-100)</span>
+          </div>
+        </div>
+        <a href="/notation/randsum-dice-notation/" class="notation-link">Full notation reference &rarr;</a>
       </div>
     </section>
 
@@ -238,7 +287,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
             </ul>
           </div>
           <div class="footer-col">
-            <h4>Community</h4>
+            <h4>Resources</h4>
             <ul>
               <li><a href="https://playground.randsum.dev" target="_blank" rel="noopener noreferrer">Playground</a></li>
               <li>
@@ -404,16 +453,6 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   :global(:root[data-theme='light'] .tagline-exceptions) {
     color: #dc2626;
     -webkit-text-fill-color: #dc2626;
-  }
-
-  :global(.hero-subtitle-inner) {
-    display: inline-block;
-    animation: slot-tick 0.06s ease-out both;
-  }
-
-  @keyframes slot-tick {
-    0%   { transform: translateY(8px); opacity: 0; }
-    100% { transform: translateY(0);   opacity: 1; }
   }
 
   :global(.hero-subtitle) {
@@ -662,7 +701,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     letter-spacing: 0.01em;
   }
 
-  /* Feature cards — header-only, description overlays on hover */
+  /* Feature cards — always-visible descriptions */
   .pkg-card--feature {
     min-height: auto;
     align-self: start;
@@ -670,7 +709,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   }
 
   .pkg-card--feature .pkg-card-header {
-    margin: -1.25rem -1.5rem;
+    margin: -1.25rem -1.5rem 0.5rem;
     padding: 0.75rem 1.5rem;
     justify-content: center;
     border-bottom: none;
@@ -682,32 +721,101 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
   .pkg-card--feature .pkg-card-desc {
     font-size: 0.8rem;
-    position: absolute;
-    left: -1px;
-    right: -1px;
-    top: 100%;
     margin: 0;
-    padding: 0.75rem 1.5rem;
-    background: var(--sl-color-gray-6);
-    border: 1px solid rgba(168, 85, 247, 0.18);
-    border-top: none;
-    border-radius: 0 0 var(--radius, 5px) var(--radius, 5px);
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-4px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
-  .pkg-card--feature:hover {
-    z-index: 10;
-    border-radius: var(--radius, 5px) var(--radius, 5px) 0 0;
-    border-bottom-color: transparent;
+  .pkg-card--feature .pkg-card-desc code {
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    font-size: 0.75rem;
+    color: var(--sl-color-accent-high);
+    background: rgba(168, 85, 247, 0.1);
+    border-radius: 3px;
+    padding: 0.05em 0.3em;
   }
 
-  .pkg-card--feature:hover .pkg-card-desc {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
+  /* ===== Code Example ===== */
+  .code-example-section {
+    padding: 0 0.5rem 2rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .code-example {
+    width: 100%;
+    max-width: 36rem;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: var(--radius, 5px);
+    overflow: hidden;
+  }
+
+  .code-example :global(pre) {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  /* ===== Notation Section ===== */
+  .notation-section {
+    padding: 2rem 0.5rem;
+    border-top: 1px solid rgba(168, 85, 247, 0.1);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+  }
+
+  .notation-heading {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .notation-intro {
+    font-size: 0.95rem;
+    color: var(--sl-color-gray-2);
+    margin: 0 0 1.25rem;
+    max-width: 52rem;
+    line-height: 1.6;
+  }
+
+  .notation-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 1.25rem;
+    border-top: 1px solid rgba(168, 85, 247, 0.1);
+  }
+
+  .notation-row {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(168, 85, 247, 0.08);
+  }
+
+  .notation-code {
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    color: var(--sl-color-accent-high);
+    min-width: 8rem;
+    flex-shrink: 0;
+  }
+
+  .notation-desc {
+    font-size: 0.9rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .notation-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--sl-color-accent);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .notation-link:hover {
+    color: var(--sl-color-accent-high);
   }
 
   /* ===== Light mode softening ===== */
@@ -850,6 +958,14 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     .footer-links {
       grid-template-columns: 1fr;
       text-align: center;
+    }
+
+    .notation-code {
+      min-width: 5.5rem;
+    }
+
+    .notation-row {
+      gap: 0.75rem;
     }
   }
 
