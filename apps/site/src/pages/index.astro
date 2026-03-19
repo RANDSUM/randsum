@@ -1,5 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import { Code } from 'astro-expressive-code/components'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { ClickableTagline, HeroRollerPlayground } from '../components/HeroInteractive'
 import { GameSchemaViewer } from '../components/GameSchemaViewer'
@@ -139,7 +140,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </button>
               </div>
-              <pre class="code-example-pre"><code>{codeExample}</code></pre>
+              <Code code={codeExample} lang="typescript" />
             </div>
           </div>
         </div>
@@ -233,9 +234,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           <div class="integrations-pitch">
             <h2 class="pitch-heading">
               <span class="pitch-accent">Roll</span>
-              <span class="pitch-plain"> your</span>
-              <br />
-              <span class="pitch-plain">own </span>
+              <span class="pitch-plain"> your own </span>
               <span class="pitch-sky">way</span>
               <span class="pitch-plain">.</span>
             </h2>
@@ -955,32 +954,19 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     overflow: hidden;
   }
 
-  .code-example :global(pre),
-  .code-example-pre {
+  .code-example :global(.expressive-code) {
     margin: 0;
+  }
+
+  .code-example :global(.expressive-code pre) {
     border-radius: 0;
     font-size: 0.8rem;
     line-height: 1.5;
-    padding: 1rem 1.25rem;
-    background: var(--sl-color-gray-6, #18181b);
-    color: var(--sl-color-gray-1);
-    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-    white-space: pre;
-    overflow-x: auto;
   }
 
-  .code-example-pre code {
-    font-family: inherit;
-    font-size: inherit;
-    background: none;
-    padding: 0;
+  .code-example :global(.expressive-code .frame) {
     border: none;
-    color: inherit;
-  }
-
-  :global(:root[data-theme='light']) .code-example-pre {
-    background: #f8f9fa;
-    color: #24292e;
+    border-radius: 0;
   }
 
 
