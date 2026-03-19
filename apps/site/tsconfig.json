@@ -5,6 +5,9 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "@randsum/dice-ui": ["../../packages/dice-ui/src/index.ts"]
+    }
   }
 }

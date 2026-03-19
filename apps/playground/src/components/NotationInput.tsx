@@ -1,5 +1,6 @@
 import React, { forwardRef, useCallback } from 'react'
 import type { Token } from '@randsum/roller/tokenize'
+import { TokenOverlayInput } from '@randsum/dice-ui'
 import type { ValidationState } from './PlaygroundApp'
 import { validationStateToBorderColor } from './notationInputUtils'
 import './NotationInput.css'
@@ -73,48 +74,32 @@ export const NotationInput = forwardRef<HTMLInputElement, NotationInputProps>(
         </span>
 
         <div className="notation-input-wrap">
-          {tokens.length > 0 && (
-            <div className="notation-input-overlay" aria-hidden="true">
-              {tokens.map((token, i) => (
-                <span
-                  key={i}
-                  className={[
-                    `pg-token pg-token--${token.category}`,
-                    hoveredTokenIdx !== null && hoveredTokenIdx !== i ? 'pg-token--dim' : '',
-                    hoveredTokenIdx === i ? 'pg-token--active' : ''
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                >
-                  {token.text}
-                </span>
-              ))}
-            </div>
-          )}
-          <input
-            ref={ref}
-            type="text"
-            className={`notation-input-field${tokens.length > 0 ? ' notation-input-field--highlighted' : ''}${readOnly ? ' notation-input-field--readonly' : ''}`}
-            style={{ width: `${Math.max(value.length, 4)}ch` }}
-            autoFocus={!readOnly}
-            value={value}
-            placeholder="4d6L"
-            disabled={readOnly}
-            onChange={e => {
-              onChange(e.target.value)
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' && isValid) {
-                onSubmit()
-              }
-            }}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            spellCheck={false}
-            autoComplete="off"
-            aria-label="Dice notation"
-            aria-readonly={readOnly}
-          />
+          <TokenOverlayInput tokens={tokens} hoveredTokenIdx={hoveredTokenIdx}>
+            <input
+              ref={ref}
+              type="text"
+              className={`notation-input-field${tokens.length > 0 ? ' notation-input-field--highlighted' : ''}${readOnly ? ' notation-input-field--readonly' : ''}`}
+              style={{ width: `${Math.max(value.length, 4)}ch` }}
+              autoFocus={!readOnly}
+              value={value}
+              placeholder="4d6L"
+              disabled={readOnly}
+              onChange={e => {
+                onChange(e.target.value)
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && isValid) {
+                  onSubmit()
+                }
+              }}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              spellCheck={false}
+              autoComplete="off"
+              aria-label="Dice notation"
+              aria-readonly={readOnly}
+            />
+          </TokenOverlayInput>
         </div>
 
         <span className="notation-input-suffix">

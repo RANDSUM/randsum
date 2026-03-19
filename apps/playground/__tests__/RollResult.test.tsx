@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import type { RollRecord, RollerRollResult } from '@randsum/roller'
-import { DieBadge, PoolSection, RollResult, StepRow } from '../src/components/RollResult'
+import { DieBadge, RollSteps as PoolSection, StepRow } from '@randsum/dice-ui'
+import { RollResult } from '../src/components/RollResult'
 
 function makeRecord(overrides: {
   initialRolls?: number[]

@@ -36,6 +36,34 @@
   --pg-radius-md: 5px;
 }
 
+/* ===== dice-ui bridge — map --dui-* to playground tokens ===== */
+:root {
+  --dui-color-bg: var(--pg-color-bg);
+  --dui-color-surface: var(--pg-color-surface);
+  --dui-color-surface-alt: var(--pg-color-surface-alt);
+  --dui-color-border: var(--pg-color-border);
+  --dui-color-text: var(--pg-color-text);
+  --dui-color-text-muted: var(--pg-color-text-muted);
+  --dui-color-text-dim: var(--pg-color-text-dim);
+  --dui-color-accent: var(--pg-color-accent);
+  --dui-color-accent-high: var(--pg-color-accent-high);
+  --dui-color-accent-low: var(--pg-color-accent-low);
+  --dui-color-error: var(--pg-color-error);
+  --dui-color-success: var(--pg-color-success);
+  --dui-color-removed: var(--pg-color-removed);
+  --dui-color-added: var(--pg-color-added);
+  --dui-color-total: var(--pg-color-total);
+  --dui-font-mono: var(--pg-font-mono);
+  --dui-font-body: var(--pg-font-body);
+  --dui-space-xs: var(--pg-space-xs);
+  --dui-space-sm: var(--pg-space-sm);
+  --dui-space-md: var(--pg-space-md);
+  --dui-space-lg: var(--pg-space-lg);
+  --dui-space-xl: var(--pg-space-xl);
+  --dui-radius-sm: var(--pg-radius-sm);
+  --dui-radius-md: var(--pg-radius-md);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     --pg-color-bg: #ffffff;

@@ -16,6 +16,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@randsum/dice-ui": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@astrojs/react": "5.0.0",
     "@stackblitz/sdk": "latest",

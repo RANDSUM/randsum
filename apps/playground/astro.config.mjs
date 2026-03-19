@@ -18,7 +18,8 @@ export default defineConfig({
         '@randsum/roller/tokenize': resolve(__dirname, '../../packages/roller/src/tokenize.ts'),
         '@randsum/roller/docs': resolve(__dirname, '../../packages/roller/src/docs/index.ts'),
         '@randsum/roller/trace': resolve(__dirname, '../../packages/roller/src/trace/index.ts'),
-        '@randsum/roller': resolve(__dirname, '../../packages/roller/src/index.ts')
+        '@randsum/roller': resolve(__dirname, '../../packages/roller/src/index.ts'),
+        '@randsum/dice-ui': resolve(__dirname, '../../packages/dice-ui/src/index.ts')
       }
     }
   }
