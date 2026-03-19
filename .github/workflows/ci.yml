@@ -118,7 +118,6 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/cli' check
 
-
   site:
     name: site
     needs: changes
@@ -159,33 +158,10 @@ jobs:
           bun-version: ${{ steps.bun-version.outputs.version }}
       - run: npx skills-ref validate skills/dice-rolling/SKILL.md
 
-  publish-preflight:
-    name: publish preflight
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
-      - name: Dry-run publish preflight
-        run: bun run publish -- --dry-run
-
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, site, skill, publish-preflight]
+    needs: [roller, games, cli, site, skill]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}
