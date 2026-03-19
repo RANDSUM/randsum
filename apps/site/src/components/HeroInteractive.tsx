@@ -73,7 +73,10 @@ const CHIP_PRESETS = [
   { label: 'Reroll Ones', notation: '4d6R{1}' },
   { label: 'Percentile', notation: 'd%' },
   { label: 'Keep Three', notation: '4d6K3' },
-  { label: 'Escalating', notation: '1d4+1d6+1d8+1d10+1d12+1d20' }
+  { label: 'Escalating', notation: '1d4+1d6+1d8+1d10+1d12+1d20' },
+  { label: 'Capped', notation: '3d8C{>6}' },
+  { label: 'Geometric', notation: 'g6' },
+  { label: 'Draw Dice', notation: '5DD10' }
 ] as const
 
 export function HeroRollerPlayground(): React.JSX.Element {

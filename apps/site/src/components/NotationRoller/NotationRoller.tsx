@@ -116,8 +116,14 @@ export function NotationRoller({
       const input = inputRef.current
       if (!input) return
       const rect = input.getBoundingClientRect()
-      const chWidth = input.offsetWidth / notation.length
-      const charIdx = Math.floor((e.clientX - rect.left) / chWidth)
+      const style = getComputedStyle(input)
+      const padLeft = parseFloat(style.paddingLeft) || 0
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      ctx.font = style.font
+      const chWidth = ctx.measureText('0').width
+      const charIdx = Math.floor((e.clientX - rect.left - padLeft) / chWidth)
       const tokenIdx = tokens.findIndex(t => charIdx >= t.start && charIdx < t.end)
       setHoveredTokenIdx(tokenIdx === -1 ? null : tokenIdx)
     },

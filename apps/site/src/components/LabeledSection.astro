@@ -64,6 +64,17 @@ const { label, labelSide = 'left' } = Astro.props
     order: 1;
   }
 
+  .label-right .content-column :global(.pkg-grid) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .label-right .content-column :global(.pkg-grid > *) {
+    flex: 0 1 calc((100% - 2rem) / 3);
+    min-width: 0;
+  }
+
   .content-column {
     flex: 1;
     min-width: 0;

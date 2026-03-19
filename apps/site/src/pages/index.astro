@@ -3,13 +3,24 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
 import { Code } from 'astro:components'
 import { corePackages, gamePackages, toolPackages } from '../utils/packageData'
 import { ClickableTagline, HeroRollerPlayground } from '../components/HeroInteractive'
+import { GameSchemaViewer } from '../components/GameSchemaViewer'
+import { IntegrationViewer } from '../components/IntegrationViewer'
 import LabeledSection from '../components/LabeledSection.astro'
 
 const codeExample = `import { roll } from '@randsum/roller'
 
-const attack = roll('2d20H')     // advantage
-const damage = roll('2d6+3')     // greatsword + STR
-const stats  = roll('4d6Lx6')    // ability scores`
+const { total, rolls } = roll('4d6L')
+
+console.log(total)
+  // 15
+console.log(rolls[0].initialRolls)
+  // [1, 5, 4, 6]
+console.log(rolls[0].rolls)
+  // [4, 5, 6]
+console.log(rolls[0].description)
+  // ["Roll 4 6-sided dice", "Drop lowest"]`
+
+const stackblitzNotation = '4d6L'
 
 const gameColorMap: Record<string, string> = {
   roller: 'var(--core-roller)',
@@ -100,14 +111,11 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                 Get Started
               </a>
-              <a href="https://playground.randsum.dev" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" ry="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"/></svg>
-                Try the Playground
+              <a href="https://github.com/RANDSUM/randsum" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                GitHub
               </a>
             </div>
-          </div>
-          <div class="hero-playground not-content">
-            <HeroRollerPlayground client:only="react" />
             <div class="hero-install-row">
               <button class="install-cmd" data-cmd="bun add @randsum/roller" aria-label="Copy bun install command">
                 <code>bun add @randsum/roller</code>
@@ -119,83 +127,173 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               </button>
             </div>
           </div>
+          <div class="hero-code not-content">
+            <div class="code-example">
+              <div class="code-example-chrome">
+                <div class="code-chrome-dots">
+                  <span class="code-chrome-dot code-chrome-dot--red"></span>
+                  <span class="code-chrome-dot code-chrome-dot--yellow"></span>
+                  <span class="code-chrome-dot code-chrome-dot--green"></span>
+                </div>
+                <span class="code-chrome-filename">index.ts</span>
+                <button class="code-example-stackblitz" data-notation={stackblitzNotation} aria-label="Edit in StackBlitz" title="Edit in StackBlitz">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+              </div>
+              <div class="code-block-dark"><Code code={codeExample} lang="typescript" theme="github-dark" /></div>
+              <div class="code-block-light"><Code code={codeExample} lang="typescript" theme="github-light" /></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Code Example -->
-    <section class="code-example-section">
-      <div class="code-example not-content">
-        <Code code={codeExample} lang="typescript" />
+    <hr class="section-divider" />
+
+    <!-- Features + Playground -->
+    <section class="features-section">
+      <div class="section-inner">
+        <div class="features-playground-row">
+          <div class="playground-col not-content">
+            <HeroRollerPlayground client:only="react" />
+          </div>
+          <div class="playground-pitch">
+            <h2 class="pitch-heading">
+              <span class="pitch-plain">Every </span>
+              <span class="pitch-accent">modifier</span>
+              <span class="pitch-plain">,</span>
+              <br />
+              <span class="pitch-highlight">parsed</span>
+              <span class="pitch-plain"> and </span>
+              <span class="pitch-highlight">validated</span>
+              <span class="pitch-plain">.</span>
+            </h2>
+            <p class="pitch-body">
+              19 modifiers &mdash; drop, keep, explode, reroll, cap, unique, wild die, and more &mdash; fully specified, documented, and implemented in a single engine. The <code>@randsum/roller</code> spec covers every common rolling pattern so you never have to invent your own.
+            </p>
+            <div class="pitch-actions">
+              <a href="/notation/randsum-dice-notation/" class="btn btn-outline btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                The RANDSUM Dice Notation Spec
+              </a>
+              <a href="https://playground.randsum.dev" class="btn btn-outline btn-sm" target="_blank" rel="noopener noreferrer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="3" ry="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"/></svg>
+                Playground
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Features -->
-    <section class="features-section">
+    <hr class="section-divider" />
+
+    <!-- Game Schema -->
+    <section class="game-schema-section">
       <div class="section-inner">
-        <div class="pkg-grid pkg-grid--4">
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+        <div class="game-schema-row">
+          <div class="game-schema-pitch">
+            <h2 class="pitch-heading">
+              <span class="pitch-plain">Define </span>
+              <span class="pitch-accent">games</span>
+              <span class="pitch-plain">,</span>
+              <br />
+              <span class="pitch-plain">not </span>
+              <span class="pitch-warn">code</span>
+              <span class="pitch-plain">.</span>
+            </h2>
+            <p class="pitch-body">
+              Every game system is a declarative <code>.randsum.json</code> spec &mdash; dice pools, modifiers, outcome tables, and input validation. The codegen pipeline turns specs into typed TypeScript. No hand-written game logic. Adding a new game is as simple as configuring a JSON file.
+            </p>
+            <div class="pitch-actions">
+              <a href="/games/introduction/" class="btn btn-outline btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Game Packages
+              </a>
+              <a href="/games/schema/overview/" class="btn btn-outline btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Schema Spec
+              </a>
+            </div>
+          </div>
+          <div class="game-schema-viewer-col not-content">
+            <GameSchemaViewer client:only="react" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Integrations -->
+    <section class="integrations-section">
+      <div class="section-inner">
+        <div class="integrations-row">
+          <div class="integrations-viewer-col not-content">
+            <IntegrationViewer client:only="react" />
+          </div>
+          <div class="integrations-pitch">
+            <h2 class="pitch-heading">
+              <span class="pitch-accent">Roll</span>
+              <span class="pitch-plain"> your</span>
+              <br />
+              <span class="pitch-plain">own </span>
+              <span class="pitch-sky">way</span>
+              <span class="pitch-plain">.</span>
+            </h2>
+            <p class="pitch-body">
+              In your terminal, in your Discord, or in your dev workspace &mdash; wherever you need numbers, RANDSUM is there. A CLI for quick rolls, a Discord bot for game night, AI skills for Claude, and an npm package for everything else.
+            </p>
+            <div class="pitch-actions">
+              <a href="/tools/discord-bot/" class="btn btn-outline btn-sm">
+                <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"/></svg>
+                Discord Bot
+              </a>
+              <a href="/tools/cli/" class="btn btn-outline btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                @randsum/cli
+              </a>
+              <a href="/tools/claude-code-skill/" class="btn btn-outline btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                Claude Skills
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Features -->
+    <LabeledSection label="Features" labelSide="left">
+      <div class="pkg-grid pkg-grid--4">
+        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Zero Dependencies</h3>
           </div>
           <p class="pkg-card-desc">No transitive deps. One package, zero supply chain surface, under 20KB.</p>
         </div>
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Notation Parser</h3>
+            <h3 class="pkg-card-name">RANDSUM Dice Notation</h3>
           </div>
-          <p class="pkg-card-desc">Write <code>4d6L</code> and get typed results. Exploding dice, rerolls, drop/keep, caps &mdash; the full notation spec, parsed and validated.</p>
+          <p class="pkg-card-desc">A complete dice notation spec. 19 modifiers covering every common rolling pattern &mdash; parsed, validated, and fully specified.</p>
         </div>
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Game Ready</h3>
+            <h3 class="pkg-card-name">Game Schema</h3>
           </div>
-          <p class="pkg-card-desc">Pre-built packages for D&D 5e, Blades, Daggerheart, PbtA, and more.</p>
+          <p class="pkg-card-desc">Declarative JSON specs for TTRPG systems. Six games built in, with a runtime loader to run and register your own.</p>
         </div>
-        <div class="pkg-card pkg-card--feature" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
             <h3 class="pkg-card-name">Type-Safe</h3>
           </div>
-          <p class="pkg-card-desc">Hover any <code>roll('4d6L')</code> call and see the full result shape. No type assertions, no <code>any</code>.</p>
-        </div>
+          <p class="pkg-card-desc">Typed inputs, typed outputs. Every roll result is fully structured &mdash; no type assertions, no <code>any</code>, no guessing.</p>
         </div>
       </div>
-    </section>
-
-    <!-- Notation -->
-    <section class="notation-section">
-      <div class="section-inner">
-        <h2 class="notation-heading">The Notation</h2>
-        <p class="notation-intro">RANDSUM uses a documented notation that extends standard dice syntax with modifiers for every common rolling pattern. Write what you mean, get typed results back.</p>
-        <div class="notation-examples">
-          <div class="notation-row">
-            <code class="notation-code">2d20H</code>
-            <span class="notation-desc">Roll two d20s, keep the highest (advantage)</span>
-          </div>
-          <div class="notation-row">
-            <code class="notation-code">4d6L</code>
-            <span class="notation-desc">Roll four d6s, drop the lowest (ability scores)</span>
-          </div>
-          <div class="notation-row">
-            <code class="notation-code">8d6!</code>
-            <span class="notation-desc">Roll eight d6s, exploding on max</span>
-          </div>
-          <div class="notation-row">
-            <code class="notation-code">{'4d6R{1,2}'}</code>
-            <span class="notation-desc">Roll four d6s, reroll any 1s or 2s</span>
-          </div>
-          <div class="notation-row">
-            <code class="notation-code">2d6+3</code>
-            <span class="notation-desc">Roll two d6s plus three</span>
-          </div>
-          <div class="notation-row">
-            <code class="notation-code">d%</code>
-            <span class="notation-desc">Percentile die (1-100)</span>
-          </div>
-        </div>
-        <a href="/notation/randsum-dice-notation/" class="notation-link">Full notation reference &rarr;</a>
-      </div>
-    </section>
+    </LabeledSection>
 
     <!-- Packages -->
     <LabeledSection label="Packages" labelSide="right">
@@ -332,7 +430,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
   /* ===== Hero ===== */
   .hero {
-    padding: 0;
+    padding: 1.5rem 0;
   }
 
   .hero-inner {
@@ -346,20 +444,20 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     flex-direction: row;
     align-items: stretch;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
   }
 
   .hero-text {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-evenly;
     align-items: flex-start;
     text-align: left;
     min-width: 0;
   }
 
-  .hero-playground {
+  .hero-code {
     flex: 0 0 50%;
     min-width: 0;
     display: flex;
@@ -379,6 +477,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     flex-wrap: wrap;
     gap: 0.4rem;
     justify-content: space-evenly;
+    margin-bottom: 1rem;
   }
 
   :global(.hero-chip) {
@@ -470,29 +569,22 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     gap: 0.5rem;
     padding: 0;
-  }
-
-  .hero-install-row .install-cmd {
-    font-size: 0.8rem;
   }
 
   .install-cmd {
     appearance: none;
     display: inline-flex;
     align-items: center;
-    align-self: center;
     gap: 0.4rem;
-    height: 2rem;
-    min-height: 2rem;
-    max-height: 2rem;
-    overflow: hidden;
+    height: 1.75rem;
     background: rgba(168, 85, 247, 0.08);
     border: 1px solid rgba(168, 85, 247, 0.15);
     border-radius: var(--radius, 5px);
     padding: 0 0.5rem;
+    margin: 0;
     cursor: pointer;
     transition: all 0.15s ease;
   }
@@ -571,6 +663,12 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   :global(.btn-outline:hover) {
     background: var(--sl-color-gray-5);
     border-color: var(--sl-color-gray-3);
+  }
+
+  :global(.btn-sm) {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
   }
 
   /* ===== Package Grid ===== */
@@ -727,16 +825,122 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     padding: 0.05em 0.3em;
   }
 
-  /* ===== Code Example ===== */
-  .code-example-section {
-    padding: 0 0.5rem 2rem;
+  /* ===== Section Divider ===== */
+  .section-divider {
+    max-width: 72rem;
+    margin: 1rem auto 0.25rem;
+    border: none;
+    border-top: 1px solid var(--sl-color-gray-5);
+  }
+
+  /* ===== Features + Playground Row ===== */
+  .features-playground-row {
     display: flex;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  .playground-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+
+  .playground-pitch {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: flex-end;
+    text-align: right;
+    min-width: 0;
+  }
+
+  .pitch-heading {
+    font-family: var(--sl-font-heading, var(--sl-font));
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0 0 0.75rem;
+  }
+
+  .pitch-plain {
+    color: var(--sl-color-white);
+  }
+
+  .pitch-accent {
+    background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .pitch-highlight {
+    color: #34d399;
+    -webkit-text-fill-color: #34d399;
+  }
+
+  :global(:root[data-theme='light']) .pitch-highlight {
+    color: #059669;
+    -webkit-text-fill-color: #059669;
+  }
+
+  .pitch-warn {
+    color: #fbbf24;
+    -webkit-text-fill-color: #fbbf24;
+  }
+
+  :global(:root[data-theme='light']) .pitch-warn {
+    color: #d97706;
+    -webkit-text-fill-color: #d97706;
+  }
+
+  .pitch-sky {
+    color: #38bdf8;
+    -webkit-text-fill-color: #38bdf8;
+  }
+
+  :global(:root[data-theme='light']) .pitch-sky {
+    color: #0284c7;
+    -webkit-text-fill-color: #0284c7;
+  }
+
+  .pitch-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+  }
+
+  .pitch-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .pitch-body code {
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    background: rgba(168, 85, 247, 0.08);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    color: var(--sl-color-accent-high);
+  }
+
+  .pitch-highlight-inline {
+    color: #34d399;
+    font-weight: 700;
+  }
+
+  :global(:root[data-theme='light']) .pitch-highlight-inline {
+    color: #059669;
   }
 
   .code-example {
     width: 100%;
-    max-width: 36rem;
     border: 1px solid rgba(168, 85, 247, 0.25);
     border-radius: var(--radius, 5px);
     overflow: hidden;
@@ -745,71 +949,278 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   .code-example :global(pre) {
     margin: 0;
     border-radius: 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    padding: 1rem 1.25rem;
   }
 
-  /* ===== Notation Section ===== */
-  .notation-section {
-    padding: 2rem 0.5rem;
-    border-top: 1px solid rgba(168, 85, 247, 0.1);
-    border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+  /* Theme-aware code blocks: show dark by default, light when Starlight is in light mode */
+  .code-block-light { display: none; }
+  :global(:root[data-theme='light']) .code-block-dark { display: none; }
+  :global(:root[data-theme='light']) .code-block-light { display: block; }
+
+  :global(.code-example-chrome) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(24, 24, 27, 0.6);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.15);
   }
 
-  .notation-heading {
-    font-family: var(--sl-font-heading, var(--sl-font));
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.75rem;
-    letter-spacing: -0.02em;
+  :global(:root[data-theme='light'] .code-example-chrome) {
+    background: rgba(244, 244, 245, 0.8);
   }
 
-  .notation-intro {
-    font-size: 0.95rem;
-    color: var(--sl-color-gray-2);
-    margin: 0 0 1.25rem;
-    max-width: 52rem;
-    line-height: 1.6;
+  :global(.code-chrome-dots) {
+    display: flex;
+    gap: 0.35rem;
   }
 
-  .notation-examples {
+  :global(.code-chrome-dot) {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+  }
+
+  :global(.code-chrome-dot--red) { background: #ef4444; }
+  :global(.code-chrome-dot--yellow) { background: #eab308; }
+  :global(.code-chrome-dot--green) { background: #22c55e; }
+
+  :global(.code-chrome-filename) {
+    flex: 1;
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    font-size: 0.7rem;
+    color: var(--sl-color-gray-3);
+    letter-spacing: 0.02em;
+  }
+
+  .code-example-stackblitz {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    color: var(--sl-color-gray-3);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius, 5px);
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .code-example-stackblitz:hover {
+    color: var(--sl-color-accent-high);
+    background: rgba(168, 85, 247, 0.12);
+  }
+
+  /* ===== Game Schema Section ===== */
+  .game-schema-section {
+    padding: 1.5rem 0;
+  }
+
+  .game-schema-row {
+    display: flex;
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .game-schema-pitch {
+    flex: 0 0 40%;
     display: flex;
     flex-direction: column;
-    gap: 0;
-    margin-bottom: 1.25rem;
-    border-top: 1px solid rgba(168, 85, 247, 0.1);
+    justify-content: center;
+    min-width: 0;
   }
 
-  .notation-row {
+  .game-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0;
     display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 1.5rem;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid rgba(168, 85, 247, 0.08);
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
   }
 
-  .notation-code {
-    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-    font-size: 0.9rem;
-    color: var(--sl-color-accent-high);
-    min-width: 8rem;
+  .game-list li {
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .game-list li::before {
+    content: '→ ';
+    color: var(--sl-color-accent);
+  }
+
+  .game-schema-viewer-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.game-schema-viewer) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+  }
+
+  :global(.game-schema-chips) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+
+  :global(.game-schema-display) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: var(--radius, 5px);
+    overflow: hidden;
+    min-height: 0;
+    mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+  }
+
+  :global(.game-schema-chrome) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(24, 24, 27, 0.6);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.15);
     flex-shrink: 0;
   }
 
-  .notation-desc {
-    font-size: 0.9rem;
-    color: var(--sl-color-gray-2);
+  :global(:root[data-theme='light'] .game-schema-chrome) {
+    background: rgba(244, 244, 245, 0.8);
   }
 
-  .notation-link {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--sl-color-accent);
-    text-decoration: none;
-    transition: color 0.15s ease;
+  :global(.game-schema-code) {
+    flex: 1;
+    overflow: hidden;
+    max-height: 22rem;
+    background: var(--sl-color-gray-6, #18181b);
   }
 
-  .notation-link:hover {
-    color: var(--sl-color-accent-high);
+  :global(:root[data-theme='light'] .game-schema-code) {
+    background: #fafafa;
+  }
+
+  :global(.game-schema-code pre) {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    color: var(--sl-color-gray-1);
+    white-space: pre;
+    background: transparent;
+  }
+
+  :global(.game-schema-code code) {
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    padding: 0;
+    border: none;
+  }
+
+  /* ===== Integrations Section ===== */
+  .integrations-section {
+    padding: 1.5rem 0;
+  }
+
+  .integrations-row {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .integrations-viewer-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.integration-viewer) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+  }
+
+  :global(.integration-chips) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+
+  :global(.integration-display) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  :global(.integration-terminal) {
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: var(--radius, 5px);
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  }
+
+  :global(.integration-terminal-body) {
+    background: var(--sl-color-gray-6, #18181b);
+    overflow: hidden;
+    max-height: 10rem;
+  }
+
+  :global(:root[data-theme='light'] .integration-terminal-body) {
+    background: #fafafa;
+  }
+
+  :global(.integration-terminal-body pre) {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+    color: var(--sl-color-gray-1);
+    white-space: pre;
+    background: transparent;
+  }
+
+  :global(.integration-terminal-body code) {
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    padding: 0;
+    border: none;
+  }
+
+  :global(.integration-image-wrap) {
+    display: flex;
+    justify-content: center;
+    border-radius: var(--radius, 5px);
+    overflow: hidden;
+  }
+
+  :global(.integration-image) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius, 5px);
+  }
+
+  .integrations-pitch {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    min-width: 0;
   }
 
   /* ===== Light mode softening ===== */
@@ -850,6 +1261,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   .footer-links {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    align-items: start;
     gap: 2rem;
     max-width: 48rem;
     margin: 0 auto;
@@ -895,7 +1307,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   /* ===== Responsive ===== */
   @media (max-width: 768px) {
     .hero {
-      padding: 1.5rem 0 2rem;
+      padding: 1.5rem 0;
       text-align: center;
     }
 
@@ -910,11 +1322,11 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     }
 
     .hero-text {
-      align-items: flex-start;
-      text-align: left;
+      align-items: center;
+      text-align: center;
     }
 
-    .hero-playground {
+    .hero-code {
       width: 100%;
       flex: none;
     }
@@ -922,8 +1334,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
     .hero-install-row {
       flex-direction: column;
-      align-items: stretch;
-      padding: 1rem;
+      align-items: center;
+      padding: 0;
     }
 
     :global(.clickable-tagline) {
@@ -944,9 +1356,51 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     }
 
     .pkg-grid,
+    .pkg-grid--2,
     .pkg-grid--3,
     .pkg-grid--4 {
       grid-template-columns: 1fr;
+    }
+
+    .features-playground-row {
+      flex-direction: column;
+    }
+
+    .playground-pitch {
+      flex: none;
+      text-align: center;
+      align-items: center;
+    }
+
+    .pitch-heading {
+      font-size: 1.5rem;
+    }
+
+    .pitch-actions {
+      justify-content: center;
+    }
+
+    .game-schema-row {
+      flex-direction: column;
+    }
+
+    .game-schema-pitch {
+      flex: none;
+      text-align: center;
+      align-items: center;
+    }
+
+    .integrations-row {
+      flex-direction: column-reverse;
+    }
+
+    .integrations-pitch {
+      text-align: center;
+      align-items: center;
+    }
+
+    .integrations-viewer-col {
+      flex: none;
     }
 
     .footer-links {
@@ -954,13 +1408,6 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
       text-align: center;
     }
 
-    .notation-code {
-      min-width: 5.5rem;
-    }
-
-    .notation-row {
-      gap: 0.75rem;
-    }
   }
 
   @media (min-width: 769px) and (max-width: 1024px) {
@@ -985,6 +1432,18 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
         setTimeout(() => { (icon as HTMLElement).style.color = '' }, 1500)
       }
     })
+  })
+
+  // StackBlitz code example
+  document.querySelector<HTMLButtonElement>('.code-example-stackblitz')?.addEventListener('click', () => {
+    const notation = document.querySelector<HTMLButtonElement>('.code-example-stackblitz')?.dataset['notation'] ?? '4d6L'
+    const safe = JSON.stringify(notation)
+    const code = `import { roll } from '@randsum/roller'\n\nconst { total, rolls } = roll(${safe})\n\nconsole.log(total)\nconsole.log(rolls[0].initialRolls)\nconsole.log(rolls[0].rolls)\nconsole.log(rolls[0].description)\n`
+    const packageJson = JSON.stringify({ name: 'randsum-playground', version: '1.0.0', private: true, scripts: { start: 'tsx index.ts' }, dependencies: { '@randsum/roller': 'latest', tsx: 'latest' } }, null, 2)
+    const params = new URLSearchParams({ title: `RANDSUM — ${notation}`, description: `Rolling ${notation} with @randsum/roller`, template: 'node' })
+    params.set('file[index.ts]', code)
+    params.set('file[package.json]', packageJson)
+    window.open(`https://stackblitz.com/run?${params.toString()}`, '_blank', 'noopener,noreferrer')
   })
 
   // Fetch npm versions live and update version badges
