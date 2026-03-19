@@ -97,10 +97,11 @@ export const toolPackages: PackageInfo[] = [
   {
     id: 'skill',
     name: 'skill',
-    displayName: 'LLM Skill',
-    description: 'Prompt file for teaching RANDSUM dice notation to any LLM.',
+    displayName: 'Claude Skills',
+    description:
+      'Three skills that give AI agents dice rolling, probability analysis, and game spec authoring.',
     npmPackage: 'skills/dice-rolling/SKILL.md',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills/dice-rolling',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills',
     category: 'tool',
     color: '#06b6d4' // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
   },
