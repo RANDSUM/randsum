@@ -40,10 +40,10 @@
 
 /* ===== Light mode ===== */
 :root[data-theme='light'] {
-  /* Accent - purple-500 based, adjusted for light backgrounds */
-  --sl-color-accent-low: #f3e8ff; /* purple-100 */
-  --sl-color-accent: #9333ea; /* purple-600 */
-  --sl-color-accent-high: #6b21a8; /* purple-800 */
+  /* Accent - purple, softened for light backgrounds */
+  --sl-color-accent-low: #f5f0ff; /* purple-50 tinted */
+  --sl-color-accent: #7c3aed; /* purple-600 desaturated */
+  --sl-color-accent-high: #5b21b6; /* purple-700 */
 
   /* Zinc gray scale (light mode: gray-1 = darkest, gray-6 = lightest) */
   --sl-color-white: #18181b; /* zinc-900 */

@@ -1,4 +1,12 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore
+} from 'react'
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import type { RollRecord } from '@randsum/roller'
@@ -8,6 +16,34 @@ import { ErrorBoundary } from '../ErrorBoundary'
 import { tokenize } from '@randsum/roller/tokenize'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import './NotationRoller.css'
+
+function getTheme(): 'light' | 'dark' {
+  if (typeof document === 'undefined') return 'dark'
+  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
+}
+
+function subscribeTheme(callback: () => void): () => void {
+  const observer = new MutationObserver(callback)
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  })
+  return () => {
+    observer.disconnect()
+  }
+}
+
+function useTheme(): 'light' | 'dark' {
+  return useSyncExternalStore(subscribeTheme, getTheme, () => 'dark' as const)
+}
+
+function tokenColor(
+  doc: { readonly color: string; readonly colorLight: string } | undefined,
+  theme: 'light' | 'dark'
+): string | undefined {
+  if (!doc) return undefined
+  return theme === 'light' ? doc.colorLight : doc.color
+}
 
 type RollerState =
   | { status: 'idle' }
@@ -27,6 +63,7 @@ export function NotationRoller({
   readonly onChange?: (notation: string) => void
   readonly resetToken?: number
 } = {}): React.JSX.Element {
+  const theme = useTheme()
   const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
   const [state, setState] = useState<RollerState>({ status: 'idle' })
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -130,7 +167,7 @@ export function NotationRoller({
                         ]
                           .filter(Boolean)
                           .join(' ')}
-                        style={{ color: NOTATION_DOCS[token.key]?.color }}
+                        style={{ color: tokenColor(NOTATION_DOCS[token.key], theme) }}
                       >
                         {token.text}
                       </span>
@@ -177,8 +214,10 @@ export function NotationRoller({
                   handleRoll()
                 }}
                 disabled={!isValid || state.status === 'rolling'}
+                aria-label="Roll the dice"
+                title="Roll the dice"
               >
-                {resultState ? 'Re-Roll' : 'Roll'}
+                ROLL
               </button>
             </div>
           </div>
@@ -219,7 +258,7 @@ export function NotationRoller({
                             .join(' ')}
                           style={
                             {
-                              '--chip-color': NOTATION_DOCS[token.key]?.color
+                              '--chip-color': tokenColor(NOTATION_DOCS[token.key], theme)
                             } as React.CSSProperties
                           }
                           onMouseEnter={() => {

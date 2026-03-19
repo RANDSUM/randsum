@@ -604,6 +604,39 @@ function getAccentColor(pkg: { id: string; color?: string }): string {
     transform: none;
   }
 
+  /* ===== Light mode softening ===== */
+  :global(:root[data-theme='light']) .pkg-card {
+    border-color: rgba(124, 58, 237, 0.12);
+    background: rgba(124, 58, 237, 0.03);
+    border-top-color: var(--card-accent, rgba(124, 58, 237, 0.2));
+  }
+
+  :global(:root[data-theme='light']) .pkg-card:hover {
+    border-color: rgba(124, 58, 237, 0.2);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(124, 58, 237, 0.15);
+  }
+
+  :global(:root[data-theme='light']) .pkg-card-header {
+    border-bottom-color: rgba(124, 58, 237, 0.08);
+  }
+
+  :global(:root[data-theme='light']) .pkg-card--feature:hover {
+    border-color: rgba(124, 58, 237, 0.12);
+    border-top-color: var(--card-accent, rgba(124, 58, 237, 0.2));
+  }
+
+  :global(:root[data-theme='light']) .install-cmd {
+    background: rgba(124, 58, 237, 0.04);
+    border-color: rgba(124, 58, 237, 0.1);
+  }
+
+  :global(:root[data-theme='light']) .install-cmd:hover {
+    border-color: rgba(124, 58, 237, 0.2);
+    background: rgba(124, 58, 237, 0.06);
+  }
+
   /* ===== Footer ===== */
   .landing-footer {
     padding: 2rem 0 1.5rem;
