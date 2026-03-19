@@ -167,6 +167,9 @@ jobs:
       - name: Read Bun version
         id: bun-version
         run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ steps.bun-version.outputs.version }}
