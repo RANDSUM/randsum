@@ -1,0 +1,471 @@
+/* ===== Container ===== */
+.du-notation-roller {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ===== Shell ===== */
+.du-notation-roller-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: none;
+  border-radius: var(--dui-radius, 5px);
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+/* ===== Main input row ===== */
+.du-notation-roller-row {
+  display: flex;
+  align-items: center;
+  height: 3rem;
+  background: var(--dui-color-surface, #222228);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--dui-radius, 5px);
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+@media (prefers-color-scheme: light) {
+  .du-notation-roller-row {
+    background: #eeeef0;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .du-notation-roller-row {
+  background: #eeeef0;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.du-notation-roller-shell--valid .du-notation-roller-row {
+  border-color: var(--dui-color-accent, #a855f7);
+}
+
+@media (prefers-color-scheme: light) {
+  .du-notation-roller-shell--valid .du-notation-roller-row {
+    border-color: #7c3aed;
+  }
+}
+[data-theme='light'] .du-notation-roller-shell--valid .du-notation-roller-row {
+  border-color: #9333ea;
+}
+
+.du-notation-roller-shell--invalid .du-notation-roller-row {
+  border-color: #f97583;
+}
+
+/* ===== Input wrap ===== */
+.du-notation-roller-input-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0 0.75rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.du-nr-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--dui-font-mono, 'Menlo', 'Consolas', 'Monaco', monospace);
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: 0;
+  font-kerning: none;
+}
+
+/* ===== Text input ===== */
+.du-notation-roller-input {
+  padding: 0;
+  font-family: var(--dui-font-mono, 'Menlo', 'Consolas', 'Monaco', monospace);
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: 0;
+  font-kerning: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #98c379;
+  caret-color: var(--dui-color-accent, #a855f7);
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+.du-notation-roller-input--highlight {
+  color: transparent;
+}
+
+@media (prefers-color-scheme: light) {
+  .du-notation-roller-input {
+    color: #417e38;
+    caret-color: #7c3aed;
+  }
+}
+[data-theme='light'] .du-notation-roller-input {
+  color: #417e38;
+  caret-color: #7c3aed;
+}
+
+/* ===== Buttons ===== */
+.du-notation-roller-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+}
+
+.du-notation-roller-roll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.75rem;
+  padding: 0 0.75rem;
+  background: var(--dui-color-accent, #a855f7);
+  border: none;
+  border-radius: var(--dui-radius, 5px);
+  color: #fff;
+  font-family: var(--dui-font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+  line-height: 1;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.du-notation-roller-roll-btn:hover {
+  background: #9333ea;
+}
+
+.du-notation-roller-roll-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.du-notation-roller-roll-btn:disabled:hover {
+  background: var(--dui-color-accent, #a855f7);
+}
+
+/* ===== Description row ===== */
+.du-notation-roller-desc-row {
+  border-top: none;
+  background: transparent;
+  padding: 0.35rem 0.5rem 0.5rem;
+  min-height: 0;
+  font-family: var(--dui-font-mono, 'Menlo', 'Consolas', 'Monaco', monospace);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+.du-notation-roller-desc {
+  flex: 1;
+  text-align: left;
+}
+
+.du-notation-roller-desc--hint {
+  color: rgba(230, 237, 243, 0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  .du-notation-roller-desc--hint {
+    color: rgba(31, 35, 40, 0.5);
+  }
+}
+[data-theme='light'] .du-notation-roller-desc--hint {
+  color: rgba(31, 35, 40, 0.5);
+}
+
+.du-notation-roller-desc--valid {
+  color: #9ca3af;
+}
+
+@media (prefers-color-scheme: light) {
+  .du-notation-roller-desc--valid {
+    color: #52525b;
+  }
+}
+[data-theme='light'] .du-notation-roller-desc--valid {
+  color: #52525b;
+}
+
+.du-notation-roller-desc--invalid {
+  color: #f97583;
+}
+
+/* ===== Description chips ===== */
+.du-nr-desc-chip {
+  font-size: 0.7rem;
+  padding: 0.05em 0.25em;
+  border-radius: var(--dui-radius, 5px);
+  cursor: default;
+  user-select: none;
+  color: var(--chip-color, inherit);
+  transition:
+    color 0.15s ease,
+    opacity 0.12s ease;
+  line-height: 1.5;
+}
+
+.du-nr-desc-chip--dim {
+  opacity: 0.35;
+}
+
+.du-nr-desc-sep {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  user-select: none;
+  transition: opacity 0.12s ease;
+}
+
+.du-nr-desc-sep--dim {
+  opacity: 0.2;
+}
+
+/* ===== Result overlay ===== */
+.du-notation-roller-result-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 66.67%;
+  max-height: 200%;
+  z-index: 50;
+  display: block;
+  padding: 0.5rem;
+  background: var(--dui-color-surface, #18181b);
+  border-radius: var(--dui-radius, 5px);
+  border: 1.5px solid var(--dui-color-accent, #a855f7);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  font-family: var(--dui-font-mono, 'Menlo', 'Consolas', 'Monaco', monospace);
+  font-size: 0.75rem;
+  animation: du-nr-tooltip-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.du-notation-roller-result-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 49;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--dui-radius, 5px);
+  pointer-events: auto;
+  animation: du-nr-backdrop-in 0.2s ease;
+}
+
+.du-nr-tooltip-close {
+  float: right;
+  background: none;
+  border: none;
+  color: #71717a;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.1rem 0.25rem;
+  margin: 0 0 0.25rem 0.25rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.du-nr-tooltip-close:hover {
+  color: #e4e4e7;
+}
+
+@keyframes du-nr-tooltip-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes du-nr-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===== Tooltip layout ===== */
+.du-nr-tooltip-flow {
+  width: 100%;
+}
+
+.du-nr-tooltip-total-pane {
+  float: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2ch;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0.75rem 0.5rem 0;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: var(--dui-radius, 5px);
+}
+
+.du-nr-tooltip-total-value {
+  font-family: var(--dui-font-mono, 'Menlo', 'Consolas', 'Monaco', monospace);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--dui-color-text, #ffffff);
+  line-height: 1;
+}
+
+/* ===== Rows with zebra stripes ===== */
+.du-nr-tooltip-rows {
+  display: block;
+}
+
+.du-nr-tooltip-rows > * {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dui-space-sm, 0.5rem);
+  padding: var(--dui-space-xs, 0.25rem) var(--dui-space-xs, 0.25rem);
+}
+
+.du-nr-tooltip-rows > :not(.du-nr-tooltip-header-line):nth-child(odd) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+@media (prefers-color-scheme: light) {
+  .du-nr-tooltip-rows > :not(.du-nr-tooltip-header-line):nth-child(odd) {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+[data-theme='light'] .du-nr-tooltip-rows > :not(.du-nr-tooltip-header-line):nth-child(odd) {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.du-nr-tooltip-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem;
+}
+
+.du-nr-tooltip-header-line {
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.15rem;
+  padding-bottom: 0.35rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .du-nr-tooltip-header-line {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+}
+[data-theme='light'] .du-nr-tooltip-header-line {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+.du-nr-tooltip-notation {
+  font-weight: 700;
+  color: var(--dui-color-accent, #a855f7);
+  white-space: nowrap;
+}
+
+.du-nr-tooltip-sep {
+  color: #3f3f46;
+}
+
+.du-nr-tooltip-desc {
+  color: var(--dui-color-text-dim, #71717a);
+  font-size: 0.65rem;
+}
+
+.du-nr-tooltip-row--total {
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 0.15rem;
+  padding-top: 0.35rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .du-nr-tooltip-row--total {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+  .du-nr-tooltip-total-pane {
+    border-color: rgba(147, 51, 234, 0.3);
+  }
+  .du-nr-tooltip-total-value {
+    color: #18181b;
+  }
+}
+[data-theme='light'] .du-nr-tooltip-row--total {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+[data-theme='light'] .du-nr-tooltip-total-pane {
+  border-color: rgba(147, 51, 234, 0.3);
+}
+[data-theme='light'] .du-nr-tooltip-total-value {
+  color: #18181b;
+}
+
+.du-nr-result-label--total {
+  font-weight: 700;
+}
+
+.du-nr-result-dice--total {
+  font-weight: 700;
+}
+
+@media (prefers-color-scheme: light) {
+  .du-nr-result-label--total,
+  .du-nr-result-dice--total {
+    color: #18181b;
+  }
+  .du-notation-roller-result-overlay {
+    background: #eeeef0;
+    border-color: #7c3aed;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+  .du-notation-roller-result-backdrop {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .du-nr-tooltip-close:hover {
+    color: #27272a;
+  }
+}
+[data-theme='light'] .du-nr-result-label--total,
+[data-theme='light'] .du-nr-result-dice--total {
+  color: #18181b;
+}
+[data-theme='light'] .du-notation-roller-result-overlay {
+  background: #eeeef0;
+  border-color: #9333ea;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+[data-theme='light'] .du-nr-tooltip-close:hover {
+  color: #27272a;
+}

@@ -35,7 +35,7 @@ const makeRecord = (): RollRecord => ({
 describe('RollResult component', () => {
   test('renders nr-tooltip-rows container', () => {
     const html = renderToStaticMarkup(createElement(RollResult, { records: [makeRecord()] }))
-    expect(html).toContain('nr-tooltip-rows')
+    expect(html).toContain('du-nr-tooltip-rows')
   })
 
   test('renders step rows for a single pool', () => {
@@ -47,36 +47,36 @@ describe('RollResult component', () => {
     const html = renderToStaticMarkup(
       createElement(RollResult, { records: [makeRecord(), makeRecord()] })
     )
-    expect(html).toContain('nr-pool-heading')
+    expect(html).toContain('du-nr-pool-heading')
     expect(html).toContain('1d6')
   })
 
   test('does not render pool header for single record', () => {
     const html = renderToStaticMarkup(createElement(RollResult, { records: [makeRecord()] }))
-    expect(html).not.toContain('nr-pool-heading')
+    expect(html).not.toContain('du-nr-pool-heading')
   })
 })
 
 describe('Tooltip container structure', () => {
-  test('result overlay CSS class is defined in CSS', async () => {
+  test('result overlay CSS class is defined in dice-ui CSS', async () => {
     const css = await Bun.file(
-      new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
+      new URL('../../../packages/dice-ui/src/NotationRoller.css', import.meta.url).pathname
     ).text()
-    expect(css).toContain('.notation-roller-result-overlay')
+    expect(css).toContain('.du-notation-roller-result-overlay')
   })
 
-  test('result backdrop CSS class is defined in CSS', async () => {
+  test('result backdrop CSS class is defined in dice-ui CSS', async () => {
     const css = await Bun.file(
-      new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
+      new URL('../../../packages/dice-ui/src/NotationRoller.css', import.meta.url).pathname
     ).text()
-    expect(css).toContain('.notation-roller-result-backdrop')
+    expect(css).toContain('.du-notation-roller-result-backdrop')
   })
 
   test('result overlay CSS uses absolute positioning', async () => {
     const css = await Bun.file(
-      new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
+      new URL('../../../packages/dice-ui/src/NotationRoller.css', import.meta.url).pathname
     ).text()
-    const overlayIdx = css.indexOf('.notation-roller-result-overlay')
+    const overlayIdx = css.indexOf('.du-notation-roller-result-overlay')
     const blockEnd = css.indexOf('}', overlayIdx)
     const overlayBlock = css.slice(overlayIdx, blockEnd)
     expect(overlayBlock).toContain('position: absolute')
@@ -84,9 +84,9 @@ describe('Tooltip container structure', () => {
 
   test('result backdrop CSS uses backdrop-filter: blur()', async () => {
     const css = await Bun.file(
-      new URL('../src/components/NotationRoller/NotationRoller.css', import.meta.url).pathname
+      new URL('../../../packages/dice-ui/src/NotationRoller.css', import.meta.url).pathname
     ).text()
-    const backdropIdx = css.indexOf('.notation-roller-result-backdrop')
+    const backdropIdx = css.indexOf('.du-notation-roller-result-backdrop')
     const blockEnd = css.indexOf('}', backdropIdx)
     const backdropBlock = css.slice(backdropIdx, blockEnd)
     expect(backdropBlock).toContain('backdrop-filter:')
