@@ -9,8 +9,8 @@
  *   bun run publish -- --otp=123456  # provide 2FA OTP (local only)
  *
  * Uses `bun pm pack` to resolve workspace: protocols, then `npm publish`
- * on the tarball. In CI, auth is via NPM_CONFIG_TOKEN and provenance
- * attestation is added via --provenance.
+ * on the tarball. In CI, auth and provenance are handled automatically
+ * by npm Trusted Publishers (OIDC). Requires npm >= 11.5.1, Node >= 22.14.
  *
  * Publishes workspace packages in dependency order, skips private ones.
  */
@@ -48,7 +48,6 @@ async function getPublishablePackages(): Promise<{ name: string; dir: string }[]
 
 const extraArgs = process.argv.slice(2)
 const dryRun = extraArgs.includes('--dry-run')
-const isCI = Boolean(process.env.CI)
 
 const packages = await getPublishablePackages()
 
@@ -77,9 +76,6 @@ for (const { name, dir } of packages) {
     }
 
     const npmArgs = ['publish', tgzPath, '--access=public']
-    if (isCI) {
-      npmArgs.push('--provenance')
-    }
     for (const arg of extraArgs) {
       npmArgs.push(arg)
     }
