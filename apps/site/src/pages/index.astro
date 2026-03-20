@@ -1023,6 +1023,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     border-radius: 0;
     font-size: 0.8rem;
     line-height: 1.5;
+    tab-size: 2;
+    overflow-x: auto;
   }
 
   .code-example :global(.expressive-code .frame) {
@@ -1191,6 +1193,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     color: var(--sl-color-gray-1);
     white-space: pre;
     background: transparent;
+    tab-size: 2;
+    overflow-x: auto;
   }
 
   :global(.game-schema-code code) {
@@ -1263,6 +1267,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     color: var(--sl-color-gray-1);
     white-space: pre;
     background: transparent;
+    tab-size: 2;
+    overflow-x: auto;
   }
 
   :global(.integration-terminal-body code) {
@@ -1487,6 +1493,20 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
     .integrations-viewer-col {
       flex: none;
+    }
+
+    .code-example :global(.expressive-code pre) {
+      font-size: 0.65rem;
+    }
+
+    :global(.game-schema-code pre) {
+      font-size: 0.6rem;
+      padding: 0.75rem 1rem;
+    }
+
+    :global(.integration-terminal-body pre) {
+      font-size: 0.6rem;
+      padding: 0.75rem 1rem;
     }
 
     .footer-links {
