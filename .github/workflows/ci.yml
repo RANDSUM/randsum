@@ -22,6 +22,7 @@ jobs:
       cli: ${{ steps.filter.outputs.cli }}
       site: ${{ steps.filter.outputs.site }}
       skill: ${{ steps.filter.outputs.skill }}
+      changesets: ${{ steps.filter.outputs.changesets }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -46,6 +47,10 @@ jobs:
             skill:
               - 'skills/**'
               - '.github/workflows/ci.yml'
+            changesets:
+              - '.changeset/**'
+              - '!.changeset/README.md'
+              - '!.changeset/config.json'
 
   roller:
     name: roller
@@ -158,10 +163,33 @@ jobs:
           bun-version: ${{ steps.bun-version.outputs.version }}
       - run: npx skills-ref validate skills/dice-rolling/SKILL.md
 
+  publish-dry-run:
+    name: publish (dry run)
+    needs: changes
+    if: needs.changes.outputs.changesets == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - name: Dry-run publish
+        run: bun scripts/publish.ts --dry-run
+
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, site, skill]
+    needs: [roller, games, cli, site, skill, publish-dry-run]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}
