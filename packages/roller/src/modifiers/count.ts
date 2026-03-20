@@ -150,7 +150,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     },
     {
       key: 'ms{..}',
-      category: 'Counting',
+      category: 'Arithmetic',
       color: '#6366f1',
       colorLight: '#4338ca',
       title: 'Margin of Success',
@@ -182,6 +182,7 @@ function matchesExact(roll: number, options: CountOptions): boolean {
 
 export const countModifier: ModifierDefinition<CountOptions> = {
   ...countSchema,
+  mutatesRolls: false as const,
 
   validate: options => {
     if (
