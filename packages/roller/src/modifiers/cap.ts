@@ -57,7 +57,7 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
     docs: [
       {
         key: 'C{..}',
-        category: 'Pool',
+        category: 'Clamp',
         color: '#67e8f9',
         colorLight: '#0891b2',
         title: 'Cap',

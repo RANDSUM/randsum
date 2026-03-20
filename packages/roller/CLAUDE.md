@@ -102,12 +102,16 @@ Dice types use:
 
 Modifiers use:
 
-- `'Pool'` — dice pool manipulation (drop, keep, reroll, replace, cap, unique)
-- `'Explode'` — explosion mechanics (explode, compound, penetrate, explodeSequence)
-- `'Arithmetic'` — numeric operations (plus, minus, multiply, multiplyTotal, integerDivide, modulo)
-- `'Counting'` — count-based operations (count successes/failures)
-- `'Order'` — ordering operations (sort)
-- `'Special'` — special modifier behaviors (wildDie)
+- `'Clamp'` — cap modifier (clamp individual die values)
+- `'Map'` — replace modifier (map die values to new values)
+- `'Filter'` — drop/keep modifiers (remove dice from pool)
+- `'Substitute'` — reroll/unique modifiers (re-randomize dice)
+- `'Generate'` — explode/explodeSequence modifiers (add dice to pool)
+- `'Accumulate'` — compound/penetrate modifiers (accumulate into existing die)
+- `'Scale'` — arithmetic modifiers (plus, minus, multiply, multiplyTotal, integerDivide, modulo)
+- `'Reinterpret'` — count modifiers (replace sum with count)
+- `'Dispatch'` — wildDie modifier (conditional dispatch)
+- `'Order'` — sort modifier (ordering operations)
 
 Every entry in `NOTATION_DOCS` has at least one `forms` entry and at least one `examples` entry. The `key` field is the stable identifier for display routing, filtering, and reference panels — use it instead of the record key (they match, but `key` is explicit). Keys are case-sensitive; the underlying notation parser is case-insensitive, but doc keys use the canonical shorthand from the notation spec (`'L'` not `'l'`).
 
@@ -117,11 +121,11 @@ Every entry in `NOTATION_DOCS` has at least one `forms` entry and at least one `
 import { NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS } from "@randsum/roller/docs"
 
 const dropLowest = NOTATION_DOCS["L"]
-// { key: 'L', category: 'Pool', title: 'Drop Lowest', ... }
+// { key: 'L', category: 'Filter', title: 'Drop Lowest', ... }
 
 // All modifier docs
 Object.entries(MODIFIER_DOCS).forEach(([key, doc]) => {
-  console.log(key, doc.category, doc.title) // 'L' → 'Pool' → 'Drop Lowest', etc.
+  console.log(key, doc.category, doc.title) // 'L' → 'Filter' → 'Drop Lowest', etc.
 })
 
 // All dice type docs

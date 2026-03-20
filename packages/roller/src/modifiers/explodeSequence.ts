@@ -36,7 +36,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
   docs: [
     {
       key: '!s{..}',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fcd34d',
       colorLight: '#ca8a04',
       title: 'Explode Sequence',
@@ -51,7 +51,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     },
     {
       key: '!i',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fcd34d',
       colorLight: '#ca8a04',
       title: 'Inflation',
@@ -63,7 +63,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     },
     {
       key: '!r',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fcd34d',
       colorLight: '#ca8a04',
       title: 'Reduction',

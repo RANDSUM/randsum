@@ -40,7 +40,7 @@ export const compoundSchema: NotationSchema<boolean | number> = defineNotationSc
   docs: [
     {
       key: '!!',
-      category: 'Explode',
+      category: 'Accumulate',
       color: '#f59e0b',
       colorLight: '#b45309',
       title: 'Compound Explode',

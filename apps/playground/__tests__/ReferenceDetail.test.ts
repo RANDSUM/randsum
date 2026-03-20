@@ -133,7 +133,7 @@ describe('ReferenceDetail data contract', () => {
     test('hasComparisons returns false for docs with undefined comparisons', () => {
       const doc: NotationDoc = {
         key: 'T',
-        category: 'test',
+        category: 'Order',
         title: 'Test',
         description: 'A test doc',
         displayBase: 'T',

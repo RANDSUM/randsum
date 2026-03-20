@@ -5,15 +5,11 @@ export type TokenType = string
 
 export type ModifierCategory =
   | 'Core'
-  | 'Special' // dice types (unchanged)
-  | 'Pool'
-  | 'Explode'
-  | 'Arithmetic' // current modifier categories (SHIP-4 removes)
-  | 'Counting'
-  | 'Order' // current (Order stays, Counting removed in SHIP-4)
+  | 'Special' // dice types
+  | 'Order'
   | 'Clamp'
   | 'Map'
-  | 'Filter' // new verb categories
+  | 'Filter'
   | 'Substitute'
   | 'Generate'
   | 'Accumulate'
@@ -102,47 +98,47 @@ function describeModifierToken(tokenText: string): string {
 // Order matters — more specific patterns must come before ambiguous ones
 const MODIFIERS: readonly ModifierEntry[] = [
   // // before other patterns to avoid partial match
-  { key: '//', category: 'Arithmetic', pattern: /^\/\/\d+/ },
+  { key: '//', category: 'Scale', pattern: /^\/\/\d+/ },
   // %N (modulo)
-  { key: '%', category: 'Arithmetic', pattern: /^%\d+/ },
+  { key: '%', category: 'Scale', pattern: /^%\d+/ },
   // ** before * to avoid partial match
-  { key: '**', category: 'Arithmetic', pattern: /^\*\*\d+/ },
-  { key: '*', category: 'Arithmetic', pattern: /^\*\d+/ },
+  { key: '**', category: 'Scale', pattern: /^\*\*\d+/ },
+  { key: '*', category: 'Scale', pattern: /^\*\d+/ },
   // !! and !p and !s{} and !i and !r before ! to avoid partial match
-  { key: '!!', category: 'Explode', pattern: /^!!\d*/ },
-  { key: '!p', category: 'Explode', pattern: /^!p\d*/i },
-  { key: '!s{..}', category: 'Explode', pattern: /^![sS]\{[\d,]+\}/ },
-  { key: '!i', category: 'Explode', pattern: /^![iI]/ },
-  { key: '!r', category: 'Explode', pattern: /^![rR]/ },
-  { key: '!', category: 'Explode', pattern: /^!/ },
+  { key: '!!', category: 'Accumulate', pattern: /^!!\d*/ },
+  { key: '!p', category: 'Accumulate', pattern: /^!p\d*/i },
+  { key: '!s{..}', category: 'Generate', pattern: /^![sS]\{[\d,]+\}/ },
+  { key: '!i', category: 'Generate', pattern: /^![iI]/ },
+  { key: '!r', category: 'Generate', pattern: /^![rR]/ },
+  { key: '!', category: 'Generate', pattern: /^!/ },
   // Drop variants
-  { key: 'H', category: 'Pool', pattern: /^[Hh]\d*/ },
-  { key: 'L', category: 'Pool', pattern: /^[Ll]\d*/ },
-  { key: 'D{..}', category: 'Pool', pattern: /^[Dd]\{[^}]+\}/ },
+  { key: 'H', category: 'Filter', pattern: /^[Hh]\d*/ },
+  { key: 'L', category: 'Filter', pattern: /^[Ll]\d*/ },
+  { key: 'D{..}', category: 'Filter', pattern: /^[Dd]\{[^}]+\}/ },
   // Keep: KM before KL before K to avoid K matching first char of KM/KL
-  { key: 'KM', category: 'Pool', pattern: /^[Kk][Mm]\d*/ },
-  { key: 'KL', category: 'Pool', pattern: /^[Kk][Ll]\d*/ },
-  { key: 'K', category: 'Pool', pattern: /^[Kk]\d*/ },
+  { key: 'KM', category: 'Filter', pattern: /^[Kk][Mm]\d*/ },
+  { key: 'KL', category: 'Filter', pattern: /^[Kk][Ll]\d*/ },
+  { key: 'K', category: 'Filter', pattern: /^[Kk]\d*/ },
   // Brace-based modifiers — closing } required; partial input stays unknown
   // ro{} (reroll once) before R{} to avoid R matching first char of ro
-  { key: 'ro{..}', category: 'Pool', pattern: /^[Rr][Oo]\{[^}]+\}/ },
-  { key: 'R{..}', category: 'Pool', pattern: /^[Rr]\{[^}]+\}\d*/ },
-  { key: 'C{..}', category: 'Pool', pattern: /^[Cc]\{[^}]+\}/ },
-  { key: 'V{..}', category: 'Pool', pattern: /^[Vv]\{[^}]+\}/ },
-  { key: 'U', category: 'Pool', pattern: /^[Uu](?:\{[^}]+\})?/ },
+  { key: 'ro{..}', category: 'Substitute', pattern: /^[Rr][Oo]\{[^}]+\}/ },
+  { key: 'R{..}', category: 'Substitute', pattern: /^[Rr]\{[^}]+\}\d*/ },
+  { key: 'C{..}', category: 'Clamp', pattern: /^[Cc]\{[^}]+\}/ },
+  { key: 'V{..}', category: 'Map', pattern: /^[Vv]\{[^}]+\}/ },
+  { key: 'U', category: 'Substitute', pattern: /^[Uu](?:\{[^}]+\})?/ },
   // Wild Die — must come before margin of success and sort
-  { key: 'W', category: 'Special', pattern: /^[Ww](?![{])/ },
+  { key: 'W', category: 'Dispatch', pattern: /^[Ww](?![{])/ },
   // Count — must come before countSuccesses and sort
-  { key: '#{..}', category: 'Counting', pattern: /^#\{[^}]+\}/ },
+  { key: '#{..}', category: 'Reinterpret', pattern: /^#\{[^}]+\}/ },
   // Margin of success — must come before countSuccesses and sort
-  { key: 'ms{..}', category: 'Counting', pattern: /^[Mm][Ss]\{\d+\}/ },
-  { key: 'S{..}', category: 'Counting', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
-  { key: 'F{..}', category: 'Counting', pattern: /^[Ff]\{\d+\}/ },
+  { key: 'ms{..}', category: 'Scale', pattern: /^[Mm][Ss]\{\d+\}/ },
+  { key: 'S{..}', category: 'Reinterpret', pattern: /^[Ss]\{\d+(?:,\d+)?\}/ },
+  { key: 'F{..}', category: 'Reinterpret', pattern: /^[Ff]\{\d+\}/ },
   // Sort — must come after countSuccesses (S{N}) to avoid conflicts
   { key: 'sort', category: 'Order', pattern: /^[Ss](?:[Aa]|[Dd])?(?![{\d])/ },
-  // Arithmetic — only meaningful after a core token
-  { key: '+', category: 'Arithmetic', pattern: /^\+\d+/ },
-  { key: '-', category: 'Arithmetic', pattern: /^-\d+/ },
+  // Scale — only meaningful after a core token
+  { key: '+', category: 'Scale', pattern: /^\+\d+/ },
+  { key: '-', category: 'Scale', pattern: /^-\d+/ },
   // Repeat operator — xN at the end (N >= 1)
   { key: 'xN', category: 'Special', pattern: /^[Xx][1-9]\d*/ },
   // Annotation/label — metadata, does not affect mechanics

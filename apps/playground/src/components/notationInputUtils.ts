@@ -5,10 +5,17 @@ export type ValidationState = 'empty' | 'valid' | 'invalid'
 export function tokenCategoryToClass(category: TokenCategory): string {
   if (category === 'Core') return 'token-core'
   if (category === 'Special') return 'token-special'
-  if (category === 'Pool') return 'token-pool'
-  if (category === 'Explode' || category === 'Counting' || category === 'Order')
+  if (category === 'Filter' || category === 'Clamp' || category === 'Map') return 'token-pool'
+  if (
+    category === 'Generate' ||
+    category === 'Accumulate' ||
+    category === 'Substitute' ||
+    category === 'Reinterpret' ||
+    category === 'Dispatch' ||
+    category === 'Order'
+  )
     return 'token-modifier'
-  if (category === 'Arithmetic') return 'token-arithmetic'
+  if (category === 'Scale') return 'token-arithmetic'
   return 'token-unknown'
 }
 

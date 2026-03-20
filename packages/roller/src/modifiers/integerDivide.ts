@@ -28,7 +28,7 @@ export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<
   docs: [
     {
       key: '//',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#34d399',
       colorLight: '#059669',
       title: 'Integer Divide',

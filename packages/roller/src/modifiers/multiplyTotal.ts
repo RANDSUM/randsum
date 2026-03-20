@@ -28,7 +28,7 @@ export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<
   docs: [
     {
       key: '**',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#84cc16',
       colorLight: '#3f6212',
       title: 'Multiply Total',

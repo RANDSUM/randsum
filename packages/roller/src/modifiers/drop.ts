@@ -118,7 +118,7 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
   docs: [
     {
       key: 'L',
-      category: 'Pool',
+      category: 'Filter',
       color: '#fb7185',
       colorLight: '#e11d48',
       title: 'Drop Lowest',
@@ -136,7 +136,7 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     },
     {
       key: 'H',
-      category: 'Pool',
+      category: 'Filter',
       color: '#fb7185',
       colorLight: '#e11d48',
       title: 'Drop Highest',
@@ -154,7 +154,7 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
     },
     {
       key: 'D{..}',
-      category: 'Pool',
+      category: 'Filter',
       color: '#e11d48',
       colorLight: '#9f1239',
       title: 'Drop by Condition',

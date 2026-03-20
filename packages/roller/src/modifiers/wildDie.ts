@@ -32,7 +32,7 @@ export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boole
   docs: [
     {
       key: 'W',
-      category: 'Special',
+      category: 'Dispatch',
       color: '#facc15',
       colorLight: '#a16207',
       title: 'Wild Die',

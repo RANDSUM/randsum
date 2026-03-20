@@ -35,7 +35,7 @@ export const plusSchema: NotationSchema<number> = defineNotationSchema<number>({
   docs: [
     {
       key: '+',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#4ade80',
       colorLight: '#16a34a',
       title: 'Add',

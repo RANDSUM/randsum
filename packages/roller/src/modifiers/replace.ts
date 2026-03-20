@@ -71,7 +71,7 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
     docs: [
       {
         key: 'V{..}',
-        category: 'Pool',
+        category: 'Map',
         color: '#2dd4bf',
         colorLight: '#0d9488',
         title: 'Replace',

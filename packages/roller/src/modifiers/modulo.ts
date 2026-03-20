@@ -28,7 +28,7 @@ export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>
   docs: [
     {
       key: '%',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#10b981',
       colorLight: '#047857',
       title: 'Modulo',

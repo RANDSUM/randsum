@@ -52,7 +52,7 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
   docs: [
     {
       key: 'U',
-      category: 'Pool',
+      category: 'Substitute',
       color: '#5eead4',
       colorLight: '#0f766e',
       title: 'Unique',

@@ -98,7 +98,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
   docs: [
     {
       key: '#{..}',
-      category: 'Counting',
+      category: 'Reinterpret',
       color: '#60a5fa',
       colorLight: '#2563eb',
       title: 'Count',
@@ -120,7 +120,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     },
     {
       key: 'S{..}',
-      category: 'Counting',
+      category: 'Reinterpret',
       color: '#3b82f6',
       colorLight: '#1d4ed8',
       title: 'Count Successes',
@@ -138,7 +138,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     },
     {
       key: 'F{..}',
-      category: 'Counting',
+      category: 'Reinterpret',
       color: '#93c5fd',
       colorLight: '#3b82f6',
       title: 'Count Failures',
@@ -150,7 +150,7 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
     },
     {
       key: 'ms{..}',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#6366f1',
       colorLight: '#4338ca',
       title: 'Margin of Success',

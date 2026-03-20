@@ -73,7 +73,7 @@ describe('NotationDoc', () => {
   test('NotationDoc type is exported and assignable from ModifierDoc', () => {
     const doc: NotationDoc = {
       key: 'L',
-      category: 'Pool',
+      category: 'Filter',
       color: '#fb7185',
       colorLight: '#e11d48',
       title: 'Drop Lowest',
@@ -83,14 +83,14 @@ describe('NotationDoc', () => {
       examples: [{ notation: '4d6L', description: 'Drop lowest' }]
     }
     expect(doc.key).toBe('L')
-    expect(doc.category).toBe('Pool')
+    expect(doc.category).toBe('Filter')
     expect(doc.title).toBe('Drop Lowest')
   })
 
   test('ModifierDoc is a backwards-compatible alias for NotationDoc', () => {
     const doc: ModifierDoc = {
       key: 'H',
-      category: 'Pool',
+      category: 'Filter',
       color: '#fb7185',
       colorLight: '#e11d48',
       title: 'Drop Highest',
@@ -100,14 +100,14 @@ describe('NotationDoc', () => {
       examples: [{ notation: '2d20H', description: 'Drop highest' }]
     }
     expect(doc.key).toBe('H')
-    expect(doc.category).toBe('Pool')
+    expect(doc.category).toBe('Filter')
   })
 
   test('NotationDoc type is usable', () => {
     const doc: NotationDoc = MODIFIER_DOCS['L']!
     expect(doc.title).toBe('Drop Lowest')
     expect(doc.key).toBe('L')
-    expect(doc.category).toBe('Pool')
+    expect(doc.category).toBe('Filter')
   })
 })
 
@@ -115,7 +115,7 @@ describe('NotationSchema.docs', () => {
   test('NotationSchema accepts optional docs field', () => {
     const doc: NotationDoc = {
       key: '!',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fbbf24',
       colorLight: '#d97706',
       title: 'Explode',

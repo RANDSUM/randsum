@@ -32,7 +32,7 @@ export const minusSchema: NotationSchema<number> = defineNotationSchema<number>(
   docs: [
     {
       key: '-',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#f87171',
       colorLight: '#dc2626',
       title: 'Subtract',
