@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test'
 import { lookupByRange } from '../../src/lib/lookupByRange'
-import { SchemaError } from '../../src/lib/errors'
 
 describe('lookupByRange', () => {
   test('matches exact single-value key', () => {
@@ -103,13 +102,16 @@ describe('lookupByRange', () => {
     expect(result.result).toEqual({})
   })
 
-  test('throws SchemaError when no range matches', () => {
+  test('returns "No result" when no range matches', () => {
     const table = { '1-5': { label: 'Low' } }
-    expect(() => lookupByRange(table, 99)).toThrow(SchemaError)
-    expect(() => lookupByRange(table, 99)).toThrow('No range found for value 99')
+    const result = lookupByRange(table, 99)
+    expect(result.key).toBe('99')
+    expect(result.result.label).toBe('No result')
   })
 
-  test('throws SchemaError for empty table', () => {
-    expect(() => lookupByRange({}, 1)).toThrow(SchemaError)
+  test('returns "No result" for empty table', () => {
+    const result = lookupByRange({}, 1)
+    expect(result.key).toBe('1')
+    expect(result.result.label).toBe('No result')
   })
 })

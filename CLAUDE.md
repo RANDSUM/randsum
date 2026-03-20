@@ -8,12 +8,10 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 **Core**: `@randsum/roller` — zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
 
-**Game packages** live in `games/` — each wraps roller with game-specific interpretation:
+**Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
 
-**Display & UI Utilities**: `@randsum/display-utils` — browser-targeted utilities for step visualization, modifier docs, and StackBlitz integration (published to npm, consumed by CLI and component-library)
-
-**Tools**: `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private)
+**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/playground` (private)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
@@ -79,6 +77,20 @@ All publishable packages produce ESM only:
 - Bundle size limits enforced: roller 20KB (includes notation), game packages 15KB, salvageunion 35KB
 
 CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
+
+## Publishing
+
+**Always use `bun publish`, never `npm publish`.** `npm publish` does not resolve `workspace:~` references — it ships the literal string, which is unresolvable for consumers. `bun publish` correctly resolves `workspace:~` to a real semver range (e.g., `~1.2.3`) at pack time.
+
+```bash
+# From package directory:
+bun publish --access public --otp <CODE>   # First publish of a scoped package
+bun publish --otp <CODE>                   # Subsequent publishes
+```
+
+- OTP is required — the npm account has 2FA set to `auth-and-writes`
+- Publish order: `@randsum/roller` first, then dependent packages (`@randsum/games`, `@randsum/cli`)
+- Auth: Bun reads `~/.npmrc` via `$XDG_CONFIG_HOME` (`~/.config/.npmrc`), not `~/.npmrc` directly. Both files must stay in sync. If `bun publish` returns a mysterious 404 on a scoped package, check for a stale token in `~/.config/.npmrc`
 
 ## Versioning
 

@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
   <h1>@randsum/roller</h1>
-  <h3>TypeScript-First Dice Notation Ecosystem</h3>
+  <h3>A Zero Dependency, Typescript-First, Bun-Native Dice Notation and Rolling Engine</h3>
   <p>Throw Dice, Not Exceptions.</p>
 
 [![npm version](https://img.shields.io/npm/v/@randsum/roller)](https://www.npmjs.com/package/@randsum/roller)
@@ -13,7 +13,7 @@
 
 </div>
 
-TypeScript-first dice notation engine for JavaScript and TypeScript. Throw Dice, Not Exceptions.
+A Zero Dependency, Typescript-First, Bun-Native Dice Notation and Rolling Engine. Throw Dice, Not Exceptions.
 
 ## Installation
 

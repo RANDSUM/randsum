@@ -481,8 +481,6 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 }
 ```
 
-`@randsum/component-library` is not a dependency. The playground builds its own React components locally.
-
 ### What is imported from each package
 
 **`@randsum/roller`** (main barrel):

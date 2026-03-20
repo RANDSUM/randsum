@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo">
   <h1>@randsum/cli</h1>
-  <h3>TypeScript-First Dice Notation Ecosystem</h3>
+  <h3>A Zero Dependency, Typescript-First, Bun-Native Dice Notation and Rolling Engine</h3>
   <p>Throw Dice, Not Exceptions.</p>
 </div>
 

@@ -22,16 +22,9 @@ const ROOT = join(import.meta.dir, '..')
  * Packages must be published in dependency order so that downstream
  * packages can resolve their dependencies on the registry.
  */
-const PUBLISH_ORDER: readonly string[] = [
-  'packages/roller',
-  'packages/games',
-  'packages/component-library',
-  'apps/cli',
-]
+const PUBLISH_ORDER: readonly string[] = ['packages/roller', 'packages/games', 'apps/cli']
 
-async function getPublishablePackages(): Promise<
-  { name: string; dir: string }[]
-> {
+async function getPublishablePackages(): Promise<{ name: string; dir: string }[]> {
   const packages: { name: string; dir: string }[] = []
 
   for (const relDir of PUBLISH_ORDER) {
@@ -55,9 +48,7 @@ const publishArgs = ['--access=public', ...extraArgs]
 
 const packages = await getPublishablePackages()
 
-console.log(
-  `\nPublishing ${packages.length} packages${dryRun ? ' (dry run)' : ''}:\n`
-)
+console.log(`\nPublishing ${packages.length} packages${dryRun ? ' (dry run)' : ''}:\n`)
 for (const { name } of packages) {
   console.log(`  ${name}`)
 }

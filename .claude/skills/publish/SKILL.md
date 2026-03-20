@@ -22,6 +22,7 @@ If any check fails, report the failure and stop. Do not proceed.
 ## Version Bump
 
 Ask the user which version bump to apply:
+
 - **patch** (bug fixes, no new features)
 - **minor** (new features, backward compatible)
 - **major** (breaking changes)
@@ -31,8 +32,8 @@ Then run: `bun pm version <patch|minor|major>`
 ### Version Sync
 
 When bumping a **core package** (`@randsum/roller`, `@randsum/notation`) to a new minor or major version, dependent packages must receive a corresponding bump:
+
 - `@randsum/games`
-- `@randsum/component-library`
 - `@randsum/display-utils`
 
 Patch bumps in core do not require dependent bumps.

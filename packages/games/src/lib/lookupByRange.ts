@@ -1,5 +1,3 @@
-import { SchemaError } from './errors'
-
 const RANGE_PATTERN = /^(-?\d+)(?:-(-?\d+))?$/
 
 function toEntry(rawEntry: unknown): {
@@ -39,5 +37,5 @@ export function lookupByRange(
       if (value >= min && value <= max) return { key, result: toEntry(rawEntry) }
     }
   }
-  throw new SchemaError(`No range found for value ${value}`, 'NO_TABLE_MATCH')
+  return { key: String(value), result: { label: 'No result' } }
 }
