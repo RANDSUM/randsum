@@ -185,6 +185,8 @@ jobs:
       - run: bun run build
       - name: Dry-run publish
         run: bun scripts/publish.ts --dry-run
+        env:
+          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   ci-gate:
     name: CI Gate
