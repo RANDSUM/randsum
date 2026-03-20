@@ -3,6 +3,8 @@
   "private": true,
   "devDependencies": {
     "@astrojs/netlify": "7.0.2",
+    "@changesets/changelog-github": "0.6.0",
+    "@changesets/cli": "2.30.0",
     "@eslint/js": "10.0.1",
     "@size-limit/preset-small-lib": "12.0.1",
     "@types/bun": "1.3.10",
@@ -68,10 +70,8 @@
     "discord:lint": "bun --filter @randsum/discord-bot lint",
     "discord:format": "bun --filter @randsum/discord-bot format",
     "discord:typecheck": "bun --filter @randsum/discord-bot typecheck",
-    "version": "bun pm version",
-    "version:patch": "bun pm version patch",
-    "version:minor": "bun pm version minor",
-    "version:major": "bun pm version major",
+    "changeset": "bunx changeset",
+    "version-packages": "bunx changeset version",
     "publish": "bun run build && bun run check && bun scripts/publish.ts"
   },
   "type": "module",

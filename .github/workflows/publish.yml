@@ -1,14 +1,19 @@
-name: Publish
+name: Release
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  publish:
-    name: Publish packages
+  release:
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,20 +39,14 @@ jobs:
       - name: Check bundle sizes
         run: bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size
 
-      - name: Publish roller
-        continue-on-error: true
+      - name: Create Release PR or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: bun changeset version
+          publish: bun run publish
+          title: 'chore: version packages'
+          commit: 'chore: version packages'
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: cd packages/roller && bun publish --access=public
-
-      - name: Publish games
-        continue-on-error: true
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: cd packages/games && bun publish --access=public
-
-      - name: Publish cli
-        continue-on-error: true
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: cd apps/cli && bun publish --access=public
