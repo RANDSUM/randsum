@@ -14,7 +14,6 @@ Flags:
   --json            Output as JSON
   -r, --repeat N    Roll N times
   -s, --seed N      Use seeded random
-  -i, --interactive Open interactive TUI
   -h, --help        Show this help
   -V, --version     Show version
 
@@ -23,8 +22,7 @@ Examples:
   randsum 2d20L +5         Roll with advantage + modifier
   randsum 1d20 -v          Verbose output
   randsum 3d6 --json       JSON output
-  randsum 4d6L -r 6        Roll 6 times
-  randsum                  Open interactive TUI`
+  randsum 4d6L -r 6        Roll 6 times`
 
 interface ParsedArgs {
   readonly notations: string[]
@@ -32,7 +30,6 @@ interface ParsedArgs {
   readonly json: boolean
   readonly repeat: number
   readonly seed: number | undefined
-  readonly interactive: boolean
   readonly help: boolean
   readonly version: boolean
 }
@@ -44,7 +41,6 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
     json: false,
     repeat: 1,
     seed: undefined as number | undefined,
-    interactive: false,
     help: false,
     version: false
   }
@@ -60,8 +56,6 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
     } else if (arg === '-s' || arg === '--seed') {
       const seedValue = Number(args[i + 1])
       flags.seed = Number.isNaN(seedValue) ? undefined : seedValue
-    } else if (arg === '-i' || arg === '--interactive') {
-      flags.interactive = true
     } else if (arg === '-h' || arg === '--help') {
       flags.help = true
     } else if (arg === '-V' || arg === '--version') {
@@ -83,7 +77,7 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
   return { notations, ...flags }
 }
 
-async function main(): Promise<void> {
+function main(): void {
   const parsed = parseArgs(process.argv)
 
   if (parsed.help) {
@@ -98,10 +92,9 @@ async function main(): Promise<void> {
     return
   }
 
-  if (parsed.notations.length === 0 || parsed.interactive) {
-    // TUI mode — dynamic import to avoid loading Ink when not needed
-    const { launchTui } = await import('./tui/App')
-    launchTui()
+  if (parsed.notations.length === 0) {
+    // eslint-disable-next-line no-console
+    console.log(HELP)
     return
   }
 
@@ -117,4 +110,4 @@ async function main(): Promise<void> {
   console.log(output)
 }
 
-void main()
+main()

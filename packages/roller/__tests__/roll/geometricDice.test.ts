@@ -21,10 +21,30 @@ describe('Geometric dice (gN)', () => {
       expect(result.rolls).toHaveLength(1)
     })
 
-    test('stress test: all values >= 1 and capped at 1000', () => {
-      Array.from({ length: 999 }, () => roll('g6')).forEach(({ total }) => {
-        expect(total).toBeGreaterThanOrEqual(1)
-        expect(total).toBeLessThanOrEqual(1000)
+    test('rolls show actual die values ending with 1', () => {
+      const result = roll('g6')
+      const rolls = result.rolls[0]!.rolls
+      expect(rolls.length).toBeGreaterThanOrEqual(1)
+      // Last roll in a geometric sequence is always 1 (the stop condition)
+      expect(rolls[rolls.length - 1]).toBe(1)
+      // All rolls are valid d6 values
+      rolls.forEach(die => {
+        expect(die).toBeGreaterThanOrEqual(1)
+        expect(die).toBeLessThanOrEqual(6)
+      })
+    })
+
+    test('total is sum of all die values', () => {
+      const result = roll('g6')
+      const rolls = result.rolls[0]!.rolls
+      const expectedTotal = rolls.reduce((sum, v) => sum + v, 0)
+      expect(result.total).toBe(expectedTotal)
+    })
+
+    test('stress test: all sequences end with 1', () => {
+      Array.from({ length: 999 }, () => roll('g6')).forEach(({ rolls: records }) => {
+        const rolls = records[0]!.rolls
+        expect(rolls[rolls.length - 1]).toBe(1)
       })
     })
   })
@@ -35,12 +55,11 @@ describe('Geometric dice (gN)', () => {
       expect(result.total).toBeGreaterThanOrEqual(1)
     })
 
-    test('stress test: g2 results vary (not all 1)', () => {
+    test('stress test: g2 roll counts vary', () => {
       const results = Array.from({ length: 999 }, () => roll('g2'))
-      const totals = results.map(r => r.total)
-      const uniqueTotals = new Set(totals)
-      // With g2 (50% chance of 1 each roll), we should see at least some variety
-      expect(uniqueTotals.size).toBeGreaterThan(1)
+      const rollCounts = results.map(r => r.rolls[0]!.rolls.length)
+      const uniqueCounts = new Set(rollCounts)
+      expect(uniqueCounts.size).toBeGreaterThan(1)
     })
   })
 
@@ -50,34 +69,31 @@ describe('Geometric dice (gN)', () => {
       expect(result.total).toBeGreaterThanOrEqual(1)
     })
 
-    test('stress test: g20 tends to produce higher values than g2', () => {
+    test('stress test: g20 tends to produce more rolls than g2', () => {
       const g2Results = Array.from({ length: 500 }, () => roll('g2'))
       const g20Results = Array.from({ length: 500 }, () => roll('g20'))
-      const g2Avg = g2Results.reduce((s, r) => s + r.total, 0) / g2Results.length
-      const g20Avg = g20Results.reduce((s, r) => s + r.total, 0) / g20Results.length
-      // g20 should on average take more rolls (1/20 chance of stopping vs 1/2)
-      expect(g20Avg).toBeGreaterThan(g2Avg)
+      const g2AvgRolls =
+        g2Results.reduce((s, r) => s + r.rolls[0]!.rolls.length, 0) / g2Results.length
+      const g20AvgRolls =
+        g20Results.reduce((s, r) => s + r.rolls[0]!.rolls.length, 0) / g20Results.length
+      expect(g20AvgRolls).toBeGreaterThan(g2AvgRolls)
     })
   })
 
   describe('quantity prefix', () => {
-    test('2g6 rolls two independent geometric dice', () => {
+    test('2g6 produces rolls from two independent geometric sequences', () => {
       const result = roll('2g6')
       expect(result.rolls).toHaveLength(1)
-      // The quantity is 2, so there should be 2 roll values
-      expect(result.rolls[0]!.rolls).toHaveLength(2)
+      const rolls = result.rolls[0]!.rolls
+      // Should have at least 2 rolls (minimum 1 per sequence)
+      expect(rolls.length).toBeGreaterThanOrEqual(2)
     })
 
-    test('3g6 rolls three independent geometric dice', () => {
-      const result = roll('3g6')
-      expect(result.rolls[0]!.rolls).toHaveLength(3)
-    })
-
-    test('stress test: each geometric die result >= 1', () => {
-      Array.from({ length: 999 }, () => roll('2g6')).forEach(({ rolls }) => {
-        rolls[0]!.rolls.forEach(die => {
+    test('stress test: each die value in range', () => {
+      Array.from({ length: 999 }, () => roll('2g6')).forEach(({ rolls: records }) => {
+        records[0]!.rolls.forEach(die => {
           expect(die).toBeGreaterThanOrEqual(1)
-          expect(die).toBeLessThanOrEqual(1000)
+          expect(die).toBeLessThanOrEqual(6)
         })
       })
     })
@@ -90,6 +106,7 @@ describe('Geometric dice (gN)', () => {
       const r1 = roll('g6', { randomFn: s1 })
       const r2 = roll('g6', { randomFn: s2 })
       expect(r1.total).toBe(r2.total)
+      expect(r1.rolls[0]!.rolls).toEqual(r2.rolls[0]!.rolls)
     })
   })
 

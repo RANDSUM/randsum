@@ -41,11 +41,16 @@ export class RollPipeline<T = string> {
    * Generate the initial dice rolls before any modifiers are applied.
    */
   public generateInitialRolls(): this {
-    const { sides, quantity, draw, geometric } = this.params
+    const { sides, quantity, draw, geometric, numericFaces } = this.params
     if (draw === true) {
       this.initialRolls = this.drawWithoutReplacement(quantity, sides)
     } else if (geometric === true) {
-      this.initialRolls = Array.from({ length: quantity }, () => this.geometricRoll(sides))
+      this.initialRolls = this.geometricRolls(quantity, sides)
+    } else if (numericFaces !== undefined) {
+      this.initialRolls = Array.from(
+        { length: quantity },
+        () => numericFaces[coreRandom(numericFaces.length, this.rng)] ?? 0
+      )
     } else {
       this.initialRolls = coreSpreadRolls(quantity, sides, this.rng)
     }
@@ -53,15 +58,20 @@ export class RollPipeline<T = string> {
   }
 
   /**
-   * Perform a single geometric roll: roll dN until a 1 appears.
-   * Returns the number of rolls it took (including the final 1).
-   * Capped at 1000 to prevent infinite loops.
+   * Perform geometric rolls: for each of `quantity` sequences, roll dN until
+   * a 1 appears. Returns the actual die values from all sequences concatenated.
+   * Each sequence is capped at 1000 rolls to prevent infinite loops.
    */
-  private geometricRoll(sides: number, count = 1): number {
-    if (count > 1000) return 1000
-    const value = coreRandom(sides, this.rng) + 1
-    if (value === 1) return count
-    return this.geometricRoll(sides, count + 1)
+  private geometricRolls(quantity: number, sides: number): number[] {
+    const results: number[] = []
+    for (const _ of Array.from({ length: quantity })) {
+      for (const __ of Array.from({ length: 1000 })) {
+        const value = coreRandom(sides, this.rng) + 1
+        results.push(value)
+        if (value === 1) break
+      }
+    }
+    return results
   }
 
   /**
@@ -116,7 +126,11 @@ export class RollPipeline<T = string> {
       return this
     }
 
-    const rollOne = (): number => coreRandom(sides, this.rng) + 1
+    const { numericFaces } = this.params
+    const rollOne =
+      numericFaces !== undefined
+        ? (): number => numericFaces[coreRandom(numericFaces.length, this.rng)] ?? 0
+        : (): number => coreRandom(sides, this.rng) + 1
     const ctx: ModifierContext = {
       rollOne,
       parameters: { sides, quantity },

@@ -137,6 +137,73 @@ const GAME_SCHEMAS = [
   }
 ] as const
 
+function highlightJson(json: string): React.JSX.Element {
+  const tokenPattern =
+    /("(?:[^"\\]|\\.)*")\s*:|("(?:[^"\\]|\\.)*")|(-?\d+(?:\.\d+)?)\b|(true|false|null)/g
+  const source = json
+  const matches = Array.from(source.matchAll(tokenPattern))
+  const positions: { start: number; end: number; element: React.JSX.Element }[] = []
+
+  for (const match of matches) {
+    const fullMatch = match[0]
+    const start = match.index
+
+    if (match[1] !== undefined) {
+      // Key: "key":
+      const colonIdx = fullMatch.lastIndexOf(':')
+      positions.push({
+        start,
+        end: start + colonIdx,
+        element: <span style={{ color: '#82aaff' }}>{fullMatch.slice(0, colonIdx)}</span>
+      })
+      positions.push({
+        start: start + colonIdx,
+        end: start + fullMatch.length,
+        element: <span style={{ color: '#abb2bf' }}>{fullMatch.slice(colonIdx)}</span>
+      })
+    } else if (match[2] !== undefined) {
+      // String value
+      positions.push({
+        start,
+        end: start + fullMatch.length,
+        element: <span style={{ color: '#98c379' }}>{fullMatch}</span>
+      })
+    } else if (match[3] !== undefined) {
+      // Number
+      positions.push({
+        start,
+        end: start + fullMatch.length,
+        element: <span style={{ color: '#d19a66' }}>{fullMatch}</span>
+      })
+    } else if (match[4] !== undefined) {
+      // Boolean/null
+      positions.push({
+        start,
+        end: start + fullMatch.length,
+        element: <span style={{ color: '#c678dd' }}>{fullMatch}</span>
+      })
+    }
+  }
+
+  // Build output by filling gaps with unstyled text
+  const sorted = positions.sort((a, b) => a.start - b.start)
+  const result: React.JSX.Element[] = []
+  const cursor = { pos: 0 }
+
+  for (const [i, pos] of sorted.entries()) {
+    if (cursor.pos < pos.start) {
+      result.push(<span key={`g-${i}`}>{source.slice(cursor.pos, pos.start)}</span>)
+    }
+    result.push(<span key={`t-${i}`}>{pos.element}</span>)
+    cursor.pos = pos.end
+  }
+  if (cursor.pos < source.length) {
+    result.push(<span key="end">{source.slice(cursor.pos)}</span>)
+  }
+
+  return <>{result}</>
+}
+
 export function GameSchemaViewer(): React.JSX.Element {
   const [selectedIdx, setSelectedIdx] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -202,7 +269,7 @@ export function GameSchemaViewer(): React.JSX.Element {
         </div>
         <div ref={scrollRef} className="game-schema-code">
           <pre>
-            <code>{selected.json}</code>
+            <code>{highlightJson(selected.json)}</code>
           </pre>
         </div>
       </div>

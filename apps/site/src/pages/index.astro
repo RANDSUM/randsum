@@ -194,15 +194,15 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           <div class="game-schema-pitch">
             <h2 class="pitch-heading">
               <span class="pitch-plain">Define </span>
-              <span class="pitch-accent">games</span>
+              <span class="pitch-game-cycle">games</span>
               <span class="pitch-plain">,</span>
               <br />
               <span class="pitch-plain">not </span>
-              <span class="pitch-warn">code</span>
+              <span class="pitch-purple">code</span>
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
-              Every game system is a declarative <code>.randsum.json</code> spec &mdash; dice pools, modifiers, outcome tables, and input validation. The codegen pipeline turns specs into typed TypeScript. No hand-written game logic. Adding a new game is as simple as configuring a JSON file.
+              The <code>@randsum/games</code> package generates typed randomizers from declarative <code>.randsum.json</code> specs. Define dice pools, modifiers, and outcome tables in JSON &mdash; the codegen pipeline handles the rest. Adding a new game system is just writing a config file.
             </p>
             <div class="pitch-actions">
               <a href="/games/introduction/" class="btn btn-outline btn-sm">
@@ -279,9 +279,9 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
         </div>
         <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Game Schema</h3>
+            <h3 class="pkg-card-name">Bun Native</h3>
           </div>
-          <p class="pkg-card-desc">Declarative JSON specs for TTRPG systems. Six games built in, with a runtime loader to run and register your own.</p>
+          <p class="pkg-card-desc">Built with Bun from the ground up. Bun workspace monorepo, bun:test, bunup builds. Fast installs, fast tests, fast everything.</p>
         </div>
         <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
           <div class="pkg-card-header">
@@ -942,6 +942,30 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   :global(:root[data-theme='light']) .pitch-warn {
     color: #d97706;
     -webkit-text-fill-color: #d97706;
+  }
+
+  .pitch-purple {
+    color: #a855f7;
+    -webkit-text-fill-color: #a855f7;
+  }
+
+  :global(:root[data-theme='light']) .pitch-purple {
+    color: #9333ea;
+    -webkit-text-fill-color: #9333ea;
+  }
+
+  .pitch-game-cycle {
+    animation: game-color-cycle 6s ease-in-out infinite;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  @keyframes game-color-cycle {
+    0%, 100% { color: var(--game-fifth); }
+    16% { color: var(--game-daggerheart); }
+    33% { color: var(--game-root-rpg); }
+    50% { color: var(--game-salvageunion); }
+    66% { color: var(--game-blades); }
+    83% { color: var(--game-pbta); }
   }
 
   .pitch-sky {

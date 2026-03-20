@@ -5,7 +5,7 @@ import { optionsToNotation } from '../notation/transformers/optionsToNotation'
 import { optionsToSidesFaces } from '../notation/transformers/optionsToSidesFaces'
 import { validateRollOptions } from '../lib/optionsValidation'
 import { ValidationError } from '../errors'
-import type { DiceNotation, ReplaceOptions } from '../types'
+import type { DiceNotation } from '../types'
 import type { RollArgument, RollOptions, RollParams } from '../types'
 
 const DRAW_DIE_PATTERN = /^(\d*)[Dd][Dd](\d+)$/
@@ -24,7 +24,7 @@ function isAllNumeric(values: readonly string[]): boolean {
 /**
  * Build RollParams for a die with known numeric faces.
  * Used by custom faces (d{...}), Fate dice (dF), and zero-bias (zN).
- * Internally rolls a dN and uses the replace modifier to map indices to face values.
+ * The pipeline selects directly from the face values — no replace modifier needed.
  */
 function buildNumericFaceParams<T>(
   faces: readonly number[],
@@ -34,18 +34,13 @@ function buildNumericFaceParams<T>(
   description: string[],
   position: number
 ): RollParams<T>[] {
-  const sides = faces.length
-  const replace: ReplaceOptions[] = faces.map((face, i) => ({
-    from: i + 1,
-    to: face
-  }))
-
   return [
     {
       quantity,
-      sides,
+      sides: faces.length,
+      numericFaces: faces,
       arithmetic: 'add',
-      modifiers: { replace },
+      modifiers: {},
       key: `Roll ${position}`,
       argument: arg as DiceNotation,
       notation,

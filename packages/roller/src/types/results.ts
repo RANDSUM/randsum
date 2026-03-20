@@ -13,6 +13,8 @@ export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 's
   sides: number
   /** Custom face values if using non-numeric dice */
   faces?: T[]
+  /** Numeric face values for dice with non-standard faces (e.g. Fate: [-1,0,1], zero-bias: [0,1,2,...]) */
+  numericFaces?: readonly number[]
   /** Draw without replacement (DD notation) */
   draw?: true
   /** Geometric die — roll until 1, count attempts */
