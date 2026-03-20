@@ -8,6 +8,7 @@ export interface TokenOverlayInputProps {
   readonly hoveredTokenIdx: number | null
   readonly theme?: 'light' | 'dark'
   readonly children: React.ReactNode
+  readonly overlayRef?: React.Ref<HTMLDivElement>
 }
 
 function tokenColor(
@@ -22,12 +23,13 @@ export function TokenOverlayInput({
   tokens,
   hoveredTokenIdx,
   theme = 'dark',
-  children
+  children,
+  overlayRef
 }: TokenOverlayInputProps): React.JSX.Element {
   return (
     <div className="du-input-wrap">
       {tokens.length > 0 && (
-        <div className="du-notation-overlay" aria-hidden="true">
+        <div className="du-notation-overlay" aria-hidden="true" ref={overlayRef}>
           {tokens.map((token, i) => {
             const doc = NOTATION_DOCS[token.key]
             const color = tokenColor(doc, theme)

@@ -33,9 +33,9 @@ const makeRecord = (): RollRecord => ({
 })
 
 describe('RollResult component', () => {
-  test('renders nr-result-inner container', () => {
+  test('renders nr-tooltip-rows container', () => {
     const html = renderToStaticMarkup(createElement(RollResult, { records: [makeRecord()] }))
-    expect(html).toContain('nr-result-inner')
+    expect(html).toContain('nr-tooltip-rows')
   })
 
   test('renders step rows for a single pool', () => {
@@ -47,13 +47,13 @@ describe('RollResult component', () => {
     const html = renderToStaticMarkup(
       createElement(RollResult, { records: [makeRecord(), makeRecord()] })
     )
-    expect(html).toContain('du-pool-heading')
+    expect(html).toContain('nr-pool-heading')
     expect(html).toContain('1d6')
   })
 
   test('does not render pool header for single record', () => {
     const html = renderToStaticMarkup(createElement(RollResult, { records: [makeRecord()] }))
-    expect(html).not.toContain('du-pool-heading')
+    expect(html).not.toContain('nr-pool-heading')
   })
 })
 

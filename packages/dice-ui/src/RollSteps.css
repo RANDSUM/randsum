@@ -18,24 +18,22 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--dui-space-sm);
-  padding: var(--dui-space-xs) 0;
+  padding: var(--dui-space-xs) var(--dui-space-xs);
 }
 
 .du-step-row--final {
-  border-top: 1px solid var(--dui-color-border);
   padding-top: var(--dui-space-sm);
   margin-top: var(--dui-space-xs);
 }
 
 .du-step-label {
-  font-size: 0.8125rem;
   color: var(--dui-color-text-muted);
   flex-shrink: 0;
 }
 
 .du-step-arithmetic {
   font-family: var(--dui-font-mono);
-  color: var(--dui-color-accent);
+  color: var(--dui-color-text);
   font-weight: 600;
 }
 
@@ -61,13 +59,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.75rem;
-  padding: 0.125rem 0.375rem;
+  min-width: 1.5em;
+  padding: 0.125rem 0.25rem;
   border-radius: var(--dui-radius-sm);
   font-family: var(--dui-font-mono);
-  font-size: 0.875rem;
   font-weight: 500;
-  background: var(--dui-color-surface-alt);
+  background: transparent;
   color: var(--dui-color-text);
 }
 
@@ -77,5 +74,5 @@
 }
 
 .du-die-badge--added {
-  color: var(--dui-color-added);
+  color: var(--dui-color-text);
 }
