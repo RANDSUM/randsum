@@ -1,7 +1,7 @@
 <div align="center">
   <img width="150" height="150" src="https://raw.githubusercontent.com/RANDSUM/randsum/refs/heads/main/icon.webp" alt="Randsum Logo. A Dotted D6 rolled a 6 with the dots arranged to look like an R.">
   <h1>Randsum</h1>
-  <h3>TypeScript-First Dice Notation Ecosystem</h3>
+  <h3>A Zero Dependency, Typescript-First, Bun-Native Dice Notation and Rolling Engine</h3>
   <p>Throw Dice, Not Exceptions.</p>
 
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
@@ -18,25 +18,23 @@
 
 This repository contains multiple packages and applications for dice rolling and tabletop RPG mechanics:
 
-### Core Packages
+### Core Packages (published to npm)
 
-- **[@randsum/notation](packages/notation)** - Dice notation parser and type foundation
-- **[@randsum/roller](packages/roller)** - Core dice rolling engine with advanced notation support
-- **[@randsum/display-utils](packages/display-utils)** - Shared display and formatting utilities for RANDSUM packages
-- **[@randsum/games/blades](packages/games)** - Blades in the Dark system mechanics
-- **[@randsum/games/daggerheart](packages/games)** - Daggerheart RPG system support
-- **[@randsum/games/fifth](packages/games)** - D&D 5th Edition mechanics
-- **[@randsum/games/pbta](packages/games)** - Powered by the Apocalypse system mechanics
-- **[@randsum/games/root-rpg](packages/games)** - Root RPG system implementation
-- **[@randsum/games/salvageunion](packages/games)** - Salvage Union mechanics
-
-### Applications
-
+- **[@randsum/roller](packages/roller)** - Zero-dependency dice rolling engine with built-in notation parsing and validation
+- **[@randsum/games](packages/games)** - TTRPG game packages with subpath exports per system:
+  - `@randsum/games/blades` - Blades in the Dark
+  - `@randsum/games/daggerheart` - Daggerheart
+  - `@randsum/games/fifth` - D&D 5th Edition
+  - `@randsum/games/pbta` - Powered by the Apocalypse
+  - `@randsum/games/root-rpg` - Root RPG
+  - `@randsum/games/salvageunion` - Salvage Union
 - **[@randsum/cli](apps/cli)** - CLI and interactive TUI for rolling dice from the terminal
-- **[@randsum/discord-bot](apps/discord-bot)** - Discord bot with dice rolling capabilities using discord.js and Bun
-- **[@randsum/site](apps/site)** - Documentation and marketing website built with Astro
 
-All packages are built with TypeScript, thoroughly tested, and published to NPM with full type definitions.
+### Applications (private)
+
+- **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
+- **[@randsum/site](apps/site)** - Documentation and marketing website built with Astro
+- **[@randsum/playground](apps/playground)** - Interactive dice notation playground
 
 ## 🚀 Quick Example
 
@@ -111,7 +109,7 @@ Bun's workspace features handle tasks across all packages with automatic depende
 - `bun run test` - Run all tests
 - `bun run lint` - Run ESLint checks across the monorepo
 - `bun run typecheck` - Run TypeScript checks for all packages
-- `bun run check:all` - Complete CI pipeline (lint, format check, typecheck, test)
+- `bun run check:all` - Run all package-level checks (build, typecheck, lint, format, test)
 - `bun run fix:all` - Run ESLint with auto-fix and format code
 - `bun run format` - Format code using Prettier
 
@@ -133,14 +131,6 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 
 ## 📚 Documentation
 
-### Package Documentation
-
-Each package includes comprehensive documentation:
-
-- **API Reference**: Generated TypeDoc documentation for all packages
-- **README Files**: Individual package documentation in each `packages/*/README.md`
-- **Examples**: Usage examples and integration guides
-
 ### Key Resources
 
 - [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`
@@ -149,13 +139,7 @@ Each package includes comprehensive documentation:
 
 ### Website Deployment
 
-The documentation site (`@randsum/site`) is automatically deployed to:
-
-- **Netlify**: Configured via `apps/site/netlify.toml` and deployed on push to main
-- **GitHub Pages (Repository)**: Deployed to the `gh-pages` branch via GitHub Actions
-- **GitHub Pages (Organization)**: Deployed to `randsum.github.io` repository via GitHub Actions
-
-All deployments are triggered automatically on push to the `main` branch. The site build is included in the CI pipeline via `check:all`.
+The documentation site (`@randsum/site`) is deployed to **Netlify**, configured via `apps/site/netlify.toml` and deployed automatically on push to main.
 
 ---
 
