@@ -80,10 +80,21 @@ for (const { name, dir } of packages) {
       npmArgs.push(arg)
     }
 
-    await $`npm ${npmArgs}`
+    const result = await $`npm ${npmArgs}`.nothrow().quiet()
+    const output = result.stderr.toString()
+
+    if (result.exitCode === 0) {
+      console.log(`  published ${name}`)
+    } else if (output.includes('You cannot publish over the previously published')) {
+      console.log(`  skipped ${name} (version already published)`)
+    } else {
+      console.error(output)
+      failed.push(name)
+    }
 
     unlinkSync(tgzPath)
-  } catch {
+  } catch (e) {
+    console.error(String(e))
     failed.push(name)
   }
   console.log()
