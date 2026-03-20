@@ -41,6 +41,8 @@ export interface ModifierLog {
   added: number[]
   /** Values that were removed by this modifier */
   removed: number[]
+  /** Paired replacements for modifiers that do 1:1 substitution (e.g. unique, reroll, replace) */
+  replacements?: readonly { readonly from: number; readonly to: number }[]
 }
 
 /**

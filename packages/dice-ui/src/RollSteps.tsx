@@ -35,6 +35,24 @@ export function DieBadge({ value, variant }: DieBadgeProps): React.JSX.Element {
   )
 }
 
+function ReplacementPair({
+  from,
+  to,
+  index
+}: {
+  readonly from: number
+  readonly to: number
+  readonly index: number
+}): React.JSX.Element {
+  return (
+    <span key={`rp-${index}`} className="du-replacement-pair">
+      <DieBadge value={from} variant="removed" />
+      <span className="du-replacement-arrow">{'\u2192'}</span>
+      <DieBadge value={to} variant="added" />
+    </span>
+  )
+}
+
 export function StepRow({ step }: StepRowProps): React.JSX.Element {
   if (step.kind === 'divider') {
     return <hr className="du-step-divider" />
@@ -50,19 +68,34 @@ export function StepRow({ step }: StepRowProps): React.JSX.Element {
   }
 
   if (step.kind === 'rolls') {
+    const replacements = step.replacements ?? []
+
     return (
       <div className="du-step-row">
         <span className="du-step-label">{step.label}</span>
         <span className="du-die-badges">
-          {step.removed.map((v, i) => (
-            <DieBadge key={`r-${i}`} value={v} variant="removed" />
-          ))}
-          {step.added.map((v, i) => (
-            <DieBadge key={`a-${i}`} value={v} variant="added" />
-          ))}
-          {step.unchanged.map((v, i) => (
-            <DieBadge key={`u-${i}`} value={v} variant="unchanged" />
-          ))}
+          {replacements.length > 0 ? (
+            <>
+              {replacements.map((r, i) => (
+                <ReplacementPair key={`rp-${i}`} from={r.from} to={r.to} index={i} />
+              ))}
+              {step.unchanged.map((v, i) => (
+                <DieBadge key={`u-${i}`} value={v} variant="unchanged" />
+              ))}
+            </>
+          ) : (
+            <>
+              {step.removed.map((v, i) => (
+                <DieBadge key={`r-${i}`} value={v} variant="removed" />
+              ))}
+              {step.added.map((v, i) => (
+                <DieBadge key={`a-${i}`} value={v} variant="added" />
+              ))}
+              {step.unchanged.map((v, i) => (
+                <DieBadge key={`u-${i}`} value={v} variant="unchanged" />
+              ))}
+            </>
+          )}
         </span>
       </div>
     )

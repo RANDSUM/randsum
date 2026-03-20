@@ -76,3 +76,15 @@
 .du-die-badge--added {
   color: var(--dui-color-text);
 }
+
+/* ===== Replacement pairs (from → to) ===== */
+.du-replacement-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+}
+
+.du-replacement-arrow {
+  color: var(--dui-color-text-muted);
+  font-size: 0.75em;
+}

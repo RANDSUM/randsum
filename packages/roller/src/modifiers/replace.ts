@@ -105,20 +105,23 @@ export const replaceModifier: ModifierDefinition<ReplaceOptions | ReplaceOptions
 
   apply: (rolls, options) => {
     const replaceRules = Array.isArray(options) ? options : [options]
+    const replacements: { from: number; to: number }[] = []
 
     const applyRule = (currentRolls: number[], rule: ReplaceOptions): number[] => {
       const { from, to } = rule
       return currentRolls.map(roll => {
-        if (typeof from === 'object') {
-          return matchesComparison(roll, from) ? to : roll
+        const matches = typeof from === 'object' ? matchesComparison(roll, from) : roll === from
+        if (matches && roll !== to) {
+          replacements.push({ from: roll, to })
+          return to
         }
-        return roll === from ? to : roll
+        return roll
       })
     }
 
     const result = replaceRules.reduce((currentRolls, rule) => applyRule(currentRolls, rule), rolls)
 
-    return { rolls: result }
+    return { rolls: result, replacements }
   },
 
   validate: options => {

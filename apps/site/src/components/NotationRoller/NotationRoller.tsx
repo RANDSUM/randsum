@@ -401,7 +401,18 @@ export function RollResult({
       {total !== undefined && (
         <div className="nr-tooltip-row nr-tooltip-row--total">
           <span className="du-step-label nr-result-label--total">Total</span>
-          <span className="du-step-final-math nr-result-dice--total">{total}</span>
+          <span className="du-step-final-math nr-result-dice--total">
+            {records.length > 1
+              ? records
+                  .map((r, i) => {
+                    const poolTotal =
+                      r.rolls.length > 0 ? `[${r.rolls.join('+')}]` : `${r.appliedTotal}`
+                    const prefix = i === 0 ? '' : r.appliedTotal < 0 ? ' - ' : ' + '
+                    return `${prefix}${r.appliedTotal < 0 && i > 0 ? poolTotal.replace('-', '') : poolTotal}`
+                  })
+                  .join('') + ` = ${total}`
+              : total}
+          </span>
         </div>
       )}
     </div>

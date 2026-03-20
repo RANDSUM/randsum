@@ -30,7 +30,7 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   readonly sort: 92
   readonly integerDivide: 93
   readonly modulo: 94
-  readonly count: 95
+  readonly count: 80
   readonly multiplyTotal: 100
 } = {
   cap: 10,
@@ -50,7 +50,7 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   sort: 92,
   integerDivide: 93,
   modulo: 94,
-  count: 95,
+  count: 80,
   multiplyTotal: 100
 } as const satisfies Record<string, number>
 

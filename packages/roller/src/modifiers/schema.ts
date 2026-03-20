@@ -126,6 +126,8 @@ export interface ModifierApplyResult {
    * (e.g., multiply, count, plus/minus).
    */
   transformTotal?: TotalTransformer
+  /** Paired replacements for modifiers that do 1:1 substitution */
+  replacements?: readonly { readonly from: number; readonly to: number }[]
 }
 
 /**

@@ -35,7 +35,8 @@ export function createModifierLog(
   modifier: string,
   options: ModifierConfig | undefined,
   initialRolls: number[],
-  newRolls: number[]
+  newRolls: number[],
+  replacements?: readonly { readonly from: number; readonly to: number }[]
 ): ModifierLog {
   const baseLog = { modifier, options }
 
@@ -71,5 +72,9 @@ export function createModifierLog(
     }
   }
 
-  return { ...baseLog, added, removed }
+  const log: ModifierLog = { ...baseLog, added, removed }
+  if (replacements !== undefined && replacements.length > 0) {
+    log.replacements = replacements
+  }
+  return log
 }

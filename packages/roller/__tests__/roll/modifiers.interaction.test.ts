@@ -36,13 +36,14 @@ describe('modifier interactions', () => {
   })
 
   describe('count + arithmetic', () => {
-    test('count (priority 95) overwrites plus (priority 90) total', () => {
+    test('arithmetic applies after count: 4d1 count>=1 + 2 = 6', () => {
       const result = roll({
         sides: 1,
         quantity: 4,
         modifiers: { count: { greaterThanOrEqual: 1 }, plus: 2 }
       })
-      expect(result.total).toBe(4)
+      // count finds 4 successes, then plus adds 2 = 6
+      expect(result.total).toBe(6)
     })
 
     test('count with deduct subtracts botches', () => {

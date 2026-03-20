@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const INTEGRATIONS = [
   {
@@ -87,22 +87,179 @@ bunx @randsum/cli 3d6     # Blades pool
   }
 ] as const
 
+function highlightCode(code: string, filename: string): React.JSX.Element {
+  if (filename === 'terminal') {
+    // Terminal: highlight $ prompts and box-drawing
+    const lines = code.split('\n')
+    return (
+      <>
+        {lines.map((line, i) => (
+          <span key={i}>
+            {i > 0 && '\n'}
+            {line.startsWith('$') ? (
+              <>
+                <span style={{ color: '#98c379' }}>$</span>
+                <span style={{ color: '#e5c07b' }}>{line.slice(1)}</span>
+              </>
+            ) : (
+              <span style={{ color: '#abb2bf' }}>{line}</span>
+            )}
+          </span>
+        ))}
+      </>
+    )
+  }
+
+  if (filename.endsWith('.ts')) {
+    // TypeScript: keyword, string, comment, function highlighting
+    const tokenPattern =
+      /(\/\/[^\n]*|'[^']*'|`[^`]*`|"[^"]*"|\b(?:import|from|export|const|function|return|if|throw|new|map)\b|(?:Error|string)\b|\{|\}|\(|\))/g
+    const parts = code.split(tokenPattern)
+    return (
+      <>
+        {parts.map((part, i) => {
+          if (!part) return null
+          if (part.startsWith('//'))
+            return (
+              <span key={i} style={{ color: '#5c6370', fontStyle: 'italic' }}>
+                {part}
+              </span>
+            )
+          if (part.startsWith("'") || part.startsWith('"') || part.startsWith('`'))
+            return (
+              <span key={i} style={{ color: '#98c379' }}>
+                {part}
+              </span>
+            )
+          if (/^(?:import|from|export|const|function|return|if|throw|new)$/.test(part))
+            return (
+              <span key={i} style={{ color: '#c678dd' }}>
+                {part}
+              </span>
+            )
+          if (/^(?:Error|string|map)$/.test(part))
+            return (
+              <span key={i} style={{ color: '#e5c07b' }}>
+                {part}
+              </span>
+            )
+          return <span key={i}>{part}</span>
+        })}
+      </>
+    )
+  }
+
+  if (filename.endsWith('.md')) {
+    // Markdown: frontmatter, headings, code blocks, bold
+    const lines = code.split('\n')
+    const firstFence = lines.indexOf('---')
+    const secondFence = firstFence >= 0 ? lines.indexOf('---', firstFence + 1) : -1
+    return (
+      <>
+        {lines.map((line, i) => {
+          const inFrontmatter =
+            firstFence >= 0 && secondFence >= 0 && i > firstFence && i < secondFence
+          if (line === '---' && (i === firstFence || i === secondFence)) {
+            return (
+              <span key={i}>
+                {i > 0 && '\n'}
+                <span style={{ color: '#5c6370' }}>{line}</span>
+              </span>
+            )
+          }
+          if (inFrontmatter) {
+            const colonIdx = line.indexOf(':')
+            if (colonIdx > 0) {
+              return (
+                <span key={i}>
+                  {i > 0 && '\n'}
+                  <span style={{ color: '#e5c07b' }}>{line.slice(0, colonIdx)}</span>
+                  <span style={{ color: '#abb2bf' }}>:</span>
+                  <span style={{ color: '#98c379' }}>{line.slice(colonIdx + 1)}</span>
+                </span>
+              )
+            }
+            return (
+              <span key={i}>
+                {i > 0 && '\n'}
+                <span style={{ color: '#98c379' }}>{line}</span>
+              </span>
+            )
+          }
+          if (line.startsWith('#'))
+            return (
+              <span key={i}>
+                {i > 0 && '\n'}
+                <span style={{ color: '#61afef' }}>{line}</span>
+              </span>
+            )
+          if (line.startsWith('```'))
+            return (
+              <span key={i}>
+                {i > 0 && '\n'}
+                <span style={{ color: '#5c6370' }}>{line}</span>
+              </span>
+            )
+          if (line.includes('**')) {
+            const boldParts = line.split(/(\*\*[^*]+\*\*)/)
+            return (
+              <span key={i}>
+                {i > 0 && '\n'}
+                {boldParts.map((p, j) =>
+                  p.startsWith('**') ? (
+                    <span key={j} style={{ color: '#e5c07b', fontWeight: 700 }}>
+                      {p}
+                    </span>
+                  ) : (
+                    <span key={j}>{p}</span>
+                  )
+                )}
+              </span>
+            )
+          }
+          return (
+            <span key={i}>
+              {i > 0 && '\n'}
+              {line}
+            </span>
+          )
+        })}
+      </>
+    )
+  }
+
+  return <>{code}</>
+}
+
 export function IntegrationViewer(): React.JSX.Element {
   const [selectedIdx, setSelectedIdx] = useState(0)
+  const cycleRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
+
+  const startCycle = useCallback(() => {
+    if (cycleRef.current) clearInterval(cycleRef.current)
+    cycleRef.current = setInterval(() => {
+      setSelectedIdx(i => (i + 1) % INTEGRATIONS.length)
+    }, 8000)
+  }, [])
 
   const handleChipClick = useCallback((idx: number) => {
     setSelectedIdx(idx)
+    if (cycleRef.current) clearInterval(cycleRef.current)
+    cycleRef.current = undefined
   }, [])
 
   useEffect(() => {
+    startCycle()
     const handler = (): void => {
       setSelectedIdx(i => (i + 1) % INTEGRATIONS.length)
+      startCycle()
     }
     window.addEventListener('die-rolled', handler)
     return () => {
+      if (cycleRef.current) clearInterval(cycleRef.current)
       window.removeEventListener('die-rolled', handler)
     }
-  }, [])
+  }, [startCycle])
 
   const selected = INTEGRATIONS[selectedIdx]
   if (!selected) return <div />
@@ -137,7 +294,7 @@ export function IntegrationViewer(): React.JSX.Element {
             </div>
             <div className="integration-terminal-body">
               <pre>
-                <code>{selected.content}</code>
+                <code>{highlightCode(selected.content, selected.filename)}</code>
               </pre>
             </div>
           </div>
@@ -154,7 +311,7 @@ export function IntegrationViewer(): React.JSX.Element {
             </div>
             <div className="integration-terminal-body">
               <pre>
-                <code>{selected.content}</code>
+                <code>{highlightCode(selected.content, selected.filename)}</code>
               </pre>
             </div>
           </div>

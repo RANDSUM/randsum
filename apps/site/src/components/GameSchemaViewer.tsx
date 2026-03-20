@@ -140,23 +140,36 @@ const GAME_SCHEMAS = [
 export function GameSchemaViewer(): React.JSX.Element {
   const [selectedIdx, setSelectedIdx] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const cycleRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
+
+  const startCycle = useCallback(() => {
+    if (cycleRef.current) clearInterval(cycleRef.current)
+    cycleRef.current = setInterval(() => {
+      setSelectedIdx(i => (i + 1) % GAME_SCHEMAS.length)
+      if (scrollRef.current) scrollRef.current.scrollTop = 0
+    }, 8000)
+  }, [])
 
   const handleChipClick = useCallback((idx: number) => {
     setSelectedIdx(idx)
     if (scrollRef.current) scrollRef.current.scrollTop = 0
+    if (cycleRef.current) clearInterval(cycleRef.current)
+    cycleRef.current = undefined
   }, [])
 
-  // Listen for die-rolled to cycle schemas
   useEffect(() => {
+    startCycle()
     const handler = (): void => {
       setSelectedIdx(i => (i + 1) % GAME_SCHEMAS.length)
       if (scrollRef.current) scrollRef.current.scrollTop = 0
+      startCycle()
     }
     window.addEventListener('die-rolled', handler)
     return () => {
+      if (cycleRef.current) clearInterval(cycleRef.current)
       window.removeEventListener('die-rolled', handler)
     }
-  }, [])
+  }, [startCycle])
 
   const selected = GAME_SCHEMAS[selectedIdx]
   if (!selected) return <div />

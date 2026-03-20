@@ -108,25 +108,33 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
       return findUnique(value, 0)
     }
 
-    const { result } = rolls.reduce<{ result: number[]; seen: Set<number> }>(
+    const { result, replacements } = rolls.reduce<{
+      result: number[]
+      seen: Set<number>
+      replacements: { from: number; to: number }[]
+    }>(
       (acc, value) => {
         if (exceptions.has(value)) {
-          return { result: [...acc.result, value], seen: acc.seen }
+          return { ...acc, result: [...acc.result, value] }
         }
 
         if (acc.seen.has(value)) {
           const newValue = rerollUntilUnique(value, acc.seen)
           const newSeen = new Set(acc.seen).add(newValue)
-          return { result: [...acc.result, newValue], seen: newSeen }
+          return {
+            result: [...acc.result, newValue],
+            seen: newSeen,
+            replacements: [...acc.replacements, { from: value, to: newValue }]
+          }
         }
 
         const newSeen = new Set(acc.seen).add(value)
-        return { result: [...acc.result, value], seen: newSeen }
+        return { ...acc, result: [...acc.result, value], seen: newSeen }
       },
-      { result: [], seen: new Set<number>() }
+      { result: [], seen: new Set<number>(), replacements: [] }
     )
 
-    return { rolls: result }
+    return { rolls: result, replacements }
   },
 
   validate: (options, { sides, quantity }) => {

@@ -162,9 +162,9 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               <span class="pitch-accent">modifier</span>
               <span class="pitch-plain">,</span>
               <br />
-              <span class="pitch-highlight">parsed</span>
+              <span class="pitch-color-cycle" aria-label="parsed">{"parsed".split('').map((c, i) => <span class="pitch-color-char" style={`animation-delay: ${i * 0.15}s`}>{c}</span>)}</span>
               <span class="pitch-plain"> and </span>
-              <span class="pitch-highlight">validated</span>
+              <span class="pitch-color-cycle" aria-label="validated">{"validated".split('').map((c, i) => <span class="pitch-color-char" style={`animation-delay: ${(i + 6) * 0.15}s`}>{c}</span>)}</span>
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
@@ -894,6 +894,44 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   :global(:root[data-theme='light']) .pitch-highlight {
     color: #059669;
     -webkit-text-fill-color: #059669;
+  }
+
+  .pitch-color-cycle {
+    display: inline;
+  }
+
+  .pitch-color-char {
+    display: inline-block;
+    animation: syntax-color-cycle 4.5s ease-in-out infinite;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  @keyframes syntax-color-cycle {
+    0%, 100% { color: #60a5fa; }      /* core blue */
+    11% { color: #f060d0; }           /* drop fuchsia */
+    22% { color: #ffab70; }           /* keep orange */
+    33% { color: #e5c07b; }           /* explode gold */
+    44% { color: #c792ea; }           /* reroll purple */
+    55% { color: #89ddff; }           /* cap cyan */
+    66% { color: #80cbc4; }           /* unique teal */
+    77% { color: #98c379; }           /* plus green */
+    88% { color: #82aaff; }           /* count blue-violet */
+  }
+
+  :global(:root[data-theme='light']) .pitch-color-char {
+    animation-name: syntax-color-cycle-light;
+  }
+
+  @keyframes syntax-color-cycle-light {
+    0%, 100% { color: #2563eb; }
+    11% { color: #b028a8; }
+    22% { color: #c2620a; }
+    33% { color: #9a7c1a; }
+    44% { color: #7c4dab; }
+    55% { color: #0082a5; }
+    66% { color: #1a7a72; }
+    77% { color: #3a7d20; }
+    88% { color: #3a60c8; }
   }
 
   .pitch-warn {

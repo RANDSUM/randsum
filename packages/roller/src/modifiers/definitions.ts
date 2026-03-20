@@ -35,12 +35,12 @@ export const RANDSUM_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
   explodeSequenceModifier as ModifierDefinition,
   uniqueModifier as ModifierDefinition,
   wildDieModifier as ModifierDefinition,
+  countModifier as ModifierDefinition,
   multiplyModifier as ModifierDefinition,
   plusModifier as ModifierDefinition,
   minusModifier as ModifierDefinition,
   sortModifier as ModifierDefinition,
   integerDivideModifier as ModifierDefinition,
   moduloModifier as ModifierDefinition,
-  countModifier as ModifierDefinition,
   multiplyTotalModifier as ModifierDefinition
 ])

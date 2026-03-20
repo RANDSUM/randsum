@@ -214,23 +214,30 @@ export const rerollModifier: ModifierDefinition<RerollOptions> = {
     const { rollOne } = assertRollFn(ctx)
     const { max } = options
 
-    const { result } = rolls.reduce<{ result: number[]; rerollCount: number }>(
+    const { result, replacements } = rolls.reduce<{
+      result: number[]
+      rerollCount: number
+      replacements: { from: number; to: number }[]
+    }>(
       (acc, roll) => {
         if (max !== undefined && acc.rerollCount >= max) {
-          return { result: [...acc.result, roll], rerollCount: acc.rerollCount }
+          return { ...acc, result: [...acc.result, roll] }
         }
 
         const newRoll = rerollSingle(roll, options, rollOne)
         const didReroll = newRoll !== roll
         return {
           result: [...acc.result, newRoll],
-          rerollCount: didReroll ? acc.rerollCount + 1 : acc.rerollCount
+          rerollCount: didReroll ? acc.rerollCount + 1 : acc.rerollCount,
+          replacements: didReroll
+            ? [...acc.replacements, { from: roll, to: newRoll }]
+            : acc.replacements
         }
       },
-      { result: [], rerollCount: 0 }
+      { result: [], rerollCount: 0, replacements: [] }
     )
 
-    return { rolls: result }
+    return { rolls: result, replacements }
   },
 
   validate: (options, { sides }) => {

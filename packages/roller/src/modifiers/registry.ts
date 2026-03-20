@@ -104,7 +104,7 @@ export function applyModifier(
     const log =
       modifier.mutatesRolls === false
         ? createArithmeticLog(name, options)
-        : createModifierLog(name, options, initialRolls, applied.rolls)
+        : createModifierLog(name, options, initialRolls, applied.rolls, applied.replacements)
 
     if (applied.transformTotal) {
       return {

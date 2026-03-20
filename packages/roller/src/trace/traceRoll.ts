@@ -7,6 +7,7 @@ export type RollTraceStep =
       unchanged: readonly number[]
       removed: readonly number[]
       added: readonly number[]
+      replacements?: readonly { readonly from: number; readonly to: number }[]
     }
   | { kind: 'divider' }
   | { kind: 'arithmetic'; label: string; display: string }
@@ -154,13 +155,17 @@ export function traceRoll(record: RollRecord): readonly RollTraceStep[] {
     }
 
     const label = modifierLabel(log.modifier, log.options)
-    modifierSteps.push({
+    const step: RollTraceStep & { kind: 'rolls' } = {
       kind: 'rolls',
       label,
       unchanged,
       removed: log.removed,
       added: log.added
-    })
+    }
+    if (log.replacements !== undefined && log.replacements.length > 0) {
+      step.replacements = log.replacements
+    }
+    modifierSteps.push(step)
   }
 
   if (modifierSteps.length > 0) {

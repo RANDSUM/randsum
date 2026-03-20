@@ -59,13 +59,13 @@ describe('Story 5+7: Modifier Co-Location', () => {
         'explodeSequence',
         'unique',
         'wildDie',
+        'count',
         'multiply',
         'plus',
         'minus',
         'sort',
         'integerDivide',
         'modulo',
-        'count',
         'multiplyTotal'
       ])
     })
