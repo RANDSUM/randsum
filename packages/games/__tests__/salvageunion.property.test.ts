@@ -7,14 +7,6 @@ const ROLLABLE_TABLE_NAMES = (
 )
   .filter(t => t.indexable !== false)
   .map(t => t.name)
-  .filter(name => {
-    try {
-      roll(name)
-      return true
-    } catch {
-      return false
-    }
-  })
 
 describe('roll property-based tests', () => {
   test('total is always in the range 1-20', () => {
