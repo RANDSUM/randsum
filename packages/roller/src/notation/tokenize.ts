@@ -3,20 +3,30 @@ import { validateNotation } from './validateNotation'
 // TokenType kept for backwards compatibility; will be removed when S5/S6 complete
 export type TokenType = string
 
-export type TokenCategory =
+export type ModifierCategory =
   | 'Core'
-  | 'Special'
+  | 'Special' // dice types (unchanged)
   | 'Pool'
   | 'Explode'
-  | 'Arithmetic'
+  | 'Arithmetic' // current modifier categories (SHIP-4 removes)
   | 'Counting'
-  | 'Order'
-  | 'unknown'
+  | 'Order' // current (Order stays, Counting removed in SHIP-4)
+  | 'Clamp'
+  | 'Map'
+  | 'Filter' // new verb categories
+  | 'Substitute'
+  | 'Generate'
+  | 'Accumulate'
+  | 'Scale'
+  | 'Reinterpret'
+  | 'Dispatch'
+
+export type TokenCategory = ModifierCategory | 'unknown'
 
 export interface Token {
   readonly text: string
   readonly key: string
-  readonly category: string
+  readonly category: TokenCategory
   readonly start: number
   readonly end: number
   readonly description: string

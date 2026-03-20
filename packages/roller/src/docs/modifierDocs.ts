@@ -1,9 +1,12 @@
 import { RANDSUM_MODIFIERS } from '../modifiers/definitions'
 import { RANDSUM_DICE_SCHEMAS } from '../dice/index'
+import type { ModifierCategory } from '../notation/tokenize'
+
+export type { ModifierCategory }
 
 export interface NotationDoc {
   readonly key: string
-  readonly category: string
+  readonly category: ModifierCategory
   readonly title: string
   readonly description: string
   readonly displayBase: string
