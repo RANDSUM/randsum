@@ -8,6 +8,9 @@
  *   bun run publish -- --dry-run     # simulate without publishing
  *   bun run publish -- --otp=123456  # provide 2FA OTP
  *
+ * In CI with `id-token: write` permission, OIDC Trusted Publishers handles
+ * authentication automatically — no NPM_TOKEN secret needed.
+ *
  * Publishes workspace packages in dependency order, skips private ones.
  * workspace: protocol references are replaced with real versions by bun publish.
  */
