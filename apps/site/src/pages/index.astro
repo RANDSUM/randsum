@@ -158,9 +158,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           </div>
           <div class="playground-pitch">
             <h2 class="pitch-heading">
-              <span class="pitch-plain">Every </span>
-              <span class="pitch-accent">modifier</span>
-              <span class="pitch-plain">,</span>
+              <span class="pitch-accent">@randsum/roller</span>
+              <span class="pitch-plain">:</span>
               <br />
               <span class="pitch-color-cycle" aria-label="parsed">{"parsed".split('').map((c, i) => <span class="pitch-color-char" style={`animation-delay: ${i * 0.15}s`}>{c}</span>)}</span>
               <span class="pitch-plain"> and </span>
@@ -168,7 +167,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
-              19 modifiers &mdash; drop, keep, explode, reroll, cap, unique, wild die, and more &mdash; fully specified, documented, and implemented in a single engine. The <code>@randsum/roller</code> spec covers every common rolling pattern so you never have to invent your own.
+              A complete dice notation spec &mdash; fully specified, documented, and implemented in a single zero-dependency engine. Every common rolling pattern covered so you never have to invent your own.
             </p>
             <div class="pitch-actions">
               <a href="/notation/randsum-dice-notation/" class="btn btn-outline btn-sm">
@@ -194,15 +193,15 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           <div class="game-schema-pitch">
             <h2 class="pitch-heading">
               <span class="pitch-plain">Define </span>
-              <span class="pitch-game-cycle">games</span>
+              <span class="pitch-game-cycle">Rules</span>
               <span class="pitch-plain">,</span>
               <br />
-              <span class="pitch-plain">not </span>
-              <span class="pitch-purple">code</span>
+              <span class="pitch-plain">get </span>
+              <span class="pitch-purple">Rollers</span>
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
-              The <code>@randsum/games</code> package generates typed randomizers from declarative <code>.randsum.json</code> specs. Define dice pools, modifiers, and outcome tables in JSON &mdash; the codegen pipeline handles the rest. Adding a new game system is just writing a config file.
+              Describe your game&rsquo;s mechanics in a <code>.randsum.json</code> spec and <code>@randsum/games</code> generates a bespoke, fully-typed roller for that system. Adding a new game is just writing a config file.
             </p>
             <div class="pitch-actions">
               <a href="/games/introduction/" class="btn btn-outline btn-sm">
