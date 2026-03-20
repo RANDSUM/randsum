@@ -27,6 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: 'https://registry.npmjs.org'
       - name: Read Bun version
         id: bun-version
         run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
