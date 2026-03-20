@@ -32,63 +32,124 @@ Sugar features are documented alongside the primitive they desugar to. Each suga
 
 ### Modifiers (13 primitives, 8 sugar, 1 macro)
 
-**Value Modifiers** — transform individual die values in-place:
+**Value Modifiers (Clamp, Map verbs)** — transform individual die values in-place, no pool membership change:
 
-| Modifier | Notation | Priority | Classification |
-| -------- | -------- | -------- | -------------- |
-| Cap      | `C{...}` | 10       | Primitive      |
-| Replace  | `V{...}` | 30       | Primitive      |
+| Modifier | Notation | Priority | Classification | Verb  |
+| -------- | -------- | -------- | -------------- | ----- |
+| Cap      | `C{...}` | 10       | Primitive      | Clamp |
+| Replace  | `V{...}` | 30       | Primitive      | Map   |
 
-**Pool Modifiers** — change which dice remain in the pool:
+**Pool Modifiers (Filter, Substitute verbs)** — change which dice remain in the pool or re-randomize their values:
 
-| Modifier    | Notation           | Priority | Classification                     |
-| ----------- | ------------------ | -------- | ---------------------------------- |
-| Drop        | `L`, `H`, `D{...}` | 20       | Primitive                          |
-| Keep        | `K`, `kl`          | 21       | Sugar → inverse of Drop            |
-| Keep Middle | `KM`               | 21       | Sugar → Drop lowest + Drop highest |
-| Reroll      | `R{...}`           | 40       | Primitive                          |
-| Reroll Once | `ro{...}`          | 40       | Sugar → `R{...}` with `max: 1`     |
-| Unique      | `U`                | 60       | Primitive                          |
+| Modifier    | Notation           | Priority | Classification                     | Verb       |
+| ----------- | ------------------ | -------- | ---------------------------------- | ---------- |
+| Drop        | `L`, `H`, `D{...}` | 20       | Primitive                          | Filter     |
+| Keep        | `K`, `kl`          | 21       | Sugar → inverse of Drop            | Filter     |
+| Keep Middle | `KM`               | 21       | Sugar → Drop lowest + Drop highest | Filter     |
+| Reroll      | `R{...}`           | 40       | Primitive                          | Substitute |
+| Reroll Once | `ro{...}`          | 40       | Sugar → `R{...}` with `max: 1`     | Substitute |
+| Unique      | `U`                | 60       | Primitive                          | Substitute |
 
-**Explosion Family** — add dice or accumulate values on max:
+**Explosion Family (Generate, Accumulate verbs)** — add dice or accumulate values on max:
 
-| Modifier         | Notation  | Priority | Classification                                                 |
-| ---------------- | --------- | -------- | -------------------------------------------------------------- |
-| Explode          | `!`       | 50       | Primitive (single-pass, adds dice to pool)                     |
-| Compound         | `!!`      | 51       | Primitive (accumulates into existing die, pool size preserved) |
-| Penetrate        | `!p`      | 52       | Primitive (accumulates roll-1 into die)                        |
-| Explode Sequence | `!s{...}` | 53       | Primitive (steps through die sizes)                            |
-| Inflation        | `!i`      | 53       | Sugar → `!s{...}` going up TTRPG standard set                  |
-| Reduction        | `!r`      | 53       | Sugar → `!s{...}` going down TTRPG standard set                |
-| Wild Die         | `W`       | 55       | Macro → compound on max, drop on 1, noop otherwise             |
+| Modifier         | Notation  | Priority | Classification                                                 | Verb       |
+| ---------------- | --------- | -------- | -------------------------------------------------------------- | ---------- |
+| Explode          | `!`       | 50       | Primitive (single-pass, adds dice to pool)                     | Generate   |
+| Compound         | `!!`      | 51       | Primitive (accumulates into existing die, pool size preserved) | Accumulate |
+| Penetrate        | `!p`      | 52       | Primitive (accumulates roll-1 into die)                        | Accumulate |
+| Explode Sequence | `!s{...}` | 53       | Primitive (steps through die sizes)                            | Generate   |
+| Inflation        | `!i`      | 53       | Sugar → `!s{...}` going up TTRPG standard set                  | Generate   |
+| Reduction        | `!r`      | 53       | Sugar → `!s{...}` going down TTRPG standard set                | Generate   |
+| Wild Die         | `W`       | 55       | Macro → compound on max, drop on 1, noop otherwise             | Dispatch   |
 
-**Total Modifiers** — arithmetic applied to the final number:
+**Total Modifiers (Scale verb)** — arithmetic applied to the final number:
 
-| Modifier          | Notation | Priority | Classification                            |
-| ----------------- | -------- | -------- | ----------------------------------------- |
-| Multiply          | `*N`     | 85       | Primitive (pre-arithmetic)                |
-| Plus              | `+N`     | 90       | Primitive                                 |
-| Minus             | `-N`     | 91       | Sugar → negative Plus                     |
-| Margin of Success | `ms{N}`  | 91       | Sugar → Minus N                           |
-| Integer Divide    | `//N`    | 93       | Primitive                                 |
-| Modulo            | `%N`     | 94       | Primitive                                 |
-| Multiply Total    | `**N`    | 100      | Sugar → Multiply at post-arithmetic phase |
+| Modifier          | Notation | Priority | Classification                            | Verb  |
+| ----------------- | -------- | -------- | ----------------------------------------- | ----- |
+| Multiply          | `*N`     | 85       | Primitive (pre-arithmetic)                | Scale |
+| Plus              | `+N`     | 90       | Primitive                                 | Scale |
+| Minus             | `-N`     | 91       | Sugar → negative Plus                     | Scale |
+| Margin of Success | `ms{N}`  | 91       | Sugar → Minus N                           | Scale |
+| Integer Divide    | `//N`    | 93       | Primitive                                 | Scale |
+| Modulo            | `%N`     | 94       | Primitive                                 | Scale |
+| Multiply Total    | `**N`    | 100      | Sugar → Multiply at post-arithmetic phase | Scale |
 
-**Counting Modifiers** — change the result model from sum to count:
+**Counting Modifiers (Reinterpret verb)** — replace the aggregation model (sum to count):
 
-| Modifier        | Notation | Priority | Classification                          |
-| --------------- | -------- | -------- | --------------------------------------- |
-| Count           | `#{...}` | 95       | Primitive                               |
-| Count Successes | `S{N}`   | 95       | Sugar → Count with `greaterThanOrEqual` |
-| Count Failures  | `F{N}`   | 95       | Sugar → Count with `lessThanOrEqual`    |
+| Modifier        | Notation | Priority | Classification                          | Verb        |
+| --------------- | -------- | -------- | --------------------------------------- | ----------- |
+| Count           | `#{...}` | 95       | Primitive                               | Reinterpret |
+| Count Successes | `S{N}`   | 95       | Sugar → Count with `greaterThanOrEqual` | Reinterpret |
+| Count Failures  | `F{N}`   | 95       | Sugar → Count with `lessThanOrEqual`    | Reinterpret |
 
-**Display & Meta** — presentation and notation-level features:
+**Display & Meta (Order verb)** — presentation and notation-level features:
 
-| Feature     | Notation  | Priority | Classification                                 |
-| ----------- | --------- | -------- | ---------------------------------------------- |
-| Sort        | `sa`/`sd` | 92       | Primitive (display only, no effect on total)   |
-| Annotations | `[text]`  | —        | Primitive (metadata)                           |
-| Repeat      | `xN`      | —        | Sugar → parser expansion into N roll arguments |
+| Feature     | Notation  | Priority | Classification                                 | Verb  |
+| ----------- | --------- | -------- | ---------------------------------------------- | ----- |
+| Sort        | `sa`/`sd` | 92       | Primitive (display only, no effect on total)   | Order |
+| Annotations | `[text]`  | —        | Primitive (metadata)                           | —     |
+| Repeat      | `xN`      | —        | Sugar → parser expansion into N roll arguments | —     |
+
+## Execution Pipeline
+
+Modifiers execute in priority order. That ordering encodes three distinct stages, each marked by a capability flag in the modifier schema. Understanding the stages explains why certain modifiers must run before others and what it means for the pool to be "frozen".
+
+### Three-Stage Model
+
+```
+Stage 1 — Deterministic Pool Shaping (priority 10-30)
+  No randomness. Pure functions over the dice array.
+  Modifiers: cap, replace, drop, keep
+  Boundary signal: requiresRollFn = false
+
+Stage 2 — Stochastic Pool Dynamics (priority 40-60)
+  Introduces randomness. Every modifier here requires rollOne.
+  Modifiers: reroll, explode, compound, penetrate, explodeSequence, unique, wildDie
+  Boundary signal: requiresRollFn = true
+
+Stage 3 — Total Derivation (priority 80-100)
+  Pool is frozen. Operates on the computed total.
+  Modifiers: count, multiply, plus, minus, integerDivide, modulo, multiplyTotal, sort
+  Boundary signal: mutatesRolls = false
+```
+
+**Why stages matter for notation authors:** Modifiers in different stages have different contracts. A Stage 1 modifier (e.g., `C{<1}`) always sees the full initial roll result — it cannot depend on explosion outcomes. A Stage 2 modifier (e.g., `!`) operates on the pool as shaped by Stage 1, and may invoke the random function multiple times. Stage 3 modifiers never see individual dice — they operate only on the summed total that Stage 1 and Stage 2 produced.
+
+The stage boundaries are not arbitrary conventions — they are structural facts encoded in `requiresRollFn` and `mutatesRolls`. A modifier with `requiresRollFn = true` cannot safely run in Stage 1 (where no roll function is available). A modifier with `mutatesRolls = false` has declared that it does not transform the dice array, which is the defining contract of Stage 3.
+
+### The Verb Taxonomy
+
+Within each stage, modifiers perform distinct verbs that describe what they do to the pool or total:
+
+| Verb            | Stage | Modifiers                                                   | What it does                                           |
+| --------------- | ----- | ----------------------------------------------------------- | ------------------------------------------------------ |
+| **Clamp**       | 1     | cap                                                         | Constrain values to boundaries                         |
+| **Map**         | 1     | replace                                                     | Deterministic value substitution                       |
+| **Filter**      | 1     | drop, keep                                                  | Remove dice from pool (pool shrinks)                   |
+| **Substitute**  | 2     | reroll, unique                                              | Re-randomize matching dice (pool size unchanged)       |
+| **Generate**    | 2     | explode, explodeSequence                                    | Append new dice to pool (pool grows)                   |
+| **Accumulate**  | 2     | compound, penetrate                                         | Fold explosion into existing die (pool size preserved) |
+| **Scale**       | 3     | plus, minus, multiply, multiplyTotal, integerDivide, modulo | Arithmetic on the total                                |
+| **Reinterpret** | 3     | count                                                       | Replace aggregation model (sum to cardinality)         |
+| **Order**       | 3     | sort                                                        | Presentation-only reordering (no total effect)         |
+| **Dispatch**    | 2     | wildDie                                                     | Runtime conditional branch (macro)                     |
+
+**Dispatch** is a macro, not a primitive verb. `wildDie` branches at runtime: on a maximum roll it dispatches to Accumulate behavior; on a 1 it dispatches to Filter behavior; otherwise it is a no-op. It requires `rollOne` (Stage 2) because the accumulating explosion branch introduces randomness.
+
+**Order** (`sort`) has no effect on the computed total. It reorders the dice array for display purposes only. Its presence in Stage 3 is correct by execution ordering — the pool is frozen before sort runs — but sort produces no arithmetic change.
+
+**Reinterpret** (`count`) is the structural outlier. It uses the total channel but replaces the aggregation model rather than adjusting the sum arithmetically. It is the only modifier that changes what the total means rather than what the total is.
+
+### Two-Channel Architecture
+
+`ModifierApplyResult` exposes two output channels that never overlap within a single modifier:
+
+- **Pool channel** (`rolls`) — modifiers that transform the dice array. Used by Stage 1 and Stage 2 modifiers. The resulting array is the input to the next modifier in priority order.
+- **Total channel** (`transformTotal`) — modifiers that transform the computed sum. Used by Stage 3 modifiers. The pool is not touched.
+
+The `mutatesRolls: false` flag on a modifier's schema is the code's declaration that it uses only the total channel. A modifier with `mutatesRolls: false` will never modify the dice array — the runtime passes the pool through unchanged and applies `transformTotal` to the sum instead.
+
+No modifier uses both channels simultaneously. A modifier either shapes the pool or adjusts the total — never both.
 
 ## Basic Syntax
 
