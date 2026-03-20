@@ -1,6 +1,7 @@
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
+import { createScaleBehavior } from './shared/scale'
 
 const multiplyPattern = /(?<!\*)\*(?!\*)(\d+)/
 
@@ -28,7 +29,7 @@ export const multiplySchema: NotationSchema<number> = defineNotationSchema<numbe
   docs: [
     {
       key: '*',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#a3e635',
       colorLight: '#4d7c0f',
       title: 'Multiply Dice',
@@ -46,11 +47,5 @@ export const multiplySchema: NotationSchema<number> = defineNotationSchema<numbe
 
 export const multiplyModifier: ModifierDefinition<number> = {
   ...multiplySchema,
-  mutatesRolls: false,
-  apply: (rolls, options) => {
-    return {
-      rolls,
-      transformTotal: total => total * options
-    }
-  }
+  ...createScaleBehavior((total, value) => total * value)
 }

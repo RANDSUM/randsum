@@ -19,112 +19,112 @@ describe('tokenize', () => {
     const tokens = tokenize('4d6L')
     expect(tokens).toHaveLength(2)
     expect(tokens[0]?.category).toBe('Core')
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Filter')
     expect(tokens[1]?.text).toBe('L')
   })
 
   test('tokenizes drop highest', () => {
     const tokens = tokenize('2d20H')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Filter')
     expect(tokens[1]?.text).toBe('H')
   })
 
   test('tokenizes explode', () => {
     const tokens = tokenize('3d6!')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Explode')
+    expect(tokens[1]?.category).toBe('Generate')
     expect(tokens[1]?.text).toBe('!')
   })
 
   test('tokenizes compound', () => {
     const tokens = tokenize('3d6!!')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Explode')
+    expect(tokens[1]?.category).toBe('Accumulate')
     expect(tokens[1]?.text).toBe('!!')
   })
 
   test('tokenizes penetrate', () => {
     const tokens = tokenize('3d6!p')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Explode')
+    expect(tokens[1]?.category).toBe('Accumulate')
     expect(tokens[1]?.text).toBe('!p')
   })
 
   test('tokenizes plus modifier', () => {
     const tokens = tokenize('1d20+5')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Arithmetic')
+    expect(tokens[1]?.category).toBe('Scale')
     expect(tokens[1]?.text).toBe('+5')
   })
 
   test('tokenizes minus modifier', () => {
     const tokens = tokenize('2d8-2')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Arithmetic')
+    expect(tokens[1]?.category).toBe('Scale')
     expect(tokens[1]?.text).toBe('-2')
   })
 
   test('tokenizes reroll', () => {
     const tokens = tokenize('4d6R{1}')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Substitute')
     expect(tokens[1]?.text).toBe('R{1}')
   })
 
   test('tokenizes cap', () => {
     const tokens = tokenize('4d20C{>18}')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Clamp')
     expect(tokens[1]?.text).toBe('C{>18}')
   })
 
   test('tokenizes replace', () => {
     const tokens = tokenize('3d6V{1=6}')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Map')
     expect(tokens[1]?.text).toBe('V{1=6}')
   })
 
   test('tokenizes unique', () => {
     const tokens = tokenize('5d20U')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Substitute')
     expect(tokens[1]?.text).toBe('U')
   })
 
   test('tokenizes keep highest', () => {
     const tokens = tokenize('4d6K3')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Filter')
     expect(tokens[1]?.text).toBe('K3')
   })
 
   test('tokenizes keep lowest', () => {
     const tokens = tokenize('4d6kl2')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Filter')
     expect(tokens[1]?.text).toBe('kl2')
   })
 
   test('tokenizes multiply', () => {
     const tokens = tokenize('2d6*3')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Arithmetic')
+    expect(tokens[1]?.category).toBe('Scale')
     expect(tokens[1]?.text).toBe('*3')
   })
 
   test('tokenizes multiplyTotal', () => {
     const tokens = tokenize('2d6**3')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Arithmetic')
+    expect(tokens[1]?.category).toBe('Scale')
     expect(tokens[1]?.text).toBe('**3')
   })
 
   test('tokenizes countSuccesses', () => {
     const tokens = tokenize('4d6S{5}')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Counting')
+    expect(tokens[1]?.category).toBe('Reinterpret')
     expect(tokens[1]?.text).toBe('S{5}')
   })
 
@@ -133,10 +133,10 @@ describe('tokenize', () => {
     expect(tokens.length).toBeGreaterThanOrEqual(4)
     const types = tokens.map(t => t.category)
     expect(types).toContain('Core')
-    expect(types).toContain('Pool')
-    expect(types).toContain('Pool')
-    expect(types).toContain('Explode')
-    expect(types).toContain('Arithmetic')
+    expect(types).toContain('Filter')
+    expect(types).toContain('Substitute')
+    expect(types).toContain('Generate')
+    expect(types).toContain('Scale')
   })
 
   test('handles unknown characters', () => {
@@ -172,7 +172,7 @@ describe('tokenize', () => {
 
   test('includes description for modifier tokens', () => {
     const tokens = tokenize('4d6L')
-    const dropToken = tokens.find(t => t.category === 'Pool')
+    const dropToken = tokens.find(t => t.category === 'Filter')
     expect(dropToken?.description).toBeTruthy()
   })
 
@@ -200,28 +200,28 @@ describe('tokenize', () => {
   test('tokenizes compound with depth', () => {
     const tokens = tokenize('2d6!!3')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Explode')
+    expect(tokens[1]?.category).toBe('Accumulate')
     expect(tokens[1]?.text).toBe('!!3')
   })
 
   test('tokenizes penetrate with depth', () => {
     const tokens = tokenize('2d6!p3')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Explode')
+    expect(tokens[1]?.category).toBe('Accumulate')
     expect(tokens[1]?.text).toBe('!p3')
   })
 
   test('tokenizes drop with count', () => {
     const tokens = tokenize('5d6L2')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Filter')
     expect(tokens[1]?.text).toBe('L2')
   })
 
   test('tokenizes unique with exceptions', () => {
     const tokens = tokenize('5d6U{1,6}')
     expect(tokens).toHaveLength(2)
-    expect(tokens[1]?.category).toBe('Pool')
+    expect(tokens[1]?.category).toBe('Substitute')
     expect(tokens[1]?.text).toBe('U{1,6}')
   })
 
@@ -365,21 +365,21 @@ describe('tokenize', () => {
   describe('explodeSequence tokens', () => {
     test('tokenizes explode sequence with die sizes', () => {
       const tokens = tokenize('2d6!s{4,6,8}')
-      const esToken = tokens.find(t => t.category === 'Explode')
+      const esToken = tokens.find(t => t.category === 'Generate')
       expect(esToken).toBeDefined()
       expect(esToken?.text).toBe('!s{4,6,8}')
     })
 
     test('tokenizes inflation explode', () => {
       const tokens = tokenize('2d6!i')
-      const esToken = tokens.find(t => t.category === 'Explode')
+      const esToken = tokens.find(t => t.category === 'Generate')
       expect(esToken).toBeDefined()
       expect(esToken?.text).toBe('!i')
     })
 
     test('tokenizes reduction explode', () => {
       const tokens = tokenize('2d6!r')
-      const esToken = tokens.find(t => t.category === 'Explode')
+      const esToken = tokens.find(t => t.category === 'Generate')
       expect(esToken).toBeDefined()
       expect(esToken?.text).toBe('!r')
     })
@@ -388,7 +388,7 @@ describe('tokenize', () => {
   describe('reroll once token', () => {
     test('tokenizes reroll once as reroll type', () => {
       const tokens = tokenize('4d6ro{1}')
-      const roToken = tokens.find(t => t.category === 'Pool')
+      const roToken = tokens.find(t => t.category === 'Substitute')
       expect(roToken).toBeDefined()
       expect(roToken?.text).toBe('ro{1}')
     })
@@ -397,7 +397,7 @@ describe('tokenize', () => {
   describe('keep middle token', () => {
     test('tokenizes keep middle', () => {
       const tokens = tokenize('6d6KM')
-      const kmToken = tokens.find(t => t.category === 'Pool')
+      const kmToken = tokens.find(t => t.category === 'Filter')
       expect(kmToken).toBeDefined()
       expect(kmToken?.text).toBe('KM')
     })
@@ -406,7 +406,7 @@ describe('tokenize', () => {
   describe('margin of success token', () => {
     test('tokenizes margin of success', () => {
       const tokens = tokenize('1d20ms{15}')
-      const msToken = tokens.find(t => t.category === 'Counting')
+      const msToken = tokens.find(t => t.category === 'Scale')
       expect(msToken).toBeDefined()
       expect(msToken?.text).toBe('ms{15}')
     })
@@ -417,7 +417,7 @@ describe('tokenize', () => {
   describe('missing notation coverage', () => {
     test('tokenizes F{3} as countFailures', () => {
       const tokens = tokenize('5d10F{3}')
-      const fToken = tokens.find(t => t.category === 'Counting')
+      const fToken = tokens.find(t => t.category === 'Reinterpret')
       expect(fToken).toBeDefined()
       expect(fToken?.text).toBe('F{3}')
       expect(fToken?.category).not.toBe('unknown')
@@ -425,70 +425,70 @@ describe('tokenize', () => {
 
     test('tokenizes lowercase f{5} as countFailures', () => {
       const tokens = tokenize('5d10f{5}')
-      const fToken = tokens.find(t => t.category === 'Counting')
+      const fToken = tokens.find(t => t.category === 'Reinterpret')
       expect(fToken).toBeDefined()
       expect(fToken?.text).toBe('f{5}')
     })
 
     test('tokenizes #{>=7} as count', () => {
       const tokens = tokenize('5d10#{>=7}')
-      const countToken = tokens.find(t => t.category === 'Counting')
+      const countToken = tokens.find(t => t.category === 'Reinterpret')
       expect(countToken).toBeDefined()
       expect(countToken?.text).toBe('#{>=7}')
     })
 
     test('tokenizes KM as keepMiddle', () => {
       const tokens = tokenize('6d6KM')
-      const kmToken = tokens.find(t => t.category === 'Pool')
+      const kmToken = tokens.find(t => t.category === 'Filter')
       expect(kmToken).toBeDefined()
       expect(kmToken?.text).toBe('KM')
     })
 
     test('tokenizes KM3 as keepMiddle', () => {
       const tokens = tokenize('6d6KM3')
-      const kmToken = tokens.find(t => t.category === 'Pool')
+      const kmToken = tokens.find(t => t.category === 'Filter')
       expect(kmToken).toBeDefined()
       expect(kmToken?.text).toBe('KM3')
     })
 
     test('tokenizes ro{1} as reroll', () => {
       const tokens = tokenize('4d6ro{1}')
-      const roToken = tokens.find(t => t.category === 'Pool')
+      const roToken = tokens.find(t => t.category === 'Substitute')
       expect(roToken).toBeDefined()
       expect(roToken?.text).toBe('ro{1}')
     })
 
     test('tokenizes !s{4,6,8} as explodeSequence', () => {
       const tokens = tokenize('2d6!s{4,6,8}')
-      const esToken = tokens.find(t => t.category === 'Explode')
+      const esToken = tokens.find(t => t.category === 'Generate')
       expect(esToken).toBeDefined()
       expect(esToken?.text).toBe('!s{4,6,8}')
     })
 
     test('tokenizes !i as explodeSequence', () => {
       const tokens = tokenize('2d6!i')
-      const esToken = tokens.find(t => t.category === 'Explode')
+      const esToken = tokens.find(t => t.category === 'Generate')
       expect(esToken).toBeDefined()
       expect(esToken?.text).toBe('!i')
     })
 
     test('tokenizes !r as explodeSequence', () => {
       const tokens = tokenize('2d6!r')
-      const esToken = tokens.find(t => t.category === 'Explode')
+      const esToken = tokens.find(t => t.category === 'Generate')
       expect(esToken).toBeDefined()
       expect(esToken?.text).toBe('!r')
     })
 
     test('tokenizes ms{15} as marginOfSuccess', () => {
       const tokens = tokenize('1d20ms{15}')
-      const msToken = tokens.find(t => t.category === 'Counting')
+      const msToken = tokens.find(t => t.category === 'Scale')
       expect(msToken).toBeDefined()
       expect(msToken?.text).toBe('ms{15}')
     })
 
     test('tokenizes W as wildDie', () => {
       const tokens = tokenize('5d6W')
-      const wToken = tokens.find(t => t.category === 'Special')
+      const wToken = tokens.find(t => t.category === 'Dispatch')
       expect(wToken).toBeDefined()
       expect(wToken?.text).toBe('W')
     })

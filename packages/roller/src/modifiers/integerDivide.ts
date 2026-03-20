@@ -1,6 +1,7 @@
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
+import { createScaleBehavior } from './shared/scale'
 
 const integerDividePattern = /\/\/(\d+)/
 
@@ -28,7 +29,7 @@ export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<
   docs: [
     {
       key: '//',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#34d399',
       colorLight: '#059669',
       title: 'Integer Divide',
@@ -46,11 +47,5 @@ export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<
 
 export const integerDivideModifier: ModifierDefinition<number> = {
   ...integerDivideSchema,
-  mutatesRolls: false,
-  apply: (rolls, options) => {
-    return {
-      rolls,
-      transformTotal: total => Math.trunc(total / options)
-    }
-  }
+  ...createScaleBehavior((total, value) => Math.trunc(total / value))
 }

@@ -40,7 +40,7 @@ export const penetrateSchema: NotationSchema<boolean | number> = defineNotationS
   docs: [
     {
       key: '!p',
-      category: 'Explode',
+      category: 'Accumulate',
       color: '#d97706',
       colorLight: '#92400e',
       title: 'Penetrating Explode',

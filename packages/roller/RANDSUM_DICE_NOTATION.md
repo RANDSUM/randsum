@@ -10,13 +10,13 @@ The core `roll()` function accepts several argument types: a **number** (sides f
 
 ## Taxonomy
 
-Every notation feature is classified as a **primitive**, **sugar**, or **macro**:
+Every notation feature is classified as a **primitive**, **alias**, or **macro**:
 
 - **Primitive** — irreducible behavior that cannot be expressed as a composition of other features
-- **Sugar** — notation convenience that maps to one or more primitives with identical observable behavior
+- **Alias** — notation convenience that maps to one or more primitives with identical observable behavior
 - **Macro** — conditional dispatch to multiple primitives based on runtime state
 
-Sugar features are documented alongside the primitive they desugar to. Each sugar section traces the exact desugaring.
+Alias features are documented alongside the primitive they desugar to. Each alias section traces the exact desugaring.
 
 ### Dice Types
 
@@ -26,69 +26,130 @@ Sugar features are documented alongside the primitive they desugar to. Each suga
 | Custom Faces | `d{...}` | Primitive                                |
 | Geometric    | `gN`     | Primitive (unique generation model)      |
 | Draw         | `DDN`    | Primitive (sampling without replacement) |
-| Percentile   | `d%`     | Sugar → `1d100`                          |
-| Fate/Fudge   | `dF`     | Sugar → `d3` + Replace                   |
-| Zero-Bias    | `zN`     | Sugar → `d{0..N-1}`                      |
+| Percentile   | `d%`     | Alias → `1d100`                          |
+| Fate/Fudge   | `dF`     | Alias → `d3` + Replace                   |
+| Zero-Bias    | `zN`     | Alias → `d{0..N-1}`                      |
 
-### Modifiers (13 primitives, 8 sugar, 1 macro)
+### Modifiers (13 primitives, 8 alias, 1 macro)
 
-**Value Modifiers** — transform individual die values in-place:
+**Value Modifiers (Clamp, Map verbs)** — transform individual die values in-place, no pool membership change:
 
-| Modifier | Notation | Priority | Classification |
-| -------- | -------- | -------- | -------------- |
-| Cap      | `C{...}` | 10       | Primitive      |
-| Replace  | `V{...}` | 30       | Primitive      |
+| Modifier | Notation | Priority | Classification | Verb  |
+| -------- | -------- | -------- | -------------- | ----- |
+| Cap      | `C{...}` | 10       | Primitive      | Clamp |
+| Replace  | `V{...}` | 30       | Primitive      | Map   |
 
-**Pool Modifiers** — change which dice remain in the pool:
+**Pool Modifiers (Filter, Substitute verbs)** — change which dice remain in the pool or re-randomize their values:
 
-| Modifier    | Notation           | Priority | Classification                     |
-| ----------- | ------------------ | -------- | ---------------------------------- |
-| Drop        | `L`, `H`, `D{...}` | 20       | Primitive                          |
-| Keep        | `K`, `kl`          | 21       | Sugar → inverse of Drop            |
-| Keep Middle | `KM`               | 21       | Sugar → Drop lowest + Drop highest |
-| Reroll      | `R{...}`           | 40       | Primitive                          |
-| Reroll Once | `ro{...}`          | 40       | Sugar → `R{...}` with `max: 1`     |
-| Unique      | `U`                | 60       | Primitive                          |
+| Modifier    | Notation           | Priority | Classification                     | Verb       |
+| ----------- | ------------------ | -------- | ---------------------------------- | ---------- |
+| Drop        | `L`, `H`, `D{...}` | 20       | Primitive                          | Filter     |
+| Keep        | `K`, `kl`          | 21       | Alias → inverse of Drop            | Filter     |
+| Keep Middle | `KM`               | 21       | Alias → Drop lowest + Drop highest | Filter     |
+| Reroll      | `R{...}`           | 40       | Primitive                          | Substitute |
+| Reroll Once | `ro{...}`          | 40       | Alias → `R{...}` with `max: 1`     | Substitute |
+| Unique      | `U`                | 60       | Primitive                          | Substitute |
 
-**Explosion Family** — add dice or accumulate values on max:
+**Explosion Family (Generate, Accumulate verbs)** — add dice or accumulate values on max:
 
-| Modifier         | Notation  | Priority | Classification                                                 |
-| ---------------- | --------- | -------- | -------------------------------------------------------------- |
-| Explode          | `!`       | 50       | Primitive (single-pass, adds dice to pool)                     |
-| Compound         | `!!`      | 51       | Primitive (accumulates into existing die, pool size preserved) |
-| Penetrate        | `!p`      | 52       | Primitive (accumulates roll-1 into die)                        |
-| Explode Sequence | `!s{...}` | 53       | Primitive (steps through die sizes)                            |
-| Inflation        | `!i`      | 53       | Sugar → `!s{...}` going up TTRPG standard set                  |
-| Reduction        | `!r`      | 53       | Sugar → `!s{...}` going down TTRPG standard set                |
-| Wild Die         | `W`       | 55       | Macro → compound on max, drop on 1, noop otherwise             |
+| Modifier         | Notation  | Priority | Classification                                                 | Verb       |
+| ---------------- | --------- | -------- | -------------------------------------------------------------- | ---------- |
+| Explode          | `!`       | 50       | Primitive (single-pass, adds dice to pool)                     | Generate   |
+| Compound         | `!!`      | 51       | Primitive (accumulates into existing die, pool size preserved) | Accumulate |
+| Penetrate        | `!p`      | 52       | Primitive (accumulates roll-1 into die)                        | Accumulate |
+| Explode Sequence | `!s{...}` | 53       | Primitive (steps through die sizes)                            | Generate   |
+| Inflation        | `!i`      | 53       | Alias → `!s{...}` going up TTRPG standard set                  | Generate   |
+| Reduction        | `!r`      | 53       | Alias → `!s{...}` going down TTRPG standard set                | Generate   |
+| Wild Die         | `W`       | 55       | Macro → compound on max, drop on 1, noop otherwise             | Dispatch   |
 
-**Total Modifiers** — arithmetic applied to the final number:
+**Total Modifiers (Scale verb)** — arithmetic applied to the final number:
 
-| Modifier          | Notation | Priority | Classification                            |
-| ----------------- | -------- | -------- | ----------------------------------------- |
-| Multiply          | `*N`     | 85       | Primitive (pre-arithmetic)                |
-| Plus              | `+N`     | 90       | Primitive                                 |
-| Minus             | `-N`     | 91       | Sugar → negative Plus                     |
-| Margin of Success | `ms{N}`  | 91       | Sugar → Minus N                           |
-| Integer Divide    | `//N`    | 93       | Primitive                                 |
-| Modulo            | `%N`     | 94       | Primitive                                 |
-| Multiply Total    | `**N`    | 100      | Sugar → Multiply at post-arithmetic phase |
+| Modifier          | Notation | Priority | Classification                            | Verb  |
+| ----------------- | -------- | -------- | ----------------------------------------- | ----- |
+| Multiply          | `*N`     | 85       | Primitive (pre-arithmetic)                | Scale |
+| Plus              | `+N`     | 90       | Primitive                                 | Scale |
+| Minus             | `-N`     | 91       | Alias → negative Plus                     | Scale |
+| Margin of Success | `ms{N}`  | 91       | Alias → Minus N                           | Scale |
+| Integer Divide    | `//N`    | 93       | Primitive                                 | Scale |
+| Modulo            | `%N`     | 94       | Primitive                                 | Scale |
+| Multiply Total    | `**N`    | 100      | Alias → Multiply at post-arithmetic phase | Scale |
 
-**Counting Modifiers** — change the result model from sum to count:
+**Counting Modifiers (Reinterpret verb)** — replace the aggregation model (sum to count):
 
-| Modifier        | Notation | Priority | Classification                          |
-| --------------- | -------- | -------- | --------------------------------------- |
-| Count           | `#{...}` | 95       | Primitive                               |
-| Count Successes | `S{N}`   | 95       | Sugar → Count with `greaterThanOrEqual` |
-| Count Failures  | `F{N}`   | 95       | Sugar → Count with `lessThanOrEqual`    |
+| Modifier        | Notation | Priority | Classification                          | Verb        |
+| --------------- | -------- | -------- | --------------------------------------- | ----------- |
+| Count           | `#{...}` | 95       | Primitive                               | Reinterpret |
+| Count Successes | `S{N}`   | 95       | Alias → Count with `greaterThanOrEqual` | Reinterpret |
+| Count Failures  | `F{N}`   | 95       | Alias → Count with `lessThanOrEqual`    | Reinterpret |
 
-**Display & Meta** — presentation and notation-level features:
+**Display & Meta (Order verb)** — presentation and notation-level features:
 
-| Feature     | Notation  | Priority | Classification                                 |
-| ----------- | --------- | -------- | ---------------------------------------------- |
-| Sort        | `sa`/`sd` | 92       | Primitive (display only, no effect on total)   |
-| Annotations | `[text]`  | —        | Primitive (metadata)                           |
-| Repeat      | `xN`      | —        | Sugar → parser expansion into N roll arguments |
+| Feature     | Notation  | Priority | Classification                                 | Verb  |
+| ----------- | --------- | -------- | ---------------------------------------------- | ----- |
+| Sort        | `sa`/`sd` | 92       | Primitive (display only, no effect on total)   | Order |
+| Annotations | `[text]`  | —        | Primitive (metadata)                           | —     |
+| Repeat      | `xN`      | —        | Alias → parser expansion into N roll arguments | —     |
+
+## Execution Pipeline
+
+Modifiers execute in priority order. That ordering encodes three distinct stages, each marked by a capability flag in the modifier schema. Understanding the stages explains why certain modifiers must run before others and what it means for the pool to be "frozen".
+
+### Three-Stage Model
+
+```
+Stage 1 — Deterministic Pool Shaping (priority 10-30)
+  No randomness. Pure functions over the dice array.
+  Modifiers: cap, replace, drop, keep
+  Boundary signal: requiresRollFn = false
+
+Stage 2 — Stochastic Pool Dynamics (priority 40-60)
+  Introduces randomness. Every modifier here requires rollOne.
+  Modifiers: reroll, explode, compound, penetrate, explodeSequence, unique, wildDie
+  Boundary signal: requiresRollFn = true
+
+Stage 3 — Total Derivation (priority 80-100)
+  Pool is frozen. Operates on the computed total.
+  Modifiers: count, multiply, plus, minus, integerDivide, modulo, multiplyTotal, sort
+  Boundary signal: mutatesRolls = false
+```
+
+**Why stages matter for notation authors:** Modifiers in different stages have different contracts. A Stage 1 modifier (e.g., `C{<1}`) always sees the full initial roll result — it cannot depend on explosion outcomes. A Stage 2 modifier (e.g., `!`) operates on the pool as shaped by Stage 1, and may invoke the random function multiple times. Stage 3 modifiers never see individual dice — they operate only on the summed total that Stage 1 and Stage 2 produced.
+
+The stage boundaries are not arbitrary conventions — they are structural facts encoded in `requiresRollFn` and `mutatesRolls`. A modifier with `requiresRollFn = true` cannot safely run in Stage 1 (where no roll function is available). A modifier with `mutatesRolls = false` has declared that it does not transform the dice array, which is the defining contract of Stage 3.
+
+### The Verb Taxonomy
+
+Within each stage, modifiers perform distinct verbs that describe what they do to the pool or total:
+
+| Verb            | Stage | Modifiers                                                   | What it does                                           |
+| --------------- | ----- | ----------------------------------------------------------- | ------------------------------------------------------ |
+| **Clamp**       | 1     | cap                                                         | Constrain values to boundaries                         |
+| **Map**         | 1     | replace                                                     | Deterministic value substitution                       |
+| **Filter**      | 1     | drop, keep                                                  | Remove dice from pool (pool shrinks)                   |
+| **Substitute**  | 2     | reroll, unique                                              | Re-randomize matching dice (pool size unchanged)       |
+| **Generate**    | 2     | explode, explodeSequence                                    | Append new dice to pool (pool grows)                   |
+| **Accumulate**  | 2     | compound, penetrate                                         | Fold explosion into existing die (pool size preserved) |
+| **Scale**       | 3     | plus, minus, multiply, multiplyTotal, integerDivide, modulo | Arithmetic on the total                                |
+| **Reinterpret** | 3     | count                                                       | Replace aggregation model (sum to cardinality)         |
+| **Order**       | 3     | sort                                                        | Presentation-only reordering (no total effect)         |
+| **Dispatch**    | 2     | wildDie                                                     | Runtime conditional branch (macro)                     |
+
+**Dispatch** is a macro, not a primitive verb. `wildDie` branches at runtime: on a maximum roll it dispatches to Accumulate behavior; on a 1 it dispatches to Filter behavior; otherwise it is a no-op. It requires `rollOne` (Stage 2) because the accumulating explosion branch introduces randomness.
+
+**Order** (`sort`) has no effect on the computed total. It reorders the dice array for display purposes only. Its presence in Stage 3 is correct by execution ordering — the pool is frozen before sort runs — but sort produces no arithmetic change.
+
+**Reinterpret** (`count`) is the structural outlier. It uses the total channel but replaces the aggregation model rather than adjusting the sum arithmetically. It is the only modifier that changes what the total means rather than what the total is.
+
+### Two-Channel Architecture
+
+`ModifierApplyResult` exposes two output channels that never overlap within a single modifier:
+
+- **Pool channel** (`rolls`) — modifiers that transform the dice array. Used by Stage 1 and Stage 2 modifiers. The resulting array is the input to the next modifier in priority order.
+- **Total channel** (`transformTotal`) — modifiers that transform the computed sum. Used by Stage 3 modifiers. The pool is not touched.
+
+The `mutatesRolls: false` flag on a modifier's schema is the code's declaration that it uses only the total channel. A modifier with `mutatesRolls: false` will never modify the dice array — the runtime passes the pool through unchanged and applies `transformTotal` to the sum instead.
+
+No modifier uses both channels simultaneously. A modifier either shapes the pool or adjusts the total — never both.
 
 ## Basic Syntax
 
@@ -168,7 +229,7 @@ roll({
 
 **Use cases:** Custom damage type dice (fire/ice/lightning), narrative dice (success/failure/complication), weighted probability dice, or any die with non-standard faces.
 
-### Zero-Bias Dice (`zN`) — _sugar → d{0..N-1}_
+### Zero-Bias Dice (`zN`) — _alias → d{0..N-1}_
 
 Zero-indexed dice that roll 0 to N-1 instead of 1 to N. All notation in randsum is case-insensitive.
 
@@ -232,7 +293,7 @@ Internally, `DDN` sets the `draw: true` flag on `RollParams` and uses Fisher-Yat
 
 **Use cases:** Card-deck mechanics, random encounter tables without repeats, draft picks, Catan-style resource distribution.
 
-### Percentile Die (`d%`) — _sugar → 1d100_
+### Percentile Die (`d%`) — _alias → 1d100_
 
 A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and any system with percentage-based resolution.
 
@@ -255,7 +316,7 @@ Internally, `'d%'` maps to `{ quantity: 1, sides: 100 }`.
 roll("d%", "d%") // Two percentile dice
 ```
 
-### Fate/Fudge Dice (`dF`) — _sugar → d3 + Replace_
+### Fate/Fudge Dice (`dF`) — _alias → d3 + Replace_
 
 Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The standard Fate Core roll is `4dF`, giving a range of -4 to +4. An extended variant (`dF.2`) uses five faces: -2, -1, 0, +1, +2.
 
@@ -288,7 +349,7 @@ Internally, `dF` uses the replace modifier to map die faces to negative and zero
 
 ## Modifiers
 
-### Basic Arithmetic — _primitive (Plus), sugar (Minus)_
+### Basic Arithmetic — _primitive (Plus), alias (Minus)_
 
 | Notation | Description           |
 | -------- | --------------------- |
@@ -549,7 +610,7 @@ roll({
 
 **Note:** The max count in `R{<N}M` caps the total number of rerolls across the entire dice pool, not per die.
 
-### Reroll Once — _sugar → Reroll with max=1_
+### Reroll Once — _alias → Reroll with max=1_
 
 Reroll once is shorthand for rerolling with a maximum of 1 attempt. All notation in randsum is case-insensitive.
 
@@ -581,7 +642,7 @@ roll({
 })
 ```
 
-**Sugar equivalence:** `ro{...}` is sugar for `R{...}1`. For example, `4d6ro{<3}` is identical to `4d6R{<3}1`.
+**Alias equivalence:** `ro{...}` is alias for `R{...}1`. For example, `4d6ro{<3}` is identical to `4d6R{<3}1`.
 
 **Use cases:** D&D 5e Savage Attacker feat, Great Weapon Fighting (reroll 1s and 2s once per die), or any system where you want a single reroll chance without unlimited retries.
 
@@ -691,7 +752,7 @@ roll({
 })
 ```
 
-### Keep Modifiers — _sugar → inverse of Drop_
+### Keep Modifiers — _alias → inverse of Drop_
 
 Keep specific dice from the result (complement to drop):
 
@@ -734,7 +795,7 @@ roll({
 
 **Note:** Keeping N highest is equivalent to dropping (quantity - N) lowest. For example, `4d6K3` is the same as `4d6L1`.
 
-### Keep Middle — _sugar → Drop lowest + Drop highest_
+### Keep Middle — _alias → Drop lowest + Drop highest_
 
 Keep middle dice by dropping equal numbers from both ends. All notation in randsum is case-insensitive.
 
@@ -763,7 +824,7 @@ roll({
 })
 ```
 
-**Sugar equivalence:** `KM` is sugar for `LH` (drop 1 lowest + 1 highest). `KMN` is sugar for `LNHN` (drop N lowest + N highest). For example, `5d6KM` is identical to `5d6LH`, and `7d8KM2` is identical to `7d8L2H2`.
+**Alias equivalence:** `KM` is alias for `LH` (drop 1 lowest + 1 highest). `KMN` is alias for `LNHN` (drop N lowest + N highest). For example, `5d6KM` is identical to `5d6LH`, and `7d8KM2` is identical to `7d8L2H2`.
 
 **Use cases:** Systems that want a median-biased result, trimming outliers from both ends of the roll.
 
@@ -963,9 +1024,9 @@ roll({
 
 **Use cases:** Critical hits that double or triple base damage before modifiers. Or systems where dice are multiplied before bonuses are added.
 
-### Count Successes (S{N}) — _sugar → Count with greaterThanOrEqual_
+### Count Successes (S{N}) — _alias → Count with greaterThanOrEqual_
 
-> **Sugar equivalence:** `S{7}` is identical to `#{>=7}`. `S{7,1}` is identical to `#{>=7,<=1}` with deduct mode.
+> **Alias equivalence:** `S{7}` is identical to `#{>=7}`. `S{7,1}` is identical to `#{>=7,<=1}` with deduct mode.
 >
 > **Implementation note:** `S{N}` parses directly into `{ count: { greaterThanOrEqual: N } }` — the same `count` key used by the `#{}` primitive. The `countSuccessesBehavior` defined in `src/lib/modifiers/behaviors/countSuccesses.ts` is dead code: `countSuccessesModifier` is never registered in `RANDSUM_MODIFIERS`. All execution flows through `countBehavior`.
 
@@ -980,7 +1041,7 @@ Count dice meeting a threshold instead of summing values. Used in dice pool syst
 
 ```typescript
 roll("5d10S{7}") // Count how many dice rolled >= 7
-// Equivalent options-object form (S{N} is sugar — use the count key):
+// Equivalent options-object form (S{N} is an alias — use the count key):
 roll({
   sides: 10,
   quantity: 5,
@@ -1001,7 +1062,7 @@ roll({
 })
 ```
 
-**How it works:** Instead of summing dice values, the total becomes a count of dice that meet or exceed the threshold. If a botch threshold is specified, dice at or below that value are counted as botches and subtracted from the success count. Execution is handled entirely by the `count` modifier (`countBehavior`) — `S{N}` is parse-time sugar only.
+**How it works:** Instead of summing dice values, the total becomes a count of dice that meet or exceed the threshold. If a botch threshold is specified, dice at or below that value are counted as botches and subtracted from the success count. Execution is handled entirely by the `count` modifier (`countBehavior`) — `S{N}` is parse-time alias only.
 
 **Example:** `5d10S{7}` rolls [8, 3, 10, 6, 9]. Successes >= 7: [8, 10, 9] = 3 successes.
 
@@ -1140,9 +1201,9 @@ roll({
 
 **Use cases:** World of Darkness, Shadowrun, and any dice pool system that counts hits or failures instead of summing values. The deduct form handles WoD-style botch subtraction natively.
 
-### Count Failures (F{N}) — _sugar → Count with lessThanOrEqual_
+### Count Failures (F{N}) — _alias → Count with lessThanOrEqual_
 
-> **Sugar equivalence:** `F{3}` is identical to `#{<=3}`.
+> **Alias equivalence:** `F{3}` is identical to `#{<=3}`.
 >
 > **Implementation note:** `F{N}` parses directly into `{ count: { lessThanOrEqual: N } }` — the same `count` key used by the `#{}` primitive. The `countFailuresBehavior` defined in `src/lib/modifiers/behaviors/countFailures.ts` is dead code: `countFailuresModifier` is never registered in `RANDSUM_MODIFIERS`. All execution flows through `countBehavior`.
 
@@ -1156,7 +1217,7 @@ Count how many dice rolled at or below a threshold. The total becomes the failur
 
 ```typescript
 roll("5d10F{3}") // Count how many dice rolled <= 3
-// Equivalent options-object form (F{N} is sugar — use the count key):
+// Equivalent options-object form (F{N} is an alias — use the count key):
 roll({
   sides: 10,
   quantity: 5,
@@ -1166,13 +1227,13 @@ roll({
 })
 ```
 
-**How it works:** Instead of summing dice values, the total becomes a count of dice that are at or below the threshold. Execution is handled entirely by the `count` modifier (`countBehavior`) — `F{N}` is parse-time sugar only.
+**How it works:** Instead of summing dice values, the total becomes a count of dice that are at or below the threshold. Execution is handled entirely by the `count` modifier (`countBehavior`) — `F{N}` is parse-time alias only.
 
 **Example:** `5d10F{3}` rolls [8, 2, 10, 1, 9]. Failures <= 3: [2, 1] = 2 failures.
 
 **Use cases:** Dice pool systems where you need to count both successes and failures separately, risk assessment mechanics, World of Darkness botch counting.
 
-### Margin of Success — _sugar → Minus N_
+### Margin of Success — _alias → Minus N_
 
 Calculate the margin above or below a target number. All notation in randsum is case-insensitive.
 
@@ -1196,7 +1257,7 @@ roll({
 })
 ```
 
-**Sugar equivalence:** `ms{N}` is sugar for `-N`. For example, `1d20ms{15}` is identical to `1d20-15`. The `ms` form exists for readability when calculating margins of success or failure against a difficulty class or target number.
+**Alias equivalence:** `ms{N}` is alias for `-N`. For example, `1d20ms{15}` is identical to `1d20-15`. The `ms` form exists for readability when calculating margins of success or failure against a difficulty class or target number.
 
 **Use cases:** Checking how far above or below a DC a roll lands, degree-of-success systems, or any context where the margin matters more than the raw total.
 
@@ -1231,7 +1292,7 @@ The wild die modifier operates at priority 55, after explode/compound/penetrate.
 
 **Use cases:** West End Games D6 System (Star Wars D6, Ghostbusters, Indiana Jones RPG).
 
-### Total Multiplier (\*\*) — _sugar → Multiply at post-arithmetic phase_
+### Total Multiplier (\*\*) — _alias → Multiply at post-arithmetic phase_
 
 Multiply the entire final total after all other modifiers:
 
@@ -1293,9 +1354,9 @@ roll("4d6L[strength]") // Label the roll purpose
 
 **Use cases:** Tracking damage types in D&D, labeling ability score rolls, annotating complex multi-group rolls for display purposes.
 
-### Repeat Operator (xN) — _sugar → parser expansion_
+### Repeat Operator (xN) — _alias → parser expansion_
 
-Notation sugar that repeats a roll expression N times:
+Notation alias that repeats a roll expression N times:
 
 | Notation | Description                           |
 | -------- | ------------------------------------- |
@@ -1341,7 +1402,7 @@ Modifiers can be chained together. They are applied in a specific order to ensur
 | 95       | Count            | `#{...}`  | Count dice matching conditions     |
 | 100      | Total Multiply   | `**N`     | Multiply entire final total        |
 
-> **Note:** `S{N}` and `F{N}` are sugar for `#{>=N}` and `#{<=N}` respectively. They share priority 95 with Count.
+> **Note:** `S{N}` and `F{N}` are alias for `#{>=N}` and `#{<=N}` respectively. They share priority 95 with Count.
 
 Lower priority numbers execute first. This order ensures predictable behavior:
 
@@ -1634,14 +1695,14 @@ roll("3d6W+2") // 3d6 with wild die and +2 modifier
 
 ```typescript
 roll("8d10#{>=8,<=1}") // WoD: successes on 8+, botch on 1
-roll("8d10S{8,1}") // Sugar: same as above
+roll("8d10S{8,1}") // Alias: same as above
 ```
 
 ### Shadowrun Hits
 
 ```typescript
 roll("12d6#{>=5}") // Count hits (5 or 6)
-roll("12d6S{5}") // Sugar: same as above
+roll("12d6S{5}") // Alias: same as above
 ```
 
 ### Labeled Damage Rolls

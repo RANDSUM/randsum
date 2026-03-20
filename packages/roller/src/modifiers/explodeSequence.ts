@@ -36,7 +36,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
   docs: [
     {
       key: '!s{..}',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fcd34d',
       colorLight: '#ca8a04',
       title: 'Explode Sequence',
@@ -51,7 +51,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     },
     {
       key: '!i',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fcd34d',
       colorLight: '#ca8a04',
       title: 'Inflation',
@@ -63,7 +63,7 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
     },
     {
       key: '!r',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fcd34d',
       colorLight: '#ca8a04',
       title: 'Reduction',
@@ -77,17 +77,11 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
 })
 
 /**
- * Roll a single die with a given number of sides using the raw RNG.
- */
-function rollWithSides(sides: number, rng: () => number): number {
-  return coreRandom(sides, rng) + 1
-}
-
-/**
  * Walk through the die size sequence, rolling each die and continuing
  * if max is hit. The last die in the sequence repeats (capped by DEFAULT_EXPLOSION_DEPTH).
+ * Uses a typed roll function consistent with the injected roll mechanism.
  */
-function explodeThroughSequence(sequence: number[], rng: () => number): number[] {
+function explodeThroughSequence(sequence: number[], rollOne: (sides: number) => number): number[] {
   const results: number[] = []
   const lastSize = sequence[sequence.length - 1]
   if (lastSize === undefined) return results
@@ -97,7 +91,7 @@ function explodeThroughSequence(sequence: number[], rng: () => number): number[]
 
   for (const _ of Array.from({ length: maxIterations })) {
     const currentSize = remaining.shift() ?? lastSize
-    const rolled = rollWithSides(currentSize, rng)
+    const rolled = rollOne(currentSize)
     results.push(rolled)
 
     if (rolled !== currentSize) break // Didn't hit max, stop
@@ -120,14 +114,17 @@ export const explodeSequenceModifier: ModifierDefinition<number[]> = {
     }
 
     const { sides } = parameters
-    const rng = ctx.randomFn ?? Math.random
+    // Build a sized roll function backed by the injected RNG (always provided when requiresRollFn: true).
+    const rng = ctx.randomFn
+    if (rng === undefined) throw new Error('Internal error: randomFn required for explodeSequence')
+    const rollOneSized = (rollSides: number): number => coreRandom(rollSides, rng) + 1
     const additionalRolls: number[] = []
 
     for (const roll of rolls) {
       if (roll !== sides) continue
 
       // This die hit max, start the sequence
-      const seqRolls = explodeThroughSequence(options, rng)
+      const seqRolls = explodeThroughSequence(options, rollOneSized)
       additionalRolls.push(...seqRolls)
     }
 

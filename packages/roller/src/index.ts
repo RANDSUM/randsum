@@ -41,7 +41,7 @@ export {
   modifiersToDescription
 } from './notation/transformers/modifiersToStrings'
 export { tokenize } from './notation/tokenize'
-export type { Token, TokenType, TokenCategory } from './notation/tokenize'
+export type { Token, TokenType, TokenCategory, ModifierCategory } from './notation/tokenize'
 export { suggestNotationFix } from './notation/suggestions'
 export { coreNotationPattern } from './notation/coreNotationPattern'
 export { formatHumanList } from './notation/formatHumanList'

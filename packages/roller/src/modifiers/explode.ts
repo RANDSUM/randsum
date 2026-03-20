@@ -30,7 +30,7 @@ export const explodeSchema: NotationSchema<boolean> = defineNotationSchema<boole
   docs: [
     {
       key: '!',
-      category: 'Explode',
+      category: 'Generate',
       color: '#fbbf24',
       colorLight: '#d97706',
       title: 'Explode',

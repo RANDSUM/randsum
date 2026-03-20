@@ -2,6 +2,7 @@ import type { ModifierOptions } from '../notation/types'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
+import { createScaleBehavior } from './shared/scale'
 
 const minusPattern = /-(\d+)/
 const minusGlobalPattern = /-(\d+)/g
@@ -32,7 +33,7 @@ export const minusSchema: NotationSchema<number> = defineNotationSchema<number>(
   docs: [
     {
       key: '-',
-      category: 'Arithmetic',
+      category: 'Scale',
       color: '#f87171',
       colorLight: '#dc2626',
       title: 'Subtract',
@@ -50,11 +51,5 @@ export const minusSchema: NotationSchema<number> = defineNotationSchema<number>(
 
 export const minusModifier: ModifierDefinition<number> = {
   ...minusSchema,
-  mutatesRolls: false,
-  apply: (rolls, options) => {
-    return {
-      rolls,
-      transformTotal: total => total - options
-    }
-  }
+  ...createScaleBehavior((total, value) => total - value)
 }

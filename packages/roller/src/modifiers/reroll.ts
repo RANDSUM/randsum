@@ -105,7 +105,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
   docs: [
     {
       key: 'R{..}',
-      category: 'Pool',
+      category: 'Substitute',
       color: '#f472b6',
       colorLight: '#db2777',
       title: 'Reroll',
@@ -149,7 +149,7 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
     },
     {
       key: 'ro{..}',
-      category: 'Pool',
+      category: 'Substitute',
       color: '#f472b6',
       colorLight: '#db2777',
       title: 'Reroll Once',

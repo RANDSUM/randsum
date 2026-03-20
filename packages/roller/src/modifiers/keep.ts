@@ -72,7 +72,7 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
   docs: [
     {
       key: 'K',
-      category: 'Pool',
+      category: 'Filter',
       color: '#fb923c',
       colorLight: '#c2410c',
       title: 'Keep Highest',
@@ -90,7 +90,7 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
     },
     {
       key: 'KL',
-      category: 'Pool',
+      category: 'Filter',
       color: '#f97316',
       colorLight: '#9a3412',
       title: 'Keep Lowest',
@@ -108,7 +108,7 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
     },
     {
       key: 'KM',
-      category: 'Pool',
+      category: 'Filter',
       color: '#fdba74',
       colorLight: '#ea580c',
       title: 'Keep Middle',

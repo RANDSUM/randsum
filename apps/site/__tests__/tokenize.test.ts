@@ -9,11 +9,11 @@ describe('tokenize — compound notation', () => {
     expect(tokens[1]).toMatchObject({ category: 'Core', text: '+1d20', start: 3, end: 8 })
   })
 
-  test('1d6+5 still treats +5 as arithmetic (not a pool)', () => {
+  test('1d6+5 still treats +5 as scale (not a pool)', () => {
     const tokens = tokenize('1d6+5')
     expect(tokens).toHaveLength(2)
     expect(tokens[0]).toMatchObject({ category: 'Core', text: '1d6' })
-    expect(tokens[1]).toMatchObject({ category: 'Arithmetic', text: '+5' })
+    expect(tokens[1]).toMatchObject({ category: 'Scale', text: '+5' })
   })
 
   test('1d6+1d20L produces core, core, dropLowest', () => {
@@ -21,7 +21,7 @@ describe('tokenize — compound notation', () => {
     expect(tokens).toHaveLength(3)
     expect(tokens[0]).toMatchObject({ category: 'Core', text: '1d6', start: 0, end: 3 })
     expect(tokens[1]).toMatchObject({ category: 'Core', text: '+1d20', start: 3, end: 8 })
-    expect(tokens[2]).toMatchObject({ category: 'Pool', text: 'L', start: 8, end: 9 })
+    expect(tokens[2]).toMatchObject({ category: 'Filter', text: 'L', start: 8, end: 9 })
   })
 
   test('second core description is english', () => {
@@ -33,7 +33,7 @@ describe('tokenize — compound notation', () => {
 describe('tokenize — bare drop/keep suffixes (no number)', () => {
   test('H alone → dropHighest with "Drop highest" description', () => {
     const tokens = tokenize('1d6H')
-    const t = tokens.find(t => t.category === 'Pool')
+    const t = tokens.find(t => t.category === 'Filter' || t.category === 'Substitute')
     expect(t).toBeDefined()
     expect(t?.description).toBe('Drop highest')
     expect(t?.text).toBe('H')
@@ -41,7 +41,7 @@ describe('tokenize — bare drop/keep suffixes (no number)', () => {
 
   test('KL alone → keepLowest with "Keep lowest" description', () => {
     const tokens = tokenize('1d6KL')
-    const t = tokens.find(t => t.category === 'Pool')
+    const t = tokens.find(t => t.category === 'Filter' || t.category === 'Substitute')
     expect(t).toBeDefined()
     expect(t?.description).toBe('Keep lowest')
     expect(t?.text).toBe('KL')
@@ -49,7 +49,7 @@ describe('tokenize — bare drop/keep suffixes (no number)', () => {
 
   test('K alone → keepHighest with "Keep highest" description', () => {
     const tokens = tokenize('1d6K')
-    const t = tokens.find(t => t.category === 'Pool')
+    const t = tokens.find(t => t.category === 'Filter' || t.category === 'Substitute')
     expect(t).toBeDefined()
     expect(t?.description).toBe('Keep highest')
     expect(t?.text).toBe('K')
@@ -59,14 +59,14 @@ describe('tokenize — bare drop/keep suffixes (no number)', () => {
 describe('tokenize — reroll inner condition extraction', () => {
   test('R{<3} → description is "Reroll <3"', () => {
     const tokens = tokenize('1d6R{<3}')
-    const t = tokens.find(t => t.category === 'Pool')
+    const t = tokens.find(t => t.category === 'Filter' || t.category === 'Substitute')
     expect(t).toBeDefined()
     expect(t?.description).toBe('Reroll less than 3')
   })
 
   test('R{1,2} → description is "Reroll 1,2"', () => {
     const tokens = tokenize('1d6R{1,2}')
-    const t = tokens.find(t => t.category === 'Pool')
+    const t = tokens.find(t => t.category === 'Filter' || t.category === 'Substitute')
     expect(t?.description).toBe('Reroll 1 and 2')
   })
 })

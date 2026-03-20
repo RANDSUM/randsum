@@ -17,19 +17,29 @@ describe('tokenCategoryToClass', () => {
     }
   })
 
-  test('maps Pool to token-pool', () => {
-    expect(tokenCategoryToClass('Pool')).toBe('token-pool')
+  test('maps Filter/Clamp/Map to token-pool', () => {
+    const poolCategories: TokenCategory[] = ['Filter', 'Clamp', 'Map']
+    for (const c of poolCategories) {
+      expect(tokenCategoryToClass(c)).toBe('token-pool')
+    }
   })
 
-  test('maps Explode/Counting/Order to token-modifier', () => {
-    const modifierCategories: TokenCategory[] = ['Explode', 'Counting', 'Order']
+  test('maps Generate/Accumulate/Substitute/Reinterpret/Dispatch/Order to token-modifier', () => {
+    const modifierCategories: TokenCategory[] = [
+      'Generate',
+      'Accumulate',
+      'Substitute',
+      'Reinterpret',
+      'Dispatch',
+      'Order'
+    ]
     for (const c of modifierCategories) {
       expect(tokenCategoryToClass(c)).toBe('token-modifier')
     }
   })
 
-  test('maps Arithmetic to token-arithmetic', () => {
-    expect(tokenCategoryToClass('Arithmetic')).toBe('token-arithmetic')
+  test('maps Scale to token-arithmetic', () => {
+    expect(tokenCategoryToClass('Scale')).toBe('token-arithmetic')
   })
 
   test('maps unknown to token-unknown', () => {

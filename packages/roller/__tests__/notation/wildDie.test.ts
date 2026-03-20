@@ -67,7 +67,7 @@ describe('Wild Die (W) notation', () => {
   describe('tokenize', () => {
     test('produces a wildDie token', () => {
       const tokens = tokenize('5d6W')
-      const wildToken = tokens.find(t => t.category === 'Special')
+      const wildToken = tokens.find(t => t.category === 'Dispatch')
 
       expect(wildToken).toBeDefined()
       expect(wildToken?.text).toBe('W')
@@ -75,7 +75,7 @@ describe('Wild Die (W) notation', () => {
 
     test('produces lowercase wildDie token', () => {
       const tokens = tokenize('5d6w')
-      const wildToken = tokens.find(t => t.category === 'Special')
+      const wildToken = tokens.find(t => t.category === 'Dispatch')
 
       expect(wildToken).toBeDefined()
       expect(wildToken?.text).toBe('w')
