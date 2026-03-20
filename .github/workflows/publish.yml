@@ -41,6 +41,9 @@ jobs:
       - name: Check bundle sizes
         run: bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size
 
+      - name: Strip token auth from .npmrc for OIDC Trusted Publishers
+        run: sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
+
       - name: Create Release PR or Publish
         id: changesets
         uses: changesets/action@v1
@@ -51,4 +54,3 @@ jobs:
           commit: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ''
