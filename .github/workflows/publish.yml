@@ -21,7 +21,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: 'https://registry.npmjs.org'
       - name: Read Bun version
         id: bun-version
         run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
@@ -41,9 +40,6 @@ jobs:
       - name: Check bundle sizes
         run: bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size
 
-      - name: Strip token auth from .npmrc for OIDC Trusted Publishers
-        run: sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
-
       - name: Create Release PR or Publish
         id: changesets
         uses: changesets/action@v1
@@ -54,3 +50,4 @@ jobs:
           commit: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

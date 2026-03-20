@@ -9,8 +9,8 @@
  *   bun run publish -- --otp=123456  # provide 2FA OTP (local only)
  *
  * Uses `bun pm pack` to resolve workspace: protocols, then `npm publish`
- * on the tarball. In CI with `id-token: write`, npm handles OIDC Trusted
- * Publishers auth automatically via --provenance.
+ * on the tarball. In CI, auth is via NPM_CONFIG_TOKEN and provenance
+ * attestation is added via --provenance.
  *
  * Publishes workspace packages in dependency order, skips private ones.
  */
@@ -50,13 +50,6 @@ const extraArgs = process.argv.slice(2)
 const dryRun = extraArgs.includes('--dry-run')
 const isCI = Boolean(process.env.CI)
 
-// setup-node exports NODE_AUTH_TOKEN with a dummy value (XXXXX-XXXXX-XXXXX-XXXXX).
-// npm reads this from env and fails with ENEEDAUTH instead of falling through to OIDC.
-// Deleting it lets npm use Trusted Publishers via --provenance.
-if (isCI) {
-  delete process.env.NODE_AUTH_TOKEN
-}
-
 const packages = await getPublishablePackages()
 
 console.log(`\nPublishing ${packages.length} packages${dryRun ? ' (dry run)' : ''}:\n`)
@@ -91,9 +84,7 @@ for (const { name, dir } of packages) {
       npmArgs.push(arg)
     }
 
-    const cleanEnv = { ...process.env }
-    delete cleanEnv.NODE_AUTH_TOKEN
-    await $`npm ${npmArgs}`.env(cleanEnv)
+    await $`npm ${npmArgs}`
 
     unlinkSync(tgzPath)
   } catch {
