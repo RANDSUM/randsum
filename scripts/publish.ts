@@ -50,6 +50,13 @@ const extraArgs = process.argv.slice(2)
 const dryRun = extraArgs.includes('--dry-run')
 const isCI = Boolean(process.env.CI)
 
+// setup-node exports NODE_AUTH_TOKEN with a dummy value (XXXXX-XXXXX-XXXXX-XXXXX).
+// npm reads this from env and fails with ENEEDAUTH instead of falling through to OIDC.
+// Deleting it lets npm use Trusted Publishers via --provenance.
+if (isCI) {
+  delete process.env.NODE_AUTH_TOKEN
+}
+
 const packages = await getPublishablePackages()
 
 console.log(`\nPublishing ${packages.length} packages${dryRun ? ' (dry run)' : ''}:\n`)
