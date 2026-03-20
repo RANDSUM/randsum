@@ -40,20 +40,20 @@ describe('RollResult component', () => {
 
   test('renders step rows for a single pool', () => {
     const html = renderToStaticMarkup(createElement(RollResult, { records: [makeRecord()] }))
-    expect(html).toContain('nr-result-row')
+    expect(html).toContain('du-step-row')
   })
 
   test('renders pool header when multiple records', () => {
     const html = renderToStaticMarkup(
       createElement(RollResult, { records: [makeRecord(), makeRecord()] })
     )
-    expect(html).toContain('nr-result-pool-header')
+    expect(html).toContain('du-pool-heading')
     expect(html).toContain('1d6')
   })
 
   test('does not render pool header for single record', () => {
     const html = renderToStaticMarkup(createElement(RollResult, { records: [makeRecord()] }))
-    expect(html).not.toContain('nr-result-pool-header')
+    expect(html).not.toContain('du-pool-heading')
   })
 })
 
