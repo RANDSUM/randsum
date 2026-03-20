@@ -91,7 +91,9 @@ for (const { name, dir } of packages) {
       npmArgs.push(arg)
     }
 
-    await $`npm ${npmArgs}`
+    const cleanEnv = { ...process.env }
+    delete cleanEnv.NODE_AUTH_TOKEN
+    await $`npm ${npmArgs}`.env(cleanEnv)
 
     unlinkSync(tgzPath)
   } catch {
