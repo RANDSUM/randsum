@@ -89,45 +89,63 @@ Fix three confirmed implementation bugs before touching any category values:
 
 ### Phase 2 — Typed union introduction (non-breaking, type hardening)
 
-Introduce a `ModifierCategory` typed union over the existing seven category string values:
+Introduce a `ModifierCategory` typed union using verb-based categories that describe what each modifier does:
 
 ```typescript
 export type ModifierCategory =
-  | 'Core'
-  | 'Special'
-  | 'Pool'
-  | 'Explode'
-  | 'Arithmetic'
-  | 'Counting'
-  | 'Order'
+  | 'Core'        // dice types: xDN
+  | 'Special'     // special dice types: d%, dF, gN, DDN, zN, d{...}
+  | 'Clamp'       // cap: constrain values to boundaries
+  | 'Map'         // replace: deterministic value substitution
+  | 'Filter'      // drop, keep: remove dice from pool
+  | 'Substitute'  // reroll, unique: re-randomize matching dice
+  | 'Generate'    // explode, explodeSequence: append new dice
+  | 'Accumulate'  // compound, penetrate: fold into existing die
+  | 'Scale'       // plus, minus, multiply, multiplyTotal, integerDivide, modulo
+  | 'Reinterpret' // count: replace aggregation model (sum → cardinality)
+  | 'Order'       // sort: presentation-only reordering
+  | 'Dispatch'    // wildDie: runtime conditional branch (macro)
 ```
 
-Replace `readonly category: string` on `NotationDoc` with `readonly category: ModifierCategory`. Align `TokenCategory` in `tokenize.ts` to use `ModifierCategory` rather than declaring its own union. This is a non-breaking type change — no string values change, only the constraint tightens.
-
-This phase delivers immediate value: IDE completions, compile-time safety for future modifier authors, and a single authoritative definition for both the docs and tokenizer vocabularies.
+Replace `readonly category: string` on `NotationDoc` with `readonly category: ModifierCategory`. Align `TokenCategory` in `tokenize.ts` to use `ModifierCategory`. Each modifier's category now describes the verb it performs — no ambiguity, no grouping that hides structural differences.
 
 ### Phase 3 — Category value corrections (breaking, minor version bump required)
 
-After Phase 2 establishes the typed union, correct the two confirmed misclassifications:
+After Phase 2 establishes the typed union, migrate all modifier categories to the verb-based vocabulary:
 
-- Reclassify `cap` and `replace` from `'Pool'` to a new value: `'Value'`. The name reflects the actual operation — value-level clamping and substitution — and distinguishes it from pool-membership operations (drop, keep, reroll, unique).
+| Modifier | Old Category | New Category | Verb |
+|----------|-------------|-------------|------|
+| cap | Pool | Clamp | constrain values |
+| replace | Pool | Map | deterministic substitution |
+| drop | Pool | Filter | remove dice |
+| keep | Pool | Filter | remove dice (inverse) |
+| reroll | Pool | Substitute | re-randomize |
+| unique | Pool | Substitute | enforce uniqueness |
+| explode | Explode | Generate | append dice |
+| explodeSequence | Explode | Generate | append dice (stepped) |
+| compound | Explode | Accumulate | fold into die |
+| penetrate | Explode | Accumulate | fold (roll-1) |
+| wildDie | Special | Dispatch | conditional branch |
+| count | Counting | Reinterpret | replace aggregation |
+| plus | Arithmetic | Scale | add to total |
+| minus | Arithmetic | Scale | subtract from total |
+| multiply | Arithmetic | Scale | multiply total |
+| multiplyTotal | Arithmetic | Scale | multiply total (post) |
+| integerDivide | Arithmetic | Scale | divide total |
+| modulo | Arithmetic | Scale | modulo total |
+| sort | Order | Order | reorder (unchanged) |
 
-- Reclassify `wildDie` from `'Special'` to `'Macro'`. `wildDie` is a conditional modifier that branches at runtime to either ACCUMULATE or FILTER behavior. It is not a die type. The `'Macro'` label matches the taxonomy established in the prior four-expert notation primitives debate (`memory/notation-primitives-vs-sugar.md`).
+This requires updating:
 
-- Add `'Value'` and `'Macro'` to the `ModifierCategory` union and remove the values that no longer apply to any modifier (if `'Special'` retains only die types after wildDie moves out, it stays; if not, evaluate).
-
-This phase requires updating:
-
-- `capSchema.docs` and `replaceSchema.docs` — category value change
-- `wildDieSchema.docs` — category value change
-- `tokenize.ts` token patterns for `'C{..}'`, `'V{..}'`, and `'W'` — category value change
-- `dice-ui` CSS class names: `du-token--Pool` → `du-token--Value`, `du-token--Special` (wildDie) handled by new `du-token--Macro`
-- Playground `notationInputUtils.ts` — exhaustive switch updated to include new values
+- Every modifier's `docs` array — category value change
+- `tokenize.ts` — all token pattern categories
+- `dice-ui` CSS class names: `du-token--Pool` → `du-token--Filter`/`du-token--Clamp`/etc.
+- Playground `notationInputUtils.ts` — exhaustive switch updated
 - Playground tests — hardcoded category assertions updated
 - `RANDSUM_DICE_NOTATION.md` — category column in modifier tables updated
 - Roller `CLAUDE.md` — category value list updated
 
-Phase 3 ships as a standalone minor-version bump with explicit migration notes. The PR must be labeled `breaking-change` and must include a migration note listing every renamed value.
+Phase 3 ships as a standalone minor-version bump with explicit migration notes. The PR must be labeled `breaking-change` and include a migration table of old → new values.
 
 ### Pipeline documentation (shipped alongside Phase 2)
 
@@ -154,8 +172,6 @@ The pipeline documentation uses structural stage names in developer-facing docs 
 
 ### Non-decisions (deferred)
 
-- **Verb taxonomy as navigation model** — whether to restructure `RANDSUM_DICE_NOTATION.md` sections around the seven-verb taxonomy (CLAMP, MAP, FILTER, SUBSTITUTE, GENERATE, ACCUMULATE, SCALE) rather than the category taxonomy is deferred to a follow-up documentation design session.
-- **`count` structural outlier** — whether `count` deserves its own `'Reinterpret'` category (it changes what the total *means*, not what it *is*) is deferred. The current `'Counting'` label is inaccurate but functional. Renaming it is an additional breaking change that should not ride with Phase 3.
 - **`multiply`/`multiplyTotal` DRY** — consolidation of structurally-identical multiply behaviors is tracked separately and does not affect the category taxonomy.
 
 ## References
