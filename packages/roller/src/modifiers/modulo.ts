@@ -1,6 +1,7 @@
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
+import { createScaleBehavior } from './shared/scale'
 
 const moduloPattern = /%(\d+)/
 
@@ -46,11 +47,5 @@ export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>
 
 export const moduloModifier: ModifierDefinition<number> = {
   ...moduloSchema,
-  mutatesRolls: false,
-  apply: (rolls, options) => {
-    return {
-      rolls,
-      transformTotal: total => total % options
-    }
-  }
+  ...createScaleBehavior((total, value) => total % value)
 }

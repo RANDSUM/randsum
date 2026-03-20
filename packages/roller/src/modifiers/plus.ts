@@ -2,6 +2,7 @@ import type { ModifierOptions } from '../notation/types'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import type { ModifierDefinition } from './schema'
+import { createScaleBehavior } from './shared/scale'
 
 const plusPattern = /\+(\d+)/
 const plusGlobalPattern = /\+(\d+)/g
@@ -53,11 +54,5 @@ export const plusSchema: NotationSchema<number> = defineNotationSchema<number>({
 
 export const plusModifier: ModifierDefinition<number> = {
   ...plusSchema,
-  mutatesRolls: false,
-  apply: (rolls, options) => {
-    return {
-      rolls,
-      transformTotal: total => total + options
-    }
-  }
+  ...createScaleBehavior((total, value) => total + value)
 }
