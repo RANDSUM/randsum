@@ -1,6 +1,12 @@
 ---
-const title = 'notation.randsum.dev'
-const description = 'The RANDSUM Dice Notation Specification'
+import { getCollection, render } from 'astro:content'
+import { getLatestVersion } from '../utils/versions'
+
+const latestId = await getLatestVersion()
+const entries = await getCollection('specs')
+const entry = entries.find((e) => e.id === latestId)
+if (!entry) throw new Error(`No spec entry found for version: ${latestId}`)
+const { Content } = await render(entry)
 ---
 
 <!doctype html>
@@ -8,12 +14,9 @@ const description = 'The RANDSUM Dice Notation Specification'
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+    <title>RANDSUM Dice Notation Specification</title>
   </head>
   <body>
-    <h1>{title}</h1>
-    <p>{description}</p>
-    <p><a href="/spec/v1.0">View the specification</a></p>
+    <Content />
   </body>
 </html>

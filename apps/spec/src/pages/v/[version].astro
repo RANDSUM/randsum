@@ -1,0 +1,31 @@
+---
+import { getCollection, render } from 'astro:content'
+import { isLatestVersion } from '../../utils/versions'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('specs')
+  return entries.map((entry) => ({
+    params: { version: entry.id },
+    props: { entry }
+  }))
+}
+
+const { entry } = Astro.props
+const { version } = Astro.params
+const { Content } = await render(entry)
+const latest = await isLatestVersion(version)
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RANDSUM Dice Notation Spec — {version}</title>
+  </head>
+  <body>
+    {latest && <p><a href="/">← Latest</a></p>}
+    {!latest && <p><a href="/">← Back to latest</a></p>}
+    <Content />
+  </body>
+</html>
