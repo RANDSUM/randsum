@@ -158,8 +158,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           </div>
           <div class="playground-pitch">
             <h2 class="pitch-heading">
-              <span class="pitch-accent">@randsum/roller</span>
-              <span class="pitch-plain">:</span>
+              <span class="pitch-plain">Every </span><span class="pitch-purple">modifier</span><span class="pitch-plain">,</span>
               <br />
               <span class="pitch-color-cycle" aria-label="parsed">{"parsed".split('').map((c, i) => <span class="pitch-color-char" style={`animation-delay: ${i * 0.15}s`}>{c}</span>)}</span>
               <span class="pitch-plain"> and </span>
@@ -167,7 +166,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
-              A complete dice notation spec &mdash; fully specified, documented, and implemented in a single zero-dependency engine. Every common rolling pattern covered so you never have to invent your own.
+              <code>@randsum/roller</code> is a zero-dependency dice engine with a complete notation spec &mdash; fully specified, documented, and implemented. Every common rolling pattern covered so you never have to invent your own.
             </p>
             <div class="pitch-actions">
               <a href="/notation/randsum-dice-notation/" class="btn btn-outline btn-sm">
@@ -197,7 +196,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               <span class="pitch-plain">,</span>
               <br />
               <span class="pitch-plain">get </span>
-              <span class="pitch-purple">Rollers</span>
+              <span class="pitch-purple">Rolls</span>
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
@@ -1237,7 +1236,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
   :global(.integration-display) {
     flex: 1;
-    min-height: 0;
+    min-height: 14rem;
   }
 
   :global(.integration-terminal) {
@@ -1282,14 +1281,18 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   :global(.integration-image-wrap) {
     display: flex;
     justify-content: center;
+    align-items: center;
     border-radius: var(--radius, 5px);
     overflow: hidden;
+    min-height: 14rem;
   }
 
   :global(.integration-image) {
     max-width: 100%;
+    max-height: 14rem;
     height: auto;
     border-radius: var(--radius, 5px);
+    object-fit: contain;
   }
 
   .integrations-pitch {
