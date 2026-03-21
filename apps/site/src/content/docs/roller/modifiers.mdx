@@ -1,6 +1,6 @@
 ---
 title: Modifiers
-description: "Full TypeScript API for every RANDSUM modifier: cap, drop, keep, replace, reroll, explode, compound, penetrate, wild die, unique, count successes, count failures, sort, integer divide, modulo, and multipliers."
+description: "Full TypeScript API for every RANDSUM modifier: cap, drop, keep, replace, reroll, explode, compound, penetrate, explode sequence, wild die, unique, count, sort, integer divide, modulo, and multipliers."
 head:
   - tag: script
     attrs:
@@ -29,8 +29,6 @@ Modifiers are applied in priority order (lower number = earlier execution):
 | Priority | Modifier | Notation | Options key |
 |---|---|---|---|
 | 10 | Cap | C&#123;...&#125; | `cap` |
-| 20 | Drop | `H`, `L`, D&#123;...&#125; | `drop` |
-| 21 | Keep | `K`, `kl` | `keep` |
 | 30 | Replace | V&#123;...&#125; | `replace` |
 | 40 | Reroll | R&#123;...&#125; | `reroll` |
 | 50 | Explode | `!` | `explode` |
@@ -39,39 +37,44 @@ Modifiers are applied in priority order (lower number = earlier execution):
 | 53 | Explode Sequence | `!s{...}`, `!i`, `!r` | `explodeSequence` |
 | 55 | Wild Die | `W` | `wildDie` |
 | 60 | Unique | `U` | `unique` |
+| 65 | Drop | `H`, `L`, D&#123;...&#125; | `drop` |
+| 66 | Keep | `K`, `kl` | `keep` |
+| 80 | Count | #&#123;...&#125; | `count` |
 | 85 | Pre-arithmetic multiply | `*N` | `multiply` |
 | 90 | Plus | `+N` | `plus` |
 | 91 | Minus | `-N` | `minus` |
-| 92 | Sort | `sa`/`sd` | `sort` |
 | 93 | Integer divide | `//N` | `integerDivide` |
 | 94 | Modulo | `%N` | `modulo` |
-| 95 | Count successes | S&#123;...&#125; | `countSuccesses` |
-| 96 | Count failures | F&#123;...&#125; | `countFailures` |
+| 95 | Sort | `sa`/`sd` | `sort` |
 | 100 | Total multiply | `**N` | `multiplyTotal` |
 
-This means dice values are capped/constrained first, then pool size is adjusted (drop/keep), then values are replaced or rerolled, then explosive mechanics fire, and finally arithmetic is applied.
+:::note
+`S{...}` (count successes) and `F{...}` (count failures) are sugar aliases parsed onto the `count` modifier — they are not independent `ModifierOptions` keys.
+:::
+
+This means dice values are capped/constrained first, then values are replaced or rerolled, then explosive mechanics fire, pool size is adjusted (drop/keep), and finally arithmetic is applied.
 
 ## ModifierOptions interface
 
 <CodeExample code={`interface ModifierOptions {
   cap?: ComparisonOptions
-  drop?: DropOptions
-  keep?: KeepOptions
   replace?: ReplaceOptions | ReplaceOptions[]
   reroll?: RerollOptions
-  unique?: boolean | UniqueOptions
-  explode?: boolean | number
-  compound?: boolean | number
-  penetrate?: boolean | number
+  explode?: boolean | ComparisonOptions
+  compound?: boolean | number | ComparisonOptions
+  penetrate?: boolean | number | ComparisonOptions
+  explodeSequence?: number[]
   wildDie?: boolean
-  countSuccesses?: SuccessCountOptions
-  countFailures?: FailureCountOptions
+  unique?: boolean | UniqueOptions
+  drop?: DropOptions
+  keep?: KeepOptions
+  count?: CountOptions
   multiply?: number
   plus?: number
   minus?: number
-  sort?: 'ascending' | 'descending'
   integerDivide?: number
   modulo?: number
+  sort?: 'asc' | 'desc'
   multiplyTotal?: number
 }`} />
 
@@ -349,6 +352,38 @@ roll({
 
 Each subsequent penetration subtracts 1 from the result before adding, creating diminishing returns.
 
+## Explode Sequence
+
+Roll additional dice using a custom die-size sequence when the current die shows its maximum value. Each step in the sequence uses the next die size; the last size repeats until max depth is reached.
+
+**Options key:** `explodeSequence`
+
+| Notation | Description |
+|---|---|
+| `!s{N1,N2,...}` | Explode through die sizes in sequence |
+| `!i` | Sugar: inflate through standard die set (d4 &rarr; d6 &rarr; d8 &rarr; d10 &rarr; d12 &rarr; d20) |
+| `!r` | Sugar: reduce through standard die set (d20 &rarr; d12 &rarr; d10 &rarr; d8 &rarr; d6 &rarr; d4) |
+
+<CodeExample code={`import { roll } from '@randsum/roller'
+
+roll('1d4!s{4,6,8,10}') // Explode d4 -> d6 -> d8 -> d10
+roll('1d6!s{8,12}')     // Explode to d8, then d12
+roll('1d4!i')           // Inflate through standard die set
+roll('1d20!r')          // Reduce through standard die set
+
+// Options object
+roll({
+  sides: 4,
+  quantity: 1,
+  modifiers: { explodeSequence: [4, 6, 8, 10] }
+})`} />
+
+<NotationRoller defaultNotation="1d4!s{4,6,8,10}" client:only="react" />
+
+When the die shows its maximum, a new die of the next size in the sequence is rolled and added. The sequence steps forward with each successive explosion; once the last size is reached, it repeats (capped at the default explosion depth).
+
+**Example:** `1d4!s{4,6,8,10}` rolls a d4. On a 4 (max), rolls a d6. On a 6 (max), rolls a d8. On a 7 — not max — the sequence stops.
+
 ## Wild Die
 
 The D6 System wild die modifier (West End Games). The last die in the pool is designated as the "wild die" with special behavior. All notation is **case-insensitive**.
@@ -483,13 +518,13 @@ roll('4d6sd') // Sort results descending
 roll({
   sides: 6,
   quantity: 4,
-  modifiers: { sort: 'ascending' }
+  modifiers: { sort: 'asc' }
 })
 
 roll({
   sides: 6,
   quantity: 4,
-  modifiers: { sort: 'descending' }
+  modifiers: { sort: 'desc' }
 })`} />
 
 <NotationRoller defaultNotation="4d6sa" client:only="react" />
@@ -552,44 +587,20 @@ roll({
 
 **Use cases:** Wrapping values into ranges, clock mechanics, cyclic resource systems.
 
-## Count successes
+## Count
 
-Count dice meeting a threshold instead of summing. Used in dice pool systems (World of Darkness, Shadowrun).
+Count dice matching a condition instead of summing values. Used in dice pool systems (World of Darkness, Shadowrun, and similar). The total becomes the count of matching dice.
 
-**Options key:** `countSuccesses`
-
-<CodeExample code={`import { roll } from '@randsum/roller'
-
-roll('5d10S{7}') // 0-5
-roll('5d10S{7,1}')  // Successes >= 7, minus botches <= 1
-
-// Options object
-roll({
-  sides: 10,
-  quantity: 5,
-  modifiers: {
-    countSuccesses: { threshold: 7, botchThreshold: 1 }
-  }
-})`} />
-
-<NotationRoller defaultNotation="5d10S{7}" client:only="react" />
-
-**SuccessCountOptions:**
-
-<CodeExample code={`interface SuccessCountOptions {
-  threshold: number
-  botchThreshold?: number
-}`} />
-
-## Count failures
-
-Count how many dice rolled at or below a threshold. The total becomes the failure count. All notation is **case-insensitive**.
-
-**Options key:** `countFailures`
+**Options key:** `count`
 
 | Notation | Description |
 |---|---|
-| `F{N}` | Count dice that rolled &lt;= N |
+| `#{condition}` | Primary notation — count dice matching a comparison condition |
+| `S{N}` | Sugar: count dice &gt;= N (successes) |
+| `S{N,B}` | Sugar: count dice &gt;= N, subtract dice &lt;= B (successes minus botches) |
+| `F{N}` | Sugar: count dice &lt;= N (failures) |
+
+`S{...}` and `F{...}` are convenience aliases parsed onto the same `count` modifier with `CountOptions`. The `ModifierOptions` interface has only one key: `count`.
 
 :::note
 `F` requires curly braces (`F{N}`) to avoid conflict with Fate dice notation (`dF`).
@@ -597,27 +608,62 @@ Count how many dice rolled at or below a threshold. The total becomes the failur
 
 <CodeExample code={`import { roll } from '@randsum/roller'
 
-roll('5d10F{3}') // Count how many dice rolled <= 3
+// Primary notation: #{condition}
+roll('5d10#{>=7}')      // Count dice >= 7
+roll('5d10#{>3,<1}')    // Count >3, subtract <1 (deduct mode)
 
-// Options object
+// Sugar: S{} for successes
+roll('5d10S{7}')        // Count dice >= 7
+roll('5d10S{7,1}')      // Count >= 7, subtract <= 1 (botches)
+
+// Sugar: F{} for failures
+roll('5d10F{3}')        // Count dice <= 3
+
+// Options object (always uses 'count' key, never countSuccesses/countFailures)
 roll({
   sides: 10,
   quantity: 5,
   modifiers: {
-    countFailures: { threshold: 3 }
+    count: { greaterThanOrEqual: 7 }
+  }
+})
+
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    count: { greaterThanOrEqual: 7, lessThanOrEqual: 1, deduct: true }
+  }
+})
+
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: {
+    count: { lessThanOrEqual: 3 }
   }
 })`} />
 
-<NotationRoller defaultNotation="5d10F{3}" client:only="react" />
+<NotationRoller defaultNotation="5d10#{>=7}" client:only="react" />
 
-**Example:** `5d10F{3}` rolls [8, 2, 10, 1, 9]. Failures at or below 3: [2, 1] = 2 failures.
+**Example:** `5d10#{>=7}` rolls [8, 2, 10, 1, 9]. Dice &gt;= 7: [8, 10, 9] = 3.
 
-**Use cases:** Dice pool systems where you need to count both successes and failures separately, risk assessment mechanics, World of Darkness botch counting.
+**Example (deduct):** `5d10#{>3,<1}` counts dice &gt; 3 and subtracts dice &lt; 1. If above = 4 and below = 1, total = 3.
 
-**FailureCountOptions:**
+**CountOptions:**
 
-<CodeExample code={`interface FailureCountOptions {
-  threshold: number
+<CodeExample code={`interface CountOptions extends ComparisonOptions {
+  /** If true, below-threshold count subtracts from above-threshold count */
+  deduct?: boolean
+}
+
+// ComparisonOptions fields used by CountOptions:
+interface ComparisonOptions {
+  greaterThan?: number
+  greaterThanOrEqual?: number
+  lessThan?: number
+  lessThanOrEqual?: number
+  exact?: number[]
 }`} />
 
 ## Total multiply
@@ -646,19 +692,19 @@ The full calculation order is:
 
 1. Roll all dice
 2. Apply cap (clamp values)
-3. Apply drop/keep (adjust pool)
-4. Apply replace (swap values)
-5. Apply reroll (re-roll matching dice)
-6. Apply explode/compound/penetrate (add dice or modify values)
-7. Apply wild die behavior (compound on max, remove on 1)
-8. Apply unique (ensure no duplicates)
-9. Sum remaining dice
-10. Apply pre-arithmetic multiply (`*`)
-11. Apply plus/minus (`+`/`-`)
-12. Sort results if applicable (`sa`/`sd`)
+3. Apply replace (swap values)
+4. Apply reroll (re-roll matching dice)
+5. Apply explode/compound/penetrate/explodeSequence (add dice or modify values)
+6. Apply wild die behavior (compound on max, remove on 1)
+7. Apply unique (ensure no duplicates)
+8. Apply drop/keep (adjust pool size — runs after explosions)
+9. Apply count if applicable (#&#123;...&#125;, or sugar S&#123;...&#125;/F&#123;...&#125;)
+10. Sum remaining dice
+11. Apply pre-arithmetic multiply (`*`)
+12. Apply plus/minus (`+`/`-`)
 13. Apply integer divide (`//N`)
 14. Apply modulo (`%N`)
-15. Count successes/failures if applicable (S&#123;...&#125;/F&#123;...&#125;)
+15. Sort results if applicable (`sa`/`sd`)
 16. Apply total multiply (`**`)
 
 <NotationRoller defaultNotation="4d6K3!*2+3**2" client:only="react" />
