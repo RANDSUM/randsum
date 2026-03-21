@@ -61,6 +61,8 @@
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/site dev",
+    "notation:build": "bun run --filter @randsum/spec prebuild && bun run --filter @randsum/spec build",
+    "notation:dev": "bun run --filter @randsum/spec prebuild && bun run --filter @randsum/spec dev",
     "playground:build": "bun run --filter @randsum/playground build",
     "playground:dev": "bun run --filter @randsum/roller dev & bun run --filter @randsum/playground dev",
     "discord:dev": "cd apps/discord-bot && bun run dev",
