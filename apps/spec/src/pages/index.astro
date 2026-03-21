@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content'
 import { getLatestVersion } from '../utils/versions'
+import SpecLayout from '../layouts/SpecLayout.astro'
 
 const latestId = await getLatestVersion()
 const entries = await getCollection('specs')
@@ -9,14 +10,12 @@ if (!entry) throw new Error(`No spec entry found for version: ${latestId}`)
 const { Content } = await render(entry)
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RANDSUM Dice Notation Specification</title>
-  </head>
-  <body>
+<SpecLayout
+  title="RANDSUM Dice Notation Specification"
+  version={latestId}
+  isLatest={true}
+>
+  <div slot="content">
     <Content />
-  </body>
-</html>
+  </div>
+</SpecLayout>

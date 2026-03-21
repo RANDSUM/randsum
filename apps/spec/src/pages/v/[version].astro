@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content'
 import { isLatestVersion } from '../../utils/versions'
+import SpecLayout from '../../layouts/SpecLayout.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('specs')
@@ -16,16 +17,17 @@ const { Content } = await render(entry)
 const latest = await isLatestVersion(version)
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RANDSUM Dice Notation Spec — {version}</title>
-  </head>
-  <body>
-    {latest && <p><a href="/">← Latest</a></p>}
-    {!latest && <p><a href="/">← Back to latest</a></p>}
+<SpecLayout
+  title="RANDSUM Dice Notation Specification"
+  version={version}
+  isLatest={latest}
+>
+  <div slot="content">
+    {!latest && (
+      <p style="margin-bottom: 1.5rem;">
+        <a href="/" style="color: var(--accent);">&larr; Back to latest</a>
+      </p>
+    )}
     <Content />
-  </body>
-</html>
+  </div>
+</SpecLayout>

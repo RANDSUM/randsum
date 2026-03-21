@@ -1,0 +1,43 @@
+---
+import SkipLink from '../components/SkipLink.astro'
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  version: string
+  isLatest: boolean
+}
+
+const { title, version, isLatest } = Astro.props
+const pageTitle = isLatest
+  ? `${title}`
+  : `${title} — ${version}`
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <SkipLink />
+    <slot name="hero" />
+    <div class="spec-layout">
+      <nav class="spec-sidebar" aria-label="Spec sections">
+        <slot name="sidebar">
+          <p class="label" style="color: var(--text-muted);">Sidebar</p>
+        </slot>
+      </nav>
+      <main id="main-content" class="spec-content">
+        <slot name="content" />
+      </main>
+      <aside class="spec-aside" aria-label="On this page">
+        <slot name="aside">
+          <p class="label" style="color: var(--text-muted);">On this page</p>
+        </slot>
+      </aside>
+    </div>
+  </body>
+</html>

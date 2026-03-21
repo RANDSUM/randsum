@@ -1,0 +1,144 @@
+/* === Reset === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* === Scroll behavior === */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* === Custom Properties (Dark mode default) === */
+:root {
+  /* Accent */
+  --accent: #06b6d4;
+  --accent-light: #22d3ee;
+  --accent-dark: #0891b2;
+  --accent-tint: rgba(6, 182, 212, 0.08);
+  --accent-border: rgba(6, 182, 212, 0.2);
+
+  /* Surfaces */
+  --bg: #1a1a1f;
+  --surface: #222228;
+  --border: #2e2e35;
+
+  /* Text */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-dim: #52525b;
+
+  /* Layout */
+  --sidebar-width: 220px;
+  --aside-width: 160px;
+  --content-max-width: 720px;
+}
+
+/* === Body === */
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* === Focus === */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* === Skip Link === */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 4px 4px;
+}
+
+.skip-link:focus-visible {
+  top: 0;
+  outline: 2px solid var(--accent-light);
+  outline-offset: 2px;
+}
+
+/* === Three-Column Layout === */
+.spec-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr var(--aside-width);
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.spec-hero {
+  grid-column: 1 / -1;
+}
+
+.spec-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+}
+
+.spec-content {
+  max-width: var(--content-max-width);
+  width: 100%;
+  padding: 2rem 2.5rem;
+}
+
+.spec-aside {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+}
+
+/* === Responsive === */
+@media (max-width: 1279px) {
+  .spec-layout {
+    grid-template-columns: var(--sidebar-width) 1fr;
+  }
+
+  .spec-aside {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .spec-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .spec-sidebar {
+    display: none;
+  }
+}
+
+/* === Typography helpers === */
+.label {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
