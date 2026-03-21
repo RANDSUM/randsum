@@ -263,31 +263,15 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
     <!-- Features -->
     <LabeledSection label="Features" labelSide="left">
-      <div class="pkg-grid pkg-grid--4 feature-grid">
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Zero Dependencies</h3>
-          </div>
-          <p class="pkg-card-desc">No transitive deps. One package, zero supply chain surface, under 20KB.</p>
-        </div>
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">RANDSUM Dice Notation</h3>
-          </div>
-          <p class="pkg-card-desc">A complete dice notation spec. 19 modifiers covering every common rolling pattern &mdash; parsed, validated, and fully specified.</p>
-        </div>
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Bun Native</h3>
-          </div>
-          <p class="pkg-card-desc">Built with Bun from the ground up. Bun workspace monorepo, bun:test, bunup builds. Fast installs, fast tests, fast everything.</p>
-        </div>
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Type-Safe</h3>
-          </div>
-          <p class="pkg-card-desc">Typed inputs, typed outputs. Every roll result is fully structured &mdash; no type assertions, no <code>any</code>, no guessing.</p>
-        </div>
+      <div class="feature-chips">
+        <span class="feature-chip">Zero Dependencies</span>
+        <span class="feature-chip">TypeScript First</span>
+        <span class="feature-chip">Bun Native</span>
+        <a class="feature-chip feature-chip--link" href="https://notation.randsum.dev" target="_blank" rel="noopener noreferrer">RDN Spec</a>
+        <span class="feature-chip">Game Support</span>
+        <span class="feature-chip">ESM Only</span>
+        <span class="feature-chip">Under 20KB</span>
+        <span class="feature-chip">26 Modifiers</span>
       </div>
     </LabeledSection>
 
@@ -808,28 +792,43 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     padding: 0.75rem 1rem;
   }
 
-  .feature-grid .pkg-card-header {
-    margin: -0.75rem -1rem 0.5rem;
-    padding: 0.5rem 1rem;
+  .feature-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
-  .feature-grid .pkg-card-name {
-    font-size: 0.85rem;
+  .feature-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    transition: border-color 0.15s ease, background 0.15s ease;
   }
 
-  .feature-grid .pkg-card-desc {
-    font-size: 0.75rem;
-    margin: 0;
-    line-height: 1.5;
+  .feature-chip:hover {
+    border-color: var(--sl-color-accent);
   }
 
-  .pkg-card--feature .pkg-card-desc code {
-    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-    font-size: 0.75rem;
+  .feature-chip--link {
     color: var(--sl-color-accent-high);
-    background: rgba(168, 85, 247, 0.1);
-    border-radius: 3px;
-    padding: 0.05em 0.3em;
+    border-color: var(--sl-color-accent);
+    background: rgba(168, 85, 247, 0.08);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .feature-chip--link:hover {
+    background: rgba(168, 85, 247, 0.16);
+    color: #fff;
   }
 
   /* ===== Section Divider ===== */
