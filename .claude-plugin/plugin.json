@@ -20,7 +20,6 @@
     "probability",
     "game-mechanics"
   ],
-  "agents": ".claude/agents",
-  "skills": [".claude/skills", "./skills"],
+  "skills": "./skills",
   "hooks": ".claude-plugin/hooks/hooks.json"
 }
