@@ -413,6 +413,223 @@ body {
   outline-offset: 2px;
 }
 
+/* === MobileMenu === */
+
+/* Hamburger trigger button — fixed top-left, only visible below 1024px */
+.mobile-menu-trigger {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 200;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.mobile-menu-trigger:hover {
+  border-color: var(--accent-border);
+  background: var(--bg);
+}
+
+.mobile-menu-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 1px;
+  transition: background 0.15s ease;
+}
+
+/* Backdrop */
+.mobile-menu-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.mobile-menu-backdrop.is-visible {
+  opacity: 1;
+}
+
+/* Overlay panel — slides in from left */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 220;
+  width: min(320px, 85vw);
+  height: 100dvh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 1.25rem 1rem;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+}
+
+.mobile-menu-overlay.is-open {
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-overlay {
+    transition: none;
+  }
+
+  .mobile-menu-backdrop {
+    transition: none;
+  }
+}
+
+.mobile-menu-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.mobile-menu-version {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mobile-version-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.mobile-latest-badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  font-size: 10px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--accent-tint);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  border-radius: 3px;
+}
+
+.mobile-menu-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.mobile-menu-close:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-border);
+}
+
+.mobile-menu-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.mobile-sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.mobile-sidebar-group-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--text-muted);
+}
+
+.mobile-sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.mobile-sidebar-link {
+  display: block;
+  padding: 0.4rem 0.5rem;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 4px;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.mobile-sidebar-link:hover {
+  color: var(--text-primary);
+  background: var(--bg);
+}
+
+.mobile-sidebar-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Body scroll lock when menu is open */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* === Responsive: show mobile trigger below 1024px === */
+@media (max-width: 1023px) {
+  .mobile-menu-trigger {
+    display: flex;
+  }
+
+  .mobile-menu-backdrop {
+    display: block;
+  }
+
+  /* Add top padding to content so hamburger button doesn't overlap */
+  .spec-content {
+    padding-top: 4rem;
+  }
+}
+
 /* === SpecContent: Rendered Markdown Styles === */
 .spec-content-body {
   max-width: var(--content-max-width);

@@ -79,7 +79,7 @@ const { currentVersion, allVersions, isLatest } = Astro.props
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       close()
-      trigger?.focus()
+      ;(trigger as HTMLElement | null)?.focus()
     }
   })
 </script>

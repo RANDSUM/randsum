@@ -17,12 +17,12 @@ interface Props {
   version: string
   versions: string[]
   isLatest: boolean
-  specMarkdown: string
-  specUrl: string
+  specMarkdown?: string
+  specUrl?: string
   headings?: Heading[]
 }
 
-const { title, version, versions, isLatest, specMarkdown, specUrl, headings = [] } = Astro.props
+const { title, version, versions, isLatest, specMarkdown = '', specUrl = '', headings = [] } = Astro.props
 const pageTitle = isLatest
   ? `${title}`
   : `${title} — ${version}`
@@ -55,6 +55,6 @@ const pageTitle = isLatest
         </slot>
       </aside>
     </div>
-    <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />
+    {specMarkdown && <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />}
   </body>
 </html>
