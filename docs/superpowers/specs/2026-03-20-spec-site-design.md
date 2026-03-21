@@ -42,11 +42,12 @@ The spec markdown file at repo root is the source of truth. A build script copie
 ### Versioning
 
 - Spec versions stored as: `apps/spec/src/content/specs/v1.0.md`, `v1.1.md`, etc.
-- URL scheme: `notation.randsum.dev` (latest) or `notation.randsum.dev?v=1.0` (specific version)
-- **Implementation**: All version content is embedded in the single HTML page at build time, wrapped in `<div data-version="1.0" hidden>` containers. Only the active version's container is visible. The client script reads `?v=` on load and toggles the `hidden` attribute. This is a purely static approach — no SSR, no redirects, no separate pages per version. For small version counts (1-5 expected), the bundle size impact is acceptable.
-- The version dropdown lists all versions, marks latest with "(latest)"
-- Selecting a version updates `?v=` query parameter and toggles visibility. Browser history is updated via `replaceState`.
-- **Invalid version**: If `?v=` references a nonexistent version, the latest version is shown and the URL is silently corrected.
+- **Implementation**: Each version gets its own static page via Astro dynamic routes (`[version].astro`). Build produces `/v/1.0/index.html`, `/v/1.1/index.html`, etc. The root `index.astro` renders the latest version directly (no redirect).
+- URL scheme: `notation.randsum.dev` (latest) or `notation.randsum.dev/v/1.0` (specific version)
+- The version dropdown links between pages (standard `<a>` navigation, no client-side routing)
+- **LLM-friendly**: Each version URL contains only that version's content. Crawlers and LLMs see a single clean document per URL.
+- **Invalid version**: Astro's static build only generates pages for versions that exist. Unknown paths hit the 404 page.
+- `llms.txt` and `llms-full.txt` at the site root point to the latest version.
 
 ### No Starlight
 
@@ -241,7 +242,8 @@ apps/spec/
   netlify.toml             -- deploy config (publish dir, build command)
   src/
     pages/
-      index.astro          -- single page entry point
+      index.astro          -- renders latest spec version
+      v/[version].astro    -- dynamic route, one page per spec version
       404.astro            -- not found page (minimal, links to notation.randsum.dev)
     layouts/
       SpecLayout.astro     -- three-column layout shell
@@ -250,10 +252,11 @@ apps/spec/
       SidebarNav.astro     -- left navigation with version indicator
       SpecContent.astro    -- rendered markdown content
       OnThisPage.astro     -- right-side heading TOC
-      VersionDropdown.astro -- version selector (used in hero + sidebar)
+      VersionDropdown.astro -- version selector (links between /v/X.Y pages)
       VersionBanner.astro  -- "viewing older version" banner
       MobileMenu.astro     -- hamburger overlay for mobile
       SkipLink.astro       -- skip-to-content accessibility link
+      ShareActions.astro   -- copy-to-MD, open-in-Claude/ChatGPT buttons
     content/
       specs/
         v1.0.md            -- spec version 1.0 (copied from repo root at build)
@@ -264,9 +267,11 @@ apps/spec/
     copy-latest-spec.sh   -- copies RANDSUM_DICE_NOTATION_SPEC.md to content/specs/
   public/
     favicon.ico
+    llms.txt              -- brief description + link to latest
+    llms-full.txt         -- generated at build: full spec markdown
 ```
 
-Client-side TypeScript (scroll spy, version switching, mobile menu) lives inside Astro component `<script>` blocks, not as standalone files. Astro compiles these to bundled JS at build time.
+Client-side TypeScript (scroll spy, mobile menu) lives inside Astro component `<script>` blocks, not as standalone files. Astro compiles these to bundled JS at build time. Version switching is standard `<a>` navigation between static pages — no client JS needed.
 
 ## Build Integration
 
@@ -286,6 +291,17 @@ Client-side TypeScript (scroll spy, version switching, mobile menu) lives inside
 - **No spec files at build time**: `copy-latest-spec.sh` fails the build with an error message pointing to the expected file location.
 - **Invalid `?v=` parameter**: Client JS falls back to latest version, corrects the URL silently via `replaceState`.
 - **404 page**: Minimal page with the cyan accent, "Page not found" message, and a link back to `notation.randsum.dev`.
+
+## LLM & Share Actions
+
+A floating action bar (bottom-right or top-right of content area) provides:
+- **Copy as Markdown** — copies the current version's spec content as markdown to clipboard
+- **Open in Claude** — opens Claude.ai with the spec content pre-loaded
+- **Open in ChatGPT** — opens ChatGPT with the spec content pre-loaded
+- **llms.txt** — `/llms.txt` at site root with brief description + link to latest spec
+- **llms-full.txt** — `/llms-full.txt` with the full spec markdown for the latest version
+
+This mirrors the `starlight-page-actions` plugin on the main site but implemented as a custom Astro component since we're not using Starlight.
 
 ## Out of Scope
 
