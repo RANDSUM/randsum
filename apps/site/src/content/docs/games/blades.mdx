@@ -1,6 +1,6 @@
 ---
 title: Blades in the Dark
-description: TypeScript package for Blades in the Dark dice pools. Handles 0–4 dice, desperate position (0 dice), and returns critical, success, partial, or failure.
+description: TypeScript package for Blades in the Dark dice pools. Handles 0–6 dice, desperate position (0 dice), and returns critical, success, partial, or failure.
 head:
   - tag: script
     attrs:
@@ -53,7 +53,9 @@ roll(0)  // Zero dice: rolls 2d6, keeps lowest
 roll(1)  // One die
 roll(2)  // Two dice
 roll(3)  // Three dice
-roll(4)  // Four dice (e.g., with assistance)`} />
+roll(4)  // Four dice (e.g., with assistance)
+roll(5)  // Five dice (e.g., with assistance + push)
+roll(6)  // Six dice (maximum pool)`} />
 
 <CodeExample code={`import { roll } from '@randsum/games/blades'
 
@@ -82,7 +84,7 @@ switch (result) {
 
 | Parameter | Type | Description |
 |---|---|---|
-| `rating` | `number` (optional) | Action rating / dice pool size (0-4) |
+| `rating` | `number` (optional) | Action rating / dice pool size (0-6) |
 
 **Returns:** `GameRollResult` with:
 
@@ -105,11 +107,15 @@ switch (result) {
 
 When the dice pool is 0, the system rolls 2d6 and keeps only the lowest die. This makes failure much more likely and prevents critical results.
 
+## About this implementation
+
+This package handles the dice roll outcome only. **Position** (controlled, risky, desperate) and **Effect** (limited, standard, great) are narrative mechanics in Blades in the Dark that a caller manages separately — they are not part of the roll output. Use `result` to determine the mechanical outcome, then apply position and effect in your own game logic.
+
 ## Error handling
 
 Game `roll()` can throw two types of errors:
 
-- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., rating of 5 when max is 4)
+- **`ValidationError`** (from `@randsum/roller`) -- numeric input out of range or not finite (e.g., rating of 7 when max is 6)
 - **`SchemaError`** (from `@randsum/games/blades`) -- game-specific issues like unmatched outcome tables
 
 <CodeExample code={`import { roll, SchemaError } from '@randsum/games/blades'
@@ -119,7 +125,7 @@ try {
   roll(99)
 } catch (error) {
   if (error instanceof ValidationError) {
-    // Out-of-range rating (must be 0–4)
+    // Out-of-range rating (must be 0–6)
     console.log(error.code)    // 'VALIDATION_ERROR'
   } else if (error instanceof SchemaError) {
     // Game-specific error
