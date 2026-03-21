@@ -68,6 +68,11 @@ export function singleNotationToOptions(notationString: string): ParsedNotationO
   const modifiersString = cleaned.replace(coreNotationMatch, '')
   const [quantityNot, sidesNotation = ''] = coreNotationMatch.split(/[Dd]/)
 
+  // Gap 44: The ABNF grammar defines a `mod-add-pool` rule for "+NdS" notation (adding a dice pool,
+  // not a scalar). At the code level, this is handled by parsing each notation segment separately
+  // (in notationToOptions.ts) and assigning `arithmetic: 'subtract' | 'add'` based on the leading sign.
+  // The ABNF `mod-add-pool` and the `arithmetic` field are two different layers of the same concept:
+  // the ABNF describes the syntax surface; `arithmetic` is the IR field that drives pool combination.
   const core: ParsedNotationOptions = {
     quantity: Math.abs(Number(quantityNot)),
     arithmetic: Number(quantityNot) < 0 ? ('subtract' as const) : ('add' as const),

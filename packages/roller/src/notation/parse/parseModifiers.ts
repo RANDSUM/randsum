@@ -100,6 +100,10 @@ export function parseModifiers(notation: string): ModifierOptions {
     )
   }
 
+  // Gap 43: Multiple +N or -N modifiers in a single notation string are NOT additive.
+  // Object.assign means the last matched parse result wins (replacement, not accumulation).
+  // Example: "4d6+2+3" — only the last +N value is kept, not summed to +5.
+  // Use a single +N with the summed value (e.g. "4d6+5") for combined arithmetic.
   for (const schema of PARSE_SCHEMAS) {
     if (schema.pattern.test(processed)) {
       schema.pattern.lastIndex = 0
