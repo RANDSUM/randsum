@@ -1,5 +1,5 @@
 [build]
-  base = "apps/spec"
+  base = "apps/notationSpec"
   command = "bun run prebuild && bun run build"
   publish = "dist"
 

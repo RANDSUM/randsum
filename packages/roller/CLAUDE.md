@@ -258,7 +258,7 @@ To add a modifier:
 
 1. Create `src/modifiers/<mod>.ts` — export `<mod>Schema` and `<mod>Modifier`
 2. Register `<mod>Modifier` in `RANDSUM_MODIFIERS` in `src/modifiers/index.ts`
-3. Document the notation at https://notation.randsum.dev (update `apps/spec/src/content/specs/`)
+3. Document the notation at https://notation.randsum.dev (update `apps/notationSpec/src/content/specs/`)
 
 See `docs/adr/ADR-007-modifier-co-location.md` for the architectural rationale. See https://notation.randsum.dev for the full modifier priority table and faceted classification.
 

@@ -50,6 +50,17 @@
         "discord.js": "^14.25.1",
       },
     },
+    "apps/notationSpec": {
+      "name": "@randsum/spec",
+      "version": "1.0.0",
+      "dependencies": {
+        "astro": "6.0.2",
+      },
+      "devDependencies": {
+        "@astrojs/check": "0.9.7",
+        "typescript": "5.8.3",
+      },
+    },
     "apps/playground": {
       "name": "@randsum/playground",
       "version": "1.1.2",
@@ -92,17 +103,6 @@
         "@astrojs/check": "0.9.7",
         "starlight-page-actions": "0.5.0",
         "starlight-sidebar-topics": "0.7.1",
-      },
-    },
-    "apps/spec": {
-      "name": "@randsum/spec",
-      "version": "1.0.0",
-      "dependencies": {
-        "astro": "6.0.2",
-      },
-      "devDependencies": {
-        "@astrojs/check": "0.9.7",
-        "typescript": "5.8.3",
       },
     },
     "packages/dice-ui": {
@@ -742,7 +742,7 @@
 
     "@randsum/site": ["@randsum/site@workspace:apps/site"],
 
-    "@randsum/spec": ["@randsum/spec@workspace:apps/spec"],
+    "@randsum/spec": ["@randsum/spec@workspace:apps/notationSpec"],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-rc.3", "", {}, "sha512-eybk3TjzzzV97Dlj5c+XrBFW57eTNhzod66y9HrBlzJ6NsCrWCp/2kaPS3K9wJmurBC0Tdw4yPjXKZqlznim3Q=="],
 
