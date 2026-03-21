@@ -219,14 +219,10 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
     })
 
-    test('validates zero quantity dice', () => {
+    test('rejects zero quantity dice', () => {
       const result = validateNotation('0d6')
 
-      expect(result.valid).toBe(true)
-      if (result.valid) {
-        expect(result.options[0]?.sides).toBe(6)
-        expect(result.options[0]?.quantity).toBe(0)
-      }
+      expect(result.valid).toBe(false)
     })
 
     test('validates large numbers', () => {
