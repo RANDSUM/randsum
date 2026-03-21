@@ -192,12 +192,14 @@ jobs:
           bun-version: ${{ steps.bun-version.outputs.version }}
       - name: Verify skills
         run: npx skills-ref validate skills/dice-rolling/SKILL.md
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
       - name: Verify plugin
-        run: npx claude plugin validate .claude-plugin/
+        run: claude plugin validate .claude-plugin/plugin.json
       - name: Verify marketplace
         run: |
           if [ -f .claude-plugin/marketplace.json ]; then
-            npx claude plugin validate .claude-plugin/marketplace.json
+            claude plugin validate .claude-plugin/marketplace.json
           else
             echo "No marketplace.json found, skipping"
           fi
