@@ -1,7 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content'
-import { isLatestVersion } from '../../utils/versions'
+import { isLatestVersion, getVersions } from '../../utils/versions'
 import SpecLayout from '../../layouts/SpecLayout.astro'
+import SpecContent from '../../components/SpecContent.astro'
+import SidebarNav from '../../components/SidebarNav.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('specs')
@@ -13,21 +15,26 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { version } = Astro.params
-const { Content } = await render(entry)
+const { Content, headings } = await render(entry)
 const latest = await isLatestVersion(version)
+const allVersions = await getVersions()
 ---
 
 <SpecLayout
   title="RANDSUM Dice Notation Specification"
   version={version}
+  versions={allVersions}
   isLatest={latest}
 >
-  <div slot="content">
-    {!latest && (
-      <p style="margin-bottom: 1.5rem;">
-        <a href="/" style="color: var(--accent);">&larr; Back to latest</a>
-      </p>
-    )}
+  <SidebarNav slot="sidebar" headings={headings} version={version} isLatest={latest} />
+  <SpecContent slot="content">
+    {
+      !latest && (
+        <p style="margin-bottom: 1.5rem;">
+          <a href="/" style="color: var(--accent);">&larr; Back to latest</a>
+        </p>
+      )
+    }
     <Content />
-  </div>
+  </SpecContent>
 </SpecLayout>

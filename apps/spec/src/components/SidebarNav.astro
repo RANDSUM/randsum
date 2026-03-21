@@ -1,0 +1,90 @@
+---
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  headings: Heading[]
+  version: string
+  isLatest: boolean
+}
+
+const { headings, version, isLatest } = Astro.props
+
+const SIDEBAR_GROUPS = [
+  {
+    label: 'Foundations',
+    prefixes: ['1.', '2.', '3.']
+  },
+  {
+    label: 'Features',
+    prefixes: ['4.', '5.']
+  },
+  {
+    label: 'Pipeline',
+    prefixes: ['6.', '7.']
+  },
+  {
+    label: 'Reference',
+    prefixes: ['8.', '9.', '10.']
+  },
+  {
+    label: 'Appendices',
+    prefixes: ['A.', 'B.', 'C.', 'D.']
+  }
+]
+
+// Only top-level headings (depth 2) for sidebar navigation
+const topHeadings = headings.filter((h) => h.depth === 2)
+
+function getGroupForHeading(text: string) {
+  for (const group of SIDEBAR_GROUPS) {
+    for (const prefix of group.prefixes) {
+      if (text.startsWith(prefix)) return group.label
+    }
+  }
+  return null
+}
+
+// Build grouped structure
+const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) => ({
+  label: g.label,
+  items: topHeadings.filter((h) => getGroupForHeading(h.text) === g.label)
+})).filter((g) => g.items.length > 0)
+---
+
+<div class="sidebar-inner">
+  <div class="sidebar-version">
+    <span class="label" style="color: var(--text-muted);">Version</span>
+    <span class="sidebar-version-badge">
+      {version}{isLatest ? <span class="sidebar-latest-badge">latest</span> : null}
+    </span>
+  </div>
+
+  <nav aria-label="Spec sections">
+    {grouped.map((group, groupIdx) => (
+      <div class="sidebar-group">
+        <span class="label sidebar-group-label">{group.label}</span>
+        <ul class="sidebar-list" role="list">
+          {group.items.map((heading, itemIdx) => {
+            const isFirst = groupIdx === 0 && itemIdx === 0
+            return (
+              <li>
+                <a
+                  href={`#${heading.slug}`}
+                  class:list={['sidebar-link', { active: isFirst }]}
+                  aria-current={isFirst ? 'true' : undefined}
+                  data-sidebar-link
+                >
+                  {heading.text}
+                </a>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    ))}
+  </nav>
+</div>
