@@ -126,7 +126,7 @@ export const toolPackages: PackageInfo[] = [
     description: 'Discord bot with slash commands for all RANDSUM packages.',
     npmPackage: '@randsum/discord-bot',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot',
-    version: '1.0.0',
+    version: '1.1.2',
     category: 'tool',
     color: '#5865F2' // Discord purple
   },

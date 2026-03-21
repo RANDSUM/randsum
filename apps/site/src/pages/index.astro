@@ -7,6 +7,14 @@ import { GameSchemaViewer } from '../components/GameSchemaViewer'
 import { IntegrationViewer } from '../components/IntegrationViewer'
 import LabeledSection from '../components/LabeledSection.astro'
 
+function getBadgeUrl(pkg: { npmPackage: string; version?: string }): string | null {
+  if (!pkg.npmPackage.startsWith('@')) return null
+  if (pkg.version) {
+    return `https://img.shields.io/badge/v${pkg.version}-a855f7?style=flat-square`
+  }
+  return `https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=a855f7&label=`
+}
+
 const codeExample = `import { roll } from '@randsum/roller'
 
 const { total, rolls } = roll('4d6L')
@@ -302,8 +310,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
-              {pkg.npmPackage.startsWith('@') && (
-                <img class="pkg-card-badge" src={`https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=a855f7`} alt={`${pkg.npmPackage} version`} loading="lazy" />
+              {getBadgeUrl(pkg) && (
+                <img class="pkg-card-badge" src={getBadgeUrl(pkg)!} alt={`${pkg.displayName} version`} loading="lazy" />
               )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
@@ -343,8 +351,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
-              {pkg.npmPackage.startsWith('@') && (
-                <img class="pkg-card-badge" src={`https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=a855f7`} alt={`${pkg.npmPackage} version`} loading="lazy" />
+              {getBadgeUrl(pkg) && (
+                <img class="pkg-card-badge" src={getBadgeUrl(pkg)!} alt={`${pkg.displayName} version`} loading="lazy" />
               )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
