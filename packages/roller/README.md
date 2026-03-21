@@ -15,6 +15,8 @@
 
 A Zero Dependency, Typescript-First, Bun-Native Dice Notation and Rolling Engine. Throw Dice, Not Exceptions.
 
+**[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation (RDN) Specification
+
 ## Installation
 
 ```bash
@@ -76,7 +78,7 @@ try {
 }
 ```
 
-### Notation Reference
+### RDN Reference
 
 | Notation   | Description                 |
 | ---------- | --------------------------- |

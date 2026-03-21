@@ -2,6 +2,8 @@
 
 TTRPG game packages for the RANDSUM dice ecosystem. Each game subpath wraps [@randsum/roller](https://www.npmjs.com/package/@randsum/roller) with game-specific input validation, roll configuration, and result interpretation.
 
+Built on `@randsum/roller`, which is **[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**. All game packages use RANDSUM Dice Notation (RDN) for dice mechanics.
+
 ## Install
 
 ```bash
@@ -14,7 +16,7 @@ npm install @randsum/games
 
 | Subpath                       | Game System               | Dice              |
 | ----------------------------- | ------------------------- | ----------------- |
-| `@randsum/games/blades`       | Blades in the Dark        | 0-10d6 pool       |
+| `@randsum/games/blades`       | Blades in the Dark        | 0-4d6 pool        |
 | `@randsum/games/daggerheart`  | Daggerheart               | 2d12 Hope + Fear  |
 | `@randsum/games/fifth`        | D&D 5th Edition           | 1d20 + modifier   |
 | `@randsum/games/pbta`         | Powered by the Apocalypse | 2d6 + stat        |

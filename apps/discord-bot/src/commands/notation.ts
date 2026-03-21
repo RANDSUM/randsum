@@ -79,7 +79,7 @@ const notationReference = [
 export const notationCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('notation')
-    .setDescription('Randsum Dice Notation Reference'),
+    .setDescription('RANDSUM Dice Notation Reference'),
 
   async execute(interaction) {
     await interaction.deferReply()

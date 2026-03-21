@@ -7,6 +7,8 @@
 
 Dice rolling CLI and interactive TUI powered by [RANDSUM](https://github.com/RANDSUM/randsum).
 
+Powered by `@randsum/roller` — **[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**
+
 ## Install
 
 ```bash
