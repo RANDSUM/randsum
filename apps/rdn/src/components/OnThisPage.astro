@@ -34,6 +34,12 @@ for (const h of headings) {
 // Scroll spy (S-008) will repopulate this list dynamically
 const firstGroup = groups[0]
 const initialChildren = firstGroup?.children ?? []
+
+const tocData = JSON.stringify(groups.map(g => ({
+  slug: g.h2.slug,
+  text: g.h2.text,
+  children: g.children.map(c => ({ depth: c.depth, slug: c.slug, text: c.text }))
+})))
 ---
 
 <div class="toc-inner">
@@ -49,14 +55,8 @@ const initialChildren = firstGroup?.children ?? []
   </ul>
 </div>
 
-<!-- Embed full heading data for scroll spy (S-008) -->
-<script type="application/json" id="toc-sections-data">
-  {JSON.stringify(groups.map(g => ({
-    slug: g.h2.slug,
-    text: g.h2.text,
-    children: g.children.map(c => ({ depth: c.depth, slug: c.slug, text: c.text }))
-  })))}
-</script>
+<!-- Embed full heading data for scroll spy -->
+<div id="toc-sections-data" data-sections={tocData} hidden></div>
 
 <script>
   ;(function () {
@@ -70,7 +70,7 @@ const initialChildren = firstGroup?.children ?? []
 
     if (!dataEl || !tocList || !content) return
 
-    const sections: TocSection[] = JSON.parse(dataEl.textContent ?? '[]')
+    const sections: TocSection[] = JSON.parse(dataEl.getAttribute('data-sections') ?? '[]')
     const h2Elements = Array.from(content.querySelectorAll<HTMLHeadingElement>('h2[id]'))
 
     let activeSectionSlug: string | null = null
