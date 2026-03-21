@@ -88,3 +88,47 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
     ))}
   </nav>
 </div>
+
+<script>
+  // Scroll spy: update aria-current and active class as user scrolls
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-sidebar-link]')
+
+  function getHeadingIds(): string[] {
+    return Array.from(links).map((l) => l.getAttribute('href')?.slice(1) ?? '').filter(Boolean)
+  }
+
+  function updateActive(activeId: string) {
+    links.forEach((link) => {
+      const href = link.getAttribute('href')?.slice(1)
+      const isActive = href === activeId
+      link.classList.toggle('active', isActive)
+      if (isActive) {
+        link.setAttribute('aria-current', 'true')
+      } else {
+        link.removeAttribute('aria-current')
+      }
+    })
+  }
+
+  const headingIds = getHeadingIds()
+  if (headingIds.length > 0) {
+    updateActive(headingIds[0]!)
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => {
+          return a.boundingClientRect.top - b.boundingClientRect.top
+        })
+        if (visible.length > 0) {
+          updateActive(visible[0]!.target.id)
+        }
+      },
+      { rootMargin: '0px 0px -60% 0px', threshold: 0 }
+    )
+
+    headingIds.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+  }
+</script>
