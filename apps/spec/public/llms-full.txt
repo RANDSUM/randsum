@@ -92,7 +92,7 @@ The set of derivation statuses is closed. No other status exists or may be added
 | ----- | --------------------- | -------------- | ----------------------------------------------------------------------------------- | ------------------------ |
 | 1     | Deterministic Shaping | 10--39         | No RNG. Pure functions over the dice array. `requiresRollFn = false`.               | `requiresRollFn = false` |
 | 2     | Stochastic Dynamics   | 40--69         | Requires a roll function. May introduce new random values. `requiresRollFn = true`. | `requiresRollFn = true`  |
-| 3     | Total Derivation      | 80--127        | Pool is frozen. Operates on the scalar total only. `mutatesRolls = false`.          | `mutatesRolls = false`   |
+| 3     | Total Derivation      | 80--100        | Pool is frozen. Operates on the scalar total only. `mutatesRolls = false`.          | `mutatesRolls = false`   |
 
 Stage boundaries are structural: a modifier declaring `requiresRollFn = true` cannot run in Stage 1. A modifier declaring `mutatesRolls = false` cannot modify the dice array.
 
@@ -302,7 +302,7 @@ The execution pipeline processes modifiers in three sequential stages:
 
 1. **Stage 1 -- Deterministic Pool Shaping** (priority 10--39): Pure transformations of the pool array. No random number generation.
 2. **Stage 2 -- Stochastic Pool Dynamics** (priority 40--69): Transformations that introduce randomness. Requires a roll function.
-3. **Stage 3 -- Total Derivation** (priority 80--127): Pool is frozen. Operates on the scalar total.
+3. **Stage 3 -- Total Derivation** (priority 80--100): Pool is frozen. Operates on the scalar total.
 
 Modifiers execute in ascending priority order. Within a stage, priority ordering is strict: a modifier with priority 20 MUST execute before a modifier with priority 30.
 
@@ -939,63 +939,69 @@ Implementations MAY claim partial conformance to this specification at one of fo
 
 ### 10.1 Level 1 -- Core
 
+Universal features supported by all major dice platforms (Roll20, Foundry VTT, Avrae, rpg-dice-roller, Sophie's Dice, GNOLL, Dice Maiden).
+
 A Level 1 implementation MUST support:
 
 - Standard dice (`NdS`)
 - Plus (`+N`)
 - Minus (`-N`)
+- Multiply (`*N`)
+- Drop (`L`, `H`, `D{...}`)
+- Keep (`K`, `kl`)
 
-### 10.2 Level 2 -- Pool
+### 10.2 Level 2 -- VTT Baseline
+
+Features supported by 5+ of 7 major platforms. This level covers running games on any mainstream VTT — D&D 5e, World of Darkness, Fate Core, PbtA, and most published systems.
 
 A Level 2 implementation MUST support all Level 1 features plus:
 
-- Cap (`C{...}`)
-- Drop (`L`, `H`, `D{...}`)
-- Keep (`K`, `kl`)
-- Keep Middle (`KM`)
-- Replace (`V{...}`)
 - Reroll (`R{...}`)
 - Reroll Once (`ro{...}`)
-- Multiply (`*N`)
-- Multiply Total (`**N`)
-- Sort (`sa`, `sd`)
-- Condition expressions (Section 5)
-
-### 10.3 Level 3 -- Dice Pools
-
-A Level 3 implementation MUST support all Level 2 features plus:
-
 - Explode (`!`)
 - Conditional Explode (`!{condition}`)
-- Compound (`!!`)
-- Penetrate (`!p`)
 - Count (`#{...}`)
 - Count Successes (`S{N}`)
 - Count Failures (`F{N}`)
-- Unique (`U`)
+- Condition Expressions (Section 5)
 
-This level covers dice pool systems (World of Darkness, Shadowrun) and explosive mechanics (Savage Worlds, Hackmaster).
+### 10.3 Level 3 -- Extended
+
+Features supported by 2--4 major platforms. Covers Savage Worlds (Compound), Hackmaster (Penetrate), Fate Core (dF), custom dice systems, and advanced pool mechanics.
+
+A Level 3 implementation MUST support all Level 2 features plus:
+
+- Cap (`C{...}`)
+- Compound (`!!`)
+- Penetrate (`!p`)
+- Sort (`sa`, `sd`)
+- Unique (`U`)
+- Custom Faces (`d{...}`)
+- Keep Middle (`KM`)
+- Replace (`V{...}`)
+- Multiply Total (`**N`)
+- Integer Divide (`//N`)
+- Modulo (`%N`)
+- Percentile dice (`d%`)
+- Fate/Fudge dice (`dF`, `dF.2`)
+- Annotations (`[text]`)
 
 ### 10.4 Level 4 -- Full
 
+RANDSUM extensions and features with 0--1 platform precedent.
+
 A Level 4 implementation MUST support all Level 3 features plus:
 
-- Custom Faces (`d{...}`)
-- Fate/Fudge dice (`dF`, `dF.2`)
 - Zero-Bias dice (`zN`)
-- Percentile dice (`d%`)
 - Geometric dice (`gN`)
 - Draw dice (`DDN`)
 - Repeat (`xN`)
-- Annotations (`[text]`)
 - Explode Sequence (`!s{...}`)
 - Inflation (`!i`)
 - Reduction (`!r`)
 - Wild Die (`W`)
 - Conditional Compound (`!!{condition}`)
 - Conditional Penetrate (`!p{condition}`)
-- Integer Divide (`//N`)
-- Modulo (`%N`)
 - Margin of Success (`ms{N}`)
 
 ### 10.5 Partial Conformance Claims
