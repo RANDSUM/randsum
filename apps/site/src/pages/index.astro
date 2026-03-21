@@ -810,11 +810,21 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
   .feature-card {
     min-height: auto;
+    padding: 0;
+  }
+
+  .feature-card:hover {
+    transform: none;
   }
 
   .feature-card .pkg-card-header {
-    margin-bottom: 0;
+    margin: 0;
+    padding: 0.6rem 1rem;
     border-bottom: none;
+  }
+
+  .feature-card .pkg-card-header::before {
+    display: none;
   }
 
   .feature-grid {
