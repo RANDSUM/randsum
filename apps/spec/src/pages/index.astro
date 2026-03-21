@@ -11,6 +11,7 @@ const entries = await getCollection('specs')
 const entry = entries.find((e) => e.id === latestId)
 if (!entry) throw new Error(`No spec entry found for version: ${latestId}`)
 const { Content, headings } = await render(entry)
+const specUrl = 'https://notation.randsum.dev'
 ---
 
 <SpecLayout
@@ -18,6 +19,9 @@ const { Content, headings } = await render(entry)
   version={latestId}
   versions={allVersions}
   isLatest={true}
+  specMarkdown={entry.body ?? ''}
+  specUrl={specUrl}
+  headings={headings}
 >
   <SidebarNav slot="sidebar" headings={headings} version={latestId} isLatest={true} />
   <SpecContent slot="content">

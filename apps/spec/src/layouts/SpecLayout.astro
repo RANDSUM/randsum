@@ -2,16 +2,27 @@
 import HeroHeader from '../components/HeroHeader.astro'
 import VersionBanner from '../components/VersionBanner.astro'
 import SkipLink from '../components/SkipLink.astro'
+import ShareActions from '../components/ShareActions.astro'
+import MobileMenu from '../components/MobileMenu.astro'
 import '../styles/global.css'
+
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
 
 interface Props {
   title: string
   version: string
   versions: string[]
   isLatest: boolean
+  specMarkdown: string
+  specUrl: string
+  headings?: Heading[]
 }
 
-const { title, version, versions, isLatest } = Astro.props
+const { title, version, versions, isLatest, specMarkdown, specUrl, headings = [] } = Astro.props
 const pageTitle = isLatest
   ? `${title}`
   : `${title} — ${version}`
@@ -26,6 +37,7 @@ const pageTitle = isLatest
   </head>
   <body>
     <SkipLink />
+    <MobileMenu headings={headings} version={version} isLatest={isLatest} />
     <HeroHeader version={version} versions={versions} isLatest={isLatest} />
     <VersionBanner isLatest={isLatest} />
     <div class="spec-layout">
@@ -43,5 +55,6 @@ const pageTitle = isLatest
         </slot>
       </aside>
     </div>
+    <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />
   </body>
 </html>
