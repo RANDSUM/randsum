@@ -256,6 +256,22 @@ body {
   font-size: 15px;
   color: var(--text-secondary);
   max-width: 480px;
+  margin-bottom: 0.5rem;
+}
+
+.spec-hero-package {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.spec-hero-package a {
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.spec-hero-package a:hover {
+  text-decoration: underline;
 }
 
 .spec-hero-actions {

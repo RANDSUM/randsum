@@ -24,23 +24,23 @@ import { wildDieModifier } from './wildDie'
  * This is the single source of truth for which modifiers exist and their execution order.
  */
 export const RANDSUM_MODIFIERS: readonly ModifierDefinition[] = Object.freeze([
-  capModifier as ModifierDefinition,
-  dropModifier as ModifierDefinition,
-  keepModifier as ModifierDefinition,
-  replaceModifier as ModifierDefinition,
-  rerollModifier as ModifierDefinition,
-  explodeModifier as ModifierDefinition,
-  compoundModifier as ModifierDefinition,
-  penetrateModifier as ModifierDefinition,
-  explodeSequenceModifier as ModifierDefinition,
-  uniqueModifier as ModifierDefinition,
-  wildDieModifier as ModifierDefinition,
-  countModifier as ModifierDefinition,
-  multiplyModifier as ModifierDefinition,
-  plusModifier as ModifierDefinition,
-  minusModifier as ModifierDefinition,
-  sortModifier as ModifierDefinition,
-  integerDivideModifier as ModifierDefinition,
-  moduloModifier as ModifierDefinition,
-  multiplyTotalModifier as ModifierDefinition
+  capModifier as ModifierDefinition,            // 10 - Clamp
+  replaceModifier as ModifierDefinition,        // 30 - Map
+  rerollModifier as ModifierDefinition,         // 40 - Substitute
+  explodeModifier as ModifierDefinition,        // 50 - Generate
+  compoundModifier as ModifierDefinition,       // 51 - Accumulate
+  penetrateModifier as ModifierDefinition,      // 52 - Accumulate
+  explodeSequenceModifier as ModifierDefinition, // 53 - Generate
+  wildDieModifier as ModifierDefinition,        // 55 - Dispatch
+  uniqueModifier as ModifierDefinition,         // 60 - Substitute
+  dropModifier as ModifierDefinition,           // 65 - Filter (moved after explosions)
+  keepModifier as ModifierDefinition,           // 66 - Filter (moved after explosions)
+  countModifier as ModifierDefinition,          // 80 - Reinterpret
+  multiplyModifier as ModifierDefinition,       // 85 - Scale
+  plusModifier as ModifierDefinition,           // 90 - Scale
+  minusModifier as ModifierDefinition,          // 91 - Scale
+  integerDivideModifier as ModifierDefinition,  // 93 - Scale
+  moduloModifier as ModifierDefinition,         // 94 - Scale
+  sortModifier as ModifierDefinition,           // 95 - Order (moved after arithmetic)
+  multiplyTotalModifier as ModifierDefinition   // 100 - Scale
 ])

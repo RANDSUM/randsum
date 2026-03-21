@@ -960,7 +960,7 @@ describe('applyAllModifiers', () => {
     expect(transformer?.(12, [3, 4, 5])).toBe(15)
   })
 
-  test('applies modifiers in priority order (drop before reroll)', () => {
+  test('applies modifiers in priority order (reroll before drop)', () => {
     const fixedRollOne = (): number => 5
     const ctx: ModifierContext = { rollOne: fixedRollOne, parameters: { sides: 6, quantity: 4 } }
 
@@ -970,9 +970,9 @@ describe('applyAllModifiers', () => {
       ctx
     )
 
-    // Drop (priority 20) runs before reroll (priority 40)
-    // Drop lowest (1) first, then reroll has nothing matching [1] in remaining rolls
-    expect(result.rolls.sort((a, b) => a - b)).toEqual([3, 4, 6])
+    // Reroll (priority 40) runs before drop (priority 65)
+    // Reroll 1 -> 5, pool is [5, 3, 4, 6], then drop lowest (3)
+    expect(result.rolls.sort((a, b) => a - b)).toEqual([4, 5, 6])
     expect(result.logs.length).toBe(2)
   })
 

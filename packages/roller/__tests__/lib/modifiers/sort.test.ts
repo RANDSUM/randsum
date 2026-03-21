@@ -45,8 +45,8 @@ describe('sortModifier', () => {
       expect(sortModifier.name).toBe('sort')
     })
 
-    test('has priority 92', () => {
-      expect(sortModifier.priority).toBe(92)
+    test('has priority 95', () => {
+      expect(sortModifier.priority).toBe(95)
     })
   })
 })

@@ -14,8 +14,8 @@
  */
 export const MODIFIER_PRIORITIES: Record<string, number> & {
   readonly cap: 10
-  readonly drop: 20
-  readonly keep: 21
+  readonly drop: 65
+  readonly keep: 66
   readonly replace: 30
   readonly reroll: 40
   readonly explode: 50
@@ -27,15 +27,15 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   readonly multiply: 85
   readonly plus: 90
   readonly minus: 91
-  readonly sort: 92
+  readonly sort: 95
   readonly integerDivide: 93
   readonly modulo: 94
   readonly count: 80
   readonly multiplyTotal: 100
 } = {
   cap: 10,
-  drop: 20,
-  keep: 21,
+  drop: 65,
+  keep: 66,
   replace: 30,
   reroll: 40,
   explode: 50,
@@ -47,7 +47,7 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   multiply: 85,
   plus: 90,
   minus: 91,
-  sort: 92,
+  sort: 95,
   integerDivide: 93,
   modulo: 94,
   count: 80,
