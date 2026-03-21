@@ -33,5 +33,8 @@ export function buildExplosionTrigger(
   if (options === true) {
     return (value, sides) => value === sides
   }
+  if (options === false) {
+    return () => false
+  }
   return (value, _sides) => matchesCondition(value, options)
 }

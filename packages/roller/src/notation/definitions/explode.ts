@@ -1,25 +1,46 @@
+import type { ComparisonOptions } from '../types'
+import { formatComparisonNotation, hasConditions, parseComparisonNotation } from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
-const explodePattern = /(?<!!)!(?!!|[pPsSiIrR])/
 
-export const explodeSchema: NotationSchema<boolean> = defineNotationSchema<boolean>({
+const explodePattern =
+  /(?<!!)!(?!!|[pPsSiIrR])(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/
+
+export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = defineNotationSchema<
+  boolean | ComparisonOptions
+>({
   name: 'explode',
   priority: 50,
 
-  pattern: /(?<!!)!(?!!|[pPsSiIrR])/,
+  pattern: /(?<!!)!(?!!|[pPsSiIrR])(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/,
 
   parse: notation => {
-    if (explodePattern.test(notation)) {
-      return { explode: true }
+    const match = explodePattern.exec(notation)
+    if (!match) return {}
+
+    const conditionBlock = match[2]
+    if (conditionBlock) {
+      const parsed = parseComparisonNotation(conditionBlock)
+      if (hasConditions(parsed)) {
+        return { explode: parsed }
+      }
     }
-    return {}
+
+    return { explode: true }
   },
 
   toNotation: options => {
-    return options ? '!' : undefined
+    if (options === true) return '!'
+    if (typeof options === 'object') {
+      const parts = formatComparisonNotation(options)
+      if (!parts.length) return '!'
+      return `!{${parts.join(',')}}`
+    }
+    return undefined
   },
 
   toDescription: options => {
     if (!options) return []
+    if (options === true) return ['Exploding Dice']
     return ['Exploding Dice']
   }
 })
