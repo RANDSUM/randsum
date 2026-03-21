@@ -38,11 +38,11 @@ The core format is `NdS` where **N** is the number of dice and **S** is the numb
 
 ### Geometric die
 
-A geometric die rolls dN repeatedly until a 1 appears, and the result is the number of rolls it took. All notation is **case-insensitive**.
+A geometric die rolls dN repeatedly as long as the maximum face value is rolled, and the result is the sum of all rolls. All notation is **case-insensitive**.
 
 | Notation | Description |
 |---|---|
-| `gN` | Roll dN until 1 appears, result = count |
+| `gN` | Roll dN until a non-maximum is rolled, result = sum |
 | `3gN` | Three independent geometric rolls |
 
 <NotationRoller defaultNotation="g6" client:only="react" />
