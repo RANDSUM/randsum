@@ -2,14 +2,16 @@
  * Shared utilities for explosion-type modifiers (explode, compound, penetrate).
  *
  * These modifiers share a common pattern:
- * - Trigger on maximum die value
+ * - Trigger on maximum die value (or a condition expression)
  * - Recursively roll additional dice
  * - Have configurable depth limits
  */
 
 import { DEFAULT_EXPLOSION_DEPTH } from '../../lib/constants'
+import type { ComparisonOptions } from '../../notation/types'
 import type { ModifierApplyResult, ModifierContext } from '../schema'
 import { assertRequiredContext } from '../schema'
+import { buildExplosionTrigger } from './conditionMatch'
 
 /**
  * Strategy for handling explosion results.
@@ -64,15 +66,20 @@ export const ExplosionStrategies: {
  * Resolve the max depth from explosion options.
  *
  * Convention:
- *   - `true`      -> use defaultDepth (modifier's built-in default)
- *   - `0`         -> "unlimited" -- uses DEFAULT_EXPLOSION_DEPTH as a practical ceiling
- *   - N (integer) -> explode at most N times
- *   - `false`     -> disabled (should not reach here; handled upstream)
+ *   - `true`              -> use defaultDepth (modifier's built-in default)
+ *   - `0`                 -> "unlimited" -- uses DEFAULT_EXPLOSION_DEPTH as a practical ceiling
+ *   - N (integer)         -> explode at most N times
+ *   - `false`             -> disabled (should not reach here; handled upstream)
+ *   - ComparisonOptions   -> use defaultDepth (condition controls trigger, not depth)
  *
  * Note: `0` means "unlimited" by convention (matching dice notation where !!0 = unlimited
  * compound). It does NOT mean "never explode". Use `false` to disable.
  */
-export function resolveExplosionDepth(options: boolean | number, defaultDepth = 1): number {
+export function resolveExplosionDepth(
+  options: boolean | number | ComparisonOptions,
+  defaultDepth = 1
+): number {
+  if (typeof options === 'object') return defaultDepth
   if (options === true) return defaultDepth
   if (options === false) return 0 // false means disabled, but shouldn't reach here
   if (options === 0) return DEFAULT_EXPLOSION_DEPTH
@@ -85,11 +92,12 @@ export function resolveExplosionDepth(options: boolean | number, defaultDepth = 
  * This is used for compound and penetrate modifiers where
  * the explosion adds to the existing die rather than creating new dice.
  *
- * @param initial - The initial die value (must equal sides to trigger)
+ * @param initial - The initial die value (must trigger to start)
  * @param sides - The die's maximum value
  * @param rollOne - Function to roll a single die
  * @param maxDepth - Maximum recursion depth
  * @param strategy - How to accumulate results
+ * @param trigger - Predicate that determines whether a roll triggers continuation
  * @returns The final accumulated value
  */
 export function applyAccumulatingExplosion(
@@ -97,9 +105,10 @@ export function applyAccumulatingExplosion(
   sides: number,
   rollOne: () => number,
   maxDepth: number,
-  strategy: ExplosionStrategy
+  strategy: ExplosionStrategy,
+  trigger?: (value: number, sides: number) => boolean
 ): number {
-  const shouldContinue = strategy.shouldContinue ?? ((roll, max) => roll === max)
+  const shouldContinue = trigger ?? strategy.shouldContinue ?? ((roll, max) => roll === max)
 
   const recurse = (total: number, depth: number): number => {
     if (depth >= maxDepth) return total
@@ -117,18 +126,25 @@ export function applyAccumulatingExplosion(
 /**
  * Create a ModifierBehavior.apply function for accumulating explosion modifiers
  * (compound and penetrate). Both share the same pattern: map over rolls,
- * apply explosion to any die that hit max.
+ * apply explosion to any die that hit the trigger condition.
  */
 export function createAccumulatingExplosionBehavior(
   strategy: ExplosionStrategy
-): (rolls: number[], options: boolean | number, ctx: ModifierContext) => ModifierApplyResult {
+): (
+  rolls: number[],
+  options: boolean | number | ComparisonOptions,
+  ctx: ModifierContext
+) => ModifierApplyResult {
   return (rolls, options, ctx) => {
     const { rollOne, parameters } = assertRequiredContext(ctx)
     const { sides } = parameters
     const maxDepth = resolveExplosionDepth(options)
+    const trigger = buildExplosionTrigger(typeof options === 'number' ? true : options)
 
     const result = rolls.map(roll =>
-      roll === sides ? applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy) : roll
+      trigger(roll, sides)
+        ? applyAccumulatingExplosion(roll, sides, rollOne, maxDepth, strategy, trigger)
+        : roll
     )
 
     return { rolls: result }
