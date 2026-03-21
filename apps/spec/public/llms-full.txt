@@ -960,14 +960,10 @@ A Level 2 implementation MUST support all Level 1 features plus:
 - Sort (`sa`, `sd`)
 - Condition expressions (Section 5)
 
-### 10.3 Level 3 -- Advanced
+### 10.3 Level 3 -- Dice Pools
 
 A Level 3 implementation MUST support all Level 2 features plus:
 
-- Custom Faces (`d{...}`)
-- Repeat (`xN`)
-- Fate/Fudge dice (`dF`, `dF.2`)
-- Zero-Bias dice (`zN`)
 - Explode (`!`)
 - Conditional Explode (`!{condition}`)
 - Compound (`!!`)
@@ -976,24 +972,30 @@ A Level 3 implementation MUST support all Level 2 features plus:
 - Count Successes (`S{N}`)
 - Count Failures (`F{N}`)
 - Unique (`U`)
-- Integer Divide (`//N`)
-- Modulo (`%N`)
-- Margin of Success (`ms{N}`)
+
+This level covers dice pool systems (World of Darkness, Shadowrun) and explosive mechanics (Savage Worlds, Hackmaster).
 
 ### 10.4 Level 4 -- Full
 
 A Level 4 implementation MUST support all Level 3 features plus:
 
+- Custom Faces (`d{...}`)
+- Fate/Fudge dice (`dF`, `dF.2`)
+- Zero-Bias dice (`zN`)
+- Percentile dice (`d%`)
 - Geometric dice (`gN`)
 - Draw dice (`DDN`)
+- Repeat (`xN`)
+- Annotations (`[text]`)
 - Explode Sequence (`!s{...}`)
 - Inflation (`!i`)
 - Reduction (`!r`)
 - Wild Die (`W`)
 - Conditional Compound (`!!{condition}`)
 - Conditional Penetrate (`!p{condition}`)
-- Percentile dice (`d%`)
-- Annotations (`[text]`)
+- Integer Divide (`//N`)
+- Modulo (`%N`)
+- Margin of Success (`ms{N}`)
 
 ### 10.5 Partial Conformance Claims
 
