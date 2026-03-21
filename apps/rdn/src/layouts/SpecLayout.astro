@@ -34,6 +34,11 @@ const pageTitle = isLatest
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
+    <script is:inline>
+      // Apply saved theme before render to prevent flash
+      const saved = localStorage.getItem('rdn-theme')
+      if (saved === 'light') document.documentElement.classList.add('light')
+    </script>
   </head>
   <body>
     <SkipLink />
@@ -56,5 +61,14 @@ const pageTitle = isLatest
       </aside>
     </div>
     {specMarkdown && <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />}
+    <script>
+      const toggle = document.querySelector('[data-theme-toggle]')
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isLight = document.documentElement.classList.toggle('light')
+          localStorage.setItem('rdn-theme', isLight ? 'light' : 'dark')
+        })
+      }
+    </script>
   </body>
 </html>
