@@ -231,4 +231,4 @@ import { traceRoll, formatAsMath } from '@randsum/roller/trace'
 import type { RollTraceStep } from '@randsum/roller/trace'
 ```
 
-`traceRoll(notation)` returns an array of `RollTraceStep` objects — a discriminated union with `kind: 'rolls' | 'divider' | 'arithmetic' | 'finalRolls'` — showing each stage of roll evaluation. `formatAsMath(notation)` returns a human-readable math string (e.g. `"2 + 4 = 6"`). Useful for verbose output displays and debugging.
+`traceRoll(record)` takes a `RollRecord` (from `result.rolls[n]`) and returns `readonly RollTraceStep[]` — a discriminated union with `kind: 'rolls' | 'divider' | 'arithmetic' | 'finalRolls'` — showing each stage of roll evaluation. `formatAsMath(rolls, delta?)` takes a `readonly number[]` and optional numeric delta and returns a human-readable math string (e.g. `"2 + 4 = 6"`). Useful for verbose output displays and debugging.
