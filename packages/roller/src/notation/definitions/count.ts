@@ -2,11 +2,12 @@ import type { CountOptions } from '../types'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 import { parseComparisonNotation } from '../comparison'
 
-const countPattern = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
+// eslint-disable-next-line @typescript-eslint/no-inferrable-types
+export const countPattern: RegExp = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
 export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>({
   name: 'count',
-  priority: 95,
+  priority: 80,
 
   pattern: countPattern,
 

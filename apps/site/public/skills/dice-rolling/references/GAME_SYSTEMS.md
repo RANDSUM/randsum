@@ -7,7 +7,7 @@
 - **Mechanics**: d6 dice pools, keep highest result
 - **Outcomes**: 6 = success, 4-5 = partial, 1-3 = failure
 - **Special**: Multiple 6s = critical success
-- **Usage**: `roll(rating?)` — 0 = desperate (2d6, keep lowest), 1-4 = roll that many d6
+- **Usage**: `roll(rating?)` — 0 = desperate (2d6, keep lowest), 1-6 = roll that many d6
 
 ### @randsum/games/daggerheart - Daggerheart RPG
 
@@ -40,8 +40,8 @@
 
 ### @randsum/games/salvageunion - Salvage Union
 
-- **Mechanics**: d20 roll-under system
-- **Outcome**: Lower is better, 1 = critical success, 20 = critical failure
+- **Mechanics**: D20 table-based system, higher is better
+- **Outcome**: Higher is better; 20 = best outcome, 1 = worst outcome
 - **Usage**: `roll(tableName?)`
 
 ## Common Patterns
@@ -63,4 +63,4 @@ All game packages:
 | Blades        | `Nd6` (pool)             | Highest die: 6 success, 4-5 partial, 1-3 fail |
 | Daggerheart   | 2d12                     | Hope/Fear interpretation                      |
 | PbtA / Root   | 2d6 + stat               | 10+ strong, 7-9 weak, 6- miss                 |
-| Salvage Union | d20 vs target            | Roll under target, lower is better            |
+| Salvage Union | d20 table lookup         | Roll table, higher is better                  |

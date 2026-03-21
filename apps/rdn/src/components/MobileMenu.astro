@@ -1,0 +1,183 @@
+---
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  headings: Heading[]
+  version: string
+  isLatest: boolean
+}
+
+const { headings, version, isLatest } = Astro.props
+
+const SIDEBAR_GROUPS = [
+  { label: 'Foundations', prefixes: ['1.', '2.', '3.'] },
+  { label: 'Features', prefixes: ['4.', '5.'] },
+  { label: 'Pipeline', prefixes: ['6.', '7.'] },
+  { label: 'Reference', prefixes: ['8.', '9.', '10.'] },
+  { label: 'Appendices', prefixes: ['A.', 'B.', 'C.', 'D.'] }
+]
+
+const topHeadings = headings.filter((h) => h.depth === 2)
+
+function getGroupForHeading(text: string) {
+  for (const group of SIDEBAR_GROUPS) {
+    for (const prefix of group.prefixes) {
+      if (text.startsWith(prefix)) return group.label
+    }
+  }
+  return null
+}
+
+const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) => ({
+  label: g.label,
+  items: topHeadings.filter((h) => getGroupForHeading(h.text) === g.label)
+})).filter((g) => g.items.length > 0)
+---
+
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <!-- Hamburger button (fixed, visible only < 1024px) -->
+  <button
+    class="mobile-menu-trigger"
+    id="mobile-menu-trigger"
+    aria-label="Open navigation menu"
+    aria-expanded="false"
+    aria-controls="mobile-menu-overlay"
+  >
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+  </button>
+
+  <!-- Overlay backdrop -->
+  <div class="mobile-menu-backdrop" id="mobile-menu-backdrop" aria-hidden="true"></div>
+
+  <!-- Overlay panel -->
+  <div
+    class="mobile-menu-overlay"
+    id="mobile-menu-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Navigation menu"
+  >
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-version">
+        <span class="label" style="color: var(--text-muted);">Version</span>
+        <span class="mobile-version-badge">
+          {version}{isLatest ? <span class="mobile-latest-badge">latest</span> : null}
+        </span>
+      </div>
+      <button
+        class="mobile-menu-close"
+        id="mobile-menu-close"
+        aria-label="Close navigation menu"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav aria-label="Spec sections">
+      {grouped.map((group) => (
+        <div class="mobile-sidebar-group">
+          <span class="label mobile-sidebar-group-label">{group.label}</span>
+          <ul class="mobile-sidebar-list" role="list">
+            {group.items.map((heading) => (
+              <li>
+                <a
+                  href={`#${heading.slug}`}
+                  class="mobile-sidebar-link"
+                  data-mobile-nav-link
+                >
+                  {heading.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+</div>
+
+<script>
+  const trigger = document.getElementById('mobile-menu-trigger')
+  const overlay = document.getElementById('mobile-menu-overlay')
+  const backdrop = document.getElementById('mobile-menu-backdrop')
+  const closeBtn = document.getElementById('mobile-menu-close')
+  const navLinks = document.querySelectorAll('[data-mobile-nav-link]')
+
+  if (!trigger || !overlay || !backdrop || !closeBtn) {
+    throw new Error('MobileMenu: required elements not found')
+  }
+
+  function getFocusableElements(): HTMLElement[] {
+    return Array.from(
+      overlay!.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => !el.hasAttribute('disabled'))
+  }
+
+  function openMenu(): void {
+    trigger!.setAttribute('aria-expanded', 'true')
+    overlay!.classList.add('is-open')
+    backdrop!.classList.add('is-visible')
+    document.body.classList.add('mobile-menu-open')
+    // Focus first focusable element in overlay
+    const focusable = getFocusableElements()
+    if (focusable.length > 0) {
+      focusable[0]!.focus()
+    }
+  }
+
+  function closeMenu(): void {
+    trigger!.setAttribute('aria-expanded', 'false')
+    overlay!.classList.remove('is-open')
+    backdrop!.classList.remove('is-visible')
+    document.body.classList.remove('mobile-menu-open')
+    trigger!.focus()
+  }
+
+  function trapFocus(e: KeyboardEvent): void {
+    if (!overlay!.classList.contains('is-open')) return
+    if (e.key !== 'Tab') return
+
+    const focusable = getFocusableElements()
+    if (focusable.length === 0) return
+
+    const first = focusable[0]!
+    const last = focusable[focusable.length - 1]!
+
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+  }
+
+  trigger.addEventListener('click', openMenu)
+  closeBtn.addEventListener('click', closeMenu)
+  backdrop.addEventListener('click', closeMenu)
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && overlay!.classList.contains('is-open')) {
+      closeMenu()
+    }
+    trapFocus(e)
+  })
+
+  navLinks.forEach((link) => {
+    link.addEventListener('click', closeMenu)
+  })
+</script>

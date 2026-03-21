@@ -15,7 +15,7 @@ Architectural decisions are documented in:
 
 ```bash
 # From the monorepo root:
-bun run playground:dev          # Dev server (also starts roller + display-utils watchers)
+bun run playground:dev          # Dev server (also starts roller watcher)
 bun run playground:build        # Production build (outputs to apps/playground/dist)
 
 # From apps/playground/:
@@ -25,10 +25,10 @@ bun run preview                 # Preview production build locally
 bun run typecheck               # TypeScript strict check (tsc --noEmit)
 ```
 
-The `playground:dev` root script runs three processes in parallel:
+The `playground:dev` root script runs two processes in parallel:
 
 ```
-bun run --filter @randsum/roller dev & bun run --filter @randsum/display-utils dev & bun run --filter @randsum/playground dev
+bun run --filter @randsum/roller dev & bun run --filter @randsum/playground dev
 ```
 
 Workspace dependencies must be built (or in watch mode) before the Astro dev server starts.
@@ -156,7 +156,7 @@ Renders:
 
 - RANDSUM logo wordmark (SVG or text) linking to `https://randsum.dev`
 - Link to `https://randsum.dev` labeled "docs" or "randsum.dev"
-- StackBlitz button: calls `buildStackBlitzProject(notation)` from `@randsum/display-utils` and opens the project using `@stackblitz/sdk`. Button is disabled when `notation` is empty.
+- StackBlitz button: calls `buildStackBlitzProject(notation)` from `src/helpers/stackblitz.ts` (local helper) and opens the project using `@stackblitz/sdk`. Button is disabled when `notation` is empty.
 
 ---
 
@@ -254,14 +254,14 @@ interface RollResultProps {
 
 Pure display component. Renders nothing if the component is not mounted (caller conditionally renders based on `rollResult !== null`).
 
-For each `RollRecord` in `result.rolls`, calls `computeSteps(record)` from `@randsum/display-utils` to get an ordered `readonly TooltipStep[]`. Renders each step:
+For each `RollRecord` in `result.rolls`, calls `traceRoll(record)` from `@randsum/roller/trace` to get an ordered `readonly RollTraceStep[]`. Renders each step:
 
-| `TooltipStep` kind | Rendering                                                                                                                                                        |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `'rolls'`          | Row: label on left, die badges on right. Badges: unchanged in `--pg-color-text`, removed in `--pg-color-removed` with strikethrough, added in `--pg-color-added` |
-| `'arithmetic'`     | Row: `label` on left, `display` (`+5`, `×2`, etc.) on right in `--pg-color-accent`                                                                               |
-| `'divider'`        | `<hr>` separator                                                                                                                                                 |
-| `'finalRolls'`     | Row: "Final" label, die badges, then `formatAsMath(rolls, arithmeticDelta)` from `@randsum/display-utils`                                                        |
+| `RollTraceStep` kind | Rendering                                                                                                                                                        |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'rolls'`            | Row: label on left, die badges on right. Badges: unchanged in `--pg-color-text`, removed in `--pg-color-removed` with strikethrough, added in `--pg-color-added` |
+| `'arithmetic'`       | Row: `label` on left, `display` (`+5`, `×2`, etc.) on right in `--pg-color-accent`                                                                               |
+| `'divider'`          | `<hr>` separator                                                                                                                                                 |
+| `'finalRolls'`       | Row: "Final" label, die badges, then `formatAsMath(rolls, arithmeticDelta)` from `@randsum/roller/trace`                                                         |
 
 The grand total (`result.total`) is displayed as a large number in `--pg-color-total` above the step breakdown.
 
@@ -307,7 +307,7 @@ Renders a two-column grid covering the **complete** RANDSUM dice notation — no
 | `zN`          | Zero-bias die (0 to N-1)     |
 | `d{a,b,c}`    | Custom faces die             |
 
-**2. Modifiers** — rendered from `MODIFIER_DOCS` (`@randsum/display-utils`). Each entry shows `doc.displayBase` in the left column and `doc.title` in the right. This covers all 19+ modifiers: drop, keep, cap, reroll, replace, explode, compound, penetrate, unique, wild die, count successes, count failures, plus, minus, multiply, multiply total, integer divide, modulo, sort.
+**2. Modifiers** — rendered from `MODIFIER_DOCS` (`@randsum/roller/docs`). Each entry shows `doc.displayBase` in the left column and `doc.title` in the right. This covers all 19+ modifiers: drop, keep, cap, reroll, replace, explode, compound, penetrate, unique, wild die, count successes, count failures, plus, minus, multiply, multiply total, integer divide, modulo, sort.
 
 **3. Operators**
 
@@ -328,7 +328,7 @@ On desktop: two-column table layout. Below 480px: single-column list.
 
 ```typescript
 interface ReferenceDetailProps {
-  modifierKey: string // Key into MODIFIER_DOCS
+  modifierKey: string // Key into MODIFIER_DOCS (from @randsum/roller/docs)
   doc: ModifierDoc // Pre-looked-up doc entry
 }
 ```
@@ -466,17 +466,18 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 ```json
 {
   "name": "@randsum/playground",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "private": true,
   "dependencies": {
     "@randsum/roller": "workspace:~",
-    "@randsum/display-utils": "workspace:~",
+    "@randsum/dice-ui": "workspace:~",
     "@astrojs/react": "...",
-    "@astrojs/netlify": "...",
-    "react": "catalog:",
-    "react-dom": "catalog:",
+    "@stackblitz/sdk": "...",
+    "@supabase/supabase-js": "...",
     "astro": "...",
-    "@stackblitz/sdk": "..."
+    "nanoid": "...",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   }
 }
 ```
@@ -495,15 +496,20 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 - `tokenize` — converts notation string to `readonly Token[]` for syntax highlighting in `NotationInput`
 - `Token`, `TokenType` — types for token rendering
 
-**`@randsum/display-utils`**:
+**`@randsum/roller/trace`**:
 
-- `computeSteps` — converts a `RollRecord` to `readonly TooltipStep[]` for step visualization
+- `traceRoll` — converts a `RollRecord` to `readonly RollTraceStep[]` for step visualization (replaces old `computeSteps`)
 - `formatAsMath` — formats number arrays as math expression strings
-- `TooltipStep` — type for step rendering
+- `RollTraceStep` — type for step rendering (replaces old `TooltipStep`)
+
+**`@randsum/roller/docs`**:
+
 - `MODIFIER_DOCS` — static modifier documentation for `QuickReferenceGrid` and `ReferenceDetail`
 - `ModifierDoc` — type for modifier doc entries
+
+**`src/helpers/stackblitz.ts`** (local helper — not a workspace package):
+
 - `buildStackBlitzProject` — generates a StackBlitz project object for `PlaygroundHeader`
-- `StackBlitzProject` — type for StackBlitz integration
 
 **`@stackblitz/sdk`**:
 
@@ -516,7 +522,7 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 - `output: 'static'` — static site generation
 - Integrations: `@astrojs/react()`, `@astrojs/netlify()` (production only)
 - `site: 'https://playground.randsum.dev'`
-- Vite aliases resolve `@randsum/roller` and `@randsum/display-utils` from workspace source during development (same pattern as `apps/site/astro.config.mjs`)
+- Vite aliases resolve `@randsum/roller` and `@randsum/dice-ui` from workspace source during development (same pattern as `apps/site/astro.config.mjs`)
 
 ## Netlify Deployment
 
@@ -539,7 +545,7 @@ The playground build is excluded from `check:all` and the npm publish pipeline. 
 
 No `size-limit` entry exists for the playground. Bundle size is managed via Netlify deploy metrics, not `size-limit`.
 
-If a pre-push hook for the playground is added in the future, it should use path filters: `apps/playground/`, `packages/roller/`, `packages/display-utils/`.
+If a pre-push hook for the playground is added in the future, it should use path filters: `apps/playground/`, `packages/roller/`, `packages/dice-ui/`.
 
 ## Design Review Requirements
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { parseComparisonNotation } from '../../src/notation/comparison'
+import { formatComparisonNotation, parseComparisonNotation } from '../../src/notation/comparison'
 
 describe('parseComparisonNotation — >= and <=', () => {
   test('parses >= alone', () => {
@@ -28,5 +28,29 @@ describe('parseComparisonNotation — >= and <=', () => {
     const result = parseComparisonNotation('{>=4,<=2}')
     expect(result.greaterThanOrEqual).toBe(4)
     expect(result.lessThanOrEqual).toBe(2)
+  })
+})
+
+describe('parseComparisonNotation — exact / =N', () => {
+  test('parses bare integer as exact', () => {
+    const result = parseComparisonNotation('5')
+    expect(result.exact).toEqual([5])
+  })
+
+  test('parses =N as exact', () => {
+    const result = parseComparisonNotation('=5')
+    expect(result.exact).toEqual([5])
+  })
+
+  // Gap 42: =N round-trip is lossy — formatComparisonNotation emits bare integers, not =N.
+  // parse("=5") -> { exact: [5] } -> format -> "5" (not "=5").
+  // Both "5" and "=5" parse identically, so the round-trip is semantically lossless even
+  // though the notation form changes. This is documented behavior, not a bug.
+  test('=N round-trip: parse then format emits bare integer (not =N)', () => {
+    const parsed = parseComparisonNotation('=5')
+    const formatted = formatComparisonNotation(parsed)
+    expect(formatted).toEqual(['5'])
+    // Verify the re-parsed result is identical to the original parse
+    expect(parseComparisonNotation(formatted[0] ?? '')).toEqual(parsed)
   })
 })

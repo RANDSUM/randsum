@@ -2,6 +2,7 @@ import { coreNotationPattern } from './coreNotationPattern'
 import type { DiceNotation } from './types'
 import { suggestNotationFix } from './suggestions'
 import { buildNotationPattern } from './parse/parseModifiers'
+import { countPattern } from './definitions/count'
 
 // Special die type patterns (case-insensitive via 'i' flag on final regex)
 // Percentile: d% or D% (exact match, no modifiers)
@@ -54,22 +55,23 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   if (typeof argument !== 'string') return false
   const trimmedArg = argument.trim()
   if (trimmedArg.length === 0 || trimmedArg.length > 1000) return false
-  const cleanArg = trimmedArg.replace(/\s/g, '')
-  if (cleanArg.length === 0) return false
 
   // Check special die types that don't support modifiers (exact match)
-  if (PERCENTILE_PATTERN.test(cleanArg)) return true
-  if (FATE_PATTERN.test(cleanArg)) return true
-  if (CUSTOM_FACES_PATTERN.test(cleanArg)) return true
+  if (PERCENTILE_PATTERN.test(trimmedArg)) return true
+  if (FATE_PATTERN.test(trimmedArg)) return true
+  if (CUSTOM_FACES_PATTERN.test(trimmedArg)) return true
 
   // For standard dice, require the core NdS pattern as a quick gate.
   // For special modifier-supporting types (z, g, DD), the complete pattern
   // includes their core patterns alongside the standard NdS pattern.
   const hasStandardCore = coreNotationPattern.test(trimmedArg)
-  const hasSpecialCore = MODIFIER_DIE_CORES.some(src => new RegExp(src).test(cleanArg))
+  const hasSpecialCore = MODIFIER_DIE_CORES.some(src => new RegExp(src).test(trimmedArg))
   if (!hasStandardCore && !hasSpecialCore) return false
 
-  const remaining = cleanArg.replaceAll(getCompleteNotationPattern(), '')
+  const countPatternGlobal = new RegExp(countPattern.source, 'g')
+  if ([...trimmedArg.matchAll(countPatternGlobal)].length > 1) return false
+
+  const remaining = trimmedArg.replaceAll(getCompleteNotationPattern(), '')
   return remaining.length === 0
 }
 

@@ -1,0 +1,218 @@
+---
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  headings: Heading[]
+}
+
+const { headings } = Astro.props
+
+// Group headings by h2 sections
+// Each h2 starts a new group; h3/h4 are children of the current h2
+type Group = {
+  h2: Heading
+  children: Heading[]
+}
+
+const groups: Group[] = []
+let current: Group | null = null
+
+for (const h of headings) {
+  if (h.depth === 2) {
+    current = { h2: h, children: [] }
+    groups.push(current)
+  } else if ((h.depth === 3 || h.depth === 4) && current) {
+    current.children.push(h)
+  }
+}
+
+// Use only the first group's children for initial render
+// Scroll spy (S-008) will repopulate this list dynamically
+const firstGroup = groups[0]
+const initialChildren = firstGroup?.children ?? []
+
+// Build a tree: h2 > h3 > h4[]
+type TocH4 = { depth: number; slug: string; text: string }
+type TocH3 = { depth: number; slug: string; text: string; children: TocH4[] }
+type TocGroup = { slug: string; text: string; sections: TocH3[] }
+
+const tocGroups: TocGroup[] = groups.map(g => {
+  const sections: TocH3[] = []
+  let currentH3: TocH3 | null = null
+
+  for (const c of g.children) {
+    if (c.depth === 3) {
+      currentH3 = { depth: c.depth, slug: c.slug, text: c.text, children: [] }
+      sections.push(currentH3)
+    } else if (c.depth === 4 && currentH3) {
+      currentH3.children.push({ depth: c.depth, slug: c.slug, text: c.text })
+    }
+  }
+
+  return { slug: g.h2.slug, text: g.h2.text, sections }
+})
+
+const tocData = JSON.stringify(tocGroups)
+---
+
+<div class="toc-inner">
+  <p class="label toc-title" data-toc-title>In this section</p>
+  <ul class="toc-list" data-toc-list aria-label="On this page navigation">
+    {initialChildren.map((h) => (
+      <li class={`toc-item toc-depth-${h.depth}`} data-toc-section={h.slug}>
+        <a href={`#${h.slug}`} class="toc-link">
+          {h.text}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<!-- Embed full heading data for scroll spy -->
+<div id="toc-sections-data" data-sections={tocData} hidden></div>
+
+<script>
+  ;(function () {
+    type TocH4 = { depth: number; slug: string; text: string }
+    type TocH3 = { depth: number; slug: string; text: string; children: TocH4[] }
+    type TocGroup = { slug: string; text: string; sections: TocH3[] }
+
+    const dataEl = document.getElementById('toc-sections-data')
+    const tocList = document.querySelector<HTMLElement>('[data-toc-list]')
+    const tocTitle = document.querySelector<HTMLElement>('[data-toc-title]')
+    const content = document.querySelector('.spec-content-body')
+
+    if (!dataEl || !tocList || !content) return
+
+    const groups: TocGroup[] = JSON.parse(dataEl.getAttribute('data-sections') ?? '[]')
+    const h2Elements = Array.from(content.querySelectorAll<HTMLHeadingElement>('h2[id]'))
+    const h3Elements = Array.from(content.querySelectorAll<HTMLHeadingElement>('h3[id]'))
+
+    let activeGroupSlug: string | null = null
+    let activeH3Slug: string | null = null
+    let activeH4Slug: string | null = null
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    function renderToc(group: TocGroup, activeH3: string | null) {
+      if (tocTitle) {
+        tocTitle.textContent = group.text
+      }
+
+      while (tocList!.firstChild) {
+        tocList!.removeChild(tocList!.firstChild)
+      }
+
+      for (const h3 of group.sections) {
+        const li = document.createElement('li')
+        li.className = 'toc-item toc-depth-3'
+        const a = document.createElement('a')
+        a.href = `#${h3.slug}`
+        a.className = 'toc-link'
+        if (h3.slug === activeH3) a.classList.add('active')
+        a.textContent = h3.text
+        li.appendChild(a)
+        tocList!.appendChild(li)
+
+        // If this h3 is active and has children, expand them
+        if (h3.slug === activeH3 && h3.children.length > 0) {
+          for (const h4 of h3.children) {
+            const subLi = document.createElement('li')
+            subLi.className = 'toc-item toc-depth-4'
+            const subA = document.createElement('a')
+            subA.href = `#${h4.slug}`
+            subA.className = 'toc-link'
+            subA.textContent = h4.text
+            subLi.appendChild(subA)
+            tocList!.appendChild(subLi)
+          }
+        }
+      }
+    }
+
+    function setActiveLink(slug: string) {
+      const links = tocList!.querySelectorAll<HTMLAnchorElement>('.toc-link')
+      for (const link of links) {
+        const isActive = link.getAttribute('href') === `#${slug}`
+        link.classList.toggle('active', isActive)
+      }
+    }
+
+    function findCurrent(elements: HTMLElement[]): string | null {
+      const threshold = window.innerHeight * 0.2
+      let current: string | null = null
+      for (const el of elements) {
+        if (el.getBoundingClientRect().top <= threshold) {
+          current = el.id
+        } else {
+          break
+        }
+      }
+      return current
+    }
+
+    function onScroll() {
+      const groupSlug = findCurrent(h2Elements)
+      const h3Slug = findCurrent(h3Elements)
+
+      const group = groups.find(g => g.slug === groupSlug)
+      if (!group) return
+
+      // Find which h3 within this group is active
+      const activeSection = group.sections.find(s => s.slug === h3Slug)
+      const effectiveH3 = activeSection ? h3Slug : group.sections[0]?.slug ?? null
+
+      // Re-render if group or active h3 changed
+      if (groupSlug !== activeGroupSlug || effectiveH3 !== activeH3Slug) {
+        activeGroupSlug = groupSlug
+        activeH3Slug = effectiveH3
+        renderToc(group, effectiveH3)
+      }
+
+      // Highlight active h4 within expanded section
+      if (activeSection && activeSection.children.length > 0) {
+        const h4Elements = activeSection.children
+          .map(c => content!.querySelector<HTMLElement>(`#${CSS.escape(c.slug)}`))
+          .filter((el): el is HTMLElement => el !== null)
+
+        const h4Slug = findCurrent(h4Elements)
+        if (h4Slug && h4Slug !== activeH4Slug) {
+          activeH4Slug = h4Slug
+          setActiveLink(h4Slug)
+        } else if (!h4Slug && activeH4Slug !== effectiveH3) {
+          // Before first h4, keep h3 highlighted
+          activeH4Slug = effectiveH3
+          setActiveLink(effectiveH3!)
+        }
+      }
+    }
+
+    let ticking = false
+    window.addEventListener('scroll', () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        onScroll()
+        ticking = false
+      })
+    }, { passive: true })
+
+    onScroll()
+
+    tocList.addEventListener('click', (e) => {
+      const anchor = (e.target as HTMLElement).closest<HTMLAnchorElement>('.toc-link')
+      if (!anchor) return
+      const href = anchor.getAttribute('href')
+      if (!href) return
+      const targetEl = document.querySelector<HTMLElement>(href)
+      if (!targetEl) return
+      e.preventDefault()
+      targetEl.scrollIntoView({ behavior: prefersReducedMotion ? 'instant' : 'smooth' })
+      history.pushState(null, '', href)
+    })
+  })()
+</script>

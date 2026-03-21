@@ -18,7 +18,7 @@ export const corePackages: PackageInfo[] = [
     description: 'Zero-dependency dice engine with built-in notation parsing and validation.',
     npmPackage: '@randsum/roller',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/roller',
-    version: '3.0.0',
+    version: '1.3.0',
     category: 'core',
     color: '#f8fafc' // white (slate-50) — uses --tool-roller CSS var which adapts dark/light
   },
@@ -29,7 +29,7 @@ export const corePackages: PackageInfo[] = [
     description: 'Pre-built dice resolvers for popular tabletop RPGs. One package, six systems.',
     npmPackage: '@randsum/games',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
-    version: '1.0.0',
+    version: '1.3.0',
     category: 'core',
     color: '#a855f7' // purple accent
   }
@@ -44,7 +44,7 @@ export const gamePackages: PackageInfo[] = [
       'Roll action dice. Resolve critical, success, partial, or failure for Blades in the Dark.',
     npmPackage: '@randsum/games/blades',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
-    version: '3.0.0',
+    version: '1.3.0',
     category: 'game',
     color: '#64748b' // slate-500 — noir, shadowy
   },
@@ -56,7 +56,7 @@ export const gamePackages: PackageInfo[] = [
       'Roll hope and fear dice, see which dominates, detect critical hope for Daggerheart.',
     npmPackage: '@randsum/games/daggerheart',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
-    version: '3.0.0',
+    version: '1.3.0',
     category: 'game',
     color: '#eab308' // yellow-500 — gold
   },
@@ -67,7 +67,7 @@ export const gamePackages: PackageInfo[] = [
     description: 'd20 roll resolution for D&D 5e.',
     npmPackage: '@randsum/games/fifth',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
-    version: '3.0.0',
+    version: '1.3.0',
     category: 'game',
     color: '#dc2626' // red
   },
@@ -78,7 +78,7 @@ export const gamePackages: PackageInfo[] = [
     description: 'Roll 2d6+bonus. Strong hit, weak hit, or miss for Root: The RPG.',
     npmPackage: '@randsum/games/root-rpg',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
-    version: '3.0.0',
+    version: '1.3.0',
     category: 'game',
     color: '#22c55e' // green
   },
@@ -89,7 +89,7 @@ export const gamePackages: PackageInfo[] = [
     description: 'd20 table lookups for Salvage Union.',
     npmPackage: '@randsum/games/salvageunion',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
-    version: '3.0.0',
+    version: '1.3.0',
     category: 'game',
     color: '#f59e0b' // amber — industrial/salvage aesthetic
   },
@@ -101,7 +101,7 @@ export const gamePackages: PackageInfo[] = [
       'Roll 2d6+stat. Miss, weak hit, or strong hit for any Powered by the Apocalypse game.',
     npmPackage: '@randsum/games/pbta',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/games',
-    version: '3.0.0',
+    version: '1.3.0',
     category: 'game',
     color: '#6b7280' // grey
   }
@@ -111,13 +111,14 @@ export const toolPackages: PackageInfo[] = [
   {
     id: 'skill',
     name: 'skill',
-    displayName: 'Claude Skills',
+    displayName: 'Claude Plugin',
     description:
-      'Three skills that give AI agents dice rolling, probability analysis, and game spec authoring.',
+      'Claude Code plugin with skills for dice rolling, probability analysis, and game spec authoring.',
     npmPackage: 'skills/dice-rolling/SKILL.md',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills',
+    version: '1.0.0',
     category: 'tool',
-    color: '#06b6d4' // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
+    color: '#E07A2F' // Claude orange
   },
   {
     id: 'discord-bot',
@@ -126,7 +127,7 @@ export const toolPackages: PackageInfo[] = [
     description: 'Discord bot with slash commands for all RANDSUM packages.',
     npmPackage: '@randsum/discord-bot',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/discord-bot',
-    version: '1.0.0',
+    version: '1.1.2',
     category: 'tool',
     color: '#5865F2' // Discord purple
   },

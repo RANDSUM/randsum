@@ -167,6 +167,21 @@ describe('count modifier', () => {
     })
   })
 
+  describe('duplicate count modifier rejection', () => {
+    test('roll("4d6#{>=3}#{<=1}") throws ModifierError', () => {
+      expect(() => roll('4d6#{>=3}#{<=1}')).toThrow()
+    })
+
+    test('isDiceNotation("4d6#{>=3}#{<=1}") returns false', async () => {
+      const { isDiceNotation } = await import('../../src/notation/isDiceNotation')
+      expect(isDiceNotation('4d6#{>=3}#{<=1}')).toBe(false)
+    })
+
+    test('single count modifier still works: roll("4d6#{>=3}")', () => {
+      expect(() => roll('4d6#{>=3}')).not.toThrow()
+    })
+  })
+
   describe('deterministic with seeded random', () => {
     test('produces same result with same seed', () => {
       const s1 = createSeededRandom(123)

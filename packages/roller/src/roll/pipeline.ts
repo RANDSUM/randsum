@@ -59,7 +59,8 @@ export class RollPipeline<T = string> {
 
   /**
    * Perform geometric rolls: for each of `quantity` sequences, roll dN until
-   * a 1 appears. Returns the actual die values from all sequences concatenated.
+   * a non-maximum value appears. Returns the actual die values from all
+   * sequences concatenated.
    * Each sequence is capped at 1000 rolls to prevent infinite loops.
    */
   private geometricRolls(quantity: number, sides: number): number[] {
@@ -68,7 +69,7 @@ export class RollPipeline<T = string> {
       for (const __ of Array.from({ length: 1000 })) {
         const value = coreRandom(sides, this.rng) + 1
         results.push(value)
-        if (value === 1) break
+        if (value !== sides) break
       }
     }
     return results
@@ -76,7 +77,13 @@ export class RollPipeline<T = string> {
 
   /**
    * Draw values without replacement from a pool of [1..sides].
-   * If quantity exceeds sides, the pool reshuffles after exhaustion.
+   * If quantity exceeds sides, the pool reshuffles after exhaustion and drawing
+   * continues from the fresh pool until all `quantity` values are produced.
+   * Example: `8DD6` returns 8 values — a permutation of [1..6] followed by
+   * 2 more values drawn from a reshuffled pool.
+   *
+   * Design decision: reshuffle (not cap) is the intended behavior.
+   * The spec (RDN v1.0-alpha §4.4) and site docs both describe this semantics.
    */
   private drawWithoutReplacement(quantity: number, sides: number): number[] {
     const result: number[] = []

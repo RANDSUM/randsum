@@ -4,6 +4,7 @@ import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import type { ModifierDefinition } from './schema'
+import { matchesComparison } from '../lib/comparison/matchesComparison'
 
 const countPattern = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
@@ -163,23 +164,6 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
   ]
 })
 
-function matchesAbove(roll: number, options: CountOptions): boolean {
-  if (options.greaterThanOrEqual !== undefined && roll >= options.greaterThanOrEqual) return true
-  if (options.greaterThan !== undefined && roll > options.greaterThan) return true
-  return false
-}
-
-function matchesBelow(roll: number, options: CountOptions): boolean {
-  if (options.lessThanOrEqual !== undefined && roll <= options.lessThanOrEqual) return true
-  if (options.lessThan !== undefined && roll < options.lessThan) return true
-  return false
-}
-
-function matchesExact(roll: number, options: CountOptions): boolean {
-  if (options.exact?.includes(roll)) return true
-  return false
-}
-
 export const countModifier: ModifierDefinition<CountOptions> = {
   ...countSchema,
   mutatesRolls: false as const,
@@ -202,14 +186,25 @@ export const countModifier: ModifierDefinition<CountOptions> = {
     return {
       rolls,
       transformTotal: (_total, currentRolls) => {
-        const aboveCount = currentRolls.filter(r => matchesAbove(r, options)).length
-        const belowCount = currentRolls.filter(r => matchesBelow(r, options)).length
-        const exactCount = currentRolls.filter(r => matchesExact(r, options)).length
-
         if (options.deduct) {
-          return aboveCount + exactCount - belowCount
+          const aboveOptions = {
+            ...(options.greaterThan !== undefined ? { greaterThan: options.greaterThan } : {}),
+            ...(options.greaterThanOrEqual !== undefined
+              ? { greaterThanOrEqual: options.greaterThanOrEqual }
+              : {}),
+            ...(options.exact !== undefined ? { exact: options.exact } : {})
+          }
+          const belowOptions = {
+            ...(options.lessThan !== undefined ? { lessThan: options.lessThan } : {}),
+            ...(options.lessThanOrEqual !== undefined
+              ? { lessThanOrEqual: options.lessThanOrEqual }
+              : {})
+          }
+          const aboveCount = currentRolls.filter(r => matchesComparison(r, aboveOptions)).length
+          const belowCount = currentRolls.filter(r => matchesComparison(r, belowOptions)).length
+          return aboveCount - belowCount
         }
-        return aboveCount + belowCount + exactCount
+        return currentRolls.filter(r => matchesComparison(r, options)).length
       }
     }
   }

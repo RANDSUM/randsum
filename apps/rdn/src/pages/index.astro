@@ -1,0 +1,32 @@
+---
+import { getCollection, render } from 'astro:content'
+import { getLatestVersion, getVersions } from '../utils/versions'
+import SpecLayout from '../layouts/SpecLayout.astro'
+import SpecContent from '../components/SpecContent.astro'
+import SidebarNav from '../components/SidebarNav.astro'
+import OnThisPage from '../components/OnThisPage.astro'
+
+const latestId = await getLatestVersion()
+const allVersions = await getVersions()
+const entries = await getCollection('specs')
+const entry = entries.find((e) => e.id === latestId)
+if (!entry) throw new Error(`No spec entry found for version: ${latestId}`)
+const { Content, headings } = await render(entry)
+const specUrl = 'https://notation.randsum.dev'
+---
+
+<SpecLayout
+  title="RANDSUM Dice Notation Specification"
+  version={latestId}
+  versions={allVersions}
+  isLatest={true}
+  specMarkdown={entry.body ?? ''}
+  specUrl={specUrl}
+  headings={headings}
+>
+  <SidebarNav slot="sidebar" headings={headings} version={latestId} isLatest={true} />
+  <SpecContent slot="content">
+    <Content />
+  </SpecContent>
+  <OnThisPage slot="aside" headings={headings} />
+</SpecLayout>

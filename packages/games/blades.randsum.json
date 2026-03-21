@@ -40,9 +40,9 @@
       "rating": {
         "type": "integer",
         "minimum": 0,
-        "maximum": 4,
+        "maximum": 6,
         "default": 1,
-        "description": "Action rating (0 = desperate: roll 2 dice, keep lowest; 1–4 = roll that many, keep highest)"
+        "description": "Dice pool size including action rating, assists, and push (0 = desperate, 1-6 = standard)"
       }
     },
     "dice": {

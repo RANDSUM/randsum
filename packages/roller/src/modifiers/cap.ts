@@ -112,6 +112,10 @@ export const capModifier: ModifierDefinition<ComparisonOptions> = {
             ? greaterThanOrEqual
             : roll
 
+      // Gap 41: C{N} (bare integer) is parsed as `exact: [N]` internally.
+      // Despite the name "exact", the apply logic here implements max-cap semantics:
+      // clamp DOWN to `cap` if v > cap. This is correct behavior for "no result exceeds N".
+      // The `exact` representation is an internal detail; consumers should treat C{N} as a ceiling cap.
       const afterExactCap = (exact ?? []).reduce((v, cap) => (v > cap ? cap : v), afterHighCap)
 
       const afterLowCap =

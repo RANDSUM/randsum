@@ -169,5 +169,5 @@ P(success) = target / 20. Critical success on 1 (5%). Critical failure on 20 (5%
 ## References
 
 - [Full probability tables](references/PROBABILITY_TABLES.md) -- 4d6L distribution, advantage/disadvantage curves, Blades and PbtA lookup tables
-- [Dice notation spec](../../packages/roller/RANDSUM_DICE_NOTATION.md) -- complete modifier syntax
+- [RANDSUM Dice Notation Specification](https://notation.randsum.dev) -- complete modifier syntax and taxonomy
 - [Game system mechanics](../dice-rolling/references/GAME_SYSTEMS.md) -- how each game interprets rolls

@@ -5,13 +5,18 @@ import { ModifierError } from '../errors'
 import type { ModifierDefinition } from './schema'
 import { indicesByRank } from './poolSelection'
 
+// keepMiddlePattern accepts an optional count argument (e.g. KM2, KM3).
+// When N is given, N dice are dropped from each end (keeping pool - 2N).
+// When bare KM is used, N defaults to 1 (keeping pool - 2).
+// This parameterized form is intentional and documented in the `docs` array above.
+// The formal spec defines bare KM; KM(n) is the extended form accepted by the code.
 const keepMiddlePattern = /[Kk][Mm](\d+)?/
 const keepHighestPattern = /[Kk](?![LlMm])(\d+)?/
 const keepLowestPattern = /[Kk][Ll](\d+)?/i
 
 export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<KeepOptions>({
   name: 'keep',
-  priority: 21,
+  priority: 66,
 
   pattern: /[Kk]([LlMm])?(\d+)?/,
 

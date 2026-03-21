@@ -7,6 +7,8 @@
 
 Dice rolling CLI and interactive TUI powered by [RANDSUM](https://github.com/RANDSUM/randsum).
 
+Powered by `@randsum/roller` — **[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**
+
 ## Install
 
 ```bash
@@ -49,7 +51,7 @@ randsum -i            # Explicit interactive flag
 
 ## Dice Notation
 
-Uses [RANDSUM Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) — supports drop/keep (`L`/`H`), reroll (`R{}`), exploding (`!`), unique (`U`), cap (`C{}`), and arithmetic (`+`/`-`).
+Uses [RANDSUM Dice Notation](https://notation.randsum.dev) — supports drop/keep (`L`/`H`), reroll (`R{}`), exploding (`!`), unique (`U`), cap (`C{}`), and arithmetic (`+`/`-`).
 
 ## License
 

@@ -2,6 +2,8 @@
 
 Discord bot for rolling dice using RANDSUM game mechanics. Built with discord.js and Bun.
 
+Powered by `@randsum/roller` — **[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**
+
 ## Features
 
 - **Generic Dice Rolling** (`/roll`) - Roll using standard dice notation (e.g., `2d6+3`)
@@ -91,7 +93,7 @@ bun run start
 ### Available Commands
 
 - `/roll notation:2d6+3` - Roll generic dice notation
-- `/blades dice:3` - Roll Blades in the Dark (0-10 dice)
+- `/blades dice:3` - Roll Blades in the Dark (0-4 dice)
 - `/dh modifier:2 advantage:Advantage` - Roll Daggerheart with options
 - `/root modifier:1` - Roll Root RPG (-4 to +4 modifier)
 - `/su table:Core Mechanic` - Roll on Salvage Union tables

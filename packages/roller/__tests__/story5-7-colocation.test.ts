@@ -45,27 +45,27 @@ describe('Story 5+7: Modifier Co-Location', () => {
       }
     })
 
-    test('modifiers are in a consistent order matching the old definition', () => {
+    test('modifiers are in priority order', () => {
       const names = RANDSUM_MODIFIERS.map(m => m.name)
       expect(names).toEqual([
         'cap',
-        'drop',
-        'keep',
         'replace',
         'reroll',
         'explode',
         'compound',
         'penetrate',
         'explodeSequence',
-        'unique',
         'wildDie',
+        'unique',
+        'drop',
+        'keep',
         'count',
         'multiply',
         'plus',
         'minus',
-        'sort',
         'integerDivide',
         'modulo',
+        'sort',
         'multiplyTotal'
       ])
     })

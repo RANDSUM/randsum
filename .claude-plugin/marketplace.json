@@ -1,14 +1,18 @@
 {
-  "name": "randsum-marketplace",
+  "name": "randsum",
   "owner": {
     "name": "RANDSUM",
     "email": "alxjrvs@gmail.com"
   },
+  "metadata": {
+    "description": "RANDSUM Dice Notation (RDN) tools for Claude Code — dice rolling, probability analysis, and game spec creation for tabletop RPGs",
+    "version": "1.0.0"
+  },
   "plugins": [
     {
       "name": "randsum",
-      "source": ".",
-      "description": "RANDSUM dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
+      "source": "./",
+      "description": "RDN-conformant dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
       "version": "1.0.0",
       "author": {
         "name": "RANDSUM",
@@ -23,10 +27,16 @@
         "ttrpg",
         "tabletop-rpg",
         "dice-notation",
+        "rdn",
         "dnd",
         "probability",
-        "game-mechanics"
-      ]
+        "game-mechanics",
+        "blades-in-the-dark",
+        "daggerheart",
+        "pbta"
+      ],
+      "category": "gaming",
+      "tags": ["dice-rolling", "ttrpg", "game-mechanics", "rdn-spec"]
     }
   ]
 }

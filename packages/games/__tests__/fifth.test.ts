@@ -116,6 +116,34 @@ describe('roll', () => {
     })
   })
 
+  // Gap 14: Deterministic crit detection
+  //
+  // The generated roll() does not expose a randomFn option — it calls executeRoll
+  // internally with no way to inject a seeded RNG from the game API layer.
+  // We use stress testing (9999 iterations) to deterministically exercise the
+  // nat-1 and nat-20 code paths and assert the correct boolean values.
+  describe('deterministic crit detection', () => {
+    test('isNatural1 is true when the rolled value is 1', () => {
+      const iterations = 9999
+      const results = Array.from({ length: iterations }, () => roll({ modifier: 0, crit: true }))
+      const nat1Result = results.find(r => r.rolls[0]?.initialRolls[0] === 1)
+      // With 9999 rolls of a d20, the probability of never rolling 1 is (19/20)^9999 ~= 0
+      expect(nat1Result).toBeDefined()
+      expect(nat1Result?.details.criticals?.isNatural1).toBe(true)
+      expect(nat1Result?.details.criticals?.isNatural20).toBe(false)
+    })
+
+    test('isNatural20 is true when the rolled value is 20', () => {
+      const iterations = 9999
+      const results = Array.from({ length: iterations }, () => roll({ modifier: 0, crit: true }))
+      const nat20Result = results.find(r => r.rolls[0]?.initialRolls[0] === 20)
+      // With 9999 rolls of a d20, the probability of never rolling 20 is (19/20)^9999 ~= 0
+      expect(nat20Result).toBeDefined()
+      expect(nat20Result?.details.criticals?.isNatural20).toBe(true)
+      expect(nat20Result?.details.criticals?.isNatural1).toBe(false)
+    })
+  })
+
   describe('input validation', () => {
     test('throws error for NaN modifier', () => {
       expect(() => roll({ modifier: NaN })).toThrow(

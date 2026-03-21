@@ -1,0 +1,85 @@
+---
+interface Props {
+  currentVersion: string
+  allVersions: string[]
+  isLatest: boolean
+}
+
+const { currentVersion, allVersions, isLatest } = Astro.props
+---
+
+<div class="version-dropdown-wrapper">
+  <button
+    class="version-dropdown-trigger"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-label="Select specification version"
+  >
+    <span class="version-current">
+      {currentVersion}
+      {isLatest && <span class="version-latest-badge">latest</span>}
+    </span>
+    <svg class="version-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <ul
+    class="version-dropdown-list"
+    role="listbox"
+    aria-label="Specification versions"
+    hidden
+  >
+    {allVersions.slice().reverse().map((v) => {
+      const isSelected = v === currentVersion
+      const href = v === allVersions[allVersions.length - 1] ? '/' : `/v/${v}/`
+      return (
+        <li role="option" aria-selected={isSelected}>
+          <a href={href} class:list={['version-option', { 'version-option--active': isSelected }]}>
+            <span>{v}</span>
+            {v === allVersions[allVersions.length - 1] && (
+              <span class="version-latest-badge">latest</span>
+            )}
+          </a>
+        </li>
+      )
+    })}
+  </ul>
+</div>
+
+<script>
+  const wrapper = document.querySelector('.version-dropdown-wrapper')
+  const trigger = wrapper?.querySelector<HTMLElement>('.version-dropdown-trigger')
+  const list = wrapper?.querySelector('.version-dropdown-list')
+
+  function open() {
+    list?.removeAttribute('hidden')
+    trigger?.setAttribute('aria-expanded', 'true')
+  }
+
+  function close() {
+    list?.setAttribute('hidden', '')
+    trigger?.setAttribute('aria-expanded', 'false')
+  }
+
+  trigger?.addEventListener('click', () => {
+    const isOpen = trigger.getAttribute('aria-expanded') === 'true'
+    if (isOpen) {
+      close()
+    } else {
+      open()
+    }
+  })
+
+  document.addEventListener('click', (e) => {
+    if (!wrapper?.contains(e.target as Node)) {
+      close()
+    }
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      close()
+      ;(trigger as HTMLElement | null)?.focus()
+    }
+  })
+</script>

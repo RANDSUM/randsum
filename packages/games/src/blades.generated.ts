@@ -21,14 +21,14 @@ export function roll(
   if (input?.rating !== undefined && typeof input?.rating === 'number')
     validateFinite(
       input?.rating,
-      'Action rating (0 = desperate: roll 2 dice, keep lowest; 1–4 = roll that many, keep highest)'
+      'Dice pool size including action rating, assists, and push (0 = desperate, 1-6 = standard)'
     )
   if (input?.rating !== undefined && typeof input?.rating === 'number')
     validateRange(
       input?.rating,
       0,
-      4,
-      'Action rating (0 = desperate: roll 2 dice, keep lowest; 1–4 = roll that many, keep highest)'
+      6,
+      'Dice pool size including action rating, assists, and push (0 = desperate, 1-6 = standard)'
     )
   if (input?.rating === 0) {
     const r = executeRoll({ sides: 6, quantity: 2, modifiers: { keep: { lowest: 1 } } })

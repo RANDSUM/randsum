@@ -1,0 +1,41 @@
+---
+---
+
+<article class="spec-content-body" aria-label="Specification content">
+  <slot />
+</article>
+
+<script>
+  // Group consecutive "**Label:** value" paragraphs into styled property cards.
+  // These are <p> elements whose first child is a <strong> ending with ":"
+  const body = document.querySelector('.spec-content-body')
+  if (body) {
+    const paragraphs = Array.from(body.querySelectorAll('p'))
+    let group: HTMLElement[] = []
+
+    function flushGroup() {
+      if (group.length < 2) {
+        group = []
+        return
+      }
+      const wrapper = document.createElement('div')
+      wrapper.className = 'prop-card'
+      const firstEl = group[0]!
+      firstEl.parentNode!.insertBefore(wrapper, firstEl)
+      for (const p of group) {
+        wrapper.appendChild(p)
+      }
+      group = []
+    }
+
+    for (const p of paragraphs) {
+      const strong = p.querySelector(':scope > strong:first-child')
+      if (strong && strong.textContent?.endsWith(':')) {
+        group.push(p)
+      } else {
+        flushGroup()
+      }
+    }
+    flushGroup()
+  }
+</script>

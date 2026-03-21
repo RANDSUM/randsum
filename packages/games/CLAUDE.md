@@ -89,7 +89,7 @@ Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate
 2. Run `bun run --filter @randsum/games gen` to generate `src/<shortcode>.generated.ts`
 3. Add a subpath export in `package.json` under `"exports"` (follow existing pattern)
 4. Add the shortcode to `AVAILABLE_GAMES` in `src/index.ts`
-5. Add a size-limit entry in `package.json` (8 KB limit for most games)
+5. Add a size-limit entry in `package.json` (15 KB limit for most games, 35 KB for salvageunion)
 6. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
 7. Run `bun run --filter @randsum/games check` to verify everything passes
 
@@ -119,5 +119,7 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + f
 - Games depend only on `@randsum/roller`. Games never depend on each other.
 - Bundle size limit: 15 KB per game (35 KB for salvageunion due to baked-in tables).
 - Remote data (e.g., Salvage Union tables) is fetched at codegen time and baked into generated code. Zero runtime network calls.
+
+For the formal modifier taxonomy and classification system, see https://notation.randsum.dev.
 
 See the root `CLAUDE.md` for monorepo-wide conventions (TypeScript style, testing framework, build output).

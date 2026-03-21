@@ -1,0 +1,74 @@
+---
+import HeroHeader from '../components/HeroHeader.astro'
+import VersionBanner from '../components/VersionBanner.astro'
+import SkipLink from '../components/SkipLink.astro'
+import ShareActions from '../components/ShareActions.astro'
+import MobileMenu from '../components/MobileMenu.astro'
+import '../styles/global.css'
+
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  title: string
+  version: string
+  versions: string[]
+  isLatest: boolean
+  specMarkdown?: string
+  specUrl?: string
+  headings?: Heading[]
+}
+
+const { title, version, versions, isLatest, specMarkdown = '', specUrl = '', headings = [] } = Astro.props
+const pageTitle = isLatest
+  ? `${title}`
+  : `${title} — ${version}`
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      // Apply saved theme before render to prevent flash
+      const saved = localStorage.getItem('rdn-theme')
+      if (saved === 'light') document.documentElement.classList.add('light')
+    </script>
+  </head>
+  <body>
+    <SkipLink />
+    <MobileMenu headings={headings} version={version} isLatest={isLatest} />
+    <HeroHeader version={version} versions={versions} isLatest={isLatest} />
+    <VersionBanner isLatest={isLatest} />
+    <div class="spec-layout">
+      <nav class="spec-sidebar" aria-label="Spec sections">
+        <slot name="sidebar">
+          <p class="label" style="color: var(--text-muted);">Sidebar</p>
+        </slot>
+      </nav>
+      <main id="main-content" class="spec-content">
+        <slot name="content" />
+      </main>
+      <aside class="spec-aside" aria-label="In this section">
+        <slot name="aside">
+          <p class="label" style="color: var(--text-muted);">On this page</p>
+        </slot>
+      </aside>
+    </div>
+    {specMarkdown && <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />}
+    <script>
+      const toggle = document.querySelector('[data-theme-toggle]')
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isLight = document.documentElement.classList.toggle('light')
+          localStorage.setItem('rdn-theme', isLight ? 'light' : 'dark')
+        })
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,110 @@
+---
+title: RANDSUM CLI — Command-Line Dice Roller
+description: Roll dice from your terminal using RANDSUM notation. Supports verbose output, JSON output, repeat rolls, and seeded random.
+---
+
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+The **RANDSUM CLI** is a command-line dice roller powered by `@randsum/roller`. Pass any RANDSUM notation and get instant results in your terminal.
+
+## Installation
+
+Install globally with Bun or npm:
+
+<CodeExample lang="bash" code={`# Bun
+bun add -g @randsum/cli
+
+# npm
+npm install -g @randsum/cli
+
+# Run without installing
+npx @randsum/cli 4d6L`} />
+
+Requires Node >= 18 or Bun.
+
+## Usage
+
+```
+randsum [notation...] [flags]
+```
+
+Pass one or more notation arguments. Multiple notations are combined into a single roll result.
+
+<CodeExample lang="bash" code={`randsum 4d6L             # Roll 4d6, drop lowest
+randsum 2d20L +5         # Roll with advantage + modifier
+randsum 1d20 -v          # Verbose output
+randsum 3d6 --json       # JSON output
+randsum 4d6L -r 6        # Roll 6 times`} />
+
+## Flags
+
+| Flag | Description |
+|---|---|
+| `-v`, `--verbose` | Show detailed roll breakdown (raw dice, kept dice, total) |
+| `--json` | Output result as JSON |
+| `-r N`, `--repeat N` | Roll N times and print each result |
+| `-s N`, `--seed N` | Use a seeded random number generator for reproducible results |
+| `-h`, `--help` | Show help text |
+| `-V`, `--version` | Show installed version |
+
+## Output Formats
+
+### Compact (default)
+
+Shows the total, followed by the final dice values in brackets, followed by any modifier descriptions.
+
+```
+14  [3, 5, 6]  drop lowest 1
+```
+
+### Verbose (`-v`)
+
+Multi-line breakdown showing each roll group with raw dice, kept dice (when modifiers apply), and total.
+
+```
+Roll:  4d6, drop lowest 1
+Raw:   [2, 3, 5, 6]
+Kept:  [3, 5, 6]
+Total: 14
+```
+
+### JSON (`--json`)
+
+Structured JSON output. Useful for piping into other tools.
+
+```json
+{
+  "total": 14,
+  "rolls": [
+    {
+      "description": ["4d6", "drop lowest 1"],
+      "raw": [2, 3, 5, 6],
+      "kept": [3, 5, 6],
+      "total": 14
+    }
+  ]
+}
+```
+
+## Examples
+
+<CodeExample lang="bash" code={`# D&D ability score generation — roll 6 sets of 4d6 drop lowest
+randsum 4d6L -r 6
+
+# Advantage roll — two d20s, keep highest, plus 5
+randsum 2d20H +5
+
+# Seeded roll for reproducible results
+randsum 2d6 -s 42
+
+# Combine multiple notation groups
+randsum 2d6+3 1d8
+
+# JSON output for scripting
+randsum 4d6L --json | jq '.total'`} />
+
+## Links
+
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/apps/cli)
+- [RANDSUM notation reference](/notation/randsum-dice-notation/)
+- [\`@randsum/roller\` API reference](/roller/api-reference/)

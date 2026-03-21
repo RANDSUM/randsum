@@ -1,0 +1,156 @@
+---
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  headings: Heading[]
+  version: string
+  isLatest: boolean
+}
+
+const { headings, version, isLatest } = Astro.props
+
+const SIDEBAR_GROUPS = [
+  {
+    label: 'Foundations',
+    prefixes: ['1.', '2.', '3.']
+  },
+  {
+    label: 'Features',
+    prefixes: ['4.', '5.']
+  },
+  {
+    label: 'Pipeline',
+    prefixes: ['6.', '7.']
+  },
+  {
+    label: 'Reference',
+    prefixes: ['8.', '9.', '10.']
+  },
+  {
+    label: 'Appendices',
+    prefixes: ['A.', 'B.', 'C.', 'D.']
+  }
+]
+
+// Only top-level headings (depth 2) for sidebar navigation
+const topHeadings = headings.filter((h) => h.depth === 2)
+
+function getGroupForHeading(text: string) {
+  for (const group of SIDEBAR_GROUPS) {
+    for (const prefix of group.prefixes) {
+      if (text.startsWith(prefix)) return group.label
+    }
+  }
+  return null
+}
+
+// Build grouped structure
+const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) => ({
+  label: g.label,
+  items: topHeadings.filter((h) => getGroupForHeading(h.text) === g.label)
+})).filter((g) => g.items.length > 0)
+---
+
+<div class="sidebar-inner">
+  <div class="sidebar-version">
+    <span class="label" style="color: var(--text-muted);">Version</span>
+    <span class="sidebar-version-badge">
+      {version}{isLatest ? <span class="sidebar-latest-badge">latest</span> : null}
+    </span>
+  </div>
+
+  <nav aria-label="Spec sections">
+    {grouped.map((group, groupIdx) => (
+      <div class="sidebar-group">
+        <span class="label sidebar-group-label">{group.label}</span>
+        <ul class="sidebar-list" role="list">
+          {group.items.map((heading, itemIdx) => {
+            const isFirst = groupIdx === 0 && itemIdx === 0
+            return (
+              <li>
+                <a
+                  href={`#${heading.slug}`}
+                  class:list={['sidebar-link', { active: isFirst }]}
+                  aria-current={isFirst ? 'true' : undefined}
+                  data-sidebar-link
+                >
+                  {heading.text}
+                </a>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    ))}
+  </nav>
+</div>
+
+<script>
+  const content = document.querySelector('.spec-content-body')
+  const sidebarLinks = document.querySelectorAll<HTMLAnchorElement>('[data-sidebar-link]')
+
+  if (content && sidebarLinks.length > 0) {
+    let activeSectionSlug: string | null = null
+
+    function setActive(slug: string) {
+      if (slug === activeSectionSlug) return
+      activeSectionSlug = slug
+
+      for (const link of sidebarLinks) {
+        const isActive = link.getAttribute('href') === `#${slug}`
+        link.classList.toggle('active', isActive)
+        if (isActive) {
+          link.setAttribute('aria-current', 'true')
+        } else {
+          link.removeAttribute('aria-current')
+        }
+      }
+
+      document.dispatchEvent(
+        new CustomEvent('section-change', { detail: { slug } })
+      )
+    }
+
+    const h2Elements = Array.from(content.querySelectorAll<HTMLHeadingElement>('h2[id]'))
+
+    // Use scroll listener for reliable section tracking.
+    // IntersectionObserver with tight rootMargin misses sections when
+    // the h2 heading scrolls past the narrow trigger zone too quickly.
+    function findCurrentSection(): string | null {
+      const threshold = window.innerHeight * 0.2
+      let current: string | null = null
+      for (const h2 of h2Elements) {
+        const rect = h2.getBoundingClientRect()
+        if (rect.top <= threshold) {
+          current = h2.id
+        } else {
+          break
+        }
+      }
+      return current
+    }
+
+    let ticking = false
+    function onScroll() {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const slug = findCurrentSection()
+        if (slug) setActive(slug)
+        ticking = false
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    // Activate the first section on page load
+    const initialSlug = findCurrentSection() ?? h2Elements[0]?.id
+    if (initialSlug) {
+      setActive(initialSlug)
+    }
+  }
+</script>

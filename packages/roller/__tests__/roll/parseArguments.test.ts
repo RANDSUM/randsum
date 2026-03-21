@@ -474,7 +474,7 @@ describe(parseArguments, () => {
       })
 
       describe('like a complicated dice notation', () => {
-        const argument = `10d20 H2 L V{1=2,>2=6} D{<2,>5,2,4} C{<2,>18} R{5,2}3 U{5}  R{<6} ! +2 -5 +3`
+        const argument = `10d20H2LV{1=2,>2=6}D{<2,>5,2,4}C{<2,>18}R{5,2}3U{5}R{<6}!+2-5+3`
 
         test('returns a RollParameter matching the notation', () => {
           const [params] = parseArguments(argument, 1)

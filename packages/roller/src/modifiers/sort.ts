@@ -4,12 +4,12 @@ import type { ModifierDefinition } from './schema'
 
 type SortDirection = 'asc' | 'desc'
 
-// Matches s, sa, sd (case-insensitive) but NOT S{ (count successes)
-const sortPattern = /[Ss]([Aa]|[Dd])?(?![{\d])/
+// Matches sa, sd (case-insensitive) but NOT S{ (count successes); bare s is not valid per spec
+const sortPattern = /[Ss]([Aa]|[Dd])(?![{\d])/
 
 export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<SortDirection>({
   name: 'sort',
-  priority: 92,
+  priority: 95,
 
   pattern: sortPattern,
 
@@ -25,7 +25,7 @@ export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<So
   },
 
   toNotation: options => {
-    return options === 'desc' ? 'sd' : 's'
+    return options === 'desc' ? 'sd' : 'sa'
   },
 
   toDescription: options => {
@@ -41,11 +41,10 @@ export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<So
       title: 'Sort',
       description:
         'Sort the dice pool in ascending or descending order. Does not affect the total \u2014 only the presentation order of dice.',
-      displayBase: 's',
-      displayOptional: 'a/d',
+      displayBase: 'sa',
+      displayOptional: '/sd',
       forms: [
-        { notation: 's', note: 'Sort ascending (default)' },
-        { notation: 'sa', note: 'Sort ascending explicitly' },
+        { notation: 'sa', note: 'Sort ascending' },
         { notation: 'sd', note: 'Sort descending' }
       ],
       examples: [

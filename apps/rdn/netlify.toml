@@ -1,0 +1,9 @@
+[build]
+  base = "apps/rdn"
+  command = "bun run prebuild && bun run build"
+  publish = "dist"
+
+[dev]
+  command = "astro dev"
+  targetPort = 4322
+  port = 8889

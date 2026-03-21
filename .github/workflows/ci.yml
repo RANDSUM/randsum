@@ -21,6 +21,7 @@ jobs:
       games: ${{ steps.filter.outputs.games }}
       cli: ${{ steps.filter.outputs.cli }}
       site: ${{ steps.filter.outputs.site }}
+      rdn: ${{ steps.filter.outputs.rdn }}
       skill: ${{ steps.filter.outputs.skill }}
       changesets: ${{ steps.filter.outputs.changesets }}
     steps:
@@ -44,8 +45,12 @@ jobs:
               - 'packages/**'
               - 'apps/site/**'
               - '.github/workflows/ci.yml'
+            rdn:
+              - 'apps/rdn/**'
+              - '.github/workflows/ci.yml'
             skill:
               - 'skills/**'
+              - '.claude-plugin/**'
               - '.github/workflows/ci.yml'
             changesets:
               - '.changeset/**'
@@ -148,8 +153,32 @@ jobs:
       - run: bun run build
       - run: bun run --filter '@randsum/site' check
 
+  rdn:
+    name: rdn
+    needs: changes
+    if: needs.changes.outputs.rdn == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Bun version
+        id: bun-version
+        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter '@randsum/rdn' check
+
   skill:
-    name: skill-verify
+    name: claude-doctor
     needs: changes
     if: needs.changes.outputs.skill == 'true'
     runs-on: ubuntu-latest
@@ -161,7 +190,19 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ steps.bun-version.outputs.version }}
-      - run: npx skills-ref validate skills/dice-rolling/SKILL.md
+      - name: Verify skills
+        run: npx skills-ref validate skills/dice-rolling/SKILL.md
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Verify plugin
+        run: claude plugin validate .claude-plugin/plugin.json
+      - name: Verify marketplace
+        run: |
+          if [ -f .claude-plugin/marketplace.json ]; then
+            claude plugin validate .claude-plugin/marketplace.json
+          else
+            echo "No marketplace.json found, skipping"
+          fi
 
   publish-dry-run:
     name: publish (dry run)
@@ -193,7 +234,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, site, skill, publish-dry-run]
+    needs: [roller, games, cli, site, rdn, skill, publish-dry-run]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

@@ -21,4 +21,4 @@ bun run test                   # Run tests
 
 ## Dependencies
 
-- `@randsum/roller` ^3.0.0 - Core dice engine (bundled at build time via bunup)
+- `@randsum/roller` workspace:~ - Core dice engine (dev dependency, bundled into `dist/index.js` at build time via bunup — not a runtime dependency)

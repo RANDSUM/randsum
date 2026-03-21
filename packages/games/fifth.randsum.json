@@ -29,10 +29,10 @@
         "when": { "input": "crit" },
         "value": {
           "isNatural1": {
-            "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 1 }
+            "$dieCheck": { "pool": 0, "field": "initial", "die": 0, "operator": "=", "value": 1 }
           },
           "isNatural20": {
-            "$dieCheck": { "pool": 0, "field": "final", "die": 0, "operator": "=", "value": 20 }
+            "$dieCheck": { "pool": 0, "field": "initial", "die": 0, "operator": "=", "value": 20 }
           }
         }
       }

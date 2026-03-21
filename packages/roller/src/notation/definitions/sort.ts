@@ -2,12 +2,12 @@ import { type NotationSchema, defineNotationSchema } from '../schema'
 
 type SortDirection = 'asc' | 'desc'
 
-// Matches s, sa, sd (case-insensitive) but NOT S{ (count successes)
-const sortPattern = /[Ss]([Aa]|[Dd])?(?![{\d])/
+// Matches sa, sd (case-insensitive) but NOT S{ (count successes); bare s is not valid per spec
+const sortPattern = /[Ss]([Aa]|[Dd])(?![{\d])/
 
 export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<SortDirection>({
   name: 'sort',
-  priority: 92,
+  priority: 95,
 
   pattern: sortPattern,
 
@@ -23,7 +23,7 @@ export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<So
   },
 
   toNotation: options => {
-    return options === 'desc' ? 'sd' : 's'
+    return options === 'desc' ? 'sd' : 'sa'
   },
 
   toDescription: options => {

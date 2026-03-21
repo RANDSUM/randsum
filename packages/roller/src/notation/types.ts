@@ -42,17 +42,7 @@ export interface UniqueOptions {
   notUnique: number[]
 }
 
-export interface CountOptions {
-  /** Count dice greater than N */
-  greaterThan?: number
-  /** Count dice greater than or equal to N */
-  greaterThanOrEqual?: number
-  /** Count dice less than N */
-  lessThan?: number
-  /** Count dice less than or equal to N */
-  lessThanOrEqual?: number
-  /** Count dice matching exact values */
-  exact?: number[]
+export interface CountOptions extends ComparisonOptions {
   /** If true, below-threshold count subtracts from above-threshold count */
   deduct?: boolean
 }
@@ -86,11 +76,11 @@ export interface ModifierOptions {
   /** Ensure unique values (true or options) */
   unique?: boolean | UniqueOptions
   /** Exploding dice: reroll and add on max value (single pass) */
-  explode?: boolean
+  explode?: boolean | ComparisonOptions
   /** Compounding exploding: add to triggering die instead of creating new dice */
-  compound?: boolean | number
+  compound?: boolean | number | ComparisonOptions
   /** Penetrating exploding: subtract 1 from each subsequent explosion */
-  penetrate?: boolean | number
+  penetrate?: boolean | number | ComparisonOptions
   /** Count dice matching conditions instead of summing */
   count?: CountOptions
   /** Multiply dice result (before +/- arithmetic) */

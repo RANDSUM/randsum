@@ -14,6 +14,8 @@
 
 </div>
 
+**[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
+
 ## 📦 Monorepo Structure
 
 This repository contains multiple packages and applications for dice rolling and tabletop RPG mechanics:
@@ -133,7 +135,9 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 
 ### Key Resources
 
-- [Randsum Dice Notation](https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md) - A guide for using [Dice Notation](https://en.wikipedia.org/wiki/Dice_notation) with `randsum`
+- [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev) - Formal spec for dice notation syntax
+- [Documentation](https://randsum.dev)
+- [Playground](https://playground.randsum.dev)
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
 

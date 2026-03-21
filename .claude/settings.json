@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'bun.lockb'; then echo 'Blocked: do not edit bun.lockb directly. Run bun install instead.' && exit 2; fi"
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'bun\\.lock'; then echo 'Blocked: do not edit lockfiles directly. Run bun install instead.' && exit 2; fi"
           }
         ]
       }

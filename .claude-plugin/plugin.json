@@ -1,7 +1,7 @@
 {
   "name": "randsum",
   "version": "1.0.0",
-  "description": "RANDSUM dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
+  "description": "RDN-conformant dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
   "author": {
     "name": "RANDSUM",
     "url": "https://randsum.dev"
@@ -15,11 +15,10 @@
     "ttrpg",
     "tabletop-rpg",
     "dice-notation",
+    "rdn",
     "dnd",
     "probability",
     "game-mechanics"
   ],
-  "agents": ".claude/agents",
-  "skills": ".claude/skills",
-  "hooks": ".claude-plugin/hooks/hooks.json"
+  "skills": "./skills"
 }

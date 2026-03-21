@@ -71,8 +71,9 @@ Most developers should start with `@randsum/roller`. It includes the full notati
 
 ## Design principles
 
+- **RDN conformant** -- `@randsum/roller` implements the complete [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev) at Level 4 (Full) conformance, the formal standard for dice notation syntax in tabletop RPGs
 - **Zero core dependencies** -- `@randsum/roller` has no runtime dependencies and includes the full notation parser and validator
 - **Throws on invalid input** -- `roll()` throws typed errors on bad input (`ValidationError`, `ModifierError`, or `NotationParseError`); validate user-provided strings with `isDiceNotation()` or `validateNotation()` before rolling
 - **Game packages are code-generated** -- every game is defined as a `.randsum.json` spec and transformed into TypeScript by an internal codegen pipeline
 - **Strict TypeScript** -- `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, no `any`
-- **Bundle size enforced** -- roller 20KB (includes notation), game packages under 10KB each
+- **Bundle size enforced** -- roller 20KB (includes notation), game packages under 15KB each (35KB for salvageunion)

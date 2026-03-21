@@ -1,0 +1,18 @@
+# RANDSUM Dice Notation Specification
+
+The RANDSUM Dice Notation Specification defines the syntax and semantics of RANDSUM dice notation — a human-readable, machine-parseable format for expressing dice rolls in tabletop RPGs.
+
+## Latest Version
+
+- **v1.0-alpha**: https://notation.randsum.dev/v/1.0-alpha
+
+## Full Spec for LLMs
+
+The complete specification text is available at:
+https://notation.randsum.dev/llms-full.txt
+
+## Links
+
+- Site: https://notation.randsum.dev
+- GitHub: https://github.com/RANDSUM/randsum
+- npm: https://www.npmjs.com/package/@randsum/roller

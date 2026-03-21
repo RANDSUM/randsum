@@ -110,11 +110,16 @@ export default defineConfig({
               { label: 'Introduction', slug: 'notation/introduction' },
               { label: 'Getting Started', slug: 'notation/getting-started' },
               {
-                label: 'Randsum Dice Notation Spec',
+                label: 'RDN Syntax Guide',
                 slug: 'notation/randsum-dice-notation'
               },
               { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },
-              { label: 'API Reference', slug: 'notation/api-reference' }
+              { label: 'API Reference', slug: 'notation/api-reference' },
+              {
+                label: 'Formal Specification',
+                link: 'https://notation.randsum.dev',
+                attrs: { target: '_blank' }
+              }
             ]
           },
           {
@@ -155,8 +160,9 @@ export default defineConfig({
             icon: 'setting',
             items: [
               { label: 'Playground', link: 'https://playground.randsum.dev' },
+              { label: 'CLI', slug: 'tools/cli' },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
-              { label: 'Claude Skills', slug: 'tools/claude-code-skill' }
+              { label: 'Claude Plugin', slug: 'tools/claude-code-skill' }
             ]
           }
         ])

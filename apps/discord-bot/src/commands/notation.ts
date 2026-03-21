@@ -79,7 +79,7 @@ const notationReference = [
 export const notationCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('notation')
-    .setDescription('Randsum Dice Notation Reference'),
+    .setDescription('RANDSUM Dice Notation Reference'),
 
   async execute(interaction) {
     await interaction.deferReply()
@@ -93,11 +93,9 @@ export const notationCommand: Command = {
 
       const embed = new EmbedBuilder()
         .setColor('#FFD700')
-        .setTitle('randsum.dev')
-        .setURL(
-          'https://github.com/RANDSUM/randsum/blob/main/packages/roller/RANDSUM_DICE_NOTATION.md'
-        )
-        .setDescription('Dice Notation Reference Guide')
+        .setTitle('notation.randsum.dev')
+        .setURL('https://notation.randsum.dev')
+        .setDescription('RANDSUM Dice Notation Specification')
         .addFields(fields)
         .setFooter(embedFooterDetails)
 

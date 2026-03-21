@@ -70,10 +70,10 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('2d10V{1=2,2=3}')).toBe(true)
     })
 
-    test('returns true for dice notation with internal whitespace', () => {
-      expect(isDiceNotation('2d8 + 3')).toBe(true)
-      expect(isDiceNotation('4d6L + 2')).toBe(true)
-      expect(isDiceNotation('3d6 ! + 5')).toBe(true)
+    test('returns false for dice notation with internal whitespace', () => {
+      expect(isDiceNotation('2d8 + 3')).toBe(false)
+      expect(isDiceNotation('4d6L + 2')).toBe(false)
+      expect(isDiceNotation('3d6 ! + 5')).toBe(false)
     })
 
     test('returns true for dice notation with leading/trailing whitespace', () => {
@@ -84,8 +84,11 @@ describe('isDiceNotation', () => {
       expect(isDiceNotation('\n4d6\n')).toBe(true)
     })
 
+    test('returns false for zero-quantity dice notation', () => {
+      expect(isDiceNotation('0d6')).toBe(false)
+    })
+
     test('returns true for edge case dice values', () => {
-      expect(isDiceNotation('0d6')).toBe(true)
       expect(isDiceNotation('999d999')).toBe(true)
     })
 

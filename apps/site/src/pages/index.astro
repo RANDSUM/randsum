@@ -7,6 +7,16 @@ import { GameSchemaViewer } from '../components/GameSchemaViewer'
 import { IntegrationViewer } from '../components/IntegrationViewer'
 import LabeledSection from '../components/LabeledSection.astro'
 
+function getBadgeUrl(pkg: { npmPackage: string; version?: string }): string | null {
+  if (pkg.version) {
+    return `https://img.shields.io/badge/v${pkg.version}-a855f7?style=flat-square`
+  }
+  if (pkg.npmPackage.startsWith('@')) {
+    return `https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=a855f7`
+  }
+  return null
+}
+
 const codeExample = `import { roll } from '@randsum/roller'
 
 const { total, rolls } = roll('4d6L')
@@ -158,8 +168,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           </div>
           <div class="playground-pitch">
             <h2 class="pitch-heading">
-              <span class="pitch-accent">@randsum/roller</span>
-              <span class="pitch-plain">:</span>
+              <span class="pitch-plain">Every </span><span class="pitch-purple">modifier</span><span class="pitch-plain">,</span>
               <br />
               <span class="pitch-color-cycle" aria-label="parsed">{"parsed".split('').map((c, i) => <span class="pitch-color-char" style={`animation-delay: ${i * 0.15}s`}>{c}</span>)}</span>
               <span class="pitch-plain"> and </span>
@@ -167,7 +176,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
-              A complete dice notation spec &mdash; fully specified, documented, and implemented in a single zero-dependency engine. Every common rolling pattern covered so you never have to invent your own.
+              <code>@randsum/roller</code> is a zero-dependency dice engine with a complete notation spec &mdash; fully specified, documented, and implemented. Every common rolling pattern covered so you never have to invent your own.
             </p>
             <div class="pitch-actions">
               <a href="/notation/randsum-dice-notation/" class="btn btn-outline btn-sm">
@@ -197,7 +206,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               <span class="pitch-plain">,</span>
               <br />
               <span class="pitch-plain">get </span>
-              <span class="pitch-purple">Rollers</span>
+              <span class="pitch-purple">Rolls</span>
               <span class="pitch-plain">.</span>
             </h2>
             <p class="pitch-body">
@@ -232,13 +241,14 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           </div>
           <div class="integrations-pitch">
             <h2 class="pitch-heading">
+              <span class="pitch-plain">You can </span>
               <span class="pitch-accent">Roll</span>
-              <span class="pitch-plain"> your own </span>
-              <span class="pitch-sky">way</span>
-              <span class="pitch-plain">.</span>
+              <br />
+              <span class="pitch-sky">your</span>
+              <span class="pitch-plain"> own way.</span>
             </h2>
             <p class="pitch-body">
-              In your terminal, in your Discord, or in your dev workspace &mdash; wherever you need numbers, RANDSUM is there. A CLI for quick rolls, a Discord bot for game night, AI skills for Claude, and an npm package for everything else.
+              In your terminal, in your Discord, or in your dev workspace &mdash; wherever you need numbers, RANDSUM is there. A CLI for quick rolls, a Discord bot for game night, a Claude plugin for AI-assisted rolling, and an npm package for everything else.
             </p>
             <div class="pitch-actions">
               <a href="/tools/discord-bot/" class="btn btn-outline btn-sm">
@@ -251,7 +261,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               </a>
               <a href="/tools/claude-code-skill/" class="btn btn-outline btn-sm">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                Claude Skills
+                Claude Plugin
               </a>
             </div>
           </div>
@@ -263,30 +273,30 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
     <!-- Features -->
     <LabeledSection label="Features" labelSide="left">
-      <div class="pkg-grid pkg-grid--4 feature-grid">
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Zero Dependencies</h3>
-          </div>
-          <p class="pkg-card-desc">No transitive deps. One package, zero supply chain surface, under 20KB.</p>
+      <div class="pkg-grid feature-grid">
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Zero Dependencies</h3></div>
         </div>
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">RANDSUM Dice Notation</h3>
-          </div>
-          <p class="pkg-card-desc">A complete dice notation spec. 19 modifiers covering every common rolling pattern &mdash; parsed, validated, and fully specified.</p>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">TypeScript First</h3></div>
         </div>
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Bun Native</h3>
-          </div>
-          <p class="pkg-card-desc">Built with Bun from the ground up. Bun workspace monorepo, bun:test, bunup builds. Fast installs, fast tests, fast everything.</p>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Bun Native</h3></div>
         </div>
-        <div class="pkg-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
-          <div class="pkg-card-header">
-            <h3 class="pkg-card-name">Type-Safe</h3>
-          </div>
-          <p class="pkg-card-desc">Typed inputs, typed outputs. Every roll result is fully structured &mdash; no type assertions, no <code>any</code>, no guessing.</p>
+        <a class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff" href="https://notation.randsum.dev" target="_blank" rel="noopener noreferrer">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">RDN Spec</h3></div>
+        </a>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Game Support</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">ESM Only</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Under 20KB</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">26 Modifiers</h3></div>
         </div>
       </div>
     </LabeledSection>
@@ -302,10 +312,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
-              {pkg.npmPackage.startsWith('@') && (
-                <span class="pkg-card-version" data-npm-version={pkg.npmPackage}>
-                  {pkg.version ? `v${pkg.version}` : ''}
-                </span>
+              {getBadgeUrl(pkg) && (
+                <img class="pkg-card-badge" src={getBadgeUrl(pkg)!} alt={`${pkg.displayName} version`} loading="lazy" />
               )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
@@ -345,10 +353,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           >
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
-              {pkg.npmPackage.startsWith('@') && (
-                <span class="pkg-card-version" data-npm-version={pkg.npmPackage}>
-                  {pkg.version ? `v${pkg.version}` : ''}
-                </span>
+              {getBadgeUrl(pkg) && (
+                <img class="pkg-card-badge" src={getBadgeUrl(pkg)!} alt={`${pkg.displayName} version`} loading="lazy" />
               )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
@@ -377,12 +383,13 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
               <li><a href="/roller/introduction/">@randsum/roller</a></li>
               <li><a href="/notation/introduction/">Dice Notation</a></li>
               <li><a href="/games/introduction/">Game Packages</a></li>
-              <li><a href="/tools/claude-code-skill/">Claude Skills</a></li>
+              <li><a href="/tools/claude-code-skill/">Claude Plugin</a></li>
             </ul>
           </div>
           <div class="footer-col">
             <h4>Resources</h4>
             <ul>
+              <li><a href="https://notation.randsum.dev" target="_blank" rel="noopener noreferrer">RDN Spec</a></li>
               <li><a href="https://playground.randsum.dev" target="_blank" rel="noopener noreferrer">Playground</a></li>
               <li>
                 <a href="https://github.com/RANDSUM/randsum" target="_blank" rel="noopener noreferrer">
@@ -752,6 +759,11 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     color: var(--card-hover-text, #fff);
   }
 
+  .pkg-card-badge {
+    height: 18px;
+    vertical-align: middle;
+  }
+
   .pkg-card-version {
     font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
     font-size: 0.75rem;
@@ -808,28 +820,33 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     padding: 0.75rem 1rem;
   }
 
-  .feature-grid .pkg-card-header {
-    margin: -0.75rem -1rem 0.5rem;
-    padding: 0.5rem 1rem;
+  .feature-card {
+    min-height: auto;
+    padding: 0;
   }
 
-  .feature-grid .pkg-card-name {
-    font-size: 0.85rem;
+  .feature-card:hover {
+    transform: none;
   }
 
-  .feature-grid .pkg-card-desc {
-    font-size: 0.75rem;
+  .feature-card .pkg-card-header {
     margin: 0;
-    line-height: 1.5;
+    padding: 0.6rem 1rem;
+    border-bottom: none;
   }
 
-  .pkg-card--feature .pkg-card-desc code {
-    font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-    font-size: 0.75rem;
-    color: var(--sl-color-accent-high);
-    background: rgba(168, 85, 247, 0.1);
-    border-radius: 3px;
-    padding: 0.05em 0.3em;
+  .feature-card .pkg-card-header::before {
+    display: none;
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    .feature-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   /* ===== Section Divider ===== */
@@ -1237,7 +1254,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
   :global(.integration-display) {
     flex: 1;
-    min-height: 0;
+    min-height: 14rem;
   }
 
   :global(.integration-terminal) {
@@ -1282,14 +1299,18 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
   :global(.integration-image-wrap) {
     display: flex;
     justify-content: center;
+    align-items: center;
     border-radius: var(--radius, 5px);
     overflow: hidden;
+    min-height: 14rem;
   }
 
   :global(.integration-image) {
     max-width: 100%;
+    max-height: 14rem;
     height: auto;
     border-radius: var(--radius, 5px);
+    object-fit: contain;
   }
 
   .integrations-pitch {
