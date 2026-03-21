@@ -940,34 +940,31 @@ body.mobile-menu-open {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   margin-bottom: 1.25rem;
 }
 
 .prop-card p {
-  display: grid;
-  grid-template-columns: 8rem 1fr;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-  padding: 0.35rem 0;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .prop-card p:last-child {
   border-bottom: none;
   margin-bottom: 0;
+  padding-bottom: 0;
 }
 
-.prop-card p > strong {
-  color: var(--text-muted);
+.prop-card p > strong:first-child {
+  color: var(--accent);
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  align-self: baseline;
-  padding-top: 0.1rem;
+  margin-right: 0.5rem;
 }
 
 /* === OnThisPage (right TOC) === */
