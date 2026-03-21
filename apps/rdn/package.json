@@ -1,5 +1,5 @@
 {
-  "name": "@randsum/spec",
+  "name": "@randsum/rdn",
   "version": "1.0.0",
   "description": "RANDSUM Dice Notation Specification site at notation.randsum.dev",
   "private": true,
@@ -31,7 +31,8 @@
     "typecheck": "astro check",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc"
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.7",
