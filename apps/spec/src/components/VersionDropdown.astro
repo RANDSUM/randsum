@@ -48,7 +48,7 @@ const { currentVersion, allVersions, isLatest } = Astro.props
 
 <script>
   const wrapper = document.querySelector('.version-dropdown-wrapper')
-  const trigger = wrapper?.querySelector('.version-dropdown-trigger')
+  const trigger = wrapper?.querySelector<HTMLElement>('.version-dropdown-trigger')
   const list = wrapper?.querySelector('.version-dropdown-list')
 
   function open() {

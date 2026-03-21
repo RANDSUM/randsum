@@ -616,3 +616,64 @@ body {
   font-weight: 700;
   color: var(--text-primary);
 }
+
+/* === OnThisPage (right TOC) === */
+.toc-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toc-title {
+  color: var(--text-muted);
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.toc-item {
+  border-left: 2px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.toc-item.toc-depth-3 {
+  padding-left: 0;
+}
+
+.toc-item.toc-depth-4 {
+  padding-left: 0.75rem;
+}
+
+.toc-item:has(.toc-link.active) {
+  border-left-color: var(--accent);
+}
+
+.toc-link {
+  display: block;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.15s ease;
+}
+
+.toc-link:hover {
+  color: var(--accent-light);
+}
+
+.toc-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.toc-link.active {
+  color: var(--accent);
+}

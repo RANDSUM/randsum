@@ -1,0 +1,168 @@
+---
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  headings: Heading[]
+}
+
+const { headings } = Astro.props
+
+// Group headings by h2 sections
+// Each h2 starts a new group; h3/h4 are children of the current h2
+type Group = {
+  h2: Heading
+  children: Heading[]
+}
+
+const groups: Group[] = []
+let current: Group | null = null
+
+for (const h of headings) {
+  if (h.depth === 2) {
+    current = { h2: h, children: [] }
+    groups.push(current)
+  } else if ((h.depth === 3 || h.depth === 4) && current) {
+    current.children.push(h)
+  }
+}
+
+// Use only the first group's children for initial render
+// Scroll spy (S-008) will repopulate this list dynamically
+const firstGroup = groups[0]
+const initialChildren = firstGroup?.children ?? []
+---
+
+<div class="toc-inner">
+  <p class="label toc-title">On this page</p>
+  <ul class="toc-list" data-toc-list aria-label="On this page navigation">
+    {initialChildren.map((h) => (
+      <li class={`toc-item toc-depth-${h.depth}`} data-toc-section={h.slug}>
+        <a href={`#${h.slug}`} class="toc-link">
+          {h.text}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<!-- Embed full heading data for scroll spy (S-008) -->
+<script type="application/json" id="toc-sections-data">
+  {JSON.stringify(groups.map(g => ({
+    slug: g.h2.slug,
+    text: g.h2.text,
+    children: g.children.map(c => ({ depth: c.depth, slug: c.slug, text: c.text }))
+  })))}
+</script>
+
+<script>
+  ;(function () {
+    type TocChild = { depth: number; slug: string; text: string }
+    type TocSection = { slug: string; text: string; children: TocChild[] }
+
+    const dataEl = document.getElementById('toc-sections-data')
+    const tocList = document.querySelector<HTMLElement>('[data-toc-list]')
+    const content = document.querySelector('.spec-content-body')
+
+    if (!dataEl || !tocList || !content) return
+
+    const sections: TocSection[] = JSON.parse(dataEl.textContent ?? '[]')
+    let subObserver: IntersectionObserver | null = null
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    function setActiveTocLink(slug: string) {
+      const links = tocList!.querySelectorAll<HTMLAnchorElement>('.toc-link')
+      for (const link of links) {
+        const isActive = link.getAttribute('href') === `#${slug}`
+        link.classList.toggle('active', isActive)
+        if (isActive) {
+          link.setAttribute('aria-current', 'true')
+        } else {
+          link.removeAttribute('aria-current')
+        }
+      }
+    }
+
+    function buildTocNode(child: TocChild): HTMLLIElement {
+      const li = document.createElement('li')
+      li.className = `toc-item toc-depth-${child.depth}`
+      li.dataset['tocSection'] = child.slug
+      const a = document.createElement('a')
+      a.href = `#${child.slug}`
+      a.className = 'toc-link'
+      a.textContent = child.text
+      li.appendChild(a)
+      return li
+    }
+
+    function activateSection(sectionSlug: string) {
+      const section = sections.find((s) => s.slug === sectionSlug)
+      if (!section) return
+
+      // Repopulate list using DOM methods
+      while (tocList!.firstChild) {
+        tocList!.removeChild(tocList!.firstChild)
+      }
+      for (const child of section.children) {
+        tocList!.appendChild(buildTocNode(child))
+      }
+
+      // Tear down previous sub-observer
+      if (subObserver) {
+        subObserver.disconnect()
+        subObserver = null
+      }
+
+      if (section.children.length === 0) return
+
+      // Find sub-heading elements in content
+      const subEls = section.children
+        .map((c) => content!.querySelector<HTMLElement>(`#${CSS.escape(c.slug)}`))
+        .filter((el): el is HTMLElement => el !== null)
+
+      if (subEls.length === 0) return
+
+      // Set first sub-heading active initially
+      setActiveTocLink(subEls[0]!.id)
+
+      subObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              setActiveTocLink((entry.target as HTMLElement).id)
+              break
+            }
+          }
+        },
+        { threshold: 0, rootMargin: '-10% 0px -80% 0px' }
+      )
+
+      for (const el of subEls) {
+        subObserver.observe(el)
+      }
+    }
+
+    document.addEventListener('section-change', (e) => {
+      const slug = (e as CustomEvent<{ slug: string }>).detail.slug
+      activateSection(slug)
+    })
+
+    // Respect reduced motion for TOC anchor clicks
+    tocList.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement
+      const anchor = target.closest<HTMLAnchorElement>('.toc-link')
+      if (!anchor) return
+      const href = anchor.getAttribute('href')
+      if (!href) return
+      const targetEl = document.querySelector<HTMLElement>(href)
+      if (!targetEl) return
+      e.preventDefault()
+      targetEl.scrollIntoView({ behavior: prefersReducedMotion ? 'instant' : 'smooth' })
+      history.pushState(null, '', href)
+    })
+  })()
+</script>

@@ -4,6 +4,7 @@ import { getLatestVersion, getVersions } from '../utils/versions'
 import SpecLayout from '../layouts/SpecLayout.astro'
 import SpecContent from '../components/SpecContent.astro'
 import SidebarNav from '../components/SidebarNav.astro'
+import OnThisPage from '../components/OnThisPage.astro'
 
 const latestId = await getLatestVersion()
 const allVersions = await getVersions()
@@ -23,4 +24,5 @@ const { Content, headings } = await render(entry)
   <SpecContent slot="content">
     <Content />
   </SpecContent>
+  <OnThisPage slot="aside" headings={headings} />
 </SpecLayout>

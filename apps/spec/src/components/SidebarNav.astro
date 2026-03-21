@@ -88,3 +88,50 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
     ))}
   </nav>
 </div>
+
+<script>
+  const content = document.querySelector('.spec-content-body')
+  const sidebarLinks = document.querySelectorAll<HTMLAnchorElement>('[data-sidebar-link]')
+
+  if (content && sidebarLinks.length > 0) {
+    let activeSectionSlug: string | null = null
+
+    function setActive(slug: string) {
+      if (slug === activeSectionSlug) return
+      activeSectionSlug = slug
+
+      for (const link of sidebarLinks) {
+        const isActive = link.getAttribute('href') === `#${slug}`
+        link.classList.toggle('active', isActive)
+        if (isActive) {
+          link.setAttribute('aria-current', 'true')
+        } else {
+          link.removeAttribute('aria-current')
+        }
+      }
+
+      document.dispatchEvent(
+        new CustomEvent('section-change', { detail: { slug } })
+      )
+    }
+
+    const h2Elements = content.querySelectorAll<HTMLHeadingElement>('h2[id]')
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const slug = (entry.target as HTMLHeadingElement).id
+            setActive(slug)
+            break
+          }
+        }
+      },
+      { threshold: 0, rootMargin: '-10% 0px -80% 0px' }
+    )
+
+    for (const h2 of h2Elements) {
+      observer.observe(h2)
+    }
+  }
+</script>
