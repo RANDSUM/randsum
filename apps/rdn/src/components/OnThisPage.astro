@@ -71,8 +71,11 @@ const initialChildren = firstGroup?.children ?? []
     if (!dataEl || !tocList || !content) return
 
     const sections: TocSection[] = JSON.parse(dataEl.textContent ?? '[]')
+    const h2Elements = Array.from(content.querySelectorAll<HTMLHeadingElement>('h2[id]'))
+
+    let activeSectionSlug: string | null = null
     let subElements: HTMLElement[] = []
-    let activeSubSection: string | null = null
+    let activeSubSlug: string | null = null
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -102,6 +105,9 @@ const initialChildren = firstGroup?.children ?? []
     }
 
     function activateSection(sectionSlug: string) {
+      if (sectionSlug === activeSectionSlug) return
+      activeSectionSlug = sectionSlug
+
       const section = sections.find((s) => s.slug === sectionSlug)
       if (!section) return
 
@@ -110,7 +116,7 @@ const initialChildren = firstGroup?.children ?? []
         tocTitle.textContent = section.text
       }
 
-      // Repopulate list using DOM methods
+      // Repopulate list
       while (tocList!.firstChild) {
         tocList!.removeChild(tocList!.firstChild)
       }
@@ -120,6 +126,7 @@ const initialChildren = firstGroup?.children ?? []
 
       if (section.children.length === 0) {
         subElements = []
+        activeSubSlug = null
         return
       }
 
@@ -128,15 +135,25 @@ const initialChildren = firstGroup?.children ?? []
         .map((c) => content!.querySelector<HTMLElement>(`#${CSS.escape(c.slug)}`))
         .filter((el): el is HTMLElement => el !== null)
 
-      // Set first sub-heading active initially
-      if (subElements[0]) {
-        activeSubSection = subElements[0].id
-        setActiveTocLink(activeSubSection)
-      }
+      activeSubSlug = null
     }
 
-    function updateActiveSubHeading() {
-      if (subElements.length === 0) return
+    function findCurrentSection(): string | null {
+      const threshold = window.innerHeight * 0.2
+      let current: string | null = null
+      for (const h2 of h2Elements) {
+        const rect = h2.getBoundingClientRect()
+        if (rect.top <= threshold) {
+          current = h2.id
+        } else {
+          break
+        }
+      }
+      return current
+    }
+
+    function findCurrentSubHeading(): string | null {
+      if (subElements.length === 0) return null
       const threshold = window.innerHeight * 0.2
       let current: string | null = null
       for (const el of subElements) {
@@ -147,9 +164,28 @@ const initialChildren = firstGroup?.children ?? []
           break
         }
       }
-      if (current && current !== activeSubSection) {
-        activeSubSection = current
-        setActiveTocLink(current)
+      return current
+    }
+
+    function onScroll() {
+      // Update section
+      const sectionSlug = findCurrentSection()
+      if (sectionSlug) {
+        activateSection(sectionSlug)
+      }
+
+      // Update sub-heading highlight
+      const subSlug = findCurrentSubHeading()
+      if (subSlug && subSlug !== activeSubSlug) {
+        activeSubSlug = subSlug
+        setActiveTocLink(subSlug)
+      } else if (!subSlug && subElements.length > 0 && subElements[0]) {
+        // Before first sub-heading, highlight the first one
+        const firstId = subElements[0].id
+        if (firstId !== activeSubSlug) {
+          activeSubSlug = firstId
+          setActiveTocLink(firstId)
+        }
       }
     }
 
@@ -158,15 +194,13 @@ const initialChildren = firstGroup?.children ?? []
       if (ticking) return
       ticking = true
       requestAnimationFrame(() => {
-        updateActiveSubHeading()
+        onScroll()
         ticking = false
       })
     }, { passive: true })
 
-    document.addEventListener('section-change', (e) => {
-      const slug = (e as CustomEvent<{ slug: string }>).detail.slug
-      activateSection(slug)
-    })
+    // Initial activation
+    onScroll()
 
     // Respect reduced motion for TOC anchor clicks
     tocList.addEventListener('click', (e) => {
