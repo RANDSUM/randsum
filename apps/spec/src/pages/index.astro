@@ -4,6 +4,7 @@ import { getLatestVersion, getVersions } from '../utils/versions'
 import SpecLayout from '../layouts/SpecLayout.astro'
 import SpecContent from '../components/SpecContent.astro'
 import SidebarNav from '../components/SidebarNav.astro'
+import OnThisPage from '../components/OnThisPage.astro'
 
 const latestId = await getLatestVersion()
 const allVersions = await getVersions()
@@ -27,4 +28,5 @@ const specUrl = 'https://notation.randsum.dev'
   <SpecContent slot="content">
     <Content />
   </SpecContent>
+  <OnThisPage slot="aside" headings={headings} />
 </SpecLayout>
