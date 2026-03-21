@@ -87,10 +87,11 @@ describe('ReferenceDetail data contract', () => {
       expect(doc?.comparisons).toBeUndefined()
     })
 
-    test('! (explode) does not have comparisons', () => {
+    test('! (explode) has comparisons for conditional explode', () => {
       const doc = MODIFIER_DOCS['!']
       expect(doc).toBeDefined()
-      expect(doc?.comparisons).toBeUndefined()
+      expect(doc?.comparisons).toBeDefined()
+      expect(doc?.comparisons?.length).toBeGreaterThan(0)
     })
   })
 
