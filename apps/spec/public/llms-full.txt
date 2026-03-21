@@ -952,6 +952,7 @@ A Level 2 implementation MUST support all Level 1 features plus:
 - Cap (`C{...}`)
 - Drop (`L`, `H`, `D{...}`)
 - Keep (`K`, `kl`)
+- Keep Middle (`KM`)
 - Replace (`V{...}`)
 - Reroll (`R{...}`)
 - Reroll Once (`ro{...}`)
