@@ -303,9 +303,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
               {pkg.npmPackage.startsWith('@') && (
-                <span class="pkg-card-version" data-npm-version={pkg.npmPackage}>
-                  {pkg.version ? `v${pkg.version}` : ''}
-                </span>
+                <img class="pkg-card-badge" src={`https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=a855f7`} alt={`${pkg.npmPackage} version`} loading="lazy" />
               )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
@@ -346,9 +344,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
             <div class="pkg-card-header">
               <h3 class="pkg-card-name">{pkg.displayName}</h3>
               {pkg.npmPackage.startsWith('@') && (
-                <span class="pkg-card-version" data-npm-version={pkg.npmPackage}>
-                  {pkg.version ? `v${pkg.version}` : ''}
-                </span>
+                <img class="pkg-card-badge" src={`https://img.shields.io/npm/v/${pkg.npmPackage}?style=flat-square&color=a855f7`} alt={`${pkg.npmPackage} version`} loading="lazy" />
               )}
             </div>
             <p class="pkg-card-desc">{pkg.description}</p>
@@ -383,6 +379,7 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
           <div class="footer-col">
             <h4>Resources</h4>
             <ul>
+              <li><a href="https://notation.randsum.dev" target="_blank" rel="noopener noreferrer">RDN Spec</a></li>
               <li><a href="https://playground.randsum.dev" target="_blank" rel="noopener noreferrer">Playground</a></li>
               <li>
                 <a href="https://github.com/RANDSUM/randsum" target="_blank" rel="noopener noreferrer">
@@ -750,6 +747,11 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
   .pkg-card:hover .pkg-card-name {
     color: var(--card-hover-text, #fff);
+  }
+
+  .pkg-card-badge {
+    height: 18px;
+    vertical-align: middle;
   }
 
   .pkg-card-version {
