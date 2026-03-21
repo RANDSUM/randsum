@@ -79,7 +79,10 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/cli",
+    "apps/discord-bot",
+    "apps/playground",
+    "apps/site"
   ],
   "overrides": {
     "lodash": "4.17.23",
