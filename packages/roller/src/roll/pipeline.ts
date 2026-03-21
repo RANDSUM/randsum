@@ -77,7 +77,10 @@ export class RollPipeline<T = string> {
 
   /**
    * Draw values without replacement from a pool of [1..sides].
-   * If quantity exceeds sides, the pool reshuffles after exhaustion.
+   * If quantity exceeds sides, the pool reshuffles after exhaustion and
+   * drawing continues from the fresh pool. This is the intended behavior
+   * (reshuffle, not cap) as documented in RDN v1.0-alpha §4.4 and the
+   * site notation reference. `8DD6` returns 8 values, not 6.
    */
   private drawWithoutReplacement(quantity: number, sides: number): number[] {
     const result: number[] = []
