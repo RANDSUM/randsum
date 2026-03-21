@@ -137,10 +137,11 @@ const initialChildren = firstGroup?.children ?? []
 
     function updateActiveSubHeading() {
       if (subElements.length === 0) return
-      const scrollY = window.scrollY + window.innerHeight * 0.15
+      const threshold = window.innerHeight * 0.2
       let current: string | null = null
       for (const el of subElements) {
-        if (el.offsetTop <= scrollY) {
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= threshold) {
           current = el.id
         } else {
           break

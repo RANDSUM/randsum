@@ -121,10 +121,11 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
     // IntersectionObserver with tight rootMargin misses sections when
     // the h2 heading scrolls past the narrow trigger zone too quickly.
     function findCurrentSection(): string | null {
-      const scrollY = window.scrollY + window.innerHeight * 0.15
+      const threshold = window.innerHeight * 0.2
       let current: string | null = null
       for (const h2 of h2Elements) {
-        if (h2.offsetTop <= scrollY) {
+        const rect = h2.getBoundingClientRect()
+        if (rect.top <= threshold) {
           current = h2.id
         } else {
           break
