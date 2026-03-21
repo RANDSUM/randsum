@@ -211,9 +211,7 @@ Comparison utilities (`parseComparisonNotation`, `hasConditions`, `formatCompari
 
 ## Dice Notation Reference
 
-The formal specification (taxonomy, classification, conformance levels) lives at https://notation.randsum.dev. This package's `RANDSUM_DICE_NOTATION.md` is the syntax guide with examples and TypeScript code.
-
-`RANDSUM_DICE_NOTATION.md` in this package is the canonical reference for all notation syntax, modifier behavior, and options-object forms.
+The RANDSUM Dice Notation Specification lives at https://notation.randsum.dev — the authoritative reference for taxonomy, classification, conformance levels, syntax, and modifier behavior.
 
 ## Notation API
 
@@ -260,11 +258,9 @@ To add a modifier:
 
 1. Create `src/modifiers/<mod>.ts` — export `<mod>Schema` and `<mod>Modifier`
 2. Register `<mod>Modifier` in `RANDSUM_MODIFIERS` in `src/modifiers/index.ts`
-3. Add the notation to `RANDSUM_DICE_NOTATION.md`
+3. Document the notation at https://notation.randsum.dev (update `apps/spec/src/content/specs/`)
 
-See `docs/adr/ADR-007-modifier-co-location.md` for the architectural rationale.
-
-See `RANDSUM_DICE_NOTATION.md` for the full modifier priority table. See https://notation.randsum.dev for the formal modifier taxonomy and faceted classification.
+See `docs/adr/ADR-007-modifier-co-location.md` for the architectural rationale. See https://notation.randsum.dev for the full modifier priority table and faceted classification.
 
 ### Tokenize Isolation Invariant
 

@@ -73,6 +73,5 @@ Lefthook runs on commit: ESLint, Prettier, and typecheck. If hooks fail, run `bu
 
 - [GitHub Issues](https://github.com/RANDSUM/randsum/issues) -- bugs and feature requests
 - [Project Board](https://github.com/orgs/RANDSUM/projects/2/views/1) -- roadmap and priorities
-- [Dice Notation Specification](https://notation.randsum.dev) -- formal notation spec (taxonomy, pipeline, conformance)
-- [Dice Notation Syntax Guide](packages/roller/RANDSUM_DICE_NOTATION.md) -- notation syntax reference with examples
+- [RANDSUM Dice Notation Specification](https://notation.randsum.dev) -- formal notation spec (taxonomy, pipeline, conformance, syntax)
 - [Architecture Decisions](docs/adr/) -- key design decisions and rationale

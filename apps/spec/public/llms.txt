@@ -4,7 +4,7 @@ The RANDSUM Dice Notation Specification defines the syntax and semantics of RAND
 
 ## Latest Version
 
-- **v1.0** (Draft): https://notation.randsum.dev/spec/v1.0
+- **v1.0-alpha**: https://notation.randsum.dev/v/1.0-alpha
 
 ## Full Spec for LLMs
 

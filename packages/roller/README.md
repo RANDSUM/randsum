@@ -90,7 +90,7 @@ try {
 | `4d6R{<3}` | Reroll values below 3       |
 | `4d6U`     | Unique rolls only           |
 
-See [RANDSUM_DICE_NOTATION.md](./RANDSUM_DICE_NOTATION.md) for the complete notation syntax guide. See [notation.randsum.dev](https://notation.randsum.dev) for the formal specification (taxonomy, pipeline, conformance).
+See the [RANDSUM Dice Notation Specification](https://notation.randsum.dev) for the complete notation reference, taxonomy, and syntax guide.
 
 ### Other Exports
 

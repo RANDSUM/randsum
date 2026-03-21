@@ -5,11 +5,20 @@ export async function getVersions(): Promise<string[]> {
   return entries
     .map(e => e.id)
     .sort((a, b) => {
-      const toNum = (v: string) => v.replace(/^v/, '').split('.').map(Number)
-      const [aMaj = 0, aMin = 0] = toNum(a)
-      const [bMaj = 0, bMin = 0] = toNum(b)
-      if (aMaj !== bMaj) return aMaj - bMaj
-      return aMin - bMin
+      const parse = (v: string) => {
+        const clean = v.replace(/^v/, '')
+        const [numPart = '0', preRelease] = clean.split('-') as [string, string | undefined]
+        const [maj = 0, min = 0] = numPart.split('.').map(Number)
+        return { maj, min, preRelease }
+      }
+      const pa = parse(a)
+      const pb = parse(b)
+      if (pa.maj !== pb.maj) return pa.maj - pb.maj
+      if (pa.min !== pb.min) return pa.min - pb.min
+      // Pre-release sorts before release (1.0-alpha < 1.0)
+      if (pa.preRelease && !pb.preRelease) return -1
+      if (!pa.preRelease && pb.preRelease) return 1
+      return (pa.preRelease ?? '').localeCompare(pb.preRelease ?? '')
     })
 }
 
