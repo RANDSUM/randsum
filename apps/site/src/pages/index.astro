@@ -263,15 +263,31 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
     <!-- Features -->
     <LabeledSection label="Features" labelSide="left">
-      <div class="feature-chips">
-        <span class="feature-chip">Zero Dependencies</span>
-        <span class="feature-chip">TypeScript First</span>
-        <span class="feature-chip">Bun Native</span>
-        <a class="feature-chip feature-chip--link" href="https://notation.randsum.dev" target="_blank" rel="noopener noreferrer">RDN Spec</a>
-        <span class="feature-chip">Game Support</span>
-        <span class="feature-chip">ESM Only</span>
-        <span class="feature-chip">Under 20KB</span>
-        <span class="feature-chip">26 Modifiers</span>
+      <div class="pkg-grid feature-grid">
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Zero Dependencies</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">TypeScript First</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Bun Native</h3></div>
+        </div>
+        <a class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff" href="https://notation.randsum.dev" target="_blank" rel="noopener noreferrer">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">RDN Spec</h3></div>
+        </a>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Game Support</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">ESM Only</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">Under 20KB</h3></div>
+        </div>
+        <div class="pkg-card feature-card" style="--card-accent: var(--sl-color-accent); --card-hover-text: #fff">
+          <div class="pkg-card-header"><h3 class="pkg-card-name">26 Modifiers</h3></div>
+        </div>
       </div>
     </LabeledSection>
 
@@ -792,43 +808,23 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     padding: 0.75rem 1rem;
   }
 
-  .feature-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  .feature-card {
+    min-height: auto;
   }
 
-  .feature-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.4rem 1rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--sl-color-white);
-    background: var(--sl-color-gray-6);
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 999px;
-    white-space: nowrap;
-    letter-spacing: 0.02em;
-    transition: border-color 0.15s ease, background 0.15s ease;
+  .feature-card .pkg-card-header {
+    margin-bottom: 0;
+    border-bottom: none;
   }
 
-  .feature-chip:hover {
-    border-color: var(--sl-color-accent);
+  .feature-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 
-  .feature-chip--link {
-    color: var(--sl-color-accent-high);
-    border-color: var(--sl-color-accent);
-    background: rgba(168, 85, 247, 0.08);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .feature-chip--link:hover {
-    background: rgba(168, 85, 247, 0.16);
-    color: #fff;
+  @media (max-width: 768px) {
+    .feature-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   /* ===== Section Divider ===== */
