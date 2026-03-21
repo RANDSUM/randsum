@@ -1,0 +1,14 @@
+---
+interface Props {
+  isLatest: boolean
+}
+
+const { isLatest } = Astro.props
+---
+
+{!isLatest && (
+  <div class="version-banner" role="alert">
+    <span>You are viewing an older version of this specification.</span>
+    <a href="/" class="version-banner-link">View latest &rarr;</a>
+  </div>
+)}

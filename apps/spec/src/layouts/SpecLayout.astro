@@ -1,14 +1,17 @@
 ---
+import HeroHeader from '../components/HeroHeader.astro'
+import VersionBanner from '../components/VersionBanner.astro'
 import SkipLink from '../components/SkipLink.astro'
 import '../styles/global.css'
 
 interface Props {
   title: string
   version: string
+  versions: string[]
   isLatest: boolean
 }
 
-const { title, version, isLatest } = Astro.props
+const { title, version, versions, isLatest } = Astro.props
 const pageTitle = isLatest
   ? `${title}`
   : `${title} — ${version}`
@@ -23,7 +26,8 @@ const pageTitle = isLatest
   </head>
   <body>
     <SkipLink />
-    <slot name="hero" />
+    <HeroHeader version={version} versions={versions} isLatest={isLatest} />
+    <VersionBanner isLatest={isLatest} />
     <div class="spec-layout">
       <nav class="spec-sidebar" aria-label="Spec sections">
         <slot name="sidebar">

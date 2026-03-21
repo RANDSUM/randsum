@@ -88,10 +88,6 @@ body {
   min-height: 100vh;
 }
 
-.spec-hero {
-  grid-column: 1 / -1;
-}
-
 .spec-sidebar {
   position: sticky;
   top: 0;
@@ -206,7 +202,9 @@ body {
   color: var(--text-secondary);
   text-decoration: none;
   border-radius: 4px;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
 }
 
 .sidebar-link:hover {
@@ -220,7 +218,7 @@ body {
 }
 
 .sidebar-link.active,
-.sidebar-link[aria-current="true"] {
+.sidebar-link[aria-current='true'] {
   color: var(--accent);
   background: var(--accent-tint);
 }
@@ -297,7 +295,9 @@ body {
   font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
 .version-dropdown-trigger:hover {
@@ -321,7 +321,7 @@ body {
   transition: transform 0.15s ease;
 }
 
-.version-dropdown-trigger[aria-expanded="true"] .version-chevron {
+.version-dropdown-trigger[aria-expanded='true'] .version-chevron {
   transform: rotate(180deg);
 }
 
@@ -351,7 +351,9 @@ body {
   font-size: 13px;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
 }
 
 .version-option:hover {
@@ -409,4 +411,208 @@ body {
 .version-banner-link:focus-visible {
   outline: 2px solid #eab308;
   outline-offset: 2px;
+}
+
+/* === SpecContent: Rendered Markdown Styles === */
+.spec-content-body {
+  max-width: var(--content-max-width);
+}
+
+/* --- Headings --- */
+.spec-content-body h2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  background-image: linear-gradient(90deg, var(--accent) 40%, transparent);
+  background-size: 100% 2px;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
+.spec-content-body h2:first-child {
+  margin-top: 0;
+}
+
+.spec-content-body h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.spec-content-body h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* --- Paragraphs --- */
+.spec-content-body p {
+  margin-bottom: 1rem;
+}
+
+/* --- Links --- */
+.spec-content-body a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.spec-content-body a:hover {
+  text-decoration: underline;
+  color: var(--accent-light);
+}
+
+/* --- Horizontal Rules (section dividers) --- */
+.spec-content-body hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent) 40%, transparent);
+  margin: 2.5rem 0;
+}
+
+/* --- Tables --- */
+.spec-content-body table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 1.5rem;
+  font-size: 14px;
+  line-height: 1.6;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.spec-content-body thead th {
+  background: var(--accent);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  white-space: nowrap;
+}
+
+.spec-content-body tbody td {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.spec-content-body tbody tr:nth-child(odd) {
+  background: var(--surface);
+}
+
+.spec-content-body tbody tr:nth-child(even) {
+  background: var(--bg);
+}
+
+/* --- Blockquotes / Callout Boxes --- */
+.spec-content-body blockquote {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-tint);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  border-radius: 0 6px 6px 0;
+  color: var(--text-secondary);
+}
+
+.spec-content-body blockquote p {
+  margin-bottom: 0.5rem;
+}
+
+.spec-content-body blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Inline Code --- */
+.spec-content-body code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+}
+
+/* --- Code Blocks --- */
+.spec-content-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+.spec-content-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: 13px;
+}
+
+/* --- Lists --- */
+.spec-content-body ul,
+.spec-content-body ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.spec-content-body ul {
+  list-style-type: disc;
+}
+
+.spec-content-body ul li::marker {
+  color: var(--accent);
+}
+
+.spec-content-body ol li::marker {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.spec-content-body li {
+  margin-bottom: 0.35rem;
+}
+
+.spec-content-body li > ul,
+.spec-content-body li > ol {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+/* --- Definition Lists (Glossary) --- */
+.spec-content-body dl {
+  margin-bottom: 1.25rem;
+}
+
+.spec-content-body dt {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.75rem;
+}
+
+.spec-content-body dd {
+  margin-left: 1.5rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* --- Strong and Emphasis --- */
+.spec-content-body strong {
+  font-weight: 700;
+  color: var(--text-primary);
 }
