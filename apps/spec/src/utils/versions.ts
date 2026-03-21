@@ -5,9 +5,9 @@ export async function getVersions(): Promise<string[]> {
   return entries
     .map(e => e.id)
     .sort((a, b) => {
-      const parse = (v: string) => {
+      const parse = (v: string): { maj: number; min: number; preRelease: string | undefined } => {
         const clean = v.replace(/^v/, '')
-        const [numPart = '0', preRelease] = clean.split('-') as [string, string | undefined]
+        const [numPart, preRelease] = clean.split('-') as [string, string | undefined]
         const [maj = 0, min = 0] = numPart.split('.').map(Number)
         return { maj, min, preRelease }
       }
