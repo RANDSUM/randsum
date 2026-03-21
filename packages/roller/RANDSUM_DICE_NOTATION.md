@@ -1,6 +1,6 @@
 # Randsum Dice Notation
 
-> **Formal Specification:** For the complete taxonomy, classification system, conformance levels, and execution pipeline specification, see [RANDSUM_DICE_NOTATION_SPEC.md](../../RANDSUM_DICE_NOTATION_SPEC.md) at the repository root. This document is the notation syntax guide; the spec is the authoritative reference for implementers.
+> **Formal Specification:** For the complete taxonomy, classification system, conformance levels, and execution pipeline specification, see [notation.randsum.dev](https://notation.randsum.dev). This document is the notation syntax guide; the spec is the authoritative reference for implementers.
 
 ## Overview
 
@@ -20,7 +20,7 @@ Every notation feature is classified as a **primitive**, **alias**, or **macro**
 
 Alias features are documented alongside the primitive they desugar to. Each alias section traces the exact desugaring.
 
-> For the full faceted classification system (Pipeline Stages, Operational Verbs, Output Channels, and Conformance Levels), see the [Formal Specification](../../RANDSUM_DICE_NOTATION_SPEC.md).
+> For the full faceted classification system (Pipeline Stages, Operational Verbs, Output Channels, and Conformance Levels), see [notation.randsum.dev](https://notation.randsum.dev).
 
 ### Dice Types
 

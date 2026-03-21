@@ -1,3 +1,6 @@
+<!-- This file is the content source for https://notation.randsum.dev -->
+<!-- Read the spec at the website. Do not link to this file directly. -->
+
 # Randsum Dice Notation Specification
 
 **Version:** 1.0

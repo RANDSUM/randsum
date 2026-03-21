@@ -133,7 +133,7 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 
 ### Key Resources
 
-- [Randsum Dice Notation Specification](RANDSUM_DICE_NOTATION_SPEC.md) - Formal spec for RANDSUM Dice Notation (taxonomy, pipeline, conformance)
+- [Randsum Dice Notation Specification](https://notation.randsum.dev) - Formal spec for RANDSUM Dice Notation (taxonomy, pipeline, conformance)
 - [Notation Syntax Guide](packages/roller/RANDSUM_DICE_NOTATION.md) - Notation syntax with examples
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?

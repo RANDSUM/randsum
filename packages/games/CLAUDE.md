@@ -120,6 +120,6 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + f
 - Bundle size limit: 15 KB per game (35 KB for salvageunion due to baked-in tables).
 - Remote data (e.g., Salvage Union tables) is fetched at codegen time and baked into generated code. Zero runtime network calls.
 
-For the formal modifier taxonomy and classification system, see `RANDSUM_DICE_NOTATION_SPEC.md` at the repository root.
+For the formal modifier taxonomy and classification system, see https://notation.randsum.dev.
 
 See the root `CLAUDE.md` for monorepo-wide conventions (TypeScript style, testing framework, build output).
