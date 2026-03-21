@@ -27,7 +27,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "prebuild": "bash scripts/copy-latest-spec.sh",
     "astro": "astro",
     "typecheck": "astro check",
     "lint": "eslint . -c ../../eslint.config.js",
