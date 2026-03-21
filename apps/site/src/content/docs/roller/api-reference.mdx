@@ -126,7 +126,7 @@ Return type of `roll()`. Extends `RollResult`.
 | Property | Type | Description |
 |---|---|---|
 | `total` | `number` | Combined total of all roll groups |
-| `result` | `T[]` | Aggregate result values (defaults to `string[]`) |
+| `values` | `T[]` | Aggregate result values (defaults to `string[]`) |
 | `rolls` | `RollRecord<T>[]` | Full record for each roll group |
 
 ### `RollRecord<T>`
@@ -147,14 +147,14 @@ Detailed record of a single roll group.
 | `label` | `string` (optional) | Annotation label from notation |
 | `customResults` | `T[]` (optional) | Custom face results for non-numeric dice |
 
-### `RollResult<TResult, TRollRecord>`
+### `RollResult<TValues, TRollRecord>`
 
 Generic base type.
 
 | Property | Type | Description |
 |---|---|---|
 | `rolls` | `TRollRecord[]` | Individual roll records |
-| `result` | `TResult` | Aggregate result |
+| `values` | `TValues` | Aggregate result |
 
 ## Input types
 
