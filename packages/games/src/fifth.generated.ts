@@ -40,7 +40,10 @@ export function roll(input?: {
     const details = {
       criticals:
         input?.crit !== undefined
-          ? { isNatural1: r.rolls[0]?.rolls[0] === 1, isNatural20: r.rolls[0]?.rolls[0] === 20 }
+          ? {
+              isNatural1: r.rolls[0]?.initialRolls[0] === 1,
+              isNatural20: r.rolls[0]?.initialRolls[0] === 20
+            }
           : undefined
     }
     return { total, result: total, rolls: r.rolls, details }
@@ -55,7 +58,10 @@ export function roll(input?: {
     const details = {
       criticals:
         input?.crit !== undefined
-          ? { isNatural1: r.rolls[0]?.rolls[0] === 1, isNatural20: r.rolls[0]?.rolls[0] === 20 }
+          ? {
+              isNatural1: r.rolls[0]?.initialRolls[0] === 1,
+              isNatural20: r.rolls[0]?.initialRolls[0] === 20
+            }
           : undefined
     }
     return { total, result: total, rolls: r.rolls, details }
@@ -65,7 +71,10 @@ export function roll(input?: {
   const details = {
     criticals:
       input?.crit !== undefined
-        ? { isNatural1: r.rolls[0]?.rolls[0] === 1, isNatural20: r.rolls[0]?.rolls[0] === 20 }
+        ? {
+            isNatural1: r.rolls[0]?.initialRolls[0] === 1,
+            isNatural20: r.rolls[0]?.initialRolls[0] === 20
+          }
         : undefined
   }
   return { total, result: total, rolls: r.rolls, details }
