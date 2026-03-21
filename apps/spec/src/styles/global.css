@@ -500,6 +500,15 @@ body {
   .mobile-menu-backdrop {
     transition: none;
   }
+
+  .sidebar-link,
+  .mobile-sidebar-link,
+  .version-dropdown-trigger,
+  .version-option,
+  .spec-hero-github,
+  .version-banner-link {
+    transition: none;
+  }
 }
 
 .mobile-menu-header {
