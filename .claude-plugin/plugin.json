@@ -20,6 +20,5 @@
     "probability",
     "game-mechanics"
   ],
-  "skills": "./skills",
-  "hooks": ".claude-plugin/hooks/hooks.json"
+  "skills": "./skills"
 }
