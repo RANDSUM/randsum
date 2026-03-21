@@ -1,11 +1,11 @@
-# spec.randsum.dev — Dice Notation Spec Site Design
+# notation.randsum.dev — Dice Notation Spec Site Design
 
 **Status:** Approved
 **Date:** 2026-03-20
 
 ## Goal
 
-Build a standalone Astro 6 app (`apps/spec`) that renders the RANDSUM Dice Notation Specification as a navigable, accessible, single-page web application at `spec.randsum.dev`. The markdown spec file remains the source of truth; the site is a presentation layer.
+Build a standalone Astro 6 app (`apps/spec`) that renders the RANDSUM Dice Notation Specification as a navigable, accessible, single-page web application at `notation.randsum.dev`. The markdown spec file remains the source of truth; the site is a presentation layer.
 
 ## Decisions Made
 
@@ -42,7 +42,7 @@ The spec markdown file at repo root is the source of truth. A build script copie
 ### Versioning
 
 - Spec versions stored as: `apps/spec/src/content/specs/v1.0.md`, `v1.1.md`, etc.
-- URL scheme: `spec.randsum.dev` (latest) or `spec.randsum.dev?v=1.0` (specific version)
+- URL scheme: `notation.randsum.dev` (latest) or `notation.randsum.dev?v=1.0` (specific version)
 - **Implementation**: All version content is embedded in the single HTML page at build time, wrapped in `<div data-version="1.0" hidden>` containers. Only the active version's container is visible. The client script reads `?v=` on load and toggles the `hidden` attribute. This is a purely static approach — no SSR, no redirects, no separate pages per version. For small version counts (1-5 expected), the bundle size impact is acceptable.
 - The version dropdown lists all versions, marks latest with "(latest)"
 - Selecting a version updates `?v=` query parameter and toggles visibility. Browser history is updated via `replaceState`.
@@ -242,7 +242,7 @@ apps/spec/
   src/
     pages/
       index.astro          -- single page entry point
-      404.astro            -- not found page (minimal, links to spec.randsum.dev)
+      404.astro            -- not found page (minimal, links to notation.randsum.dev)
     layouts/
       SpecLayout.astro     -- three-column layout shell
     components/
@@ -285,7 +285,7 @@ Client-side TypeScript (scroll spy, version switching, mobile menu) lives inside
 
 - **No spec files at build time**: `copy-latest-spec.sh` fails the build with an error message pointing to the expected file location.
 - **Invalid `?v=` parameter**: Client JS falls back to latest version, corrects the URL silently via `replaceState`.
-- **404 page**: Minimal page with the cyan accent, "Page not found" message, and a link back to `spec.randsum.dev`.
+- **404 page**: Minimal page with the cyan accent, "Page not found" message, and a link back to `notation.randsum.dev`.
 
 ## Out of Scope
 
