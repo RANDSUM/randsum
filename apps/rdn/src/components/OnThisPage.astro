@@ -37,7 +37,7 @@ const initialChildren = firstGroup?.children ?? []
 ---
 
 <div class="toc-inner">
-  <p class="label toc-title">On this page</p>
+  <p class="label toc-title" data-toc-title>In this section</p>
   <ul class="toc-list" data-toc-list aria-label="On this page navigation">
     {initialChildren.map((h) => (
       <li class={`toc-item toc-depth-${h.depth}`} data-toc-section={h.slug}>
@@ -65,12 +65,14 @@ const initialChildren = firstGroup?.children ?? []
 
     const dataEl = document.getElementById('toc-sections-data')
     const tocList = document.querySelector<HTMLElement>('[data-toc-list]')
+    const tocTitle = document.querySelector<HTMLElement>('[data-toc-title]')
     const content = document.querySelector('.spec-content-body')
 
     if (!dataEl || !tocList || !content) return
 
     const sections: TocSection[] = JSON.parse(dataEl.textContent ?? '[]')
-    let subObserver: IntersectionObserver | null = null
+    let subElements: HTMLElement[] = []
+    let activeSubSection: string | null = null
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -103,6 +105,11 @@ const initialChildren = firstGroup?.children ?? []
       const section = sections.find((s) => s.slug === sectionSlug)
       if (!section) return
 
+      // Update the title to show current section name
+      if (tocTitle) {
+        tocTitle.textContent = section.text
+      }
+
       // Repopulate list using DOM methods
       while (tocList!.firstChild) {
         tocList!.removeChild(tocList!.firstChild)
@@ -111,40 +118,49 @@ const initialChildren = firstGroup?.children ?? []
         tocList!.appendChild(buildTocNode(child))
       }
 
-      // Tear down previous sub-observer
-      if (subObserver) {
-        subObserver.disconnect()
-        subObserver = null
+      if (section.children.length === 0) {
+        subElements = []
+        return
       }
 
-      if (section.children.length === 0) return
-
       // Find sub-heading elements in content
-      const subEls = section.children
+      subElements = section.children
         .map((c) => content!.querySelector<HTMLElement>(`#${CSS.escape(c.slug)}`))
         .filter((el): el is HTMLElement => el !== null)
 
-      if (subEls.length === 0) return
-
       // Set first sub-heading active initially
-      setActiveTocLink(subEls[0]!.id)
-
-      subObserver = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              setActiveTocLink((entry.target as HTMLElement).id)
-              break
-            }
-          }
-        },
-        { threshold: 0, rootMargin: '-10% 0px -80% 0px' }
-      )
-
-      for (const el of subEls) {
-        subObserver.observe(el)
+      if (subElements[0]) {
+        activeSubSection = subElements[0].id
+        setActiveTocLink(activeSubSection)
       }
     }
+
+    function updateActiveSubHeading() {
+      if (subElements.length === 0) return
+      const scrollY = window.scrollY + window.innerHeight * 0.15
+      let current: string | null = null
+      for (const el of subElements) {
+        if (el.offsetTop <= scrollY) {
+          current = el.id
+        } else {
+          break
+        }
+      }
+      if (current && current !== activeSubSection) {
+        activeSubSection = current
+        setActiveTocLink(current)
+      }
+    }
+
+    let ticking = false
+    window.addEventListener('scroll', () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        updateActiveSubHeading()
+        ticking = false
+      })
+    }, { passive: true })
 
     document.addEventListener('section-change', (e) => {
       const slug = (e as CustomEvent<{ slug: string }>).detail.slug

@@ -115,29 +115,41 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
       )
     }
 
-    const h2Elements = content.querySelectorAll<HTMLHeadingElement>('h2[id]')
+    const h2Elements = Array.from(content.querySelectorAll<HTMLHeadingElement>('h2[id]'))
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const slug = (entry.target as HTMLHeadingElement).id
-            setActive(slug)
-            break
-          }
+    // Use scroll listener for reliable section tracking.
+    // IntersectionObserver with tight rootMargin misses sections when
+    // the h2 heading scrolls past the narrow trigger zone too quickly.
+    function findCurrentSection(): string | null {
+      const scrollY = window.scrollY + window.innerHeight * 0.15
+      let current: string | null = null
+      for (const h2 of h2Elements) {
+        if (h2.offsetTop <= scrollY) {
+          current = h2.id
+        } else {
+          break
         }
-      },
-      { threshold: 0, rootMargin: '-10% 0px -80% 0px' }
-    )
-
-    for (const h2 of h2Elements) {
-      observer.observe(h2)
+      }
+      return current
     }
 
-    // Activate the first section on page load so the TOC populates immediately
-    const firstH2 = h2Elements[0]
-    if (firstH2) {
-      setActive(firstH2.id)
+    let ticking = false
+    function onScroll() {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const slug = findCurrentSection()
+        if (slug) setActive(slug)
+        ticking = false
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    // Activate the first section on page load
+    const initialSlug = findCurrentSection() ?? h2Elements[0]?.id
+    if (initialSlug) {
+      setActive(initialSlug)
     }
   }
 </script>

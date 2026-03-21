@@ -83,7 +83,7 @@ body {
 /* === Three-Column Layout === */
 .spec-layout {
   display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, var(--content-max-width)) var(--aside-width);
+  grid-template-columns: var(--sidebar-width) 1fr var(--aside-width);
   grid-template-rows: auto 1fr;
   min-height: 100vh;
 }
