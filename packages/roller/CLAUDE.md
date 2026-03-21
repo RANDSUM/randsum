@@ -211,7 +211,9 @@ Comparison utilities (`parseComparisonNotation`, `hasConditions`, `formatCompari
 
 ## Dice Notation Reference
 
-Full spec: `RANDSUM_DICE_NOTATION.md` in this package. That file is the canonical reference for all notation syntax, modifier behavior, and options-object forms.
+The formal specification (taxonomy, classification, conformance levels) lives in `RANDSUM_DICE_NOTATION_SPEC.md` at the repository root. This package's `RANDSUM_DICE_NOTATION.md` is the syntax guide with examples and TypeScript code.
+
+`RANDSUM_DICE_NOTATION.md` in this package is the canonical reference for all notation syntax, modifier behavior, and options-object forms.
 
 ## Notation API
 
@@ -262,7 +264,7 @@ To add a modifier:
 
 See `docs/adr/ADR-007-modifier-co-location.md` for the architectural rationale.
 
-See `RANDSUM_DICE_NOTATION.md` for the full modifier priority table.
+See `RANDSUM_DICE_NOTATION.md` for the full modifier priority table. See `RANDSUM_DICE_NOTATION_SPEC.md` at the repository root for the formal modifier taxonomy and faceted classification.
 
 ### Tokenize Isolation Invariant
 

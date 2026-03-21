@@ -110,6 +110,8 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 The `RANDSUM_MODIFIERS` array in `packages/roller/src/modifiers/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior). See `packages/roller/RANDSUM_DICE_NOTATION.md` for the full priority table and syntax reference.
 
+See `RANDSUM_DICE_NOTATION_SPEC.md` for the formal specification including faceted classification, conformance levels, and execution pipeline contracts.
+
 ### `roll()` Argument Types
 
 ```typescript
@@ -160,6 +162,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 ## Dice Notation Reference
 
-Full spec: `packages/roller/RANDSUM_DICE_NOTATION.md`
+Full spec: `RANDSUM_DICE_NOTATION_SPEC.md` (taxonomy, pipeline, conformance)
+Syntax guide: `packages/roller/RANDSUM_DICE_NOTATION.md` (notation syntax, examples)
 
-Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)
+Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `!{condition}` (conditional explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)
