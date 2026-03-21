@@ -59,7 +59,8 @@ export class RollPipeline<T = string> {
 
   /**
    * Perform geometric rolls: for each of `quantity` sequences, roll dN until
-   * a 1 appears. Returns the actual die values from all sequences concatenated.
+   * a non-maximum value appears. Returns the actual die values from all
+   * sequences concatenated.
    * Each sequence is capped at 1000 rolls to prevent infinite loops.
    */
   private geometricRolls(quantity: number, sides: number): number[] {
@@ -68,7 +69,7 @@ export class RollPipeline<T = string> {
       for (const __ of Array.from({ length: 1000 })) {
         const value = coreRandom(sides, this.rng) + 1
         results.push(value)
-        if (value === 1) break
+        if (value !== sides) break
       }
     }
     return results

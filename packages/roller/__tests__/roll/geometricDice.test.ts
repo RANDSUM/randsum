@@ -21,12 +21,16 @@ describe('Geometric dice (gN)', () => {
       expect(result.rolls).toHaveLength(1)
     })
 
-    test('rolls show actual die values ending with 1', () => {
+    test('rolls show actual die values ending with a non-maximum roll', () => {
       const result = roll('g6')
       const rolls = result.rolls[0]!.rolls
       expect(rolls.length).toBeGreaterThanOrEqual(1)
-      // Last roll in a geometric sequence is always 1 (the stop condition)
-      expect(rolls[rolls.length - 1]).toBe(1)
+      // Last roll in a geometric sequence is always less than sides (the stop condition)
+      expect(rolls[rolls.length - 1]).toBeLessThan(6)
+      // All non-terminal rolls should equal the max (6)
+      rolls.slice(0, -1).forEach(die => {
+        expect(die).toBe(6)
+      })
       // All rolls are valid d6 values
       rolls.forEach(die => {
         expect(die).toBeGreaterThanOrEqual(1)
@@ -41,10 +45,10 @@ describe('Geometric dice (gN)', () => {
       expect(result.total).toBe(expectedTotal)
     })
 
-    test('stress test: all sequences end with 1', () => {
+    test('stress test: all sequences end with a non-maximum roll', () => {
       Array.from({ length: 999 }, () => roll('g6')).forEach(({ rolls: records }) => {
         const rolls = records[0]!.rolls
-        expect(rolls[rolls.length - 1]).toBe(1)
+        expect(rolls[rolls.length - 1]).toBeLessThan(6)
       })
     })
   })
@@ -69,14 +73,16 @@ describe('Geometric dice (gN)', () => {
       expect(result.total).toBeGreaterThanOrEqual(1)
     })
 
-    test('stress test: g20 tends to produce more rolls than g2', () => {
+    test('stress test: g2 tends to produce more rolls than g20', () => {
+      // g2 continues on max (2), 50% chance per roll -> expected length ~2
+      // g20 continues on max (20), 5% chance per roll -> expected length ~1.05
       const g2Results = Array.from({ length: 500 }, () => roll('g2'))
       const g20Results = Array.from({ length: 500 }, () => roll('g20'))
       const g2AvgRolls =
         g2Results.reduce((s, r) => s + r.rolls[0]!.rolls.length, 0) / g2Results.length
       const g20AvgRolls =
         g20Results.reduce((s, r) => s + r.rolls[0]!.rolls.length, 0) / g20Results.length
-      expect(g20AvgRolls).toBeGreaterThan(g2AvgRolls)
+      expect(g2AvgRolls).toBeGreaterThan(g20AvgRolls)
     })
   })
 
