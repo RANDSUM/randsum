@@ -9,8 +9,9 @@ Accepted
 `apps/spec/` requires three pieces of client-side interactivity:
 
 1. **Scroll spy** — two-level: the left sidebar highlights the active `##` section; the right "On This Page" panel tracks `###`/`####` headings within the currently visible `##` section, re-populating its list when the active section changes.
-2. **Version switching** — reads `?v=` on load, toggles `hidden` on `data-version` containers, updates the URL on dropdown change (covered fully in ADR-016).
-3. **Mobile hamburger menu** — below 1024px, the sidebar collapses into a fixed overlay opened by a hamburger button and closed by navigation or an outside tap.
+2. **Mobile hamburger menu** — below 1024px, the sidebar collapses into a fixed overlay opened by a hamburger button and closed by navigation or an outside tap.
+
+Note: Version switching was originally listed here as a third piece of client-side interactivity. Per ADR-016 (amended), versioning now uses separate static pages with standard `<a>` navigation — no client-side JavaScript is needed for version switching.
 
 Three implementation options were evaluated:
 
@@ -39,7 +40,7 @@ Write the scroll spy, version switcher, and mobile menu as TypeScript inside Ast
 The browser APIs required are:
 
 - `IntersectionObserver` — for scroll spy section detection. Supported by all modern browsers (>97% global coverage as of 2026).
-- `history.replaceState` — for version URL updates without page reload.
+- `history.replaceState` — reserved for future use (version switching now uses page navigation per ADR-016).
 - `document.querySelector` / `classList` / `hidden` — for DOM manipulation.
 - `matchMedia` / resize listener — for responsive breakpoint detection (hamburger menu visibility).
 
@@ -53,7 +54,7 @@ The interactivity is co-located with the component that owns the relevant DOM:
 
 - `SidebarNav.astro` — contains the scroll spy script for left sidebar active-section highlighting. Sets up one `IntersectionObserver` on all `##` heading elements. When a heading enters or exits the viewport, the corresponding sidebar link receives the active state (`aria-current="true"` + cyan highlight class).
 - `OnThisPage.astro` — contains the right TOC scroll spy script. Observes `##` headings to determine the active section; when the active section changes, repopulates the right TOC with that section's `###`/`####` headings. Also observes those sub-headings to highlight the one closest to the top of the viewport.
-- `VersionDropdown.astro` — contains the version switching script. Reads `?v=` on `DOMContentLoaded`, toggles container visibility, handles dropdown change events.
+- `VersionDropdown.astro` — renders version links as `<a>` tags pointing to `/v/X.Y/`. No client-side JS needed (per ADR-016 amendment — versioning uses standard page navigation).
 - `MobileMenu.astro` — contains the hamburger menu open/close script. Manages `aria-expanded` state, focus trap, outside-tap detection.
 
 Scripts inside Astro `<script>` blocks are compiled by Vite at build time. They are TypeScript (strict mode, matching the monorepo's `tsconfig.json` conventions). They are not standalone modules and do not have `export` statements — they run as IIFE-style scripts in the page context.

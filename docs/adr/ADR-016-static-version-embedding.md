@@ -41,7 +41,7 @@ The implementation contract:
 - The version dropdown is a set of `<a>` links between pages — standard navigation, no client-side routing needed.
 - Non-latest versions display a banner: "You are viewing an older version of this specification. [View latest]"
 - `public/llms.txt` provides a brief description and link to the latest spec.
-- `public/llms-full.txt` is generated at build time containing the full latest spec markdown.
+- `public/llms-full.txt` is generated at build time by the `prebuild` script: it copies the latest spec markdown file from `src/content/specs/` (the same file used for rendering) to `public/llms-full.txt`. This ensures the LLM-consumable text matches the rendered site exactly.
 - The `prebuild` script copies `RANDSUM_DICE_NOTATION_SPEC.md` from repo root to `src/content/specs/v<current>.md`.
 
 ## Consequences

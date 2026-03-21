@@ -18,7 +18,7 @@ The notation spec site has requirements that are structurally incompatible with 
 
 **Hero header that scrolls away.** The design calls for a large hero header (containing the spec title, version dropdown, and GitHub link) that disappears on scroll, leaving only the three-column body sticky. Starlight has a persistent slim header with no scroll-away behavior. Removing or transforming it requires overriding the `<Head>` and `<Header>` slots and disabling Starlight's own sticky header CSS.
 
-**Version switching via `data-version` containers.** All spec versions are embedded in a single HTML page at build time and toggled client-side. This pattern has no analog in Starlight's content model, which maps one content collection entry to one page. Embedding multiple hidden document subtrees in a single page would require bypassing Starlight's content rendering pipeline entirely.
+**Per-version static pages with dynamic routes.** Each spec version gets its own static page via Astro `[version].astro` dynamic routes (see ADR-016). This requires full control over `getStaticPaths()` and page layout — Starlight's content model maps one content collection entry to one page with its own routing, which conflicts with our version-aware route structure.
 
 **No Tailwind.** The spec site uses plain CSS with custom properties to stay lightweight. Starlight uses its own CSS variables and expects a specific theming surface. Mixing plain CSS with Starlight's layer requires careful specificity management that adds maintenance burden.
 
