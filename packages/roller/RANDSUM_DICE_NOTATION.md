@@ -1,5 +1,7 @@
 # Randsum Dice Notation
 
+> **Formal Specification:** For the complete taxonomy, classification system, conformance levels, and execution pipeline specification, see [RANDSUM_DICE_NOTATION_SPEC.md](../../RANDSUM_DICE_NOTATION_SPEC.md) at the repository root. This document is the notation syntax guide; the spec is the authoritative reference for implementers.
+
 ## Overview
 
 Dice notation is a compact way to represent dice rolls and their modifications. For example, `4d20+2` means "roll four twenty-sided dice, then add two".
@@ -17,6 +19,8 @@ Every notation feature is classified as a **primitive**, **alias**, or **macro**
 - **Macro** — conditional dispatch to multiple primitives based on runtime state
 
 Alias features are documented alongside the primitive they desugar to. Each alias section traces the exact desugaring.
+
+> For the full faceted classification system (Pipeline Stages, Operational Verbs, Output Channels, and Conformance Levels), see the [Formal Specification](../../RANDSUM_DICE_NOTATION_SPEC.md).
 
 ### Dice Types
 
@@ -849,6 +853,30 @@ roll({
 
 **Example:** `3d6!` rolls [6, 4, 6]. The two 6s explode, adding [5, 3]. Final result: [6, 4, 6, 5, 3] = 24.
 
+### Conditional Explode (`!{condition}`) — _extension of Explode primitive_
+
+Explode on a configurable condition instead of only on the maximum value. Uses the same Condition Expression syntax as Cap, Drop, Reroll, and Count.
+
+| Notation | Description                    |
+| -------- | ------------------------------ |
+| `!{>=N}` | Explode when result >= N       |
+| `!{>N}`  | Explode when result > N        |
+| `!{=N}`  | Explode on exact value N       |
+| `!{N,M}` | Explode on exact values N or M |
+
+Bare `!` is sugar for `!{=max}` (trigger on maximum face value).
+
+```typescript
+roll("5d10!{>=8}") // World of Darkness 8-again: explode on 8, 9, or 10
+roll("5d10!{=10}") // World of Darkness 10-again: explode only on 10
+roll("4d6!{>=5}") // Explode on 5 or 6
+roll({
+  sides: 10,
+  quantity: 5,
+  modifiers: { explode: { greaterThanOrEqual: 8 } }
+})
+```
+
 ### Compounding Exploding (!!) — _primitive_
 
 Exploding dice that add to the triggering die instead of creating new dice:
@@ -892,6 +920,29 @@ roll({
 
 - **Explode (`!`)**: Creates new dice → `[6, 4, 6]` becomes `[6, 4, 6, 5, 3]` (5 dice)
 - **Compound (`!!`)**: Modifies existing die → `[6, 4, 6]` becomes `[15, 4, 12]` (still 3 dice)
+
+### Conditional Compound (`!!{condition}`) — _extension of Compound primitive_
+
+Compound on a configurable condition instead of only on the maximum value.
+
+| Notation  | Description               |
+| --------- | ------------------------- |
+| `!!{>=N}` | Compound when result >= N |
+| `!!{>N}`  | Compound when result > N  |
+| `!!{=N}`  | Compound on exact value N |
+| `!!{N,M}` | Compound on values N or M |
+
+Bare `!!` is sugar for `!!{=max}` (trigger on maximum face value).
+
+```typescript
+roll("3d6!!{>=5}") // Compound when result is 5 or 6
+roll("3d6!!{=6}") // Compound only on maximum (same as bare !!)
+roll({
+  sides: 6,
+  quantity: 3,
+  modifiers: { compound: { greaterThanOrEqual: 5 } }
+})
+```
 
 ### Penetrating Exploding (!p) — _primitive_
 
@@ -937,6 +988,29 @@ roll({
 - **Explode (`!`)**: `[6]` → `[6, 6, 4]` = 16 (new dice added)
 - **Compound (`!!`)**: `[6]` → `[16]` = 16 (die value modified)
 - **Penetrate (`!p`)**: `[6]` → `[12]` = 12 (6 + (6-1) + (3-1) if it keeps penetrating, die value modified with -1 on each subsequent roll)
+
+### Conditional Penetrate (`!p{condition}`) — _extension of Penetrate primitive_
+
+Penetrate on a configurable condition instead of only on the maximum value.
+
+| Notation  | Description                |
+| --------- | -------------------------- |
+| `!p{>=N}` | Penetrate when result >= N |
+| `!p{>N}`  | Penetrate when result > N  |
+| `!p{=N}`  | Penetrate on exact value N |
+| `!p{N,M}` | Penetrate on values N or M |
+
+Bare `!p` is sugar for `!p{=max}` (trigger on maximum face value).
+
+```typescript
+roll("3d6!p{>=5}") // Penetrate when result is 5 or 6
+roll("3d6!p{=6}") // Penetrate only on maximum (same as bare !p)
+roll({
+  sides: 6,
+  quantity: 3,
+  modifiers: { penetrate: { greaterThanOrEqual: 5 } }
+})
+```
 
 ### Explode Sequence — _primitive_
 
