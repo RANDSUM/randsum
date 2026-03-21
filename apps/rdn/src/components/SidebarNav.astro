@@ -133,5 +133,11 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
     for (const h2 of h2Elements) {
       observer.observe(h2)
     }
+
+    // Activate the first section on page load so the TOC populates immediately
+    const firstH2 = h2Elements[0]
+    if (firstH2) {
+      setActive(firstH2.id)
+    }
   }
 </script>
