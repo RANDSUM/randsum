@@ -225,6 +225,7 @@ body {
 
 /* === HeroHeader === */
 .spec-hero {
+  position: relative;
   background: linear-gradient(180deg, rgba(6, 182, 212, 0.08), transparent);
   padding: 2.5rem 2rem 2rem;
 }
@@ -258,11 +259,12 @@ body {
 }
 
 .spec-hero-actions {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  flex-shrink: 0;
-  padding-top: 0.25rem;
 }
 
 .spec-hero-github {
