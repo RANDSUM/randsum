@@ -110,7 +110,7 @@ export default defineConfig({
               { label: 'Introduction', slug: 'notation/introduction' },
               { label: 'Getting Started', slug: 'notation/getting-started' },
               {
-                label: 'Randsum Dice Notation Spec',
+                label: 'RDN Syntax Guide',
                 slug: 'notation/randsum-dice-notation'
               },
               { label: 'Validation & Parsing', slug: 'notation/validation-and-parsing' },

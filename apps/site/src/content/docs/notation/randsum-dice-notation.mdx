@@ -453,25 +453,25 @@ Modifiers can be chained together. They are applied in a fixed priority order:
 | Priority | Modifier | Notation | Description |
 |---|---|---|---|
 | 10 | Cap | `C{...}` | Limit roll values to a range |
-| 20 | Drop | `H`, `L` | Remove dice from pool |
-| 21 | Keep | `K`, `kl` | Keep dice in pool |
 | 30 | Replace | `V{...}` | Replace specific values |
 | 40 | Reroll | `R{...}` | Reroll dice matching conditions |
 | 50 | Explode | `!` | Roll additional dice on max |
 | 51 | Compound | `!!` | Add explosion to existing die |
 | 52 | Penetrate | `!p` | Add explosion minus 1 to die |
-| 53 | Explode Sequence | `!s{...}`, `!i`, `!r` | Explode through die size sequence |
-| 55 | Wild Die | `W` | D6 System wild die behavior |
 | 60 | Unique | `U` | Ensure no duplicate values |
-| 85 | Multiply | `*N` | Multiply dice sum (pre-arithmetic) |
-| 90 | Plus | `+N` | Add to total |
-| 91 | Minus | `-N` | Subtract from total |
-| 92 | Sort | `sa`/`sd` | Sort results for display |
-| 93 | Integer Divide | `//N` | Integer divide total |
-| 94 | Modulo | `%N` | Total modulo N |
-| 95 | Count Successes | `S{...}` | Count dice meeting threshold |
-| 96 | Count Failures | `F{...}` | Count dice at or below threshold |
-| 100 | Total Multiply | `**N` | Multiply entire final total |
+| 65 | Drop | `H`, `L` | Remove dice from pool |
+| 66 | Keep | `K`, `kl` | Keep dice in pool |
+| 70 | Explode Sequence | `!s{...}`, `!i`, `!r` | Explode through die size sequence |
+| 75 | Wild Die | `W` | D6 System wild die behavior |
+| 80 | Count Successes | `S{...}` | Count dice meeting threshold |
+| 80 | Count Failures | `F{...}` | Count dice at or below threshold |
+| 95 | Sort | `sa`/`sd` | Sort results for display |
+| 100 | Multiply | `*N` | Multiply dice sum (pre-arithmetic) |
+| 110 | Plus | `+N` | Add to total |
+| 111 | Minus | `-N` | Subtract from total |
+| 120 | Integer Divide | `//N` | Integer divide total |
+| 130 | Modulo | `%N` | Total modulo N |
+| 150 | Total Multiply | `**N` | Multiply entire final total |
 
 <NotationRoller defaultNotation="4d6R{<3}L" client:only="react" />
 <NotationRoller defaultNotation="4d6L+2" client:only="react" />

@@ -36,6 +36,12 @@ import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 Parse, validate, and transform dice notation strings — all built into `@randsum/roller`. Notation is a core capability of the roller, not a separate package. It supports 19 modifier schemas, special dice types (geometric, draw), annotations, and the repeat operator, with zero runtime dependencies.
 
+## What is RDN?
+
+**RANDSUM Dice Notation (RDN)** is a formal specification for dice notation syntax used in tabletop RPGs. It defines a three-stage execution pipeline, 26 modifiers, and four conformance levels. The full specification is published at [notation.randsum.dev](https://notation.randsum.dev).
+
+`@randsum/roller` implements the complete RDN specification at **Level 4 (Full) conformance**.
+
 ## What it does
 
 **Validation** — check if a string is valid dice notation, with type narrowing or structured error details.

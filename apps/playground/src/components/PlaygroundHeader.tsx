@@ -60,6 +60,17 @@ export function PlaygroundHeader({ notation }: PlaygroundHeaderProps): React.Rea
           docs
         </a>
 
+        <a
+          href="https://notation.randsum.dev"
+          style={{
+            color: 'var(--pg-color-text-muted)',
+            textDecoration: 'none',
+            fontSize: '0.875rem'
+          }}
+        >
+          spec
+        </a>
+
         <button
           type="button"
           disabled={isEmpty}
