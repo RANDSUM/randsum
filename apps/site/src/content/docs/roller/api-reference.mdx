@@ -200,3 +200,35 @@ All modifier option types are exported from `@randsum/roller`.
 | `ValidValidationResult` | `{ valid: true, argument, description, options, notation, error: null }` |
 | `InvalidValidationResult` | `{ valid: false, argument, error: ValidationErrorInfo }` |
 | `ValidationErrorInfo` | `{ message: string, argument: string }` |
+
+## Subpath exports
+
+`@randsum/roller` publishes several subpath exports for tree-shaking and specialized use cases.
+
+| Import path | Exports | When to use |
+|---|---|---|
+| `@randsum/roller` | Full API — all functions, types, and error classes | Default; use when bundle size is not a concern |
+| `@randsum/roller/roll` | `roll()` only | Game packages and the CLI use this to avoid bundling the full notation toolkit |
+| `@randsum/roller/validate` | `validateNotation()`, `isDiceNotation()`, `notation()`, validation helpers | When you only need input validation without rolling |
+| `@randsum/roller/errors` | `RandsumError`, `ValidationError`, `ModifierError`, `RollError`, `NotationParseError`, `ERROR_CODES` | Error handling only, no roll logic |
+| `@randsum/roller/tokenize` | `tokenize()` | Low-level notation tokenization |
+| `@randsum/roller/docs` | `NOTATION_DOCS`, `MODIFIER_DOCS`, `DICE_DOCS` and types `NotationDoc`, `ModifierDoc`, `ModifierCategory` | Build-time docs generation, introspection tooling |
+| `@randsum/roller/trace` | `traceRoll()`, `formatAsMath()` and type `RollTraceStep` | Step-by-step roll debugging and math display |
+
+### `/docs` subpath
+
+```typescript
+import { NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS } from '@randsum/roller/docs'
+import type { NotationDoc, ModifierDoc, ModifierCategory } from '@randsum/roller/docs'
+```
+
+`NOTATION_DOCS` documents the full notation syntax. `MODIFIER_DOCS` lists each modifier with its category, syntax, and description. `DICE_DOCS` covers special die types (Fate, percentile, geometric, etc.). All three are structured data suitable for generating reference pages or powering autocomplete.
+
+### `/trace` subpath
+
+```typescript
+import { traceRoll, formatAsMath } from '@randsum/roller/trace'
+import type { RollTraceStep } from '@randsum/roller/trace'
+```
+
+`traceRoll(notation)` returns an array of `RollTraceStep` objects — a discriminated union with `kind: 'rolls' | 'divider' | 'arithmetic' | 'finalRolls'` — showing each stage of roll evaluation. `formatAsMath(notation)` returns a human-readable math string (e.g. `"2 + 4 = 6"`). Useful for verbose output displays and debugging.

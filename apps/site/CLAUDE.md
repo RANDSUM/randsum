@@ -2,65 +2,100 @@
 
 ## Overview
 
-Astro-based static site for documentation and marketing. Deploys to Netlify.
+Starlight-powered static documentation site. Deploys to Netlify on push to main.
 
-## Astro Conventions
+## Tech Stack
 
-- Pages in `src/pages/` directory
-- Components in `src/components/`
-- Layouts in `src/layouts/`
-- Styles in `src/styles/`
-- Static assets in `public/`
+- **Astro** with `@astrojs/starlight` — docs framework with sidebar, search, and routing
+- **React** via `@astrojs/react` — interactive components (playground, live REPL)
+- **Netlify** adapter for static output
 
-## Page Structure
+## Content Structure
+
+All documentation lives in `src/content/docs/` as `.mdx` files. Starlight auto-routes them:
 
 ```
-src/pages/
-  index.astro           # Homepage
-  packages/
-    {package}.astro     # Package documentation pages
+src/content/docs/
+  welcome/
+    introduction.mdx
+    ecosystem-overview.mdx
+  roller/
+    introduction.mdx
+    getting-started.mdx
+    roll-options.mdx
+    modifiers.mdx
+    error-handling.mdx
+    api-reference.mdx
+  notation/
+    introduction.mdx
+    getting-started.mdx
+    randsum-dice-notation.mdx
+    validation-and-parsing.mdx
+    api-reference.mdx
   games/
-    {game}.astro        # Game-specific pages
+    introduction.mdx
+    getting-started.mdx
+    blades.mdx
+    daggerheart.mdx
+    fifth.mdx
+    pbta.mdx
+    root-rpg.mdx
+    salvageunion.mdx
+    schema/
+      overview.mdx
+      reference.mdx
+      using-loadspec.mdx
+      contributing-a-game.mdx
   tools/
-    index.astro         # Tools overview
+    discord-bot.mdx
+    claude-code-skill.mdx
 ```
 
-## React Integration
+## Adding Content
 
-Uses `@astrojs/react` for React components:
+Create a `.mdx` file in the appropriate `src/content/docs/` subdirectory with frontmatter:
 
-- Components can use React
-- Prefer Astro components when possible
-- React for interactive features
+```mdx
+---
+title: Page Title
+description: Brief description
+---
+```
 
-## Component Patterns
+Then register the slug in `astro.config.mjs` under `starlightSidebarTopics` in the matching topic's `items` array.
 
-- `PackageCard.astro` - Displays package information
-- `CodeExample.astro` - Syntax-highlighted code blocks
-- `BaseLayout.astro` - Main layout wrapper
+## Components
+
+Custom Starlight component overrides in `src/components/`:
+
+- `Header.astro` — site header override
+- `SiteTitle.astro` — logo/title override
+- `ThemeSelect.astro` — theme toggle override
+
+Interactive components:
+
+- `live-repl/` — live code examples (used via `<CodeExample>` in MDX)
+- `HeroInteractive.tsx` — hero section dice playground
+- `NotationRoller/` — notation input component
+- `GameComparison.tsx` — game system comparison table
+- `GameSchemaViewer.tsx` — schema viewer
+- `IntegrationViewer.tsx` — integration viewer
+- `LabeledSection.astro` — labeled content block
 
 ## Package Data
 
-Package metadata defined in `src/utils/packageData.ts`:
+`src/utils/packageData.ts` defines metadata for packages shown on the site:
 
-- `corePackages` - Core packages array
-- `games` - Game system packages
-- `toolPackages` - Tool packages
+- `corePackages` — core packages array
+- `games` — game system packages
+- `toolPackages` — tool packages
 
-## Styling
-
-CSS files in `src/styles/`:
-
-- Uses CSS custom properties for theming
-- Responsive design patterns
-- Consistent spacing via CSS variables
-
-## Build & Deploy
+## Build Commands
 
 ```bash
-bun run dev        # Development server
+bun run dev        # Development server (localhost:4321)
 bun run build      # Production build
 bun run preview    # Preview production build
+bun run typecheck  # astro check
+bun run check      # Full check (build, typecheck, format, lint, test)
 ```
-
-Deploys automatically to Netlify on push to main branch.
