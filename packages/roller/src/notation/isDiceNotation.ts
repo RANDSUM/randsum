@@ -2,6 +2,7 @@ import { coreNotationPattern } from './coreNotationPattern'
 import type { DiceNotation } from './types'
 import { suggestNotationFix } from './suggestions'
 import { buildNotationPattern } from './parse/parseModifiers'
+import { countPattern } from './definitions/count'
 
 // Special die type patterns (case-insensitive via 'i' flag on final regex)
 // Percentile: d% or D% (exact match, no modifiers)
@@ -66,6 +67,9 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   const hasStandardCore = coreNotationPattern.test(trimmedArg)
   const hasSpecialCore = MODIFIER_DIE_CORES.some(src => new RegExp(src).test(trimmedArg))
   if (!hasStandardCore && !hasSpecialCore) return false
+
+  const countPatternGlobal = new RegExp(countPattern.source, 'g')
+  if ([...trimmedArg.matchAll(countPatternGlobal)].length > 1) return false
 
   const remaining = trimmedArg.replaceAll(getCompleteNotationPattern(), '')
   return remaining.length === 0

@@ -19,7 +19,8 @@ import { minusSchema } from '../definitions/minus'
 import { sortSchema } from '../definitions/sort'
 import { integerDivideSchema } from '../definitions/integerDivide'
 import { moduloSchema } from '../definitions/modulo'
-import { countSchema } from '../definitions/count'
+import { countPattern, countSchema } from '../definitions/count'
+import { ModifierError } from '../../errors'
 import { multiplyTotalSchema } from '../definitions/multiplyTotal'
 
 /**
@@ -90,6 +91,14 @@ const PARSE_SCHEMAS: readonly ParseableSchema[] = [...MODIFIER_SCHEMAS, ...COUNT
 export function parseModifiers(notation: string): ModifierOptions {
   const result: ModifierOptions = {}
   const processed = preprocessNotation(notation)
+
+  const countPatternGlobal = new RegExp(countPattern.source, 'g')
+  if ([...processed.matchAll(countPatternGlobal)].length > 1) {
+    throw new ModifierError(
+      'count',
+      'Duplicate count modifier: only one #{...} is allowed per notation string'
+    )
+  }
 
   for (const schema of PARSE_SCHEMAS) {
     if (schema.pattern.test(processed)) {

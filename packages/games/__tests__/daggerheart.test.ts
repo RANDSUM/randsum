@@ -120,6 +120,27 @@ describe('roll', () => {
     })
   })
 
+  // Gap 15: Critical hope reachable with amplified dice
+  //
+  // The generated roll() does not expose a randomFn option, so seeded injection
+  // is not available at the game API layer. We use stress testing to confirm that
+  // 'critical hope' (hopeTotal === fearTotal) is reachable when both dice are d20.
+  describe('critical hope with amplified dice', () => {
+    test('critical hope is reachable with amplifyHope: true and amplifyFear: true', () => {
+      const iterations = 9999
+      const results = Array.from({ length: iterations }, () =>
+        roll({ amplifyHope: true, amplifyFear: true })
+      )
+      const criticalHope = results.find(r => r.result === 'critical hope')
+      // With 9999 rolls, the chance of never rolling equal values on 2d20 is negligible
+      expect(criticalHope).toBeDefined()
+      expect(criticalHope?.result).toBe('critical hope')
+      expect(criticalHope?.details?.hope.amplified).toBe(true)
+      expect(criticalHope?.details?.fear.amplified).toBe(true)
+      expect(criticalHope?.details?.hope.roll).toBe(criticalHope?.details?.fear.roll)
+    })
+  })
+
   describe('amplify options', () => {
     test('amplifyHope uses d20 instead of d12', () => {
       const results = Array.from({ length: 20 }, () => roll({ amplifyHope: true }))

@@ -13,7 +13,7 @@ const resultTier = (result: (typeof VALID_RESULTS)[number]): number => {
 describe('roll property-based tests', () => {
   test('result is always a valid Root RPG outcome', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -20, max: 20 }), bonus => {
+      fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
         const { result } = roll(bonus)
         return (VALID_RESULTS as readonly string[]).includes(result)
       })
@@ -22,7 +22,7 @@ describe('roll property-based tests', () => {
 
   test('total is always within [2 + bonus, 12 + bonus]', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -20, max: 20 }), bonus => {
+      fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
         const { total } = roll(bonus)
         return total >= 2 + bonus && total <= 12 + bonus
       })
@@ -31,7 +31,7 @@ describe('roll property-based tests', () => {
 
   test('result maps correctly to total thresholds', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -20, max: 20 }), bonus => {
+      fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
         const { result, total } = roll(bonus)
         if (total >= 10) return result === 'Strong Hit'
         if (total >= 7) return result === 'Weak Hit'
@@ -40,9 +40,9 @@ describe('roll property-based tests', () => {
     )
   })
 
-  test('never throws for valid bonus range (-20 to +20)', () => {
+  test('never throws for valid bonus range (-3 to +5)', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -20, max: 20 }), bonus => {
+      fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
         try {
           roll(bonus)
           return true
@@ -56,8 +56,8 @@ describe('roll property-based tests', () => {
   test('monotonic results — higher total never yields a lower tier result', () => {
     fc.assert(
       fc.property(
-        fc.integer({ min: -20, max: 20 }),
-        fc.integer({ min: -20, max: 20 }),
+        fc.integer({ min: -3, max: 5 }),
+        fc.integer({ min: -3, max: 5 }),
         (bonusA, bonusB) => {
           const rollA = roll(bonusA)
           const rollB = roll(bonusB)

@@ -105,4 +105,25 @@ describe('roll property-based tests', () => {
       )
     )
   })
+
+  // Gap 36: Invariant test — total === diceTotal + stat + forward + ongoing
+  //
+  // diceTotal is the raw sum of the kept dice (before stat/forward/ongoing are added).
+  // The roller applies stat+forward+ongoing as a `plus` modifier, so:
+  //   total = diceTotal + stat + forward + ongoing
+  // This invariant must hold across all valid input combinations.
+  test('total equals diceTotal + stat + forward + ongoing', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: -3, max: 5 }),
+        fc.integer({ min: -5, max: 5 }),
+        fc.integer({ min: -5, max: 5 }),
+        (stat, forward, ongoing) => {
+          const { total, details } = roll({ stat, forward, ongoing })
+          if (details === undefined) return false
+          return total === details.diceTotal + details.stat + details.forward + details.ongoing
+        }
+      )
+    )
+  })
 })

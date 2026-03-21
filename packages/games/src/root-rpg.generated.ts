@@ -18,7 +18,7 @@ export function roll(
 ): GameRollResult<RootRpgRollResult, undefined, RollRecord> {
   const input: { bonus: number } = typeof rawInput === 'number' ? { bonus: rawInput } : rawInput
   if (typeof input.bonus === 'number') validateFinite(input.bonus, 'Root RPG bonus')
-  if (typeof input.bonus === 'number') validateRange(input.bonus, -20, 20, 'Root RPG bonus')
+  if (typeof input.bonus === 'number') validateRange(input.bonus, -3, 5, 'Root RPG bonus')
   const r = executeRoll({ sides: 6, quantity: 2, modifiers: { plus: input.bonus } })
   const total = r.total
   if (total >= 10 && total <= 32) return { total, result: 'Strong Hit', rolls: r.rolls }

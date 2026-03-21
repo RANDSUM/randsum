@@ -63,30 +63,28 @@ describe('roll', () => {
   describe('edge cases', () => {
     test('throws error for extremely large positive modifiers', () => {
       const bonus = 1000
-      expect(() => roll(bonus)).toThrow('Root RPG bonus must be between -20 and 20, received: 1000')
+      expect(() => roll(bonus)).toThrow('Root RPG bonus must be between -3 and 5, received: 1000')
     })
 
     test('throws error for extremely large negative modifiers', () => {
       const bonus = -1000
-      expect(() => roll(bonus)).toThrow(
-        'Root RPG bonus must be between -20 and 20, received: -1000'
-      )
+      expect(() => roll(bonus)).toThrow('Root RPG bonus must be between -3 and 5, received: -1000')
     })
 
     test('handles maximum valid positive modifier', () => {
-      const bonus = 20
+      const bonus = 5
       const { result, total } = roll(bonus)
       expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
-      expect(total).toBeGreaterThanOrEqual(22) // 2d6 minimum (2) + 20
-      expect(total).toBeLessThanOrEqual(32) // 2d6 maximum (12) + 20
+      expect(total).toBeGreaterThanOrEqual(7) // 2d6 minimum (2) + 5
+      expect(total).toBeLessThanOrEqual(17) // 2d6 maximum (12) + 5
     })
 
     test('handles maximum valid negative modifier', () => {
-      const bonus = -20
+      const bonus = -3
       const { result, total } = roll(bonus)
       expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
-      expect(total).toBeGreaterThanOrEqual(-18) // 2d6 minimum (2) - 20
-      expect(total).toBeLessThanOrEqual(-8) // 2d6 maximum (12) - 20
+      expect(total).toBeGreaterThanOrEqual(-1) // 2d6 minimum (2) - 3
+      expect(total).toBeLessThanOrEqual(9) // 2d6 maximum (12) - 3
     })
 
     test('throws error for NaN modifier', () => {
@@ -106,11 +104,11 @@ describe('roll', () => {
     })
 
     test('handles boundary values correctly', () => {
-      expect(() => roll(21)).toThrow('Root RPG bonus must be between -20 and 20')
-      expect(() => roll(-21)).toThrow('Root RPG bonus must be between -20 and 20')
+      expect(() => roll(6)).toThrow('Root RPG bonus must be between -3 and 5')
+      expect(() => roll(-4)).toThrow('Root RPG bonus must be between -3 and 5')
 
-      expect(() => roll(20)).not.toThrow()
-      expect(() => roll(-20)).not.toThrow()
+      expect(() => roll(5)).not.toThrow()
+      expect(() => roll(-3)).not.toThrow()
     })
   })
 })
