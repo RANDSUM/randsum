@@ -50,6 +50,7 @@ jobs:
               - '.github/workflows/ci.yml'
             skill:
               - 'skills/**'
+              - '.claude-plugin/**'
               - '.github/workflows/ci.yml'
             changesets:
               - '.changeset/**'
@@ -177,7 +178,7 @@ jobs:
       - run: bun run --filter '@randsum/rdn' check
 
   skill:
-    name: skill-verify
+    name: claude-doctor
     needs: changes
     if: needs.changes.outputs.skill == 'true'
     runs-on: ubuntu-latest
@@ -189,7 +190,17 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ steps.bun-version.outputs.version }}
-      - run: npx skills-ref validate skills/dice-rolling/SKILL.md
+      - name: Verify skills
+        run: npx skills-ref validate skills/dice-rolling/SKILL.md
+      - name: Verify plugin
+        run: npx claude plugin validate .claude-plugin/
+      - name: Verify marketplace
+        run: |
+          if [ -f .claude-plugin/marketplace.json ]; then
+            npx claude plugin validate .claude-plugin/marketplace.json
+          else
+            echo "No marketplace.json found, skipping"
+          fi
 
   publish-dry-run:
     name: publish (dry run)

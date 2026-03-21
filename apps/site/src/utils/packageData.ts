@@ -111,14 +111,14 @@ export const toolPackages: PackageInfo[] = [
   {
     id: 'skill',
     name: 'skill',
-    displayName: 'Claude Skills',
+    displayName: 'Claude Plugin',
     description:
-      'Three skills that give AI agents dice rolling, probability analysis, and game spec authoring.',
+      'Claude Code plugin with skills for dice rolling, probability analysis, and game spec authoring.',
     npmPackage: 'skills/dice-rolling/SKILL.md',
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills',
     version: '1.0.0',
     category: 'tool',
-    color: '#06b6d4' // cyan-500 — AI/technical feel; distinct from Discord purple (#5865F2)
+    color: '#E07A2F' // Claude orange
   },
   {
     id: 'discord-bot',
