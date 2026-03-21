@@ -6,7 +6,7 @@ const countFailuresPattern = /[Ff]\{(\d+)\}/
 export const countFailuresSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>(
   {
     name: 'count',
-    priority: 96,
+    priority: 80,
 
     pattern: countFailuresPattern,
 

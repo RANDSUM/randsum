@@ -6,7 +6,7 @@ const countPattern = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}/
 
 export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>({
   name: 'count',
-  priority: 95,
+  priority: 80,
 
   pattern: countPattern,
 

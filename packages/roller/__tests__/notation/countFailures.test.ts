@@ -67,9 +67,9 @@ describe('countFailures notation', () => {
   })
 
   describe('priority', () => {
-    test('has priority 96 (after countSuccesses at 95)', async () => {
+    test('has priority 80 (same as count, as it is an alias)', async () => {
       const { countFailuresSchema } = await import('../../src/notation/definitions/countFailures')
-      expect(countFailuresSchema.priority).toBe(96)
+      expect(countFailuresSchema.priority).toBe(80)
     })
   })
 })

@@ -163,9 +163,9 @@ describe('count notation (#{...})', () => {
   })
 
   describe('priority', () => {
-    test('has priority 95', async () => {
+    test('has priority 80', async () => {
       const { countSchema } = await import('../../src/notation/definitions/count')
-      expect(countSchema.priority).toBe(95)
+      expect(countSchema.priority).toBe(80)
     })
   })
 

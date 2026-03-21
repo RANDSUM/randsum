@@ -42,17 +42,7 @@ export interface UniqueOptions {
   notUnique: number[]
 }
 
-export interface CountOptions {
-  /** Count dice greater than N */
-  greaterThan?: number
-  /** Count dice greater than or equal to N */
-  greaterThanOrEqual?: number
-  /** Count dice less than N */
-  lessThan?: number
-  /** Count dice less than or equal to N */
-  lessThanOrEqual?: number
-  /** Count dice matching exact values */
-  exact?: number[]
+export interface CountOptions extends ComparisonOptions {
   /** If true, below-threshold count subtracts from above-threshold count */
   deduct?: boolean
 }
