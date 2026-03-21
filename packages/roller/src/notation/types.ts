@@ -86,11 +86,11 @@ export interface ModifierOptions {
   /** Ensure unique values (true or options) */
   unique?: boolean | UniqueOptions
   /** Exploding dice: reroll and add on max value (single pass) */
-  explode?: boolean
+  explode?: boolean | ComparisonOptions
   /** Compounding exploding: add to triggering die instead of creating new dice */
-  compound?: boolean | number
+  compound?: boolean | number | ComparisonOptions
   /** Penetrating exploding: subtract 1 from each subsequent explosion */
-  penetrate?: boolean | number
+  penetrate?: boolean | number | ComparisonOptions
   /** Count dice matching conditions instead of summing */
   count?: CountOptions
   /** Multiply dice result (before +/- arithmetic) */
