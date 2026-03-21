@@ -17,9 +17,9 @@ Standard dice, special dice types, and modifiers all work with every notation fu
 isDiceNotation('4d6L')                // true — standard notation
 isDiceNotation('z6')                  // true — zero-bias die (faces 0-5)
 isDiceNotation('d{fire,ice,lightning}') // true — custom faces
-isDiceNotation('4d6KM')               // true — keep middle
-isDiceNotation('4d20ro{<5}')          // true — reroll once
-isDiceNotation('1d20ms{15}')          // true — margin of success
+isDiceNotation('4d6KM')               // true — keep middle dice, discard highest and lowest
+isDiceNotation('4d20ro{<5}')          // true — reroll once any die showing less than 5
+isDiceNotation('1d20ms{15}')          // true — margin of success: result minus target (15)
 isDiceNotation('6d6sd')               // true — sort descending`} />
 
 ## Check if a string is valid notation

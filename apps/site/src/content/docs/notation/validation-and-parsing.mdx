@@ -149,12 +149,29 @@ Parse a notation string into typed tokens for syntax highlighting or UI display.
 
 const tokens = tokenize('4d6L+2')
 // [
-//   { text: '4d6', type: 'core', start: 0, end: 3, description: '4 six-sided dice' },
-//   { text: 'L',   type: 'dropLowest', start: 3, end: 4, description: 'Drop lowest 1' },
-//   { text: '+2',  type: 'plus', start: 4, end: 6, description: 'Plus 2' }
+//   { text: '4d6', key: 'xDN',  category: 'Core',   start: 0, end: 3, description: '4 six-sided dice' },
+//   { text: 'L',   key: 'L',    category: 'Filter',  start: 3, end: 4, description: 'Drop lowest 1' },
+//   { text: '+2',  key: '+',    category: 'Scale',   start: 4, end: 6, description: 'Plus 2' }
 // ]`} />
 
-Token types: `core`, `dropLowest`, `dropHighest`, `keepHighest`, `keepLowest`, `reroll`, `explode`, `compound`, `penetrate`, `cap`, `replace`, `unique`, `countSuccesses`, `dropCondition`, `plus`, `minus`, `multiply`, `multiplyTotal`, `unknown`.
+Each token conforms to the `Token` interface:
+
+```ts
+interface Token {
+  readonly text: string        // the matched substring from the input
+  readonly key: string         // notation pattern key (e.g. 'xDN', 'L', 'R{..}')
+  readonly category: TokenCategory
+  readonly start: number       // start index (inclusive)
+  readonly end: number         // end index (exclusive)
+  readonly description: string // human-readable description
+}
+```
+
+`TokenCategory` is `ModifierCategory | 'unknown'`, where `ModifierCategory` is one of:
+
+`'Core'` | `'Special'` | `'Order'` | `'Clamp'` | `'Map'` | `'Filter'` | `'Substitute'` | `'Generate'` | `'Accumulate'` | `'Scale'` | `'Reinterpret'` | `'Dispatch'`
+
+Tokens that do not match any known pattern have `category: 'unknown'`.
 
 ## Common validation issues
 
