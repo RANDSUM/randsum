@@ -38,22 +38,6 @@ describe('Sort Modifier', () => {
     })
   })
 
-  describe('bare sort defaults to ascending', () => {
-    test('roll("6d6s") sorts ascending by default', () => {
-      const result = roll('6d6s' as string)
-      const record = result.rolls[0]
-      expect(record).toBeDefined()
-      const rolls = record!.rolls
-      for (const [i, value] of rolls.entries()) {
-        if (i > 0) {
-          const prev = rolls[i - 1]
-          expect(prev).toBeDefined()
-          expect(value).toBeGreaterThanOrEqual(prev!)
-        }
-      }
-    })
-  })
-
   describe('case insensitivity', () => {
     test('roll("6d6SA") sorts ascending', () => {
       const result = roll('6d6SA' as string)

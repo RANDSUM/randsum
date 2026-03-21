@@ -9,20 +9,12 @@ import {
 
 describe('Sort Notation Schema', () => {
   describe('parse', () => {
-    test('parses s (sort ascending)', () => {
-      expect(sortSchema.parse('4d6s')).toEqual({ sort: 'asc' })
-    })
-
     test('parses sa (sort ascending explicit)', () => {
       expect(sortSchema.parse('4d6sa')).toEqual({ sort: 'asc' })
     })
 
     test('parses sd (sort descending)', () => {
       expect(sortSchema.parse('4d6sd')).toEqual({ sort: 'desc' })
-    })
-
-    test('parses S (uppercase)', () => {
-      expect(sortSchema.parse('4d6S')).toEqual({ sort: 'asc' })
     })
 
     test('parses SA (uppercase)', () => {
@@ -47,8 +39,8 @@ describe('Sort Notation Schema', () => {
   })
 
   describe('toNotation', () => {
-    test('formats asc as s', () => {
-      expect(sortSchema.toNotation('asc')).toBe('s')
+    test('formats asc as sa', () => {
+      expect(sortSchema.toNotation('asc')).toBe('sa')
     })
 
     test('formats desc as sd', () => {
@@ -68,8 +60,8 @@ describe('Sort Notation Schema', () => {
 })
 
 describe('Sort in parseModifiers', () => {
-  test('parses sort from notation', () => {
-    expect(parseModifiers('4d6s')).toEqual({ sort: 'asc' })
+  test('parses sort ascending from notation', () => {
+    expect(parseModifiers('4d6sa')).toEqual({ sort: 'asc' })
   })
 
   test('parses sort descending from notation', () => {
@@ -83,15 +75,15 @@ describe('Sort in parseModifiers', () => {
   })
 
   test('combines with other modifiers', () => {
-    const result = parseModifiers('4d6Ls')
+    const result = parseModifiers('4d6Lsa')
     expect(result.drop).toEqual({ lowest: 1 })
     expect(result.sort).toBe('asc')
   })
 })
 
 describe('Sort in isDiceNotation', () => {
-  test('4d6s is valid notation', () => {
-    expect(isDiceNotation('4d6s')).toBe(true)
+  test('4d6s is NOT valid notation (bare s not in spec)', () => {
+    expect(isDiceNotation('4d6s')).toBe(false)
   })
 
   test('4d6sa is valid notation', () => {
@@ -102,14 +94,14 @@ describe('Sort in isDiceNotation', () => {
     expect(isDiceNotation('4d6sd')).toBe(true)
   })
 
-  test('4d6Ls is valid notation', () => {
-    expect(isDiceNotation('4d6Ls')).toBe(true)
+  test('4d6Ls is NOT valid notation (bare s not in spec)', () => {
+    expect(isDiceNotation('4d6Ls')).toBe(false)
   })
 })
 
 describe('Sort in modifiersToNotation', () => {
-  test('includes sort in notation output', () => {
-    expect(modifiersToNotation({ sort: 'asc' })).toBe('s')
+  test('includes sort ascending as sa in notation output', () => {
+    expect(modifiersToNotation({ sort: 'asc' })).toBe('sa')
   })
 
   test('includes sort descending in notation output', () => {
