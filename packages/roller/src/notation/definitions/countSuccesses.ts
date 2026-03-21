@@ -5,7 +5,7 @@ const countSuccessesPattern = /(?<!!)[Ss]\{(\d+)(?:,(\d+))?\}/
 export const countSuccessesSchema: NotationSchema<CountOptions> =
   defineNotationSchema<CountOptions>({
     name: 'count',
-    priority: 95,
+    priority: 80,
 
     pattern: countSuccessesPattern,
 
