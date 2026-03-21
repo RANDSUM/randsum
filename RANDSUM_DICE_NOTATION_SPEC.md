@@ -1357,7 +1357,7 @@ MODULO (%N)
   Group:     Arithmetic (Section 7.4)
 
 SORT (sa/sd)
-  Status:    Primitive (Presentation Directive)
+  Status:    Presentation Directive
   Stage:     3 -- Total Derivation
   Verb:      --
   Channel:   Pool (display only)
