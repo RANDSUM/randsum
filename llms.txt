@@ -1,11 +1,11 @@
-# RANDSUM - Universal Dice Rolling Library
+# RANDSUM - Dice Notation and Rolling Engine
 
-> Dice notation and rolling for tabletop RPGs. Works with D&D 5E, Blades in the Dark, PbtA, Daggerheart, Root RPG, Salvage Union, and more.
+> TypeScript dice engine implementing the RANDSUM Dice Notation (RDN) specification. RDN v1.0 Level 4 (Full) Conformant. Works with D&D 5e, Blades in the Dark, PbtA, Daggerheart, Root RPG, Salvage Union, and more.
 
 ## Packages
 
-- @randsum/roller - Core dice engine with built-in notation parser
-- @randsum/games - Unified game package with subpath exports:
+- @randsum/roller - Core dice engine with built-in RDN notation parser
+- @randsum/games - TTRPG game packages with subpath exports:
   - @randsum/games/fifth - D&D 5th Edition
   - @randsum/games/blades - Blades in the Dark
   - @randsum/games/pbta - Powered by the Apocalypse
@@ -21,27 +21,21 @@ roll() accepts number, notation string, options object, or multiple arguments:
 
 roll(20)       // Number: 1d20
 roll("4d6L")   // Notation: D&D ability score (4d6, drop lowest)
-roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })  // Object: same as 4d6L
+roll({ sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } })
 roll("2d20L+5") // Advantage attack roll
 roll("2d6+3")   // PbtA / 2d6 + stat
 roll("d%")      // Percentile: 1d100
 roll("4dF")     // Fate Core: 4 Fate dice (-4 to +4)
-roll("1d20", "2d6", "+5")  // Multiple: attack + damage + modifier
-roll("5d6W")   // D6 System wild die (Star Wars D6)
-roll("g6")     // Geometric die: roll until 1, return count
-roll("3DD6")   // Draw die: 3 unique values from d6 pool
-roll("4d6Lx6") // Repeat: generate 6 ability scores
-roll("2d6+3[fire]+1d4[cold]")  // Annotations: label damage types
-roll("4d6//2") // Integer division
-roll("5d10F{3}") // Count failures <= 3
-
-## Documentation
-
-- skills/dice-rolling/SKILL.md - AI agent skill (agentskills.io format)
-- packages/roller/RANDSUM_DICE_NOTATION.md - Complete notation reference
+roll("5d6W")   // D6 System wild die
+roll("g6")     // Geometric die
+roll("3DD6")   // Draw die
+roll("4d6Lx6") // Repeat operator
+roll("2d6+3[fire]") // Annotations
 
 ## Links
 
-- Documentation: https://randsum.dev/
+- Documentation: https://randsum.dev
+- RDN Specification: https://notation.randsum.dev
+- Playground: https://playground.randsum.dev
 - GitHub: https://github.com/RANDSUM/randsum
-- Notation reference: https://randsum.dev/packages/roller/
+- RDN Spec (full text): https://notation.randsum.dev/llms-full.txt

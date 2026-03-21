@@ -19,8 +19,7 @@ bun run check:all  # Verify everything works
 
 ## Project Structure
 
-- `packages/roller/` -- Core dice engine (all packages depend on this)
-- `packages/notation/` -- Dice notation parser (zero dependencies)
+- `packages/roller/` -- Core dice engine with built-in RDN notation parser (all packages depend on this)
 - `packages/games/` -- Game system packages (subpath exports per game)
 - `packages/display-utils/` -- Browser utilities for step visualization and StackBlitz integration
 - `apps/site/` -- Documentation site (Astro)
@@ -73,5 +72,5 @@ Lefthook runs on commit: ESLint, Prettier, and typecheck. If hooks fail, run `bu
 
 - [GitHub Issues](https://github.com/RANDSUM/randsum/issues) -- bugs and feature requests
 - [Project Board](https://github.com/orgs/RANDSUM/projects/2/views/1) -- roadmap and priorities
-- [RANDSUM Dice Notation Specification](https://notation.randsum.dev) -- formal notation spec (taxonomy, pipeline, conformance, syntax)
+- [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev) -- the formal spec for dice notation syntax
 - [Architecture Decisions](docs/adr/) -- key design decisions and rationale
