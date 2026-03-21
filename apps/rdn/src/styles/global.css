@@ -935,6 +935,41 @@ body.mobile-menu-open {
   color: var(--text-primary);
 }
 
+/* === Property Cards (grouped **Label:** value paragraphs) === */
+.prop-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.prop-card p {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.prop-card p:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.prop-card p > strong {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: baseline;
+  padding-top: 0.1rem;
+}
+
 /* === OnThisPage (right TOC) === */
 .toc-inner {
   display: flex;
