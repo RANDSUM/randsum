@@ -18,12 +18,12 @@ export function useTemplates(): UseTemplatesReturn {
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    let cancelled = false
+    const controller = { cancelled: false }
 
     storage
       .getTemplates()
       .then(loaded => {
-        if (!cancelled) {
+        if (!controller.cancelled) {
           const sorted = [...loaded].sort(
             (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
           )
@@ -31,18 +31,18 @@ export function useTemplates(): UseTemplatesReturn {
         }
       })
       .catch(() => {
-        if (!cancelled) {
+        if (!controller.cancelled) {
           setIsError(true)
         }
       })
       .finally(() => {
-        if (!cancelled) {
+        if (!controller.cancelled) {
           setIsLoading(false)
         }
       })
 
     return () => {
-      cancelled = true
+      controller.cancelled = true
     }
   }, [])
 

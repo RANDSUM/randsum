@@ -7,6 +7,8 @@ import { roll as rollSalvageunion } from '@randsum/games/salvageunion'
 import { useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
 
+import type { RollRecord } from '@randsum/roller'
+
 import type { SupportedGameId } from '../lib/gameConfig'
 import { useRollResultStore } from '../lib/stores/rollResultStore'
 import { storage } from '../lib/storage'
@@ -16,9 +18,9 @@ const GAME_ROLL_MAP: Readonly<
   Record<
     SupportedGameId,
     (inputs: Record<string, unknown>) => {
-      total: number
-      result: unknown
-      rolls: readonly unknown[]
+      readonly total: number
+      readonly result: unknown
+      readonly rolls: readonly RollRecord[]
     }
   >
 > = {
@@ -76,7 +78,7 @@ export function useGameRoll(gameId: SupportedGameId): UseGameRollReturn {
         const notation = `${gameId} roll`
         const parsed = {
           total: result.total,
-          records: result.rolls as [],
+          records: result.rolls,
           notation
         }
 
@@ -88,7 +90,7 @@ export function useGameRoll(gameId: SupportedGameId): UseGameRollReturn {
           id: generateId(),
           notation,
           total: result.total,
-          rolls: result.rolls as [],
+          rolls: result.rolls,
           createdAt: new Date().toISOString(),
           gameId
         }

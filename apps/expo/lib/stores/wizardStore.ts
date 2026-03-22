@@ -20,11 +20,18 @@ interface WizardState {
   reset(): void
 }
 
-function computeCanAdvance(step: WizardStep, draft: Partial<RollTemplate>): boolean {
+function computeCanAdvance(
+  step: WizardStep,
+  type: WizardType,
+  draft: Partial<RollTemplate>
+): boolean {
   switch (step) {
     case 'type':
       return true
     case 'build':
+      if (type === 'game') {
+        return typeof draft.gameId === 'string' && draft.gameInputs !== undefined
+      }
       return typeof draft.notation === 'string' && draft.notation.length > 0
     case 'variables':
       return true
@@ -46,7 +53,7 @@ export const useWizardStore = create<WizardState>()(set => ({
       const nextStep = STEP_ORDER[idx + 1]!
       return {
         step: nextStep,
-        canAdvance: computeCanAdvance(nextStep, state.draft)
+        canAdvance: computeCanAdvance(nextStep, state.type, state.draft)
       }
     })
   },
@@ -58,19 +65,19 @@ export const useWizardStore = create<WizardState>()(set => ({
       const prevStep = STEP_ORDER[idx - 1]!
       return {
         step: prevStep,
-        canAdvance: computeCanAdvance(prevStep, state.draft)
+        canAdvance: computeCanAdvance(prevStep, state.type, state.draft)
       }
     })
   },
 
   setType(type: WizardType) {
-    set(state => ({ type, canAdvance: computeCanAdvance(state.step, state.draft) }))
+    set(state => ({ type, canAdvance: computeCanAdvance(state.step, type, state.draft) }))
   },
 
   updateDraft(fields: Partial<RollTemplate>) {
     set(state => {
       const draft = { ...state.draft, ...fields }
-      return { draft, canAdvance: computeCanAdvance(state.step, draft) }
+      return { draft, canAdvance: computeCanAdvance(state.step, state.type, draft) }
     })
   },
 
