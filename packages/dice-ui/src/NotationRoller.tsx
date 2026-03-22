@@ -4,9 +4,7 @@ import { isDiceNotation } from '@randsum/roller/validate'
 import { tokenize } from '@randsum/roller/tokenize'
 import type { RollRecord } from '@randsum/roller'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
-import { traceRoll } from '@randsum/roller/trace'
 import { TokenOverlayInput } from './TokenOverlayInput'
-import { StepRow } from './RollSteps'
 import { useTheme } from './useTheme'
 import './NotationRoller.css'
 
@@ -18,10 +16,11 @@ function tokenColor(
   return theme === 'light' ? doc.colorLight : doc.color
 }
 
-type RollerState =
-  | { status: 'idle' }
-  | { status: 'rolling' }
-  | { status: 'result'; total: number; records: readonly RollRecord[] }
+export interface RollResult {
+  readonly total: number
+  readonly records: readonly RollRecord[]
+  readonly notation: string
+}
 
 export interface NotationRollerProps {
   readonly defaultNotation?: string
@@ -31,6 +30,8 @@ export interface NotationRollerProps {
   readonly resetToken?: number
   /** Render prop for custom actions in the description row */
   readonly renderActions?: (notation: string) => React.ReactNode
+  /** Fires with roll result data when a roll completes. */
+  readonly onRoll?: (result: RollResult) => void
 }
 
 export function NotationRoller({
@@ -39,14 +40,14 @@ export function NotationRoller({
   className,
   onChange,
   resetToken,
-  renderActions
+  renderActions,
+  onRoll
 }: NotationRollerProps = {}): React.JSX.Element {
   const theme = useTheme()
   const [notation, setNotation] = useState(controlledNotation ?? defaultNotation)
-  const [state, setState] = useState<RollerState>({ status: 'idle' })
+  const [rolling, setRolling] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const inputRef = useRef<HTMLInputElement>(null)
-  const tooltipRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const [hoveredTokenIdx, setHoveredTokenIdx] = useState<number | null>(null)
   const tokens = useMemo(() => tokenize(notation), [notation])
@@ -60,31 +61,31 @@ export function NotationRoller({
   useEffect(() => {
     if (controlledNotation === undefined) return
     setNotation(controlledNotation)
-    setState({ status: 'idle' })
+    setRolling(false)
     setHoveredTokenIdx(null)
   }, [controlledNotation, resetToken])
 
   const isValid = notation.length > 0 && isDiceNotation(notation)
   const shellVariant = notation.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'
-  const resultState = state.status === 'result' ? state : null
 
   const handleRoll = useCallback(() => {
     if (!isValid) return
-    setState({ status: 'rolling' })
+    setRolling(true)
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => {
       try {
         const result = roll(notation)
         if (result.rolls.length === 0) {
-          setState({ status: 'idle' })
+          setRolling(false)
           return
         }
-        setState({ status: 'result', total: result.total, records: result.rolls })
+        onRoll?.({ total: result.total, records: result.rolls, notation })
       } catch {
         // invalid notation — isDiceNotation guard above should prevent this
       }
+      setRolling(false)
     }, 300)
-  }, [notation, isValid])
+  }, [notation, isValid, onRoll])
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {
@@ -109,7 +110,7 @@ export function NotationRoller({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setNotation(e.target.value)
-      setState({ status: 'idle' })
+      setRolling(false)
       setHoveredTokenIdx(null)
       onChange?.(e.target.value)
     },
@@ -171,7 +172,7 @@ export function NotationRoller({
                 e.stopPropagation()
                 handleRoll()
               }}
-              disabled={!isValid || state.status === 'rolling'}
+              disabled={!isValid || rolling}
               aria-label="Roll the dice"
               title="Roll the dice"
             >
@@ -249,97 +250,7 @@ export function NotationRoller({
           )}
           {renderActions !== undefined && renderActions(notation)}
         </div>
-        {resultState && (
-          <>
-            <div
-              className="du-notation-roller-result-backdrop"
-              onClick={() => {
-                setState({ status: 'idle' })
-              }}
-            />
-            <div ref={tooltipRef} className="du-notation-roller-result-overlay">
-              <div className="du-nr-tooltip-flow">
-                <button
-                  className="du-nr-tooltip-close"
-                  onClick={() => {
-                    setState({ status: 'idle' })
-                  }}
-                  aria-label="Close result"
-                >
-                  &times;
-                </button>
-                <div className="du-nr-tooltip-total-pane">
-                  <div className="du-nr-tooltip-total-value">{resultState.total}</div>
-                </div>
-                <RollResultDisplay
-                  records={resultState.records}
-                  total={resultState.total}
-                  notation={notation}
-                />
-              </div>
-            </div>
-          </>
-        )}
       </div>
-    </div>
-  )
-}
-
-export function RollResultDisplay({
-  records,
-  total,
-  notation
-}: {
-  readonly records: readonly RollRecord[]
-  readonly total?: number
-  readonly notation?: string
-}): React.JSX.Element {
-  const multiPool = records.length > 1
-  const steps = records.flatMap((record, i) => {
-    const rows: React.JSX.Element[] = []
-    if (multiPool) {
-      rows.push(
-        <div key={`heading-${i}`} className="du-nr-tooltip-row du-nr-pool-heading">
-          {record.notation}
-        </div>
-      )
-    }
-    const traced = traceRoll(record)
-    traced.forEach((step, j) => {
-      rows.push(<StepRow key={`step-${i}-${j}`} step={step} />)
-    })
-    return rows
-  })
-
-  return (
-    <div className="du-nr-tooltip-rows">
-      {notation !== undefined && (
-        <div className="du-nr-tooltip-row du-nr-tooltip-header-line">
-          <span className="du-nr-tooltip-notation">{notation}</span>
-          <span className="du-nr-tooltip-sep">|</span>
-          <span className="du-nr-tooltip-desc">
-            {records.map(r => r.description.join(', ')).join(' + ')}
-          </span>
-        </div>
-      )}
-      {steps}
-      {total !== undefined && (
-        <div className="du-nr-tooltip-row du-nr-tooltip-row--total">
-          <span className="du-step-label du-nr-result-label--total">Total</span>
-          <span className="du-step-final-math du-nr-result-dice--total">
-            {records.length > 1
-              ? records
-                  .map((r, i) => {
-                    const poolTotal =
-                      r.rolls.length > 0 ? `[${r.rolls.join('+')}]` : `${r.appliedTotal}`
-                    const prefix = i === 0 ? '' : r.appliedTotal < 0 ? ' - ' : ' + '
-                    return `${prefix}${r.appliedTotal < 0 && i > 0 ? poolTotal.replace('-', '') : poolTotal}`
-                  })
-                  .join('') + ` = ${total}`
-              : total}
-          </span>
-        </div>
-      )}
     </div>
   )
 }

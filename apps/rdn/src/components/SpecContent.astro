@@ -6,6 +6,17 @@
 </article>
 
 <script>
+  // Wrap tables in scrollable containers for mobile
+  const specBody = document.querySelector('.spec-content-body')
+  if (specBody) {
+    for (const table of Array.from(specBody.querySelectorAll(':scope > table'))) {
+      const wrapper = document.createElement('div')
+      wrapper.className = 'table-wrap'
+      table.parentNode!.insertBefore(wrapper, table)
+      wrapper.appendChild(table)
+    }
+  }
+
   // Group consecutive "**Label:** value" paragraphs into styled property cards.
   // These are <p> elements whose first child is a <strong> ending with ":"
   const body = document.querySelector('.spec-content-body')

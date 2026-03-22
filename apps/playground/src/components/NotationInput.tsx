@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback } from 'react'
 import type { Token } from '@randsum/roller/tokenize'
 import { TokenOverlayInput } from '@randsum/dice-ui'
-import type { ValidationState } from './PlaygroundApp'
+import type { ValidationState } from './notationInputUtils'
 import { validationStateToBorderColor } from './notationInputUtils'
 import './NotationInput.css'
 

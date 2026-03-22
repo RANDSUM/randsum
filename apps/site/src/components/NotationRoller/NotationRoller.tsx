@@ -1,4 +1,6 @@
-import { NotationRoller as DuNotationRoller } from '@randsum/dice-ui'
+import { useState } from 'react'
+import { NotationRoller as DuNotationRoller, RollResultPanel } from '@randsum/dice-ui'
+import type { RollResult } from '@randsum/dice-ui'
 import { buildStackBlitzProject } from '../../helpers/stackblitz'
 import { ErrorBoundary } from '../ErrorBoundary'
 import './NotationRoller.css'
@@ -93,13 +95,38 @@ export function NotationRoller(props: {
   readonly onChange?: (notation: string) => void
   readonly resetToken?: number
 }): React.JSX.Element {
+  const [result, setResult] = useState<RollResult | null>(null)
+
   return (
     <ErrorBoundary>
-      <DuNotationRoller
-        {...props}
-        className={['not-content', props.className].filter(Boolean).join(' ')}
-        renderActions={SiteActions}
-      />
+      <div style={{ position: 'relative' }}>
+        <DuNotationRoller
+          {...props}
+          className={['not-content', props.className].filter(Boolean).join(' ')}
+          renderActions={SiteActions}
+          onRoll={setResult}
+        />
+        {result !== null && (
+          <>
+            <div
+              className="du-notation-roller-result-backdrop"
+              onClick={() => {
+                setResult(null)
+              }}
+            />
+            <div className="du-notation-roller-result-overlay">
+              <RollResultPanel
+                total={result.total}
+                records={result.records}
+                notation={result.notation}
+                onClose={() => {
+                  setResult(null)
+                }}
+              />
+            </div>
+          </>
+        )}
+      </div>
     </ErrorBoundary>
   )
 }

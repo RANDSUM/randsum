@@ -16,7 +16,12 @@ export function ReferenceSidebar({
 
   return (
     <aside className="pg-reference-sidebar">
-      <QuickReferenceGrid selectedEntry={selectedEntry} onSelect={onSelect} />
+      <QuickReferenceGrid
+        notation=""
+        selectedEntry={selectedEntry}
+        onSelect={onSelect}
+        onAdd={(_fragment: string) => undefined}
+      />
       {doc !== undefined && selectedEntry !== null && (
         <ReferenceDetail modifierKey={selectedEntry} doc={doc} />
       )}

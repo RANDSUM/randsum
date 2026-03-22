@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import type { RollRecord, RollerRollResult } from '@randsum/roller'
-import { DieBadge, RollSteps as PoolSection, StepRow } from '@randsum/dice-ui'
-import { RollResult } from '../src/components/RollResult'
+import type { RollRecord } from '@randsum/roller'
+import type { RollResult as RollResultData } from '@randsum/dice-ui'
+import { DieBadge, RollSteps as PoolSection, RollResultPanel, StepRow } from '@randsum/dice-ui'
 
 function makeRecord(overrides: {
   initialRolls?: number[]
@@ -30,19 +30,18 @@ function makeRecord(overrides: {
   } as unknown as RollRecord
 }
 
-function makeResult(records: RollRecord[], total?: number): RollerRollResult {
+function makeResult(records: RollRecord[], total?: number): RollResultData {
   return {
-    rolls: records,
+    records,
     total: total ?? records.reduce((sum, r) => sum + r.total, 0),
-    values: records.flatMap(r => r.rolls)
-    // eslint-disable-next-line no-restricted-syntax
-  } as unknown as RollerRollResult
+    notation: records.map(r => r.notation).join(', ')
+  }
 }
 
-describe('RollResult', () => {
+describe('RollResultPanel', () => {
   describe('component exports', () => {
-    test('RollResult is a function component', () => {
-      expect(typeof RollResult).toBe('function')
+    test('RollResultPanel is exported as a function', () => {
+      expect(typeof RollResultPanel).toBe('function')
     })
 
     test('DieBadge is a function component', () => {
@@ -138,18 +137,26 @@ describe('RollResult', () => {
     })
   })
 
-  describe('RollResult (full component)', () => {
+  describe('RollResultPanel (full component)', () => {
     test('renders grand total prominently', () => {
       const record = makeRecord({ total: 12 })
       const result = makeResult([record], 12)
-      const element = RollResult({ result })
+      const element = RollResultPanel({
+        total: result.total,
+        records: result.records,
+        notation: result.notation
+      })
       expect(element).toBeDefined()
     })
 
     test('renders single pool without notation heading', () => {
       const record = makeRecord({ notation: '2d6' })
       const result = makeResult([record])
-      const element = RollResult({ result })
+      const element = RollResultPanel({
+        total: result.total,
+        records: result.records,
+        notation: result.notation
+      })
       expect(element).toBeDefined()
     })
 
@@ -157,7 +164,11 @@ describe('RollResult', () => {
       const record1 = makeRecord({ notation: '1d20+5', total: 15 })
       const record2 = makeRecord({ notation: '2d6', total: 7 })
       const result = makeResult([record1, record2], 22)
-      const element = RollResult({ result })
+      const element = RollResultPanel({
+        total: result.total,
+        records: result.records,
+        notation: result.notation
+      })
       expect(element).toBeDefined()
     })
 
@@ -177,7 +188,11 @@ describe('RollResult', () => {
         ]
       })
       const result = makeResult([record], 9)
-      const element = RollResult({ result })
+      const element = RollResultPanel({
+        total: result.total,
+        records: result.records,
+        notation: result.notation
+      })
       expect(element).toBeDefined()
     })
 
@@ -197,7 +212,11 @@ describe('RollResult', () => {
         ]
       })
       const result = makeResult([record], 20)
-      const element = RollResult({ result })
+      const element = RollResultPanel({
+        total: result.total,
+        records: result.records,
+        notation: result.notation
+      })
       expect(element).toBeDefined()
     })
   })

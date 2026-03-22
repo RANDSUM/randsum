@@ -9,8 +9,16 @@ import { PlaygroundApp } from '../components/PlaygroundApp'
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RANDSUM Playground</title>
+    <title>RANDSUM Dice Notation Playground</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('pg-theme')
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved)
+        }
+      } catch {}
+    </script>
   </head>
   <body>
     <PlaygroundApp client:load />
