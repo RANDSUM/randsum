@@ -4,15 +4,10 @@ import { useTheme } from '../hooks/useTheme'
 
 interface ActionRowProps {
   readonly onClear: () => void
-  readonly onNotation: () => void
   readonly isSaveEnabled: boolean
 }
 
-export function ActionRow({
-  onClear,
-  onNotation,
-  isSaveEnabled
-}: ActionRowProps): React.JSX.Element {
+export function ActionRow({ onClear, isSaveEnabled }: ActionRowProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
 
   return (
@@ -34,17 +29,6 @@ export function ActionRow({
           ]}
         >
           Save
-        </Text>
-      </Pressable>
-
-      <Pressable
-        onPress={onNotation}
-        accessibilityRole="button"
-        accessibilityLabel="Notation"
-        style={[styles.button, { borderColor: tokens.border }]}
-      >
-        <Text style={[styles.label, { color: tokens.text, fontSize: fontSizes.base }]}>
-          Notation
         </Text>
       </Pressable>
 
