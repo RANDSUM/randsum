@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 
 import { useTemplates } from '../hooks/useTemplates'
+import { generateId } from '../lib/generateId'
 import { useTheme } from '../hooks/useTheme'
 import { useWizardStore } from '../lib/stores/wizardStore'
 import type { RollTemplate } from '../lib/types'
@@ -383,7 +384,7 @@ export default function WizardScreen(): React.JSX.Element {
 
   async function handleSave(): Promise<void> {
     const template: RollTemplate = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: draft.name ?? 'Untitled',
       notation: draft.notation ?? '',
       variables: draft.variables ?? [],

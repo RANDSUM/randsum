@@ -24,6 +24,7 @@
     "@supabase/supabase-js": "^2.49.4",
     "expo": "~55.0.8",
     "expo-constants": "~55.0.9",
+    "expo-crypto": "~55.0.10",
     "expo-font": "55.0.4",
     "expo-haptics": "55.0.9",
     "expo-linking": "~55.0.8",

@@ -3,6 +3,7 @@ import { roll as executeRoll } from '@randsum/roller'
 import { useRouter } from 'expo-router'
 import { useRef, useState } from 'react'
 
+import { generateId } from '../lib/generateId'
 import { storage } from '../lib/storage'
 import { useRollResultStore } from '../lib/stores/rollResultStore'
 import { supabase } from '../lib/supabase'
@@ -19,10 +20,6 @@ interface UseRollOptions {
 interface UseRollReturn {
   readonly roll: (...args: readonly RollArgument[]) => void
   readonly isPending: boolean
-}
-
-function generateId(): string {
-  return crypto.randomUUID()
 }
 
 export function useRoll(options?: UseRollOptions): UseRollReturn {

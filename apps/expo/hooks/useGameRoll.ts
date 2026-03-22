@@ -9,6 +9,7 @@ import { useCallback, useRef, useState } from 'react'
 
 import type { RollRecord } from '@randsum/roller'
 
+import { generateId } from '../lib/generateId'
 import type { SupportedGameId } from '../lib/gameConfig'
 import { useRollResultStore } from '../lib/stores/rollResultStore'
 import { storage } from '../lib/storage'
@@ -49,10 +50,6 @@ const GAME_ROLL_MAP: Readonly<
     ),
   'root-rpg': inputs => rollRootRpg(inputs as { bonus: number }),
   salvageunion: inputs => rollSalvageunion(inputs as { tableName: string })
-}
-
-function generateId(): string {
-  return crypto.randomUUID()
 }
 
 interface UseGameRollReturn {
