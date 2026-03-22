@@ -1,8 +1,8 @@
 # RANDSUM Dice Notation Specification
 
-**Version:** 1.0-alpha
-**Status:** Alpha
-**Date:** 2026-03-20
+**Version:** 0.9.0
+**Status:** Draft
+**Date:** 2026-03-21
 
 ---
 
@@ -1419,4 +1419,4 @@ The feature MUST work with existing modifiers without introducing a new return t
 
 ---
 
-_End of RANDSUM Dice Notation Specification v1.0-alpha_
+_End of RANDSUM Dice Notation Specification v0.9.0_

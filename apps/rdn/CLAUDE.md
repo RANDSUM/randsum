@@ -56,7 +56,7 @@ bun run check        # build + typecheck + format:check + lint
 
 Add a new spec version by creating `src/content/specs/<version>.md` (e.g. `v1.1.md`).
 
-The content collection ID strips the leading `v` and the `.md` extension — so `v1.0-alpha.md` becomes ID `1.0-alpha`. The `[version].astro` route uses this ID as the URL segment.
+The content collection ID strips the leading `v` and the `.md` extension — so `v0.9.0.md` becomes ID `0.9.0`. The `[version].astro` route uses this ID as the URL segment.
 
 `getVersions()` sorts versions semantically: pre-release tags (e.g. `-alpha`) sort before the release of the same number. `getLatestVersion()` returns the last item in the sorted list.
 
