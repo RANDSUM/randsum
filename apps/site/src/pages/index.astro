@@ -17,18 +17,20 @@ function getBadgeUrl(pkg: { npmPackage: string; version?: string }): string | nu
   return null
 }
 
-const codeExample = `import { roll } from '@randsum/roller'
-
-const { total, rolls } = roll('4d6L')
-
-console.log(total)
-  // 15
-console.log(rolls[0].initialRolls)
-  // [1, 5, 4, 6]
-console.log(rolls[0].rolls)
-  // [4, 5, 6]
-console.log(rolls[0].description)
-  // ["Roll 4 6-sided dice", "Drop lowest"]`
+const codeExample = [
+  "import { roll } from '@randsum/roller'",
+  '',
+  "const { total, rolls } = roll('4d6L')",
+  '',
+  'console.log(total)',
+  '// 15',
+  'console.log(rolls[0].initialRolls)',
+  '// [1, 5, 4, 6]',
+  'console.log(rolls[0].rolls)',
+  '// [4, 5, 6]',
+  'console.log(rolls[0].description)',
+  '// ["Roll 4 6-sided dice", "Drop lowest"]'
+].join('\n')
 
 const stackblitzNotation = '4d6L'
 
@@ -468,6 +470,12 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
     justify-content: center;
     gap: 0.75rem;
     padding-top: 0;
+    overflow: hidden;
+  }
+
+  .hero-code :global(pre) {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   :global(.hero-subtitle) {
@@ -1433,7 +1441,13 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
     .hero-code {
       width: 100%;
+      max-width: 100vw;
       flex: none;
+      overflow-x: auto;
+    }
+
+    .hero-code :global(pre) {
+      font-size: 12px;
     }
 
 
@@ -1514,6 +1528,10 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 
     .integrations-viewer-col {
       flex: none;
+    }
+
+    .code-example {
+      text-align: left;
     }
 
     .code-example :global(.expressive-code pre) {
