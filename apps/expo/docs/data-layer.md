@@ -9,6 +9,10 @@ The RANDSUM Expo app uses a local-first architecture. All reads and writes go to
 These types are referenced throughout the data layer. Define them at `lib/types.ts`.
 
 ```typescript
+import type { RollRecord } from '@randsum/roller'
+```
+
+```typescript
 /** A saved roll template */
 export interface RollTemplate {
   /** nanoid — generated with nanoid() before saving */
@@ -41,8 +45,8 @@ export interface RollHistoryEntry {
   /** The notation that was rolled (e.g. "4d6L") */
   readonly notation: string
   readonly total: number
-  /** Serialized RollRecord[] from @randsum/roller */
-  readonly rolls: unknown
+  /** Individual dice pool results from @randsum/roller */
+  readonly rolls: readonly RollRecord[]
   /** Present when rolled via a game roller */
   readonly gameId?: string
   /** Present when rolled from a saved template */
@@ -198,7 +202,7 @@ CREATE TABLE profiles (
 **`templates`**
 ```sql
 CREATE TABLE templates (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id          TEXT PRIMARY KEY,  -- nanoid from client, stored as-is
   user_id     UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   name        TEXT NOT NULL,
   notation    TEXT NOT NULL,
@@ -215,21 +219,21 @@ CREATE INDEX templates_user_id_idx ON templates(user_id);
 **`roll_history`**
 ```sql
 CREATE TABLE roll_history (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id          TEXT PRIMARY KEY,  -- nanoid from client, stored as-is
   user_id     UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   notation    TEXT NOT NULL,
   total       INTEGER NOT NULL,
   rolls       JSONB NOT NULL,  -- RollRecord[]
   game_id     TEXT,
-  template_id UUID REFERENCES templates(id) ON DELETE SET NULL,
+  template_id TEXT REFERENCES templates(id) ON DELETE SET NULL,
   created_at  TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE INDEX roll_history_user_id_created_at_idx ON roll_history(user_id, created_at DESC);
 ```
 
-**Notes:**
-- Local `id` values are nanoids (strings); Supabase `id` values are UUIDs. The sync engine maps between them on upload. The local record retains its nanoid as the canonical ID — Supabase stores the same value cast to UUID.
+**Sync ID strategy:**
+- Local `id` values are nanoids (strings). Supabase uses `TEXT` primary keys to store the same nanoid values directly — no UUID conversion needed. The nanoid is the canonical ID across both local and cloud storage. This avoids the need for a local-to-remote ID mapping table.
 - `profiles.preferences` includes only cross-device preferences (`theme`, `defaultMode`, `lastGameId`). The `haptics` preference is device-local and never synced.
 
 ---

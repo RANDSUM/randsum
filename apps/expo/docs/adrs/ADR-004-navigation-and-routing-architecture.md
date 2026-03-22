@@ -138,15 +138,19 @@ The wizard is a **single route** at `app/wizard.tsx`, presented as a `pageSheet`
 ```typescript
 // lib/useWizardStore.ts
 interface WizardState {
-  step: 'type' | 'build' | 'variables' | 'name'
-  templateDraft: Partial<RollTemplate>
-  setStep(step: WizardState['step']): void
+  step: number  // 0-3 index
+  type: 'standard' | 'game' | null
+  draft: Partial<RollTemplate>
+  readonly canAdvance: boolean
+  goToNext(): void
+  goToPrev(): void
+  setType(type: 'standard' | 'game'): void
   updateDraft(fields: Partial<RollTemplate>): void
   reset(): void
 }
 ```
 
-Navigation inside the wizard is entirely imperative (`useWizardStore().setStep('build')`) — no route pushes, no back-stack entries between steps. The native back button and swipe-down gesture both dismiss the entire wizard (calling `router.back()`), not pop a single step. A visible "Back" button inside the wizard UI calls `setStep` to the previous step; "Cancel" calls `router.back()` directly.
+Navigation inside the wizard is entirely imperative (`useWizardStore().goToNext()`) — no route pushes, no back-stack entries between steps. The native back button and swipe-down gesture both dismiss the entire wizard (calling `router.back()`), not pop a single step. A visible "Back" button inside the wizard UI calls `goToPrev()` to go to the previous step; "Cancel" calls `router.back()` directly.
 
 On successful save at the Name step, the wizard calls `router.replace('/(tabs)/saved')`, replacing the wizard modal with the saved tab so the back button does not return to the wizard.
 

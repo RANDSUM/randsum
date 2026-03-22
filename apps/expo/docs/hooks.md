@@ -70,7 +70,8 @@ interface UseRollReturn {
   /**
    * Execute a roll with one or more arguments.
    * Appends to local history, then navigates to /result with serialized result.
-   * Fires haptic feedback (native only) before rolling.
+   * Haptic feedback is NOT fired by this hook — it is owned by the UI layer
+   * (RollButton, DieButton). See ADR-006 for haptic ownership.
    * Throws `ValidationError` if any argument fails `isDiceNotation` — callers
    * must either validate inputs or catch errors.
    */
@@ -86,8 +87,7 @@ function useRoll(options?: UseRollOptions): UseRollReturn
 ```
 
 **Side effects:**
-1. Fires `Haptics.impactAsync(ImpactFeedbackStyle.Medium)` on native before executing the roll
-2. Calls `roll(...args)` from `@randsum/roller` — synchronous, pure computation
+1. Calls `roll(...args)` from `@randsum/roller` — synchronous, pure computation (haptics are handled by the calling UI component, not this hook)
 3. Appends a `RollHistoryEntry` to local storage via `storage.appendHistory()` — async, does not block the overlay
 4. Calls `router.push({ pathname: '/result', params: { result: serializeRollResult(result) } })` — opens the result overlay immediately (does not wait for storage write)
 5. If authenticated and online, `lib/sync.ts` queues the history entry for Supabase insertion in the background
@@ -131,7 +131,7 @@ function useGameRoll(gameId: SupportedGameId): UseGameRollReturn
 ```
 
 **Side effects:**
-- Same haptic/storage/navigation pattern as `useRoll`
+- Same storage/navigation pattern as `useRoll` (haptics owned by UI layer)
 - The history entry includes `gameId` so the History feed can display the game name
 
 **Error states:**
