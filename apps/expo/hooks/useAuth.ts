@@ -20,11 +20,16 @@ export function useAuth(): UseAuthReturn {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      setUser(data.session?.user ?? null)
-      setIsLoading(false)
-    })
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        setSession(data.session)
+        setUser(data.session?.user ?? null)
+        setIsLoading(false)
+      })
+      .catch(() => {
+        setIsLoading(false)
+      })
 
     // Subscribe to auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
