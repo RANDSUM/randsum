@@ -65,6 +65,7 @@
     "rdn:dev": "bun run --filter @randsum/rdn dev",
     "playground:build": "bun run --filter @randsum/playground build",
     "playground:dev": "bun run --filter @randsum/roller dev & bun run --filter @randsum/playground dev",
+    "expo:dev": "cd apps/expo && npx expo start",
     "expo:start": "cd apps/expo && npx expo start",
     "expo:web": "cd apps/expo && npx expo start --web",
     "expo:ios": "cd apps/expo && npx expo start --ios",
