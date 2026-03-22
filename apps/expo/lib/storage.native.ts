@@ -37,13 +37,15 @@ const SCHEMA = `
   );
 `
 
-let _db: SQLite.SQLiteDatabase | null = null
+const dbPromise: Promise<SQLite.SQLiteDatabase> = SQLite.openDatabaseAsync('randsum.db').then(
+  async db => {
+    await db.execAsync(SCHEMA)
+    return db
+  }
+)
 
 async function getDb(): Promise<SQLite.SQLiteDatabase> {
-  if (_db !== null) return _db
-  _db = await SQLite.openDatabaseAsync('randsum.db')
-  await _db.execAsync(SCHEMA)
-  return _db
+  return dbPromise
 }
 
 interface TemplateRow {

@@ -11,7 +11,7 @@ interface PoolState {
   increment(sides: number): void
   decrement(sides: number): void
   clear(): void
-  toNotation(): string
+  toNotation(): string | null
   toArguments(): readonly RollArgument[]
 }
 
@@ -49,12 +49,12 @@ export const usePoolStore = create<PoolState>()((set, get) => ({
     set({ pool: {}, isEmpty: true })
   },
 
-  toNotation(): string {
+  toNotation(): string | null {
     const pool = get().pool
     const sides = Object.keys(pool)
       .map(Number)
       .sort((a, b) => a - b)
-    if (sides.length === 0) return ''
+    if (sides.length === 0) return null
     return sides.map(s => `${pool[s]}d${s}`).join('+')
   },
 

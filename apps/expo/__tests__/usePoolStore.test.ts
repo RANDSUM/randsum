@@ -99,8 +99,8 @@ describe('usePoolStore', () => {
   })
 
   describe('toNotation', () => {
-    test('returns empty string for empty pool', () => {
-      expect(usePoolStore.getState().toNotation()).toBe('')
+    test('returns null for empty pool', () => {
+      expect(usePoolStore.getState().toNotation()).toBeNull()
     })
 
     test('returns correct notation for single die type', () => {
