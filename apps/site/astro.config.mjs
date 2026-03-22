@@ -162,7 +162,7 @@ export default defineConfig({
               { label: 'Playground', link: 'https://playground.randsum.dev' },
               { label: 'CLI', slug: 'tools/cli' },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
-              { label: 'Claude Plugin', slug: 'tools/claude-code-skill' }
+              { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' }
             ]
           }
         ])
