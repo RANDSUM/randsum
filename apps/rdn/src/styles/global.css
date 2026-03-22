@@ -424,7 +424,7 @@ body {
 .version-dropdown-list {
   position: absolute;
   top: calc(100% + 4px);
-  right: 0;
+  left: 0;
   z-index: 50;
   min-width: 160px;
   background: var(--surface);
@@ -516,7 +516,7 @@ body {
   display: none;
   position: fixed;
   top: 1rem;
-  left: 1rem;
+  right: 1rem;
   z-index: 200;
   width: 2.5rem;
   height: 2.5rem;
@@ -561,26 +561,28 @@ body {
   z-index: 210;
   background: rgba(0, 0, 0, 0.6);
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.25s ease;
 }
 
 .mobile-menu-backdrop.is-visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
-/* Overlay panel — slides in from left */
+/* Overlay panel — slides in from right */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
-  left: 0;
+  right: 0;
   z-index: 220;
   width: min(320px, 85vw);
   height: 100dvh;
   background: var(--surface);
-  border-right: 1px solid var(--border);
+  border-left: 1px solid var(--border);
   overflow-y: auto;
   padding: 1.25rem 1rem;
-  transform: translateX(-100%);
+  transform: translateX(100%);
   transition: transform 0.25s ease;
 }
 

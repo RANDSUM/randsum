@@ -34,6 +34,7 @@ const pageTitle = isLatest
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
+    <link rel="icon" href="/favicon.ico" />
     <script is:inline>
       // Apply saved theme before render to prevent flash
       const saved = localStorage.getItem('rdn-theme')
@@ -42,7 +43,7 @@ const pageTitle = isLatest
   </head>
   <body>
     <SkipLink />
-    <MobileMenu headings={headings} version={version} isLatest={isLatest} />
+    <MobileMenu headings={headings} version={version} isLatest={isLatest} specMarkdown={specMarkdown} specUrl={specUrl} />
     <HeroHeader version={version} versions={versions} isLatest={isLatest} />
     <VersionBanner isLatest={isLatest} />
     <div class="spec-layout">

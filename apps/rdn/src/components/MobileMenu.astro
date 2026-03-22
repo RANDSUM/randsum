@@ -9,9 +9,18 @@ interface Props {
   headings: Heading[]
   version: string
   isLatest: boolean
+  specMarkdown?: string
+  specUrl?: string
 }
 
-const { headings, version, isLatest } = Astro.props
+const { headings, version, isLatest, specMarkdown = '', specUrl = '' } = Astro.props
+
+const truncatedForLlm = specMarkdown.length > 4000
+  ? specMarkdown.slice(0, 4000) + `\n\n[Full spec: ${specUrl}]`
+  : specMarkdown
+
+const claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(truncatedForLlm)}`
+const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)}`
 
 const SIDEBAR_GROUPS = [
   { label: 'Foundations', prefixes: ['1.', '2.', '3.'] },
@@ -101,6 +110,34 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
         </div>
       ))}
     </nav>
+
+    {specMarkdown.length > 0 && (
+      <div class="mobile-sidebar-group" style="border-top: 1px solid var(--border); padding-top: 1rem;">
+        <span class="label mobile-sidebar-group-label">Share</span>
+        <ul class="mobile-sidebar-list" role="list">
+          <li>
+            <button
+              type="button"
+              class="mobile-sidebar-link mobile-copy-md-btn"
+              data-markdown={specMarkdown}
+              style="background: none; border: none; width: 100%; text-align: left; font: inherit; cursor: pointer;"
+            >
+              Copy Markdown
+            </button>
+          </li>
+          <li>
+            <a class="mobile-sidebar-link" href={claudeUrl} target="_blank" rel="noopener noreferrer">
+              Open in Claude
+            </a>
+          </li>
+          <li>
+            <a class="mobile-sidebar-link" href={chatgptUrl} target="_blank" rel="noopener noreferrer">
+              Open in ChatGPT
+            </a>
+          </li>
+        </ul>
+      </div>
+    )}
   </div>
 </div>
 
@@ -180,4 +217,24 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
   navLinks.forEach((link) => {
     link.addEventListener('click', closeMenu)
   })
+
+  // Mobile copy markdown button
+  const mobileCopyBtn = document.querySelector('.mobile-copy-md-btn') as HTMLButtonElement | null
+  if (mobileCopyBtn) {
+    mobileCopyBtn.addEventListener('click', async () => {
+      const markdown = mobileCopyBtn.dataset.markdown ?? ''
+      try {
+        await navigator.clipboard.writeText(markdown)
+        const original = mobileCopyBtn.textContent
+        mobileCopyBtn.textContent = 'Copied!'
+        mobileCopyBtn.style.color = 'var(--accent)'
+        setTimeout(() => {
+          mobileCopyBtn.textContent = original
+          mobileCopyBtn.style.color = ''
+        }, 2000)
+      } catch {
+        // Clipboard API unavailable
+      }
+    })
+  }
 </script>
