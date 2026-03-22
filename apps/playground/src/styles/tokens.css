@@ -90,13 +90,6 @@
     flex-wrap: wrap;
     gap: var(--pg-space-sm);
   }
-  .pg-header-nav {
-    gap: var(--pg-space-sm) !important;
-    flex-wrap: wrap;
-  }
-  .pg-header-title-sub {
-    display: none;
-  }
 }
 
 [data-theme='light'] {

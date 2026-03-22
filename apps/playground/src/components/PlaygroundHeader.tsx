@@ -53,21 +53,15 @@ export function PlaygroundHeader({ notation }: PlaygroundHeaderProps): React.Rea
           fontSize: '1.25rem'
         }}
       >
-        RANDSUM{' '}
-        <span
-          className="pg-header-title-sub"
-          style={{ fontWeight: 400, fontSize: '0.75em', color: 'var(--pg-color-text-muted)' }}
-        >
-          DICE NOTATION PLAYGROUND
-        </span>
+        <span style={{ whiteSpace: 'nowrap' }}>RANDSUM Dice Notation Playground</span>
       </a>
 
       <nav
-        className="pg-header-nav"
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 'var(--pg-space-md)'
+          gap: 'var(--pg-space-md)',
+          flexShrink: 0
         }}
       >
         <a
