@@ -1,5 +1,5 @@
 import Constants from 'expo-constants'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Linking,
@@ -13,6 +13,7 @@ import {
 } from 'react-native'
 
 import { useAuth } from '../../hooks/useAuth'
+import { useSync } from '../../hooks/useSync'
 import { useTheme } from '../../hooks/useTheme'
 import { storage } from '../../lib/storage'
 import { useThemeStore } from '../../lib/stores/themeStore'
@@ -27,6 +28,17 @@ export default function AccountScreen(): React.JSX.Element {
   const [isSignUp, setIsSignUp] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [hapticsEnabled, setHapticsEnabled] = useState(true)
+
+  useEffect(() => {
+    storage
+      .getPreferences()
+      .then(prefs => {
+        setHapticsEnabled(prefs.haptics)
+      })
+      .catch(() => {
+        // Fall back to default (true)
+      })
+  }, [])
 
   const styles = StyleSheet.create({
     container: {

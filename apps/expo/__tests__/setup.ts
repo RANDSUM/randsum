@@ -18,5 +18,10 @@ mock.module('react-native', () => ({
   useColorScheme: () => 'dark',
   StyleSheet: {
     create: <T extends Record<string, object>>(styles: T): T => styles
+  },
+  Share: {
+    share: async (_opts: { message: string; url?: string }): Promise<{ action: string }> => ({
+      action: 'sharedAction'
+    })
   }
 }))

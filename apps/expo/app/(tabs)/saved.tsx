@@ -10,6 +10,7 @@ import { useRoll } from '../../hooks/useRoll'
 import { useTemplates } from '../../hooks/useTemplates'
 import { useTheme } from '../../hooks/useTheme'
 import { interpolateNotation } from '../../lib/interpolate'
+import { shareTemplate } from '../../lib/sharing'
 import type { RollTemplate } from '../../lib/types'
 
 export default function SavedScreen(): React.JSX.Element {
@@ -55,6 +56,10 @@ export default function SavedScreen(): React.JSX.Element {
     },
     [deleteTemplate]
   )
+
+  const handleShare = useCallback((template: RollTemplate) => {
+    shareTemplate(template, `https://randsum.io/t/${template.id}`)
+  }, [])
 
   const styles = StyleSheet.create({
     container: {
@@ -120,6 +125,7 @@ export default function SavedScreen(): React.JSX.Element {
             onQuickRoll={handleQuickRoll}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onShare={handleShare}
           />
         )}
         ListEmptyComponent={

@@ -1,11 +1,15 @@
 import type { RollArgument } from '@randsum/roller'
 import { roll as executeRoll } from '@randsum/roller'
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { storage } from '../lib/storage'
 import { useRollResultStore } from '../lib/stores/rollResultStore'
+import { supabase } from '../lib/supabase'
+import { syncToCloud } from '../lib/sync'
 import type { RollHistoryEntry } from '../lib/types'
+
+import { useAuth } from './useAuth'
 
 interface UseRollOptions {
   readonly templateId?: string
@@ -25,6 +29,9 @@ export function useRoll(options?: UseRollOptions): UseRollReturn {
   const router = useRouter()
   const setPending = useRollResultStore(s => s.setPending)
   const [isPending, setIsPending] = useState(false)
+  const { user } = useAuth()
+  const userRef = useRef(user)
+  userRef.current = user
 
   function roll(...args: readonly RollArgument[]): void {
     const result = executeRoll(...(args as RollArgument[]))
@@ -53,6 +60,13 @@ export function useRoll(options?: UseRollOptions): UseRollReturn {
     }
     storage
       .appendHistory(entry)
+      .then(() => {
+        // If authenticated, sync to cloud in the background
+        const currentUser = userRef.current
+        if (currentUser) {
+          void syncToCloud(currentUser.id, storage, supabase)
+        }
+      })
       .catch(() => {
         // Storage failures are silent — the overlay has already opened
       })

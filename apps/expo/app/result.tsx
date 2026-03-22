@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native'
 
 import { RollResultView } from '../components/RollResultView'
 import { useRoll } from '../hooks/useRoll'
+import { shareRollResult } from '../lib/sharing'
 import { useRollResultStore } from '../lib/stores/rollResultStore'
 
 export default function ResultScreen(): React.JSX.Element | null {
@@ -36,7 +37,7 @@ export default function ResultScreen(): React.JSX.Element | null {
         result={pending}
         onRollAgain={handleRollAgain}
         onSaveAsTemplate={() => undefined}
-        onShare={() => undefined}
+        onShare={() => shareRollResult(pending)}
       />
     </View>
   )

@@ -8,13 +8,15 @@ interface TemplateRowProps {
   readonly onQuickRoll: (template: RollTemplate) => void
   readonly onEdit: (template: RollTemplate) => void
   readonly onDelete: (id: string) => void
+  readonly onShare?: (template: RollTemplate) => void
 }
 
 export function TemplateRow({
   template,
   onQuickRoll,
   onEdit,
-  onDelete
+  onDelete,
+  onShare
 }: TemplateRowProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
 
@@ -115,6 +117,14 @@ export function TemplateRow({
             accessibilityRole="button"
           >
             <Text style={styles.actionText}>Edit</Text>
+          </Pressable>
+          <Pressable
+            style={styles.editButton}
+            onPress={() => onShare?.(template)}
+            accessibilityLabel={`Share ${template.name}`}
+            accessibilityRole="button"
+          >
+            <Text style={styles.actionText}>Share</Text>
           </Pressable>
           <Pressable
             style={styles.deleteButton}
