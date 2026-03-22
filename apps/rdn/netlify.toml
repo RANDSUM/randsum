@@ -1,6 +1,6 @@
 [build]
   base = "apps/rdn"
-  command = "bun run prebuild && bun run build"
+  command = "bun run build"
   publish = "dist"
 
 [dev]
