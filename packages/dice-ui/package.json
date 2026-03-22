@@ -17,6 +17,17 @@
     "react": "catalog:",
     "react-dom": "catalog:"
   },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "expo-haptics": {
+      "optional": true
+    }
+  },
   "scripts": {
     "typecheck": "tsc --noEmit"
   }
