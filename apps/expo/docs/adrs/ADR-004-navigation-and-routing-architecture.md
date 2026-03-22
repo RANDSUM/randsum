@@ -24,6 +24,8 @@ Two approaches exist:
 
 The PRD's technical architecture already specifies `result.tsx` as a file in `app/` (not inside `app/(tabs)/`), suggesting the modal-as-route model.
 
+ADR-006 specifies that the Roll Wizard uses `presentationStyle: 'pageSheet'` on iOS and is dismissible via swipe-down on all platforms. A single-route modal with internal step state satisfies this requirement cleanly. A four-route stack would require back-button handling across route boundaries, complicate wizard-state persistence between steps, and create an inconsistent dismiss gesture (swipe-down dismisses the whole wizard vs. pops one step).
+
 ## Decision
 
 ### Expo Router file-based routing with tab navigator and modal stack
@@ -34,6 +36,9 @@ The routing structure maps to the file system as follows:
 app/
   _layout.tsx             # Root layout — QueryClient, Zustand providers, modal stack
   result.tsx              # Roll result overlay (modal presentation)
+  wizard.tsx              # Roll wizard (pageSheet modal, internal step state via useWizardStore)
+  t/
+    [id].tsx              # Shared template deep link
   (tabs)/
     _layout.tsx           # Tab navigator — 5 tabs with icons and labels
     index.tsx             # Roll tab (Simple Mode / Advanced Mode toggle)
@@ -41,12 +46,6 @@ app/
     saved.tsx             # Saved templates tab
     history.tsx           # History feed tab
     account.tsx           # Account / settings tab
-  wizard/
-    _layout.tsx           # Wizard stack layout (back button, step indicator)
-    index.tsx             # Step 1: Choose type (Standard or Game)
-    build.tsx             # Step 2: Build the roll
-    variables.tsx         # Step 3: Add variables
-    name.tsx              # Step 4: Name and save
 ```
 
 ### Tab group: `app/(tabs)/`
@@ -101,33 +100,94 @@ export default function RootLayout() {
           animation: 'slide_from_bottom',
         }}
       />
-      <Stack.Screen name="wizard" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="wizard"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+          animation: 'slide_from_bottom',
+        }}
+      />
     </Stack>
   )
 }
 ```
 
-When a roll completes, the screen that triggered the roll calls `router.push('/result')` with the roll result passed as route params (serialized as a JSON string to satisfy Expo Router's string-only param constraint):
+When a roll completes, the screen that triggered the roll calls `router.push('/result')` with the roll result passed as route params. Because Expo Router params are strings only, the `RollRecord` is serialized using `serializeRollResult` from `lib/parseRollResult.ts` (see below):
 
 ```typescript
+import { serializeRollResult } from '@/lib/parseRollResult'
+
 router.push({
   pathname: '/result',
-  params: { result: JSON.stringify(rollResult) },
+  params: { result: serializeRollResult(rollResult) },
 })
 ```
 
-The result screen reads params with `useLocalSearchParams()` and parses the JSON. On dismiss (swipe down or backdrop tap), the result screen calls `router.back()`, which returns to the originating tab. The history append happens inside the result screen's `useEffect` on mount — the result is always recorded before the overlay is shown, not on dismiss.
+The result screen reads params with `useLocalSearchParams()` and deserializes using `parseRollResult`. On dismiss (swipe down or backdrop tap), the result screen calls `router.back()`, which returns to the originating tab. The history append happens inside the result screen's `useEffect` on mount — the result is always recorded before the overlay is shown, not on dismiss.
 
 Using a route (rather than a Zustand-controlled overlay at the root layout level) provides:
 - Native iOS/Android modal dismiss gesture for free (`presentation: 'modal'`)
 - A back stack entry — the "Roll again" action can replace the current modal route with a new roll result
 - Deep-linkability if a future feature wants to link to a shared result (params are URL-accessible on web)
 
-### Roll wizard: `app/wizard/` as a stack
+### Roll wizard: `app/wizard.tsx` as a single modal route with internal step state
 
-The wizard is a four-screen stack at `app/wizard/`. It uses Expo Router's nested stack navigator. Each step pushes forward; the native back button or a custom "Back" button pops. Step 4 (name and save) calls `router.replace('/(tabs)/saved')` on successful save, replacing the wizard stack with the saved tab so the back button does not return to the wizard.
+The wizard is a **single route** at `app/wizard.tsx`, presented as a `pageSheet` modal (consistent with ADR-006). All step navigation is internal — the wizard component renders the correct step view based on a Zustand `useWizardStore`.
 
-The wizard is entered via `router.push('/wizard')` from the Saved tab's FAB or header button. It is not accessible via deep links (no reason to link to mid-wizard state).
+```typescript
+// lib/useWizardStore.ts
+interface WizardState {
+  step: 'type' | 'build' | 'variables' | 'name'
+  templateDraft: Partial<RollTemplate>
+  setStep(step: WizardState['step']): void
+  updateDraft(fields: Partial<RollTemplate>): void
+  reset(): void
+}
+```
+
+Navigation inside the wizard is entirely imperative (`useWizardStore().setStep('build')`) — no route pushes, no back-stack entries between steps. The native back button and swipe-down gesture both dismiss the entire wizard (calling `router.back()`), not pop a single step. A visible "Back" button inside the wizard UI calls `setStep` to the previous step; "Cancel" calls `router.back()` directly.
+
+On successful save at the Name step, the wizard calls `router.replace('/(tabs)/saved')`, replacing the wizard modal with the saved tab so the back button does not return to the wizard.
+
+The `useWizardStore` is reset on wizard entry (in a `useEffect` in `wizard.tsx`) to clear any stale state from a previously abandoned session.
+
+This model resolves the contradiction with ADR-006's `pageSheet` description: a single modal route dismisses as a sheet, which is the platform-correct behavior. A four-route stack inside the modal would require custom back-button logic to distinguish "pop wizard step" from "dismiss wizard sheet."
+
+### `lib/parseRollResult.ts` — serialization helper
+
+`RollRecord` from `@randsum/roller` contains nested arrays and numeric values that are fully JSON-serializable, but Expo Router's params are typed as `string | string[]`. A dedicated helper at `lib/parseRollResult.ts` owns the serialization contract and handles type narrowing:
+
+```typescript
+import type { RollRecord } from '@randsum/roller'
+
+export interface ParsedRollResult {
+  readonly total: number
+  readonly records: readonly RollRecord[]
+  readonly notation: string
+}
+
+/** Serialize a roll result for passing as an Expo Router route param. */
+export function serializeRollResult(result: ParsedRollResult): string {
+  return JSON.stringify(result)
+}
+
+/**
+ * Deserialize a roll result from an Expo Router route param.
+ * Returns null if the param is absent or malformed — callers must handle this
+ * case (e.g. navigate back immediately).
+ */
+export function parseRollResult(raw: string | string[] | undefined): ParsedRollResult | null {
+  if (typeof raw !== 'string') return null
+  try {
+    return JSON.parse(raw) as ParsedRollResult
+  } catch {
+    return null
+  }
+}
+```
+
+This helper is the only place in the codebase that calls `JSON.parse` on route params. Using it rather than inline `JSON.parse` calls ensures that any future schema change to `ParsedRollResult` is a single-file update, and that the `exactOptionalPropertyTypes` constraint does not produce subtle bugs across multiple call sites.
 
 ### Simple/Advanced Mode toggle: in-screen state, not routing
 
@@ -155,12 +215,14 @@ This route is not in the tab group and has no tab bar. After saving, it navigate
 - The modal presentation for the result overlay uses native iOS/Android swipe-to-dismiss with no custom gesture code.
 - Deep links for shared templates have a natural home at `app/t/[id].tsx`.
 - Expo Router's `useLocalSearchParams()` and `router.push()` are the only navigation primitives needed — no imperative navigation service or context.
+- The single-route wizard aligns with ADR-006's `pageSheet` description: swipe-down dismisses the entire wizard. No custom back-button interception is needed between wizard steps.
+- `useWizardStore` cleanly accumulates step state in memory without polluting route params with partially-complete wizard data.
 
 ### Negative
 
-- Roll result params must be JSON-stringified to pass through Expo Router's string param constraint. Deeply nested `RollRecord` types must be serialized and deserialized correctly; any non-serializable values (e.g. `undefined` fields vs. absent fields in `exactOptionalPropertyTypes`) can cause subtle bugs.
-- The wizard's four-step flow is four route files. Simple state (e.g. the notation string built in step 2, needed in step 3) cannot be passed via URL params for complex objects. A Zustand `useWizardStore` is needed to hold in-progress wizard state across steps, with the store cleared on wizard exit.
-- `router.replace('/(tabs)/saved')` after wizard completion discards the wizard stack history. If the user expects the back button to return to the wizard after a save, this will surprise them. This is an accepted UX trade-off — returning to a completed wizard would be confusing.
+- Roll result params must be JSON-stringified. `lib/parseRollResult.ts` owns this contract — any caller that bypasses it with inline `JSON.parse` is a defect.
+- Wizard step navigation is not reflected in the URL. Users cannot deep-link to a mid-wizard state (acceptable — this is explicitly out of scope).
+- `router.replace('/(tabs)/saved')` after wizard completion discards the wizard modal from the back stack. If the user expects the back button to return to the wizard after a save, this will surprise them. This is an accepted UX trade-off — returning to a completed wizard would be confusing.
 
 ### Neutral
 
@@ -174,3 +236,4 @@ This route is not in the tab group and has no tab bar. After saving, it navigate
 - PRD: Sharing section (`randsum.io/t/{template_id}` deep link)
 - Expo Router docs: Tab navigator, Stack navigator, modal presentation, `useLocalSearchParams`
 - ADR-001: State Management Topology (wizard state in Zustand, not in routes)
+- ADR-006: Interaction Patterns — Roll Wizard as `pageSheet`, step indicator, dismiss behavior

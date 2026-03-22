@@ -40,6 +40,7 @@ Concrete stores:
 - `useNotationStore` — current notation string (Advanced Mode), validation status
 - `useThemeStore` — active theme (`'dark' | 'light'`), seeded from preferences but mutated by the toggle
 - `useUIStore` — overlay visibility, active game selection, active tab state that must survive re-renders
+- `useSyncStore` — sync engine status surface for the Account screen: `status: 'idle' | 'syncing' | 'error'`, `pendingCount: number`, `lastSyncAt: string | null`. Written by `lib/sync.ts`; read by the Account screen's sync status indicator. Not persisted — resets to `idle` on app launch.
 
 Zustand stores are created with `create()` and optionally persisted to AsyncStorage using the `zustand/middleware` `persist` middleware for stores that must survive app restart (e.g. `useThemeStore`).
 

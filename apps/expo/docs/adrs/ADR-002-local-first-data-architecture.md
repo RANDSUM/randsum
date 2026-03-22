@@ -46,6 +46,7 @@ All local I/O goes through a single module at `lib/storage.ts`. This module expo
 interface LocalStorage {
   getTemplates(): Promise<RollTemplate[]>
   saveTemplate(template: RollTemplate): Promise<void>
+  updateTemplate(template: RollTemplate): Promise<void>
   deleteTemplate(id: string): Promise<void>
 
   getHistory(limit?: number): Promise<RollHistoryEntry[]>
@@ -57,6 +58,10 @@ interface LocalStorage {
   savePreferences(prefs: Preferences): Promise<void>
 }
 ```
+
+`updateTemplate` takes a `RollTemplate` with an existing `id` and replaces the stored record. For `SQLiteBackend` this is an `UPDATE ... WHERE id = ?`; for `AsyncStorageBackend` it is a find-by-id replacement in the JSON array. Callers are responsible for updating `updated_at` before calling `updateTemplate`.
+
+**Schema migrations are out of scope for v1.** The initial schema is created once via `CREATE TABLE IF NOT EXISTS`. There is no ALTER TABLE strategy, no migration runner, and no version table. If the schema needs to change in a future version, the migration approach is deferred to that story. This is a known constraint: schema changes in v1+ will require a dedicated migration plan.
 
 The implementation selects the correct backend at module load time:
 
