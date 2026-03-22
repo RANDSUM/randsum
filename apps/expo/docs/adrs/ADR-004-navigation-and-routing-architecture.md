@@ -113,23 +113,26 @@ export default function RootLayout() {
 }
 ```
 
-When a roll completes, the screen that triggered the roll calls `router.push('/result')` with the roll result passed as route params. Because Expo Router params are strings only, the `RollRecord` is serialized using `serializeRollResult` from `lib/parseRollResult.ts` (see below):
+When a roll completes, the `useRoll` hook writes the result to a Zustand store (`useRollResultStore`) and then calls `router.push('/result')` with no params. The result screen reads from the store, not from route params.
 
 ```typescript
-import { serializeRollResult } from '@/lib/parseRollResult'
+// In useRoll.ts
+setPending(parsedResult)
+router.push('/result')
 
-router.push({
-  pathname: '/result',
-  params: { result: serializeRollResult(rollResult) },
-})
+// In result.tsx
+const pending = useRollResultStore(s => s.pending)
 ```
 
-The result screen reads params with `useLocalSearchParams()` and deserializes using `parseRollResult`. On dismiss (swipe down or backdrop tap), the result screen calls `router.back()`, which returns to the originating tab. The history append happens inside the result screen's `useEffect` on mount — the result is always recorded before the overlay is shown, not on dismiss.
+**Why a store instead of route params:** Roll results contain `RollRecord[]` — deeply nested arrays that can be large (e.g., Salvage Union rolls with many modifier steps). JSON-stringifying them into URL params risks hitting URL length limits on web and adds unnecessary serialization overhead. The store approach avoids this class of bug entirely. Roll results are ephemeral (not shareable by URL), so deep-linkability is not a concern.
 
-Using a route (rather than a Zustand-controlled overlay at the root layout level) provides:
+On dismiss (swipe down or backdrop tap), the result screen calls `router.back()`, which returns to the originating tab. The store is cleared on unmount. History append happens inside `useRoll` immediately after the roll — the result is recorded before the overlay opens.
+
+`lib/parseRollResult.ts` remains as a utility defining the `ParsedRollResult` type. `serializeRollResult` and `parseRollResult` functions are retained for potential future deep-link use but are not used in the current result flow.
+
+Using a modal route provides:
 - Native iOS/Android modal dismiss gesture for free (`presentation: 'modal'`)
-- A back stack entry — the "Roll again" action can replace the current modal route with a new roll result
-- Deep-linkability if a future feature wants to link to a shared result (params are URL-accessible on web)
+- A back stack entry — the "Roll again" action re-fires the roll and updates the store in-place
 
 ### Roll wizard: `app/wizard.tsx` as a single modal route with internal step state
 
@@ -224,7 +227,7 @@ This route is not in the tab group and has no tab bar. After saving, it navigate
 
 ### Negative
 
-- Roll result params must be JSON-stringified. `lib/parseRollResult.ts` owns this contract — any caller that bypasses it with inline `JSON.parse` is a defect.
+- Roll results are passed via Zustand store, not URL params. This means roll results are not deep-linkable — acceptable since they are ephemeral.
 - Wizard step navigation is not reflected in the URL. Users cannot deep-link to a mid-wizard state (acceptable — this is explicitly out of scope).
 - `router.replace('/(tabs)/saved')` after wizard completion discards the wizard modal from the back stack. If the user expects the back button to return to the wizard after a save, this will surprise them. This is an accepted UX trade-off — returning to a completed wizard would be confusing.
 

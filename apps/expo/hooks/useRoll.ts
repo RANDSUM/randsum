@@ -18,7 +18,7 @@ interface UseRollReturn {
 }
 
 function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  return crypto.randomUUID()
 }
 
 export function useRoll(options?: UseRollOptions): UseRollReturn {
