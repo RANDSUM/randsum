@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/jetbrains-mono": "0.4.1",
+    "@supabase/supabase-js": "^2.49.4",
     "@expo/vector-icons": "^15.0.2",
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
