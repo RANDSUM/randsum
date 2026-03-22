@@ -100,7 +100,7 @@ Each input has a label above it (from the spec's `label` field) in `text-muted`,
 
 The Saved tab displays templates in a flat list. Each row shows: template name (primary, `text`, `size-base`), notation or game reference (secondary, `text-muted`, `size-sm`, JetBrains Mono for notation strings), and a quick-roll button (right side, `accent` circle with a play icon, 44pt minimum touch target).
 
-**Swipe left on a row:** Reveals two actions — **Edit** (`surface-alt`, pencil icon) and **Delete** (`error`, trash icon). This is the platform-standard swipe-to-reveal pattern on both iOS and Android (via `react-native-gesture-handler`).
+**Inline action buttons:** Each row shows always-visible **Edit** (`surface-alt`, pencil icon) and **Delete** (`error`, trash icon) buttons. This replaces the originally-proposed swipe-to-reveal pattern to avoid adding `react-native-gesture-handler` as a dependency. Always-visible buttons are appropriate for templates because they are curated items (not a log) where active management is expected.
 
 Tapping **Edit** opens the Roll Wizard sheet at the appropriate step (pre-filled with the template's values).
 
