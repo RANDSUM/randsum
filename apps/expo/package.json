@@ -2,11 +2,16 @@
   "name": "@randsum/expo",
   "version": "1.0.0",
   "main": "index.ts",
+  "private": true,
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "npx expo lint",
+    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@randsum/roller": "workspace:~",
@@ -19,7 +24,9 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "eslint": "10.1.0",
+    "eslint-config-expo": "55.0.0",
+    "eslint-plugin-prettier": "5.5.5",
     "typescript": "~5.9.2"
-  },
-  "private": true
+  }
 }

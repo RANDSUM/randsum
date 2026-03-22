@@ -29,7 +29,7 @@ pre-push:
       run: bun run --filter @randsum/games gen:check > /dev/null 2>&1
       priority: 2
     test:
-      run: bun test 2>&1 | tail -5
+      run: bun run test 2>&1 | tail -5
       priority: 2
     audit:
       run: bun audit --level=high > /dev/null 2>&1
