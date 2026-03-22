@@ -131,7 +131,7 @@ Each history entry is a row: notation (JetBrains Mono, `size-sm`, `text-muted`) 
 
 **Tap to expand:** The row expands in-place (not a new screen, not a modal) to reveal the full breakdown — individual die values, modifier steps. The expansion uses a height animation (spring, 200ms). Tapping again collapses it.
 
-**Swipe to delete:** Same swipe-to-reveal pattern as the template list, but with only a Delete action (no Edit). No confirmation dialog — a single swipe-reveal-tap to delete a history entry is not worth a dialog; the history feed is a log, not a curated collection.
+**Long-press to delete:** Long-press (400ms) reveals an inline Delete button. This replaces the originally-proposed swipe-to-reveal pattern to avoid adding `react-native-gesture-handler` as a dependency — the long-press approach keeps the native dependency surface smaller. No confirmation dialog — a single long-press-tap to delete is not worth a dialog; the history feed is a log, not a curated collection. If swipe-to-reveal is added later (when `react-native-gesture-handler` is needed for other features), this can be upgraded without changing the data model.
 
 ### Accessibility
 

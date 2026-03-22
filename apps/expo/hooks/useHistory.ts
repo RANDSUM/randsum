@@ -16,12 +16,12 @@ export function useHistory(): UseHistoryReturn {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    let cancelled = false
+    const controller = { cancelled: false }
 
     storage
       .getHistory()
       .then(loaded => {
-        if (!cancelled) {
+        if (!controller.cancelled) {
           setEntries(loaded)
         }
       })
@@ -29,13 +29,13 @@ export function useHistory(): UseHistoryReturn {
         // Storage read failure — leave entries empty
       })
       .finally(() => {
-        if (!cancelled) {
+        if (!controller.cancelled) {
           setIsLoading(false)
         }
       })
 
     return () => {
-      cancelled = true
+      controller.cancelled = true
     }
   }, [])
 
