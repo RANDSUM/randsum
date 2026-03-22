@@ -14,7 +14,7 @@ export interface Variable {
 
 /** A saved roll template */
 export interface RollTemplate {
-  /** nanoid — generated with nanoid() before saving */
+  /** crypto.randomUUID() — generated with nanoid() before saving */
   readonly id: string
   readonly name: string
   /** Notation string, may include {variable} placeholders */
@@ -32,7 +32,7 @@ export interface RollTemplate {
 
 /** A single entry in the roll history feed */
 export interface RollHistoryEntry {
-  /** nanoid */
+  /** crypto.randomUUID() */
   readonly id: string
   /** The notation that was rolled (e.g. "4d6L") */
   readonly notation: string

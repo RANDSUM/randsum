@@ -97,7 +97,7 @@ export default function AccountScreen(): React.JSX.Element {
       borderColor: tokens.border
     },
     primaryButtonText: {
-      color: '#ffffff',
+      color: tokens.text,
       fontSize: fontSizes.base,
       fontWeight: '600'
     },

@@ -4,7 +4,7 @@ import { usePoolStore } from '../lib/stores/poolStore'
 
 describe('usePoolStore', () => {
   beforeEach(() => {
-    usePoolStore.setState({ pool: {} })
+    usePoolStore.setState({ pool: {}, isEmpty: true })
   })
 
   describe('initial state', () => {
