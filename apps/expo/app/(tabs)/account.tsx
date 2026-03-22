@@ -22,6 +22,7 @@ export default function AccountScreen(): React.JSX.Element {
   const { tokens, fontSizes, colorScheme } = useTheme()
   const toggleTheme = useThemeStore(s => s.toggleTheme)
   const { user, isLoading, signIn, signUp, signOut } = useAuth()
+  const { status: syncStatus, lastSyncAt, errorMessage: syncError, triggerSync } = useSync()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -190,6 +191,32 @@ export default function AccountScreen(): React.JSX.Element {
           <Pressable style={[styles.button, styles.secondaryButton]} onPress={handleSignOut}>
             <Text style={styles.secondaryButtonText}>Sign Out</Text>
           </Pressable>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Sync</Text>
+          <Text style={styles.toggleLabel}>
+            {syncStatus === 'syncing'
+              ? 'Syncing...'
+              : syncStatus === 'error'
+                ? `Sync error: ${syncError ?? 'Unknown error'}`
+                : lastSyncAt
+                  ? `Last synced: ${new Date(lastSyncAt).toLocaleString()}`
+                  : 'Not yet synced'}
+          </Text>
+          {syncStatus === 'syncing' ? (
+            <ActivityIndicator color={tokens.accent} style={{ marginTop: 8 }} />
+          ) : (
+            <Pressable
+              style={[styles.button, styles.secondaryButton, { marginTop: 8 }]}
+              onPress={() => {
+                void triggerSync()
+              }}
+            >
+              <Text style={styles.secondaryButtonText}>Sync Now</Text>
+            </Pressable>
+          )}
+          {syncStatus === 'error' && <Text style={styles.errorText}>{syncError}</Text>}
         </View>
 
         <View style={styles.section}>

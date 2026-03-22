@@ -1,21 +1,9 @@
-import { describe, expect, mock, test } from 'bun:test'
-
-// Mock Share before importing sharing module
-mock.module('react-native', () => ({
-  Share: {
-    share: async (_opts: { message: string; url?: string }): Promise<{ action: string }> => ({
-      action: 'sharedAction'
-    })
-  },
-  useColorScheme: () => 'dark',
-  StyleSheet: {
-    create: <T extends Record<string, object>>(styles: T): T => styles
-  }
-}))
-
-import { formatRollResultText, shareRollResult, shareTemplate } from '../lib/sharing'
+import { describe, expect, test } from 'bun:test'
 import type { ParsedRollResult } from '../lib/parseRollResult'
 import type { RollTemplate } from '../lib/types'
+
+// Dynamic import ensures setup.ts preload mock is active before react-native resolves
+const { formatRollResultText, shareRollResult, shareTemplate } = await import('../lib/sharing')
 
 // Minimal RollRecord shape matching @randsum/roller
 function makeRecord(
@@ -53,7 +41,7 @@ describe('formatRollResultText', () => {
     expect(formatRollResultText(result)).toBe('Rolled 2d6 → 0 ([3], [4])')
   })
 
-  test('formats single die result with no breakdown when no records', () => {
+  test('formats single die result', () => {
     const result: ParsedRollResult = {
       notation: '1d20',
       total: 17,
