@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NotationRoller, RollResultPanel } from '@randsum/dice-ui'
 import type { RollResult as RollResultData } from '@randsum/dice-ui'
 import { PlaygroundHeader } from './PlaygroundHeader'
-import { QuickReferenceGrid } from './QuickReferenceGrid'
+import { QuickReferenceGrid } from '@randsum/dice-ui'
 
 // ---- Types (exported for testing) ----
 
