@@ -1,4 +1,4 @@
-import type { ColorScheme, FontSizes, ThemeTokens } from '../lib/stores/themeStore'
+import type { ColorScheme, FontSizes, ThemeTokens } from '../lib/theme'
 import { useThemeStore } from '../lib/stores/themeStore'
 
 interface UseThemeReturn {
