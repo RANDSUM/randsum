@@ -110,14 +110,20 @@ Tapping **Delete** shows a brief confirmation alert (one tap to confirm, one to 
 
 ### Roll Wizard (Template Creation)
 
-The Roll Wizard is a bottom sheet (`presentationStyle: 'pageSheet'` on iOS). It uses a step indicator at the top to show progress. Steps:
+The Roll Wizard is a single modal route at `app/wizard.tsx`, presented with `presentationStyle: 'pageSheet'` on iOS. It is entered via `router.push('/wizard')` and dismissed via `router.back()`. There is no nested Expo Router stack inside the wizard — the route is a single file.
+
+Step progression and all wizard state (current step index, in-progress notation, selected type, variable definitions, draft name) are managed by a Zustand `useWizardStore`. The store is cleared on wizard entry and on wizard exit (both save and cancel paths). This avoids stale state if the user re-opens the wizard.
+
+The wizard renders four internal steps, controlled by the store's `currentStep` field:
 
 1. **Type** — Standard notation or Game-specific (segmented control, two options)
 2. **Build** — Pool builder (Standard path) or Game input form (Game path). For the Standard path, this is the same dice grid as Simple Mode with the Add Modifiers expansion below it.
 3. **Variables** (optional, skip button available) — Mark parts of the notation as `{variable_name}`. A simple interface: tap a token in the notation to convert it to a variable, then name it and set an optional default.
 4. **Name and Save** — Text input for the template name, Save button.
 
-Navigation between steps: **Next** and **Back** buttons at the bottom of each step. **Cancel** (top-left, always visible) dismisses the sheet without saving. No changes are persisted until Step 4's Save button is pressed.
+A step indicator at the top of the sheet shows the current position (e.g. "Step 2 of 4"). Navigation between steps uses **Next** and **Back** buttons at the bottom of each step, which call `useWizardStore.goToNext()` and `useWizardStore.goToPrev()` — there is no `router.push()` between steps. **Cancel** (top-left, always visible) calls `router.back()` after clearing the store. No changes are persisted until Step 4's Save button is pressed.
+
+Because the wizard is a single route (not a stack), the device back button and iOS swipe-down both call `router.back()` from any step — the user exits the wizard entirely rather than going back one step. The **Back** button within each step handles intra-wizard backwards navigation. This is an intentional trade-off: it keeps the route model simple and avoids the URL-param serialization problem that a multi-route wizard would introduce.
 
 ### History Feed
 
@@ -135,7 +141,17 @@ Minimum touch target: 44 x 44pt on all interactive elements, enforced via `minWi
 
 Focus order on the Roll screen follows reading order: pool display → dice grid (left-right, top-bottom) → action row → roll button. VoiceOver/TalkBack navigation is tested against this order.
 
-The animated total in the Roll Result overlay uses `AccessibilityInfo.announceForAccessibility()` to announce the final number when the animation completes. The animation itself is suppressed when `useReducedMotion()` returns true (replaced with an immediate value display).
+The animated total in the Roll Result overlay uses `AccessibilityInfo.announceForAccessibility()` to announce the final number when the animation completes. The animation itself is suppressed when `useReducedMotion()` returns `true` (replaced with an immediate value display). `useReducedMotion` is imported from `react-native-reanimated`:
+
+```ts
+import { useReducedMotion } from 'react-native-reanimated'
+```
+
+## Dependencies
+
+- `react-native-reanimated` — provides `useReducedMotion()` and `useAnimatedStyle` for all spring animations (die button press scale, roll result number spin, history row expansion). This package is a mandatory peer dependency of Expo SDK 55 and is already present in the project.
+- `expo-haptics` — `Haptics.impactAsync` and `Haptics.notificationAsync` for tactile feedback on tap, roll, and result reveal.
+- `react-native-gesture-handler` — swipe-to-reveal on template and history rows.
 
 ## Consequences
 
@@ -143,12 +159,14 @@ The animated total in the Roll Result overlay uses `AccessibilityInfo.announceFo
 - Long-press to decrement removes the need for a separate remove button, keeping the dice grid clean and touch-target-friendly
 - The Roll Result overlay's slide-up-from-bottom pattern is the platform idiom for ephemeral results on both iOS and Android — users understand it without instruction
 - Swipe-to-reveal on template and history rows is consistent with iOS Mail and other list-management apps players already know
-- The Roll Wizard step indicator gives users a progress model without committing to a full navigation stack — they always know how many steps remain
+- The Roll Wizard as a single modal route eliminates the URL-param serialization problem for complex wizard state — all state lives in `useWizardStore`, which is typed and validated
+- The single-route wizard avoids generating deep-link-able URLs for mid-wizard states, which would be meaningless and potentially confusing
 - In-place history expansion avoids navigation overhead for the peek-at-details use case
-- `useReducedMotion()` support means animated reveals do not cause problems for users with motion sensitivity
+- `useReducedMotion()` support (from `react-native-reanimated`) means animated reveals do not cause problems for users with motion sensitivity
 
 ### Negative
 - Long-press to decrement is a non-obvious affordance — first-time users may not discover it without a tooltip or onboarding hint. A brief first-launch tooltip on the dice grid ("Long press to remove") is recommended but not specified in this ADR.
+- The Roll Wizard's single-route model means the device back button exits the wizard entirely from any step rather than going back one step. The explicit in-wizard Back button handles step regression. Users accustomed to the OS back gesture for step-back (common in Android apps) may find this surprising.
 - The Roll Wizard's four-step flow is the longest interaction in the app. Users who abandon at Step 2 or 3 lose all their work (no draft persistence). Draft persistence is out of scope for v1 but should be considered in v1.1.
 - In-place history expansion with a height animation is straightforward for short breakdowns. For deeply nested results (e.g. Salvage Union rolls with many modifier steps), the expanded row may be very tall, pushing subsequent rows far down the list. A max-height with internal scroll should be evaluated during implementation.
 - The numeric stepper for `integer` inputs in game rollers requires two taps to change a value by one (minus, then confirm). For ratings that span 1–6 (Blades in the Dark), this is acceptable. For wider ranges, a direct-tap-to-edit numeric input may be preferable. This can be addressed with game-specific UI overrides post-launch.
