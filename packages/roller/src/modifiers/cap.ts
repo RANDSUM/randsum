@@ -52,56 +52,7 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
       descriptions.push(...comparison.map(str => `No Rolls ${str}`))
 
       return descriptions
-    },
-
-    docs: [
-      {
-        key: 'C{..}',
-        category: 'Clamp',
-        color: '#67e8f9',
-        colorLight: '#0891b2',
-        title: 'Cap',
-        description:
-          'Clamp individual die values to a range \u2014 dice outside the boundary are moved to it.',
-        displayBase: 'C{..}',
-        forms: [{ notation: 'C{...}', note: 'Comma-separate multiple conditions' }],
-        comparisons: [
-          { operator: 'n', note: 'max cap: no result exceeds n' },
-          {
-            operator: '>n',
-            note: 'cap: clamp anything above n down to n'
-          },
-          {
-            operator: '>=n',
-            note: 'cap: clamp n and above down to n'
-          },
-          {
-            operator: '<n',
-            note: 'floor: clamp anything below n up to n'
-          },
-          {
-            operator: '<=n',
-            note: 'floor: clamp n and below up to n'
-          }
-        ],
-        examples: [
-          {
-            description: 'Cap rolls: nothing exceeds 5',
-            notation: '4d6C{>5}',
-            options: { sides: 6, quantity: 4, modifiers: { cap: { greaterThan: 5 } } }
-          },
-          {
-            description: 'Clamp rolls to [3, 18]',
-            notation: '4d20C{<3,>18}',
-            options: {
-              sides: 20,
-              quantity: 4,
-              modifiers: { cap: { lessThan: 3, greaterThan: 18 } }
-            }
-          }
-        ]
-      }
-    ]
+    }
   }
 )
 
