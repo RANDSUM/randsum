@@ -45,8 +45,16 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
       displayBase: '!s{..}',
       forms: [{ notation: '!s{N1,N2,...}', note: 'Step through die sizes on each explosion' }],
       examples: [
-        { description: 'Explode through d4, d6, d8, d10', notation: '1d4!s{4,6,8,10}', options: { sides: 4, modifiers: { explodeSequence: [4, 6, 8, 10] } } },
-        { description: 'Explode to d8, then d12', notation: '1d6!s{8,12}', options: { sides: 6, modifiers: { explodeSequence: [8, 12] } } }
+        {
+          description: 'Explode through d4, d6, d8, d10',
+          notation: '1d4!s{4,6,8,10}',
+          options: { sides: 4, modifiers: { explodeSequence: [4, 6, 8, 10] } }
+        },
+        {
+          description: 'Explode to d8, then d12',
+          notation: '1d6!s{8,12}',
+          options: { sides: 6, modifiers: { explodeSequence: [8, 12] } }
+        }
       ]
     },
     {
@@ -60,7 +68,11 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
       displayBase: '!i',
       forms: [{ notation: '!i', note: 'Inflate through standard dice sizes' }],
       examples: [
-        { description: 'Explode d4 through d6, d8, d10, d12, d20', notation: '1d4!i', options: { sides: 4, modifiers: { explodeSequence: [6, 8, 10, 12, 20] } } }
+        {
+          description: 'Explode d4 through d6, d8, d10, d12, d20',
+          notation: '1d4!i',
+          options: { sides: 4, modifiers: { explodeSequence: [6, 8, 10, 12, 20] } }
+        }
       ]
     },
     {
@@ -74,7 +86,11 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
       displayBase: '!r',
       forms: [{ notation: '!r', note: 'Reduce through standard dice sizes' }],
       examples: [
-        { description: 'Explode d20 through d12, d10, d8, d6, d4', notation: '1d20!r', options: { sides: 20, modifiers: { explodeSequence: [12, 10, 8, 6, 4] } } }
+        {
+          description: 'Explode d20 through d12, d10, d8, d6, d4',
+          notation: '1d20!r',
+          options: { sides: 20, modifiers: { explodeSequence: [12, 10, 8, 6, 4] } }
+        }
       ]
     }
   ]

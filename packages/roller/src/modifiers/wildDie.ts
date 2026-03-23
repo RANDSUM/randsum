@@ -41,7 +41,11 @@ export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boole
       displayBase: 'W',
       forms: [{ notation: 'W', note: 'Apply wild die rule' }],
       examples: [
-        { description: 'D6 System with wild die', notation: '5d6W', options: { sides: 6, quantity: 5, modifiers: { wildDie: true } } }
+        {
+          description: 'D6 System with wild die',
+          notation: '5d6W',
+          options: { sides: 6, quantity: 5, modifiers: { wildDie: true } }
+        }
       ]
     }
   ]

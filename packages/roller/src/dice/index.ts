@@ -35,9 +35,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       description: 'Shorthand for a 100-sided die. Equivalent to 1d100.',
       displayBase: 'd%',
       forms: [{ notation: 'd%', note: 'Roll 1-100' }],
-      examples: [
-        { description: 'Roll 1-100', notation: 'd%', options: { sides: 100 } }
-      ]
+      examples: [{ description: 'Roll 1-100', notation: 'd%', options: { sides: 100 } }]
     }
   },
   {
@@ -55,8 +53,16 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
         { notation: 'dF.2', note: 'Extended Fudge die: -2 to +2' }
       ],
       examples: [
-        { description: 'Fate Core: four Fate dice (-4 to +4)', notation: '4dF', options: { sides: [-1, 0, 1], quantity: 4 } },
-        { description: 'Extended Fudge die (-2 to +2)', notation: 'dF.2', options: { sides: [-2, -1, 0, 1, 2] } }
+        {
+          description: 'Fate Core: four Fate dice (-4 to +4)',
+          notation: '4dF',
+          options: { sides: [-1, 0, 1], quantity: 4 }
+        },
+        {
+          description: 'Extended Fudge die (-2 to +2)',
+          notation: 'dF.2',
+          options: { sides: [-2, -1, 0, 1, 2] }
+        }
       ]
     }
   },
@@ -72,7 +78,11 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       displayBase: 'zN',
       forms: [{ notation: 'zN', note: 'Roll 0 to N-1' }],
       examples: [
-        { description: 'Roll 0-5 instead of 1-6', notation: 'z6', options: { sides: [0, 1, 2, 3, 4, 5] } }
+        {
+          description: 'Roll 0-5 instead of 1-6',
+          notation: 'z6',
+          options: { sides: [0, 1, 2, 3, 4, 5] }
+        }
       ]
     }
   },
@@ -87,9 +97,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       description: 'Roll an N-sided die repeatedly until a 1 appears. Total is the count of rolls.',
       displayBase: 'gN',
       forms: [{ notation: 'gN', note: 'Roll until 1 appears; count rolls' }],
-      examples: [
-        { description: 'Geometric d6 — roll until 1', notation: 'g6' }
-      ]
+      examples: [{ description: 'Geometric d6 — roll until 1', notation: 'g6' }]
     }
   },
   {
@@ -103,9 +111,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       description: 'Draw dice from a pool without replacement — each value can only appear once.',
       displayBase: 'DDN',
       forms: [{ notation: 'xDDN', note: 'Draw x unique values from 1-N' }],
-      examples: [
-        { description: 'Draw 3 unique values from 1-6', notation: '3DD6' }
-      ]
+      examples: [{ description: 'Draw 3 unique values from 1-6', notation: '3DD6' }]
     }
   },
   {
@@ -121,7 +127,11 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       forms: [{ notation: 'd{a,b,c,...}', note: 'Comma-separated list of face values' }],
       examples: [
         { description: 'Weighted custom die', notation: 'd{1,2,2,3,3,4}' },
-        { description: 'Coin flip (heads/tails)', notation: 'd{H,T}', options: { sides: ['H', 'T'] } }
+        {
+          description: 'Coin flip (heads/tails)',
+          notation: 'd{H,T}',
+          options: { sides: ['H', 'T'] }
+        }
       ]
     }
   }

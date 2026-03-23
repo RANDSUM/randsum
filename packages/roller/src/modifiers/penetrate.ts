@@ -87,7 +87,11 @@ export const penetrateSchema: NotationSchema<boolean | number | ComparisonOption
           { operator: '<=n', note: 'penetrate on n or less' }
         ],
         examples: [
-          { description: 'Roll 1d6; max penetrates with -1 per chain', notation: '1d6!p', options: { sides: 6, modifiers: { penetrate: true } } },
+          {
+            description: 'Roll 1d6; max penetrates with -1 per chain',
+            notation: '1d6!p',
+            options: { sides: 6, modifiers: { penetrate: true } }
+          },
           { description: 'Penetrate, then drop lowest', notation: '2d6!pL' },
           {
             description: 'Roll 5d10; penetrate on 8 or higher',

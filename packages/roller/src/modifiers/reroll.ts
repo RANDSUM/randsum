@@ -136,7 +136,11 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
         }
       ],
       examples: [
-        { description: 'Reroll any 1s', notation: '4d6R{1}', options: { sides: 6, quantity: 4, modifiers: { reroll: { exact: [1] } } } },
+        {
+          description: 'Reroll any 1s',
+          notation: '4d6R{1}',
+          options: { sides: 6, quantity: 4, modifiers: { reroll: { exact: [1] } } }
+        },
         {
           description: 'Reroll results under 3',
           notation: '2d10R{<3}',
@@ -181,7 +185,11 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
         }
       ],
       examples: [
-        { description: 'Reroll 1s once', notation: '4d6ro{1}', options: { sides: 6, quantity: 4, modifiers: { reroll: { exact: [1], max: 1 } } } },
+        {
+          description: 'Reroll 1s once',
+          notation: '4d6ro{1}',
+          options: { sides: 6, quantity: 4, modifiers: { reroll: { exact: [1], max: 1 } } }
+        },
         {
           description: 'Reroll under 3 once',
           notation: '2d10ro{<3}',

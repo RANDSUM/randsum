@@ -39,7 +39,11 @@ export const multiplySchema: NotationSchema<number> = defineNotationSchema<numbe
       forms: [{ notation: '*n', note: 'Multiply dice sum by n (pre-arithmetic)' }],
       examples: [
         { description: '(roll \u00d7 2) + 3', notation: '2d6*2+3' },
-        { description: 'Triple the dice sum', notation: '4d6*3', options: { sides: 6, quantity: 4, modifiers: { multiply: 3 } } }
+        {
+          description: 'Triple the dice sum',
+          notation: '4d6*3',
+          options: { sides: 6, quantity: 4, modifiers: { multiply: 3 } }
+        }
       ]
     }
   ]
