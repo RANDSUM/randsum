@@ -87,7 +87,9 @@ export function parseSpecialPoolSegment(segment: string): SpecialPoolResult | nu
 
   const customMatch = CUSTOM_FACES_POOL_PATTERN.exec(trimmed)
   if (customMatch) {
-    const faces = customMatch[3]!.split(',').map(f => f.trim())
+    const facesStr = customMatch[3]
+    if (facesStr === undefined) return null
+    const faces = facesStr.split(',').map(f => f.trim())
     return {
       quantity: extractQuantity(customMatch[2]),
       sides: faces.length,

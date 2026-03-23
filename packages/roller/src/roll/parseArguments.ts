@@ -44,7 +44,9 @@ function splitMultiPoolString(input: string): readonly PoolSegment[] {
   if (signedMatches.length === 0) return [{ notation: input, arithmetic: 'add' }]
 
   // Find where the first signed pool starts — everything before it is the first pool
-  const firstSignedIdx = signedMatches[0]!.index
+  const firstSigned = signedMatches[0]
+  if (firstSigned === undefined) return [{ notation: input, arithmetic: 'add' }]
+  const firstSignedIdx = firstSigned.index
   if (firstSignedIdx === 0) {
     // Entire string starts with a sign — not a valid multi-pool (no first pool)
     return [{ notation: input, arithmetic: 'add' }]
