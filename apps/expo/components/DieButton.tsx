@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { ImpactFeedbackStyle } from 'expo-haptics'
 import { useRef } from 'react'
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Animated, Pressable, StyleSheet, Text } from 'react-native'
 
 import { useTheme } from '../hooks/useTheme'
 

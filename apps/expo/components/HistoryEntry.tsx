@@ -38,16 +38,6 @@ export function HistoryEntry({
     onPress(entry)
   }
 
-  const handleToggle = (): void => {
-    Animated.spring(animatedHeight, {
-      toValue: isExpanded ? 0 : 1,
-      useNativeDriver: false,
-      speed: 20,
-      bounciness: 0
-    }).start()
-    onToggle()
-  }
-
   const handleLongPress = (): void => {
     setShowDeleteButton(prev => !prev)
   }
