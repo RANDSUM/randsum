@@ -62,13 +62,13 @@ describe('multi-pool special dice notation', () => {
       })
     })
 
-    describe('scope fence: non-numeric stays invalid in multi-pool', () => {
-      test('isDiceNotation("1d20+dF") returns false', () => {
-        expect(isDiceNotation('1d20+dF')).toBe(false)
+    describe('all dice types valid in multi-pool', () => {
+      test('isDiceNotation("1d20+dF") returns true', () => {
+        expect(isDiceNotation('1d20+dF')).toBe(true)
       })
 
-      test('isDiceNotation("1d20+d{H,T}") returns false', () => {
-        expect(isDiceNotation('1d20+d{H,T}')).toBe(false)
+      test('isDiceNotation("1d20+d{H,T}") returns true', () => {
+        expect(isDiceNotation('1d20+d{H,T}')).toBe(true)
       })
     })
   })
