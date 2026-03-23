@@ -66,7 +66,8 @@ void mock.module('@randsum/roller', () => ({
   isDiceNotation: () => true,
   validateNotation: () => ({}),
   validateFinite: () => true,
-  validateRange: () => true
+  validateRange: () => true,
+  suggestNotationFix: () => undefined
 }))
 
 void mock.module('@randsum/roller/roll', () => ({

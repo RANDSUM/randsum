@@ -15,7 +15,8 @@ const {
   ModifierError,
   ValidationError,
   RollError,
-  ERROR_CODES
+  ERROR_CODES,
+  suggestNotationFix: realSuggestNotationFix
 } = await import('../../../../packages/roller/src/index')
 
 const mockEmbed = {
@@ -93,6 +94,9 @@ void mock.module('discord.js', () => ({
 // Only individual tests override with mockImplementationOnce for controlled results.
 const mockNotation = mock((...args: Parameters<typeof realNotation>) => realNotation(...args))
 const mockRoll = mock((...args: Parameters<typeof realRoll>) => realRoll(...args))
+const mockSuggestNotationFix = mock((...args: Parameters<typeof realSuggestNotationFix>) =>
+  realSuggestNotationFix(...args)
+)
 
 void mock.module('@randsum/roller', () => ({
   roll: mockRoll,
@@ -101,6 +105,7 @@ void mock.module('@randsum/roller', () => ({
   validateRange,
   isDiceNotation,
   validateNotation,
+  suggestNotationFix: mockSuggestNotationFix,
   RandsumError,
   NotationParseError,
   ModifierError,
@@ -145,6 +150,11 @@ beforeEach(() => {
   mockRoll
     .mockClear()
     .mockImplementation((...args: Parameters<typeof realRoll>) => realRoll(...args))
+  mockSuggestNotationFix
+    .mockClear()
+    .mockImplementation((...args: Parameters<typeof realSuggestNotationFix>) =>
+      realSuggestNotationFix(...args)
+    )
 })
 
 describe('rollCommand', () => {
@@ -199,5 +209,31 @@ describe('rollCommand', () => {
     const interaction = makeInteraction({ notation: '2d6L' })
     await rollCommand.execute(interaction as never)
     expect(mockEmbed.addFields).toHaveBeenCalled()
+  })
+
+  test('error with suggestion: embed description includes "Did you mean" text', async () => {
+    mockNotation.mockImplementationOnce(() => {
+      throw new Error('Invalid notation')
+    })
+    mockSuggestNotationFix.mockImplementationOnce(() => '2d6')
+    const interaction = makeInteraction({ notation: '2d garbage' })
+    await rollCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledTimes(1)
+    expect(mockEmbed.setDescription).toHaveBeenCalledWith(
+      expect.stringContaining('Did you mean `2d6`?')
+    )
+  })
+
+  test('error without suggestion: shows generic error message without "Did you mean"', async () => {
+    mockNotation.mockImplementationOnce(() => {
+      throw new Error('Invalid notation')
+    })
+    mockSuggestNotationFix.mockImplementationOnce(() => undefined)
+    const interaction = makeInteraction({ notation: 'zzz' })
+    await rollCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledTimes(1)
+    expect(mockEmbed.setDescription).not.toHaveBeenCalledWith(
+      expect.stringContaining('Did you mean')
+    )
   })
 })

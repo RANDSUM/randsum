@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { roll } from '@randsum/roller/roll'
 import { notation as createNotation } from '@randsum/roller/validate'
+import { suggestNotationFix } from '@randsum/roller'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
@@ -57,11 +58,12 @@ export const rollCommand: Command = {
 
       await interaction.editReply({ embeds: [embed] })
     } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
+      const baseMessage = e instanceof Error ? e.message : 'An unknown error occurred'
+      const suggestion = suggestNotationFix(notationString)
+      const description = suggestion
+        ? `${baseMessage}\n\nDid you mean \`${suggestion}\`?`
+        : baseMessage
+      await replyWithError(interaction, 'Error', description)
     }
   }
 }
