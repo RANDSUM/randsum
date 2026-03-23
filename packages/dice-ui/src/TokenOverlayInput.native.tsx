@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from 'react'
-import type { TextInput as RNTextInput } from 'react-native'
-import { Animated, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import React from 'react'
+import { Platform, StyleSheet, Text, TextInput, View } from 'react-native'
 import type { Token } from '@randsum/roller/tokenize'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import { tokenColor } from './tokenColor'
@@ -12,26 +11,25 @@ export interface TokenOverlayInputNativeProps {
   readonly theme?: 'light' | 'dark'
   readonly placeholder?: string
   readonly onSubmitEditing?: () => void
+  readonly isInvalid?: boolean
 }
 
-const TOKENS = {
+const THEME_TOKENS = {
   dark: {
     text: '#fafafa',
-    textMuted: '#a1a1aa',
     textDim: '#71717a',
     surface: '#18181b',
     surfaceAlt: '#27272a',
-    border: '#3f3f46',
-    accent: '#a855f7'
+    accent: '#a855f7',
+    error: '#f97583'
   },
   light: {
     text: '#18181b',
-    textMuted: '#3f3f46',
     textDim: '#71717a',
     surface: '#f4f4f5',
     surfaceAlt: '#e4e4e7',
-    border: '#a1a1aa',
-    accent: '#9333ea'
+    accent: '#9333ea',
+    error: '#f97583'
   }
 }
 
@@ -40,126 +38,110 @@ const PLAIN_COLORS = {
   light: '#417e38'
 }
 
-const FONT_SIZE = 20
-const CURSOR_HEIGHT = 24
-const CURSOR_WIDTH = 2
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    minHeight: 48,
-    justifyContent: 'center'
-  },
-  tokenDisplay: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8
-  },
-  tokenText: {
-    fontFamily: 'JetBrainsMono_400Regular',
-    fontSize: FONT_SIZE
-  },
-  placeholderText: {
-    fontFamily: 'JetBrainsMono_400Regular',
-    fontSize: FONT_SIZE
-  },
-  hiddenInput: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    opacity: 0,
-    fontFamily: 'JetBrainsMono_400Regular',
-    fontSize: FONT_SIZE
-  },
-  cursor: {
-    width: CURSOR_WIDTH,
-    height: CURSOR_HEIGHT,
-    borderRadius: 1
-  }
-})
-
-function BlinkingCursor({ color }: { readonly color: string }): React.JSX.Element {
-  const opacity = useRef(new Animated.Value(1)).current
-
-  useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true
-        })
-      ])
-    )
-    animation.start()
-    return () => animation.stop()
-  }, [opacity])
-
-  return <Animated.View style={[styles.cursor, { backgroundColor: color, opacity }]} />
-}
-
+/**
+ * Native token overlay input.
+ *
+ * Architecture: A real TextInput is always rendered and interactive.
+ * When there are tokens to colorize, the input text is made transparent
+ * and a colored overlay is positioned on top with pointerEvents:'none'.
+ * This gives native cursor, selection, and paste behavior for free.
+ */
 export function TokenOverlayInput({
   value,
   onChangeText,
   tokens,
   theme = 'dark',
   placeholder,
-  onSubmitEditing
+  onSubmitEditing,
+  isInvalid = false
 }: TokenOverlayInputNativeProps): React.JSX.Element {
-  const inputRef = useRef<RNTextInput>(null)
-  const themeTokens = TOKENS[theme]
-  const [isFocused, setIsFocused] = React.useState(false)
-
-  const handlePress = (): void => {
-    inputRef.current?.focus()
-  }
-
+  const themeTokens = THEME_TOKENS[theme]
   const hasTokens = tokens.length > 0
-  const isEmpty = value.length === 0
+  const showOverlay = hasTokens || (isInvalid && value.length > 0)
+
+  // When overlay is shown, make the real input text transparent so the
+  // colored overlay text is visible instead. Caret stays visible.
+  const inputTextColor = showOverlay ? 'transparent' : PLAIN_COLORS[theme]
 
   return (
-    <Pressable style={styles.container} onPress={handlePress}>
-      <View style={styles.tokenDisplay}>
-        {isEmpty && placeholder !== undefined ? (
-          <Text style={[styles.placeholderText, { color: themeTokens.textDim }]}>
-            {placeholder}
-          </Text>
-        ) : hasTokens ? (
-          tokens.map((token, i) => {
-            const doc = NOTATION_DOCS[token.key]
-            const color = tokenColor(doc, theme) ?? themeTokens.text
-            return (
-              <Text key={i} style={[styles.tokenText, { color }]}>
-                {token.text}
-              </Text>
-            )
-          })
-        ) : (
-          <Text style={[styles.tokenText, { color: PLAIN_COLORS[theme] }]}>{value}</Text>
-        )}
-        {isFocused && <BlinkingCursor color={themeTokens.accent} />}
-      </View>
+    <View style={styles.container}>
+      {/* Real TextInput — always interactive, handles cursor/selection/paste */}
       <TextInput
-        ref={inputRef}
-        style={styles.hiddenInput}
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSubmitEditing}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        placeholder={placeholder}
+        placeholderTextColor={themeTokens.textDim}
         autoCorrect={false}
         autoCapitalize="none"
         spellCheck={false}
         returnKeyType="go"
         autoComplete="off"
+        style={[
+          styles.input,
+          {
+            color: inputTextColor,
+            ...Platform.select({
+              web: { caretColor: themeTokens.accent },
+              default: {}
+            })
+          }
+        ]}
       />
-    </Pressable>
+
+      {/* Colored overlay — positioned on top, non-interactive */}
+      {showOverlay && (
+        <View style={styles.overlay} pointerEvents="none">
+          {isInvalid ? (
+            <Text style={[styles.overlayText, { color: themeTokens.error }]}>{value}</Text>
+          ) : (
+            tokens.map((token, i) => {
+              const doc = NOTATION_DOCS[token.key]
+              const color = tokenColor(doc, theme) ?? themeTokens.text
+              return (
+                <Text key={`t${i}`} style={[styles.overlayText, { color }]}>
+                  {token.text}
+                </Text>
+              )
+            })
+          )}
+        </View>
+      )}
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'relative',
+    justifyContent: 'center',
+    minHeight: 48
+  },
+  input: {
+    fontFamily: 'JetBrainsMono_400Regular',
+    fontSize: 20,
+    lineHeight: 28,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    letterSpacing: 0,
+    minHeight: 48
+  },
+  overlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10
+  },
+  overlayText: {
+    fontFamily: 'JetBrainsMono_400Regular',
+    fontSize: 20,
+    lineHeight: 28,
+    letterSpacing: 0
+  }
+})

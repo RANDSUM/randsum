@@ -47,16 +47,16 @@ export function ActionRow({ onClear, isSaveEnabled }: ActionRowProps): React.JSX
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    gap: 8
+    gap: 10
   },
   button: {
     flex: 1,
-    minHeight: 44,
+    minHeight: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderRadius: 6,
-    paddingVertical: 8
+    borderRadius: 10,
+    paddingVertical: 10
   },
   label: {
     fontWeight: '500'

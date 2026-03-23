@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { ImpactFeedbackStyle } from 'expo-haptics'
 import { useRef } from 'react'
@@ -5,25 +6,28 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { useTheme } from '../hooks/useTheme'
 
-interface DieButtonProps {
-  readonly sides: number
-  readonly count: number
-  readonly onPress: () => void
-  readonly onLongPress: () => void
-  readonly disabled?: boolean
+type MaterialCommunityIconName = React.ComponentProps<typeof MaterialCommunityIcons>['name']
+
+const DIE_ICONS: Readonly<Record<number, MaterialCommunityIconName>> = {
+  4: 'dice-d4-outline',
+  6: 'dice-d6-outline',
+  8: 'dice-d8-outline',
+  10: 'dice-d10-outline',
+  12: 'dice-d12-outline',
+  20: 'dice-d20-outline',
+  100: 'percent-outline'
 }
 
-export function DieButton({
-  sides,
-  count,
-  onPress,
-  onLongPress,
-  disabled = false
-}: DieButtonProps): React.JSX.Element {
+interface DieButtonProps {
+  readonly sides: number
+  readonly label?: string
+  readonly onPress: () => void
+}
+
+export function DieButton({ sides, label, onPress }: DieButtonProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
   const scale = useRef(new Animated.Value(1)).current
-
-  const isActive = count > 0
+  const iconName = DIE_ICONS[sides] ?? 'dice-multiple-outline'
 
   function handlePressIn(): void {
     Animated.spring(scale, { toValue: 0.93, useNativeDriver: true, speed: 50 }).start()
@@ -42,71 +46,31 @@ export function DieButton({
     onPress()
   }
 
-  async function handleLongPress(): Promise<void> {
-    try {
-      await Haptics.impactAsync(ImpactFeedbackStyle.Light)
-    } catch {
-      // no-op on web
-    }
-    onLongPress()
-  }
-
-  const containerStyle = {
-    backgroundColor: disabled ? tokens.surface : isActive ? tokens.surfaceAlt : 'transparent',
-    borderColor: tokens.border,
-    borderWidth: 1
-  }
-
-  const labelColor = disabled ? tokens.textDim : isActive ? tokens.text : tokens.textDim
-
   return (
     <Animated.View style={{ transform: [{ scale }], flex: 1 }}>
       <Pressable
         onPress={handlePress}
-        onLongPress={handleLongPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        disabled={disabled}
-        delayLongPress={400}
         accessibilityRole="button"
-        accessibilityLabel={`D${sides}, ${count} in pool`}
-        accessibilityHint="Tap to add, long press to remove"
-        style={[styles.button, containerStyle]}
+        accessibilityLabel={`Add ${label ?? `D${sides}`} to notation`}
+        style={[
+          styles.button,
+          {
+            backgroundColor: tokens.surfaceAlt,
+            borderColor: tokens.border
+          }
+        ]}
       >
+        <MaterialCommunityIcons name={iconName} size={28} color={tokens.accent} />
         <Text
           style={[
             styles.label,
-            { color: labelColor, fontFamily: 'JetBrainsMono_400Regular', fontSize: fontSizes.lg }
+            { color: tokens.text, fontFamily: 'JetBrainsMono_400Regular', fontSize: fontSizes.sm }
           ]}
         >
-          D{sides}
+          {label ?? `D${sides}`}
         </Text>
-        {isActive && !disabled && (
-          <View
-            style={[
-              styles.badge,
-              {
-                backgroundColor: tokens.accent,
-                minWidth: 20,
-                height: 20,
-                borderRadius: 10
-              }
-            ]}
-          >
-            <Text
-              style={[
-                styles.badgeText,
-                {
-                  color: tokens.text,
-                  fontFamily: 'JetBrainsMono_400Regular',
-                  fontSize: fontSizes.sm
-                }
-              ]}
-            >
-              {count}
-            </Text>
-          </View>
-        )}
       </Pressable>
     </Animated.View>
   )
@@ -115,29 +79,17 @@ export function DieButton({
 const styles = StyleSheet.create({
   button: {
     minWidth: 44,
-    minHeight: 44,
-    flex: 1,
+    minHeight: 72,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    paddingVertical: 12,
+    borderRadius: 10,
+    paddingVertical: 10,
     paddingHorizontal: 8,
-    position: 'relative'
+    borderWidth: 1,
+    gap: 4
   },
   label: {
-    fontWeight: '400',
+    fontWeight: '500',
     textAlign: 'center'
-  },
-  badge: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4
-  },
-  badgeText: {
-    fontWeight: '700',
-    lineHeight: 16
   }
 })

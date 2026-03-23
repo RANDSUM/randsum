@@ -17,6 +17,7 @@ export interface NotationRollerProps {
   readonly onChange?: (notation: string) => void
   readonly resetToken?: number
   readonly onRoll?: (result: RollResult) => void
+  readonly showRollButton?: boolean
 }
 
 const TOKENS = {
@@ -93,7 +94,8 @@ export function NotationRoller({
   notation: controlledNotation,
   onChange,
   resetToken,
-  onRoll
+  onRoll,
+  showRollButton = true
 }: NotationRollerProps = {}): React.JSX.Element {
   const theme = useTheme()
   const themeTokens = TOKENS[theme]
@@ -203,7 +205,15 @@ export function NotationRoller({
         <View
           style={[
             styles.inputWrap,
-            { borderColor: themeTokens.border, backgroundColor: themeTokens.surfaceAlt }
+            {
+              borderColor:
+                notation.length > 0 && !isValid
+                  ? themeTokens.error
+                  : isValid
+                    ? themeTokens.accent
+                    : themeTokens.border,
+              backgroundColor: themeTokens.surfaceAlt
+            }
           ]}
         >
           <TokenOverlayInput
@@ -213,20 +223,23 @@ export function NotationRoller({
             theme={theme}
             placeholder="1d20"
             onSubmitEditing={handleRoll}
+            isInvalid={notation.length > 0 && !isValid}
           />
         </View>
-        <Pressable
-          style={[
-            styles.rollButton,
-            { backgroundColor: isValid && !rolling ? themeTokens.accent : themeTokens.border }
-          ]}
-          onPress={handlePress}
-          disabled={!isValid || rolling}
-          accessibilityLabel="Roll the dice"
-          accessibilityRole="button"
-        >
-          <Text style={[styles.rollButtonText, { color: themeTokens.surface }]}>{'ROLL'}</Text>
-        </Pressable>
+        {showRollButton && (
+          <Pressable
+            style={[
+              styles.rollButton,
+              { backgroundColor: isValid && !rolling ? themeTokens.accent : themeTokens.border }
+            ]}
+            onPress={handlePress}
+            disabled={!isValid || rolling}
+            accessibilityLabel="Roll the dice"
+            accessibilityRole="button"
+          >
+            <Text style={[styles.rollButtonText, { color: themeTokens.surface }]}>{'ROLL'}</Text>
+          </Pressable>
+        )}
       </View>
       <View style={styles.descRow}>{descContent}</View>
     </View>

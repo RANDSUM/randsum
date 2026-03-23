@@ -2,41 +2,30 @@ import { StyleSheet, View } from 'react-native'
 
 import { DieButton } from './DieButton'
 
-const DIE_SIDES = [4, 6, 8, 10, 12, 20] as const
+const ROW1 = [4, 6, 8] as const
+const ROW2 = [10, 12, 20] as const
+const PERCENTILE = 100
 
 interface DiceGridProps {
-  readonly pool: Readonly<Record<number, number>>
-  readonly onIncrement: (sides: number) => void
-  readonly onDecrement: (sides: number) => void
+  readonly onDiePress: (sides: number) => void
+  readonly onPercentilePress: () => void
 }
 
-export function DiceGrid({ pool, onIncrement, onDecrement }: DiceGridProps): React.JSX.Element {
-  const row1 = DIE_SIDES.slice(0, 3)
-  const row2 = DIE_SIDES.slice(3)
-
+export function DiceGrid({ onDiePress, onPercentilePress }: DiceGridProps): React.JSX.Element {
   return (
     <View style={styles.grid}>
       <View style={styles.row}>
-        {row1.map(sides => (
-          <DieButton
-            key={sides}
-            sides={sides}
-            count={pool[sides] ?? 0}
-            onPress={() => onIncrement(sides)}
-            onLongPress={() => onDecrement(sides)}
-          />
+        {ROW1.map(sides => (
+          <DieButton key={sides} sides={sides} onPress={() => onDiePress(sides)} />
         ))}
       </View>
       <View style={styles.row}>
-        {row2.map(sides => (
-          <DieButton
-            key={sides}
-            sides={sides}
-            count={pool[sides] ?? 0}
-            onPress={() => onIncrement(sides)}
-            onLongPress={() => onDecrement(sides)}
-          />
+        {ROW2.map(sides => (
+          <DieButton key={sides} sides={sides} onPress={() => onDiePress(sides)} />
         ))}
+      </View>
+      <View style={styles.row}>
+        <DieButton sides={PERCENTILE} label="d%" onPress={onPercentilePress} />
       </View>
     </View>
   )
@@ -44,10 +33,10 @@ export function DiceGrid({ pool, onIncrement, onDecrement }: DiceGridProps): Rea
 
 const styles = StyleSheet.create({
   grid: {
-    gap: 8
+    gap: 12
   },
   row: {
     flexDirection: 'row',
-    gap: 8
+    gap: 10
   }
 })

@@ -1,18 +1,34 @@
+import { useRouter } from 'expo-router'
+import { useState } from 'react'
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import { HistoryEntry } from '../../components/HistoryEntry'
 import { useHistory } from '../../hooks/useHistory'
 import { useTheme } from '../../hooks/useTheme'
+import { useRollResultStore } from '../../lib/stores/rollResultStore'
 import type { RollHistoryEntry } from '../../lib/types'
-import { useState } from 'react'
 
 export default function HistoryScreen(): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
   const { entries, isLoading, deleteEntry, clearHistory } = useHistory()
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const setPendingArchived = useRollResultStore(s => s.setPendingArchived)
+  const router = useRouter()
 
   function handleToggle(id: string): void {
     setExpandedId(prev => (prev === id ? null : id))
+  }
+
+  function handleViewResult(entry: RollHistoryEntry): void {
+    setPendingArchived(
+      {
+        total: entry.total,
+        records: entry.rolls,
+        notation: entry.notation
+      },
+      entry.createdAt
+    )
+    router.push('/result')
   }
 
   function handleClearAll(): void {
@@ -85,6 +101,7 @@ export default function HistoryScreen(): React.JSX.Element {
         entry={item}
         isExpanded={expandedId === item.id}
         onToggle={() => handleToggle(item.id)}
+        onPress={handleViewResult}
         onDelete={id => {
           deleteEntry(id).catch(() => undefined)
         }}

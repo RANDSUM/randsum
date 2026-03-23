@@ -9,6 +9,7 @@ interface HistoryEntryProps {
   readonly isExpanded: boolean
   readonly onToggle: () => void
   readonly onDelete: (id: string) => void
+  readonly onPress: (entry: RollHistoryEntry) => void
 }
 
 function formatRelativeTime(isoString: string): string {
@@ -26,11 +27,16 @@ export function HistoryEntry({
   entry,
   isExpanded,
   onToggle,
-  onDelete
+  onDelete,
+  onPress
 }: HistoryEntryProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
   const animatedHeight = useRef(new Animated.Value(isExpanded ? 1 : 0)).current
   const [showDeleteButton, setShowDeleteButton] = useState(false)
+
+  const handlePress = (): void => {
+    onPress(entry)
+  }
 
   const handleToggle = (): void => {
     Animated.spring(animatedHeight, {
@@ -156,11 +162,11 @@ export function HistoryEntry({
   return (
     <View style={styles.row}>
       <TouchableOpacity
-        onPress={handleToggle}
+        onPress={handlePress}
         onLongPress={handleLongPress}
         delayLongPress={400}
         accessibilityRole="button"
-        accessibilityLabel={`Roll: ${entry.notation}, total ${entry.total}. Tap to ${isExpanded ? 'collapse' : 'expand'}. Long press for delete.`}
+        accessibilityLabel={`Roll: ${entry.notation}, total ${entry.total}. Tap to view details. Long press for delete.`}
         activeOpacity={0.7}
       >
         <View style={styles.mainContent}>

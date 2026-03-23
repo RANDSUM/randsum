@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
-import { Pressable, StyleSheet, Text } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { useTheme } from '../../hooks/useTheme'
-import { useRollModeStore } from '../../lib/stores/rollModeStore'
+import { useContentTabStore } from '../../lib/stores/contentTabStore'
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name']
 
@@ -19,47 +19,63 @@ function TabIcon({
   return <Ionicons name={name} color={color} size={size} />
 }
 
-function ModeToggleButton(): React.JSX.Element {
+function ContentTabToggle(): React.JSX.Element {
   const { tokens } = useTheme()
-  const mode = useRollModeStore(s => s.mode)
-  const toggle = useRollModeStore(s => s.toggle)
-  const isAdvanced = mode === 'advanced'
+  const tab = useContentTabStore(s => s.tab)
+  const setTab = useContentTabStore(s => s.setTab)
 
   return (
-    <Pressable
-      onPress={toggle}
-      accessibilityRole="button"
-      accessibilityLabel={isAdvanced ? 'Switch to Simple mode' : 'Switch to Advanced mode'}
-      style={[
-        toggleStyles.button,
-        { backgroundColor: isAdvanced ? tokens.accent : tokens.surfaceAlt }
-      ]}
-    >
-      <Text
+    <View style={[toggleStyles.track, { backgroundColor: tokens.surfaceAlt }]}>
+      <Pressable
+        onPress={() => setTab('common')}
         style={[
-          toggleStyles.label,
-          { color: isAdvanced ? '#fff' : tokens.text, fontFamily: 'JetBrainsMono_400Regular' }
+          toggleStyles.segment,
+          tab === 'common' ? { backgroundColor: tokens.accent } : undefined
         ]}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: tab === 'common' }}
       >
-        {'</>'}
-      </Text>
-    </Pressable>
+        <Text
+          style={[toggleStyles.label, { color: tab === 'common' ? '#ffffff' : tokens.textMuted }]}
+        >
+          Common
+        </Text>
+      </Pressable>
+      <Pressable
+        onPress={() => setTab('notation')}
+        style={[
+          toggleStyles.segment,
+          tab === 'notation' ? { backgroundColor: tokens.accent } : undefined
+        ]}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: tab === 'notation' }}
+      >
+        <Text
+          style={[toggleStyles.label, { color: tab === 'notation' ? '#ffffff' : tokens.textMuted }]}
+        >
+          Notation
+        </Text>
+      </Pressable>
+    </View>
   )
 }
 
 const toggleStyles = StyleSheet.create({
-  button: {
-    marginRight: 12,
+  track: {
+    flexDirection: 'row',
+    borderRadius: 8,
+    padding: 2,
+    marginRight: 12
+  },
+  segment: {
     paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    minHeight: 32,
-    alignItems: 'center',
-    justifyContent: 'center'
+    paddingVertical: 5,
+    borderRadius: 6
   },
   label: {
-    fontSize: 13,
-    fontWeight: '600'
+    fontSize: 11,
+    fontWeight: '600',
+    fontFamily: 'JetBrainsMono_400Regular'
   }
 })
 
@@ -85,7 +101,7 @@ export default function TabLayout(): React.JSX.Element {
         name="index"
         options={{
           title: 'Roll',
-          headerRight: () => <ModeToggleButton />,
+          headerRight: () => <ContentTabToggle />,
           tabBarIcon: ({ color, size }) => <TabIcon name="dice-outline" color={color} size={size} />
         }}
       />

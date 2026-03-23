@@ -1,7 +1,8 @@
 import * as Haptics from 'expo-haptics'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   AccessibilityInfo,
+  ActivityIndicator,
   Animated,
   ScrollView,
   StyleSheet,
@@ -18,19 +19,27 @@ interface RollResultViewProps {
   readonly onRollAgain: () => void
   readonly onSaveAsTemplate: () => void
   readonly onShare: () => void
+  readonly archivedAt?: string | null
 }
 
 export function RollResultView({
   result,
   onRollAgain,
   onSaveAsTemplate,
-  onShare
+  onShare,
+  archivedAt
 }: RollResultViewProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
   const animatedValue = useRef(new Animated.Value(0)).current
-  const displayRef = useRef(0)
+  const isArchived = archivedAt !== undefined && archivedAt !== null
+  const [isAnimating, setIsAnimating] = useState(!isArchived)
 
   useEffect(() => {
+    if (isArchived) {
+      setIsAnimating(false)
+      return
+    }
+    setIsAnimating(true)
     animatedValue.setValue(0)
     const animation = Animated.timing(animatedValue, {
       toValue: result.total,
@@ -38,12 +47,9 @@ export function RollResultView({
       useNativeDriver: false
     })
 
-    const listener = animatedValue.addListener(({ value }) => {
-      displayRef.current = Math.round(value)
-    })
-
     animation.start(({ finished }) => {
       if (finished) {
+        setIsAnimating(false)
         AccessibilityInfo.announceForAccessibility(String(result.total))
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined)
       }
@@ -51,9 +57,8 @@ export function RollResultView({
 
     return () => {
       animation.stop()
-      animatedValue.removeListener(listener)
     }
-  }, [result.total, animatedValue])
+  }, [result.total, animatedValue, isArchived])
 
   const styles = StyleSheet.create({
     container: {
@@ -67,11 +72,43 @@ export function RollResultView({
       borderRadius: 2,
       backgroundColor: tokens.border,
       alignSelf: 'center',
-      marginBottom: 32
+      marginBottom: 16
+    },
+    archivedBanner: {
+      backgroundColor: tokens.surfaceAlt,
+      borderRadius: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      marginHorizontal: 16,
+      marginBottom: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderLeftWidth: 3,
+      borderLeftColor: tokens.textDim
+    },
+    archivedLabel: {
+      color: tokens.textMuted,
+      fontSize: fontSizes.sm,
+      fontWeight: '600',
+      textTransform: 'uppercase',
+      letterSpacing: 1
+    },
+    archivedTime: {
+      color: tokens.textDim,
+      fontSize: fontSizes.xs,
+      fontFamily: 'JetBrainsMono_400Regular'
     },
     totalContainer: {
       alignItems: 'center',
-      marginBottom: 8
+      justifyContent: 'center',
+      marginBottom: 8,
+      minHeight: 60
+    },
+    spinnerWrap: {
+      height: 60,
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     total: {
       fontSize: fontSizes['3xl'],
@@ -161,14 +198,30 @@ export function RollResultView({
     <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.handle} accessibilityRole="none" />
 
+      {isArchived && (
+        <View style={styles.archivedBanner}>
+          <Text style={styles.archivedLabel}>Archived Roll</Text>
+          <Text style={styles.archivedTime}>
+            {new Date(archivedAt).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit'
+            })}
+          </Text>
+        </View>
+      )}
+
       <View style={styles.totalContainer}>
-        <Animated.Text style={styles.total} accessibilityLabel={`Total: ${result.total}`}>
-          {animatedValue.interpolate({
-            inputRange: [0, Math.max(result.total, 1)],
-            outputRange: ['0', String(result.total)],
-            extrapolate: 'clamp'
-          })}
-        </Animated.Text>
+        {isAnimating ? (
+          <View style={styles.spinnerWrap}>
+            <ActivityIndicator size="large" color={tokens.accent} />
+          </View>
+        ) : (
+          <Text style={styles.total} accessibilityLabel={`Total: ${result.total}`}>
+            {result.total}
+          </Text>
+        )}
       </View>
 
       <Text style={styles.notation} accessibilityRole="text">

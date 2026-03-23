@@ -18,6 +18,7 @@ declare module '@randsum/dice-ui' {
     readonly onChange?: (notation: string) => void
     readonly resetToken?: number
     readonly onRoll?: (result: RollResult) => void
+    readonly showRollButton?: boolean
   }
 
   export function NotationRoller(props?: NotationRollerProps): React.JSX.Element
