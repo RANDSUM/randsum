@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react'
+import { Fragment, useSyncExternalStore } from 'react'
 
 export function getTheme(): 'light' | 'dark' {
   if (typeof document === 'undefined') return 'dark'
@@ -18,4 +18,12 @@ export function subscribeTheme(callback: () => void): () => void {
 
 export function useTheme(): 'light' | 'dark' {
   return useSyncExternalStore(subscribeTheme, getTheme, () => 'dark' as const)
+}
+
+export function DiceUIThemeProvider({
+  children
+}: {
+  readonly children: React.ReactNode
+}): React.JSX.Element {
+  return <Fragment>{children}</Fragment>
 }

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { ModifierCategory, NotationDoc } from '@randsum/roller/docs'
-import { useTheme } from '@randsum/dice-ui'
+import { useTheme } from './useTheme'
 
 // ---- Props ----
 
@@ -898,7 +898,8 @@ export function QuickReferenceGrid({
     for (const cat of CATEGORY_ORDER) {
       const docs = groups.get(cat)
       if (docs !== undefined && docs.length > 0) {
-        const sampleColor = theme === 'light' ? docs[0].colorLight : docs[0].color
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const sampleColor = theme === 'light' ? docs[0]!.colorLight : docs[0]!.color
         ordered.push({ category: cat, docs, color: sampleColor })
       }
     }

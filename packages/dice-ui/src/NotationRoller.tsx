@@ -2,25 +2,14 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { roll } from '@randsum/roller/roll'
 import { isDiceNotation } from '@randsum/roller/validate'
 import { tokenize } from '@randsum/roller/tokenize'
-import type { RollRecord } from '@randsum/roller'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import { TokenOverlayInput } from './TokenOverlayInput'
 import { useTheme } from './useTheme'
+import { tokenColor } from './tokenColor'
+import type { RollResult } from './types'
 import './NotationRoller.css'
 
-function tokenColor(
-  doc: { readonly color: string; readonly colorLight: string } | undefined,
-  theme: 'light' | 'dark'
-): string | undefined {
-  if (!doc) return undefined
-  return theme === 'light' ? doc.colorLight : doc.color
-}
-
-export interface RollResult {
-  readonly total: number
-  readonly records: readonly RollRecord[]
-  readonly notation: string
-}
+export type { RollResult }
 
 export interface NotationRollerProps {
   readonly defaultNotation?: string

@@ -1,5 +1,5 @@
 import { MODIFIER_DOCS } from '@randsum/roller/docs'
-import { QuickReferenceGrid } from './QuickReferenceGrid'
+import { QuickReferenceGrid } from '@randsum/dice-ui'
 import { ReferenceDetail } from './ReferenceDetail'
 import './ReferenceSidebar.css'
 
