@@ -85,50 +85,54 @@ export const notationCommand: Command = {
         time: COLLECTOR_TIMEOUT
       })
 
-      collector.on('collect', async (selectInteraction: StringSelectMenuInteraction) => {
-        const selected = selectInteraction.values[0]
-        if (selected === undefined) return
+      collector.on('collect', (selectInteraction: StringSelectMenuInteraction) => {
+        void (async () => {
+          const selected = selectInteraction.values[0]
+          if (selected === undefined) return
 
-        const entries = grouped.get(selected) ?? []
-        const categoryEmbed = buildCategoryEmbed(selected, entries)
+          const entries = grouped.get(selected) ?? []
+          const categoryEmbed = buildCategoryEmbed(selected, entries)
 
-        const updatedMenu = new StringSelectMenuBuilder()
-          .setCustomId('notation-category')
-          .setPlaceholder('Select a category')
-          .addOptions(
-            categories.map(cat => ({
-              label: cat,
-              value: cat,
-              default: cat === selected
-            }))
-          )
+          const updatedMenu = new StringSelectMenuBuilder()
+            .setCustomId('notation-category')
+            .setPlaceholder('Select a category')
+            .addOptions(
+              categories.map(cat => ({
+                label: cat,
+                value: cat,
+                default: cat === selected
+              }))
+            )
 
-        const updatedRow = new ActionRowBuilder().addComponents(updatedMenu)
+          const updatedRow = new ActionRowBuilder().addComponents(updatedMenu)
 
-        await selectInteraction.update({
-          embeds: [categoryEmbed],
-          components: [updatedRow as never]
-        })
+          await selectInteraction.update({
+            embeds: [categoryEmbed],
+            components: [updatedRow as never]
+          })
+        })()
       })
 
-      collector.on('end', async () => {
-        const disabledMenu = new StringSelectMenuBuilder()
-          .setCustomId('notation-category')
-          .setPlaceholder('Select a category')
-          .addOptions(
-            categories.map(cat => ({
-              label: cat,
-              value: cat,
-              default: cat === firstCategory
-            }))
-          )
-          .setDisabled(true)
+      collector.on('end', () => {
+        void (async () => {
+          const disabledMenu = new StringSelectMenuBuilder()
+            .setCustomId('notation-category')
+            .setPlaceholder('Select a category')
+            .addOptions(
+              categories.map(cat => ({
+                label: cat,
+                value: cat,
+                default: cat === firstCategory
+              }))
+            )
+            .setDisabled(true)
 
-        const disabledRow = new ActionRowBuilder().addComponents(disabledMenu)
+          const disabledRow = new ActionRowBuilder().addComponents(disabledMenu)
 
-        await message.edit({
-          components: [disabledRow as never]
-        })
+          await message.edit({
+            components: [disabledRow as never]
+          })
+        })()
       })
     } catch (e) {
       await replyWithError(

@@ -106,12 +106,7 @@ function makeInteraction(): {
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(
-      () =>
-        Promise.resolve(mockMessage) as ReturnType<
-          ReturnType<typeof mock>
-        >
-    )
+    editReply: mock(() => Promise.resolve(mockMessage) as ReturnType<ReturnType<typeof mock>>)
   }
 }
 
@@ -173,8 +168,8 @@ describe('notationCommand', () => {
     await notationCommand.execute(interaction as never)
     // addOptions called with category entries
     expect(mockSelectMenu.addOptions).toHaveBeenCalled()
-    const addOptionsCall = (mockSelectMenu.addOptions as ReturnType<typeof mock>)
-      .mock.calls[0]?.[0] as Array<{ label: string; value: string }> | undefined
+    const addOptionsCall = (mockSelectMenu.addOptions as ReturnType<typeof mock>).mock
+      .calls[0]?.[0] as { label: string; value: string }[] | undefined
     const labels = addOptionsCall?.map((o: { label: string }) => o.label) ?? []
     // Our mock has two categories: Filter and Clamp
     expect(labels).toContain('Filter')
