@@ -19,12 +19,12 @@ const isFullNotation = (s: string): boolean =>
 
 /**
  * Known options examples that fail due to validation bugs (not doc bugs).
- * Cap's "Clamp to [3, 18]" uses { lessThan: 3, greaterThan: 18 } which is
+ * Cap's "Clamp rolls to [3, 18]" uses { lessThan: 3, greaterThan: 18 } which is
  * semantically correct for cap (floor/ceiling), but validateComparisonOptions
  * rejects it as an impossible range. The equivalent notation "4d20C{<3,>18}"
  * works fine because it bypasses validation.
  */
-const KNOWN_OPTIONS_FAILURES: ReadonlySet<string> = new Set(['Clamp to [3, 18]'])
+const KNOWN_OPTIONS_FAILURES: ReadonlySet<string> = new Set(['Clamp rolls to [3, 18]'])
 
 describe('Rosetta Stone — notation examples', () => {
   for (const [, doc] of Object.entries(NOTATION_DOCS)) {
@@ -50,14 +50,16 @@ describe('Rosetta Stone — notation examples', () => {
 describe('Rosetta Stone — options examples', () => {
   for (const [, doc] of Object.entries(NOTATION_DOCS)) {
     describe(doc.title, () => {
-      for (const example of doc.optionsExamples) {
+      for (const example of doc.examples) {
+        if (example.options === undefined) continue
+
         if (KNOWN_OPTIONS_FAILURES.has(example.description)) {
           test.todo(`options "${example.description}" — known validation bug (cap clamp range)`)
           continue
         }
 
         test(`options "${example.description}" is rollable`, () => {
-          const result = roll(example.options)
+          const result = roll(example.options!)
           expect(result.rolls.length).toBeGreaterThanOrEqual(1)
           expect(typeof result.total).toBe('number')
         })

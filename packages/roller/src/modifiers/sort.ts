@@ -48,18 +48,8 @@ export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<So
         { notation: 'sd', note: 'Sort descending' }
       ],
       examples: [
-        { notation: '4d6sa', description: 'Roll 4d6, display sorted low to high' },
-        { notation: '4d6sd', description: 'Roll 4d6, display sorted high to low' }
-      ],
-      optionsExamples: [
-        {
-          description: 'Sort ascending',
-          options: { sides: 6, quantity: 4, modifiers: { sort: 'asc' } }
-        },
-        {
-          description: 'Sort descending',
-          options: { sides: 6, quantity: 4, modifiers: { sort: 'desc' } }
-        }
+        { description: 'Roll 4d6, display sorted low to high', notation: '4d6sa', options: { sides: 6, quantity: 4, modifiers: { sort: 'asc' } } },
+        { description: 'Roll 4d6, display sorted high to low', notation: '4d6sd', options: { sides: 6, quantity: 4, modifiers: { sort: 'desc' } } }
       ]
     }
   ]

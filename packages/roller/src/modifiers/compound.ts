@@ -87,20 +87,11 @@ export const compoundSchema: NotationSchema<boolean | number | ComparisonOptions
           { operator: '<=n', note: 'compound on n or less' }
         ],
         examples: [
-          { notation: '3d6!!', description: 'Roll 3d6; 6s add to themselves' },
-          { notation: '1d8!!5', description: 'Roll 1d8, compound up to 5 times' },
+          { description: 'Roll 3d6; 6s add to themselves', notation: '3d6!!', options: { sides: 6, quantity: 3, modifiers: { compound: true } } },
+          { description: 'Roll 1d8, compound up to 5 times', notation: '1d8!!5' },
           {
+            description: 'Roll 5d10; compound on 8 or higher',
             notation: '5d10!!{>=8}',
-            description: 'Roll 5d10; compound on 8 or higher'
-          }
-        ],
-        optionsExamples: [
-          {
-            description: 'Compound on max',
-            options: { sides: 6, quantity: 3, modifiers: { compound: true } }
-          },
-          {
-            description: 'Compound on 8+',
             options: { sides: 10, quantity: 5, modifiers: { compound: { greaterThanOrEqual: 8 } } }
           }
         ]

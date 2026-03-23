@@ -23,12 +23,9 @@ export interface NotationDoc {
     readonly note: string
   }[]
   readonly examples: readonly {
+    readonly description: string
     readonly notation: string
-    readonly description: string
-  }[]
-  readonly optionsExamples: readonly {
-    readonly description: string
-    readonly options: RollOptions<string | number>
+    readonly options?: RollOptions<string | number>
   }[]
 }
 

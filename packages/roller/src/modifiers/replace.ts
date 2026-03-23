@@ -86,23 +86,14 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
           { operator: '<=n=y', note: 'replace n or lower with y' }
         ],
         examples: [
-          { notation: '4d6V{1=2}', description: 'Replace 1s with 2' },
-          {
-            notation: '4d20V{>18=20}',
-            description: 'Cap 19s and 20s to 20'
-          },
-          {
-            notation: '4d6V{1=2,6=5}',
-            description: 'Replace multiple'
-          }
-        ],
-        optionsExamples: [
           {
             description: 'Replace 1s with 2',
+            notation: '4d6V{1=2}',
             options: { sides: 6, quantity: 4, modifiers: { replace: { from: 1, to: 2 } } }
           },
           {
-            description: 'Replace >18 with 20',
+            description: 'Cap 19s and 20s to 20',
+            notation: '4d20V{>18=20}',
             options: {
               sides: 20,
               quantity: 4,
@@ -110,7 +101,8 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
             }
           },
           {
-            description: 'Replace multiple values',
+            description: 'Replace multiple',
+            notation: '4d6V{1=2,6=5}',
             options: {
               sides: 6,
               quantity: 4,

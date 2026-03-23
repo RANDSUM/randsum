@@ -38,18 +38,8 @@ export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<
       displayOptional: 'n',
       forms: [{ notation: '**n', note: 'Multiply final total by n' }],
       examples: [
-        { notation: '2d6+3**2', description: '(roll + 3) \u00d7 2' },
-        { notation: '4d6L**3', description: '(drop-lowest sum) \u00d7 3' }
-      ],
-      optionsExamples: [
-        {
-          description: 'Double the final total',
-          options: { sides: 6, quantity: 2, modifiers: { plus: 3, multiplyTotal: 2 } }
-        },
-        {
-          description: 'Triple the final total',
-          options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, multiplyTotal: 3 } }
-        }
+        { description: '(roll + 3) \u00d7 2', notation: '2d6+3**2', options: { sides: 6, quantity: 2, modifiers: { plus: 3, multiplyTotal: 2 } } },
+        { description: '(drop-lowest sum) \u00d7 3', notation: '4d6L**3', options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, multiplyTotal: 3 } } }
       ]
     }
   ]

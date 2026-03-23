@@ -80,20 +80,10 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
         { operator: '<=n', note: 'explode on n or less' }
       ],
       examples: [
-        { notation: '3d6!', description: 'Roll 3d6; any 6 adds another d6' },
-        { notation: '4d6L!', description: 'Roll 4d6, explode, then drop lowest' },
-        { notation: '3d10!{>=8}', description: 'Roll 3d10; explode on 8 or higher' },
-        { notation: '5d10!{=10}', description: 'Roll 5d10; explode only on 10' }
-      ],
-      optionsExamples: [
-        {
-          description: 'Explode on max',
-          options: { sides: 6, quantity: 3, modifiers: { explode: true } }
-        },
-        {
-          description: 'Explode on 8+',
-          options: { sides: 10, quantity: 3, modifiers: { explode: { greaterThanOrEqual: 8 } } }
-        }
+        { description: 'Roll 3d6; any 6 adds another d6', notation: '3d6!', options: { sides: 6, quantity: 3, modifiers: { explode: true } } },
+        { description: 'Roll 4d6, explode, then drop lowest', notation: '4d6L!' },
+        { description: 'Roll 3d10; explode on 8 or higher', notation: '3d10!{>=8}', options: { sides: 10, quantity: 3, modifiers: { explode: { greaterThanOrEqual: 8 } } } },
+        { description: 'Roll 5d10; explode only on 10', notation: '5d10!{=10}' }
       ]
     }
   ]

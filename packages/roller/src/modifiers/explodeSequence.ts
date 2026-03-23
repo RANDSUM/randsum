@@ -45,18 +45,8 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
       displayBase: '!s{..}',
       forms: [{ notation: '!s{N1,N2,...}', note: 'Step through die sizes on each explosion' }],
       examples: [
-        { notation: '1d4!s{4,6,8,10}', description: 'Explode through d4, d6, d8, d10' },
-        { notation: '1d6!s{8,12}', description: 'Explode to d8, then d12' }
-      ],
-      optionsExamples: [
-        {
-          description: 'Explode through d4, d6, d8, d10',
-          options: { sides: 4, modifiers: { explodeSequence: [4, 6, 8, 10] } }
-        },
-        {
-          description: 'Explode to d8, then d12',
-          options: { sides: 6, modifiers: { explodeSequence: [8, 12] } }
-        }
+        { description: 'Explode through d4, d6, d8, d10', notation: '1d4!s{4,6,8,10}', options: { sides: 4, modifiers: { explodeSequence: [4, 6, 8, 10] } } },
+        { description: 'Explode to d8, then d12', notation: '1d6!s{8,12}', options: { sides: 6, modifiers: { explodeSequence: [8, 12] } } }
       ]
     },
     {
@@ -69,12 +59,8 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
         'Explode upward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going up.',
       displayBase: '!i',
       forms: [{ notation: '!i', note: 'Inflate through standard dice sizes' }],
-      examples: [{ notation: '1d4!i', description: 'Explode d4 through d6, d8, d10, d12, d20' }],
-      optionsExamples: [
-        {
-          description: 'Inflate from d4 through standard sizes',
-          options: { sides: 4, modifiers: { explodeSequence: [6, 8, 10, 12, 20] } }
-        }
+      examples: [
+        { description: 'Explode d4 through d6, d8, d10, d12, d20', notation: '1d4!i', options: { sides: 4, modifiers: { explodeSequence: [6, 8, 10, 12, 20] } } }
       ]
     },
     {
@@ -87,12 +73,8 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
         'Explode downward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going down.',
       displayBase: '!r',
       forms: [{ notation: '!r', note: 'Reduce through standard dice sizes' }],
-      examples: [{ notation: '1d20!r', description: 'Explode d20 through d12, d10, d8, d6, d4' }],
-      optionsExamples: [
-        {
-          description: 'Reduce from d20 through standard sizes',
-          options: { sides: 20, modifiers: { explodeSequence: [12, 10, 8, 6, 4] } }
-        }
+      examples: [
+        { description: 'Explode d20 through d12, d10, d8, d6, d4', notation: '1d20!r', options: { sides: 20, modifiers: { explodeSequence: [12, 10, 8, 6, 4] } } }
       ]
     }
   ]

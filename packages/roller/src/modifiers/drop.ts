@@ -128,18 +128,13 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
       forms: [{ notation: 'L(n)', note: 'Drop n lowest (default: 1)' }],
       examples: [
         {
+          description: 'Roll 4d6, drop lowest (ability scores)',
           notation: '4d6L',
-          description: 'Roll 4d6, drop lowest (ability scores)'
-        },
-        { notation: '5d6L2', description: 'Roll 5d6, drop 2 lowest' }
-      ],
-      optionsExamples: [
-        {
-          description: 'Drop lowest 1',
           options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }
         },
         {
-          description: 'Drop lowest 2',
+          description: 'Roll 5d6, drop 2 lowest',
+          notation: '5d6L2',
           options: { sides: 6, quantity: 5, modifiers: { drop: { lowest: 2 } } }
         }
       ]
@@ -156,19 +151,14 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
       forms: [{ notation: 'H(n)', note: 'Drop n highest (default: 1)' }],
       examples: [
         {
+          description: 'Roll 2d20, drop highest (disadvantage)',
           notation: '2d20H',
-          description: 'Roll 2d20, drop highest (disadvantage)'
-        },
-        { notation: '4d6H', description: 'Roll 4d6, drop highest' }
-      ],
-      optionsExamples: [
-        {
-          description: 'Drop highest 1',
           options: { sides: 20, quantity: 2, modifiers: { drop: { highest: 1 } } }
         },
         {
-          description: 'Drop highest 2',
-          options: { sides: 6, quantity: 5, modifiers: { drop: { highest: 2 } } }
+          description: 'Roll 4d6, drop highest',
+          notation: '4d6H',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { highest: 1 } } }
         }
       ]
     },
@@ -190,23 +180,21 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
         { operator: '<=n', note: 'drop dice showing n or less' }
       ],
       examples: [
-        { notation: '4d6D{1}', description: 'Drop all 1s' },
-        { notation: '4d6D{>=5}', description: 'Drop all 5s and above' },
-        {
-          notation: '4d6D{<=2}',
-          description: 'Drop any result of 2 or lower'
-        },
-        { notation: '4d6D{1,6}', description: 'Drop multiple' }
-      ],
-      optionsExamples: [
         {
           description: 'Drop all 1s',
+          notation: '4d6D{1}',
           options: { sides: 6, quantity: 4, modifiers: { drop: { exact: [1] } } }
         },
         {
-          description: 'Drop 5 and above',
+          description: 'Drop all 5s and above',
+          notation: '4d6D{>=5}',
           options: { sides: 6, quantity: 4, modifiers: { drop: { greaterThanOrEqual: 5 } } }
-        }
+        },
+        {
+          description: 'Drop any result of 2 or lower',
+          notation: '4d6D{<=2}'
+        },
+        { description: 'Drop multiple', notation: '4d6D{1,6}' }
       ]
     }
   ]

@@ -141,8 +141,7 @@ describe('ReferenceDetail data contract', () => {
         color: '#000000',
         colorLight: '#000000',
         forms: [{ notation: 'T', note: 'test form' }],
-        examples: [{ notation: '1dT', description: 'test example' }],
-        optionsExamples: []
+        examples: [{ description: 'test example', notation: '1dT' }]
       }
       expect(hasComparisons(doc)).toBe(false)
     })

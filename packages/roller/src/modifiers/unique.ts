@@ -67,21 +67,13 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
       ],
       examples: [
         {
+          description: 'Roll 4d20, no duplicate results',
           notation: '4d20U',
-          description: 'Roll 4d20, no duplicate results'
-        },
-        {
-          notation: '4d6U{1}',
-          description: 'Unique except 1s may repeat'
-        }
-      ],
-      optionsExamples: [
-        {
-          description: 'All unique results',
           options: { sides: 20, quantity: 4, modifiers: { unique: true } }
         },
         {
           description: 'Unique except 1s may repeat',
+          notation: '4d6U{1}',
           options: { sides: 6, quantity: 4, modifiers: { unique: { notUnique: [1] } } }
         }
       ]

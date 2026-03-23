@@ -40,12 +40,8 @@ export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boole
         'D6 System wild die: compound-explode on max, drop wild die and highest on 1, no effect otherwise. A macro that dispatches to multiple primitives based on runtime state.',
       displayBase: 'W',
       forms: [{ notation: 'W', note: 'Apply wild die rule' }],
-      examples: [{ notation: '5d6W', description: 'D6 System with wild die' }],
-      optionsExamples: [
-        {
-          description: 'D6 System wild die',
-          options: { sides: 6, quantity: 5, modifiers: { wildDie: true } }
-        }
+      examples: [
+        { description: 'D6 System with wild die', notation: '5d6W', options: { sides: 6, quantity: 5, modifiers: { wildDie: true } } }
       ]
     }
   ]
