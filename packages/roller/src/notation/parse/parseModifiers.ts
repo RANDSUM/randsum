@@ -130,5 +130,5 @@ export function buildNotationPattern(): RegExp {
   // Annotation labels [text] -- stripped before parsing, needed for isDiceNotation validation
   sources.push('\\[[^\\]]+\\]')
 
-  return new RegExp(sources.join('|'), 'g')
+  return new RegExp(sources.join('|'), 'gi')
 }

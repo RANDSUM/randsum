@@ -73,10 +73,8 @@ describe('isDiceNotation — comprehensive', () => {
       expect(isDiceNotation(notation)).toBe(true)
     })
 
-    // Known bug: penetrate pattern /i flag is lost when buildNotationPattern
-    // joins .source strings into a combined regex with only /g flag.
-    test('isDiceNotation("1d6!P") returns false (known bug: penetrate /i flag lost in combined regex)', () => {
-      expect(isDiceNotation('1d6!P')).toBe(false)
+    test('isDiceNotation("1d6!P") returns true', () => {
+      expect(isDiceNotation('1d6!P')).toBe(true)
     })
   })
 

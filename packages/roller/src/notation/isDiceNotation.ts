@@ -50,7 +50,7 @@ function getCompleteNotationPattern(): RegExp {
       ...SIGNED_POOL_PATTERNS,
       buildNotationPattern().source
     ].join('|'),
-    'g'
+    'gi'
   )
   cachedPattern.lastIndex = 0
   return cachedPattern

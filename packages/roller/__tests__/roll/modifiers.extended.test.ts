@@ -149,11 +149,12 @@ describe('Extended Modifier Integration Tests', () => {
         expect(record!.rolls).toHaveLength(3)
       })
 
-      // NOTE: "!P" (uppercase P) is NOT accepted -- this is a pre-existing
-      // case-sensitivity gap where isDiceNotation rejects "3d6!P" even
-      // though the penetrate schema pattern is /!p/i. Filed as known issue.
-      test('"!P" uppercase P throws (known case-sensitivity gap)', () => {
-        expect(() => roll('3d6!P' as string)).toThrow()
+      test('"!P" uppercase P is accepted (case-insensitive)', () => {
+        const result = roll('3d6!P' as string)
+        expect(result.total).toBeGreaterThanOrEqual(3)
+        const record = result.rolls[0]
+        expect(record).toBeDefined()
+        expect(record!.rolls).toHaveLength(3)
       })
     })
 
