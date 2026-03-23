@@ -93,6 +93,16 @@ export const penetrateSchema: NotationSchema<boolean | number | ComparisonOption
             notation: '5d10!p{>=8}',
             description: 'Roll 5d10; penetrate on 8 or higher'
           }
+        ],
+        optionsExamples: [
+          {
+            description: 'Penetrate on max',
+            options: { sides: 6, modifiers: { penetrate: true } }
+          },
+          {
+            description: 'Penetrate on 8+',
+            options: { sides: 10, quantity: 5, modifiers: { penetrate: { greaterThanOrEqual: 8 } } }
+          }
         ]
       }
     ]

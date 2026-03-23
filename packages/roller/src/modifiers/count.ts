@@ -117,6 +117,20 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
       examples: [
         { notation: '5d10#{>=7}', description: 'Count dice >= 7' },
         { notation: '5d10#{>3,<1}', description: 'Count >3, deduct <1' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Count dice >= 7',
+          options: { sides: 10, quantity: 5, modifiers: { count: { greaterThanOrEqual: 7 } } }
+        },
+        {
+          description: 'Count >3, deduct <1',
+          options: {
+            sides: 10,
+            quantity: 5,
+            modifiers: { count: { greaterThan: 3, lessThan: 1, deduct: true } }
+          }
+        }
       ]
     },
     {
@@ -135,6 +149,20 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
       examples: [
         { notation: '5d10S{7}', description: 'Count dice that rolled 7 or higher' },
         { notation: '5d10S{7,1}', description: 'Successes \u2265 7, subtract botches \u2264 1' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Count successes >= 7',
+          options: { sides: 10, quantity: 5, modifiers: { count: { greaterThanOrEqual: 7 } } }
+        },
+        {
+          description: 'Successes >= 7, subtract botches <= 1',
+          options: {
+            sides: 10,
+            quantity: 5,
+            modifiers: { count: { greaterThanOrEqual: 7, lessThanOrEqual: 1, deduct: true } }
+          }
+        }
       ]
     },
     {
@@ -147,7 +175,13 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
         'Count dice at or below a threshold instead of summing values. Sugar for Count with lessThanOrEqual.',
       displayBase: 'F{..}',
       forms: [{ notation: 'F{N}', note: 'Count failures <= N' }],
-      examples: [{ notation: '5d10F{3}', description: 'Count dice <= 3' }]
+      examples: [{ notation: '5d10F{3}', description: 'Count dice <= 3' }],
+      optionsExamples: [
+        {
+          description: 'Count failures <= 3',
+          options: { sides: 10, quantity: 5, modifiers: { count: { lessThanOrEqual: 3 } } }
+        }
+      ]
     },
     {
       key: 'ms{..}',
@@ -159,7 +193,13 @@ export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<Co
         'Subtract a target number from the total to get the margin of success or failure. Sugar for Minus N.',
       displayBase: 'ms{..}',
       forms: [{ notation: 'ms{N}', note: 'Subtract N from total' }],
-      examples: [{ notation: '1d20ms{15}', description: 'Margin of success vs DC 15' }]
+      examples: [{ notation: '1d20ms{15}', description: 'Margin of success vs DC 15' }],
+      optionsExamples: [
+        {
+          description: 'Margin of success vs DC 15',
+          options: { sides: 20, modifiers: { minus: 15 } }
+        }
+      ]
     }
   ]
 })

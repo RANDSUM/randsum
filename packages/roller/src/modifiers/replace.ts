@@ -95,6 +95,33 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
             notation: '4d6V{1=2,6=5}',
             description: 'Replace multiple'
           }
+        ],
+        optionsExamples: [
+          {
+            description: 'Replace 1s with 2',
+            options: { sides: 6, quantity: 4, modifiers: { replace: { from: 1, to: 2 } } }
+          },
+          {
+            description: 'Replace >18 with 20',
+            options: {
+              sides: 20,
+              quantity: 4,
+              modifiers: { replace: { from: { greaterThan: 18 }, to: 20 } }
+            }
+          },
+          {
+            description: 'Replace multiple values',
+            options: {
+              sides: 6,
+              quantity: 4,
+              modifiers: {
+                replace: [
+                  { from: 1, to: 2 },
+                  { from: 6, to: 5 }
+                ]
+              }
+            }
+          }
         ]
       }
     ]

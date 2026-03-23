@@ -132,6 +132,16 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
           description: 'Roll 4d6, drop lowest (ability scores)'
         },
         { notation: '5d6L2', description: 'Roll 5d6, drop 2 lowest' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Drop lowest 1',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }
+        },
+        {
+          description: 'Drop lowest 2',
+          options: { sides: 6, quantity: 5, modifiers: { drop: { lowest: 2 } } }
+        }
       ]
     },
     {
@@ -150,6 +160,16 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
           description: 'Roll 2d20, drop highest (disadvantage)'
         },
         { notation: '4d6H', description: 'Roll 4d6, drop highest' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Drop highest 1',
+          options: { sides: 20, quantity: 2, modifiers: { drop: { highest: 1 } } }
+        },
+        {
+          description: 'Drop highest 2',
+          options: { sides: 6, quantity: 5, modifiers: { drop: { highest: 2 } } }
+        }
       ]
     },
     {
@@ -177,6 +197,16 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
           description: 'Drop any result of 2 or lower'
         },
         { notation: '4d6D{1,6}', description: 'Drop multiple' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Drop all 1s',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { exact: [1] } } }
+        },
+        {
+          description: 'Drop 5 and above',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { greaterThanOrEqual: 5 } } }
+        }
       ]
     }
   ]

@@ -40,6 +40,13 @@ export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>
       examples: [
         { notation: '1d20%5', description: 'Roll 1d20, result mod 5' },
         { notation: '2d6%3', description: 'Roll 2d6, remainder after dividing by 3' }
+      ],
+      optionsExamples: [
+        { description: 'Result mod 5', options: { sides: 20, modifiers: { modulo: 5 } } },
+        {
+          description: 'Remainder after dividing by 3',
+          options: { sides: 6, quantity: 2, modifiers: { modulo: 3 } }
+        }
       ]
     }
   ]

@@ -40,6 +40,16 @@ export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<
       examples: [
         { notation: '2d6//2', description: 'Roll 2d6, halve (round down)' },
         { notation: '4d6L//3', description: 'Drop lowest, then divide by 3' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Halve the total (round down)',
+          options: { sides: 6, quantity: 2, modifiers: { integerDivide: 2 } }
+        },
+        {
+          description: 'Divide total by 3',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, integerDivide: 3 } }
+        }
       ]
     }
   ]

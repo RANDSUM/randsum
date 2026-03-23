@@ -93,6 +93,16 @@ export const compoundSchema: NotationSchema<boolean | number | ComparisonOptions
             notation: '5d10!!{>=8}',
             description: 'Roll 5d10; compound on 8 or higher'
           }
+        ],
+        optionsExamples: [
+          {
+            description: 'Compound on max',
+            options: { sides: 6, quantity: 3, modifiers: { compound: true } }
+          },
+          {
+            description: 'Compound on 8+',
+            options: { sides: 10, quantity: 5, modifiers: { compound: { greaterThanOrEqual: 8 } } }
+          }
         ]
       }
     ]

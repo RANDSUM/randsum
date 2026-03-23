@@ -44,6 +44,13 @@ export const minusSchema: NotationSchema<number> = defineNotationSchema<number>(
       examples: [
         { notation: '1d20-2', description: 'Roll 1d20, subtract 2' },
         { notation: '4d6L-1', description: 'Drop lowest, subtract 1' }
+      ],
+      optionsExamples: [
+        { description: 'Subtract 2 from total', options: { sides: 20, modifiers: { minus: 2 } } },
+        {
+          description: 'Subtract 1 from total',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, minus: 1 } }
+        }
       ]
     }
   ]

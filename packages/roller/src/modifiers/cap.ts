@@ -93,6 +93,20 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
             notation: '4d20C{<3,>18}',
             description: 'Clamp rolls to [3, 18]'
           }
+        ],
+        optionsExamples: [
+          {
+            description: 'Cap at 5 (nothing exceeds 5)',
+            options: { sides: 6, quantity: 4, modifiers: { cap: { greaterThan: 5 } } }
+          },
+          {
+            description: 'Clamp to [3, 18]',
+            options: {
+              sides: 20,
+              quantity: 4,
+              modifiers: { cap: { lessThan: 3, greaterThan: 18 } }
+            }
+          }
         ]
       }
     ]

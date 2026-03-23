@@ -1,6 +1,7 @@
 import { RANDSUM_MODIFIERS } from '../modifiers/definitions'
 import { RANDSUM_DICE_SCHEMAS } from '../dice/index'
 import type { ModifierCategory } from '../notation/tokenize'
+import type { RollOptions } from '../notation/types'
 
 export type { ModifierCategory }
 
@@ -24,6 +25,10 @@ export interface NotationDoc {
   readonly examples: readonly {
     readonly notation: string
     readonly description: string
+  }[]
+  readonly optionsExamples: readonly {
+    readonly description: string
+    readonly options: RollOptions<string | number>
   }[]
 }
 

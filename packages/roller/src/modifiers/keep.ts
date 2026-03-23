@@ -91,6 +91,16 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
           description: 'Roll 2d20, keep highest (advantage)'
         },
         { notation: '4d6K3', description: 'Roll 4d6, keep highest 3' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Keep highest 1 (advantage)',
+          options: { sides: 20, quantity: 2, modifiers: { keep: { highest: 1 } } }
+        },
+        {
+          description: 'Keep highest 3',
+          options: { sides: 6, quantity: 4, modifiers: { keep: { highest: 3 } } }
+        }
       ]
     },
     {
@@ -109,6 +119,16 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
           description: 'Roll 2d20, keep lowest (disadvantage)'
         },
         { notation: '4d6KL2', description: 'Roll 4d6, keep 2 lowest' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Keep lowest 1 (disadvantage)',
+          options: { sides: 20, quantity: 2, modifiers: { keep: { lowest: 1 } } }
+        },
+        {
+          description: 'Keep lowest 2',
+          options: { sides: 6, quantity: 4, modifiers: { keep: { lowest: 2 } } }
+        }
       ]
     },
     {
@@ -133,6 +153,12 @@ export const keepSchema: NotationSchema<KeepOptions> = defineNotationSchema<Keep
           description: 'Keep 3 middle dice'
         },
         { notation: '4d6KM', description: 'Keep middle 2' }
+      ],
+      optionsExamples: [
+        {
+          description: 'Keep middle (drop 1 from each end)',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1, highest: 1 } } }
+        }
       ]
     }
   ]
