@@ -1,27 +1,9 @@
 #!/usr/bin/env node
 import { REST, Routes } from 'discord.js'
 import { config } from './utils/config.js'
+import { commands as commandList } from './commands/index.js'
 
-// Import commands
-import { bladesCommand } from './commands/blades.js'
-import { dhCommand } from './commands/dh.js'
-import { fifthCommand } from './commands/fifth.js'
-import { notationCommand } from './commands/notation.js'
-import { pbtaCommand } from './commands/pbta.js'
-import { rollCommand } from './commands/roll.js'
-import { rootCommand } from './commands/root.js'
-import { suCommand } from './commands/su.js'
-
-const commands = [
-  bladesCommand.data.toJSON(),
-  dhCommand.data.toJSON(),
-  fifthCommand.data.toJSON(),
-  notationCommand.data.toJSON(),
-  pbtaCommand.data.toJSON(),
-  rollCommand.data.toJSON(),
-  rootCommand.data.toJSON(),
-  suCommand.data.toJSON()
-]
+const commands = commandList.map(c => c.data.toJSON())
 
 const rest = new REST().setToken(config.token)
 

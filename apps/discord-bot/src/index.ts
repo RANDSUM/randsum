@@ -2,16 +2,7 @@
 import { Client, Collection, Events, GatewayIntentBits } from 'discord.js'
 import { config } from './utils/config.js'
 import type { Command } from './types.js'
-
-// Import commands
-import { bladesCommand } from './commands/blades.js'
-import { dhCommand } from './commands/dh.js'
-import { fifthCommand } from './commands/fifth.js'
-import { notationCommand } from './commands/notation.js'
-import { pbtaCommand } from './commands/pbta.js'
-import { rollCommand } from './commands/roll.js'
-import { rootCommand } from './commands/root.js'
-import { suCommand } from './commands/su.js'
+import { commands as commandList } from './commands/index.js'
 
 // Import events
 import { interactionCreateHandler } from './events/interactionCreate.js'
@@ -23,18 +14,6 @@ const client = new Client({
 
 // Create a collection to store commands
 const commands = new Collection<string, Command>()
-
-// Register commands
-const commandList = [
-  bladesCommand,
-  dhCommand,
-  fifthCommand,
-  notationCommand,
-  pbtaCommand,
-  rollCommand,
-  rootCommand,
-  suCommand
-]
 
 for (const command of commandList) {
   commands.set(command.data.name, command)
