@@ -20,8 +20,6 @@
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-navigation/bottom-tabs": "7.15.6",
-    "@react-navigation/native": "7.1.34",
     "@supabase/supabase-js": "^2.49.4",
     "expo": "~55.0.8",
     "expo-constants": "~55.0.9",

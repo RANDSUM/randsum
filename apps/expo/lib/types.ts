@@ -2,9 +2,6 @@ import type { RollRecord } from '@randsum/roller'
 
 export type { RollRecord }
 
-/** Die sides available in Simple Mode */
-export type DieSide = 4 | 6 | 8 | 10 | 12 | 20
-
 /** A named variable in a template */
 export interface Variable {
   readonly name: string

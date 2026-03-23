@@ -24,6 +24,7 @@ bun run test                             # Run all tests (bun:test, recursive)
 bun run lint                             # ESLint all packages
 bun run format                           # Prettier all packages
 bun run typecheck                        # TypeScript strict check
+bun run knip                             # Find unused files, deps, and exports
 bun run check:all                        # Full CI pipeline (lint, format, typecheck, test, build, size, site)
 bun run fix:all                          # Auto-fix lint + format issues
 
@@ -134,7 +135,7 @@ roll("5d10F{3}") // Count failures <= 3
 ## Git Hooks (Lefthook)
 
 **pre-commit** (parallel): ESLint --fix, Prettier, typecheck
-**pre-push**: all tests, unused exports check, security audit, skill verification, bundle size check
+**pre-push**: build, codegen check, tests, security audit, knip (unused files/deps)
 
 If hooks fail, run `bun run fix:all`.
 

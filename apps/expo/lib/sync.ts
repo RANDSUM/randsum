@@ -3,13 +3,13 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import type { LocalStorage, RollHistoryEntry, RollTemplate } from './storage'
 import { useSyncStore } from './stores/syncStore'
 
-export interface SyncError {
+interface SyncError {
   readonly entity: string
   readonly id: string
   readonly message: string
 }
 
-export interface SyncResult {
+interface SyncResult {
   readonly uploaded: number
   readonly downloaded: number
   readonly merged: number
@@ -188,7 +188,7 @@ export async function syncToCloud(
 /**
  * Pull remote data and merge with local (last-write-wins).
  */
-export async function syncFromCloud(
+async function syncFromCloud(
   userId: string,
   storageBackend: LocalStorage,
   supabaseClient: SupabaseClient

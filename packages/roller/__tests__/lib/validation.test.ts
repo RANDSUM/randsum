@@ -3,7 +3,6 @@ import {
   validateFinite,
   validateGreaterThan,
   validateInteger,
-  validateLessThan,
   validateNonNegative,
   validateRange
 } from '../../src/lib/utils/validation'
@@ -216,49 +215,5 @@ describe('validateGreaterThan', () => {
     expect(() => {
       validateGreaterThan(2, 5, 'num')
     }).toThrow('received: 2')
-  })
-})
-
-describe('validateLessThan', () => {
-  test('passes for value less than threshold', () => {
-    expect(() => {
-      validateLessThan(3, 5, 'count')
-    }).not.toThrow()
-  })
-
-  test('throws for value equal to threshold', () => {
-    expect(() => {
-      validateLessThan(5, 5, 'count')
-    }).toThrow('count must be less than 5')
-  })
-
-  test('throws for value greater than threshold', () => {
-    expect(() => {
-      validateLessThan(10, 5, 'count')
-    }).toThrow('count must be less than 5')
-  })
-
-  test('works with zero threshold', () => {
-    expect(() => {
-      validateLessThan(-1, 0, 'negative')
-    }).not.toThrow()
-    expect(() => {
-      validateLessThan(0, 0, 'negative')
-    }).toThrow()
-  })
-
-  test('works with negative threshold', () => {
-    expect(() => {
-      validateLessThan(-10, -5, 'value')
-    }).not.toThrow()
-    expect(() => {
-      validateLessThan(-5, -5, 'value')
-    }).toThrow()
-  })
-
-  test('error includes received value', () => {
-    expect(() => {
-      validateLessThan(10, 5, 'max')
-    }).toThrow('received: 10')
   })
 })

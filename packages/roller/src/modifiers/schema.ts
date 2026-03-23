@@ -4,7 +4,6 @@ import type {
   DropOptions,
   KeepOptions,
   ModifierLog,
-  ModifierOptions,
   ReplaceOptions,
   RequiredNumericRollParameters,
   RerollOptions,
@@ -211,11 +210,6 @@ export interface ModifierOptionTypes {
   modulo: number
   multiplyTotal: number
 }
-
-/**
- * The modifier registry - maps modifier names to their definitions.
- */
-export type ModifierRegistry = Map<keyof ModifierOptions, ModifierDefinition>
 
 /**
  * Result of processing all modifiers through the registry.

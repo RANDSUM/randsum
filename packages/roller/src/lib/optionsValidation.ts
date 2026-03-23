@@ -1,6 +1,6 @@
-import { validateGreaterThan, validateInteger } from './utils'
+import { validateGreaterThan, validateInteger } from './utils/validation'
 import type { RollOptions } from '../types'
-import { validateModifiers } from './modifiers'
+import { validateModifiers } from '../modifiers/registry'
 import { ValidationError } from '../errors'
 
 /**

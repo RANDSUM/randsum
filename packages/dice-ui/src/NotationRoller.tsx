@@ -9,8 +9,6 @@ import { tokenColor } from './tokenColor'
 import type { RollResult } from './types'
 import './NotationRoller.css'
 
-export type { RollResult }
-
 export interface NotationRollerProps {
   readonly defaultNotation?: string
   readonly notation?: string

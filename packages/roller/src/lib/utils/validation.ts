@@ -29,9 +29,3 @@ export function validateGreaterThan(value: number, threshold: number, name: stri
     throw new ValidationError(`${name} must be greater than ${threshold}, received: ${value}`)
   }
 }
-
-export function validateLessThan(value: number, threshold: number, name: string): void {
-  if (value >= threshold) {
-    throw new ValidationError(`${name} must be less than ${threshold}, received: ${value}`)
-  }
-}

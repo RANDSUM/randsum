@@ -53,6 +53,3 @@ export const MODIFIER_PRIORITIES: Record<string, number> & {
   count: 80,
   multiplyTotal: 100
 } as const satisfies Record<string, number>
-
-// eslint-disable-next-line @typescript-eslint/no-deprecated
-export type ModifierPriorityName = keyof typeof MODIFIER_PRIORITIES

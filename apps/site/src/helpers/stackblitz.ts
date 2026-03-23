@@ -1,4 +1,4 @@
-export interface StackBlitzProject {
+interface StackBlitzProject {
   readonly title: string
   readonly description: string
   readonly template: string

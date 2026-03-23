@@ -1,0 +1,46 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.ts"],
+      "project": ["scripts/*.ts"],
+      "ignoreDependencies": [
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/parser",
+        "astro",
+        "@astrojs/netlify",
+        "devalue",
+        "flatted",
+        "undici",
+        "fast-check",
+        "mitata"
+      ]
+    },
+    "packages/roller": {
+      "project": ["src/**/*.ts", "!src/**/*.test.ts"],
+      "includeEntryExports": true
+    },
+    "packages/games": {
+      "entry": ["src/index.ts", "src/schema.ts", "src/*.generated.ts"],
+      "project": ["src/**/*.ts"],
+      "includeEntryExports": true
+    },
+    "packages/dice-ui": {
+      "entry": ["src/index.native.ts"],
+      "project": ["src/**/*.{ts,tsx}"],
+      "includeEntryExports": true
+    },
+    "apps/expo": {
+      "entry": ["app/**/*.tsx"],
+      "project": ["**/*.{ts,tsx}"],
+      "ignoreDependencies": ["expo-*"]
+    },
+    "apps/playground": {},
+    "apps/rdn": {},
+    "apps/site": {}
+  },
+  "ignoreBinaries": ["skills-ref", "expo"],
+  "ignore": ["**/bunup.config.ts", "**/*.native.ts", "**/*.native.tsx", "**/*.generated.ts"],
+  "exclude": ["optionalPeerDependencies", "unresolved", "exports", "types"],
+  "ignoreExportsUsedInFile": true
+}

@@ -4,8 +4,6 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 
 import { type ColorScheme, type FontSizes, type ThemeTokens, fontSizes, getTokens } from '../theme'
 
-export type { ColorScheme, FontSizes, ThemeTokens }
-
 interface ThemeState {
   readonly colorScheme: ColorScheme
   readonly tokens: ThemeTokens

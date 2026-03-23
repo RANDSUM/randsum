@@ -2,7 +2,7 @@ import type { GameShortcode } from '@randsum/games'
 
 export type SupportedGameId = GameShortcode
 
-export interface GameConfig {
+interface GameConfig {
   readonly name: string
   readonly color: string
   readonly shortcode: SupportedGameId

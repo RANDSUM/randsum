@@ -49,14 +49,6 @@ export function getAllModifiers(): ModifierDefinition[] {
 }
 
 /**
- * Get modifier execution order (sorted by priority).
- * @deprecated Use the MODIFIER_ORDER constant directly for better performance.
- */
-export function getModifierOrder(): readonly (keyof ModifierOptions)[] {
-  return MODIFIER_ORDER
-}
-
-/**
  * Parse notation string into ModifierOptions.
  */
 export function parseModifiers(notation: string): ModifierOptions {

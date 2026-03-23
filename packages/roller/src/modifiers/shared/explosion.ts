@@ -75,7 +75,7 @@ export const ExplosionStrategies: {
  * Note: `0` means "unlimited" by convention (matching dice notation where !!0 = unlimited
  * compound). It does NOT mean "never explode". Use `false` to disable.
  */
-export function resolveExplosionDepth(
+function resolveExplosionDepth(
   options: boolean | number | ComparisonOptions,
   defaultDepth = 1
 ): number {

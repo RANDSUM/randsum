@@ -72,48 +72,54 @@ describe('Story 5+7: Modifier Co-Location', () => {
   })
 
   describe('co-located exports', () => {
-    test('cap.ts exports both capSchema and capModifier', async () => {
+    test('cap.ts exports capModifier with schema and behavior fields', async () => {
       const mod = await import('../src/modifiers/cap')
-      expect(mod.capSchema).toBeDefined()
       expect(mod.capModifier).toBeDefined()
-      expect(mod.capSchema.name).toBe('cap')
+      expect(mod.capModifier.name).toBe('cap')
       expect(typeof mod.capModifier.apply).toBe('function')
+      expect(mod.capModifier.pattern).toBeInstanceOf(RegExp)
     })
 
-    test('drop.ts exports both dropSchema and dropModifier', async () => {
+    test('drop.ts exports dropModifier with schema and behavior fields', async () => {
       const mod = await import('../src/modifiers/drop')
-      expect(mod.dropSchema).toBeDefined()
       expect(mod.dropModifier).toBeDefined()
+      expect(mod.dropModifier.name).toBe('drop')
+      expect(typeof mod.dropModifier.apply).toBe('function')
     })
 
-    test('explode.ts exports both explodeSchema and explodeModifier', async () => {
+    test('explode.ts exports explodeModifier with schema and behavior fields', async () => {
       const mod = await import('../src/modifiers/explode')
-      expect(mod.explodeSchema).toBeDefined()
       expect(mod.explodeModifier).toBeDefined()
+      expect(mod.explodeModifier.name).toBe('explode')
+      expect(typeof mod.explodeModifier.apply).toBe('function')
     })
 
-    test('compound.ts exports both compoundSchema and compoundModifier', async () => {
+    test('compound.ts exports compoundModifier with schema and behavior fields', async () => {
       const mod = await import('../src/modifiers/compound')
-      expect(mod.compoundSchema).toBeDefined()
       expect(mod.compoundModifier).toBeDefined()
+      expect(mod.compoundModifier.name).toBe('compound')
+      expect(typeof mod.compoundModifier.apply).toBe('function')
     })
 
-    test('penetrate.ts exports both penetrateSchema and penetrateModifier', async () => {
+    test('penetrate.ts exports penetrateModifier with schema and behavior fields', async () => {
       const mod = await import('../src/modifiers/penetrate')
-      expect(mod.penetrateSchema).toBeDefined()
       expect(mod.penetrateModifier).toBeDefined()
+      expect(mod.penetrateModifier.name).toBe('penetrate')
+      expect(typeof mod.penetrateModifier.apply).toBe('function')
     })
 
-    test('plus.ts exports both plusSchema and plusModifier', async () => {
+    test('plus.ts exports plusModifier with schema and behavior fields', async () => {
       const mod = await import('../src/modifiers/plus')
-      expect(mod.plusSchema).toBeDefined()
       expect(mod.plusModifier).toBeDefined()
+      expect(mod.plusModifier.name).toBe('plus')
+      expect(typeof mod.plusModifier.apply).toBe('function')
     })
 
-    test('minus.ts exports both minusSchema and minusModifier', async () => {
+    test('minus.ts exports minusModifier with schema and behavior fields', async () => {
       const mod = await import('../src/modifiers/minus')
-      expect(mod.minusSchema).toBeDefined()
       expect(mod.minusModifier).toBeDefined()
+      expect(mod.minusModifier.name).toBe('minus')
+      expect(typeof mod.minusModifier.apply).toBe('function')
     })
   })
 

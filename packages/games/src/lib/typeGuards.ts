@@ -11,9 +11,9 @@ import type {
  * for additional roll definitions beyond the base `roll` key.
  */
 // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-export const ROLL_KEY_PATTERN: RegExp = /^roll[A-Z][a-zA-Z]*$/
+const ROLL_KEY_PATTERN: RegExp = /^roll[A-Z][a-zA-Z]*$/
 
-export function isRollDefinition(value: unknown): value is RollDefinition {
+function isRollDefinition(value: unknown): value is RollDefinition {
   if (typeof value !== 'object' || value === null) return false
   if (!('resolve' in value)) return false
   return 'dice' in value || 'dicePools' in value

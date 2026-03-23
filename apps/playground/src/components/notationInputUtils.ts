@@ -19,11 +19,6 @@ export function tokenCategoryToClass(category: TokenCategory): string {
   return 'token-unknown'
 }
 
-// Backwards-compatible alias — will be removed when playground test suite is updated
-export function tokenTypeToClass(category: string): string {
-  return tokenCategoryToClass(category as TokenCategory)
-}
-
 export function validationStateToBorderColor(state: ValidationState): string {
   if (state === 'valid') return 'var(--pg-color-accent)'
   if (state === 'invalid') return 'var(--pg-color-error)'

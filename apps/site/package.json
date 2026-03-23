@@ -21,7 +21,6 @@
     "@astrojs/react": "5.0.0",
     "@astrojs/starlight": "0.38.0",
     "@randsum/dice-ui": "workspace:~",
-    "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@stackblitz/sdk": "latest",
     "@types/react": "catalog:",

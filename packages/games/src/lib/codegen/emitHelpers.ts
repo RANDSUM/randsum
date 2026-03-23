@@ -62,7 +62,7 @@ export function integerOrInputCode(
   return accessor
 }
 
-export function inputTsType(decl: InputDeclaration): string {
+function inputTsType(decl: InputDeclaration): string {
   if (decl.type === 'integer') return 'number'
   if (decl.type === 'boolean') return 'boolean'
   if (decl.enum !== undefined && decl.enum.length > 0) {
@@ -71,7 +71,7 @@ export function inputTsType(decl: InputDeclaration): string {
   return 'string'
 }
 
-export function isInputOptional(decl: InputDeclaration): boolean {
+function isInputOptional(decl: InputDeclaration): boolean {
   return decl.default !== undefined || decl.optional === true
 }
 
@@ -103,7 +103,7 @@ export function getOutcomeRanges(outcome: NormalizedOutcome | undefined): readon
   return []
 }
 
-export function getResultStrings(outcome: NormalizedOutcome | undefined): string[] {
+function getResultStrings(outcome: NormalizedOutcome | undefined): string[] {
   if (outcome === undefined) return []
   if ('degreeOfSuccess' in outcome) {
     return Object.keys(outcome.degreeOfSuccess)

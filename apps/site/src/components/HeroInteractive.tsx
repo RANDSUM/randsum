@@ -9,60 +9,6 @@ const SLOT_INTERVALS = [
 
 const DIE_ROLLED = 'die-rolled'
 
-export function SpinningLogo({ logoSrc }: { readonly logoSrc: string }): React.JSX.Element {
-  const [spinning, setSpinning] = useState(false)
-  const [nudging, setNudging] = useState(false)
-  const [spinDuration, setSpinDuration] = useState(3.2)
-  const nudgeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-
-  useEffect(() => {
-    const schedule = (): void => {
-      nudgeTimerRef.current = setTimeout(
-        () => {
-          setNudging(true)
-        },
-        5000 + roll(3000).total
-      )
-    }
-    if (!spinning) schedule()
-    return () => {
-      if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current)
-    }
-  }, [spinning, nudging])
-
-  const handleClick = (): void => {
-    if (spinning) return
-    if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current)
-    setNudging(false)
-    const duration = 3.0 + (roll(5).total - 1) * 0.1
-    setSpinDuration(duration)
-    setSpinning(true)
-    window.dispatchEvent(new CustomEvent(DIE_ROLLED))
-  }
-
-  return (
-    <img
-      src={logoSrc}
-      alt="RANDSUM logo"
-      className={[
-        'hero-logo',
-        spinning ? 'hero-logo--spinning' : '',
-        nudging ? 'hero-logo--nudge' : ''
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      width={240}
-      height={240}
-      onClick={handleClick}
-      onAnimationEnd={e => {
-        if (e.animationName === 'die-spin') setSpinning(false)
-        if (e.animationName === 'logo-nudge') setNudging(false)
-      }}
-      style={{ cursor: 'pointer', '--spin-duration': `${spinDuration}s` } as React.CSSProperties}
-    />
-  )
-}
-
 const CHIP_PRESETS = [
   { label: 'Drop Lowest', notation: '4d6L' },
   { label: 'Fudge', notation: '4dF' },

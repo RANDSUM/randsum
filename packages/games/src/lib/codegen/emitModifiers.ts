@@ -2,7 +2,7 @@ import type { NormalizedDiceConfig, NormalizedRollDefinition } from '../normaliz
 import type { InputDeclaration, IntegerOrInput, ModifyOperation } from '../types'
 import { integerOrInputCode, toDiceConfig } from './emitHelpers'
 
-export function buildModifiersCode(
+function buildModifiersCode(
   modify: readonly ModifyOperation[],
   inputs: NormalizedRollDefinition['inputs'],
   optional: boolean

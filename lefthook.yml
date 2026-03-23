@@ -34,3 +34,6 @@ pre-push:
     audit:
       run: bun audit --level=high > /dev/null 2>&1
       priority: 2
+    knip:
+      run: bun run knip > /dev/null 2>&1
+      priority: 2

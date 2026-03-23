@@ -24,4 +24,4 @@ export interface LocalStorage {
 
 // Metro resolves storage.native.ts on iOS/Android and storage.web.ts on web.
 // This fallback re-exports the web implementation for non-Metro environments (e.g. tests).
-export { createAsyncStorageBackend, DEFAULT_PREFERENCES, storage } from './storage.web'
+export { storage } from './storage.web'

@@ -158,10 +158,18 @@ jobs:
       - name: Dry-run publish
         run: bun scripts/publish.ts --dry-run
 
+  knip:
+    name: knip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/bun-setup
+      - run: bun run knip
+
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, site, rdn, skill, publish-dry-run]
+    needs: [roller, games, cli, site, rdn, skill, publish-dry-run, knip]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

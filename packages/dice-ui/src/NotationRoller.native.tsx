@@ -9,8 +9,6 @@ import { useTheme } from './useTheme'
 import { tokenColor } from './tokenColor'
 import type { RollResult } from './types'
 
-export type { RollResult }
-
 export interface NotationRollerProps {
   readonly defaultNotation?: string
   readonly notation?: string

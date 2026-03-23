@@ -4,7 +4,7 @@ import type {
   NormalizedRollDefinition
 } from '../normalizedTypes'
 
-export function normalizedLeafTsType(
+function normalizedLeafTsType(
   leaf: NormalizedDetailsLeafDef,
   inputs: NormalizedRollDefinition['inputs']
 ): string {
