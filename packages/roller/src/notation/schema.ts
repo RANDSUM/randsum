@@ -1,4 +1,3 @@
-import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierOptions } from './types'
 
 /**
@@ -46,12 +45,6 @@ export interface NotationSchema<TOptions = unknown> {
    * Returns array of descriptions (some modifiers produce multiple lines).
    */
   toDescription: (options: TOptions) => string[]
-
-  /**
-   * Static documentation for this modifier's notation.
-   * Co-located with the schema so docs travel with the schema definition.
-   */
-  readonly docs?: readonly NotationDoc[]
 }
 
 /**
