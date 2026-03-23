@@ -39,14 +39,22 @@ export const fifthCommand: Command = {
     try {
       const result = roll({
         modifier,
+        crit: true,
         ...(rollingWith ? { rollingWith } : {})
       })
 
       const initialRolls = result.rolls[0]?.initialRolls ?? []
 
+      const criticals = result.details.criticals
+      const isNat20 = criticals?.isNatural20 === true
+      const isNat1 = criticals?.isNatural1 === true
+
+      const embedColor = isNat20 ? 0xffd700 : isNat1 ? 0xdc143c : 0x1e90ff
+      const titlePrefix = isNat20 ? 'Natural 20! ' : isNat1 ? 'Natural 1! ' : ''
+
       const embed = new EmbedBuilder()
-        .setColor(0x1e90ff) // D&D blue
-        .setTitle(`D&D 5e Roll: ${result.total}`)
+        .setColor(embedColor)
+        .setTitle(`${titlePrefix}D&D 5e Roll: ${result.total}`)
         .setDescription(rollingWith ? `Rolled with ${rollingWith}` : 'Standard roll')
         .setFooter(embedFooterDetails)
 
