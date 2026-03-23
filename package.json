@@ -42,7 +42,7 @@
     "@types/react-dom": "^19.0.0"
   },
   "scripts": {
-    "prepare": "[ -d .git ] && lefthook install || true",
+    "prepare": "[ -d .git ] && (git config --unset-all --local core.hooksPath 2>/dev/null; lefthook install) || true",
     "help": "bun scripts/help.ts",
     "dev": "bun run --filter '*' dev",
     "build": "bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' --filter '@randsum/cli' --filter '@randsum/discord-bot' build",

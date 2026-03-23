@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "types": ["bun"],
     "paths": {
       "@randsum/games/*": ["./src/*.generated.ts"]
     }
