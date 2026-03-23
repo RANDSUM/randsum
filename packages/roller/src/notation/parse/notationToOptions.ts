@@ -2,8 +2,19 @@ import { coreNotationPattern } from '../coreNotationPattern'
 import type { ParsedNotationOptions } from '../types'
 import { listOfNotations } from './listOfNotations'
 import { singleNotationToOptions } from './singleNotationToOptions'
+import { parseSpecialPoolSegment } from './parseSpecialPool'
 
-const globalCoreNotationPattern = new RegExp(coreNotationPattern.source, 'g')
+// Matches standard NdS pools OR special numeric pools (d%, gN, DDN)
+// Order: DDN before standard (two D's must be caught before one D)
+const POOL_BOUNDARY_PATTERN = new RegExp(
+  [
+    coreNotationPattern.source,
+    String.raw`[+-]?\d*[Dd][Dd]\d+`,
+    String.raw`[+-]?\d*[Gg]\d+`,
+    String.raw`[+-]?\d*[Dd]%`
+  ].join('|'),
+  'g'
+)
 
 const repeatPattern = /[Xx]([1-9]\d*)$/
 
@@ -31,11 +42,33 @@ export function notationToOptions(notationString: string): ParsedNotationOptions
     return Array.from({ length: repeat.count }, () => baseOptions).flat()
   }
 
-  const coreMatches = Array.from(notationString.matchAll(globalCoreNotationPattern))
+  POOL_BOUNDARY_PATTERN.lastIndex = 0
+  const poolMatches = Array.from(notationString.matchAll(POOL_BOUNDARY_PATTERN))
 
-  if (coreMatches.length <= 1) {
+  if (poolMatches.length <= 1) {
     return [singleNotationToOptions(notationString)]
   }
 
-  return listOfNotations(notationString, coreMatches).map(singleNotationToOptions)
+  // Check if any pool matches are special (non-standard NdS)
+  const hasSpecialPool = poolMatches.some(m => {
+    const t = m[0]
+    return /[Gg]\d+$/.test(t) || /[Dd][Dd]\d+$/.test(t) || /[Dd]%$/.test(t)
+  })
+
+  if (!hasSpecialPool) {
+    // Pure standard NdS multi-pool — use existing path
+    const coreMatches = Array.from(
+      notationString.matchAll(new RegExp(coreNotationPattern.source, 'g'))
+    )
+    return listOfNotations(notationString, coreMatches).map(singleNotationToOptions)
+  }
+
+  // Mixed or all-special pools: split by pool boundaries and parse each segment
+  return listOfNotations(notationString, poolMatches).map(segment => {
+    const special = parseSpecialPoolSegment(segment)
+    if (special !== null) {
+      return { quantity: special.quantity, sides: special.sides, arithmetic: special.arithmetic }
+    }
+    return singleNotationToOptions(segment)
+  })
 }

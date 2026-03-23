@@ -21,9 +21,17 @@ const MODIFIER_DIE_CORES = [
   String.raw`\d*[Dd][Dd]\d+`
 ]
 
+// Multi-pool patterns for special numeric dice (d%, gN, DDN)
+// Includes both standalone (first pool) and signed (+/-) forms (subsequent pools)
+const MULTI_POOL_SPECIAL_PATTERNS = [
+  String.raw`[+-]?\d*[Dd]%`,
+  String.raw`[+-]\d*[Gg]\d+`,
+  String.raw`[+-]\d*[Dd][Dd]\d+`
+]
+
 // Cache the complete pattern since schemas never change at runtime
 // eslint-disable-next-line no-restricted-syntax
-let cachedPattern: RegExp | null = null
+let cachedPattern: RegExp | null = null // Reset by clearing this if patterns change
 
 /**
  * Get the complete notation pattern (core notation + special die cores + all modifier patterns).
@@ -31,7 +39,12 @@ let cachedPattern: RegExp | null = null
  */
 function getCompleteNotationPattern(): RegExp {
   cachedPattern ??= new RegExp(
-    [coreNotationPattern.source, ...MODIFIER_DIE_CORES, buildNotationPattern().source].join('|'),
+    [
+      coreNotationPattern.source,
+      ...MODIFIER_DIE_CORES,
+      ...MULTI_POOL_SPECIAL_PATTERNS,
+      buildNotationPattern().source
+    ].join('|'),
     'g'
   )
   cachedPattern.lastIndex = 0
@@ -64,9 +77,11 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   // For standard dice, require the core NdS pattern as a quick gate.
   // For special modifier-supporting types (z, g, DD), the complete pattern
   // includes their core patterns alongside the standard NdS pattern.
+  // For multi-pool strings, percentile (d%) also counts as a valid core.
   const hasStandardCore = coreNotationPattern.test(trimmedArg)
   const hasSpecialCore = MODIFIER_DIE_CORES.some(src => new RegExp(src).test(trimmedArg))
-  if (!hasStandardCore && !hasSpecialCore) return false
+  const hasPercentileCore = /\d*[Dd]%/.test(trimmedArg)
+  if (!hasStandardCore && !hasSpecialCore && !hasPercentileCore) return false
 
   const countPatternGlobal = new RegExp(countPattern.source, 'g')
   if ([...trimmedArg.matchAll(countPatternGlobal)].length > 1) return false
