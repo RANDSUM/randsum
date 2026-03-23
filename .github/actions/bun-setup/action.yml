@@ -1,0 +1,33 @@
+name: Setup Bun
+description: Read .bun-version, setup bun, restore cache, and install dependencies
+inputs:
+  node-version:
+    description: 'Node version to setup via actions/setup-node@v6 (omit to skip node setup)'
+    required: false
+    default: ''
+  registry-url:
+    description: 'npm registry URL for setup-node (e.g. https://registry.npmjs.org)'
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Read Bun version
+      id: bun-version
+      shell: bash
+      run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ steps.bun-version.outputs.version }}
+    - uses: actions/setup-node@v6
+      if: ${{ inputs.node-version != '' }}
+      with:
+        node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.registry-url || '' }}
+    - uses: actions/cache@v4
+      with:
+        path: ~/.bun/install/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+        restore-keys: ${{ runner.os }}-bun-
+    - run: bun install --frozen-lockfile
+      shell: bash
