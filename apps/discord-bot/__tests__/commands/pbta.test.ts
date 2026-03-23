@@ -39,8 +39,15 @@ class OptionBuilder {
   }
 }
 
+const mockCollector = {
+  on: mock(() => mockCollector)
+}
+
 void mock.module('discord.js', () => ({
   EmbedBuilder: mock(() => mockEmbed),
+  StringSelectMenuBuilder: mock(() => ({})),
+  ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
+  ComponentType: { StringSelect: 3, Button: 2 },
   SlashCommandBuilder: class {
     public setName(): this {
       return this
@@ -57,6 +64,11 @@ void mock.module('discord.js', () => ({
       return this
     }
   }
+}))
+
+const mockRow = {}
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => mockRow)
 }))
 
 const mockRoll = mock(() => ({
@@ -86,7 +98,9 @@ function makeInteraction(
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
+    editReply: mock(() =>
+      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
+    ),
     options: {
       getInteger: mock((name: string) => {
         if (name === 'stat') return opts.stat ?? 2
@@ -102,6 +116,7 @@ function makeInteraction(
 beforeEach(() => {
   for (const fn of Object.values(mockEmbed)) fn.mockClear()
   mockRoll.mockClear()
+  for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
 
 describe('pbtaCommand', () => {
@@ -149,6 +164,14 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: 2, rollingWith: 'Advantage' })
     await pbtaCommand.execute(interaction as never)
     expect(mockEmbed.addFields).toHaveBeenCalled()
+  })
+
+  test('reply includes re-roll button component', async () => {
+    const interaction = makeInteraction({ stat: 2 })
+    await pbtaCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ components: expect.any(Array) })
+    )
   })
 
   test('error path: roll throws, replies with error embed', async () => {
