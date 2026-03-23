@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Token } from '@randsum/roller/tokenize'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
+import { tokenColor } from './tokenColor'
 import './TokenOverlayInput.css'
 
 export interface TokenOverlayInputProps {
@@ -9,14 +10,6 @@ export interface TokenOverlayInputProps {
   readonly theme?: 'light' | 'dark'
   readonly children: React.ReactNode
   readonly overlayRef?: React.Ref<HTMLDivElement>
-}
-
-function tokenColor(
-  doc: { readonly color: string; readonly colorLight: string } | undefined,
-  theme: 'light' | 'dark'
-): string | undefined {
-  if (!doc) return undefined
-  return theme === 'light' ? doc.colorLight : doc.color
 }
 
 export function TokenOverlayInput({

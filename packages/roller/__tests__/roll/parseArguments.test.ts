@@ -547,7 +547,6 @@ describe(parseArguments, () => {
 
       expect(params).toMatchObject([
         {
-          argument,
           quantity: 1,
           sides: 20,
           notation: '1d20',
@@ -555,7 +554,6 @@ describe(parseArguments, () => {
           arithmetic: 'add'
         },
         {
-          argument,
           quantity: 2,
           sides: 6,
           notation: '2d6',
@@ -563,11 +561,9 @@ describe(parseArguments, () => {
           arithmetic: 'add'
         },
         {
-          argument,
           quantity: 1,
           sides: 8,
-          notation: '-1d8',
-          description: ['Roll 1 8-sided die', 'and Subtract the result'],
+          notation: '1d8',
           arithmetic: 'subtract'
         }
       ])

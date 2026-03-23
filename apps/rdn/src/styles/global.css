@@ -105,7 +105,6 @@ body {
   grid-template-columns: var(--sidebar-width) 1fr var(--aside-width);
   grid-template-rows: auto 1fr;
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 .spec-sidebar {

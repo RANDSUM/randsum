@@ -64,18 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
+      - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' check
       - name: Check bundle size
         run: bun run --filter '@randsum/roller' size
@@ -87,18 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
+      - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/games' check
       - name: Verify generated files are up to date
@@ -113,18 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
+      - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/cli' check
 
@@ -135,21 +102,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/bun-setup
         with:
-          node-version: 22
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
+          node-version: '22'
       - run: bun run build
       - run: bun run --filter '@randsum/site' check
 
@@ -160,21 +115,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/bun-setup
         with:
-          node-version: 22
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
+          node-version: '22'
       - run: bun run --filter '@randsum/rdn' check
 
   skill:
@@ -184,12 +127,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
+      - uses: ./.github/actions/bun-setup
       - name: Verify skills
         run: npx skills-ref validate skills/dice-rolling/SKILL.md
       - name: Install Claude Code
@@ -211,18 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Read Bun version
-        id: bun-version
-        run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ steps.bun-version.outputs.version }}
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-      - run: bun install --frozen-lockfile
+      - uses: ./.github/actions/bun-setup
       - run: bun run build
       - name: Configure npm auth
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc

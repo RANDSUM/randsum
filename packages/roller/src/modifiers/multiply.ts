@@ -24,25 +24,7 @@ export const multiplySchema: NotationSchema<number> = defineNotationSchema<numbe
 
   toDescription: options => {
     return [`Multiply dice by ${options}`]
-  },
-
-  docs: [
-    {
-      key: '*',
-      category: 'Scale',
-      color: '#a3e635',
-      colorLight: '#4d7c0f',
-      title: 'Multiply Dice',
-      description: 'Multiply the dice sum before applying +/\u2212 arithmetic modifiers.',
-      displayBase: '*',
-      displayOptional: 'n',
-      forms: [{ notation: '*n', note: 'Multiply dice sum by n (pre-arithmetic)' }],
-      examples: [
-        { notation: '2d6*2+3', description: '(roll \u00d7 2) + 3' },
-        { notation: '4d6*3', description: 'Triple the dice sum' }
-      ]
-    }
-  ]
+  }
 })
 
 export const multiplyModifier: ModifierDefinition<number> = {

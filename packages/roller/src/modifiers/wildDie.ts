@@ -27,22 +27,7 @@ export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boole
   toDescription: options => {
     if (options) return ['Wild Die (compound on max, penalty on 1)']
     return []
-  },
-
-  docs: [
-    {
-      key: 'W',
-      category: 'Dispatch',
-      color: '#facc15',
-      colorLight: '#a16207',
-      title: 'Wild Die',
-      description:
-        'D6 System wild die: compound-explode on max, drop wild die and highest on 1, no effect otherwise. A macro that dispatches to multiple primitives based on runtime state.',
-      displayBase: 'W',
-      forms: [{ notation: 'W', note: 'Apply wild die rule' }],
-      examples: [{ notation: '5d6W', description: 'D6 System with wild die' }]
-    }
-  ]
+  }
 })
 
 export const wildDieModifier: ModifierDefinition<boolean> = {

@@ -67,7 +67,7 @@ const SPECIAL_DIE_PATTERNS: readonly SpecialDieEntry[] = [
     pattern: /^(\d*)[Dd]\{([^}]+)\}/,
     describe: t => `Custom faces: ${t}`
   },
-  { key: 'd%', category: 'Special', pattern: /^[Dd]%/, describe: () => 'Percentile die (d100)' }
+  { key: 'd%', category: 'Special', pattern: /^\d*[Dd]%/, describe: () => 'Percentile die (d100)' }
 ]
 
 interface ModifierEntry {

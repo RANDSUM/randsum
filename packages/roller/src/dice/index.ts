@@ -18,9 +18,9 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       displayBase: 'xDN',
       forms: [{ notation: 'xDN', note: 'Roll x dice, N sides each' }],
       examples: [
-        { notation: '1d20', description: 'Roll one d20' },
-        { notation: '4d6', description: 'Roll four d6' },
-        { notation: '2d8', description: 'Roll two d8' }
+        { description: 'Roll one d20', notation: '1d20', options: { sides: 20 } },
+        { description: 'Roll four d6', notation: '4d6', options: { sides: 6, quantity: 4 } },
+        { description: 'Roll two d8', notation: '2d8', options: { sides: 8, quantity: 2 } }
       ]
     }
   },
@@ -35,7 +35,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       description: 'Shorthand for a 100-sided die. Equivalent to 1d100.',
       displayBase: 'd%',
       forms: [{ notation: 'd%', note: 'Roll 1-100' }],
-      examples: [{ notation: 'd%', description: 'Roll 1-100' }]
+      examples: [{ description: 'Roll 1-100', notation: 'd%', options: { sides: 100 } }]
     }
   },
   {
@@ -53,8 +53,16 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
         { notation: 'dF.2', note: 'Extended Fudge die: -2 to +2' }
       ],
       examples: [
-        { notation: '4dF', description: 'Fate Core: four Fate dice (-4 to +4)' },
-        { notation: 'dF.2', description: 'Extended Fudge die (-2 to +2)' }
+        {
+          description: 'Fate Core: four Fate dice (-4 to +4)',
+          notation: '4dF',
+          options: { sides: [-1, 0, 1], quantity: 4 }
+        },
+        {
+          description: 'Extended Fudge die (-2 to +2)',
+          notation: 'dF.2',
+          options: { sides: [-2, -1, 0, 1, 2] }
+        }
       ]
     }
   },
@@ -69,7 +77,13 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       description: 'A zero-indexed die that rolls 0 through N-1 instead of 1 through N.',
       displayBase: 'zN',
       forms: [{ notation: 'zN', note: 'Roll 0 to N-1' }],
-      examples: [{ notation: 'z6', description: 'Roll 0-5 instead of 1-6' }]
+      examples: [
+        {
+          description: 'Roll 0-5 instead of 1-6',
+          notation: 'z6',
+          options: { sides: [0, 1, 2, 3, 4, 5] }
+        }
+      ]
     }
   },
   {
@@ -83,7 +97,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       description: 'Roll an N-sided die repeatedly until a 1 appears. Total is the count of rolls.',
       displayBase: 'gN',
       forms: [{ notation: 'gN', note: 'Roll until 1 appears; count rolls' }],
-      examples: [{ notation: 'g6', description: 'Geometric d6 — roll until 1' }]
+      examples: [{ description: 'Geometric d6 — roll until 1', notation: 'g6' }]
     }
   },
   {
@@ -97,7 +111,7 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       description: 'Draw dice from a pool without replacement — each value can only appear once.',
       displayBase: 'DDN',
       forms: [{ notation: 'xDDN', note: 'Draw x unique values from 1-N' }],
-      examples: [{ notation: '3DD6', description: 'Draw 3 unique values from 1-6' }]
+      examples: [{ description: 'Draw 3 unique values from 1-6', notation: '3DD6' }]
     }
   },
   {
@@ -112,8 +126,12 @@ export const RANDSUM_DICE_SCHEMAS: readonly DiceSchema[] = [
       displayBase: 'd{...}',
       forms: [{ notation: 'd{a,b,c,...}', note: 'Comma-separated list of face values' }],
       examples: [
-        { notation: 'd{1,2,2,3,3,4}', description: 'Weighted custom die' },
-        { notation: 'd{H,T}', description: 'Coin flip (heads/tails)' }
+        { description: 'Weighted custom die', notation: 'd{1,2,2,3,3,4}' },
+        {
+          description: 'Coin flip (heads/tails)',
+          notation: 'd{H,T}',
+          options: { sides: ['H', 'T'] }
+        }
       ]
     }
   }

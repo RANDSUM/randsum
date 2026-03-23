@@ -63,6 +63,9 @@ bunfig.toml
 # Framework-specific
 *.astro
 **/.netlify/**
+**/.expo/**
+apps/expo/android/**
+apps/expo/ios/**
 
 # Markdown files in specific directories (keep formatting as-is)
 **/node_modules/**/*.md

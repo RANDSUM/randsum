@@ -61,41 +61,7 @@ export const compoundSchema: NotationSchema<boolean | number | ComparisonOptions
         return [`Compounding Dice on ${conditions.join(' or ')}`]
       }
       return []
-    },
-
-    docs: [
-      {
-        key: '!!',
-        category: 'Accumulate',
-        color: '#f59e0b',
-        colorLight: '#b45309',
-        title: 'Compound Explode',
-        description:
-          'Like explode, but extra rolls add to the triggering die rather than creating new dice.',
-        displayBase: '!!',
-        displayOptional: 'n',
-        forms: [
-          { notation: '!!(n)', note: 'Compound up to n times (default: once)' },
-          { notation: '!!0', note: 'Unlimited depth (capped at 100)' },
-          { notation: '!!{condition}', note: 'Compound on condition match' }
-        ],
-        comparisons: [
-          { operator: 'n', note: 'compound on exactly n' },
-          { operator: '>n', note: 'compound on more than n' },
-          { operator: '>=n', note: 'compound on n or more' },
-          { operator: '<n', note: 'compound on less than n' },
-          { operator: '<=n', note: 'compound on n or less' }
-        ],
-        examples: [
-          { notation: '3d6!!', description: 'Roll 3d6; 6s add to themselves' },
-          { notation: '1d8!!5', description: 'Roll 1d8, compound up to 5 times' },
-          {
-            notation: '5d10!!{>=8}',
-            description: 'Roll 5d10; compound on 8 or higher'
-          }
-        ]
-      }
-    ]
+    }
   })
 
 export const compoundModifier: ModifierDefinition<boolean | number | ComparisonOptions> = {

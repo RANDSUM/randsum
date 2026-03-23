@@ -99,15 +99,26 @@ const tocData = JSON.stringify(tocGroups)
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     function renderToc(group: TocGroup, activeH3: string | null) {
+      // For groups with no subsections, find the next group that has sections
+      // and show a preview of upcoming content
+      let displayGroup = group
+      if (group.sections.length === 0) {
+        const idx = groups.indexOf(group)
+        const next = groups.slice(idx + 1).find(g => g.sections.length > 0)
+        if (next) {
+          displayGroup = next
+        }
+      }
+
       if (tocTitle) {
-        tocTitle.textContent = group.text
+        tocTitle.textContent = displayGroup.text
       }
 
       while (tocList!.firstChild) {
         tocList!.removeChild(tocList!.firstChild)
       }
 
-      for (const h3 of group.sections) {
+      for (const h3 of displayGroup.sections) {
         const li = document.createElement('li')
         li.className = 'toc-item toc-depth-3'
         const a = document.createElement('a')
@@ -159,7 +170,8 @@ const tocData = JSON.stringify(tocGroups)
       const groupSlug = findCurrent(h2Elements)
       const h3Slug = findCurrent(h3Elements)
 
-      const group = groups.find(g => g.slug === groupSlug)
+      // Fall back to first group when at the top of the page
+      const group = groups.find(g => g.slug === groupSlug) ?? groups[0]
       if (!group) return
 
       // Find which h3 within this group is active

@@ -24,25 +24,7 @@ export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>
 
   toDescription: options => {
     return [`Modulo ${options}`]
-  },
-
-  docs: [
-    {
-      key: '%',
-      category: 'Scale',
-      color: '#10b981',
-      colorLight: '#047857',
-      title: 'Modulo',
-      description: 'Take the remainder after dividing the total by a number.',
-      displayBase: '%',
-      displayOptional: 'n',
-      forms: [{ notation: '%n', note: 'Total modulo n' }],
-      examples: [
-        { notation: '1d20%5', description: 'Roll 1d20, result mod 5' },
-        { notation: '2d6%3', description: 'Roll 2d6, remainder after dividing by 3' }
-      ]
-    }
-  ]
+  }
 })
 
 export const moduloModifier: ModifierDefinition<number> = {

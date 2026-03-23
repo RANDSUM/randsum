@@ -56,37 +56,7 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
       return [`Exploding Dice on ${conditions.join(' or ')}`]
     }
     return ['Exploding Dice']
-  },
-
-  docs: [
-    {
-      key: '!',
-      category: 'Generate',
-      color: '#fbbf24',
-      colorLight: '#d97706',
-      title: 'Explode',
-      description:
-        'Each die showing its maximum value triggers an extra die roll. Continues if new dice also max.',
-      displayBase: '!',
-      forms: [
-        { notation: '!', note: 'Explode on max value' },
-        { notation: '!{condition}', note: 'Explode on condition match' }
-      ],
-      comparisons: [
-        { operator: 'n', note: 'explode on exactly n' },
-        { operator: '>n', note: 'explode on more than n' },
-        { operator: '>=n', note: 'explode on n or more' },
-        { operator: '<n', note: 'explode on less than n' },
-        { operator: '<=n', note: 'explode on n or less' }
-      ],
-      examples: [
-        { notation: '3d6!', description: 'Roll 3d6; any 6 adds another d6' },
-        { notation: '4d6L!', description: 'Roll 4d6, explode, then drop lowest' },
-        { notation: '3d10!{>=8}', description: 'Roll 3d10; explode on 8 or higher' },
-        { notation: '5d10!{=10}', description: 'Roll 5d10; explode only on 10' }
-      ]
-    }
-  ]
+  }
 })
 
 export const explodeModifier: ModifierDefinition<boolean | ComparisonOptions> = {

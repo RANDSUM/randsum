@@ -40,7 +40,8 @@ export default tseslint.config(
       '**/.ladle/**',
       '**/__tests__/fixtures/dist/**',
       '**/__tests__/fixtures/*.ts',
-      '**/*.generated.ts'
+      '**/*.generated.ts',
+      'apps/expo/**'
     ]
   },
   {
@@ -152,7 +153,8 @@ export default tseslint.config(
           patterns: [
             {
               group: ['*/src/lib/*', '*/src/internal/*', '*/src/roll/*'],
-              message: 'Import from the package public API instead (e.g. @randsum/roller, not internal paths).'
+              message:
+                'Import from the package public API instead (e.g. @randsum/roller, not internal paths).'
             }
           ]
         }

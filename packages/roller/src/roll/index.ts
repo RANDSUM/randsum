@@ -114,10 +114,23 @@ export function roll<T = string>(
 
   const parameters = rollArgs.flatMap((arg, index) => parseArguments(arg, index + 1))
   const rolls = parameters.map(parameter => executeRollPipeline(parameter, config?.randomFn))
-  const total = rolls.reduce((acc, cur) => {
-    const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
-    return acc + cur.total * factor
-  }, 0)
+
+  // If multiple pools exist and any has non-numeric custom faces, total is 0
+  // (single-pool string-faced rolls keep their index-based total)
+  const hasStringFaces =
+    rolls.length > 1 &&
+    rolls.some(
+      r =>
+        r.customResults !== undefined &&
+        r.parameters.faces !== undefined &&
+        r.parameters.numericFaces === undefined
+    )
+  const total = hasStringFaces
+    ? 0
+    : rolls.reduce((acc, cur) => {
+        const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
+        return acc + cur.total * factor
+      }, 0)
 
   const values = rolls.flatMap<T>(r => {
     if (r.customResults) {

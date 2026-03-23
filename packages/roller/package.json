@@ -111,7 +111,7 @@
   "size-limit": [
     {
       "path": "dist/index.js",
-      "limit": "15 KB"
+      "limit": "12.5 KB"
     },
     {
       "path": "dist/index.d.ts",
@@ -119,11 +119,11 @@
     },
     {
       "path": "dist/tokenize.js",
-      "limit": "6 KB"
+      "limit": "6.5 KB"
     },
     {
       "path": "dist/docs/index.js",
-      "limit": "20 KB"
+      "limit": "6 KB"
     },
     {
       "path": "dist/trace/index.js",

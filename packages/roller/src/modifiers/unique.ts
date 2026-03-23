@@ -47,36 +47,7 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
       return [`No Duplicates (except ${formatHumanList(options.notUnique)})`]
     }
     return []
-  },
-
-  docs: [
-    {
-      key: 'U',
-      category: 'Substitute',
-      color: '#5eead4',
-      colorLight: '#0f766e',
-      title: 'Unique',
-      description: 'Force all dice in the pool to show different values by rerolling duplicates.',
-      displayBase: 'U',
-      displayOptional: '{..}',
-      forms: [
-        {
-          notation: 'U({..})',
-          note: 'All unique; optional exceptions list'
-        }
-      ],
-      examples: [
-        {
-          notation: '4d20U',
-          description: 'Roll 4d20, no duplicate results'
-        },
-        {
-          notation: '4d6U{1}',
-          description: 'Unique except 1s may repeat'
-        }
-      ]
-    }
-  ]
+  }
 })
 
 export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
