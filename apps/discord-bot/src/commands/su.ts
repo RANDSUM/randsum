@@ -30,8 +30,6 @@ function getColor(roll: number): number {
   return colors[roll - 1] ?? 0xffd700
 }
 
-const tableChoices = VALID_TABLE_NAMES.map(name => ({ name, value: name }))
-
 export const suCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('su')
@@ -39,10 +37,19 @@ export const suCommand: Command = {
     .addStringOption(option =>
       option
         .setName('table')
-        .setDescription('The table to roll on')
+        .setDescription('The table to roll on (default: Core Mechanic)')
         .setRequired(false)
-        .addChoices(...tableChoices)
+        .setAutocomplete(true)
     ),
+
+  async autocomplete(interaction) {
+    const focused = interaction.options.getFocused().toLowerCase()
+    const filtered = VALID_TABLE_NAMES.filter(name => name.toLowerCase().includes(focused)).slice(
+      0,
+      25
+    )
+    await interaction.respond(filtered.map(name => ({ name, value: name })))
+  },
 
   async execute(interaction) {
     const tableName = interaction.options.getString('table') ?? 'Core Mechanic'

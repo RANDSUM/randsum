@@ -31,6 +31,9 @@ class OptionBuilder {
   public addChoices(): this {
     return this
   }
+  public setAutocomplete(): this {
+    return this
+  }
 }
 
 void mock.module('discord.js', () => ({

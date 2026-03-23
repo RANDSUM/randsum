@@ -3,11 +3,24 @@ import type { Client, Collection, Interaction } from 'discord.js'
 import type { Command } from '../types.js'
 
 export async function interactionCreateHandler(interaction: Interaction): Promise<void> {
+  const client = interaction.client as Client & { commands: Collection<string, Command> }
+
+  if (interaction.isAutocomplete()) {
+    const command = client.commands.get(interaction.commandName)
+    if (command?.autocomplete) {
+      try {
+        await command.autocomplete(interaction)
+      } catch (error) {
+        console.error('Error handling autocomplete:', error)
+      }
+    }
+    return
+  }
+
   if (!interaction.isChatInputCommand()) {
     return
   }
 
-  const client = interaction.client as Client & { commands: Collection<string, Command> }
   const command = client.commands.get(interaction.commandName)
 
   if (!command) {
