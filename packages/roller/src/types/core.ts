@@ -16,7 +16,7 @@ export interface RequiredNumericRollParameters {
  * String literal type for percentile dice (d%).
  * Equivalent to rolling 1d100.
  */
-export type PercentileDie = 'd%' | 'D%'
+export type PercentileDie = 'd%' | 'D%' | `${number}${'d' | 'D'}%`
 
 /**
  * Fate/Fudge dice notation variants.

@@ -97,10 +97,14 @@ export type AnyMod =
  * Tiered modifier suffix for DiceNotation:
  * - '' — no modifiers
  * - AnyMod — exactly one modifier (precise)
- * - AnyMod + AnyMod — exactly two modifiers (precise)
- * - AnyMod + AnyMod + string — three or more (graceful widening)
+ * - `${AnyMod}${string}` — two or more modifiers (graceful widening)
+ *
+ * Note: `${AnyMod}${AnyMod}` would be more precise for two modifiers, but
+ * the cross-product of all modifier patterns causes TypeScript to compute a
+ * union too large for practical compilation. Single-modifier precision catches
+ * the most common case; multi-modifier widens to string after the first.
  */
-export type ModifierSuffix = '' | AnyMod | `${AnyMod}${AnyMod}` | `${AnyMod}${AnyMod}${string}`
+export type ModifierSuffix = '' | AnyMod | `${AnyMod}${string}`
 
 // ===== Type-level smoke tests =====
 

@@ -42,6 +42,8 @@ export interface UniqueOptions {
   notUnique: number[]
 }
 
+import type { ModifierSuffix } from './templateLiterals'
+
 export interface CountOptions extends ComparisonOptions {
   /** If true, below-threshold count subtracts from above-threshold count */
   deduct?: boolean
@@ -124,7 +126,7 @@ export interface ParsedNotationOptions {
 /**
  * Template literal type for dice notation strings.
  */
-export type DiceNotation = `${number}${'d' | 'D'}${number}${string}`
+export type DiceNotation = `${number}${'d' | 'D'}${number}${ModifierSuffix}`
 
 /**
  * Configuration options for a dice roll.
