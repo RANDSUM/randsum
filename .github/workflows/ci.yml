@@ -23,6 +23,7 @@ jobs:
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
       skill: ${{ steps.filter.outputs.skill }}
+      discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +52,11 @@ jobs:
             skill:
               - 'skills/**'
               - '.claude-plugin/**'
+              - '.github/workflows/ci.yml'
+            discord-bot:
+              - 'apps/discord-bot/**'
+              - 'packages/roller/**'
+              - 'packages/games/**'
               - '.github/workflows/ci.yml'
             changesets:
               - '.changeset/**'
@@ -94,6 +100,17 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/cli' check
+
+  discord-bot:
+    name: discord-bot
+    needs: changes
+    if: needs.changes.outputs.discord-bot == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/bun-setup
+      - run: bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build
+      - run: bun run --filter '@randsum/discord-bot' check
 
   site:
     name: site
@@ -169,7 +186,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, site, rdn, skill, publish-dry-run, knip]
+    needs: [roller, games, cli, discord-bot, site, rdn, skill, publish-dry-run, knip]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}
