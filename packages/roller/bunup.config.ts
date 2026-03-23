@@ -15,6 +15,6 @@ export default defineConfig({
   exports: true,
   minify: true,
   sourcemap: 'external',
-  target: 'browser',
+  target: 'node',
   clean: true
 })
