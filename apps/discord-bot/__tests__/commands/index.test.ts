@@ -36,6 +36,9 @@ class OptionBuilder {
 
 void mock.module('discord.js', () => ({
   EmbedBuilder: mock(() => mockEmbed),
+  StringSelectMenuBuilder: mock(() => ({})),
+  ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
+  ComponentType: { StringSelect: 3 },
   SlashCommandBuilder: class {
     public name = ''
     public setName(n: string): this {
