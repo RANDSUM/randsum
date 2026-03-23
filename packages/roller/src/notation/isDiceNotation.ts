@@ -5,8 +5,8 @@ import { buildNotationPattern } from './parse/parseModifiers'
 import { countPattern } from './definitions/count'
 
 // Special die type patterns (case-insensitive via 'i' flag on final regex)
-// Percentile: d% or D% (exact match, no modifiers)
-const PERCENTILE_PATTERN = /^[Dd]%$/
+// Percentile: [N]d% or [N]D% (optional quantity prefix, no modifiers)
+const PERCENTILE_PATTERN = /^\d*[Dd]%$/
 
 // Fate/Fudge: [N]dF[.1|.2] (no modifiers)
 const FATE_PATTERN = /^\d*[Dd][Ff](?:\.[12])?$/

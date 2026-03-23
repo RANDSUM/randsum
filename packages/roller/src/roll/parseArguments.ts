@@ -165,8 +165,14 @@ function parseGeometricDieParams<T>(arg: string, position: number): RollParams<T
   ]
 }
 
-function isPercentileDie(argument: unknown): argument is 'd%' | 'D%' {
-  return argument === 'd%' || argument === 'D%'
+const PERCENTILE_DIE_PATTERN = /^(\d*)[Dd]%$/
+
+function parsePercentileDie(argument: unknown): { quantity: number; sides: 100 } | null {
+  if (typeof argument !== 'string') return null
+  const match = PERCENTILE_DIE_PATTERN.exec(argument)
+  if (!match) return null
+  const quantity = match[1] ? Number(match[1]) : 1
+  return { quantity, sides: 100 }
 }
 
 /**
@@ -174,8 +180,9 @@ function isPercentileDie(argument: unknown): argument is 'd%' | 'D%' {
  * Handles notation strings, numbers, and options objects.
  */
 function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
-  if (isPercentileDie(argument)) {
-    return [{ quantity: 1, sides: 100 }]
+  const percentile = parsePercentileDie(argument)
+  if (percentile) {
+    return [percentile]
   }
 
   if (isDiceNotation(argument)) {
