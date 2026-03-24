@@ -244,7 +244,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     description:
       'Like explode, but extra rolls add to the triggering die rather than creating new dice.',
     displayBase: '!!',
-    displayOptional: 'n',
     forms: [
       { notation: '!!(n)', note: 'Compound up to n times (default: once)' },
       { notation: '!!0', note: 'Unlimited depth (capped at 100)' },
@@ -281,7 +280,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     description:
       'Like explode, but each subsequent explosion subtracts 1 from the result (Hackmaster-style).',
     displayBase: '!p',
-    displayOptional: 'n',
     forms: [
       { notation: '!p(n)', note: 'Penetrate up to n times (default: once)' },
       { notation: '!p0', note: 'Unlimited depth (capped at 100)' },
@@ -396,7 +394,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Unique',
     description: 'Force all dice in the pool to show different values by rerolling duplicates.',
     displayBase: 'U',
-    displayOptional: '{..}',
     forms: [
       {
         notation: 'U({..})',
@@ -425,7 +422,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Drop Lowest',
     description: 'Remove the lowest-valued dice from the pool before summing.',
     displayBase: 'L',
-    displayOptional: 'n',
     forms: [{ notation: 'L(n)', note: 'Drop n lowest (default: 1)' }],
     examples: [
       {
@@ -448,7 +444,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Drop Highest',
     description: 'Remove the highest-valued dice from the pool before summing.',
     displayBase: 'H',
-    displayOptional: 'n',
     forms: [{ notation: 'H(n)', note: 'Drop n highest (default: 1)' }],
     examples: [
       {
@@ -507,7 +502,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Keep Highest',
     description: 'Keep only the n highest-valued dice; discard the rest.',
     displayBase: 'K',
-    displayOptional: 'n',
     forms: [{ notation: 'K(n)', note: 'Keep n highest (default: 1)' }],
     examples: [
       {
@@ -530,7 +524,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Keep Lowest',
     description: 'Keep only the n lowest-valued dice; discard the rest.',
     displayBase: 'KL',
-    displayOptional: 'n',
     forms: [{ notation: 'KL(n)', note: 'Keep n lowest (default: 1)' }],
     examples: [
       {
@@ -554,7 +547,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     description:
       'Keep N dice closest to the middle of the pool by dropping equal numbers from both ends. Sugar for Drop lowest + Drop highest.',
     displayBase: 'KM',
-    displayOptional: 'n',
     forms: [
       {
         notation: 'KM(n)',
@@ -683,7 +675,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Multiply Dice',
     description: 'Multiply the dice sum before applying +/\u2212 arithmetic modifiers.',
     displayBase: '*',
-    displayOptional: 'n',
     forms: [{ notation: '*n', note: 'Multiply dice sum by n (pre-arithmetic)' }],
     examples: [
       { description: '(roll \u00d7 2) + 3', notation: '2d6*2+3' },
@@ -703,7 +694,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Add',
     description: 'Add a fixed number to the total after all dice are rolled.',
     displayBase: '+',
-    displayOptional: 'n',
     forms: [{ notation: '+n', note: 'Add n to total' }],
     examples: [
       {
@@ -727,7 +717,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Subtract',
     description: 'Subtract a fixed number from the total after all dice are rolled.',
     displayBase: '\u2212',
-    displayOptional: 'n',
     forms: [{ notation: '-n', note: 'Subtract n from total' }],
     examples: [
       {
@@ -751,7 +740,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Integer Divide',
     description: 'Divide the total by a number and round down (floor division).',
     displayBase: '//',
-    displayOptional: 'n',
     forms: [{ notation: '//n', note: 'Divide total by n, round down' }],
     examples: [
       {
@@ -775,7 +763,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Modulo',
     description: 'Take the remainder after dividing the total by a number.',
     displayBase: '%',
-    displayOptional: 'n',
     forms: [{ notation: '%n', note: 'Total modulo n' }],
     examples: [
       {
@@ -800,7 +787,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     description:
       'Sort the dice pool in ascending or descending order. Does not affect the total \u2014 only the presentation order of dice.',
     displayBase: 'sa',
-    displayOptional: '/sd',
     forms: [
       { notation: 'sa', note: 'Sort ascending' },
       { notation: 'sd', note: 'Sort descending' }
@@ -827,7 +813,6 @@ export const MODIFIER_DOC_ENTRIES: readonly NotationDoc[] = [
     title: 'Multiply Total',
     description: 'Multiply the entire final total after all other modifiers have been applied.',
     displayBase: '**',
-    displayOptional: 'n',
     forms: [{ notation: '**n', note: 'Multiply final total by n' }],
     examples: [
       {

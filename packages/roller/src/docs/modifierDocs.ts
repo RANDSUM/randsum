@@ -11,7 +11,6 @@ export interface NotationDoc {
   readonly title: string
   readonly description: string
   readonly displayBase: string
-  readonly displayOptional?: string
   readonly color: string
   readonly colorLight: string
   readonly forms: readonly {
