@@ -1,25 +1,15 @@
 import { describe, expect, test } from 'bun:test'
 import { RANDSUM_MODIFIERS } from '../../src/modifiers/definitions'
-import { MODIFIER_DOC_ENTRIES } from '../../src/docs/modifierDocEntries'
+import { MODIFIER_DOCS } from '../../src/docs/modifierDocs'
 
 describe('modifier doc sync', () => {
-  test('MODIFIER_DOC_ENTRIES exists and is non-empty', () => {
-    expect(MODIFIER_DOC_ENTRIES).toBeDefined()
-    expect(MODIFIER_DOC_ENTRIES.length).toBeGreaterThan(0)
+  test('MODIFIER_DOCS exists and is non-empty', () => {
+    expect(MODIFIER_DOCS).toBeDefined()
+    expect(Object.keys(MODIFIER_DOCS).length).toBeGreaterThan(0)
   })
 
-  test('every modifier in RANDSUM_MODIFIERS has at least one doc entry', () => {
-    const docKeys = new Set(MODIFIER_DOC_ENTRIES.map(doc => doc.key))
-    // Each modifier name should appear somewhere in the doc keys or at least
-    // we should have doc entries contributed from that modifier
-    expect(docKeys.size).toBeGreaterThan(0)
-    // All 19 modifiers contribute docs
-    expect(RANDSUM_MODIFIERS.length).toBe(19)
-  })
-
-  test('MODIFIER_DOC_ENTRIES contains known modifier doc keys', () => {
-    const keys = MODIFIER_DOC_ENTRIES.map(doc => doc.key)
-    // Spot-check a few known keys from well-known modifiers
+  test('MODIFIER_DOCS contains known modifier doc keys', () => {
+    const keys = Object.keys(MODIFIER_DOCS)
     expect(keys).toContain('+')
     expect(keys).toContain('-')
     expect(keys).toContain('!')
@@ -44,9 +34,13 @@ describe('modifier doc sync', () => {
     expect(keys).toContain('!s{..}')
   })
 
-  test('no modifier in RANDSUM_MODIFIERS has a docs property', () => {
-    for (const mod of RANDSUM_MODIFIERS) {
-      expect('docs' in mod).toBe(false)
+  test('NotationDoc entries do not have a displayOptional field', () => {
+    for (const [, doc] of Object.entries(MODIFIER_DOCS)) {
+      expect('displayOptional' in doc).toBe(false)
     }
+  })
+
+  test('RANDSUM_MODIFIERS has 19 modifiers', () => {
+    expect(RANDSUM_MODIFIERS.length).toBe(19)
   })
 })
