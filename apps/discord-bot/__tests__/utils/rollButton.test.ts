@@ -1,9 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
 
-// parseRerollId lives in its own file with no discord.js dependency,
-// so it's safe to import statically without mock interference
-import { parseRerollId } from '../../src/utils/parseRerollId.js'
-
 const mockButton = {
   setCustomId: mock(() => mockButton),
   setLabel: mock(() => mockButton),
@@ -42,7 +38,10 @@ void mock.module('discord.js', () => ({
   }
 }))
 
+// All imports MUST be dynamic and AFTER mock.module to ensure Bun 1.3.10
+// resolves discord.js from the mock, not the real module
 const { createRollButton } = await import('../../src/utils/rollButton.js')
+const { parseRerollId } = await import('../../src/utils/parseRerollId.js')
 
 describe('createRollButton', () => {
   test('returns an ActionRow', () => {
