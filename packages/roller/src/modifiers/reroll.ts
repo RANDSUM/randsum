@@ -12,6 +12,7 @@ import { matchesComparison, validateComparisonOptions } from '../lib/comparison'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
 import { assertRollFn } from './schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 
 const comparisonGroup = '((?:>=|<=|>|<|=)?\\d+(?:,(?:>=|<=|>|<|=)?\\d+)*)'
 const rerollPattern = new RegExp(
@@ -24,6 +25,103 @@ export const rerollSchema: NotationSchema<RerollOptions> = defineNotationSchema<
   priority: 40,
 
   pattern: /[Rr]([Oo])?\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\}(\d+)?/,
+
+  docs: [
+    {
+      key: 'R{..}',
+      category: 'Substitute',
+      color: '#f472b6',
+      colorLight: '#db2777',
+      title: 'Reroll',
+      description:
+        'Reroll dice that match a condition. The new result stands (may reroll again if still matching).',
+      displayBase: 'R{..}',
+      forms: [
+        {
+          notation: 'R{...}',
+          note: 'Reroll until result no longer matches'
+        },
+        { notation: 'R{...}(d)', note: 'Max d reroll attempts' }
+      ],
+      comparisons: [
+        { operator: 'n', note: 'reroll dice showing exactly n' },
+        { operator: '>n', note: 'reroll dice showing more than n' },
+        {
+          operator: '>=n',
+          note: 'reroll dice showing n or more'
+        },
+        {
+          operator: '<n',
+          note: 'reroll dice showing less than n'
+        },
+        {
+          operator: '<=n',
+          note: 'reroll dice showing n or less'
+        }
+      ],
+      examples: [
+        {
+          description: 'Reroll any 1s',
+          notation: '4d6R{1}',
+          options: { sides: 6, quantity: 4, modifiers: { reroll: { exact: [1] } } }
+        },
+        {
+          description: 'Reroll results under 3',
+          notation: '2d10R{<3}',
+          options: { sides: 10, quantity: 2, modifiers: { reroll: { lessThan: 3 } } }
+        },
+        {
+          description: 'Reroll under 3, max 2 attempts',
+          notation: '4d6R{<3}2',
+          options: { sides: 6, quantity: 4, modifiers: { reroll: { lessThan: 3, max: 2 } } }
+        }
+      ]
+    },
+    {
+      key: 'ro{..}',
+      category: 'Substitute',
+      color: '#f472b6',
+      colorLight: '#db2777',
+      title: 'Reroll Once',
+      description:
+        'Reroll dice matching a condition with a maximum of 1 attempt. Sugar for Reroll with max=1.',
+      displayBase: 'ro{..}',
+      forms: [
+        {
+          notation: 'ro{...}',
+          note: 'Reroll once if condition met'
+        }
+      ],
+      comparisons: [
+        { operator: 'n', note: 'reroll dice showing exactly n' },
+        { operator: '>n', note: 'reroll dice showing more than n' },
+        {
+          operator: '>=n',
+          note: 'reroll dice showing n or more'
+        },
+        {
+          operator: '<n',
+          note: 'reroll dice showing less than n'
+        },
+        {
+          operator: '<=n',
+          note: 'reroll dice showing n or less'
+        }
+      ],
+      examples: [
+        {
+          description: 'Reroll 1s once',
+          notation: '4d6ro{1}',
+          options: { sides: 6, quantity: 4, modifiers: { reroll: { exact: [1], max: 1 } } }
+        },
+        {
+          description: 'Reroll under 3 once',
+          notation: '2d10ro{<3}',
+          options: { sides: 10, quantity: 2, modifiers: { reroll: { lessThan: 3, max: 1 } } }
+        }
+      ]
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const matches = Array.from(notation.matchAll(rerollPattern))
