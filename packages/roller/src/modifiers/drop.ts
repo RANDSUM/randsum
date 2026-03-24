@@ -6,6 +6,7 @@ import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import { matchesComparison } from '../lib/comparison/matchesComparison'
 import type { ModifierDefinition } from './schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 
 const dropHighestPattern = /[Hh](\d+)?/g
 const dropLowestPattern = /(?<![Kk])[Ll](\d+)?/g
@@ -78,6 +79,85 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
 
     return parts.length ? parts.join('') : undefined
   },
+
+  docs: [
+    {
+      key: 'L',
+      category: 'Filter',
+      color: '#fb7185',
+      colorLight: '#e11d48',
+      title: 'Drop Lowest',
+      description: 'Remove the lowest-valued dice from the pool before summing.',
+      displayBase: 'L',
+      forms: [{ notation: 'L(n)', note: 'Drop n lowest (default: 1)' }],
+      examples: [
+        {
+          description: 'Roll 4d6, drop lowest (ability scores)',
+          notation: '4d6L',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 } } }
+        },
+        {
+          description: 'Roll 5d6, drop 2 lowest',
+          notation: '5d6L2',
+          options: { sides: 6, quantity: 5, modifiers: { drop: { lowest: 2 } } }
+        }
+      ]
+    },
+    {
+      key: 'H',
+      category: 'Filter',
+      color: '#fb7185',
+      colorLight: '#e11d48',
+      title: 'Drop Highest',
+      description: 'Remove the highest-valued dice from the pool before summing.',
+      displayBase: 'H',
+      forms: [{ notation: 'H(n)', note: 'Drop n highest (default: 1)' }],
+      examples: [
+        {
+          description: 'Roll 2d20, drop highest (disadvantage)',
+          notation: '2d20H',
+          options: { sides: 20, quantity: 2, modifiers: { drop: { highest: 1 } } }
+        },
+        {
+          description: 'Roll 4d6, drop highest',
+          notation: '4d6H',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { highest: 1 } } }
+        }
+      ]
+    },
+    {
+      key: 'D{..}',
+      category: 'Filter',
+      color: '#e11d48',
+      colorLight: '#9f1239',
+      title: 'Drop by Condition',
+      description:
+        'Drop any dice matching a condition \u2014 more flexible than L/H for arbitrary thresholds.',
+      displayBase: 'D{..}',
+      forms: [{ notation: 'D{...}', note: 'Comma-separate multiple conditions' }],
+      comparisons: [
+        { operator: 'n', note: 'drop dice showing exactly n' },
+        { operator: '>n', note: 'drop dice showing more than n' },
+        { operator: '>=n', note: 'drop dice showing n or more' },
+        { operator: '<n', note: 'drop dice showing less than n' },
+        { operator: '<=n', note: 'drop dice showing n or less' }
+      ],
+      examples: [
+        {
+          description: 'Drop all 1s',
+          notation: '4d6D{1}',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { exact: [1] } } }
+        },
+        {
+          description: 'Drop all 5s and above',
+          notation: '4d6D{>=5}',
+          options: { sides: 6, quantity: 4, modifiers: { drop: { greaterThanOrEqual: 5 } } }
+        },
+        { description: 'Drop any result of 2 or lower', notation: '4d6D{<=2}' },
+        { description: 'Drop multiple', notation: '4d6D{1,6}' }
+      ]
+    }
+  ] satisfies readonly NotationDoc[],
 
   toDescription: options => {
     const { highest, lowest, greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, exact } =

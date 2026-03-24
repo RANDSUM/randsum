@@ -4,6 +4,7 @@ import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import { coreRandom } from '../lib/random'
 import type { ModifierDefinition } from './schema'
 import { assertRequiredContext } from './schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 
 const explodeSequencePattern = /![sS]\{[\d,]+\}/
 
@@ -12,6 +13,68 @@ export const explodeSequenceSchema: NotationSchema<number[]> = defineNotationSch
   priority: 53,
 
   pattern: /![sS]\{[\d,]+\}|![iI]|![rR]/,
+
+  docs: [
+    {
+      key: '!s{..}',
+      category: 'Generate',
+      color: '#fcd34d',
+      colorLight: '#ca8a04',
+      title: 'Explode Sequence',
+      description:
+        'On max, re-roll with the next die size in a custom sequence rather than reusing the same die.',
+      displayBase: '!s{..}',
+      forms: [{ notation: '!s{N1,N2,...}', note: 'Step through die sizes on each explosion' }],
+      examples: [
+        {
+          description: 'Explode through d4, d6, d8, d10',
+          notation: '1d4!s{4,6,8,10}',
+          options: { sides: 4, modifiers: { explodeSequence: [4, 6, 8, 10] } }
+        },
+        {
+          description: 'Explode to d8, then d12',
+          notation: '1d6!s{8,12}',
+          options: { sides: 6, modifiers: { explodeSequence: [8, 12] } }
+        }
+      ]
+    },
+    {
+      key: '!i',
+      category: 'Generate',
+      color: '#fcd34d',
+      colorLight: '#ca8a04',
+      title: 'Inflation',
+      description:
+        'Explode upward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going up.',
+      displayBase: '!i',
+      forms: [{ notation: '!i', note: 'Inflate through standard dice sizes' }],
+      examples: [
+        {
+          description: 'Explode d4 through d6, d8, d10, d12, d20',
+          notation: '1d4!i',
+          options: { sides: 4, modifiers: { explodeSequence: [6, 8, 10, 12, 20] } }
+        }
+      ]
+    },
+    {
+      key: '!r',
+      category: 'Generate',
+      color: '#fcd34d',
+      colorLight: '#ca8a04',
+      title: 'Reduction',
+      description:
+        'Explode downward through the TTRPG standard die set (4, 6, 8, 10, 12, 20, 100). Sugar for Explode Sequence going down.',
+      displayBase: '!r',
+      forms: [{ notation: '!r', note: 'Reduce through standard dice sizes' }],
+      examples: [
+        {
+          description: 'Explode d20 through d12, d10, d8, d6, d4',
+          notation: '1d20!r',
+          options: { sides: 20, modifiers: { explodeSequence: [12, 10, 8, 6, 4] } }
+        }
+      ]
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = explodeSequencePattern.exec(notation)

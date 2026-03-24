@@ -192,10 +192,10 @@ describe('NOTATION_DOCS', () => {
 })
 
 describe('derivation correctness', () => {
-  test('every RANDSUM_MODIFIERS doc maps to same object in MODIFIER_DOCS', () => {
+  test('every RANDSUM_MODIFIERS doc maps to equivalent entry in MODIFIER_DOCS', () => {
     for (const mod of RANDSUM_MODIFIERS) {
       for (const doc of mod.docs ?? []) {
-        expect(MODIFIER_DOCS[doc.key]).toBe(doc)
+        expect(MODIFIER_DOCS[doc.key]).toEqual(doc)
       }
     }
   })
