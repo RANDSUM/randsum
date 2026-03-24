@@ -1,62 +1,12 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => {
-    return mockEmbed
-  }),
-  setTitle: mock(() => {
-    return mockEmbed
-  }),
-  setDescription: mock(() => {
-    return mockEmbed
-  }),
-  setFooter: mock(() => {
-    return mockEmbed
-  }),
-  addFields: mock(() => {
-    return mockEmbed
-  })
+const mockCollector = {
+  on: mock(() => mockCollector)
 }
 
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public setMinValue(): this {
-    return this
-  }
-  public setMaxValue(): this {
-    return this
-  }
-  public addChoices(): this {
-    return this
-  }
-}
-
-void mock.module('discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-    public addIntegerOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addStringOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
+const mockRow = {}
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => mockRow)
 }))
 
 const mockRoll = mock(() => ({
@@ -86,7 +36,9 @@ function makeInteraction(
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
+    editReply: mock(() =>
+      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
+    ),
     options: {
       getInteger: mock((name: string) => {
         if (name === 'stat') return opts.stat ?? 2
@@ -100,15 +52,19 @@ function makeInteraction(
 }
 
 beforeEach(() => {
-  for (const fn of Object.values(mockEmbed)) fn.mockClear()
   mockRoll.mockClear()
+  for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
 
 describe('pbtaCommand', () => {
   test('strong hit', async () => {
     const interaction = makeInteraction({ stat: 2 })
     await pbtaCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Strong Hit!')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Strong Hit!')
   })
 
   test('weak hit', async () => {
@@ -119,7 +75,11 @@ describe('pbtaCommand', () => {
     }))
     const interaction = makeInteraction({ stat: 1 })
     await pbtaCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Weak Hit')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Weak Hit')
   })
 
   test('miss', async () => {
@@ -130,25 +90,52 @@ describe('pbtaCommand', () => {
     }))
     const interaction = makeInteraction({ stat: -1 })
     await pbtaCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Miss')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Miss')
   })
 
   test('non-zero forward adds forward field', async () => {
     const interaction = makeInteraction({ stat: 2, forward: 1 })
     await pbtaCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
+    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Forward')
   })
 
   test('non-zero ongoing adds ongoing field', async () => {
     const interaction = makeInteraction({ stat: 2, ongoing: 2 })
     await pbtaCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
+    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Ongoing')
   })
 
   test('rollingWith adds rolling_with field', async () => {
     const interaction = makeInteraction({ stat: 2, rollingWith: 'Advantage' })
     await pbtaCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
+    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Rolling With')
+  })
+
+  test('reply includes re-roll button component', async () => {
+    const interaction = makeInteraction({ stat: 2 })
+    await pbtaCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ components: expect.any(Array) })
+    )
   })
 
   test('error path: roll throws, replies with error embed', async () => {
@@ -157,7 +144,10 @@ describe('pbtaCommand', () => {
     })
     const interaction = makeInteraction({ stat: 2 })
     await pbtaCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Error')
   })
 })

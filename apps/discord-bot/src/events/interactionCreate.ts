@@ -1,5 +1,5 @@
-import { MessageFlags } from 'discord.js'
-import type { Client, Collection, Interaction } from 'discord.js'
+import { MessageFlags } from '../utils/discord.js'
+import type { Client, Collection, Interaction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
 export async function interactionCreateHandler(interaction: Interaction): Promise<void> {
@@ -13,6 +13,19 @@ export async function interactionCreateHandler(interaction: Interaction): Promis
       } catch (error) {
         console.error('Error handling autocomplete:', error)
       }
+    }
+    return
+  }
+
+  if (interaction.isButton()) {
+    if (
+      interaction.customId.startsWith('reroll:') ||
+      interaction.customId.startsWith('showwork:')
+    ) {
+      await interaction.reply({
+        content: 'This roll has expired. Use the slash command to roll again.',
+        flags: [MessageFlags.Ephemeral] as const
+      })
     }
     return
   }

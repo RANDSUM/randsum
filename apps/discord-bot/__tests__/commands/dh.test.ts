@@ -1,60 +1,12 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => {
-    return mockEmbed
-  }),
-  setTitle: mock(() => {
-    return mockEmbed
-  }),
-  setDescription: mock(() => {
-    return mockEmbed
-  }),
-  setFooter: mock(() => {
-    return mockEmbed
-  }),
-  addFields: mock(() => {
-    return mockEmbed
-  })
+const mockCollector = {
+  on: mock(() => mockCollector)
 }
 
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public addChoices(): this {
-    return this
-  }
-}
-
-void mock.module('discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-    public addIntegerOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addStringOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addBooleanOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
+const mockRow = {}
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => mockRow)
 }))
 
 const mockRoll = mock(() => ({
@@ -86,7 +38,9 @@ function makeInteraction(
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
+    editReply: mock(() =>
+      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
+    ),
     options: {
       getInteger: mock((_name: string) => opts.modifier ?? 0),
       getString: mock((_name: string) => opts.rollingWith ?? null),
@@ -100,8 +54,8 @@ function makeInteraction(
 }
 
 beforeEach(() => {
-  for (const fn of Object.values(mockEmbed)) fn.mockClear()
   mockRoll.mockClear()
+  for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
 
 describe('dhCommand', () => {
@@ -109,7 +63,11 @@ describe('dhCommand', () => {
     const interaction = makeInteraction()
     await dhCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Hope!')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Hope!')
   })
 
   test('fear result', async () => {
@@ -121,7 +79,11 @@ describe('dhCommand', () => {
     }))
     const interaction = makeInteraction()
     await dhCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Fear!')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Fear!')
   })
 
   test('critical hope result', async () => {
@@ -133,26 +95,53 @@ describe('dhCommand', () => {
     }))
     const interaction = makeInteraction()
     await dhCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Critical Hope!')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Critical Hope!')
   })
 
   test('with advantage and extraDie shows extra die fields', async () => {
     mockRoll.mockImplementationOnce(() => ({
       result: 'hope' as const,
       total: 18,
-      details: { hope: { roll: 8 }, fear: { roll: 6 }, extraDie: { roll: 4 }, modifier: 0 },
+      details: {
+        hope: { roll: 8 },
+        fear: { roll: 6 },
+        extraDie: { roll: 4, advantageRoll: 4, disadvantageRoll: undefined },
+        modifier: 0
+      },
       rolls: []
     }))
     const interaction = makeInteraction({ rollingWith: 'Advantage' })
     await dhCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
+    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Advantage Die (d6)')
   })
 
   test('with modifier adds modifier field', async () => {
     const interaction = makeInteraction({ modifier: 3 })
     await dhCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
+    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Modifier')
+  })
+
+  test('reply includes re-roll button component', async () => {
+    const interaction = makeInteraction()
+    await dhCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ components: expect.any(Array) })
+    )
   })
 
   test('error path: roll throws, replies with error embed', async () => {
@@ -161,7 +150,10 @@ describe('dhCommand', () => {
     })
     const interaction = makeInteraction()
     await dhCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Error')
   })
 })

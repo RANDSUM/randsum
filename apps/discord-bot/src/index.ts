@@ -1,20 +1,12 @@
 #!/usr/bin/env node
-import { Client, Collection, Events, GatewayIntentBits } from 'discord.js'
+import { Client, Collection, Events, GatewayIntentBits } from './utils/discord.js'
 import { config } from './utils/config.js'
 import type { Command } from './types.js'
-
-// Import commands
-import { bladesCommand } from './commands/blades.js'
-import { dhCommand } from './commands/dh.js'
-import { fifthCommand } from './commands/fifth.js'
-import { notationCommand } from './commands/notation.js'
-import { pbtaCommand } from './commands/pbta.js'
-import { rollCommand } from './commands/roll.js'
-import { rootCommand } from './commands/root.js'
-import { suCommand } from './commands/su.js'
+import { commands as commandList } from './commands/index.js'
 
 // Import events
 import { interactionCreateHandler } from './events/interactionCreate.js'
+import { guildCreateHandler } from './events/guildCreate.js'
 
 // Create a new client instance
 const client = new Client({
@@ -23,18 +15,6 @@ const client = new Client({
 
 // Create a collection to store commands
 const commands = new Collection<string, Command>()
-
-// Register commands
-const commandList = [
-  bladesCommand,
-  dhCommand,
-  fifthCommand,
-  notationCommand,
-  pbtaCommand,
-  rollCommand,
-  rootCommand,
-  suCommand
-]
 
 for (const command of commandList) {
   commands.set(command.data.name, command)
@@ -52,6 +32,10 @@ client.once(Events.ClientReady, c => {
 // Wrap async handler to catch unhandled rejections
 client.on(Events.InteractionCreate, interaction => {
   void interactionCreateHandler(interaction)
+})
+
+client.on(Events.GuildCreate, guild => {
+  void guildCreateHandler(guild)
 })
 
 // Error handling

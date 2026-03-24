@@ -1,5 +1,5 @@
-import type { ChatInputCommandInteraction } from 'discord.js'
-import { EmbedBuilder } from 'discord.js'
+import type { ChatInputCommandInteraction } from './discord.js'
+import { EmbedBuilder } from './discord.js'
 import { embedFooterDetails } from './constants.js'
 
 export async function replyWithError(

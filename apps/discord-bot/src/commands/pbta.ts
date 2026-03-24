@@ -1,8 +1,68 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import { ComponentType, EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/pbta'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
+import { createRollButton } from '../utils/rollButton.js'
 import type { Command } from '../types.js'
+
+interface PbtaParams {
+  readonly stat: number
+  readonly forward: number
+  readonly ongoing: number
+  readonly rollingWith: 'Advantage' | 'Disadvantage' | null
+}
+
+function buildPbtaEmbed({ stat, forward, ongoing, rollingWith }: PbtaParams): EmbedBuilder {
+  const result = roll({
+    stat,
+    ...(forward !== 0 ? { forward } : {}),
+    ...(ongoing !== 0 ? { ongoing } : {}),
+    ...(rollingWith === 'Advantage' ? { advantage: true } : {}),
+    ...(rollingWith === 'Disadvantage' ? { disadvantage: true } : {})
+  })
+
+  const initialRolls = result.rolls[0]?.initialRolls ?? []
+
+  const resultConfig = {
+    strong_hit: { color: 0xffd700, resultTitle: 'Strong Hit!' },
+    weak_hit: { color: 0xffff00, resultTitle: 'Weak Hit' },
+    miss: { color: 0xff0000, resultTitle: 'Miss' }
+  } as const
+
+  const { color, resultTitle } = resultConfig[result.result]
+
+  const embed = new EmbedBuilder()
+    .setColor(color)
+    .setTitle(resultTitle)
+    .setDescription(`Total: ${result.total}`)
+    .setFooter(embedFooterDetails)
+
+  embed.addFields({ name: 'Dice Rolled', value: initialRolls.join(', ') || 'None', inline: true })
+  embed.addFields({ name: 'Stat', value: stat >= 0 ? `+${stat}` : String(stat), inline: true })
+  embed.addFields({ name: 'Total', value: String(result.total), inline: true })
+
+  if (forward !== 0) {
+    embed.addFields({
+      name: 'Forward',
+      value: forward > 0 ? `+${forward}` : String(forward),
+      inline: true
+    })
+  }
+
+  if (ongoing !== 0) {
+    embed.addFields({
+      name: 'Ongoing',
+      value: ongoing > 0 ? `+${ongoing}` : String(ongoing),
+      inline: true
+    })
+  }
+
+  if (rollingWith) {
+    embed.addFields({ name: 'Rolling With', value: rollingWith, inline: true })
+  }
+
+  return embed
+}
 
 export const pbtaCommand: Command = {
   data: new SlashCommandBuilder()
@@ -45,82 +105,47 @@ export const pbtaCommand: Command = {
     await interaction.deferReply()
 
     try {
-      const result = roll({
+      const pbtaParams: PbtaParams = { stat, forward, ongoing, rollingWith }
+      const paramsStr = JSON.stringify({
         stat,
         ...(forward !== 0 ? { forward } : {}),
         ...(ongoing !== 0 ? { ongoing } : {}),
-        ...(rollingWith === 'Advantage' ? { advantage: true } : {}),
-        ...(rollingWith === 'Disadvantage' ? { disadvantage: true } : {})
+        ...(rollingWith ? { rollingWith } : {})
+      })
+      const embed = buildPbtaEmbed(pbtaParams)
+      const row = createRollButton('pbta', paramsStr)
+      const response = await interaction.editReply({ embeds: [embed], components: [row] })
+
+      const collector = response.createMessageComponentCollector({
+        componentType: ComponentType.Button,
+        filter: i => i.customId === `reroll:pbta:${paramsStr}`,
+        time: 300_000
       })
 
-      const initialRolls = result.rolls[0]?.initialRolls ?? []
-
-      const resultConfig = {
-        strong_hit: {
-          color: 0xffd700, // Gold
-          resultTitle: 'Strong Hit!'
-        },
-        weak_hit: {
-          color: 0xffff00, // Yellow
-          resultTitle: 'Weak Hit'
-        },
-        miss: {
-          color: 0xff0000, // Red
-          resultTitle: 'Miss'
-        }
-      } as const
-
-      const { color, resultTitle } = resultConfig[result.result]
-
-      const embed = new EmbedBuilder()
-        .setColor(color)
-        .setTitle(resultTitle)
-        .setDescription(`Total: ${result.total}`)
-        .setFooter(embedFooterDetails)
-
-      embed.addFields({
-        name: 'Dice Rolled',
-        value: initialRolls.join(', ') || 'None',
-        inline: true
+      collector.on('collect', i => {
+        void (async () => {
+          await i.deferUpdate()
+          try {
+            const reEmbed = buildPbtaEmbed(pbtaParams)
+            await i.editReply({
+              embeds: [reEmbed],
+              components: [createRollButton('pbta', paramsStr)]
+            })
+          } catch {
+            await i.editReply({ content: 'An error occurred while re-rolling.' })
+          }
+        })()
       })
 
-      embed.addFields({
-        name: 'Stat',
-        value: stat >= 0 ? `+${stat}` : String(stat),
-        inline: true
+      collector.on('end', () => {
+        void (async () => {
+          try {
+            await interaction.editReply({ components: [createRollButton('pbta', paramsStr, true)] })
+          } catch {
+            // Message may have been deleted
+          }
+        })()
       })
-
-      embed.addFields({
-        name: 'Total',
-        value: String(result.total),
-        inline: true
-      })
-
-      if (forward !== 0) {
-        embed.addFields({
-          name: 'Forward',
-          value: forward > 0 ? `+${forward}` : String(forward),
-          inline: true
-        })
-      }
-
-      if (ongoing !== 0) {
-        embed.addFields({
-          name: 'Ongoing',
-          value: ongoing > 0 ? `+${ongoing}` : String(ongoing),
-          inline: true
-        })
-      }
-
-      if (rollingWith) {
-        embed.addFields({
-          name: 'Rolling With',
-          value: rollingWith,
-          inline: true
-        })
-      }
-
-      await interaction.editReply({ embeds: [embed] })
     } catch (e) {
       await replyWithError(
         interaction,

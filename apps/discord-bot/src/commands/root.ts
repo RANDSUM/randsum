@@ -1,7 +1,8 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import { ComponentType, EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
+import { createRollButton } from '../utils/rollButton.js'
 import type { Command } from '../types.js'
 
 const ROOT_IMAGES = {
@@ -9,6 +10,43 @@ const ROOT_IMAGES = {
   'Weak Hit': 'https://files.randsum.io/root-weak-hit.png',
   Miss: 'https://files.randsum.io/root-miss.png'
 } as const
+
+function buildRootEmbed(modifier: number, memberNick: string): EmbedBuilder {
+  const result = roll(modifier)
+  const initialRolls = result.rolls[0]?.initialRolls ?? []
+
+  const resultConfig = {
+    'Strong Hit': { color: 0x00ff00, resultDescription: 'You succeed at your goal' },
+    'Weak Hit': {
+      color: 0xffff00,
+      resultDescription: 'You succeed, but with a cost or complication'
+    },
+    Miss: { color: 0xff0000, resultDescription: "Things don't go your way" }
+  } as const
+
+  const { color, resultDescription } = resultConfig[result.result]
+  const thumbnail = ROOT_IMAGES[result.result]
+
+  const embed = new EmbedBuilder()
+    .setColor(color)
+    .setTitle(`${memberNick} rolled a ${result.result}`)
+    .setDescription(resultDescription)
+    .setThumbnail(thumbnail)
+    .setFooter(embedFooterDetails)
+
+  embed.addFields({ name: 'Dice Rolls', value: initialRolls.join(', '), inline: true })
+  embed.addFields({ name: 'Total', value: String(result.total), inline: true })
+
+  if (modifier !== 0) {
+    embed.addFields({
+      name: 'Modifier',
+      value: modifier > 0 ? `+${modifier}` : String(modifier),
+      inline: true
+    })
+  }
+
+  return embed
+}
 
 export const rootCommand: Command = {
   data: new SlashCommandBuilder()
@@ -30,61 +68,41 @@ export const rootCommand: Command = {
     await interaction.deferReply()
 
     try {
-      const result = roll(modifier)
+      const paramsStr = String(modifier)
+      const embed = buildRootEmbed(modifier, memberNick)
+      const row = createRollButton('root', paramsStr)
+      const response = await interaction.editReply({ embeds: [embed], components: [row] })
 
-      // Get initial dice rolls
-      const initialRolls = result.rolls[0]?.initialRolls ?? []
-
-      // Determine color, title, and description based on result
-      const resultConfig = {
-        'Strong Hit': {
-          color: 0x00ff00, // Green
-          resultDescription: 'You succeed at your goal'
-        },
-        'Weak Hit': {
-          color: 0xffff00, // Yellow
-          resultDescription: 'You succeed, but with a cost or complication'
-        },
-        Miss: {
-          color: 0xff0000, // Red
-          resultDescription: "Things don't go your way"
-        }
-      } as const
-
-      const { color, resultDescription } = resultConfig[result.result]
-      const thumbnail = ROOT_IMAGES[result.result]
-
-      const embed = new EmbedBuilder()
-        .setColor(color)
-        .setTitle(`${memberNick} rolled a ${result.result}`)
-        .setDescription(resultDescription)
-        .setThumbnail(thumbnail)
-        .setFooter(embedFooterDetails)
-
-      // Add dice rolls
-      embed.addFields({
-        name: 'Dice Rolls',
-        value: initialRolls.join(', '),
-        inline: true
+      const collector = response.createMessageComponentCollector({
+        componentType: ComponentType.Button,
+        filter: i => i.customId === `reroll:root:${paramsStr}`,
+        time: 300_000
       })
 
-      // Add total
-      embed.addFields({
-        name: 'Total',
-        value: String(result.total),
-        inline: true
+      collector.on('collect', i => {
+        void (async () => {
+          await i.deferUpdate()
+          try {
+            const reEmbed = buildRootEmbed(modifier, memberNick)
+            await i.editReply({
+              embeds: [reEmbed],
+              components: [createRollButton('root', paramsStr)]
+            })
+          } catch {
+            await i.editReply({ content: 'An error occurred while re-rolling.' })
+          }
+        })()
       })
 
-      // Add modifier if present
-      if (modifier !== 0) {
-        embed.addFields({
-          name: 'Modifier',
-          value: modifier > 0 ? `+${modifier}` : String(modifier),
-          inline: true
-        })
-      }
-
-      await interaction.editReply({ embeds: [embed] })
+      collector.on('end', () => {
+        void (async () => {
+          try {
+            await interaction.editReply({ components: [createRollButton('root', paramsStr, true)] })
+          } catch {
+            // Message may have been deleted
+          }
+        })()
+      })
     } catch (e) {
       await replyWithError(
         interaction,

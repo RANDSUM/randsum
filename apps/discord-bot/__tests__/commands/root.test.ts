@@ -1,58 +1,12 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => {
-    return mockEmbed
-  }),
-  setTitle: mock(() => {
-    return mockEmbed
-  }),
-  setDescription: mock(() => {
-    return mockEmbed
-  }),
-  setFooter: mock(() => {
-    return mockEmbed
-  }),
-  addFields: mock(() => {
-    return mockEmbed
-  }),
-  setThumbnail: mock(() => {
-    return mockEmbed
-  })
+const mockCollector = {
+  on: mock(() => mockCollector)
 }
 
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public setMinValue(): this {
-    return this
-  }
-  public setMaxValue(): this {
-    return this
-  }
-}
-
-void mock.module('discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-    public addIntegerOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
+const mockRow = {}
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => mockRow)
 }))
 
 const mockRoll = mock(() => ({
@@ -73,22 +27,28 @@ function makeInteraction(modifier: number | null = null): {
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
+    editReply: mock(() =>
+      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
+    ),
     options: { getInteger: mock(() => modifier) },
     member: { user: { username: 'Tester' } }
   }
 }
 
 beforeEach(() => {
-  for (const fn of Object.values(mockEmbed)) fn.mockClear()
   mockRoll.mockClear()
+  for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
 
 describe('rootCommand', () => {
   test('Strong Hit', async () => {
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Tester rolled a Strong Hit')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Tester rolled a Strong Hit')
   })
 
   test('Weak Hit', async () => {
@@ -99,7 +59,11 @@ describe('rootCommand', () => {
     }))
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Tester rolled a Weak Hit')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Tester rolled a Weak Hit')
   })
 
   test('Miss', async () => {
@@ -110,13 +74,30 @@ describe('rootCommand', () => {
     }))
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Tester rolled a Miss')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Tester rolled a Miss')
   })
 
   test('non-zero modifier adds modifier field', async () => {
     const interaction = makeInteraction(2)
     await rootCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
+    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Modifier')
+  })
+
+  test('reply includes re-roll button component', async () => {
+    const interaction = makeInteraction()
+    await rootCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ components: expect.any(Array) })
+    )
   })
 
   test('error path: roll throws, replies with error embed', async () => {
@@ -125,7 +106,10 @@ describe('rootCommand', () => {
     })
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Error')
   })
 })
