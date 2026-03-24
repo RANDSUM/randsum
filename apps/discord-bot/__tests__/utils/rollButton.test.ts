@@ -1,91 +1,62 @@
-import { describe, expect, mock, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
+import { ButtonStyle } from 'discord.js'
+import { createRollButton } from '../../src/utils/rollButton.js'
+import { parseRerollId } from '../../src/utils/parseRerollId.js'
 
-const mockButton = {
-  setCustomId: mock(() => mockButton),
-  setLabel: mock(() => mockButton),
-  setStyle: mock(() => mockButton),
-  setDisabled: mock(() => mockButton)
-}
-
-const mockActionRow = {
-  addComponents: mock(() => mockActionRow)
-}
-
-const mockEmbed = {
-  setColor: () => mockEmbed,
-  setTitle: () => mockEmbed,
-  setDescription: () => mockEmbed,
-  setFooter: () => mockEmbed,
-  addFields: () => mockEmbed,
-  setThumbnail: () => mockEmbed,
-  setURL: () => mockEmbed
-}
-
-void mock.module('discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  ActionRowBuilder: mock(() => mockActionRow),
-  ButtonBuilder: mock(() => mockButton),
-  ButtonStyle: { Secondary: 2 },
-  StringSelectMenuBuilder: mock(() => ({})),
-  ComponentType: { StringSelect: 3, Button: 2 },
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-  }
-}))
-
-// All imports MUST be dynamic and AFTER mock.module to ensure Bun 1.3.10
-// resolves discord.js from the mock, not the real module
-const { createRollButton } = await import('../../src/utils/rollButton.js')
-const { parseRerollId } = await import('../../src/utils/parseRerollId.js')
+// No mock.module needed — discord.js builders are plain JS classes that
+// produce inspectable JSON via toJSON(). Testing real output is more
+// reliable than verifying mock calls, and avoids Bun's mock.module
+// global-state issues across test files.
 
 describe('createRollButton', () => {
-  test('returns an ActionRow', () => {
+  test('returns an ActionRow with one button component', () => {
     const row = createRollButton('roll', '2d6')
-    expect(row).toBe(mockActionRow)
-  })
-
-  test('adds a button component to the row', () => {
-    createRollButton('roll', '2d6')
-    expect(mockActionRow.addComponents).toHaveBeenCalled()
+    const json = row.toJSON()
+    expect(json.type).toBe(1) // ActionRow type
+    expect(json.components).toHaveLength(1)
+    expect(json.components[0]?.type).toBe(2) // Button type
   })
 
   test('button has Roll Again label', () => {
-    createRollButton('roll', '2d6')
-    expect(mockButton.setLabel).toHaveBeenCalledWith('Roll Again')
+    const row = createRollButton('roll', '2d6')
+    const button = row.toJSON().components[0]
+    expect(button?.label).toBe('Roll Again')
   })
 
   test('button custom ID encodes command and params', () => {
-    createRollButton('roll', '2d6')
-    expect(mockButton.setCustomId).toHaveBeenCalledWith('reroll:roll:2d6')
+    const row = createRollButton('roll', '2d6')
+    const button = row.toJSON().components[0]
+    expect(button?.custom_id).toBe('reroll:roll:2d6')
   })
 
   test('button custom ID for game command with JSON params', () => {
-    createRollButton('fifth', '{"modifier":5,"rollingWith":"Advantage"}')
-    expect(mockButton.setCustomId).toHaveBeenCalledWith(
-      'reroll:fifth:{"modifier":5,"rollingWith":"Advantage"}'
-    )
+    const row = createRollButton('fifth', '{"modifier":5,"rollingWith":"Advantage"}')
+    const button = row.toJSON().components[0]
+    expect(button?.custom_id).toBe('reroll:fifth:{"modifier":5,"rollingWith":"Advantage"}')
   })
 
   test('button custom ID stays within 100 chars', () => {
-    const params = '2d6'
-    createRollButton('roll', params)
-    const customId = `reroll:roll:${params}`
-    expect(customId.length).toBeLessThanOrEqual(100)
+    const row = createRollButton('roll', '2d6')
+    const button = row.toJSON().components[0]
+    expect(button?.custom_id?.length).toBeLessThanOrEqual(100)
   })
 
-  test('disabled button uses setDisabled(true)', () => {
-    createRollButton('roll', '2d6', true)
-    expect(mockButton.setDisabled).toHaveBeenCalledWith(true)
+  test('button uses Secondary style', () => {
+    const row = createRollButton('roll', '2d6')
+    const button = row.toJSON().components[0]
+    expect(button?.style).toBe(ButtonStyle.Secondary)
   })
 
-  test('enabled button uses setDisabled(false) by default', () => {
-    createRollButton('roll', '2d6')
-    expect(mockButton.setDisabled).toHaveBeenCalledWith(false)
+  test('disabled button has disabled true', () => {
+    const row = createRollButton('roll', '2d6', true)
+    const button = row.toJSON().components[0]
+    expect(button?.disabled).toBe(true)
+  })
+
+  test('enabled button has disabled false by default', () => {
+    const row = createRollButton('roll', '2d6')
+    const button = row.toJSON().components[0]
+    expect(button?.disabled).toBe(false)
   })
 })
 
