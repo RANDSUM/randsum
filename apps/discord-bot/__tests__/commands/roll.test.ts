@@ -1,24 +1,8 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-// @randsum/roller is mocked via mock.module below, so we import from its source entry
-// to get real implementations that bypass the mock. This single import replaces what were
-// previously 5 deep relative imports into roller/notation internals.
-const {
-  roll: realRoll,
-  isDiceNotation,
-  notation: realNotation,
-  validateNotation,
-  validateFinite,
-  validateRange,
-  RandsumError,
-  NotationParseError,
-  ModifierError,
-  ValidationError,
-  RollError,
-  ERROR_CODES,
-  suggestNotationFix: realSuggestNotationFix
-} = await import('../../../../packages/roller/src/index')
-
+// discord.js mock MUST be registered before any await import() calls.
+// On Linux CI, Bun may pre-link transitive module graphs during async
+// imports, causing "Export named X not found" if the mock isn't set yet.
 const mockEmbed = {
   setColor: mock(() => {
     return mockEmbed
@@ -103,6 +87,25 @@ const mockRow = {}
 void mock.module('../../src/utils/rollButton.js', () => ({
   createRollButton: mock(() => mockRow)
 }))
+
+// Import real roller implementations AFTER all mock.module calls for discord.js.
+// On Linux CI, Bun may pre-link transitive module graphs during await import(),
+// so discord.js mock must be registered first.
+const {
+  roll: realRoll,
+  isDiceNotation,
+  notation: realNotation,
+  validateNotation,
+  validateFinite,
+  validateRange,
+  RandsumError,
+  NotationParseError,
+  ModifierError,
+  ValidationError,
+  RollError,
+  ERROR_CODES,
+  suggestNotationFix: realSuggestNotationFix
+} = await import('../../../../packages/roller/src/index')
 
 // Mock functions delegate to real implementations by default.
 // This is critical: mock.module leaks globally in Bun, so if other test files
