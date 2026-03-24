@@ -1,5 +1,5 @@
-import { EmbedBuilder } from 'discord.js'
-import type { Guild } from 'discord.js'
+import { EmbedBuilder } from '../utils/discord.js'
+import type { Guild } from '../utils/discord.js'
 import { embedFooterDetails } from '../utils/constants.js'
 
 export async function guildCreateHandler(guild: Guild): Promise<void> {

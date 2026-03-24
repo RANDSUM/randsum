@@ -4,8 +4,8 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
   StringSelectMenuBuilder
-} from 'discord.js'
-import type { StringSelectMenuInteraction } from 'discord.js'
+} from '../utils/discord.js'
+import type { StringSelectMenuInteraction } from '../utils/discord.js'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { NotationDoc } from '@randsum/roller/docs'
 import { embedFooterDetails } from '../utils/constants.js'

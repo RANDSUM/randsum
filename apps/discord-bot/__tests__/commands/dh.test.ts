@@ -37,7 +37,7 @@ const mockCollector = {
   on: mock(() => mockCollector)
 }
 
-void mock.module('discord.js', () => ({
+void mock.module('../../src/utils/discord.js', () => ({
   EmbedBuilder: mock(() => mockEmbed),
   StringSelectMenuBuilder: mock(() => ({})),
   ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),

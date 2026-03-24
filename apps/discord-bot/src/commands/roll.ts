@@ -4,7 +4,7 @@ import {
   ComponentType,
   EmbedBuilder,
   SlashCommandBuilder
-} from 'discord.js'
+} from '../utils/discord.js'
 import { roll } from '@randsum/roller/roll'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { suggestNotationFix } from '@randsum/roller'

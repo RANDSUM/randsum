@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { REST, Routes } from 'discord.js'
+import { REST, Routes } from './utils/discord.js'
 import { config } from './utils/config.js'
 import { commands as commandList } from './commands/index.js'
 

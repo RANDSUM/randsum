@@ -1,4 +1,4 @@
-import { ComponentType, EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import { ComponentType, EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { VALID_TABLE_NAMES, roll } from '@randsum/games/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Client, Collection, Events, GatewayIntentBits } from 'discord.js'
+import { Client, Collection, Events, GatewayIntentBits } from './utils/discord.js'
 import { config } from './utils/config.js'
 import type { Command } from './types.js'
 import { commands as commandList } from './commands/index.js'

@@ -42,7 +42,7 @@ const mockMessage = {
   edit: mock(() => Promise.resolve(undefined))
 }
 
-void mock.module('discord.js', () => ({
+void mock.module('../../src/utils/discord.js', () => ({
   EmbedBuilder: mock(() => mockEmbed),
   StringSelectMenuBuilder: mock(() => mockSelectMenu),
   ActionRowBuilder: mock(() => mockActionRow),
@@ -130,7 +130,7 @@ describe('notationCommand', () => {
     const interaction = makeInteraction()
     await notationCommand.execute(interaction as never)
     // StringSelectMenuBuilder should be instantiated (for category pagination)
-    const { StringSelectMenuBuilder } = await import('discord.js')
+    const { StringSelectMenuBuilder } = await import('../../src/utils/discord.js')
     expect(StringSelectMenuBuilder).toHaveBeenCalled()
   })
 

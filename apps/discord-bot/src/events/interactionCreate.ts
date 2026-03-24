@@ -1,5 +1,5 @@
-import { MessageFlags } from 'discord.js'
-import type { Client, Collection, Interaction } from 'discord.js'
+import { MessageFlags } from '../utils/discord.js'
+import type { Client, Collection, Interaction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
 export async function interactionCreateHandler(interaction: Interaction): Promise<void> {

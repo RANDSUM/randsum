@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { embedFooterDetails } from '../utils/constants.js'
 import type { Command } from '../types.js'
 import { bladesCommand } from './blades.js'
