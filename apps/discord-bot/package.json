@@ -40,7 +40,7 @@
     "dev": "bun run src/index.ts",
     "start": "node dist/index.js",
     "deploy-commands": "bun run src/deploy-commands.ts",
-    "test": "bun test",
+    "test": "bun test --preload ./__tests__/setup.ts",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",

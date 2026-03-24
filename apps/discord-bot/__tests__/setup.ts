@@ -1,5 +1,7 @@
+console.warn('[test-setup] discord.js mock preload executing')
+
 /**
- * Shared test setup — preloaded before all test files via bunfig.toml.
+ * Shared test setup — preloaded before all test files via --preload flag.
  *
  * discord.js v14 ships CJS source as its entry point (src/index.js).
  * It uses __exportStar from tslib to re-export from discord-api-types,
