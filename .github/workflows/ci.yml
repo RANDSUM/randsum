@@ -110,7 +110,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build
-      - run: bun run --filter '@randsum/discord-bot' check
+      - run: bun run check
+        working-directory: apps/discord-bot
 
   site:
     name: site
