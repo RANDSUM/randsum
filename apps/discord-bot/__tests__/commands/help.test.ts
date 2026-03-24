@@ -1,13 +1,12 @@
 import { describe, expect, mock, test } from 'bun:test'
 
 const mockEmbed = {
-  setColor: () => mockEmbed,
-  setTitle: () => mockEmbed,
-  setDescription: () => mockEmbed,
-  setFooter: () => mockEmbed,
-  addFields: () => mockEmbed,
-  setThumbnail: () => mockEmbed,
-  setURL: () => mockEmbed
+  setColor: mock(() => mockEmbed),
+  setTitle: mock(() => mockEmbed),
+  setDescription: mock(() => mockEmbed),
+  setFooter: mock(() => mockEmbed),
+  addFields: mock(() => mockEmbed),
+  setURL: mock(() => mockEmbed)
 }
 
 class OptionBuilder {
@@ -104,25 +103,62 @@ void mock.module('@randsum/games/salvageunion', () => ({
   VALID_TABLE_NAMES: ['Core Mechanic']
 }))
 
-const { commands } = await import('../../src/commands/index.js')
+// Must mock rollButton to avoid import issues
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => ({}))
+}))
 
-describe('commands barrel', () => {
-  test('exports an array of 9 commands', () => {
-    expect(Array.isArray(commands)).toBe(true)
-    expect(commands).toHaveLength(9)
+const { helpCommand } = await import('../../src/commands/help.js')
+
+function makeInteraction(): {
+  deferReply: ReturnType<typeof mock>
+  editReply: ReturnType<typeof mock>
+} {
+  return {
+    deferReply: mock(() => Promise.resolve(undefined)),
+    editReply: mock(() => Promise.resolve(undefined))
+  }
+}
+
+describe('helpCommand', () => {
+  test('has name "help"', () => {
+    expect(helpCommand.data.name).toBe('help')
   })
 
-  test('each command has data and execute properties', () => {
-    for (const command of commands) {
-      expect(command).toHaveProperty('data')
-      expect(command).toHaveProperty('execute')
-      expect(typeof command.execute).toBe('function')
-    }
+  test('has a description', () => {
+    expect(typeof helpCommand.data.description).toBe('string')
+    expect(helpCommand.data.description.length).toBeGreaterThan(0)
   })
 
-  test('each command has a data object', () => {
-    for (const command of commands) {
-      expect(command.data).toBeDefined()
-    }
+  test('execute: defers reply', async () => {
+    const interaction = makeInteraction()
+    await helpCommand.execute(interaction as never)
+    expect(interaction.deferReply).toHaveBeenCalledTimes(1)
+  })
+
+  test('execute: replies with an embed', async () => {
+    const interaction = makeInteraction()
+    await helpCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ embeds: expect.any(Array) })
+    )
+  })
+
+  test('execute: embed uses gold color', async () => {
+    const interaction = makeInteraction()
+    await helpCommand.execute(interaction as never)
+    expect(mockEmbed.setColor).toHaveBeenCalledWith('#FFD700')
+  })
+
+  test('execute: embed includes footer', async () => {
+    const interaction = makeInteraction()
+    await helpCommand.execute(interaction as never)
+    expect(mockEmbed.setFooter).toHaveBeenCalled()
+  })
+
+  test('execute: embed lists commands via addFields', async () => {
+    const interaction = makeInteraction()
+    await helpCommand.execute(interaction as never)
+    expect(mockEmbed.addFields).toHaveBeenCalled()
   })
 })

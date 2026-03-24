@@ -6,6 +6,7 @@ import { commands as commandList } from './commands/index.js'
 
 // Import events
 import { interactionCreateHandler } from './events/interactionCreate.js'
+import { guildCreateHandler } from './events/guildCreate.js'
 
 // Create a new client instance
 const client = new Client({
@@ -31,6 +32,10 @@ client.once(Events.ClientReady, c => {
 // Wrap async handler to catch unhandled rejections
 client.on(Events.InteractionCreate, interaction => {
   void interactionCreateHandler(interaction)
+})
+
+client.on(Events.GuildCreate, guild => {
+  void guildCreateHandler(guild)
 })
 
 // Error handling
