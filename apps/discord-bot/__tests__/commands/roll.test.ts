@@ -72,6 +72,10 @@ void mock.module('discord.js', () => ({
   EmbedBuilder: mock(() => mockEmbed),
   StringSelectMenuBuilder: mock(() => ({})),
   ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
+  ButtonBuilder: mock(() => ({
+    setCustomId: () => ({ setLabel: () => ({ setStyle: () => ({}) }) })
+  })),
+  ButtonStyle: { Secondary: 2 },
   ComponentType: { StringSelect: 3, Button: 2 },
   SlashCommandBuilder: class {
     public setName(): this {
@@ -138,6 +142,18 @@ void mock.module('@randsum/roller/validate', () => ({
   validateFinite,
   validateRange
 }))
+const mockTraceRoll = mock(() => [
+  { kind: 'rolls', label: 'Rolled', unchanged: [3, 4], removed: [], added: [] }
+])
+
+void mock.module('@randsum/roller/trace', () => ({
+  traceRoll: mockTraceRoll,
+  formatAsMath: mock((rolls: number[], delta = 0) => {
+    const terms = rolls.map((n: number, i: number) => (i === 0 ? String(n) : `+ ${n}`))
+    if (delta > 0) terms.push(`+ ${delta}`)
+    return terms.join(' ')
+  })
+}))
 
 const { rollCommand } = await import('../../src/commands/roll.js')
 
@@ -170,6 +186,11 @@ beforeEach(() => {
     .mockImplementation((...args: Parameters<typeof realSuggestNotationFix>) =>
       realSuggestNotationFix(...args)
     )
+  mockTraceRoll
+    .mockClear()
+    .mockImplementation(() => [
+      { kind: 'rolls', label: 'Rolled', unchanged: [3, 4], removed: [], added: [] }
+    ])
 })
 
 describe('rollCommand', () => {
@@ -263,5 +284,43 @@ describe('rollCommand', () => {
     expect(mockEmbed.setDescription).not.toHaveBeenCalledWith(
       expect.stringContaining('Did you mean')
     )
+  })
+
+  test('Show Work button omitted when trace has only 1 step', async () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 5,
+      rolls: [{ initialRolls: [5], rolls: [5], modifierLogs: [], total: 5, appliedTotal: 5 }]
+    }))
+    mockTraceRoll.mockImplementationOnce(() => [
+      { kind: 'rolls', label: 'Rolled', unchanged: [5], removed: [], added: [] }
+    ])
+    const interaction = makeInteraction({ notation: '1d6' })
+    await rollCommand.execute(interaction as never)
+    const callArgs = interaction.editReply.mock.calls[0][0] as { components: unknown[] }
+    expect(callArgs.components).toHaveLength(1)
+  })
+
+  test('Show Work button present when trace has more than 1 step', async () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 7,
+      rolls: [
+        {
+          initialRolls: [3, 4],
+          rolls: [4],
+          modifierLogs: [{ modifier: 'drop', options: { lowest: 1 }, removed: [3], added: [] }],
+          total: 7,
+          appliedTotal: 7
+        }
+      ]
+    }))
+    mockTraceRoll.mockImplementationOnce(() => [
+      { kind: 'rolls', label: 'Rolled', unchanged: [3, 4], removed: [], added: [] },
+      { kind: 'rolls', label: 'Drop Lowest 1', unchanged: [4], removed: [3], added: [] },
+      { kind: 'finalRolls', rolls: [4], arithmeticDelta: 0 }
+    ])
+    const interaction = makeInteraction({ notation: '2d6L' })
+    await rollCommand.execute(interaction as never)
+    const callArgs = interaction.editReply.mock.calls[0][0] as { components: unknown[] }
+    expect(callArgs.components).toHaveLength(2)
   })
 })

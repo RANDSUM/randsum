@@ -18,7 +18,10 @@ export async function interactionCreateHandler(interaction: Interaction): Promis
   }
 
   if (interaction.isButton()) {
-    if (interaction.customId.startsWith('reroll:')) {
+    if (
+      interaction.customId.startsWith('reroll:') ||
+      interaction.customId.startsWith('showwork:')
+    ) {
       await interaction.reply({
         content: 'This roll has expired. Use the slash command to roll again.',
         flags: [MessageFlags.Ephemeral] as const
