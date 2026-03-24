@@ -1,7 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 
-export { parseRerollId } from './parseRerollId.js'
-
 export function createRollButton(
   command: string,
   params: string,
