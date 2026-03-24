@@ -122,7 +122,7 @@ Use these subpaths to import only what you need without pulling in the full roll
 
 ```typescript
 import { MODIFIER_DOCS } from "@randsum/roller/docs"
-import type { ModifierDoc } from "@randsum/roller/docs"
+import type { NotationDoc } from "@randsum/roller/docs"
 
 // Keyed by notation shorthand
 const doc = MODIFIER_DOCS["L"] // Drop Lowest

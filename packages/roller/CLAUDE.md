@@ -46,7 +46,6 @@ import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
 import { tokenize } from "@randsum/roller/tokenize" // notation tokenizer, no roll engine
 import { NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS } from "@randsum/roller/docs"
 import type { NotationDoc } from "@randsum/roller/docs"
-import type { ModifierDoc } from "@randsum/roller/docs" // deprecated alias for NotationDoc
 import { traceRoll, formatAsMath } from "@randsum/roller/trace"
 import type { RollTraceStep } from "@randsum/roller/trace"
 ```
@@ -63,7 +62,6 @@ Exports static documentation data describing every RANDSUM dice type and modifie
 - `MODIFIER_DOCS: Readonly<Record<string, NotationDoc>>` — modifier-only subset of `NOTATION_DOCS` (excludes dice types)
 - `DICE_DOCS: Readonly<Record<string, NotationDoc>>` — dice-type-only subset of `NOTATION_DOCS` (excludes modifiers)
 - `NotationDoc` type — primary type for all documentation entries
-- `ModifierDoc` type — **deprecated alias for `NotationDoc`**; removed in the next major version
 
 **`NotationDoc` shape:**
 
@@ -304,7 +302,7 @@ All types are exported with `export type`:
 - `RandomFn`, `RollConfig` - Custom random function types
 - `CustomFacesNotation`, `DrawDieNotation`, `FateDieNotation`, `GeometricDieNotation`, `PercentileDie`, `ZeroBiasNotation` — special die notation types
 
-> `ModifierDoc` is a deprecated type alias for `NotationDoc`. Use `NotationDoc` in all new code; `ModifierDoc` will be removed in the next major version. `DiceSchema` is an internal type in `src/dice/index.ts` and is not exported from any public subpath.
+> `DiceSchema` is an internal type in `src/dice/index.ts` and is not exported from any public subpath.
 
 > Consumers who previously imported `RollResult` should use `RollerRollResult`. Consumers who previously imported `ValidValidationResult` or `InvalidValidationResult` should use `ValidationResult` (discriminated union on `valid: boolean`). Consumers who previously imported `RollParams`, `RequiredNumericRollParameters`, `ModifierLog`, `NumericRollBonus`, or `ModifierConfig` should use `ReturnType<typeof roll>` or construct the relevant types from the public surface.
 

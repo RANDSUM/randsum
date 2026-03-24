@@ -28,8 +28,6 @@ export interface NotationDoc {
   }[]
 }
 
-export type ModifierDoc = NotationDoc
-
 const diceEntries: readonly [string, NotationDoc][] = RANDSUM_DICE_SCHEMAS.map(schema => [
   schema.doc.key,
   schema.doc

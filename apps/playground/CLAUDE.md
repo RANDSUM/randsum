@@ -329,11 +329,11 @@ On desktop: two-column table layout. Below 480px: single-column list.
 ```typescript
 interface ReferenceDetailProps {
   modifierKey: string // Key into MODIFIER_DOCS (from @randsum/roller/docs)
-  doc: ModifierDoc // Pre-looked-up doc entry
+  doc: NotationDoc // Pre-looked-up doc entry
 }
 ```
 
-Renders full documentation for the selected modifier using `ModifierDoc` fields:
+Renders full documentation for the selected modifier using `NotationDoc` fields:
 
 - `doc.title` — heading
 - `doc.description` — prose description
@@ -505,7 +505,7 @@ These tokens derive from the Tailwind slate/blue scale used in `apps/site/src/st
 **`@randsum/roller/docs`**:
 
 - `MODIFIER_DOCS` — static modifier documentation for `QuickReferenceGrid` and `ReferenceDetail`
-- `ModifierDoc` — type for modifier doc entries
+- `NotationDoc` — type for notation doc entries
 
 **`src/helpers/stackblitz.ts`** (local helper — not a workspace package):
 
