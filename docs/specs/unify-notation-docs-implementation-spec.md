@@ -192,7 +192,7 @@ The mapping of modifier names to doc entry keys is as follows. Every modifier in
 | `explode` | `'!'` |
 | `compound` | `'!!'` |
 | `penetrate` | `'!p'` |
-| `explodeSequence` | `'!s{..}'` |
+| `explodeSequence` | `'!s{..}'`, `'!i'`, `'!r'` |
 | `wildDie` | `'W'` |
 | `unique` | `'U'` |
 | `drop` | `'L'`, `'H'`, `'D{..}'` |
@@ -206,7 +206,9 @@ The mapping of modifier names to doc entry keys is as follows. Every modifier in
 | `sort` | `'sort'` |
 | `multiplyTotal` | `'**'` |
 
-Total: 19 modifier names → 28 doc entries. This is the same count as the current `MODIFIER_DOC_ENTRIES` array (845 lines, 28 entries).
+Total: 19 modifier names → 28 doc entries (explodeSequence contributes 3, count contributes 4, drop and keep contribute 3 each, reroll contributes 2). This is the same count as the current `MODIFIER_DOC_ENTRIES` array (845 lines, 28 entries).
+
+**Key finding on `explodeSequence`:** The `explodeSequence` modifier has three entries: `'!s{..}'` (Explode Sequence), `'!i'` (Inflation — sugar for upward sequence), and `'!r'` (Reduction — sugar for downward sequence). All three belong on `explodeSequenceSchema.docs`.
 
 **Key finding on `count`:** The `count` modifier currently has four entries in `modifierDocEntries.ts`: `'#{..}'`, `'S{..}'` (Count Successes), `'F{..}'` (Count Failures), and `'ms{..}'` (Margin of Success). All four belong on `countSchema.docs`.
 
@@ -436,10 +438,10 @@ export interface ConformanceVector {
    */
   readonly sequenceRolls?: readonly number[]
   /**
-   * Expected error type string for error_cases vectors.
-   * E.g. 'ValidationError', 'SchemaError'.
+   * Always `true` when present — indicates this vector expects an error.
+   * The error type description is in `errorDescription`, not here.
    */
-  readonly expectedError?: string
+  readonly expectedError?: true
   /** Human-readable explanation for the expectedError. */
   readonly errorDescription?: string
   /** Freeform note for unusual vector behavior. */
@@ -633,7 +635,11 @@ diff /tmp/conformance-original.json apps/rdn/public/conformance/v0.9.0.json
 
 If `diff` reports no output, the migration is complete. Any difference indicates either a key ordering mismatch, a value transcription error, or a missing/extra field. The developer must resolve all differences before merging.
 
-**Known identity risk: `generatedFrom` field.** The current JSON file has `"generatedFrom": "Appendix G of the RANDSUM Dice Notation Specification v0.9.0"`. The TypeScript source sets `generatedFrom: 'apps/rdn/src/conformance/vectors.ts'`. These values differ. The `conformance:check` gate in CI will fail until the committed `v0.9.0.json` is regenerated from the new source. The dev must run `conformance:gen` once and commit both the updated JSON and the new TypeScript source together. The `git diff --exit-code` check in `conformance:check` will then pass.
+**Known identity risks:**
+
+1. **`generatedFrom` field.** The current JSON file has `"generatedFrom": "Appendix G of the RANDSUM Dice Notation Specification v0.9.0"`. The TypeScript source sets `generatedFrom: 'apps/rdn/src/conformance/vectors.ts'`. These values differ. The `conformance:check` gate in CI will fail until the committed `v0.9.0.json` is regenerated from the new source. The dev must run `conformance:gen` once and commit both the updated JSON and the new TypeScript source together. The `git diff --exit-code` check in `conformance:check` will then pass.
+
+2. **`note` field key reordering in vectors 31 and 42.** The current JSON has `note` appearing before `expectedPool` in vectors 31 (key order: `...seedRolls, note, expectedPool...`) and 42 (key order: `...category, note, seedRolls...`). The `STABLE_KEY_ORDER` array places `note` last, so the gen script will move `note` to the end of these two vectors. This is intentional — the gen script enforces canonical key ordering. The diff will show these two vectors reordered but with identical values. This is expected and correct.
 
 ---
 
