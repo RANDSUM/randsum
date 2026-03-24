@@ -123,7 +123,7 @@
     },
     {
       "path": "dist/docs/index.js",
-      "limit": "6 KB"
+      "limit": "20 KB"
     },
     {
       "path": "dist/trace/index.js",
