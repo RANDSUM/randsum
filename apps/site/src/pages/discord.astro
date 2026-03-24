@@ -1,3 +1,550 @@
 ---
-return Astro.redirect('/tools/discord-bot/', 301)
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import DiscordEmbed from '../components/DiscordEmbed.astro'
+
+const OAUTH_URL =
+  'https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands'
+
+const games = [
+  {
+    command: '/fifth',
+    name: 'D&D 5th Edition',
+    description: 'd20 + modifier with advantage/disadvantage. Nat 20 and nat 1 highlighted.',
+    color: '#dc2626',
+    href: '/games/fifth/'
+  },
+  {
+    command: '/blades',
+    name: 'Blades in the Dark',
+    description: 'Action dice pool — critical, success, partial, or failure.',
+    color: '#64748b',
+    href: '/games/blades/'
+  },
+  {
+    command: '/dh',
+    name: 'Daggerheart',
+    description: 'Hope and fear dice with modifiers and amplification.',
+    color: '#eab308',
+    href: '/games/daggerheart/'
+  },
+  {
+    command: '/pbta',
+    name: 'Powered by the Apocalypse',
+    description: '2d6 + stat. Miss, weak hit, or strong hit for any PbtA game.',
+    color: '#6b7280',
+    href: '/games/pbta/'
+  },
+  {
+    command: '/root',
+    name: 'Root RPG',
+    description: '2d6 + bonus. Strong hit, weak hit, or miss.',
+    color: '#22c55e',
+    href: '/games/root-rpg/'
+  },
+  {
+    command: '/su',
+    name: 'Salvage Union',
+    description: 'd20 table lookups including Core Mechanic and Morale.',
+    color: '#f59e0b',
+    href: '/games/salvageunion/'
+  }
+]
+
+const commands = [
+  { name: '/roll', description: 'Roll any dice using full RANDSUM notation', example: '/roll notation:4d6L+2' },
+  { name: '/blades', description: 'Blades in the Dark action roll', example: '/blades dice:3' },
+  { name: '/fifth', description: 'D&D 5e d20 roll with advantage support', example: '/fifth modifier:5 rolling_with:Advantage' },
+  { name: '/dh', description: 'Daggerheart hope and fear dice', example: '/dh modifier:3 rolling_with:Advantage' },
+  { name: '/root', description: 'Root RPG 2d6 + modifier', example: '/root modifier:2' },
+  { name: '/su', description: 'Salvage Union table roll', example: '/su table:Core Mechanic' },
+  { name: '/pbta', description: 'Powered by the Apocalypse move roll', example: '/pbta stat:2 forward:1' },
+  { name: '/notation', description: 'Show dice notation reference guide', example: '/notation' },
+  { name: '/help', description: 'List all available RANDSUM commands', example: '/help' }
+]
 ---
+
+<StarlightPage
+  frontmatter={{
+    title: 'RANDSUM Dice Bot',
+    description: 'Roll dice for your TTRPG sessions directly in Discord. Supports D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.',
+    template: 'splash'
+  }}
+  hasSidebar={false}
+>
+  <div class="discord-landing">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-badge">
+          <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"/></svg>
+          Discord Bot
+        </div>
+        <h1 class="hero-heading">RANDSUM Dice Bot</h1>
+        <p class="hero-tagline">Roll dice for your TTRPG sessions directly in Discord.</p>
+        <p class="hero-sub">
+          Slash commands for D&amp;D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union —
+          plus full RANDSUM notation for anything else.
+        </p>
+        <div class="hero-actions">
+          <a href={OAUTH_URL} class="btn btn-discord" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"/></svg>
+            Add to Discord
+          </a>
+          <a href="/tools/discord-bot/" class="btn btn-secondary">
+            View Docs
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Supported Games -->
+    <section class="games-section">
+      <div class="section-inner">
+        <h2 class="section-heading">Supported Games</h2>
+        <p class="section-sub">Dedicated slash commands with game-accurate resolution for six systems.</p>
+        <div class="games-grid">
+          {games.map((game) => (
+            <a class="game-card" href={game.href} style={`--game-accent: ${game.color}`}>
+              <div class="game-card-command">{game.command}</div>
+              <div class="game-card-name">{game.name}</div>
+              <p class="game-card-desc">{game.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Command Quick Reference -->
+    <section class="commands-section">
+      <div class="section-inner">
+        <h2 class="section-heading">Commands</h2>
+        <p class="section-sub">Nine slash commands covering every rolling scenario.</p>
+        <div class="commands-table-wrap">
+          <table class="commands-table">
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Description</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commands.map((cmd) => (
+                <tr>
+                  <td><code class="cmd-name">{cmd.name}</code></td>
+                  <td>{cmd.description}</td>
+                  <td><code class="cmd-example">{cmd.example}</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Example Results -->
+    <section class="examples-section">
+      <div class="section-inner">
+        <h2 class="section-heading">Example Results</h2>
+        <p class="section-sub">Rich embeds with full roll breakdowns, color-coded by outcome.</p>
+        <div class="embeds-grid">
+          <div class="embed-wrap">
+            <div class="embed-label"><code>/roll notation:4d6L+2</code></div>
+            <DiscordEmbed
+              color="#FFD700"
+              title="You rolled a 17"
+              fields={[
+                { name: 'Initial Rolls', value: '3, 4, 2, 6', inline: true },
+                { name: 'Modified Rolls', value: '3, 4, 6', inline: true },
+                { name: 'Total', value: '17', inline: true }
+              ]}
+              footer="/roll notation:4d6L+2"
+            />
+          </div>
+          <div class="embed-wrap">
+            <div class="embed-label"><code>/fifth modifier:5 rolling_with:Advantage</code></div>
+            <DiscordEmbed
+              color="#1E90FF"
+              title="D&D 5e Roll: 23"
+              description="Rolled with Advantage"
+              fields={[
+                { name: 'Dice', value: '18, 14', inline: true },
+                { name: 'Kept', value: '18', inline: true },
+                { name: 'Total', value: '18 + 5 = 23', inline: true }
+              ]}
+              footer="/fifth modifier:5 rolling_with:Advantage"
+            />
+          </div>
+          <div class="embed-wrap">
+            <div class="embed-label"><code>/blades dice:3</code></div>
+            <DiscordEmbed
+              color="#FFD700"
+              title="Critical Success!"
+              description="You rolled two 6s."
+              fields={[
+                { name: 'Dice Pool', value: '3 dice', inline: true },
+                { name: 'Results', value: '6, 6, 3', inline: true },
+                { name: 'Outcome', value: 'Critical', inline: true }
+              ]}
+              footer="/blades dice:3"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- Footer CTA -->
+    <section class="cta-section">
+      <div class="section-inner cta-inner">
+        <h2 class="cta-heading">Ready to roll?</h2>
+        <p class="cta-sub">Add RANDSUM to your server — no configuration required.</p>
+        <div class="cta-actions">
+          <a href={OAUTH_URL} class="btn btn-discord" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"/></svg>
+            Add to Discord
+          </a>
+          <a href="/tools/discord-bot/" class="btn btn-secondary">
+            Full Documentation
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</StarlightPage>
+
+<style>
+  .discord-landing {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ---- Shared ---- */
+
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--sl-color-gray-5);
+    margin: 3rem 0;
+  }
+
+  .section-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-heading {
+    font-family: var(--sl-font-heading);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--sl-color-white);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-sub {
+    color: var(--sl-color-gray-2);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  /* ---- Buttons ---- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    transition: opacity 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn:hover {
+    opacity: 0.88;
+  }
+
+  .btn-discord {
+    background: #5865F2;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(88, 101, 242, 0.4);
+  }
+
+  .btn-discord:hover {
+    box-shadow: 0 4px 16px rgba(88, 101, 242, 0.55);
+    opacity: 1;
+  }
+
+  .btn-secondary {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+    border: 1px solid var(--sl-color-gray-4);
+  }
+
+  /* ---- Hero ---- */
+
+  .hero {
+    padding: 3.5rem 0 2rem;
+    text-align: center;
+  }
+
+  .hero-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(88, 101, 242, 0.15);
+    color: #818cf8;
+    border: 1px solid rgba(88, 101, 242, 0.3);
+    border-radius: 999px;
+    padding: 0.2rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-heading {
+    font-family: var(--sl-font-heading);
+    font-size: clamp(2rem, 6vw, 3.25rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #c084fc, #a855f7, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+  }
+
+  .hero-tagline {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-sub {
+    color: var(--sl-color-gray-2);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ---- Games Grid ---- */
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .game-card {
+    display: block;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    text-decoration: none;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--game-accent, #a855f7);
+    opacity: 0.8;
+  }
+
+  .game-card:hover {
+    border-color: var(--game-accent, #a855f7);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .game-card-command {
+    font-family: var(--sl-font-mono, monospace);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--game-accent, #a855f7);
+    margin-bottom: 0.375rem;
+  }
+
+  .game-card-name {
+    font-family: var(--sl-font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--sl-color-white);
+    margin-bottom: 0.5rem;
+  }
+
+  .game-card-desc {
+    color: var(--sl-color-gray-2);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ---- Commands Table ---- */
+
+  .commands-table-wrap {
+    overflow-x: auto;
+    border-radius: 0.75rem;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .commands-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .commands-table thead {
+    background: var(--sl-color-gray-6);
+  }
+
+  .commands-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    color: var(--sl-color-gray-2);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .commands-table td {
+    padding: 0.75rem 1rem;
+    color: var(--sl-color-gray-2);
+    border-bottom: 1px solid var(--sl-color-gray-6);
+    vertical-align: middle;
+  }
+
+  .commands-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .commands-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .cmd-name {
+    font-family: var(--sl-font-mono, monospace);
+    font-size: 0.875rem;
+    color: #a855f7;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .cmd-example {
+    font-family: var(--sl-font-mono, monospace);
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-3);
+    white-space: nowrap;
+  }
+
+  /* ---- Embeds Grid ---- */
+
+  .embeds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .embed-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .embed-label {
+    font-size: 0.8125rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .embed-label code {
+    font-family: var(--sl-font-mono, monospace);
+    color: #a855f7;
+  }
+
+  /* ---- Footer CTA ---- */
+
+  .cta-section {
+    padding: 2rem 0 3.5rem;
+  }
+
+  .cta-inner {
+    text-align: center;
+  }
+
+  .cta-heading {
+    font-family: var(--sl-font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--sl-color-white);
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-sub {
+    color: var(--sl-color-gray-2);
+    font-size: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ---- Responsive ---- */
+
+  @media (max-width: 600px) {
+    .games-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .embeds-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      padding: 2rem 0 1.5rem;
+    }
+
+    .section-heading {
+      font-size: 1.375rem;
+    }
+  }
+</style>
