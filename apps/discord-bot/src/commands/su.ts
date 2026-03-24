@@ -1,10 +1,11 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
+import { ComponentType, EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { VALID_TABLE_NAMES, roll } from '@randsum/games/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
+import { createRollButton } from '../utils/rollButton.js'
 import type { Command } from '../types.js'
 
-function getColor(roll: number): number {
+function getColor(rollValue: number): number {
   const colors = [
     0x8b0000, // 1 - Dark red
     0xa52a2a, // 2
@@ -27,7 +28,26 @@ function getColor(roll: number): number {
     0x00ced1, // 19
     0x00ff00 // 20 - Green
   ]
-  return colors[roll - 1] ?? 0xffd700
+  return colors[rollValue - 1] ?? 0xffd700
+}
+
+function buildSuEmbed(tableName: string): EmbedBuilder {
+  const rollResult = roll(tableName)
+  const { result } = rollResult
+  const color = getColor(result.roll)
+
+  const embed = new EmbedBuilder()
+    .setColor(color)
+    .setTitle(typeof result.label === 'string' ? result.label : 'Unknown')
+    .setDescription(typeof result.description === 'string' ? result.description : '')
+    .setFooter(embedFooterDetails)
+
+  embed.addFields(
+    { name: 'Table', value: result.tableName, inline: true },
+    { name: 'Roll', value: String(result.roll), inline: true }
+  )
+
+  return embed
 }
 
 export const suCommand: Command = {
@@ -57,30 +77,41 @@ export const suCommand: Command = {
     await interaction.deferReply()
 
     try {
-      const rollResult = roll(tableName)
-      const { result } = rollResult
-      const color = getColor(result.roll)
+      const paramsStr = tableName
+      const embed = buildSuEmbed(tableName)
+      const row = createRollButton('su', paramsStr)
+      const response = await interaction.editReply({ embeds: [embed], components: [row] })
 
-      const embed = new EmbedBuilder()
-        .setColor(color)
-        .setTitle(typeof result.label === 'string' ? result.label : 'Unknown')
-        .setDescription(typeof result.description === 'string' ? result.description : '')
-        .setFooter(embedFooterDetails)
+      const collector = response.createMessageComponentCollector({
+        componentType: ComponentType.Button,
+        filter: i => i.customId === `reroll:su:${paramsStr}`,
+        time: 300_000
+      })
 
-      embed.addFields(
-        {
-          name: 'Table',
-          value: result.tableName,
-          inline: true
-        },
-        {
-          name: 'Roll',
-          value: String(result.roll),
-          inline: true
-        }
-      )
+      collector.on('collect', i => {
+        void (async () => {
+          await i.deferUpdate()
+          try {
+            const reEmbed = buildSuEmbed(tableName)
+            await i.editReply({
+              embeds: [reEmbed],
+              components: [createRollButton('su', paramsStr)]
+            })
+          } catch {
+            await i.editReply({ content: 'An error occurred while re-rolling.' })
+          }
+        })()
+      })
 
-      await interaction.editReply({ embeds: [embed] })
+      collector.on('end', () => {
+        void (async () => {
+          try {
+            await interaction.editReply({ components: [createRollButton('su', paramsStr, true)] })
+          } catch {
+            // Message may have been deleted
+          }
+        })()
+      })
     } catch (e) {
       await replyWithError(
         interaction,

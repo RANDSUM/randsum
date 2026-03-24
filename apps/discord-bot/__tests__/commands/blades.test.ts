@@ -39,11 +39,15 @@ class OptionBuilder {
   }
 }
 
+const mockCollector = {
+  on: mock(() => mockCollector)
+}
+
 void mock.module('discord.js', () => ({
   EmbedBuilder: mock(() => mockEmbed),
   StringSelectMenuBuilder: mock(() => ({})),
   ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
-  ComponentType: { StringSelect: 3 },
+  ComponentType: { StringSelect: 3, Button: 2 },
   SlashCommandBuilder: class {
     public setName(): this {
       return this
@@ -56,6 +60,11 @@ void mock.module('discord.js', () => ({
       return this
     }
   }
+}))
+
+const mockRow = {}
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => mockRow)
 }))
 
 const mockRoll = mock(() => ({
@@ -75,7 +84,9 @@ function makeInteraction(dice: number): {
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
+    editReply: mock(() =>
+      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
+    ),
     options: { getInteger: mock(() => dice) }
   }
 }
@@ -83,6 +94,7 @@ function makeInteraction(dice: number): {
 beforeEach(() => {
   for (const fn of Object.values(mockEmbed)) fn.mockClear()
   mockRoll.mockClear()
+  for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
 
 describe('bladesCommand', () => {
@@ -124,6 +136,14 @@ describe('bladesCommand', () => {
     const interaction = makeInteraction(1)
     await bladesCommand.execute(interaction as never)
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('Failure')
+  })
+
+  test('reply includes re-roll button component', async () => {
+    const interaction = makeInteraction(3)
+    await bladesCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ components: expect.any(Array) })
+    )
   })
 
   test('error path: roll throws, replies with error embed', async () => {

@@ -43,6 +43,10 @@ const mockEmbed = {
   })
 }
 
+const mockCollector = {
+  on: mock(() => mockCollector)
+}
+
 class OptionBuilder {
   public setName(): this {
     return this
@@ -68,7 +72,7 @@ void mock.module('discord.js', () => ({
   EmbedBuilder: mock(() => mockEmbed),
   StringSelectMenuBuilder: mock(() => ({})),
   ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
-  ComponentType: { StringSelect: 3 },
+  ComponentType: { StringSelect: 3, Button: 2 },
   SlashCommandBuilder: class {
     public setName(): this {
       return this
@@ -89,6 +93,11 @@ void mock.module('discord.js', () => ({
       return this
     }
   }
+}))
+
+const mockRow = {}
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => mockRow)
 }))
 
 // Mock functions delegate to real implementations by default.
@@ -139,13 +148,16 @@ function makeInteraction(opts: Record<string, string | null> = {}): {
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
+    editReply: mock(() =>
+      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
+    ),
     options: { getString: mock((name: string) => opts[name] ?? null) }
   }
 }
 
 beforeEach(() => {
   for (const fn of Object.values(mockEmbed)) fn.mockClear()
+  for (const fn of Object.values(mockCollector)) fn.mockClear()
   // Reset to real implementations (mockClear only resets call counts, not implementation)
   mockNotation
     .mockClear()
@@ -173,6 +185,19 @@ describe('rollCommand', () => {
     expect(mockRoll).toHaveBeenCalledTimes(1)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
     expect(mockEmbed.setTitle).toHaveBeenCalledWith('You rolled a 15')
+  })
+
+  test('reply includes re-roll button component', async () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 15,
+      result: ['8', '7'],
+      rolls: [{ initialRolls: [8, 7], rolls: [8, 7], modifierLogs: [] }]
+    }))
+    const interaction = makeInteraction({ notation: '2d6' })
+    await rollCommand.execute(interaction as never)
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ components: expect.any(Array) })
+    )
   })
 
   test('invalid notation: replyWithError called, roll not called', async () => {
