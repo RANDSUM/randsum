@@ -28,6 +28,9 @@ pre-push:
     codegen-check:
       run: bun run --filter @randsum/games gen:check > /dev/null 2>&1
       priority: 2
+    conformance-check:
+      run: bun run --filter @randsum/rdn conformance:check > /dev/null 2>&1
+      priority: 2
     test:
       run: bun run test 2>&1 | tail -5
       priority: 2

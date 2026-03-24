@@ -1,6 +1,6 @@
 {
   "specVersion": "0.9.0",
-  "generatedFrom": "Appendix G of the RANDSUM Dice Notation Specification v0.9.0",
+  "generatedFrom": "apps/rdn/src/conformance/vectors.ts",
   "conformanceLevels": {
     "level1_core": [1, 2, 3, 10, 11, 14, 15, 16, 19, 20, 26, 27],
     "level2_vtt": [
@@ -293,36 +293,36 @@
       "id": 28,
       "notation": "4d",
       "category": "error_cases",
-      "expectedError": true,
       "section": "9.5",
-      "conformanceLevel": 1
+      "conformanceLevel": 1,
+      "expectedError": true
     },
     {
       "id": 29,
       "notation": "d",
       "category": "error_cases",
-      "expectedError": true,
       "section": "9.5",
-      "conformanceLevel": 1
+      "conformanceLevel": 1,
+      "expectedError": true
     },
     {
       "id": 30,
       "notation": "d0",
       "category": "error_cases",
-      "expectedError": true,
       "section": "9.5",
-      "conformanceLevel": 1
+      "conformanceLevel": 1,
+      "expectedError": true
     },
     {
       "id": 31,
       "notation": "2d{fire,ice,lightning}",
       "category": "extended_coverage",
       "seedRolls": [2, 1],
-      "note": "Face indices: 1=fire, 2=ice, 3=lightning. Roll values map to face labels.",
       "expectedPool": ["ice", "fire"],
       "expectedTotal": null,
       "section": "4.2",
-      "conformanceLevel": 3
+      "conformanceLevel": 3,
+      "note": "Face indices: 1=fire, 2=ice, 3=lightning. Roll values map to face labels."
     },
     {
       "id": 32,
@@ -432,12 +432,12 @@
       "id": 42,
       "notation": "4d6C{5}L!+2",
       "category": "extended_coverage",
-      "note": "Complex multi-modifier chain. Exact pool depends on priority resolution; see Section 6.9.",
       "seedRolls": [6, 1, 5, 6],
       "expectedPool": null,
       "expectedTotal": null,
       "section": "6.9",
-      "conformanceLevel": 4
+      "conformanceLevel": 4,
+      "note": "Complex multi-modifier chain. Exact pool depends on priority resolution; see Section 6.9."
     },
     {
       "id": 43,
@@ -474,27 +474,27 @@
       "id": 46,
       "notation": "0d6",
       "category": "error_cases",
-      "expectedError": true,
       "section": "9.5",
-      "conformanceLevel": 1
+      "conformanceLevel": 1,
+      "expectedError": true
     },
     {
       "id": 47,
       "notation": "5d10S{7}F{3}",
       "category": "error_cases",
-      "expectedError": true,
-      "errorDescription": "Multiple Count modifiers are not permitted",
       "section": "6.9",
-      "conformanceLevel": 1
+      "conformanceLevel": 1,
+      "expectedError": true,
+      "errorDescription": "Multiple Count modifiers are not permitted"
     },
     {
       "id": 48,
       "notation": "4d6 L",
       "category": "error_cases",
-      "expectedError": true,
-      "errorDescription": "Whitespace between tokens is not permitted",
       "section": "8.2",
-      "conformanceLevel": 1
+      "conformanceLevel": 1,
+      "expectedError": true,
+      "errorDescription": "Whitespace between tokens is not permitted"
     }
   ]
 }
