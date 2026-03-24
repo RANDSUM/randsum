@@ -4,6 +4,7 @@ import { validateComparisonOptions } from '../lib/comparison'
 import { matchesComparison } from '../lib/comparison/matchesComparison'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierDefinition } from './schema'
 
 const replacePattern = /[Vv]\{((?:>=|<=|>|<)?\d+=\d+(?:,(?:>=|<=|>|<)?\d+=\d+)*)\}/
@@ -14,6 +15,56 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
     priority: 30,
 
     pattern: replacePattern,
+
+    docs: [
+      {
+        key: 'V{..}',
+        category: 'Map',
+        color: '#2dd4bf',
+        colorLight: '#0d9488',
+        title: 'Replace',
+        description: 'Replace dice showing specific values with a new value.',
+        displayBase: 'V{..}',
+        forms: [{ notation: 'V{...}', note: 'Comma-separate multiple rules' }],
+        comparisons: [
+          { operator: 'n=y', note: 'replace exact match n with y' },
+          { operator: '>n=y', note: 'replace anything above n with y' },
+          { operator: '>=n=y', note: 'replace n or higher with y' },
+          { operator: '<n=y', note: 'replace anything below n with y' },
+          { operator: '<=n=y', note: 'replace n or lower with y' }
+        ],
+        examples: [
+          {
+            description: 'Replace 1s with 2',
+            notation: '4d6V{1=2}',
+            options: { sides: 6, quantity: 4, modifiers: { replace: { from: 1, to: 2 } } }
+          },
+          {
+            description: 'Cap 19s and 20s to 20',
+            notation: '4d20V{>18=20}',
+            options: {
+              sides: 20,
+              quantity: 4,
+              modifiers: { replace: { from: { greaterThan: 18 }, to: 20 } }
+            }
+          },
+          {
+            description: 'Replace multiple',
+            notation: '4d6V{1=2,6=5}',
+            options: {
+              sides: 6,
+              quantity: 4,
+              modifiers: {
+                replace: [
+                  { from: 1, to: 2 },
+                  { from: 6, to: 5 }
+                ]
+              }
+            }
+          }
+        ]
+      } satisfies NotationDoc
+    ],
 
     parse: notation => {
       const match = replacePattern.exec(notation)

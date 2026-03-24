@@ -2,6 +2,7 @@ import type { UniqueOptions } from '../notation/types'
 import { formatHumanList } from '../notation/formatHumanList'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 import { ModifierError } from '../errors'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
@@ -16,6 +17,36 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
   priority: 60,
 
   pattern: uniquePattern,
+
+  docs: [
+    {
+      key: 'U',
+      category: 'Substitute',
+      color: '#5eead4',
+      colorLight: '#0f766e',
+      title: 'Unique',
+      description: 'Force all dice in the pool to show different values by rerolling duplicates.',
+      displayBase: 'U',
+      forms: [
+        {
+          notation: 'U({..})',
+          note: 'All unique; optional exceptions list'
+        }
+      ],
+      examples: [
+        {
+          description: 'Roll 4d20, no duplicate results',
+          notation: '4d20U',
+          options: { sides: 20, quantity: 4, modifiers: { unique: true } }
+        },
+        {
+          description: 'Unique except 1s may repeat',
+          notation: '4d6U{1}',
+          options: { sides: 6, quantity: 4, modifiers: { unique: { notUnique: [1] } } }
+        }
+      ]
+    } satisfies NotationDoc
+  ],
 
   parse: notation => {
     const match = uniquePattern.exec(notation)
