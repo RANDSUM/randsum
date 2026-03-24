@@ -1,6 +1,7 @@
 import type { ModifierOptions } from '../notation/types'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierDefinition } from './schema'
 import { createScaleBehavior } from './shared/scale'
 
@@ -12,6 +13,31 @@ export const plusSchema: NotationSchema<number> = defineNotationSchema<number>({
   priority: 90,
 
   pattern: plusPattern,
+
+  docs: [
+    {
+      key: '+',
+      category: 'Scale',
+      color: '#4ade80',
+      colorLight: '#16a34a',
+      title: 'Add',
+      description: 'Add a fixed number to the total after all dice are rolled.',
+      displayBase: '+',
+      forms: [{ notation: '+n', note: 'Add n to total' }],
+      examples: [
+        {
+          description: 'Roll 1d20, add 5',
+          notation: '1d20+5',
+          options: { sides: 20, modifiers: { plus: 5 } }
+        },
+        {
+          description: 'Roll 2d6, add 3',
+          notation: '2d6+3',
+          options: { sides: 6, quantity: 2, modifiers: { plus: 3 } }
+        }
+      ]
+    } satisfies NotationDoc
+  ],
 
   parse: notation => {
     const matches = Array.from(notation.matchAll(plusGlobalPattern))
