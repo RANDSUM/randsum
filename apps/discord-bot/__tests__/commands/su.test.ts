@@ -1,70 +1,8 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => {
-    return mockEmbed
-  }),
-  setTitle: mock(() => {
-    return mockEmbed
-  }),
-  setDescription: mock(() => {
-    return mockEmbed
-  }),
-  setFooter: mock(() => {
-    return mockEmbed
-  }),
-  addFields: mock(() => {
-    return mockEmbed
-  })
-}
-
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public addChoices(): this {
-    return this
-  }
-  public setAutocomplete(): this {
-    return this
-  }
-}
-
 const mockCollector = {
   on: mock(() => mockCollector)
 }
-
-void mock.module('../../src/utils/discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  StringSelectMenuBuilder: mock(() => ({})),
-  ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
-  ButtonBuilder: mock(() => ({
-    setCustomId: () => ({}),
-    setLabel: () => ({}),
-    setStyle: () => ({}),
-    setDisabled: () => ({})
-  })),
-  ButtonStyle: { Secondary: 2 },
-  ComponentType: { StringSelect: 3, Button: 2 },
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-    public addStringOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
-}))
 
 const mockRow = {}
 void mock.module('../../src/utils/rollButton.js', () => ({
@@ -106,7 +44,6 @@ function makeInteraction(table: string | null = null): {
 }
 
 beforeEach(() => {
-  for (const fn of Object.values(mockEmbed)) fn.mockClear()
   mockRoll.mockClear()
   for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
@@ -128,7 +65,11 @@ describe('suCommand', () => {
   test('embed title matches result label', async () => {
     const interaction = makeInteraction(null)
     await suCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Success')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Success')
   })
 
   test('reply includes re-roll button component', async () => {
@@ -145,7 +86,10 @@ describe('suCommand', () => {
     })
     const interaction = makeInteraction(null)
     await suCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Error')
   })
 })

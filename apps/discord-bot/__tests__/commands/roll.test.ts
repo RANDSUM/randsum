@@ -1,96 +1,15 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-// discord.js mock MUST be registered before any await import() calls.
-// On Linux CI, Bun may pre-link transitive module graphs during async
-// imports, causing "Export named X not found" if the mock isn't set yet.
-const mockEmbed = {
-  setColor: mock(() => {
-    return mockEmbed
-  }),
-  setTitle: mock(() => {
-    return mockEmbed
-  }),
-  setDescription: mock(() => {
-    return mockEmbed
-  }),
-  setFooter: mock(() => {
-    return mockEmbed
-  }),
-  addFields: mock(() => {
-    return mockEmbed
-  }),
-  setThumbnail: mock(() => {
-    return mockEmbed
-  }),
-  setURL: mock(() => {
-    return mockEmbed
-  })
-}
-
 const mockCollector = {
   on: mock(() => mockCollector)
 }
-
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public setMinValue(): this {
-    return this
-  }
-  public setMaxValue(): this {
-    return this
-  }
-  public addChoices(): this {
-    return this
-  }
-}
-
-void mock.module('../../src/utils/discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  StringSelectMenuBuilder: mock(() => ({})),
-  ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
-  ButtonBuilder: mock(() => ({
-    setCustomId: () => ({ setLabel: () => ({ setStyle: () => ({}) }) })
-  })),
-  ButtonStyle: { Secondary: 2 },
-  ComponentType: { StringSelect: 3, Button: 2 },
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-    public addStringOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addIntegerOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addBooleanOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
-}))
 
 const mockRow = {}
 void mock.module('../../src/utils/rollButton.js', () => ({
   createRollButton: mock(() => mockRow)
 }))
 
-// Import real roller implementations AFTER all mock.module calls for discord.js.
-// On Linux CI, Bun may pre-link transitive module graphs during await import(),
-// so discord.js mock must be registered first.
+// Import real roller implementations — no discord.js mocking needed.
 const {
   roll: realRoll,
   isDiceNotation,
@@ -108,9 +27,6 @@ const {
 } = await import('../../../../packages/roller/src/index')
 
 // Mock functions delegate to real implementations by default.
-// This is critical: mock.module leaks globally in Bun, so if other test files
-// import roll from @randsum/roller, they must get the real behavior, not mock data.
-// Only individual tests override with mockImplementationOnce for controlled results.
 const mockNotation = mock((...args: Parameters<typeof realNotation>) => realNotation(...args))
 const mockRoll = mock((...args: Parameters<typeof realRoll>) => realRoll(...args))
 const mockSuggestNotationFix = mock((...args: Parameters<typeof realSuggestNotationFix>) =>
@@ -133,7 +49,6 @@ void mock.module('@randsum/roller', () => ({
   ERROR_CODES
 }))
 
-// Mock subpath imports to match the narrowed imports in source
 void mock.module('@randsum/roller/roll', () => ({
   roll: mockRoll
 }))
@@ -145,6 +60,7 @@ void mock.module('@randsum/roller/validate', () => ({
   validateFinite,
   validateRange
 }))
+
 const mockTraceRoll = mock(() => [
   { kind: 'rolls', label: 'Rolled', unchanged: [3, 4], removed: [], added: [] }
 ])
@@ -175,9 +91,7 @@ function makeInteraction(opts: Record<string, string | null> = {}): {
 }
 
 beforeEach(() => {
-  for (const fn of Object.values(mockEmbed)) fn.mockClear()
   for (const fn of Object.values(mockCollector)) fn.mockClear()
-  // Reset to real implementations (mockClear only resets call counts, not implementation)
   mockNotation
     .mockClear()
     .mockImplementation((...args: Parameters<typeof realNotation>) => realNotation(...args))
@@ -208,7 +122,11 @@ describe('rollCommand', () => {
     expect(interaction.deferReply).toHaveBeenCalledTimes(1)
     expect(mockRoll).toHaveBeenCalledTimes(1)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('You rolled a 15')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('You rolled a 15')
   })
 
   test('reply includes re-roll button component', async () => {
@@ -260,7 +178,12 @@ describe('rollCommand', () => {
     }))
     const interaction = makeInteraction({ notation: '2d6L' })
     await rollCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
+    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Modified Rolls')
   })
 
   test('error with suggestion: embed description includes "Did you mean" text', async () => {
@@ -271,9 +194,11 @@ describe('rollCommand', () => {
     const interaction = makeInteraction({ notation: '2d garbage' })
     await rollCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    expect(mockEmbed.setDescription).toHaveBeenCalledWith(
-      expect.stringContaining('Did you mean `2d6`?')
-    )
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(String(embedJson.description)).toContain('Did you mean `2d6`?')
   })
 
   test('error without suggestion: shows generic error message without "Did you mean"', async () => {
@@ -284,9 +209,11 @@ describe('rollCommand', () => {
     const interaction = makeInteraction({ notation: 'zzz' })
     await rollCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    expect(mockEmbed.setDescription).not.toHaveBeenCalledWith(
-      expect.stringContaining('Did you mean')
-    )
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(String(embedJson.description)).not.toContain('Did you mean')
   })
 
   test('Show Work button omitted when trace has only 1 step', async () => {
@@ -299,7 +226,7 @@ describe('rollCommand', () => {
     ])
     const interaction = makeInteraction({ notation: '1d6' })
     await rollCommand.execute(interaction as never)
-    const callArgs = interaction.editReply.mock.calls[0][0] as { components: unknown[] }
+    const callArgs = interaction.editReply.mock.calls[0]?.[0] as { components: unknown[] }
     expect(callArgs.components).toHaveLength(1)
   })
 
@@ -323,7 +250,7 @@ describe('rollCommand', () => {
     ])
     const interaction = makeInteraction({ notation: '2d6L' })
     await rollCommand.execute(interaction as never)
-    const callArgs = interaction.editReply.mock.calls[0][0] as { components: unknown[] }
+    const callArgs = interaction.editReply.mock.calls[0]?.[0] as { components: unknown[] }
     expect(callArgs.components).toHaveLength(2)
   })
 })

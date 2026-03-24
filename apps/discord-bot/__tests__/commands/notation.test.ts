@@ -1,37 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => {
-    return mockEmbed
-  }),
-  setTitle: mock(() => {
-    return mockEmbed
-  }),
-  setDescription: mock(() => {
-    return mockEmbed
-  }),
-  setFooter: mock(() => {
-    return mockEmbed
-  }),
-  addFields: mock(() => {
-    return mockEmbed
-  }),
-  setURL: mock(() => {
-    return mockEmbed
-  })
-}
-
-const mockSelectMenu = {
-  setCustomId: mock(() => mockSelectMenu),
-  setPlaceholder: mock(() => mockSelectMenu),
-  addOptions: mock(() => mockSelectMenu),
-  setDisabled: mock(() => mockSelectMenu)
-}
-
-const mockActionRow = {
-  addComponents: mock(() => mockActionRow)
-}
-
 const mockCollector = {
   on: mock(() => mockCollector),
   stop: mock(() => undefined)
@@ -41,21 +9,6 @@ const mockMessage = {
   createMessageComponentCollector: mock(() => mockCollector),
   edit: mock(() => Promise.resolve(undefined))
 }
-
-void mock.module('../../src/utils/discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  StringSelectMenuBuilder: mock(() => mockSelectMenu),
-  ActionRowBuilder: mock(() => mockActionRow),
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-  },
-  ComponentType: { StringSelect: 3 }
-}))
 
 // Mock NOTATION_DOCS with a controlled fixture so tests are deterministic
 const mockNotationDocs = {
@@ -111,9 +64,6 @@ function makeInteraction(): {
 }
 
 beforeEach(() => {
-  for (const fn of Object.values(mockEmbed)) fn.mockClear()
-  for (const fn of Object.values(mockSelectMenu)) fn.mockClear()
-  for (const fn of Object.values(mockActionRow)) fn.mockClear()
   for (const fn of Object.values(mockCollector)) fn.mockClear()
   for (const fn of Object.values(mockMessage)) fn.mockClear()
 })
@@ -126,25 +76,37 @@ describe('notationCommand', () => {
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
   })
 
-  test('uses NOTATION_DOCS grouped by category', async () => {
+  test('editReply includes embeds and components', async () => {
     const interaction = makeInteraction()
     await notationCommand.execute(interaction as never)
-    // StringSelectMenuBuilder should be instantiated (for category pagination)
-    const { StringSelectMenuBuilder } = await import('../../src/utils/discord.js')
-    expect(StringSelectMenuBuilder).toHaveBeenCalled()
+    expect(interaction.editReply).toHaveBeenCalledWith(
+      expect.objectContaining({
+        embeds: expect.any(Array),
+        components: expect.any(Array)
+      })
+    )
   })
 
   test('embed title links to notation.randsum.dev', async () => {
     const interaction = makeInteraction()
     await notationCommand.execute(interaction as never)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('notation.randsum.dev')
-    expect(mockEmbed.setURL).toHaveBeenCalledWith('https://notation.randsum.dev')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('notation.randsum.dev')
+    expect(embedJson.url).toBe('https://notation.randsum.dev')
   })
 
   test('embed shows fields for first category entries', async () => {
     const interaction = makeInteraction()
     await notationCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: unknown[] }
+    expect(embedJson.fields).toBeDefined()
+    expect((embedJson.fields ?? []).length).toBeGreaterThan(0)
   })
 
   test('collector is created with 5-minute timeout', async () => {
@@ -163,15 +125,15 @@ describe('notationCommand', () => {
     expect(endCall).toBeDefined()
   })
 
-  test('select menu options include all categories', async () => {
+  test('components include a select menu with category options', async () => {
     const interaction = makeInteraction()
     await notationCommand.execute(interaction as never)
-    // addOptions called with category entries
-    expect(mockSelectMenu.addOptions).toHaveBeenCalled()
-    const addOptionsCall = (mockSelectMenu.addOptions as ReturnType<typeof mock>).mock
-      .calls[0]?.[0] as { label: string; value: string }[] | undefined
-    const labels = addOptionsCall?.map((o: { label: string }) => o.label) ?? []
-    // Our mock has two categories: Filter and Clamp
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      components: { toJSON: () => { components: { options?: { label: string }[] }[] } }[]
+    }
+    const rowJson = call.components[0]?.toJSON()
+    const selectMenu = rowJson?.components[0]
+    const labels = (selectMenu?.options ?? []).map(o => o.label)
     expect(labels).toContain('Filter')
     expect(labels).toContain('Clamp')
   })

@@ -1,76 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => mockEmbed),
-  setTitle: mock(() => mockEmbed),
-  setDescription: mock(() => mockEmbed),
-  setFooter: mock(() => mockEmbed),
-  addFields: mock(() => mockEmbed),
-  setURL: mock(() => mockEmbed)
-}
-
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public setMinValue(): this {
-    return this
-  }
-  public setMaxValue(): this {
-    return this
-  }
-  public addChoices(): this {
-    return this
-  }
-  public setAutocomplete(): this {
-    return this
-  }
-}
-
-void mock.module('../../src/utils/discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  StringSelectMenuBuilder: mock(() => ({})),
-  ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
-  ButtonBuilder: mock(() => ({
-    setCustomId: () => ({}),
-    setLabel: () => ({}),
-    setStyle: () => ({}),
-    setDisabled: () => ({})
-  })),
-  ButtonStyle: { Secondary: 2 },
-  ComponentType: { StringSelect: 3, Button: 2 },
-  SlashCommandBuilder: class {
-    public name = ''
-    public description = ''
-    public setName(n: string): this {
-      this.name = n
-      return this
-    }
-    public setDescription(d: string): this {
-      this.description = d
-      return this
-    }
-    public addStringOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addIntegerOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addBooleanOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
-}))
-
 void mock.module('@randsum/roller', () => ({
   roll: () => ({ total: 1, result: ['1'], rolls: [] }),
   notation: () => ({}),
@@ -103,7 +32,6 @@ void mock.module('@randsum/games/salvageunion', () => ({
   VALID_TABLE_NAMES: ['Core Mechanic']
 }))
 
-// Must mock rollButton to avoid import issues
 void mock.module('../../src/utils/rollButton.js', () => ({
   createRollButton: mock(() => ({}))
 }))
@@ -147,18 +75,31 @@ describe('helpCommand', () => {
   test('execute: embed uses gold color', async () => {
     const interaction = makeInteraction()
     await helpCommand.execute(interaction as never)
-    expect(mockEmbed.setColor).toHaveBeenCalledWith('#FFD700')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.color).toBe(0xffd700)
   })
 
   test('execute: embed includes footer', async () => {
     const interaction = makeInteraction()
     await helpCommand.execute(interaction as never)
-    expect(mockEmbed.setFooter).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { footer?: unknown }
+    expect(embedJson.footer).toBeDefined()
   })
 
   test('execute: embed lists commands via addFields', async () => {
     const interaction = makeInteraction()
     await helpCommand.execute(interaction as never)
-    expect(mockEmbed.addFields).toHaveBeenCalled()
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON() as { fields?: unknown[] }
+    expect(embedJson.fields).toBeDefined()
+    expect((embedJson.fields ?? []).length).toBeGreaterThan(0)
   })
 })

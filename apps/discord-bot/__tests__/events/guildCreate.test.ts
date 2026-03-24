@@ -1,18 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => mockEmbed),
-  setTitle: mock(() => mockEmbed),
-  setDescription: mock(() => mockEmbed),
-  setFooter: mock(() => mockEmbed),
-  addFields: mock(() => mockEmbed),
-  setURL: mock(() => mockEmbed)
-}
-
-void mock.module('../../src/utils/discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed)
-}))
-
 const { guildCreateHandler } = await import('../../src/events/guildCreate.js')
 
 function makeGuild(systemChannelOverride?: null | { send: ReturnType<typeof mock> }): {
@@ -30,11 +17,21 @@ function makeGuild(systemChannelOverride?: null | { send: ReturnType<typeof mock
   }
 }
 
+function getEmbedJson(guild: {
+  systemChannel: { send: ReturnType<typeof mock> }
+}): Record<string, unknown> {
+  const sendMock = guild.systemChannel.send
+  const call = sendMock.mock.calls[0]![0] as {
+    embeds: { toJSON: () => Record<string, unknown> }[]
+  }
+  return call.embeds[0]!.toJSON()
+}
+
 describe('guildCreateHandler', () => {
   test('sends welcome embed to systemChannel when present', async () => {
     const guild = makeGuild()
     await guildCreateHandler(guild as never)
-    expect(guild.systemChannel?.send).toHaveBeenCalledWith(
+    expect(guild.systemChannel!.send).toHaveBeenCalledWith(
       expect.objectContaining({ embeds: expect.any(Array) })
     )
   })
@@ -51,37 +48,32 @@ describe('guildCreateHandler', () => {
   test('welcome embed uses purple color', async () => {
     const guild = makeGuild()
     await guildCreateHandler(guild as never)
-    expect(mockEmbed.setColor).toHaveBeenCalledWith('#A855F7')
+    const embedJson = getEmbedJson(guild)
+    expect(embedJson.color).toBe(0xa855f7)
   })
 
   test('welcome embed includes footer', async () => {
     const guild = makeGuild()
     await guildCreateHandler(guild as never)
-    expect(mockEmbed.setFooter).toHaveBeenCalled()
+    const embedJson = getEmbedJson(guild)
+    expect(embedJson.footer).toBeDefined()
   })
 
-  test('welcome embed includes a link to notation.randsum.dev via setURL or description', async () => {
+  test('welcome embed includes a link to notation.randsum.dev via description', async () => {
     const guild = makeGuild()
     await guildCreateHandler(guild as never)
-    // Either setURL or setDescription should mention the notation URL
-    const urlCalled = mockEmbed.setURL.mock.calls.some(call =>
-      String(call[0]).includes('notation.randsum.dev')
-    )
-    const descCalled = mockEmbed.setDescription.mock.calls.some(call =>
-      String(call[0]).includes('notation.randsum.dev')
-    )
-    expect(urlCalled || descCalled).toBe(true)
+    const embedJson = getEmbedJson(guild)
+    expect(embedJson.description as string).toContain('notation.randsum.dev')
   })
 
   test('welcome embed mentions RANDSUM in title or description', async () => {
     const guild = makeGuild()
     await guildCreateHandler(guild as never)
-    const titleCalled = mockEmbed.setTitle.mock.calls.some(call =>
-      String(call[0]).toUpperCase().includes('RANDSUM')
-    )
-    const descCalled = mockEmbed.setDescription.mock.calls.some(call =>
-      String(call[0]).toUpperCase().includes('RANDSUM')
-    )
-    expect(titleCalled || descCalled).toBe(true)
+    const embedJson = getEmbedJson(guild)
+    const title = (embedJson.title as string | undefined) ?? ''
+    const desc = (embedJson.description as string | undefined) ?? ''
+    const titleMatch = title.toUpperCase().includes('RANDSUM')
+    const descMatch = desc.toUpperCase().includes('RANDSUM')
+    expect(titleMatch || descMatch).toBe(true)
   })
 })

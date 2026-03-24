@@ -1,67 +1,8 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: mock(() => mockEmbed),
-  setTitle: mock(() => mockEmbed),
-  setDescription: mock(() => mockEmbed),
-  setFooter: mock(() => mockEmbed),
-  addFields: mock(() => mockEmbed)
-}
-
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public setMinValue(): this {
-    return this
-  }
-  public setMaxValue(): this {
-    return this
-  }
-  public addChoices(): this {
-    return this
-  }
-}
-
 const mockCollector = {
   on: mock(() => mockCollector)
 }
-
-void mock.module('../../src/utils/discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  StringSelectMenuBuilder: mock(() => ({})),
-  ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
-  ButtonBuilder: mock(() => ({
-    setCustomId: () => ({}),
-    setLabel: () => ({}),
-    setStyle: () => ({}),
-    setDisabled: () => ({})
-  })),
-  ButtonStyle: { Secondary: 2 },
-  ComponentType: { StringSelect: 3, Button: 2 },
-  SlashCommandBuilder: class {
-    public setName(): this {
-      return this
-    }
-    public setDescription(): this {
-      return this
-    }
-    public addIntegerOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addStringOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
-}))
 
 const mockRow = {}
 void mock.module('../../src/utils/rollButton.js', () => ({
@@ -103,7 +44,6 @@ function makeInteraction(
 }
 
 beforeEach(() => {
-  for (const fn of Object.values(mockEmbed)) fn.mockClear()
   mockRoll.mockClear()
   for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
@@ -112,8 +52,12 @@ describe('fifthCommand', () => {
   test('normal roll uses blue color', async () => {
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
-    expect(mockEmbed.setColor).toHaveBeenCalledWith(0x1e90ff)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('D&D 5e Roll: 15')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.color).toBe(0x1e90ff)
+    expect(embedJson.title).toBe('D&D 5e Roll: 15')
   })
 
   test('passes crit: true in the roll call', async () => {
@@ -151,8 +95,12 @@ describe('fifthCommand', () => {
     }))
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
-    expect(mockEmbed.setColor).toHaveBeenCalledWith(0xffd700)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Natural 20! D&D 5e Roll: 20')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.color).toBe(0xffd700)
+    expect(embedJson.title).toBe('Natural 20! D&D 5e Roll: 20')
   })
 
   test('natural 1 uses crimson color and "Natural 1!" prefix', async () => {
@@ -164,8 +112,12 @@ describe('fifthCommand', () => {
     }))
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
-    expect(mockEmbed.setColor).toHaveBeenCalledWith(0xdc143c)
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Natural 1! D&D 5e Roll: 1')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.color).toBe(0xdc143c)
+    expect(embedJson.title).toBe('Natural 1! D&D 5e Roll: 1')
   })
 
   test('reply includes re-roll button component', async () => {
@@ -182,7 +134,10 @@ describe('fifthCommand', () => {
     })
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith({ embeds: [mockEmbed] })
-    expect(mockEmbed.setTitle).toHaveBeenCalledWith('Error')
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => Record<string, unknown> }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    expect(embedJson.title).toBe('Error')
   })
 })

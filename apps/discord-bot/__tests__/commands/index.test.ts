@@ -1,77 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
 
-const mockEmbed = {
-  setColor: () => mockEmbed,
-  setTitle: () => mockEmbed,
-  setDescription: () => mockEmbed,
-  setFooter: () => mockEmbed,
-  addFields: () => mockEmbed,
-  setThumbnail: () => mockEmbed,
-  setURL: () => mockEmbed
-}
-
-class OptionBuilder {
-  public setName(): this {
-    return this
-  }
-  public setDescription(): this {
-    return this
-  }
-  public setRequired(): this {
-    return this
-  }
-  public setMinValue(): this {
-    return this
-  }
-  public setMaxValue(): this {
-    return this
-  }
-  public addChoices(): this {
-    return this
-  }
-  public setAutocomplete(): this {
-    return this
-  }
-}
-
-void mock.module('../../src/utils/discord.js', () => ({
-  EmbedBuilder: mock(() => mockEmbed),
-  StringSelectMenuBuilder: mock(() => ({})),
-  ActionRowBuilder: mock(() => ({ addComponents: () => ({}) })),
-  ButtonBuilder: mock(() => ({
-    setCustomId: () => ({}),
-    setLabel: () => ({}),
-    setStyle: () => ({}),
-    setDisabled: () => ({})
-  })),
-  ButtonStyle: { Secondary: 2 },
-  ComponentType: { StringSelect: 3, Button: 2 },
-  SlashCommandBuilder: class {
-    public name = ''
-    public description = ''
-    public setName(n: string): this {
-      this.name = n
-      return this
-    }
-    public setDescription(d: string): this {
-      this.description = d
-      return this
-    }
-    public addStringOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addIntegerOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-    public addBooleanOption(fn: (o: OptionBuilder) => unknown): this {
-      fn(new OptionBuilder())
-      return this
-    }
-  }
-}))
-
 void mock.module('@randsum/roller', () => ({
   roll: () => ({ total: 1, result: ['1'], rolls: [] }),
   notation: () => ({}),
@@ -102,6 +30,10 @@ void mock.module('@randsum/games/root-rpg', () => ({ roll: () => ({ total: 1 }) 
 void mock.module('@randsum/games/salvageunion', () => ({
   roll: () => ({ total: 1 }),
   VALID_TABLE_NAMES: ['Core Mechanic']
+}))
+
+void mock.module('../../src/utils/rollButton.js', () => ({
+  createRollButton: mock(() => ({}))
 }))
 
 const { commands } = await import('../../src/commands/index.js')
