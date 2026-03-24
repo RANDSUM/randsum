@@ -1,8 +1,7 @@
-import { ComponentType, EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
-import { createRollButton } from '../utils/rollButton.js'
 import type { Command } from '../types.js'
 
 const ROOT_IMAGES = {
@@ -68,41 +67,8 @@ export const rootCommand: Command = {
     await interaction.deferReply()
 
     try {
-      const paramsStr = String(modifier)
       const embed = buildRootEmbed(modifier, memberNick)
-      const row = createRollButton('root', paramsStr)
-      const response = await interaction.editReply({ embeds: [embed], components: [row] })
-
-      const collector = response.createMessageComponentCollector({
-        componentType: ComponentType.Button,
-        filter: i => i.customId === `reroll:root:${paramsStr}`,
-        time: 300_000
-      })
-
-      collector.on('collect', i => {
-        void (async () => {
-          await i.deferUpdate()
-          try {
-            const reEmbed = buildRootEmbed(modifier, memberNick)
-            await i.editReply({
-              embeds: [reEmbed],
-              components: [createRollButton('root', paramsStr)]
-            })
-          } catch {
-            await i.editReply({ content: 'An error occurred while re-rolling.' })
-          }
-        })()
-      })
-
-      collector.on('end', () => {
-        void (async () => {
-          try {
-            await interaction.editReply({ components: [createRollButton('root', paramsStr, true)] })
-          } catch {
-            // Message may have been deleted
-          }
-        })()
-      })
+      await interaction.editReply({ embeds: [embed] })
     } catch (e) {
       await replyWithError(
         interaction,

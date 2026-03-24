@@ -1,8 +1,7 @@
-import { ComponentType, EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/daggerheart'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
-import { createRollButton } from '../utils/rollButton.js'
 import type { Command } from '../types.js'
 
 interface DhParams {
@@ -112,46 +111,8 @@ export const dhCommand: Command = {
 
     try {
       const dhParams: DhParams = { modifier, rollingWith, amplifyHope, amplifyFear }
-      const paramsStr = JSON.stringify({
-        modifier,
-        ...(rollingWith ? { rollingWith } : {}),
-        amplifyHope,
-        amplifyFear
-      })
       const embed = buildDhEmbed(dhParams)
-      const row = createRollButton('dh', paramsStr)
-      const response = await interaction.editReply({ embeds: [embed], components: [row] })
-
-      const collector = response.createMessageComponentCollector({
-        componentType: ComponentType.Button,
-        filter: i => i.customId === `reroll:dh:${paramsStr}`,
-        time: 300_000
-      })
-
-      collector.on('collect', i => {
-        void (async () => {
-          await i.deferUpdate()
-          try {
-            const reEmbed = buildDhEmbed(dhParams)
-            await i.editReply({
-              embeds: [reEmbed],
-              components: [createRollButton('dh', paramsStr)]
-            })
-          } catch {
-            await i.editReply({ content: 'An error occurred while re-rolling.' })
-          }
-        })()
-      })
-
-      collector.on('end', () => {
-        void (async () => {
-          try {
-            await interaction.editReply({ components: [createRollButton('dh', paramsStr, true)] })
-          } catch {
-            // Message may have been deleted
-          }
-        })()
-      })
+      await interaction.editReply({ embeds: [embed] })
     } catch (e) {
       await replyWithError(
         interaction,

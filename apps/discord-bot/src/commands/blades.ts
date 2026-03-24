@@ -1,8 +1,7 @@
-import { ComponentType, EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/blades'
 import { D6_IMAGES, embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
-import { createRollButton } from '../utils/rollButton.js'
 import type { Command } from '../types.js'
 
 function buildBladesEmbed(dice: number): EmbedBuilder {
@@ -89,43 +88,8 @@ export const bladesCommand: Command = {
     await interaction.deferReply()
 
     try {
-      const paramsStr = String(dice)
       const embed = buildBladesEmbed(dice)
-      const row = createRollButton('blades', paramsStr)
-      const response = await interaction.editReply({ embeds: [embed], components: [row] })
-
-      const collector = response.createMessageComponentCollector({
-        componentType: ComponentType.Button,
-        filter: i => i.customId === `reroll:blades:${paramsStr}`,
-        time: 300_000
-      })
-
-      collector.on('collect', i => {
-        void (async () => {
-          await i.deferUpdate()
-          try {
-            const reEmbed = buildBladesEmbed(dice)
-            await i.editReply({
-              embeds: [reEmbed],
-              components: [createRollButton('blades', paramsStr)]
-            })
-          } catch {
-            await i.editReply({ content: 'An error occurred while re-rolling.' })
-          }
-        })()
-      })
-
-      collector.on('end', () => {
-        void (async () => {
-          try {
-            await interaction.editReply({
-              components: [createRollButton('blades', paramsStr, true)]
-            })
-          } catch {
-            // Message may have been deleted
-          }
-        })()
-      })
+      await interaction.editReply({ embeds: [embed] })
     } catch (e) {
       await replyWithError(
         interaction,

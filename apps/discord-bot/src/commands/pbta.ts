@@ -1,8 +1,7 @@
-import { ComponentType, EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/pbta'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
-import { createRollButton } from '../utils/rollButton.js'
 import type { Command } from '../types.js'
 
 interface PbtaParams {
@@ -106,46 +105,8 @@ export const pbtaCommand: Command = {
 
     try {
       const pbtaParams: PbtaParams = { stat, forward, ongoing, rollingWith }
-      const paramsStr = JSON.stringify({
-        stat,
-        ...(forward !== 0 ? { forward } : {}),
-        ...(ongoing !== 0 ? { ongoing } : {}),
-        ...(rollingWith ? { rollingWith } : {})
-      })
       const embed = buildPbtaEmbed(pbtaParams)
-      const row = createRollButton('pbta', paramsStr)
-      const response = await interaction.editReply({ embeds: [embed], components: [row] })
-
-      const collector = response.createMessageComponentCollector({
-        componentType: ComponentType.Button,
-        filter: i => i.customId === `reroll:pbta:${paramsStr}`,
-        time: 300_000
-      })
-
-      collector.on('collect', i => {
-        void (async () => {
-          await i.deferUpdate()
-          try {
-            const reEmbed = buildPbtaEmbed(pbtaParams)
-            await i.editReply({
-              embeds: [reEmbed],
-              components: [createRollButton('pbta', paramsStr)]
-            })
-          } catch {
-            await i.editReply({ content: 'An error occurred while re-rolling.' })
-          }
-        })()
-      })
-
-      collector.on('end', () => {
-        void (async () => {
-          try {
-            await interaction.editReply({ components: [createRollButton('pbta', paramsStr, true)] })
-          } catch {
-            // Message may have been deleted
-          }
-        })()
-      })
+      await interaction.editReply({ embeds: [embed] })
     } catch (e) {
       await replyWithError(
         interaction,

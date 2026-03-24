@@ -1,14 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockCollector = {
-  on: mock(() => mockCollector)
-}
-
-const mockRow = {}
-void mock.module('../../src/utils/rollButton.js', () => ({
-  createRollButton: mock(() => mockRow)
-}))
-
 const mockRoll = mock(() => ({
   total: 15,
   result: {
@@ -36,16 +27,13 @@ function makeInteraction(table: string | null = null): {
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() =>
-      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
-    ),
+    editReply: mock(() => Promise.resolve(undefined)),
     options: { getString: mock(() => table) }
   }
 }
 
 beforeEach(() => {
   mockRoll.mockClear()
-  for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
 
 describe('suCommand', () => {
@@ -70,14 +58,6 @@ describe('suCommand', () => {
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Success')
-  })
-
-  test('reply includes re-roll button component', async () => {
-    const interaction = makeInteraction(null)
-    await suCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith(
-      expect.objectContaining({ components: expect.any(Array) })
-    )
   })
 
   test('error path: roll throws, replies with error embed', async () => {

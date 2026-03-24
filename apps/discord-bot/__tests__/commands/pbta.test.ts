@@ -1,14 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 
-const mockCollector = {
-  on: mock(() => mockCollector)
-}
-
-const mockRow = {}
-void mock.module('../../src/utils/rollButton.js', () => ({
-  createRollButton: mock(() => mockRow)
-}))
-
 const mockRoll = mock(() => ({
   result: 'strong_hit' as const,
   total: 10,
@@ -36,9 +27,7 @@ function makeInteraction(
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() =>
-      Promise.resolve({ createMessageComponentCollector: mock(() => mockCollector) })
-    ),
+    editReply: mock(() => Promise.resolve(undefined)),
     options: {
       getInteger: mock((name: string) => {
         if (name === 'stat') return opts.stat ?? 2
@@ -53,7 +42,6 @@ function makeInteraction(
 
 beforeEach(() => {
   mockRoll.mockClear()
-  for (const fn of Object.values(mockCollector)) fn.mockClear()
 })
 
 describe('pbtaCommand', () => {
@@ -128,14 +116,6 @@ describe('pbtaCommand', () => {
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
     expect(fieldNames).toContain('Rolling With')
-  })
-
-  test('reply includes re-roll button component', async () => {
-    const interaction = makeInteraction({ stat: 2 })
-    await pbtaCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith(
-      expect.objectContaining({ components: expect.any(Array) })
-    )
   })
 
   test('error path: roll throws, replies with error embed', async () => {
