@@ -1,0 +1,131 @@
+---
+interface Field {
+  name: string
+  value: string
+  inline?: boolean
+}
+
+interface Props {
+  color: string
+  title: string
+  description?: string
+  fields?: Field[]
+  footer?: string
+  thumbnail?: string
+}
+
+const { color, title, description, fields = [], footer, thumbnail } = Astro.props
+---
+
+<div class="discord-embed">
+  <div class="color-bar" style={`background-color: ${color}`}></div>
+  <div class="embed-content">
+    {thumbnail && (
+      <img class="thumbnail" src={thumbnail} alt="" />
+    )}
+    <div class="embed-body">
+      <div class="embed-title">{title}</div>
+      {description && <div class="embed-description">{description}</div>}
+      {fields.length > 0 && (
+        <div class="fields">
+          {fields.map((field) => (
+            <div class={`field ${field.inline ? 'inline' : ''}`}>
+              <div class="field-name">{field.name}</div>
+              <div class="field-value">{field.value}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {footer && <div class="embed-footer">{footer}</div>}
+    </div>
+  </div>
+</div>
+
+<style>
+  .discord-embed {
+    display: flex;
+    background-color: #2b2d31;
+    border-radius: 4px;
+    max-width: 520px;
+    margin: 1rem 0;
+    overflow: hidden;
+    font-family: 'gg sans', 'Noto Sans', sans-serif;
+  }
+
+  .color-bar {
+    width: 4px;
+    flex-shrink: 0;
+  }
+
+  .embed-content {
+    display: flex;
+    padding: 0.75rem 1rem 1rem 0.75rem;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .embed-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .embed-title {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .embed-description {
+    color: #dbdee1;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.375;
+  }
+
+  .fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .field {
+    min-width: 100%;
+  }
+
+  .field.inline {
+    min-width: calc(33% - 0.5rem);
+    flex: 1;
+  }
+
+  .field-name {
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    margin-bottom: 0.125rem;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .field-value {
+    color: #dbdee1;
+    font-size: 0.8125rem;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .embed-footer {
+    color: #87898c;
+    font-size: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #3f4248;
+  }
+</style>

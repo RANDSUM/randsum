@@ -4,6 +4,7 @@ description: Add a dice rolling bot to your Discord server. Supports RANDSUM not
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
+import DiscordEmbed from '../../../components/DiscordEmbed.astro'
 
 The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. Built with [discord.js](https://discord.js.org) and Bun, it provides detailed roll breakdowns and full support for all RANDSUM game packages.
 
@@ -35,7 +36,7 @@ Roll Blades in the Dark action rolls. Takes the number of dice in your pool and 
 
 ### `/fifth`
 
-Roll D&D 5th Edition dice (1d20 + modifier). Supports advantage and disadvantage.
+Roll D&D 5th Edition dice (1d20 + modifier). Supports advantage and disadvantage. Natural 20 results display in gold, natural 1 in crimson — visible at a glance.
 
 <CodeExample lang="bash" code={`/fifth modifier:5
 /fifth modifier:3 rolling_with:Advantage
@@ -82,6 +83,10 @@ Display a reference guide for RANDSUM dice notation. Shows all available modifie
 
 <CodeExample lang="bash" code={`/notation`} />
 
+### `/help`
+
+Lists all available RANDSUM slash commands with descriptions.
+
 ## Game Support
 
 The following game packages have dedicated slash commands:
@@ -99,6 +104,45 @@ The following game packages have dedicated slash commands:
 - **Full notation support** -- All RANDSUM dice notation features (drop, reroll, explode, etc.)
 - **Game-specific commands** -- Dedicated commands for each supported RPG system
 - **Color-coded embeds** -- Results are visually distinct by outcome type
+
+## Example Results
+
+See what RANDSUM bot results look like in practice.
+
+<DiscordEmbed
+  color="#FFD700"
+  title="You rolled a 17"
+  fields={[
+    { name: "Initial Rolls", value: "3, 4, 2, 6", inline: true },
+    { name: "Modified Rolls", value: "3, 4, 6", inline: true },
+    { name: "Total", value: "17", inline: true },
+  ]}
+  footer="/roll notation:4d6L+2"
+/>
+
+<DiscordEmbed
+  color="#1E90FF"
+  title="D&D 5e Roll: 23"
+  description="Rolled with Advantage"
+  fields={[
+    { name: "Dice", value: "18, 14", inline: true },
+    { name: "Kept", value: "18", inline: true },
+    { name: "Total", value: "18 + 5 = 23", inline: true },
+  ]}
+  footer="/fifth modifier:5 rolling_with:Advantage"
+/>
+
+<DiscordEmbed
+  color="#FFD700"
+  title="Critical Success!"
+  description="You rolled two 6s."
+  fields={[
+    { name: "Dice Pool", value: "3 dice", inline: true },
+    { name: "Results", value: "6, 6, 3", inline: true },
+    { name: "Outcome", value: "Critical", inline: true },
+  ]}
+  footer="/blades dice:3"
+/>
 
 ## Self-Hosted Setup
 
