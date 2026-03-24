@@ -58,8 +58,8 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
         },
         { description: 'Roll 5d10; explode only on 10', notation: '5d10!{=10}' }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = explodePattern.exec(notation)

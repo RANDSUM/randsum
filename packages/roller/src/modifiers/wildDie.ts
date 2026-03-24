@@ -32,8 +32,8 @@ export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boole
           options: { sides: 6, quantity: 5, modifiers: { wildDie: true } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = wildDiePattern.exec(notation)

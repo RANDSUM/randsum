@@ -34,8 +34,8 @@ export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>
           options: { sides: 6, quantity: 2, modifiers: { modulo: 3 } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = moduloPattern.exec(notation)

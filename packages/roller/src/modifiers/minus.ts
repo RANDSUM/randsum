@@ -36,8 +36,8 @@ export const minusSchema: NotationSchema<number> = defineNotationSchema<number>(
           options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, minus: 1 } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const matches = Array.from(notation.matchAll(minusGlobalPattern))

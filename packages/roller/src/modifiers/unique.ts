@@ -45,8 +45,8 @@ export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotat
           options: { sides: 6, quantity: 4, modifiers: { unique: { notUnique: [1] } } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = uniquePattern.exec(notation)

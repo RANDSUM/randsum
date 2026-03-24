@@ -55,8 +55,8 @@ export const compoundSchema: NotationSchema<boolean | number | ComparisonOptions
             options: { sides: 10, quantity: 5, modifiers: { compound: { greaterThanOrEqual: 8 } } }
           }
         ]
-      } satisfies NotationDoc
-    ],
+      }
+    ] satisfies readonly NotationDoc[],
 
     parse: notation => {
       const match = compoundPattern.exec(notation)

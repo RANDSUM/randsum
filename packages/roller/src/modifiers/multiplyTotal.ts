@@ -34,8 +34,8 @@ export const multiplyTotalSchema: NotationSchema<number> = defineNotationSchema<
           options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, multiplyTotal: 3 } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = multiplyTotalPattern.exec(notation)

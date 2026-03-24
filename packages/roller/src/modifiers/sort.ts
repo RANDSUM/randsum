@@ -40,8 +40,8 @@ export const sortSchema: NotationSchema<SortDirection> = defineNotationSchema<So
           options: { sides: 6, quantity: 4, modifiers: { sort: 'desc' } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = sortPattern.exec(notation)

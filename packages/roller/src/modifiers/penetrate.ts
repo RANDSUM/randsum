@@ -55,8 +55,8 @@ export const penetrateSchema: NotationSchema<boolean | number | ComparisonOption
             options: { sides: 10, quantity: 5, modifiers: { penetrate: { greaterThanOrEqual: 8 } } }
           }
         ]
-      } satisfies NotationDoc
-    ],
+      }
+    ] satisfies readonly NotationDoc[],
 
     parse: notation => {
       const match = penetratePattern.exec(notation)

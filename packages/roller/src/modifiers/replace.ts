@@ -63,8 +63,8 @@ export const replaceSchema: NotationSchema<ReplaceOptions | ReplaceOptions[]> =
             }
           }
         ]
-      } satisfies NotationDoc
-    ],
+      }
+    ] satisfies readonly NotationDoc[],
 
     parse: notation => {
       const match = replacePattern.exec(notation)

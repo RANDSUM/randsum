@@ -65,8 +65,8 @@ export const capSchema: NotationSchema<ComparisonOptions> = defineNotationSchema
             }
           }
         ]
-      } satisfies NotationDoc
-    ],
+      }
+    ] satisfies readonly NotationDoc[],
 
     parse: notation => {
       const match = capPattern.exec(notation)

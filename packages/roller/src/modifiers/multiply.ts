@@ -30,8 +30,8 @@ export const multiplySchema: NotationSchema<number> = defineNotationSchema<numbe
           options: { sides: 6, quantity: 4, modifiers: { multiply: 3 } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = multiplyPattern.exec(notation)

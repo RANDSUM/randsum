@@ -36,8 +36,8 @@ export const plusSchema: NotationSchema<number> = defineNotationSchema<number>({
           options: { sides: 6, quantity: 2, modifiers: { plus: 3 } }
         }
       ]
-    } satisfies NotationDoc
-  ],
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const matches = Array.from(notation.matchAll(plusGlobalPattern))
