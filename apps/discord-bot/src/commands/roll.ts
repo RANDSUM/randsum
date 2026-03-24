@@ -1,7 +1,6 @@
 import {
   ActionRowBuilder,
   ButtonBuilder,
-  ButtonStyle,
   ComponentType,
   EmbedBuilder,
   SlashCommandBuilder
@@ -61,7 +60,7 @@ function createShowWorkButton(notation: string): ActionRowBuilder<ButtonBuilder>
   const button = new ButtonBuilder()
     .setCustomId(`showwork:${notation}`)
     .setLabel('Show Work')
-    .setStyle(ButtonStyle.Secondary)
+    .setStyle(2) // ButtonStyle.Secondary
 
   return new ActionRowBuilder<ButtonBuilder>().addComponents(button)
 }
