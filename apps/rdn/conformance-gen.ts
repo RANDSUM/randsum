@@ -59,4 +59,4 @@ if (proc.exitCode !== 0) {
 }
 
 await Bun.write(outPath, new TextDecoder().decode(proc.stdout))
-console.log(`Written: ${outPath.pathname}`)
+console.warn(`Written: ${outPath.pathname}`)
