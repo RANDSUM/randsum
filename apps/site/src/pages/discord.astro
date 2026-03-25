@@ -1,6 +1,5 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
-import DiscordEmbed from '../components/DiscordEmbed.astro'
 
 const OAUTH_URL =
   'https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands'
@@ -67,7 +66,14 @@ const commands = [
   frontmatter={{
     title: 'RANDSUM Dice Bot',
     description: 'Roll dice for your TTRPG sessions directly in Discord. Supports D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.',
-    template: 'splash'
+    template: 'splash',
+    head: [
+      { tag: 'meta', attrs: { property: 'og:title', content: 'RANDSUM Dice Bot' } },
+      { tag: 'meta', attrs: { property: 'og:description', content: 'Roll dice for your TTRPG sessions directly in Discord. D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.' } },
+      { tag: 'meta', attrs: { property: 'og:image', content: 'https://randsum.dev/discord-ss-roll-10d20.png' } },
+      { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
+      { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://randsum.dev/discord-ss-roll-10d20.png' } }
+    ]
   }}
   hasSidebar={false}
 >
@@ -76,9 +82,14 @@ const commands = [
     <!-- Hero -->
     <section class="hero">
       <div class="hero-inner">
-        <div class="hero-badge">
-          <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"/></svg>
-          Discord Bot
+        <div class="hero-logos">
+          <img src="/randsum-logo.png" alt="RANDSUM" class="hero-logo" width="64" height="64" />
+          <svg class="hero-connector" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#a855f7" d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+          </svg>
+          <svg class="hero-logo" width="64" height="64" viewBox="0 0 127.14 96.36" aria-label="Discord" role="img">
+            <path fill="#5865F2" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+          </svg>
         </div>
         <h1 class="hero-heading">RANDSUM Dice Bot</h1>
         <p class="hero-tagline">Roll dice for your TTRPG sessions directly in Discord.</p>
@@ -88,7 +99,7 @@ const commands = [
         </p>
         <div class="hero-actions">
           <a href={OAUTH_URL} class="btn btn-discord" target="_blank" rel="noopener noreferrer">
-            <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 127.14 96.36" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
             Add to Discord
           </a>
           <a href="/tools/discord-bot/" class="btn btn-secondary">
@@ -154,48 +165,23 @@ const commands = [
       <div class="section-inner">
         <h2 class="section-heading">Example Results</h2>
         <p class="section-sub">Rich embeds with full roll breakdowns, color-coded by outcome.</p>
-        <div class="embeds-grid">
-          <div class="embed-wrap">
-            <div class="embed-label"><code>/roll notation:4d6L+2</code></div>
-            <DiscordEmbed
-              color="#FFD700"
-              title="You rolled a 17"
-              fields={[
-                { name: 'Initial Rolls', value: '3, 4, 2, 6', inline: true },
-                { name: 'Modified Rolls', value: '3, 4, 6', inline: true },
-                { name: 'Total', value: '17', inline: true }
-              ]}
-              footer="/roll notation:4d6L+2"
-            />
-          </div>
-          <div class="embed-wrap">
-            <div class="embed-label"><code>/fifth modifier:5 rolling_with:Advantage</code></div>
-            <DiscordEmbed
-              color="#1E90FF"
-              title="D&D 5e Roll: 23"
-              description="Rolled with Advantage"
-              fields={[
-                { name: 'Dice', value: '18, 14', inline: true },
-                { name: 'Kept', value: '18', inline: true },
-                { name: 'Total', value: '18 + 5 = 23', inline: true }
-              ]}
-              footer="/fifth modifier:5 rolling_with:Advantage"
-            />
-          </div>
-          <div class="embed-wrap">
-            <div class="embed-label"><code>/blades dice:3</code></div>
-            <DiscordEmbed
-              color="#FFD700"
-              title="Critical Success!"
-              description="You rolled two 6s."
-              fields={[
-                { name: 'Dice Pool', value: '3 dice', inline: true },
-                { name: 'Results', value: '6, 6, 3', inline: true },
-                { name: 'Outcome', value: 'Critical', inline: true }
-              ]}
-              footer="/blades dice:3"
-            />
-          </div>
+        <div class="screenshot-grid">
+          <figure class="screenshot">
+            <img src="/discord-ss-roll-10d20.png" alt="/roll 10d20 — rolled a 100" loading="lazy" />
+            <figcaption><code>/roll notation:10d20</code></figcaption>
+          </figure>
+          <figure class="screenshot">
+            <img src="/discord-ss-dh-critical.png" alt="/dh — Daggerheart Critical Hope" loading="lazy" />
+            <figcaption><code>/dh modifier:3</code></figcaption>
+          </figure>
+          <figure class="screenshot">
+            <img src="/discord-ss-roll-2d12.png" alt="/roll 2d12+1 result" loading="lazy" />
+            <figcaption><code>/roll notation:2d12+1</code></figcaption>
+          </figure>
+          <figure class="screenshot">
+            <img src="/discord-ss-su-failure.png" alt="/su — Salvage Union Failure" loading="lazy" />
+            <figcaption><code>/su table:Core Mechanic</code></figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -209,7 +195,7 @@ const commands = [
         <p class="cta-sub">Add RANDSUM to your server — no configuration required.</p>
         <div class="cta-actions">
           <a href={OAUTH_URL} class="btn btn-discord" target="_blank" rel="noopener noreferrer">
-            <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.55 3.15A13.3 13.3 0 0010.25 2a9.8 9.8 0 00-.42.87 12.3 12.3 0 00-3.66 0A9.8 9.8 0 005.75 2 13.4 13.4 0 002.45 3.15 14.2 14.2 0 00.21 11.97a13.5 13.5 0 004.07 2.06 10 10 0 00.87-1.41 8.7 8.7 0 01-1.37-.66c.12-.08.23-.17.33-.27a9.6 9.6 0 008.18 0c.11.1.22.19.33.27-.44.26-.89.48-1.37.66.25.5.54.97.87 1.41a13.4 13.4 0 004.07-2.06A14.1 14.1 0 0013.55 3.15z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 127.14 96.36" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
             Add to Discord
           </a>
           <a href="/tools/discord-bot/" class="btn btn-secondary">
@@ -304,20 +290,23 @@ const commands = [
     margin: 0 auto;
   }
 
-  .hero-badge {
-    display: inline-flex;
+  .hero-logos {
+    display: flex;
     align-items: center;
-    gap: 0.4rem;
-    background: rgba(88, 101, 242, 0.15);
-    color: #818cf8;
-    border: 1px solid rgba(88, 101, 242, 0.3);
-    border-radius: 999px;
-    padding: 0.2rem 0.75rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    margin-bottom: 1.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .hero-connector {
+    flex-shrink: 0;
   }
 
   .hero-heading {
@@ -472,27 +461,35 @@ const commands = [
     white-space: nowrap;
   }
 
-  /* ---- Embeds Grid ---- */
+  /* ---- Screenshot Grid ---- */
 
-  .embeds-grid {
+  .screenshot-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
     align-items: start;
   }
 
-  .embed-wrap {
+  .screenshot {
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .embed-label {
+  .screenshot img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .screenshot figcaption {
     font-size: 0.8125rem;
     color: var(--sl-color-gray-3);
   }
 
-  .embed-label code {
+  .screenshot figcaption code {
     font-family: var(--sl-font-mono, monospace);
     color: #a855f7;
   }
@@ -535,12 +532,21 @@ const commands = [
       grid-template-columns: 1fr;
     }
 
-    .embeds-grid {
+    .screenshot-grid {
       grid-template-columns: 1fr;
     }
 
     .hero {
       padding: 2rem 0 1.5rem;
+    }
+
+    .hero-logos {
+      gap: 0.75rem;
+    }
+
+    .hero-logo {
+      width: 48px;
+      height: 48px;
     }
 
     .section-heading {
