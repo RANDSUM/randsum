@@ -4,22 +4,14 @@
     "appVersionSource": "remote"
   },
   "build": {
-    "base": {
-      "env": {
-        "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
-      }
-    },
     "development": {
-      "extends": "base",
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
-      "extends": "base",
       "distribution": "internal"
     },
     "production": {
-      "extends": "base",
       "distribution": "store",
       "autoIncrement": true
     }
