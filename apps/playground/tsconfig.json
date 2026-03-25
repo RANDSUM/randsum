@@ -7,7 +7,13 @@
     "jsxImportSource": "react",
     "types": ["bun"],
     "paths": {
-      "@randsum/dice-ui": ["../../packages/dice-ui/src/index.ts"]
+      "@randsum/dice-ui": ["../../packages/dice-ui/src/index.ts"],
+      "@randsum/roller": ["../../packages/roller/src/index.ts"],
+      "@randsum/roller/roll": ["../../packages/roller/src/roll/index.ts"],
+      "@randsum/roller/validate": ["../../packages/roller/src/validate.ts"],
+      "@randsum/roller/tokenize": ["../../packages/roller/src/tokenize.ts"],
+      "@randsum/roller/docs": ["../../packages/roller/src/docs/index.ts"],
+      "@randsum/roller/trace": ["../../packages/roller/src/trace/index.ts"]
     }
   }
 }
