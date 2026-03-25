@@ -1,3 +1,4 @@
+import { NotationParseError } from '../errors'
 import { coreNotationPattern } from './coreNotationPattern'
 import type { DiceNotation } from './types'
 import { suggestNotationFix } from './suggestions'
@@ -100,23 +101,6 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   // Then strip all remaining known tokens (core dice, modifiers, signed pools)
   const remaining = stripped.replaceAll(getCompleteNotationPattern(), '')
   return remaining.length === 0
-}
-
-/**
- * Error thrown when a string is not valid dice notation.
- */
-export class NotationParseError extends Error {
-  public readonly code = 'INVALID_NOTATION' as const
-  public readonly suggestion: string | undefined
-
-  constructor(notation: string, reason: string, suggestion?: string) {
-    const message = suggestion
-      ? `Invalid notation "${notation}": ${reason}. Did you mean "${suggestion}"?`
-      : `Invalid notation "${notation}": ${reason}`
-    super(message)
-    this.name = 'NotationParseError'
-    this.suggestion = suggestion
-  }
 }
 
 /**

@@ -1,7 +1,8 @@
 import type { RollArgument } from '@randsum/roller'
 import { NotationRoller, QuickReferenceGrid } from '@randsum/dice-ui'
 import type { RollResult } from '@randsum/dice-ui'
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { DiceGrid } from '../../components/DiceGrid'
 import { RollButton } from '../../components/RollButton'

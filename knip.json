@@ -39,7 +39,7 @@
     "apps/rdn": {},
     "apps/site": {}
   },
-  "ignoreBinaries": ["skills-ref", "expo"],
+  "ignoreBinaries": ["skills-ref", "expo", "eas-cli"],
   "ignore": ["**/bunup.config.ts", "**/*.native.ts", "**/*.native.tsx", "**/*.generated.ts"],
   "exclude": ["optionalPeerDependencies", "unresolved", "exports", "types"],
   "ignoreExportsUsedInFile": true

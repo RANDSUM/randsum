@@ -1,5 +1,6 @@
 import type { DiceNotation, RollOptions } from '../types'
-import { NotationParseError, isDiceNotation } from '../isDiceNotation'
+import { NotationParseError } from '../../errors'
+import { isDiceNotation } from '../isDiceNotation'
 import { modifiersToNotation } from './modifiersToStrings'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
 
