@@ -48,6 +48,7 @@ jobs:
               - '.github/workflows/ci.yml'
             rdn:
               - 'apps/rdn/**'
+              - 'packages/roller/**'
               - '.github/workflows/ci.yml'
             skill:
               - 'skills/**'
@@ -135,6 +136,7 @@ jobs:
       - uses: ./.github/actions/bun-setup
         with:
           node-version: '22'
+      - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/rdn' check
 
   skill:
