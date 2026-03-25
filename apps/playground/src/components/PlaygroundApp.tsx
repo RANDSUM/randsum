@@ -3,6 +3,10 @@ import { NotationRoller, RollResultPanel } from '@randsum/dice-ui'
 import type { RollResult as RollResultData } from '@randsum/dice-ui'
 import { PlaygroundHeader } from './PlaygroundHeader'
 import { QuickReferenceGrid } from '@randsum/dice-ui'
+import { buildNotationUrl, resolveInitialNotation } from '../helpers/url'
+
+// Re-export URL helpers for backward-compat with existing tests
+export { buildNotationUrl, resolveInitialNotation }
 
 // ---- Types (exported for testing) ----
 
@@ -24,21 +28,6 @@ export function buildInitialState(initialNotation: string | null): PlaygroundSta
 
 export function applyEscape(prev: PlaygroundState): PlaygroundState {
   return { ...prev, rollResult: null, selectedEntry: null }
-}
-
-// ---- URL helpers (exported for testing) ----
-
-export function resolveInitialNotation(params: URLSearchParams): string | null {
-  const notationParam = params.get('notation')
-  if (notationParam !== null) {
-    return notationParam.length > 0 ? notationParam : null
-  }
-  const nParam = params.get('n')
-  return nParam !== null && nParam.length > 0 ? nParam : null
-}
-
-export function buildNotationUrl(notation: string): string {
-  return `?n=${encodeURIComponent(notation)}`
 }
 
 // ---- Component ----
@@ -78,6 +67,19 @@ export function PlaygroundApp(): React.ReactElement {
     },
     [handleChange]
   )
+
+  // Debounced URL sync — update ?n= as user types without a page reload.
+  // When notation is empty, remove the query string entirely.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const next =
+        state.notation.length > 0 ? buildNotationUrl(state.notation) : window.location.pathname
+      history.replaceState({}, '', next)
+    }, 300)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [state.notation])
 
   // Global keyboard handler for Escape
   useEffect(() => {

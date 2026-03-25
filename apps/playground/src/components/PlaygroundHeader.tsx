@@ -1,7 +1,9 @@
+import React, { useState } from 'react'
 import sdk from '@stackblitz/sdk'
 import type { ProjectTemplate } from '@stackblitz/sdk'
 import { useTheme } from '@randsum/dice-ui'
 import { buildStackBlitzProject } from '../helpers/stackblitz'
+import { buildNotationUrl, getCopyButtonLabel } from '../helpers/url'
 
 interface PlaygroundHeaderProps {
   readonly notation: string
@@ -30,6 +32,17 @@ function toggleTheme(): void {
 export function PlaygroundHeader({ notation }: PlaygroundHeaderProps): React.ReactElement {
   const isEmpty = notation.trim() === ''
   const theme = useTheme()
+  const [isCopied, setIsCopied] = useState(false)
+
+  function handleCopyLink(): void {
+    const url = window.location.origin + buildNotationUrl(notation)
+    void navigator.clipboard.writeText(url).then(() => {
+      setIsCopied(true)
+      setTimeout(() => {
+        setIsCopied(false)
+      }, 2000)
+    })
+  }
 
   return (
     <header
@@ -85,6 +98,24 @@ export function PlaygroundHeader({ notation }: PlaygroundHeaderProps): React.Rea
         >
           spec
         </a>
+
+        <button
+          type="button"
+          disabled={isEmpty}
+          onClick={handleCopyLink}
+          style={{
+            cursor: isEmpty ? 'not-allowed' : 'pointer',
+            padding: 'var(--pg-space-xs) var(--pg-space-sm)',
+            backgroundColor: isEmpty ? 'var(--pg-color-surface-alt)' : 'var(--pg-color-accent)',
+            color: isEmpty ? 'var(--pg-color-text-muted)' : 'var(--pg-color-text)',
+            border: '1px solid var(--pg-color-border)',
+            borderRadius: 'var(--pg-radius-sm)',
+            fontFamily: 'var(--pg-font-mono)',
+            fontSize: '0.875rem'
+          }}
+        >
+          {getCopyButtonLabel(isCopied)}
+        </button>
 
         <button
           type="button"
