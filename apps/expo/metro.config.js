@@ -13,6 +13,14 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, 'node_modules')
 ]
 
+// Add react-native to web condition set so Metro resolves packages like
+// Zustand to their CJS entries (which use process.env.NODE_ENV) instead
+// of ESM entries (which use import.meta.env.MODE — invalid in classic scripts).
+config.resolver.unstable_conditionsByPlatform = {
+  ...config.resolver.unstable_conditionsByPlatform,
+  web: ['browser', 'react-native']
+}
+
 // Resolve workspace packages to TypeScript source instead of dist/.
 // Metro handles TS natively — this avoids needing a build step on EAS.
 config.resolver.resolveRequest = (context, moduleName, platform) => {
@@ -27,7 +35,10 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     ),
     '@randsum/roller/validate': path.resolve(monorepoRoot, 'packages/roller/src/validate.ts'),
     '@randsum/roller/errors': path.resolve(monorepoRoot, 'packages/roller/src/errors.ts'),
-    '@randsum/dice-ui': path.resolve(monorepoRoot, 'packages/dice-ui/src/index.native.ts')
+    '@randsum/dice-ui': path.resolve(
+      monorepoRoot,
+      platform === 'web' ? 'packages/dice-ui/src/index.ts' : 'packages/dice-ui/src/index.native.ts'
+    )
   }
 
   if (workspacePackages[moduleName]) {
