@@ -38,7 +38,7 @@ export function RollButton({
   }
 
   const bgColor = enabled ? tokens.accent : tokens.surfaceAlt
-  const textColor = enabled ? tokens.text : tokens.textDim
+  const textColor = enabled ? '#ffffff' : tokens.textDim
 
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
@@ -64,9 +64,11 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8
+    borderRadius: 10
   },
   label: {
-    fontWeight: '600'
+    fontWeight: '600',
+    fontFamily: 'JetBrainsMono_400Regular',
+    letterSpacing: 1
   }
 })

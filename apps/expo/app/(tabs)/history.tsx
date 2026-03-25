@@ -56,12 +56,13 @@ export default function HistoryScreen(): React.JSX.Element {
       justifyContent: 'space-between',
       paddingHorizontal: 16,
       paddingVertical: 12,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: tokens.border
+      borderBottomWidth: 1,
+      borderBottomColor: 'rgba(168, 85, 247, 0.15)'
     },
     headerTitle: {
       fontSize: fontSizes.lg,
       fontWeight: '600',
+      fontFamily: 'JetBrainsMono_400Regular',
       color: tokens.text
     },
     clearButton: {

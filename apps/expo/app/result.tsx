@@ -47,7 +47,6 @@ export default function ResultScreen(): React.JSX.Element | null {
       <RollResultView
         result={pending}
         onRollAgain={handleRollAgain}
-        onSaveAsTemplate={() => undefined}
         onShare={() => shareRollResult(pending)}
         archivedAt={archivedAt}
       />

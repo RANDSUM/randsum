@@ -35,7 +35,6 @@ export default function RootLayout(): React.JSX.Element | null {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="result" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="wizard" options={{ presentation: 'modal' }} />
       </Stack>
     </DiceUIThemeProvider>
   )

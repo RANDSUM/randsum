@@ -58,8 +58,8 @@ export function HistoryEntry({
   const styles = StyleSheet.create({
     row: {
       backgroundColor: tokens.surface,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: tokens.border
+      borderBottomWidth: 1,
+      borderBottomColor: 'rgba(168, 85, 247, 0.1)'
     },
     mainContent: {
       flexDirection: 'row',
@@ -164,7 +164,6 @@ export function HistoryEntry({
             <Text style={styles.notation}>{entry.notation}</Text>
             <View style={styles.meta}>
               <Text style={styles.metaText}>{formatRelativeTime(entry.createdAt)}</Text>
-              {entry.gameId !== undefined && <Text style={styles.metaText}>{entry.gameId}</Text>}
             </View>
           </View>
           <Text style={styles.total}>{entry.total}</Text>

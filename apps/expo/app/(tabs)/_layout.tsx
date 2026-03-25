@@ -89,10 +89,23 @@ export default function TabLayout(): React.JSX.Element {
         tabBarInactiveTintColor: tokens.textDim,
         tabBarStyle: {
           backgroundColor: tokens.bg,
-          borderTopColor: tokens.surfaceAlt
+          borderTopColor: 'rgba(168, 85, 247, 0.15)',
+          borderTopWidth: 1
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'JetBrainsMono_400Regular',
+          fontSize: 10,
+          letterSpacing: 0.5
         },
         headerStyle: {
-          backgroundColor: tokens.bg
+          backgroundColor: tokens.bg,
+          shadowColor: 'transparent',
+          elevation: 0
+        },
+        headerTitleStyle: {
+          fontFamily: 'JetBrainsMono_400Regular',
+          fontWeight: '600',
+          letterSpacing: -0.02 * 17
         },
         headerTintColor: tokens.text
       }}
@@ -103,15 +116,6 @@ export default function TabLayout(): React.JSX.Element {
           title: 'Roll',
           headerRight: () => <ContentTabToggle />,
           tabBarIcon: ({ color, size }) => <TabIcon name="dice-outline" color={color} size={size} />
-        }}
-      />
-      <Tabs.Screen
-        name="games"
-        options={{
-          title: 'Games',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="game-controller-outline" color={color} size={size} />
-          )
         }}
       />
       <Tabs.Screen

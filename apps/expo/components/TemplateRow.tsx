@@ -6,7 +6,6 @@ import { useTheme } from '../hooks/useTheme'
 interface TemplateRowProps {
   readonly template: RollTemplate
   readonly onQuickRoll: (template: RollTemplate) => void
-  readonly onEdit: (template: RollTemplate) => void
   readonly onDelete: (id: string) => void
   readonly onShare?: (template: RollTemplate) => void
 }
@@ -14,76 +13,10 @@ interface TemplateRowProps {
 export function TemplateRow({
   template,
   onQuickRoll,
-  onEdit,
   onDelete,
   onShare
 }: TemplateRowProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
-
-  const styles = StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: tokens.surface,
-      borderRadius: 8,
-      padding: 12,
-      marginBottom: 8
-    },
-    content: {
-      flex: 1,
-      marginRight: 12
-    },
-    name: {
-      color: tokens.text,
-      fontSize: fontSizes.base,
-      fontWeight: '600'
-    },
-    notation: {
-      color: tokens.textMuted,
-      fontSize: fontSizes.sm,
-      fontFamily: 'JetBrainsMono_400Regular',
-      marginTop: 2
-    },
-    variableCount: {
-      color: tokens.textDim,
-      fontSize: fontSizes.xs,
-      marginTop: 2
-    },
-    quickRollButton: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      backgroundColor: tokens.accent,
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    quickRollText: {
-      color: tokens.text,
-      fontSize: fontSizes.lg,
-      fontWeight: '700'
-    },
-    actions: {
-      flexDirection: 'row',
-      gap: 8,
-      marginTop: 8
-    },
-    editButton: {
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      backgroundColor: tokens.surfaceAlt,
-      borderRadius: 6
-    },
-    deleteButton: {
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      backgroundColor: tokens.error,
-      borderRadius: 6
-    },
-    actionText: {
-      color: tokens.text,
-      fontSize: fontSizes.sm
-    }
-  })
 
   function handleDelete(): void {
     Alert.alert('Delete Template', `Delete "${template.name}"?`, [
@@ -97,54 +30,114 @@ export function TemplateRow({
   }
 
   const variableCount = template.variables.length
-  const secondaryText = template.gameId ?? template.notation
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: tokens.surface,
+          borderColor: 'rgba(168, 85, 247, 0.12)',
+          borderTopColor: 'rgba(168, 85, 247, 0.25)'
+        }
+      ]}
+    >
       <View style={styles.content}>
-        <Text style={styles.name}>{template.name}</Text>
-        <Text style={styles.notation}>{secondaryText}</Text>
+        <Text style={[styles.name, { color: tokens.text, fontSize: fontSizes.base }]}>
+          {template.name}
+        </Text>
+        <Text style={[styles.notation, { color: tokens.textMuted, fontSize: fontSizes.sm }]}>
+          {template.notation}
+        </Text>
         {variableCount > 0 && (
-          <Text style={styles.variableCount}>
+          <Text style={[styles.variableCount, { color: tokens.textDim, fontSize: fontSizes.xs }]}>
             {variableCount} variable{variableCount > 1 ? 's' : ''}
           </Text>
         )}
         <View style={styles.actions}>
           <Pressable
-            style={styles.editButton}
-            onPress={() => onEdit(template)}
-            accessibilityLabel={`Edit ${template.name}`}
-            accessibilityRole="button"
-          >
-            <Text style={styles.actionText}>Edit</Text>
-          </Pressable>
-          <Pressable
-            style={styles.editButton}
+            style={[styles.actionButton, { backgroundColor: tokens.surfaceAlt }]}
             onPress={() => onShare?.(template)}
             accessibilityLabel={`Share ${template.name}`}
             accessibilityRole="button"
           >
-            <Text style={styles.actionText}>Share</Text>
+            <Text style={[styles.actionText, { color: tokens.text, fontSize: fontSizes.sm }]}>
+              Share
+            </Text>
           </Pressable>
           <Pressable
-            style={styles.deleteButton}
+            style={[styles.actionButton, { backgroundColor: tokens.error }]}
             onPress={handleDelete}
             accessibilityLabel={`Delete ${template.name}`}
             accessibilityRole="button"
           >
-            <Text style={styles.actionText}>Delete</Text>
+            <Text style={[styles.actionText, { color: tokens.text, fontSize: fontSizes.sm }]}>
+              Delete
+            </Text>
           </Pressable>
         </View>
       </View>
       <Pressable
-        style={styles.quickRollButton}
+        style={[styles.quickRollButton, { backgroundColor: tokens.accent }]}
         onPress={() => onQuickRoll(template)}
         accessibilityLabel={`Roll ${template.name}`}
         accessibilityHint="Tap to roll this template"
         accessibilityRole="button"
       >
-        <Text style={styles.quickRollText}>{'>'}</Text>
+        <Text style={[styles.quickRollText, { color: '#ffffff', fontSize: fontSizes.lg }]}>
+          {'>'}
+        </Text>
       </Pressable>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderTopWidth: 2,
+    padding: 12,
+    marginBottom: 8
+  },
+  content: {
+    flex: 1,
+    marginRight: 12
+  },
+  name: {
+    fontWeight: '600'
+  },
+  notation: {
+    fontFamily: 'JetBrainsMono_400Regular',
+    marginTop: 2
+  },
+  variableCount: {
+    marginTop: 2
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8
+  },
+  actionButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6
+  },
+  actionText: {
+    fontFamily: 'JetBrainsMono_400Regular'
+  },
+  quickRollButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  quickRollText: {
+    fontWeight: '700',
+    fontFamily: 'JetBrainsMono_400Regular'
+  }
+})

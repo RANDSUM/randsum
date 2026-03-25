@@ -1,22 +1,22 @@
 import type { RollArgument } from '@randsum/roller'
 import { NotationRoller, QuickReferenceGrid } from '@randsum/dice-ui'
 import type { RollResult } from '@randsum/dice-ui'
-import { useRouter } from 'expo-router'
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 import { DiceGrid } from '../../components/DiceGrid'
 import { RollButton } from '../../components/RollButton'
 import { useRoll } from '../../hooks/useRoll'
+import { useTemplates } from '../../hooks/useTemplates'
 import { useTheme } from '../../hooks/useTheme'
+import { generateId } from '../../lib/generateId'
 import { useContentTabStore } from '../../lib/stores/contentTabStore'
 import { useNotationStore } from '../../lib/stores/notationStore'
 import { usePoolStore } from '../../lib/stores/poolStore'
-import { useWizardStore } from '../../lib/stores/wizardStore'
 
 export default function RollScreen(): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
-  const router = useRouter()
   const activeTab = useContentTabStore(s => s.tab)
+  const { saveTemplate } = useTemplates()
 
   const clearPool = usePoolStore(s => s.clear)
 
@@ -53,10 +53,14 @@ export default function RollScreen(): React.JSX.Element {
 
   function handleSave(): void {
     if (!isValid) return
-    useWizardStore.getState().reset()
-    useWizardStore.getState().setType('standard')
-    useWizardStore.getState().updateDraft({ notation })
-    router.push('/wizard')
+    void saveTemplate({
+      id: generateId(),
+      name: notation,
+      notation,
+      variables: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    })
   }
 
   function handleAppendNotation(fragment: string): void {
@@ -66,7 +70,6 @@ export default function RollScreen(): React.JSX.Element {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: tokens.bg }]}>
       <View style={styles.container}>
-        {/* Input area — always visible */}
         <View style={styles.inputArea}>
           <NotationRoller
             notation={notation}
@@ -76,7 +79,6 @@ export default function RollScreen(): React.JSX.Element {
           />
         </View>
 
-        {/* Content area */}
         <View style={styles.contentArea}>
           {activeTab === 'common' ? (
             <View style={styles.diceGridWrap}>
@@ -87,7 +89,6 @@ export default function RollScreen(): React.JSX.Element {
           )}
         </View>
 
-        {/* Bottom bar — always visible */}
         <View style={styles.bottomBar}>
           <View style={styles.secondaryRow}>
             <Pressable
@@ -96,7 +97,7 @@ export default function RollScreen(): React.JSX.Element {
               style={[
                 styles.secondaryButton,
                 {
-                  borderColor: tokens.border,
+                  borderColor: isValid ? 'rgba(168, 85, 247, 0.3)' : tokens.border,
                   opacity: isValid ? 1 : 0.4
                 }
               ]}
@@ -167,6 +168,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   secondaryLabel: {
-    fontWeight: '500'
+    fontWeight: '500',
+    fontFamily: 'JetBrainsMono_400Regular'
   }
 })

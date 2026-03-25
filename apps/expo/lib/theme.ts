@@ -7,6 +7,7 @@ export interface ThemeTokens {
   readonly textMuted: string
   readonly textDim: string
   readonly accent: string
+  readonly accentLow: string
   readonly accentHigh: string
   readonly error: string
   readonly success: string
@@ -25,29 +26,31 @@ export interface FontSizes {
 export type ColorScheme = 'dark' | 'light'
 
 export const darkTokens: ThemeTokens = {
-  bg: '#09090b',
-  surface: '#18181b',
-  surfaceAlt: '#27272a',
+  bg: '#1a1a1f',
+  surface: '#222228',
+  surfaceAlt: '#2e2e35',
   border: '#52525b',
   text: '#fafafa',
   textMuted: '#a1a1aa',
   textDim: '#71717a',
   accent: '#a855f7',
+  accentLow: '#2e1065',
   accentHigh: '#d8b4fe',
   error: '#ef4444',
   success: '#10b981'
 }
 
 export const lightTokens: ThemeTokens = {
-  bg: '#ffffff',
-  surface: '#f4f4f5',
+  bg: '#f4f4f6',
+  surface: '#ebebed',
   surfaceAlt: '#e4e4e7',
   border: '#a1a1aa',
   text: '#18181b',
   textMuted: '#3f3f46',
   textDim: '#71717a',
-  accent: '#a855f7',
-  accentHigh: '#7c3aed',
+  accent: '#7c3aed',
+  accentLow: '#f5f0ff',
+  accentHigh: '#5b21b6',
   error: '#dc2626',
   success: '#059669'
 }

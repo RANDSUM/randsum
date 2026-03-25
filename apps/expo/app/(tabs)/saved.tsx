@@ -1,6 +1,5 @@
-import { useRouter } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
 
 import { TemplateRow } from '../../components/TemplateRow'
 import { VariablePromptSheet } from '../../components/VariablePromptSheet'
@@ -15,7 +14,6 @@ import type { RollTemplate } from '../../lib/types'
 
 export default function SavedScreen(): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
-  const router = useRouter()
   const { templates, isLoading, deleteTemplate } = useTemplates()
   const [variableTemplate, setVariableTemplate] = useState<RollTemplate | null>(null)
   const { roll } = useRoll({
@@ -43,13 +41,6 @@ export default function SavedScreen(): React.JSX.Element {
     [variableTemplate, roll]
   )
 
-  const handleEdit = useCallback(
-    (_template: RollTemplate) => {
-      router.push('/wizard')
-    },
-    [router]
-  )
-
   const handleDelete = useCallback(
     (id: string) => {
       deleteTemplate(id)
@@ -61,60 +52,18 @@ export default function SavedScreen(): React.JSX.Element {
     shareTemplate(template, `https://randsum.io/t/${template.id}`)
   }, [])
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: tokens.bg
-    },
-    list: {
-      padding: 16
-    },
-    emptyContainer: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 32
-    },
-    emptyText: {
-      color: tokens.textMuted,
-      fontSize: fontSizes.base,
-      textAlign: 'center'
-    },
-    loadingContainer: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: tokens.bg
-    },
-    fab: {
-      position: 'absolute',
-      right: 20,
-      bottom: 20,
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: tokens.accent,
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    fabText: {
-      color: tokens.text,
-      fontSize: fontSizes['2xl'],
-      fontWeight: '300',
-      lineHeight: 34
-    }
-  })
-
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator color={tokens.accent} />
+      <View style={[styles.centered, { backgroundColor: tokens.bg }]}>
+        <Text style={[styles.loadingText, { color: tokens.textDim, fontSize: fontSizes.base }]}>
+          Loading...
+        </Text>
       </View>
     )
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.bg }]}>
       <FlatList
         data={templates}
         keyExtractor={item => item.id}
@@ -123,25 +72,18 @@ export default function SavedScreen(): React.JSX.Element {
           <TemplateRow
             template={item}
             onQuickRoll={handleQuickRoll}
-            onEdit={handleEdit}
             onDelete={handleDelete}
             onShare={handleShare}
           />
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No saved rolls. Tap + to create one.</Text>
+            <Text style={[styles.emptyText, { color: tokens.textMuted, fontSize: fontSizes.base }]}>
+              No saved rolls yet.{'\n'}Use the Save button on the Roll tab.
+            </Text>
           </View>
         }
       />
-      <Pressable
-        style={styles.fab}
-        onPress={() => router.push('/wizard')}
-        accessibilityLabel="Create new template"
-        accessibilityRole="button"
-      >
-        <Text style={styles.fabText}>+</Text>
-      </Pressable>
       <VariablePromptSheet
         variables={variableTemplate?.variables ?? []}
         isVisible={variableTemplate !== null}
@@ -151,3 +93,30 @@ export default function SavedScreen(): React.JSX.Element {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  list: {
+    padding: 16
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  loadingText: {
+    fontFamily: 'JetBrainsMono_400Regular'
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 32
+  },
+  emptyText: {
+    textAlign: 'center',
+    lineHeight: 22
+  }
+})

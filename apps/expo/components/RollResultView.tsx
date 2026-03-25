@@ -17,7 +17,6 @@ import type { ParsedRollResult } from '../lib/parseRollResult'
 interface RollResultViewProps {
   readonly result: ParsedRollResult
   readonly onRollAgain: () => void
-  readonly onSaveAsTemplate: () => void
   readonly onShare: () => void
   readonly archivedAt?: string | null
 }
@@ -25,7 +24,6 @@ interface RollResultViewProps {
 export function RollResultView({
   result,
   onRollAgain,
-  onSaveAsTemplate,
   onShare,
   archivedAt
 }: RollResultViewProps): React.JSX.Element {
@@ -168,20 +166,25 @@ export function RollResultView({
       justifyContent: 'center'
     },
     primaryButtonText: {
-      color: tokens.text,
+      color: '#ffffff',
       fontSize: fontSizes.lg,
-      fontWeight: '600'
+      fontWeight: '600',
+      fontFamily: 'JetBrainsMono_400Regular',
+      letterSpacing: 1
     },
     secondaryButton: {
       backgroundColor: tokens.surfaceAlt,
       borderRadius: 10,
+      borderWidth: 1,
+      borderColor: 'rgba(168, 85, 247, 0.15)',
       height: 48,
       alignItems: 'center',
       justifyContent: 'center'
     },
     secondaryButtonText: {
       color: tokens.textMuted,
-      fontSize: fontSizes.base
+      fontSize: fontSizes.base,
+      fontFamily: 'JetBrainsMono_400Regular'
     }
   })
 
@@ -255,15 +258,6 @@ export function RollResultView({
           accessibilityLabel="Roll again"
         >
           <Text style={styles.primaryButtonText}>Roll Again</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={onSaveAsTemplate}
-          accessibilityRole="button"
-          accessibilityLabel="Save as template"
-        >
-          <Text style={styles.secondaryButtonText}>Save as Template</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

@@ -57,18 +57,14 @@ export function DieButton({ sides, label, onPress }: DieButtonProps): React.JSX.
         style={[
           styles.button,
           {
-            backgroundColor: tokens.surfaceAlt,
-            borderColor: tokens.border
+            backgroundColor: tokens.surface,
+            borderColor: 'rgba(168, 85, 247, 0.18)',
+            borderTopColor: 'rgba(168, 85, 247, 0.35)'
           }
         ]}
       >
         <MaterialCommunityIcons name={iconName} size={28} color={tokens.accent} />
-        <Text
-          style={[
-            styles.label,
-            { color: tokens.text, fontFamily: 'JetBrainsMono_400Regular', fontSize: fontSizes.sm }
-          ]}
-        >
+        <Text style={[styles.label, { color: tokens.text, fontSize: fontSizes.sm }]}>
           {label ?? `D${sides}`}
         </Text>
       </Pressable>
@@ -82,14 +78,16 @@ const styles = StyleSheet.create({
     minHeight: 72,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
+    borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderWidth: 1,
+    borderTopWidth: 2,
     gap: 4
   },
   label: {
     fontWeight: '500',
+    fontFamily: 'JetBrainsMono_400Regular',
     textAlign: 'center'
   }
 })

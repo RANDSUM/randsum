@@ -53,22 +53,27 @@ export default function AccountScreen(): React.JSX.Element {
       color: tokens.text,
       fontSize: fontSizes.xl,
       fontWeight: '600',
+      fontFamily: 'JetBrainsMono_400Regular',
+      letterSpacing: -0.5,
       marginBottom: 24
     },
     section: {
       backgroundColor: tokens.surface,
-      borderRadius: 12,
+      borderRadius: 8,
       padding: 16,
       marginBottom: 16,
       borderWidth: 1,
-      borderColor: tokens.border
+      borderColor: 'rgba(168, 85, 247, 0.12)',
+      borderTopWidth: 2,
+      borderTopColor: 'rgba(168, 85, 247, 0.25)'
     },
     sectionTitle: {
       color: tokens.textMuted,
       fontSize: fontSizes.xs,
       fontWeight: '600',
+      fontFamily: 'JetBrainsMono_400Regular',
       textTransform: 'uppercase',
-      letterSpacing: 0.8,
+      letterSpacing: 1,
       marginBottom: 12
     },
     input: {
@@ -94,16 +99,18 @@ export default function AccountScreen(): React.JSX.Element {
     secondaryButton: {
       backgroundColor: tokens.surfaceAlt,
       borderWidth: 1,
-      borderColor: tokens.border
+      borderColor: 'rgba(168, 85, 247, 0.15)'
     },
     primaryButtonText: {
-      color: tokens.text,
+      color: '#ffffff',
       fontSize: fontSizes.base,
-      fontWeight: '600'
+      fontWeight: '600',
+      fontFamily: 'JetBrainsMono_400Regular'
     },
     secondaryButtonText: {
       color: tokens.textMuted,
-      fontSize: fontSizes.base
+      fontSize: fontSizes.base,
+      fontFamily: 'JetBrainsMono_400Regular'
     },
     errorText: {
       color: tokens.error,
