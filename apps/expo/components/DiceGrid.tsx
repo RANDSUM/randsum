@@ -33,7 +33,10 @@ export function DiceGrid({ onDiePress, onPercentilePress }: DiceGridProps): Reac
 
 const styles = StyleSheet.create({
   grid: {
-    gap: 12
+    gap: 12,
+    width: '100%',
+    maxWidth: 360,
+    alignSelf: 'center'
   },
   row: {
     flexDirection: 'row',
