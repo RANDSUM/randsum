@@ -1,7 +1,7 @@
 [build]
-  base = "apps/rdn"
-  command = "bun run build"
-  publish = "dist"
+  base = "."
+  command = "bun run --filter @randsum/roller build && bun run --filter @randsum/rdn build"
+  publish = "apps/rdn/dist"
 
 [dev]
   command = "astro dev"
