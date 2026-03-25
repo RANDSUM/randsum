@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { NOTATION_DOCS } from '../../src/docs'
 import { roll } from '../../src/roll'
 import { isDiceNotation } from '../../src/notation/isDiceNotation'
+import { notationToOptions } from '../../src/notation/parse/notationToOptions'
 
 /**
  * Detect whether a notation string is a full rollable expression (e.g. "3d6!")
@@ -16,15 +17,6 @@ const isFullNotation = (s: string): boolean =>
   /^\d*[gG]\d+$/.test(s) ||
   /^\d*[dD]{2}\d+$/.test(s) ||
   /^\d*[dD]\{[^}]+\}$/.test(s)
-
-/**
- * Known options examples that fail due to validation bugs (not doc bugs).
- * Cap's "Clamp rolls to [3, 18]" uses { lessThan: 3, greaterThan: 18 } which is
- * semantically correct for cap (floor/ceiling), but validateComparisonOptions
- * rejects it as an impossible range. The equivalent notation "4d20C{<3,>18}"
- * works fine because it bypasses validation.
- */
-const KNOWN_OPTIONS_FAILURES: ReadonlySet<string> = new Set(['Clamp rolls to [3, 18]'])
 
 describe('Rosetta Stone — notation examples', () => {
   for (const [, doc] of Object.entries(NOTATION_DOCS)) {
@@ -43,9 +35,39 @@ describe('Rosetta Stone — notation examples', () => {
           expect(result.rolls.length).toBeGreaterThanOrEqual(1)
           expect(typeof result.total).toBe('number')
         })
+
+        test(`notation "${example.notation}" result has expected dice count`, () => {
+          const parsed = notationToOptions(example.notation)
+          const firstParsed = parsed[0]
+          if (firstParsed === undefined) return
+
+          const expectedQuantity = firstParsed.quantity ?? 1
+          const result = roll(example.notation)
+          const firstRoll = result.rolls[0]
+          if (firstRoll === undefined) return
+
+          // Geometric dice roll until 1 — initialRolls.length is variable by design
+          if (firstRoll.parameters.geometric) return
+
+          expect(firstRoll.initialRolls.length).toBe(expectedQuantity)
+        })
       }
     })
   }
+})
+
+describe('Cap — floor/ceiling clamp range (S3 regression)', () => {
+  test('cap { lessThan: 3, greaterThan: 18 } validates and rolls without throwing', () => {
+    expect(() => {
+      const result = roll({
+        sides: 20,
+        quantity: 4,
+        modifiers: { cap: { lessThan: 3, greaterThan: 18 } }
+      })
+      expect(result.rolls.length).toBeGreaterThanOrEqual(1)
+      expect(typeof result.total).toBe('number')
+    }).not.toThrow()
+  })
 })
 
 describe('Rosetta Stone — options examples', () => {
@@ -54,16 +76,29 @@ describe('Rosetta Stone — options examples', () => {
       for (const example of doc.examples) {
         if (example.options === undefined) continue
 
-        if (KNOWN_OPTIONS_FAILURES.has(example.description)) {
-          test.todo(`options "${example.description}" — known validation bug (cap clamp range)`)
-          continue
-        }
-
         test(`options "${example.description}" is rollable`, () => {
           const result = roll(example.options!)
           expect(result.rolls.length).toBeGreaterThanOrEqual(1)
           expect(typeof result.total).toBe('number')
         })
+
+        test(`options "${example.description}" has correct quantity of dice`, () => {
+          const expectedQuantity = example.options!.quantity ?? 1
+          const result = roll(example.options!)
+          const firstRoll = result.rolls[0]
+          if (firstRoll === undefined) return
+
+          expect(firstRoll.initialRolls.length).toBe(expectedQuantity)
+        })
+
+        if (isFullNotation(example.notation)) {
+          test(`notation "${example.notation}" and options "${example.description}" produce same pool count`, () => {
+            const notationResult = roll(example.notation)
+            const optionsResult = roll(example.options!)
+
+            expect(notationResult.rolls.length).toBe(optionsResult.rolls.length)
+          })
+        }
       }
     })
   }

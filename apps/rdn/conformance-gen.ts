@@ -26,6 +26,7 @@ function stableVector(v: object): object {
 }
 
 const output = {
+  $id: CONFORMANCE_FILE.$id,
   specVersion: CONFORMANCE_FILE.specVersion,
   generatedFrom: CONFORMANCE_FILE.generatedFrom,
   conformanceLevels: CONFORMANCE_FILE.conformanceLevels,
@@ -59,4 +60,4 @@ if (proc.exitCode !== 0) {
 }
 
 await Bun.write(outPath, new TextDecoder().decode(proc.stdout))
-console.log(`Written: ${outPath.pathname}`)
+console.warn(`Written: ${outPath.pathname}`)
