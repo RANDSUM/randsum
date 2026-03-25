@@ -50,7 +50,9 @@ describe('PlaygroundApp state', () => {
       const prev: PlaygroundState = {
         notation: '4d6',
         rollResult: fakeRollResult(),
-        selectedEntry: 'L'
+        selectedEntry: 'L',
+        rolling: false,
+        suggestion: null
       }
       const next = applyEscape(prev)
       expect(next.rollResult).toBeNull()
@@ -61,7 +63,9 @@ describe('PlaygroundApp state', () => {
       const prev: PlaygroundState = {
         notation: '4d6',
         rollResult: fakeRollResult(),
-        selectedEntry: null
+        selectedEntry: null,
+        rolling: false,
+        suggestion: null
       }
       const next = applyEscape(prev)
       expect(next.notation).toBe('4d6')
@@ -71,7 +75,9 @@ describe('PlaygroundApp state', () => {
       const prev: PlaygroundState = {
         notation: '4d6',
         rollResult: null,
-        selectedEntry: null
+        selectedEntry: null,
+        rolling: false,
+        suggestion: null
       }
       const next = applyEscape(prev)
       expect(next.rollResult).toBeNull()
@@ -115,7 +121,9 @@ describe('PlaygroundApp state', () => {
       const prev: PlaygroundState = {
         notation: '4d6',
         rollResult: fakeRollResult(),
-        selectedEntry: null
+        selectedEntry: null,
+        rolling: false,
+        suggestion: null
       }
       const next = applyEscape(prev)
       expect(next.notation).toBe('4d6')

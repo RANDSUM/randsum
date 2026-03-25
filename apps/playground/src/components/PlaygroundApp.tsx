@@ -1,39 +1,34 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NotationRoller, RollResultPanel } from '@randsum/dice-ui'
 import type { RollResult as RollResultData } from '@randsum/dice-ui'
+import { roll } from '@randsum/roller/roll'
+import { isDiceNotation } from '@randsum/roller/validate'
+import { suggestNotationFix } from '@randsum/roller'
 import { PlaygroundHeader } from './PlaygroundHeader'
 import { QuickReferenceGrid } from '@randsum/dice-ui'
 import { buildNotationUrl, resolveInitialNotation } from '../helpers/url'
+import {
+  type PlaygroundState,
+  applyEscape,
+  applyRollResult,
+  applyRolling,
+  applySuggestion,
+  buildInitialState,
+  computeSuggestion
+} from './playgroundStateUtils'
 
 // Re-export URL helpers for backward-compat with existing tests
 export { buildNotationUrl, resolveInitialNotation }
 
-// ---- Types (exported for testing) ----
-
-export interface PlaygroundState {
-  readonly notation: string
-  readonly rollResult: RollResultData | null
-  readonly selectedEntry: string | null
-}
-
-// ---- Pure state transition helpers (exported for testing) ----
-
-export function buildInitialState(initialNotation: string | null): PlaygroundState {
-  return {
-    notation: initialNotation ?? '',
-    rollResult: null,
-    selectedEntry: null
-  }
-}
-
-export function applyEscape(prev: PlaygroundState): PlaygroundState {
-  return { ...prev, rollResult: null, selectedEntry: null }
-}
+// Re-export state types and helpers for backward-compat with existing tests
+export type { PlaygroundState }
+export { applyEscape, buildInitialState }
 
 // ---- Component ----
 
 export function PlaygroundApp(): React.ReactElement {
   const stateRef = useRef(buildInitialState(null))
+  const rollingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const [state, setState] = useState<PlaygroundState>(() => {
     if (typeof window === 'undefined') return buildInitialState(null)
@@ -44,12 +39,45 @@ export function PlaygroundApp(): React.ReactElement {
 
   stateRef.current = state
 
+  // Clean up rolling timer on unmount
+  useEffect(() => {
+    return () => {
+      if (rollingTimerRef.current) clearTimeout(rollingTimerRef.current)
+    }
+  }, [])
+
   const handleChange = useCallback((notation: string) => {
-    setState(prev => ({ ...prev, notation }))
+    setState(prev => {
+      const suggestion = isDiceNotation(notation)
+        ? null
+        : computeSuggestion(notation, suggestNotationFix)
+      return applySuggestion({ ...prev, notation }, suggestion)
+    })
   }, [])
 
   const handleRoll = useCallback((result: RollResultData) => {
-    setState(prev => ({ ...prev, rollResult: result }))
+    setState(prev => applyRollResult(prev, result))
+  }, [])
+
+  const triggerRoll = useCallback(() => {
+    const { notation } = stateRef.current
+    if (!isDiceNotation(notation)) return
+    setState(prev => applyRolling(prev))
+    if (rollingTimerRef.current) clearTimeout(rollingTimerRef.current)
+    rollingTimerRef.current = setTimeout(() => {
+      try {
+        const result = roll(notation)
+        if (result.rolls.length > 0) {
+          setState(prev =>
+            applyRollResult(prev, { total: result.total, records: result.rolls, notation })
+          )
+        } else {
+          setState(prev => ({ ...prev, rolling: false }))
+        }
+      } catch {
+        setState(prev => ({ ...prev, rolling: false }))
+      }
+    }, 300)
   }, [])
 
   const handleSelect = useCallback((entryKey: string) => {
@@ -81,17 +109,25 @@ export function PlaygroundApp(): React.ReactElement {
     }
   }, [state.notation])
 
-  // Global keyboard handler for Escape
+  // Global keyboard handler for Escape and Enter
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent): void {
       if (e.key === 'Escape') {
         setState(prev => applyEscape(prev))
+      } else if (e.key === 'Enter') {
+        triggerRoll()
       }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       window.removeEventListener('keydown', onKeyDown)
     }
+  }, [triggerRoll])
+
+  const handleSuggestionClick = useCallback((): void => {
+    const suggested = stateRef.current.suggestion
+    if (suggested === null) return
+    setState(prev => applySuggestion({ ...prev, notation: suggested }, null))
   }, [])
 
   return (
@@ -116,6 +152,34 @@ export function PlaygroundApp(): React.ReactElement {
         }}
       >
         <NotationRoller notation={state.notation} onChange={handleChange} onRoll={handleRoll} />
+
+        {state.suggestion !== null && (
+          <div
+            style={{
+              marginTop: 'var(--pg-space-xs)',
+              fontSize: '0.85rem',
+              color: 'var(--pg-color-text-muted)'
+            }}
+          >
+            {'Did you mean: '}
+            <button
+              onClick={handleSuggestionClick}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                fontFamily: 'var(--pg-font-mono)',
+                color: 'var(--pg-color-accent)',
+                fontSize: 'inherit'
+              }}
+            >
+              {state.suggestion}
+            </button>
+            {'?'}
+          </div>
+        )}
+
         <div style={{ marginTop: 'var(--pg-space-lg)', position: 'relative' }}>
           <h3
             style={{
@@ -145,16 +209,28 @@ export function PlaygroundApp(): React.ReactElement {
                   setState(prev => applyEscape(prev))
                 }}
               />
-              <div className="qrg-overlay-panel">
+              <div className="qrg-overlay-panel" role="status" aria-live="polite">
                 <div className="qrg-overlay-content">
-                  <RollResultPanel
-                    total={state.rollResult.total}
-                    records={state.rollResult.records}
-                    notation={state.rollResult.notation}
-                    onClose={() => {
-                      setState(prev => applyEscape(prev))
-                    }}
-                  />
+                  {state.rolling ? (
+                    <div
+                      style={{
+                        padding: 'var(--pg-space-lg)',
+                        color: 'var(--pg-color-text-muted)',
+                        fontFamily: 'var(--pg-font-mono)'
+                      }}
+                    >
+                      Rolling...
+                    </div>
+                  ) : (
+                    <RollResultPanel
+                      total={state.rollResult.total}
+                      records={state.rollResult.records}
+                      notation={state.rollResult.notation}
+                      onClose={() => {
+                        setState(prev => applyEscape(prev))
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </>
