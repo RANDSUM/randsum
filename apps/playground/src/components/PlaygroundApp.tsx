@@ -44,7 +44,7 @@ export function buildNotationUrl(notation: string): string {
 // ---- Component ----
 
 export function PlaygroundApp(): React.ReactElement {
-  const stateRef = useRef<PlaygroundState>(buildInitialState(null))
+  const stateRef = useRef(buildInitialState(null))
 
   const [state, setState] = useState<PlaygroundState>(() => {
     if (typeof window === 'undefined') return buildInitialState(null)

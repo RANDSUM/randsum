@@ -70,7 +70,7 @@ describe('coreRandom', () => {
   describe('distribution validation', () => {
     test('produces reasonably uniform distribution for d6', () => {
       const iterations = 10000
-      const counts = Array.from({ length: iterations }, () => coreRandom(6)).reduce<number[]>(
+      const counts = Array.from({ length: iterations }, () => coreRandom(6)).reduce(
         (acc, result) => {
           acc[result]++
           return acc
@@ -89,7 +89,7 @@ describe('coreRandom', () => {
 
     test('produces reasonably uniform distribution for d20', () => {
       const iterations = 20000
-      const counts = Array.from({ length: iterations }, () => coreRandom(20)).reduce<number[]>(
+      const counts = Array.from({ length: iterations }, () => coreRandom(20)).reduce(
         (acc, result) => {
           acc[result]++
           return acc

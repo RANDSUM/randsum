@@ -23,10 +23,10 @@ const CHIP_PRESETS = [
   { label: 'Capped', notation: '3d8C{>6}' },
   { label: 'Geometric', notation: 'g6' },
   { label: 'Draw Dice', notation: '5DD10' }
-] as const
+]
 
 export function HeroRollerPlayground(): React.JSX.Element {
-  const [notation, setNotation] = useState<string>(CHIP_PRESETS[0].notation)
+  const [notation, setNotation] = useState(CHIP_PRESETS[0]?.notation ?? '4d6L')
   const [selectedChip, setSelectedChip] = useState<number | null>(0)
   const [resetToken, setResetToken] = useState(0)
   const autoCyclingRef = useRef(true)

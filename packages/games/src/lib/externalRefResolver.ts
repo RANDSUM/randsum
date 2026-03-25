@@ -35,7 +35,7 @@ async function fetchJson(url: string): Promise<unknown> {
 function resolvePointer(data: unknown, pointer: string, url: string): unknown {
   if (!pointer || pointer === '/') return data
   const segments = pointer.startsWith('/') ? pointer.slice(1).split('/') : pointer.split('/')
-  return segments.reduce<unknown>((cur, seg) => {
+  return segments.reduce((cur, seg) => {
     if (cur === null || typeof cur !== 'object') {
       throw new SchemaError(
         `Cannot resolve pointer "${pointer}" in "${url}": hit non-object at "${seg}"`,

@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "noUncheckedIndexedAccess": true,
+    "types": ["bun"],
     "paths": {
       "@randsum/dice-ui": ["../../packages/dice-ui/src/index.ts"]
     }

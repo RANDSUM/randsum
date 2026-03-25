@@ -32,7 +32,7 @@ function applyInputDefaults(
   inputs: Readonly<Record<string, InputDeclaration>> | undefined
 ): RollInput {
   if (!inputs) return input
-  return Object.entries(inputs).reduce<Readonly<Record<string, InputValue>>>((acc, [key, decl]) => {
+  return Object.entries(inputs).reduce((acc, [key, decl]) => {
     if (acc[key] !== undefined || decl.default === undefined) return acc
     return { ...acc, [key]: decl.default }
   }, input)
