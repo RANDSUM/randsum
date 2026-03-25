@@ -412,8 +412,8 @@ function getCardStyle(pkg: { id: string; color?: string }): string {
 </StarlightPage>
 
 <style>
-  /* Hide Starlight's auto-generated title panel on the landing page */
-  :global(.content-panel:has(#_top)) {
+  /* Hide Starlight's auto-generated title panel on the landing page only */
+  :global(body:has(.landing) .content-panel:has(#_top)) {
     display: none !important;
   }
 
