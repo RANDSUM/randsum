@@ -64,7 +64,7 @@ Frontmatter fields are all optional: `title`, `version`, `status`, `date`.
 
 ## Key Constraints
 
-- No workspace dependencies — only `astro` itself.
+- Dev dependency on `@randsum/roller` (build-time only — imports `NOTATION_DOCS` for the auto-generated modifier reference appendix).
 - Private app, never published to npm.
 - Deployed to Netlify (see `netlify.toml`).
 - Fonts: Inter (body) and JetBrains Mono (code/headings), loaded via Astro font optimization.

@@ -1,0 +1,144 @@
+---
+import { MODIFIER_DOCS, DICE_DOCS } from '@randsum/roller/docs'
+import type { NotationDoc } from '@randsum/roller/docs'
+
+const categoryOrder = [
+  'Core',
+  'Special',
+  'Clamp',
+  'Map',
+  'Substitute',
+  'Generate',
+  'Accumulate',
+  'Dispatch',
+  'Filter',
+  'Reinterpret',
+  'Scale',
+  'Order'
+]
+
+const allDocs = { ...DICE_DOCS, ...MODIFIER_DOCS }
+
+const grouped = new Map<string, NotationDoc[]>()
+for (const doc of Object.values(allDocs)) {
+  const list = grouped.get(doc.category) ?? []
+  list.push(doc)
+  grouped.set(doc.category, list)
+}
+
+const sortedCategories = categoryOrder.filter(c => grouped.has(c))
+---
+
+<section class="modifier-reference" id="appendix-h">
+  <h2>Appendix H: Notation Quick Reference</h2>
+  <p class="modifier-reference-intro">
+    Auto-generated from <code>@randsum/roller/docs</code>. This section is the
+    single source of truth for notation syntax, forms, and examples.
+  </p>
+
+  {sortedCategories.map(category => (
+    <div class="ref-category">
+      <h3>{category}</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Notation</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Forms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {grouped.get(category)!.map(doc => (
+            <tr>
+              <td><code>{doc.displayBase}</code></td>
+              <td>{doc.title}</td>
+              <td>{doc.description}</td>
+              <td>
+                {doc.forms.map(f => (
+                  <span class="ref-form">
+                    <code>{f.notation}</code>
+                    <span class="ref-form-note">{f.note}</span>
+                  </span>
+                ))}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {grouped.get(category)!.some(d => d.examples.length > 0) && (
+        <details class="ref-examples">
+          <summary>Examples</summary>
+          <table>
+            <thead>
+              <tr>
+                <th>Notation</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {grouped.get(category)!.flatMap(doc =>
+                doc.examples.map(ex => (
+                  <tr>
+                    <td><code>{ex.notation}</code></td>
+                    <td>{ex.description}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </details>
+      )}
+    </div>
+  ))}
+</section>
+
+<style>
+  .modifier-reference {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .modifier-reference-intro {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ref-category {
+    margin-bottom: 2rem;
+  }
+
+  .ref-category h3 {
+    margin-bottom: 0.75rem;
+  }
+
+  .ref-form {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .ref-form-note {
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    margin-left: 0.5rem;
+  }
+
+  .ref-examples {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .ref-examples summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ref-examples table {
+    font-size: 0.875rem;
+  }
+</style>
