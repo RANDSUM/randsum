@@ -1,6 +1,7 @@
 import type { ConformanceFile } from './types'
 
 export const CONFORMANCE_FILE: ConformanceFile = {
+  $id: 'https://notation.randsum.dev/conformance/v0.9.0.json',
   specVersion: '0.9.0',
   generatedFrom: 'apps/rdn/src/conformance/vectors.ts',
   conformanceLevels: {
