@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { NOTATION_DOCS } from '../../src/docs'
 import { roll } from '../../src/roll'
 import { isDiceNotation } from '../../src/notation/isDiceNotation'
+import { notationToOptions } from '../../src/notation/parse/notationToOptions'
 
 /**
  * Detect whether a notation string is a full rollable expression (e.g. "3d6!")
@@ -34,6 +35,22 @@ describe('Rosetta Stone — notation examples', () => {
           expect(result.rolls.length).toBeGreaterThanOrEqual(1)
           expect(typeof result.total).toBe('number')
         })
+
+        test(`notation "${example.notation}" result has expected dice count`, () => {
+          const parsed = notationToOptions(example.notation)
+          const firstParsed = parsed[0]
+          if (firstParsed === undefined) return
+
+          const expectedQuantity = firstParsed.quantity ?? 1
+          const result = roll(example.notation)
+          const firstRoll = result.rolls[0]
+          if (firstRoll === undefined) return
+
+          // Geometric dice roll until 1 — initialRolls.length is variable by design
+          if (firstRoll.parameters.geometric) return
+
+          expect(firstRoll.initialRolls.length).toBe(expectedQuantity)
+        })
       }
     })
   }
@@ -64,6 +81,24 @@ describe('Rosetta Stone — options examples', () => {
           expect(result.rolls.length).toBeGreaterThanOrEqual(1)
           expect(typeof result.total).toBe('number')
         })
+
+        test(`options "${example.description}" has correct quantity of dice`, () => {
+          const expectedQuantity = example.options!.quantity ?? 1
+          const result = roll(example.options!)
+          const firstRoll = result.rolls[0]
+          if (firstRoll === undefined) return
+
+          expect(firstRoll.initialRolls.length).toBe(expectedQuantity)
+        })
+
+        if (isFullNotation(example.notation)) {
+          test(`notation "${example.notation}" and options "${example.description}" produce same pool count`, () => {
+            const notationResult = roll(example.notation)
+            const optionsResult = roll(example.options!)
+
+            expect(notationResult.rolls.length).toBe(optionsResult.rolls.length)
+          })
+        }
       }
     })
   }
