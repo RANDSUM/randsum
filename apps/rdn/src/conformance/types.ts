@@ -59,6 +59,7 @@ export interface ConformanceVector {
 
 /** Top-level shape of the conformance JSON file. */
 export interface ConformanceFile {
+  readonly $id?: string
   readonly specVersion: string
   readonly generatedFrom: string
   readonly conformanceLevels: {

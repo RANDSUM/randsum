@@ -26,6 +26,7 @@ function stableVector(v: object): object {
 }
 
 const output = {
+  $id: CONFORMANCE_FILE.$id,
   specVersion: CONFORMANCE_FILE.specVersion,
   generatedFrom: CONFORMANCE_FILE.generatedFrom,
   conformanceLevels: CONFORMANCE_FILE.conformanceLevels,
