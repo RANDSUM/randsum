@@ -1,5 +1,6 @@
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
 import { assertRequiredContext } from './schema'
@@ -12,6 +13,27 @@ export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boole
   priority: 55,
 
   pattern: wildDiePattern,
+
+  docs: [
+    {
+      key: 'W',
+      category: 'Dispatch',
+      color: '#facc15',
+      colorLight: '#a16207',
+      title: 'Wild Die',
+      description:
+        'D6 System wild die: compound-explode on max, drop wild die and highest on 1, no effect otherwise. A macro that dispatches to multiple primitives based on runtime state.',
+      displayBase: 'W',
+      forms: [{ notation: 'W', note: 'Apply wild die rule' }],
+      examples: [
+        {
+          description: 'D6 System with wild die',
+          notation: '5d6W',
+          options: { sides: 6, quantity: 5, modifiers: { wildDie: true } }
+        }
+      ]
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = wildDiePattern.exec(notation)

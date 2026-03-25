@@ -7,6 +7,7 @@ import {
 } from '../notation/comparison'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierDefinition } from './schema'
 import { ExplosionStrategies, createAccumulatingExplosionBehavior } from './shared/explosion'
 
@@ -18,6 +19,44 @@ export const compoundSchema: NotationSchema<boolean | number | ComparisonOptions
     priority: 51,
 
     pattern: compoundPattern,
+
+    docs: [
+      {
+        key: '!!',
+        category: 'Accumulate',
+        color: '#f59e0b',
+        colorLight: '#b45309',
+        title: 'Compound Explode',
+        description:
+          'Like explode, but extra rolls add to the triggering die rather than creating new dice.',
+        displayBase: '!!',
+        forms: [
+          { notation: '!!(n)', note: 'Compound up to n times (default: once)' },
+          { notation: '!!0', note: 'Unlimited depth (capped at 100)' },
+          { notation: '!!{condition}', note: 'Compound on condition match' }
+        ],
+        comparisons: [
+          { operator: 'n', note: 'compound on exactly n' },
+          { operator: '>n', note: 'compound on more than n' },
+          { operator: '>=n', note: 'compound on n or more' },
+          { operator: '<n', note: 'compound on less than n' },
+          { operator: '<=n', note: 'compound on n or less' }
+        ],
+        examples: [
+          {
+            description: 'Roll 3d6; 6s add to themselves',
+            notation: '3d6!!',
+            options: { sides: 6, quantity: 3, modifiers: { compound: true } }
+          },
+          { description: 'Roll 1d8, compound up to 5 times', notation: '1d8!!5' },
+          {
+            description: 'Roll 5d10; compound on 8 or higher',
+            notation: '5d10!!{>=8}',
+            options: { sides: 10, quantity: 5, modifiers: { compound: { greaterThanOrEqual: 8 } } }
+          }
+        ]
+      }
+    ] satisfies readonly NotationDoc[],
 
     parse: notation => {
       const match = compoundPattern.exec(notation)

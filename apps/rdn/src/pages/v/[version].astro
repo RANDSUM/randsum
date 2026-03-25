@@ -5,6 +5,7 @@ import SpecLayout from '../../layouts/SpecLayout.astro'
 import SpecContent from '../../components/SpecContent.astro'
 import SidebarNav from '../../components/SidebarNav.astro'
 import OnThisPage from '../../components/OnThisPage.astro'
+import ModifierReference from '../../components/ModifierReference.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('specs')
@@ -41,6 +42,7 @@ const specUrl = `https://notation.randsum.dev/v/${version}`
       )
     }
     <Content />
+    <ModifierReference />
   </SpecContent>
   <OnThisPage slot="aside" headings={headings} />
 </SpecLayout>

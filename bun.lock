@@ -115,6 +115,7 @@
       },
       "devDependencies": {
         "@astrojs/check": "0.9.7",
+        "@randsum/roller": "workspace:~",
         "typescript": "5.8.3",
       },
     },

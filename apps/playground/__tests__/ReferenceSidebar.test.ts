@@ -6,7 +6,7 @@ import { MODIFIER_DOCS } from '@randsum/roller/docs'
 
 describe('ReferenceSidebar data contract', () => {
   describe('MODIFIER_DOCS lookup', () => {
-    test('a known modifier key resolves to a ModifierDoc', () => {
+    test('a known modifier key resolves to a NotationDoc', () => {
       const key = Object.keys(MODIFIER_DOCS)[0]
       expect(key).toBeDefined()
       const doc = MODIFIER_DOCS[key]

@@ -1,8 +1,8 @@
-import type { ModifierDoc } from '@randsum/roller/docs'
+import type { NotationDoc } from '@randsum/roller/docs'
 
 interface ReferenceDetailProps {
   readonly modifierKey: string
-  readonly doc: ModifierDoc
+  readonly doc: NotationDoc
 }
 
 const containerStyle: React.CSSProperties = {

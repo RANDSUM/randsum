@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { DICE_DOCS, MODIFIER_DOCS, NOTATION_DOCS } from '../src/docs/index'
-import type { ModifierDoc, NotationDoc } from '../src/docs/index'
+import type { NotationDoc } from '../src/docs/index'
 import type { NotationSchema } from '../src/notation/schema'
 import { RANDSUM_MODIFIERS } from '../src/modifiers/definitions'
 import { RANDSUM_DICE_SCHEMAS } from '../src/dice/index'
@@ -62,15 +62,10 @@ describe('MODIFIER_DOCS', () => {
   test('xDN is not in MODIFIER_DOCS (moved to DICE_DOCS)', () => {
     expect(MODIFIER_DOCS['xDN']).toBeUndefined()
   })
-
-  test('ModifierDoc type is usable', () => {
-    const doc: ModifierDoc = MODIFIER_DOCS['L']!
-    expect(doc.title).toBe('Drop Lowest')
-  })
 })
 
 describe('NotationDoc', () => {
-  test('NotationDoc type is exported and assignable from ModifierDoc', () => {
+  test('NotationDoc type is exported and assignable', () => {
     const doc: NotationDoc = {
       key: 'L',
       category: 'Filter',
@@ -87,23 +82,7 @@ describe('NotationDoc', () => {
     expect(doc.title).toBe('Drop Lowest')
   })
 
-  test('ModifierDoc is a backwards-compatible alias for NotationDoc', () => {
-    const doc: ModifierDoc = {
-      key: 'H',
-      category: 'Filter',
-      color: '#fb7185',
-      colorLight: '#e11d48',
-      title: 'Drop Highest',
-      description: 'Remove the highest die',
-      displayBase: 'H',
-      forms: [{ notation: 'H', note: 'Drop 1 highest' }],
-      examples: [{ notation: '2d20H', description: 'Drop highest' }]
-    }
-    expect(doc.key).toBe('H')
-    expect(doc.category).toBe('Filter')
-  })
-
-  test('NotationDoc type is usable', () => {
+  test('NotationDoc type is usable from MODIFIER_DOCS', () => {
     const doc: NotationDoc = MODIFIER_DOCS['L']!
     expect(doc.title).toBe('Drop Lowest')
     expect(doc.key).toBe('L')
@@ -192,10 +171,10 @@ describe('NOTATION_DOCS', () => {
 })
 
 describe('derivation correctness', () => {
-  test('every RANDSUM_MODIFIERS doc maps to same object in MODIFIER_DOCS', () => {
+  test('every RANDSUM_MODIFIERS doc maps to equivalent entry in MODIFIER_DOCS', () => {
     for (const mod of RANDSUM_MODIFIERS) {
       for (const doc of mod.docs ?? []) {
-        expect(MODIFIER_DOCS[doc.key]).toBe(doc)
+        expect(MODIFIER_DOCS[doc.key]).toEqual(doc)
       }
     }
   })

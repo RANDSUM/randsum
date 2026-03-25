@@ -7,6 +7,7 @@ import {
 } from '../notation/comparison'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
+import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierDefinition } from './schema'
 import { assertRequiredContext } from './schema'
 import { buildExplosionTrigger } from './shared/conditionMatch'
@@ -21,6 +22,44 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
   priority: 50,
 
   pattern: /(?<!!)!(?!!|[pPsSiIrR])(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/,
+
+  docs: [
+    {
+      key: '!',
+      category: 'Generate',
+      color: '#fbbf24',
+      colorLight: '#d97706',
+      title: 'Explode',
+      description:
+        'Each die showing its maximum value triggers an extra die roll. Continues if new dice also max.',
+      displayBase: '!',
+      forms: [
+        { notation: '!', note: 'Explode on max value' },
+        { notation: '!{condition}', note: 'Explode on condition match' }
+      ],
+      comparisons: [
+        { operator: 'n', note: 'explode on exactly n' },
+        { operator: '>n', note: 'explode on more than n' },
+        { operator: '>=n', note: 'explode on n or more' },
+        { operator: '<n', note: 'explode on less than n' },
+        { operator: '<=n', note: 'explode on n or less' }
+      ],
+      examples: [
+        {
+          description: 'Roll 3d6; any 6 adds another d6',
+          notation: '3d6!',
+          options: { sides: 6, quantity: 3, modifiers: { explode: true } }
+        },
+        { description: 'Roll 4d6, explode, then drop lowest', notation: '4d6L!' },
+        {
+          description: 'Roll 3d10; explode on 8 or higher',
+          notation: '3d10!{>=8}',
+          options: { sides: 10, quantity: 3, modifiers: { explode: { greaterThanOrEqual: 8 } } }
+        },
+        { description: 'Roll 5d10; explode only on 10', notation: '5d10!{=10}' }
+      ]
+    }
+  ] satisfies readonly NotationDoc[],
 
   parse: notation => {
     const match = explodePattern.exec(notation)

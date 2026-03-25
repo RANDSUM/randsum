@@ -212,14 +212,14 @@ All modifier option types are exported from `@randsum/roller`.
 | `@randsum/roller/validate` | `validateNotation()`, `isDiceNotation()`, `notation()`, validation helpers | When you only need input validation without rolling |
 | `@randsum/roller/errors` | `RandsumError`, `ValidationError`, `ModifierError`, `RollError`, `NotationParseError`, `ERROR_CODES` | Error handling only, no roll logic |
 | `@randsum/roller/tokenize` | `tokenize()` | Low-level notation tokenization |
-| `@randsum/roller/docs` | `NOTATION_DOCS`, `MODIFIER_DOCS`, `DICE_DOCS` and types `NotationDoc`, `ModifierDoc`, `ModifierCategory` | Build-time docs generation, introspection tooling |
+| `@randsum/roller/docs` | `NOTATION_DOCS`, `MODIFIER_DOCS`, `DICE_DOCS` and types `NotationDoc`, `ModifierCategory` | Build-time docs generation, introspection tooling |
 | `@randsum/roller/trace` | `traceRoll()`, `formatAsMath()` and type `RollTraceStep` | Step-by-step roll debugging and math display |
 
 ### `/docs` subpath
 
 ```typescript
 import { NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS } from '@randsum/roller/docs'
-import type { NotationDoc, ModifierDoc, ModifierCategory } from '@randsum/roller/docs'
+import type { NotationDoc, ModifierCategory } from '@randsum/roller/docs'
 ```
 
 `NOTATION_DOCS` documents the full notation syntax. `MODIFIER_DOCS` lists each modifier with its category, syntax, and description. `DICE_DOCS` covers special die types (Fate, percentile, geometric, etc.). All three are structured data suitable for generating reference pages or powering autocomplete.

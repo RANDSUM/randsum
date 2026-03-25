@@ -1,3 +1,4 @@
+import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierOptions } from './types'
 
 /**
@@ -45,6 +46,14 @@ export interface NotationSchema<TOptions = unknown> {
    * Returns array of descriptions (some modifiers produce multiple lines).
    */
   toDescription: (options: TOptions) => string[]
+
+  /**
+   * Static documentation entries for this modifier.
+   * One modifier may produce multiple entries (e.g., drop produces 'L', 'H', 'D{..}').
+   * Required for any modifier registered in RANDSUM_MODIFIERS.
+   * Must not reference any behavior-only symbols (safe for tokenize bundle).
+   */
+  docs?: readonly NotationDoc[]
 }
 
 /**

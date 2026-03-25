@@ -46,7 +46,6 @@ import { validateNotation, isDiceNotation } from "@randsum/roller/validate"
 import { tokenize } from "@randsum/roller/tokenize" // notation tokenizer, no roll engine
 import { NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS } from "@randsum/roller/docs"
 import type { NotationDoc } from "@randsum/roller/docs"
-import type { ModifierDoc } from "@randsum/roller/docs" // deprecated alias for NotationDoc
 import { traceRoll, formatAsMath } from "@randsum/roller/trace"
 import type { RollTraceStep } from "@randsum/roller/trace"
 ```
@@ -63,7 +62,6 @@ Exports static documentation data describing every RANDSUM dice type and modifie
 - `MODIFIER_DOCS: Readonly<Record<string, NotationDoc>>` — modifier-only subset of `NOTATION_DOCS` (excludes dice types)
 - `DICE_DOCS: Readonly<Record<string, NotationDoc>>` — dice-type-only subset of `NOTATION_DOCS` (excludes modifiers)
 - `NotationDoc` type — primary type for all documentation entries
-- `ModifierDoc` type — **deprecated alias for `NotationDoc`**; removed in the next major version
 
 **`NotationDoc` shape:**
 
@@ -76,7 +74,6 @@ interface NotationDoc {
   readonly color: string // dark-mode accent color (hex), e.g. '#fb7185'
   readonly colorLight: string // light-mode accent color (hex), e.g. '#e11d48'
   readonly displayBase: string // primary notation symbol(s), e.g. 'L', 'R{..}'
-  readonly displayOptional?: string // optional suffix, e.g. 'n', '{..}'
   readonly forms: readonly {
     readonly notation: string
     readonly note: string
@@ -259,6 +256,7 @@ To add a modifier:
 1. Create `src/modifiers/<mod>.ts` — export `<mod>Schema` and `<mod>Modifier`
 2. Register `<mod>Modifier` in `RANDSUM_MODIFIERS` in `src/modifiers/index.ts`
 3. Document the notation at https://notation.randsum.dev (update `apps/rdn/src/content/specs/`)
+4. Add a `docs: readonly NotationDoc[]` array to the `<mod>Schema` export — one entry per notation surface (e.g., drop has three: L, H, D{..}). Docs are co-located on the schema so adding a modifier is a single-file operation.
 
 See `docs/adr/ADR-007-modifier-co-location.md` for the architectural rationale. See https://notation.randsum.dev for the full modifier priority table and faceted classification.
 
@@ -304,7 +302,7 @@ All types are exported with `export type`:
 - `RandomFn`, `RollConfig` - Custom random function types
 - `CustomFacesNotation`, `DrawDieNotation`, `FateDieNotation`, `GeometricDieNotation`, `PercentileDie`, `ZeroBiasNotation` — special die notation types
 
-> `ModifierDoc` is a deprecated type alias for `NotationDoc`. Use `NotationDoc` in all new code; `ModifierDoc` will be removed in the next major version. `DiceSchema` is an internal type in `src/dice/index.ts` and is not exported from any public subpath.
+> `DiceSchema` is an internal type in `src/dice/index.ts` and is not exported from any public subpath.
 
 > Consumers who previously imported `RollResult` should use `RollerRollResult`. Consumers who previously imported `ValidValidationResult` or `InvalidValidationResult` should use `ValidationResult` (discriminated union on `valid: boolean`). Consumers who previously imported `RollParams`, `RequiredNumericRollParameters`, `ModifierLog`, `NumericRollBonus`, or `ModifierConfig` should use `ReturnType<typeof roll>` or construct the relevant types from the public surface.
 
