@@ -85,24 +85,24 @@ describe('edge cases', () => {
       )
     })
 
-    test('cap with invalid range throws modifier error', () => {
+    test('cap with floor/ceiling range clamps values without throwing', () => {
       expect(() =>
         roll({
           sides: 20,
           quantity: 1,
           modifiers: { cap: { lessThan: 3, greaterThan: 10 } }
         })
-      ).toThrow(ModifierError)
+      ).not.toThrow()
     })
 
-    test('cap with mutually exclusive gt/lt conditions throws modifier error', () => {
+    test('cap with reversed gt/lt clamp range clamps values without throwing', () => {
       expect(() =>
         roll({
           sides: 6,
           quantity: 3,
           modifiers: { cap: { greaterThan: 10, lessThan: 3 } }
         })
-      ).toThrow(ModifierError)
+      ).not.toThrow()
     })
 
     test('reroll with impossible gte/lte conditions throws modifier error', () => {

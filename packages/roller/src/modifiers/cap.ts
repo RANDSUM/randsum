@@ -4,7 +4,6 @@ import {
   formatComparisonNotation,
   parseComparisonNotation
 } from '../notation/comparison'
-import { validateComparisonOptions } from '../lib/comparison'
 import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import type { NotationDoc } from '../docs/modifierDocs'
@@ -138,7 +137,8 @@ export const capModifier: ModifierDefinition<ComparisonOptions> = {
     return { rolls: newRolls }
   },
 
-  validate: options => {
-    validateComparisonOptions('cap', options)
+  validate: _options => {
+    // Cap uses clamping semantics (floor/ceiling), not filter semantics.
+    // Any combination of lessThan/greaterThan is valid — no impossible range exists.
   }
 }
