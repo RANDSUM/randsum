@@ -5,31 +5,31 @@
     "": {
       "name": "randsum-monorepo",
       "devDependencies": {
-        "@astrojs/netlify": "latest",
-        "@changesets/changelog-github": "latest",
-        "@changesets/cli": "latest",
-        "@eslint/js": "latest",
-        "@size-limit/preset-small-lib": "latest",
-        "@types/bun": "latest",
-        "@typescript-eslint/eslint-plugin": "latest",
-        "@typescript-eslint/parser": "latest",
-        "astro": "latest",
-        "bunup": "latest",
-        "devalue": "latest",
-        "eslint": "latest",
-        "eslint-config-prettier": "latest",
-        "eslint-plugin-prettier": "latest",
-        "fast-check": "latest",
-        "flatted": "latest",
-        "knip": "latest",
-        "lefthook": "latest",
-        "mitata": "latest",
-        "prettier": "latest",
-        "prettier-plugin-astro": "latest",
-        "size-limit": "latest",
-        "typescript": "latest",
-        "typescript-eslint": "latest",
-        "undici": "latest",
+        "@astrojs/netlify": "7.0.4",
+        "@changesets/changelog-github": "0.6.0",
+        "@changesets/cli": "2.30.0",
+        "@eslint/js": "10.0.1",
+        "@size-limit/preset-small-lib": "12.0.1",
+        "@types/bun": "1.3.11",
+        "@typescript-eslint/eslint-plugin": "8.57.2",
+        "@typescript-eslint/parser": "8.57.2",
+        "astro": "6.0.8",
+        "bunup": "0.16.31",
+        "devalue": "5.6.4",
+        "eslint": "10.1.0",
+        "eslint-config-prettier": "10.1.8",
+        "eslint-plugin-prettier": "5.5.5",
+        "fast-check": "4.6.0",
+        "flatted": "3.4.2",
+        "knip": "6.0.5",
+        "lefthook": "2.1.4",
+        "mitata": "1.0.34",
+        "prettier": "3.8.1",
+        "prettier-plugin-astro": "0.14.1",
+        "size-limit": "12.0.1",
+        "typescript": "6.0.2",
+        "typescript-eslint": "8.57.2",
+        "undici": "6.24.0",
       },
     },
     "apps/cli": {
@@ -60,7 +60,6 @@
         "@randsum/dice-ui": "workspace:~",
         "@randsum/roller": "workspace:~",
         "@react-native-async-storage/async-storage": "2.2.0",
-        "@supabase/supabase-js": "^2.49.4",
         "expo": "~55.0.8",
         "expo-constants": "~55.0.9",
         "expo-crypto": "~55.0.10",
@@ -1240,18 +1239,6 @@
 
     "@stackblitz/sdk": ["@stackblitz/sdk@1.11.0", "", {}, "sha512-DFQGANNkEZRzFk1/rDP6TcFdM82ycHE+zfl9C/M/jXlH68jiqHWHFMQURLELoD8koxvu/eW5uhg94NSAZlYrUQ=="],
 
-    "@supabase/auth-js": ["@supabase/auth-js@2.99.3", "", { "dependencies": { "tslib": "2.8.1" } }, "sha512-vMEVLA1kGGYd/kdsJSwtjiFUZM1nGfrz2DWmgMBZtocV48qL+L2+4QpIkueXyBEumMQZFEyhz57i/5zGHjvdBw=="],
-
-    "@supabase/functions-js": ["@supabase/functions-js@2.99.3", "", { "dependencies": { "tslib": "2.8.1" } }, "sha512-6tk2zrcBkzKaaBXPOG5nshn30uJNFGOH9LxOnE8i850eQmsX+jVm7vql9kTPyvUzEHwU4zdjSOkXS9M+9ukMVA=="],
-
-    "@supabase/postgrest-js": ["@supabase/postgrest-js@2.99.3", "", { "dependencies": { "tslib": "2.8.1" } }, "sha512-8HxEf+zNycj7Z8+ONhhlu+7J7Ha+L6weyCtdEeK2mN5OWJbh6n4LPU4iuJ5UlCvvNnbSXMoutY7piITEEAgl2g=="],
-
-    "@supabase/realtime-js": ["@supabase/realtime-js@2.99.3", "", { "dependencies": { "@types/phoenix": "^1.6.6", "@types/ws": "^8.18.1", "tslib": "2.8.1", "ws": "^8.18.2" } }, "sha512-c1azgZ2nZPczbY5k5u5iFrk1InpxN81IvNE+UBAkjrBz3yc5ALLJNkeTQwbJZT4PZBuYXEzqYGLMuh9fdTtTMg=="],
-
-    "@supabase/storage-js": ["@supabase/storage-js@2.99.3", "", { "dependencies": { "iceberg-js": "^0.8.1", "tslib": "2.8.1" } }, "sha512-lOfIm4hInNcd8x0i1LWphnLKxec42wwbjs+vhaVAvR801Vda0UAMbTooUY6gfqgQb8v29GofqKuQMMTAsl6w/w=="],
-
-    "@supabase/supabase-js": ["@supabase/supabase-js@2.99.3", "", { "dependencies": { "@supabase/auth-js": "2.99.3", "@supabase/functions-js": "2.99.3", "@supabase/postgrest-js": "2.99.3", "@supabase/realtime-js": "2.99.3", "@supabase/storage-js": "2.99.3" } }, "sha512-GuPbzoEaI51AkLw9VGhLNvnzw4PHbS3p8j2/JlvLeZNQMKwZw4aEYQIDBRtFwL5Nv7/275n9m4DHtakY8nCvgg=="],
-
     "@sveltejs/acorn-typescript": ["@sveltejs/acorn-typescript@1.0.9", "", { "peerDependencies": { "acorn": "^8.9.0" } }, "sha512-lVJX6qEgs/4DOcRTpo56tmKzVPtoWAaVbL4hfO7t7NVwl9AAXzQR6cihesW1BmNMPl+bK6dreu2sOKBP2Q9CIA=="],
 
     "@testing-library/react-native": ["@testing-library/react-native@13.3.3", "", { "dependencies": { "jest-matcher-utils": "^30.0.5", "picocolors": "^1.1.1", "pretty-format": "^30.0.5", "redent": "^3.0.0" }, "peerDependencies": { "jest": ">=29.0.0", "react": ">=18.2.0", "react-native": ">=0.71", "react-test-renderer": ">=18.2.0" }, "optionalPeers": ["jest"] }, "sha512-k6Mjsd9dbZgvY4Bl7P1NIpePQNi+dfYtlJ5voi9KQlynxSyQkfOgJmYGCYmw/aSgH/rUcFvG8u5gd4npzgRDyg=="],
@@ -1303,8 +1290,6 @@
     "@types/node": ["@types/node@25.5.0", "", { "dependencies": { "undici-types": "~7.18.0" } }, "sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw=="],
 
     "@types/normalize-package-data": ["@types/normalize-package-data@2.4.4", "", {}, "sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA=="],
-
-    "@types/phoenix": ["@types/phoenix@1.6.7", "", {}, "sha512-oN9ive//QSBkf19rfDv45M7eZPi0eEXylht2OLEXicu5b4KoQ1OzXIw+xDSGWxSxe1JmepRR/ZH283vsu518/Q=="],
 
     "@types/react": ["@types/react@19.2.14", "", { "dependencies": { "csstype": "^3.2.2" } }, "sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w=="],
 
@@ -2245,8 +2230,6 @@
     "hyphenate-style-name": ["hyphenate-style-name@1.1.0", "", {}, "sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw=="],
 
     "i18next": ["i18next@23.16.8", "", { "dependencies": { "@babel/runtime": "^7.23.2" } }, "sha512-06r/TitrM88Mg5FdUXAKL96dJMzgqLE5dv3ryBAra4KCwD9mJ4ndOTS95ZuymIGoE+2hzfdaMak2X11/es7ZWg=="],
-
-    "iceberg-js": ["iceberg-js@0.8.1", "", {}, "sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA=="],
 
     "iconv-lite": ["iconv-lite@0.7.2", "", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3.0.0" } }, "sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw=="],
 
@@ -3865,8 +3848,6 @@
     "@size-limit/esbuild/nanoid": ["nanoid@5.1.6", "", { "bin": { "nanoid": "bin/nanoid.js" } }, "sha512-c7+7RQ+dMB5dPwwCp4ee1/iV/q2P6aK1mTZcfr1BTuVlyW9hJYiMPybJCcnBlQtuSmTIWNeazm/zqNoZSSElBg=="],
 
     "@so-ric/colorspace/color": ["color@5.0.3", "", { "dependencies": { "color-convert": "^3.1.3", "color-string": "^2.1.3" } }, "sha512-ezmVcLR3xAVp8kYOm4GS45ZLLgIE6SPAFoduLr6hTDajwb3KZ2F46gulK3XpcwRFb5KKGCSezCBAY4Dw4HsyXA=="],
-
-    "@supabase/realtime-js/ws": ["ws@8.19.0", "", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-blAT2mjOEIi0ZzruJfIhb3nps74PRWTCz1IjglWEEpQl5XS/UNama6u2/rjFkDDouqr4L67ry+1aGIALViWjDg=="],
 
     "@testing-library/react-native/pretty-format": ["pretty-format@30.3.0", "", { "dependencies": { "@jest/schemas": "30.0.5", "ansi-styles": "^5.2.0", "react-is": "^18.3.1" } }, "sha512-oG4T3wCbfeuvljnyAzhBvpN45E8iOTXCU/TD3zXW80HA3dQ4ahdqMkWGiPWZvjpQwlbyHrPTWUAqUzGzv4l1JQ=="],
 

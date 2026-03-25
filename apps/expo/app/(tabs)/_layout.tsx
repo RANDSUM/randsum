@@ -137,9 +137,9 @@ export default function TabLayout(): React.JSX.Element {
       <Tabs.Screen
         name="account"
         options={{
-          title: 'Account',
+          title: 'Settings',
           tabBarIcon: ({ color, size }) => (
-            <TabIcon name="person-outline" color={color} size={size} />
+            <TabIcon name="settings-outline" color={color} size={size} />
           )
         }}
       />

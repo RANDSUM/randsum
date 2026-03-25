@@ -1,11 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { storage } from '../lib/storage'
-import { supabase } from '../lib/supabase'
-import { syncToCloud } from '../lib/sync'
 import type { RollTemplate } from '../lib/types'
-
-import { useAuth } from './useAuth'
 
 interface UseTemplatesReturn {
   readonly templates: readonly RollTemplate[]
@@ -16,24 +12,10 @@ interface UseTemplatesReturn {
   readonly deleteTemplate: (id: string) => Promise<void>
 }
 
-function useSyncAfterWrite(): () => void {
-  const { user } = useAuth()
-  const userRef = useRef(user)
-  userRef.current = user
-
-  return useCallback(() => {
-    const currentUser = userRef.current
-    if (currentUser) {
-      void syncToCloud(currentUser.id, storage, supabase)
-    }
-  }, [])
-}
-
 export function useTemplates(): UseTemplatesReturn {
   const [templates, setTemplates] = useState<readonly RollTemplate[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isError, setIsError] = useState(false)
-  const syncAfterWrite = useSyncAfterWrite()
 
   useEffect(() => {
     const controller = { cancelled: false }
@@ -64,52 +46,39 @@ export function useTemplates(): UseTemplatesReturn {
     }
   }, [])
 
-  const saveTemplate = useCallback(
-    async (template: RollTemplate): Promise<void> => {
-      const now = new Date().toISOString()
-      const withTimestamps: RollTemplate = {
-        ...template,
-        createdAt: template.createdAt || now,
-        updatedAt: template.updatedAt || now
-      }
-      setTemplates(prev => [withTimestamps, ...prev])
-      try {
-        await storage.saveTemplate(withTimestamps)
-        syncAfterWrite()
-      } catch {
-        setTemplates(prev => prev.filter(t => t.id !== template.id))
-      }
-    },
-    [syncAfterWrite]
-  )
+  const saveTemplate = useCallback(async (template: RollTemplate): Promise<void> => {
+    const now = new Date().toISOString()
+    const withTimestamps: RollTemplate = {
+      ...template,
+      createdAt: template.createdAt || now,
+      updatedAt: template.updatedAt || now
+    }
+    setTemplates(prev => [withTimestamps, ...prev])
+    try {
+      await storage.saveTemplate(withTimestamps)
+    } catch {
+      setTemplates(prev => prev.filter(t => t.id !== template.id))
+    }
+  }, [])
 
-  const updateTemplate = useCallback(
-    async (template: RollTemplate): Promise<void> => {
-      setTemplates(prev => prev.map(t => (t.id === template.id ? template : t)))
-      try {
-        await storage.updateTemplate(template)
-        syncAfterWrite()
-      } catch {
-        // Reload from storage on failure
-        const loaded = await storage.getTemplates()
-        setTemplates(loaded)
-      }
-    },
-    [syncAfterWrite]
-  )
+  const updateTemplate = useCallback(async (template: RollTemplate): Promise<void> => {
+    setTemplates(prev => prev.map(t => (t.id === template.id ? template : t)))
+    try {
+      await storage.updateTemplate(template)
+    } catch {
+      const loaded = await storage.getTemplates()
+      setTemplates(loaded)
+    }
+  }, [])
 
-  const deleteTemplate = useCallback(
-    async (id: string): Promise<void> => {
-      setTemplates(prev => prev.filter(t => t.id !== id))
-      try {
-        await storage.deleteTemplate(id)
-        syncAfterWrite()
-      } catch {
-        // Best-effort — item already removed from local state
-      }
-    },
-    [syncAfterWrite]
-  )
+  const deleteTemplate = useCallback(async (id: string): Promise<void> => {
+    setTemplates(prev => prev.filter(t => t.id !== id))
+    try {
+      await storage.deleteTemplate(id)
+    } catch {
+      // Best-effort — item already removed from local state
+    }
+  }, [])
 
   return { templates, isLoading, isError, saveTemplate, updateTemplate, deleteTemplate }
 }
