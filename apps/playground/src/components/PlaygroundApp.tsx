@@ -209,7 +209,7 @@ export function PlaygroundApp(): React.ReactElement {
                   setState(prev => applyEscape(prev))
                 }}
               />
-              <div className="qrg-overlay-panel">
+              <div className="qrg-overlay-panel" role="status" aria-live="polite">
                 <div className="qrg-overlay-content">
                   {state.rolling ? (
                     <div

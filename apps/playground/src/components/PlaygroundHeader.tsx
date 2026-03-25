@@ -70,6 +70,7 @@ export function PlaygroundHeader({ notation }: PlaygroundHeaderProps): React.Rea
       </a>
 
       <nav
+        aria-label="Playground tools"
         style={{
           display: 'flex',
           alignItems: 'center',
