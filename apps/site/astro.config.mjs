@@ -61,6 +61,11 @@ export default defineConfig({
           icon: 'github',
           label: 'GitHub',
           href: 'https://github.com/RANDSUM/randsum'
+        },
+        {
+          icon: 'discord',
+          label: 'Discord Bot',
+          href: '/discord'
         }
       ],
       components: {
