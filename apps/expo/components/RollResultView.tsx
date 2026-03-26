@@ -4,6 +4,7 @@ import {
   AccessibilityInfo,
   ActivityIndicator,
   Animated,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,12 +19,14 @@ interface RollResultViewProps {
   readonly result: ParsedRollResult
   readonly onRollAgain: () => void
   readonly onShare: () => void
+  readonly onClose: () => void
 }
 
 export function RollResultView({
   result,
   onRollAgain,
-  onShare
+  onShare,
+  onClose
 }: RollResultViewProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
   const animatedValue = useRef(new Animated.Value(0)).current
@@ -65,7 +68,22 @@ export function RollResultView({
       style={[styles.container, { backgroundColor: tokens.bg }]}
       contentContainerStyle={styles.contentContainer}
     >
-      <View style={[styles.handle, { backgroundColor: tokens.border }]} accessibilityRole="none" />
+      <View style={styles.topBar}>
+        <View
+          style={[styles.handle, { backgroundColor: tokens.border }]}
+          accessibilityRole="none"
+        />
+        <Pressable
+          onPress={onClose}
+          style={styles.closeButton}
+          accessibilityRole="button"
+          accessibilityLabel="Close"
+        >
+          <Text style={[styles.closeText, { color: tokens.textMuted, fontSize: fontSizes.sm }]}>
+            Done
+          </Text>
+        </Pressable>
+      </View>
 
       <View style={styles.totalContainer}>
         {isAnimating ? (
@@ -165,12 +183,27 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1
   },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingTop: 4
+  },
   handle: {
-    width: 36,
+    flex: 1,
     height: 4,
+    maxWidth: 36,
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: 16
+  },
+  closeButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4
+  },
+  closeText: {
+    fontFamily: 'JetBrainsMono_400Regular',
+    fontWeight: '600'
   },
   totalContainer: {
     alignItems: 'center',

@@ -1,20 +1,20 @@
 import type { RollResult } from '@randsum/dice-ui'
 import { NotationRoller, QuickReferenceGrid } from '@randsum/dice-ui'
-import { useRouter } from 'expo-router'
-import { useEffect, useRef } from 'react'
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { RollResultView } from '../components/RollResultView'
 import { useTheme } from '../hooks/useTheme'
-import { buildNotationUrl, copyLink } from '../lib/sharing'
-import { serializeRollResult } from '../lib/parseRollResult'
+import { buildNotationUrl, copyLink, shareRollResult } from '../lib/sharing'
+import type { ParsedRollResult } from '../lib/parseRollResult'
 import { useNotationStore } from '../lib/stores/notationStore'
 
 export default function IndexScreen(): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
-  const router = useRouter()
   const notation = useNotationStore(s => s.notation)
   const setNotation = useNotationStore(s => s.setNotation)
+  const [result, setResult] = useState<ParsedRollResult | null>(null)
 
   // Seed notation from ?n= on web (runs once on mount)
   useEffect(() => {
@@ -45,12 +45,21 @@ export default function IndexScreen(): React.JSX.Element {
   }, [notation])
 
   function handleRoll(rollResult: RollResult): void {
-    const data = serializeRollResult({
+    setResult({
       total: rollResult.total,
       records: rollResult.records,
       notation: rollResult.notation
     })
-    router.push({ pathname: '/result', params: { data } })
+  }
+
+  function handleCloseResult(): void {
+    setResult(null)
+  }
+
+  function handleShareResult(): void {
+    if (result !== null) {
+      void shareRollResult(result)
+    }
   }
 
   function handleAddFragment(fragment: string): void {
@@ -110,6 +119,30 @@ export default function IndexScreen(): React.JSX.Element {
           </>
         )}
       </View>
+
+      {result !== null && (
+        <Modal visible transparent animationType="fade" onRequestClose={handleCloseResult}>
+          <Pressable
+            style={[styles.modalBackdrop, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}
+            onPress={handleCloseResult}
+          >
+            <Pressable
+              style={[
+                styles.modalContent,
+                { backgroundColor: tokens.bg, borderColor: tokens.border }
+              ]}
+              onPress={() => {}}
+            >
+              <RollResultView
+                result={result}
+                onRollAgain={handleCloseResult}
+                onShare={handleShareResult}
+                onClose={handleCloseResult}
+              />
+            </Pressable>
+          </Pressable>
+        </Modal>
+      )}
     </SafeAreaView>
   )
 }
@@ -120,8 +153,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingTop: 8,
-    gap: 16
+    paddingTop: 8
   },
   rollerWrap: {
     paddingHorizontal: 16,
@@ -142,5 +174,19 @@ const styles = StyleSheet.create({
   },
   webButtonText: {
     fontFamily: 'JetBrainsMono_400Regular'
+  },
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '80%',
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden'
   }
 })

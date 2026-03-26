@@ -34,13 +34,6 @@ export default function RootLayout(): React.JSX.Element | null {
     <DiceUIThemeProvider theme={colorScheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="result"
-          options={{
-            presentation: 'modal',
-            headerShown: false
-          }}
-        />
       </Stack>
     </DiceUIThemeProvider>
   )
