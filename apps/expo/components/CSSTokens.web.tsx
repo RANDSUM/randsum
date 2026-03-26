@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 
+import { useThemeStore } from '../lib/stores/themeStore'
+
 const CSS_TOKENS = `
 :root {
   /* Typography */
@@ -79,6 +81,8 @@ const CSS_TOKENS = `
 `
 
 export function CSSTokens(): null {
+  const colorScheme = useThemeStore(s => s.colorScheme)
+
   useEffect(() => {
     const existing = document.getElementById('dui-css-tokens')
     if (existing !== null) {
@@ -89,6 +93,11 @@ export function CSSTokens(): null {
     style.textContent = CSS_TOKENS
     document.head.appendChild(style)
   }, [])
+
+  // Sync data-theme attribute on <html> so CSS variable overrides respond
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', colorScheme)
+  }, [colorScheme])
 
   return null
 }

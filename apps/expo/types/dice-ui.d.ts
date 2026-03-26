@@ -41,4 +41,19 @@ declare module '@randsum/dice-ui' {
   export function subscribeTheme(callback: () => void): () => void
 
   export function tokenColor(doc: unknown, theme: 'light' | 'dark'): string | undefined
+
+  export interface RollResultPanelProps {
+    readonly total: number
+    readonly records: readonly RollRecord[]
+    readonly notation: string
+    readonly onClose?: () => void
+    readonly className?: string
+  }
+
+  export function RollResultPanel(props: RollResultPanelProps): React.JSX.Element
+  export function RollResultDisplay(props: {
+    readonly records: readonly RollRecord[]
+    readonly total?: number
+    readonly notation?: string
+  }): React.JSX.Element
 }

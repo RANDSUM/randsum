@@ -1,26 +1,18 @@
 import type { RollResult } from '@randsum/dice-ui'
-import { NotationRoller, QuickReferenceGrid } from '@randsum/dice-ui'
+import { NotationRoller, QuickReferenceGrid, RollResultPanel } from '@randsum/dice-ui'
 import { useEffect, useRef, useState } from 'react'
-import {
-  Modal,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions
-} from 'react-native'
+import { Modal, Platform, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { RollResultView } from '../components/RollResultView'
 import { WebHeader } from '../components/WebHeader'
 import { useTheme } from '../hooks/useTheme'
-import { buildNotationUrl, copyLink } from '../lib/sharing'
+import { buildNotationUrl } from '../lib/sharing'
 import type { ParsedRollResult } from '../lib/parseRollResult'
 import { useNotationStore } from '../lib/stores/notationStore'
 
 export default function IndexScreen(): React.JSX.Element {
-  const { tokens, fontSizes } = useTheme()
+  const { tokens } = useTheme()
   const notation = useNotationStore(s => s.notation)
   const setNotation = useNotationStore(s => s.setNotation)
   const [result, setResult] = useState<ParsedRollResult | null>(null)
@@ -81,10 +73,6 @@ export default function IndexScreen(): React.JSX.Element {
     setNotation(notation + fragment)
   }
 
-  function handleCopyLink(): void {
-    void copyLink(notation)
-  }
-
   const isWeb = Platform.OS === 'web'
   const { width } = useWindowDimensions()
   const isDesktop = isWeb && width >= 768
@@ -99,21 +87,6 @@ export default function IndexScreen(): React.JSX.Element {
       ]}
     >
       <NotationRoller notation={notation} onChange={setNotation} onRoll={handleRoll} />
-
-      {isWeb && (
-        <View style={styles.webActions}>
-          <Pressable
-            onPress={handleCopyLink}
-            style={[styles.webButton, { borderColor: tokens.border }]}
-            accessibilityRole="button"
-            accessibilityLabel="Copy link to this notation"
-          >
-            <Text style={[styles.webButtonText, { color: tokens.text, fontSize: fontSizes.sm }]}>
-              Copy Link
-            </Text>
-          </Pressable>
-        </View>
-      )}
     </View>
   )
 
@@ -182,7 +155,16 @@ export default function IndexScreen(): React.JSX.Element {
               ]}
               onPress={() => {}}
             >
-              <RollResultView result={result} />
+              {isWeb ? (
+                <RollResultPanel
+                  total={result.total}
+                  records={result.records}
+                  notation={result.notation}
+                  onClose={handleCloseResult}
+                />
+              ) : (
+                <RollResultView result={result} />
+              )}
             </Pressable>
           </Pressable>
         </Modal>
@@ -204,20 +186,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 8,
     gap: 8
-  },
-  webActions: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    gap: 8
-  },
-  webButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderRadius: 8
-  },
-  webButtonText: {
-    fontFamily: 'JetBrainsMono_400Regular'
   },
   webTwoCol: {
     flexDirection: 'row',

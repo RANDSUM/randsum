@@ -6,7 +6,7 @@ Proposed
 
 ## Context
 
-The RANDSUM Advanced Mode notation input must match `playground.randsum.dev` as closely as possible. The playground is built with `@randsum/dice-ui`, which provides:
+The RANDSUM Advanced Mode notation input must match `randsum.io` as closely as possible. The playground is built with `@randsum/dice-ui`, which provides:
 
 - `NotationRoller` — the top-level component that owns notation input, token highlighting, validation feedback, and roll dispatch. It wraps `TokenOverlayInput` internally; `TokenOverlayInput` is an internal implementation detail, not the public API surface.
 - `RollResultPanel` — a structured breakdown of dice results with modifier steps

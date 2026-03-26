@@ -38,7 +38,7 @@ export function WebHeader(): React.JSX.Element {
       fontFamily: 'JetBrainsMono_700Bold',
       fontSize: fontSizes.lg,
       fontWeight: '700',
-      color: tokens.accent
+      color: tokens.text
     },
     button: {
       paddingHorizontal: 10,
@@ -62,7 +62,7 @@ export function WebHeader(): React.JSX.Element {
     <View style={styles.header}>
       <View style={styles.wordmarkWrap}>
         <Text style={styles.wordmark} accessibilityRole="text">
-          RANDSUM
+          RANDSUM Dice Notation Playground
         </Text>
       </View>
 

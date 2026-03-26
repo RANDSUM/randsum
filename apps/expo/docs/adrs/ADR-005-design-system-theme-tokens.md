@@ -7,7 +7,7 @@ Proposed
 
 The RANDSUM Expo app targets iOS, Android, and Web from a single codebase. It must establish a shared visual identity that:
 
-1. Matches `randsum.dev` and `playground.randsum.dev` so the product feels like a coherent ecosystem, not a separate app bolted on.
+1. Matches `randsum.dev` and `randsum.io` so the product feels like a coherent ecosystem, not a separate app bolted on.
 2. Respects the TTRPG audience — tabletop players overwhelmingly use apps in dark environments (game nights, dimly lit tables) and expect dark-mode-first interfaces.
 3. Works across React Native's `StyleSheet` system without a CSS-in-JS runtime, while remaining compatible with Expo Web where CSS is available.
 4. Distinguishes dice values and notation from ambient UI text. Notation strings like `4d6L` and numeric results like `18` carry semantic weight and must be visually distinct from labels and chrome.

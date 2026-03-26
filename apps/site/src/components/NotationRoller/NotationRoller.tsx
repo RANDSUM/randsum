@@ -15,7 +15,7 @@ function SiteActions(notation: string): React.JSX.Element {
         className={`nr-code-action-btn${notation.length === 0 ? ' nr-code-action-btn--disabled' : ''}`}
         href={
           notation.length > 0
-            ? `https://playground.randsum.dev?notation=${encodeURIComponent(notation)}`
+            ? `https://randsum.io?notation=${encodeURIComponent(notation)}`
             : undefined
         }
         target="_blank"

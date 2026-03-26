@@ -31,7 +31,7 @@ All dice logic comes from workspace-linked `@randsum/roller` (`workspace:~`). No
 
 ### dice-ui Strategy
 
-The Advanced Mode notation input should match `playground.randsum.dev` as closely as possible. `@randsum/dice-ui` components use `react-dom` APIs (CSS imports, `className`, `getBoundingClientRect`). Strategy:
+The Advanced Mode notation input should match `randsum.io` as closely as possible. `@randsum/dice-ui` components use `react-dom` APIs (CSS imports, `className`, `getBoundingClientRect`). Strategy:
 
 1. **Start with `"use dom"`** — Expo's DOM component directive wraps web components in a WebView proxy. This gives literal 1:1 parity with the playground. Fast to ship.
 2. **Port to native if needed** — if WebView performance is unacceptable, create `.native.tsx` platform-specific variants using `TextInput`, `View`, `StyleSheet`.
@@ -106,7 +106,7 @@ The primary rolling interface. A pool builder with dice buttons.
 
 ### 2. Advanced Mode (Roll tab — toggled via Notation button)
 
-A notation-based text input, similar to `playground.randsum.dev`.
+A notation-based text input, similar to `randsum.io`.
 
 **Layout:**
 
