@@ -35,7 +35,6 @@
       "project": ["**/*.{ts,tsx}"],
       "ignoreDependencies": ["expo-*"]
     },
-    "apps/playground": {},
     "apps/rdn": {},
     "apps/site": {}
   },

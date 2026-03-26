@@ -1,4 +1,0 @@
-[build]
-  base = "."
-  command = "bun run build && bun run playground:build"
-  publish = "apps/playground/dist"

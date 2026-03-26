@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
 `blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
 
-**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/playground` (private)
+**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/expo` (dice playground — web, iOS, Android, private)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 

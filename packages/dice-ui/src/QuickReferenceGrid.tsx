@@ -99,7 +99,7 @@ const RESPONSIVE_STYLES = `
   .qrg-masonry {
     display: flex;
     flex-direction: column;
-    gap: var(--pg-space-sm);
+    gap: var(--dui-space-sm);
   }
   @media (min-width: 640px) {
     .qrg-masonry {
@@ -110,26 +110,26 @@ const RESPONSIVE_STYLES = `
     .qrg-col {
       display: flex;
       flex-direction: column;
-      gap: var(--pg-space-sm);
+      gap: var(--dui-space-sm);
     }
   }
   .qrg-entry-row {
     display: grid;
     grid-template-columns: minmax(80px, auto) 1fr;
-    gap: var(--pg-space-xs);
-    padding: 2px var(--pg-space-sm);
+    gap: var(--dui-space-xs);
+    padding: 2px var(--dui-space-sm);
     cursor: pointer;
     align-items: baseline;
     line-height: 1.4;
   }
   .qrg-entry-row:hover {
-    background-color: var(--pg-color-surface-alt);
+    background-color: var(--dui-color-surface-alt);
   }
   .qrg-entry-wrap:nth-child(odd) > .qrg-entry-row {
-    background-color: color-mix(in srgb, var(--pg-color-surface-alt) 40%, transparent);
+    background-color: color-mix(in srgb, var(--dui-color-surface-alt) 40%, transparent);
   }
   .qrg-entry-wrap:nth-child(odd) > .qrg-entry-row:hover {
-    background-color: var(--pg-color-surface-alt);
+    background-color: var(--dui-color-surface-alt);
   }
   @media (max-width: 480px) {
     .qrg-entry-row {
@@ -145,7 +145,7 @@ const RESPONSIVE_STYLES = `
     z-index: 10;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
-    border-radius: var(--pg-radius-md);
+    border-radius: var(--dui-radius-md);
   }
   [data-theme='light'] .qrg-overlay-backdrop,
   .qrg-overlay-backdrop--light {
@@ -163,7 +163,7 @@ const RESPONSIVE_STYLES = `
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: var(--pg-space-lg) var(--pg-space-md);
+    padding: var(--dui-space-lg) var(--dui-space-md);
     overflow-y: auto;
     pointer-events: none;
   }
@@ -171,9 +171,9 @@ const RESPONSIVE_STYLES = `
     pointer-events: auto;
     width: 100%;
     max-width: 28rem;
-    background: var(--pg-color-surface);
-    border: 1.5px solid var(--pg-color-border);
-    border-radius: var(--pg-radius-md);
+    background: var(--dui-color-surface);
+    border: 1.5px solid var(--dui-color-border);
+    border-radius: var(--dui-radius-md);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     animation: qrg-modal-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
@@ -192,15 +192,15 @@ const RESPONSIVE_STYLES = `
   }
   .qrg-modal-header {
     display: flex;
-    gap: var(--pg-space-md);
-    padding: var(--pg-space-md);
-    border-bottom: 1px solid var(--pg-color-border);
+    gap: var(--dui-space-md);
+    padding: var(--dui-space-md);
+    border-bottom: 1px solid var(--dui-color-border);
     align-items: flex-start;
   }
   @media (max-width: 480px) {
     .qrg-modal-header {
       flex-direction: column;
-      gap: var(--pg-space-sm);
+      gap: var(--dui-space-sm);
     }
   }
   .qrg-stepper {
@@ -210,9 +210,9 @@ const RESPONSIVE_STYLES = `
     gap: 1px;
   }
   .qrg-stepper-btn {
-    background: var(--pg-color-surface-alt);
-    border: 1px solid var(--pg-color-border);
-    color: var(--pg-color-text-muted);
+    background: var(--dui-color-surface-alt);
+    border: 1px solid var(--dui-color-border);
+    color: var(--dui-color-text-muted);
     font-size: 0.65rem;
     line-height: 1;
     padding: 2px 8px;
@@ -220,71 +220,71 @@ const RESPONSIVE_STYLES = `
     user-select: none;
   }
   .qrg-stepper-btn:hover {
-    background: var(--pg-color-border);
-    color: var(--pg-color-text);
+    background: var(--dui-color-border);
+    color: var(--dui-color-text);
   }
   .qrg-stepper-btn:first-child {
-    border-radius: var(--pg-radius-sm) var(--pg-radius-sm) 0 0;
+    border-radius: var(--dui-radius-sm) var(--dui-radius-sm) 0 0;
   }
   .qrg-stepper-btn:last-child {
-    border-radius: 0 0 var(--pg-radius-sm) var(--pg-radius-sm);
+    border-radius: 0 0 var(--dui-radius-sm) var(--dui-radius-sm);
   }
   .qrg-stepper-value {
-    background: var(--pg-color-bg);
-    border-left: 1px solid var(--pg-color-border);
-    border-right: 1px solid var(--pg-color-border);
-    font-family: var(--pg-font-mono);
+    background: var(--dui-color-bg);
+    border-left: 1px solid var(--dui-color-border);
+    border-right: 1px solid var(--dui-color-border);
+    font-family: var(--dui-font-mono);
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--pg-color-text);
+    color: var(--dui-color-text);
     padding: 2px 10px;
     text-align: center;
     min-width: 2.5ch;
   }
   .qrg-add-btn {
-    padding: var(--pg-space-xs) var(--pg-space-md);
+    padding: var(--dui-space-xs) var(--dui-space-md);
     border: none;
-    border-radius: var(--pg-radius-sm);
-    font-family: var(--pg-font-mono);
+    border-radius: var(--dui-radius-sm);
+    font-family: var(--dui-font-mono);
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease;
   }
   .qrg-add-btn:disabled {
-    background: var(--pg-color-surface-alt);
-    color: var(--pg-color-text-dim);
+    background: var(--dui-color-surface-alt);
+    color: var(--dui-color-text-dim);
     cursor: not-allowed;
   }
   .qrg-op-select {
-    background: var(--pg-color-bg);
-    border: 1px solid var(--pg-color-border);
-    border-radius: var(--pg-radius-sm);
-    color: var(--pg-color-text);
-    font-family: var(--pg-font-mono);
+    background: var(--dui-color-bg);
+    border: 1px solid var(--dui-color-border);
+    border-radius: var(--dui-radius-sm);
+    color: var(--dui-color-text);
+    font-family: var(--dui-font-mono);
     font-size: 0.78rem;
     padding: 2px 4px;
   }
 `
 
 const cardStyle: React.CSSProperties = {
-  backgroundColor: 'var(--pg-color-surface)',
-  border: '1px solid var(--pg-color-border)',
-  borderRadius: 'var(--pg-radius-md)',
-  marginBottom: 'var(--pg-space-sm)',
+  backgroundColor: 'var(--dui-color-surface)',
+  border: '1px solid var(--dui-color-border)',
+  borderRadius: 'var(--dui-radius-md)',
+  marginBottom: 'var(--dui-space-sm)',
   overflow: 'hidden'
 }
 
 const sectionHeaderStyle: React.CSSProperties = {
-  padding: 'var(--pg-space-sm)',
+  padding: 'var(--dui-space-sm)',
   fontSize: '0.7rem',
-  fontFamily: 'var(--pg-font-body)',
+  fontFamily: 'var(--dui-font-body)',
   fontWeight: 600,
   letterSpacing: '0.06em',
   textTransform: 'uppercase',
-  color: 'var(--pg-color-text-dim)',
-  backgroundColor: 'var(--pg-color-surface-alt)',
-  borderBottom: '1px solid var(--pg-color-border)',
+  color: 'var(--dui-color-text-dim)',
+  backgroundColor: 'var(--dui-color-surface-alt)',
+  borderBottom: '1px solid var(--dui-color-border)',
   cursor: 'default',
   userSelect: 'none'
 }
@@ -355,12 +355,12 @@ function DiceBuilder({
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 'var(--pg-space-md)',
+        gap: 'var(--dui-space-md)',
         flexWrap: 'wrap'
       }}
     >
       <NumericStepper value={quantity} onChange={setQuantity} min={1} accentColor={accentColor} />
-      <span style={{ fontFamily: 'var(--pg-font-mono)', color: 'var(--pg-color-text-dim)' }}>
+      <span style={{ fontFamily: 'var(--dui-font-mono)', color: 'var(--dui-color-text-dim)' }}>
         d
       </span>
       <NumericStepper value={sides} onChange={setSides} min={2} accentColor={accentColor} />
@@ -394,10 +394,10 @@ function NumberBuilder({
   const preview = `${builder.actual}${value}`
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--pg-space-md)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--dui-space-md)' }}>
       <span
         style={{
-          fontFamily: 'var(--pg-font-mono)',
+          fontFamily: 'var(--dui-font-mono)',
           fontWeight: 600,
           color: accentColor,
           fontSize: '0.85rem'
@@ -441,13 +441,13 @@ function ConditionBuilder({
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 'var(--pg-space-sm)',
+        gap: 'var(--dui-space-sm)',
         flexWrap: 'wrap'
       }}
     >
       <span
         style={{
-          fontFamily: 'var(--pg-font-mono)',
+          fontFamily: 'var(--dui-font-mono)',
           fontWeight: 600,
           color: accentColor,
           fontSize: '0.85rem'
@@ -469,7 +469,7 @@ function ConditionBuilder({
         ))}
       </select>
       <NumericStepper value={value} onChange={setValue} min={1} accentColor={accentColor} />
-      <span style={{ fontFamily: 'var(--pg-font-mono)', color: accentColor, fontSize: '0.85rem' }}>
+      <span style={{ fontFamily: 'var(--dui-font-mono)', color: accentColor, fontSize: '0.85rem' }}>
         &#125;
       </span>
       <button
@@ -559,7 +559,7 @@ function EntryRow({
   readonly theme: 'light' | 'dark'
 }): React.ReactElement {
   const accentColor = theme === 'light' ? doc.colorLight : doc.color
-  const notationColor = isSelected ? accentColor : 'var(--pg-color-accent-high)'
+  const notationColor = isSelected ? accentColor : 'var(--dui-color-accent-high)'
 
   return (
     <div className="qrg-entry-wrap">
@@ -567,7 +567,7 @@ function EntryRow({
         role="button"
         tabIndex={0}
         className="qrg-entry-row"
-        style={isSelected ? { backgroundColor: 'var(--pg-color-surface-alt)' } : undefined}
+        style={isSelected ? { backgroundColor: 'var(--dui-color-surface-alt)' } : undefined}
         onClick={() => {
           onSelect(doc.key)
         }}
@@ -580,7 +580,7 @@ function EntryRow({
       >
         <span
           style={{
-            fontFamily: 'var(--pg-font-mono)',
+            fontFamily: 'var(--dui-font-mono)',
             fontSize: '0.78rem',
             transition: 'color 0.15s ease',
             color: notationColor
@@ -590,7 +590,7 @@ function EntryRow({
         </span>
         <span
           className="qrg-entry-description"
-          style={{ fontSize: '0.78rem', color: 'var(--pg-color-text-muted)' }}
+          style={{ fontSize: '0.78rem', color: 'var(--dui-color-text-muted)' }}
         >
           {doc.title}
         </span>
@@ -618,7 +618,7 @@ function DocModal({
   const canAdd = canAddModifier(notation, doc)
 
   const codeStyle: React.CSSProperties = {
-    fontFamily: 'var(--pg-font-mono)',
+    fontFamily: 'var(--dui-font-mono)',
     color: accentColor,
     flexShrink: 0
   }
@@ -644,10 +644,10 @@ function DocModal({
                 alignItems: 'center',
                 justifyContent: 'center',
                 minWidth: '3.5rem',
-                padding: 'var(--pg-space-sm) var(--pg-space-md)',
+                padding: 'var(--dui-space-sm) var(--dui-space-md)',
                 border: `1px solid ${accentColor}40`,
-                borderRadius: 'var(--pg-radius-md)',
-                fontFamily: 'var(--pg-font-mono)',
+                borderRadius: 'var(--dui-radius-md)',
+                fontFamily: 'var(--dui-font-mono)',
                 fontSize: '1.5rem',
                 fontWeight: 700,
                 color: accentColor,
@@ -661,7 +661,7 @@ function DocModal({
                 style={{
                   fontWeight: 600,
                   fontSize: '0.9rem',
-                  color: 'var(--pg-color-text)',
+                  color: 'var(--dui-color-text)',
                   marginBottom: '0.2em'
                 }}
               >
@@ -670,7 +670,7 @@ function DocModal({
               <div
                 style={{
                   fontSize: '0.78rem',
-                  color: 'var(--pg-color-text-muted)',
+                  color: 'var(--dui-color-text-muted)',
                   lineHeight: 1.5
                 }}
               >
@@ -682,7 +682,7 @@ function DocModal({
               style={{
                 background: 'none',
                 border: 'none',
-                color: 'var(--pg-color-text-dim)',
+                color: 'var(--dui-color-text-dim)',
                 fontSize: '1.1rem',
                 lineHeight: 1,
                 padding: '0.1rem 0.25rem',
@@ -698,14 +698,14 @@ function DocModal({
           </div>
 
           {/* Forms + Examples */}
-          <div style={{ padding: 'var(--pg-space-sm) var(--pg-space-md)', fontSize: '0.78rem' }}>
+          <div style={{ padding: 'var(--dui-space-sm) var(--dui-space-md)', fontSize: '0.78rem' }}>
             <div
               style={{
                 fontSize: '0.65rem',
-                fontFamily: 'var(--pg-font-mono)',
+                fontFamily: 'var(--dui-font-mono)',
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
-                color: 'var(--pg-color-text-dim)',
+                color: 'var(--dui-color-text-dim)',
                 margin: '0 0 2px 0'
               }}
             >
@@ -715,7 +715,7 @@ function DocModal({
               style={{
                 listStyle: 'none',
                 padding: 0,
-                margin: '0 0 var(--pg-space-xs) 0',
+                margin: '0 0 var(--dui-space-xs) 0',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '2px'
@@ -724,10 +724,10 @@ function DocModal({
               {doc.forms.map((form, i) => (
                 <li
                   key={i}
-                  style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--pg-space-sm)' }}
+                  style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--dui-space-sm)' }}
                 >
                   <code style={codeStyle}>{form.notation}</code>
-                  <span style={{ color: 'var(--pg-color-text-dim)' }}>{form.note}</span>
+                  <span style={{ color: 'var(--dui-color-text-dim)' }}>{form.note}</span>
                 </li>
               ))}
             </ul>
@@ -737,11 +737,11 @@ function DocModal({
                 <div
                   style={{
                     fontSize: '0.65rem',
-                    fontFamily: 'var(--pg-font-mono)',
+                    fontFamily: 'var(--dui-font-mono)',
                     letterSpacing: '0.06em',
                     textTransform: 'uppercase',
-                    color: 'var(--pg-color-text-dim)',
-                    margin: 'var(--pg-space-xs) 0 2px 0'
+                    color: 'var(--dui-color-text-dim)',
+                    margin: 'var(--dui-space-xs) 0 2px 0'
                   }}
                 >
                   Operators
@@ -750,7 +750,7 @@ function DocModal({
                   style={{
                     listStyle: 'none',
                     padding: 0,
-                    margin: '0 0 var(--pg-space-xs) 0',
+                    margin: '0 0 var(--dui-space-xs) 0',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '2px'
@@ -762,11 +762,11 @@ function DocModal({
                       style={{
                         display: 'flex',
                         alignItems: 'baseline',
-                        gap: 'var(--pg-space-sm)'
+                        gap: 'var(--dui-space-sm)'
                       }}
                     >
                       <code style={codeStyle}>{c.operator}</code>
-                      <span style={{ color: 'var(--pg-color-text-dim)' }}>{c.note}</span>
+                      <span style={{ color: 'var(--dui-color-text-dim)' }}>{c.note}</span>
                     </li>
                   ))}
                 </ul>
@@ -776,11 +776,11 @@ function DocModal({
             <div
               style={{
                 fontSize: '0.65rem',
-                fontFamily: 'var(--pg-font-mono)',
+                fontFamily: 'var(--dui-font-mono)',
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
-                color: 'var(--pg-color-text-dim)',
-                margin: 'var(--pg-space-xs) 0 2px 0'
+                color: 'var(--dui-color-text-dim)',
+                margin: 'var(--dui-space-xs) 0 2px 0'
               }}
             >
               Examples
@@ -798,10 +798,10 @@ function DocModal({
               {doc.examples.map((ex, i) => (
                 <li
                   key={i}
-                  style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--pg-space-sm)' }}
+                  style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--dui-space-sm)' }}
                 >
                   <code style={codeStyle}>{ex.notation}</code>
-                  <span style={{ color: 'var(--pg-color-text-dim)' }}>{ex.description}</span>
+                  <span style={{ color: 'var(--dui-color-text-dim)' }}>{ex.description}</span>
                 </li>
               ))}
             </ul>
@@ -810,19 +810,19 @@ function DocModal({
           {/* Builder */}
           <div
             style={{
-              padding: 'var(--pg-space-sm) var(--pg-space-md) var(--pg-space-md)',
-              borderTop: '1px solid var(--pg-color-border)',
-              backgroundColor: 'var(--pg-color-surface-alt)'
+              padding: 'var(--dui-space-sm) var(--dui-space-md) var(--dui-space-md)',
+              borderTop: '1px solid var(--dui-color-border)',
+              backgroundColor: 'var(--dui-color-surface-alt)'
             }}
           >
             <div
               style={{
                 fontSize: '0.65rem',
-                fontFamily: 'var(--pg-font-mono)',
+                fontFamily: 'var(--dui-font-mono)',
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
-                color: 'var(--pg-color-text-dim)',
-                marginBottom: 'var(--pg-space-xs)'
+                color: 'var(--dui-color-text-dim)',
+                marginBottom: 'var(--dui-space-xs)'
               }}
             >
               Add to notation
@@ -858,8 +858,8 @@ function DocModal({
               <div
                 style={{
                   fontSize: '0.7rem',
-                  color: 'var(--pg-color-text-dim)',
-                  marginTop: 'var(--pg-space-xs)',
+                  color: 'var(--dui-color-text-dim)',
+                  marginTop: 'var(--dui-space-xs)',
                   fontStyle: 'italic'
                 }}
               >
@@ -915,7 +915,7 @@ export function QuickReferenceGrid({
   const rightGroups = grouped.slice(midpoint)
 
   return (
-    <div style={{ position: 'relative', fontFamily: 'var(--pg-font-body)' }}>
+    <div style={{ position: 'relative', fontFamily: 'var(--dui-font-body)' }}>
       <style>{RESPONSIVE_STYLES}</style>
       <div className="qrg-masonry">
         <div className="qrg-col">

@@ -1,6 +1,0 @@
-.main-column {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pg-space-md);
-  min-width: 0;
-}

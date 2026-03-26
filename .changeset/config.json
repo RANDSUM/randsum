@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "minor",
-  "ignore": ["@randsum/site", "@randsum/playground", "@randsum/discord-bot"]
+  "ignore": ["@randsum/site", "@randsum/discord-bot"]
 }

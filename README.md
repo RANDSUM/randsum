@@ -36,7 +36,7 @@ This repository contains multiple packages and applications for dice rolling and
 
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
 - **[@randsum/site](apps/site)** - Documentation and marketing website built with Astro
-- **[@randsum/playground](apps/playground)** - Interactive dice notation playground
+- **[@randsum/expo](apps/expo)** - Dice notation playground (web, iOS, Android)
 
 ## 🚀 Quick Example
 
@@ -137,7 +137,7 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 
 - [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev) - Formal spec for dice notation syntax
 - [Documentation](https://randsum.dev)
-- [Playground](https://playground.randsum.dev)
+- [Playground](https://randsum.io)
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
 
