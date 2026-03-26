@@ -20,11 +20,16 @@ function createElement(
   }
 }
 
+// Captured useEffect calls — reset in beforeEach so each test gets a clean slate
+const _capturedEffects: { fn: () => void | (() => void); deps?: unknown[] }[] = []
+
 const reactMock = {
   createElement,
   // hooks used by IndexScreen
   useState: <T,>(initial: T): [T, (v: T) => void] => [initial, () => {}],
-  useEffect: (_fn: () => void | (() => void), _deps?: unknown[]) => {},
+  useEffect: (fn: () => void | (() => void), deps?: unknown[]) => {
+    _capturedEffects.push({ fn, deps })
+  },
   useRef: <T,>(initial: T): { current: T } => ({ current: initial }),
   Fragment: 'Fragment',
   default: {} as Record<string, unknown>
@@ -136,6 +141,11 @@ mock.module('../lib/stores/notationStore', () => ({
 
 const { default: IndexScreen } = await import('../app/index')
 
+// Clear captured effects before each test so tests don't bleed into each other
+beforeEach(() => {
+  _capturedEffects.length = 0
+})
+
 type ReactEl = {
   type: string
   props: Record<string, unknown>
@@ -240,5 +250,88 @@ describe('IndexScreen mobile layout (< 768px, web)', () => {
     const root = IndexScreen() as ReactEl
     const twoCol = findAll(root, el => el.props['testID'] === 'desktop-two-col')
     expect(twoCol.length).toBe(0)
+  })
+
+  test('wraps QuickReferenceGrid in a details element on mobile web', () => {
+    const root = IndexScreen() as ReactEl
+    const details = findAll(root, el => el.type === 'details')
+    expect(details.length).toBe(1)
+  })
+
+  test('details element contains a summary with Notation Reference label', () => {
+    const root = IndexScreen() as ReactEl
+    const details = findAll(root, el => el.type === 'details')[0] as ReactEl
+    expect(details).toBeDefined()
+    const summary = findAll(details, el => el.type === 'summary')
+    expect(summary.length).toBe(1)
+    const summaryEl = summary[0] as ReactEl
+    expect(summaryEl.props['children']).toBe('Notation Reference')
+  })
+
+  test('details element is collapsed by default (open={false})', () => {
+    const root = IndexScreen() as ReactEl
+    const details = findAll(root, el => el.type === 'details')[0] as ReactEl
+    expect(details).toBeDefined()
+    expect(details.props['open']).toBe(false)
+  })
+})
+
+describe('IndexScreen desktop layout does not wrap grid in details', () => {
+  beforeEach(() => {
+    _dims.width = 1024
+    _dims.height = 768
+  })
+
+  test('no details element on desktop web', () => {
+    const root = IndexScreen() as ReactEl
+    const details = findAll(root, el => el.type === 'details')
+    expect(details.length).toBe(0)
+  })
+})
+
+describe('IndexScreen Escape key handler (web)', () => {
+  // Bun's test runner is Node-based — the bare `window` identifier used in
+  // index.tsx's effect body is not a built-in global. We install a stub on
+  // globalThis before running the captured effects, mirroring what the Expo
+  // web runtime provides.
+
+  test('IndexScreen registers a useEffect with [result] dependency for the escape handler', () => {
+    IndexScreen()
+
+    // The escape useEffect is keyed on [result]; result starts as null
+    const resultDeps = _capturedEffects.filter(e => e.deps?.length === 1 && e.deps[0] === null)
+    expect(resultDeps.length).toBeGreaterThanOrEqual(1)
+  })
+
+  test('escape handler useEffect returns a cleanup function on web', () => {
+    // Provide a minimal window stub so the effect body can run
+    const addedListeners: { type: string; handler: EventListener }[] = []
+    const removedListeners: { type: string; handler: EventListener }[] = []
+    const prevWindow = (globalThis as Record<string, unknown>)['window']
+    ;(globalThis as Record<string, unknown>)['window'] = {
+      addEventListener: (type: string, handler: EventListener) => {
+        addedListeners.push({ type, handler })
+      },
+      removeEventListener: (type: string, handler: EventListener) => {
+        removedListeners.push({ type, handler })
+      },
+      location: { search: '', pathname: '/' },
+      history: { replaceState: () => {} }
+    }
+
+    IndexScreen()
+
+    // Find the effect with [null] dependency (escape handler, result=null)
+    const escapeEffect = _capturedEffects.find(e => e.deps?.length === 1 && e.deps[0] === null)
+    expect(escapeEffect).toBeDefined()
+
+    // Run it — it should not throw and should return a cleanup function
+    const cleanup = escapeEffect!.fn()
+    expect(typeof cleanup).toBe('function')
+
+    // Run cleanup — the handler that was added should be removed
+    if (typeof cleanup === 'function') cleanup()
+    expect(removedListeners.length).toBe(addedListeners.length)
+    ;(globalThis as Record<string, unknown>)['window'] = prevWindow
   })
 })

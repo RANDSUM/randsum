@@ -35,6 +35,18 @@ export default function IndexScreen(): React.JSX.Element {
     }
   }, [setNotation])
 
+  // Escape key handler — dismiss result modal on web
+  useEffect(() => {
+    if (Platform.OS !== 'web') return
+    const handler = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') setResult(null)
+    }
+    window.addEventListener('keydown', handler)
+    return () => {
+      window.removeEventListener('keydown', handler)
+    }
+  }, [result])
+
   // Debounced URL sync — update ?n= as user types (web only)
   const urlSyncTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   useEffect(() => {
@@ -133,7 +145,19 @@ export default function IndexScreen(): React.JSX.Element {
             ) : (
               <>
                 {roller}
-                {grid}
+                <details open={false}>
+                  <summary
+                    style={{
+                      color: 'var(--dui-color-text-muted)',
+                      cursor: 'pointer',
+                      paddingTop: 'var(--dui-space-sm)',
+                      paddingBottom: 'var(--dui-space-sm)'
+                    }}
+                  >
+                    Notation Reference
+                  </summary>
+                  {grid}
+                </details>
               </>
             )}
           </>
