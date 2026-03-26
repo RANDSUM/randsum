@@ -1,5 +1,5 @@
 // dice-ui public exports
-export type { RollResult } from './types'
+export type { RollResult, QuickReferenceGridProps } from './types'
 export { tokenColor } from './tokenColor'
 export { useTheme, getTheme, subscribeTheme, DiceUIThemeProvider } from './useTheme'
 export { TokenOverlayInput } from './TokenOverlayInput'

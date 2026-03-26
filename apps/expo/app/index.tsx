@@ -2,7 +2,7 @@ import type { RollResult } from '@randsum/dice-ui'
 import { NotationRoller, QuickReferenceGrid } from '@randsum/dice-ui'
 import { useRouter } from 'expo-router'
 import { useEffect, useRef } from 'react'
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useTheme } from '../hooks/useTheme'
@@ -61,34 +61,55 @@ export default function IndexScreen(): React.JSX.Element {
     void copyLink(notation)
   }
 
+  const isWeb = Platform.OS === 'web'
+
+  const roller = (
+    <View
+      style={[
+        styles.rollerWrap,
+        isWeb
+          ? { borderBottomWidth: 1, borderBottomColor: tokens.border }
+          : { borderTopWidth: 1, borderTopColor: tokens.border }
+      ]}
+    >
+      <NotationRoller notation={notation} onChange={setNotation} onRoll={handleRoll} />
+
+      {isWeb && (
+        <View style={styles.webActions}>
+          <Pressable
+            onPress={handleCopyLink}
+            style={[styles.webButton, { borderColor: tokens.border }]}
+            accessibilityRole="button"
+            accessibilityLabel="Copy link to this notation"
+          >
+            <Text style={[styles.webButtonText, { color: tokens.text, fontSize: fontSizes.sm }]}>
+              Copy Link
+            </Text>
+          </Pressable>
+        </View>
+      )}
+    </View>
+  )
+
+  const grid = (
+    <QuickReferenceGrid onAdd={handleAddFragment} notation={notation} inverted={!isWeb} />
+  )
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: tokens.bg }]}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.rollerWrap}>
-          <NotationRoller notation={notation} onChange={setNotation} onRoll={handleRoll} />
-        </View>
-
-        {Platform.OS === 'web' && (
-          <View style={styles.webActions}>
-            <Pressable
-              onPress={handleCopyLink}
-              style={[styles.webButton, { borderColor: tokens.border }]}
-              accessibilityRole="button"
-              accessibilityLabel="Copy link to this notation"
-            >
-              <Text style={[styles.webButtonText, { color: tokens.text, fontSize: fontSizes.sm }]}>
-                Copy Link
-              </Text>
-            </Pressable>
-          </View>
+      <View style={styles.content}>
+        {isWeb ? (
+          <>
+            {roller}
+            {grid}
+          </>
+        ) : (
+          <>
+            {grid}
+            {roller}
+          </>
         )}
-
-        <QuickReferenceGrid onAdd={handleAddFragment} notation={notation} />
-      </ScrollView>
+      </View>
     </SafeAreaView>
   )
 }
@@ -97,20 +118,20 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1
   },
-  scroll: {
-    flex: 1
-  },
   content: {
-    paddingHorizontal: 16,
+    flex: 1,
     paddingTop: 8,
-    paddingBottom: 32,
     gap: 16
   },
   rollerWrap: {
-    paddingBottom: 4
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+    gap: 8
   },
   webActions: {
     flexDirection: 'row',
+    paddingHorizontal: 16,
     gap: 8
   },
   webButton: {

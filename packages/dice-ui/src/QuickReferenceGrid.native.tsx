@@ -6,12 +6,7 @@ import { useTheme } from './useTheme'
 import { tokenColor } from './tokenColor'
 import { NumericStepper } from './NumericStepper'
 
-// ---- Props ----
-
-interface QuickReferenceGridProps {
-  readonly onAdd: (fragment: string) => void
-  readonly notation?: string
-}
+import type { QuickReferenceGridProps } from './types'
 
 // ---- Theme tokens ----
 
@@ -662,34 +657,71 @@ function EntryRow({
   doc,
   theme,
   onSelect,
-  isOdd
+  isOdd,
+  side
 }: {
   readonly doc: NotationDoc
   readonly theme: 'light' | 'dark'
   readonly onSelect: (key: string) => void
   readonly isOdd: boolean
+  readonly side?: 'left' | 'right'
 }): React.JSX.Element {
   const tokens = TOKENS[theme]
   const accentColor = tokenColor(doc, theme) ?? tokens.accent
+  const isRight = side === 'right'
+  const isPaired = side !== undefined
 
   return (
     <Pressable
       style={[
-        styles.entryRow,
-        { backgroundColor: isOdd ? `${tokens.surfaceAlt}66` : 'transparent' }
+        isPaired ? pairedStyles.entry : styles.entryRow,
+        { backgroundColor: isOdd ? `${tokens.surfaceAlt}66` : 'transparent' },
+        isRight ? pairedStyles.entryRight : undefined
       ]}
       onPress={() => onSelect(doc.key)}
       accessibilityLabel={`${doc.displayBase} - ${doc.title}`}
       accessibilityRole="button"
     >
-      <Text style={[styles.entryKey, { color: accentColor }]}>{doc.displayBase}</Text>
-      <Text style={[styles.entryTitle, { color: tokens.textMuted }]} numberOfLines={1}>
-        {doc.title}
-      </Text>
-      <Text style={[styles.entryChevron, { color: tokens.textDim }]}>{'\u203A'}</Text>
+      {isRight ? (
+        <>
+          <Text
+            style={[styles.entryTitle, { color: tokens.textMuted, textAlign: 'right' }]}
+            numberOfLines={1}
+          >
+            {doc.title}
+          </Text>
+          <Text style={[styles.entryKey, { color: accentColor, textAlign: 'right' }]}>
+            {doc.displayBase}
+          </Text>
+          <Text style={[styles.entryChevron, { color: tokens.textDim }]}>{'\u203A'}</Text>
+        </>
+      ) : (
+        <>
+          <Text style={[styles.entryChevron, { color: tokens.textDim }]}>{'\u2039'}</Text>
+          <Text style={[styles.entryKey, { color: accentColor }]}>{doc.displayBase}</Text>
+          <Text style={[styles.entryTitle, { color: tokens.textMuted }]} numberOfLines={1}>
+            {doc.title}
+          </Text>
+        </>
+      )}
     </Pressable>
   )
 }
+
+const pairedStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row'
+  },
+  entry: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 8
+  },
+  entryRight: {}
+})
 
 // ---- Section header ----
 
@@ -723,15 +755,21 @@ function SectionHeader({
 
 // ---- Main component ----
 
+type PairedItem =
+  | { readonly kind: 'single'; readonly doc: NotationDoc }
+  | { readonly kind: 'pair'; readonly left: NotationDoc; readonly right: NotationDoc }
+
 interface SectionData {
   readonly category: ModifierCategory
   readonly color: string
-  readonly data: readonly NotationDoc[]
+  readonly data: readonly PairedItem[]
+  readonly isMulti: boolean
 }
 
 export function QuickReferenceGrid({
   onAdd,
-  notation
+  notation,
+  inverted: isInverted = false
 }: QuickReferenceGridProps): React.JSX.Element {
   const theme = useTheme()
   const tokens = TOKENS[theme]
@@ -745,11 +783,31 @@ export function QuickReferenceGrid({
       if (docs !== undefined && docs.length > 0) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const sampleColor = tokenColor(docs[0]!, theme) ?? tokens.accent
-        result.push({ category: cat, color: sampleColor, data: docs })
+        const isMulti = docs.length > 1
+        const paired: PairedItem[] = []
+        if (isMulti) {
+          for (let i = 0; i < docs.length; i += 2) {
+            const left = docs[i]!
+            const right = docs[i + 1]
+            if (right !== undefined) {
+              paired.push({ kind: 'pair', left, right })
+            } else {
+              paired.push({ kind: 'single', doc: left })
+            }
+          }
+        } else {
+          paired.push({ kind: 'single', doc: docs[0]! })
+        }
+        result.push({
+          category: cat,
+          color: sampleColor,
+          data: isInverted ? paired.reverse() : paired,
+          isMulti
+        })
       }
     }
     return result
-  }, [theme])
+  }, [theme, isInverted])
 
   const selectedDoc = selectedKey !== null ? (NOTATION_DOCS[selectedKey] ?? null) : null
   const selectedAccent =
@@ -775,17 +833,77 @@ export function QuickReferenceGrid({
     <View style={styles.container}>
       <SectionList
         sections={
-          sections as unknown as readonly { category: string; color: string; data: NotationDoc[] }[]
+          sections as unknown as readonly {
+            category: string
+            color: string
+            data: PairedItem[]
+            isMulti: boolean
+          }[]
         }
-        keyExtractor={doc => doc.key}
-        renderSectionHeader={({ section }) => {
+        keyExtractor={item =>
+          item.kind === 'single' ? item.doc.key : `${item.left.key}-${item.right.key}`
+        }
+        renderSectionHeader={
+          isInverted
+            ? () => null
+            : ({ section }) => {
+                const s = section as unknown as SectionData
+                return (
+                  <SectionHeader
+                    label={CATEGORY_LABELS[s.category]}
+                    color={s.color}
+                    theme={theme}
+                  />
+                )
+              }
+        }
+        renderSectionFooter={
+          isInverted
+            ? ({ section }) => {
+                const s = section as unknown as SectionData
+                return (
+                  <SectionHeader
+                    label={CATEGORY_LABELS[s.category]}
+                    color={s.color}
+                    theme={theme}
+                  />
+                )
+              }
+            : undefined
+        }
+        renderItem={({ item, index, section }) => {
           const s = section as unknown as SectionData
-          return <SectionHeader label={CATEGORY_LABELS[s.category]} color={s.color} theme={theme} />
+          if (item.kind === 'single') {
+            return (
+              <EntryRow
+                doc={item.doc}
+                theme={theme}
+                onSelect={handleSelect}
+                isOdd={index % 2 === 1}
+              />
+            )
+          }
+          return (
+            <View style={pairedStyles.row}>
+              <EntryRow
+                doc={item.left}
+                theme={theme}
+                onSelect={handleSelect}
+                isOdd={index % 2 === 0}
+                side="left"
+              />
+              <EntryRow
+                doc={item.right}
+                theme={theme}
+                onSelect={handleSelect}
+                isOdd={index % 2 === 1}
+                side="right"
+              />
+            </View>
+          )
         }}
-        renderItem={({ item, index }) => (
-          <EntryRow doc={item} theme={theme} onSelect={handleSelect} isOdd={index % 2 === 1} />
-        )}
         stickySectionHeadersEnabled={false}
+        inverted={isInverted}
       />
 
       {selectedDoc !== null && (

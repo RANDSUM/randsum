@@ -1,6 +1,6 @@
 // Native-specific barrel — re-exports components from their .native.tsx implementations.
 // Used by the Expo app's tsconfig paths mapping for correct type resolution.
-export type { RollResult } from './types'
+export type { RollResult, QuickReferenceGridProps } from './types'
 export { tokenColor } from './tokenColor'
 export { useTheme, getTheme, subscribeTheme, DiceUIThemeProvider } from './useTheme.native'
 export { TokenOverlayInput } from './TokenOverlayInput.native'

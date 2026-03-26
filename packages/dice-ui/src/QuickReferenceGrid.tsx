@@ -2,15 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { ModifierCategory, NotationDoc } from '@randsum/roller/docs'
 import { useTheme } from './useTheme'
-
-// ---- Props ----
-
-interface QuickReferenceGridProps {
-  readonly notation: string
-  readonly selectedEntry: string | null
-  readonly onSelect: (entryKey: string) => void
-  readonly onAdd: (fragment: string) => void
-}
+import type { QuickReferenceGridProps } from './types'
 
 // ---- Builder type system ----
 
@@ -884,12 +876,20 @@ function DocModal({
 // ---- Main component ----
 
 export function QuickReferenceGrid({
+  onAdd,
   notation,
-  selectedEntry,
-  onSelect,
-  onAdd
+  inverted: _inverted,
+  selectedEntry: controlledEntry,
+  onSelect: controlledOnSelect
 }: QuickReferenceGridProps): React.ReactElement {
   const theme = useTheme()
+  const [internalEntry, setInternalEntry] = useState<string | null>(null)
+  const selectedEntry = controlledEntry !== undefined ? controlledEntry : internalEntry
+  const onSelect =
+    controlledOnSelect ??
+    ((key: string) => {
+      setInternalEntry(prev => (prev === key ? null : key))
+    })
 
   const grouped = useMemo(() => {
     const groups = groupByCategory()
@@ -955,7 +955,7 @@ export function QuickReferenceGrid({
         <DocModal
           doc={selectedDoc}
           accentColor={selectedAccent}
-          notation={notation}
+          notation={notation ?? ''}
           onClose={() => {
             onSelect(selectedDoc.key)
           }}

@@ -26,6 +26,7 @@ declare module '@randsum/dice-ui' {
   export interface QuickReferenceGridProps {
     readonly onAdd: (fragment: string) => void
     readonly notation?: string
+    readonly inverted?: boolean
   }
 
   export function QuickReferenceGrid(props: QuickReferenceGridProps): React.JSX.Element
