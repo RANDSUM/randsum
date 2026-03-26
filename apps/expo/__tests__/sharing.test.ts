@@ -1,9 +1,8 @@
 import { describe, expect, test } from 'bun:test'
 import type { ParsedRollResult } from '../lib/parseRollResult'
-import type { RollTemplate } from '../lib/types'
 
 // Dynamic import ensures setup.ts preload mock is active before react-native resolves
-const { formatRollResultText, shareRollResult, shareTemplate } = await import('../lib/sharing')
+const { formatRollResultText, shareRollResult } = await import('../lib/sharing')
 
 // Minimal RollRecord shape matching @randsum/roller
 function makeRecord(
@@ -68,19 +67,5 @@ describe('shareRollResult', () => {
       records: [makeRecord([6, 5, 4, 1], [6, 5, 4]) as never]
     }
     await expect(shareRollResult(result)).resolves.toBeUndefined()
-  })
-})
-
-describe('shareTemplate', () => {
-  test('resolves without throwing', async () => {
-    const template: RollTemplate = {
-      id: 'abc123',
-      name: 'Test',
-      notation: '1d20',
-      variables: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-    await expect(shareTemplate(template, 'https://randsum.io/t/abc123')).resolves.toBeUndefined()
   })
 })

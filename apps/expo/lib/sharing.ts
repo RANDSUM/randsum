@@ -1,7 +1,6 @@
 import { Share } from 'react-native'
 
 import type { ParsedRollResult } from './parseRollResult'
-import type { RollTemplate } from './types'
 
 /**
  * Formats a ParsedRollResult as a human-readable string.
@@ -32,11 +31,23 @@ export async function shareRollResult(result: ParsedRollResult): Promise<void> {
   }
 }
 
-/** Share a template via the system share sheet with a deep link URL. */
-export async function shareTemplate(template: RollTemplate, templateUrl: string): Promise<void> {
+/**
+ * Builds a URL with a ?n= query param for the given notation.
+ * Web-only — call with a Platform.OS === 'web' guard at the call site.
+ */
+export function buildNotationUrl(notation: string): string {
+  return `?n=${encodeURIComponent(notation)}`
+}
+
+/**
+ * Copies the notation URL to the clipboard.
+ * Web-only — call with a Platform.OS === 'web' guard at the call site.
+ */
+export async function copyLink(notation: string): Promise<void> {
   try {
-    await Share.share({ message: templateUrl, url: templateUrl })
+    const url = `${window.location.origin}${window.location.pathname}${buildNotationUrl(notation)}`
+    await navigator.clipboard.writeText(url)
   } catch {
-    // Share API unavailable or dismissed — silently ignore
+    // Clipboard API unavailable — silently ignore
   }
 }
