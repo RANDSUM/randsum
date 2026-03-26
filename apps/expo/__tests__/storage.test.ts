@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, test } from 'bun:test'
-import { mock } from 'bun:test'
+import { beforeEach, describe, expect, test, mock } from 'bun:test'
 
 import type { Preferences, RollHistoryEntry, RollTemplate } from '../lib/types'
 
