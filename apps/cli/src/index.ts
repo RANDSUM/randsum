@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+import { render } from 'ink'
+import { createElement } from 'react'
+import { NotationRoller } from '@randsum/dice-ui/ink'
 import { runSimple } from './simple/run'
 import { version as VERSION } from '../package.json'
 
@@ -77,8 +80,8 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
   return { notations, ...flags }
 }
 
-function main(): void {
-  const parsed = parseArgs(process.argv)
+export function main(argv: readonly string[]): void {
+  const parsed = parseArgs(argv)
 
   if (parsed.help) {
     // eslint-disable-next-line no-console
@@ -93,8 +96,7 @@ function main(): void {
   }
 
   if (parsed.notations.length === 0) {
-    // eslint-disable-next-line no-console
-    console.log(HELP)
+    render(createElement(NotationRoller))
     return
   }
 
@@ -110,4 +112,4 @@ function main(): void {
   console.log(output)
 }
 
-main()
+main(process.argv)
