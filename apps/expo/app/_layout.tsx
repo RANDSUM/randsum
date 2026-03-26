@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import { useColorScheme } from 'react-native'
 
+import { CSSTokens } from '../components/CSSTokens'
 import { initThemeFromSystem, useThemeStore } from '../lib/stores/themeStore'
 
 SplashScreen.preventAutoHideAsync()
@@ -32,6 +33,7 @@ export default function RootLayout(): React.JSX.Element | null {
 
   return (
     <DiceUIThemeProvider theme={colorScheme}>
+      <CSSTokens />
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
