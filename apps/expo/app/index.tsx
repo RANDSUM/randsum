@@ -5,6 +5,7 @@ import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { RollResultView } from '../components/RollResultView'
+import { WebHeader } from '../components/WebHeader'
 import { useTheme } from '../hooks/useTheme'
 import { buildNotationUrl, copyLink } from '../lib/sharing'
 import type { ParsedRollResult } from '../lib/parseRollResult'
@@ -103,6 +104,7 @@ export default function IndexScreen(): React.JSX.Element {
       <View style={styles.content}>
         {isWeb ? (
           <>
+            <WebHeader />
             {roller}
             {grid}
           </>
