@@ -4,11 +4,9 @@ import {
   AccessibilityInfo,
   ActivityIndicator,
   Animated,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native'
 
@@ -17,17 +15,9 @@ import type { ParsedRollResult } from '../lib/parseRollResult'
 
 interface RollResultViewProps {
   readonly result: ParsedRollResult
-  readonly onRollAgain: () => void
-  readonly onShare: () => void
-  readonly onClose: () => void
 }
 
-export function RollResultView({
-  result,
-  onRollAgain,
-  onShare,
-  onClose
-}: RollResultViewProps): React.JSX.Element {
+export function RollResultView({ result }: RollResultViewProps): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
   const animatedValue = useRef(new Animated.Value(0)).current
   const [isAnimating, setIsAnimating] = useState(true)
@@ -64,48 +54,36 @@ export function RollResultView({
   })
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: tokens.bg }]}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <View style={styles.topBar}>
-        <View
-          style={[styles.handle, { backgroundColor: tokens.border }]}
-          accessibilityRole="none"
-        />
-        <Pressable
-          onPress={onClose}
-          style={styles.closeButton}
-          accessibilityRole="button"
-          accessibilityLabel="Close"
-        >
-          <Text style={[styles.closeText, { color: tokens.textMuted, fontSize: fontSizes.sm }]}>
-            Done
-          </Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.totalContainer}>
-        {isAnimating ? (
-          <View style={styles.spinnerWrap}>
-            <ActivityIndicator size="large" color={tokens.accent} />
-          </View>
-        ) : (
-          <Text
-            style={[styles.total, { color: tokens.text, fontSize: fontSizes['3xl'] }]}
-            accessibilityLabel={`Total: ${result.total}`}
-          >
-            {result.total}
-          </Text>
-        )}
-      </View>
-
-      <Text
-        style={[styles.notation, { color: tokens.textMuted, fontSize: fontSizes.sm }]}
-        accessibilityRole="text"
+    <ScrollView style={[styles.container, { backgroundColor: tokens.bg }]}>
+      <View
+        style={[
+          styles.totalRow,
+          {
+            backgroundColor: tokens.surfaceAlt,
+            borderBottomWidth: 1,
+            borderBottomColor: tokens.border
+          }
+        ]}
       >
-        {result.notation}
-      </Text>
+        <View style={[styles.totalBadge, { borderColor: `${tokens.accent}40` }]}>
+          {isAnimating ? (
+            <ActivityIndicator size="small" color={tokens.accent} />
+          ) : (
+            <Text
+              style={[styles.totalText, { color: tokens.accent, fontSize: fontSizes['3xl'] }]}
+              accessibilityLabel={`Total: ${result.total}`}
+            >
+              {result.total}
+            </Text>
+          )}
+        </View>
+        <Text
+          style={[styles.notation, { color: tokens.textMuted, fontSize: fontSizes.sm }]}
+          accessibilityRole="text"
+        >
+          {result.notation}
+        </Text>
+      </View>
 
       {allDice.length > 0 && (
         <>
@@ -141,89 +119,36 @@ export function RollResultView({
           </View>
         </>
       )}
-
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.primaryButton, { backgroundColor: tokens.accent }]}
-          onPress={onRollAgain}
-          accessibilityRole="button"
-          accessibilityLabel="Roll again"
-        >
-          <Text style={[styles.primaryButtonText, { fontSize: fontSizes.lg }]}>Roll Again</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.secondaryButton,
-            { backgroundColor: tokens.surfaceAlt, borderColor: 'rgba(168, 85, 247, 0.15)' }
-          ]}
-          onPress={onShare}
-          accessibilityRole="button"
-          accessibilityLabel="Share"
-        >
-          <Text
-            style={[
-              styles.secondaryButtonText,
-              { color: tokens.textMuted, fontSize: fontSizes.base }
-            ]}
-          >
-            Share
-          </Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 12
   },
-  contentContainer: {
-    flexGrow: 1
-  },
-  topBar: {
+  totalRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 14,
+    gap: 12
+  },
+  totalBadge: {
+    borderWidth: 1,
+    borderRadius: 8,
     paddingHorizontal: 12,
-    paddingTop: 4
-  },
-  handle: {
-    flex: 1,
-    height: 4,
-    maxWidth: 36,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 16
-  },
-  closeButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 4
-  },
-  closeText: {
-    fontFamily: 'JetBrainsMono_400Regular',
-    fontWeight: '600'
-  },
-  totalContainer: {
+    paddingVertical: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
-    minHeight: 60
+    minWidth: 50
   },
-  spinnerWrap: {
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  total: {
+  totalText: {
     fontFamily: 'JetBrainsMono_400Regular',
-    fontWeight: 'bold'
+    fontWeight: '700'
   },
   notation: {
     fontFamily: 'JetBrainsMono_400Regular',
-    textAlign: 'center',
-    marginBottom: 24
+    flex: 1
   },
   breakdownLabel: {
     marginBottom: 8,
@@ -245,33 +170,6 @@ const styles = StyleSheet.create({
     opacity: 0.4
   },
   pillText: {
-    fontFamily: 'JetBrainsMono_400Regular'
-  },
-  actions: {
-    paddingHorizontal: 16,
-    gap: 12,
-    paddingBottom: 32
-  },
-  primaryButton: {
-    borderRadius: 10,
-    height: 52,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  primaryButtonText: {
-    color: '#ffffff',
-    fontWeight: '600',
-    fontFamily: 'JetBrainsMono_400Regular',
-    letterSpacing: 1
-  },
-  secondaryButton: {
-    borderRadius: 10,
-    borderWidth: 1,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  secondaryButtonText: {
     fontFamily: 'JetBrainsMono_400Regular'
   }
 })

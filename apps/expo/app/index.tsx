@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { RollResultView } from '../components/RollResultView'
 import { useTheme } from '../hooks/useTheme'
-import { buildNotationUrl, copyLink, shareRollResult } from '../lib/sharing'
+import { buildNotationUrl, copyLink } from '../lib/sharing'
 import type { ParsedRollResult } from '../lib/parseRollResult'
 import { useNotationStore } from '../lib/stores/notationStore'
 
@@ -54,12 +54,6 @@ export default function IndexScreen(): React.JSX.Element {
 
   function handleCloseResult(): void {
     setResult(null)
-  }
-
-  function handleShareResult(): void {
-    if (result !== null) {
-      void shareRollResult(result)
-    }
   }
 
   function handleAddFragment(fragment: string): void {
@@ -129,16 +123,11 @@ export default function IndexScreen(): React.JSX.Element {
             <Pressable
               style={[
                 styles.modalContent,
-                { backgroundColor: tokens.bg, borderColor: tokens.border }
+                { backgroundColor: tokens.bg, borderColor: tokens.accent }
               ]}
               onPress={() => {}}
             >
-              <RollResultView
-                result={result}
-                onRollAgain={handleCloseResult}
-                onShare={handleShareResult}
-                onClose={handleCloseResult}
-              />
+              <RollResultView result={result} />
             </Pressable>
           </Pressable>
         </Modal>
@@ -179,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
+    padding: 32
   },
   modalContent: {
     width: '100%',
