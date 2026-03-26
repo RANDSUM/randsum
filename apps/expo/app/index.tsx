@@ -1,7 +1,15 @@
 import type { RollResult } from '@randsum/dice-ui'
 import { NotationRoller, QuickReferenceGrid } from '@randsum/dice-ui'
 import { useEffect, useRef, useState } from 'react'
-import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { RollResultView } from '../components/RollResultView'
@@ -66,6 +74,8 @@ export default function IndexScreen(): React.JSX.Element {
   }
 
   const isWeb = Platform.OS === 'web'
+  const { width } = useWindowDimensions()
+  const isDesktop = isWeb && width >= 768
 
   const roller = (
     <View
@@ -105,8 +115,27 @@ export default function IndexScreen(): React.JSX.Element {
         {isWeb ? (
           <>
             <WebHeader />
-            {roller}
-            {grid}
+            {isDesktop ? (
+              <View testID="desktop-two-col" style={styles.webTwoCol}>
+                <View style={styles.webLeftCol}>{roller}</View>
+                <View
+                  style={[
+                    styles.webRightCol,
+                    // Web-only CSS properties — position:sticky + independent scroll
+                    // React Native Web passes these through to the DOM; the cast is
+                    // required because RN's ViewStyle type does not include CSS-only props.
+                    { position: 'sticky', maxHeight: '100vh', overflowY: 'auto' } as object
+                  ]}
+                >
+                  {grid}
+                </View>
+              </View>
+            ) : (
+              <>
+                {roller}
+                {grid}
+              </>
+            )}
           </>
         ) : (
           <>
@@ -165,6 +194,18 @@ const styles = StyleSheet.create({
   },
   webButtonText: {
     fontFamily: 'JetBrainsMono_400Regular'
+  },
+  webTwoCol: {
+    flexDirection: 'row',
+    flex: 1,
+    gap: 24
+  },
+  webLeftCol: {
+    flex: 1
+  },
+  webRightCol: {
+    flex: 1,
+    alignSelf: 'flex-start'
   },
   modalBackdrop: {
     flex: 1,
