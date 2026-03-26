@@ -1,19 +1,20 @@
 import type { RollResult } from '@randsum/dice-ui'
 import { NotationRoller, QuickReferenceGrid } from '@randsum/dice-ui'
-import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'expo-router'
+import { useEffect, useRef } from 'react'
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useTheme } from '../hooks/useTheme'
 import { buildNotationUrl, copyLink } from '../lib/sharing'
-import type { ParsedRollResult } from '../lib/parseRollResult'
+import { serializeRollResult } from '../lib/parseRollResult'
 import { useNotationStore } from '../lib/stores/notationStore'
 
 export default function IndexScreen(): React.JSX.Element {
   const { tokens, fontSizes } = useTheme()
+  const router = useRouter()
   const notation = useNotationStore(s => s.notation)
   const setNotation = useNotationStore(s => s.setNotation)
-  const [result, setResult] = useState<ParsedRollResult | null>(null)
 
   // Seed notation from ?n= on web (runs once on mount)
   useEffect(() => {
@@ -44,15 +45,12 @@ export default function IndexScreen(): React.JSX.Element {
   }, [notation])
 
   function handleRoll(rollResult: RollResult): void {
-    setResult({
+    const data = serializeRollResult({
       total: rollResult.total,
       records: rollResult.records,
       notation: rollResult.notation
     })
-  }
-
-  function handleClearResult(): void {
-    setResult(null)
+    router.push({ pathname: '/result', params: { data } })
   }
 
   function handleAddFragment(fragment: string): void {
@@ -73,41 +71,6 @@ export default function IndexScreen(): React.JSX.Element {
         <View style={styles.rollerWrap}>
           <NotationRoller notation={notation} onChange={setNotation} onRoll={handleRoll} />
         </View>
-
-        {result !== null && (
-          <View
-            style={[
-              styles.resultCard,
-              { backgroundColor: tokens.surface, borderColor: tokens.border }
-            ]}
-          >
-            <Pressable
-              onPress={handleClearResult}
-              style={styles.resultClose}
-              accessibilityRole="button"
-              accessibilityLabel="Dismiss result"
-            >
-              <Text
-                style={[
-                  styles.resultCloseText,
-                  { color: tokens.textMuted, fontSize: fontSizes.sm }
-                ]}
-              >
-                ✕
-              </Text>
-            </Pressable>
-            <Text
-              style={[styles.resultTotal, { color: tokens.accent, fontSize: fontSizes['3xl'] }]}
-            >
-              {result.total}
-            </Text>
-            <Text
-              style={[styles.resultNotation, { color: tokens.textMuted, fontSize: fontSizes.sm }]}
-            >
-              {result.notation}
-            </Text>
-          </View>
-        )}
 
         {Platform.OS === 'web' && (
           <View style={styles.webActions}>
@@ -145,29 +108,6 @@ const styles = StyleSheet.create({
   },
   rollerWrap: {
     paddingBottom: 4
-  },
-  resultCard: {
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 16,
-    alignItems: 'center',
-    gap: 4
-  },
-  resultClose: {
-    position: 'absolute',
-    top: 8,
-    right: 12,
-    padding: 4
-  },
-  resultCloseText: {
-    fontFamily: 'JetBrainsMono_400Regular'
-  },
-  resultTotal: {
-    fontFamily: 'JetBrainsMono_400Regular',
-    fontWeight: '700'
-  },
-  resultNotation: {
-    fontFamily: 'JetBrainsMono_400Regular'
   },
   webActions: {
     flexDirection: 'row',
