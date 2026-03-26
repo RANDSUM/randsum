@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.packages.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["bun"]
+    "types": ["bun"],
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*", "package.json"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]

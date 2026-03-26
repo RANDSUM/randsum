@@ -38,8 +38,14 @@
     "tabletop",
     "dice-roller"
   ],
+  "dependencies": {
+    "@randsum/dice-ui": "workspace:~",
+    "ink": "6.8.0",
+    "react": "catalog:"
+  },
   "devDependencies": {
-    "@randsum/roller": "workspace:~"
+    "@randsum/roller": "workspace:~",
+    "@types/react": "catalog:"
   },
   "scripts": {
     "build": "bunup && chmod +x dist/index.js",
