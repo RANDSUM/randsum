@@ -1,0 +1,52 @@
+name: Deploy Expo Native (iOS + Android)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/expo/**'
+      - 'packages/dice-ui/**'
+      - 'packages/roller/**'
+
+concurrency:
+  group: expo-native-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build and submit Android
+        run: cd apps/expo && npx eas-cli build --platform android --profile production --auto-submit --non-interactive
+
+  build-ios:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build and submit iOS
+        run: cd apps/expo && npx eas-cli build --platform ios --profile production --auto-submit --non-interactive

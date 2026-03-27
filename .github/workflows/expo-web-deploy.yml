@@ -1,0 +1,36 @@
+name: Deploy Expo Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/expo/**'
+      - 'packages/dice-ui/**'
+      - 'packages/roller/**'
+
+concurrency:
+  group: expo-web-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Export web build
+        run: cd apps/expo && npx expo export --platform web
+
+      - name: Deploy to EAS Hosting
+        run: cd apps/expo && npx eas-cli deploy --channel production --non-interactive
