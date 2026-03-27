@@ -14,6 +14,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.randsum.app",
       "supportsTablet": true,
       "associatedDomains": ["applinks:randsum.io"]
     },
