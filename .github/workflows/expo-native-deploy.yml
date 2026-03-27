@@ -29,8 +29,8 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build and submit Android
-        run: cd apps/expo && npx eas-cli build --platform android --profile production --auto-submit --non-interactive
+      - name: Build Android
+        run: cd apps/expo && npx eas-cli build --platform android --profile production --non-interactive
 
   build-ios:
     runs-on: ubuntu-latest
@@ -48,5 +48,5 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build and submit iOS
-        run: cd apps/expo && npx eas-cli build --platform ios --profile production --auto-submit --non-interactive
+      - name: Build iOS
+        run: cd apps/expo && npx eas-cli build --platform ios --profile production --non-interactive
