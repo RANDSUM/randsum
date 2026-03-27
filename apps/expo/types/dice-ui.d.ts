@@ -27,7 +27,20 @@ declare module '@randsum/dice-ui' {
     readonly onAdd: (fragment: string) => void
     readonly notation?: string
     readonly inverted?: boolean
+    readonly suppressModal?: boolean
+    readonly selectedEntry?: string | null
+    readonly onSelect?: (entryKey: string) => void
   }
+
+  export interface DocModalProps {
+    readonly doc: import('@randsum/roller/docs').NotationDoc
+    readonly accentColor: string
+    readonly notation: string
+    readonly onClose: () => void
+    readonly onAdd: (fragment: string) => void
+  }
+
+  export function DocModal(props: DocModalProps): React.JSX.Element
 
   export function QuickReferenceGrid(props: QuickReferenceGridProps): React.JSX.Element
 

@@ -18,7 +18,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--dui-space-sm);
-  padding: var(--dui-space-xs) var(--dui-space-xs);
+  padding: var(--dui-space-xs) var(--dui-space-sm);
+  font-family: var(--dui-font-mono);
 }
 
 .du-step-row--final {

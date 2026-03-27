@@ -140,12 +140,11 @@ const RESPONSIVE_STYLES = `
     }
   }
   .qrg-overlay-backdrop {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    z-index: 10;
+    z-index: 9998;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
-    border-radius: var(--dui-radius-md);
   }
   [data-theme='light'] .qrg-overlay-backdrop,
   .qrg-overlay-backdrop--light {
@@ -157,11 +156,11 @@ const RESPONSIVE_STYLES = `
     }
   }
   .qrg-overlay-panel {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    z-index: 11;
+    z-index: 9999;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     padding: var(--dui-space-lg) var(--dui-space-md);
     overflow-y: auto;
@@ -177,6 +176,7 @@ const RESPONSIVE_STYLES = `
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     animation: qrg-modal-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
+    font-family: var(--dui-font-mono, 'JetBrains Mono', ui-monospace, monospace);
   }
   [data-theme='light'] .qrg-overlay-content {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
@@ -601,7 +601,7 @@ function EntryRow({
 
 // ---- DocModal ----
 
-function DocModal({
+export function DocModal({
   doc,
   accentColor,
   notation,
@@ -880,7 +880,8 @@ export function QuickReferenceGrid({
   notation,
   inverted: _inverted,
   selectedEntry: controlledEntry,
-  onSelect: controlledOnSelect
+  onSelect: controlledOnSelect,
+  suppressModal = false
 }: QuickReferenceGridProps): React.ReactElement {
   const theme = useTheme()
   const [internalEntry, setInternalEntry] = useState<string | null>(null)
@@ -951,7 +952,7 @@ export function QuickReferenceGrid({
         </div>
       </div>
 
-      {selectedDoc !== null && (
+      {selectedDoc !== null && !suppressModal && (
         <DocModal
           doc={selectedDoc}
           accentColor={selectedAccent}

@@ -1,5 +1,12 @@
 import type { RollResult } from '@randsum/dice-ui'
-import { NotationRoller, QuickReferenceGrid, RollResultPanel } from '@randsum/dice-ui'
+import {
+  DocModal,
+  NotationRoller,
+  QuickReferenceGrid,
+  RollResultPanel,
+  tokenColor
+} from '@randsum/dice-ui'
+import { NOTATION_DOCS } from '@randsum/roller/docs'
 import { useEffect, useRef, useState } from 'react'
 import { Modal, Platform, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -16,6 +23,7 @@ export default function IndexScreen(): React.JSX.Element {
   const notation = useNotationStore(s => s.notation)
   const setNotation = useNotationStore(s => s.setNotation)
   const [result, setResult] = useState<ParsedRollResult | null>(null)
+  const [selectedDocKey, setSelectedDocKey] = useState<string | null>(null)
 
   // Seed notation from ?n= on web (runs once on mount)
   useEffect(() => {
@@ -73,6 +81,14 @@ export default function IndexScreen(): React.JSX.Element {
     setNotation(notation + fragment)
   }
 
+  function handleDocSelect(key: string): void {
+    setSelectedDocKey(prev => (prev === key ? null : key))
+  }
+
+  function handleCloseDoc(): void {
+    setSelectedDocKey(null)
+  }
+
   const isWeb = Platform.OS === 'web'
   const { width } = useWindowDimensions()
   const isDesktop = isWeb && width >= 768
@@ -82,7 +98,14 @@ export default function IndexScreen(): React.JSX.Element {
       style={[
         styles.rollerWrap,
         isWeb
-          ? { borderBottomWidth: 1, borderBottomColor: tokens.border }
+          ? ({
+              borderBottomWidth: 1,
+              borderBottomColor: tokens.border,
+              position: 'sticky',
+              top: 0,
+              zIndex: 10000,
+              backgroundColor: tokens.bg
+            } as object)
           : { borderTopWidth: 1, borderTopColor: tokens.border }
       ]}
     >
@@ -91,49 +114,37 @@ export default function IndexScreen(): React.JSX.Element {
   )
 
   const grid = (
-    <QuickReferenceGrid onAdd={handleAddFragment} notation={notation} inverted={!isWeb} />
+    <QuickReferenceGrid
+      onAdd={handleAddFragment}
+      notation={notation}
+      inverted={!isWeb}
+      suppressModal={isWeb}
+      selectedEntry={isWeb ? selectedDocKey : undefined}
+      onSelect={isWeb ? handleDocSelect : undefined}
+    />
   )
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: tokens.bg }]}>
+      <WebHeader />
       <View style={styles.content}>
         {isWeb ? (
-          <>
-            <WebHeader />
-            {isDesktop ? (
-              <View testID="desktop-two-col" style={styles.webTwoCol}>
-                <View style={styles.webLeftCol}>{roller}</View>
-                <View
-                  style={[
-                    styles.webRightCol,
-                    // Web-only CSS properties — position:sticky + independent scroll
-                    // React Native Web passes these through to the DOM; the cast is
-                    // required because RN's ViewStyle type does not include CSS-only props.
-                    { position: 'sticky', maxHeight: '100vh', overflowY: 'auto' } as object
-                  ]}
-                >
-                  {grid}
-                </View>
-              </View>
-            ) : (
-              <>
-                {roller}
-                <details open={false}>
-                  <summary
-                    style={{
-                      color: 'var(--dui-color-text-muted)',
-                      cursor: 'pointer',
-                      paddingTop: 'var(--dui-space-sm)',
-                      paddingBottom: 'var(--dui-space-sm)'
-                    }}
-                  >
-                    Notation Reference
-                  </summary>
-                  {grid}
-                </details>
-              </>
-            )}
-          </>
+          <View
+            style={[
+              styles.webShell,
+              isDesktop
+                ? ({
+                    width: '62.5%',
+                    maxWidth: 1200,
+                    alignSelf: 'center',
+                    overflowY: 'auto'
+                  } as object)
+                : ({ overflowY: 'auto', paddingHorizontal: 12 } as object)
+            ]}
+          >
+            {roller}
+            {grid}
+          </View>
         ) : (
           <>
             {grid}
@@ -169,6 +180,24 @@ export default function IndexScreen(): React.JSX.Element {
           </Pressable>
         </Modal>
       )}
+
+      {isWeb &&
+        selectedDocKey !== null &&
+        (() => {
+          const doc = NOTATION_DOCS[selectedDocKey]
+          if (doc === undefined) return null
+          const accentColor =
+            tokenColor(doc, tokens.bg === '#09090b' ? 'dark' : 'light') ?? tokens.accent
+          return (
+            <DocModal
+              doc={doc}
+              accentColor={accentColor}
+              notation={notation}
+              onClose={handleCloseDoc}
+              onAdd={handleAddFragment}
+            />
+          )
+        })()}
     </SafeAreaView>
   )
 }
@@ -182,22 +211,15 @@ const styles = StyleSheet.create({
     paddingTop: 8
   },
   rollerWrap: {
-    paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 8,
     gap: 8
   },
-  webTwoCol: {
-    flexDirection: 'row',
-    flex: 1,
-    gap: 24
-  },
-  webLeftCol: {
+  webShell: {
     flex: 1
   },
-  webRightCol: {
-    flex: 1,
-    alignSelf: 'flex-start'
+  webGridWrap: {
+    flex: 1
   },
   modalBackdrop: {
     flex: 1,

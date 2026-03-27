@@ -1,5 +1,5 @@
 // dice-ui public exports
-export type { RollResult, QuickReferenceGridProps } from './types'
+export type { RollResult, QuickReferenceGridProps, DocModalProps } from './types'
 export { tokenColor } from './tokenColor'
 export { useTheme, getTheme, subscribeTheme, DiceUIThemeProvider } from './useTheme'
 export { TokenOverlayInput } from './TokenOverlayInput'
@@ -10,4 +10,4 @@ export { NotationRoller } from './NotationRoller'
 export type { NotationRollerProps } from './NotationRoller'
 export { RollResultPanel, RollResultDisplay } from './RollResultPanel'
 export type { RollResultPanelProps } from './RollResultPanel'
-export { QuickReferenceGrid } from './QuickReferenceGrid'
+export { QuickReferenceGrid, DocModal } from './QuickReferenceGrid'
