@@ -33,4 +33,4 @@ jobs:
         run: cd apps/expo && npx expo export --platform web
 
       - name: Deploy to EAS Hosting
-        run: cd apps/expo && npx eas-cli deploy --channel production --non-interactive
+        run: cd apps/expo && npx eas-cli deploy --prod --non-interactive
