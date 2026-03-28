@@ -71,7 +71,7 @@
 
 .du-die-badge--removed {
   color: var(--dui-color-removed);
-  opacity: 0.7;
+  opacity: 0.85; /* was 0.7 — improves readability of struck-through removed values */
 }
 
 .du-die-badge--added {

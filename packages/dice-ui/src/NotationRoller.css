@@ -190,16 +190,16 @@
 }
 
 .du-notation-roller-desc--hint {
-  color: rgba(230, 237, 243, 0.35);
+  color: rgba(230, 237, 243, 0.55); /* was 0.35 — ~1.8:1 dark; now ~3.3:1 */
 }
 
 @media (prefers-color-scheme: light) {
   .du-notation-roller-desc--hint {
-    color: rgba(31, 35, 40, 0.5);
+    color: rgba(31, 35, 40, 0.65); /* was 0.5 — ~2.7:1 light; now ~3.6:1 */
   }
 }
 [data-theme='light'] .du-notation-roller-desc--hint {
-  color: rgba(31, 35, 40, 0.5);
+  color: rgba(31, 35, 40, 0.65); /* was 0.5 — ~2.7:1 light; now ~3.6:1 */
 }
 
 .du-notation-roller-desc--valid {
@@ -310,7 +310,7 @@
   right: var(--dui-space-sm, 0.5rem);
   background: none;
   border: none;
-  color: #71717a;
+  color: #8a8a93; /* was #71717a — near-AA for UI elements */
   font-size: 1rem;
   line-height: 1;
   padding: 0.1rem 0.25rem;
