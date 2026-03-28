@@ -19,7 +19,11 @@ export function RollResultPanel({
   className
 }: RollResultPanelProps): React.JSX.Element {
   return (
-    <div className={['du-nr-tooltip-flow', className].filter(Boolean).join(' ')}>
+    <div
+      className={['du-nr-tooltip-flow', className].filter(Boolean).join(' ')}
+      role="status"
+      aria-live="polite"
+    >
       {onClose !== undefined && (
         <button className="du-nr-tooltip-close" onClick={onClose} aria-label="Close result">
           &times;
