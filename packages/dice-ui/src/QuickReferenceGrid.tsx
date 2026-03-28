@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { ModifierCategory, NotationDoc } from '@randsum/roller/docs'
 import { useTheme } from './useTheme'
@@ -174,9 +174,18 @@ const RESPONSIVE_STYLES = `
     border: 1.5px solid var(--dui-color-border);
     border-radius: var(--dui-radius-md);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    animation: qrg-modal-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
     font-family: var(--dui-font-mono, 'JetBrains Mono', ui-monospace, monospace);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .qrg-overlay-content {
+      animation: qrg-modal-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qrg-overlay-content {
+      animation: none;
+    }
   }
   [data-theme='light'] .qrg-overlay-content {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
@@ -601,6 +610,9 @@ function EntryRow({
 
 // ---- DocModal ----
 
+const FOCUSABLE_SELECTORS =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 export function DocModal({
   doc,
   accentColor,
@@ -616,6 +628,67 @@ export function DocModal({
 }): React.ReactElement {
   const builder = getBuilderType(doc)
   const canAdd = canAddModifier(notation, doc)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const priorFocusRef = useRef<Element | null>(null)
+  const titleId = `qrg-modal-title-${doc.key.replace(/[^a-zA-Z0-9]/g, '-')}`
+
+  // Capture the currently-focused element before the modal mounts
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      priorFocusRef.current = document.activeElement
+    }
+    return () => {
+      // Restore focus to the trigger element on unmount
+      if (priorFocusRef.current !== null && priorFocusRef.current instanceof HTMLElement) {
+        priorFocusRef.current.focus()
+      }
+    }
+  }, [])
+
+  // Move focus into the panel on open
+  useEffect(() => {
+    const panel = panelRef.current
+    if (panel === null) return
+    const first = panel.querySelector<HTMLElement>(FOCUSABLE_SELECTORS)
+    if (first !== null) {
+      first.focus()
+    } else {
+      panel.focus()
+    }
+  }, [])
+
+  // Escape key + focus trap
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const panel = panelRef.current
+      if (panel === null) return
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS))
+      if (focusable.length === 0) return
+      const first = focusable[0] ?? null
+      const last = focusable[focusable.length - 1] ?? null
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          if (last !== null) last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          if (first !== null) first.focus()
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [onClose])
 
   const codeStyle: React.CSSProperties = {
     fontFamily: 'var(--dui-font-mono)',
@@ -634,7 +707,15 @@ export function DocModal({
     <>
       <div className="qrg-overlay-backdrop" onClick={onClose} />
       <div className="qrg-overlay-panel">
-        <div className="qrg-overlay-content" style={{ borderColor: accentColor }}>
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          tabIndex={-1}
+          className="qrg-overlay-content"
+          style={{ borderColor: accentColor }}
+        >
           {/* Header: big notation pane + title/description */}
           <div className="qrg-modal-header">
             <div
@@ -658,6 +739,7 @@ export function DocModal({
             </div>
             <div style={{ minWidth: 0 }}>
               <div
+                id={titleId}
                 style={{
                   fontWeight: 600,
                   fontSize: '0.9rem',
