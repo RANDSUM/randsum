@@ -1,0 +1,11 @@
+---
+import Default from '@astrojs/starlight/components/Head.astro'
+const { entry } = Astro.props
+const title = entry?.data.title ?? 'RANDSUM — TypeScript Dice Rolling Library'
+const description = entry?.data.description ?? 'Dice rolling library for TypeScript and JavaScript tabletop RPGs.'
+---
+<Default {...Astro.props}><slot /></Default>
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
