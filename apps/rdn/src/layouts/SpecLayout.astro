@@ -35,6 +35,16 @@ const pageTitle = isLatest
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
     <link rel="icon" href="/favicon.ico" />
+    <meta name="description" content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types." />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types." />
+    <meta property="og:image" content="https://randsum.dev/og-image.svg" />
+    <meta property="og:url" content={specUrl} />
+    <meta property="og:type" content="article" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types." />
+    <meta name="twitter:image" content="https://randsum.dev/og-image.svg" />
     <script is:inline>
       // Apply saved theme before render to prevent flash
       const saved = localStorage.getItem('rdn-theme')

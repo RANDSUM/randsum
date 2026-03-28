@@ -11,7 +11,6 @@ const { currentVersion, allVersions, isLatest } = Astro.props
 <div class="version-dropdown-wrapper">
   <button
     class="version-dropdown-trigger"
-    aria-haspopup="listbox"
     aria-expanded="false"
     aria-label="Select specification version"
   >
@@ -25,16 +24,14 @@ const { currentVersion, allVersions, isLatest } = Astro.props
   </button>
   <ul
     class="version-dropdown-list"
-    role="listbox"
-    aria-label="Specification versions"
     hidden
   >
     {allVersions.slice().reverse().map((v) => {
       const isSelected = v === currentVersion
       const href = v === allVersions[allVersions.length - 1] ? '/' : `/v/${v}/`
       return (
-        <li role="option" aria-selected={isSelected}>
-          <a href={href} class:list={['version-option', { 'version-option--active': isSelected }]}>
+        <li>
+          <a href={href} aria-current={isSelected ? 'page' : undefined} class:list={['version-option', { 'version-option--active': isSelected }]}>
             <span>{v}</span>
             {v === allVersions[allVersions.length - 1] && (
               <span class="version-latest-badge">latest</span>
