@@ -24,6 +24,7 @@ export default function IndexScreen(): React.JSX.Element {
   const setNotation = useNotationStore(s => s.setNotation)
   const [result, setResult] = useState<ParsedRollResult | null>(null)
   const [selectedDocKey, setSelectedDocKey] = useState<string | null>(null)
+  const priorFocusRef = useRef<Element | null>(null)
 
   // Seed notation from ?n= on web (runs once on mount)
   useEffect(() => {
@@ -39,11 +40,27 @@ export default function IndexScreen(): React.JSX.Element {
   useEffect(() => {
     if (Platform.OS !== 'web') return
     const handler = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') setResult(null)
+      if (e.key === 'Escape') {
+        setResult(null)
+        if (priorFocusRef.current instanceof HTMLElement) {
+          priorFocusRef.current.focus()
+        }
+      }
     }
     window.addEventListener('keydown', handler)
     return () => {
       window.removeEventListener('keydown', handler)
+    }
+  }, [result])
+
+  // Move focus into modal content on web when result appears
+  const modalContentRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (Platform.OS !== 'web') return
+    if (result === null) return
+    const el = modalContentRef.current
+    if (el !== null) {
+      el.focus()
     }
   }, [result])
 
@@ -66,6 +83,9 @@ export default function IndexScreen(): React.JSX.Element {
   }, [notation])
 
   function handleRoll(rollResult: RollResult): void {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      priorFocusRef.current = document.activeElement
+    }
     setResult({
       total: rollResult.total,
       records: rollResult.records,
@@ -75,6 +95,9 @@ export default function IndexScreen(): React.JSX.Element {
 
   function handleCloseResult(): void {
     setResult(null)
+    if (Platform.OS === 'web' && priorFocusRef.current instanceof HTMLElement) {
+      priorFocusRef.current.focus()
+    }
   }
 
   function handleAddFragment(fragment: string): void {
@@ -126,8 +149,53 @@ export default function IndexScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: tokens.bg }]}>
+      {isWeb && (
+        <a
+          href="#main-content"
+          style={
+            {
+              position: 'absolute',
+              top: -9999,
+              left: -9999,
+              width: 1,
+              height: 1,
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              whiteSpace: 'nowrap'
+            } as React.CSSProperties
+          }
+          onFocus={e => {
+            const target = e.currentTarget as HTMLAnchorElement
+            Object.assign(target.style, {
+              position: 'static',
+              top: 'auto',
+              left: 'auto',
+              width: 'auto',
+              height: 'auto',
+              overflow: 'visible',
+              clip: 'auto',
+              whiteSpace: 'normal'
+            })
+          }}
+          onBlur={e => {
+            const target = e.currentTarget as HTMLAnchorElement
+            Object.assign(target.style, {
+              position: 'absolute',
+              top: -9999,
+              left: -9999,
+              width: 1,
+              height: 1,
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              whiteSpace: 'nowrap'
+            })
+          }}
+        >
+          Skip to content
+        </a>
+      )}
       <WebHeader />
-      <View style={styles.content}>
+      <View nativeID="main-content" style={styles.content}>
         {isWeb ? (
           <View
             style={[
@@ -158,6 +226,8 @@ export default function IndexScreen(): React.JSX.Element {
           <Pressable
             style={[styles.modalBackdrop, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}
             onPress={handleCloseResult}
+            accessibilityLabel="Close result"
+            accessibilityRole="button"
           >
             <Pressable
               style={[
@@ -165,6 +235,16 @@ export default function IndexScreen(): React.JSX.Element {
                 { backgroundColor: tokens.bg, borderColor: tokens.accent }
               ]}
               onPress={() => {}}
+              accessibilityRole="none"
+              {...(isWeb
+                ? ({
+                    role: 'dialog',
+                    'aria-modal': 'true',
+                    'aria-label': 'Roll result',
+                    tabIndex: -1,
+                    ref: modalContentRef
+                  } as object)
+                : {})}
             >
               {isWeb ? (
                 <RollResultPanel

@@ -90,7 +90,7 @@ export function WebHeader(): React.JSX.Element {
   })
 
   return (
-    <View>
+    <View accessibilityRole="header">
       <View style={dynamicStyles.header}>
         <View style={styles.wordmarkWrap}>
           <Text style={dynamicStyles.wordmark}>RANDSUM</Text>

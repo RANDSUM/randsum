@@ -3,6 +3,7 @@ import { defineConfig, fontProviders } from 'astro/config'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 
+import sitemap from '@astrojs/sitemap'
 import starlight from '@astrojs/starlight'
 import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
@@ -35,6 +36,7 @@ export default defineConfig({
   ],
   site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
   integrations: [
+    sitemap(),
     starlight({
       title: 'RANDSUM — TypeScript Dice Rolling Library for Tabletop RPGs',
       favicon: '/favicon.ico',
@@ -69,6 +71,7 @@ export default defineConfig({
         }
       ],
       components: {
+        Head: './src/components/Head.astro',
         Header: './src/components/Header.astro',
         SiteTitle: './src/components/SiteTitle.astro',
         ThemeSelect: './src/components/ThemeSelect.astro'

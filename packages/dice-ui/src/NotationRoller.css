@@ -98,6 +98,11 @@
   min-width: 0;
 }
 
+.du-notation-roller-input:focus-visible {
+  outline: 2px solid var(--dui-color-accent, #a855f7);
+  outline-offset: 2px;
+}
+
 .du-notation-roller-input--highlight {
   color: transparent;
 }
@@ -158,6 +163,11 @@
   background: var(--dui-color-accent, #a855f7);
 }
 
+.du-notation-roller-roll-btn:focus-visible {
+  outline: 2px solid var(--dui-color-accent, #a855f7);
+  outline-offset: 2px;
+}
+
 /* ===== Description row ===== */
 .du-notation-roller-desc-row {
   border-top: none;
@@ -180,16 +190,16 @@
 }
 
 .du-notation-roller-desc--hint {
-  color: rgba(230, 237, 243, 0.35);
+  color: rgba(230, 237, 243, 0.55); /* was 0.35 — ~1.8:1 dark; now ~3.3:1 */
 }
 
 @media (prefers-color-scheme: light) {
   .du-notation-roller-desc--hint {
-    color: rgba(31, 35, 40, 0.5);
+    color: rgba(31, 35, 40, 0.65); /* was 0.5 — ~2.7:1 light; now ~3.6:1 */
   }
 }
 [data-theme='light'] .du-notation-roller-desc--hint {
-  color: rgba(31, 35, 40, 0.5);
+  color: rgba(31, 35, 40, 0.65); /* was 0.5 — ~2.7:1 light; now ~3.6:1 */
 }
 
 .du-notation-roller-desc--valid {
@@ -255,10 +265,21 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   font-family: var(--dui-font-mono, 'Menlo', 'Consolas', 'Monaco', monospace);
   font-size: 0.75rem;
-  animation: du-nr-tooltip-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: auto;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .du-notation-roller-result-overlay {
+    animation: du-nr-tooltip-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .du-notation-roller-result-overlay {
+    animation: none;
+  }
 }
 
 .du-notation-roller-result-backdrop {
@@ -269,7 +290,18 @@
   background: rgba(0, 0, 0, 0.3);
   border-radius: var(--dui-radius, 5px);
   pointer-events: auto;
-  animation: du-nr-backdrop-in 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .du-notation-roller-result-backdrop {
+    animation: du-nr-backdrop-in 0.2s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .du-notation-roller-result-backdrop {
+    animation: none;
+  }
 }
 
 .du-nr-tooltip-close {
@@ -278,7 +310,7 @@
   right: var(--dui-space-sm, 0.5rem);
   background: none;
   border: none;
-  color: #71717a;
+  color: #8a8a93; /* was #71717a — near-AA for UI elements */
   font-size: 1rem;
   line-height: 1;
   padding: 0.1rem 0.25rem;
@@ -289,6 +321,11 @@
 
 .du-nr-tooltip-close:hover {
   color: #e4e4e7;
+}
+
+.du-nr-tooltip-close:focus-visible {
+  outline: 2px solid var(--dui-color-accent, #a855f7);
+  outline-offset: 2px;
 }
 
 @keyframes du-nr-tooltip-in {
