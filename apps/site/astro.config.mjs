@@ -94,7 +94,8 @@ export default defineConfig({
             icon: 'open-book',
             items: [
               { label: 'Introduction', slug: 'welcome/introduction' },
-              { label: 'Ecosystem Overview', slug: 'welcome/ecosystem-overview' }
+              { label: 'Ecosystem Overview', slug: 'welcome/ecosystem-overview' },
+              { label: 'Attribution', slug: 'welcome/attribution' }
             ]
           },
           {
