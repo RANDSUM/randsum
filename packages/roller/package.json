@@ -3,6 +3,9 @@
   "description": "TypeScript dice engine implementing the RANDSUM Dice Notation (RDN) specification for tabletop RPGs",
   "version": "1.3.0",
   "type": "module",
+  "sideEffects": [
+    "./src/**/*"
+  ],
   "private": false,
   "files": [
     "dist",
