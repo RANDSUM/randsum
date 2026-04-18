@@ -183,7 +183,8 @@ export const keepModifier: ModifierDefinition<KeepOptions> = {
       if (options.highest > quantity || options.highest < 1) {
         throw new ModifierError(
           'keep',
-          `Cannot keep ${options.highest} highest dice from a pool of ${quantity}`
+          `Cannot keep ${options.highest} highest dice from a pool of ${quantity}`,
+          { path: 'modifiers.keep.highest', value: options.highest }
         )
       }
     }
@@ -191,7 +192,8 @@ export const keepModifier: ModifierDefinition<KeepOptions> = {
       if (options.lowest > quantity || options.lowest < 1) {
         throw new ModifierError(
           'keep',
-          `Cannot keep ${options.lowest} lowest dice from a pool of ${quantity}`
+          `Cannot keep ${options.lowest} lowest dice from a pool of ${quantity}`,
+          { path: 'modifiers.keep.lowest', value: options.lowest }
         )
       }
     }

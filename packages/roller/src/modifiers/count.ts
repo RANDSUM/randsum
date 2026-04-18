@@ -214,7 +214,8 @@ export const countModifier: ModifierDefinition<CountOptions> = {
     ) {
       throw new ModifierError(
         'count',
-        `botchThreshold (${options.lessThanOrEqual}) must be less than threshold (${options.greaterThanOrEqual})`
+        `botchThreshold (${options.lessThanOrEqual}) must be less than threshold (${options.greaterThanOrEqual})`,
+        { path: 'modifiers.count', value: options }
       )
     }
   },

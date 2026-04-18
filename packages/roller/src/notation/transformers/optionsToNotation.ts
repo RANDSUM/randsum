@@ -20,7 +20,9 @@ export function optionsToNotation<T = string>(options: RollOptions<T>): DiceNota
   const proposed = `${arithmeticPrefix}${quantity}d${sides}${modifierSuffix}`
 
   if (!isDiceNotation(proposed)) {
-    throw new NotationParseError(proposed, 'Generated notation is invalid')
+    throw new NotationParseError(proposed, 'Generated notation is invalid', undefined, {
+      value: options
+    })
   }
   return proposed
 }

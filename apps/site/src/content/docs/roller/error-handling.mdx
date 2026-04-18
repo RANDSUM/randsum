@@ -44,6 +44,43 @@ try {
   }
 }`} />
 
+## Structured error context
+
+Every `RandsumError` carries an optional `context` property with structured diagnostics. Throw sites populate the fields they know about; consumers can present richer errors (e.g. highlight an invalid character, show which option field failed) without parsing message strings.
+
+```ts
+interface ErrorContext {
+  readonly path?: string        // dotted path, e.g. 'quantity', 'modifiers.drop.lowest'
+  readonly value?: unknown      // the offending value
+  readonly notation?: string    // the notation string, when relevant
+  readonly position?: number    // zero-indexed character offset in the notation
+}
+```
+
+Reading the context:
+
+<CodeExample code={`import { roll, ValidationError, NotationParseError } from '@randsum/roller'
+
+try {
+  roll({ sides: 6, quantity: -1 })
+} catch (e) {
+  if (e instanceof ValidationError) {
+    console.error(e.context?.path)   // 'quantity'
+    console.error(e.context?.value)  // -1
+  }
+}
+
+try {
+  roll('1d6x5000') // repeat count exceeds the MAX_REPEAT_COUNT cap
+} catch (e) {
+  if (e instanceof NotationParseError) {
+    console.error(e.context?.notation) // '1d6x5000'
+    console.error(e.context?.position) // index of the 'x' operator
+  }
+}`} />
+
+Context is optional and may be `undefined` — always use optional chaining (`e.context?.path`) when reading fields. Not every throw site has path/position information; only use context for display enhancements, not required parsing.
+
 ## Validate before rolling
 
 For user-facing inputs — form fields, chat commands, API parameters — validate before rolling. This avoids try/catch and gives you structured error information.

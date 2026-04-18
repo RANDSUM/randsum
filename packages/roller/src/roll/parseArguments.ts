@@ -276,7 +276,10 @@ function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
   }
 
   if (typeof argument === 'string') {
-    throw new ValidationError(`"${argument}" is not valid dice notation`)
+    throw new ValidationError(`"${argument}" is not valid dice notation`, {
+      notation: argument,
+      value: argument
+    })
   }
 
   if (typeof argument === 'number') {

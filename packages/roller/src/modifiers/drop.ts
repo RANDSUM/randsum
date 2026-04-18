@@ -231,7 +231,10 @@ export const dropModifier: ModifierDefinition<DropOptions> = {
   validate: (options, { quantity }) => {
     const totalDrop = (options.lowest ?? 0) + (options.highest ?? 0)
     if (totalDrop >= quantity) {
-      throw new ModifierError('drop', `Cannot drop ${totalDrop} dice from a pool of ${quantity}`)
+      throw new ModifierError('drop', `Cannot drop ${totalDrop} dice from a pool of ${quantity}`, {
+        path: 'modifiers.drop',
+        value: options
+      })
     }
   }
 }

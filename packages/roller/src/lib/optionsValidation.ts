@@ -31,7 +31,10 @@ export function validateRollOptions<T>(options: RollOptions<T>): void {
     validateMaxSides(options.sides)
   } else if (Array.isArray(options.sides)) {
     if (options.sides.length === 0) {
-      throw new ValidationError('sides array must not be empty')
+      throw new ValidationError('sides array must not be empty', {
+        path: 'sides',
+        value: options.sides
+      })
     }
     validateMaxSides(options.sides.length)
   }

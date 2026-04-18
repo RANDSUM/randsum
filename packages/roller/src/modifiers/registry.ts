@@ -79,7 +79,10 @@ export function applyModifier(
 
   const modifier = modifierMap.get(name)
   if (!modifier) {
-    throw new ModifierError(name, `Unknown modifier type: ${name}`)
+    throw new ModifierError(name, `Unknown modifier type: ${name}`, {
+      path: `modifiers.${name}`,
+      value: options
+    })
   }
 
   if (modifier.requiresRollFn && ctx.rollOne === undefined) {

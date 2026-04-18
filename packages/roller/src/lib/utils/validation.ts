@@ -14,42 +14,63 @@ export const MAX_SIDES = 1_000_000
 
 export function validateInteger(value: number, name: string): asserts value is number {
   if (!Number.isInteger(value)) {
-    throw new ValidationError(`${name} must be an integer, received: ${value}`)
+    throw new ValidationError(`${name} must be an integer, received: ${value}`, {
+      path: name,
+      value
+    })
   }
 }
 
 export function validateMaxQuantity(value: number): void {
   if (value > MAX_QUANTITY) {
-    throw new ValidationError(`quantity ${value} exceeds maximum of ${MAX_QUANTITY}`)
+    throw new ValidationError(`quantity ${value} exceeds maximum of ${MAX_QUANTITY}`, {
+      path: 'quantity',
+      value
+    })
   }
 }
 
 export function validateMaxSides(value: number): void {
   if (value > MAX_SIDES) {
-    throw new ValidationError(`sides ${value} exceeds maximum of ${MAX_SIDES}`)
+    throw new ValidationError(`sides ${value} exceeds maximum of ${MAX_SIDES}`, {
+      path: 'sides',
+      value
+    })
   }
 }
 
 export function validateRange(value: number, min: number, max: number, name: string): void {
   if (value < min || value > max) {
-    throw new ValidationError(`${name} must be between ${min} and ${max}, received: ${value}`)
+    throw new ValidationError(`${name} must be between ${min} and ${max}, received: ${value}`, {
+      path: name,
+      value
+    })
   }
 }
 
 export function validateNonNegative(value: number, name: string): void {
   if (value < 0) {
-    throw new ValidationError(`${name} must be non-negative, received: ${value}`)
+    throw new ValidationError(`${name} must be non-negative, received: ${value}`, {
+      path: name,
+      value
+    })
   }
 }
 
 export function validateFinite(value: number, name: string): void {
   if (!Number.isFinite(value)) {
-    throw new ValidationError(`${name} must be a finite number, received: ${value}`)
+    throw new ValidationError(`${name} must be a finite number, received: ${value}`, {
+      path: name,
+      value
+    })
   }
 }
 
 export function validateGreaterThan(value: number, threshold: number, name: string): void {
   if (value <= threshold) {
-    throw new ValidationError(`${name} must be greater than ${threshold}, received: ${value}`)
+    throw new ValidationError(`${name} must be greater than ${threshold}, received: ${value}`, {
+      path: name,
+      value
+    })
   }
 }

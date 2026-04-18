@@ -14,7 +14,8 @@ export function validateComparisonOptions(modifierName: string, options: Compari
   if (lower !== undefined && upper !== undefined && lower > upper) {
     throw new ModifierError(
       modifierName,
-      `Impossible comparison: condition requires value >= ${lower} AND <= ${upper}`
+      `Impossible comparison: condition requires value >= ${lower} AND <= ${upper}`,
+      { path: `modifiers.${modifierName}`, value: options }
     )
   }
 }

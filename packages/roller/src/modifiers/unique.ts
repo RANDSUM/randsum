@@ -91,7 +91,11 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
     const { sides, quantity } = parameters
 
     if (quantity > sides) {
-      throw new ModifierError('unique', 'Cannot have more rolls than sides when unique is enabled')
+      throw new ModifierError(
+        'unique',
+        'Cannot have more rolls than sides when unique is enabled',
+        { path: 'modifiers.unique', value: { quantity, sides } }
+      )
     }
 
     const exceptions = new Set(typeof options === 'object' ? options.notUnique : [])
@@ -146,7 +150,8 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
     if (neededUnique > sides) {
       throw new ModifierError(
         'unique',
-        `Cannot have ${neededUnique} unique values with only ${sides} sides`
+        `Cannot have ${neededUnique} unique values with only ${sides} sides`,
+        { path: 'modifiers.unique', value: options }
       )
     }
   }

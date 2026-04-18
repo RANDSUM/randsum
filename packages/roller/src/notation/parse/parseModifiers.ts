@@ -93,10 +93,16 @@ export function parseModifiers(notation: string): ModifierOptions {
   const processed = preprocessNotation(notation)
 
   const countPatternGlobal = new RegExp(countPattern.source, 'g')
-  if ([...processed.matchAll(countPatternGlobal)].length > 1) {
+  const countMatches = [...processed.matchAll(countPatternGlobal)]
+  if (countMatches.length > 1) {
+    const secondMatch = countMatches[1]
     throw new ModifierError(
       'count',
-      'Duplicate count modifier: only one #{...} is allowed per notation string'
+      'Duplicate count modifier: only one #{...} is allowed per notation string',
+      {
+        notation,
+        ...(secondMatch ? { position: secondMatch.index } : {})
+      }
     )
   }
 

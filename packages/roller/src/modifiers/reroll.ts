@@ -258,7 +258,8 @@ export const rerollModifier: ModifierDefinition<RerollOptions> = {
         if (value < 1 || value > sides) {
           throw new ModifierError(
             'reroll',
-            `Reroll value ${value} is outside valid range [1, ${sides}]`
+            `Reroll value ${value} is outside valid range [1, ${sides}]`,
+            { path: 'modifiers.reroll.exact', value }
           )
         }
       }

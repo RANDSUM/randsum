@@ -19,10 +19,10 @@ export const MAX_REPEAT_DEPTH = 10
 
 const repeatPattern = /[Xx]([1-9]\d*)$/
 
-function parseRepeat(input: string): { base: string; count: number } | null {
+function parseRepeat(input: string): { base: string; count: number; position: number } | null {
   const match = repeatPattern.exec(input)
   if (!match) return null
-  return { base: input.slice(0, match.index), count: Number(match[1]) }
+  return { base: input.slice(0, match.index), count: Number(match[1]), position: match.index }
 }
 
 function notationToOptionsInternal(notationString: string, depth: number): ParsedNotationOptions[] {
@@ -33,13 +33,17 @@ function notationToOptionsInternal(notationString: string, depth: number): Parse
     if (depth >= MAX_REPEAT_DEPTH) {
       throw new NotationParseError(
         notationString,
-        `repeat nesting depth exceeds maximum of ${MAX_REPEAT_DEPTH}`
+        `repeat nesting depth exceeds maximum of ${MAX_REPEAT_DEPTH}`,
+        undefined,
+        { position: repeat.position }
       )
     }
     if (repeat.count > MAX_REPEAT_COUNT) {
       throw new NotationParseError(
         notationString,
-        `repeat count ${repeat.count} exceeds maximum of ${MAX_REPEAT_COUNT}`
+        `repeat count ${repeat.count} exceeds maximum of ${MAX_REPEAT_COUNT}`,
+        undefined,
+        { position: repeat.position, value: repeat.count }
       )
     }
     const baseOptions = notationToOptionsInternal(repeat.base, depth + 1)
