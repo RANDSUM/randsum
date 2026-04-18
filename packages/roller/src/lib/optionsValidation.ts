@@ -1,4 +1,9 @@
-import { validateGreaterThan, validateInteger } from './utils/validation'
+import {
+  validateGreaterThan,
+  validateInteger,
+  validateMaxQuantity,
+  validateMaxSides
+} from './utils/validation'
 import type { RollOptions } from '../types'
 import { validateModifiers } from '../modifiers/registry'
 import { ValidationError } from '../errors'
@@ -23,15 +28,18 @@ export function validateRollOptions<T>(options: RollOptions<T>): void {
   if (typeof options.sides === 'number') {
     validateGreaterThan(options.sides, 0, 'sides')
     validateInteger(options.sides, 'sides')
+    validateMaxSides(options.sides)
   } else if (Array.isArray(options.sides)) {
     if (options.sides.length === 0) {
       throw new ValidationError('sides array must not be empty')
     }
+    validateMaxSides(options.sides.length)
   }
 
   if (options.quantity !== undefined) {
     validateGreaterThan(options.quantity, 0, 'quantity')
     validateInteger(options.quantity, 'quantity')
+    validateMaxQuantity(options.quantity)
   }
 
   if (options.modifiers) {

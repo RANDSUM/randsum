@@ -5,6 +5,7 @@ import { optionsToDescription } from '../notation/transformers/optionsToDescript
 import { optionsToNotation } from '../notation/transformers/optionsToNotation'
 import { optionsToSidesFaces } from '../notation/transformers/optionsToSidesFaces'
 import { validateRollOptions } from '../lib/optionsValidation'
+import { validateMaxQuantity, validateMaxSides } from '../lib/utils/validation'
 import { ValidationError } from '../errors'
 import type { DiceNotation } from '../types'
 import type { RollArgument, RollOptions, RollParams } from '../types'
@@ -266,7 +267,12 @@ function optionsFromArgument<T>(argument: RollArgument<T>): RollOptions<T>[] {
   }
 
   if (isDiceNotation(argument)) {
-    return [...notationToOptions(argument)]
+    const parsed = notationToOptions(argument)
+    for (const options of parsed) {
+      validateMaxQuantity(options.quantity)
+      validateMaxSides(options.sides)
+    }
+    return [...parsed]
   }
 
   if (typeof argument === 'string') {
