@@ -22,3 +22,7 @@ bun run test                   # Run tests
 ## Dependencies
 
 - `@randsum/roller` workspace:~ - Core dice engine (dev dependency, bundled into `dist/index.js` at build time via bunup — not a runtime dependency)
+
+## Publishing
+
+Always `bun publish`. Never `npm publish`. See root `CLAUDE.md` for why.

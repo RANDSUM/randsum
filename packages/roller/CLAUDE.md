@@ -206,6 +206,10 @@ Bundle size limit: 5 KB (`dist/trace/index.js`). The trace subpath has no Node.j
 
 Comparison utilities (`parseComparisonNotation`, `hasConditions`, `formatComparisonNotation`, `formatComparisonDescription`) are available from the main barrel.
 
+## Publishing
+
+Always `bun publish`. Never `npm publish`. See root `CLAUDE.md` for why.
+
 ## Dice Notation Reference
 
 The RANDSUM Dice Notation Specification lives at https://notation.randsum.dev — the authoritative reference for taxonomy, classification, conformance levels, syntax, and modifier behavior.

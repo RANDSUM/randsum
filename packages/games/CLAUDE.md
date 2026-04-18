@@ -122,4 +122,8 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + f
 
 For the formal modifier taxonomy and classification system, see https://notation.randsum.dev.
 
+## Publishing
+
+Always `bun publish`. Never `npm publish`. See root `CLAUDE.md` for why.
+
 See the root `CLAUDE.md` for monorepo-wide conventions (TypeScript style, testing framework, build output).
