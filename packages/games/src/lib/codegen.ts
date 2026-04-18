@@ -1,6 +1,7 @@
 import { SchemaError } from './errors'
 import type { NormalizedRollDefinition, NormalizedSpec } from './normalizedTypes'
 import { normalizeSpec } from './normalizer'
+import { validateRangeCoverage } from './rangeCoverage'
 import type { RandSumSpec, RemoteTableLookupOperation, ResultMappingLeaf } from './types'
 import { validateSpec } from './validator'
 import { generateRollParts } from './codegen/emitBody'
@@ -163,6 +164,7 @@ export async function generateCode(
   }
 
   const nspec = normalizeSpec(spec)
+  validateRangeCoverage(nspec)
   return buildCodeString(nspec, options)
 }
 
