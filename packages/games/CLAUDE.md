@@ -86,6 +86,8 @@ Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate
 
 ## Adding a New Game
 
+Read [`docs/randsum-json-schema.md`](./docs/randsum-json-schema.md) first — it is the narrative guide to the `.randsum.json` spec format with real examples from every in-tree game.
+
 1. Create `<shortcode>.randsum.json` at the package root
 2. Run `bun run --filter @randsum/games gen` to generate `src/<shortcode>.generated.ts` and refresh `src/availableGames.generated.ts` (which drives the `AVAILABLE_GAMES` public export)
 3. Add a subpath export in `package.json` under `"exports"` (follow existing pattern). The `exports` field is hand-maintained — bunup's `exports: true` auto-writer is intentionally disabled because its common-prefix inference breaks when entries are added. `__tests__/exports-sync.test.ts` guards against drift.
