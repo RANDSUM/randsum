@@ -90,7 +90,7 @@
     "apps/*"
   ],
   "overrides": {
-    "lodash": "4.17.23",
+    "lodash": "4.18.1",
     "markdown-it": "14.1.1",
     "mdast-util-to-hast": "13.2.1",
     "undici": "6.24.0",
@@ -100,6 +100,9 @@
     "yauzl": "3.2.1",
     "h3": "1.15.9",
     "yaml": "2.8.3",
-    "brace-expansion": "5.0.5"
+    "brace-expansion": "5.0.5",
+    "@xmldom/xmldom": "0.9.10",
+    "defu": "6.1.7",
+    "vite": "7.3.2"
   }
 }
