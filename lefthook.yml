@@ -16,6 +16,9 @@ pre-commit:
       stage_fixed: true
     typecheck:
       run: bun run typecheck
+    codegen-check:
+      glob: "packages/games/*.randsum.json"
+      run: bun run --filter @randsum/games gen:check
 
 pre-push:
   output:
