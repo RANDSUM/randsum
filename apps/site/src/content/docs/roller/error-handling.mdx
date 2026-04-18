@@ -29,7 +29,7 @@ Valid-but-unusual inputs (like `roll(1)` for a single-sided die) are not errors.
 | `ValidationError` | `RandsumError` | `VALIDATION_ERROR` | Options object has invalid values |
 | `ModifierError` | `RandsumError` | `MODIFIER_ERROR` | A modifier receives bad arguments |
 | `RollError` | `RandsumError` | `ROLL_ERROR` | General roll execution failure |
-| `NotationParseError` | `Error` | `INVALID_NOTATION` | Notation string fails to parse. Includes a `suggestion` property when a fix can be inferred. |
+| `NotationParseError` | `RandsumError` | `INVALID_NOTATION` | Notation string fails to parse. Includes a `suggestion` property when a fix can be inferred. |
 
 <CodeExample code={`import { RandsumError, NotationParseError } from '@randsum/roller'
 
@@ -113,7 +113,7 @@ try {
   console.log(result.total)
 } catch (e) {
   if (e instanceof NotationParseError) {
-    // NotationParseError extends Error directly, not RandsumError
+    // NotationParseError extends RandsumError (check this branch first for the suggestion field)
     console.error(e.message, e.suggestion)
   } else if (e instanceof RandsumError) {
     console.error(e.code, e.message)

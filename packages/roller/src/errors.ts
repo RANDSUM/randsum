@@ -39,15 +39,14 @@ export class RandsumError extends Error {
 /**
  * Error thrown when a string is not valid dice notation.
  */
-export class NotationParseError extends Error {
-  public readonly code = 'INVALID_NOTATION' as const
+export class NotationParseError extends RandsumError {
   public readonly suggestion: string | undefined
 
   constructor(notation: string, reason: string, suggestion?: string) {
     const message = suggestion
       ? `Invalid notation "${notation}": ${reason}. Did you mean "${suggestion}"?`
       : `Invalid notation "${notation}": ${reason}`
-    super(message)
+    super(message, ERROR_CODES.INVALID_NOTATION)
     this.name = 'NotationParseError'
     this.suggestion = suggestion
   }
