@@ -53,12 +53,6 @@
       "description": "Default roll — exported as `roll`"
     }
   },
-  "patternProperties": {
-    "^roll[A-Z][a-zA-Z]*$": {
-      "$ref": "#/$defs/RollDefinition",
-      "description": "Named roll — the key name becomes the export (e.g. rollFortune → rollFortune). Must start with 'roll' followed by an uppercase letter."
-    }
-  },
   "$defs": {
     "PoolDefinition": {
       "type": "object",

@@ -121,6 +121,18 @@ describe('validateSpec', () => {
       expect(result.valid).toBe(false)
     })
 
+    test('rejects named roll keys like rollBonus (pattern removed)', () => {
+      const result = validateSpec({
+        $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+        name: 'Test',
+        shortcode: 'test',
+        game_url: 'https://example.com',
+        roll: { dice: { pool: { sides: 6 }, quantity: 1 }, resolve: 'sum' },
+        rollBonus: { dice: { pool: { sides: 6 }, quantity: 1 }, resolve: 'sum' }
+      })
+      expect(result.valid).toBe(false)
+    })
+
     test('accepts modify with both markDice and keepMarked', () => {
       const result = validateSpec({
         $schema: 'https://randsum.dev/schemas/v1/randsum.json',

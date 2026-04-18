@@ -19,11 +19,5 @@
     "modify": [{ "keepHighest": 1 }],
     "resolve": "sum",
     "outcome": { "tableLookup": { "$ref": "#/tables/basic" } }
-  },
-  "rollBonus": {
-    "inputs": { "sides": { "type": "integer", "minimum": 2, "default": 6 } },
-    "dice": { "pool": { "sides": { "$input": "sides" } }, "quantity": 1 },
-    "resolve": "sum",
-    "outcome": { "ranges": [{ "min": 1, "max": 20, "result": "done" }] }
   }
 }

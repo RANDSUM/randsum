@@ -198,7 +198,7 @@ export interface RandSumSpec {
   readonly pools?: Readonly<Record<string, PoolDefinition>>
   readonly tables?: Readonly<Record<string, TableDefinition>>
   readonly outcomes?: Readonly<Record<string, OutcomeOperation>>
-  readonly [key: string]: unknown
+  readonly roll: RollDefinition
 }
 
 import type { GameRollResult } from '../types'

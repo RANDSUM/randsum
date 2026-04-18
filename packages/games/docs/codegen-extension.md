@@ -63,7 +63,7 @@ All paths are relative to `packages/games/`.
 | `src/lib/normalizedTypes.ts` | IR types (`NormalizedSpec`, `NormalizedRollDefinition`, `NormalizedResolveOperation`, `NormalizedOutcome`, `NormalizedDetailsFieldDef`). ~130 lines — read this first. |
 | `src/lib/normalizer.ts` | Pure function `normalizeSpec(spec: RandSumSpec): NormalizedSpec`. Resolves every `$ref`, collapses sugar, tags discriminated unions with `kind`. |
 | `src/lib/refResolver.ts` | Typed `$ref` resolvers. Three entry points: `resolvePoolRef`, `resolveTableRef`, `resolveOutcomeRef`. Each narrows to its target type or throws `SchemaError('REF_NOT_FOUND')`. ~83 lines. |
-| `src/lib/typeGuards.ts` | `getRollDefinitions(spec)` (finds `roll`, `rollFortune`, etc.), plus `isDetailsLeaf` / `isConditionalDetails` / `isInputRef` / `isConditionalRef`. |
+| `src/lib/typeGuards.ts` | `getRollDefinitions(spec)` (returns `{ roll: spec.roll }`), plus `isDetailsLeaf` / `isConditionalDetails` / `isInputRef` / `isConditionalRef`. |
 | `src/lib/codegen.ts` | `generateCode(spec, options)` — top-level codegen entry. Detects `remoteTableLookup`, fetches or reads remote data, strips unused fields, assembles imports, delegates per-roll emission. |
 | `src/lib/codegen/emitBody.ts` | `generateRollParts(key, rollDef, …)`. Emits the function body, overloads, and result type. Delegates to `emitModifiers`, `emitOutcome`, `emitDetails`. |
 | `src/lib/codegen/emitModifiers.ts` | Translates `modify[]` entries to roller `RollOptions.modifiers` literals. |

@@ -29,23 +29,4 @@ export function roll(
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
-export type RollBonusResult = 'done'
-
-export function rollBonus(sides?: number): GameRollResult<RollBonusResult, undefined, RollRecord>
-export function rollBonus(input?: {
-  sides?: number
-}): GameRollResult<RollBonusResult, undefined, RollRecord>
-export function rollBonus(
-  rawInput?: number | { sides?: number }
-): GameRollResult<RollBonusResult, undefined, RollRecord> {
-  const input: { sides?: number } =
-    typeof rawInput === 'number' ? { sides: rawInput } : (rawInput ?? {})
-  if (input?.sides !== undefined && typeof input?.sides === 'number')
-    validateFinite(input?.sides, 'Test Game sides')
-  const r = executeRoll({ sides: input?.sides ?? 6, quantity: 1 })
-  const total = r.total
-  if (total >= 1 && total <= 20) return { total, result: 'done', rolls: r.rolls }
-  throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
-}
-
 export type { GameRollResult, RollRecord }

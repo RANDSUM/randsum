@@ -6,19 +6,6 @@ import type {
   RollDefinition
 } from './types'
 
-/**
- * Matches keys like `rollFoo`, `rollBar`, etc. — the naming convention
- * for additional roll definitions beyond the base `roll` key.
- */
-// eslint-disable-next-line @typescript-eslint/no-inferrable-types
-const ROLL_KEY_PATTERN: RegExp = /^roll[A-Z][a-zA-Z]*$/
-
-function isRollDefinition(value: unknown): value is RollDefinition {
-  if (typeof value !== 'object' || value === null) return false
-  if (!('resolve' in value)) return false
-  return 'dice' in value || 'dicePools' in value
-}
-
 export function isDetailsLeaf(def: DetailsFieldDef): def is DetailsLeafDef {
   return (
     '$input' in def ||
@@ -49,14 +36,9 @@ export function isConditionalRef(value: IntegerOrInput): value is {
 }
 
 /**
- * Discovers all roll definitions in a spec by checking the `roll` key
- * and any keys matching ROLL_KEY_PATTERN (`rollFoo`, `rollBar`, etc.).
+ * Returns the single `roll` definition from a spec as a keyed record,
+ * preserving the callsites that iterate over `nspec.rolls`.
  */
 export function getRollDefinitions(spec: RandSumSpec): Readonly<Record<string, RollDefinition>> {
-  const patternKeys = Object.keys(spec).filter(k => ROLL_KEY_PATTERN.test(k))
-  const rollKeys = ['roll', ...patternKeys]
-  const entries = rollKeys
-    .filter(key => isRollDefinition(spec[key]))
-    .map(key => [key, spec[key] as RollDefinition] as const)
-  return Object.fromEntries(entries)
+  return { roll: spec.roll }
 }

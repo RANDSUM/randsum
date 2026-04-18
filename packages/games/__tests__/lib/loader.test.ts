@@ -8,7 +8,6 @@ import { loadSpec, loadSpecAsync } from '../../src/lib'
 const TEST_SPEC_PATH = resolve(import.meta.dir, './fixtures/test.randsum.json')
 
 const VALID_ROLL_RESULTS = ['high', 'low'] as const
-const VALID_BONUS_RESULTS = ['done'] as const
 
 describe('loadSpec with file path', () => {
   test('loads spec from disk path and returns callable roll functions', () => {
@@ -73,22 +72,9 @@ describe('loadSpec with test.randsum.json', () => {
     })
   })
 
-  describe('rollBonus', () => {
-    test('sides 8: result valid, rolls.length === 1', () => {
-      const result = game.rollBonus({ sides: 8 })
-      expect(VALID_BONUS_RESULTS).toContain(result.result)
-      expect(result.rolls).toHaveLength(1)
-    })
-
-    test('no input: uses default sides 6, returns valid result', () => {
-      const result = game.rollBonus()
-      expect(VALID_BONUS_RESULTS).toContain(result.result)
-    })
-  })
-
   describe('spec keys', () => {
-    test('exposes roll and rollBonus', () => {
-      expect(Object.keys(game).sort()).toEqual(['roll', 'rollBonus'])
+    test('exposes only roll', () => {
+      expect(Object.keys(game).sort()).toEqual(['roll'])
     })
   })
 })

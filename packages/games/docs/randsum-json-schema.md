@@ -89,7 +89,6 @@ types live in `packages/games/randsum.json:7-61`.
   "outcomes": { /* named OutcomeOperation entries */ },
 
   "roll":     { /* the primary RollDefinition */ }
-  // optional: "rollFortune", "rollProject", etc. — see §3.7
 }
 ```
 
@@ -113,21 +112,7 @@ types live in `packages/games/randsum.json:7-61`.
 | `tables`    | Named outcome tables. Reference with `{ "$ref": "#/tables/<name>" }`.        | `randsum.json:41-45`         |
 | `outcomes`  | Named outcome operations. Reference with `{ "$ref": "#/outcomes/<name>" }`. | `randsum.json:46-50`         |
 
-### 2.3 `patternProperties`: named rolls beyond `roll`
-
-The schema declares a `patternProperties` entry for `^roll[A-Z][a-zA-Z]*$`
-(`packages/games/randsum.json:56-61`). Any top-level key that matches — e.g.
-`rollFortune`, `rollProject` — is treated as an additional roll definition,
-validated against the same `RollDefinition` schema, and exported from the
-generated module under that name.
-
-**None of the current specs use this feature.** It exists in the schema and
-codegen (`packages/games/src/lib/typeGuards.ts:14,55-62`), but every
-in-tree spec has only the primary `roll`. Authors of games with multiple
-distinct roll types (Burning Wheel base + artha, PbtA peripheral moves,
-etc.) are the intended users.
-
-### 2.4 `$defs`
+### 2.3 `$defs`
 
 The meta-schema's `$defs` section
 (`packages/games/randsum.json:62-910`) is purely for schema reuse via
@@ -334,14 +319,6 @@ the input's declared type. A `PipelineOverride`
 D&D 5e uses two `when` entries to swap the pipeline for advantage and
 disadvantage (`fifth.randsum.json:40-55`). Only the `dice` and `modify`
 stages are overridden; the shared `resolve: "sum"` and `details` fall through.
-
-### 3.7 Named rolls (pattern-property roll keys)
-
-As documented in §2.3, any top-level key matching `^roll[A-Z][a-zA-Z]*$` is
-treated as an additional roll definition. The generated module exports each
-under its declared name. No in-tree spec uses this feature yet; new specs
-should prefer `when` overrides for variants that share most of their
-pipeline, and reserve named rolls for mechanics that are structurally distinct.
 
 ---
 
