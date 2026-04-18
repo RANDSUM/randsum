@@ -202,5 +202,37 @@ export default tseslint.config(
       'no-await-in-loop': 'off',
       'no-console': 'off'
     }
+  },
+  {
+    // Tokenize isolation: the @randsum/roller/tokenize subpath must bundle only
+    // modifier schemas (*Schema), never modifier behaviors (*Modifier). The
+    // tokenize import graph is reachable through packages/roller/src/notation/**
+    // plus tokenize.ts itself. Banning *Modifier imports within that subtree
+    // protects ESM tree-shaking. See packages/roller/CLAUDE.md "Tokenize
+    // Isolation Invariant" and docs/adr/ADR-007-modifier-co-location.md.
+    files: [
+      // Duplicated patterns so the override applies whether ESLint is invoked
+      // from the monorepo root (`bun run lint`) or from inside packages/roller
+      // (`bun run --filter @randsum/roller lint`, which cds into the package).
+      'packages/roller/src/notation/**/*.ts',
+      'packages/roller/src/tokenize.ts',
+      'src/notation/**/*.ts',
+      'src/tokenize.ts'
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/modifiers/*', '**/modifiers'],
+              importNamePattern: 'Modifier$',
+              message:
+                'Tokenize-reachable files must not import *Modifier (behavior) symbols — only *Schema exports. Importing a behavior here breaks tree-shaking and inflates dist/tokenize.js. See packages/roller/CLAUDE.md "Tokenize Isolation Invariant".'
+            }
+          ]
+        }
+      ]
+    }
   }
 )
