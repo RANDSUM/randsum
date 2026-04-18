@@ -6,6 +6,7 @@ import type { NotationSchema } from '../notation/schema'
 import { ModifierError } from '../errors'
 import { matchesComparison } from '../lib/comparison/matchesComparison'
 import type { ModifierDefinition } from './schema'
+import { sumMatchCounts } from './shared/extractCount'
 import type { NotationDoc } from '../docs/modifierDocs'
 
 const dropHighestPattern = /[Hh](\d+)?/g
@@ -22,19 +23,11 @@ export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<Drop
   parse: notation => {
     const drop: DropOptions = {}
 
-    const highestMatches = Array.from(notation.matchAll(dropHighestPattern))
-    if (highestMatches.length > 0) {
-      drop.highest = highestMatches.reduce((sum, match) => {
-        return sum + (match[1] ? Number(match[1]) : 1)
-      }, 0)
-    }
+    const highest = sumMatchCounts(notation, dropHighestPattern, 1)
+    if (highest !== undefined) drop.highest = highest
 
-    const lowestMatches = Array.from(notation.matchAll(dropLowestPattern))
-    if (lowestMatches.length > 0) {
-      drop.lowest = lowestMatches.reduce((sum, match) => {
-        return sum + (match[1] ? Number(match[1]) : 1)
-      }, 0)
-    }
+    const lowest = sumMatchCounts(notation, dropLowestPattern, 1)
+    if (lowest !== undefined) drop.lowest = lowest
 
     const constraintsMatch = dropConstraintsPattern.exec(notation)
     if (constraintsMatch?.[1]) {

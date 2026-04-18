@@ -3,6 +3,7 @@ import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import type { NotationDoc } from '../docs/modifierDocs'
 import type { ModifierDefinition } from './schema'
+import { sumMatchCounts } from './shared/extractCount'
 import { createScaleBehavior } from './shared/scale'
 
 const plusPattern = /\+(\d+)/
@@ -40,10 +41,9 @@ export const plusSchema: NotationSchema<number> = defineNotationSchema<number>({
   ] satisfies readonly NotationDoc[],
 
   parse: notation => {
-    const matches = Array.from(notation.matchAll(plusGlobalPattern))
-    if (matches.length === 0) return {}
+    const total = sumMatchCounts(notation, plusGlobalPattern)
+    if (total === undefined) return {}
 
-    const total = matches.reduce((sum, match) => sum + Number(match[1]), 0)
     const result: Pick<ModifierOptions, 'plus'> = { plus: total }
     return result
   },
