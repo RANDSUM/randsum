@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/react": "catalog:",
     "ink-testing-library": "4.0.0",
-    "react-native": "0.83.2"
+    "react-native": "0.85.1"
   },
   "peerDependencies": {
     "react": "catalog:",
