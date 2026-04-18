@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Accepted — all publishable packages emit ESM only (no `.cjs`/`.d.cts`/`dist/cjs/`).
 
 ## Context
 

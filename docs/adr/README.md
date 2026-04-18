@@ -10,9 +10,9 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 | --------------------------------------------------------- | ------------------------------------------------------ | ------------------------ |
 | [001](./ADR-001-unified-games-package.md)                 | Unified games package with subpath exports             | Accepted                 |
 | [003](./ADR-003-notation-as-separate-package.md)          | Notation as separate zero-dependency package           | Superseded by ADR-005    |
+| [004](./ADR-004-literal-types-over-branded-types.md)      | Literal types over branded types for public API        | Accepted                 |
 | [005](./ADR-005-merge-notation-into-roller.md)            | Merge @randsum/notation back into @randsum/roller      | Accepted                 |
-| [007](./ADR-007-modifier-co-location.md)                  | Modifier co-location into `src/modifiers/`             | Proposed                 |
-| [009](./ADR-009-public-api-surface-reduction.md)          | Public API surface reduction for @randsum/roller       | Proposed                 |
+| [009](./ADR-009-public-api-surface-reduction.md)          | Public API surface reduction for @randsum/roller       | Accepted                 |
 
 ### Code Generation and Schema
 
@@ -24,15 +24,16 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 
 | #                                                   | Title                                                          | Status   |
 | --------------------------------------------------- | -------------------------------------------------------------- | -------- |
-| [004](./ADR-004-literal-types-over-branded-types.md)| Literal types over branded types for public API                | Accepted |
 | [006](./ADR-006-notation-scope-boundary.md)         | Notation scope boundary — single roll expressions only         | Accepted |
+| [007](./ADR-007-modifier-co-location.md)            | Modifier co-location into `src/modifiers/`                     | Accepted |
 | [014](./ADR-014-modifier-category-taxonomy.md)      | Modifier category taxonomy and pipeline model                  | Accepted |
 
 ### Publishing and Build
 
 | #                                                   | Title                                                     | Status   |
 | --------------------------------------------------- | --------------------------------------------------------- | -------- |
-| [008](./ADR-008-esm-only-package-output.md)         | ESM-only package output across all publishable packages   | Proposed |
+| [008](./ADR-008-esm-only-package-output.md)         | ESM-only package output across all publishable packages   | Accepted |
+| [018](./ADR-018-roller-sideeffects-src-glob.md)     | Roller sideEffects via src-glob (bunup self-DCE workaround) | Accepted |
 
 ### Toolchain
 
@@ -61,10 +62,11 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 Consult these ADRs before starting the related kind of task.
 
 - **Adding a new game package** — check [ADR-001](./ADR-001-unified-games-package.md) (single `@randsum/games` with subpath exports) and [ADR-002](./ADR-002-code-generation-from-json-specs.md) (never hand-write — extend the JSON schema and regenerate).
-- **Extending dice notation or adding a new modifier** — check [ADR-006](./ADR-006-notation-scope-boundary.md) (no multi-expression composition) and [ADR-014](./ADR-014-modifier-category-taxonomy.md) (pipeline model, category taxonomy). For modifier file layout, [ADR-007](./ADR-007-modifier-co-location.md).
+- **Extending dice notation or adding a new modifier** — check [ADR-006](./ADR-006-notation-scope-boundary.md) (no multi-expression composition) and [ADR-014](./ADR-014-modifier-category-taxonomy.md) (pipeline model, category taxonomy). For modifier file layout and the tokenize-isolation invariant, [ADR-007](./ADR-007-modifier-co-location.md).
 - **Changing `roll()` input types** — [ADR-004](./ADR-004-literal-types-over-branded-types.md) established literal-type API. Branded types are rejected.
 - **Modifying the roller public API surface** — [ADR-009](./ADR-009-public-api-surface-reduction.md) limits the public symbols. Consult before adding exports.
 - **Adding CJS support or a `require` conditional export** — rejected by [ADR-008](./ADR-008-esm-only-package-output.md).
+- **Touching `sideEffects` in `@randsum/roller`** — [ADR-018](./ADR-018-roller-sideeffects-src-glob.md) documents the bunup self-DCE bug and the `["./src/**/*"]` workaround. Do not switch to `false` without re-verifying the bug is gone.
 - **Looking for `@randsum/notation`** — gone. Merged into roller per [ADR-005](./ADR-005-merge-notation-into-roller.md). Original separation rationale in [ADR-003](./ADR-003-notation-as-separate-package.md) (superseded).
 - **Considering a linter/formatter swap (e.g., Biome)** — [ADR-013](./ADR-013-biome-migration-evaluation.md) deferred the migration. Re-evaluate only with new evidence.
 - **Working on notation.randsum.dev (`apps/spec/` / `apps/rdn/`)** — [ADR-015](./ADR-015-custom-astro-layout-over-starlight.md) (no Starlight), [ADR-016](./ADR-016-static-version-embedding.md) (per-version static pages), [ADR-017](./ADR-017-vanilla-typescript-client-interactivity.md) (no React islands).

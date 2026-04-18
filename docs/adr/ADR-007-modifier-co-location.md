@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Accepted — tokenize-isolation lint rule enforced in `eslint.config.js` since `2bff333c`.
 
 ## Context
 
