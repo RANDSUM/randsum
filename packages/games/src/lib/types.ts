@@ -112,10 +112,12 @@ export interface DegreeOfSuccessOperation {
   readonly criticalFailure?: number
 }
 
+export type ResultShape = 'numeric' | 'label'
+
 export type OutcomeOperation =
-  | { readonly ranges: readonly TableRange[] }
-  | { readonly degreeOfSuccess: DegreeOfSuccessOperation }
-  | { readonly tableLookup: RefOrTableDefinition }
+  | { readonly ranges: readonly TableRange[]; readonly resultShape?: ResultShape }
+  | { readonly degreeOfSuccess: DegreeOfSuccessOperation; readonly resultShape?: ResultShape }
+  | { readonly tableLookup: RefOrTableDefinition; readonly resultShape?: ResultShape }
 
 export interface Condition {
   readonly input: string

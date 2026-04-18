@@ -8,6 +8,7 @@ import type {
   ModifyOperation,
   PostResolveModifyOperation,
   RemoteTableLookupOperation,
+  ResultShape,
   TableDefinition,
   TableRange
 } from './types'
@@ -40,9 +41,9 @@ export type NormalizedResolveOperation =
 // ---- Outcome (always concrete, never Ref) ----
 
 export type NormalizedOutcome =
-  | { readonly ranges: readonly TableRange[] }
-  | { readonly degreeOfSuccess: DegreeOfSuccessOperation }
-  | { readonly tableLookup: TableDefinition }
+  | { readonly ranges: readonly TableRange[]; readonly resultShape?: ResultShape }
+  | { readonly degreeOfSuccess: DegreeOfSuccessOperation; readonly resultShape?: ResultShape }
+  | { readonly tableLookup: TableDefinition; readonly resultShape?: ResultShape }
 
 // ---- Details (discriminated with kind) ----
 

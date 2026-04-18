@@ -671,8 +671,14 @@
       ]
     },
 
+    "ResultShape": {
+      "type": "string",
+      "enum": ["numeric", "label"],
+      "description": "Controls the generated `result` field's shape. 'label' (default when outcome is declared) returns the matched range's result string. 'numeric' returns the resolved total instead, while still validating that a range matches and populating details. Use 'numeric' when you want total-as-result with range validation (fail-if-no-match) or details enrichment without forcing a string label."
+    },
+
     "OutcomeOperation": {
-      "description": "Stage 4 — map the resolved value to a game result string. Choose one: 'ranges' for range-to-result mapping, 'degreeOfSuccess' for PF2e-style tiered outcomes, or 'tableLookup' for a named table.",
+      "description": "Stage 4 — map the resolved value to a game result. Choose one: 'ranges' for range-to-result mapping, 'degreeOfSuccess' for PF2e-style tiered outcomes, or 'tableLookup' for a named table. Optionally pair with resultShape: 'numeric' to keep the numeric total as the result while still enforcing range coverage.",
       "oneOf": [
         {
           "type": "object",
@@ -684,7 +690,8 @@
               "description": "Ordered list of range-to-result mappings. Evaluated top to bottom; first match wins.",
               "minItems": 1,
               "items": { "$ref": "#/$defs/TableRange" }
-            }
+            },
+            "resultShape": { "$ref": "#/$defs/ResultShape" }
           }
         },
         {
@@ -709,7 +716,8 @@
                   "description": "Minimum total for a critical failure"
                 }
               }
-            }
+            },
+            "resultShape": { "$ref": "#/$defs/ResultShape" }
           }
         },
         {
@@ -717,7 +725,8 @@
           "required": ["tableLookup"],
           "additionalProperties": false,
           "properties": {
-            "tableLookup": { "$ref": "#/$defs/RefOrTableDefinition" }
+            "tableLookup": { "$ref": "#/$defs/RefOrTableDefinition" },
+            "resultShape": { "$ref": "#/$defs/ResultShape" }
           }
         }
       ]

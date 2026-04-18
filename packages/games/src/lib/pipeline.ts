@@ -270,14 +270,25 @@ function applyOutcome(
 ): string | number {
   if (outcome === undefined) return total
 
+  const numeric = outcome.resultShape === 'numeric'
+
   if ('ranges' in outcome) {
-    return lookupRanges(total, outcome.ranges, preModifyRolls, workingRolls, input)
+    const label = lookupRanges(total, outcome.ranges, preModifyRolls, workingRolls, input)
+    return numeric ? total : label
   }
   if ('degreeOfSuccess' in outcome) {
-    return applyDegreeOfSuccess(total, outcome.degreeOfSuccess)
+    const label = applyDegreeOfSuccess(total, outcome.degreeOfSuccess)
+    return numeric ? total : label
   }
   if ('tableLookup' in outcome) {
-    return lookupRanges(total, outcome.tableLookup.ranges, preModifyRolls, workingRolls, input)
+    const label = lookupRanges(
+      total,
+      outcome.tableLookup.ranges,
+      preModifyRolls,
+      workingRolls,
+      input
+    )
+    return numeric ? total : label
   }
 
   return String(total)

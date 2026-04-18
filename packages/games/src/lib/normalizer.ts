@@ -87,15 +87,18 @@ function normalizeOutcome(outcome: OutcomeOperation | Ref, spec: RandSumSpec): N
     ? resolveOutcomeRef(spec, outcome.$ref)
     : outcome
 
+  const shape = resolved.resultShape
+  const shapePart = shape !== undefined ? { resultShape: shape } : {}
+
   if ('ranges' in resolved) {
-    return { ranges: resolved.ranges }
+    return { ranges: resolved.ranges, ...shapePart }
   }
   if ('degreeOfSuccess' in resolved) {
-    return { degreeOfSuccess: resolved.degreeOfSuccess }
+    return { degreeOfSuccess: resolved.degreeOfSuccess, ...shapePart }
   }
   // tableLookup
   if ('tableLookup' in resolved) {
-    return { tableLookup: normalizeTableDefinition(resolved.tableLookup, spec) }
+    return { tableLookup: normalizeTableDefinition(resolved.tableLookup, spec), ...shapePart }
   }
   // Should be unreachable given OutcomeOperation's type
   return resolved as NormalizedOutcome

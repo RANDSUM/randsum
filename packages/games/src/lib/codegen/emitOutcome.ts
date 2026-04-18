@@ -6,7 +6,8 @@ function generateDegreeLines(
   degrees: DegreeOfSuccessOperation,
   indent: string,
   rollsExpr: string,
-  hasDetails: boolean
+  hasDetails: boolean,
+  numeric: boolean
 ): string[] {
   const candidates: [string, number][] = []
   if (degrees.criticalSuccess !== undefined)
@@ -18,16 +19,17 @@ function generateDegreeLines(
   candidates.sort((a, b) => b[1] - a[1])
 
   const detailsPart = hasDetails ? ', details' : ''
+  const resultExpr = (name: string): string => (numeric ? 'total' : `'${name}'`)
   const ifLines = candidates
     .slice(0, -1)
     .map(
       ([name, threshold]) =>
-        `${indent}if (total >= ${threshold}) return { total, result: '${name}', rolls: ${rollsExpr}${detailsPart} }`
+        `${indent}if (total >= ${threshold}) return { total, result: ${resultExpr(name)}, rolls: ${rollsExpr}${detailsPart} }`
     )
   const last = candidates[candidates.length - 1]
   const defaultLine =
     last !== undefined
-      ? `${indent}return { total, result: '${last[0]}', rolls: ${rollsExpr}${detailsPart} }`
+      ? `${indent}return { total, result: ${resultExpr(last[0])}, rolls: ${rollsExpr}${detailsPart} }`
       : `${indent}throw new SchemaError(\`No degree of success matches total \${total}\`, 'NO_TABLE_MATCH')`
   return [...ifLines, defaultLine]
 }
@@ -37,11 +39,13 @@ export function buildRangeReturn(
   indent: string,
   inputs: NormalizedRollDefinition['inputs'],
   optional: boolean,
-  hasDetails: boolean
+  hasDetails: boolean,
+  numeric = false
 ): string | null {
   const conditions: string[] = []
   const detailsPart = hasDetails ? ', details' : ''
-  const ret = `{ total, result: '${range.result}', rolls: r.rolls${detailsPart} }`
+  const resultExpr = numeric ? 'total' : `'${range.result}'`
+  const ret = `{ total, result: ${resultExpr}, rolls: r.rolls${detailsPart} }`
 
   if (range.poolCondition !== undefined) {
     const pc = range.poolCondition
@@ -99,14 +103,16 @@ export function generateOutcomeLines(
     return [`${indent}return { total, result: total, rolls: ${rollsExpr}${detailsPart} }`]
   }
 
+  const numeric = outcome.resultShape === 'numeric'
+
   if ('degreeOfSuccess' in outcome) {
-    return generateDegreeLines(outcome.degreeOfSuccess, indent, rollsExpr, hasDetails)
+    return generateDegreeLines(outcome.degreeOfSuccess, indent, rollsExpr, hasDetails, numeric)
   }
 
   const ranges = getOutcomeRanges(outcome)
   const lines: string[] = []
   for (const range of ranges) {
-    const check = buildRangeReturn(range, indent, inputs, optional, hasDetails)
+    const check = buildRangeReturn(range, indent, inputs, optional, hasDetails, numeric)
     if (check) lines.push(check)
   }
   lines.push(

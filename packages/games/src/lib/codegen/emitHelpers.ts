@@ -165,6 +165,14 @@ export function collectResults(rollDef: NormalizedRollDefinition): CollectedResu
   }
   // No outcome — numeric passthrough
   if (rollDef.outcome === undefined) return { kind: 'numeric' }
+  // Explicit numeric resultShape on the outcome — return the total as the result
+  // even though ranges gate validation and details.
+  if (rollDef.outcome.resultShape === 'numeric') {
+    const whenAllNumeric = (rollDef.when ?? []).every(wc =>
+      wc.override.outcome === undefined ? true : wc.override.outcome.resultShape === 'numeric'
+    )
+    if (whenAllNumeric) return { kind: 'numeric' }
+  }
   const defaultResults = getResultStrings(rollDef.outcome)
   const whenResults = (rollDef.when ?? []).flatMap(wc =>
     wc.override.outcome ? getResultStrings(wc.override.outcome) : []
