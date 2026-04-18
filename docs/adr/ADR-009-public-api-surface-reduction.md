@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Accepted — all three steps implemented in `fcfafb7e` (2026-03-16).
 
 ## Context
 
