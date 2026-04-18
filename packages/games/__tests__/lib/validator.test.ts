@@ -90,5 +90,50 @@ describe('validateSpec', () => {
         }
       }
     })
+
+    test('rejects modify with markDice but no keepMarked', () => {
+      const result = validateSpec({
+        $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+        name: 'Test',
+        shortcode: 'test',
+        game_url: 'https://example.com',
+        roll: {
+          dice: { pool: { sides: 6 }, quantity: 3 },
+          modify: [{ markDice: { operator: '>=', value: 4, flag: 'hit' } }],
+          resolve: 'sum'
+        }
+      })
+      expect(result.valid).toBe(false)
+    })
+
+    test('rejects modify with keepMarked but no markDice', () => {
+      const result = validateSpec({
+        $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+        name: 'Test',
+        shortcode: 'test',
+        game_url: 'https://example.com',
+        roll: {
+          dice: { pool: { sides: 6 }, quantity: 3 },
+          modify: [{ keepMarked: 'hit' }],
+          resolve: 'sum'
+        }
+      })
+      expect(result.valid).toBe(false)
+    })
+
+    test('accepts modify with both markDice and keepMarked', () => {
+      const result = validateSpec({
+        $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+        name: 'Test',
+        shortcode: 'test',
+        game_url: 'https://example.com',
+        roll: {
+          dice: { pool: { sides: 6 }, quantity: 3 },
+          modify: [{ markDice: { operator: '>=', value: 4, flag: 'hit' } }, { keepMarked: 'hit' }],
+          resolve: 'sum'
+        }
+      })
+      expect(result.valid).toBe(true)
+    })
   })
 })

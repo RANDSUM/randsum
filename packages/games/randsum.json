@@ -201,8 +201,7 @@
         },
         "modify": {
           "description": "Stage 2 (optional) — apply modifiers to individual dice before resolving. Each entry applies one modifier.",
-          "type": "array",
-          "items": { "$ref": "#/$defs/ModifyOperation" }
+          "$ref": "#/$defs/ModifyPipeline"
         },
         "resolve": {
           "description": "Stage 3 — collapse the dice pool into a single value. Use 'sum' to total the dice, 'countMatching' to count dice meeting a condition, 'tableLookup' to map the total through a table, or a comparePool operation for multi-pool rolls.",
@@ -306,8 +305,7 @@
         },
         "modify": {
           "description": "Override for Stage 2 (modifiers)",
-          "type": "array",
-          "items": { "$ref": "#/$defs/ModifyOperation" }
+          "$ref": "#/$defs/ModifyPipeline"
         },
         "resolve": {
           "description": "Override for Stage 3 (resolution)",
@@ -399,6 +397,22 @@
           "description": "Add a flat value to the resolved total"
         }
       }
+    },
+
+    "ModifyPipeline": {
+      "type": "array",
+      "description": "Ordered list of modifier operations. If any entry uses markDice, a later entry must use keepMarked (and vice versa) — the pair is meaningless alone.",
+      "items": { "$ref": "#/$defs/ModifyOperation" },
+      "allOf": [
+        {
+          "if": { "contains": { "type": "object", "required": ["markDice"] } },
+          "then": { "contains": { "type": "object", "required": ["keepMarked"] } }
+        },
+        {
+          "if": { "contains": { "type": "object", "required": ["keepMarked"] } },
+          "then": { "contains": { "type": "object", "required": ["markDice"] } }
+        }
+      ]
     },
 
     "ModifyOperation": {
