@@ -95,6 +95,8 @@ Read [`docs/randsum-json-schema.md`](./docs/randsum-json-schema.md) first — it
 5. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
 6. Run `bun run --filter @randsum/games check` to verify everything passes
 
+To change the codegen pipeline itself (new resolve strategy, new pool shape, new condition type), see `docs/codegen-extension.md`.
+
 ## Testing Patterns
 
 - **Unit tests** (`<shortcode>.test.ts`): Test each input combination, verify result types, check dice pool sizes, validate edge cases (e.g., zero-dice desperate rolls)
