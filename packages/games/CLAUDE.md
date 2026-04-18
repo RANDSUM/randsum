@@ -21,7 +21,8 @@ packages/games/
   build.ts                # Custom build script (bunup)
   src/
     *.generated.ts        # Generated game modules (DO NOT EDIT)
-    index.ts              # Root export (AVAILABLE_GAMES, GameRollResult, SchemaError)
+    index.ts              # Root export (re-exports AVAILABLE_GAMES, GameRollResult, SchemaError)
+    availableGames.generated.ts  # Generated AVAILABLE_GAMES constant (do not edit)
     types.ts              # GameRollResult generic type
     schema.ts             # Schema validation/loading exports
     lib/
@@ -86,12 +87,11 @@ Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate
 ## Adding a New Game
 
 1. Create `<shortcode>.randsum.json` at the package root
-2. Run `bun run --filter @randsum/games gen` to generate `src/<shortcode>.generated.ts`
+2. Run `bun run --filter @randsum/games gen` to generate `src/<shortcode>.generated.ts` and refresh `src/availableGames.generated.ts` (which drives the `AVAILABLE_GAMES` public export)
 3. Add a subpath export in `package.json` under `"exports"` (follow existing pattern)
-4. Add the shortcode to `AVAILABLE_GAMES` in `src/index.ts`
-5. Add a size-limit entry in `package.json` (15 KB limit for most games, 35 KB for salvageunion)
-6. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
-7. Run `bun run --filter @randsum/games check` to verify everything passes
+4. Add a size-limit entry in `package.json` (15 KB limit for most games, 35 KB for salvageunion)
+5. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
+6. Run `bun run --filter @randsum/games check` to verify everything passes
 
 ## Testing Patterns
 
