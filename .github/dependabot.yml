@@ -9,3 +9,11 @@ updates:
     directory: '/' # Location of package manifests
     schedule:
       interval: 'weekly'
+
+  # Keep GitHub Actions up to date. Because workflows pin actions to commit
+  # SHAs (see .github/workflows/*.yml), Dependabot will open PRs that bump
+  # the SHA and update the trailing `# <tag>` comment.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
