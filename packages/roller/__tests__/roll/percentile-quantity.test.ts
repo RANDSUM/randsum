@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { isDiceNotation } from '../../src/notation/isDiceNotation'
 import { tokenize } from '../../src/notation/tokenize'
 import { roll } from '../../src'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Percentile dice with quantity prefix (Nd%)', () => {
   describe('isDiceNotation', () => {
@@ -96,7 +97,7 @@ describe('Percentile dice with quantity prefix (Nd%)', () => {
     })
 
     test('stress test: roll("3d%") total always in [3, 300]', () => {
-      Array.from({ length: 9999 }).forEach(() => {
+      Array.from({ length: STRESS_ITERATIONS }).forEach(() => {
         const result = roll('3d%')
         expect(result.total).toBeGreaterThanOrEqual(3)
         expect(result.total).toBeLessThanOrEqual(300)

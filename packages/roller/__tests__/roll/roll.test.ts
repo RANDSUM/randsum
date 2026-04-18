@@ -2,8 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
-
-const loops = 9999
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe(roll, () => {
   describe('Stress Test', () => {
@@ -11,7 +10,7 @@ describe(roll, () => {
       describe('numeric args', () => {
         const arg = 20
         test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(arg))
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(20)
             expect(total).toBeGreaterThan(0)
@@ -30,7 +29,7 @@ describe(roll, () => {
       describe('object args', () => {
         const arg = { sides: 20 }
         test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(arg))
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(20)
             expect(total).toBeGreaterThan(0)
@@ -40,7 +39,7 @@ describe(roll, () => {
 
       describe('multiple object args with arithmetic modifiers', () => {
         test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () =>
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () =>
             roll({ sides: 1, arithmetic: 'add' }, { sides: 100, arithmetic: 'subtract' })
           )
           dummyArray.forEach(({ total }) => {
@@ -53,7 +52,7 @@ describe(roll, () => {
       describe('notation args', () => {
         const arg = '1d20'
         test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(arg))
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(20)
             expect(total).toBeGreaterThan(0)
@@ -62,7 +61,7 @@ describe(roll, () => {
 
         const negArg = '-1d20'
         test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () => roll(negArg))
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(negArg))
           dummyArray.forEach(({ total }) => {
             expect(total).toBeGreaterThanOrEqual(-20)
             expect(total).toBeLessThan(0)
@@ -73,7 +72,7 @@ describe(roll, () => {
       describe('notation args with whitespace', () => {
         const arg = '  1d20  '
         test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(arg))
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(20)
             expect(total).toBeGreaterThan(0)
@@ -88,7 +87,7 @@ describe(roll, () => {
         }
 
         test('never goes outside of the bounds of the roll (counting sides of faces, ignoring sides)', () => {
-          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(arg))
           dummyArray.forEach(({ total }) => {
             expect(total).toBeLessThanOrEqual(12)
             expect(total).toBeGreaterThan(1)
@@ -96,7 +95,7 @@ describe(roll, () => {
         })
 
         test('returns a values array of the custom faces', () => {
-          const dummyArray = Array.from({ length: loops }, () => roll(arg))
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(arg))
           dummyArray.forEach(({ values }) => {
             expect(values[0]).toBeDefined()
             expect(values[1]).toBeDefined()
@@ -116,7 +115,7 @@ describe(roll, () => {
         const argThree = '1d20'
         const argFour = '1d20+1d20'
         test('it never goes outside of the bounds of the roll', () => {
-          const dummyArray = Array.from({ length: loops }, () =>
+          const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () =>
             roll(argOne, argTwo, argThree, argFour)
           )
           dummyArray.forEach(({ total, rolls }) => {

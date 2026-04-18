@@ -2,8 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
-
-const loops = 9999
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Special Dice Integration Tests', () => {
   // ─── d% (Percentile Die) ─────────────────────────────────────────────
@@ -79,7 +78,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('stress test', () => {
       test('d% total always in [1, 100]', () => {
-        const results = Array.from({ length: loops }, () => roll('d%' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('d%' as string))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(1)
           expect(total).toBeLessThanOrEqual(100)
@@ -87,7 +86,9 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('d% distribution covers full range over many rolls', () => {
-        const totals = new Set(Array.from({ length: loops }, () => roll('d%' as string).total))
+        const totals = new Set(
+          Array.from({ length: STRESS_ITERATIONS }, () => roll('d%' as string).total)
+        )
         // Over 9999 rolls of d100, we should see at least 90 distinct values
         expect(totals.size).toBeGreaterThanOrEqual(90)
       })
@@ -202,7 +203,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('stress test', () => {
       test('4dF total always in [-4, 4]', () => {
-        const results = Array.from({ length: loops }, () => roll('4dF' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF' as string))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(-4)
           expect(total).toBeLessThanOrEqual(4)
@@ -210,7 +211,7 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('dF individual values always in [-1, 0, 1]', () => {
-        const results = Array.from({ length: loops }, () => roll('4dF' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF' as string))
         results.forEach(({ rolls }) => {
           const record = rolls[0]
           expect(record).toBeDefined()
@@ -222,7 +223,7 @@ describe('Special Dice Integration Tests', () => {
 
       test('dF distribution: all three values (-1, 0, 1) appear', () => {
         const allValues = new Set<number>()
-        Array.from({ length: loops }, () => {
+        Array.from({ length: STRESS_ITERATIONS }, () => {
           const result = roll('dF' as string)
           const record = result.rolls[0]
           if (record) {
@@ -247,7 +248,7 @@ describe('Special Dice Integration Tests', () => {
     })
 
     test('dF.1 produces the same range as dF', () => {
-      const results = Array.from({ length: loops }, () => roll('dF.1' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.1' as string))
       results.forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(-1)
         expect(total).toBeLessThanOrEqual(1)
@@ -255,7 +256,7 @@ describe('Special Dice Integration Tests', () => {
     })
 
     test('dF.1 individual values always in [-1, 0, 1]', () => {
-      const results = Array.from({ length: loops }, () => roll('dF.1' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.1' as string))
       results.forEach(({ rolls }) => {
         const record = rolls[0]
         expect(record).toBeDefined()
@@ -299,7 +300,7 @@ describe('Special Dice Integration Tests', () => {
     })
 
     test('dF.2 individual values always in [-2, -1, 0, 1, 2]', () => {
-      const results = Array.from({ length: loops }, () => roll('dF.2' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.2' as string))
       results.forEach(({ rolls }) => {
         const record = rolls[0]
         expect(record).toBeDefined()
@@ -311,7 +312,7 @@ describe('Special Dice Integration Tests', () => {
 
     test('dF.2 distribution: all five values appear', () => {
       const allValues = new Set<number>()
-      Array.from({ length: loops }, () => {
+      Array.from({ length: STRESS_ITERATIONS }, () => {
         const result = roll('dF.2' as string)
         const record = result.rolls[0]
         if (record) {
@@ -348,7 +349,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('stress test', () => {
       test('4dF.2 total always in [-8, 8]', () => {
-        const results = Array.from({ length: loops }, () => roll('4dF.2' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF.2' as string))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(-8)
           expect(total).toBeLessThanOrEqual(8)

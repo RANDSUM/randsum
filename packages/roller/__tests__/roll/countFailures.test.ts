@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('countFailures modifier', () => {
   describe('via options object (using count)', () => {
@@ -36,7 +37,7 @@ describe('countFailures modifier', () => {
     })
 
     test('stress test: failure count is always in [0, quantity]', () => {
-      Array.from({ length: 9999 }, () =>
+      Array.from({ length: STRESS_ITERATIONS }, () =>
         roll({ sides: 10, quantity: 5, modifiers: { count: { lessThanOrEqual: 3 } } })
       ).forEach(r => {
         expect(r.total).toBeGreaterThanOrEqual(0)

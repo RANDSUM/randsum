@@ -2,8 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
-
-const loops = 9999
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Sort Modifier', () => {
   describe('ascending sort', () => {
@@ -116,7 +115,7 @@ describe('Sort Modifier', () => {
 
   describe('stress test', () => {
     test('sort ascending invariant holds across 9999 iterations', () => {
-      const results = Array.from({ length: loops }, () => roll('6d6sa' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('6d6sa' as string))
       results.forEach(({ rolls: records }) => {
         const record = records[0]
         expect(record).toBeDefined()
@@ -132,7 +131,7 @@ describe('Sort Modifier', () => {
     })
 
     test('sort descending invariant holds across 9999 iterations', () => {
-      const results = Array.from({ length: loops }, () => roll('6d6sd' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('6d6sd' as string))
       results.forEach(({ rolls: records }) => {
         const record = records[0]
         expect(record).toBeDefined()

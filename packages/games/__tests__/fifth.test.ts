@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/games/fifth'
+import { STRESS_ITERATIONS } from './stressIterations'
 
 describe('roll', () => {
   describe('basic roll', () => {
@@ -124,8 +125,9 @@ describe('roll', () => {
   // nat-1 and nat-20 code paths and assert the correct boolean values.
   describe('deterministic crit detection', () => {
     test('isNatural1 is true when the rolled value is 1', () => {
-      const iterations = 9999
-      const results = Array.from({ length: iterations }, () => roll({ modifier: 0, crit: true }))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () =>
+        roll({ modifier: 0, crit: true })
+      )
       const nat1Result = results.find(r => r.rolls[0]?.initialRolls[0] === 1)
       // With 9999 rolls of a d20, the probability of never rolling 1 is (19/20)^9999 ~= 0
       expect(nat1Result).toBeDefined()
@@ -134,8 +136,9 @@ describe('roll', () => {
     })
 
     test('isNatural20 is true when the rolled value is 20', () => {
-      const iterations = 9999
-      const results = Array.from({ length: iterations }, () => roll({ modifier: 0, crit: true }))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () =>
+        roll({ modifier: 0, crit: true })
+      )
       const nat20Result = results.find(r => r.rolls[0]?.initialRolls[0] === 20)
       // With 9999 rolls of a d20, the probability of never rolling 20 is (19/20)^9999 ~= 0
       expect(nat20Result).toBeDefined()

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Draw Die (DD)', () => {
   describe('basic DD notation', () => {
@@ -16,7 +17,7 @@ describe('Draw Die (DD)', () => {
     })
 
     test('stress test: DD6 always in [1, 6]', () => {
-      Array.from({ length: 9999 }, () => roll('DD6')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('DD6')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(1)
         expect(total).toBeLessThanOrEqual(6)
       })
@@ -52,7 +53,7 @@ describe('Draw Die (DD)', () => {
 
     test('3DD6 draws are all unique (within a single draw)', () => {
       // 3 draws from 6 sides — all must be unique
-      Array.from({ length: 9999 }, () => roll('3DD6')).forEach(({ rolls }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('3DD6')).forEach(({ rolls }) => {
         const drawn = rolls[0]!.initialRolls
         const unique = new Set(drawn)
         expect(unique.size).toBe(drawn.length)
@@ -60,7 +61,7 @@ describe('Draw Die (DD)', () => {
     })
 
     test('3DD6 values are all in [1, 6]', () => {
-      Array.from({ length: 9999 }, () => roll('3DD6')).forEach(({ rolls }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('3DD6')).forEach(({ rolls }) => {
         for (const v of rolls[0]!.initialRolls) {
           expect(v).toBeGreaterThanOrEqual(1)
           expect(v).toBeLessThanOrEqual(6)
@@ -71,7 +72,7 @@ describe('Draw Die (DD)', () => {
 
   describe('exhaustive draw (quantity === sides)', () => {
     test('6DD6 draws all 6 values, each exactly once', () => {
-      Array.from({ length: 9999 }, () => roll('6DD6')).forEach(({ rolls }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('6DD6')).forEach(({ rolls }) => {
         const drawn = rolls[0]!.initialRolls
         expect(drawn).toHaveLength(6)
         const sorted = [...drawn].sort((a, b) => a - b)

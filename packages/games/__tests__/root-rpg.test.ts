@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/games/root-rpg'
+import { STRESS_ITERATIONS } from './stressIterations'
 
 describe('roll', () => {
   describe('roll ranges', () => {
@@ -38,10 +39,9 @@ describe('roll', () => {
     })
   })
 
-  const loops = 9999
   describe('result interpretation', () => {
     test('returns Proper results', () => {
-      const dummyArray = Array.from({ length: loops }, () => roll(0))
+      const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll(0))
 
       dummyArray.forEach(({ result, total }) => {
         if (result === 'Strong Hit') {

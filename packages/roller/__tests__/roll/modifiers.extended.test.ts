@@ -2,8 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
-
-const loops = 9999
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Extended Modifier Integration Tests', () => {
   // ─── compound (!!) ──────────────────────────────────────────────────
@@ -82,14 +81,14 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('stress test', () => {
       test('3d6!! total always >= 3 (no zero/negative)', () => {
-        const results = Array.from({ length: loops }, () => roll('3d6!!' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!!' as string))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(3)
         })
       })
 
       test('3d6!! always has exactly 3 dice in the result', () => {
-        const results = Array.from({ length: loops }, () => roll('3d6!!' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!!' as string))
         results.forEach(({ rolls }) => {
           const record = rolls[0]
           expect(record).toBeDefined()
@@ -183,14 +182,14 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('stress test', () => {
       test('3d6!p total always >= 3 (no zero/negative)', () => {
-        const results = Array.from({ length: loops }, () => roll('3d6!p' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!p' as string))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(3)
         })
       })
 
       test('3d6!p always has exactly 3 dice in the result', () => {
-        const results = Array.from({ length: loops }, () => roll('3d6!p' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!p' as string))
         results.forEach(({ rolls }) => {
           const record = rolls[0]
           expect(record).toBeDefined()

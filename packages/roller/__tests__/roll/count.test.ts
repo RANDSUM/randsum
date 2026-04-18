@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('count modifier', () => {
   describe('via notation string #{...}', () => {
@@ -142,7 +143,7 @@ describe('count modifier', () => {
 
   describe('stress tests', () => {
     test('count total always in [0, quantity] for non-deduct', () => {
-      Array.from({ length: 9999 }, () =>
+      Array.from({ length: STRESS_ITERATIONS }, () =>
         roll({ sides: 10, quantity: 5, modifiers: { count: { greaterThanOrEqual: 7 } } })
       ).forEach(r => {
         expect(r.total).toBeGreaterThanOrEqual(0)
@@ -151,7 +152,7 @@ describe('count modifier', () => {
     })
 
     test('deduct count can be negative', () => {
-      const results = Array.from({ length: 9999 }, () =>
+      const results = Array.from({ length: STRESS_ITERATIONS }, () =>
         roll({
           sides: 10,
           quantity: 5,

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/games/daggerheart'
+import { STRESS_ITERATIONS } from './stressIterations'
 
 describe('roll', () => {
   describe('basic functionality', () => {
@@ -127,8 +128,7 @@ describe('roll', () => {
   // 'critical hope' (hopeTotal === fearTotal) is reachable when both dice are d20.
   describe('critical hope with amplified dice', () => {
     test('critical hope is reachable with amplifyHope: true and amplifyFear: true', () => {
-      const iterations = 9999
-      const results = Array.from({ length: iterations }, () =>
+      const results = Array.from({ length: STRESS_ITERATIONS }, () =>
         roll({ amplifyHope: true, amplifyFear: true })
       )
       const criticalHope = results.find(r => r.result === 'critical hope')

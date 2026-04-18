@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Percentile dice (d%)', () => {
   test('roll("d%") returns a result', () => {
@@ -21,7 +22,7 @@ describe('Percentile dice (d%)', () => {
   })
 
   test('stress test: all values in [1, 100]', () => {
-    Array.from({ length: 9999 }).forEach(() => {
+    Array.from({ length: STRESS_ITERATIONS }).forEach(() => {
       const result = roll('d%')
       expect(result.total).toBeGreaterThanOrEqual(1)
       expect(result.total).toBeLessThanOrEqual(100)

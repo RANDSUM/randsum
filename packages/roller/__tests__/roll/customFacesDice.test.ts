@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Custom faces dice (d{...})', () => {
   describe('basic d{2,3,5,7}', () => {
@@ -20,7 +21,7 @@ describe('Custom faces dice (d{...})', () => {
     })
 
     test('stress test: all values are valid faces', () => {
-      Array.from({ length: 9999 }, () => roll('d{2,3,5,7}')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('d{2,3,5,7}')).forEach(({ total }) => {
         expect([2, 3, 5, 7]).toContain(total)
       })
     })
@@ -40,7 +41,7 @@ describe('Custom faces dice (d{...})', () => {
     })
 
     test('stress test: 2d{2,3,5,7} always in [4, 14]', () => {
-      Array.from({ length: 9999 }, () => roll('2d{2,3,5,7}')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('2d{2,3,5,7}')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(4)
         expect(total).toBeLessThanOrEqual(14)
       })
@@ -49,7 +50,7 @@ describe('Custom faces dice (d{...})', () => {
 
   describe('faces with zero', () => {
     test('roll("d{0,1,2}") can return 0', () => {
-      const results = Array.from({ length: 9999 }, () => roll('d{0,1,2}'))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('d{0,1,2}'))
       const totals = results.map(r => r.total)
       expect(totals).toContain(0)
       results.forEach(({ total }) => {
@@ -60,13 +61,13 @@ describe('Custom faces dice (d{...})', () => {
 
   describe('faces with negative numbers', () => {
     test('roll("d{-1,0,1}") produces values in [-1, 1]', () => {
-      Array.from({ length: 9999 }, () => roll('d{-1,0,1}')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('d{-1,0,1}')).forEach(({ total }) => {
         expect([-1, 0, 1]).toContain(total)
       })
     })
 
     test('roll("4d{-1,0,1}") is like 4 Fate dice', () => {
-      Array.from({ length: 9999 }, () => roll('4d{-1,0,1}')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('4d{-1,0,1}')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(-4)
         expect(total).toBeLessThanOrEqual(4)
       })
@@ -75,7 +76,7 @@ describe('Custom faces dice (d{...})', () => {
 
   describe('two-sided custom die', () => {
     test('roll("d{0,1}") is a zero-one coin', () => {
-      Array.from({ length: 9999 }, () => roll('d{0,1}')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('d{0,1}')).forEach(({ total }) => {
         expect([0, 1]).toContain(total)
       })
     })
@@ -83,7 +84,7 @@ describe('Custom faces dice (d{...})', () => {
 
   describe('duplicate face values', () => {
     test('roll("d{1,1,1,2}") is weighted toward 1', () => {
-      const results = Array.from({ length: 9999 }, () => roll('d{1,1,1,2}'))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('d{1,1,1,2}'))
       const ones = results.filter(r => r.total === 1).length
       const twos = results.filter(r => r.total === 2).length
       // With 3/4 chance of 1, ones should heavily outnumber twos

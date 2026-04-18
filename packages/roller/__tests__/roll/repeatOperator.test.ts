@@ -1,8 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
-
-const loops = 9999
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Repeat Operator (xN)', () => {
   describe('basic usage', () => {
@@ -62,7 +61,7 @@ describe('Repeat Operator (xN)', () => {
     test(
       'roll("4d6Lx6") always produces 6 records with totals in [3, 18] each',
       () => {
-        const results = Array.from({ length: loops }, () => roll('4d6Lx6' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4d6Lx6' as string))
         results.forEach(({ rolls, total }) => {
           expect(rolls).toHaveLength(6)
           // Each record: 4d6 drop lowest = 3d6 effective, range [3, 18]

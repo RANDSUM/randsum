@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('notation sugar', () => {
   describe('reroll once (ro{})', () => {
@@ -68,7 +69,7 @@ describe('notation sugar', () => {
     })
 
     test('stress test: ro{1} always produces valid results', () => {
-      const results = Array.from({ length: 9999 }, () => roll('4d6ro{1}'))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4d6ro{1}'))
       results.forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(4)
         expect(total).toBeLessThanOrEqual(24)
@@ -140,7 +141,7 @@ describe('notation sugar', () => {
     })
 
     test('stress test: 6d6KM always produces total in valid range', () => {
-      const results = Array.from({ length: 9999 }, () => roll('6d6KM'))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('6d6KM'))
       results.forEach(({ total, rolls }) => {
         // 4 dice kept, each 1-6
         expect(total).toBeGreaterThanOrEqual(4)
@@ -198,7 +199,7 @@ describe('notation sugar', () => {
     })
 
     test('stress test: 1d20ms{15} always produces total in valid range', () => {
-      const results = Array.from({ length: 9999 }, () => roll('1d20ms{15}'))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('1d20ms{15}'))
       results.forEach(({ total }) => {
         // 1d20 produces 1-20, minus 15 => -14 to 5
         expect(total).toBeGreaterThanOrEqual(-14)

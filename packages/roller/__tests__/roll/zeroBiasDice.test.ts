@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Zero-bias dice (zN)', () => {
   describe('basic z6', () => {
@@ -21,7 +22,7 @@ describe('Zero-bias dice (zN)', () => {
     })
 
     test('stress test: all values in [0, 5]', () => {
-      Array.from({ length: 9999 }, () => roll('z6')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('z6')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(0)
         expect(total).toBeLessThanOrEqual(5)
       })
@@ -36,7 +37,7 @@ describe('Zero-bias dice (zN)', () => {
     })
 
     test('stress test: all values in [0, 19]', () => {
-      Array.from({ length: 9999 }, () => roll('z20')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('z20')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(0)
         expect(total).toBeLessThanOrEqual(19)
       })
@@ -57,7 +58,7 @@ describe('Zero-bias dice (zN)', () => {
     })
 
     test('stress test: 4z6 always in [0, 20]', () => {
-      Array.from({ length: 9999 }, () => roll('4z6')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('4z6')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(0)
         expect(total).toBeLessThanOrEqual(20)
       })
@@ -72,7 +73,7 @@ describe('Zero-bias dice (zN)', () => {
 
   describe('z2 (coin flip 0-1)', () => {
     test('stress test: all values in [0, 1]', () => {
-      Array.from({ length: 9999 }, () => roll('z2')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('z2')).forEach(({ total }) => {
         expect([0, 1]).toContain(total)
       })
     })

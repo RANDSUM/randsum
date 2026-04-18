@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src'
+import { STRESS_ITERATIONS } from '../stressIterations'
 
 describe('Fate/Fudge dice (dF)', () => {
   describe('basic dF', () => {
@@ -27,7 +28,7 @@ describe('Fate/Fudge dice (dF)', () => {
     })
 
     test('stress test: all values in [-1, 1]', () => {
-      Array.from({ length: 9999 }, () => roll('dF')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('dF')).forEach(({ total }) => {
         expect([-1, 0, 1]).toContain(total)
       })
     })
@@ -41,7 +42,7 @@ describe('Fate/Fudge dice (dF)', () => {
     })
 
     test('stress test: 4dF always in [-4, 4]', () => {
-      Array.from({ length: 9999 }, () => roll('4dF')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(-4)
         expect(total).toBeLessThanOrEqual(4)
       })
@@ -62,13 +63,13 @@ describe('Fate/Fudge dice (dF)', () => {
     })
 
     test('stress test: dF.2 values in [-2, -1, 0, 1, 2]', () => {
-      Array.from({ length: 9999 }, () => roll('dF.2')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.2')).forEach(({ total }) => {
         expect([-2, -1, 0, 1, 2]).toContain(total)
       })
     })
 
     test('stress test: 4dF.2 always in [-8, 8]', () => {
-      Array.from({ length: 9999 }, () => roll('4dF.2')).forEach(({ total }) => {
+      Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF.2')).forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(-8)
         expect(total).toBeLessThanOrEqual(8)
       })
