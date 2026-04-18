@@ -88,12 +88,18 @@
 
     "TableRange": {
       "type": "object",
-      "description": "A single condition-to-result entry in a lookup table. Match by resolved value (exact or min/max range), pool composition (poolCondition), or both. When both are present, both must match (AND semantics). Cannot mix exact and min/max.",
+      "description": "A single condition-to-result entry in a lookup table. Match by resolved value (exact, min-only, max-only, or min+max range), pool composition (poolCondition), or both. When both are present, both must match (AND semantics). Cannot mix exact with min/max.",
       "required": ["result"],
       "additionalProperties": false,
       "properties": {
-        "min": { "type": "integer", "description": "Minimum resolved value (inclusive)" },
-        "max": { "type": "integer", "description": "Maximum resolved value (inclusive)" },
+        "min": {
+          "type": "integer",
+          "description": "Minimum resolved value (inclusive). When max is omitted, matches any value >= min."
+        },
+        "max": {
+          "type": "integer",
+          "description": "Maximum resolved value (inclusive). When min is omitted, matches any value <= max."
+        },
         "exact": { "type": "integer", "description": "Exact resolved value to match" },
         "poolCondition": {
           "$ref": "#/$defs/PoolCondition",
@@ -108,7 +114,8 @@
         {
           "anyOf": [
             { "required": ["exact"] },
-            { "required": ["min", "max"] },
+            { "required": ["min"] },
+            { "required": ["max"] },
             { "required": ["poolCondition"] }
           ]
         },

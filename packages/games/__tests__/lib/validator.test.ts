@@ -121,6 +121,26 @@ describe('validateSpec', () => {
       expect(result.valid).toBe(false)
     })
 
+    test('accepts TableRange with min alone', () => {
+      const result = validateSpec({
+        $schema: 'https://randsum.dev/schemas/v1/randsum.json',
+        name: 'Test',
+        shortcode: 'test',
+        game_url: 'https://example.com',
+        roll: {
+          dice: { pool: { sides: 6 }, quantity: 2 },
+          resolve: 'sum',
+          outcome: {
+            ranges: [
+              { min: 7, result: 'success' },
+              { max: 6, result: 'failure' }
+            ]
+          }
+        }
+      })
+      expect(result.valid).toBe(true)
+    })
+
     test('rejects named roll keys like rollBonus (pattern removed)', () => {
       const result = validateSpec({
         $schema: 'https://randsum.dev/schemas/v1/randsum.json',

@@ -118,6 +118,24 @@ describe('range coverage validator', () => {
     expect(typeof code).toBe('string')
   })
 
+  test('accepts and emits min-alone ranges', async () => {
+    const spec = makeSpec({
+      roll: {
+        dice: { pool: { sides: 6 }, quantity: 2 },
+        resolve: 'sum',
+        outcome: {
+          ranges: [
+            { min: 7, result: 'success' },
+            { max: 6, result: 'failure' }
+          ]
+        }
+      }
+    })
+    const code = await generateCode(spec)
+    expect(code).toContain('total >= 7')
+    expect(code).toContain('total <= 6')
+  })
+
   test('accounts for postResolveModifiers shift', async () => {
     const spec = makeSpec({
       roll: {

@@ -154,13 +154,19 @@ function lookupRanges(
     const poolMatch =
       range.poolCondition === undefined ||
       evaluatePoolCondition(range.poolCondition, preModifyRolls, workingRolls, input)
-    const valueMatch =
-      (range.exact !== undefined && total === range.exact) ||
-      (range.min !== undefined &&
-        range.max !== undefined &&
-        total >= range.min &&
-        total <= range.max) ||
-      (range.poolCondition !== undefined && range.exact === undefined && range.min === undefined)
+    // Value-match semantics, aligned with the emitter (emitOutcome.ts:70-80):
+    //   exact           → total === exact
+    //   min + max       → min <= total <= max
+    //   min alone       → total >= min
+    //   max alone       → total <= max
+    //   no value part   → matches when poolCondition matches
+    const hasValueConstraint =
+      range.exact !== undefined || range.min !== undefined || range.max !== undefined
+    const valueMatch = hasValueConstraint
+      ? (range.exact === undefined || total === range.exact) &&
+        (range.min === undefined || total >= range.min) &&
+        (range.max === undefined || total <= range.max)
+      : range.poolCondition !== undefined
     if (poolMatch && valueMatch) return range.result
   }
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
