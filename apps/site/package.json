@@ -18,7 +18,7 @@
   "type": "module",
   "dependencies": {
     "@astrojs/netlify": "7.0.1",
-    "@astrojs/react": "5.0.0",
+    "@astrojs/react": "5.0.3",
     "@astrojs/starlight": "0.38.0",
     "@randsum/dice-ui": "workspace:~",
     "@randsum/roller": "workspace:~",
