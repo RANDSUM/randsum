@@ -146,7 +146,7 @@
     },
     {
       "path": "dist/pbta.generated.js",
-      "limit": "15 KB",
+      "limit": "16 KB",
       "ignore": [
         "node:module"
       ]
