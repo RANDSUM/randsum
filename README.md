@@ -14,7 +14,7 @@
 
 </div>
 
-**[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
+**[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
 
 ## 📦 Monorepo Structure
 

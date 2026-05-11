@@ -2,7 +2,7 @@
 
 Discord bot for rolling dice using RANDSUM game mechanics. Built with discord.js and Bun.
 
-Powered by `@randsum/roller` — **[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**
+Powered by `@randsum/roller` — **[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**
 
 ## Features
 
@@ -147,120 +147,24 @@ bun run typecheck
 
 ## Deployment
 
-### Deploying to Railway
-
-[Railway](https://railway.app) provides an easy way to deploy the Discord bot with automatic builds and environment variable management. This project includes a pre-configured `railway.json` file optimized for the monorepo structure.
-
-#### Prerequisites
-
-- A [Railway account](https://railway.app)
-- Your Discord bot credentials (see [Getting Discord Credentials](#getting-discord-credentials))
-- The monorepo repository pushed to GitHub (recommended for automatic deployments)
-
-#### Monorepo Configuration
-
-The included `railway.json` is configured to:
-
-- Build from the monorepo root to access shared dependencies
-- Set the correct working directory for the Discord bot
-- Handle Bun-specific build and start commands
-
-#### Step-by-Step Railway Deployment
-
-1. **Install Railway CLI** (optional, but recommended):
-
-   ```bash
-   npm i -g @railway/cli
-   ```
-
-2. **Login to Railway**:
-
-   ```bash
-   railway login
-   ```
-
-3. **Initialize Railway project** (from the `apps/discord-bot` directory):
-
-   ```bash
-   cd apps/discord-bot
-   railway init
-   ```
-
-4. **Set environment variables**:
-
-   ```bash
-   railway variables set DISCORD_TOKEN=your_bot_token_here
-   railway variables set DISCORD_CLIENT_ID=your_client_id_here
-   ```
-
-   Or set them through the Railway dashboard:
-   - Go to your project on [Railway Dashboard](https://railway.app/dashboard)
-   - Click on your service → Variables tab
-   - Add `DISCORD_TOKEN` and `DISCORD_CLIENT_ID`
-
-5. **Deploy commands before first deployment**:
-
-   You must deploy slash commands locally before Railway deployment:
-
-   ```bash
-   # From apps/discord-bot directory
-   bun run deploy-commands
-   ```
-
-6. **Deploy to Railway**:
-
-   ```bash
-   railway up
-   ```
-
-   Or connect your GitHub repository for automatic deployments:
-   - Go to Railway Dashboard → Your Project
-   - Click "New" → "GitHub Repo"
-   - Select your repository
-   - Railway will automatically detect the `railway.json` configuration
-
-#### Deploying via Railway Dashboard (No CLI)
-
-1. Go to [Railway Dashboard](https://railway.app/dashboard)
-2. Click "New Project" → "Deploy from GitHub repo"
-3. Select your RANDSUM monorepo repository
-4. Configure the service settings:
-   - **Root Directory**: `apps/discord-bot`
-   - **Build Command**: Leave empty (Railway will use `railway.json`)
-   - **Start Command**: Leave empty (Railway will use `railway.json`)
-   - The pre-configured `railway.json` file will handle the monorepo build process automatically
-5. Add environment variables in the Variables tab:
-   - `DISCORD_TOKEN`: Your bot token from Discord Developer Portal
-   - `DISCORD_CLIENT_ID`: Your application ID from Discord Developer Portal
-6. Deploy slash commands locally before Railway deployment:
-
-   ```bash
-   cd apps/discord-bot
-   bun run deploy-commands
-   ```
-
-7. Click "Deploy" and monitor the deployment logs
-
-#### Important Notes
-
-- Remove `DISCORD_GUILD_ID` from production environment variables to deploy commands globally
-- Global command deployment can take up to 1 hour to propagate
-- Railway automatically restarts your bot on crashes
-- Monitor logs in the Railway dashboard under the "Deployments" tab
-
-### Other Deployment Options
-
-For self-hosted or alternative deployment methods:
+The bot is currently self-hosted — there is no automated deploy config checked in. To run it on your own host:
 
 ```bash
-# Build the bot
+# Build
 bun run build
 
-# Run with PM2 (process manager)
-pm2 start dist/index.js --name randsum-bot
+# Set env vars (DISCORD_TOKEN, DISCORD_CLIENT_ID)
+export DISCORD_TOKEN=...
+export DISCORD_CLIENT_ID=...
 
-# Or use systemd, Docker, etc.
+# Deploy slash commands (once per command-set change)
+bun run deploy-commands
+
+# Run with your process manager of choice (pm2, systemd, docker, etc.)
+pm2 start dist/index.js --name randsum-bot
 ```
+
+Remove `DISCORD_GUILD_ID` from the runtime environment to register commands globally (~1 hour propagation). Leave it set to a guild ID for instant per-guild registration during development.
 
 ## Environment Variables
 
