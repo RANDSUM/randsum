@@ -1,0 +1,4 @@
+{"ts":"2026-05-10T19:30:00Z","phase":"bootstrap","event":"manifest_written","run_id":"2026-05-10-audit-fixes","mode":"concurrent","pr_strategy":"one"}
+{"ts":"2026-05-10T19:31:00Z","phase":"define","event":"intent_written","ac_count":7,"source":"audit/synthesis-top-30.md"}
+{"ts":"2026-05-10T19:31:01Z","phase":"define","event":"issue_skipped","reason":"--no-issue flag"}
+{"ts":"2026-05-10T19:31:02Z","phase":"define","event":"phase_complete"}
