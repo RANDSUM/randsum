@@ -54,6 +54,7 @@
     "format:check": "bun run --filter '@randsum/*' format:check",
     "typecheck": "bun run --filter '@randsum/*' typecheck",
     "check": "bun run --filter '@randsum/roller' check && bun run --filter '@randsum/games' check && bun run --filter '@randsum/cli' check && bun run --filter '@randsum/discord-bot' check && bun run --filter '@randsum/site' check && bun run --filter '@randsum/rdn' check",
+    "check:all": "bun run check",
     "bench": "bun run packages/roller/__benchmarks__/roll.bench.ts",
     "bench:ci": "bun run packages/roller/__benchmarks__/roll.bench.ts --json > benchmark-results.json",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",

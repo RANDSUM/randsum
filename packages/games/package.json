@@ -114,6 +114,7 @@
     "gen": "bun run codegen.ts",
     "gen:check": "bun run codegen.ts --check",
     "test": "bun run build && bun test",
+    "test:coverage": "bun run build && bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",

@@ -73,6 +73,15 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' check
+      - name: Generate coverage
+        run: bun run --filter '@randsum/roller' test:coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        with:
+          files: ./packages/roller/coverage/lcov.info
+          flags: roller
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check bundle size
         run: bun run --filter '@randsum/roller' size
 
@@ -88,6 +97,15 @@ jobs:
       - run: bun run --filter '@randsum/games' check
       - name: Verify generated files are up to date
         run: bun run --filter '@randsum/games' gen:check
+      - name: Generate coverage
+        run: bun run --filter '@randsum/games' test:coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        with:
+          files: ./packages/games/coverage/lcov.info
+          flags: games
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check bundle size
         run: bun run --filter '@randsum/games' size
 
