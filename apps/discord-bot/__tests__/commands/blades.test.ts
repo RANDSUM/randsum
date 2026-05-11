@@ -13,12 +13,18 @@ const { bladesCommand } = await import('../../src/commands/blades.js')
 function makeInteraction(dice: number): {
   deferReply: ReturnType<typeof mock>
   editReply: ReturnType<typeof mock>
-  options: { getInteger: ReturnType<typeof mock> }
+  options: {
+    getInteger: ReturnType<typeof mock>
+    getBoolean: ReturnType<typeof mock>
+  }
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
     editReply: mock(() => Promise.resolve(undefined)),
-    options: { getInteger: mock(() => dice) }
+    options: {
+      getInteger: mock(() => dice),
+      getBoolean: mock(() => false)
+    }
   }
 }
 

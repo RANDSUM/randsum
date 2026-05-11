@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
@@ -58,13 +59,19 @@ export const rootCommand: Command = {
         .setRequired(false)
         .setMinValue(-4)
         .setMaxValue(4)
+    )
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
     ),
 
   async execute(interaction) {
     const modifier = interaction.options.getInteger('modifier') ?? 0
     const memberNick = interaction.member?.user.username ?? 'Unknown'
 
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
     try {
       const embed = buildRootEmbed(modifier, memberNick)

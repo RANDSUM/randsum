@@ -3,45 +3,46 @@ import { runSimple } from '../../src/simple/run'
 
 describe('runSimple', () => {
   test('returns compact output for valid notation', () => {
-    const output = runSimple({
+    const result = runSimple({
       notations: ['4d6L'],
       verbose: false,
       json: false,
       repeat: 1
     })
-    expect(output).toMatch(/^\d+/)
+    expect(result.stdout).toMatch(/^\d+/)
+    expect(result.hadError).toBe(false)
   })
 
   test('returns verbose output when verbose flag set', () => {
-    const output = runSimple({
+    const result = runSimple({
       notations: ['2d6'],
       verbose: true,
       json: false,
       repeat: 1
     })
-    expect(output).toContain('Roll:')
-    expect(output).toContain('Total:')
+    expect(result.stdout).toContain('Roll:')
+    expect(result.stdout).toContain('Total:')
   })
 
   test('returns JSON output when json flag set', () => {
-    const output = runSimple({
+    const result = runSimple({
       notations: ['1d20'],
       verbose: false,
       json: true,
       repeat: 1
     })
-    const parsed = JSON.parse(output) as Record<string, unknown>
+    const parsed = JSON.parse(result.stdout) as Record<string, unknown>
     expect(parsed).toHaveProperty('total')
   })
 
   test('repeats rolls with repeat flag', () => {
-    const output = runSimple({
+    const result = runSimple({
       notations: ['1d6'],
       verbose: false,
       json: false,
       repeat: 3
     })
-    const lines = output.split('\n').filter(Boolean)
+    const lines = result.stdout.split('\n').filter(Boolean)
     expect(lines).toHaveLength(3)
   })
 
@@ -60,26 +61,28 @@ describe('runSimple', () => {
       repeat: 1,
       seed: 42
     })
-    expect(a).toBe(b)
+    expect(a.stdout).toBe(b.stdout)
   })
 
-  test('returns error for invalid notation', () => {
-    const output = runSimple({
+  test('routes errors to stderr and flags hadError', () => {
+    const result = runSimple({
       notations: ['zzzz'],
       verbose: false,
       json: false,
       repeat: 1
     })
-    expect(output).toContain('Error:')
+    expect(result.stderr).toContain('Error:')
+    expect(result.stdout).toBe('')
+    expect(result.hadError).toBe(true)
   })
 
   test('supports multiple notations', () => {
-    const output = runSimple({
+    const result = runSimple({
       notations: ['1d6', '1d8'],
       verbose: false,
       json: false,
       repeat: 1
     })
-    expect(output).toMatch(/^\d+/)
+    expect(result.stdout).toMatch(/^\d+/)
   })
 })

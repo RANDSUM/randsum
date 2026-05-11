@@ -57,12 +57,18 @@ const { rollCommand } = await import('../../src/commands/roll.js')
 function makeInteraction(opts: Record<string, string | null> = {}): {
   deferReply: ReturnType<typeof mock>
   editReply: ReturnType<typeof mock>
-  options: { getString: ReturnType<typeof mock> }
+  options: {
+    getString: ReturnType<typeof mock>
+    getBoolean: ReturnType<typeof mock>
+  }
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
     editReply: mock(() => Promise.resolve(undefined)),
-    options: { getString: mock((name: string) => opts[name] ?? null) }
+    options: {
+      getString: mock((name: string) => opts[name] ?? null),
+      getBoolean: mock(() => false)
+    }
   }
 }
 

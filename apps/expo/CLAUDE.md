@@ -36,9 +36,8 @@ apps/expo/
     stores/
       themeStore.ts         # Persisted colorScheme + tokens (Zustand)
       notationStore.ts      # Current notation + validation state (Zustand)
-    storage.ts              # AsyncStorage-backed key/value
-    storage.web.ts          # localStorage variant
-    storage.native.ts       # AsyncStorage variant
+    storage.ts              # Re-exports the web storage implementation
+    storage.web.ts          # localStorage-backed implementation
     theme.ts                # ColorScheme, ThemeTokens, fontSizes, getTokens()
     interpolate.ts          # Variable interpolation for templates
     parseRollResult.ts      # RollerRollResult -> ParsedRollResult
@@ -107,7 +106,7 @@ This forces Metro's web bundler to resolve packages like Zustand to their CJS en
 `.web.tsx` / `.native.tsx` suffixes are picked up by Metro and by `metro.config.js`'s dice-ui fork. Use them for:
 
 - Components that need DOM APIs on web (`CSSTokens.web.tsx`).
-- Storage backends (`storage.web.ts` vs `storage.native.ts`).
+- Storage backends (`storage.web.ts`). Native variants can be added later under `storage.native.ts` if SQLite-backed persistence is reintroduced.
 
 When adding a new platform-specific file, keep the default (`.ts` / `.tsx`) as the native variant or a shared implementation, and introduce `.web.*` only when the web path genuinely diverges.
 

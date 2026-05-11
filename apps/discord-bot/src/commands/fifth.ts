@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/fifth'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
@@ -83,6 +84,12 @@ export const fifthCommand: Command = {
           { name: 'Advantage', value: 'Advantage' },
           { name: 'Disadvantage', value: 'Disadvantage' }
         )
+    )
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
     ),
 
   async execute(interaction) {
@@ -92,7 +99,7 @@ export const fifthCommand: Command = {
       | 'Disadvantage'
       | null
 
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
     try {
       const params: FifthParams = { modifier, rollingWith }

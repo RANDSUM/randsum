@@ -3,6 +3,7 @@ import { roll } from '@randsum/roller/roll'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { suggestNotationFix } from '@randsum/roller'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 import type { RollerRollResult } from '@randsum/roller'
@@ -51,11 +52,17 @@ export const rollCommand: Command = {
         .setName('notation')
         .setDescription('Dice notation (e.g., 2d6+3, d%, 4dF)')
         .setRequired(true)
+    )
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
     ),
 
   async execute(interaction) {
     const notationString = interaction.options.getString('notation', true)
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
     try {
       const validNotation = createNotation(notationString)

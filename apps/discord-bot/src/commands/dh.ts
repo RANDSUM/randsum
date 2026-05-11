@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/daggerheart'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
@@ -96,6 +97,12 @@ export const dhCommand: Command = {
         .setName('amplify_fear')
         .setDescription('Amplify Fear die (use d20 instead of d12)')
         .setRequired(false)
+    )
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
     ),
 
   async execute(interaction) {
@@ -107,7 +114,7 @@ export const dhCommand: Command = {
     const amplifyHope = interaction.options.getBoolean('amplify_hope') ?? false
     const amplifyFear = interaction.options.getBoolean('amplify_fear') ?? false
 
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
     try {
       const dhParams: DhParams = { modifier, rollingWith, amplifyHope, amplifyFear }

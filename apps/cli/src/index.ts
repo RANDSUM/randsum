@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readFileSync } from 'node:fs'
 import { render } from 'ink'
 import { createElement } from 'react'
 import { NotationRoller } from '@randsum/dice-ui/ink'
@@ -85,6 +86,14 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
   return { notations, ...flags }
 }
 
+function readStdinSync(): string {
+  try {
+    return readFileSync(0, 'utf8').trim()
+  } catch {
+    return ''
+  }
+}
+
 export function main(argv: readonly string[]): void {
   const parsed = parseArgs(argv)
 
@@ -100,21 +109,35 @@ export function main(argv: readonly string[]): void {
     return
   }
 
-  if (parsed.interactive || parsed.notations.length === 0) {
+  const stdinNotations =
+    parsed.notations.length === 0 && !parsed.interactive && !process.stdin.isTTY
+      ? readStdinSync().split(/\s+/).filter(Boolean)
+      : []
+  const notations = parsed.notations.length > 0 ? parsed.notations : stdinNotations
+
+  if (parsed.interactive || notations.length === 0) {
     render(createElement(NotationRoller))
     return
   }
 
-  // Simple mode
-  const output = runSimple({
-    notations: parsed.notations,
+  const result = runSimple({
+    notations,
     verbose: parsed.verbose,
     json: parsed.json,
     repeat: parsed.repeat,
     seed: parsed.seed
   })
-  // eslint-disable-next-line no-console
-  console.log(output)
+
+  if (result.stdout) {
+    // eslint-disable-next-line no-console
+    console.log(result.stdout)
+  }
+  if (result.stderr) {
+    console.error(result.stderr)
+  }
+  if (result.hadError) {
+    process.exit(1)
+  }
 }
 
 main(process.argv)

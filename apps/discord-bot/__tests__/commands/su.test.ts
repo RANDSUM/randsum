@@ -23,12 +23,18 @@ const { suCommand } = await import('../../src/commands/su.js')
 function makeInteraction(table: string | null = null): {
   deferReply: ReturnType<typeof mock>
   editReply: ReturnType<typeof mock>
-  options: { getString: ReturnType<typeof mock> }
+  options: {
+    getString: ReturnType<typeof mock>
+    getBoolean: ReturnType<typeof mock>
+  }
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
     editReply: mock(() => Promise.resolve(undefined)),
-    options: { getString: mock(() => table) }
+    options: {
+      getString: mock(() => table),
+      getBoolean: mock(() => false)
+    }
   }
 }
 

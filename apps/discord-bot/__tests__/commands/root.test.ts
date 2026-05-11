@@ -13,13 +13,19 @@ const { rootCommand } = await import('../../src/commands/root.js')
 function makeInteraction(modifier: number | null = null): {
   deferReply: ReturnType<typeof mock>
   editReply: ReturnType<typeof mock>
-  options: { getInteger: ReturnType<typeof mock> }
+  options: {
+    getInteger: ReturnType<typeof mock>
+    getBoolean: ReturnType<typeof mock>
+  }
   member: { user: { username: string } }
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
     editReply: mock(() => Promise.resolve(undefined)),
-    options: { getInteger: mock(() => modifier) },
+    options: {
+      getInteger: mock(() => modifier),
+      getBoolean: mock(() => false)
+    },
     member: { user: { username: 'Tester' } }
   }
 }
