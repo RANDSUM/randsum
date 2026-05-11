@@ -47,7 +47,7 @@
     "help": "bun scripts/help.ts",
     "dev": "bun run --filter '*' dev",
     "build": "bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' --filter '@randsum/cli' --filter '@randsum/discord-bot' build",
-    "test": "bun run --filter '@randsum/roller' --filter '@randsum/games' --filter '@randsum/cli' --filter '@randsum/discord-bot' test",
+    "test": "bun run --filter '@randsum/roller' --filter '@randsum/games' --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/rdn' test",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "bun run --filter '@randsum/*' lint",
     "format": "bun run --filter '@randsum/*' format",
