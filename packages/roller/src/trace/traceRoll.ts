@@ -17,7 +17,9 @@ const ARITHMETIC_MODIFIERS: Partial<Record<string, { label: string; sign: string
   plus: { label: 'Add', sign: '+' },
   minus: { label: 'Subtract', sign: '-' },
   multiply: { label: 'Multiply', sign: '\u00d7' },
-  multiplyTotal: { label: 'Multiply total', sign: '\u00d7' }
+  multiplyTotal: { label: 'Multiply total', sign: '\u00d7' },
+  integerDivide: { label: 'Integer divide', sign: '\u00f7' },
+  modulo: { label: 'Modulo', sign: '%' }
 }
 
 function numVal(opts: Record<string, unknown>, key: string): number | undefined {

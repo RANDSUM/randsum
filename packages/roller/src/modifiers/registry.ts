@@ -49,22 +49,6 @@ export function getAllModifiers(): ModifierDefinition[] {
 }
 
 /**
- * Parse notation string into ModifierOptions.
- */
-export function parseModifiers(notation: string): ModifierOptions {
-  const result: ModifierOptions = {}
-
-  for (const modifier of RANDSUM_MODIFIERS) {
-    if (modifier.pattern.test(notation)) {
-      modifier.pattern.lastIndex = 0
-      Object.assign(result, modifier.parse(notation))
-    }
-  }
-
-  return result
-}
-
-/**
  * Apply a single modifier by name.
  */
 export function applyModifier(
@@ -90,6 +74,9 @@ export function applyModifier(
   }
   if (modifier.requiresParameters && ctx.parameters === undefined) {
     throw new ModifierError(name, `roll parameters required for ${name} modifier`)
+  }
+  if (modifier.requiresRandomFn && ctx.randomFn === undefined) {
+    throw new ModifierError(name, `randomFn function required for ${name} modifier`)
   }
 
   const initialRolls = [...rolls]

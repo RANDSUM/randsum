@@ -6,10 +6,10 @@ import {
   hasModifier,
   modifierToDescription,
   modifierToNotation,
-  parseModifiers,
   processModifierDescriptions,
   processModifierNotations
 } from '../../../src/modifiers/registry'
+import { parseModifiers } from '../../../src/notation/parse/parseModifiers'
 import { ModifierError } from '../../../src/errors'
 import type { ModifierContext } from '../../../src/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'

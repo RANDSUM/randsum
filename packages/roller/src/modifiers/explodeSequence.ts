@@ -2,8 +2,9 @@ import { defineNotationSchema } from '../notation/schema'
 import type { NotationSchema } from '../notation/schema'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import { coreRandom } from '../lib/random'
+import { ModifierError } from '../errors'
 import type { ModifierDefinition } from './schema'
-import { assertRequiredContext } from './schema'
+import { assertParameters } from './schema'
 import type { NotationDoc } from '../docs/modifierDocs'
 
 const explodeSequencePattern = /![sS]\{[\d,]+\}/
@@ -124,20 +125,24 @@ function explodeThroughSequence(sequence: number[], rollOne: (sides: number) => 
 
 export const explodeSequenceModifier: ModifierDefinition<number[]> = {
   ...explodeSequenceSchema,
-  requiresRollFn: true,
   requiresParameters: true,
+  requiresRandomFn: true,
 
   apply: (rolls, options, ctx) => {
-    const { parameters } = assertRequiredContext(ctx)
+    const { parameters } = assertParameters(ctx)
 
     if (!Array.isArray(options) || options.length === 0) {
       return { rolls }
     }
 
     const { sides } = parameters
-    // Build a sized roll function backed by the injected RNG (always provided when requiresRollFn: true).
     const rng = ctx.randomFn
-    if (rng === undefined) throw new Error('Internal error: randomFn required for explodeSequence')
+    if (rng === undefined) {
+      throw new ModifierError(
+        'explodeSequence',
+        'randomFn function required for explodeSequence modifier'
+      )
+    }
     const rollOneSized = (rollSides: number): number => coreRandom(rollSides, rng) + 1
     const additionalRolls: number[] = []
 

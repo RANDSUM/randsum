@@ -6,9 +6,9 @@ import {
   getModifier,
   modifierToDescription,
   modifierToNotation,
-  parseModifiers,
   validateModifiers
 } from '../../../src/modifiers/registry'
+import { parseModifiers } from '../../../src/notation/parse/parseModifiers'
 
 const mockRollOne = (): number => Math.floor(Math.random() * 6) + 1
 const mockContext: ModifierContext = {
