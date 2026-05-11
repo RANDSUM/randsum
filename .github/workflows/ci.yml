@@ -171,6 +171,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: ./.github/actions/bun-setup
+      - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/expo' typecheck
       - run: bun run --filter '@randsum/expo' lint
       - name: Test IndexScreen layout
