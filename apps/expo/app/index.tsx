@@ -196,22 +196,31 @@ export default function IndexScreen(): React.JSX.Element {
       )}
       <WebHeader />
       <View nativeID="main-content" style={styles.content}>
-        {isWeb ? (
+        {isWeb && isDesktop ? (
           <View
+            testID="desktop-two-col"
             style={[
               styles.webShell,
-              isDesktop
-                ? ({
-                    width: '62.5%',
-                    maxWidth: 1200,
-                    alignSelf: 'center',
-                    overflowY: 'auto'
-                  } as object)
-                : ({ overflowY: 'auto', paddingHorizontal: 12 } as object)
+              {
+                flexDirection: 'row',
+                width: '100%',
+                maxWidth: 1200,
+                alignSelf: 'center',
+                gap: 24,
+                paddingHorizontal: 24
+              } as object
             ]}
           >
+            <View style={styles.twoColLeft}>{roller}</View>
+            <View style={styles.twoColRight}>{grid}</View>
+          </View>
+        ) : isWeb ? (
+          <View style={[styles.webShell, { overflowY: 'auto', paddingHorizontal: 12 } as object]}>
             {roller}
-            {grid}
+            <details open={false}>
+              <summary>Notation Reference</summary>
+              {grid}
+            </details>
           </View>
         ) : (
           <>
@@ -300,6 +309,13 @@ const styles = StyleSheet.create({
   },
   webGridWrap: {
     flex: 1
+  },
+  twoColLeft: {
+    flex: 1
+  },
+  twoColRight: {
+    flex: 1,
+    alignSelf: 'flex-start'
   },
   modalBackdrop: {
     flex: 1,

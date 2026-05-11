@@ -22,6 +22,7 @@ jobs:
       cli: ${{ steps.filter.outputs.cli }}
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
+      expo: ${{ steps.filter.outputs.expo }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
@@ -49,6 +50,11 @@ jobs:
             rdn:
               - 'apps/rdn/**'
               - 'packages/roller/**'
+              - '.github/workflows/ci.yml'
+            expo:
+              - 'apps/expo/**'
+              - 'packages/roller/**'
+              - 'packages/dice-ui/**'
               - '.github/workflows/ci.yml'
             skill:
               - 'skills/**'
@@ -157,6 +163,19 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/rdn' check
 
+  expo:
+    name: expo
+    needs: changes
+    if: needs.changes.outputs.expo == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: ./.github/actions/bun-setup
+      - run: bun run --filter '@randsum/expo' typecheck
+      - run: bun run --filter '@randsum/expo' lint
+      - name: Test IndexScreen layout
+        run: bun test apps/expo/__tests__/IndexScreen.test.tsx
+
   skill:
     name: claude-doctor
     needs: changes
@@ -206,7 +225,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, discord-bot, site, rdn, skill, publish-dry-run, knip]
+    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, publish-dry-run, knip]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

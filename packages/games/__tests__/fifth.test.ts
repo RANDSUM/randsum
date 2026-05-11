@@ -145,6 +145,47 @@ describe('roll', () => {
       expect(nat20Result?.details.criticals?.isNatural20).toBe(true)
       expect(nat20Result?.details.criticals?.isNatural1).toBe(false)
     })
+
+    test('crit detection reflects the KEPT die under advantage (not the dropped one)', () => {
+      // Audit P0 #2: crits previously read initialRolls[0] (RNG order) which
+      // inverted the result under advantage when the lower die landed on 1 or 20.
+      // After the fix (field: 'final'), only the kept die can produce a crit.
+      const results = Array.from({ length: STRESS_ITERATIONS }, () =>
+        roll({ modifier: 0, rollingWith: 'Advantage', crit: true })
+      )
+      // Case A: the dropped die is a 1 but the kept die is higher -> isNatural1 must be false.
+      const droppedNat1 = results.find(r => {
+        const initial = r.rolls[0]?.initialRolls ?? []
+        const kept = r.rolls[0]?.rolls[0]
+        return initial.includes(1) && kept !== 1
+      })
+      expect(droppedNat1).toBeDefined()
+      expect(droppedNat1?.details.criticals?.isNatural1).toBe(false)
+
+      // Case B: the kept (highest) die is a 20 -> isNatural20 must be true regardless of the other die.
+      const keptNat20 = results.find(r => r.rolls[0]?.rolls[0] === 20)
+      expect(keptNat20).toBeDefined()
+      expect(keptNat20?.details.criticals?.isNatural20).toBe(true)
+    })
+
+    test('crit detection reflects the KEPT die under disadvantage (not the dropped one)', () => {
+      const results = Array.from({ length: STRESS_ITERATIONS }, () =>
+        roll({ modifier: 0, rollingWith: 'Disadvantage', crit: true })
+      )
+      // Case A: the dropped die is a 20 but the kept die is lower -> isNatural20 must be false.
+      const droppedNat20 = results.find(r => {
+        const initial = r.rolls[0]?.initialRolls ?? []
+        const kept = r.rolls[0]?.rolls[0]
+        return initial.includes(20) && kept !== 20
+      })
+      expect(droppedNat20).toBeDefined()
+      expect(droppedNat20?.details.criticals?.isNatural20).toBe(false)
+
+      // Case B: the kept (lowest) die is a 1 -> isNatural1 must be true regardless of the other die.
+      const keptNat1 = results.find(r => r.rolls[0]?.rolls[0] === 1)
+      expect(keptNat1).toBeDefined()
+      expect(keptNat1?.details.criticals?.isNatural1).toBe(true)
+    })
   })
 
   describe('input validation', () => {
