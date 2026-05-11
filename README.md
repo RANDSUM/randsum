@@ -147,6 +147,16 @@ The documentation site (`@randsum/site`) is deployed to **Netlify**, configured 
 
 ---
 
+## 🗺️ Roadmap & Community
+
+RANDSUM is actively evolving. Track in-flight epics on the [public project board](https://github.com/orgs/RANDSUM/projects/2/views/1) — published packages, upcoming game systems (Fate Core, Pathfinder 2e, Ironsworn), the typed notation template literal layer, and the dice mechanic spec format are all queued there.
+
+- **Discord:** [randsum.dev/discord](https://randsum.dev/discord/) — questions, feedback, game requests
+- **Issues & ideas:** [GitHub Issues](https://github.com/RANDSUM/randsum/issues)
+- **Open PRs:** see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the dev loop
+
+---
+
 ## Why did you make this?
 
 Sometime around 2012, I decided I wanted to learn to program. I had installed ruby on the best laptop six-hundred dollars could buy, set to make a dice roller as an easy first project.
