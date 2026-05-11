@@ -47,7 +47,7 @@ pre-push:
       run: bun run test 2>&1 | tail -5
       priority: 2
     audit:
-      run: bun audit --level=high > /dev/null 2>&1
+      run: bun audit --audit-level=high > /dev/null 2>&1
       priority: 2
     knip:
       run: bun run knip > /dev/null 2>&1
