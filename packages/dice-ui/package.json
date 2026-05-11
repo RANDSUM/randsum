@@ -14,18 +14,19 @@
     "./ink": "./src/ink/index.ts"
   },
   "dependencies": {
-    "@randsum/roller": "workspace:~",
-    "ink": "6.8.0"
+    "@randsum/roller": "workspace:~"
   },
   "devDependencies": {
     "@types/react": "catalog:",
+    "ink": "6.8.0",
     "ink-testing-library": "4.0.0",
     "react-native": "0.83.2"
   },
   "peerDependencies": {
+    "expo-haptics": "*",
+    "ink": "^6.0.0",
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "expo-haptics": "*"
+    "react-dom": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -35,6 +36,9 @@
       "optional": true
     },
     "expo-haptics": {
+      "optional": true
+    },
+    "ink": {
       "optional": true
     }
   },

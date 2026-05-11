@@ -5,7 +5,9 @@
     "baseUrl": ".",
     "paths": {
       "@randsum/dice-ui": ["./types/dice-ui.d.ts"]
-    }
+    },
+    "types": ["bun"],
+    "ignoreDeprecations": "6.0"
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
