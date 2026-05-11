@@ -198,6 +198,40 @@ jobs:
             echo "No marketplace.json found, skipping"
           fi
 
+  bench:
+    name: bench (regression gate)
+    needs: changes
+    if: needs.changes.outputs.roller == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: ./.github/actions/bun-setup
+      - name: Build roller
+        run: bun run --filter '@randsum/roller' build
+      - name: Run benchmark
+        run: bun run bench:ci
+      - name: Restore previous benchmark data
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf  # v4
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-
+      - name: Compare and store benchmark
+        uses: benchmark-action/github-action-benchmark@4de1bed97a47495fc4c5404952da0499e31f5c29  # v1.20.4
+        with:
+          tool: 'customSmallerIsBetter'
+          output-file-path: benchmark-results.json
+          external-data-json-path: ./cache/benchmark-data.json
+          fail-on-alert: true
+          alert-threshold: '120%'
+          comment-on-alert: ${{ github.event_name == 'pull_request' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          save-data-file: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
   publish-dry-run:
     name: publish (dry run)
     needs: changes
@@ -225,7 +259,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, publish-dry-run, knip]
+    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, bench, publish-dry-run, knip]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}
