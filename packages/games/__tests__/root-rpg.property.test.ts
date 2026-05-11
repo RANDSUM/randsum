@@ -14,7 +14,7 @@ describe('roll property-based tests', () => {
   test('result is always a valid Root RPG outcome', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
-        const { result } = roll(bonus)
+        const { result } = roll({ bonus })
         return (VALID_RESULTS as readonly string[]).includes(result)
       })
     )
@@ -23,7 +23,7 @@ describe('roll property-based tests', () => {
   test('total is always within [2 + bonus, 12 + bonus]', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
-        const { total } = roll(bonus)
+        const { total } = roll({ bonus })
         return total >= 2 + bonus && total <= 12 + bonus
       })
     )
@@ -32,7 +32,7 @@ describe('roll property-based tests', () => {
   test('result maps correctly to total thresholds', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
-        const { result, total } = roll(bonus)
+        const { result, total } = roll({ bonus })
         if (total >= 10) return result === 'Strong Hit'
         if (total >= 7) return result === 'Weak Hit'
         return result === 'Miss'
@@ -44,7 +44,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
         try {
-          roll(bonus)
+          roll({ bonus })
           return true
         } catch {
           return false
@@ -59,14 +59,32 @@ describe('roll property-based tests', () => {
         fc.integer({ min: -3, max: 5 }),
         fc.integer({ min: -3, max: 5 }),
         (bonusA, bonusB) => {
-          const rollA = roll(bonusA)
-          const rollB = roll(bonusB)
+          const rollA = roll({ bonus: bonusA })
+          const rollB = roll({ bonus: bonusB })
           if (rollA.total >= rollB.total) {
             return resultTier(rollA.result) >= resultTier(rollB.result)
           }
           return true
         }
       )
+    )
+  })
+
+  test('Advantage: total within [2 + bonus, 12 + bonus] (sum of kept top-2 of 3d6)', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
+        const { total } = roll({ bonus, rollingWith: 'Advantage' })
+        return total >= 2 + bonus && total <= 12 + bonus
+      })
+    )
+  })
+
+  test('Disadvantage: total within [2 + bonus, 12 + bonus] (sum of kept bottom-2 of 3d6)', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
+        const { total } = roll({ bonus, rollingWith: 'Disadvantage' })
+        return total >= 2 + bonus && total <= 12 + bonus
+      })
     )
   })
 })

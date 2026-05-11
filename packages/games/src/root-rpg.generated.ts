@@ -9,16 +9,44 @@ import type { SchemaErrorCode } from './lib/errors'
 
 export type RootRpgRollResult = 'Miss' | 'Strong Hit' | 'Weak Hit'
 
-export function roll(bonus: number): GameRollResult<RootRpgRollResult, undefined, RollRecord>
 export function roll(input: {
   bonus: number
-}): GameRollResult<RootRpgRollResult, undefined, RollRecord>
-export function roll(
-  rawInput: number | { bonus: number }
-): GameRollResult<RootRpgRollResult, undefined, RollRecord> {
-  const input: { bonus: number } = typeof rawInput === 'number' ? { bonus: rawInput } : rawInput
+  rollingWith?: 'Advantage' | 'Disadvantage'
+}): GameRollResult<RootRpgRollResult, undefined, RollRecord> {
   if (typeof input.bonus === 'number') validateFinite(input.bonus, 'Root RPG bonus')
   if (typeof input.bonus === 'number') validateRange(input.bonus, -3, 5, 'Root RPG bonus')
+  if (
+    input.rollingWith !== undefined &&
+    !['Advantage', 'Disadvantage'].includes(input.rollingWith as string)
+  )
+    throw new SchemaError(
+      `Invalid rollingWith value: ${String(input.rollingWith)}. Must be 'Advantage' or 'Disadvantage'.`,
+      'INVALID_INPUT_TYPE'
+    )
+  if (input.rollingWith === 'Advantage') {
+    const r = executeRoll({
+      sides: 6,
+      quantity: 3,
+      modifiers: { keep: { highest: 2 }, plus: input.bonus }
+    })
+    const total = r.total
+    if (total >= 10 && total <= 32) return { total, result: 'Strong Hit', rolls: r.rolls }
+    if (total >= 7 && total <= 9) return { total, result: 'Weak Hit', rolls: r.rolls }
+    if (total >= -18 && total <= 6) return { total, result: 'Miss', rolls: r.rolls }
+    throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
+  }
+  if (input.rollingWith === 'Disadvantage') {
+    const r = executeRoll({
+      sides: 6,
+      quantity: 3,
+      modifiers: { keep: { lowest: 2 }, plus: input.bonus }
+    })
+    const total = r.total
+    if (total >= 10 && total <= 32) return { total, result: 'Strong Hit', rolls: r.rolls }
+    if (total >= 7 && total <= 9) return { total, result: 'Weak Hit', rolls: r.rolls }
+    if (total >= -18 && total <= 6) return { total, result: 'Miss', rolls: r.rolls }
+    throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
+  }
   const r = executeRoll({ sides: 6, quantity: 2, modifiers: { plus: input.bonus } })
   const total = r.total
   if (total >= 10 && total <= 32) return { total, result: 'Strong Hit', rolls: r.rolls }

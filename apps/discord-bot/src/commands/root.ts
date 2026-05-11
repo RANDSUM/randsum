@@ -11,7 +11,7 @@ const ROOT_IMAGES = {
 } as const
 
 function buildRootEmbed(modifier: number, memberNick: string): EmbedBuilder {
-  const result = roll(modifier)
+  const result = roll({ bonus: modifier })
   const initialRolls = result.rolls[0]?.initialRolls ?? []
 
   const resultConfig = {
