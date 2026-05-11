@@ -13,6 +13,7 @@ Arguments:
   notation          Dice notation (e.g. 4d6L, 2d20+5)
 
 Flags:
+  -i, --interactive Launch interactive TUI mode
   -v, --verbose     Show detailed roll breakdown
   --json            Output as JSON
   -r, --repeat N    Roll N times
@@ -29,6 +30,7 @@ Examples:
 
 interface ParsedArgs {
   readonly notations: string[]
+  readonly interactive: boolean
   readonly verbose: boolean
   readonly json: boolean
   readonly repeat: number
@@ -40,6 +42,7 @@ interface ParsedArgs {
 function parseArgs(argv: readonly string[]): ParsedArgs {
   const notations: string[] = []
   const flags = {
+    interactive: false,
     verbose: false,
     json: false,
     repeat: 1,
@@ -50,7 +53,9 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
 
   const args = argv.slice(2)
   for (const [i, arg] of args.entries()) {
-    if (arg === '-v' || arg === '--verbose') {
+    if (arg === '-i' || arg === '--interactive') {
+      flags.interactive = true
+    } else if (arg === '-v' || arg === '--verbose') {
       flags.verbose = true
     } else if (arg === '--json') {
       flags.json = true
@@ -95,7 +100,7 @@ export function main(argv: readonly string[]): void {
     return
   }
 
-  if (parsed.notations.length === 0) {
+  if (parsed.interactive || parsed.notations.length === 0) {
     render(createElement(NotationRoller))
     return
   }

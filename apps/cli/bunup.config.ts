@@ -4,9 +4,9 @@ export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
   dts: false,
-  minify: true,
+  minify: false,
   sourcemap: 'external',
   target: 'node',
   clean: true,
-  noExternal: ['@randsum/roller']
+  noExternal: [/^@randsum\//]
 })
