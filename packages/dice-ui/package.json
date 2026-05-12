@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@types/react": "catalog:",
-    "react-native": "0.83.2"
+    "react-native": "0.85.3"
   },
   "peerDependencies": {
     "expo-haptics": "*",
