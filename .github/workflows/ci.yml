@@ -27,7 +27,7 @@ jobs:
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590  # v3
         id: filter
         with:
@@ -76,7 +76,7 @@ jobs:
     if: needs.changes.outputs.roller == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' check
       - name: Generate coverage
@@ -97,7 +97,7 @@ jobs:
     if: needs.changes.outputs.games == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/games' check
@@ -121,7 +121,7 @@ jobs:
     if: needs.changes.outputs.cli == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/cli' check
@@ -132,7 +132,7 @@ jobs:
     if: needs.changes.outputs.discord-bot == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build
       - run: bun run --filter '@randsum/discord-bot' check
@@ -143,7 +143,7 @@ jobs:
     if: needs.changes.outputs.site == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
         with:
           node-version: '22'
@@ -156,7 +156,7 @@ jobs:
     if: needs.changes.outputs.rdn == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
         with:
           node-version: '22'
@@ -169,7 +169,7 @@ jobs:
     if: needs.changes.outputs.expo == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/expo' typecheck
@@ -183,7 +183,7 @@ jobs:
     if: needs.changes.outputs.skill == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - name: Verify skills
         run: npx skills-ref validate skills/dice-rolling/SKILL.md
@@ -208,7 +208,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - name: Build roller
         run: bun run --filter '@randsum/roller' build
@@ -239,7 +239,7 @@ jobs:
     if: needs.changes.outputs.changesets == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run build
       - name: Configure npm auth
@@ -253,7 +253,7 @@ jobs:
     name: knip
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run knip
 
