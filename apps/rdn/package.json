@@ -17,7 +17,7 @@
   },
   "type": "module",
   "dependencies": {
-    "astro": "6.0.2"
+    "astro": "6.1.6"
   },
   "engines": {
     "node": ">=22.12.0",
