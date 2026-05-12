@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
-import { formatCompact, formatJson, formatVerbose } from '../../src/shared/format'
+import { formatCompact, formatJson, formatVerbose } from '../src/format'
 
 describe('formatCompact', () => {
   test('formats a simple roll', () => {

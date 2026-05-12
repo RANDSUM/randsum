@@ -5,7 +5,7 @@
   <p>Throw Dice, Not Exceptions.</p>
 </div>
 
-Dice rolling CLI and interactive TUI powered by [RANDSUM](https://github.com/RANDSUM/randsum).
+Dice rolling CLI powered by [RANDSUM](https://github.com/RANDSUM/randsum).
 
 Powered by `@randsum/roller` — **[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**
 
@@ -30,17 +30,9 @@ randsum 1d20+5        # Attack roll with modifier
 randsum 3d6!          # Exploding dice
 ```
 
-### Interactive TUI
-
-```bash
-randsum               # Launch interactive mode
-randsum -i            # Explicit interactive flag
-```
-
 ### Options
 
 ```
--i, --interactive     Launch interactive TUI mode
 -v, --verbose         Show detailed roll breakdown
 --json                Output results as JSON
 -r, --repeat N        Roll N times (default: 1)

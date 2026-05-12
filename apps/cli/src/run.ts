@@ -1,8 +1,8 @@
 import type { RollArgument, RollConfig } from '@randsum/roller'
 import { roll } from '@randsum/roller/roll'
-import { formatCompact, formatJson, formatVerbose } from '../shared/format'
+import { formatCompact, formatJson, formatVerbose } from './format'
 
-interface SimpleOptions {
+interface RunOptions {
   readonly notations: readonly string[]
   readonly verbose: boolean
   readonly json: boolean
@@ -10,7 +10,7 @@ interface SimpleOptions {
   readonly seed?: number | undefined
 }
 
-export interface SimpleResult {
+export interface RunResult {
   readonly stdout: string
   readonly stderr: string
   readonly hadError: boolean
@@ -27,7 +27,7 @@ function createSeededRandom(seed: number): () => number {
   }
 }
 
-export function runSimple(options: SimpleOptions): SimpleResult {
+export function runRolls(options: RunOptions): RunResult {
   const config: RollConfig | undefined =
     options.seed !== undefined ? { randomFn: createSeededRandom(options.seed) } : undefined
 

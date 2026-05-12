@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs'
-import { render } from 'ink'
-import { createElement } from 'react'
-import { NotationRoller } from '@randsum/dice-ui/ink'
-import { runSimple } from './simple/run'
+import { runRolls } from './run'
 import { version as VERSION } from '../package.json'
 
-const HELP = `Usage: randsum [notation...] [flags]
+const HELP = `Usage: randsum <notation...> [flags]
 
 Roll dice using RANDSUM notation.
 
@@ -14,7 +11,6 @@ Arguments:
   notation          Dice notation (e.g. 4d6L, 2d20+5)
 
 Flags:
-  -i, --interactive Launch interactive TUI mode
   -v, --verbose     Show detailed roll breakdown
   --json            Output as JSON
   -r, --repeat N    Roll N times
@@ -31,7 +27,6 @@ Examples:
 
 interface ParsedArgs {
   readonly notations: string[]
-  readonly interactive: boolean
   readonly verbose: boolean
   readonly json: boolean
   readonly repeat: number
@@ -43,7 +38,6 @@ interface ParsedArgs {
 function parseArgs(argv: readonly string[]): ParsedArgs {
   const notations: string[] = []
   const flags = {
-    interactive: false,
     verbose: false,
     json: false,
     repeat: 1,
@@ -54,9 +48,7 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
 
   const args = argv.slice(2)
   for (const [i, arg] of args.entries()) {
-    if (arg === '-i' || arg === '--interactive') {
-      flags.interactive = true
-    } else if (arg === '-v' || arg === '--verbose') {
+    if (arg === '-v' || arg === '--verbose') {
       flags.verbose = true
     } else if (arg === '--json') {
       flags.json = true
@@ -110,17 +102,18 @@ export function main(argv: readonly string[]): void {
   }
 
   const stdinNotations =
-    parsed.notations.length === 0 && !parsed.interactive && !process.stdin.isTTY
+    parsed.notations.length === 0 && !process.stdin.isTTY
       ? readStdinSync().split(/\s+/).filter(Boolean)
       : []
   const notations = parsed.notations.length > 0 ? parsed.notations : stdinNotations
 
-  if (parsed.interactive || notations.length === 0) {
-    render(createElement(NotationRoller))
-    return
+  if (notations.length === 0) {
+    // eslint-disable-next-line no-console
+    console.log(HELP)
+    process.exit(1)
   }
 
-  const result = runSimple({
+  const result = runRolls({
     notations,
     verbose: parsed.verbose,
     json: parsed.json,
@@ -140,4 +133,6 @@ export function main(argv: readonly string[]): void {
   }
 }
 
-main(process.argv)
+if (import.meta.main) {
+  main(process.argv)
+}
