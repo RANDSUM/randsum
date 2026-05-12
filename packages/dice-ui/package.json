@@ -1,6 +1,6 @@
 {
   "name": "@randsum/dice-ui",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "React UI components for RANDSUM dice rolling — notation input with token overlay, roll step visualizer, and combined roller",
   "private": true,
   "license": "MIT",
