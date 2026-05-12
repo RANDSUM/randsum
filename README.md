@@ -14,7 +14,7 @@
 
 </div>
 
-**[RDN v1.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
+**[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
 
 ## 📦 Monorepo Structure
 
@@ -144,6 +144,16 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 ### Website Deployment
 
 The documentation site (`@randsum/site`) is deployed to **Netlify**, configured via `apps/site/netlify.toml` and deployed automatically on push to main.
+
+---
+
+## 🗺️ Roadmap & Community
+
+RANDSUM is actively evolving. Track in-flight epics on the [public project board](https://github.com/orgs/RANDSUM/projects/2/views/1) — published packages, upcoming game systems (Fate Core, Pathfinder 2e, Ironsworn), the typed notation template literal layer, and the dice mechanic spec format are all queued there.
+
+- **Discord:** [randsum.dev/discord](https://randsum.dev/discord/) — questions, feedback, game requests
+- **Issues & ideas:** [GitHub Issues](https://github.com/RANDSUM/randsum/issues)
+- **Open PRs:** see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the dev loop
 
 ---
 

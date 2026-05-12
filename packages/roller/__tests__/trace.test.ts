@@ -83,6 +83,44 @@ describe('traceRoll', () => {
     expect(steps[2]?.kind).toBe('finalRolls')
   })
 
+  test('integerDivide modifier produces arithmetic step with ÷ sign', () => {
+    const record = {
+      initialRolls: [10],
+      rolls: [10],
+      modifierLogs: [{ modifier: 'integerDivide', options: 2, removed: [], added: [] }],
+      total: 10,
+      appliedTotal: 5
+    }
+    const steps = traceRoll(record)
+    expect(steps.length).toBe(3)
+    expect(steps[1]?.kind).toBe('arithmetic')
+    if (steps[1]?.kind === 'arithmetic') {
+      expect(steps[1].label).toBe('Integer divide')
+      expect(steps[1].display).toBe('÷2')
+    }
+    expect(steps[2]?.kind).toBe('finalRolls')
+    if (steps[2]?.kind === 'finalRolls') {
+      expect(steps[2].arithmeticDelta).toBe(-5)
+    }
+  })
+
+  test('modulo modifier produces arithmetic step with % sign', () => {
+    const record = {
+      initialRolls: [10],
+      rolls: [10],
+      modifierLogs: [{ modifier: 'modulo', options: 3, removed: [], added: [] }],
+      total: 10,
+      appliedTotal: 1
+    }
+    const steps = traceRoll(record)
+    expect(steps.length).toBe(3)
+    expect(steps[1]?.kind).toBe('arithmetic')
+    if (steps[1]?.kind === 'arithmetic') {
+      expect(steps[1].label).toBe('Modulo')
+      expect(steps[1].display).toBe('%3')
+    }
+  })
+
   test('return type is readonly RollTraceStep[]', () => {
     const record = {
       initialRolls: [1],

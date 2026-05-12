@@ -165,6 +165,12 @@ export interface ModifierBehavior<TOptions = unknown> {
   requiresParameters?: boolean
 
   /**
+   * Whether this modifier requires the raw randomFn for rolling dice of arbitrary sizes.
+   * If true, ctx.randomFn must be provided when applying.
+   */
+  requiresRandomFn?: boolean
+
+  /**
    * Whether apply() may return a different rolls array reference.
    * When false, apply() returns a reference-equal rolls array and only uses transformTotal.
    * The registry calls createArithmeticLog() instead of createModifierLog() when false,

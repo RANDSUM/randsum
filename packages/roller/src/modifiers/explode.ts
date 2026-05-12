@@ -31,7 +31,7 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
       colorLight: '#d97706',
       title: 'Explode',
       description:
-        'Each die showing its maximum value triggers an extra die roll. Continues if new dice also max.',
+        'Each die showing its maximum value triggers one additional die roll (single wave; the new dice are not themselves checked for explosion).',
       displayBase: '!',
       forms: [
         { notation: '!', note: 'Explode on max value' },

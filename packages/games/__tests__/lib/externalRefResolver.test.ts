@@ -22,20 +22,24 @@ describe('resolveExternalRefs', () => {
   })
 
   test('throws SchemaError for unreachable external ref URL', async () => {
-    const specWithBadRef = {
-      ...PLAIN_SPEC,
-      tables: {
-        myTable: {
-          $ref: 'https://this-domain-does-not-exist-randsum-test.invalid/tables.json#/foo'
+    const originalFetch = globalThis.fetch
+    globalThis.fetch = () => Promise.reject(new Error('ENOTFOUND test.invalid'))
+    try {
+      const specWithBadRef = {
+        ...PLAIN_SPEC,
+        tables: {
+          myTable: {
+            $ref: 'https://this-domain-does-not-exist-randsum-test.invalid/tables.json#/foo'
+          }
         }
       }
-    }
-    try {
       await resolveExternalRefs(specWithBadRef as RandSumSpec)
       expect(true).toBe(false) // should not reach here
     } catch (e) {
       expect(e).toBeInstanceOf(SchemaError)
       expect((e as SchemaError).code).toBe('EXTERNAL_REF_FAILED')
+    } finally {
+      globalThis.fetch = originalFetch
     }
   })
 

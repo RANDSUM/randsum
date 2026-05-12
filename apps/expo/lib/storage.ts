@@ -22,6 +22,4 @@ export interface LocalStorage {
   savePreferences(prefs: Preferences): Promise<void>
 }
 
-// Metro resolves storage.native.ts on iOS/Android and storage.web.ts on web.
-// This fallback re-exports the web implementation for non-Metro environments (e.g. tests).
 export { storage } from './storage.web'

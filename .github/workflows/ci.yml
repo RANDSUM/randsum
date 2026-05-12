@@ -22,6 +22,7 @@ jobs:
       cli: ${{ steps.filter.outputs.cli }}
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
+      expo: ${{ steps.filter.outputs.expo }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
@@ -50,6 +51,11 @@ jobs:
               - 'apps/rdn/**'
               - 'packages/roller/**'
               - '.github/workflows/ci.yml'
+            expo:
+              - 'apps/expo/**'
+              - 'packages/roller/**'
+              - 'packages/dice-ui/**'
+              - '.github/workflows/ci.yml'
             skill:
               - 'skills/**'
               - '.claude-plugin/**'
@@ -73,6 +79,15 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' check
+      - name: Generate coverage
+        run: bun run --filter '@randsum/roller' test:coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        with:
+          files: ./packages/roller/coverage/lcov.info
+          flags: roller
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check bundle size
         run: bun run --filter '@randsum/roller' size
 
@@ -88,6 +103,15 @@ jobs:
       - run: bun run --filter '@randsum/games' check
       - name: Verify generated files are up to date
         run: bun run --filter '@randsum/games' gen:check
+      - name: Generate coverage
+        run: bun run --filter '@randsum/games' test:coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        with:
+          files: ./packages/games/coverage/lcov.info
+          flags: games
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check bundle size
         run: bun run --filter '@randsum/games' size
 
@@ -139,6 +163,20 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/rdn' check
 
+  expo:
+    name: expo
+    needs: changes
+    if: needs.changes.outputs.expo == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: ./.github/actions/bun-setup
+      - run: bun run --filter '@randsum/roller' build
+      - run: bun run --filter '@randsum/expo' typecheck
+      - run: bun run --filter '@randsum/expo' lint
+      - name: Test IndexScreen layout
+        run: bun test apps/expo/__tests__/IndexScreen.test.tsx
+
   skill:
     name: claude-doctor
     needs: changes
@@ -160,6 +198,40 @@ jobs:
           else
             echo "No marketplace.json found, skipping"
           fi
+
+  bench:
+    name: bench (regression gate)
+    needs: changes
+    if: needs.changes.outputs.roller == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: ./.github/actions/bun-setup
+      - name: Build roller
+        run: bun run --filter '@randsum/roller' build
+      - name: Run benchmark
+        run: bun run bench:ci
+      - name: Restore previous benchmark data
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf  # v4
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-benchmark-
+      - name: Compare and store benchmark
+        uses: benchmark-action/github-action-benchmark@4de1bed97a47495fc4c5404952da0499e31f5c29  # v1.20.4
+        with:
+          tool: 'customSmallerIsBetter'
+          output-file-path: benchmark-results.json
+          external-data-json-path: ./cache/benchmark-data.json
+          fail-on-alert: true
+          alert-threshold: '120%'
+          comment-on-alert: ${{ github.event_name == 'pull_request' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          save-data-file: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
   publish-dry-run:
     name: publish (dry run)
@@ -188,7 +260,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, discord-bot, site, rdn, skill, publish-dry-run, knip]
+    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, bench, publish-dry-run, knip]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

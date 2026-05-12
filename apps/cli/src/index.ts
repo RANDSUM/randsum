@@ -1,11 +1,9 @@
 #!/usr/bin/env node
-import { render } from 'ink'
-import { createElement } from 'react'
-import { NotationRoller } from '@randsum/dice-ui/ink'
-import { runSimple } from './simple/run'
+import { readFileSync } from 'node:fs'
+import { runRolls } from './run'
 import { version as VERSION } from '../package.json'
 
-const HELP = `Usage: randsum [notation...] [flags]
+const HELP = `Usage: randsum <notation...> [flags]
 
 Roll dice using RANDSUM notation.
 
@@ -80,6 +78,14 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
   return { notations, ...flags }
 }
 
+function readStdinSync(): string {
+  try {
+    return readFileSync(0, 'utf8').trim()
+  } catch {
+    return ''
+  }
+}
+
 export function main(argv: readonly string[]): void {
   const parsed = parseArgs(argv)
 
@@ -95,21 +101,38 @@ export function main(argv: readonly string[]): void {
     return
   }
 
-  if (parsed.notations.length === 0) {
-    render(createElement(NotationRoller))
-    return
+  const stdinNotations =
+    parsed.notations.length === 0 && !process.stdin.isTTY
+      ? readStdinSync().split(/\s+/).filter(Boolean)
+      : []
+  const notations = parsed.notations.length > 0 ? parsed.notations : stdinNotations
+
+  if (notations.length === 0) {
+    // eslint-disable-next-line no-console
+    console.log(HELP)
+    process.exit(1)
   }
 
-  // Simple mode
-  const output = runSimple({
-    notations: parsed.notations,
+  const result = runRolls({
+    notations,
     verbose: parsed.verbose,
     json: parsed.json,
     repeat: parsed.repeat,
     seed: parsed.seed
   })
-  // eslint-disable-next-line no-console
-  console.log(output)
+
+  if (result.stdout) {
+    // eslint-disable-next-line no-console
+    console.log(result.stdout)
+  }
+  if (result.stderr) {
+    console.error(result.stderr)
+  }
+  if (result.hadError) {
+    process.exit(1)
+  }
 }
 
-main(process.argv)
+if (import.meta.main) {
+  main(process.argv)
+}

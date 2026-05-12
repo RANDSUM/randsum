@@ -51,7 +51,7 @@ describe('game subpath smoke tests', () => {
   })
 
   test('root-rpg: roll returns result, total, and rolls', () => {
-    const outcome = rootRoll(0)
+    const outcome = rootRoll({ bonus: 0 })
 
     expect(outcome.result).toBeDefined()
     expect(typeof outcome.total).toBe('number')

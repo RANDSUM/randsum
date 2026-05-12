@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/pbta'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
@@ -90,6 +91,12 @@ export const pbtaCommand: Command = {
           { name: 'Advantage', value: 'Advantage' },
           { name: 'Disadvantage', value: 'Disadvantage' }
         )
+    )
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
     ),
 
   async execute(interaction) {
@@ -101,7 +108,7 @@ export const pbtaCommand: Command = {
       | 'Disadvantage'
       | null
 
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
     try {
       const pbtaParams: PbtaParams = { stat, forward, ongoing, rollingWith }

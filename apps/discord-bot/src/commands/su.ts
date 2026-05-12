@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { VALID_TABLE_NAMES, roll } from '@randsum/games/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
@@ -59,6 +60,12 @@ export const suCommand: Command = {
         .setDescription('The table to roll on (default: Core Mechanic)')
         .setRequired(false)
         .setAutocomplete(true)
+    )
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
     ),
 
   async autocomplete(interaction) {
@@ -73,7 +80,7 @@ export const suCommand: Command = {
   async execute(interaction) {
     const tableName = interaction.options.getString('table') ?? 'Core Mechanic'
 
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
     try {
       const embed = buildSuEmbed(tableName)

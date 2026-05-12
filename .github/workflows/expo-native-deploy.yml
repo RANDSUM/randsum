@@ -1,12 +1,21 @@
 name: Deploy Expo Native (iOS + Android)
 
+# Manual-trigger only. Native builds are not submitted to App Store / Play Store
+# automatically, so running them on every push to main burns EAS build minutes
+# for binaries no one installs. Trigger via the Actions tab when a release is
+# actually ready to ship to stores.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/expo/**'
-      - 'packages/dice-ui/**'
-      - 'packages/roller/**'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        required: true
+        type: choice
+        default: both
+        options:
+          - both
+          - android
+          - ios
 
 concurrency:
   group: expo-native-deploy
@@ -14,6 +23,7 @@ concurrency:
 
 jobs:
   build-android:
+    if: ${{ inputs.platform == 'both' || inputs.platform == 'android' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
@@ -33,6 +43,7 @@ jobs:
         run: cd apps/expo && npx eas-cli build --platform android --profile production --non-interactive
 
   build-ios:
+    if: ${{ inputs.platform == 'both' || inputs.platform == 'ios' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4

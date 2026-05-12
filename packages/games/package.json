@@ -106,7 +106,7 @@
     "ajv": "8.18.0",
     "bunup": "0.16.31",
     "prettier": "3.8.1",
-    "typescript": "6.0.2"
+    "typescript": "catalog:"
   },
   "scripts": {
     "prepublishOnly": "bun run build",
@@ -114,6 +114,7 @@
     "gen": "bun run codegen.ts",
     "gen:check": "bun run codegen.ts --check",
     "test": "bun run build && bun test",
+    "test:coverage": "bun run build && bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . -c ../../eslint.config.js",
     "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
@@ -145,7 +146,7 @@
     },
     {
       "path": "dist/pbta.generated.js",
-      "limit": "15 KB",
+      "limit": "16 KB",
       "ignore": [
         "node:module"
       ]

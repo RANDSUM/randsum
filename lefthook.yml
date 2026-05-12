@@ -1,4 +1,8 @@
 pre-commit:
+  # `install` runs first (priority: 1); the rest run in parallel afterward
+  # (priority: 2). Lefthook respects priority ordering and only parallelises
+  # within a priority band — without this, install raced lint/typecheck on
+  # fresh checkouts and flaked workspace resolution.
   parallel: true
   output:
     - summary
@@ -6,19 +10,24 @@ pre-commit:
   commands:
     install:
       run: bun install --frozen-lockfile
+      priority: 1
     lint:
       glob: "*.{ts,tsx,js,mjs}"
       run: bun run lint --fix
       stage_fixed: true
+      priority: 2
     format:
       glob: "*.{ts,tsx,js,json,md,astro,css}"
       run: bunx prettier --write --ignore-path .prettierignore --config .prettierrc {staged_files}
       stage_fixed: true
+      priority: 2
     typecheck:
       run: bun run typecheck
+      priority: 2
     codegen-check:
       glob: "packages/games/*.randsum.json"
       run: bun run --filter @randsum/games gen:check
+      priority: 2
 
 pre-push:
   output:
@@ -38,7 +47,7 @@ pre-push:
       run: bun run test 2>&1 | tail -5
       priority: 2
     audit:
-      run: bun audit --level=high > /dev/null 2>&1
+      run: bun audit --audit-level=high > /dev/null 2>&1
       priority: 2
     knip:
       run: bun run knip > /dev/null 2>&1

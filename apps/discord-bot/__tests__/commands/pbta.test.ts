@@ -23,6 +23,7 @@ function makeInteraction(
   options: {
     getInteger: ReturnType<typeof mock>
     getString: ReturnType<typeof mock>
+    getBoolean: ReturnType<typeof mock>
   }
 } {
   return {
@@ -35,7 +36,8 @@ function makeInteraction(
         if (name === 'ongoing') return opts.ongoing ?? 0
         return 0
       }),
-      getString: mock((_name: string) => opts.rollingWith ?? null)
+      getString: mock((_name: string) => opts.rollingWith ?? null),
+      getBoolean: mock(() => false)
     }
   }
 }

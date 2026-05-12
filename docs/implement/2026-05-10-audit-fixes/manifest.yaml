@@ -1,0 +1,32 @@
+run_id: 2026-05-10-audit-fixes
+status: shipped
+mode: concurrent
+pr_strategy: one
+pr_creation: deferred_to_user
+base_branch: main
+working_branch: audit
+final_sha: e4163b0a
+aggregate_budget: 30
+phases:
+  bootstrap: complete
+  define: complete
+  scope: complete
+  cycles: complete
+  integrate: complete
+  review: complete
+  ship: complete
+scope: |
+  Execute all 30 prioritized audit items from audit/synthesis-top-30.md.
+  Single PR on `audit` branch. P0 first, then P1, then P2.
+  Items grouped by category for commit batching:
+    - Docs/templates fixes (cheap, no code risk)
+    - CI workflow wiring (NPM_TOKEN, codecov, bench gate, expo CI)
+    - Roller code fixes (modifier docs, dead code, trace, registry guard)
+    - Game spec fixes (D&D crit, Root mastery)
+    - App fixes (CLI flag, expo tests, discord ephemeral, dead deps)
+    - Architecture (sideEffects, TS consolidation, ink peerDep)
+test_commands:
+  - bun run lint
+  - bun run typecheck
+  - bun run test
+  - bun run build

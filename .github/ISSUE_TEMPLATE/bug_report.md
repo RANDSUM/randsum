@@ -1,38 +1,36 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+about: Report incorrect roll output, notation parsing failures, or game-spec mismatches
+title: "[bug] "
+labels: bug
+assignees: ""
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Package and version**
+e.g. `@randsum/roller@1.3.0`, `@randsum/games/blades@1.3.0`
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Notation or roll input that reproduces the bug**
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+```ts
+// paste the exact call
+roll("4d6L")
+```
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Expected output**
+What you expected `roll(...)` to return — pool, total, result, modifierLogs, etc.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Actual output**
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+```
+// paste the actual return value, error message, or stack trace
+```
+
+**Environment**
+
+- Runtime: Bun / Node version
+- OS: macOS / Linux / Windows
+- Bundler (if relevant): esbuild / rollup / webpack / vite
 
 **Additional context**
-Add any other context about the problem here.
+
+Anything else that helps — links to the RDN spec section, prior issues, or game-system source material if this is a game-package bug.

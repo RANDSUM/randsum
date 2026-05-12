@@ -1,13 +1,19 @@
 import type { RollArgument, RollConfig } from '@randsum/roller'
 import { roll } from '@randsum/roller/roll'
-import { formatCompact, formatJson, formatVerbose } from '../shared/format'
+import { formatCompact, formatJson, formatVerbose } from './format'
 
-interface SimpleOptions {
+interface RunOptions {
   readonly notations: readonly string[]
   readonly verbose: boolean
   readonly json: boolean
   readonly repeat: number
   readonly seed?: number | undefined
+}
+
+export interface RunResult {
+  readonly stdout: string
+  readonly stderr: string
+  readonly hadError: boolean
 }
 
 function createSeededRandom(seed: number): () => number {
@@ -21,24 +27,29 @@ function createSeededRandom(seed: number): () => number {
   }
 }
 
-export function runSimple(options: SimpleOptions): string {
+export function runRolls(options: RunOptions): RunResult {
   const config: RollConfig | undefined =
     options.seed !== undefined ? { randomFn: createSeededRandom(options.seed) } : undefined
 
   const format = options.json ? formatJson : options.verbose ? formatVerbose : formatCompact
 
-  const lines: string[] = []
+  const stdoutLines: string[] = []
+  const stderrLines: string[] = []
 
   const notations = options.notations as readonly RollArgument[]
 
   for (const _i of Array.from({ length: options.repeat })) {
     try {
       const result = config ? roll(...notations, config) : roll(...notations)
-      lines.push(format(result))
+      stdoutLines.push(format(result))
     } catch (e) {
-      lines.push(`Error: ${e instanceof Error ? e.message : String(e)}`)
+      stderrLines.push(`Error: ${e instanceof Error ? e.message : String(e)}`)
     }
   }
 
-  return lines.join('\n')
+  return {
+    stdout: stdoutLines.join('\n'),
+    stderr: stderrLines.join('\n'),
+    hadError: stderrLines.length > 0
+  }
 }

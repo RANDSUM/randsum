@@ -20,6 +20,7 @@ function makeInteraction(
   options: {
     getInteger: ReturnType<typeof mock>
     getString: ReturnType<typeof mock>
+    getBoolean: ReturnType<typeof mock>
   }
 } {
   return {
@@ -27,7 +28,8 @@ function makeInteraction(
     editReply: mock(() => Promise.resolve(undefined)),
     options: {
       getInteger: mock(() => modifier),
-      getString: mock(() => rollingWith)
+      getString: mock(() => rollingWith),
+      getBoolean: mock(() => false)
     }
   }
 }

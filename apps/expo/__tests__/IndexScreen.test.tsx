@@ -107,7 +107,14 @@ mock.module('../components/RollResultView', () => ({
 
 mock.module('@randsum/dice-ui', () => ({
   NotationRoller: 'NotationRoller',
-  QuickReferenceGrid: 'QuickReferenceGrid'
+  QuickReferenceGrid: 'QuickReferenceGrid',
+  DocModal: 'DocModal',
+  RollResultPanel: 'RollResultPanel',
+  tokenColor: () => undefined
+}))
+
+mock.module('@randsum/roller/docs', () => ({
+  NOTATION_DOCS: {}
 }))
 
 mock.module('../lib/sharing', () => ({
