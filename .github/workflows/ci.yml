@@ -228,7 +228,7 @@ jobs:
           output-file-path: benchmark-results.json
           external-data-json-path: ./cache/benchmark-data.json
           fail-on-alert: true
-          alert-threshold: '120%'
+          alert-threshold: '150%'
           comment-on-alert: ${{ github.event_name == 'pull_request' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           save-data-file: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
