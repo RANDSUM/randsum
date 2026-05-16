@@ -103,7 +103,7 @@
     "@randsum/roller": "workspace:~"
   },
   "devDependencies": {
-    "ajv": "8.18.0",
+    "ajv": "8.20.0",
     "bunup": "0.16.31",
     "prettier": "3.8.1",
     "typescript": "catalog:"
