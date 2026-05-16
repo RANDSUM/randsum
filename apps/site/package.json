@@ -18,14 +18,14 @@
   "type": "module",
   "dependencies": {
     "@astrojs/netlify": "7.0.1",
-    "@astrojs/react": "5.0.0",
+    "@astrojs/react": "5.0.4",
     "@astrojs/starlight": "0.38.0",
     "@randsum/dice-ui": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@stackblitz/sdk": "latest",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "astro": "6.0.2",
+    "astro": "6.1.10",
     "astro-expressive-code": "0.41.7",
     "react": "catalog:",
     "react-dom": "catalog:"

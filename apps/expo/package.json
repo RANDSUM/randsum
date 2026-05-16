@@ -1,6 +1,6 @@
 {
   "name": "@randsum/expo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "expo-router/entry",
   "private": true,
   "scripts": {
@@ -22,12 +22,12 @@
     "expo-font": "55.0.4",
     "expo-haptics": "55.0.9",
     "expo-router": "~55.0.7",
-    "expo-splash-screen": "55.0.12",
+    "expo-splash-screen": "55.0.20",
     "expo-status-bar": "~55.0.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.2",
-    "react-native-safe-area-context": "~5.6.2",
+    "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.23.0",
     "react-native-web": "^0.21.0",
     "zustand": "5.0.12"
