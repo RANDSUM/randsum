@@ -215,7 +215,7 @@ jobs:
       - name: Run benchmark
         run: bun run bench:ci
       - name: Restore previous benchmark data
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf  # v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v4
         with:
           path: ./cache
           key: ${{ runner.os }}-benchmark-${{ github.ref }}
