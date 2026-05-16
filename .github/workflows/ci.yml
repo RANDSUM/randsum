@@ -222,7 +222,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-benchmark-
       - name: Compare and store benchmark
-        uses: benchmark-action/github-action-benchmark@4de1bed97a47495fc4c5404952da0499e31f5c29  # v1.20.4
+        uses: benchmark-action/github-action-benchmark@52576c92bccf6ac60c8223ec7eb2565637cae9ba  # v1.20.4
         with:
           tool: 'customSmallerIsBetter'
           output-file-path: benchmark-results.json
