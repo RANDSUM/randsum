@@ -82,7 +82,7 @@ jobs:
       - name: Generate coverage
         run: bun run --filter '@randsum/roller' test:coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2  # v5
         with:
           files: ./packages/roller/coverage/lcov.info
           flags: roller
@@ -106,7 +106,7 @@ jobs:
       - name: Generate coverage
         run: bun run --filter '@randsum/games' test:coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2  # v5
         with:
           files: ./packages/games/coverage/lcov.info
           flags: games
