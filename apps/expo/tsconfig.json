@@ -3,8 +3,9 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
+    "moduleSuffixes": [".native", ""],
     "paths": {
-      "@randsum/dice-ui": ["./types/dice-ui.d.ts"]
+      "@randsum/dice-ui": ["../../packages/dice-ui/src/index.native.ts"]
     },
     "types": ["bun"],
     "ignoreDeprecations": "6.0"
