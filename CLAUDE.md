@@ -166,3 +166,32 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 Full spec: https://notation.randsum.dev (taxonomy, pipeline, conformance, syntax)
 
 Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `!{condition}` (conditional explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)
+
+## MCP Servers
+
+`.mcp.json` (project-scoped, committed) declares the official MCP servers for
+this repo's deploy/host stack. Each maps to a real workspace target:
+
+| Server    | Transport   | Backs                                   | Auth (env var)       |
+| --------- | ----------- | --------------------------------------- | -------------------- |
+| `netlify` | stdio (npx) | `apps/site`, `apps/rdn` (Netlify sites) | `NETLIFY_AUTH_TOKEN` |
+| `render`  | http        | `apps/discord-bot` (Render worker)      | `RENDER_API_KEY`     |
+| `expo`    | http        | `apps/expo` (EAS native + web)          | OAuth — run `/mcp`   |
+| `github`  | http        | repo host (issues, PRs, releases)       | `GITHUB_PAT`         |
+
+Secrets are **never** committed — `.mcp.json` references env vars via `${VAR}`
+expansion. Before using a server, export its token (e.g. in your shell rc or a
+local untracked `.env`):
+
+```bash
+export NETLIFY_AUTH_TOKEN=...   # netlify login / app token
+export RENDER_API_KEY=...       # Render dashboard → Account Settings → API Keys
+export GITHUB_PAT=...           # GitHub → fine-grained PAT (repo scope)
+# expo authenticates via OAuth: run `/mcp` in Claude Code after first launch
+```
+
+Run `/mcp` in Claude Code to check connection status and authenticate the
+OAuth-based `expo` server. `netlify` and `github` may already be connected at
+the account level (claude.ai integrations); the project entries make the stack
+self-documenting and reproducible for fresh checkouts and CI — remove either if
+the account-level connection is preferred and the duplicate tools are noisy.
