@@ -316,7 +316,7 @@ function validateInputs(
       decl.type === 'string' &&
       decl.enum !== undefined &&
       decl.enum.length > 0 &&
-      !decl.enum.includes(val as string)
+      !decl.enum.includes(val)
     ) {
       const enumList = decl.enum.map(v => `'${v}'`).join(' or ')
       throw new SchemaError(
@@ -495,14 +495,23 @@ export function executePipeline(
   const preModifyRolls = rollerResult.rolls.flatMap((r: RollRecord) => r.initialRolls)
   const rawRolls = rollerResult.rolls.flatMap((r: RollRecord) => r.rolls)
   const workingRolls = applyManualModifiers(rawRolls, manualOps)
-  const rawTotal = resolveTotal(workingRolls, effectiveResolve, mergedInput)
+  // `modify` add/subtract ops translate to roller's `plus`/`minus`, which affect the roll
+  // TOTAL but are not dice values, so they are absent from `workingRolls`. resolveTotal sums
+  // dice only, so for a `sum` resolve we must re-add those total-only modifiers to match the
+  // generated code (which uses roller's `total` directly). Without this the runtime silently
+  // drops input-driven modifiers (e.g. PbtA stat, 5e modifier) — see dualConsumer.test.ts.
+  const dieTotal = resolveTotal(workingRolls, effectiveResolve, mergedInput)
+  const rawTotal =
+    effectiveResolve === 'sum'
+      ? dieTotal + (rollerOptions.plus ?? 0) - (rollerOptions.minus ?? 0)
+      : dieTotal
   const total = applyPostResolveModifiers(rawTotal, effectivePostResolveModifiers, mergedInput)
   const result = applyOutcome(total, effectiveOutcome, preModifyRolls, workingRolls, mergedInput)
 
   if (rollDef.details !== undefined && Object.keys(rollDef.details).length > 0) {
     const details = buildDetails(rollDef.details, {
       input: mergedInput,
-      diceTotal: rawTotal,
+      diceTotal: dieTotal,
       total,
       poolTotals: {},
       conditionalPoolTotals: {},
