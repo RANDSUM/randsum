@@ -14,6 +14,14 @@
       ]
     },
     "packages/roller": {
+      "entry": [
+        "src/index.ts",
+        "src/errors.ts",
+        "src/tokenize.ts",
+        "src/validate.ts",
+        "src/trace/index.ts",
+        "src/docs/index.ts"
+      ],
       "project": ["src/**/*.ts", "!src/**/*.test.ts"],
       "includeEntryExports": true
     },
