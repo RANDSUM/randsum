@@ -11,7 +11,17 @@ export default tseslint.config(
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          // bunup config files use `export default defineConfig(...)`, which can't satisfy
+          // isolatedDeclarations, so they're not in any project tsconfig — lint them via the
+          // default inferred project instead.
+          allowDefaultProject: [
+            'packages/roller/bunup.config.ts',
+            'packages/games/bunup.config.ts',
+            'apps/cli/bunup.config.ts',
+            'apps/discord-bot/bunup.config.ts'
+          ]
+        },
         tsconfigRootDir: import.meta.dirname
       }
     },

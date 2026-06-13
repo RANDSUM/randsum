@@ -1,4 +1,7 @@
 {
   "extends": "../../tsconfig.apps.json",
+  "compilerOptions": {
+    "types": ["bun"]
+  },
   "include": ["src/**/*", "__tests__/**/*"]
 }

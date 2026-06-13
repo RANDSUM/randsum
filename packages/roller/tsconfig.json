@@ -11,6 +11,8 @@
     "src/**/*",
     "__tests__/**/*",
     "test-utils/src/**/*",
+    "test-utils/__tests__/**/*",
+    "__benchmarks__/**/*",
     "../../apps/rdn/src/conformance/**/*"
   ],
   "exclude": ["node_modules", "dist"]

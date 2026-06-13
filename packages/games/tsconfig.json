@@ -6,6 +6,6 @@
       "@randsum/games/*": ["./src/*.generated.ts"]
     }
   },
-  "include": ["src", "__tests__"],
+  "include": ["src", "__tests__", "codegen.ts"],
   "exclude": ["node_modules", "dist"]
 }

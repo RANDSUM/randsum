@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
-const mockRoll = mock(() => ({
-  result: 'success' as const,
+const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
+  result: 'success',
   total: 5,
   rolls: [{ initialRolls: [5, 3], rolls: [5], modifierLogs: [] }]
 }))
@@ -38,7 +39,7 @@ describe('bladesCommand', () => {
     await bladesCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Success!')
@@ -53,7 +54,7 @@ describe('bladesCommand', () => {
     const interaction = makeInteraction(2)
     await bladesCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Critical Success!')
@@ -68,7 +69,7 @@ describe('bladesCommand', () => {
     const interaction = makeInteraction(2)
     await bladesCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Partial Success')
@@ -83,7 +84,7 @@ describe('bladesCommand', () => {
     const interaction = makeInteraction(1)
     await bladesCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Failure')
@@ -96,7 +97,7 @@ describe('bladesCommand', () => {
     const interaction = makeInteraction(3)
     await bladesCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Error')

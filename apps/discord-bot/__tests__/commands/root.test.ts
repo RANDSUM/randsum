@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
-const mockRoll = mock(() => ({
-  result: 'Strong Hit' as const,
+const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
+  result: 'Strong Hit',
   total: 9,
   rolls: [{ initialRolls: [5, 4], rolls: [5, 4], modifierLogs: [] }]
 }))
@@ -39,7 +40,7 @@ describe('rootCommand', () => {
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Tester rolled a Strong Hit')
@@ -54,7 +55,7 @@ describe('rootCommand', () => {
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Tester rolled a Weak Hit')
@@ -69,7 +70,7 @@ describe('rootCommand', () => {
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Tester rolled a Miss')
@@ -79,7 +80,7 @@ describe('rootCommand', () => {
     const interaction = makeInteraction(2)
     await rootCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
@@ -93,7 +94,7 @@ describe('rootCommand', () => {
     const interaction = makeInteraction()
     await rootCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Error')
