@@ -8,7 +8,9 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type FateRollResult =
+  | 'Abysmal'
   | 'Average'
+  | 'Catastrophic'
   | 'Epic'
   | 'Fair'
   | 'Fantastic'
@@ -45,7 +47,9 @@ export function roll(
   if (total === 1) return { total, result: 'Average', rolls: r.rolls }
   if (total === 0) return { total, result: 'Mediocre', rolls: r.rolls }
   if (total === -1) return { total, result: 'Poor', rolls: r.rolls }
-  if (total <= -2) return { total, result: 'Terrible', rolls: r.rolls }
+  if (total === -2) return { total, result: 'Terrible', rolls: r.rolls }
+  if (total === -3) return { total, result: 'Catastrophic', rolls: r.rolls }
+  if (total <= -4) return { total, result: 'Abysmal', rolls: r.rolls }
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 

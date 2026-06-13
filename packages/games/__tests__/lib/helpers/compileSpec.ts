@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { expect } from 'bun:test'
 
 import { generateCode } from '../../../src/lib/codegen'
-import type { GameRollResult, RandSumSpec } from '../../../src/lib/types'
+import type { RandSumSpec } from '../../../src/lib/types'
 import type { RollRecord } from '@randsum/roller'
 
 /**
@@ -25,9 +25,19 @@ const tmpDir = fileURLToPath(new URL('../../../.test-tmp/', import.meta.url))
 
 const counter = { n: 0 }
 
-export type CompiledRoll = (
-  input?: unknown
-) => GameRollResult<string | number, Readonly<Record<string, unknown>> | undefined, RollRecord>
+/**
+ * Test-facing shape of a compiled roll result. `details` is always optionally accessible (the
+ * real GameRollResult omits it entirely when a spec has no details, which is awkward to narrow
+ * in tests). `result` is widened to string | number since the harness compiles arbitrary specs.
+ */
+export interface CompiledResult {
+  readonly rolls: readonly RollRecord[]
+  readonly total: number
+  readonly result: string | number
+  readonly details?: Readonly<Record<string, unknown>>
+}
+
+export type CompiledRoll = (input?: unknown) => CompiledResult
 
 export type CompiledGame = Readonly<Record<string, CompiledRoll>>
 

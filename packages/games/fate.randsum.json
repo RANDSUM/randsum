@@ -23,7 +23,9 @@
         { "exact": 1, "result": "Average" },
         { "exact": 0, "result": "Mediocre" },
         { "exact": -1, "result": "Poor" },
-        { "max": -2, "result": "Terrible" }
+        { "exact": -2, "result": "Terrible" },
+        { "exact": -3, "result": "Catastrophic" },
+        { "max": -4, "result": "Abysmal" }
       ]
     }
   },
