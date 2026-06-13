@@ -31,8 +31,13 @@ describe('degreeOfSuccess schema validation', () => {
 describe('degreeOfSuccess runtime', () => {
   test('result is one of the declared degree names', async () => {
     const game = await compileSpec(DOS_SPEC)
-    const VALID = ['criticalSuccess', 'success', 'failure', 'criticalFailure']
-    Array.from({ length: 100 }, () => game.roll!()).forEach(r => {
+    const VALID: readonly (string | number)[] = [
+      'criticalSuccess',
+      'success',
+      'failure',
+      'criticalFailure'
+    ]
+    Array.from({ length: 100 }, () => game['roll']!()).forEach(r => {
       expect(VALID).toContain(r.result)
     })
   })
@@ -41,7 +46,7 @@ describe('degreeOfSuccess runtime', () => {
     // d20 roll of 1 → criticalFailure (threshold 0)
     const game = await compileSpec(DOS_SPEC)
     // Can't force a specific roll, but run enough to see criticalFailure appear
-    const results = Array.from({ length: 200 }, () => game.roll!()).map(r => r.result)
+    const results = Array.from({ length: 200 }, () => game['roll']!()).map(r => r.result)
     expect(results).toContain('criticalFailure')
   })
 })

@@ -115,7 +115,7 @@ describe('postResolveModifiers runtime behavior', () => {
     // 2d6 min is 2. With bonus 100, total must be >= 102.
     // If bonus were per-die: 2*(1+100) = 202 minimum — different value, not what we test.
     // With post-resolve: total = (sum of 2d6) + 100 ∈ [102, 112].
-    Array.from({ length: 20 }, () => game.roll!({ bonus: 100 })).forEach(r => {
+    Array.from({ length: 20 }, () => game['roll']!({ bonus: 100 })).forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(102)
       expect(r.total).toBeLessThanOrEqual(112)
     })
@@ -123,7 +123,7 @@ describe('postResolveModifiers runtime behavior', () => {
 
   test('bonus 0 leaves total in 2d6 range [2, 12]', async () => {
     const game = await compileSpec(SPEC_WITH_BONUS)
-    Array.from({ length: 50 }, () => game.roll!({ bonus: 0 })).forEach(r => {
+    Array.from({ length: 50 }, () => game['roll']!({ bonus: 0 })).forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(2)
       expect(r.total).toBeLessThanOrEqual(12)
     })
@@ -137,7 +137,7 @@ describe('postResolveModifiers runtime behavior', () => {
         postResolveModifiers: [{ add: 10 }]
       }
     })
-    Array.from({ length: 20 }, () => game.roll!()).forEach(r => {
+    Array.from({ length: 20 }, () => game['roll']!()).forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(12) // 2+10
       expect(r.total).toBeLessThanOrEqual(22) // 12+10
     })
@@ -160,7 +160,7 @@ describe('postResolveModifiers runtime behavior', () => {
         ]
       }
     })
-    const boosted = game.roll!({ mode: 'boosted' })
+    const boosted = game['roll']!({ mode: 'boosted' })
     expect(boosted.total).toBeGreaterThanOrEqual(52)
   })
 })
@@ -197,10 +197,8 @@ describe('postResolveModifiers codegen', () => {
   })
 
   test('no postResolveModifiers: generates plain r.total', async () => {
-    const specNoBonus = {
-      ...CODEGEN_SPEC,
-      roll: { ...CODEGEN_SPEC.roll, postResolveModifiers: undefined }
-    }
+    const { postResolveModifiers: _prm, ...rollWithoutPRM } = CODEGEN_SPEC.roll
+    const specNoBonus = { ...CODEGEN_SPEC, roll: rollWithoutPRM }
     const code = await generateCode(specNoBonus)
     // Should be exactly r.total, not r.total + anything
     expect(code).toContain('const total = r.total')

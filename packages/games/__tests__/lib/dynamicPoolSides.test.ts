@@ -21,7 +21,7 @@ const DYNAMIC_SIDES_SPEC = {
     },
     resolve: {
       comparePoolHighest: {
-        pools: ['hope', 'fear'],
+        pools: ['hope', 'fear'] as readonly [string, string],
         ties: 'tie',
         outcomes: { hope: 'hope', fear: 'fear' }
       }
@@ -58,7 +58,7 @@ describe('dynamic pool sides (conditional IntegerOrInput)', () => {
   describe('runtime behavior', () => {
     test('ifTrue=20 produces values up to 20 when input is true', async () => {
       const game = await compileSpec(DYNAMIC_SIDES_SPEC)
-      const results = Array.from({ length: 50 }, () => game.roll!({ amplify: true }))
+      const results = Array.from({ length: 50 }, () => game['roll']!({ amplify: true }))
       const hopeTotals = results.flatMap(r =>
         r.rolls.filter(rec => rec.rolls.length > 0).map(rec => rec.rolls[0])
       )
@@ -74,7 +74,7 @@ describe('dynamic pool sides (conditional IntegerOrInput)', () => {
 
     test('ifFalse=12 keeps values within d12 range when input is false', async () => {
       const game = await compileSpec(DYNAMIC_SIDES_SPEC)
-      const results = Array.from({ length: 50 }, () => game.roll!({ amplify: false }))
+      const results = Array.from({ length: 50 }, () => game['roll']!({ amplify: false }))
       const hopeTotals = results.flatMap(r =>
         r.rolls.filter(rec => rec.rolls.length > 0).map(rec => rec.rolls[0])
       )
@@ -88,7 +88,7 @@ describe('dynamic pool sides (conditional IntegerOrInput)', () => {
 
     test('default false uses ifFalse value', async () => {
       const game = await compileSpec(DYNAMIC_SIDES_SPEC)
-      const results = Array.from({ length: 50 }, () => game.roll!())
+      const results = Array.from({ length: 50 }, () => game['roll']!())
       const hopeTotals = results.flatMap(r =>
         r.rolls.filter(rec => rec.rolls.length > 0).map(rec => rec.rolls[0])
       )

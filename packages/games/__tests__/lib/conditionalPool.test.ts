@@ -33,7 +33,7 @@ const COND_POOL_SPEC = {
     },
     resolve: {
       comparePoolHighest: {
-        pools: ['hope', 'fear'],
+        pools: ['hope', 'fear'] as readonly [string, string],
         ties: 'tie',
         outcomes: { hope: 'hope', fear: 'fear' }
       }
@@ -72,7 +72,7 @@ describe('conditionalPools schema validation', () => {
 describe('conditionalPools runtime', () => {
   test('advantage adds d6 to total', async () => {
     const game = await compileSpec(COND_POOL_SPEC)
-    const results = Array.from({ length: 50 }, () => game.roll!({ rollingWith: 'Advantage' }))
+    const results = Array.from({ length: 50 }, () => game['roll']!({ rollingWith: 'Advantage' }))
     // With advantage: total = hope(1-12) + fear(1-12) + d6(1-6) = 3-30
     results.forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(3)
@@ -86,7 +86,7 @@ describe('conditionalPools runtime', () => {
 
   test('disadvantage subtracts d6 from total', async () => {
     const game = await compileSpec(COND_POOL_SPEC)
-    const results = Array.from({ length: 50 }, () => game.roll!({ rollingWith: 'Disadvantage' }))
+    const results = Array.from({ length: 50 }, () => game['roll']!({ rollingWith: 'Disadvantage' }))
     // With disadvantage: total = hope(1-12) + fear(1-12) - d6(1-6) = -4 to 23
     results.forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(-4)
@@ -115,7 +115,7 @@ describe('conditionalPools runtime', () => {
       }
     }
     const game = await compileSpec(optionalSpec)
-    const results = Array.from({ length: 20 }, () => game.roll!())
+    const results = Array.from({ length: 20 }, () => game['roll']!())
     // Without rollingWith: total = hope(1-12) + fear(1-12) = 2-24
     results.forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(2)

@@ -15,6 +15,17 @@ const PLAIN_SPEC: RandSumSpec = {
   }
 }
 
+function specWith(extra: Record<string, unknown>): RandSumSpec {
+  return { ...PLAIN_SPEC, ...extra }
+}
+
+function makeFetchMock(responseFactory: () => Promise<Response>): typeof fetch {
+  return Object.assign(
+    (..._args: Parameters<typeof fetch>): Promise<Response> => responseFactory(),
+    { preconnect: (..._args: Parameters<typeof fetch.preconnect>) => undefined }
+  ) satisfies typeof fetch
+}
+
 describe('resolveExternalRefs', () => {
   test('returns spec unchanged if no external refs present', async () => {
     const result = await resolveExternalRefs(PLAIN_SPEC)
@@ -23,17 +34,16 @@ describe('resolveExternalRefs', () => {
 
   test('throws SchemaError for unreachable external ref URL', async () => {
     const originalFetch = globalThis.fetch
-    globalThis.fetch = () => Promise.reject(new Error('ENOTFOUND test.invalid'))
+    globalThis.fetch = makeFetchMock(() => Promise.reject(new Error('ENOTFOUND test.invalid')))
     try {
-      const specWithBadRef = {
-        ...PLAIN_SPEC,
+      const specWithBadRef = specWith({
         tables: {
           myTable: {
             $ref: 'https://this-domain-does-not-exist-randsum-test.invalid/tables.json#/foo'
           }
         }
-      }
-      await resolveExternalRefs(specWithBadRef as RandSumSpec)
+      })
+      await resolveExternalRefs(specWithBadRef)
       expect(true).toBe(false) // should not reach here
     } catch (e) {
       expect(e).toBeInstanceOf(SchemaError)
@@ -45,19 +55,19 @@ describe('resolveExternalRefs', () => {
 
   test('throws SchemaError with helpful message for HTTP error', async () => {
     const originalFetch = globalThis.fetch
-    globalThis.fetch = () =>
+    globalThis.fetch = makeFetchMock(() =>
       Promise.resolve(new Response(null, { status: 404, statusText: 'Not Found' }))
+    )
     try {
-      const specWithBadRef = {
-        ...PLAIN_SPEC,
+      const specWithBadRef = specWith({
         tables: {
           myTable: {
             $ref: 'https://example.com/nonexistent#/foo'
           }
         }
-      }
+      })
       try {
-        await resolveExternalRefs(specWithBadRef as RandSumSpec)
+        await resolveExternalRefs(specWithBadRef)
         expect(true).toBe(false) // should not reach here
       } catch (e) {
         expect(e).toBeInstanceOf(SchemaError)

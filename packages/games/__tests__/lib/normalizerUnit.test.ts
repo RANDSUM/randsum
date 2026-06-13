@@ -18,8 +18,11 @@ describe('normalizeSpec: countMatching resolve', () => {
     }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
-    expect(typeof rollDef.resolve).toBe('object')
-    expect('countMatching' in rollDef.resolve).toBe(true)
+    const resolve0 = rollDef.resolve
+    expect(typeof resolve0).toBe('object')
+    expect(typeof resolve0 === 'object' && resolve0 !== null && 'countMatching' in resolve0).toBe(
+      true
+    )
   })
 })
 
@@ -102,8 +105,11 @@ describe('normalizeSpec: comparePoolSum resolve', () => {
     }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
-    expect(typeof rollDef.resolve).toBe('object')
-    expect('comparePoolSum' in rollDef.resolve).toBe(true)
+    const resolve1 = rollDef.resolve
+    expect(typeof resolve1).toBe('object')
+    expect(typeof resolve1 === 'object' && resolve1 !== null && 'comparePoolSum' in resolve1).toBe(
+      true
+    )
   })
 })
 
@@ -155,8 +161,11 @@ describe('normalizeSpec: remoteTableLookup resolve', () => {
     }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
-    expect(typeof rollDef.resolve).toBe('object')
-    expect('remoteTableLookup' in rollDef.resolve).toBe(true)
+    const resolve2 = rollDef.resolve
+    expect(typeof resolve2).toBe('object')
+    expect(
+      typeof resolve2 === 'object' && resolve2 !== null && 'remoteTableLookup' in resolve2
+    ).toBe(true)
   })
 })
 
@@ -188,8 +197,11 @@ describe('normalizeSpec: tableLookup resolve', () => {
     }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
-    expect(typeof rollDef.resolve).toBe('object')
-    expect('tableLookup' in rollDef.resolve).toBe(true)
+    const resolve3 = rollDef.resolve
+    expect(typeof resolve3).toBe('object')
+    expect(typeof resolve3 === 'object' && resolve3 !== null && 'tableLookup' in resolve3).toBe(
+      true
+    )
   })
 })
 
@@ -218,7 +230,7 @@ describe('normalizeSpec: degreeOfSuccess outcome normalization', () => {
     expect(rollDef.outcome).toBeDefined()
     expect('degreeOfSuccess' in rollDef.outcome!).toBe(true)
     const outcome = rollDef.outcome as { degreeOfSuccess: Record<string, number> }
-    expect(outcome.degreeOfSuccess.criticalSuccess).toBe(20)
+    expect(outcome.degreeOfSuccess['criticalSuccess']).toBe(20)
   })
 })
 

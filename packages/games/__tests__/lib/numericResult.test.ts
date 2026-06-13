@@ -19,7 +19,7 @@ const NUMERIC_SPEC = {
 describe('numeric result (no outcome field)', () => {
   test('result is the numeric total, not a string', async () => {
     const game = await compileSpec(NUMERIC_SPEC)
-    const r = game.roll!({ modifier: 5 })
+    const r = game['roll']!({ modifier: 5 })
     expect(typeof r.result).toBe('number')
     expect(r.result).toBe(r.total)
     expect(r.total).toBeGreaterThanOrEqual(6)

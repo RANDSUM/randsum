@@ -22,9 +22,9 @@ async function formatCode(code: string, filepath: string): Promise<string> {
 function loadRemoteDataCache(spec: RandSumSpec): ReadonlyMap<string, readonly unknown[]> {
   const cache = new Map<string, readonly unknown[]>()
   const roll = spec.roll as Record<string, unknown> | undefined
-  const resolve = roll?.resolve as Record<string, unknown> | undefined
-  const rtl = resolve?.remoteTableLookup as Record<string, unknown> | undefined
-  const url = typeof rtl?.url === 'string' ? rtl.url : undefined
+  const resolve = roll?.['resolve'] as Record<string, unknown> | undefined
+  const rtl = resolve?.['remoteTableLookup'] as Record<string, unknown> | undefined
+  const url = typeof rtl?.['url'] === 'string' ? rtl['url'] : undefined
   if (url) {
     const fixturePath = join(fixturesDir, `${spec.shortcode}-tables.json`)
     if (existsSync(fixturePath)) {
