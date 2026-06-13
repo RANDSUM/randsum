@@ -6,7 +6,7 @@ import { useTheme } from './useTheme'
 import { tokenColor } from './tokenColor'
 import { NumericStepper } from './NumericStepper'
 
-import type { QuickReferenceGridProps } from './types'
+import type { DocModalProps, QuickReferenceGridProps } from './types'
 
 // ---- Theme tokens ----
 
@@ -505,13 +505,7 @@ export function DocModal({
   notation,
   onClose,
   onAdd
-}: {
-  readonly doc: NotationDoc
-  readonly accentColor: string
-  readonly notation: string | undefined
-  readonly onClose: () => void
-  readonly onAdd: (fragment: string) => void
-}): React.JSX.Element {
+}: DocModalProps): React.JSX.Element {
   const theme = useTheme()
   const tokens = TOKENS[theme]
   const builder = getBuilderType(doc)
@@ -856,7 +850,7 @@ export function QuickReferenceGrid({
         <DocModal
           doc={selectedDoc}
           accentColor={selectedAccent}
-          notation={notation}
+          notation={notation ?? ''}
           onClose={handleClose}
           onAdd={handleAdd}
         />

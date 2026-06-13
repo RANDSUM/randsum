@@ -43,7 +43,6 @@ apps/expo/
     parseRollResult.ts      # RollerRollResult -> ParsedRollResult
     sharing.ts              # Share URL builder
     types.ts
-  types/dice-ui.d.ts        # Module augmentation for @randsum/dice-ui
   __tests__/                # bun:test (see Testing below)
   metro.config.js           # Workspace resolver + web conditions (load-bearing)
   bunfig.toml               # Preloads __tests__/setup.ts
@@ -97,7 +96,7 @@ This forces Metro's web bundler to resolve packages like Zustand to their CJS en
 
 ## Path Aliases and Imports
 
-- No TS path aliases beyond `@randsum/dice-ui` -> `./types/dice-ui.d.ts` (module augmentation only — actual resolution happens in Metro).
+- `@randsum/dice-ui` resolves via a tsconfig `paths` mapping to `../../packages/dice-ui/src/index.native.ts` (the real native barrel). Combined with `"moduleSuffixes": [".native", ""]`, tsc typechecks the app against dice-ui's actual native component types — no hand-maintained shim. Runtime resolution still happens in Metro (web -> `index.ts`, native -> `index.native.ts`).
 - Imports within `apps/expo` use relative paths (`../components/...`, `../lib/...`).
 - The app is excluded from the monorepo ESLint config (`'apps/expo/**'` ignore); a local `eslint.config.js` owns the app's lint rules.
 
