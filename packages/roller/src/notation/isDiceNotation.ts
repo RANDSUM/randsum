@@ -1,38 +1,41 @@
 import { NotationParseError } from '../errors'
+import {
+  DIE_MARKER_CUSTOM_FACES,
+  DIE_MARKER_DRAW,
+  DIE_MARKER_FATE,
+  DIE_MARKER_GEOMETRIC,
+  DIE_MARKER_PERCENTILE,
+  DIE_MARKER_ZERO_BIAS
+} from './constants'
 import { coreNotationPattern } from './coreNotationPattern'
 import type { DiceNotation } from './types'
 import { suggestNotationFix } from './suggestions'
 import { buildNotationPattern, findCountFamilyMatchIndices } from './parse/parseModifiers'
 
-// Special die type patterns (case-insensitive via 'i' flag on final regex)
-// Percentile: [N]d% or [N]D% (optional quantity prefix, no modifiers)
-const PERCENTILE_PATTERN = /^\d*[Dd]%$/
-
-// Fate/Fudge: [N]dF[.1|.2] (no modifiers)
-const FATE_PATTERN = /^\d*[Dd][Ff](?:\.[12])?$/
-
-// Custom faces: [N]d{faces} (no modifiers)
-const CUSTOM_FACES_PATTERN = /^\d*[Dd]\{[^}]+\}$/
+// Special die-type patterns, composed from the canonical marker fragments in constants.ts.
+// Each here is a whole-string match: optional quantity prefix + die-type marker (no modifiers).
+const PERCENTILE_PATTERN = new RegExp(`^\\d*${DIE_MARKER_PERCENTILE}$`)
+const FATE_PATTERN = new RegExp(`^\\d*${DIE_MARKER_FATE}$`)
+const CUSTOM_FACES_PATTERN = new RegExp(`^\\d*${DIE_MARKER_CUSTOM_FACES}$`)
 
 // Core patterns for special die types that support modifiers (z, g, DD)
 const MODIFIER_DIE_CORES = [
-  String.raw`\d*[Zz]\d+`,
-  String.raw`\d*[Gg]\d+`,
-  String.raw`\d*[Dd][Dd]\d+`
+  String.raw`\d*` + DIE_MARKER_ZERO_BIAS,
+  String.raw`\d*` + DIE_MARKER_GEOMETRIC,
+  String.raw`\d*` + DIE_MARKER_DRAW
 ]
 
 // Multi-pool stripping patterns for isDiceNotation validation.
-// Two sets: signed (for subsequent pools after +/-) and unsigned (for first pool at start).
-// Signed patterns use [+-] (required) to avoid colliding with modifiers like D{>=5}.
-// Unsigned patterns only match at the very start of the string (handled separately).
+// Signed patterns use [+-] (required) to avoid colliding with modifiers like D{>=5}; unsigned
+// (leadingSpecial below) only match at the very start of the string.
 const SIGNED_POOL_PATTERNS = [
-  String.raw`[+-]\d*[Dd]%`,
-  String.raw`[+-]\d*[Dd]\{[^}]+\}`,
-  String.raw`[+-]\d*[Dd][Dd]\d+`,
-  String.raw`[+-]\d*[Dd][Ff](?:\.[12])?`,
-  String.raw`[+-]\d*[Gg]\d+`,
-  String.raw`[+-]\d*[Zz]\d+`
-]
+  DIE_MARKER_PERCENTILE,
+  DIE_MARKER_CUSTOM_FACES,
+  DIE_MARKER_DRAW,
+  DIE_MARKER_FATE,
+  DIE_MARKER_GEOMETRIC,
+  DIE_MARKER_ZERO_BIAS
+].map(marker => String.raw`[+-]\d*` + marker)
 
 // Cache the complete pattern since schemas never change at runtime
 // eslint-disable-next-line no-restricted-syntax
@@ -85,7 +88,11 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   // For multi-pool strings, percentile (d%) also counts as a valid core.
   const hasStandardCore = coreNotationPattern.test(trimmedArg)
   const hasSpecialCore = MODIFIER_DIE_CORES.some(src => new RegExp(src).test(trimmedArg))
-  const hasAnySpecialDie = /\d*[Dd]%|\d*[Dd][Ff]|\d*[Dd]\{[^}]+\}|\d*[Zz]\d+/.test(trimmedArg)
+  const hasAnySpecialDie = new RegExp(
+    [DIE_MARKER_PERCENTILE, DIE_MARKER_FATE, DIE_MARKER_CUSTOM_FACES, DIE_MARKER_ZERO_BIAS]
+      .map(marker => String.raw`\d*` + marker)
+      .join('|')
+  ).test(trimmedArg)
   if (!hasStandardCore && !hasSpecialCore && !hasAnySpecialDie) return false
 
   // Reject multiple count-family modifiers (#{}, S{}, F{}) — they all map to the
@@ -94,8 +101,18 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
 
   // Strip the leading special die if the string starts with one (first pool, no sign).
   // This handles cases like "2dF+1d6" where "2dF" is at position 0.
-  const leadingSpecial =
-    /^\d*[Dd]%|^\d*[Dd][Dd]\d+|^\d*[Dd][Ff](?:\.[12])?|^\d*[Dd]\{[^}]+\}|^\d*[Gg]\d+|^\d*[Zz]\d+/
+  const leadingSpecial = new RegExp(
+    [
+      DIE_MARKER_PERCENTILE,
+      DIE_MARKER_DRAW,
+      DIE_MARKER_FATE,
+      DIE_MARKER_CUSTOM_FACES,
+      DIE_MARKER_GEOMETRIC,
+      DIE_MARKER_ZERO_BIAS
+    ]
+      .map(marker => String.raw`^\d*` + marker)
+      .join('|')
+  )
   const stripped = trimmedArg.replace(leadingSpecial, '')
 
   // Then strip all remaining known tokens (core dice, modifiers, signed pools)

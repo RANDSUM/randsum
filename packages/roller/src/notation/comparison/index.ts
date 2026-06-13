@@ -2,7 +2,19 @@ import type { ComparisonOptions } from '../types'
 import { formatHumanList } from '../formatHumanList'
 
 /**
- * Parses a condition string into comparison options.
+ * Parses a condition string (the `{...}` body of a condition modifier, e.g. for `C{...}`,
+ * `R{...}`, `#{...}`) into comparison options.
+ *
+ * Comma separates multiple conditions; how they combine depends on the part:
+ * - Comparison operators (`>`, `>=`, `<`, `<=`) combine via **AND** — `{>3,<10}` matches a die
+ *   that is greater than 3 AND less than 10.
+ * - Bare numbers and `=N` accumulate into the `exact` list, which matches via **OR** — `{5,10}`
+ *   matches a die showing exactly 5 OR exactly 10. Note this is **not** a range: `{5,10}` does
+ *   NOT mean "between 5 and 10"; use `{>=5,<=10}` for an inclusive range.
+ *
+ * @example
+ * parseComparisonNotation('5,10')    // { exact: [5, 10] } — 5 or 10
+ * parseComparisonNotation('>=5,<=10') // { greaterThanOrEqual: 5, lessThanOrEqual: 10 } — range
  */
 export function parseComparisonNotation(conditionString: string): ComparisonOptions {
   const content = conditionString.replace(/[{}]/g, '')
