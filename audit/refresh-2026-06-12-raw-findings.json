@@ -1,0 +1,1097 @@
+{
+  "summary": "Adversarial whole-monorepo audit: best-practices, DRY, UX, DX, strategic drop/expand/refine/clarify",
+  "agentCount": 120,
+  "logs": [
+    "Reading prior audit + repo structure to calibrate baseline",
+    "Fanning out 11 adversarial reviewers, each verifying its own findings as it completes",
+    "pipeline[9] failed: agent({schema}): subagent completed without calling StructuredOutput (after 2 in-conversation nudges)",
+    "107 findings reviewed, 60 survived adversarial verification"
+  ],
+  "result": {
+    "report": "I have all the verified findings and area summaries. Let me synthesize the final report directly.\n\n# RANDSUM Monorepo Refresh Audit\n\n## 1. Executive Summary\n\nRANDSUM is in strong internal health following the recently-shipped 30-item audit (PR #1056): the core roller engine is well-tested (1100+ tests, strict TS, clean error hierarchy), publishing is sorted, and CI gates are wired. This refresh surfaces **no new P0s** — nothing blocks shipping. The dominant themes are (1) **runtime-vs-codegen duplication** in the games pipeline, where the same domain logic is implemented twice with real silent-drift risk; (2) **an under-decided dice-ui dual-target strategy** that is neither web-first-with-escape-hatch nor true dual-mode, carrying ~40% duplication and a live native-only crash (missing `DocModal` export); and (3) **doc-vs-code drift** across README/llms.txt/CONTRIBUTING that misadvertises removed features. The single highest-correctness issue is the count-modifier collision in the roller, where `roll('3d6S{3}F{1}')` silently drops a condition and returns wrong results through the public API.\n\n## 2. Strategic Verdict\n\n### DROP (dead weight / over-engineering)\n- **`scripts/help.ts` stale entries** — lists non-existent `mcp:compile`/`mcp:compile:all` and wrong release script names. Cut the MCP category and fix the Release names.\n- **`QuickReferenceGrid.native.tsx` (866 LOC)** — violates the project's own ADR-003 (use-dom WebView is the documented native default; a `.native.tsx` port was explicitly deferred until WebView perf became a blocker, which never happened). Either delete it and rely on the documented use-dom path, or formally amend ADR-003.\n- **Over-engineered recommendations to resist:** scripts to auto-patch `metro.config.js`, a full `CodeExpr` AST for codegen, badge-generation CI hooks, and shared-`scripts.json` package.json machinery. These cost more than the trivial problems they solve.\n\n### EXPAND (under-invested)\n- **Multi-roll spec support** (P1) — schema/codegen allow exactly one `roll` per spec, blocking Blades resistance rolls and D&D 5e ability-score generation/saves. The IR and emit loop *already* iterate named rolls; only `getRollDefinitions()` (typeGuards.ts:42) and the singular `roll` schema property block it. Cheap unblock for two flagship games.\n- **Non-standard die types** (P2) — `PoolDefinition.sides: IntegerOrInput` can't express Fate/Fudge or custom faces, blocking the planned Fate Core package. The roller already supports these; add a `faces: number[]` / `notation` escape hatch.\n- **Dual-consumer validation test** (P1) — no test runs both the generated `roll()` and the runtime pipeline on the same input and asserts agreement. Drift can accumulate silently. Use the existing roller-mock pattern to force fixed dice.\n- **Expo test coverage** — CI runs 1 of 11 expo test files; the full suite has ~42 failing/erroring tests hiding behind the gate.\n\n### REFINE (works but rough)\n- **Count-modifier collision** (P1) — three schemas all named `count` (`#{}`, `S{N}`, `F{N}`); last-match-wins silently drops conditions. Normalize sugar to `#{}` pre-parse or consolidate + reject conflicts.\n- **Runtime↔codegen duplication** — operator maps (×3), leaf resolution, degree-of-success, range matching all parallel-implemented. Extract shared declarative descriptors that both the runtime predicate and string emitter consume.\n- **`sideEffects: true` regression** — restore the ADR-018 value `[\"./src/**/*\"]` (a one-line fix already validated to cut consumer bundles ~72%).\n- **dice-ui web/native duplication** — extract `.util.ts` shared logic and a single token palette source.\n\n### CLARIFY (confusing / underspecified)\n- **dice-ui dual-target true-north** — pick: formalize dual-target (unify props, barrel-parity test) OR drop native for use-dom. Update the stale `dice-ui/CLAUDE.md`.\n- **`check:all` ≠ CI** — CLAUDE.md calls it \"the full CI pipeline\" and lists \"size\", but it runs neither knip nor size. Reconcile the doc and add the missing checks.\n- **Doc drift** — README advertises a removed \"Interactive TUI mode\" (two places), llms.txt claims RDN v1.0 (only v0.9.0 exists), CONTRIBUTING references deleted `display-utils`, README badge says TS 5.9 (actual 6.0.2).\n- **Game spec input descriptions** — 5 of 6 specs omit `description`, which degrades real generated validation error messages (not just docs).\n\n## 3. Prioritized Findings (severity-adjusted, duplicates merged)\n\n| Priority | Area | Title | Category | Effort | Recommendation |\n|---|---|---|---|---|---|\n| **P1** | roller-core | Count modifier collision silently drops conditions via last-match-wins | refine | M | Pre-parse normalize `S{N}`/`F{N}`→`#{}` or consolidate into one global-validating `count` schema; add test rejecting `3d6S{3}F{1}` |\n| **P1** | games-codegen | No dual-consumer validation test (generated vs runtime can drift silently) | expand | M | Add `dualConsumer.test.ts`; mock `@randsum/roller` to fix dice, assert both paths classify identically |\n| **P1** | games-specs | Single-roll-per-spec blocks Blades resistance + D&D 5e ability scores | expand | M | Add `rolls: {[key]: RollDefinition}` to schema; fix `getRollDefinitions()` (typeGuards.ts:42) — IR/emit already support N rolls |\n| **P1** | dice-ui | `DocModal` missing from native barrel → live RN crash, masked by hand-written `.d.ts` + test mock | fix | S | Re-export `DocModal` from `index.native.ts` (export it in native grid); add barrel export-parity test; delete `apps/expo/types/dice-ui.d.ts` |\n| **P1** | apps-misc | Expo lacks `check`/`test` scripts; CI runs 1 of 11 test files (~42 failing hidden) | clarify | S | Add `test`+`check` scripts; have CI run full expo suite, not one file |\n| **P1** | docs-dx | README advertises removed \"Interactive TUI mode\" (lines 33 + 73) | fix | S | Remove both TUI mentions; show real stdin/one-shot examples |\n| **P2** | roller-core | Die-type regex patterns duplicated across 4 parse files | refine | S | Extract composable fragments to `notation/constants.ts`; add cross-check test |\n| **P2** | roller-core | `ARITHMETIC_MODIFIERS` map in traceRoll lacks registry-coverage enforcement | fix | S | Add registry-iterating test; comment its purpose |\n| **P2** | roller-notation | `isDiceNotation` validation chain encodes special-die syntax 6 ways | clarify | M | Consolidate special-die listings; add tokenize↔isDiceNotation property tests |\n| **P2** | roller-notation | NotationParseError lacks position for invalid tokens | refine | M | Wire existing `position` into `notation()`; anchored left-to-right scan for residual index |\n| **P2** | roller-notation | Comma-as-AND condition semantics undocumented ({5,10}≠range) | clarify | S | Document comma-AND + explicit range example; (skip suggestNotationFix scope creep) |\n| **P2** | games-codegen | Operator-map / leaf-resolution / degree / range logic duplicated runtime↔codegen | refine | M | Extract shared declarative descriptors both paths consume |\n| **P2** | games-codegen | Codegen emits raw TS strings with no escaping (build-time author input) | refine | S | Add string-escape helper at literal-interpolation sites (AST optional) |\n| **P2** | games-specs | Non-standard die types (Fate/custom faces) inexpressible | expand | M | Add `faces`/`notation` escape hatch to `PoolDefinition`; doc Fate Core example |\n| **P2** | games-specs | Fate dice + Ironsworn challenge-comparison schema gaps | expand | L | Design `faces` support + `challengeComparison` resolve strategy; doc in codegen-extension.md |\n| **P2** | games-specs | 5 of 6 specs omit input `description` (degrades generated error labels) | clarify | S | Add descriptions; regenerate |\n| **P2** | dice-ui | Dual-target maturity mismatch (web complete, native draft); web stub, ignored props | clarify | L | Pick true-north; unify provider signature/props or drop native; barrel-parity test |\n| **P2** | dice-ui | Web/native ~40% duplication (verbatim logic + copy-pasted token palettes) | refine | M | Extract `.util.ts` shared logic + single token source |\n| **P2** | dice-ui | QuickReferenceGrid dual-maintenance vs ADR-003 (1916 LOC, contradicts documented strategy) | drop | L | Delete native variant OR extract identical helpers + amend ADR-003 |\n| **P2** | cli | Verbose output lacks per-roll subtotals/separators | refine | S | Add `Subtotal:` per record + section dividers |\n| **P2** | cli | No size-limit gate on published CLI (94KB unaudited) | clarify | S | Add `size-limit`+`size` script; add CLI filter to publish.yml size step |\n| **P2** | cli | stdin/pipe feature undocumented in README | clarify | S | Add Piping/Integration section with `echo`/`jq` examples |\n| **P2** | cli | Help example `2d20L +5` is invalid (unquoted → error) | fix | S | Change to `'2d20L+5'`; note spaces must be quoted |\n| **P2** | cli | CLI cannot access game packages | expand | M | Document scope + point to playground/Discord; (game subcommands need design) |\n| **P2** | apps-misc | Discord-bot 6 game commands duplicate defer/try/catch harness | refine | M | Extract `createGameCommand` factory (~60 LOC boilerplate) |\n| **P2** | apps-misc | Metro subpath map hand-synced to roller exports, untyped, typecheck-invisible | refine | M | Derive subpath map from `package.json#exports` to prevent drift |\n| **P2** | monorepo | Root `test` omits dice-ui (orphaned `tokenColor.test.ts` never runs) | fix | S | Add `test` script to dice-ui; add CI job |\n| **P2** | monorepo | `check:all` ≠ CI (missing knip + size); CLAUDE.md falsely lists \"size\" | clarify | S | Add knip+size to check:all; fix CLAUDE.md:28 |\n| **P2** | monorepo | Root `check` excludes dice-ui (no typecheck/lint/test) | fix | S | Add `check` script to dice-ui then wire into root |\n| **P2** | monorepo | Pre-push hook missing size check | refine | S | Add `size` step (priority 1) after build |\n| **P2** | strategic | roller `sideEffects: true` regression breaks tree-shaking | refine | S | Restore `[\"./src/**/*\"]` per ADR-018 (validated ~72% reduction) |\n| **P2** | docs-dx | llms.txt claims RDN v1.0; only v0.9.0 exists | fix | S | Change llms.txt:3 to v0.9.0 |\n| **P2** | docs-dx | CONTRIBUTING references deleted `display-utils` package | fix | S | Remove line; note /docs and /trace subpaths |\n| **P2** | docs-dx | RDN version hardcoded across 6 files (already drifted) | refine | S | Fix llms.txt drift; centralization optional |\n| **P2** | apps-misc | Expo/RDN/Site build-config divergence (untyped Metro map) | refine | M | Derive Metro map from exports; doc subpath-add step |\n| **P3** | (various) | — small polish items below — | — | S | See Quick Wins / defer |\n\n**P3 items (defer/batch):** custom-face empty/whitespace validation; IR-type JSDoc; type-guard exhaustiveness assertion at normalizer boundary; PbtA/Root range-bound tidiness (Root only); `srd_url` omissions; pre-commit codegen glob; CLI compact-format separators; CLI output-format docs; `--seed` semantics docs; CLI edge-case tests (`--repeat abc`/`-5` parser bug); app script duplication; discord-bot release-build inclusion; ESLint generated-file comment; Prettier TOML glob; knip-output redirect; game-spec-creator cross-link; TS badge 5.9→6.0.2; CLI positioning README cleanup; dice-ui prop/TokenOverlayInput asymmetries; Metro-resolver doc comment.\n\n## 4. Dependency Update Note\n\nDependency bumps were applied separately. **Flag for testing: `undici` 6 → 8 is a major version jump** — verify any fetch/HTTP-dependent paths (notably WebFetch-adjacent tooling, Discord bot HTTP, and any Node fetch polyfill usage) against undici 8's breaking changes before merging. All other bumps are minor/patch and lower-risk, but run `bun run check:all` + the full test suite post-bump.\n\n## 5. Quick Wins (S-effort, high-value checklist)\n\n- [ ] Re-export `DocModal` from `dice-ui/index.native.ts` + add barrel export-parity test (fixes live RN crash) **[P1]**\n- [ ] Remove \"Interactive TUI mode\" from README (lines 33, 73); add real stdin example **[P1]**\n- [ ] Add `test`/`check` scripts to expo + run full suite in CI **[P1]**\n- [ ] Restore `sideEffects: [\"./src/**/*\"]` in roller per ADR-018 (~72% bundle cut)\n- [ ] Fix llms.txt RDN v1.0 → v0.9.0\n- [ ] Remove `display-utils` line from CONTRIBUTING.md\n- [ ] Fix help example `2d20L +5` → `'2d20L+5'`\n- [ ] Add `size-limit` to CLI + size filter in publish.yml\n- [ ] Document stdin/pipe in CLI README\n- [ ] Add knip + size to `check:all`; fix CLAUDE.md:28 \"size\" claim\n- [ ] Add `test`/`check` scripts to dice-ui + wire into root + CI\n- [ ] Add pre-push size check\n- [ ] Remove `mcp:compile*` and fix release names in `scripts/help.ts`\n- [ ] Add input `description` fields to 5 game specs (improves generated error labels)\n- [ ] TS badge 5.9 → 6.0.2\n\n## 6. Per-Area Health\n\n- **roller engine+modifiers:** Strong post-audit; one real correctness bug (count collision, P1) plus pattern-duplication and trace-coverage refinements.\n- **roller notation parser:** Sound grammar, 100% coverage, no parsing defects; gaps are diagnostics (position info, multi-listing of special dies) not correctness.\n- **games codegen pipeline:** Well-tested but pervasively dual-implemented (runtime vs codegen); biggest gap is the missing cross-validation test (P1).\n- **games specs+schema:** Architecturally sound; two strategic expansions (multi-roll P1, non-standard dice P2) unblock the next game cohort.\n- **dice-ui:** Weakest area — under-decided dual-target strategy, ~40% duplication, and a live masked native crash; needs a true-north decision.\n- **apps/cli:** Solid thin one-shot tool; needs doc cleanup (stdin, help fix), a size gate, and verbose-output polish.\n- **apps (discord/expo/rdn/site):** CLI/Discord solid; Expo needs a product decision + real test gating; cross-app config duplication is cosmetic.\n- **monorepo build/CI:** CI is robust but local `check`/`check:all` drifted from it (dice-ui omitted, knip/size missing) — mostly trivial fixes.\n- **docs+DX:** Well-structured but several doc-code drifts (TUI, llms.txt, display-utils, badge) that mislead contributors and LLM context.\n- **strategic/product:** Technically over-delivering, adoption under-invested; clarify dice-ui/Expo scope and CLI positioning to convert engineering into reach.",
+    "totalFindings": 107,
+    "survived": 60,
+    "survivedFindings": [
+      {
+        "title": "Count modifier family parsed through two separate schema pathways with inconsistent precedence",
+        "dimension": "dry",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/roller/src/notation/parse/parseModifiers.ts:68-84 + definitions/count* files",
+        "problem": "Count is implemented three times: countSchema (notation/definitions/count.ts) parsing #{...}, countSuccessesSchema (countSuccesses.ts) parsing S{N}, countFailuresSchema (countFailures.ts) parsing F{N}. All three are schema-only (no behavior) and all three claim the same name: 'count'. parseModifiers() explicitly dedups duplicate count modifiers (lines 95-107) but only for countSchema. If both S{5} and #{>=5} appear in one notation, the second-match dedup will miss it because countSuccessesSchema and countSchema have different patterns. Audit item #66 calls this 'un-integrated notation variants pending story resolution.'",
+        "recommendation": "Document that S{N} and F{N} are syntactic sugar for count #{...}, not separate modifiers. Either (a) add a pre-parse pass that normalizes S{N} and F{N} to #{...} before the main parseModifiers loop, or (b) consolidate all three schemas into one 'count' definition that handles all three notations and validates globally. Add a test that rejects '3d6S{3}F{1}' with a clear error message.",
+        "effort": "M",
+        "area": "roller-core",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed against the actual code and verified empirically. Three schemas all declare name:'count': countSchema (#{...}) at notation/definitions/count.ts, countSuccessesSchema (S{N}) at countSuccesses.ts, countFailuresSchema (F{N}) at countFailures.ts — all schema-only, no behavior. The dedup block in parseModifiers.ts:95-107 only counts #{...} matches via countPatternGlobal, so cross-pathway collisions are not detected. The PARSE_SCHEMAS loop (line 113-118) uses Object.assign, which is last-match-wins, so one count condition is silently discarded.\n\nVerified empirically: parseModifiers('S{5}#{>=3}') => {count:{greaterThanOrEqual:5}} (the #{>=3} is silently dropped); parseModifiers('S{3}F{1}') => {count:{lessThanOrEqual:1}} (the S{3} is silently lost). Through the real public roll() path: roll('3d6S{3}F{1}') and roll('5d10S{6}#{<=1}') both execute without error and silently apply only one condition. No validation rejects the conflicting notation. The cited locations (parseModifiers.ts:68-84 and 95-107, plus the count* definition files) are all accurate.\n\nNot duplicative: the prior audit's roller.md/synthesis F2 covers a different issue (registry-vs-notation-layer parser drift). This silent-collision-within-the-notation-parser bug is new. The recommendation (pre-parse normalization of S{N}/F{N} to #{...}, or consolidation into one global-validating schema, plus a test rejecting 3d6S{3}F{1}) is sound and non-duplicative of existing code.\n\nAdjusting severity from P2 to P1: the finding's DRY/refine framing undersells the real impact. This is not merely duplication — it produces silently-wrong roll results through the public roll() API with no error (e.g. White-Wolf successes-and-botches counting silently mis-counts). Silent incorrect output on the core API is correctness-grade. The blast radius is somewhat limited because the documented botch form is S{N,N} rather than combined S{N}F{N}, but silent-wrong-answer behavior reaching the public entry point warrants P1.",
+          "adjustedSeverity": "P1",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "parseArguments() pattern duplication: die type patterns defined in two locations",
+        "dimension": "dry",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/roller/src/roll/parseArguments.ts:92-99 vs src/notation/*",
+        "problem": "parseArguments.ts defines regex patterns for DRAW_DIE, GEOMETRIC, FATE, ZERO_BIAS, CUSTOM_FACES (lines 92-99). Each of these patterns is also present in notation definitions and parsers. The patterns are not factored into a shared constant file, so maintaining them requires updates in two locations. A change to fate-die semantics risks divergence.",
+        "recommendation": "Extract all die type patterns (DRAW_DIE_PATTERN, GEOMETRIC_DIE_PATTERN, etc.) into src/lib/constants.ts alongside DEFAULT_EXPLOSION_DEPTH. Re-export from both parseArguments.ts and the notation parser locations. Add a test that verifies parseArguments patterns and notation patterns agree on the same die types.",
+        "effort": "S",
+        "area": "roller-core",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Confirmed and actually understated. The special-die-type patterns (DRAW, GEOMETRIC, FATE, ZERO_BIAS, CUSTOM_FACES, PERCENTILE) are duplicated across at least FOUR live files, not two: packages/roller/src/roll/parseArguments.ts (lines 92-96 + PERCENTILE at line 249), notation/parse/parseSpecialPool.ts (lines 2-7), notation/isDiceNotation.ts (lines 10-35, 89, 98), and notation/tokenize.ts (lines 43-70). I verified all four parse paths are live: parseArguments calls parseDrawDieParams/etc., and parseSpecialPoolSegment is consumed by notationToOptions.ts:62. The Fate pattern fragment [Dd][Ff](?:\\.[12])? alone appears in 6 spots with hand-copied variations (capturing vs non-capturing groups, optional sign prefix, $ anchoring). A change to fate-die semantics genuinely requires synchronized edits across all of them — the divergence risk is concrete.\n\nTwo minor location/recommendation corrections (kept verdict at 'confirmed' since the core claim holds): (1) The cited 'lines 92-99' is slightly off — 92-96 are five patterns, 98-99 are FATE_STANDARD/EXTENDED_FACES constants (not patterns), and PERCENTILE_DIE_PATTERN is at line 249. (2) The recommended home lib/constants.ts exists and does hold DEFAULT_EXPLOSION_DEPTH as claimed, but notation/constants.ts (which already exists, holding TTRPG_STANDARD_DIE_SET) is the architecturally correct target since three of the four consumers live under notation/. Also, a naive single-constant extraction won't work due to the intentional per-context variations; the right shape is composable base fragments (e.g., a FATE_CORE raw-string fragment that each call site wraps with its own sign/anchor/capture needs). This nudges effort from pure-S toward S/S-M but stays small.\n\nP2 severity is correct: this is a latent DRY/maintainability hazard (refine category), not a current correctness bug — the patterns agree today, the risk is future drift.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "ARITHMETIC_MODIFIERS map in traceRoll() lacks enforcement and is incomplete",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "fix",
+        "location": "packages/roller/src/trace/traceRoll.ts:16-23",
+        "problem": "ARITHMETIC_MODIFIERS includes plus, minus, multiply, multiplyTotal, integerDivide, and modulo. However, there's no compile-time check ensuring that all arithmetic modifiers in the registry are included in this map. If a future arithmetic modifier is added and forgotten, traceRoll() silently emits a misleading empty 'rolls' step instead of the correct 'arithmetic' step.",
+        "recommendation": "Add a test that iterates over RANDSUM_MODIFIERS, identifies all modifiers with createScaleBehavior()'s signature, and asserts they're keys in ARITHMETIC_MODIFIERS. Add a comment near ARITHMETIC_MODIFIERS explaining why it exists and when to update it. Consider extracting ARITHMETIC_MODIFIERS to be computed from modifier metadata rather than hardcoded.",
+        "effort": "M",
+        "area": "roller-core",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against the actual code. `packages/roller/src/trace/traceRoll.ts:16-23` defines `ARITHMETIC_MODIFIERS` as a hardcoded `Partial<Record<...>>` with exactly 6 keys: plus, minus, multiply, multiplyTotal, integerDivide, modulo. Grep confirms these are precisely the 6 modifiers that import `createScaleBehavior` (src/modifiers/{plus,minus,multiply,multiplyTotal,integerDivide,modulo}.ts), so the map is currently complete and correct — no live bug.\\n\\nThe failure mode is real and concrete: arithmetic/Scale modifiers use `createArithmeticLog` (src/modifiers/log.ts:3-13) which always emits `added: []`, `removed: []`. In `traceRoll` (lines 96-171), a log not found in `ARITHMETIC_MODIFIERS` falls through to the generic `kind: 'rolls'` branch (line 147+), producing a step with empty unchanged/removed/added and a generic capitalized label and no value display — i.e. a misleading, content-free trace step instead of a `kind: 'arithmetic'` step. So a future Scale modifier added without updating the map silently degrades the trace output.\\n\\nNo enforcement exists: __tests__/trace.test.ts has no reference to ARITHMETIC_MODIFIERS, RANDSUM_MODIFIERS, or Scale; nothing iterates the registry to assert coverage. The Partial<Record> type is permissive by design, so TS won't catch the omission. The recommendation (a registry-iterating test plus a clarifying comment) is sound and non-duplicative.\\n\\nScope/severity: this is a display-only subpath (@randsum/roller/trace), never affects roll correctness, and only bites if a new arithmetic modifier is added — which CLAUDE.md notes is frozen/rare. It is a genuine latent maintainability gap, correctly rated P2 (fix category). Minor quibble: effort is closer to S than M (a single iteration test plus comment), but that does not change severity. Confirmed as written.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Special pool parsing lacks validation for custom face syntax edge cases",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/roller/src/notation/parse/parseSpecialPool.ts:88-99",
+        "problem": "Custom faces d{f1,f2,...,fN} are split by comma with no validation. Empty faces (d{1,,2}), whitespace-only faces (d{1, ,2}), or faces with special characters are accepted as-is. The custom faces list is returned without trimming or deduplication, and no check for empty face counts. This can create surprising behavior downstream.",
+        "recommendation": "After splitting, trim each face and filter out empty strings. Validate that the list is non-empty and that faces match expected patterns (e.g., numeric strings only for numeric custom dice). Throw a ParseError with position info if validation fails. Add tests for edge cases: d{}, d{1,,2}, d{ , }, d{ñ,€}.",
+        "effort": "S",
+        "area": "roller-notation",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The finding has a small real kernel but is substantially mis-located and mis-described, and over-rated.\n\nWHAT'S REAL: Custom-faces dice do silently accept empty/whitespace faces. Verified by running the engine: roll(\"d{1,,2}\") yields a 3-sided string die with faces [\"1\",\"\",\"2\"]; roll(\"d{ , }\") yields faces [\"\",\"\"]. There is no empty-string filtering and no deduplication.\n\nWHAT'S WRONG WITH THE FINDING:\n1. WRONG LOCATION (the load-bearing error). The cited spot, packages/roller/src/notation/parse/parseSpecialPool.ts:88-99, is effectively a dead path for actual rolls: its `customFaces` output is the ONLY field discarded by its sole caller — notationToOptions.ts:62-64 returns only { quantity, sides, arithmetic }. Adding validation at the cited lines would have zero effect on roll behavior. The path that actually produces the faces[] for a roll is parseArguments.ts:160-199 (parseCustomFacesDieParams), which the finding never mentions. So the recommendation, applied literally, is a no-op.\n2. FALSE SPECIFICS: \"returned without trimming\" is false — both parseSpecialPool.ts:92 and parseArguments.ts:167 call .map(f => f.trim()). The \"d{}\" test case is moot — the regex CUSTOM_FACES_POOL_PATTERN /...\\{([^}]+)\\}.../ uses [^}]+ (one-or-more), so d{} fails to match and throws ValidationError(\"not valid dice notation\"); it is NOT \"accepted as-is\". \"No check for empty face counts\" is also off — [^}]+ guarantees at least one character and split always yields >=1 element.\n\nSEVERITY: The genuine residual (empty-string/whitespace faces accepted, no dedup) is a niche cosmetic oddity with no correctness, crash, or security impact — a P3 nitpick, not a P2. And it would need relocation to parseArguments.ts to be fixable at all. The prior 30-item audit did not cover this specific edge case, so it isn't a duplicate, but it's low-signal.\n\nNet: real-but-minor, mis-located, mis-described, over-rated.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "isDiceNotation validation chain is complex and hard to verify exhaustively",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "packages/roller/src/notation/isDiceNotation.ts:73-104",
+        "problem": "isDiceNotation() performs a multi-step validation: check length, check special non-modifier dies (exact match), check for standard/special cores, strip leading special die, strip all remaining tokens, verify nothing remains. The logic is sound but difficult to reason about. The leading special die stripping regex and the complete pattern stripping use different mechanisms, making it hard to verify they cover the same syntax. A future modification to one path might not sync with the other.",
+        "recommendation": "Refactor isDiceNotation() to use a single tokenization pass (similar to tokenize.ts) rather than multi-step regex stripping. Ensure all validation uses the same token set. Document the validation stages as a numbered checklist. Add property-based tests that verify: (1) all outputs of tokenize() pass isDiceNotation(), and (2) all strings that fail isDiceNotation() have at least one invalid token from tokenize().",
+        "effort": "M",
+        "area": "roller-notation",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "medium",
+          "reasoning": "Verified against the actual code. packages/roller/src/notation/isDiceNotation.ts (lines 73-104) does perform exactly the multi-step validation described: length check, exact-match special-die checks (PERCENTILE/FATE/CUSTOM_FACES, lines 79-81), core gate (87-90), count-pattern guard (92-93), leading-special-die strip (97-99), then complete-pattern strip with a verify-nothing-remains check (102-103). The core concern is real and understated: the same special-die syntax is encoded FIVE separate ways within this one file — MODIFIER_DIE_CORES (19-23), SIGNED_POOL_PATTERNS (29-36), the three exact-match constants (10-16), the inline hasAnySpecialDie regex (89), and the inline leadingSpecial regex (97-98). A separate full tokenizer (tokenize.ts) already exists with a sixth authoritative listing (SPECIAL_DIE_PATTERNS). Adding a new special die requires synchronizing all six, which is a concrete drift hazard — the finding's central claim. Confirmed non-duplicative: prior audits (audit/synthesis-top-30.md, plans/3.0.0-harsh-audit*.md) only mention tokenize in the context of missing React component tests, never this validation chain. The property-test recommendation is sound and unmet: no fast-check tests and no tokenize<->isDiceNotation cross-check exist in __tests__/notation/. Two caveats keep confidence at medium rather than high: (1) the 'single tokenization pass' refactor half of the recommendation is a genuine design tradeoff, not a clear win — tokenize() is intentionally forgiving (emits 'unknown' tokens for UI display) while isDiceNotation is strict, so collapsing them risks conflating two different contracts; (2) no incorrect runtime behavior is demonstrated, so this is a maintainability/drift risk, not a live bug. P2 / clarify is the correct rating.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Comparison operator precedence in conditions may be ambiguous",
+        "dimension": "ux",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "packages/roller/src/notation/comparison/index.ts:17-39",
+        "problem": "parseComparisonNotation() splits on commas and treats each as a separate condition. A notation like {>5,<10} is parsed as two independent conditions, not a range. This is correct per spec, but the behavior is non-obvious. A user might write {5,10} expecting a range [5..10], but get exact matches [5, 10] instead. No guidance is provided on how to express ranges.",
+        "recommendation": "In error messages and documentation, clarify the comma-separated AND logic. When suggesting fixes (e.g., in suggestNotationFix()), detect patterns that look like ranges ({5..10} or {5-10}) and suggest the correct form (e.g., {>=5,<=10}). Add examples to the CLAUDE.md comparison section.",
+        "effort": "S",
+        "area": "roller-notation",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "medium",
+          "reasoning": "Core technical claims verified against packages/roller/src/notation/comparison/index.ts:7-46. parseComparisonNotation() strips braces, splits on commas (lines 9-12), loops each part independently (lines 17-39): bare numbers and =N push into exact[] (lines 30-37); >/</>=/<= set respective fields. So {5,10} yields exact:[5,10] (two exact matches, NOT a range) — confirming the central concern. Behavior is non-obvious and no inline range syntax exists. Not a duplicate: the three prior audits (plans/3.0.0-harsh-audit*.md, audit/synthesis-top-30.md) never mention comparison/range condition semantics.\n\nMedium confidence because the framing is partly overstated. The headline example {>5,<10} actually DOES behave as a range: comma-as-AND combines >5 and <10 into effective range [6..9], so that example is not ambiguous — the genuine footgun is only the literal {5,10} case (exact matches mistaken for a range), a narrow edge with no test gap, no correctness bug, no user reports. The recommendation to extend suggestNotationFix() (packages/roller/src/notation/suggestions.ts) is partly unsound: that function today handles ONLY core NdS typos (missing separator/quantity/spaces) and never inspects brace-condition syntax, so adding {5..10}/{5-10} range detection is a real scope expansion, not a trivial S tweak. The doc-clarification half (note comma-as-AND in CLAUDE.md/spec, add an explicit range example) is sound and cheap. P2/clarify is right — low-impact UX/documentation polish, not a bug.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Error messages lack position information for multi-token failures",
+        "dimension": "ux",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/roller/src/notation/parse/parseModifiers.ts:99-106, packages/roller/src/notation/isDiceNotation.ts:114-119",
+        "problem": "When isDiceNotation() or notation() throws a NotationParseError, the error context often includes notation but not position. For invalid input like '4d6L+2+3X', the error message does not indicate that 'X' is the offending character or at what index it appears. This forces users to manually find and fix the error.",
+        "recommendation": "When throwing NotationParseError, compute and include the position of the first invalid token. For getDiceNotation's token-stripping logic, track the position of the remaining invalid text. Pass position in ErrorContext. Update error messages to highlight the offending segment: 'Invalid notation \"4d6L+2+3X\": unknown token \"X\" at position 10'.",
+        "effort": "M",
+        "area": "roller-notation",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The core problem is real and current. The `notation()` function at packages/roller/src/notation/isDiceNotation.ts:113-119 throws NotationParseError with no positional info, even though ErrorContext.position exists (errors.ts:42-43). Reproduced with `4d6L+2+3X`: message is the generic \"String does not match dice notation pattern\", context is only {\"notation\":\"4d6L+2+3X\"}, and the suggestion truncates to \"4d6\" — discarding the valid `L+2+3` and never pointing at the offending `X` (index 8). isDiceNotation computes `remaining` (the unmatched residue) at line 102-103 but throws it away.\\n\\nHowever, the finding is mis-cited and must be adjusted: the parseModifiers.ts:99-106 location is WRONG. That exact throw site (the duplicate-count ModifierError) ALREADY includes position via `...(secondMatch ? { position: secondMatch.index } : {})`. It is a counterexample of position info working, not a problem location. Only the isDiceNotation.ts citation is valid.\\n\\nThe recommendation is sound and non-duplicative — the position infra exists and is already used elsewhere, so wiring it into notation() is consistent with existing patterns. Prior audit (audit/dimensions/roller.md) only describes the error hierarchy generically and does not fix this gap. One caveat: the recommendation understates effort. isDiceNotation strips tokens via replaceAll across the whole string, so the original index of residual invalid text is not directly recoverable from `remaining.length`; computing the true position requires a left-to-right anchored scan, not a trivial length offset. Severity P2 (UX refinement) is correct.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "DRY violation: operator mapping repeated 3 times",
+        "dimension": "dry",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/games/src/lib/pipeline.ts:350, codegen/emitDetails.ts:62, codegen/emitOutcome.ts:53",
+        "problem": "Comparison operator translation (= to ===, etc.) is defined in three locations with identical logic. Pipeline uses a function map; emitters use string literals. Creates maintenance burden and drift risk.",
+        "recommendation": "Extract shared constant to src/lib/operators.ts with operatorToString() and operatorToFn() helpers. All call sites import from this module.",
+        "effort": "S",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified all three cited locations contain the same comparison-operator mapping for the {=,>,>=,<,<=} set with an identical `?? '='` (or `=== ` function) fallback:\n\n- packages/games/src/lib/pipeline.ts:350 — `opMap: Record<string, (a,b)=>boolean>` with function values `(a,b)=>a===b` etc., evaluating `$dieCheck` at RUNTIME.\n- packages/games/src/lib/codegen/emitDetails.ts:62-69 — `opMap: Record<string,string>` emitting JS operator strings ('=' -> '===') for the SAME `$dieCheck` in CODEGEN.\n- packages/games/src/lib/codegen/emitOutcome.ts:53-60 — byte-identical string opMap for poolCondition.countWhere.\n\nThe two emitter maps are literally identical text. The pipeline map encodes the same operator semantics as functions. The genuine cost is drift risk between the runtime path (pipeline) and the generated path (emitDetails) for the same `$dieCheck` semantics — they must produce identical results, but live in two unsynchronized copies; adding an operator means editing three sites.\n\nAdjustments to the finding, not its validity:\n1. Location path prefix is slightly wrong: files are under `src/lib/codegen/`, not `codegen/`. Filenames and line numbers are exact.\n2. No `operators.ts` module exists today, so the recommendation is non-duplicative.\n3. The recommendation's split into operatorToString() (for emitters) + operatorToFn() (for pipeline) is correct because the emitters need strings and the pipeline needs functions. Note a 4th related comparator exists, conditionEvaluator.compareValues (handles non-numeric '='), which is distinct and should NOT be naively merged — consolidation should target the numeric $dieCheck/countWhere operator set.\n\nSeverity P2 / refine / category=refine is appropriate: consistent today, low blast radius, but real maintenance + silent-drift hazard between runtime and codegen.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Parallel logic: resolveLeaf vs normalizedLeafValueCode",
+        "dimension": "dry",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/games/src/lib/pipeline.ts:339, packages/games/src/lib/codegen/emitDetails.ts:51",
+        "problem": "Two functions implement the same domain logic for resolving NormalizedDetailsLeafDef. Runtime evaluates; codegen generates code. Both handle $input, expr, $pool, $conditionalPool, $dieCheck identically. Updates require synchronized changes.",
+        "recommendation": "Extract shared structure inspection into intermediate representation. Runtime and codegen independently consume this form.",
+        "effort": "M",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified both cited locations are accurate. resolveLeaf (packages/games/src/lib/pipeline.ts:339) and normalizedLeafValueCode (packages/games/src/lib/codegen/emitDetails.ts:51) both branch on the same five leaf shapes in identical order: 'expr' (diceTotal vs total), '$pool', '$conditionalPool', '$dieCheck', and the fallthrough '$input' (with default handling). The duplication is concrete and goes beyond structure: the $dieCheck operator map is duplicated literally — pipeline.ts:350-356 maps operators to comparison FUNCTIONS, emitDetails.ts:62-68 maps the same five operators ('=','>','>=','<','<=') to comparison-operator STRINGS. The default fallback ('=== for unknown op) is also repeated. Adding a new operator or leaf kind requires synchronized edits across resolveLeaf, normalizedLeafValueCode, normalizedLeafTsType (emitDetails.ts:7), detailsNeedsDiceTotal, and detailsNeedsConditionalPool. This is a legitimate runtime-vs-codegen split (one evaluates to values, one emits source strings), so they genuinely cannot be naively merged — the recommendation to extract a shared structural IR that both consume independently is sound and non-duplicative of existing code. Confirmed not a re-report: the only prior-audit mention of $dieCheck (audit/dimensions/games.md:23) is an unrelated fifth-edition crit-detection bug. Severity P2/refine is correct: real drift risk but contained surface, the spec format is documented as feature-frozen in project memory, and the fix is M-effort for a low-frequency risk — a worthwhile cleanup, not urgent.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Degree of success algorithm duplicated",
+        "dimension": "dry",
+        "severity": "P1",
+        "category": "refine",
+        "location": "packages/games/src/lib/pipeline.ts:175, packages/games/src/lib/codegen/emitOutcome.ts:5",
+        "problem": "Both paths sort thresholds and iterate to find first match. Identical logic; only output form differs (value vs code string).",
+        "recommendation": "Extract computeDegreeOfSuccess(total, degrees): string. Both codegen and runtime call this.",
+        "effort": "M",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Duplication is real and at the cited locations. pipeline.ts:175 `applyDegreeOfSuccess` and emitOutcome.ts:5 `generateDegreeLines` both build an identical `candidates: [string, number][]` array (same four keys criticalSuccess/success/failure/criticalFailure, same push-if-defined order) and both sort `candidates.sort((a, b) => b[1] - a[1])`, then iterate to find the first `total >= threshold` match. The duplicated logic is the candidate-build + sort step (~14 lines).\n\nHowever the finding is mis-rated and the recommendation is unsound as written:\n\n1. SEVERITY (P1 -> P2): This is ~14 lines of stable, well-tested, low-churn logic with no correctness risk. The two copies are not drifting and the algorithm is simple. P1 overstates it; this is a P2 refine.\n\n2. RECOMMENDATION is technically wrong. `computeDegreeOfSuccess(total, degrees): string` CANNOT be shared by both paths. The codegen path (emitOutcome.ts) has no runtime `total` — it emits source-code strings, baking precomputed sorted thresholds into the generated file as `if (total >= N) return ...` lines. Verified that generated files (e.g. daggerheart.generated.ts) import ONLY from `@randsum/roller` and `./lib/errors` — never the runtime pipeline (an architecturally enforced boundary per packages/games/CLAUDE.md). A runtime function would serve only the runtime path; codegen would still need its own emitter. The genuinely extractable shared primitive is the ORDERING step: a `degreeCandidates(degrees: DegreeOfSuccessOperation): [string, number][]` helper (in lib/codegen/emitHelpers.ts or a shared lib module) that builds and sorts the candidate list. Runtime iterates it to return a name; codegen emits if/return lines from it. That removes the true duplication while preserving each path's distinct output mechanism.\n\nNot a duplicate of the prior audit — no degree-of-success duplication finding exists in audit/ or plans/3.0.0-harsh-audit*.md (only an unrelated reference in audit/dimensions/testing.md).",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Range matching logic duplicated",
+        "dimension": "dry",
+        "severity": "P1",
+        "category": "refine",
+        "location": "packages/games/src/lib/pipeline.ts:146, packages/games/src/lib/codegen/emitOutcome.ts:37",
+        "problem": "Range evaluation (exact/min/max/poolCondition) implemented twice. Pipeline loops inline; codegen builds code. Identical semantics.",
+        "recommendation": "Define rangeMatches(range, total, preModify, postModify, input): boolean. Codegen wraps in code generation; runtime calls directly.",
+        "effort": "M",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "adjustedSeverity": "P3",
+          "isActionable": true,
+          "reasoning": "The duplication is REAL and at the cited locations. Runtime range matching lives in packages/games/src/lib/pipeline.ts:127-173 (evaluatePoolCondition + lookupRanges), and the codegen string-emitter mirrors it in packages/games/src/lib/codegen/emitOutcome.ts:37-90 (buildRangeReturn). Both implement the same poolCondition logic (filter+count, atLeast/atLeastRatio), the same operator map, and the same exact / min+max / min-alone / max-alone / poolCondition-only ordering. The author is already aware of the coupling: pipeline.ts:157 carries an explicit comment \"aligned with the emitter (emitOutcome.ts:70-80)\". So the real cost is drift risk between two hand-maintained implementations of identical matching rules — concrete but low.\n\nHowever the severity and the specific recommendation are off. (1) Severity P1 overstates it: ~25 parallel lines in low-churn codegen internals, no correctness bug, already documented as coupled. P3 (refine) is accurate. (2) The recommendation as written (\"runtime calls rangeMatches directly; codegen wraps it\") is partly unsound given the architecture. Generated files import ONLY @randsum/roller, ./types, and ./lib/errors (verified in blades.generated.ts) — they deliberately do NOT depend on the pipeline. The codegen emits self-contained inline source where total/preModify/postModify are emitted variable *references*, not values, so a shared boolean predicate cannot be \"wrapped\" by the emitter without either shipping the predicate into generated output (adding a runtime lib dependency the architecture explicitly avoids) or building a heavier AST/template abstraction. The honest, low-cost dedup is to extract a single declarative descriptor — the operator map and the exact/min/max/poolCondition ordering — that both the runtime predicate and the string emitter consume, so any change to the rules edits one source. That removes the drift risk without breaking the zero-dependency generated-output contract. Adjusted to P3 and a refined recommendation rather than rejected, because the underlying observation is valid."
+        }
+      },
+      {
+        "title": "Codegen lacks intermediate AST for string generation",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/games/src/lib/codegen/emitOutcome.ts",
+        "problem": "integerOrInputCode() and operator translation generate raw TypeScript strings without intermediate representation. Fragile for escaping, future types, complex expressions.",
+        "recommendation": "Introduce CodeExpr class: Literal(n) | Input(name, opt) | BinOp(l, op, r) | Call(f, args). Build compositionally, render to strings.",
+        "effort": "L",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against the actual code. The cited file packages/games/src/lib/codegen/emitOutcome.ts exists and, together with emitHelpers.ts, emits TypeScript by raw string concatenation with no intermediate representation. integerOrInputCode() (emitHelpers.ts:46-63) builds expressions like `(${accessor} ? ${val.ifTrue} : ${val.ifFalse})` and operator translation happens via inline opMap lookups in emitOutcome.ts:53-60 producing `${poolVar}.filter(v => v ${op} ${val}).length`. No CodeExpr/AST type exists anywhere in the codegen dir.\n\nThe \"fragile for escaping\" claim is concretely demonstrable: author-controlled spec strings are interpolated into single-quoted JS literals with zero escaping — emitOutcome.ts:47 `'${range.result}'`, emitHelpers.ts:90 (condition.value), emitHelpers.ts:249/252 (enum values), emitOutcome.ts:22 (degree name). A spec result/enum value containing an apostrophe or backslash would emit broken or injected generated code. So the structural problem and at least one of its named costs are real and current.\n\nNon-duplicative: the only adjacent prior-audit item (audit/synthesis-top-30.md testing:F1) flags low test coverage of emit functions, not the string-vs-AST architecture. The escaping hazard is unreported.\n\nCalibration: P2/refine is correct. Crucially this is BUILD-TIME, author-written spec input (not runtime user input), so there is no security exposure and any breakage fails loudly at codegen (Prettier parse / typecheck) rather than shipping silently. The cost is a bounded latent-robustness gap, not a live bug — consistent with P2, not higher. The full CodeExpr AST recommendation (effort L) is sound but somewhat over-scoped relative to the concrete demonstrable cost; a small string-escape helper at the literal-interpolation sites would neutralize the actual escaping hazard at effort S. Recommend keeping severity P2 but treating the AST as optional polish and the escape helper as the high-value slice.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "IR types lack semantic documentation",
+        "dimension": "best-practices",
+        "severity": "P3",
+        "category": "clarify",
+        "location": "packages/games/src/lib/normalizedTypes.ts",
+        "problem": "11+ types without explaining why each is normalized. NormalizedOutcome conflates three strategies. NormalizedDetailsFieldDef pattern unexplained. Readers cross-reference docs.",
+        "recommendation": "Add JSDoc explaining each type's purpose and consumers. Group related types with section comments. Add module-level example showing before/after normalization.",
+        "effort": "S",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against the actual file. packages/games/src/lib/normalizedTypes.ts contains 11+ exported IR types (NormalizedPoolDefinition, NormalizedDiceConfig, NormalizedResolveOperation, NormalizedOutcome, NormalizedDetailsLeafDef, NormalizedDetailsFieldDef, NormalizedConditionalPool, NormalizedPipelineOverride, NormalizedRollCase, NormalizedRollDefinition, NormalizedSpec) with ZERO JSDoc (grep `/**` = 0). Only terse `// ----` section banners exist. NormalizedOutcome (lines 43-46) does union three distinct strategies (ranges / degreeOfSuccess / tableLookup) with no inline note on when each applies, and NormalizedDetailsFieldDef (lines 65-78) uses a kind-tagged leaf/nested/conditional pattern with no explanation of intent. The \"readers cross-reference docs\" claim is directly corroborated: packages/games/docs/codegen-extension.md (lines 63, 81-83) literally instructs readers to \"read this first\" and cites specific line ranges (31-46) to understand normalized resolve/outcome — proving the types are not self-documenting. Not duplicative: no prior harsh-audit plan (rounds 1-3) or audit/synthesis-top-30.md mentions this file or these types. Severity P3 is correct and should not be adjusted up: there is no correctness/security/perf impact, the narrative docs already carry the rationale, and the no-JSDoc style is consistent with the sibling source-spec file types.ts (also 0 JSDoc, 221 lines), making this a house-style polish item rather than a defect. Recommendation (JSDoc per type + grouping + module-level before/after example) is sound, non-duplicative, and genuinely low-effort (S). Mildly actionable — real, well-scoped DX improvement, but lowest-priority.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Type guards lack completeness verification",
+        "dimension": "best-practices",
+        "severity": "P3",
+        "category": "expand",
+        "location": "packages/games/src/lib/typeGuards.ts",
+        "problem": "Guards like isDetailsLeaf() must mirror union structure exactly. New variants require coordinated changes. Guards check discriminant presence only, not shape.",
+        "recommendation": "Use exhaustive pattern matching with TypeScript control flow: structure types so switch(def.kind) is provably exhaustive. Document pattern.",
+        "effort": "S",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "medium",
+          "reasoning": "VERIFIED against packages/games/src/lib/typeGuards.ts and types.ts. The factual core is accurate: isDetailsLeaf() (typeGuards.ts:9-17) checks only for the presence of the 5 discriminant keys ($input, expr, $pool, $conditionalPool, $dieCheck) that map 1:1 to the 5 DetailsLeafDef variants (types.ts:165-170). It performs no shape validation, and adding a 6th leaf variant requires manually editing the guard with no compile-time check that it stays in sync with the union. The normalizer (normalizer.ts:112-130) consumes these guards and falls through to an `as Readonly<Record...>` cast for the nested case with no `never`/exhaustiveness assertion — a genuine (if minor) gap. No assertNever/exhaustive pattern exists anywhere in lib/. Severity P3 is correct: blast radius is one 9-line function with two call sites.\n\nHowever the RECOMMENDATION is only partially sound and needs adjustment, not adoption as written. (1) \"Structure types so switch(def.kind) is provably exhaustive\" cannot be applied to DetailsFieldDef directly: these types are deserialized from hand-authored .randsum.json specs and are distinguished STRUCTURALLY by design (no `kind` field). Adding `kind` discriminants would break the public spec format users author. (2) The codebase ALREADY converts to a tagged kind-discriminated IR (NormalizedDetailsFieldDef with kind: 'leaf'|'conditional'|'nested') at exactly this boundary, so the requested pattern is already present at the IR layer — it just can't be pushed up to the spec layer. (3) \"Guards check discriminant presence only, not shape\" is largely mooted in practice because spec shape is validated upstream by the ajv meta-schema (validator.ts) before normalization runs, so malformed shapes never reach these guards.\n\nThe defensible improvement is narrower than stated: add an assertNever/never-exhaustiveness guard at the normalizeDetailsField fallthrough (normalizer.ts:126) so a future DetailsLeafDef/DetailsFieldDef variant fails to compile rather than silently being treated as a nested record. Confirmed as P3 expand, but the orchestrator should treat the recommendation as \"add exhaustiveness assertion at the normalizer boundary,\" not \"add kind discriminants to spec types.\"",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "No dual-consumer validation test",
+        "dimension": "best-practices",
+        "severity": "P1",
+        "category": "expand",
+        "location": "packages/games/__tests__/lib/",
+        "problem": "Codegen and runtime have separate test suites. No test pairs them: generate code for a spec, run both generated function and runtime interpreter on same inputs, assert matching results. Drift could accumulate silently.",
+        "recommendation": "Add dualConsumer.test.ts: (1) load spec, (2) generate code, (3) execute generated and runtime on identical inputs, (4) assert matching results. Include property-based tests with random inputs.",
+        "effort": "M",
+        "area": "games-codegen",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "VERIFIED REAL. The dual-consumer premise holds: packages/games/src/lib/pipeline.ts (executePipeline, runtime interpreter) and packages/games/src/lib/codegen.ts (generateCode emitter) both independently consume the same NormalizedRollDefinition IR. Generated game code is a fully standalone execution path — e.g. src/blades.generated.ts inlines all condition/threshold/pool logic and calls executeRoll directly; it does NOT delegate to executePipeline. loadSpec (src/lib/loader.ts:25) routes to executePipeline. So there are genuinely two semantic implementations of the same spec.\\n\\nGAP CONFIRMED: No test runs both the generated roll() and pipeline loadSpec().roll() on identical inputs and asserts matching results. The tests that import both (degreeOfSuccess.test.ts, conditionalPool.test.ts, multiPool.test.ts, postResolve.test.ts, dynamicPoolSides.test.ts) test pipeline behavior via loadSpec and separately do STATIC string assertions on generateCode output (type contains names, descending order, no error string) — never semantic cross-validation. codegen-snapshots.test.ts only locks generated text against checked-in files. So interpreter/emitter drift could accumulate silently — the finding's core concern is valid, located correctly, and non-duplicative.\\n\\nONE CAVEAT ON THE RECOMMENDATION (why not 'adjusted': the finding's substance/severity/location/effort are sound; only the implementation note needs refinement): the recommendation 'execute both on identical inputs, assert matching results' is not directly feasible at the value level today because neither path threads a seedable RNG. Generated code calls executeRoll({sides,quantity,modifiers}) with no config.randomFn, and executePipeline(rollDef, input, specName) has no RNG parameter — even though roller's roll() supports config.randomFn. A feasible-today approach is to spyOn/mock @randsum/roller (the exact pattern already in codegenUnit.test.ts) to force a fixed dice outcome, then assert both paths classify it identically; or thread a shared RNG through both paths first (larger work). The finding stands; implementers should use the mock-the-roller approach rather than assuming inputs alone determinize output.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Input parameters lack descriptions in 5 of 6 game specs",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "packages/games/*.randsum.json (daggerheart, fifth, pbta, root-rpg, salvageunion)",
+        "problem": "Input parameters like `modifier`, `amplifyHope`, `amplifyFear`, `rollingWith`, `stat`, `forward`, `ongoing`, and `tableName` lack `description` fields in their InputDeclaration. While the schema doesn't mandate descriptions (required: [\"type\"] only), missing descriptions reduce spec clarity and make it harder for codegen tooling or downstream documentors to auto-generate API documentation. Blades is the only spec with full input descriptions.",
+        "recommendation": "Add descriptive `description` fields to all undocumented input parameters. Examples: `modifier` → \"Modifier to add to the roll\"; `amplifyHope` → \"When true, roll d20 instead of d12 for Hope\"; `rollingWith` → \"Apply advantage or disadvantage\"; `stat` → \"Character stat bonus\"; `tableName` → \"Name of the Salvage Union table to roll on\".",
+        "effort": "S",
+        "area": "games-specs",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "VERIFIED REAL AND CURRENT. Parsed all 6 specs at packages/games/*.randsum.json. Inputs lacking `description`: daggerheart (modifier, amplifyHope, amplifyFear, rollingWith — all 4), pbta (stat, forward, ongoing, rollingWith — all 4), root-rpg (bonus, rollingWith — both), salvageunion (tableName), and fifth (rollingWith — though fifth DOES document modifier and crit). So 5 of 6 specs have undocumented inputs, as claimed.\n\nTWO CORRECTIONS to the finding's framing, neither fatal:\n1. The claim \"Blades is the only spec with full input descriptions\" is inaccurate — fifth.randsum.json documents 2 of its 3 inputs (modifier='5E modifier', crit). It's just missing rollingWith. So it's \"5 specs have SOME undocumented inputs,\" not \"only blades has any.\"\n2. The finding UNDERSELLS the real cost. It speculates descriptions help \"downstream documentors auto-generate API documentation\" — but the actual concrete cost is that `description` IS already consumed by codegen at packages/games/src/lib/codegen/emitHelpers.ts:237, where it becomes the human-readable label in runtime validateFinite/validateRange error messages. When absent, it falls back to `${specName} ${fieldName}`, producing generic labels in shipped generated code — e.g. pbta.generated.ts:25 emits validateFinite(input.stat, 'Powered by the Apocalypse stat') and daggerheart.generated.ts:28 emits 'Daggerheart modifier'. So missing descriptions degrade real user-facing validation error messages, not hypothetical docs. The finding's rootedness is even stronger than it claims.\n\nRecommendation is sound and non-duplicative: the prior 30-item audit did not cover input descriptions. Adding descriptions is a low-effort spec-only change that regenerates better error labels. Note the root.bonus param recommendation in the finding cites 'stat' for root-rpg which is wrong (root uses 'bonus'), but that's a cosmetic error in the example list. P2/clarify/DX is the correct rating — this is polish affecting error-message quality, not a bug. Effort S is correct (edit specs, run codegen).",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Missing srd_url for 5 of 6 games",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "packages/games/*.randsum.json (daggerheart, fifth, pbta, root-rpg, salvageunion)",
+        "problem": "The `srd_url` field is optional but present only for Blades in the Dark. For the other five games, it is omitted entirely. This reduces discoverability for consumers who want to validate spec accuracy. D&D 5e in particular should point to an SRD.",
+        "recommendation": "Add `srd_url` to each spec where an official SRD exists: D&D 5e → https://www.dndbeyond.com/sources/basic-rules, Daggerheart → official docs, PbtA → official SRD link, Root RPG → Magpie Games reference, Salvage Union → Leyline Press page.",
+        "effort": "S",
+        "area": "games-specs",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The factual claim is accurate: only packages/games/blades.randsum.json has srd_url; daggerheart, fifth, pbta, root-rpg, salvageunion omit it (confirmed via grep). srd_url is an optional field (packages/games/src/lib/types.ts:199, normalizedTypes.ts:127).\n\nBut the finding's rationale and severity are wrong. (1) The stated benefit has no delivery mechanism: srd_url never reaches consumers. grep -c 'srd' across ALL src/*.generated.ts returns 0 — including blades. The field exists only in spec JSON, the schema/IR type, and a normalizer pass-through (normalizer.ts:225). The public package API (roll(), AVAILABLE_GAMES) never surfaces it, so 'discoverability for consumers' is unachievable as described — it's authoring-time metadata only. (2) Required discoverability already exists: every spec has a required game_url to the official publisher (fifth→dnd.wizards.com, salvageunion→leyline.press, root-rpg→magpiegames.com, daggerheart→darringtonpress.com), filling most of the claimed gap. (3) The recommendation is partly unsound: D&D Beyond basic-rules is a commercial Wizards property, not the 5e SRD CC document; and for Daggerheart/PbtA it hand-waves 'official docs' rather than citing real canonical SRD URLs, several of which don't exist distinct from game_url.\n\nReal but trivial cosmetic inconsistency with no consumer-facing cost and an overstated benefit. Below P2; at most a P3 nicety.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "PbtA and Root RPG outcome range bounds are imprecise and asymmetric",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "packages/games/pbta.randsum.json:29-33, packages/games/root-rpg.randsum.json:16-21",
+        "problem": "Both specs declare outcome ranges with lower bounds that are far wider than necessary: PbtA uses `min: -11` (actual min = -1), Root RPG uses `min: -18` (actual min = -1). These ranges are technically correct but may confuse future maintainers about actual game physics.",
+        "recommendation": "Calculate and document the actual minimum and maximum possible totals for each game. For PbtA (2d6 + stat, stat range -3 to +5): min = -1, max = 17. For Root RPG: min = -1, max = 17. Update ranges to `min: -1` to make the spec more self-documenting. Add a comment explaining the calculation.",
+        "effort": "S",
+        "area": "games-specs",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The finding is half-wrong and overstated. I opened both cited specs and the range-coverage validator that consumes them.\n\nPBTA HALF IS FACTUALLY WRONG. The finding claims pbta.randsum.json `min: -11` is \"far wider than necessary (actual min = -1)\" and recommends `min: -1, max: 17`. But pbta.randsum.json:8-20 adds THREE modifiers, not just stat: `stat` (-3..+5), `forward` (-5..+5), and `ongoing` (-5..+5). Real total range = 2d6(2..12) shifted by all three: min = 2-3-5-5 = -11, max = 12+5+5+5 = 27. The spec's `min: -11, max: 27` are EXACTLY correct, not imprecise. Worse, the finding's recommended `min: -1, max: 17` would be a regression: validateRangeCoverage (packages/games/src/lib/rangeCoverage.ts:242, wired into codegen.ts:167) requires outcome ranges to cover the entire pool range, so narrowing PbtA to -1..17 would leave -11..-2 and 18..27 uncovered and throw SchemaError at codegen. The finding's own arithmetic ignored forward/ongoing.\n\nROOT RPG HALF IS CORRECT BUT THE COST IS OVERSTATED. root-rpg.randsum.json only adds `bonus` (-3..+5) to 2d6 (Advantage/Disadvantage are 3d6-keep-2, still 2..12), so real range is -1..17. The spec's `min: -18, max: 32` (lines 18,20) are genuinely over-wide. However, this is purely cosmetic: findUncoveredGaps (rangeCoverage.ts:172-173) clips every covered range to the actual pool bounds before checking, so the slack -18 and 32 are never reachable totals and never affect classification. It is a self-documentation nit on ONE spec, not the two-spec systemic DX issue described.\n\nNET: location partially wrong (PbtA bounds are correct, not imprecise), recommendation partially harmful (PbtA change breaks codegen), and the real (Root-only) issue is cosmetic with no functional cost. Keep only the Root RPG bound-tightening as a P3 tidiness item; the title's claim that this spans both games and affects clarity at P2 is not supported.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "No schema or codegen support for non-standard die types (Fate dice, custom faces)",
+        "dimension": "strategic",
+        "severity": "P2",
+        "category": "expand",
+        "location": "packages/games/randsum.json:63-66 (PoolDefinition.sides), packages/games/src/lib/types.ts:8-10",
+        "problem": "The `PoolDefinition.sides` field accepts only `IntegerOrInput`. Non-standard dice like Fate/Fudge dice (faces -1, 0, +1) cannot be expressed in specs. This blocks codegen support for Fate Core and any other game system with non-d4/d6/d8/d10/d12/d20 dice. Prior audit (F6) confirmed this as a blocker.",
+        "recommendation": "Extend `PoolDefinition` to support non-integer sides. Add a `notation` escape hatch field (e.g., `\"notation\": \"4dF\"`) that accepts RANDSUM Dice Notation strings, reusing the existing roller parser. Alternatively, add a `specialDie` field (e.g., `{ \"specialDie\": \"fate\" }`). Document whichever approach in randsum-json-schema.md with Fate Core as the example.",
+        "effort": "M",
+        "area": "games-specs",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against actual code. Both cited locations are exact: packages/games/randsum.json:63-66 defines PoolDefinition.sides as {$ref: IntegerOrInput}, and packages/games/src/lib/types.ts:8-9 declares `readonly sides: IntegerOrInput`. IntegerOrInput (types.ts:1-4) resolves only to number or an $input that yields a number — there is no string/notation/faces path. The roller DOES fully support non-standard dice (Fate/Fudge dF at core.ts:24-25, custom faces d{-1,0,1} at core.ts:59-64, zN zero-indexed), but the codegen path emits only `executeRoll({ sides: <number>, quantity })` (emitBody.ts:48, emitModifiers.ts:50-58) and the roller's RollOptions.sides is typed `number` (core.ts:12). So Fate Core and any custom-face system genuinely cannot be expressed as a .randsum.json spec, which violates the project's documented schema-extension principle (no hand-written game TS). Confirmed current: randsum.json has no notation/specialDie/faces field (only a description string mentioning \"faces\"); no fate.randsum.json exists; recent schema commits (resultShape, markDice, min-max) did not address it. Non-duplication confirmed: this was flagged as F6 in audit/dimensions/games.md but did NOT make the shipped audit/synthesis-top-30.md (which contains games F1-F5, F10, F11 — F6 absent), so it was identified-but-not-shipped, i.e. genuinely still open. Recommendation is sound and even stronger than stated: the roller already exposes a custom-faces API, so a `faces: number[]` field maps cleanly, and a `notation` escape hatch reuses the existing parser. P2 is appropriate — blocks the P1 Fate Core game (#940) but is not a correctness or publishing blocker.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Schema lacks 'multi-roll' specs: single roll per spec blocks Blades resistance and D&D 5e ability scores",
+        "dimension": "strategic",
+        "severity": "P1",
+        "category": "expand",
+        "location": "packages/games/codegen.ts:89 (generateCode only handles spec.roll), packages/games/randsum.json:51-54 (top-level roll is singular)",
+        "problem": "The schema and codegen support exactly one `roll` definition per spec. Blades in the Dark has both an action roll and a resistance roll (mechanically identical but different outcome interpretation). D&D 5e has ability checks, ability score generation, and death saves. Currently, consumers must re-derive outcomes themselves (Blades) or the games are under-scoped (5e). Prior audit flagged this as F3 (Blades) and F4 (5e).",
+        "recommendation": "Extend the schema to allow either a single `roll` (backward compat) or a `rolls: { [key: string]: RollDefinition }` object. Update codegen to emit one exported function per spec entry (e.g., `rollAction()`, `rollResistance()` for Blades). Document the pattern in randsum-json-schema.md.",
+        "effort": "M",
+        "area": "games-specs",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The core claim is TRUE and current. The schema (packages/games/randsum.json:7,51-54) declares exactly one singular `roll` property (required, no `rolls` map), and blades.randsum.json / fifth.randsum.json each expose a single roll(). Blades is missing its resistance roll; 5e is missing 4d6L ability-score generation, saves, and death saves. Consumers must re-derive these (e.g. stress = 6 - total for Blades).\\n\\nThe finding's LOCATIONS are partly wrong. codegen.ts is 142 lines, not 89+, and `generateCode` lives in src/lib, not codegen.ts. The real single-roll hardcode is `getRollDefinitions()` in packages/games/src/lib/typeGuards.ts:42, which returns `{ roll: spec.roll }`. The randsum.json:51-54 citation is accurate.\\n\\nCRITICALLY, the finding UNDERSTATES how close the codebase already is. The IR (NormalizedSpec.rolls is a Record<string,...> — normalizer.ts:216-226) and the codegen emit loop (codegen.ts:127 `for (const [key, rollDef] of Object.entries(nspec.rolls))`) ALREADY iterate over multiple named rolls, and emitBody.ts:353-368 emits `export function ${key}(...)` keyed off the roll name, with result types prefixed by capitalize(key). So the entire pipeline already supports N named rolls per spec; only two leaf points block it: getRollDefinitions hardcoding `{ roll }`, and the schema declaring singular `roll`. The recommendation (add a `rolls` map alongside `roll`, emit one function per entry) is exactly right and cheaper than 'M' implies given the existing plumbing.\\n\\nNot a duplicate of an already-FIXED item: prior audit games.md F3 (P1, Blades resistance) and F4 (P2, 5e) documented this but were explicitly listed under synthesis-top-30.md:152-153 'Honorable mentions (didn't make top 30)' and were NOT shipped in the 30-item fix. So they are genuinely still-open. This finding legitimately consolidates and re-prioritizes them as a single strategic 'expand' item.\\n\\nAdjusting: severity stays P1 (defensible — blocks correct scoping of two flagship games, fix is cheap given existing IR support). Marking 'adjusted' rather than 'confirmed' because the cited code locations are inaccurate and should be corrected to typeGuards.ts:42 + randsum.json:51-54, and the recommendation should note the IR/codegen already support multi-roll.",
+          "adjustedSeverity": "P1",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Pre-commit codegen check doesn't trigger on edits to generated files",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "lefthook.yml (pre-commit codegen-check glob), audit/dimensions/games.md:F5",
+        "problem": "The pre-commit hook's `codegen-check` command only runs when `.randsum.json` spec files are modified. If a developer hand-edits a `src/*.generated.ts` file and stages it, the hook won't detect the drift—codegen freshness is only checked at pre-push. This allows commits with invalid generated code to exist in local history.",
+        "recommendation": "Add `packages/games/src/*.generated.ts` to the pre-commit codegen-check glob. Change lefthook.yml from `glob: 'packages/games/*.randsum.json'` to `glob: 'packages/games/*.randsum.json|packages/games/src/*.generated.ts'`. This catches drift at commit time rather than push time.",
+        "effort": "S",
+        "area": "games-specs",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed against the actual files. /Users/jarvis/Code/RANDSUM/@RANDSUM/lefthook.yml pre-commit codegen-check has glob: \"packages/games/*.randsum.json\", so it only fires when a spec is staged; a hand-edit to packages/games/src/*.generated.ts staged without touching a spec does not trigger gen:check at commit time. The pre-push codegen-check runs unconditionally (no glob) via `bun run --filter @randsum/games gen:check` → codegen.ts --check, which checks all generated files. The cited location and the audit's F5 source are accurate, and the issue is not duplicated by any existing pre-commit command.\n\nTwo reasons to ADJUST rather than confirm as-is:\n\n1) Severity is overstated at P2. The pre-push hook is a complete safety net: it runs gen:check on every push regardless of which files changed, so drift can never reach the remote or CI. The only consequence is an invalid generated file existing in LOCAL-only history between commit and push — no shipping/CI exposure. The audit's own F5 text concedes \"The pre-push protection is the primary safety net.\" This is a P3 local-DX nicety, not a P2.\n\n2) The literal recommendation is technically shaky. Lefthook uses the gobwas/glob matcher; a single pipe-joined string `'packages/games/*.randsum.json|packages/games/src/*.generated.ts'` is not the documented way to express two path patterns (lefthook expects a YAML array, e.g. glob: [\"packages/games/*.randsum.json\", \"packages/games/src/*.generated.ts\"]). The intent is sound but the exact change as written may not behave as claimed and should use the array form.\n\nReal, current, non-duplicative, but mis-rated and the fix needs syntax correction — hence adjusted to P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Schema and codegen extensibility gaps block Fate Core and Ironsworn additions",
+        "dimension": "strategic",
+        "severity": "P1",
+        "category": "expand",
+        "location": "audit/dimensions/games.md:F6–F7, packages/games/randsum.json",
+        "problem": "Two major schema gaps block future games: (1) Fate Core requires special die support (Fate/Fudge dice), which current `PoolDefinition.sides: IntegerOrInput` cannot express. (2) Ironsworn requires a challenge-comparison resolve strategy (compare 1d6+stat+bonus against two d10 challenge dice, count wins) distinct from existing `comparePoolHighest` and `countMatching`. Both are flagged as P2 codegen extensibility blockers in prior audit.",
+        "recommendation": "Design and implement schema extensions: (1) Extend `PoolDefinition` with notation or specialDie support for non-standard dice. (2) Design a `challengeComparison` resolve strategy for Ironsworn-style action-vs-challenge mechanics. Document both in randsum-json-schema.md with examples. Prioritize Fate Core first (simpler), then Ironsworn. This unblocks the next cohort of games.",
+        "effort": "L",
+        "area": "games-specs",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Both underlying gaps are REAL and current in the code. (1) Fate dice: packages/games/randsum.json:899-934 and packages/games/src/lib/types.ts:9 define PoolDefinition.sides as IntegerOrInput (integer or $input resolving to an integer) — there is no notation/faces/specialDie escape hatch, so dF/Fudge dice genuinely cannot be expressed in a spec. (2) Ironsworn: ResolveOperation (randsum.json:505-560) enumerates exactly sum, countMatching, tableLookup, comparePoolHighest, comparePoolSum — no action-vs-two-challenge-dice strategy exists. Neither game has been started (no *fate*/*ironsworn* files). The recommendation is sound and not duplicative.\n\nHowever, the SEVERITY is mis-rated. The source audit (audit/dimensions/games.md) explicitly rates F6 as P2 and F7 as P2; this finding aggregates them and promotes to P1 with no new justification. These are extensibility gaps for UNSTARTED future roadmap games (#940/#944 are epics, not committed work) — they block nothing currently shipping. The audit's own summary calls them 'real and non-trivial' yet deliberately rated them P2. Promotion to P1 is unwarranted; correct severity is P2.\n\nMinor imprecision: the recommendation says to document in randsum-json-schema.md, but packages/games/docs/codegen-extension.md already exists as the canonical home for new resolve strategies / pool shapes — that's the doc to update. Doesn't invalidate the finding.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Excessive code duplication across web/native target variants (40-50% overhead)",
+        "dimension": "dry",
+        "severity": "P1",
+        "category": "refine",
+        "location": "packages/dice-ui/src/*.{tsx,native.tsx}",
+        "problem": "dice-ui maintains 11 parallel .tsx/.native.tsx pairs (NotationRoller: 243 vs 245 LOC; RollSteps: 124 vs 220 LOC; RollResultPanel: 97 vs 190 LOC; TokenOverlayInput: 56 vs 147 LOC; QuickReferenceGrid: 1050 vs 866 LOC). Shared logic (tokenize, isDiceNotation, NOTATION_DOCS usage, traceRoll) is duplicated verbatim. Theme TOKENS objects (dark/light color maps) are copy-pasted into 5 native files with identical hex values. This creates maintenance burden: a color fix, import path change, or business logic update must be applied twice, risking silent inconsistencies.",
+        "recommendation": "Extract shared logic into `.util.ts` files (e.g., `buildTokens.ts` exporting theme constants, `rollStepsLogic.ts` for the step-rendering algorithm). Web components import CSS; native components use StyleSheet.create. Converge on a single `Step` data structure that both targets render from. For color tokens, define once in a shared file and both targets reference it. This reduces duplication from ~1900 shared LOC to ~300, freeing that maintenance budget.",
+        "effort": "M",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed against actual files. LOC counts match exactly (NotationRoller 243/245, RollSteps 124/220, RollResultPanel 97/190, TokenOverlayInput 56/147, QuickReferenceGrid 1050/866). Shared logic IS duplicated verbatim across NotationRoller.tsx vs .native.tsx — the handleRoll callback, tokens useMemo, isValid check, and the desc-row token-mapping algorithm (sep computation, category branching, tokenColor(NOTATION_DOCS[token.key], theme)) are near-identical. The TOKENS color palette (text:#fafafa, accent:#a855f7, etc.) is copy-pasted into 5 native files (NotationRoller, RollResultPanel, QuickReferenceGrid, RollSteps, TokenOverlayInput); the subsets already diverge in which keys each carries, which is direct evidence the predicted drift has begun. NOT a duplicate of the shipped 30-item audit, which only covered dice-ui's ink dependency (item 10/architecture:F2) and unbuilt-source resolution, never the web/native component duplication. The recommendation (extract .util.ts shared logic + single token source) is sound and non-duplicative.\n\nTwo corrections justify 'adjusted' rather than 'confirmed': (1) Severity overstated. dice-ui is private:true, v2.0.0, consumed only by apps/expo and apps/site — no published-API or runtime-correctness exposure. This is refine-quality maintenance drift, not a release blocker; P2 fits better than P1. (2) Payoff overstated: '~1900 shared LOC to ~300' is inflated — much per-target LOC is genuinely platform-specific (CSS class-string composition vs StyleSheet.create objects, div/input vs View/Pressable, mouse-hover overlay positioning that has no RN analog). The truly shareable surface is the roller-glue logic and the token palette — real and worth extracting, but smaller than claimed. Minor inaccuracy: the rec says converge on a single Step structure, but RollSteps already shares RollTraceStep from @randsum/roller/trace; the duplication there is rendering JSX, not the data shape.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "DocModal not exported from native barrel, breaking Metro resolution contract",
+        "dimension": "best-practices",
+        "severity": "P1",
+        "category": "fix",
+        "location": "packages/dice-ui/src/index.native.ts",
+        "problem": "Web `index.ts` exports `DocModal` from `QuickReferenceGrid`, but `index.native.ts` omits it. Expo's Metro resolver is configured to fork dice-ui to `index.native.ts` on native platforms. If downstream code imports `{ DocModal }` from `@randsum/dice-ui` on native, it will fail at runtime because the native barrel doesn't re-export it. The Expo app type augmentation (apps/expo/types/dice-ui.d.ts) declares the interface but the native runtime won't provide it.",
+        "recommendation": "Add `export { QuickReferenceGrid, DocModal }` to `index.native.ts` line 14 (or stub DocModal with a no-op if native truly doesn't support it). Verify that apps/expo actually uses DocModal on native and that Metro properly resolves the export.",
+        "effort": "S",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The export asymmetry is real but the claimed runtime break is false. Verified facts: packages/dice-ui/src/index.ts:13 exports `{ QuickReferenceGrid, DocModal }`; packages/dice-ui/src/index.native.ts:14 exports only `{ QuickReferenceGrid }`, omitting DocModal. In QuickReferenceGrid.native.tsx:502 DocModal is declared as a PRIVATE function (`function DocModal`, not `export function`), unlike the web version (QuickReferenceGrid.tsx:616 `export function DocModal`). apps/expo/metro.config.js does fork @randsum/dice-ui to index.native.ts on non-web platforms, and apps/expo/app/index.tsx:2-8 unconditionally imports DocModal.\n\nREFUTATION of the P1 claim: the sole consumer never invokes DocModal on native. apps/expo/app/index.tsx:273 gates the top-level `<DocModal>` render behind `isWeb && selectedDocKey !== null` (isWeb = Platform.OS === 'web', line 115). On native the QuickReferenceGrid renders its OWN internal DocModal (native file line 856, controlled via `suppressModal={isWeb}` at index.tsx:144). So on native, DocModal binds to undefined via Metro's loose ESM/CJS interop (no import-time throw) and is simply never rendered. There is no runtime failure. The type augmentation (apps/expo/types/dice-ui.d.ts) masks this from tsc but the code path is dead on native by design.\n\nThe recommendation is also imprecise: simply adding DocModal to index.native.ts line 14 would NOT compile, because DocModal in QuickReferenceGrid.native.tsx is not exported (line 502) — you'd first have to add `export`. And the native design appears to deliberately keep DocModal internal to the grid (the grid owns its modal lifecycle on native; the web split exposes it so the app hosts the modal). Blindly exporting may be incorrect.\n\nNet: a genuine barrel-symmetry inconsistency and latent footgun worth a one-line fix or a comment, but NOT a P1 runtime break. Downgrade to P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Multi-target abstraction maturity mismatch: native variants in draft state, web complete",
+        "dimension": "strategic",
+        "severity": "P1",
+        "category": "clarify",
+        "location": "packages/dice-ui/CLAUDE.md, apps/expo/CLAUDE.md, metro.config.js",
+        "problem": "The CLAUDE.md documentation states the plan: 'If WebView performance becomes a blocker, produce `.native.tsx` variants.' Native implementations exist for all components, but the strategy is underdeveloped: (1) useTheme.native differs fundamentally (Context vs MutationObserver), (2) NumericStepper.tsx is a web stub returning null, (3) QuickReferenceGrid.native lacks DocModal and has different prop signatures (no `suppressModal`, `selectedEntry`, `onSelect` parity). The abstraction is neither 'web-first with a native escape hatch' nor 'true dual-mode'; it's a half-implemented hybrid that creates API surface mismatches. The Expo app works because it manually manages both variants and forks them in state (e.g., `suppressModal={isWeb}`, `inverted={!isWeb}`). This is not self-documenting or maintainable.",
+        "recommendation": "Decide the true north: (A) EMBRACE dual-target: formalize the native implementations as first-class, unify all prop interfaces, ensure parity across both barrels (index.ts vs index.native.ts), and remove web stubs like NumericStepper.tsx. OR (B) DROP native variants and gate them behind Expo's 'use dom' entirely (WebView for rich UI). OR (C) SIMPLIFY to web-only (game packages only, native only via Expo's WebView). Currently, the half-state costs more than either full investment or full retreat. If (A), add a pre-push test that exports are identical in both barrels. If (B/C), delete the .native.tsx files and remove Metro's fork logic.",
+        "effort": "L",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "VERIFIED against actual code. Every technical claim holds:\n\n1. useTheme divergence (CONFIRMED): packages/dice-ui/src/useTheme.tsx uses useSyncExternalStore + MutationObserver and DiceUIThemeProvider accepts only {children}. useTheme.native.tsx uses React Context and DiceUIThemeProvider accepts {theme, children}. The signatures genuinely differ — a real API mismatch.\n\n2. NumericStepper.tsx web stub (CONFIRMED): it is literally a stub returning null (lines 1-14: \"Web stub — NumericStepper is a native-only component\"), while NumericStepper.native.tsx is the real implementation.\n\n3. QuickReferenceGrid prop asymmetry (CONFIRMED): the shared QuickReferenceGridProps in types.ts declares suppressModal, selectedEntry, onSelect. The web QuickReferenceGrid.tsx (lines 960-967) honors all of them; the native QuickReferenceGrid.native.tsx (lines 742-746) destructures only {onAdd, notation, inverted} and silently ignores suppressModal/selectedEntry/onSelect. Native also has an internal DocModal not exported, while web exports DocModal. index.ts exports DocModal; index.native.ts does NOT — confirming the barrel asymmetry.\n\n4. Expo forks variants in state (CONFIRMED): apps/expo/app/index.tsx:143-144 sets inverted={!isWeb}, suppressModal={isWeb}; metro.config.js forks index.ts vs index.native.ts by platform; apps/expo/app/_layout.tsx:36 passes <DiceUIThemeProvider theme={colorScheme}> — a prop the web variant ignores entirely. apps/expo/types/dice-ui.d.ts hand-declares the native surface (including props native ignores), so type-checking cannot catch the drift.\n\nNON-DUPLICATIVE: The prior audit's architecture F2 / synthesis #10 cover dice-ui shipping as unbuilt source and the ink dependency, and mention the expo .d.ts duplication tax — but do NOT cover the native/web component-parity mismatch (divergent provider signature, web stub, ignored props). This is a new, distinct strategic finding.\n\nSEVERITY ADJUSTED P1 -> P2: The finding is real and the recommendation (pick a true-north: formalize dual-target with a barrel-parity test, or drop native for DOM-WebView, or go web-only; delete stubs/fork logic accordingly) is sound. But the blast radius is bounded: dice-ui is private:true, never published, all consumers are first-party, and the app works today because the ignored-prop combinations happen to be benign (native receives suppressModal=false, so the modal it renders is correct). This is genuine maintainability/clarity debt with a latent-bug surface, not a correctness or shipping blocker — which maps to P2 rather than P1.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "API mismatch: NotationRollerProps differ between web and native (className, renderActions missing on native)",
+        "dimension": "dx",
+        "severity": "P1",
+        "category": "refine",
+        "location": "packages/dice-ui/src/NotationRoller.tsx vs .native.tsx",
+        "problem": "Web NotationRollerProps includes `className` and `renderActions` (render prop for custom toolbar). Native version omits both, instead accepting `showRollButton` boolean. This forces wrapper code (e.g., apps/site/NotationRoller.tsx) to fork imports or cast. The site wraps the web component to inject StackBlitz/playground actions — this pattern is impossible on native without rewriting the entire component. RollResultPanelProps also differs (web has `className`, native omits it). The prop divergence means consumers cannot write isomorphic code or swap targets at bundle time.",
+        "recommendation": "Unify NotationRollerProps across both files: include className, renderActions, and showRollButton on both. For native, renderActions can be a render prop that gets ignored (or used to hook into a custom modal). This allows a single consumer interface and makes it possible to swap targets via tsconfig paths without code changes.",
+        "effort": "M",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The factual claims are accurate. Verified in packages/dice-ui/src/NotationRoller.tsx (web: NotationRollerProps has `className` line 15 and `renderActions` line 19) vs NotationRoller.native.tsx (native: omits both, adds `showRollButton` line 18). RollResultPanel.tsx (web) has `className` line 11; RollResultPanel.native.tsx omits it (lines 7-12). The prior 30-item audit (audit/synthesis-top-30.md) touched dice-ui only re: the ink dependency, so this is non-duplicative.\n\nHowever, the SEVERITY (P1) and the \"actual cost\" framing are overstated, warranting a downgrade to P3:\n\n1. The divergence is DELIBERATE and documented architecture. Both packages/dice-ui/CLAUDE.md and apps/expo/CLAUDE.md describe platform-forked `.web`/`.native` components as the intended strategy, and apps/expo/metro.config.js forks `@randsum/dice-ui` to index.native.ts by platform. `className` has no meaning in React Native, and `renderActions` returning DOM-element ReactNode is unrenderable on native — so the props legitimately differ by render target.\n\n2. The claimed cost is not borne out by any real consumer. The site wrapper (apps/site/src/components/NotationRoller/NotationRoller.tsx) imports from @randsum/dice-ui (web) with NO casting and NO import fork — it just uses web props. The expo consumer (apps/expo/app/index.tsx line 135) uses only the native props, resolved by Metro, typed via the ambient apps/expo/types/dice-ui.d.ts shim. Neither consumer \"forks imports or casts,\" and there is no isomorphic/target-swapping consumer in the repo that the divergence breaks. The claim \"impossible without rewriting the entire component\" and \"consumers cannot write isomorphic code\" is unsubstantiated.\n\n3. The recommendation is partly unsound: adding `className` to native props would expose a no-op prop (misleading API), and a `renderActions` that \"gets ignored\" defeats its purpose. The genuinely-actionable nugget is the `showRollButton` asymmetry — native has it, web doesn't — but that is a minor papercut, not a swap-targets blocker.\n\nReal but minor DX rough edge. Downgrade P1 -> P3; the unification recommendation should be narrowed to aligning the genuinely-shared props (e.g. add `showRollButton` to web) rather than forcing platform-meaningless props onto both.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "TokenOverlayInput.native API fundamentally differs (managed TextInput vs unmanaged overlay children)",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/dice-ui/src/TokenOverlayInput.tsx vs .native.tsx",
+        "problem": "Web version accepts `children: React.ReactNode` (the input is wrapped inside) and ref/hoveredTokenIdx props. Native version is self-contained: accepts `value`, `onChangeText`, `tokens` and manages the TextInput + overlay internally. The two are not drop-in compatible — NotationRoller.native had to rewrite how it uses TokenOverlayInput, wrapping the TextInput differently than the web version. This is the most egregious prop mismatch and suggests the components were ported separately rather than refactored to share an interface.",
+        "recommendation": "Adopt the web interface (children + refs) as the canonical one. For native, accept `value/onChangeText` via children-as-render-prop pattern (a common React idiom). Alternatively, replace both with a render-prop-based design where the caller owns the TextInput and both targets just render the overlay. This unifies the mental model and allows the site/Expo code to use the same component with minimal platform detection.",
+        "effort": "M",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "VERIFIED REAL: The two TokenOverlayInput variants have genuinely divergent public APIs. Web (packages/dice-ui/src/TokenOverlayInput.tsx, props lines 7-13) takes children/overlayRef/hoveredTokenIdx — caller owns the <input>, hover is driven by mouse + getBoundingClientRect on overlay spans. Native (TokenOverlayInput.native.tsx, props lines 7-15) takes value/onChangeText/placeholder/onSubmitEditing/isInvalid — component owns the TextInput. Both are exported under the same public name, with index.native.ts:7 aliasing TokenOverlayInputNativeProps as TokenOverlayInputProps, so the public type silently differs by platform. The cost description (NotationRoller wires them differently) is accurate: NotationRoller.tsx:121-151 passes children + overlayRef; NotationRoller.native.tsx:217-225 passes value/onChangeText/isInvalid. Not a duplicate of the prior 30-item audit (synthesis-top-30.md and dimension files do not mention this).\n\nADJUSTED DOWN for two reasons:\n\n1) Severity inflated. TokenOverlayInput is NOT consumed by any downstream app — site (apps/site/.../NotationRoller.tsx) and Expo (apps/expo/app/index.tsx + ambient types apps/expo/types/dice-ui.d.ts) consume only the higher-level NotationRoller, whose prop shape is consistent across platforms (modulo showRollButton vs className). The divergence is a latent footgun in a private, never-published package, not active friction. The recommendation's stated benefit ('site/Expo use the same component with minimal platform detection') is hypothetical — nobody uses this component cross-platform today. This is P3, not P2.\n\n2) Recommendation partly unsound. 'Adopt the web children+refs interface as canonical for native' cannot work: the native overlay technique structurally requires the component to own the TextInput (it sets the real input text color to transparent at native.tsx:64 and layers a colored Text overlay at lines 92-109). The web hover model (hoveredTokenIdx, getBoundingClientRect, onMouseMove/Leave) is DOM/mouse-only with no RN equivalent. The fallback render-prop design (caller owns the TextInput) also breaks the transparent-input technique. So 'unify the interface' is not clearly correct — these may legitimately be platform-specific siblings sharing only a name. A sound, cheaper fix: keep them separate but give distinct exported type names (drop the misleading 'as TokenOverlayInputProps' alias) and document in dice-ui CLAUDE.md that the variants are intentionally non-isomorphic. Effort S, not M.\n\nBottom line: the prop mismatch is real and current and worth a small cleanup, but it is lower severity (P3) and the prescribed unification is partly infeasible.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "No type-safety tests for multi-target consistency (export parity, prop parity, logic equivalence)",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "expand",
+        "location": "packages/dice-ui/__tests__/ (currently only tokenColor.test.ts)",
+        "problem": "The single test file covers only tokenColor utility. There are no tests for: (1) that index.ts and index.native.ts export the same symbols (DocModal is already missing from one), (2) that component props match between .tsx and .native.tsx, (3) that the rendering logic for DieBadge, StepRow, RollSteps produces equivalent DOM/tree structure on both targets. A refactor to unify code could silently break the native variant, and vice versa.",
+        "recommendation": "Add a test suite that (a) compares export lists between barrels, (b) validates prop interface parity via TypeScript type tests, (c) spot-checks rendering equivalence (e.g., DieBadge with variant='added' renders identically). Use a snapshot or structural assertion approach to catch drift.",
+        "effort": "M",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "CONFIRMED and stronger than reported. The export asymmetry is real: packages/dice-ui/src/index.ts:13 exports `DocModal` (and index.ts:2 exports `DocModalProps`), but packages/dice-ui/src/index.native.ts:14 only exports `QuickReferenceGrid` — `DocModal` is NOT re-exported on native. In QuickReferenceGrid.native.tsx:502 `DocModal` is a local non-exported `function`, whereas in the web QuickReferenceGrid.tsx:616 it is `export function DocModal`.\n\nThis is not just a hypothetical the finding frames it as (\"a refactor COULD silently break native\"). It is a LIVE runtime bug on the native target: apps/expo/app/index.tsx:3 does `import { DocModal } from '@randsum/dice-ui'`; apps/expo/metro.config.js:40 resolves native to `src/index.native.ts`, which does not export DocModal — so DocModal is `undefined` at runtime, and rendering `<DocModal .../>` at index.tsx:281 crashes React Native with \"Element type is invalid... got: undefined.\" Two things mask it: (1) the hand-written ambient declaration apps/expo/types/dice-ui.d.ts:43 declares `DocModal` exists, so `tsc` passes; (2) the test mock IndexScreen.test.tsx:111 hard-codes `DocModal: 'DocModal'`, so tests never hit the real barrel. Web is fine (web barrel exports it). Blast radius is contained: package is `private: true`, consumed only by apps/expo and apps/site.\n\nThe finding's recommendation (export-parity assertion between the two barrels, plus prop/render parity) is sound and non-duplicative — __tests__/ contains only tokenColor.test.ts, and an export-list diff between index.ts and index.native.ts would have caught this exact bug. \n\nAdjustment: the finding mis-frames a shipped native crash as a P2 \"we lack parity tests / expand\" gap. The generic test-investment is fairly P2, but because it is masking a current runtime defect in the native expo build, the actionable severity is P1: fix the missing native export (re-export DocModal from index.native.ts and/or export it from QuickReferenceGrid.native.tsx) AND add the export-parity test that guards it going forward. Also worth deleting the redundant hand-written apps/expo/types/dice-ui.d.ts which actively hides drift like this.",
+          "adjustedSeverity": "P1",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "QuickReferenceGrid complexity (1050 LOC web, 866 native) — unclear if dual-maintenance is worth the native support",
+        "dimension": "strategic",
+        "severity": "P2",
+        "category": "drop",
+        "location": "packages/dice-ui/src/QuickReferenceGrid.tsx vs .native.tsx",
+        "problem": "QuickReferenceGrid is the largest component by far, implementing a complex notation reference with modal, category grouping, filtering, and builder-type UI. The web version uses CSS grid + HTML + inline styles; the native version uses React Native's SectionList + StyleSheet. Both are ~1000 LOC and share zero implementation (can't extract even the groupByCategory logic because it's duplicated). The Expo app uses it heavily, but if native performance issues arose, the entire 1916 LOC would need rework. The component is also rarely touched — it shipped in commit dda5b5ff and has had only bug fixes / color contrast since.",
+        "recommendation": "Either (1) commit to native and refactor to extract all logic, share category grouping, merge prop interfaces, or (2) gate QuickReferenceGrid to web only and render it via 'use dom' WebView on native. The current state (two full parallel implementations with no shared logic) is a maintenance anti-pattern. If Expo never hits performance issues with the WebView variant, dropping native saves 1000 LOC and eliminates a code-review burden. This decision should be explicit and documented in CLAUDE.md.",
+        "effort": "L",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "VERIFIED REAL, but the finding mis-diagnoses the situation. Confirmed facts: LOC exact (1050 web / 866 native / 1916 total via wc -l); QuickReferenceGrid is the largest dice-ui component by 4x (next largest is NotationRoller at ~245 LOC each); the two files share ZERO imports/implementation; and it was NOT covered in the prior 30-item audit (grep of audit/ + plans/ found nothing). The duplication is real and concrete: groupByCategory() is BYTE-FOR-BYTE identical between packages/dice-ui/src/QuickReferenceGrid.tsx (line 83) and .native.tsx (line 113), and NUMBER_KEYS, CONDITION_KEYS, DICE_SIDES_KEYS, CATEGORY_ORDER, and OPERATORS are all duplicated verbatim. Git history confirms only incremental UI polish (a11y, layout) since introduction.\\n\\nThree corrections drive the 'adjusted' verdict: (1) Wrong commit hash — finding cites dda5b5ff but the actual introducing commit is 6602d5af. (2) The claim 'can't extract even the groupByCategory logic because it's duplicated' is FALSE — it is byte-identical and trivially extractable to a shared module; duplication is the symptom, not a barrier. (3) Most importantly, the recommendation's option-2 ('gate to web only, render via use dom WebView on native') and its closing line ('this decision should be explicit and documented in CLAUDE.md') are already done. apps/expo/docs/adrs/ADR-003-dice-ui-integration-via-use-dom.md and apps/expo/CLAUDE.md both document the exact three-step strategy: web=direct, native=use-dom WebView (default escape hatch), and '.native.tsx port ONLY if WebView perf is a blocker — explicitly NOT built in the initial sprint.' So QuickReferenceGrid.native.tsx existing at all is the project already VIOLATING its own documented ADR by jumping to step 3 without the documented perf-blocker trigger. The finding's strategic instinct is correct (1000 LOC of unjustified dual-maintenance), but it frames this as an open undocumented decision when it's a documented decision the code contradicts. Secondary real issue it surfaces: packages/dice-ui/CLAUDE.md is badly stale — it documents none of the .native.tsx variants, omits QuickReferenceGrid entirely, lists useTheme.ts (actually .tsx) and a non-existent RollResultDisplay export. Severity P2 is appropriate (real maintenance/strategic debt, non-blocking, private package). Recommended action: either delete QuickReferenceGrid.native.tsx and rely on the documented use-dom path, OR if native is intentionally kept, extract the identical helpers to a shared module and update both dice-ui/CLAUDE.md and ADR-003 to record the deviation.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Metro resolver documentation incomplete: missing guidance on adding new subpaths",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "apps/expo/CLAUDE.md, apps/expo/metro.config.js",
+        "problem": "CLAUDE.md states 'All workspace subpaths are enumerated explicitly in the resolveRequest function. If a new subpath is added to @randsum/roller or @randsum/dice-ui, it must be added to this map.' But there's no description of HOW to add one or WHAT the map looks like. A developer adding a new game package subpath (e.g., @randsum/games/planescape) would have to reverse-engineer metro.config.js. The config is also untyped and runs before TypeScript, so errors surface only at runtime.",
+        "recommendation": "Add a code comment in metro.config.js showing the pattern (e.g., `'@randsum/games/planescape': resolve(__dirname, '../../packages/games/src/planescape.ts')`) and reference it from CLAUDE.md with a section 'Adding a new workspace subpath.' Consider adding a script (e.g., `scripts/add-workspace-subpath.ts`) that patches metro.config.js and validates the result.",
+        "effort": "S",
+        "area": "dice-ui",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Files verified. The resolver map is real and manually maintained at apps/expo/metro.config.js (resolveRequest, ~lines 29-45), untyped JS, and a missing entry surfaces only at runtime via the context.resolveRequest fallback. So the core mechanism exists.\n\nBut the finding is significantly overstated and mis-framed:\n\n1. INVALID CENTRAL EXAMPLE: \"@randsum/games/planescape\" cannot happen. apps/expo/package.json depends ONLY on @randsum/roller and @randsum/dice-ui (verified). The map covers only roller/dice-ui subpaths; a games subpath would never be added here. The finding's own example reflects a misunderstanding of the map's scope.\n\n2. OVERSTATED \"reverse-engineer\" CLAIM: apps/expo/CLAUDE.md already has a dedicated \"Metro Resolver — Load-Bearing\" section with a \"Workspace TypeScript source resolution\" subsection that explicitly states new subpaths must be added, documents the platform fork for dice-ui, and warns to verify with `bun run web` + a native build. The map is self-documenting — each entry is a literal `'subpath': path.resolve(monorepoRoot, 'packages/.../src/X.ts')` that can be copied. This is not \"reverse-engineering.\"\n\n3. UNSOUND HALF OF RECOMMENDATION: adding a scripts/add-workspace-subpath.ts that patches metro.config.js is over-engineering for a private app with ~8 stable entries that change rarely — the kind of dead-weight tooling this audit should flag for removal, not addition.\n\nThe only genuinely actionable kernel is trivial: add an inline comment in metro.config.js showing the one-line pattern. That is a P3 nicety, not a P2 DX gap. Adjusting to P3 and scoping the recommendation to just the inline comment.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "CLI lacks game-specific roll commands; limits adoption for actual gaming",
+        "dimension": "strategic",
+        "severity": "P1",
+        "category": "expand",
+        "location": "apps/cli/src/index.ts, apps/cli/README.md",
+        "problem": "The CLI only accepts raw notation strings (e.g. `randsum 4d6L`). Users cannot roll game-specific mechanics like D&D 5e ability scores, Blades in the Dark resistance rolls, or any named roll from the game packages. The 6 game packages (@randsum/games subpaths) are entirely inaccessible from the CLI, forcing users to either use the web playground or calculate notation themselves.",
+        "recommendation": "Add game-specific subcommands or a `--game` flag that exposes the game packages' named rolls. Example: `randsum fifth ability-score` or `randsum --game=fifth ability-score`. This would unlock the full value of the ecosystem and dramatically improve usability for the target audience (TTRPG GMs/players). Alternatively, document this limitation and recommend the web playground or Discord bot for game-specific rolls.",
+        "effort": "M",
+        "area": "cli",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The factual premise is CONFIRMED against current code. apps/cli/src/index.ts (verified) is a flat notation parser — it only collects notation strings, routes them through runRolls()/@randsum/roller, and exposes no game access. apps/cli/package.json lists only @randsum/roller (devDep, bundled); none of the @randsum/games subpaths are imported. apps/cli/README.md documents only notation usage. So \"the 6 game packages are inaccessible from the CLI\" is accurate and current. It is also non-duplicative: prior audits (audit/dimensions/apps.md F1/F2, plans/3.0.0-harsh-audit-round-2/3) covered the phantom -i flag, stdin/exit codes (now fixed — index.ts has readStdinSync + process.exit(1)), and packaging/workspace-dep issues — none proposed exposing game packages.\n\nHowever the finding is MIS-RATED at P1 and its mechanism is partly inaccurate:\n\n1. Severity overstated. This is a feature-expansion opinion, not a defect. The CLI works correctly for its declared scope — apps/cli/CLAUDE.md states \"Simple terminal dice roller. Pass notation args, get results.\" There is no broken behavior, no incorrect output, no user-trust damage (contrast the real P1 in prior audit, the phantom -i flag, which IS trust damage). Per the project's own strategy (MEMORY: Discord bot #939 and the Expo/web playground are the channels for richer interaction; the \"Unified Roller App Sprint\" planned an Ink TUI that has since been deliberately stripped back out — index.ts no longer has src/tui or an Ink dep), keeping the CLI notation-only looks intentional, not an oversight. This belongs at P2 (a worthwhile \"expand\" idea) or even P3.\n\n2. Mechanism inaccurate. The recommendation assumes \"named rolls\" like `randsum fifth ability-score`. Verified packages/games/src/fifth.generated.ts: each game subpath exports a SINGLE roll(input) function (fifth takes {modifier, rollingWith, crit}), not a catalog of named rolls. So the proposed subcommand surface doesn't map onto the actual game API and would need design work the finding doesn't acknowledge.\n\nThe finding's better/secondary recommendation — document the scope boundary and point users to the playground/Discord bot for game rolls — is the cheaper, more defensible move and is closer to a CLARIFY than an EXPAND. Real and actionable, but P2, not P1.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Verbose output lacks visual separation and per-roll subtotals for multi-notation rolls",
+        "dimension": "ux",
+        "severity": "P2",
+        "category": "refine",
+        "location": "apps/cli/src/format.ts:19-34",
+        "problem": "When rolling multiple notations (e.g. `randsum 2d6 4d6L 1d20+5 --verbose`), the output shows all rolls sequentially without clear separation. Each roll's section lacks a per-roll subtotal, making it hard to see which total applies to which notation. The final `Total:` line is a sum but doesn't clarify whether each notation contributes equally or if some have modifiers.",
+        "recommendation": "Improve formatVerbose to add (1) blank lines or dashes between roll sections, (2) show `Subtotal:` for each record using `record.total`, (3) optionally label each roll with its index or notation. Example: '--- Roll 1: 2d6 --- / Roll: ... / Subtotal: 8 / --- Roll 2: 4d6L --- / Roll: ... / Subtotal: 14 / Total: 22'",
+        "effort": "S",
+        "area": "cli",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against actual code and runtime output. /Users/jarvis/Code/RANDSUM/@RANDSUM/apps/cli/src/format.ts:19-34 (formatVerbose) loops over result.rolls pushing only Roll:/Raw:/Kept: lines per record, then a single `Total:` at the end — no separators between sections and no per-roll subtotal. Confirmed by running `randsum 2d6 4d6L 1d20+5 --verbose --seed 42`, which produced 9 run-together lines ending in `Total: 26` with no way to attribute portions to each notation (3 + 9 + 14 = 26 is non-obvious). Location is accurate. The recommendation is sound and implementable: RollRecord.total exists (packages/roller/src/types/results.ts:62) and is already consumed by formatJson in the same file, so adding a `Subtotal:` line and a divider is trivial. Not a duplicate — no prior audit item (audit/, plans/3.0.0-harsh-audit*.md) mentions verbose output, subtotals, or CLI formatting. One nuance strengthening the finding: verbose mode also hides arithmetic (1d20+5 shows Raw [9]/Kept [9] with no visible +5), which compounds the reconciliation difficulty the finding describes. Severity P2 / category refine / effort S are all appropriate: a real but low-stakes UX roughness in a published-but-low-traffic CLI, not a correctness bug.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Compact format output is visually ambiguous for multi-notation rolls",
+        "dimension": "ux",
+        "severity": "P2",
+        "category": "refine",
+        "location": "apps/cli/src/format.ts:3-17",
+        "problem": "Compact output for `randsum 1d20+5 2d6` produces `26  [16]  Add 5  [4, 1]`, which is hard to parse at a glance. It's unclear where one roll ends and another begins. The array `[16]` could be misread as a single die value, and the `[4, 1]` appears appended without clear grouping.",
+        "recommendation": "Improve compact format to use separators or clearer grouping. Example: `26 = [16]+5 + [4,1]` or `26 {1d20+5: 21} {2d6: 5}`. Alternatively, always use JSON for machine-readable output and reserve compact/verbose for human readability of single rolls only.",
+        "effort": "S",
+        "area": "cli",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Verified against the real code. `apps/cli/src/format.ts:3-17` (formatCompact) exists exactly as cited and joins all parts with double-spaces via `parts.join('  ')`, pushing `[rolls]` then trailing modifier descriptions per record with no per-notation grouping. Reproduced live: `randsum 1d20+5 2d6 -s 42` outputs `16  [6]  Add 5  [1, 4]`. With multiple notations the boundary is genuinely ambiguous — `[1, 4]` reads as another modifier appended to roll 1 rather than a separate dice pool, exactly as the finding claims (the finding's `26 [16] Add 5 [4,1]` example is illustrative; structure matches reality). The problem is real and current.\n\nNot duplicative: prior audits (audit/synthesis-top-30.md, plans/3.0.0-harsh-audit-round-3.md) flag other CLI issues (phantom `-i` README flag, `catalog:`/`workspace:~` publish bugs, stdin support) but none touch compact-output legibility. Notably the prior audit inventory still describes an Ink-based TUI CLI that no longer exists — the CLI was rewritten to these plain-text formatters, so this code is under-reviewed and the finding is genuinely new.\n\nRecommendation is partially sound: the separator/grouping idea is correct and low-risk (CLI tests only assert `/^\\d+/` on compact output, so a separator won't break them). But the alternative — \"reserve compact for single rolls, force JSON for machine output\" — is misguided; it would remove the legitimate multi-notation compact use case rather than improve it. Keep only the separator half.\n\nSeverity: P2 is slightly generous. This is a cosmetic, single-app, human-readability rough edge on default output; it never yields wrong values, and `-v` verbose mode already gives unambiguous per-roll breakdown. P3 is the right rating. Confirming the issue but adjusting severity down to P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "No size-limit constraint on CLI package; 256KB binary is unaudited",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "apps/cli/package.json (missing size-limit config)",
+        "problem": "All other publishable packages (roller 16KB, games 15KB each, salvageunion 35KB, component-library) have `size-limit` entries in their package.json. The CLI has 256KB dist output (92KB index.js + sourcemap) with no configured size gate. A future bundler misconfiguration or accidental heavy dependency could ship without notice.",
+        "recommendation": "Add a `size-limit` entry to apps/cli/package.json capping dist/index.js at ~100KB (current 92KB plus buffer). This enforces the thin one-shot binary constraint. Verify the CLI is included in the root `bun run size` validation step.",
+        "effort": "S",
+        "area": "cli",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "The core problem is real and current. Verified at /Users/jarvis/Code/RANDSUM/@RANDSUM/apps/cli/package.json: the CLI is published (\"private\": false, has bin/main/files for npm), ships dist/index.js at 94KB (plus a 166KB .map, hence the ~256KB total cited), and has NO size-limit config. Only two packages have size-limit: packages/roller/package.json (16KB) and packages/games/package.json. The CI gate in .github/workflows/publish.yml:32 explicitly runs `size` ONLY on roller and games (`bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size`), so the CLI binary genuinely ships unaudited. A future heavy-dep mistake would pass undetected. Not a duplicate of the prior audits (audit/3.0.0-harsh-audit*.md mention salvageunion size and CLI workspace-dep, but never the missing CLI size gate).\n\nHowever, the finding's supporting details contain factual errors that need correction (not enough to reject, since the central claim and location hold):\n1. It claims \"games 15KB each, salvageunion 35KB, component-library\" have size-limit entries. False. There is no standalone salvageunion package (it's a games subpath) and no component-library package (the UI package is packages/dice-ui, also without size-limit). Only roller and games carry size-limit.\n2. The recommendation says to \"verify the CLI is included in the root `bun run size`\" — but NO root `size` script exists. `check:all` just calls `check`, which runs per-package check scripts, and none of those (including roller/games) include `size`. The only place size runs in CI is publish.yml.\n\nSo the correct fix is two-part: add a `size-limit` entry + `size` script to apps/cli/package.json capping dist/index.js (~100KB given current 94KB), AND add the CLI filter to the size step in .github/workflows/publish.yml:32 — otherwise the new gate would never run. P2/clarify/S rating is sound (CI/DX hardening, no user-facing breakage, small effort).",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "No usage examples for stdin/pipe integration in README; feature is undiscovered",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "apps/cli/README.md",
+        "problem": "The audit fixed stdin support (PR #1056), but the README doesn't document it. Users won't know they can pipe notation: `echo '4d6L' | randsum` or chain commands: `randsum 4d6L --json | jq '.total'`. The feature exists but is invisible to discovery.",
+        "recommendation": "Add a 'Piping' or 'Integration' section to the README with examples: `echo '4d6L' | randsum`, `randsum 4d6L --json | jq '.total'`, `for roll in {1..6}; do randsum 4d6L; done | awk '{s+=$1} END {print s}'`. Mention that stdin is read when no args are passed and stdin is not a TTY.",
+        "effort": "S",
+        "area": "cli",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against actual code. The stdin/pipe feature is real and current: apps/cli/src/index.ts lines 104-108 read stdin via readStdinSync() when no notation args are passed and process.stdin.isTTY is false. PR #1056 shipped this (prior audit item #25 / [apps:F2] fixed the implementation and explicitly cited the `randsum 4d6L --json | jq '.total'` use case). However, apps/cli/README.md (full file read) contains ZERO mention of stdin, piping, jq, or chaining — grep for those terms returns exit 1. So the feature is genuinely invisible to discovery.\\n\\nThe recommended examples are accurate against the actual output formats: apps/cli/src/format.ts line 38 emits a `.total` field in JSON output (so `| jq '.total'` works), and line 4 puts `String(result.total)` as the first token of compact output (so the awk-sum example works too).\\n\\nThis is NOT a duplicate of prior audit item #25 — that item fixed the implementation + exit codes; this is the follow-up documentation gap, which the prior audit did not call out. It is also distinct from prior item #14 (the phantom `-i`/`--interactive` flag), which the current README no longer contains.\\n\\nSeverity P2 is correct: this is a 'clarify'/DX discoverability issue with no correctness impact — the feature works regardless. Effort S is correct (a few README lines). Location apps/cli/README.md is accurate. Recommendation is sound and non-duplicative.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Help text example `2d20L +5` is invalid syntax; will confuse users",
+        "dimension": "ux",
+        "severity": "P2",
+        "category": "fix",
+        "location": "apps/cli/src/index.ts:23 (HELP constant)",
+        "problem": "The help example shows `randsum 2d20L +5` without quotes. In shell, this parses as two separate arguments: `2d20L` (valid) and `+5` (invalid notation). Users copying this literally will get errors. Correct usage requires quoting: `randsum '2d20L+5'` or concatenation without space.",
+        "recommendation": "Update the help example to `randsum '2d20L+5'` (with quotes) or `randsum 2d20L+5` (no space). Add a note in the Examples section: 'Complex notation with spaces must be quoted: randsum \"2d20L + 5\"'.",
+        "effort": "S",
+        "area": "cli",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified directly against apps/cli/src/index.ts. Line 23 of the HELP constant contains the example `randsum 2d20L +5` (labeled \"Roll with advantage + modifier\"). Running this literal command (bun run dev -- 2d20L +5) produces `Error: Validation error: \"+5\" is not valid dice notation` and exits non-zero. The quoted form `randsum '2d20L+5'` works correctly (outputs \"25 [20] Drop lowest, Add 5\"), confirming the recommended fix is sound. The finding is NEW: the prior audit (audit/dimensions/apps.md) only references 2d20L in the context of the missing -i interactive flag drift, not this help-text syntax issue, so it is non-duplicative.\n\nOne nuance: the finding's *mechanism* is mildly inaccurate. It attributes the error to shell-level arg splitting where `+5` is \"invalid notation\" standalone. In reality, run.ts passes ALL parsed notations together as roll('2d20L', '+5') — the roller's multi-argument API requires each argument to be self-contained notation (e.g. roll('1d20+5','2d6')), and a bare '+5' fails that per-argument validation. The outcome (example errors) and fix (quote/concatenate) are correct regardless, so this does not change the verdict, only the explanation.\n\nP2 is appropriate: a genuine copy-paste failure in the primary --help output of a published npm CLI, but cosmetic with low blast radius. Confirmed and actionable.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "No documentation for output formats or their use cases",
+        "dimension": "dx",
+        "severity": "P3",
+        "category": "clarify",
+        "location": "apps/cli/README.md, apps/cli/src/format.ts",
+        "problem": "The README lists three output modes (`-v/--verbose`, `--json`) but doesn't explain when to use each, what they contain, or why someone would choose one over another. Compact is the default but never named. Users must reverse-engineer the format difference.",
+        "recommendation": "Add a 'Output Formats' section to the README explaining: compact (default, one-liner for quick rolls), verbose (multi-line detail with Raw/Kept/Total), json (machine-readable for scripting). Include one example of each and note when to use each format (quick rolls vs detail vs scripting).",
+        "effort": "S",
+        "area": "cli",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against the actual files. apps/cli/README.md (Options section) lists `-v/--verbose` and `--json` with one-line descriptions but never explains what each contains, when to choose one, or names the default (compact) format. apps/cli/src/format.ts confirms three distinct formatters exist: formatCompact (total + bracketed rolls), formatVerbose (multi-line Roll/Raw/Kept/Total), and formatJson (total, rolls[].{description,raw,kept,total}). The README gives no use-case guidance for any of them.\\n\\nNot duplicative: the prior audit (audit/dimensions/apps.md) touched the CLI README only for a phantom `-i/--interactive` flag (F1, now removed) and the conformance-version claim (F8, now showing v0.9.0). Neither addressed output-format documentation. So this is a genuinely-open, distinct finding.\\n\\nThe finding has one minor wording imprecision: it says the README lists 'three output modes' then notes compact is never named — the README actually documents only two flags, with compact implicit as default. This doesn't undermine the core claim; the finding's own problem statement acknowledges compact is the unnamed default. The recommendation is sound and proportionate.\\n\\nSeverity P3 is correct: this is pure DX polish on a published CLI, not a correctness or user-trust break (unlike the phantom flag, which was P1). Effort S is reasonable for a README section with three examples.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Seeded random semantics are undocumented; users may not understand when to use --seed",
+        "dimension": "dx",
+        "severity": "P3",
+        "category": "clarify",
+        "location": "apps/cli/src/index.ts:17, apps/cli/README.md:39",
+        "problem": "The `--seed N` flag uses a deterministic LCG. The help text doesn't explain the difference between seeded (same result every time) vs unseeded (random). Users unfamiliar with RNG concepts won't understand the tradeoff or when --seed is useful.",
+        "recommendation": "Expand the help text for `--seed` to: `--seed N   Set random seed for reproducible rolls (same result every time). Without --seed, uses system RNG.` This clarifies the difference. Don't add cryptographic or OS RNG options unless there's demand; the current setup is sufficient for the CLI's scope.",
+        "effort": "S",
+        "area": "cli",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against actual code. The LCG-based seeded random exists at apps/cli/src/run.ts:19-28 (createSeededRandom). The in-CLI help text at index.ts:17 is terse (\"-s, --seed N  Use seeded random\") with no explanation of what seeding does or when to use it. The README at README.md:39 is marginally clearer (\"Set random seed for reproducible rolls\") but still doesn't explain the seeded-vs-unseeded tradeoff. The finding's facts, locations, and line numbers are all accurate. The recommendation is sound, non-duplicative (no existing code/doc explains the tradeoff), and appropriately scoped (correctly resists adding crypto/OS RNG options). This is a genuine but minor documentation-clarity gap: --seed is an opt-in advanced flag, the README already conveys \"reproducible,\" and users who reach for seeding generally understand RNG concepts — so the actual cost is low. P3 (lowest tier) is the correct severity for a docs-polish nitpick. It is actionable (one-line help text edit). Not duplicative of the prior 30-item audit, which focused on publish/build/correctness P0-P2 items.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Test suite doesn't cover edge cases or malformed input",
+        "dimension": "best-practices",
+        "severity": "P3",
+        "category": "clarify",
+        "location": "apps/cli/__tests__/run.test.ts, apps/cli/__tests__/index.test.ts",
+        "problem": "Tests cover happy path and basic errors. Edge cases like `--repeat abc` (non-numeric), very large pools (e.g. `10000d10000`), or conflicting flags are not tested. Flag parsing is vulnerable to edge cases or undocumented behavior.",
+        "recommendation": "Add tests for: (1) `--repeat` with non-numeric value (current behavior: defaults to 1), (2) very large pool sizes (should not hang or overflow), (3) conflicting flags like `--json --verbose` (document which takes precedence), (4) stdin edge cases (empty, binary data). Keep scope focused on CLI-specific behavior, not roller robustness.",
+        "effort": "M",
+        "area": "cli",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed the cited files exist (apps/cli/__tests__/run.test.ts, index.test.ts) and that they only cover happy-path + basic notation errors. The finding's core premise — flag parsing has untested, surprising edge cases — is REAL and verified by running the CLI. However, the finding's stated current behavior is factually WRONG, so I'm marking it adjusted rather than confirmed.\n\nActual behavior (verified by execution):\n- `randsum 1d6 --repeat abc` does NOT \"default to 1\". The skip-logic in apps/cli/src/index.ts:64-71 only consumes a flag's value when it parses as a number (`!Number.isNaN(Number(arg))`), so the non-numeric `abc` leaks through to `notations.push(arg)` (line 74) and produces \"Validation error: \\\"abc\\\" is not valid dice notation\" + exit 1. Same latent bug affects `--seed abc`.\n- `--repeat 0`: `Number('0') || 1` (index.ts:56) hits the falsy trap and silently rolls once instead of zero times.\n- `--repeat -5`: `Array.from({ length: -5 })` (run.ts:41) yields [], so the CLI silently produces no output and exits 0 — a confusing no-op.\n- `--json --verbose`: json wins (run.ts:34 ternary), undocumented precedence.\n\nThese confirm the \"clarify\"/undocumented-behavior framing. The recommendation to add CLI-specific edge-case tests is sound and non-duplicative — no existing test touches any of these, and the prior audit only covered stdin/exit-code (synthesis F2, already implemented in current index.ts at lines 104-113/132). \n\nTwo parts of the recommendation are weak: (1) the \"very large pools (10000d10000) should not hang/overflow\" item is unfounded — I ran it and it completes instantly with correct output; (2) stdin edge cases are partially covered by the already-shipped F2 work. The real value is testing/fixing the `--repeat`/`--seed` argument-consumption bug and documenting flag precedence. Severity P3 is correct (robustness/UX polish, no crash or data corruption); the parser bug is a genuine but minor defect. Effort is closer to S (tests) or S–M (tests + parser guards) than M.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Five apps have nearly identical script patterns but no shared base or DRY abstraction",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "refine",
+        "location": "apps/cli/package.json + apps/discord-bot/package.json + apps/rdn/package.json + apps/site/package.json + apps/expo/package.json",
+        "problem": "Each app duplicates the same 6-8 scripts verbatim (build, typecheck, format, lint, test, check). Changes to linting rules or TypeScript config require manual edits in 4-5 places. The root package.json has a corresponding check script that chains them serially (8 subprocess invocations for one CI gate). This fragmentation makes it harder to keep CI gates consistent and makes mass-refactors require scatter-gun edits.",
+        "recommendation": "Create a shared scripts.json or Makefile that's imported/generated in each app's package.json, or adopt a monorepo task runner abstraction. At minimum, document the canonical script set in root CLAUDE.md and add a linting rule that flags check script deviations.",
+        "effort": "M",
+        "area": "apps-misc",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Verified all five app package.jsons. The core observation (duplicated script strings) is real but the finding is overstated and partly inaccurate, warranting a downgrade from P2 to P3.\n\nWHAT'S TRUE: `format` and `format:check` are byte-identical across all 5 apps; `lint` is identical across cli/discord-bot/rdn/site; the `check` chain `bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test` is verbatim in cli, discord-bot, rdn, site. So duplication of these strings genuinely exists. This is also a NEW finding — the prior audit (audit/dimensions/build-tooling-ci.md, apps.md) covers TS version fragmentation (F4) and redundant CI builds (F10) but NOT script duplication.\n\nWHAT'S INACCURATE: (1) \"Five apps have nearly identical patterns\" is false — apps/expo/package.json has NO `check`, NO `test`, and NO `build` script (it uses `expo start`/`bunup`-less Expo tooling) and a different `lint` (`eslint app hooks lib __tests__`). Only 4 apps share the check pattern. (2) \"8 subprocess invocations\" is wrong — root `check` chains 6 package filters (roller, games, cli, discord-bot, site, rdn), each internally chaining 5 steps.\n\nWHY IMPACT IS LOW: The duplicated script lines all delegate to SHARED root configs (`-c ../../eslint.config.js`, `--config ../../.prettierrc`, `tsc` reads inherited tsconfig). So a lint/format rule change happens in the shared config, NOT in each script string — the \"scatter-gun edit\" risk the finding asserts barely materializes. Moreover the root package.json ALREADY implements the recommended abstraction for lint/format/typecheck via `bun run --filter '@randsum/*' lint`, so part of the fix exists.\n\nRECOMMENDATION FLAW: \"shared scripts.json or Makefile that's imported/generated in each app's package.json\" is partly infeasible — package.json `scripts` cannot import from an external file; npm/bun have no such mechanism. The realistic fix is the existing `--filter` pattern plus documenting a canonical script set, which is minor.\n\nNet: real, current, correctly located, non-duplicative — but cosmetic with near-zero maintenance cost and factual errors. Adjust P2 -> P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Discord-bot has 6 game commands that follow 90% identical structure: parse args -> build embed -> catch error -> reply",
+        "dimension": "dry",
+        "severity": "P1",
+        "category": "refine",
+        "location": "apps/discord-bot/src/commands/{blades,dh,fifth,pbta,root,su}.ts (660 LOC total, ~110 LOC per file)",
+        "problem": "Each command independently: (1) imports game package, (2) defines buildXyzEmbed(params), (3) exports Command with SlashCommandBuilder + async execute, (4) wraps roll() in try/catch. The embed building is game-specific, but the command harness and error handling are pure boilerplate. A bug fix in the command structure requires edits to 6+ files. Adding a new game requires copy-pasting a full 100-line file.",
+        "recommendation": "Extract a createGameCommand(gameImportFn, buildEmbed, slashCommandConfig) factory function. This reduces each game command to ~30 lines: import, define params, build embed, call factory. Maintains game-specific logic while eliminating harness duplication.",
+        "effort": "M",
+        "area": "apps-misc",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed real and current. All 6 game commands (blades.ts, dh.ts, fifth.ts, pbta.ts, root.ts, su.ts in apps/discord-bot/src/commands/) total 663 LOC, matching the cited ~660. Each independently imports its game roll(), defines a buildXEmbed(), exports a Command with SlashCommandBuilder, and contains a byte-for-byte identical execute harness: parse options -> await deferReplyHonoringHidden(interaction) -> try { build embed; editReply } catch (e) { replyWithError(interaction, 'Error', e instanceof Error ? e.message : 'An unknown error occurred') }. That defer/try/catch/editReply block and the verbatim 'An unknown error occurred' string are duplicated 6x. No createGameCommand/factory exists today (grep confirms), and the Command interface in types.ts already supports the optional autocomplete (used only by su.ts) that a factory must preserve. The recommendation is sound and non-duplicative.\n\nAdjusting severity P1 -> P2 because the finding overstates the blast radius. The extractable duplication is the ~10-line execute harness plus the error string (roughly ~60 LOC of true boilerplate), NOT the bulk of the 660 LOC. Most of each file is genuinely game-specific: buildXEmbed bodies differ substantially (blades 4-way resultConfig, dh advantage/disadvantage die handling, fifth nat-1/nat-20 detection, su a 20-entry color gradient) and the SlashCommandBuilder option definitions differ per game (dice 0-10 vs stat -3..5 vs modifier -30..30, plus su autocomplete). So the claim that each file drops to ~30 lines is optimistic; realistic per-file savings are ~10 lines. Additionally, this is a private, never-published internal app (per apps/discord-bot/CLAUDE.md), so a harness bug touching 6 files is real friction but bounded — no external consumers, nothing blocked. That profile is P2 (refine), not P1.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Expo and RDN build systems diverge: Expo uses Metro (untyped JS, custom resolver), RDN uses Astro (standard Vite). No DRY pattern for workspace linking.",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "refine",
+        "location": "apps/expo/metro.config.js (untyped) vs apps/rdn/astro.config.ts vs apps/site/astro.config.mjs",
+        "problem": "Expo's metro.config.js manually maps all @randsum/* subpaths to TypeScript source (e.g., @randsum/roller/roll -> ./packages/roller/src/roll.ts). If a new subpath is added, it must be manually added to Metro. The untyped Metro config is risky: changes don't surface in bun run typecheck. RDN and Site use Astro's native resolution, so they don't need custom mapping, but then they have slow builds if source files change (no TypeScript caching). No standard pattern exists.",
+        "recommendation": "Convert metro.config.js to metro.config.ts with explicit types, or generate it from a shared workspace-config.json. Document in CLAUDE.md: 'When adding a subpath, add it here and here.' For RDN/Site, consider whether importing TS source directly (like Metro) would speed up dev; if acceptable, leave as-is.",
+        "effort": "M",
+        "area": "apps-misc",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "VERIFIED the core: apps/expo/metro.config.js (lines 26-53) hand-maintains a map of 7 @randsum/roller subpaths to TS source, mirroring exactly the 7 subpath exports in packages/roller/package.json (\".\", \"/roll\", \"/errors\", \"/validate\", \"/tokenize\", \"/docs\", \"/trace\"). The config is untyped JS — confirmed by apps/expo/CLAUDE.md, which itself flags both problems verbatim: \"If a new subpath is added... it must be added to this map\" and \"metro.config.js is untyped JS. Changes there do not surface in bun run typecheck.\" So the genuine actionable defect is real and current: a hand-synced, typecheck-invisible duplication of roller's export surface that silently breaks native/web resolution if a subpath is added and forgotten. Not a duplicate — searched audit/ and plans/3.0.0-harsh-audit*.md; no prior coverage of Metro or build configs.\n\nADJUSTED because the finding overstates its scope in two ways. (1) The \"build systems diverge / no DRY pattern\" framing is weak: Metro (RN) and Astro (Vite) are different runtimes by necessity — Expo resolves to TS source specifically to skip an EAS prebuild for native bundles, while Astro/Vite resolve workspaces natively. This isn't arbitrary divergence. (2) The RDN claims are partly wrong: apps/rdn/astro.config.ts imports nothing from dice-ui and only build-time imports NOTATION_DOCS from roller (per rdn/CLAUDE.md), so \"RDN has slow builds if source files change\" is irrelevant; and apps/site/astro.config.mjs (line 188) ALREADY aliases @randsum/dice-ui to TS source via Vite, so a source-resolution pattern partially exists. The recommendation to convert to metro.config.ts is also mild — Metro loads JS configs by convention and .ts wouldn't gain typecheck coverage without extra wiring; the stronger fix is to derive the subpath map from roller's package.json#exports so it can never drift.\n\nNet: legitimate P2 refine, but the actionable kernel is narrow (the untyped hand-synced Metro map), not the broad \"build systems diverge\" thesis. Severity P2 is correct.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Expo lacks a 'check' script, making CI gate unclear",
+        "dimension": "dx",
+        "severity": "P1",
+        "category": "clarify",
+        "location": "apps/expo/package.json",
+        "problem": "CLI, discord-bot, rdn, and site each define check: bun run build && bun run typecheck && ... But Expo has no check script. When a developer touches Expo code, it's ambiguous what verification to run. Root check doesn't include Expo, so untested changes might be pushed.",
+        "recommendation": "Add check script to apps/expo/package.json: tsc --noEmit && eslint ... && prettier ... && bun test. Update root CLAUDE.md to document that Expo is excluded from root check due to Expo Router conventions, but developers must still run bun run --filter @randsum/expo test.",
+        "effort": "S",
+        "area": "apps-misc",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Verified against the actual files. The structural claim is TRUE: apps/cli, apps/discord-bot, apps/rdn, and apps/site each define a `check` script (`bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test`), while apps/expo/package.json has no `check` and no `test` script (only start/android/ios/web/lint/format/typecheck). Root `check`/`check:all` in package.json explicitly enumerates roller, games, cli, discord-bot, site, rdn — expo is excluded.\n\nHowever the finding is mis-framed on two points and needs adjustment:\n\n1. \"CI gate unclear\" is partly wrong. .github/workflows/ci.yml DOES have a dedicated `expo` job (lines 166-178) that is part of the `ci-gate` needs array (line 263). So expo is gated in CI — it is not ungated. The job runs roller build + expo typecheck + expo lint + `bun test apps/expo/__tests__/IndexScreen.test.tsx`.\n\n2. The recommendation is partially unsound as written: it suggests developers run `bun run --filter @randsum/expo test`, but no `test` script exists — I ran it and got \"a package.json script 'test' was not found\". The recommendation must first ADD a `test` script before it can be referenced.\n\nCritically, the finding UNDERSTATES the real cost. The CI expo job cherry-picks exactly ONE of 11 test files (IndexScreen.test.tsx, which passes 12/12). The other 10 files are run by no gate. I ran the full suite (`bun test apps/expo/__tests__/`) and got 31 fail + 11 errors across 10 files (44 pass / 75 total). useRoll.ts shows 0% coverage. So the genuine problem is not merely \"ambiguous what to verify\" — it is a coverage hole hiding ~42 broken/erroring tests in a private app. The fix should add a `check` (and `test`) script AND have CI run the full expo suite, not one file. Severity P1 is reasonable (expo is private/unpublished, capping blast radius), but the category is closer to a real test-rot/coverage gap than a pure DX-clarity nit.",
+          "adjustedSeverity": "P1",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Discord-bot builds with bunup but is never published to npm; unclear why it's in the same build pipeline as CLI",
+        "dimension": "strategic",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "apps/discord-bot/package.json (private: true) + package.json build script",
+        "problem": "Discord-bot and CLI are built identically and included in the same root build command. But CLI is published to npm; discord-bot is private and deployed via GitHub Actions. They're in the same pipeline by cargo-cult inheritance, not because they share build concerns. This conflates 'build for publishing' with 'prepare for deployment'.",
+        "recommendation": "Separate concerns: (1) root build should only build publishable packages (roller, games, CLI). (2) Add separate CI jobs for app deployments, OR (3) create bun run build:all. Document: 'root build = publishable packages only; CI jobs build apps separately.'",
+        "effort": "S",
+        "area": "apps-misc",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "PARTIALLY VERIFIED but mis-rated and mis-reasoned. Confirmed: root `build` (package.json:49) builds roller, games, cli, AND discord-bot; the release workflow (.github/workflows/publish.yml:30) runs that same root `bun run build` before publishing, so it does build the private discord-bot app needlessly during release. discord-bot is indeed private:true (apps/discord-bot/package.json:5).\\n\\nHowever the finding's reasoning is partly WRONG and overstated:\\n(1) The claim 'discord-bot is deployed via GitHub Actions' is FALSE — there is no discord deploy workflow (.github/workflows/ has expo-native-deploy.yml and expo-web-deploy.yml but nothing for discord; discord deployment per apps/discord-bot/CLAUDE.md is entirely manual: build + deploy-commands + start).\\n(2) The 'publishing vs deployment conflation' is largely already solved: scripts/publish.ts uses a hardcoded PUBLISH_ORDER of only roller/games/cli and explicitly skips private packages, so discord-bot is never actually published — only built.\\n(3) CI is already well-separated: ci.yml gives each package its own path-filtered job (cli job lines 118-127 builds only roller+cli; discord-bot job lines 129-138 builds roller+games+discord-bot), so per-package concerns are NOT conflated in CI.\\n\\nThe only genuine residual issue is that the release workflow builds discord-bot unnecessarily — a few seconds of wasted CI time, no correctness impact. That is a P3 nitpick, not a P2 strategic concern. Recommendation (separate build:all from publishable-only build) is sound but low-value and partly redundant with the already-correct publish.ts filtering. Adjusting severity P2 -> P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Root test script missing @randsum/dice-ui and @randsum/site",
+        "dimension": "dx",
+        "severity": "P1",
+        "category": "fix",
+        "location": "package.json:50",
+        "problem": "The root `test` script runs tests only for `@randsum/roller`, `@randsum/games`, `@randsum/cli`, `@randsum/discord-bot`, and `@randsum/rdn`. It excludes `@randsum/dice-ui` (packages/dice-ui) and `@randsum/site` (apps/site). If dice-ui or site tests fail, `bun run test` at root won't catch them, creating a CI/local test coverage gap. Per the audit's findings and per CI's knip job, these packages are part of the checked ecosystem.",
+        "recommendation": "Add both packages to the test script: `bun run --filter '@randsum/roller' --filter '@randsum/games' --filter '@randsum/dice-ui' --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/rdn' --filter '@randsum/site' test`",
+        "effort": "S",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The finding is partly real, partly wrong, and its recommendation is unsound as written.\n\nREAL part: `packages/dice-ui` is a genuine coverage gap. It has a real test file (`packages/dice-ui/__tests__/tokenColor.test.ts`) but its package.json (`packages/dice-ui/package.json`) defines only a `typecheck` script — there is NO `test` script. The root `test` script (package.json:50) omits dice-ui, and no CI job runs dice-ui's tests: in `.github/workflows/ci.yml` a change to `packages/dice-ui/**` (line 57) only triggers the `expo` job, which runs typecheck/lint plus the single file `apps/expo/__tests__/IndexScreen.test.tsx` — never `tokenColor.test.ts`. So that test genuinely never executes in CI or via root `bun run test`.\n\nWRONG part: The finding claims `@randsum/site` is also excluded/uncovered. That is false. `apps/site/package.json` DOES have a `test` script (`bun test`), and its `check` script chains `... && bun run test`. CI runs `bun run --filter '@randsum/site' check` (ci.yml:151), and the site paths-filter (ci.yml:46-49) triggers on any `packages/**` or `apps/site/**` change. Site's 4 test files are covered. Adding site to the root test script would be redundant, not a fix.\n\nUNSOUND recommendation: The proposed fix `--filter '@randsum/dice-ui' test` cannot work because dice-ui has no `test` script — bun would skip/error. The correct fix requires FIRST adding a `test` script (`bun test`) to `packages/dice-ui/package.json`, then either wiring it into root `test` or, better, into CI so it actually gates PRs (the root script is local-only; CI is per-package filtered).\n\nSEVERITY: P1 overstates this. The single untested unit is `tokenColor.ts`, a UI color-mapping helper in a private (non-published) package; the failure-to-run risk is low-impact and isolated. P2 is appropriate.\n\nActionable, scoped-down recommendation: add `\"test\": \"bun test\"` to `packages/dice-ui/package.json`, then add a dice-ui CI job (or fold dice-ui test into the existing expo job's test step) so `tokenColor.test.ts` runs on `packages/dice-ui/**` changes. Drop the site portion of the finding entirely.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "check:all does not match CI pipeline — missing knip and size",
+        "dimension": "dx",
+        "severity": "P1",
+        "category": "clarify",
+        "location": "package.json:57",
+        "problem": "The CLAUDE.md root section (line 28) says `bun run check:all` is the full CI pipeline. However, check:all runs only per-package `check` scripts (build, typecheck, format:check, lint, test). The actual CI also runs separate jobs for: `knip`, `size` per package, `gen:check`, and `conformance:check`. A developer running `bun run check:all` will see green and push, then CI fails on knip or bundle size. This contradicts CONTRIBUTING.md guidance.",
+        "recommendation": "Expand check:all to include: `&& bun run knip && bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size` to match essential CI checks and catch failures locally before push.",
+        "effort": "S",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed real and current. /Users/jarvis/Code/RANDSUM/@RANDSUM/package.json:57 defines `check:all` as `bun run check`, and `check` (line 56) only runs per-package `check` scripts = build + typecheck + format:check + lint + test (verified in packages/roller/package.json and packages/games/package.json). It does NOT run knip, size, or gen:check. Meanwhile .github/workflows/ci.yml runs knip as its own job (lines 252-258), `size` per package (lines 92, 116), and gen:check (line 105). The doc contradiction is accurate and arguably worse than stated: CLAUDE.md:28 literally claims `check:all` is the \"Full CI pipeline (lint, format, typecheck, test, build, size, site)\" — explicitly listing \"size\", which is false. CONTRIBUTING.md:17 and :63 tell contributors to run `check:all` to \"Verify everything works\" before pushing.\\n\\nTwo corrections to the finding's scope: (1) The pre-push lefthook hook (lefthook.yml:32-54) DOES run knip, gen:check, and conformance-check, so a developer pushing through git is caught on those items unless they use --no-verify. The finding overstates knip/gen:check as gaps a dev would actually hit. (2) The one genuinely unguarded item is `size` — it is absent from check:all AND from pre-push, so bundle-size regressions are only caught in CI. That is the real, concrete cost.\\n\\nNote: MEMORY.md claims commit 6f663a3d added a size check to check:all, but current main's check:all (line 57) does not contain it — so it was either reverted or never landed on main. This finding is therefore not duplicative of already-shipped work; it is still open on main.\\n\\nSeverity adjusted P1->P2: this is doc-vs-script drift plus one missing local size check, not a correctness bug, and pre-push hooks already mitigate most listed items. Recommendation is sound (add `&& bun run knip && bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size` to check:all) and, critically, CLAUDE.md:28's false \"size\" claim should be reconciled with whatever check:all actually does.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Lefthook pre-push missing size check",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "refine",
+        "location": "lefthook.yml:32-54",
+        "problem": "Lefthook pre-push runs `build`, then `codegen-check`, `conformance-check`, `test`, `audit`, and `knip`, but does NOT run `size` checks. A developer can push code that increases bundle size beyond limits, and only CI will catch it post-push.",
+        "recommendation": "Add a pre-push size check step after build (priority 1): `size: { run: \"bun run --filter '@randsum/roller' size && bun run --filter '@randsum/games' size > /dev/null 2>&1\", priority: 1 }`",
+        "effort": "S",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against the actual files. lefthook.yml:32-54 shows the pre-push hook runs build (priority 1), then codegen-check, conformance-check, test, audit, and knip (all priority 2) — there is NO size check, exactly as described. The size limits are real CI gates: .github/workflows/ci.yml:91-116 and publish.yml:31-32 both run `bun run --filter '@randsum/roller' size` and `'@randsum/games' size`, confirming size violations are caught only post-push in CI. The per-package `size` script exists (invoked via --filter throughout CI), so the recommendation is implementable as written. Not a duplicate: the prior audit (audit/dimensions/build-tooling-ci.md) covered lefthook's parallel-install race (F6-ish) and pre-push test truncation (F7), but never the missing size check. So this is a genuinely new, still-open finding.\n\nTwo caveats keep this at P2 rather than higher: (1) CI is a reliable backstop, so the only cost is a slower feedback loop — a developer learns of a size regression after pushing rather than before, which is a shift-left convenience, not a correctness gap. (2) The recommendation's exact command is slightly inconsistent — it redirects only the games half to /dev/null while leaving roller's output visible, unlike the rest of the file which redirects whole commands; a cleaner form would wrap both. Bundle-size pushes are also relatively rare events. P2/refine is the correct rating; the finding is accurate and actionable.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Root check script excludes @randsum/dice-ui",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "fix",
+        "location": "package.json:56",
+        "problem": "The root `check` script lists roller, games, cli, discord-bot, site, and rdn, but omits dice-ui. This means `bun run check` won't run dice-ui's typecheck, lint, format, or tests. Dice-ui is a workspace library used by site. Any type errors will only be caught by the full knip job, not by check:all.",
+        "recommendation": "Add `&& bun run --filter '@randsum/dice-ui' check` to the root check command after the roller check.",
+        "effort": "S",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed the core problem at the cited location. package.json:56 `check` runs per-package `check` for roller, games, cli, discord-bot, site, rdn and omits @randsum/dice-ui. dice-ui exists at packages/dice-ui, is consumed via workspace:~ by BOTH apps/site and apps/expo (finding only named site), and contains real .tsx source plus a live test file (packages/dice-ui/__tests__/tokenColor.test.ts). Since `check:all` -> `check` calls per-package check (not the root `@randsum/*` typecheck glob), dice-ui's typecheck never runs in the main gate and its test never runs anywhere in CI — a genuine gap.\\n\\nBUT the recommendation as written is unsound: dice-ui's package.json defines ONLY a `typecheck` script (no check/lint/format/test). I verified that `bun run --filter '@randsum/dice-ui' check` errors with \"No packages matched the filter\" because no `check` script exists. So appending `&& bun run --filter '@randsum/dice-ui' check` would break the chain, not fix it. The real fix is two-part: first add a `check` (and lint/format/test) script to packages/dice-ui/package.json matching the roller/rdn pattern (`build && typecheck && format:check && lint && test`, minus build since dice-ui has no build), THEN wire it into the root `check`. Severity P2 stands (private package, but an orphaned test and unlinted .tsx source is a real DX/CI hole). Adjusting because the problem is real and accurately located but the proposed one-liner is incorrect/incomplete.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "ESLint config ignores generated .ts files but treats them as entry points",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "eslint.config.js:43, knip.json:24,48",
+        "problem": "ESLint's ignores array (line 43) includes `'**/*.generated.ts'`, so linting is skipped for code-generated files. However, knip.json explicitly lists generated files as entry points (e.g., `'src/*.generated.ts'` in games). This ambiguity means codegen bugs won't surface as lint errors. The generated files are committed and represent the public API.",
+        "recommendation": "Either (a) remove `'**/*.generated.ts'` from ESLint ignores so generated code is linted (catches codegen bugs), or (b) keep it ignored and document in codegen.ts that generated files skip ESLint checks. Option (a) is safer.",
+        "effort": "M",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The factual observations are accurate but the analysis and primary recommendation are unsound. VERIFIED FACTS: eslint.config.js:43 ignores `**/*.generated.ts`; knip.json:24 lists `src/*.generated.ts` as a knip entry; knip.json:48 also ignores `**/*.generated.ts`. Running `bunx eslint --no-ignore` on packages/games/src/blades.generated.ts and salvageunion.generated.ts produces 12 errors. Not previously reported in audit/ or plans/3.0.0-harsh-audit*.md.\n\nWHY ADJUSTED, NOT CONFIRMED:\n1. The \"ambiguity\" framing is wrong. Knip \"entry\" and ESLint \"ignore\" are not in conflict — they are different tools doing different jobs. Knip's entry declares generated files as graph roots so their EXPORTS aren't reported as unused; knip's own ignore (line 48) stops knip analyzing the files themselves. ESLint ignoring them is a separate, independent decision. There is no genuine tension between knip entries and ESLint ignores.\n2. The claim \"codegen bugs won't surface as lint errors\" is misleading. I inspected the 12 errors: they are all stylistic type-aware rules — `@typescript-eslint/unified-signatures` and `no-unnecessary-condition` — firing on INTENTIONAL defensive codegen patterns (blades.generated.ts:19-43 emits `input?.rating !== undefined && typeof input?.rating === 'number'` and optional chaining the type-checker knows is redundant). These are false positives on safe defensive code, not codegen bugs.\n3. Recommendation (a) — \"remove from ignores, it's safer\" — is actively wrong. It would inject 12+ CI-blocking errors, forcing either rule-disabling or making codegen emit less-defensive code, for zero correctness gain. Codegen correctness is already guarded by `gen:check` (freshness), `typecheck`, and per-game unit + fast-check property tests. Codegen already runs Prettier (codegen.ts:15-17), so formatting is covered.\n\nSEVERITY: P2 overstates impact (no correctness or runtime cost; purely a documentation-clarity nit). Lower to P3. The only sound, actionable remedy is recommendation (b): add a one-line comment near eslint.config.js:43 (and/or in codegen.ts) noting generated files intentionally skip ESLint because they are Prettier-formatted and type-checked, and that type-aware rules produce false positives on defensive codegen. Reject recommendation (a) entirely.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Prettier config includes TOML override but lefthook doesn't format TOML",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "refine",
+        "location": ".prettierrc:38-42, lefthook.yml:20",
+        "problem": "The Prettier config has an override for `*.toml` files, but the lefthook pre-commit format glob `'*.{ts,tsx,js,json,md,astro,css}'` (line 20) doesn't include TOML. This means bunfig.toml won't be auto-formatted by pre-commit hooks, though `bun run format` at root would format it. Inconsistency: staged changes to TOML files won't be formatted by hooks.",
+        "recommendation": "Update the lefthook format glob to include TOML: `'*.{ts,tsx,js,json,md,astro,css,toml,yml,yaml}'`",
+        "effort": "S",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "The core claim is verifiable. .prettierrc:38-42 (verified) has a `*.toml` override, and lefthook.yml:20 (verified) format glob `\"*.{ts,tsx,js,json,md,astro,css}\"` excludes TOML (and YAML/YAML). TOML files do exist: ./bunfig.toml, apps/expo/bunfig.toml, apps/site/netlify.toml, apps/rdn/netlify.toml. So staged TOML changes are not auto-formatted by pre-commit hooks — that part is accurate.\n\nHowever, the finding contains a factual error in its justification: it claims \"`bun run format` at root would format it.\" Root `format` is `bun run --filter '@randsum/*' format`, which delegates to each package's `prettier --write .` scoped to that package directory. The repo-root `./bunfig.toml` lives in NO package directory, so it is formatted by neither the hook nor `bun run format`. Only the apps/* TOML files (which ARE inside @randsum/* package dirs running `prettier --write .`) are covered by `bun run format` but not by hooks.\n\nSeverity is overstated. The only TOML-specific prettier override is `singleQuote: false`, which is already prettier's TOML default, so the formatting delta is effectively nil. bunfig.toml/netlify.toml are config files touched very rarely, and CI `format:check` (per-package) would catch any apps/* drift. The actual cost is negligible — a true but trivial consistency nitpick, not a P2. The recommendation (extend the glob to include toml/yml/yaml) is sound and low-risk, but this belongs at P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Pre-commit knip output hidden, making failures opaque",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "lefthook.yml:52-54",
+        "problem": "Pre-push knip runs with output redirected to /dev/null: `bun run knip > /dev/null 2>&1`. If knip fails, the developer won't see why the push was blocked. Pre-commit lint, by contrast, shows output.",
+        "recommendation": "Change to: `run: bun run knip` to display knip output when it fails, helping developers understand what was detected.",
+        "effort": "S",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Location is accurate: lefthook.yml:53 has `bun run knip > /dev/null 2>&1`. But the finding's central justification is false. It claims knip is uniquely opaque and contrasts it with pre-commit lint \"showing output.\" In reality: (1) this is the pre-push hook, not pre-commit; (2) within pre-push, knip is NOT special — build (line 38), codegen-check (41), conformance-check (44), and audit (50) ALL use the identical `> /dev/null 2>&1` redirect. The redirect is a deliberate, consistent house style for the pre-push band, not an oversight on knip. The only command that surfaces stdout is `test` (line 47, via `tail -5`), intentionally. Moreover, lefthook's `output: [summary, failure]` config (line 33) means a knip failure IS reported by lefthook as a failed command with non-zero exit — the developer sees that knip blocked the push and can re-run `bun run knip` for detail; the redirect only hides knip's stdout, not the fact of failure. So the problem is far smaller than stated, and the recommendation to un-redirect only knip would create inconsistency with four sibling commands; doing it consistently is a debatable style choice, not a clear fix. Real-but-trivial with a flawed premise: drop from P2 to P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "Help script lists non-existent 'mcp:compile' commands",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "fix",
+        "location": "scripts/help.ts:36-38",
+        "problem": "The help script lists `'mcp:compile'` and `'mcp:compile:all'` commands under 'MCP Server', but these do not exist in package.json scripts. This misleads developers.",
+        "recommendation": "Remove the MCP Server category from help.ts, or add the scripts to package.json if they're a planned feature. Given the project scope (dice-rolling), this is likely stale documentation.",
+        "effort": "S",
+        "area": "monorepo-config",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified directly against the code. scripts/help.ts lines 36-38 list 'mcp:compile' and 'mcp:compile:all' under an 'MCP Server' category. The root package.json scripts (full list inspected: prepare, help, dev, build, test, ..., changeset, version-packages, publish) contain NO mcp scripts. A repo-wide grep for 'mcp:compile' returns ONLY the two lines in help.ts itself — the commands exist nowhere else. No MCP package or app exists (packages/ = dice-ui, games, roller). Running `bun run mcp:compile` would fail. Not a duplicate: prior audit dirs (audit/, plans/) have zero references to help.ts or mcp:compile. MEMORY confirms MCP server is only an aspirational 'post-launch feature gated behind publishing,' so these entries are premature. The recommendation (remove the category, or add scripts if planned) is sound. P2 is correct: this is dev-facing doc drift that wastes time but is non-blocking. Note: help.ts has additional drift beyond this finding — the Release category lists 'changeset:version'/'changeset:publish' but actual scripts are 'version-packages'/'publish' — confirming the file is stale more broadly, which strengthens (not weakens) the finding.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "CONTRIBUTING.md references deleted display-utils package",
+        "dimension": "dx",
+        "severity": "P1",
+        "category": "fix",
+        "location": "/Users/jarvis/Code/RANDSUM/@RANDSUM/CONTRIBUTING.md:24",
+        "problem": "Line 24 states '`packages/display-utils/` -- Browser utilities for step visualization and StackBlitz integration'. This package was deleted in commit f74c323d (feat!: delete @randsum/display-utils), with functionality absorbed into @randsum/roller subpaths (/docs and /trace). New contributors reading the contributing guide will attempt to find this package.",
+        "recommendation": "Remove the display-utils line from the project structure section. Replace with a brief note about the /docs and /trace subpaths if needed. Update reference to point to dice-ui instead if browser component needs are mentioned.",
+        "effort": "S",
+        "area": "docs-dx",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed real and current. CONTRIBUTING.md:24 reads \"`packages/display-utils/` -- Browser utilities for step visualization and StackBlitz integration\". The package no longer exists: `packages/` contains only dice-ui, games, roller. Deletion is confirmed via commits f74c323d (feat!: delete @randsum/display-utils, absorbed into @randsum/roller subpaths) and 60404f12. The location is accurate and the recommendation (remove the line, optionally note /docs and /trace subpaths or point to dice-ui) is sound. Not a duplicate: prior audits flagged different CONTRIBUTING.md problems — the CLAUDE/ directory 404 links (round-1/2/3) and the packages/{name} vs games/{name} game path (round-3 S11). Round-2 item 6 was the inverse (\"README does not list display-utils,\" pre-deletion). The display-utils structure line at line 24 is genuinely still-open and not previously reported. Adjusting severity P1 -> P2: this is a stale documentation reference in a structure list. It mildly confuses a new contributor but breaks no build, test, or workflow, unlike the 404 onboarding links the prior audits (rightly) prioritized. Worth fixing in a docs cleanup pass, not a release blocker.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "README.md TypeScript badge version drift (5.9 vs 6.0.2)",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "fix",
+        "location": "/Users/jarvis/Code/RANDSUM/@RANDSUM/README.md:10",
+        "problem": "Badge displays 'TypeScript-5.9' but package.json specifies typescript@6.0.2 (verified in root package.json and confirmed by 'bun list typescript'). Creates false impression of codebase's actual tooling version for visitors.",
+        "recommendation": "Update badge to '6.0.2' to match package.json. Consider automating this in CI if possible (e.g., via badge-generation hook), or document the manual maintenance task in CONTRIBUTING.md.",
+        "effort": "S",
+        "area": "docs-dx",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed factually. README.md:10 renders `[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)]` while root package.json pins typescript@6.0.2 (devDependencies line 27 and catalog line 39). The drift is real and current, the cited location is exact, and the recommendation (bump to 6.0.2) is correct and non-duplicative. Adjusting severity from P2 to P3: this is a static, hardcoded badge with zero functional, build, type, or consumer impact — it is a purely cosmetic README label. In an audit context oriented toward architectural/correctness signal, P2 overstates it; it is a genuine-but-trivial nitpick. The automation suggestion (CI badge-gen hook) is over-engineering for a value that changes maybe once a year, so the fix should be a one-line manual edit, not new tooling.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "llms.txt claims RDN v1.0 conformance when only v0.9.0 exists",
+        "dimension": "best-practices",
+        "severity": "P1",
+        "category": "fix",
+        "location": "/Users/jarvis/Code/RANDSUM/@RANDSUM/llms.txt:3",
+        "problem": "llms.txt line 3 states 'RDN v1.0 Level 4 (Full) Conformant' but only v0.9.0 exists in /Users/jarvis/Code/RANDSUM/@RANDSUM/apps/rdn/src/content/specs/ (verified with 'ls'). Root README.md and all app READMEs correctly state v0.9.0. This creates confusion for LLM context (llms.txt is loaded into Claude requests) and breaks consistency across documentation surfaces.",
+        "recommendation": "Change 'RDN v1.0' to 'RDN v0.9.0' in llms.txt line 3. This aligns with actual spec availability in /apps/rdn/src/content/specs/v0.9.0.md.",
+        "effort": "S",
+        "area": "docs-dx",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Confirmed and current. /Users/jarvis/Code/RANDSUM/@RANDSUM/llms.txt line 3 reads \"RDN v1.0 Level 4 (Full) Conformant\" while apps/rdn/src/content/specs/ contains only v0.9.0.md. Every other doc surface was already reconciled to v0.9.0: README.md:17, packages/roller/README.md:18, packages/games/README.md:5, apps/cli/README.md:10, apps/discord-bot/README.md:5 all now say \"RDN v0.9.0 Level 4 (Full) Conformant\". Root llms.txt was the one surface missed. (The two other \"RDN v1.0\" hits in v0.9.0.md:1028 and llms-full.txt:1027 are inside a quoted example illustrating the conformance-claim FORMAT, not real claims, so not part of this defect.) Location, problem, and recommendation are all accurate; root llms.txt is a hand-maintained standalone file (not generated), so a one-line edit fixes it.\n\nAdjusting severity P1 -> P2. This is the residual of the prior audit item F8 (audit/dimensions/apps.md, audit/synthesis-top-30.md), whose stated fix was \"roll README claims back to v0.9.0 OR ship v1.0 spec.\" The READMEs were rolled back; llms.txt is the leftover. Cost is contained entirely to LLM-context/documentation consistency with zero functional or runtime impact, one line in one non-published file. That is a P2 cleanup, not a P1. Still actionable and worth fixing because llms.txt is the canonical repo-root LLM-context file and the inconsistency directly misleads any model loading it.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "README.md still advertises non-existent interactive TUI mode",
+        "dimension": "ux",
+        "severity": "P1",
+        "category": "fix",
+        "location": "/Users/jarvis/Code/RANDSUM/@RANDSUM/README.md:73",
+        "problem": "Line 73 states 'npx @randsum/cli         # Interactive TUI mode'. However, the CLI (apps/cli/src/index.ts) is a one-shot notation parser with no interactive/render path — the TUI/ink code was removed in PR #1056 despite an earlier plan to keep it. Users who run 'npx @randsum/cli' with no args get help text, not a TUI. The audit memo confirms this was REMOVED, not implemented.",
+        "recommendation": "Remove the interactive TUI line entirely. The CLI now only supports: notation args, --verbose, --json, --repeat, --seed, and stdin/pipe mode. Example usage: 'npx @randsum/cli 2d20' or 'echo 4d6L | npx @randsum/cli'. Update example to reflect actual usage.",
+        "effort": "S",
+        "area": "docs-dx",
+        "verdict": {
+          "verdict": "confirmed",
+          "confidence": "high",
+          "reasoning": "Verified against actual code. README.md:73 reads `npx @randsum/cli         # Interactive TUI mode`. apps/cli/src/index.ts is a pure one-shot arg parser: with zero notations, main() prints HELP and process.exit(1) (lines 110-114). There is no interactive/render/ink path in index.ts, run.ts, or format.ts; apps/cli/CLAUDE.md itself describes it as a \"Simple terminal dice roller. Pass notation args, get results.\" So the README advertises a non-existent mode, and the actual behavior (help text + exit 1) directly contradicts it. Location and recommendation are accurate; removing the line and using a real example (e.g. `echo 4d6L | npx @randsum/cli` for stdin mode, supported at index.ts:104-108) is sound and non-duplicative. One refinement strengthening the finding: README.md:33 also falsely claims \"@randsum/cli - CLI and interactive TUI for rolling dice\" — the same fix should cover both occurrences. Severity P1 kept: it is the project's canonical README, top-level Quick Example, advertising an entry experience that doesn't exist; though doc-only (not a functional/data bug), it is user-facing and appears in two places, so P1 stands rather than dropping to P2.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "RDN version string hardcoded across multiple app READMEs",
+        "dimension": "dry",
+        "severity": "P2",
+        "category": "refine",
+        "location": "/Users/jarvis/Code/RANDSUM/@RANDSUM/apps/*/README.md (cli, discord-bot)",
+        "problem": "RDN conformance claim 'RDN v0.9.0 Level 4 (Full) Conformant' is duplicated in at least 3 files: root README, cli/README, discord-bot/README. No single source of truth. If RDN is bumped to v1.0, all three files must be updated manually, increasing risk of drift.",
+        "recommendation": "Extract the RDN version claim to a shared constant in llms.txt or a dedicated config. Alternatively, add it to root CLAUDE.md as the canonical statement, then reference 'See root CLAUDE.md' in app READMEs. Verify this doesn't require CI-build-time substitution (should be static doc text, not generated).",
+        "effort": "M",
+        "area": "docs-dx",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "CONFIRMED the underlying problem but the finding undercounts the scope and is partly duplicative of prior audit F8. The RDN conformance string is hardcoded in 6 files, not 3: README.md:17, packages/roller/README.md:18, packages/games/README.md:5, apps/cli/README.md:10, apps/discord-bot/README.md:5 (all \"RDN v0.9.0 Level 4 (Full) Conformant\"), and llms.txt:3 (\"RDN v1.0 Level 4 (Full) Conformant\"). The finding's location (\"cli, discord-bot\") and count (\"at least 3 files\") are both understated.\n\nThe DRY risk the finding predicts has ALREADY MATERIALIZED: llms.txt says v1.0 while all five READMEs say v0.9.0, while the canonical spec (apps/rdn/src/content/specs/v0.9.0.md, the only spec file, Status: Draft) is v0.9.0. So llms.txt is making a false conformance claim to a spec version that does not exist as a published document. This is a live correctness/credibility defect, not a hypothetical.\n\nThis is substantially duplicative of the prior audit's F8 (audit/dimensions/apps.md:76-81, rated P1): \"Only one spec version (v0.9.0 Draft); READMEs claim 'RDN v1.0 Level 4 Conformant'.\" The audit commit 6cf8b298 applied F8's option (b) — changing the five READMEs to v0.9.0 — but missed llms.txt, which still carries the stale v1.0 claim. So the genuinely-NEW, still-open item is: llms.txt:3 was not updated in the F8 fix and now contradicts every README.\n\nAdjusting because: (1) the finding's framing (pure DRY/shared-constant refactor, effort M) overweights the engineering solution for a one-line static doc string — a shared-constant/build-substitution layer is overkill; (2) the real, actionable defect is the single stale line in llms.txt, fixable in seconds, which the finding buries; (3) scope/location are inaccurate (6 files, including root/roller/games READMEs the finding omits). Severity stays P2: a false conformance claim in llms.txt (consumed by LLM agents as authoritative) is more than cosmetic, but it is one line and low blast radius.\n\nActionable fix: change llms.txt:3 from \"RDN v1.0 Level 4\" to \"RDN v0.9.0 Level 4\" to match the published spec and the five READMEs. A shared-constant extraction is optional and not worth M effort for one string.",
+          "adjustedSeverity": "P2",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "game-spec-creator skill lacks end-to-end walkthrough example",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "/Users/jarvis/Code/RANDSUM/@RANDSUM/skills/game-spec-creator/SKILL.md (entire file)",
+        "problem": "The game-spec-creator skill provides excellent spec format documentation (lines 19-194) but doesn't include a **complete worked example** of: (1) creating a new .randsum.json, (2) running 'bun run --filter @randsum/games gen' to generate code, (3) adding a subpath export to package.json, (4) writing and running tests. New contributors may generate a spec but not know the complete workflow. The references/SPEC_EXAMPLES.md file has spec examples but no instructions on what to do after creating them.",
+        "recommendation": "Add a 'Full Walkthrough' section to SKILL.md (after section 'Common Patterns') that walks through: (a) creating a simple blades-style game spec, (b) placing it at packages/games/mygame.randsum.json, (c) running codegen, (d) adding subpath export, (e) writing a unit test, (f) running bun run --filter @randsum/games test. Alternatively, link to CONTRIBUTING.md#Adding-a-New-Game which already covers this.",
+        "effort": "M",
+        "area": "docs-dx",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Verified against the actual files. The core claim is partially accurate: /Users/jarvis/Code/RANDSUM/@RANDSUM/skills/game-spec-creator/SKILL.md focuses on spec authoring and its \"Validation and Testing\" section (lines 184-189) mentions codegen and tests but omits the integration steps — adding the subpath export to package.json, the size-limit entry, and file placement. So there is a genuine gap relative to a full end-to-end walkthrough.\n\nHowever, the finding overstates both severity and novelty. The complete workflow is already documented and discoverable in TWO places the finding itself references: CONTRIBUTING.md \"Adding a New Game\" (lines 27-36) and, more completely, packages/games/CLAUDE.md \"Adding a New Game\" (lines 87-98), which gives a precise 6-step workflow including the subpath-export gotcha (exports-sync.test.ts drift guard) and size-limit entry. The skill also already links to references/SPEC_EXAMPLES.md for full specs. The skill's stated scope (its frontmatter description: \"create .randsum.json specs / understand the RANDSUM spec format\") is spec authoring, not the package-integration lifecycle — so the missing steps are arguably out of scope by design.\n\nMinor inaccuracy in the finding: it proposes placing the spec at \"packages/games/mygame.randsum.json\", but the real convention is the package root with the shortcode name (`<shortcode>.randsum.json`), and tests live at packages/games/__tests__/. The recommendation to add a walkthrough OR link to the existing workflow doc is sound and non-duplicative of code, but the lower-effort, higher-value fix is simply a one-line cross-link from SKILL.md's \"Validation and Testing\" section to packages/games/CLAUDE.md#Adding-a-New-Game (the canonical source), not authoring a parallel M-effort walkthrough that would risk drift from the real docs.\n\nNet: real but mis-rated. This is a low-cost doc nicety (workflow is one grep away in two discoverable docs), so P3 not P2, and the effort should be S (add a cross-link), not M.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "CLI published to npm but under-feature-promoted and possibly mis-scoped",
+        "dimension": "dx",
+        "severity": "P2",
+        "category": "clarify",
+        "location": "apps/cli/README.md, apps/cli/src/index.ts",
+        "problem": "The CLI is published as @randsum/cli (6 versions on npm) and documented in the root README, but its README is only 50 lines and focuses on single notation rolls. The tool is positioned as 'a simple terminal dice roller,' but the README hints at features that don't exist (interactive mode was removed per audit #1056) or are undocumented (stdin/pipe support was added but not mentioned in the README). A user npx @randsum/cli expecting a TUI or REPL gets a one-shot notation parser, which feels incomplete. The README doesn't explain the intended use case: quick ad-hoc rolls from the terminal, or a game aid that runs alongside a TTRPG session.",
+        "recommendation": "Clarify the CLI's positioning: either (1) promote it as a lightweight one-shot tool with stdin support documented (echo '4d6L' | @randsum/cli), or (2) invest in building a simple TUI mode with multi-roll sessions, history, and template support. Update the README to show the stdin pattern, JSON output option, and example one-liners for game integration. If TUI is genuinely out of scope, remove 'Interactive TUI' from the root README's feature list.",
+        "effort": "S",
+        "area": "strategic-product",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "Partly confirmed, partly refuted — the actionable doc-drift is real but the finding mis-locates it and includes a stale recommendation.\n\nCONFIRMED (real & current):\n1. The CLI is now a pure one-shot notation roller. The TUI was deliberately REMOVED — apps/cli/src has only index.ts, run.ts, format.ts; there is NO tui/ dir, and apps/cli/package.json no longer depends on ink or dice-ui.\n2. The ROOT README (/Users/jarvis/Code/RANDSUM/@RANDSUM/README.md) still falsely advertises the removed TUI: line 33 (\"CLI and interactive TUI for rolling dice\") and line 73 (\"npx @randsum/cli  # Interactive TUI mode\"). Running `npx @randsum/cli` with no args + a TTY now just prints help and exits 1 — no TUI. This is a genuine, current doc-drift bug the prior audit's item #14 did NOT catch (that item was about the *CLI* README's phantom `-i` flag, which is now fixed).\n3. stdin/pipe support exists in code (index.ts readStdinSync + !process.stdin.isTTY) but apps/cli/README.md never documents the `echo '4d6L' | randsum` pattern. Confirmed.\n\nREFUTED / MIS-LOCATED:\n- The finding blames apps/cli/README.md for the phantom interactive/TUI claim. That README is clean — it has NO interactive/TUI mention and correctly documents --json, -r, -s, etc. The phantom-TUI text is in the ROOT README.md, not the cited file.\n- Recommendation option (2) \"invest in building a simple TUI mode\" is stale/refuted: the TUI was just deliberately removed (and ink mis-classification was flagged in the prior audit). Re-adding it contradicts the current direction. Only the documentation-cleanup half of the recommendation (document stdin, strip 'Interactive TUI' from root README) is sound and non-duplicative.\n\nNet: real, low-severity documentation drift. Adjusting because the cited location is wrong (root README.md, not apps/cli/README.md) and half the recommendation is unsound. Keeping P2 is reasonable but I'd lean P3 — it's pure doc cleanup with no functional/publish impact. Marking P3.",
+          "adjustedSeverity": "P3",
+          "isActionable": true
+        }
+      },
+      {
+        "title": "sideEffects: true on roller prevents tree-shaking, shipping full engine when consumers only need tokenize",
+        "dimension": "best-practices",
+        "severity": "P2",
+        "category": "refine",
+        "location": "packages/roller/package.json (line 6)",
+        "problem": "The roller's package.json sets sideEffects: true, which tells bundlers to pull the full dist/index.js even if a consumer imports only @randsum/roller/tokenize. Per CLAUDE.md, this was reverted from false due to a bunup 0.16.31 issue with subpath re-exports, but the issue is never cited or explained. Without proper tree-shaking, every UI component that uses tokenize pulls the full modifier registry, random number generation, and roll engine (~16 KB of dead code).",
+        "recommendation": "Investigate the underlying bunup issue with subpath re-exports and either: (1) upgrade bunup if the issue is fixed in 0.17+, or (2) split the roller into src/tokenize-only and src/full-engine with explicit entry points so sideEffects: false works. If the re-export issue persists, document it in CLAUDE.md as a known limitation and add a GitHub issue linking to the bunup tracker. This is a high-value win for UI bundle sizes.",
+        "effort": "M",
+        "area": "strategic-product",
+        "verdict": {
+          "verdict": "adjusted",
+          "confidence": "high",
+          "reasoning": "CONFIRMED REAL but the finding's framing and recommendation are wrong and partly duplicative; severity unchanged at P2.\n\nCore problem is real and current. packages/roller/package.json line 6 is `\"sideEffects\": true`. The main barrel dist/index.js re-exports the entire engine via shared chunks (verified: roll, modifiers, notation, validation all re-exported), so a consumer importing a narrow surface from `@randsum/roller` (e.g. `import { isDiceNotation } from '@randsum/roller'`) cannot tree-shake the roll engine out. This is a measured ~37 KB consumer cost (51.3 KB vs 14.5 KB).\n\nKEY CORRECTION the finding missed: this is a REGRESSION from an Accepted ADR, not an unexplained workaround. Git history shows the correct value was `\"sideEffects\": [\"./src/**/*\"]` (commit 8d7f6d28, documented in docs/adr/ADR-018-roller-sideeffects-src-glob.md, Status: Accepted). The src-glob matches nothing at consumer time (published `files` is dist/LICENSE/README only — src/ is never shipped) so it tree-shakes like `false`, while matching at BUILD time to sidestep bunup 0.16.31's self-DCE bug that breaks dist/docs/index.js and dist/trace/index.js when `false` is used. During the 30-item audit a dev tried `false` (commit e4163b0a), hit the documented bunup bug, and INCORRECTLY reverted to `true` instead of restoring the working `[\"./src/**/*\"]` array. The audit merge (6cf8b298) carried `true` forward.\n\nWHERE THE FINDING IS WRONG (hence adjusted, not confirmed):\n1. It claims the bunup issue is 'never cited or explained' — false. ADR-018 documents it exhaustively (alternatives tested, measurements, references) and commit e4163b0a's message explains the exact failure (broken minified subpath output).\n2. It mis-describes the cost: consumers importing the dedicated subpath `@randsum/roller/tokenize` are NOT affected — that is a separate bunup entry point producing an isolated 256-byte dist/tokenize.js. The real cost is narrow imports from the main barrel `@randsum/roller`. CLAUDE.md's tokenize-isolation invariant relies on separate entry points + ESM tree-shaking, not the sideEffects field.\n3. Its recommendation (investigate/upgrade bunup, split tokenize vs full-engine entry points, file a GH issue) is over-engineered and duplicates work already done. The correct, already-validated, one-line fix is: restore `\"sideEffects\": [\"./src/**/*\"]` per Accepted ADR-018 (which yields the measured 72% reduction, keeps all size-limit budgets and tests green, requires no bunup upgrade or entry-point split). bunup is still 0.16.31, so `false` remains unsafe.\n\nSeverity P2 (refine) is appropriate: real build/DX hygiene regression affecting downstream UI bundle sizes, but not release-blocking.\n\nRecommended action: change packages/roller/package.json line 6 from `\"sideEffects\": true` to `\"sideEffects\": [\"./src/**/*\"]`, restoring conformance to ADR-018. Verify with `bun run --filter @randsum/roller size` and the dist smoke test.",
+          "adjustedSeverity": "unchanged",
+          "isActionable": true
+        }
+      }
+    ]
+  }
+}
