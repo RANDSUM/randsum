@@ -13,6 +13,7 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 | [004](./ADR-004-literal-types-over-branded-types.md)      | Literal types over branded types for public API        | Accepted                 |
 | [005](./ADR-005-merge-notation-into-roller.md)            | Merge @randsum/notation back into @randsum/roller      | Accepted                 |
 | [009](./ADR-009-public-api-surface-reduction.md)          | Public API surface reduction for @randsum/roller       | Accepted                 |
+| [019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) | CLI shipped without Ink; dice-ui has no TUI target | Accepted                 |
 
 ### Code Generation and Schema
 
@@ -72,5 +73,6 @@ Consult these ADRs before starting the related kind of task.
 - **Working on notation.randsum.dev (`apps/spec/` / `apps/rdn/`)** — [ADR-015](./ADR-015-custom-astro-layout-over-starlight.md) (no Starlight), [ADR-016](./ADR-016-static-version-embedding.md) (per-version static pages), [ADR-017](./ADR-017-vanilla-typescript-client-interactivity.md) (no React islands).
 - **Working on the playground app** — [ADR-011](./ADR-011-playground-layout-design.md) (layout), [ADR-012](./ADR-012-playground-app-infrastructure.md) (infrastructure). Note the playground is in the process of being retired in favor of `apps/expo/` per the Unified Roller App Sprint.
 - **Updating the docs site copy or examples** — [ADR-010](./ADR-010-docs-site-notation-merge-alignment.md) aligned the site with the notation-into-roller merge. Any doc that still references `@randsum/notation` as a separate package is stale.
+- **Working on `apps/cli` or `@randsum/dice-ui`** — [ADR-019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) records that the CLI is a plain string-formatter (no Ink, no dice-ui dep) and dice-ui has only web + React Native targets (no `ink/` TUI). Do not re-introduce Ink on the assumption it was once intended.
 
 When a proposed change conflicts with an ADR, either amend the ADR in the same PR (with explicit superseded/amended status) or reject the change.

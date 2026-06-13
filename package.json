@@ -23,6 +23,7 @@
     "prettier": "3.8.4",
     "prettier-plugin-astro": "0.14.1",
     "size-limit": "12.1.0",
+    "typedoc": "0.28.19",
     "typescript": "6.0.3",
     "typescript-eslint": "8.61.0"
   },
@@ -60,6 +61,7 @@
     "knip": "knip --exclude catalog --no-config-hints",
     "arch:check": "depcruise packages apps --config .dependency-cruiser.cjs",
     "secrets:scan": "bash scripts/gitleaks-precommit.sh",
+    "docs:api": "typedoc",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/site dev",

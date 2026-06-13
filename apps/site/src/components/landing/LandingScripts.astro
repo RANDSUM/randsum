@@ -1,0 +1,56 @@
+---
+// Client-side behaviour for the landing page: install-command copy, the StackBlitz
+// "edit" button, and live npm version badge hydration. Extracted verbatim from
+// src/pages/index.astro (L7c).
+---
+
+<script>
+  // Install copy-to-clipboard
+  document.querySelectorAll<HTMLButtonElement>('.install-cmd').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const cmd = btn.dataset['cmd'] ?? btn.textContent?.trim() ?? ''
+      await navigator.clipboard.writeText(cmd)
+      const icon = btn.querySelector('.install-copy-icon')
+      if (icon) {
+        (icon as HTMLElement).style.color = 'var(--sl-color-accent-high)'
+        setTimeout(() => { (icon as HTMLElement).style.color = '' }, 1500)
+      }
+    })
+  })
+
+  // StackBlitz code example
+  document.querySelector<HTMLButtonElement>('.code-example-stackblitz')?.addEventListener('click', () => {
+    const notation = document.querySelector<HTMLButtonElement>('.code-example-stackblitz')?.dataset['notation'] ?? '4d6L'
+    const safe = JSON.stringify(notation)
+    const code = `import { roll } from '@randsum/roller'\n\nconst { total, rolls } = roll(${safe})\n\nconsole.log(total)\nconsole.log(rolls[0].initialRolls)\nconsole.log(rolls[0].rolls)\nconsole.log(rolls[0].description)\n`
+    const packageJson = JSON.stringify({ name: 'randsum-playground', version: '1.0.0', private: true, scripts: { start: 'tsx index.ts' }, dependencies: { '@randsum/roller': 'latest', tsx: 'latest' } }, null, 2)
+    const params = new URLSearchParams({ title: `RANDSUM — ${notation}`, description: `Rolling ${notation} with @randsum/roller`, template: 'node' })
+    params.set('file[index.ts]', code)
+    params.set('file[package.json]', packageJson)
+    window.open(`https://stackblitz.com/run?${params.toString()}`, '_blank', 'noopener,noreferrer')
+  })
+
+  // Fetch npm versions live and update version badges
+  ;(async () => {
+    const versionEls = Array.from(document.querySelectorAll<HTMLElement>('[data-npm-version]'))
+    const packageNames = [...new Set(versionEls.map(el => el.dataset['npmVersion']!))]
+
+    const results = await Promise.allSettled(
+      packageNames.map(async (pkg) => {
+        const res = await fetch(`https://registry.npmjs.org/${pkg}/latest`)
+        if (!res.ok) throw new Error(`${res.status}`)
+        const data = await res.json() as { version: string }
+        return [pkg, data.version] as const
+      })
+    )
+
+    const versionMap = new Map(
+      results.flatMap(r => r.status === 'fulfilled' ? [r.value] : [])
+    )
+
+    versionEls.forEach(el => {
+      const version = versionMap.get(el.dataset['npmVersion']!)
+      if (version) el.textContent = `v${version}`
+    })
+  })()
+</script>

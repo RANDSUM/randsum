@@ -1,0 +1,23 @@
+---
+import { gamePackages } from '../../utils/packageData'
+import LabeledSection from '../LabeledSection.astro'
+import { getCardStyle } from './cardHelpers'
+---
+
+<LabeledSection label="Games" labelSide="left">
+  <div class="pkg-grid">
+    {gamePackages.map((pkg) => (
+      <a
+        class="pkg-card"
+        style={getCardStyle(pkg)}
+        href={`/games/${pkg.id}/`}
+      >
+        <div class="pkg-card-header">
+          <h3 class="pkg-card-name">{pkg.displayName}</h3>
+        </div>
+        <p class="pkg-card-desc">{pkg.description}</p>
+        <span class="pkg-card-link">View docs &rarr;</span>
+      </a>
+    ))}
+  </div>
+</LabeledSection>

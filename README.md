@@ -141,9 +141,20 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
 
-### Website Deployment
+### Generated API reference
 
-The documentation site (`@randsum/site`) is deployed to **Netlify**, configured via `apps/site/netlify.toml` and deployed automatically on push to main.
+`bun run docs:api` runs **TypeDoc** (config in `typedoc.json` / `tsconfig.typedoc.json`) over
+the public surfaces of `@randsum/roller` and `@randsum/games`, emitting HTML into `docs/api/`
+(git-ignored). This produces the reference locally; **publishing the generated output to
+randsum.dev is out of scope here** — only the config + script are wired up.
+
+### Deployment & operations
+
+The documentation site (`@randsum/site`) is deployed to **Netlify**, configured via
+`apps/site/netlify.toml` and deployed automatically on push to main. For the full operational
+runbook — every app's host, deploy, restart, token rotation, and per-platform rollback/DR
+steps — see [`apps/DEPLOY.md`](apps/DEPLOY.md). Incident RCAs go in `runbooks/` (template at
+`runbooks/RCA-template.md`).
 
 ---
 

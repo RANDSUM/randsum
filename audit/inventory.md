@@ -29,16 +29,16 @@ Layout: **Single-repo (Bun workspace monorepo)**
 
 #### Packages (workspaces)
 
-| Workspace          | Version | Status         | LOC src   | Tests          | Bundle limits                                    | Notes                                                                                                                            |
-| ------------------ | ------- | -------------- | --------- | -------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/roller`  | 1.3.0   | Public (npm)   | ~7,778    | 109 test files | index 16KB, tokenize 6.5KB, docs 20KB, trace 5KB | Zero runtime deps. Notation parser native. Subpaths: `/roll`, `/errors`, `/validate`, `/tokenize`, `/docs`, `/trace`.            |
-| `packages/games`   | 1.3.0   | Public (npm)   | ~5,815    | 44 test files  | 15KB per game; 33KB salvageunion                 | Codegen-driven from `.randsum.json` specs. Subpaths: `/blades`, `/daggerheart`, `/fifth`, `/pbta`, `/root-rpg`, `/salvageunion`. |
-| `packages/dice-ui` | unknown | Likely private | ~3,780    | 5 test files   | n/a                                              | Shared UI components (.tsx web, .native.tsx RN, ink/ TUI).                                                                       |
-| `apps/cli`         | 1.3.0   | Public (npm)   | ~205      | 4 test files   | n/a                                              | Ink-based TUI dice roller (`randsum` binary). Depends on dice-ui.                                                                |
-| `apps/expo`        | private | Private        | (managed) | 10 test files  | n/a                                              | Cross-platform playground (web + iOS + Android). Deployed to randsumapp.expo.app.                                                |
-| `apps/discord-bot` | unknown | Private        | ~1,176    | 11 test files  | n/a                                              | Discord slash-command bot. Public-invite directory submission outstanding.                                                       |
-| `apps/site`        | private | Private        | ~3,799    | 4 test files   | n/a                                              | Astro docs site (randsum.dev). Purple-accent theme, prefetch disabled.                                                           |
-| `apps/rdn`         | private | Private        | ~1,954    | 0 test files   | n/a                                              | Notation spec site (notation.randsum.dev).                                                                                       |
+| Workspace          | Version | Status       | LOC src   | Tests          | Bundle limits                                    | Notes                                                                                                                                                                                                  |
+| ------------------ | ------- | ------------ | --------- | -------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/roller`  | 1.3.0   | Public (npm) | ~7,778    | 109 test files | index 16KB, tokenize 6.5KB, docs 20KB, trace 5KB | Zero runtime deps. Notation parser native. Subpaths: `/roll`, `/errors`, `/validate`, `/tokenize`, `/docs`, `/trace`.                                                                                  |
+| `packages/games`   | 1.3.0   | Public (npm) | ~5,815    | 44 test files  | 15KB per game; 33KB salvageunion                 | Codegen-driven from `.randsum.json` specs. Subpaths: `/blades`, `/daggerheart`, `/fifth`, `/pbta`, `/root-rpg`, `/salvageunion`.                                                                       |
+| `packages/dice-ui` | 2.0.0   | Private      | ~3,780    | 5 test files   | n/a                                              | Shared React UI components. Two render targets only: `.tsx` (web/react-dom) + `.native.tsx` (React Native). No `ink/` TUI target, no `ink` dependency (ADR-019).                                       |
+| `apps/cli`         | 2.0.0   | Public (npm) | ~205      | 4 test files   | n/a                                              | Plain string-formatting CLI (`randsum` binary): argv parse + `roll()` + compact/verbose/JSON formatters. No React/Ink, no `@randsum/dice-ui` dep — only `@randsum/roller`, inlined at build (ADR-019). |
+| `apps/expo`        | private | Private      | (managed) | 10 test files  | n/a                                              | Cross-platform playground (web + iOS + Android). Deployed to randsumapp.expo.app.                                                                                                                      |
+| `apps/discord-bot` | unknown | Private      | ~1,176    | 11 test files  | n/a                                              | Discord slash-command bot. Public-invite directory submission outstanding.                                                                                                                             |
+| `apps/site`        | private | Private      | ~3,799    | 4 test files   | n/a                                              | Astro docs site (randsum.dev). Purple-accent theme, prefetch disabled.                                                                                                                                 |
+| `apps/rdn`         | private | Private      | ~1,954    | 0 test files   | n/a                                              | Notation spec site (notation.randsum.dev).                                                                                                                                                             |
 
 #### Game specs (`.randsum.json`)
 
@@ -71,9 +71,10 @@ Outstanding spec-driven candidates per project memory: Fate Core (#940), Pathfin
 - **TypeScript 5.9 (workspace) / 6.0 (root devDep)** — note mismatch
 - **bunup 0.16.31** — bundler for ESM-only output
 - **Astro 6.0.8** (site)
-- **Expo SDK 55** (expo app)
-- **Ink 6.8 + React 19.2** (CLI TUI)
+- **Expo SDK 55 + React 19.2** (expo app); **react-native** / react-dom in `dice-ui` (no Ink anywhere — ADR-019)
 - **ESLint 10 + Prettier 3.8** (linting)
+- **TypeDoc 0.28** (generated API reference via `bun run docs:api`)
+- **Playwright 1.60** (expo web e2e smoke, opt-in)
 - **fast-check 4.6** (property tests)
 - **size-limit 12** (bundle gates)
 - **mitata 1.0** (benchmarks)
@@ -122,6 +123,7 @@ The repo already contains substantial design memory:
 
 - **High** on package boundaries, build/test/lint commands, language identification, CI surface.
 - **Medium** on per-app LOC totals: `apps/expo/src` showed 0 files via the `src/` scan because Expo's source layout places entry files at the app root (`App.tsx`, `app/`); the 10 test files were detected. Treat Expo LOC as "not measured" rather than zero.
-- **Medium** on `packages/dice-ui` external API status — not declared `private`, but no `version` examined here.
+- **High** on `packages/dice-ui` status — `package.json` declares `"private": true` and `"version": "2.0.0"`. Verified two render targets (`index.ts` web, `index.native.ts` native); no `ink/` target.
+- **Descriptive-artifact reconciliation (N4, 2026-06-13):** Verified against source. The CLI is a plain string-formatting tool (no Ink, no dice-ui dep); `dice-ui` has no `ink/` TUI target and no `ink` dependency; the `NormalizedRollDefinition` IR is codegen-only (`packages/games/src/lib/`, zero references from `packages/roller`). See `docs/adr/ADR-019`.
 - **Headless-mode fallback engagement** — client/project derived from working directory (`@RANDSUM`); audit date defaulted to today (2026-05-10). User may edit if needed.
 - **Pre-existing audit material** is rich — this audit should cross-reference / supersede rather than re-discover findings already captured under "Release Audit 2 (2026-03-14)" and the four-panel audit.
