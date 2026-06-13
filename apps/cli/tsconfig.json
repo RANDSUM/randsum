@@ -4,5 +4,5 @@
     "types": ["bun"],
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*", "package.json"]
+  "include": ["src/**/*", "__tests__/**/*", "package.json"]
 }
