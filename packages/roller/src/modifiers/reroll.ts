@@ -226,28 +226,25 @@ export const rerollModifier: ModifierDefinition<RerollOptions> = {
     const { rollOne } = assertRollFn(ctx)
     const { max } = options
 
-    const { result, replacements } = rolls.reduce<{
-      result: number[]
-      rerollCount: number
-      replacements: { from: number; to: number }[]
-    }>(
-      (acc, roll) => {
-        if (max !== undefined && acc.rerollCount >= max) {
-          return { ...acc, result: [...acc.result, roll] }
-        }
+    // Linear single-pass accumulation: push into one array instead of
+    // spread-copying the accumulator each iteration (was O(n²)).
+    // A reroll happens iff a replacement is recorded, so the reroll count
+    // equals replacements.length — no separate counter needed.
+    const result: number[] = []
+    const replacements: { from: number; to: number }[] = []
 
-        const newRoll = rerollSingle(roll, options, rollOne)
-        const didReroll = newRoll !== roll
-        return {
-          result: [...acc.result, newRoll],
-          rerollCount: didReroll ? acc.rerollCount + 1 : acc.rerollCount,
-          replacements: didReroll
-            ? [...acc.replacements, { from: roll, to: newRoll }]
-            : acc.replacements
-        }
-      },
-      { result: [], rerollCount: 0, replacements: [] }
-    )
+    for (const roll of rolls) {
+      if (max !== undefined && replacements.length >= max) {
+        result.push(roll)
+        continue
+      }
+
+      const newRoll = rerollSingle(roll, options, rollOne)
+      if (newRoll !== roll) {
+        replacements.push({ from: roll, to: newRoll })
+      }
+      result.push(newRoll)
+    }
 
     return { rolls: result, replacements }
   },

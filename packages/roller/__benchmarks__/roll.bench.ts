@@ -9,6 +9,12 @@ const cases: readonly { readonly name: string; readonly fn: () => unknown }[] = 
   { name: 'roll("2d20H")', fn: () => roll('2d20H') },
   { name: 'roll("4d6R{1}")', fn: () => roll('4d6R{1}') },
   { name: 'roll("10d6!")', fn: () => roll('10d6!') },
+  // Large-pool cases exercise the linearized reroll/unique accumulators (X3).
+  // Note: a unique pool requires quantity <= sides, so the audit's illustrative
+  // "10000d20U" is invalid (would throw); we use a valid large unique pool.
+  { name: 'roll("1000d6")', fn: () => roll('1000d6') },
+  { name: 'roll("100d6R{<3}")', fn: () => roll('100d6R{<3}') },
+  { name: 'roll("5000d10000U")', fn: () => roll('5000d10000U') },
   { name: 'validateNotation("2d6")', fn: () => validateNotation('2d6') },
   { name: 'validateNotation("4d6L+2d8H!+5")', fn: () => validateNotation('4d6L+2d8H!+5') }
 ]
@@ -49,6 +55,12 @@ if (isCI) {
     bench('roll("2d20H")', () => roll('2d20H'))
     bench('roll("4d6R{1}")', () => roll('4d6R{1}'))
     bench('roll("10d6!")', () => roll('10d6!'))
+  })
+
+  group('roll() - large pools', () => {
+    bench('roll("1000d6")', () => roll('1000d6'))
+    bench('roll("100d6R{<3}")', () => roll('100d6R{<3}'))
+    bench('roll("5000d10000U")', () => roll('5000d10000U'))
   })
 
   group('validateNotation()', () => {
