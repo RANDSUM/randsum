@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/npm/l/randsum)](https://github.com/RANDSUM/randsum/blob/main/LICENSE)
 [![CI Status](https://github.com/RANDSUM/randsum/workflows/CI/badge.svg)](https://github.com/RANDSUM/randsum/actions)
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![NPM Downloads](https://img.shields.io/npm/dm/@randsum/roller)](https://www.npmjs.com/package/@randsum/roller)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/RANDSUM/randsum/commits/main)
 [![Types](https://img.shields.io/badge/Types-included-blue)](https://www.npmjs.com/package/@randsum/roller)
@@ -30,7 +30,7 @@ This repository contains multiple packages and applications for dice rolling and
   - `@randsum/games/pbta` - Powered by the Apocalypse
   - `@randsum/games/root-rpg` - Root RPG
   - `@randsum/games/salvageunion` - Salvage Union
-- **[@randsum/cli](apps/cli)** - CLI and interactive TUI for rolling dice from the terminal
+- **[@randsum/cli](apps/cli)** - One-shot CLI for rolling dice notation from the terminal
 
 ### Applications (private)
 
@@ -70,7 +70,7 @@ Or directly from your terminal:
 npx @randsum/cli 2d20    # Roll two twenty-sided dice
 npx @randsum/cli 4d6L    # Character stat roll (drop lowest)
 npx @randsum/cli 2d20L   # Roll with advantage (drop lowest)
-npx @randsum/cli         # Interactive TUI mode
+echo 4d6L | npx @randsum/cli   # Read notation from stdin (pipe mode)
 ```
 
 ## 🛠️ Development

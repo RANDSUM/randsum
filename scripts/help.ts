@@ -33,14 +33,10 @@ const categories: Record<string, Record<string, string>> = {
     'site:dev': 'Start Astro dev server (localhost:4321)',
     'site:build': 'Build documentation site'
   },
-  'MCP Server': {
-    'mcp:compile': 'Build standalone MCP binary (current OS)',
-    'mcp:compile:all': 'Build MCP binaries for all platforms'
-  },
   Release: {
     changeset: 'Create a new changeset',
-    'changeset:version': 'Version packages from changesets',
-    'changeset:publish': 'Publish packages to NPM'
+    'version-packages': 'Version packages from changesets',
+    publish: 'Build, check, and publish packages to NPM'
   }
 }
 
@@ -57,5 +53,7 @@ for (const [category, scripts] of Object.entries(categories)) {
 console.log('\n' + '='.repeat(55))
 console.log('\nPackage-specific commands:')
 console.log('  bun run --filter @randsum/<pkg> <script>')
-console.log('\nAdd a new game: add <shortcode>.randsum.json to packages/games/, run bun run codegen')
+console.log(
+  '\nAdd a new game: add <shortcode>.randsum.json to packages/games/, run bun run codegen'
+)
 console.log('\nMore info: CLAUDE/scripts.md or CONTRIBUTING.md\n')
