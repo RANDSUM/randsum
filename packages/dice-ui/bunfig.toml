@@ -1,0 +1,4 @@
+[test]
+# Register a happy-dom global environment before any test file runs so the web (.tsx)
+# component-behavior tests can mount React via @testing-library/react.
+preload = ["./__tests__/happydom.setup.ts"]

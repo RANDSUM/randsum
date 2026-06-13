@@ -16,6 +16,9 @@
     "@randsum/roller": "workspace:~"
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "20.10.3",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/react": "16.3.2",
     "@types/react": "catalog:",
     "react-native": "0.85.3"
   },
@@ -38,6 +41,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test __tests__",
+    "test:coverage": "bun test __tests__ --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "check": "bun run typecheck && bun run test"
   }
 }
