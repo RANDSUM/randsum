@@ -181,6 +181,28 @@ describe('count modifier', () => {
     test('single count modifier still works: roll("4d6#{>=3}")', () => {
       expect(() => roll('4d6#{>=3}')).not.toThrow()
     })
+
+    // Regression: count-family collision. #{}, S{}, and F{} all resolve to the
+    // single `count` option, so two of them in one string previously merged via
+    // last-match-wins and silently dropped a condition (e.g. 3d6S{3}F{1} kept only
+    // F{1}). Spec mandates rejection (conformance vector 47).
+    test('cross-family duplicates throw: S{N}+F{N}, #{}+S{}, #{}+F{}', () => {
+      expect(() => roll('3d6S{3}F{1}')).toThrow()
+      expect(() => roll('5d10#{>=7}S{3}')).toThrow()
+      expect(() => roll('5d10#{>=7}F{3}')).toThrow()
+      expect(() => roll('4d6F{1}F{2}')).toThrow()
+    })
+
+    test('isDiceNotation("3d6S{3}F{1}") returns false', async () => {
+      const { isDiceNotation } = await import('../../src/notation/isDiceNotation')
+      expect(isDiceNotation('3d6S{3}F{1}')).toBe(false)
+    })
+
+    test('single S{} / F{} / S{n,b} still parse', () => {
+      expect(() => roll('5d10S{7}')).not.toThrow()
+      expect(() => roll('5d10F{3}')).not.toThrow()
+      expect(() => roll('5d10S{7,1}')).not.toThrow()
+    })
   })
 
   describe('deterministic with seeded random', () => {
