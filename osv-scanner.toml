@@ -1,0 +1,29 @@
+# osv-scanner configuration (audit item X8 / security R2).
+#
+# The four advisories below are the known, accepted, DEV/BUILD-TIME-ONLY
+# transitive findings carried since the 2026-06-12 refresh. None reach the three
+# published packages (@randsum/roller has zero deps, @randsum/games depends only
+# on @randsum/roller, @randsum/cli has zero runtime deps) — they resolve through
+# astro/@astrojs, size-limit, knip, and the private expo app. They cannot be
+# force-resolved without a major Astro/Expo upgrade (no-overrides policy), so
+# they are ignored HERE to keep the SCA job green while still surfacing any NEW
+# advisory or license change. The authoritative blocking gate remains the
+# `bun audit --audit-level=high` CI step.
+#
+# Re-evaluate on the next Expo SDK / Astro major bump (security R1).
+
+[[IgnoredVulns]]
+id = "GHSA-gv7w-rqvm-qjhr"
+reason = "esbuild Deno-install binary-integrity issue; no Deno install path in this bun/node monorepo. Dev/build-time only, never reaches published packages."
+
+[[IgnoredVulns]]
+id = "GHSA-g7r4-m6w7-qqqr"
+reason = "esbuild dev-server file read (Windows). Dev-only; not in any published package's dependency graph."
+
+[[IgnoredVulns]]
+id = "GHSA-48c2-rrv3-qjmp"
+reason = "yaml stack overflow via astro/@astrojs build tooling. Build-time only; not shipped."
+
+[[IgnoredVulns]]
+id = "GHSA-w5hq-g745-h8pq"
+reason = "uuid transitive via expo (private app). Not in any published package."

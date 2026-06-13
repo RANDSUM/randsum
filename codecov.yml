@@ -4,12 +4,41 @@ coverage:
       default:
         target: 80%
         threshold: 5%
+      # dice-ui coverage tracked under its own flag/target (audit X6). Starts at a
+      # modest floor (80 LOC tests over ~3.5k source LOC today) and ratchets up as
+      # the dice-ui agent adds component-behavior tests; raise as coverage grows.
+      dice-ui:
+        target: 50%
+        threshold: 5%
+        flags:
+          - dice-ui
     patch:
       default:
         target: 70%
         threshold: 5%
+      dice-ui:
+        target: 60%
+        threshold: 5%
+        flags:
+          - dice-ui
   ignore:
     - "apps/cli/src/tui/hooks/useCursorPosition.ts"
+
+# Per-package flags so each library's coverage is tracked independently and
+# carried forward when its files are untouched in a PR.
+flags:
+  roller:
+    paths:
+      - packages/roller/
+    carryforward: true
+  games:
+    paths:
+      - packages/games/
+    carryforward: true
+  dice-ui:
+    paths:
+      - packages/dice-ui/
+    carryforward: true
 
 comment:
   layout: "reach,diff,flags,files"

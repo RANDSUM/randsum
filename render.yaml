@@ -2,7 +2,17 @@ services:
   - type: worker
     name: randsum-discord-bot
     runtime: node
-    buildCommand: bun install && bun run build
+    # Explicit region/plan/autoDeploy/numInstances so cost + latency posture is
+    # captured in code rather than left to Render's silent defaults (audit L5 /
+    # infrastructure F4). numInstances MUST stay 1: a Discord gateway worker
+    # must hold a single connection — multiple instances double-process events.
+    region: oregon
+    plan: starter
+    autoDeploy: true
+    numInstances: 1
+    # Scope the build to the bot's dependency subtree (roller -> games -> bot)
+    # instead of the full-monorepo `bun run build`, which also built the CLI.
+    buildCommand: bun install --frozen-lockfile && bun run --filter @randsum/roller --filter @randsum/games --filter @randsum/discord-bot build
     startCommand: node apps/discord-bot/dist/index.js
     envVars:
       - key: DISCORD_TOKEN
