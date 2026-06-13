@@ -116,12 +116,14 @@ describe('#10: validation codegen', () => {
 
   test('runtime throws on NaN', async () => {
     const loaded = await compileSpec(VALIDATED_SPEC)
-    expect(() => loaded.roll!({ bonus: NaN })).toThrow('Root RPG bonus must be a finite number')
+    expect(() => loaded['roll']!({ bonus: NaN })).toThrow('Root RPG bonus must be a finite number')
   })
 
   test('runtime throws on out-of-range', async () => {
     const loaded = await compileSpec(VALIDATED_SPEC)
-    expect(() => loaded.roll!({ bonus: 1000 })).toThrow('Root RPG bonus must be between -20 and 20')
+    expect(() => loaded['roll']!({ bonus: 1000 })).toThrow(
+      'Root RPG bonus must be between -20 and 20'
+    )
   })
 
   test('no validation imports when no integer inputs', async () => {
@@ -210,7 +212,7 @@ describe('#995: validation description label', () => {
       }
     }
     const loaded = await compileSpec(spec)
-    expect(() => loaded.roll!({ bonus: 100 })).toThrow('5E modifier must be between -5 and 5')
+    expect(() => loaded['roll']!({ bonus: 100 })).toThrow('5E modifier must be between -5 and 5')
   })
 })
 
@@ -241,18 +243,18 @@ describe('#995: string enum validation', () => {
 
   test('runtime throws on invalid enum value', async () => {
     const loaded = await compileSpec(ENUM_GUARD_SPEC)
-    expect(() => loaded.roll!({ mode: 'Gamma' })).toThrow(
+    expect(() => loaded['roll']!({ mode: 'Gamma' })).toThrow(
       "Invalid mode value: Gamma. Must be 'Alpha' or 'Beta'."
     )
   })
 
   test('runtime accepts valid enum value', async () => {
     const loaded = await compileSpec(ENUM_GUARD_SPEC)
-    expect(() => loaded.roll!({ mode: 'Alpha' })).not.toThrow()
+    expect(() => loaded['roll']!({ mode: 'Alpha' })).not.toThrow()
   })
 
   test('runtime accepts undefined for optional enum', async () => {
     const loaded = await compileSpec(ENUM_GUARD_SPEC)
-    expect(() => loaded.roll!()).not.toThrow()
+    expect(() => loaded['roll']!()).not.toThrow()
   })
 })

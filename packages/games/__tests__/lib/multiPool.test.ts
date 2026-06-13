@@ -15,7 +15,7 @@ const BASE_MULTI = {
     },
     resolve: {
       comparePoolHighest: {
-        pools: ['hope', 'fear'],
+        pools: ['hope', 'fear'] as readonly [string, string],
         ties: 'critical hope',
         outcomes: { hope: 'hope', fear: 'fear' }
       }
@@ -35,7 +35,7 @@ const RUNTIME_SPEC = {
     },
     resolve: {
       comparePoolHighest: {
-        pools: ['hope', 'fear'],
+        pools: ['hope', 'fear'] as readonly [string, string],
         ties: 'critical hope',
         outcomes: { hope: 'hope', fear: 'fear' }
       }
@@ -46,22 +46,22 @@ const RUNTIME_SPEC = {
 describe('dicePools runtime execution', () => {
   test('result is one of the declared outcomes or ties value', async () => {
     const game = await compileSpec(RUNTIME_SPEC)
-    const VALID = ['hope', 'fear', 'critical hope']
-    Array.from({ length: 100 }, () => game.roll!()).forEach(r => {
+    const VALID: readonly (string | number)[] = ['hope', 'fear', 'critical hope']
+    Array.from({ length: 100 }, () => game['roll']!()).forEach(r => {
       expect(VALID).toContain(r.result)
     })
   })
 
   test('rolls contains entries from both pools', async () => {
     const game = await compileSpec(RUNTIME_SPEC)
-    const r = game.roll!()
+    const r = game['roll']!()
     // Two separate pools → at least 2 roll records
     expect(r.rolls.length).toBeGreaterThanOrEqual(2)
   })
 
   test('total is the sum of both pool totals', async () => {
     const game = await compileSpec(RUNTIME_SPEC)
-    Array.from({ length: 20 }, () => game.roll!()).forEach(r => {
+    Array.from({ length: 20 }, () => game['roll']!()).forEach(r => {
       // Each pool rolls 1d12, so total should be 2-24
       expect(r.total).toBeGreaterThanOrEqual(2)
       expect(r.total).toBeLessThanOrEqual(24)
@@ -75,7 +75,7 @@ describe('dicePools runtime execution', () => {
         ...RUNTIME_SPEC.roll,
         resolve: {
           comparePoolSum: {
-            pools: ['hope', 'fear'],
+            pools: ['hope', 'fear'] as readonly [string, string],
             ties: 'tie',
             outcomes: { hope: 'hope_wins', fear: 'fear_wins' }
           }
@@ -83,8 +83,8 @@ describe('dicePools runtime execution', () => {
       }
     }
     const game = await compileSpec(sumSpec)
-    const VALID = ['hope_wins', 'fear_wins', 'tie']
-    Array.from({ length: 50 }, () => game.roll!()).forEach(r => {
+    const VALID: readonly (string | number)[] = ['hope_wins', 'fear_wins', 'tie']
+    Array.from({ length: 50 }, () => game['roll']!()).forEach(r => {
       expect(VALID).toContain(r.result)
     })
   })
@@ -103,7 +103,7 @@ describe('dicePools schema validation', () => {
         ...BASE_MULTI.roll,
         resolve: {
           comparePoolSum: {
-            pools: ['hope', 'fear'],
+            pools: ['hope', 'fear'] as readonly [string, string],
             ties: 'tie',
             outcomes: { hope: 'hope_wins', fear: 'fear_wins' }
           }
@@ -131,7 +131,7 @@ describe('dicePools schema validation', () => {
         ...BASE_MULTI.roll,
         resolve: {
           comparePoolHighest: {
-            pools: ['hope', 'fear'],
+            pools: ['hope', 'fear'] as readonly [string, string],
             outcomes: { hope: 'hope', fear: 'fear' }
           }
         }
@@ -163,7 +163,7 @@ const CODEGEN_MULTI_SPEC = {
     },
     resolve: {
       comparePoolHighest: {
-        pools: ['hope', 'fear'],
+        pools: ['hope', 'fear'] as readonly [string, string],
         ties: 'critical hope',
         outcomes: { hope: 'hope', fear: 'fear' }
       }
@@ -203,7 +203,7 @@ describe('dicePools codegen', () => {
         },
         resolve: {
           comparePoolHighest: {
-            pools: ['hope', 'fear'],
+            pools: ['hope', 'fear'] as readonly [string, string],
             outcomes: { hope: 'hope', fear: 'fear' }
             // ties omitted — runtime will return 'hope=fear'
           }

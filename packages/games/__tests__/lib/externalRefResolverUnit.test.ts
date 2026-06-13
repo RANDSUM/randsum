@@ -9,6 +9,19 @@ function specWith(extra: Record<string, unknown>): RandSumSpec {
   return { ...PLAIN_SPEC, ...extra }
 }
 
+// Widen a typed value to unknown for assertions where the static type is more narrow than the
+// runtime value (e.g., after external ref resolution replaces a $ref with a non-TableDefinition).
+function asUnknown(value: unknown): unknown {
+  return value
+}
+
+function makeFetchMock(responseFactory: () => Promise<Response>): typeof fetch {
+  return Object.assign(
+    (..._args: Parameters<typeof fetch>): Promise<Response> => responseFactory(),
+    { preconnect: (..._args: Parameters<typeof fetch.preconnect>) => undefined }
+  ) satisfies typeof fetch
+}
+
 const PLAIN_SPEC: RandSumSpec = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
   name: 'Test',
@@ -28,20 +41,16 @@ describe('fetchJson error paths', () => {
   })
 
   test('throws SchemaError for HTTP error status', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: false,
-        status: 404
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() => Promise.resolve({ ok: false, status: 404 } as Response))
     )
-    const specWithRef = {
-      ...PLAIN_SPEC,
+    const specWithRef = specWith({
       tables: {
         myTable: { $ref: 'https://example.com/data.json#/tables' }
       }
-    }
+    })
     try {
-      await resolveExternalRefs(specWithRef as RandSumSpec)
+      await resolveExternalRefs(specWithRef)
       expect(true).toBe(false)
     } catch (e) {
       expect(e).toBeInstanceOf(SchemaError)
@@ -51,17 +60,16 @@ describe('fetchJson error paths', () => {
   })
 
   test('throws SchemaError for network error (non-SchemaError)', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.reject(new Error('Network failure'))
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() => Promise.reject(new Error('Network failure')))
     )
-    const specWithRef = {
-      ...PLAIN_SPEC,
+    const specWithRef = specWith({
       tables: {
         myTable: { $ref: 'https://example.com/data.json' }
       }
-    }
+    })
     try {
-      await resolveExternalRefs(specWithRef as RandSumSpec)
+      await resolveExternalRefs(specWithRef)
       expect(true).toBe(false)
     } catch (e) {
       expect(e).toBeInstanceOf(SchemaError)
@@ -71,17 +79,16 @@ describe('fetchJson error paths', () => {
   })
 
   test('throws SchemaError for non-Error rejection', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.reject(new Error('string error'))
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() => Promise.reject(new Error('string error')))
     )
-    const specWithRef = {
-      ...PLAIN_SPEC,
+    const specWithRef = specWith({
       tables: {
         myTable: { $ref: 'https://example.com/data.json' }
       }
-    }
+    })
     try {
-      await resolveExternalRefs(specWithRef as RandSumSpec)
+      await resolveExternalRefs(specWithRef)
       expect(true).toBe(false)
     } catch (e) {
       expect(e).toBeInstanceOf(SchemaError)
@@ -98,55 +105,58 @@ describe('resolvePointer edge cases', () => {
   })
 
   test('resolves deeply nested pointer', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ a: { b: { c: 'deep-value' } } })
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ a: { b: { c: 'deep-value' } } })
+        } as Response)
+      )
     )
-    const specWithRef = {
-      ...PLAIN_SPEC,
+    const specWithRef = specWith({
       tables: {
         myTable: { $ref: 'https://example.com/data.json#/a/b/c' }
       }
-    }
-    const result = await resolveExternalRefs(specWithRef as RandSumSpec)
-    expect((result as Record<string, unknown>).tables).toEqual({ myTable: 'deep-value' })
+    })
+    const result = await resolveExternalRefs(specWithRef)
+    expect(asUnknown(result.tables?.['myTable'])).toEqual('deep-value')
   })
 
   test('resolves root pointer (no hash fragment)', async () => {
     const data = { ranges: [] }
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(data)
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(data)
+        } as Response)
+      )
     )
-    const specWithRef = {
-      ...PLAIN_SPEC,
+    const specWithRef = specWith({
       tables: {
         myTable: { $ref: 'https://example.com/data.json' }
       }
-    }
-    const result = await resolveExternalRefs(specWithRef as RandSumSpec)
-    expect((result as Record<string, unknown>).tables).toEqual({ myTable: data })
+    })
+    const result = await resolveExternalRefs(specWithRef)
+    expect(asUnknown(result.tables?.['myTable'])).toEqual(data)
   })
 
   test('throws for pointer hitting non-object', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ a: 'not-object' })
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ a: 'not-object' })
+        } as Response)
+      )
     )
-    const specWithRef = {
-      ...PLAIN_SPEC,
+    const specWithRef = specWith({
       tables: {
         myTable: { $ref: 'https://example.com/data.json#/a/b' }
       }
-    }
+    })
     try {
-      await resolveExternalRefs(specWithRef as RandSumSpec)
+      await resolveExternalRefs(specWithRef)
       expect(true).toBe(false)
     } catch (e) {
       expect(e).toBeInstanceOf(SchemaError)
@@ -155,20 +165,21 @@ describe('resolvePointer edge cases', () => {
   })
 
   test('throws for pointer with missing segment', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ a: { x: 1 } })
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ a: { x: 1 } })
+        } as Response)
+      )
     )
-    const specWithRef = {
-      ...PLAIN_SPEC,
+    const specWithRef = specWith({
       tables: {
         myTable: { $ref: 'https://example.com/data.json#/a/missing' }
       }
-    }
+    })
     try {
-      await resolveExternalRefs(specWithRef as RandSumSpec)
+      await resolveExternalRefs(specWithRef)
       expect(true).toBe(false)
     } catch (e) {
       expect(e).toBeInstanceOf(SchemaError)
@@ -186,16 +197,19 @@ describe('inlineRefs with arrays', () => {
 
   test('inlines refs inside arrays', async () => {
     const resolved = { key: 'value' }
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(resolved)
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(resolved)
+        } as Response)
+      )
     )
     const result = await resolveExternalRefs(
       specWith({ customList: [{ $ref: 'https://example.com/data.json' }, 'plain-string', 42] })
     )
-    const list = (result as Record<string, unknown>).customList as unknown[]
+    const resultWithCustom = result as RandSumSpec & { customList: unknown[] }
+    const list = resultWithCustom.customList
     expect(list[0]).toEqual(resolved)
     expect(list[1]).toBe('plain-string')
     expect(list[2]).toBe(42)
@@ -203,20 +217,21 @@ describe('inlineRefs with arrays', () => {
 
   test('inlines refs in nested objects', async () => {
     const resolved = { data: [1, 2, 3] }
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(resolved)
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(resolved)
+        } as Response)
+      )
     )
     const result = await resolveExternalRefs(
       specWith({ nested: { deep: { ref: { $ref: 'https://example.com/data.json' } } } })
     )
-    const nested = (result as Record<string, unknown>).nested as Record<
-      string,
-      Record<string, unknown>
-    >
-    expect(nested.deep.ref).toEqual(resolved)
+    const resultWithNested = result as RandSumSpec & {
+      nested: Record<string, Record<string, unknown>>
+    }
+    expect(resultWithNested.nested['deep']?.['ref']).toEqual(resolved)
   })
 })
 
@@ -229,19 +244,20 @@ describe('collectExternalRefs with nested objects', () => {
 
   test('collects refs from deeply nested structures', async () => {
     const data = { result: 'resolved' }
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(data)
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(data)
+        } as Response)
+      )
     )
     const result = await resolveExternalRefs(
       specWith({ level1: { level2: { level3: { $ref: 'https://example.com/deep.json' } } } })
     )
-    const level1 = (result as Record<string, unknown>).level1 as Record<
-      string,
-      Record<string, unknown>
-    >
-    expect(level1.level2.level3).toEqual(data)
+    const resultWithLevel = result as RandSumSpec & {
+      level1: Record<string, Record<string, unknown>>
+    }
+    expect(resultWithLevel.level1['level2']?.['level3']).toEqual(data)
   })
 })

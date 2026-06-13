@@ -3,6 +3,13 @@ import { afterEach, describe, expect, spyOn, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
 import { SchemaError } from '../../src/lib/errors'
 
+function makeFetchMock(responseFactory: () => Promise<Response>): typeof fetch {
+  return Object.assign(
+    (..._args: Parameters<typeof fetch>): Promise<Response> => responseFactory(),
+    { preconnect: (..._args: Parameters<typeof fetch.preconnect>) => undefined }
+  ) satisfies typeof fetch
+}
+
 describe('generateCode with invalid spec', () => {
   test('throws SchemaError for invalid spec', async () => {
     const badSpec = { name: 'bad' } as never
@@ -25,11 +32,8 @@ describe('fetchRemoteData', () => {
   })
 
   test('throws SchemaError for non-ok response', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: false,
-        status: 500
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() => Promise.resolve({ ok: false, status: 500 } as Response))
     )
     const spec = {
       $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -60,11 +64,13 @@ describe('fetchRemoteData', () => {
   })
 
   test('resolves dataPath when provided', async () => {
-    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ nested: { data: [{ name: 'Entry', table: {} }] } })
-      } as Response)
+    fetchSpyRef.current = spyOn(globalThis, 'fetch').mockImplementation(
+      makeFetchMock(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ nested: { data: [{ name: 'Entry', table: {} }] } })
+        } as Response)
+      )
     )
     const spec = {
       $schema: 'https://randsum.dev/schemas/v1/randsum.json',

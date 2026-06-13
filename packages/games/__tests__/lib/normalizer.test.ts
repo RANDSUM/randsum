@@ -181,8 +181,18 @@ describe('normalizeSpec specifics', () => {
     const extraDie = roll!.details!['extraDie']!
     expect(extraDie.kind).toBe('conditional')
     if (extraDie.kind === 'conditional') {
-      expect(extraDie.fields['advantageRoll']!.$conditionalPool).toBe('advantage')
-      expect(extraDie.fields['disadvantageRoll']!.$conditionalPool).toBe('disadvantage')
+      const advField = extraDie.fields['advantageRoll']
+      const disadvField = extraDie.fields['disadvantageRoll']
+      const advPool =
+        advField !== undefined && '$conditionalPool' in advField
+          ? advField.$conditionalPool
+          : undefined
+      const disadvPool =
+        disadvField !== undefined && '$conditionalPool' in disadvField
+          ? disadvField.$conditionalPool
+          : undefined
+      expect(advPool).toBe('advantage')
+      expect(disadvPool).toBe('disadvantage')
     }
   })
 
@@ -218,7 +228,9 @@ describe('normalizeSpec specifics', () => {
     const roll = normalized.rolls['roll']
     const resolve = roll!.resolve
     expect(typeof resolve).toBe('object')
-    expect('remoteTableLookup' in resolve).toBe(true)
+    expect(typeof resolve === 'object' && resolve !== null && 'remoteTableLookup' in resolve).toBe(
+      true
+    )
   })
 
   test('root-rpg: inline outcome is preserved', () => {

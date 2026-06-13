@@ -6,13 +6,19 @@ const MOCK_REMOTE_DATA = [
   { name: 'CoreTable', table: { '1-5': { label: 'Failure' }, '6-10': { label: 'Success' } } }
 ]
 
+function makeFetchMock(data: unknown = MOCK_REMOTE_DATA): typeof fetch {
+  return Object.assign(
+    (..._args: Parameters<typeof fetch>): Promise<Response> =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(data)
+      } as Response),
+    { preconnect: (..._args: Parameters<typeof fetch.preconnect>) => undefined }
+  ) satisfies typeof fetch
+}
+
 function mockFetch(data: unknown = MOCK_REMOTE_DATA): ReturnType<typeof spyOn> {
-  return spyOn(globalThis, 'fetch').mockImplementation(() =>
-    Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve(data)
-    } as Response)
-  )
+  return spyOn(globalThis, 'fetch').mockImplementation(makeFetchMock(data))
 }
 
 const RTL_SPEC = {
