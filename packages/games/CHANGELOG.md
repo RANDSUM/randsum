@@ -1,5 +1,26 @@
 # @randsum/games
 
+## 3.0.0
+
+### Major Changes
+
+- [`64b6b93`](https://github.com/RANDSUM/randsum/commit/64b6b93d06f5b5acd777aa1bc020699e514c5f31) Thanks [@alxjrvs](https://github.com/alxjrvs)! - Remove the runtime spec interpreter (`loadSpec`/`loadSpecAsync`) from the public `@randsum/games/schema` export. Spec semantics now live solely in the code generator; the interpreter duplicated codegen logic and has been retired. Use the generated subpath exports (e.g. `import { roll } from '@randsum/games/blades'`) or `generateCode` from `@randsum/games/schema` to work with specs programmatically.
+
+### Minor Changes
+
+- [`5f67558`](https://github.com/RANDSUM/randsum/commit/5f675587e42761190a2df403802956dbbd237f6e) Thanks [@alxjrvs](https://github.com/alxjrvs)! - Add custom die faces to the spec format. A pool may now declare `faces` instead of `sides`:
+
+  - **Numeric faces** (e.g. `{ "faces": [-1, 0, 1] }` for a Fate/Fudge die) roll and sum as their values and feed outcome ranges — unblocks Fate-style games ([#940](https://github.com/RANDSUM/randsum/issues/940)).
+  - **String faces** (e.g. `{ "faces": ["hit", "miss", "crit"] }`, a "table die") with `resolve: "faces"` resolve to the rolled label, generating a face-label result union type.
+
+  Codegen emits `<quantity>d{...}` notation for faces pools. Faces are not yet supported inside multi-pool (`dicePools`) or conditional pools.
+
+- [`911bc20`](https://github.com/RANDSUM/randsum/commit/911bc205d22ad9cd325ea8a8a870c9b9f7f5ba33) Thanks [@alxjrvs](https://github.com/alxjrvs)! - Add the Fate Core game package (`@randsum/games/fate`, [#940](https://github.com/RANDSUM/randsum/issues/940)), unblocked by the custom-die-faces feature. `roll()` throws four Fate dice (`faces: [-1, 0, 1]`), applies an optional `modifier` (the skill rating, an integer in `[-2, 4]`, default `0`), and maps the total to the Fate ladder adjective rungs (Legendary down through Terrible), clamping the open ends.
+
+  Also hardens the codegen string-literal interpolation: author-supplied strings (result labels, descriptions, enum values, error templates) are now escaped before being emitted into generated TypeScript, so a quote, backslash, or newline can no longer break or inject into the generated module.
+
+  > Note: the Fate ladder rung names and the modifier range deserve a human TTRPG-accuracy review before release.
+
 ## 2.0.0
 
 ### Minor Changes
