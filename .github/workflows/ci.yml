@@ -302,20 +302,15 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      # Vulnerability scan (OSV). License surfacing was dropped — osv-scanner
+      # v2's `--licenses` flag is an SPDX allowlist checker, not a summary mode
+      # (`--licenses=summary` errors), and an allowlist would fail on the known
+      # LGPL/MPL build-tool transitives. Revisit if a summary subcommand lands.
       - name: OSV vulnerability scan
         uses: google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2  # v2.3.8
         with:
           scan-args: |-
             --config=osv-scanner.toml
-            --recursive
-            ./
-      - name: OSV license summary
-        if: always()
-        uses: google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2  # v2.3.8
-        with:
-          scan-args: |-
-            --config=osv-scanner.toml
-            --licenses=summary
             --recursive
             ./
 

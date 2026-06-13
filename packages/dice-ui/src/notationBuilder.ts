@@ -65,7 +65,11 @@ export function getBuilderType(doc: NotationDoc): BuilderType {
 export function canAddModifier(notation: string | undefined, doc: NotationDoc): boolean {
   if (doc.category === 'Core' || doc.category === 'Special') return true
   if (notation === undefined || notation.length === 0) return false
-  return /\d*d[\d%F{]/i.test(notation)
+  // Detect a dice expression (a `d` followed by a die spec). The leading digit
+  // count is irrelevant to this boolean test, so it is intentionally omitted —
+  // a `\d*d` prefix backtracks polynomially on long digit runs (CodeQL
+  // js/polynomial-redos). `d[\d%F{]` matches the exact same set, linearly.
+  return /d[\d%F{]/i.test(notation)
 }
 
 // ---- Category grouping ----
