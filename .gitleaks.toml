@@ -1,0 +1,29 @@
+# gitleaks configuration for the RANDSUM monorepo.
+# Extends the upstream default ruleset, then layers an allowlist for the
+# known-benign tracked files so a clean tree scans green (audit item N3).
+#
+# Run locally:  gitleaks git --staged --redact --config .gitleaks.toml
+# (lefthook wires this into pre-commit; CI runs gitleaks/gitleaks-action.)
+
+title = "RANDSUM gitleaks config"
+
+[extend]
+# Inherit gitleaks' built-in rules (AWS keys, GitHub tokens, npm tokens, etc.).
+useDefault = true
+
+[allowlist]
+description = "Known-benign tracked config — registry settings and the env template carry no real secrets."
+
+# Files that are config templates / registry pointers, never live credentials.
+paths = [
+  '''(^|/)\.npmrc$''',
+  '''(^|/)\.env\.example$''',
+  '''(^|/)\.gitleaks\.toml$'''
+]
+
+# Placeholder values used in the committed .env.example templates
+# (e.g. DISCORD_TOKEN=your_bot_token_here).
+regexes = [
+  '''your_[a-z_]+_here''',
+  '''DISCORD_(TOKEN|CLIENT_ID|GUILD_ID)=\s*$'''
+]

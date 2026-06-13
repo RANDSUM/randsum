@@ -28,6 +28,14 @@ pre-commit:
       glob: "packages/games/*.randsum.json"
       run: bun run --filter @randsum/games gen:check
       priority: 2
+    gitleaks:
+      # Committed-secret scan (audit N3). The wrapper runs the gitleaks binary or
+      # docker image if present and fails the commit on a finding; if neither is
+      # installed it prints a loud install hint and exits 0 (CI is the hard gate
+      # that cannot be bypassed with --no-verify). Not gated on a glob: it must
+      # see every staged change, so it cannot be silently skipped by file type.
+      run: bash scripts/gitleaks-precommit.sh
+      priority: 2
 
 pre-push:
   output:
@@ -54,4 +62,10 @@ pre-push:
       priority: 2
     knip:
       run: bun run knip > /dev/null 2>&1
+      priority: 2
+    arch-check:
+      # Cycle + boundary invariants (audit X7b / architecture R2+R3): no circular
+      # deps, no game-to-game import, no @randsum/*/src or /dist reach-in. Also runs
+      # in CI feeding the CI Gate so it cannot be bypassed with --no-verify.
+      run: bun run arch:check > /dev/null 2>&1
       priority: 2
