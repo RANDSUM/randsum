@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import fc from 'fast-check'
 
 import { roll } from '../../src/roll'
+import type { FateDieNotation } from '../../src/types/core'
 
 describe('Special dice property tests', () => {
   describe('d% (percentile)', () => {
@@ -35,7 +36,7 @@ describe('Special dice property tests', () => {
           const result = roll('d%')
           const record = result.rolls[0]
           expect(record).toBeDefined()
-          const dieValue = record!.rolls[0]
+          const dieValue = record!.rolls[0]!
           expect(dieValue).toBeDefined()
           expect(result.total).toBe(dieValue)
         }),
@@ -62,7 +63,7 @@ describe('Special dice property tests', () => {
     test('NdF total always in [-N, N] for various quantities', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 20 }), quantity => {
-          const notation = `${quantity}dF`
+          const notation = `${quantity}dF` as FateDieNotation
           const result = roll(notation)
           expect(result.total).toBeGreaterThanOrEqual(-quantity)
           expect(result.total).toBeLessThanOrEqual(quantity)
@@ -74,7 +75,7 @@ describe('Special dice property tests', () => {
     test('NdF produces correct number of dice', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 20 }), quantity => {
-          const notation = `${quantity}dF`
+          const notation = `${quantity}dF` as FateDieNotation
           const result = roll(notation)
           const record = result.rolls[0]
           expect(record).toBeDefined()
@@ -87,7 +88,7 @@ describe('Special dice property tests', () => {
     test('dF total equals sum of individual rolls', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 10 }), quantity => {
-          const notation = `${quantity}dF`
+          const notation = `${quantity}dF` as FateDieNotation
           const result = roll(notation)
           const record = result.rolls[0]
           expect(record).toBeDefined()
@@ -117,7 +118,7 @@ describe('Special dice property tests', () => {
     test('NdF.2 total always in [-2N, 2N] for various quantities', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 20 }), quantity => {
-          const notation = `${quantity}dF.2`
+          const notation = `${quantity}dF.2` as FateDieNotation
           const result = roll(notation)
           expect(result.total).toBeGreaterThanOrEqual(-2 * quantity)
           expect(result.total).toBeLessThanOrEqual(2 * quantity)
@@ -129,7 +130,7 @@ describe('Special dice property tests', () => {
     test('NdF.2 produces correct number of dice', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 20 }), quantity => {
-          const notation = `${quantity}dF.2`
+          const notation = `${quantity}dF.2` as FateDieNotation
           const result = roll(notation)
           const record = result.rolls[0]
           expect(record).toBeDefined()
@@ -142,7 +143,7 @@ describe('Special dice property tests', () => {
     test('dF.2 total equals sum of individual rolls', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 10 }), quantity => {
-          const notation = `${quantity}dF.2`
+          const notation = `${quantity}dF.2` as FateDieNotation
           const result = roll(notation)
           const record = result.rolls[0]
           expect(record).toBeDefined()
@@ -158,7 +159,7 @@ describe('Special dice property tests', () => {
     test('d% + dF total is bounded correctly', () => {
       fc.assert(
         fc.property(fc.constant(null), () => {
-          const result = roll('d%', 'dF' as string)
+          const result = roll('d%', 'dF')
           // d% in [1,100], dF in [-1,1], sum in [0, 101]
           expect(result.total).toBeGreaterThanOrEqual(0)
           expect(result.total).toBeLessThanOrEqual(101)
@@ -171,7 +172,7 @@ describe('Special dice property tests', () => {
     test('d% + NdF total is bounded correctly', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 10 }), quantity => {
-          const notation = `${quantity}dF`
+          const notation = `${quantity}dF` as FateDieNotation
           const result = roll('d%', notation)
           // d% in [1,100], NdF in [-N,N], sum in [1-N, 100+N]
           expect(result.total).toBeGreaterThanOrEqual(1 - quantity)

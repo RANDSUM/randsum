@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { isDiceNotation } from '../../src/notation/isDiceNotation'
 import { roll } from '../../src'
+import type { DiceNotation } from '../../src/notation/types'
 
 describe('multi-pool special dice notation', () => {
   describe('isDiceNotation', () => {
@@ -89,7 +90,7 @@ describe('multi-pool special dice notation', () => {
 
     describe('1d20+g6 produces 2 roll records', () => {
       test('roll("1d20+g6").rolls.length is 2', () => {
-        const result = roll('1d20+g6')
+        const result = roll('1d20+g6' as DiceNotation)
         expect(result.rolls).toHaveLength(2)
       })
     })

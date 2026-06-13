@@ -7,6 +7,7 @@ import {
   modifiersToNotation
 } from '../../src/notation/transformers/modifiersToStrings'
 import { TTRPG_STANDARD_DIE_SET } from '../../src/notation/constants'
+import type { DiceNotation } from '../../src/notation/types'
 
 describe('TTRPG_STANDARD_DIE_SET', () => {
   test('contains the standard TTRPG die sizes in order', () => {

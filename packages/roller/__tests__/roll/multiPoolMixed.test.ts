@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { isDiceNotation } from '../../src/validate'
 import { roll } from '../../src/roll'
+import type { DiceNotation } from '../../src/notation/types'
 
 describe('mixed multi-pool notation', () => {
   describe('isDiceNotation', () => {
@@ -42,13 +43,13 @@ describe('mixed multi-pool notation', () => {
   describe('roll', () => {
     describe('Fate pools are numeric — total is sum', () => {
       test('roll("2dF+2dF") produces 2 pools and numeric total', () => {
-        const result = roll('2dF+2dF')
+        const result = roll('2dF+2dF' as DiceNotation)
         expect(result.rolls.length).toBe(2)
         expect(typeof result.total).toBe('number')
       })
 
       test('roll("1d20+dF") produces 2 pools and numeric total', () => {
-        const result = roll('1d20+dF')
+        const result = roll('1d20+dF' as DiceNotation)
         expect(result.rolls.length).toBe(2)
         expect(typeof result.total).toBe('number')
       })
@@ -56,7 +57,7 @@ describe('mixed multi-pool notation', () => {
 
     describe('string-faced pools force total to 0', () => {
       test('roll("1d20+d{H,T}") has total 0', () => {
-        const result = roll('1d20+d{H,T}')
+        const result = roll('1d20+d{H,T}' as DiceNotation)
         expect(result.rolls.length).toBe(2)
         expect(result.total).toBe(0)
       })
@@ -70,7 +71,7 @@ describe('mixed multi-pool notation', () => {
 
     describe('individual pool results preserved', () => {
       test('roll("1d20+d{H,T}") has individual results', () => {
-        const result = roll('1d20+d{H,T}')
+        const result = roll('1d20+d{H,T}' as DiceNotation)
         expect(result.rolls[0]).toBeDefined()
         expect(result.rolls[1]).toBeDefined()
       })

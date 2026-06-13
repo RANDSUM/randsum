@@ -1,5 +1,14 @@
 import type { RollRecord } from '../types'
 
+/**
+ * The subset of RollRecord fields required by traceRoll.
+ * Accepts any object that has at least these fields.
+ */
+export type TraceableRollRecord = Pick<
+  RollRecord,
+  'initialRolls' | 'rolls' | 'modifierLogs' | 'appliedTotal' | 'total'
+>
+
 export type RollTraceStep =
   | {
       kind: 'rolls'
@@ -79,7 +88,7 @@ function applyRemove(pool: readonly number[], values: readonly number[]): number
   return result
 }
 
-export function traceRoll(record: RollRecord): readonly RollTraceStep[] {
+export function traceRoll(record: TraceableRollRecord): readonly RollTraceStep[] {
   const steps: RollTraceStep[] = []
   const current: number[] = [...record.initialRolls]
 

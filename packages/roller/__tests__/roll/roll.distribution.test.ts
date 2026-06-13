@@ -1,12 +1,13 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
+import type { DiceNotation } from '../../src/notation/types'
 
 const N = 10_000
 const SEED = 42
 
 function rollMany(
-  notation: string,
+  notation: DiceNotation,
   seed = SEED,
   n = N
 ): { mean: number; min: number; max: number; faces: Set<number> } {
@@ -27,7 +28,7 @@ function rollMany(
 
 describe('distribution tests', () => {
   describe('NdX mean = N * (X+1) / 2', () => {
-    const cases: [string, number][] = [
+    const cases: [DiceNotation, number][] = [
       ['1d6', 3.5],
       ['2d6', 7.0],
       ['1d20', 10.5],

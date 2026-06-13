@@ -102,14 +102,14 @@ describe('Custom faces dice (d{...})', () => {
       const record = result.rolls[0]!
       expect(record.customResults).toBeDefined()
       expect(record.customResults).toHaveLength(1)
-      expect(['fire', 'ice', 'lightning']).toContain(record.customResults![0])
+      expect(['fire', 'ice', 'lightning']).toContain(record.customResults![0]!)
     })
 
     test('stress test: all string face values are valid', () => {
       const validFaces = ['fire', 'ice', 'lightning']
       Array.from({ length: 999 }, () => roll('d{fire,ice,lightning}')).forEach(({ rolls }) => {
         const record = rolls[0]!
-        expect(validFaces).toContain(record.customResults![0])
+        expect(validFaces).toContain(record.customResults![0]!)
       })
     })
 
@@ -126,7 +126,7 @@ describe('Custom faces dice (d{...})', () => {
       const result = roll('D{fire,ice}')
       const record = result.rolls[0]!
       expect(record.customResults).toBeDefined()
-      expect(['fire', 'ice']).toContain(record.customResults![0])
+      expect(['fire', 'ice']).toContain(record.customResults![0]!)
     })
 
     test('total is sum of raw die indices (not meaningful for strings)', () => {
@@ -142,14 +142,14 @@ describe('Custom faces dice (d{...})', () => {
       const result = roll('d{1,fire,3}')
       const record = result.rolls[0]!
       expect(record.customResults).toBeDefined()
-      expect(['1', 'fire', '3']).toContain(record.customResults![0])
+      expect(['1', 'fire', '3']).toContain(record.customResults![0]!)
     })
 
     test('stress test: mixed face values are all strings', () => {
       const validFaces = ['1', 'fire', '3']
       Array.from({ length: 999 }, () => roll('d{1,fire,3}')).forEach(({ rolls }) => {
         const record = rolls[0]!
-        expect(validFaces).toContain(record.customResults![0])
+        expect(validFaces).toContain(record.customResults![0]!)
       })
     })
   })

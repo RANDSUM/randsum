@@ -62,9 +62,8 @@ describe('listOfNotations', () => {
     })
 
     test('handles match with undefined index', () => {
-      // Create a mock match array with undefined index
+      // Create a mock match array without an index property (reads as undefined at runtime)
       const fakeMatch = ['2d6'] as RegExpMatchArray
-      fakeMatch.index = undefined
       const result = listOfNotations('2d6', [fakeMatch])
 
       expect(result).toEqual([])

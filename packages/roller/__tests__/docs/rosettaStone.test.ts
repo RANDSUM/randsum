@@ -3,6 +3,7 @@ import { NOTATION_DOCS } from '../../src/docs'
 import { roll } from '../../src/roll'
 import { isDiceNotation } from '../../src/notation/isDiceNotation'
 import { notationToOptions } from '../../src/notation/parse/notationToOptions'
+import type { DiceNotation } from '../../src/notation/types'
 
 /**
  * Detect whether a notation string is a full rollable expression (e.g. "3d6!")
@@ -31,7 +32,7 @@ describe('Rosetta Stone — notation examples', () => {
         test(`notation "${example.notation}" is valid and rollable`, () => {
           expect(isDiceNotation(example.notation)).toBe(true)
 
-          const result = roll(example.notation)
+          const result = roll(example.notation as DiceNotation)
           expect(result.rolls.length).toBeGreaterThanOrEqual(1)
           expect(typeof result.total).toBe('number')
         })
@@ -42,7 +43,7 @@ describe('Rosetta Stone — notation examples', () => {
           if (firstParsed === undefined) return
 
           const expectedQuantity = firstParsed.quantity ?? 1
-          const result = roll(example.notation)
+          const result = roll(example.notation as DiceNotation)
           const firstRoll = result.rolls[0]
           if (firstRoll === undefined) return
 
@@ -93,7 +94,7 @@ describe('Rosetta Stone — options examples', () => {
 
         if (isFullNotation(example.notation)) {
           test(`notation "${example.notation}" and options "${example.description}" produce same pool count`, () => {
-            const notationResult = roll(example.notation)
+            const notationResult = roll(example.notation as DiceNotation)
             const optionsResult = roll(example.options!)
 
             expect(notationResult.rolls.length).toBe(optionsResult.rolls.length)
