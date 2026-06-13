@@ -140,6 +140,13 @@ export type CollectedResults =
   | { readonly kind: 'result-mapping' }
 
 export function collectResults(rollDef: NormalizedRollDefinition): CollectedResults {
+  // faces resolve: the result is the rolled string-face label — the union of the pool's faces.
+  if (rollDef.resolve === 'faces') {
+    const dc = rollDef.dice !== undefined && 'pool' in rollDef.dice ? rollDef.dice : undefined
+    const labels = (dc?.pool.faces ?? []).filter((f): f is string => typeof f === 'string')
+    if (labels.length > 0) return { kind: 'union', values: [...new Set(labels)].sort() }
+    return { kind: 'opaque' }
+  }
   // remoteTableLookup: always has resultMapping
   if (typeof rollDef.resolve === 'object' && 'remoteTableLookup' in rollDef.resolve) {
     return { kind: 'result-mapping' }

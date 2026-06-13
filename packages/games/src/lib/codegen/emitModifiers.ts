@@ -1,3 +1,4 @@
+import { SchemaError } from '../errors'
 import type { NormalizedDiceConfig, NormalizedRollDefinition } from '../normalizedTypes'
 import type { InputDeclaration, IntegerOrInput, ModifyOperation } from '../types'
 import { integerOrInputCode, toDiceConfig } from './emitHelpers'
@@ -47,13 +48,29 @@ export function buildDiceOptionsCode(
 ): string {
   const dc = toDiceConfig(dice)
   const pool = dc.pool
+  const quantitySource = dc.quantity ?? pool.quantity
+  const qty =
+    quantitySource !== undefined ? integerOrInputCode(quantitySource, inputs, optional) : '1'
+
+  // Custom-faces pool: roller's options object ignores `faces`, so emit `<qty>d{f1,f2,...}`
+  // notation instead. Numeric faces sum/compare as their values; string faces resolve to labels.
+  if (pool.faces !== undefined) {
+    if (modify && modify.length > 0) {
+      throw new SchemaError(
+        'Dice modifiers are not supported on custom-faces pools',
+        'INVALID_SPEC'
+      )
+    }
+    return `\`\${${qty}}d{${pool.faces.join(',')}}\``
+  }
+
+  if (pool.sides === undefined) {
+    throw new SchemaError('Pool must define either "sides" or "faces"', 'INVALID_SPEC')
+  }
   const sides =
     typeof pool.sides === 'number'
       ? String(pool.sides)
       : integerOrInputCode(pool.sides, inputs, optional)
-  const quantitySource = dc.quantity ?? pool.quantity
-  const qty =
-    quantitySource !== undefined ? integerOrInputCode(quantitySource, inputs, optional) : '1'
   const modsStr = modify && modify.length > 0 ? buildModifiersCode(modify, inputs, optional) : null
   const fields = [`sides: ${sides}`, `quantity: ${qty}`]
   if (modsStr) fields.push(modsStr)

@@ -16,7 +16,8 @@ import type {
 // ---- Pool (ref-free) ----
 
 export interface NormalizedPoolDefinition {
-  readonly sides: IntegerOrInput
+  readonly sides?: IntegerOrInput
+  readonly faces?: readonly (number | string)[]
   readonly quantity?: IntegerOrInput
 }
 
@@ -32,6 +33,7 @@ export interface NormalizedDiceConfig {
 
 export type NormalizedResolveOperation =
   | 'sum'
+  | 'faces'
   | { readonly countMatching: CountMatchingOperation }
   | { readonly tableLookup: TableDefinition }
   | { readonly comparePoolHighest: ComparePoolOperation }

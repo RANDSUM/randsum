@@ -39,6 +39,12 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
     const dc = dicePools[poolName]
     if (dc === undefined) continue
     const pool = dc.pool
+    if (pool.sides === undefined) {
+      throw new SchemaError(
+        'Custom faces are not supported in multi-pool (dicePools) rolls',
+        'INVALID_SPEC'
+      )
+    }
     const sides = integerOrInputCode(pool.sides, rollDef.inputs, optional)
     const quantitySource = dc.quantity ?? pool.quantity
     const qty =
@@ -76,6 +82,9 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
     for (const [name, cp] of Object.entries(rollDef.conditionalPools)) {
       const cond = conditionCodeFromCondition(cp.condition, optional)
       const cpPool = cp.pool
+      if (cpPool.sides === undefined) {
+        throw new SchemaError('Custom faces are not supported in conditional pools', 'INVALID_SPEC')
+      }
       const cpSides = integerOrInputCode(cpPool.sides, rollDef.inputs, optional)
       const cpQty =
         cpPool.quantity !== undefined
@@ -151,7 +160,8 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
 function generateFunctionBody(
   rollDef: NormalizedRollDefinition,
   optional: boolean,
-  specName: string
+  specName: string,
+  resultName: string
 ): string[] {
   const validationLines = generateValidationLines(rollDef, optional, '  ', specName)
 
@@ -246,6 +256,20 @@ function generateFunctionBody(
   // Build details object if declared
   if (hasDetails) {
     lines.push(...emitDetailsObjectCode(detailsDef, optional, '  ', 'diceTotal'))
+  }
+
+  // faces resolve: the result is the rolled face label (a "table die"), read from roller's
+  // customResults rather than mapped through outcome ranges.
+  if (rollDef.resolve === 'faces') {
+    const detailsPart = hasDetails ? ', details' : ''
+    lines.push(`  const faceResult = r.rolls[0]?.customResults?.[0]`)
+    lines.push(
+      `  if (faceResult === undefined) throw new SchemaError('faces resolve produced no result', 'NO_TABLE_MATCH')`
+    )
+    lines.push(
+      `  return { total, result: faceResult as ${resultName}, rolls: r.rolls${detailsPart} }`
+    )
+    return lines
   }
 
   // Remote table lookup replaces outcome lines with a find+lookupByRange call
@@ -368,7 +392,7 @@ export function generateRollParts(
     parts.push(`export function ${key}(${param}): ${returnType} {`)
   }
 
-  parts.push(...generateFunctionBody(rollDef, optional, specName))
+  parts.push(...generateFunctionBody(rollDef, optional, specName, prefixedResultName))
   parts.push(`}`)
   parts.push(``)
 

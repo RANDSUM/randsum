@@ -69,23 +69,41 @@ function computeSinglePoolRange(
   if (dc === undefined) return undefined
   const pool = dc.pool
 
-  const sidesRange = resolveIntegerOrInput(pool.sides, rollDef.inputs)
   const quantitySource = dc.quantity ?? pool.quantity
   const quantityRange =
     quantitySource === undefined
       ? rangeOf(1)
       : resolveIntegerOrInput(quantitySource, rollDef.inputs)
+  if (!quantityRange || quantityRange.min < 0) return undefined
 
-  if (!sidesRange || !quantityRange) return undefined
-  if (sidesRange.min < 1 || quantityRange.min < 0) return undefined
-
-  // Raw sum range: each die contributes [1, sides]. Across `quantity` dice:
-  //   min total = quantity.min * 1
-  //   max total = quantity.max * sides.max
-  const initial: IntRange = {
-    min: quantityRange.min * 1,
-    max: quantityRange.max * sidesRange.max
-  }
+  // Compute the raw total range and the max single-die value (used by keep-modifiers below).
+  // Standard dice: each die contributes [1, sides]. Numeric custom faces: each die contributes
+  // [minFace, maxFace]; string/mixed faces have no numeric range so coverage is skipped.
+  const base = ((): { readonly initial: IntRange; readonly dieMax: number } | undefined => {
+    if (pool.faces !== undefined) {
+      const numeric = pool.faces.filter((f): f is number => typeof f === 'number')
+      if (numeric.length === 0 || numeric.length !== pool.faces.length) return undefined
+      const minFace = Math.min(...numeric)
+      const maxFace = Math.max(...numeric)
+      const corners = [
+        minFace * quantityRange.min,
+        minFace * quantityRange.max,
+        maxFace * quantityRange.min,
+        maxFace * quantityRange.max
+      ]
+      return { initial: { min: Math.min(...corners), max: Math.max(...corners) }, dieMax: maxFace }
+    }
+    if (pool.sides === undefined) return undefined
+    const sidesRange = resolveIntegerOrInput(pool.sides, rollDef.inputs)
+    if (!sidesRange || sidesRange.min < 1) return undefined
+    return {
+      initial: { min: quantityRange.min * 1, max: quantityRange.max * sidesRange.max },
+      dieMax: sidesRange.max
+    }
+  })()
+  if (base === undefined) return undefined
+  const initial = base.initial
+  const dieMax = base.dieMax
 
   // Apply modify-stage operators. We fold through a reducer that either returns
   // a new IntRange or `undefined` to signal "can't analyze — skip coverage".
@@ -99,12 +117,12 @@ function computeSinglePoolRange(
         const keep = resolveIntegerOrInput(op.keepHighest, rollDef.inputs)
         if (!keep) return { bail: true }
         // Keep N highest: each kept die is [1, sides.max].
-        return { range: { min: keep.min * 1, max: keep.max * sidesRange.max } }
+        return { range: { min: keep.min * 1, max: keep.max * dieMax } }
       }
       if (op.keepLowest !== undefined) {
         const keep = resolveIntegerOrInput(op.keepLowest, rollDef.inputs)
         if (!keep) return { bail: true }
-        return { range: { min: keep.min * 1, max: keep.max * sidesRange.max } }
+        return { range: { min: keep.min * 1, max: keep.max * dieMax } }
       }
       if (op.add !== undefined) {
         const addRange = resolveIntegerOrInput(op.add, rollDef.inputs)

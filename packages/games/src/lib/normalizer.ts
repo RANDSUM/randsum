@@ -29,14 +29,12 @@ import type {
 } from './types'
 
 function normalizePool(pool: PoolDefinition | Ref, spec: RandSumSpec): NormalizedPoolDefinition {
-  if (isRef(pool)) {
-    const resolved = resolvePoolRef(spec, pool.$ref)
-    return {
-      sides: resolved.sides,
-      ...(resolved.quantity !== undefined ? { quantity: resolved.quantity } : {})
-    }
+  const resolved = isRef(pool) ? resolvePoolRef(spec, pool.$ref) : pool
+  return {
+    ...(resolved.sides !== undefined ? { sides: resolved.sides } : {}),
+    ...(resolved.faces !== undefined ? { faces: resolved.faces } : {}),
+    ...(resolved.quantity !== undefined ? { quantity: resolved.quantity } : {})
   }
-  return { sides: pool.sides, ...(pool.quantity !== undefined ? { quantity: pool.quantity } : {}) }
 }
 
 function normalizeDiceConfig(dc: DiceConfig, spec: RandSumSpec): NormalizedDiceConfig {
@@ -73,6 +71,7 @@ function normalizeResolveOperation(
   spec: RandSumSpec
 ): NormalizedResolveOperation {
   if (resolve === 'sum') return 'sum'
+  if (resolve === 'faces') return 'faces'
   if ('countMatching' in resolve) return { countMatching: resolve.countMatching }
   if ('tableLookup' in resolve) {
     return { tableLookup: normalizeTableDefinition(resolve.tableLookup, spec) }

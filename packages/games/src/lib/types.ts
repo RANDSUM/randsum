@@ -6,7 +6,13 @@ export type IntegerOrInput =
 export type InputValue = number | string | boolean
 
 export interface PoolDefinition {
-  readonly sides: IntegerOrInput
+  readonly sides?: IntegerOrInput
+  /**
+   * Custom die faces, mutually exclusive with `sides`. Numeric faces (e.g. `[-1, 0, 1]` for a
+   * Fate/Fudge die) roll and sum as their values. String faces (e.g. `['fire', 'ice']`) are a
+   * "table die" — use with `resolve: 'faces'` to return the rolled label as the result.
+   */
+  readonly faces?: readonly (number | string)[]
   readonly quantity?: IntegerOrInput
 }
 
@@ -99,6 +105,7 @@ export interface RemoteTableLookupOperation {
 
 export type ResolveOperation =
   | 'sum'
+  | 'faces'
   | { readonly countMatching: CountMatchingOperation }
   | { readonly tableLookup: RefOrTableDefinition }
   | { readonly comparePoolHighest: ComparePoolOperation }
