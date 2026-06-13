@@ -15,6 +15,11 @@ const generatedEntries = readdirSync('src')
 // the guard that catches package.json drift on each build.
 export default defineConfig({
   entry: [...generatedEntries, 'src/index.ts', 'src/schema.ts'],
+  // Pin the output base to `src/` so dist stays flat (`dist/blades.generated.js`, not
+  // `dist/src/blades.generated.js`). Without this, bunup derives the base from the lowest
+  // common ancestor of all entries, which flips to keeping the `src/` segment once enough
+  // entries are present — drifting from the hand-maintained package.json#exports paths.
+  sourceBase: './src',
   format: ['esm'],
   dts: true,
   external: ['@randsum/roller'],

@@ -41,6 +41,12 @@
         "default": "./dist/daggerheart.generated.js"
       }
     },
+    "./fate": {
+      "import": {
+        "types": "./dist/fate.generated.d.ts",
+        "default": "./dist/fate.generated.js"
+      }
+    },
     "./salvageunion": {
       "import": {
         "types": "./dist/salvageunion.generated.d.ts",
@@ -86,6 +92,8 @@
     "game",
     "blades-in-the-dark",
     "daggerheart",
+    "fate-core",
+    "fudge",
     "dnd",
     "5e",
     "pbta",
@@ -139,6 +147,13 @@
     },
     {
       "path": "dist/daggerheart.generated.js",
+      "limit": "16 KB",
+      "ignore": [
+        "node:module"
+      ]
+    },
+    {
+      "path": "dist/fate.generated.js",
       "limit": "15 KB",
       "ignore": [
         "node:module"

@@ -2,6 +2,7 @@
 export const AVAILABLE_GAMES = [
   'blades',
   'daggerheart',
+  'fate',
   'fifth',
   'pbta',
   'root-rpg',

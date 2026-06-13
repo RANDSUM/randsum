@@ -1,6 +1,6 @@
 import type { NormalizedOutcome, NormalizedRollDefinition } from '../normalizedTypes'
 import type { DegreeOfSuccessOperation, ResultMappingLeaf, TableRange } from '../types'
-import { getOutcomeRanges, integerOrInputCode } from './emitHelpers'
+import { getOutcomeRanges, integerOrInputCode, quoteString } from './emitHelpers'
 
 function generateDegreeLines(
   degrees: DegreeOfSuccessOperation,
@@ -19,7 +19,7 @@ function generateDegreeLines(
   candidates.sort((a, b) => b[1] - a[1])
 
   const detailsPart = hasDetails ? ', details' : ''
-  const resultExpr = (name: string): string => (numeric ? 'total' : `'${name}'`)
+  const resultExpr = (name: string): string => (numeric ? 'total' : quoteString(name))
   const ifLines = candidates
     .slice(0, -1)
     .map(
@@ -44,7 +44,7 @@ export function buildRangeReturn(
 ): string | null {
   const conditions: string[] = []
   const detailsPart = hasDetails ? ', details' : ''
-  const resultExpr = numeric ? 'total' : `'${range.result}'`
+  const resultExpr = numeric ? 'total' : quoteString(range.result)
   const ret = `{ total, result: ${resultExpr}, rolls: r.rolls${detailsPart} }`
 
   if (range.poolCondition !== undefined) {
