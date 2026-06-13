@@ -499,7 +499,7 @@ function NoArgBuilder({
 
 // ---- DocModal ----
 
-function DocModal({
+export function DocModal({
   doc,
   accentColor,
   notation,

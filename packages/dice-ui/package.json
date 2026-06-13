@@ -36,6 +36,8 @@
     }
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test __tests__",
+    "check": "bun run typecheck && bun run test"
   }
 }
