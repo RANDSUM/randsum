@@ -1,3 +1,4 @@
+import { quoteString } from './emitHelpers'
 import type {
   NormalizedDetailsFieldDef,
   NormalizedDetailsLeafDef,
@@ -71,7 +72,7 @@ function normalizedLeafValueCode(
   }
   const accessor = optional ? `input?.${leaf.$input}` : `input.${leaf.$input}`
   if (leaf.default !== undefined) {
-    return `${accessor} ?? ${typeof leaf.default === 'string' ? `'${leaf.default}'` : String(leaf.default)}`
+    return `${accessor} ?? ${typeof leaf.default === 'string' ? quoteString(leaf.default) : String(leaf.default)}`
   }
   return accessor
 }
