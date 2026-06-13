@@ -105,3 +105,6 @@ packages/site/public/api/
 /docs/plans/
 .claude/worktrees/
 .superpowers/
+
+# Codegen test harness temp files
+packages/games/.test-tmp/
