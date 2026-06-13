@@ -101,7 +101,7 @@ function normalizeOutcome(outcome: OutcomeOperation | Ref, spec: RandSumSpec): N
     return { tableLookup: normalizeTableDefinition(resolved.tableLookup, spec), ...shapePart }
   }
   // Should be unreachable given OutcomeOperation's type
-  return resolved as NormalizedOutcome
+  return resolved
 }
 
 function normalizeDetailsLeaf(leaf: DetailsFieldDef): NormalizedDetailsLeafDef {

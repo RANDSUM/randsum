@@ -126,7 +126,7 @@ function buildNumericFaceParams<T>(
       argument: arg as DiceNotation,
       notation,
       description
-    } as RollParams<T>
+    }
   ]
 }
 
@@ -194,7 +194,7 @@ function parseCustomFacesDieParams<T>(arg: string, position: number): RollParams
       argument: arg as DiceNotation,
       notation,
       description
-    } as RollParams<T>
+    }
   ]
 }
 
@@ -218,7 +218,7 @@ function parseDrawDieParams<T>(arg: string, position: number): RollParams<T>[] |
       argument: arg as DiceNotation,
       notation,
       description
-    } as RollParams<T>
+    }
   ]
 }
 
@@ -242,7 +242,7 @@ function parseGeometricDieParams<T>(arg: string, position: number): RollParams<T
       argument: arg as DiceNotation,
       notation,
       description
-    } as RollParams<T>
+    }
   ]
 }
 

@@ -266,7 +266,7 @@ describe('emitBody: opaque result type', () => {
       dice: { pool: { sides: 6 }, quantity: 1 },
       outcome: { ranges: [] }
     }
-    const result = collectResults(rollDef as never)
+    const result = collectResults(rollDef)
     expect(result.kind).toBe('opaque')
   })
 
@@ -278,7 +278,7 @@ describe('emitBody: opaque result type', () => {
       dice: { pool: { sides: 6 }, quantity: 1 },
       outcome: { ranges: [] as never[] }
     }
-    const parts = generateRollParts('roll', rollDef as never, 'Test', 'test')
+    const parts = generateRollParts('roll', rollDef, 'Test', 'test')
     // Should contain `export type TestRollResult = string`
     expect(parts.some(p => p.includes('TestRollResult = string'))).toBe(true)
   })
@@ -298,7 +298,7 @@ describe('emitBody: result-mapping type (line 309-311)', () => {
       },
       dice: { pool: { sides: 20 }, quantity: 1 }
     }
-    const result = collectResults(rollDef as never)
+    const result = collectResults(rollDef)
     expect(result.kind).toBe('result-mapping')
   })
 })
@@ -422,7 +422,7 @@ describe('emitHelpers: integerOrInputCode with conditional', () => {
         },
         resolve: 'sum' as const
       }
-    } as RandSumSpec
+    }
     const code = await generateCode(spec)
     expect(code).toContain('? 20 : 6')
   })

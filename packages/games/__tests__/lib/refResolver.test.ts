@@ -48,7 +48,7 @@ const BASE_SPEC: RandSumSpec = {
     dice: { pool: { $ref: '#/pools/actionDice' } },
     resolve: 'sum' as const
   }
-} as RandSumSpec
+}
 
 describe('isRef', () => {
   test('returns true for object with $ref string', () => {

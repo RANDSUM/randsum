@@ -34,7 +34,7 @@ describe('edge cases', () => {
     })
 
     test('"1d0" notation throws', () => {
-      expect(() => roll('1d0' as string)).toThrow(ValidationError)
+      expect(() => roll('1d0')).toThrow(ValidationError)
     })
   })
 
@@ -240,27 +240,27 @@ describe('edge cases', () => {
 
     describe('notation parsing', () => {
       test('parses *N as pre-arithmetic multiply', () => {
-        const result = roll('2d1*2' as string)
+        const result = roll('2d1*2')
         expect(result.total).toBe(4)
       })
 
       test('parses **N as total multiply', () => {
-        const result = roll('2d1**2' as string)
+        const result = roll('2d1**2')
         expect(result.total).toBe(4)
       })
 
       test('parses *N+M correctly: (dice * N) + M', () => {
-        const result = roll('2d1*2+3' as string)
+        const result = roll('2d1*2+3')
         expect(result.total).toBe(7)
       })
 
       test('parses +M**N correctly: (dice + M) * N', () => {
-        const result = roll('2d1+3**2' as string)
+        const result = roll('2d1+3**2')
         expect(result.total).toBe(10)
       })
 
       test('parses *N+M**P correctly: ((dice * N) + M) * P', () => {
-        const result = roll('2d1*2+3**2' as string)
+        const result = roll('2d1*2+3**2')
         expect(result.total).toBe(14)
       })
     })

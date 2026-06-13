@@ -17,7 +17,7 @@
   },
   "type": "module",
   "dependencies": {
-    "astro": "6.1.10"
+    "astro": "6.4.6"
   },
   "engines": {
     "node": ">=22.12.0",
@@ -38,8 +38,8 @@
     "conformance:check": "bun conformance-gen.ts && git diff --exit-code public/conformance/v0.9.0.json"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.7",
-    "@astrojs/sitemap": "3.7.2",
+    "@astrojs/check": "0.9.9",
+    "@astrojs/sitemap": "3.7.3",
     "@randsum/roller": "workspace:~",
     "typescript": "catalog:"
   }

@@ -32,7 +32,7 @@ export function createArithmeticNotation(
       const total = matches.reduce((sum, match) => sum + Number(match[1]), 0)
       const result: Pick<ModifierOptions, ArithmeticKey> = {
         [name]: total
-      } as Pick<ModifierOptions, ArithmeticKey>
+      }
       return result
     },
 

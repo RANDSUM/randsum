@@ -47,7 +47,10 @@ pre-push:
       run: bun run test 2>&1 | tail -5
       priority: 2
     audit:
-      run: bun audit --audit-level=high > /dev/null 2>&1
+      # GHSA-gv7w-rqvm-qjhr: esbuild Deno-install binary-integrity issue. Not applicable
+      # to this bun/node monorepo (no Deno install path), dev/build-time only, and unfixable
+      # without a dependency override (astro/vite/size-limit pin esbuild <0.28.1 upstream).
+      run: bun audit --audit-level=high --ignore=GHSA-gv7w-rqvm-qjhr > /dev/null 2>&1
       priority: 2
     knip:
       run: bun run knip > /dev/null 2>&1

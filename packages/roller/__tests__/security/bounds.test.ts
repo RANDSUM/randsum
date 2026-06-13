@@ -45,13 +45,13 @@ describe('security: quantity/sides bounds', () => {
   describe('notation path', () => {
     test('roll("999999d20") is permitted when quantity <= MAX_QUANTITY and sides <= MAX_SIDES', () => {
       // 999999 > MAX_QUANTITY (10_000) — should reject
-      expect(() => roll('999999d20' as string)).toThrow(ValidationError)
+      expect(() => roll('999999d20')).toThrow(ValidationError)
     })
 
     test('notation quantity above MAX_QUANTITY throws with attempted + cap', () => {
       const attempted = MAX_QUANTITY + 1
       try {
-        roll(`${attempted}d20` as string)
+        roll(`${attempted}d20`)
         throw new Error('expected throw')
       } catch (e) {
         expect(e).toBeInstanceOf(ValidationError)
@@ -64,7 +64,7 @@ describe('security: quantity/sides bounds', () => {
     test('notation sides above MAX_SIDES throws with attempted + cap', () => {
       const attempted = MAX_SIDES + 1
       try {
-        roll(`1d${attempted}` as string)
+        roll(`1d${attempted}`)
         throw new Error('expected throw')
       } catch (e) {
         expect(e).toBeInstanceOf(ValidationError)

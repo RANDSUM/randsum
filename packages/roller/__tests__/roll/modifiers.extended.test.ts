@@ -10,18 +10,18 @@ describe('Extended Modifier Integration Tests', () => {
   describe('compound (!!)', () => {
     describe('basic usage', () => {
       test('roll("3d6!!") returns a valid result', () => {
-        const result = roll('3d6!!' as string)
+        const result = roll('3d6!!')
         expect(result.total).toBeGreaterThanOrEqual(3)
         expect(typeof result.total).toBe('number')
       })
 
       test('roll("3d6!!") produces exactly 1 roll record', () => {
-        const result = roll('3d6!!' as string)
+        const result = roll('3d6!!')
         expect(result.rolls).toHaveLength(1)
       })
 
       test('compound preserves dice count (modifies values, does not add dice)', () => {
-        const result = roll('3d6!!' as string)
+        const result = roll('3d6!!')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.rolls).toHaveLength(3)
@@ -30,7 +30,7 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('with depth limit', () => {
       test('roll("1d6!!5") compound with depth limit 5', () => {
-        const result = roll('1d6!!5' as string)
+        const result = roll('1d6!!5')
         expect(result.total).toBeGreaterThanOrEqual(1)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -38,7 +38,7 @@ describe('Extended Modifier Integration Tests', () => {
       })
 
       test('roll("1d6!!0") compound unlimited (capped at 1000)', () => {
-        const result = roll('1d6!!0' as string)
+        const result = roll('1d6!!0')
         expect(result.total).toBeGreaterThanOrEqual(1)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -48,7 +48,7 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('case insensitivity', () => {
       test('notation is case-insensitive for the core part', () => {
-        const result = roll('3D6!!' as string)
+        const result = roll('3D6!!')
         expect(result.total).toBeGreaterThanOrEqual(3)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -59,16 +59,16 @@ describe('Extended Modifier Integration Tests', () => {
     describe('with seeded random', () => {
       test('deterministic results with seeded random', () => {
         const seeded1 = createSeededRandom(42)
-        const result1 = roll('3d6!!' as string, { randomFn: seeded1 })
+        const result1 = roll('3d6!!', { randomFn: seeded1 })
         const seeded2 = createSeededRandom(42)
-        const result2 = roll('3d6!!' as string, { randomFn: seeded2 })
+        const result2 = roll('3d6!!', { randomFn: seeded2 })
         expect(result1.total).toBe(result2.total)
       })
     })
 
     describe('modifier log', () => {
       test('compound modifier appears in modifierLogs', () => {
-        const result = roll('3d6!!' as string)
+        const result = roll('3d6!!')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.modifierLogs).toBeDefined()
@@ -81,14 +81,14 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('stress test', () => {
       test('3d6!! total always >= 3 (no zero/negative)', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!!' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!!'))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(3)
         })
       })
 
       test('3d6!! always has exactly 3 dice in the result', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!!' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!!'))
         results.forEach(({ rolls }) => {
           const record = rolls[0]
           expect(record).toBeDefined()
@@ -103,18 +103,18 @@ describe('Extended Modifier Integration Tests', () => {
   describe('penetrate (!p)', () => {
     describe('basic usage', () => {
       test('roll("3d6!p") returns a valid result', () => {
-        const result = roll('3d6!p' as string)
+        const result = roll('3d6!p')
         expect(result.total).toBeGreaterThanOrEqual(3)
         expect(typeof result.total).toBe('number')
       })
 
       test('roll("3d6!p") produces exactly 1 roll record', () => {
-        const result = roll('3d6!p' as string)
+        const result = roll('3d6!p')
         expect(result.rolls).toHaveLength(1)
       })
 
       test('penetrate preserves dice count (modifies values, does not add dice)', () => {
-        const result = roll('3d6!p' as string)
+        const result = roll('3d6!p')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.rolls).toHaveLength(3)
@@ -123,7 +123,7 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('with depth limit', () => {
       test('roll("1d6!p5") penetrate with depth limit 5', () => {
-        const result = roll('1d6!p5' as string)
+        const result = roll('1d6!p5')
         expect(result.total).toBeGreaterThanOrEqual(1)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -131,7 +131,7 @@ describe('Extended Modifier Integration Tests', () => {
       })
 
       test('roll("1d6!p0") penetrate unlimited (capped at 1000)', () => {
-        const result = roll('1d6!p0' as string)
+        const result = roll('1d6!p0')
         expect(result.total).toBeGreaterThanOrEqual(1)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -141,7 +141,7 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('case insensitivity', () => {
       test('notation is case-insensitive for the core part', () => {
-        const result = roll('3D6!p' as string)
+        const result = roll('3D6!p')
         expect(result.total).toBeGreaterThanOrEqual(3)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -149,7 +149,7 @@ describe('Extended Modifier Integration Tests', () => {
       })
 
       test('"!P" uppercase P is accepted (case-insensitive)', () => {
-        const result = roll('3d6!P' as string)
+        const result = roll('3d6!P')
         expect(result.total).toBeGreaterThanOrEqual(3)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -160,16 +160,16 @@ describe('Extended Modifier Integration Tests', () => {
     describe('with seeded random', () => {
       test('deterministic results with seeded random', () => {
         const seeded1 = createSeededRandom(42)
-        const result1 = roll('3d6!p' as string, { randomFn: seeded1 })
+        const result1 = roll('3d6!p', { randomFn: seeded1 })
         const seeded2 = createSeededRandom(42)
-        const result2 = roll('3d6!p' as string, { randomFn: seeded2 })
+        const result2 = roll('3d6!p', { randomFn: seeded2 })
         expect(result1.total).toBe(result2.total)
       })
     })
 
     describe('modifier log', () => {
       test('penetrate modifier appears in modifierLogs', () => {
-        const result = roll('3d6!p' as string)
+        const result = roll('3d6!p')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.modifierLogs).toBeDefined()
@@ -182,14 +182,14 @@ describe('Extended Modifier Integration Tests', () => {
 
     describe('stress test', () => {
       test('3d6!p total always >= 3 (no zero/negative)', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!p' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!p'))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(3)
         })
       })
 
       test('3d6!p always has exactly 3 dice in the result', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!p' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('3d6!p'))
         results.forEach(({ rolls }) => {
           const record = rolls[0]
           expect(record).toBeDefined()
@@ -203,7 +203,7 @@ describe('Extended Modifier Integration Tests', () => {
 
   describe('combined modifier scenarios', () => {
     test('compound with plus: roll("3d6!!+3")', () => {
-      const result = roll('3d6!!+3' as string)
+      const result = roll('3d6!!+3')
       expect(result.total).toBeGreaterThanOrEqual(6)
       const record = result.rolls[0]
       expect(record).toBeDefined()
@@ -211,7 +211,7 @@ describe('Extended Modifier Integration Tests', () => {
     })
 
     test('penetrate with plus: roll("3d6!p+1")', () => {
-      const result = roll('3d6!p+1' as string)
+      const result = roll('3d6!p+1')
       expect(result.total).toBeGreaterThanOrEqual(4)
       const record = result.rolls[0]
       expect(record).toBeDefined()
@@ -219,12 +219,12 @@ describe('Extended Modifier Integration Tests', () => {
     })
 
     test('compound with multiply: roll("3d6!!*2+3")', () => {
-      const result = roll('3d6!!*2+3' as string)
+      const result = roll('3d6!!*2+3')
       expect(result.total).toBeGreaterThanOrEqual(9)
     })
 
     test('penetrate with drop lowest: roll("3d6!pL+1")', () => {
-      const result = roll('3d6!pL+1' as string)
+      const result = roll('3d6!pL+1')
       expect(typeof result.total).toBe('number')
     })
   })

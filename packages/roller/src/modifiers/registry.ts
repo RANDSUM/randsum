@@ -31,7 +31,7 @@ export function getModifier<K extends keyof ModifierOptions>(
 ): ModifierDefinition<ModifierOptionTypes[K]> | undefined {
   const definition = modifierMap.get(name)
   if (definition === undefined) return undefined
-  return definition as ModifierDefinition<ModifierOptionTypes[K]>
+  return definition
 }
 
 /**

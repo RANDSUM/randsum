@@ -12,7 +12,7 @@ function makeSpec(rollDef: Record<string, unknown>): RandSumSpec {
     shortcode: 'test-pipe',
     game_url: 'https://example.com',
     roll: { resolve: 'sum' as const, ...rollDef }
-  } as RandSumSpec
+  }
 }
 
 function getNormalized(spec: RandSumSpec): NormalizedRollDefinition {
@@ -143,7 +143,7 @@ describe('executePipeline', () => {
           ],
           resolve: 'sum' as const
         }
-      } as RandSumSpec
+      }
       const game = loadSpec(spec)
       const result = game.roll()
       expect(typeof result.total).toBe('number')
@@ -360,7 +360,7 @@ describe('executePipeline', () => {
             tableLookup: { $ref: '#/tables/myTable' }
           }
         }
-      } as RandSumSpec
+      }
       const game = loadSpec(spec)
       const results = Array.from({ length: 100 }, () => game.roll())
       results.forEach(r => {
@@ -975,7 +975,7 @@ describe('executePipeline', () => {
             tableLookup: { $ref: '#/tables/outcomes' }
           }
         }
-      } as RandSumSpec
+      }
       const game = loadSpec(spec)
       const results = Array.from({ length: 100 }, () => game.roll())
       results.forEach(r => {
@@ -1001,7 +1001,7 @@ describe('executePipeline', () => {
             }
           }
         }
-      } as RandSumSpec
+      }
       const game = loadSpec(spec)
       const results = Array.from({ length: 100 }, () => game.roll())
       results.forEach(r => {

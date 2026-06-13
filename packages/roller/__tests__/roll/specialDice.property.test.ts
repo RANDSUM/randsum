@@ -8,7 +8,7 @@ describe('Special dice property tests', () => {
     test('d% always produces total in [1, 100]', () => {
       fc.assert(
         fc.property(fc.constant(null), () => {
-          const result = roll('d%' as string)
+          const result = roll('d%')
           expect(result.total).toBeGreaterThanOrEqual(1)
           expect(result.total).toBeLessThanOrEqual(100)
         }),
@@ -19,7 +19,7 @@ describe('Special dice property tests', () => {
     test('d% always produces exactly 1 roll record with 1 die', () => {
       fc.assert(
         fc.property(fc.constant(null), () => {
-          const result = roll('d%' as string)
+          const result = roll('d%')
           expect(result.rolls).toHaveLength(1)
           const record = result.rolls[0]
           expect(record).toBeDefined()
@@ -32,7 +32,7 @@ describe('Special dice property tests', () => {
     test('d% total equals the single die value', () => {
       fc.assert(
         fc.property(fc.constant(null), () => {
-          const result = roll('d%' as string)
+          const result = roll('d%')
           const record = result.rolls[0]
           expect(record).toBeDefined()
           const dieValue = record!.rolls[0]
@@ -48,7 +48,7 @@ describe('Special dice property tests', () => {
     test('dF always produces individual values in [-1, 0, 1]', () => {
       fc.assert(
         fc.property(fc.constant(null), () => {
-          const result = roll('dF' as string)
+          const result = roll('dF')
           const record = result.rolls[0]
           expect(record).toBeDefined()
           record!.rolls.forEach(value => {
@@ -103,7 +103,7 @@ describe('Special dice property tests', () => {
     test('dF.2 always produces individual values in [-2, -1, 0, 1, 2]', () => {
       fc.assert(
         fc.property(fc.constant(null), () => {
-          const result = roll('dF.2' as string)
+          const result = roll('dF.2')
           const record = result.rolls[0]
           expect(record).toBeDefined()
           record!.rolls.forEach(value => {
@@ -158,7 +158,7 @@ describe('Special dice property tests', () => {
     test('d% + dF total is bounded correctly', () => {
       fc.assert(
         fc.property(fc.constant(null), () => {
-          const result = roll('d%' as string, 'dF' as string)
+          const result = roll('d%', 'dF' as string)
           // d% in [1,100], dF in [-1,1], sum in [0, 101]
           expect(result.total).toBeGreaterThanOrEqual(0)
           expect(result.total).toBeLessThanOrEqual(101)
@@ -172,7 +172,7 @@ describe('Special dice property tests', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 10 }), quantity => {
           const notation = `${quantity}dF`
-          const result = roll('d%' as string, notation)
+          const result = roll('d%', notation)
           // d% in [1,100], NdF in [-N,N], sum in [1-N, 100+N]
           expect(result.total).toBeGreaterThanOrEqual(1 - quantity)
           expect(result.total).toBeLessThanOrEqual(100 + quantity)
