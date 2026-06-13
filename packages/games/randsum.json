@@ -64,13 +64,19 @@
   "$defs": {
     "PoolDefinition": {
       "type": "object",
-      "description": "A dice pool shape. Defines die sides and optionally a default quantity. Quantity can always be overridden in the dice stage.",
-      "required": ["sides"],
+      "description": "A dice pool shape. Defines a die — standard (`sides`) or custom-faced (`faces`) — and optionally a default quantity. Quantity can always be overridden in the dice stage.",
+      "oneOf": [{ "required": ["sides"] }, { "required": ["faces"] }],
       "additionalProperties": false,
       "properties": {
         "sides": {
           "$ref": "#/$defs/IntegerOrInput",
-          "description": "Number of faces on the die (e.g. 6 for a d6, 20 for a d20). Accepts $input for dynamic die types."
+          "description": "Number of faces on the die (e.g. 6 for a d6, 20 for a d20). Accepts $input for dynamic die types. Mutually exclusive with faces."
+        },
+        "faces": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": ["number", "string"] },
+          "description": "Custom die faces, mutually exclusive with sides. Numeric faces (e.g. [-1, 0, 1] for a Fate/Fudge die) roll and sum as their values. String faces (e.g. [\"fire\", \"ice\"]) are a table die — use with resolve: 'faces' to return the rolled label."
         },
         "quantity": {
           "$ref": "#/$defs/IntegerOrInput",
@@ -515,8 +521,8 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["sum"],
-          "description": "Sum all remaining dice values into a single total"
+          "enum": ["sum", "faces"],
+          "description": "'sum' totals all remaining dice values; 'faces' resolves a custom string-faces (table) die to its rolled label"
         },
         {
           "type": "object",

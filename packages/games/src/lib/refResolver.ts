@@ -35,7 +35,7 @@ export function resolveRef(spec: RandSumSpec, ref: string): unknown {
 
 function isPoolDefinition(value: unknown): value is PoolDefinition {
   if (typeof value !== 'object' || value === null) return false
-  return 'sides' in value
+  return 'sides' in value || 'faces' in value
 }
 
 function isTableDefinition(value: unknown): value is TableDefinition {
@@ -53,7 +53,7 @@ export function resolvePoolRef(spec: RandSumSpec, ref: string): PoolDefinition {
   const resolved = resolveRef(spec, ref)
   if (!isPoolDefinition(resolved)) {
     throw new SchemaError(
-      `Ref "${ref}" does not resolve to a PoolDefinition (expected object with "sides")`,
+      `Ref "${ref}" does not resolve to a PoolDefinition (expected object with "sides" or "faces")`,
       'REF_NOT_FOUND'
     )
   }
