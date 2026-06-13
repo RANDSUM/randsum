@@ -1,6 +1,9 @@
 import { MessageFlags } from '../utils/discord.js'
 import type { Client, Collection, Interaction } from '../utils/discord.js'
 import type { Command } from '../types.js'
+import { logger } from '../utils/logger.js'
+import { recordError, recordInvocation } from '../utils/metrics.js'
+import { captureException } from '../utils/errorTracker.js'
 
 export async function interactionCreateHandler(interaction: Interaction): Promise<void> {
   const client = interaction.client as Client & { commands: Collection<string, Command> }
@@ -11,7 +14,11 @@ export async function interactionCreateHandler(interaction: Interaction): Promis
       try {
         await command.autocomplete(interaction)
       } catch (error) {
-        console.error('Error handling autocomplete:', error)
+        captureException(error, {
+          command: interaction.commandName,
+          interactionId: interaction.id,
+          phase: 'autocomplete'
+        })
       }
     }
     return
@@ -24,22 +31,42 @@ export async function interactionCreateHandler(interaction: Interaction): Promis
   const command = client.commands.get(interaction.commandName)
 
   if (!command) {
-    console.error(`No command matching ${interaction.commandName} was found.`)
+    logger.warn('command.not_found', {
+      command: interaction.commandName,
+      interactionId: interaction.id
+    })
     return
   }
+
+  recordInvocation(interaction.commandName)
 
   try {
     await command.execute(interaction)
   } catch (error) {
-    console.error('Error executing command:', error)
+    recordError(interaction.commandName)
+    captureException(error, {
+      command: interaction.commandName,
+      interactionId: interaction.id,
+      userId: interaction.user.id,
+      guildId: interaction.guildId ?? undefined,
+      phase: 'execute'
+    })
     const reply = {
       content: 'There was an error while executing this command!',
       flags: [MessageFlags.Ephemeral] as const
     }
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp(reply)
-    } else {
-      await interaction.reply(reply)
+    try {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp(reply)
+      } else {
+        await interaction.reply(reply)
+      }
+    } catch (replyError) {
+      captureException(replyError, {
+        command: interaction.commandName,
+        interactionId: interaction.id,
+        phase: 'error-reply'
+      })
     }
   }
 }
