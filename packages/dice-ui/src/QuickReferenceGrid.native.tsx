@@ -5,6 +5,13 @@ import type { ModifierCategory, NotationDoc } from '@randsum/roller/docs'
 import { useTheme } from './useTheme'
 import { tokenColor } from './tokenColor'
 import { NumericStepper } from './NumericStepper'
+import {
+  CATEGORY_ORDER,
+  OPERATORS,
+  canAddModifier,
+  getBuilderType,
+  groupByCategory
+} from './notationBuilder'
 
 import type { DocModalProps, QuickReferenceGridProps } from './types'
 
@@ -33,67 +40,7 @@ const TOKENS = {
   }
 }
 
-// ---- Builder type system ----
-
-type BuilderType =
-  | { readonly kind: 'dice' }
-  | { readonly kind: 'no-arg'; readonly fragment: string }
-  | { readonly kind: 'number'; readonly prefix: string; readonly actual: string }
-  | { readonly kind: 'condition'; readonly prefix: string; readonly actual: string }
-
-const NUMBER_KEYS = new Set(['K', 'KL', 'KM', '+', '-', '*', '//', '%', '**', 'ms{..}'])
-const CONDITION_KEYS = new Set([
-  'R{..}',
-  'ro{..}',
-  'C{..}',
-  'V{..}',
-  'D{..}',
-  '#{..}',
-  'S{..}',
-  'F{..}',
-  '!s{..}'
-])
-const DICE_SIDES_KEYS = new Set(['gN', 'DDN', 'zN'])
-
-function getBuilderType(doc: NotationDoc): BuilderType {
-  if (doc.key === 'xDN') return { kind: 'dice' }
-  if (DICE_SIDES_KEYS.has(doc.key)) {
-    const prefix = doc.displayBase.replace('N', '')
-    return { kind: 'number', prefix, actual: prefix }
-  }
-  if (NUMBER_KEYS.has(doc.key)) {
-    const actual = doc.key === '-' ? '-' : doc.key === 'ms{..}' ? 'ms' : doc.key
-    return { kind: 'number', prefix: doc.displayBase, actual }
-  }
-  if (CONDITION_KEYS.has(doc.key)) {
-    const actual = doc.key.replace('{..}', '')
-    return { kind: 'condition', prefix: doc.displayBase.replace('{..}', ''), actual }
-  }
-  return { kind: 'no-arg', fragment: doc.key === 'sort' ? 'sa' : doc.key }
-}
-
-function canAddModifier(notation: string | undefined, doc: NotationDoc): boolean {
-  if (doc.category === 'Core' || doc.category === 'Special') return true
-  if (notation === undefined || notation.length === 0) return false
-  return /\d*d[\d%F{]/i.test(notation)
-}
-
-// ---- Category ordering ----
-
-const CATEGORY_ORDER: readonly ModifierCategory[] = [
-  'Core',
-  'Special',
-  'Filter',
-  'Generate',
-  'Accumulate',
-  'Substitute',
-  'Clamp',
-  'Map',
-  'Reinterpret',
-  'Scale',
-  'Order',
-  'Dispatch'
-]
+// ---- Category labels (native: UPPERCASE) ----
 
 const CATEGORY_LABELS: Readonly<Record<ModifierCategory, string>> = {
   Core: 'CORE DICE',
@@ -108,19 +55,6 @@ const CATEGORY_LABELS: Readonly<Record<ModifierCategory, string>> = {
   Scale: 'SCALE',
   Order: 'ORDER',
   Dispatch: 'DISPATCH'
-}
-
-function groupByCategory(): ReadonlyMap<ModifierCategory, readonly NotationDoc[]> {
-  const groups = new Map<ModifierCategory, NotationDoc[]>()
-  for (const doc of Object.values(NOTATION_DOCS)) {
-    const existing = groups.get(doc.category)
-    if (existing) {
-      existing.push(doc)
-    } else {
-      groups.set(doc.category, [doc])
-    }
-  }
-  return groups
 }
 
 // ---- Styles ----
@@ -307,8 +241,6 @@ const styles = StyleSheet.create({
 })
 
 // ---- Builder components ----
-
-const OPERATORS = ['<', '>', '=', '<=', '>='] as const
 
 function DiceBuilder({
   accentColor,
@@ -758,7 +690,7 @@ export function QuickReferenceGrid({
   }, [])
 
   const sections: readonly SectionData[] = useMemo(() => {
-    const groups = groupByCategory()
+    const groups = groupByCategory(NOTATION_DOCS)
     const result: SectionData[] = []
     for (const cat of CATEGORY_ORDER) {
       const docs = groups.get(cat)
