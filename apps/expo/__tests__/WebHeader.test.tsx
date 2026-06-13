@@ -63,6 +63,32 @@ mock.module('../lib/stores/notationStore', () => ({
   useNotationStore: _useNotationStore
 }))
 
+// WebHeader is exercised as a plain function (not via a renderer), so React's hooks must
+// be stubbed and the JSX transform must emit inspectable { type, props } nodes. Mirrors the
+// harness in IndexScreen.test.tsx. (These module mocks are isolated per file because the
+// expo `test` script runs each test file in its own process.)
+function jsxFactory(type: unknown, props: Record<string, unknown> | null): object {
+  return { type, props: props ?? {} }
+}
+const reactMock = {
+  useState: <T,>(initial: T): [T, (v: T) => void] => [initial, () => {}],
+  createElement: (type: unknown, props: Record<string, unknown> | null): object =>
+    jsxFactory(type, props),
+  Fragment: 'Fragment',
+  default: {} as Record<string, unknown>
+}
+reactMock.default = reactMock
+mock.module('react', () => reactMock)
+mock.module('react/jsx-dev-runtime', () => ({
+  jsxDEV: (type: unknown, props: Record<string, unknown> | null) => jsxFactory(type, props),
+  Fragment: 'Fragment'
+}))
+mock.module('react/jsx-runtime', () => ({
+  jsx: jsxFactory,
+  jsxs: jsxFactory,
+  Fragment: 'Fragment'
+}))
+
 const { WebHeader } = await import('../components/WebHeader')
 
 type ReactEl = {

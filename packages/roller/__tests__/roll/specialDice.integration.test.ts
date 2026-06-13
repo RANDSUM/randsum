@@ -10,18 +10,18 @@ describe('Special Dice Integration Tests', () => {
   describe('d% (percentile die)', () => {
     describe('basic usage', () => {
       test('roll("d%") returns a valid result', () => {
-        const result = roll('d%' as string)
+        const result = roll('d%')
         expect(result.total).toBeGreaterThanOrEqual(1)
         expect(result.total).toBeLessThanOrEqual(100)
       })
 
       test('roll("d%") produces exactly 1 roll record', () => {
-        const result = roll('d%' as string)
+        const result = roll('d%')
         expect(result.rolls).toHaveLength(1)
       })
 
       test('roll("d%") roll record has exactly 1 die', () => {
-        const result = roll('d%' as string)
+        const result = roll('d%')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.rolls).toHaveLength(1)
@@ -29,39 +29,39 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('roll("d%") result array has 1 entry', () => {
-        const result = roll('d%' as string)
+        const result = roll('d%')
         expect(result.values).toHaveLength(1)
       })
     })
 
     describe('with custom RNG', () => {
       test('randomFn returning 0 produces minimum (1)', () => {
-        const result = roll('d%' as string, { randomFn: () => 0 })
+        const result = roll('d%', { randomFn: () => 0 })
         expect(result.total).toBe(1)
       })
 
       test('randomFn returning 0.999 produces maximum (100)', () => {
-        const result = roll('d%' as string, { randomFn: () => 0.999 })
+        const result = roll('d%', { randomFn: () => 0.999 })
         expect(result.total).toBe(100)
       })
 
       test('deterministic results with seeded random', () => {
         const seeded1 = createSeededRandom(42)
-        const result1 = roll('d%' as string, { randomFn: seeded1 })
+        const result1 = roll('d%', { randomFn: seeded1 })
         const seeded2 = createSeededRandom(42)
-        const result2 = roll('d%' as string, { randomFn: seeded2 })
+        const result2 = roll('d%', { randomFn: seeded2 })
         expect(result1.total).toBe(result2.total)
       })
     })
 
     describe('multiple percentile dice', () => {
       test('roll("d%", "d%", "d%") produces 3 roll records', () => {
-        const result = roll('d%' as string, 'd%' as string, 'd%' as string)
+        const result = roll('d%', 'd%' as string, 'd%' as string)
         expect(result.rolls).toHaveLength(3)
       })
 
       test('roll("d%", "d%") total is sum of both', () => {
-        const result = roll('d%' as string, 'd%' as string, {
+        const result = roll('d%', 'd%' as string, {
           randomFn: () => 0
         })
         expect(result.total).toBe(2) // 1 + 1
@@ -70,7 +70,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('case insensitivity', () => {
       test('"D%" is accepted', () => {
-        const result = roll('D%' as string)
+        const result = roll('D%')
         expect(result.total).toBeGreaterThanOrEqual(1)
         expect(result.total).toBeLessThanOrEqual(100)
       })
@@ -78,7 +78,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('stress test', () => {
       test('d% total always in [1, 100]', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('d%' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('d%'))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(1)
           expect(total).toBeLessThanOrEqual(100)
@@ -86,9 +86,7 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('d% distribution covers full range over many rolls', () => {
-        const totals = new Set(
-          Array.from({ length: STRESS_ITERATIONS }, () => roll('d%' as string).total)
-        )
+        const totals = new Set(Array.from({ length: STRESS_ITERATIONS }, () => roll('d%').total))
         // Over 9999 rolls of d100, we should see at least 90 distinct values
         expect(totals.size).toBeGreaterThanOrEqual(90)
       })
@@ -100,18 +98,18 @@ describe('Special Dice Integration Tests', () => {
   describe('dF (Fate/Fudge die)', () => {
     describe('basic usage', () => {
       test('roll("dF") returns a valid result', () => {
-        const result = roll('dF' as string)
+        const result = roll('dF')
         expect(result.total).toBeGreaterThanOrEqual(-1)
         expect(result.total).toBeLessThanOrEqual(1)
       })
 
       test('roll("dF") produces exactly 1 roll record', () => {
-        const result = roll('dF' as string)
+        const result = roll('dF')
         expect(result.rolls).toHaveLength(1)
       })
 
       test('roll("dF") roll record has exactly 1 die', () => {
-        const result = roll('dF' as string)
+        const result = roll('dF')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.initialRolls).toHaveLength(1)
@@ -120,7 +118,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('with quantity', () => {
       test('roll("4dF") produces 1 roll record with 4 dice', () => {
-        const result = roll('4dF' as string)
+        const result = roll('4dF')
         expect(result.rolls).toHaveLength(1)
         const record = result.rolls[0]
         expect(record).toBeDefined()
@@ -128,13 +126,13 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('roll("4dF") total is in [-4, 4]', () => {
-        const result = roll('4dF' as string)
+        const result = roll('4dF')
         expect(result.total).toBeGreaterThanOrEqual(-4)
         expect(result.total).toBeLessThanOrEqual(4)
       })
 
       test('roll("1dF") with explicit quantity 1', () => {
-        const result = roll('1dF' as string)
+        const result = roll('1dF')
         expect(result.rolls).toHaveLength(1)
         expect(result.total).toBeGreaterThanOrEqual(-1)
         expect(result.total).toBeLessThanOrEqual(1)
@@ -143,27 +141,27 @@ describe('Special Dice Integration Tests', () => {
 
     describe('with custom RNG', () => {
       test('randomFn returning 0 produces all -1 (minimum)', () => {
-        const result = roll('4dF' as string, { randomFn: () => 0 })
+        const result = roll('4dF', { randomFn: () => 0 })
         expect(result.total).toBe(-4)
       })
 
       test('randomFn returning 0.999 produces all +1 (maximum)', () => {
-        const result = roll('4dF' as string, { randomFn: () => 0.999 })
+        const result = roll('4dF', { randomFn: () => 0.999 })
         expect(result.total).toBe(4)
       })
 
       test('deterministic results with seeded random', () => {
         const seeded1 = createSeededRandom(42)
-        const result1 = roll('4dF' as string, { randomFn: seeded1 })
+        const result1 = roll('4dF', { randomFn: seeded1 })
         const seeded2 = createSeededRandom(42)
-        const result2 = roll('4dF' as string, { randomFn: seeded2 })
+        const result2 = roll('4dF', { randomFn: seeded2 })
         expect(result1.total).toBe(result2.total)
       })
     })
 
     describe('Fate die replace modifier', () => {
       test('dF roll record has replace in modifierLogs', () => {
-        const result = roll('dF' as string)
+        const result = roll('dF')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         // The replace modifier should appear in the logs since dF
@@ -172,7 +170,7 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('dF final rolls contain only values from [-1, 0, 1]', () => {
-        const result = roll('4dF' as string)
+        const result = roll('4dF')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         record!.rolls.forEach(value => {
@@ -183,19 +181,19 @@ describe('Special Dice Integration Tests', () => {
 
     describe('case insensitivity', () => {
       test('"DF" is accepted', () => {
-        const result = roll('DF' as string)
+        const result = roll('DF')
         expect(result.total).toBeGreaterThanOrEqual(-1)
         expect(result.total).toBeLessThanOrEqual(1)
       })
 
       test('"Df" is accepted', () => {
-        const result = roll('Df' as string)
+        const result = roll('Df')
         expect(result.total).toBeGreaterThanOrEqual(-1)
         expect(result.total).toBeLessThanOrEqual(1)
       })
 
       test('"df" is accepted', () => {
-        const result = roll('df' as string)
+        const result = roll('df')
         expect(result.total).toBeGreaterThanOrEqual(-1)
         expect(result.total).toBeLessThanOrEqual(1)
       })
@@ -203,7 +201,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('stress test', () => {
       test('4dF total always in [-4, 4]', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF'))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(-4)
           expect(total).toBeLessThanOrEqual(4)
@@ -211,7 +209,7 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('dF individual values always in [-1, 0, 1]', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF'))
         results.forEach(({ rolls }) => {
           const record = rolls[0]
           expect(record).toBeDefined()
@@ -224,7 +222,7 @@ describe('Special Dice Integration Tests', () => {
       test('dF distribution: all three values (-1, 0, 1) appear', () => {
         const allValues = new Set<number>()
         Array.from({ length: STRESS_ITERATIONS }, () => {
-          const result = roll('dF' as string)
+          const result = roll('dF')
           const record = result.rolls[0]
           if (record) {
             record.rolls.forEach(v => allValues.add(v))
@@ -242,13 +240,13 @@ describe('Special Dice Integration Tests', () => {
 
   describe('dF.1 (explicit standard Fate)', () => {
     test('roll("dF.1") returns a valid result', () => {
-      const result = roll('dF.1' as string)
+      const result = roll('dF.1')
       expect(result.total).toBeGreaterThanOrEqual(-1)
       expect(result.total).toBeLessThanOrEqual(1)
     })
 
     test('dF.1 produces the same range as dF', () => {
-      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.1' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.1'))
       results.forEach(({ total }) => {
         expect(total).toBeGreaterThanOrEqual(-1)
         expect(total).toBeLessThanOrEqual(1)
@@ -256,7 +254,7 @@ describe('Special Dice Integration Tests', () => {
     })
 
     test('dF.1 individual values always in [-1, 0, 1]', () => {
-      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.1' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.1'))
       results.forEach(({ rolls }) => {
         const record = rolls[0]
         expect(record).toBeDefined()
@@ -268,14 +266,14 @@ describe('Special Dice Integration Tests', () => {
 
     describe('case insensitivity', () => {
       test('"DF.1" is accepted', () => {
-        const result = roll('DF.1' as string)
+        const result = roll('DF.1')
         expect(result.total).toBeGreaterThanOrEqual(-1)
         expect(result.total).toBeLessThanOrEqual(1)
       })
     })
 
     test('roll("4dF.1") with quantity', () => {
-      const result = roll('4dF.1' as string)
+      const result = roll('4dF.1')
       expect(result.total).toBeGreaterThanOrEqual(-4)
       expect(result.total).toBeLessThanOrEqual(4)
       const record = result.rolls[0]
@@ -288,19 +286,19 @@ describe('Special Dice Integration Tests', () => {
 
   describe('dF.2 (extended Fate)', () => {
     test('roll("dF.2") returns a valid result', () => {
-      const result = roll('dF.2' as string)
+      const result = roll('dF.2')
       expect(result.total).toBeGreaterThanOrEqual(-2)
       expect(result.total).toBeLessThanOrEqual(2)
     })
 
     test('roll("4dF.2") total is in [-8, 8]', () => {
-      const result = roll('4dF.2' as string)
+      const result = roll('4dF.2')
       expect(result.total).toBeGreaterThanOrEqual(-8)
       expect(result.total).toBeLessThanOrEqual(8)
     })
 
     test('dF.2 individual values always in [-2, -1, 0, 1, 2]', () => {
-      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.2' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('dF.2'))
       results.forEach(({ rolls }) => {
         const record = rolls[0]
         expect(record).toBeDefined()
@@ -313,7 +311,7 @@ describe('Special Dice Integration Tests', () => {
     test('dF.2 distribution: all five values appear', () => {
       const allValues = new Set<number>()
       Array.from({ length: STRESS_ITERATIONS }, () => {
-        const result = roll('dF.2' as string)
+        const result = roll('dF.2')
         const record = result.rolls[0]
         if (record) {
           record.rolls.forEach(v => allValues.add(v))
@@ -329,7 +327,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('case insensitivity', () => {
       test('"DF.2" is accepted', () => {
-        const result = roll('DF.2' as string)
+        const result = roll('DF.2')
         expect(result.total).toBeGreaterThanOrEqual(-2)
         expect(result.total).toBeLessThanOrEqual(2)
       })
@@ -337,19 +335,19 @@ describe('Special Dice Integration Tests', () => {
 
     describe('with custom RNG', () => {
       test('randomFn returning 0 produces minimum (-2)', () => {
-        const result = roll('dF.2' as string, { randomFn: () => 0 })
+        const result = roll('dF.2', { randomFn: () => 0 })
         expect(result.total).toBe(-2)
       })
 
       test('randomFn returning 0.999 produces maximum (2)', () => {
-        const result = roll('dF.2' as string, { randomFn: () => 0.999 })
+        const result = roll('dF.2', { randomFn: () => 0.999 })
         expect(result.total).toBe(2)
       })
     })
 
     describe('stress test', () => {
       test('4dF.2 total always in [-8, 8]', () => {
-        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF.2' as string))
+        const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('4dF.2'))
         results.forEach(({ total }) => {
           expect(total).toBeGreaterThanOrEqual(-8)
           expect(total).toBeLessThanOrEqual(8)
@@ -378,19 +376,19 @@ describe('Special Dice Integration Tests', () => {
 
   describe('mixing Fate variants', () => {
     test('roll("dF", "dF.2") produces 2 roll records', () => {
-      const result = roll('dF' as string, 'dF.2' as string)
+      const result = roll('dF', 'dF.2' as string)
       expect(result.rolls).toHaveLength(2)
     })
 
     test('roll("dF", "dF.2") total is in [-3, 3]', () => {
-      const result = roll('dF' as string, 'dF.2' as string)
+      const result = roll('dF', 'dF.2' as string)
       // dF range: [-1, 1], dF.2 range: [-2, 2], combined: [-3, 3]
       expect(result.total).toBeGreaterThanOrEqual(-3)
       expect(result.total).toBeLessThanOrEqual(3)
     })
 
     test('roll("4dF", "4dF") produces 2 roll records', () => {
-      const result = roll('4dF' as string, '4dF' as string)
+      const result = roll('4dF', '4dF' as string)
       expect(result.rolls).toHaveLength(2)
       expect(result.total).toBeGreaterThanOrEqual(-8)
       expect(result.total).toBeLessThanOrEqual(8)
@@ -401,7 +399,7 @@ describe('Special Dice Integration Tests', () => {
 
   describe('complex mixed scenarios', () => {
     test('roll("d%", "4dF", 20) - all three argument types', () => {
-      const result = roll('d%' as string, '4dF' as string, 20)
+      const result = roll('d%', '4dF' as string, 20)
       expect(result.rolls).toHaveLength(3)
 
       // d% contributes [1, 100]
@@ -413,12 +411,12 @@ describe('Special Dice Integration Tests', () => {
     })
 
     test('roll("d%", "2d6", "4dF", 8) - everything together', () => {
-      const result = roll('d%' as string, '2d6' as string, '4dF' as string, 8)
+      const result = roll('d%', '2d6' as string, '4dF' as string, 8)
       expect(result.rolls).toHaveLength(4)
     })
 
     test('kitchen sink: d%, 4dF, 2d6+3, d20, {sides:8, quantity:3}', () => {
-      const result = roll('d%' as string, '4dF' as string, '2d6+3' as string, 20, {
+      const result = roll('d%', '4dF' as string, '2d6+3' as string, 20, {
         sides: 8,
         quantity: 3
       })
@@ -443,7 +441,7 @@ describe('Special Dice Integration Tests', () => {
     test('kitchen sink with deterministic RNG produces consistent results', () => {
       const seeded1 = createSeededRandom(123)
       const result1 = roll(
-        'd%' as string,
+        'd%',
         '4dF' as string,
         '2d6+3' as string,
         20,
@@ -453,7 +451,7 @@ describe('Special Dice Integration Tests', () => {
 
       const seeded2 = createSeededRandom(123)
       const result2 = roll(
-        'd%' as string,
+        'd%',
         '4dF' as string,
         '2d6+3' as string,
         20,
@@ -471,7 +469,7 @@ describe('Special Dice Integration Tests', () => {
   describe('result structure validation', () => {
     describe('d% result structure', () => {
       test('roll record has correct fields', () => {
-        const result = roll('d%' as string)
+        const result = roll('d%')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.rolls).toBeInstanceOf(Array)
@@ -484,7 +482,7 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('d% appliedTotal equals total for single die', () => {
-        const result = roll('d%' as string)
+        const result = roll('d%')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.appliedTotal).toBe(record!.total)
@@ -493,7 +491,7 @@ describe('Special Dice Integration Tests', () => {
 
     describe('dF result structure', () => {
       test('roll record has correct fields', () => {
-        const result = roll('4dF' as string)
+        const result = roll('4dF')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         expect(record!.rolls).toBeInstanceOf(Array)
@@ -505,7 +503,7 @@ describe('Special Dice Integration Tests', () => {
       })
 
       test('dF total equals sum of individual rolls', () => {
-        const result = roll('4dF' as string)
+        const result = roll('4dF')
         const record = result.rolls[0]
         expect(record).toBeDefined()
         const sum = record!.rolls.reduce((acc, val) => acc + val, 0)

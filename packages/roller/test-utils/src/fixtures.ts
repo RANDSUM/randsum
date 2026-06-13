@@ -1,5 +1,4 @@
 import type {
-  DiceNotation,
   NumericRollBonus,
   RequiredNumericRollParameters,
   RollOptions,
@@ -78,9 +77,9 @@ export function createRollParams(overrides: Partial<RollParams> = {}): RollParam
     sides: 6,
     quantity: 1,
     description: ['Roll 1d6'],
-    argument: '1d6' as DiceNotation,
+    argument: '1d6',
     arithmetic: 'add',
-    notation: '1d6' as DiceNotation,
+    notation: '1d6',
     modifiers: {},
     key: 'Roll 1'
   }

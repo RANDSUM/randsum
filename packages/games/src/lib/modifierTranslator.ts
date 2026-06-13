@@ -37,7 +37,9 @@ export function translateModifiers(
       rollerOptions.keep = { lowest: bindInteger(op.keepLowest, input) }
     }
     if (op.add !== undefined) {
-      rollerOptions.plus = bindInteger(op.add, input)
+      // Accumulate multiple `add` ops (e.g. PbtA stat + forward + ongoing) rather than
+      // overwriting — matches the generated code, which sums them into one `plus`.
+      rollerOptions.plus = (rollerOptions.plus ?? 0) + bindInteger(op.add, input)
     }
     if (op.cap !== undefined) {
       const capOptions: ComparisonOptions = {}

@@ -26,7 +26,7 @@ function specToLoadedSpec(spec: RandSumSpec): LoadedSpec {
     return [key, fn] as const
   })
 
-  return Object.fromEntries(entries) as LoadedSpec
+  return Object.fromEntries(entries)
 }
 
 export function loadSpec(input: RandSumSpec | string): LoadedSpec {

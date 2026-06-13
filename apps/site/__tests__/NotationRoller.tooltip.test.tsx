@@ -12,8 +12,8 @@ import type { RollRecord } from '@randsum/roller'
 
 // Minimal RollRecord fixture with the full shape computeSteps expects
 const makeRecord = (): RollRecord => ({
-  notation: '1d6' as RollRecord['notation'],
-  argument: '1d6' as RollRecord['argument'],
+  notation: '1d6',
+  argument: '1d6',
   description: ['Roll 1 6-sided die'],
   parameters: {
     sides: 6,
@@ -21,9 +21,9 @@ const makeRecord = (): RollRecord => ({
     modifiers: {},
     arithmetic: 'add' as const,
     key: 'Roll 1',
-    argument: '1d6' as RollRecord['argument'],
+    argument: '1d6',
     description: ['Roll 1 6-sided die'],
-    notation: '1d6' as RollRecord['notation']
+    notation: '1d6'
   },
   rolls: [4],
   initialRolls: [4],

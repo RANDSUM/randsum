@@ -21,8 +21,6 @@ import { CONFORMANCE_FILE } from '../../../../apps/rdn/src/conformance/vectors'
  * - Vector 2 (d20): roller rejects bare `dN` notation (requires leading quantity digit)
  * - Vector 39 (3d6!s{4,6,8}): spec uses {values} as trigger set for sequence start;
  *   roller uses them as die sizes in a step-through sequence — semantics mismatch
- * - Vector 47 (5d10S{7}F{3}): spec mandates rejection of multiple Count modifiers;
- *   roller silently accepts and applies the last one
  */
 
 /**
@@ -47,8 +45,7 @@ const FATE_2_FACES = [-2, -1, 0, 1, 2] as const
 // These are marked .todo() rather than skipped to surface them as known failures.
 const KNOWN_CONFORMANCE_GAPS: Record<number, string> = {
   2: 'roller rejects bare `dN` notation without a leading quantity digit (spec §4.1 requires it be valid)',
-  39: 'spec interprets !s{4,6,8} as trigger values for sequence; roller uses them as die sizes',
-  47: 'spec requires rejection of multiple Count modifiers (S{7}F{3}); roller silently accepts'
+  39: 'spec interprets !s{4,6,8} as trigger values for sequence; roller uses them as die sizes'
 }
 
 describe('Conformance Vectors', () => {

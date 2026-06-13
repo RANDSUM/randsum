@@ -36,9 +36,12 @@ export function isConditionalRef(value: IntegerOrInput): value is {
 }
 
 /**
- * Returns the single `roll` definition from a spec as a keyed record,
- * preserving the callsites that iterate over `nspec.rolls`.
+ * Returns a spec's roll definitions as a keyed record. A spec declares either a single
+ * `roll` (keyed as `roll`) or multiple named `rolls`. Validation guarantees exactly one
+ * of the two is present; an empty record is returned only for an already-invalid spec.
  */
 export function getRollDefinitions(spec: RandSumSpec): Readonly<Record<string, RollDefinition>> {
-  return { roll: spec.roll }
+  if (spec.rolls !== undefined) return spec.rolls
+  if (spec.roll !== undefined) return { roll: spec.roll }
+  return {}
 }

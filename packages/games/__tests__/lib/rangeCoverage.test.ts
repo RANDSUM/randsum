@@ -11,7 +11,7 @@ function makeSpec(overrides: Partial<RandSumSpec>): RandSumSpec {
     shortcode: 'cov',
     game_url: 'https://example.com',
     ...overrides
-  } as RandSumSpec
+  }
 }
 
 async function expectThrows(spec: RandSumSpec, messagePattern?: RegExp): Promise<SchemaError> {

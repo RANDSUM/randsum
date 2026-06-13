@@ -15,7 +15,7 @@ describe('normalizeSpec: countMatching resolve', () => {
           countMatching: { operator: '>=' as const, value: 4 }
         }
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(typeof rollDef.resolve).toBe('object')
@@ -43,7 +43,7 @@ describe('normalizeSpec: tableLookup outcome', () => {
           }
         }
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(rollDef.outcome).toBeDefined()
@@ -71,7 +71,7 @@ describe('normalizeSpec: tableLookup outcome', () => {
           tableLookup: { $ref: '#/tables/myTable' }
         }
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(rollDef.outcome).toBeDefined()
@@ -99,7 +99,7 @@ describe('normalizeSpec: comparePoolSum resolve', () => {
           }
         }
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(typeof rollDef.resolve).toBe('object')
@@ -122,7 +122,7 @@ describe('normalizeSpec: dice array normalization', () => {
         ],
         resolve: 'sum' as const
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(Array.isArray(rollDef.dice)).toBe(true)
@@ -152,7 +152,7 @@ describe('normalizeSpec: remoteTableLookup resolve', () => {
           }
         }
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(typeof rollDef.resolve).toBe('object')
@@ -185,7 +185,7 @@ describe('normalizeSpec: tableLookup resolve', () => {
           ]
         }
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(typeof rollDef.resolve).toBe('object')
@@ -212,7 +212,7 @@ describe('normalizeSpec: degreeOfSuccess outcome normalization', () => {
           }
         }
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     const rollDef = normalized.rolls['roll']!
     expect(rollDef.outcome).toBeDefined()
@@ -235,7 +235,7 @@ describe('normalizeSpec: version and srd_url pass-through', () => {
         dice: { pool: { sides: 6 }, quantity: 1 },
         resolve: 'sum' as const
       }
-    } as RandSumSpec
+    }
     const normalized = normalizeSpec(spec)
     expect(normalized.version).toBe('1.0.0')
     expect(normalized.srd_url).toBe('https://srd.example.com')

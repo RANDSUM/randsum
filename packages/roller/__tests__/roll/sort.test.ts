@@ -7,7 +7,7 @@ import { STRESS_ITERATIONS } from '../stressIterations'
 describe('Sort Modifier', () => {
   describe('ascending sort', () => {
     test('roll("6d6sa") rolls array is sorted ascending', () => {
-      const result = roll('6d6sa' as string)
+      const result = roll('6d6sa')
       const record = result.rolls[0]
       expect(record).toBeDefined()
       const rolls = record!.rolls
@@ -23,7 +23,7 @@ describe('Sort Modifier', () => {
 
   describe('descending sort', () => {
     test('roll("6d6sd") rolls array is sorted descending', () => {
-      const result = roll('6d6sd' as string)
+      const result = roll('6d6sd')
       const record = result.rolls[0]
       expect(record).toBeDefined()
       const rolls = record!.rolls
@@ -39,7 +39,7 @@ describe('Sort Modifier', () => {
 
   describe('case insensitivity', () => {
     test('roll("6d6SA") sorts ascending', () => {
-      const result = roll('6d6SA' as string)
+      const result = roll('6d6SA')
       const record = result.rolls[0]
       expect(record).toBeDefined()
       const rolls = record!.rolls
@@ -53,7 +53,7 @@ describe('Sort Modifier', () => {
     })
 
     test('roll("6d6SD") sorts descending', () => {
-      const result = roll('6d6SD' as string)
+      const result = roll('6d6SD')
       const record = result.rolls[0]
       expect(record).toBeDefined()
       const rolls = record!.rolls
@@ -71,7 +71,7 @@ describe('Sort Modifier', () => {
     test('sorted and unsorted rolls produce the same total with seeded random', () => {
       const seeded1 = createSeededRandom(42)
       const sortedResult = roll(
-        { sides: 6, quantity: 6, modifiers: { sort: 'asc' } } as Parameters<typeof roll>[0],
+        { sides: 6, quantity: 6, modifiers: { sort: 'asc' } },
         { randomFn: seeded1 }
       )
 
@@ -96,7 +96,7 @@ describe('Sort Modifier', () => {
 
   describe('combined with other modifiers', () => {
     test('roll("4d6Lsa") drops lowest then sorts ascending', () => {
-      const result = roll('4d6Lsa' as string)
+      const result = roll('4d6Lsa')
       const record = result.rolls[0]
       expect(record).toBeDefined()
       // After dropping lowest, should have 3 dice
@@ -115,7 +115,7 @@ describe('Sort Modifier', () => {
 
   describe('stress test', () => {
     test('sort ascending invariant holds across 9999 iterations', () => {
-      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('6d6sa' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('6d6sa'))
       results.forEach(({ rolls: records }) => {
         const record = records[0]
         expect(record).toBeDefined()
@@ -131,7 +131,7 @@ describe('Sort Modifier', () => {
     })
 
     test('sort descending invariant holds across 9999 iterations', () => {
-      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('6d6sd' as string))
+      const results = Array.from({ length: STRESS_ITERATIONS }, () => roll('6d6sd'))
       results.forEach(({ rolls: records }) => {
         const record = records[0]
         expect(record).toBeDefined()

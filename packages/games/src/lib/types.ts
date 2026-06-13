@@ -200,7 +200,13 @@ export interface RandSumSpec {
   readonly pools?: Readonly<Record<string, PoolDefinition>>
   readonly tables?: Readonly<Record<string, TableDefinition>>
   readonly outcomes?: Readonly<Record<string, OutcomeOperation>>
-  readonly roll: RollDefinition
+  /** Single default roll, exported as `roll`. Mutually exclusive with `rolls` (exactly one is required). */
+  readonly roll?: RollDefinition
+  /**
+   * Multiple named rolls. Each key is exported as its own roll function (e.g. `action`,
+   * `resistance`). Keys must be valid JS identifiers. Mutually exclusive with `roll`.
+   */
+  readonly rolls?: Readonly<Record<string, RollDefinition>>
 }
 
 import type { GameRollResult } from '../types'

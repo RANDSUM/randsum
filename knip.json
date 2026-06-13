@@ -9,9 +9,6 @@
         "@typescript-eslint/parser",
         "astro",
         "@astrojs/netlify",
-        "devalue",
-        "flatted",
-        "undici",
         "fast-check",
         "mitata"
       ]

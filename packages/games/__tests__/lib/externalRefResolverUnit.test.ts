@@ -6,7 +6,7 @@ import type { RandSumSpec } from '../../src/lib/types'
 
 // Helper to create test specs with extra properties without `as unknown as T`
 function specWith(extra: Record<string, unknown>): RandSumSpec {
-  return { ...PLAIN_SPEC, ...extra } as RandSumSpec
+  return { ...PLAIN_SPEC, ...extra }
 }
 
 const PLAIN_SPEC: RandSumSpec = {

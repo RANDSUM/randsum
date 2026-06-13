@@ -172,10 +172,8 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/expo' typecheck
-      - run: bun run --filter '@randsum/expo' lint
-      - name: Test IndexScreen layout
-        run: bun test apps/expo/__tests__/IndexScreen.test.tsx
+      - run: bun run --filter '@randsum/dice-ui' check
+      - run: bun run --filter '@randsum/expo' check
 
   skill:
     name: claude-doctor

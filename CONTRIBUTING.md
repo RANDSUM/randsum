@@ -21,7 +21,7 @@ bun run check:all  # Verify everything works
 
 - `packages/roller/` -- Core dice engine with built-in RDN notation parser (all packages depend on this)
 - `packages/games/` -- Game system packages (subpath exports per game)
-- `packages/display-utils/` -- Browser utilities for step visualization and StackBlitz integration
+- `packages/dice-ui/` -- Shared dice UI components (web + React Native targets)
 - `apps/site/` -- Documentation site (Astro)
 
 ## Adding a New Game

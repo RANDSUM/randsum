@@ -11,7 +11,7 @@ function makeSpec(overrides: Partial<RandSumSpec>): RandSumSpec {
     shortcode: 'shape',
     game_url: 'https://example.com',
     ...overrides
-  } as RandSumSpec
+  }
 }
 
 describe('resultShape: numeric', () => {

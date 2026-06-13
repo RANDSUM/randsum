@@ -4,7 +4,8 @@
   "title": "randsum Dice Mechanic Spec",
   "description": "Declarative format for expressing a complete game system's dice mechanics as a four-stage pipeline: Dice → Modify → Resolve → Outcome.",
   "type": "object",
-  "required": ["$schema", "name", "shortcode", "game_url", "roll"],
+  "required": ["$schema", "name", "shortcode", "game_url"],
+  "oneOf": [{ "required": ["roll"] }, { "required": ["rolls"] }],
   "additionalProperties": false,
   "properties": {
     "$schema": {
@@ -50,7 +51,14 @@
     },
     "roll": {
       "$ref": "#/$defs/RollDefinition",
-      "description": "Default roll — exported as `roll`"
+      "description": "Default single roll — exported as `roll`. Mutually exclusive with `rolls`."
+    },
+    "rolls": {
+      "type": "object",
+      "description": "Multiple named rolls. Each key is exported as its own roll function (e.g. `action`, `resistance`). Mutually exclusive with `roll`.",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$" },
+      "additionalProperties": { "$ref": "#/$defs/RollDefinition" }
     }
   },
   "$defs": {

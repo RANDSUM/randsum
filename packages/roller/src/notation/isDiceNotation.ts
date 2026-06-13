@@ -2,8 +2,7 @@ import { NotationParseError } from '../errors'
 import { coreNotationPattern } from './coreNotationPattern'
 import type { DiceNotation } from './types'
 import { suggestNotationFix } from './suggestions'
-import { buildNotationPattern } from './parse/parseModifiers'
-import { countPattern } from './definitions/count'
+import { buildNotationPattern, findCountFamilyMatchIndices } from './parse/parseModifiers'
 
 // Special die type patterns (case-insensitive via 'i' flag on final regex)
 // Percentile: [N]d% or [N]D% (optional quantity prefix, no modifiers)
@@ -89,8 +88,9 @@ export function isDiceNotation(argument: unknown): argument is DiceNotation {
   const hasAnySpecialDie = /\d*[Dd]%|\d*[Dd][Ff]|\d*[Dd]\{[^}]+\}|\d*[Zz]\d+/.test(trimmedArg)
   if (!hasStandardCore && !hasSpecialCore && !hasAnySpecialDie) return false
 
-  const countPatternGlobal = new RegExp(countPattern.source, 'g')
-  if ([...trimmedArg.matchAll(countPatternGlobal)].length > 1) return false
+  // Reject multiple count-family modifiers (#{}, S{}, F{}) — they all map to the
+  // single `count` option and cannot coexist (see parseModifiers / conformance vector 47).
+  if (findCountFamilyMatchIndices(trimmedArg).length > 1) return false
 
   // Strip the leading special die if the string starts with one (first pool, no sign).
   // This handles cases like "2dF+1d6" where "2dF" is at position 0.

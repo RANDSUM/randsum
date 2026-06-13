@@ -88,20 +88,46 @@ const PARSE_SCHEMAS: readonly ParseableSchema[] = [...MODIFIER_SCHEMAS, ...COUNT
  * Uses notation/definitions schemas as the schema source, supplemented by
  * count-family sugar schemas (S{N}, F{N}) pending Story 9 resolution.
  */
+/**
+ * The count family — `#{...}`, `S{...}`, and `F{...}` — all resolve to the single
+ * `count` modifier option. Because parsing merges schema results via Object.assign,
+ * two count-family modifiers in one string would silently overwrite each other
+ * (last-match-wins) rather than combine. The spec mandates rejection instead
+ * (conformance vector 47, `5d10S{7}F{3}`).
+ */
+const COUNT_FAMILY_PATTERNS: readonly RegExp[] = [
+  countPattern,
+  countSuccessesSchema.pattern,
+  countFailuresSchema.pattern
+]
+
+/**
+ * Return the sorted start indices of every count-family modifier (`#{}`, `S{}`, `F{}`)
+ * in a notation string. Shared by parseModifiers (which throws on duplicates) and
+ * isDiceNotation (which rejects them), so both agree on what is valid.
+ */
+export function findCountFamilyMatchIndices(notation: string): readonly number[] {
+  return COUNT_FAMILY_PATTERNS.flatMap(pattern => {
+    const flags = pattern.flags.includes('g') ? pattern.flags : `${pattern.flags}g`
+    const global = new RegExp(pattern.source, flags)
+    return [...notation.matchAll(global)].map(match => match.index)
+  }).sort((a, b) => a - b)
+}
+
 export function parseModifiers(notation: string): ModifierOptions {
   const result: ModifierOptions = {}
   const processed = preprocessNotation(notation)
 
-  const countPatternGlobal = new RegExp(countPattern.source, 'g')
-  const countMatches = [...processed.matchAll(countPatternGlobal)]
-  if (countMatches.length > 1) {
-    const secondMatch = countMatches[1]
+  const countFamilyMatches = findCountFamilyMatchIndices(processed)
+
+  if (countFamilyMatches.length > 1) {
+    const secondIndex = countFamilyMatches[1]
     throw new ModifierError(
       'count',
-      'Duplicate count modifier: only one #{...} is allowed per notation string',
+      'Multiple Count modifiers are not permitted: only one of #{...}, S{...}, or F{...} may appear per notation string. Combine them into a single #{...} or S{n,b}.',
       {
         notation,
-        ...(secondMatch ? { position: secondMatch.index } : {})
+        ...(secondIndex !== undefined ? { position: secondIndex } : {})
       }
     )
   }
