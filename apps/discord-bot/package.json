@@ -18,7 +18,7 @@
   "dependencies": {
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
-    "discord.js": "^14.25.1"
+    "discord.js": "^14.26.4"
   },
   "keywords": [
     "discord",

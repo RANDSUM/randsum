@@ -23,9 +23,10 @@
     "react-native": "0.85.3"
   },
   "peerDependencies": {
-    "expo-haptics": "*",
+    "expo-haptics": ">=56.0.0",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-native": ">=0.85.3"
   },
   "peerDependenciesMeta": {
     "react-dom": {
