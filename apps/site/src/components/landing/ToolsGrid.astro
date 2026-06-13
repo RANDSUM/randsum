@@ -1,0 +1,26 @@
+---
+import { toolPackages } from '../../utils/packageData'
+import LabeledSection from '../LabeledSection.astro'
+import { getBadgeUrl, getCardStyle, getToolCardHref } from './cardHelpers'
+---
+
+<LabeledSection label="Tools" labelSide="right">
+  <div class="pkg-grid pkg-grid--3">
+    {toolPackages.map((pkg) => (
+      <a
+        class="pkg-card"
+        style={getCardStyle(pkg)}
+        href={getToolCardHref(pkg)}
+      >
+        <div class="pkg-card-header">
+          <h3 class="pkg-card-name">{pkg.displayName}</h3>
+          {getBadgeUrl(pkg) && (
+            <img class="pkg-card-badge" src={getBadgeUrl(pkg)!} alt={`${pkg.displayName} version`} loading="lazy" />
+          )}
+        </div>
+        <p class="pkg-card-desc">{pkg.description}</p>
+        <span class="pkg-card-link">View docs &rarr;</span>
+      </a>
+    ))}
+  </div>
+</LabeledSection>

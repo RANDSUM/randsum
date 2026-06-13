@@ -22,6 +22,7 @@
     "prettier": "3.8.4",
     "prettier-plugin-astro": "0.14.1",
     "size-limit": "12.1.0",
+    "typedoc": "0.28.19",
     "typescript": "6.0.3",
     "typescript-eslint": "8.61.0"
   },
@@ -57,6 +58,7 @@
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
     "knip": "knip --exclude catalog --no-config-hints",
+    "docs:api": "typedoc",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/site dev",
