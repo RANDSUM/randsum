@@ -6,8 +6,8 @@ See the root `CLAUDE.md` for monorepo-wide conventions. This file covers Expo-sp
 
 ## Stack
 
-- **Expo SDK 55** with **Expo Router** (file-based routing under `app/`)
-- **React 19 / React Native 0.83 / react-native-web 0.21**
+- **Expo SDK 56** with **Expo Router** (file-based routing under `app/`)
+- **React 19 / React Native 0.85 / react-native-web 0.21**
 - **Zustand 5** for client state (`lib/stores/`) with `persist` + `createJSONStorage(AsyncStorage)`
 - **@react-native-async-storage/async-storage** for persistence
 - **JetBrainsMono_400Regular** via `@expo-google-fonts/jetbrains-mono` (required before render)

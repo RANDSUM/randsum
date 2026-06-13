@@ -21,7 +21,7 @@ RANDSUM is a universal dice rolling app for tabletop RPG players. It supports st
 | `@randsum/roller`  | Dice engine — `roll()`, validation, notation parsing (`workspace:~`)                                        |
 | `@randsum/games`   | Game-specific rollers — Blades, D&D 5e, Daggerheart, PbtA, Root RPG, Salvage Union (`workspace:~`)          |
 | `@randsum/dice-ui` | Notation input with token overlay — use via `"use dom"` initially, port to native if needed (`workspace:~`) |
-| Expo SDK 55        | Universal app framework (iOS, Android, Web)                                                                 |
+| Expo SDK 56        | Universal app framework (iOS, Android, Web)                                                                 |
 | Expo Router        | File-based navigation (tab bar, modals, deep links)                                                         |
 | TanStack Query     | Server state, Supabase queries, cache management                                                            |
 | Zustand            | Client state management (pool builder, UI state, preferences)                                               |

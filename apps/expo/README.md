@@ -1,6 +1,6 @@
 # @randsum/expo — Dice Playground
 
-The cross-platform RANDSUM dice playground (web + iOS + Android), built with **Expo SDK 55**
+The cross-platform RANDSUM dice playground (web + iOS + Android), built with **Expo SDK 56**
 and Expo Router. The web build powers the public playground at
 [randsumapp.expo.app](https://randsumapp.expo.app) (also `randsum.io`).
 
@@ -9,7 +9,7 @@ and Expo Router. The web build powers the public playground at
 
 ## Stack
 
-- Expo SDK 55, React 19 / React Native, react-native-web
+- Expo SDK 56, React 19 / React Native, react-native-web
 - Zustand (client state), AsyncStorage (persistence)
 - Workspace-linked `@randsum/roller` and `@randsum/dice-ui`
 
