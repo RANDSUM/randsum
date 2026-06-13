@@ -22,7 +22,11 @@ export type RollTraceStep =
   | { kind: 'arithmetic'; label: string; display: string }
   | { kind: 'finalRolls'; rolls: readonly number[]; arithmeticDelta: number }
 
-const ARITHMETIC_MODIFIERS: Partial<Record<string, { label: string; sign: string }>> = {
+/**
+ * Trace-render metadata for the arithmetic ('Scale'-category) modifiers. Kept in sync with the
+ * modifier registry by __tests__/trace/arithmeticModifiers.coverage.test.ts.
+ */
+export const ARITHMETIC_MODIFIERS: Partial<Record<string, { label: string; sign: string }>> = {
   plus: { label: 'Add', sign: '+' },
   minus: { label: 'Subtract', sign: '-' },
   multiply: { label: 'Multiply', sign: '\u00d7' },

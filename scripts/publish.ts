@@ -46,6 +46,33 @@ async function getPublishablePackages(): Promise<{ name: string; dir: string }[]
   return packages
 }
 
+/**
+ * Pack @randsum/roller with `sideEffects: false` injected into the published manifest.
+ *
+ * The in-repo package.json keeps `sideEffects: true` because bunup's self-DCE breaks roller's
+ * dist when it builds with `false`, AND the cli bundles roller from source (noExternal) and reads
+ * that field. But consumers installing the published package should be able to tree-shake the
+ * narrow surfaces (e.g. `isDiceNotation`) out of the engine. `bun pm pack` does NOT rebuild dist
+ * or run prepublishOnly, so we flip the field only for the pack and restore it immediately after —
+ * the tarball ships the already-built healthy dist with a tree-shakeable manifest. See ADR-018.
+ */
+async function packRollerWithSideEffectsFalse(dir: string): Promise<string> {
+  const pkgPath = join(dir, 'package.json')
+  const original = await Bun.file(pkgPath).text()
+  const patched = original.replace(/"sideEffects":\s*true/, '"sideEffects": false')
+  if (patched === original) {
+    throw new Error(
+      'Expected roller package.json to contain `"sideEffects": true` to flip for publish'
+    )
+  }
+  try {
+    await Bun.write(pkgPath, patched)
+    return await $`bun pm pack`.cwd(dir).text()
+  } finally {
+    await Bun.write(pkgPath, original)
+  }
+}
+
 const extraArgs = process.argv.slice(2)
 const dryRun = extraArgs.includes('--dry-run')
 
@@ -63,7 +90,10 @@ const failed: string[] = []
 for (const { name, dir } of packages) {
   console.log(`--- ${name} ---`)
   try {
-    const packOutput = await $`bun pm pack`.cwd(dir).text()
+    const packOutput =
+      name === '@randsum/roller'
+        ? await packRollerWithSideEffectsFalse(dir)
+        : await $`bun pm pack`.cwd(dir).text()
     const tgzMatch = packOutput.match(/^Total files:.*$/m)
     const tgzFile = (await Array.fromAsync(new Bun.Glob('*.tgz').scan(dir)))[0]
     if (!tgzFile) {
