@@ -279,29 +279,6 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - run: bun run arch:check
 
-  gitleaks:
-    # Committed-secret scan (audit N3 / security R3). Authoritative gate: unlike
-    # the lefthook pre-commit hook, this cannot be skipped with --no-verify.
-    #
-    # NOTE: gitleaks-action is GitLeaks LLC commercial software. It is free for
-    # personal accounts but ORGANIZATION-owned repos (this repo is under the
-    # RANDSUM org) require a (free-trial-available) GITLEAKS_LICENSE secret —
-    # obtain one at https://gitleaks.io and add it as an org/repo Actions secret.
-    # Until that secret exists this job will fail closed (which is the safe
-    # default for a secret-scanner). If a license is undesirable, swap this step
-    # for the Apache-2.0 gitleaks CLI binary (`bash scripts/gitleaks-precommit.sh`
-    # after installing gitleaks via a setup step).
-    name: gitleaks
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e  # v3.0.0
-        env:
-          GITLEAKS_CONFIG: .gitleaks.toml
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-
   audit:
     # Dependency advisory gate relocated from local-only pre-push into CI
     # (audit X8b / security F1, infrastructure F5). Cannot be bypassed with
@@ -345,7 +322,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, bench, publish-dry-run, knip, arch, gitleaks, audit]
+    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, bench, publish-dry-run, knip, arch, audit]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

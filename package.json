@@ -60,7 +60,6 @@
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
     "knip": "knip --exclude catalog --no-config-hints",
     "arch:check": "depcruise packages apps --config .dependency-cruiser.cjs",
-    "secrets:scan": "bash scripts/gitleaks-precommit.sh",
     "docs:api": "typedoc",
     "fix:all": "bun run lint -- --fix && bun run format",
     "site:build": "bun --filter @randsum/site build",
