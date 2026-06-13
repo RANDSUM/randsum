@@ -2,7 +2,6 @@ import { describe, expect, test } from 'bun:test'
 import {
   SchemaError,
   generateCode,
-  loadSpec,
   lookupByRange,
   resolveExternalRefs,
   specToFilename,
@@ -12,7 +11,6 @@ import {
 describe('schema build smoke test', () => {
   test('all exported functions are defined', () => {
     expect(typeof generateCode).toBe('function')
-    expect(typeof loadSpec).toBe('function')
     expect(typeof lookupByRange).toBe('function')
     expect(typeof resolveExternalRefs).toBe('function')
     expect(typeof specToFilename).toBe('function')

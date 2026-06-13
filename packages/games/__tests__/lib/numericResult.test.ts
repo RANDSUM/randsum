@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { generateCode, loadSpec } from '../../src/lib'
+import { generateCode } from '../../src/lib'
+import { compileSpec } from './helpers/compileSpec'
 
 const NUMERIC_SPEC = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -16,9 +17,9 @@ const NUMERIC_SPEC = {
 }
 
 describe('numeric result (no outcome field)', () => {
-  test('result is the numeric total, not a string', () => {
-    const game = loadSpec(NUMERIC_SPEC)
-    const r = game.roll({ modifier: 5 })
+  test('result is the numeric total, not a string', async () => {
+    const game = await compileSpec(NUMERIC_SPEC)
+    const r = game.roll!({ modifier: 5 })
     expect(typeof r.result).toBe('number')
     expect(r.result).toBe(r.total)
     expect(r.total).toBeGreaterThanOrEqual(6)

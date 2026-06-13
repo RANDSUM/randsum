@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
-import { loadSpec, validateSpec } from '../../src/lib'
+import { validateSpec } from '../../src/lib'
+import { compileSpec } from './helpers/compileSpec'
 
 const COND_POOL_SPEC = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -69,9 +70,9 @@ describe('conditionalPools schema validation', () => {
 })
 
 describe('conditionalPools runtime', () => {
-  test('advantage adds d6 to total', () => {
-    const game = loadSpec(COND_POOL_SPEC)
-    const results = Array.from({ length: 50 }, () => game.roll({ rollingWith: 'Advantage' }))
+  test('advantage adds d6 to total', async () => {
+    const game = await compileSpec(COND_POOL_SPEC)
+    const results = Array.from({ length: 50 }, () => game.roll!({ rollingWith: 'Advantage' }))
     // With advantage: total = hope(1-12) + fear(1-12) + d6(1-6) = 3-30
     results.forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(3)
@@ -83,9 +84,9 @@ describe('conditionalPools runtime', () => {
     })
   })
 
-  test('disadvantage subtracts d6 from total', () => {
-    const game = loadSpec(COND_POOL_SPEC)
-    const results = Array.from({ length: 50 }, () => game.roll({ rollingWith: 'Disadvantage' }))
+  test('disadvantage subtracts d6 from total', async () => {
+    const game = await compileSpec(COND_POOL_SPEC)
+    const results = Array.from({ length: 50 }, () => game.roll!({ rollingWith: 'Disadvantage' }))
     // With disadvantage: total = hope(1-12) + fear(1-12) - d6(1-6) = -4 to 23
     results.forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(-4)
@@ -97,9 +98,24 @@ describe('conditionalPools runtime', () => {
     })
   })
 
-  test('no rollingWith means no extra pool', () => {
-    const game = loadSpec(COND_POOL_SPEC)
-    const results = Array.from({ length: 20 }, () => game.roll())
+  test('no rollingWith means no extra pool', async () => {
+    // Use a variant with optional input so the compiled code allows calling
+    // without any argument (the codegen enforces required enum inputs).
+    const optionalSpec = {
+      ...COND_POOL_SPEC,
+      roll: {
+        ...COND_POOL_SPEC.roll,
+        inputs: {
+          rollingWith: {
+            type: 'string' as const,
+            enum: ['Advantage', 'Disadvantage'],
+            optional: true
+          }
+        }
+      }
+    }
+    const game = await compileSpec(optionalSpec)
+    const results = Array.from({ length: 20 }, () => game.roll!())
     // Without rollingWith: total = hope(1-12) + fear(1-12) = 2-24
     results.forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(2)

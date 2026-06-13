@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
-import { loadSpec, validateSpec } from '../../src/lib'
+import { validateSpec } from '../../src/lib'
+import { compileSpec } from './helpers/compileSpec'
 
 const DYNAMIC_SIDES_SPEC = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -55,9 +56,9 @@ describe('dynamic pool sides (conditional IntegerOrInput)', () => {
   })
 
   describe('runtime behavior', () => {
-    test('ifTrue=20 produces values up to 20 when input is true', () => {
-      const game = loadSpec(DYNAMIC_SIDES_SPEC)
-      const results = Array.from({ length: 50 }, () => game.roll({ amplify: true }))
+    test('ifTrue=20 produces values up to 20 when input is true', async () => {
+      const game = await compileSpec(DYNAMIC_SIDES_SPEC)
+      const results = Array.from({ length: 50 }, () => game.roll!({ amplify: true }))
       const hopeTotals = results.flatMap(r =>
         r.rolls.filter(rec => rec.rolls.length > 0).map(rec => rec.rolls[0])
       )
@@ -71,9 +72,9 @@ describe('dynamic pool sides (conditional IntegerOrInput)', () => {
       })
     })
 
-    test('ifFalse=12 keeps values within d12 range when input is false', () => {
-      const game = loadSpec(DYNAMIC_SIDES_SPEC)
-      const results = Array.from({ length: 50 }, () => game.roll({ amplify: false }))
+    test('ifFalse=12 keeps values within d12 range when input is false', async () => {
+      const game = await compileSpec(DYNAMIC_SIDES_SPEC)
+      const results = Array.from({ length: 50 }, () => game.roll!({ amplify: false }))
       const hopeTotals = results.flatMap(r =>
         r.rolls.filter(rec => rec.rolls.length > 0).map(rec => rec.rolls[0])
       )
@@ -85,9 +86,9 @@ describe('dynamic pool sides (conditional IntegerOrInput)', () => {
       })
     })
 
-    test('default false uses ifFalse value', () => {
-      const game = loadSpec(DYNAMIC_SIDES_SPEC)
-      const results = Array.from({ length: 50 }, () => game.roll())
+    test('default false uses ifFalse value', async () => {
+      const game = await compileSpec(DYNAMIC_SIDES_SPEC)
+      const results = Array.from({ length: 50 }, () => game.roll!())
       const hopeTotals = results.flatMap(r =>
         r.rolls.filter(rec => rec.rolls.length > 0).map(rec => rec.rolls[0])
       )

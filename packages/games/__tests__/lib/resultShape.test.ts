@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { generateCode } from '../../src/lib/codegen'
-import { loadSpec } from '../../src/lib/loader'
+import { compileSpec, expectRejects } from './helpers/compileSpec'
 import type { RandSumSpec } from '../../src/lib/types'
 
 function makeSpec(overrides: Partial<RandSumSpec>): RandSumSpec {
@@ -39,15 +39,16 @@ describe('resultShape: numeric', () => {
     expect(code).not.toContain("result: 'strong'")
   })
 
-  test('runtime loader returns total as numeric result', () => {
-    const game = loadSpec(numericSpec)
-    const result = game.roll()
+  test('compiled module returns total as numeric result', async () => {
+    const game = await compileSpec(numericSpec)
+    const result = game['roll']!()
     expect(typeof result.result).toBe('number')
     expect(result.result).toBe(result.total)
   })
 
-  test('runtime still throws when no range matches (validation preserved)', () => {
-    // Range gap at total 5: a resolveTotal of 5 should fail.
+  test('numeric range gaps are rejected at compile time (validation preserved)', async () => {
+    // Range gap at total 5: codegen's range-coverage check rejects the spec up front,
+    // so the gap can never surface as a runtime failure.
     const gappedSpec = makeSpec({
       shortcode: 'gapped',
       roll: {
@@ -62,21 +63,7 @@ describe('resultShape: numeric', () => {
         }
       }
     })
-    const game = loadSpec(gappedSpec)
-    // Force a deterministic 5 by faking Math.random to hit a 5 on d6 — instead
-    // we just assert the lookup logic throws on 5 directly by invoking many
-    // times; any single-die d6 that rolls 5 will blow up.
-    const rolls = Array.from({ length: 30 }, () => {
-      try {
-        return { ok: true as const, res: game.roll() }
-      } catch (e) {
-        return { ok: false as const, err: e as Error }
-      }
-    })
-    // We expect at least some to succeed (rolls of 1..4 or 6) and at least
-    // one to fail over 30 iterations (roll of 5 is ~1/6).
-    const hadSuccess = rolls.some(r => r.ok)
-    expect(hadSuccess).toBe(true)
+    await expectRejects(compileSpec(gappedSpec), 'missing 5')
   })
 })
 

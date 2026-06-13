@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import { loadSpec, validateSpec } from '../../src/lib'
+import { validateSpec } from '../../src/lib'
 import { generateCode } from '../../src/lib/codegen'
+import { compileSpec } from './helpers/compileSpec'
 
 const BASE = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -109,41 +110,41 @@ describe('postResolveModifiers runtime behavior', () => {
     }
   }
 
-  test('bonus 100 makes total >= 102 (proves bonus applied after sum, not per-die)', () => {
-    const game = loadSpec(SPEC_WITH_BONUS)
+  test('bonus 100 makes total >= 102 (proves bonus applied after sum, not per-die)', async () => {
+    const game = await compileSpec(SPEC_WITH_BONUS)
     // 2d6 min is 2. With bonus 100, total must be >= 102.
     // If bonus were per-die: 2*(1+100) = 202 minimum — different value, not what we test.
     // With post-resolve: total = (sum of 2d6) + 100 ∈ [102, 112].
-    Array.from({ length: 20 }, () => game.roll({ bonus: 100 })).forEach(r => {
+    Array.from({ length: 20 }, () => game.roll!({ bonus: 100 })).forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(102)
       expect(r.total).toBeLessThanOrEqual(112)
     })
   })
 
-  test('bonus 0 leaves total in 2d6 range [2, 12]', () => {
-    const game = loadSpec(SPEC_WITH_BONUS)
-    Array.from({ length: 50 }, () => game.roll({ bonus: 0 })).forEach(r => {
+  test('bonus 0 leaves total in 2d6 range [2, 12]', async () => {
+    const game = await compileSpec(SPEC_WITH_BONUS)
+    Array.from({ length: 50 }, () => game.roll!({ bonus: 0 })).forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(2)
       expect(r.total).toBeLessThanOrEqual(12)
     })
   })
 
-  test('static bonus (number literal) works', () => {
-    const game = loadSpec({
+  test('static bonus (number literal) works', async () => {
+    const game = await compileSpec({
       ...SPEC_WITH_BONUS,
       roll: {
         ...SPEC_WITH_BONUS.roll,
         postResolveModifiers: [{ add: 10 }]
       }
     })
-    Array.from({ length: 20 }, () => game.roll()).forEach(r => {
+    Array.from({ length: 20 }, () => game.roll!()).forEach(r => {
       expect(r.total).toBeGreaterThanOrEqual(12) // 2+10
       expect(r.total).toBeLessThanOrEqual(22) // 12+10
     })
   })
 
-  test('postResolveModifiers in when override applies correctly', () => {
-    const game = loadSpec({
+  test('postResolveModifiers in when override applies correctly', async () => {
+    const game = await compileSpec({
       ...SPEC_WITH_BONUS,
       roll: {
         ...SPEC_WITH_BONUS.roll,
@@ -159,7 +160,7 @@ describe('postResolveModifiers runtime behavior', () => {
         ]
       }
     })
-    const boosted = game.roll({ mode: 'boosted' })
+    const boosted = game.roll!({ mode: 'boosted' })
     expect(boosted.total).toBeGreaterThanOrEqual(52)
   })
 })

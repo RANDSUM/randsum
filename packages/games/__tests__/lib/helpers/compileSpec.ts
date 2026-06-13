@@ -1,6 +1,8 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
+import { expect } from 'bun:test'
+
 import { generateCode } from '../../../src/lib/codegen'
 import type { GameRollResult, RandSumSpec } from '../../../src/lib/types'
 import type { RollRecord } from '@randsum/roller'
@@ -43,12 +45,36 @@ export async function compileSpec(spec: RandSumSpec): Promise<CompiledGame> {
 
   try {
     const mod = (await import(file)) as Record<string, unknown>
+    // The generated module also re-exports the SchemaError class (a function); keep only the
+    // spec's roll functions so the returned record mirrors the spec's roll keys.
+    const nonRollExports = new Set(['SchemaError'])
     const game: Record<string, CompiledRoll> = {}
     for (const [key, value] of Object.entries(mod)) {
-      if (typeof value === 'function') game[key] = value as CompiledRoll
+      if (typeof value === 'function' && !nonRollExports.has(key)) {
+        game[key] = value as CompiledRoll
+      }
     }
     return game
   } finally {
     rmSync(file, { force: true })
+  }
+}
+
+/**
+ * Assert that a promise rejects, optionally with a message containing `messageIncludes`.
+ * Used for specs that codegen rejects at compile time (e.g. invalid spec, range gaps).
+ * Avoids `expect(...).rejects.toThrow()`, whose bun typings trip await-thenable lint.
+ */
+export async function expectRejects(
+  promise: Promise<unknown>,
+  messageIncludes?: string
+): Promise<void> {
+  const outcome = await promise.then(
+    () => ({ rejected: false as const }),
+    (error: unknown) => ({ rejected: true as const, error })
+  )
+  expect(outcome.rejected, 'expected promise to reject, but it resolved').toBe(true)
+  if (messageIncludes !== undefined && outcome.rejected) {
+    expect((outcome.error as Error).message).toContain(messageIncludes)
   }
 }
