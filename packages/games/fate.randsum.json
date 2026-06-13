@@ -23,9 +23,7 @@
         { "exact": 1, "result": "Average" },
         { "exact": 0, "result": "Mediocre" },
         { "exact": -1, "result": "Poor" },
-        { "exact": -2, "result": "Terrible" },
-        { "exact": -3, "result": "Catastrophic" },
-        { "max": -4, "result": "Abysmal" }
+        { "max": -2, "result": "Terrible" }
       ]
     }
   },
@@ -35,9 +33,9 @@
       "modifier": {
         "type": "integer",
         "minimum": -2,
-        "maximum": 4,
+        "maximum": 5,
         "default": 0,
-        "description": "Skill rating (Fate ladder rung) added to the 4dF total"
+        "description": "Skill rating (Fate ladder rung, Terrible -2 to Superb +5) added to the 4dF total"
       }
     },
     "dice": {

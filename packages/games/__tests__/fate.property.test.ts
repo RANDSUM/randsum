@@ -13,15 +13,13 @@ const LADDER = [
   'Average',
   'Mediocre',
   'Poor',
-  'Terrible',
-  'Catastrophic',
-  'Abysmal'
+  'Terrible'
 ]
 
 describe('roll property-based tests', () => {
   test('result is always a valid Fate ladder rung', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -2, max: 4 }), modifier => {
+      fc.property(fc.integer({ min: -2, max: 5 }), modifier => {
         const { result } = roll({ modifier })
         return LADDER.includes(result)
       })
@@ -30,7 +28,7 @@ describe('roll property-based tests', () => {
 
   test('four Fate dice are always rolled', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -2, max: 4 }), modifier => {
+      fc.property(fc.integer({ min: -2, max: 5 }), modifier => {
         const { rolls } = roll({ modifier })
         return rolls[0]?.initialRolls.length === 4
       })
@@ -39,7 +37,7 @@ describe('roll property-based tests', () => {
 
   test('each Fate die is -1, 0, or +1', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -2, max: 4 }), modifier => {
+      fc.property(fc.integer({ min: -2, max: 5 }), modifier => {
         const { rolls } = roll({ modifier })
         return (rolls[0]?.initialRolls ?? []).every(d => d === -1 || d === 0 || d === 1)
       })
@@ -48,7 +46,7 @@ describe('roll property-based tests', () => {
 
   test('total equals the dice sum plus the modifier', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -2, max: 4 }), modifier => {
+      fc.property(fc.integer({ min: -2, max: 5 }), modifier => {
         const { total, rolls } = roll({ modifier })
         const diceTotal = (rolls[0]?.initialRolls ?? []).reduce((s, v) => s + v, 0)
         return total === diceTotal + modifier
@@ -58,7 +56,7 @@ describe('roll property-based tests', () => {
 
   test('total stays within the [-4 + modifier, 4 + modifier] envelope', () => {
     fc.assert(
-      fc.property(fc.integer({ min: -2, max: 4 }), modifier => {
+      fc.property(fc.integer({ min: -2, max: 5 }), modifier => {
         const { total } = roll({ modifier })
         return total >= -4 + modifier && total <= 4 + modifier
       })

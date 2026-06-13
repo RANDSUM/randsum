@@ -13,9 +13,7 @@ const LADDER = [
   'Average',
   'Mediocre',
   'Poor',
-  'Terrible',
-  'Catastrophic',
-  'Abysmal'
+  'Terrible'
 ] as const
 
 describe('roll', () => {
