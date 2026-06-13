@@ -14,12 +14,14 @@ import {
   collectResults,
   conditionCode,
   conditionCodeFromCondition,
+  escapeTemplate,
   generateValidationLines,
   getOutcomeRanges,
   getSingleInputOverload,
   hasEffectivePostResolveModifiers,
   inputAllOptional,
   integerOrInputCode,
+  quoteString,
   toPascalCase
 } from './emitHelpers'
 import { buildDiceOptionsCode } from './emitModifiers'
@@ -142,10 +144,10 @@ function generateMultiPoolBody(rollDef: NormalizedRollDefinition): string[] {
     const [keyA, keyB] = op.pools
     const tiesReturn =
       op.ties !== undefined
-        ? `{ total, result: '${op.ties}', rolls${detailsPart} }`
-        : `{ total, result: '${keyA}=${keyB}', rolls${detailsPart} }`
-    const aWinsReturn = `{ total, result: '${op.outcomes[keyA] ?? keyA}', rolls${detailsPart} }`
-    const bWinsReturn = `{ total, result: '${op.outcomes[keyB] ?? keyB}', rolls${detailsPart} }`
+        ? `{ total, result: ${quoteString(op.ties)}, rolls${detailsPart} }`
+        : `{ total, result: ${quoteString(`${keyA}=${keyB}`)}, rolls${detailsPart} }`
+    const aWinsReturn = `{ total, result: ${quoteString(op.outcomes[keyA] ?? keyA)}, rolls${detailsPart} }`
+    const bWinsReturn = `{ total, result: ${quoteString(op.outcomes[keyB] ?? keyB)}, rolls${detailsPart} }`
 
     lines.push(`  if (${keyA}Total === ${keyB}Total) return ${tiesReturn}`)
     lines.push(`  if (${keyA}Total > ${keyB}Total) return ${aWinsReturn}`)
@@ -280,8 +282,11 @@ function generateFunctionBody(
     lines.push(`  const foundTable = REMOTE_DATA.find(t => t.${find.field} === ${keyAccessor})`)
     // Emit error message — custom template or default
     if (find.errorMessage !== undefined) {
-      const escaped = find.errorMessage.replace(/\\/g, '\\\\').replace(/`/g, '\\`')
-      const template = escaped.replace('${value}', `\${${keyAccessor}}`)
+      // escapeTemplate neutralizes backslashes, backticks, and stray `${`. The literal
+      // `${value}` placeholder is escaped to `\${value}` by that pass, so we match the escaped
+      // form when substituting in the real key accessor.
+      const escaped = escapeTemplate(find.errorMessage)
+      const template = escaped.replace('\\${value}', `\${${keyAccessor}}`)
       lines.push(`  if (!foundTable) throw new SchemaError(\`${template}\`, 'NO_TABLE_MATCH')`)
     } else {
       lines.push(
@@ -350,7 +355,7 @@ export function generateRollParts(
       parts.push(`export type ${prefixedResultName} = number`)
       break
     case 'union': {
-      const resultUnion = results.values.map(r => `'${r}'`).join(' | ')
+      const resultUnion = results.values.map(r => quoteString(r)).join(' | ')
       parts.push(`export type ${prefixedResultName} = ${resultUnion}`)
       break
     }

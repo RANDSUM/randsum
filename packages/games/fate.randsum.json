@@ -1,0 +1,49 @@
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "Fate Core",
+  "shortcode": "fate",
+  "version": "1.0.0",
+  "game_url": "https://fate-srd.com/",
+  "srd_url": "https://fate-srd.com/fate-core/",
+
+  "pools": {
+    "fateDice": { "faces": [-1, 0, 1] }
+  },
+
+  "outcomes": {
+    "ladder": {
+      "ranges": [
+        { "min": 8, "result": "Legendary" },
+        { "exact": 7, "result": "Epic" },
+        { "exact": 6, "result": "Fantastic" },
+        { "exact": 5, "result": "Superb" },
+        { "exact": 4, "result": "Great" },
+        { "exact": 3, "result": "Good" },
+        { "exact": 2, "result": "Fair" },
+        { "exact": 1, "result": "Average" },
+        { "exact": 0, "result": "Mediocre" },
+        { "exact": -1, "result": "Poor" },
+        { "max": -2, "result": "Terrible" }
+      ]
+    }
+  },
+
+  "roll": {
+    "inputs": {
+      "modifier": {
+        "type": "integer",
+        "minimum": -2,
+        "maximum": 4,
+        "default": 0,
+        "description": "Skill rating (Fate ladder rung) added to the 4dF total"
+      }
+    },
+    "dice": {
+      "pool": { "$ref": "#/pools/fateDice" },
+      "quantity": 4
+    },
+    "resolve": "sum",
+    "postResolveModifiers": [{ "add": { "$input": "modifier" } }],
+    "outcome": { "$ref": "#/outcomes/ladder" }
+  }
+}

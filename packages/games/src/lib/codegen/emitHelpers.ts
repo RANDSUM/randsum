@@ -14,6 +14,37 @@ import type {
   TableRange
 } from '../types'
 
+/**
+ * Escape an author-supplied string for safe interpolation inside a single-quoted TypeScript
+ * string literal in generated code. Without this, a result label, description, or table name
+ * containing a quote, backslash, or newline would produce broken (or injectable) output.
+ * U+2028/U+2029 are line terminators in JS source and are escaped defensively.
+ */
+export function escapeSingleQuoted(str: string): string {
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\u2028/gu, '\\u2028')
+    .replace(/\u2029/gu, '\\u2029')
+}
+
+/**
+ * Escape an author-supplied string for safe interpolation inside a backtick template literal
+ * in generated code (escaping backslashes, backticks, and `${` interpolation starts).
+ */
+export function escapeTemplate(str: string): string {
+  return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
+}
+
+/**
+ * Render an author-supplied string as a complete single-quoted TypeScript string literal.
+ */
+export function quoteString(str: string): string {
+  return `'${escapeSingleQuoted(str)}'`
+}
+
 export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
@@ -66,7 +97,7 @@ function inputTsType(decl: InputDeclaration): string {
   if (decl.type === 'integer') return 'number'
   if (decl.type === 'boolean') return 'boolean'
   if (decl.enum !== undefined && decl.enum.length > 0) {
-    return decl.enum.map(v => `'${v}'`).join(' | ')
+    return decl.enum.map(v => quoteString(String(v))).join(' | ')
   }
   return 'string'
 }
@@ -87,7 +118,8 @@ export function buildInputType(inputs: NormalizedRollDefinition['inputs']): stri
 
 export function conditionCodeFromCondition(condition: Condition, optional: boolean): string {
   const tsOp = condition.operator === '=' ? '===' : condition.operator
-  const val = typeof condition.value === 'string' ? `'${condition.value}'` : String(condition.value)
+  const val =
+    typeof condition.value === 'string' ? quoteString(condition.value) : String(condition.value)
   const accessor = optional ? `input?.${condition.input}` : `input.${condition.input}`
   return `${accessor} ${tsOp} ${val}`
 }
@@ -241,20 +273,20 @@ export function generateValidationLines(
     const guard = isOptionalField ? `${accessor} !== undefined && ` : ''
 
     if (decl.type === 'integer') {
-      const label = decl.description ?? `${specName} ${fieldName}`
+      const label = quoteString(decl.description ?? `${specName} ${fieldName}`)
       lines.push(
-        `${indent}if (${guard}typeof ${accessor} === 'number') validateFinite(${accessor}, '${label}')`
+        `${indent}if (${guard}typeof ${accessor} === 'number') validateFinite(${accessor}, ${label})`
       )
       if (decl.minimum !== undefined && decl.maximum !== undefined) {
         lines.push(
-          `${indent}if (${guard}typeof ${accessor} === 'number') validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, '${label}')`
+          `${indent}if (${guard}typeof ${accessor} === 'number') validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, ${label})`
         )
       }
     }
 
     if (decl.type === 'string' && decl.enum !== undefined && decl.enum.length > 0) {
-      const enumValues = decl.enum.map(v => `'${v}'`).join(', ')
-      const enumList = decl.enum.map(v => `'${v}'`).join(' or ')
+      const enumValues = decl.enum.map(v => quoteString(String(v))).join(', ')
+      const enumList = decl.enum.map(v => escapeTemplate(quoteString(String(v)))).join(' or ')
       lines.push(
         `${indent}if (${guard}![${enumValues}].includes(${accessor} as string)) throw new SchemaError(\`Invalid ${fieldName} value: \${String(${accessor})}. Must be ${enumList}.\`, 'INVALID_INPUT_TYPE')`
       )
