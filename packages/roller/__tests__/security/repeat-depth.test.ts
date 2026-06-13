@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { NotationParseError } from '../../src/errors'
 import { MAX_REPEAT_COUNT, MAX_REPEAT_DEPTH } from '../../src/notation/parse/notationToOptions'
+import type { DiceNotation } from '../../src/notation/types'
 
 describe('security: repeat operator bounds', () => {
   test(`repeat count at MAX_REPEAT_COUNT (${MAX_REPEAT_COUNT}) is permitted`, () => {
@@ -28,7 +29,7 @@ describe('security: repeat operator bounds', () => {
 
   test('nested repeat exceeding MAX_REPEAT_DEPTH throws NotationParseError', () => {
     // 11 chained x2 operators -> depth 11 > MAX_REPEAT_DEPTH (10)
-    const nested = '1d6' + 'x2'.repeat(MAX_REPEAT_DEPTH + 1)
+    const nested = ('1d6' + 'x2'.repeat(MAX_REPEAT_DEPTH + 1)) as DiceNotation
     try {
       roll(nested)
       throw new Error('expected throw')

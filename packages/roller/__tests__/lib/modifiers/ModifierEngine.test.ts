@@ -665,13 +665,13 @@ describe('modifierToDescription', () => {
   })
 
   test('generates description for unique with notUnique array', () => {
-    const result = modifierToDescription('unique', { notUnique: [1] })
+    const result = modifierToDescription('unique', { notUnique: [1] })!
     expect(result[0]).toContain('No Duplicates')
     expect(result[0]).toContain('except')
   })
 
   test('generates description for drop lowest', () => {
-    const result = modifierToDescription('drop', { lowest: 1 })
+    const result = modifierToDescription('drop', { lowest: 1 })!
     expect(result[0]).toContain('Drop')
     expect(result[0]).toContain('lowest')
   })

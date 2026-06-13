@@ -2,8 +2,16 @@
   "extends": "../../tsconfig.packages.json",
   "compilerOptions": {
     "composite": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "rootDir": "../..",
+    "types": ["bun"],
+    "lib": ["ESNext"]
   },
-  "include": ["src/**/*", "__tests__/**/*.types.test.ts"],
+  "include": [
+    "src/**/*",
+    "__tests__/**/*",
+    "test-utils/src/**/*",
+    "../../apps/rdn/src/conformance/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }

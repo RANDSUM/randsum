@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { roll } from '../../src/roll'
 import { createQueueRandom } from '../../test-utils/src/queueRandom'
 import { CONFORMANCE_FILE } from '../../../../apps/rdn/src/conformance/vectors'
+import type { DiceNotation } from '../../src/notation/types'
 
 /**
  * Conformance Vector Test Suite
@@ -54,14 +55,16 @@ describe('Conformance Vectors', () => {
 
     // Known conformance gaps — mark as todo with explanation
     if (KNOWN_CONFORMANCE_GAPS[vector.id] !== undefined) {
-      test.todo(`${name} — CONFORMANCE GAP: ${KNOWN_CONFORMANCE_GAPS[vector.id]}`)
+      test.todo(`${name} — CONFORMANCE GAP: ${KNOWN_CONFORMANCE_GAPS[vector.id] ?? ''}`, () => {
+        // placeholder for todo test — implementation gap tracked above
+      })
       continue
     }
 
     // Error vectors — assert roll() throws
     if ('expectedError' in vector && vector.expectedError) {
       test(name, () => {
-        expect(() => roll(vector.notation)).toThrow()
+        expect(() => roll(vector.notation as DiceNotation)).toThrow()
       })
       continue
     }
@@ -100,7 +103,7 @@ describe('Conformance Vectors', () => {
     }
 
     test(name, () => {
-      const notation = vector.notation
+      const notation = vector.notation as DiceNotation
       const expectedPool = vector.expectedPool as number[]
       const expectedTotal = vector.expectedTotal!
 

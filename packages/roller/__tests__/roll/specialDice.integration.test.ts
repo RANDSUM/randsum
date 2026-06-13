@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 
 import { roll } from '../../src/roll'
+import type { DiceNotation } from '../../src/notation/types'
 import { createSeededRandom } from '../../test-utils/src/seededRandom'
 import { STRESS_ITERATIONS } from '../stressIterations'
 
@@ -56,12 +57,12 @@ describe('Special Dice Integration Tests', () => {
 
     describe('multiple percentile dice', () => {
       test('roll("d%", "d%", "d%") produces 3 roll records', () => {
-        const result = roll('d%', 'd%' as string, 'd%' as string)
+        const result = roll('d%', 'd%', 'd%')
         expect(result.rolls).toHaveLength(3)
       })
 
       test('roll("d%", "d%") total is sum of both', () => {
-        const result = roll('d%', 'd%' as string, {
+        const result = roll('d%', 'd%', {
           randomFn: () => 0
         })
         expect(result.total).toBe(2) // 1 + 1
@@ -360,15 +361,15 @@ describe('Special Dice Integration Tests', () => {
 
   describe('invalid special dice variants', () => {
     test('"dF.3" throws', () => {
-      expect(() => roll('dF.3' as string)).toThrow()
+      expect(() => roll('dF.3' as DiceNotation)).toThrow()
     })
 
     test('"dF.0" throws', () => {
-      expect(() => roll('dF.0' as string)).toThrow()
+      expect(() => roll('dF.0' as DiceNotation)).toThrow()
     })
 
     test('"d%%" throws', () => {
-      expect(() => roll('d%%' as string)).toThrow()
+      expect(() => roll('d%%' as DiceNotation)).toThrow()
     })
   })
 
@@ -376,19 +377,19 @@ describe('Special Dice Integration Tests', () => {
 
   describe('mixing Fate variants', () => {
     test('roll("dF", "dF.2") produces 2 roll records', () => {
-      const result = roll('dF', 'dF.2' as string)
+      const result = roll('dF', 'dF.2')
       expect(result.rolls).toHaveLength(2)
     })
 
     test('roll("dF", "dF.2") total is in [-3, 3]', () => {
-      const result = roll('dF', 'dF.2' as string)
+      const result = roll('dF', 'dF.2')
       // dF range: [-1, 1], dF.2 range: [-2, 2], combined: [-3, 3]
       expect(result.total).toBeGreaterThanOrEqual(-3)
       expect(result.total).toBeLessThanOrEqual(3)
     })
 
     test('roll("4dF", "4dF") produces 2 roll records', () => {
-      const result = roll('4dF', '4dF' as string)
+      const result = roll('4dF', '4dF')
       expect(result.rolls).toHaveLength(2)
       expect(result.total).toBeGreaterThanOrEqual(-8)
       expect(result.total).toBeLessThanOrEqual(8)
@@ -399,7 +400,7 @@ describe('Special Dice Integration Tests', () => {
 
   describe('complex mixed scenarios', () => {
     test('roll("d%", "4dF", 20) - all three argument types', () => {
-      const result = roll('d%', '4dF' as string, 20)
+      const result = roll('d%', '4dF', 20)
       expect(result.rolls).toHaveLength(3)
 
       // d% contributes [1, 100]
@@ -411,12 +412,12 @@ describe('Special Dice Integration Tests', () => {
     })
 
     test('roll("d%", "2d6", "4dF", 8) - everything together', () => {
-      const result = roll('d%', '2d6' as string, '4dF' as string, 8)
+      const result = roll('d%', '2d6' as DiceNotation, '4dF', 8)
       expect(result.rolls).toHaveLength(4)
     })
 
     test('kitchen sink: d%, 4dF, 2d6+3, d20, {sides:8, quantity:3}', () => {
-      const result = roll('d%', '4dF' as string, '2d6+3' as string, 20, {
+      const result = roll('d%', '4dF', '2d6+3' as DiceNotation, 20, {
         sides: 8,
         quantity: 3
       })
@@ -442,8 +443,8 @@ describe('Special Dice Integration Tests', () => {
       const seeded1 = createSeededRandom(123)
       const result1 = roll(
         'd%',
-        '4dF' as string,
-        '2d6+3' as string,
+        '4dF',
+        '2d6+3' as DiceNotation,
         20,
         { sides: 8, quantity: 3 },
         { randomFn: seeded1 }
@@ -452,8 +453,8 @@ describe('Special Dice Integration Tests', () => {
       const seeded2 = createSeededRandom(123)
       const result2 = roll(
         'd%',
-        '4dF' as string,
-        '2d6+3' as string,
+        '4dF',
+        '2d6+3' as DiceNotation,
         20,
         { sides: 8, quantity: 3 },
         { randomFn: seeded2 }

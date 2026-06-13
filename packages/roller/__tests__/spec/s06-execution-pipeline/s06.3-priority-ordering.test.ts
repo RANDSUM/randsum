@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { RANDSUM_MODIFIERS } from '../../../src/modifiers'
+import type { ModifierOptions } from '../../../src/notation/types'
 
 // Spec Appendix A: modifier priority table.
 // Priority determines execution order — lower number runs first.
@@ -33,7 +34,7 @@ describe('S06.3 — Modifier Priority Ordering', () => {
         specPriority,
         `Modifier "${modifier.name}" is not in the spec priority table`
       ).toBeDefined()
-      expect(modifier.priority).toBe(specPriority)
+      expect(modifier.priority).toBe(specPriority!)
     })
   })
 
@@ -51,7 +52,10 @@ describe('S06.3 — Modifier Priority Ordering', () => {
   test('all spec-named modifiers are present in RANDSUM_MODIFIERS', () => {
     const registeredNames = new Set(RANDSUM_MODIFIERS.map(m => m.name))
     Object.keys(SPEC_PRIORITIES).forEach(name => {
-      expect(registeredNames.has(name), `Expected modifier "${name}" to be registered`).toBe(true)
+      expect(
+        registeredNames.has(name as keyof ModifierOptions),
+        `Expected modifier "${name}" to be registered`
+      ).toBe(true)
     })
   })
 

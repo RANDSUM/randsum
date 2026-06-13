@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import fc from 'fast-check'
 
 import { roll } from '../../src/roll'
+import type { DiceNotation } from '../../src/notation/types'
 
 describe('notation sugar property tests', () => {
   describe('reroll once (ro{})', () => {
@@ -26,8 +27,8 @@ describe('notation sugar property tests', () => {
     test('ro{} produces same result as R{}1 for any comparison', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 6 }), threshold => {
-          const notation1 = `4d6ro{${threshold}}`
-          const notation2 = `4d6R{${threshold}}1`
+          const notation1 = `4d6ro{${threshold}}` as DiceNotation
+          const notation2 = `4d6R{${threshold}}1` as DiceNotation
           // Both should parse without error
           const result1 = roll(notation1)
           const result2 = roll(notation2)
@@ -43,7 +44,7 @@ describe('notation sugar property tests', () => {
     test('KM on Nd6 always produces N-2 dice for N > 2', () => {
       fc.assert(
         fc.property(fc.integer({ min: 3, max: 20 }), quantity => {
-          const notation = `${quantity}d6KM`
+          const notation = `${quantity}d6KM` as DiceNotation
           const result = roll(notation)
           const record = result.rolls[0]
           expect(record).toBeDefined()
@@ -57,7 +58,7 @@ describe('notation sugar property tests', () => {
       fc.assert(
         fc.property(fc.integer({ min: 1, max: 5 }), dropCount => {
           const quantity = dropCount * 2 + 2
-          const notation = `${quantity}d6KM${dropCount}`
+          const notation = `${quantity}d6KM${dropCount}` as DiceNotation
           const result = roll(notation)
           const record = result.rolls[0]
           expect(record).toBeDefined()
@@ -73,7 +74,7 @@ describe('notation sugar property tests', () => {
           fc.integer({ min: 4, max: 12 }),
           fc.integer({ min: 4, max: 20 }),
           (quantity, sides) => {
-            const notation = `${quantity}d${sides}KM`
+            const notation = `${quantity}d${sides}KM` as DiceNotation
             const result = roll(notation)
             const keptCount = quantity - 2
             expect(result.total).toBeGreaterThanOrEqual(keptCount)
@@ -103,7 +104,7 @@ describe('notation sugar property tests', () => {
           fc.integer({ min: 1, max: 10 }),
           fc.integer({ min: 1, max: 20 }),
           (quantity, target) => {
-            const notation = `${quantity}d6ms{${target}}`
+            const notation = `${quantity}d6ms{${target}}` as DiceNotation
             const result = roll(notation)
             // Raw total in [quantity, quantity*6], minus target
             expect(result.total).toBeGreaterThanOrEqual(quantity - target)

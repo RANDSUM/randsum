@@ -1,5 +1,5 @@
 import type { RollConfig, RollRecord, RollerRollResult } from '../../src/types'
-import { notation } from '../../src/isDiceNotation'
+import { notation } from '../../src/notation/isDiceNotation'
 import { roll } from '../../src/roll'
 import { createSeededRandom } from './seededRandom'
 
@@ -12,7 +12,11 @@ import { createSeededRandom } from './seededRandom'
  * @returns A mock RollerRollResult
  */
 export function createMockRoll(rolls: number[], total?: number): RollerRollResult {
+  const mockNotation = notation(`${rolls.length}d20`)
+  const computedTotal = total ?? rolls.reduce((a, b) => a + b, 0)
   const mockRollRecord: RollRecord = {
+    argument: mockNotation,
+    notation: mockNotation,
     description: ['Mock roll'],
     parameters: {
       sides: 20,
@@ -20,21 +24,21 @@ export function createMockRoll(rolls: number[], total?: number): RollerRollResul
       arithmetic: 'add',
       modifiers: {},
       key: 'Mock roll',
-      argument: { sides: 20, quantity: rolls.length },
-      notation: notation(`${rolls.length}d20`),
+      argument: mockNotation,
+      notation: mockNotation,
       description: ['Mock roll']
     },
     rolls,
     initialRolls: rolls,
     modifierLogs: [],
-    appliedTotal: total ?? rolls.reduce((a, b) => a + b, 0),
-    total: total ?? rolls.reduce((a, b) => a + b, 0)
+    appliedTotal: computedTotal,
+    total: computedTotal
   }
 
   return {
     rolls: [mockRollRecord],
-    result: rolls.map(String),
-    total: total ?? rolls.reduce((a, b) => a + b, 0)
+    values: rolls.map(String),
+    total: computedTotal
   }
 }
 
