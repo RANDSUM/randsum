@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
-import { loadSpec } from '../../src/lib/loader'
 import { validateSpec } from '../../src/lib'
+import { compileSpec } from './helpers/compileSpec'
 
 describe('#990: duplicate plus bug', () => {
   const MULTI_ADD_SPEC = {
@@ -114,14 +114,14 @@ describe('#10: validation codegen', () => {
     expect(code).toContain("validateRange(input?.bonus, -20, 20, 'Root RPG bonus')")
   })
 
-  test('runtime throws on NaN', () => {
-    const loaded = loadSpec(VALIDATED_SPEC)
-    expect(() => loaded.roll({ bonus: NaN })).toThrow('Root RPG bonus must be a finite number')
+  test('runtime throws on NaN', async () => {
+    const loaded = await compileSpec(VALIDATED_SPEC)
+    expect(() => loaded.roll!({ bonus: NaN })).toThrow('Root RPG bonus must be a finite number')
   })
 
-  test('runtime throws on out-of-range', () => {
-    const loaded = loadSpec(VALIDATED_SPEC)
-    expect(() => loaded.roll({ bonus: 1000 })).toThrow('Root RPG bonus must be between -20 and 20')
+  test('runtime throws on out-of-range', async () => {
+    const loaded = await compileSpec(VALIDATED_SPEC)
+    expect(() => loaded.roll!({ bonus: 1000 })).toThrow('Root RPG bonus must be between -20 and 20')
   })
 
   test('no validation imports when no integer inputs', async () => {
@@ -188,7 +188,7 @@ describe('#995: validation description label', () => {
     expect(code).toContain("validateFinite(input?.bonus, 'Fallback Test bonus')")
   })
 
-  test('runtime uses description for error message', () => {
+  test('runtime uses description for error message', async () => {
     const spec = {
       $schema: 'https://randsum.dev/schemas/v1/randsum.json',
       name: 'Desc Runtime',
@@ -209,8 +209,8 @@ describe('#995: validation description label', () => {
         resolve: 'sum' as const
       }
     }
-    const loaded = loadSpec(spec)
-    expect(() => loaded.roll({ bonus: 100 })).toThrow('5E modifier must be between -5 and 5')
+    const loaded = await compileSpec(spec)
+    expect(() => loaded.roll!({ bonus: 100 })).toThrow('5E modifier must be between -5 and 5')
   })
 })
 
@@ -239,20 +239,20 @@ describe('#995: string enum validation', () => {
     expect(code).toContain('Invalid mode value')
   })
 
-  test('runtime throws on invalid enum value', () => {
-    const loaded = loadSpec(ENUM_GUARD_SPEC)
-    expect(() => loaded.roll({ mode: 'Gamma' })).toThrow(
+  test('runtime throws on invalid enum value', async () => {
+    const loaded = await compileSpec(ENUM_GUARD_SPEC)
+    expect(() => loaded.roll!({ mode: 'Gamma' })).toThrow(
       "Invalid mode value: Gamma. Must be 'Alpha' or 'Beta'."
     )
   })
 
-  test('runtime accepts valid enum value', () => {
-    const loaded = loadSpec(ENUM_GUARD_SPEC)
-    expect(() => loaded.roll({ mode: 'Alpha' })).not.toThrow()
+  test('runtime accepts valid enum value', async () => {
+    const loaded = await compileSpec(ENUM_GUARD_SPEC)
+    expect(() => loaded.roll!({ mode: 'Alpha' })).not.toThrow()
   })
 
-  test('runtime accepts undefined for optional enum', () => {
-    const loaded = loadSpec(ENUM_GUARD_SPEC)
-    expect(() => loaded.roll()).not.toThrow()
+  test('runtime accepts undefined for optional enum', async () => {
+    const loaded = await compileSpec(ENUM_GUARD_SPEC)
+    expect(() => loaded.roll!()).not.toThrow()
   })
 })

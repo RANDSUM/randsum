@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
-import { loadSpec } from '../../src/lib/loader'
 import { validateSpec } from '../../src/lib'
+import { compileSpec } from './helpers/compileSpec'
 
 const DETAILS_SPEC = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -88,10 +88,10 @@ describe('details fields codegen', () => {
   })
 })
 
-describe('details fields runtime (loadSpec)', () => {
-  test('returns details object with correct fields', () => {
-    const loaded = loadSpec(DETAILS_SPEC)
-    const result = loaded.roll({ modifier: 3 })
+describe('details fields runtime (compileSpec)', () => {
+  test('returns details object with correct fields', async () => {
+    const loaded = await compileSpec(DETAILS_SPEC)
+    const result = loaded.roll!({ modifier: 3 })
     expect(result.details).toBeDefined()
     expect(result.details?.modifier).toBe(3)
     expect(typeof result.details?.diceTotal).toBe('number')
@@ -99,15 +99,15 @@ describe('details fields runtime (loadSpec)', () => {
     expect(result.details?.total).toBe(result.total)
   })
 
-  test('diceTotal differs from total when modifier applied', () => {
-    const loaded = loadSpec(DETAILS_SPEC)
-    const result = loaded.roll({ modifier: 5 })
+  test('diceTotal differs from total when modifier applied', async () => {
+    const loaded = await compileSpec(DETAILS_SPEC)
+    const result = loaded.roll!({ modifier: 5 })
     expect(result.details?.diceTotal).toBe(result.total - 5)
   })
 
-  test('uses default when input not provided', () => {
-    const loaded = loadSpec(DETAILS_SPEC)
-    const result = loaded.roll()
+  test('uses default when input not provided', async () => {
+    const loaded = await compileSpec(DETAILS_SPEC)
+    const result = loaded.roll!()
     expect(result.details?.modifier).toBe(0)
   })
 })
@@ -130,9 +130,9 @@ describe('no details fields', () => {
     expect(code).not.toContain('TestNoDetailsRollDetails')
   })
 
-  test('runtime returns no details property', () => {
-    const loaded = loadSpec(NO_DETAILS_SPEC)
-    const result = loaded.roll()
+  test('runtime returns no details property', async () => {
+    const loaded = await compileSpec(NO_DETAILS_SPEC)
+    const result = loaded.roll!()
     expect(result.details).toBeUndefined()
   })
 })
@@ -178,9 +178,9 @@ describe('nested details objects (#992)', () => {
     expect(code).toContain('stats: { total: total, bonus:')
   })
 
-  test('runtime returns nested details object', () => {
-    const loaded = loadSpec(NESTED_DETAILS_SPEC)
-    const result = loaded.roll({ bonus: 7 })
+  test('runtime returns nested details object', async () => {
+    const loaded = await compileSpec(NESTED_DETAILS_SPEC)
+    const result = loaded.roll!({ bonus: 7 })
     expect(result.details).toBeDefined()
     expect(typeof result.details?.diceTotal).toBe('number')
     const stats = result.details?.stats as { total: number; bonus: number }
@@ -224,9 +224,9 @@ describe('$pool ref details (#992)', () => {
     expect(code).toContain('fearTotal: fearTotal')
   })
 
-  test('runtime returns pool totals in details', () => {
-    const loaded = loadSpec(POOL_REF_DETAILS_SPEC)
-    const result = loaded.roll()
+  test('runtime returns pool totals in details', async () => {
+    const loaded = await compileSpec(POOL_REF_DETAILS_SPEC)
+    const result = loaded.roll!()
     expect(result.details).toBeDefined()
     expect(typeof result.details?.hopeTotal).toBe('number')
     expect(typeof result.details?.fearTotal).toBe('number')
@@ -288,17 +288,17 @@ describe('$conditionalPool ref details (#992)', () => {
     expect(code).toContain("bonusPool: conditionalPoolTotals['bonus'] ?? 0")
   })
 
-  test('runtime returns 0 for conditional pool when condition not met', () => {
-    const loaded = loadSpec(CONDITIONAL_POOL_DETAILS_SPEC)
-    const result = loaded.roll()
+  test('runtime returns 0 for conditional pool when condition not met', async () => {
+    const loaded = await compileSpec(CONDITIONAL_POOL_DETAILS_SPEC)
+    const result = loaded.roll!()
     expect(result.details).toBeDefined()
     expect(result.details?.bonusPool).toBe(0)
   })
 
-  test('runtime returns nonzero for conditional pool when condition met', () => {
-    const loaded = loadSpec(CONDITIONAL_POOL_DETAILS_SPEC)
+  test('runtime returns nonzero for conditional pool when condition met', async () => {
+    const loaded = await compileSpec(CONDITIONAL_POOL_DETAILS_SPEC)
     // Run multiple times to ensure at least one produces a nonzero
-    const results = Array.from({ length: 50 }, () => loaded.roll({ advantage: true }))
+    const results = Array.from({ length: 50 }, () => loaded.roll!({ advantage: true }))
     const found = results.some(r => (r.details?.bonusPool as number) > 0)
     expect(found).toBe(true)
   })
@@ -349,16 +349,16 @@ describe('conditional (when) details (#992)', () => {
     expect(code).toContain('advantageInfo: input?.advantage !== undefined ?')
   })
 
-  test('runtime returns undefined for conditional when input missing', () => {
-    const loaded = loadSpec(CONDITIONAL_DETAILS_SPEC)
-    const result = loaded.roll()
+  test('runtime returns undefined for conditional when input missing', async () => {
+    const loaded = await compileSpec(CONDITIONAL_DETAILS_SPEC)
+    const result = loaded.roll!()
     expect(result.details).toBeDefined()
     expect(result.details?.advantageInfo).toBeUndefined()
   })
 
-  test('runtime returns nested object for conditional when input provided', () => {
-    const loaded = loadSpec(CONDITIONAL_DETAILS_SPEC)
-    const result = loaded.roll({ advantage: true })
+  test('runtime returns nested object for conditional when input provided', async () => {
+    const loaded = await compileSpec(CONDITIONAL_DETAILS_SPEC)
+    const result = loaded.roll!({ advantage: true })
     expect(result.details).toBeDefined()
     const info = result.details?.advantageInfo as { active: boolean; roll: number }
     expect(info).toBeDefined()

@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { generateCode } from '../../src/lib/codegen'
-import { loadSpec, validateSpec } from '../../src/lib'
+import { validateSpec } from '../../src/lib'
+import { compileSpec } from './helpers/compileSpec'
 
 const BASE_MULTI = {
   $schema: 'https://randsum.dev/schemas/v1/randsum.json',
@@ -43,31 +44,31 @@ const RUNTIME_SPEC = {
 }
 
 describe('dicePools runtime execution', () => {
-  test('result is one of the declared outcomes or ties value', () => {
-    const game = loadSpec(RUNTIME_SPEC)
+  test('result is one of the declared outcomes or ties value', async () => {
+    const game = await compileSpec(RUNTIME_SPEC)
     const VALID = ['hope', 'fear', 'critical hope']
-    Array.from({ length: 100 }, () => game.roll()).forEach(r => {
+    Array.from({ length: 100 }, () => game.roll!()).forEach(r => {
       expect(VALID).toContain(r.result)
     })
   })
 
-  test('rolls contains entries from both pools', () => {
-    const game = loadSpec(RUNTIME_SPEC)
-    const r = game.roll()
+  test('rolls contains entries from both pools', async () => {
+    const game = await compileSpec(RUNTIME_SPEC)
+    const r = game.roll!()
     // Two separate pools → at least 2 roll records
     expect(r.rolls.length).toBeGreaterThanOrEqual(2)
   })
 
-  test('total is the sum of both pool totals', () => {
-    const game = loadSpec(RUNTIME_SPEC)
-    Array.from({ length: 20 }, () => game.roll()).forEach(r => {
+  test('total is the sum of both pool totals', async () => {
+    const game = await compileSpec(RUNTIME_SPEC)
+    Array.from({ length: 20 }, () => game.roll!()).forEach(r => {
       // Each pool rolls 1d12, so total should be 2-24
       expect(r.total).toBeGreaterThanOrEqual(2)
       expect(r.total).toBeLessThanOrEqual(24)
     })
   })
 
-  test('comparePoolSum works the same way', () => {
+  test('comparePoolSum works the same way', async () => {
     const sumSpec = {
       ...RUNTIME_SPEC,
       roll: {
@@ -81,9 +82,9 @@ describe('dicePools runtime execution', () => {
         }
       }
     }
-    const game = loadSpec(sumSpec)
+    const game = await compileSpec(sumSpec)
     const VALID = ['hope_wins', 'fear_wins', 'tie']
-    Array.from({ length: 50 }, () => game.roll()).forEach(r => {
+    Array.from({ length: 50 }, () => game.roll!()).forEach(r => {
       expect(VALID).toContain(r.result)
     })
   })

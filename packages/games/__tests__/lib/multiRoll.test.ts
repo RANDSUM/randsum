@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { loadSpec } from '../../src/lib/loader'
+import { compileSpec, expectRejects } from './helpers/compileSpec'
 import { generateCode } from '../../src/lib/codegen'
 import { validateSpec } from '../../src/lib/validator'
 import type { RandSumSpec } from '../../src/lib/types'
@@ -42,12 +42,12 @@ describe('multi-roll specs', () => {
     expect(code).not.toContain('export function roll(')
   })
 
-  test('loadSpec exposes every named roll as a callable', () => {
-    const loaded = loadSpec(multiRollSpec)
+  test('the compiled module exposes every named roll as a callable', async () => {
+    const loaded = await compileSpec(multiRollSpec)
     expect(Object.keys(loaded).sort()).toEqual(['attack', 'damage'])
 
-    const attackFn = loaded.attack
-    const damageFn = loaded.damage
+    const attackFn = loaded['attack']
+    const damageFn = loaded['damage']
     expect(attackFn).toBeDefined()
     expect(damageFn).toBeDefined()
 
@@ -62,7 +62,7 @@ describe('multi-roll specs', () => {
     })
   })
 
-  test('single-roll specs still work unchanged', () => {
+  test('single-roll specs still work unchanged', async () => {
     const singleRollSpec: RandSumSpec = {
       $schema: 'https://randsum.dev/schemas/v1/randsum.json',
       name: 'Single Roll Test',
@@ -71,20 +71,20 @@ describe('multi-roll specs', () => {
       roll: { dice: { pool: { sides: 20 }, quantity: 1 }, resolve: 'sum' }
     }
     expect(validateSpec(singleRollSpec).valid).toBe(true)
-    expect(Object.keys(loadSpec(singleRollSpec))).toEqual(['roll'])
+    expect(Object.keys(await compileSpec(singleRollSpec))).toEqual(['roll'])
   })
 
   describe('roll/rolls are mutually exclusive and exactly one is required', () => {
-    test('rejects a spec declaring BOTH roll and rolls', () => {
+    test('rejects a spec declaring BOTH roll and rolls', async () => {
       const both: RandSumSpec = {
         ...multiRollSpec,
         roll: { dice: { pool: { sides: 20 }, quantity: 1 }, resolve: 'sum' }
       }
       expect(validateSpec(both).valid).toBe(false)
-      expect(() => loadSpec(both)).toThrow()
+      await expectRejects(compileSpec(both))
     })
 
-    test('rejects a spec declaring NEITHER roll nor rolls', () => {
+    test('rejects a spec declaring NEITHER roll nor rolls', async () => {
       const neither: RandSumSpec = {
         $schema: 'https://randsum.dev/schemas/v1/randsum.json',
         name: 'No Roll Test',
@@ -92,7 +92,7 @@ describe('multi-roll specs', () => {
         game_url: 'https://example.com'
       }
       expect(validateSpec(neither).valid).toBe(false)
-      expect(() => loadSpec(neither)).toThrow()
+      await expectRejects(compileSpec(neither))
     })
 
     test('rejects roll keys that are not valid identifiers', () => {

@@ -1,5 +1,4 @@
 export { resolveExternalRefs } from './externalRefResolver'
-export { loadSpec, loadSpecAsync } from './loader'
 export { generateCode } from './codegen'
 export { validateSpec } from './validator'
 export type { RandSumSpec } from './types'
