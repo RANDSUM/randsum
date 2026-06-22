@@ -34,7 +34,7 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 | #                                                   | Title                                                     | Status   |
 | --------------------------------------------------- | --------------------------------------------------------- | -------- |
 | [008](./ADR-008-esm-only-package-output.md)         | ESM-only package output across all publishable packages   | Accepted |
-| [018](./ADR-018-roller-sideeffects-src-glob.md)     | Roller sideEffects via src-glob (bunup self-DCE workaround) | Accepted |
+| [018](./ADR-018-roller-sideeffects-src-glob.md)     | Roller sideEffects: `true` in-repo, flipped to `false` at publish | Accepted (amended) |
 
 ### Toolchain
 
@@ -67,7 +67,7 @@ Consult these ADRs before starting the related kind of task.
 - **Changing `roll()` input types** — [ADR-004](./ADR-004-literal-types-over-branded-types.md) established literal-type API. Branded types are rejected.
 - **Modifying the roller public API surface** — [ADR-009](./ADR-009-public-api-surface-reduction.md) limits the public symbols. Consult before adding exports.
 - **Adding CJS support or a `require` conditional export** — rejected by [ADR-008](./ADR-008-esm-only-package-output.md).
-- **Touching `sideEffects` in `@randsum/roller`** — [ADR-018](./ADR-018-roller-sideeffects-src-glob.md) documents the bunup self-DCE bug and the `["./src/**/*"]` workaround. Do not switch to `false` without re-verifying the bug is gone.
+- **Touching `sideEffects` in `@randsum/roller`** — [ADR-018](./ADR-018-roller-sideeffects-src-glob.md): the in-repo value is `true` (required by bunup's self-DCE and the CLI's `noExternal` source bundling) and is flipped to `false` in the published tarball by `scripts/publish.ts`. Do not change the in-repo `true` without updating that flip — the `publish (dry run)` CI job asserts it.
 - **Looking for `@randsum/notation`** — gone. Merged into roller per [ADR-005](./ADR-005-merge-notation-into-roller.md). Original separation rationale in [ADR-003](./ADR-003-notation-as-separate-package.md) (superseded).
 - **Considering a linter/formatter swap (e.g., Biome)** — [ADR-013](./ADR-013-biome-migration-evaluation.md) deferred the migration. Re-evaluate only with new evidence.
 - **Working on notation.randsum.dev (`apps/rdn/`)** — [ADR-015](./ADR-015-custom-astro-layout-over-starlight.md) (no Starlight), [ADR-016](./ADR-016-static-version-embedding.md) (per-version static pages), [ADR-017](./ADR-017-vanilla-typescript-client-interactivity.md) (no React islands).

@@ -1,81 +1,103 @@
-# ADR-018: Roller `sideEffects` Uses `["./src/**/*"]` Instead of `false`
+# ADR-018: Roller `sideEffects` — `true` In-Repo, Flipped to `false` at Publish
 
 ## Status
 
-Accepted. Re-verified 2026-06-21 against bunup `0.16.32` (see Re-verification below).
+Accepted (amended 2026-06-21). An earlier revision of this ADR specified an array-form
+`["./src/**/*"]` glob; the implemented approach is a publish-time manifest flip (see
+Decision). Re-verified against bunup `0.16.32`.
 
 ## Context
 
-`@randsum/roller` is a pure-function dice engine with no module-level side effects. Downstream consumers that import a narrow surface (for example, `isDiceNotation` from `@randsum/roller`) should be able to tree-shake the roll engine out of their bundles. The conventional signal for this is `"sideEffects": false` in `package.json`.
+`@randsum/roller` is a pure-function dice engine with no module-level side effects.
+Consumers that import a narrow surface (for example, `isDiceNotation`) should be able to
+tree-shake the rest of the engine out of their bundles. The conventional signal for that is
+`"sideEffects": false` in `package.json`.
 
-The naïve fix — adding `"sideEffects": false` to `packages/roller/package.json` — produces a broken `dist/`. Because bunup (built on `Bun.build`) reads the package's own `sideEffects` field during the build, and combines ESM code splitting with dead-code elimination, the builder eliminates top-level exported consts from shared chunks that it cannot prove are read by a downstream consumer *within the same build*. The result:
+Two constraints make a plain `"sideEffects": false` in the **in-repo** `package.json`
+unworkable:
 
-- `dist/docs/index.js` shrinks from 3283 B to 108 B (a bare `export { D as NOTATION_DOCS, ... }` referencing undeclared identifiers)
-- `dist/trace/index.js` shrinks from 2517 B to 88 B (same problem)
-- `dist/tokenize.js` shrinks from 256 B to 69 B
-- `dist/index.js` contains `export { N as validateRange, H as validateNotation, ... }` where `N`, `H`, etc. are never imported in the same file
-- Every roller dist smoke test fails at runtime with `"X" is not declared in this file`
-- Downstream `@randsum/games` consumption of those broken chunks also fails
-
-This was documented in commit `b8c81fde` ("fix(build): remove sideEffects: false to fix empty bundle output") and deferred in commit `c4b54b3b` ("chore(games): mark @randsum/games as sideEffects-free") with a note that roller was blocked on bunup's minifier+splitter interaction.
-
-The practical options were:
-
-a. **Tune bunup config** — `ignoreDCEAnnotations: true`, `minify: false`, or `splitting: false`. Tested. None resolve the issue; the DCE happens independently of the minifier flag and independently of whether splitting is enabled.
-b. **Array-form `sideEffects`** — declare a narrow subset of files as having side effects. A pattern that matches no file at publish time but *does* match at build time neutralizes the self-DCE trap without polluting downstream tree-shaking.
-c. **Drop minify or splitting** — either option ships larger published dists or loses chunk sharing. No measurable consumer-side benefit.
-d. **Publish-time injection** — strip `sideEffects` during build, inject `"sideEffects": false` during `prepublishOnly`. Brittle and adds a hook to the release pipeline.
+1. **bunup self-DCE breaks the dist.** bunup (built on `Bun.build`) reads the package's own
+   `sideEffects` field at build time and, combining ESM code splitting with dead-code
+   elimination, strips top-level exported consts from shared chunks it cannot prove are read
+   within the same build. With `false`:
+   - `dist/docs/index.js` collapses to a bare `export { D as NOTATION_DOCS, ... }` referencing
+     undeclared identifiers (~108 B); `dist/trace/index.js` and `dist/tokenize.js` similarly.
+   - Every roller dist smoke test fails at runtime with `"X" is not declared in this file`,
+     and downstream `@randsum/games` consumption of those chunks breaks.
+   - Diagnosed in commit `b8c81fde`. Tuning bunup (`ignoreDCEAnnotations: true`,
+     `minify: false`, `splitting: false`) does not resolve it — the DCE is independent of
+     those flags.
+2. **`apps/cli` bundles roller from source.** The CLI's bunup config uses
+   `noExternal: [/^@randsum\//]` and reads roller's `sideEffects` field while bundling. The
+   in-repo value must keep the CLI's bundled output intact.
 
 ## Decision
 
-Use `"sideEffects": ["./src/**/*"]` in `packages/roller/package.json`.
+Keep **`"sideEffects": true`** in the in-repo `packages/roller/package.json`, and flip it to
+**`"sideEffects": false`** only in the published tarball manifest at pack time.
 
-At build time, bunup resolves imports from `packages/roller/src/**/*` and marks them as having side effects, which prevents the runtime-breaking DCE of exported consts in the output chunks.
+`scripts/publish.ts` (`packRollerWithSideEffectsFalse`) rewrites `"sideEffects": true` →
+`"sideEffects": false` in the manifest immediately before `bun pm pack`, then restores it.
+`bun pm pack` does not rebuild `dist/` or run lifecycle hooks, so the tarball ships the
+already-built healthy `dist/**/*` alongside a tree-shakeable manifest. The script asserts the
+field is `true` before flipping and fails loudly if it is not.
 
-At consumer time, the published tarball contains only `dist/**/*` (per the `files` field). Nothing a downstream bundler resolves will match `./src/**/*`, so the sideEffects list is effectively empty and the package is fully tree-shakeable.
+Net effect:
+
+- **In-repo / build / CLI**: `sideEffects: true` keeps bunup's self-DCE from corrupting the
+  dist and keeps the CLI's `noExternal` source bundle intact.
+- **Published package**: ships `sideEffects: false`, so consumers tree-shake unused surfaces.
 
 ## Consequences
 
 ### Positive
 
-- Consumer bundles that import a subset of the public API tree-shake the rest of the engine. Measured with esbuild (`--bundle --tree-shaking=true --minify`) on a packed 1.3.0 tarball:
-  - Baseline (no `sideEffects`): `import { isDiceNotation } from '@randsum/roller'` → 51.3 KB
-  - With `sideEffects: ["./src/**/*"]`: same import → 14.5 KB (**72% reduction**)
-- No changes to bunup config or build pipeline. All existing size-limit budgets continue to pass.
-- All 2683 roller tests and 503 games tests continue to pass. The dist smoke test passes.
+- Consumers installing `@randsum/roller` receive `sideEffects: false` and full tree-shaking of
+  narrow imports (the common case for UI and validation code).
+- The in-repo build and the CLI's source bundling stay correct.
+- Only the manifest is rewritten; the healthy pre-built dist is what ships.
 
 ### Negative
 
-- The `sideEffects` value is a workaround for a bunup self-DCE bug, not the idiomatic `false`. A comment in `package.json` is not possible (JSON); this ADR exists so future engineers understand the shape.
-- If bunup's behavior changes (for example, it starts resolving `sideEffects` globs relative to `dist/` rather than the package root, or the underlying `Bun.build` stops applying self-DCE from the package's own `sideEffects`), this value should be revisited and simplified to `false`.
+- The published manifest's `sideEffects` differs from the in-repo one. Anyone reasoning about
+  roller's tree-shaking must read `scripts/publish.ts`, not just `package.json` — hence this ADR.
+- The release path depends on the flip step. The assertion in `packRollerWithSideEffectsFalse`
+  guards against the field silently changing shape (to `false` or an array), which would skip
+  the flip and ship a non-tree-shakeable (or, if set to `false` in-repo, a broken) package.
 
 ### Neutral
 
-- Adding a full import (`import { roll } from '@randsum/roller'`) makes no appreciable difference (65829 B vs 65827 B) because the tree-shaker already drops what ESM static analysis can see. The win is for narrow imports, which are the common case for UI and validation code.
+- Adding a full import (`import { roll } from '@randsum/roller'`) makes no appreciable size
+  difference; ESM static analysis already drops what it can see. The win is for narrow imports.
 
 ## Alternatives Considered
 
-- **`sideEffects: false`** — Broken (see Context).
-- **`sideEffects: ["./dist/**/*"]`** — Broken. bunup's self-DCE still runs against the in-memory module graph, not dist paths.
-- **`sideEffects: ["./src/**/*", "./dist/**/*"]`** — Works at build time but neutralizes consumer tree-shaking (the `./dist/**/*` pattern matches every imported file). Equivalent to omitting the field entirely.
-- **`bunup: { ignoreDCEAnnotations: true }`** — Tested, does not affect this DCE path.
-- **`bunup: { splitting: false }`** — Tested, does not fix the re-export stub problem. The regression persists.
-- **Post-build `package.json` rewrite** — Rejected; added brittleness for no measurable advantage over (b).
+- **`sideEffects: false` in-repo** — Broken: bunup self-DCE corrupts the dist (see Context),
+  and the CLI's source bundle reads the field.
+- **`sideEffects: ["./src/**/*"]` (the prior ADR-018 decision)** — Builds clean and, because the
+  published tarball ships only `dist/**/*` (which the `./src/**/*` glob never matches), yields a
+  tree-shakeable published manifest. Superseded by the publish-time flip: the in-repo value must
+  stay `true` for the CLI's `noExternal` source bundling, and a single `true` plus an explicit,
+  asserted flip is easier to reason about than a glob whose consumer-side behavior depends on
+  what the tarball happens to contain.
+- **`sideEffects: ["./dist/**/*"]`** — Broken; self-DCE runs against the in-memory module graph,
+  and the glob neutralizes consumer tree-shaking.
+- **bunup config tuning** (`ignoreDCEAnnotations`, `splitting: false`) — Tested; does not fix
+  the self-DCE.
 
 ## Re-verification (2026-06-21)
 
-After the dependency bump to bunup `0.16.32`, the `false` option was re-tested to see whether the upstream self-DCE bug had been fixed:
-
-- `sideEffects: false` → **still broken.** `packages/roller/__tests__/dist.smoke.test.ts` fails at `dist/index.js` with the re-export-of-undeclared-identifier symptom described in Context. The bug persists; `false` remains non-viable.
-- `sideEffects: ["./src/**/*"]` → builds clean, all 11 dist smoke assertions pass, and every `size-limit` budget passes.
-
-A second issue was found and corrected: `packages/roller/package.json` had drifted to `sideEffects: true`. That value builds correctly but marks **every** module as having side effects, which disables downstream tree-shaking entirely — the opposite of this ADR's intent. It was restored to the decided `["./src/**/*"]`.
-
-The guidance stands: do not switch to `false` without re-confirming the bunup bug is gone, and do not "simplify" to `true`.
+- `sideEffects: false` in-repo was re-tested against bunup `0.16.32`: it still breaks the dist
+  (`packages/roller/__tests__/dist.smoke.test.ts` fails with the undeclared-identifier symptom).
+  The bunup bug persists; `false` remains non-viable in-repo.
+- The `publish (dry run)` CI job asserts the in-repo field is `true`. Do **not** change
+  `packages/roller/package.json`'s `sideEffects` away from `true` without updating
+  `scripts/publish.ts` to match.
 
 ## References
 
-- Commit `b8c81fde` — previous diagnosis of the same failure mode.
+- `scripts/publish.ts` — `packRollerWithSideEffectsFalse` (the pack-time manifest flip).
+- Commit `b8c81fde` — diagnosis of the bunup self-DCE failure mode.
 - Commit `c4b54b3b` — games sideEffects opt-in; roller deferral note.
 - bunup docs: https://bunup.dev/docs/guide/options (splitting, minify, ignoreDCEAnnotations).
 - [webpack docs on `sideEffects`](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free) — canonical semantics for array-form `sideEffects`.
