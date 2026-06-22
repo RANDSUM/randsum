@@ -58,7 +58,6 @@ Styling uses plain CSS with custom properties in `src/styles/global.css`. No Tai
 
 ## References
 
-- Design spec: `docs/superpowers/specs/2026-03-20-spec-site-design.md`
 - ADR-011: Playground Layout Design — prior decision to use a custom layout for `apps/playground/`, establishing the precedent of non-Starlight apps in this monorepo
 - ADR-012: Playground App Infrastructure — further context on how non-Starlight apps are structured
 - `apps/site/` — the main site that uses Starlight, for contrast

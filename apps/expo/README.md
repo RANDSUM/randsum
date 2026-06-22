@@ -12,8 +12,7 @@ The cross-platform RANDSUM dice playground (web + iOS + Android), built with
 
 The app is a **single screen** (`app/index.tsx`): a notation roller plus a
 quick-reference grid, backed by the `@randsum/dice-ui` components. There are no
-tabs, history, templates, accounts, or cloud sync yet — see `PRD.md` for the
-forward-looking product spec.
+tabs, history, templates, accounts, or cloud sync yet.
 
 ## Stack
 
@@ -43,5 +42,5 @@ Supabase variables expected _if/when_ cloud sync is re-introduced (it was remove
 ## More
 
 See [`CLAUDE.md`](./CLAUDE.md) for the Metro resolver (load-bearing), platform-fork
-conventions, and store patterns; [`PRD.md`](./PRD.md) for the (forward-looking)
-product spec; and the root [`CLAUDE.md`](../../CLAUDE.md) for monorepo-wide rules.
+conventions, and store patterns; and the root [`CLAUDE.md`](../../CLAUDE.md) for
+monorepo-wide rules.

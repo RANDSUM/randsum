@@ -62,7 +62,6 @@ The conformance vectors are generated separately from the spec pages. `src/confo
 
 ## References
 
-- Design spec: `docs/superpowers/specs/2026-03-20-spec-site-design.md`
 - ADR-017: Vanilla TypeScript for Client Interactivity
 - `apps/rdn/src/content/specs/` — versioned spec storage (currently `v0.9.0.md`)
 - `apps/rdn/src/content.config.ts` — `specs` content collection and ID generation

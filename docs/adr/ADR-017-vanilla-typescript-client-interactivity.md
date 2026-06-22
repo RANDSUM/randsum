@@ -87,7 +87,6 @@ All smooth scroll behavior (sidebar link clicks, in-page anchor navigation) resp
 
 ## References
 
-- Design spec: `docs/superpowers/specs/2026-03-20-spec-site-design.md` — tech stack section
 - ADR-016: Per-Version Static Pages for Spec Versioning — version switching uses `<a>` page navigation, so no version-switching script is part of the client JS described in this ADR
 - MDN: IntersectionObserver API — `https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver`
 - Astro docs: Scripts and event handling — `https://docs.astro.build/en/guides/client-side-scripts/`

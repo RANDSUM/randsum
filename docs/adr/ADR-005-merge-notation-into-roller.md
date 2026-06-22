@@ -24,8 +24,6 @@ Merge `@randsum/notation` back into `@randsum/roller`. All notation source files
 
 `packages/notation/` is deleted. `@randsum/notation` is deprecated on npm with a pointer to `@randsum/roller`.
 
-See `docs/specs/MERGE-NOTATION-INTO-ROLLER.md` for the full implementation spec.
-
 ## Consequences
 
 ### Positive
@@ -96,5 +94,4 @@ ADR-003 is superseded by this reversal. The governing decision for notation is n
 ## References
 - ADR-003: Notation as Separate Package (superseded by this decision)
 - ADR-006: Notation Scope Boundary (governs what belongs in notation/roller vs. game packages)
-- `docs/specs/MERGE-NOTATION-INTO-ROLLER.md` — implementation spec
 - Issue #1000: chore: merge @randsum/notation back into @randsum/roller

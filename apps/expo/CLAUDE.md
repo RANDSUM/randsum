@@ -10,8 +10,7 @@ The app is a **single-screen prototype**. The entire UI is `app/index.tsx`
 (a notation roller + quick-reference grid + roll-result panel) under
 `app/_layout.tsx`. **None of the following exist yet:** tabs, a roll-history
 feed, templates, game-specific rollers, accounts/auth, Supabase, SQLite, or
-TanStack Query. `PRD.md` describes those as future work — treat it as aspiration,
-not a description of the codebase. Document and build against current reality.
+TanStack Query. Document and build against current reality.
 
 ## Stack
 
@@ -25,8 +24,8 @@ not a description of the codebase. Document and build against current reality.
 - **Workspace-linked**: `@randsum/roller`, `@randsum/dice-ui` (both `workspace:~`)
 - **Web deploy target**: randsumapp.expo.app (EAS Hosting)
 
-Supabase / cloud sync (referenced in `PRD.md` and `.env.example`) was removed
-2026-03-25 and is **not wired**. Do not re-add it without an explicit task.
+Supabase / cloud sync (referenced in `.env.example`) was removed 2026-03-25 and
+is **not wired**. Do not re-add it without an explicit task.
 
 ## Directory Layout
 
@@ -200,7 +199,6 @@ work, not currently built out.
 
 ## Cross-References
 
-- Product spec (forward-looking): `apps/expo/PRD.md`
 - ADRs: `apps/expo/docs/adrs/`
 - Core engine: `packages/roller/CLAUDE.md`
 - UI components: `packages/dice-ui/CLAUDE.md`
