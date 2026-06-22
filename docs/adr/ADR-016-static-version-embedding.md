@@ -18,7 +18,7 @@ A server-side rendered Astro app reads `?v=` from the request, fetches the corre
 
 ### Option B: Separate static pages per version
 
-Generate one page per version via Astro dynamic routes: `v/[version].astro` produces `/v/1.0/index.html`, `/v/1.1/index.html`, etc. The root `index.astro` renders the latest version directly. Each URL contains only that version's content.
+Generate one page per version via Astro dynamic routes: `src/pages/v/[version].astro` produces `/v/0.9.0/index.html` (and `/v/<next>/index.html` as versions are added). The root `index.astro` renders the latest version directly. Each URL contains only that version's content.
 
 ### Option C: All versions embedded in one page, toggled client-side
 
@@ -31,18 +31,19 @@ This was the original proposal. It was rejected because:
 
 ## Decision
 
-`apps/spec/` uses **Option B**: one static page per version, generated at build time via Astro dynamic routes.
+`apps/rdn/` uses **Option B**: one static page per version, generated at build time via Astro dynamic routes.
 
 The implementation contract:
 
-- `src/content/specs/` contains one markdown file per version: `v1.0.md`, `v1.1.md`, etc.
-- `src/pages/v/[version].astro` is a dynamic route that generates one page per content entry.
-- `src/pages/index.astro` renders the latest version directly (same layout, no redirect).
+- `src/content/specs/` contains one markdown file per version, authored directly in this directory — currently `v0.9.0.md`. Adding a version means adding a markdown file here; there is no copy step from elsewhere in the repo.
+- `src/content.config.ts` defines the `specs` content collection via a `glob` loader over `src/content/specs/*.md`. Its `generateId` strips the leading `v` and the `.md` extension, so `v0.9.0.md` becomes the content-entry ID `0.9.0`.
+- `src/pages/v/[version].astro` is a dynamic route whose `getStaticPaths()` maps each collection entry to `params: { version: entry.id }`, generating one page per version (e.g. `/v/0.9.0/`).
+- `src/pages/index.astro` renders the latest version directly (same layout, no redirect). `src/utils/versions.ts` provides `getVersions()` / `getLatestVersion()` / `isLatestVersion()` for version-aware sorting and selection.
 - The version dropdown is a set of `<a>` links between pages — standard navigation, no client-side routing needed.
-- Non-latest versions display a banner: "You are viewing an older version of this specification. [View latest]"
-- `public/llms.txt` provides a brief description and link to the latest spec.
-- `public/llms-full.txt` is generated at build time by the `prebuild` script: it copies the latest spec markdown file from `src/content/specs/` (the same file used for rendering) to `public/llms-full.txt`. This ensures the LLM-consumable text matches the rendered site exactly.
-- The `prebuild` script copies `RANDSUM_DICE_NOTATION_SPEC.md` from repo root to `src/content/specs/v<current>.md`.
+- Non-latest versions display a banner (`VersionBanner.astro`): "You are viewing an older version of this specification. [View latest]"
+- `public/llms.txt` provides a brief description and link to the latest spec, and `public/llms-full.txt` holds the full spec text for LLM consumers. Both are committed static files under `public/`.
+
+The conformance vectors are generated separately from the spec pages. `src/conformance/vectors.ts` defines `CONFORMANCE_FILE` (the canonical vector set), and the `conformance:gen` script (`conformance-gen.ts`) serializes it with a stable key order to `public/conformance/v0.9.0.json`, exercising `@randsum/roller` as a build-time dev dependency. The `conformance:check` script regenerates the JSON and runs `git diff --exit-code` on `public/conformance/v0.9.0.json` as a CI guard, keeping the published vectors in sync with their source.
 
 ## Consequences
 
@@ -63,4 +64,6 @@ The implementation contract:
 
 - Design spec: `docs/superpowers/specs/2026-03-20-spec-site-design.md`
 - ADR-017: Vanilla TypeScript for Client Interactivity
-- `apps/spec/src/content/specs/` — versioned spec storage
+- `apps/rdn/src/content/specs/` — versioned spec storage (currently `v0.9.0.md`)
+- `apps/rdn/src/content.config.ts` — `specs` content collection and ID generation
+- `apps/rdn/conformance-gen.ts` — `conformance:gen` / `conformance:check` vector generator

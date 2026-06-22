@@ -20,6 +20,8 @@ Accepted
 
 Merge `@randsum/notation` back into `@randsum/roller`. All notation source files move to `packages/roller/src/notation/`. Subpath exports on roller (`./tokenize`, `./comparison`) preserve independent consumption of notation utilities without the rolling engine.
 
+> **Later correction (ADR-009):** the `./comparison` subpath described below was subsequently removed — its four comparison functions were folded into the main barrel. Only `./tokenize` remains a live subpath today. References to `./comparison` in this ADR document the original merge decision, not the current package surface.
+
 `packages/notation/` is deleted. `@randsum/notation` is deprecated on npm with a pointer to `@randsum/roller`.
 
 See `docs/specs/MERGE-NOTATION-INTO-ROLLER.md` for the full implementation spec.

@@ -1,125 +1,127 @@
 # ADR-005: Design System & Theme Tokens
 
 ## Status
-Proposed
+
+Accepted (implemented)
 
 ## Context
 
-The RANDSUM Expo app targets iOS, Android, and Web from a single codebase. It must establish a shared visual identity that:
+The RANDSUM Expo app targets iOS, Android, and Web from a single codebase and
+must share a visual identity with `randsum.dev` / `randsum.io`. The TTRPG
+audience expects a dark-mode-first interface, and the design must work across
+React Native's `StyleSheet` system (no CSS-in-JS runtime) while remaining
+compatible with Expo Web, where the `@randsum/dice-ui` components are themed via
+CSS custom properties.
 
-1. Matches `randsum.dev` and `randsum.io` so the product feels like a coherent ecosystem, not a separate app bolted on.
-2. Respects the TTRPG audience — tabletop players overwhelmingly use apps in dark environments (game nights, dimly lit tables) and expect dark-mode-first interfaces.
-3. Works across React Native's `StyleSheet` system without a CSS-in-JS runtime, while remaining compatible with Expo Web where CSS is available.
-4. Distinguishes dice values and notation from ambient UI text. Notation strings like `4d6L` and numeric results like `18` carry semantic weight and must be visually distinct from labels and chrome.
-
-Without a token system, each component author makes independent color choices. On a multi-screen app that includes a pool builder, game rollers, a history feed, and account settings, divergent choices compound quickly into an incoherent visual hierarchy.
+Without a token layer, light/dark switching would be scattered across every
+component. A semantic token set keeps it a single-store concern.
 
 ## Decision
 
-### Accent and Neutral Palette
+### Two token surfaces
 
-The app adopts the same palette as `randsum.dev`:
+The app has two coordinated token sources, because the screen mixes React Native
+primitives with web dice-ui components:
 
-- **Accent:** `#a855f7` (Tailwind purple-500) — used for primary CTAs, active tab indicators, focus rings, and the Roll button
-- **Accent high:** `#d8b4fe` (Tailwind purple-300) — used for text links and subtle accent states on dark surfaces
+1. **`lib/theme.ts`** — typed `ThemeTokens` consumed by React Native
+   `StyleSheet` via `useTheme()` / `useThemeStore`. Holds `darkTokens` and
+   `lightTokens` plus a `fontSizes` scale. `getTokens(mode)` returns the right
+   map.
+2. **`components/CSSTokens.web.tsx`** — injects `--dui-color-*` CSS custom
+   properties onto `:root` and keeps `data-theme` on `<html>` in sync with
+   `colorScheme`. These drive `@randsum/dice-ui`'s own theming on web.
+   `components/CSSTokens.tsx` is a native no-op.
 
-Neutral grays follow the Tailwind zinc scale, which has a cool, slightly blue-gray cast that reads well against the purple accent without competing.
+Both sets follow the Tailwind zinc neutral scale with a purple accent, matching
+`randsum.dev`. The two surfaces are intentionally close but not byte-identical
+(e.g. the RN `bg` is `#1a1a1f`; the CSS `--dui-color-bg` is `#09090b`), because
+one themes RN chrome and the other themes the embedded dice-ui components.
 
-### Semantic Token Set
+### Semantic tokens (`lib/theme.ts`)
 
-All components consume semantic tokens, never raw hex values. This ensures light/dark mode switching is a single-layer concern in the theme store, not scattered across every component.
+`ThemeTokens` defines: `bg`, `surface`, `surfaceAlt`, `border`, `text`,
+`textMuted`, `textDim`, `accent`, `accentLow`, `accentHigh`, `error`, `success`.
+Components read these through `useTheme()` rather than hard-coding hex values.
 
-| Token | Dark value | Light value | Purpose |
-|---|---|---|---|
-| `bg` | `#09090b` (zinc-950) | `#ffffff` | Screen/page background |
-| `surface` | `#18181b` (zinc-900) | `#f4f4f5` | Cards, sheets, modals |
-| `surface-alt` | `#27272a` (zinc-800) | `#e4e4e7` | Nested surfaces, input backgrounds |
-| `border` | `#52525b` (zinc-600) | `#a1a1aa` | Dividers, input outlines, separators |
-| `text` | `#fafafa` (zinc-50) | `#18181b` | Primary text |
-| `text-muted` | `#a1a1aa` (zinc-400) | `#3f3f46` | Secondary labels, metadata |
-| `text-dim` | `#71717a` (zinc-500) | `#71717a` | Placeholder text, disabled states |
-| `accent` | `#a855f7` | `#a855f7` | Primary actions, active states |
-| `accent-high` | `#d8b4fe` | `#7c3aed` | Links, accent text on surfaces |
-| `error` | `#ef4444` (red-500) | `#dc2626` | Validation errors, destructive actions |
-| `success` | `#10b981` (emerald-500) | `#059669` | Sync status, success confirmations |
+| Token | Dark (`darkTokens`) | Light (`lightTokens`) |
+|---|---|---|
+| `bg` | `#1a1a1f` | `#f4f4f6` |
+| `surface` | `#222228` | `#ebebed` |
+| `surfaceAlt` | `#2e2e35` | `#e4e4e7` |
+| `border` | `#52525b` | `#a1a1aa` |
+| `text` | `#fafafa` | `#18181b` |
+| `textMuted` | `#a1a1aa` | `#3f3f46` |
+| `textDim` | `#71717a` | `#71717a` |
+| `accent` | `#a855f7` | `#7c3aed` |
+| `accentLow` | `#2e1065` | `#f5f0ff` |
+| `accentHigh` | `#d8b4fe` | `#5b21b6` |
+| `error` | `#ef4444` | `#dc2626` |
+| `success` | `#10b981` | `#059669` |
 
-The `accent` token is the same in both modes — purple-500 has adequate contrast against both `bg` (dark) and `#ffffff` (light) at the sizes used for button backgrounds and tab indicators.
+`textDim` (zinc-500) is the same in both modes — a serviceable midpoint for
+placeholder/disabled text rather than two separate tokens.
 
-`text-dim` is the same in both modes because zinc-500 sits at approximately the perceptual midpoint between the dark and light backgrounds, making it serviceable (though not optimal) as placeholder text in either mode. This is a known trade-off: optimizing both would require separate tokens, adding cognitive overhead for a minor gain.
+### Dark-mode default
 
-### Dark-Mode Default
-
-The app defaults to dark mode. The user's system preference (`useColorScheme` from React Native) is read on first launch; if the system is light, the app starts light. After first launch, the user's explicit preference (stored in `preferences.theme`) overrides the system value. This is implemented in the Zustand theme store.
-
-Rationale for dark-first: TTRPG sessions happen at tables where ambient light is low. A bright white screen is disruptive. Dark-first is also consistent with how `randsum.dev` presents itself.
+The theme store defaults to dark. `initThemeFromSystem()` (called once from
+`app/_layout.tsx` with the React Native `useColorScheme()` value) applies the
+system scheme on first launch when no explicit preference is set; after the user
+toggles, the persisted `colorScheme` wins. See ADR-001.
 
 ### Typography
 
-Two typefaces cover all use cases:
+- **JetBrains Mono** — loaded via `@expo-google-fonts/jetbrains-mono`
+  (`JetBrainsMono_400Regular`), gated through `useFonts` in `app/_layout.tsx` so
+  it is available before first render. Used for notation and numeric dice values.
+  On web it is also referenced as `--dui-font-mono` in the injected CSS.
+- **System sans-serif** — `--dui-font-body` (`ui-sans-serif, system-ui,
+  sans-serif`) for UI chrome; no bundle cost, native rendering per platform.
 
-**JetBrains Mono** — used for:
-- Notation strings (e.g. `4d6L`, `1d20+5`)
-- Numeric roll results (e.g. `18`, `[6, 5, 4, 1]`)
-- Individual die values in the breakdown
-- The pool display in Simple Mode
-- The notation input field in Advanced Mode
+Font sizes are a stepped scale in `lib/theme.ts` (`fontSizes`): `xs` 11,
+`sm` 13, `base` 15, `lg` 17, `xl` 22, `2xl` 32, `3xl` 48.
 
-Rationale: Notation is a formal language with tokens (`d`, `L`, `+`, `{}`). Monospace rendering makes the tokenization visually apparent — each character occupies a fixed slot, so users can parse notation quickly. JetBrains Mono is already loaded on `randsum.dev`, so using it in the app creates direct continuity.
+### Theme store implementation
 
-**System sans-serif** (San Francisco on iOS, Roboto on Android, system-ui on Web) — used for:
-- Tab bar labels
-- Screen headings and section titles
-- Button labels
-- Form field labels and helper text
-- Game names, template names, metadata
+`lib/stores/themeStore.ts` holds `colorScheme` plus the derived `tokens` and
+`fontSizes`. `colorScheme` is persisted to AsyncStorage (`partialize` persists
+only `colorScheme`; `tokens` are recomputed on rehydrate). Components read tokens
+via the `useTheme()` hook (`hooks/useTheme.ts`) and build `StyleSheet` color
+values from the live token map rather than module-level constants.
 
-Rationale: System fonts render at native quality with no bundle cost. They feel at home on each platform. The two-typeface system creates a clear semantic split: monospace = dice values/notation, sans = UI chrome.
+## Deferred — not implemented
 
-Font sizes follow a stepped scale. All sizes are defined as tokens, not magic numbers in individual components:
-- `size-xs`: 11
-- `size-sm`: 13
-- `size-base`: 15
-- `size-lg`: 17
-- `size-xl`: 22
-- `size-2xl`: 32
-- `size-3xl`: 48 (roll result total only)
-
-### Theme Store Implementation
-
-A Zustand store (`lib/theme.ts`) holds the resolved token map and a `colorScheme: 'dark' | 'light'` field. Components access tokens via a `useTheme()` hook that returns the current token map. The store initializes from `preferences.theme` (persisted) with `useColorScheme()` as the fallback.
-
-All `StyleSheet` objects that need color values are created inside the component body using `useTheme()`, not as module-level constants. This is the React Native idiom for dynamic theming and avoids stale closures when the user switches modes at runtime.
-
-### Game-Specific Color Accents
-
-The Games tab features six game systems, each with a distinct color identity to aid rapid recognition. These are supplementary to the accent palette and appear only on game cards and game roller headers:
-
-| Game | Color |
-|---|---|
-| Blades in the Dark | slate (`#64748b`) |
-| D&D 5th Edition | gold (`#f59e0b`) |
-| Daggerheart | amber (`#f97316`) |
-| Powered by the Apocalypse | emerald (`#10b981`) |
-| Root RPG | green (`#22c55e`) |
-| Salvage Union | orange (`#ea580c`) |
-
-These colors are not part of the semantic token system. They are constants in a `gameColors` map and are consumed only by game-specific components.
+- **Game-specific color accents** — earlier drafts defined a per-game
+  `gameColors` map (Blades, 5e, Daggerheart, PbtA, Root, Salvage Union). No
+  Games surface exists, and no such map ships. This is future work.
 
 ## Consequences
 
 ### Positive
-- Visual consistency across all screens and with the wider RANDSUM web ecosystem
-- Dark-mode default aligns with TTRPG user expectations and reduces eye strain at the table
-- Semantic token layer makes light/dark switching a single-store concern — no per-component conditionals
-- JetBrains Mono provides clear notation readability and ecosystem continuity with randsum.dev
-- System sans-serif costs nothing in bundle size and renders natively on each platform
+
+- Visual consistency with the RANDSUM web ecosystem; dark-first matches TTRPG
+  use.
+- Semantic token layer makes light/dark a single-store concern — no per-component
+  conditionals.
+- JetBrains Mono gives clear notation readability and continuity with
+  `randsum.dev`; system sans costs nothing in bundle size.
 
 ### Negative
-- JetBrains Mono must be bundled with the app (adds ~120KB to the binary for the relevant weights). This is a fixed cost regardless of how many screens use it.
-- All StyleSheet objects that include color tokens must be constructed inside component bodies (cannot be module-level constants), which is slightly less ergonomic than the React Native default and may be unfamiliar to contributors new to dynamic theming.
-- `text-dim` (zinc-500) is a compromise: adequate contrast in both modes but not optimal in either. If accessibility audits flag it, splitting into separate dark/light tokens will require touching every component that uses `text-dim`.
+
+- Two token surfaces (`lib/theme.ts` and `CSSTokens.web.tsx`) must be kept
+  visually coherent by hand; they are deliberately not auto-derived from one
+  source.
+- StyleSheet color values must be built inside component bodies (not module-level
+  constants), which is slightly less ergonomic but is the RN idiom for dynamic
+  theming.
 
 ### Neutral
-- Light mode is fully supported from day one; it is not an afterthought. The implementation cost is low because the token layer exists.
-- `accent` (purple-500) carries a small contrast shortfall against white (`#ffffff`) at small text sizes (contrast ratio ~4.5:1, passing AA but not AAA). Accent is never used as body text, so this is not a practical concern.
-- The `gameColors` map is intentionally kept out of the semantic token system. If a future design iteration unifies game colors with the token system, this can be refactored without affecting any non-game components.
+
+- Light mode is fully supported from day one because the token layer exists.
+
+## References
+
+- `lib/theme.ts` — `ThemeTokens`, `darkTokens`, `lightTokens`, `fontSizes`
+- `lib/stores/themeStore.ts`, `hooks/useTheme.ts`
+- `components/CSSTokens.web.tsx` — CSS custom-property injection
+- `app/_layout.tsx` — font loading + theme init
+- ADR-001: State Management Topology (the theme store)

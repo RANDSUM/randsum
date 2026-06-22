@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-The RANDSUM ecosystem already uses Starlight for the main documentation site (`apps/site/`). When designing `apps/spec/` — the notation specification viewer at `notation.randsum.dev` — reusing Starlight was the natural first option to evaluate. It would provide built-in search, sidebar configuration, i18n scaffolding, and maintained Astro integration.
+The RANDSUM ecosystem already uses Starlight for the main documentation site (`apps/site/`). When designing `apps/rdn/` — the notation specification viewer at `notation.randsum.dev` — reusing Starlight was the natural first option to evaluate. It would provide built-in search, sidebar configuration, i18n scaffolding, and maintained Astro integration.
 
 The notation spec site has requirements that are structurally incompatible with Starlight's design assumptions:
 
@@ -18,15 +18,15 @@ The notation spec site has requirements that are structurally incompatible with 
 
 **Hero header that scrolls away.** The design calls for a large hero header (containing the spec title, version dropdown, and GitHub link) that disappears on scroll, leaving only the three-column body sticky. Starlight has a persistent slim header with no scroll-away behavior. Removing or transforming it requires overriding the `<Head>` and `<Header>` slots and disabling Starlight's own sticky header CSS.
 
-**Per-version static pages with dynamic routes.** Each spec version gets its own static page via Astro `[version].astro` dynamic routes (see ADR-016). This requires full control over `getStaticPaths()` and page layout — Starlight's content model maps one content collection entry to one page with its own routing, which conflicts with our version-aware route structure.
+**Per-version static pages with dynamic routes.** Each spec version gets its own static page via the Astro `src/pages/v/[version].astro` dynamic route (see ADR-016). This requires full control over `getStaticPaths()` and page layout — Starlight's content model maps one content collection entry to one page with its own routing, which conflicts with our version-aware route structure.
 
 **No Tailwind.** The spec site uses plain CSS with custom properties to stay lightweight. Starlight uses its own CSS variables and expects a specific theming surface. Mixing plain CSS with Starlight's layer requires careful specificity management that adds maintenance burden.
 
-The cumulative effect of these conflicts is that adopting Starlight for `apps/spec/` would require overriding the majority of Starlight's layout, routing, and content pipeline — leaving behind only Astro itself. That is the same as writing a custom layout with extra constraints imposed by an unused framework.
+The cumulative effect of these conflicts is that adopting Starlight for `apps/rdn/` would require overriding the majority of Starlight's layout, routing, and content pipeline — leaving behind only Astro itself. That is the same as writing a custom layout with extra constraints imposed by an unused framework.
 
 ## Decision
 
-`apps/spec/` uses a custom Astro layout (`SpecLayout.astro`) with no Starlight dependency.
+`apps/rdn/` uses a custom Astro layout (`SpecLayout.astro`) with no Starlight dependency.
 
 The layout shell is three-column:
 
@@ -54,7 +54,7 @@ Styling uses plain CSS with custom properties in `src/styles/global.css`. No Tai
 - No Starlight built-in search. Full-text search within the spec is out of scope for v1; if it is added later, it must be implemented from scratch (e.g., Pagefind integration, which is also used by Starlight and is fully compatible with static Astro sites).
 - No Starlight i18n scaffolding. Internationalization of the spec is not a near-term requirement, but if it becomes one, the infrastructure must be built without Starlight's locale routing.
 - The layout, sidebar, and scroll spy components are custom code that must be maintained. Starlight upgrades would have kept this code at zero maintenance cost.
-- Future contributors familiar with Starlight from `apps/site/` will encounter a different setup in `apps/spec/`. The two apps are intentionally distinct and the design spec documents this divergence.
+- Future contributors familiar with Starlight from `apps/site/` will encounter a different setup in `apps/rdn/`. The two apps are intentionally distinct and the design spec documents this divergence.
 
 ## References
 

@@ -124,4 +124,4 @@ The following `apps/site/src/content/docs/` files require content changes to ref
 - ADR-005: Merge @randsum/notation back into @randsum/roller (the implementation decision that necessitates this docs update)
 - Commit `e9f7533e`: refactor: merge notation into roller, streamline modifier system
 - `apps/site/src/content/docs/` — site content directory
-- `packages/roller/RANDSUM_DICE_NOTATION.md` — authoritative notation spec (source of truth for the notation reference pages)
+- `apps/rdn/src/content/specs/` — authoritative notation spec (source of truth for the notation reference pages), served at `notation.randsum.dev`

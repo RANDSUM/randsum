@@ -2,29 +2,45 @@
 
 ## Overview
 
-Private React component library providing dice notation UI for RANDSUM apps. Exports three main components — a notation input with token color overlay (`TokenOverlayInput`), a roll step visualizer (`RollSteps`/`StepRow`/`DieBadge`), and a combined notation roller with result display (`NotationRoller`). Also exports a theme utility (`useTheme`, `getTheme`, `subscribeTheme`).
+Private React component library (v2.0.0) providing dice notation UI for RANDSUM apps. Exports a
+notation input with token color overlay (`TokenOverlayInput`), a roll step visualizer
+(`RollSteps`/`StepRow`/`DieBadge`), result panels (`RollResultPanel`/`RollResultDisplay`), a
+combined notation roller (`NotationRoller`), a quick reference grid (`QuickReferenceGrid`/`DocModal`),
+and theme utilities (`useTheme`/`getTheme`/`subscribeTheme`/`DiceUIThemeProvider`).
 
-Depends on `@randsum/roller` via `workspace:~`. Peer dependencies on React and React DOM. Has no build script — consumed directly as TypeScript source by the playground app via path aliases or direct imports.
+The only runtime dependency is `@randsum/roller` (`workspace:~`). `react`, `react-dom`,
+`react-native`, and `expo-haptics` are peer dependencies (the latter three optional). There is **no
+build script** — `main`/`types`/`exports` resolve to `src/index.ts`, so the package is consumed
+directly as TypeScript source.
 
 Private, never published to npm.
+
+## Platform forks
+
+Two entry barrels expose the same public surface against platform-specific implementations:
+
+- `src/index.ts` (web / react-dom) → `*.tsx` files.
+- `src/index.native.ts` (React Native) → `*.native.tsx` files.
+
+Most components ship both a `.tsx` and a `.native.tsx`. The Expo app maps to the native barrel via
+`tsconfig` paths; web bundlers resolve `index.ts`. There is **no TUI / `ink` target** (see
+`docs/adr/ADR-019`).
 
 ## Exports
 
 ```typescript
-// Theme
-export { useTheme, getTheme, subscribeTheme }
-
-// Notation input with token color overlay
+export type { RollResult, QuickReferenceGridProps, DocModalProps }
+export { tokenColor }
+export { useTheme, getTheme, subscribeTheme, DiceUIThemeProvider }
 export { TokenOverlayInput }
 export type { TokenOverlayInputProps }
-
-// Roll step visualizer
 export { DieBadge, StepRow, RollSteps }
 export type { DieBadgeProps, StepRowProps, RollStepsProps }
-
-// Combined roller + result display
-export { NotationRoller, RollResultDisplay }
+export { NotationRoller }
 export type { NotationRollerProps }
+export { RollResultPanel, RollResultDisplay }
+export type { RollResultPanelProps }
+export { QuickReferenceGrid, DocModal }
 ```
 
 ## Directory Structure
@@ -32,30 +48,56 @@ export type { NotationRollerProps }
 ```
 packages/dice-ui/
   src/
-    index.ts                  # Public exports
-    useTheme.ts               # Theme (light/dark) reactive utility
-    TokenOverlayInput.tsx     # Input with colored token spans overlaid
+    index.ts                  # Web public barrel
+    index.native.ts           # React Native public barrel
+    types.ts                  # Shared prop/result types
+    useTheme.tsx              # Theme store + provider (web)
+    useTheme.native.tsx       # Theme store + provider (native)
+    tokenColor.ts             # Notation-token → color helper
+    TokenOverlayInput.tsx     # Input with colored token spans overlaid (web)
+    TokenOverlayInput.native.tsx
     TokenOverlayInput.css
-    RollSteps.tsx             # DieBadge, StepRow, RollSteps components
+    RollSteps.tsx             # DieBadge, StepRow, RollSteps (web)
+    RollSteps.native.tsx
     RollSteps.css
-    NotationRoller.tsx        # Full roller: input + roll button + result overlay
+    RollResultPanel.tsx       # RollResultPanel + RollResultDisplay (web)
+    RollResultPanel.native.tsx
+    NotationRoller.tsx        # Full roller: input + roll button + result (web)
+    NotationRoller.native.tsx
     NotationRoller.css
-    tokens.css                # CSS custom property tokens (colors, spacing)
+    NumericStepper.tsx        # +/- stepper (web) / .native.tsx
+    QuickReferenceGrid.tsx    # Notation reference grid + DocModal (web)
+    QuickReferenceGrid.native.tsx
+    notationBuilder.ts        # Notation assembly helper
+    tokens.css                # CSS custom-property tokens (colors, spacing)
 ```
 
 ## Component Notes
 
-**`NotationRoller`** — the main combined component. Accepts `defaultNotation`, controlled `notation`+`onChange`, `renderActions` render prop for custom toolbar content, and a `resetToken` for resetting controlled state. Shows a result overlay on roll with `RollResultDisplay`.
+- **`NotationRoller`** — main combined component. Input + roll button + a result panel rendered via
+  `RollResultDisplay`.
+- **`TokenOverlayInput`** — wraps an `<input>` with a positioned overlay of colored `<span>`s for
+  tokenized notation segments. Used inside `NotationRoller`.
+- **`RollSteps`** — renders a list of `StepRow`s showing each step of a roll. `DieBadge` renders an
+  individual die face value.
+- **`QuickReferenceGrid`** — grid of notation examples; `DocModal` shows per-entry docs.
+- **`useTheme`** — subscribes to a module-level `'light' | 'dark'` theme store; `getTheme()` /
+  `subscribeTheme()` for imperative access; `DiceUIThemeProvider` for context wrapping.
 
-**`TokenOverlayInput`** — wraps an `<input>` with a positioned overlay of colored `<span>` elements corresponding to tokenized notation segments. Used inside `NotationRoller`.
+## Commands
 
-**`RollSteps`** — renders a list of `StepRow` elements showing each step of a `traceRoll()` result. `DieBadge` renders an individual die face value.
-
-**`useTheme`** — subscribes to a module-level theme store (`'light' | 'dark'`). `getTheme()` / `subscribeTheme()` for external control.
+```bash
+bun run typecheck   # tsc --noEmit
+bun run test        # bun test __tests__
+bun run check       # typecheck + test
+```
 
 ## Key Constraints
 
-- No build script — the package is consumed as source, not a built artifact.
+- No build script — consumed as TypeScript source, not a built artifact.
 - Private, never published to npm.
-- CSS files must be imported alongside their component file (e.g. `import './NotationRoller.css'`).
-- All props interfaces use `readonly` on their fields (strict mode convention).
+- Web and native implementations must stay in sync on the shared public surface (both barrels export
+  the same names).
+- CSS files are imported alongside their web component file (e.g. `import './NotationRoller.css'`);
+  native variants use React Native styles instead.
+- Props interfaces use `readonly` fields (strict mode convention).

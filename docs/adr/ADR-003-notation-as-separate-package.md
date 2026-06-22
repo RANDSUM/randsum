@@ -2,7 +2,9 @@
 
 ## Status
 
-Accepted
+Superseded by [ADR-005](./ADR-005-merge-notation-into-roller.md)
+
+This ADR documents the original (later reversed) decision to split notation into its own package. The split was reversed when `@randsum/notation` was merged back into `@randsum/roller`; see ADR-005 for the governing decision and reversal rationale.
 
 ## Context
 

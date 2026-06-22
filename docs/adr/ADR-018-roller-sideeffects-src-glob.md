@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted. Re-verified 2026-06-21 against bunup `0.16.32` (see Re-verification below).
 
 ## Context
 
@@ -61,6 +61,17 @@ At consumer time, the published tarball contains only `dist/**/*` (per the `file
 - **`bunup: { ignoreDCEAnnotations: true }`** — Tested, does not affect this DCE path.
 - **`bunup: { splitting: false }`** — Tested, does not fix the re-export stub problem. The regression persists.
 - **Post-build `package.json` rewrite** — Rejected; added brittleness for no measurable advantage over (b).
+
+## Re-verification (2026-06-21)
+
+After the dependency bump to bunup `0.16.32`, the `false` option was re-tested to see whether the upstream self-DCE bug had been fixed:
+
+- `sideEffects: false` → **still broken.** `packages/roller/__tests__/dist.smoke.test.ts` fails at `dist/index.js` with the re-export-of-undeclared-identifier symptom described in Context. The bug persists; `false` remains non-viable.
+- `sideEffects: ["./src/**/*"]` → builds clean, all 11 dist smoke assertions pass, and every `size-limit` budget passes.
+
+A second issue was found and corrected: `packages/roller/package.json` had drifted to `sideEffects: true`. That value builds correctly but marks **every** module as having side effects, which disables downstream tree-shaking entirely — the opposite of this ADR's intent. It was restored to the decided `["./src/**/*"]`.
+
+The guidance stands: do not switch to `false` without re-confirming the bunup bug is gone, and do not "simplify" to `true`.
 
 ## References
 

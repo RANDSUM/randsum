@@ -1,18 +1,9 @@
 {
   "mcpServers": {
-    "netlify": {
-      "command": "npx",
-      "args": ["-y", "@netlify/mcp"],
-      "env": {
-        "NETLIFY_AUTH_TOKEN": "${NETLIFY_AUTH_TOKEN}"
-      }
-    },
     "render": {
       "type": "http",
       "url": "https://mcp.render.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${RENDER_API_KEY}"
-      }
+      "headersHelper": "$CLAUDE_PROJECT_DIR/scripts/mcp-1password-headers.sh"
     },
     "expo": {
       "type": "http",
@@ -21,9 +12,7 @@
     "github": {
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "Bearer ${GITHUB_PAT}"
-      }
+      "headersHelper": "$CLAUDE_PROJECT_DIR/scripts/mcp-1password-headers.sh"
     }
   }
 }

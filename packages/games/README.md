@@ -2,7 +2,7 @@
 
 TTRPG game packages for the RANDSUM dice ecosystem. Each game subpath wraps [@randsum/roller](https://www.npmjs.com/package/@randsum/roller) with game-specific input validation, roll configuration, and result interpretation.
 
-Built on `@randsum/roller`, which is **[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**. All game packages use RANDSUM Dice Notation (RDN) for dice mechanics.
+ESM-only. The only dependency is `@randsum/roller`, which is **[RDN Level 4 (Full) Conformant](https://notation.randsum.dev)**. Game subpaths never depend on each other.
 
 ## Install
 
@@ -18,6 +18,7 @@ npm install @randsum/games
 | ----------------------------- | ------------------------- | ----------------- |
 | `@randsum/games/blades`       | Blades in the Dark        | 0-4d6 pool        |
 | `@randsum/games/daggerheart`  | Daggerheart               | 2d12 Hope + Fear  |
+| `@randsum/games/fate`         | Fate Core                 | 4dF + modifier    |
 | `@randsum/games/fifth`        | D&D 5th Edition           | 1d20 + modifier   |
 | `@randsum/games/pbta`         | Powered by the Apocalypse | 2d6 + stat        |
 | `@randsum/games/root-rpg`     | Root RPG                  | 2d6 + bonus       |
@@ -40,6 +41,13 @@ const { result } = roll({ modifier: 5, rollingWith: "Advantage" })
 ```
 
 ```typescript
+import { roll } from "@randsum/games/fate"
+
+const { result } = roll({ modifier: 2 })
+// result: ladder rung, e.g. 'Average' | 'Fair' | 'Good' | 'Great' | 'Superb' | ...
+```
+
+```typescript
 import { roll } from "@randsum/games/pbta"
 
 const { result } = roll({ stat: 2 })
@@ -56,7 +64,7 @@ const { result } = roll({ modifier: 3 })
 ```typescript
 import { roll } from "@randsum/games/root-rpg"
 
-const { result } = roll(2)
+const { result } = roll({ modifier: 2 })
 // result: 'Strong Hit' | 'Weak Hit' | 'Miss'
 ```
 
@@ -78,35 +86,50 @@ try {
   roll({ modifier: Infinity })
 } catch (error) {
   if (error instanceof SchemaError) {
-    console.log(error.code) // 'INVALID_INPUT_TYPE'
+    console.log(error.code) // e.g. 'INVALID_INPUT_TYPE'
   }
 }
 ```
 
 ## Type Exports
 
-Every subpath exports:
+Each subpath exports its own game-specific result type (e.g. `BladesRollResult`,
+`FateRollResult`, `FifthRollResult`) plus the shared types:
 
-- `RollResult` -- the game-specific result type
 - `GameRollResult` -- the full return type from `roll()`
 - `RollRecord` -- raw dice data from the core roller
-- `SchemaError` -- error class thrown on invalid input
 - `SchemaErrorCode` -- union type of error codes
 
+and the value:
+
+- `SchemaError` -- error class thrown on invalid input
+
 ```typescript
-import type { RollResult, GameRollResult, RollRecord } from "@randsum/games/blades"
-import { SchemaError } from "@randsum/games/blades"
+import { roll, SchemaError } from "@randsum/games/blades"
+import type { BladesRollResult, GameRollResult, RollRecord } from "@randsum/games/blades"
 ```
 
-The salvageunion subpath also exports `VALID_TABLE_NAMES` (a const tuple of all table names) and `ROLL_TABLE_ENTRIES` (the full table data).
+The salvageunion subpath additionally exports the values `VALID_TABLE_NAMES` (a
+const tuple of all table names) and `ROLL_TABLE_ENTRIES` (the full table data).
 
 ## Schema
 
-The `@randsum/games/schema` subpath provides the JSON Schema definition, validator, and loader for `.randsum.json` spec files used to code-generate game packages.
+The `@randsum/games/schema` subpath exposes the validator and code generator for
+the `.randsum.json` spec files used to code-generate game packages:
 
 ```typescript
-import { validateSpec, loadSpec } from "@randsum/games/schema"
+import {
+  validateSpec,
+  resolveExternalRefs,
+  generateCode,
+  specToFilename,
+  lookupByRange,
+  SchemaError
+} from "@randsum/games/schema"
 ```
+
+It also exports the spec types (`RandSumSpec`, `ValidationResult`, `ValidationError`,
+`SchemaErrorCode`, and the spec-section types).
 
 ## Documentation
 

@@ -1,10 +1,12 @@
 # @randsum/dice-ui
 
-Private, internal React component library for RANDSUM dice UIs — notation input with a token
-overlay, a roll-step visualizer, a result panel, and a combined notation roller.
+Private, internal React component library for RANDSUM dice UIs — a notation input with a token
+color overlay, a roll-step visualizer, result panels, a combined notation roller, and a quick
+reference grid.
 
-> **Private package.** Not published to npm (`"private": true`). Consumed from source by
-> `apps/expo` and `apps/site` within the monorepo via `workspace:~`.
+> **Private package** (`"private": true`, v2.0.0). Not published to npm. Consumed from source by
+> `apps/expo` and `apps/site` within the monorepo via `workspace:~`. There is **no build step** —
+> `main`/`types`/`exports` all point at `src/index.ts`.
 
 ## Render targets
 
@@ -14,15 +16,27 @@ Two targets only — there is **no TUI / `ink` target** (see `docs/adr/ADR-019`)
 - **React Native:** `src/index.native.ts` → the `.native.tsx` components.
 
 Bundlers/resolvers pick the target by platform (Metro for Expo, `paths`/conditions for the
-site). The only runtime workspace dependency is `@randsum/roller`; `react` / `react-dom` /
-`react-native` / `expo-haptics` are peers.
+site). The only runtime workspace dependency is `@randsum/roller`. `react`, `react-dom`,
+`react-native`, and `expo-haptics` are peers (the last three optional).
+
+## Exports
+
+Both barrels expose the same public surface:
+
+- Theme: `useTheme`, `getTheme`, `subscribeTheme`, `DiceUIThemeProvider`
+- `TokenOverlayInput` — notation input with a colored token overlay
+- `RollSteps`, `StepRow`, `DieBadge` — roll-step visualizer
+- `NotationRoller` — combined input + roll button + result display
+- `RollResultPanel`, `RollResultDisplay` — result panels
+- `QuickReferenceGrid`, `DocModal` — notation reference grid + modal
+- `tokenColor` — token-to-color helper
 
 ## Commands
 
 ```bash
-bun run --filter @randsum/dice-ui typecheck
-bun run --filter @randsum/dice-ui test
-bun run --filter @randsum/dice-ui check
+bun run --filter @randsum/dice-ui typecheck   # tsc --noEmit
+bun run --filter @randsum/dice-ui test        # bun test __tests__
+bun run --filter @randsum/dice-ui check       # typecheck + test
 ```
 
 ## More

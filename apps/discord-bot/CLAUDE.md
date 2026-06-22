@@ -31,6 +31,11 @@ apps/discord-bot/
       constants.ts       # D6 die face image URLs, embed footer
       discord.ts         # CJS require() wrapper for discord.js (Linux CI compat)
       replyWithError.ts  # Shared error embed helper
+      ephemeral.ts       # Ephemeral-reply flag helper
+      logger.ts          # Structured logging
+      metrics.ts         # Lightweight metrics counters
+      errorTracker.ts    # Error capture/reporting
+      loginWithBackoff.ts # Gateway login with retry/backoff
 ```
 
 ## Commands
@@ -58,7 +63,22 @@ Set these before running:
 
 `config.ts` throws at startup if `DISCORD_TOKEN` or `DISCORD_CLIENT_ID` are missing.
 
-## Deployment Workflow
+## Deployment
+
+Deploys to **Render** as a `worker` service via the repo-root `render.yaml` blueprint
+(`name: randsum-discord-bot`, `runtime: node`, `region: oregon`, `plan: starter`, `autoDeploy: true`).
+
+- `numInstances` MUST stay `1` — a Discord gateway worker holds a single connection; multiple
+  instances double-process events.
+- Build is scoped to the dependency subtree, not the full monorepo:
+  `bun install --frozen-lockfile && bun run --filter @randsum/roller --filter @randsum/games --filter @randsum/discord-bot build`
+- Start: `node apps/discord-bot/dist/index.js`
+- `BUN_VERSION` pinned to 1.3.14 (matches `.bun-version` / CI). `DISCORD_TOKEN`,
+  `DISCORD_CLIENT_ID`, `DISCORD_GUILD_ID` are `sync: false` (set in the dashboard, not committed).
+- The blueprint may not be auto-synced to the live service — if you edit it, also reconcile the
+  Render dashboard env vars.
+
+### Manual / local deployment workflow
 
 1. Set env vars
 2. `bun run build` — produces `dist/index.js`

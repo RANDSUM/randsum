@@ -1,4 +1,4 @@
-# ADR-017: Vanilla TypeScript for Client Interactivity in apps/spec
+# ADR-017: Vanilla TypeScript for Client Interactivity in apps/rdn
 
 ## Status
 
@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-`apps/spec/` requires three pieces of client-side interactivity:
+`apps/rdn/` requires three pieces of client-side interactivity:
 
 1. **Scroll spy** — two-level: the left sidebar highlights the active `##` section; the right "On This Page" panel tracks `###`/`####` headings within the currently visible `##` section, re-populating its list when the active section changes.
 2. **Mobile hamburger menu** — below 1024px, the sidebar collapses into a fixed overlay opened by a hamburger button and closed by navigation or an outside tap.
@@ -31,7 +31,7 @@ Add `@astrojs/svelte` and implement interactivity as Svelte components. Svelte c
 
 Rejected for similar reasons, though the weight argument is weaker. The primary objection is that Svelte's reactive model is designed for state-driven UI — form inputs, live data, component trees. Scroll spy is a DOM observation task, not a state management task. Svelte's stores and bindings add a conceptual layer that does not map cleanly onto `IntersectionObserver` callbacks that imperatively update CSS classes. The code is not simpler to write or read in Svelte than in vanilla DOM APIs for this use case.
 
-Additionally, introducing Svelte creates a second component authoring model in a monorepo that uses React elsewhere (dice-ui, component-library). A one-off Svelte dependency in `apps/spec/` is harder to justify to contributors than "this app uses no framework."
+Additionally, introducing Svelte creates a second component authoring model in a monorepo that uses React elsewhere (dice-ui, component-library). A one-off Svelte dependency in `apps/rdn/` is harder to justify to contributors than "this app uses no framework."
 
 ### Option C: Vanilla TypeScript in Astro `<script>` blocks
 
@@ -48,7 +48,7 @@ None of these require a framework abstraction. They are stable, well-documented 
 
 ## Decision
 
-All client-side interactivity in `apps/spec/` is implemented as vanilla TypeScript inside Astro `<script>` blocks. No React, Svelte, Vue, or other component framework is added as a dependency.
+All client-side interactivity in `apps/rdn/` is implemented as vanilla TypeScript inside Astro `<script>` blocks. No React, Svelte, Vue, or other component framework is added as a dependency.
 
 The interactivity is co-located with the component that owns the relevant DOM:
 
@@ -75,7 +75,7 @@ All smooth scroll behavior (sidebar link clicks, in-page anchor navigation) resp
 
 - Zero framework runtime overhead. The page ships approximately 2-3 KB of bundled JS for all interactive behavior. This is the minimum possible for this feature set using browser-native APIs.
 - No hydration lifecycle. Astro's `<script>` blocks run after the DOM is ready, with no framework mount/unmount to reason about. The interaction model is: DOM is there, script runs, observers attach.
-- No new package dependencies beyond Astro itself. `apps/spec/package.json` has no `@astrojs/react`, `@astrojs/svelte`, or similar.
+- No new package dependencies beyond Astro itself. `apps/rdn/package.json` has no `@astrojs/react`, `@astrojs/svelte`, or similar — its only `dependencies` entry is `astro`.
 - Maintenance surface is small and self-contained. Each component's interactive logic lives in the same file as its markup. A contributor can read `SidebarNav.astro` and understand both the HTML structure and the scroll spy behavior in one file.
 - The vanilla TS approach is readable and auditable for developers who are not familiar with any particular component framework. `IntersectionObserver` is MDN-documented and widely understood.
 
@@ -88,6 +88,6 @@ All smooth scroll behavior (sidebar link clicks, in-page anchor navigation) resp
 ## References
 
 - Design spec: `docs/superpowers/specs/2026-03-20-spec-site-design.md` — tech stack section
-- ADR-016: Static Version Embedding — the version-switching script is part of the client JS described in this ADR
+- ADR-016: Per-Version Static Pages for Spec Versioning — version switching uses `<a>` page navigation, so no version-switching script is part of the client JS described in this ADR
 - MDN: IntersectionObserver API — `https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver`
 - Astro docs: Scripts and event handling — `https://docs.astro.build/en/guides/client-side-scripts/`

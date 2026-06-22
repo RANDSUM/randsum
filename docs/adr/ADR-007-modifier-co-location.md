@@ -44,7 +44,8 @@ src/modifiers/
   ...              # one file per modifier
   shared/
     explosion.ts   # createAccumulatingExplosionBehavior(strategy) factory
-  index.ts         # RANDSUM_MODIFIERS array — the single source of truth
+  definitions.ts   # RANDSUM_MODIFIERS array — the single source of truth
+  index.ts         # re-exports RANDSUM_MODIFIERS + registry helpers
 ```
 
 The existing five-directory modifier structure is deleted:
