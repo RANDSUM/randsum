@@ -1,168 +1,114 @@
-# ADR-003: dice-ui Integration via "use dom"
+# ADR-003: dice-ui Integration via Metro Platform Fork
 
 ## Status
 
-Proposed
+Accepted (implemented for web; native parity is future work)
 
 ## Context
 
-The RANDSUM Advanced Mode notation input must match `randsum.io` as closely as possible. The playground is built with `@randsum/dice-ui`, which provides:
+The single screen (`app/index.tsx`) needs RANDSUM's notation UI to match
+`randsum.io`. It uses `@randsum/dice-ui` components directly: `NotationRoller`,
+`QuickReferenceGrid`, `RollResultPanel`, and `DocModal`.
 
-- `NotationRoller` — the top-level component that owns notation input, token highlighting, validation feedback, and roll dispatch. It wraps `TokenOverlayInput` internally; `TokenOverlayInput` is an internal implementation detail, not the public API surface.
-- `RollResultPanel` — a structured breakdown of dice results with modifier steps
-- Token chip components driven by CSS `className` and inline style props
-- Layout that depends on `getBoundingClientRect` for token position calculation
+These components are built for the web. They depend on `react-dom` APIs,
+`className` / CSS, DOM measurement (`getBoundingClientRect`), and CSS custom
+properties for theming — none of which exist in React Native. The question was
+how to consume one workspace package (`@randsum/dice-ui`) across web and native
+without maintaining two import sites in the app.
 
-These components are built for the web. They depend on:
-- `react-dom` APIs (`ReactDOM.createPortal`, `flushSync`)
-- CSS class names and `className` prop (not `StyleSheet`)
-- DOM measurement APIs (`getBoundingClientRect`, `ResizeObserver`)
-- CSS custom properties for theming
-
-None of these APIs exist in React Native. `className` is not a valid prop on `View` or `Text`. `getBoundingClientRect` does not exist on the `ref` returned by React Native components. Porting `@randsum/dice-ui` to native would require rewriting every component against React Native primitives, duplicating layout logic, and maintaining two implementations indefinitely.
-
-Expo's `"use dom"` directive (introduced in Expo SDK 51, stable in SDK 55) allows a React component file to declare itself a DOM component. On native platforms, Expo wraps it in a WebView proxy, communicating via a structured bridge. On web, the file is loaded as a normal React component with direct DOM access.
-
-The question is: use `"use dom"` to ship dice-ui on native via WebView, or rewrite native-specific variants from the start?
+An earlier draft proposed wrapping dice-ui in an Expo `"use dom"` WebView
+component to get native parity on day one. That approach was **not adopted** (see
+below).
 
 ## Decision
 
-### Start with `"use dom"` for dice-ui components
+### Import `@randsum/dice-ui` directly; fork the package by platform in Metro
 
-Advanced Mode's `NotationInput` component wraps `@randsum/dice-ui`'s `NotationRoller` using the `"use dom"` directive. This gives:
-- Literal 1:1 feature parity with the playground on day one
-- No duplication of token highlight logic
-- A single source of truth for notation rendering
+The app imports dice-ui components straight into `app/index.tsx` — no WebView
+wrapper, no bridge. Platform divergence is handled entirely by the Metro
+resolver in `metro.config.js`, which maps `@randsum/dice-ui` to a different
+entry point per platform:
 
-The `"use dom"` file lives at `components/NotationInput.tsx` and is marked at its top line:
-
-```tsx
-'use dom'
-
-import { NotationRoller } from '@randsum/dice-ui'
-// ... props bridge
+```js
+'@randsum/dice-ui': path.resolve(
+  monorepoRoot,
+  platform === 'web'
+    ? 'packages/dice-ui/src/index.ts'        // react-dom components
+    : 'packages/dice-ui/src/index.native.ts' // React Native components
+)
 ```
 
-On iOS and Android, Expo renders this in a transparent WebView. The component communicates with the native shell via props (passed in) and callbacks (passed in as serializable event handlers). The bridge supports JSON-serializable values only — no functions with closures, no React refs crossing the boundary.
+The resolver also maps `@randsum/dice-ui` (and `@randsum/roller` subpaths) to
+TypeScript **source** in the monorepo rather than built `dist/` output, so EAS
+needs no prebuild step. tsc typechecks against the native entry via a tsconfig
+`paths` mapping plus `moduleSuffixes: [".native", ""]`.
 
-### Prop bridge — aligned with `NotationRollerProps`
+A second resolver setting is load-bearing for web:
 
-`NotationRoller` accepts the following props (from `packages/dice-ui/src/NotationRoller.tsx`):
-
-```typescript
-interface NotationRollerProps {
-  readonly defaultNotation?: string
-  readonly notation?: string        // controlled input
-  readonly className?: string
-  readonly onChange?: (notation: string) => void
-  readonly resetToken?: number      // increment to trigger an uncontrolled reset
-  readonly renderActions?: (notation: string) => React.ReactNode
-  readonly onRoll?: (result: RollResult) => void
+```js
+config.resolver.unstable_conditionsByPlatform = {
+  web: ['browser', 'react-native']
 }
 ```
 
-The `"use dom"` bridge exposes a subset of these — only JSON-serializable values cross the WebView boundary:
+This forces Metro's web bundler to resolve packages like Zustand to their CJS
+entries (Zustand's ESM entry uses `import.meta.env.MODE`, invalid in the classic
+script contexts Metro emits).
 
-| Prop | Type | Direction | Notes |
-|------|------|-----------|-------|
-| `notation` | `string` | native → DOM | Controlled input value |
-| `resetToken` | `number` | native → DOM | Increment to reset the input |
-| `onChange` | `(notation: string) => void` | DOM → native | Fires on each keystroke; native updates `useNotationStore` |
-| `onRoll` | `(result: RollResult) => void` | DOM → native | Fires after a successful roll; `result` is `{ total, records, notation }`, fully JSON-serializable |
+### Web is the real target today
 
-Props not bridged: `className` (no CSS in native), `renderActions` (returns `React.ReactNode`, not serializable). The ROLL button inside `NotationRoller` is the only roll trigger — the native shell does not need a separate submit path.
+On web the direct import works exactly as `randsum.io` does: `react-dom` is
+available, CSS custom properties drive theming (injected by
+`components/CSSTokens.web.tsx`), and `app/index.tsx` lays the roller and
+reference grid out in a desktop two-column / mobile single-column shell.
 
-No `React.ReactNode` children, no function props with complex closures, no `ref` forwarding across the boundary.
+### Native: resolves, but parity is not built
 
-### Theming: seeding the DOM component's theme store
+On native, Metro routes to `packages/dice-ui/src/index.native.ts`. The app also
+ships a React Native result panel (`components/RollResultView.tsx`) used in place
+of the web `RollResultPanel` inside the result modal, and fires
+`expo-haptics` success feedback on roll (native only). Full native parity for the
+dice-ui surface is **future work**, not currently built out.
 
-`NotationRoller` resolves its theme by reading the `data-theme` attribute on `document.documentElement` via a `MutationObserver` (see `packages/dice-ui/src/useTheme.ts`). When the attribute is `"light"`, the component uses light-mode token colors; otherwise it defaults to dark.
+### Considered but not adopted: Expo `"use dom"`
 
-Inside the `"use dom"` component, the native app's theme preference is passed as a prop (`theme: 'light' | 'dark'`). On mount and on prop change, the `"use dom"` component sets the attribute on the WebView's `document.documentElement`:
+Wrapping dice-ui in a `"use dom"` WebView component was evaluated. It was
+rejected as the integration mechanism because:
 
-```typescript
-useEffect(() => {
-  document.documentElement.setAttribute('data-theme', theme)
-}, [theme])
-```
+- The Metro platform fork already lets the app import one package name and get
+  the right implementation per platform, with zero WebView indirection on web.
+- WebView round-trips add input latency to notation typing, the app's hot path.
+- A serialization-only props bridge (no refs, no `React.ReactNode`) is a standing
+  constraint on the component API.
 
-This bridges the native `useThemeStore` into `dice-ui`'s internal theme mechanism without requiring any changes to `@randsum/dice-ui`. The WebView document is isolated from the native app's DOM — setting `data-theme` on it does not affect the native shell.
-
-### Web target uses dice-ui directly
-
-On Expo Web, `"use dom"` components are rendered as regular React components — there is no WebView indirection. `react-dom` is available and the component works without a bridge. The behavior is identical to the playground.
-
-Platform detection is Expo's responsibility. The same `components/NotationInput.tsx` file works on all three platforms without conditional logic in the component itself.
-
-### Native fallback path: `.native.tsx` platform extensions
-
-If WebView performance is unacceptable in production — measured as perceptible input lag during notation typing on a mid-range Android device — the fallback is a `.native.tsx` platform-specific variant:
-
-```
-components/NotationInput.tsx         ← "use dom" version (web + native via WebView)
-components/NotationInput.native.tsx  ← React Native TextInput version (native only)
-```
-
-Metro bundler resolves `.native.tsx` over `.tsx` on iOS and Android. The `.native.tsx` variant implements the same prop interface using React Native's `TextInput`, custom `Text` spans for token highlighting (approximated), and `StyleSheet`. It does not use dice-ui at all.
-
-This fallback is explicitly **not built in the initial sprint**. It is noted here so developers know the escape hatch exists and can begin implementing it if WebView performance proves inadequate during QA.
-
-### `RollResultPanel` (result overlay) — native-first from the start
-
-The roll result overlay (`components/RollResultView.tsx`) is built as a React Native component from the start, not using `"use dom"`. The rationale: the result overlay is full-screen, animated (slide-up, number spin), and integrates deeply with React Native's gesture and animation systems (`Animated`, `PanResponder` or `react-native-reanimated`). Attempting to animate a WebView-hosted component with native gesture coordination is not practical.
-
-The `RollResultPanel` from dice-ui is used as a **reference implementation only**. The native component reproduces its visual structure (total, breakdown, notation, actions) using React Native primitives.
-
-### Metro + ESM compatibility risk
-
-The spike validated `@randsum/roller` with Metro's bundler. It did **not** validate `@randsum/dice-ui` or any `@randsum/games` subpath imports. Both packages are ESM-only with subpath exports.
-
-Metro requires `resolver.unstable_enablePackageExports: true` in `metro.config.js` to resolve `exports`-field subpaths correctly. Without it, imports like `@randsum/dice-ui` or `@randsum/games/blades` will fail to resolve at bundle time.
-
-The current `apps/expo/metro.config.js` must verify this flag is set:
-
-```javascript
-const { getDefaultConfig } = require('expo/metro-config')
-
-const config = getDefaultConfig(__dirname)
-config.resolver.unstable_enablePackageExports = true
-
-module.exports = config
-```
-
-Additional risks to validate before shipping Advanced Mode:
-- `@randsum/dice-ui` imports `react-dom` — Metro must not attempt to bundle `react-dom` for the native target (it is only used inside the `"use dom"` WebView). This is handled by Expo's `"use dom"` build transform, but should be confirmed.
-- `@randsum/games` subpath imports (e.g. `@randsum/games/blades`) depend on the same `unstable_enablePackageExports` flag. If game rollers are added in the same story as Advanced Mode, test both import paths before closing the story.
+`"use dom"` remains an option for a future native-parity push, but it is not the
+chosen approach and no `"use dom"` component exists in the app.
 
 ## Consequences
 
 ### Positive
 
-- Advanced Mode ships on day one with full feature parity with the playground — no separate notation highlight implementation.
-- The token highlight logic in `@randsum/dice-ui` is maintained in one place. Bug fixes to the playground's notation rendering automatically improve the app.
-- Web target gets zero-overhead direct component usage.
-- The `.native.tsx` fallback path is well-defined and does not require an ADR revision to pursue.
-- The `data-theme` theming mechanism requires no changes to `@randsum/dice-ui` — the WebView attribute is the existing hook.
+- One import site in the app; the platform decision lives in one resolver file.
+- Web has zero-overhead, 1:1 parity with `randsum.io` — direct component usage.
+- Resolving to TS source avoids a dice-ui/roller build step on EAS.
 
 ### Negative
 
-- WebView communication adds latency to the props bridge. If a user types faster than the bridge round-trips, there may be visible lag in token highlighting on low-end native devices. This is the primary risk.
-- Debugging issues in the `"use dom"` component on native requires inspecting WebView internals, which is less ergonomic than native React Native debugging.
-- The prop bridge constraint (JSON-serializable only) means any future enhancement to `NotationInput` that requires passing React nodes or refs across the boundary will require a redesign.
-- The `RollResultPanel` from dice-ui is not reused in the app — its visual design must be reproduced in React Native. This means any dice-ui updates to the result panel layout require manual porting to the native component.
-- Metro's ESM/subpath-export support is gated behind an unstable resolver flag. If Metro stabilizes a different API surface in a future Expo SDK, the `metro.config.js` will need updating.
+- `metro.config.js` is untyped JS, so resolver changes do not surface in
+  `bun run typecheck` — they must be verified with `bun run web` and a native
+  build. New `@randsum/*` subpaths must be added to the resolver map by hand.
+- Native parity for the dice-ui surface is unfinished; the screen is effectively
+  a web-first experience today.
 
 ### Neutral
 
-- `@randsum/dice-ui` becomes a runtime dependency of the Expo app (`apps/expo/package.json`), linked via `workspace:~`. This is consistent with how the playground consumes it.
-- The `"use dom"` WebView is loaded from the app bundle, not from a remote URL. There is no network dependency for the Advanced Mode input.
+- `@randsum/dice-ui` is an app runtime dependency via `workspace:~`, consistent
+  with how the web site consumes it.
 
 ## References
 
-- PRD: dice-ui Strategy section (three-step strategy: use dom → port if needed → direct on web)
-- PRD: Advanced Mode screen specification
-- Expo docs: DOM Components (`"use dom"` directive, SDK 55)
-- `apps/playground/` — dice-ui usage on web (reference implementation)
-- `packages/dice-ui/src/NotationRoller.tsx` — `NotationRollerProps` interface, `RollResult` type
-- `packages/dice-ui/src/useTheme.ts` — `data-theme` attribute mechanism
-- Expo Metro docs: `resolver.unstable_enablePackageExports`
+- `apps/expo/metro.config.js` — platform fork + web condition set (load-bearing)
+- `packages/dice-ui/src/index.ts`, `packages/dice-ui/src/index.native.ts`
+- `app/index.tsx` — direct dice-ui usage
+- `components/RollResultView.tsx` — native result panel
+- `apps/expo/CLAUDE.md` — Metro resolver and dice-ui integration notes

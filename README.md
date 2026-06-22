@@ -26,6 +26,7 @@ This repository contains multiple packages and applications for dice rolling and
 - **[@randsum/games](packages/games)** - TTRPG game packages with subpath exports per system:
   - `@randsum/games/blades` - Blades in the Dark
   - `@randsum/games/daggerheart` - Daggerheart
+  - `@randsum/games/fate` - Fate Core
   - `@randsum/games/fifth` - D&D 5th Edition
   - `@randsum/games/pbta` - Powered by the Apocalypse
   - `@randsum/games/root-rpg` - Root RPG
@@ -35,8 +36,9 @@ This repository contains multiple packages and applications for dice rolling and
 ### Applications (private)
 
 - **[@randsum/discord-bot](apps/discord-bot)** - Discord bot for dice rolling
-- **[@randsum/site](apps/site)** - Documentation and marketing website built with Astro
-- **[@randsum/expo](apps/expo)** - Dice notation playground (web, iOS, Android)
+- **[@randsum/site](apps/site)** - Documentation site built with Astro + Starlight ([randsum.dev](https://randsum.dev))
+- **[@randsum/rdn](apps/rdn)** - RANDSUM Dice Notation specification site ([notation.randsum.dev](https://notation.randsum.dev))
+- **[@randsum/expo](apps/expo)** - Dice playground (web, iOS, Android)
 
 ## 🚀 Quick Example
 
@@ -61,7 +63,7 @@ roll("2d20H") // Roll with disadvantage (2d20, drop highest)
 // Multiple arguments: combine rolls
 roll("1d20+5", "2d6+3") // Attack roll + damage roll
 
-roll("4d6L!R{<3}") // Roll 4d6, drop lowest, reroll below 3
+roll("4d6LR{<3}") // Roll 4d6, drop lowest, reroll below 3
 ```
 
 Or directly from your terminal:
@@ -160,7 +162,7 @@ steps — see [`apps/DEPLOY.md`](apps/DEPLOY.md). Incident RCAs go in `runbooks/
 
 ## 🗺️ Roadmap & Community
 
-RANDSUM is actively evolving. Track in-flight epics on the [public project board](https://github.com/orgs/RANDSUM/projects/2/views/1) — published packages, upcoming game systems (Fate Core, Pathfinder 2e, Ironsworn), the typed notation template literal layer, and the dice mechanic spec format are all queued there.
+RANDSUM is actively evolving. Track in-flight epics on the [public project board](https://github.com/orgs/RANDSUM/projects/2/views/1) — published packages, upcoming game systems (Pathfinder 2e, Ironsworn), the typed notation template literal layer, and the dice mechanic spec format are all queued there.
 
 - **Discord:** [randsum.dev/discord](https://randsum.dev/discord/) — questions, feedback, game requests
 - **Issues & ideas:** [GitHub Issues](https://github.com/RANDSUM/randsum/issues)

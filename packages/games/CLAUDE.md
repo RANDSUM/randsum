@@ -2,12 +2,14 @@
 
 ## Overview
 
-Wraps `@randsum/roller` with game-specific dice mechanics for tabletop RPGs. Each game is defined as a declarative `.randsum.json` spec and code-generated into TypeScript. Consumer API uses subpath exports:
+Wraps `@randsum/roller` with game-specific dice mechanics for tabletop RPGs. Each game is defined as a declarative `.randsum.json` spec and code-generated into TypeScript. ESM-only; the only dependency is `@randsum/roller`. Games never depend on each other. Consumer API uses subpath exports:
 
 ```typescript
 import { roll } from "@randsum/games/blades"
 import { roll } from "@randsum/games/salvageunion"
 ```
+
+Seven games ship: `blades`, `daggerheart`, `fate`, `fifth`, `pbta`, `root-rpg`, `salvageunion` (each a subpath export). A `./schema` subpath exposes the codegen toolkit. `AVAILABLE_GAMES` / `GameShortcode` (from `src/availableGames.generated.ts`) are the public source of truth for the game list.
 
 Each game's `roll()` returns a `GameRollResult<TResult, TDetails, TRollRecord>` with typed `result`, `total`, and `rolls`.
 
@@ -24,7 +26,7 @@ packages/games/
     index.ts              # Root export (re-exports AVAILABLE_GAMES, GameRollResult, SchemaError)
     availableGames.generated.ts  # Generated AVAILABLE_GAMES constant (do not edit)
     types.ts              # GameRollResult generic type
-    schema.ts             # Schema validation/loading exports
+    schema.ts             # ./schema subpath: validateSpec, resolveExternalRefs, generateCode, specToFilename, lookupByRange, SchemaError + spec types
     lib/
       codegen/            # Code generation pipeline
       codegen.ts          # generateCode() function
@@ -77,12 +79,14 @@ bun run --filter @randsum/games gen:check    # Verify generated files are up to 
 The codegen script (`codegen.ts` at package root):
 
 1. Reads all `*.randsum.json` files from the package root
-2. Validates each against the meta-schema
-3. Fetches remote data if needed (e.g., Salvage Union tables), caches to `__fixtures__/`
+2. Resolves external `$ref`s via `resolveExternalRefs` (fetches remote data, e.g. Salvage Union tables, cached to `__fixtures__/<shortcode>-tables.json`)
+3. Validates each resolved spec against the meta-schema via `validateSpec`
 4. Calls `generateCode()` from `src/lib` to produce TypeScript
-5. Formats with Prettier and writes to `src/<shortcode>.generated.ts`
+5. Formats with Prettier and writes to `src/<shortcode>.generated.ts`, then regenerates `src/availableGames.generated.ts`
 
-Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate`. They export a typed `roll()` function and re-export `GameRollResult`, `RollRecord`, `SchemaError`.
+Build output: `dist/<shortcode>.generated.js` + `.d.ts` per game. With `--check` (`gen:check`), the script writes nothing and fails if any generated file is stale.
+
+Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate`. Each exports a typed `roll()` function, a game-specific result type (e.g. `BladesRollResult`), the `SchemaError` value, and re-exports the types `GameRollResult`, `RollRecord`, `SchemaErrorCode`. The salvageunion module additionally exports the `ROLL_TABLE_ENTRIES` and `VALID_TABLE_NAMES` values.
 
 ## Adding a New Game
 
@@ -91,7 +95,7 @@ Read [`docs/randsum-json-schema.md`](./docs/randsum-json-schema.md) first — it
 1. Create `<shortcode>.randsum.json` at the package root
 2. Run `bun run --filter @randsum/games gen` to generate `src/<shortcode>.generated.ts` and refresh `src/availableGames.generated.ts` (which drives the `AVAILABLE_GAMES` public export)
 3. Add a subpath export in `package.json` under `"exports"` (follow existing pattern). The `exports` field is hand-maintained — bunup's `exports: true` auto-writer is intentionally disabled because its common-prefix inference breaks when entries are added. `__tests__/exports-sync.test.ts` guards against drift.
-4. Add a size-limit entry in `package.json` (15 KB limit for most games, 35 KB for salvageunion)
+4. Add a size-limit entry in `package.json` (15 KB for most games; 16 KB for daggerheart and pbta; 33 KB for salvageunion)
 5. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
 6. Run `bun run --filter @randsum/games check` to verify everything passes
 
@@ -121,7 +125,7 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + f
 - All game logic lives in the `.randsum.json` spec. Never hand-write game logic in generated `.ts` files.
 - Generated files are checked in but must not be manually edited. Always regenerate via codegen.
 - Games depend only on `@randsum/roller`. Games never depend on each other.
-- Bundle size limit: 15 KB per game (35 KB for salvageunion due to baked-in tables).
+- Bundle size limit: 15 KB per game (16 KB for daggerheart and pbta; 33 KB for salvageunion due to baked-in tables).
 - Remote data (e.g., Salvage Union tables) is fetched at codegen time and baked into generated code. Zero runtime network calls.
 
 For the formal modifier taxonomy and classification system, see https://notation.randsum.dev.

@@ -1,17 +1,17 @@
 # @randsum/test-utils
 
-Shared test utilities for RANDSUM packages.
+Shared test utilities for the RANDSUM monorepo. Part of `@randsum/roller`; not
+published separately.
 
-This package provides common testing utilities including:
+## What it provides
 
-- Seeded random number generators for deterministic tests
-- Custom assertions for roll results
-- Common test fixtures and mock data
-- Helper functions for creating mock rolls
-
-## Installation
-
-This package is part of the RANDSUM monorepo and is not published separately.
+- **Deterministic RNG** — `createSeededRandom(seed)` and `createQueueRandom(...)`
+  return a `RandomFn` you can pass to `roll()` as a `RollConfig`.
+- **Assertions** — `expectRollInRange`, `expectAllRollsInRange`.
+- **Fixtures** — `commonNotations`, `commonRollOptions`, and factory helpers
+  (`createRollOptions`, `createRollParams`, `createNumericRollBonus`,
+  `createRequiredNumericRollParameters`, `createMockRollOne`).
+- **Mocks** — `createMockRoll`, `createDeterministicRoll`.
 
 ## Usage
 
@@ -19,14 +19,18 @@ This package is part of the RANDSUM monorepo and is not published separately.
 import { createSeededRandom, expectRollInRange, commonNotations } from "@randsum/test-utils"
 import { roll } from "@randsum/roller"
 
-// roll() accepts number, notation string, options object, or multiple arguments
-// Deterministic testing
+// Deterministic testing — RollConfig must be the LAST argument to roll()
 const seeded = createSeededRandom(42)
 const result = roll("4d6L", { randomFn: seeded })
 
 // Custom assertions
 expectRollInRange(result, 3, 18)
 
-// Common fixtures
-const advantageRoll = roll(commonNotations.advantage)
+// Common fixtures (notation strings)
+const advantage = roll(commonNotations.advantage) // "2d20H"
 ```
+
+`createSeededRandom(seed)` returns a `RandomFn` (a `() => number` in `[0, 1)`).
+The same seed always yields the same sequence, so tests are reproducible.
+`commonNotations` keys: `advantage`, `disadvantage`, `abilityScore`, `damage`,
+`skillCheck`, `basic`, `percentile`, `exploding`, `reroll`, `cap`.

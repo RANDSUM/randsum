@@ -6,9 +6,8 @@ Accepted
 
 ## Context
 
-Earlier project memory and several descriptive artifacts (notably `audit/inventory.md`
-and the architecture audit dimension) recorded a planned "unified roller app" direction
-in which:
+Earlier project memory and audit findings recorded a planned "unified roller app"
+direction in which:
 
 - `apps/cli` would be an **Ink-based TUI** that depended on `@randsum/dice-ui`, and
 - `@randsum/dice-ui` would ship a **third render target** — an `ink/` subdirectory of
@@ -45,9 +44,6 @@ Record that the "Ink TUI / dice-ui TUI target" direction is **retired, not pendi
 - `dice-ui` is a two-target (web + React Native) component library with no TUI surface.
 - The `NormalizedRollDefinition` IR is a build-time codegen artifact, not a runtime concept.
 
-`audit/inventory.md` has been corrected to match this reality (CLI no longer described as
-an Ink TUI depending on dice-ui; dice-ui no longer described as having an `ink/` target).
-
 ## Consequences
 
 ### Positive
@@ -67,4 +63,3 @@ an Ink TUI depending on dice-ui; dice-ui no longer described as having an `ink/`
 - `apps/cli/src/{index,run,format}.ts`, `apps/cli/package.json`, `apps/cli/bunup.config.ts`
 - `packages/dice-ui/package.json`, `packages/dice-ui/src/index.ts`, `packages/dice-ui/src/index.native.ts`
 - `packages/games/src/lib/normalizedTypes.ts` (IR definition; consumers under `packages/games/src/lib/`)
-- `audit/inventory.md` (corrected in the same change as this ADR)

@@ -167,7 +167,7 @@ The pipeline documentation uses structural stage names in developer-facing docs 
 
 - Phase 3 is a breaking change for any consumer of `@randsum/roller/docs` or `@randsum/roller/tokenize` that pattern-matches on `'Pool'` or `'Special'` category strings. Internal consumers (dice-ui, playground) must be updated in the same PR.
 - CSS class names generated from `token.category` will change for cap, replace, and wildDie tokens. Existing stylesheets using `du-token--Pool` or `du-token--Special` (for wildDie) will produce unstyled tokens for affected notation until updated. There is no runtime warning.
-- The `'Value'` and `'Macro'` category values have no prior established meaning in the RANDSUM ecosystem. Consumers who have built tooling against the category vocabulary will need documentation updates alongside the code changes.
+- The new verb-based category values (`Clamp`, `Map`, `Filter`, `Substitute`, `Generate`, `Accumulate`, `Scale`, `Reinterpret`, `Dispatch`) have no prior established meaning in the RANDSUM ecosystem. Consumers who have built tooling against the old category vocabulary will need documentation updates alongside the code changes.
 - `sort`'s category classification remains unresolved in this ADR. It sits in Stage 3 by priority but has no effect on the computed total and is arguably a presentational modifier. Whether sort moves to a new `'Display'` category or remains in `'Order'` is deferred to the Phase 3 PR author, who must evaluate against the dice-ui and playground blast radius at that time.
 
 ### Non-decisions (deferred)

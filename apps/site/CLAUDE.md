@@ -1,59 +1,41 @@
-# @randsum/site - Documentation Website
+# @randsum/site — Documentation Website
 
 ## Overview
 
-Starlight-powered static documentation site. Deploys to Netlify on push to main.
+Starlight-powered documentation site with a custom marketing landing page.
+Private app, deploys to Netlify on push to `main`. Lives at `randsum.dev`.
 
 ## Tech Stack
 
-- **Astro** with `@astrojs/starlight` — docs framework with sidebar, search, and routing
-- **React** via `@astrojs/react` — interactive components (playground, live REPL)
-- **Netlify** adapter for static output
+- **Astro 6.4.6** — static site framework (`output` via `@astrojs/netlify`)
+- **`@astrojs/starlight` 0.40.0** — docs framework (sidebar, search, routing)
+  - `starlight-sidebar-topics` — top-level topic grouping in the sidebar
+  - `starlight-page-actions` — per-page action links
+- **`@astrojs/react` 5.0.7** — interactive React islands (playground, REPL)
+- **`astro-expressive-code`** — code block rendering
+- **`@randsum/roller` + `@randsum/dice-ui`** — workspace-linked, power the live
+  playground / notation components
+- Fonts (Inter, JetBrains Mono) via Astro's Google font provider
 
 ## Content Structure
 
-All documentation lives in `src/content/docs/` as `.mdx` files. Starlight auto-routes them:
+Docs live in `src/content/docs/` as `.mdx` files; Starlight auto-routes them.
+Top-level topics: `welcome/`, `roller/`, `notation/`, `games/` (incl.
+`games/schema/`), `tools/`.
 
-```
-src/content/docs/
-  welcome/
-    introduction.mdx
-    ecosystem-overview.mdx
-  roller/
-    introduction.mdx
-    getting-started.mdx
-    roll-options.mdx
-    modifiers.mdx
-    error-handling.mdx
-    api-reference.mdx
-  notation/
-    introduction.mdx
-    getting-started.mdx
-    randsum-dice-notation.mdx
-    validation-and-parsing.mdx
-    api-reference.mdx
-  games/
-    introduction.mdx
-    getting-started.mdx
-    blades.mdx
-    daggerheart.mdx
-    fifth.mdx
-    pbta.mdx
-    root-rpg.mdx
-    salvageunion.mdx
-    schema/
-      overview.mdx
-      reference.mdx
-      using-loadspec.mdx
-      contributing-a-game.mdx
-  tools/
-    discord-bot.mdx
-    claude-code-skill.mdx
-```
+## Landing Page
+
+The home page is **not** a Starlight doc — it's a custom `src/pages/index.astro`
+that renders a `StarlightPage` shell wrapping landing sections from
+`src/components/landing/` (`LandingHero`, `FeaturesGrid`, `FeaturesPlayground`,
+`GamesGrid`, `PackagesGrid`, `ToolsGrid`, `IntegrationsSection`,
+`GameSchemaSection`, `LandingFooter`, `LandingScripts`). There is also a
+`src/pages/discord.astro` route.
 
 ## Adding Content
 
-Create a `.mdx` file in the appropriate `src/content/docs/` subdirectory with frontmatter:
+Create a `.mdx` file in the appropriate `src/content/docs/` subdirectory with
+frontmatter:
 
 ```mdx
 ---
@@ -62,40 +44,44 @@ description: Brief description
 ---
 ```
 
-Then register the slug in `astro.config.mjs` under `starlightSidebarTopics` in the matching topic's `items` array.
+Then register the slug in `astro.config.mjs` under `starlightSidebarTopics` in
+the matching topic's `items` array.
 
 ## Components
 
-Custom Starlight component overrides in `src/components/`:
+Starlight component overrides (in `src/components/`, wired in `astro.config.mjs`):
 
+- `Head.astro` — `<head>` override (OG/Twitter meta)
 - `Header.astro` — site header override
 - `SiteTitle.astro` — logo/title override
 - `ThemeSelect.astro` — theme toggle override
 
-Interactive components:
+Interactive / shared components:
 
 - `live-repl/` — live code examples (used via `<CodeExample>` in MDX)
-- `HeroInteractive.tsx` — hero section dice playground
 - `NotationRoller/` — notation input component
-- `GameComparison.tsx` — game system comparison table
+- `HeroInteractive.tsx` — hero dice playground
 - `GameSchemaViewer.tsx` — schema viewer
 - `IntegrationViewer.tsx` — integration viewer
 - `LabeledSection.astro` — labeled content block
+- `ErrorBoundary/` — React error boundary
+
+## Build Pipeline
+
+- `src/integrations/copy-markdown-to-dist.ts` — custom Astro integration that
+  copies raw markdown into `dist/` (so source docs are fetchable post-build).
 
 ## Package Data
 
-`src/utils/packageData.ts` defines metadata for packages shown on the site:
+`src/utils/packageData.ts` defines metadata for packages shown on the site
+(`corePackages`, `games`, `toolPackages`).
 
-- `corePackages` — core packages array
-- `games` — game system packages
-- `toolPackages` — tool packages
-
-## Build Commands
+## Commands
 
 ```bash
-bun run dev        # Development server (localhost:4321)
+bun run dev        # Dev server (localhost:4321)
 bun run build      # Production build
 bun run preview    # Preview production build
 bun run typecheck  # astro check
-bun run check      # Full check (build, typecheck, format, lint, test)
+bun run check      # build + typecheck + format:check + lint + test
 ```

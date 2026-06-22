@@ -2,96 +2,80 @@
 
 ## Status
 
-Proposed
+Accepted (partially implemented)
 
 ## Context
 
-The RANDSUM Expo app has two meaningfully different categories of runtime state, and conflating them leads to either over-fetching (treating UI state as server data) or stale cache bugs (treating server data as local state).
+The RANDSUM Expo app is a single-screen prototype (`app/index.tsx`). Its runtime
+state is small and entirely client-side:
 
-**Client/UI state** is ephemeral, lives only on the device, and is mutated synchronously in response to user gestures:
-- The current dice pool being built in Simple Mode (e.g. `3d6 + 1d8`)
-- The current notation string in Advanced Mode
-- Which game is selected in the Games tab
-- Theme preference (dark/light) before it has been written to storage
-- Whether the roll result overlay is visible
+- The current notation string being edited, plus its validation status
+- The active color scheme (`'dark' | 'light'`)
+- Whether the roll-result modal is visible, and the result it shows
 
-**Server/persisted state** is asynchronous, may be stale, and requires cache invalidation:
-- Roll templates stored in Supabase (fetched on mount, written after user saves)
-- Roll history when cloud sync is active (merged from local + remote on sign-in)
-- The authenticated user's profile and preferences from Supabase
-
-A single global store trying to own both categories creates a coupling problem: every Supabase response must be manually threaded into the store, and every cache invalidation has to be driven by imperative calls rather than query keys.
-
-React Context alone is insufficient. Each of the five tabs potentially mounts independently in Expo Router, and passing context across tab boundaries via React's component tree is error-prone at the scale of this app.
+There is no server, no account system, and no remote data source. Earlier drafts
+of this ADR described a Zustand + TanStack Query split with Supabase-backed
+templates, history, and profiles; none of that is installed or used today. This
+ADR is trimmed to the topology that actually ships.
 
 ## Decision
 
-Use **two purpose-specific libraries with clear, non-overlapping boundaries**:
+Use **Zustand for client/UI state**, with AsyncStorage persistence for the
+preferences that must survive a reload. There is no server-state library.
 
-### Zustand — client/UI state
+### Zustand stores (`lib/stores/`)
 
-Zustand manages all state that is:
-- Synchronous and device-local
-- Not fetched from a remote source
-- Reset on user action, not on cache expiry
+- `useThemeStore` (`lib/stores/themeStore.ts`) — holds `colorScheme` and the
+  derived `tokens` / `fontSizes`. **Persisted** via `zustand/middleware`
+  `persist` + `createJSONStorage(() => AsyncStorage)` under the key
+  `zustand/theme`. `partialize` persists only `colorScheme`; `tokens` are
+  recomputed from `getTokens()` on rehydrate (`onRehydrateStorage`).
+  `initThemeFromSystem()` seeds the store once from the system `useColorScheme()`
+  value, called from `app/_layout.tsx`; an explicit user toggle then takes over.
+- `useNotationStore` (`lib/stores/notationStore.ts`) — holds the current
+  `notation` string plus derived `isValid` / `hasError` from `isDiceNotation()`.
+  **Not persisted.**
 
-Concrete stores:
-- `usePoolStore` — current dice pool (Simple Mode), reset on Roll or Clear
-- `useNotationStore` — current notation string (Advanced Mode), validation status
-- `useThemeStore` — active theme (`'dark' | 'light'`), seeded from preferences but mutated by the toggle
-- `useUIStore` — overlay visibility, active game selection, active tab state that must survive re-renders
-- `useSyncStore` — sync engine status surface for the Account screen: `status: 'idle' | 'syncing' | 'error'`, `pendingCount: number`, `lastSyncAt: string | null`. Written by `lib/sync.ts`; read by the Account screen's sync status indicator. Not persisted — resets to `idle` on app launch.
+Stores expose selector-friendly hooks; consumers read with
+`useStore(s => s.field)`. `hooks/useTheme.ts` is a thin wrapper over
+`useThemeStore`.
 
-Zustand stores are created with `create()` and optionally persisted to AsyncStorage using the `zustand/middleware` `persist` middleware for stores that must survive app restart (e.g. `useThemeStore`).
+### Roll result
 
-### TanStack Query — server/async state
+The current roll result is held in local `useState` inside `app/index.tsx`, not
+in a store. It is ephemeral and only one screen needs it, so a store would be
+overkill.
 
-TanStack Query (`@tanstack/react-query`) manages all state that is:
-- Fetched from Supabase or derived from a Supabase response
-- Subject to cache invalidation (e.g. after a template is saved or deleted)
-- Loaded asynchronously and potentially stale
+### No server-state library
 
-Concrete query domains:
-- `useTemplatesQuery` — fetches the user's saved templates from Supabase; invalidated after any template mutation
-- `useHistoryQuery` — fetches cloud roll history; only active when the user is authenticated
-- `useProfileQuery` — fetches the user's Supabase profile and cloud preferences on sign-in
-
-TanStack Query is configured with a `QueryClient` at the root layout. The Supabase client is the query function dependency — it is not stored in Zustand.
-
-### The boundary rule
-
-The boundary is enforced by one constraint: **Zustand stores never hold Supabase responses, and TanStack Query never holds UI gesture state.** If a piece of data crosses this line (e.g. preferences loaded from Supabase need to seed the theme store), that handoff happens in a one-time effect on query success, not by merging the two state layers.
-
-Example: on successful `useProfileQuery`, a `useEffect` calls `useThemeStore.getState().setTheme(profile.preferences.theme)`. After that point, Zustand owns the theme for UI purposes. Zustand does not re-fetch from Supabase; TanStack Query does not know the theme store exists.
-
-### Local data (AsyncStorage/SQLite)
-
-Local templates and history — the data that exists before a user signs in — are accessed via a `lib/storage.ts` abstraction (see ADR-002). Reads from local storage are wrapped in TanStack Query using a local query key (e.g. `['templates', 'local']`). This keeps the hooks interface consistent for components regardless of whether the backing store is local or remote: components call `useTemplatesQuery()`, which internally decides whether to hit local storage or Supabase based on auth state.
+TanStack Query is **not installed**. There is nothing to fetch — `roll()` is a
+pure local computation from `@randsum/roller`. If a remote data source is ever
+added, a server-state library can be introduced then, behind its own ADR.
 
 ## Consequences
 
 ### Positive
 
-- Components have a single, consistent hook interface for each data domain regardless of whether auth is active.
-- Cache invalidation after mutations (`invalidateQueries`) is automatic and correct — no manual Zustand setters to update template lists after a save.
-- Zustand stores are small, type-safe, and testable in isolation.
-- TanStack Query's devtools provide visibility into Supabase query timing, retries, and stale states during development.
-- The boundary rule is enforceable in code review: any Supabase response showing up in a Zustand store is a clear violation.
+- The state layer is minimal: two small, type-safe Zustand stores plus one piece
+  of local component state.
+- Theme preference survives reloads via AsyncStorage with no extra wiring.
+- No cache-invalidation machinery to reason about, because there is no cache.
 
 ### Negative
 
-- Two state libraries means two mental models for developers new to the codebase.
-- The handoff pattern (query success → seed Zustand) introduces a small window where the theme store has its default value before the profile query resolves. A loading state or skeleton must cover this.
-- Persist middleware for Zustand (theme, preferences) and TanStack Query's cache are both writing to AsyncStorage. Key namespace collisions must be avoided by convention (`zustand/theme`, `rq/templates`, etc.).
+- The `notationStore`/`themeStore` split is deliberately small; if the app grows
+  to multiple screens sharing more state, the store topology will need revisiting.
 
 ### Neutral
 
-- Neither library is a monorepo dependency. Both are app-only deps in `apps/expo/package.json`.
-- The `QueryClient` lives in `app/_layout.tsx`. All tabs share one cache instance — this is the intended Expo Router pattern.
+- Zustand is an app-only dependency in `apps/expo/package.json`, not a monorepo
+  dependency.
+- A `lib/storage.ts` / `lib/storage.web.ts` abstraction exists (templates,
+  history, preferences) but is **not wired into the screen** — it is exercised
+  only by tests. See ADR-002.
 
 ## References
 
-- PRD: Technical Architecture section (Zustand, TanStack Query listed as core dependencies)
-- PRD: Data Model section (local vs Supabase schema)
-- ADR-002: Local-First Data Architecture (defines the `lib/storage.ts` abstraction referenced above)
-- Expo Router docs: Root layout and shared providers
+- ADR-002: Local-First Data Architecture (status of the unused storage layer)
+- ADR-005: Design System & Theme Tokens (the theme store's token map)
+- `lib/stores/themeStore.ts`, `lib/stores/notationStore.ts`

@@ -34,7 +34,7 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 | #                                                   | Title                                                     | Status   |
 | --------------------------------------------------- | --------------------------------------------------------- | -------- |
 | [008](./ADR-008-esm-only-package-output.md)         | ESM-only package output across all publishable packages   | Accepted |
-| [018](./ADR-018-roller-sideeffects-src-glob.md)     | Roller sideEffects via src-glob (bunup self-DCE workaround) | Accepted |
+| [018](./ADR-018-roller-sideeffects-src-glob.md)     | Roller sideEffects: `true` in-repo, flipped to `false` at publish | Accepted (amended) |
 
 ### Toolchain
 
@@ -49,14 +49,14 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 | [010](./ADR-010-docs-site-notation-merge-alignment.md)              | Documentation site alignment with notation-into-roller merge | Accepted                                 |
 | [015](./ADR-015-custom-astro-layout-over-starlight.md)              | Custom Astro layout over Starlight for notation.randsum.dev  | Accepted                                 |
 | [016](./ADR-016-static-version-embedding.md)                        | Per-version static pages for spec versioning                 | Accepted (amended)                       |
-| [017](./ADR-017-vanilla-typescript-client-interactivity.md)         | Vanilla TypeScript for client interactivity in apps/spec     | Accepted                                 |
+| [017](./ADR-017-vanilla-typescript-client-interactivity.md)         | Vanilla TypeScript for client interactivity in apps/rdn      | Accepted                                 |
 
 ### Playground / Interactive Apps
 
 | #                                                     | Title                           | Status   |
 | ----------------------------------------------------- | ------------------------------- | -------- |
-| [011](./ADR-011-playground-layout-design.md)          | Playground layout design        | Accepted |
-| [012](./ADR-012-playground-app-infrastructure.md)     | Playground app infrastructure   | Accepted |
+| [011](./ADR-011-playground-layout-design.md)          | Playground layout design        | Superseded by apps/expo |
+| [012](./ADR-012-playground-app-infrastructure.md)     | Playground app infrastructure   | Superseded by apps/expo |
 
 ## For AI Agents
 
@@ -67,11 +67,11 @@ Consult these ADRs before starting the related kind of task.
 - **Changing `roll()` input types** — [ADR-004](./ADR-004-literal-types-over-branded-types.md) established literal-type API. Branded types are rejected.
 - **Modifying the roller public API surface** — [ADR-009](./ADR-009-public-api-surface-reduction.md) limits the public symbols. Consult before adding exports.
 - **Adding CJS support or a `require` conditional export** — rejected by [ADR-008](./ADR-008-esm-only-package-output.md).
-- **Touching `sideEffects` in `@randsum/roller`** — [ADR-018](./ADR-018-roller-sideeffects-src-glob.md) documents the bunup self-DCE bug and the `["./src/**/*"]` workaround. Do not switch to `false` without re-verifying the bug is gone.
+- **Touching `sideEffects` in `@randsum/roller`** — [ADR-018](./ADR-018-roller-sideeffects-src-glob.md): the in-repo value is `true` (required by bunup's self-DCE and the CLI's `noExternal` source bundling) and is flipped to `false` in the published tarball by `scripts/publish.ts`. Do not change the in-repo `true` without updating that flip — the `publish (dry run)` CI job asserts it.
 - **Looking for `@randsum/notation`** — gone. Merged into roller per [ADR-005](./ADR-005-merge-notation-into-roller.md). Original separation rationale in [ADR-003](./ADR-003-notation-as-separate-package.md) (superseded).
 - **Considering a linter/formatter swap (e.g., Biome)** — [ADR-013](./ADR-013-biome-migration-evaluation.md) deferred the migration. Re-evaluate only with new evidence.
-- **Working on notation.randsum.dev (`apps/spec/` / `apps/rdn/`)** — [ADR-015](./ADR-015-custom-astro-layout-over-starlight.md) (no Starlight), [ADR-016](./ADR-016-static-version-embedding.md) (per-version static pages), [ADR-017](./ADR-017-vanilla-typescript-client-interactivity.md) (no React islands).
-- **Working on the playground app** — [ADR-011](./ADR-011-playground-layout-design.md) (layout), [ADR-012](./ADR-012-playground-app-infrastructure.md) (infrastructure). Note the playground is in the process of being retired in favor of `apps/expo/` per the Unified Roller App Sprint.
+- **Working on notation.randsum.dev (`apps/rdn/`)** — [ADR-015](./ADR-015-custom-astro-layout-over-starlight.md) (no Starlight), [ADR-016](./ADR-016-static-version-embedding.md) (per-version static pages), [ADR-017](./ADR-017-vanilla-typescript-client-interactivity.md) (no React islands).
+- **Looking for the playground app** — there is no `apps/playground/`. The interactive dice app is `apps/expo/`. [ADR-011](./ADR-011-playground-layout-design.md) and [ADR-012](./ADR-012-playground-app-infrastructure.md) record the original playground design but were superseded by `apps/expo/` and never built.
 - **Updating the docs site copy or examples** — [ADR-010](./ADR-010-docs-site-notation-merge-alignment.md) aligned the site with the notation-into-roller merge. Any doc that still references `@randsum/notation` as a separate package is stale.
 - **Working on `apps/cli` or `@randsum/dice-ui`** — [ADR-019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) records that the CLI is a plain string-formatter (no Ink, no dice-ui dep) and dice-ui has only web + React Native targets (no `ink/` TUI). Do not re-introduce Ink on the assumption it was once intended.
 

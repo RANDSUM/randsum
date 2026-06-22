@@ -10,7 +10,7 @@ Game packages contained hand-written TypeScript with duplicated patterns across 
 
 ## Decision
 
-Define game mechanics declaratively in `.randsum.json` spec files and generate TypeScript via a codegen pipeline (`@randsum/gameSchema`). Each spec is validated against a JSON Schema, normalized into an intermediate representation, and emitted as a self-contained TypeScript module.
+Define game mechanics declaratively in `.randsum.json` spec files and generate TypeScript via a codegen pipeline that lives in the unified `@randsum/games` package (the toolkit is exposed via the `@randsum/games/schema` subpath). The pipeline (`packages/games/codegen.ts`) reads each `*.randsum.json` from the package root, resolves external `$ref`s, validates the spec against the `randsum.json` meta-schema, generates TypeScript, formats it with Prettier, and writes a self-contained module to `src/<shortcode>.generated.ts`.
 
 ## Consequences
 

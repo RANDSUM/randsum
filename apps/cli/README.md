@@ -41,9 +41,21 @@ randsum 3d6!          # Exploding dice
 -h, --help            Show help
 ```
 
+Notation can also be piped in via stdin:
+
+```bash
+echo "4d6L" | randsum
+```
+
 ## Dice Notation
 
 Uses [RANDSUM Dice Notation](https://notation.randsum.dev) — supports drop/keep (`L`/`H`), reroll (`R{}`), exploding (`!`), unique (`U`), cap (`C{}`), and arithmetic (`+`/`-`).
+
+## How it ships
+
+A plain string-formatting CLI — no interactive UI. `@randsum/roller` is bundled into a single
+ESM `dist/index.js` at build time (bunup, `noExternal: /^@randsum\//`), so the published package
+has **zero runtime dependencies**.
 
 ## License
 

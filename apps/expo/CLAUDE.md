@@ -1,29 +1,39 @@
 # @randsum/expo — Dice Playground (Web, iOS, Android)
 
-Private Expo app powering `randsum.io` and the future native apps. See `PRD.md` for the full product spec (tabs, roll result overlay, history, templates, account).
+Private Expo app powering the web playground at `randsumapp.expo.app` plus native
+builds. See the root `CLAUDE.md` for monorepo-wide conventions; this file covers
+Expo-specific guidance only.
 
-See the root `CLAUDE.md` for monorepo-wide conventions. This file covers Expo-specific guidance only.
+## Current State — Read This First
+
+The app is a **single-screen prototype**. The entire UI is `app/index.tsx`
+(a notation roller + quick-reference grid + roll-result panel) under
+`app/_layout.tsx`. **None of the following exist yet:** tabs, a roll-history
+feed, templates, game-specific rollers, accounts/auth, Supabase, SQLite, or
+TanStack Query. Document and build against current reality.
 
 ## Stack
 
 - **Expo SDK 56** with **Expo Router** (file-based routing under `app/`)
 - **React 19 / React Native 0.85 / react-native-web 0.21**
-- **Zustand 5** for client state (`lib/stores/`) with `persist` + `createJSONStorage(AsyncStorage)`
-- **@react-native-async-storage/async-storage** for persistence
-- **JetBrainsMono_400Regular** via `@expo-google-fonts/jetbrains-mono` (required before render)
+- **Zustand 5** for client state (`lib/stores/`) — `themeStore` (persisted via
+  `persist` + `createJSONStorage(AsyncStorage)`) and `notationStore` (not persisted)
+- **AsyncStorage 2** for persistence
+- **JetBrainsMono_400Regular** via `@expo-google-fonts/jetbrains-mono` (loaded
+  before first render)
 - **Workspace-linked**: `@randsum/roller`, `@randsum/dice-ui` (both `workspace:~`)
-- **EAS project**: `d50b53cf-026b-45e8-823d-c96fb621a521` (slug `randsumapp`, owner `randsum`)
 - **Web deploy target**: randsumapp.expo.app (EAS Hosting)
 
-Supabase auth and TanStack Query from the PRD are not wired yet — they were removed in 2026-03-25 and will return later. Do not add them back without an explicit task.
+Supabase / cloud sync (referenced in `.env.example`) was removed 2026-03-25 and
+is **not wired**. Do not re-add it without an explicit task.
 
 ## Directory Layout
 
 ```
 apps/expo/
-  app/                      # Expo Router (file-based)
-    _layout.tsx             # Root layout — fonts, theme, Stack navigator, <Head>
-    index.tsx               # Roll screen (notation roller + reference grid)
+  app/                      # Expo Router (file-based) — the whole app
+    _layout.tsx             # Root layout — fonts, theme init, Stack navigator
+    index.tsx               # The single screen (notation roller + reference grid)
   components/               # UI — one file per component
     CSSTokens.tsx           # Native no-op
     CSSTokens.web.tsx       # Injects CSS custom properties on web
@@ -34,16 +44,17 @@ apps/expo/
     useTheme.ts             # Reads from themeStore
   lib/
     stores/
-      themeStore.ts         # Persisted colorScheme + tokens (Zustand)
+      themeStore.ts         # Persisted colorScheme + derived tokens (Zustand)
       notationStore.ts      # Current notation + validation state (Zustand)
     storage.ts              # Re-exports the web storage implementation
     storage.web.ts          # localStorage-backed implementation
     theme.ts                # ColorScheme, ThemeTokens, fontSizes, getTokens()
-    interpolate.ts          # Variable interpolation for templates
-    parseRollResult.ts      # RollerRollResult -> ParsedRollResult
-    sharing.ts              # Share URL builder
+    interpolate.ts          # Variable interpolation helper
+    parseRollResult.ts      # RollResult -> ParsedRollResult
+    sharing.ts              # Share URL builder (?n= notation)
     types.ts
-  __tests__/                # bun:test (see Testing below)
+  docs/                     # Component/store/data-layer notes + ADRs (docs/adrs/)
+  __tests__/                # bun:test (see Testing)
   metro.config.js           # Workspace resolver + web conditions (load-bearing)
   bunfig.toml               # Preloads __tests__/setup.ts
   app.json, eas.json, tsconfig.json, package.json
@@ -52,16 +63,22 @@ apps/expo/
 ## Commands
 
 ```bash
-# Per-app (run from apps/expo or with --filter @randsum/expo)
+# Per-app (from apps/expo or with --filter @randsum/expo)
 bun run start                    # Expo dev server
 bun run ios                      # Open iOS simulator
 bun run android                  # Open Android emulator (requires ANDROID_HOME)
 bun run web                      # Web dev server
 bun run typecheck                # tsc --noEmit
 bun run lint                     # ESLint (uses apps/expo/eslint.config.js)
+bun run check                    # typecheck + format:check + lint + test
 
-# Tests run from the monorepo root via bun:test
-bun test apps/expo               # Run expo tests with the preloaded setup
+# Tests (bun:test, preloaded setup via bunfig.toml)
+bun test apps/expo               # All expo tests
+bun test apps/expo/__tests__/useRoll.test.ts   # Single file
+
+# E2E (Playwright, web only)
+bun run e2e:build                # expo export --platform web
+bun run test:e2e                 # playwright test
 
 # EAS (from this directory)
 eas build --platform ios --profile preview
@@ -69,20 +86,24 @@ eas build --platform android --profile preview
 eas deploy --prod                # Web deploy to randsumapp.expo.app
 ```
 
-ANDROID_HOME must be set (see `memory/MEMORY.md` — installed at `~/Library/Android/sdk`).
+ANDROID_HOME must be set for Android builds.
 
 ## Metro Resolver — Load-Bearing
 
-`metro.config.js` contains two critical configurations. Changes here are high-risk; verify with `bun run web` and a native build before landing.
+`metro.config.js` contains two critical configurations. Changes here are
+high-risk; verify with `bun run web` and a native build before landing.
 
 ### 1. Workspace TypeScript source resolution
 
-Metro resolves `@randsum/*` imports directly to TS source in the monorepo rather than built `dist/` output. This avoids needing a prebuild step on EAS. All workspace subpaths are enumerated explicitly in the `resolveRequest` function. **If a new subpath is added to `@randsum/roller` or `@randsum/dice-ui`, it must be added to this map.**
+Metro resolves `@randsum/*` imports directly to TS source in the monorepo rather
+than built `dist/` output — avoiding a prebuild step on EAS. All workspace
+subpaths are enumerated explicitly in `resolveRequest`. **If a new subpath is
+added to `@randsum/roller` or `@randsum/dice-ui`, add it to this map.**
 
 The `@randsum/dice-ui` mapping forks by platform:
 
-- Web -> `packages/dice-ui/src/index.ts` (react-dom components)
-- Native -> `packages/dice-ui/src/index.native.ts` (React Native components)
+- Web → `packages/dice-ui/src/index.ts` (react-dom components)
+- Native → `packages/dice-ui/src/index.native.ts` (React Native components)
 
 ### 2. Web condition fix (Zustand / CJS-gated packages)
 
@@ -92,75 +113,93 @@ config.resolver.unstable_conditionsByPlatform = {
 }
 ```
 
-This forces Metro's web bundler to resolve packages like Zustand to their CJS entries. Zustand's ESM entry uses `import.meta.env.MODE`, which is invalid in classic script contexts that Metro emits. Without this line, web builds error at runtime. Do not remove.
+Forces Metro's web bundler to resolve packages like Zustand to their CJS entries.
+Zustand's ESM entry uses `import.meta.env.MODE`, invalid in the classic script
+contexts Metro emits. Without this line, web builds error at runtime. Do not remove.
 
 ## Path Aliases and Imports
 
-- `@randsum/dice-ui` resolves via a tsconfig `paths` mapping to `../../packages/dice-ui/src/index.native.ts` (the real native barrel). Combined with `"moduleSuffixes": [".native", ""]`, tsc typechecks the app against dice-ui's actual native component types — no hand-maintained shim. Runtime resolution still happens in Metro (web -> `index.ts`, native -> `index.native.ts`).
+- `@randsum/dice-ui` resolves via a tsconfig `paths` mapping to
+  `../../packages/dice-ui/src/index.native.ts`. Combined with
+  `"moduleSuffixes": [".native", ""]`, tsc typechecks the app against dice-ui's
+  actual native component types — no hand-maintained shim. Runtime resolution
+  still happens in Metro (web → `index.ts`, native → `index.native.ts`).
 - Imports within `apps/expo` use relative paths (`../components/...`, `../lib/...`).
-- The app is excluded from the monorepo ESLint config (`'apps/expo/**'` ignore); a local `eslint.config.js` owns the app's lint rules.
+- The app is excluded from the monorepo ESLint config; a local `eslint.config.js`
+  owns the app's lint rules.
 
 ## Platform-Specific Files
 
-`.web.tsx` / `.native.tsx` suffixes are picked up by Metro and by `metro.config.js`'s dice-ui fork. Use them for:
+`.web.tsx` / `.native.tsx` suffixes are picked up by Metro and the dice-ui fork.
+Used for:
 
-- Components that need DOM APIs on web (`CSSTokens.web.tsx`).
-- Storage backends (`storage.web.ts`). Native variants can be added later under `storage.native.ts` if SQLite-backed persistence is reintroduced.
+- Components needing DOM APIs on web (`CSSTokens.web.tsx`).
+- Storage backends (`storage.web.ts`, re-exported by `storage.ts`).
 
-When adding a new platform-specific file, keep the default (`.ts` / `.tsx`) as the native variant or a shared implementation, and introduce `.web.*` only when the web path genuinely diverges.
+When adding a platform-specific file, keep the default (`.ts` / `.tsx`) as the
+native/shared variant and introduce `.web.*` only when the web path diverges.
 
-## `"use dom"` Strategy for `@randsum/dice-ui`
+## `@randsum/dice-ui` Integration
 
-Some dice-ui components (`NotationRoller`, `QuickReferenceGrid`, `TokenOverlayInput`) rely on `react-dom` APIs — CSS imports, `className`, `getBoundingClientRect`. The plan from the PRD:
-
-1. **Web target**: use the components directly (react-dom is already available).
-2. **Native target**: use Expo's `"use dom"` directive on wrapping components to render them inside a WebView. This is the default escape hatch today.
-3. **Port to native**: if WebView performance becomes a blocker, produce `.native.tsx` variants using `TextInput`, `View`, `StyleSheet`.
-
-The Metro resolver already routes `@randsum/dice-ui` to `index.native.ts` on native. Confirm that export surface before porting.
+The screen uses dice-ui components (`NotationRoller`, `QuickReferenceGrid`,
+`RollResultPanel`, `DocModal`) that rely on `react-dom` APIs (CSS imports,
+`className`, `getBoundingClientRect`). On web these are used directly. On native,
+the Metro resolver routes to `index.native.ts`; full native parity (Expo
+`"use dom"` WebView wrappers, or hand-ported `.native.tsx` variants) is future
+work, not currently built out.
 
 ## State Management
 
-- **Theme**: `lib/stores/themeStore.ts` — persisted `colorScheme`, derived `tokens`, derived `fontSizes`. `initThemeFromSystem()` is called once from `_layout.tsx` with the system `useColorScheme()` value. Persisted layer uses `partialize` to store only `colorScheme`; tokens are recomputed on rehydrate.
-- **Notation**: `lib/stores/notationStore.ts` — current notation string plus derived `isValid` / `hasError` from `isDiceNotation()`. Not persisted.
-- **Roll result**: local `useState` in `app/index.tsx`. The PRD calls for a history feed backed by AsyncStorage / SQLite; not implemented yet.
+- **Theme**: `lib/stores/themeStore.ts` — persisted `colorScheme`, derived
+  `tokens` and `fontSizes`. `initThemeFromSystem()` is called once from
+  `_layout.tsx` with the system `useColorScheme()` value. `partialize` persists
+  only `colorScheme`; tokens are recomputed on rehydrate.
+- **Notation**: `lib/stores/notationStore.ts` — current notation string plus
+  derived `isValid` / `hasError` from `isDiceNotation()`. Not persisted.
+- **Roll result**: local `useState` in `app/index.tsx`. (No history feed exists.)
 
 ## Testing
 
 - Framework: `bun:test` with `./__tests__/setup.ts` preloaded via `bunfig.toml`.
-- Setup mocks `@react-native-async-storage/async-storage` and a minimal subset of `react-native` (`useColorScheme`, `StyleSheet.create`, `Share.share`). Add to the mock when you need more from RN.
-- Hook tests assert module contract (export exists, is callable). Full hook behavior is tested at the store level rather than through `renderHook` to avoid a full React Native test renderer.
-- Run a single file: `bun test apps/expo/__tests__/useRoll.test.ts`.
-
-## How to Add a New Screen
-
-1. Create the file under `app/` following Expo Router conventions. A tab screen goes under `app/(tabs)/<name>.tsx`; a modal under `app/<name>.tsx` with `presentation: 'modal'` in the route options.
-2. Register it in the relevant `_layout.tsx` `<Stack.Screen name="<name>" />` (or it gets default options).
-3. Read shared state via hooks from `hooks/` or stores from `lib/stores/`. Do not import Zustand directly into screens unless it's a trivial local store.
-4. Use `useTheme()` for tokens and `Platform.OS` for platform forks. Both web and native must render.
-5. Add a test in `__tests__/` if there is logic beyond wiring — focus on store interactions, not rendering.
+- Setup mocks `@react-native-async-storage/async-storage` and a minimal subset of
+  `react-native` (`useColorScheme`, `StyleSheet.create`, `Share.share`). Extend
+  the mock when you need more from RN.
+- Hook tests assert module contract; behavior is tested at the store level rather
+  than via `renderHook`, avoiding a full RN test renderer.
+- A separate Playwright e2e suite runs against the exported web build
+  (`e2e/`, `test:e2e`).
 
 ## How to Wire a New Store
 
-1. Create `lib/stores/<name>Store.ts`. Export an interface with `readonly` fields and action methods with explicit return types (`setX(x: X): void`).
-2. Use `create<State>()(set, get => ({ ... }))`. Wrap with `persist(..., { name: 'zustand/<name>', storage: createJSONStorage(() => AsyncStorage), partialize })` only if the state must survive reloads.
-3. Do not store derived data that can be recomputed cheaply at the selector site — but tokens are stored because `getTokens()` is branch-heavy and the tokens object is read on every render.
-4. Export a selector-friendly hook: consumers should call `useXStore(s => s.field)` rather than pulling the whole state.
-5. If the store needs to be seeded from platform APIs (e.g. `useColorScheme`), expose an initializer function (`initXFromSystem`) that the root `_layout.tsx` calls inside a `useEffect`.
+1. Create `lib/stores/<name>Store.ts`. Export an interface with `readonly` fields
+   and action methods with explicit return types (`setX(x: X): void`).
+2. Use `create<State>()((set, get) => ({ ... }))`. Wrap with
+   `persist(..., { name: 'zustand/<name>', storage: createJSONStorage(() => AsyncStorage), partialize })`
+   only if the state must survive reloads.
+3. Don't store derived data that can be recomputed cheaply at the selector site —
+   but `themeStore` stores `tokens` because `getTokens()` is branch-heavy and read
+   on every render.
+4. Export a selector-friendly hook so consumers call `useXStore(s => s.field)`
+   rather than pulling whole state.
+5. If the store seeds from platform APIs (e.g. `useColorScheme`), expose an
+   initializer (`initXFromSystem`) called from `_layout.tsx` inside a `useEffect`.
 
 ## Known Gotchas
 
-- **Supabase was removed.** The PRD references it but there is no client. Re-adding requires product sign-off.
-- **TanStack Query is not installed.** Do not add it for ad-hoc data fetching without a task.
-- **`"use dom"`** requires specific Expo configuration and only works on Expo SDK 54+. It is our fallback for dice-ui parity on native, not a general-purpose escape hatch.
-- **`metro.config.js` is untyped JS.** Changes there do not surface in `bun run typecheck`. Verify by running `bun run web` after edits.
-- **Web bundler is Metro**, not Vite/webpack. Some Metro-specific behaviors (condition sets, `resolveRequest`) have no equivalent in other bundlers. Do not copy-paste resolver patches from other Expo projects without understanding `unstable_conditionsByPlatform`.
-- **Fonts must load before rendering.** `_layout.tsx` returns `null` until `useFonts` reports loaded, so anything that races the splash screen will fail silently.
+- **`metro.config.js` is untyped JS.** Changes there do not surface in
+  `bun run typecheck`. Verify by running `bun run web` after edits.
+- **Web bundler is Metro**, not Vite/webpack. Metro-specific behaviors (condition
+  sets, `resolveRequest`) have no equivalent elsewhere — don't copy resolver
+  patches from other Expo projects without understanding
+  `unstable_conditionsByPlatform`.
+- **Fonts must load before rendering.** `_layout.tsx` returns `null` until
+  `useFonts` reports loaded, so anything racing the splash screen fails silently.
+- **Supabase / TanStack Query are not installed.** Do not add them for ad-hoc
+  needs without a task.
 
 ## Cross-References
 
-- Product spec: `apps/expo/PRD.md`
+- ADRs: `apps/expo/docs/adrs/`
 - Core engine: `packages/roller/CLAUDE.md`
-- Game wrappers: `packages/games/CLAUDE.md`
 - UI components: `packages/dice-ui/CLAUDE.md`
 - Monorepo conventions: root `CLAUDE.md`
