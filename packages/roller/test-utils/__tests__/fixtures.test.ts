@@ -11,8 +11,8 @@ import {
 
 describe('commonNotations', () => {
   test('contains expected notation strings', () => {
-    expect(commonNotations.advantage).toBe('2d20H')
-    expect(commonNotations.disadvantage).toBe('2d20L')
+    expect(commonNotations.advantage).toBe('2d20L')
+    expect(commonNotations.disadvantage).toBe('2d20H')
     expect(commonNotations.abilityScore).toBe('4d6L')
     expect(commonNotations.damage).toBe('1d8+3')
     expect(commonNotations.skillCheck).toBe('1d20+5')
@@ -32,12 +32,12 @@ describe('commonRollOptions', () => {
     expect(commonRollOptions.advantage).toEqual({
       sides: 20,
       quantity: 2,
-      modifiers: { drop: { highest: 1 } }
+      modifiers: { drop: { lowest: 1 } }
     })
     expect(commonRollOptions.disadvantage).toEqual({
       sides: 20,
       quantity: 2,
-      modifiers: { drop: { lowest: 1 } }
+      modifiers: { drop: { highest: 1 } }
     })
   })
 })
