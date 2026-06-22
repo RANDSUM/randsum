@@ -9,9 +9,12 @@ Powered by `@randsum/roller` — **[RDN v0.9.0 Level 4 (Full) Conformant](https:
 - **Generic Dice Rolling** (`/roll`) - Roll using standard dice notation (e.g., `2d6+3`)
 - **Blades in the Dark** (`/blades`) - Roll dice pools for Blades in the Dark
 - **Daggerheart** (`/dh`) - Roll Hope and Fear dice with modifiers and advantage
+- **D&D 5e** (`/fifth`) - Roll d20 checks with critical hit/miss display
 - **Root RPG** (`/root`) - Roll 2d6 for Root RPG with strong/weak hit mechanics
 - **Salvage Union** (`/su`) - Roll on Salvage Union tables
+- **Powered by the Apocalypse** (`/pbta`) - Roll 2d6 PbtA moves
 - **Notation Guide** (`/notation`) - Display a reference guide for dice notation
+- **Help** (`/help`) - List all available commands
 
 ## Setup
 
@@ -93,11 +96,14 @@ bun run start
 ### Available Commands
 
 - `/roll notation:2d6+3` - Roll generic dice notation
-- `/blades dice:3` - Roll Blades in the Dark (0-4 dice)
+- `/blades dice:3` - Roll Blades in the Dark
 - `/dh modifier:2 advantage:Advantage` - Roll Daggerheart with options
+- `/fifth` - Roll a D&D 5e d20 check (with critical hit/miss display)
 - `/root modifier:1` - Roll Root RPG (-4 to +4 modifier)
 - `/su table:Core Mechanic` - Roll on Salvage Union tables
+- `/pbta modifier:1` - Roll a Powered by the Apocalypse 2d6 move
 - `/notation` - Show dice notation reference guide
+- `/help` - List all available commands
 
 ## Development
 
@@ -106,18 +112,20 @@ bun run start
 ```
 src/
 ├── commands/        # Slash command handlers
+│   ├── index.ts     # Command barrel (single source of truth)
 │   ├── blades.ts
 │   ├── dh.ts
+│   ├── fifth.ts
+│   ├── help.ts
 │   ├── notation.ts
+│   ├── pbta.ts
 │   ├── roll.ts
 │   ├── root.ts
 │   └── su.ts
 ├── events/          # Discord event handlers
-│   ├── ready.ts
-│   └── interactionCreate.ts
-├── utils/           # Shared utilities
-│   ├── config.ts
-│   └── constants.ts
+│   ├── interactionCreate.ts
+│   └── guildCreate.ts
+├── utils/           # Shared utilities (config, constants, discord, logger, metrics, etc.)
 ├── types.ts         # TypeScript type definitions
 ├── index.ts         # Bot entry point
 └── deploy-commands.ts  # Command registration script
@@ -127,9 +135,8 @@ src/
 
 1. Create a new file in `src/commands/` (e.g., `mycommand.ts`)
 2. Export a command object with `data` (SlashCommandBuilder) and `execute` function
-3. Import and register it in `src/index.ts`
-4. Import and add it to `src/deploy-commands.ts`
-5. Run `bun run deploy-commands` to register the new command
+3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/index.ts` and `src/deploy-commands.ts` import from it)
+4. Run `bun run deploy-commands` to register the new command
 
 ### Testing
 
@@ -147,24 +154,33 @@ bun run typecheck
 
 ## Deployment
 
-The bot is currently self-hosted — there is no automated deploy config checked in. To run it on your own host:
+The bot deploys to **Render** as a `worker` service, defined as Infrastructure-as-Code in the
+repo-root [`render.yaml`](../../render.yaml) blueprint (`name: randsum-discord-bot`):
+
+- `numInstances: 1` — a Discord gateway worker must hold a single connection; multiple instances
+  would double-process events. Do not scale this up.
+- Build is scoped to the bot's dependency subtree (`@randsum/roller` → `@randsum/games` →
+  `@randsum/discord-bot`) rather than the full monorepo build.
+- Start command: `node apps/discord-bot/dist/index.js`.
+- `BUN_VERSION` is pinned (1.3.14) to match CI; `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, and
+  `DISCORD_GUILD_ID` are set in the Render dashboard (`sync: false` — not committed).
+
+> The `render.yaml` blueprint is not necessarily auto-synced to the live service. If you change it,
+> verify the corresponding dashboard values (env vars, Bun version) match.
+
+Slash commands are registered out-of-band with `bun run deploy-commands` (run once per command-set
+change, not part of the Render start command). Remove `DISCORD_GUILD_ID` to register commands
+globally (~1 hour propagation); set it to a guild ID for instant per-guild registration during
+development.
+
+### Running on your own host
 
 ```bash
-# Build
 bun run build
-
-# Set env vars (DISCORD_TOKEN, DISCORD_CLIENT_ID)
-export DISCORD_TOKEN=...
-export DISCORD_CLIENT_ID=...
-
-# Deploy slash commands (once per command-set change)
-bun run deploy-commands
-
-# Run with your process manager of choice (pm2, systemd, docker, etc.)
-pm2 start dist/index.js --name randsum-bot
+export DISCORD_TOKEN=... DISCORD_CLIENT_ID=...
+bun run deploy-commands        # once per command-set change
+node dist/index.js             # or via pm2 / systemd / docker
 ```
-
-Remove `DISCORD_GUILD_ID` from the runtime environment to register commands globally (~1 hour propagation). Leave it set to a guild ID for instant per-guild registration during development.
 
 ## Environment Variables
 

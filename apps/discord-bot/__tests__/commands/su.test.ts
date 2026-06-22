@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
 const mockRoll = mock(() => ({
   total: 15,
@@ -60,7 +61,7 @@ describe('suCommand', () => {
     const interaction = makeInteraction(null)
     await suCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Success')
@@ -73,7 +74,7 @@ describe('suCommand', () => {
     const interaction = makeInteraction(null)
     await suCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Error')

@@ -36,7 +36,7 @@
       "includeEntryExports": true
     },
     "apps/expo": {
-      "entry": ["app/**/*.tsx"],
+      "entry": ["app/**/*.tsx", "playwright.config.ts", "e2e/**/*.ts"],
       "project": ["**/*.{ts,tsx}"],
       "ignoreDependencies": ["expo-*"]
     },

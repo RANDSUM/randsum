@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
 const mockCollector = {
   on: mock(() => mockCollector),
@@ -91,7 +92,7 @@ describe('notationCommand', () => {
     const interaction = makeInteraction()
     await notationCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('notation.randsum.dev')
@@ -102,7 +103,7 @@ describe('notationCommand', () => {
     const interaction = makeInteraction()
     await notationCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: unknown[] }
     expect(embedJson.fields).toBeDefined()

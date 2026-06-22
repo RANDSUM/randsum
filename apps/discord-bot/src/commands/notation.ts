@@ -10,6 +10,7 @@ import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { NotationDoc } from '@randsum/roller/docs'
 import { embedFooterDetails } from '../utils/constants.js'
 import { replyWithError } from '../utils/replyWithError.js'
+import { captureException } from '../utils/errorTracker.js'
 import type { Command } from '../types.js'
 
 const COLLECTOR_TIMEOUT = 5 * 60 * 1000
@@ -87,51 +88,67 @@ export const notationCommand: Command = {
 
       collector.on('collect', (selectInteraction: StringSelectMenuInteraction) => {
         void (async () => {
-          const selected = selectInteraction.values[0]
-          if (selected === undefined) return
+          try {
+            const selected = selectInteraction.values[0]
+            if (selected === undefined) return
 
-          const entries = grouped.get(selected) ?? []
-          const categoryEmbed = buildCategoryEmbed(selected, entries)
+            const entries = grouped.get(selected) ?? []
+            const categoryEmbed = buildCategoryEmbed(selected, entries)
 
-          const updatedMenu = new StringSelectMenuBuilder()
-            .setCustomId('notation-category')
-            .setPlaceholder('Select a category')
-            .addOptions(
-              categories.map(cat => ({
-                label: cat,
-                value: cat,
-                default: cat === selected
-              }))
-            )
+            const updatedMenu = new StringSelectMenuBuilder()
+              .setCustomId('notation-category')
+              .setPlaceholder('Select a category')
+              .addOptions(
+                categories.map(cat => ({
+                  label: cat,
+                  value: cat,
+                  default: cat === selected
+                }))
+              )
 
-          const updatedRow = new ActionRowBuilder().addComponents(updatedMenu)
+            const updatedRow = new ActionRowBuilder().addComponents(updatedMenu)
 
-          await selectInteraction.update({
-            embeds: [categoryEmbed],
-            components: [updatedRow as never]
-          })
+            await selectInteraction.update({
+              embeds: [categoryEmbed],
+              components: [updatedRow as never]
+            })
+          } catch (error) {
+            captureException(error, {
+              command: 'notation',
+              interactionId: selectInteraction.id,
+              phase: 'collector.collect'
+            })
+          }
         })()
       })
 
       collector.on('end', () => {
         void (async () => {
-          const disabledMenu = new StringSelectMenuBuilder()
-            .setCustomId('notation-category')
-            .setPlaceholder('Select a category')
-            .addOptions(
-              categories.map(cat => ({
-                label: cat,
-                value: cat,
-                default: cat === firstCategory
-              }))
-            )
-            .setDisabled(true)
+          try {
+            const disabledMenu = new StringSelectMenuBuilder()
+              .setCustomId('notation-category')
+              .setPlaceholder('Select a category')
+              .addOptions(
+                categories.map(cat => ({
+                  label: cat,
+                  value: cat,
+                  default: cat === firstCategory
+                }))
+              )
+              .setDisabled(true)
 
-          const disabledRow = new ActionRowBuilder().addComponents(disabledMenu)
+            const disabledRow = new ActionRowBuilder().addComponents(disabledMenu)
 
-          await message.edit({
-            components: [disabledRow as never]
-          })
+            await message.edit({
+              components: [disabledRow as never]
+            })
+          } catch (error) {
+            captureException(error, {
+              command: 'notation',
+              interactionId: interaction.id,
+              phase: 'collector.end'
+            })
+          }
         })()
       })
     } catch (e) {

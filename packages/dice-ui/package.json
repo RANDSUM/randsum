@@ -16,13 +16,17 @@
     "@randsum/roller": "workspace:~"
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "20.10.3",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/react": "16.3.2",
     "@types/react": "catalog:",
     "react-native": "0.85.3"
   },
   "peerDependencies": {
-    "expo-haptics": "*",
+    "expo-haptics": ">=56.0.0",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-native": ">=0.85.3"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -38,6 +42,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test __tests__",
+    "test:coverage": "bun test __tests__ --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "check": "bun run typecheck && bun run test"
   }
 }

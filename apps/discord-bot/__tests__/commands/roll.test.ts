@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
 // Import real roller implementations — no discord.js mocking needed.
 const {
@@ -15,11 +16,14 @@ const {
   RollError,
   ERROR_CODES,
   suggestNotationFix: realSuggestNotationFix
-} = await import('../../../../packages/roller/src/index')
+} = await import('@randsum/roller')
 
 // Mock functions delegate to real implementations by default.
 const mockNotation = mock((...args: Parameters<typeof realNotation>) => realNotation(...args))
-const mockRoll = mock((...args: Parameters<typeof realRoll>) => realRoll(...args))
+const mockRoll = mock(
+  (...args: Parameters<typeof realRoll>): { total: number; result?: unknown; rolls: unknown[] } =>
+    realRoll(...args)
+)
 const mockSuggestNotationFix = mock((...args: Parameters<typeof realSuggestNotationFix>) =>
   realSuggestNotationFix(...args)
 )
@@ -99,7 +103,7 @@ describe('rollCommand', () => {
     expect(mockRoll).toHaveBeenCalledTimes(1)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('You rolled a 15')
@@ -142,7 +146,7 @@ describe('rollCommand', () => {
     const interaction = makeInteraction({ notation: '2d6L' })
     await rollCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
@@ -158,7 +162,7 @@ describe('rollCommand', () => {
     await rollCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(String(embedJson.description)).toContain('Did you mean `2d6`?')
@@ -173,7 +177,7 @@ describe('rollCommand', () => {
     await rollCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(String(embedJson.description)).not.toContain('Did you mean')

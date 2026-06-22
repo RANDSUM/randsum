@@ -4,6 +4,14 @@
   command = "bun run build && bun run site:build"
   publish = "apps/site/dist"
 
+[build.environment]
+  # Pin the build toolchain so Netlify deploys are reproducible (audit X4 /
+  # infrastructure F1). NODE_VERSION matches the CI site job (node 22); BUN_VERSION
+  # matches .bun-version (1.3.14). Netlify also auto-detects .bun-version, but
+  # declaring it here keeps the version visible in the deploy config.
+  NODE_VERSION = "22"
+  BUN_VERSION = "1.3.14"
+
 [dev]
   command = "astro dev"
   targetPort = 4321

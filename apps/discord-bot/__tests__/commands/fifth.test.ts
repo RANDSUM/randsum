@@ -1,11 +1,14 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
-const mockRoll = mock(() => ({
-  total: 15,
-  result: 15,
-  rolls: [{ initialRolls: [15], rolls: [15], modifierLogs: [] }],
-  details: { criticals: undefined }
-}))
+const mockRoll = mock(
+  (): { total: number; result: number; rolls: unknown[]; details: unknown } => ({
+    total: 15,
+    result: 15,
+    rolls: [{ initialRolls: [15], rolls: [15], modifierLogs: [] }],
+    details: { criticals: undefined }
+  })
+)
 
 void mock.module('@randsum/games/fifth', () => ({ roll: mockRoll }))
 
@@ -43,7 +46,7 @@ describe('fifthCommand', () => {
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.color).toBe(0x1e90ff)
@@ -86,7 +89,7 @@ describe('fifthCommand', () => {
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.color).toBe(0xffd700)
@@ -103,7 +106,7 @@ describe('fifthCommand', () => {
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.color).toBe(0xdc143c)
@@ -117,7 +120,7 @@ describe('fifthCommand', () => {
     const interaction = makeInteraction()
     await fifthCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Error')

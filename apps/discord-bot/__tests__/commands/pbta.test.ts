@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
-const mockRoll = mock(() => ({
-  result: 'strong_hit' as const,
+const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
+  result: 'strong_hit',
   total: 10,
   rolls: [{ initialRolls: [5, 5], rolls: [5, 5], modifierLogs: [] }]
 }))
@@ -51,7 +52,7 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: 2 })
     await pbtaCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Strong Hit!')
@@ -66,7 +67,7 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: 1 })
     await pbtaCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Weak Hit')
@@ -81,7 +82,7 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: -1 })
     await pbtaCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Miss')
@@ -91,7 +92,7 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: 2, forward: 1 })
     await pbtaCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
@@ -102,7 +103,7 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: 2, ongoing: 2 })
     await pbtaCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
@@ -113,7 +114,7 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: 2, rollingWith: 'Advantage' })
     await pbtaCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
@@ -127,7 +128,7 @@ describe('pbtaCommand', () => {
     const interaction = makeInteraction({ stat: 2 })
     await pbtaCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Error')

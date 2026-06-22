@@ -1,4 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
 const { guildCreateHandler } = await import('../../src/events/guildCreate.js')
 
@@ -18,11 +19,11 @@ function makeGuild(systemChannelOverride?: null | { send: ReturnType<typeof mock
 }
 
 function getEmbedJson(guild: {
-  systemChannel: { send: ReturnType<typeof mock> }
-}): Record<string, unknown> {
-  const sendMock = guild.systemChannel.send
+  systemChannel: { send: ReturnType<typeof mock> } | null
+}): APIEmbed {
+  const sendMock = guild.systemChannel!.send
   const call = sendMock.mock.calls[0]![0] as {
-    embeds: { toJSON: () => Record<string, unknown> }[]
+    embeds: { toJSON: () => APIEmbed }[]
   }
   return call.embeds[0]!.toJSON()
 }
@@ -63,15 +64,15 @@ describe('guildCreateHandler', () => {
     const guild = makeGuild()
     await guildCreateHandler(guild as never)
     const embedJson = getEmbedJson(guild)
-    expect(embedJson.description as string).toContain('notation.randsum.dev')
+    expect(embedJson.description!).toContain('notation.randsum.dev')
   })
 
   test('welcome embed mentions RANDSUM in title or description', async () => {
     const guild = makeGuild()
     await guildCreateHandler(guild as never)
     const embedJson = getEmbedJson(guild)
-    const title = (embedJson.title as string | undefined) ?? ''
-    const desc = (embedJson.description as string | undefined) ?? ''
+    const title = embedJson.title ?? ''
+    const desc = embedJson.description ?? ''
     const titleMatch = title.toUpperCase().includes('RANDSUM')
     const descMatch = desc.toUpperCase().includes('RANDSUM')
     expect(titleMatch || descMatch).toBe(true)

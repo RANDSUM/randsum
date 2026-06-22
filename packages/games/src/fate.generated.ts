@@ -8,9 +8,7 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type FateRollResult =
-  | 'Abysmal'
   | 'Average'
-  | 'Catastrophic'
   | 'Epic'
   | 'Fair'
   | 'Fantastic'
@@ -32,9 +30,17 @@ export function roll(
   const input: { modifier?: number } =
     typeof rawInput === 'number' ? { modifier: rawInput } : (rawInput ?? {})
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
-    validateFinite(input?.modifier, 'Skill rating (Fate ladder rung) added to the 4dF total')
+    validateFinite(
+      input?.modifier,
+      'Skill rating (Fate ladder rung, Terrible -2 to Superb +5) added to the 4dF total'
+    )
   if (input?.modifier !== undefined && typeof input?.modifier === 'number')
-    validateRange(input?.modifier, -2, 4, 'Skill rating (Fate ladder rung) added to the 4dF total')
+    validateRange(
+      input?.modifier,
+      -2,
+      5,
+      'Skill rating (Fate ladder rung, Terrible -2 to Superb +5) added to the 4dF total'
+    )
   const r = executeRoll(`${4}d{-1,0,1}`)
   const total = r.total + (input?.modifier ?? 0)
   if (total >= 8) return { total, result: 'Legendary', rolls: r.rolls }
@@ -47,9 +53,7 @@ export function roll(
   if (total === 1) return { total, result: 'Average', rolls: r.rolls }
   if (total === 0) return { total, result: 'Mediocre', rolls: r.rolls }
   if (total === -1) return { total, result: 'Poor', rolls: r.rolls }
-  if (total === -2) return { total, result: 'Terrible', rolls: r.rolls }
-  if (total === -3) return { total, result: 'Catastrophic', rolls: r.rolls }
-  if (total <= -4) return { total, result: 'Abysmal', rolls: r.rolls }
+  if (total <= -2) return { total, result: 'Terrible', rolls: r.rolls }
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 

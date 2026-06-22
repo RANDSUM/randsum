@@ -13,6 +13,8 @@
     "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
     "typecheck": "tsc --noEmit",
     "test": "bun test __tests__ --isolate",
+    "e2e:build": "expo export --platform web",
+    "test:e2e": "playwright test",
     "check": "bun run typecheck && bun run format:check && bun run lint && bun run test"
   },
   "dependencies": {
@@ -20,26 +22,29 @@
     "@randsum/dice-ui": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "expo": "~55.0.8",
-    "expo-font": "55.0.4",
-    "expo-haptics": "55.0.9",
-    "expo-router": "~55.0.7",
-    "expo-splash-screen": "55.0.20",
-    "expo-status-bar": "~55.0.4",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "react-native": "0.83.2",
+    "expo": "^56.0.11",
+    "expo-constants": "~56.0.18",
+    "expo-font": "~56.0.6",
+    "expo-haptics": "~56.0.3",
+    "expo-linking": "~56.0.14",
+    "expo-router": "~56.2.10",
+    "expo-splash-screen": "~56.0.10",
+    "expo-status-bar": "~56.0.4",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.85.3",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "~4.23.0",
+    "react-native-screens": "4.25.2",
     "react-native-web": "^0.21.0",
-    "zustand": "5.0.12"
+    "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@testing-library/react-native": "13.3.3",
+    "@playwright/test": "1.60.0",
+    "@testing-library/react-native": "14.0.0",
     "@types/react": "~19.2.2",
-    "eslint": "10.1.0",
-    "eslint-config-expo": "55.0.0",
-    "eslint-plugin-prettier": "5.5.5",
+    "eslint": "10.5.0",
+    "eslint-config-expo": "~56.0.4",
+    "eslint-plugin-prettier": "5.5.6",
     "typescript": "catalog:"
   }
 }

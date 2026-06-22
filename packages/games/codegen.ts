@@ -24,11 +24,11 @@ function fixturePathFor(shortcode: string): string {
 function getRemoteUrl(spec: RandSumSpec): string | undefined {
   const rollDefs = spec.rolls ?? (spec.roll !== undefined ? { roll: spec.roll } : {})
   for (const rollDef of Object.values(rollDefs)) {
-    const resolve = (rollDef as Record<string, unknown>)['resolve'] as
-      | Record<string, unknown>
-      | undefined
-    const rtl = resolve?.['remoteTableLookup'] as Record<string, unknown> | undefined
-    if (typeof rtl?.['url'] === 'string') return rtl['url']
+    const resolve = rollDef.resolve
+    if (typeof resolve === 'object' && 'remoteTableLookup' in resolve) {
+      const { url } = resolve.remoteTableLookup
+      if (typeof url === 'string') return url
+    }
   }
   return undefined
 }

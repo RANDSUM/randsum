@@ -27,5 +27,16 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
-  }
+  },
+  "files": [],
+  "references": [
+    { "path": "packages/roller" },
+    { "path": "packages/games" },
+    { "path": "packages/dice-ui" },
+    { "path": "apps/cli" },
+    { "path": "apps/discord-bot" },
+    { "path": "apps/rdn" },
+    { "path": "apps/site" },
+    { "path": "apps/expo" }
+  ]
 }

@@ -55,3 +55,9 @@ pre-push:
     knip:
       run: bun run knip > /dev/null 2>&1
       priority: 2
+    arch-check:
+      # Cycle + boundary invariants (audit X7b / architecture R2+R3): no circular
+      # deps, no game-to-game import, no @randsum/*/src or /dist reach-in. Also runs
+      # in CI feeding the CI Gate so it cannot be bypassed with --no-verify.
+      run: bun run arch:check > /dev/null 2>&1
+      priority: 2

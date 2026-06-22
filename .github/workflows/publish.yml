@@ -1,5 +1,17 @@
 name: Release
 
+# SECURITY — workflow_run safe-usage invariant (audit L7 / security F3).
+# `workflow_run` runs in the PRIVILEGED base-repo context with access to
+# NPM_TOKEN / GITHUB_TOKEN and contents:write + id-token:write. To avoid a
+# "pwn-request" exposure this job MUST:
+#   - only ever check out trusted DEFAULT-BRANCH code (the bare `actions/checkout`
+#     below resolves to the default branch in workflow_run context — never pass a
+#     PR ref/sha to checkout here), and
+#   - NEVER download or execute artifacts uploaded by the triggering CI run
+#     (fork PRs can populate those). No `actions/download-artifact` belongs here.
+# The trigger is already gated on `branches: [main]` + conclusion == 'success';
+# keep it that way. Any change that consumes PR-controlled input converts this
+# into a credential-leak vector — re-review against this invariant first.
 on:
   workflow_run:
     workflows: ["CI"]

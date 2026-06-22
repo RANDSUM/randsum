@@ -9,9 +9,9 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Core**: `@randsum/roller` — zero-dependency dice engine with built-in notation parsing and validation. Every other package depends on it via `workspace:~`.
 
 **Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
-`blades` (Blades in the Dark), `daggerheart`, `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse)
+`blades` (Blades in the Dark), `daggerheart`, `fate` (Fate Core), `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse). A `schema` subpath exports the codegen/validation API.
 
-**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private), `@randsum/site` (Astro docs site, private), `@randsum/expo` (dice playground — web, iOS, Android, private)
+**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private Discord bot, deployed as a Render worker), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private), `@randsum/expo` (dice playground — web, iOS, Android, private)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
@@ -19,7 +19,7 @@ Game packages never depend on each other — only on `@randsum/roller`.
 
 ```bash
 bun install                              # Install all dependencies
-bun run build                            # Build all packages (bunup: ESM+CJS+DTS)
+bun run build                            # Build all packages (bunup: ESM + DTS, no CJS)
 bun run test                             # Run all tests (bun:test, recursive)
 bun run lint                             # ESLint all packages
 bun run format                           # Prettier all packages
@@ -55,7 +55,7 @@ bun run help                             # Quick command reference
 - No semicolons, single quotes, no trailing commas (Prettier)
 - Discriminated unions use `kind` or `type` as the discriminant field (e.g., `CollectedResults` with `kind: 'union' | 'numeric' | 'opaque' | 'result-mapping'`)
 - Literal types for API inputs: `roll()` accepts plain numbers and notation strings, not branded/opaque types
-- Error hierarchy: `ValidationError` and `SchemaError` both extend `RandsumError`. Use `instanceof RandsumError` to catch all RANDSUM errors, or catch them individually for specific handling
+- Error hierarchy: all errors extend `RandsumError`. roller exports `NotationParseError`, `ModifierError`, `ValidationError`, and `RollError` (`@randsum/roller/errors`); games exports `SchemaError`. Use `instanceof RandsumError` to catch all RANDSUM errors, or catch them individually for specific handling
 - Re-export conventions: game subpaths re-export `GameRollResult`, `RollRecord`, and `SchemaError`. Internal types stay internal. Use `export type` for type-only re-exports
 
 ## Testing
@@ -75,7 +75,7 @@ All publishable packages produce ESM only:
 - `dist/index.d.ts` (TypeScript declarations)
 - Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`
 - No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
-- Bundle size limits enforced: roller 20KB (includes notation), game packages 15KB, salvageunion 35KB
+- Bundle size limits enforced (per-package `size-limit`): roller main `dist/index.js` 16KB (notation included; `docs` subpath 20KB, `tokenize` 6.75KB, `trace` 5KB), game packages 15KB (daggerheart and pbta 16KB), salvageunion 33KB
 
 CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
 
@@ -109,7 +109,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-The `RANDSUM_MODIFIERS` array in `packages/roller/src/modifiers/index.ts` is the single source of truth for which modifiers exist and their execution order. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior).
+The `RANDSUM_MODIFIERS` array in `packages/roller/src/modifiers/definitions.ts` (re-exported from `src/modifiers/index.ts`) is the single source of truth for which modifiers exist and their execution order. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior).
 
 See https://notation.randsum.dev for the formal specification including faceted classification, conformance levels, and execution pipeline contracts.
 
@@ -134,8 +134,8 @@ roll("5d10F{3}") // Count failures <= 3
 
 ## Git Hooks (Lefthook)
 
-**pre-commit** (parallel): ESLint --fix, Prettier, typecheck
-**pre-push**: build, codegen check, tests, security audit, knip (unused files/deps)
+**pre-commit** (parallel): `bun install --frozen-lockfile` (priority 1), then ESLint `--fix`, Prettier, typecheck, and codegen check (`gen:check`)
+**pre-push**: build (priority 1), then codegen check, conformance check (`@randsum/rdn conformance:check`), tests, security audit (`bun audit --audit-level=high`), knip, and arch check (`arch:check`)
 
 If hooks fail, run `bun run fix:all`.
 
@@ -155,14 +155,45 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 - `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
 - `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
 
-**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. Check with `bun run size` or per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 10KB, salvageunion: 100KB).
+**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. Check with `bun run size` or per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 15KB; daggerheart and pbta 16KB; salvageunion 33KB).
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 
-**Hook failures**: Pre-commit runs install, lint --fix, format, and typecheck in parallel. Pre-push runs build (priority 1), then test (priority 2), then `bun audit --level=high`. Recovery: `bun run fix:all`, then retry. See `lefthook.yml` for full config.
+**Hook failures**: Pre-commit runs install, lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build (priority 1), then codegen check, conformance check, test, `bun audit --audit-level=high`, knip, and arch check. Recovery: `bun run fix:all`, then retry. See `lefthook.yml` for full config.
 
 ## Dice Notation Reference
 
 Full spec: https://notation.randsum.dev (taxonomy, pipeline, conformance, syntax)
 
 Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `!{condition}` (conditional explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)
+
+## MCP Servers
+
+`.mcp.json` (project-scoped, committed) declares the official MCP servers for
+this repo's deploy/host stack. Each maps to a real workspace target:
+
+| Server   | Transport | Backs                              | Auth                            |
+| -------- | --------- | ---------------------------------- | ------------------------------- |
+| `render` | http      | `apps/discord-bot` (Render worker) | 1Password PAT (`headersHelper`) |
+| `expo`   | http      | `apps/expo` (EAS native + web)     | OAuth — run `/mcp`              |
+| `github` | http      | repo host (issues, PRs, releases)  | 1Password PAT (`headersHelper`) |
+
+Secrets are **never** committed. The `github` and `render` (http) servers
+resolve their fine-grained PATs at connect time via `scripts/mcp-1password-headers.sh`,
+wired through each server's `headersHelper`. Claude Code runs that script outside
+the bash sandbox, so it can read the token from the 1Password `claude-agent`
+vault (service-account token in the macOS keychain) — the same convention as the
+Spacebase MCP. The script expects these vault items:
+
+```
+op://claude-agent/GitHub PAT/credential      # github
+op://claude-agent/Render API Key/credential  # render
+```
+
+An already-exported env var wins over `op`, so CI / fresh checkouts without
+1Password can still authenticate by exporting `GITHUB_PAT` / `RENDER_API_KEY`
+before launch. `expo` authenticates via OAuth — run `/mcp` after first launch.
+
+Run `/mcp` in Claude Code to check connection status. Netlify is **not** a
+project-scoped server here — use the account-level claude.ai Netlify connector
+(already connected) for `apps/site` / `apps/rdn`.

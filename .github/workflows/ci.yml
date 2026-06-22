@@ -174,6 +174,19 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/dice-ui' check
       - run: bun run --filter '@randsum/expo' check
+      # dice-ui coverage (audit X6). The `test:coverage` script is added by the
+      # dice-ui workstream; this step + upload are the wiring. Guarded so the job
+      # stays green until that script + lcov land.
+      - name: Generate dice-ui coverage
+        run: bun run --filter '@randsum/dice-ui' test:coverage || echo "dice-ui test:coverage not available yet"
+      - name: Upload dice-ui coverage to Codecov
+        if: hashFiles('packages/dice-ui/coverage/lcov.info') != ''
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        with:
+          files: ./packages/dice-ui/coverage/lcov.info
+          flags: dice-ui
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   skill:
     name: claude-doctor
@@ -255,10 +268,56 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - run: bun run knip
 
+  arch:
+    # Architecture invariants (audit X7b / architecture R2+R3): no circular deps,
+    # no game-to-game import, no @randsum/*/src or /dist reach-in. Also runs in
+    # lefthook pre-push; this CI copy cannot be bypassed with --no-verify.
+    name: arch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: ./.github/actions/bun-setup
+      - run: bun run arch:check
+
+  audit:
+    # Dependency advisory gate relocated from local-only pre-push into CI
+    # (audit X8b / security F1, infrastructure F5). Cannot be bypassed with
+    # --no-verify. GHSA-gv7w-rqvm-qjhr is the accepted esbuild Deno-install
+    # advisory (see lefthook.yml / osv-scanner.toml for the rationale).
+    name: audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: ./.github/actions/bun-setup
+      - run: bun audit --audit-level=high --ignore=GHSA-gv7w-rqvm-qjhr
+
+  sca:
+    # SCA + license surfacing (audit X8a / security R2, F1, F2). Confirms the four
+    # known dev/build-time advisories (ignored via osv-scanner.toml so this job
+    # stays green) and surfaces LGPL/MPL transitives. Report-only: `bun audit`
+    # above is the blocking advisory gate; this job is the confirmation/visibility
+    # pass, so a new transient OSV finding informs without breaking the gate.
+    name: sca
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      # Vulnerability scan (OSV). License surfacing was dropped — osv-scanner
+      # v2's `--licenses` flag is an SPDX allowlist checker, not a summary mode
+      # (`--licenses=summary` errors), and an allowlist would fail on the known
+      # LGPL/MPL build-tool transitives. Revisit if a summary subcommand lands.
+      - name: OSV vulnerability scan
+        uses: google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2  # v2.3.8
+        with:
+          scan-args: |-
+            --config=osv-scanner.toml
+            --recursive
+            ./
+
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, bench, publish-dry-run, knip]
+    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, bench, publish-dry-run, knip, arch, audit]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

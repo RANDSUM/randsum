@@ -1,11 +1,14 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
-const mockRoll = mock(() => ({
-  result: 'hope' as const,
-  total: 14,
-  details: { hope: { roll: 8 }, fear: { roll: 6 }, extraDie: undefined, modifier: 0 },
-  rolls: []
-}))
+const mockRoll = mock(
+  (): { result: string; total: number; details: unknown; rolls: unknown[] } => ({
+    result: 'hope',
+    total: 14,
+    details: { hope: { roll: 8 }, fear: { roll: 6 }, extraDie: undefined, modifier: 0 },
+    rolls: []
+  })
+)
 
 void mock.module('@randsum/games/daggerheart', () => ({ roll: mockRoll }))
 
@@ -52,7 +55,7 @@ describe('dhCommand', () => {
     await dhCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Hope!')
@@ -68,7 +71,7 @@ describe('dhCommand', () => {
     const interaction = makeInteraction()
     await dhCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Fear!')
@@ -84,7 +87,7 @@ describe('dhCommand', () => {
     const interaction = makeInteraction()
     await dhCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Critical Hope!')
@@ -106,7 +109,7 @@ describe('dhCommand', () => {
     await dhCommand.execute(interaction as never)
     expect(interaction.editReply).toHaveBeenCalledTimes(1)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
@@ -117,7 +120,7 @@ describe('dhCommand', () => {
     const interaction = makeInteraction({ modifier: 3 })
     await dhCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
     const fieldNames = (embedJson.fields ?? []).map(f => f.name)
@@ -131,7 +134,7 @@ describe('dhCommand', () => {
     const interaction = makeInteraction()
     await dhCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.title).toBe('Error')

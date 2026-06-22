@@ -114,31 +114,30 @@ export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
       return findUnique(value, 0)
     }
 
-    const { result, replacements } = rolls.reduce<{
-      result: number[]
-      seen: Set<number>
-      replacements: { from: number; to: number }[]
-    }>(
-      (acc, value) => {
-        if (exceptions.has(value)) {
-          return { ...acc, result: [...acc.result, value] }
-        }
+    // Linear single-pass accumulation: one persistent Set and push into a
+    // single result array, instead of cloning the Set and spread-copying the
+    // accumulator each iteration (was O(n²)).
+    const result: number[] = []
+    const seen = new Set<number>()
+    const replacements: { from: number; to: number }[] = []
 
-        if (acc.seen.has(value)) {
-          const newValue = rerollUntilUnique(value, acc.seen)
-          const newSeen = new Set(acc.seen).add(newValue)
-          return {
-            result: [...acc.result, newValue],
-            seen: newSeen,
-            replacements: [...acc.replacements, { from: value, to: newValue }]
-          }
-        }
+    for (const value of rolls) {
+      if (exceptions.has(value)) {
+        result.push(value)
+        continue
+      }
 
-        const newSeen = new Set(acc.seen).add(value)
-        return { ...acc, result: [...acc.result, value], seen: newSeen }
-      },
-      { result: [], seen: new Set<number>(), replacements: [] }
-    )
+      if (seen.has(value)) {
+        const newValue = rerollUntilUnique(value, seen)
+        seen.add(newValue)
+        result.push(newValue)
+        replacements.push({ from: value, to: newValue })
+        continue
+      }
+
+      seen.add(value)
+      result.push(value)
+    }
 
     return { rolls: result, replacements }
   },

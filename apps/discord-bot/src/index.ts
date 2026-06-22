@@ -3,10 +3,18 @@ import { Client, Collection, Events, GatewayIntentBits } from './utils/discord.j
 import { config } from './utils/config.js'
 import type { Command } from './types.js'
 import { commands as commandList } from './commands/index.js'
+import { logger } from './utils/logger.js'
+import { flushMetrics, startMetricsFlush, stopMetricsFlush } from './utils/metrics.js'
+import { captureException, initErrorTracker } from './utils/errorTracker.js'
+import { loginWithBackoff } from './utils/loginWithBackoff.js'
 
 // Import events
 import { interactionCreateHandler } from './events/interactionCreate.js'
 import { guildCreateHandler } from './events/guildCreate.js'
+
+// Initialize observability before anything else can throw.
+initErrorTracker()
+startMetricsFlush()
 
 // Create a new client instance
 const client = new Client({
@@ -25,8 +33,10 @@ for (const command of commandList) {
 
 // Register event handlers - use clientReady (ready is deprecated in v14, removed in v15)
 client.once(Events.ClientReady, c => {
-  console.warn(`✅ Bot is ready! Logged in as ${c.user.tag}`)
-  console.warn(`📊 Serving ${c.guilds.cache.size} servers`)
+  logger.info('bot.ready', {
+    tag: c.user.tag,
+    guilds: c.guilds.cache.size
+  })
 })
 
 // Wrap async handler to catch unhandled rejections
@@ -40,22 +50,22 @@ client.on(Events.GuildCreate, guild => {
 
 // Error handling
 client.on('error', error => {
-  console.error('❌ Discord client error:', error)
+  captureException(error, { phase: 'client.error' })
 })
 
 process.on('unhandledRejection', error => {
-  console.error('❌ Unhandled promise rejection:', error)
-  console.error(error)
+  captureException(error, { phase: 'unhandledRejection' })
 })
 
 process.on('uncaughtException', error => {
-  console.error('❌ Uncaught exception:', error)
-  console.error(error)
+  captureException(error, { phase: 'uncaughtException' })
 })
 
 // Graceful shutdown
 function shutdown(signal: string): void {
-  console.warn(`🛑 ${signal} received, shutting down...`)
+  logger.info('bot.shutdown', { signal })
+  flushMetrics()
+  stopMetricsFlush()
   void client.destroy()
   process.exit(0)
 }
@@ -67,12 +77,15 @@ process.on('SIGINT', () => {
   shutdown('SIGINT')
 })
 
-// Login to Discord
-console.warn('🔄 Connecting to Discord...')
+// Login to Discord with capped exponential backoff so a transient outage at
+// boot does not immediately exit, and a misconfigured auth does not produce a
+// tight restart-crash loop under Render's auto-restart.
+logger.info('bot.connecting')
 try {
-  await client.login(config.token)
-  console.warn('🔗 Login successful, waiting for ready event...')
+  await loginWithBackoff(() => client.login(config.token))
+  logger.info('bot.login_succeeded')
 } catch (error) {
-  console.error('❌ Failed to login:', error)
+  captureException(error, { phase: 'login' })
+  flushMetrics()
   process.exit(1)
 }

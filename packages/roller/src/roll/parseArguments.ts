@@ -246,6 +246,25 @@ function parseGeometricDieParams<T>(arg: string, position: number): RollParams<T
   ]
 }
 
+/**
+ * Special-die parsers, tried in order against a notation string argument.
+ *
+ * Each entry returns fully-built RollParams when its pattern matches, or null
+ * to fall through to the next parser. Ordering is preserved from the original
+ * sequential if-ladder. Driving the dispatch from a table removes the repeated
+ * `as RollParams<T>[]` casts: each parser is invoked with the caller's `T`, so
+ * its return type already matches.
+ */
+type SpecialDieParser = <T>(arg: string, position: number) => RollParams<T>[] | null
+
+const SPECIAL_DIE_PARSERS: readonly SpecialDieParser[] = [
+  parseDrawDieParams,
+  parseGeometricDieParams,
+  parseFateDieParams,
+  parseZeroBiasDieParams,
+  parseCustomFacesDieParams
+]
+
 const PERCENTILE_DIE_PATTERN = /^(\d*)[Dd]%$/
 
 function parsePercentileDie(argument: unknown): { quantity: number; sides: 100 } | null {
@@ -314,20 +333,10 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
       })
     }
 
-    const drawParams = parseDrawDieParams<T>(argument, position)
-    if (drawParams) return drawParams
-
-    const geometricParams = parseGeometricDieParams<T>(argument, position)
-    if (geometricParams) return geometricParams
-
-    const fateParams = parseFateDieParams(argument, position)
-    if (fateParams) return fateParams as RollParams<T>[]
-
-    const zeroBiasParams = parseZeroBiasDieParams(argument, position)
-    if (zeroBiasParams) return zeroBiasParams as RollParams<T>[]
-
-    const customFacesParams = parseCustomFacesDieParams(argument, position)
-    if (customFacesParams) return customFacesParams as RollParams<T>[]
+    for (const parseSpecialDie of SPECIAL_DIE_PARSERS) {
+      const params = parseSpecialDie<T>(argument, position)
+      if (params) return params
+    }
   }
 
   const allOptions = optionsFromArgument(argument)

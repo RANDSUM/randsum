@@ -21,6 +21,13 @@ expo-env.d.ts
 # Metro
 .metro-health-check*
 
+# Playwright (e2e)
+test-results/
+playwright-report/
+.playwright/
+blob-report/
+playwright/.cache/
+
 # debug
 npm-debug.*
 yarn-debug.*

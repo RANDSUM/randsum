@@ -1,4 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
+import type { APIEmbed } from 'discord.js'
 
 void mock.module('@randsum/roller', () => ({
   roll: () => ({ total: 1, result: ['1'], rolls: [] }),
@@ -76,7 +77,7 @@ describe('helpCommand', () => {
     const interaction = makeInteraction()
     await helpCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON()
     expect(embedJson.color).toBe(0xffd700)
@@ -86,7 +87,7 @@ describe('helpCommand', () => {
     const interaction = makeInteraction()
     await helpCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { footer?: unknown }
     expect(embedJson.footer).toBeDefined()
@@ -96,7 +97,7 @@ describe('helpCommand', () => {
     const interaction = makeInteraction()
     await helpCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => Record<string, unknown> }[]
+      embeds: { toJSON: () => APIEmbed }[]
     }
     const embedJson = call.embeds[0]!.toJSON() as { fields?: unknown[] }
     expect(embedJson.fields).toBeDefined()
