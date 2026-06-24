@@ -2,6 +2,13 @@
   base = "."
   command = "bun run --filter @randsum/roller build && bun run --filter @randsum/rdn build"
   publish = "apps/rdn/dist"
+  # Skip the build (exit 0) when no changes touched this site or its build inputs,
+  # conserving free-tier build minutes. rdn only depends on @randsum/roller, so it
+  # rebuilds on changes to apps/rdn, packages/roller, or root build config (lockfile,
+  # workspace + tsconfig). `git diff --quiet` exits 1 when those paths changed →
+  # build proceeds. On the first build CACHED_COMMIT_REF is empty and git errors
+  # non-zero, so the build also proceeds (safe default).
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/rdn packages/roller package.json bun.lock tsconfig.json tsconfig.packages.json"
 
 [build.environment]
   # Pin the build toolchain so Netlify deploys are reproducible (audit X4 /
