@@ -1,8 +1,20 @@
 [build]
-  # Build command runs from root (base directory)
-  # Builds packages first (for workspace resolution), generates API docs, then builds the site
-  command = "bun run build && bun run site:build"
+  # Build command runs from root (base directory). The site imports @randsum/roller
+  # and @randsum/games (via subpath exports, so both must be built first); it does
+  # NOT import @randsum/cli or @randsum/discord-bot (those appear only in MDX prose).
+  # So build just roller + games rather than the full `bun run build`, conserving
+  # free-tier build minutes. roller is built before games because games depends on it.
+  command = "bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run site:build"
   publish = "apps/site/dist"
+  # Skip the build (exit 0) when no changes touched this site or its build inputs,
+  # conserving free-tier build minutes. The site imports roller + games and renders
+  # MDX docs for the whole ecosystem, so it rebuilds on changes to apps/site, any
+  # packages/*, or root build config (lockfile, workspace + tsconfig). It does NOT
+  # rebuild for changes confined to the other apps (rdn, cli, expo, discord-bot).
+  # `git diff --quiet` exits 1 when the listed paths changed → build proceeds. On the
+  # first build CACHED_COMMIT_REF is empty and git errors non-zero, so the build also
+  # proceeds (safe default).
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/site packages package.json bun.lock tsconfig.json tsconfig.packages.json"
 
 [build.environment]
   # Pin the build toolchain so Netlify deploys are reproducible (audit X4 /
