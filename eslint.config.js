@@ -50,8 +50,7 @@ export default tseslint.config(
       '**/.ladle/**',
       '**/__tests__/fixtures/dist/**',
       '**/__tests__/fixtures/*.ts',
-      '**/*.generated.ts',
-      'apps/expo/**'
+      '**/*.generated.ts'
     ]
   },
   {

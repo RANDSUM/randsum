@@ -22,7 +22,7 @@ jobs:
       cli: ${{ steps.filter.outputs.cli }}
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
-      expo: ${{ steps.filter.outputs.expo }}
+      dice-ui: ${{ steps.filter.outputs.dice-ui }}
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
@@ -51,8 +51,7 @@ jobs:
               - 'apps/rdn/**'
               - 'packages/roller/**'
               - '.github/workflows/ci.yml'
-            expo:
-              - 'apps/expo/**'
+            dice-ui:
               - 'packages/roller/**'
               - 'packages/dice-ui/**'
               - '.github/workflows/ci.yml'
@@ -163,17 +162,16 @@ jobs:
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/rdn' check
 
-  expo:
-    name: expo
+  dice-ui:
+    name: dice-ui
     needs: changes
-    if: needs.changes.outputs.expo == 'true'
+    if: needs.changes.outputs.dice-ui == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/dice-ui' check
-      - run: bun run --filter '@randsum/expo' check
       # dice-ui coverage (audit X6). The `test:coverage` script is added by the
       # dice-ui workstream; this step + upload are the wiring. Guarded so the job
       # stays green until that script + lcov land.
@@ -317,7 +315,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, discord-bot, site, rdn, expo, skill, bench, publish-dry-run, knip, arch, audit]
+    needs: [roller, games, cli, discord-bot, site, rdn, dice-ui, skill, bench, publish-dry-run, knip, arch, audit]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

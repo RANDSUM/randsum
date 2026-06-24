@@ -55,8 +55,8 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 
 | #                                                     | Title                           | Status   |
 | ----------------------------------------------------- | ------------------------------- | -------- |
-| [011](./ADR-011-playground-layout-design.md)          | Playground layout design        | Superseded by apps/expo |
-| [012](./ADR-012-playground-app-infrastructure.md)     | Playground app infrastructure   | Superseded by apps/expo |
+| [011](./ADR-011-playground-layout-design.md)          | Playground layout design        | Superseded (apps/expo, since removed) |
+| [012](./ADR-012-playground-app-infrastructure.md)     | Playground app infrastructure   | Superseded (apps/expo, since removed) |
 
 ## For AI Agents
 
@@ -71,7 +71,7 @@ Consult these ADRs before starting the related kind of task.
 - **Looking for `@randsum/notation`** — gone. Merged into roller per [ADR-005](./ADR-005-merge-notation-into-roller.md). Original separation rationale in [ADR-003](./ADR-003-notation-as-separate-package.md) (superseded).
 - **Considering a linter/formatter swap (e.g., Biome)** — [ADR-013](./ADR-013-biome-migration-evaluation.md) deferred the migration. Re-evaluate only with new evidence.
 - **Working on notation.randsum.dev (`apps/rdn/`)** — [ADR-015](./ADR-015-custom-astro-layout-over-starlight.md) (no Starlight), [ADR-016](./ADR-016-static-version-embedding.md) (per-version static pages), [ADR-017](./ADR-017-vanilla-typescript-client-interactivity.md) (no React islands).
-- **Looking for the playground app** — there is no `apps/playground/`. The interactive dice app is `apps/expo/`. [ADR-011](./ADR-011-playground-layout-design.md) and [ADR-012](./ADR-012-playground-app-infrastructure.md) record the original playground design but were superseded by `apps/expo/` and never built.
+- **Looking for the playground app** — there is none. There was never an `apps/playground/`; the interactive dice app effort moved to an `apps/expo/` prototype, which has since been removed from the monorepo. [ADR-011](./ADR-011-playground-layout-design.md) and [ADR-012](./ADR-012-playground-app-infrastructure.md) record the original playground design, which was superseded by `apps/expo/` and never built.
 - **Updating the docs site copy or examples** — [ADR-010](./ADR-010-docs-site-notation-merge-alignment.md) aligned the site with the notation-into-roller merge. Any doc that still references `@randsum/notation` as a separate package is stale.
 - **Working on `apps/cli` or `@randsum/dice-ui`** — [ADR-019](./ADR-019-cli-without-ink-and-dice-ui-no-tui-target.md) records that the CLI is a plain string-formatter (no Ink, no dice-ui dep) and dice-ui has only web + React Native targets (no `ink/` TUI). Do not re-introduce Ink on the assumption it was once intended.
 

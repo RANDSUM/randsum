@@ -8,23 +8,16 @@ notation input with token color overlay (`TokenOverlayInput`), a roll step visua
 combined notation roller (`NotationRoller`), a quick reference grid (`QuickReferenceGrid`/`DocModal`),
 and theme utilities (`useTheme`/`getTheme`/`subscribeTheme`/`DiceUIThemeProvider`).
 
-The only runtime dependency is `@randsum/roller` (`workspace:~`). `react`, `react-dom`,
-`react-native`, and `expo-haptics` are peer dependencies (the latter three optional). There is **no
-build script** — `main`/`types`/`exports` resolve to `src/index.ts`, so the package is consumed
-directly as TypeScript source.
+The only runtime dependency is `@randsum/roller` (`workspace:~`). `react` and `react-dom` are peer
+dependencies (`react-dom` optional). There is **no build script** — `main`/`types`/`exports` resolve
+to `src/index.ts`, so the package is consumed directly as TypeScript source.
 
 Private, never published to npm.
 
-## Platform forks
+## Render target
 
-Two entry barrels expose the same public surface against platform-specific implementations:
-
-- `src/index.ts` (web / react-dom) → `*.tsx` files.
-- `src/index.native.ts` (React Native) → `*.native.tsx` files.
-
-Most components ship both a `.tsx` and a `.native.tsx`. The Expo app maps to the native barrel via
-`tsconfig` paths; web bundlers resolve `index.ts`. There is **no TUI / `ink` target** (see
-`docs/adr/ADR-019`).
+Web only (`react-dom`) — `src/index.ts` → the `.tsx` components. There is **no React Native target**
+and **no TUI / `ink` target** (see `docs/adr/ADR-019`).
 
 ## Exports
 
@@ -48,26 +41,18 @@ export { QuickReferenceGrid, DocModal }
 ```
 packages/dice-ui/
   src/
-    index.ts                  # Web public barrel
-    index.native.ts           # React Native public barrel
+    index.ts                  # Public barrel
     types.ts                  # Shared prop/result types
-    useTheme.tsx              # Theme store + provider (web)
-    useTheme.native.tsx       # Theme store + provider (native)
+    useTheme.tsx              # Theme store + provider
     tokenColor.ts             # Notation-token → color helper
-    TokenOverlayInput.tsx     # Input with colored token spans overlaid (web)
-    TokenOverlayInput.native.tsx
+    TokenOverlayInput.tsx     # Input with colored token spans overlaid
     TokenOverlayInput.css
-    RollSteps.tsx             # DieBadge, StepRow, RollSteps (web)
-    RollSteps.native.tsx
+    RollSteps.tsx             # DieBadge, StepRow, RollSteps
     RollSteps.css
-    RollResultPanel.tsx       # RollResultPanel + RollResultDisplay (web)
-    RollResultPanel.native.tsx
-    NotationRoller.tsx        # Full roller: input + roll button + result (web)
-    NotationRoller.native.tsx
+    RollResultPanel.tsx       # RollResultPanel + RollResultDisplay
+    NotationRoller.tsx        # Full roller: input + roll button + result
     NotationRoller.css
-    NumericStepper.tsx        # +/- stepper (web) / .native.tsx
-    QuickReferenceGrid.tsx    # Notation reference grid + DocModal (web)
-    QuickReferenceGrid.native.tsx
+    QuickReferenceGrid.tsx    # Notation reference grid + DocModal
     notationBuilder.ts        # Notation assembly helper
     tokens.css                # CSS custom-property tokens (colors, spacing)
 ```
@@ -96,8 +81,5 @@ bun run check       # typecheck + test
 
 - No build script — consumed as TypeScript source, not a built artifact.
 - Private, never published to npm.
-- Web and native implementations must stay in sync on the shared public surface (both barrels export
-  the same names).
-- CSS files are imported alongside their web component file (e.g. `import './NotationRoller.css'`);
-  native variants use React Native styles instead.
+- CSS files are imported alongside their component file (e.g. `import './NotationRoller.css'`).
 - Props interfaces use `readonly` fields (strict mode convention).

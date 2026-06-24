@@ -1,7 +1,6 @@
-// Platform-agnostic notation-builder logic shared by the web (`.tsx`) and native
-// (`.native.tsx`) QuickReferenceGrid implementations. This module MUST stay free of any
-// React / React-Native imports so both render targets and the bun:test unit suite can
-// consume it directly. Only the rendering/styling stays per-platform.
+// Presentation-agnostic notation-builder logic for the QuickReferenceGrid implementation.
+// This module MUST stay free of any React imports so the component and the bun:test unit
+// suite can both consume it directly. Only the rendering/styling lives in the component.
 
 import type { ModifierCategory, NotationDoc } from '@randsum/roller/docs'
 
@@ -61,7 +60,7 @@ export function getBuilderType(doc: NotationDoc): BuilderType {
 
 // A modifier can only be appended when the current notation already contains a dice
 // expression (e.g. `2d6`). Core/Special dice types are always addable. `notation` may be
-// undefined (native passes the optional prop straight through).
+// undefined (the optional prop is passed straight through).
 export function canAddModifier(notation: string | undefined, doc: NotationDoc): boolean {
   if (doc.category === 'Core' || doc.category === 'Special') return true
   if (notation === undefined || notation.length === 0) return false
