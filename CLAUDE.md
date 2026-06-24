@@ -135,7 +135,7 @@ roll("5d10F{3}") // Count failures <= 3
 ## Git Hooks (Lefthook)
 
 **pre-commit** (parallel): `bun install --frozen-lockfile` (priority 1), then ESLint `--fix`, Prettier, typecheck, and codegen check (`gen:check`)
-**pre-push**: build (priority 1), then codegen check, conformance check (`@randsum/rdn conformance:check`), tests, security audit (`bun audit --audit-level=high`), knip, and arch check (`arch:check`)
+**pre-push**: build (priority 1), then codegen check, conformance check (`@randsum/rdn conformance:check`), tests, security audit (`bun audit --audit-level=high`), SCA scan (`scripts/sca-scan.sh` — OSV-Scanner, mirrors the CI `sca` job; soft-skips if `osv-scanner`/Docker absent), knip, and arch check (`arch:check`)
 
 If hooks fail, run `bun run fix:all`.
 
@@ -159,7 +159,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 
-**Hook failures**: Pre-commit runs install, lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build (priority 1), then codegen check, conformance check, test, `bun audit --audit-level=high`, knip, and arch check. Recovery: `bun run fix:all`, then retry. See `lefthook.yml` for full config.
+**Hook failures**: Pre-commit runs install, lint --fix, format, typecheck, and codegen check (`gen:check`) in parallel. Pre-push runs build (priority 1), then codegen check, conformance check, test, `bun audit --audit-level=high`, SCA scan (`scripts/sca-scan.sh`), knip, and arch check. Recovery: `bun run fix:all`, then retry. See `lefthook.yml` for full config.
 
 ## Dice Notation Reference
 
