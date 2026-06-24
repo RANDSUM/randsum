@@ -36,7 +36,6 @@
     { "path": "apps/cli" },
     { "path": "apps/discord-bot" },
     { "path": "apps/rdn" },
-    { "path": "apps/site" },
-    { "path": "apps/expo" }
+    { "path": "apps/site" }
   ]
 }

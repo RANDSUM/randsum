@@ -8,16 +8,14 @@ to file incident RCAs.
 
 ## Surface map
 
-| Surface             | App                                             | Host            | Trigger                           | URL                                     |
-| ------------------- | ----------------------------------------------- | --------------- | --------------------------------- | --------------------------------------- |
-| Docs site           | `apps/site`                                     | Netlify         | push to `main`                    | randsum.dev                             |
-| Notation spec site  | `apps/rdn`                                      | Netlify         | push to `main`                    | notation.randsum.dev                    |
-| Playground (web)    | `apps/expo`                                     | EAS Hosting     | `.github` web-deploy on `main`    | randsumapp.expo.app / randsum.io        |
-| Playground (native) | `apps/expo`                                     | EAS Build       | `.github` native-deploy on `main` | EAS artifacts (not yet store-submitted) |
-| Discord bot         | `apps/discord-bot`                              | Render (worker) | manual / Render redeploy          | n/a (Discord gateway)                   |
-| npm packages        | `packages/roller`, `packages/games`, `apps/cli` | npm registry    | manual `bun publish`              | npmjs.com/org/randsum                   |
+| Surface            | App                                             | Host            | Trigger                  | URL                   |
+| ------------------ | ----------------------------------------------- | --------------- | ------------------------ | --------------------- |
+| Docs site          | `apps/site`                                     | Netlify         | push to `main`           | randsum.dev           |
+| Notation spec site | `apps/rdn`                                      | Netlify         | push to `main`           | notation.randsum.dev  |
+| Discord bot        | `apps/discord-bot`                              | Render (worker) | manual / Render redeploy | n/a (Discord gateway) |
+| npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry    | manual `bun publish`     | npmjs.com/org/randsum |
 
-> Config sources: `apps/site/netlify.toml`, `apps/rdn/netlify.toml`, `apps/expo/eas.json`,
+> Config sources: `apps/site/netlify.toml`, `apps/rdn/netlify.toml`,
 > `render.yaml` (repo root). Workflow files live in `.github/workflows/` (owned separately —
 > see those files for the exact trigger steps).
 
@@ -53,57 +51,6 @@ you can roll forward again the same way once the fix lands.
   Netlify state is recoverable by reconnecting the repo and redeploying `main`.
 - DNS for `randsum.dev` / `notation.randsum.dev` is the only non-git state — keep the
   registrar and Netlify DNS records documented in the team password vault.
-
----
-
-## EAS Hosting (apps/expo web → randsumapp.expo.app / randsum.io)
-
-- **EAS project:** `d50b53cf-026b-45e8-823d-c96fb621a521` (slug `randsumapp`, owner `randsum`).
-- Web deploy command: `eas deploy --prod` (from `apps/expo`); also wired to a `main` push workflow.
-
-### Deploy
-
-```bash
-cd apps/expo
-eas deploy --prod        # builds the Expo web export and uploads to EAS Hosting
-```
-
-### Rollback — promotion / aliasing
-
-EAS Hosting keeps every deployment immutable and addressable. Rolling back = re-aliasing the
-production alias to a previous deployment rather than rebuilding:
-
-```bash
-cd apps/expo
-eas deploy:list                          # list deployment IDs (newest first)
-eas deploy:promote --id <DEPLOYMENT_ID>  # promote a previous deployment to production
-# (equivalently, repoint the prod alias to the older deployment)
-```
-
-Confirm the targeted deployment ID is the last known-good build before promoting. Promotion
-is instant and reversible — promote forward again once a fix ships.
-
-### Native (iOS/Android)
-
-`eas.json` defines `development` / `preview` / `production` build profiles and a
-`submit.production` config (Android `internal` track, `draft` release status). Native builds
-run on `main` but are **not** auto-submitted to stores yet. To ship a native build:
-
-```bash
-cd apps/expo
-eas build --platform ios --profile production
-eas build --platform android --profile production
-eas submit --platform android --profile production   # requires Play service account
-```
-
-Native "rollback" = submit/promote a previous build artifact via EAS / store consoles; there
-is no instant alias swap for native binaries.
-
-### DR notes
-
-- The web app is reproducible from git via `eas deploy`. The EAS project ID + owner are the
-  only external bindings; keep store credentials (App Store Connect key, Play service account)
-  in the vault — they are not in the repo.
 
 ---
 

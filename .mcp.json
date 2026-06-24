@@ -5,10 +5,6 @@
       "url": "https://mcp.render.com/mcp",
       "headersHelper": "$CLAUDE_PROJECT_DIR/scripts/mcp-1password-headers.sh"
     },
-    "expo": {
-      "type": "http",
-      "url": "https://mcp.expo.dev/mcp"
-    },
     "github": {
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",

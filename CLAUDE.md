@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
 `blades` (Blades in the Dark), `daggerheart`, `fate` (Fate Core), `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse). A `schema` subpath exports the codegen/validation API.
 
-**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private Discord bot, deployed as a Render worker), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private), `@randsum/expo` (dice playground — web, iOS, Android, private)
+**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private Discord bot, deployed as a Render worker), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private)
 
 Game packages never depend on each other — only on `@randsum/roller`.
 
@@ -175,7 +175,6 @@ this repo's deploy/host stack. Each maps to a real workspace target:
 | Server   | Transport | Backs                              | Auth                            |
 | -------- | --------- | ---------------------------------- | ------------------------------- |
 | `render` | http      | `apps/discord-bot` (Render worker) | 1Password PAT (`headersHelper`) |
-| `expo`   | http      | `apps/expo` (EAS native + web)     | OAuth — run `/mcp`              |
 | `github` | http      | repo host (issues, PRs, releases)  | 1Password PAT (`headersHelper`) |
 
 Secrets are **never** committed. The `github` and `render` (http) servers
@@ -192,7 +191,7 @@ op://claude-agent/Render API Key/credential  # render
 
 An already-exported env var wins over `op`, so CI / fresh checkouts without
 1Password can still authenticate by exporting `GITHUB_PAT` / `RENDER_API_KEY`
-before launch. `expo` authenticates via OAuth — run `/mcp` after first launch.
+before launch.
 
 Run `/mcp` in Claude Code to check connection status. Netlify is **not** a
 project-scoped server here — use the account-level claude.ai Netlify connector

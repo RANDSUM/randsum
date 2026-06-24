@@ -2,7 +2,12 @@
 
 ## Status
 
-Accepted
+Accepted.
+
+> Update (2026-06-23): the React Native target described below has since been removed
+> along with the `apps/expo` app — `@randsum/dice-ui` is now **web-only**. The core
+> decision (CLI ships without Ink; dice-ui has no TUI target) is unchanged. The factual
+> claims below have been updated to reflect the single remaining render target.
 
 ## Context
 
@@ -10,8 +15,8 @@ Earlier project memory and audit findings recorded a planned "unified roller app
 direction in which:
 
 - `apps/cli` would be an **Ink-based TUI** that depended on `@randsum/dice-ui`, and
-- `@randsum/dice-ui` would ship a **third render target** — an `ink/` subdirectory of
-  TUI components — alongside its web (`.tsx`) and React Native (`.native.tsx`) targets.
+- `@randsum/dice-ui` would ship an additional render target — an `ink/` subdirectory of
+  TUI components — alongside its web (`.tsx`) and (then-present) React Native targets.
 
 That intent was never realized. The artifacts drifted from the shipped code, which this
 ADR records so the retired direction is captured rather than silently reverted.
@@ -24,11 +29,10 @@ The current, verified-in-source reality:
   React, no Ink, and no dependency on `@randsum/dice-ui`.** Its only workspace dependency
   is `@randsum/roller` (declared as a `devDependency` and inlined at build time via bunup's
   `noExternal: [/^@randsum\//]`). `apps/cli/package.json` is at version `2.0.0`.
-- **`@randsum/dice-ui` has exactly two render targets**: `index.ts` (web / react-dom,
-  the `.tsx` components) and `index.native.ts` (React Native, the `.native.tsx`
-  components). There is **no `ink/` directory and no `ink` dependency** in
+- **`@randsum/dice-ui` has exactly one render target**: `index.ts` (web / react-dom,
+  the `.tsx` components). There is **no `ink/` directory and no `ink` dependency** in
   `packages/dice-ui/package.json`. Its dependencies are `@randsum/roller` plus
-  React / React Native peers.
+  React peers. (A React Native target existed previously and was removed with `apps/expo`.)
 - **The `NormalizedRollDefinition` IR is codegen-only.** It is defined in
   `packages/games/src/lib/normalizedTypes.ts` and consumed exclusively inside
   `packages/games/src/lib/` (the `normalizer`, `codegen`, and `emit*` functions).
@@ -41,7 +45,7 @@ The current, verified-in-source reality:
 Record that the "Ink TUI / dice-ui TUI target" direction is **retired, not pending**:
 
 - The CLI is intentionally a thin, dependency-light string formatter over `@randsum/roller`.
-- `dice-ui` is a two-target (web + React Native) component library with no TUI surface.
+- `dice-ui` is a web-only component library with no TUI surface.
 - The `NormalizedRollDefinition` IR is a build-time codegen artifact, not a runtime concept.
 
 ## Consequences
@@ -61,5 +65,5 @@ Record that the "Ink TUI / dice-ui TUI target" direction is **retired, not pendi
 ## References
 
 - `apps/cli/src/{index,run,format}.ts`, `apps/cli/package.json`, `apps/cli/bunup.config.ts`
-- `packages/dice-ui/package.json`, `packages/dice-ui/src/index.ts`, `packages/dice-ui/src/index.native.ts`
+- `packages/dice-ui/package.json`, `packages/dice-ui/src/index.ts`
 - `packages/games/src/lib/normalizedTypes.ts` (IR definition; consumers under `packages/games/src/lib/`)

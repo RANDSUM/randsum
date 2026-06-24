@@ -31,27 +31,15 @@
       "includeEntryExports": true
     },
     "packages/dice-ui": {
-      "entry": ["src/index.native.ts"],
+      "entry": ["src/index.ts"],
       "project": ["src/**/*.{ts,tsx}"],
       "includeEntryExports": true
-    },
-    "apps/expo": {
-      "entry": ["app/**/*.tsx", "playwright.config.ts", "e2e/**/*.ts"],
-      "project": ["**/*.{ts,tsx}"],
-      "ignoreDependencies": ["expo-*"]
     },
     "apps/rdn": {},
     "apps/site": {}
   },
-  "ignoreBinaries": ["skills-ref", "expo", "eas-cli"],
-  "ignore": [
-    "**/bunup.config.ts",
-    "**/*.native.ts",
-    "**/*.native.tsx",
-    "**/*.web.ts",
-    "**/*.web.tsx",
-    "**/*.generated.ts"
-  ],
+  "ignoreBinaries": ["skills-ref"],
+  "ignore": ["**/bunup.config.ts", "**/*.generated.ts"],
   "exclude": ["optionalPeerDependencies", "unresolved", "exports", "types"],
   "ignoreExportsUsedInFile": true
 }

@@ -5,23 +5,20 @@ color overlay, a roll-step visualizer, result panels, a combined notation roller
 reference grid.
 
 > **Private package** (`"private": true`, v2.0.0). Not published to npm. Consumed from source by
-> `apps/expo` and `apps/site` within the monorepo via `workspace:~`. There is **no build step** —
+> `apps/site` within the monorepo via `workspace:~`. There is **no build step** —
 > `main`/`types`/`exports` all point at `src/index.ts`.
 
-## Render targets
+## Render target
 
-Two targets only — there is **no TUI / `ink` target** (see `docs/adr/ADR-019`):
+Web only (`react-dom`): `src/index.ts` → the `.tsx` components. There is **no React Native target**
+and **no TUI / `ink` target** (see `docs/adr/ADR-019`).
 
-- **Web (react-dom):** `src/index.ts` → the `.tsx` components.
-- **React Native:** `src/index.native.ts` → the `.native.tsx` components.
-
-Bundlers/resolvers pick the target by platform (Metro for Expo, `paths`/conditions for the
-site). The only runtime workspace dependency is `@randsum/roller`. `react`, `react-dom`,
-`react-native`, and `expo-haptics` are peers (the last three optional).
+The only runtime workspace dependency is `@randsum/roller`. `react` and `react-dom` are peers
+(`react-dom` optional).
 
 ## Exports
 
-Both barrels expose the same public surface:
+The public surface:
 
 - Theme: `useTheme`, `getTheme`, `subscribeTheme`, `DiceUIThemeProvider`
 - `TokenOverlayInput` — notation input with a colored token overlay
@@ -41,5 +38,5 @@ bun run --filter @randsum/dice-ui check       # typecheck + test
 
 ## More
 
-See [`CLAUDE.md`](./CLAUDE.md) in this directory for component-by-component guidance and the
-platform-fork conventions, and the root [`CLAUDE.md`](../../CLAUDE.md) for monorepo-wide rules.
+See [`CLAUDE.md`](./CLAUDE.md) in this directory for component-by-component guidance, and the root
+[`CLAUDE.md`](../../CLAUDE.md) for monorepo-wide rules.

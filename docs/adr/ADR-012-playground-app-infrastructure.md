@@ -2,7 +2,8 @@
 
 ## Status
 
-Superseded by `apps/expo`. Designed, never built.
+Superseded by an interactive Expo app (`apps/expo`), which has since been
+removed from the monorepo. Designed, never built.
 
 ## Context
 
@@ -23,7 +24,8 @@ Plan the playground as a private Astro workspace package at `apps/playground/`
 **This plan was never implemented.** No `apps/playground/` directory, no
 `@randsum/playground` package, no separate Netlify site, and no
 `playground.randsum.dev` deployment were ever created. The interactive dice app
-effort instead moved to `apps/expo/`. The detailed `package.json`, `astro.config`,
+effort instead moved to an `apps/expo/` prototype, which has since been removed
+from the monorepo. The detailed `package.json`, `astro.config`,
 `netlify.toml`, DNS/CNAME setup, and root-script wiring recorded in earlier drafts
 of this ADR describe infrastructure that does not exist and have been removed; the
 intent above is kept only as a historical record.
@@ -32,13 +34,13 @@ intent above is kept only as a historical record.
 
 - There is no playground subdomain, Netlify site, or workspace package to operate
   or maintain — the operational surface this ADR weighed never materialized.
-- The reasoning about deployment isolation and build ordering may inform how
-  `apps/expo` is built and shipped, but the Astro/Netlify specifics do not apply
-  to an Expo/EAS target.
-- Future interactive-app infrastructure decisions should be made against
-  `apps/expo`, not a standalone playground.
+- The reasoning about deployment isolation and build ordering may inform any
+  future interactive app, but the Astro/Netlify specifics did not apply to the
+  Expo/EAS target that superseded this plan and has since been removed.
+- There is no interactive-app infrastructure in the monorepo today (the `apps/expo`
+  prototype was removed); future decisions would start fresh.
 
 ## References
 
-- ADR-011: Playground Layout Design (also superseded by `apps/expo`)
-- `apps/expo/` — the interactive dice app effort that replaced this plan
+- ADR-011: Playground Layout Design (also superseded by the removed `apps/expo`)
+- `apps/expo/` — the interactive dice app effort that replaced this plan, since removed
