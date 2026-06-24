@@ -1,0 +1,2353 @@
+{
+  "schema_version": "v1",
+  "engagement": {
+    "slug": "randsum-randsum-monorepo-2026-06-23",
+    "client": "randsum",
+    "project": "randsum-monorepo",
+    "audit_date": "2026-06-23",
+    "generated_at": "2026-06-24T03:05:04Z"
+  },
+  "verdict": {
+    "risk_level": "healthy",
+    "headline": "A mature, uniformly strong TypeScript dice-library monorepo with no critical or high-severity findings — remaining work is observability \"last-mile\" and polish.",
+    "framing": "Every remediation item is Medium or Low; the codebase is ready to build on, not to fix."
+  },
+  "scorecard": [
+    {
+      "dimension": "maintainability",
+      "grade": "B",
+      "headline": "Well-maintained and highly modular (zero dead code per `knip`); dragged only by diverged `dice-ui` web/native component pairs and a 157-line codegen emitter function. (Report grade: B+)"
+    },
+    {
+      "dimension": "test-quality",
+      "grade": "A",
+      "headline": "~1.21:1 test-to-code ratio across 193 files with property, 9999-iter stress, and conformance layers; thin app-layer e2e is the only real gap. (Report grade: A−)"
+    },
+    {
+      "dimension": "security",
+      "grade": "A",
+      "headline": "No hardcoded secrets, ReDoS-resistant notation parser with hard bounds, zero-dependency core, clean `bun audit`; minor gaps are a missing commit-time secret scanner and a `Math.random` RNG boundary note. (Report grade: A−)"
+    },
+    {
+      "dimension": "reliability",
+      "grade": "B",
+      "headline": "Excellent error hierarchy and a deliberately hardened bot, but the Sentry tracker is a no-op stub and there is no liveness/SLO/alert for the single-instance worker."
+    },
+    {
+      "dimension": "performance",
+      "grade": "A",
+      "headline": "Pure-compute engine with every unbounded loop (explode/reroll/unique/repeat) explicitly capped and enforced bundle budgets; two roller entry points sit near their size ceiling. (Report grade: A−)"
+    },
+    {
+      "dimension": "architecture",
+      "grade": "A",
+      "headline": "Mechanically enforced stable-core DAG (`dependency-cruiser` clean: 0 cycles, 0 cross-game imports), genuinely zero-dep core, 19 MADR ADRs."
+    },
+    {
+      "dimension": "delivery",
+      "grade": "A",
+      "headline": "Elite lead time; Changesets + npm OIDC Trusted Publishing, SHA-pinned path-filtered CI with bench/SCA gates; soft spots are stale branches and single-maintainer bus factor."
+    },
+    {
+      "dimension": "documentation",
+      "grade": "A",
+      "headline": "Top-decile doc estate (root + per-package CLAUDE.md, 19 ADRs, two doc sites, a real ops runbook); drift risks are a stale bot README and unpublished TypeDoc."
+    },
+    {
+      "dimension": "infrastructure",
+      "grade": "A",
+      "headline": "100% config-as-code across Render/Netlify×2/EAS+npm with full toolchain pinning, SHA-pinned actions, and zero committed secrets (OIDC + `sync:false`); minor drift-detection gaps. (Report grade: A−)"
+    }
+  ],
+  "blockers": [],
+  "top_risks": [
+    {
+      "rank": 1,
+      "title": "Bot error tracker is a no-op stub",
+      "summary": "`forwardToSentry` is empty, so even with a DSN set, exceptions never leave Render logs; the single-instance worker has no runtime error aggregation.",
+      "source_dimensions": ["reliability", "infrastructure"]
+    },
+    {
+      "rank": 2,
+      "title": "No liveness signal / SLO / alert for the single-instance bot",
+      "summary": "A stuck-but-alive gateway is invisible until a user reports it; metrics flush but nothing closes the detection loop.",
+      "source_dimensions": ["reliability", "infrastructure"]
+    },
+    {
+      "rank": 3,
+      "title": "`dice-ui` web/native duplication",
+      "summary": "`QuickReferenceGrid` `.tsx`/`.native.tsx` differ by ~1,459 lines; every change is made twice and silently lands on one platform. The repo's top modifiability risk.",
+      "source_dimensions": ["maintainability"]
+    },
+    {
+      "rank": 4,
+      "title": "Doc-vs-reality drift",
+      "summary": "`apps/discord-bot/README.md` documents a pm2/systemd self-host path the production Render blueprint contradicts; TypeDoc is wired but unpublished, leaving hand-authored API pages to drift.",
+      "source_dimensions": ["documentation"]
+    },
+    {
+      "rank": 5,
+      "title": "Single-maintainer bus factor",
+      "summary": "Release decisions, secret rotation, DNS, and vault access concentrate on one person; automation survives, human-held knowledge does not.",
+      "source_dimensions": ["delivery", "documentation", "infrastructure"]
+    }
+  ],
+  "top_recommendations": [
+    {
+      "rank": 1,
+      "title": "Fix the stale bot README hosting path (pm2 → Render)",
+      "summary": "One-file fix closing a known, already-acknowledged doc-rot vector.",
+      "risk_reduction": "medium",
+      "remediation_item_ids": ["N1"]
+    },
+    {
+      "rank": 2,
+      "title": "Activate the error tracker + add a Sentry DSN",
+      "summary": "Wire `forwardToSentry` to a real transport so the SPOF worker has runtime error visibility.",
+      "risk_reduction": "medium",
+      "remediation_item_ids": ["N7"]
+    },
+    {
+      "rank": 3,
+      "title": "Add liveness + one symptom-based alert + a minimal SLO for the bot",
+      "summary": "Turn existing metrics into incident *detection*.",
+      "risk_reduction": "medium",
+      "remediation_item_ids": ["N8", "N9"]
+    },
+    {
+      "rank": 4,
+      "title": "Confirm branch protection requires `ci-gate` on `main`, and confirm PaaS declarations against live state once",
+      "summary": "Close the two \"configured but unverified\" gaps on an auto-deploying main.",
+      "risk_reduction": "medium",
+      "remediation_item_ids": ["N2", "N3"]
+    },
+    {
+      "rank": 5,
+      "title": "Publish TypeDoc (or diff it in CI) and extract shared `dice-ui` logic",
+      "summary": "Kill the two largest doc-rot and duplication vectors.",
+      "risk_reduction": "medium",
+      "remediation_item_ids": ["N11", "L1"]
+    }
+  ],
+  "narrative": {
+    "executive_summary": "`randsum` is a single Bun-workspace TypeScript monorepo (~53.6k LOC across the zero-dependency `@randsum/roller` engine, the code-generated `@randsum/games` packages, the `@randsum/dice-ui` React-Native library, and five apps — CLI, Discord bot, two Astro doc sites, and an Expo playground). It publishes a dice ecosystem to npm under `@randsum`.\n\nThe headline finding is that there is **no headline problem**. Across nine quality dimensions the scorecard is uniformly strong — seven A-band, two B-band — with **zero Critical or High-severity findings**. Architectural invariants are mechanically enforced rather than merely documented (`dependency-cruiser` `arch:check` ran clean: 275 modules, 0 cycles, 0 cross-package violations); the untrusted-notation parser is ReDoS-resistant with hard input bounds; the test estate is genuinely deep (193 files, ~2,700 roller tests with property-based + 9999-iteration stress + RFC-2119 conformance layers); delivery is Elite-tier (Changesets + npm OIDC Trusted Publishing, SHA-pinned CI with bench/SCA gates); and the documentation estate is top-decile for the project's size (19 MADR ADRs, two doc sites, a real ops runbook).\n\nThe two B-grade dimensions — maintainability and reliability — are dragged by a small number of contained issues rather than systemic weakness: the `@randsum/dice-ui` web/native component pairs have diverged badly (the `QuickReferenceGrid` `.tsx`/`.native.tsx` differ by ~1,459 lines), and the single long-running service (`apps/discord-bot`) has its observability \"last mile\" unfinished — the Sentry error tracker is a no-op stub and there is no liveness signal, SLO, or alert for the single-instance gateway worker.\n\n**Highest-leverage recommendation:** finish the bot's observability last mile (activate the error tracker, add a liveness check + one symptom-based alert + a minimal SLO, and unit-test the failure-path utilities). This is one bounded effort that lifts the bot's reliability posture from B to A and closes the only cluster of findings sourced by more than one dimension.",
+    "methodology": "This audit is **LLM-driven (v1)** — Claude reads code, manifests, configs, git history, and supplied artifacts and reasons about quality dimensions without running a full static-analysis toolchain. Findings are hypothesis-grade and should be confirmed with measurement before significant remediation. Where tools *were* run to ground a conclusion (`dependency-cruiser`, `knip`, `bun audit`, `size-limit`, and a clean `bun run build` + test pass), the report says so.\n\nAll nine dimensions ran; none were skipped. The **Infrastructure** dimension ran and is graded on managed-PaaS posture only — the repo has no IaC, containers, or self-managed orchestration, so those sub-checks are genuinely N/A (not failures). Several infrastructure and delivery conclusions are \"configured but unverified\" — derived from declared config (`render.yaml`, `netlify.toml`, branch-protection assumptions) rather than confirmed live state — and are flagged as such.\n\nOne cross-report discrepancy was reconciled against source: the performance report's draft claim that \"no benchmark regression gate exists\" was **incorrect** — `.github/workflows/ci.yml` does run a `bench (regression gate)` job (`fail-on-alert: true`, 150% threshold), matching the delivery report. The performance report has been corrected and that recommendation dropped as already-satisfied.\n\nAnchored frameworks: ISO/IEC 25010, ISO/IEC 5055, OWASP ASVS / SAMM, DORA / Accelerate, Robert C. Martin package metrics, *Your Code as a Crime Scene*."
+  },
+  "inventory": {
+    "working_directory": "/Users/jarvis/Code/@RANDSUM (audited via clean worktree `audit-run` off `main`)",
+    "layout_notes": "Single-repo (Bun workspace monorepo — one git repo, many sub-projects)",
+    "repos": [
+      {
+        "name": "randsum-monorepo",
+        "description": "Bun workspace monorepo for a dice-rolling ecosystem targeting tabletop RPGs. Core is `@randsum/roller`, a zero-dependency dice engine with built-in notation parsing/validation; game packages wrap it with game-specific interpretation; apps consume it (CLI, Discord bot, docs sites, Expo playground). Published to npm under `@randsum`.",
+        "primary_language": "TypeScript",
+        "other_languages": ["Astro (docs sites)", "minimal JS (config)"],
+        "loc_approx": 53600,
+        "loc_breakdown": "~53,600 across source + tests (roller ~26.2k, games ~11.8k, dice-ui ~4.0k, site ~3.0k, discord-bot ~3.0k, expo ~2.7k, rdn ~2.2k, cli ~0.5k, scripts ~0.2k). Includes 193 test files.",
+        "manifests": [
+          "root `package.json` (private, `randsum-monorepo`)",
+          "per-package `package.json`",
+          "bun.lock",
+          "bunfig.toml",
+          "tsconfig.json (+ tsconfig.apps.json, tsconfig.packages.json, tsconfig.typedoc.json)",
+          "knip.json",
+          "eslint.config.js",
+          ".dependency-cruiser.cjs",
+          "lefthook.yml",
+          "osv-scanner.toml",
+          "codecov.yml"
+        ],
+        "frameworks": [
+          "Bun (runtime + test + bundler via bunup)",
+          "TypeScript 6 strict (isolatedDeclarations, exactOptionalPropertyTypes, noUncheckedIndexedAccess)",
+          "ESLint 10 + Prettier",
+          "Astro 6 + Starlight (site, rdn)",
+          "React Native + Expo (expo, dice-ui)",
+          "discord.js (discord-bot)",
+          "fast-check (property tests)",
+          "Changesets (versioning/release)"
+        ],
+        "default_branch": "main",
+        "last_commit_date": "2026-06-23",
+        "first_commit_date": "2018-03-06",
+        "commit_count": 1343,
+        "activity_status": "active",
+        "notes": "Workspace structure — publishable packages: `@randsum/roller` (2.0.0, zero-dep core), `@randsum/games` (3.0.1, depends on roller), `@randsum/dice-ui` (2.0.0, RN component lib), `@randsum/cli` (2.0.0). Private apps: `@randsum/discord-bot` (1.1.2, Render worker), `@randsum/expo` (1.0.1, EAS native+web), `@randsum/site` (1.1.2, randsum.dev docs, Netlify), `@randsum/rdn` (1.0.0, notation.randsum.dev, Netlify). Game packages depend only on roller, never on each other. Codegen pipeline generates game packages from `.randsum.json` specs. Infrastructure: no IaC, no containers, no orchestrators; runtime config present (render.yaml, two netlify.toml, expo app.json/eas.json) — qualifies for the infrastructure dimension on managed-PaaS posture. 91 commits in the last 90 days; primary contributor Alex Jarvis (+ dependabot, Claude, github-actions)."
+      }
+    ],
+    "source_artifacts": [
+      {
+        "path": "CLAUDE.md (root + per-package)",
+        "classification": "runbook / guidance",
+        "summary": "Architecture, conventions, commands, build/publish/versioning rules for agents and contributors",
+        "parsed": true
+      },
+      {
+        "path": "README.md",
+        "classification": "doc",
+        "summary": "Ecosystem overview and package index",
+        "parsed": true
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "classification": "doc",
+        "summary": "Contribution workflow",
+        "parsed": true
+      },
+      {
+        "path": "SECURITY.md",
+        "classification": "doc",
+        "summary": "Security policy / disclosure",
+        "parsed": true
+      },
+      {
+        "path": "CODE_OF_CONDUCT.md",
+        "classification": "doc",
+        "summary": "Community standards",
+        "parsed": false
+      },
+      {
+        "path": "DEPLOY.md (apps/)",
+        "classification": "runbook",
+        "summary": "App deployment instructions",
+        "parsed": true
+      },
+      {
+        "path": "runbooks/",
+        "classification": "runbook",
+        "summary": "Operational runbooks",
+        "parsed": true
+      },
+      {
+        "path": "docs/",
+        "classification": "doc",
+        "summary": "Additional documentation",
+        "parsed": true
+      },
+      {
+        "path": "llms.txt",
+        "classification": "doc",
+        "summary": "LLM-oriented project description",
+        "parsed": true
+      },
+      {
+        "path": ".changeset/",
+        "classification": "release metadata",
+        "summary": "Pending Changesets version-bump entries",
+        "parsed": true
+      }
+    ]
+  },
+  "dimensions": [
+    {
+      "slug": "maintainability",
+      "title": "Maintainability",
+      "grade": "B",
+      "summary": "This is a well-maintained, highly modular TypeScript monorepo. The core `@randsum/roller` engine averages ~81 LOC/file with a one-file-per-modifier registry pattern that keeps the most-churned subsystem small and analysable; strict compiler flags plus an ESLint config banning `let`/`any`/`as unknown as` enforce consistency. Dead code is effectively nil — `knip` reports no unused files or exports (only three unused devDependencies). The two genuine maintainability drags are the React-Native UI library (`@randsum/dice-ui`), which carries seven `.tsx`/`.native.tsx` component pairs with massive divergence, and the games codegen emitter, whose 157-line `generateFunctionBody` is the single most complex function in the tree. Neither is critical. Report grade: B+.",
+      "framework_anchors": [
+        "ISO/IEC 25010 §6.5 — Maintainability",
+        "ISO/IEC 5055 — Maintainability rules",
+        "Tornhill, Your Code as a Crime Scene — churn × complexity",
+        "Robert C. Martin package metrics"
+      ],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "`@randsum/dice-ui` web/native component duplication",
+          "severity": "medium",
+          "locations": [
+            {
+              "path": "packages/dice-ui/src/QuickReferenceGrid.tsx",
+              "line_start": 1,
+              "snippet": "983 LOC"
+            },
+            {
+              "path": "packages/dice-ui/src/QuickReferenceGrid.native.tsx",
+              "line_start": 1,
+              "snippet": "792 LOC"
+            }
+          ],
+          "evidence": "A line-level diff of the two `QuickReferenceGrid` variants shows ~1,459 differing lines — the web and native implementations have diverged so far they are effectively two parallel components sharing a name, not a thin platform shim over shared logic. `dice-ui` is the only package with files exceeding 500 LOC (two of the repo's three), and has the highest average file size (173 LOC/file vs. 81 for roller). Plus six other `.tsx`/`.native.tsx` pairs (NotationRoller, NumericStepper, RollResultPanel, RollSteps, TokenOverlayInput, useTheme).",
+          "impact": "Every behavioural change to a dice-UI component must be made twice and kept in sync by hand; divergence this wide means fixes silently land on only one platform. This is the repo's primary modifiability/duplication risk per ISO/IEC 25010 §6.5. The finding is the size and divergence, not the platform split itself (idiomatic React-Native).",
+          "framework_refs": ["ISO/IEC 25010 §6.5", "ISO/IEC 5055 file-size rules"]
+        },
+        {
+          "id": "F2",
+          "title": "Oversized codegen function `generateFunctionBody`",
+          "severity": "medium",
+          "locations": [
+            {
+              "path": "packages/games/src/lib/codegen/emitBody.ts",
+              "line_start": 162,
+              "snippet": "function spans ~157 lines; file is 405 LOC"
+            }
+          ],
+          "evidence": "`generateFunctionBody` is ~157 lines — the single longest function found in the codebase — and sits alongside `generateMultiPoolBody` (~132 lines) and `generateRollParts` (~86 lines) in the same file. Max indentation depth ~5 levels. Per ISO/IEC 5055-MN-FN-LOC, functions over 50 LOC are flagged maintainability defects; this one is >3x the threshold.",
+          "impact": "This is string-emitting codegen (it builds the `.generated.ts` game files), so bugs here propagate to all eight game packages at once. Its length and nesting make the emitter the hardest part of the codegen pipeline to reason about and the riskiest to extend.",
+          "framework_refs": ["ISO/IEC 5055-MN-FN-LOC"]
+        },
+        {
+          "id": "F3",
+          "title": "Multi-pool notation parsing concentrates regex complexity",
+          "severity": "low",
+          "locations": [
+            {
+              "path": "packages/roller/src/roll/parseArguments.ts",
+              "line_start": 1,
+              "snippet": "368 LOC, second-most-churned current file at 12 changes/2y"
+            }
+          ],
+          "evidence": "The file hand-rolls multi-pool boundary detection with two interlocking `RegExp` constants (MULTI_POOL_BOUNDARY, FIRST_POOL_PATTERN) built from `String.raw` alternation lists, then walks `matchAll` results with index arithmetic and several defensive `undefined` guards. It is dense but well-commented and decomposed into named helpers (splitMultiPoolString, etc.).",
+          "impact": "This is inherent parsing complexity, not accidental — but it is both high-churn and the place where edge-case bugs in notation like `\"1d20+2d6\"` originate. It is the roller subsystem most worth additional property-test coverage rather than restructuring."
+        },
+        {
+          "id": "F4",
+          "title": "High-churn roller barrels and shared type modules",
+          "severity": "low",
+          "locations": [
+            { "path": "packages/roller/src/index.ts", "snippet": "24 changes/2y" },
+            { "path": "packages/roller/src/roll/index.ts", "snippet": "23 changes/2y" },
+            {
+              "path": "packages/roller/src/types/",
+              "snippet": "index.ts 14, core.ts 14, results.ts 13, modifiers.ts 13"
+            }
+          ],
+          "evidence": "The top current-file churn is dominated by barrel re-export files and the shared `types/` directory — files that change whenever any export surface or type shifts. These are low-complexity (barrels are flat re-exports) so they are not hot-spots in Tornhill's churn×complexity sense, but the type cluster is a fan-in concentration point.",
+          "impact": "Low — high churn on low-complexity barrels is expected and healthy in a published-API monorepo. Flagged only to confirm the hot-spot analysis found no file that is both high-churn and high-complexity."
+        },
+        {
+          "id": "F5",
+          "title": "Minor unused dependencies (dead-code hygiene)",
+          "severity": "low",
+          "locations": [
+            {
+              "path": "apps/expo/package.json",
+              "snippet": "react-dom, react-native-screens, react-native-web, @testing-library/react-native"
+            },
+            { "path": "packages/dice-ui/package.json", "snippet": "@testing-library/dom" },
+            { "path": "packages/games/package.json", "snippet": "bunup devDep" }
+          ],
+          "evidence": "`bun run knip` reports 3 unused dependencies and 3 unused devDependencies, plus one unlisted binary (playwright). It reports zero unused source files and zero unused exports across the workspace. (knip emitted two non-fatal load errors for `apps/expo` configs referencing a missing `expo/tsconfig.base`, so expo's dead-export sweep is partial.)",
+          "impact": "Trivial — manifest hygiene only. The absence of any unused-export or orphan-file finding is a strong positive signal for ISO/IEC 5055 \"unreachable code\": this codebase has essentially no dead code surface."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "Files >500 LOC (non-test, non-generated)",
+          "value": 3,
+          "notes": "QuickReferenceGrid.tsx 983, .native.tsx 792, apps/rdn vectors.ts 503 (conformance data)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Functions >50 LOC (sampled)",
+          "value": "~4 notable",
+          "notes": "generateFunctionBody ~157, generateMultiPoolBody ~132, generateRollParts ~86 (emitBody.ts); rerollSingle ~63"
+        },
+        {
+          "scope": "roller",
+          "label": "Avg file size",
+          "value": "81 LOC/file (97 files)",
+          "notes": "Excellent modularity — one-file-per-modifier registry"
+        },
+        {
+          "scope": "games",
+          "label": "Avg file size",
+          "value": "126 LOC/file (20 hand-written)",
+          "notes": "+2,756 LOC of .generated.ts excluded"
+        },
+        {
+          "scope": "dice-ui",
+          "label": "Avg file size",
+          "value": "173 LOC/file (20 files)",
+          "notes": "Highest in repo; web/native duplication is the driver"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Dead-code surface",
+          "value": "Near-zero",
+          "notes": "Unused exports: 0 · Orphan files: 0 (knip) · Unused deps: 6 (manifest hygiene)"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Extract shared logic out of the `dice-ui` web/native component pairs into platform-agnostic hooks/utilities",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "Especially the ~983/792-LOC `QuickReferenceGrid` variants — leave each `.native.tsx`/`.tsx` as a thin render shim. Reduces the two-places-to-change duplication that is the repo's top modifiability risk."
+        },
+        {
+          "id": "R2",
+          "title": "Decompose `generateFunctionBody` (and siblings) in `emitBody.ts` into smaller named sub-emitters per concern",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "Pool emission, modifier emission, multi-pool join. Lowers the blast radius of codegen changes that affect all eight game packages."
+        },
+        {
+          "id": "R3",
+          "title": "Add targeted `fast-check` property tests around `parseArguments.ts` multi-pool splitting",
+          "horizon": "now",
+          "risk_reduction": "medium",
+          "description": "Signed/unsigned pool boundaries, special-die collisions like `D{..}`/`DD`/`d%`, to lock down the high-churn notation edge cases rather than restructuring the parser."
+        },
+        {
+          "id": "R4",
+          "title": "Prune the six unused dependencies flagged by knip and fix the `apps/expo` `tsconfig.base` reference",
+          "horizon": "now",
+          "risk_reduction": "low",
+          "description": "So knip can complete its expo dead-export sweep, restoring full dead-code coverage in CI."
+        }
+      ],
+      "confidence": "Directly observed: file sizes and counts, the >500-LOC file list, dice-ui web/native line-divergence (diff), per-package avg file size, churn counts, and dead-code results (knip). LLM-estimated: all cyclomatic-complexity buckets and function-length figures (treat \"157 lines\" as ±10%). Churn caveat: the repo was restructured, so raw 2-year churn is dominated by paths that no longer exist; hot-spot findings are computed against currently-existing files only, making hot-spot ranking directional. Generated code (2,756 LOC) excluded from complexity findings."
+    },
+    {
+      "slug": "test-quality",
+      "title": "Test Quality",
+      "grade": "A",
+      "summary": "The randsum monorepo has a mature, well-architected test suite. 193 test files span unit, property-based, stress, conformance-vector, integration, and e2e layers. The test-to-code ratio is ~1.21:1 (27,749 test LOC over 22,858 non-test source LOC), and the core engine alone runs 2,702 tests across 114 files. Test code is healthy: only one file exceeds 800 LOC, skips are few and each carries an explicit documented reason, and there are zero \"flaky\"/\"TODO: fix\" markers. Sampled tests show genuine depth (real invariants, a true cross-boundary integration test, dist-output smoke tests). Marks are withheld from a full A only because integration/e2e coverage is thin at the app layer and live coverage numbers live off-repo in Codecov. Grade A− (88/100).",
+      "framework_anchors": [
+        "ISO/IEC 25010 §6.5.4 (Testability)",
+        "DORA / Accelerate (continuous testing)",
+        "Test pyramid (Cohn)"
+      ],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "App-layer integration/e2e coverage is thin",
+          "severity": "medium",
+          "locations": [
+            {
+              "path": "apps/discord-bot/__tests__/integration/roll.integration.test.ts",
+              "snippet": "the one genuine un-mocked cross-boundary test"
+            },
+            { "path": "apps/expo/e2e/", "snippet": "present but minimal" }
+          ],
+          "evidence": "The discord-bot's un-mocked cross-boundary integration test (real roller + seeded random → asserts the actual Discord embed) is exemplary but unique; the `cli` app has no equivalent and the docs-site builds have no smoke e2e. Pyramid shape is otherwise healthy and correctly weighted: a broad, deep unit + property base under the zero-dependency core, a deliberately thin integration/e2e cap.",
+          "impact": "This is the only marked gap holding test-quality below a full A. The right shape for a library-centric monorepo (the value is in the engine), but the app surfaces would benefit from replicating the discord-bot integration pattern."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "Test files",
+          "value": 193,
+          "notes": "*.test.ts / *.test.tsx"
+        },
+        { "scope": "randsum-monorepo", "label": "Test LOC", "value": 27749 },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Non-test source LOC (ts/tsx, excl. dist)",
+          "value": 22858
+        },
+        { "scope": "randsum-monorepo", "label": "Test-to-code ratio", "value": "~1.21 : 1" },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Property-based test files",
+          "value": "13 (*.property.test.ts), 18 import fast-check"
+        },
+        {
+          "scope": "roller",
+          "label": "Core-engine test count",
+          "value": "2,702 tests / 114 files / 1.46M expect() calls"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Skipped tests",
+          "value": "3 test.skip + 2 test.todo (all documented)"
+        },
+        { "scope": "randsum-monorepo", "label": "Flakiness markers", "value": 0 },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Test files > 800 LOC",
+          "value": "1 (notation/definitions.test.ts, 987 LOC)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Coverage % (live)",
+          "value": "Not measured here — tracked in Codecov"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Guard the dist-smoke tests against a missing `dist/`",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "Detect a missing `dist/` and test.skip with a \"run `bun run build` first\" message, so a fresh-worktree run doesn't surface 15+ confusing failures that are really a missing build step."
+        },
+        {
+          "id": "R2",
+          "title": "Broaden app-layer integration/e2e (replicate the discord-bot pattern)",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "Replicate the un-mocked cross-boundary pattern for the `cli` app, and add at least a smoke e2e for the `site`/`rdn` docs builds. The expo e2e is currently minimal."
+        },
+        {
+          "id": "R3",
+          "title": "Surface live coverage in-repo",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "Add a Codecov coverage badge to the README and keep ratcheting the `dice-ui` target as its component tests land."
+        },
+        {
+          "id": "R4",
+          "title": "Keep the largest test file in check",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "notation/definitions.test.ts (987 LOC) is fine as a data table, but if it grows further, split by notation category to preserve navigability."
+        }
+      ],
+      "confidence": "High. Metrics are measured (file counts, LOC, skip/flaky greps, CI config inspection) rather than estimated. Coverage targets are cited from codecov.yml and CI; live coverage percentages are not measured here (no committed report) — Codecov hosts them. The 15 test failures observed on a raw worktree run were root-caused to a missing build artifact, not a defect, and confirmed green (17/0) after `bun run build`."
+    },
+    {
+      "slug": "security",
+      "title": "Security",
+      "grade": "A",
+      "summary": "`randsum-monorepo` is, at its center, a pure-computation TypeScript library (`@randsum/roller`, zero runtime dependencies) plus thin consumers. This shape collapses most of the application-security attack surface: no database, no HTTP server in published packages, no user accounts, no session layer, no SQL. The dominant real risk for a dice library — untrusted-input parsing leading to DoS (ReDoS or unbounded compute) — is explicitly and competently mitigated with regex hygiene and hard numeric bounds. Security process maturity is high: committed SECURITY.md, `bun audit --audit-level=high` gated in pre-push and a scheduled workflow, an osv-scanner.toml documenting every accepted advisory, and all GitHub Actions pinned to full commit SHAs. No hardcoded secrets. Held just below A by a missing commit-time secret scanner and the `Math.random` default RNG note. Grade A− (89/100).",
+      "framework_anchors": ["OWASP Top 10 (2021)", "OWASP ASVS / SAMM", "CWE"],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "S-1",
+          "title": "No automated secret-scanning gate on commit",
+          "severity": "low",
+          "locations": [
+            { "path": "lefthook.yml", "snippet": "no gitleaks/detect-secrets pre-commit hook" }
+          ],
+          "evidence": "Pattern grep and `bun audit` run, but a dedicated scanner (gitleaks / detect-secrets / GitHub push protection) is not wired into lefthook or CI. Pattern grep across all source/config returned zero suspected committed secrets; `.env` is gitignored; only `.env.example` placeholders are committed; Render declares Discord secrets `sync:false`.",
+          "impact": "The repo is clean today; adding the gate prevents future accidental commits and is cheap. Pure prevention.",
+          "framework_refs": ["CWE-798", "OWASP A07"]
+        },
+        {
+          "id": "S-2",
+          "title": "Default RNG is `Math.random` (non-cryptographic)",
+          "severity": "low",
+          "locations": [
+            { "path": "packages/roller/src/roll/pipeline.ts", "line_start": 37 },
+            { "path": "packages/roller/src/lib/random/coreRandom.ts" }
+          ],
+          "evidence": "The default RNG is `Math.random`. For an entertainment dice library this is fine and performant, and the API allows injecting a custom `randomFn`. But because the product's value proposition is dice fairness, it is worth a note that `Math.random` is not cryptographically secure and must never be relied on where unpredictability matters (any future money/wager or commit-reveal use).",
+          "impact": "Informational; not a vulnerability in the current entertainment context. Consumers needing CSPRNG-grade output should pass `{ randomFn }` backed by `crypto.getRandomValues`.",
+          "framework_refs": ["CWE-338", "OWASP A02"]
+        }
+      ],
+      "metrics": [
+        { "scope": "randsum-monorepo", "label": "Suspected committed secrets", "value": 0 },
+        { "scope": "randsum-monorepo", "label": "bun audit high/critical", "value": 0 },
+        {
+          "scope": "randsum-monorepo",
+          "label": "bun audit moderate / low (dev/build-time only, suppressed)",
+          "value": "4 / 1"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Dependency manifests with stale-major risk",
+          "value": 0,
+          "notes": "zero-dep core; discord.js on current major"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Auth scheme",
+          "value": "None (library) / Discord gateway token (bot)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "License risk distribution",
+          "value": "Permissive: all; Weak/Strong/Network copyleft: 0; Unknown: 0 (in published graph)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "GitHub Actions pinned to SHA",
+          "value": "Yes — all"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Add a commit-time secret scanner",
+          "horizon": "now",
+          "risk_reduction": "low",
+          "description": "Wire gitleaks or detect-secrets into lefthook.yml pre-commit (and/or enable GitHub push protection). The repo is clean today; this is pure prevention. (S-1, CWE-798.)"
+        },
+        {
+          "id": "R2",
+          "title": "Document the RNG security boundary",
+          "horizon": "next",
+          "risk_reduction": "low",
+          "description": "Add a one-line note in `@randsum/roller` docs/README that the default `Math.random` is non-cryptographic and entertainment-grade, and show the `{ randomFn }` injection pattern. (S-2, CWE-338.)"
+        },
+        {
+          "id": "R3",
+          "title": "Run a real SCA + license tool as v2 confirmation",
+          "horizon": "next",
+          "risk_reduction": "low",
+          "description": "This report is manifest-level hypothesis. Confirm with a full-tree scanner (Trivy/Snyk for CVEs; license-checker/ScanCode/FOSSA for licenses) across the Astro/Expo transitive trees where the suppressed advisories live."
+        },
+        {
+          "id": "R4",
+          "title": "Re-evaluate the suppressed advisories on the next Astro/Expo major bump",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "The suppressions in osv-scanner.toml are correct now but should expire, not become permanent."
+        },
+        {
+          "id": "R5",
+          "title": "Consider a basic per-user/-guild rate limit on the Discord bot's compute commands",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "The roller caps a single roll's work, but a flood of large-but-legal rolls could pressure the single worker instance. Low priority given the entertainment context and Discord's own interaction rate limits — a defense-in-depth note for the numInstances:1 worker."
+        }
+      ],
+      "confidence": "High for the core library and CI/secrets posture (static review covered the full parse/validate path, all package manifests, every GH workflow, both .env.example files, and a live bun audit run). Medium for the runtime apps (discord-bot, two Astro/Netlify sites, Expo) — reviewed statically; no running instance or deployed config inspected. Findings are hypothesis-grade; none are exploitation-confirmed."
+    },
+    {
+      "slug": "reliability",
+      "title": "Reliability",
+      "grade": "B",
+      "summary": "This is a zero-runtime-dependency dice-engine monorepo: the publishable packages are pure computation with no network, DB, or queue I/O, so reliability there reduces to error-surface design and correctness — and on that axis the codebase is strong. A single coherent error hierarchy (all errors extend `RandsumError`) spans the ecosystem, `roll()` throws on invalid input, and there are no empty or all-swallowing catch blocks anywhere in non-test source. The only long-running surface, the `apps/discord-bot` Render worker, has been deliberately hardened (capped exponential backoff, structured JSON logger, in-process metrics, safety-net handlers, graceful shutdown, a pluggable error-tracker seam). The main residual gaps are an inactive error tracker (Sentry seam is a no-op stub), no health/liveness signal, no SLO/SLI or alerting, and no dedicated tests for the load-bearing reliability utilities.",
+      "framework_anchors": [
+        "ISO/IEC 25010 §6.2 — Reliability",
+        "ISO/IEC 5055 — Reliability rules",
+        "Google SRE Book — observability, SLO/SLI",
+        "OpenTelemetry semantic conventions",
+        "DORA / Accelerate"
+      ],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "Error tracker is configured but never forwards (no-op Sentry stub)",
+          "severity": "medium",
+          "locations": [
+            {
+              "path": "apps/discord-bot/src/utils/errorTracker.ts",
+              "line_start": 42,
+              "snippet": "forwardToSentry no-op"
+            },
+            {
+              "path": "apps/discord-bot/src/utils/errorTracker.ts",
+              "line_start": 30,
+              "snippet": "initErrorTracker"
+            }
+          ],
+          "evidence": "`captureException` logs a structured line and, when `SENTRY_DSN` is set, calls `forwardToSentry` — whose body is an empty no-op stub with a comment to swap in `Sentry.captureException`. `@sentry/node` is intentionally not a dependency (bundle-size tradeoff). So even with a DSN configured, exceptions are never delivered to an external tracker; they exist only in Render's log stream.",
+          "impact": "No aggregated error inventory, no deduplication, no alert-on-new-exception, no release-regression tracking. MTTR for a recurring bot exception depends entirely on manually grepping Render logs. The \"error tracker\" is presently observability theater unless the stub is wired up."
+        },
+        {
+          "id": "F2",
+          "title": "No health / liveness signal for the single-instance gateway worker",
+          "severity": "medium",
+          "locations": [
+            {
+              "path": "apps/discord-bot/src/index.ts",
+              "snippet": "no healthz/readyz/healthCheck (grep returns nothing)"
+            },
+            {
+              "path": "apps/discord-bot/render.yaml",
+              "snippet": "worker blueprint — no HTTP health check"
+            }
+          ],
+          "evidence": "The bot is a Render `worker` (not a web service), so Render provides no HTTP health check, and the code exposes none. A \"zombie\" state — process alive but gateway silently disconnected and not reconnecting — would not be detected by the platform. There is no application-level heartbeat, shardDisconnect/shardReconnecting instrumentation, or watchdog.",
+          "impact": "A silent gateway stall is invisible until a user reports it. `numInstances` is correctly pinned to 1, which also means there is no redundancy to mask a stuck instance. Recovery is manual redeploy."
+        },
+        {
+          "id": "F3",
+          "title": "No SLO / SLI definitions or alerting",
+          "severity": "medium",
+          "locations": [{ "path": "runbooks/incidents/", "snippet": "empty (only .gitkeep)" }],
+          "evidence": "Metrics exist (per-command counters flushed every 5 min to a metrics.flush log line) and code comments anticipate \"a future symptom-based alert,\" but no alert is defined and no target is documented. The RCA template references SEV1/2/3 but incidents/ is empty.",
+          "impact": "The team has the raw signal to define a symptom-based alert but has not closed the loop. Without an alert, the metrics flush is forensic-only. Appropriate severity for a hobby bot; would be High for a revenue service."
+        },
+        {
+          "id": "F4",
+          "title": "Load-bearing reliability utilities have no dedicated tests",
+          "severity": "medium",
+          "locations": [
+            {
+              "path": "apps/discord-bot/__tests__/",
+              "snippet": "no test references loginWithBackoff, metrics, errorTracker, logger, or interactionCreate error path"
+            }
+          ],
+          "evidence": "loginWithBackoff.ts (retry/backoff loop with an explicitly injectable `sleep` seam), metrics.ts, logger.ts, and the interactionCreate catch/follow-up fallback are the components most likely to fail during an incident, yet none has a unit test. The injectable sleep/options signals test intent that was never realized.",
+          "impact": "The code paths that only execute under failure (backoff exhaustion, reply-after-error fallback, metrics flush on shutdown) are exactly the ones least exercised in normal operation, so regressions there ship silently."
+        },
+        {
+          "id": "F5",
+          "title": "No distributed tracing or request/interaction correlation id",
+          "severity": "low",
+          "locations": [
+            { "path": "apps/discord-bot/src/utils/logger.ts" },
+            { "path": "apps/discord-bot/src/utils/errorTracker.ts" }
+          ],
+          "evidence": "Logs are structured JSON and captureException stamps interactionId/command/userId/guildId/phase onto error lines. But there is no trace-id spanning the full interaction lifecycle, no OpenTelemetry/tracing library, and routine logs carry no correlation id. For a single-service worker with no downstream calls this is the correct scope.",
+          "impact": "Minimal at current scale. Reconstructing a single interaction's full flow from logs requires the error path to have fired (only errors carry interactionId)."
+        },
+        {
+          "id": "F6",
+          "title": "`config.ts` throws at import time on missing env vars (fail-fast, with a restart-loop caveat)",
+          "severity": "low",
+          "locations": [
+            { "path": "apps/discord-bot/src/utils/config.ts", "line_start": 11, "line_end": 17 }
+          ],
+          "evidence": "Missing DISCORD_TOKEN/DISCORD_CLIENT_ID throws a plain Error at module evaluation, before index.ts's initErrorTracker() runs. This is correct fail-fast, but a misconfigured (not missing) token surfaces only at client.login(), where loginWithBackoff (5 attempts, capped 30s) then process.exit(1) correctly avoids a tight crash-loop. The config-missing path throws before the tracker is initialized, so that specific failure is never captured by captureException.",
+          "impact": "Very low — a missing-env misconfiguration is a deploy-time error caught immediately on first boot. Noted as a minor asymmetry: the auth-failure path is hardened, the missing-config path is not."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "Bare-except / silent-catch count",
+          "value": 0,
+          "notes": "grep for empty catch in non-test src returns none"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Outbound calls missing timeouts",
+          "value": "N/A (libs) / low (bot)",
+          "notes": "Libraries make no I/O; bot's only outbound is discord.js"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Logging maturity",
+          "value": "Structured (bot) / ad-hoc console (cli, deploy-commands)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Metrics maturity",
+          "value": "Counters only",
+          "notes": "In-process per-command counters flushed every 5 min; no histograms"
+        },
+        { "scope": "randsum-monorepo", "label": "Tracing presence", "value": "None" },
+        { "scope": "randsum-monorepo", "label": "SLO / SLI definitions", "value": "None" },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Alerting maturity",
+          "value": "None",
+          "notes": "Metrics are forensic-only"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Health endpoint coverage",
+          "value": "None",
+          "notes": "Worker (no HTTP surface)"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Activate the error tracker: wire `forwardToSentry` to a real transport",
+          "horizon": "now",
+          "risk_reduction": "medium",
+          "description": "Wire to Sentry.captureException (or a lighter HTTP-DSN POST to stay dependency-thin), gated on SENTRY_DSN. Closes the gap where the \"error tracker\" currently only logs."
+        },
+        {
+          "id": "R2",
+          "title": "Add an application-level liveness signal for the bot",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "Instrument discord.js shardDisconnect/shardReconnecting/shardError into the logger + metrics, and add a lightweight watchdog (or a tiny /healthz listener) so a stuck-but-alive gateway connection is detectable."
+        },
+        {
+          "id": "R3",
+          "title": "Define one symptom-based alert from the existing metrics",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "E.g. command error-rate over a 5-min window, or absence of any bot.ready/metrics.flush line, routed to a notification channel. The signal already exists; only the alert rule and routing are missing."
+        },
+        {
+          "id": "R4",
+          "title": "Add unit tests for the load-bearing bot reliability utilities",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "loginWithBackoff (exhaustion, cap, success-on-retry via the injectable sleep), metrics (flush/snapshot/timer lifecycle), logger (Error serialization, level→stream routing), and the interactionCreate error-reply fallback."
+        },
+        {
+          "id": "R5",
+          "title": "Document a minimal SLO/SLI and error-budget one-liner for the bot",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "E.g. \"best-effort, single-instance; target: respond to >99% of interactions; budget-exhaustion policy: investigate before adding commands\" so operational intent is captured."
+        },
+        {
+          "id": "R6",
+          "title": "Capture the missing-config failure path through `captureException`",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "Move initErrorTracker() ahead of (or restructure) the config.ts import-time throw, so all boot failures land in one place. Minor consistency improvement."
+        }
+      ],
+      "confidence": "Findings are directly observable from source, not LLM-inferred: the error hierarchy, the bot's reliability utilities, and render.yaml were read in full. The empty-catch count (0) and the absence of health endpoints/SLO files/tracing/alerting/observability libraries were verified by grep. The grade weighting reflects a judgment call: most of the codebase is pure-computation libraries where service-uptime checks are genuinely N/A, so the grade is anchored on error-surface design (excellent) and the single long-running service's operational posture (good-but-incomplete). Defect-signal analysis is code-only — runbooks/incidents/ is empty."
+    },
+    {
+      "slug": "performance",
+      "title": "Performance",
+      "grade": "A",
+      "summary": "This is a pure-compute TypeScript library ecosystem, not a service with a data tier. The performance-relevant surface is narrow and the team has clearly engineered against it: per-package bundle budgets are enforced in CI, the roll engine is fully synchronous with bounded loops everywhere, and a mitata benchmark suite exists with large-pool cases wired in. The two highest-leverage risk classes for a dice engine — unbounded explode/reroll/unique loops and bundle-size creep — are both actively guarded. The only material finding is tight bundle headroom on two roller entry points. Data-access findings (N+1, missing indexes, pagination) are N/A — there is no database or persistent data tier. Grade A− (90/100).",
+      "framework_anchors": ["ISO/IEC 25010 §6.6 — Performance efficiency"],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "Tight bundle headroom on two roller entry points",
+          "severity": "low",
+          "locations": [
+            {
+              "path": "packages/roller/dist/index.js",
+              "snippet": "16 KB limit, measured 15.73 KB — 0.27 KB (1.7%) headroom"
+            },
+            {
+              "path": "packages/roller/dist/tokenize.js",
+              "snippet": "6.75 KB limit, measured 6.5 KB — 0.25 KB (3.7%) headroom"
+            }
+          ],
+          "evidence": "`bun run size` (size-limit, fresh build) shows dist/index.js at 1.7% headroom and dist/tokenize.js at 3.7% headroom (brotli). Both will trip size-limit on the next non-trivial barrel addition or a behavior leak into the tokenize import graph. The gate already catches it.",
+          "impact": "A new modifier or notation primitive is likely to force a deliberate budget-vs-trim decision. The dist/tokenize.js isolation invariant (schema must not reference behavior symbols at module-init) should stay front-of-mind in review."
+        },
+        {
+          "id": "F2",
+          "title": "Unbounded-loop risk is systematically bounded (positive finding)",
+          "severity": "low",
+          "locations": [
+            {
+              "path": "packages/roller/src/modifiers/reroll.ts",
+              "line_start": 210,
+              "snippet": "MAX_REROLL_ATTEMPTS = 99"
+            },
+            {
+              "path": "packages/roller/src/modifiers/unique.ts",
+              "line_start": 105,
+              "snippet": "MAX_REROLL_ATTEMPTS = 99; throws on exhaustion"
+            },
+            {
+              "path": "packages/roller/src/roll/pipeline.ts",
+              "line_start": 69,
+              "snippet": "geometric die hard 1000 cap"
+            }
+          ],
+          "evidence": "Every loop that could run forever has an explicit ceiling: reroll/unique (99 attempts), compound/penetrate (DEFAULT_EXPLOSION_DEPTH=1000), explodeSequence (length+1000), geometric (1000), repeat (MAX_REPEAT_COUNT=1000, MAX_REPEAT_DEPTH=10). Per-die accumulator complexity in reroll/unique was deliberately de-quadratic'd from O(n²) to a single linear pass, with large-pool benchmark cases exercising the paths. The benchmark regression gate (bench, fail-on-alert at 150%) exists in ci.yml.",
+          "impact": "Strong safety posture for a notation language that lets users write arbitrary explode/reroll combinations. Listed as a positive finding to record the audit's best evidence that the team treats hot-path complexity as a first-class concern."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "Suspected N+1 patterns",
+          "value": "N/A — no DB / ORM / data tier"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Endpoints without pagination",
+          "value": "N/A — no list endpoints"
+        },
+        {
+          "scope": "roller",
+          "label": "Async/sync mismatch occurrences",
+          "value": 0,
+          "notes": "0 async/await/Promise in packages/roller/src"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Bundle budgets enforced",
+          "value": "Yes — size-limit on roller (5 entry points) and games (7 bundles), brotli"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Unbounded-loop guards",
+          "value": "5 distinct ceilings"
+        },
+        {
+          "scope": "roller",
+          "label": "dist/index.js headroom",
+          "value": "0.27 KB (1.7%)",
+          "notes": "tight"
+        },
+        {
+          "scope": "roller",
+          "label": "dist/tokenize.js headroom",
+          "value": "0.25 KB (3.7%)",
+          "notes": "tight"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Benchmark regression gate exists; consider widening its trigger",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "A bench (regression gate) job is already wired in ci.yml (github-action-benchmark, fail-on-alert: true, 150% threshold). The only residual item is that the gate triggers on roller path-changes — consider whether cross-package changes that affect roller hot paths should also trip it. (An earlier draft mis-stated this gate as absent; corrected post-review.)"
+        },
+        {
+          "id": "R2",
+          "title": "Watch the two tight bundle budgets",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "dist/index.js (1.7% headroom) and dist/tokenize.js (3.7% headroom) will trip on the next non-trivial addition. The gate is already in size-limit, so this is \"be aware,\" not \"fix.\" Keep the dist/tokenize.js isolation invariant front-of-mind in review."
+        },
+        {
+          "id": "R3",
+          "title": "Micro-optimize `applyAllModifiers` only if a benchmark demands it",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "The per-step object rebuild + array spread in the reduce and the per-modifier [...rolls] snapshot are the only remaining non-linear-ish allocations on the hot path. With K ≤ 19 and typically 1-3 active modifiers, almost certainly not worth the readability cost — flagged for completeness."
+        }
+      ],
+      "confidence": "Medium-High. Findings combine static reading of the roller hot paths with one empirical measurement — bun run size (size-limit) was executed against a fresh @randsum/roller build, so the bundle numbers are real. The mitata benchmark harness was read but not run to completion; latency claims are structural inferences, not measured nanoseconds. None of the findings rise to \"rework needed\" — they are headroom and hygiene notes."
+    },
+    {
+      "slug": "architecture",
+      "title": "Architecture",
+      "grade": "A",
+      "summary": "The RANDSUM monorepo exhibits a deliberate, well-governed layered architecture: a zero-dependency core (`@randsum/roller`) sits at the base, game packages and the component library depend only on it, and apps sit at the top — a strict DAG (roller <- {games, dice-ui} <- apps). The single most important architectural invariant — no cycles, no cross-game coupling, no reaching into internal src/dist — is not merely documented but mechanically enforced by a `dependency-cruiser` config wired into arch:check (pre-push and CI). A live run confirmed a clean graph (275 modules, 570 dependencies, zero violations). Decision history is unusually strong: 19 numbered ADRs, the most recent committed two days before the audit. The few observations below are minor refinements, not structural debt.",
+      "framework_anchors": [
+        "ISO/IEC 25010 §6.5.1 — Modularity",
+        "Acyclic Dependencies Principle (ADP)",
+        "Stable Dependencies Principle (SDP)",
+        "Robert C. Martin package metrics",
+        "Light DDD — bounded contexts"
+      ],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "Architecture invariants are enforced by tooling, not just convention (positive finding)",
+          "severity": "low",
+          "locations": [
+            { "path": ".dependency-cruiser.cjs" },
+            { "path": "package.json", "line_start": 65, "snippet": "arch:check" },
+            { "path": "lefthook.yml", "snippet": "pre-push" }
+          ],
+          "evidence": "Four forbidden rules encode the design contract: no-circular, no-cross-game-import-internal and -subpath (with an explicit allow for the shared @randsum/games/schema API), and no-internal-reach-in. dependency-cruiser 17.4.3 is pinned; the check runs in pre-push and the CI Gate. Live run during this audit: \"no dependency violations found (275 modules, 570 dependencies cruised).\"",
+          "impact": "The stable-core layering cannot silently erode. This is the difference between an aspirational architecture and a guaranteed one, and removes the primary risk this dimension usually flags (latent cycles)."
+        },
+        {
+          "id": "F2",
+          "title": "Exemplary, current ADR discipline (positive finding)",
+          "severity": "low",
+          "locations": [{ "path": "docs/adr/", "snippet": "ADR-001 … ADR-019, README.md" }],
+          "evidence": "19 MADR-style ADRs with explicit Status sections, covering the unified games package, codegen, notation merge, literal vs branded types, modifier co-location, ESM-only output, API surface reduction, and tooling/app decisions. Most recent ADR committed 2026-06-21.",
+          "impact": "Decision rationale is discoverable and recent; the dependency-cruiser comments even back-reference architecture remediation IDs, showing the audit→decision→enforcement loop is closed."
+        },
+        {
+          "id": "F3",
+          "title": "Stable-core layering matches actual imports (positive finding)",
+          "severity": "low",
+          "locations": [{ "path": "packages/roller/src/" }],
+          "evidence": "roller declares no @randsum dependency (true zero-dep core). games and dice-ui depend on roller via workspace:~ only. Apps depend downward only. Roller's own internals are cleanly layered: roll/pipeline.ts composes lib/random, modifiers, types, and errors in a one-directional pipeline.",
+          "impact": "Confirms the documented layering is real, not just declared. The most-depended-on package (roller) is also the most stable (zero deps), satisfying SDP."
+        },
+        {
+          "id": "F4",
+          "title": "Game packages are well-isolated bounded contexts (positive finding)",
+          "severity": "low",
+          "locations": [
+            { "path": "packages/games/src/", "snippet": "*.generated.ts" },
+            { "path": "packages/games/codegen.ts" }
+          ],
+          "evidence": "Each game is generated from a declarative .randsum.json spec and emitted as an independent *.generated.ts entry. Grep for cross-game imports returned zero matches; the dependency-cruiser run confirms. The generated files call roll() directly.",
+          "impact": "Adding or changing a game cannot ripple into a sibling — the defining property of good bounded-context isolation."
+        },
+        {
+          "id": "F5",
+          "title": "Coupling-magnet directories exist but are bounded and local",
+          "severity": "low",
+          "locations": [
+            { "path": "packages/roller/src/lib/", "snippet": "~12 intra-package importers" },
+            { "path": "packages/games/src/lib/", "snippet": "~9 importers" }
+          ],
+          "evidence": "roller's src/lib/ has ~12 intra-package importers; games' src/lib/ has ~9. These are real fan-in hubs, but each is package-local (no cross-package lib sharing), contents are cohesive and named by concern, and app-level utils/helpers directories are small and confined. The roller/src/lib/utils nesting and a generic lib/utils/constants.ts are the only mild grab-bag smells.",
+          "impact": "Low. These hubs are intentional and contained; the risk is only that lib/utils could accrete unrelated helpers over time. Worth periodic review, not remediation."
+        },
+        {
+          "id": "F6",
+          "title": "CLI consumes roller via a bundled devDependency",
+          "severity": "low",
+          "locations": [
+            { "path": "apps/cli/package.json", "snippet": "devDependencies.@randsum/roller" },
+            { "path": "apps/cli/src/run.ts" }
+          ],
+          "evidence": "apps/cli imports roll from @randsum/roller/roll but lists roller under devDependencies, not dependencies. For a CLI that bundles its output (bunup) this is defensible — roller is inlined at build time. It does make the dependency edge invisible to consumers reading dependencies and to some tooling.",
+          "impact": "Minimal — purely a manifest-hygiene nuance. Confirm the published CLI bundle is self-contained (it is built with bunup)."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "Top-level workspace modules",
+          "value": 8,
+          "notes": "3 publishable libs + 1 CLI + 4 apps"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Layering scheme",
+          "value": "Layered / stable-core (roller <- {games, dice-ui} <- apps)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Suspected cycles",
+          "value": "None",
+          "notes": "arch:check clean: 275 modules / 570 deps, 0 violations"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Coupling magnets",
+          "value": "roller/src/lib (~12 fan-in), games/src/lib (~9 fan-in)",
+          "notes": "All package-local"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "ADR presence",
+          "value": "Yes — 19 ADRs, most recent 2026-06-21"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Public API surface",
+          "value": "Well-defined",
+          "notes": "Subpath exports; ADR-009 documents surface reduction"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Keep the `lib/utils` and `lib/` hubs under periodic review",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "So they do not accrete unrelated helpers; consider splitting roller/src/lib/utils by concern if it grows."
+        },
+        {
+          "id": "R2",
+          "title": "Make the `apps/cli` → roller dependency edge explicit",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "Optionally move @randsum/roller from devDependencies to dependencies in apps/cli/package.json (or add a comment documenting the bundled-edge rationale) so the edge is explicit to manifest-reading tooling."
+        },
+        {
+          "id": "R3",
+          "title": "Maintain the ADR + `dependency-cruiser` discipline as the team grows",
+          "horizon": "now",
+          "risk_reduction": "medium",
+          "description": "It is the load-bearing control for this architecture and should be treated as a required gate, not optional."
+        }
+      ],
+      "confidence": "Cycle detection here is not the usual v1 heuristic: the repo ships dependency-cruiser 17.4.3 and arch:check was run live, so the no-cycles/no-cross-game-coupling/no-reach-in conclusions are directly observed. One caveat: the project sets tsPreCompilationDeps: false, so the cruiser ignores type-only edges (justified — erased at compile time); a pathological type-only cycle would not be caught, but none was found. Fan-in counts are grep-based approximations. The grade rests on exhaustively-verified structural invariants plus directly-counted ADRs, so confidence is high."
+    },
+    {
+      "slug": "delivery",
+      "title": "Delivery Health",
+      "grade": "A",
+      "summary": "`randsum-monorepo` exhibits a mature, highly-automated delivery posture for a single-maintainer open-source monorepo. npm publishing is fully automated through Changesets + a workflow_run-gated Release workflow using npm OIDC Trusted Publishing (no long-lived tokens), and four deploy targets (Discord-bot → Render autoDeploy, two Astro sites → Netlify, Expo web/native → EAS) ship on push to main — effectively continuous deployment. Lead time is elite: merged PRs overwhelmingly close the same day. CI is unusually disciplined — SHA-pinned actions, path-filtered per-package jobs, an aggregating CI Gate, a benchmark regression gate, OSV/SCA scanning, dependabot auto-merge. The main soft spots are branch sprawl (16 unmerged remote branches, several ~3 months stale) and unverifiable branch-protection enforcement from the worktree.",
+      "framework_anchors": [
+        "DORA / Accelerate",
+        "Trunk-based development",
+        "SLSA / supply-chain provenance"
+      ],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "Branch sprawl: 16 unmerged remote branches, several stale (~3 months)",
+          "severity": "low",
+          "locations": [
+            {
+              "path": "randsum-monorepo",
+              "snippet": "git branch -r --no-merged main (16); story/* and jarvis/p* branches stale since 2026-03-24 / 2026-06-13"
+            }
+          ],
+          "evidence": "Squash-merge workflow leaves source branches behind; for-each-ref shows multiple story/* and jarvis/p* branches with no commits past March/June and no corresponding open PR activity.",
+          "impact": "Cosmetic clutter and ambiguity about which branches are live work vs. abandoned. No correctness risk, but stale branches accrete confusion and can mask truly-in-flight work."
+        },
+        {
+          "id": "F2",
+          "title": "Branch-protection / required-status-checks on `main` not verifiable from worktree",
+          "severity": "low",
+          "locations": [{ "path": ".github/workflows/ci.yml", "snippet": "ci-gate job" }],
+          "evidence": "A well-formed aggregating gate exists (ci-gate needs all per-package jobs and fails on any failure/cancellation), and arch/audit jobs carry comments asserting they cannot be bypassed with --no-verify because they run in CI. But whether GitHub requires ci-gate (and review) before merge to main is a repo-settings fact not present in the checked-out tree.",
+          "impact": "If the gate is configured-but-not-required, a direct push or an un-gated merge could land unverified code on main (which auto-deploys). The presence of the gate strongly suggests intent to enforce; confirm enforcement."
+        },
+        {
+          "id": "F3",
+          "title": "Change failure rate and MTTR not measurable from git alone",
+          "severity": "low",
+          "locations": [{ "path": "randsum-monorepo", "snippet": "git history only" }],
+          "evidence": "No revert/rollback/hotfix commits in the last 90 days (grep → 0 on first-parent main). Many fix(ci): commits exist but those are forward-fixes during the OIDC-publishing migration, not production incident recoveries. There is no incident-tracking artifact in-repo.",
+          "impact": "Two of the four DORA metrics are unobservable here. The zero-revert signal is mildly encouraging but not a substitute for measured CFR/MTTR. Collect these from deploy/incident tooling."
+        },
+        {
+          "id": "F4",
+          "title": "Single-maintainer bus factor (delivery continuity risk)",
+          "severity": "low",
+          "locations": [{ "path": "randsum-monorepo", "snippet": "contributor history" }],
+          "evidence": "Inventory notes the primary contributor is Alex Jarvis (plus dependabot, Claude, github-actions bots). 91 commits in 90 days are near-entirely one human author.",
+          "impact": "Delivery automation is excellent and would survive, but release decisions, secret rotation (OIDC/EXPO_TOKEN/Render), and incident response concentrate on one person. Not a CI/CD defect — a continuity note for the delivery system as a whole."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "Deployment frequency proxy",
+          "value": "High → Elite (per-merge CD to 4 targets)",
+          "notes": "LLM-estimated"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Lead time proxy",
+          "value": "Elite (<1 day)",
+          "notes": "Last ~30 merged PRs: most created→merged same day. From gh pr list"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Merge/commit cadence",
+          "value": "15 PRs merged in 90d; 76 first-parent commits to main in 90d"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "npm release automation",
+          "value": "Full CD (Changesets + OIDC Trusted Publishing)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Change failure rate",
+          "value": "Not measured (v1 LLM-driven; git-only)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Time to restore (MTTR)",
+          "value": "Not measured (v1 LLM-driven; git-only)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "CI provider + automation level",
+          "value": "GitHub Actions — full CD",
+          "notes": "7 workflows"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Stale / unmerged remote branches",
+          "value": "16 unmerged; ~7 stale"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Conventional-commit compliance",
+          "value": "~95% (190/200 of recent first-parent commits)"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Confirm (and, if absent, enable) GitHub branch protection on `main` requiring `ci-gate` and a review",
+          "horizon": "now",
+          "risk_reduction": "medium",
+          "description": "The workflows assume gated merges but enforcement is not in-tree."
+        },
+        {
+          "id": "R2",
+          "title": "Begin collecting change-failure-rate and MTTR from deploy/incident tooling",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "Render deploy history, Netlify/EAS deploy logs, an incident log, so the two unmeasured DORA metrics become observable rather than inferred."
+        },
+        {
+          "id": "R3",
+          "title": "Prune stale remote branches",
+          "horizon": "now",
+          "risk_reduction": "low",
+          "description": "Delete-on-merge for squashed PRs; sweep the story/* and jarvis/p* branches that have no recent activity or open PR."
+        },
+        {
+          "id": "R4",
+          "title": "Document the secret-rotation and release-recovery runbook for the single-maintainer scenario",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "OIDC publisher config, EXPO_TOKEN, Render/Netlify credentials, CODECOV_TOKEN, to reduce bus-factor risk on the delivery path."
+        }
+      ],
+      "confidence": "Deployment-frequency and lead-time buckets are LLM-estimated from git history and gh pr list metadata, not from observed production deploy events — directionally robust but read as DORA buckets, not precise figures. Deploy-on-push behavior is read from workflow triggers and PaaS config. Change failure rate and MTTR are explicitly not measured (out of reach with git alone). Branch-protection enforcement (F2) is a repo-settings fact not present in the tree. CI/CD config-quality observations are directly observed from reading the seven workflow files in full."
+    },
+    {
+      "slug": "documentation",
+      "title": "Documentation & Onboarding",
+      "grade": "A",
+      "summary": "The randsum monorepo carries an exceptionally heavy and well-maintained documentation investment that puts it in the top decile for a project of this size. The root README.md hits every checklist item; a complete contributor on-ramp exists via CONTRIBUTING.md plus a root and per-package CLAUDE.md system; there are 19 well-indexed MADR-style ADRs; a real operational runbook (apps/DEPLOY.md) with rollback/DR/token-rotation procedures and an RCA template; two dedicated documentation sites; TypeDoc wired for API generation; and machine-readable docs surfaces (/docs subpath, llms.txt). Onboarding friction is genuinely low — a new contributor can go from clone to green build via a single documented bun run check:all. Gaps are minor and hygienic: TypeDoc output is configured but not published, two READMEs are thin, one known stale README is flagged but not yet fixed.",
+      "framework_anchors": [
+        "ISO/IEC 25010 §6.4.1 — Appropriateness Recognisability",
+        "ISO/IEC 25010 §6.4.2 — Learnability",
+        "Diátaxis"
+      ],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "Generated API reference (TypeDoc) is configured but never published",
+          "severity": "medium",
+          "locations": [
+            { "path": "typedoc.json" },
+            { "path": "package.json", "line_start": 66, "snippet": "\"docs:api\": \"typedoc\"" },
+            { "path": ".gitignore", "line_start": 93, "snippet": "/docs/api/" }
+          ],
+          "evidence": "TypeDoc is fully wired — entry points cover packages/roller/src/index.ts plus the 7 generated game modules, output to docs/api/, private/internal symbols excluded. But docs/api/ is git-ignored and the root README states \"publishing the generated output to randsum.dev is out of scope here.\" The hand-authored */api-reference.mdx pages are the de-facto public API reference and must be kept in sync by hand.",
+          "impact": "The authoritative, always-current generated API surface is invisible to consumers. Hand-maintained API-reference pages are a doc-rot vector — they can silently drift from the actual exported signatures since nothing regenerates or diffs them against TypeDoc."
+        },
+        {
+          "id": "F2",
+          "title": "Known-stale `apps/discord-bot/README.md` flagged but not corrected",
+          "severity": "medium",
+          "locations": [
+            { "path": "apps/discord-bot/README.md", "line_start": 182 },
+            {
+              "path": "apps/DEPLOY.md",
+              "line_start": 117,
+              "line_end": 118,
+              "snippet": "contradiction called out"
+            }
+          ],
+          "evidence": "The README still documents a self-hosted run path (node dist/index.js # or via pm2 / systemd / docker), but the committed render.yaml hosts the bot as a Render worker. apps/DEPLOY.md already notes \"treat Render as the source of truth for hosting,\" so the discrepancy is acknowledged in one doc while the other remains uncorrected.",
+          "impact": "\"Doc rot beats no docs\" — a confidently-wrong hosting path can send an operator down a pm2/systemd route that does not match production. Low blast radius (private app, single maintainer) keeps this at Medium rather than High."
+        },
+        {
+          "id": "F3",
+          "title": "Two thin READMEs: `apps/cli` and `apps/rdn`",
+          "severity": "low",
+          "locations": [
+            { "path": "apps/cli/README.md", "snippet": "62 lines; CLAUDE.md 41 lines (thinnest)" },
+            { "path": "apps/rdn/README.md", "snippet": "26 lines" }
+          ],
+          "evidence": "apps/cli is the thinnest README+CLAUDE pair — adequate install/command reference but no architecture or test-pattern notes. apps/rdn/README.md is bare-minimum (26 lines) and delegates almost everything to its CLAUDE.md. No file is below 20 lines, so there are no empty stubs.",
+          "impact": "Minor onboarding friction for these two surfaces only; both are buffered by solid CLAUDE.md files, so a contributor is not blocked, just under-served relative to the monorepo's high baseline."
+        },
+        {
+          "id": "F4",
+          "title": "Runbook coverage is template-only for incidents",
+          "severity": "low",
+          "locations": [
+            { "path": "runbooks/incidents/.gitkeep", "snippet": "empty" },
+            { "path": "runbooks/RCA-template.md" }
+          ],
+          "evidence": "A high-quality RCA template exists (timeline, root-cause vs trigger, detection gap, action items), and apps/DEPLOY.md documents the copy-to-incidents/ workflow, but the incidents/ directory contains only a .gitkeep. This is expected for a project with no recorded outages, not a defect.",
+          "impact": "None today. The process is documented and ready; there is simply no incident history to learn from. Flagged so it is not mistaken for missing runbook coverage."
+        },
+        {
+          "id": "F5",
+          "title": "External dependencies the audit cannot verify (Discord, project board, password vault)",
+          "severity": "low",
+          "locations": [
+            { "path": "README.md", "line_start": 165, "line_end": 169 },
+            {
+              "path": "apps/DEPLOY.md",
+              "line_start": 54,
+              "line_end": 55,
+              "snippet": "registrar/Netlify DNS + store credentials in the team password vault"
+            }
+          ],
+          "evidence": "Roadmap/community routing points to a GitHub project board and Discord; DR notes correctly externalize DNS records and store credentials to a password vault. These are sound practices but live outside the repo and cannot be confirmed by this read-only audit.",
+          "impact": "Negligible — flagged per the skill's \"linked external resources count, but note the gap\" guidance. Bus-factor risk concentrates on the single maintainer who holds vault access."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "README completeness (root)",
+          "value": "5/5",
+          "notes": "Purpose, quickstart, architecture, contributing link, license — all present plus badges"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "README count / coverage",
+          "value": "14 README files"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "API doc presence",
+          "value": "Generated (config) + hand-authored reference",
+          "notes": "TypeDoc configured but output gitignored/unpublished"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "ADR count + recency",
+          "value": "19 ADRs; most recent commit 2026-06-21"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Runbook coverage",
+          "value": "Comprehensive (deploy + rollback + DR + token rotation); incident log empty"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Onboarding friction",
+          "value": "Low — est. minutes-to-first-build"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Documentation freshness",
+          "value": "High — 32 doc-touching commits in last 90 days"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Dedicated doc sites",
+          "value": "2 (randsum.dev: 29 MDX pages; notation.randsum.dev: 1,537-line formal spec + 48 conformance vectors)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Machine-readable docs",
+          "value": "llms.txt, /docs subpath, llms-full.txt"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Publish the TypeDoc output (or generate + diff it in CI against the hand-authored pages)",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "Publish git-ignored docs/api/ to a stable URL and link from README, OR generate in CI and diff against */api-reference.mdx to catch signature drift. Closes the only structural doc-rot vector (F1)."
+        },
+        {
+          "id": "R2",
+          "title": "Correct `apps/discord-bot/README.md` to make Render the documented hosting path",
+          "horizon": "now",
+          "risk_reduction": "medium",
+          "description": "Or explicitly mark the pm2/systemd/docker block as \"alternative self-host, not production,\" resolving the contradiction already noted in apps/DEPLOY.md (F2)."
+        },
+        {
+          "id": "R3",
+          "title": "Expand the two thin surfaces (`apps/cli`, `apps/rdn`)",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "Add architecture/test-pattern notes to apps/cli/CLAUDE.md and a brief structure/deploy section to apps/rdn/README.md so they meet the monorepo's own baseline (F3)."
+        },
+        {
+          "id": "R4",
+          "title": "Capture vault/DNS/store-credential ownership and the bus-factor mitigation",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "A short access/ownership note (the DR sections reference the vault but not who holds it) (F5)."
+        }
+      ],
+      "confidence": "Directly observable (high confidence): README/CONTRIBUTING/SECURITY/DEPLOY/ADR contents and line counts, ADR count (19) and recency (git-dated 2026-06-21), TypeDoc config and its git-ignored output, the discord-bot pm2-vs-Render contradiction, doc-site page counts. LLM-estimated: the README-completeness score and per-file quality assessments are checklist judgments, not a docs linter. \"Onboarding friction: Low\" is an inference, not a timed rehearsal. ADR bodies beyond the index were not all read individually. External resources (Discord, project board, password vault) were not inspected."
+    },
+    {
+      "slug": "infrastructure",
+      "title": "Infrastructure & Platform",
+      "grade": "A",
+      "summary": "This repo has no IaC, no containers, and no self-managed orchestration — its deploy surface is entirely managed PaaS (Render worker, two Netlify Astro sites, Expo/EAS native+web, npm via OIDC Trusted Publishing). Scoped to managed-platform posture, the configuration is mature and well above the norm: every deploy surface is config-as-code (render.yaml, two netlify.toml, eas.json/app.json), build toolchains are version-pinned, all GitHub Actions are SHA-pinned, no secrets are committed (Render env vars use sync:false; .env* gitignored), npm publishing uses tokenless OIDC, and a dedicated runbooks/DEPLOY.md documents deploy/rollback/DR/token-rotation for every surface. Residual findings are inherent platform tradeoffs (single-instance Discord worker, deliberately pinned), one self-flagged BUN_VERSION drift risk, and the absence of any drift-detection/IaC-scan tooling. Grade A−.",
+      "framework_anchors": [
+        "AWS Well-Architected — Operational Excellence",
+        "AWS Well-Architected — Reliability",
+        "AWS Well-Architected — Cost Optimization / FinOps",
+        "AWS Well-Architected — Security",
+        "CIS Software Supply Chain Benchmark"
+      ],
+      "repos_covered": ["randsum-monorepo"],
+      "findings": [
+        {
+          "id": "F1",
+          "title": "Single-instance Discord worker is a single point of failure",
+          "severity": "low",
+          "locations": [{ "path": "render.yaml", "line_start": 11, "snippet": "numInstances: 1" }],
+          "evidence": "The Render worker is pinned to one instance. The inline comment documents this is mandatory: a Discord gateway connection must be held by a single process — multiple instances double-process events. plan: starter, region: oregon (single region).",
+          "impact": "If the single worker / Oregon region is down, the bot is offline until Render reschedules it (no hot standby, no multi-AZ). This is an accepted, correct architectural constraint for a singleton gateway consumer, not a defect — but it remains a genuine availability SPOF with no failover."
+        },
+        {
+          "id": "F2",
+          "title": "`BUN_VERSION` dashboard-drift risk between blueprint and live service",
+          "severity": "low",
+          "locations": [{ "path": "render.yaml", "line_start": 18, "line_end": 22 }],
+          "evidence": "The repo self-flags this: the comment states \"The live service was on 1.3.8 — if this blueprint is not auto-synced, update the dashboard env var too.\" Render Blueprints only apply env-var values on sync; a manually-edited dashboard value can silently diverge from the committed 1.3.14.",
+          "impact": "Build toolchain drift between code-declared and provisioned state — the canonical config-as-code vs. dashboard drift gap. A divergent live Bun version could produce build/runtime behavior that does not match CI. Partially mitigated by the explicit pin + warning; residual risk is that no automated check confirms the dashboard matches the blueprint."
+        },
+        {
+          "id": "F3",
+          "title": "No automated drift detection or config-scan tooling",
+          "severity": "low",
+          "locations": [
+            { "path": "render.yaml" },
+            { "path": "apps/*/netlify.toml" },
+            { "path": "apps/expo/eas.json" }
+          ],
+          "evidence": "Findings here are hypothesis-grade — they read declared config, not provisioned state. There is no checkov/tfsec-equivalent for PaaS configs in CI, no Render Blueprint sync-check, and no Netlify/EAS config linting. The bun audit security workflow covers dependency CVEs, not platform config.",
+          "impact": "The strong declared posture (pinning, sync:false, runbooks) cannot be automatically confirmed against the live platforms. Drift would go undetected until a deploy breaks. Low because the surface is small (3 platforms) and the runbook documents manual verification paths."
+        },
+        {
+          "id": "F4",
+          "title": "Expo app version source is `remote`; native builds not store-submitted",
+          "severity": "low",
+          "locations": [
+            {
+              "path": "apps/expo/eas.json",
+              "line_start": 3,
+              "snippet": "appVersionSource: remote"
+            },
+            {
+              "path": "apps/expo/eas.json",
+              "line_start": 19,
+              "line_end": 26,
+              "snippet": "submit.production"
+            }
+          ],
+          "evidence": "appVersionSource: remote means the build/version number is owned by EAS servers, not the repo. The native deploy workflow builds on manual dispatch only and the Android submit track is internal/draft; iOS has no submit config at all. DEPLOY.md confirms native builds are \"not yet store-submitted.\"",
+          "impact": "Version provenance for native binaries is not reproducible from git alone (mitigated: autoIncrement: true + remote source is the EAS-recommended pattern). The half-configured submit path means a native release still requires manual console steps — documented, but not codified."
+        }
+      ],
+      "metrics": [
+        {
+          "scope": "randsum-monorepo",
+          "label": "IaC tool(s) present",
+          "value": "None",
+          "notes": "Managed PaaS only"
+        },
+        { "scope": "randsum-monorepo", "label": "Container images defined", "value": 0 },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Managed-PaaS surfaces",
+          "value": 4,
+          "notes": "Render (worker), Netlify ×2, EAS (web+native) + npm publish"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Config-as-code coverage",
+          "value": "100% of surfaces"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Build-toolchain version pinning",
+          "value": "Full",
+          "notes": "BUN_VERSION 1.3.14, NODE_VERSION 22/24, EAS CLI ^20.1.0, actions SHA-pinned"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Committed plaintext secrets",
+          "value": 0,
+          "notes": "Render sync:false; .env* gitignored; OIDC publish"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Single-points-of-failure (prod)",
+          "value": 1,
+          "notes": "Discord worker numInstances:1 (intrinsic, documented)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Documented rollback path",
+          "value": "Yes (all surfaces)"
+        },
+        {
+          "scope": "randsum-monorepo",
+          "label": "Drift-detection / config-scan in CI",
+          "value": "No"
+        }
+      ],
+      "recommendations": [
+        {
+          "id": "R1",
+          "title": "Add a CI guard that the Render dashboard `BUN_VERSION` matches the committed `render.yaml`",
+          "horizon": "next",
+          "risk_reduction": "medium",
+          "description": "E.g. a scheduled job hitting the Render API, or enforce Blueprint auto-sync, closing the self-flagged drift gap in F2."
+        },
+        {
+          "id": "R2",
+          "title": "Confirm the hypothesis-grade declarations against live state once",
+          "horizon": "now",
+          "risk_reduction": "medium",
+          "description": "Verify Render env vars are all sync:false in the dashboard, Netlify build env matches the .toml, and EAS project bindings are current. Record the verification date in runbooks/DEPLOY.md."
+        },
+        {
+          "id": "R3",
+          "title": "Document the single-instance constraint as an explicit ADR and consider a lightweight external uptime check",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "If/when bot availability becomes a concern. The worker has no inbound URL, so monitor via a heartbeat the bot emits."
+        },
+        {
+          "id": "R4",
+          "title": "Codify the Expo native submit path",
+          "horizon": "later",
+          "risk_reduction": "low",
+          "description": "Add an iOS submit.production block; promote Android beyond internal/draft when ready, so a store release is fully config-as-code rather than partly manual."
+        },
+        {
+          "id": "R5",
+          "title": "Add a Sentry DSN so the single-instance worker has runtime observability",
+          "horizon": "next",
+          "risk_reduction": "low",
+          "description": "The errorTracker seam at apps/discord-bot/src/utils/errorTracker.ts is already wired; a DSN gives the outage-prone SPOF runtime error visibility."
+        }
+      ],
+      "confidence": "Findings are hypothesis-grade, not provisioned-state-confirmed. This dimension reads committed declarations; it does not call the Render/Netlify/EAS/npm APIs. The live platforms may have drifted (F2 is exactly this risk, self-flagged). Scope was correctly narrowed to managed-PaaS posture per the inventory: no IaC, container, or k8s artifact, so the CIS Docker/K8s, IAM/VPC, and encryption-at-rest sweeps are Not Applicable, not failures. All config files were read in full; the no-committed-secrets finding is directly observed. The single-instance SPOF (F1) severity is a judgment call (Low — intrinsic constraint, non-revenue workload)."
+    }
+  ],
+  "ontology": {
+    "source_of_truth": "There is no database — this is a stateless library ecosystem, so the domain model lives entirely in TypeScript type definitions and the declarative `.randsum.json` game specs. The two authoritative sources are `packages/roller/src/types/` (+ `src/notation/types.ts`, `src/errors.ts`) for the dice-engine domain, and `packages/games/src/lib/types.ts` plus the `*.randsum.json` spec files for the game-interpretation domain. Where the two disagree, roller types are canonical for dice mechanics and the spec/meta-schema (`packages/games/randsum.json`) is canonical for game definitions. The formal notation grammar is specified externally at https://notation.randsum.dev.",
+    "entities": [
+      {
+        "name": "Roll (the roll() operation)",
+        "purpose": "A request to roll one or more dice pools and combine them into a single total. The central verb of the engine; accepts a number, a notation string, an options object, or several combined.",
+        "key_attributes": [
+          "RollArgument (RollOptions | DiceNotation | special-die notation literal | bare number)"
+        ],
+        "source": "packages/roller/src/types/core.ts:107 (RollArgument); entry at packages/roller/src/roll/"
+      },
+      {
+        "name": "RollOptions",
+        "purpose": "The structured form of a single dice pool to roll — sides, quantity, how it combines arithmetically, and which modifiers apply.",
+        "key_attributes": [
+          "sides",
+          "quantity",
+          "arithmetic ('add' | 'subtract')",
+          "modifiers (ModifierOptions)",
+          "key"
+        ],
+        "source": "packages/roller/src/notation/types.ts:136"
+      },
+      {
+        "name": "RollParams",
+        "purpose": "A fully resolved roll specification — every option materialized to concrete values, ready to execute and describe. Bridges parsed notation and execution.",
+        "key_attributes": [
+          "sides",
+          "quantity",
+          "faces/numericFaces",
+          "draw",
+          "geometric",
+          "notation",
+          "description",
+          "label"
+        ],
+        "source": "packages/roller/src/types/results.ts:11"
+      },
+      {
+        "name": "RollRecord",
+        "purpose": "The complete audit trail of one executed dice pool — what was rolled, every modifier that touched it, and the final total. The unit of roll history.",
+        "key_attributes": [
+          "notation",
+          "parameters",
+          "rolls (post-modifier)",
+          "initialRolls (raw)",
+          "modifierLogs",
+          "appliedTotal",
+          "customResults",
+          "label",
+          "total"
+        ],
+        "source": "packages/roller/src/types/results.ts:40"
+      },
+      {
+        "name": "RollerRollResult",
+        "purpose": "The full return value of roll() — the combined total across all pools, the flat list of die values, and the per-pool records.",
+        "key_attributes": ["total", "values (T[])", "rolls (RollRecord[])"],
+        "source": "packages/roller/src/types/results.ts:93 (extends generic RollResult at :71)"
+      },
+      {
+        "name": "ModifierDefinition / Modifier",
+        "purpose": "A transformation applied to a dice pool — drop, reroll, explode, cap, count, arithmetic, etc. The RANDSUM_MODIFIERS registry is the single source of truth for which modifiers exist and the priority order (19 modifiers).",
+        "key_attributes": [
+          "notation regex/parse-format (the *Schema half)",
+          "dice-pool behavior (the *Modifier half)",
+          "priority",
+          "option shapes: DropOptions/KeepOptions/RerollOptions/ReplaceOptions/UniqueOptions/CountOptions/ComparisonOptions"
+        ],
+        "source": "registry at packages/roller/src/modifiers/definitions.ts; one file per modifier"
+      },
+      {
+        "name": "ModifierLog",
+        "purpose": "A record of one modifier's effect on a pool — the frequency delta of values added/removed, plus any 1:1 replacements.",
+        "key_attributes": ["modifier (name)", "options", "added[]", "removed[]", "replacements[]"],
+        "source": "packages/roller/src/types/modifiers.ts:35"
+      },
+      {
+        "name": "DiceNotation / Notation",
+        "purpose": "The string DSL for expressing a roll (NdS plus modifier suffixes). Parsed natively in the roller — there is no separate notation package (merged in per ADR-005).",
+        "key_attributes": [
+          "template-literal type ${number}d${number}${suffix}",
+          "parsed into ParsedNotationOptions"
+        ],
+        "source": "DiceNotation packages/roller/src/notation/types.ts:129; ParsedNotationOptions :113"
+      },
+      {
+        "name": "Token",
+        "purpose": "A lexical unit of a notation string, produced by the tokenize-only path (UI-safe, no roll behavior). Powers notation builders.",
+        "key_attributes": ["Token", "TokenType", "TokenCategory"],
+        "source": "packages/roller/src/tokenize.ts (./tokenize subpath)"
+      },
+      {
+        "name": "NotationDoc",
+        "purpose": "Static, display-only documentation for each dice type and modifier — derived from the schema registries, safe for any bundling context (no engine).",
+        "key_attributes": [
+          "keyed by canonical shorthand ('xDN','d%','L','!',…)",
+          "subsets MODIFIER_DOCS / DICE_DOCS",
+          "ModifierCategory"
+        ],
+        "source": "packages/roller/src/docs/modifierDocs.ts (./docs subpath)"
+      },
+      {
+        "name": "RollTraceStep",
+        "purpose": "One ordered display step when walking a RollRecord's modifier history for visualization. Discriminated union on kind.",
+        "key_attributes": ["kind: 'rolls' | 'divider' | 'arithmetic' | 'finalRolls'"],
+        "source": "packages/roller/src/trace/ (./trace subpath)"
+      },
+      {
+        "name": "RandsumError (and subclasses)",
+        "purpose": "The error hierarchy. All engine and game failures extend a single base, so callers can catch RandsumError broadly or each subtype specifically.",
+        "key_attributes": [
+          "code: ErrorCode",
+          "optional context",
+          "subclasses: NotationParseError, ModifierError, ValidationError, RollError (roller); SchemaError (games)"
+        ],
+        "source": "packages/roller/src/errors.ts:50 (base + 4 subclasses); packages/games/src/lib/errors.ts:12 (SchemaError)"
+      },
+      {
+        "name": "GameRollResult",
+        "purpose": "A game-interpreted roll outcome — wraps the raw total/rolls with a typed, game-specific result (e.g. 'critical' | 'success' | 'partial' | 'failure') and optional structured details.",
+        "key_attributes": ["result (TResult)", "total", "rolls", "optional details (TDetails)"],
+        "source": "packages/games/src/types.ts:10"
+      },
+      {
+        "name": "RandSumSpec (.randsum.json)",
+        "purpose": "The declarative definition of a single game's dice mechanics. Code-generated into a typed roll() per game. Defines a four-stage pipeline: Dice → Modify → Resolve → Outcome.",
+        "key_attributes": [
+          "name",
+          "shortcode",
+          "game_url",
+          "srd_url",
+          "pools",
+          "tables",
+          "outcomes",
+          "roll or rolls"
+        ],
+        "source": "packages/games/src/lib/types.ts:200 (RandSumSpec); meta-schema packages/games/randsum.json"
+      },
+      {
+        "name": "RollDefinition",
+        "purpose": "One named roll within a spec — its inputs, dice pools, modifier chain, resolution strategy, outcome table, and conditional overrides.",
+        "key_attributes": [
+          "inputs",
+          "dice/dicePools/conditionalPools",
+          "modify",
+          "resolve",
+          "outcome",
+          "when (conditional cases)",
+          "details"
+        ],
+        "source": "packages/games/src/lib/types.ts:187"
+      },
+      {
+        "name": "PoolDefinition",
+        "purpose": "A named dice pool in a spec — sides (or custom faces) and quantity, either of which may bind to a user input.",
+        "key_attributes": [
+          "sides (IntegerOrInput)",
+          "faces (numeric or string/'table die')",
+          "quantity"
+        ],
+        "source": "packages/games/src/lib/types.ts:7"
+      },
+      {
+        "name": "TableDefinition / TableRange / Outcome",
+        "purpose": "Outcome resolution — maps a resolved roll value (or pool condition) to a labeled result. The bridge from raw number to game-meaning.",
+        "key_attributes": [
+          "ranges[] (min/max/exact/poolCondition → result)",
+          "outcomes via tableLookup/inline ranges/degreeOfSuccess/remoteTableLookup",
+          "resultShape: 'numeric' | 'label'"
+        ],
+        "source": "packages/games/src/lib/types.ts:24 (TableRange), :31 (TableDefinition), :124 (OutcomeOperation)"
+      },
+      {
+        "name": "InputDeclaration",
+        "purpose": "A typed, validated user input to a game roll (e.g. Blades' rating, a D&D ability modifier).",
+        "key_attributes": [
+          "type ('integer' | 'string' | 'boolean')",
+          "minimum",
+          "maximum",
+          "default",
+          "enum",
+          "optional",
+          "description"
+        ],
+        "source": "packages/games/src/lib/types.ts:148"
+      },
+      {
+        "name": "NormalizedSpec (codegen IR)",
+        "purpose": "The intermediate representation the codegen pipeline produces by resolving every $ref/$input in a RandSumSpec into a flat, concrete form before emitting TypeScript. Internal, not a published type.",
+        "key_attributes": [
+          "rolls keyed by name, each a NormalizedRollDefinition with ref-free pools, resolve, outcome, and kind-discriminated details fields ('leaf' | 'nested' | 'conditional')"
+        ],
+        "source": "packages/games/src/lib/normalizedTypes.ts:124 (NormalizedSpec), :109 (NormalizedRollDefinition)"
+      }
+    ],
+    "relationships": [
+      {
+        "from": "Roll (roll())",
+        "to": "RollerRollResult",
+        "type": "produces",
+        "evidence": "packages/roller/src/types/results.ts:93"
+      },
+      {
+        "from": "RollerRollResult",
+        "to": "RollRecord",
+        "type": "has-many (rolls)",
+        "evidence": "packages/roller/src/types/results.ts:71,93"
+      },
+      {
+        "from": "RollRecord",
+        "to": "RollParams",
+        "type": "has-one (parameters)",
+        "evidence": "packages/roller/src/types/results.ts:48"
+      },
+      {
+        "from": "RollRecord",
+        "to": "ModifierLog",
+        "type": "has-many (modifierLogs)",
+        "evidence": "packages/roller/src/types/results.ts:54"
+      },
+      {
+        "from": "RollOptions",
+        "to": "ModifierOptions",
+        "type": "has-one (modifiers)",
+        "evidence": "packages/roller/src/notation/types.ts:143"
+      },
+      {
+        "from": "ModifierOptions",
+        "to": "DropOptions / KeepOptions / RerollOptions / …",
+        "type": "composed-of",
+        "evidence": "packages/roller/src/notation/types.ts:67-106"
+      },
+      {
+        "from": "RANDSUM_MODIFIERS",
+        "to": "ModifierDefinition",
+        "type": "has-many (registry)",
+        "evidence": "packages/roller/src/modifiers/definitions.ts"
+      },
+      {
+        "from": "DiceNotation",
+        "to": "ParsedNotationOptions",
+        "type": "parsed-into",
+        "evidence": "packages/roller/src/notation/types.ts:113,129"
+      },
+      {
+        "from": "RollTraceStep",
+        "to": "RollRecord",
+        "type": "derived-from (traceRoll)",
+        "evidence": "packages/roller/src/trace/"
+      },
+      {
+        "from": "NotationDoc",
+        "to": "ModifierDefinition / DiceSchema",
+        "type": "derived-from",
+        "evidence": "packages/roller/src/docs/modifierDocs.ts"
+      },
+      {
+        "from": "NotationParseError / ModifierError / ValidationError / RollError",
+        "to": "RandsumError",
+        "type": "extends",
+        "evidence": "packages/roller/src/errors.ts:65-94"
+      },
+      {
+        "from": "SchemaError",
+        "to": "RandsumError",
+        "type": "extends",
+        "evidence": "packages/games/src/lib/errors.ts:12"
+      },
+      {
+        "from": "Game roll()",
+        "to": "GameRollResult",
+        "type": "produces",
+        "evidence": "packages/games/src/types.ts:10"
+      },
+      {
+        "from": "GameRollResult",
+        "to": "RollRecord (roller)",
+        "type": "has-many (rolls)",
+        "evidence": "packages/games/src/types.ts:15"
+      },
+      {
+        "from": "RandSumSpec",
+        "to": "RollDefinition",
+        "type": "has-one/has-many (roll / rolls)",
+        "evidence": "packages/games/src/lib/types.ts:210,216"
+      },
+      {
+        "from": "RandSumSpec",
+        "to": "PoolDefinition / TableDefinition / OutcomeOperation",
+        "type": "has-many (pools/tables/outcomes)",
+        "evidence": "packages/games/src/lib/types.ts:207-209"
+      },
+      {
+        "from": "RollDefinition",
+        "to": "InputDeclaration",
+        "type": "has-many (inputs)",
+        "evidence": "packages/games/src/lib/types.ts:188"
+      },
+      {
+        "from": "RollDefinition",
+        "to": "PoolDefinition",
+        "type": "references (dice.pool, via $ref)",
+        "evidence": "packages/games/src/lib/types.ts:40,189"
+      },
+      {
+        "from": "RollDefinition",
+        "to": "OutcomeOperation / TableDefinition",
+        "type": "references (outcome, via $ref)",
+        "evidence": "packages/games/src/lib/types.ts:195"
+      },
+      {
+        "from": "RandSumSpec",
+        "to": "NormalizedSpec",
+        "type": "normalized-into (codegen)",
+        "evidence": "packages/games/src/lib/normalizer.ts, normalizedTypes.ts:124"
+      },
+      {
+        "from": "NormalizedSpec",
+        "to": "Generated roll()",
+        "type": "emitted-into (codegen)",
+        "evidence": "packages/games/src/*.generated.ts"
+      },
+      {
+        "from": "Generated game roll()",
+        "to": "roller roll()",
+        "type": "calls",
+        "evidence": "packages/games/CLAUDE.md (imports @randsum/roller/roll)"
+      },
+      {
+        "from": "Game packages",
+        "to": "each other",
+        "type": "none (forbidden)",
+        "evidence": "root CLAUDE.md; games depend only on roller"
+      }
+    ],
+    "glossary": [
+      {
+        "term": "Notation",
+        "definition": "The string DSL for a roll: NdS plus modifier suffixes (4d6L, 2d6+3[fire]). Parsed natively by the roller.",
+        "where_appears": "packages/roller/src/notation/types.ts:129; https://notation.randsum.dev"
+      },
+      {
+        "term": "Dice pool",
+        "definition": "A group of like dice rolled together (quantity × sides).",
+        "where_appears": "packages/roller/src/notation/types.ts:136; packages/games/src/lib/types.ts:7"
+      },
+      {
+        "term": "Modifier",
+        "definition": "A transformation on a pool's results (drop/reroll/explode/etc.); 19 exist, run in fixed priority order.",
+        "where_appears": "packages/roller/src/modifiers/definitions.ts"
+      },
+      {
+        "term": "Drop / Keep (L/H)",
+        "definition": "Remove (drop) or retain (keep) the lowest/highest dice before totaling.",
+        "where_appears": "packages/roller/src/notation/types.ts:14,21; drop.ts/keep.ts"
+      },
+      {
+        "term": "Reroll (R{..})",
+        "definition": "Reroll dice matching a condition, up to an optional max.",
+        "where_appears": "packages/roller/src/notation/types.ts:28; reroll.ts"
+      },
+      {
+        "term": "Explode (!)",
+        "definition": "On a triggering value, roll an extra die and add it (single pass). Variants: compound, penetrate, explodeSequence.",
+        "where_appears": "packages/roller/src/notation/types.ts:80-105; explode.ts"
+      },
+      {
+        "term": "Unique (U)",
+        "definition": "Force all kept dice to distinct values, except listed notUnique.",
+        "where_appears": "packages/roller/src/notation/types.ts:40; unique.ts"
+      },
+      {
+        "term": "Cap (C{..})",
+        "definition": "Clamp rolled values into a comparison range.",
+        "where_appears": "packages/roller/src/notation/types.ts:68; cap.ts"
+      },
+      {
+        "term": "Count failures/successes (F{N})",
+        "definition": "Count dice matching a condition instead of summing; deduct subtracts below-threshold from above.",
+        "where_appears": "packages/roller/src/notation/types.ts:47; count.ts"
+      },
+      {
+        "term": "Wild die (W)",
+        "definition": "D6-System wild die: compounds on max, removes wild + highest on a 1.",
+        "where_appears": "packages/roller/src/notation/types.ts:100; wildDie.ts"
+      },
+      {
+        "term": "Percentile die (d%)",
+        "definition": "Equivalent to 1d100.",
+        "where_appears": "packages/roller/src/types/core.ts:19 (PercentileDie)"
+      },
+      {
+        "term": "Fate / Fudge die (dF, dF.2)",
+        "definition": "Faces [-1,0,1] (standard) or [-2..2] (extended); sum as signed values.",
+        "where_appears": "packages/roller/src/types/core.ts:29-47; packages/games/fate.randsum.json"
+      },
+      {
+        "term": "Zero-bias die (zN)",
+        "definition": "A dN with faces 0..N-1 instead of 1..N.",
+        "where_appears": "packages/roller/src/types/core.ts:56"
+      },
+      {
+        "term": "Custom-faces die (d{a,b,c})",
+        "definition": "Die with explicit numeric or string faces; string faces form a 'table die'.",
+        "where_appears": "packages/roller/src/types/core.ts:68; packages/games/src/lib/types.ts:9"
+      },
+      {
+        "term": "Draw die (DDN)",
+        "definition": "Sampling without replacement — no repeats until the pool is exhausted.",
+        "where_appears": "packages/roller/src/types/core.ts:77"
+      },
+      {
+        "term": "Geometric die (gN)",
+        "definition": "Roll a dN until the first 1; result is the attempt count.",
+        "where_appears": "packages/roller/src/types/core.ts:88"
+      },
+      {
+        "term": "Annotation / label ([fire])",
+        "definition": "A free-text tag attached to a roll, carried through to results.",
+        "where_appears": "packages/roller/src/types/results.ts:28; notation/types.ts:123"
+      },
+      {
+        "term": "Pool condition",
+        "definition": "A success test on a pool ('at least 2 dice show 6'), used in outcome tables.",
+        "where_appears": "packages/games/src/lib/types.ts:17 (PoolCondition)"
+      },
+      {
+        "term": "Outcome table",
+        "definition": "A range/exact/condition lookup mapping a resolved value to a labeled result.",
+        "where_appears": "packages/games/src/lib/types.ts:31; packages/games/blades.randsum.json"
+      },
+      {
+        "term": "Degree of success",
+        "definition": "Outcome resolution by thresholds: critical-success/success/failure/critical-failure.",
+        "where_appears": "packages/games/src/lib/types.ts (DegreeOfSuccessOperation)"
+      },
+      {
+        "term": "Resolve strategy",
+        "definition": "How a pool collapses to a value: sum, faces, countMatching, tableLookup, comparePool*, remoteTableLookup.",
+        "where_appears": "packages/games/src/lib/types.ts:124 (ResolveOperation)"
+      },
+      {
+        "term": "Remote table lookup",
+        "definition": "A resolve strategy that fetches an external table at codegen time and bakes it in (e.g. Salvage Union).",
+        "where_appears": "packages/games/src/lib/types.ts (RemoteTableLookupOperation); __fixtures__/salvageunion-tables.json"
+      },
+      {
+        "term": "Shortcode",
+        "definition": "A game's stable identifier and subpath name (blades, fifth, …).",
+        "where_appears": "packages/games/src/availableGames.generated.ts (GameShortcode, AVAILABLE_GAMES)"
+      },
+      {
+        "term": "Codegen",
+        "definition": "The pipeline that resolves a .randsum.json spec to a NormalizedSpec and emits a typed *.generated.ts.",
+        "where_appears": "packages/games/codegen.ts; src/lib/codegen.ts"
+      },
+      {
+        "term": "$ref / $input",
+        "definition": "Spec-internal pointers to a shared section (#/tables/x) or a declared user input.",
+        "where_appears": "packages/games/blades.randsum.json; src/lib/refResolver.ts"
+      },
+      {
+        "term": "TTRPG standard die set",
+        "definition": "The conventional polyhedral set: d4/d6/d8/d10/d12/d20/d100.",
+        "where_appears": "packages/roller/src/notation/constants.ts:5"
+      }
+    ],
+    "contexts": [
+      {
+        "name": "Roller Engine (packages/roller)",
+        "entities": [
+          "Roll",
+          "RollOptions",
+          "RollParams",
+          "RollRecord",
+          "RollerRollResult",
+          "RollResult",
+          "ModifierDefinition",
+          "ModifierOptions",
+          "ModifierLog",
+          "DiceNotation",
+          "ParsedNotationOptions",
+          "Token",
+          "NotationDoc",
+          "RollTraceStep",
+          "RandsumError",
+          "NotationParseError",
+          "ModifierError",
+          "ValidationError",
+          "RollError"
+        ],
+        "ui_surface": "Zero-dependency dice core: notation parsing/validation/tokenization, the 19-modifier pipeline, RNG, roll execution, static docs, and trace visualization. Owns all dice mechanics; knows nothing about games."
+      },
+      {
+        "name": "Game Interpretation (packages/games)",
+        "entities": [
+          "RandSumSpec",
+          "RollDefinition",
+          "PoolDefinition",
+          "PoolCondition",
+          "TableDefinition",
+          "TableRange",
+          "OutcomeOperation",
+          "InputDeclaration",
+          "ResolveOperation",
+          "RemoteTableLookupOperation",
+          "GameRollResult",
+          "NormalizedSpec",
+          "NormalizedRollDefinition",
+          "SchemaError"
+        ],
+        "ui_surface": "Wraps the roller with game-specific meaning. Declarative .randsum.json specs are code-generated into typed roll()s. Depends only on the roller; games never depend on each other. Games: blades, daggerheart, fate, fifth, pbta, root-rpg, salvageunion."
+      },
+      {
+        "name": "Notation Specification (apps/rdn → notation.randsum.dev)",
+        "entities": ["Notation grammar", "modifier taxonomy", "conformance levels"],
+        "ui_surface": "The formal, external specification of the notation grammar — taxonomy, faceted classification, conformance levels, and the execution-pipeline contract. The authoritative reference the engine conforms to (pre-push runs an @randsum/rdn conformance:check). Documentation context, not runtime entities."
+      },
+      {
+        "name": "Consumer Apps (apps/cli, apps/discord-bot, apps/site, apps/expo, packages/dice-ui)",
+        "entities": ["dice-ui kind-tagged notation-builder fragments"],
+        "ui_surface": "Surfaces that consume the engine and games: the published CLI, the Discord bot (Render worker), the docs site (randsum.dev), the Expo dice playground, and the dice-ui React Native component library. These introduce presentation-layer types but no new domain entities."
+      }
+    ],
+    "confidence": "Directly observable: all roller entities and relationships are read straight from exported TypeScript interfaces with explicit return types (isolatedDeclarations forces this), so they are high-confidence. The error hierarchy, modifier registry, and the four bounded contexts map 1:1 to package boundaries. Spec/game entities are high-confidence from packages/games/src/lib/types.ts and the meta-schema, cross-checked against a real spec (blades.randsum.json). Spec-internal relationships are implicit string pointers ($ref/$input) resolved at codegen time, not type-level links. Correction to the audit brief: the referenced CollectedResults discriminated union with kind: 'union' | 'numeric' | 'opaque' | 'result-mapping' does NOT exist in the codebase; the real result type is RollerRollResult/RollResult. No persistence layer exists — the ontology is derived entirely from types and specs."
+  },
+  "remediation": {
+    "items": [
+      {
+        "id": "N1",
+        "title": "Correct the stale `apps/discord-bot/README.md` hosting path (pm2 → Render)",
+        "horizon": "now",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["documentation"],
+        "source_finding_ids": ["F2"],
+        "discipline": "docs",
+        "description": "Confidently-wrong doc, already acknowledged-but-uncorrected in apps/DEPLOY.md. A one-file fix closing a known doc-rot vector — the highest risk-reduction-per-edit item in the audit.",
+        "acceptance_criteria": "apps/discord-bot/README.md:182 no longer presents `node dist/index.js` via pm2/systemd/docker as the production run path; Render (per render.yaml) is documented as the source of truth; any self-host block is explicitly marked \"alternative self-host, not production\"; no remaining contradiction with apps/DEPLOY.md:117-118."
+      },
+      {
+        "id": "N2",
+        "title": "Confirm (and enable if absent) branch protection requiring `ci-gate` on `main`",
+        "horizon": "now",
+        "risk_reduction": "medium",
+        "severity": "low",
+        "source_dimensions": ["delivery"],
+        "source_finding_ids": ["F2"],
+        "discipline": "build",
+        "description": "`main` auto-deploys to four targets. A configured-but-not-required ci-gate means an un-gated merge could ship unverified code. This only verifies the repo-settings fact the worktree can't see.",
+        "acceptance_criteria": "GitHub branch protection on main requires the ci-gate status check; at least one review/approval is required before merge to main; verification recorded (e.g. a screenshot or a note in a runbook)."
+      },
+      {
+        "id": "N3",
+        "title": "Confirm hypothesis-grade PaaS declarations against live platform state (once)",
+        "horizon": "now",
+        "risk_reduction": "medium",
+        "severity": "low",
+        "source_dimensions": ["infrastructure"],
+        "source_finding_ids": ["F3"],
+        "discipline": "infrastructure",
+        "description": "The entire infrastructure A-grade rests on declared config never checked against provisioned state. A one-time confirmation converts a hypothesis into a fact cheaply, and seeds the drift gap in N7/L7.",
+        "acceptance_criteria": "Render env vars confirmed all sync:false in the dashboard; live BUN_VERSION matches committed render.yaml (1.3.14); Netlify build env confirmed to match each apps/*/netlify.toml; EAS project bindings confirmed current; verification date recorded in runbooks/DEPLOY.md."
+      },
+      {
+        "id": "N4",
+        "title": "Add `fast-check` property tests around `parseArguments.ts` multi-pool splitting",
+        "horizon": "now",
+        "risk_reduction": "medium",
+        "severity": "low",
+        "source_dimensions": ["maintainability"],
+        "source_finding_ids": ["F3"],
+        "discipline": "reliability",
+        "description": "parseArguments.ts is the highest-churn + moderate-complexity file in the engine and the origin of notation edge-case bugs (\"1d20+2d6\"). Locking its behavior with property tests hardens the core's most bug-prone surface without restructuring it.",
+        "acceptance_criteria": "New *.property.test.ts covers signed/unsigned multi-pool boundaries and special-die collisions (D{..}/DD/d%); tests pass and run in the roller CI job."
+      },
+      {
+        "id": "N5",
+        "title": "Manifest hygiene: prune unused deps and fix the expo `tsconfig.base` reference",
+        "horizon": "now",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["maintainability"],
+        "source_finding_ids": ["F5"],
+        "discipline": "build",
+        "description": "knip already flags the items; a clean sweep restores full dead-code coverage in CI (the expo tsconfig.base load error currently leaves expo's dead-export sweep partial).",
+        "acceptance_criteria": "The 6 unused (dev)dependencies flagged by bun run knip are removed or justified; apps/expo tsconfig no longer references the missing expo/tsconfig.base; knip completes the expo sweep without load errors."
+      },
+      {
+        "id": "N6",
+        "title": "Prune stale remote branches (delete-on-merge + sweep story/*, jarvis/p*)",
+        "horizon": "now",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["delivery"],
+        "source_finding_ids": ["F1"],
+        "discipline": "build",
+        "description": "16 unmerged remote branches (~7 stale) are cosmetic clutter that masks in-flight work; pruning is trivial and reduces ambiguity.",
+        "acceptance_criteria": "Enable delete-on-merge for squash-merged PRs; stale story/* and jarvis/p* branches with no open PR / recent activity are deleted."
+      },
+      {
+        "id": "N7",
+        "title": "Activate the Discord-bot error tracker and add a Sentry DSN",
+        "horizon": "next",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["reliability", "infrastructure"],
+        "source_finding_ids": ["F1"],
+        "discipline": "observability",
+        "description": "The forwardToSentry body is an empty no-op stub, so even with a DSN set, exceptions never leave Render logs — \"observability theater.\" Merged with infrastructure R5 (same seam, same fix): the single-instance worker's outage-prone SPOF currently has no runtime error aggregation.",
+        "acceptance_criteria": "forwardToSentry (apps/discord-bot/src/utils/errorTracker.ts:42) delivers to a real tracker (Sentry SDK or a dependency-thin HTTP-DSN POST), gated on SENTRY_DSN; a Sentry DSN (or equivalent) is configured for the deployed worker; a test exercises the forward path (mocked transport) so the stub can't silently regress."
+      },
+      {
+        "id": "N8",
+        "title": "Add an application-level liveness signal + gateway instrumentation for the bot",
+        "horizon": "next",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["reliability", "infrastructure"],
+        "source_finding_ids": ["F2"],
+        "discipline": "observability",
+        "description": "The bot is a Render worker with no HTTP health check; a \"zombie\" state (process alive, gateway silently disconnected) is invisible until a user reports it. The numInstances:1 SPOF (correct and intrinsic) has no failover, so detection is the only available mitigation.",
+        "acceptance_criteria": "discord.js shardDisconnect/shardReconnecting/shardError events are instrumented into the logger + metrics; a lightweight watchdog or /healthz-style heartbeat makes a stuck-but-alive gateway externally detectable (an emitted heartbeat the worker pushes, since it has no inbound URL)."
+      },
+      {
+        "id": "N9",
+        "title": "Define one symptom-based alert and a minimal SLO/SLI for the bot",
+        "horizon": "next",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["reliability"],
+        "source_finding_ids": ["F3"],
+        "discipline": "observability",
+        "description": "Per-command metrics already flush every 5 min, but nothing closes the loop — the signal is forensic-only. One alert + a one-line SLO turns existing metrics into incident detection.",
+        "acceptance_criteria": "One symptom-based alert is defined and routed to a notification channel (e.g. command error-rate over a 5-min window, or absence of bot.ready / metrics.flush lines); a minimal SLO/SLI + error-budget one-liner is recorded."
+      },
+      {
+        "id": "N10",
+        "title": "Add unit tests for the load-bearing bot reliability utilities",
+        "horizon": "next",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["reliability", "test-quality"],
+        "source_finding_ids": ["F4"],
+        "discipline": "reliability",
+        "description": "loginWithBackoff, metrics, logger, and the interactionCreate error-reply fallback are the components that only run under failure — exactly the untested code that ships regressions silently. loginWithBackoff's injectable sleep seam signals test intent that was never realized.",
+        "acceptance_criteria": "Unit tests cover loginWithBackoff (exhaustion, cap, success-on-retry via the injectable sleep), metrics (flush/snapshot/timer lifecycle), logger (Error serialization, level→stream routing), and the interactionCreate error-reply fallback (replied/deferred branches); tests run in the discord-bot CI job."
+      },
+      {
+        "id": "N11",
+        "title": "Publish the generated TypeDoc API reference (or diff it against hand-authored pages in CI)",
+        "horizon": "next",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["documentation"],
+        "source_finding_ids": ["F1"],
+        "discipline": "docs",
+        "description": "TypeDoc is fully wired but docs/api/ is git-ignored and unpublished; the hand-authored */api-reference.mdx pages are the de-facto public reference and can silently drift from exported signatures. This is the only structural doc-rot vector in an otherwise A-grade doc estate.",
+        "acceptance_criteria": "Either: TypeDoc output is published to a stable URL and linked from the README; Or: CI generates TypeDoc and diffs it against the */api-reference.mdx pages, failing on signature drift."
+      },
+      {
+        "id": "N12",
+        "title": "Broaden app-layer integration/e2e coverage (replicate the discord-bot pattern)",
+        "horizon": "next",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["test-quality"],
+        "source_finding_ids": ["F1"],
+        "discipline": "reliability",
+        "description": "The discord-bot's un-mocked cross-boundary integration test is exemplary but unique; the cli app has no equivalent and the docs-site builds have no smoke e2e. This is the only marked gap holding test-quality below a full A.",
+        "acceptance_criteria": "An un-mocked cross-boundary integration test exists for the cli app (mirroring the discord-bot pattern: real engine + seeded random → asserted output); at least a smoke e2e exists for the site / rdn docs builds."
+      },
+      {
+        "id": "N13",
+        "title": "Add a CI guard that live Render `BUN_VERSION` matches the committed blueprint",
+        "horizon": "next",
+        "risk_reduction": "medium",
+        "severity": "low",
+        "source_dimensions": ["infrastructure"],
+        "source_finding_ids": ["F2"],
+        "discipline": "infrastructure",
+        "description": "The repo self-flags this drift risk (the live service was on 1.3.8 vs committed 1.3.14). A divergent live Bun version could produce build/runtime behavior that doesn't match CI. After the one-time N3 confirmation, this makes the check standing.",
+        "acceptance_criteria": "A CI/scheduled job (Render API) asserts the live BUN_VERSION matches render.yaml, OR Blueprint auto-sync is enforced so divergence is impossible."
+      },
+      {
+        "id": "L1",
+        "title": "Extract shared logic from the `dice-ui` web/native component pairs",
+        "horizon": "later",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["maintainability"],
+        "source_finding_ids": ["F1"],
+        "discipline": "frontend",
+        "description": "The QuickReferenceGrid.tsx (983 LOC) / .native.tsx (792 LOC) pair has ~1,459 differing lines — effectively two parallel components, the repo's top duplication/modifiability risk. Placed in Later because it is contained to a single private package and is a substantial refactor, not a quick fix.",
+        "acceptance_criteria": "Shared logic for the diverged dice-ui pairs (starting with QuickReferenceGrid) is extracted into platform-agnostic hooks/utilities; each .tsx/.native.tsx is reduced to a thin render shim over the shared logic."
+      },
+      {
+        "id": "L2",
+        "title": "Decompose the oversized codegen emitter `generateFunctionBody`",
+        "horizon": "later",
+        "risk_reduction": "medium",
+        "severity": "medium",
+        "source_dimensions": ["maintainability"],
+        "source_finding_ids": ["F2"],
+        "discipline": "build",
+        "description": "generateFunctionBody (~157 lines) is the single longest function in the tree and is string-emitting codegen — bugs propagate to all eight game packages at once. Decomposing it lowers the blast radius of codegen changes.",
+        "acceptance_criteria": "generateFunctionBody (and siblings generateMultiPoolBody, generateRollParts in emitBody.ts) are split into smaller named sub-emitters by concern (pool / modifier / multi-pool join); gen:check still passes."
+      },
+      {
+        "id": "L3",
+        "title": "Add a commit-time secret-scanning gate",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["security"],
+        "source_finding_ids": ["S-1"],
+        "discipline": "security",
+        "description": "The repo is clean today, but no dedicated scanner (gitleaks / detect-secrets / GitHub push protection) is wired into lefthook or CI. Pure prevention against future accidental commits — cheap.",
+        "acceptance_criteria": "gitleaks or detect-secrets runs in lefthook.yml pre-commit, and/or GitHub push protection is enabled; a baseline pass is clean."
+      },
+      {
+        "id": "L4",
+        "title": "Document the RNG security boundary (`Math.random` is non-crypto)",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["security"],
+        "source_finding_ids": ["S-2"],
+        "discipline": "docs",
+        "description": "The product's value proposition is dice fairness, yet the default RNG is Math.random (non-cryptographic). Documenting the boundary + the { randomFn } injection pattern prevents misuse in any future money/wager / commit-reveal context.",
+        "acceptance_criteria": "@randsum/roller docs/README state that the default RNG is entertainment-grade and non-cryptographic; the { randomFn } injection pattern (e.g. backed by crypto.getRandomValues) is shown for CSPRNG-grade consumers."
+      },
+      {
+        "id": "L5",
+        "title": "Begin collecting change-failure-rate and MTTR from deploy/incident tooling",
+        "horizon": "later",
+        "risk_reduction": "medium",
+        "severity": "low",
+        "source_dimensions": ["delivery"],
+        "source_finding_ids": ["F3"],
+        "discipline": "observability",
+        "description": "Two of the four DORA metrics are unobservable from git. Sourcing them from Render/Netlify/EAS deploy history (and any incident log) completes the delivery picture. Strategic, not urgent — delivery already grades A.",
+        "acceptance_criteria": "CFR and MTTR are derived from deploy/incident tooling and recorded somewhere durable (dashboard or periodic note), rather than inferred from zero-revert git history."
+      },
+      {
+        "id": "L6",
+        "title": "Note the bench gate's `roller`-only trigger scope (gate exists; verify breadth)",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["performance", "delivery"],
+        "source_finding_ids": ["R1"],
+        "discipline": "build",
+        "description": "Reconciliation note — performance R1 claims no bench gate exists; this is stale. The gate does exist (bench (regression gate), fail-on-alert: true, threshold 150%, baseline cached). The only residual nuance: the job is gated on needs.changes.outputs.roller == 'true', so a games/CLI-only change won't re-run or re-baseline the benchmark.",
+        "acceptance_criteria": "A maintainer confirms the roller-path-only trigger is intentional, OR the bench job's path filter is broadened if non-roller code can affect roll-engine latency; performance R1's \"no gate exists\" claim is corrected in any downstream tracking."
+      },
+      {
+        "id": "L7",
+        "title": "Watch the two tight roller bundle budgets (`dist/index.js`, `dist/tokenize.js`)",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["performance"],
+        "source_finding_ids": ["F1"],
+        "discipline": "build",
+        "description": "dist/index.js (1.7% headroom) and dist/tokenize.js (3.7% headroom) will trip size-limit on the next non-trivial barrel addition or a behavior leak into the tokenize import graph. The gate already catches it — this is \"be aware in review,\" not a fix.",
+        "acceptance_criteria": "The dist/tokenize.js isolation invariant (schema must not reference behavior symbols at module-init) is documented as a review checkpoint; any new modifier/notation primitive triggers a deliberate budget-vs-trim decision rather than an accidental CI failure."
+      },
+      {
+        "id": "L8",
+        "title": "Guard the dist-smoke tests against a missing `dist/`",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["test-quality"],
+        "source_finding_ids": ["R1"],
+        "discipline": "reliability",
+        "description": "A fresh-worktree bun test without a prior build surfaces 15+ confusing Cannot-find-module dist/index.js failures that are really a missing build step (CI never hits this — pre-push runs build at priority 1). A skip-with-message guard makes the failure mode self-explanatory to new contributors.",
+        "acceptance_criteria": "The (dist) smoke tests detect a missing dist/ and test.skip with a \"run bun run build first\" message instead of erroring opaquely."
+      },
+      {
+        "id": "L9",
+        "title": "Capture vault/DNS/credential ownership and a secret-rotation/release-recovery runbook (bus-factor)",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["delivery", "documentation", "infrastructure"],
+        "source_finding_ids": ["F4", "F5"],
+        "discipline": "docs",
+        "description": "Single-maintainer continuity risk recurs across three dimensions: release decisions, secret rotation (OIDC / EXPO_TOKEN / Render / Netlify / CODECOV_TOKEN), DNS, vault access, and incident response all concentrate on one person. Automation would survive a bus event; the human-held knowledge would not.",
+        "acceptance_criteria": "A runbook documents secret-rotation steps for OIDC publisher config, EXPO_TOKEN, Render/Netlify credentials, and CODECOV_TOKEN; vault / DNS / store-credential ownership (who holds access) is recorded."
+      },
+      {
+        "id": "L10",
+        "title": "Expand the two thin READMEs (`apps/cli`, `apps/rdn`)",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["documentation"],
+        "source_finding_ids": ["F3"],
+        "discipline": "docs",
+        "description": "Both surfaces are below the monorepo's high doc baseline (buffered by solid CLAUDE.md files, so no contributor is blocked — just under-served).",
+        "acceptance_criteria": "apps/cli/CLAUDE.md gains architecture / test-pattern notes; apps/rdn/README.md gains a brief structure/deploy section."
+      },
+      {
+        "id": "L11",
+        "title": "Keep coupling-magnet `lib/` hubs and the largest test file under periodic review",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["architecture", "maintainability", "test-quality"],
+        "source_finding_ids": ["F5", "F4"],
+        "discipline": "build",
+        "description": "roller/src/lib (~12 fan-in) and games/src/lib (~9) are intentional, contained hubs today; the only risk is lib/utils accreting unrelated helpers over time. Likewise notation/definitions.test.ts (987 LOC) is fine as a data table but should split by category if it grows. Watch items, not remediation.",
+        "acceptance_criteria": "A periodic-review note exists for roller/src/lib/utils (split by concern if it accretes unrelated helpers); notation/definitions.test.ts is split by notation category if it grows materially beyond its current size."
+      },
+      {
+        "id": "L12",
+        "title": "Make the `apps/cli` → roller dependency edge explicit",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["architecture"],
+        "source_finding_ids": ["F6"],
+        "discipline": "build",
+        "description": "apps/cli imports @randsum/roller/roll but lists roller under devDependencies (defensible — bunup inlines it at build), making the edge invisible to manifest-reading tooling. Manifest-hygiene nuance only.",
+        "acceptance_criteria": "Either roller is moved to dependencies in apps/cli/package.json, OR a comment documents the bundled-edge rationale; the published CLI bundle is confirmed self-contained."
+      },
+      {
+        "id": "L13",
+        "title": "Re-evaluate suppressed dev/build-time advisories on the next Astro/Expo major bump",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["security"],
+        "source_finding_ids": ["R4"],
+        "discipline": "security",
+        "description": "The 4 moderate + 1 low advisories suppressed in osv-scanner.toml are correctly dev/build-time-only and unreachable from published packages today, but suppressions should expire, not become permanent. Optionally pair with a full-tree SCA/license scanner as a v2 confirmation.",
+        "acceptance_criteria": "The osv-scanner.toml suppressions are re-checked at the next Astro/Expo major bump and removed if resolved; (optional) a full-transitive-tree SCA + license scan is run once to confirm the manifest-level findings."
+      },
+      {
+        "id": "L14",
+        "title": "Codify the Expo native store-submit path; consider bot rate-limiting",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["infrastructure", "security"],
+        "source_finding_ids": ["F4"],
+        "discipline": "infrastructure",
+        "description": "Two small defense-in-depth / completeness items: the Expo native submit path is half-configured (no iOS submit.production; Android internal/draft), so a native release still requires manual console steps; and the single-instance bot worker caps a single roll's work but not a flood of large-but-legal rolls.",
+        "acceptance_criteria": "An iOS submit.production block is added and the Android track promoted beyond internal/draft when a store release is intended; (optional) a basic per-user/-guild rate limit guards the bot's compute commands."
+      },
+      {
+        "id": "L15",
+        "title": "Capture the missing-config failure path through `captureException` (minor consistency)",
+        "horizon": "later",
+        "risk_reduction": "low",
+        "severity": "low",
+        "source_dimensions": ["reliability"],
+        "source_finding_ids": ["F6", "F5"],
+        "discipline": "observability",
+        "description": "config.ts throws at import time before initErrorTracker() runs, so a missing-env failure lands only as a raw stderr stack while the auth-failure path is hardened — a minor asymmetry. Optionally also add happy-path interaction-level correlation ids (F5) for easier log reconstruction.",
+        "acceptance_criteria": "initErrorTracker() runs before (or the config.ts throw is restructured so) all boot failures route through captureException."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Bot observability \"last mile\" — Reliability F1–F4 and Infrastructure F1/R5 all collapse into one effort: activate the tracker (N7), add liveness/alerting (N8, N9), and test the failure-path utilities (N10). Fixing this once lifts the bot's reliability posture from B to A.",
+      "Single-maintainer bus factor — recurs across Delivery, Documentation, and Infrastructure; one ownership + secret-rotation runbook (L9) addresses all three.",
+      "Doc-vs-reality drift — the stale bot README (N1) and unpublished TypeDoc (N11) are the only structural doc-rot vectors in an otherwise top-decile doc estate.",
+      "\"Configured but unverified\" platform posture — branch protection (N2), PaaS-vs-live state (N3), and BUN_VERSION drift (N13) all convert declared config into confirmed state."
+    ],
+    "confidence": "Most items rest on directly observable evidence (file reads, knip, bun audit, dependency-cruiser, size-limit, grep sweeps). LLM judgment was used for severity/risk-reduction ranking and for maintainability complexity buckets (function lengths are ±10% heuristics). One source-level discrepancy was reconciled against ci.yml: the performance report's claim that \"no benchmark regression gate exists\" is incorrect — the gate exists (bench (regression gate), fail-on-alert at 150%), matching the delivery report; that recommendation is dropped as already-satisfied and only its residual nuance (roller-path-only trigger) is carried (L6). Effort, duration, and team-shape estimates are deliberately out of scope; the Now/Next/Later buckets are priority groupings, not time buckets."
+  }
+}
