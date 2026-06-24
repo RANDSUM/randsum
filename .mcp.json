@@ -13,6 +13,15 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headersHelper": "$CLAUDE_PROJECT_DIR/scripts/mcp-1password-headers.sh"
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=rcownsizpvjkzkgfcloe&read_only=true",
+      "headersHelper": "$CLAUDE_PROJECT_DIR/scripts/mcp-1password-headers.sh"
+    },
+    "netlify": {
+      "type": "http",
+      "url": "https://netlify-mcp.netlify.app/mcp"
     }
   }
 }
