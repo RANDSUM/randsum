@@ -1,25 +1,23 @@
 # osv-scanner configuration (audit item X8 / security R2).
 #
-# The advisories below are the known, accepted, DEV/BUILD-TIME-ONLY
-# transitive findings carried since the 2026-06-12 refresh. None reach the three
-# published packages (@randsum/roller has zero deps, @randsum/games depends only
-# on @randsum/roller, @randsum/cli has zero runtime deps) — they resolve through
-# astro/@astrojs, size-limit, and knip. They cannot be
-# force-resolved without a major Astro upgrade (no-overrides policy), so
-# they are ignored HERE to keep the SCA job green while still surfacing any NEW
-# advisory or license change. The authoritative blocking gate remains the
-# `bun audit --audit-level=high` CI step.
+# Most previously-accepted dev/build-time transitive advisories are now
+# FORCE-RESOLVED via `overrides` in the root package.json (yaml, esbuild,
+# @opentelemetry/*), so they no longer need suppression here — the scanner sees
+# the patched versions directly. (The former uuid finding is gone entirely with
+# the expo app removed in #1121.)
 #
-# Re-evaluate on the next Astro major bump (security R1).
+# The single advisory below cannot be safely fixed: js-yaml 3.14.2 is pulled
+# only by changesets' read-yaml-file@1, which calls js-yaml's removed `safeLoad`
+# API — the first patched js-yaml (4.2.0) is a breaking major, so forcing it via
+# overrides breaks the release pipeline. It is dev/release-tooling only (never in
+# the published packages: @randsum/roller has zero deps, @randsum/games depends
+# only on @randsum/roller, @randsum/cli has zero runtime deps) and parses only
+# trusted repo config, not attacker input. Re-evaluate when @changesets /
+# @manypkg bump to read-yaml-file@2.
+#
+# The authoritative blocking gate remains `bun audit --audit-level=high`; this
+# OSV job is the report-only confirmation/visibility pass.
 
 [[IgnoredVulns]]
-id = "GHSA-gv7w-rqvm-qjhr"
-reason = "esbuild Deno-install binary-integrity issue; no Deno install path in this bun/node monorepo. Dev/build-time only, never reaches published packages."
-
-[[IgnoredVulns]]
-id = "GHSA-g7r4-m6w7-qqqr"
-reason = "esbuild dev-server file read (Windows). Dev-only; not in any published package's dependency graph."
-
-[[IgnoredVulns]]
-id = "GHSA-48c2-rrv3-qjmp"
-reason = "yaml stack overflow via astro/@astrojs build tooling. Build-time only; not shipped."
+id = "GHSA-h67p-54hq-rp68"
+reason = "js-yaml <=4.1.1 quadratic-complexity DoS in merge-key handling. Pulled only by changesets' read-yaml-file@1 (calls the removed safeLoad; first fix 4.2.0 is a breaking major, so cannot be overridden without breaking releases). Dev/release-tooling only, parses trusted repo config; not in any published package."
