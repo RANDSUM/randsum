@@ -172,14 +172,20 @@ Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest)
 `.mcp.json` (project-scoped, committed) declares the official MCP servers for
 this repo's deploy/host stack. Each maps to a real workspace target:
 
-| Server   | Transport | Backs                              | Auth                            |
-| -------- | --------- | ---------------------------------- | ------------------------------- |
-| `render` | http      | `apps/discord-bot` (Render worker) | 1Password PAT (`headersHelper`) |
-| `expo`   | http      | `apps/expo` (EAS native + web)     | OAuth — run `/mcp`              |
-| `github` | http      | repo host (issues, PRs, releases)  | 1Password PAT (`headersHelper`) |
+| Server     | Transport | Backs                              | Auth                            |
+| ---------- | --------- | ---------------------------------- | ------------------------------- |
+| `render`   | http      | `apps/discord-bot` (Render worker) | 1Password PAT (`headersHelper`) |
+| `expo`     | http      | `apps/expo` (EAS native + web)     | OAuth — run `/mcp`              |
+| `github`   | http      | repo host (issues, PRs, releases)  | 1Password PAT (`headersHelper`) |
+| `supabase` | http      | `apps/expo` (Supabase data layer)  | 1Password PAT (`headersHelper`) |
+| `netlify`  | http      | `apps/site` / `apps/rdn` (Netlify) | OAuth — run `/mcp`              |
 
-Secrets are **never** committed. The `github` and `render` (http) servers
-resolve their fine-grained PATs at connect time via `scripts/mcp-1password-headers.sh`,
+The `supabase` server is scoped to the expo project ref (`rcownsizpvjkzkgfcloe`,
+already public via `EXPO_PUBLIC_SUPABASE_URL`) and pinned `read_only=true` in the
+URL — drop that query param only when a migration/DDL session genuinely needs writes.
+
+Secrets are **never** committed. The `github`, `render`, and `supabase` (http)
+servers resolve their fine-grained PATs at connect time via `scripts/mcp-1password-headers.sh`,
 wired through each server's `headersHelper`. Claude Code runs that script outside
 the bash sandbox, so it can read the token from the 1Password `claude-agent`
 vault (service-account token in the macOS keychain) — the same convention as the
@@ -188,12 +194,15 @@ Spacebase MCP. The script expects these vault items:
 ```
 op://claude-agent/GitHub PAT/credential      # github
 op://claude-agent/Render API Key/credential  # render
+op://claude-agent/Supabase PAT/credential    # supabase
 ```
 
 An already-exported env var wins over `op`, so CI / fresh checkouts without
-1Password can still authenticate by exporting `GITHUB_PAT` / `RENDER_API_KEY`
-before launch. `expo` authenticates via OAuth — run `/mcp` after first launch.
+1Password can still authenticate by exporting `GITHUB_PAT` / `RENDER_API_KEY` /
+`SUPABASE_ACCESS_TOKEN` before launch. `expo` and `netlify` authenticate via
+OAuth — run `/mcp` after first launch.
 
-Run `/mcp` in Claude Code to check connection status. Netlify is **not** a
-project-scoped server here — use the account-level claude.ai Netlify connector
-(already connected) for `apps/site` / `apps/rdn`.
+Run `/mcp` in Claude Code to check connection status. The account-level claude.ai
+Netlify connector remains available too; the project-scoped `netlify` server above
+just keeps `apps/site` / `apps/rdn` aligned with the other deploy targets so a
+fresh checkout has it without account setup.
