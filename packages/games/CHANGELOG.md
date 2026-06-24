@@ -1,5 +1,11 @@
 # @randsum/games
 
+## 3.0.1
+
+### Patch Changes
+
+- [#1088](https://github.com/RANDSUM/randsum/pull/1088) [`7faf232`](https://github.com/RANDSUM/randsum/commit/7faf232d94dc7b7a46a07abd55813e786d536572) Thanks [@alxjrvs](https://github.com/alxjrvs)! - Verify the npm OIDC Trusted Publishing release pipeline end-to-end. No functional or API change — release-infrastructure smoke test only.
+
 ## 3.0.0
 
 ### Major Changes
