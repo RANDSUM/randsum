@@ -42,7 +42,14 @@
     "@types/react-dom": "^19.2.3"
   },
   "overrides": {
-    "undici": ">=6.27.0"
+    "undici": ">=6.27.0",
+    "yaml": ">=2.8.3",
+    "esbuild": ">=0.28.1",
+    "@opentelemetry/core": ">=2.8.0",
+    "@opentelemetry/resources": ">=2.8.0",
+    "@opentelemetry/sdk-trace-base": ">=2.8.0",
+    "@opentelemetry/sdk-trace-node": ">=2.8.0",
+    "@opentelemetry/context-async-hooks": ">=2.8.0"
   },
   "scripts": {
     "prepare": "[ -d .git ] && (git config --unset-all --local core.hooksPath 2>/dev/null; lefthook install) || true",
