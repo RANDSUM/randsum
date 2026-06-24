@@ -3,6 +3,15 @@
   # Builds packages first (for workspace resolution), generates API docs, then builds the site
   command = "bun run build && bun run site:build"
   publish = "apps/site/dist"
+  # Skip the build (exit 0) when no changes touched this site or its build inputs,
+  # conserving free-tier build minutes. The site documents the whole ecosystem and
+  # generates API docs (typedoc) from every package, so it rebuilds on changes to
+  # apps/site, any packages/*, or root build config (lockfile, workspace + tsconfig +
+  # typedoc). It does NOT rebuild for changes confined to the other apps (rdn, cli,
+  # expo, discord-bot). `git diff --quiet` exits 1 when the listed paths changed →
+  # build proceeds. On the first build CACHED_COMMIT_REF is empty and git errors
+  # non-zero, so the build also proceeds (safe default).
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/site packages package.json bun.lock tsconfig.json tsconfig.packages.json tsconfig.typedoc.json typedoc.json"
 
 [build.environment]
   # Pin the build toolchain so Netlify deploys are reproducible (audit X4 /
