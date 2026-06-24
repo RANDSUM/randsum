@@ -9,8 +9,10 @@
  *   bun run publish -- --otp=123456  # provide 2FA OTP (local only)
  *
  * Uses `bun pm pack` to resolve workspace: protocols, then `npm publish`
- * on the tarball. In CI, auth and provenance are handled automatically
- * by npm Trusted Publishers (OIDC). Requires npm >= 11.5.1, Node >= 22.14.
+ * on the tarball. In CI, auth is handled by npm Trusted Publishing (OIDC) —
+ * no NPM_TOKEN — and `--provenance` (added only under GITHUB_ACTIONS) attests
+ * the build to the workflow run. Local publishes omit provenance and use
+ * `--otp`. Requires npm >= 11.5.1, Node >= 22.14, `id-token: write` on the job.
  *
  * Publishes workspace packages in dependency order, skips private ones.
  */
@@ -106,6 +108,10 @@ for (const { name, dir } of packages) {
     }
 
     const npmArgs = ['publish', tgzPath, '--access=public']
+    // Provenance requires an OIDC-capable CI; skip it for local --otp publishes.
+    if (process.env['GITHUB_ACTIONS'] === 'true') {
+      npmArgs.push('--provenance')
+    }
     for (const arg of extraArgs) {
       npmArgs.push(arg)
     }
