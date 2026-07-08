@@ -39,19 +39,21 @@
   targetPort = 4321
   port = 8888
 
-# The 11 legacy 301 redirects (old /packages/*, /docs/*, /getting-started/* URLs)
-# now live in apps/site/astro.config.mjs under `redirects: {...}` — NOT here.
-# Reason: this site ships an on-demand SSR function (src/pages/api/roll.ts), and
-# @astrojs/netlify registers it at `/*` with preferStatic: true. Netlify runs
-# functions BEFORE toml [[redirects]] and preferStatic only defers to existing
-# static files, so toml redirects for those (static-file-less) sources would be
-# shadowed by the function and 404 instead of 301. Astro emits the config
-# redirects as routes the function serves itself, bypassing that precedence.
-# Keep new legacy redirects in astro.config.mjs so the two configs never drift.
-
-# Redirect 404s to the 404 page. Kept here as a static-file-level catch-all — it
-# is a status-404 rewrite, not a 301, so it does not belong in Astro's redirects.
-[[redirects]]
-  from = "/*"
-  to = "/404"
-  status = 404
+# NO [[redirects]] live here — this file intentionally has none.
+#
+# This site ships an on-demand SSR function (src/pages/api/roll.ts,
+# `prerender = false`), which @astrojs/netlify registers at `path: '/*'` with
+# `preferStatic: true`. Two consequences drive the redirect layout:
+#
+# 1. Legacy 301 redirects (old /packages/*, /docs/*, /getting-started/* URLs)
+#    now live in apps/site/astro.config.mjs under `redirects: {...}`. Astro emits
+#    them into dist/_redirects (status 301) AND bakes them into the SSR
+#    function's own route manifest, so they resolve as 301s. Keep new legacy
+#    redirects there so the two configs never drift.
+#
+# 2. There is deliberately NO `/* -> /404` catch-all here. An explicit toml
+#    catch-all is itself a redirect rule and Netlify matches it BEFORE handing
+#    the request to the function's `/*` route — it would shadow the SSR function
+#    entirely, 404ing /api/roll (both GET and POST). The SSR function already
+#    serves the 404 page (with a 404 status) for any unmatched route, so the
+#    catch-all is both redundant and harmful. 404 behavior is preserved by Astro.

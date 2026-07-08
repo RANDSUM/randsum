@@ -22,12 +22,13 @@ export default defineConfig({
   // Legacy 301 redirects for old URL shapes. These MUST live here rather than in
   // netlify.toml [[redirects]]: this site ships an on-demand SSR function
   // (`src/pages/api/roll.ts`, `prerender = false`), and @astrojs/netlify then
-  // registers that function at `/*` with `preferStatic: true`. Netlify evaluates
-  // functions BEFORE toml redirects and `preferStatic` only defers to *existing
-  // static files* — the legacy sources below have none, so a toml redirect would
-  // be shadowed by the function and 404. Declared here, Astro emits them as real
-  // redirect routes the function itself serves, so they resolve regardless of
-  // Netlify precedence. The `/*` → /404 catch-all stays in netlify.toml.
+  // registers that function at `/*` with `preferStatic: true`. An explicit toml
+  // redirect is matched BEFORE the request reaches the function's `/*` route, so
+  // toml redirects (and, fatally, a toml `/*` catch-all) shadow the function.
+  // Declared here, Astro emits these into dist/_redirects (301) AND bakes them
+  // into the function's own route manifest, so they resolve regardless of
+  // Netlify precedence. netlify.toml deliberately carries NO redirects now — the
+  // SSR function serves the 404 page (404 status) for unmatched routes itself.
   redirects: {
     // Old package URLs → new game/tool pages
     '/packages/fifth/': { status: 301, destination: '/games/fifth/' },
