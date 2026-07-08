@@ -83,6 +83,46 @@ describe('@randsum/cli e2e (built binary)', () => {
     expect(stderr).toContain('Error:')
   })
 
+  test('unknown flag exits non-zero with a clear message (not a parse error)', () => {
+    const { stderr, exitCode } = runCli(['4d6L', '--jsn'])
+    expect(exitCode).toBe(1)
+    expect(stderr).toContain('Unknown flag: --jsn')
+    expect(stderr).not.toContain('not valid dice notation')
+  })
+
+  test('--total prints only the numeric total', () => {
+    const { stdout, exitCode } = runCli(['3d6', '--total', '--seed', '42'])
+    expect(exitCode).toBe(0)
+    expect(stdout).toMatch(/^\d+$/)
+  })
+
+  test('-t with --repeat prints one total per line', () => {
+    const { stdout, exitCode } = runCli(['1d6', '-t', '-r', '3', '--seed', '42'])
+    expect(exitCode).toBe(0)
+    const lines = stdout.split('\n').filter(Boolean)
+    expect(lines).toHaveLength(3)
+    for (const line of lines) {
+      expect(line).toMatch(/^\d+$/)
+    }
+  })
+
+  test('--total combined with --json is rejected', () => {
+    const { stderr, exitCode } = runCli(['3d6', '--total', '--json'])
+    expect(exitCode).toBe(1)
+    expect(stderr).toContain('Cannot combine --total with --json')
+  })
+
+  test('--json with -r emits JSON-lines (one object per line)', () => {
+    const { stdout, exitCode } = runCli(['2d6', '--json', '-r', '2', '--seed', '42'])
+    expect(exitCode).toBe(0)
+    const lines = stdout.split('\n').filter(Boolean)
+    expect(lines).toHaveLength(2)
+    for (const line of lines) {
+      const parsed = JSON.parse(line) as { total: number }
+      expect(typeof parsed.total).toBe('number')
+    }
+  })
+
   test('--help exits 0 and prints usage', () => {
     const { stdout, exitCode } = runCli(['--help'])
     expect(exitCode).toBe(0)
