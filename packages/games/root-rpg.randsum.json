@@ -15,9 +15,9 @@
     "modify": [{ "add": { "$input": "bonus" } }],
     "outcome": {
       "ranges": [
-        { "min": 10, "max": 32, "result": "Strong Hit" },
-        { "min": 7, "max": 9, "result": "Weak Hit" },
-        { "min": -18, "max": 6, "result": "Miss" }
+        { "min": 10, "result": "strong_hit" },
+        { "min": 7, "max": 9, "result": "weak_hit" },
+        { "max": 6, "result": "miss" }
       ]
     },
     "when": [

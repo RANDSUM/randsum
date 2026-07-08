@@ -7,7 +7,7 @@ import type { GameRollResult } from './types'
 import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
-export type DaggerheartRollResult = 'critical hope' | 'fear' | 'hope'
+export type DaggerheartRollResult = 'critical_hope' | 'fear' | 'hope'
 
 export interface DaggerheartRollDetails {
   readonly hope: { readonly roll: number; readonly amplified: boolean }
@@ -71,7 +71,7 @@ export function roll(input?: {
           }
         : undefined
   }
-  if (hopeTotal === fearTotal) return { total, result: 'critical hope', rolls, details }
+  if (hopeTotal === fearTotal) return { total, result: 'critical_hope', rolls, details }
   if (hopeTotal > fearTotal) return { total, result: 'hope', rolls, details }
   return { total, result: 'fear', rolls, details }
 }

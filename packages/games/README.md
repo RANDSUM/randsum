@@ -44,7 +44,7 @@ const { result } = roll({ modifier: 5, rollingWith: "Advantage" })
 import { roll } from "@randsum/games/fate"
 
 const { result } = roll({ modifier: 2 })
-// result: ladder rung, e.g. 'Average' | 'Fair' | 'Good' | 'Great' | 'Superb' | ...
+// result: ladder rung, e.g. 'average' | 'fair' | 'good' | 'great' | 'superb' | ...
 ```
 
 ```typescript
@@ -58,14 +58,14 @@ const { result } = roll({ stat: 2 })
 import { roll } from "@randsum/games/daggerheart"
 
 const { result } = roll({ modifier: 3 })
-// result: 'hope' | 'fear' | 'critical hope'
+// result: 'hope' | 'fear' | 'critical_hope'
 ```
 
 ```typescript
 import { roll } from "@randsum/games/root-rpg"
 
 const { result } = roll({ modifier: 2 })
-// result: 'Strong Hit' | 'Weak Hit' | 'Miss'
+// result: 'strong_hit' | 'weak_hit' | 'miss'
 ```
 
 ```typescript

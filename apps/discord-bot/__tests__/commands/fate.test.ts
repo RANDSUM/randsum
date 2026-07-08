@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, mock, test } from 'bun:test'
 import type { APIEmbed } from 'discord.js'
 
 const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
-  result: 'Great',
+  result: 'great',
   total: 4,
   rolls: [{ initialRolls: [1, 1, 0, 1], rolls: [1, 1, 0, 1], modifierLogs: [] }]
 }))

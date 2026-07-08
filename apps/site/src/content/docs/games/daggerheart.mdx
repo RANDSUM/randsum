@@ -84,7 +84,7 @@ roll({
 <CodeExample code={`import { roll } from '@randsum/games/daggerheart'
 
 const { result, total, details } = roll({ modifier: 3 })
-// result: 'hope' | 'fear' | 'critical hope'
+// result: 'hope' | 'fear' | 'critical_hope'
 // details: { hope, fear, extraDie, modifier }
 
 const { hope, fear, extraDie, modifier } = details`} />
@@ -106,7 +106,7 @@ const { hope, fear, extraDie, modifier } = details`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `DaggerheartRollResult` | `'hope' \| 'fear' \| 'critical hope'` |
+| `result` | `DaggerheartRollResult` | `'hope' \| 'fear' \| 'critical_hope'` |
 | `total` | `number` | Sum of all dice + modifier |
 | `details` | `DaggerheartRollDetails` | Detailed breakdown (see below) |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |

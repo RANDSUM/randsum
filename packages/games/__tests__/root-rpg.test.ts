@@ -44,12 +44,12 @@ describe('roll', () => {
       const dummyArray = Array.from({ length: STRESS_ITERATIONS }, () => roll({ bonus: 0 }))
 
       dummyArray.forEach(({ result, total }) => {
-        if (result === 'Strong Hit') {
+        if (result === 'strong_hit') {
           expect(total).toBeGreaterThanOrEqual(10)
           return
         }
 
-        if (result === 'Weak Hit') {
+        if (result === 'weak_hit') {
           expect(total).toBeGreaterThanOrEqual(7)
           expect(total).toBeLessThanOrEqual(9)
           return
@@ -150,14 +150,14 @@ describe('roll', () => {
 
     test('handles maximum valid positive modifier', () => {
       const { result, total } = roll({ bonus: 5 })
-      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
+      expect(['strong_hit', 'weak_hit', 'miss']).toContain(result)
       expect(total).toBeGreaterThanOrEqual(7) // 2d6 minimum (2) + 5
       expect(total).toBeLessThanOrEqual(17) // 2d6 maximum (12) + 5
     })
 
     test('handles maximum valid negative modifier', () => {
       const { result, total } = roll({ bonus: -3 })
-      expect(['Strong Hit', 'Weak Hit', 'Miss']).toContain(result)
+      expect(['strong_hit', 'weak_hit', 'miss']).toContain(result)
       expect(total).toBeGreaterThanOrEqual(-1) // 2d6 minimum (2) - 3
       expect(total).toBeLessThanOrEqual(9) // 2d6 maximum (12) - 3
     })

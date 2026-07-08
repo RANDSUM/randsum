@@ -4,13 +4,17 @@ import { join } from 'node:path'
 
 import { format, resolveConfig } from 'prettier'
 
-import { generateCode, resolveExternalRefs, validateSpec } from './src/lib'
+import { generateCode, getRollDefinitions, resolveExternalRefs, validateSpec } from './src/lib'
 import type { RandSumSpec } from './src/lib'
 
 const packageDir = import.meta.dirname
 const srcDir = join(packageDir, 'src')
 const fixturesDir = join(packageDir, '__fixtures__')
 const checkMode = process.argv.includes('--check')
+// By default codegen is hermetic: remote table data is read from the
+// checked-in __fixtures__ snapshot. Pass --refresh-remote to refetch from the
+// network and rewrite the fixture.
+const refreshRemote = process.argv.includes('--refresh-remote')
 
 async function formatCode(code: string, filepath: string): Promise<string> {
   const config = await resolveConfig(filepath)
@@ -22,8 +26,7 @@ function fixturePathFor(shortcode: string): string {
 }
 
 function getRemoteUrl(spec: RandSumSpec): string | undefined {
-  const rollDefs = spec.rolls ?? (spec.roll !== undefined ? { roll: spec.roll } : {})
-  for (const rollDef of Object.values(rollDefs)) {
+  for (const rollDef of Object.values(getRollDefinitions(spec))) {
     const resolve = rollDef.resolve
     if (typeof resolve === 'object' && 'remoteTableLookup' in resolve) {
       const { url } = resolve.remoteTableLookup
@@ -64,7 +67,7 @@ async function main(): Promise<void> {
     const remoteUrl = getRemoteUrl(spec)
     const remoteDataCache = new Map<string, readonly unknown[]>()
 
-    if (remoteUrl && !checkMode) {
+    if (remoteUrl && refreshRemote && !checkMode) {
       const response = await fetch(remoteUrl)
       if (!response.ok) {
         console.error(`FAIL  fetch ${remoteUrl}: HTTP ${String(response.status)}`)
@@ -75,12 +78,12 @@ async function main(): Promise<void> {
 
       mkdirSync(fixturesDir, { recursive: true })
       writeFileSync(fixturePathFor(spec.shortcode), JSON.stringify(data, null, 2) + '\n', 'utf-8')
-      console.log(`  fixture: __fixtures__/${spec.shortcode}-tables.json`)
-    } else if (remoteUrl && checkMode) {
+      console.log(`  fixture: __fixtures__/${spec.shortcode}-tables.json (refreshed from remote)`)
+    } else if (remoteUrl) {
       const fixturePath = fixturePathFor(spec.shortcode)
       if (!existsSync(fixturePath)) {
         console.error(
-          `FAIL  missing fixture ${fixturePath}. Run \`bun run codegen\` to generate it.`
+          `FAIL  missing fixture ${fixturePath}. Run \`bun run codegen --refresh-remote\` to generate it.`
         )
         process.exit(1)
       }

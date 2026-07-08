@@ -10,19 +10,24 @@ function buildRootEmbed(modifier: number, displayName: string): EmbedBuilder {
   const initialRolls = result.rolls[0]?.initialRolls ?? []
 
   const resultConfig = {
-    'Strong Hit': { color: 0x00ff00, resultDescription: 'You succeed at your goal' },
-    'Weak Hit': {
+    strong_hit: {
+      label: 'Strong Hit',
+      color: 0x00ff00,
+      resultDescription: 'You succeed at your goal'
+    },
+    weak_hit: {
+      label: 'Weak Hit',
       color: 0xffff00,
       resultDescription: 'You succeed, but with a cost or complication'
     },
-    Miss: { color: 0xff0000, resultDescription: "Things don't go your way" }
+    miss: { label: 'Miss', color: 0xff0000, resultDescription: "Things don't go your way" }
   } as const
 
-  const { color, resultDescription } = resultConfig[result.result]
+  const { color, resultDescription, label } = resultConfig[result.result]
 
   const embed = new EmbedBuilder()
     .setColor(color)
-    .setTitle(`${displayName} rolled a ${result.result}`)
+    .setTitle(`${displayName} rolled a ${label}`)
     .setDescription(resultDescription)
     .setFooter(embedFooterDetails)
 
