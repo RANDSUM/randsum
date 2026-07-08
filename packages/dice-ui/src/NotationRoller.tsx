@@ -235,7 +235,7 @@ export function NotationRoller({
                 })}
             </span>
           )}
-          {renderActions !== undefined && renderActions(notation)}
+          {renderActions?.(notation)}
         </div>
       </div>
     </div>
