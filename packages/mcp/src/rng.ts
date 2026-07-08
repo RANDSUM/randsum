@@ -21,7 +21,11 @@ export function createSeededRandom(seed: number): RandomFn {
   const m = 2 ** 32
   const state = { value: seed }
   return (): number => {
-    state.value = (a * state.value + c) % m
+    // Normalize the modulo: JS `%` preserves the sign of the dividend, so a
+    // negative seed could otherwise drive `value` negative and yield a random
+    // number in (-1, 0), producing impossible dice faces. `((x % m) + m) % m`
+    // keeps `value` in [0, m) for any integer seed.
+    state.value = (((a * state.value + c) % m) + m) % m
     return state.value / m
   }
 }

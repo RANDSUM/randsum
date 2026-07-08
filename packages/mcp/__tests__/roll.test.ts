@@ -25,6 +25,19 @@ describe('rollNotation', () => {
     expect(a.total).not.toBe(b.total)
   })
 
+  test('produces valid faces for negative seeds', () => {
+    // Regression: a negative seed used to drive the LCG negative (JS `%` keeps
+    // the dividend's sign), yielding random values in (-1, 0) and impossible
+    // dice faces (e.g. 4d6 seed -1000 -> [0,-2,-5,-2], total -9).
+    const result = rollNotation({ notation: '4d6', seed: -1000 })
+    expect(result.total).toBeGreaterThanOrEqual(4)
+    expect(result.total).toBeLessThanOrEqual(24)
+    for (const roll of result.pools[0]?.rolls ?? []) {
+      expect(roll).toBeGreaterThanOrEqual(1)
+      expect(roll).toBeLessThanOrEqual(6)
+    }
+  })
+
   test('combines multiple pools when notation has arithmetic', () => {
     const result = rollNotation({ notation: '2d6+3', seed: 7 })
     expect(result.total).toBeGreaterThanOrEqual(5)
