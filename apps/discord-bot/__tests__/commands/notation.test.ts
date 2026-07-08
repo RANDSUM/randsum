@@ -57,10 +57,12 @@ const { notationCommand } = await import('../../src/commands/notation.js')
 function makeInteraction(): {
   deferReply: ReturnType<typeof mock>
   editReply: ReturnType<typeof mock>
+  options: { getBoolean: ReturnType<typeof mock> }
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(mockMessage) as ReturnType<ReturnType<typeof mock>>)
+    editReply: mock(() => Promise.resolve(mockMessage) as ReturnType<ReturnType<typeof mock>>),
+    options: { getBoolean: mock(() => false) }
   }
 }
 
