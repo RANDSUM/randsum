@@ -493,4 +493,48 @@ describe('tokenize', () => {
       expect(wToken?.text).toBe('W')
     })
   })
+
+  // The tokenize subpath calls the lexer unguarded by the 1000-char parse gate,
+  // so the scanner must be iterative (not per-token/per-char recursion) or a long
+  // input overflows the call stack. Regression for the scanFrom recursion bug.
+  describe('very long input does not overflow the stack', () => {
+    test('1,000,000 unknown characters tokenize without throwing', () => {
+      const tokens = tokenize('q'.repeat(1_000_000))
+      // Consecutive unknown characters coalesce into a single unknown token.
+      expect(tokens).toHaveLength(1)
+      expect(tokens[0]?.category).toBe('unknown')
+      expect(tokens[0]?.text).toHaveLength(1_000_000)
+    })
+
+    test('a very long valid multi-pool string tokenizes without throwing', () => {
+      const notation = `1d20${'+1d20'.repeat(100_000)}`
+      const tokens = tokenize(notation)
+      // 1 leading pool + 100,000 signed pools.
+      expect(tokens).toHaveLength(100_001)
+      expect(tokens.every(t => t.category === 'Core')).toBe(true)
+    })
+
+    // Regression for CodeQL js/polynomial-redos: the annotation matcher used a
+    // sticky regex whose failed attempt cost O(remaining), making an all-'['
+    // input quadratic across the scan. The indexOf-based matcher with a
+    // no-close-bracket memo keeps this linear.
+    test('1,000,000 open brackets (no closing bracket) tokenize in linear time', () => {
+      const start = performance.now()
+      const tokens = tokenize('['.repeat(1_000_000))
+      const elapsed = performance.now() - start
+      expect(tokens).toHaveLength(1)
+      expect(tokens[0]?.category).toBe('unknown')
+      expect(tokens[0]?.text).toHaveLength(1_000_000)
+      // Quadratic scanning took effectively forever here; linear is well under a second.
+      expect(elapsed).toBeLessThan(5_000)
+    })
+
+    test('annotation semantics preserved: first ] closes, empty [] rejected', () => {
+      expect(tokenize('2d6[fire]').map(t => t.category)).toEqual(['Core', 'Special'])
+      expect(tokenize('2d6[a]b]')[1]?.text).toBe('[a]')
+      expect(tokenize('2d6[[x]')[1]?.text).toBe('[[x]')
+      const empty = tokenize('2d6[]')
+      expect(empty.some(t => t.category === 'unknown')).toBe(true)
+    })
+  })
 })

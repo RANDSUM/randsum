@@ -1,34 +1,13 @@
 import { describe, expect, test } from 'bun:test'
-import { RANDSUM_MODIFIERS } from '../../src/modifiers'
-import { buildNotationPattern, parseModifiers } from '../../src/notation/parse/parseModifiers'
+import { parseModifiers } from '../../src/notation/parse/parseModifiers'
 
 /**
- * Tests that verify parseModifiers and buildNotationPattern use RANDSUM_MODIFIERS
- * as the single source of truth for modifier schemas, eliminating the allSchemas
- * dual-maintenance hazard.
+ * Tests that verify parseModifiers uses RANDSUM_MODIFIERS as the single source of
+ * truth for modifier schemas, eliminating the allSchemas dual-maintenance hazard.
  *
  * Story 1: allSchemas Dual-Maintenance Elimination
  */
 describe('parseModifiers — RANDSUM_MODIFIERS integration', () => {
-  describe('buildNotationPattern', () => {
-    test('pattern includes all modifier patterns from RANDSUM_MODIFIERS', () => {
-      const pattern = buildNotationPattern()
-      const source = pattern.source
-
-      for (const modifier of RANDSUM_MODIFIERS) {
-        expect(source).toContain(modifier.pattern.source)
-      }
-    })
-
-    test('pattern count matches RANDSUM_MODIFIERS length plus sugar patterns', () => {
-      // RANDSUM_MODIFIERS entries + marginOfSuccess + repeat operator + annotation + count-family sugar
-      // The exact count depends on implementation, but at minimum all RANDSUM_MODIFIERS patterns are present
-      const pattern = buildNotationPattern()
-      const patternCount = pattern.source.split('|').length
-      expect(patternCount).toBeGreaterThanOrEqual(RANDSUM_MODIFIERS.length)
-    })
-  })
-
   describe('parseModifiers', () => {
     test('parses drop modifier notation', () => {
       const result = parseModifiers('4d6L')

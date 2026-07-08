@@ -106,6 +106,20 @@ export interface ModifierOptions {
 }
 
 /**
+ * The die-type of a parsed pool. `standard` covers ordinary NdS (and percentile,
+ * which is d100); the remaining kinds are the special dice whose face semantics
+ * must survive parsing.
+ */
+export type ParsedDieType =
+  | 'standard'
+  | 'percentile'
+  | 'fate'
+  | 'custom'
+  | 'draw'
+  | 'geometric'
+  | 'zeroBias'
+
+/**
  * The result of parsing a dice notation string.
  * Similar to RollOptions but with sides always numeric and
  * quantity/arithmetic always present.
@@ -121,6 +135,16 @@ export interface ParsedNotationOptions {
   modifiers?: ModifierOptions
   /** Annotation label (e.g., [fire]) */
   label?: string
+  /**
+   * The die-type of this pool. Present for special dice (fate, custom faces,
+   * draw, geometric, zero-bias, percentile) so their semantics are not lost when
+   * a notation string is parsed to options; absent (or 'standard') for plain NdS.
+   */
+  dieType?: ParsedDieType
+  /** Fate/Fudge variant: 1 (dF, -1..+1) or 2 (dF.2, -2..+2). Only for `dieType: 'fate'`. */
+  fateVariant?: 1 | 2
+  /** Raw custom face values (e.g. from `d{fire,ice}`). Only for `dieType: 'custom'`. */
+  customFaces?: readonly string[]
 }
 
 /**
@@ -183,6 +207,11 @@ export interface ValidationErrorInfo {
   message: string
   /** The input that failed validation */
   argument: string
+  /**
+   * Zero-based character offset where parsing failed (the position of the first
+   * unexpected/invalid token). Populated by the single-pass parser.
+   */
+  position?: number
 }
 
 /**
