@@ -1,18 +1,19 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/pbta'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
-interface PbtaParams {
-  readonly stat: number
-  readonly forward: number
-  readonly ongoing: number
-  readonly rollingWith: 'Advantage' | 'Disadvantage' | null
-}
+function buildPbtaEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const stat = interaction.options.getInteger('stat', true)
+  const forward = interaction.options.getInteger('forward') ?? 0
+  const ongoing = interaction.options.getInteger('ongoing') ?? 0
+  const rollingWith = interaction.options.getString('rolling_with') as
+    | 'Advantage'
+    | 'Disadvantage'
+    | null
 
-function buildPbtaEmbed({ stat, forward, ongoing, rollingWith }: PbtaParams): EmbedBuilder {
   const result = roll({
     stat,
     ...(forward !== 0 ? { forward } : {}),
@@ -21,7 +22,7 @@ function buildPbtaEmbed({ stat, forward, ongoing, rollingWith }: PbtaParams): Em
     ...(rollingWith === 'Disadvantage' ? { disadvantage: true } : {})
   })
 
-  const initialRolls = result.rolls[0]?.initialRolls ?? []
+  const initialRolls = getInitialRolls(result)
 
   const resultConfig = {
     strong_hit: { color: 0xffd700, resultTitle: 'Strong Hit!' },
@@ -44,7 +45,7 @@ function buildPbtaEmbed({ stat, forward, ongoing, rollingWith }: PbtaParams): Em
   if (forward !== 0) {
     embed.addFields({
       name: 'Forward',
-      value: forward > 0 ? `+${forward}` : String(forward),
+      value: formatSignedModifier(forward),
       inline: true
     })
   }
@@ -52,7 +53,7 @@ function buildPbtaEmbed({ stat, forward, ongoing, rollingWith }: PbtaParams): Em
   if (ongoing !== 0) {
     embed.addFields({
       name: 'Ongoing',
-      value: ongoing > 0 ? `+${ongoing}` : String(ongoing),
+      value: formatSignedModifier(ongoing),
       inline: true
     })
   }
@@ -64,7 +65,7 @@ function buildPbtaEmbed({ stat, forward, ongoing, rollingWith }: PbtaParams): Em
   return embed
 }
 
-export const pbtaCommand: Command = {
+export const pbtaCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('pbta')
     .setDescription('Roll dice for Powered by the Apocalypse games')
@@ -98,28 +99,5 @@ export const pbtaCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    const stat = interaction.options.getInteger('stat', true)
-    const forward = interaction.options.getInteger('forward') ?? 0
-    const ongoing = interaction.options.getInteger('ongoing') ?? 0
-    const rollingWith = interaction.options.getString('rolling_with') as
-      | 'Advantage'
-      | 'Disadvantage'
-      | null
-
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const pbtaParams: PbtaParams = { stat, forward, ongoing, rollingWith }
-      const embed = buildPbtaEmbed(pbtaParams)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
-  }
-}
+  buildEmbed: buildPbtaEmbed
+})

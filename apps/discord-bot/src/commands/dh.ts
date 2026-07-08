@@ -1,18 +1,19 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/daggerheart'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand, formatSignedModifier } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
-interface DhParams {
-  readonly modifier: number
-  readonly rollingWith: 'Advantage' | 'Disadvantage' | null
-  readonly amplifyHope: boolean
-  readonly amplifyFear: boolean
-}
+function buildDhEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const modifier = interaction.options.getInteger('modifier') ?? 0
+  const rollingWith = interaction.options.getString('rolling_with') as
+    | 'Advantage'
+    | 'Disadvantage'
+    | null
+  const amplifyHope = interaction.options.getBoolean('amplify_hope') ?? false
+  const amplifyFear = interaction.options.getBoolean('amplify_fear') ?? false
 
-function buildDhEmbed({ modifier, rollingWith, amplifyHope, amplifyFear }: DhParams): EmbedBuilder {
   const result = roll({
     modifier,
     ...(rollingWith ? { rollingWith } : {}),
@@ -48,7 +49,7 @@ function buildDhEmbed({ modifier, rollingWith, amplifyHope, amplifyFear }: DhPar
   if (modifier !== 0) {
     embed.addFields({
       name: 'Modifier',
-      value: modifier > 0 ? `+${modifier}` : String(modifier),
+      value: formatSignedModifier(modifier),
       inline: true
     })
   }
@@ -69,7 +70,7 @@ function buildDhEmbed({ modifier, rollingWith, amplifyHope, amplifyFear }: DhPar
   return embed
 }
 
-export const dhCommand: Command = {
+export const dhCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('dh')
     .setDescription('Roll dice for Daggerheart')
@@ -104,28 +105,5 @@ export const dhCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    const modifier = interaction.options.getInteger('modifier') ?? 0
-    const rollingWith = interaction.options.getString('rolling_with') as
-      | 'Advantage'
-      | 'Disadvantage'
-      | null
-    const amplifyHope = interaction.options.getBoolean('amplify_hope') ?? false
-    const amplifyFear = interaction.options.getBoolean('amplify_fear') ?? false
-
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const dhParams: DhParams = { modifier, rollingWith, amplifyHope, amplifyFear }
-      const embed = buildDhEmbed(dhParams)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
-  }
-}
+  buildEmbed: buildDhEmbed
+})
