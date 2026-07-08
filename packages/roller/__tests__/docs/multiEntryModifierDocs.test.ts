@@ -1,47 +1,46 @@
 import { describe, expect, test } from 'bun:test'
-import { dropSchema } from '../../src/modifiers/drop'
-import { keepSchema } from '../../src/modifiers/keep'
-import { countSchema } from '../../src/modifiers/count'
-import { rerollSchema } from '../../src/modifiers/reroll'
-import { explodeSequenceSchema } from '../../src/modifiers/explodeSequence'
+import {
+  countDocs,
+  dropDocs,
+  explodeSequenceDocs,
+  keepDocs,
+  rerollDocs
+} from '../../src/docs/modifierDocData'
 
 describe('multi-entry modifier docs (S2)', () => {
-  describe('dropSchema.docs', () => {
+  describe('dropDocs', () => {
     test('has a docs array with 3 entries', () => {
-      expect(dropSchema.docs).toBeDefined()
-      expect(dropSchema.docs!.length).toBe(3)
+      expect(dropDocs.length).toBe(3)
     })
 
     test('entry keys are L, H, D{..}', () => {
-      const keys = dropSchema.docs!.map(d => d.key)
+      const keys = dropDocs.map(d => d.key)
       expect(keys).toContain('L')
       expect(keys).toContain('H')
       expect(keys).toContain('D{..}')
     })
   })
 
-  describe('keepSchema.docs', () => {
+  describe('keepDocs', () => {
     test('has a docs array with 3 entries', () => {
-      expect(keepSchema.docs).toBeDefined()
-      expect(keepSchema.docs!.length).toBe(3)
+      expect(keepDocs.length).toBe(3)
     })
 
     test('entry keys are K, KL, KM', () => {
-      const keys = keepSchema.docs!.map(d => d.key)
+      const keys = keepDocs.map(d => d.key)
       expect(keys).toContain('K')
       expect(keys).toContain('KL')
       expect(keys).toContain('KM')
     })
   })
 
-  describe('countSchema.docs', () => {
+  describe('countDocs', () => {
     test('has a docs array with 4 entries', () => {
-      expect(countSchema.docs).toBeDefined()
-      expect(countSchema.docs!.length).toBe(4)
+      expect(countDocs.length).toBe(4)
     })
 
     test('entry keys are #{..}, S{..}, F{..}, ms{..}', () => {
-      const keys = countSchema.docs!.map(d => d.key)
+      const keys = countDocs.map(d => d.key)
       expect(keys).toContain('#{..}')
       expect(keys).toContain('S{..}')
       expect(keys).toContain('F{..}')
@@ -49,27 +48,25 @@ describe('multi-entry modifier docs (S2)', () => {
     })
   })
 
-  describe('rerollSchema.docs', () => {
+  describe('rerollDocs', () => {
     test('has a docs array with 2 entries', () => {
-      expect(rerollSchema.docs).toBeDefined()
-      expect(rerollSchema.docs!.length).toBe(2)
+      expect(rerollDocs.length).toBe(2)
     })
 
     test('entry keys are R{..} and ro{..}', () => {
-      const keys = rerollSchema.docs!.map(d => d.key)
+      const keys = rerollDocs.map(d => d.key)
       expect(keys).toContain('R{..}')
       expect(keys).toContain('ro{..}')
     })
   })
 
-  describe('explodeSequenceSchema.docs', () => {
+  describe('explodeSequenceDocs', () => {
     test('has a docs array with 3 entries', () => {
-      expect(explodeSequenceSchema.docs).toBeDefined()
-      expect(explodeSequenceSchema.docs!.length).toBe(3)
+      expect(explodeSequenceDocs.length).toBe(3)
     })
 
     test('entry keys are !s{..}, !i, !r', () => {
-      const keys = explodeSequenceSchema.docs!.map(d => d.key)
+      const keys = explodeSequenceDocs.map(d => d.key)
       expect(keys).toContain('!s{..}')
       expect(keys).toContain('!i')
       expect(keys).toContain('!r')
@@ -77,34 +74,20 @@ describe('multi-entry modifier docs (S2)', () => {
   })
 
   describe('no displayOptional field in any docs entry', () => {
-    test('dropSchema docs entries have no displayOptional', () => {
-      for (const doc of dropSchema.docs ?? []) {
-        expect('displayOptional' in doc).toBe(false)
-      }
-    })
+    const groups = [
+      { name: 'dropDocs', docs: dropDocs },
+      { name: 'keepDocs', docs: keepDocs },
+      { name: 'countDocs', docs: countDocs },
+      { name: 'rerollDocs', docs: rerollDocs },
+      { name: 'explodeSequenceDocs', docs: explodeSequenceDocs }
+    ] as const
 
-    test('keepSchema docs entries have no displayOptional', () => {
-      for (const doc of keepSchema.docs ?? []) {
-        expect('displayOptional' in doc).toBe(false)
-      }
-    })
-
-    test('countSchema docs entries have no displayOptional', () => {
-      for (const doc of countSchema.docs ?? []) {
-        expect('displayOptional' in doc).toBe(false)
-      }
-    })
-
-    test('rerollSchema docs entries have no displayOptional', () => {
-      for (const doc of rerollSchema.docs ?? []) {
-        expect('displayOptional' in doc).toBe(false)
-      }
-    })
-
-    test('explodeSequenceSchema docs entries have no displayOptional', () => {
-      for (const doc of explodeSequenceSchema.docs ?? []) {
-        expect('displayOptional' in doc).toBe(false)
-      }
-    })
+    for (const { name, docs } of groups) {
+      test(`${name} entries have no displayOptional`, () => {
+        for (const doc of docs) {
+          expect('displayOptional' in doc).toBe(false)
+        }
+      })
+    }
   })
 })

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 import { createSeededRandom } from '../../../test-utils/src/seededRandom'
-import { explodeSchema } from '../../../src/modifiers/explode'
+import { explodeSchema } from '../../../src/notation/definitions/explode'
 
 describe('Conditional Explode notation', () => {
   test('parses !{>=8}', () => {

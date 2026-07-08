@@ -1,85 +1,9 @@
 import type { UniqueOptions } from '../notation/types'
-import { formatHumanList } from '../notation/formatHumanList'
-import { defineNotationSchema } from '../notation/schema'
-import type { NotationSchema } from '../notation/schema'
-import type { NotationDoc } from '../docs/modifierDocs'
+import { uniqueSchema } from '../notation/definitions/unique'
 import { ModifierError } from '../errors'
 import { MAX_REROLL_ATTEMPTS } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
 import { assertRequiredContext } from './schema'
-
-const uniquePattern = /[Uu](?:\{([^}]{1,50})\})?/
-
-export const uniqueSchema: NotationSchema<boolean | UniqueOptions> = defineNotationSchema<
-  boolean | UniqueOptions
->({
-  name: 'unique',
-  priority: 60,
-
-  pattern: uniquePattern,
-
-  docs: [
-    {
-      key: 'U',
-      category: 'Substitute',
-      color: '#5eead4',
-      colorLight: '#0f766e',
-      title: 'Unique',
-      description: 'Force all dice in the pool to show different values by rerolling duplicates.',
-      displayBase: 'U',
-      forms: [
-        {
-          notation: 'U({..})',
-          note: 'All unique; optional exceptions list'
-        }
-      ],
-      examples: [
-        {
-          description: 'Roll 4d20, no duplicate results',
-          notation: '4d20U',
-          options: { sides: 20, quantity: 4, modifiers: { unique: true } }
-        },
-        {
-          description: 'Unique except 1s may repeat',
-          notation: '4d6U{1}',
-          options: { sides: 6, quantity: 4, modifiers: { unique: { notUnique: [1] } } }
-        }
-      ]
-    }
-  ] satisfies readonly NotationDoc[],
-
-  parse: notation => {
-    const match = uniquePattern.exec(notation)
-    if (!match) return {}
-
-    if (!match[1]) {
-      return { unique: true }
-    }
-
-    const exceptions = match[1]
-      .split(',')
-      .map(s => Number(s.trim()))
-      .filter(n => !isNaN(n))
-
-    return { unique: { notUnique: exceptions } }
-  },
-
-  toNotation: options => {
-    if (options === true) return 'U'
-    if (typeof options === 'object') {
-      return `U{${options.notUnique.join(',')}}`
-    }
-    return undefined
-  },
-
-  toDescription: options => {
-    if (options === true) return ['No Duplicate Rolls']
-    if (typeof options === 'object') {
-      return [`No Duplicates (except ${formatHumanList(options.notUnique)})`]
-    }
-    return []
-  }
-})
 
 export const uniqueModifier: ModifierDefinition<boolean | UniqueOptions> = {
   ...uniqueSchema,
