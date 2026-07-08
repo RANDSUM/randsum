@@ -13,7 +13,7 @@ const categories: Record<string, Record<string, string>> = {
     test: 'Run all tests recursively',
     build: 'Build all packages (ESM + types, no CJS)',
     'fix:all': 'Auto-fix lint issues and format code',
-    'check:all': 'Run full CI pipeline locally'
+    check: 'Run the full per-package check chain locally'
   },
   'Code Quality': {
     lint: 'Run ESLint across all packages',
