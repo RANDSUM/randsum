@@ -27,9 +27,14 @@ jobs:
       skill: ${{ steps.filter.outputs.skill }}
       discord-bot: ${{ steps.filter.outputs.discord-bot }}
       changesets: ${{ steps.filter.outputs.changesets }}
+      # Dynamic matrix for the consolidated `package` job below: one include leg
+      # per CHANGED package, carrying its per-package config (prereq builds, node
+      # version, coverage flag, size gate). Job-level `if` cannot see `matrix`, so
+      # filtering the legs here is how unchanged packages skip.
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d  # v4.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         id: filter
         with:
           filters: |
@@ -78,138 +83,94 @@ jobs:
               # so publint/attw catch manifest regressions without a changeset.
               - 'scripts/publish.ts'
               - 'packages/*/package.json'
+      - name: Build package matrix
+        id: set-matrix
+        # Emit one include leg per CHANGED package. The full per-package config
+        # lives here; jq keeps only the legs whose paths-filter output is 'true'.
+        # An empty include => the `package` job produces zero legs and is skipped.
+        run: |
+          all='[
+            {"pkg":"roller","coverage":"roller","size":true},
+            {"pkg":"games","build":"@randsum/roller","coverage":"games","size":true},
+            {"pkg":"cli","build":"@randsum/roller"},
+            {"pkg":"mcp","build":"@randsum/roller @randsum/games"},
+            {"pkg":"discord-bot","build":"@randsum/roller @randsum/games"},
+            {"pkg":"site","build":"@randsum/roller @randsum/games","node":"22"},
+            {"pkg":"rdn","build":"@randsum/roller","node":"22"},
+            {"pkg":"dice-ui","build":"@randsum/roller","coverage":"dice-ui"}
+          ]'
+          changed='${{ toJSON(steps.filter.outputs) }}'
+          include=$(jq -cn --argjson all "$all" --argjson changed "$changed" \
+            '$all | map(select($changed[.pkg] == "true"))')
+          echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
-  roller:
-    name: roller
+  # The eight per-package jobs (roller, games, cli, mcp, discord-bot, site, rdn,
+  # dice-ui) were near-identical, differing only in filter name, prerequisite
+  # builds, node version, and coverage flags. They are folded into one matrix,
+  # populated dynamically by the `changes` job so only changed packages get a
+  # leg. The `include` entries carry the per-package differences.
+  package:
+    name: ${{ matrix.pkg }}
     needs: changes
-    if: needs.changes.outputs.roller == 'true'
+    # Skip entirely when no package changed (empty include => no legs anyway,
+    # but this keeps the job from appearing at all).
+    if: fromJSON(needs.changes.outputs.matrix).include[0] != null
     runs-on: ubuntu-latest
+    strategy:
+      # Run every package leg even if a sibling fails, so the CI Gate sees each
+      # package's real result instead of a fail-fast cancellation.
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.changes.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
-      - run: bun run --filter '@randsum/roller' check
-      - name: Generate coverage
-        run: bun run --filter '@randsum/roller' test:coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
         with:
-          files: ./packages/roller/coverage/lcov.info
-          flags: roller
-          fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Check bundle size
-        run: bun run --filter '@randsum/roller' size
-
-  games:
-    name: games
-    needs: changes
-    if: needs.changes.outputs.games == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: ./.github/actions/bun-setup
-      - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/games' check
+          # site/rdn pin node 22 to match their netlify.toml NODE_VERSION so CI
+          # builds them on the runtime Netlify deploys on; other legs pass '',
+          # which bun-setup treats as "skip node setup".
+          node-version: ${{ matrix.node || '' }}
+      - name: Build dependencies
+        if: matrix.build
+        # Build prerequisites one at a time in listed (dependency) order. bun's
+        # --filter runs in parallel without topological ordering, and games'
+        # build needs roller's dist to already exist, so a combined multi-filter
+        # build would race.
+        run: |
+          read -ra pkgs <<< "${{ matrix.build }}"
+          for pkg in "${pkgs[@]}"; do
+            bun run --filter "$pkg" build
+          done
       - name: Verify generated files are up to date
+        if: matrix.pkg == 'games'
         run: bun run --filter '@randsum/games' gen:check
+      - name: Check
+        run: bun run --filter "@randsum/${{ matrix.pkg }}" check
       - name: Generate coverage
-        run: bun run --filter '@randsum/games' test:coverage
+        if: matrix.coverage
+        run: bun run --filter "@randsum/${{ matrix.pkg }}" test:coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
+        if: matrix.coverage && hashFiles(format('packages/{0}/coverage/lcov.info', matrix.pkg)) != ''
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5
         with:
-          files: ./packages/games/coverage/lcov.info
-          flags: games
+          files: ./packages/${{ matrix.pkg }}/coverage/lcov.info
+          flags: ${{ matrix.coverage }}
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Check bundle size
-        run: bun run --filter '@randsum/games' size
+        if: matrix.size
+        run: bun run --filter "@randsum/${{ matrix.pkg }}" size
 
-  cli:
-    name: cli
-    needs: changes
-    if: needs.changes.outputs.cli == 'true'
+  workspace-scripts:
+    # Guard against a package silently opting out of the standard script set.
+    # `bun run --filter '*' <script>` skips packages that lack the target script,
+    # which is how dice-ui escaped linting for months (audit Wave 3). This job
+    # feeds the CI Gate so the escape hatch cannot be bypassed with --no-verify.
+    name: workspace-scripts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
-      - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/cli' check
-
-  mcp:
-    name: mcp
-    needs: changes
-    if: needs.changes.outputs.mcp == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: ./.github/actions/bun-setup
-      - run: bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build
-      - run: bun run --filter '@randsum/mcp' check
-
-  discord-bot:
-    name: discord-bot
-    needs: changes
-    if: needs.changes.outputs.discord-bot == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: ./.github/actions/bun-setup
-      - run: bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build
-      - run: bun run --filter '@randsum/discord-bot' check
-
-  site:
-    name: site
-    needs: changes
-    if: needs.changes.outputs.site == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: ./.github/actions/bun-setup
-        with:
-          # Pin node 22 to match apps/site/netlify.toml's NODE_VERSION so CI
-          # builds the site on the same runtime Netlify deploys it on.
-          node-version: '22'
-      - run: bun run build
-      - run: bun run --filter '@randsum/site' check
-
-  rdn:
-    name: rdn
-    needs: changes
-    if: needs.changes.outputs.rdn == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: ./.github/actions/bun-setup
-        with:
-          # Pin node 22 to match apps/rdn/netlify.toml's NODE_VERSION so CI
-          # builds the site on the same runtime Netlify deploys it on.
-          node-version: '22'
-      - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/rdn' check
-
-  dice-ui:
-    name: dice-ui
-    needs: changes
-    if: needs.changes.outputs.dice-ui == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: ./.github/actions/bun-setup
-      - run: bun run --filter '@randsum/roller' build
-      - run: bun run --filter '@randsum/dice-ui' check
-      # dice-ui coverage (audit X6). The `test:coverage` script is added by the
-      # dice-ui workstream; this step + upload are the wiring. Guarded so the job
-      # stays green until that script + lcov land.
-      - name: Generate dice-ui coverage
-        run: bun run --filter '@randsum/dice-ui' test:coverage || echo "dice-ui test:coverage not available yet"
-      - name: Upload dice-ui coverage to Codecov
-        if: hashFiles('packages/dice-ui/coverage/lcov.info') != ''
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574  # v5
-        with:
-          files: ./packages/dice-ui/coverage/lcov.info
-          flags: dice-ui
-          fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
+      - run: bun run check:workspace-scripts
 
   skill:
     name: claude-doctor
@@ -217,7 +178,7 @@ jobs:
     if: needs.changes.outputs.skill == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
       - name: Verify skills
         run: npx skills-ref validate skills/dice-rolling/SKILL.md
@@ -242,27 +203,33 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
       - name: Build roller
         run: bun run --filter '@randsum/roller' build
       - name: Run benchmark
+        # bench:ci runs the suite 3x and emits the per-benchmark MEDIAN, so a
+        # single cold/noisy run on a sub-20µs benchmark can no longer trip the
+        # gate against a stale cached baseline (audit Wave 3 false positive).
         run: bun run bench:ci
       - name: Restore previous benchmark data
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf  # v4
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
         with:
           path: ./cache
           key: ${{ runner.os }}-benchmark-${{ github.ref }}
           restore-keys: |
             ${{ runner.os }}-benchmark-
       - name: Compare and store benchmark
-        uses: benchmark-action/github-action-benchmark@4de1bed97a47495fc4c5404952da0499e31f5c29  # v1.20.4
+        uses: benchmark-action/github-action-benchmark@4de1bed97a47495fc4c5404952da0499e31f5c29 # v1.20.4
         with:
-          tool: 'customSmallerIsBetter'
+          tool: "customSmallerIsBetter"
           output-file-path: benchmark-results.json
           external-data-json-path: ./cache/benchmark-data.json
           fail-on-alert: true
-          alert-threshold: '150%'
+          # Belt-and-braces with the median-of-3 runner above: 160% tolerance so
+          # runner-to-runner variance on tiny benchmarks doesn't false-alarm,
+          # while a genuine >1.6x regression still fails the gate.
+          alert-threshold: "160%"
           comment-on-alert: ${{ github.event_name == 'pull_request' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           save-data-file: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -273,7 +240,7 @@ jobs:
     if: needs.changes.outputs.changesets == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run build
       - name: Configure npm auth
@@ -303,7 +270,7 @@ jobs:
     name: knip
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run knip
 
@@ -314,7 +281,7 @@ jobs:
     name: arch
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun run arch:check
 
@@ -326,7 +293,7 @@ jobs:
     name: audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/bun-setup
       - run: bun audit --audit-level=high
 
@@ -340,13 +307,13 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       # Vulnerability scan (OSV). License surfacing was dropped — osv-scanner
       # v2's `--licenses` flag is an SPDX allowlist checker, not a summary mode
       # (`--licenses=summary` errors), and an allowlist would fail on the known
       # LGPL/MPL build-tool transitives. Revisit if a summary subcommand lands.
       - name: OSV vulnerability scan
-        uses: google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2  # v2.3.8
+        uses: google/osv-scanner-action/osv-scanner-action@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
         with:
           scan-args: |-
             --config=osv-scanner.toml
@@ -356,7 +323,12 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, mcp, discord-bot, site, rdn, dice-ui, skill, bench, publish-dry-run, knip, arch, audit]
+    # `package` is the consolidated matrix job: its single `result` aggregates
+    # every leg (roller, games, cli, mcp, discord-bot, site, rdn, dice-ui) — if
+    # any leg fails, the aggregate is `failure`, so listing it once still covers
+    # all eight packages. `workspace-scripts` guards against a package silently
+    # dropping a standard script.
+    needs: [package, workspace-scripts, skill, bench, publish-dry-run, knip, arch, audit]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}
