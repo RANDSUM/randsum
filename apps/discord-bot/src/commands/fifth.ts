@@ -10,6 +10,27 @@ interface FifthParams {
   readonly rollingWith: 'Advantage' | 'Disadvantage' | null
 }
 
+/**
+ * Renders each initial d20 with the kept die(s) bold and the dropped die(s)
+ * struck through. Kept values are matched against the roller's post-modifier
+ * `rolls` (the dice it actually kept) and consumed one-by-one, so a tie — where
+ * both d20s show the same face — still renders exactly one bold and one struck
+ * die rather than bolding both.
+ */
+function markKeptRolls(initialRolls: number[], keptRolls: number[]): string {
+  const remaining = [...keptRolls]
+  return initialRolls
+    .map(r => {
+      const idx = remaining.indexOf(r)
+      if (idx !== -1) {
+        remaining.splice(idx, 1)
+        return `**${r}**`
+      }
+      return `~~${r}~~`
+    })
+    .join(', ')
+}
+
 function buildFifthEmbed({ modifier, rollingWith }: FifthParams): EmbedBuilder {
   const result = roll({
     modifier,
@@ -18,6 +39,7 @@ function buildFifthEmbed({ modifier, rollingWith }: FifthParams): EmbedBuilder {
   })
 
   const initialRolls = result.rolls[0]?.initialRolls ?? []
+  const keptRolls = result.rolls[0]?.rolls ?? []
   const criticals = result.details.criticals
   const isNat20 = criticals?.isNatural20 === true
   const isNat1 = criticals?.isNatural1 === true
@@ -33,15 +55,7 @@ function buildFifthEmbed({ modifier, rollingWith }: FifthParams): EmbedBuilder {
 
   const rollsText =
     rollingWith && initialRolls.length > 1
-      ? initialRolls
-          .map(r => {
-            const kept =
-              rollingWith === 'Advantage'
-                ? r === Math.max(...initialRolls)
-                : r === Math.min(...initialRolls)
-            return kept ? `**${r}**` : `~~${r}~~`
-          })
-          .join(', ')
+      ? markKeptRolls(initialRolls, keptRolls)
       : initialRolls.join(', ')
 
   embed.addFields({

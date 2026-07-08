@@ -113,6 +113,59 @@ describe('fifthCommand', () => {
     expect(embedJson.title).toBe('Natural 1! D&D 5e Roll: 1')
   })
 
+  test('advantage tie: kept die bold, dropped die struck (not both bold)', async () => {
+    // Both d20s show 4. The roller keeps one (rolls: [4]); the display must
+    // bold exactly one die and strike the other, never bold both.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 4,
+      result: 4,
+      rolls: [{ initialRolls: [4, 4], rolls: [4], modifierLogs: [] }],
+      details: { criticals: undefined }
+    }))
+    const interaction = makeInteraction(0, 'Advantage')
+    await fifthCommand.execute(interaction as never)
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => APIEmbed }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    const diceField = embedJson.fields?.find(f => f.name === 'Dice Rolled (2d20)')
+    expect(diceField?.value).toBe('**4**, ~~4~~')
+  })
+
+  test('disadvantage tie: kept die bold, dropped die struck (not both bold)', async () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 17,
+      result: 17,
+      rolls: [{ initialRolls: [17, 17], rolls: [17], modifierLogs: [] }],
+      details: { criticals: undefined }
+    }))
+    const interaction = makeInteraction(0, 'Disadvantage')
+    await fifthCommand.execute(interaction as never)
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => APIEmbed }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    const diceField = embedJson.fields?.find(f => f.name === 'Dice Rolled (2d20)')
+    expect(diceField?.value).toBe('**17**, ~~17~~')
+  })
+
+  test('advantage non-tie: higher kept bold, lower struck', async () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 18,
+      result: 18,
+      rolls: [{ initialRolls: [18, 5], rolls: [18], modifierLogs: [] }],
+      details: { criticals: undefined }
+    }))
+    const interaction = makeInteraction(0, 'Advantage')
+    await fifthCommand.execute(interaction as never)
+    const call = interaction.editReply.mock.calls[0]?.[0] as {
+      embeds: { toJSON: () => APIEmbed }[]
+    }
+    const embedJson = call.embeds[0]!.toJSON()
+    const diceField = embedJson.fields?.find(f => f.name === 'Dice Rolled (2d20)')
+    expect(diceField?.value).toBe('**18**, ~~5~~')
+  })
+
   test('error path: roll throws, replies with error embed', async () => {
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
