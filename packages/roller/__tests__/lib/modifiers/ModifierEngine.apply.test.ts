@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'bun:test'
 import type { ModifierContext } from '../../../src/modifiers/schema'
-import { applyAllModifiers, applyModifier, getModifier } from '../../../src/modifiers/registry'
+import { applyAllModifiers, applyModifier } from '../../../src/modifiers/registry'
+import { explodeModifier } from '../../../src/modifiers/explode'
+import { keepModifier } from '../../../src/modifiers/keep'
 
 const mockRollOne = (): number => Math.floor(Math.random() * 6) + 1
 const mockContext: ModifierContext = {
@@ -408,42 +410,29 @@ describe('applyModifier', () => {
 describe('direct modifier definition edge cases', () => {
   describe('explode modifier', () => {
     test('parse returns empty object when notation does not match', () => {
-      const explode = getModifier('explode')
-      expect(explode).toBeDefined()
-      expect(explode?.parse('x')).toEqual({})
+      expect(explodeModifier.parse('x')).toEqual({})
     })
 
     test('toDescription returns empty array for falsy options', () => {
-      const explode = getModifier('explode')
-      expect(explode).toBeDefined()
-      expect(explode?.toDescription(false)).toEqual([])
+      expect(explodeModifier.toDescription(false)).toEqual([])
     })
   })
 
   describe('keep modifier', () => {
     test('parse returns empty object when notation does not match', () => {
-      const keep = getModifier('keep')
-      expect(keep).toBeDefined()
-      expect(keep?.parse('xyz')).toEqual({})
+      expect(keepModifier.parse('xyz')).toEqual({})
     })
 
     test('toNotation returns undefined for empty options', () => {
-      const keep = getModifier('keep')
-      expect(keep).toBeDefined()
-      expect(keep?.toNotation({})).toBeUndefined()
+      expect(keepModifier.toNotation({})).toBeUndefined()
     })
 
     test('toDescription returns empty array for empty options', () => {
-      const keep = getModifier('keep')
-      expect(keep).toBeDefined()
-      expect(keep?.toDescription({})).toEqual([])
+      expect(keepModifier.toDescription({})).toEqual([])
     })
 
     test('apply returns unchanged rolls when neither highest nor lowest specified', () => {
-      const keep = getModifier('keep')
-      expect(keep).toBeDefined()
-      if (!keep) return
-      const result = keep.apply([1, 2, 3, 4], {}, mockContext)
+      const result = keepModifier.apply([1, 2, 3, 4], {}, mockContext)
       expect(result.rolls).toEqual([1, 2, 3, 4])
     })
   })

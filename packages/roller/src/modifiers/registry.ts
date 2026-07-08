@@ -2,7 +2,6 @@ import type { ModifierLog, ModifierOptions, RequiredNumericRollParameters } from
 import type {
   ModifierContext,
   ModifierDefinition,
-  ModifierOptionTypes,
   RegistryProcessResult,
   TotalTransformer
 } from './schema'
@@ -22,31 +21,6 @@ const modifierMap: ReadonlyMap<keyof ModifierOptions, ModifierDefinition> = new 
 export const MODIFIER_ORDER: readonly (keyof ModifierOptions)[] = Object.freeze(
   RANDSUM_MODIFIERS.map(m => m.name)
 )
-
-/**
- * Get a modifier definition by name.
- */
-export function getModifier<K extends keyof ModifierOptions>(
-  name: K
-): ModifierDefinition<ModifierOptionTypes[K]> | undefined {
-  const definition = modifierMap.get(name)
-  if (definition === undefined) return undefined
-  return definition
-}
-
-/**
- * Check if a modifier is registered.
- */
-export function hasModifier(name: keyof ModifierOptions): boolean {
-  return modifierMap.has(name)
-}
-
-/**
- * Get all modifier definitions in priority order.
- */
-export function getAllModifiers(): ModifierDefinition[] {
-  return Array.from(RANDSUM_MODIFIERS)
-}
 
 /**
  * Apply a single modifier by name.
@@ -116,80 +90,33 @@ export function applyAllModifiers(
   initialRolls: number[],
   ctx: ModifierContext
 ): RegistryProcessResult {
-  const initialState: RegistryProcessResult = {
-    rolls: [...initialRolls],
-    logs: [],
-    totalTransformers: []
-  }
+  // Push into local accumulators instead of rebuilding logs/transformers arrays
+  // via spread on every modifier (which was O(n^2) in the number of modifiers).
+  // Rolls are threaded through the fold's return value — O(1) reassignment, no
+  // per-step spread.
+  const logs: ModifierLog[] = []
+  const totalTransformers: TotalTransformer[] = []
 
-  return MODIFIER_ORDER.reduce((state, name) => {
-    const options = modifiers[name]
-    if (options === undefined) {
-      return state
-    }
+  const rolls = MODIFIER_ORDER.reduce<number[]>(
+    (currentRolls, name) => {
+      const options = modifiers[name]
+      if (options === undefined) {
+        return currentRolls
+      }
 
-    const result = applyModifier(name, options, state.rolls, ctx)
-    return {
-      rolls: result.rolls,
-      logs: result.log ? [...state.logs, result.log] : state.logs,
-      totalTransformers: result.transformTotal
-        ? [...state.totalTransformers, result.transformTotal]
-        : state.totalTransformers
-    }
-  }, initialState)
-}
+      const result = applyModifier(name, options, currentRolls, ctx)
+      if (result.log) {
+        logs.push(result.log)
+      }
+      if (result.transformTotal) {
+        totalTransformers.push(result.transformTotal)
+      }
+      return result.rolls
+    },
+    [...initialRolls]
+  )
 
-/**
- * Convert modifier options to notation string.
- */
-export function modifierToNotation(
-  name: keyof ModifierOptions,
-  options: ModifierOptions[keyof ModifierOptions]
-): string | undefined {
-  if (options === undefined) return undefined
-
-  const modifier = modifierMap.get(name)
-  if (!modifier) return undefined
-
-  return modifier.toNotation(options)
-}
-
-/**
- * Convert modifier options to description.
- */
-export function modifierToDescription(
-  name: keyof ModifierOptions,
-  options: ModifierOptions[keyof ModifierOptions]
-): string[] | undefined {
-  if (options === undefined) return undefined
-
-  const modifier = modifierMap.get(name)
-  if (!modifier) return undefined
-
-  return modifier.toDescription(options)
-}
-
-/**
- * Process all modifiers to notation string.
- */
-export function processModifierNotations(modifiers: ModifierOptions | undefined): string {
-  if (!modifiers) return ''
-
-  return MODIFIER_ORDER.map(name => modifierToNotation(name, modifiers[name]))
-    .filter((notation): notation is string => typeof notation === 'string')
-    .join('')
-}
-
-/**
- * Process all modifiers to descriptions.
- */
-export function processModifierDescriptions(modifiers: ModifierOptions | undefined): string[] {
-  if (!modifiers) return []
-
-  return MODIFIER_ORDER.map(name => modifierToDescription(name, modifiers[name]))
-    .flat()
-    .filter((desc): desc is string => typeof desc === 'string')
-    .filter(desc => desc.length > 0)
+  return { rolls, logs, totalTransformers }
 }
 
 /**
