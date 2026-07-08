@@ -1,0 +1,114 @@
+---
+title: MCP Server — RANDSUM for AI Agents
+description: Expose RANDSUM dice rolling to any MCP client. The @randsum/mcp stdio server gives AI agents roll, validate, and roll_game tools with seeded reproducibility.
+---
+
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+The **RANDSUM MCP server** (`@randsum/mcp`) is a
+[Model Context Protocol](https://modelcontextprotocol.io) stdio server that
+exposes the RANDSUM dice-rolling ecosystem to AI agents. It wraps
+`@randsum/roller` and `@randsum/games`, so an assistant can roll dice, validate
+notation, and roll for specific tabletop game systems.
+
+The server speaks MCP over stdio and ships as a CLI binary (`randsum-mcp`), so
+any MCP client can launch it with `bunx` or `npx` — no global install required.
+
+## Configuration
+
+The snippets below mirror
+[`packages/mcp/README.md`](https://github.com/RANDSUM/randsum/blob/main/packages/mcp/README.md),
+which is the source of truth for install and config.
+
+### Claude Code
+
+<CodeExample lang="bash" code={`claude mcp add randsum -- bunx -y @randsum/mcp`} />
+
+### Claude Desktop
+
+Add the server to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "randsum": {
+      "command": "bunx",
+      "args": ["-y", "@randsum/mcp"]
+    }
+  }
+}
+```
+
+Any MCP client that can spawn a stdio server works — point it at the
+`randsum-mcp` binary (or `bunx @randsum/mcp` / `npx @randsum/mcp`).
+
+## Tools
+
+The server registers three tools:
+
+| Tool        | Input                                     | Returns                                                              |
+| ----------- | ----------------------------------------- | ------------------------------------------------------------------- |
+| `roll`      | `{ notation: string, seed?: number }`     | `total`, per-pool `pools`, and a human-readable `description`        |
+| `validate`  | `{ notation: string }`                    | `valid`, `description` (when valid), `suggestion`/`error` (when not) |
+| `roll_game` | `{ game: GameShortcode, params: object }` | game-interpreted `total`, `result`, `details`, and raw `rolls`      |
+
+### `roll`
+
+Rolls [RANDSUM dice notation](https://notation.randsum.dev) (e.g. `4d6L`,
+`2d20+5`, `1d100`). Pass an integer `seed` for a deterministic, reproducible
+roll. Invalid notation throws with a suggested fix.
+
+```json
+{ "notation": "4d6L", "seed": 42 }
+```
+
+The result carries the combined `total`, a `pools` array (one entry per dice
+pool, each with its own `rolls`, `total`, and `description`), and a top-level
+`description` string.
+
+### `validate`
+
+Checks whether a notation string is valid, returning a description when it is
+and a suggested fix when it is not (e.g. `d20` → `1d20`).
+
+```json
+{ "notation": "4d6L" }
+```
+
+### `roll_game`
+
+Rolls for one game system and interprets the dice per that game. `game` is one
+of `blades`, `daggerheart`, `fate`, `fifth`, `pbta`, `root-rpg`, or
+`salvageunion`. Only the `params` fields relevant to the chosen game are read;
+a required field missing for its game throws.
+
+| Game           | Relevant `params`                                       |
+| -------------- | ------------------------------------------------------- |
+| `blades`       | `rating`                                                |
+| `daggerheart`  | `modifier`, `amplifyHope`, `amplifyFear`, `rollingWith` |
+| `fate`         | `modifier`                                              |
+| `fifth`        | `modifier`, `rollingWith`, `crit`                       |
+| `pbta`         | `stat` (required), `forward`, `ongoing`, `rollingWith`  |
+| `root-rpg`     | `bonus` (required), `rollingWith`                       |
+| `salvageunion` | `tableName` (required)                                  |
+
+`rollingWith` is `"Advantage"` or `"Disadvantage"`.
+
+```json
+{ "game": "fifth", "params": { "modifier": 3, "rollingWith": "Advantage" } }
+```
+
+## Seeded reproducibility
+
+The `roll` tool accepts an optional integer `seed`. With a seed, the server uses
+a deterministic random number generator, so the same `notation` + `seed` always
+produces the same dice — ideal for tests, examples, and shareable results.
+Omit `seed` for a fresh random roll each call. (`validate` and `roll_game` do
+not take a seed.)
+
+## Links
+
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/mcp)
+- [README (install & config source of truth)](https://github.com/RANDSUM/randsum/blob/main/packages/mcp/README.md)
+- [RANDSUM notation reference](/notation/randsum-dice-notation/)
+- [Model Context Protocol](https://modelcontextprotocol.io)
