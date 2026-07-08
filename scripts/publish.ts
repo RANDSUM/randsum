@@ -28,7 +28,12 @@ const ROOT = join(import.meta.dir, '..')
  * Packages must be published in dependency order so that downstream
  * packages can resolve their dependencies on the registry.
  */
-const PUBLISH_ORDER: readonly string[] = ['packages/roller', 'packages/games', 'apps/cli']
+const PUBLISH_ORDER: readonly string[] = [
+  'packages/roller',
+  'packages/games',
+  'packages/mcp',
+  'apps/cli'
+]
 
 async function getPublishablePackages(): Promise<{ name: string; dir: string }[]> {
   const packages: { name: string; dir: string }[] = []
