@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/blades'
-import { D6_IMAGES, embedFooterDetails } from '../utils/constants.js'
+import { embedFooterDetails } from '../utils/constants.js'
 import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
@@ -15,36 +15,31 @@ function buildBladesEmbed(dice: number): EmbedBuilder {
     critical: {
       color: 0xffd700,
       resultTitle: 'Critical Success!',
-      resultDescription: 'Things go better than expected',
-      thumbnail: D6_IMAGES.double6
+      resultDescription: 'Things go better than expected'
     },
     success: {
       color: 0x00ff00,
       resultTitle: 'Success!',
-      resultDescription: 'You succeed at your goal',
-      thumbnail: D6_IMAGES[6]
+      resultDescription: 'You succeed at your goal'
     },
     partial: {
       color: 0xffff00,
       resultTitle: 'Partial Success',
-      resultDescription: 'You succeed, but with a consequence',
-      thumbnail: D6_IMAGES[highestDie as keyof typeof D6_IMAGES]
+      resultDescription: 'You succeed, but with a consequence'
     },
     failure: {
       color: 0xff0000,
       resultTitle: 'Failure',
-      resultDescription: "Things don't go your way",
-      thumbnail: D6_IMAGES[highestDie as keyof typeof D6_IMAGES]
+      resultDescription: "Things don't go your way"
     }
   }
 
-  const { color, resultTitle, resultDescription, thumbnail } = resultConfig[result.result]
+  const { color, resultTitle, resultDescription } = resultConfig[result.result]
 
   const embed = new EmbedBuilder()
     .setColor(color)
     .setTitle(resultTitle)
     .setDescription(resultDescription)
-    .setThumbnail(thumbnail)
     .setFooter(embedFooterDetails)
 
   embed.addFields({
