@@ -156,5 +156,16 @@ export const toolPackages: PackageInfo[] = [
     sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/apps/cli',
     category: 'tool',
     color: '#84cc16' // lime-500 — terminal/dev feel
+  },
+  {
+    id: 'mcp',
+    name: 'mcp',
+    displayName: 'MCP Server',
+    description:
+      'Model Context Protocol server exposing roll, validate, and roll_game tools to AI agents.',
+    npmPackage: '@randsum/mcp',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/packages/mcp',
+    category: 'tool',
+    color: '#E07A2F' // Claude orange
   }
 ]
