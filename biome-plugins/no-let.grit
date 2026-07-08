@@ -3,13 +3,20 @@
 // is never reassigned; this plugin bans the `let` keyword outright (the repo
 // forbids reassignable bindings), so a `let` that IS reassigned is still caught.
 //
-// Implementation note: matched via the `JsVariableDeclaration` CST node with an
-// anchored text regex on the leading keyword. Biome 2.5's GritQL snippet parser
-// does not match a bare `let $x = $y` snippet (it does for `const`), and the
-// `kind` keyword-token field is not bindable, so the regex form is used.
+// Implementation note: matched via the CST declaration node with an anchored
+// text regex on the leading keyword. Biome 2.5's GritQL snippet parser does not
+// match a bare `let $x = $y` snippet (it does for `const`), and the `kind`
+// keyword-token field is not bindable, so the regex form is used. Two node
+// types are covered: `JsVariableDeclaration` (statement lets and the C-style
+// `for (let i = 0; …)` init) and `JsForVariableDeclaration` (the `for (let v of
+// …)` / `for (let k in …)` heads, which are a distinct node the statement form
+// would otherwise miss).
 language js
 
-JsVariableDeclaration() as $decl where {
+or {
+  JsVariableDeclaration(),
+  JsForVariableDeclaration()
+} as $decl where {
   $decl <: r"^let[\s\S]*",
   register_diagnostic(span=$decl, message="Use `const` instead of `let`. Prefer immutable bindings (repo policy).")
 }

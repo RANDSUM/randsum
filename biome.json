@@ -63,11 +63,24 @@
       },
       "complexity": {
         "useLiteralKeys": "off"
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
       }
     }
   },
   "overrides": [
     { "includes": ["**/package.json"], "json": { "formatter": { "lineWidth": 120 } } },
+    {
+      "includes": [
+        "packages/roller/src/notation/**/*.ts",
+        "packages/roller/src/tokenize.ts",
+        "src/notation/**/*.ts",
+        "src/tokenize.ts"
+      ],
+      "plugins": ["./biome-plugins/no-tokenize-modifier-import.grit"]
+    },
     {
       "includes": [
         "scripts/**/*.ts",

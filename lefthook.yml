@@ -20,9 +20,21 @@ pre-commit:
       run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
       priority: 2
-    # Biome does not format .astro templates, so prettier-plugin-astro (scoped to
-    # apps/site + apps/rdn) still formats staged .astro files.
-    format-astro:
+    # Biome does not format .astro templates, so prettier-plugin-astro still
+    # formats staged .astro files. prettier + the plugin live ONLY under
+    # apps/site and apps/rdn (not root), so each step sets `root:` to run inside
+    # that app — `bunx prettier` then resolves the app-local, exact-pinned
+    # prettier@3.8.4 + prettier-plugin-astro and the app's own .prettierrc.json.
+    # A root-level `bunx prettier` would fetch an unpinned prettier that cannot
+    # resolve the plugin and would block any commit staging a .astro file.
+    format-astro-site:
+      root: "apps/site/"
+      glob: "*.astro"
+      run: bunx prettier --write {staged_files}
+      stage_fixed: true
+      priority: 2
+    format-astro-rdn:
+      root: "apps/rdn/"
       glob: "*.astro"
       run: bunx prettier --write {staged_files}
       stage_fixed: true
