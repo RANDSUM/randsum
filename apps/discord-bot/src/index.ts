@@ -27,7 +27,6 @@ const commands = new Collection<string, Command>()
 for (const command of commandList) {
   commands.set(command.data.name, command)
 }
-
 // Attach commands to client
 ;(client as Client & { commands: Collection<string, Command> }).commands = commands
 

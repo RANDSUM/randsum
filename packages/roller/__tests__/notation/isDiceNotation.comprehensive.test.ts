@@ -106,12 +106,14 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('replace/map modifiers', () => {
-    test.each([['1d6V{1=6}'], ['1d6V{>5=1}'], ['1d6v{1=6}'], ['1d6V{1=2,2=3}']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['1d6V{1=6}'],
+      ['1d6V{>5=1}'],
+      ['1d6v{1=6}'],
+      ['1d6V{1=2,2=3}']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
 
     // V{=1:6} uses colon syntax which is not supported — replace uses = as separator
     test('isDiceNotation("1d6V{=1:6}") returns false (colon not valid replace syntax)', () => {
@@ -120,21 +122,26 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('unique modifiers', () => {
-    test.each([['4d6U'], ['4d6u'], ['4d6U{3,6}'], ['4d6u{3,6}']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['4d6U'],
+      ['4d6u'],
+      ['4d6U{3,6}'],
+      ['4d6u{3,6}']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('count modifiers', () => {
-    test.each([['4d6#{>=3}'], ['4d6#{>3}'], ['4d6S{3}'], ['4d6S{3,4}'], ['4d6F{1}']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['4d6#{>=3}'],
+      ['4d6#{>3}'],
+      ['4d6S{3}'],
+      ['4d6S{3,4}'],
+      ['4d6F{1}']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('arithmetic modifiers', () => {
@@ -155,20 +162,22 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('sort modifiers', () => {
-    test.each([['4d6sa'], ['4d6SA'], ['4d6sd'], ['4d6SD']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['4d6sa'],
+      ['4d6SA'],
+      ['4d6sd'],
+      ['4d6SD']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
 
     // Bare s/S is intentionally not valid sort notation per spec — must use sa/sd
-    test.each([['4d6s'], ['4d6S']])(
-      'isDiceNotation("%s") returns false (bare sort requires direction suffix)',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(false)
-      }
-    )
+    test.each([
+      ['4d6s'],
+      ['4d6S']
+    ])('isDiceNotation("%s") returns false (bare sort requires direction suffix)', notation => {
+      expect(isDiceNotation(notation)).toBe(false)
+    })
   })
 
   describe('wild die', () => {
@@ -178,21 +187,23 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('repeat operator', () => {
-    test.each([['4d6Lx6'], ['4d6x3'], ['1d20X2']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['4d6Lx6'],
+      ['4d6x3'],
+      ['1d20X2']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('label/annotation', () => {
-    test.each([['1d20+5[fire]'], ['4d6L[ability score]'], ['1d6[damage]']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['1d20+5[fire]'],
+      ['4d6L[ability score]'],
+      ['1d6[damage]']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('percentile dice', () => {
@@ -202,12 +213,17 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('fate/fudge dice', () => {
-    test.each([['dF'], ['DF'], ['df'], ['4dF'], ['dF.1'], ['dF.2'], ['4dF.2']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['dF'],
+      ['DF'],
+      ['df'],
+      ['4dF'],
+      ['dF.1'],
+      ['dF.2'],
+      ['4dF.2']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('zero-bias dice', () => {
@@ -229,12 +245,15 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('draw dice', () => {
-    test.each([['DD6'], ['dd20'], ['Dd8'], ['dD10'], ['3DD8']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['DD6'],
+      ['dd20'],
+      ['Dd8'],
+      ['dD10'],
+      ['3DD8']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('geometric dice', () => {
@@ -289,12 +308,16 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('special die types with modifiers', () => {
-    test.each([['3z10L'], ['g6+3'], ['3DD6H'], ['z6!'], ['2g6+5'], ['DD6K']])(
-      'isDiceNotation("%s") returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      ['3z10L'],
+      ['g6+3'],
+      ['3DD6H'],
+      ['z6!'],
+      ['2g6+5'],
+      ['DD6K']
+    ])('isDiceNotation("%s") returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('stress tests', () => {
@@ -357,12 +380,15 @@ describe('isDiceNotation — comprehensive', () => {
   describe('invalid — incomplete notation', () => {
     // `d6` is valid (bare dN, quantity optional per RDN §4.1). `d0`/`1d0`/`0d6`
     // stay invalid: sides must be a positive integer and quantity must be > 0.
-    test.each([['d'], ['4d'], ['d0'], ['1d0'], ['0d6']])(
-      'isDiceNotation("%s") returns false',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(false)
-      }
-    )
+    test.each([
+      ['d'],
+      ['4d'],
+      ['d0'],
+      ['1d0'],
+      ['0d6']
+    ])('isDiceNotation("%s") returns false', notation => {
+      expect(isDiceNotation(notation)).toBe(false)
+    })
 
     test('isDiceNotation("d6") returns true (bare dN)', () => {
       expect(isDiceNotation('d6')).toBe(true)
@@ -370,21 +396,28 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('invalid — bad modifiers and characters', () => {
-    test.each([['4d6X'], ['4d6X0'], ['1d6@'], ['1d6#'], ['1d6$'], ['1d6%'], ['2d6d'], ['1d}']])(
-      'isDiceNotation("%s") returns false',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(false)
-      }
-    )
+    test.each([
+      ['4d6X'],
+      ['4d6X0'],
+      ['1d6@'],
+      ['1d6#'],
+      ['1d6$'],
+      ['1d6%'],
+      ['2d6d'],
+      ['1d}']
+    ])('isDiceNotation("%s") returns false', notation => {
+      expect(isDiceNotation(notation)).toBe(false)
+    })
   })
 
   describe('invalid — whitespace within notation', () => {
-    test.each([['2d8 + 3'], ['4d6L + 2'], ['3d6 ! + 5']])(
-      'isDiceNotation("%s") returns false',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(false)
-      }
-    )
+    test.each([
+      ['2d8 + 3'],
+      ['4d6L + 2'],
+      ['3d6 ! + 5']
+    ])('isDiceNotation("%s") returns false', notation => {
+      expect(isDiceNotation(notation)).toBe(false)
+    })
   })
 
   describe('invalid — decimal numbers', () => {
@@ -394,12 +427,15 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('valid — leading/trailing whitespace is trimmed', () => {
-    test.each([[' 1d6'], ['1d6 '], [' 1d6 '], ['\t2d8\t'], ['\n4d6\n']])(
-      'isDiceNotation(%j) returns true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-      }
-    )
+    test.each([
+      [' 1d6'],
+      ['1d6 '],
+      [' 1d6 '],
+      ['\t2d8\t'],
+      ['\n4d6\n']
+    ])('isDiceNotation(%j) returns true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+    })
   })
 
   describe('valid — signed leading pool', () => {

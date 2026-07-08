@@ -38,7 +38,7 @@ const SIGNED_POOL_PATTERNS = [
 ].map(marker => String.raw`[+-]\d*` + marker)
 
 // Cache the complete pattern since schemas never change at runtime
-// eslint-disable-next-line no-restricted-syntax
+// biome-ignore lint/plugin: module-level RegExp cache; reassigned via ??= on first access
 let cachedPattern: RegExp | null = null // Reset by clearing this if patterns change
 
 /**

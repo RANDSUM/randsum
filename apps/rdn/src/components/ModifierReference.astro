@@ -32,66 +32,72 @@ const sortedCategories = categoryOrder.filter(c => grouped.has(c))
 <section class="modifier-reference" id="appendix-h">
   <h2>Appendix H: Notation Quick Reference</h2>
   <p class="modifier-reference-intro">
-    Auto-generated from <code>@randsum/roller/docs</code>. This section is the
-    single source of truth for notation syntax, forms, and examples.
+    Auto-generated from <code>@randsum/roller/docs</code>. This section is the single source of
+    truth for notation syntax, forms, and examples.
   </p>
 
-  {sortedCategories.map(category => (
-    <div class="ref-category">
-      <h3>{category}</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Notation</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Forms</th>
-          </tr>
-        </thead>
-        <tbody>
-          {grouped.get(category)!.map(doc => (
+  {
+    sortedCategories.map(category => (
+      <div class="ref-category">
+        <h3>{category}</h3>
+        <table>
+          <thead>
             <tr>
-              <td><code>{doc.displayBase}</code></td>
-              <td>{doc.title}</td>
-              <td>{doc.description}</td>
-              <td>
-                {doc.forms.map(f => (
-                  <span class="ref-form">
-                    <code>{f.notation}</code>
-                    <span class="ref-form-note">{f.note}</span>
-                  </span>
-                ))}
-              </td>
+              <th>Notation</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Forms</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {grouped.get(category)!.some(d => d.examples.length > 0) && (
-        <details class="ref-examples">
-          <summary>Examples</summary>
-          <table>
-            <thead>
+          </thead>
+          <tbody>
+            {grouped.get(category)!.map(doc => (
               <tr>
-                <th>Notation</th>
-                <th>Description</th>
+                <td>
+                  <code>{doc.displayBase}</code>
+                </td>
+                <td>{doc.title}</td>
+                <td>{doc.description}</td>
+                <td>
+                  {doc.forms.map(f => (
+                    <span class="ref-form">
+                      <code>{f.notation}</code>
+                      <span class="ref-form-note">{f.note}</span>
+                    </span>
+                  ))}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {grouped.get(category)!.flatMap(doc =>
-                doc.examples.map(ex => (
-                  <tr>
-                    <td><code>{ex.notation}</code></td>
-                    <td>{ex.description}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </details>
-      )}
-    </div>
-  ))}
+            ))}
+          </tbody>
+        </table>
+
+        {grouped.get(category)!.some(d => d.examples.length > 0) && (
+          <details class="ref-examples">
+            <summary>Examples</summary>
+            <table>
+              <thead>
+                <tr>
+                  <th>Notation</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {grouped.get(category)!.flatMap(doc =>
+                  doc.examples.map(ex => (
+                    <tr>
+                      <td>
+                        <code>{ex.notation}</code>
+                      </td>
+                      <td>{ex.description}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </details>
+        )}
+      </div>
+    ))
+  }
 </section>
 
 <style>

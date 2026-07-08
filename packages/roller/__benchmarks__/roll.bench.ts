@@ -31,12 +31,12 @@ if (isCI) {
   const benchmarks = cases.map(({ name, fn }) => {
     // Benchmark hot path: counter loops avoid the array allocation that
     // Array.from would introduce inside the timed region. Lint exception only.
-    /* eslint-disable no-restricted-syntax */
+    // biome-ignore lint/plugin: hot-path counter loop; avoids Array.from allocation in the timed region
     for (let i = 0; i < WARMUP; i += 1) fn()
     const start = process.hrtime.bigint()
+    // biome-ignore lint/plugin: hot-path counter loop; avoids Array.from allocation in the timed region
     for (let i = 0; i < ITERATIONS; i += 1) fn()
     const end = process.hrtime.bigint()
-    /* eslint-enable no-restricted-syntax */
     const nsPerOp = Number(end - start) / ITERATIONS
     return { name, unit: 'ns', value: nsPerOp }
   })

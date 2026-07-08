@@ -1,0 +1,8 @@
+// Bans the `as unknown as T` double-assertion escape hatch. Mirrors the former
+// ESLint `no-restricted-syntax` selector `TSAsExpression > TSUnknownKeyword`.
+// Policy is to prefer type guards over forced casts.
+language js
+
+`$e as unknown as $t` where {
+  register_diagnostic(span=$t, message="Avoid the `as unknown as T` double assertion. Use a type guard instead (repo policy).")
+}

@@ -9,7 +9,7 @@ import ModifierReference from '../../components/ModifierReference.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('specs')
-  return entries.map((entry) => ({
+  return entries.map(entry => ({
     params: { version: entry.id },
     props: { entry }
   }))
@@ -37,7 +37,9 @@ const specUrl = `https://notation.randsum.dev/v/${version}`
     {
       !latest && (
         <p style="margin-bottom: 1.5rem;">
-          <a href="/" style="color: var(--accent);">&larr; Back to latest</a>
+          <a href="/" style="color: var(--accent);">
+            &larr; Back to latest
+          </a>
         </p>
       )
     }

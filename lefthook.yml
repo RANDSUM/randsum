@@ -11,14 +11,20 @@ pre-commit:
     install:
       run: bun install --frozen-lockfile
       priority: 1
-    lint:
-      glob: "*.{ts,tsx,js,mjs}"
-      run: bun run lint --fix
+    # Biome replaces the former ESLint (--fix) + Prettier steps in a single pass:
+    # `check --write` runs the linter (applying safe fixes) and the formatter.
+    # Unfixable lint errors still exit non-zero and block the commit, matching the
+    # old `eslint --fix` gate.
+    biome:
+      glob: "*.{ts,tsx,js,mjs,cjs,json,jsonc,css}"
+      run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
       priority: 2
-    format:
-      glob: "*.{ts,tsx,js,json,md,astro,css}"
-      run: bunx prettier --write --ignore-path .prettierignore --config .prettierrc {staged_files}
+    # Biome does not format .astro templates, so prettier-plugin-astro (scoped to
+    # apps/site + apps/rdn) still formats staged .astro files.
+    format-astro:
+      glob: "*.astro"
+      run: bunx prettier --write {staged_files}
       stage_fixed: true
       priority: 2
     typecheck:

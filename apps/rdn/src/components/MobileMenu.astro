@@ -15,9 +15,10 @@ interface Props {
 
 const { headings, version, isLatest, specMarkdown = '', specUrl = '' } = Astro.props
 
-const truncatedForLlm = specMarkdown.length > 4000
-  ? specMarkdown.slice(0, 4000) + `\n\n[Full spec: ${specUrl}]`
-  : specMarkdown
+const truncatedForLlm =
+  specMarkdown.length > 4000
+    ? specMarkdown.slice(0, 4000) + `\n\n[Full spec: ${specUrl}]`
+    : specMarkdown
 
 const claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(truncatedForLlm)}`
 const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)}`
@@ -30,7 +31,7 @@ const SIDEBAR_GROUPS = [
   { label: 'Appendices', prefixes: ['A.', 'B.', 'C.', 'D.'] }
 ]
 
-const topHeadings = headings.filter((h) => h.depth === 2)
+const topHeadings = headings.filter(h => h.depth === 2)
 
 function getGroupForHeading(text: string) {
   for (const group of SIDEBAR_GROUPS) {
@@ -41,10 +42,10 @@ function getGroupForHeading(text: string) {
   return null
 }
 
-const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) => ({
+const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map(g => ({
   label: g.label,
-  items: topHeadings.filter((h) => getGroupForHeading(h.text) === g.label)
-})).filter((g) => g.items.length > 0)
+  items: topHeadings.filter(h => getGroupForHeading(h.text) === g.label)
+})).filter(g => g.items.length > 0)
 ---
 
 <div class="mobile-menu" id="mobile-menu">
@@ -79,65 +80,78 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
           {version}{isLatest ? <span class="mobile-latest-badge">latest</span> : null}
         </span>
       </div>
-      <button
-        class="mobile-menu-close"
-        id="mobile-menu-close"
-        aria-label="Close navigation menu"
-      >
+      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close navigation menu">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path
+            d="M4 4L16 16M16 4L4 16"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"></path>
         </svg>
       </button>
     </div>
 
     <nav aria-label="Spec sections">
-      {grouped.map((group) => (
-        <div class="mobile-sidebar-group">
-          <span class="label mobile-sidebar-group-label">{group.label}</span>
-          <ul class="mobile-sidebar-list" role="list">
-            {group.items.map((heading) => (
-              <li>
-                <a
-                  href={`#${heading.slug}`}
-                  class="mobile-sidebar-link"
-                  data-mobile-nav-link
-                >
-                  {heading.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {
+        grouped.map(group => (
+          <div class="mobile-sidebar-group">
+            <span class="label mobile-sidebar-group-label">{group.label}</span>
+            <ul class="mobile-sidebar-list" role="list">
+              {group.items.map(heading => (
+                <li>
+                  <a href={`#${heading.slug}`} class="mobile-sidebar-link" data-mobile-nav-link>
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
     </nav>
 
-    {specMarkdown.length > 0 && (
-      <div class="mobile-sidebar-group" style="border-top: 1px solid var(--border); padding-top: 1rem;">
-        <span class="label mobile-sidebar-group-label">Share</span>
-        <ul class="mobile-sidebar-list" role="list">
-          <li>
-            <button
-              type="button"
-              class="mobile-sidebar-link mobile-copy-md-btn"
-              data-markdown={specMarkdown}
-              style="background: none; border: none; width: 100%; text-align: left; font: inherit; cursor: pointer;"
-            >
-              Copy Markdown
-            </button>
-          </li>
-          <li>
-            <a class="mobile-sidebar-link" href={claudeUrl} target="_blank" rel="noopener noreferrer">
-              Open in Claude
-            </a>
-          </li>
-          <li>
-            <a class="mobile-sidebar-link" href={chatgptUrl} target="_blank" rel="noopener noreferrer">
-              Open in ChatGPT
-            </a>
-          </li>
-        </ul>
-      </div>
-    )}
+    {
+      specMarkdown.length > 0 && (
+        <div
+          class="mobile-sidebar-group"
+          style="border-top: 1px solid var(--border); padding-top: 1rem;"
+        >
+          <span class="label mobile-sidebar-group-label">Share</span>
+          <ul class="mobile-sidebar-list" role="list">
+            <li>
+              <button
+                type="button"
+                class="mobile-sidebar-link mobile-copy-md-btn"
+                data-markdown={specMarkdown}
+                style="background: none; border: none; width: 100%; text-align: left; font: inherit; cursor: pointer;"
+              >
+                Copy Markdown
+              </button>
+            </li>
+            <li>
+              <a
+                class="mobile-sidebar-link"
+                href={claudeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open in Claude
+              </a>
+            </li>
+            <li>
+              <a
+                class="mobile-sidebar-link"
+                href={chatgptUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open in ChatGPT
+              </a>
+            </li>
+          </ul>
+        </div>
+      )
+    }
   </div>
 </div>
 
@@ -157,7 +171,7 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
       overlay!.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
       )
-    ).filter((el) => !el.hasAttribute('disabled'))
+    ).filter(el => !el.hasAttribute('disabled'))
   }
 
   function openMenu(): void {
@@ -214,7 +228,7 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
     trapFocus(e)
   })
 
-  navLinks.forEach((link) => {
+  navLinks.forEach(link => {
     link.addEventListener('click', closeMenu)
   })
 
