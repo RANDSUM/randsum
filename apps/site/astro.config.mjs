@@ -198,6 +198,7 @@ export default defineConfig({
             items: [
               { label: 'Playground', link: 'https://randsum.io' },
               { label: 'CLI', slug: 'tools/cli' },
+              { label: 'MCP Server', slug: 'tools/mcp' },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
               { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' },
               { label: 'HTTP API & Schema', slug: 'tools/http-api' }
