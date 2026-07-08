@@ -1,8 +1,7 @@
 # @randsum/dice-ui
 
-Private, internal React component library for RANDSUM dice UIs — a notation input with a token
-color overlay, a roll-step visualizer, result panels, a combined notation roller, and a quick
-reference grid.
+Private, internal React component library for RANDSUM dice UIs — a combined notation roller
+(input + token color overlay + roll button) and the result panels that render a roll's steps.
 
 > **Private package** (`"private": true`, v2.0.0). Not published to npm. Consumed from source by
 > `apps/site` within the monorepo via `workspace:~`. There is **no build step** —
@@ -18,22 +17,25 @@ The only runtime workspace dependency is `@randsum/roller`. `react` and `react-d
 
 ## Exports
 
-The public surface:
+The public surface is intentionally small — only what `apps/site` consumes:
 
-- Theme: `useTheme`, `getTheme`, `subscribeTheme`, `DiceUIThemeProvider`
-- `TokenOverlayInput` — notation input with a colored token overlay
-- `RollSteps`, `StepRow`, `DieBadge` — roll-step visualizer
-- `NotationRoller` — combined input + roll button + result display
-- `RollResultPanel`, `RollResultDisplay` — result panels
-- `QuickReferenceGrid`, `DocModal` — notation reference grid + modal
-- `tokenColor` — token-to-color helper
+- `NotationRoller` (+ `NotationRollerProps`) — combined input + roll button + description row
+- `RollResultPanel` (+ `RollResultPanelProps`), `RollResultDisplay` — result panels
+- `RollResult` — the roll-result payload type emitted by `NotationRoller`'s `onRoll`
+
+Everything else (`TokenOverlayInput`, the roll-step visualizer in `RollSteps`, the
+`useTheme`/`getTheme`/`subscribeTheme` theme store, and the `tokenColor` helper) is an internal
+implementation detail used by the components above — imported directly from its module, not
+re-exported from the barrel.
 
 ## Commands
 
 ```bash
-bun run --filter @randsum/dice-ui typecheck   # tsc --noEmit
-bun run --filter @randsum/dice-ui test        # bun test __tests__
-bun run --filter @randsum/dice-ui check       # typecheck + test
+bun run --filter @randsum/dice-ui typecheck      # tsc --noEmit
+bun run --filter @randsum/dice-ui lint           # eslint
+bun run --filter @randsum/dice-ui format:check   # prettier --check
+bun run --filter @randsum/dice-ui test           # bun test __tests__
+bun run --filter @randsum/dice-ui check          # typecheck + format:check + lint + test
 ```
 
 ## More
