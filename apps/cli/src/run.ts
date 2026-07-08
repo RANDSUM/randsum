@@ -1,6 +1,7 @@
 import type { RollArgument, RollConfig, RollerRollResult } from '@randsum/roller'
 import { suggestNotationFix } from '@randsum/roller'
 import { roll } from '@randsum/roller/roll'
+import { isDiceNotation } from '@randsum/roller/validate'
 import { formatCompact, formatJson, formatVerbose } from './format'
 
 interface RunOptions {
@@ -52,7 +53,8 @@ export function runRolls(options: RunOptions): RunResult {
       stdoutLines.push(format(result))
     } catch (e) {
       const baseMessage = `Error: ${e instanceof Error ? e.message : String(e)}`
-      const suggestion = suggestNotationFix(options.notations.join(' '))
+      const invalidNotation = options.notations.find(notation => !isDiceNotation(notation))
+      const suggestion = invalidNotation ? suggestNotationFix(invalidNotation) : undefined
       stderrLines.push(
         suggestion ? `${baseMessage}\n\nDid you mean \`${suggestion}\`?` : baseMessage
       )

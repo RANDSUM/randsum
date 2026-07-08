@@ -117,6 +117,30 @@ describe('runRolls', () => {
     expect(result.hadError).toBe(true)
   })
 
+  test('suggests a fix for the invalid notation, not the joined args', () => {
+    const result = runRolls({
+      notations: ['2d6+3', '1d8zz'],
+      verbose: false,
+      json: false,
+      repeat: 1
+    })
+    expect(result.stderr).toContain('Did you mean `1d8`?')
+    expect(result.stderr).not.toContain('2d6+31d8zz')
+    expect(result.hadError).toBe(true)
+  })
+
+  test('omits a suggestion when the invalid notation has no sensible fix', () => {
+    const result = runRolls({
+      notations: ['1d6', 'zzzz'],
+      verbose: false,
+      json: false,
+      repeat: 1
+    })
+    expect(result.stderr).toContain('Error:')
+    expect(result.stderr).not.toContain('Did you mean')
+    expect(result.hadError).toBe(true)
+  })
+
   test('supports multiple notations', () => {
     const result = runRolls({
       notations: ['1d6', '1d8'],
