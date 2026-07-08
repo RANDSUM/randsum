@@ -20,7 +20,7 @@
     "size-limit": "12.1.0",
     "typedoc": "0.28.19",
     "typescript": "catalog:",
-    "typescript-eslint": "8.61.0"
+    "typescript-eslint": "8.63.0"
   },
   "engines": {
     "node": ">=22.14.0",
