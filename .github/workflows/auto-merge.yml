@@ -12,7 +12,10 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    # github.actor is GitHub's documented gate for Dependabot auto-merge; on
+    # `pull_request` it reflects the real triggering actor and this job only runs
+    # privileged automerge, never executing PR-controlled code.
+    if: ${{ github.actor == 'dependabot[bot]' }}  # zizmor: ignore[bot-conditions]
     steps:
       - name: Dependabot metadata
         id: metadata
