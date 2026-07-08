@@ -21,12 +21,12 @@ function buildDhEmbed({ modifier, rollingWith, amplifyHope, amplifyFear }: DhPar
   })
 
   const color: number =
-    result.result === 'critical hope' ? 0xffd700 : result.result === 'hope' ? 0xffff00 : 0x9b59b6
+    result.result === 'critical_hope' ? 0xffd700 : result.result === 'hope' ? 0xffff00 : 0x9b59b6
 
   const embed = new EmbedBuilder()
     .setColor(color)
     .setTitle(
-      `${result.result === 'critical hope' ? 'Critical ' : ''}${result.result === 'fear' ? 'Fear' : 'Hope'}!`
+      `${result.result === 'critical_hope' ? 'Critical ' : ''}${result.result === 'fear' ? 'Fear' : 'Hope'}!`
     )
     .setDescription(`Total: ${result.total}`)
     .setFooter(embedFooterDetails)

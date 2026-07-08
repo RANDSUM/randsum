@@ -36,7 +36,7 @@
     "resolve": {
       "comparePoolHighest": {
         "pools": ["hope", "fear"],
-        "ties": "critical hope",
+        "ties": "critical_hope",
         "outcomes": { "hope": "hope", "fear": "fear" }
       }
     },

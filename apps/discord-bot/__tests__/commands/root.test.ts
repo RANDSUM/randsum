@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, mock, test } from 'bun:test'
 import type { APIEmbed } from 'discord.js'
 
 const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
-  result: 'Strong Hit',
+  result: 'strong_hit',
   total: 9,
   rolls: [{ initialRolls: [5, 4], rolls: [5, 4], modifierLogs: [] }]
 }))
@@ -48,7 +48,7 @@ describe('rootCommand', () => {
 
   test('Weak Hit', async () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'Weak Hit' as const,
+      result: 'weak_hit' as const,
       total: 7,
       rolls: [{ initialRolls: [4, 3], rolls: [4, 3], modifierLogs: [] }]
     }))
@@ -63,7 +63,7 @@ describe('rootCommand', () => {
 
   test('Miss', async () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'Miss' as const,
+      result: 'miss' as const,
       total: 3,
       rolls: [{ initialRolls: [2, 1], rolls: [2, 1], modifierLogs: [] }]
     }))

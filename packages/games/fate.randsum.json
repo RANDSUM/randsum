@@ -13,17 +13,17 @@
   "outcomes": {
     "ladder": {
       "ranges": [
-        { "min": 8, "result": "Legendary" },
-        { "exact": 7, "result": "Epic" },
-        { "exact": 6, "result": "Fantastic" },
-        { "exact": 5, "result": "Superb" },
-        { "exact": 4, "result": "Great" },
-        { "exact": 3, "result": "Good" },
-        { "exact": 2, "result": "Fair" },
-        { "exact": 1, "result": "Average" },
-        { "exact": 0, "result": "Mediocre" },
-        { "exact": -1, "result": "Poor" },
-        { "max": -2, "result": "Terrible" }
+        { "min": 8, "result": "legendary" },
+        { "exact": 7, "result": "epic" },
+        { "exact": 6, "result": "fantastic" },
+        { "exact": 5, "result": "superb" },
+        { "exact": 4, "result": "great" },
+        { "exact": 3, "result": "good" },
+        { "exact": 2, "result": "fair" },
+        { "exact": 1, "result": "average" },
+        { "exact": 0, "result": "mediocre" },
+        { "exact": -1, "result": "poor" },
+        { "max": -2, "result": "terrible" }
       ]
     }
   },

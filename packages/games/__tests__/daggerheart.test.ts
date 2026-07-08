@@ -5,7 +5,7 @@ import { STRESS_ITERATIONS } from './stressIterations'
 describe('roll', () => {
   describe('basic functionality', () => {
     test('returns valid roll types', () => {
-      const validTypes = ['hope', 'fear', 'critical hope']
+      const validTypes = ['hope', 'fear', 'critical_hope']
 
       Array.from({ length: 20 }).forEach(() => {
         const result = roll({})
@@ -125,16 +125,16 @@ describe('roll', () => {
   //
   // The generated roll() does not expose a randomFn option, so seeded injection
   // is not available at the game API layer. We use stress testing to confirm that
-  // 'critical hope' (hopeTotal === fearTotal) is reachable when both dice are d20.
+  // 'critical_hope' (hopeTotal === fearTotal) is reachable when both dice are d20.
   describe('critical hope with amplified dice', () => {
     test('critical hope is reachable with amplifyHope: true and amplifyFear: true', () => {
       const results = Array.from({ length: STRESS_ITERATIONS }, () =>
         roll({ amplifyHope: true, amplifyFear: true })
       )
-      const criticalHope = results.find(r => r.result === 'critical hope')
+      const criticalHope = results.find(r => r.result === 'critical_hope')
       // With 9999 rolls, the chance of never rolling equal values on 2d20 is negligible
       expect(criticalHope).toBeDefined()
-      expect(criticalHope?.result).toBe('critical hope')
+      expect(criticalHope?.result).toBe('critical_hope')
       expect(criticalHope?.details?.hope.amplified).toBe(true)
       expect(criticalHope?.details?.fear.amplified).toBe(true)
       expect(criticalHope?.details?.hope.roll).toBe(criticalHope?.details?.fear.roll)

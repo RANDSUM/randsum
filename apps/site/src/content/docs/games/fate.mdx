@@ -46,7 +46,7 @@ The `@randsum/games/fate` subpath provides mechanics for [Fate Core](https://www
 // Roll 4dF with no skill modifier
 const { result, total } = roll()
 console.log(total)  // -4 to +4
-console.log(result) // e.g. 'Mediocre'`} />
+console.log(result) // e.g. 'mediocre'`} />
 
 <CodeExample code={`import { roll } from '@randsum/games/fate'
 
@@ -59,14 +59,14 @@ roll({ modifier: 3 }) // object overload: the same roll`} />
 const { result } = roll({ modifier: 4 })
 
 switch (result) {
-  case 'Legendary':
-  case 'Epic':
-  case 'Fantastic':
+  case 'legendary':
+  case 'epic':
+  case 'fantastic':
     // A standout success
     break
-  case 'Superb':
-  case 'Great':
-  case 'Good':
+  case 'superb':
+  case 'great':
+  case 'good':
     // A solid success
     break
   default:
@@ -98,19 +98,19 @@ Fate dice are six-sided dice with two `+` faces, two blank faces, and two `−` 
 
 | Total | Rung |
 |---|---|
-| +8 or more | `Legendary` |
-| +7 | `Epic` |
-| +6 | `Fantastic` |
-| +5 | `Superb` |
-| +4 | `Great` |
-| +3 | `Good` |
-| +2 | `Fair` |
-| +1 | `Average` |
-| 0 | `Mediocre` |
-| -1 | `Poor` |
-| -2 or less | `Terrible` |
+| +8 or more | `legendary` |
+| +7 | `epic` |
+| +6 | `fantastic` |
+| +5 | `superb` |
+| +4 | `great` |
+| +3 | `good` |
+| +2 | `fair` |
+| +1 | `average` |
+| 0 | `mediocre` |
+| -1 | `poor` |
+| -2 or less | `terrible` |
 
-The open-ended `Legendary` and `Terrible` rungs absorb any total beyond the ends of the ladder.
+The open-ended `legendary` and `terrible` rungs absorb any total beyond the ends of the ladder.
 
 ## Error handling
 
