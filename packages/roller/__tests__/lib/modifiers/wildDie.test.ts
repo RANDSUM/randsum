@@ -29,7 +29,7 @@ describe('wildDie modifier behavior', () => {
     test('compound chains when follow-up also hits max', () => {
       const rolls = [3, 4, 5, 2, 6]
       const values = [6, 3] // first rollOne is 6 (chain), second is 3 (stop)
-      // eslint-disable-next-line no-restricted-syntax
+      // biome-ignore lint/plugin: mutable call counter drives the stubbed sequential roller
       let callIdx = 0
       const rollOne = (): number => {
         const v = values[callIdx] ?? 3

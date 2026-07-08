@@ -16,32 +16,31 @@ import '../styles/landing.css'
 <StarlightPage
   frontmatter={{
     title: 'RANDSUM',
-    description: 'Zero-dependency TypeScript dice engine. Parse and roll 4d6L, 2d20H, exploding dice, and more. Pre-built for D&D 5e, Blades, and 4 more systems.',
+    description:
+      'Zero-dependency TypeScript dice engine. Parse and roll 4d6L, 2d20H, exploding dice, and more. Pre-built for D&D 5e, Blades, and 4 more systems.',
     template: 'splash',
     head: [
       {
         tag: 'script',
         attrs: { type: 'application/ld+json' },
         content: JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
+          '@context': 'https://schema.org',
+          '@graph': [
             {
-              "@type": "WebSite",
-              "@id": "https://randsum.dev/#website",
-              "name": "RANDSUM",
-              "url": "https://randsum.dev/",
-              "description": "TypeScript-first dice notation ecosystem for tabletop RPGs. Zero-dependency dice engine with full notation support and game-specific packages.",
-              "publisher": { "@id": "https://randsum.dev/#organization" }
+              '@type': 'WebSite',
+              '@id': 'https://randsum.dev/#website',
+              name: 'RANDSUM',
+              url: 'https://randsum.dev/',
+              description:
+                'TypeScript-first dice notation ecosystem for tabletop RPGs. Zero-dependency dice engine with full notation support and game-specific packages.',
+              publisher: { '@id': 'https://randsum.dev/#organization' }
             },
             {
-              "@type": "Organization",
-              "@id": "https://randsum.dev/#organization",
-              "name": "RANDSUM",
-              "url": "https://randsum.dev/",
-              "sameAs": [
-                "https://github.com/RANDSUM/randsum",
-                "https://www.npmjs.com/org/randsum"
-              ]
+              '@type': 'Organization',
+              '@id': 'https://randsum.dev/#organization',
+              name: 'RANDSUM',
+              url: 'https://randsum.dev/',
+              sameAs: ['https://github.com/RANDSUM/randsum', 'https://www.npmjs.com/org/randsum']
             }
           ]
         })

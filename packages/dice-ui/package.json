@@ -32,9 +32,9 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "test": "bun test __tests__",
     "test:coverage": "bun test __tests__ --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "check": "bun run typecheck && bun run format:check && bun run lint && bun run test"
