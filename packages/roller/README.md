@@ -58,12 +58,13 @@ argument. Returns a `RollerRollResult`:
 const result = roll("2d6+3")
 
 result.total // number — combined total after all modifiers
-result.values // string[] — individual die values ("3", "5", ...)
+result.values // (number | T)[] — individual die values (3, 5, ...)
 result.rolls // RollRecord[] — full per-pool records with modifier history
 ```
 
-For custom-faced dice (`{ sides: ['+', '-', ' '] }`), `values` holds the actual
-face values instead of numeric strings.
+`values` is honest about what was rolled: numeric pools contribute actual
+numbers, and custom-faced dice (`{ sides: ['+', '-', ' '] }`) contribute their
+actual face values (`T`).
 
 `roll()` throws on invalid input. Catch `RandsumError` (the base class) to handle
 every RANDSUM error, or catch a subclass for specific handling:
@@ -111,20 +112,21 @@ import {
 
 ### RDN reference
 
-| Notation      | Description                  |
-| ------------- | ---------------------------- |
-| `4d6`         | Roll 4 six-sided dice        |
-| `4d6+2`       | Add 2 to the total           |
-| `4d6L`        | Drop lowest                  |
-| `4d6H`        | Drop highest                 |
-| `4d6!`        | Exploding dice               |
-| `4d6R{<3}`    | Reroll values below 3        |
-| `4d6R{<3}!`   | Reroll below 3, then explode |
-| `4d6U`        | Unique rolls only            |
-| `4d20C{>18}`  | Cap values above 18          |
-| `d%`          | Percentile (1d100)           |
-| `4dF`         | Four Fate dice (-4 to +4)    |
-| `2d6+3[fire]` | Annotated roll               |
+| Notation      | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `4d6`         | Roll 4 six-sided dice                              |
+| `d20`         | Bare `dN` — quantity omitted, equivalent to `1d20` |
+| `4d6+2`       | Add 2 to the total                                 |
+| `4d6L`        | Drop lowest                                        |
+| `4d6H`        | Drop highest                                       |
+| `4d6!`        | Exploding dice                                     |
+| `4d6R{<3}`    | Reroll values below 3                              |
+| `4d6R{<3}!`   | Reroll below 3, then explode                       |
+| `4d6U`        | Unique rolls only                                  |
+| `4d20C{>18}`  | Cap values above 18                                |
+| `d%`          | Percentile (1d100)                                 |
+| `4dF`         | Four Fate dice (-4 to +4)                          |
+| `2d6+3[fire]` | Annotated roll                                     |
 
 Modifiers run in a fixed priority order regardless of their position in the
 source string, but the tokenizer still requires syntactically valid ordering
@@ -136,15 +138,16 @@ complete reference, taxonomy, conformance levels, and modifier pipeline.
 
 The package exposes focused subpaths so you can import only what you need:
 
-| Subpath                    | Provides                                                             |
-| -------------------------- | -------------------------------------------------------------------- |
-| `@randsum/roller`          | Barrel — `roll`, validation, conversion, errors, types               |
-| `@randsum/roller/roll`     | `roll` only                                                          |
-| `@randsum/roller/errors`   | Error classes and `ERROR_CODES`                                      |
-| `@randsum/roller/validate` | `validateNotation`, `isDiceNotation`, `notation`, numeric validators |
-| `@randsum/roller/tokenize` | `tokenize` — notation tokenizer, no roll engine                      |
-| `@randsum/roller/docs`     | Static notation/modifier documentation data                          |
-| `@randsum/roller/trace`    | Turn a `RollRecord` into a step-by-step display trace                |
+| Subpath                    | Provides                                                                |
+| -------------------------- | ----------------------------------------------------------------------- |
+| `@randsum/roller`          | Barrel — `roll`, validation, conversion, errors, types                  |
+| `@randsum/roller/roll`     | `roll` only                                                             |
+| `@randsum/roller/errors`   | Error classes and `ERROR_CODES`                                         |
+| `@randsum/roller/validate` | `validateNotation`, `isDiceNotation`, `notation`, numeric validators    |
+| `@randsum/roller/tokenize` | `tokenize` — notation tokenizer, no roll engine                         |
+| `@randsum/roller/docs`     | Static notation/modifier documentation data                             |
+| `@randsum/roller/trace`    | Turn a `RollRecord` into a step-by-step display trace                   |
+| `@randsum/roller/random`   | `createSeededRandom`, `createQueueRandom` — deterministic RNG factories |
 
 **`@randsum/roller/tokenize`** — tokenizes notation without pulling in the roll
 engine, RNG, or modifier behaviors. Use it in UI components and form validators.
@@ -182,6 +185,20 @@ formatAsMath([3, 4, 5], -1) // "3 + 4 + 5 - 1"
 ```
 
 `RollTraceStep` is a discriminated union on `kind`: `'rolls' | 'divider' | 'arithmetic' | 'finalRolls'`.
+
+**`@randsum/roller/random`** — deterministic RNG factories for reproducible
+rolls, seeded tests, and replayable sessions. Pass the result as `randomFn`.
+
+```typescript
+import { roll } from "@randsum/roller/roll"
+import { createSeededRandom, createQueueRandom } from "@randsum/roller/random"
+
+// Same seed → same sequence (negative seeds are normalized to valid faces).
+roll("1d20", { randomFn: createSeededRandom(42) })
+
+// Replay an exact sequence of die values.
+roll("3d6", { randomFn: createQueueRandom({ sides: 6, rolls: [3, 5, 2] }) })
+```
 
 ## Related packages
 

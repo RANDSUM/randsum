@@ -125,8 +125,11 @@ export interface ParsedNotationOptions {
 
 /**
  * Template literal type for dice notation strings.
+ *
+ * The quantity is optional (`d20` is accepted as an alias for `1d20`, per
+ * RDN §4.1), so the leading number may be omitted.
  */
-export type DiceNotation = `${number}${'d' | 'D'}${number}${ModifierSuffix}`
+export type DiceNotation = `${number | ''}${'d' | 'D'}${number}${ModifierSuffix}`
 
 /**
  * Configuration options for a dice roll.
@@ -147,6 +150,11 @@ export interface RollOptions<T = string> {
    * Default keys are auto-generated as "Roll 1", "Roll 2", etc.
    */
   key?: string | undefined
+  /**
+   * Optional annotation label for this roll (e.g. `"fire"` from `2d6[fire]`).
+   * Carried through to the roll record; does not affect the numeric result.
+   */
+  label?: string | undefined
 }
 
 /**

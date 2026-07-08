@@ -1,6 +1,7 @@
 import type { RollArgument, RollConfig, RollerRollResult } from '@randsum/roller'
 import { suggestNotationFix } from '@randsum/roller'
 import { roll } from '@randsum/roller/roll'
+import { createSeededRandom } from '@randsum/roller/random'
 import { isDiceNotation } from '@randsum/roller/validate'
 import { formatCompact, formatJson, formatVerbose } from './format'
 
@@ -17,17 +18,6 @@ export interface RunResult {
   readonly stdout: string
   readonly stderr: string
   readonly hadError: boolean
-}
-
-function createSeededRandom(seed: number): () => number {
-  const a = 1664525
-  const c = 1013904223
-  const m = 2 ** 32
-  const state = { value: seed }
-  return (): number => {
-    state.value = (a * state.value + c) % m
-    return state.value / m
-  }
 }
 
 export function runRolls(options: RunOptions): RunResult {

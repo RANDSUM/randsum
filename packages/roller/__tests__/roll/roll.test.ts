@@ -100,10 +100,10 @@ describe(roll, () => {
             expect(values[0]).toBeDefined()
             expect(values[1]).toBeDefined()
             if (values[0] !== undefined) {
-              expect(arg.sides).toContain(values[0])
+              expect(arg.sides).toContain(values[0] as string)
             }
             if (values[1] !== undefined) {
-              expect(arg.sides).toContain(values[1])
+              expect(arg.sides).toContain(values[1] as string)
             }
           })
         })

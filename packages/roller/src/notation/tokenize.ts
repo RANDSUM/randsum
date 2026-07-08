@@ -165,7 +165,7 @@ function parseFrom(notation: string, cursor: number, tokens: Token[]): readonly 
 
   // A second dice pool (e.g. +1d20 in "1d6+1d20") must be detected before
   // the plus/minus modifier patterns would consume the leading +/- sign.
-  const newPoolMatch = /^[+-]\d+[Dd][1-9]\d*/.exec(remaining)
+  const newPoolMatch = /^[+-]\d*[Dd][1-9]\d*/.exec(remaining)
   if (newPoolMatch) {
     const text = newPoolMatch[0]
     tokens.push({
@@ -221,7 +221,10 @@ export function tokenize(notation: string): readonly Token[] {
     }
   }
 
-  const coreMatch = /^[+-]?\d+[Dd]\d+/.exec(notation)
+  // Quantity is optional per RDN §4.1 — a bare `dN` de-aliases to `1dN`. Special
+  // die patterns (DDN, dF, d%, …) are matched first above, so relaxing the leading
+  // quantity here cannot swallow their markers.
+  const coreMatch = /^[+-]?\d*[Dd]\d+/.exec(notation)
 
   if (coreMatch) {
     const text = coreMatch[0]

@@ -1,10 +1,11 @@
 import type { RollArgument, RollConfig, RollerRollResult } from '../types'
+import { ValidationError } from '../errors'
 import { parseArguments } from './parseArguments'
 import { executeRollPipeline } from './pipeline'
 
 /**
  * Type guard to check if an argument is a RollConfig object.
- * RollConfig has randomFn and/or lightweight but not sides/quantity, distinguishing it from RollOptions.
+ * RollConfig has randomFn but not sides/quantity, distinguishing it from RollOptions.
  */
 function isRollConfig(arg: unknown): arg is RollConfig {
   return (
@@ -26,7 +27,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  *
  * @typeParam T - Type for custom dice faces. Defaults to `string`.
  *   - For standard numeric dice (notation strings or numbers), `values` contains
- *     string representations of the roll values (e.g., `["5", "3", "6"]`).
+ *     the actual numeric roll values (e.g., `[5, 3, 6]`).
  *   - For custom faces (options with `sides: T[]`), `values` contains the actual
  *     face values of type T.
  *
@@ -43,7 +44,7 @@ function isRollConfig(arg: unknown): arg is RollConfig {
  * ```ts
  * const result = roll("2d6")
  * result.total // => Sum of 2d6
- * result.values // => ["3", "5"] - string representations
+ * result.values // => [3, 5] - numeric roll values
  * ```
  *
  * @example Options object
@@ -115,8 +116,9 @@ export function roll<T = string>(
   const parameters = rollArgs.flatMap((arg, index) => parseArguments(arg, index + 1))
   const rolls = parameters.map(parameter => executeRollPipeline(parameter, config?.randomFn))
 
-  // If multiple pools exist and any has non-numeric custom faces, total is 0
-  // (single-pool string-faced rolls keep their index-based total)
+  // A custom-faced pool (string faces, e.g. d{H,T}) has no numeric contribution.
+  // Summing it alongside numeric pools would silently produce a total that is
+  // indistinguishable from a genuine zero, so reject the mix outright.
   const hasStringFaces =
     rolls.length > 1 &&
     rolls.some(
@@ -125,18 +127,24 @@ export function roll<T = string>(
         r.parameters.faces !== undefined &&
         r.parameters.numericFaces === undefined
     )
-  const total = hasStringFaces
-    ? 0
-    : rolls.reduce((acc, cur) => {
-        const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
-        return acc + cur.total * factor
-      }, 0)
+  if (hasStringFaces) {
+    throw new ValidationError(
+      'Cannot combine custom-faced dice (non-numeric faces) with other pools in a single roll — the result has no meaningful total. Roll them separately.'
+    )
+  }
 
-  const values = rolls.flatMap<T>(r => {
+  const total = rolls.reduce((acc, cur) => {
+    const factor = cur.parameters.arithmetic === 'subtract' ? -1 : 1
+    return acc + cur.total * factor
+  }, 0)
+
+  // `values` is honest about what was rolled: custom-faced pools contribute their
+  // actual face values (T); numeric pools contribute their actual numbers.
+  const values = rolls.flatMap<number | T>(r => {
     if (r.customResults) {
       return r.customResults
     }
-    return r.rolls.map(n => String(n) as T)
+    return r.rolls
   })
 
   return {

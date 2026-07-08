@@ -181,10 +181,10 @@ describe('validateNotation', () => {
       expect(result.valid).toBe(false)
     })
 
-    test('rejects incomplete notation', () => {
+    test('accepts bare dN notation (quantity optional per RDN §4.1)', () => {
       const result = validateNotation('d6')
 
-      expect(result.valid).toBe(false)
+      expect(result.valid).toBe(true)
     })
 
     test('rejects notation without sides', () => {
@@ -338,10 +338,10 @@ describe('validateNotation', () => {
         expect(result.valid).toBe(false)
       })
 
-      test('returns invalid result for partial notation', () => {
+      test('accepts bare dN notation (quantity optional per RDN §4.1)', () => {
         const result = validateNotation('d6')
 
-        expect(result.valid).toBe(false)
+        expect(result.valid).toBe(true)
       })
     })
   })

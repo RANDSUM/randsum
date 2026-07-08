@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { isDiceNotation } from '../../src/validate'
 import { roll } from '../../src/roll'
+import { ValidationError } from '../../src/errors'
 import type { DiceNotation } from '../../src/notation/types'
 
 describe('mixed multi-pool notation', () => {
@@ -55,25 +56,25 @@ describe('mixed multi-pool notation', () => {
       })
     })
 
-    describe('string-faced pools force total to 0', () => {
-      test('roll("1d20+d{H,T}") has total 0', () => {
-        const result = roll('1d20+d{H,T}' as DiceNotation)
-        expect(result.rolls.length).toBe(2)
-        expect(result.total).toBe(0)
+    describe('string-faced pools in a multi-pool throw (no meaningful total)', () => {
+      test('roll("1d20+d{H,T}") throws a ValidationError', () => {
+        expect(() => roll('1d20+d{H,T}' as DiceNotation)).toThrow(ValidationError)
       })
 
-      test('roll("d{H,T}+d{A,B,C}") has total 0', () => {
-        const result = roll('d{H,T}+d{A,B,C}')
-        expect(result.rolls.length).toBe(2)
-        expect(result.total).toBe(0)
+      test('roll("d{H,T}+d{A,B,C}") throws a ValidationError', () => {
+        expect(() => roll('d{H,T}+d{A,B,C}')).toThrow(ValidationError)
+      })
+
+      test('the thrown message explains the mix is unsupported', () => {
+        expect(() => roll('1d20+d{H,T}' as DiceNotation)).toThrow(/custom-faced dice/)
       })
     })
 
-    describe('individual pool results preserved', () => {
-      test('roll("1d20+d{H,T}") has individual results', () => {
-        const result = roll('1d20+d{H,T}' as DiceNotation)
-        expect(result.rolls[0]).toBeDefined()
-        expect(result.rolls[1]).toBeDefined()
+    describe('single custom-faced pool still rolls (index-based total preserved)', () => {
+      test('roll("d{H,T}") produces one pool and does not throw', () => {
+        const result = roll('d{H,T}')
+        expect(result.rolls.length).toBe(1)
+        expect(result.values.every(v => v === 'H' || v === 'T')).toBe(true)
       })
     })
   })

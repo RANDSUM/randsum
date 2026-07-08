@@ -8,7 +8,7 @@ import type { NumericRollBonus } from './modifiers'
  *
  * @template T - Type for custom dice faces
  */
-export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 'sides'>> {
+export interface RollParams<T = string> extends Required<Omit<RollOptions<T>, 'sides' | 'label'>> {
   /** Numeric sides (always resolved to number) */
   sides: number
   /** Custom face values if using non-numeric dice */
@@ -80,8 +80,13 @@ export interface RollRecord<T = string> {
 export interface RollerRollResult<T = string> {
   /** Individual roll records */
   rolls: RollRecord<T>[]
-  /** Aggregate values — flat array of individual die values */
-  values: T[]
+  /**
+   * Aggregate values — a flat array of individual die results.
+   *
+   * Numeric pools contribute their actual numbers (`number`); custom-faced
+   * pools (`sides: T[]`) contribute their actual face values (`T`).
+   */
+  values: (number | T)[]
   /** Combined total of all rolls */
   total: number
 }

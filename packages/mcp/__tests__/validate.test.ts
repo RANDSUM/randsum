@@ -19,7 +19,8 @@ describe('validateNotationInput', () => {
   })
 
   test('offers a suggestion for a fixable typo', () => {
-    const result = validateNotationInput({ notation: 'd20' })
+    // `d20` is now valid (bare dN), so use a trailing-operator typo instead.
+    const result = validateNotationInput({ notation: '1d20+' })
     expect(result.valid).toBe(false)
     expect(result.suggestion).toBe('1d20')
   })

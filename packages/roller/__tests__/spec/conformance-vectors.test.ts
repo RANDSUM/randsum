@@ -19,7 +19,6 @@ import type { DiceNotation } from '../../src/notation/types'
  * - Null expectedPool/expectedTotal: indeterminate result per spec.
  *
  * Known conformance gaps (marked .todo):
- * - Vector 2 (d20): roller rejects bare `dN` notation (requires leading quantity digit)
  * - Vector 39 (3d6!s{4,6,8}): spec uses {values} as trigger set for sequence start;
  *   roller uses them as die sizes in a step-through sequence — semantics mismatch
  */
@@ -45,7 +44,6 @@ const FATE_2_FACES = [-2, -1, 0, 1, 2] as const
 // Known conformance gaps: vector ids that cannot pass due to roller behavior mismatches
 // These are marked .todo() rather than skipped to surface them as known failures.
 const KNOWN_CONFORMANCE_GAPS: Record<number, string> = {
-  2: 'roller rejects bare `dN` notation without a leading quantity digit (spec §4.1 requires it be valid)',
   39: 'spec interprets !s{4,6,8} as trigger values for sequence; roller uses them as die sizes'
 }
 
