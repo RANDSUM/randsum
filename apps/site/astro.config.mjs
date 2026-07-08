@@ -10,6 +10,7 @@ import starlightSidebarTopics from 'starlight-sidebar-topics'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
 import { copyMarkdownToDist } from './src/integrations/copy-markdown-to-dist'
+import { copySchemaToDist } from './src/integrations/copy-schema-to-dist'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
@@ -18,6 +19,32 @@ const isDev = process.argv.includes('dev')
 
 export default defineConfig({
   base: '/',
+  // Legacy 301 redirects for old URL shapes. These MUST live here rather than in
+  // netlify.toml [[redirects]]: this site ships an on-demand SSR function
+  // (`src/pages/api/roll.ts`, `prerender = false`), and @astrojs/netlify then
+  // registers that function at `/*` with `preferStatic: true`. An explicit toml
+  // redirect is matched BEFORE the request reaches the function's `/*` route, so
+  // toml redirects (and, fatally, a toml `/*` catch-all) shadow the function.
+  // Declared here, Astro emits these into dist/_redirects (301) AND bakes them
+  // into the function's own route manifest, so they resolve regardless of
+  // Netlify precedence. netlify.toml deliberately carries NO redirects now — the
+  // SSR function serves the 404 page (404 status) for unmatched routes itself.
+  redirects: {
+    // Old package URLs → new game/tool pages
+    '/packages/fifth/': { status: 301, destination: '/games/fifth/' },
+    '/packages/blades/': { status: 301, destination: '/games/blades/' },
+    '/packages/daggerheart/': { status: 301, destination: '/games/daggerheart/' },
+    '/packages/pbta/': { status: 301, destination: '/games/pbta/' },
+    '/packages/root-rpg/': { status: 301, destination: '/games/root-rpg/' },
+    '/packages/salvageunion/': { status: 301, destination: '/games/salvageunion/' },
+    '/packages/discord-bot/': { status: 301, destination: '/tools/discord-bot/' },
+    // Old docs URLs → new reference pages
+    '/docs/notation/': { status: 301, destination: '/notation/randsum-dice-notation/' },
+    '/docs/errors/': { status: 301, destination: '/roller/modifiers/' },
+    // Old getting-started URLs → new locations
+    '/getting-started/notation/': { status: 301, destination: '/roller/getting-started/' },
+    '/getting-started/game-packages/': { status: 301, destination: '/games/introduction/' }
+  },
   fonts: [
     {
       name: 'Inter',
@@ -172,7 +199,8 @@ export default defineConfig({
               { label: 'Playground', link: 'https://randsum.io' },
               { label: 'CLI', slug: 'tools/cli' },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
-              { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' }
+              { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' },
+              { label: 'HTTP API & Schema', slug: 'tools/http-api' }
             ]
           }
         ])
@@ -180,7 +208,8 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css']
     }),
     react(),
-    copyMarkdownToDist()
+    copyMarkdownToDist(),
+    copySchemaToDist()
   ],
   prefetch: false,
   vite: {

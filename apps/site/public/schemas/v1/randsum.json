@@ -4,7 +4,8 @@
   "title": "randsum Dice Mechanic Spec",
   "description": "Declarative format for expressing a complete game system's dice mechanics as a four-stage pipeline: Dice → Modify → Resolve → Outcome.",
   "type": "object",
-  "required": ["$schema", "name", "shortcode", "game_url", "roll"],
+  "required": ["$schema", "name", "shortcode", "game_url"],
+  "oneOf": [{ "required": ["roll"] }, { "required": ["rolls"] }],
   "additionalProperties": false,
   "properties": {
     "$schema": {
@@ -50,25 +51,32 @@
     },
     "roll": {
       "$ref": "#/$defs/RollDefinition",
-      "description": "Default roll — exported as `roll`"
-    }
-  },
-  "patternProperties": {
-    "^roll[A-Z][a-zA-Z]*$": {
-      "$ref": "#/$defs/RollDefinition",
-      "description": "Named roll — the key name becomes the export (e.g. rollFortune → rollFortune). Must start with 'roll' followed by an uppercase letter."
+      "description": "Default single roll — exported as `roll`. Mutually exclusive with `rolls`."
+    },
+    "rolls": {
+      "type": "object",
+      "description": "Multiple named rolls. Each key is exported as its own roll function (e.g. `action`, `resistance`). Mutually exclusive with `roll`.",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$" },
+      "additionalProperties": { "$ref": "#/$defs/RollDefinition" }
     }
   },
   "$defs": {
     "PoolDefinition": {
       "type": "object",
-      "description": "A dice pool shape. Defines die sides and optionally a default quantity. Quantity can always be overridden in the dice stage.",
-      "required": ["sides"],
+      "description": "A dice pool shape. Defines a die — standard (`sides`) or custom-faced (`faces`) — and optionally a default quantity. Quantity can always be overridden in the dice stage.",
+      "oneOf": [{ "required": ["sides"] }, { "required": ["faces"] }],
       "additionalProperties": false,
       "properties": {
         "sides": {
           "$ref": "#/$defs/IntegerOrInput",
-          "description": "Number of faces on the die (e.g. 6 for a d6, 20 for a d20). Accepts $input for dynamic die types."
+          "description": "Number of faces on the die (e.g. 6 for a d6, 20 for a d20). Accepts $input for dynamic die types. Mutually exclusive with faces."
+        },
+        "faces": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": ["number", "string"] },
+          "description": "Custom die faces, mutually exclusive with sides. Numeric faces (e.g. [-1, 0, 1] for a Fate/Fudge die) roll and sum as their values. String faces (e.g. [\"fire\", \"ice\"]) are a table die — use with resolve: 'faces' to return the rolled label."
         },
         "quantity": {
           "$ref": "#/$defs/IntegerOrInput",
@@ -94,12 +102,18 @@
 
     "TableRange": {
       "type": "object",
-      "description": "A single condition-to-result entry in a lookup table. Match by resolved value (exact or min/max range), pool composition (poolCondition), or both. When both are present, both must match (AND semantics). Cannot mix exact and min/max.",
+      "description": "A single condition-to-result entry in a lookup table. Match by resolved value (exact, min-only, max-only, or min+max range), pool composition (poolCondition), or both. When both are present, both must match (AND semantics). Cannot mix exact with min/max.",
       "required": ["result"],
       "additionalProperties": false,
       "properties": {
-        "min": { "type": "integer", "description": "Minimum resolved value (inclusive)" },
-        "max": { "type": "integer", "description": "Maximum resolved value (inclusive)" },
+        "min": {
+          "type": "integer",
+          "description": "Minimum resolved value (inclusive). When max is omitted, matches any value >= min."
+        },
+        "max": {
+          "type": "integer",
+          "description": "Maximum resolved value (inclusive). When min is omitted, matches any value <= max."
+        },
         "exact": { "type": "integer", "description": "Exact resolved value to match" },
         "poolCondition": {
           "$ref": "#/$defs/PoolCondition",
@@ -114,7 +128,8 @@
         {
           "anyOf": [
             { "required": ["exact"] },
-            { "required": ["min", "max"] },
+            { "required": ["min"] },
+            { "required": ["max"] },
             { "required": ["poolCondition"] }
           ]
         },
@@ -201,8 +216,7 @@
         },
         "modify": {
           "description": "Stage 2 (optional) — apply modifiers to individual dice before resolving. Each entry applies one modifier.",
-          "type": "array",
-          "items": { "$ref": "#/$defs/ModifyOperation" }
+          "$ref": "#/$defs/ModifyPipeline"
         },
         "resolve": {
           "description": "Stage 3 — collapse the dice pool into a single value. Use 'sum' to total the dice, 'countMatching' to count dice meeting a condition, 'tableLookup' to map the total through a table, or a comparePool operation for multi-pool rolls.",
@@ -229,7 +243,7 @@
         },
         "details": {
           "type": "object",
-          "description": "Named fields returned alongside the roll result. Each field is either a pass-through of an input value or a computed expression (diceTotal = sum before postResolveModifiers, total = final total).",
+          "description": "Named fields returned alongside the roll result. Each field is either a pass-through of an input value, a computed expression (diceTotal = raw sum of kept dice before arithmetic modifiers, total = final total), a pool reference, or a die check (boolean comparison on a specific die value).",
           "additionalProperties": { "$ref": "#/$defs/DetailsFieldDef" }
         }
       }
@@ -306,8 +320,7 @@
         },
         "modify": {
           "description": "Override for Stage 2 (modifiers)",
-          "type": "array",
-          "items": { "$ref": "#/$defs/ModifyOperation" }
+          "$ref": "#/$defs/ModifyPipeline"
         },
         "resolve": {
           "description": "Override for Stage 3 (resolution)",
@@ -401,6 +414,22 @@
       }
     },
 
+    "ModifyPipeline": {
+      "type": "array",
+      "description": "Ordered list of modifier operations. If any entry uses markDice, a later entry must use keepMarked (and vice versa) — the pair is meaningless alone.",
+      "items": { "$ref": "#/$defs/ModifyOperation" },
+      "allOf": [
+        {
+          "if": { "contains": { "type": "object", "required": ["markDice"] } },
+          "then": { "contains": { "type": "object", "required": ["keepMarked"] } }
+        },
+        {
+          "if": { "contains": { "type": "object", "required": ["keepMarked"] } },
+          "then": { "contains": { "type": "object", "required": ["markDice"] } }
+        }
+      ]
+    },
+
     "ModifyOperation": {
       "type": "object",
       "description": "A single modifier applied to individual dice values before resolving. Include exactly one modifier key per entry.",
@@ -492,8 +521,8 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["sum"],
-          "description": "Sum all remaining dice values into a single total"
+          "enum": ["sum", "faces"],
+          "description": "'sum' totals all remaining dice values; 'faces' resolves a custom string-faces (table) die to its rolled label"
         },
         {
           "type": "object",
@@ -656,8 +685,14 @@
       ]
     },
 
+    "ResultShape": {
+      "type": "string",
+      "enum": ["numeric", "label"],
+      "description": "Controls the generated `result` field's shape. 'label' (default when outcome is declared) returns the matched range's result string. 'numeric' returns the resolved total instead, while still validating that a range matches and populating details. Use 'numeric' when you want total-as-result with range validation (fail-if-no-match) or details enrichment without forcing a string label."
+    },
+
     "OutcomeOperation": {
-      "description": "Stage 4 — map the resolved value to a game result string. Choose one: 'ranges' for range-to-result mapping, 'degreeOfSuccess' for PF2e-style tiered outcomes, or 'tableLookup' for a named table.",
+      "description": "Stage 4 — map the resolved value to a game result. Choose one: 'ranges' for range-to-result mapping, 'degreeOfSuccess' for PF2e-style tiered outcomes, or 'tableLookup' for a named table. Optionally pair with resultShape: 'numeric' to keep the numeric total as the result while still enforcing range coverage.",
       "oneOf": [
         {
           "type": "object",
@@ -669,7 +704,8 @@
               "description": "Ordered list of range-to-result mappings. Evaluated top to bottom; first match wins.",
               "minItems": 1,
               "items": { "$ref": "#/$defs/TableRange" }
-            }
+            },
+            "resultShape": { "$ref": "#/$defs/ResultShape" }
           }
         },
         {
@@ -694,7 +730,8 @@
                   "description": "Minimum total for a critical failure"
                 }
               }
-            }
+            },
+            "resultShape": { "$ref": "#/$defs/ResultShape" }
           }
         },
         {
@@ -702,7 +739,8 @@
           "required": ["tableLookup"],
           "additionalProperties": false,
           "properties": {
-            "tableLookup": { "$ref": "#/$defs/RefOrTableDefinition" }
+            "tableLookup": { "$ref": "#/$defs/RefOrTableDefinition" },
+            "resultShape": { "$ref": "#/$defs/ResultShape" }
           }
         }
       ]
@@ -733,7 +771,7 @@
     },
 
     "DetailsLeafDef": {
-      "description": "A leaf field in the details object. Either passes through an input value, computes a pipeline expression, or references a pool total.",
+      "description": "A leaf field in the details object. Either passes through an input value, computes a pipeline expression, references a pool total, or performs a boolean die check.",
       "oneOf": [
         {
           "type": "object",
@@ -758,7 +796,7 @@
             "expr": {
               "type": "string",
               "enum": ["diceTotal", "total"],
-              "description": "Computed expression: 'diceTotal' = sum before postResolveModifiers, 'total' = final total"
+              "description": "Computed expression: 'diceTotal' = raw sum of kept dice before arithmetic modifiers, 'total' = final total"
             }
           }
         },
@@ -791,6 +829,45 @@
               "type": "string",
               "enum": ["total"],
               "description": "Which value from the conditional pool result (currently only 'total')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["$dieCheck"],
+          "additionalProperties": false,
+          "properties": {
+            "$dieCheck": {
+              "type": "object",
+              "description": "Boolean check on a specific die value. Produces true/false based on comparing a die's rolled value against a target.",
+              "required": ["pool", "field", "die", "operator", "value"],
+              "additionalProperties": false,
+              "properties": {
+                "pool": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Zero-indexed roll record (pool) to check"
+                },
+                "field": {
+                  "type": "string",
+                  "enum": ["final", "initial"],
+                  "description": "Whether to check the final (after keep/drop) or initial (before modifiers) die value"
+                },
+                "die": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Zero-indexed die within the pool's rolls array"
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": ["=", ">", ">=", "<", "<="],
+                  "description": "Comparison operator"
+                },
+                "value": {
+                  "type": "integer",
+                  "description": "Target value to compare against"
+                }
+              }
             }
           }
         }

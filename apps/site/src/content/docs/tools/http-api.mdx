@@ -1,0 +1,110 @@
+---
+title: HTTP API & Hosted Schema
+description: Roll dice over HTTP with POST /api/roll, and reference the games meta-schema hosted at its canonical $id.
+---
+
+RANDSUM exposes two zero-install web surfaces at `randsum.dev`: an HTTP roll
+endpoint and the hosted games meta-schema. Both are public and CORS-enabled, so
+you can call them from any browser, editor, or server.
+
+## Hosted meta-schema
+
+The `@randsum/games` package validates every `*.randsum.json` game spec against a
+[JSON Schema](https://json-schema.org). That schema is published at its declared
+`$id`:
+
+```
+https://randsum.dev/schemas/v1/randsum.json
+```
+
+It is served as `application/json` and is byte-identical to the source of truth
+in the monorepo (`packages/games/randsum.json`) — a build step copies it into the
+site and a sync test fails the build if the two ever drift.
+
+### Editor autocompletion
+
+Until the schema lands in [SchemaStore](https://www.schemastore.org) (tracked in
+[issue #1130](https://github.com/RANDSUM/randsum/issues/1130)), reference it
+explicitly with a `$schema` key so editors like VS Code give you completion and
+validation while authoring a game spec:
+
+```json
+{
+  "$schema": "https://randsum.dev/schemas/v1/randsum.json",
+  "name": "My Game",
+  "shortcode": "mygame",
+  "game_url": "https://example.com",
+  "roll": {
+    "dice": { "pool": { "sides": 6, "quantity": 2 } },
+    "resolve": "sum"
+  }
+}
+```
+
+## `POST /api/roll`
+
+Evaluate any [RANDSUM dice notation](https://notation.randsum.dev) over HTTP. The
+endpoint runs the same `roll()` engine as `@randsum/roller`.
+
+### Request
+
+`POST` JSON with a single `notation` field:
+
+```bash
+curl -X POST https://randsum.dev/api/roll \
+  -H "Content-Type: application/json" \
+  -d '{"notation":"4d6L"}'
+```
+
+### Response — `200 OK`
+
+```json
+{
+  "notation": "4d6L",
+  "total": 12,
+  "rolls": [3, 4, 5],
+  "description": "Roll 4 6-sided dice; Drop lowest"
+}
+```
+
+| Field         | Type       | Description                                  |
+| ------------- | ---------- | -------------------------------------------- |
+| `notation`    | `string`   | The notation that was rolled                 |
+| `total`       | `number`   | Combined total of all rolls                  |
+| `rolls`       | `number[]` | Individual die values after modifiers        |
+| `description` | `string`   | Human-readable description of the roll        |
+
+### Errors — `400 Bad Request`
+
+Invalid notation returns the roller's own error message, plus a `suggestion`
+when a likely fix can be inferred (the same hint powered by `suggestNotationFix`):
+
+```bash
+curl -X POST https://randsum.dev/api/roll \
+  -H "Content-Type: application/json" \
+  -d '{"notation":"d6"}'
+```
+
+```json
+{
+  "error": "Invalid dice notation: \"d6\"",
+  "suggestion": "1d6"
+}
+```
+
+Notation longer than 1000 characters is rejected before parsing, and oversized
+request bodies return `413 Payload Too Large`.
+
+### Usage — `GET /api/roll`
+
+A plain `GET` returns a JSON description of the contract, handy for quick
+discovery:
+
+```bash
+curl https://randsum.dev/api/roll
+```
+
+### CORS
+
+Every response includes `Access-Control-Allow-Origin: *`, so the endpoint is
+callable directly from browser front-ends.
