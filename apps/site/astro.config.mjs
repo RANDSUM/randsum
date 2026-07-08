@@ -19,6 +19,31 @@ const isDev = process.argv.includes('dev')
 
 export default defineConfig({
   base: '/',
+  // Legacy 301 redirects for old URL shapes. These MUST live here rather than in
+  // netlify.toml [[redirects]]: this site ships an on-demand SSR function
+  // (`src/pages/api/roll.ts`, `prerender = false`), and @astrojs/netlify then
+  // registers that function at `/*` with `preferStatic: true`. Netlify evaluates
+  // functions BEFORE toml redirects and `preferStatic` only defers to *existing
+  // static files* — the legacy sources below have none, so a toml redirect would
+  // be shadowed by the function and 404. Declared here, Astro emits them as real
+  // redirect routes the function itself serves, so they resolve regardless of
+  // Netlify precedence. The `/*` → /404 catch-all stays in netlify.toml.
+  redirects: {
+    // Old package URLs → new game/tool pages
+    '/packages/fifth/': { status: 301, destination: '/games/fifth/' },
+    '/packages/blades/': { status: 301, destination: '/games/blades/' },
+    '/packages/daggerheart/': { status: 301, destination: '/games/daggerheart/' },
+    '/packages/pbta/': { status: 301, destination: '/games/pbta/' },
+    '/packages/root-rpg/': { status: 301, destination: '/games/root-rpg/' },
+    '/packages/salvageunion/': { status: 301, destination: '/games/salvageunion/' },
+    '/packages/discord-bot/': { status: 301, destination: '/tools/discord-bot/' },
+    // Old docs URLs → new reference pages
+    '/docs/notation/': { status: 301, destination: '/notation/randsum-dice-notation/' },
+    '/docs/errors/': { status: 301, destination: '/roller/modifiers/' },
+    // Old getting-started URLs → new locations
+    '/getting-started/notation/': { status: 301, destination: '/roller/getting-started/' },
+    '/getting-started/game-packages/': { status: 301, destination: '/games/introduction/' }
+  },
   fonts: [
     {
       name: 'Inter',

@@ -39,65 +39,18 @@
   targetPort = 4321
   port = 8888
 
-# Old package URLs → new game/tool pages
-[[redirects]]
-  from = "/packages/fifth/"
-  to = "/games/fifth/"
-  status = 301
+# The 11 legacy 301 redirects (old /packages/*, /docs/*, /getting-started/* URLs)
+# now live in apps/site/astro.config.mjs under `redirects: {...}` — NOT here.
+# Reason: this site ships an on-demand SSR function (src/pages/api/roll.ts), and
+# @astrojs/netlify registers it at `/*` with preferStatic: true. Netlify runs
+# functions BEFORE toml [[redirects]] and preferStatic only defers to existing
+# static files, so toml redirects for those (static-file-less) sources would be
+# shadowed by the function and 404 instead of 301. Astro emits the config
+# redirects as routes the function serves itself, bypassing that precedence.
+# Keep new legacy redirects in astro.config.mjs so the two configs never drift.
 
-[[redirects]]
-  from = "/packages/blades/"
-  to = "/games/blades/"
-  status = 301
-
-[[redirects]]
-  from = "/packages/daggerheart/"
-  to = "/games/daggerheart/"
-  status = 301
-
-[[redirects]]
-  from = "/packages/pbta/"
-  to = "/games/pbta/"
-  status = 301
-
-[[redirects]]
-  from = "/packages/root-rpg/"
-  to = "/games/root-rpg/"
-  status = 301
-
-[[redirects]]
-  from = "/packages/salvageunion/"
-  to = "/games/salvageunion/"
-  status = 301
-
-[[redirects]]
-  from = "/packages/discord-bot/"
-  to = "/tools/discord-bot/"
-  status = 301
-
-# Old docs URLs → new reference pages
-[[redirects]]
-  from = "/docs/notation/"
-  to = "/notation/randsum-dice-notation/"
-  status = 301
-
-[[redirects]]
-  from = "/docs/errors/"
-  to = "/roller/modifiers/"
-  status = 301
-
-# Old getting-started URLs → new locations
-[[redirects]]
-  from = "/getting-started/notation/"
-  to = "/roller/getting-started/"
-  status = 301
-
-[[redirects]]
-  from = "/getting-started/game-packages/"
-  to = "/games/introduction/"
-  status = 301
-
-# Redirect 404s to the 404 page
+# Redirect 404s to the 404 page. Kept here as a static-file-level catch-all — it
+# is a status-404 rewrite, not a 301, so it does not belong in Astro's redirects.
 [[redirects]]
   from = "/*"
   to = "/404"

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { isDiceNotation, roll, suggestNotationFix, validateNotation } from '@randsum/roller'
+import { isDiceNotation, roll, suggestNotationFix } from '@randsum/roller'
 
 // Deploy as an on-demand Netlify function rather than a prerendered page.
 export const prerender = false
@@ -7,8 +7,11 @@ export const prerender = false
 // The roller rejects notation longer than 1000 characters, so anything past
 // that can never produce a valid roll — reject it before touching the parser.
 const MAX_NOTATION_LENGTH = 1000
-// Early bail-out for oversized payloads. Generous headroom over a 1000-char
-// notation wrapped in the tiny JSON envelope, but small enough to shed abuse.
+// Cap on the buffered request body. This is checked after the body is read, on
+// `string.length` (UTF-16 code units, not bytes), so it is a coarse ceiling
+// rather than a true wire-size limit — enough to shed obviously oversized
+// payloads once buffered. Generous headroom over a 1000-char notation wrapped in
+// the tiny JSON envelope.
 const MAX_BODY_BYTES = 4096
 
 const CORS_HEADERS: Readonly<Record<string, string>> = {
@@ -56,12 +59,10 @@ export function evaluateNotation(input: unknown): RollEvaluation {
     }
   }
 
+  // `!isDiceNotation` already guarantees the notation is invalid, so there is no
+  // "valid" case to branch on here — surface the invalid-notation message directly.
   if (!isDiceNotation(input)) {
-    const validation = validateNotation(input)
-    const message = validation.valid
-      ? `Invalid dice notation: "${input}"`
-      : validation.error.message
-    return errorBody(message, suggestNotationFix(input))
+    return errorBody(`Invalid dice notation: "${input}"`, suggestNotationFix(input))
   }
 
   try {
