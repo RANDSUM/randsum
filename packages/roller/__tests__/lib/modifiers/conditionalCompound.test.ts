@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 import { createSeededRandom } from '../../../test-utils/src/seededRandom'
-import { compoundSchema } from '../../../src/modifiers/compound'
+import { compoundSchema } from '../../../src/notation/definitions/compound'
 
 describe('Conditional Compound notation', () => {
   test('parses !!{>=8}', () => {

@@ -58,9 +58,9 @@ export function roll(input: {
       ongoing: input.ongoing ?? 0,
       diceTotal: diceTotal
     }
-    if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
+    if (total >= 10) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
-    if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
+    if (total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
     throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
   }
   if (input.rollingWith === 'Disadvantage') {
@@ -80,9 +80,9 @@ export function roll(input: {
       ongoing: input.ongoing ?? 0,
       diceTotal: diceTotal
     }
-    if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
+    if (total >= 10) return { total, result: 'strong_hit', rolls: r.rolls, details }
     if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
-    if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
+    if (total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
     throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
   }
   const r = executeRoll({
@@ -98,9 +98,9 @@ export function roll(input: {
     ongoing: input.ongoing ?? 0,
     diceTotal: diceTotal
   }
-  if (total >= 10 && total <= 27) return { total, result: 'strong_hit', rolls: r.rolls, details }
+  if (total >= 10) return { total, result: 'strong_hit', rolls: r.rolls, details }
   if (total >= 7 && total <= 9) return { total, result: 'weak_hit', rolls: r.rolls, details }
-  if (total >= -11 && total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
+  if (total <= 6) return { total, result: 'miss', rolls: r.rolls, details }
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 

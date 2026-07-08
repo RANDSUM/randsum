@@ -11,7 +11,7 @@ export type ValidationResult =
   | { readonly valid: true }
   | { readonly valid: false; readonly errors: readonly ValidationError[] }
 
-const ajv = new Ajv({ allErrors: true })
+const ajv = new Ajv({ allErrors: true, allowUnionTypes: true })
 const _validate = ajv.compile(schema)
 
 export function validateSpec(spec: unknown): ValidationResult {

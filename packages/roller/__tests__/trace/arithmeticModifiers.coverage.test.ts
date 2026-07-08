@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 
 import { ARITHMETIC_MODIFIERS } from '../../src/trace/traceRoll'
 import { RANDSUM_MODIFIERS } from '../../src/modifiers'
+import { MODIFIER_DOCS_BY_NAME } from '../../src/docs/modifierDocData'
 
 /**
  * The trace renderer's ARITHMETIC_MODIFIERS map must stay in sync with the
@@ -12,7 +13,7 @@ import { RANDSUM_MODIFIERS } from '../../src/modifiers'
  * ARITHMETIC_MODIFIERS entry (or vice versa), these tests fail.
  */
 const registryArithmeticNames: string[] = RANDSUM_MODIFIERS.filter(
-  modifier => modifier.docs?.[0]?.category === 'Scale'
+  modifier => MODIFIER_DOCS_BY_NAME[modifier.name]?.[0]?.category === 'Scale'
 )
   .map(modifier => modifier.name as string)
   .sort()

@@ -3,17 +3,17 @@ import fc from 'fast-check'
 import { roll } from '@randsum/games/fate'
 
 const LADDER = [
-  'Legendary',
-  'Epic',
-  'Fantastic',
-  'Superb',
-  'Great',
-  'Good',
-  'Fair',
-  'Average',
-  'Mediocre',
-  'Poor',
-  'Terrible'
+  'legendary',
+  'epic',
+  'fantastic',
+  'superb',
+  'great',
+  'good',
+  'fair',
+  'average',
+  'mediocre',
+  'poor',
+  'terrible'
 ]
 
 describe('roll property-based tests', () => {

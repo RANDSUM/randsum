@@ -1,61 +1,6 @@
-import type { ModifierOptions } from '../notation/types'
-import { defineNotationSchema } from '../notation/schema'
-import type { NotationSchema } from '../notation/schema'
-import type { NotationDoc } from '../docs/modifierDocs'
+import { minusSchema } from '../notation/definitions/minus'
 import type { ModifierDefinition } from './schema'
-import { sumMatchCounts } from './shared/extractCount'
 import { createScaleBehavior } from './shared/scale'
-
-const minusPattern = /-(\d+)/
-const minusGlobalPattern = /-(\d+)/g
-
-export const minusSchema: NotationSchema<number> = defineNotationSchema<number>({
-  name: 'minus',
-  priority: 91,
-
-  pattern: minusPattern,
-
-  docs: [
-    {
-      key: '-',
-      category: 'Scale',
-      color: '#f87171',
-      colorLight: '#dc2626',
-      title: 'Subtract',
-      description: 'Subtract a fixed number from the total after all dice are rolled.',
-      displayBase: '\u2212',
-      forms: [{ notation: '-n', note: 'Subtract n from total' }],
-      examples: [
-        {
-          description: 'Roll 1d20, subtract 2',
-          notation: '1d20-2',
-          options: { sides: 20, modifiers: { minus: 2 } }
-        },
-        {
-          description: 'Drop lowest, subtract 1',
-          notation: '4d6L-1',
-          options: { sides: 6, quantity: 4, modifiers: { drop: { lowest: 1 }, minus: 1 } }
-        }
-      ]
-    }
-  ] satisfies readonly NotationDoc[],
-
-  parse: notation => {
-    const total = sumMatchCounts(notation, minusGlobalPattern)
-    if (total === undefined) return {}
-
-    const result: Pick<ModifierOptions, 'minus'> = { minus: total }
-    return result
-  },
-
-  toNotation: options => {
-    return `-${options}`
-  },
-
-  toDescription: options => {
-    return [`Subtract ${options}`]
-  }
-})
 
 export const minusModifier: ModifierDefinition<number> = {
   ...minusSchema,

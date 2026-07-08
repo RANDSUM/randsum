@@ -32,6 +32,7 @@
   "references": [
     { "path": "packages/roller" },
     { "path": "packages/games" },
+    { "path": "packages/mcp" },
     { "path": "packages/dice-ui" },
     { "path": "apps/cli" },
     { "path": "apps/discord-bot" },

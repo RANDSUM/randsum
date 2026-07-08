@@ -7,7 +7,7 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -20, max: 20 }), modifier => {
         const { result } = roll({ modifier })
-        return ['hope', 'fear', 'critical hope'].includes(result)
+        return ['hope', 'fear', 'critical_hope'].includes(result)
       })
     )
   })
