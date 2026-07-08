@@ -1,4 +1,5 @@
-import type { RollArgument, RollConfig } from '@randsum/roller'
+import type { RollArgument, RollConfig, RollerRollResult } from '@randsum/roller'
+import { suggestNotationFix } from '@randsum/roller'
 import { roll } from '@randsum/roller/roll'
 import { formatCompact, formatJson, formatVerbose } from './format'
 
@@ -6,6 +7,7 @@ interface RunOptions {
   readonly notations: readonly string[]
   readonly verbose: boolean
   readonly json: boolean
+  readonly total?: boolean
   readonly repeat: number
   readonly seed?: number | undefined
 }
@@ -31,7 +33,13 @@ export function runRolls(options: RunOptions): RunResult {
   const config: RollConfig | undefined =
     options.seed !== undefined ? { randomFn: createSeededRandom(options.seed) } : undefined
 
-  const format = options.json ? formatJson : options.verbose ? formatVerbose : formatCompact
+  const format = options.total
+    ? (result: RollerRollResult): string => String(result.total)
+    : options.json
+      ? formatJson
+      : options.verbose
+        ? formatVerbose
+        : formatCompact
 
   const stdoutLines: string[] = []
   const stderrLines: string[] = []
@@ -43,7 +51,11 @@ export function runRolls(options: RunOptions): RunResult {
       const result = config ? roll(...notations, config) : roll(...notations)
       stdoutLines.push(format(result))
     } catch (e) {
-      stderrLines.push(`Error: ${e instanceof Error ? e.message : String(e)}`)
+      const baseMessage = `Error: ${e instanceof Error ? e.message : String(e)}`
+      const suggestion = suggestNotationFix(options.notations.join(' '))
+      stderrLines.push(
+        suggestion ? `${baseMessage}\n\nDid you mean \`${suggestion}\`?` : baseMessage
+      )
     }
   }
 

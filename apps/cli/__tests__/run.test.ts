@@ -64,6 +64,35 @@ describe('runRolls', () => {
     expect(a.stdout).toBe(b.stdout)
   })
 
+  test('prints only the numeric total when total flag set', () => {
+    const result = runRolls({
+      notations: ['3d6'],
+      verbose: false,
+      json: false,
+      total: true,
+      repeat: 1,
+      seed: 42
+    })
+    expect(result.stdout).toMatch(/^\d+$/)
+    expect(result.hadError).toBe(false)
+  })
+
+  test('total flag prints one total per line with repeat', () => {
+    const result = runRolls({
+      notations: ['1d6'],
+      verbose: false,
+      json: false,
+      total: true,
+      repeat: 3,
+      seed: 42
+    })
+    const lines = result.stdout.split('\n').filter(Boolean)
+    expect(lines).toHaveLength(3)
+    for (const line of lines) {
+      expect(line).toMatch(/^\d+$/)
+    }
+  })
+
   test('routes errors to stderr and flags hadError', () => {
     const result = runRolls({
       notations: ['zzzz'],
@@ -73,6 +102,18 @@ describe('runRolls', () => {
     })
     expect(result.stderr).toContain('Error:')
     expect(result.stdout).toBe('')
+    expect(result.hadError).toBe(true)
+  })
+
+  test('appends a did-you-mean suggestion when one is available', () => {
+    const result = runRolls({
+      notations: ['d20+'],
+      verbose: false,
+      json: false,
+      repeat: 1
+    })
+    expect(result.stderr).toContain('Error:')
+    expect(result.stderr).toContain('Did you mean')
     expect(result.hadError).toBe(true)
   })
 
