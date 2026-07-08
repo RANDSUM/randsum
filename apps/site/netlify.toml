@@ -10,7 +10,7 @@
   # conserving free-tier build minutes. The site imports roller + games and renders
   # MDX docs for the whole ecosystem, so it rebuilds on changes to apps/site, any
   # packages/*, or root build config (lockfile, workspace + tsconfig). It does NOT
-  # rebuild for changes confined to the other apps (rdn, cli, expo, discord-bot).
+  # rebuild for changes confined to the other apps (rdn, cli, discord-bot).
   # `git diff --quiet` exits 1 when the listed paths changed → build proceeds. On the
   # first build CACHED_COMMIT_REF is empty and git errors non-zero, so the build also
   # proceeds (safe default).
@@ -68,23 +68,23 @@
 # Old docs URLs → new reference pages
 [[redirects]]
   from = "/docs/notation/"
-  to = "/reference/dice-notation/"
+  to = "/notation/randsum-dice-notation/"
   status = 301
 
 [[redirects]]
   from = "/docs/errors/"
-  to = "/reference/modifiers/"
+  to = "/roller/modifiers/"
   status = 301
 
 # Old getting-started URLs → new locations
 [[redirects]]
   from = "/getting-started/notation/"
-  to = "/getting-started/quick-start/"
+  to = "/roller/getting-started/"
   status = 301
 
 [[redirects]]
   from = "/getting-started/game-packages/"
-  to = "/games/overview/"
+  to = "/games/introduction/"
   status = 301
 
 # Redirect 404s to the 404 page
