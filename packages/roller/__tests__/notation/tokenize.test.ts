@@ -493,4 +493,25 @@ describe('tokenize', () => {
       expect(wToken?.text).toBe('W')
     })
   })
+
+  // The tokenize subpath calls the lexer unguarded by the 1000-char parse gate,
+  // so the scanner must be iterative (not per-token/per-char recursion) or a long
+  // input overflows the call stack. Regression for the scanFrom recursion bug.
+  describe('very long input does not overflow the stack', () => {
+    test('1,000,000 unknown characters tokenize without throwing', () => {
+      const tokens = tokenize('q'.repeat(1_000_000))
+      // Consecutive unknown characters coalesce into a single unknown token.
+      expect(tokens).toHaveLength(1)
+      expect(tokens[0]?.category).toBe('unknown')
+      expect(tokens[0]?.text).toHaveLength(1_000_000)
+    })
+
+    test('a very long valid multi-pool string tokenizes without throwing', () => {
+      const notation = `1d20${'+1d20'.repeat(100_000)}`
+      const tokens = tokenize(notation)
+      // 1 leading pool + 100,000 signed pools.
+      expect(tokens).toHaveLength(100_001)
+      expect(tokens.every(t => t.category === 'Core')).toBe(true)
+    })
+  })
 })

@@ -79,29 +79,53 @@ function buildPool(head: LexToken, bound: readonly LexToken[]): PoolNode {
  * This is the single acceptance authority — `isDiceNotation` is `parse().valid`.
  */
 export function parseNotation(input: string): ParseResult {
+  // The lexer positions tokens relative to the trimmed string; track the leading
+  // whitespace so every reported error offset is in the caller's coordinates.
+  const trimOffset = input.length - input.trimStart().length
   const trimmed = input.trim()
   if (trimmed.length === 0) return invalid('Empty notation', 0)
   if (trimmed.length > MAX_NOTATION_LENGTH) {
-    return invalid(`Notation exceeds ${MAX_NOTATION_LENGTH} characters`, MAX_NOTATION_LENGTH)
+    return invalid(
+      `Notation exceeds ${MAX_NOTATION_LENGTH} characters`,
+      MAX_NOTATION_LENGTH + trimOffset
+    )
   }
 
   const tokens = scan(trimmed)
 
   // Every token must be known.
   const unknown = tokens.find(t => t.role === 'unknown')
-  if (unknown) return invalid(`Unexpected "${unknown.text}"`, unknown.start)
+  if (unknown) return invalid(`Unexpected "${unknown.text}"`, unknown.start + trimOffset)
 
   // A die expression must begin with a pool.
   const head = tokens[0]
   if (!head) return invalid('No die expression found', 0)
-  if (head.role !== 'pool') return invalid(`Expected a die before "${head.text}"`, head.start)
+  if (head.role !== 'pool') {
+    return invalid(`Expected a die before "${head.text}"`, head.start + trimOffset)
+  }
+
+  // A repeat operator (xN) repeats everything to its left, so it may only appear
+  // in a trailing run: any repeat followed by a further pool / modifier /
+  // annotation has no well-defined scope. RDN §6.8.3 leaves multi-pool scope
+  // unspecified; rather than silently drop a mid-stream `xN` (as `4d6x2+2d8`
+  // previously did), reject it with a positioned error. Whole-string-trailing
+  // `xN` is accepted and repeats the entire expression.
+  const strayRepeat = tokens.find(
+    (t, i) => t.role === 'repeat' && tokens.slice(i + 1).some(u => u.role !== 'repeat')
+  )
+  if (strayRepeat) {
+    return invalid(
+      `Repeat "${strayRepeat.text}" must be at the end of the notation`,
+      strayRepeat.start + trimOffset
+    )
+  }
 
   // At most one Count-family modifier (RDN P5).
   const countFamily = tokens.filter(t => t.role === 'modifier' && COUNT_FAMILY_KEYS.has(t.key))
   if (countFamily.length > 1) {
     return invalid(
       'Only one Count-family modifier (#{}, S{}, F{}) is permitted',
-      countFamily[1]?.start ?? 0
+      (countFamily[1]?.start ?? 0) + trimOffset
     )
   }
 
@@ -111,11 +135,12 @@ export function parseNotation(input: string): ParseResult {
       t.role === 'pool' &&
       !poolMagnitudeValid(t.poolKind ?? 'standard', t.text.replace(/^[+-]/, ''))
   )
-  if (badPool) return invalid(`Invalid die "${badPool.text}"`, badPool.start)
+  if (badPool) return invalid(`Invalid die "${badPool.text}"`, badPool.start + trimOffset)
 
   // Group tokens into pools: each pool token owns the following modifier /
-  // annotation tokens until the next pool token. (repeat tokens are structurally
-  // valid wherever they lex — nested `xN` is legal — and handled in notationToOptions.)
+  // annotation tokens until the next pool token. Any trailing `xN` run (the only
+  // position `xN` is now accepted) is ignored here and applied by
+  // notationToOptions, which strips a whole-string-trailing repeat before parsing.
   const pools = tokens.flatMap((tok, i) => {
     if (tok.role !== 'pool') return []
     const nextOffset = tokens.slice(i + 1).findIndex(t => t.role === 'pool')

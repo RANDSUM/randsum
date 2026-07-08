@@ -89,9 +89,14 @@ function appendUnknown(tokens: LexToken[], char: string, cursor: number): void {
   }
 }
 
-function scanFrom(input: string, cursor: number, tokens: LexToken[]): void {
-  if (cursor >= input.length) return
-
+/**
+ * Advance the cursor by exactly one token, pushing it onto `tokens`, and return
+ * the new cursor. Every branch consumes at least one character, so the driving
+ * loop in `scan` is guaranteed to terminate. This is an ordinary function (not a
+ * recursion) precisely so that pathological input — a very long unmatched run, or
+ * a very long valid stream — costs stack space O(1) rather than O(length).
+ */
+function scanStep(input: string, cursor: number, tokens: LexToken[]): number {
   const isStart = cursor === 0
   const nextIsSign = input[cursor] === '+' || input[cursor] === '-'
   if (isStart || nextIsSign) {
@@ -107,8 +112,7 @@ function scanFrom(input: string, cursor: number, tokens: LexToken[]): void {
         poolKind: pool.kind,
         sign: pool.sign
       })
-      scanFrom(input, pool.end, tokens)
-      return
+      return pool.end
     }
   }
 
@@ -122,8 +126,7 @@ function scanFrom(input: string, cursor: number, tokens: LexToken[]): void {
       end: mod.end,
       role: 'modifier'
     })
-    scanFrom(input, mod.end, tokens)
-    return
+    return mod.end
   }
 
   const repeat = matchAt(REPEAT_MATCHER, input, cursor)
@@ -136,8 +139,7 @@ function scanFrom(input: string, cursor: number, tokens: LexToken[]): void {
       end: cursor + repeat.length,
       role: 'repeat'
     })
-    scanFrom(input, cursor + repeat.length, tokens)
-    return
+    return cursor + repeat.length
   }
 
   const annotation = matchAt(ANNOTATION_MATCHER, input, cursor)
@@ -150,12 +152,11 @@ function scanFrom(input: string, cursor: number, tokens: LexToken[]): void {
       end: cursor + annotation.length,
       role: 'annotation'
     })
-    scanFrom(input, cursor + annotation.length, tokens)
-    return
+    return cursor + annotation.length
   }
 
   appendUnknown(tokens, input[cursor] ?? '', cursor)
-  scanFrom(input, cursor + 1, tokens)
+  return cursor + 1
 }
 
 /**
@@ -163,10 +164,20 @@ function scanFrom(input: string, cursor: number, tokens: LexToken[]): void {
  * Structure is NOT enforced here (a leading modifier, a pool mid-stream, etc. are
  * tokenized as they lie) — this is the raw stream `tokenize` exposes. Structural
  * validity is layered on top by `parseNotation`.
+ *
+ * The pass is an iterative loop (not per-token/per-char recursion) so that
+ * arbitrarily long input — the `tokenize` subpath is unguarded by the 1000-char
+ * gate — cannot overflow the call stack.
  */
 export function scan(input: string): readonly LexToken[] {
   if (input.length === 0) return []
   const tokens: LexToken[] = []
-  scanFrom(input, 0, tokens)
+  // Mutable cursor held on a const object (the lint rule bans `let` but allows
+  // this); every `scanStep` advances it by at least one character, so the loop
+  // terminates in O(length) steps with O(1) stack depth.
+  const cursor = { pos: 0 }
+  while (cursor.pos < input.length) {
+    cursor.pos = scanStep(input, cursor.pos, tokens)
+  }
   return tokens
 }

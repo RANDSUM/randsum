@@ -25,9 +25,17 @@ Breaking / behavior changes:
   `validateNotation(...).error` now carry the real character offset where parsing
   failed (`ErrorContext.position` / `ValidationErrorInfo.position`).
 - The structural parser rejects some malformed strings the old strip-based
-  validator accepted (a die/modifier out of pool position, a leading-zero
-  magnitude on a special die). Acceptance of all well-formed notation is
-  unchanged.
+  validator accepted (a die/modifier out of pool position, an annotation before a
+  pool such as `[fire]1d20`, a leading-zero magnitude on a special die).
+  Acceptance of all well-formed notation is unchanged.
+- Repeat operator (`xN`) scope is now explicit. `xN` repeats everything to its
+  left, so it is accepted ONLY as a trailing run and a whole-string-trailing `xN`
+  now repeats the ENTIRE expression (before → the pre-lexer engine scoped a
+  trailing `xN` to the last pool: `2d6+1d8x2` was "2d6 then two 1d8"; after → it
+  is "(2d6+1d8) twice"). A non-trailing `xN` — e.g. `4d6x2+2d8` — was previously
+  accepted but silently dropped (the `x2` had no effect); it is now a positioned
+  rejection (`isDiceNotation` → false, `roll()` throws). Single-pool trailing
+  repeats (`4d6Lx6`) and nested trailing repeats (`2d6x2x3`) are unchanged.
 - `validateNotation(...).description` (and the public `optionsToDescription`) now
   render special dice with their own semantics — `validateNotation('4dF')` reports
   `"Roll 4dF"`, `'3DD6'` reports `"Draw 3 from d6"`, `'g6'` reports the geometric
