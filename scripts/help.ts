@@ -11,7 +11,7 @@
 const categories: Record<string, Record<string, string>> = {
   'Daily Development': {
     test: 'Run all tests recursively',
-    build: 'Build all packages (ESM + CJS + types)',
+    build: 'Build all packages (ESM + types, no CJS)',
     'fix:all': 'Auto-fix lint issues and format code',
     'check:all': 'Run full CI pipeline locally'
   },
@@ -20,14 +20,13 @@ const categories: Record<string, Record<string, string>> = {
     format: 'Format code with Prettier',
     'format:check': 'Check if code is formatted',
     typecheck: 'Run TypeScript type checking',
-    'check:exports': 'Find unused exports'
+    knip: 'Find unused files, deps, and exports'
   },
   'Testing & Analysis': {
     'test:coverage': 'Run tests with coverage report',
     bench: 'Run performance benchmarks',
     profile: 'CPU profile benchmarks (Chrome DevTools)',
-    'profile:md': 'CPU profile benchmarks (Markdown)',
-    size: 'Check bundle sizes against limits'
+    'profile:md': 'CPU profile benchmarks (Markdown)'
   },
   'Site Development': {
     'site:dev': 'Start Astro dev server (localhost:4321)',
@@ -54,6 +53,6 @@ console.log('\n' + '='.repeat(55))
 console.log('\nPackage-specific commands:')
 console.log('  bun run --filter @randsum/<pkg> <script>')
 console.log(
-  '\nAdd a new game: add <shortcode>.randsum.json to packages/games/, run bun run codegen'
+  '\nAdd a new game: add <shortcode>.randsum.json to packages/games/, run bun run --filter @randsum/games gen'
 )
 console.log('\nMore info: CLAUDE/scripts.md or CONTRIBUTING.md\n')

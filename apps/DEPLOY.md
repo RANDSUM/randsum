@@ -1,6 +1,6 @@
 # Operations Runbook — Deploy, Rollback & DR
 
-_Last verified against source: 2026-06-13. Covers all deployable apps in this monorepo._
+_Last verified against source: 2026-07-07. Covers all deployable apps in this monorepo._
 
 This is the operational counterpart to each app's `CLAUDE.md` (which covers development).
 It documents how each surface is hosted, deployed, rolled back, and recovered, plus where
@@ -13,11 +13,14 @@ to file incident RCAs.
 | Docs site          | `apps/site`                                     | Netlify         | push to `main`           | randsum.dev           |
 | Notation spec site | `apps/rdn`                                      | Netlify         | push to `main`           | notation.randsum.dev  |
 | Discord bot        | `apps/discord-bot`                              | Render (worker) | manual / Render redeploy | n/a (Discord gateway) |
-| npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry    | manual `bun publish`     | npmjs.com/org/randsum |
+| npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry    | changesets on merge      | npmjs.com/org/randsum |
 
 > Config sources: `apps/site/netlify.toml`, `apps/rdn/netlify.toml`,
 > `render.yaml` (repo root). Workflow files live in `.github/workflows/` (owned separately —
 > see those files for the exact trigger steps).
+>
+> The `randsum.io` playground is a **legacy app deployed outside this monorepo** — it is not
+> built or deployed by any config here and is out of scope for this runbook.
 
 ---
 
@@ -25,7 +28,7 @@ to file incident RCAs.
 
 Both Astro sites are separate Netlify projects building from this repo.
 
-- **site** build: `bun run build && bun run site:build`, publish `apps/site/dist`.
+- **site** build: `bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run site:build`, publish `apps/site/dist`.
 - **rdn** build: `bun run --filter @randsum/roller build && bun run --filter @randsum/rdn build`, publish `apps/rdn/dist`.
 - Deploys are automatic on push to `main`.
 
@@ -47,7 +50,7 @@ you can roll forward again the same way once the fix lands.
 
 ### DR notes
 
-- The site is fully reproducible from git (`bun run build && bun run site:build`). Loss of
+- The site is fully reproducible from git (`bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run site:build`). Loss of
   Netlify state is recoverable by reconnecting the repo and redeploying `main`.
 - DNS for `randsum.dev` / `notation.randsum.dev` is the only non-git state — keep the
   registrar and Netlify DNS records documented in the team password vault.
@@ -60,9 +63,6 @@ you can roll forward again the same way once the fix lands.
 (`randsum-discord-bot`): build `bun install && bun run build`, start
 `node apps/discord-bot/dist/index.js`. Env vars `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`,
 `DISCORD_GUILD_ID` are `sync: false` (set in the Render dashboard, never committed).
-
-> Note: `apps/discord-bot/README.md` still describes a self-hosted/pm2 path. The committed
-> infra-as-code is Render (`render.yaml`); treat Render as the source of truth for hosting.
 
 ### Deploy
 
@@ -112,9 +112,13 @@ gateway.
 
 ## npm packages (roller, games, cli)
 
-Publishing is **manual** and must use `bun publish` (never `npm publish` — see root
-`CLAUDE.md` for the `workspace:~` resolution reason). Order: `@randsum/roller` →
-`@randsum/games` → `@randsum/cli`.
+Publishing is **automated via changesets + npm OIDC Trusted Publishing** (`.github/workflows/publish.yml`):
+merging a changeset to `main` opens/updates a `chore: version packages` PR, and merging that PR
+publishes the changed packages. Under the hood `bun scripts/publish.ts` packs each package with
+`bun pm pack` (resolving `workspace:~`) and publishes the tarball with `npm publish --provenance`,
+in order `@randsum/roller` → `@randsum/games` → `@randsum/cli`. A local fallback is
+`bun scripts/publish.ts --otp=<CODE>`. See root `CLAUDE.md` for the full flow and the
+`workspace:~` resolution reason (never run a bare `npm publish` on the raw source tree).
 
 ### Rollback
 

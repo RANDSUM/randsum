@@ -4,7 +4,7 @@ Thanks for your interest in contributing! This guide covers everything you need 
 
 ## Prerequisites
 
-- [Bun](https://bun.sh) v1.0+
+- [Bun](https://bun.sh) >= 1.3.14 (enforced by `engines`)
 - [Node.js](https://nodejs.org) v18+ (for compatibility)
 - Git
 
@@ -21,8 +21,11 @@ bun run check:all  # Verify everything works
 
 - `packages/roller/` -- Core dice engine with built-in RDN notation parser (all packages depend on this)
 - `packages/games/` -- Game system packages (subpath exports per game)
-- `packages/dice-ui/` -- Shared dice UI components (web + React Native targets)
-- `apps/site/` -- Documentation site (Astro)
+- `packages/dice-ui/` -- Private, web-only React UI components (consumed by `apps/site`)
+- `apps/cli/` -- Published npm CLI (`@randsum/cli`)
+- `apps/discord-bot/` -- Private Discord bot, deployed as a Render worker
+- `apps/site/` -- Documentation site at randsum.dev (Astro + Starlight)
+- `apps/rdn/` -- Notation spec site at notation.randsum.dev (Astro)
 
 ## Adding a New Game
 
@@ -64,9 +67,11 @@ Run `bun run fix:all` to auto-fix lint and format issues.
 4. Use conventional commit messages (`feat:`, `fix:`, `docs:`, `chore:`, `test:`, `refactor:`)
 5. Open a PR with a clear description of what and why
 
-### Pre-commit Hooks
+### Git Hooks (Lefthook)
 
-Lefthook runs on commit: ESLint, Prettier, and typecheck. If hooks fail, run `bun run fix:all`.
+**pre-commit** runs `bun install --frozen-lockfile` first (priority 1), then in parallel: ESLint `--fix`, Prettier, `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. If it fails, run `bun run fix:all`.
+
+**pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (priority 1), then in parallel: codegen check (`gen:check`), conformance check (`@randsum/rdn conformance:check`), the full test suite, a security audit (`bun audit --audit-level=high`), an SCA scan (`scripts/sca-scan.sh`, OSV-Scanner; soft-skips if the scanner is unavailable), `knip`, and the architecture check (`arch:check`). See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
 
 ## Resources
 

@@ -218,7 +218,7 @@ src/
     schema.ts       # NotationSchema type + defineNotationSchema
     tokenize.ts, validateNotation.ts, isDiceNotation.ts, suggestions.ts, ...
   types/            # shared types: core.ts, modifiers.ts, results.ts, index.ts
-  lib/              # random/, transformers/, utils/ (incl. validation.ts)
+  lib/              # comparison/, random/, utils/ + constants.ts, optionsValidation.ts (transformers live under notation/)
 ```
 
 ## Bundle size limits

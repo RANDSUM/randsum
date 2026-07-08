@@ -8,7 +8,7 @@
 - **Date / time (UTC):** <start> – <end>
 - **Duration:** <e.g. 42m>
 - **Severity:** <SEV1 outage | SEV2 degraded | SEV3 minor>
-- **Surface(s) affected:** <randsum.dev | notation.randsum.dev | playground web/native | discord bot | npm package>
+- **Surface(s) affected:** <randsum.dev | notation.randsum.dev | discord bot | npm package>
 - **Author:** <name>
 - **Status:** <draft | reviewed | closed>
 

@@ -13,6 +13,8 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 **Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private Discord bot, deployed as a Render worker), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private)
 
+**UI**: `@randsum/dice-ui` in `packages/dice-ui/` — private, web-only React component library (notation input with token overlay, roll step visualizer, combined roller) consumed by `apps/site`. Never published to npm; depends only on `@randsum/roller`.
+
 Game packages never depend on each other — only on `@randsum/roller`.
 
 ## Commands
@@ -25,7 +27,7 @@ bun run lint                             # ESLint all packages
 bun run format                           # Prettier all packages
 bun run typecheck                        # TypeScript strict check
 bun run knip                             # Find unused files, deps, and exports
-bun run check:all                        # Full CI pipeline (lint, format, typecheck, test, build, size, site)
+bun run check:all                        # Per-package check chain (build, typecheck, format:check, lint, test)
 bun run fix:all                          # Auto-fix lint + format issues
 
 # Single package
@@ -36,7 +38,7 @@ bun run --filter @randsum/games build    # Build one package
 bun test packages/roller/__tests__/roll/roll.test.ts
 
 # Other
-bun run size                             # Bundle size checks (size-limit)
+bun run --filter @randsum/roller size    # Bundle size checks (size-limit; per-package, no root script)
 bun run bench                            # Performance benchmarks (mitata)
 bun run site:dev                         # Astro dev server (localhost:4321)
 bun run help                             # Quick command reference
@@ -73,7 +75,7 @@ All publishable packages produce ESM only:
 
 - `dist/index.js` (ESM)
 - `dist/index.d.ts` (TypeScript declarations)
-- Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`
+- Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`. The game subpaths in `@randsum/games` are code-generated, so each compiles to `dist/<game>.generated.js` / `dist/<game>.generated.d.ts` (e.g. `./fifth` → `dist/fifth.generated.js`); the `schema` subpath is `dist/schema.js`.
 - No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
 - Bundle size limits enforced (per-package `size-limit`): roller main `dist/index.js` 16KB (notation included; `docs` subpath 20KB, `tokenize` 6.75KB, `trace` 5KB), game packages 15KB (daggerheart and pbta 16KB), salvageunion 33KB
 
@@ -81,21 +83,19 @@ CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates E
 
 ## Publishing
 
-**Always use `bun publish`, never `npm publish`.** `npm publish` does not resolve `workspace:~` references — it ships the literal string, which is unresolvable for consumers. `bun publish` correctly resolves `workspace:~` to a real semver range (e.g., `~1.2.3`) at pack time.
+Releases are **automated via [changesets](https://github.com/changesets/changesets) + npm OIDC Trusted Publishing** — you do not run a publish command by hand in the normal flow.
 
-```bash
-# From package directory:
-bun publish --access public --otp <CODE>   # First publish of a scoped package
-bun publish --otp <CODE>                   # Subsequent publishes
-```
+1. Add a changeset with your change: `bun run changeset` (writes a markdown file under `.changeset/`).
+2. On merge to `main`, the `Release` workflow (`.github/workflows/publish.yml`) runs after CI succeeds. The `changesets/action` either opens/updates a `chore: version packages` PR (applying `bun changeset version` to bump versions and roll per-package `CHANGELOG.md` entries) or, when that version PR is merged, publishes the changed packages.
+3. Publishing itself runs `bun scripts/publish.ts`, which packs each package with `bun pm pack` (resolving `workspace:~` to a real semver range at pack time) and then publishes the resulting tarball with `npm publish`. In CI, auth is npm Trusted Publishing (OIDC — no `NPM_TOKEN`) and `--provenance` is added to attest the build.
 
-- OTP is required — the npm account has 2FA set to `auth-and-writes`
-- Publish order: `@randsum/roller` first, then dependent packages (`@randsum/games`, `@randsum/cli`)
-- Auth: Bun reads `~/.npmrc` via `$XDG_CONFIG_HOME` (`~/.config/.npmrc`), not `~/.npmrc` directly. Both files must stay in sync. If `bun publish` returns a mysterious 404 on a scoped package, check for a stale token in `~/.config/.npmrc`
+**`workspace:~` warning:** never run a bare `npm publish` from a package directory — `npm` ships the literal `workspace:~` string, which is unresolvable for consumers. The pack step in `scripts/publish.ts` (`bun pm pack`) is what resolves it, so publishing always goes through that script (or `bun publish`), never `npm publish` on the raw source tree.
+
+**Local fallback (rare):** `bun scripts/publish.ts` can publish from a workstation. Pass `--otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`) and optionally `--dry-run`. Local runs omit `--provenance`. Publish order is fixed topologically in the script: `@randsum/roller` → `@randsum/games` → `@randsum/cli`.
 
 ## Versioning
 
-When `@randsum/roller` receives a minor version bump, dependent packages (game packages) should also receive a corresponding minor version bump to keep the ecosystem in sync. This applies to minor and major releases — patch bumps in core do not require dependents to bump.
+`@randsum/roller`, `@randsum/games`, `@randsum/cli`, and `@randsum/dice-ui` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/site` and `@randsum/discord-bot` are in the changesets `ignore` list (private, not versioned this way).
 
 ## Key Patterns
 
@@ -124,7 +124,7 @@ roll("d%") // Percentile: 1d100
 roll("4dF") // Fate Core: 4 Fate dice (-4 to +4)
 roll("dF.2") // Extended Fudge die (-2 to +2)
 roll("5d6W") // D6 System wild die
-roll("g6") // Geometric die (roll until 1)
+roll("g6") // Geometric die (reroll while max; sum all rolls)
 roll("3DD6") // Draw die (no replacement)
 roll("4d6Lx6") // Repeat operator (6 ability scores)
 roll("2d6+3[fire]") // Annotation/label
@@ -155,7 +155,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 - `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
 - `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
 
-**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. Check with `bun run size` or per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 15KB; daggerheart and pbta 16KB; salvageunion 33KB).
+**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. There is no root `size` script — check per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 15KB; daggerheart and pbta 16KB; salvageunion 33KB).
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 
