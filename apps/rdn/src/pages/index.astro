@@ -9,7 +9,7 @@ import OnThisPage from '../components/OnThisPage.astro'
 const latestId = await getLatestVersion()
 const allVersions = await getVersions()
 const entries = await getCollection('specs')
-const entry = entries.find((e) => e.id === latestId)
+const entry = entries.find(e => e.id === latestId)
 if (!entry) throw new Error(`No spec entry found for version: ${latestId}`)
 const { Content, headings } = await render(entry)
 const specUrl = 'https://notation.randsum.dev'

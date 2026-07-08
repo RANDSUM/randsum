@@ -50,13 +50,29 @@ const games = [
 ]
 
 const commands = [
-  { name: '/roll', description: 'Roll any dice using full RANDSUM notation', example: '/roll notation:4d6L+2' },
+  {
+    name: '/roll',
+    description: 'Roll any dice using full RANDSUM notation',
+    example: '/roll notation:4d6L+2'
+  },
   { name: '/blades', description: 'Blades in the Dark action roll', example: '/blades dice:3' },
-  { name: '/fifth', description: 'D&D 5e d20 roll with advantage support', example: '/fifth modifier:5 rolling_with:Advantage' },
-  { name: '/dh', description: 'Daggerheart hope and fear dice', example: '/dh modifier:3 rolling_with:Advantage' },
+  {
+    name: '/fifth',
+    description: 'D&D 5e d20 roll with advantage support',
+    example: '/fifth modifier:5 rolling_with:Advantage'
+  },
+  {
+    name: '/dh',
+    description: 'Daggerheart hope and fear dice',
+    example: '/dh modifier:3 rolling_with:Advantage'
+  },
   { name: '/root', description: 'Root RPG 2d6 + modifier', example: '/root modifier:2' },
   { name: '/su', description: 'Salvage Union table roll', example: '/su table:Core Mechanic' },
-  { name: '/pbta', description: 'Powered by the Apocalypse move roll', example: '/pbta stat:2 forward:1' },
+  {
+    name: '/pbta',
+    description: 'Powered by the Apocalypse move roll',
+    example: '/pbta stat:2 forward:1'
+  },
   { name: '/notation', description: 'Show dice notation reference guide', example: '/notation' },
   { name: '/help', description: 'List all available RANDSUM commands', example: '/help' }
 ]
@@ -65,46 +81,79 @@ const commands = [
 <StarlightPage
   frontmatter={{
     title: 'RANDSUM Dice Bot',
-    description: 'Roll dice for your TTRPG sessions directly in Discord. Supports D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.',
+    description:
+      'Roll dice for your TTRPG sessions directly in Discord. Supports D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.',
     template: 'splash',
     head: [
       { tag: 'meta', attrs: { property: 'og:title', content: 'RANDSUM Dice Bot' } },
-      { tag: 'meta', attrs: { property: 'og:description', content: 'Roll dice for your TTRPG sessions directly in Discord. D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.' } },
-      { tag: 'meta', attrs: { property: 'og:image', content: 'https://randsum.dev/discord-ss-roll-10d20.png' } },
+      {
+        tag: 'meta',
+        attrs: {
+          property: 'og:description',
+          content:
+            'Roll dice for your TTRPG sessions directly in Discord. D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.'
+        }
+      },
+      {
+        tag: 'meta',
+        attrs: { property: 'og:image', content: 'https://randsum.dev/discord-ss-roll-10d20.png' }
+      },
       { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
-      { tag: 'meta', attrs: { name: 'twitter:image', content: 'https://randsum.dev/discord-ss-roll-10d20.png' } }
+      {
+        tag: 'meta',
+        attrs: { name: 'twitter:image', content: 'https://randsum.dev/discord-ss-roll-10d20.png' }
+      }
     ]
   }}
   hasSidebar={false}
 >
   <div class="discord-landing">
-
     <!-- Hero -->
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-logos">
-          <img src="/randsum-logo.png" alt="RANDSUM" class="hero-logo hero-logo-randsum" width="80" height="80" />
+          <img
+            src="/randsum-logo.png"
+            alt="RANDSUM"
+            class="hero-logo hero-logo-randsum"
+            width="80"
+            height="80"
+          />
           <svg class="hero-connector" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#5865F2" d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+            <path
+              fill="#5865F2"
+              d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"
+            ></path>
           </svg>
-          <svg class="hero-logo hero-logo-discord" viewBox="0 0 127.14 96.36" aria-label="Discord" role="img">
-            <path fill="#5865F2" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+          <svg
+            class="hero-logo hero-logo-discord"
+            viewBox="0 0 127.14 96.36"
+            aria-label="Discord"
+            role="img"
+          >
+            <path
+              fill="#5865F2"
+              d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"
+            ></path>
           </svg>
         </div>
         <h1 class="hero-heading">RANDSUM Dice Bot</h1>
         <p class="hero-tagline">Roll dice for your TTRPG sessions directly in Discord.</p>
         <p class="hero-sub">
-          Slash commands for D&amp;D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union —
-          plus full RANDSUM notation for anything else.
+          Slash commands for D&amp;D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and
+          Salvage Union — plus full RANDSUM notation for anything else.
         </p>
         <div class="hero-actions">
           <a href={OAUTH_URL} class="btn btn-discord" target="_blank" rel="noopener noreferrer">
-            <svg width="20" height="20" viewBox="0 0 127.14 96.36" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 127.14 96.36" aria-hidden="true"
+              ><path
+                fill="currentColor"
+                d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"
+              ></path></svg
+            >
             Add to Discord
           </a>
-          <a href="/tools/discord-bot/" class="btn btn-secondary">
-            View Docs
-          </a>
+          <a href="/tools/discord-bot/" class="btn btn-secondary"> View Docs </a>
         </div>
       </div>
     </section>
@@ -115,15 +164,19 @@ const commands = [
     <section class="games-section">
       <div class="section-inner">
         <h2 class="section-heading">Supported Games</h2>
-        <p class="section-sub">Dedicated slash commands with game-accurate resolution for six systems.</p>
+        <p class="section-sub">
+          Dedicated slash commands with game-accurate resolution for six systems.
+        </p>
         <div class="games-grid">
-          {games.map((game) => (
-            <a class="game-card" href={game.href} style={`--game-accent: ${game.color}`}>
-              <div class="game-card-command">{game.command}</div>
-              <div class="game-card-name">{game.name}</div>
-              <p class="game-card-desc">{game.description}</p>
-            </a>
-          ))}
+          {
+            games.map(game => (
+              <a class="game-card" href={game.href} style={`--game-accent: ${game.color}`}>
+                <div class="game-card-command">{game.command}</div>
+                <div class="game-card-name">{game.name}</div>
+                <p class="game-card-desc">{game.description}</p>
+              </a>
+            ))
+          }
         </div>
       </div>
     </section>
@@ -145,13 +198,19 @@ const commands = [
               </tr>
             </thead>
             <tbody>
-              {commands.map((cmd) => (
-                <tr>
-                  <td><code class="cmd-name">{cmd.name}</code></td>
-                  <td>{cmd.description}</td>
-                  <td><code class="cmd-example">{cmd.example}</code></td>
-                </tr>
-              ))}
+              {
+                commands.map(cmd => (
+                  <tr>
+                    <td>
+                      <code class="cmd-name">{cmd.name}</code>
+                    </td>
+                    <td>{cmd.description}</td>
+                    <td>
+                      <code class="cmd-example">{cmd.example}</code>
+                    </td>
+                  </tr>
+                ))
+              }
             </tbody>
           </table>
         </div>
@@ -171,7 +230,11 @@ const commands = [
             <figcaption><code>/roll notation:10d20</code></figcaption>
           </figure>
           <figure class="screenshot">
-            <img src="/discord-ss-dh-critical.png" alt="/dh — Daggerheart Critical Hope" loading="lazy" />
+            <img
+              src="/discord-ss-dh-critical.png"
+              alt="/dh — Daggerheart Critical Hope"
+              loading="lazy"
+            />
             <figcaption><code>/dh modifier:3</code></figcaption>
           </figure>
           <figure class="screenshot">
@@ -179,7 +242,11 @@ const commands = [
             <figcaption><code>/roll notation:2d12+1</code></figcaption>
           </figure>
           <figure class="screenshot">
-            <img src="/discord-ss-su-failure.png" alt="/su — Salvage Union Failure" loading="lazy" />
+            <img
+              src="/discord-ss-su-failure.png"
+              alt="/su — Salvage Union Failure"
+              loading="lazy"
+            />
             <figcaption><code>/su table:Core Mechanic</code></figcaption>
           </figure>
         </div>
@@ -195,16 +262,18 @@ const commands = [
         <p class="cta-sub">Add RANDSUM to your server — no configuration required.</p>
         <div class="cta-actions">
           <a href={OAUTH_URL} class="btn btn-discord" target="_blank" rel="noopener noreferrer">
-            <svg width="20" height="20" viewBox="0 0 127.14 96.36" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 127.14 96.36" aria-hidden="true"
+              ><path
+                fill="currentColor"
+                d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"
+              ></path></svg
+            >
             Add to Discord
           </a>
-          <a href="/tools/discord-bot/" class="btn btn-secondary">
-            Full Documentation
-          </a>
+          <a href="/tools/discord-bot/" class="btn btn-secondary"> Full Documentation </a>
         </div>
       </div>
     </section>
-
   </div>
 </StarlightPage>
 
@@ -253,7 +322,9 @@ const commands = [
     font-weight: 600;
     font-size: 0.9375rem;
     text-decoration: none;
-    transition: opacity 0.15s, box-shadow 0.15s;
+    transition:
+      opacity 0.15s,
+      box-shadow 0.15s;
     white-space: nowrap;
   }
 
@@ -262,7 +333,7 @@ const commands = [
   }
 
   .btn-discord {
-    background: #5865F2;
+    background: #5865f2;
     color: #fff;
     box-shadow: 0 2px 8px rgba(88, 101, 242, 0.4);
   }
@@ -321,7 +392,7 @@ const commands = [
     font-family: var(--sl-font-heading);
     font-size: clamp(2rem, 6vw, 3.25rem);
     font-weight: 800;
-    background: linear-gradient(135deg, #818cf8, #5865F2, #4752c4);
+    background: linear-gradient(135deg, #818cf8, #5865f2, #4752c4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -365,7 +436,10 @@ const commands = [
     border-radius: 0.75rem;
     padding: 1.25rem;
     text-decoration: none;
-    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s,
+      transform 0.15s;
     position: relative;
     overflow: hidden;
   }
@@ -377,12 +451,12 @@ const commands = [
     left: 0;
     right: 0;
     height: 3px;
-    background: var(--game-accent, #5865F2);
+    background: var(--game-accent, #5865f2);
     opacity: 0.8;
   }
 
   .game-card:hover {
-    border-color: var(--game-accent, #5865F2);
+    border-color: var(--game-accent, #5865f2);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
   }
@@ -391,7 +465,7 @@ const commands = [
     font-family: var(--sl-font-mono, monospace);
     font-size: 0.8125rem;
     font-weight: 700;
-    color: var(--game-accent, #5865F2);
+    color: var(--game-accent, #5865f2);
     margin-bottom: 0.375rem;
   }
 
@@ -457,7 +531,7 @@ const commands = [
   .cmd-name {
     font-family: var(--sl-font-mono, monospace);
     font-size: 0.875rem;
-    color: #5865F2;
+    color: #5865f2;
     font-weight: 700;
     white-space: nowrap;
   }
@@ -499,7 +573,7 @@ const commands = [
 
   .screenshot figcaption code {
     font-family: var(--sl-font-mono, monospace);
-    color: #5865F2;
+    color: #5865f2;
   }
 
   /* ---- Footer CTA ---- */

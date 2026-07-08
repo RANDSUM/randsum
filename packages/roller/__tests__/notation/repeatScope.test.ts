@@ -17,13 +17,16 @@ import { roll } from '../../src/roll'
  */
 describe('repeat operator (xN) scope', () => {
   describe('accepted: trailing repeat', () => {
-    test.each([['4d6Lx6'], ['4d6x3'], ['1d20X2'], ['2d6x2x3'], ['2d6+1d8x2']])(
-      'isDiceNotation("%s") is true',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(true)
-        expect(parseNotation(notation).valid).toBe(true)
-      }
-    )
+    test.each([
+      ['4d6Lx6'],
+      ['4d6x3'],
+      ['1d20X2'],
+      ['2d6x2x3'],
+      ['2d6+1d8x2']
+    ])('isDiceNotation("%s") is true', notation => {
+      expect(isDiceNotation(notation)).toBe(true)
+      expect(parseNotation(notation).valid).toBe(true)
+    })
 
     test('whole-string-trailing xN repeats the ENTIRE expression', () => {
       // `2d6+1d8x2` => (2d6 + 1d8) twice => 4 pools, not the last pool twice.
@@ -38,13 +41,14 @@ describe('repeat operator (xN) scope', () => {
   })
 
   describe('rejected: non-trailing repeat', () => {
-    test.each([['4d6x2+2d8'], ['4d6x2L'], ['1d6x2+1d6x2']])(
-      'isDiceNotation("%s") is false',
-      notation => {
-        expect(isDiceNotation(notation)).toBe(false)
-        expect(parseNotation(notation).valid).toBe(false)
-      }
-    )
+    test.each([
+      ['4d6x2+2d8'],
+      ['4d6x2L'],
+      ['1d6x2+1d6x2']
+    ])('isDiceNotation("%s") is false', notation => {
+      expect(isDiceNotation(notation)).toBe(false)
+      expect(parseNotation(notation).valid).toBe(false)
+    })
 
     test('parse reports the stray repeat at its position', () => {
       const result = parseNotation('4d6x2+2d8')

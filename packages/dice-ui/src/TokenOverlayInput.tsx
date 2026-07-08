@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import type { Token } from '@randsum/roller/tokenize'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import { tokenColor } from './tokenColor'

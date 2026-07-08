@@ -1,0 +1,105 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.3/schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/coverage",
+      "!**/*.generated.ts",
+      "!**/*.d.ts",
+      "!**/.astro",
+      "!**/.netlify",
+      "!**/public",
+      "!**/.ladle",
+      "!**/*.tsbuildinfo",
+      "!**/.bunup-dts-*",
+      "!**/__tests__/fixtures",
+      "!**/*.astro"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "semicolons": "asNeeded",
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "trailingCommas": "none",
+      "arrowParentheses": "asNeeded",
+      "quoteProperties": "asNeeded",
+      "bracketSpacing": true,
+      "bracketSameLine": false
+    }
+  },
+  "json": { "formatter": { "enabled": true, "trailingCommas": "none" } },
+  "css": { "formatter": { "enabled": true, "quoteStyle": "single" } },
+  "assist": { "enabled": false },
+  "plugins": ["./biome-plugins/no-let.grit", "./biome-plugins/no-double-assertion.grit"],
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": { "recommended": false },
+      "style": {
+        "useConst": "error",
+        "useImportType": "error",
+        "useExportType": "error",
+        "useReadonlyClassProperties": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noVar": "error",
+        "noDebugger": "error",
+        "noConsole": { "level": "warn", "options": { "allow": ["warn", "error"] } },
+        "useIterableCallbackReturn": "off",
+        "noShorthandPropertyOverrides": "off"
+      },
+      "complexity": {
+        "useLiteralKeys": "off"
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      }
+    }
+  },
+  "overrides": [
+    { "includes": ["**/package.json"], "json": { "formatter": { "lineWidth": 120 } } },
+    {
+      "includes": [
+        "packages/roller/src/notation/**/*.ts",
+        "packages/roller/src/tokenize.ts",
+        "src/notation/**/*.ts",
+        "src/tokenize.ts"
+      ],
+      "plugins": ["./biome-plugins/no-tokenize-modifier-import.grit"]
+    },
+    {
+      "includes": [
+        "scripts/**/*.ts",
+        "**/*.bench.ts",
+        "**/__benchmarks__/**/*.ts",
+        "**/build.ts",
+        "**/codegen.ts",
+        "apps/cli/src/**/*.ts"
+      ],
+      "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
+    },
+    {
+      "includes": ["**/__tests__/**", "**/test-utils/**", "**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noConsole": "off" },
+          "style": { "noNonNullAssertion": "off" }
+        }
+      }
+    }
+  ]
+}

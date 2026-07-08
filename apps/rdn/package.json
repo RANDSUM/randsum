@@ -29,9 +29,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
-    "lint": "eslint . -c ../../eslint.config.js",
-    "format": "prettier --write . --ignore-path ../../.prettierignore --config ../../.prettierrc",
-    "format:check": "prettier --check . --ignore-path ../../.prettierignore --config ../../.prettierrc",
+    "lint": "biome lint .",
+    "format": "biome format --write . && prettier --write \"src/**/*.astro\"",
+    "format:check": "biome format . && prettier --check \"src/**/*.astro\"",
     "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test",
     "test": "bun test __tests__/",
     "conformance:gen": "bun conformance-gen.ts",
@@ -41,6 +41,8 @@
     "@astrojs/check": "0.9.9",
     "@astrojs/sitemap": "3.7.3",
     "@randsum/roller": "workspace:~",
-    "typescript": "catalog:"
+    "prettier": "3.8.4",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript": "6.0.3"
   }
 }
