@@ -79,7 +79,7 @@ describe('dhCommand', () => {
 
   test('critical hope result', async () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'critical hope' as const,
+      result: 'critical_hope' as const,
       total: 20,
       details: { hope: { roll: 10 }, fear: { roll: 10 }, extraDie: undefined, modifier: 0 },
       rolls: []

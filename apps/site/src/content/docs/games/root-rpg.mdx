@@ -45,20 +45,20 @@ The `@randsum/games/root-rpg` subpath provides mechanics for [Root RPG](https://
 
 // Roll with a stat bonus
 const { result, total } = roll(2)
-// result: 'Strong Hit' | 'Weak Hit' | 'Miss'`} />
+// result: 'strong_hit' | 'weak_hit' | 'miss'`} />
 
 <CodeExample code={`import { roll } from '@randsum/games/root-rpg'
 
 const { result } = roll(0)
 
 switch (result) {
-  case 'Strong Hit':
+  case 'strong_hit':
     // 10+ total: complete success
     break
-  case 'Weak Hit':
+  case 'weak_hit':
     // 7-9 total: partial success with cost
     break
-  case 'Miss':
+  case 'miss':
     // 6- total: failure
     break
 }`} />
@@ -83,7 +83,7 @@ roll(-1)  // Penalty`} />
 
 | Property | Type | Description |
 |---|---|---|
-| `result` | `RootRpgRollResult` | `'Strong Hit' \| 'Weak Hit' \| 'Miss'` |
+| `result` | `RootRpgRollResult` | `'strong_hit' \| 'weak_hit' \| 'miss'` |
 | `total` | `number` | Sum of 2d6 + bonus |
 | `rolls` | `RollRecord[]` | Raw dice data from the core roller |
 
@@ -91,9 +91,9 @@ roll(-1)  // Penalty`} />
 
 | Outcome | Total | Description |
 |---|---|---|
-| `Strong Hit` | 10+ | Complete success -- you achieve your goal |
-| `Weak Hit` | 7-9 | Partial success -- you do it, but with a cost or complication |
-| `Miss` | 6- | Failure -- things go badly |
+| `strong_hit` | 10+ | Complete success -- you achieve your goal |
+| `weak_hit` | 7-9 | Partial success -- you do it, but with a cost or complication |
+| `miss` | 6- | Failure -- things go badly |
 
 ## Error handling
 

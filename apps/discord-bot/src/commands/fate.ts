@@ -9,21 +9,22 @@ import type { Command } from '../types.js'
 const SKILL_MIN = -2
 const SKILL_MAX = 5
 
-// Keyed by the exported FateRollResult union so the ladder-to-colour map stays
-// exhaustive: renaming the result strings (e.g. to snake_case) surfaces here as
-// a type error rather than a silent miss.
-const ladderColors: Record<FateRollResult, number> = {
-  Legendary: 0xffd700,
-  Epic: 0xffd700,
-  Fantastic: 0x2ecc71,
-  Superb: 0x2ecc71,
-  Great: 0x2ecc71,
-  Good: 0x3498db,
-  Fair: 0x3498db,
-  Average: 0x95a5a6,
-  Mediocre: 0x95a5a6,
-  Poor: 0xe67e22,
-  Terrible: 0xe74c3c
+// Keyed by the exported FateRollResult union so the ladder map stays
+// exhaustive: renaming the result strings surfaces here as a type error
+// rather than a silent miss. `label` is the human-readable ladder rung shown
+// to the player; the result strings themselves are snake_case.
+const ladder: Record<FateRollResult, { readonly color: number; readonly label: string }> = {
+  legendary: { color: 0xffd700, label: 'Legendary' },
+  epic: { color: 0xffd700, label: 'Epic' },
+  fantastic: { color: 0x2ecc71, label: 'Fantastic' },
+  superb: { color: 0x2ecc71, label: 'Superb' },
+  great: { color: 0x2ecc71, label: 'Great' },
+  good: { color: 0x3498db, label: 'Good' },
+  fair: { color: 0x3498db, label: 'Fair' },
+  average: { color: 0x95a5a6, label: 'Average' },
+  mediocre: { color: 0x95a5a6, label: 'Mediocre' },
+  poor: { color: 0xe67e22, label: 'Poor' },
+  terrible: { color: 0xe74c3c, label: 'Terrible' }
 }
 
 function fateDieSymbol(die: number): string {
@@ -38,8 +39,8 @@ function buildFateEmbed(skill: number): EmbedBuilder {
   const symbols = dice.map(fateDieSymbol).join('  ')
 
   const embed = new EmbedBuilder()
-    .setColor(ladderColors[result.result])
-    .setTitle(result.result)
+    .setColor(ladder[result.result].color)
+    .setTitle(ladder[result.result].label)
     .setDescription(`Total: ${result.total}`)
     .setFooter(embedFooterDetails)
 
