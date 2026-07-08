@@ -56,6 +56,12 @@
         "default": "./dist/trace/index.js"
       }
     },
+    "./random": {
+      "import": {
+        "types": "./dist/random.d.ts",
+        "default": "./dist/random.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "author": {
@@ -130,6 +136,10 @@
     {
       "path": "dist/trace/index.js",
       "limit": "1.1 KB"
+    },
+    {
+      "path": "dist/random.js",
+      "limit": "1 KB"
     }
   ]
 }

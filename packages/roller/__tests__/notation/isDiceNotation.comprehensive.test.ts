@@ -355,12 +355,18 @@ describe('isDiceNotation — comprehensive', () => {
   })
 
   describe('invalid — incomplete notation', () => {
-    test.each([['d'], ['4d'], ['d6'], ['d0'], ['1d0'], ['0d6']])(
+    // `d6` is valid (bare dN, quantity optional per RDN §4.1). `d0`/`1d0`/`0d6`
+    // stay invalid: sides must be a positive integer and quantity must be > 0.
+    test.each([['d'], ['4d'], ['d0'], ['1d0'], ['0d6']])(
       'isDiceNotation("%s") returns false',
       notation => {
         expect(isDiceNotation(notation)).toBe(false)
       }
     )
+
+    test('isDiceNotation("d6") returns true (bare dN)', () => {
+      expect(isDiceNotation('d6')).toBe(true)
+    })
   })
 
   describe('invalid — bad modifiers and characters', () => {

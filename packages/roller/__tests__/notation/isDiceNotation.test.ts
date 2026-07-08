@@ -154,10 +154,15 @@ describe('isDiceNotation', () => {
     })
 
     test('returns false for incomplete dice notation', () => {
-      expect(isDiceNotation('d6')).toBe(false)
       expect(isDiceNotation('2d')).toBe(false)
       expect(isDiceNotation('1')).toBe(false)
       expect(isDiceNotation('d')).toBe(false)
+    })
+
+    test('accepts bare dN notation (quantity optional per RDN §4.1)', () => {
+      expect(isDiceNotation('d6')).toBe(true)
+      expect(isDiceNotation('d20')).toBe(true)
+      expect(isDiceNotation('D8')).toBe(true)
     })
 
     test('returns false for invalid dice separators', () => {

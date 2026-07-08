@@ -40,11 +40,12 @@ describe('evaluateNotation', () => {
   })
 
   test('invalid notation returns the roller error message with a suggestion', () => {
-    const { status, body } = evaluateNotation('d6')
+    // `d6` is now valid (bare dN de-aliases to 1d6), so use a trailing-operator
+    // typo instead. suggestNotationFix maps '1d6+' -> '1d6'.
+    const { status, body } = evaluateNotation('1d6+')
     expect(status).toBe(400)
     const err = body as RollErrorBody
     expect(err.error.length).toBeGreaterThan(0)
-    // suggestNotationFix maps 'd6' -> '1d6'
     expect(err.suggestion).toBe('1d6')
   })
 

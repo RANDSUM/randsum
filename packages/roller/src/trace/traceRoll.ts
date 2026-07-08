@@ -40,6 +40,12 @@ function numVal(opts: Record<string, unknown>, key: string): number | undefined 
   return typeof v === 'number' ? v : undefined
 }
 
+function numArr(opts: Record<string, unknown>, key: string): readonly number[] | undefined {
+  const v = opts[key]
+  if (Array.isArray(v) && v.every((n): n is number => typeof n === 'number')) return v
+  return undefined
+}
+
 function formatComparison(opts: Record<string, unknown>): string {
   const parts: string[] = []
   const gt = numVal(opts, 'greaterThan')
@@ -50,8 +56,10 @@ function formatComparison(opts: Record<string, unknown>): string {
   if (lt !== undefined) parts.push(`Less than ${lt}`)
   const lte = numVal(opts, 'lessThanOrEqual')
   if (lte !== undefined) parts.push(`At most ${lte}`)
-  const exact = numVal(opts, 'exact')
-  if (exact !== undefined) parts.push(`${exact}`)
+  // `exact` is a number[] in ComparisonOptions — read it as an array, not a
+  // scalar, so exact-match conditions actually render in the trace label.
+  const exact = numArr(opts, 'exact')
+  if (exact !== undefined && exact.length > 0) parts.push(`Exactly ${exact.join(', ')}`)
   return parts.join(', ')
 }
 
@@ -185,7 +193,14 @@ export function traceRoll(record: TraceableRollRecord): readonly RollTraceStep[]
 
   if (modifierSteps.length > 0) {
     steps.push(...modifierSteps)
-    const arithmeticDelta = record.appliedTotal - record.total
+    // The scalar arithmetic offset between the final dice and the reported total,
+    // i.e. everything the total-transforming modifiers (plus/minus, integer
+    // divide, modulo, …) contribute beyond the sum of the dice themselves.
+    // Deriving it from `appliedTotal - total` was wrong: on a real record both
+    // already include the modifier arithmetic, so it was only ever nonzero for
+    // subtractive pools (where appliedTotal is the negated total).
+    const rollsSum = record.rolls.reduce((acc, cur) => acc + cur, 0)
+    const arithmeticDelta = record.total - rollsSum
     steps.push({
       kind: 'finalRolls',
       rolls: record.rolls,
