@@ -3,9 +3,9 @@
   "changelog": ["@changesets/changelog-github", { "repo": "RANDSUM/randsum" }],
   "commit": false,
   "fixed": [],
-  "linked": [["@randsum/roller", "@randsum/games", "@randsum/cli", "@randsum/dice-ui"]],
+  "linked": [["@randsum/roller", "@randsum/games", "@randsum/cli"]],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "minor",
-  "ignore": ["@randsum/site", "@randsum/discord-bot"]
+  "ignore": ["@randsum/site", "@randsum/discord-bot", "@randsum/dice-ui"]
 }
