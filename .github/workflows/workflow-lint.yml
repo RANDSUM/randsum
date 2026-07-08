@@ -1,0 +1,47 @@
+name: Workflow Lint
+
+# Static analysis of the GitHub Actions workflows themselves (audit CI-tooling).
+# Not a required check / not wired into the CI Gate — it's an advisory hardening
+# pass. actionlint validates workflow syntax + shellcheck's the `run:` scripts;
+# zizmor audits for CI security smells. Both actions are SHA-pinned like every
+# other action in this repo.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: workflow-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: actionlint + zizmor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: actionlint
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7  # v2.2.0
+      - name: zizmor
+        uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa  # v0.5.7
+        with:
+          version: 1.20.0
+          # All remaining findings are Low-confidence `artipacked` noise — these
+          # checkouts never reuse the persisted credential. The two higher-confidence
+          # findings (dangerous-triggers, bot-conditions) are documented + inline
+          # `# zizmor: ignore`d at their sites.
+          min-confidence: medium
+          # Offline audits only: deterministic, no dependence on the GHSA feed.
+          online-audits: false
+          # Emit inline annotations instead of uploading SARIF — the repo uses
+          # GitHub default-setup code scanning, so an advanced-security upload here
+          # would collide with it.
+          advanced-security: false
+          annotations: true
