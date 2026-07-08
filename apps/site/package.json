@@ -22,9 +22,7 @@
     "@astrojs/starlight": "0.40.0",
     "@randsum/dice-ui": "workspace:~",
     "@randsum/roller": "workspace:~",
-    "@stackblitz/sdk": "latest",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
+    "@stackblitz/sdk": "~1.11.0",
     "astro": "6.4.6",
     "astro-expressive-code": "0.43.1",
     "react": "catalog:",
@@ -49,6 +47,8 @@
   "devDependencies": {
     "@astrojs/check": "0.9.9",
     "@astrojs/sitemap": "3.7.3",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "starlight-page-actions": "0.6.1",
     "starlight-sidebar-topics": "0.8.0"
   }
