@@ -24,6 +24,7 @@ void mock.module('@randsum/roller/validate', () => ({
 
 void mock.module('@randsum/games/blades', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/daggerheart', () => ({ roll: () => ({ total: 1 }) }))
+void mock.module('@randsum/games/fate', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/fifth', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/pbta', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/root-rpg', () => ({ roll: () => ({ total: 1 }) }))
@@ -39,9 +40,9 @@ void mock.module('../../src/utils/rollButton.js', () => ({
 const { commands } = await import('../../src/commands/index.js')
 
 describe('commands barrel', () => {
-  test('exports an array of 9 commands', () => {
+  test('exports an array of 10 commands', () => {
     expect(Array.isArray(commands)).toBe(true)
-    expect(commands).toHaveLength(9)
+    expect(commands).toHaveLength(10)
   })
 
   test('each command has data and execute properties', () => {
