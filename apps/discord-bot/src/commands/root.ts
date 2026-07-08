@@ -5,13 +5,7 @@ import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import type { Command } from '../types.js'
 
-const ROOT_IMAGES = {
-  'Strong Hit': 'https://files.randsum.io/root-strong-hit.png',
-  'Weak Hit': 'https://files.randsum.io/root-weak-hit.png',
-  Miss: 'https://files.randsum.io/root-miss.png'
-} as const
-
-function buildRootEmbed(modifier: number, memberNick: string): EmbedBuilder {
+function buildRootEmbed(modifier: number, displayName: string): EmbedBuilder {
   const result = roll({ bonus: modifier })
   const initialRolls = result.rolls[0]?.initialRolls ?? []
 
@@ -25,13 +19,11 @@ function buildRootEmbed(modifier: number, memberNick: string): EmbedBuilder {
   } as const
 
   const { color, resultDescription } = resultConfig[result.result]
-  const thumbnail = ROOT_IMAGES[result.result]
 
   const embed = new EmbedBuilder()
     .setColor(color)
-    .setTitle(`${memberNick} rolled a ${result.result}`)
+    .setTitle(`${displayName} rolled a ${result.result}`)
     .setDescription(resultDescription)
-    .setThumbnail(thumbnail)
     .setFooter(embedFooterDetails)
 
   embed.addFields({ name: 'Dice Rolls', value: initialRolls.join(', '), inline: true })
@@ -69,12 +61,12 @@ export const rootCommand: Command = {
 
   async execute(interaction) {
     const modifier = interaction.options.getInteger('modifier') ?? 0
-    const memberNick = interaction.member?.user.username ?? 'Unknown'
+    const displayName = interaction.user.displayName
 
     await deferReplyHonoringHidden(interaction)
 
     try {
-      const embed = buildRootEmbed(modifier, memberNick)
+      const embed = buildRootEmbed(modifier, displayName)
       await interaction.editReply({ embeds: [embed] })
     } catch (e) {
       await replyWithError(

@@ -18,7 +18,7 @@ function makeInteraction(modifier: number | null = null): {
     getInteger: ReturnType<typeof mock>
     getBoolean: ReturnType<typeof mock>
   }
-  member: { user: { username: string } }
+  user: { displayName: string }
 } {
   return {
     deferReply: mock(() => Promise.resolve(undefined)),
@@ -27,7 +27,7 @@ function makeInteraction(modifier: number | null = null): {
       getInteger: mock(() => modifier),
       getBoolean: mock(() => false)
     },
-    member: { user: { username: 'Tester' } }
+    user: { displayName: 'Tester' }
   }
 }
 
