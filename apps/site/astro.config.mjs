@@ -156,6 +156,7 @@ export default defineConfig({
                   { label: 'Blades in the Dark', slug: 'games/blades' },
                   { label: 'D&D 5e', slug: 'games/fifth' },
                   { label: 'Daggerheart', slug: 'games/daggerheart' },
+                  { label: 'Fate Core', slug: 'games/fate' },
                   { label: 'Powered by the Apocalypse', slug: 'games/pbta' },
                   { label: 'Root RPG', slug: 'games/root-rpg' },
                   { label: 'Salvage Union', slug: 'games/salvageunion' }
