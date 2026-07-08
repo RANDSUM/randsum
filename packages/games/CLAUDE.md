@@ -20,7 +20,6 @@ packages/games/
   *.randsum.json          # Game specs (one per game, at package root)
   randsum.json            # Meta-schema for spec validation
   codegen.ts              # Codegen entry point
-  build.ts                # Custom build script (bunup)
   src/
     *.generated.ts        # Generated game modules (DO NOT EDIT)
     index.ts              # Root export (re-exports AVAILABLE_GAMES, GameRollResult, SchemaError)
@@ -28,9 +27,8 @@ packages/games/
     types.ts              # GameRollResult generic type
     schema.ts             # ./schema subpath: validateSpec, resolveExternalRefs, generateCode, specToFilename, lookupByRange, SchemaError + spec types
     lib/
-      codegen/            # Code generation pipeline
+      codegen/            # Code generation pipeline (body/details/modifiers/outcome emitters)
       codegen.ts          # generateCode() function
-      pipeline.ts         # Runtime roll pipeline
       normalizer.ts       # Spec normalization to IR
       normalizedTypes.ts  # NormalizedRollDefinition IR types
       types.ts            # Internal spec types (RandSumSpec)

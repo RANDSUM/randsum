@@ -2,7 +2,7 @@
 
 A narrative guide to authoring a game spec. Covers the structure of a
 `.randsum.json` file, how each field translates into generated TypeScript, and
-the patterns drawn from the six game specs currently in the tree.
+the patterns drawn from the seven game specs currently in the tree.
 
 The formal JSON Schema for this format lives at
 `packages/games/randsum.json`. Examples in this guide cite real specs in
@@ -643,7 +643,7 @@ semver-visible API change.
 
 ## 7. Common patterns — a cookbook
 
-Eight patterns drawn from the six specs. Each one: the mechanic, the snippet,
+Eight patterns drawn from the seven specs. Each one: the mechanic, the snippet,
 and a pointer at the full spec for context.
 
 ### 7.1 Best-of-N action roll (Blades position/effect)

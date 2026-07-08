@@ -1,3 +1,4 @@
+<!-- Keep in sync with the repo-root llms.txt. This copy is served at randsum.dev/llms.txt. -->
 # RANDSUM - Dice Notation and Rolling Engine
 
 > TypeScript dice engine implementing the RANDSUM Dice Notation (RDN) specification. RDN v0.9.0 Level 4 (Full) Conformant. Works with D&D 5e, Blades in the Dark, PbtA, Daggerheart, Root RPG, Salvage Union, and more.
