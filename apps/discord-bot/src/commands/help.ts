@@ -1,39 +1,31 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import type { Client, Collection } from '../utils/discord.js'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import type { Command } from '../types.js'
-import { bladesCommand } from './blades.js'
-import { dhCommand } from './dh.js'
-import { fifthCommand } from './fifth.js'
-import { notationCommand } from './notation.js'
-import { pbtaCommand } from './pbta.js'
-import { rollCommand } from './roll.js'
-import { rootCommand } from './root.js'
-import { suCommand } from './su.js'
-
-const listedCommands: readonly Command[] = [
-  rollCommand,
-  notationCommand,
-  bladesCommand,
-  dhCommand,
-  fifthCommand,
-  pbtaCommand,
-  rootCommand,
-  suCommand
-]
 
 export const helpCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('List all available RANDSUM commands'),
+    .setDescription('List all available RANDSUM commands')
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
+    ),
 
   async execute(interaction) {
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
-    const fields = listedCommands.map(cmd => ({
-      name: `/${cmd.data.name}`,
-      value: cmd.data.description,
-      inline: false
-    }))
+    const client = interaction.client as Client & { commands: Collection<string, Command> }
+    const fields = [...client.commands.values()]
+      .filter(cmd => cmd.data.name !== 'help')
+      .map(cmd => ({
+        name: `/${cmd.data.name}`,
+        value: cmd.data.description,
+        inline: false
+      }))
 
     const embed = new EmbedBuilder()
       .setColor('#FFD700')
