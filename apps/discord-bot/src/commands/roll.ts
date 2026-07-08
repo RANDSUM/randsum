@@ -3,12 +3,15 @@ import { roll } from '@randsum/roller/roll'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { suggestNotationFix } from '@randsum/roller'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand, defaultErrorMessage } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
-import type { RollerRollResult } from '@randsum/roller'
 
-function buildEmbedFromResult(notationString: string, result: RollerRollResult): EmbedBuilder {
+function buildRollEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const notationString = interaction.options.getString('notation', true)
+  const validNotation = createNotation(notationString)
+  const result = roll(validNotation)
+
   const embed = new EmbedBuilder()
     .setColor('#FFD700')
     .setTitle(`You rolled a ${result.total}`)
@@ -27,10 +30,7 @@ function buildEmbedFromResult(notationString: string, result: RollerRollResult):
         })
       }
       const modifiedRolls = rollRecord.rolls
-      if (
-        modifiedRolls.length > 0 &&
-        JSON.stringify(modifiedRolls) !== JSON.stringify(initialRolls)
-      ) {
+      if (modifiedRolls.length > 0 && rollRecord.modifierLogs.length > 0) {
         embed.addFields({
           name: 'Modified Rolls',
           value: modifiedRolls.join(', '),
@@ -43,7 +43,14 @@ function buildEmbedFromResult(notationString: string, result: RollerRollResult):
   return embed
 }
 
-export const rollCommand: Command = {
+function describeRollError(error: unknown, interaction: ChatInputCommandInteraction): string {
+  const notationString = interaction.options.getString('notation', true)
+  const baseMessage = defaultErrorMessage(error)
+  const suggestion = suggestNotationFix(notationString)
+  return suggestion ? `${baseMessage}\n\nDid you mean \`${suggestion}\`?` : baseMessage
+}
+
+export const rollCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('roll')
     .setDescription('Test your luck with a roll of the dice')
@@ -59,23 +66,6 @@ export const rollCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    const notationString = interaction.options.getString('notation', true)
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const validNotation = createNotation(notationString)
-      const result = roll(validNotation)
-      const embed = buildEmbedFromResult(notationString, result)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      const baseMessage = e instanceof Error ? e.message : 'An unknown error occurred'
-      const suggestion = suggestNotationFix(notationString)
-      const description = suggestion
-        ? `${baseMessage}\n\nDid you mean \`${suggestion}\`?`
-        : baseMessage
-      await replyWithError(interaction, 'Error', description)
-    }
-  }
-}
+  buildEmbed: buildRollEmbed,
+  describeError: describeRollError
+})

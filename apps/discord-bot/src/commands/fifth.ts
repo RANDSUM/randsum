@@ -1,14 +1,9 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/fifth'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
-
-interface FifthParams {
-  readonly modifier: number
-  readonly rollingWith: 'Advantage' | 'Disadvantage' | null
-}
 
 /**
  * Renders each initial d20 with the kept die(s) bold and the dropped die(s)
@@ -17,7 +12,7 @@ interface FifthParams {
  * both d20s show the same face — still renders exactly one bold and one struck
  * die rather than bolding both.
  */
-function markKeptRolls(initialRolls: number[], keptRolls: number[]): string {
+function markKeptRolls(initialRolls: readonly number[], keptRolls: readonly number[]): string {
   const remaining = [...keptRolls]
   return initialRolls
     .map(r => {
@@ -31,14 +26,20 @@ function markKeptRolls(initialRolls: number[], keptRolls: number[]): string {
     .join(', ')
 }
 
-function buildFifthEmbed({ modifier, rollingWith }: FifthParams): EmbedBuilder {
+function buildFifthEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const modifier = interaction.options.getInteger('modifier') ?? 0
+  const rollingWith = interaction.options.getString('rolling_with') as
+    | 'Advantage'
+    | 'Disadvantage'
+    | null
+
   const result = roll({
     modifier,
     crit: true,
     ...(rollingWith ? { rollingWith } : {})
   })
 
-  const initialRolls = result.rolls[0]?.initialRolls ?? []
+  const initialRolls = getInitialRolls(result)
   const keptRolls = result.rolls[0]?.rolls ?? []
   const criticals = result.details.criticals
   const isNat20 = criticals?.isNatural20 === true
@@ -67,7 +68,7 @@ function buildFifthEmbed({ modifier, rollingWith }: FifthParams): EmbedBuilder {
   if (modifier !== 0) {
     embed.addFields({
       name: 'Modifier',
-      value: modifier > 0 ? `+${modifier}` : String(modifier),
+      value: formatSignedModifier(modifier),
       inline: true
     })
   }
@@ -77,7 +78,7 @@ function buildFifthEmbed({ modifier, rollingWith }: FifthParams): EmbedBuilder {
   return embed
 }
 
-export const fifthCommand: Command = {
+export const fifthCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('fifth')
     .setDescription('Roll dice for D&D 5th Edition (1d20 + modifier)')
@@ -105,26 +106,5 @@ export const fifthCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    const modifier = interaction.options.getInteger('modifier') ?? 0
-    const rollingWith = interaction.options.getString('rolling_with') as
-      | 'Advantage'
-      | 'Disadvantage'
-      | null
-
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const params: FifthParams = { modifier, rollingWith }
-      const embed = buildFifthEmbed(params)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
-  }
-}
+  buildEmbed: buildFifthEmbed
+})

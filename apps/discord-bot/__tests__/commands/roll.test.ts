@@ -141,7 +141,13 @@ describe('rollCommand', () => {
   test('modified rolls differ from initial: Modified Rolls field added', async () => {
     mockRoll.mockImplementationOnce(() => ({
       total: 7,
-      rolls: [{ initialRolls: [3, 4], rolls: [4], modifierLogs: [] }]
+      rolls: [
+        {
+          initialRolls: [3, 4],
+          rolls: [4],
+          modifierLogs: [{ modifier: 'drop', options: {}, added: [], removed: [3] }]
+        }
+      ]
     }))
     const interaction = makeInteraction({ notation: '2d6L' })
     await rollCommand.execute(interaction as never)

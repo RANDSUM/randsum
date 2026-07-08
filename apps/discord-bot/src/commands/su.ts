@@ -1,8 +1,8 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { VALID_TABLE_NAMES, roll } from '@randsum/games/salvageunion'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
 function getColor(rollValue: number): number {
@@ -31,7 +31,8 @@ function getColor(rollValue: number): number {
   return colors[rollValue - 1] ?? 0xffd700
 }
 
-function buildSuEmbed(tableName: string): EmbedBuilder {
+function buildSuEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const tableName = interaction.options.getString('table') ?? 'Core Mechanic'
   const rollResult = roll(tableName)
   const { result } = rollResult
   const color = getColor(result.roll)
@@ -50,7 +51,7 @@ function buildSuEmbed(tableName: string): EmbedBuilder {
   return embed
 }
 
-export const suCommand: Command = {
+export const suCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('su')
     .setDescription('The Salvage Union is here to help you with your salvaging needs')
@@ -67,7 +68,7 @@ export const suCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
+  buildEmbed: buildSuEmbed,
   async autocomplete(interaction) {
     const focused = interaction.options.getFocused().toLowerCase()
     const filtered = VALID_TABLE_NAMES.filter(name => name.toLowerCase().includes(focused)).slice(
@@ -75,22 +76,5 @@ export const suCommand: Command = {
       25
     )
     await interaction.respond(filtered.map(name => ({ name, value: name })))
-  },
-
-  async execute(interaction) {
-    const tableName = interaction.options.getString('table') ?? 'Core Mechanic'
-
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const embed = buildSuEmbed(tableName)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
   }
-}
+})
