@@ -1,0 +1,149 @@
+---
+title: Fate Core
+description: TypeScript package for Fate Core dice. Rolls 4dF, adds a skill rating, and resolves the result against the Fate ladder from Terrible up to Legendary.
+head:
+  - tag: script
+    attrs:
+      type: application/ld+json
+    content: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "@randsum/games/fate",
+        "applicationCategory": "DeveloperApplication",
+        "programmingLanguage": "TypeScript",
+        "version": "3.0.1",
+        "description": "TypeScript dice rolling package for Fate Core. Rolls 4dF plus a skill rating and resolves the result against the Fate ladder.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "downloadUrl": "https://www.npmjs.com/package/@randsum/games",
+        "codeRepository": "https://github.com/RANDSUM/randsum/tree/main/packages/games",
+        "keywords": "Fate Core, Fudge, 4dF, Fate ladder, dice, TypeScript, tabletop RPG"
+      }
+---
+
+import { Tabs, TabItem, LinkCard } from '@astrojs/starlight/components'
+import CodeExample from '../../../components/live-repl/CodeExample.astro'
+
+The `@randsum/games/fate` subpath provides mechanics for [Fate Core](https://www.evilhat.com/home/fate-core/), a tabletop RPG that rolls four Fate dice (`4dF`), adds a skill rating, and reads the total off the Fate ladder.
+
+<LinkCard title="Official Site" href="https://www.evilhat.com/home/fate-core/" description="Fate Core by Evil Hat" />
+
+## Installation
+
+<Tabs>
+  <TabItem label="bun">
+    <CodeExample lang="bash" code={`bun add @randsum/games`} />
+  </TabItem>
+  <TabItem label="npm">
+    <CodeExample lang="bash" code={`npm install @randsum/games`} />
+  </TabItem>
+</Tabs>
+
+## Usage
+
+<CodeExample code={`import { roll } from '@randsum/games/fate'
+
+// Roll 4dF with no skill modifier
+const { result, total } = roll()
+console.log(total)  // -4 to +4
+console.log(result) // e.g. 'Mediocre'`} />
+
+<CodeExample code={`import { roll } from '@randsum/games/fate'
+
+// Add a skill rating (a rung on the Fate ladder, -2 to +5)
+roll(3)             // scalar overload: skill of +3
+roll({ modifier: 3 }) // object overload: the same roll`} />
+
+<CodeExample code={`import { roll } from '@randsum/games/fate'
+
+const { result } = roll({ modifier: 4 })
+
+switch (result) {
+  case 'Legendary':
+  case 'Epic':
+  case 'Fantastic':
+    // A standout success
+    break
+  case 'Superb':
+  case 'Great':
+  case 'Good':
+    // A solid success
+    break
+  default:
+    // Fair and below
+    break
+}`} />
+
+## API
+
+### `roll(modifier?: number)` / `roll(input?: { modifier?: number })`
+
+**Input:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `modifier` | `number` (optional) | Skill rating — a rung on the Fate ladder (`-2` to `+5`), added to the 4dF total |
+
+**Returns:** `GameRollResult` with:
+
+| Property | Type | Description |
+|---|---|---|
+| `result` | `FateRollResult` | The ladder rung the total lands on |
+| `total` | `number` | The 4dF total plus the skill modifier |
+| `rolls` | `RollRecord[]` | Raw dice data from the core roller (each Fate die is `-1`, `0`, or `+1`) |
+
+## The Fate ladder
+
+Fate dice are six-sided dice with two `+` faces, two blank faces, and two `−` faces, read as `+1`, `0`, and `−1`. Four of them (`4dF`) sum to a total between `-4` and `+4`. Add your skill rating and read the result off the ladder:
+
+| Total | Rung |
+|---|---|
+| +8 or more | `Legendary` |
+| +7 | `Epic` |
+| +6 | `Fantastic` |
+| +5 | `Superb` |
+| +4 | `Great` |
+| +3 | `Good` |
+| +2 | `Fair` |
+| +1 | `Average` |
+| 0 | `Mediocre` |
+| -1 | `Poor` |
+| -2 or less | `Terrible` |
+
+The open-ended `Legendary` and `Terrible` rungs absorb any total beyond the ends of the ladder.
+
+## Error handling
+
+Game `roll()` can throw two types of errors:
+
+- **`ValidationError`** (from `@randsum/roller`) — the skill modifier is out of range (`-2` to `+5`) or not finite
+- **`SchemaError`** (from `@randsum/games/fate`) — game-specific issues like an unmatched ladder rung
+
+<CodeExample code={`import { roll, SchemaError } from '@randsum/games/fate'
+import { ValidationError } from '@randsum/roller'
+
+try {
+  roll(99)
+} catch (error) {
+  if (error instanceof ValidationError) {
+    // Out-of-range skill rating (must be -2 to +5)
+    console.log(error.code)    // 'VALIDATION_ERROR'
+  } else if (error instanceof SchemaError) {
+    // Game-specific error
+    console.log(error.code)    // 'NO_TABLE_MATCH'
+  }
+}`} />
+
+## Types
+
+<CodeExample code={`import type { FateRollResult, GameRollResult, RollRecord } from '@randsum/games/fate'
+import { SchemaError } from '@randsum/games/fate'`} />
+
+## Schema
+
+This game is powered by a `.randsum.json` spec that defines the dice pool, the ladder outcomes, and validation rules. The TypeScript code is generated from this spec at build time. See [Schema Overview](/games/schema/overview/) for how game specs work.
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/@randsum/games)
+- [Source code](https://github.com/RANDSUM/randsum/tree/main/packages/games)
