@@ -6,6 +6,7 @@
 
 - @randsum/roller - Core dice engine with built-in RDN notation parser
 - @randsum/cli - Command-line dice roller (published npm CLI)
+- @randsum/mcp - Model Context Protocol stdio server exposing roll, validate, and roll_game tools to AI agents (bunx/npx @randsum/mcp)
 - @randsum/games - TTRPG game packages with subpath exports:
   - @randsum/games/fifth - D&D 5th Edition
   - @randsum/games/blades - Blades in the Dark
@@ -34,6 +35,11 @@ roll("g6")     // Geometric die
 roll("3DD6")   // Draw die
 roll("4d6Lx6") // Repeat operator
 roll("2d6+3[fire]") // Annotations
+
+## Web Surfaces
+
+- HTTP roll endpoint: POST https://randsum.dev/api/roll with JSON { "notation": "4d6L" }; returns { notation, total, rolls, description }. Runs the same roll() engine as @randsum/roller. CORS-enabled; GET returns the contract.
+- Hosted games meta-schema: https://randsum.dev/schemas/v1/randsum.json (JSON Schema for *.randsum.json game specs; reference it via a "$schema" key for editor autocompletion).
 
 ## Links
 
