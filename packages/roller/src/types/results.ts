@@ -63,19 +63,6 @@ export interface RollRecord<T = string> {
 }
 
 /**
- * Generic roll result container.
- *
- * @template TValues - Type of the overall values
- * @template TRollRecord - Type of individual roll records
- */
-export interface RollResult<TValues = number, TRollRecord = RollRecord> {
-  /** Individual roll records */
-  rolls: TRollRecord[]
-  /** Aggregate values */
-  values: TValues
-}
-
-/**
  * Result from the roll() function.
  *
  * Contains all roll records, individual results, and the combined total.
@@ -90,7 +77,11 @@ export interface RollResult<TValues = number, TRollRecord = RollRecord> {
  * result.rolls   // => Full roll records with history
  * ```
  */
-export interface RollerRollResult<T = string> extends RollResult<T[], RollRecord<T>> {
+export interface RollerRollResult<T = string> {
+  /** Individual roll records */
+  rolls: RollRecord<T>[]
+  /** Aggregate values — flat array of individual die values */
+  values: T[]
   /** Combined total of all rolls */
   total: number
 }

@@ -45,20 +45,21 @@ treated as a roll argument and fails validation.
 
 Declared in `package.json` `exports`:
 
-| Subpath      | Source            | Provides                                                                   |
-| ------------ | ----------------- | -------------------------------------------------------------------------- |
-| `.`          | `src/index.ts`    | Barrel — `roll`, validation, conversion, errors, types, comparison helpers |
-| `./roll`     | `src/roll/`       | `roll` only                                                                |
-| `./errors`   | `src/errors.ts`   | Error classes + `ERROR_CODES`                                              |
-| `./validate` | `src/validate.ts` | Validation + numeric validators                                            |
-| `./tokenize` | `src/tokenize.ts` | `tokenize`, `Token`, `TokenType`, `TokenCategory`                          |
-| `./docs`     | `src/docs/`       | `NOTATION_DOCS`, `MODIFIER_DOCS`, `DICE_DOCS`, `NotationDoc`               |
-| `./trace`    | `src/trace/`      | `traceRoll`, `formatAsMath`, `RollTraceStep`                               |
+| Subpath      | Source            | Provides                                                     |
+| ------------ | ----------------- | ------------------------------------------------------------ |
+| `.`          | `src/index.ts`    | Barrel — `roll`, validation, conversion, errors, types       |
+| `./roll`     | `src/roll/`       | `roll` only                                                  |
+| `./errors`   | `src/errors.ts`   | Error classes + `ERROR_CODES`                                |
+| `./validate` | `src/validate.ts` | Validation + numeric validators                              |
+| `./tokenize` | `src/tokenize.ts` | `tokenize`, `Token`, `TokenCategory`                         |
+| `./docs`     | `src/docs/`       | `NOTATION_DOCS`, `MODIFIER_DOCS`, `DICE_DOCS`, `NotationDoc` |
+| `./trace`    | `src/trace/`      | `traceRoll`, `formatAsMath`, `RollTraceStep`                 |
 
 There is **no `./comparison` subpath**. Comparison helpers
 (`parseComparisonNotation`, `hasConditions`, `formatComparisonNotation`,
-`formatComparisonDescription`) are exported from the main barrel (ADR-009 folded
-the old `./comparison` export into `.`).
+`formatComparisonDescription`) are **internal** to `src/notation/comparison/` —
+consumed directly by the modifier and notation-definition code, not re-exported
+from any public surface.
 
 ### `./docs` — static notation documentation
 
@@ -90,16 +91,19 @@ The trace subpath uses no Node-specific APIs and works in browser contexts.
 
 ## Notation API (from the barrel)
 
-All native to this package (`src/notation/`):
+All native to this package (`src/notation/`). Public barrel surface:
 
 - **Parsing:** `notation`, `isDiceNotation`, `validateNotation`,
-  `notationToOptions`, `listOfNotations`, `suggestNotationFix`
+  `notationToOptions`, `suggestNotationFix`
 - **Transformers:** `optionsToNotation`, `optionsToDescription`,
-  `optionsToSidesFaces`, `modifiersToNotation`, `modifiersToDescription`
+  `modifiersToNotation`, `modifiersToDescription`
 - **Tokenization:** `tokenize`
-- **Comparison:** `parseComparisonNotation`, `hasConditions`,
-  `formatComparisonNotation`, `formatComparisonDescription`
-- **Constants:** `TTRPG_STANDARD_DIE_SET`, `coreNotationPattern`, `formatHumanList`
+
+Comparison helpers (`parseComparisonNotation`, `hasConditions`,
+`formatComparisonNotation`, `formatComparisonDescription`), `listOfNotations`,
+`optionsToSidesFaces`, `TTRPG_STANDARD_DIE_SET`, `coreNotationPattern`, and
+`formatHumanList` are **internal** — used within `src/`, not re-exported from the
+barrel.
 
 ## Modifier system
 
@@ -181,7 +185,7 @@ All types use `export type`. From the barrel:
   `UniqueOptions`
 - `RollRecord`, `RollRecord<T>`
 - `ValidationResult`, `ValidationErrorInfo`
-- `Token`, `TokenType`, `TokenCategory`, `ModifierCategory`
+- `Token`, `TokenCategory`, `ModifierCategory`
 
 Shared type definitions live in `src/types/` (`core.ts`, `modifiers.ts`,
 `results.ts`, `index.ts`). The `NotationSchema` type lives in

@@ -151,7 +151,7 @@ engine, RNG, or modifier behaviors. Use it in UI components and form validators.
 
 ```typescript
 import { tokenize } from "@randsum/roller/tokenize"
-import type { Token, TokenType } from "@randsum/roller/tokenize"
+import type { Token, TokenCategory } from "@randsum/roller/tokenize"
 ```
 
 **`@randsum/roller/docs`** — static `NotationDoc` data describing every dice type

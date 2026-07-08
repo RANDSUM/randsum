@@ -1,8 +1,5 @@
 import { validateNotation } from './validateNotation'
 
-// TokenType kept for backwards compatibility; will be removed when S5/S6 complete
-export type TokenType = string
-
 export type ModifierCategory =
   | 'Core'
   | 'Special' // dice types
