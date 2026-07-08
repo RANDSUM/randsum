@@ -10,6 +10,7 @@ import starlightSidebarTopics from 'starlight-sidebar-topics'
 import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
 import { copyMarkdownToDist } from './src/integrations/copy-markdown-to-dist'
+import { copySchemaToDist } from './src/integrations/copy-schema-to-dist'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
@@ -172,7 +173,8 @@ export default defineConfig({
               { label: 'Playground', link: 'https://randsum.io' },
               { label: 'CLI', slug: 'tools/cli' },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
-              { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' }
+              { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' },
+              { label: 'HTTP API & Schema', slug: 'tools/http-api' }
             ]
           }
         ])
@@ -180,7 +182,8 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css']
     }),
     react(),
-    copyMarkdownToDist()
+    copyMarkdownToDist(),
+    copySchemaToDist()
   ],
   prefetch: false,
   vite: {

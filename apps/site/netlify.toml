@@ -16,6 +16,16 @@
   # proceeds (safe default).
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/site packages package.json bun.lock tsconfig.json tsconfig.packages.json"
 
+# Serve the hosted games meta-schema with an explicit JSON content type. The
+# schema is reachable at its declared $id (https://randsum.dev/schemas/v1/randsum.json)
+# and editors fetch it via a `$schema` reference, so the content type must be
+# application/json (Netlify's default for .json, pinned here to be explicit).
+[[headers]]
+  for = "/schemas/*"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Access-Control-Allow-Origin = "*"
+
 [build.environment]
   # Pin the build toolchain so Netlify deploys are reproducible (audit X4 /
   # infrastructure F1). NODE_VERSION matches the CI site job (node 22); BUN_VERSION
