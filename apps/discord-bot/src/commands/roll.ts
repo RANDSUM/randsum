@@ -30,7 +30,10 @@ function buildRollEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder 
         })
       }
       const modifiedRolls = rollRecord.rolls
-      if (modifiedRolls.length > 0 && rollRecord.modifierLogs.length > 0) {
+      if (
+        modifiedRolls.length > 0 &&
+        JSON.stringify(modifiedRolls) !== JSON.stringify(initialRolls)
+      ) {
         embed.addFields({
           name: 'Modified Rolls',
           value: modifiedRolls.join(', '),
