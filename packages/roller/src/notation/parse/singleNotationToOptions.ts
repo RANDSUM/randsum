@@ -66,7 +66,14 @@ export function singleNotationToOptions(notationString: string): ParsedNotationO
   const { cleaned, label } = extractLabel(trimmedNotationString)
   const coreNotationMatch = cleaned.match(coreNotationPattern)?.at(0) ?? ''
   const modifiersString = cleaned.replace(coreNotationMatch, '')
-  const [quantityNot, sidesNotation = ''] = coreNotationMatch.split(/[Dd]/)
+  const [quantityNot = '', sidesNotation = ''] = coreNotationMatch.split(/[Dd]/)
+  // Quantity is optional (`d20` === `1d20`). The prefix is at most a sign plus
+  // digits; strip the sign to read the magnitude. An omitted quantity on a real
+  // die defaults to 1; if no core matched at all (sidesNotation empty) keep 0 so
+  // malformed input still parses to a rejectable zero-sided pool.
+  const isSubtractive = quantityNot.startsWith('-')
+  const quantityDigits = quantityNot.replace(/^[+-]/, '')
+  const quantity = quantityDigits === '' ? (sidesNotation === '' ? 0 : 1) : Number(quantityDigits)
 
   // Gap 44: The ABNF grammar defines a `mod-add-pool` rule for "+NdS" notation (adding a dice pool,
   // not a scalar). At the code level, this is handled by parsing each notation segment separately
@@ -74,8 +81,8 @@ export function singleNotationToOptions(notationString: string): ParsedNotationO
   // The ABNF `mod-add-pool` and the `arithmetic` field are two different layers of the same concept:
   // the ABNF describes the syntax surface; `arithmetic` is the IR field that drives pool combination.
   const core: ParsedNotationOptions = {
-    quantity: Math.abs(Number(quantityNot)),
-    arithmetic: Number(quantityNot) < 0 ? ('subtract' as const) : ('add' as const),
+    quantity,
+    arithmetic: isSubtractive ? ('subtract' as const) : ('add' as const),
     sides: Number(sidesNotation)
   }
 

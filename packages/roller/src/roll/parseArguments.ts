@@ -346,20 +346,20 @@ export function parseArguments<T>(argument: RollArgument<T>, position: number): 
       quantity = 1,
       arithmetic = 'add',
       modifiers = {},
-      key = `Roll ${position}${indexLabel}`
+      key = `Roll ${position}${indexLabel}`,
+      label,
+      ...restOptions
     } = options
-    const label =
-      'label' in options
-        ? ((options as Record<string, unknown>)['label'] as string | undefined)
-        : undefined
     return {
-      ...options,
+      ...restOptions,
       ...optionsToSidesFaces(options),
       key,
       modifiers,
       quantity,
       arithmetic,
       argument,
+      // Re-add label only when present so an absent one stays absent (not
+      // `label: undefined`) under exactOptionalPropertyTypes.
       ...(label !== undefined ? { label } : {}),
       notation: optionsToNotation(options),
       description: optionsToDescription(options)

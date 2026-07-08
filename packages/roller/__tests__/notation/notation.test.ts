@@ -21,30 +21,12 @@ describe('notation', () => {
       expect(notation('3d6!')).toBe('3d6!')
       expect(notation('2d10C{>8}')).toBe('2d10C{>8}')
     })
-  })
 
-  describe('invalid notation with suggestions', () => {
-    test('throws NotationParseError with suggestion for missing quantity', () => {
-      try {
-        notation('d6')
-        expect.unreachable('Should have thrown')
-      } catch (e) {
-        expect(e).toBeInstanceOf(NotationParseError)
-        const error = e as NotationParseError
-        expect(error.suggestion).toBe('1d6')
-        expect(error.message).toContain('Did you mean "1d6"?')
-      }
-    })
-
-    test('throws NotationParseError with suggestion for uppercase D', () => {
-      try {
-        notation('D20')
-        expect.unreachable('Should have thrown')
-      } catch (e) {
-        expect(e).toBeInstanceOf(NotationParseError)
-        const error = e as NotationParseError
-        expect(error.suggestion).toBe('1d20')
-      }
+    test('accepts bare dN notation (quantity optional, de-aliases to 1dN)', () => {
+      // RDN §4.1: `standard-die = [quantity] %i"d" positive-integer` — quantity
+      // is optional, so `d6` / `D20` are valid and equivalent to `1d6` / `1d20`.
+      expect(notation('d6')).toBe('d6')
+      expect(notation('D20')).toBe('D20')
     })
   })
 

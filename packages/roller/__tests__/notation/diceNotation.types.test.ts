@@ -111,8 +111,8 @@ const _lowerK: DiceNotation = '4d6k3'
 // @ts-expect-error — bare string is not DiceNotation
 const _badStr: DiceNotation = 'hello'
 
-// @ts-expect-error — missing quantity
-const _noQty: DiceNotation = 'd6'
+// Bare dN is valid: quantity is optional (RDN §4.1), so `d6` === `1d6`.
+const _bareD: DiceNotation = 'd6'
 
 // @ts-expect-error — missing sides
 const _noSides: DiceNotation = '4d'
@@ -195,7 +195,7 @@ void [
   _upperD2,
   _lowerK,
   _badStr,
-  _noQty,
+  _bareD,
   _noSides,
   _empty,
   _fate,

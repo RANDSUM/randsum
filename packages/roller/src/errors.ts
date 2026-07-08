@@ -2,12 +2,7 @@
  * Centralized error codes for all RANDSUM errors.
  * Use these constants instead of raw strings for consistency.
  */
-export const ERROR_CODES: Record<string, string> & {
-  readonly INVALID_NOTATION: 'INVALID_NOTATION'
-  readonly MODIFIER_ERROR: 'MODIFIER_ERROR'
-  readonly VALIDATION_ERROR: 'VALIDATION_ERROR'
-  readonly ROLL_ERROR: 'ROLL_ERROR'
-} = {
+export const ERROR_CODES = {
   /** Invalid dice notation syntax */
   INVALID_NOTATION: 'INVALID_NOTATION',
   /** Error applying a modifier */
@@ -16,11 +11,16 @@ export const ERROR_CODES: Record<string, string> & {
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   /** General roll execution error */
   ROLL_ERROR: 'ROLL_ERROR'
-} as const satisfies Record<string, string>
+} as const
 
-export type ErrorCode =
-  | (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
-  | (string & Record<never, never>)
+/**
+ * Closed literal union of every RANDSUM error code.
+ *
+ * The union is exhaustive: it contains only the codes declared in
+ * {@link ERROR_CODES}, so consumers can `switch` over an `ErrorCode` and have
+ * TypeScript verify every case is handled.
+ */
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
 
 /**
  * Optional structured context for a RANDSUM error.
@@ -46,12 +46,20 @@ export interface ErrorContext {
 /**
  * Base error class for all RANDSUM errors.
  * All custom errors in the RANDSUM ecosystem should extend this class.
+ *
+ * The class is generic over its `code` type. The roller's own errors use the
+ * closed {@link ErrorCode} union (so consumers can switch exhaustively), while
+ * downstream packages that extend `RandsumError` may specialize `Code` with
+ * their own literal union (e.g. `@randsum/games`'s `SchemaError`). `Code`
+ * defaults to `string` so a bare `extends RandsumError` can still carry an
+ * arbitrary code — the honest base type, since a caught `RandsumError` may be
+ * any subclass.
  */
-export class RandsumError extends Error {
-  public readonly code: ErrorCode
+export class RandsumError<Code extends string = string> extends Error {
+  public readonly code: Code
   public readonly context: ErrorContext | undefined
 
-  constructor(message: string, code: ErrorCode, context?: ErrorContext) {
+  constructor(message: string, code: Code, context?: ErrorContext) {
     super(message)
     this.name = 'RandsumError'
     this.code = code
@@ -62,7 +70,7 @@ export class RandsumError extends Error {
 /**
  * Error thrown when a string is not valid dice notation.
  */
-export class NotationParseError extends RandsumError {
+export class NotationParseError extends RandsumError<ErrorCode> {
   public readonly suggestion: string | undefined
 
   constructor(notation: string, reason: string, suggestion?: string, context?: ErrorContext) {
@@ -77,21 +85,21 @@ export class NotationParseError extends RandsumError {
   }
 }
 
-export class ModifierError extends RandsumError {
+export class ModifierError extends RandsumError<ErrorCode> {
   constructor(modifierType: string, reason: string, context?: ErrorContext) {
     super(`Modifier error for "${modifierType}": ${reason}`, ERROR_CODES.MODIFIER_ERROR, context)
     this.name = 'ModifierError'
   }
 }
 
-export class ValidationError extends RandsumError {
+export class ValidationError extends RandsumError<ErrorCode> {
   constructor(message: string, context?: ErrorContext) {
     super(`Validation error: ${message}`, ERROR_CODES.VALIDATION_ERROR, context)
     this.name = 'ValidationError'
   }
 }
 
-export class RollError extends RandsumError {
+export class RollError extends RandsumError<ErrorCode> {
   constructor(message: string, context?: ErrorContext) {
     super(message, ERROR_CODES.ROLL_ERROR, context)
     this.name = 'RollError'
