@@ -20,6 +20,7 @@ jobs:
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
       cli: ${{ steps.filter.outputs.cli }}
+      mcp: ${{ steps.filter.outputs.mcp }}
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
       dice-ui: ${{ steps.filter.outputs.dice-ui }}
@@ -42,6 +43,11 @@ jobs:
             cli:
               - 'packages/roller/**'
               - 'apps/cli/**'
+              - '.github/workflows/ci.yml'
+            mcp:
+              - 'packages/roller/**'
+              - 'packages/games/**'
+              - 'packages/mcp/**'
               - '.github/workflows/ci.yml'
             site:
               - 'packages/**'
@@ -128,6 +134,17 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/cli' check
+
+  mcp:
+    name: mcp
+    needs: changes
+    if: needs.changes.outputs.mcp == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: ./.github/actions/bun-setup
+      - run: bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build
+      - run: bun run --filter '@randsum/mcp' check
 
   discord-bot:
     name: discord-bot
@@ -272,7 +289,7 @@ jobs:
         # not fail on the expected missing-CJS resolutions.
         run: |
           set -euo pipefail
-          for dir in packages/roller packages/games apps/cli; do
+          for dir in packages/roller packages/games packages/mcp apps/cli; do
             echo "::group::$dir"
             ( cd "$dir" && bun pm pack )
             tgz=$(ls "$dir"/*.tgz)
@@ -339,7 +356,7 @@ jobs:
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [roller, games, cli, discord-bot, site, rdn, dice-ui, skill, bench, publish-dry-run, knip, arch, audit]
+    needs: [roller, games, cli, mcp, discord-bot, site, rdn, dice-ui, skill, bench, publish-dry-run, knip, arch, audit]
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

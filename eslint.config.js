@@ -19,7 +19,8 @@ export default tseslint.config(
             'packages/roller/bunup.config.ts',
             'packages/games/bunup.config.ts',
             'apps/cli/bunup.config.ts',
-            'apps/discord-bot/bunup.config.ts'
+            'apps/discord-bot/bunup.config.ts',
+            'packages/mcp/bunup.config.ts'
           ]
         },
         tsconfigRootDir: import.meta.dirname

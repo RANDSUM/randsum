@@ -28,6 +28,11 @@
       "project": ["src/**/*.{ts,tsx}"],
       "includeEntryExports": true
     },
+    "packages/mcp": {
+      "entry": ["src/index.ts", "__tests__/**/*.test.ts"],
+      "project": ["src/**/*.ts", "__tests__/**/*.ts"],
+      "includeEntryExports": true
+    },
     "apps/rdn": {},
     "apps/site": {}
   },
