@@ -4,14 +4,7 @@
     ".": {
       "entry": ["scripts/*.ts"],
       "project": ["scripts/*.ts"],
-      "ignoreDependencies": [
-        "@typescript-eslint/eslint-plugin",
-        "@typescript-eslint/parser",
-        "astro",
-        "@astrojs/netlify",
-        "fast-check",
-        "mitata"
-      ]
+      "ignoreDependencies": ["mitata"]
     },
     "packages/roller": {
       "entry": [
