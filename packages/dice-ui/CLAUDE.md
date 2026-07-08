@@ -2,11 +2,12 @@
 
 ## Overview
 
-Private React component library (v2.0.0) providing dice notation UI for RANDSUM apps. Exports a
-notation input with token color overlay (`TokenOverlayInput`), a roll step visualizer
-(`RollSteps`/`StepRow`/`DieBadge`), result panels (`RollResultPanel`/`RollResultDisplay`), a
-combined notation roller (`NotationRoller`), a quick reference grid (`QuickReferenceGrid`/`DocModal`),
-and theme utilities (`useTheme`/`getTheme`/`subscribeTheme`/`DiceUIThemeProvider`).
+Private React component library (v2.0.0) providing dice notation UI for RANDSUM apps. The public
+barrel exports a combined notation roller (`NotationRoller`) and the result panels
+(`RollResultPanel`/`RollResultDisplay`) that render a roll's steps, plus the `RollResult` payload
+type. The supporting pieces — a token-overlay input (`TokenOverlayInput`), a roll-step visualizer
+(`RollSteps`/`StepRow`/`DieBadge`), a theme store (`useTheme`/`getTheme`/`subscribeTheme`), and the
+`tokenColor` helper — remain internal modules imported by those components, not re-exported.
 
 The only runtime dependency is `@randsum/roller` (`workspace:~`). `react` and `react-dom` are peer
 dependencies (`react-dom` optional). There is **no build script** — `main`/`types`/`exports` resolve
@@ -22,38 +23,34 @@ and **no TUI / `ink` target** (see `docs/adr/ADR-019`).
 ## Exports
 
 ```typescript
-export type { RollResult, QuickReferenceGridProps, DocModalProps }
-export { tokenColor }
-export { useTheme, getTheme, subscribeTheme, DiceUIThemeProvider }
-export { TokenOverlayInput }
-export type { TokenOverlayInputProps }
-export { DieBadge, StepRow, RollSteps }
-export type { DieBadgeProps, StepRowProps, RollStepsProps }
+export type { RollResult }
 export { NotationRoller }
 export type { NotationRollerProps }
 export { RollResultPanel, RollResultDisplay }
 export type { RollResultPanelProps }
-export { QuickReferenceGrid, DocModal }
 ```
+
+The barrel is scoped to exactly what `apps/site` imports. `TokenOverlayInput`, `RollSteps`
+(`StepRow`/`DieBadge`), `useTheme`/`getTheme`/`subscribeTheme`/`DiceUIThemeProvider`, and
+`tokenColor` are internal modules — still tested directly under `__tests__/` but no longer part of
+the public surface.
 
 ## Directory Structure
 
 ```
 packages/dice-ui/
   src/
-    index.ts                  # Public barrel
-    types.ts                  # Shared prop/result types
-    useTheme.tsx              # Theme store + provider
-    tokenColor.ts             # Notation-token → color helper
-    TokenOverlayInput.tsx     # Input with colored token spans overlaid
+    index.ts                  # Public barrel (NotationRoller, result panels, RollResult)
+    types.ts                  # RollResult type
+    useTheme.tsx              # Theme store + provider (internal)
+    tokenColor.ts             # Notation-token → color helper (internal)
+    TokenOverlayInput.tsx     # Input with colored token spans overlaid (internal)
     TokenOverlayInput.css
-    RollSteps.tsx             # DieBadge, StepRow, RollSteps
+    RollSteps.tsx             # DieBadge, StepRow, RollSteps (internal)
     RollSteps.css
     RollResultPanel.tsx       # RollResultPanel + RollResultDisplay
     NotationRoller.tsx        # Full roller: input + roll button + result
     NotationRoller.css
-    QuickReferenceGrid.tsx    # Notation reference grid + DocModal
-    notationBuilder.ts        # Notation assembly helper
     tokens.css                # CSS custom-property tokens (colors, spacing)
 ```
 
@@ -64,17 +61,18 @@ packages/dice-ui/
 - **`TokenOverlayInput`** — wraps an `<input>` with a positioned overlay of colored `<span>`s for
   tokenized notation segments. Used inside `NotationRoller`.
 - **`RollSteps`** — renders a list of `StepRow`s showing each step of a roll. `DieBadge` renders an
-  individual die face value.
-- **`QuickReferenceGrid`** — grid of notation examples; `DocModal` shows per-entry docs.
+  individual die face value. `RollResultPanel`/`RollResultDisplay` reuse `StepRow` directly.
 - **`useTheme`** — subscribes to a module-level `'light' | 'dark'` theme store; `getTheme()` /
   `subscribeTheme()` for imperative access; `DiceUIThemeProvider` for context wrapping.
 
 ## Commands
 
 ```bash
-bun run typecheck   # tsc --noEmit
-bun run test        # bun test __tests__
-bun run check       # typecheck + test
+bun run typecheck      # tsc --noEmit
+bun run lint           # eslint
+bun run format:check   # prettier --check
+bun run test           # bun test __tests__
+bun run check          # typecheck + format:check + lint + test
 ```
 
 ## Key Constraints

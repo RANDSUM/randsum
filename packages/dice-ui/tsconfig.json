@@ -4,8 +4,9 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "lib": ["ESNext", "DOM"],
+    "types": ["bun"],
     "outDir": "dist"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "__tests__/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
