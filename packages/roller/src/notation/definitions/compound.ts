@@ -1,5 +1,10 @@
 import type { ComparisonOptions } from '../types'
-import { formatComparisonNotation, hasConditions, parseComparisonNotation } from '../comparison'
+import {
+  formatComparisonDescription,
+  formatComparisonNotation,
+  hasConditions,
+  parseComparisonNotation
+} from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
 const compoundPattern = /!!(\d+)?(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/
@@ -48,7 +53,7 @@ export const compoundSchema: NotationSchema<boolean | number | ComparisonOptions
       if (options === 0) return ['Compounding Dice (unlimited)']
       if (typeof options === 'number') return [`Compounding Dice (max ${options} times)`]
       if (typeof options === 'object') {
-        const conditions = formatComparisonNotation(options)
+        const conditions = formatComparisonDescription(options)
         if (conditions.length === 0) return ['Compounding Dice']
         return [`Compounding Dice on ${conditions.join(' or ')}`]
       }

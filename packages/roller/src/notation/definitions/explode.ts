@@ -1,5 +1,10 @@
 import type { ComparisonOptions } from '../types'
-import { formatComparisonNotation, hasConditions, parseComparisonNotation } from '../comparison'
+import {
+  formatComparisonDescription,
+  formatComparisonNotation,
+  hasConditions,
+  parseComparisonNotation
+} from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
 const explodePattern =
@@ -41,6 +46,11 @@ export const explodeSchema: NotationSchema<boolean | ComparisonOptions> = define
   toDescription: options => {
     if (!options) return []
     if (options === true) return ['Exploding Dice']
+    if (typeof options === 'object') {
+      const conditions = formatComparisonDescription(options)
+      if (conditions.length === 0) return ['Exploding Dice']
+      return [`Exploding Dice on ${conditions.join(' or ')}`]
+    }
     return ['Exploding Dice']
   }
 })

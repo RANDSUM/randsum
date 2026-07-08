@@ -1,56 +1,8 @@
-import { defineNotationSchema } from '../notation/schema'
-import type { NotationSchema } from '../notation/schema'
-import type { NotationDoc } from '../docs/modifierDocs'
+import { wildDieSchema } from '../notation/definitions/wildDie'
 import { DEFAULT_EXPLOSION_DEPTH } from '../lib/constants'
 import type { ModifierDefinition } from './schema'
 import { assertRequiredContext } from './schema'
 import { ExplosionStrategies, applyAccumulatingExplosion } from './shared/explosion'
-
-const wildDiePattern = /[Ww](?![{])/
-
-export const wildDieSchema: NotationSchema<boolean> = defineNotationSchema<boolean>({
-  name: 'wildDie',
-  priority: 55,
-
-  pattern: wildDiePattern,
-
-  docs: [
-    {
-      key: 'W',
-      category: 'Dispatch',
-      color: '#facc15',
-      colorLight: '#a16207',
-      title: 'Wild Die',
-      description:
-        'D6 System wild die: compound-explode on max, drop wild die and highest on 1, no effect otherwise. A macro that dispatches to multiple primitives based on runtime state.',
-      displayBase: 'W',
-      forms: [{ notation: 'W', note: 'Apply wild die rule' }],
-      examples: [
-        {
-          description: 'D6 System with wild die',
-          notation: '5d6W',
-          options: { sides: 6, quantity: 5, modifiers: { wildDie: true } }
-        }
-      ]
-    }
-  ] satisfies readonly NotationDoc[],
-
-  parse: notation => {
-    const match = wildDiePattern.exec(notation)
-    if (!match) return {}
-    return { wildDie: true }
-  },
-
-  toNotation: options => {
-    if (options) return 'W'
-    return undefined
-  },
-
-  toDescription: options => {
-    if (options) return ['Wild Die (compound on max, penalty on 1)']
-    return []
-  }
-})
 
 export const wildDieModifier: ModifierDefinition<boolean> = {
   ...wildDieSchema,

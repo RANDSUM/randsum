@@ -1,5 +1,10 @@
 import type { ComparisonOptions } from '../types'
-import { formatComparisonNotation, hasConditions, parseComparisonNotation } from '../comparison'
+import {
+  formatComparisonDescription,
+  formatComparisonNotation,
+  hasConditions,
+  parseComparisonNotation
+} from '../comparison'
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
 const penetratePattern = /!p(\d+)?(\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})?/i
@@ -48,7 +53,7 @@ export const penetrateSchema: NotationSchema<boolean | number | ComparisonOption
       if (options === 0) return ['Penetrating Dice (unlimited)']
       if (typeof options === 'number') return [`Penetrating Dice (max ${options} times)`]
       if (typeof options === 'object') {
-        const conditions = formatComparisonNotation(options)
+        const conditions = formatComparisonDescription(options)
         if (conditions.length === 0) return ['Penetrating Dice']
         return [`Penetrating Dice on ${conditions.join(' or ')}`]
       }

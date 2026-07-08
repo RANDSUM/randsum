@@ -63,8 +63,10 @@ from any public surface.
 
 ### `./docs` — static notation documentation
 
-Pure static `NotationDoc` data derived from the modifier and dice schema
-registries; no roll engine, safe for any bundling context.
+Pure static `NotationDoc` data — `dist/docs/index.js` is fully self-contained
+(no chunk imports) and pulls in zero roll-engine or notation-parse code, safe for
+any bundling context. Modifier docs come from `src/docs/modifierDocData.ts` (pure
+data); dice docs from `src/dice/index.ts`.
 
 - `NOTATION_DOCS: Readonly<Record<string, NotationDoc>>` — every dice type and
   modifier, keyed by canonical notation shorthand (`'xDN'`, `'d%'`, `'L'`, `'!'`,
@@ -72,9 +74,10 @@ registries; no roll engine, safe for any bundling context.
 - `MODIFIER_DOCS` / `DICE_DOCS` — modifier-only / dice-only subsets
 - `NotationDoc`, `ModifierCategory` types
 
-Source: `src/docs/modifierDocs.ts` derives the records; `src/docs/index.ts`
-re-exports. Keys are case-sensitive canonical shorthand (`'L'`, not `'l'`), even
-though the parser is case-insensitive.
+Source: `src/docs/modifierDocs.ts` derives the records from
+`src/docs/modifierDocData.ts` (modifier docs) and `RANDSUM_DICE_SCHEMAS` (dice
+docs); `src/docs/index.ts` re-exports. Keys are case-sensitive canonical
+shorthand (`'L'`, not `'l'`), even though the parser is case-insensitive.
 
 ### `./trace` — roll result visualization
 
@@ -120,37 +123,62 @@ wildDie, unique, drop, keep, count, multiply, plus, minus,
 integerDivide, modulo, sort, multiplyTotal
 ```
 
-Each modifier is one co-located file `src/modifiers/<mod>.ts` exporting two
-symbols:
+Each modifier's schema and behavior are **single-sourced**, split across two
+files to keep the tokenize path free of roll-engine code:
 
-- **`<mod>Schema`** (`NotationSchema`) — regex pattern, parse/format logic,
-  priority, and a co-located `docs` array. Used by both the tokenize path and the
-  roll path.
-- **`<mod>Modifier`** (`ModifierDefinition`) — full definition combining schema
-  and dice-pool behavior. Used only by the roll path.
+- **`<mod>Schema`** (`NotationSchema`) lives in
+  `src/notation/definitions/<mod>.ts` — the canonical, behavior-free source of
+  regex pattern, `parse`, `toNotation`, and `toDescription`. This is the only
+  copy; the parse/validate/tokenize path imports it directly (via
+  `src/notation/parse/parseModifiers.ts` and
+  `src/notation/transformers/modifiersToStrings.ts`).
+- **`<mod>Modifier`** (`ModifierDefinition`) lives in `src/modifiers/<mod>.ts` —
+  it **imports** `<mod>Schema` from `notation/definitions`, spreads it, and
+  attaches only the dice-pool behavior (`apply`, `validate`, `requires*`,
+  `mutatesRolls`). Used only by the roll path (`RANDSUM_MODIFIERS`). The registry
+  reads `name` + behavior fields off the modifier; it never touches the schema's
+  `parse`/`toNotation`/`toDescription`.
+
+There is **no second schema copy**. (Historically `src/modifiers/<mod>.ts`
+redefined the whole schema — pattern/parse/format plus a `docs` array — duplicating
+`notation/definitions/<mod>.ts`; the two had already drifted. That duplication is
+gone.)
+
+Static notation **docs are pure data**, defined once in
+`src/docs/modifierDocData.ts` (grouped per modifier: most own one surface, `drop`
+owns `L`/`H`/`D{..}`, `keep` owns `K`/`KL`/`KM`, `reroll` owns `R{..}`/`ro{..}`,
+`explodeSequence` owns `!s{..}`/`!i`/`!r`, and `count` owns the whole count family
+`#{..}`/`S{..}`/`F{..}`/`ms{..}`). Docs are **not** carried on the schema or
+modifier objects — that would leak ~4 KB of doc strings into `dist/tokenize.js`
+(which imports the schemas to parse). `MODIFIER_DOCS_BY_NAME` re-establishes the
+modifier→docs linkage explicitly.
 
 To add a modifier:
 
-1. Create `src/modifiers/<mod>.ts` exporting `<mod>Schema` and `<mod>Modifier`
-2. Register `<mod>Modifier` in `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`)
-3. Add a `docs` array to `<mod>Schema` — one entry per notation surface (e.g.
-   drop has three: `L`, `H`, `D{..}`)
-4. Document the notation at https://notation.randsum.dev (`apps/rdn/`)
+1. Create `src/notation/definitions/<mod>.ts` exporting `<mod>Schema`
+2. Create `src/modifiers/<mod>.ts` importing `<mod>Schema` and exporting
+   `<mod>Modifier` (schema spread + behavior)
+3. Register `<mod>Modifier` in `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`)
+4. Add a `<mod>Docs` group to `src/docs/modifierDocData.ts` — one entry per
+   notation surface — and wire it into `MODIFIER_DOCS_BY_NAME` and
+   `MODIFIER_NOTATION_DOCS`
+5. Document the notation at https://notation.randsum.dev (`apps/rdn/`)
 
 ### Tokenize isolation invariant
 
 The `./tokenize` subpath must never pull in modifier behaviors. Behaviors are
-dice-pool manipulation functions, meaningless in a UI context. Post-co-location,
-isolation rests on ESM tree-shaking rather than directory structure:
+dice-pool manipulation functions, meaningless in a UI context. Isolation rests on
+directory boundaries plus ESM tree-shaking:
 
-- Each modifier file exports `<mod>Schema` (tokenize path) and `<mod>Modifier`
-  (roll path only).
-- The tokenize import graph references `<mod>Schema` by name and never
-  `<mod>Modifier`, so bundlers eliminate the behavior from `dist/tokenize.js`.
-- **Invariant:** a `<mod>Schema` must not reference any behavior-only symbol at
-  module-init time, or the reference defeats tree-shaking and leaks the engine.
-- Static `docs` data on a schema is display metadata, not behavior — it does not
-  violate the invariant.
+- The tokenize path imports schemas only from `src/notation/definitions/`, never
+  from `src/modifiers/` (which carry `apply`/`validate`). So the roll engine is
+  never in the tokenize import graph.
+- **Invariant:** a `notation/definitions/<mod>.ts` schema must not import any
+  behavior-only symbol (nothing from `src/modifiers/**` or the roll pipeline).
+- **Invariant:** doc data is heavy static strings, so it lives in
+  `src/docs/modifierDocData.ts` — **never** on the schema objects the tokenize
+  path imports. Attaching a `docs` array back onto a `notation/definitions`
+  schema re-bloats `dist/tokenize.js` by ~3.5 KB (the whole doc dataset).
 
 The `size-limit` gate on `dist/tokenize.js` (6.75 KB) is the enforcement check.
 Verify after any modifier change:
@@ -202,17 +230,18 @@ src/
   roll/             # roll() entry, argument parsing, execution pipeline
     parseArguments.ts
     pipeline.ts
-  modifiers/        # one file per modifier (co-located schema + behavior)
+  modifiers/        # roll-path behavior; each file imports its schema + attaches apply/validate
     definitions.ts  # RANDSUM_MODIFIERS — single source of truth (existence + order)
     index.ts        # re-exports RANDSUM_MODIFIERS + registry helpers
     registry.ts     # MODIFIER_ORDER, applyAllModifiers, validateModifiers
-    schema.ts       # ModifierContext
-    cap.ts, drop.ts, explode.ts, ...   # one file per modifier
+    schema.ts       # ModifierContext, ModifierDefinition (= NotationSchema & ModifierBehavior)
+    cap.ts, drop.ts, explode.ts, ...   # import <mod>Schema from notation/definitions + behavior
     shared/         # shared modifier helpers (e.g. explosion factory)
-  dice/             # internal dice schema registry (DiceSchema not exported)
+  dice/             # internal dice schema registry (DiceSchema not exported); pure doc data
   docs/
-    modifierDocs.ts # derives NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS
-    index.ts        # ./docs re-exports
+    modifierDocData.ts # pure static NotationDoc data (single source; grouped per modifier)
+    modifierDocs.ts    # derives NOTATION_DOCS, MODIFIER_DOCS, DICE_DOCS from the data
+    index.ts           # ./docs re-exports
   trace/            # ./trace — traceRoll, formatAsMath, RollTraceStep
   notation/         # native notation parsing/validation/tokenization
     comparison/     # {<3,>18} condition syntax
@@ -229,13 +258,18 @@ src/
 
 `size-limit` in `package.json` enforces:
 
-| File                  | Limit   |
-| --------------------- | ------- |
-| `dist/index.js`       | 16 KB   |
-| `dist/index.d.ts`     | 10 KB   |
-| `dist/tokenize.js`    | 6.75 KB |
-| `dist/docs/index.js`  | 20 KB   |
-| `dist/trace/index.js` | 5 KB    |
+| File                  | Limit    |
+| --------------------- | -------- |
+| `dist/index.js`       | 13.25 KB |
+| `dist/index.d.ts`     | 10 KB    |
+| `dist/tokenize.js`    | 6.75 KB  |
+| `dist/docs/index.js`  | 5.25 KB  |
+| `dist/trace/index.js` | 1.1 KB   |
+
+These budgets were tightened after schema unification removed the duplicated
+modifier schemas (the main bundle previously shipped both copies) and moved docs
+off the roll/tokenize paths: `dist/index.js` fell ~15.7 → 11.5 KB and
+`dist/docs/index.js` ~10 → 4.5 KB.
 
 A bump in `dist/tokenize.js` usually means a behavior leaked into the tokenize
 path — trace the import graph from `src/tokenize.ts`.

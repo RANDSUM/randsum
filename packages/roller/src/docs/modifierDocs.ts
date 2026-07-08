@@ -1,5 +1,5 @@
-import { RANDSUM_MODIFIERS } from '../modifiers/definitions'
 import { RANDSUM_DICE_SCHEMAS } from '../dice/index'
+import { MODIFIER_NOTATION_DOCS } from './modifierDocData'
 import type { ModifierCategory } from '../notation/tokenize'
 import type { RollOptions } from '../notation/types'
 
@@ -33,9 +33,9 @@ const diceEntries: readonly [string, NotationDoc][] = RANDSUM_DICE_SCHEMAS.map(s
   schema.doc
 ])
 
-const modifierEntries: readonly [string, NotationDoc][] = RANDSUM_MODIFIERS.flatMap(
-  mod => mod.docs ?? []
-).map(doc => [doc.key, doc] as [string, NotationDoc])
+const modifierEntries: readonly [string, NotationDoc][] = MODIFIER_NOTATION_DOCS.map(
+  doc => [doc.key, doc] as [string, NotationDoc]
+)
 
 export const NOTATION_DOCS: Readonly<Record<string, NotationDoc>> = Object.freeze(
   Object.fromEntries([...diceEntries, ...modifierEntries])

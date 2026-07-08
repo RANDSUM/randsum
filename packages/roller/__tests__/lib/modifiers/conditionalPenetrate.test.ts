@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { roll } from '@randsum/roller'
 import { createSeededRandom } from '../../../test-utils/src/seededRandom'
-import { penetrateSchema } from '../../../src/modifiers/penetrate'
+import { penetrateSchema } from '../../../src/notation/definitions/penetrate'
 
 describe('Conditional Penetrate notation', () => {
   test('parses !p{>=8}', () => {

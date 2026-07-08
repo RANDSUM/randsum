@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { DICE_DOCS, MODIFIER_DOCS, NOTATION_DOCS } from '../src/docs/index'
 import type { NotationDoc } from '../src/docs/index'
 import type { NotationSchema } from '../src/notation/schema'
-import { RANDSUM_MODIFIERS } from '../src/modifiers/definitions'
+import { MODIFIER_NOTATION_DOCS } from '../src/docs/modifierDocData'
 import { RANDSUM_DICE_SCHEMAS } from '../src/dice/index'
 
 function checkNotationDocShape(doc: NotationDoc, key: string): void {
@@ -171,11 +171,9 @@ describe('NOTATION_DOCS', () => {
 })
 
 describe('derivation correctness', () => {
-  test('every RANDSUM_MODIFIERS doc maps to equivalent entry in MODIFIER_DOCS', () => {
-    for (const mod of RANDSUM_MODIFIERS) {
-      for (const doc of mod.docs ?? []) {
-        expect(MODIFIER_DOCS[doc.key]).toEqual(doc)
-      }
+  test('every MODIFIER_NOTATION_DOCS entry maps to the same object in MODIFIER_DOCS', () => {
+    for (const doc of MODIFIER_NOTATION_DOCS) {
+      expect(MODIFIER_DOCS[doc.key]).toBe(doc)
     }
   })
 
