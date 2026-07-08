@@ -14,6 +14,9 @@ name: Release
 # keep it that way. Any change that consumes PR-controlled input converts this
 # into a credential-leak vector — re-review against this invariant first.
 on:
+  # zizmor: ignore[dangerous-triggers] — workflow_run is used deliberately and
+  # safely here per the invariant documented above (default-branch checkout only,
+  # no PR-controlled input or artifacts consumed). See the security note.
   workflow_run:
     workflows: ["CI"]
     types: [completed]
@@ -39,6 +42,9 @@ jobs:
           # (with a placeholder token) which shadows OIDC Trusted Publishing. The
           # committed root .npmrc already sets registry=registry.npmjs.org, so npm
           # targets the right registry and authenticates purely via OIDC.
+          # Pin node 24: publishing needs npm >= 11.5.1 (Trusted Publishing / OIDC
+          # provenance); node 24 ships a new-enough npm and `npm install -g npm@latest`
+          # below tops it off. Kept ahead of the site/rdn node 22 pins on purpose.
           node-version: '24'
       - name: Install latest npm
         run: npm install -g npm@latest

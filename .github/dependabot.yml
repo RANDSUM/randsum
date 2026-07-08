@@ -9,6 +9,10 @@ updates:
     directory: '/' # Location of package manifests
     schedule:
       interval: 'weekly'
+    # Supply-chain cooldown: let new releases bake before adopting them
+    # (also satisfies zizmor's insufficient-cooldown audit).
+    cooldown:
+      default-days: 3
 
   # Keep GitHub Actions up to date. Because workflows pin actions to commit
   # SHAs (see .github/workflows/*.yml), Dependabot will open PRs that bump
@@ -17,3 +21,5 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    cooldown:
+      default-days: 3

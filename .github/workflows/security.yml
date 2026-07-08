@@ -1,9 +1,9 @@
 name: Security Audit
 permissions:
   contents: read
+# Schedule-only: pushes to main are already covered by the ci.yml `audit` job.
+# This weekly run catches newly-published advisories against unchanged code.
 on:
-  push:
-    branches: [main]
   schedule:
     - cron: '0 8 * * 1'
 
@@ -17,4 +17,4 @@ jobs:
       - uses: ./.github/actions/bun-setup
 
       - name: Security audit
-        run: bun audit --audit-level high
+        run: bun audit --audit-level=high

@@ -68,6 +68,10 @@ jobs:
               - '.changeset/**'
               - '!.changeset/README.md'
               - '!.changeset/config.json'
+              # Also re-run the publish dry-run when the packaging surface changes,
+              # so publint/attw catch manifest regressions without a changeset.
+              - 'scripts/publish.ts'
+              - 'packages/*/package.json'
 
   roller:
     name: roller
@@ -145,6 +149,8 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
         with:
+          # Pin node 22 to match apps/site/netlify.toml's NODE_VERSION so CI
+          # builds the site on the same runtime Netlify deploys it on.
           node-version: '22'
       - run: bun run build
       - run: bun run --filter '@randsum/site' check
@@ -158,6 +164,8 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
         with:
+          # Pin node 22 to match apps/rdn/netlify.toml's NODE_VERSION so CI
+          # builds the site on the same runtime Netlify deploys it on.
           node-version: '22'
       - run: bun run --filter '@randsum/roller' build
       - run: bun run --filter '@randsum/rdn' check
@@ -257,6 +265,22 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Dry-run publish
         run: bun scripts/publish.ts --dry-run
+      - name: Lint packaged tarballs (publint + attw)
+        # Pack each publishable package and validate the tarball's manifest and
+        # type-resolution profile. Pinned via bunx so no root deps are added.
+        # These are ESM-only packages, so attw runs with --profile esm-only to
+        # not fail on the expected missing-CJS resolutions.
+        run: |
+          set -euo pipefail
+          for dir in packages/roller packages/games apps/cli; do
+            echo "::group::$dir"
+            ( cd "$dir" && bun pm pack )
+            tgz=$(ls "$dir"/*.tgz)
+            bunx publint@0.3.21 "$tgz"
+            bunx @arethetypeswrong/cli@0.18.4 --profile esm-only "$tgz"
+            rm -f "$dir"/*.tgz
+            echo "::endgroup::"
+          done
 
   knip:
     name: knip
@@ -280,14 +304,14 @@ jobs:
   audit:
     # Dependency advisory gate relocated from local-only pre-push into CI
     # (audit X8b / security F1, infrastructure F5). Cannot be bypassed with
-    # --no-verify. GHSA-gv7w-rqvm-qjhr is the accepted esbuild Deno-install
-    # advisory (see lefthook.yml / osv-scanner.toml for the rationale).
+    # --no-verify. The esbuild >=0.28.1 override in the root package.json
+    # resolves GHSA-gv7w-rqvm-qjhr, so no --ignore is needed.
     name: audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
       - uses: ./.github/actions/bun-setup
-      - run: bun audit --audit-level=high --ignore=GHSA-gv7w-rqvm-qjhr
+      - run: bun audit --audit-level=high
 
   sca:
     # SCA + license surfacing (audit X8a / security R2, F1, F2). Confirms the four
