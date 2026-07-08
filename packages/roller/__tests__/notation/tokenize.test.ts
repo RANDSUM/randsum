@@ -513,5 +513,28 @@ describe('tokenize', () => {
       expect(tokens).toHaveLength(100_001)
       expect(tokens.every(t => t.category === 'Core')).toBe(true)
     })
+
+    // Regression for CodeQL js/polynomial-redos: the annotation matcher used a
+    // sticky regex whose failed attempt cost O(remaining), making an all-'['
+    // input quadratic across the scan. The indexOf-based matcher with a
+    // no-close-bracket memo keeps this linear.
+    test('1,000,000 open brackets (no closing bracket) tokenize in linear time', () => {
+      const start = performance.now()
+      const tokens = tokenize('['.repeat(1_000_000))
+      const elapsed = performance.now() - start
+      expect(tokens).toHaveLength(1)
+      expect(tokens[0]?.category).toBe('unknown')
+      expect(tokens[0]?.text).toHaveLength(1_000_000)
+      // Quadratic scanning took effectively forever here; linear is well under a second.
+      expect(elapsed).toBeLessThan(5_000)
+    })
+
+    test('annotation semantics preserved: first ] closes, empty [] rejected', () => {
+      expect(tokenize('2d6[fire]').map(t => t.category)).toEqual(['Core', 'Special'])
+      expect(tokenize('2d6[a]b]')[1]?.text).toBe('[a]')
+      expect(tokenize('2d6[[x]')[1]?.text).toBe('[[x]')
+      const empty = tokenize('2d6[]')
+      expect(empty.some(t => t.category === 'unknown')).toBe(true)
+    })
   })
 })

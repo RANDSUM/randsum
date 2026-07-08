@@ -64,8 +64,36 @@ function scanModifierAt(input: string, pos: number): ModifierMatch | null {
   return null
 }
 
-const ANNOTATION_MATCHER = /\[[^\]]+\]/y
 const REPEAT_MATCHER = /[Xx][1-9]\d*/y
+
+/**
+ * Memo for annotation scanning: once no ']' exists at or beyond a position,
+ * none exists at any later position either, so failed searches never repeat.
+ */
+interface AnnotationScanState {
+  noCloseBracketFrom: number
+}
+
+/**
+ * Linear-time annotation matcher, replacing the sticky regex /\[[^\]]+\]/y.
+ * That regex cost O(remaining) per failed attempt (greedy [^\]]+ run plus
+ * backtrack), which an all-'[' input turned into O(n^2) across the scan — a
+ * real DoS on the unguarded tokenize subpath (CodeQL js/polynomial-redos).
+ * indexOf is linear per call and the memo bounds total search work to one
+ * pass, keeping the whole scan O(n). Semantics are identical: the first ']'
+ * closes the annotation, and at least one content character is required.
+ */
+function matchAnnotationAt(input: string, pos: number, state: AnnotationScanState): string | null {
+  if (input.charCodeAt(pos) !== 91 /* '[' */) return null
+  if (pos >= state.noCloseBracketFrom) return null
+  const close = input.indexOf(']', pos + 1)
+  if (close === -1) {
+    state.noCloseBracketFrom = pos
+    return null
+  }
+  if (close === pos + 1) return null
+  return input.slice(pos, close + 1)
+}
 
 function matchAt(matcher: RegExp, input: string, pos: number): string | null {
   matcher.lastIndex = pos
@@ -96,7 +124,12 @@ function appendUnknown(tokens: LexToken[], char: string, cursor: number): void {
  * recursion) precisely so that pathological input — a very long unmatched run, or
  * a very long valid stream — costs stack space O(1) rather than O(length).
  */
-function scanStep(input: string, cursor: number, tokens: LexToken[]): number {
+function scanStep(
+  input: string,
+  cursor: number,
+  tokens: LexToken[],
+  annotationState: AnnotationScanState
+): number {
   const isStart = cursor === 0
   const nextIsSign = input[cursor] === '+' || input[cursor] === '-'
   if (isStart || nextIsSign) {
@@ -142,7 +175,7 @@ function scanStep(input: string, cursor: number, tokens: LexToken[]): number {
     return cursor + repeat.length
   }
 
-  const annotation = matchAt(ANNOTATION_MATCHER, input, cursor)
+  const annotation = matchAnnotationAt(input, cursor, annotationState)
   if (annotation) {
     tokens.push({
       text: annotation,
@@ -176,8 +209,9 @@ export function scan(input: string): readonly LexToken[] {
   // this); every `scanStep` advances it by at least one character, so the loop
   // terminates in O(length) steps with O(1) stack depth.
   const cursor = { pos: 0 }
+  const annotationState: AnnotationScanState = { noCloseBracketFrom: Number.POSITIVE_INFINITY }
   while (cursor.pos < input.length) {
-    cursor.pos = scanStep(input, cursor.pos, tokens)
+    cursor.pos = scanStep(input, cursor.pos, tokens, annotationState)
   }
   return tokens
 }
