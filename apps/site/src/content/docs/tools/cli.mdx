@@ -41,7 +41,8 @@ randsum 4d6L -r 6        # Roll 6 times`} />
 | Flag | Description |
 |---|---|
 | `-v`, `--verbose` | Show detailed roll breakdown (raw dice, kept dice, total) |
-| `--json` | Output result as JSON |
+| `--json` | Output result as JSON. With `-r`, emits JSON-lines (one object per line) |
+| `-t`, `--total` | Print only the numeric total, one per line (for scripting). Cannot combine with `--json` |
 | `-r N`, `--repeat N` | Roll N times and print each result |
 | `-s N`, `--seed N` | Use a seeded random number generator for reproducible results |
 | `-h`, `--help` | Show help text |
@@ -86,13 +87,31 @@ Structured JSON output. Useful for piping into other tools.
 }
 ```
 
+When combined with `-r N`, `--json` emits **JSON-lines** — one JSON object per
+line rather than a single array — so you can stream each roll into `jq`:
+
+<CodeExample lang="bash" code={`randsum 4d6L --json -r 6 | jq '.total'`} />
+
+### Total (`-t`)
+
+Prints only the numeric total, one per line. Ideal for scripting — no brackets,
+labels, or JSON to parse. Composes with `-r` (one total per line) but cannot be
+combined with `--json`.
+
+```
+14
+```
+
 ## Examples
 
 <CodeExample lang="bash" code={`# D&D ability score generation — roll 6 sets of 4d6 drop lowest
 randsum 4d6L -r 6
 
-# Advantage roll — two d20s, keep highest, plus 5
-randsum 2d20H +5
+# Advantage roll — two d20s, drop the lowest (keep highest)
+randsum 2d20L
+
+# Disadvantage roll — two d20s, drop the highest (keep lowest)
+randsum 2d20H
 
 # Seeded roll for reproducible results
 randsum 2d6 -s 42
@@ -101,7 +120,13 @@ randsum 2d6 -s 42
 randsum 2d6+3 1d8
 
 # JSON output for scripting
-randsum 4d6L --json | jq '.total'`} />
+randsum 4d6L --json | jq '.total'
+
+# JSON-lines: one object per repeat, streamed into jq
+randsum 4d6L --json -r 6 | jq '.total'
+
+# Total-only output for shell scripts
+randsum 4d6L -t -r 6`} />
 
 ## Links
 
