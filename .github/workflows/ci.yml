@@ -157,7 +157,7 @@ jobs:
         run: bun run --filter "@randsum/$PKG" test:coverage
       - name: Upload coverage to Codecov
         if: matrix.coverage && hashFiles(format('packages/{0}/coverage/lcov.info', matrix.pkg)) != ''
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v5
         with:
           files: ./packages/${{ matrix.pkg }}/coverage/lcov.info
           flags: ${{ matrix.coverage }}
@@ -222,7 +222,7 @@ jobs:
         # gate against a stale cached baseline (audit Wave 3 false positive).
         run: bun run bench:ci
       - name: Restore previous benchmark data
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         with:
           path: ./cache
           key: ${{ runner.os }}-benchmark-${{ github.ref }}
