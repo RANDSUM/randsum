@@ -79,11 +79,13 @@ describe('@randsum/roller (dist)', () => {
     expect(typeof mod.tokenize).toBe('function')
   })
 
-  test('comparison functions exported from main entry', async () => {
+  test('pruned internal helpers are not re-exported from main entry', async () => {
     const mod = await import('../../roller/dist/index.js')
-    expect(typeof mod.parseComparisonNotation).toBe('function')
-    expect(typeof mod.hasConditions).toBe('function')
-    expect(typeof mod.formatComparisonNotation).toBe('function')
-    expect(typeof mod.formatComparisonDescription).toBe('function')
+    expect('parseComparisonNotation' in mod).toBe(false)
+    expect('optionsToSidesFaces' in mod).toBe(false)
+    expect('listOfNotations' in mod).toBe(false)
+    expect('coreNotationPattern' in mod).toBe(false)
+    expect('formatHumanList' in mod).toBe(false)
+    expect('TTRPG_STANDARD_DIE_SET' in mod).toBe(false)
   })
 })

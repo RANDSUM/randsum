@@ -27,7 +27,7 @@ export type {
   NumericRollBonus
 } from './modifiers'
 
-export type { RollParams, RollRecord, RollResult, RollerRollResult } from './results'
+export type { RollParams, RollRecord, RollerRollResult } from './results'
 
 export type {
   ValidValidationResult,
