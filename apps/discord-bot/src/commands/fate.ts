@@ -2,8 +2,8 @@ import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/fate'
 import type { FateRollResult } from '@randsum/games/fate'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
 const SKILL_MIN = -2
@@ -33,9 +33,12 @@ function fateDieSymbol(die: number): string {
   return '▢'
 }
 
-function buildFateEmbed(skill: number): EmbedBuilder {
+function buildFateEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const rawSkill = interaction.options.getInteger('skill') ?? 0
+  const skill = Math.max(SKILL_MIN, Math.min(SKILL_MAX, rawSkill))
+
   const result = roll({ modifier: skill })
-  const dice = result.rolls[0]?.initialRolls ?? []
+  const dice = getInitialRolls(result)
   const symbols = dice.map(fateDieSymbol).join('  ')
 
   const embed = new EmbedBuilder()
@@ -49,7 +52,7 @@ function buildFateEmbed(skill: number): EmbedBuilder {
   if (skill !== 0) {
     embed.addFields({
       name: 'Skill',
-      value: skill > 0 ? `+${skill}` : String(skill),
+      value: formatSignedModifier(skill),
       inline: true
     })
   }
@@ -59,7 +62,7 @@ function buildFateEmbed(skill: number): EmbedBuilder {
   return embed
 }
 
-export const fateCommand: Command = {
+export const fateCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('fate')
     .setDescription('Roll 4dF + skill against the Fate ladder (Fate Core)')
@@ -77,22 +80,5 @@ export const fateCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    const rawSkill = interaction.options.getInteger('skill') ?? 0
-    const skill = Math.max(SKILL_MIN, Math.min(SKILL_MAX, rawSkill))
-
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const embed = buildFateEmbed(skill)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
-  }
-}
+  buildEmbed: buildFateEmbed
+})

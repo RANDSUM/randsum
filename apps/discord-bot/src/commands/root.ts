@@ -1,13 +1,16 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
-function buildRootEmbed(modifier: number, displayName: string): EmbedBuilder {
+function buildRootEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const modifier = interaction.options.getInteger('modifier') ?? 0
+  const displayName = interaction.user.displayName
+
   const result = roll({ bonus: modifier })
-  const initialRolls = result.rolls[0]?.initialRolls ?? []
+  const initialRolls = getInitialRolls(result)
 
   const resultConfig = {
     strong_hit: {
@@ -37,7 +40,7 @@ function buildRootEmbed(modifier: number, displayName: string): EmbedBuilder {
   if (modifier !== 0) {
     embed.addFields({
       name: 'Modifier',
-      value: modifier > 0 ? `+${modifier}` : String(modifier),
+      value: formatSignedModifier(modifier),
       inline: true
     })
   }
@@ -45,7 +48,7 @@ function buildRootEmbed(modifier: number, displayName: string): EmbedBuilder {
   return embed
 }
 
-export const rootCommand: Command = {
+export const rootCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('root')
     .setDescription('Roll dice for Root RPG')
@@ -63,22 +66,5 @@ export const rootCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    const modifier = interaction.options.getInteger('modifier') ?? 0
-    const displayName = interaction.user.displayName
-
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const embed = buildRootEmbed(modifier, displayName)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
-  }
-}
+  buildEmbed: buildRootEmbed
+})
