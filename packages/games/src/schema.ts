@@ -6,6 +6,7 @@
 // the type system while satisfying isolatedDeclarations.
 import { resolveExternalRefs as _resolveExternalRefs } from './lib/externalRefResolver'
 import { generateCode as _generateCode, specToFilename as _specToFilename } from './lib/codegen'
+import type { GenerateCodeOptions } from './lib/codegen'
 import { validateSpec as _validateSpec } from './lib/validator'
 import { SchemaError as _SchemaError } from './lib/errors'
 import { lookupByRange as _lookupByRange } from './lib/lookupByRange'
@@ -14,7 +15,8 @@ import type { RandSumSpec } from './lib/types'
 import type { ValidationResult } from './lib/validator'
 
 export const resolveExternalRefs: (spec: RandSumSpec) => Promise<RandSumSpec> = _resolveExternalRefs
-export const generateCode: (spec: RandSumSpec) => Promise<string> = _generateCode
+export const generateCode: (spec: RandSumSpec, options?: GenerateCodeOptions) => Promise<string> =
+  _generateCode
 export const specToFilename: (name: string) => string = _specToFilename
 export const validateSpec: (spec: unknown) => ValidationResult = _validateSpec
 export const SchemaError: typeof _SchemaError = _SchemaError
@@ -26,6 +28,7 @@ export const lookupByRange: (
   readonly result: { readonly label?: string | undefined; readonly value?: string | undefined }
 } = _lookupByRange
 
+export type { GenerateCodeOptions } from './lib/codegen'
 export type { SchemaErrorCode } from './lib/errors'
 export type { ValidationResult, ValidationError } from './lib/validator'
 export type {

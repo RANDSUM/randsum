@@ -8,17 +8,17 @@ import { SchemaError } from './lib/errors'
 import type { SchemaErrorCode } from './lib/errors'
 
 export type FateRollResult =
-  | 'Average'
-  | 'Epic'
-  | 'Fair'
-  | 'Fantastic'
-  | 'Good'
-  | 'Great'
-  | 'Legendary'
-  | 'Mediocre'
-  | 'Poor'
-  | 'Superb'
-  | 'Terrible'
+  | 'average'
+  | 'epic'
+  | 'fair'
+  | 'fantastic'
+  | 'good'
+  | 'great'
+  | 'legendary'
+  | 'mediocre'
+  | 'poor'
+  | 'superb'
+  | 'terrible'
 
 export function roll(modifier?: number): GameRollResult<FateRollResult, undefined, RollRecord>
 export function roll(input?: {
@@ -43,17 +43,17 @@ export function roll(
     )
   const r = executeRoll(`${4}d{-1,0,1}`)
   const total = r.total + (input?.modifier ?? 0)
-  if (total >= 8) return { total, result: 'Legendary', rolls: r.rolls }
-  if (total === 7) return { total, result: 'Epic', rolls: r.rolls }
-  if (total === 6) return { total, result: 'Fantastic', rolls: r.rolls }
-  if (total === 5) return { total, result: 'Superb', rolls: r.rolls }
-  if (total === 4) return { total, result: 'Great', rolls: r.rolls }
-  if (total === 3) return { total, result: 'Good', rolls: r.rolls }
-  if (total === 2) return { total, result: 'Fair', rolls: r.rolls }
-  if (total === 1) return { total, result: 'Average', rolls: r.rolls }
-  if (total === 0) return { total, result: 'Mediocre', rolls: r.rolls }
-  if (total === -1) return { total, result: 'Poor', rolls: r.rolls }
-  if (total <= -2) return { total, result: 'Terrible', rolls: r.rolls }
+  if (total >= 8) return { total, result: 'legendary', rolls: r.rolls }
+  if (total === 7) return { total, result: 'epic', rolls: r.rolls }
+  if (total === 6) return { total, result: 'fantastic', rolls: r.rolls }
+  if (total === 5) return { total, result: 'superb', rolls: r.rolls }
+  if (total === 4) return { total, result: 'great', rolls: r.rolls }
+  if (total === 3) return { total, result: 'good', rolls: r.rolls }
+  if (total === 2) return { total, result: 'fair', rolls: r.rolls }
+  if (total === 1) return { total, result: 'average', rolls: r.rolls }
+  if (total === 0) return { total, result: 'mediocre', rolls: r.rolls }
+  if (total === -1) return { total, result: 'poor', rolls: r.rolls }
+  if (total <= -2) return { total, result: 'terrible', rolls: r.rolls }
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 

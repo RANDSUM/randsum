@@ -3,17 +3,17 @@ import { roll } from '@randsum/games/fate'
 import { STRESS_ITERATIONS } from './stressIterations'
 
 const LADDER = [
-  'Legendary',
-  'Epic',
-  'Fantastic',
-  'Superb',
-  'Great',
-  'Good',
-  'Fair',
-  'Average',
-  'Mediocre',
-  'Poor',
-  'Terrible'
+  'legendary',
+  'epic',
+  'fantastic',
+  'superb',
+  'great',
+  'good',
+  'fair',
+  'average',
+  'mediocre',
+  'poor',
+  'terrible'
 ] as const
 
 describe('roll', () => {
@@ -79,17 +79,17 @@ describe('roll', () => {
 
   describe('ladder rung classification', () => {
     test.each([
-      [8, 'Legendary'],
-      [7, 'Epic'],
-      [6, 'Fantastic'],
-      [5, 'Superb'],
-      [4, 'Great'],
-      [3, 'Good'],
-      [2, 'Fair'],
-      [1, 'Average'],
-      [0, 'Mediocre'],
-      [-1, 'Poor'],
-      [-2, 'Terrible']
+      [8, 'legendary'],
+      [7, 'epic'],
+      [6, 'fantastic'],
+      [5, 'superb'],
+      [4, 'great'],
+      [3, 'good'],
+      [2, 'fair'],
+      [1, 'average'],
+      [0, 'mediocre'],
+      [-1, 'poor'],
+      [-2, 'terrible']
     ] as const)('a total of %d maps to %s', (total, expected) => {
       // Hold the modifier near the target total and sample rolls until the exact total appears,
       // then assert the rung. Terrible/Legendary clamp the open-ended ends of the ladder.

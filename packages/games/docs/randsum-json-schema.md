@@ -467,12 +467,13 @@ Opaque vs. numeric results:
 ### 5.3 `remoteTableLookup` — build-time tables
 
 The `remoteTableLookup` resolver embeds a remote JSON dataset into the
-generated module. At codegen time, `packages/games/codegen.ts:59-84`
-fetches the URL, writes the JSON to
-`packages/games/__fixtures__/<shortcode>-tables.json` for the
-`gen:check` CI path, and passes the dataset to the emitter. The generated
-module ships with the full table baked into the JS bundle. At runtime the
-module never hits the network.
+generated module. Codegen is hermetic: by default `packages/games/codegen.ts`
+reads the checked-in snapshot at
+`packages/games/__fixtures__/<shortcode>-tables.json` and passes the dataset
+to the emitter — no network access. Pass `--refresh-remote` to refetch from
+the source URL and rewrite that snapshot. The generated module ships with the
+full table baked into the JS bundle, so at runtime the module never hits the
+network either.
 
 The shape (`randsum.json:557-602`):
 
@@ -732,7 +733,7 @@ discussion.
 ### 7.5 Hope and Fear duel (Daggerheart)
 
 Two named pools, resolved by comparing the highest single die between them;
-a tie becomes `"critical hope"`.
+a tie becomes `"critical_hope"`.
 
 `packages/games/daggerheart.randsum.json:20-42`:
 
@@ -744,7 +745,7 @@ a tie becomes `"critical hope"`.
 "resolve": {
   "comparePoolHighest": {
     "pools":    ["hope", "fear"],
-    "ties":     "critical hope",
+    "ties":     "critical_hope",
     "outcomes": { "hope": "hope", "fear": "fear" }
   }
 }
@@ -789,9 +790,9 @@ compare against 10+ / 7-9 / 6-. Root RPG is the minimal version
 "modify":  [{ "add": { "$input": "bonus" } }],
 "outcome": {
   "ranges": [
-    { "min": 10, "max": 32, "result": "Strong Hit" },
-    { "min": 7,  "max": 9,  "result": "Weak Hit" },
-    { "min": -18, "max": 6, "result": "Miss" }
+    { "min": 10, "result": "strong_hit" },
+    { "min": 7, "max": 9, "result": "weak_hit" },
+    { "max": 6, "result": "miss" }
   ]
 }
 ```

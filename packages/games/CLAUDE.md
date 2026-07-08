@@ -13,6 +13,8 @@ Seven games ship: `blades`, `daggerheart`, `fate`, `fifth`, `pbta`, `root-rpg`, 
 
 Each game's `roll()` returns a `GameRollResult<TResult, TDetails, TRollRecord>` with typed `result`, `total`, and `rolls`.
 
+Every enum-like `result` string is `snake_case` across all games (e.g. `strong_hit`, `weak_hit`, `miss`, `critical_hope`, `legendary`). This is a stable, machine-friendly contract — switch on these values in code, and derive any human-readable label (e.g. `"Strong Hit"`) at the display layer. Free-text strings pulled from data tables (e.g. Salvage Union's `remoteTableLookup` result text) are data, not enums, and are left verbatim.
+
 ## Directory Structure
 
 ```
@@ -42,7 +44,7 @@ packages/games/
     <shortcode>.property.test.ts  # Property-based tests per game
     build-smoke.test.ts           # Build output verification
   __fixtures__/
-    salvageunion-tables.json      # Cached remote table data
+    salvageunion-tables.json      # Checked-in remote table snapshot (codegen reads this by default)
 ```
 
 ## .randsum.json Spec Format
@@ -77,12 +79,15 @@ bun run --filter @randsum/games gen:check    # Verify generated files are up to 
 The codegen script (`codegen.ts` at package root):
 
 1. Reads all `*.randsum.json` files from the package root
-2. Resolves external `$ref`s via `resolveExternalRefs` (fetches remote data, e.g. Salvage Union tables, cached to `__fixtures__/<shortcode>-tables.json`)
-3. Validates each resolved spec against the meta-schema via `validateSpec`
-4. Calls `generateCode()` from `src/lib` to produce TypeScript
-5. Formats with Prettier and writes to `src/<shortcode>.generated.ts`, then regenerates `src/availableGames.generated.ts`
+2. Resolves external `$ref`s via `resolveExternalRefs`
+3. Reads remote table data (e.g. Salvage Union tables) from the checked-in `__fixtures__/<shortcode>-tables.json` snapshot — **codegen is hermetic by default and never hits the network**
+4. Validates each resolved spec against the meta-schema via `validateSpec`
+5. Calls `generateCode()` from `src/lib` to produce TypeScript
+6. Formats with Prettier and writes to `src/<shortcode>.generated.ts`, then regenerates `src/availableGames.generated.ts`
 
 Build output: `dist/<shortcode>.generated.js` + `.d.ts` per game. With `--check` (`gen:check`), the script writes nothing and fails if any generated file is stale.
+
+Remote fixtures are refreshed only on demand: `bun run --filter @randsum/games gen -- --refresh-remote` refetches from the source URL and rewrites the `__fixtures__/<shortcode>-tables.json` snapshot. Plain `gen` and `gen:check` are offline and deterministic — running `gen` twice in a row leaves the tree clean.
 
 Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate`. Each exports a typed `roll()` function, a game-specific result type (e.g. `BladesRollResult`), the `SchemaError` value, and re-exports the types `GameRollResult`, `RollRecord`, `SchemaErrorCode`. The salvageunion module additionally exports the `ROLL_TABLE_ENTRIES` and `VALID_TABLE_NAMES` values.
 
@@ -124,7 +129,7 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + f
 - Generated files are checked in but must not be manually edited. Always regenerate via codegen.
 - Games depend only on `@randsum/roller`. Games never depend on each other.
 - Bundle size limit: 15 KB per game (16 KB for daggerheart and pbta; 33 KB for salvageunion due to baked-in tables).
-- Remote data (e.g., Salvage Union tables) is fetched at codegen time and baked into generated code. Zero runtime network calls.
+- Remote data (e.g., Salvage Union tables) is read from the checked-in `__fixtures__/` snapshot at codegen time and baked into generated code. Codegen is hermetic (no network) unless `--refresh-remote` is passed; zero runtime network calls either way.
 
 For the formal modifier taxonomy and classification system, see https://notation.randsum.dev.
 

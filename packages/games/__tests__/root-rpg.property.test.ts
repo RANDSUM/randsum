@@ -2,11 +2,11 @@ import { describe, test } from 'bun:test'
 import fc from 'fast-check'
 import { roll } from '@randsum/games/root-rpg'
 
-const VALID_RESULTS = ['Strong Hit', 'Weak Hit', 'Miss'] as const
+const VALID_RESULTS = ['strong_hit', 'weak_hit', 'miss'] as const
 
 const resultTier = (result: (typeof VALID_RESULTS)[number]): number => {
-  if (result === 'Strong Hit') return 2
-  if (result === 'Weak Hit') return 1
+  if (result === 'strong_hit') return 2
+  if (result === 'weak_hit') return 1
   return 0
 }
 
@@ -33,9 +33,9 @@ describe('roll property-based tests', () => {
     fc.assert(
       fc.property(fc.integer({ min: -3, max: 5 }), bonus => {
         const { result, total } = roll({ bonus })
-        if (total >= 10) return result === 'Strong Hit'
-        if (total >= 7) return result === 'Weak Hit'
-        return result === 'Miss'
+        if (total >= 10) return result === 'strong_hit'
+        if (total >= 7) return result === 'weak_hit'
+        return result === 'miss'
       })
     )
   })
