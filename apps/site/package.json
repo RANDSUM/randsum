@@ -52,6 +52,7 @@
     "prettier": "3.8.4",
     "prettier-plugin-astro": "0.14.1",
     "starlight-page-actions": "0.6.2",
-    "starlight-sidebar-topics": "0.8.0"
+    "starlight-sidebar-topics": "0.8.0",
+    "typescript": "6.0.3"
   }
 }

@@ -43,6 +43,6 @@
     "@randsum/roller": "workspace:~",
     "prettier": "3.8.4",
     "prettier-plugin-astro": "0.14.1",
-    "typescript": "catalog:"
+    "typescript": "6.0.3"
   }
 }
