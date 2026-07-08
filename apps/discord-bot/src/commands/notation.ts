@@ -9,6 +9,7 @@ import type { StringSelectMenuInteraction } from '../utils/discord.js'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { NotationDoc } from '@randsum/roller/docs'
 import { embedFooterDetails } from '../utils/constants.js'
+import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import { captureException } from '../utils/errorTracker.js'
 import type { Command } from '../types.js'
@@ -50,10 +51,16 @@ function buildCategoryEmbed(category: string, entries: NotationDoc[]): EmbedBuil
 export const notationCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('notation')
-    .setDescription('RANDSUM Dice Notation Reference'),
+    .setDescription('RANDSUM Dice Notation Reference')
+    .addBooleanOption(option =>
+      option
+        .setName('hidden')
+        .setDescription('Make the result visible only to you')
+        .setRequired(false)
+    ),
 
   async execute(interaction) {
-    await interaction.deferReply()
+    await deferReplyHonoringHidden(interaction)
 
     try {
       const grouped = groupByCategory(NOTATION_DOCS)
@@ -74,11 +81,11 @@ export const notationCommand: Command = {
           }))
         )
 
-      const row = new ActionRowBuilder().addComponents(selectMenu)
+      const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu)
 
       const message = await interaction.editReply({
         embeds: [embed],
-        components: [row as never]
+        components: [row]
       })
 
       const collector = message.createMessageComponentCollector({
@@ -106,11 +113,13 @@ export const notationCommand: Command = {
                 }))
               )
 
-            const updatedRow = new ActionRowBuilder().addComponents(updatedMenu)
+            const updatedRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+              updatedMenu
+            )
 
             await selectInteraction.update({
               embeds: [categoryEmbed],
-              components: [updatedRow as never]
+              components: [updatedRow]
             })
           } catch (error) {
             captureException(error, {
@@ -137,10 +146,12 @@ export const notationCommand: Command = {
               )
               .setDisabled(true)
 
-            const disabledRow = new ActionRowBuilder().addComponents(disabledMenu)
+            const disabledRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+              disabledMenu
+            )
 
             await message.edit({
-              components: [disabledRow as never]
+              components: [disabledRow]
             })
           } catch (error) {
             captureException(error, {
