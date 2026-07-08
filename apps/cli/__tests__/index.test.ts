@@ -32,6 +32,12 @@ describe('main() mode dispatch', () => {
     expect(consoleSpy.log).toHaveBeenCalled()
   })
 
+  test('--help documents the --total flag', () => {
+    main(['node', 'randsum', '--help'])
+    const output = consoleSpy.log?.mock.calls[0]?.[0] as string
+    expect(output).toContain('--total')
+  })
+
   test('--version flag prints version and returns', () => {
     main(['node', 'randsum', '--version'])
     expect(consoleSpy.log).toHaveBeenCalled()
