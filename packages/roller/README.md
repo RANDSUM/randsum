@@ -134,6 +134,14 @@ source string, but the tokenizer still requires syntactically valid ordering
 [RANDSUM Dice Notation Specification](https://notation.randsum.dev) for the
 complete reference, taxonomy, conformance levels, and modifier pipeline.
 
+All of these functions — `isDiceNotation`, `validateNotation`,
+`notationToOptions`, `tokenize`, and `roll()` itself — are views over a single
+cursor-based lexer. Validation, tokenization, options conversion, and rolling
+therefore always agree on what a string means; `validateNotation` errors report
+the exact character offset that failed, and special dice (`4dF`, `d{fire,ice}`,
+`3DD6`, `g6`, `z6`) keep their face semantics through `notationToOptions` rather
+than degrading to plain numeric pools.
+
 ## Subpath exports
 
 The package exposes focused subpaths so you can import only what you need:

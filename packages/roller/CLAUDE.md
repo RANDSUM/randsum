@@ -12,6 +12,44 @@ this package** (under `src/notation/` and `src/modifiers/`). There is no separat
 `@randsum/notation` package — it was merged in (ADR-005). Any reference to it is
 stale.
 
+## Notation lexer (single pass)
+
+All notation processing runs through **one cursor-based lexer** in
+`src/notation/lexer/`. Every public surface is a thin view over it — there is no
+separate regex system per surface:
+
+- **`specs.ts`** — the single token inventory. `POOL_SPECS` (die-type heads) and
+  `MODIFIER_SPECS` (category + sticky matcher per modifier). The modifier matchers
+  are compiled from the `notation/definitions/<mod>Schema` patterns in RDN
+  specificity order, so the schemas stay the semantic source of truth.
+- **`scan.ts`** — `scan(input)` is a pure lexical left-to-right pass producing
+  positioned `LexToken`s (pool / modifier / annotation / repeat / unknown). No
+  structure is enforced here; this is exactly what `tokenize` exposes.
+- **`parse.ts`** — `parseNotation(input)` layers grammar over the token stream
+  (begins with a pool, no unknown tokens, positive-integer magnitudes, ≤1
+  Count-family modifier, 1000-char limit) and returns a typed pool AST plus the
+  error position.
+
+The four surfaces are views of that one pass:
+
+- `isDiceNotation` = `parseNotation(...).valid`; `notation()` throws with the real
+  `ErrorContext.position`.
+- `validateNotation` = parse + describe, with `error.position` populated.
+- `notationToOptions` = AST → `ParsedNotationOptions[]`. Special-die semantics
+  survive via the additive `dieType` / `fateVariant` / `customFaces` fields, and
+  multi-pool splitting comes from the AST (no separate splitter).
+- `tokenize` = the positioned `scan` stream with descriptions attached (no
+  hand-rolled pattern table).
+- `roll()`'s `parseArguments` consumes the same parser — no private die-type
+  regexes, no multi-pool splitter. Special dice are built from `dieType`; a
+  special die carrying modifiers still throws (roller rejects modifiers on
+  special dice).
+
+Oversized input (> 1000 chars) fails consistently (throws) across every surface.
+The lexer is linear, so it is inherently ReDoS-free, and — by dropping the old
+per-roll giant-alternation validator — `roll()` on the gate notations is ~2–5×
+faster than the pre-lexer path.
+
 ## Main API
 
 ### `roll<T = string>(...args): RollerRollResult<T>`
