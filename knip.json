@@ -19,8 +19,8 @@
       "includeEntryExports": true
     },
     "packages/games": {
-      "entry": ["src/index.ts", "src/schema.ts", "src/*.generated.ts"],
-      "project": ["src/**/*.ts"],
+      "entry": ["src/index.ts", "src/schema.ts", "src/*.generated.ts", "__tests__/**/*.ts"],
+      "project": ["src/**/*.ts", "__tests__/**/*.ts"],
       "includeEntryExports": true
     },
     "packages/dice-ui": {
