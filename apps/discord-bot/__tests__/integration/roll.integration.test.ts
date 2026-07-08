@@ -86,6 +86,23 @@ describe('roll command integration (un-mocked roller)', () => {
     expect(String(embed.description)).toContain('2d6')
   })
 
+  test('arithmetic-only notation does not render a Modified Rolls field', async () => {
+    // Regression guard: the real roller emits a modifierLog for every applied
+    // modifier, including non-mutating arithmetic ones (plus/minus/...), so a
+    // `modifierLogs.length > 0` gate would wrongly add a "Modified Rolls" field
+    // that duplicates "Initial Rolls". The rolled dice are unchanged for
+    // 2d6+3, so only "Initial Rolls" should appear.
+    const interaction = makeInteraction('2d6+3')
+    await rollCommand.execute(interaction as never)
+
+    const embed = embedFromPayload(interaction.captured[0]) as APIEmbed & {
+      fields?: { name: string }[]
+    }
+    const fieldNames = (embed.fields ?? []).map(f => f.name)
+    expect(fieldNames).toContain('Initial Rolls')
+    expect(fieldNames).not.toContain('Modified Rolls')
+  })
+
   test('total is within the valid range for the notation', async () => {
     const interaction = makeInteraction('3d8')
     await rollCommand.execute(interaction as never)

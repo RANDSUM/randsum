@@ -1,14 +1,15 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/blades'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
+import { createGameCommand, getInitialRolls } from './lib/index.js'
+import type { ChatInputCommandInteraction } from '../utils/discord.js'
 import type { Command } from '../types.js'
 
-function buildBladesEmbed(dice: number): EmbedBuilder {
+function buildBladesEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
+  const dice = interaction.options.getInteger('dice', true)
   const result = roll({ rating: dice })
 
-  const initialRolls = result.rolls[0]?.initialRolls ?? []
+  const initialRolls = getInitialRolls(result)
   const highestDie = initialRolls.length > 0 ? Math.max(...initialRolls) : 1
 
   const resultConfig = {
@@ -65,7 +66,7 @@ function buildBladesEmbed(dice: number): EmbedBuilder {
   return embed
 }
 
-export const bladesCommand: Command = {
+export const bladesCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('blades')
     .setDescription('Roll dice for Blades in the Dark')
@@ -83,21 +84,5 @@ export const bladesCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    const dice = interaction.options.getInteger('dice', true)
-
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const embed = buildBladesEmbed(dice)
-      await interaction.editReply({ embeds: [embed] })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
-  }
-}
+  buildEmbed: buildBladesEmbed
+})
