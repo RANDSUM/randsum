@@ -1,0 +1,24 @@
+// Tokenize isolation (ADR-007). The @randsum/roller/tokenize subpath must
+// bundle only modifier schemas (*Schema), never modifier behaviours (*Modifier).
+// The tokenize import graph is reachable through packages/roller/src/notation/**
+// plus src/tokenize.ts; importing a *Modifier behaviour symbol there breaks ESM
+// tree-shaking and inflates dist/tokenize.js.
+//
+// This mirrors the former ESLint `no-restricted-imports` override
+// (group `**/modifiers` | `**/modifiers/*`, importNamePattern `Modifier$`). It
+// is wired via a scoped `overrides` entry in biome.json so it only runs against
+// the tokenize-reachable subtree — dependency-cruiser cannot express an
+// import-*name*-level ban, which is why this GritQL plugin exists.
+//
+// Implementation note: matched on the whole `JsImport` CST node with an anchored
+// text regex (GritQL regex `<:` is a full-node match). The braces-snippet form
+// (`import { $x } from $s`) only binds a single specifier and misses
+// multi-specifier and aliased imports, so the node-text regex is used instead.
+// Literal `"` cannot appear inside a `r"…"` raw string (it terminates it), so
+// quote characters are written as the hex escapes \x27 (') and \x22 (").
+language js
+
+JsImport() as $import where {
+  $import <: r"[\s\S]*\{[\s\S]*[A-Za-z0-9_]+Modifier\b[\s\S]*\}[\s\S]*from[\s\S]*modifiers(?:/[^\x27\x22]*)?[\x27\x22][\s\S]*",
+  register_diagnostic(span=$import, message="Tokenize-reachable files must not import *Modifier (behavior) symbols — only *Schema exports. Importing a behavior here breaks tree-shaking and inflates dist/tokenize.js. See packages/roller/CLAUDE.md \"Tokenize Isolation Invariant\" and docs/adr/ADR-007-modifier-co-location.md.")
+}

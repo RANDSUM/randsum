@@ -145,22 +145,3 @@ export function parseModifiers(notation: string): ModifierOptions {
 
   return result
 }
-
-/**
- * Build a combined regex pattern from all known notation schemas.
- * Patterns are joined in priority order, plus syntactic sugar patterns.
- */
-export function buildNotationPattern(): RegExp {
-  const sources = [...PARSE_SCHEMAS]
-    .sort((a, b) => a.priority - b.priority)
-    .map(s => s.pattern.source)
-
-  // Add syntactic sugar patterns that are pre-processed before schema parsing
-  sources.push(marginOfSuccessPattern.source)
-  // Repeat operator (xN) -- handled in notationToOptions, but needed for isDiceNotation validation
-  sources.push('[Xx][1-9]\\d*')
-  // Annotation labels [text] -- stripped before parsing, needed for isDiceNotation validation
-  sources.push('\\[[^\\]]+\\]')
-
-  return new RegExp(sources.join('|'), 'gi')
-}

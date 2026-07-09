@@ -37,7 +37,7 @@ const SIDEBAR_GROUPS = [
 ]
 
 // Only top-level headings (depth 2) for sidebar navigation
-const topHeadings = headings.filter((h) => h.depth === 2)
+const topHeadings = headings.filter(h => h.depth === 2)
 
 function getGroupForHeading(text: string) {
   for (const group of SIDEBAR_GROUPS) {
@@ -49,10 +49,10 @@ function getGroupForHeading(text: string) {
 }
 
 // Build grouped structure
-const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) => ({
+const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map(g => ({
   label: g.label,
-  items: topHeadings.filter((h) => getGroupForHeading(h.text) === g.label)
-})).filter((g) => g.items.length > 0)
+  items: topHeadings.filter(h => getGroupForHeading(h.text) === g.label)
+})).filter(g => g.items.length > 0)
 ---
 
 <div class="sidebar-inner">
@@ -64,28 +64,30 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
   </div>
 
   <nav aria-label="Spec sections">
-    {grouped.map((group, groupIdx) => (
-      <div class="sidebar-group">
-        <span class="label sidebar-group-label">{group.label}</span>
-        <ul class="sidebar-list" role="list">
-          {group.items.map((heading, itemIdx) => {
-            const isFirst = groupIdx === 0 && itemIdx === 0
-            return (
-              <li>
-                <a
-                  href={`#${heading.slug}`}
-                  class:list={['sidebar-link', { active: isFirst }]}
-                  aria-current={isFirst ? 'true' : undefined}
-                  data-sidebar-link
-                >
-                  {heading.text}
-                </a>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    ))}
+    {
+      grouped.map((group, groupIdx) => (
+        <div class="sidebar-group">
+          <span class="label sidebar-group-label">{group.label}</span>
+          <ul class="sidebar-list" role="list">
+            {group.items.map((heading, itemIdx) => {
+              const isFirst = groupIdx === 0 && itemIdx === 0
+              return (
+                <li>
+                  <a
+                    href={`#${heading.slug}`}
+                    class:list={['sidebar-link', { active: isFirst }]}
+                    aria-current={isFirst ? 'true' : undefined}
+                    data-sidebar-link
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      ))
+    }
   </nav>
 </div>
 
@@ -110,9 +112,7 @@ const grouped: { label: string; items: Heading[] }[] = SIDEBAR_GROUPS.map((g) =>
         }
       }
 
-      document.dispatchEvent(
-        new CustomEvent('section-change', { detail: { slug } })
-      )
+      document.dispatchEvent(new CustomEvent('section-change', { detail: { slug } }))
     }
 
     const h2Elements = Array.from(content.querySelectorAll<HTMLHeadingElement>('h2[id]'))

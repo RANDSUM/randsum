@@ -12,12 +12,7 @@ void mock.module('@randsum/games/pbta', () => ({ roll: mockRoll }))
 const { pbtaCommand } = await import('../../src/commands/pbta.js')
 
 function makeInteraction(
-  opts: {
-    stat?: number
-    forward?: number
-    ongoing?: number
-    rollingWith?: string | null
-  } = {}
+  opts: { stat?: number; forward?: number; ongoing?: number; rollingWith?: string | null } = {}
 ): {
   deferReply: ReturnType<typeof mock>
   editReply: ReturnType<typeof mock>

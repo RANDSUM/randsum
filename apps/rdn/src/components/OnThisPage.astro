@@ -62,13 +62,15 @@ const tocData = JSON.stringify(tocGroups)
 <div class="toc-inner">
   <p class="label toc-title" data-toc-title>In this section</p>
   <ul class="toc-list" data-toc-list aria-label="On this page navigation">
-    {initialChildren.map((h) => (
-      <li class={`toc-item toc-depth-${h.depth}`} data-toc-section={h.slug}>
-        <a href={`#${h.slug}`} class="toc-link">
-          {h.text}
-        </a>
-      </li>
-    ))}
+    {
+      initialChildren.map(h => (
+        <li class={`toc-item toc-depth-${h.depth}`} data-toc-section={h.slug}>
+          <a href={`#${h.slug}`} class="toc-link">
+            {h.text}
+          </a>
+        </li>
+      ))
+    }
   </ul>
 </div>
 
@@ -176,7 +178,7 @@ const tocData = JSON.stringify(tocGroups)
 
       // Find which h3 within this group is active
       const activeSection = group.sections.find(s => s.slug === h3Slug)
-      const effectiveH3 = activeSection ? h3Slug : group.sections[0]?.slug ?? null
+      const effectiveH3 = activeSection ? h3Slug : (group.sections[0]?.slug ?? null)
 
       // Re-render if group or active h3 changed
       if (groupSlug !== activeGroupSlug || effectiveH3 !== activeH3Slug) {
@@ -204,18 +206,22 @@ const tocData = JSON.stringify(tocGroups)
     }
 
     let ticking = false
-    window.addEventListener('scroll', () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(() => {
-        onScroll()
-        ticking = false
-      })
-    }, { passive: true })
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return
+        ticking = true
+        requestAnimationFrame(() => {
+          onScroll()
+          ticking = false
+        })
+      },
+      { passive: true }
+    )
 
     onScroll()
 
-    tocList.addEventListener('click', (e) => {
+    tocList.addEventListener('click', e => {
       const anchor = (e.target as HTMLElement).closest<HTMLAnchorElement>('.toc-link')
       if (!anchor) return
       const href = anchor.getAttribute('href')

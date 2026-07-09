@@ -11,11 +11,7 @@ void mock.module('@randsum/games/fate', () => ({ roll: mockRoll }))
 
 const { fateCommand } = await import('../../src/commands/fate.js')
 
-function makeInteraction(
-  opts: {
-    skill?: number
-  } = {}
-): {
+function makeInteraction(opts: { skill?: number } = {}): {
   deferReply: ReturnType<typeof mock>
   editReply: ReturnType<typeof mock>
   options: {

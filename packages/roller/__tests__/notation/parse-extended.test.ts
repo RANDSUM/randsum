@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { buildNotationPattern, parseModifiers } from '../../src/notation/parse/parseModifiers'
+import { parseModifiers } from '../../src/notation/parse/parseModifiers'
 import { singleNotationToOptions } from '../../src/notation/parse/singleNotationToOptions'
 
 describe('parseModifiers', () => {
@@ -61,25 +61,6 @@ describe('parseModifiers', () => {
     expect(parseModifiers('S{5}')).toEqual({
       count: { greaterThanOrEqual: 5 }
     })
-  })
-})
-
-describe('buildNotationPattern', () => {
-  test('returns a RegExp', () => {
-    const pattern = buildNotationPattern()
-    expect(pattern).toBeInstanceOf(RegExp)
-  })
-
-  test('pattern has global flag', () => {
-    const pattern = buildNotationPattern()
-    expect(pattern.flags).toContain('g')
-  })
-
-  test('matches modifier notations', () => {
-    const pattern = buildNotationPattern()
-    expect('L'.match(pattern)).not.toBeNull()
-    expect('+5'.match(pattern)).not.toBeNull()
-    expect('!!'.match(pattern)).not.toBeNull()
   })
 })
 

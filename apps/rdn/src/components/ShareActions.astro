@@ -6,9 +6,10 @@ interface Props {
 
 const { specMarkdown, specUrl } = Astro.props
 
-const truncatedForLlm = specMarkdown.length > 4000
-  ? specMarkdown.slice(0, 4000) + `\n\n[Full spec: ${specUrl}]`
-  : specMarkdown
+const truncatedForLlm =
+  specMarkdown.length > 4000
+    ? specMarkdown.slice(0, 4000) + `\n\n[Full spec: ${specUrl}]`
+    : specMarkdown
 
 const claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(truncatedForLlm)}`
 const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)}`
@@ -22,7 +23,18 @@ const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)
     aria-label="Copy spec as Markdown"
     data-markdown={specMarkdown}
   >
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
     </svg>
@@ -36,7 +48,18 @@ const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)
     rel="noopener noreferrer"
     aria-label="Open spec in Claude"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
       <polyline points="15 3 21 3 21 9"></polyline>
       <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -51,7 +74,18 @@ const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)
     rel="noopener noreferrer"
     aria-label="Open spec in ChatGPT"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
       <polyline points="15 3 21 3 21 9"></polyline>
       <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -90,7 +124,10 @@ const chatgptUrl = `https://chatgpt.com/?q=${encodeURIComponent(truncatedForLlm)
     line-height: 1;
     cursor: pointer;
     text-decoration: none;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    transition:
+      color 0.15s,
+      border-color 0.15s,
+      background 0.15s;
     white-space: nowrap;
   }
 

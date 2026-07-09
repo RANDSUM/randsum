@@ -7,10 +7,7 @@
   "pools": { "d6": { "sides": 6 } },
   "tables": {
     "basic": {
-      "ranges": [
-        { "exact": 6, "result": "high" },
-        { "min": 1, "max": 5, "result": "low" }
-      ]
+      "ranges": [{ "exact": 6, "result": "high" }, { "min": 1, "max": 5, "result": "low" }]
     }
   },
   "roll": {
