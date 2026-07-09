@@ -1,14 +1,4 @@
-import type {
-  ComparisonOptions,
-  CountOptions,
-  DropOptions,
-  KeepOptions,
-  ModifierLog,
-  ReplaceOptions,
-  RequiredNumericRollParameters,
-  RerollOptions,
-  UniqueOptions
-} from '../types'
+import type { ModifierLog, RequiredNumericRollParameters } from '../types'
 import type { NotationSchema } from '../notation/schema'
 
 /**
@@ -190,32 +180,6 @@ export interface ModifierBehavior<TOptions = unknown> {
  */
 export type ModifierDefinition<TOptions = unknown> = NotationSchema<TOptions> &
   ModifierBehavior<TOptions>
-
-/**
- * Maps modifier names to their option types.
- * Used for type-safe modifier definitions.
- */
-export interface ModifierOptionTypes {
-  cap: ComparisonOptions
-  count: CountOptions
-  drop: DropOptions
-  keep: KeepOptions
-  replace: ReplaceOptions | ReplaceOptions[]
-  reroll: RerollOptions
-  unique: boolean | UniqueOptions
-  explode: boolean | ComparisonOptions
-  compound: boolean | number | ComparisonOptions
-  penetrate: boolean | number | ComparisonOptions
-  explodeSequence: number[]
-  multiply: number
-  plus: number
-  minus: number
-  sort: 'asc' | 'desc'
-  wildDie: boolean
-  integerDivide: number
-  modulo: number
-  multiplyTotal: number
-}
 
 /**
  * Result of processing all modifiers through the registry.
