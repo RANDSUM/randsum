@@ -21,7 +21,7 @@
     },
     "apps/cli": {
       "name": "@randsum/cli",
-      "version": "2.0.0",
+      "version": "4.0.0",
       "bin": {
         "randsum": "dist/index.js",
       },
@@ -83,7 +83,7 @@
         "@randsum/roller": "workspace:~",
       },
       "devDependencies": {
-        "@happy-dom/global-registrator": "20.10.3",
+        "@happy-dom/global-registrator": "20.10.6",
         "@testing-library/dom": "10.4.1",
         "@testing-library/react": "16.3.2",
         "@types/react": "catalog:",
@@ -98,7 +98,7 @@
     },
     "packages/games": {
       "name": "@randsum/games",
-      "version": "3.0.1",
+      "version": "4.0.0",
       "dependencies": {
         "@randsum/roller": "workspace:~",
       },
@@ -111,7 +111,7 @@
     },
     "packages/mcp": {
       "name": "@randsum/mcp",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "bin": {
         "randsum-mcp": "dist/index.js",
       },
@@ -126,7 +126,7 @@
     },
     "packages/roller": {
       "name": "@randsum/roller",
-      "version": "2.0.0",
+      "version": "4.0.0",
       "devDependencies": {
         "fast-check": "catalog:",
       },
@@ -437,7 +437,7 @@
 
     "@fastify/busboy": ["@fastify/busboy@3.2.0", "", {}, "sha512-m9FVDXU3GT2ITSe0UaMA5rU3QkfC/UXtCU8y0gSN/GugTqtVldOBWIB5V6V3sbmenVZUIpU6f+mPEO2+m5iTaA=="],
 
-    "@happy-dom/global-registrator": ["@happy-dom/global-registrator@20.10.3", "", { "dependencies": { "@types/node": ">=20.0.0", "happy-dom": "^20.10.3" } }, "sha512-rw10ox5gAdKT5UScrrhLRE8y9t2xzvRx2lUNwbXlPogJixYGciElqywuLlcmX+Rgcif0sF2wWUwqUEob1BKZTA=="],
+    "@happy-dom/global-registrator": ["@happy-dom/global-registrator@20.10.6", "", { "dependencies": { "@types/node": ">=20.0.0", "happy-dom": "^20.10.6" } }, "sha512-Nu/IjRkkNxmeG2ywWsyJSO4d1BrWTqVzxCPL+gXj0b97klhmjd6wLzt6Bx/laNpkZ3WLW7zNCqmtMIbIlahqug=="],
 
     "@hono/node-server": ["@hono/node-server@1.19.14", "", { "peerDependencies": { "hono": "^4" } }, "sha512-GwtvgtXxnWsucXvbQXkRgqksiH2Qed37H9xHZocE5sA3N8O8O8/8FA3uclQXxXVzc9XBZuEOMK7+r02FmSpHtw=="],
 
