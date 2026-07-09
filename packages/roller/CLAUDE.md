@@ -319,7 +319,7 @@ bun test                              # run tests (bun:test)
 bun run test:coverage                 # tests with lcov coverage
 bun run build                         # bunup — ESM + DTS
 bun run typecheck                     # tsc --noEmit
-bun run lint                          # eslint
+bun run lint                          # biome
 bun run format / format:check         # biome
 bun run size                          # size-limit
 bun run check                         # build + typecheck + format:check + lint + test

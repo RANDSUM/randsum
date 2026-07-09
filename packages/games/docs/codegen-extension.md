@@ -72,7 +72,7 @@ All paths are relative to `packages/games/`.
 | `src/lib/codegen/emitHelpers.ts` | Helpers shared across emitters: `integerOrInputCode`, `collectResults`, `buildInputType`, `getSingleInputOverload`, `needsValidationImports`, `generateValidationLines`. **~250 lines — most of the codegen's intelligence lives here.** |
 | `src/lib/pipeline.ts` | Runtime interpreter over `NormalizedSpec`. Mirrors every emitter's semantics. |
 | `src/lib/errors.ts` | `SchemaError` + `SchemaErrorCode` union: `REF_NOT_FOUND`, `INPUT_NOT_FOUND`, `INVALID_INPUT_TYPE`, `NO_TABLE_MATCH`, `CONDITION_TYPE_MISMATCH`, `INVALID_SPEC`, `EXTERNAL_REF_FAILED`. |
-| `codegen.ts` (package root) | CLI driver. Reads `*.randsum.json`, runs validation → external refs → `generateCode` → prettier → writes `src/<shortcode>.generated.ts`. Supports `--check` (CI freshness). |
+| `codegen.ts` (package root) | CLI driver. Reads `*.randsum.json`, runs validation → external refs → `generateCode` → biome → writes `src/<shortcode>.generated.ts`. Supports `--check` (CI freshness). |
 
 Anchor points you will almost certainly touch when extending the pipeline:
 

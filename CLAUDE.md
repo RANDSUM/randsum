@@ -23,7 +23,7 @@ Game packages never depend on each other — only on `@randsum/roller`.
 bun install                              # Install all dependencies
 bun run build                            # Build all packages (bunup: ESM + DTS, no CJS)
 bun run test                             # Run all tests (bun:test, recursive)
-bun run lint                             # ESLint all packages
+bun run lint                             # Biome lint all packages
 bun run format                           # Biome format all packages
 bun run typecheck                        # TypeScript strict check
 bun run knip                             # Find unused files, deps, and exports
@@ -47,12 +47,12 @@ bun run help                             # Quick command reference
 ## TypeScript Conventions
 
 - Strict mode with `isolatedDeclarations`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`
-- `const` only — `let` is banned by ESLint
+- `const` only — `let` is banned by a Biome GritQL plugin
 - `import type { X }` enforced (`consistent-type-imports`)
 - Explicit return types on exported functions
 - PascalCase for types/interfaces/enums, UPPER_CASE for enum members
 - No `any` — use `unknown` with type guards
-- No `as unknown as T` — banned by ESLint AST selector
+- No `as unknown as T` — banned by a Biome GritQL plugin (both plain and parenthesized forms)
 - `prefer-readonly` enabled
 - No semicolons, single quotes, no trailing commas (Biome formatter)
 - Discriminated unions use `kind` or `type` as the discriminant field (e.g., `CollectedResults` with `kind: 'union' | 'numeric' | 'opaque' | 'result-mapping'`)
@@ -147,7 +147,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 
 **Test failures**: Isolate with `bun test packages/roller/__tests__/roll/roll.test.ts`. Use `--bail` to stop on the first failure: `bun test --bail`. Filter by package: `bun run --filter @randsum/roller test`.
 
-**ESLint failures**: Common violations: `no-let` (use `const`), `consistent-type-imports` (use `import type`), `prefer-readonly`, and the AST selector banning `as unknown as T`. Auto-fix with `bun run fix:all` or target lint only: `bun run lint -- --fix`.
+**Lint failures (Biome)**: Common violations: the `no-let` GritQL plugin (use `const`), `useImportType` (use `import type`), and the plugin banning `as unknown as T`. Auto-fix with `bun run fix:all` (biome check --write).
 
 **Type errors**: Run `bun run typecheck`. Common strict-mode issues:
 
