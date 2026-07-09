@@ -1,6 +1,6 @@
 {
   "name": "@randsum/cli",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "description": "Dice rolling CLI powered by RANDSUM",
   "private": false,
   "author": {
