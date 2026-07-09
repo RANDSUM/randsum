@@ -15,8 +15,7 @@
       "!**/.ladle",
       "!**/*.tsbuildinfo",
       "!**/.bunup-dts-*",
-      "!**/__tests__/fixtures",
-      "!**/*.astro"
+      "!**/__tests__/fixtures"
     ]
   },
   "formatter": {
@@ -71,6 +70,17 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
     { "includes": ["**/package.json"], "json": { "formatter": { "lineWidth": 120 } } },
     {
       "includes": [

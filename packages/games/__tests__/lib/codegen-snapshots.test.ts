@@ -2,10 +2,10 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { describe, expect, test } from 'bun:test'
-import { format, resolveConfig } from 'prettier'
 
 import { generateCode } from '../../src/lib/codegen'
 import { resolveExternalRefs } from '../../src/lib/externalRefResolver'
+import { formatGeneratedCode } from '../../src/lib/formatGeneratedCode'
 import type { RandSumSpec } from '../../src/lib/types'
 
 const packageDir = join(import.meta.dirname, '..', '..')
@@ -13,11 +13,6 @@ const srcDir = join(packageDir, 'src')
 const fixturesDir = join(packageDir, '__fixtures__')
 
 const specFiles = readdirSync(packageDir).filter(f => f.endsWith('.randsum.json'))
-
-async function formatCode(code: string, filepath: string): Promise<string> {
-  const config = await resolveConfig(filepath)
-  return format(code, { ...(config ?? {}), parser: 'typescript' })
-}
 
 function loadRemoteDataCache(spec: RandSumSpec): ReadonlyMap<string, readonly unknown[]> {
   const cache = new Map<string, readonly unknown[]>()
@@ -48,7 +43,7 @@ describe('codegen snapshot tests', () => {
         const resolved = await resolveExternalRefs(spec)
         const remoteDataCache = loadRemoteDataCache(resolved)
         const code = await generateCode(resolved, { remoteDataCache })
-        const formatted = await formatCode(code, expectedFile)
+        const formatted = formatGeneratedCode(code, expectedFile)
         const checkedIn = readFileSync(expectedFile, 'utf-8')
         expect(formatted).toBe(checkedIn)
       },

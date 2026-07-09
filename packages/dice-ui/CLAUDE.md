@@ -70,7 +70,7 @@ packages/dice-ui/
 ```bash
 bun run typecheck      # tsc --noEmit
 bun run lint           # eslint
-bun run format:check   # prettier --check
+bun run format:check   # biome format .
 bun run test           # bun test __tests__
 bun run check          # typecheck + format:check + lint + test
 ```

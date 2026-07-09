@@ -114,7 +114,6 @@
     "ajv": "8.20.0",
     "bunup": "0.16.32",
     "fast-check": "catalog:",
-    "prettier": "3.8.4",
     "typescript": "catalog:"
   },
   "scripts": {

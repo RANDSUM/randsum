@@ -39,8 +39,8 @@
     "astro": "astro",
     "test": "bun test",
     "lint": "biome lint .",
-    "format": "biome format --write . && prettier --write \"src/**/*.astro\"",
-    "format:check": "biome format . && prettier --check \"src/**/*.astro\"",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "typecheck": "astro check",
     "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
   },
@@ -49,8 +49,6 @@
     "@astrojs/sitemap": "3.7.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "prettier": "3.8.4",
-    "prettier-plugin-astro": "0.14.1",
     "starlight-page-actions": "0.6.2",
     "starlight-sidebar-topics": "0.8.0",
     "typescript": "6.0.3"
