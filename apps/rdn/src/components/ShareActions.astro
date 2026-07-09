@@ -8,7 +8,7 @@ const { specMarkdown, specUrl } = Astro.props
 
 const truncatedForLlm =
   specMarkdown.length > 4000
-    ? specMarkdown.slice(0, 4000) + `\n\n[Full spec: ${specUrl}]`
+    ? `${specMarkdown.slice(0, 4000)}\n\n[Full spec: ${specUrl}]`
     : specMarkdown
 
 const claudeUrl = `https://claude.ai/new?q=${encodeURIComponent(truncatedForLlm)}`

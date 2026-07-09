@@ -33,7 +33,7 @@ bun run build                  # bunup → dist/index.js (ESM), then chmod +x
 bun run test                   # bun test (calls tool handlers directly)
 bun run typecheck              # tsc --noEmit
 bun run lint                   # ESLint
-bun run format                 # Prettier
+bun run format                 # Biome
 bun run check                  # build + typecheck + format:check + lint + test
 ```
 

@@ -53,7 +53,7 @@ See `packages/games/CLAUDE.md` for detailed patterns and conventions.
 - `const` only (no `let`), `import type` for type-only imports
 - No `any`, no `as unknown as T` -- use type guards
 - Explicit return types on exported functions
-- Prettier: no semicolons, single quotes, no trailing commas
+- Biome formatter: no semicolons, single quotes, no trailing commas
 
 See the root `CLAUDE.md` for the full TypeScript conventions reference.
 
@@ -69,7 +69,7 @@ Run `bun run fix:all` to auto-fix lint and format issues.
 
 ### Git Hooks (Lefthook)
 
-**pre-commit** runs `bun install --frozen-lockfile` first (priority 1), then in parallel: ESLint `--fix`, Prettier, `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. If it fails, run `bun run fix:all`.
+**pre-commit** runs `bun install --frozen-lockfile` first (priority 1), then in parallel: Biome (`check --write` — lint + format, covering `.astro`), `typecheck`, and a codegen check (`gen:check`) when a `.randsum.json` spec changed. If it fails, run `bun run fix:all`.
 
 **pre-push** is a heavier gauntlet — expect it to take a while. It runs `build` first (priority 1), then in parallel: codegen check (`gen:check`), conformance check (`@randsum/rdn conformance:check`), the full test suite, a security audit (`bun audit --audit-level=high`), an SCA scan (`scripts/sca-scan.sh`, OSV-Scanner; soft-skips if the scanner is unavailable), `knip`, and the architecture check (`arch:check`). See `lefthook.yml` for the exact config. Do not `--no-verify` past a real failure.
 

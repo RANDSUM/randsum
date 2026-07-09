@@ -1,6 +1,7 @@
 export { resolveExternalRefs } from './externalRefResolver'
 export { generateCode } from './codegen'
 export type { GenerateCodeOptions } from './codegen'
+export { formatGeneratedCode } from './formatGeneratedCode'
 export { validateSpec } from './validator'
 export { getRollDefinitions } from './typeGuards'
 export type { RandSumSpec } from './types'

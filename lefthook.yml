@@ -14,29 +14,12 @@ pre-commit:
     # Biome replaces the former ESLint (--fix) + Prettier steps in a single pass:
     # `check --write` runs the linter (applying safe fixes) and the formatter.
     # Unfixable lint errors still exit non-zero and block the commit, matching the
-    # old `eslint --fix` gate.
+    # old `eslint --fix` gate. Biome is now the sole formatter — including for
+    # .astro files (it formats the frontmatter script and lints it; the template
+    # markup is left as-authored, the deliberate single-formatter trade-off).
     biome:
-      glob: "*.{ts,tsx,js,mjs,cjs,json,jsonc,css}"
+      glob: "*.{ts,tsx,js,mjs,cjs,json,jsonc,css,astro}"
       run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
-      stage_fixed: true
-      priority: 2
-    # Biome does not format .astro templates, so prettier-plugin-astro still
-    # formats staged .astro files. prettier + the plugin live ONLY under
-    # apps/site and apps/rdn (not root), so each step sets `root:` to run inside
-    # that app — `bunx prettier` then resolves the app-local, exact-pinned
-    # prettier@3.8.4 + prettier-plugin-astro and the app's own .prettierrc.json.
-    # A root-level `bunx prettier` would fetch an unpinned prettier that cannot
-    # resolve the plugin and would block any commit staging a .astro file.
-    format-astro-site:
-      root: "apps/site/"
-      glob: "*.astro"
-      run: bunx prettier --write {staged_files}
-      stage_fixed: true
-      priority: 2
-    format-astro-rdn:
-      root: "apps/rdn/"
-      glob: "*.astro"
-      run: bunx prettier --write {staged_files}
       stage_fixed: true
       priority: 2
     typecheck:

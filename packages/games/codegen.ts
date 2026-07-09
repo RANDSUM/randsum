@@ -2,9 +2,13 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { format, resolveConfig } from 'prettier'
-
-import { generateCode, getRollDefinitions, resolveExternalRefs, validateSpec } from './src/lib'
+import {
+  formatGeneratedCode,
+  generateCode,
+  getRollDefinitions,
+  resolveExternalRefs,
+  validateSpec
+} from './src/lib'
 import type { RandSumSpec } from './src/lib'
 
 const packageDir = import.meta.dirname
@@ -15,11 +19,6 @@ const checkMode = process.argv.includes('--check')
 // checked-in __fixtures__ snapshot. Pass --refresh-remote to refetch from the
 // network and rewrite the fixture.
 const refreshRemote = process.argv.includes('--refresh-remote')
-
-async function formatCode(code: string, filepath: string): Promise<string> {
-  const config = await resolveConfig(filepath)
-  return format(code, { ...(config ?? {}), parser: 'typescript' })
-}
 
 function fixturePathFor(shortcode: string): string {
   return join(fixturesDir, `${shortcode}-tables.json`)
@@ -95,7 +94,7 @@ async function main(): Promise<void> {
     const entryFilepath = join(srcDir, entryFilename)
 
     const code = await generateCode(spec, { remoteDataCache })
-    const formatted = await formatCode(code, entryFilepath)
+    const formatted = formatGeneratedCode(code, entryFilepath)
 
     if (checkMode) {
       const existing = existsSync(entryFilepath) ? readFileSync(entryFilepath, 'utf-8') : ''
@@ -120,7 +119,7 @@ async function main(): Promise<void> {
       .join(',\n')}\n] as const\n\n` +
     `export type GameShortcode = (typeof AVAILABLE_GAMES)[number]\n`
   const availableGamesPath = join(srcDir, 'availableGames.generated.ts')
-  const formattedAvailable = await formatCode(availableGamesSource, availableGamesPath)
+  const formattedAvailable = formatGeneratedCode(availableGamesSource, availableGamesPath)
 
   if (checkMode) {
     const existing = existsSync(availableGamesPath) ? readFileSync(availableGamesPath, 'utf-8') : ''
