@@ -47,7 +47,7 @@ bun run start            # Run built output via Node (production)
 bun run deploy-commands  # Register slash commands with Discord API (run once after changes)
 bun run typecheck        # tsc --noEmit
 bun run lint             # ESLint
-bun run format           # Prettier
+bun run format           # Biome
 bun run check            # build + typecheck + format:check + lint + test
 ```
 

@@ -115,7 +115,7 @@ Bun's workspace features handle tasks across all packages with automatic depende
 - `bun run typecheck` - Run TypeScript checks for all packages
 - `bun run check:all` - Run all package-level checks (build, typecheck, lint, format, test)
 - `bun run fix:all` - Run ESLint with auto-fix and format code
-- `bun run format` - Format code using Prettier
+- `bun run format` - Format code using Biome
 
 **Package-Specific Tasks**:
 

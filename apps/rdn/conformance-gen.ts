@@ -36,26 +36,15 @@ const output = {
 const outPath = new URL('./public/conformance/v0.9.0.json', import.meta.url)
 const raw = JSON.stringify(output, null, 2) + '\n'
 
-const proc = Bun.spawnSync(
-  [
-    'bunx',
-    'prettier',
-    '--parser',
-    'json',
-    '--print-width',
-    '100',
-    '--tab-width',
-    '2',
-    '--trailing-comma',
-    'none',
-    '--stdin-filepath',
-    'v0.9.0.json'
-  ],
-  { stdin: new TextEncoder().encode(raw), cwd: import.meta.dir }
-)
+// Format the generated conformance file with Biome (the repo's sole formatter,
+// reading the root biome.json) so it matches house style.
+const proc = Bun.spawnSync(['bunx', '@biomejs/biome', 'format', '--stdin-file-path=v0.9.0.json'], {
+  stdin: new TextEncoder().encode(raw),
+  cwd: import.meta.dir
+})
 
 if (proc.exitCode !== 0) {
-  console.error('Prettier failed:', new TextDecoder().decode(proc.stderr))
+  console.error('Biome failed:', new TextDecoder().decode(proc.stderr))
   process.exit(1)
 }
 

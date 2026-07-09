@@ -19,14 +19,12 @@ type Group = {
 }
 
 const groups: Group[] = []
-let current: Group | null = null
 
 for (const h of headings) {
   if (h.depth === 2) {
-    current = { h2: h, children: [] }
-    groups.push(current)
-  } else if ((h.depth === 3 || h.depth === 4) && current) {
-    current.children.push(h)
+    groups.push({ h2: h, children: [] })
+  } else if (h.depth === 3 || h.depth === 4) {
+    groups[groups.length - 1]?.children.push(h)
   }
 }
 
@@ -42,14 +40,16 @@ type TocGroup = { slug: string; text: string; sections: TocH3[] }
 
 const tocGroups: TocGroup[] = groups.map(g => {
   const sections: TocH3[] = []
-  let currentH3: TocH3 | null = null
 
   for (const c of g.children) {
     if (c.depth === 3) {
-      currentH3 = { depth: c.depth, slug: c.slug, text: c.text, children: [] }
-      sections.push(currentH3)
-    } else if (c.depth === 4 && currentH3) {
-      currentH3.children.push({ depth: c.depth, slug: c.slug, text: c.text })
+      sections.push({ depth: c.depth, slug: c.slug, text: c.text, children: [] })
+    } else if (c.depth === 4) {
+      sections[sections.length - 1]?.children.push({
+        depth: c.depth,
+        slug: c.slug,
+        text: c.text
+      })
     }
   }
 

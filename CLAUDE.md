@@ -24,7 +24,7 @@ bun install                              # Install all dependencies
 bun run build                            # Build all packages (bunup: ESM + DTS, no CJS)
 bun run test                             # Run all tests (bun:test, recursive)
 bun run lint                             # ESLint all packages
-bun run format                           # Prettier all packages
+bun run format                           # Biome format all packages
 bun run typecheck                        # TypeScript strict check
 bun run knip                             # Find unused files, deps, and exports
 bun run check:all                        # Per-package check chain (build, typecheck, format:check, lint, test)
@@ -54,7 +54,7 @@ bun run help                             # Quick command reference
 - No `any` — use `unknown` with type guards
 - No `as unknown as T` — banned by ESLint AST selector
 - `prefer-readonly` enabled
-- No semicolons, single quotes, no trailing commas (Prettier)
+- No semicolons, single quotes, no trailing commas (Biome formatter)
 - Discriminated unions use `kind` or `type` as the discriminant field (e.g., `CollectedResults` with `kind: 'union' | 'numeric' | 'opaque' | 'result-mapping'`)
 - Literal types for API inputs: `roll()` accepts plain numbers and notation strings, not branded/opaque types
 - Error hierarchy: all errors extend `RandsumError`. roller exports `NotationParseError`, `ModifierError`, `ValidationError`, and `RollError` (`@randsum/roller/errors`); games exports `SchemaError`. Use `instanceof RandsumError` to catch all RANDSUM errors, or catch them individually for specific handling
@@ -134,7 +134,7 @@ roll("5d10F{3}") // Count failures <= 3
 
 ## Git Hooks (Lefthook)
 
-**pre-commit** (parallel): `bun install --frozen-lockfile` (priority 1), then ESLint `--fix`, Prettier, typecheck, and codegen check (`gen:check`)
+**pre-commit** (parallel): `bun install --frozen-lockfile` (priority 1), then Biome (`check --write`: lint + format, covering `.astro`), typecheck, and codegen check (`gen:check`)
 **pre-push**: build (priority 1), then codegen check, conformance check (`@randsum/rdn conformance:check`), tests, security audit (`bun audit --audit-level=high`), SCA scan (`scripts/sca-scan.sh` — OSV-Scanner, mirrors the CI `sca` job; soft-skips if `osv-scanner`/Docker absent), knip, and arch check (`arch:check`)
 
 If hooks fail, run `bun run fix:all`.

@@ -67,7 +67,7 @@ bun run build             # Static build → dist/
 bun run preview           # Preview built output
 bun run typecheck         # astro check
 bun run lint              # ESLint
-bun run format            # Prettier
+bun run format            # Biome
 bun run test              # bun:test (__tests__/)
 bun run conformance:gen   # Regenerate public/conformance/<version>.json
 bun run conformance:check # conformance:gen + git diff --exit-code (CI guard)

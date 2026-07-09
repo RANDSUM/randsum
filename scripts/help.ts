@@ -17,7 +17,7 @@ const categories: Record<string, Record<string, string>> = {
   },
   'Code Quality': {
     lint: 'Run ESLint across all packages',
-    format: 'Format code with Prettier',
+    format: 'Format code with Biome',
     'format:check': 'Check if code is formatted',
     typecheck: 'Run TypeScript type checking',
     knip: 'Find unused files, deps, and exports'

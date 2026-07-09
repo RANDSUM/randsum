@@ -36,7 +36,7 @@ like. If not, skim `packages/games/blades.randsum.json` first — it exercises
           └─────────┬──────────────┘        └────────────┬─────────────┘
                     ▼                                    ▼
           src/<shortcode>.generated.ts            GameRollResult<...>
-          (checked in, prettier-formatted)
+          (checked in, biome-formatted)
 ```
 
 The **same IR** is consumed by two sinks:

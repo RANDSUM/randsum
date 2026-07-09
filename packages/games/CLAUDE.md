@@ -83,7 +83,7 @@ The codegen script (`codegen.ts` at package root):
 3. Reads remote table data (e.g. Salvage Union tables) from the checked-in `__fixtures__/<shortcode>-tables.json` snapshot — **codegen is hermetic by default and never hits the network**
 4. Validates each resolved spec against the meta-schema via `validateSpec`
 5. Calls `generateCode()` from `src/lib` to produce TypeScript
-6. Formats with Prettier and writes to `src/<shortcode>.generated.ts`, then regenerates `src/availableGames.generated.ts`
+6. Formats with Biome (via `formatGeneratedCode` in `src/lib`, which shells out to the workspace Biome binary using the repo's `biome.json`) and writes to `src/<shortcode>.generated.ts`, then regenerates `src/availableGames.generated.ts`
 
 Build output: `dist/<shortcode>.generated.js` + `.d.ts` per game. With `--check` (`gen:check`), the script writes nothing and fails if any generated file is stale.
 
