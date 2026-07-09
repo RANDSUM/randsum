@@ -172,10 +172,11 @@ Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest)
 `.mcp.json` (project-scoped, committed) declares the official MCP servers for
 this repo's deploy/host stack. Each maps to a real workspace target:
 
-| Server   | Transport | Backs                              | Auth                            |
-| -------- | --------- | ---------------------------------- | ------------------------------- |
-| `render` | http      | `apps/discord-bot` (Render worker) | 1Password PAT (`headersHelper`) |
-| `github` | http      | repo host (issues, PRs, releases)  | 1Password PAT (`headersHelper`) |
+| Server    | Transport | Backs                              | Auth                            |
+| --------- | --------- | ---------------------------------- | ------------------------------- |
+| `render`  | http      | `apps/discord-bot` (Render worker) | 1Password PAT (`headersHelper`) |
+| `github`  | http      | repo host (issues, PRs, releases)  | 1Password PAT (`headersHelper`) |
+| `netlify` | http      | `apps/site` / `apps/rdn` (Netlify) | OAuth — run `/mcp`              |
 
 Secrets are **never** committed. The `github` and `render` (http) servers
 resolve their fine-grained PATs at connect time via `scripts/mcp-1password-headers.sh`,
@@ -193,6 +194,8 @@ An already-exported env var wins over `op`, so CI / fresh checkouts without
 1Password can still authenticate by exporting `GITHUB_PAT` / `RENDER_API_KEY`
 before launch.
 
-Run `/mcp` in Claude Code to check connection status. Netlify is **not** a
-project-scoped server here — use the account-level claude.ai Netlify connector
-(already connected) for `apps/site` / `apps/rdn`.
+Run `/mcp` in Claude Code to check connection status. `netlify` authenticates
+via OAuth (run `/mcp` after first launch). The account-level claude.ai Netlify
+connector remains available in interactive sessions; the project-scoped server
+exists so headless/cron sessions — where account connectors are absent — can
+still manage the `apps/site` / `apps/rdn` deploys.
