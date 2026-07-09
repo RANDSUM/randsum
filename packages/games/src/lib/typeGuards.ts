@@ -1,10 +1,4 @@
-import type {
-  DetailsFieldDef,
-  DetailsLeafDef,
-  IntegerOrInput,
-  RandSumSpec,
-  RollDefinition
-} from './types'
+import type { DetailsFieldDef, DetailsLeafDef, RandSumSpec, RollDefinition } from './types'
 
 export function isDetailsLeaf(def: DetailsFieldDef): def is DetailsLeafDef {
   return (
@@ -21,18 +15,6 @@ export function isConditionalDetails(def: DetailsFieldDef): def is {
   readonly value: Readonly<Record<string, DetailsLeafDef>>
 } {
   return 'when' in def && 'value' in def
-}
-
-export function isInputRef(value: IntegerOrInput): value is { readonly $input: string } {
-  return typeof value === 'object' && '$input' in value
-}
-
-export function isConditionalRef(value: IntegerOrInput): value is {
-  readonly $input: string
-  readonly ifTrue: number
-  readonly ifFalse: number
-} {
-  return typeof value === 'object' && '$input' in value && 'ifTrue' in value && 'ifFalse' in value
 }
 
 /**
