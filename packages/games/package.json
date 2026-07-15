@@ -117,7 +117,7 @@
     "typescript": "catalog:"
   },
   "scripts": {
-    "prepublishOnly": "bun run build",
+    "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
     "build": "bunup",
     "gen": "bun run codegen.ts",
     "gen:check": "bun run codegen.ts --check",

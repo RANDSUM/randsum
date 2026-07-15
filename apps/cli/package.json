@@ -48,7 +48,7 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "prepublishOnly": "bun run build",
+    "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
     "typecheck": "tsc --noEmit",
     "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
   },

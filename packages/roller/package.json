@@ -105,7 +105,7 @@
   },
   "scripts": {
     "dev": "bunup --watch",
-    "prepublishOnly": "bun run build",
+    "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
     "build": "bunup",
     "test": "bun test",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
