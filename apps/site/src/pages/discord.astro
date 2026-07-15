@@ -1,5 +1,6 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import KofiButton from '../components/KofiButton.astro'
 
 const OAUTH_URL =
   'https://discord.com/oauth2/authorize?client_id=1290434147159904276&permissions=274877906944&scope=bot%20applications.commands'
@@ -271,6 +272,9 @@ const commands = [
             Add to Discord
           </a>
           <a href="/tools/discord-bot/" class="btn btn-secondary"> Full Documentation </a>
+        </div>
+        <div class="cta-support">
+          <KofiButton />
         </div>
       </div>
     </section>
@@ -605,6 +609,12 @@ const commands = [
     gap: 0.75rem;
     justify-content: center;
     flex-wrap: wrap;
+  }
+
+  .cta-support {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.75rem;
   }
 
   /* ---- Responsive ---- */

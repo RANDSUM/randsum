@@ -4,6 +4,7 @@ import VersionBanner from '../components/VersionBanner.astro'
 import SkipLink from '../components/SkipLink.astro'
 import ShareActions from '../components/ShareActions.astro'
 import MobileMenu from '../components/MobileMenu.astro'
+import KofiButton from '../components/KofiButton.astro'
 import '../styles/global.css'
 
 interface Heading {
@@ -93,6 +94,17 @@ const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
       </aside>
     </div>
     {specMarkdown && <ShareActions specMarkdown={specMarkdown} specUrl={specUrl} />}
+    <footer class="spec-footer">
+      <KofiButton />
+    </footer>
+    <style>
+      .spec-footer {
+        display: flex;
+        justify-content: center;
+        padding: 2rem 1rem 3rem;
+        border-top: 1px solid var(--border);
+      }
+    </style>
     <script>
       const toggle = document.querySelector('[data-theme-toggle]')
       if (toggle) {
