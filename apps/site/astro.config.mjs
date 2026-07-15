@@ -101,7 +101,8 @@ export default defineConfig({
         Head: './src/components/Head.astro',
         Header: './src/components/Header.astro',
         SiteTitle: './src/components/SiteTitle.astro',
-        ThemeSelect: './src/components/ThemeSelect.astro'
+        ThemeSelect: './src/components/ThemeSelect.astro',
+        Footer: './src/components/Footer.astro'
       },
       plugins: [
         starlightPageActions({

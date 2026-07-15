@@ -1,9 +1,12 @@
 ---
-
+import KofiButton from '../KofiButton.astro'
 ---
 
 <footer class="landing-footer not-content">
   <div class="section-inner">
+    <div class="footer-support">
+      <KofiButton />
+    </div>
     <div class="footer-links">
       <div class="footer-col">
         <h4>Documentation</h4>
@@ -49,3 +52,13 @@
     </div>
   </div>
 </footer>
+
+<style>
+  .footer-support {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--sl-color-hairline, rgba(255, 255, 255, 0.1));
+  }
+</style>
