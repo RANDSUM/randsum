@@ -54,16 +54,6 @@ async function getPublishablePackages(): Promise<{ name: string; dir: string }[]
 }
 
 /**
- * Pack @randsum/roller with `sideEffects: false` injected into the published manifest.
- *
- * The in-repo package.json keeps `sideEffects: true` because bunup's self-DCE breaks roller's
- * dist when it builds with `false`, AND the cli bundles roller from source (noExternal) and reads
- * that field. But consumers installing the published package should be able to tree-shake the
- * narrow surfaces (e.g. `isDiceNotation`) out of the engine. `bun pm pack` does NOT rebuild dist
- * or run prepublishOnly, so we flip the field only for the pack and restore it immediately after —
- * the tarball ships the already-built healthy dist with a tree-shakeable manifest. See ADR-018.
- */
-/**
  * Guard: assert a packed tarball's manifest carries no unresolved `workspace:` protocol.
  *
  * The `workspace:` protocol is a bun/pnpm dev-time reference that MUST be resolved to a real
@@ -105,6 +95,16 @@ async function assertNoWorkspaceProtocol(tgzPath: string, name: string): Promise
   }
 }
 
+/**
+ * Pack @randsum/roller with `sideEffects: false` injected into the published manifest.
+ *
+ * The in-repo package.json keeps `sideEffects: true` because bunup's self-DCE breaks roller's
+ * dist when it builds with `false`, AND the cli bundles roller from source (noExternal) and reads
+ * that field. But consumers installing the published package should be able to tree-shake the
+ * narrow surfaces (e.g. `isDiceNotation`) out of the engine. `bun pm pack` does NOT rebuild dist
+ * or run prepublishOnly, so we flip the field only for the pack and restore it immediately after —
+ * the tarball ships the already-built healthy dist with a tree-shakeable manifest. See ADR-018.
+ */
 async function packRollerWithSideEffectsFalse(dir: string): Promise<string> {
   const pkgPath = join(dir, 'package.json')
   const original = await Bun.file(pkgPath).text()
