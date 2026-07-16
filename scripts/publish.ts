@@ -54,6 +54,48 @@ async function getPublishablePackages(): Promise<{ name: string; dir: string }[]
 }
 
 /**
+ * Guard: assert a packed tarball's manifest carries no unresolved `workspace:` protocol.
+ *
+ * The `workspace:` protocol is a bun/pnpm dev-time reference that MUST be resolved to a real
+ * semver range at pack time — `bun pm pack` does this. If a tarball ever ships `workspace:~`
+ * to the registry, `npm install` of that package hard-fails with
+ * `EUNSUPPORTEDPROTOCOL Unsupported URL Type "workspace:"`, making it completely uninstallable.
+ *
+ * This exact failure shipped in the legacy standalone game packages (@randsum/salvageunion,
+ * daggerheart, blades, fifth, root-rpg, pbta) when they were published with a raw `npm publish`
+ * (which does NOT resolve `workspace:`) before this script existed. This guard makes that class
+ * of breakage impossible to publish again, independent of which tool packed the tarball.
+ */
+async function assertNoWorkspaceProtocol(tgzPath: string, name: string): Promise<void> {
+  const manifestText = await $`tar -xzOf ${tgzPath} package/package.json`.text()
+  const manifest = JSON.parse(manifestText) as Record<string, unknown>
+  const depFields = [
+    'dependencies',
+    'peerDependencies',
+    'optionalDependencies',
+    'devDependencies'
+  ] as const
+  const offenders: string[] = []
+  for (const field of depFields) {
+    const deps = manifest[field]
+    if (deps && typeof deps === 'object') {
+      for (const [dep, range] of Object.entries(deps as Record<string, unknown>)) {
+        if (typeof range === 'string' && range.startsWith('workspace:')) {
+          offenders.push(`${field}.${dep} = ${range}`)
+        }
+      }
+    }
+  }
+  if (offenders.length > 0) {
+    throw new Error(
+      `${name} tarball still contains unresolved workspace: protocol — this would be ` +
+        `uninstallable via npm (EUNSUPPORTEDPROTOCOL). Refusing to publish.\n` +
+        offenders.map(o => `    ${o}`).join('\n')
+    )
+  }
+}
+
+/**
  * Pack @randsum/roller with `sideEffects: false` injected into the published manifest.
  *
  * The in-repo package.json keeps `sideEffects: true` because bunup's self-DCE breaks roller's
@@ -111,6 +153,10 @@ for (const { name, dir } of packages) {
     if (tgzMatch) {
       console.log(tgzMatch[0])
     }
+
+    // Refuse to publish a tarball that still carries an unresolved workspace: protocol —
+    // it would be uninstallable via npm. See assertNoWorkspaceProtocol for the incident.
+    await assertNoWorkspaceProtocol(tgzPath, name)
 
     const npmArgs = ['publish', tgzPath, '--access=public']
     // Provenance requires an OIDC-capable CI; skip it for local --otp publishes.
