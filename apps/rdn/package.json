@@ -41,6 +41,6 @@
     "@astrojs/check": "0.9.9",
     "@astrojs/sitemap": "3.7.3",
     "@randsum/roller": "workspace:~",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   }
 }
