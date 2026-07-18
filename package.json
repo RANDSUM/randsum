@@ -9,7 +9,7 @@
     "@types/bun": "catalog:",
     "bunup": "0.16.32",
     "dependency-cruiser": "18.0.0",
-    "knip": "6.25.0",
+    "knip": "6.26.0",
     "lefthook": "2.1.9",
     "mitata": "catalog:",
     "size-limit": "12.1.0",
