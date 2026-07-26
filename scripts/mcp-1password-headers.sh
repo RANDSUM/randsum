@@ -33,11 +33,11 @@ resolve() {
 
 case "${CLAUDE_CODE_MCP_SERVER_NAME:-}" in
   github)
-    token="$(resolve "${GITHUB_PAT:-}" 'op://claude-agent/GitHub PAT/credential')"
+    token="$(resolve "${GITHUB_PAT:-}" 'op://claude-agent/claude-git-pat/credential')"
     printf '{"Authorization":"Bearer %s"}' "$token"
     ;;
   render)
-    token="$(resolve "${RENDER_API_KEY:-}" 'op://claude-agent/Render API Key/credential')"
+    token="$(resolve "${RENDER_API_KEY:-}" 'op://claude-agent/render-api-key/credential')"
     printf '{"Authorization":"Bearer %s"}' "$token"
     ;;
   *)

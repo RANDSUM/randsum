@@ -186,8 +186,8 @@ vault (service-account token in the macOS keychain) — the same convention as t
 Spacebase MCP. The script expects these vault items:
 
 ```
-op://claude-agent/GitHub PAT/credential      # github
-op://claude-agent/Render API Key/credential  # render
+op://claude-agent/claude-git-pat/credential   # github
+op://claude-agent/render-api-key/credential   # render
 ```
 
 An already-exported env var wins over `op`, so CI / fresh checkouts without
