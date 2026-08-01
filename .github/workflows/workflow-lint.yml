@@ -30,7 +30,7 @@ jobs:
       - name: actionlint
         uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7  # v2.2.0
       - name: zizmor
-        uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa  # v0.5.7
+        uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5  # v0.6.1
         with:
           version: 1.20.0
           # All remaining findings are Low-confidence `artipacked` noise — these
