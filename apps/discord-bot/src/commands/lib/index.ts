@@ -22,7 +22,7 @@ export function defaultErrorMessage(error: unknown): string {
  * (SlashCommandBuilder) and a `buildEmbed` that reads the interaction options
  * and returns an EmbedBuilder. Commands with bespoke error text (e.g. /roll's
  * "Did you mean" suggestion) pass `describeError`; commands with option
- * autocomplete (e.g. /su) pass `autocomplete`.
+ * autocomplete pass `autocomplete`.
  */
 export function createGameCommand(options: CreateGameCommandOptions): Command {
   const { data, buildEmbed, describeError, autocomplete } = options

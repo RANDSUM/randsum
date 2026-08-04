@@ -1,6 +1,6 @@
 ---
 title: RANDSUM Discord Dice Bot — D&D, Blades, PbtA & More
-description: Add a dice rolling bot to your Discord server. Supports RANDSUM notation, D&D 5e, Blades in the Dark, Daggerheart, Root RPG, and Salvage Union with rich embeds.
+description: Add a dice rolling bot to your Discord server. Supports RANDSUM notation, D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG with rich embeds.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
@@ -61,13 +61,11 @@ Roll Root RPG mechanics. Rolls 2d6 with an optional modifier and returns the out
 /root modifier:-1
 /root   # No modifier`} />
 
-### `/su`
+### `/salvageunion`
 
-Roll on Salvage Union tables. Supports all Salvage Union tables including Core Mechanic, Morale, and others.
+Salvage Union rolls have moved. This command points you to [SURef](https://salvageunion.io/discord), the official bot from salvageunion.io, which rolls every Salvage Union table and looks up any chassis, system, module, or piece of equipment. It replaces the old `/su` command, which no longer exists.
 
-<CodeExample lang="bash" code={`/su table:Core Mechanic
-/su table:Morale
-/su   # Uses default table`} />
+<CodeExample lang="bash" code={`/salvageunion`} />
 
 ### `/pbta`
 
@@ -97,7 +95,8 @@ The following game packages have dedicated slash commands:
 - **@randsum/games/daggerheart** -- `/dh` for Daggerheart hope and fear dice
 - **@randsum/games/pbta** -- `/pbta` for Powered by the Apocalypse moves
 - **@randsum/games/root-rpg** -- `/root` for Root RPG mechanics
-- **@randsum/games/salvageunion** -- `/su` for Salvage Union table rolls
+
+Salvage Union is served by the [SURef bot](https://salvageunion.io/discord) instead; `/salvageunion` points there. The `@randsum/games/salvageunion` package is still published and usable in your own code.
 
 ## Features
 
@@ -115,8 +114,6 @@ See what RANDSUM bot results look like in practice.
 ![/dh modifier:3 — Daggerheart Critical Hope](/discord-ss-dh-critical.png)
 
 ![/roll notation:2d12+1 result](/discord-ss-roll-2d12.png)
-
-![/su table:Core Mechanic — Salvage Union Failure](/discord-ss-su-failure.png)
 
 ## Self-Hosted Setup
 

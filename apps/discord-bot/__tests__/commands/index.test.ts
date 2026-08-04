@@ -28,10 +28,6 @@ void mock.module('@randsum/games/fate', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/fifth', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/pbta', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/root-rpg', () => ({ roll: () => ({ total: 1 }) }))
-void mock.module('@randsum/games/salvageunion', () => ({
-  roll: () => ({ total: 1 }),
-  VALID_TABLE_NAMES: ['Core Mechanic']
-}))
 
 void mock.module('../../src/utils/rollButton.js', () => ({
   createRollButton: mock(() => ({}))
