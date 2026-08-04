@@ -30,9 +30,17 @@
     "@types/react-dom": "^19.2.3"
   },
   "overrides": {
-    "undici": ">=6.27.0 <7",
+    "undici": ">=6.28.0 <7",
     "yaml": ">=2.8.3",
     "esbuild": ">=0.28.1",
+    "postcss": ">=8.5.23 <9",
+    "sharp": ">=0.35.0 <1",
+    "svgo": ">=4.0.2 <5",
+    "fast-uri": ">=3.1.5 <4",
+    "ip-address": ">=10.3.1 <11",
+    "brace-expansion": ">=2.1.4 <3 || >=5.0.9",
+    "hono": ">=4.12.34 <5",
+    "tar": ">=7.5.21 <8",
     "@opentelemetry/core": ">=2.8.0",
     "@opentelemetry/resources": ">=2.8.0",
     "@opentelemetry/sdk-trace-base": ">=2.8.0",
