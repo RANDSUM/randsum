@@ -8,7 +8,7 @@ import { notationCommand } from './notation.js'
 import { pbtaCommand } from './pbta.js'
 import { rollCommand } from './roll.js'
 import { rootCommand } from './root.js'
-import { suCommand } from './su.js'
+import { salvageUnionCommand } from './salvageunion.js'
 
 export const commands: readonly Command[] = [
   bladesCommand,
@@ -20,5 +20,5 @@ export const commands: readonly Command[] = [
   pbtaCommand,
   rollCommand,
   rootCommand,
-  suCommand
+  salvageUnionCommand
 ]

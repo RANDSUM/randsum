@@ -40,13 +40,6 @@ const games = [
     description: '2d6 + bonus. Strong hit, weak hit, or miss.',
     color: '#22c55e',
     href: '/games/root-rpg/'
-  },
-  {
-    command: '/su',
-    name: 'Salvage Union',
-    description: 'd20 table lookups including Core Mechanic and Morale.',
-    color: '#f59e0b',
-    href: '/games/salvageunion/'
   }
 ]
 
@@ -68,7 +61,11 @@ const commands = [
     example: '/dh modifier:3 rolling_with:Advantage'
   },
   { name: '/root', description: 'Root RPG 2d6 + modifier', example: '/root modifier:2' },
-  { name: '/su', description: 'Salvage Union table roll', example: '/su table:Core Mechanic' },
+  {
+    name: '/salvageunion',
+    description: 'Points to the SURef bot, which handles Salvage Union',
+    example: '/salvageunion'
+  },
   {
     name: '/pbta',
     description: 'Powered by the Apocalypse move roll',
@@ -83,7 +80,7 @@ const commands = [
   frontmatter={{
     title: 'RANDSUM Dice Bot',
     description:
-      'Roll dice for your TTRPG sessions directly in Discord. Supports D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.',
+      'Roll dice for your TTRPG sessions directly in Discord. Supports D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG.',
     template: 'splash',
     head: [
       { tag: 'meta', attrs: { property: 'og:title', content: 'RANDSUM Dice Bot' } },
@@ -92,7 +89,7 @@ const commands = [
         attrs: {
           property: 'og:description',
           content:
-            'Roll dice for your TTRPG sessions directly in Discord. D&D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and Salvage Union.'
+            'Roll dice for your TTRPG sessions directly in Discord. D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG.'
         }
       },
       {
@@ -141,8 +138,8 @@ const commands = [
         <h1 class="hero-heading">RANDSUM Dice Bot</h1>
         <p class="hero-tagline">Roll dice for your TTRPG sessions directly in Discord.</p>
         <p class="hero-sub">
-          Slash commands for D&amp;D 5e, Blades in the Dark, Daggerheart, PbtA, Root RPG, and
-          Salvage Union — plus full RANDSUM notation for anything else.
+          Slash commands for D&amp;D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root
+          RPG — plus full RANDSUM notation for anything else.
         </p>
         <div class="hero-actions">
           <a href={OAUTH_URL} class="btn btn-discord" target="_blank" rel="noopener noreferrer">
@@ -241,14 +238,6 @@ const commands = [
           <figure class="screenshot">
             <img src="/discord-ss-roll-2d12.png" alt="/roll 2d12+1 result" loading="lazy" />
             <figcaption><code>/roll notation:2d12+1</code></figcaption>
-          </figure>
-          <figure class="screenshot">
-            <img
-              src="/discord-ss-su-failure.png"
-              alt="/su — Salvage Union Failure"
-              loading="lazy"
-            />
-            <figcaption><code>/su table:Core Mechanic</code></figcaption>
           </figure>
         </div>
       </div>

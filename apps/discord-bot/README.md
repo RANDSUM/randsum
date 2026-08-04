@@ -11,7 +11,7 @@ Powered by `@randsum/roller` — **[RDN v0.9.0 Level 4 (Full) Conformant](https:
 - **Daggerheart** (`/dh`) - Roll Hope and Fear dice with modifiers and advantage
 - **D&D 5e** (`/fifth`) - Roll d20 checks with critical hit/miss display
 - **Root RPG** (`/root`) - Roll 2d6 for Root RPG with strong/weak hit mechanics
-- **Salvage Union** (`/su`) - Roll on Salvage Union tables
+- **Salvage Union** (`/salvageunion`) - Points to the [SURef bot](https://salvageunion.io/discord), which handles Salvage Union rolls and lookups
 - **Powered by the Apocalypse** (`/pbta`) - Roll 2d6 PbtA moves
 - **Notation Guide** (`/notation`) - Display a reference guide for dice notation
 - **Help** (`/help`) - List all available commands
@@ -100,7 +100,7 @@ bun run start
 - `/dh modifier:2 advantage:Advantage` - Roll Daggerheart with options
 - `/fifth` - Roll a D&D 5e d20 check (with critical hit/miss display)
 - `/root modifier:1` - Roll Root RPG (-4 to +4 modifier)
-- `/su table:Core Mechanic` - Roll on Salvage Union tables
+- `/salvageunion` - Point to the SURef bot for Salvage Union
 - `/pbta modifier:1` - Roll a Powered by the Apocalypse 2d6 move
 - `/notation` - Show dice notation reference guide
 - `/help` - List all available commands
@@ -115,13 +115,14 @@ src/
 │   ├── index.ts     # Command barrel (single source of truth)
 │   ├── blades.ts
 │   ├── dh.ts
+│   ├── fate.ts
 │   ├── fifth.ts
 │   ├── help.ts
 │   ├── notation.ts
 │   ├── pbta.ts
 │   ├── roll.ts
 │   ├── root.ts
-│   └── su.ts
+│   └── salvageunion.ts
 ├── events/          # Discord event handlers
 │   ├── interactionCreate.ts
 │   └── guildCreate.ts

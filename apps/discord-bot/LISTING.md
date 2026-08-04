@@ -10,11 +10,11 @@ RANDSUM.io
 
 ## Short Description (max 100–150 chars)
 
-Roll dice for D&D, Blades in the Dark, Daggerheart, Fate Core, PbtA, Root RPG, and Salvage Union directly in Discord.
+Roll dice for D&D, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG directly in Discord.
 
 ## Long Description
 
-RANDSUM is a fully-featured dice rolling bot for tabletop RPG sessions. Built on the open-source [@randsum/roller](https://github.com/RANDSUM/randsum) library, it supports the full RANDSUM dice notation system and provides dedicated slash commands for seven popular game systems.
+RANDSUM is a fully-featured dice rolling bot for tabletop RPG sessions. Built on the open-source [@randsum/roller](https://github.com/RANDSUM/randsum) library, it supports the full RANDSUM dice notation system and provides dedicated slash commands for six popular game systems.
 
 ### Supported Game Systems
 
@@ -24,7 +24,8 @@ RANDSUM is a fully-featured dice rolling bot for tabletop RPG sessions. Built on
 - **Fate Core** (`/fate`) — 4dF + skill resolved against the Fate ladder, from Terrible up to Legendary.
 - **Powered by the Apocalypse** (`/pbta`) — 2d6 + stat with forward and ongoing bonuses. Miss, weak hit, and strong hit outcomes.
 - **Root RPG** (`/root`) — 2d6 + bonus with strong hit, weak hit, and miss resolution.
-- **Salvage Union** (`/su`) — d20 table lookups including Core Mechanic and Morale tables.
+
+Salvage Union is handled by the [SURef bot](https://salvageunion.io/discord); `/salvageunion` points you there.
 
 ### Key Features
 
@@ -44,7 +45,7 @@ RANDSUM is a fully-featured dice rolling bot for tabletop RPG sessions. Built on
 | `/dh [modifier] [rolling_with] [amplify_hope] [amplify_fear]` | Daggerheart hope and fear dice                       |
 | `/fate [skill]`                                               | Fate Core 4dF + skill against the ladder             |
 | `/root [modifier]`                                            | Root RPG 2d6 + modifier                              |
-| `/su [table]`                                                 | Salvage Union table roll                             |
+| `/salvageunion`                                               | Points to the SURef bot for Salvage Union            |
 | `/pbta stat:<n> [forward] [ongoing] [rolling_with]`           | PbtA 2d6 move roll                                   |
 | `/notation`                                                   | Show dice notation reference guide                   |
 | `/help`                                                       | List all available commands                          |
@@ -60,7 +61,7 @@ RANDSUM is a fully-featured dice rolling bot for tabletop RPG sessions. Built on
 
 ## Tags
 
-`dice` `dice-roller` `ttrpg` `dnd` `tabletop` `rpg` `blades-in-the-dark` `daggerheart` `fate` `pbta` `root-rpg` `salvage-union` `5e`
+`dice` `dice-roller` `ttrpg` `dnd` `tabletop` `rpg` `blades-in-the-dark` `daggerheart` `fate` `pbta` `root-rpg` `5e`
 
 ## Category
 

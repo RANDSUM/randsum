@@ -16,13 +16,14 @@ apps/discord-bot/
       index.ts           # Command barrel — single source of truth for all commands
       blades.ts          # /blades — Blades in the Dark (rating 0-10)
       dh.ts              # /dh — Daggerheart
+      fate.ts            # /fate — Fate Core
       fifth.ts           # /fifth — D&D 5e (with critical hit/miss display)
       help.ts            # /help — lists all available commands
       notation.ts        # /notation — live docs from @randsum/roller/docs, paginated by category
       pbta.ts            # /pbta — Powered by the Apocalypse
       roll.ts            # /roll — generic notation roller
       root.ts            # /root — Root RPG
-      su.ts              # /su — Salvage Union
+      salvageunion.ts    # /salvageunion — pointer to the SURef bot (rolls nothing)
     events/
       interactionCreate.ts  # Routes slash commands and autocomplete interactions
       guildCreate.ts     # Sends welcome embed when bot joins a new server
@@ -92,7 +93,7 @@ Each command file exports a named `*Command` object with:
 - `data` — a `SlashCommandBuilder` instance defining the name, description, and options
 - `execute(interaction)` — async handler; uses `interaction.deferReply()` + `editReply()` pattern
 
-All game commands import their `roll()` from the corresponding `@randsum/games/<shortcode>` subpath.
+All game commands import their `roll()` from the corresponding `@randsum/games/<shortcode>` subpath. The exception is `/salvageunion`, which rolls nothing: Salvage Union moved to the SURef bot (salvageunion.io), and this command exists only to point users there. Renaming it off `/su` also frees that name for SURef in servers running both bots.
 
 ## Adding a New Command
 
