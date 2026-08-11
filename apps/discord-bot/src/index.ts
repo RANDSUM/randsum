@@ -7,6 +7,7 @@ import { logger } from './utils/logger.js'
 import { flushMetrics, startMetricsFlush, stopMetricsFlush } from './utils/metrics.js'
 import { captureException, initErrorTracker } from './utils/errorTracker.js'
 import { loginWithBackoff } from './utils/loginWithBackoff.js'
+import { syncCommands } from './utils/syncCommands.js'
 
 // Import events
 import { interactionCreateHandler } from './events/interactionCreate.js'
@@ -88,3 +89,14 @@ try {
   flushMetrics()
   process.exit(1)
 }
+
+// Reconcile Discord's registered command list with the barrel above. Deliberately
+// after login: the handlers are already live, so the registry can never advertise
+// a command this process cannot serve. `syncCommands` resolves rather than throws
+// on any API failure — a registry problem must not take down a connected bot.
+await syncCommands({
+  token: config.token,
+  clientId: config.clientId,
+  guildId: config.guildId,
+  commands: commandList
+})
