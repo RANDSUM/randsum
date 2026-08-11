@@ -320,11 +320,14 @@ jobs:
       - run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr
 
   sca:
-    # SCA + license surfacing (audit X8a / security R2, F1, F2). Confirms the four
-    # known dev/build-time advisories (ignored via osv-scanner.toml so this job
-    # stays green) and surfaces LGPL/MPL transitives. Report-only: `bun audit`
-    # above is the blocking advisory gate; this job is the confirmation/visibility
-    # pass, so a new transient OSV finding informs without breaking the gate.
+    # SCA + license surfacing (audit X8a / security R2, F1, F2). Suppresses the
+    # known dev/build-time advisories via osv-scanner.toml and surfaces LGPL/MPL
+    # transitives. Report-only, and NOT expected to be green: `bun audit` above
+    # is the blocking advisory gate, while this job deliberately reports what
+    # that gate does not cover — anything below `high`, currently
+    # @hono/node-server. `continue-on-error: true` plus its absence from the
+    # `CI Gate` needs list is what keeps those findings informative rather than
+    # blocking. See osv-scanner.toml for the per-advisory reasoning.
     name: sca
     runs-on: ubuntu-latest
     continue-on-error: true

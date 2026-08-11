@@ -13,6 +13,21 @@ updates:
     # (also satisfies zizmor's insufficient-cooldown audit).
     cooldown:
       default-days: 7
+    ignore:
+      # js-yaml 4.3.1 added an ESM `exports` map in a PATCH release, which Astro
+      # cannot load — `astro build` fails with "The requested module 'js-yaml'
+      # does not provide an export named 'default'", breaking apps/site and
+      # apps/rdn. Only the pinned bun.lock currently holds js-yaml at 4.3.0.
+      #
+      # Partial mitigation only: this stops Dependabot proposing the bump, but
+      # js-yaml is transitive (@astrojs/internal-helpers and @changesets/parse
+      # both request ^4.1.1), so ANY unpinned resolve — `bun update`, or a plain
+      # `bun install` on a refreshed lockfile — still floats to 4.3.1. The
+      # failure surfaces as an unrelated-looking Astro build error, which is why
+      # it is written down here and in osv-scanner.toml. Remove this once
+      # js-yaml restores the 4.3.0 export shape or Astro supports the new one.
+      - dependency-name: 'js-yaml'
+        versions: ['4.3.1']
 
   # Keep GitHub Actions up to date. Because workflows pin actions to commit
   # SHAs (see .github/workflows/*.yml), Dependabot will open PRs that bump

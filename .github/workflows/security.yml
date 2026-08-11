@@ -16,5 +16,11 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
       - uses: ./.github/actions/bun-setup
 
+      # The --ignore list MUST match ci.yml's `audit` job and lefthook.yml; the
+      # per-advisory justification lives in osv-scanner.toml. It matters most
+      # here: this job exists to catch NEWLY-published advisories against
+      # unchanged code, so carrying the known-baseline suppressions is what
+      # keeps a red run meaningful. Without them it fails every Monday on the
+      # same three findings and stops distinguishing new from known.
       - name: Security audit
-        run: bun audit --audit-level=high
+        run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr

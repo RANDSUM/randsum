@@ -6,17 +6,27 @@
 # patched versions directly. (The former uuid finding is gone entirely with the
 # expo app removed in #1121.)
 #
-# Everything suppressed below is dev/build-time only. None of it reaches a
-# published package: @randsum/roller has zero deps, @randsum/games depends only
-# on @randsum/roller, and @randsum/cli has zero runtime deps.
+# Everything suppressed below is dev/build-time only, and none of it reaches a
+# published package. The four published packages are @randsum/roller (zero
+# deps), @randsum/games (depends only on @randsum/roller), @randsum/cli (zero
+# runtime deps) and @randsum/mcp — the last is the only one with real runtime
+# dependencies (@modelcontextprotocol/sdk, zod), so it is the one worth
+# re-checking: neither js-yaml nor image-size appears beneath it in bun.lock.
 #
-# NOTE ON THE TWO GATES. `bun audit --audit-level=high` in .github/workflows/ci.yml
-# is the blocking gate and is wired into `CI Gate`. This OSV job is report-only
-# (`continue-on-error: true`, and deliberately NOT in the CI Gate `needs` list),
-# so it surfaces medium/low findings — currently @hono/node-server — without
-# breaking the build. Keep the `--ignore` flags there in sync with the entries
-# here: a suppression here that is missing there fails the gate, and the reverse
-# hides a finding from the report.
+# NOTE ON THE TWO GATES. `bun audit --audit-level=high` is the blocking gate.
+# This OSV job is report-only (`continue-on-error: true`, and deliberately NOT
+# in the CI Gate `needs` list), so it surfaces medium/low findings — currently
+# @hono/node-server — without breaking the build.
+#
+# KEEPING THE LISTS IN SYNC. `bun audit --ignore` flags appear in THREE places:
+#   .github/workflows/ci.yml   (audit job — the blocking gate)
+#   .github/workflows/security.yml (weekly cron — catches new advisories)
+#   lefthook.yml               (pre-push — local parity)
+# Nothing enforces the sync, so mind the direction of drift. An entry here that
+# is missing from those three fails the gate loudly, which is the safe way to be
+# wrong. The dangerous direction is the reverse: an `--ignore` in `bun audit`
+# with no entry here means the blocking gate passes silently while only the
+# report-only OSV job still shows the finding. Add here first, then there.
 #
 # The prior GHSA-h67p-54hq-rp68 js-yaml entry was removed — the scanner reported
 # it as an unused ignore, having been superseded by GHSA-5p4m-2wfm-xmqj below.
