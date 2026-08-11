@@ -297,21 +297,37 @@ jobs:
   audit:
     # Dependency advisory gate relocated from local-only pre-push into CI
     # (audit X8b / security F1, infrastructure F5). Cannot be bypassed with
-    # --no-verify. The esbuild >=0.28.1 override in the root package.json
-    # resolves GHSA-gv7w-rqvm-qjhr, so no --ignore is needed.
+    # --no-verify. Advisories are fixed via `overrides` in the root package.json
+    # wherever a patched release is usable, so --ignore is reserved for the ones
+    # where it is not.
+    #
+    # Three suppressions, all dev/build-time only and none in a published
+    # package. Full justification and re-evaluation criteria live in
+    # osv-scanner.toml — keep the two lists in sync.
+    #
+    #   GHSA-5p4m-2wfm-xmqj  js-yaml. A fix exists but cannot be adopted: 4.3.1
+    #                        adds an ESM exports map in a patch release that
+    #                        breaks `astro build`, and Bun cannot split the 3.x
+    #                        and 4.x majors (no nested overrides) while
+    #                        read-yaml-file@1 still needs the removed safeLoad.
+    #   GHSA-5p2g-fcmc-qvqq  image-size. No fixed version published.
+    #   GHSA-w3rx-r6r6-pgpr  image-size. No fixed version published.
     name: audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/bun-setup
-      - run: bun audit --audit-level=high
+      - run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr
 
   sca:
-    # SCA + license surfacing (audit X8a / security R2, F1, F2). Confirms the four
-    # known dev/build-time advisories (ignored via osv-scanner.toml so this job
-    # stays green) and surfaces LGPL/MPL transitives. Report-only: `bun audit`
-    # above is the blocking advisory gate; this job is the confirmation/visibility
-    # pass, so a new transient OSV finding informs without breaking the gate.
+    # SCA + license surfacing (audit X8a / security R2, F1, F2). Suppresses the
+    # known dev/build-time advisories via osv-scanner.toml and surfaces LGPL/MPL
+    # transitives. Report-only, and NOT expected to be green: `bun audit` above
+    # is the blocking advisory gate, while this job deliberately reports what
+    # that gate does not cover — anything below `high`, currently
+    # @hono/node-server. `continue-on-error: true` plus its absence from the
+    # `CI Gate` needs list is what keeps those findings informative rather than
+    # blocking. See osv-scanner.toml for the per-advisory reasoning.
     name: sca
     runs-on: ubuntu-latest
     continue-on-error: true
