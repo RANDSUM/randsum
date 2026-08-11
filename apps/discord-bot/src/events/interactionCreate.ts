@@ -35,6 +35,23 @@ export async function interactionCreateHandler(interaction: Interaction): Promis
       command: interaction.commandName,
       interactionId: interaction.id
     })
+    // Returning without replying lets the interaction time out, which Discord
+    // renders as "The application did not respond" — indistinguishable from an
+    // offline bot. This fires whenever Discord's registered command list is
+    // ahead of the running code (a renamed or removed command that was never
+    // de-registered), so answer explicitly rather than going silent.
+    try {
+      await interaction.reply({
+        content: `\`/${interaction.commandName}\` is no longer available — it was renamed or removed. Type \`/\` to see RANDSUM's current commands.`,
+        flags: [MessageFlags.Ephemeral] as const
+      })
+    } catch (error) {
+      captureException(error, {
+        command: interaction.commandName,
+        interactionId: interaction.id,
+        phase: 'not-found-reply'
+      })
+    }
     return
   }
 
