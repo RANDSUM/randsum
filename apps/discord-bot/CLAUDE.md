@@ -37,6 +37,7 @@ apps/discord-bot/
       metrics.ts         # Lightweight metrics counters
       errorTracker.ts    # Error capture/reporting
       loginWithBackoff.ts # Gateway login with retry/backoff
+      syncCommands.ts    # Startup reconciliation of Discord's registered commands
 ```
 
 ## Commands
@@ -45,7 +46,7 @@ apps/discord-bot/
 bun run dev              # Run from source (no build step, for development)
 bun run build            # Build to dist/index.js with bunup
 bun run start            # Run built output via Node (production)
-bun run deploy-commands  # Register slash commands with Discord API (run once after changes)
+bun run deploy-commands  # Manual escape hatch — startup now syncs commands automatically
 bun run typecheck        # tsc --noEmit
 bun run lint             # ESLint
 bun run format           # Biome
@@ -83,8 +84,9 @@ Deploys to **Render** as a `worker` service via the repo-root `render.yaml` blue
 
 1. Set env vars
 2. `bun run build` — produces `dist/index.js`
-3. `bun run deploy-commands` — registers slash commands (only needed once, or after adding/changing commands)
-4. `bun start` — runs the bot
+3. `bun start` — runs the bot, which reconciles slash commands on startup (see
+   [Command Registration](#command-registration)). `bun run deploy-commands` still exists as a
+   manual escape hatch but is not required.
 
 ## Slash Command Structure
 
@@ -95,11 +97,38 @@ Each command file exports a named `*Command` object with:
 
 All game commands import their `roll()` from the corresponding `@randsum/games/<shortcode>` subpath. The exception is `/salvageunion`, which rolls nothing: Salvage Union moved to the SURef bot (salvageunion.io), and this command exists only to point users there. Renaming it off `/su` also frees that name for SURef in servers running both bots.
 
+## Command Registration
+
+Registration is **automatic and self-healing** — do not rely on remembering a manual step.
+
+On every boot, after login succeeds, `src/index.ts` calls `syncCommands()`. It fetches the
+commands Discord currently has registered, normalizes both sides, and issues a write **only if
+they differ**:
+
+- identical → one GET, logs `commands.sync.unchanged`, no write
+- different → PUT of the full barrel, logs `commands.sync.updated` with `added` / `removed`
+- API failure → logs `commands.sync.failed` and the bot **keeps running** on its existing
+  command list; a registry problem must never take down a connected bot
+
+Ordering is deliberate: the sync runs *after* login, so the handlers are live before the registry
+can advertise them. Discord can never list a command this process cannot serve.
+
+Normalization is the load-bearing part. Discord echoes back fields the bot never declares
+(`id`, `application_id`, `version`, `integration_types`, …) and fills defaults for omitted ones
+(`required: false`, `type: 1`), so both sides are reduced to just the declared fields before
+comparison. Without that, every restart would look like a change and burn the application's daily
+command-write budget. Command order is normalized away; **option order is preserved**, because
+Discord treats it as semantic (required options must come first).
+
+`bun run deploy-commands` remains as a manual escape hatch — useful to force a write without
+restarting the worker — but it is no longer part of the deploy path.
+
 ## Adding a New Command
 
 1. Create `src/commands/<name>.ts` exporting a `Command` object
 2. Add the import and entry to `src/commands/index.ts` — this is the only file that needs to change for registration (both `index.ts` and `deploy-commands.ts` import from the barrel)
-3. Run `bun run deploy-commands` to register with Discord
+3. Deploy. The next boot registers it automatically. Global commands can take up to an hour to
+   propagate to all clients; set `DISCORD_GUILD_ID` locally for instant propagation while developing.
 
 ## Testing
 

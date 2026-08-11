@@ -71,15 +71,18 @@ Generate an invite link with these permissions:
 
 ## Usage
 
-### Deploy Commands
+### Slash Commands
 
-Before running the bot, deploy the slash commands to Discord:
+Slash commands register themselves. On every startup, after login, the bot compares its command
+barrel against what Discord has registered and writes only if they differ — so a deploy is all it
+takes, and a drifted registry heals itself on the next restart.
+
+Set `DISCORD_GUILD_ID` in `.env` for instant per-guild registration while developing; leave it
+unset for global registration (~1 hour propagation).
 
 ```bash
-# Deploy to a specific guild (instant, good for development)
+# Optional: force a registration write without restarting the bot
 bun run deploy-commands
-
-# For global deployment, remove DISCORD_GUILD_ID from .env
 ```
 
 ### Run the Bot
@@ -137,7 +140,7 @@ src/
 1. Create a new file in `src/commands/` (e.g., `mycommand.ts`)
 2. Export a command object with `data` (SlashCommandBuilder) and `execute` function
 3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/index.ts` and `src/deploy-commands.ts` import from it)
-4. Run `bun run deploy-commands` to register the new command
+4. Deploy — the next startup registers it automatically (see [Slash Commands](#slash-commands))
 
 ### Testing
 
@@ -169,18 +172,17 @@ repo-root [`render.yaml`](../../render.yaml) blueprint (`name: randsum-discord-b
 > The `render.yaml` blueprint is not necessarily auto-synced to the live service. If you change it,
 > verify the corresponding dashboard values (env vars, Bun version) match.
 
-Slash commands are registered out-of-band with `bun run deploy-commands` (run once per command-set
-change, not part of the Render start command). Remove `DISCORD_GUILD_ID` to register commands
-globally (~1 hour propagation); set it to a guild ID for instant per-guild registration during
-development.
+Slash commands are reconciled by the bot itself on startup — no out-of-band step, and no way for a
+deploy to leave Discord advertising a command the running code cannot serve. Remove
+`DISCORD_GUILD_ID` to register commands globally (~1 hour propagation); set it to a guild ID for
+instant per-guild registration during development.
 
 ### Running on your own host
 
 ```bash
 bun run build
 export DISCORD_TOKEN=... DISCORD_CLIENT_ID=...
-bun run deploy-commands        # once per command-set change
-node dist/index.js             # or via pm2 / systemd / docker
+node dist/index.js             # or via pm2 / systemd / docker; registers commands on boot
 ```
 
 ## Environment Variables

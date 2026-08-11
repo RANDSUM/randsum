@@ -67,16 +67,24 @@ you can roll forward again the same way once the fix lands.
 ### Deploy
 
 Render auto-deploys the worker on push to `main` (per the blueprint). The bot's **slash
-commands** are registered separately and are _not_ part of the Render deploy — after changing
-a command set, run once:
-
-```bash
-cd apps/discord-bot
-bun run deploy-commands   # needs DISCORD_TOKEN + DISCORD_CLIENT_ID in the environment
-```
+commands** are reconciled by the worker itself on startup: after login it compares its command
+barrel against Discord's registered set and writes only when they differ, logging
+`commands.sync.unchanged` / `commands.sync.updated` / `commands.sync.failed`. Deploying is
+therefore sufficient — there is no separate registration step to remember.
 
 (Remove `DISCORD_GUILD_ID` to register globally — ~1h propagation; set it for instant
 per-guild registration during development.)
+
+> This used to be a manual `bun run deploy-commands`. It was forgotten after #1191 renamed
+> `/su` to `/salvageunion`, leaving Discord advertising a command the worker no longer had;
+> every invocation silently timed out for a week while the bot was healthy. The startup sync
+> exists so that failure mode cannot recur.
+
+```bash
+# Escape hatch: force a registration write without restarting the worker
+cd apps/discord-bot
+bun run deploy-commands   # needs DISCORD_TOKEN + DISCORD_CLIENT_ID in the environment
+```
 
 ### Restart
 
@@ -89,15 +97,16 @@ gateway.
 1. Render dashboard → `randsum-discord-bot` → **Deploys** (or **Events**) tab.
 2. Find the last known-good deploy → **Redeploy** that commit (Render's "Rollback to this
    deploy" / "Redeploy" action rebuilds and restarts the worker on that commit).
-3. If a command-schema change is part of the regression, re-run `bun run deploy-commands`
-   from the rolled-back checkout to restore the prior command set.
+3. If a command-schema change is part of the regression, the redeployed worker restores the
+   prior command set on startup — the rolled-back barrel is what it syncs from. Watch for
+   `commands.sync.updated` in the logs to confirm.
 
 ### Token rotation (`DISCORD_TOKEN`)
 
 1. Discord Developer Portal → your application → **Bot** → **Reset Token**; copy the new token.
 2. Render dashboard → `randsum-discord-bot` → **Environment** → update `DISCORD_TOKEN` → save.
-3. Render restarts the worker with the new secret. (Updating `DISCORD_TOKEN` does not require
-   re-running `deploy-commands` — that only changes when commands change.)
+3. Render restarts the worker with the new secret. (The restart runs the startup command sync,
+   which will log `commands.sync.unchanged` — a token rotation is not a command change.)
 4. Invalidate the old token: it is revoked the moment you reset it in the portal, so any
    leaked copy stops working immediately. Audit any place the old value may have leaked.
 5. `DISCORD_CLIENT_ID` is the application ID, not a secret, but is also stored in Render env.
