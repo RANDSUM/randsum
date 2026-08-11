@@ -102,6 +102,14 @@ keeping the published JSON in sync with the source.
   imports `MODIFIER_DOCS` / `DICE_DOCS` from `@randsum/roller/docs` to auto-generate
   the modifier reference appendix.
 - No client-side framework — interactivity is vanilla TS in Astro `<script>` blocks.
+- **`typescript` is pinned to `6.0.3` here, deliberately — do NOT move it to `catalog:`.**
+  The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`, and this app
+  and `apps/site` are the only holdouts. They are blocked upstream, not by neglect:
+  `@astrojs/check` declares `peerDependencies: { typescript: "^5.0.0 || ^6.0.0" }` as of
+  its latest release (0.9.10), and under TS 7 `astro check` dies before checking anything
+  with `Cannot read properties of undefined (reading 'fileExists')` in
+  `@astrojs/language-server`'s `getTsconfig`. Revisit when `@astrojs/check` ships a
+  release whose peer range admits TypeScript 7.
 - Private app, never published to npm.
 - Deployed to Netlify (see `netlify.toml`).
 - Fonts: Inter (body) and JetBrains Mono (code/headings), via Astro's Google
