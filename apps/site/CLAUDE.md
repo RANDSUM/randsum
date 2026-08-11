@@ -17,6 +17,15 @@ Private app, deploys to Netlify on push to `main`. Lives at `randsum.dev`.
   playground / notation components
 - Fonts (Inter, JetBrains Mono) via Astro's Google font provider
 
+> **`typescript` is pinned to `6.0.3` here, deliberately — do NOT move it to `catalog:`.**
+> The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`; this app and
+> `apps/rdn` are the only holdouts, and they are blocked upstream rather than overlooked.
+> `@astrojs/check` declares `peerDependencies: { typescript: "^5.0.0 || ^6.0.0" }` as of its
+> latest release (0.9.10), and under TS 7 `astro check` dies before checking anything with
+> `Cannot read properties of undefined (reading 'fileExists')` in `@astrojs/language-server`'s
+> `getTsconfig`. Revisit when `@astrojs/check` ships a release whose peer range admits
+> TypeScript 7.
+
 ## Content Structure
 
 Docs live in `src/content/docs/` as `.mdx` files; Starlight auto-routes them.
