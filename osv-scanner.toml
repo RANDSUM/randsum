@@ -1,23 +1,70 @@
 # osv-scanner configuration (audit item X8 / security R2).
 #
-# Most previously-accepted dev/build-time transitive advisories are now
+# Most previously-accepted dev/build-time transitive advisories are
 # FORCE-RESOLVED via `overrides` in the root package.json (yaml, esbuild,
-# @opentelemetry/*), so they no longer need suppression here — the scanner sees
-# the patched versions directly. (The former uuid finding is gone entirely with
-# the expo app removed in #1121.)
+# @opentelemetry/*), so they need no suppression here — the scanner sees the
+# patched versions directly. (The former uuid finding is gone entirely with the
+# expo app removed in #1121.)
 #
-# The single advisory below cannot be safely fixed: js-yaml 3.14.2 is pulled
-# only by changesets' read-yaml-file@1, which calls js-yaml's removed `safeLoad`
-# API — the first patched js-yaml (4.2.0) is a breaking major, so forcing it via
-# overrides breaks the release pipeline. It is dev/release-tooling only (never in
-# the published packages: @randsum/roller has zero deps, @randsum/games depends
-# only on @randsum/roller, @randsum/cli has zero runtime deps) and parses only
-# trusted repo config, not attacker input. Re-evaluate when @changesets /
-# @manypkg bump to read-yaml-file@2.
+# Everything suppressed below is dev/build-time only. None of it reaches a
+# published package: @randsum/roller has zero deps, @randsum/games depends only
+# on @randsum/roller, and @randsum/cli has zero runtime deps.
 #
-# The authoritative blocking gate remains `bun audit --audit-level=high`; this
-# OSV job is the report-only confirmation/visibility pass.
+# NOTE ON THE TWO GATES. `bun audit --audit-level=high` in .github/workflows/ci.yml
+# is the blocking gate and is wired into `CI Gate`. This OSV job is report-only
+# (`continue-on-error: true`, and deliberately NOT in the CI Gate `needs` list),
+# so it surfaces medium/low findings — currently @hono/node-server — without
+# breaking the build. Keep the `--ignore` flags there in sync with the entries
+# here: a suppression here that is missing there fails the gate, and the reverse
+# hides a finding from the report.
+#
+# The prior GHSA-h67p-54hq-rp68 js-yaml entry was removed — the scanner reported
+# it as an unused ignore, having been superseded by GHSA-5p4m-2wfm-xmqj below.
+
+# --- js-yaml: fix exists but is currently unusable ---------------------------
+#
+# GHSA-5p4m-2wfm-xmqj hits both js-yaml majors in the tree: 3.15.0 (via
+# changesets' read-yaml-file@1) and 4.3.0 (via astro / @astrojs/*). The patched
+# releases are 3.15.1 and 4.3.1, and BOTH are blocked, for two independent
+# reasons — verified, not assumed:
+#
+#   1. js-yaml 4.3.1 ships a breaking change in a patch release: it adds an
+#      ESM `exports` map (`import` -> dist/js-yaml.mjs) that 4.3.0 did not have,
+#      and Astro cannot load it — `astro build` dies with "The requested module
+#      'js-yaml' does not provide an export named 'default'". Reproduced on both
+#      astro 7.0.6 and 7.1.4, with and without an override. Only the pinned
+#      bun.lock is currently keeping 4.3.0 in place; a fresh resolve breaks the
+#      apps/site and apps/rdn builds.
+#   2. The two majors cannot be split anyway. Bun collapses `overrides` to a
+#      single version tree-wide and prints "Bun currently does not support
+#      nested overrides", so there is no way to give read-yaml-file 3.15.1 while
+#      giving Astro 4.3.x. read-yaml-file@1.1.0 calls the `safeLoad` API removed
+#      in js-yaml 4, so a single 4.x override breaks the release pipeline.
+#
+# Reachability is bounded: js-yaml parses repo-local content we author (Astro
+# frontmatter/config at build time, changesets config at release time), never
+# attacker-supplied input, and the advisory is a quadratic-CPU DoS.
+#
+# Re-evaluate when js-yaml publishes a 4.3.2 that restores the 4.3.0 export
+# shape, when Astro supports the new one, or when @manypkg moves to
+# read-yaml-file@2.
 
 [[IgnoredVulns]]
-id = "GHSA-h67p-54hq-rp68"
-reason = "js-yaml <=4.1.1 quadratic-complexity DoS in merge-key handling. Pulled only by changesets' read-yaml-file@1 (calls the removed safeLoad; first fix 4.2.0 is a breaking major, so cannot be overridden without breaking releases). Dev/release-tooling only, parses trusted repo config; not in any published package."
+id = "GHSA-5p4m-2wfm-xmqj"
+reason = "js-yaml quadratic CPU consumption in !!omap resolution (3.x and 4.x). Patched 3.15.1/4.3.1 are unusable: 4.3.1 adds an ESM exports map that breaks `astro build` ('does not provide an export named default'), and Bun cannot split the two majors (no nested overrides) while read-yaml-file@1 still needs the safeLoad removed in js-yaml 4. Build/release tooling only, parses repo-local content, never in a published package."
+
+# --- image-size: no fix exists at any version --------------------------------
+#
+# Reaches the tree only as a build-time transitive of Astro's image handling,
+# via @astrojs/netlify (apps/site) and astro (apps/rdn) — both private apps. At
+# build time it parses repo-local committed assets, not attacker input, so the
+# DoS reachability is bounded by our own images. OSV lists no fixed version for
+# either advisory. Re-evaluate when a fix ships or Astro drops the dependency.
+
+[[IgnoredVulns]]
+id = "GHSA-5p2g-fcmc-qvqq"
+reason = "image-size: JXL and HEIF parsers allow denial of service through infinite loops. No fixed version published. Build-time transitive of astro/@astrojs/netlify in the private apps/site and apps/rdn only; never in a published package. Parses repo-local committed assets, not attacker input."
+
+[[IgnoredVulns]]
+id = "GHSA-w3rx-r6r6-pgpr"
+reason = "image-size: ICNS parser allows denial of service through an infinite loop. Same package, same reachability and reasoning as GHSA-5p2g-fcmc-qvqq. No fixed version published."

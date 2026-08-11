@@ -48,10 +48,12 @@ pre-push:
       run: bun run test 2>&1 | tail -5
       priority: 2
     audit:
-      # Dependency advisory gate. The esbuild >=0.28.1 override in the root
-      # package.json resolves GHSA-gv7w-rqvm-qjhr, so no --ignore is needed.
-      # Also runs in CI (ci.yml `audit` job) so it cannot be bypassed with --no-verify.
-      run: bun audit --audit-level=high > /dev/null 2>&1
+      # Dependency advisory gate. Also runs in CI (ci.yml `audit` job) so it cannot
+      # be bypassed with --no-verify. The --ignore list MUST match the CI job and
+      # osv-scanner.toml; that file carries the per-advisory justification.
+      # Currently: js-yaml (patched release breaks `astro build`) and image-size
+      # x2 (no fixed version published).
+      run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr > /dev/null 2>&1
       priority: 2
     sca:
       # Local mirror of the CI `sca` job (OSV-Scanner against bun.lock, honouring
