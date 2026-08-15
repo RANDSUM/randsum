@@ -301,7 +301,7 @@ jobs:
     # wherever a patched release is usable, so --ignore is reserved for the ones
     # where it is not.
     #
-    # Three suppressions, all dev/build-time only and none in a published
+    # Four suppressions, all dev/build-time only and none in a published
     # package. Full justification and re-evaluation criteria live in
     # osv-scanner.toml — keep the two lists in sync.
     #
@@ -312,12 +312,21 @@ jobs:
     #                        read-yaml-file@1 still needs the removed safeLoad.
     #   GHSA-5p2g-fcmc-qvqq  image-size. No fixed version published.
     #   GHSA-w3rx-r6r6-pgpr  image-size. No fixed version published.
+    #   GHSA-jmr9-qjv8-65gv  extract-zip. No fixed version published at ANY
+    #                        version — latest IS 2.0.1 and the advisory covers
+    #                        <=2.0.1, so no override can resolve it, and the
+    #                        latest @netlify/functions-dev (1.3.5) still
+    #                        requires extract-zip ^2.0.1. Build/dev-time only,
+    #                        reached via apps/site -> @astrojs/netlify ->
+    #                        @netlify/vite-plugin -> @netlify/dev ->
+    #                        @netlify/functions-dev, under the PRIVATE apps/site
+    #                        workspace. An accepted exposure, not a fix.
     name: audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/bun-setup
-      - run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr
+      - run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr --ignore=GHSA-jmr9-qjv8-65gv
 
   sca:
     # SCA + license surfacing (audit X8a / security R2, F1, F2). Suppresses the

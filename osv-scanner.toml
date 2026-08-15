@@ -2,16 +2,17 @@
 #
 # Most previously-accepted dev/build-time transitive advisories are
 # FORCE-RESOLVED via `overrides` in the root package.json (yaml, esbuild,
-# @opentelemetry/*), so they need no suppression here — the scanner sees the
-# patched versions directly. (The former uuid finding is gone entirely with the
-# expo app removed in #1121.)
+# nanoid, @opentelemetry/*), so they need no suppression here — the scanner sees
+# the patched versions directly. (The former uuid finding is gone entirely with
+# the expo app removed in #1121.)
 #
 # Everything suppressed below is dev/build-time only, and none of it reaches a
 # published package. The four published packages are @randsum/roller (zero
 # deps), @randsum/games (depends only on @randsum/roller), @randsum/cli (zero
 # runtime deps) and @randsum/mcp — the last is the only one with real runtime
 # dependencies (@modelcontextprotocol/sdk, zod), so it is the one worth
-# re-checking: neither js-yaml nor image-size appears beneath it in bun.lock.
+# re-checking: none of js-yaml, image-size or extract-zip appears beneath it in
+# bun.lock.
 #
 # NOTE ON THE TWO GATES. `bun audit --audit-level=high` is the blocking gate.
 # This OSV job is report-only (`continue-on-error: true`, and deliberately NOT
@@ -78,3 +79,47 @@ reason = "image-size: JXL and HEIF parsers allow denial of service through infin
 [[IgnoredVulns]]
 id = "GHSA-w3rx-r6r6-pgpr"
 reason = "image-size: ICNS parser allows denial of service through an infinite loop. Same package, same reachability and reasoning as GHSA-5p2g-fcmc-qvqq. No fixed version published."
+
+# --- extract-zip: no fix exists at any version -------------------------------
+#
+# ACCEPTED EXPOSURE, NOT A RESOLVED ONE. Unlike nanoid — which had a published
+# 3.3.18 and so got an `overrides` floor rather than an entry here — extract-zip
+# has nothing to float to. Its LATEST published version IS 2.0.1 and the
+# advisory covers <=2.0.1, so no override can resolve it. Verified, not assumed.
+#
+# Full path into the tree, all of it build/dev-time:
+#
+#   apps/site (private)
+#     -> @astrojs/netlify
+#       -> @netlify/vite-plugin
+#         -> @netlify/dev
+#           -> @netlify/functions-dev
+#             -> extract-zip ^2.0.1
+#
+# Upstream does not offer a way out today. The locked @netlify/functions-dev is
+# 1.3.0; the latest published is 1.3.5 and it STILL declares `extract-zip
+# ^2.0.1`. Bumping @astrojs/netlify 8.1.1 -> 8.2.1 does not drop the path
+# either. So this is not a stale-lockfile problem that an update would clear.
+#
+# Reachability is bounded: extract-zip is only exercised by the Netlify local
+# dev/functions tooling unpacking archives it fetches itself, under the PRIVATE
+# apps/site workspace. It is not in any published package (see the header note),
+# and it never unpacks user- or contributor-supplied archives in this repo. The
+# advisory is a symlink path traversal during extraction, which needs an
+# attacker-authored zip to matter.
+#
+# RE-EVALUATE WHEN: `@netlify/functions-dev` drops the `extract-zip ^2.0.1`
+# dependency, or extract-zip publishes any version above 2.0.1. Check with
+# `bun pm view @netlify/functions-dev dependencies` and `bun pm view extract-zip
+# version` — both were checked when this entry was added and neither had moved.
+# This is a condition, not a date; nothing expires it automatically.
+#
+# NOT A RANDSUM QUIRK. The same advisory, with the same null patched version, is
+# blocking the audit gate in the Binfinite repo through the same Netlify dev
+# toolchain (alongside two image-size advisories that are likewise unfixable).
+# It is a portfolio-wide upstream problem, so the condition above is worth
+# re-checking for more than this repo.
+
+[[IgnoredVulns]]
+id = "GHSA-jmr9-qjv8-65gv"
+reason = "extract-zip: unvalidated symlink path traversal during extraction. No fixed version published at any version — latest IS 2.0.1 and the advisory covers <=2.0.1, so no override can resolve it; latest @netlify/functions-dev (1.3.5) still requires extract-zip ^2.0.1. Build/dev-time only, via apps/site -> @astrojs/netlify -> @netlify/vite-plugin -> @netlify/dev -> @netlify/functions-dev, under the private apps/site workspace; never in a published package, and never unpacking contributor-supplied archives. Re-evaluate when @netlify/functions-dev drops the dependency or extract-zip publishes above 2.0.1."
