@@ -13,8 +13,8 @@
  * omits `lint`/`test`/`typecheck` would drop out of every gate unnoticed.
  *
  * Wiring: this guard runs at the head of the root `check` chain and as its own
- * CI job feeding the CI Gate, so a newly-added package that forgets a standard
- * script fails the build instead of quietly opting out.
+ * CI job feeding the CI Success gate, so a newly-added package that forgets a
+ * standard script fails the build instead of quietly opting out.
  */
 
 import { readFileSync, readdirSync, statSync } from 'node:fs'

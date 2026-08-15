@@ -117,8 +117,8 @@ jobs:
     if: fromJSON(needs.changes.outputs.matrix).include[0] != null
     runs-on: ubuntu-latest
     strategy:
-      # Run every package leg even if a sibling fails, so the CI Gate sees each
-      # package's real result instead of a fail-fast cancellation.
+      # Run every package leg even if a sibling fails, so the CI Success gate
+      # sees each package's real result instead of a fail-fast cancellation.
       fail-fast: false
       matrix: ${{ fromJSON(needs.changes.outputs.matrix) }}
     steps:
@@ -170,7 +170,7 @@ jobs:
         run: bun run --filter "@randsum/$PKG" size
 
   ci-aggregator:
-    # Guard against a job silently opting out of the CI Gate. `ci-gate`'s `needs:`
+    # Guard against a job silently opting out of the gate. `ci-gate`'s `needs:`
     # list is hand-maintained, and a job missing from it still runs, still goes
     # red, and still cannot fail the only required status check — the gate stops
     # gating with no symptom. This job diffs the two lists mechanically, and is
@@ -186,7 +186,8 @@ jobs:
     # Guard against a package silently opting out of the standard script set.
     # `bun run --filter '*' <script>` skips packages that lack the target script,
     # which is how dice-ui escaped linting for months (audit Wave 3). This job
-    # feeds the CI Gate so the escape hatch cannot be bypassed with --no-verify.
+    # feeds the CI Success gate so the escape hatch cannot be bypassed with
+    # --no-verify.
     name: workspace-scripts
     runs-on: ubuntu-latest
     steps:
@@ -347,9 +348,9 @@ jobs:
     # transitives. Report-only: `bun audit` above is the blocking advisory gate,
     # while this job deliberately reports what that gate does not cover —
     # anything below `high`. `continue-on-error: true` plus its absence from the
-    # `CI Gate` needs list is what keeps those findings informative rather than
-    # blocking. It is currently green (the two Medium and one Low it used to
-    # report — @astrojs/netlify, @hono/node-server, astro — all had published
+    # `CI Success` needs list is what keeps those findings informative rather
+    # than blocking. It is currently green (the two Medium and one Low it used
+    # to report — @astrojs/netlify, @hono/node-server, astro — all had published
     # fixes and were bumped), so a new finding here is genuinely new. See
     # osv-scanner.toml for the per-advisory reasoning.
     name: sca
@@ -370,7 +371,7 @@ jobs:
             ./
 
   ci-gate:
-    name: CI Gate
+    name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
     # every leg (roller, games, cli, mcp, discord-bot, site, rdn, dice-ui) — if
