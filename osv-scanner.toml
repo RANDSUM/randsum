@@ -16,8 +16,12 @@
 #
 # NOTE ON THE TWO GATES. `bun audit --audit-level=high` is the blocking gate.
 # This OSV job is report-only (`continue-on-error: true`, and deliberately NOT
-# in the CI Gate `needs` list), so it surfaces medium/low findings — currently
-# @hono/node-server — without breaking the build.
+# in the CI Gate `needs` list), so it surfaces medium/low findings without
+# breaking the build. The two gates are therefore NOT redundant, and a green
+# `audit` is a strictly weaker statement than a green `sca`: @astrojs/netlify
+# (Low), @hono/node-server (Medium) and astro (Medium) all sailed past
+# `--audit-level=high` and stopped only here. All three had published fixes and
+# were bumped rather than suppressed, so this scan is currently clean.
 #
 # KEEPING THE LISTS IN SYNC. `bun audit --ignore` flags appear in THREE places:
 #   .github/workflows/ci.yml   (audit job — the blocking gate)

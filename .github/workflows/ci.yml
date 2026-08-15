@@ -331,12 +331,14 @@ jobs:
   sca:
     # SCA + license surfacing (audit X8a / security R2, F1, F2). Suppresses the
     # known dev/build-time advisories via osv-scanner.toml and surfaces LGPL/MPL
-    # transitives. Report-only, and NOT expected to be green: `bun audit` above
-    # is the blocking advisory gate, while this job deliberately reports what
-    # that gate does not cover — anything below `high`, currently
-    # @hono/node-server. `continue-on-error: true` plus its absence from the
+    # transitives. Report-only: `bun audit` above is the blocking advisory gate,
+    # while this job deliberately reports what that gate does not cover —
+    # anything below `high`. `continue-on-error: true` plus its absence from the
     # `CI Gate` needs list is what keeps those findings informative rather than
-    # blocking. See osv-scanner.toml for the per-advisory reasoning.
+    # blocking. It is currently green (the two Medium and one Low it used to
+    # report — @astrojs/netlify, @hono/node-server, astro — all had published
+    # fixes and were bumped), so a new finding here is genuinely new. See
+    # osv-scanner.toml for the per-advisory reasoning.
     name: sca
     runs-on: ubuntu-latest
     continue-on-error: true
