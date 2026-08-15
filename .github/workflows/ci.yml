@@ -169,6 +169,19 @@ jobs:
           PKG: ${{ matrix.pkg }}
         run: bun run --filter "@randsum/$PKG" size
 
+  ci-aggregator:
+    # Guard against a job silently opting out of the CI Gate. `ci-gate`'s `needs:`
+    # list is hand-maintained, and a job missing from it still runs, still goes
+    # red, and still cannot fail the only required status check — the gate stops
+    # gating with no symptom. This job diffs the two lists mechanically, and is
+    # itself in that `needs:` list so it cannot be bypassed.
+    name: ci-aggregator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./.github/actions/bun-setup
+      - run: bun run check:ci-aggregator
+
   workspace-scripts:
     # Guard against a package silently opting out of the standard script set.
     # `bun run --filter '*' <script>` skips packages that lack the target script,
@@ -363,8 +376,23 @@ jobs:
     # every leg (roller, games, cli, mcp, discord-bot, site, rdn, dice-ui) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
     # all eight packages. `workspace-scripts` guards against a package silently
-    # dropping a standard script.
-    needs: [package, workspace-scripts, skill, bench, publish-dry-run, knip, arch, audit]
+    # dropping a standard script; `ci-aggregator` guards this very list.
+    #
+    # `changes` is listed even though nothing here reads its outputs: a failure in
+    # it leaves its four dependents `skipped` rather than `failure`, and the loop
+    # below treats skipped as a pass — so without it, a broken matrix build was a
+    # green gate. (Found by `ci-aggregator` on its first run.)
+    needs:
+      - changes
+      - package
+      - workspace-scripts
+      - ci-aggregator
+      - skill
+      - bench
+      - publish-dry-run
+      - knip
+      - arch
+      - audit
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}
