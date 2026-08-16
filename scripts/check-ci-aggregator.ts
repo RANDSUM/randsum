@@ -9,7 +9,7 @@
  *
  * WHY THIS EXISTS
  * ---------------
- * Branch protection on `main` requires exactly one context: "CI Gate". That job
+ * Branch protection on `main` requires exactly one context: "CI Success". That job
  * (`ci-gate` in .github/workflows/ci.yml) is `if: always()` and decides pass/fail
  * by reading `join(needs.*.result)` — so its verdict covers precisely the jobs in
  * its hand-maintained `needs:` array, and NOTHING else. A job missing from that
@@ -64,7 +64,7 @@ const WORKFLOW = `${WORKFLOW_DIR}/ci.yml`
 
 /**
  * The aggregate job's key. This is the identity of the required status check
- * ("CI Gate" is its `name:`), not an assumption about the job graph — every other
+ * ("CI Success" is its `name:`), not an assumption about the job graph — every other
  * job name in this file is derived at runtime. It lives here as a single named
  * constant precisely so a rename is a one-line change: if the gate is renamed,
  * branch protection has to be updated in the same breath, and this check failing
@@ -223,7 +223,7 @@ if (jobs.length === 0) {
 if (!jobs.includes(AGGREGATOR)) {
   fail(
     `No \`${AGGREGATOR}\` job in ${WORKFLOW}.\n\n` +
-      '"CI Gate" is the only required status check on main. If the aggregate job was\n' +
+      '"CI Success" is the only required status check on main. If the aggregate job was\n' +
       'renamed, update AGGREGATOR in scripts/check-ci-aggregator.ts AND the\n' +
       'branch-protection ruleset.'
   )
@@ -265,7 +265,7 @@ const problems = [
 if (problems.length > 0) {
   fail(
     `${WORKFLOW}\n\n${problems.join('\n')}\n\n` +
-      '"CI Gate" is the ONLY required status check on main, and it can only fail on a\n' +
+      '"CI Success" is the ONLY required status check on main, and it can only fail on a\n' +
       `job it \`needs:\`. Fix the list at ${WORKFLOW} → ${AGGREGATOR}: → needs:, or — for\n` +
       'a deliberate opt-out — add the job to EXCLUDED in scripts/check-ci-aggregator.ts\n' +
       'with a one-line reason.'
@@ -278,7 +278,7 @@ const exemptions =
     : `\nExempt by allowlist: ${[...EXCLUDED].map(([job, why]) => `${job} (${why})`).join('; ')}.`
 
 console.log(
-  `CI aggregator guard passed: "CI Gate" (${AGGREGATOR}) gates all ${gated.length} jobs in ` +
+  `CI aggregator guard passed: "CI Success" (${AGGREGATOR}) gates all ${gated.length} jobs in ` +
     `${WORKFLOW}.${exemptions}\n` +
     `Scope: \`needs:\` reaches only inside one workflow file, so this says nothing about ` +
     `${otherWorkflows().join(', ')}. If any job in those ever becomes a required status ` +
