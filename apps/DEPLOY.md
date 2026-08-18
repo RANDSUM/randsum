@@ -71,17 +71,47 @@ gh run list --repo RANDSUM/randsum --workflow deploy-cloudflare.yml --limit 1
 Needs zone-write, which the CLI token does not carry. This is what unlocks custom
 domains for the Workers *and* apex CNAME flattening.
 
-### 4. Cut DNS over · the risky one
+### 4. Cut DNS over · smaller than it looks
 
-**Do not do this unattended.** It is the only step that takes randsum.dev down
-for everyone if a record is missed. Follow the order in the Phase 2 notes: lower
-TTLs 24–48h ahead, audit every record by hand (Cloudflare's auto-scan misses
-CNAMEs, and MX/SPF/DKIM/DMARC are the usual casualty), disable DNSSEC at the
-registrar and wait out the DS TTL **before** switching nameservers, then import
-grey-cloud, verify, and only then proxy.
+The generic advice for this step is to lower TTLs days ahead, hunt for email
+records, and disable DNSSEC before touching nameservers. **Audited on
+2026-08-18, three of those four do not apply to this zone.**
 
-Keep the Netlify DNS zone for at least two weeks — while it exists, rollback is
-one nameserver change.
+| Name | Type | Value | TTL |
+| --- | --- | --- | --- |
+| `randsum.dev` | A | `18.208.88.157`, `98.84.224.111` | 120 |
+| `www.randsum.dev` | A | same pair | 120 |
+| `notation.randsum.dev` | A | same pair | 120 |
+
+Both IPs are Netlify's shared load balancers, so all three names are really "point
+at Netlify" and all three get replaced wholesale.
+
+Confirmed **absent**: `MX`, `TXT` (so no SPF/DKIM/DMARC and no verification
+records), `CAA`, `DS` (DNSSEC is **not** enabled), `_acme-challenge`, `_dmarc`,
+and any wildcard. There are no CNAMEs at all, which is what Cloudflare's
+auto-scan is worst at.
+
+What that removes:
+
+- **No TTL lowering.** Already 120s — propagation is two minutes, not two days.
+- **No DNSSEC dance.** Nothing to disable, no DS TTL to wait out.
+- **No email risk.** There is no mail on this domain to break.
+
+What still stands:
+
+- **Verify grey-cloud before proxying.** Confirm all three names resolve
+  correctly with nothing proxied, then flip.
+- **Keep the Netlify DNS zone for at least two weeks.** While it exists,
+  rollback is one nameserver change at the registrar; once deleted it is a
+  rebuild.
+- **Do it with someone watching.** Short TTLs make a mistake quick to *undo*,
+  not impossible to *make*.
+
+> ⚠️ **This inventory is a probe, not a zone dump.** It was built with `dig`
+> against the names above plus the usual suspects; enumerating a zone requires
+> AXFR (refused) or the Netlify DNS dashboard. Before cutting over, open that
+> dashboard and diff it against this table — a record at a name nobody guessed
+> is exactly what this method cannot see.
 
 ### Only then: decommission
 
