@@ -24,7 +24,6 @@
  *    awaits in-flight sends so those paths can shut down without losing the
  *    one event explaining why.
  */
-import { randomUUID } from 'node:crypto'
 import { logger } from './logger.js'
 
 export interface ErrorContext {
@@ -205,7 +204,11 @@ async function postEnvelope(
   context: ErrorContext
 ): Promise<void> {
   try {
-    const eventId = randomUUID().replaceAll('-', '')
+    // The WebCrypto global, not `node:crypto`. Identical output, but it exists
+    // on workerd as well as Node — importing the Node module made this whole
+    // module unloadable in a Worker ("No such module node:crypto") unless the
+    // nodejs_compat flag was enabled, which is a large hammer for one UUID.
+    const eventId = crypto.randomUUID().replaceAll('-', '')
     const described = describeError(error)
     const event = {
       event_id: eventId,

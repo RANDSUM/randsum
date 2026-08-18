@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { roll } from '@randsum/roller/roll'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { suggestNotationFix } from '@randsum/roller'
@@ -13,7 +13,7 @@ function buildRollEmbed(context: CommandContext): EmbedBuilder {
   const result = roll(validNotation)
 
   const embed = new EmbedBuilder()
-    .setColor('#FFD700')
+    .setColor(0xffd700)
     .setTitle(`You rolled a ${result.total}`)
     .setDescription(`Rolling: ${notationString}`)
     .setFooter(embedFooterDetails)

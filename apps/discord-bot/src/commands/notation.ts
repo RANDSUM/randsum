@@ -4,7 +4,7 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
   StringSelectMenuBuilder
-} from '../utils/discord.js'
+} from '../utils/builders.js'
 import type { StringSelectMenuInteraction } from '../utils/discord.js'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { NotationDoc } from '@randsum/roller/docs'
@@ -40,7 +40,7 @@ function buildCategoryEmbed(category: string, entries: NotationDoc[]): EmbedBuil
   }))
 
   return new EmbedBuilder()
-    .setColor('#FFD700')
+    .setColor(0xffd700)
     .setTitle('notation.randsum.dev')
     .setURL('https://notation.randsum.dev')
     .setDescription(`**${category}** modifiers`)

@@ -7,7 +7,7 @@ export async function guildCreateHandler(guild: Guild): Promise<void> {
   if (guild.systemChannel === null) return
 
   const embed = new EmbedBuilder()
-    .setColor('#A855F7')
+    .setColor(0xa855f7)
     .setTitle('Welcome to RANDSUM!')
     .setDescription(
       'RANDSUM — Roll dice for your TTRPG sessions\n\nKey commands:\n`/roll` — Roll any dice notation\n`/notation` — Browse the notation reference\n`/blades`, `/dh`, `/fate`, `/fifth`, `/pbta`, `/root` — Game-specific rolls\n`/help` — List all commands\n\nLearn the full dice notation spec at https://notation.randsum.dev'

@@ -12,7 +12,7 @@
  * alive, no second failure mode) and visibly faster — the user never sees a
  * "thinking…" state for work that was already done.
  */
-import { MessageFlags } from '../utils/discord.js'
+import { MessageFlags } from '../utils/builders.js'
 import { optionsFromPayload } from '../commands/lib/context.js'
 import { defaultErrorMessage } from '../commands/lib/index.js'
 import type { Command } from '../types.js'
