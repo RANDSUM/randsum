@@ -106,6 +106,12 @@ records, and disable DNSSEC before touching nameservers. **Audited on
 | `randsum.dev` | A | `18.208.88.157`, `98.84.224.111` | 120 |
 | `www.randsum.dev` | A | same pair | 120 |
 | `notation.randsum.dev` | A | same pair | 120 |
+| `playground.randsum.dev` | A | same pair | 120 |
+
+> `playground` is listed here because it **was** in the zone — it was missed at
+> migration time and is the subject of the correction below. It pointed at a
+> Netlify project that had already been returning 404, and is being retired
+> rather than recreated.
 
 Both IPs are Netlify's shared load balancers, so all three names are really "point
 at Netlify" and all three get replaced wholesale.
@@ -132,24 +138,60 @@ What still stands:
 - **Do it with someone watching.** Short TTLs make a mistake quick to *undo*,
   not impossible to *make*.
 
-> ⚠️ **This inventory was a probe, not a zone dump** — it was built with `dig`
-> against the names above plus the usual suspects, because enumerating a zone
-> requires AXFR (refused) or the Netlify DNS dashboard.
+> ⚠️ **This inventory was a probe, not a zone dump, and the first probe was
+> WRONG.** It was built with `dig` against the names above plus the usual
+> suspects, because enumerating a zone requires AXFR (refused) or the Netlify DNS
+> dashboard.
 >
-> **Re-checked after the cutover, and it held.** The Netlify/NS1 zone is still
-> authoritative for its own copy, so it was queried directly for MX, TXT, CAA,
-> SRV and CNAME across the apex and fifteen candidate subdomains: it contains
-> exactly three names, all A records. The migration script replicated A records
-> only, which was therefore complete rather than lucky — worth stating, because
-> "we copied the A records" and "we copied everything" happened to coincide here
-> and would not on a zone carrying mail or domain-verification records.
+> **It missed `playground.randsum.dev`.** That name had the same Netlify A-record
+> pair as the other three, was not on the guessed list, and was therefore not
+> replicated into the Cloudflare zone — so it went from resolving to NXDOMAIN at
+> the nameserver flip, and this file previously claimed the replication had been
+> complete. It had not.
+>
+> **What was actually lost: nothing that worked.** `playground.randsum.dev`
+> already returned **404** before the migration — verified by requesting it
+> directly against the Netlify load balancer with a `Host` header, and by its
+> `randsum-playground` project 404ing on its own `netlify.app` URL too. So the
+> real change is 404 → NXDOMAIN on a hostname that had been dead for some time.
+> It is being **retired deliberately** rather than restored: pointing DNS back at
+> a dead project would restore a 404, and the Netlify project is being deleted.
+>
+> **Re-enumerated properly afterwards.** ~120 candidate names — every Netlify
+> project hostname, every name appearing anywhere in this repo, and a long
+> generic list — queried against the still-authoritative NS1 zone for A, CNAME
+> and TXT. The zone contains exactly four names: the apex, `www`, `notation` and
+> `playground`. No MX, TXT, CAA or SRV anywhere.
+>
+> **The lesson is the one this warning already stated and the next reader should
+> not have to relearn:** a guessed-name probe cannot prove a zone is complete,
+> only that the names you thought of are present. Enumerate from an authoritative
+> source — here, the host's own project list would have surfaced `playground`
+> immediately, since it was a custom domain on a project in the same account.
 
 ### Only then: decommission
 
 **Netlify: done in the repo, pending in the account.** Nothing here builds for
-Netlify any more, so the remaining work is deleting the two Netlify projects and
-turning off their deploy previews — otherwise Netlify keeps building this repo
-on every PR, producing deploys nobody reads.
+Netlify any more, so the remaining work is on Netlify's side — otherwise its git
+integration keeps building this repo on every PR, producing deploys nobody reads.
+
+The account holds **four** projects, across two teams, and only the first two
+are built from this repo:
+
+| Project | Serves | Team | State |
+| --- | --- | --- | --- |
+| `randsum-site` | randsum.dev | dev | live deploy, no longer receives traffic |
+| `rdn-spec` | notation.randsum.dev | dev | live deploy, no longer receives traffic |
+| `randsum-playground` | playground.randsum.dev | pro | **404s on its own URL**; DNS now retired |
+| `randsumweb` | randsum.io | pro | last deployed 2024; `randsum.io` now answers from Cloudflare, not here |
+
+The last two are **not** built by this repo and predate the migration — they are
+listed so that "delete the Netlify projects" does not quietly mean "delete two of
+four and leave two behind."
+
+`randsum.io` in particular needs a decision rather than a deletion: it currently
+serves a `randsum-expo` page from Cloudflare with DNS at Hover, so the Netlify
+project behind it is already bypassed.
 
 **Render: not yet, deliberately.** The Render worker is the bot's only fallback:
 
