@@ -23,7 +23,7 @@
     "@randsum/dice-ui": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@stackblitz/sdk": "~1.11.0",
-    "astro": "7.1.0",
+    "astro": "7.2.2",
     "astro-expressive-code": "0.44.0",
     "react": "catalog:",
     "react-dom": "catalog:"
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
+    "@astrojs/cloudflare": "14.2.1",
     "@astrojs/sitemap": "3.7.3",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
