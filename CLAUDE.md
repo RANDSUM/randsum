@@ -205,11 +205,22 @@ accept unread.
 `.mcp.json` (project-scoped, committed) declares the official MCP servers for
 this repo's deploy/host stack. Each maps to a real workspace target:
 
-| Server    | Transport | Backs                              | Auth                            |
-| --------- | --------- | ---------------------------------- | ------------------------------- |
-| `render`  | http      | `apps/discord-bot` (Render worker) | 1Password PAT (`headersHelper`) |
-| `github`  | http      | repo host (issues, PRs, releases)  | 1Password PAT (`headersHelper`) |
-| `netlify` | http      | `apps/site` / `apps/rdn` (Netlify) | OAuth — run `/mcp`              |
+| Server                     | Transport | Backs                                     | Auth                            |
+| -------------------------- | --------- | ----------------------------------------- | ------------------------------- |
+| `cloudflare-bindings`      | http      | Workers, KV, D1 for both sites            | OAuth — run `/mcp`              |
+| `cloudflare-observability` | http      | Workers logs and analytics                | OAuth — run `/mcp`              |
+| `github`                   | http      | repo host (issues, PRs, releases)         | 1Password PAT (`headersHelper`) |
+| `render`                   | http      | `apps/discord-bot` — **until the bot moves** | 1Password PAT (`headersHelper`) |
+
+**`netlify` was removed**: both sites now serve from Cloudflare, so there is
+nothing left for it to manage. `render` stays only because the Discord bot still
+runs there; it goes when the bot moves to its Worker.
+
+Cloudflare's own MCP servers authenticate by OAuth rather than a bearer token,
+so they need no `headersHelper` and no vault item — run `/mcp` once to
+authorize. A third server, `docs.mcp.cloudflare.com`, is deliberately **not**
+declared: the vendored skills in `.claude/skills/` already cover platform
+guidance, and a tool surface every session pays for should earn its place.
 
 Secrets are **never** committed. The `github` and `render` (http) servers
 resolve their fine-grained PATs at connect time via `scripts/mcp-1password-headers.sh`,

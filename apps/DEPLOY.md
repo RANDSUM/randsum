@@ -8,16 +8,26 @@ to file incident RCAs.
 
 ## Surface map
 
-| Surface            | App                                             | Host            | Trigger                  | URL                   |
-| ------------------ | ----------------------------------------------- | --------------- | ------------------------ | --------------------- |
-| Docs site          | `apps/site`                                     | Netlify         | push to `main`           | randsum.dev           |
-| Notation spec site | `apps/rdn`                                      | Netlify         | push to `main`           | notation.randsum.dev  |
-| Discord bot        | `apps/discord-bot`                              | Render (worker) | manual / Render redeploy | n/a (Discord gateway) |
-| npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry    | changesets on merge      | npmjs.com/org/randsum |
+| Surface            | App                                             | Host                | Trigger                  | URL                   |
+| ------------------ | ----------------------------------------------- | ------------------- | ------------------------ | --------------------- |
+| Docs site          | `apps/site`                                     | **Cloudflare**      | push to `main`           | randsum.dev           |
+| Notation spec site | `apps/rdn`                                      | **Cloudflare**      | push to `main`           | notation.randsum.dev  |
+| Discord bot        | `apps/discord-bot`                              | Render (worker)     | manual / Render redeploy | n/a (Discord gateway) |
+| npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
-> Config sources: `apps/site/netlify.toml`, `apps/rdn/netlify.toml`,
-> `render.yaml` (repo root). Workflow files live in `.github/workflows/` (owned separately —
-> see those files for the exact trigger steps).
+**Both sites migrated to Cloudflare on 2026-08-18.** DNS for `randsum.dev` is on
+Cloudflare (nameservers `davina`/`rajeev`.ns.cloudflare.com, registrar still
+Hover), and both sites serve from Workers with custom domains. `/api/roll` runs
+as a Worker route on the apex.
+
+> The Netlify projects and `netlify.toml` files are **kept, not deleted**, until
+> the migration has proven itself. They no longer serve traffic. Deleting them
+> is the last step, not part of the cutover — while they exist, reverting is
+> restoring two A records per hostname.
+
+> Config sources: `apps/site/wrangler.jsonc`, `apps/rdn/wrangler.jsonc`,
+> `render.yaml` (repo root), plus the still-present `netlify.toml` files.
+> Deployment runs from `.github/workflows/deploy-cloudflare.yml`.
 >
 > The `randsum.io` playground is a **legacy app deployed outside this monorepo** — it is not
 > built or deployed by any config here and is out of scope for this runbook.
