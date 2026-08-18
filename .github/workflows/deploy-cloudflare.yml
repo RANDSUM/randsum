@@ -1,21 +1,26 @@
-# Deploy static sites to Cloudflare Workers on merge to main.
+# Deploy every Cloudflare surface on merge to main.
 #
-# Netlify deploys itself from its own git integration, which is why this repo
-# has never had a deploy job. Cloudflare has no equivalent — Workers Builds
+# Netlify deployed itself from its own git integration, which is why this repo
+# had no deploy job for years. Cloudflare has no equivalent — Workers Builds
 # exists, but its monorepo handling has a known flakiness report for workspace
 # dependency resolution and nothing authoritative for Bun, and this repo has
 # cross-package build ordering (roller -> rdn) that CI already sequences
 # correctly. So deployment lives here, where the build is already known-good.
 #
-# Path-filtered per site rather than deploying everything on every merge, which
-# is the same economy the netlify.toml `ignore` predicates were buying.
+# Path-filtered per surface rather than deploying everything on every merge,
+# which is the same economy the netlify.toml `ignore` predicates were buying.
 #
-# Both jobs SKIP rather than fail when CLOUDFLARE_API_TOKEN is absent. That is
-# the state of the world until the secret is added, and a workflow that fails
-# red on every merge for a known, documented, expected reason is worse than one
-# that does nothing: it trains people to ignore a failing check, and the next
-# real failure hides inside the noise. Adding the secret enables deploys with no
-# further change here.
+# Every job SKIPS rather than fails when CLOUDFLARE_API_TOKEN is absent. A
+# workflow that fails red on every merge for a known, documented, expected
+# reason is worse than one that does nothing: it trains people to ignore a
+# failing check, and the next real failure hides inside the noise.
+#
+# NOTE the asymmetry, because it decides how bad a missed deploy is. The two
+# sites are live on Cloudflare and the Netlify projects are kept only as a
+# rollback, so a skipped site deploy means randsum.dev silently serves stale
+# content. The bot is stricter still: Discord posts interactions to
+# bot.randsum.dev and there is no second transport behind it any more, so the
+# deployed Worker IS the bot.
 name: Deploy (Cloudflare)
 
 on:
@@ -24,6 +29,7 @@ on:
     paths:
       - 'apps/rdn/**'
       - 'apps/site/**'
+      - 'apps/discord-bot/**'
       - 'packages/**'
       - 'bun.lock'
       - '.github/workflows/deploy-cloudflare.yml'
@@ -68,10 +74,10 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/bun-setup
 
-      # DEPLOY_TARGET selects the Astro adapter. Astro allows exactly one, and
-      # Netlify is still serving randsum.dev, so the config defaults to Netlify
-      # and only this job opts into Cloudflare. Both targets are buildable from
-      # the same commit until the cutover.
+      # DEPLOY_TARGET is now the config's own default, so this is belt and
+      # braces rather than an opt-in. It stays set explicitly because this job
+      # must never build for Netlify, and that should not depend on a default
+      # someone could reasonably change back while the switch still exists.
       - name: Build
         env:
           DEPLOY_TARGET: cloudflare
@@ -90,7 +96,32 @@ jobs:
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
-            echo "Add the secret to enable Cloudflare deploys. Netlify is unaffected."
+            echo "randsum.dev will keep serving the previously deployed version."
             exit 0
           fi
           bunx wrangler@4 deploy -c apps/site/dist/server/wrangler.json
+
+  bot:
+    name: bot.randsum.dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./.github/actions/bun-setup
+
+      # The game packages must be built first: the Worker imports them through
+      # workspace subpath exports, and wrangler bundles from dist. Unlike the
+      # sites there is no separate app build step — wrangler compiles the
+      # TypeScript entry itself.
+      - name: Build dependencies
+        run: bun run --filter '@randsum/roller' --filter '@randsum/games' build
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
+            echo "The bot keeps serving the previously deployed Worker."
+            exit 0
+          fi
+          bunx wrangler@4 deploy -c apps/discord-bot/wrangler.jsonc

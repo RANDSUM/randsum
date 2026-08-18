@@ -121,11 +121,35 @@ reached its error paths only if `errorTracker.init` logged `enabled: true` for t
 
 ## Deployment
 
-Deploys to **Render** as a `worker` service via the repo-root `render.yaml` blueprint
-(`name: randsum-discord-bot`, `runtime: node`, `region: oregon`, `plan: starter`, `autoDeploy: true`).
+**The bot runs as a Cloudflare Worker on HTTP interactions. The gateway is no longer how
+interactions arrive.** Discord POSTs them to `https://bot.randsum.dev/`, configured as the
+application's Interactions Endpoint URL, and `.github/workflows/deploy-cloudflare.yml` deploys
+`apps/discord-bot/wrangler.jsonc` on merge to `main`.
 
-- `numInstances` MUST stay `1` — a Discord gateway worker holds a single connection; multiple
-  instances double-process events.
+The two transports are mutually exclusive — setting that URL is what stopped gateway delivery, and
+clearing it is what would start it again. Discord validates the endpoint before saving it (a signed
+PING must Pong, and a corrupted signature must be rejected), so a broken Worker cannot be
+configured, only an already-configured one can break.
+
+- `DISCORD_PUBLIC_KEY` is a committed `var`, not a secret — see the reasoning in `wrangler.jsonc`.
+- `bot.randsum.dev` is declared in `routes`, so a deploy cannot detach the hostname Discord calls.
+- The Worker needs **no** `DISCORD_TOKEN`. HTTP interactions are authenticated by request
+  signature, not by a bot session, so the most sensitive credential simply is not present.
+- The dispatcher does **not** defer. A dice roll is sub-millisecond against a 3-second deadline, so
+  it replies directly — no follow-up webhook, no interaction token to keep alive.
+
+### The gateway path is still here, and still builds
+
+`src/index.ts` and everything under `src/events/` remain the discord.js gateway bot. It is dormant,
+not dead: it is the rollback, and a rollback that does not compile is not a rollback. Keep both
+transports working until the Render service is actually deleted.
+
+Historically it deployed to **Render** as a `worker` service via the repo-root `render.yaml`
+blueprint (`name: randsum-discord-bot`, `runtime: node`, `region: oregon`, `plan: starter`). If it
+is ever brought back:
+
+- `numInstances` MUST stay `1` — a gateway worker holds a single connection; multiple instances
+  double-process events.
 - Build is scoped to the dependency subtree, not the full monorepo:
   `bun install --frozen-lockfile && bun run --filter @randsum/roller --filter @randsum/games --filter @randsum/discord-bot build`
 - Start: `node apps/discord-bot/dist/index.js`
@@ -133,6 +157,15 @@ Deploys to **Render** as a `worker` service via the repo-root `render.yaml` blue
   `DISCORD_CLIENT_ID`, `DISCORD_GUILD_ID` are `sync: false` (set in the dashboard, not committed).
 - The blueprint may not be auto-synced to the live service — if you edit it, also reconcile the
   Render dashboard env vars.
+
+### Slash command registration did NOT move
+
+Commands are registered against the application, not against a transport, so the existing global
+registrations kept working across the cutover untouched. The gateway bot reconciles them on
+startup; with it stopped, `bun run deploy-commands` is the way to push a changed command list.
+**Adding or renaming a command now requires that step explicitly** — nothing in the Worker path
+does it for you, and the Worker will answer an unregistered command's name with "Unknown command"
+only if Discord ever sends it, which it will not.
 
 ### Manual / local deployment workflow
 
