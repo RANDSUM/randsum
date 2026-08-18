@@ -37,6 +37,7 @@ apps/discord-bot/
       metrics.ts         # Lightweight metrics counters
       errorTracker.ts    # Error capture/reporting
       loginWithBackoff.ts # Gateway login with retry/backoff
+      gateway.ts         # Shard lifecycle logging, liveness snapshot, stall watchdog
       syncCommands.ts    # Startup reconciliation of Discord's registered commands
 ```
 
@@ -65,6 +66,35 @@ Set these before running:
 | `SENTRY_DSN`        | No       | When set, captured exceptions are delivered to Sentry (see below)           |
 
 `config.ts` throws at startup if `DISCORD_TOKEN` or `DISCORD_CLIENT_ID` are missing.
+
+## Gateway Observability
+
+A Discord worker has no inbound URL, so "is it up?" is answerable only from what it logs — and
+before `src/utils/gateway.ts` existed, it logged nothing about its connection. `index.ts`
+registered `ClientReady`, `InteractionCreate`, `GuildCreate` and `client.on('error')`, none of
+which fire on a shard disconnect. A dropped WebSocket therefore left the process alive, the
+5-minute `metrics.flush` heartbeat ticking, and Render reporting a healthy worker, while the bot
+was offline in Discord.
+
+Three pieces close that:
+
+- **Every transition is logged.** `registerGatewayLogging(client)` wires `ShardReady`,
+  `ShardResume`, `ShardReconnecting`, `ShardDisconnect` and `ShardError` to `gateway.*` lines
+  carrying shard id, close code, and how long the previous status held.
+- **The heartbeat carries liveness.** `metrics.flush` embeds `gatewaySnapshot()`
+  (`status`, `connected`, `forMs`, `disconnects`, `resumes`). This is the load-bearing part: a
+  heartbeat that proves only "the event loop is turning" is *worse* than none, because it reads
+  as health. Grep `'"connected":false'` to find an outage.
+- **A stall is reported once.** `startGatewayWatchdog()` runs before login and captures an
+  exception if the connection sits off `ready` past five minutes. Starting it *before* login is
+  deliberate — the failure it exists to catch is a login that never returns, which
+  `loginWithBackoff` cannot see because that only logs when a call *rejects*.
+
+It deliberately **does not auto-restart** a stalled connection. Discord throttles session starts,
+so restarting into a throttle deepens the outage; the watchdog escalates and a human decides.
+
+> On 2026-08-18 `client.login()` hung for a full hour between `bot.connecting` and
+> `bot.login_succeeded` with zero log output. `bot.login_succeeded` now records `elapsedMs`.
 
 ## Error Tracking
 

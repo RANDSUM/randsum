@@ -118,23 +118,43 @@ the first two need no Render access at all.
    `curl -sS https://registry.npmjs.org/@randsum/roller/latest` for the packages. "Randsum is
    down" is most often only one of these four.
 
-3. **Read the logs.** Render dashboard → `randsum-discord-bot` → **Logs**, or the `render` MCP
-   server (`.mcp.json`). The bot logs one JSON line per lifecycle event, so grep for the boot
-   sequence: `errorTracker.init` → `bot.connecting` → `login.retry` → `bot.login_succeeded` →
-   `bot.ready` → `commands.sync.*`. Where it stops tells you which failure this is:
+3. **Check the heartbeat first — it answers "is it connected?" directly.** Every
+   `metrics.flush` line (one per 5 minutes) embeds the gateway snapshot:
 
-   | Last line seen                     | Meaning                                                       |
-   | ---------------------------------- | ------------------------------------------------------------- |
+   ```
+   "gateway":{"status":"ready","connected":true,"forMs":812344,"disconnects":0,"resumes":0}
+   ```
+
+   Grep the logs for `'"connected":false'`. A hit is an outage, with `status` and `forMs`
+   saying which kind and for how long. **This is the fastest signal available and it should be
+   your first look** — it needs no correlation across lines.
+
+4. **Read the boot sequence.** Render dashboard → `randsum-discord-bot` → **Logs**, or the
+   `render` MCP server (`.mcp.json`). One JSON line per lifecycle event:
+   `errorTracker.init` → `bot.connecting` → `gateway.connecting` → `bot.login_succeeded`
+   (with `elapsedMs`) → `gateway.ready` → `commands.sync.*` → `bot.ready`. Where it stops tells
+   you which failure this is:
+
+   | Last line seen                      | Meaning                                                       |
+   | ----------------------------------- | ------------------------------------------------------------- |
    | `login.retry` ×5 then `login.failed`| Bad/revoked `DISCORD_TOKEN` → exit 1 → Render restart loop. Rotate the token (below). |
-   | `bot.ready`, then silence          | Connected and healthy; the problem is command registration or a specific command. |
-   | `commands.sync.failed`             | Registry desync only. The bot still serves its previous command list. |
-   | nothing at all                     | Service suspended, or the deploy never started. Check Render **Events**. |
+   | `bot.connecting` then nothing       | `client.login()` is hung — **not** a rejection, so `loginWithBackoff` never fires. Usually Discord throttling session starts. `gateway.stalled` fires after 5 min. |
+   | `gateway.disconnected` / `gateway.reconnecting` | WebSocket dropped. Process is alive and Render shows green; the bot is offline in Discord. |
+   | `bot.ready`, then silence           | Connected and healthy; the problem is command registration or a specific command. |
+   | `commands.sync.failed`              | Registry desync only. The bot still serves its previous command list. |
+   | nothing at all                      | Service suspended, or the deploy never started. Check Render **Events**. |
 
    Note the login path is a **crash loop by design**: five backed-off attempts, then `exit(1)`
    so a persistent auth failure surfaces to the platform rather than sitting in a fake-healthy
    process. Repeated restart events in Render with `login.failed` in each is the signature.
 
-4. **Check Sentry.** Only meaningful if the run logged `errorTracker.init … enabled: true`.
+   > **A green Render dashboard does not mean a connected bot.** Render only knows the process
+   > is alive. On 2026-08-18 the bot was offline while every Render signal — build, deploy,
+   > events, service status — was `succeeded`, and the logs showed nothing but identical
+   > `metrics.flush` heartbeats. The gateway fields above exist so that is never again
+   > indistinguishable from health; do not conclude "the bot is fine" from Render state alone.
+
+5. **Check Sentry.** Only meaningful if the run logged `errorTracker.init … enabled: true`.
    `SENTRY_DSN` is optional and unset by default — see the caveat under *Deploy* above.
 
 ### Restart
