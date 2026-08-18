@@ -1,4 +1,5 @@
 import type { Command } from '../types.js'
+import { setCommandRegistry } from './lib/registry.js'
 import { bladesCommand } from './blades.js'
 import { dhCommand } from './dh.js'
 import { fateCommand } from './fate.js'
@@ -10,7 +11,7 @@ import { rollCommand } from './roll.js'
 import { rootCommand } from './root.js'
 import { salvageUnionCommand } from './salvageunion.js'
 
-export const commands: readonly Command[] = [
+const commandList: readonly Command[] = [
   bladesCommand,
   dhCommand,
   fateCommand,
@@ -22,3 +23,10 @@ export const commands: readonly Command[] = [
   rootCommand,
   salvageUnionCommand
 ]
+
+// Published for `/help`, which needs the list of its siblings. Pushed rather
+// than imported so `/help` never has to import this barrel, which would be a
+// cycle — see lib/registry.ts.
+setCommandRegistry(commandList)
+
+export const commands: readonly Command[] = commandList

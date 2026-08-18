@@ -1,10 +1,16 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
-import type { Client, Collection } from '../utils/discord.js'
 import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
+import { createGameCommand } from './lib/index.js'
+import { commandRegistry } from './lib/registry.js'
 import type { Command } from '../types.js'
 
-export const helpCommand: Command = {
+/**
+ * `/help` reads the registry rather than `client.commands`, which is what makes
+ * it work on both transports — a Worker has no client to read a registry off.
+ * The barrel publishes the list; see `lib/registry.ts` for why it is pushed
+ * rather than imported.
+ */
+export const helpCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('help')
     .setDescription('List all available RANDSUM commands')
@@ -14,26 +20,20 @@ export const helpCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    await deferReplyHonoringHidden(interaction)
-
-    const client = interaction.client as Client & { commands: Collection<string, Command> }
-    const fields = [...client.commands.values()]
-      .filter(cmd => cmd.data.name !== 'help')
-      .map(cmd => ({
-        name: `/${cmd.data.name}`,
-        value: cmd.data.description,
+  buildEmbed: () => {
+    const fields = commandRegistry()
+      .filter(command => command.data.name !== 'help')
+      .map(command => ({
+        name: `/${command.data.name}`,
+        value: command.data.description,
         inline: false
       }))
 
-    const embed = new EmbedBuilder()
+    return new EmbedBuilder()
       .setColor(0xffd700)
       .setTitle('RANDSUM Commands')
       .setDescription('Here are all the available commands:')
       .addFields(fields)
       .setFooter(embedFooterDetails)
-
-    await interaction.editReply({ embeds: [embed] })
   }
-}
+})

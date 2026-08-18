@@ -80,7 +80,17 @@ describe('helpCommand', () => {
     expect(embedJson.footer).toBeDefined()
   })
 
-  test('execute: lists commands from the client collection, excluding help itself', async () => {
+  test('execute: lists commands from the barrel, excluding help itself', async () => {
+    // Source of truth changed deliberately. `/help` used to read
+    // `client.commands`, which only exists on the gateway — a Worker has no
+    // client, so the same command could not have rendered there. It now reads
+    // the command barrel, which `apps/discord-bot/CLAUDE.md` already calls the
+    // single source of truth for what commands exist.
+    //
+    // Importing the barrel is what publishes the registry, so the import below
+    // is load-bearing rather than incidental.
+    await import('../../src/commands/index.js')
+
     const interaction = makeInteraction()
     await helpCommand.execute(interaction as never)
     const call = interaction.editReply.mock.calls[0]?.[0] as {
