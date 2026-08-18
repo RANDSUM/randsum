@@ -14,6 +14,7 @@ import {
   startGatewayWatchdog,
   stopGatewayWatchdog
 } from './utils/gateway.js'
+import { startHeartbeat, stopHeartbeat } from './utils/heartbeat.js'
 
 // Import events
 import { interactionCreateHandler } from './events/interactionCreate.js'
@@ -22,6 +23,10 @@ import { guildCreateHandler } from './events/guildCreate.js'
 // Initialize observability before anything else can throw.
 initErrorTracker()
 startMetricsFlush()
+// Started before the client exists, deliberately: a process that dies during
+// boot — bad config, failed dependency, OOM — is exactly the case no in-process
+// reporter can catch, and the monitor should already be expecting pings by then.
+startHeartbeat()
 
 // Create a new client instance
 const client = new Client({
@@ -78,6 +83,7 @@ function shutdown(signal: string): void {
   flushMetrics()
   stopMetricsFlush()
   stopGatewayWatchdog()
+  stopHeartbeat()
   void client.destroy()
   process.exit(0)
 }
