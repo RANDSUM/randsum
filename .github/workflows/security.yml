@@ -28,18 +28,5 @@ jobs:
       #                        split the two majors). Build/release tooling only.
       #   GHSA-5p2g-fcmc-qvqq  image-size. No fixed version published.
       #   GHSA-w3rx-r6r6-pgpr  image-size. No fixed version published.
-      #   GHSA-jmr9-qjv8-65gv  extract-zip. No fixed version published at ANY
-      #                        version — latest IS 2.0.1 and the advisory covers
-      #                        <=2.0.1, and the latest @netlify/functions-dev
-      #                        (1.3.5) still requires extract-zip ^2.0.1.
-      #                        Build/dev-time only, via apps/site ->
-      #                        @astrojs/netlify -> @netlify/vite-plugin ->
-      #                        @netlify/dev -> @netlify/functions-dev, under the
-      #                        PRIVATE apps/site workspace. Accepted, not fixed.
-      #                        THIS ONE IS THE MOST LIKELY TO BECOME STALE — it
-      #                        is suppressed only because upstream offers no
-      #                        patched release, so this weekly run is the place
-      #                        the re-evaluation condition in osv-scanner.toml
-      #                        should actually get noticed.
       - name: Security audit
-        run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr --ignore=GHSA-jmr9-qjv8-65gv
+        run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr

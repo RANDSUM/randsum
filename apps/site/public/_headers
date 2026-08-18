@@ -5,12 +5,13 @@
 # `$schema` reference, so the content type has to be application/json rather
 # than whatever the host guesses.
 #
-# This duplicates the [[headers]] block in netlify.toml on purpose, and only
-# until Netlify is decommissioned. `_headers` is understood by BOTH Netlify and
-# Cloudflare, so during the migration this one file keeps the rule correct on
-# whichever host is serving. Deleting the netlify.toml block instead would have
-# been tidier and riskier — it would change behaviour on the site that is
-# currently live, to fix a site that is not yet serving anyone.
+# This file is now the only place the rule lives. It duplicated a [[headers]]
+# block in netlify.toml during the migration — `_headers` is understood by both
+# hosts, so one file kept the rule correct on whichever was serving — and
+# netlify.toml went with Netlify.
+#
+# Verified live: https://randsum.dev/schemas/v1/randsum.json returns
+# `application/json; charset=utf-8` from Cloudflare.
 /schemas/*
   Content-Type: application/json; charset=utf-8
   Access-Control-Allow-Origin: *

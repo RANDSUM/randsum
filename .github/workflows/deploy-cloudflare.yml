@@ -15,12 +15,11 @@
 # reason is worse than one that does nothing: it trains people to ignore a
 # failing check, and the next real failure hides inside the noise.
 #
-# NOTE the asymmetry, because it decides how bad a missed deploy is. The two
-# sites are live on Cloudflare and the Netlify projects are kept only as a
-# rollback, so a skipped site deploy means randsum.dev silently serves stale
-# content. The bot is stricter still: Discord posts interactions to
-# bot.randsum.dev and there is no second transport behind it any more, so the
-# deployed Worker IS the bot.
+# NOTE what a skipped deploy now costs, because there is no second host behind
+# any of these. Netlify has been removed from the repo entirely, so a skipped
+# site deploy means randsum.dev silently serves stale content. The bot is
+# stricter still: Discord posts interactions to bot.randsum.dev and there is no
+# second transport, so the deployed Worker IS the bot.
 name: Deploy (Cloudflare)
 
 on:
@@ -62,7 +61,7 @@ jobs:
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
-            echo "Add the secret to enable Cloudflare deploys. Netlify is unaffected."
+            echo "notation.randsum.dev will keep serving the previously deployed version."
             exit 0
           fi
           bunx wrangler@4 deploy -c apps/rdn/wrangler.jsonc
@@ -74,13 +73,9 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/bun-setup
 
-      # DEPLOY_TARGET is now the config's own default, so this is belt and
-      # braces rather than an opt-in. It stays set explicitly because this job
-      # must never build for Netlify, and that should not depend on a default
-      # someone could reasonably change back while the switch still exists.
+      # roller and games are workspace subpath imports, so both must be built
+      # before Astro can resolve anything in the docs pages or the playground.
       - name: Build
-        env:
-          DEPLOY_TARGET: cloudflare
         run: |
           bun run --filter '@randsum/roller' build
           bun run --filter '@randsum/games' build

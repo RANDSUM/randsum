@@ -10,7 +10,6 @@
       "!**/*.generated.ts",
       "!**/*.d.ts",
       "!**/.astro",
-      "!**/.netlify",
       "!**/public",
       "!**/.ladle",
       "!**/*.tsbuildinfo",
