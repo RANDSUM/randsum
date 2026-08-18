@@ -9,6 +9,13 @@
 #
 # Path-filtered per site rather than deploying everything on every merge, which
 # is the same economy the netlify.toml `ignore` predicates were buying.
+#
+# Both jobs SKIP rather than fail when CLOUDFLARE_API_TOKEN is absent. That is
+# the state of the world until the secret is added, and a workflow that fails
+# red on every merge for a known, documented, expected reason is worse than one
+# that does nothing: it trains people to ignore a failing check, and the next
+# real failure hides inside the noise. Adding the secret enables deploys with no
+# further change here.
 name: Deploy (Cloudflare)
 
 on:
@@ -46,7 +53,13 @@ jobs:
       - name: Deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: bunx wrangler@4 deploy -c apps/rdn/wrangler.jsonc
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
+            echo "Add the secret to enable Cloudflare deploys. Netlify is unaffected."
+            exit 0
+          fi
+          bunx wrangler@4 deploy -c apps/rdn/wrangler.jsonc
 
   site:
     name: randsum.dev
@@ -74,4 +87,10 @@ jobs:
       - name: Deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: bunx wrangler@4 deploy -c apps/site/dist/server/wrangler.json
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
+            echo "Add the secret to enable Cloudflare deploys. Netlify is unaffected."
+            exit 0
+          fi
+          bunx wrangler@4 deploy -c apps/site/dist/server/wrangler.json
