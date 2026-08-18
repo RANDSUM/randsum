@@ -52,8 +52,21 @@ export interface SendOutcome {
  */
 export type SendEnvelope = (url: string, body: string) => Promise<SendOutcome>
 
+/** Posts an already-formatted payload to a Discord webhook. Injected in tests. */
+export type PostDiscord = (url: string, payload: unknown) => Promise<SendOutcome>
+
 /** A hung ingest request must never outlive the shutdown it is reporting on. */
 const SEND_TIMEOUT_MS = 5000
+
+const defaultPostDiscord: PostDiscord = async (url, payload) => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(SEND_TIMEOUT_MS)
+  })
+  return { ok: response.ok, status: response.status }
+}
 
 const defaultSend: SendEnvelope = async (url, body) => {
   const response = await fetch(url, {
@@ -65,11 +78,36 @@ const defaultSend: SendEnvelope = async (url, body) => {
   return { ok: response.ok, status: response.status }
 }
 
+/**
+ * Suppression window for repeated identical errors.
+ *
+ * Load-bearing for the Discord sink specifically. Sentry fingerprints and
+ * groups server-side, so a crash loop there is one issue with a rising count; a
+ * webhook has no such thing, and Discord rate-limits a webhook to 5 requests
+ * per 2 seconds. Without this, the failure mode that most needs reporting — a
+ * tight restart-crash loop — is the one that floods the channel and gets itself
+ * rate-limited into silence.
+ */
+const DEDUPE_WINDOW_MS = 10 * 60 * 1000
+
+/** Bounds the signature map so a long-lived process cannot leak keys. */
+const MAX_TRACKED_SIGNATURES = 200
+
 const trackerState: {
   dsn: string | undefined
   target: SentryTarget | undefined
   send: SendEnvelope
-} = { dsn: undefined, target: undefined, send: defaultSend }
+  discordWebhook: string | undefined
+  postDiscord: PostDiscord
+  seen: Map<string, number>
+} = {
+  dsn: undefined,
+  target: undefined,
+  send: defaultSend,
+  discordWebhook: undefined,
+  postDiscord: defaultPostDiscord,
+  seen: new Map()
+}
 
 /** In-flight deliveries, awaited by `flushErrorTracker`. */
 const pending = new Set<Promise<void>>()
@@ -102,14 +140,27 @@ function parseDsn(dsn: string): SentryTarget | undefined {
 export interface InitOptions {
   /** Injected in tests; defaults to a real `fetch` POST. */
   readonly send?: SendEnvelope | undefined
+  readonly postDiscord?: PostDiscord | undefined
 }
 
 export function initErrorTracker(options: InitOptions = {}): void {
   trackerState.send = options.send ?? defaultSend
+  trackerState.postDiscord = options.postDiscord ?? defaultPostDiscord
+  trackerState.seen.clear()
+
+  // Both sinks can be active at once, on purpose: it makes migrating from one
+  // to the other a config change with an overlap period rather than a cutover.
+  const webhook = process.env['DISCORD_ERROR_WEBHOOK_URL']
+  if (webhook !== undefined && webhook.length > 0) {
+    trackerState.discordWebhook = webhook
+    logger.info('errorTracker.init', { tracker: 'discord', enabled: true })
+  }
 
   const configured = process.env['SENTRY_DSN']
   if (configured === undefined || configured.length === 0) {
-    logger.info('errorTracker.init', { tracker: 'none', enabled: false })
+    if (trackerState.discordWebhook === undefined) {
+      logger.info('errorTracker.init', { tracker: 'none', enabled: false })
+    }
     return
   }
 
@@ -198,14 +249,93 @@ function forwardToSentry(error: unknown, context: ErrorContext): void {
   })
 }
 
+/**
+ * Whether this error has already been reported inside the suppression window.
+ *
+ * Signature is type + message, deliberately excluding the stack and the
+ * context: a crash loop produces the same error from the same place with a new
+ * interaction id every time, and keying on those would defeat the whole point.
+ */
+function isDuplicate(described: DescribedError, now: number): boolean {
+  const signature = `${described.type}:${described.value}`
+  const last = trackerState.seen.get(signature)
+
+  if (last !== undefined && now - last < DEDUPE_WINDOW_MS) return true
+
+  // Cheapest possible bound: once full, drop the oldest insertion. Map preserves
+  // insertion order, so this is O(1) and needs no timestamps sort.
+  if (trackerState.seen.size >= MAX_TRACKED_SIGNATURES) {
+    const oldest = trackerState.seen.keys().next()
+    if (!oldest.done) trackerState.seen.delete(oldest.value)
+  }
+  trackerState.seen.set(signature, now)
+  return false
+}
+
+function forwardToDiscord(described: DescribedError, context: ErrorContext): void {
+  const url = trackerState.discordWebhook
+  if (url === undefined) return
+
+  // Discord caps an embed description at 4096 characters and a whole message at
+  // 6000; truncating the stack well short of that leaves room for the fields.
+  const stack = described.stack ?? '(no stack)'
+  const payload = {
+    username: 'RANDSUM',
+    embeds: [
+      {
+        title: `⚠️ ${described.type}`.slice(0, 256),
+        description: `\`\`\`\n${stack.slice(0, 1500)}\n\`\`\``,
+        color: 0xa855f7,
+        fields: Object.entries(context)
+          .filter(([, value]) => value !== undefined)
+          .slice(0, 10)
+          .map(([name, value]) => ({
+            name: name.slice(0, 256),
+            value: String(value).slice(0, 1024),
+            inline: true
+          })),
+        timestamp: new Date().toISOString()
+      }
+    ]
+  }
+
+  const send = (async () => {
+    try {
+      const outcome = await trackerState.postDiscord(url, payload)
+      if (!outcome.ok) {
+        logger.warn('errorTracker.discord_failed', { status: outcome.status })
+      }
+    } catch (sendError) {
+      // Never re-enter captureException — that recurses.
+      logger.warn('errorTracker.discord_failed', { error: sendError })
+    }
+  })()
+
+  pending.add(send)
+  void send.then(() => {
+    pending.delete(send)
+  })
+}
+
 export function captureException(error: unknown, context: ErrorContext = {}): void {
+  // The structured log line is emitted unconditionally, before any suppression.
+  // Dedupe governs *notification*, never the record — the log is the thing you
+  // grep afterwards to find out how many times it actually happened.
   logger.error('exception.captured', {
     ...context,
     error
   })
+
+  const described = describeError(error)
+  if (isDuplicate(described, Date.now())) {
+    logger.debug('errorTracker.suppressed', { type: described.type })
+    return
+  }
+
   if (trackerState.target !== undefined) {
     forwardToSentry(error, context)
   }
+  forwardToDiscord(described, context)
 }
 
 /**

@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import type { SendEnvelope, SendOutcome } from '../../src/utils/errorTracker.js'
+import type { PostDiscord, SendEnvelope, SendOutcome } from '../../src/utils/errorTracker.js'
 
 interface TrackerModule {
-  readonly initErrorTracker: (options?: { readonly send?: SendEnvelope | undefined }) => void
+  readonly initErrorTracker: (options?: {
+    readonly send?: SendEnvelope | undefined
+    readonly postDiscord?: PostDiscord | undefined
+  }) => void
   readonly captureException: (error: unknown, context?: Record<string, unknown>) => void
   readonly flushErrorTracker: () => Promise<void>
 }
@@ -40,15 +43,21 @@ function parseEvent(body: string): {
 }
 
 const originalDsn = process.env['SENTRY_DSN']
+const originalWebhook = process.env['DISCORD_ERROR_WEBHOOK_URL']
 const DSN = 'https://abc123@o42.ingest.sentry.io/7654321'
 
+// Both sinks are env-driven, so both must be cleared between cases. Leaving the
+// webhook set leaks into later tests as a real network call to a fake host.
 beforeEach(() => {
   delete process.env['SENTRY_DSN']
+  delete process.env['DISCORD_ERROR_WEBHOOK_URL']
 })
 
 afterEach(() => {
   if (originalDsn === undefined) delete process.env['SENTRY_DSN']
   else process.env['SENTRY_DSN'] = originalDsn
+  if (originalWebhook === undefined) delete process.env['DISCORD_ERROR_WEBHOOK_URL']
+  else process.env['DISCORD_ERROR_WEBHOOK_URL'] = originalWebhook
 })
 
 describe('errorTracker', () => {
@@ -165,6 +174,73 @@ describe('errorTracker', () => {
 
     await tracker.flushErrorTracker()
     expect(settled.done).toBe(true)
+  })
+
+  test('suppresses a repeated identical error inside the dedupe window', async () => {
+    process.env['SENTRY_DSN'] = DSN
+    const captured: Captured[] = []
+
+    const tracker = await loadTracker()
+    tracker.initErrorTracker({ send: recorder(captured) })
+
+    // A crash loop: same error, over and over. Exactly the shape that would
+    // otherwise flood a webhook and get itself rate-limited into silence.
+    for (const _ of Array.from({ length: 5 })) {
+      tracker.captureException(new Error('boom'))
+    }
+    await tracker.flushErrorTracker()
+
+    expect(captured).toHaveLength(1)
+  })
+
+  test('distinct errors are not suppressed by one another', async () => {
+    process.env['SENTRY_DSN'] = DSN
+    const captured: Captured[] = []
+
+    const tracker = await loadTracker()
+    tracker.initErrorTracker({ send: recorder(captured) })
+    tracker.captureException(new Error('first'))
+    tracker.captureException(new Error('second'))
+    tracker.captureException(new TypeError('first'))
+    await tracker.flushErrorTracker()
+
+    expect(captured).toHaveLength(3)
+  })
+
+  test('delivers to a Discord webhook when configured', async () => {
+    process.env['DISCORD_ERROR_WEBHOOK_URL'] = 'https://discord.example/webhook'
+    const posts: { url: string; payload: unknown }[] = []
+
+    const tracker = await loadTracker()
+    tracker.initErrorTracker({
+      postDiscord: (url, payload) => {
+        posts.push({ url, payload })
+        return Promise.resolve(OK)
+      }
+    })
+    tracker.captureException(new Error('boom'), { phase: 'login' })
+    await tracker.flushErrorTracker()
+
+    expect(posts).toHaveLength(1)
+    expect(posts[0]?.url).toBe('https://discord.example/webhook')
+    const payload = posts[0]?.payload as {
+      embeds: { title: string; fields: { name: string }[] }[]
+    }
+    expect(payload.embeds[0]?.title).toContain('Error')
+    expect(payload.embeds[0]?.fields.map(f => f.name)).toContain('phase')
+  })
+
+  test('a Discord delivery failure never throws', async () => {
+    process.env['DISCORD_ERROR_WEBHOOK_URL'] = 'https://discord.example/webhook'
+
+    const tracker = await loadTracker()
+    tracker.initErrorTracker({
+      postDiscord: () => Promise.reject(new Error('429 rate limited'))
+    })
+    expect(() => {
+      tracker.captureException(new Error('boom'))
+    }).not.toThrow()
+    await tracker.flushErrorTracker()
   })
 
   test('serializes a non-Error throw instead of dropping it', async () => {

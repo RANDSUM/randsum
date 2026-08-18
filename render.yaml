@@ -30,3 +30,15 @@ services:
       # Optional at runtime — the tracker no-ops when unset.
       - key: SENTRY_DSN
         sync: false
+      # Discord webhook that captured exceptions are posted to. The cheapest
+      # alerting path and the one that needs no third-party account; repeated
+      # identical errors are suppressed for 10 minutes so a crash loop cannot
+      # flood the channel. Runs alongside SENTRY_DSN rather than instead of it.
+      - key: DISCORD_ERROR_WEBHOOK_URL
+        sync: false
+      # Dead-man's-switch URL, pinged every 60s. The only signal that survives
+      # the process dying — on 2026-08-18 the bot was offline for an hour with
+      # every Render signal green, because a healthy-but-disconnected process
+      # looks identical to a healthy one from the outside.
+      - key: HEALTHCHECK_URL
+        sync: false
