@@ -16,6 +16,8 @@
 
 **[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
 
+Built on **[the Butter Stack](https://alxjrvs.github.io/butter/)** — Bun · Unified workspace · TypeScript · TanStack · Edge-deployed · React.
+
 ## 📦 Monorepo Structure
 
 This repository contains multiple packages and applications for dice rolling and tabletop RPG mechanics:
