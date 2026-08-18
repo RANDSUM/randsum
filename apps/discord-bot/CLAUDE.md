@@ -62,8 +62,32 @@ Set these before running:
 | `DISCORD_TOKEN`     | Yes      | Bot token from Discord Developer Portal                                     |
 | `DISCORD_CLIENT_ID` | Yes      | Application (client) ID                                                     |
 | `DISCORD_GUILD_ID`  | No       | If set, deploys commands to that guild only (faster propagation during dev) |
+| `SENTRY_DSN`        | No       | When set, captured exceptions are delivered to Sentry (see below)           |
 
 `config.ts` throws at startup if `DISCORD_TOKEN` or `DISCORD_CLIENT_ID` are missing.
+
+## Error Tracking
+
+`captureException` (`src/utils/errorTracker.ts`) always emits a structured log line. When
+`SENTRY_DSN` is set it *also* POSTs the event to Sentry's envelope ingest API using plain
+`fetch` — there is no `@sentry/node` dependency, so enabling reporting costs the worker bundle
+nothing.
+
+Three properties are load-bearing, and each has a test:
+
+- **Tracking never throws.** A delivery failure is `logger.warn`-ed, never routed back through
+  `captureException` (which would recurse). A malformed DSN degrades to logging-only and says so
+  at boot (`errorTracker.init reason=invalid_dsn`) — a typo'd DSN otherwise looks identical to a
+  working one from the dashboard: the service comes up and simply never reports.
+- **Captures survive a deliberate exit.** Delivery is async, so the fatal-login path — the one
+  event that explains a crash loop — would be discarded by an immediate `process.exit(1)`.
+  `index.ts` awaits `flushErrorTracker()` before exiting.
+- **Delivery is injectable.** `initErrorTracker({ send })` takes a `SendEnvelope`, mirroring the
+  `RestLike` seam in `syncCommands`, so tests never touch the network or patch global `fetch`.
+
+Before this was wired, `forwardToSentry` was an empty stub: `SENTRY_DSN` was accepted, logged as
+`enabled: true`, and no event was ever sent. Treat "nothing in Sentry" as meaning the bot never
+reached its error paths only if `errorTracker.init` logged `enabled: true` for the run in question.
 
 ## Deployment
 
