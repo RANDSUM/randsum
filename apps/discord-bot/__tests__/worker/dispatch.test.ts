@@ -19,6 +19,7 @@ interface Rendered {
   type: number
   data?: {
     embeds?: { title?: string; fields?: { name: string; value: string }[] }[]
+    components?: readonly unknown[]
     flags?: number
   }
 }
@@ -109,11 +110,47 @@ describe('dispatchInteraction', () => {
     expect(response.data?.embeds?.[0]?.title).toBe('Salvage Union has moved')
   })
 
-  test('reports commands that have no Worker renderer yet', () => {
-    // /notation is the last holdout — its pagination uses a gateway-only
-    // component collector. It must say so rather than silently do nothing.
+  test('renders /notation with its category selector attached', () => {
     const response = invoke('notation')
-    expect(response.data?.embeds?.[0]?.title).toBe('Error')
+    expect(response.data?.embeds?.[0]?.title).toBe('notation.randsum.dev')
+    // The embed alone would be a reference page with no way to change category
+    // — working, but silently missing the entire interaction.
+    expect(response.data?.components).toBeDefined()
+  })
+
+  test('every command has a Worker renderer', () => {
+    // The parity gate. A new command added without a buildEmbed would answer
+    // "not available on this deployment" in production, which is the kind of
+    // gap that only surfaces when someone tries the command.
+    for (const command of commandList) {
+      expect(command.buildEmbed).toBeDefined()
+    }
+  })
+
+  test('a category selection re-renders in place', () => {
+    // The gateway keeps a collector open on a socket; a Worker gets an
+    // independent POST. This works because a select menu sends its chosen
+    // value back — the selection carries its own state.
+    const response = dispatchInteraction(
+      { type: 3, data: { custom_id: 'notation-category', values: ['Arithmetic'] } },
+      commands
+    ) as Rendered
+
+    // Type 7 edits the existing message rather than posting a new one, matching
+    // the gateway path's `.update()`.
+    expect(response.type).toBe(7)
+    expect(response.data?.embeds?.[0]?.title).toBe('notation.randsum.dev')
+  })
+
+  test('an unrecognised category falls back rather than rendering empty', () => {
+    // A stale menu from an old message must not produce a blank reference page.
+    const response = dispatchInteraction(
+      { type: 3, data: { custom_id: 'notation-category', values: ['NoSuchCategory'] } },
+      commands
+    ) as Rendered
+
+    expect(response.type).toBe(7)
+    expect(response.data?.embeds?.[0]?.fields?.length).toBeGreaterThan(0)
   })
 
   test('returns undefined for interaction types it does not handle', () => {

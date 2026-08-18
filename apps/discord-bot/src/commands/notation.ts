@@ -1,52 +1,12 @@
-import {
-  ActionRowBuilder,
-  ComponentType,
-  EmbedBuilder,
-  SlashCommandBuilder,
-  StringSelectMenuBuilder
-} from '../utils/builders.js'
+import { ComponentType, SlashCommandBuilder } from '../utils/builders.js'
 import type { StringSelectMenuInteraction } from '../utils/discord.js'
-import { NOTATION_DOCS } from '@randsum/roller/docs'
-import type { NotationDoc } from '@randsum/roller/docs'
-import { embedFooterDetails } from '../utils/constants.js'
 import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { replyWithError } from '../utils/replyWithError.js'
 import { captureException } from '../utils/errorTracker.js'
+import { buildCategoryMenu, buildNotationView } from './lib/notationView.js'
 import type { Command } from '../types.js'
 
 const COLLECTOR_TIMEOUT = 5 * 60 * 1000
-
-function groupByCategory(docs: Readonly<Record<string, NotationDoc>>): Map<string, NotationDoc[]> {
-  const groups = new Map<string, NotationDoc[]>()
-  for (const doc of Object.values(docs)) {
-    const existing = groups.get(doc.category)
-    if (existing !== undefined) {
-      existing.push(doc)
-    } else {
-      groups.set(doc.category, [doc])
-    }
-  }
-  return groups
-}
-
-function buildCategoryEmbed(category: string, entries: NotationDoc[]): EmbedBuilder {
-  const fields = entries.map(doc => ({
-    name: `${doc.title} (${doc.displayBase})`,
-    value: [
-      doc.description,
-      ...doc.examples.map(ex => `**\`${ex.notation}\`** — ${ex.description}`)
-    ].join('\n'),
-    inline: false
-  }))
-
-  return new EmbedBuilder()
-    .setColor(0xffd700)
-    .setTitle('notation.randsum.dev')
-    .setURL('https://notation.randsum.dev')
-    .setDescription(`**${category}** modifiers`)
-    .addFields(fields)
-    .setFooter(embedFooterDetails)
-}
 
 export const notationCommand: Command = {
   data: new SlashCommandBuilder()
@@ -59,33 +19,21 @@ export const notationCommand: Command = {
         .setRequired(false)
     ),
 
+  // The Worker renders the same view; see lib/notationView.ts. Only the initial
+  // page — a Worker answers each selection as a fresh interaction rather than
+  // holding a collector, so there is no "session" to seed here.
+  buildEmbed: () => buildNotationView().embed,
+  buildComponents: () => [buildNotationView().row.toJSON()],
+
   async execute(interaction) {
     await deferReplyHonoringHidden(interaction)
 
     try {
-      const grouped = groupByCategory(NOTATION_DOCS)
-      const categories = Array.from(grouped.keys())
-      const firstCategory = categories[0] ?? 'Core'
-      const firstEntries = grouped.get(firstCategory) ?? []
-
-      const embed = buildCategoryEmbed(firstCategory, firstEntries)
-
-      const selectMenu = new StringSelectMenuBuilder()
-        .setCustomId('notation-category')
-        .setPlaceholder('Select a category')
-        .addOptions(
-          categories.map(cat => ({
-            label: cat,
-            value: cat,
-            default: cat === firstCategory
-          }))
-        )
-
-      const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu)
+      const view = buildNotationView()
 
       const message = await interaction.editReply({
-        embeds: [embed],
-        components: [row]
+        embeds: [view.embed],
+        components: [view.row]
       })
 
       const collector = message.createMessageComponentCollector({
@@ -99,27 +47,10 @@ export const notationCommand: Command = {
             const selected = selectInteraction.values[0]
             if (selected === undefined) return
 
-            const entries = grouped.get(selected) ?? []
-            const categoryEmbed = buildCategoryEmbed(selected, entries)
-
-            const updatedMenu = new StringSelectMenuBuilder()
-              .setCustomId('notation-category')
-              .setPlaceholder('Select a category')
-              .addOptions(
-                categories.map(cat => ({
-                  label: cat,
-                  value: cat,
-                  default: cat === selected
-                }))
-              )
-
-            const updatedRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-              updatedMenu
-            )
-
+            const updated = buildNotationView(selected)
             await selectInteraction.update({
-              embeds: [categoryEmbed],
-              components: [updatedRow]
+              embeds: [updated.embed],
+              components: [updated.row]
             })
           } catch (error) {
             captureException(error, {
@@ -134,24 +65,10 @@ export const notationCommand: Command = {
       collector.on('end', () => {
         void (async () => {
           try {
-            const disabledMenu = new StringSelectMenuBuilder()
-              .setCustomId('notation-category')
-              .setPlaceholder('Select a category')
-              .addOptions(
-                categories.map(cat => ({
-                  label: cat,
-                  value: cat,
-                  default: cat === firstCategory
-                }))
-              )
-              .setDisabled(true)
-
-            const disabledRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-              disabledMenu
-            )
-
+            // Grey the menu out once it stops responding, so a click that can no
+            // longer work looks disabled rather than broken.
             await message.edit({
-              components: [disabledRow]
+              components: [buildCategoryMenu(view.categories, view.category, true)]
             })
           } catch (error) {
             captureException(error, {
@@ -162,11 +79,11 @@ export const notationCommand: Command = {
           }
         })()
       })
-    } catch (e) {
+    } catch (error) {
       await replyWithError(
         interaction,
         'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
+        error instanceof Error ? error.message : 'An unknown error occurred'
       )
     }
   }

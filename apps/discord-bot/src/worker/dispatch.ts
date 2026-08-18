@@ -15,6 +15,7 @@
 import { MessageFlags } from '../utils/builders.js'
 import { optionsFromPayload } from '../commands/lib/context.js'
 import { defaultErrorMessage } from '../commands/lib/index.js'
+import { buildNotationView, NOTATION_SELECT_ID } from '../commands/lib/notationView.js'
 import type { Command } from '../types.js'
 
 /** Discord's interaction type numbers. */
@@ -30,6 +31,8 @@ export const InteractionType = {
 export const InteractionResponseType = {
   Pong: 1,
   ChannelMessageWithSource: 4,
+  /** Replaces the message the component is attached to, in place. */
+  UpdateMessage: 7,
   AutocompleteResult: 8
 } as const
 
@@ -39,6 +42,10 @@ export interface InteractionPayload {
   readonly data?: {
     readonly name?: string
     readonly options?: readonly { readonly name: string; readonly value?: unknown }[]
+    /** Present on component interactions — identifies which control was used. */
+    readonly custom_id?: string
+    /** A select menu's chosen options. This is where its state arrives. */
+    readonly values?: readonly string[]
   }
   readonly member?: {
     readonly user?: { readonly global_name?: string; readonly username?: string }
@@ -70,6 +77,32 @@ function errorResponse(message: string): unknown {
 }
 
 /**
+ * Handle a message-component interaction.
+ *
+ * Where a gateway bot keeps a collector alive on an open socket, each click
+ * here arrives as an independent POST with no memory of the original command.
+ * That is fine for `/notation` because it uses a select menu, and Discord sends
+ * the chosen option back in `data.values` — the selection carries its own state.
+ * A *button* carrying a page index would genuinely need that index encoded into
+ * its `custom_id`, since nothing else would survive the round trip.
+ *
+ * Responds with UpdateMessage (7), which edits the existing message in place,
+ * matching the gateway path's `.update()` rather than posting a new reply.
+ */
+function dispatchComponent(payload: InteractionPayload): unknown {
+  if (payload.data?.custom_id !== NOTATION_SELECT_ID) return undefined
+
+  const view = buildNotationView(payload.data.values?.[0])
+  return {
+    type: InteractionResponseType.UpdateMessage,
+    data: {
+      embeds: [view.embed.toJSON()],
+      components: [view.row.toJSON()]
+    }
+  }
+}
+
+/**
  * Build the response for one interaction.
  *
  * Returns `undefined` for interaction types this dispatcher does not handle, so
@@ -81,6 +114,10 @@ export function dispatchInteraction(
 ): unknown {
   if (payload.type === InteractionType.Ping) {
     return { type: InteractionResponseType.Pong }
+  }
+
+  if (payload.type === InteractionType.MessageComponent) {
+    return dispatchComponent(payload)
   }
 
   if (payload.type !== InteractionType.ApplicationCommand) return undefined
@@ -108,10 +145,16 @@ export function dispatchInteraction(
     })
     const hidden = options.getBoolean('hidden') ?? false
 
+    const components = command.buildComponents?.({
+      options,
+      userDisplayName: resolveDisplayName(payload)
+    })
+
     return {
       type: InteractionResponseType.ChannelMessageWithSource,
       data: {
         embeds: [embed.toJSON()],
+        ...(components !== undefined && components.length > 0 ? { components } : {}),
         ...(hidden ? { flags: MessageFlags.Ephemeral } : {})
       }
     }

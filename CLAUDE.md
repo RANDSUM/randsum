@@ -167,6 +167,39 @@ Full spec: https://notation.randsum.dev (taxonomy, pipeline, conformance, syntax
 
 Key syntax: `NdS` (basic), `+X`/`-X` (arithmetic), `L`/`H` (drop lowest/highest), `R{<3}` (reroll), `!` (explode), `!{condition}` (conditional explode), `U` (unique), `C{<1,>6}` (cap), `d%` (percentile), `dF`/`dF.2` (Fate/Fudge), `W` (wild die), `F{N}` (count failures), `//N` (integer divide), `%N` (modulo), `gN` (geometric die), `DDN` (draw die), `xN` (repeat), `[text]` (annotation)
 
+## Cloudflare Skills
+
+`.claude/skills/` carries three of Cloudflare's published agent skills, checked
+in rather than installed. Cloning the repo is the whole setup — there is nothing
+to run and nothing to remember, and every contributor and CI see the same
+guidance.
+
+| Skill | Why it is here |
+| --- | --- |
+| `workers-best-practices` | Both sites and the Discord bot Worker run on Workers |
+| `wrangler` | Deploys run `wrangler deploy`; three `wrangler.jsonc` files are checked in |
+| `web-perf` | randsum.dev and notation.randsum.dev are public docs sites |
+
+**Project scope on purpose.** `wrangler --install-skills` writes to the *global*
+agent path, which applies Cloudflare guidance to every repo on the machine
+including ones with no Cloudflare in them.
+
+**A deliberate subset.** Cloudflare publishes thirteen. The big one —
+`cloudflare`, the whole-platform reference — is **1.9 MB across ~285 files**
+against 68 KB for all three above combined, and documents Queues, D1, R2, AI and
+Zero Trust, none of which this repo uses. A skill list is context every session
+pays for whether or not it is used, so each entry earns its place by use.
+`scripts/sync-cloudflare-skills.ts` records the reasoning for every skill kept
+and every one rejected.
+
+```bash
+bun run skills:sync   # refresh from github.com/cloudflare/skills
+```
+
+Read the diff when you do. This pulls third-party prose that steers an agent
+directly into the repo, and a silent auto-update of that is not something to
+accept unread.
+
 ## MCP Servers
 
 `.mcp.json` (project-scoped, committed) declares the official MCP servers for

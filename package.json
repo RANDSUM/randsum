@@ -53,6 +53,7 @@
     "prepare": "[ -d .git ] && (git config --unset-all --local core.hooksPath 2>/dev/null; lefthook install) || true",
     "help": "bun scripts/help.ts",
     "check:workspace-scripts": "bun scripts/check-workspace-scripts.ts",
+    "skills:sync": "bun scripts/sync-cloudflare-skills.ts",
     "check:ci-aggregator": "bun scripts/check-ci-aggregator.ts",
     "build": "bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/mcp' build",
     "test": "bun run --filter '*' test",
