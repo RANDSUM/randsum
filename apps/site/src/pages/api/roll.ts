@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import { isDiceNotation, roll, suggestNotationFix } from '@randsum/roller'
 
-// Deploy as an on-demand Netlify function rather than a prerendered page.
+// Deploy as an on-demand Worker route rather than a prerendered page.
 export const prerender = false
 
 // The roller rejects notation longer than 1000 characters, so anything past

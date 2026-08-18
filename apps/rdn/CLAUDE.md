@@ -56,7 +56,7 @@ apps/rdn/
   __tests__/
     conformance.test.ts  # bun:test
   astro.config.ts
-  netlify.toml
+  wrangler.jsonc
 ```
 
 ## Commands
@@ -111,9 +111,8 @@ keeping the published JSON in sync with the source.
   `@astrojs/language-server`'s `getTsconfig`. Revisit when `@astrojs/check` ships a
   release whose peer range admits TypeScript 7.
 - Private app, never published to npm.
-- **Deployed to both Netlify (`netlify.toml`) and Cloudflare Workers
-  (`wrangler.jsonc`) during the migration.** Netlify is still the live site —
-  DNS has not moved — and Cloudflare publishes alongside it until the cutover.
+- **Deployed to Cloudflare Workers (`wrangler.jsonc`).** Netlify served this
+  site until 2026-08-18 and has been removed entirely.
   Cloudflare deploys from `.github/workflows/deploy-cloudflare.yml` on merge to
   `main`, not from Workers Builds: rdn imports roller through a workspace
   subpath export that has to be built first, and CI already sequences that.

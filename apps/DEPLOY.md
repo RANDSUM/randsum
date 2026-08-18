@@ -15,18 +15,21 @@ to file incident RCAs.
 | Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | push to `main`           | bot.randsum.dev       |
 | npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
-**Both sites migrated to Cloudflare on 2026-08-18.** DNS for `randsum.dev` is on
-Cloudflare (nameservers `davina`/`rajeev`.ns.cloudflare.com, registrar still
-Hover), and both sites serve from Workers with custom domains. `/api/roll` runs
-as a Worker route on the apex.
+**Everything migrated to Cloudflare on 2026-08-18** — both sites and the Discord
+bot. DNS for `randsum.dev` is on Cloudflare (nameservers
+`davina`/`rajeev`.ns.cloudflare.com, registrar still Hover), and all three
+surfaces serve from Workers with custom domains. `/api/roll` runs as a Worker
+route on the apex.
 
-> The Netlify projects and `netlify.toml` files are **kept, not deleted**, until
-> the migration has proven itself. They no longer serve traffic. Deleting them
-> is the last step, not part of the cutover — while they exist, reverting is
-> restoring two A records per hostname.
+> **Netlify has been removed from the repo entirely** — the adapter, both
+> `netlify.toml` files, and the `@astrojs/netlify` dependency. Nothing here
+> targets it, and the Astro build has exactly one adapter again. Removing it
+> also dropped ~390 transitive packages and closed the `extract-zip` advisory
+> (GHSA-jmr9-qjv8-65gv), which was suppressed only because it was unreachable
+> any other way.
 
 > Config sources: `apps/site/wrangler.jsonc`, `apps/rdn/wrangler.jsonc`,
-> `render.yaml` (repo root), plus the still-present `netlify.toml` files.
+> `apps/discord-bot/wrangler.jsonc`, and `render.yaml` (repo root, dormant).
 > Deployment runs from `.github/workflows/deploy-cloudflare.yml`.
 >
 > The `randsum.io` playground is a **legacy app deployed outside this monorepo** — it is not
@@ -41,12 +44,14 @@ as a Worker route on the apex.
 > are kept as the record of how it was done and how to verify it, not as
 > outstanding work.
 >
-> **What is left is decommissioning, which is deliberately not automatic.** The
-> Netlify projects and the Render worker still exist and still cost nothing to
-> keep. They are the rollback: while they exist, reverting a site is restoring
-> two A records, and reverting the bot is clearing one field in the Discord
-> application settings. Delete them only after a soak period, and delete Netlify
-> before Render — the sites have been verified far longer than the bot has.
+> **Netlify is gone from the repo.** The adapter, both `netlify.toml` files and
+> the dependency were removed once the decision to leave was final, so there is
+> no longer a Netlify build to fall back to — reverting a site now means
+> reverting that removal, not flipping a switch. That is a deliberate trade:
+> carrying a second adapter indefinitely has its own cost, and the sites had
+> already been serving from Cloudflare and verified.
+>
+> **The Render worker still exists**, dormant. It is the bot's fallback.
 >
 > One thing genuinely does remain: `CLOUDFLARE_API_TOKEN` is **not** set as a
 > repository secret, so `deploy-cloudflare.yml` skips every job and merges to
@@ -122,7 +127,8 @@ What still stands:
   correctly with nothing proxied, then flip.
 - **Keep the Netlify DNS zone for at least two weeks.** While it exists,
   rollback is one nameserver change at the registrar; once deleted it is a
-  rebuild.
+  rebuild. (Still true as of writing — the zone was queried directly during the
+  post-cutover re-check below, so it is demonstrably still there.)
 - **Do it with someone watching.** Short TTLs make a mistake quick to *undo*,
   not impossible to *make*.
 
@@ -140,17 +146,19 @@ What still stands:
 
 ### Only then: decommission
 
-**Not yet done, and that is the plan rather than an oversight.** Netlify and
-Render still exist. They cost nothing to keep and they are the rollback:
+**Netlify: done in the repo, pending in the account.** Nothing here builds for
+Netlify any more, so the remaining work is deleting the two Netlify projects and
+turning off their deploy previews — otherwise Netlify keeps building this repo
+on every PR, producing deploys nobody reads.
+
+**Render: not yet, deliberately.** The Render worker is the bot's only fallback:
 
 | To revert | Do this | Time |
 | --- | --- | --- |
-| A site | Re-add the two Netlify A records for that hostname | ~1 min + TTL |
 | The bot | Clear the Interactions Endpoint URL in the Discord app | instant |
 
-Close Netlify first — the sites have been verified continuously since the DNS
-switch, whereas the bot cut over later the same day. Close Render only after the
-bot has been observed handling real traffic across a busy period.
+Delete Render only after the bot has been observed handling real traffic across
+a busy period.
 
 **The bot's rollback has a shelf life.** Clearing the endpoint URL restores
 gateway delivery only while a gateway process is actually running. Once the
@@ -167,36 +175,65 @@ Workers Observability is enabled in `wrangler.jsonc` and is now the only place
 bot errors are visible — worth knowing before wondering why the heartbeat went
 quiet.
 
-## Netlify (apps/site → randsum.dev, apps/rdn → notation.randsum.dev)
+## Cloudflare (apps/site → randsum.dev, apps/rdn → notation.randsum.dev)
 
-Both Astro sites are separate Netlify projects building from this repo.
+Both Astro sites are separate Workers, each with a custom domain, deployed from
+`.github/workflows/deploy-cloudflare.yml` on merge to `main`.
 
-- **site** build: `bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run site:build`, publish `apps/site/dist`.
-- **rdn** build: `bun run --filter @randsum/roller build && bun run --filter @randsum/rdn build`, publish `apps/rdn/dist`.
-- Deploys are automatic on push to `main`.
+- **site** — needs a Worker, not just assets: `src/pages/api/roll.ts` sets
+  `prerender = false`, so one route is server-rendered and everything else ships
+  as static assets. Built via `@astrojs/cloudflare` with
+  `prerenderEnvironment: 'node'`; deploy the **adapter-generated**
+  `apps/site/dist/server/wrangler.json`, not the hand-written
+  `apps/site/wrangler.jsonc` (that one is build input).
+- **rdn** — `output: 'static'`, no adapter. Deploy `apps/rdn/wrangler.jsonc`.
+- Both are path-filtered, so a merge only redeploys what it touched.
 
 ### Deploy
 
-Merge to `main`. Netlify builds and publishes automatically. To force a rebuild without a
-code change, use **Deploys → Trigger deploy → Deploy site** in the Netlify dashboard
-(or `netlify deploy --build --prod` with the Netlify CLI from the app directory).
+Merge to `main`. To deploy by hand, or when `CLOUDFLARE_API_TOKEN` is unset and
+CI is skipping:
 
-### Rollback — "publish previous deploy"
+```bash
+bun run --filter '@randsum/roller' build
+bun run --filter '@randsum/games' build
+DEPLOY_TARGET=cloudflare bun run site:build
+wrangler deploy -c apps/site/dist/server/wrangler.json
 
-1. Netlify dashboard → select the project (randsum.dev or notation.randsum.dev).
-2. **Deploys** tab → find the last known-good deploy in the list.
-3. Open it → **Publish deploy** (a.k.a. "Publish previous deploy").
-4. Netlify instantly re-points the live site to that immutable build — no rebuild needed.
+bun run --filter @randsum/roller --filter @randsum/rdn build
+wrangler deploy -c apps/rdn/wrangler.jsonc
+```
 
-This is atomic and reversible: republishing an older deploy does not delete newer ones, so
-you can roll forward again the same way once the fix lands.
+### Rollback — roll back to a previous version
+
+Workers keeps every uploaded version, so rollback needs no rebuild:
+
+```bash
+wrangler deployments list --name randsum-site
+wrangler rollback --name randsum-site [<version-id>]
+```
+
+Same shape for `randsum-rdn` and `randsum-discord-bot`. This is atomic and
+reversible — rolling back does not delete newer versions.
+
+> **`wrangler rollback` restores code, not configuration.** Custom domains,
+> routes and vars live on the Worker rather than in the version, so a rollback
+> will not undo a bad `routes` change. Fix that by deploying a corrected config.
 
 ### DR notes
 
-- The site is fully reproducible from git (`bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run site:build`). Loss of
-  Netlify state is recoverable by reconnecting the repo and redeploying `main`.
-- DNS for `randsum.dev` / `notation.randsum.dev` is the only non-git state — keep the
-  registrar and Netlify DNS records documented in the team password vault.
+- Both sites are fully reproducible from git; loss of Cloudflare state is
+  recoverable by re-running the deploy commands above.
+- The non-git state is **DNS and the zone**: `randsum.dev` is on Cloudflare
+  nameservers with the registrar still at Hover. Keep the registrar credentials
+  and the Cloudflare account documented in the password vault. The zone holds
+  only three proxied records, all pointing at Workers custom domains.
+- **A trailing-slash redirect returns 307, not 301**, because Workers Static
+  Assets hardcodes it and `html_handling` cannot change it. This is not a
+  regression to chase: pages emit `<link rel="canonical">` and the sitemap uses
+  the trailing-slash form, so the canonical URL is declared explicitly. The
+  site's own legacy redirects are still 301 — they come from Astro's route
+  manifest, a different mechanism.
 
 ---
 

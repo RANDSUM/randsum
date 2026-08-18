@@ -212,9 +212,10 @@ this repo's deploy/host stack. Each maps to a real workspace target:
 | `github`                   | http      | repo host (issues, PRs, releases)         | 1Password PAT (`headersHelper`) |
 | `render`                   | http      | `apps/discord-bot` — **until the bot moves** | 1Password PAT (`headersHelper`) |
 
-**`netlify` was removed**: both sites now serve from Cloudflare, so there is
-nothing left for it to manage. `render` stays only because the Discord bot still
-runs there; it goes when the bot moves to its Worker.
+**`netlify` was removed**, and so was Netlify itself — the adapter, both
+`netlify.toml` files, and the dependency. Nothing in this repo targets it any
+more. `render` stays only until the Render service is deleted; the bot itself
+already runs on Cloudflare.
 
 Cloudflare's own MCP servers authenticate by OAuth rather than a bearer token,
 so they need no `headersHelper` and no vault item — run `/mcp` once to
@@ -238,8 +239,4 @@ An already-exported env var wins over `op`, so CI / fresh checkouts without
 1Password can still authenticate by exporting `GITHUB_PAT` / `RENDER_API_KEY`
 before launch.
 
-Run `/mcp` in Claude Code to check connection status. `netlify` authenticates
-via OAuth (run `/mcp` after first launch). The account-level claude.ai Netlify
-connector remains available in interactive sessions; the project-scoped server
-exists so headless/cron sessions — where account connectors are absent — can
-still manage the `apps/site` / `apps/rdn` deploys.
+Run `/mcp` in Claude Code to check connection status.
