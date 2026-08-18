@@ -24,6 +24,77 @@ to file incident RCAs.
 
 ---
 
+## Cloudflare cutover — the four manual steps
+
+> **Status: in progress.** All the code has shipped. Both sites build for
+> Cloudflare, CI deploys them on merge, and the Discord bot has a working
+> HTTP-interactions Worker. **Netlify and Render still serve everything** — that
+> is deliberate, and nothing user-facing has changed.
+>
+> What remains cannot be done from a terminal. Everything below needs a browser
+> and account access. Each step has a verification you can run afterwards; do not
+> proceed past one that fails.
+
+### 1. Register a workers.dev subdomain · ~1 min
+
+Both Workers exist but have **no URL at all**, so nothing can be smoke-tested.
+There is no CLI flag for this — `wrangler --help` has none, and `wrangler deploy`
+falls back to declining the prompt in any non-interactive shell.
+
+<https://dash.cloudflare.com/f5f08e7e86ab8c183e381d4504bf8ba5/workers/onboarding>
+
+```bash
+wrangler deploy -c apps/rdn/wrangler.jsonc   # should now print a *.workers.dev URL
+curl -sSo /dev/null -w '%{http_code}\n' https://randsum-rdn.<subdomain>.workers.dev/
+```
+
+### 2. Add `CLOUDFLARE_API_TOKEN` · ~2 min
+
+Cloudflare dashboard → My Profile → API Tokens → Create Token. It needs
+**`Workers Scripts: Edit`** (add `Workers KV: Edit` if the site's session KV is
+ever used). Then:
+
+```bash
+gh secret set CLOUDFLARE_API_TOKEN --repo RANDSUM/randsum
+```
+
+Until this exists the deploy workflow **skips with a notice rather than failing**,
+so main stays green either way. Adding it switches deploys on with no code
+change.
+
+```bash
+gh run list --repo RANDSUM/randsum --workflow deploy-cloudflare.yml --limit 1
+```
+
+### 3. Add `randsum.dev` as a Cloudflare zone
+
+Needs zone-write, which the CLI token does not carry. This is what unlocks custom
+domains for the Workers *and* apex CNAME flattening.
+
+### 4. Cut DNS over · the risky one
+
+**Do not do this unattended.** It is the only step that takes randsum.dev down
+for everyone if a record is missed. Follow the order in the Phase 2 notes: lower
+TTLs 24–48h ahead, audit every record by hand (Cloudflare's auto-scan misses
+CNAMEs, and MX/SPF/DKIM/DMARC are the usual casualty), disable DNSSEC at the
+registrar and wait out the DS TTL **before** switching nameservers, then import
+grey-cloud, verify, and only then proxy.
+
+Keep the Netlify DNS zone for at least two weeks — while it exists, rollback is
+one nameserver change.
+
+### Only then: decommission
+
+Netlify and Render can be closed once both sites have served from Cloudflare for
+a week and the bot has been stable. **The Discord bot is a separate switch**:
+setting an Interactions Endpoint URL stops gateway delivery instantly and is
+mutually exclusive with the Render worker, so treat it as its own cutover with
+its own rollback (delete the URL to fall back to the gateway).
+
+Sentry was never enabled — `SENTRY_DSN` has never been set in production — so
+there is nothing to close there. Alerting now runs through a Discord webhook and
+a Healthchecks heartbeat instead; see `apps/discord-bot/CLAUDE.md`.
+
 ## Netlify (apps/site → randsum.dev, apps/rdn → notation.randsum.dev)
 
 Both Astro sites are separate Netlify projects building from this repo.
