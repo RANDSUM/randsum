@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { embedFooterDetails } from '../utils/constants.js'
+import { createGameCommand } from './lib/index.js'
 import type { Command } from '../types.js'
 
 /**
@@ -16,7 +16,7 @@ const SUREF_CLIENT_ID = '1442878052823470172'
 const SUREF_INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${SUREF_CLIENT_ID}&scope=bot%20applications.commands&permissions=0`
 const SUREF_INFO_URL = 'https://salvageunion.io/discord'
 
-export const salvageUnionCommand: Command = {
+export const salvageUnionCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('salvageunion')
     .setDescription('Salvage Union rolls have moved to the SURef bot from salvageunion.io')
@@ -26,11 +26,10 @@ export const salvageUnionCommand: Command = {
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-
-  async execute(interaction) {
-    await deferReplyHonoringHidden(interaction)
-
-    const embed = new EmbedBuilder()
+  // Static content, so it takes no context at all — which is exactly why it
+  // moves to the factory for free and works on either transport unchanged.
+  buildEmbed: () =>
+    new EmbedBuilder()
       .setColor(0xb7410e)
       .setTitle('Salvage Union has moved')
       .setDescription(
@@ -41,7 +40,4 @@ export const salvageUnionCommand: Command = {
         { name: 'Learn more', value: `[salvageunion.io/discord](${SUREF_INFO_URL})` }
       )
       .setFooter(embedFooterDetails)
-
-    await interaction.editReply({ embeds: [embed] })
-  }
-}
+})

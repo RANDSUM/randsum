@@ -92,9 +92,26 @@ describe('dispatchInteraction', () => {
     expect(response.data?.embeds?.[0]?.title).toBe('Error')
   })
 
+  test('renders /help from the barrel, not from a gateway client', () => {
+    const response = invoke('help')
+    expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+
+    // The real proof it reads the registry: a Worker has no client, so an
+    // empty field list here would mean /help silently renders nothing.
+    const names = (response.data?.embeds?.[0]?.fields ?? []).map(field => field.name)
+    expect(names).toContain('/roll')
+    expect(names).not.toContain('/help')
+  })
+
+  test('renders /salvageunion', () => {
+    const response = invoke('salvageunion')
+    expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+    expect(response.data?.embeds?.[0]?.title).toBe('Salvage Union has moved')
+  })
+
   test('reports commands that have no Worker renderer yet', () => {
-    // /help, /notation and /salvageunion do not go through the factory, so they
-    // have no buildEmbed. They must say so rather than silently do nothing.
+    // /notation is the last holdout — its pagination uses a gateway-only
+    // component collector. It must say so rather than silently do nothing.
     const response = invoke('notation')
     expect(response.data?.embeds?.[0]?.title).toBe('Error')
   })
