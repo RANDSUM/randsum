@@ -55,6 +55,10 @@ export function createGameCommand(options: CreateGameCommandOptions): Command {
 
   return {
     data,
+    // Exposed so a non-gateway transport can render without an interaction.
+    // Same function the gateway path calls; there is no second implementation
+    // to drift.
+    buildEmbed,
     async execute(interaction) {
       await deferReplyHonoringHidden(interaction)
       const context = contextFromInteraction(interaction)
