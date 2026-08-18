@@ -1,0 +1,25 @@
+{
+  // Cloudflare Workers deployment for notation.randsum.dev.
+  //
+  // This site is `output: 'static'` with no Astro adapter, so there is no Worker
+  // script at all — Cloudflare serves the built files directly from the assets
+  // binding. Requests to static assets are free and unbilled, and do not count
+  // against the Workers request quota.
+  //
+  // No adapter is added on purpose. `@astrojs/cloudflare` exists to run
+  // server-rendered routes, and this site has none; adding it would introduce a
+  // Worker script, a `wrangler` peer dependency, and an Astro version floor for
+  // no behavioural gain. See apps/site for the case that genuinely needs one.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "randsum-rdn",
+  // Only matters once a Worker script exists; set now so adding one later does
+  // not silently pick up a different runtime baseline.
+  "compatibility_date": "2026-08-18",
+  "assets": {
+    "directory": "./dist",
+    // Serve Astro's own 404 page rather than Cloudflare's bare 404. Without
+    // this, unmatched routes return a blank platform error and the site's own
+    // styling and navigation are lost.
+    "not_found_handling": "404-page"
+  }
+}

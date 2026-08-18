@@ -1,0 +1,48 @@
+# Deploy static sites to Cloudflare Workers on merge to main.
+#
+# Netlify deploys itself from its own git integration, which is why this repo
+# has never had a deploy job. Cloudflare has no equivalent — Workers Builds
+# exists, but its monorepo handling has a known flakiness report for workspace
+# dependency resolution and nothing authoritative for Bun, and this repo has
+# cross-package build ordering (roller -> rdn) that CI already sequences
+# correctly. So deployment lives here, where the build is already known-good.
+#
+# Path-filtered per site rather than deploying everything on every merge, which
+# is the same economy the netlify.toml `ignore` predicates were buying.
+name: Deploy (Cloudflare)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/rdn/**'
+      - 'packages/roller/**'
+      - 'bun.lock'
+      - '.github/workflows/deploy-cloudflare.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  # Never let two deploys race to the same Worker. Not cancel-in-progress: a
+  # half-finished asset upload that gets cancelled is worse than a short queue.
+  group: deploy-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  rdn:
+    name: notation.randsum.dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./.github/actions/bun-setup
+
+      # rdn imports @randsum/roller via a workspace subpath export, so roller
+      # must be built first or the Astro build resolves nothing.
+      - name: Build
+        run: bun run --filter @randsum/roller --filter @randsum/rdn build
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: bunx wrangler@4 deploy -c apps/rdn/wrangler.jsonc
