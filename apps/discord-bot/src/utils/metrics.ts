@@ -9,6 +9,7 @@
  * No external metrics dependency (no prom-client/StatsD) — a counts log line is
  * the agreed baseline per the audit acceptance criteria.
  */
+import { gatewaySnapshot } from './gateway.js'
 import { logger } from './logger.js'
 
 const invocations = new Map<string, number>()
@@ -55,7 +56,12 @@ export function flushMetrics(): void {
     invocations: snap.invocations,
     errors: snap.errors,
     totalInvocations: snap.totalInvocations,
-    totalErrors: snap.totalErrors
+    totalErrors: snap.totalErrors,
+    // The heartbeat has to say whether the bot is *connected*, not merely that
+    // the event loop is turning. Without this, a disconnected bot emits a line
+    // identical to a healthy one every five minutes — which is exactly how the
+    // 2026-08-18 outage stayed invisible in Render for an hour.
+    gateway: gatewaySnapshot()
   })
 }
 

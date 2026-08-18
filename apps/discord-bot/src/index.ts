@@ -8,6 +8,12 @@ import { flushMetrics, startMetricsFlush, stopMetricsFlush } from './utils/metri
 import { captureException, flushErrorTracker, initErrorTracker } from './utils/errorTracker.js'
 import { loginWithBackoff } from './utils/loginWithBackoff.js'
 import { syncCommands } from './utils/syncCommands.js'
+import {
+  recordGatewayEvent,
+  registerGatewayLogging,
+  startGatewayWatchdog,
+  stopGatewayWatchdog
+} from './utils/gateway.js'
 
 // Import events
 import { interactionCreateHandler } from './events/interactionCreate.js'
@@ -53,6 +59,11 @@ client.on('error', error => {
   captureException(error, { phase: 'client.error' })
 })
 
+// Shard lifecycle. `client.on('error')` above does NOT cover this: shard errors
+// and disconnects are separate events, so without these a dropped WebSocket is
+// completely silent and the bot goes offline with nothing in the logs.
+registerGatewayLogging(client)
+
 process.on('unhandledRejection', error => {
   captureException(error, { phase: 'unhandledRejection' })
 })
@@ -66,6 +77,7 @@ function shutdown(signal: string): void {
   logger.info('bot.shutdown', { signal })
   flushMetrics()
   stopMetricsFlush()
+  stopGatewayWatchdog()
   void client.destroy()
   process.exit(0)
 }
@@ -81,9 +93,16 @@ process.on('SIGINT', () => {
 // boot does not immediately exit, and a misconfigured auth does not produce a
 // tight restart-crash loop under Render's auto-restart.
 logger.info('bot.connecting')
+recordGatewayEvent('connecting')
+// Started before login, not after: the failure this exists to catch is a login
+// that never returns. `loginWithBackoff` only logs when a call *rejects*, so a
+// hung `client.login()` produces no output at all — on 2026-08-18 that was a
+// silent hour between `bot.connecting` and `bot.login_succeeded`.
+startGatewayWatchdog()
+const loginStartedAt = Date.now()
 try {
   await loginWithBackoff(() => client.login(config.token))
-  logger.info('bot.login_succeeded')
+  logger.info('bot.login_succeeded', { elapsedMs: Date.now() - loginStartedAt })
 } catch (error) {
   captureException(error, { phase: 'login' })
   flushMetrics()
