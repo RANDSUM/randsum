@@ -2,17 +2,17 @@ import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/daggerheart'
 import { embedFooterDetails } from '../utils/constants.js'
 import { createGameCommand, formatSignedModifier } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
+import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
-function buildDhEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const modifier = interaction.options.getInteger('modifier') ?? 0
-  const rollingWith = interaction.options.getString('rolling_with') as
+function buildDhEmbed(context: CommandContext): EmbedBuilder {
+  const modifier = context.options.getInteger('modifier') ?? 0
+  const rollingWith = context.options.getString('rolling_with') as
     | 'Advantage'
     | 'Disadvantage'
     | null
-  const amplifyHope = interaction.options.getBoolean('amplify_hope') ?? false
-  const amplifyFear = interaction.options.getBoolean('amplify_fear') ?? false
+  const amplifyHope = context.options.getBoolean('amplify_hope') ?? false
+  const amplifyFear = context.options.getBoolean('amplify_fear') ?? false
 
   const result = roll({
     modifier,

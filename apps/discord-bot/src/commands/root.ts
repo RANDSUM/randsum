@@ -2,12 +2,12 @@ import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/root-rpg'
 import { embedFooterDetails } from '../utils/constants.js'
 import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
+import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
-function buildRootEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const modifier = interaction.options.getInteger('modifier') ?? 0
-  const displayName = interaction.user.displayName
+function buildRootEmbed(context: CommandContext): EmbedBuilder {
+  const modifier = context.options.getInteger('modifier') ?? 0
+  const displayName = context.userDisplayName
 
   const result = roll({ bonus: modifier })
   const initialRolls = getInitialRolls(result)

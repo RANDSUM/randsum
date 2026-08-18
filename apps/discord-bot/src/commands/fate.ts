@@ -3,7 +3,7 @@ import { roll } from '@randsum/games/fate'
 import type { FateRollResult } from '@randsum/games/fate'
 import { embedFooterDetails } from '../utils/constants.js'
 import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
+import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
 const SKILL_MIN = -2
@@ -33,8 +33,8 @@ function fateDieSymbol(die: number): string {
   return '▢'
 }
 
-function buildFateEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const rawSkill = interaction.options.getInteger('skill') ?? 0
+function buildFateEmbed(context: CommandContext): EmbedBuilder {
+  const rawSkill = context.options.getInteger('skill') ?? 0
   const skill = Math.max(SKILL_MIN, Math.min(SKILL_MAX, rawSkill))
 
   const result = roll({ modifier: skill })

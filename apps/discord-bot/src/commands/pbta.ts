@@ -2,14 +2,14 @@ import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/pbta'
 import { embedFooterDetails } from '../utils/constants.js'
 import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
+import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
-function buildPbtaEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const stat = interaction.options.getInteger('stat', true)
-  const forward = interaction.options.getInteger('forward') ?? 0
-  const ongoing = interaction.options.getInteger('ongoing') ?? 0
-  const rollingWith = interaction.options.getString('rolling_with') as
+function buildPbtaEmbed(context: CommandContext): EmbedBuilder {
+  const stat = context.options.getInteger('stat', true)
+  const forward = context.options.getInteger('forward') ?? 0
+  const ongoing = context.options.getInteger('ongoing') ?? 0
+  const rollingWith = context.options.getString('rolling_with') as
     | 'Advantage'
     | 'Disadvantage'
     | null
