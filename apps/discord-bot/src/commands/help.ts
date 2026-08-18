@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import type { Client, Collection } from '../utils/discord.js'
 import { embedFooterDetails } from '../utils/constants.js'
 import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
@@ -28,7 +28,7 @@ export const helpCommand: Command = {
       }))
 
     const embed = new EmbedBuilder()
-      .setColor('#FFD700')
+      .setColor(0xffd700)
       .setTitle('RANDSUM Commands')
       .setDescription('Here are all the available commands:')
       .addFields(fields)

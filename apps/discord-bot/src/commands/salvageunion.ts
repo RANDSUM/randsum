@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
 import { embedFooterDetails } from '../utils/constants.js'
 import type { Command } from '../types.js'

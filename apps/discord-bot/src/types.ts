@@ -1,10 +1,16 @@
 import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
-  EmbedBuilder,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder
 } from 'discord.js'
+// Deliberately the portable builder, not discord.js's. discord.js does not
+// re-export @discordjs/builders verbatim — it *subclasses* EmbedBuilder, adding
+// `.length` and accepting hex-string colours. The two are therefore distinct
+// types, and a command that returns one cannot satisfy a signature demanding
+// the other. Since command renderers must run on workerd, the portable one wins
+// and the gateway path accepts it happily (it is a JSONEncodable<APIEmbed>).
+import type { EmbedBuilder } from './utils/builders.js'
 import type { CommandContext } from './commands/lib/context.js'
 
 export interface Command {

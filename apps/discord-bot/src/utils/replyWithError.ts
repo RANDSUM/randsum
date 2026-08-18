@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction } from './discord.js'
-import { EmbedBuilder } from './discord.js'
+import { EmbedBuilder } from './builders.js'
 import { embedFooterDetails } from './constants.js'
 
 export async function replyWithError(
@@ -8,7 +8,7 @@ export async function replyWithError(
   description: string
 ): Promise<void> {
   const embed = new EmbedBuilder()
-    .setColor('#FF0000')
+    .setColor(0xff0000)
     .setTitle(title)
     .setDescription(description)
     .setFooter(embedFooterDetails)

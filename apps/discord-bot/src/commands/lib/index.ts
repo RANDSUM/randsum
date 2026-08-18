@@ -1,6 +1,7 @@
 import { deferReplyHonoringHidden } from '../../utils/ephemeral.js'
 import { replyWithError } from '../../utils/replyWithError.js'
-import type { ChatInputCommandInteraction, EmbedBuilder } from '../../utils/discord.js'
+import type { EmbedBuilder } from '../../utils/builders.js'
+import type { ChatInputCommandInteraction } from '../../utils/discord.js'
 import type { Command } from '../../types.js'
 import type { CommandContext } from './context.js'
 

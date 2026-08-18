@@ -1,4 +1,4 @@
-import { MessageFlags } from './discord.js'
+import { MessageFlags } from './builders.js'
 import type { ChatInputCommandInteraction } from './discord.js'
 
 /**

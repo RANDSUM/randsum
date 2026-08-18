@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { roll } from '@randsum/games/blades'
 import { embedFooterDetails } from '../utils/constants.js'
 import { createGameCommand, getInitialRolls } from './lib/index.js'
