@@ -4,11 +4,11 @@ import { notation as createNotation } from '@randsum/roller/validate'
 import { suggestNotationFix } from '@randsum/roller'
 import { embedFooterDetails } from '../utils/constants.js'
 import { createGameCommand, defaultErrorMessage } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
+import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
-function buildRollEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const notationString = interaction.options.getString('notation', true)
+function buildRollEmbed(context: CommandContext): EmbedBuilder {
+  const notationString = context.options.getString('notation', true)
   const validNotation = createNotation(notationString)
   const result = roll(validNotation)
 
@@ -46,8 +46,8 @@ function buildRollEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder 
   return embed
 }
 
-function describeRollError(error: unknown, interaction: ChatInputCommandInteraction): string {
-  const notationString = interaction.options.getString('notation', true)
+function describeRollError(error: unknown, context: CommandContext): string {
+  const notationString = context.options.getString('notation', true)
   const baseMessage = defaultErrorMessage(error)
   const suggestion = suggestNotationFix(notationString)
   return suggestion ? `${baseMessage}\n\nDid you mean \`${suggestion}\`?` : baseMessage

@@ -2,11 +2,11 @@ import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/blades'
 import { embedFooterDetails } from '../utils/constants.js'
 import { createGameCommand, getInitialRolls } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
+import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
-function buildBladesEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const dice = interaction.options.getInteger('dice', true)
+function buildBladesEmbed(context: CommandContext): EmbedBuilder {
+  const dice = context.options.getInteger('dice', true)
   const result = roll({ rating: dice })
 
   const initialRolls = getInitialRolls(result)

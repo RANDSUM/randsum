@@ -2,11 +2,37 @@ import { deferReplyHonoringHidden } from '../../utils/ephemeral.js'
 import { replyWithError } from '../../utils/replyWithError.js'
 import type { ChatInputCommandInteraction, EmbedBuilder } from '../../utils/discord.js'
 import type { Command } from '../../types.js'
+import type { CommandContext } from './context.js'
+
+export type { CommandContext, CommandOptions } from './context.js'
+export { optionsFromPayload } from './context.js'
+
+/**
+ * Build the transport-agnostic context from a live gateway interaction.
+ *
+ * discord.js's `interaction.options` already has the accessor shape
+ * `CommandOptions` describes, so this is a narrowing rather than an adapter —
+ * which is the point: the interface was defined to fit what already exists, so
+ * neither transport pays a translation cost.
+ */
+export function contextFromInteraction(interaction: ChatInputCommandInteraction): CommandContext {
+  return {
+    options: interaction.options,
+    // A getter, not a value. Only `/root` reads the display name, and reading
+    // it eagerly here would touch `interaction.user` on every command — which
+    // changes behaviour for the nine that never did, and immediately broke the
+    // test fixtures that (reasonably) only mock what their command uses.
+    // Deferring keeps this refactor genuinely invisible.
+    get userDisplayName() {
+      return interaction.user.displayName
+    }
+  }
+}
 
 interface CreateGameCommandOptions {
   readonly data: Command['data']
-  readonly buildEmbed: (interaction: ChatInputCommandInteraction) => EmbedBuilder
-  readonly describeError?: (error: unknown, interaction: ChatInputCommandInteraction) => string
+  readonly buildEmbed: (context: CommandContext) => EmbedBuilder
+  readonly describeError?: (error: unknown, context: CommandContext) => string
   readonly autocomplete?: Command['autocomplete']
 }
 
@@ -31,13 +57,14 @@ export function createGameCommand(options: CreateGameCommandOptions): Command {
     data,
     async execute(interaction) {
       await deferReplyHonoringHidden(interaction)
+      const context = contextFromInteraction(interaction)
 
       try {
-        const embed = buildEmbed(interaction)
+        const embed = buildEmbed(context)
         await interaction.editReply({ embeds: [embed] })
       } catch (error) {
         const description = describeError
-          ? describeError(error, interaction)
+          ? describeError(error, context)
           : defaultErrorMessage(error)
         await replyWithError(interaction, 'Error', description)
       }
