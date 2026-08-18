@@ -16,11 +16,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@discordjs/builders": "1.14.1",
-    "@discordjs/rest": "2.6.1",
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
-    "discord-api-types": "0.38.49",
     "discord.js": "^14.26.4"
   },
   "keywords": [
