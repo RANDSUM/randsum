@@ -173,15 +173,25 @@ function sameCommandSet(a: readonly NormalizedCommand[], b: readonly NormalizedC
 export async function syncCommands(options: SyncCommandsOptions): Promise<SyncResult> {
   const { token, clientId, guildId, commands } = options
   const scope: 'guild' | 'global' = guildId === undefined || guildId === '' ? 'global' : 'guild'
-  const localPayload = commands.map(command => command.data.toJSON())
-  const route: DiscordRoute =
-    scope === 'guild'
-      ? Routes.applicationGuildCommands(clientId, guildId ?? '')
-      : Routes.applicationCommands(clientId)
-
-  const rest: RestLike = options.rest ?? new REST().setToken(token)
 
   try {
+    // Inside the try on purpose. `toJSON()` validates the builder and throws on
+    // an invalid command (a too-long description, a bad option name), and
+    // `Routes.*`/`new REST()` can throw on malformed credentials. Built above
+    // the try, any of those would reject this function — and since the sole
+    // call site is a top-level `await` in `index.ts`, that rejection exits the
+    // worker, turning "one bad command definition" into a boot crash loop on
+    // Render. The contract this module documents is that a registry problem
+    // never takes down a connected bot; that has to include building the
+    // request, not just sending it.
+    const localPayload = commands.map(command => command.data.toJSON())
+    const route: DiscordRoute =
+      scope === 'guild'
+        ? Routes.applicationGuildCommands(clientId, guildId ?? '')
+        : Routes.applicationCommands(clientId)
+
+    const rest: RestLike = options.rest ?? new REST().setToken(token)
+
     const remoteRaw = await rest.get(route)
     const remote = normalizeAll(Array.isArray(remoteRaw) ? remoteRaw : [])
     const local = normalizeAll(localPayload)
@@ -225,7 +235,7 @@ export async function syncCommands(options: SyncCommandsOptions): Promise<SyncRe
     logger.error('commands.sync.failed', { scope })
     return {
       status: 'failed',
-      localCount: localPayload.length,
+      localCount: commands.length,
       remoteCount: 0,
       scope
     }

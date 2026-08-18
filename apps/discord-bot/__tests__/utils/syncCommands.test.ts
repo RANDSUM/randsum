@@ -199,6 +199,29 @@ describe('syncCommands — failure is contained', () => {
     expect(result.status).toBe('failed')
   })
 
+  test('resolves rather than throwing when a command fails to serialize', async () => {
+    // The sole call site is a top-level `await` in index.ts, so a rejection here
+    // exits the worker and Render restarts it into a crash loop. Building the
+    // payload therefore has to be inside the same guard as sending it.
+    const exploding: Command = {
+      data: {
+        name: 'broken',
+        toJSON: () => {
+          throw new Error('description exceeds 100 characters')
+        }
+      },
+      execute: () => Promise.resolve()
+    } as never
+    const { rest, get } = makeRest({ remote: [] })
+
+    const result = await syncCommands({ ...BASE, commands: [exploding], rest })
+
+    expect(result.status).toBe('failed')
+    expect(result.localCount).toBe(1)
+    // It failed before ever reaching the network.
+    expect(get).not.toHaveBeenCalled()
+  })
+
   test('resolves rather than throwing when the write fails', async () => {
     const commands = [makeCommand('salvageunion')]
     const { rest } = makeRest({

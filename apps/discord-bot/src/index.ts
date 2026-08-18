@@ -5,7 +5,7 @@ import type { Command } from './types.js'
 import { commands as commandList } from './commands/index.js'
 import { logger } from './utils/logger.js'
 import { flushMetrics, startMetricsFlush, stopMetricsFlush } from './utils/metrics.js'
-import { captureException, initErrorTracker } from './utils/errorTracker.js'
+import { captureException, flushErrorTracker, initErrorTracker } from './utils/errorTracker.js'
 import { loginWithBackoff } from './utils/loginWithBackoff.js'
 import { syncCommands } from './utils/syncCommands.js'
 
@@ -87,6 +87,11 @@ try {
 } catch (error) {
   captureException(error, { phase: 'login' })
   flushMetrics()
+  // Await delivery before exiting. This is the single most important event the
+  // bot can emit — it is the one that explains a crash loop — and Sentry
+  // delivery is asynchronous, so exiting immediately would discard it and leave
+  // the outage looking exactly like a silent service.
+  await flushErrorTracker()
   process.exit(1)
 }
 

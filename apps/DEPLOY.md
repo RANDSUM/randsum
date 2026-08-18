@@ -75,6 +75,15 @@ therefore sufficient — there is no separate registration step to remember.
 (Remove `DISCORD_GUILD_ID` to register globally — ~1h propagation; set it for instant
 per-guild registration during development.)
 
+`SENTRY_DSN` is a fourth `sync: false` env var and is **optional** — the tracker logs but does
+not report when it is unset, and the worker logs which mode it is in at boot
+(`errorTracker.init … enabled: true|false`). Set it in the Render dashboard to get exception
+reporting; check that boot line before concluding anything from an empty Sentry project.
+
+> Reporting was a no-op stub until #1211: `SENTRY_DSN` was read and logged as `enabled: true`,
+> but the forwarder had an empty body, so no event was ever sent. Any "nothing in Sentry"
+> observation from before that commit carries no information.
+
 > This used to be a manual `bun run deploy-commands`. It was forgotten after #1191 renamed
 > `/su` to `/salvageunion`, leaving Discord advertising a command the worker no longer had;
 > every invocation silently timed out for a week while the bot was healthy. The startup sync
@@ -85,6 +94,48 @@ per-guild registration during development.)
 cd apps/discord-bot
 bun run deploy-commands   # needs DISCORD_TOKEN + DISCORD_CLIENT_ID in the environment
 ```
+
+### Triage — "the bot is down"
+
+A worker has no inbound URL, so there is nothing to `curl`. Work the signals in this order;
+the first two need no Render access at all.
+
+1. **Did the last deploy succeed?** Render reports every deploy to GitHub, so deploy health is
+   readable without logging in:
+
+   ```bash
+   gh api "repos/RANDSUM/randsum/deployments?environment=main%20-%20randsum-discord-bot&per_page=5" \
+     --jq '.[] | "\(.id) \(.created_at) \(.sha[0:8])"'
+   gh api repos/RANDSUM/randsum/deployments/<id>/statuses \
+     --jq '.[] | "\(.created_at) \(.state) \(.log_url)"'
+   ```
+
+   A `success` state means the build ran and the process started. **A successful deploy followed
+   by a dead bot means a runtime failure, not a build failure** — skip straight to step 3.
+
+2. **Is it actually the bot?** The other surfaces fail independently and are directly probeable:
+   `curl -sSo /dev/null -w '%{http_code}' https://randsum.dev` (and `notation.randsum.dev`), plus
+   `curl -sS https://registry.npmjs.org/@randsum/roller/latest` for the packages. "Randsum is
+   down" is most often only one of these four.
+
+3. **Read the logs.** Render dashboard → `randsum-discord-bot` → **Logs**, or the `render` MCP
+   server (`.mcp.json`). The bot logs one JSON line per lifecycle event, so grep for the boot
+   sequence: `errorTracker.init` → `bot.connecting` → `login.retry` → `bot.login_succeeded` →
+   `bot.ready` → `commands.sync.*`. Where it stops tells you which failure this is:
+
+   | Last line seen                     | Meaning                                                       |
+   | ---------------------------------- | ------------------------------------------------------------- |
+   | `login.retry` ×5 then `login.failed`| Bad/revoked `DISCORD_TOKEN` → exit 1 → Render restart loop. Rotate the token (below). |
+   | `bot.ready`, then silence          | Connected and healthy; the problem is command registration or a specific command. |
+   | `commands.sync.failed`             | Registry desync only. The bot still serves its previous command list. |
+   | nothing at all                     | Service suspended, or the deploy never started. Check Render **Events**. |
+
+   Note the login path is a **crash loop by design**: five backed-off attempts, then `exit(1)`
+   so a persistent auth failure surfaces to the platform rather than sitting in a fake-healthy
+   process. Repeated restart events in Render with `login.failed` in each is the signature.
+
+4. **Check Sentry.** Only meaningful if the run logged `errorTracker.init … enabled: true`.
+   `SENTRY_DSN` is optional and unset by default — see the caveat under *Deploy* above.
 
 ### Restart
 
