@@ -19,12 +19,18 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const isDev = process.argv.includes('dev')
 
 // Which host this build targets. Astro allows exactly one adapter, so during
-// the Cloudflare migration this has to be selectable rather than swapped:
-// flipping it outright would break the Netlify deploy that is still serving
-// randsum.dev, before the Cloudflare one has been proven. Netlify stays the
-// default so nothing changes until a build explicitly opts in, and the eventual
-// cutover is a one-line change here plus deleting the loser.
-const deployTarget = process.env.DEPLOY_TARGET ?? 'netlify'
+// the migration this had to be selectable rather than swapped.
+//
+// Cloudflare is now the default, because it is what actually serves
+// randsum.dev. A default that disagrees with production is a trap: `bun run
+// build` locally would produce a Netlify build, and every difference between
+// the two adapters would go unnoticed until a deploy.
+//
+// Netlify remains reachable via DEPLOY_TARGET=netlify, deliberately. The
+// Netlify project still exists as the rollback, and a rollback nobody can build
+// for is not a rollback. Remove this switch — and @astrojs/netlify — when the
+// Netlify project is deleted, not before.
+const deployTarget = process.env.DEPLOY_TARGET ?? 'cloudflare'
 
 function resolveAdapter() {
   if (isDev) return undefined
@@ -40,10 +46,10 @@ function resolveAdapter() {
     // markdown pipeline's `require('path')`.
     //
     // Shiki can be pointed at a pure-JavaScript regex engine instead, and that
-    // also works — but it changes how code is highlighted, on a site that is
-    // live and currently served from Netlify. Prerendering in Node changes
-    // nothing about the output at all: it is the same environment the Netlify
-    // build already uses, so the two targets produce the same pages.
+    // also works — but it changes how code is highlighted, on a live site.
+    // Prerendering in Node changes nothing about the output at all: it is the
+    // same environment the Netlify build used, so the two targets produce
+    // identical pages. That equivalence is what made the cutover verifiable.
     prerenderEnvironment: 'node'
   })
 }

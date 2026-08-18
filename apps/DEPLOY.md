@@ -12,7 +12,7 @@ to file incident RCAs.
 | ------------------ | ----------------------------------------------- | ------------------- | ------------------------ | --------------------- |
 | Docs site          | `apps/site`                                     | **Cloudflare**      | push to `main`           | randsum.dev           |
 | Notation spec site | `apps/rdn`                                      | **Cloudflare**      | push to `main`           | notation.randsum.dev  |
-| Discord bot        | `apps/discord-bot`                              | Render (worker)     | manual / Render redeploy | n/a (Discord gateway) |
+| Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | push to `main`           | bot.randsum.dev       |
 | npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
 **Both sites migrated to Cloudflare on 2026-08-18.** DNS for `randsum.dev` is on
@@ -36,14 +36,23 @@ as a Worker route on the apex.
 
 ## Cloudflare cutover — the four manual steps
 
-> **Status: in progress.** All the code has shipped. Both sites build for
-> Cloudflare, CI deploys them on merge, and the Discord bot has a working
-> HTTP-interactions Worker. **Netlify and Render still serve everything** — that
-> is deliberate, and nothing user-facing has changed.
+> **Status: done — all three surfaces serve from Cloudflare as of 2026-08-18.**
+> Both sites and the Discord bot were cut over on the same day. The steps below
+> are kept as the record of how it was done and how to verify it, not as
+> outstanding work.
 >
-> What remains cannot be done from a terminal. Everything below needs a browser
-> and account access. Each step has a verification you can run afterwards; do not
-> proceed past one that fails.
+> **What is left is decommissioning, which is deliberately not automatic.** The
+> Netlify projects and the Render worker still exist and still cost nothing to
+> keep. They are the rollback: while they exist, reverting a site is restoring
+> two A records, and reverting the bot is clearing one field in the Discord
+> application settings. Delete them only after a soak period, and delete Netlify
+> before Render — the sites have been verified far longer than the bot has.
+>
+> One thing genuinely does remain: `CLOUDFLARE_API_TOKEN` is **not** set as a
+> repository secret, so `deploy-cloudflare.yml` skips every job and merges to
+> `main` do not actually deploy. Until it is set, deploys are manual
+> (`wrangler deploy`). Prefer a token scoped to `Workers Scripts:Edit` +
+> `Workers Routes:Edit` + `Account Settings:Read` over an account-wide key.
 
 ### 1. Register a workers.dev subdomain · ~1 min
 
@@ -117,23 +126,46 @@ What still stands:
 - **Do it with someone watching.** Short TTLs make a mistake quick to *undo*,
   not impossible to *make*.
 
-> ⚠️ **This inventory is a probe, not a zone dump.** It was built with `dig`
-> against the names above plus the usual suspects; enumerating a zone requires
-> AXFR (refused) or the Netlify DNS dashboard. Before cutting over, open that
-> dashboard and diff it against this table — a record at a name nobody guessed
-> is exactly what this method cannot see.
+> ⚠️ **This inventory was a probe, not a zone dump** — it was built with `dig`
+> against the names above plus the usual suspects, because enumerating a zone
+> requires AXFR (refused) or the Netlify DNS dashboard.
+>
+> **Re-checked after the cutover, and it held.** The Netlify/NS1 zone is still
+> authoritative for its own copy, so it was queried directly for MX, TXT, CAA,
+> SRV and CNAME across the apex and fifteen candidate subdomains: it contains
+> exactly three names, all A records. The migration script replicated A records
+> only, which was therefore complete rather than lucky — worth stating, because
+> "we copied the A records" and "we copied everything" happened to coincide here
+> and would not on a zone carrying mail or domain-verification records.
 
 ### Only then: decommission
 
-Netlify and Render can be closed once both sites have served from Cloudflare for
-a week and the bot has been stable. **The Discord bot is a separate switch**:
-setting an Interactions Endpoint URL stops gateway delivery instantly and is
-mutually exclusive with the Render worker, so treat it as its own cutover with
-its own rollback (delete the URL to fall back to the gateway).
+**Not yet done, and that is the plan rather than an oversight.** Netlify and
+Render still exist. They cost nothing to keep and they are the rollback:
 
-Sentry was never enabled — `SENTRY_DSN` has never been set in production — so
-there is nothing to close there. Alerting now runs through a Discord webhook and
-a Healthchecks heartbeat instead; see `apps/discord-bot/CLAUDE.md`.
+| To revert | Do this | Time |
+| --- | --- | --- |
+| A site | Re-add the two Netlify A records for that hostname | ~1 min + TTL |
+| The bot | Clear the Interactions Endpoint URL in the Discord app | instant |
+
+Close Netlify first — the sites have been verified continuously since the DNS
+switch, whereas the bot cut over later the same day. Close Render only after the
+bot has been observed handling real traffic across a busy period.
+
+**The bot's rollback has a shelf life.** Clearing the endpoint URL restores
+gateway delivery only while a gateway process is actually running. Once the
+Render service is deleted, that fallback is gone and reverting means
+redeploying the worker first — which is fine, but it is a different-sized
+operation than clearing a field, so do not delete Render believing the one-field
+revert still exists.
+
+Sentry needs no decommissioning: it was never enabled in production, and the
+Worker does not import the error tracker at all. Alerting for the gateway bot
+ran through a Discord webhook and a Healthchecks heartbeat (see
+`apps/discord-bot/CLAUDE.md`); **the Worker inherits neither.** Cloudflare
+Workers Observability is enabled in `wrangler.jsonc` and is now the only place
+bot errors are visible — worth knowing before wondering why the heartbeat went
+quiet.
 
 ## Netlify (apps/site → randsum.dev, apps/rdn → notation.randsum.dev)
 
