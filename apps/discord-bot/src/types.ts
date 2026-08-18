@@ -27,4 +27,14 @@ export interface Command {
    * a Worker dispatch that finds it missing must say so rather than guess.
    */
   buildEmbed?: (context: CommandContext) => EmbedBuilder
+  /**
+   * Interactive components to attach alongside the embed, as raw API JSON.
+   *
+   * Only `/notation` uses this. Kept separate from `buildEmbed` rather than
+   * folded into a single "build the view" hook because nine of ten commands
+   * have no components at all, and widening their signature to carry an always-
+   * empty array is the kind of shared abstraction that gets filled in wrongly
+   * later.
+   */
+  buildComponents?: (context: CommandContext) => readonly unknown[]
 }
