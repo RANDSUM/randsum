@@ -1,0 +1,41 @@
+{
+  // Cloudflare Workers deployment for randsum.dev.
+  //
+  // Unlike apps/rdn, this site genuinely needs a Worker: `src/pages/api/roll.ts`
+  // sets `prerender = false`, so one route is server-rendered while everything
+  // else is static. `output: 'static'` plus that single opt-out is the exact
+  // shape @astrojs/cloudflare supports — the rest of the site still ships as
+  // static assets, which are free and unbilled.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "randsum-site",
+  // No `main` on purpose. The adapter supplies its own server entrypoint, and
+  // the vite plugin reads this file *during* the build and rejects a `main`
+  // that does not exist yet — which the build output cannot, since the build is
+  // what produces it. Hand-wiring it deadlocks the build.
+  // Deliberately not "today". A compatibility date newer than the workerd
+  // bundled with the locally installed wrangler makes `wrangler dev` refuse to
+  // start ("requires compatibility date X, but the newest date supported by
+  // this server binary is Y") — so dating this to the future costs the ability
+  // to run the Worker locally, which is the only way to test it before DNS
+  // moves. Cloudflare's own servers would accept a newer date; local ones will
+  // not. Raise it deliberately, alongside a wrangler upgrade, never by reflex.
+  "compatibility_date": "2026-07-13",
+  // Load-bearing at BUILD time, not just at runtime. The adapter prerenders
+  // pages in a workerd sandbox rather than in Node, and the markdown/rehype
+  // pipeline reaches for `require('path')` while rendering. Without this flag
+  // the build fails before it produces anything, with an error that reads like
+  // a bundler problem rather than a missing runtime capability.
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // Astro's own 404 page rather than Cloudflare's bare platform error.
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    // On by default for new Workers, but declared explicitly: this is the only
+    // thing that makes `/api/roll` failures visible at all, and an implicit
+    // default is exactly the kind of thing that silently flips off later.
+    "enabled": true
+  }
+}

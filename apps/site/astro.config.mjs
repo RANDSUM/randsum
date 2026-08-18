@@ -8,6 +8,7 @@ import starlight from '@astrojs/starlight'
 import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import netlify from '@astrojs/netlify'
+import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
 import { copyMarkdownToDist } from './src/integrations/copy-markdown-to-dist'
 import { copySchemaToDist } from './src/integrations/copy-schema-to-dist'
@@ -16,6 +17,36 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
+
+// Which host this build targets. Astro allows exactly one adapter, so during
+// the Cloudflare migration this has to be selectable rather than swapped:
+// flipping it outright would break the Netlify deploy that is still serving
+// randsum.dev, before the Cloudflare one has been proven. Netlify stays the
+// default so nothing changes until a build explicitly opts in, and the eventual
+// cutover is a one-line change here plus deleting the loser.
+const deployTarget = process.env.DEPLOY_TARGET ?? 'netlify'
+
+function resolveAdapter() {
+  if (isDev) return undefined
+  if (deployTarget !== 'cloudflare') return netlify()
+
+  return cloudflare({
+    // Prerender in Node, not in workerd — which is the adapter's default.
+    //
+    // The workerd sandbox refuses WebAssembly compilation ("Wasm code
+    // generation disallowed by embedder"), and Shiki's default Oniguruma
+    // highlighter is Wasm-backed, so every page carrying a code block fails to
+    // render. That is most of a docs site. The same sandbox also breaks the
+    // markdown pipeline's `require('path')`.
+    //
+    // Shiki can be pointed at a pure-JavaScript regex engine instead, and that
+    // also works — but it changes how code is highlighted, on a site that is
+    // live and currently served from Netlify. Prerendering in Node changes
+    // nothing about the output at all: it is the same environment the Netlify
+    // build already uses, so the two targets produce the same pages.
+    prerenderEnvironment: 'node'
+  })
+}
 
 export default defineConfig({
   base: '/',
@@ -222,5 +253,5 @@ export default defineConfig({
     }
   },
   output: 'static',
-  adapter: isDev ? undefined : netlify()
+  adapter: resolveAdapter()
 })
