@@ -51,13 +51,15 @@ route on the apex.
 > carrying a second adapter indefinitely has its own cost, and the sites had
 > already been serving from Cloudflare and verified.
 >
-> **The Render worker still exists**, dormant. It is the bot's fallback.
+> **The Render worker is SUSPENDED**, not deleted. It stays that way as the
+> bot's fallback — see the decommission section for what that fallback is
+> actually worth now.
 >
-> One thing genuinely does remain: `CLOUDFLARE_API_TOKEN` is **not** set as a
-> repository secret, so `deploy-cloudflare.yml` skips every job and merges to
-> `main` do not actually deploy. Until it is set, deploys are manual
-> (`wrangler deploy`). Prefer a token scoped to `Workers Scripts:Edit` +
-> `Workers Routes:Edit` + `Account Settings:Read` over an account-wide key.
+> **`CLOUDFLARE_API_TOKEN` is set**, and CI genuinely deploys: verified by
+> re-running the workflow and confirming all three jobs uploaded new versions
+> rather than taking the skip path. The token is currently **account-wide**;
+> narrowing it to `Workers Scripts:Edit` + `Workers Routes:Edit` +
+> `Account Settings:Read` is a swap of the same repository secret.
 
 ### 1. Register a workers.dev subdomain · ~1 min
 
@@ -84,7 +86,14 @@ gh secret set CLOUDFLARE_API_TOKEN --repo RANDSUM/randsum
 
 Until this exists the deploy workflow **skips with a notice rather than failing**,
 so main stays green either way. Adding it switches deploys on with no code
-change.
+change — which is exactly how it played out.
+
+**Beware how the skip path reads in the logs.** A skipped run reports
+`success`, identically to a real deploy, because the guard exits 0 on purpose.
+The distinguishing signal is a `##[notice]` line; the echoed script source of
+the un-taken branch also contains the words "skipping deploy", so grepping the
+raw log for that string finds it either way. Check for new **version IDs**
+instead — that is the only unambiguous proof a deploy happened.
 
 ```bash
 gh run list --repo RANDSUM/randsum --workflow deploy-cloudflare.yml --limit 1
@@ -169,45 +178,57 @@ What still stands:
 > source — here, the host's own project list would have surfaced `playground`
 > immediately, since it was a custom domain on a project in the same account.
 
-### Only then: decommission
+### Decommission — done 2026-08-18
 
-**Netlify: done in the repo, pending in the account.** Nothing here builds for
-Netlify any more, so the remaining work is on Netlify's side — otherwise its git
-integration keeps building this repo on every PR, producing deploys nobody reads.
+**Netlify: fully gone.** Nothing in the repo builds for it, and the account side
+is cleaned up too. Builds were stopped on both repo-linked projects first — that
+is what actually kills the deploy previews, since Netlify's git integration is
+independent of this repo's contents and would otherwise have kept building every
+PR forever — and then all four projects were deleted.
 
 The account holds **four** projects, across two teams, and only the first two
 are built from this repo:
 
-| Project | Serves | Team | State |
+All **four** were deleted on 2026-08-18, across two teams. The count matters:
+only the first two were built from this repo, and a "delete the Netlify
+projects" instruction would plausibly have left the other two behind forever.
+
+| Project | Served | Team | Why it was safe to delete |
 | --- | --- | --- | --- |
-| `randsum-site` | randsum.dev | dev | live deploy, no longer receives traffic |
-| `rdn-spec` | notation.randsum.dev | dev | live deploy, no longer receives traffic |
-| `randsum-playground` | playground.randsum.dev | pro | **404s on its own URL**; DNS now retired |
-| `randsumweb` | randsum.io | pro | last deployed 2024; `randsum.io` now answers from Cloudflare, not here |
+| `randsum-site` | randsum.dev | dev | superseded; Cloudflare had been serving it and was verified |
+| `rdn-spec` | notation.randsum.dev | dev | same |
+| `randsum-playground` | playground.randsum.dev | pro | 404'd on its own URL; DNS already retired |
+| `randsumweb` | randsum.io | pro | last deployed 2024; `randsum.io` resolves to a Cloudflare anycast IP with no Netlify headers, so the project was already bypassed |
 
-The last two are **not** built by this repo and predate the migration — they are
-listed so that "delete the Netlify projects" does not quietly mean "delete two of
-four and leave two behind."
+Each hostname was re-checked immediately after its project was deleted.
+`randsum.io` still returns 200 and is unaffected — it serves from Cloudflare
+with DNS at Hover, and nothing in this repo builds it.
 
-`randsum.io` in particular needs a decision rather than a deletion: it currently
-serves a `randsum-expo` page from Cloudflare with DNS at Hover, so the Netlify
-project behind it is already bypassed.
+**The Netlify DNS zone was NOT deleted.** It is the only remaining
+nameserver-level rollback: while it exists, reverting the whole migration is one
+change at the registrar. Deleting the projects did not touch it.
 
-**Render: not yet, deliberately.** The Render worker is the bot's only fallback:
+**Render: suspended on 2026-08-18, deliberately not deleted.** Suspending stops
+the process and the billing while keeping the service, its env vars and its
+deploy history recoverable from one button.
 
-| To revert | Do this | Time |
+That choice has a consequence worth stating plainly, because it is easy to
+assume otherwise:
+
+| To revert the bot | Do this | Time |
 | --- | --- | --- |
-| The bot | Clear the Interactions Endpoint URL in the Discord app | instant |
+| **Today** | Resume the Render worker, then clear the Interactions Endpoint URL | ~2 min |
+| If Render is deleted | Redeploy the gateway bot somewhere first, then clear the URL | much longer |
 
-Delete Render only after the bot has been observed handling real traffic across
-a busy period.
+Clearing the endpoint URL restores gateway *delivery*, but delivery only helps
+if a gateway process is actually running. Suspending Render did not remove the
+fallback; it added a step to it. **Deleting Render is what removes it** — so do
+that only once the bot has handled real traffic across a busy period, and do not
+delete it believing the one-field revert still exists.
 
-**The bot's rollback has a shelf life.** Clearing the endpoint URL restores
-gateway delivery only while a gateway process is actually running. Once the
-Render service is deleted, that fallback is gone and reverting means
-redeploying the worker first — which is fine, but it is a different-sized
-operation than clearing a field, so do not delete Render believing the one-field
-revert still exists.
+Note the gateway bot also kept auto-deploying from `main` right up to the
+suspension, including the commit that removed Netlify. That was harmless but
+pointless: Discord had already stopped delivering to it.
 
 Sentry needs no decommissioning: it was never enabled in production, and the
 Worker does not import the error tracker at all. Alerting for the gateway bot
@@ -233,8 +254,8 @@ Both Astro sites are separate Workers, each with a custom domain, deployed from
 
 ### Deploy
 
-Merge to `main`. To deploy by hand, or when `CLOUDFLARE_API_TOKEN` is unset and
-CI is skipping:
+Merge to `main` — CI deploys automatically. To deploy by hand (or if the token
+is ever removed and CI starts skipping):
 
 ```bash
 bun run --filter '@randsum/roller' build
