@@ -4,7 +4,7 @@ Thanks for your interest in contributing! This guide covers everything you need 
 
 ## Prerequisites
 
-- [Bun](https://bun.sh) >= 1.3.14 (enforced by `engines`)
+- [Bun](https://bun.sh) >= 1.4.0 (enforced by `engines`)
 - [Node.js](https://nodejs.org) v18+ (for compatibility)
 - Git
 

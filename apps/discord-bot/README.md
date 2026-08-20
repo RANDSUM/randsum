@@ -166,7 +166,7 @@ repo-root [`render.yaml`](../../render.yaml) blueprint (`name: randsum-discord-b
 - Build is scoped to the bot's dependency subtree (`@randsum/roller` → `@randsum/games` →
   `@randsum/discord-bot`) rather than the full monorepo build.
 - Start command: `node apps/discord-bot/dist/index.js`.
-- `BUN_VERSION` is pinned (1.3.14) to match CI; `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, and
+- `BUN_VERSION` is pinned (1.4.0) to match CI; `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, and
   `DISCORD_GUILD_ID` are set in the Render dashboard (`sync: false` — not committed).
 
 > The `render.yaml` blueprint is not necessarily auto-synced to the live service. If you change it,
