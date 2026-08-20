@@ -153,7 +153,7 @@ is ever brought back:
 - Build is scoped to the dependency subtree, not the full monorepo:
   `bun install --frozen-lockfile && bun run --filter @randsum/roller --filter @randsum/games --filter @randsum/discord-bot build`
 - Start: `node apps/discord-bot/dist/index.js`
-- `BUN_VERSION` pinned to 1.3.14 (matches `.bun-version` / CI). `DISCORD_TOKEN`,
+- `BUN_VERSION` pinned to 1.4.0 (matches `.bun-version` / CI). `DISCORD_TOKEN`,
   `DISCORD_CLIENT_ID`, `DISCORD_GUILD_ID` are `sync: false` (set in the dashboard, not committed).
 - The blueprint may not be auto-synced to the live service — if you edit it, also reconcile the
   Render dashboard env vars.
