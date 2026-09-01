@@ -4,6 +4,8 @@ import type { CommandContext } from './context.js'
 
 export type { CommandContext, CommandOptions } from './context.js'
 export { optionsFromPayload } from './context.js'
+export type { RollContainerOptions, ViewFact } from './view.js'
+export { CUSTOM_ID_LIMIT, renderFacts, renderTrace, rollContainer } from './view.js'
 
 interface CreateGameCommandOptions {
   readonly data: Command['data']
