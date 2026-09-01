@@ -12,11 +12,6 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headersHelper": "$CLAUDE_PROJECT_DIR/scripts/mcp-1password-headers.sh"
-    },
-    "render": {
-      "type": "http",
-      "url": "https://mcp.render.com/mcp",
-      "headersHelper": "$CLAUDE_PROJECT_DIR/scripts/mcp-1password-headers.sh"
     }
   }
 }

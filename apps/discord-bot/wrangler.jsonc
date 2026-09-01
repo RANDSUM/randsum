@@ -1,14 +1,13 @@
 {
   // Cloudflare Worker for the Discord bot — HTTP interactions.
   //
-  // NOT WIRED UP. Deploying this changes nothing on its own: Discord only sends
-  // interactions here once an Interactions Endpoint URL is set in the
-  // application settings, and doing that STOPS gateway delivery entirely. The
-  // two transports are mutually exclusive, so the switch is a deliberate,
-  // one-way-feeling cutover — see apps/discord-bot/CLAUDE.md before flipping it.
+  // THIS IS THE BOT. Discord POSTs every interaction to the route below, and
+  // there is no second transport: the gateway process and its Render host were
+  // both removed. A failed or skipped deploy here is a user-visible outage, not
+  // a fallback to something else.
   //
-  // Wrangler bundles the TypeScript entry directly; there is no separate build
-  // step, unlike the gateway bot which bunup-bundles for Node.
+  // Wrangler bundles the TypeScript entry directly, which is why this app has
+  // no `build` script — there is no artifact to produce ahead of the deploy.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "randsum-discord-bot",
   "main": "./src/worker/index.ts",

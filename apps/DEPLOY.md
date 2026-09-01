@@ -1,6 +1,6 @@
 # Operations Runbook — Deploy, Rollback & DR
 
-_Last verified against source: 2026-07-07. Covers all deployable apps in this monorepo._
+_Last verified against source: 2026-09-01. Covers all deployable apps in this monorepo._
 
 This is the operational counterpart to each app's `CLAUDE.md` (which covers development).
 It documents how each surface is hosted, deployed, rolled back, and recovered, plus where
@@ -29,8 +29,9 @@ route on the apex.
 > any other way.
 
 > Config sources: `apps/site/wrangler.jsonc`, `apps/rdn/wrangler.jsonc`,
-> `apps/discord-bot/wrangler.jsonc`, and `render.yaml` (repo root, dormant).
-> Deployment runs from `.github/workflows/deploy-cloudflare.yml`.
+> `apps/discord-bot/wrangler.jsonc`. Deployment runs from
+> `.github/workflows/deploy-cloudflare.yml`. There are no other deploy configs —
+> Netlify and Render were both removed.
 >
 > The `randsum.io` playground is a **legacy app deployed outside this monorepo** — it is not
 > built or deployed by any config here and is out of scope for this runbook.
@@ -51,9 +52,8 @@ route on the apex.
 > carrying a second adapter indefinitely has its own cost, and the sites had
 > already been serving from Cloudflare and verified.
 >
-> **The Render worker is SUSPENDED**, not deleted. It stays that way as the
-> bot's fallback — see the decommission section for what that fallback is
-> actually worth now.
+> **Render is gone too**, as of 2026-09-01 — and with it the gateway bot it
+> hosted. The bot has exactly one transport now; see the decommission section.
 >
 > **`CLOUDFLARE_API_TOKEN` is set**, and CI genuinely deploys: verified by
 > re-running the workflow and confirming all three jobs uploaded new versions
@@ -208,35 +208,62 @@ with DNS at Hover, and nothing in this repo builds it.
 nameserver-level rollback: while it exists, reverting the whole migration is one
 change at the registrar. Deleting the projects did not touch it.
 
-**Render: suspended on 2026-08-18, deliberately not deleted.** Suspending stops
-the process and the billing while keeping the service, its env vars and its
-deploy history recoverable from one button.
+### Render — dropped entirely, 2026-09-01
 
-That choice has a consequence worth stating plainly, because it is easy to
-assume otherwise:
+Render was suspended on 2026-08-18 and kept as the bot's fallback. It is now
+gone from both sides: the repo config below was removed, and **every Render
+service was deleted from the account** (confirmed 2026-09-01). There is nothing
+left to resume.
 
-| To revert the bot | Do this | Time |
-| --- | --- | --- |
-| **Today** | Resume the Render worker, then clear the Interactions Endpoint URL | ~2 min |
-| If Render is deleted | Redeploy the gateway bot somewhere first, then clear the URL | much longer |
+**The fallback was already worth less than it looked.** Suspending stopped the
+process, so reverting was never the one-field change it sounded like: clearing
+the Interactions Endpoint URL restores gateway *delivery*, but delivery only
+helps if a gateway process is actually running. The revert was "resume Render,
+then clear the URL" — and resuming Render only worked while Render existed.
 
-Clearing the endpoint URL restores gateway *delivery*, but delivery only helps
-if a gateway process is actually running. Suspending Render did not remove the
-fallback; it added a step to it. **Deleting Render is what removes it** — so do
-that only once the bot has handled real traffic across a busy period, and do not
-delete it believing the one-field revert still exists.
+What was removed from the repo, all in one change:
 
-Note the gateway bot also kept auto-deploying from `main` right up to the
-suspension, including the commit that removed Netlify. That was harmless but
-pointless: Discord had already stopped delivering to it.
+| Removed | Was |
+| --- | --- |
+| `render.yaml` | the worker blueprint (region, plan, `numInstances: 1`, six env vars) |
+| `src/index.ts` | the discord.js gateway entry point |
+| `src/events/` | `interactionCreate`, `guildCreate` — only ever wired up by `index.ts` |
+| `src/utils/{gateway,heartbeat,loginWithBackoff,syncCommands,metrics}.ts` | connection lifecycle, dead-man's switch, login retry, boot-time registry sync, counters |
+| `bunup.config.ts` + `build`/`start` scripts | bundling `dist/index.js` for a Node host |
 
-Sentry needs no decommissioning: it was never enabled in production, and the
-Worker does not import the error tracker at all. Alerting for the gateway bot
-ran through a Discord webhook and a Healthchecks heartbeat (see
-`apps/discord-bot/CLAUDE.md`); **the Worker inherits neither.** Cloudflare
-Workers Observability is enabled in `wrangler.jsonc` and is now the only place
-bot errors are visible — worth knowing before wondering why the heartbeat went
-quiet.
+`@randsum/discord-bot` is now in `BUILD_EXEMPT` in
+`scripts/check-workspace-scripts.ts` — wrangler compiles the Worker entry itself,
+so there is no artifact left to build. `utils/discord.ts` narrowed from the
+gateway barrel to `REST`/`Routes` plus two interaction types, which is all
+`deploy-commands.ts` still needs.
+
+**Reverting to a gateway bot is now a git revert plus a new host**, not a
+config change. That is the deliberate trade: the fallback had no host, no
+traffic, and no test that it still worked, and a rollback nobody has exercised
+is a claim rather than a plan.
+
+**What this costs, concretely: slash-command registration is now manual.** The
+gateway process reconciled the registry on every boot. Nothing replaces it — see
+the bot's section below.
+
+Alerting did not survive either, and this is the part most likely to surprise
+someone later. The gateway bot's Discord webhook and Healthchecks heartbeat were
+wired in `index.ts`; **the Worker inherits neither.**
+
+`errorTracker.ts` was cut down to a structured-log seam in the same change. Its
+remote forwarding — a hand-rolled Sentry envelope sender and a Discord webhook
+poster, with a 10-minute dedupe window — was configured by `SENTRY_DSN` and
+`DISCORD_ERROR_WEBHOOK_URL`, both Render dashboard variables, and initialized by
+the gateway's `initErrorTracker()` call. None of it could have run on workerd
+regardless: it read `process.env`, and `flushErrorTracker()` existed to drain
+in-flight sends before a deliberate `process.exit`, which a Worker has no concept
+of. `/notation` still calls `captureException`; it now only logs.
+
+**Cloudflare Workers Observability is the only place bot errors are visible**,
+and it ingests exactly the structured lines `logger` emits. Re-adding delivery
+means reading config from the Worker's `env` argument, not from `process`.
+
+Sentry needs no decommissioning: it was never enabled in production.
 
 ## Cloudflare (apps/site → randsum.dev, apps/rdn → notation.randsum.dev)
 
@@ -300,136 +327,122 @@ reversible — rolling back does not delete newer versions.
 
 ---
 
-## Render (apps/discord-bot)
+## Cloudflare Worker — the Discord bot (apps/discord-bot → bot.randsum.dev)
 
-`render.yaml` (repo root) declares the bot as a Render **worker** service
-(`randsum-discord-bot`): build `bun install && bun run build`, start
-`node apps/discord-bot/dist/index.js`. Env vars `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`,
-`DISCORD_GUILD_ID` are `sync: false` (set in the Render dashboard, never committed).
+The bot is `apps/discord-bot/wrangler.jsonc`, deployed by
+`.github/workflows/deploy-cloudflare.yml` on merge to `main`. Discord POSTs each
+interaction to `https://bot.randsum.dev/`, set as the application's Interactions
+Endpoint URL.
+
+**There is no second transport.** The discord.js gateway process and its Render
+host were both removed on 2026-09-01 — `render.yaml`, `src/index.ts`,
+`src/events/`, and the gateway-only utilities are gone. A skipped or broken
+deploy here is a user-visible outage with nothing behind it, which is the main
+thing that changed about operating this service.
+
+- The Worker needs **no `DISCORD_TOKEN`**. HTTP interactions are authenticated by
+  request signature, so the most sensitive credential is simply not deployed.
+  `DISCORD_PUBLIC_KEY` is a committed `var`, not a secret — the reasoning is in
+  `wrangler.jsonc`, and it verifies signatures rather than producing them.
+- `bot.randsum.dev` is declared in `routes` as a `custom_domain`, so a deploy
+  cannot silently detach the hostname Discord calls. Discord stores an absolute
+  URL and never rediscovers it.
+- The app has **no `build` script**. Wrangler compiles `src/worker/index.ts`
+  itself; only `@randsum/roller` and `@randsum/games` are built first, because
+  the Worker imports them through workspace subpath exports.
 
 ### Deploy
 
-Render auto-deploys the worker on push to `main` (per the blueprint). The bot's **slash
-commands** are reconciled by the worker itself on startup: after login it compares its command
-barrel against Discord's registered set and writes only when they differ, logging
-`commands.sync.unchanged` / `commands.sync.updated` / `commands.sync.failed`. Deploying is
-therefore sufficient — there is no separate registration step to remember.
-
-(Remove `DISCORD_GUILD_ID` to register globally — ~1h propagation; set it for instant
-per-guild registration during development.)
-
-`SENTRY_DSN` is a fourth `sync: false` env var and is **optional** — the tracker logs but does
-not report when it is unset, and the worker logs which mode it is in at boot
-(`errorTracker.init … enabled: true|false`). Set it in the Render dashboard to get exception
-reporting; check that boot line before concluding anything from an empty Sentry project.
-
-> Reporting was a no-op stub until #1211: `SENTRY_DSN` was read and logged as `enabled: true`,
-> but the forwarder had an empty body, so no event was ever sent. Any "nothing in Sentry"
-> observation from before that commit carries no information.
-
-> This used to be a manual `bun run deploy-commands`. It was forgotten after #1191 renamed
-> `/su` to `/salvageunion`, leaving Discord advertising a command the worker no longer had;
-> every invocation silently timed out for a week while the bot was healthy. The startup sync
-> exists so that failure mode cannot recur.
+Merge to `main`. To deploy by hand:
 
 ```bash
-# Escape hatch: force a registration write without restarting the worker
-cd apps/discord-bot
-bun run deploy-commands   # needs DISCORD_TOKEN + DISCORD_CLIENT_ID in the environment
+bun run --filter '@randsum/roller' --filter '@randsum/games' build
+bunx wrangler@4 deploy -c apps/discord-bot/wrangler.jsonc
 ```
 
 ### Triage — "the bot is down"
 
-A worker has no inbound URL, so there is nothing to `curl`. Work the signals in this order;
-the first two need no Render access at all.
+Unlike the gateway process, this endpoint is directly probeable — which removes
+most of the old triage. A signed request is required for a 200, but an unsigned
+POST proves the Worker is running and rejecting correctly:
 
-1. **Did the last deploy succeed?** Render reports every deploy to GitHub, so deploy health is
-   readable without logging in:
+```bash
+curl -sS -o /dev/null -w '%{http_code}\n' -X POST https://bot.randsum.dev/ \
+  -H 'content-type: application/json' -d '{"type":1}'
+```
 
-   ```bash
-   gh api "repos/RANDSUM/randsum/deployments?environment=main%20-%20randsum-discord-bot&per_page=5" \
-     --jq '.[] | "\(.id) \(.created_at) \(.sha[0:8])"'
-   gh api repos/RANDSUM/randsum/deployments/<id>/statuses \
-     --jq '.[] | "\(.created_at) \(.state) \(.log_url)"'
-   ```
+| Response | Meaning |
+| --- | --- |
+| `401` | **Healthy.** The Worker is up and refusing an unsigned request, which is exactly what Discord's own endpoint validation checks. |
+| `405` | Healthy, but you sent a GET — only POST is handled. |
+| `530` / `522` | The route or custom domain is detached. Redeploy with the config above; do not chase it in Discord's settings. |
+| timeout / `5xx` | Worker exception. Read the logs. |
 
-   A `success` state means the build ran and the process started. **A successful deploy followed
-   by a dead bot means a runtime failure, not a build failure** — skip straight to step 3.
+```bash
+bunx wrangler@4 tail --name randsum-discord-bot          # live
+```
 
-2. **Is it actually the bot?** The other surfaces fail independently and are directly probeable:
-   `curl -sSo /dev/null -w '%{http_code}' https://randsum.dev` (and `notation.randsum.dev`), plus
-   `curl -sS https://registry.npmjs.org/@randsum/roller/latest` for the packages. "Randsum is
-   down" is most often only one of these four.
+Observability is enabled in `wrangler.jsonc`, so Workers Logs in the dashboard
+is the durable view. **It is the only place bot errors surface** — the Discord
+webhook alerting and Healthchecks heartbeat belonged to the gateway process and
+did not come along.
 
-3. **Check the heartbeat first — it answers "is it connected?" directly.** Every
-   `metrics.flush` line (one per 5 minutes) embeds the gateway snapshot:
+If the endpoint is healthy but a command misbehaves, it is a registry problem,
+not a transport one — see the next section.
 
-   ```
-   "gateway":{"status":"ready","connected":true,"forMs":812344,"disconnects":0,"resumes":0}
-   ```
+### Slash command registration is now a manual step
 
-   Grep the logs for `'"connected":false'`. A hit is an outage, with `status` and `forMs`
-   saying which kind and for how long. **This is the fastest signal available and it should be
-   your first look** — it needs no correlation across lines.
+The gateway process reconciled the command registry on every boot. Nothing in
+the Worker path does, so **adding, renaming, or removing a command requires an
+explicit write**:
 
-4. **Read the boot sequence.** Render dashboard → `randsum-discord-bot` → **Logs**, or the
-   `render` MCP server (`.mcp.json`). One JSON line per lifecycle event:
-   `errorTracker.init` → `bot.connecting` → `gateway.connecting` → `bot.login_succeeded`
-   (with `elapsedMs`) → `gateway.ready` → `commands.sync.*` → `bot.ready`. Where it stops tells
-   you which failure this is:
+```bash
+cd apps/discord-bot
+bun run deploy-commands   # needs DISCORD_TOKEN + DISCORD_CLIENT_ID in the environment
+```
 
-   | Last line seen                      | Meaning                                                       |
-   | ----------------------------------- | ------------------------------------------------------------- |
-   | `login.retry` ×5 then `login.failed`| Bad/revoked `DISCORD_TOKEN` → exit 1 → Render restart loop. Rotate the token (below). |
-   | `bot.connecting` then nothing       | `client.login()` is hung — **not** a rejection, so `loginWithBackoff` never fires. Usually Discord throttling session starts. `gateway.stalled` fires after 5 min. |
-   | `gateway.disconnected` / `gateway.reconnecting` | WebSocket dropped. Process is alive and Render shows green; the bot is offline in Discord. |
-   | `bot.ready`, then silence           | Connected and healthy; the problem is command registration or a specific command. |
-   | `commands.sync.failed`              | Registry desync only. The bot still serves its previous command list. |
-   | nothing at all                      | Service suspended, or the deploy never started. Check Render **Events**. |
+This is the one operational regression from dropping the gateway, and it has bitten
+before: #1191 renamed `/su` to `/salvageunion` without a registration write, and
+every invocation timed out for a week while the bot was healthy. A stale registry
+is invisible from the endpoint probe above.
 
-   Note the login path is a **crash loop by design**: five backed-off attempts, then `exit(1)`
-   so a persistent auth failure surfaces to the platform rather than sitting in a fake-healthy
-   process. Repeated restart events in Render with `login.failed` in each is the signature.
+(Set `DISCORD_GUILD_ID` for instant per-guild registration while developing; leave
+it unset for global registration, ~1h propagation.)
 
-   > **A green Render dashboard does not mean a connected bot.** Render only knows the process
-   > is alive. On 2026-08-18 the bot was offline while every Render signal — build, deploy,
-   > events, service status — was `succeeded`, and the logs showed nothing but identical
-   > `metrics.flush` heartbeats. The gateway fields above exist so that is never again
-   > indistinguishable from health; do not conclude "the bot is fine" from Render state alone.
+### Rollback
 
-5. **Check Sentry.** Only meaningful if the run logged `errorTracker.init … enabled: true`.
-   `SENTRY_DSN` is optional and unset by default — see the caveat under *Deploy* above.
+```bash
+bunx wrangler@4 deployments list --name randsum-discord-bot
+bunx wrangler@4 rollback --name randsum-discord-bot [<version-id>]
+```
 
-### Restart
+Atomic, no rebuild, and newer versions are not deleted. As with the sites,
+**rollback restores code, not configuration** — routes and vars live on the
+Worker, so a bad `routes` change is fixed by deploying a corrected config.
 
-Render dashboard → service `randsum-discord-bot` → **Manual Deploy → Restart service** (or
-**Suspend** then **Resume**). A worker has no inbound URL; "up" means connected to the Discord
-gateway.
-
-### Rollback — redeploy previous commit
-
-1. Render dashboard → `randsum-discord-bot` → **Deploys** (or **Events**) tab.
-2. Find the last known-good deploy → **Redeploy** that commit (Render's "Rollback to this
-   deploy" / "Redeploy" action rebuilds and restarts the worker on that commit).
-3. If a command-schema change is part of the regression, the redeployed worker restores the
-   prior command set on startup — the rolled-back barrel is what it syncs from. Watch for
-   `commands.sync.updated` in the logs to confirm.
+A rolled-back command *schema* does not roll back the registry: re-run
+`deploy-commands` from the rolled-back checkout.
 
 ### Token rotation (`DISCORD_TOKEN`)
 
-1. Discord Developer Portal → your application → **Bot** → **Reset Token**; copy the new token.
-2. Render dashboard → `randsum-discord-bot` → **Environment** → update `DISCORD_TOKEN` → save.
-3. Render restarts the worker with the new secret. (The restart runs the startup command sync,
-   which will log `commands.sync.unchanged` — a token rotation is not a command change.)
-4. Invalidate the old token: it is revoked the moment you reset it in the portal, so any
-   leaked copy stops working immediately. Audit any place the old value may have leaked.
-5. `DISCORD_CLIENT_ID` is the application ID, not a secret, but is also stored in Render env.
+The Worker does not hold this token, so rotation is no longer a deploy concern —
+it only affects whoever runs `deploy-commands`.
+
+1. Discord Developer Portal → application → **Bot** → **Reset Token**.
+2. Use the new value in the environment you run `deploy-commands` from.
+
+Resetting revokes the old token immediately. `DISCORD_CLIENT_ID` is the
+application ID, not a secret.
 
 ### DR notes
 
-- The bot is reproducible from git via the Render blueprint. The only external state is the
-  three env vars (set in Render) and the Discord application itself. Keep the Discord app's
-  owner/team membership documented so the token can always be rotated.
+- Fully reproducible from git: `wrangler deploy` from a clean checkout is
+  complete, because `DISCORD_PUBLIC_KEY` is committed rather than a Worker secret.
+- The non-git state is the **Discord application** itself — the Interactions
+  Endpoint URL and the registered command list. Keep the application's owner/team
+  membership documented so the token can always be rotated.
+- Losing `bot.randsum.dev` (zone or custom domain) takes the bot down with no
+  failing deploy to point at, since Discord never rediscovers the URL.
 
 ---
 

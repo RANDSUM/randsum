@@ -1,10 +1,10 @@
 /**
  * The `/notation` reference view — embed plus category selector.
  *
- * Extracted so both transports render the identical thing. The gateway bot
- * builds this, posts it, and keeps a component collector alive to re-render on
- * each selection; a Worker builds the same view and returns it, then builds it
- * again when Discord POSTs the next selection. Same pixels, no shared runtime.
+ * Extracted when there were two transports, so both rendered the identical
+ * thing. Only the Worker remains: it builds this view and returns it, then
+ * builds it again when Discord POSTs the next selection. Nothing is held open
+ * between the two — each selection is an independent request.
  *
  * The state question turned out to be smaller than the migration plan assumed.
  * The plan said `/notation`'s pagination would need its state encoded into the
