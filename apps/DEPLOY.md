@@ -282,7 +282,11 @@ Both Astro sites are separate Workers, each with a custom domain, deployed from
   `apps/site/dist/server/wrangler.json`, not the hand-written
   `apps/site/wrangler.jsonc` (that one is build input).
 - **rdn** — `output: 'static'`, no adapter. Deploy `apps/rdn/wrangler.jsonc`.
-- Both are path-filtered, so a merge only redeploys what it touched.
+- The path filter is on the **workflow**, not per job: a merge touching any of
+  `apps/{rdn,site,discord-bot}/**`, `packages/**` or `bun.lock` runs all three
+  deploy jobs. Redeploying an unchanged surface is a no-op version upload, so
+  this costs CI minutes rather than correctness. A manual run can narrow to one
+  surface — see below.
 
 ### Deploy
 
@@ -298,6 +302,37 @@ wrangler deploy -c apps/site/dist/server/wrangler.json
 bun run --filter @randsum/roller --filter @randsum/rdn build
 wrangler deploy -c apps/rdn/wrangler.jsonc
 ```
+
+### Deploying when the push trigger does not fire
+
+**A merge to `main` is not a guarantee that anything deployed.** On 2026-09-01
+the merge of #1235 produced ZERO workflow runs — not the deploy, not CI, not
+CodeQL. `actions/runs?head_sha=<sha>` returned `total_count: 0` twenty minutes
+later. GitHub dropped the push event; the workflow was correct and had run
+normally for the merge forty minutes before.
+
+There is no re-run for a run that never existed, so `workflow_dispatch` is the
+way out:
+
+```bash
+gh workflow run deploy-cloudflare.yml --ref main                    # all surfaces
+gh workflow run deploy-cloudflare.yml --ref main -f surface=bot     # just the bot
+gh workflow run deploy-cloudflare.yml --ref main -f surface=site    # randsum.dev
+gh workflow run deploy-cloudflare.yml --ref main -f surface=rdn     # notation.randsum.dev
+```
+
+Or use the **Run workflow** button on the workflow's Actions page. It shares the
+`deploy-cloudflare` concurrency group with the push-triggered runs, so a manual
+run queues behind an in-flight deploy rather than racing it.
+
+**Confirm a merge actually deployed** — a green PR says nothing about the push
+that followed it:
+
+```bash
+gh api "repos/RANDSUM/randsum/actions/runs?head_sha=$(git rev-parse origin/main)" --jq '.total_count'
+```
+
+`0` means no workflow ran for that commit at all. Dispatch manually.
 
 ### Rollback — roll back to a previous version
 

@@ -20,6 +20,18 @@
 # site deploy means randsum.dev silently serves stale content. The bot is
 # stricter still: Discord posts interactions to bot.randsum.dev and there is no
 # second transport, so the deployed Worker IS the bot.
+#
+# `workflow_dispatch` is the manual escape hatch, and it exists because the push
+# trigger is not guaranteed to fire. On 2026-09-01 the merge of #1235 produced
+# ZERO workflow runs — not this one, not CI, not CodeQL. `actions/runs?head_sha=`
+# returned `total_count: 0` twenty minutes later. GitHub dropped the push event;
+# nothing in this file was wrong, and the same workflow had run correctly for the
+# merge forty minutes earlier.
+#
+# That left main undeployed with no way to fix it from the Actions UI: you cannot
+# re-run a run that never existed, and the only other route was to push another
+# commit to main purely to trigger a deploy. Hence a trigger that does not depend
+# on an event GitHub might not deliver.
 name: Deploy (Cloudflare)
 
 on:
@@ -32,6 +44,13 @@ on:
       - 'packages/**'
       - 'bun.lock'
       - '.github/workflows/deploy-cloudflare.yml'
+  workflow_dispatch:
+    inputs:
+      surface:
+        description: 'Which surface to deploy'
+        type: choice
+        default: all
+        options: [all, rdn, site, bot]
 
 permissions:
   contents: read
@@ -45,6 +64,9 @@ concurrency:
 jobs:
   rdn:
     name: notation.randsum.dev
+    # A push deploys every surface, exactly as before — `inputs.surface` is empty
+    # for a push, so the first clause carries it. Only a manual run can narrow.
+    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'rdn'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -68,6 +90,9 @@ jobs:
 
   site:
     name: randsum.dev
+    # A push deploys every surface, exactly as before — `inputs.surface` is empty
+    # for a push, so the first clause carries it. Only a manual run can narrow.
+    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'site'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -98,6 +123,9 @@ jobs:
 
   bot:
     name: bot.randsum.dev
+    # A push deploys every surface, exactly as before — `inputs.surface` is empty
+    # for a push, so the first clause carries it. Only a manual run can narrow.
+    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'bot'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
