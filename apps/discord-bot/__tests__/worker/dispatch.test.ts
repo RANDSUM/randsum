@@ -8,8 +8,9 @@
  */
 import { describe, expect, test } from 'bun:test'
 import { commands as commandList } from '../../src/commands/index.js'
+import { ContainerBuilder, TextDisplayBuilder } from '../../src/utils/builders.js'
 import { dispatchInteraction, InteractionResponseType } from '../../src/worker/dispatch.js'
-import type { Command } from '../../src/types.js'
+import type { Command, RollView } from '../../src/types.js'
 
 const commands: ReadonlyMap<string, Command> = new Map(
   commandList.map(command => [command.data.name, command])
@@ -168,5 +169,63 @@ describe('dispatchInteraction', () => {
       commands
     ) as Rendered
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+  })
+
+  describe('the Components V2 seam', () => {
+    const buildView = (): RollView => [
+      new ContainerBuilder()
+        .setAccentColor(0x4fb3a5)
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent('## rendered by buildView'))
+    ]
+
+    const viewCommand: Command = { data: commandList[0]!.data, buildView }
+
+    function invokeView(options: { name: string; value: unknown }[] = []): Rendered {
+      return dispatchInteraction(
+        { type: 2, data: { name: 'probe', options } },
+        new Map([['probe', viewCommand]])
+      ) as Rendered
+    }
+
+    test('a command defining buildView is rendered as components, not embeds', () => {
+      const response = invokeView()
+      expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+      expect(response.data?.embeds).toBeUndefined()
+      // Container is component type 17.
+      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
+    })
+
+    test('the IsComponentsV2 flag is always set on a view response', () => {
+      // Without it Discord reads `components` as legacy action rows and rejects
+      // the container outright, so this flag is load-bearing, not cosmetic.
+      expect(invokeView().data?.flags).toBe(32768)
+    })
+
+    test('hidden composes with the V2 flag rather than replacing it', () => {
+      expect(invokeView([{ name: 'hidden', value: true }]).data?.flags).toBe(32768 | 64)
+    })
+
+    test('buildView wins when a command defines both renderers', () => {
+      const both: Command = {
+        data: commandList[0]!.data,
+        buildView,
+        buildEmbed: () => {
+          throw new Error('the embed path must not run when buildView exists')
+        }
+      }
+      const response = dispatchInteraction(
+        { type: 2, data: { name: 'probe' } },
+        new Map([['probe', both]])
+      ) as Rendered
+      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
+    })
+
+    test('a command with neither renderer still reports itself unavailable', () => {
+      const response = dispatchInteraction(
+        { type: 2, data: { name: 'probe' } },
+        new Map([['probe', { data: commandList[0]!.data }]])
+      ) as Rendered
+      expect(response.data?.embeds?.[0]?.title).toBe('Error')
+    })
   })
 })

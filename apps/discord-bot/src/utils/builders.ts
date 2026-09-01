@@ -21,13 +21,30 @@
  * The rule this encodes: **command files import from here, never from
  * `discord.ts`.** Anything that needs the gateway barrel is transport, and
  * belongs in the gateway entry point.
+ *
+ * The Components V2 builders (`ContainerBuilder`, `SectionBuilder`,
+ * `TextDisplayBuilder`, `SeparatorBuilder`, `ThumbnailBuilder`) are here for
+ * the same reason as the rest: they are pure data construction, and they ship
+ * in the version already pinned — Components V2 needed no dependency bump.
  */
 export {
   ActionRowBuilder,
   ButtonBuilder,
+  ContainerBuilder,
   EmbedBuilder,
+  SectionBuilder,
+  SeparatorBuilder,
   SlashCommandBuilder,
-  StringSelectMenuBuilder
+  StringSelectMenuBuilder,
+  TextDisplayBuilder,
+  ThumbnailBuilder
 } from '@discordjs/builders'
 
-export { ComponentType, MessageFlags } from 'discord-api-types/v10'
+export {
+  ButtonStyle,
+  ComponentType,
+  MessageFlags,
+  SeparatorSpacingSize
+} from 'discord-api-types/v10'
+
+export type { APIContainerComponent } from 'discord-api-types/v10'
