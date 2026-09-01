@@ -1,30 +1,15 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { roll } from '@randsum/games/fifth'
 import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
+import {
+  createGameCommand,
+  formatSignedModifier,
+  getInitialRolls,
+  getKeptRolls,
+  markKeptRolls
+} from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
-
-/**
- * Renders each initial d20 with the kept die(s) bold and the dropped die(s)
- * struck through. Kept values are matched against the roller's post-modifier
- * `rolls` (the dice it actually kept) and consumed one-by-one, so a tie — where
- * both d20s show the same face — still renders exactly one bold and one struck
- * die rather than bolding both.
- */
-function markKeptRolls(initialRolls: readonly number[], keptRolls: readonly number[]): string {
-  const remaining = [...keptRolls]
-  return initialRolls
-    .map(r => {
-      const idx = remaining.indexOf(r)
-      if (idx !== -1) {
-        remaining.splice(idx, 1)
-        return `**${r}**`
-      }
-      return `~~${r}~~`
-    })
-    .join(', ')
-}
 
 function buildFifthEmbed(context: CommandContext): EmbedBuilder {
   const modifier = context.options.getInteger('modifier') ?? 0
@@ -40,7 +25,7 @@ function buildFifthEmbed(context: CommandContext): EmbedBuilder {
   })
 
   const initialRolls = getInitialRolls(result)
-  const keptRolls = result.rolls[0]?.rolls ?? []
+  const keptRolls = getKeptRolls(result)
   const criticals = result.details.criticals
   const isNat20 = criticals?.isNatural20 === true
   const isNat1 = criticals?.isNatural1 === true

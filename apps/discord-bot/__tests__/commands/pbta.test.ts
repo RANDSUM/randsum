@@ -65,13 +65,17 @@ describe('pbtaCommand', () => {
     expect(mockRoll).toHaveBeenCalledWith({ stat: 2, ongoing: 2 })
   })
 
-  test('rollingWith adds rolling_with field', () => {
+  test('rollingWith is forwarded under the key the roller accepts', () => {
+    // Regression guard: the command used to pass `{ advantage: true }`, a key
+    // the generated roller does not declare. A conditional spread dodges
+    // excess-property checking, so it compiled, was silently dropped, and the
+    // embed reported advantage over a plain 2d6.
     const embed = render([
       { name: 'stat', value: 2 },
       { name: 'rolling_with', value: 'Advantage' }
     ])
     expect(fieldNames(embed)).toContain('Rolling With')
-    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, advantage: true })
+    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, rollingWith: 'Advantage' })
   })
 
   test('a negative stat renders with its sign', () => {

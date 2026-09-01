@@ -21,14 +21,14 @@ export function roll(
   if (input?.rating !== undefined && typeof input?.rating === 'number')
     validateFinite(
       input?.rating,
-      'Dice pool size including action rating, assists, and push (0 = desperate, 1-6 = standard)'
+      'Dice pool size including action rating, assists, and push (0 = roll two, take the worst)'
     )
   if (input?.rating !== undefined && typeof input?.rating === 'number')
     validateRange(
       input?.rating,
       0,
-      6,
-      'Dice pool size including action rating, assists, and push (0 = desperate, 1-6 = standard)'
+      10,
+      'Dice pool size including action rating, assists, and push (0 = roll two, take the worst)'
     )
   if (input?.rating === 0) {
     const r = executeRoll({ sides: 6, quantity: 2, modifiers: { keep: { lowest: 1 } } })

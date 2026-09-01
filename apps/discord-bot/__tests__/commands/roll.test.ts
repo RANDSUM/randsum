@@ -64,6 +64,10 @@ function fieldNames(embed: APIEmbed): string[] {
   return (embed.fields ?? []).map(field => field.name)
 }
 
+function fieldValues(embed: APIEmbed): string[] {
+  return (embed.fields ?? []).map(field => field.value)
+}
+
 beforeEach(() => {
   mockNotation
     .mockClear()
@@ -103,22 +107,62 @@ describe('rollCommand', () => {
     expect(() => render('1d20')).toThrow('Roll failed')
   })
 
-  test('modified rolls same as initial: no Modified Rolls field added', () => {
+  test('unmodified pool: dice render plain, with no drop marking', () => {
     mockRoll.mockImplementationOnce(() => ({
       total: 5,
-      rolls: [{ initialRolls: [5], rolls: [5], modifierLogs: [] }]
+      rolls: [{ notation: '1d6', total: 5, initialRolls: [5], rolls: [5], modifierLogs: [] }]
     }))
-    const names = fieldNames(render('1d6'))
-    expect(names).toContain('Initial Rolls')
-    expect(names).not.toContain('Modified Rolls')
+    const embed = render('1d6')
+    expect(fieldNames(embed)).toEqual(['Rolls'])
+    expect(fieldValues(embed)[0]).toBe('5')
   })
 
-  test('modified rolls differ from initial: Modified Rolls field added', () => {
+  test('modified pool: dropped dice are struck through, kept dice bold', () => {
     mockRoll.mockImplementationOnce(() => ({
       total: 7,
-      rolls: [{ initialRolls: [3, 4], rolls: [4], modifierLogs: [] }]
+      rolls: [{ notation: '2d6L', total: 7, initialRolls: [3, 4], rolls: [4], modifierLogs: [] }]
     }))
-    expect(fieldNames(render('2d6L'))).toContain('Modified Rolls')
+    // The old renderer printed two parallel plain lists and left the reader to
+    // diff them; the dropped die is now marked in place.
+    expect(fieldValues(render('2d6L'))[0]).toBe('~~3~~, **4**')
+  })
+
+  test('a tied drop marks exactly one die, not both', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 4,
+      rolls: [{ notation: '2d6L', total: 4, initialRolls: [4, 4], rolls: [4], modifierLogs: [] }]
+    }))
+    expect(fieldValues(render('2d6L'))[0]).toBe('**4**, ~~4~~')
+  })
+
+  test('multi-pool roll: every pool is rendered, not just the first', () => {
+    // The regression this guards: the renderer read `rolls[0]` only, so a
+    // second pool's dice were invisible while its total was still in the title.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 14,
+      rolls: [
+        { notation: '2d6', total: 7, initialRolls: [3, 4], rolls: [3, 4], modifierLogs: [] },
+        { notation: '1d8', total: 7, initialRolls: [7], rolls: [7], modifierLogs: [] }
+      ]
+    }))
+    const names = fieldNames(render('2d6 1d8'))
+    expect(names).toEqual(['2d6 (7)', '1d8 (7)'])
+  })
+
+  test('a repeat beyond 25 fields is truncated rather than rejected by Discord', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 90,
+      rolls: Array.from({ length: 30 }, () => ({
+        notation: '3d6',
+        total: 3,
+        initialRolls: [1, 1, 1],
+        rolls: [1, 1, 1],
+        modifierLogs: []
+      }))
+    }))
+    const names = fieldNames(render('3d6x30'))
+    expect(names.length).toBeLessThanOrEqual(25)
+    expect(names.at(-1)).toBe('…')
   })
 
   test('an empty roll record renders no dice fields rather than empty ones', () => {

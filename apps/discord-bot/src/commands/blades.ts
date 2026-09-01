@@ -1,7 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { roll } from '@randsum/games/blades'
 import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, getInitialRolls } from './lib/index.js'
+import { createGameCommand, getInitialRolls, getKeptRolls, markKeptRolls } from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
@@ -10,7 +10,11 @@ function buildBladesEmbed(context: CommandContext): EmbedBuilder {
   const result = roll({ rating: dice })
 
   const initialRolls = getInitialRolls(result)
-  const highestDie = initialRolls.length > 0 ? Math.max(...initialRolls) : 1
+  // The die the engine kept, not a locally recomputed maximum. At rating 0 the
+  // roller keeps the *lowest* of two dice, so `Math.max` named — and bolded —
+  // the die that was thrown away, directly contradicting the outcome title.
+  const keptRolls = getKeptRolls(result)
+  const decidingDie = keptRolls[0] ?? result.total
 
   const resultConfig = {
     critical: {
@@ -50,12 +54,12 @@ function buildBladesEmbed(context: CommandContext): EmbedBuilder {
   })
 
   embed.addFields({
-    name: 'Highest Roll',
-    value: String(highestDie),
+    name: 'Deciding Die',
+    value: String(decidingDie),
     inline: true
   })
 
-  const rollsText = initialRolls.map(r => (r === highestDie ? `**${r}**` : `~~${r}~~`)).join(', ')
+  const rollsText = markKeptRolls(initialRolls, keptRolls)
 
   embed.addFields({
     name: 'All Rolls',
