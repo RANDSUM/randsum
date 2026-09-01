@@ -69,11 +69,15 @@ function fieldValues(embed: APIEmbed): string[] {
 }
 
 beforeEach(() => {
+  // `mockReset` rather than `mockClear`: clear keeps queued one-shot
+  // implementations, so a `mockImplementationOnce` left unconsumed by a test
+  // that threw before reaching `roll()` would silently be picked up by the next
+  // test — turning one bad test into a cascade of three.
   mockNotation
-    .mockClear()
+    .mockReset()
     .mockImplementation((...args: Parameters<typeof realNotation>) => realNotation(...args))
   mockRoll
-    .mockClear()
+    .mockReset()
     .mockImplementation((...args: Parameters<typeof realRoll>) => realRoll(...args))
 })
 
@@ -138,15 +142,19 @@ describe('rollCommand', () => {
   test('multi-pool roll: every pool is rendered, not just the first', () => {
     // The regression this guards: the renderer read `rolls[0]` only, so a
     // second pool's dice were invisible while its total was still in the title.
+    //
+    // The notation is a repeat (`x2`), not two space-separated pools: `/roll`
+    // takes a SINGLE notation string, so `2d6 1d8` does not parse — `roll()`
+    // accepts several arguments but this command has no way to express that.
     mockRoll.mockImplementationOnce(() => ({
       total: 14,
       rolls: [
-        { notation: '2d6', total: 7, initialRolls: [3, 4], rolls: [3, 4], modifierLogs: [] },
-        { notation: '1d8', total: 7, initialRolls: [7], rolls: [7], modifierLogs: [] }
+        { notation: '4d6L', total: 7, initialRolls: [3, 4], rolls: [3, 4], modifierLogs: [] },
+        { notation: '4d6L', total: 7, initialRolls: [7], rolls: [7], modifierLogs: [] }
       ]
     }))
-    const names = fieldNames(render('2d6 1d8'))
-    expect(names).toEqual(['2d6 (7)', '1d8 (7)'])
+    const names = fieldNames(render('4d6Lx2'))
+    expect(names).toEqual(['4d6L (7)', '4d6L (7)'])
   })
 
   test('a repeat beyond 25 fields is truncated rather than rejected by Discord', () => {
