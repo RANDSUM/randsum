@@ -130,7 +130,7 @@ src/
 │   ├── root.ts
 │   ├── salvageunion.ts
 │   └── lib/         # Shared command scaffolding
-├── utils/           # builders (portable), discord (REST), config, constants, logger, etc.
+├── utils/           # builders (portable), discord (REST only), config, constants
 ├── types.ts         # TypeScript type definitions
 └── deploy-commands.ts  # Command registration script
 ```
@@ -138,7 +138,8 @@ src/
 ### Adding New Commands
 
 1. Create a new file in `src/commands/` (e.g., `mycommand.ts`)
-2. Export a command object with `data` (SlashCommandBuilder) and `execute` function
+2. Export a command object with `data` (SlashCommandBuilder) and a `buildEmbed(context)` renderer
+   — usually via the `createGameCommand` factory in `src/commands/lib/`
 3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/worker/index.ts` and `src/deploy-commands.ts` import from it)
 4. Deploy, then run `bun run deploy-commands` — registration is a separate, explicit step (see [Slash Commands](#slash-commands))
 

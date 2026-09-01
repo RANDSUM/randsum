@@ -1,33 +1,11 @@
-import { describe, expect, mock, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import type { APIEmbed } from 'discord.js'
+import { makeContext } from './lib/context.js'
 
 const { helpCommand } = await import('../../src/commands/help.js')
 
-interface FakeCommand {
-  data: { name: string; description: string }
-}
-
-function makeCommands(): Map<string, FakeCommand> {
-  const entries: FakeCommand[] = [
-    { data: { name: 'roll', description: 'Roll dice' } },
-    { data: { name: 'blades', description: 'Blades in the Dark' } },
-    { data: { name: 'help', description: 'List all available RANDSUM commands' } }
-  ]
-  return new Map(entries.map(cmd => [cmd.data.name, cmd]))
-}
-
-function makeInteraction(hidden = false): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: { getBoolean: ReturnType<typeof mock> }
-  client: { commands: Map<string, FakeCommand> }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
-    options: { getBoolean: mock(() => hidden) },
-    client: { commands: makeCommands() }
-  }
+function render(): APIEmbed {
+  return helpCommand.buildEmbed!(makeContext()).toJSON()
 }
 
 describe('helpCommand', () => {
@@ -46,58 +24,26 @@ describe('helpCommand', () => {
     expect(optionNames).toContain('hidden')
   })
 
-  test('execute: defers reply', async () => {
-    const interaction = makeInteraction()
-    await helpCommand.execute(interaction as never)
-    expect(interaction.deferReply).toHaveBeenCalledTimes(1)
+  test('embed uses gold color', () => {
+    expect(render().color).toBe(0xffd700)
   })
 
-  test('execute: replies with an embed', async () => {
-    const interaction = makeInteraction()
-    await helpCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith(
-      expect.objectContaining({ embeds: expect.any(Array) })
-    )
+  test('embed includes footer', () => {
+    expect(render().footer).toBeDefined()
   })
 
-  test('execute: embed uses gold color', async () => {
-    const interaction = makeInteraction()
-    await helpCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.color).toBe(0xffd700)
-  })
-
-  test('execute: embed includes footer', async () => {
-    const interaction = makeInteraction()
-    await helpCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { footer?: unknown }
-    expect(embedJson.footer).toBeDefined()
-  })
-
-  test('execute: lists commands from the barrel, excluding help itself', async () => {
+  test('lists commands from the barrel, excluding help itself', async () => {
     // Source of truth changed deliberately. `/help` used to read
-    // `client.commands`, which only exists on the gateway — a Worker has no
-    // client, so the same command could not have rendered there. It now reads
-    // the command barrel, which `apps/discord-bot/CLAUDE.md` already calls the
+    // `client.commands`, which only existed on the gateway — the Worker has no
+    // client, so the same command could not have rendered there. It reads the
+    // command barrel, which `apps/discord-bot/CLAUDE.md` already calls the
     // single source of truth for what commands exist.
     //
     // Importing the barrel is what publishes the registry, so the import below
     // is load-bearing rather than incidental.
     await import('../../src/commands/index.js')
 
-    const interaction = makeInteraction()
-    await helpCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
+    const fieldNames = (render().fields ?? []).map(field => field.name)
     expect(fieldNames).toContain('/roll')
     expect(fieldNames).toContain('/blades')
     expect(fieldNames).not.toContain('/help')

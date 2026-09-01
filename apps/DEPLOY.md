@@ -250,18 +250,23 @@ Alerting did not survive either, and this is the part most likely to surprise
 someone later. The gateway bot's Discord webhook and Healthchecks heartbeat were
 wired in `index.ts`; **the Worker inherits neither.**
 
-`errorTracker.ts` was cut down to a structured-log seam in the same change. Its
-remote forwarding — a hand-rolled Sentry envelope sender and a Discord webhook
-poster, with a 10-minute dedupe window — was configured by `SENTRY_DSN` and
+`errorTracker.ts` was cut down to a structured-log seam in the same change, and
+then removed entirely when `Command.execute` went — `/notation`'s gateway
+handler was its last caller. Its remote forwarding, a hand-rolled Sentry
+envelope sender and a Discord webhook poster with a 10-minute dedupe window, had
+already gone with Render; it was configured by `SENTRY_DSN` and
 `DISCORD_ERROR_WEBHOOK_URL`, both Render dashboard variables, and initialized by
 the gateway's `initErrorTracker()` call. None of it could have run on workerd
 regardless: it read `process.env`, and `flushErrorTracker()` existed to drain
 in-flight sends before a deliberate `process.exit`, which a Worker has no concept
-of. `/notation` still calls `captureException`; it now only logs.
+of.
 
-**Cloudflare Workers Observability is the only place bot errors are visible**,
-and it ingests exactly the structured lines `logger` emits. Re-adding delivery
-means reading config from the Worker's `env` argument, not from `process`.
+**Cloudflare Workers Observability is the only place bot errors are visible.** It
+needs nothing from the application — it captures uncaught exceptions and request
+telemetry at the platform level. The Worker path never emitted an application log
+line even before the removal, so there is no log stream that stopped. Re-adding
+one means writing it against the Worker's `env` argument and calling it from
+`dispatch.ts`.
 
 Sentry needs no decommissioning: it was never enabled in production.
 

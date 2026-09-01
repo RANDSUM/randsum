@@ -1,40 +1,13 @@
-import { deferReplyHonoringHidden } from '../../utils/ephemeral.js'
-import { replyWithError } from '../../utils/replyWithError.js'
 import type { EmbedBuilder } from '../../utils/builders.js'
-import type { ChatInputCommandInteraction } from '../../utils/discord.js'
 import type { Command } from '../../types.js'
 import type { CommandContext } from './context.js'
 
 export type { CommandContext, CommandOptions } from './context.js'
 export { optionsFromPayload } from './context.js'
 
-/**
- * Build the transport-agnostic context from a live gateway interaction.
- *
- * discord.js's `interaction.options` already has the accessor shape
- * `CommandOptions` describes, so this is a narrowing rather than an adapter —
- * which is the point: the interface was defined to fit what already exists, so
- * neither transport pays a translation cost.
- */
-export function contextFromInteraction(interaction: ChatInputCommandInteraction): CommandContext {
-  return {
-    options: interaction.options,
-    // A getter, not a value. Only `/root` reads the display name, and reading
-    // it eagerly here would touch `interaction.user` on every command — which
-    // changes behaviour for the nine that never did, and immediately broke the
-    // test fixtures that (reasonably) only mock what their command uses.
-    // Deferring keeps this refactor genuinely invisible.
-    get userDisplayName() {
-      return interaction.user.displayName
-    }
-  }
-}
-
 interface CreateGameCommandOptions {
   readonly data: Command['data']
   readonly buildEmbed: (context: CommandContext) => EmbedBuilder
-  readonly describeError?: (error: unknown, context: CommandContext) => string
-  readonly autocomplete?: Command['autocomplete']
 }
 
 /** Default message for the shared catch block: the error text, or a generic fallback. */
@@ -43,39 +16,22 @@ export function defaultErrorMessage(error: unknown): string {
 }
 
 /**
- * Collapses the per-game command boilerplate — defer (honoring the `hidden`
- * option), build the embed, edit the reply, and reply with an error embed on
- * failure — into one place. Each command supplies only its `data`
- * (SlashCommandBuilder) and a `buildEmbed` that reads the interaction options
- * and returns an EmbedBuilder. Commands with bespoke error text (e.g. /roll's
- * "Did you mean" suggestion) pass `describeError`; commands with option
- * autocomplete pass `autocomplete`.
+ * Pairs a command's `data` (SlashCommandBuilder) with its renderer.
+ *
+ * This used to collapse real per-command boilerplate — defer honoring the
+ * `hidden` option, build the embed, edit the reply, reply with an error embed
+ * on failure — because each command owned a gateway `execute`. All four of
+ * those steps belong to the Worker dispatcher now, which does them once for
+ * every command, so what is left here is the pairing itself.
+ *
+ * Kept rather than inlined because it gives every command one declared shape,
+ * and because `buildEmbed` is optional on `Command` while it is required here:
+ * a command built through this factory cannot omit its renderer.
  */
 export function createGameCommand(options: CreateGameCommandOptions): Command {
-  const { data, buildEmbed, describeError, autocomplete } = options
+  const { data, buildEmbed } = options
 
-  return {
-    data,
-    // Renders without an interaction object, which is what lets the Worker
-    // build a response body directly. This is the only renderer; the gateway
-    // path that also called it is gone.
-    buildEmbed,
-    async execute(interaction) {
-      await deferReplyHonoringHidden(interaction)
-      const context = contextFromInteraction(interaction)
-
-      try {
-        const embed = buildEmbed(context)
-        await interaction.editReply({ embeds: [embed] })
-      } catch (error) {
-        const description = describeError
-          ? describeError(error, context)
-          : defaultErrorMessage(error)
-        await replyWithError(interaction, 'Error', description)
-      }
-    },
-    ...(autocomplete ? { autocomplete } : {})
-  }
+  return { data, buildEmbed }
 }
 
 /** Formats a modifier with an explicit sign: positive values gain a leading `+`. */

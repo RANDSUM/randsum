@@ -61,8 +61,7 @@ export function buildCategoryEmbed(
 
 export function buildCategoryMenu(
   categories: readonly string[],
-  selected: string,
-  disabled = false
+  selected: string
 ): ActionRowBuilder<StringSelectMenuBuilder> {
   const menu = new StringSelectMenuBuilder()
     .setCustomId(NOTATION_SELECT_ID)
@@ -74,7 +73,6 @@ export function buildCategoryMenu(
         default: category === selected
       }))
     )
-    .setDisabled(disabled)
 
   return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu)
 }
@@ -82,8 +80,6 @@ export function buildCategoryMenu(
 export interface NotationView {
   readonly embed: EmbedBuilder
   readonly row: ActionRowBuilder<StringSelectMenuBuilder>
-  readonly category: string
-  readonly categories: readonly string[]
 }
 
 /**
@@ -99,8 +95,6 @@ export function buildNotationView(category?: string | undefined): NotationView {
 
   return {
     embed: buildCategoryEmbed(selected, grouped.get(selected) ?? []),
-    row: buildCategoryMenu(categories, selected),
-    category: selected,
-    categories
+    row: buildCategoryMenu(categories, selected)
   }
 }

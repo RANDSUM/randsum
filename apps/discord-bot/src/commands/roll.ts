@@ -1,9 +1,8 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { roll } from '@randsum/roller/roll'
 import { notation as createNotation } from '@randsum/roller/validate'
-import { suggestNotationFix } from '@randsum/roller'
 import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, defaultErrorMessage } from './lib/index.js'
+import { createGameCommand } from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
@@ -46,13 +45,6 @@ function buildRollEmbed(context: CommandContext): EmbedBuilder {
   return embed
 }
 
-function describeRollError(error: unknown, context: CommandContext): string {
-  const notationString = context.options.getString('notation', true)
-  const baseMessage = defaultErrorMessage(error)
-  const suggestion = suggestNotationFix(notationString)
-  return suggestion ? `${baseMessage}\n\nDid you mean \`${suggestion}\`?` : baseMessage
-}
-
 export const rollCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('roll')
@@ -69,6 +61,5 @@ export const rollCommand: Command = createGameCommand({
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-  buildEmbed: buildRollEmbed,
-  describeError: describeRollError
+  buildEmbed: buildRollEmbed
 })

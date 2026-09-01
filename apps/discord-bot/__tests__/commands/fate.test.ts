@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 import type { APIEmbed } from 'discord.js'
+import { makeContext, type RawOption } from './lib/context.js'
 
 const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
   result: 'great',
@@ -11,27 +12,12 @@ void mock.module('@randsum/games/fate', () => ({ roll: mockRoll }))
 
 const { fateCommand } = await import('../../src/commands/fate.js')
 
-function makeInteraction(opts: { skill?: number } = {}): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: {
-    getInteger: ReturnType<typeof mock>
-    getString: ReturnType<typeof mock>
-    getBoolean: ReturnType<typeof mock>
-  }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
-    options: {
-      getInteger: mock((name: string) => {
-        if (name === 'skill') return opts.skill ?? 0
-        return 0
-      }),
-      getString: mock((_name: string) => null),
-      getBoolean: mock(() => false)
-    }
-  }
+function render(options: readonly RawOption[] = []): APIEmbed {
+  return fateCommand.buildEmbed!(makeContext(options)).toJSON()
+}
+
+function field(embed: APIEmbed, name: string): { name: string; value: string } | undefined {
+  return (embed.fields ?? []).find(entry => entry.name === name)
 }
 
 beforeEach(() => {
@@ -39,67 +25,37 @@ beforeEach(() => {
 })
 
 describe('fateCommand', () => {
-  test('titles the embed with the ladder rung', async () => {
-    const interaction = makeInteraction()
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Great')
+  test('titles the embed with the ladder rung', () => {
+    expect(render().title).toBe('Great')
   })
 
-  test('renders the four Fate dice symbols', async () => {
-    const interaction = makeInteraction()
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string; value: string }[] }
-    const diceField = (embedJson.fields ?? []).find(f => f.name === 'Fate Dice (4dF)')
-    expect(diceField).toBeDefined()
-    expect(diceField!.value).toBe('+  +  ▢  +')
+  test('renders the four Fate dice symbols', () => {
+    expect(field(render(), 'Fate Dice (4dF)')?.value).toBe('+  +  ▢  +')
   })
 
-  test('non-zero skill adds a skill field', async () => {
-    const interaction = makeInteraction({ skill: 3 })
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string; value: string }[] }
-    const skillField = (embedJson.fields ?? []).find(f => f.name === 'Skill')
-    expect(skillField).toBeDefined()
-    expect(skillField!.value).toBe('+3')
+  test('non-zero skill adds a skill field', () => {
+    expect(field(render([{ name: 'skill', value: 3 }]), 'Skill')?.value).toBe('+3')
   })
 
-  test('zero skill omits the skill field', async () => {
-    const interaction = makeInteraction({ skill: 0 })
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
-    expect(fieldNames).not.toContain('Skill')
+  test('zero skill omits the skill field', () => {
+    expect(field(render([{ name: 'skill', value: 0 }]), 'Skill')).toBeUndefined()
   })
 
-  test('clamps an out-of-range skill to the ladder bounds', async () => {
-    const interaction = makeInteraction({ skill: 99 })
-    await fateCommand.execute(interaction as never)
+  test('clamps an out-of-range skill to the ladder bounds', () => {
+    render([{ name: 'skill', value: 99 }])
     expect(mockRoll).toHaveBeenCalledWith({ modifier: 5 })
   })
 
-  test('error path: roll throws, replies with error embed', async () => {
+  test('clamps a below-range skill to the ladder floor', () => {
+    render([{ name: 'skill', value: -99 }])
+    expect(mockRoll).toHaveBeenCalledWith({ modifier: -2 })
+  })
+
+  test('error path: a failing roll propagates', () => {
+    // The dispatcher renders the "Error" embed — see dispatch.test.ts.
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })
-    const interaction = makeInteraction({ skill: 1 })
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Error')
+    expect(() => render([{ name: 'skill', value: 1 }])).toThrow('Test error')
   })
 })

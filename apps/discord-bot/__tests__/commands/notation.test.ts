@@ -1,15 +1,6 @@
-import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import { describe, expect, mock, test } from 'bun:test'
 import type { APIEmbed } from 'discord.js'
-
-const mockCollector = {
-  on: mock(() => mockCollector),
-  stop: mock(() => undefined)
-}
-
-const mockMessage = {
-  createMessageComponentCollector: mock(() => mockCollector),
-  edit: mock(() => Promise.resolve(undefined))
-}
+import { makeContext } from './lib/context.js'
 
 // Mock NOTATION_DOCS with a controlled fixture so tests are deterministic
 const mockNotationDocs = {
@@ -54,90 +45,47 @@ void mock.module('@randsum/roller/docs', () => ({
 
 const { notationCommand } = await import('../../src/commands/notation.js')
 
-function makeInteraction(): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: { getBoolean: ReturnType<typeof mock> }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(mockMessage) as ReturnType<ReturnType<typeof mock>>),
-    options: { getBoolean: mock(() => false) }
-  }
+/** The select menu as it reaches Discord — `buildComponents` returns raw API JSON. */
+interface ApiActionRow {
+  readonly components: readonly {
+    readonly custom_id?: string
+    readonly options?: readonly { readonly label: string }[]
+  }[]
 }
 
-beforeEach(() => {
-  for (const fn of Object.values(mockCollector)) fn.mockClear()
-  for (const fn of Object.values(mockMessage)) fn.mockClear()
-})
+function renderEmbed(): APIEmbed {
+  return notationCommand.buildEmbed!(makeContext()).toJSON()
+}
+
+function renderComponents(): readonly ApiActionRow[] {
+  return notationCommand.buildComponents!(makeContext()) as readonly ApiActionRow[]
+}
 
 describe('notationCommand', () => {
-  test('defers reply and edits once', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    expect(interaction.deferReply).toHaveBeenCalledTimes(1)
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
+  test('embed title links to notation.randsum.dev', () => {
+    const embed = renderEmbed()
+    expect(embed.title).toBe('notation.randsum.dev')
+    expect(embed.url).toBe('https://notation.randsum.dev')
   })
 
-  test('editReply includes embeds and components', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith(
-      expect.objectContaining({
-        embeds: expect.any(Array),
-        components: expect.any(Array)
-      })
-    )
+  test('embed shows fields for first category entries', () => {
+    expect((renderEmbed().fields ?? []).length).toBeGreaterThan(0)
   })
 
-  test('embed title links to notation.randsum.dev', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('notation.randsum.dev')
-    expect(embedJson.url).toBe('https://notation.randsum.dev')
-  })
-
-  test('embed shows fields for first category entries', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: unknown[] }
-    expect(embedJson.fields).toBeDefined()
-    expect((embedJson.fields ?? []).length).toBeGreaterThan(0)
-  })
-
-  test('collector is created with 5-minute timeout', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    expect(mockMessage.createMessageComponentCollector).toHaveBeenCalledWith(
-      expect.objectContaining({ time: 5 * 60 * 1000 })
-    )
-  })
-
-  test('collector registers end handler to disable menu', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const onCalls = (mockCollector.on as ReturnType<typeof mock>).mock.calls
-    const endCall = onCalls.find((args: unknown[]) => args[0] === 'end')
-    expect(endCall).toBeDefined()
-  })
-
-  test('components include a select menu with category options', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      components: { toJSON: () => { components: { options?: { label: string }[] }[] } }[]
-    }
-    const rowJson = call.components[0]?.toJSON()
-    const selectMenu = rowJson?.components[0]
-    const labels = (selectMenu?.options ?? []).map(o => o.label)
+  test('components include a select menu with category options', () => {
+    const labels = (renderComponents()[0]?.components[0]?.options ?? []).map(o => o.label)
     expect(labels).toContain('Filter')
     expect(labels).toContain('Clamp')
+  })
+
+  test('components are plain JSON, not builders', () => {
+    // The dispatcher spreads these straight into the interaction response body,
+    // so the raw API fields must already be there. A builder keeps its fields
+    // under `.data` and would serialize to something Discord rejects, leaving a
+    // reference page with no way to change category.
+    const [row] = renderComponents()
+    expect(row).toBeDefined()
+    expect(row?.components[0]?.custom_id).toBe('notation-category')
+    expect(row).not.toHaveProperty('data')
   })
 })
