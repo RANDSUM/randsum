@@ -34,7 +34,7 @@
       "includeEntryExports": true
     },
     "apps/discord-bot": {
-      "entry": ["src/index.ts", "src/worker/index.ts", "src/deploy-commands.ts"],
+      "entry": ["src/worker/index.ts", "src/deploy-commands.ts"],
       "project": ["src/**/*.ts"]
     },
     "apps/rdn": {},

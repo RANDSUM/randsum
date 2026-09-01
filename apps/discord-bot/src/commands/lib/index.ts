@@ -56,9 +56,9 @@ export function createGameCommand(options: CreateGameCommandOptions): Command {
 
   return {
     data,
-    // Exposed so a non-gateway transport can render without an interaction.
-    // Same function the gateway path calls; there is no second implementation
-    // to drift.
+    // Renders without an interaction object, which is what lets the Worker
+    // build a response body directly. This is the only renderer; the gateway
+    // path that also called it is gone.
     buildEmbed,
     async execute(interaction) {
       await deferReplyHonoringHidden(interaction)

@@ -55,7 +55,7 @@
     "check:workspace-scripts": "bun scripts/check-workspace-scripts.ts",
     "skills:sync": "bun scripts/sync-cloudflare-skills.ts",
     "check:ci-aggregator": "bun scripts/check-ci-aggregator.ts",
-    "build": "bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run --filter '@randsum/cli' --filter '@randsum/discord-bot' --filter '@randsum/mcp' build",
+    "build": "bun run --filter '@randsum/roller' build && bun run --filter '@randsum/games' build && bun run --filter '@randsum/cli' --filter '@randsum/mcp' build",
     "test": "bun run --filter '*' test",
     "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "lint": "biome lint .",

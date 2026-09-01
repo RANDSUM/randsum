@@ -31,7 +31,12 @@ const REQUIRED_SCRIPTS = ['test', 'lint', 'format', 'format:check', 'typecheck',
 // their `src` directly (no bundling step). New entries here are a deliberate,
 // reviewable opt-out — a package cannot silently drop `build` without appearing
 // in this list.
-const BUILD_EXEMPT = new Set<string>(['@randsum/dice-ui'])
+//
+// `@randsum/discord-bot` is exempt because wrangler compiles `src/worker/index.ts`
+// itself at deploy time. It had a `build` only while it also shipped a Node
+// gateway process that bunup had to bundle for a host to run; with that gone
+// there is no artifact left to produce.
+const BUILD_EXEMPT = new Set<string>(['@randsum/dice-ui', '@randsum/discord-bot'])
 
 const WORKSPACE_DIRS = ['packages', 'apps'] as const
 

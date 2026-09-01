@@ -4,9 +4,9 @@
  * Emits one JSON line per event (level, timestamp, message, plus arbitrary
  * structured fields) to the appropriate console stream. This replaces ad-hoc
  * emoji-prefixed `console.warn`/`console.error` lines on the operational paths
- * so that Render logs can be aggregated, queried, and alerted on. Deliberately
- * no external dependency (no pino/winston) — a single function is enough for a
- * single-instance worker.
+ * so the output can be aggregated, queried, and alerted on — today by Cloudflare
+ * Workers Observability, which ingests exactly this shape. Deliberately no
+ * external dependency (no pino/winston); a single function is enough.
  */
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'

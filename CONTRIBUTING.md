@@ -23,7 +23,7 @@ bun run check:all  # Verify everything works
 - `packages/games/` -- Game system packages (subpath exports per game)
 - `packages/dice-ui/` -- Private, web-only React UI components (consumed by `apps/site`)
 - `apps/cli/` -- Published npm CLI (`@randsum/cli`)
-- `apps/discord-bot/` -- Private Discord bot, deployed as a Render worker
+- `apps/discord-bot/` -- Private Discord bot, deployed as a Cloudflare Worker
 - `apps/site/` -- Documentation site at randsum.dev (Astro + Starlight)
 - `apps/rdn/` -- Notation spec site at notation.randsum.dev (Astro)
 

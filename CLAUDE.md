@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
 `blades` (Blades in the Dark), `daggerheart`, `fate` (Fate Core), `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse). A `schema` subpath exports the codegen/validation API.
 
-**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private Discord bot, deployed as a Render worker), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private)
+**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private)
 
 **UI**: `@randsum/dice-ui` in `packages/dice-ui/` — private, web-only React component library (notation input with token overlay, roll step visualizer, combined roller) consumed by `apps/site`. Never published to npm; depends only on `@randsum/roller`.
 
@@ -210,12 +210,12 @@ this repo's deploy/host stack. Each maps to a real workspace target:
 | `cloudflare-bindings`      | http      | Workers, KV, D1 for both sites            | OAuth — run `/mcp`              |
 | `cloudflare-observability` | http      | Workers logs and analytics                | OAuth — run `/mcp`              |
 | `github`                   | http      | repo host (issues, PRs, releases)         | 1Password PAT (`headersHelper`) |
-| `render`                   | http      | `apps/discord-bot` — **until the bot moves** | 1Password PAT (`headersHelper`) |
 
-**`netlify` was removed**, and so was Netlify itself — the adapter, both
-`netlify.toml` files, and the dependency. Nothing in this repo targets it any
-more. `render` stays only until the Render service is deleted; the bot itself
-already runs on Cloudflare.
+**`netlify` and `render` were both removed**, along with the platforms
+themselves. Netlify went first — the adapter, both `netlify.toml` files, and the
+dependency. Render followed once the bot had settled on Cloudflare: `render.yaml`
+and the Node gateway process it started are gone from the repo. Every deploy
+target left is Cloudflare or npm.
 
 Cloudflare's own MCP servers authenticate by OAuth rather than a bearer token,
 so they need no `headersHelper` and no vault item — run `/mcp` once to
@@ -223,8 +223,8 @@ authorize. A third server, `docs.mcp.cloudflare.com`, is deliberately **not**
 declared: the vendored skills in `.claude/skills/` already cover platform
 guidance, and a tool surface every session pays for should earn its place.
 
-Secrets are **never** committed. The `github` and `render` (http) servers
-resolve their fine-grained PATs at connect time via `scripts/mcp-1password-headers.sh`,
+Secrets are **never** committed. The `github` (http) server resolves its
+fine-grained PAT at connect time via `scripts/mcp-1password-headers.sh`,
 wired through each server's `headersHelper`. Claude Code runs that script outside
 the bash sandbox, so it can read the token from the 1Password `claude-agent`
 vault (service-account token in the macOS keychain) — the same convention as the
@@ -232,11 +232,9 @@ Spacebase MCP. The script expects these vault items:
 
 ```
 op://claude-agent/claude-git-pat/credential   # github
-op://claude-agent/render-api-key/credential   # render
 ```
 
 An already-exported env var wins over `op`, so CI / fresh checkouts without
-1Password can still authenticate by exporting `GITHUB_PAT` / `RENDER_API_KEY`
-before launch.
+1Password can still authenticate by exporting `GITHUB_PAT` before launch.
 
 Run `/mcp` in Claude Code to check connection status.
