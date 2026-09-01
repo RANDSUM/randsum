@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 import type { APIEmbed } from 'discord.js'
+import { makeContext, type RawOption } from './lib/context.js'
 
 const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
   result: 'strong_hit',
@@ -11,24 +12,8 @@ void mock.module('@randsum/games/root-rpg', () => ({ roll: mockRoll }))
 
 const { rootCommand } = await import('../../src/commands/root.js')
 
-function makeInteraction(modifier: number | null = null): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: {
-    getInteger: ReturnType<typeof mock>
-    getBoolean: ReturnType<typeof mock>
-  }
-  user: { displayName: string }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
-    options: {
-      getInteger: mock(() => modifier),
-      getBoolean: mock(() => false)
-    },
-    user: { displayName: 'Tester' }
-  }
+function render(options: readonly RawOption[] = [], displayName = 'Tester'): APIEmbed {
+  return rootCommand.buildEmbed!(makeContext(options, displayName)).toJSON()
 }
 
 beforeEach(() => {
@@ -36,67 +21,52 @@ beforeEach(() => {
 })
 
 describe('rootCommand', () => {
-  test('Strong Hit', async () => {
-    const interaction = makeInteraction()
-    await rootCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Tester rolled a Strong Hit')
+  test('Strong Hit', () => {
+    expect(render().title).toBe('Tester rolled a Strong Hit')
   })
 
-  test('Weak Hit', async () => {
+  test('Weak Hit', () => {
     mockRoll.mockImplementationOnce(() => ({
       result: 'weak_hit' as const,
       total: 7,
       rolls: [{ initialRolls: [4, 3], rolls: [4, 3], modifierLogs: [] }]
     }))
-    const interaction = makeInteraction()
-    await rootCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Tester rolled a Weak Hit')
+    expect(render().title).toBe('Tester rolled a Weak Hit')
   })
 
-  test('Miss', async () => {
+  test('Miss', () => {
     mockRoll.mockImplementationOnce(() => ({
       result: 'miss' as const,
       total: 3,
       rolls: [{ initialRolls: [2, 1], rolls: [2, 1], modifierLogs: [] }]
     }))
-    const interaction = makeInteraction()
-    await rootCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Tester rolled a Miss')
+    expect(render().title).toBe('Tester rolled a Miss')
   })
 
-  test('non-zero modifier adds modifier field', async () => {
-    const interaction = makeInteraction(2)
-    await rootCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
-    expect(fieldNames).toContain('Modifier')
+  test('titles with the display name the transport supplies', () => {
+    // /root is the only command that reads `userDisplayName`, so this is the
+    // one place the context's second field is load-bearing. The Worker resolves
+    // it from the interaction payload (guild `member.user` or DM `user`).
+    expect(render([], 'Vagabond').title).toBe('Vagabond rolled a Strong Hit')
   })
 
-  test('error path: roll throws, replies with error embed', async () => {
+  test('non-zero modifier adds modifier field', () => {
+    const embed = render([{ name: 'modifier', value: 2 }])
+    expect((embed.fields ?? []).map(field => field.name)).toContain('Modifier')
+    expect(mockRoll).toHaveBeenCalledWith({ bonus: 2 })
+  })
+
+  test('an absent modifier defaults to zero and omits the field', () => {
+    const embed = render()
+    expect((embed.fields ?? []).map(field => field.name)).not.toContain('Modifier')
+    expect(mockRoll).toHaveBeenCalledWith({ bonus: 0 })
+  })
+
+  test('error path: a failing roll propagates', () => {
+    // The dispatcher renders the "Error" embed — see dispatch.test.ts.
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })
-    const interaction = makeInteraction()
-    await rootCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Error')
+    expect(() => render()).toThrow('Test error')
   })
 })

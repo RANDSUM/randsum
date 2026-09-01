@@ -25,7 +25,7 @@ artifact to produce ahead of a deploy. It is listed in `BUILD_EXEMPT` in
 apps/discord-bot/
   src/
     deploy-commands.ts   # One-shot Node script: writes the slash command registry
-    types.ts             # Command interface (data, execute, buildEmbed, buildComponents)
+    types.ts             # Command interface (data, buildEmbed, buildComponents)
     worker/
       index.ts           # Worker entry: verifies the signature, dispatches, responds
       verify.ts          # Ed25519 request-signature verification (WebCrypto)
@@ -47,11 +47,7 @@ apps/discord-bot/
       builders.ts        # PORTABLE Discord primitives — safe on workerd. Commands import here.
       discord.ts         # discord.js REST barrel — deploy-commands only, never the Worker
       config.ts          # Reads env vars; throws on missing required vars (deploy-commands only)
-      constants.ts       # D6 die face image URLs, embed footer
-      replyWithError.ts  # Shared error embed helper
-      ephemeral.ts       # Ephemeral-reply flag helper
-      logger.ts          # Structured logging
-      errorTracker.ts    # Error capture/reporting
+      constants.ts       # Embed footer
 ```
 
 The `builders.ts` / `discord.ts` split is load-bearing and outlived the gateway. Command files
@@ -91,29 +87,21 @@ secret. It verifies Discord's signatures and cannot produce one, so the threat m
 from a token's. HTTP interactions are authenticated by request signature rather than a bot
 session, which is why the most sensitive credential in this app is simply not deployed.
 
-## Error Tracking
+## Error surface
 
-`captureException` (`src/utils/errorTracker.ts`) emits one structured log line with
-per-interaction correlation context. That is all it does.
+**There is none in this codebase, deliberately.** `errorTracker.ts` and `logger.ts` were removed
+along with `Command.execute`: `/notation`'s gateway handler was the last thing that called
+`captureException`, and a seam with no call sites is not a seam. The module could not have been
+reused as-is anyway — it read `process.env`, which workerd does not have.
 
-**Remote delivery was removed with Render.** The module used to speak Sentry's envelope protocol
-over plain `fetch` and post to a Discord webhook, configured by `SENTRY_DSN` and
-`DISCORD_ERROR_WEBHOOK_URL` — Render dashboard variables, initialized by the gateway process's
-`initErrorTracker()` call. All of it was unrunnable on workerd regardless: it read `process.env`,
-and `flushErrorTracker()` existed to drain in-flight sends before a deliberate `process.exit`,
-which a Worker has no concept of.
+**Cloudflare Workers Observability** (enabled in `wrangler.jsonc`) is the error surface, and it
+needs nothing from the application: it captures uncaught exceptions and request telemetry at the
+platform level. Note that the Worker path never emitted an application log line even before this
+— `dispatch.ts` and `worker/index.ts` have always been silent — so nothing observable changed.
 
-**Cloudflare Workers Observability** (enabled in `wrangler.jsonc`) is the error surface now, and
-it ingests exactly what this emits. `/notation` is the only caller.
-
-The seam is kept rather than inlined into its call site so that re-adding delivery stays a change
-to this module's body with no call site touched — but it would have to read config from the
-Worker's `env` argument, not from `process`.
-
-Capturing any shape of error — an `Error`, a string, `undefined` — does not throw, so a tracker
-problem cannot become an outage. One inherited exception: `logger` serializes with
-`JSON.stringify`, so a context object holding a circular reference throws at the log call. No
-caller passes one.
+Re-adding structured logging or remote delivery means writing it against the Worker's `env`
+argument and calling it from `dispatch.ts`, which is a genuinely different shape from what was
+there.
 
 ## Deployment
 
@@ -162,12 +150,18 @@ global registrations were untouched by the Cloudflare cutover and by dropping Re
 Each command file exports a named `*Command` object with:
 
 - `data` — a `SlashCommandBuilder` defining the name, description, and options
-- `buildEmbed(context)` — the transport-agnostic renderer the Worker calls
-- `execute(interaction)` — the discord.js-shaped handler
+- `buildEmbed(context)` — the renderer the Worker calls. Takes a `CommandContext` (option
+  accessors plus the caller's display name) and returns an `EmbedBuilder`. Pure: no interaction,
+  no network, no replying.
+- `buildComponents(context)` — optional, raw API JSON. Only `/notation` has one.
 
-> `execute` is a **vestige of the gateway path**. Nothing calls it at runtime any more; only the
-> command tests exercise it. It is still typed and still passing, but it is dead weight and a
-> reasonable thing to remove in its own change.
+> The `execute(interaction)` handler that used to sit here is **gone**, along with `autocomplete`
+> (which was declared, accepted by the factory, and never once passed). Errors are the
+> dispatcher's job now: `buildEmbed` throws, and `dispatchInteraction` renders the error embed.
+>
+> `buildEmbed` is optional on the interface so the dispatcher can answer "not available on this
+> deployment" rather than guess, but every command in the barrel has one and
+> `__tests__/worker/dispatch.test.ts` holds that line.
 
 All game commands import their `roll()` from the corresponding `@randsum/games/<shortcode>`
 subpath. The exception is `/salvageunion`, which rolls nothing: Salvage Union moved to the SURef

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
 import type { APIEmbed } from 'discord.js'
+import { makeContext, type RawOption } from './lib/context.js'
 
 const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
   result: 'strong_hit',
@@ -11,31 +12,12 @@ void mock.module('@randsum/games/pbta', () => ({ roll: mockRoll }))
 
 const { pbtaCommand } = await import('../../src/commands/pbta.js')
 
-function makeInteraction(
-  opts: { stat?: number; forward?: number; ongoing?: number; rollingWith?: string | null } = {}
-): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: {
-    getInteger: ReturnType<typeof mock>
-    getString: ReturnType<typeof mock>
-    getBoolean: ReturnType<typeof mock>
-  }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
-    options: {
-      getInteger: mock((name: string) => {
-        if (name === 'stat') return opts.stat ?? 2
-        if (name === 'forward') return opts.forward ?? 0
-        if (name === 'ongoing') return opts.ongoing ?? 0
-        return 0
-      }),
-      getString: mock((_name: string) => opts.rollingWith ?? null),
-      getBoolean: mock(() => false)
-    }
-  }
+function render(options: readonly RawOption[] = [{ name: 'stat', value: 2 }]): APIEmbed {
+  return pbtaCommand.buildEmbed!(makeContext(options)).toJSON()
+}
+
+function fieldNames(embed: APIEmbed): string[] {
+  return (embed.fields ?? []).map(field => field.name)
 }
 
 beforeEach(() => {
@@ -43,89 +25,66 @@ beforeEach(() => {
 })
 
 describe('pbtaCommand', () => {
-  test('strong hit', async () => {
-    const interaction = makeInteraction({ stat: 2 })
-    await pbtaCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Strong Hit!')
+  test('strong hit', () => {
+    expect(render().title).toBe('Strong Hit!')
   })
 
-  test('weak hit', async () => {
+  test('weak hit', () => {
     mockRoll.mockImplementationOnce(() => ({
       result: 'weak_hit' as const,
       total: 8,
       rolls: [{ initialRolls: [4, 4], rolls: [4, 4], modifierLogs: [] }]
     }))
-    const interaction = makeInteraction({ stat: 1 })
-    await pbtaCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Weak Hit')
+    expect(render([{ name: 'stat', value: 1 }]).title).toBe('Weak Hit')
   })
 
-  test('miss', async () => {
+  test('miss', () => {
     mockRoll.mockImplementationOnce(() => ({
       result: 'miss' as const,
       total: 4,
       rolls: [{ initialRolls: [2, 2], rolls: [2, 2], modifierLogs: [] }]
     }))
-    const interaction = makeInteraction({ stat: -1 })
-    await pbtaCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Miss')
+    expect(render([{ name: 'stat', value: -1 }]).title).toBe('Miss')
   })
 
-  test('non-zero forward adds forward field', async () => {
-    const interaction = makeInteraction({ stat: 2, forward: 1 })
-    await pbtaCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
-    expect(fieldNames).toContain('Forward')
+  test('non-zero forward adds forward field', () => {
+    const embed = render([
+      { name: 'stat', value: 2 },
+      { name: 'forward', value: 1 }
+    ])
+    expect(fieldNames(embed)).toContain('Forward')
+    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, forward: 1 })
   })
 
-  test('non-zero ongoing adds ongoing field', async () => {
-    const interaction = makeInteraction({ stat: 2, ongoing: 2 })
-    await pbtaCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
-    expect(fieldNames).toContain('Ongoing')
+  test('non-zero ongoing adds ongoing field', () => {
+    const embed = render([
+      { name: 'stat', value: 2 },
+      { name: 'ongoing', value: 2 }
+    ])
+    expect(fieldNames(embed)).toContain('Ongoing')
+    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, ongoing: 2 })
   })
 
-  test('rollingWith adds rolling_with field', async () => {
-    const interaction = makeInteraction({ stat: 2, rollingWith: 'Advantage' })
-    await pbtaCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
-    expect(fieldNames).toContain('Rolling With')
+  test('rollingWith adds rolling_with field', () => {
+    const embed = render([
+      { name: 'stat', value: 2 },
+      { name: 'rolling_with', value: 'Advantage' }
+    ])
+    expect(fieldNames(embed)).toContain('Rolling With')
+    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, advantage: true })
   })
 
-  test('error path: roll throws, replies with error embed', async () => {
+  test('a negative stat renders with its sign', () => {
+    const embed = render([{ name: 'stat', value: -1 }])
+    const stat = (embed.fields ?? []).find(field => field.name === 'Stat')
+    expect(stat?.value).toBe('-1')
+  })
+
+  test('error path: a failing roll propagates', () => {
+    // The dispatcher renders the "Error" embed — see dispatch.test.ts.
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })
-    const interaction = makeInteraction({ stat: 2 })
-    await pbtaCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Error')
+    expect(() => render()).toThrow('Test error')
   })
 })

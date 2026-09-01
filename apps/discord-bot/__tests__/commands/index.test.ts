@@ -29,10 +29,6 @@ void mock.module('@randsum/games/fifth', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/pbta', () => ({ roll: () => ({ total: 1 }) }))
 void mock.module('@randsum/games/root-rpg', () => ({ roll: () => ({ total: 1 }) }))
 
-void mock.module('../../src/utils/rollButton.js', () => ({
-  createRollButton: mock(() => ({}))
-}))
-
 const { commands } = await import('../../src/commands/index.js')
 
 describe('commands barrel', () => {
@@ -41,17 +37,30 @@ describe('commands barrel', () => {
     expect(commands).toHaveLength(10)
   })
 
-  test('each command has data and execute properties', () => {
+  test('each command has data and a buildEmbed renderer', () => {
+    // `buildEmbed` replaced `execute` as the thing every command must have.
+    // It is optional on the interface so the dispatcher can answer "not
+    // available on this deployment" rather than guess — but a command that
+    // ships without one is unreachable in production, so the barrel is where
+    // that is checked.
     for (const command of commands) {
       expect(command).toHaveProperty('data')
-      expect(command).toHaveProperty('execute')
-      expect(typeof command.execute).toBe('function')
+      expect(command.data).toBeDefined()
+      expect(typeof command.buildEmbed).toBe('function')
     }
   })
 
-  test('each command has a data object', () => {
+  test('no command carries a gateway execute handler', () => {
+    // The discord.js entry point is gone along with the gateway transport. A
+    // command re-growing one would be dead code that reads as live.
     for (const command of commands) {
-      expect(command.data).toBeDefined()
+      expect(command).not.toHaveProperty('execute')
+      expect(command).not.toHaveProperty('autocomplete')
     }
+  })
+
+  test('command names are unique', () => {
+    const names = commands.map(command => command.data.name)
+    expect(new Set(names).size).toBe(names.length)
   })
 })
