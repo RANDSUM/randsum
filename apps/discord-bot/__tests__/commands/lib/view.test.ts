@@ -13,12 +13,8 @@
  */
 import { describe, expect, test } from 'bun:test'
 import type { TraceableRollRecord } from '@randsum/roller/trace'
-import {
-  CUSTOM_ID_LIMIT,
-  renderFacts,
-  renderTrace,
-  rollContainer
-} from '../../../src/commands/lib/view.js'
+import { CUSTOM_ID_LIMIT } from '../../../src/commands/lib/reroll.js'
+import { renderFacts, renderTrace, rollContainer } from '../../../src/commands/lib/view.js'
 import { accentsOf, buttonIdsOf, linesOf, textOf } from '../../lib/view.js'
 
 /** Real `roll('4d6L')` output — one die dropped. */

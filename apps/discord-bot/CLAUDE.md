@@ -42,7 +42,7 @@ apps/discord-bot/
       roll.ts            # /roll — generic notation roller
       root.ts            # /root — Root RPG
       salvageunion.ts    # /salvageunion — pointer to the SURef bot (rolls nothing)
-      lib/               # Shared command scaffolding (context, notation view, factory)
+      lib/               # Shared scaffolding (context, view renderer, reroll codec, factory)
     utils/
       builders.ts        # PORTABLE Discord primitives — safe on workerd. Commands import here.
       palette.ts         # Accent colours and outcome glyphs — the visual vocabulary
@@ -173,6 +173,18 @@ layout, and the `-#` subtext footer that replaces the embed footer Components V2
 Components V2 has no `inline` field grid, so label/value pairs go through `renderFacts` as one
 line; and a `custom_id` caps at 100 characters, so a reroll button carrying long notation is
 dropped rather than truncated (Discord rejects the whole message otherwise).
+
+**Reroll buttons.** `commands/lib/reroll.ts` encodes the command name and its options into the
+button's `custom_id` — the only state channel a stateless Worker has — and decodes it back into
+a `CommandContext`, so a reroll runs the same `buildView` the slash command does. Pass
+`encodeReroll('<command>', { ...options })` to `rollContainer`; it returns `undefined` when the
+result would exceed 100 characters, and the button is then omitted rather than truncated (a
+truncated id would decode into a *different roll*).
+
+A reroll answers with a **new message (type 4), never an edit (type 7)**. A Worker cannot tell
+whether the clicker is the person who rolled without spending ~19 of those 100 characters on
+their user id, and an edit would let a bystander silently overwrite someone else's result. Type 7
+stays for genuinely stateless view-switching, which is what `/notation`'s selector does.
 
 All game commands import their `roll()` from the corresponding `@randsum/games/<shortcode>`
 subpath. The exception is `/salvageunion`, which rolls nothing: Salvage Union moved to the SURef

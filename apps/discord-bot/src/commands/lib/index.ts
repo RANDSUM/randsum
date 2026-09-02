@@ -4,6 +4,7 @@ import type { CommandContext } from './context.js'
 export type { CommandContext } from './context.js'
 export type { ViewFact } from './view.js'
 export { renderTrace, rollContainer } from './view.js'
+export { decodeReroll, encodeReroll, isRerollId } from './reroll.js'
 
 interface CreateGameCommandOptions {
   readonly data: Command['data']

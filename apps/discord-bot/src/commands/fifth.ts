@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from '../utils/builders.js'
 import { FIFTH, GLYPH } from '../utils/palette.js'
 import {
   createGameCommand,
+  encodeReroll,
   formatSignedModifier,
   getInitialRolls,
   getKeptRolls,
@@ -86,6 +87,9 @@ function buildFifthView(context: CommandContext): RollView {
   const dice = dropped ? markKeptRolls(initialRolls, keptRolls) : initialRolls.join(', ')
   const label = rollingWith !== null ? `2d20, ${rollingWith}` : '1d20'
 
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('fifth', { modifier, dc, rolling_with: rollingWith, hidden })
+
   return [
     rollContainer({
       accent,
@@ -94,7 +98,7 @@ function buildFifthView(context: CommandContext): RollView {
       facts,
       body: [`**${label}**  ${dice}`],
       derivation: `${label} ${formatSignedModifier(modifier)} = ${result.total}`,
-      rerollId: `r:fifth:${modifier}:${dc ?? ''}:${rollingWith ?? ''}`
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]
 }

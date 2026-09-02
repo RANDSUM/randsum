@@ -32,13 +32,7 @@ import {
   TextDisplayBuilder
 } from '../../utils/builders.js'
 import { FOOTER_ATTRIBUTION } from '../../utils/constants.js'
-
-/**
- * Discord caps a `custom_id` at 100 characters and rejects the whole message
- * when a component exceeds it — so a reroll button carrying long notation has
- * to be dropped rather than truncated.
- */
-export const CUSTOM_ID_LIMIT = 100
+import { CUSTOM_ID_LIMIT } from './reroll.js'
 
 /**
  * A single Text Display caps at 4000 characters, and `setContent` throws rather

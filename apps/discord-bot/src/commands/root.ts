@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from '../utils/builders.js'
 import { GLYPH, ROOT } from '../utils/palette.js'
 import {
   createGameCommand,
+  encodeReroll,
   formatSignedModifier,
   getInitialRolls,
   getKeptRolls,
@@ -63,6 +64,14 @@ function buildRootView(context: CommandContext): RollView {
   // "<username> used /root" directly above every response, so the old
   // "Alex rolled a Weak Hit" title repeated it — and made this the one command
   // whose title shape differed from its nine siblings.
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('root', {
+    modifier: bonus,
+    stat,
+    rolling_with: rollingWith,
+    hidden
+  })
+
   return [
     rollContainer({
       accent: outcome.accent,
@@ -71,7 +80,7 @@ function buildRootView(context: CommandContext): RollView {
       facts,
       body: [dropped ? `**3d6, keep 2**  ${dice}` : `**2d6**  ${dice}`],
       derivation: `2d6 ${formatSignedModifier(bonus)} = ${result.total}`,
-      rerollId: `r:root:${bonus}:${stat ?? ''}:${rollingWith ?? ''}`
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]
 }

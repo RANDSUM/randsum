@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from '../utils/builders.js'
 import { GLYPH, PBTA } from '../utils/palette.js'
 import {
   createGameCommand,
+  encodeReroll,
   formatSignedModifier,
   getInitialRolls,
   getKeptRolls,
@@ -69,6 +70,15 @@ function buildPbtaView(context: CommandContext): RollView {
   const dropped = initialRolls.length > keptRolls.length
   const dice = dropped ? markKeptRolls(initialRolls, keptRolls) : initialRolls.join(', ')
 
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('pbta', {
+    stat,
+    forward,
+    ongoing,
+    rolling_with: rollingWith,
+    hidden
+  })
+
   return [
     rollContainer({
       accent: outcome.accent,
@@ -83,7 +93,7 @@ function buildPbtaView(context: CommandContext): RollView {
           : `**2d6**  ${dice}`
       ],
       derivation: `${result.details.diceTotal} ${formatSignedModifier(result.total - result.details.diceTotal)} = ${result.total}`,
-      rerollId: `r:pbta:${stat}:${forward}:${ongoing}:${rollingWith ?? ''}`
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]
 }

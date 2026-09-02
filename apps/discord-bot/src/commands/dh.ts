@@ -1,7 +1,12 @@
 import { roll } from '@randsum/games/daggerheart'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { DAGGERHEART, GLYPH } from '../utils/palette.js'
-import { createGameCommand, formatSignedModifier, rollContainer } from './lib/index.js'
+import {
+  createGameCommand,
+  encodeReroll,
+  formatSignedModifier,
+  rollContainer
+} from './lib/index.js'
 import type { CommandContext, ViewFact } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
 
@@ -81,6 +86,16 @@ function buildDhView(context: CommandContext): RollView {
   if (modifier !== 0) facts.push({ label: 'Modifier', value: formatSignedModifier(modifier) })
   facts.push({ label: 'Total', value: String(result.total) })
 
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('dh', {
+    modifier,
+    difficulty,
+    rolling_with: rollingWith,
+    amplify_hope: amplifyHope,
+    amplify_fear: amplifyFear,
+    hidden
+  })
+
   return [
     rollContainer({
       accent,
@@ -91,7 +106,7 @@ function buildDhView(context: CommandContext): RollView {
         `**Hope ${hopeSides}**  ${result.details.hope.roll}   **Fear ${fearSides}**  ${result.details.fear.roll}`
       ],
       derivation: `${hopeSides} ${result.details.hope.roll} / ${fearSides} ${result.details.fear.roll} ${formatSignedModifier(modifier)} = ${result.total}`,
-      rerollId: `r:dh:${modifier}:${difficulty ?? ''}:${rollingWith ?? ''}:${amplifyHope ? 1 : 0}:${amplifyFear ? 1 : 0}`
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]
 }

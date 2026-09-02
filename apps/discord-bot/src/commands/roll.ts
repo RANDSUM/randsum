@@ -3,7 +3,7 @@ import type { TraceableRollRecord } from '@randsum/roller/trace'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { BRAND } from '../utils/palette.js'
-import { createGameCommand, renderTrace, rollContainer } from './lib/index.js'
+import { createGameCommand, encodeReroll, renderTrace, rollContainer } from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
 
@@ -96,9 +96,9 @@ function buildRollView(context: CommandContext): RollView {
   const pools = fitPools(result.rolls.slice(0, MAX_POOLS), multiple)
 
   // The whole roll re-rolls, not one pool, so the button belongs on the first
-  // container only. `createNotation` has already validated the string, so it is
-  // safe to round-trip — the length guard lives in `rollContainer`.
-  const rerollId = `r:${notationString}`
+  // container only. Long notation simply gets no button — see `encodeReroll`.
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('roll', { notation: notationString, hidden })
 
   const containers = pools.map((record, index) => {
     const description = (record.description ?? []).join(' · ')
@@ -112,7 +112,7 @@ function buildRollView(context: CommandContext): RollView {
       ...(description.length > 0 ? { consequence: description } : {}),
       body: renderTrace(record),
       derivation: multiple ? `Pool ${index + 1} of ${result.rolls.length}` : notationString,
-      ...(index === 0 ? { rerollId } : {})
+      ...(index === 0 && rerollId !== undefined ? { rerollId } : {})
     })
   })
 

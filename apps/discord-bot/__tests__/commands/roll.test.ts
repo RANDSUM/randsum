@@ -302,7 +302,7 @@ describe('rollCommand', () => {
         }
       ]
     }))
-    expect(buttonIdsOf(render('2d6'))).toEqual(['r:2d6'])
+    expect(buttonIdsOf(render('2d6'))).toEqual(['r:roll:notation=2d6'])
   })
 
   test('an over-long notation drops the reroll button rather than sending an invalid id', () => {

@@ -16,7 +16,7 @@ import { ContainerBuilder, MessageFlags, TextDisplayBuilder } from '../utils/bui
 import { FOOTER_ATTRIBUTION } from '../utils/constants.js'
 import { ERROR } from '../utils/palette.js'
 import { optionsFromPayload } from '../commands/lib/context.js'
-import { defaultErrorMessage } from '../commands/lib/index.js'
+import { decodeReroll, defaultErrorMessage, isRerollId } from '../commands/lib/index.js'
 import { buildNotationView, NOTATION_SELECT_ID } from '../commands/lib/notationView.js'
 import type { Command, RollView } from '../types.js'
 
@@ -139,6 +139,43 @@ function errorResponse(message: string): unknown {
 }
 
 /**
+ * Re-run a command from the state encoded in a reroll button's `custom_id`.
+ *
+ * Answers with a NEW message (type 4) rather than editing the original (type
+ * 7). A Worker cannot tell whether the clicker is the person who rolled without
+ * spending ~19 of the 100 available characters on their user id, and an edit
+ * would let a bystander silently overwrite someone else's result. A new message
+ * also leaves the channel readable as a transcript.
+ *
+ * The reroll runs the same `buildView` the slash command does — there is no
+ * second rendering path to keep in step.
+ */
+function dispatchReroll(
+  customId: string,
+  payload: InteractionPayload,
+  commands: ReadonlyMap<string, Command>
+): unknown {
+  const target = decodeReroll(customId)
+  if (target === undefined) return undefined
+
+  const command = commands.get(target.commandName)
+  if (command?.buildView === undefined) {
+    // A button from an older deployment whose command has since been removed.
+    return errorResponse(`\`/${target.commandName}\` is no longer available.`)
+  }
+
+  try {
+    const view = command.buildView({
+      options: target.options,
+      userDisplayName: resolveDisplayName(payload)
+    })
+    return viewResponse(view, target.hidden)
+  } catch (error) {
+    return errorResponse(defaultErrorMessage(error))
+  }
+}
+
+/**
  * Handle a message-component interaction.
  *
  * Where a gateway bot keeps a collector alive on an open socket, each click
@@ -151,10 +188,18 @@ function errorResponse(message: string): unknown {
  * Responds with UpdateMessage (7), which edits the existing message in place,
  * matching the gateway path's `.update()` rather than posting a new reply.
  */
-function dispatchComponent(payload: InteractionPayload): unknown {
-  if (payload.data?.custom_id !== NOTATION_SELECT_ID) return undefined
+function dispatchComponent(
+  payload: InteractionPayload,
+  commands: ReadonlyMap<string, Command>
+): unknown {
+  const customId = payload.data?.custom_id
+  if (customId === undefined) return undefined
 
-  const view = buildNotationView(payload.data.values?.[0])
+  if (isRerollId(customId)) return dispatchReroll(customId, payload, commands)
+
+  if (customId !== NOTATION_SELECT_ID) return undefined
+
+  const view = buildNotationView(payload.data?.values?.[0])
   return {
     type: InteractionResponseType.UpdateMessage,
     data: {
@@ -183,7 +228,7 @@ export function dispatchInteraction(
   }
 
   if (payload.type === InteractionType.MessageComponent) {
-    return dispatchComponent(payload)
+    return dispatchComponent(payload, commands)
   }
 
   if (payload.type !== InteractionType.ApplicationCommand) return undefined

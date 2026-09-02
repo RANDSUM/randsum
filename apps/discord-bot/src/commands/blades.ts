@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from '../utils/builders.js'
 import { BLADES, GLYPH } from '../utils/palette.js'
 import {
   createGameCommand,
+  encodeReroll,
   getInitialRolls,
   getKeptRolls,
   markKeptRolls,
@@ -55,6 +56,9 @@ function buildBladesView(context: CommandContext): RollView {
   const pool =
     dice === 0 ? '0 dice — roll two, take the worst' : `${dice} ${dice === 1 ? 'die' : 'dice'}`
 
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('blades', { dice, hidden })
+
   return [
     rollContainer({
       accent: outcome.accent,
@@ -66,7 +70,7 @@ function buildBladesView(context: CommandContext): RollView {
       ],
       body: [markKeptRolls(initialRolls, keptRolls)],
       derivation: `${initialRolls.length}d6 → ${decidingDie}`,
-      rerollId: `r:blades:${dice}`
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]
 }
