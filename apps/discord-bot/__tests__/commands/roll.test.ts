@@ -247,6 +247,85 @@ describe('rollCommand', () => {
     expect(componentCountOf(view)).toBeLessThanOrEqual(40)
   })
 
+  test('a long headline and description are counted, not estimated', () => {
+    // The regression this guards. The previous guard charged a flat 160
+    // characters per container for headline, description and derivation and
+    // measured only the trace lines. A pool whose notation and description are
+    // both long costs 685 on its own, so the estimate under-counted by 4x and
+    // `4d1000R{=1..=200}x6` shipped 8416 characters into a rejected message.
+    const longNotation = `4d1000R{${Array.from({ length: 60 }, (_, index) => `=${index + 1}`).join(',')}}`
+    mockRoll.mockImplementationOnce(() => ({
+      total: 24000,
+      rolls: Array.from({ length: 6 }, () => ({
+        notation: longNotation,
+        description: [`Roll 4 1000-sided dice`, `Reroll any of [${'1, '.repeat(200)}]`],
+        total: 4000,
+        initialRolls: [1000, 1000, 1000, 1000],
+        rolls: [1000, 1000, 1000, 1000],
+        modifierLogs: [],
+        appliedTotal: 4000
+      }))
+    }))
+    const view = render(`${longNotation}x6`)
+    expect(characterCountOf(view)).toBeLessThanOrEqual(4000)
+    expect(componentCountOf(view)).toBeLessThanOrEqual(40)
+  })
+
+  test('a single pool over the budget on its own has its body clamped', () => {
+    // There is no later pool to drop, so the only lever left is the body.
+    // `1000d1000L500` measured at 4100 characters and reached the user as the
+    // dispatcher's "Something went wrong" instead of a roll.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 500000,
+      rolls: [
+        {
+          notation: '1000d1000L500',
+          description: ['Roll 1000 1000-sided dice', 'Drop lowest 500'],
+          total: 500000,
+          initialRolls: Array.from({ length: 1000 }, () => 1000),
+          rolls: Array.from({ length: 500 }, () => 1000),
+          modifierLogs: [
+            {
+              modifier: 'drop',
+              options: { lowest: 500 },
+              added: [],
+              removed: Array.from({ length: 500 }, () => 1000)
+            }
+          ],
+          appliedTotal: 500000
+        }
+      ]
+    }))
+    const view = render('1000d1000L500')
+    expect(view).toHaveLength(1)
+    expect(characterCountOf(view)).toBeLessThanOrEqual(4000)
+    expect(textOf(view)).toContain('truncated')
+  })
+
+  test('a very long notation is echoed in shortened form', () => {
+    // The derivation line echoes the notation verbatim, and a 900-character
+    // reroll set is valid notation — so the echo alone claimed a quarter of the
+    // budget for a roll that was perfectly fine.
+    const long = `1d1000R{${Array.from({ length: 200 }, (_, index) => `=${index + 1}`).join(',')}}`
+    mockRoll.mockImplementationOnce(() => ({
+      total: 1503,
+      rolls: [
+        {
+          notation: '1d6',
+          description: [],
+          total: 1503,
+          initialRolls: [3],
+          rolls: [3],
+          modifierLogs: [],
+          appliedTotal: 1503
+        }
+      ]
+    }))
+    const view = render(long)
+    expect(characterCountOf(view)).toBeLessThanOrEqual(4000)
+    expect(textOf(view)).toContain('…')
+  })
+
   test('a single over-long pool is rendered rather than dropped', () => {
     // One pool is the whole answer to what the user asked; dropping it would
     // leave a container reporting a total with no dice at all.

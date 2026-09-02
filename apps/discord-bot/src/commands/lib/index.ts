@@ -3,7 +3,13 @@ import type { CommandContext } from './context.js'
 
 export type { CommandContext } from './context.js'
 export type { ViewFact } from './view.js'
-export { renderTrace, rollContainer } from './view.js'
+export {
+  TEXT_DISPLAY_LIMIT,
+  clampContent,
+  measureContainer,
+  renderTrace,
+  rollContainer
+} from './view.js'
 export { decodeReroll, encodeReroll, isRerollId } from './reroll.js'
 
 interface CreateGameCommandOptions {

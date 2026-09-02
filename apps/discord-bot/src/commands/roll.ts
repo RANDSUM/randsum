@@ -1,13 +1,14 @@
 import { roll } from '@randsum/roller/roll'
-import type { TraceableRollRecord } from '@randsum/roller/trace'
 import { suggestNotationFix } from '@randsum/roller'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { BRAND } from '../utils/palette.js'
 import {
+  TEXT_DISPLAY_LIMIT,
   createGameCommand,
   defaultErrorMessage,
   encodeReroll,
+  measureContainer,
   renderTrace,
   rollContainer
 } from './lib/index.js'
@@ -44,6 +45,27 @@ const MAX_POOLS = 5
 const MAX_CHARACTERS = 4000
 
 /**
+ * How much of the notation the headline and derivation echo back.
+ *
+ * The notation is already on screen in the user's own command, so echoing all
+ * of it buys nothing — and `roll()` accepts notation far longer than a whole
+ * message may be. `1d6+1d6+…` repeated a few hundred times parses fine and
+ * produced a derivation line that alone blew the budget, which is how a valid
+ * roll reached the user as "Something went wrong".
+ */
+const NOTATION_ECHO_LIMIT = 200
+
+/** Shortens a value for inline display, with an ellipsis rather than a notice. */
+function truncateInline(value: string, limit: number): string {
+  return value.length <= limit ? value : `${value.slice(0, limit - 1)}…`
+}
+
+/** Everything the rendered view spends against the message character budget. */
+function measureView(view: RollView): number {
+  return view.reduce<number>((total, container) => total + measureContainer(container), 0)
+}
+
+/**
  * `/roll` — the generic notation roller, and the bot's flagship command.
  *
  * Note that the command takes a *single* notation string, so several pools can
@@ -55,89 +77,87 @@ const MAX_CHARACTERS = 4000
  * the body is `traceRoll` output rather than two parallel plain lists, so a
  * dropped or rerolled die is marked in place instead of the reader diffing
  * "Initial Rolls" against "Modified Rolls" by eye.
- */
-/**
- * Drop trailing pools until the rendered dice fit the character budget.
  *
- * Counts only what this view actually renders — the trace lines — plus a fixed
- * allowance for the headline, description and derivation each container adds.
- * A single pool is never dropped: one over-long pool is still the answer to
- * what the user asked, and `rollContainer` is the wrong place to silently
- * discard it.
+ * Fitting the character budget is done by **building and measuring**, not by
+ * estimating. The estimate this replaces charged a flat 160 characters per
+ * container for headline, description and derivation; the real figure reaches
+ * 685 when the headline echoes a long pool notation and the consequence echoes
+ * a long description, and `4d1000R{=1..=200}x6` shipped 8416 characters — more
+ * than twice the cap — straight into a rejected message.
  */
-function fitPools<T extends TraceableRollRecord>(
-  pools: readonly T[],
-  multiple: boolean
-): readonly T[] {
-  const PER_CONTAINER_OVERHEAD = 160
-  const budget = MAX_CHARACTERS - (multiple ? PER_CONTAINER_OVERHEAD : 0)
-
-  // `stopped` rather than filtering: once a pool does not fit, every later pool
-  // is dropped too. Skipping one and keeping the next would renumber
-  // "Pool 3 of 6" against pools the reader never saw.
-  return pools.reduce<{
-    readonly fitted: readonly T[]
-    readonly used: number
-    readonly stopped: boolean
-  }>(
-    (accumulator, record) => {
-      if (accumulator.stopped) return accumulator
-
-      const cost = renderTrace(record).join('\n').length + PER_CONTAINER_OVERHEAD
-      const fits = accumulator.fitted.length === 0 || accumulator.used + cost <= budget
-
-      return fits
-        ? { fitted: [...accumulator.fitted, record], used: accumulator.used + cost, stopped: false }
-        : { ...accumulator, stopped: true }
-    },
-    { fitted: [], used: 0, stopped: false }
-  ).fitted
-}
-
 function buildRollView(context: CommandContext): RollView {
   const notationString = context.options.getString('notation', true)
   const validNotation = createNotation(notationString)
   const result = roll(validNotation)
 
   const multiple = result.rolls.length > 1
-  const pools = fitPools(result.rolls.slice(0, MAX_POOLS), multiple)
+  const capped = result.rolls.slice(0, MAX_POOLS)
+  const notationEcho = truncateInline(notationString, NOTATION_ECHO_LIMIT)
 
   // The whole roll re-rolls, not one pool, so the button belongs on the first
   // container only. Long notation simply gets no button — see `encodeReroll`.
   const hidden = context.options.getBoolean('hidden') ?? false
   const rerollId = encodeReroll('roll', { notation: notationString, hidden })
 
-  const containers = pools.map((record, index) => {
-    const description = (record.description ?? []).join(' · ')
+  const render = (count: number, bodyBudget?: number): RollView => {
+    const pools = capped.slice(0, count)
 
-    return rollContainer({
-      accent: BRAND,
-      // A single pool leads with the number, because that is the answer. Several
-      // pools lead with which pool this is, and the grand total gets its own
-      // line below.
-      headline: multiple ? `${record.notation}  ·  ${record.total}` : String(result.total),
-      ...(description.length > 0 ? { consequence: description } : {}),
-      body: renderTrace(record),
-      derivation: multiple ? `Pool ${index + 1} of ${result.rolls.length}` : notationString,
-      ...(index === 0 && rerollId !== undefined ? { rerollId } : {})
+    const containers = pools.map((record, index) => {
+      const description = truncateInline(
+        (record.description ?? []).join(' · '),
+        NOTATION_ECHO_LIMIT
+      )
+
+      return rollContainer({
+        accent: BRAND,
+        // A single pool leads with the number, because that is the answer. Several
+        // pools lead with which pool this is, and the grand total gets its own
+        // line below.
+        headline: multiple
+          ? `${truncateInline(record.notation, NOTATION_ECHO_LIMIT)}  ·  ${record.total}`
+          : String(result.total),
+        ...(description.length > 0 ? { consequence: description } : {}),
+        body: renderTrace(record),
+        derivation: multiple ? `Pool ${index + 1} of ${result.rolls.length}` : notationEcho,
+        ...(index === 0 && rerollId !== undefined ? { rerollId } : {}),
+        ...(bodyBudget !== undefined ? { bodyBudget } : {})
+      })
     })
-  })
 
-  if (multiple) {
+    if (!multiple) return containers
+
     const omitted = result.rolls.length - pools.length
-    containers.push(
+    return [
+      ...containers,
       rollContainer({
         accent: BRAND,
         headline: `Total  ${result.total}`,
         ...(omitted > 0
           ? { consequence: `${omitted} further pool${omitted === 1 ? '' : 's'} not shown.` }
           : {}),
-        derivation: notationString
+        derivation: notationEcho
       })
-    )
+    ]
   }
 
-  return containers
+  // Widest view first: keep every pool that fits, drop trailing pools until one
+  // does. Dropping from the end rather than skipping a single fat pool keeps
+  // "Pool 3 of 6" honest — a reader never sees a gap in the numbering.
+  const fitted = Array.from({ length: capped.length }, (_, index) => capped.length - index)
+    .map(count => render(count))
+    .find(view => measureView(view) <= MAX_CHARACTERS)
+
+  if (fitted !== undefined) return fitted
+
+  // A single pool is never dropped: one over-long pool is still the answer to
+  // what the user asked. The only lever left is its body, so give it whatever
+  // the headline, consequence and derivation are not already using.
+  const single = render(1)
+  const first = capped[0]
+  const bodyLength = first === undefined ? 0 : renderTrace(first).join('\n').length
+  const overhead = measureView(single) - Math.min(bodyLength, TEXT_DISPLAY_LIMIT)
+
+  return render(1, Math.max(1, MAX_CHARACTERS - overhead))
 }
 
 /**

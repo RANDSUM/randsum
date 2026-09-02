@@ -12,7 +12,13 @@
  * alive, no second failure mode) and visibly faster — the user never sees a
  * "thinking…" state for work that was already done.
  */
-import { ContainerBuilder, MessageFlags, TextDisplayBuilder } from '../utils/builders.js'
+import {
+  ComponentType,
+  ContainerBuilder,
+  MessageFlags,
+  TextDisplayBuilder
+} from '../utils/builders.js'
+import { clampContent } from '../commands/lib/view.js'
 import { FOOTER_ATTRIBUTION } from '../utils/constants.js'
 import { ERROR } from '../utils/palette.js'
 import { optionsFromPayload } from '../commands/lib/context.js'
@@ -34,6 +40,11 @@ import type { Command, RollView } from '../types.js'
  * silently miss it.
  */
 const NO_MENTIONS = { parse: [] as const }
+
+/**
+ * Room for the heading and footer that share the error container's budget.
+ */
+const ERROR_MESSAGE_LIMIT = 3500
 
 /** Discord's interaction type numbers. */
 export const InteractionType = {
@@ -107,6 +118,37 @@ function viewResponse(view: RollView, hidden: boolean): unknown {
 }
 
 /**
+ * The last resort, built from plain object literals rather than builders.
+ *
+ * Nothing here can validate and therefore nothing here can throw, which is the
+ * whole point: it is what `worker/index.ts` falls back to when building a real
+ * response failed.
+ */
+export function fallbackErrorResponse(): unknown {
+  return {
+    type: InteractionResponseType.ChannelMessageWithSource,
+    data: {
+      flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
+      allowed_mentions: NO_MENTIONS,
+      components: [
+        {
+          type: ComponentType.Container,
+          accent_color: ERROR,
+          components: [
+            { type: ComponentType.TextDisplay, content: '## Something went wrong' },
+            {
+              type: ComponentType.TextDisplay,
+              content: 'That request could not be rendered. Try a shorter notation.'
+            },
+            { type: ComponentType.TextDisplay, content: `-# ${FOOTER_ATTRIBUTION}` }
+          ]
+        }
+      ]
+    }
+  }
+}
+
+/**
  * The error surface, as a container like everything else.
  *
  * Two things were wrong with the embed version beyond its shape. Its `0xff0000`
@@ -129,7 +171,13 @@ function errorResponse(message: string): unknown {
           .setAccentColor(ERROR)
           .addTextDisplayComponents(
             new TextDisplayBuilder().setContent('## Something went wrong'),
-            new TextDisplayBuilder().setContent(message),
+            // Clamped, because this is the one Text Display whose content is
+            // not ours: a validator message quotes the user's input back, and
+            // `/roll notation:<3937 chars>` made `setContent` throw INSIDE the
+            // catch block — escaping the dispatcher entirely and turning a bad
+            // roll into a Cloudflare 500. The `notation` option declares no
+            // max_length, so Discord accepts up to 6000 characters.
+            new TextDisplayBuilder().setContent(clampContent(message, ERROR_MESSAGE_LIMIT)),
             new TextDisplayBuilder().setContent(`-# ${FOOTER_ATTRIBUTION}`)
           )
           .toJSON()

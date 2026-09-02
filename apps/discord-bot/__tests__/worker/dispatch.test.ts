@@ -38,6 +38,25 @@ function invoke(name: string, options: { name: string; value: unknown }[] = []):
   ) as Rendered
 }
 
+function characterCountOf(components: readonly unknown[]): number {
+  const walk = (node: unknown): number => {
+    if (node === null || typeof node !== 'object') return 0
+    const own =
+      'type' in node && node.type === 10 && 'content' in node ? String(node.content).length : 0
+    return (
+      own +
+      Object.values(node).reduce<number>(
+        (total, value) =>
+          total +
+          (Array.isArray(value) ? value.reduce<number>((a, v) => a + walk(v), 0) : walk(value)),
+        0
+      )
+    )
+  }
+
+  return components.reduce<number>((total, component) => total + walk(component), 0)
+}
+
 describe('dispatchInteraction', () => {
   test('answers a PING with a PONG', () => {
     const response = dispatchInteraction({ type: 1 }, commands) as Rendered
@@ -285,6 +304,32 @@ describe('dispatchInteraction', () => {
         new Map([['probe', { data: commandList[0]!.data }]])
       ) as Rendered
       expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+    })
+  })
+
+  describe('error rendering', () => {
+    test('an over-long error message is clamped rather than thrown', () => {
+      // The regression this guards. `roll()` reports invalid notation by
+      // quoting it back, so a 3937-character argument produced an error message
+      // past the 4000-character Text Display cap — and `setContent` throws
+      // rather than truncating. The throw escaped the dispatcher, and
+      // Cloudflare answered Discord with a 500.
+      const response = invoke('roll', [{ name: 'notation', value: 'z'.repeat(3937) }])
+      expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+      expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+    })
+
+    test('a long valid notation renders a roll, within the character budget', () => {
+      // End to end against the real roller, no fixtures: a 900-character reroll
+      // set is valid notation, and every pool echoes it in the headline while
+      // echoing a 726-character description below it. The guard this replaced
+      // charged a flat 160 per container and let 8416 characters through.
+      const long = `4d1000R{${Array.from({ length: 200 }, (_, index) => `=${index + 1}`).join(',')}}x6`
+      const response = invoke('roll', [{ name: 'notation', value: long }])
+
+      const rendered = JSON.stringify(response.data?.components)
+      expect(rendered).not.toContain('Something went wrong')
+      expect(characterCountOf(response.data?.components ?? [])).toBeLessThanOrEqual(4000)
     })
   })
 
