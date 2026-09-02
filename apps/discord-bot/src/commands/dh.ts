@@ -75,7 +75,12 @@ export const dhCommand: Command = createGameCommand({
     .setName('dh')
     .setDescription('Roll dice for Daggerheart')
     .addIntegerOption(option =>
-      option.setName('modifier').setDescription('Modifier to add to the roll').setRequired(false)
+      option
+        .setName('modifier')
+        .setDescription('Modifier to add to the roll (-30 to 30)')
+        .setRequired(false)
+        .setMinValue(-30)
+        .setMaxValue(30)
     )
     .addStringOption(option =>
       option
