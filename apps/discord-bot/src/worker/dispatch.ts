@@ -18,6 +18,21 @@ import { defaultErrorMessage } from '../commands/lib/index.js'
 import { buildNotationView, NOTATION_SELECT_ID } from '../commands/lib/notationView.js'
 import type { Command, RollView } from '../types.js'
 
+/**
+ * Suppress every mention in every response this bot sends.
+ *
+ * Components V2 `TextDisplay` content is mention-parsed exactly like message
+ * content, and with `allowed_mentions` absent Discord's default parses
+ * everything. `/roll` puts the user's annotation verbatim into a public line —
+ * `/roll 1d20[@everyone]` renders `-# 1d20[@everyone] · rolled with …` — so any
+ * user in any server could make the bot ping a role.
+ *
+ * There is no response in this bot where a real mention is wanted, so it is set
+ * once here rather than per call site, where the next new response type would
+ * silently miss it.
+ */
+const NO_MENTIONS = { parse: [] as const }
+
 /** Discord's interaction type numbers. */
 export const InteractionType = {
   Ping: 1,
@@ -83,6 +98,7 @@ export function viewResponse(view: RollView, hidden: boolean): unknown {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
       flags: MessageFlags.IsComponentsV2 | (hidden ? MessageFlags.Ephemeral : 0),
+      allowed_mentions: NO_MENTIONS,
       components: view.map(container => container.toJSON())
     }
   }
@@ -93,6 +109,7 @@ function errorResponse(message: string): unknown {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
       embeds: [{ title: 'Error', description: message, color: 0xff0000 }],
+      allowed_mentions: NO_MENTIONS,
       flags: MessageFlags.Ephemeral
     }
   }
@@ -118,6 +135,7 @@ function dispatchComponent(payload: InteractionPayload): unknown {
   return {
     type: InteractionResponseType.UpdateMessage,
     data: {
+      allowed_mentions: NO_MENTIONS,
       embeds: [view.embed.toJSON()],
       components: [view.row.toJSON()]
     }
@@ -182,6 +200,7 @@ export function dispatchInteraction(
     return {
       type: InteractionResponseType.ChannelMessageWithSource,
       data: {
+        allowed_mentions: NO_MENTIONS,
         embeds: [embed.toJSON()],
         ...(components !== undefined && components.length > 0 ? { components } : {}),
         ...(hidden ? { flags: MessageFlags.Ephemeral } : {})
