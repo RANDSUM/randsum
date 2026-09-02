@@ -1,51 +1,88 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/root-rpg'
-import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
-import type { Command } from '../types.js'
+import { SlashCommandBuilder } from '../utils/builders.js'
+import { GLYPH, ROOT } from '../utils/palette.js'
+import {
+  createGameCommand,
+  encodeReroll,
+  formatSignedModifier,
+  getInitialRolls,
+  getKeptRolls,
+  markKeptRolls,
+  rollContainer
+} from './lib/index.js'
+import type { CommandContext, ViewFact } from './lib/index.js'
+import type { Command, RollView } from '../types.js'
 
-function buildRootEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const modifier = interaction.options.getInteger('modifier') ?? 0
-  const displayName = interaction.user.displayName
-
-  const result = roll({ bonus: modifier })
-  const initialRolls = getInitialRolls(result)
-
-  const resultConfig = {
-    strong_hit: {
-      label: 'Strong Hit',
-      color: 0x00ff00,
-      resultDescription: 'You succeed at your goal'
-    },
-    weak_hit: {
-      label: 'Weak Hit',
-      color: 0xffff00,
-      resultDescription: 'You succeed, but with a cost or complication'
-    },
-    miss: { label: 'Miss', color: 0xff0000, resultDescription: "Things don't go your way" }
-  } as const
-
-  const { color, resultDescription, label } = resultConfig[result.result]
-
-  const embed = new EmbedBuilder()
-    .setColor(color)
-    .setTitle(`${displayName} rolled a ${label}`)
-    .setDescription(resultDescription)
-    .setFooter(embedFooterDetails)
-
-  embed.addFields({ name: 'Dice Rolls', value: initialRolls.join(', '), inline: true })
-  embed.addFields({ name: 'Total', value: String(result.total), inline: true })
-
-  if (modifier !== 0) {
-    embed.addFields({
-      name: 'Modifier',
-      value: formatSignedModifier(modifier),
-      inline: true
-    })
+const OUTCOMES = {
+  strong_hit: {
+    accent: ROOT.strongHit,
+    headline: `${GLYPH.success} 10+  ·  Strong Hit`,
+    consequence: 'You pull it off cleanly.'
+  },
+  weak_hit: {
+    accent: ROOT.weakHit,
+    headline: `${GLYPH.mixed} 7-9  ·  Weak Hit`,
+    consequence: 'You do it, but it costs you something.'
+  },
+  miss: {
+    accent: ROOT.miss,
+    headline: `${GLYPH.failure} 6-  ·  Miss`,
+    consequence: 'The GM says how the Woodland pushes back.'
   }
+} as const
 
-  return embed
+/**
+ * Root's stats have names, and a player reads their sheet by name rather than
+ * by integer. Naming the stat is what lets the roll read back as the thing they
+ * actually said out loud: "Cunning, strong hit".
+ */
+const STATS = ['Charm', 'Cunning', 'Finesse', 'Luck', 'Might'] as const
+
+function buildRootView(context: CommandContext): RollView {
+  const bonus = context.options.getInteger('modifier') ?? 0
+  const stat = context.options.getString('stat')
+  const rollingWith = context.options.getString('rolling_with') as
+    | 'Advantage'
+    | 'Disadvantage'
+    | null
+
+  const result = roll({ bonus, ...(rollingWith ? { rollingWith } : {}) })
+
+  const initialRolls = getInitialRolls(result)
+  const keptRolls = getKeptRolls(result)
+  const outcome = OUTCOMES[result.result]
+
+  const facts: ViewFact[] = []
+  if (stat !== null) facts.push({ label: stat, value: formatSignedModifier(bonus) })
+  else if (bonus !== 0) facts.push({ label: 'Modifier', value: formatSignedModifier(bonus) })
+  facts.push({ label: 'Total', value: String(result.total) })
+
+  const dropped = initialRolls.length > keptRolls.length
+  const dice = dropped ? markKeptRolls(initialRolls, keptRolls) : initialRolls.join(', ')
+
+  // The invoking user is NOT named here. Discord already renders
+  // "<username> used /root" directly above every response, so the old
+  // "Alex rolled a Weak Hit" title repeated it — and made this the one command
+  // whose title shape differed from its nine siblings.
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('root', {
+    modifier: bonus,
+    stat,
+    rolling_with: rollingWith,
+    hidden
+  })
+
+  return [
+    rollContainer({
+      accent: outcome.accent,
+      headline: stat !== null ? `${outcome.headline}  ·  ${stat}` : outcome.headline,
+      consequence: outcome.consequence,
+      facts,
+      body: [dropped ? `**3d6, keep 2**  ${dice}` : `**2d6**  ${dice}`],
+      derivation: `2d6 ${formatSignedModifier(bonus)} = ${result.total}`,
+      ...(rerollId !== undefined ? { rerollId } : {})
+    })
+  ]
 }
 
 export const rootCommand: Command = createGameCommand({
@@ -55,10 +92,27 @@ export const rootCommand: Command = createGameCommand({
     .addIntegerOption(option =>
       option
         .setName('modifier')
-        .setDescription('Modifier to add to the roll')
+        .setDescription('Stat bonus for this move (-3 to 5)')
         .setRequired(false)
-        .setMinValue(-4)
-        .setMaxValue(4)
+        .setMinValue(-3)
+        .setMaxValue(5)
+    )
+    .addStringOption(option =>
+      option
+        .setName('stat')
+        .setDescription('Which stat this move uses')
+        .setRequired(false)
+        .addChoices(...STATS.map(name => ({ name, value: name })))
+    )
+    .addStringOption(option =>
+      option
+        .setName('rolling_with')
+        .setDescription('Roll 3d6 and keep the best or worst two')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Best 2 of 3', value: 'Advantage' },
+          { name: 'Worst 2 of 3', value: 'Disadvantage' }
+        )
     )
     .addBooleanOption(option =>
       option
@@ -66,5 +120,5 @@ export const rootCommand: Command = createGameCommand({
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-  buildEmbed: buildRootEmbed
+  buildView: buildRootView
 })

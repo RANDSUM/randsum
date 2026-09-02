@@ -19,7 +19,18 @@
 set -euo pipefail
 
 OSV_IMAGE="ghcr.io/google/osv-scanner-action:v2.3.8"
-ARGS=(--config=osv-scanner.toml --recursive ./)
+
+# `-L bun.lock` rather than CI's `--recursive ./`, and the difference is
+# load-bearing rather than cosmetic. OSV-Scanner's directory walk honours
+# .gitignore, and line 106 of ours ignores `.claude/worktrees/` — which is
+# exactly where agent worktrees live. Run from one, the walk skips the entire
+# tree, prints "No package sources found" and exits 128, so this pre-push step
+# was unpassable from any worktree for a tooling reason that looks nothing like
+# a tooling reason. Scanning the lockfile directly is immune to that, and loses
+# nothing: bun.lock is the only package source in the repo, so it is what the
+# recursive walk resolves to in the checkout anyway. CI keeps `--recursive ./`
+# because it runs on a clean checkout with no worktrees.
+ARGS=(--config=osv-scanner.toml -L bun.lock)
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"

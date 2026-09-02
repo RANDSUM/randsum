@@ -1,105 +1,120 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
+import { makeContext } from './lib/context.js'
+import { accentsOf, textOf } from '../lib/view.js'
+import { FATE } from '../../src/utils/palette.js'
+import type { RollView } from '../../src/types.js'
 
-const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
-  result: 'great',
-  total: 4,
-  rolls: [{ initialRolls: [1, 1, 0, 1], rolls: [1, 1, 0, 1], modifierLogs: [] }]
-}))
+const good = (): { result: string; total: number; rolls: unknown[] } => ({
+  result: 'good',
+  total: 3,
+  rolls: [{ initialRolls: [1, 0, -1, 1], rolls: [1, 0, -1, 1], modifierLogs: [] }]
+})
+
+const mockRoll = mock(good)
 
 void mock.module('@randsum/games/fate', () => ({ roll: mockRoll }))
 
 const { fateCommand } = await import('../../src/commands/fate.js')
 
-function makeInteraction(opts: { skill?: number } = {}): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: {
-    getInteger: ReturnType<typeof mock>
-    getString: ReturnType<typeof mock>
-    getBoolean: ReturnType<typeof mock>
-  }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
-    options: {
-      getInteger: mock((name: string) => {
-        if (name === 'skill') return opts.skill ?? 0
-        return 0
-      }),
-      getString: mock((_name: string) => null),
-      getBoolean: mock(() => false)
-    }
-  }
+function render(options: { name: string; value: unknown }[] = []): RollView {
+  return fateCommand.buildView!(makeContext(options))
 }
 
 beforeEach(() => {
-  mockRoll.mockClear()
+  mockRoll.mockReset().mockImplementation(good)
 })
 
 describe('fateCommand', () => {
-  test('titles the embed with the ladder rung', async () => {
-    const interaction = makeInteraction()
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Great')
+  test('the headline is the ladder rung and its number', () => {
+    // The ladder is a number line, so the rung alone loses half the meaning.
+    const view = render()
+    expect(textOf(view)).toContain('## Good (+3)')
+    expect(accentsOf(view)[0]).toBe(FATE.good)
   })
 
-  test('renders the four Fate dice symbols', async () => {
-    const interaction = makeInteraction()
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string; value: string }[] }
-    const diceField = (embedJson.fields ?? []).find(f => f.name === 'Fate Dice (4dF)')
-    expect(diceField).toBeDefined()
-    expect(diceField!.value).toBe('+  +  ▢  +')
+  test('Fate dice render as monospace tiles, not a tofu-prone glyph', () => {
+    // The old renderer used ▢ (U+25A2), which has patchy font coverage and
+    // rendered as tofu on some Android and Linux configurations.
+    const text = textOf(render())
+    expect(text).toContain('`[+]`')
+    expect(text).toContain('`[ ]`')
+    expect(text).toContain('`[-]`')
+    expect(text).not.toContain('▢')
   })
 
-  test('non-zero skill adds a skill field', async () => {
-    const interaction = makeInteraction({ skill: 3 })
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string; value: string }[] }
-    const skillField = (embedJson.fields ?? []).find(f => f.name === 'Skill')
-    expect(skillField).toBeDefined()
-    expect(skillField!.value).toBe('+3')
+  test('opposition resolves shifts into a real Fate outcome', () => {
+    // Fate's actual outcomes are Fail / Tie / Success / Succeed with Style,
+    // measured in shifts. A bare ladder rung tells a Fate player nothing.
+    expect(textOf(render([{ name: 'opposition', value: 0 }]))).toContain('Succeed with Style')
+    expect(textOf(render([{ name: 'opposition', value: 2 }]))).toContain('Success')
+    expect(textOf(render([{ name: 'opposition', value: 3 }]))).toContain('Tie')
+    expect(textOf(render([{ name: 'opposition', value: 5 }]))).toContain('Fail')
   })
 
-  test('zero skill omits the skill field', async () => {
-    const interaction = makeInteraction({ skill: 0 })
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
-    expect(fieldNames).not.toContain('Skill')
+  test('a tie is described as a tie, not as "0 shifts over"', () => {
+    expect(textOf(render([{ name: 'opposition', value: 3 }]))).toContain('A tie')
   })
 
-  test('clamps an out-of-range skill to the ladder bounds', async () => {
-    const interaction = makeInteraction({ skill: 99 })
-    await fateCommand.execute(interaction as never)
+  test('shift counts are singular or plural as appropriate', () => {
+    expect(textOf(render([{ name: 'opposition', value: 2 }]))).toContain('1 shift over')
+    expect(textOf(render([{ name: 'opposition', value: 0 }]))).toContain('3 shifts over')
+  })
+
+  test('without opposition the rung stands alone, with no invented outcome', () => {
+    const text = textOf(render())
+    expect(text).not.toContain('Succeed with Style')
+    expect(text).not.toContain('shift')
+  })
+
+  test('a skill appears only when non-zero', () => {
+    expect(textOf(render())).not.toContain('**Skill**')
+    expect(textOf(render([{ name: 'skill', value: 2 }]))).toContain('**Skill** +2')
+  })
+
+  test('an out-of-range skill is clamped to the ladder bounds', () => {
+    render([{ name: 'skill', value: 99 }])
     expect(mockRoll).toHaveBeenCalledWith({ modifier: 5 })
+
+    render([{ name: 'skill', value: -99 }])
+    expect(mockRoll).toHaveBeenLastCalledWith({ modifier: -2 })
   })
 
-  test('error path: roll throws, replies with error embed', async () => {
+  test('error path: a failing roll propagates', () => {
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })
-    const interaction = makeInteraction({ skill: 1 })
-    await fateCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Error')
+    expect(() => render()).toThrow('Test error')
+  })
+
+  test('the accent follows the outcome, not the ladder rung', () => {
+    // A Legendary total against stiffer opposition is still a Fail, and the
+    // accent used to come from the rung — so a failure rendered gold while the
+    // word beside it read "Fail". palette.ts promises the accent lets a player
+    // read success-versus-failure before any text; for this path it lied.
+    mockRoll.mockImplementationOnce(() => ({
+      result: 'legendary',
+      total: 8,
+      rolls: [{ initialRolls: [1, 1, 1, 0], rolls: [1, 1, 1, 0], modifierLogs: [] }]
+    }))
+    const view = render([{ name: 'opposition', value: 10 }])
+    expect(textOf(view)).toContain('Fail')
+    expect(accentsOf(view)[0]).toBe(FATE.terrible)
+    expect(accentsOf(view)[0]).not.toBe(FATE.legendary)
+  })
+
+  test('a low rung that beats weak opposition is not painted as a failure', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      result: 'poor',
+      total: -1,
+      rolls: [{ initialRolls: [-1, 0, 0, 0], rolls: [-1, 0, 0, 0], modifierLogs: [] }]
+    }))
+    const view = render([{ name: 'opposition', value: -4 }])
+    expect(textOf(view)).toContain('Succeed with Style')
+    expect(accentsOf(view)[0]).toBe(FATE.legendary)
+  })
+
+  test('without opposition the rung still drives the accent', () => {
+    // No verdict to report, so the ladder is all there is.
+    expect(accentsOf(render())[0]).toBe(FATE.good)
   })
 })

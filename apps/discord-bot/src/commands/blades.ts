@@ -1,69 +1,78 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/blades'
-import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, getInitialRolls } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
-import type { Command } from '../types.js'
+import { SlashCommandBuilder } from '../utils/builders.js'
+import { BLADES, GLYPH } from '../utils/palette.js'
+import {
+  createGameCommand,
+  encodeReroll,
+  getInitialRolls,
+  getKeptRolls,
+  markKeptRolls,
+  rollContainer
+} from './lib/index.js'
+import type { CommandContext } from './lib/index.js'
+import type { Command, RollView } from '../types.js'
 
-function buildBladesEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const dice = interaction.options.getInteger('dice', true)
+/**
+ * Outcome copy in Blades' own register.
+ *
+ * The old strings were generic — "Success!", "You succeed at your goal" — where
+ * the book is blunt and specific. A 6 is "you do it"; a 4-5 is "you do it, but";
+ * a 1-3 is "things go badly".
+ */
+const OUTCOMES = {
+  critical: {
+    accent: BLADES.critical,
+    headline: `${GLYPH.critical} Critical`,
+    consequence: 'You do it, and you get increased effect.'
+  },
+  success: {
+    accent: BLADES.success,
+    headline: `${GLYPH.success} Full Success`,
+    consequence: 'You do it.'
+  },
+  partial: {
+    accent: BLADES.partial,
+    headline: `${GLYPH.mixed} Partial Success`,
+    consequence: "You do it, but there's a consequence."
+  },
+  failure: {
+    accent: BLADES.failure,
+    headline: `${GLYPH.failure} Bad Outcome`,
+    consequence: 'Things go badly. The GM says how it gets worse.'
+  }
+} as const
+
+function buildBladesView(context: CommandContext): RollView {
+  const dice = context.options.getInteger('dice', true)
   const result = roll({ rating: dice })
 
   const initialRolls = getInitialRolls(result)
-  const highestDie = initialRolls.length > 0 ? Math.max(...initialRolls) : 1
+  const keptRolls = getKeptRolls(result)
+  const decidingDie = keptRolls[0] ?? result.total
+  const outcome = OUTCOMES[result.result]
 
-  const resultConfig = {
-    critical: {
-      color: 0xffd700,
-      resultTitle: 'Critical Success!',
-      resultDescription: 'Things go better than expected'
-    },
-    success: {
-      color: 0x00ff00,
-      resultTitle: 'Success!',
-      resultDescription: 'You succeed at your goal'
-    },
-    partial: {
-      color: 0xffff00,
-      resultTitle: 'Partial Success',
-      resultDescription: 'You succeed, but with a consequence'
-    },
-    failure: {
-      color: 0xff0000,
-      resultTitle: 'Failure',
-      resultDescription: "Things don't go your way"
-    }
-  }
+  // At rating 0 the roller keeps the *lowest* of two dice. "Deciding Die" is
+  // correct in both branches, where "Highest Roll" was wrong in one of them.
+  const pool =
+    dice === 0 ? '0 dice — roll two, take the worst' : `${dice} ${dice === 1 ? 'die' : 'dice'}`
 
-  const { color, resultTitle, resultDescription } = resultConfig[result.result]
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('blades', { dice, hidden })
 
-  const embed = new EmbedBuilder()
-    .setColor(color)
-    .setTitle(resultTitle)
-    .setDescription(resultDescription)
-    .setFooter(embedFooterDetails)
-
-  embed.addFields({
-    name: 'Dice Pool',
-    value: dice === 0 ? '0 dice (rolled 2, taking lowest)' : `${dice} dice`,
-    inline: true
-  })
-
-  embed.addFields({
-    name: 'Highest Roll',
-    value: String(highestDie),
-    inline: true
-  })
-
-  const rollsText = initialRolls.map(r => (r === highestDie ? `**${r}**` : `~~${r}~~`)).join(', ')
-
-  embed.addFields({
-    name: 'All Rolls',
-    value: rollsText || 'None',
-    inline: false
-  })
-
-  return embed
+  return [
+    rollContainer({
+      accent: outcome.accent,
+      headline: outcome.headline,
+      consequence: outcome.consequence,
+      facts: [
+        { label: 'Pool', value: pool },
+        { label: 'Deciding Die', value: String(decidingDie) }
+      ],
+      body: [markKeptRolls(initialRolls, keptRolls)],
+      derivation: `${initialRolls.length}d6 → ${decidingDie}`,
+      ...(rerollId !== undefined ? { rerollId } : {})
+    })
+  ]
 }
 
 export const bladesCommand: Command = createGameCommand({
@@ -73,7 +82,7 @@ export const bladesCommand: Command = createGameCommand({
     .addIntegerOption(option =>
       option
         .setName('dice')
-        .setDescription('Number of dice to roll (0-10)')
+        .setDescription('Dice pool size (0 = roll two, take the worst)')
         .setRequired(true)
         .setMinValue(0)
         .setMaxValue(10)
@@ -84,5 +93,5 @@ export const bladesCommand: Command = createGameCommand({
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-  buildEmbed: buildBladesEmbed
+  buildView: buildBladesView
 })

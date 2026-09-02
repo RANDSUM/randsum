@@ -1,52 +1,6 @@
-import {
-  ActionRowBuilder,
-  ComponentType,
-  EmbedBuilder,
-  SlashCommandBuilder,
-  StringSelectMenuBuilder
-} from '../utils/discord.js'
-import type { StringSelectMenuInteraction } from '../utils/discord.js'
-import { NOTATION_DOCS } from '@randsum/roller/docs'
-import type { NotationDoc } from '@randsum/roller/docs'
-import { embedFooterDetails } from '../utils/constants.js'
-import { deferReplyHonoringHidden } from '../utils/ephemeral.js'
-import { replyWithError } from '../utils/replyWithError.js'
-import { captureException } from '../utils/errorTracker.js'
+import { SlashCommandBuilder } from '../utils/builders.js'
+import { buildNotationView } from './lib/notationView.js'
 import type { Command } from '../types.js'
-
-const COLLECTOR_TIMEOUT = 5 * 60 * 1000
-
-function groupByCategory(docs: Readonly<Record<string, NotationDoc>>): Map<string, NotationDoc[]> {
-  const groups = new Map<string, NotationDoc[]>()
-  for (const doc of Object.values(docs)) {
-    const existing = groups.get(doc.category)
-    if (existing !== undefined) {
-      existing.push(doc)
-    } else {
-      groups.set(doc.category, [doc])
-    }
-  }
-  return groups
-}
-
-function buildCategoryEmbed(category: string, entries: NotationDoc[]): EmbedBuilder {
-  const fields = entries.map(doc => ({
-    name: `${doc.title} (${doc.displayBase})`,
-    value: [
-      doc.description,
-      ...doc.examples.map(ex => `**\`${ex.notation}\`** — ${ex.description}`)
-    ].join('\n'),
-    inline: false
-  }))
-
-  return new EmbedBuilder()
-    .setColor('#FFD700')
-    .setTitle('notation.randsum.dev')
-    .setURL('https://notation.randsum.dev')
-    .setDescription(`**${category}** modifiers`)
-    .addFields(fields)
-    .setFooter(embedFooterDetails)
-}
 
 export const notationCommand: Command = {
   data: new SlashCommandBuilder()
@@ -59,115 +13,18 @@ export const notationCommand: Command = {
         .setRequired(false)
     ),
 
-  async execute(interaction) {
-    await deferReplyHonoringHidden(interaction)
-
-    try {
-      const grouped = groupByCategory(NOTATION_DOCS)
-      const categories = Array.from(grouped.keys())
-      const firstCategory = categories[0] ?? 'Core'
-      const firstEntries = grouped.get(firstCategory) ?? []
-
-      const embed = buildCategoryEmbed(firstCategory, firstEntries)
-
-      const selectMenu = new StringSelectMenuBuilder()
-        .setCustomId('notation-category')
-        .setPlaceholder('Select a category')
-        .addOptions(
-          categories.map(cat => ({
-            label: cat,
-            value: cat,
-            default: cat === firstCategory
-          }))
-        )
-
-      const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu)
-
-      const message = await interaction.editReply({
-        embeds: [embed],
-        components: [row]
-      })
-
-      const collector = message.createMessageComponentCollector({
-        componentType: ComponentType.StringSelect,
-        time: COLLECTOR_TIMEOUT
-      })
-
-      collector.on('collect', (selectInteraction: StringSelectMenuInteraction) => {
-        void (async () => {
-          try {
-            const selected = selectInteraction.values[0]
-            if (selected === undefined) return
-
-            const entries = grouped.get(selected) ?? []
-            const categoryEmbed = buildCategoryEmbed(selected, entries)
-
-            const updatedMenu = new StringSelectMenuBuilder()
-              .setCustomId('notation-category')
-              .setPlaceholder('Select a category')
-              .addOptions(
-                categories.map(cat => ({
-                  label: cat,
-                  value: cat,
-                  default: cat === selected
-                }))
-              )
-
-            const updatedRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-              updatedMenu
-            )
-
-            await selectInteraction.update({
-              embeds: [categoryEmbed],
-              components: [updatedRow]
-            })
-          } catch (error) {
-            captureException(error, {
-              command: 'notation',
-              interactionId: selectInteraction.id,
-              phase: 'collector.collect'
-            })
-          }
-        })()
-      })
-
-      collector.on('end', () => {
-        void (async () => {
-          try {
-            const disabledMenu = new StringSelectMenuBuilder()
-              .setCustomId('notation-category')
-              .setPlaceholder('Select a category')
-              .addOptions(
-                categories.map(cat => ({
-                  label: cat,
-                  value: cat,
-                  default: cat === firstCategory
-                }))
-              )
-              .setDisabled(true)
-
-            const disabledRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-              disabledMenu
-            )
-
-            await message.edit({
-              components: [disabledRow]
-            })
-          } catch (error) {
-            captureException(error, {
-              command: 'notation',
-              interactionId: interaction.id,
-              phase: 'collector.end'
-            })
-          }
-        })()
-      })
-    } catch (e) {
-      await replyWithError(
-        interaction,
-        'Error',
-        e instanceof Error ? e.message : 'An unknown error occurred'
-      )
-    }
-  }
+  // Only the initial page. Each subsequent category selection arrives as its own
+  // POST and is rendered by `dispatchComponent` in src/worker/dispatch.ts — the
+  // select menu sends its chosen value back, so there is no session to seed here.
+  //
+  // This is the one command that had a hand-written `execute`, and the only one
+  // that lost real behaviour with it: the gateway kept a five-minute component
+  // collector open on the socket and greyed the menu out when it expired. A
+  // Worker holds nothing open, so the menu simply stays live — Discord re-POSTs
+  // every selection, and a click on a very old message renders the same page it
+  // always did rather than a disabled control.
+  // Under Components V2 the select menu lives inside the container, so what
+  // used to be a separate `buildComponents` returning a detached action row is
+  // now part of the one view — and the view is built once rather than twice.
+  buildView: () => buildNotationView()
 }

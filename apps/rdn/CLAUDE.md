@@ -56,7 +56,7 @@ apps/rdn/
   __tests__/
     conformance.test.ts  # bun:test
   astro.config.ts
-  netlify.toml
+  wrangler.jsonc
 ```
 
 ## Commands
@@ -111,6 +111,12 @@ keeping the published JSON in sync with the source.
   `@astrojs/language-server`'s `getTsconfig`. Revisit when `@astrojs/check` ships a
   release whose peer range admits TypeScript 7.
 - Private app, never published to npm.
-- Deployed to Netlify (see `netlify.toml`).
+- **Deployed to Cloudflare Workers (`wrangler.jsonc`).** Netlify served this
+  site until 2026-08-18 and has been removed entirely.
+  Cloudflare deploys from `.github/workflows/deploy-cloudflare.yml` on merge to
+  `main`, not from Workers Builds: rdn imports roller through a workspace
+  subpath export that has to be built first, and CI already sequences that.
+  No Astro adapter is involved — the site is `output: 'static'`, so Cloudflare
+  serves `dist/` directly through an assets binding with no Worker script.
 - Fonts: Inter (body) and JetBrains Mono (code/headings), via Astro's Google
   font provider (`astro.config.ts`).

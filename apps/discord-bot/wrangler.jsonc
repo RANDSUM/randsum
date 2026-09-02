@@ -1,0 +1,54 @@
+{
+  // Cloudflare Worker for the Discord bot — HTTP interactions.
+  //
+  // THIS IS THE BOT. Discord POSTs every interaction to the route below, and
+  // there is no second transport: the gateway process and its Render host were
+  // both removed. A failed or skipped deploy here is a user-visible outage, not
+  // a fallback to something else.
+  //
+  // Wrangler bundles the TypeScript entry directly, which is why this app has
+  // no `build` script — there is no artifact to produce ahead of the deploy.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "randsum-discord-bot",
+  "main": "./src/worker/index.ts",
+  // Matches the sites: newer than the locally installed wrangler's workerd
+  // supports would make `wrangler dev` refuse to start, and local testing is
+  // the only way to exercise this before Discord is pointed at it.
+  "compatibility_date": "2026-07-13",
+  // Declared here rather than passed as `--domains` on the deploy command, so a
+  // deploy that forgets the flag cannot silently detach the hostname Discord is
+  // configured to call. Discord stores an absolute URL and never rediscovers
+  // it, so losing this domain takes the bot down with no failing deploy to
+  // point at.
+  //
+  // Owning the hostname also keeps the Discord side independent of the
+  // account's workers.dev subdomain, which is a Cloudflare account detail and
+  // not something Discord's config should depend on.
+  "routes": [
+    {
+      "pattern": "bot.randsum.dev",
+      "custom_domain": true
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  // DISCORD_PUBLIC_KEY is committed, deliberately, reversing what an earlier
+  // revision of this file argued.
+  //
+  // It is not a credential. It verifies Discord's signatures; it cannot produce
+  // one. Only Discord holds the private half, so publishing this lets nobody
+  // forge an interaction — the threat model is backwards from a token's.
+  //
+  // The reason to commit it rather than `wrangler secret put` it is that a
+  // secret makes the Worker un-reproducible from the repo: CI deploys keep
+  // working (secrets survive a deploy), so a missing key shows up only on a
+  // fresh environment, as every request 401ing with nothing in the diff to
+  // explain it. Committed, `wrangler deploy` from a clean checkout is complete.
+  //
+  // The tradeoff accepted: pointing this Worker at a different Discord app is
+  // now a code change. That is the better failure mode — it shows up in review.
+  "vars": {
+    "DISCORD_PUBLIC_KEY": "fa40a08dc912843e0082cfc56ff312bfc6e20cf5306976871c16c14c72cbef11"
+  }
+}

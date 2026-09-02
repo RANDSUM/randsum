@@ -33,6 +33,10 @@
       "project": ["src/**/*.ts", "__tests__/**/*.ts"],
       "includeEntryExports": true
     },
+    "apps/discord-bot": {
+      "entry": ["src/worker/index.ts", "src/deploy-commands.ts"],
+      "project": ["src/**/*.ts"]
+    },
     "apps/rdn": {},
     "apps/site": {}
   },

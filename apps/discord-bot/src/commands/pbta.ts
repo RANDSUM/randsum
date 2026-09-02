@@ -1,15 +1,48 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/discord.js'
 import { roll } from '@randsum/games/pbta'
-import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
-import type { ChatInputCommandInteraction } from '../utils/discord.js'
-import type { Command } from '../types.js'
+import { SlashCommandBuilder } from '../utils/builders.js'
+import { GLYPH, PBTA } from '../utils/palette.js'
+import {
+  createGameCommand,
+  encodeReroll,
+  formatSignedModifier,
+  getInitialRolls,
+  getKeptRolls,
+  markKeptRolls,
+  rollContainer
+} from './lib/index.js'
+import type { CommandContext, ViewFact } from './lib/index.js'
+import type { Command, RollView } from '../types.js'
 
-function buildPbtaEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder {
-  const stat = interaction.options.getInteger('stat', true)
-  const forward = interaction.options.getInteger('forward') ?? 0
-  const ongoing = interaction.options.getInteger('ongoing') ?? 0
-  const rollingWith = interaction.options.getString('rolling_with') as
+/**
+ * The band leads, its name follows.
+ *
+ * PbtA is a family, not a game: Apocalypse World says "10+", Dungeon World says
+ * "strong hit", Masks says something else again. The numeric band is the part
+ * that travels to every table running any of them.
+ */
+const OUTCOMES = {
+  strong_hit: {
+    accent: PBTA.strongHit,
+    headline: `${GLYPH.success} 10+  ·  Strong Hit`,
+    consequence: "You do it. Take the move's full effect."
+  },
+  weak_hit: {
+    accent: PBTA.weakHit,
+    headline: `${GLYPH.mixed} 7-9  ·  Weak Hit`,
+    consequence: 'You do it, but the MC picks a complication or a cost.'
+  },
+  miss: {
+    accent: PBTA.miss,
+    headline: `${GLYPH.failure} 6-  ·  Miss`,
+    consequence: 'The MC makes a move. In most PbtA games, mark experience.'
+  }
+} as const
+
+function buildPbtaView(context: CommandContext): RollView {
+  const stat = context.options.getInteger('stat', true)
+  const forward = context.options.getInteger('forward') ?? 0
+  const ongoing = context.options.getInteger('ongoing') ?? 0
+  const rollingWith = context.options.getString('rolling_with') as
     | 'Advantage'
     | 'Disadvantage'
     | null
@@ -18,51 +51,51 @@ function buildPbtaEmbed(interaction: ChatInputCommandInteraction): EmbedBuilder 
     stat,
     ...(forward !== 0 ? { forward } : {}),
     ...(ongoing !== 0 ? { ongoing } : {}),
-    ...(rollingWith === 'Advantage' ? { advantage: true } : {}),
-    ...(rollingWith === 'Disadvantage' ? { disadvantage: true } : {})
+    ...(rollingWith ? { rollingWith } : {})
   })
 
   const initialRolls = getInitialRolls(result)
+  const keptRolls = getKeptRolls(result)
+  const outcome = OUTCOMES[result.result]
 
-  const resultConfig = {
-    strong_hit: { color: 0xffd700, resultTitle: 'Strong Hit!' },
-    weak_hit: { color: 0xffff00, resultTitle: 'Weak Hit' },
-    miss: { color: 0xff0000, resultTitle: 'Miss' }
-  } as const
+  const facts: ViewFact[] = [{ label: 'Stat', value: formatSignedModifier(stat) }]
+  if (forward !== 0) facts.push({ label: 'Forward', value: formatSignedModifier(forward) })
+  if (ongoing !== 0) facts.push({ label: 'Ongoing', value: formatSignedModifier(ongoing) })
+  // `details.diceTotal` is the dice-only subtotal the engine computes and the
+  // embed renderer never showed — exactly the number a PbtA player wants beside
+  // their modifiers.
+  facts.push({ label: 'Dice', value: String(result.details.diceTotal) })
+  facts.push({ label: 'Total', value: String(result.total) })
 
-  const { color, resultTitle } = resultConfig[result.result]
+  const dropped = initialRolls.length > keptRolls.length
+  const dice = dropped ? markKeptRolls(initialRolls, keptRolls) : initialRolls.join(', ')
 
-  const embed = new EmbedBuilder()
-    .setColor(color)
-    .setTitle(resultTitle)
-    .setDescription(`Total: ${result.total}`)
-    .setFooter(embedFooterDetails)
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('pbta', {
+    stat,
+    forward,
+    ongoing,
+    rolling_with: rollingWith,
+    hidden
+  })
 
-  embed.addFields({ name: 'Dice Rolled', value: initialRolls.join(', ') || 'None', inline: true })
-  embed.addFields({ name: 'Stat', value: stat >= 0 ? `+${stat}` : String(stat), inline: true })
-  embed.addFields({ name: 'Total', value: String(result.total), inline: true })
-
-  if (forward !== 0) {
-    embed.addFields({
-      name: 'Forward',
-      value: formatSignedModifier(forward),
-      inline: true
+  return [
+    rollContainer({
+      accent: outcome.accent,
+      headline: outcome.headline,
+      consequence: outcome.consequence,
+      facts,
+      body: [
+        // Naming the mechanic in the label is what makes the strikethrough
+        // self-explaining rather than something to decode.
+        dropped
+          ? `**3d6, keep ${rollingWith === 'Disadvantage' ? 'worst' : 'best'} 2**  ${dice}`
+          : `**2d6**  ${dice}`
+      ],
+      derivation: `${result.details.diceTotal} ${formatSignedModifier(result.total - result.details.diceTotal)} = ${result.total}`,
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
-  }
-
-  if (ongoing !== 0) {
-    embed.addFields({
-      name: 'Ongoing',
-      value: formatSignedModifier(ongoing),
-      inline: true
-    })
-  }
-
-  if (rollingWith) {
-    embed.addFields({ name: 'Rolling With', value: rollingWith, inline: true })
-  }
-
-  return embed
+  ]
 }
 
 export const pbtaCommand: Command = createGameCommand({
@@ -72,25 +105,35 @@ export const pbtaCommand: Command = createGameCommand({
     .addIntegerOption(option =>
       option
         .setName('stat')
-        .setDescription('Your stat modifier (-3 to 5)')
+        .setDescription('The stat modifier for this move (-3 to 5)')
         .setRequired(true)
         .setMinValue(-3)
         .setMaxValue(5)
     )
     .addIntegerOption(option =>
-      option.setName('forward').setDescription('One-time forward bonus').setRequired(false)
+      option
+        .setName('forward')
+        .setDescription('Bonus taken forward (-5 to 5)')
+        .setRequired(false)
+        .setMinValue(-5)
+        .setMaxValue(5)
     )
     .addIntegerOption(option =>
-      option.setName('ongoing').setDescription('Persistent ongoing bonus').setRequired(false)
+      option
+        .setName('ongoing')
+        .setDescription('Ongoing bonus (-5 to 5)')
+        .setRequired(false)
+        .setMinValue(-5)
+        .setMaxValue(5)
     )
     .addStringOption(option =>
       option
         .setName('rolling_with')
-        .setDescription('Roll with advantage or disadvantage')
+        .setDescription('Roll 3d6 and keep the best or worst two')
         .setRequired(false)
         .addChoices(
-          { name: 'Advantage', value: 'Advantage' },
-          { name: 'Disadvantage', value: 'Disadvantage' }
+          { name: 'Best 2 of 3', value: 'Advantage' },
+          { name: 'Worst 2 of 3', value: 'Disadvantage' }
         )
     )
     .addBooleanOption(option =>
@@ -99,5 +142,5 @@ export const pbtaCommand: Command = createGameCommand({
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-  buildEmbed: buildPbtaEmbed
+  buildView: buildPbtaView
 })

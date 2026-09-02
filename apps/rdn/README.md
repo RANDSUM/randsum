@@ -3,8 +3,9 @@
 The **RANDSUM Dice Notation (RDN) Specification** site — the normative spec hosted at
 [notation.randsum.dev](https://notation.randsum.dev). Built with Astro.
 
-> **Private app.** Not published to npm. Deployed to Netlify on push to `main`
-> (see [`netlify.toml`](./netlify.toml) and [`apps/DEPLOY.md`](../DEPLOY.md)).
+> **Private app.** Not published to npm. Deployed to Cloudflare Workers on push
+> to `main` (see [`wrangler.jsonc`](./wrangler.jsonc) and
+> [`apps/DEPLOY.md`](../DEPLOY.md)).
 
 It also generates the normative conformance vectors under `public/conformance/` from
 `@randsum/roller` via `conformance-gen.ts`.

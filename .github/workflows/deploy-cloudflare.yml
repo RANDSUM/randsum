@@ -1,0 +1,150 @@
+# Deploy every Cloudflare surface on merge to main.
+#
+# Netlify deployed itself from its own git integration, which is why this repo
+# had no deploy job for years. Cloudflare has no equivalent — Workers Builds
+# exists, but its monorepo handling has a known flakiness report for workspace
+# dependency resolution and nothing authoritative for Bun, and this repo has
+# cross-package build ordering (roller -> rdn) that CI already sequences
+# correctly. So deployment lives here, where the build is already known-good.
+#
+# Path-filtered per surface rather than deploying everything on every merge,
+# which is the same economy the netlify.toml `ignore` predicates were buying.
+#
+# Every job SKIPS rather than fails when CLOUDFLARE_API_TOKEN is absent. A
+# workflow that fails red on every merge for a known, documented, expected
+# reason is worse than one that does nothing: it trains people to ignore a
+# failing check, and the next real failure hides inside the noise.
+#
+# NOTE what a skipped deploy now costs, because there is no second host behind
+# any of these. Netlify has been removed from the repo entirely, so a skipped
+# site deploy means randsum.dev silently serves stale content. The bot is
+# stricter still: Discord posts interactions to bot.randsum.dev and there is no
+# second transport, so the deployed Worker IS the bot.
+#
+# `workflow_dispatch` is the manual escape hatch, and it exists because the push
+# trigger is not guaranteed to fire. On 2026-09-01 the merge of #1235 produced
+# ZERO workflow runs — not this one, not CI, not CodeQL. `actions/runs?head_sha=`
+# returned `total_count: 0` twenty minutes later. GitHub dropped the push event;
+# nothing in this file was wrong, and the same workflow had run correctly for the
+# merge forty minutes earlier.
+#
+# That left main undeployed with no way to fix it from the Actions UI: you cannot
+# re-run a run that never existed, and the only other route was to push another
+# commit to main purely to trigger a deploy. Hence a trigger that does not depend
+# on an event GitHub might not deliver.
+name: Deploy (Cloudflare)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/rdn/**'
+      - 'apps/site/**'
+      - 'apps/discord-bot/**'
+      - 'packages/**'
+      - 'bun.lock'
+      - '.github/workflows/deploy-cloudflare.yml'
+  workflow_dispatch:
+    inputs:
+      surface:
+        description: 'Which surface to deploy'
+        type: choice
+        default: all
+        options: [all, rdn, site, bot]
+
+permissions:
+  contents: read
+
+concurrency:
+  # Never let two deploys race to the same Worker. Not cancel-in-progress: a
+  # half-finished asset upload that gets cancelled is worse than a short queue.
+  group: deploy-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  rdn:
+    name: notation.randsum.dev
+    # A push deploys every surface, exactly as before — `inputs.surface` is empty
+    # for a push, so the first clause carries it. Only a manual run can narrow.
+    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'rdn'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./.github/actions/bun-setup
+
+      # rdn imports @randsum/roller via a workspace subpath export, so roller
+      # must be built first or the Astro build resolves nothing.
+      - name: Build
+        run: bun run --filter @randsum/roller --filter @randsum/rdn build
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
+            echo "notation.randsum.dev will keep serving the previously deployed version."
+            exit 0
+          fi
+          bunx wrangler@4 deploy -c apps/rdn/wrangler.jsonc
+
+  site:
+    name: randsum.dev
+    # A push deploys every surface, exactly as before — `inputs.surface` is empty
+    # for a push, so the first clause carries it. Only a manual run can narrow.
+    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'site'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./.github/actions/bun-setup
+
+      # roller and games are workspace subpath imports, so both must be built
+      # before Astro can resolve anything in the docs pages or the playground.
+      - name: Build
+        run: |
+          bun run --filter '@randsum/roller' build
+          bun run --filter '@randsum/games' build
+          bun run site:build
+
+      # Deploy the adapter-GENERATED config, not apps/site/wrangler.jsonc. The
+      # hand-written one is build input (name, compat flags, assets policy); the
+      # adapter reads it and emits dist/server/wrangler.json with the resolved
+      # entrypoint and asset paths, which is the deployable artifact.
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
+            echo "randsum.dev will keep serving the previously deployed version."
+            exit 0
+          fi
+          bunx wrangler@4 deploy -c apps/site/dist/server/wrangler.json
+
+  bot:
+    name: bot.randsum.dev
+    # A push deploys every surface, exactly as before — `inputs.surface` is empty
+    # for a push, so the first clause carries it. Only a manual run can narrow.
+    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'bot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./.github/actions/bun-setup
+
+      # The game packages must be built first: the Worker imports them through
+      # workspace subpath exports, and wrangler bundles from dist. Unlike the
+      # sites there is no separate app build step — wrangler compiles the
+      # TypeScript entry itself.
+      - name: Build dependencies
+        run: bun run --filter '@randsum/roller' --filter '@randsum/games' build
+
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN is not set — skipping deploy."
+            echo "The bot keeps serving the previously deployed Worker."
+            exit 0
+          fi
+          bunx wrangler@4 deploy -c apps/discord-bot/wrangler.jsonc

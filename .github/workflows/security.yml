@@ -21,6 +21,12 @@ jobs:
       # here: this job exists to catch NEWLY-published advisories against
       # unchanged code, so carrying the known-baseline suppressions is what
       # keeps a red run meaningful. Without them it fails every Monday on the
-      # same three findings and stops distinguishing new from known.
+      # same four findings and stops distinguishing new from known.
+      #
+      #   GHSA-5p4m-2wfm-xmqj  js-yaml. Patched 3.15.1/4.3.1 unusable (4.3.1's
+      #                        ESM exports map breaks `astro build`; Bun cannot
+      #                        split the two majors). Build/release tooling only.
+      #   GHSA-5p2g-fcmc-qvqq  image-size. No fixed version published.
+      #   GHSA-w3rx-r6r6-pgpr  image-size. No fixed version published.
       - name: Security audit
         run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr

@@ -1,6 +1,7 @@
 # @randsum/discord-bot
 
-Discord bot for rolling dice using RANDSUM game mechanics. Built with discord.js and Bun.
+Discord bot for rolling dice using RANDSUM game mechanics. Runs as a Cloudflare Worker on
+Discord's HTTP interactions, at `bot.randsum.dev`.
 
 Powered by `@randsum/roller` — **[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)**
 
@@ -73,28 +74,26 @@ Generate an invite link with these permissions:
 
 ### Slash Commands
 
-Slash commands register themselves. On every startup, after login, the bot compares its command
-barrel against what Discord has registered and writes only if they differ — so a deploy is all it
-takes, and a drifted registry heals itself on the next restart.
-
-Set `DISCORD_GUILD_ID` in `.env` for instant per-guild registration while developing; leave it
-unset for global registration (~1 hour propagation).
+Slash commands must be registered explicitly. **Deploying does not do it** — the Worker reads
+the registry, it never writes it.
 
 ```bash
-# Optional: force a registration write without restarting the bot
 bun run deploy-commands
 ```
+
+Run this whenever you add, rename, or remove a command. Set `DISCORD_GUILD_ID` in `.env` for
+instant per-guild registration while developing; leave it unset for global registration
+(~1 hour propagation).
 
 ### Run the Bot
 
 ```bash
-# Development mode (uses ts files directly)
+# Local Worker, via wrangler
 bun run dev
-
-# Production mode (requires build first)
-bun run build
-bun run start
 ```
+
+There is no `build` or `start` — wrangler compiles `src/worker/index.ts` directly, and there is
+no long-lived process to start.
 
 ### Available Commands
 
@@ -114,6 +113,10 @@ bun run start
 
 ```
 src/
+├── worker/          # Cloudflare Worker — the bot
+│   ├── index.ts     # Entry: verify signature, dispatch, respond
+│   ├── verify.ts    # Ed25519 signature verification (WebCrypto)
+│   └── dispatch.ts  # Pure: interaction payload -> response payload
 ├── commands/        # Slash command handlers
 │   ├── index.ts     # Command barrel (single source of truth)
 │   ├── blades.ts
@@ -125,22 +128,20 @@ src/
 │   ├── pbta.ts
 │   ├── roll.ts
 │   ├── root.ts
-│   └── salvageunion.ts
-├── events/          # Discord event handlers
-│   ├── interactionCreate.ts
-│   └── guildCreate.ts
-├── utils/           # Shared utilities (config, constants, discord, logger, metrics, etc.)
+│   ├── salvageunion.ts
+│   └── lib/         # Shared command scaffolding
+├── utils/           # builders (portable), discord (REST only), config, constants
 ├── types.ts         # TypeScript type definitions
-├── index.ts         # Bot entry point
 └── deploy-commands.ts  # Command registration script
 ```
 
 ### Adding New Commands
 
 1. Create a new file in `src/commands/` (e.g., `mycommand.ts`)
-2. Export a command object with `data` (SlashCommandBuilder) and `execute` function
-3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/index.ts` and `src/deploy-commands.ts` import from it)
-4. Deploy — the next startup registers it automatically (see [Slash Commands](#slash-commands))
+2. Export a command object with `data` (SlashCommandBuilder) and a `buildEmbed(context)` renderer
+   — usually via the `createGameCommand` factory in `src/commands/lib/`
+3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/worker/index.ts` and `src/deploy-commands.ts` import from it)
+4. Deploy, then run `bun run deploy-commands` — registration is a separate, explicit step (see [Slash Commands](#slash-commands))
 
 ### Testing
 
@@ -158,34 +159,32 @@ bun run typecheck
 
 ## Deployment
 
-The bot deploys to **Render** as a `worker` service, defined as Infrastructure-as-Code in the
-repo-root [`render.yaml`](../../render.yaml) blueprint (`name: randsum-discord-bot`):
-
-- `numInstances: 1` — a Discord gateway worker must hold a single connection; multiple instances
-  would double-process events. Do not scale this up.
-- Build is scoped to the bot's dependency subtree (`@randsum/roller` → `@randsum/games` →
-  `@randsum/discord-bot`) rather than the full monorepo build.
-- Start command: `node apps/discord-bot/dist/index.js`.
-- `BUN_VERSION` is pinned (1.3.14) to match CI; `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, and
-  `DISCORD_GUILD_ID` are set in the Render dashboard (`sync: false` — not committed).
-
-> The `render.yaml` blueprint is not necessarily auto-synced to the live service. If you change it,
-> verify the corresponding dashboard values (env vars, Bun version) match.
-
-Slash commands are reconciled by the bot itself on startup — no out-of-band step, and no way for a
-deploy to leave Discord advertising a command the running code cannot serve. Remove
-`DISCORD_GUILD_ID` to register commands globally (~1 hour propagation); set it to a guild ID for
-instant per-guild registration during development.
-
-### Running on your own host
+The bot deploys to **Cloudflare Workers** from [`wrangler.jsonc`](./wrangler.jsonc), via
+`.github/workflows/deploy-cloudflare.yml` on merge to `main`. Discord POSTs interactions to
+`https://bot.randsum.dev/`.
 
 ```bash
-bun run build
-export DISCORD_TOKEN=... DISCORD_CLIENT_ID=...
-node dist/index.js             # or via pm2 / systemd / docker; registers commands on boot
+bun run --filter '@randsum/roller' --filter '@randsum/games' build
+bunx wrangler@4 deploy -c apps/discord-bot/wrangler.jsonc
 ```
 
+- `bot.randsum.dev` is a `custom_domain` route, so a deploy cannot detach the hostname Discord
+  calls — and Discord never rediscovers that URL.
+- `DISCORD_PUBLIC_KEY` is a committed `var`, not a secret: it verifies Discord's signatures and
+  cannot produce one.
+- The Worker needs **no `DISCORD_TOKEN`**.
+
+> **There is no fallback transport.** The discord.js gateway bot and its Render host were both
+> removed on 2026-09-01. A skipped or broken deploy is a user-visible outage.
+
+> **Registering commands is a separate step.** Deploying the Worker does not update Discord's
+> command list — run `bun run deploy-commands`.
+
+Full triage, rollback, and DR procedures: [`apps/DEPLOY.md`](../DEPLOY.md).
+
 ## Environment Variables
+
+Used by `bun run deploy-commands` only — the Worker reads none of them.
 
 | Variable            | Required | Description                                           |
 | ------------------- | -------- | ----------------------------------------------------- |

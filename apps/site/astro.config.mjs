@@ -7,9 +7,8 @@ import sitemap from '@astrojs/sitemap'
 import starlight from '@astrojs/starlight'
 import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
-import netlify from '@astrojs/netlify'
+import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
-import { copyMarkdownToDist } from './src/integrations/copy-markdown-to-dist'
 import { copySchemaToDist } from './src/integrations/copy-schema-to-dist'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
@@ -17,18 +16,40 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 // https://astro.build/config
 const isDev = process.argv.includes('dev')
 
+function resolveAdapter() {
+  if (isDev) return undefined
+
+  return cloudflare({
+    // Prerender in Node, not in workerd — which is the adapter's default.
+    //
+    // The workerd sandbox refuses WebAssembly compilation ("Wasm code
+    // generation disallowed by embedder"), and Shiki's default Oniguruma
+    // highlighter is Wasm-backed, so every page carrying a code block fails to
+    // render. That is most of a docs site. The same sandbox also breaks the
+    // markdown pipeline's `require('path')`.
+    //
+    // Shiki can be pointed at a pure-JavaScript regex engine instead, and that
+    // also works — but it changes how code is highlighted, on a live site.
+    // Prerendering in Node changes nothing about the output at all: it is the
+    // same environment the Netlify build used, so the two targets produce
+    // identical pages. That equivalence is what made the cutover verifiable.
+    prerenderEnvironment: 'node'
+  })
+}
+
 export default defineConfig({
   base: '/',
-  // Legacy 301 redirects for old URL shapes. These MUST live here rather than in
-  // netlify.toml [[redirects]]: this site ships an on-demand SSR function
-  // (`src/pages/api/roll.ts`, `prerender = false`), and @astrojs/netlify then
-  // registers that function at `/*` with `preferStatic: true`. An explicit toml
-  // redirect is matched BEFORE the request reaches the function's `/*` route, so
-  // toml redirects (and, fatally, a toml `/*` catch-all) shadow the function.
-  // Declared here, Astro emits these into dist/_redirects (301) AND bakes them
-  // into the function's own route manifest, so they resolve regardless of
-  // Netlify precedence. netlify.toml deliberately carries NO redirects now — the
-  // SSR function serves the 404 page (404 status) for unmatched routes itself.
+  // Legacy 301 redirects for old URL shapes.
+  //
+  // Keep these in Astro config rather than in any host-level redirect file.
+  // Astro emits them into `dist/_redirects` AND bakes them into the SSR
+  // function's own route manifest, so they resolve either way — which is what
+  // made them survive the move off Netlify without being touched.
+  //
+  // They also stay 301 under Cloudflare, verified against the live site. Worth
+  // stating because Workers Static Assets issues **307** for its own
+  // trailing-slash handling, and that status is not configurable — so "the site
+  // returns 307 sometimes" is expected and is a different mechanism from these.
   redirects: {
     // Old package URLs → new game/tool pages
     '/packages/fifth/': { status: 301, destination: '/games/fifth/' },
@@ -61,7 +82,10 @@ export default defineConfig({
       styles: ['normal']
     }
   ],
-  site: process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? 'https://randsum.dev',
+  // `URL` and `DEPLOY_PRIME_URL` were Netlify's deploy-context variables, used
+  // so preview deploys emitted their own absolute URLs. Cloudflare sets neither,
+  // so the fallback was the only branch that ever ran after the migration.
+  site: 'https://randsum.dev',
   integrations: [
     sitemap(),
     starlight({
@@ -198,7 +222,6 @@ export default defineConfig({
             icon: 'setting',
             items: [
               { label: 'Playground', link: 'https://randsum.io' },
-              { label: 'CLI', slug: 'tools/cli' },
               { label: 'MCP Server', slug: 'tools/mcp' },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
               { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' },
@@ -210,7 +233,6 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css']
     }),
     react(),
-    copyMarkdownToDist(),
     copySchemaToDist()
   ],
   prefetch: false,
@@ -222,5 +244,5 @@ export default defineConfig({
     }
   },
   output: 'static',
-  adapter: isDev ? undefined : netlify()
+  adapter: resolveAdapter()
 })

@@ -1,19 +1,21 @@
 /**
- * Integration test: exercises the real /roll command handler against an
- * UN-mocked @randsum/roller. Unlike the unit tests (which mock.module the roller
- * and stub roll output), this test injects a seeded random into the real engine
- * so the produced embed content is deterministic for a known seed, then asserts
- * the reply the user would actually receive.
+ * Integration test: exercises the real /roll renderer against an UN-mocked
+ * @randsum/roller. Unlike the unit tests (which mock.module the roller and stub
+ * roll output), this test injects a seeded random into the real engine so the
+ * produced embed content is deterministic for a known seed, then asserts the
+ * embed the user would actually receive.
  *
  * This is the one cross-boundary test that would catch a real roller/bot
  * integration defect (e.g. a result shape change) that the mocked unit tests
  * cannot.
  */
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
+import { linesOf, textOf } from '../lib/view.js'
+import type { RollView } from '../../src/types.js'
 import { roll } from '@randsum/roller/roll'
 import { notation } from '@randsum/roller/validate'
 import { rollCommand } from '../../src/commands/roll.js'
+import { makeContext } from '../commands/lib/context.js'
 
 // Capture the real Math.random so we can restore it after each test.
 const realRandom = Math.random
@@ -29,35 +31,8 @@ function seededRandom(seed: number): () => number {
   }
 }
 
-interface RecordingInteraction {
-  readonly deferReply: () => Promise<void>
-  readonly editReply: (payload: unknown) => Promise<void>
-  readonly options: {
-    readonly getString: (name: string) => string | null
-    readonly getBoolean: (name: string) => boolean | null
-  }
-  readonly captured: unknown[]
-}
-
-function makeInteraction(notationString: string): RecordingInteraction {
-  const captured: unknown[] = []
-  return {
-    deferReply: () => Promise.resolve(),
-    editReply: (payload: unknown) => {
-      captured.push(payload)
-      return Promise.resolve()
-    },
-    options: {
-      getString: (name: string) => (name === 'notation' ? notationString : null),
-      getBoolean: () => false
-    },
-    captured
-  }
-}
-
-function embedFromPayload(payload: unknown): APIEmbed {
-  const typed = payload as { embeds: { toJSON: () => APIEmbed }[] }
-  return typed.embeds[0]!.toJSON()
+function render(notationString: string): RollView {
+  return rollCommand.buildView!(makeContext([{ name: 'notation', value: notationString }]))
 }
 
 beforeEach(() => {
@@ -69,7 +44,7 @@ afterEach(() => {
 })
 
 describe('roll command integration (un-mocked roller)', () => {
-  test('produces a deterministic total for a known seed', async () => {
+  test('produces a deterministic total for a known seed', () => {
     // Derive the expected total from the real engine under the same seed, so the
     // assertion stays valid if the seeded sequence changes but the engine is
     // still the one actually driving the command.
@@ -77,41 +52,32 @@ describe('roll command integration (un-mocked roller)', () => {
     const expected = roll(notation('2d6')).total
     Math.random = seededRandom(42)
 
-    const interaction = makeInteraction('2d6')
-    await rollCommand.execute(interaction as never)
-
-    expect(interaction.captured).toHaveLength(1)
-    const embed = embedFromPayload(interaction.captured[0])
-    expect(embed.title).toBe(`You rolled a ${expected}`)
-    expect(String(embed.description)).toContain('2d6')
+    const view = render('2d6')
+    expect(linesOf(view)[0]).toBe(`## ${expected}`)
+    expect(textOf(view)).toContain('2d6')
   })
 
-  test('arithmetic-only notation does not render a Modified Rolls field', async () => {
+  test('arithmetic-only notation renders its dice unmarked', () => {
     // Regression guard: the real roller emits a modifierLog for every applied
-    // modifier, including non-mutating arithmetic ones (plus/minus/...), so a
-    // `modifierLogs.length > 0` gate would wrongly add a "Modified Rolls" field
-    // that duplicates "Initial Rolls". The rolled dice are unchanged for
-    // 2d6+3, so only "Initial Rolls" should appear.
-    const interaction = makeInteraction('2d6+3')
-    await rollCommand.execute(interaction as never)
-
-    const embed = embedFromPayload(interaction.captured[0]) as APIEmbed & {
-      fields?: { name: string }[]
-    }
-    const fieldNames = (embed.fields ?? []).map(f => f.name)
-    expect(fieldNames).toContain('Initial Rolls')
-    expect(fieldNames).not.toContain('Modified Rolls')
+    // modifier, including non-mutating arithmetic ones (plus/minus/...). The
+    // rolled dice are unchanged for 2d6+3, so no die should be struck through
+    // — a `modifierLogs.length > 0` gate would wrongly mark them.
+    const text = textOf(render('2d6+3'))
+    expect(text).toContain('**Add**  +3')
+    expect(text).not.toContain('~~')
   })
 
-  test('total is within the valid range for the notation', async () => {
-    const interaction = makeInteraction('3d8')
-    await rollCommand.execute(interaction as never)
-
-    const embed = embedFromPayload(interaction.captured[0])
-    const match = /You rolled a (\d+)/.exec(embed.title ?? '')
+  test('total is within the valid range for the notation', () => {
+    const match = /^## (\d+)$/.exec(linesOf(render('3d8'))[0] ?? '')
     expect(match).not.toBeNull()
     const total = Number(match![1])
     expect(total).toBeGreaterThanOrEqual(3)
     expect(total).toBeLessThanOrEqual(24)
+  })
+
+  test('invalid notation throws for the dispatcher to render', () => {
+    // The real validator, not a mock: this is the path a user hits by typing
+    // nonsense, and the dispatcher's catch turns it into an error embed.
+    expect(() => render('not-notation')).toThrow()
   })
 })

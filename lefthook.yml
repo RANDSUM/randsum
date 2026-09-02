@@ -51,8 +51,10 @@ pre-push:
       # Dependency advisory gate. Also runs in CI (ci.yml `audit` job) so it cannot
       # be bypassed with --no-verify. The --ignore list MUST match the CI job and
       # osv-scanner.toml; that file carries the per-advisory justification.
-      # Currently: js-yaml (patched release breaks `astro build`) and image-size
-      # x2 (no fixed version published).
+      # Currently:
+      #   GHSA-5p4m-2wfm-xmqj  js-yaml     — patched release breaks `astro build`
+      #   GHSA-5p2g-fcmc-qvqq  image-size  — no fixed version published
+      #   GHSA-w3rx-r6r6-pgpr  image-size  — no fixed version published
       run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr > /dev/null 2>&1
       priority: 2
     sca:
@@ -68,6 +70,7 @@ pre-push:
     arch-check:
       # Cycle + boundary invariants (audit X7b / architecture R2+R3): no circular
       # deps, no game-to-game import, no @randsum/*/src or /dist reach-in. Also runs
-      # in CI feeding the CI Gate so it cannot be bypassed with --no-verify.
+      # in CI feeding the CI Success gate so it cannot be bypassed with
+      # --no-verify.
       run: bun run arch:check > /dev/null 2>&1
       priority: 2

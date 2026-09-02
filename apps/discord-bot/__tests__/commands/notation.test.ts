@@ -1,143 +1,71 @@
-import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
+import { describe, expect, test } from 'bun:test'
+import { notationCommand } from '../../src/commands/notation.js'
+import { NOTATION_SELECT_ID, buildNotationView } from '../../src/commands/lib/notationView.js'
+import { makeContext } from './lib/context.js'
+import { textOf } from '../lib/view.js'
+import type { RollView } from '../../src/types.js'
 
-const mockCollector = {
-  on: mock(() => mockCollector),
-  stop: mock(() => undefined)
+function selectOptions(view: RollView): { label: string; default: boolean | undefined }[] {
+  return view.flatMap(container =>
+    container.toJSON().components.flatMap(component => {
+      if (component.type !== 1) return []
+      return component.components.flatMap(control =>
+        control.type === 3 && control.custom_id === NOTATION_SELECT_ID
+          ? control.options.map(option => ({ label: option.label, default: option.default }))
+          : []
+      )
+    })
+  )
 }
-
-const mockMessage = {
-  createMessageComponentCollector: mock(() => mockCollector),
-  edit: mock(() => Promise.resolve(undefined))
-}
-
-// Mock NOTATION_DOCS with a controlled fixture so tests are deterministic
-const mockNotationDocs = {
-  L: {
-    key: 'L',
-    category: 'Filter',
-    title: 'Drop Lowest',
-    description: 'Drops the lowest die from the pool',
-    color: '#abc123',
-    colorLight: '#123abc',
-    displayBase: 'L',
-    forms: [{ notation: 'NdSL', note: 'Drop lowest die' }],
-    examples: [{ notation: '4d6L', description: 'Roll 4d6, drop lowest' }]
-  },
-  H: {
-    key: 'H',
-    category: 'Filter',
-    title: 'Drop Highest',
-    description: 'Drops the highest die from the pool',
-    color: '#abc123',
-    colorLight: '#123abc',
-    displayBase: 'H',
-    forms: [{ notation: 'NdSH', note: 'Drop highest die' }],
-    examples: [{ notation: '4d6H', description: 'Roll 4d6, drop highest' }]
-  },
-  'C{..}': {
-    key: 'C{..}',
-    category: 'Clamp',
-    title: 'Cap',
-    description: 'Clamps dice to a range',
-    color: '#def456',
-    colorLight: '#456def',
-    displayBase: 'C{..}',
-    forms: [{ notation: 'NdSC{..}', note: 'Cap dice' }],
-    examples: [{ notation: '4d6C{>5}', description: 'Cap at 5' }]
-  }
-}
-
-void mock.module('@randsum/roller/docs', () => ({
-  NOTATION_DOCS: mockNotationDocs
-}))
-
-const { notationCommand } = await import('../../src/commands/notation.js')
-
-function makeInteraction(): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: { getBoolean: ReturnType<typeof mock> }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(mockMessage) as ReturnType<ReturnType<typeof mock>>),
-    options: { getBoolean: mock(() => false) }
-  }
-}
-
-beforeEach(() => {
-  for (const fn of Object.values(mockCollector)) fn.mockClear()
-  for (const fn of Object.values(mockMessage)) fn.mockClear()
-})
 
 describe('notationCommand', () => {
-  test('defers reply and edits once', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    expect(interaction.deferReply).toHaveBeenCalledTimes(1)
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
+  const view = notationCommand.buildView!(makeContext([]))
+
+  test('renders one container, with the selector inside it', () => {
+    // Under embeds this was an embed plus a detached action row beneath. The
+    // select menu nests inside a container, so the reference is one card.
+    expect(view).toHaveLength(1)
+    expect(selectOptions(view).length).toBeGreaterThan(1)
   })
 
-  test('editReply includes embeds and components', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledWith(
-      expect.objectContaining({
-        embeds: expect.any(Array),
-        components: expect.any(Array)
-      })
-    )
+  test('the current category is marked selected in the menu', () => {
+    const chosen = selectOptions(view).filter(option => option.default === true)
+    expect(chosen).toHaveLength(1)
   })
 
-  test('embed title links to notation.randsum.dev', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('notation.randsum.dev')
-    expect(embedJson.url).toBe('https://notation.randsum.dev')
+  test('links out to the notation site', () => {
+    expect(textOf(view)).toContain('https://notation.randsum.dev')
   })
 
-  test('embed shows fields for first category entries', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: unknown[] }
-    expect(embedJson.fields).toBeDefined()
-    expect((embedJson.fields ?? []).length).toBeGreaterThan(0)
+  test('a page says where it is in the sequence', () => {
+    // Twelve categories with no counter and a placeholder reading "Select a
+    // category" gave no sense of how much reference there was.
+    expect(textOf(view)).toMatch(/Page \d+ of \d+/)
   })
 
-  test('collector is created with 5-minute timeout', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    expect(mockMessage.createMessageComponentCollector).toHaveBeenCalledWith(
-      expect.objectContaining({ time: 5 * 60 * 1000 })
-    )
+  test("each category uses the notation site's own colour, not one flat gold", () => {
+    // `NotationDoc.color` is a per-category identity the site already uses and
+    // the embed renderer discarded, painting all twelve pages the same.
+    const filter = buildNotationView('Filter')[0]?.toJSON().accent_color
+    const scale = buildNotationView('Scale')[0]?.toJSON().accent_color
+    expect(filter).toBeDefined()
+    expect(filter).not.toBe(scale)
   })
 
-  test('collector registers end handler to disable menu', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const onCalls = (mockCollector.on as ReturnType<typeof mock>).mock.calls
-    const endCall = onCalls.find((args: unknown[]) => args[0] === 'end')
-    expect(endCall).toBeDefined()
+  test('the page describes its own entries rather than calling them all modifiers', () => {
+    // Every page used to read "**<category>** modifiers", including Core and
+    // Special, which are dice *types*.
+    expect(textOf(buildNotationView('Core'))).not.toContain('modifiers')
   })
 
-  test('components include a select menu with category options', async () => {
-    const interaction = makeInteraction()
-    await notationCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      components: { toJSON: () => { components: { options?: { label: string }[] }[] } }[]
-    }
-    const rowJson = call.components[0]?.toJSON()
-    const selectMenu = rowJson?.components[0]
-    const labels = (selectMenu?.options ?? []).map(o => o.label)
-    expect(labels).toContain('Filter')
-    expect(labels).toContain('Clamp')
+  test('an unrecognised category falls back rather than rendering empty', () => {
+    // A stale menu on an old message must not produce a blank reference page.
+    expect(textOf(buildNotationView('NotACategory')).length).toBeGreaterThan(0)
+  })
+
+  test('renders the entries for the requested category', () => {
+    const text = textOf(buildNotationView('Filter'))
+    expect(text).toContain('## Filter')
+    expect(text).toContain('Drop Lowest')
   })
 })

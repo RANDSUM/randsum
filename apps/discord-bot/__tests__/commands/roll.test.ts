@@ -1,5 +1,14 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
+import { makeContext } from './lib/context.js'
+import {
+  accentsOf,
+  buttonIdsOf,
+  characterCountOf,
+  componentCountOf,
+  linesOf,
+  textOf
+} from '../lib/view.js'
+import type { RollView } from '../../src/types.js'
 
 // Import real roller implementations — no discord.js mocking needed.
 const {
@@ -15,7 +24,7 @@ const {
   ValidationError,
   RollError,
   ERROR_CODES,
-  suggestNotationFix: realSuggestNotationFix
+  suggestNotationFix
 } = await import('@randsum/roller')
 
 // Mock functions delegate to real implementations by default.
@@ -23,9 +32,6 @@ const mockNotation = mock((...args: Parameters<typeof realNotation>) => realNota
 const mockRoll = mock(
   (...args: Parameters<typeof realRoll>): { total: number; result?: unknown; rolls: unknown[] } =>
     realRoll(...args)
-)
-const mockSuggestNotationFix = mock((...args: Parameters<typeof realSuggestNotationFix>) =>
-  realSuggestNotationFix(...args)
 )
 
 void mock.module('@randsum/roller', () => ({
@@ -35,7 +41,7 @@ void mock.module('@randsum/roller', () => ({
   validateRange,
   isDiceNotation,
   validateNotation,
-  suggestNotationFix: mockSuggestNotationFix,
+  suggestNotationFix,
   RandsumError,
   NotationParseError,
   ModifierError,
@@ -58,128 +64,349 @@ void mock.module('@randsum/roller/validate', () => ({
 
 const { rollCommand } = await import('../../src/commands/roll.js')
 
-function makeInteraction(opts: Record<string, string | null> = {}): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: {
-    getString: ReturnType<typeof mock>
-    getBoolean: ReturnType<typeof mock>
-  }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
-    options: {
-      getString: mock((name: string) => opts[name] ?? null),
-      getBoolean: mock(() => false)
-    }
-  }
+function render(notation: string): RollView {
+  return rollCommand.buildView!(makeContext([{ name: 'notation', value: notation }]))
 }
 
 beforeEach(() => {
+  // `mockReset` rather than `mockClear`: clear keeps queued one-shot
+  // implementations, so a `mockImplementationOnce` left unconsumed by a test
+  // that threw early would silently be picked up by the next test.
   mockNotation
-    .mockClear()
+    .mockReset()
     .mockImplementation((...args: Parameters<typeof realNotation>) => realNotation(...args))
   mockRoll
-    .mockClear()
+    .mockReset()
     .mockImplementation((...args: Parameters<typeof realRoll>) => realRoll(...args))
-  mockSuggestNotationFix
-    .mockClear()
-    .mockImplementation((...args: Parameters<typeof realSuggestNotationFix>) =>
-      realSuggestNotationFix(...args)
-    )
 })
 
 describe('rollCommand', () => {
-  test('happy path: valid notation calls roll and replies with embed', async () => {
+  test('happy path: valid notation calls roll and renders the total', () => {
     mockRoll.mockImplementationOnce(() => ({
       total: 15,
       result: ['8', '7'],
       rolls: [{ initialRolls: [8, 7], rolls: [8, 7], modifierLogs: [] }]
     }))
-    const interaction = makeInteraction({ notation: '2d6' })
-    await rollCommand.execute(interaction as never)
-    expect(interaction.deferReply).toHaveBeenCalledTimes(1)
+    const view = render('2d6')
     expect(mockRoll).toHaveBeenCalledTimes(1)
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('You rolled a 15')
+    expect(linesOf(view)[0]).toBe('## 15')
+    expect(textOf(view)).toContain('2d6')
   })
 
-  test('invalid notation: replyWithError called, roll not called', async () => {
+  test('invalid notation: throws before roll is reached', () => {
+    // Validation runs first, so a bad notation must never make it to the
+    // engine. The dispatcher turns this throw into an "Error" embed.
     mockNotation.mockImplementationOnce(() => {
       throw new Error('Invalid')
     })
-    const interaction = makeInteraction({ notation: 'garbage' })
-    await rollCommand.execute(interaction as never)
+    expect(() => render('garbage')).toThrow('Invalid')
     expect(mockRoll).not.toHaveBeenCalled()
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
   })
 
-  test('roll throws: replies with error embed', async () => {
+  test('roll throws: the failure propagates to the dispatcher', () => {
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Roll failed')
     })
-    const interaction = makeInteraction({ notation: '1d20' })
-    await rollCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
+    expect(() => render('1d20')).toThrow('Roll failed')
   })
 
-  test('modified rolls same as initial: no Modified Rolls field added', async () => {
+  test('unmodified pool: dice render plain, with no drop marking', () => {
     mockRoll.mockImplementationOnce(() => ({
       total: 5,
-      rolls: [{ initialRolls: [5], rolls: [5], modifierLogs: [] }]
+      rolls: [
+        {
+          notation: '1d6',
+          description: ['Roll 1 6-sided die'],
+          total: 5,
+          initialRolls: [5],
+          rolls: [5],
+          modifierLogs: [],
+          appliedTotal: 5
+        }
+      ]
     }))
-    const interaction = makeInteraction({ notation: '1d6' })
-    await rollCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
+    const text = textOf(render('1d6'))
+    expect(text).toContain('## 5')
+    expect(text).toContain('**Rolled**  5')
+    expect(text).not.toContain('~~')
   })
 
-  test('modified rolls differ from initial: Modified Rolls field added', async () => {
+  test('modified pool: dropped dice are struck through in place', () => {
+    // The old renderer printed "Initial Rolls" and "Modified Rolls" as two
+    // plain lists and left the reader to diff them.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 9,
+      rolls: [
+        {
+          notation: '3d6L',
+          description: ['Roll 3 6-sided dice', 'Drop lowest'],
+          total: 9,
+          initialRolls: [4, 5, 1],
+          rolls: [4, 5],
+          modifierLogs: [{ modifier: 'drop', options: { lowest: 1 }, added: [], removed: [1] }],
+          appliedTotal: 9
+        }
+      ]
+    }))
+    const text = textOf(render('3d6L'))
+    expect(text).toContain('~~1~~')
+    expect(text).toContain('Drop Lowest 1')
+  })
+
+  test("the roller's own description explains what the notation meant", () => {
+    // `record.description` is generated on every roll and was never rendered.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 9,
+      rolls: [
+        {
+          notation: '3d6L',
+          description: ['Roll 3 6-sided dice', 'Drop lowest'],
+          total: 9,
+          initialRolls: [4, 5, 1],
+          rolls: [4, 5],
+          modifierLogs: [{ modifier: 'drop', options: { lowest: 1 }, added: [], removed: [1] }],
+          appliedTotal: 9
+        }
+      ]
+    }))
+    expect(textOf(render('3d6L'))).toContain('Roll 3 6-sided dice · Drop lowest')
+  })
+
+  test('a repeat renders every pool, plus a total container', () => {
+    // The regression this guards: the renderer read `rolls[0]` only, so a
+    // second pool's dice were invisible while its total was still reported.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 14,
+      rolls: [
+        {
+          notation: '4d6L',
+          description: [],
+          total: 7,
+          initialRolls: [3, 4],
+          rolls: [3, 4],
+          modifierLogs: [],
+          appliedTotal: 7
+        },
+        {
+          notation: '4d6L',
+          description: [],
+          total: 7,
+          initialRolls: [7],
+          rolls: [7],
+          modifierLogs: [],
+          appliedTotal: 7
+        }
+      ]
+    }))
+    const view = render('4d6Lx2')
+    expect(view).toHaveLength(3) // two pools plus the total
+    const text = textOf(view)
+    expect(text).toContain('## 4d6L  ·  7')
+    expect(text).toContain('## Total  14')
+  })
+
+  test('a large repeat stays under the 40-component cap', () => {
+    // The regression this guards, and the reason the previous version of this
+    // test did not: it asserted `view.length <= 9`, which is the CONTAINER
+    // count. That passes at 53 components. `4d6Lx6` shipped 41 and Discord
+    // rejected the message outright — the six-ability-score idiom, broken.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 60,
+      rolls: Array.from({ length: 20 }, () => ({
+        notation: '3d6',
+        description: [],
+        total: 3,
+        initialRolls: [1, 1, 1],
+        rolls: [1, 1, 1],
+        modifierLogs: [],
+        appliedTotal: 3
+      }))
+    }))
+    const view = render('3d6x20')
+    expect(componentCountOf(view)).toBeLessThanOrEqual(40)
+    expect(textOf(view)).toContain('further pools not shown')
+  })
+
+  test('a huge pool stays under the character budget', () => {
+    // Not bounded by MAX_POOLS: the roller allows 1000 dice per pool, so
+    // `300d100x8` measured at 7850 characters against a ~4000 budget.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 120000,
+      rolls: Array.from({ length: 8 }, () => ({
+        notation: '300d100',
+        description: [],
+        total: 15000,
+        initialRolls: Array.from({ length: 300 }, () => 100),
+        rolls: Array.from({ length: 300 }, () => 100),
+        modifierLogs: [],
+        appliedTotal: 15000
+      }))
+    }))
+    const view = render('300d100x8')
+    expect(characterCountOf(view)).toBeLessThanOrEqual(4000)
+    expect(componentCountOf(view)).toBeLessThanOrEqual(40)
+  })
+
+  test('a long headline and description are counted, not estimated', () => {
+    // The regression this guards. The previous guard charged a flat 160
+    // characters per container for headline, description and derivation and
+    // measured only the trace lines. A pool whose notation and description are
+    // both long costs 685 on its own, so the estimate under-counted by 4x and
+    // `4d1000R{=1..=200}x6` shipped 8416 characters into a rejected message.
+    const longNotation = `4d1000R{${Array.from({ length: 60 }, (_, index) => `=${index + 1}`).join(',')}}`
+    mockRoll.mockImplementationOnce(() => ({
+      total: 24000,
+      rolls: Array.from({ length: 6 }, () => ({
+        notation: longNotation,
+        description: [`Roll 4 1000-sided dice`, `Reroll any of [${'1, '.repeat(200)}]`],
+        total: 4000,
+        initialRolls: [1000, 1000, 1000, 1000],
+        rolls: [1000, 1000, 1000, 1000],
+        modifierLogs: [],
+        appliedTotal: 4000
+      }))
+    }))
+    const view = render(`${longNotation}x6`)
+    expect(characterCountOf(view)).toBeLessThanOrEqual(4000)
+    expect(componentCountOf(view)).toBeLessThanOrEqual(40)
+  })
+
+  test('a single pool over the budget on its own has its body clamped', () => {
+    // There is no later pool to drop, so the only lever left is the body.
+    // `1000d1000L500` measured at 4100 characters and reached the user as the
+    // dispatcher's "Something went wrong" instead of a roll.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 500000,
+      rolls: [
+        {
+          notation: '1000d1000L500',
+          description: ['Roll 1000 1000-sided dice', 'Drop lowest 500'],
+          total: 500000,
+          initialRolls: Array.from({ length: 1000 }, () => 1000),
+          rolls: Array.from({ length: 500 }, () => 1000),
+          modifierLogs: [
+            {
+              modifier: 'drop',
+              options: { lowest: 500 },
+              added: [],
+              removed: Array.from({ length: 500 }, () => 1000)
+            }
+          ],
+          appliedTotal: 500000
+        }
+      ]
+    }))
+    const view = render('1000d1000L500')
+    expect(view).toHaveLength(1)
+    expect(characterCountOf(view)).toBeLessThanOrEqual(4000)
+    expect(textOf(view)).toContain('truncated')
+  })
+
+  test('a very long notation is echoed in shortened form', () => {
+    // The derivation line echoes the notation verbatim, and a 900-character
+    // reroll set is valid notation — so the echo alone claimed a quarter of the
+    // budget for a roll that was perfectly fine.
+    const long = `1d1000R{${Array.from({ length: 200 }, (_, index) => `=${index + 1}`).join(',')}}`
+    mockRoll.mockImplementationOnce(() => ({
+      total: 1503,
+      rolls: [
+        {
+          notation: '1d6',
+          description: [],
+          total: 1503,
+          initialRolls: [3],
+          rolls: [3],
+          modifierLogs: [],
+          appliedTotal: 1503
+        }
+      ]
+    }))
+    const view = render(long)
+    expect(characterCountOf(view)).toBeLessThanOrEqual(4000)
+    expect(textOf(view)).toContain('…')
+  })
+
+  test('a single over-long pool is rendered rather than dropped', () => {
+    // One pool is the whole answer to what the user asked; dropping it would
+    // leave a container reporting a total with no dice at all.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 100000,
+      rolls: [
+        {
+          notation: '1000d1000',
+          description: [],
+          total: 100000,
+          initialRolls: Array.from({ length: 1000 }, () => 1000),
+          rolls: Array.from({ length: 1000 }, () => 1000),
+          modifierLogs: [],
+          appliedTotal: 100000
+        }
+      ]
+    }))
+    expect(render('1000d1000')).toHaveLength(1)
+  })
+
+  test('the accent is the brand colour, not an outcome tier', () => {
+    // `/roll` has no outcome, so unlike the game commands its accent is
+    // identity rather than signal.
+    mockRoll.mockImplementationOnce(() => ({
+      total: 4,
+      rolls: [
+        {
+          notation: '1d6',
+          description: [],
+          total: 4,
+          initialRolls: [4],
+          rolls: [4],
+          modifierLogs: [],
+          appliedTotal: 4
+        }
+      ]
+    }))
+    expect(accentsOf(render('1d6'))[0]).toBe(0x7c3aed)
+  })
+
+  test('a reroll button carries the notation, on the first container only', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      total: 4,
+      rolls: [
+        {
+          notation: '2d6',
+          description: [],
+          total: 4,
+          initialRolls: [4],
+          rolls: [4],
+          modifierLogs: [],
+          appliedTotal: 4
+        }
+      ]
+    }))
+    expect(buttonIdsOf(render('2d6'))).toEqual(['r:roll:notation=2d6'])
+  })
+
+  test('an over-long notation drops the reroll button rather than sending an invalid id', () => {
+    // A real, valid notation that is simply too long to round-trip: an
+    // annotation label pushes it past the 100-character custom_id ceiling.
+    const long = `2d6+3[${'a'.repeat(95)}]`
     mockRoll.mockImplementationOnce(() => ({
       total: 7,
-      rolls: [{ initialRolls: [3, 4], rolls: [4], modifierLogs: [] }]
+      rolls: [
+        {
+          notation: '2d6',
+          description: [],
+          total: 7,
+          initialRolls: [3, 4],
+          rolls: [3, 4],
+          modifierLogs: [],
+          appliedTotal: 7
+        }
+      ]
     }))
-    const interaction = makeInteraction({ notation: '2d6L' })
-    await rollCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON() as { fields?: { name: string }[] }
-    const fieldNames = (embedJson.fields ?? []).map(f => f.name)
-    expect(fieldNames).toContain('Modified Rolls')
+    expect(buttonIdsOf(render(long))).toEqual([])
   })
 
-  test('error with suggestion: embed description includes "Did you mean" text', async () => {
-    mockNotation.mockImplementationOnce(() => {
-      throw new Error('Invalid notation')
-    })
-    mockSuggestNotationFix.mockImplementationOnce(() => '2d6')
-    const interaction = makeInteraction({ notation: '2d garbage' })
-    await rollCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(String(embedJson.description)).toContain('Did you mean `2d6`?')
-  })
-
-  test('error without suggestion: shows generic error message without "Did you mean"', async () => {
-    mockNotation.mockImplementationOnce(() => {
-      throw new Error('Invalid notation')
-    })
-    mockSuggestNotationFix.mockImplementationOnce(() => undefined)
-    const interaction = makeInteraction({ notation: 'zzz' })
-    await rollCommand.execute(interaction as never)
-    expect(interaction.editReply).toHaveBeenCalledTimes(1)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(String(embedJson.description)).not.toContain('Did you mean')
+  test('an empty roll result renders nothing rather than an empty container', () => {
+    mockRoll.mockImplementationOnce(() => ({ total: 0, rolls: [] }))
+    expect(render('1d6')).toHaveLength(0)
   })
 })

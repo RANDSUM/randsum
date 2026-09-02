@@ -1,0 +1,17 @@
+# Serve the hosted games meta-schema with an explicit JSON content type.
+#
+# The schema is reachable at its declared $id
+# (https://randsum.dev/schemas/v1/randsum.json) and editors fetch it via a
+# `$schema` reference, so the content type has to be application/json rather
+# than whatever the host guesses.
+#
+# This file is now the only place the rule lives. It duplicated a [[headers]]
+# block in netlify.toml during the migration — `_headers` is understood by both
+# hosts, so one file kept the rule correct on whichever was serving — and
+# netlify.toml went with Netlify.
+#
+# Verified live: https://randsum.dev/schemas/v1/randsum.json returns
+# `application/json; charset=utf-8` from Cloudflare.
+/schemas/*
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *

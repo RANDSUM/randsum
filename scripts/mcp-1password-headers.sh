@@ -10,7 +10,7 @@
 # 1Password `claude-agent` vault, read via the service-account token cached in
 # the macOS login keychain (security -s op-claude-agent). An already-exported
 # env var wins, so CI / fresh checkouts without `op` can still authenticate by
-# exporting GITHUB_PAT / RENDER_API_KEY (per the table in CLAUDE.md).
+# exporting GITHUB_PAT (per the table in CLAUDE.md).
 #
 # No plaintext secret is ever stored on disk or committed.
 
@@ -33,11 +33,7 @@ resolve() {
 
 case "${CLAUDE_CODE_MCP_SERVER_NAME:-}" in
   github)
-    token="$(resolve "${GITHUB_PAT:-}" 'op://claude-agent/GitHub PAT/credential')"
-    printf '{"Authorization":"Bearer %s"}' "$token"
-    ;;
-  render)
-    token="$(resolve "${RENDER_API_KEY:-}" 'op://claude-agent/Render API Key/credential')"
+    token="$(resolve "${GITHUB_PAT:-}" 'op://claude-agent/claude-git-pat/credential')"
     printf '{"Authorization":"Bearer %s"}' "$token"
     ;;
   *)

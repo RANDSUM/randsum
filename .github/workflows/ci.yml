@@ -19,7 +19,6 @@ jobs:
     outputs:
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
-      cli: ${{ steps.filter.outputs.cli }}
       mcp: ${{ steps.filter.outputs.mcp }}
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
@@ -44,10 +43,6 @@ jobs:
             games:
               - 'packages/roller/**'
               - 'packages/games/**'
-              - '.github/workflows/ci.yml'
-            cli:
-              - 'packages/roller/**'
-              - 'apps/cli/**'
               - '.github/workflows/ci.yml'
             mcp:
               - 'packages/roller/**'
@@ -92,7 +87,6 @@ jobs:
           all='[
             {"pkg":"roller","coverage":"roller","size":true},
             {"pkg":"games","build":"@randsum/roller","coverage":"games","size":true},
-            {"pkg":"cli","build":"@randsum/roller"},
             {"pkg":"mcp","build":"@randsum/roller @randsum/games"},
             {"pkg":"discord-bot","build":"@randsum/roller @randsum/games"},
             {"pkg":"site","build":"@randsum/roller @randsum/games","node":"22"},
@@ -104,7 +98,7 @@ jobs:
             '$all | map(select($changed[.pkg] == "true"))')
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
-  # The eight per-package jobs (roller, games, cli, mcp, discord-bot, site, rdn,
+  # The seven per-package jobs (roller, games, mcp, discord-bot, site, rdn,
   # dice-ui) were near-identical, differing only in filter name, prerequisite
   # builds, node version, and coverage flags. They are folded into one matrix,
   # populated dynamically by the `changes` job so only changed packages get a
@@ -117,16 +111,16 @@ jobs:
     if: fromJSON(needs.changes.outputs.matrix).include[0] != null
     runs-on: ubuntu-latest
     strategy:
-      # Run every package leg even if a sibling fails, so the CI Gate sees each
-      # package's real result instead of a fail-fast cancellation.
+      # Run every package leg even if a sibling fails, so the CI Success gate
+      # sees each package's real result instead of a fail-fast cancellation.
       fail-fast: false
       matrix: ${{ fromJSON(needs.changes.outputs.matrix) }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/bun-setup
         with:
-          # site/rdn pin node 22 to match their netlify.toml NODE_VERSION so CI
-          # builds them on the runtime Netlify deploys on; other legs pass '',
+          # site/rdn pin node 22 so CI builds them on a fixed runtime rather
+          # than drifting with the runner default; other legs pass '',
           # which bun-setup treats as "skip node setup".
           node-version: ${{ matrix.node || '' }}
       - name: Build dependencies
@@ -169,11 +163,25 @@ jobs:
           PKG: ${{ matrix.pkg }}
         run: bun run --filter "@randsum/$PKG" size
 
+  ci-aggregator:
+    # Guard against a job silently opting out of the gate. `ci-gate`'s `needs:`
+    # list is hand-maintained, and a job missing from it still runs, still goes
+    # red, and still cannot fail the only required status check — the gate stops
+    # gating with no symptom. This job diffs the two lists mechanically, and is
+    # itself in that `needs:` list so it cannot be bypassed.
+    name: ci-aggregator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: ./.github/actions/bun-setup
+      - run: bun run check:ci-aggregator
+
   workspace-scripts:
     # Guard against a package silently opting out of the standard script set.
     # `bun run --filter '*' <script>` skips packages that lack the target script,
     # which is how dice-ui escaped linting for months (audit Wave 3). This job
-    # feeds the CI Gate so the escape hatch cannot be bypassed with --no-verify.
+    # feeds the CI Success gate so the escape hatch cannot be bypassed with
+    # --no-verify.
     name: workspace-scripts
     runs-on: ubuntu-latest
     steps:
@@ -265,7 +273,7 @@ jobs:
         # not fail on the expected missing-CJS resolutions.
         run: |
           set -euo pipefail
-          for dir in packages/roller packages/games packages/mcp apps/cli; do
+          for dir in packages/roller packages/games packages/mcp; do
             echo "::group::$dir"
             ( cd "$dir" && bun pm pack )
             tgz=$(ls "$dir"/*.tgz)
@@ -301,7 +309,7 @@ jobs:
     # wherever a patched release is usable, so --ignore is reserved for the ones
     # where it is not.
     #
-    # Three suppressions, all dev/build-time only and none in a published
+    # Four suppressions, all dev/build-time only and none in a published
     # package. Full justification and re-evaluation criteria live in
     # osv-scanner.toml — keep the two lists in sync.
     #
@@ -322,12 +330,14 @@ jobs:
   sca:
     # SCA + license surfacing (audit X8a / security R2, F1, F2). Suppresses the
     # known dev/build-time advisories via osv-scanner.toml and surfaces LGPL/MPL
-    # transitives. Report-only, and NOT expected to be green: `bun audit` above
-    # is the blocking advisory gate, while this job deliberately reports what
-    # that gate does not cover — anything below `high`, currently
-    # @hono/node-server. `continue-on-error: true` plus its absence from the
-    # `CI Gate` needs list is what keeps those findings informative rather than
-    # blocking. See osv-scanner.toml for the per-advisory reasoning.
+    # transitives. Report-only: `bun audit` above is the blocking advisory gate,
+    # while this job deliberately reports what that gate does not cover —
+    # anything below `high`. `continue-on-error: true` plus its absence from the
+    # `CI Success` needs list is what keeps those findings informative rather
+    # than blocking. It is currently green (the two Medium and one Low it used
+    # to report — @hono/node-server, astro — both had published
+    # fixes and were bumped), so a new finding here is genuinely new. See
+    # osv-scanner.toml for the per-advisory reasoning.
     name: sca
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -346,14 +356,29 @@ jobs:
             ./
 
   ci-gate:
-    name: CI Gate
+    name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
-    # every leg (roller, games, cli, mcp, discord-bot, site, rdn, dice-ui) — if
+    # every leg (roller, games, mcp, discord-bot, site, rdn, dice-ui) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all eight packages. `workspace-scripts` guards against a package silently
-    # dropping a standard script.
-    needs: [package, workspace-scripts, skill, bench, publish-dry-run, knip, arch, audit]
+    # all seven packages. `workspace-scripts` guards against a package silently
+    # dropping a standard script; `ci-aggregator` guards this very list.
+    #
+    # `changes` is listed even though nothing here reads its outputs: a failure in
+    # it leaves its four dependents `skipped` rather than `failure`, and the loop
+    # below treats skipped as a pass — so without it, a broken matrix build was a
+    # green gate. (Found by `ci-aggregator` on its first run.)
+    needs:
+      - changes
+      - package
+      - workspace-scripts
+      - ci-aggregator
+      - skill
+      - bench
+      - publish-dry-run
+      - knip
+      - arch
+      - audit
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}

@@ -1,33 +1,17 @@
 /**
- * discord.js re-export barrel.
+ * discord.js barrel — the REST client and the interaction types.
  *
- * Historically this used `require()` because Bun on Linux CI couldn't
- * statically analyze discord.js v14's __exportStar re-exports. Bun 1.3+
- * handles this correctly — a direct ESM import resolves all 13 named
- * exports locally. Kept as a barrel so the remaining ~13 consumer files
- * import from one place; a future PR can inline the imports and delete
- * this file.
+ * This was the *gateway* barrel: `Client`, `Collection`, `Events`,
+ * `GatewayIntentBits`, and the builders, imported by a long-lived Node process
+ * that held a WebSocket open. That process is gone, and so is everything here
+ * that existed to serve it.
+ *
+ * What remains is the only discord.js that still runs: `REST`/`Routes`, used by
+ * `deploy-commands.ts` to write the command registry. The interaction types
+ * that sat beside it went with `Command.execute` — nothing narrows a live
+ * interaction any more. `deploy-commands` is a one-shot Node script, which is
+ * what keeps discord.js out of the Worker bundle entirely.
+ *
+ * Command files import portable primitives from `builders.ts`, never from here.
  */
-export {
-  ActionRowBuilder,
-  ButtonBuilder,
-  Client,
-  Collection,
-  ComponentType,
-  EmbedBuilder,
-  Events,
-  GatewayIntentBits,
-  MessageFlags,
-  REST,
-  Routes,
-  SlashCommandBuilder,
-  StringSelectMenuBuilder
-} from 'discord.js'
-
-export type {
-  AutocompleteInteraction,
-  ChatInputCommandInteraction,
-  Guild,
-  Interaction,
-  StringSelectMenuInteraction
-} from 'discord.js'
+export { REST, Routes } from 'discord.js'

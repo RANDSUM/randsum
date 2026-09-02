@@ -16,8 +16,10 @@
   },
   "type": "module",
   "dependencies": {
+    "@discordjs/builders": "1.14.1",
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
+    "discord-api-types": "0.38.49",
     "discord.js": "^14.26.4"
   },
   "keywords": [
@@ -36,15 +38,13 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "bunup && chmod +x dist/index.js",
-    "dev": "bun run src/index.ts",
-    "start": "node dist/index.js",
+    "dev": "bunx wrangler@4 dev -c wrangler.jsonc",
     "deploy-commands": "bun run src/deploy-commands.ts",
     "test": "bun test --isolate",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "typecheck": "tsc --noEmit",
-    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
+    "check": "bun run typecheck && bun run format:check && bun run lint && bun run test"
   }
 }

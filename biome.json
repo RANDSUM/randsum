@@ -10,7 +10,6 @@
       "!**/*.generated.ts",
       "!**/*.d.ts",
       "!**/.astro",
-      "!**/.netlify",
       "!**/public",
       "!**/.ladle",
       "!**/*.tsbuildinfo",
@@ -97,8 +96,7 @@
         "**/*.bench.ts",
         "**/__benchmarks__/**/*.ts",
         "**/build.ts",
-        "**/codegen.ts",
-        "apps/cli/src/**/*.ts"
+        "**/codegen.ts"
       ],
       "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
     },

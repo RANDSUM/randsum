@@ -108,3 +108,6 @@ packages/site/public/api/
 
 # Codegen test harness temp files
 packages/games/.test-tmp/
+
+# Wrangler local state (dev sessions, cached bindings) — never committed.
+.wrangler/

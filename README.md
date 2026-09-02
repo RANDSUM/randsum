@@ -16,6 +16,8 @@
 
 **[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
 
+Built on **[the Butter Stack](https://alxjrvs.github.io/butter/)** — Bun · Unified workspace · TypeScript · TanStack · Edge-deployed · React.
+
 ## 📦 Monorepo Structure
 
 This repository contains multiple packages and applications for dice rolling and tabletop RPG mechanics:
@@ -31,7 +33,6 @@ This repository contains multiple packages and applications for dice rolling and
   - `@randsum/games/pbta` - Powered by the Apocalypse
   - `@randsum/games/root-rpg` - Root RPG
   - `@randsum/games/salvageunion` - Salvage Union
-- **[@randsum/cli](apps/cli)** - One-shot CLI for rolling dice notation from the terminal
 
 ### Applications (private)
 
@@ -64,15 +65,6 @@ roll("2d20H") // Roll with disadvantage (2d20, drop highest)
 roll("1d20+5", "2d6+3") // Attack roll + damage roll
 
 roll("4d6LR{<3}") // Roll 4d6, drop lowest, reroll below 3
-```
-
-Or directly from your terminal:
-
-```bash
-npx @randsum/cli 2d20    # Roll two twenty-sided dice
-npx @randsum/cli 4d6L    # Character stat roll (drop lowest)
-npx @randsum/cli 2d20L   # Roll with advantage (drop lowest)
-echo 4d6L | npx @randsum/cli   # Read notation from stdin (pipe mode)
 ```
 
 ## 🛠️ Development
@@ -152,8 +144,8 @@ randsum.dev is out of scope here** — only the config + script are wired up.
 
 ### Deployment & operations
 
-The documentation site (`@randsum/site`) is deployed to **Netlify**, configured via
-`apps/site/netlify.toml` and deployed automatically on push to main. For the full operational
+The documentation site (`@randsum/site`) is deployed to **Cloudflare Workers**, configured via
+`apps/site/wrangler.jsonc` and deployed automatically on push to main. For the full operational
 runbook — every app's host, deploy, restart, token rotation, and per-platform rollback/DR
 steps — see [`apps/DEPLOY.md`](apps/DEPLOY.md). Incident RCAs go in `runbooks/` (template at
 `runbooks/RCA-template.md`).

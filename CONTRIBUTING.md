@@ -4,7 +4,7 @@ Thanks for your interest in contributing! This guide covers everything you need 
 
 ## Prerequisites
 
-- [Bun](https://bun.sh) >= 1.3.14 (enforced by `engines`)
+- [Bun](https://bun.sh) >= 1.4.0 (enforced by `engines`)
 - [Node.js](https://nodejs.org) v18+ (for compatibility)
 - Git
 
@@ -22,8 +22,7 @@ bun run check:all  # Verify everything works
 - `packages/roller/` -- Core dice engine with built-in RDN notation parser (all packages depend on this)
 - `packages/games/` -- Game system packages (subpath exports per game)
 - `packages/dice-ui/` -- Private, web-only React UI components (consumed by `apps/site`)
-- `apps/cli/` -- Published npm CLI (`@randsum/cli`)
-- `apps/discord-bot/` -- Private Discord bot, deployed as a Render worker
+- `apps/discord-bot/` -- Private Discord bot, deployed as a Cloudflare Worker
 - `apps/site/` -- Documentation site at randsum.dev (Astro + Starlight)
 - `apps/rdn/` -- Notation spec site at notation.randsum.dev (Astro)
 

@@ -3,11 +3,14 @@
 ## Overview
 
 Starlight-powered documentation site with a custom marketing landing page.
-Private app, deploys to Netlify on push to `main`. Lives at `randsum.dev`.
+Private app, deploys to Cloudflare Workers on push to `main` via
+`.github/workflows/deploy-cloudflare.yml`. Lives at `randsum.dev`.
 
 ## Tech Stack
 
-- **Astro 6.4.6** — static site framework (`output` via `@astrojs/netlify`)
+- **Astro** — static site framework, built through `@astrojs/cloudflare`.
+  `output` is `static`; only `src/pages/api/roll.ts` opts out with
+  `prerender = false`, which is why this site needs a Worker at all.
 - **`@astrojs/starlight` 0.40.0** — docs framework (sidebar, search, routing)
   - `starlight-sidebar-topics` — top-level topic grouping in the sidebar
   - `starlight-page-actions` — per-page action links

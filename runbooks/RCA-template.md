@@ -26,7 +26,7 @@ One-paragraph plain-language description of what users experienced.
 | HH:MM | First signal / alert / report                                                               |
 | HH:MM | Investigation started                                                                       |
 | HH:MM | Root cause identified                                                                       |
-| HH:MM | Mitigation applied (e.g. Netlify "publish previous deploy" / EAS promote / Render redeploy) |
+| HH:MM | Mitigation applied (e.g. `wrangler rollback` / npm deprecate + patch release) |
 | HH:MM | Service confirmed healthy                                                                   |
 
 ## Root cause

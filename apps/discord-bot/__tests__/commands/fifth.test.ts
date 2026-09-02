@@ -1,181 +1,162 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
+import { makeContext } from './lib/context.js'
+import { accentsOf, textOf } from '../lib/view.js'
+import { FIFTH } from '../../src/utils/palette.js'
+import type { RollView } from '../../src/types.js'
 
-const mockRoll = mock(
-  (): { total: number; result: number; rolls: unknown[]; details: unknown } => ({
-    total: 15,
-    result: 15,
-    rolls: [{ initialRolls: [15], rolls: [15], modifierLogs: [] }],
-    details: { criticals: undefined }
-  })
-)
+interface FifthResult {
+  result: number
+  total: number
+  details: { criticals?: { isNatural1: boolean; isNatural20: boolean } }
+  rolls: unknown[]
+}
+
+const plain = (): FifthResult => ({
+  result: 12,
+  total: 12,
+  details: { criticals: { isNatural1: false, isNatural20: false } },
+  rolls: [{ initialRolls: [12], rolls: [12], modifierLogs: [] }]
+})
+
+const mockRoll = mock(plain)
 
 void mock.module('@randsum/games/fifth', () => ({ roll: mockRoll }))
 
 const { fifthCommand } = await import('../../src/commands/fifth.js')
 
-function makeInteraction(
-  modifier: number | null = 0,
-  rollingWith: string | null = null
-): {
-  deferReply: ReturnType<typeof mock>
-  editReply: ReturnType<typeof mock>
-  options: {
-    getInteger: ReturnType<typeof mock>
-    getString: ReturnType<typeof mock>
-    getBoolean: ReturnType<typeof mock>
-  }
-} {
-  return {
-    deferReply: mock(() => Promise.resolve(undefined)),
-    editReply: mock(() => Promise.resolve(undefined)),
-    options: {
-      getInteger: mock(() => modifier),
-      getString: mock(() => rollingWith),
-      getBoolean: mock(() => false)
-    }
-  }
+function render(options: { name: string; value: unknown }[] = []): RollView {
+  return fifthCommand.buildView!(makeContext(options))
 }
 
 beforeEach(() => {
-  mockRoll.mockClear()
+  mockRoll.mockReset().mockImplementation(plain)
 })
 
 describe('fifthCommand', () => {
-  test('normal roll uses blue color', async () => {
-    const interaction = makeInteraction()
-    await fifthCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.color).toBe(0x1e90ff)
-    expect(embedJson.title).toBe('D&D 5e Roll: 15')
+  test('the total leads, and the system name is not repeated back', () => {
+    // 5e is the one game where the raw number genuinely is the headline —
+    // bounded accuracy makes the whole resolution "compare this to a DC". The
+    // old title spent its loudest characters on "D&D 5e Roll:", which the
+    // player had just typed.
+    const view = render()
+    expect(textOf(view)).toContain('## 12')
+    expect(textOf(view)).not.toContain('D&D')
+    expect(accentsOf(view)[0]).toBe(FIFTH.standard)
   })
 
-  test('passes crit: true in the roll call', async () => {
-    const interaction = makeInteraction(3)
-    await fifthCommand.execute(interaction as never)
-    expect(mockRoll).toHaveBeenCalledWith({ modifier: 3, crit: true })
+  test('a natural 20 is marked, and worded truly for both rules editions', () => {
+    // Under the 2014 rules a nat 20 auto-hits on ATTACK ROLLS only, not on
+    // checks or saves; 2024 changed that. "Critical hit on an attack roll" is
+    // true under both, where a bare "automatic success" would not be.
+    mockRoll.mockImplementationOnce(() => ({
+      result: 20,
+      total: 20,
+      details: { criticals: { isNatural1: false, isNatural20: true } },
+      rolls: [{ initialRolls: [20], rolls: [20], modifierLogs: [] }]
+    }))
+    const view = render()
+    expect(textOf(view)).toContain('## ✸ Natural 20  ·  20')
+    expect(textOf(view)).toContain('Critical hit on an attack roll.')
+    expect(accentsOf(view)[0]).toBe(FIFTH.natural20)
   })
 
-  test('passes crit: true with rollingWith advantage', async () => {
-    const interaction = makeInteraction(2, 'Advantage')
-    await fifthCommand.execute(interaction as never)
-    expect(mockRoll).toHaveBeenCalledWith({
-      modifier: 2,
-      crit: true,
-      rollingWith: 'Advantage'
-    })
+  test('a natural 1 gets the fumble glyph and its own colour', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      result: 1,
+      total: 1,
+      details: { criticals: { isNatural1: true, isNatural20: false } },
+      rolls: [{ initialRolls: [1], rolls: [1], modifierLogs: [] }]
+    }))
+    const view = render()
+    expect(textOf(view)).toContain('## ☠ Natural 1  ·  1')
+    expect(accentsOf(view)[0]).toBe(FIFTH.natural1)
   })
 
-  test('passes crit: true with rollingWith disadvantage', async () => {
-    const interaction = makeInteraction(0, 'Disadvantage')
-    await fifthCommand.execute(interaction as never)
-    expect(mockRoll).toHaveBeenCalledWith({
+  test('a dc resolves the roll instead of leaving the player to compare', () => {
+    expect(textOf(render([{ name: 'dc', value: 10 }]))).toContain('Success vs DC 10')
+    expect(textOf(render([{ name: 'dc', value: 15 }]))).toContain('Failure vs DC 15')
+  })
+
+  test('no dc means no comparison line, not a wrong one', () => {
+    expect(textOf(render())).not.toContain('vs DC')
+  })
+
+  test('advantage marks the kept die bold and the dropped die struck', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      result: 18,
+      total: 18,
+      details: { criticals: { isNatural1: false, isNatural20: false } },
+      rolls: [{ initialRolls: [18, 4], rolls: [18], modifierLogs: [] }]
+    }))
+    const text = textOf(render([{ name: 'rolling_with', value: 'Advantage' }]))
+    expect(text).toContain('**2d20, Advantage**')
+    expect(text).toContain('**18**')
+    expect(text).toContain('~~4~~')
+  })
+
+  test('a tie marks exactly one die kept and one dropped, not both bold', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      result: 9,
+      total: 9,
+      details: { criticals: { isNatural1: false, isNatural20: false } },
+      rolls: [{ initialRolls: [9, 9], rolls: [9], modifierLogs: [] }]
+    }))
+    const text = textOf(render([{ name: 'rolling_with', value: 'Advantage' }]))
+    expect(text).toContain('**9**, ~~9~~')
+  })
+
+  test('passes crit: true so the roller reports naturals', () => {
+    render()
+    expect(mockRoll).toHaveBeenCalledWith({ modifier: 0, crit: true })
+
+    render([{ name: 'rolling_with', value: 'Disadvantage' }])
+    expect(mockRoll).toHaveBeenLastCalledWith({
       modifier: 0,
       crit: true,
       rollingWith: 'Disadvantage'
     })
   })
 
-  test('natural 20 uses gold color and "Natural 20!" prefix', async () => {
-    mockRoll.mockImplementationOnce(() => ({
-      total: 20,
-      result: 20,
-      rolls: [{ initialRolls: [20], rolls: [20], modifierLogs: [] }],
-      details: { criticals: { isNatural20: true, isNatural1: false } }
-    }))
-    const interaction = makeInteraction()
-    await fifthCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.color).toBe(0xffd700)
-    expect(embedJson.title).toBe('Natural 20! D&D 5e Roll: 20')
-  })
-
-  test('natural 1 uses crimson color and "Natural 1!" prefix', async () => {
-    mockRoll.mockImplementationOnce(() => ({
-      total: 1,
-      result: 1,
-      rolls: [{ initialRolls: [1], rolls: [1], modifierLogs: [] }],
-      details: { criticals: { isNatural20: false, isNatural1: true } }
-    }))
-    const interaction = makeInteraction()
-    await fifthCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.color).toBe(0xdc143c)
-    expect(embedJson.title).toBe('Natural 1! D&D 5e Roll: 1')
-  })
-
-  test('advantage tie: kept die bold, dropped die struck (not both bold)', async () => {
-    // Both d20s show 4. The roller keeps one (rolls: [4]); the display must
-    // bold exactly one die and strike the other, never bold both.
-    mockRoll.mockImplementationOnce(() => ({
-      total: 4,
-      result: 4,
-      rolls: [{ initialRolls: [4, 4], rolls: [4], modifierLogs: [] }],
-      details: { criticals: undefined }
-    }))
-    const interaction = makeInteraction(0, 'Advantage')
-    await fifthCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    const diceField = embedJson.fields?.find(f => f.name === 'Dice Rolled (2d20)')
-    expect(diceField?.value).toBe('**4**, ~~4~~')
-  })
-
-  test('disadvantage tie: kept die bold, dropped die struck (not both bold)', async () => {
-    mockRoll.mockImplementationOnce(() => ({
-      total: 17,
-      result: 17,
-      rolls: [{ initialRolls: [17, 17], rolls: [17], modifierLogs: [] }],
-      details: { criticals: undefined }
-    }))
-    const interaction = makeInteraction(0, 'Disadvantage')
-    await fifthCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    const diceField = embedJson.fields?.find(f => f.name === 'Dice Rolled (2d20)')
-    expect(diceField?.value).toBe('**17**, ~~17~~')
-  })
-
-  test('advantage non-tie: higher kept bold, lower struck', async () => {
-    mockRoll.mockImplementationOnce(() => ({
-      total: 18,
-      result: 18,
-      rolls: [{ initialRolls: [18, 5], rolls: [18], modifierLogs: [] }],
-      details: { criticals: undefined }
-    }))
-    const interaction = makeInteraction(0, 'Advantage')
-    await fifthCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    const diceField = embedJson.fields?.find(f => f.name === 'Dice Rolled (2d20)')
-    expect(diceField?.value).toBe('**18**, ~~5~~')
-  })
-
-  test('error path: roll throws, replies with error embed', async () => {
+  test('error path: a failing roll propagates', () => {
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })
-    const interaction = makeInteraction()
-    await fifthCommand.execute(interaction as never)
-    const call = interaction.editReply.mock.calls[0]?.[0] as {
-      embeds: { toJSON: () => APIEmbed }[]
-    }
-    const embedJson = call.embeds[0]!.toJSON()
-    expect(embedJson.title).toBe('Error')
+    expect(() => render()).toThrow('Test error')
+  })
+
+  test('a natural 1 that still clears the DC reads as a success, not a fumble', () => {
+    // The two-axis bug: a nat 1 on a +30 modifier totals 31 and beats DC 10.
+    // Rendering ☠ in fumble red over the word "Success" said the opposite of
+    // the line beneath it — the same mistake as labelling a kept-lowest die
+    // "Highest Roll". The natural is still announced, because it changes what
+    // the roll means; it just no longer decides the colour.
+    mockRoll.mockImplementationOnce(() => ({
+      result: 31,
+      total: 31,
+      details: { criticals: { isNatural1: true, isNatural20: false } },
+      rolls: [{ initialRolls: [1], rolls: [1], modifierLogs: [] }]
+    }))
+    const view = render([
+      { name: 'modifier', value: 30 },
+      { name: 'dc', value: 10 }
+    ])
+    expect(textOf(view)).toContain('## ◆ Natural 1  ·  31')
+    expect(textOf(view)).toContain('Success vs DC 10')
+    expect(accentsOf(view)[0]).toBe(FIFTH.natural20)
+  })
+
+  test('a natural 20 that misses the DC reads as a failure', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      result: 15,
+      total: 15,
+      details: { criticals: { isNatural1: false, isNatural20: true } },
+      rolls: [{ initialRolls: [20], rolls: [20], modifierLogs: [] }]
+    }))
+    const view = render([
+      { name: 'modifier', value: -5 },
+      { name: 'dc', value: 30 }
+    ])
+    expect(textOf(view)).toContain('## ✕ Natural 20  ·  15')
+    expect(accentsOf(view)[0]).toBe(FIFTH.natural1)
   })
 })

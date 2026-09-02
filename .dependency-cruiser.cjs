@@ -5,7 +5,7 @@
 //   2. no game subpath imports another game subpath
 //   3. no consumer reaches into @randsum/*/src or @randsum/*/dist
 //
-// Run:  bun run arch:check   (wired into lefthook pre-push and the CI Gate)
+// Run:  bun run arch:check   (wired into lefthook pre-push and the CI Success gate)
 
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
