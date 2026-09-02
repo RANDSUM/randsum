@@ -1,5 +1,6 @@
 /**
- * The `/notation` reference view — embed plus category selector.
+ * The `/notation` reference view — one container holding the reference text
+ * and its own category selector.
  *
  * Extracted when there were two transports, so both rendered the identical
  * thing. Only the Worker remains: it builds this view and returns it, then
@@ -14,12 +15,21 @@
  * `data.values[0]`. The selection *is* the state, and it arrives with the
  * interaction. The existing static custom_id was never the problem.
  */
-import { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder } from '../../utils/builders.js'
+import {
+  ActionRowBuilder,
+  ContainerBuilder,
+  SeparatorBuilder,
+  SeparatorSpacingSize,
+  StringSelectMenuBuilder,
+  TextDisplayBuilder
+} from '../../utils/builders.js'
 import { NOTATION_DOCS } from '@randsum/roller/docs'
 import type { NotationDoc } from '@randsum/roller/docs'
-import { embedFooterDetails } from '../../utils/constants.js'
+import { FOOTER_ATTRIBUTION } from '../../utils/constants.js'
+import { BRAND } from '../../utils/palette.js'
+import type { RollView } from '../../types.js'
 
-/** Shared by both transports so a rename cannot desynchronise them. */
+/** Shared by the view and the dispatcher so a rename cannot desynchronise them. */
 export const NOTATION_SELECT_ID = 'notation-category'
 
 export function groupByCategory(
@@ -37,29 +47,70 @@ export function groupByCategory(
   return groups
 }
 
-export function buildCategoryEmbed(
-  category: string,
-  entries: readonly NotationDoc[]
-): EmbedBuilder {
-  const fields = entries.map(doc => ({
-    name: `${doc.title} (${doc.displayBase})`,
-    value: [
-      doc.description,
-      ...doc.examples.map(example => `**\`${example.notation}\`** — ${example.description}`)
-    ].join('\n'),
-    inline: false
-  }))
-
-  return new EmbedBuilder()
-    .setColor(0xffd700)
-    .setTitle('notation.randsum.dev')
-    .setURL('https://notation.randsum.dev')
-    .setDescription(`**${category}** modifiers`)
-    .addFields(fields)
-    .setFooter(embedFooterDetails)
+/**
+ * `NotationDoc.color` is a CSS hex string; Discord wants an integer.
+ * Falls back to the brand accent when a doc has no colour or an unusable one.
+ */
+function parseHex(color: string | undefined): number {
+  if (color === undefined) return BRAND
+  const parsed = Number.parseInt(color.replace('#', ''), 16)
+  return Number.isNaN(parsed) ? BRAND : parsed
 }
 
-export function buildCategoryMenu(
+/**
+ * One category page.
+ *
+ * `doc.color` is a per-category identity the notation site already uses and the
+ * bot discarded, painting every page the same gold. It is the accent now, so
+ * Filter and Scale are visually distinct pages rather than the same page with
+ * different words.
+ *
+ * The old description read "**<category>** modifiers" for every page, including
+ * Core and Special — which are dice *types*, not modifiers.
+ */
+function buildCategoryContainer(
+  category: string,
+  entries: readonly NotationDoc[],
+  categories: readonly string[]
+): ContainerBuilder {
+  const container = new ContainerBuilder()
+    .setAccentColor(parseHex(entries[0]?.color))
+    .addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(
+        `## ${category}\n[notation.randsum.dev](https://notation.randsum.dev)`
+      )
+    )
+    .addSeparatorComponents(
+      new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small)
+    )
+
+  for (const doc of entries) {
+    const lines = [
+      `**${doc.title}** \`${doc.displayBase}\``,
+      doc.description,
+      // `comparisons` — the operator cheat-sheet, and the hardest part of the
+      // notation to remember — was fetched and dropped by the embed renderer.
+      ...(doc.comparisons ?? []).map(
+        comparison => `-# \`${comparison.operator}\` — ${comparison.note}`
+      ),
+      ...doc.examples.map(example => `\`${example.notation}\` — ${example.description}`)
+    ]
+    container.addTextDisplayComponents(new TextDisplayBuilder().setContent(lines.join('\n')))
+  }
+
+  container.addActionRowComponents(buildCategoryMenu(categories, category))
+
+  const position = categories.indexOf(category) + 1
+  container.addTextDisplayComponents(
+    new TextDisplayBuilder().setContent(
+      `-# Page ${position} of ${categories.length} · ${FOOTER_ATTRIBUTION}`
+    )
+  )
+
+  return container
+}
+
+function buildCategoryMenu(
   categories: readonly string[],
   selected: string
 ): ActionRowBuilder<StringSelectMenuBuilder> {
@@ -77,24 +128,16 @@ export function buildCategoryMenu(
   return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu)
 }
 
-export interface NotationView {
-  readonly embed: EmbedBuilder
-  readonly row: ActionRowBuilder<StringSelectMenuBuilder>
-}
-
 /**
  * Build the whole view for one category. Falls back to the first category when
  * given nothing or an unrecognised value — a stale menu from an old message
  * must not render an empty reference page.
  */
-export function buildNotationView(category?: string | undefined): NotationView {
+export function buildNotationView(category?: string | undefined): RollView {
   const grouped = groupByCategory()
   const categories = [...grouped.keys()]
   const fallback = categories[0] ?? 'Core'
   const selected = category !== undefined && grouped.has(category) ? category : fallback
 
-  return {
-    embed: buildCategoryEmbed(selected, grouped.get(selected) ?? []),
-    row: buildCategoryMenu(categories, selected)
-  }
+  return [buildCategoryContainer(selected, grouped.get(selected) ?? [], categories)]
 }

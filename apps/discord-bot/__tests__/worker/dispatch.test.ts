@@ -106,24 +106,26 @@ describe('dispatchInteraction', () => {
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
 
     // The real proof it reads the registry: a Worker has no client, so an
-    // empty field list here would mean /help silently renders nothing.
-    const names = (response.data?.embeds?.[0]?.fields ?? []).map(field => field.name)
-    expect(names).toContain('/roll')
-    expect(names).not.toContain('/help')
+    // empty list here would mean /help silently renders nothing.
+    const text = JSON.stringify(response.data?.components)
+    expect(text).toContain('/roll')
+    expect(text).not.toContain('**/help')
   })
 
   test('renders /salvageunion', () => {
     const response = invoke('salvageunion')
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
-    expect(response.data?.embeds?.[0]?.title).toBe('Salvage Union has moved')
+    expect(JSON.stringify(response.data?.components)).toContain('Salvage Union has moved')
   })
 
   test('renders /notation with its category selector attached', () => {
     const response = invoke('notation')
-    expect(response.data?.embeds?.[0]?.title).toBe('notation.randsum.dev')
-    // The embed alone would be a reference page with no way to change category
-    // — working, but silently missing the entire interaction.
-    expect(response.data?.components).toBeDefined()
+    // The selector now lives inside the container rather than in a detached row,
+    // so a missing menu would be a reference page with no way to change
+    // category — working, but silently missing the entire interaction.
+    const payload = JSON.stringify(response.data?.components)
+    expect(payload).toContain('notation.randsum.dev')
+    expect(payload).toContain('notation-category')
   })
 
   test('every command has a Worker renderer', () => {
@@ -147,7 +149,11 @@ describe('dispatchInteraction', () => {
     // Type 7 edits the existing message rather than posting a new one, matching
     // the gateway path's `.update()`.
     expect(response.type).toBe(7)
-    expect(response.data?.embeds?.[0]?.title).toBe('notation.randsum.dev')
+    // The V2 flag has to be set on the edit too: it cannot be removed once a
+    // message carries it, and omitting it makes Discord read the container as a
+    // malformed action row.
+    expect(response.data?.flags).toBe(32768)
+    expect(JSON.stringify(response.data?.components)).toContain('notation.randsum.dev')
   })
 
   test('an unrecognised category falls back rather than rendering empty', () => {
@@ -158,7 +164,7 @@ describe('dispatchInteraction', () => {
     ) as Rendered
 
     expect(response.type).toBe(7)
-    expect(response.data?.embeds?.[0]?.fields?.length).toBeGreaterThan(0)
+    expect(JSON.stringify(response.data?.components).length).toBeGreaterThan(100)
   })
 
   test('returns undefined for interaction types it does not handle', () => {

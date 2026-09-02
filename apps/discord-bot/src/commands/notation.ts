@@ -23,6 +23,8 @@ export const notationCommand: Command = {
   // Worker holds nothing open, so the menu simply stays live — Discord re-POSTs
   // every selection, and a click on a very old message renders the same page it
   // always did rather than a disabled control.
-  buildEmbed: () => buildNotationView().embed,
-  buildComponents: () => [buildNotationView().row.toJSON()]
+  // Under Components V2 the select menu lives inside the container, so what
+  // used to be a separate `buildComponents` returning a detached action row is
+  // now part of the one view — and the view is built once rather than twice.
+  buildView: () => buildNotationView()
 }
