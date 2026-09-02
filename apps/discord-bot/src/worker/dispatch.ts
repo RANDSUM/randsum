@@ -135,9 +135,12 @@ function dispatchComponent(payload: InteractionPayload): unknown {
   return {
     type: InteractionResponseType.UpdateMessage,
     data: {
+      // The V2 flag is required on an edit exactly as on the original message:
+      // it cannot be removed once set, and omitting it here would make Discord
+      // read the container as a malformed action row.
+      flags: MessageFlags.IsComponentsV2,
       allowed_mentions: NO_MENTIONS,
-      embeds: [view.embed.toJSON()],
-      components: [view.row.toJSON()]
+      components: view.map(container => container.toJSON())
     }
   }
 }
