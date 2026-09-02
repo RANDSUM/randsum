@@ -8,8 +8,8 @@ export default defineConfig({
   sourcemap: 'external',
   target: 'node',
   clean: true,
-  // Bundle the workspace @randsum/* packages into dist (they are devDependencies,
-  // like apps/cli), but keep @modelcontextprotocol/sdk external — it is a real
+  // Bundle the workspace @randsum/* packages into dist (they are
+  // devDependencies), but keep @modelcontextprotocol/sdk external — it is a real
   // runtime dependency resolved from node_modules by consumers.
   noExternal: [/^@randsum\//]
 })

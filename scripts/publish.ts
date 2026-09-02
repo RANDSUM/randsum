@@ -28,12 +28,7 @@ const ROOT = join(import.meta.dir, '..')
  * Packages must be published in dependency order so that downstream
  * packages can resolve their dependencies on the registry.
  */
-const PUBLISH_ORDER: readonly string[] = [
-  'packages/roller',
-  'packages/games',
-  'packages/mcp',
-  'apps/cli'
-]
+const PUBLISH_ORDER: readonly string[] = ['packages/roller', 'packages/games', 'packages/mcp']
 
 async function getPublishablePackages(): Promise<{ name: string; dir: string }[]> {
   const packages: { name: string; dir: string }[] = []
@@ -99,8 +94,7 @@ async function assertNoWorkspaceProtocol(tgzPath: string, name: string): Promise
  * Pack @randsum/roller with `sideEffects: false` injected into the published manifest.
  *
  * The in-repo package.json keeps `sideEffects: true` because bunup's self-DCE breaks roller's
- * dist when it builds with `false`, AND the cli bundles roller from source (noExternal) and reads
- * that field. But consumers installing the published package should be able to tree-shake the
+ * dist when it builds with `false`. But consumers installing the published package should be able to tree-shake the
  * narrow surfaces (e.g. `isDiceNotation`) out of the engine. `bun pm pack` does NOT rebuild dist
  * or run prepublishOnly, so we flip the field only for the pack and restore it immediately after —
  * the tarball ships the already-built healthy dist with a tree-shakeable manifest. See ADR-018.
