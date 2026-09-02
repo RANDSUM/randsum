@@ -12,22 +12,13 @@ metadata:
 
 ## Executing Rolls
 
-When a user asks you to roll dice, **produce an actual result** — don't just show notation or code. If you have shell access, use the CLI:
+When a user asks you to roll dice, **produce an actual result** — don't just show notation or code.
 
-```bash
-bunx @randsum/cli <notation>       # in bun projects (preferred)
-npx @randsum/cli <notation>        # anywhere else
-```
+If the `@randsum/mcp` server is connected, use its tools: `roll` for plain notation, `validate` to check notation, and `roll_game` for a game's own mechanics. That is the only path that runs the real engine, so prefer it whenever it is available.
 
-Examples:
-```bash
-bunx @randsum/cli 4d6L             # D&D ability score
-bunx @randsum/cli 2d20L+7          # advantage attack
-bunx @randsum/cli 3d6              # Blades in the Dark pool
-bunx @randsum/cli 5d10S{7}         # World of Darkness successes
-```
+Otherwise **simulate the roll yourself** — generate random numbers as you would genuinely roll dice, and present them clearly. Don't just describe how the roll would work without giving a result.
 
-If you don't have shell access, **simulate the roll yourself** — mentally generate random numbers as you would genuinely roll dice, and present them clearly. Don't just describe how the roll would work without giving a result.
+> There used to be a one-shot CLI here (`bunx @randsum/cli <notation>`). It was retired, and with it the option of getting a real roll out of a plain shell. The MCP server is the supported way for an agent to reach the engine now.
 
 ## Response Format
 

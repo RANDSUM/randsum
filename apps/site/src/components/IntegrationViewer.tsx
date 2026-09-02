@@ -2,28 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const INTEGRATIONS = [
   {
-    label: 'CLI',
-    id: 'cli',
-    type: 'terminal' as const,
-    filename: 'terminal',
-    content: `$ npx @randsum/cli roll 4d6L
-┌─────────────────────────────┐
-│  4d6L                       │
-│  Rolled: [5, 2, 6, 3]      │
-│  Drop lowest: 2             │
-│  Result: [3, 5, 6]          │
-│  Total: 14                  │
-└─────────────────────────────┘
-
-$ npx @randsum/cli roll 2d20H
-┌─────────────────────────────┐
-│  2d20H                      │
-│  Rolled: [14, 19]           │
-│  Keep highest: 19           │
-│  Total: 19                  │
-└─────────────────────────────┘`
-  },
-  {
     label: 'Your Code',
     id: 'code',
     type: 'code' as const,
@@ -79,37 +57,14 @@ When a user asks you to roll dice,
 **produce an actual result** — don't just
 show notation or code.
 
-\`\`\`bash
-bunx @randsum/cli 4d6L    # ability score
-bunx @randsum/cli 2d20L+7 # advantage
-bunx @randsum/cli 3d6     # Blades pool
-\`\`\``
+Use the \`roll\` tool from the
+@randsum/mcp server when it is
+connected, and otherwise roll the
+dice yourself and show the result.`
   }
 ] as const
 
 function highlightCode(code: string, filename: string): React.JSX.Element {
-  if (filename === 'terminal') {
-    // Terminal: highlight $ prompts and box-drawing
-    const lines = code.split('\n')
-    return (
-      <>
-        {lines.map((line, i) => (
-          <span key={i}>
-            {i > 0 && '\n'}
-            {line.startsWith('$') ? (
-              <>
-                <span style={{ color: '#98c379' }}>$</span>
-                <span style={{ color: '#e5c07b' }}>{line.slice(1)}</span>
-              </>
-            ) : (
-              <span style={{ color: '#abb2bf' }}>{line}</span>
-            )}
-          </span>
-        ))}
-      </>
-    )
-  }
-
   if (filename.endsWith('.ts')) {
     // TypeScript: keyword, string, comment, function highlighting
     const tokenPattern =
@@ -282,23 +237,6 @@ export function IntegrationViewer(): React.JSX.Element {
         ))}
       </div>
       <div className="integration-display">
-        {selected.type === 'terminal' && (
-          <div className="integration-terminal">
-            <div className="code-example-chrome">
-              <div className="code-chrome-dots">
-                <span className="code-chrome-dot code-chrome-dot--red" />
-                <span className="code-chrome-dot code-chrome-dot--yellow" />
-                <span className="code-chrome-dot code-chrome-dot--green" />
-              </div>
-              <span className="code-chrome-filename">{selected.filename}</span>
-            </div>
-            <div className="integration-terminal-body">
-              <pre>
-                <code>{highlightCode(selected.content, selected.filename)}</code>
-              </pre>
-            </div>
-          </div>
-        )}
         {selected.type === 'code' && (
           <div className="integration-terminal">
             <div className="code-example-chrome">

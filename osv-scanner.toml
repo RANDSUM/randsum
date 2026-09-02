@@ -8,8 +8,8 @@
 #
 # Everything suppressed below is dev/build-time only, and none of it reaches a
 # published package. The four published packages are @randsum/roller (zero
-# deps), @randsum/games (depends only on @randsum/roller), @randsum/cli (zero
-# runtime deps) and @randsum/mcp — the last is the only one with real runtime
+# deps), @randsum/games (depends only on @randsum/roller) and @randsum/mcp —
+# the last is the only one with real runtime
 # dependencies (@modelcontextprotocol/sdk, zod), so it is the one worth
 # re-checking: none of js-yaml, image-size or extract-zip appears beneath it in
 # bun.lock.

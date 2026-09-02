@@ -20,7 +20,7 @@ const gameColorMap: Record<string, string> = {
 }
 
 // Light accent colors need dark text on hover
-const darkTextOnAccent = new Set(['daggerheart', 'cli'])
+const darkTextOnAccent = new Set(['daggerheart'])
 
 // Cards that get the RANDSUM gradient instead of a flat color
 const gradientAccent = new Set(['roller'])
@@ -49,7 +49,6 @@ export function getCardStyle(pkg: Pick<CardPackage, 'id' | 'color'>): string {
 
 export function getCoreCardHref(pkg: Pick<CardPackage, 'id'>): string {
   if (pkg.id === 'games') return '/games/introduction/'
-  if (pkg.id === 'cli') return '/tools/cli/'
   return `/${pkg.id}/introduction/`
 }
 
