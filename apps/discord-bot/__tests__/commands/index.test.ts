@@ -63,4 +63,25 @@ describe('commands barrel', () => {
     const names = commands.map(command => command.data.name)
     expect(new Set(names).size).toBe(names.length)
   })
+
+  test('every integer option declares explicit bounds', () => {
+    // Three commands shipped without them — /blades, /root and /dh — and each
+    // let Discord offer a value the game spec rejects, so the player got a raw
+    // validator string instead of a roll. Discord will not enforce a range the
+    // option does not declare, so declaring one is the only place this can be
+    // caught before the roll throws.
+    for (const command of commands) {
+      for (const option of command.data.options.map(entry => entry.toJSON())) {
+        if (option.type !== 4) continue // 4 = INTEGER
+        expect(
+          { command: command.data.name, option: option.name, min: option.min_value },
+          `/${command.data.name} ${option.name} has no minimum`
+        ).toHaveProperty('min', expect.any(Number))
+        expect(
+          { command: command.data.name, option: option.name, max: option.max_value },
+          `/${command.data.name} ${option.name} has no maximum`
+        ).toHaveProperty('max', expect.any(Number))
+      }
+    }
+  })
 })
