@@ -89,10 +89,20 @@ export const pbtaCommand: Command = createGameCommand({
         .setMaxValue(5)
     )
     .addIntegerOption(option =>
-      option.setName('forward').setDescription('One-time forward bonus').setRequired(false)
+      option
+        .setName('forward')
+        .setDescription('One-time forward bonus (-5 to 5)')
+        .setRequired(false)
+        .setMinValue(-5)
+        .setMaxValue(5)
     )
     .addIntegerOption(option =>
-      option.setName('ongoing').setDescription('Persistent ongoing bonus').setRequired(false)
+      option
+        .setName('ongoing')
+        .setDescription('Persistent ongoing bonus (-5 to 5)')
+        .setRequired(false)
+        .setMinValue(-5)
+        .setMaxValue(5)
     )
     .addStringOption(option =>
       option

@@ -1,5 +1,5 @@
 import type { EmbedBuilder } from '../../utils/builders.js'
-import type { Command } from '../../types.js'
+import type { Command, RollView } from '../../types.js'
 import type { CommandContext } from './context.js'
 
 export type { CommandContext, CommandOptions } from './context.js'
@@ -7,10 +7,23 @@ export { optionsFromPayload } from './context.js'
 export type { RollContainerOptions, ViewFact } from './view.js'
 export { CUSTOM_ID_LIMIT, renderFacts, renderTrace, rollContainer } from './view.js'
 
-interface CreateGameCommandOptions {
-  readonly data: Command['data']
-  readonly buildEmbed: (context: CommandContext) => EmbedBuilder
-}
+/**
+ * Exactly one renderer, never neither.
+ *
+ * A union rather than two optional properties so the factory keeps the one
+ * guarantee it has left: a command built through it cannot forget to render.
+ * `buildView` is where every command is heading; `buildEmbed` remains until the
+ * last one migrates.
+ */
+type CreateGameCommandOptions =
+  | {
+      readonly data: Command['data']
+      readonly buildView: (context: CommandContext) => RollView
+    }
+  | {
+      readonly data: Command['data']
+      readonly buildEmbed: (context: CommandContext) => EmbedBuilder
+    }
 
 /** Default message for the shared catch block: the error text, or a generic fallback. */
 export function defaultErrorMessage(error: unknown): string {
@@ -31,9 +44,11 @@ export function defaultErrorMessage(error: unknown): string {
  * a command built through this factory cannot omit its renderer.
  */
 export function createGameCommand(options: CreateGameCommandOptions): Command {
-  const { data, buildEmbed } = options
+  if ('buildView' in options) {
+    return { data: options.data, buildView: options.buildView }
+  }
 
-  return { data, buildEmbed }
+  return { data: options.data, buildEmbed: options.buildEmbed }
 }
 
 /** Formats a modifier with an explicit sign: positive values gain a leading `+`. */
