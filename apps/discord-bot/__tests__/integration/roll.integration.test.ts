@@ -10,7 +10,8 @@
  * cannot.
  */
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
+import { linesOf, textOf } from '../lib/view.js'
+import type { RollView } from '../../src/types.js'
 import { roll } from '@randsum/roller/roll'
 import { notation } from '@randsum/roller/validate'
 import { rollCommand } from '../../src/commands/roll.js'
@@ -30,10 +31,8 @@ function seededRandom(seed: number): () => number {
   }
 }
 
-function render(notationString: string): APIEmbed {
-  return rollCommand.buildEmbed!(
-    makeContext([{ name: 'notation', value: notationString }])
-  ).toJSON()
+function render(notationString: string): RollView {
+  return rollCommand.buildView!(makeContext([{ name: 'notation', value: notationString }]))
 }
 
 beforeEach(() => {
@@ -53,9 +52,9 @@ describe('roll command integration (un-mocked roller)', () => {
     const expected = roll(notation('2d6')).total
     Math.random = seededRandom(42)
 
-    const embed = render('2d6')
-    expect(embed.title).toBe(`You rolled a ${expected}`)
-    expect(String(embed.description)).toContain('2d6')
+    const view = render('2d6')
+    expect(linesOf(view)[0]).toBe(`## ${expected}`)
+    expect(textOf(view)).toContain('2d6')
   })
 
   test('arithmetic-only notation renders its dice unmarked', () => {
@@ -63,14 +62,13 @@ describe('roll command integration (un-mocked roller)', () => {
     // modifier, including non-mutating arithmetic ones (plus/minus/...). The
     // rolled dice are unchanged for 2d6+3, so no die should be struck through
     // — a `modifierLogs.length > 0` gate would wrongly mark them.
-    const fields = render('2d6+3').fields ?? []
-    expect(fields.map(f => f.name)).toEqual(['Rolls'])
-    expect(fields[0]?.value).not.toContain('~~')
+    const text = textOf(render('2d6+3'))
+    expect(text).toContain('**Add**  +3')
+    expect(text).not.toContain('~~')
   })
 
   test('total is within the valid range for the notation', () => {
-    const embed = render('3d8')
-    const match = /You rolled a (\d+)/.exec(embed.title ?? '')
+    const match = /^## (\d+)$/.exec(linesOf(render('3d8'))[0] ?? '')
     expect(match).not.toBeNull()
     const total = Number(match![1])
     expect(total).toBeGreaterThanOrEqual(3)

@@ -40,6 +40,23 @@ import { FOOTER_ATTRIBUTION } from '../../utils/constants.js'
  */
 export const CUSTOM_ID_LIMIT = 100
 
+/**
+ * A single Text Display caps at 4000 characters, and `setContent` throws rather
+ * than truncating — so an over-long body reaches the user as the dispatcher's
+ * "Something went wrong" instead of a roll.
+ *
+ * Reachable from `/roll` without crafting: the roller allows 1000 dice per pool,
+ * and a pool of four-digit faces renders past 4000 well before that. Clamping
+ * here rather than at the call site means every future renderer inherits it.
+ */
+const TEXT_DISPLAY_LIMIT = 4000
+
+function clampContent(content: string): string {
+  if (content.length <= TEXT_DISPLAY_LIMIT) return content
+  const notice = '\n-# …truncated'
+  return content.slice(0, TEXT_DISPLAY_LIMIT - notice.length) + notice
+}
+
 /** A label/value pair — the replacement for an inline embed field. */
 export interface ViewFact {
   readonly label: string
@@ -129,7 +146,7 @@ export function rollContainer(options: RollContainerOptions): ContainerBuilder {
       new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small)
     )
 
-    const text = new TextDisplayBuilder().setContent(body.join('\n'))
+    const text = new TextDisplayBuilder().setContent(clampContent(body.join('\n')))
     const rerollable = options.rerollId !== undefined && options.rerollId.length <= CUSTOM_ID_LIMIT
 
     if (rerollable) {
