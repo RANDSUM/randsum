@@ -33,7 +33,6 @@ This repository contains multiple packages and applications for dice rolling and
   - `@randsum/games/pbta` - Powered by the Apocalypse
   - `@randsum/games/root-rpg` - Root RPG
   - `@randsum/games/salvageunion` - Salvage Union
-- **[@randsum/cli](apps/cli)** - One-shot CLI for rolling dice notation from the terminal
 
 ### Applications (private)
 
@@ -66,15 +65,6 @@ roll("2d20H") // Roll with disadvantage (2d20, drop highest)
 roll("1d20+5", "2d6+3") // Attack roll + damage roll
 
 roll("4d6LR{<3}") // Roll 4d6, drop lowest, reroll below 3
-```
-
-Or directly from your terminal:
-
-```bash
-npx @randsum/cli 2d20    # Roll two twenty-sided dice
-npx @randsum/cli 4d6L    # Character stat roll (drop lowest)
-npx @randsum/cli 2d20L   # Roll with advantage (drop lowest)
-echo 4d6L | npx @randsum/cli   # Read notation from stdin (pipe mode)
 ```
 
 ## 🛠️ Development

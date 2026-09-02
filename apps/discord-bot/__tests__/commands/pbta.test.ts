@@ -1,90 +1,130 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
-import { makeContext, type RawOption } from './lib/context.js'
+import { makeContext } from './lib/context.js'
+import { accentsOf, textOf } from '../lib/view.js'
+import { PBTA } from '../../src/utils/palette.js'
+import type { RollView } from '../../src/types.js'
 
-const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
+interface PbtaResult {
+  result: string
+  total: number
+  details: { diceTotal: number }
+  rolls: unknown[]
+}
+
+const strongHit = (): PbtaResult => ({
   result: 'strong_hit',
   total: 10,
-  rolls: [{ initialRolls: [5, 5], rolls: [5, 5], modifierLogs: [] }]
-}))
+  details: { diceTotal: 8 },
+  rolls: [{ initialRolls: [4, 4], rolls: [4, 4], modifierLogs: [] }]
+})
+
+const mockRoll = mock(strongHit)
 
 void mock.module('@randsum/games/pbta', () => ({ roll: mockRoll }))
 
 const { pbtaCommand } = await import('../../src/commands/pbta.js')
 
-function render(options: readonly RawOption[] = [{ name: 'stat', value: 2 }]): APIEmbed {
-  return pbtaCommand.buildEmbed!(makeContext(options)).toJSON()
-}
-
-function fieldNames(embed: APIEmbed): string[] {
-  return (embed.fields ?? []).map(field => field.name)
+function render(options: { name: string; value: unknown }[]): RollView {
+  return pbtaCommand.buildView!(makeContext(options))
 }
 
 beforeEach(() => {
-  mockRoll.mockClear()
+  mockRoll.mockReset().mockImplementation(strongHit)
 })
 
 describe('pbtaCommand', () => {
-  test('strong hit', () => {
-    expect(render().title).toBe('Strong Hit!')
+  test('the numeric band leads, the name follows', () => {
+    // PbtA is a family, not a game: "10+" travels to every table running one
+    // of them, where "strong hit" is Dungeon World's word specifically.
+    const view = render([{ name: 'stat', value: 2 }])
+    expect(textOf(view)).toContain('## ◆ 10+  ·  Strong Hit')
+    expect(accentsOf(view)[0]).toBe(PBTA.strongHit)
   })
 
-  test('weak hit', () => {
+  test('a weak hit names the cost', () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'weak_hit' as const,
+      result: 'weak_hit',
       total: 8,
-      rolls: [{ initialRolls: [4, 4], rolls: [4, 4], modifierLogs: [] }]
+      details: { diceTotal: 6 },
+      rolls: [{ initialRolls: [3, 3], rolls: [3, 3], modifierLogs: [] }]
     }))
-    expect(render([{ name: 'stat', value: 1 }]).title).toBe('Weak Hit')
+    const view = render([{ name: 'stat', value: 2 }])
+    expect(textOf(view)).toContain('## ◈ 7-9  ·  Weak Hit')
+    expect(accentsOf(view)[0]).toBe(PBTA.weakHit)
   })
 
-  test('miss', () => {
+  test('a miss reminds the player to mark experience', () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'miss' as const,
-      total: 4,
-      rolls: [{ initialRolls: [2, 2], rolls: [2, 2], modifierLogs: [] }]
+      result: 'miss',
+      total: 5,
+      details: { diceTotal: 3 },
+      rolls: [{ initialRolls: [1, 2], rolls: [1, 2], modifierLogs: [] }]
     }))
-    expect(render([{ name: 'stat', value: -1 }]).title).toBe('Miss')
+    const view = render([{ name: 'stat', value: 2 }])
+    expect(textOf(view)).toContain('## ✕ 6-  ·  Miss')
+    expect(textOf(view)).toContain('mark experience')
+    expect(accentsOf(view)[0]).toBe(PBTA.miss)
   })
 
-  test('non-zero forward adds forward field', () => {
-    const embed = render([
-      { name: 'stat', value: 2 },
-      { name: 'forward', value: 1 }
-    ])
-    expect(fieldNames(embed)).toContain('Forward')
-    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, forward: 1 })
+  test('the dice-only subtotal is shown beside the modifiers', () => {
+    // `details.diceTotal` is computed on every roll and was never rendered —
+    // it is exactly the number a PbtA player wants next to their stat.
+    expect(textOf(render([{ name: 'stat', value: 2 }]))).toContain('**Dice** 8')
   })
 
-  test('non-zero ongoing adds ongoing field', () => {
-    const embed = render([
-      { name: 'stat', value: 2 },
-      { name: 'ongoing', value: 2 }
-    ])
-    expect(fieldNames(embed)).toContain('Ongoing')
-    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, ongoing: 2 })
-  })
-
-  test('rollingWith adds rolling_with field', () => {
-    const embed = render([
+  test('rollingWith is forwarded under the key the roller accepts', () => {
+    // Regression guard: the command used to pass `{ advantage: true }`, a key
+    // the generated roller does not declare. A conditional spread dodges
+    // excess-property checking, so it compiled, was silently dropped, and the
+    // embed reported advantage over a plain 2d6.
+    render([
       { name: 'stat', value: 2 },
       { name: 'rolling_with', value: 'Advantage' }
     ])
-    expect(fieldNames(embed)).toContain('Rolling With')
-    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, advantage: true })
+    expect(mockRoll).toHaveBeenCalledWith({ stat: 2, rollingWith: 'Advantage' })
+  })
+
+  test('a kept-two pool names the mechanic and marks the dropped die', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      result: 'strong_hit',
+      total: 12,
+      details: { diceTotal: 10 },
+      rolls: [{ initialRolls: [2, 4, 6], rolls: [4, 6], modifierLogs: [] }]
+    }))
+    const text = textOf(
+      render([
+        { name: 'stat', value: 2 },
+        { name: 'rolling_with', value: 'Advantage' }
+      ])
+    )
+    expect(text).toContain('**3d6, keep best 2**')
+    expect(text).toContain('~~2~~')
+  })
+
+  test('forward and ongoing appear only when non-zero', () => {
+    const without = textOf(render([{ name: 'stat', value: 2 }]))
+    expect(without).not.toContain('Forward')
+    expect(without).not.toContain('Ongoing')
+
+    const withBoth = textOf(
+      render([
+        { name: 'stat', value: 2 },
+        { name: 'forward', value: 1 },
+        { name: 'ongoing', value: -1 }
+      ])
+    )
+    expect(withBoth).toContain('**Forward** +1')
+    expect(withBoth).toContain('**Ongoing** -1')
   })
 
   test('a negative stat renders with its sign', () => {
-    const embed = render([{ name: 'stat', value: -1 }])
-    const stat = (embed.fields ?? []).find(field => field.name === 'Stat')
-    expect(stat?.value).toBe('-1')
+    expect(textOf(render([{ name: 'stat', value: -1 }]))).toContain('**Stat** -1')
   })
 
   test('error path: a failing roll propagates', () => {
-    // The dispatcher renders the "Error" embed — see dispatch.test.ts.
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })
-    expect(() => render()).toThrow('Test error')
+    expect(() => render([{ name: 'stat', value: 1 }])).toThrow('Test error')
   })
 })

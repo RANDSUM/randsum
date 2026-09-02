@@ -2,14 +2,16 @@
  * Covers the HTTP-interactions dispatcher against the REAL command barrel.
  *
  * Using the real commands rather than fixtures is the point: this is the test
- * that would catch a command whose `buildEmbed` quietly depends on something a
+ * that would catch a command whose renderer quietly depends on something a
  * Worker cannot provide. A dispatcher tested only against a stub command proves
  * the dispatcher works and says nothing about whether the bot does.
  */
 import { describe, expect, test } from 'bun:test'
 import { commands as commandList } from '../../src/commands/index.js'
+import { encodeReroll } from '../../src/commands/lib/index.js'
+import { ContainerBuilder, TextDisplayBuilder } from '../../src/utils/builders.js'
 import { dispatchInteraction, InteractionResponseType } from '../../src/worker/dispatch.js'
-import type { Command } from '../../src/types.js'
+import type { Command, RollView } from '../../src/types.js'
 
 const commands: ReadonlyMap<string, Command> = new Map(
   commandList.map(command => [command.data.name, command])
@@ -18,6 +20,7 @@ const commands: ReadonlyMap<string, Command> = new Map(
 interface Rendered {
   type: number
   data?: {
+    allowed_mentions?: { parse: readonly string[] }
     embeds?: { title?: string; fields?: { name: string; value: string }[] }[]
     components?: readonly unknown[]
     flags?: number
@@ -35,6 +38,25 @@ function invoke(name: string, options: { name: string; value: unknown }[] = []):
   ) as Rendered
 }
 
+function characterCountOf(components: readonly unknown[]): number {
+  const walk = (node: unknown): number => {
+    if (node === null || typeof node !== 'object') return 0
+    const own =
+      'type' in node && node.type === 10 && 'content' in node ? String(node.content).length : 0
+    return (
+      own +
+      Object.values(node).reduce<number>(
+        (total, value) =>
+          total +
+          (Array.isArray(value) ? value.reduce<number>((a, v) => a + walk(v), 0) : walk(value)),
+        0
+      )
+    )
+  }
+
+  return components.reduce<number>((total, component) => total + walk(component), 0)
+}
+
 describe('dispatchInteraction', () => {
   test('answers a PING with a PONG', () => {
     const response = dispatchInteraction({ type: 1 }, commands) as Rendered
@@ -47,11 +69,13 @@ describe('dispatchInteraction', () => {
     // Type 4 — an immediate message. The whole simplification of this transport
     // is that a dice roll does not need a deferral and a follow-up webhook.
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
-    expect(response.data?.embeds?.[0]).toBeDefined()
+    // `/roll` renders Components V2 now, so the payload carries a container
+    // rather than an embed.
+    expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
   })
 
   test('renders every factory-backed command', () => {
-    // Guards the seam wholesale: if any command's buildEmbed reaches for
+    // Guards the seam wholesale: if any command's renderer reaches for
     // something only a gateway can supply, it fails here rather than in prod.
     const cases: [string, { name: string; value: unknown }[]][] = [
       ['roll', [{ name: 'notation', value: '2d20' }]],
@@ -66,7 +90,7 @@ describe('dispatchInteraction', () => {
     for (const [name, options] of cases) {
       const response = invoke(name, options)
       expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
-      expect(response.data?.embeds?.[0]).toBeDefined()
+      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
     }
   })
 
@@ -77,20 +101,84 @@ describe('dispatchInteraction', () => {
       { name: 'hidden', value: true }
     ])
 
-    expect(visible.data?.flags).toBeUndefined()
-    expect(hidden.data?.flags).toBeDefined()
+    // `/roll` is on Components V2, so its flag word always carries 32768 and
+    // gains 64 when hidden — the ephemeral bit composes rather than replaces.
+    expect(visible.data?.flags).toBe(32768)
+    expect(hidden.data?.flags).toBe(32768 | 64)
   })
 
   test('answers an unknown command instead of timing out', () => {
     const response = invoke('nonexistent')
     // Matches the gateway bot's behaviour: a stale registry entry says so.
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
-    expect(response.data?.embeds?.[0]?.title).toBe('Error')
+    expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
   })
 
-  test('turns a bad roll into an error embed, not a throw', () => {
+  test('turns a bad roll into an error response, not a throw', () => {
     const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
-    expect(response.data?.embeds?.[0]?.title).toBe('Error')
+    expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+  })
+
+  test('offers a correction when the notation is a near miss', () => {
+    // `/roll` is the one command with its own `describeError`, and the
+    // dispatcher has to prefer it over `defaultErrorMessage` or the hook never
+    // runs.
+    //
+    // Asserted on the BACKTICKED form deliberately. NotationParseError already
+    // ends with a double-quoted `Did you mean "2d6"?` of its own, so a looser
+    // check for 'Did you mean' would pass with the hook unwired — a test that
+    // proves nothing. Backticks are only ever produced by describeRollError.
+    const rendered = JSON.stringify(
+      invoke('roll', [{ name: 'notation', value: '26' }]).data?.components
+    )
+
+    expect(rendered).toContain('Did you mean `2d6`?')
+    // Exactly once. The hook strips the roller's own copy before appending;
+    // saying it twice is the defect this replaced.
+    expect(rendered.match(/Did you mean/g)).toHaveLength(1)
+  })
+
+  test('a reroll of a near miss gets the same correction', () => {
+    // The reroll path has its own catch block. It carries the original
+    // options in the custom_id, so it must answer identically rather than
+    // falling back to the bare message.
+    const customId = encodeReroll('roll', { notation: '26' })
+    // Guards the test itself: encodeReroll returns undefined when the id will
+    // not fit, and a dispatch with no custom_id would pass for the wrong
+    // reason. Thrown rather than asserted so it also narrows the type.
+    if (customId === undefined) throw new Error('encodeReroll could not encode the test id')
+
+    const response = dispatchInteraction(
+      {
+        type: 3,
+        data: { custom_id: customId },
+        member: { user: { global_name: 'Tester', username: 'tester' } }
+      },
+      commands
+    ) as Rendered
+
+    expect(JSON.stringify(response.data?.components)).toContain('Did you mean `2d6`?')
+  })
+
+  test('falls back to the plain message when nothing can be suggested', () => {
+    // The other half of the hook: no suggestion must mean no dangling "Did you
+    // mean" with an empty backtick pair after it.
+    const rendered = JSON.stringify(
+      invoke('roll', [{ name: 'notation', value: 'not-notation' }]).data?.components
+    )
+    expect(rendered).not.toContain('Did you mean `')
+  })
+
+  test('an error is ephemeral and carries the V2 flag', () => {
+    const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
+    expect(response.data?.flags).toBe(32768 | 64)
+  })
+
+  test('an error accent is distinct from every failure accent', () => {
+    // The embed version used 0xff0000, byte-identical to the failure colour of
+    // /blades, /pbta and /root — so a missed roll and a crash looked the same.
+    const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
+    expect(JSON.stringify(response.data?.components)).toContain(String(0x992d22))
   })
 
   test('renders /help from the barrel, not from a gateway client', () => {
@@ -98,32 +186,34 @@ describe('dispatchInteraction', () => {
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
 
     // The real proof it reads the registry: a Worker has no client, so an
-    // empty field list here would mean /help silently renders nothing.
-    const names = (response.data?.embeds?.[0]?.fields ?? []).map(field => field.name)
-    expect(names).toContain('/roll')
-    expect(names).not.toContain('/help')
+    // empty list here would mean /help silently renders nothing.
+    const text = JSON.stringify(response.data?.components)
+    expect(text).toContain('/roll')
+    expect(text).not.toContain('**/help')
   })
 
   test('renders /salvageunion', () => {
     const response = invoke('salvageunion')
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
-    expect(response.data?.embeds?.[0]?.title).toBe('Salvage Union has moved')
+    expect(JSON.stringify(response.data?.components)).toContain('Salvage Union has moved')
   })
 
   test('renders /notation with its category selector attached', () => {
     const response = invoke('notation')
-    expect(response.data?.embeds?.[0]?.title).toBe('notation.randsum.dev')
-    // The embed alone would be a reference page with no way to change category
-    // — working, but silently missing the entire interaction.
-    expect(response.data?.components).toBeDefined()
+    // The selector now lives inside the container rather than in a detached row,
+    // so a missing menu would be a reference page with no way to change
+    // category — working, but silently missing the entire interaction.
+    const payload = JSON.stringify(response.data?.components)
+    expect(payload).toContain('notation.randsum.dev')
+    expect(payload).toContain('notation-category')
   })
 
   test('every command has a Worker renderer', () => {
-    // The parity gate. A new command added without a buildEmbed would answer
-    // "not available on this deployment" in production, which is the kind of
-    // gap that only surfaces when someone tries the command.
+    // The parity gate. A new command added without a renderer would answer "not
+    // available on this deployment" in production, which is the kind of gap
+    // that only surfaces when someone tries the command.
     for (const command of commandList) {
-      expect(command.buildEmbed).toBeDefined()
+      expect(command.buildView).toBeDefined()
     }
   })
 
@@ -139,7 +229,11 @@ describe('dispatchInteraction', () => {
     // Type 7 edits the existing message rather than posting a new one, matching
     // the gateway path's `.update()`.
     expect(response.type).toBe(7)
-    expect(response.data?.embeds?.[0]?.title).toBe('notation.randsum.dev')
+    // The V2 flag has to be set on the edit too: it cannot be removed once a
+    // message carries it, and omitting it makes Discord read the container as a
+    // malformed action row.
+    expect(response.data?.flags).toBe(32768)
+    expect(JSON.stringify(response.data?.components)).toContain('notation.randsum.dev')
   })
 
   test('an unrecognised category falls back rather than rendering empty', () => {
@@ -150,7 +244,7 @@ describe('dispatchInteraction', () => {
     ) as Rendered
 
     expect(response.type).toBe(7)
-    expect(response.data?.embeds?.[0]?.fields?.length).toBeGreaterThan(0)
+    expect(JSON.stringify(response.data?.components).length).toBeGreaterThan(100)
   })
 
   test('returns undefined for interaction types it does not handle', () => {
@@ -168,5 +262,185 @@ describe('dispatchInteraction', () => {
       commands
     ) as Rendered
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+  })
+
+  describe('the Components V2 seam', () => {
+    const buildView = (): RollView => [
+      new ContainerBuilder()
+        .setAccentColor(0x4fb3a5)
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent('## rendered by buildView'))
+    ]
+
+    const viewCommand: Command = { data: commandList[0]!.data, buildView }
+
+    function invokeView(options: { name: string; value: unknown }[] = []): Rendered {
+      return dispatchInteraction(
+        { type: 2, data: { name: 'probe', options } },
+        new Map([['probe', viewCommand]])
+      ) as Rendered
+    }
+
+    test('a command defining buildView is rendered as components, not embeds', () => {
+      const response = invokeView()
+      expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+      expect(response.data?.embeds).toBeUndefined()
+      // Container is component type 17.
+      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
+    })
+
+    test('the IsComponentsV2 flag is always set on a view response', () => {
+      // Without it Discord reads `components` as legacy action rows and rejects
+      // the container outright, so this flag is load-bearing, not cosmetic.
+      expect(invokeView().data?.flags).toBe(32768)
+    })
+
+    test('hidden composes with the V2 flag rather than replacing it', () => {
+      expect(invokeView([{ name: 'hidden', value: true }]).data?.flags).toBe(32768 | 64)
+    })
+
+    test('a command with no renderer still reports itself unavailable', () => {
+      const response = dispatchInteraction(
+        { type: 2, data: { name: 'probe' } },
+        new Map([['probe', { data: commandList[0]!.data }]])
+      ) as Rendered
+      expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+    })
+  })
+
+  describe('error rendering', () => {
+    test('an over-long error message is clamped rather than thrown', () => {
+      // The regression this guards. `roll()` reports invalid notation by
+      // quoting it back, so a 3937-character argument produced an error message
+      // past the 4000-character Text Display cap — and `setContent` throws
+      // rather than truncating. The throw escaped the dispatcher, and
+      // Cloudflare answered Discord with a 500.
+      const response = invoke('roll', [{ name: 'notation', value: 'z'.repeat(3937) }])
+      expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+      expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+    })
+
+    test('a long valid notation renders a roll, within the character budget', () => {
+      // End to end against the real roller, no fixtures: a 900-character reroll
+      // set is valid notation, and every pool echoes it in the headline while
+      // echoing a 726-character description below it. The guard this replaced
+      // charged a flat 160 per container and let 8416 characters through.
+      const long = `4d1000R{${Array.from({ length: 200 }, (_, index) => `=${index + 1}`).join(',')}}x6`
+      const response = invoke('roll', [{ name: 'notation', value: long }])
+
+      const rendered = JSON.stringify(response.data?.components)
+      expect(rendered).not.toContain('Something went wrong')
+      expect(characterCountOf(response.data?.components ?? [])).toBeLessThanOrEqual(4000)
+    })
+  })
+
+  describe('reroll buttons', () => {
+    test('a reroll re-runs the command from its encoded state', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:roll:notation=4d6L' } },
+        commands
+      ) as Rendered
+      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
+    })
+
+    test('a reroll posts a NEW message rather than editing the original', () => {
+      // Type 7 would let a bystander's click silently overwrite someone else's
+      // result, since a stateless Worker cannot tell who is clicking without
+      // spending ~19 of the 100 custom_id characters on a user id.
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:roll:notation=1d20' } },
+        commands
+      ) as Rendered
+      expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+      expect(response.type).not.toBe(InteractionResponseType.UpdateMessage)
+    })
+
+    test('a reroll of a hidden roll stays hidden', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:blades:dice=3&hidden=true' } },
+        commands
+      ) as Rendered
+      expect(response.data?.flags).toBe(32768 | 64)
+    })
+
+    test('a reroll of a public roll stays public', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:blades:dice=3' } },
+        commands
+      ) as Rendered
+      expect(response.data?.flags).toBe(32768)
+    })
+
+    test('a button for a removed command says so instead of failing silently', () => {
+      // Buttons outlive deployments: nothing expires them, so a months-old
+      // message can still be clicked.
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:noSuchCommand:x=1' } },
+        commands
+      ) as Rendered
+      expect(JSON.stringify(response.data?.components)).toContain('no longer available')
+    })
+
+    test('a roll that throws on reroll renders the error, not a crash', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:blades:dice=99' } },
+        commands
+      ) as Rendered
+      expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+    })
+
+    test('a malformed reroll id is left to the caller, as before', () => {
+      expect(dispatchInteraction({ type: 3, data: { custom_id: 'r:' } }, commands)).toBeUndefined()
+    })
+
+    test('the notation selector still works alongside reroll ids', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } },
+        commands
+      ) as Rendered
+      expect(response.type).toBe(InteractionResponseType.UpdateMessage)
+    })
+  })
+
+  describe('mention suppression', () => {
+    // Components V2 TextDisplay content is mention-parsed like message content,
+    // and `/roll`'s annotation is free user text that lands verbatim in a public
+    // line. Without allowed_mentions, any user could make the bot ping a role.
+    const cases: [string, { name: string; value: unknown }[]][] = [
+      ['roll', [{ name: 'notation', value: '1d20[@everyone]' }]],
+      ['help', []],
+      ['notation', []]
+    ]
+
+    test.each(cases)('every command response suppresses mentions (/%s)', (name, options) => {
+      expect(invoke(name, options).data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('an error response suppresses mentions too', () => {
+      const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
+      expect(response.data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('a reroll response suppresses mentions', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:roll:notation=1d20' } },
+        commands
+      ) as Rendered
+      expect(response.data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('a component update suppresses mentions', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } },
+        commands
+      ) as Rendered
+      expect(response.data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('the annotation still renders — it is neutered, not stripped', () => {
+      const payload = JSON.stringify(
+        invoke('roll', [{ name: 'notation', value: '1d20[@everyone]' }])
+      )
+      expect(payload).toContain('@everyone')
+    })
   })
 })

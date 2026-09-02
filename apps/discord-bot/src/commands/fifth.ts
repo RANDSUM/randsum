@@ -1,33 +1,21 @@
-import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { roll } from '@randsum/games/fifth'
-import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
-import type { CommandContext } from './lib/index.js'
-import type { Command } from '../types.js'
+import { SlashCommandBuilder } from '../utils/builders.js'
+import { FIFTH, GLYPH } from '../utils/palette.js'
+import {
+  createGameCommand,
+  encodeReroll,
+  formatSignedModifier,
+  getInitialRolls,
+  getKeptRolls,
+  markKeptRolls,
+  rollContainer
+} from './lib/index.js'
+import type { CommandContext, ViewFact } from './lib/index.js'
+import type { Command, RollView } from '../types.js'
 
-/**
- * Renders each initial d20 with the kept die(s) bold and the dropped die(s)
- * struck through. Kept values are matched against the roller's post-modifier
- * `rolls` (the dice it actually kept) and consumed one-by-one, so a tie — where
- * both d20s show the same face — still renders exactly one bold and one struck
- * die rather than bolding both.
- */
-function markKeptRolls(initialRolls: readonly number[], keptRolls: readonly number[]): string {
-  const remaining = [...keptRolls]
-  return initialRolls
-    .map(r => {
-      const idx = remaining.indexOf(r)
-      if (idx !== -1) {
-        remaining.splice(idx, 1)
-        return `**${r}**`
-      }
-      return `~~${r}~~`
-    })
-    .join(', ')
-}
-
-function buildFifthEmbed(context: CommandContext): EmbedBuilder {
+function buildFifthView(context: CommandContext): RollView {
   const modifier = context.options.getInteger('modifier') ?? 0
+  const dc = context.options.getInteger('dc')
   const rollingWith = context.options.getString('rolling_with') as
     | 'Advantage'
     | 'Disadvantage'
@@ -40,42 +28,79 @@ function buildFifthEmbed(context: CommandContext): EmbedBuilder {
   })
 
   const initialRolls = getInitialRolls(result)
-  const keptRolls = result.rolls[0]?.rolls ?? []
+  const keptRolls = getKeptRolls(result)
   const criticals = result.details.criticals
   const isNat20 = criticals?.isNatural20 === true
   const isNat1 = criticals?.isNatural1 === true
 
-  const embedColor = isNat20 ? 0xffd700 : isNat1 ? 0xdc143c : 0x1e90ff
-  const titlePrefix = isNat20 ? 'Natural 20! ' : isNat1 ? 'Natural 1! ' : ''
+  // 5e is the one game where the raw total genuinely is the headline — bounded
+  // accuracy means the whole resolution is "compare this number to a DC or AC".
+  // So the number leads, and the system name (which the player just typed) does
+  // not appear at all.
+  // A natural and a DC verdict are independent axes, and a d20 can roll a 1 on
+  // a +30 modifier that still clears a DC 10. Rendering the fumble glyph and
+  // the fumble accent over the word "Success" said the opposite of the line
+  // below it — the same two-axis mistake as labelling a kept-lowest die
+  // "Highest Roll". When a DC is supplied it decides both; the natural is still
+  // announced in words, because it changes what the roll means at the table.
+  const passed = dc !== null ? result.total >= dc : null
+  const accent =
+    passed === true
+      ? FIFTH.natural20
+      : passed === false
+        ? FIFTH.natural1
+        : isNat20
+          ? FIFTH.natural20
+          : isNat1
+            ? FIFTH.natural1
+            : FIFTH.standard
 
-  const embed = new EmbedBuilder()
-    .setColor(embedColor)
-    .setTitle(`${titlePrefix}D&D 5e Roll: ${result.total}`)
-    .setDescription(rollingWith ? `Rolled with ${rollingWith}` : 'Standard roll')
-    .setFooter(embedFooterDetails)
+  const naturalGlyph = isNat20 ? GLYPH.critical : isNat1 ? GLYPH.fumble : null
+  const verdictGlyph = passed === true ? GLYPH.success : passed === false ? GLYPH.failure : null
+  const glyph = verdictGlyph ?? naturalGlyph
 
-  const rollsText =
-    rollingWith && initialRolls.length > 1
-      ? markKeptRolls(initialRolls, keptRolls)
-      : initialRolls.join(', ')
+  const marker = isNat20 ? 'Natural 20' : isNat1 ? 'Natural 1' : null
 
-  embed.addFields({
-    name: rollingWith ? 'Dice Rolled (2d20)' : 'Die Rolled (1d20)',
-    value: rollsText || 'None',
-    inline: true
-  })
+  // The glyph binds to the marker it qualifies — `✸ Natural 20` — and the
+  // separator only ever divides that prefix from the total.
+  const prefix = [glyph, marker].filter(part => part !== null).join(' ')
+  const headline = prefix.length > 0 ? `${prefix}  ·  ${result.total}` : String(result.total)
 
-  if (modifier !== 0) {
-    embed.addFields({
-      name: 'Modifier',
-      value: formatSignedModifier(modifier),
-      inline: true
+  // A natural 20 is an automatic hit on ATTACK ROLLS under the 2014 rules — not
+  // on ability checks or saving throws. The 2024 rules changed that. This
+  // wording is true under both, where a bare "automatic success" would not be.
+  const critLine = isNat20
+    ? 'Critical hit on an attack roll.'
+    : isNat1
+      ? 'Critical miss on an attack roll.'
+      : null
+
+  const dcLine = dc !== null ? `${result.total >= dc ? 'Success' : 'Failure'} vs DC ${dc}` : null
+
+  const consequence = [dcLine, critLine].filter(line => line !== null).join(' — ')
+
+  const facts: ViewFact[] = []
+  if (modifier !== 0) facts.push({ label: 'Modifier', value: formatSignedModifier(modifier) })
+  facts.push({ label: 'Total', value: String(result.total) })
+
+  const dropped = initialRolls.length > keptRolls.length
+  const dice = dropped ? markKeptRolls(initialRolls, keptRolls) : initialRolls.join(', ')
+  const label = rollingWith !== null ? `2d20, ${rollingWith}` : '1d20'
+
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('fifth', { modifier, dc, rolling_with: rollingWith, hidden })
+
+  return [
+    rollContainer({
+      accent,
+      headline,
+      ...(consequence.length > 0 ? { consequence } : {}),
+      facts,
+      body: [`**${label}**  ${dice}`],
+      derivation: `${label} ${formatSignedModifier(modifier)} = ${result.total}`,
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
-  }
-
-  embed.addFields({ name: 'Total', value: String(result.total), inline: true })
-
-  return embed
+  ]
 }
 
 export const fifthCommand: Command = createGameCommand({
@@ -100,11 +125,19 @@ export const fifthCommand: Command = createGameCommand({
           { name: 'Disadvantage', value: 'Disadvantage' }
         )
     )
+    .addIntegerOption(option =>
+      option
+        .setName('dc')
+        .setDescription('Difficulty Class to beat — shows success or failure')
+        .setRequired(false)
+        .setMinValue(1)
+        .setMaxValue(50)
+    )
     .addBooleanOption(option =>
       option
         .setName('hidden')
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-  buildEmbed: buildFifthEmbed
+  buildView: buildFifthView
 })

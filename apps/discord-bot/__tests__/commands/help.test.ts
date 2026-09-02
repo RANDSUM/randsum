@@ -1,51 +1,40 @@
 import { describe, expect, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
+import { helpCommand } from '../../src/commands/help.js'
+import { commands } from '../../src/commands/index.js'
 import { makeContext } from './lib/context.js'
+import { accentsOf, textOf } from '../lib/view.js'
+import { BRAND } from '../../src/utils/palette.js'
 
-const { helpCommand } = await import('../../src/commands/help.js')
-
-function render(): APIEmbed {
-  return helpCommand.buildEmbed!(makeContext()).toJSON()
-}
+const view = helpCommand.buildView!(makeContext([]))
+const text = textOf(view)
 
 describe('helpCommand', () => {
-  test('has name "help"', () => {
-    expect(helpCommand.data.name).toBe('help')
+  test('lists commands from the barrel, excluding help itself', () => {
+    for (const command of commands) {
+      if (command.data.name === 'help') continue
+      expect(text).toContain(`/${command.data.name}`)
+    }
+    expect(text).not.toContain('**/help')
   })
 
-  test('has a description', () => {
-    expect(typeof helpCommand.data.description).toBe('string')
-    expect(helpCommand.data.description.length).toBeGreaterThan(0)
+  test('names each required option, so the list is usable without guessing', () => {
+    // The embed version could tell you `/pbta` existed but not that it needs a
+    // stat — nine full-width fields of names and descriptions, no usage.
+    expect(text).toContain('**/pbta <stat>**')
+    expect(text).toContain('**/roll <notation>**')
   })
 
-  test('exposes a hidden option', () => {
-    const json = helpCommand.data.toJSON() as { options?: { name: string }[] }
-    const optionNames = (json.options ?? []).map(o => o.name)
-    expect(optionNames).toContain('hidden')
+  test('a command with no required options is listed without a hint', () => {
+    expect(text).toContain('**/fate**')
   })
 
-  test('embed uses gold color', () => {
-    expect(render().color).toBe(0xffd700)
+  test('points at the two ways in: /roll and /notation', () => {
+    expect(text).toContain('`/roll`')
+    expect(text).toContain('`/notation`')
   })
 
-  test('embed includes footer', () => {
-    expect(render().footer).toBeDefined()
-  })
-
-  test('lists commands from the barrel, excluding help itself', async () => {
-    // Source of truth changed deliberately. `/help` used to read
-    // `client.commands`, which only existed on the gateway — the Worker has no
-    // client, so the same command could not have rendered there. It reads the
-    // command barrel, which `apps/discord-bot/CLAUDE.md` already calls the
-    // single source of truth for what commands exist.
-    //
-    // Importing the barrel is what publishes the registry, so the import below
-    // is load-bearing rather than incidental.
-    await import('../../src/commands/index.js')
-
-    const fieldNames = (render().fields ?? []).map(field => field.name)
-    expect(fieldNames).toContain('/roll')
-    expect(fieldNames).toContain('/blades')
-    expect(fieldNames).not.toContain('/help')
+  test('carries the brand accent and the attribution', () => {
+    expect(accentsOf(view)[0]).toBe(BRAND)
+    expect(text).toContain('rolled with 👹 by randsum.dev')
   })
 })

@@ -13,7 +13,7 @@ to file incident RCAs.
 | Docs site          | `apps/site`                                     | **Cloudflare**      | push to `main`           | randsum.dev           |
 | Notation spec site | `apps/rdn`                                      | **Cloudflare**      | push to `main`           | notation.randsum.dev  |
 | Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | push to `main`           | bot.randsum.dev       |
-| npm packages       | `packages/roller`, `packages/games`, `apps/cli` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
+| npm packages       | `packages/roller`, `packages/games`, `packages/mcp` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
 **Everything migrated to Cloudflare on 2026-08-18** — both sites and the Discord
 bot. DNS for `randsum.dev` is on Cloudflare (nameservers
@@ -486,13 +486,13 @@ application ID, not a secret.
 
 ---
 
-## npm packages (roller, games, cli)
+## npm packages (roller, games, mcp)
 
 Publishing is **automated via changesets + npm OIDC Trusted Publishing** (`.github/workflows/publish.yml`):
 merging a changeset to `main` opens/updates a `chore: version packages` PR, and merging that PR
 publishes the changed packages. Under the hood `bun scripts/publish.ts` packs each package with
 `bun pm pack` (resolving `workspace:~`) and publishes the tarball with `npm publish --provenance`,
-in order `@randsum/roller` → `@randsum/games` → `@randsum/cli`. A local fallback is
+in order `@randsum/roller` → `@randsum/games` → `@randsum/mcp`. A local fallback is
 `bun scripts/publish.ts --otp=<CODE>`. See root `CLAUDE.md` for the full flow and the
 `workspace:~` resolution reason (never run a bare `npm publish` on the raw source tree).
 
