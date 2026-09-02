@@ -1,7 +1,13 @@
 import { EmbedBuilder, SlashCommandBuilder } from '../utils/builders.js'
 import { roll } from '@randsum/games/pbta'
 import { embedFooterDetails } from '../utils/constants.js'
-import { createGameCommand, formatSignedModifier, getInitialRolls } from './lib/index.js'
+import {
+  createGameCommand,
+  formatSignedModifier,
+  getInitialRolls,
+  getKeptRolls,
+  markKeptRolls
+} from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command } from '../types.js'
 
@@ -18,8 +24,7 @@ function buildPbtaEmbed(context: CommandContext): EmbedBuilder {
     stat,
     ...(forward !== 0 ? { forward } : {}),
     ...(ongoing !== 0 ? { ongoing } : {}),
-    ...(rollingWith === 'Advantage' ? { advantage: true } : {}),
-    ...(rollingWith === 'Disadvantage' ? { disadvantage: true } : {})
+    ...(rollingWith ? { rollingWith } : {})
   })
 
   const initialRolls = getInitialRolls(result)
@@ -38,7 +43,13 @@ function buildPbtaEmbed(context: CommandContext): EmbedBuilder {
     .setDescription(`Total: ${result.total}`)
     .setFooter(embedFooterDetails)
 
-  embed.addFields({ name: 'Dice Rolled', value: initialRolls.join(', ') || 'None', inline: true })
+  const keptRolls = getKeptRolls(result)
+  const diceText =
+    initialRolls.length > keptRolls.length
+      ? markKeptRolls(initialRolls, keptRolls)
+      : initialRolls.join(', ')
+
+  embed.addFields({ name: 'Dice Rolled', value: diceText || 'None', inline: true })
   embed.addFields({ name: 'Stat', value: stat >= 0 ? `+${stat}` : String(stat), inline: true })
   embed.addFields({ name: 'Total', value: String(result.total), inline: true })
 

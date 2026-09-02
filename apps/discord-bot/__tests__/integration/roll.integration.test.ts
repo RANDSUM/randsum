@@ -58,15 +58,14 @@ describe('roll command integration (un-mocked roller)', () => {
     expect(String(embed.description)).toContain('2d6')
   })
 
-  test('arithmetic-only notation does not render a Modified Rolls field', () => {
+  test('arithmetic-only notation renders its dice unmarked', () => {
     // Regression guard: the real roller emits a modifierLog for every applied
-    // modifier, including non-mutating arithmetic ones (plus/minus/...), so a
-    // `modifierLogs.length > 0` gate would wrongly add a "Modified Rolls" field
-    // that duplicates "Initial Rolls". The rolled dice are unchanged for
-    // 2d6+3, so only "Initial Rolls" should appear.
-    const fieldNames = (render('2d6+3').fields ?? []).map(f => f.name)
-    expect(fieldNames).toContain('Initial Rolls')
-    expect(fieldNames).not.toContain('Modified Rolls')
+    // modifier, including non-mutating arithmetic ones (plus/minus/...). The
+    // rolled dice are unchanged for 2d6+3, so no die should be struck through
+    // — a `modifierLogs.length > 0` gate would wrongly mark them.
+    const fields = render('2d6+3').fields ?? []
+    expect(fields.map(f => f.name)).toEqual(['Rolls'])
+    expect(fields[0]?.value).not.toContain('~~')
   })
 
   test('total is within the valid range for the notation', () => {

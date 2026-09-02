@@ -57,8 +57,8 @@ export const rootCommand: Command = createGameCommand({
         .setName('modifier')
         .setDescription('Modifier to add to the roll')
         .setRequired(false)
-        .setMinValue(-4)
-        .setMaxValue(4)
+        .setMinValue(-3)
+        .setMaxValue(5)
     )
     .addBooleanOption(option =>
       option
