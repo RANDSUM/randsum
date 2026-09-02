@@ -24,6 +24,7 @@ import { traceRoll, formatAsMath } from '@randsum/roller/trace'
 import type { TraceableRollRecord } from '@randsum/roller/trace'
 import {
   ButtonBuilder,
+  ComponentType,
   ButtonStyle,
   ContainerBuilder,
   SectionBuilder,
@@ -43,12 +44,41 @@ import { CUSTOM_ID_LIMIT } from './reroll.js'
  * and a pool of four-digit faces renders past 4000 well before that. Clamping
  * here rather than at the call site means every future renderer inherits it.
  */
-const TEXT_DISPLAY_LIMIT = 4000
+export const TEXT_DISPLAY_LIMIT = 4000
 
-function clampContent(content: string): string {
-  if (content.length <= TEXT_DISPLAY_LIMIT) return content
+export function clampContent(content: string, limit: number = TEXT_DISPLAY_LIMIT): string {
+  if (content.length <= limit) return content
   const notice = '\n-# …truncated'
-  return content.slice(0, TEXT_DISPLAY_LIMIT - notice.length) + notice
+  return content.slice(0, Math.max(1, limit - notice.length)) + notice
+}
+
+/**
+ * Everything Discord counts against the ~4000-character message budget.
+ *
+ * Measured from the built container rather than estimated from its inputs: the
+ * previous guard charged a flat 160 per container for headline, facts and
+ * derivation, and a headline that echoes a long notation runs to 685 on its
+ * own. That estimate let an 8416-character message through.
+ */
+export function measureContainer(container: ContainerBuilder): number {
+  const walk = (node: unknown): number => {
+    if (node === null || typeof node !== 'object') return 0
+    const own =
+      'type' in node && node.type === ComponentType.TextDisplay && 'content' in node
+        ? String(node.content).length
+        : 0
+    return (
+      own +
+      Object.values(node).reduce<number>(
+        (sum, value) =>
+          sum +
+          (Array.isArray(value) ? value.reduce<number>((a, v) => a + walk(v), 0) : walk(value)),
+        0
+      )
+    )
+  }
+
+  return walk(container.toJSON())
 }
 
 /** A label/value pair — the replacement for an inline embed field. */
@@ -72,6 +102,13 @@ export interface RollContainerOptions {
   readonly derivation?: string
   /** Encoded reroll state. Omitted — with the button — when over the id limit. */
   readonly rerollId?: string
+  /**
+   * Clamp the body to this many characters instead of the Text Display limit.
+   *
+   * A single pool can exceed the whole-message budget on its own, and there is
+   * no later pool to drop — so the only lever left is the body itself.
+   */
+  readonly bodyBudget?: number
 }
 
 /** Joins label/value pairs into the single line that replaces the field grid. */
@@ -122,15 +159,19 @@ export function renderTrace(record: TraceableRollRecord): readonly string[] {
 export function rollContainer(options: RollContainerOptions): ContainerBuilder {
   const container = new ContainerBuilder().setAccentColor(options.accent)
 
-  container.addTextDisplayComponents(new TextDisplayBuilder().setContent(`## ${options.headline}`))
+  container.addTextDisplayComponents(
+    new TextDisplayBuilder().setContent(clampContent(`## ${options.headline}`))
+  )
 
   if (options.consequence !== undefined && options.consequence.length > 0) {
-    container.addTextDisplayComponents(new TextDisplayBuilder().setContent(options.consequence))
+    container.addTextDisplayComponents(
+      new TextDisplayBuilder().setContent(clampContent(options.consequence))
+    )
   }
 
   if (options.facts !== undefined && options.facts.length > 0) {
     container.addTextDisplayComponents(
-      new TextDisplayBuilder().setContent(renderFacts(options.facts))
+      new TextDisplayBuilder().setContent(clampContent(renderFacts(options.facts)))
     )
   }
 
@@ -140,7 +181,9 @@ export function rollContainer(options: RollContainerOptions): ContainerBuilder {
       new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small)
     )
 
-    const text = new TextDisplayBuilder().setContent(clampContent(body.join('\n')))
+    const text = new TextDisplayBuilder().setContent(
+      clampContent(body.join('\n'), options.bodyBudget ?? TEXT_DISPLAY_LIMIT)
+    )
     const rerollable = options.rerollId !== undefined && options.rerollId.length <= CUSTOM_ID_LIMIT
 
     if (rerollable) {
@@ -162,7 +205,9 @@ export function rollContainer(options: RollContainerOptions): ContainerBuilder {
       ? `${options.derivation} · ${FOOTER_ATTRIBUTION}`
       : FOOTER_ATTRIBUTION
 
-  container.addTextDisplayComponents(new TextDisplayBuilder().setContent(`-# ${derivation}`))
+  container.addTextDisplayComponents(
+    new TextDisplayBuilder().setContent(clampContent(`-# ${derivation}`))
+  )
 
   return container
 }
