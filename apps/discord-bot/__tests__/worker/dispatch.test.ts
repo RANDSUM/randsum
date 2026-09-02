@@ -237,6 +237,74 @@ describe('dispatchInteraction', () => {
     })
   })
 
+  describe('reroll buttons', () => {
+    test('a reroll re-runs the command from its encoded state', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:roll:notation=4d6L' } },
+        commands
+      ) as Rendered
+      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
+    })
+
+    test('a reroll posts a NEW message rather than editing the original', () => {
+      // Type 7 would let a bystander's click silently overwrite someone else's
+      // result, since a stateless Worker cannot tell who is clicking without
+      // spending ~19 of the 100 custom_id characters on a user id.
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:roll:notation=1d20' } },
+        commands
+      ) as Rendered
+      expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
+      expect(response.type).not.toBe(InteractionResponseType.UpdateMessage)
+    })
+
+    test('a reroll of a hidden roll stays hidden', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:blades:dice=3&hidden=true' } },
+        commands
+      ) as Rendered
+      expect(response.data?.flags).toBe(32768 | 64)
+    })
+
+    test('a reroll of a public roll stays public', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:blades:dice=3' } },
+        commands
+      ) as Rendered
+      expect(response.data?.flags).toBe(32768)
+    })
+
+    test('a button for a removed command says so instead of failing silently', () => {
+      // Buttons outlive deployments: nothing expires them, so a months-old
+      // message can still be clicked.
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:noSuchCommand:x=1' } },
+        commands
+      ) as Rendered
+      expect(JSON.stringify(response.data?.components)).toContain('no longer available')
+    })
+
+    test('a roll that throws on reroll renders the error, not a crash', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:blades:dice=99' } },
+        commands
+      ) as Rendered
+      expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+    })
+
+    test('a malformed reroll id is left to the caller, as before', () => {
+      expect(dispatchInteraction({ type: 3, data: { custom_id: 'r:' } }, commands)).toBeUndefined()
+    })
+
+    test('the notation selector still works alongside reroll ids', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } },
+        commands
+      ) as Rendered
+      expect(response.type).toBe(InteractionResponseType.UpdateMessage)
+    })
+  })
+
   describe('mention suppression', () => {
     // Components V2 TextDisplay content is mention-parsed like message content,
     // and `/roll`'s annotation is free user text that lands verbatim in a public
@@ -253,6 +321,14 @@ describe('dispatchInteraction', () => {
 
     test('an error response suppresses mentions too', () => {
       const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
+      expect(response.data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('a reroll response suppresses mentions', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'r:roll:notation=1d20' } },
+        commands
+      ) as Rendered
       expect(response.data?.allowed_mentions).toEqual({ parse: [] })
     })
 

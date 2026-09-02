@@ -4,6 +4,7 @@ import { SlashCommandBuilder } from '../utils/builders.js'
 import { FATE, GLYPH } from '../utils/palette.js'
 import {
   createGameCommand,
+  encodeReroll,
   formatSignedModifier,
   getInitialRolls,
   rollContainer
@@ -100,6 +101,9 @@ function buildFateView(context: CommandContext): RollView {
   if (skill !== 0) facts.push({ label: 'Skill', value: formatSignedModifier(skill) })
   facts.push({ label: 'Total', value: formatSignedModifier(result.total) })
 
+  const hidden = context.options.getBoolean('hidden') ?? false
+  const rerollId = encodeReroll('fate', { skill, opposition, hidden })
+
   const headline = `${rung.label} (${formatSignedModifier(result.total)})`
 
   if (opposition !== null) {
@@ -124,7 +128,7 @@ function buildFateView(context: CommandContext): RollView {
         facts,
         body: [dice.map(fateDieTile).join(' ')],
         derivation: `4dF ${formatSignedModifier(skill)} = ${formatSignedModifier(result.total)} vs ${formatSignedModifier(opposition)}`,
-        rerollId: `r:fate:${skill}:${opposition}`
+        ...(rerollId !== undefined ? { rerollId } : {})
       })
     ]
   }
@@ -136,7 +140,7 @@ function buildFateView(context: CommandContext): RollView {
       facts,
       body: [dice.map(fateDieTile).join(' ')],
       derivation: `4dF ${formatSignedModifier(skill)} = ${formatSignedModifier(result.total)}`,
-      rerollId: `r:fate:${skill}:`
+      ...(rerollId !== undefined ? { rerollId } : {})
     })
   ]
 }
