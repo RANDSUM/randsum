@@ -36,8 +36,7 @@ export {
   SeparatorBuilder,
   SlashCommandBuilder,
   StringSelectMenuBuilder,
-  TextDisplayBuilder,
-  ThumbnailBuilder
+  TextDisplayBuilder
 } from '@discordjs/builders'
 
 export {

@@ -2,10 +2,9 @@ import type { EmbedBuilder } from '../../utils/builders.js'
 import type { Command, RollView } from '../../types.js'
 import type { CommandContext } from './context.js'
 
-export type { CommandContext, CommandOptions } from './context.js'
-export { optionsFromPayload } from './context.js'
-export type { RollContainerOptions, ViewFact } from './view.js'
-export { CUSTOM_ID_LIMIT, renderFacts, renderTrace, rollContainer } from './view.js'
+export type { CommandContext } from './context.js'
+export type { ViewFact } from './view.js'
+export { renderTrace, rollContainer } from './view.js'
 
 /**
  * Exactly one renderer, never neither.

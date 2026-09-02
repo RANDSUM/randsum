@@ -1,69 +1,86 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
-import { makeContext, type RawOption } from './lib/context.js'
+import { makeContext } from './lib/context.js'
+import { accentsOf, textOf } from '../lib/view.js'
+import { ROOT } from '../../src/utils/palette.js'
+import type { RollView } from '../../src/types.js'
 
-const mockRoll = mock((): { result: string; total: number; rolls: unknown[] } => ({
+const strongHit = (): { result: string; total: number; rolls: unknown[] } => ({
   result: 'strong_hit',
-  total: 9,
-  rolls: [{ initialRolls: [5, 4], rolls: [5, 4], modifierLogs: [] }]
-}))
+  total: 10,
+  rolls: [{ initialRolls: [5, 5], rolls: [5, 5], modifierLogs: [] }]
+})
+
+const mockRoll = mock(strongHit)
 
 void mock.module('@randsum/games/root-rpg', () => ({ roll: mockRoll }))
 
 const { rootCommand } = await import('../../src/commands/root.js')
 
-function render(options: readonly RawOption[] = [], displayName = 'Tester'): APIEmbed {
-  return rootCommand.buildEmbed!(makeContext(options, displayName)).toJSON()
+function render(options: { name: string; value: unknown }[] = []): RollView {
+  return rootCommand.buildView!(makeContext(options))
 }
 
 beforeEach(() => {
-  mockRoll.mockClear()
+  mockRoll.mockReset().mockImplementation(strongHit)
 })
 
 describe('rootCommand', () => {
-  test('Strong Hit', () => {
-    expect(render().title).toBe('Tester rolled a Strong Hit')
+  test('the band leads, as it does for every PbtA-family game', () => {
+    const view = render([{ name: 'modifier', value: 1 }])
+    expect(textOf(view)).toContain('## ◆ 10+  ·  Strong Hit')
+    expect(accentsOf(view)[0]).toBe(ROOT.strongHit)
   })
 
-  test('Weak Hit', () => {
+  test('a weak hit and a miss are distinct in word and colour', () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'weak_hit' as const,
-      total: 7,
-      rolls: [{ initialRolls: [4, 3], rolls: [4, 3], modifierLogs: [] }]
+      result: 'weak_hit',
+      total: 8,
+      rolls: [{ initialRolls: [4, 4], rolls: [4, 4], modifierLogs: [] }]
     }))
-    expect(render().title).toBe('Tester rolled a Weak Hit')
-  })
+    expect(accentsOf(render())[0]).toBe(ROOT.weakHit)
 
-  test('Miss', () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'miss' as const,
-      total: 3,
-      rolls: [{ initialRolls: [2, 1], rolls: [2, 1], modifierLogs: [] }]
+      result: 'miss',
+      total: 4,
+      rolls: [{ initialRolls: [2, 2], rolls: [2, 2], modifierLogs: [] }]
     }))
-    expect(render().title).toBe('Tester rolled a Miss')
+    const miss = render()
+    expect(textOf(miss)).toContain('## ✕ 6-  ·  Miss')
+    expect(accentsOf(miss)[0]).toBe(ROOT.miss)
   })
 
-  test('titles with the display name the transport supplies', () => {
-    // /root is the only command that reads `userDisplayName`, so this is the
-    // one place the context's second field is load-bearing. The Worker resolves
-    // it from the interaction payload (guild `member.user` or DM `user`).
-    expect(render([], 'Vagabond').title).toBe('Vagabond rolled a Strong Hit')
+  test('the roller is not named in the headline', () => {
+    // Discord already renders "<username> used /root" directly above every
+    // response. The old title repeated it, and made this the one command whose
+    // title shape differed from its nine siblings.
+    expect(textOf(render([{ name: 'modifier', value: 1 }]))).not.toContain('Adventurer')
   })
 
-  test('non-zero modifier adds modifier field', () => {
-    const embed = render([{ name: 'modifier', value: 2 }])
-    expect((embed.fields ?? []).map(field => field.name)).toContain('Modifier')
-    expect(mockRoll).toHaveBeenCalledWith({ bonus: 2 })
+  test('a named stat reads back the way a player says it out loud', () => {
+    const text = textOf(
+      render([
+        { name: 'modifier', value: 2 },
+        { name: 'stat', value: 'Cunning' }
+      ])
+    )
+    expect(text).toContain('Strong Hit  ·  Cunning')
+    expect(text).toContain('**Cunning** +2')
   })
 
-  test('an absent modifier defaults to zero and omits the field', () => {
-    const embed = render()
-    expect((embed.fields ?? []).map(field => field.name)).not.toContain('Modifier')
-    expect(mockRoll).toHaveBeenCalledWith({ bonus: 0 })
+  test('without a stat name the modifier is still labelled', () => {
+    expect(textOf(render([{ name: 'modifier', value: 2 }]))).toContain('**Modifier** +2')
+  })
+
+  test('rollingWith is forwarded to the roller the spec supports', () => {
+    // The spec has always supported this; the command exposed no option for it.
+    render([
+      { name: 'modifier', value: 1 },
+      { name: 'rolling_with', value: 'Advantage' }
+    ])
+    expect(mockRoll).toHaveBeenCalledWith({ bonus: 1, rollingWith: 'Advantage' })
   })
 
   test('error path: a failing roll propagates', () => {
-    // The dispatcher renders the "Error" embed — see dispatch.test.ts.
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })

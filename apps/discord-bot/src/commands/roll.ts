@@ -2,12 +2,10 @@ import { roll } from '@randsum/roller/roll'
 import type { TraceableRollRecord } from '@randsum/roller/trace'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { SlashCommandBuilder } from '../utils/builders.js'
+import { BRAND } from '../utils/palette.js'
 import { createGameCommand, renderTrace, rollContainer } from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
-
-/** Brand purple. `/roll` has no outcome tier, so the accent is identity. */
-const ROLL_ACCENT = 0x7c3aed
 
 /**
  * Containers rendered before the rest are summarised away.
@@ -106,7 +104,7 @@ function buildRollView(context: CommandContext): RollView {
     const description = (record.description ?? []).join(' · ')
 
     return rollContainer({
-      accent: ROLL_ACCENT,
+      accent: BRAND,
       // A single pool leads with the number, because that is the answer. Several
       // pools lead with which pool this is, and the grand total gets its own
       // line below.
@@ -122,7 +120,7 @@ function buildRollView(context: CommandContext): RollView {
     const omitted = result.rolls.length - pools.length
     containers.push(
       rollContainer({
-        accent: ROLL_ACCENT,
+        accent: BRAND,
         headline: `Total  ${result.total}`,
         ...(omitted > 0
           ? { consequence: `${omitted} further pool${omitted === 1 ? '' : 's'} not shown.` }
