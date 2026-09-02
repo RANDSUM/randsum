@@ -212,14 +212,19 @@ function dispatchReroll(
     return errorResponse(`\`/${target.commandName}\` is no longer available.`)
   }
 
+  // Built before the try so the catch can hand it to `describeError`. A reroll
+  // carries the original invocation's options in its `custom_id`, so the hook
+  // sees the same notation the slash command did and answers identically —
+  // there is no second error wording to keep in step.
+  const context = {
+    options: target.options,
+    userDisplayName: resolveDisplayName(payload)
+  }
+
   try {
-    const view = command.buildView({
-      options: target.options,
-      userDisplayName: resolveDisplayName(payload)
-    })
-    return viewResponse(view, target.hidden)
+    return viewResponse(command.buildView(context), target.hidden)
   } catch (error) {
-    return errorResponse(defaultErrorMessage(error))
+    return errorResponse(command.describeError?.(error, context) ?? defaultErrorMessage(error))
   }
 }
 
@@ -296,13 +301,17 @@ export function dispatchInteraction(
   }
 
   const options = optionsFromPayload(payload.data?.options)
+  // Outside the try so the catch block can pass it to `describeError`, which
+  // needs the invocation's options to say anything specific about what failed.
+  const context = { options, userDisplayName: resolveDisplayName(payload) }
 
   try {
-    const context = { options, userDisplayName: resolveDisplayName(payload) }
     const hidden = options.getBoolean('hidden') ?? false
 
     return viewResponse(command.buildView(context), hidden)
   } catch (error) {
-    return errorResponse(defaultErrorMessage(error))
+    // The command gets first refusal on the wording — `/roll` uses it to
+    // suggest a correction — and `defaultErrorMessage` covers everyone else.
+    return errorResponse(command.describeError?.(error, context) ?? defaultErrorMessage(error))
   }
 }

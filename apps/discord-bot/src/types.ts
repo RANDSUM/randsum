@@ -42,4 +42,13 @@ export interface Command {
    * menu inside its container.
    */
   buildView?: (context: CommandContext) => RollView
+  /**
+   * Bespoke error text for the dispatcher's catch blocks.
+   *
+   * Only `/roll` has one: an invalid notation is usually a near miss, and
+   * `suggestNotationFix` can name the correction. Optional because every other
+   * command's failure is already self-explanatory — the dispatcher falls back
+   * to `defaultErrorMessage`, so a command that omits this loses nothing.
+   */
+  describeError?: (error: unknown, context: CommandContext) => string
 }

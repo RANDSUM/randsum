@@ -8,6 +8,7 @@
  */
 import { describe, expect, test } from 'bun:test'
 import { commands as commandList } from '../../src/commands/index.js'
+import { encodeReroll } from '../../src/commands/lib/index.js'
 import { ContainerBuilder, TextDisplayBuilder } from '../../src/utils/builders.js'
 import { dispatchInteraction, InteractionResponseType } from '../../src/worker/dispatch.js'
 import type { Command, RollView } from '../../src/types.js'
@@ -116,6 +117,56 @@ describe('dispatchInteraction', () => {
   test('turns a bad roll into an error response, not a throw', () => {
     const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
     expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+  })
+
+  test('offers a correction when the notation is a near miss', () => {
+    // `/roll` is the one command with its own `describeError`, and the
+    // dispatcher has to prefer it over `defaultErrorMessage` or the hook never
+    // runs.
+    //
+    // Asserted on the BACKTICKED form deliberately. NotationParseError already
+    // ends with a double-quoted `Did you mean "2d6"?` of its own, so a looser
+    // check for 'Did you mean' would pass with the hook unwired — a test that
+    // proves nothing. Backticks are only ever produced by describeRollError.
+    const rendered = JSON.stringify(
+      invoke('roll', [{ name: 'notation', value: '26' }]).data?.components
+    )
+
+    expect(rendered).toContain('Did you mean `2d6`?')
+    // Exactly once. The hook strips the roller's own copy before appending;
+    // saying it twice is the defect this replaced.
+    expect(rendered.match(/Did you mean/g)).toHaveLength(1)
+  })
+
+  test('a reroll of a near miss gets the same correction', () => {
+    // The reroll path has its own catch block. It carries the original
+    // options in the custom_id, so it must answer identically rather than
+    // falling back to the bare message.
+    const customId = encodeReroll('roll', { notation: '26' })
+    // Guards the test itself: encodeReroll returns undefined when the id will
+    // not fit, and a dispatch with no custom_id would pass for the wrong
+    // reason. Thrown rather than asserted so it also narrows the type.
+    if (customId === undefined) throw new Error('encodeReroll could not encode the test id')
+
+    const response = dispatchInteraction(
+      {
+        type: 3,
+        data: { custom_id: customId },
+        member: { user: { global_name: 'Tester', username: 'tester' } }
+      },
+      commands
+    ) as Rendered
+
+    expect(JSON.stringify(response.data?.components)).toContain('Did you mean `2d6`?')
+  })
+
+  test('falls back to the plain message when nothing can be suggested', () => {
+    // The other half of the hook: no suggestion must mean no dangling "Did you
+    // mean" with an empty backtick pair after it.
+    const rendered = JSON.stringify(
+      invoke('roll', [{ name: 'notation', value: 'not-notation' }]).data?.components
+    )
+    expect(rendered).not.toContain('Did you mean `')
   })
 
   test('an error is ephemeral and carries the V2 flag', () => {
