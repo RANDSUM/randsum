@@ -1,9 +1,16 @@
 import { roll } from '@randsum/roller/roll'
 import type { TraceableRollRecord } from '@randsum/roller/trace'
+import { suggestNotationFix } from '@randsum/roller'
 import { notation as createNotation } from '@randsum/roller/validate'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { BRAND } from '../utils/palette.js'
-import { createGameCommand, encodeReroll, renderTrace, rollContainer } from './lib/index.js'
+import {
+  createGameCommand,
+  defaultErrorMessage,
+  encodeReroll,
+  renderTrace,
+  rollContainer
+} from './lib/index.js'
 import type { CommandContext } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
 
@@ -133,6 +140,37 @@ function buildRollView(context: CommandContext): RollView {
   return containers
 }
 
+/**
+ * Restates a near-miss notation as "Did you mean `2d6`?" on its own line.
+ *
+ * The base message says what is wrong; this says what to type instead, which is
+ * the useful half when someone types `26` for `2d6`. Reads the option off the
+ * context rather than the error because not every error carries the notation.
+ *
+ * The strip is not cosmetic. `NotationParseError` already ends its message with
+ * a `Did you mean "2d6"?` of its own, so appending blindly says it twice — which
+ * is what the gateway bot did, since the roller gained that suffix (#1160)
+ * before anyone re-read this function. Removing the roller's copy first leaves
+ * one suggestion, on its own line, in backticks that Discord renders as code.
+ *
+ * Matched against the exact suffix the roller would have built from this same
+ * suggestion, so a message ending some other way is left alone rather than
+ * having its tail guessed at.
+ */
+function describeRollError(error: unknown, context: CommandContext): string {
+  const notationString = context.options.getString('notation', true)
+  const baseMessage = defaultErrorMessage(error)
+  const suggestion = suggestNotationFix(notationString)
+  if (!suggestion) return baseMessage
+
+  const rollerSuffix = ` Did you mean "${suggestion}"?`
+  const trimmed = baseMessage.endsWith(rollerSuffix)
+    ? baseMessage.slice(0, -rollerSuffix.length)
+    : baseMessage
+
+  return `${trimmed}\n\nDid you mean \`${suggestion}\`?`
+}
+
 export const rollCommand: Command = createGameCommand({
   data: new SlashCommandBuilder()
     .setName('roll')
@@ -149,5 +187,6 @@ export const rollCommand: Command = createGameCommand({
         .setDescription('Make the result visible only to you')
         .setRequired(false)
     ),
-  buildView: buildRollView
+  buildView: buildRollView,
+  describeError: describeRollError
 })

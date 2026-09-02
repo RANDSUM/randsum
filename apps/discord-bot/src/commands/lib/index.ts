@@ -9,6 +9,7 @@ export { decodeReroll, encodeReroll, isRerollId } from './reroll.js'
 interface CreateGameCommandOptions {
   readonly data: Command['data']
   readonly buildView: (context: CommandContext) => RollView
+  readonly describeError?: (error: unknown, context: CommandContext) => string
 }
 
 /** Default message for the shared catch block: the error text, or a generic fallback. */
@@ -30,9 +31,11 @@ export function defaultErrorMessage(error: unknown): string {
  * a command built through this factory cannot omit its renderer.
  */
 export function createGameCommand(options: CreateGameCommandOptions): Command {
-  const { data, buildView } = options
+  const { data, buildView, describeError } = options
 
-  return { data, buildView }
+  // Spread rather than always set: `exactOptionalPropertyTypes` makes an
+  // explicit `describeError: undefined` a different type from an absent key.
+  return { data, buildView, ...(describeError ? { describeError } : {}) }
 }
 
 /** Formats a modifier with an explicit sign: positive values gain a leading `+`. */
