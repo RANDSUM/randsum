@@ -38,16 +38,15 @@ describe('commands barrel', () => {
   })
 
   test('each command has data and a renderer', () => {
-    // A renderer replaced `execute` as the thing every command must have. Both
-    // are optional on the interface so the dispatcher can answer "not available
-    // on this deployment" rather than guess — but a command that ships without
-    // either is unreachable in production, so the barrel is where that is
-    // checked. `buildView` is the Components V2 renderer commands are migrating
-    // to; `buildEmbed` is accepted until the last one moves.
+    // `buildView` replaced `buildEmbed`, which replaced `execute`, as the thing
+    // every command must have. It is optional on the interface so the
+    // dispatcher can answer "not available on this deployment" rather than
+    // guess — but a command that ships without one is unreachable in
+    // production, so the barrel is where that is checked.
     for (const command of commands) {
       expect(command).toHaveProperty('data')
       expect(command.data).toBeDefined()
-      expect(typeof (command.buildView ?? command.buildEmbed)).toBe('function')
+      expect(typeof command.buildView).toBe('function')
     }
   })
 

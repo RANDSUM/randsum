@@ -102,3 +102,10 @@ export const FATE = {
 
 /** `/roll` and the informational commands. Brand identity, not an outcome. */
 export const BRAND = 0x7c3aed
+
+/**
+ * Errors. Deliberately distinct from every failure accent above: the embed
+ * version shared `0xff0000` with three commands' failure colour, so a missed
+ * roll and a validation crash were indistinguishable.
+ */
+export const ERROR = 0x992d22
