@@ -16,7 +16,7 @@ import { MessageFlags } from '../utils/builders.js'
 import { optionsFromPayload } from '../commands/lib/context.js'
 import { defaultErrorMessage } from '../commands/lib/index.js'
 import { buildNotationView, NOTATION_SELECT_ID } from '../commands/lib/notationView.js'
-import type { Command } from '../types.js'
+import type { Command, RollView } from '../types.js'
 
 /** Discord's interaction type numbers. */
 export const InteractionType = {
@@ -31,9 +31,13 @@ export const InteractionType = {
 export const InteractionResponseType = {
   Pong: 1,
   ChannelMessageWithSource: 4,
+  DeferredChannelMessageWithSource: 5,
+  /** Acknowledges a component without showing a loading state. */
+  DeferredMessageUpdate: 6,
   /** Replaces the message the component is attached to, in place. */
   UpdateMessage: 7,
-  AutocompleteResult: 8
+  AutocompleteResult: 8,
+  Modal: 9
 } as const
 
 /** The subset of an interaction payload this dispatcher reads. */
@@ -64,6 +68,24 @@ export interface InteractionPayload {
 function resolveDisplayName(payload: InteractionPayload): string {
   const user = payload.member?.user ?? payload.user
   return user?.global_name ?? user?.username ?? 'Adventurer'
+}
+
+/**
+ * Wrap a rendered view in a Components V2 interaction response.
+ *
+ * `IsComponentsV2` is what switches Discord from the embed layout to the
+ * component tree; without it the `components` array is read as legacy action
+ * rows and a container is rejected. It composes with `Ephemeral` as a normal
+ * bit flag — 32768 | 64 — so the `hidden` option keeps working unchanged.
+ */
+export function viewResponse(view: RollView, hidden: boolean): unknown {
+  return {
+    type: InteractionResponseType.ChannelMessageWithSource,
+    data: {
+      flags: MessageFlags.IsComponentsV2 | (hidden ? MessageFlags.Ephemeral : 0),
+      components: view.map(container => container.toJSON())
+    }
+  }
 }
 
 function errorResponse(message: string): unknown {
@@ -132,23 +154,30 @@ export function dispatchInteraction(
     return errorResponse(`Unknown command: \`/${name}\`. It may have been removed.`)
   }
 
-  if (command.buildEmbed === undefined) {
+  if (command.buildView === undefined && command.buildEmbed === undefined) {
     return errorResponse(`\`/${name}\` is not available on this deployment yet.`)
   }
 
   const options = optionsFromPayload(payload.data?.options)
 
   try {
-    const embed = command.buildEmbed({
-      options,
-      userDisplayName: resolveDisplayName(payload)
-    })
+    const context = { options, userDisplayName: resolveDisplayName(payload) }
     const hidden = options.getBoolean('hidden') ?? false
 
-    const components = command.buildComponents?.({
-      options,
-      userDisplayName: resolveDisplayName(payload)
-    })
+    // Components V2 first. A command that defines `buildView` never touches the
+    // embed path, and the two are mutually exclusive per message — the V2 flag
+    // forbids `embeds` outright, so there is no blending them.
+    if (command.buildView !== undefined) {
+      return viewResponse(command.buildView(context), hidden)
+    }
+
+    // Legacy embed path. Deleted once every command defines `buildView`.
+    if (command.buildEmbed === undefined) {
+      return errorResponse(`\`/${name}\` is not available on this deployment yet.`)
+    }
+
+    const embed = command.buildEmbed(context)
+    const components = command.buildComponents?.(context)
 
     return {
       type: InteractionResponseType.ChannelMessageWithSource,
