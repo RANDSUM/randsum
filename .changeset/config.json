@@ -1,9 +1,14 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.3/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "RANDSUM/randsum" }],
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "RANDSUM/randsum"
+    }
+  ],
   "commit": false,
   "fixed": [],
-  "linked": [["@randsum/roller", "@randsum/games", "@randsum/cli"]],
+  "linked": [["@randsum/roller", "@randsum/games"]],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "minor",

@@ -8,7 +8,6 @@ RANDSUM is now distributed as scoped packages under `@randsum/*`. The legacy uns
 | ----------------- | ----------------- | -------------------------------------------------------- |
 | `@randsum/roller` | 2.x               | Core dice engine. Patches land on the latest minor       |
 | `@randsum/games`  | 3.x               | Game packages. Version-linked with roller (shared bumps) |
-| `@randsum/cli`    | 2.x               | CLI binary. Version-linked with roller (shared bumps)    |
 | `randsum` (≤ 3.x) | :x:               | Legacy monolithic package, unsupported                   |
 
 Security patches land on the latest minor of each supported major; older minors are not backported.

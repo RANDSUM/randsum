@@ -15,7 +15,7 @@
  */
 import { commands as commandList } from '../commands/index.js'
 import type { Command } from '../types.js'
-import { dispatchInteraction } from './dispatch.js'
+import { dispatchInteraction, fallbackErrorResponse } from './dispatch.js'
 import { verifyDiscordRequest } from './verify.js'
 
 export interface Env {
@@ -61,7 +61,24 @@ export default {
       return new Response('Malformed payload', { status: 400 })
     }
 
-    const response = dispatchInteraction(payload as never, commands)
+    // Belt and braces around a pure function. `dispatchInteraction` catches
+    // renderer throws and turns them into an error response — but the error
+    // response is itself built with validating builders, so a throw while
+    // BUILDING it escapes the catch. That happened: a 3937-character notation
+    // made the error container's own `setContent` throw, and with nothing here
+    // the promise rejected and Cloudflare returned 500. The user sees "This
+    // interaction failed" and Discord retries, which fails identically.
+    //
+    // The specific bug is fixed at its source; this is here so the next one
+    // costs a wrong-looking message rather than a dead endpoint.
+    const response = ((): unknown => {
+      try {
+        return dispatchInteraction(payload as never, commands)
+      } catch {
+        return fallbackErrorResponse()
+      }
+    })()
+
     if (response === undefined) {
       return new Response('Unsupported interaction type', { status: 400 })
     }

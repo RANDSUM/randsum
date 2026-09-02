@@ -6,7 +6,6 @@
 ## Packages
 
 - @randsum/roller - Core dice engine with built-in RDN notation parser
-- @randsum/cli - Command-line dice roller (published npm CLI)
 - @randsum/mcp - Model Context Protocol stdio server exposing roll, validate, and roll_game tools to AI agents (bunx/npx @randsum/mcp)
 - @randsum/games - TTRPG game packages with subpath exports:
   - @randsum/games/fifth - D&D 5th Edition
