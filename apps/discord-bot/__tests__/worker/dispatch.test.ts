@@ -19,6 +19,7 @@ const commands: ReadonlyMap<string, Command> = new Map(
 interface Rendered {
   type: number
   data?: {
+    allowed_mentions?: { parse: readonly string[] }
     embeds?: { title?: string; fields?: { name: string; value: string }[] }[]
     components?: readonly unknown[]
     flags?: number
@@ -226,6 +227,41 @@ describe('dispatchInteraction', () => {
         new Map([['probe', { data: commandList[0]!.data }]])
       ) as Rendered
       expect(response.data?.embeds?.[0]?.title).toBe('Error')
+    })
+  })
+
+  describe('mention suppression', () => {
+    // Components V2 TextDisplay content is mention-parsed like message content,
+    // and `/roll`'s annotation is free user text that lands verbatim in a public
+    // line. Without allowed_mentions, any user could make the bot ping a role.
+    const cases: [string, { name: string; value: unknown }[]][] = [
+      ['roll', [{ name: 'notation', value: '1d20[@everyone]' }]],
+      ['help', []],
+      ['notation', []]
+    ]
+
+    test.each(cases)('every command response suppresses mentions (/%s)', (name, options) => {
+      expect(invoke(name, options).data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('an error response suppresses mentions too', () => {
+      const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
+      expect(response.data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('a component update suppresses mentions', () => {
+      const response = dispatchInteraction(
+        { type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } },
+        commands
+      ) as Rendered
+      expect(response.data?.allowed_mentions).toEqual({ parse: [] })
+    })
+
+    test('the annotation still renders — it is neutered, not stripped', () => {
+      const payload = JSON.stringify(
+        invoke('roll', [{ name: 'notation', value: '1d20[@everyone]' }])
+      )
+      expect(payload).toContain('@everyone')
     })
   })
 })
