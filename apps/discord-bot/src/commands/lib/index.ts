@@ -1,4 +1,3 @@
-import type { EmbedBuilder } from '../../utils/builders.js'
 import type { Command, RollView } from '../../types.js'
 import type { CommandContext } from './context.js'
 
@@ -6,23 +5,10 @@ export type { CommandContext } from './context.js'
 export type { ViewFact } from './view.js'
 export { renderTrace, rollContainer } from './view.js'
 
-/**
- * Exactly one renderer, never neither.
- *
- * A union rather than two optional properties so the factory keeps the one
- * guarantee it has left: a command built through it cannot forget to render.
- * `buildView` is where every command is heading; `buildEmbed` remains until the
- * last one migrates.
- */
-type CreateGameCommandOptions =
-  | {
-      readonly data: Command['data']
-      readonly buildView: (context: CommandContext) => RollView
-    }
-  | {
-      readonly data: Command['data']
-      readonly buildEmbed: (context: CommandContext) => EmbedBuilder
-    }
+interface CreateGameCommandOptions {
+  readonly data: Command['data']
+  readonly buildView: (context: CommandContext) => RollView
+}
 
 /** Default message for the shared catch block: the error text, or a generic fallback. */
 export function defaultErrorMessage(error: unknown): string {
@@ -39,15 +25,13 @@ export function defaultErrorMessage(error: unknown): string {
  * every command, so what is left here is the pairing itself.
  *
  * Kept rather than inlined because it gives every command one declared shape,
- * and because `buildEmbed` is optional on `Command` while it is required here:
+ * and because `buildView` is optional on `Command` while it is required here:
  * a command built through this factory cannot omit its renderer.
  */
 export function createGameCommand(options: CreateGameCommandOptions): Command {
-  if ('buildView' in options) {
-    return { data: options.data, buildView: options.buildView }
-  }
+  const { data, buildView } = options
 
-  return { data: options.data, buildEmbed: options.buildEmbed }
+  return { data, buildView }
 }
 
 /** Formats a modifier with an explicit sign: positive values gain a leading `+`. */

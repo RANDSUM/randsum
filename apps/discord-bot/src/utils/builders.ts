@@ -14,8 +14,8 @@
  * tricks, and no second implementation.
  *
  * The version is pinned to the one discord.js itself depends on, so the classes
- * here are the same classes it would hand back. A drift there would produce
- * two `EmbedBuilder` identities in one process, which fails in a genuinely
+ * here are the same classes it would hand back. A drift there would produce two
+ * identities for the same builder in one process, which fails in a genuinely
  * confusing way.
  *
  * The rule this encodes: **command files import from here, never from
@@ -31,7 +31,6 @@ export {
   ActionRowBuilder,
   ButtonBuilder,
   ContainerBuilder,
-  EmbedBuilder,
   SectionBuilder,
   SeparatorBuilder,
   SlashCommandBuilder,

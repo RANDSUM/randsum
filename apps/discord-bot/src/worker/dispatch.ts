@@ -12,7 +12,9 @@
  * alive, no second failure mode) and visibly faster — the user never sees a
  * "thinking…" state for work that was already done.
  */
-import { MessageFlags } from '../utils/builders.js'
+import { ContainerBuilder, MessageFlags, TextDisplayBuilder } from '../utils/builders.js'
+import { FOOTER_ATTRIBUTION } from '../utils/constants.js'
+import { ERROR } from '../utils/palette.js'
 import { optionsFromPayload } from '../commands/lib/context.js'
 import { defaultErrorMessage } from '../commands/lib/index.js'
 import { buildNotationView, NOTATION_SELECT_ID } from '../commands/lib/notationView.js'
@@ -104,13 +106,34 @@ function viewResponse(view: RollView, hidden: boolean): unknown {
   }
 }
 
+/**
+ * The error surface, as a container like everything else.
+ *
+ * Two things were wrong with the embed version beyond its shape. Its `0xff0000`
+ * was byte-identical to the failure accent of `/blades`, `/pbta` and `/root`,
+ * so a missed roll and a crash looked the same; it uses a distinct dark red
+ * now. And it was the only message in the bot with no footer, because it was a
+ * raw object literal that never went near the shared constant.
+ *
+ * Always ephemeral, regardless of the `hidden` option: an error is for the
+ * person who typed the command, not the channel.
+ */
 function errorResponse(message: string): unknown {
   return {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
-      embeds: [{ title: 'Error', description: message, color: 0xff0000 }],
+      flags: MessageFlags.IsComponentsV2 | MessageFlags.Ephemeral,
       allowed_mentions: NO_MENTIONS,
-      flags: MessageFlags.Ephemeral
+      components: [
+        new ContainerBuilder()
+          .setAccentColor(ERROR)
+          .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent('## Something went wrong'),
+            new TextDisplayBuilder().setContent(message),
+            new TextDisplayBuilder().setContent(`-# ${FOOTER_ATTRIBUTION}`)
+          )
+          .toJSON()
+      ]
     }
   }
 }
@@ -175,7 +198,7 @@ export function dispatchInteraction(
     return errorResponse(`Unknown command: \`/${name}\`. It may have been removed.`)
   }
 
-  if (command.buildView === undefined && command.buildEmbed === undefined) {
+  if (command.buildView === undefined) {
     return errorResponse(`\`/${name}\` is not available on this deployment yet.`)
   }
 
@@ -185,30 +208,7 @@ export function dispatchInteraction(
     const context = { options, userDisplayName: resolveDisplayName(payload) }
     const hidden = options.getBoolean('hidden') ?? false
 
-    // Components V2 first. A command that defines `buildView` never touches the
-    // embed path, and the two are mutually exclusive per message — the V2 flag
-    // forbids `embeds` outright, so there is no blending them.
-    if (command.buildView !== undefined) {
-      return viewResponse(command.buildView(context), hidden)
-    }
-
-    // Legacy embed path. Deleted once every command defines `buildView`.
-    if (command.buildEmbed === undefined) {
-      return errorResponse(`\`/${name}\` is not available on this deployment yet.`)
-    }
-
-    const embed = command.buildEmbed(context)
-    const components = command.buildComponents?.(context)
-
-    return {
-      type: InteractionResponseType.ChannelMessageWithSource,
-      data: {
-        allowed_mentions: NO_MENTIONS,
-        embeds: [embed.toJSON()],
-        ...(components !== undefined && components.length > 0 ? { components } : {}),
-        ...(hidden ? { flags: MessageFlags.Ephemeral } : {})
-      }
-    }
+    return viewResponse(command.buildView(context), hidden)
   } catch (error) {
     return errorResponse(defaultErrorMessage(error))
   }

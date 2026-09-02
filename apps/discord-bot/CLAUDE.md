@@ -25,7 +25,7 @@ artifact to produce ahead of a deploy. It is listed in `BUILD_EXEMPT` in
 apps/discord-bot/
   src/
     deploy-commands.ts   # One-shot Node script: writes the slash command registry
-    types.ts             # Command interface (data, buildEmbed, buildComponents)
+    types.ts             # Command interface (data, buildView)
     worker/
       index.ts           # Worker entry: verifies the signature, dispatches, responds
       verify.ts          # Ed25519 request-signature verification (WebCrypto)
@@ -45,9 +45,10 @@ apps/discord-bot/
       lib/               # Shared command scaffolding (context, notation view, factory)
     utils/
       builders.ts        # PORTABLE Discord primitives — safe on workerd. Commands import here.
+      palette.ts         # Accent colours and outcome glyphs — the visual vocabulary
       discord.ts         # discord.js REST barrel — deploy-commands only, never the Worker
       config.ts          # Reads env vars; throws on missing required vars (deploy-commands only)
-      constants.ts       # Embed footer
+      constants.ts       # Footer attribution
 ```
 
 The `builders.ts` / `discord.ts` split is load-bearing and outlived the gateway. Command files
@@ -150,18 +151,28 @@ global registrations were untouched by the Cloudflare cutover and by dropping Re
 Each command file exports a named `*Command` object with:
 
 - `data` — a `SlashCommandBuilder` defining the name, description, and options
-- `buildEmbed(context)` — the renderer the Worker calls. Takes a `CommandContext` (option
-  accessors plus the caller's display name) and returns an `EmbedBuilder`. Pure: no interaction,
-  no network, no replying.
-- `buildComponents(context)` — optional, raw API JSON. Only `/notation` has one.
+- `buildView(context)` — the renderer the Worker calls. Takes a `CommandContext` (option
+  accessors plus the caller's display name) and returns a `RollView`: `readonly
+  ContainerBuilder[]`, one **Components V2** container per dice pool. Pure: no interaction, no
+  network, no replying.
 
-> The `execute(interaction)` handler that used to sit here is **gone**, along with `autocomplete`
-> (which was declared, accepted by the factory, and never once passed). Errors are the
-> dispatcher's job now: `buildEmbed` throws, and `dispatchInteraction` renders the error embed.
+> `buildEmbed` and `buildComponents` are **gone**, as `execute(interaction)` and `autocomplete`
+> went before them. The bot renders Components V2 exclusively: setting `IsComponentsV2` forbids
+> `embeds` outright, so the two shapes cannot be mixed on one message. Errors are the
+> dispatcher's job: `buildView` throws, and `dispatchInteraction` renders the error container.
 >
-> `buildEmbed` is optional on the interface so the dispatcher can answer "not available on this
+> `buildView` is optional on the interface so the dispatcher can answer "not available on this
 > deployment" rather than guess, but every command in the barrel has one and
 > `__tests__/worker/dispatch.test.ts` holds that line.
+
+**Building a view.** Route through `rollContainer()` in `commands/lib/view.ts` rather than
+assembling a container by hand — it owns the headline / consequence / facts / body / derivation
+layout, and the `-#` subtext footer that replaces the embed footer Components V2 does not have.
+`renderTrace()` turns a `RollRecord` into the step lines (`@randsum/roller/trace`), and
+`utils/palette.ts` holds every accent colour and outcome glyph. Two constraints worth knowing:
+Components V2 has no `inline` field grid, so label/value pairs go through `renderFacts` as one
+line; and a `custom_id` caps at 100 characters, so a reroll button carrying long notation is
+dropped rather than truncated (Discord rejects the whole message otherwise).
 
 All game commands import their `roll()` from the corresponding `@randsum/games/<shortcode>`
 subpath. The exception is `/salvageunion`, which rolls nothing: Salvage Union moved to the SURef
@@ -178,8 +189,19 @@ also frees that name for SURef in servers running both bots.
 
 ## Testing
 
-Tests use real discord.js builders (not mocks) and verify output via `toJSON()` on embeds. Only
-game packages (`@randsum/games/*`) and roller subpaths (`@randsum/roller/*`) are mocked.
+Tests use real discord.js builders (not mocks). Only game packages (`@randsum/games/*`) and
+roller subpaths (`@randsum/roller/*`) are mocked.
+
+Assert against a view through the helpers in `__tests__/lib/view.ts` — `textOf`, `linesOf`,
+`accentsOf`, `buttonIdsOf` — rather than walking the component tree. A container has no title,
+so the literal equivalent of `expect(embed.data.title)` is
+`view[0]!.toJSON().components[0]!.content`, which breaks when a separator moves rather than when
+the text changes.
+
+**Two traps.** `bun test` does not typecheck, so a test can pass while violating
+`exactOptionalPropertyTypes` — run `bun run check`. And `mock.module` leaks across test files
+**even under `--isolate`**, so a test relying on an un-mocked import can pass alone and fail in
+the suite; supply explicit fixtures instead.
 
 `worker/dispatch.ts` is pure — no network, no client, no side effects — which is what makes the
 bot's actual behaviour testable without a Worker runtime. It is the half worth protecting; the

@@ -2,7 +2,7 @@
  * Covers the HTTP-interactions dispatcher against the REAL command barrel.
  *
  * Using the real commands rather than fixtures is the point: this is the test
- * that would catch a command whose `buildEmbed` quietly depends on something a
+ * that would catch a command whose renderer quietly depends on something a
  * Worker cannot provide. A dispatcher tested only against a stub command proves
  * the dispatcher works and says nothing about whether the bot does.
  */
@@ -70,9 +70,7 @@ describe('dispatchInteraction', () => {
     for (const [name, options] of cases) {
       const response = invoke(name, options)
       expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
-      // Either renderer is acceptable while the migration is in flight — the
-      // point of this gate is that every command produces *something*.
-      expect(response.data?.embeds?.[0] ?? response.data?.components?.[0]).toBeDefined()
+      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
     }
   })
 
@@ -93,12 +91,24 @@ describe('dispatchInteraction', () => {
     const response = invoke('nonexistent')
     // Matches the gateway bot's behaviour: a stale registry entry says so.
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
-    expect(response.data?.embeds?.[0]?.title).toBe('Error')
+    expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
   })
 
-  test('turns a bad roll into an error embed, not a throw', () => {
+  test('turns a bad roll into an error response, not a throw', () => {
     const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
-    expect(response.data?.embeds?.[0]?.title).toBe('Error')
+    expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
+  })
+
+  test('an error is ephemeral and carries the V2 flag', () => {
+    const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
+    expect(response.data?.flags).toBe(32768 | 64)
+  })
+
+  test('an error accent is distinct from every failure accent', () => {
+    // The embed version used 0xff0000, byte-identical to the failure colour of
+    // /blades, /pbta and /root — so a missed roll and a crash looked the same.
+    const response = invoke('roll', [{ name: 'notation', value: 'not-notation' }])
+    expect(JSON.stringify(response.data?.components)).toContain(String(0x992d22))
   })
 
   test('renders /help from the barrel, not from a gateway client', () => {
@@ -129,11 +139,11 @@ describe('dispatchInteraction', () => {
   })
 
   test('every command has a Worker renderer', () => {
-    // The parity gate. A new command added without either renderer would answer
-    // "not available on this deployment" in production, which is the kind of
-    // gap that only surfaces when someone tries the command.
+    // The parity gate. A new command added without a renderer would answer "not
+    // available on this deployment" in production, which is the kind of gap
+    // that only surfaces when someone tries the command.
     for (const command of commandList) {
-      expect(command.buildView ?? command.buildEmbed).toBeDefined()
+      expect(command.buildView).toBeDefined()
     }
   })
 
@@ -218,27 +228,12 @@ describe('dispatchInteraction', () => {
       expect(invokeView([{ name: 'hidden', value: true }]).data?.flags).toBe(32768 | 64)
     })
 
-    test('buildView wins when a command defines both renderers', () => {
-      const both: Command = {
-        data: commandList[0]!.data,
-        buildView,
-        buildEmbed: () => {
-          throw new Error('the embed path must not run when buildView exists')
-        }
-      }
-      const response = dispatchInteraction(
-        { type: 2, data: { name: 'probe' } },
-        new Map([['probe', both]])
-      ) as Rendered
-      expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
-    })
-
-    test('a command with neither renderer still reports itself unavailable', () => {
+    test('a command with no renderer still reports itself unavailable', () => {
       const response = dispatchInteraction(
         { type: 2, data: { name: 'probe' } },
         new Map([['probe', { data: commandList[0]!.data }]])
       ) as Rendered
-      expect(response.data?.embeds?.[0]?.title).toBe('Error')
+      expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
     })
   })
 
