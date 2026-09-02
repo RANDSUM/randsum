@@ -1,0 +1,15 @@
+# Node for this repo. Nothing here runs on node in production — every package
+# targets bun — but two dev tools shell out to it, and one of them is picky.
+#
+# `bun run arch:check` runs dependency-cruiser, which refuses to start on a node
+# version outside `^22||^24||>=26`. It follows node's release cycle and does not
+# accept odd-numbered releases while they are current, so a machine sitting on
+# node 25 fails the check — and because arch:check is a lefthook pre-push step,
+# that machine cannot push at all. The failure names the version, but nothing in
+# the repo previously said which one to use.
+#
+# 24 is the active LTS and matches what CI resolves to: `.github/actions/bun-setup`
+# only invokes actions/setup-node when a job passes an explicit version, so the
+# arch job runs on the runner's built-in node rather than anything pinned here.
+[tools]
+node = "24"
