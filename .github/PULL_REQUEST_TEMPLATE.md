@@ -17,7 +17,6 @@
 
 - [ ] `@randsum/roller`
 - [ ] `@randsum/games` (and which subpath: blades / daggerheart / fifth / pbta / root-rpg / salvageunion / other)
-- [ ] `@randsum/cli`
 - [ ] `apps/site`, `apps/rdn`, `apps/discord-bot`
 - [ ] Infra / CI / tooling
 

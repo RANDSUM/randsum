@@ -19,7 +19,6 @@ jobs:
     outputs:
       roller: ${{ steps.filter.outputs.roller }}
       games: ${{ steps.filter.outputs.games }}
-      cli: ${{ steps.filter.outputs.cli }}
       mcp: ${{ steps.filter.outputs.mcp }}
       site: ${{ steps.filter.outputs.site }}
       rdn: ${{ steps.filter.outputs.rdn }}
@@ -44,10 +43,6 @@ jobs:
             games:
               - 'packages/roller/**'
               - 'packages/games/**'
-              - '.github/workflows/ci.yml'
-            cli:
-              - 'packages/roller/**'
-              - 'apps/cli/**'
               - '.github/workflows/ci.yml'
             mcp:
               - 'packages/roller/**'
@@ -92,7 +87,6 @@ jobs:
           all='[
             {"pkg":"roller","coverage":"roller","size":true},
             {"pkg":"games","build":"@randsum/roller","coverage":"games","size":true},
-            {"pkg":"cli","build":"@randsum/roller"},
             {"pkg":"mcp","build":"@randsum/roller @randsum/games"},
             {"pkg":"discord-bot","build":"@randsum/roller @randsum/games"},
             {"pkg":"site","build":"@randsum/roller @randsum/games","node":"22"},
@@ -104,7 +98,7 @@ jobs:
             '$all | map(select($changed[.pkg] == "true"))')
           echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
 
-  # The eight per-package jobs (roller, games, cli, mcp, discord-bot, site, rdn,
+  # The seven per-package jobs (roller, games, mcp, discord-bot, site, rdn,
   # dice-ui) were near-identical, differing only in filter name, prerequisite
   # builds, node version, and coverage flags. They are folded into one matrix,
   # populated dynamically by the `changes` job so only changed packages get a
@@ -279,7 +273,7 @@ jobs:
         # not fail on the expected missing-CJS resolutions.
         run: |
           set -euo pipefail
-          for dir in packages/roller packages/games packages/mcp apps/cli; do
+          for dir in packages/roller packages/games packages/mcp; do
             echo "::group::$dir"
             ( cd "$dir" && bun pm pack )
             tgz=$(ls "$dir"/*.tgz)
@@ -365,9 +359,9 @@ jobs:
     name: CI Success
     if: always()
     # `package` is the consolidated matrix job: its single `result` aggregates
-    # every leg (roller, games, cli, mcp, discord-bot, site, rdn, dice-ui) — if
+    # every leg (roller, games, mcp, discord-bot, site, rdn, dice-ui) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all eight packages. `workspace-scripts` guards against a package silently
+    # all seven packages. `workspace-scripts` guards against a package silently
     # dropping a standard script; `ci-aggregator` guards this very list.
     #
     # `changes` is listed even though nothing here reads its outputs: a failure in

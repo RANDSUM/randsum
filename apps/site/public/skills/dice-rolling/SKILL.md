@@ -2,7 +2,7 @@
 name: dice-rolling
 description: Roll dice using RANDSUM notation for tabletop RPGs. Use when users ask to roll dice, need probability calculations, or want game-specific mechanics for D&D, Blades in the Dark, PbtA, Daggerheart, Root RPG, and Salvage Union.
 license: MIT
-compatibility: Requires @randsum/roller npm package or @randsum/cli
+compatibility: Requires the @randsum/roller npm package or the @randsum/mcp server
 metadata:
   author: RANDSUM
   version: "3.0"
@@ -64,13 +64,10 @@ See [references/GAME_SYSTEMS.md](references/GAME_SYSTEMS.md) for detailed mechan
 
 ## Implementation Options
 
-### Option 1: CLI
+### Option 1: MCP server
 
-```bash
-npx @randsum/cli "4d6L"
-# or install globally
-npm install -g @randsum/cli
-```
+Connect `@randsum/mcp` and call its `roll`, `validate`, or `roll_game` tools. This
+is the path for an agent that wants a real roll without writing code.
 
 ### Option 2: Programmatic (TypeScript/JavaScript)
 

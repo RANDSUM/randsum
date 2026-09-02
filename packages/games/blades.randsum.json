@@ -40,9 +40,9 @@
       "rating": {
         "type": "integer",
         "minimum": 0,
-        "maximum": 6,
+        "maximum": 10,
         "default": 1,
-        "description": "Dice pool size including action rating, assists, and push (0 = desperate, 1-6 = standard)"
+        "description": "Dice pool size including action rating, assists, and push (0 = roll two, take the worst)"
       }
     },
     "dice": {

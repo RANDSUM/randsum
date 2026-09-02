@@ -11,7 +11,7 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 **Game packages** live in `packages/games/` — each wraps roller with game-specific interpretation, accessed via subpath exports:
 `blades` (Blades in the Dark), `daggerheart`, `fate` (Fate Core), `fifth` (D&D 5e), `root-rpg`, `salvageunion`, `pbta` (Powered by the Apocalypse). A `schema` subpath exports the codegen/validation API.
 
-**Apps**: `@randsum/cli` (published npm CLI), `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private)
+**Apps**: `@randsum/discord-bot` (private Discord bot, deployed as a Cloudflare Worker at bot.randsum.dev), `@randsum/site` (Astro + Starlight docs site at randsum.dev, private), `@randsum/rdn` (notation spec site at notation.randsum.dev, private)
 
 **UI**: `@randsum/dice-ui` in `packages/dice-ui/` — private, web-only React component library (notation input with token overlay, roll step visualizer, combined roller) consumed by `apps/site`. Never published to npm; depends only on `@randsum/roller`.
 
@@ -91,11 +91,11 @@ Releases are **automated via [changesets](https://github.com/changesets/changese
 
 **`workspace:~` warning:** never run a bare `npm publish` from a package directory — `npm` ships the literal `workspace:~` string, which is unresolvable for consumers. The pack step in `scripts/publish.ts` (`bun pm pack`) is what resolves it, so publishing always goes through that script (or `bun publish`), never `npm publish` on the raw source tree.
 
-**Local fallback (rare):** `bun scripts/publish.ts` can publish from a workstation. Pass `--otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`) and optionally `--dry-run`. Local runs omit `--provenance`. Publish order is fixed topologically in the script: `@randsum/roller` → `@randsum/games` → `@randsum/cli`.
+**Local fallback (rare):** `bun scripts/publish.ts` can publish from a workstation. Pass `--otp=<CODE>` (the npm account has 2FA set to `auth-and-writes`) and optionally `--dry-run`. Local runs omit `--provenance`. Publish order is fixed topologically in the script: `@randsum/roller` → `@randsum/games` → `@randsum/mcp`.
 
 ## Versioning
 
-`@randsum/roller`, `@randsum/games`, `@randsum/cli`, and `@randsum/dice-ui` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/site` and `@randsum/discord-bot` are in the changesets `ignore` list (private, not versioned this way).
+`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/site` and `@randsum/discord-bot` are in the changesets `ignore` list (private, not versioned this way).
 
 ## Key Patterns
 

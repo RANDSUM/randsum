@@ -1,8 +1,0 @@
-{
-  "extends": "../../tsconfig.apps.json",
-  "compilerOptions": {
-    "types": ["bun"],
-    "jsx": "react-jsx"
-  },
-  "include": ["src/**/*", "__tests__/**/*", "package.json"]
-}
