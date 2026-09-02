@@ -1,92 +1,145 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
-import type { APIEmbed } from 'discord.js'
-import { makeContext, type RawOption } from './lib/context.js'
+import { makeContext } from './lib/context.js'
+import { accentsOf, textOf } from '../lib/view.js'
+import { DAGGERHEART } from '../../src/utils/palette.js'
+import type { RollView } from '../../src/types.js'
 
-const mockRoll = mock(
-  (): { result: string; total: number; details: unknown; rolls: unknown[] } => ({
-    result: 'hope',
-    total: 14,
-    details: { hope: { roll: 8 }, fear: { roll: 6 }, extraDie: undefined, modifier: 0 },
-    rolls: []
-  })
-)
+interface DhResult {
+  result: string
+  total: number
+  details: {
+    hope: { roll: number; amplified: boolean }
+    fear: { roll: number; amplified: boolean }
+    modifier: number
+    extraDie?: { advantageRoll: number; disadvantageRoll: number }
+  }
+  rolls: unknown[]
+}
+
+const withHope = (): DhResult => ({
+  result: 'hope',
+  total: 15,
+  details: {
+    hope: { roll: 9, amplified: false },
+    fear: { roll: 6, amplified: false },
+    modifier: 0
+  },
+  rolls: []
+})
+
+const mockRoll = mock(withHope)
 
 void mock.module('@randsum/games/daggerheart', () => ({ roll: mockRoll }))
 
 const { dhCommand } = await import('../../src/commands/dh.js')
 
-function render(options: readonly RawOption[] = []): APIEmbed {
-  return dhCommand.buildEmbed!(makeContext(options)).toJSON()
-}
-
-function fieldNames(embed: APIEmbed): string[] {
-  return (embed.fields ?? []).map(field => field.name)
+function render(options: { name: string; value: unknown }[] = []): RollView {
+  return dhCommand.buildView!(makeContext(options))
 }
 
 beforeEach(() => {
-  mockRoll.mockClear()
+  mockRoll.mockReset().mockImplementation(withHope)
 })
 
 describe('dhCommand', () => {
-  test('hope result', () => {
-    expect(render().title).toBe('Hope!')
+  test("uses the game's own vocabulary, and states the consequence", () => {
+    // "Critical Hope!" is not a Daggerheart term, and the consequence — you
+    // gain a Hope, the GM gains a Fear — was stated nowhere in the old embed.
+    const view = render()
+    expect(textOf(view)).toContain('Rolled with Hope')
+    expect(textOf(view)).toContain('You gain a Hope.')
+    expect(accentsOf(view)[0]).toBe(DAGGERHEART.hope)
   })
 
-  test('fear result', () => {
+  test('a fear result says who gains the metacurrency', () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'fear' as const,
-      total: 10,
-      details: { hope: { roll: 4 }, fear: { roll: 8 }, extraDie: undefined, modifier: 0 },
-      rolls: []
+      ...withHope(),
+      result: 'fear',
+      details: { ...withHope().details, hope: { roll: 4, amplified: false } }
     }))
-    expect(render().title).toBe('Fear!')
+    const view = render()
+    expect(textOf(view)).toContain('Rolled with Fear')
+    expect(textOf(view)).toContain('The GM gains a Fear.')
+    expect(accentsOf(view)[0]).toBe(DAGGERHEART.fear)
   })
 
-  test('critical hope result', () => {
+  test('a critical is the game term, and clears a Stress', () => {
     mockRoll.mockImplementationOnce(() => ({
-      result: 'critical_hope' as const,
-      total: 20,
-      details: { hope: { roll: 10 }, fear: { roll: 10 }, extraDie: undefined, modifier: 0 },
-      rolls: []
+      ...withHope(),
+      result: 'critical_hope',
+      total: 20
     }))
-    expect(render().title).toBe('Critical Hope!')
+    const view = render()
+    expect(textOf(view)).toContain('## ✸ Critical Success!')
+    expect(textOf(view)).toContain('clear a Stress')
+    expect(accentsOf(view)[0]).toBe(DAGGERHEART.critical)
   })
 
-  test('with advantage and extraDie shows extra die fields', () => {
+  test('a difficulty renders the OTHER axis of the roll', () => {
+    // Daggerheart resolves on a grid: success-or-failure AND hope-or-fear.
+    // Without a difficulty the bot could only ever show the second, so
+    // "Success with Fear" — the result that most defines the game — looked
+    // identical to a plain failure.
     mockRoll.mockImplementationOnce(() => ({
-      result: 'hope' as const,
-      total: 18,
+      ...withHope(),
+      result: 'fear',
+      total: 16
+    }))
+    expect(textOf(render([{ name: 'difficulty', value: 14 }]))).toContain(
+      'Success with Fear  ·  16 vs DC 14'
+    )
+  })
+
+  test('a failure with fear is distinguishable from a success with fear', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      ...withHope(),
+      result: 'fear',
+      total: 11
+    }))
+    expect(textOf(render([{ name: 'difficulty', value: 14 }]))).toContain(
+      '✕ Failure with Fear  ·  11 vs DC 14'
+    )
+  })
+
+  test('without a difficulty it falls back to the duality axis alone', () => {
+    expect(textOf(render())).not.toContain('vs DC')
+  })
+
+  test('amplified dice are labelled from the engine, not the raw options', () => {
+    mockRoll.mockImplementationOnce(() => ({
+      ...withHope(),
       details: {
-        hope: { roll: 8 },
-        fear: { roll: 6 },
-        extraDie: { roll: 4, advantageRoll: 4, disadvantageRoll: undefined },
-        modifier: 0
-      },
-      rolls: []
+        ...withHope().details,
+        hope: { roll: 17, amplified: true },
+        fear: { roll: 6, amplified: false }
+      }
     }))
-    const embed = render([{ name: 'rolling_with', value: 'Advantage' }])
-    expect(fieldNames(embed)).toContain('Advantage Die (d6)')
+    const text = textOf(render([{ name: 'amplify_hope', value: true }]))
+    expect(text).toContain('Hope d20')
+    expect(text).toContain('Fear d12')
   })
 
-  test('with modifier adds modifier field', () => {
-    expect(fieldNames(render([{ name: 'modifier', value: 3 }]))).toContain('Modifier')
+  test('a disadvantage die is shown signed, because it is subtracted', () => {
+    // The old embed printed "Disadvantage Die (d6): 4" beside a total it had
+    // reduced by 4.
+    mockRoll.mockImplementationOnce(() => ({
+      ...withHope(),
+      details: {
+        ...withHope().details,
+        extraDie: { advantageRoll: 0, disadvantageRoll: 4 }
+      }
+    }))
+    expect(textOf(render([{ name: 'rolling_with', value: 'Disadvantage' }]))).toContain(
+      '**Disadvantage (d6)** -4'
+    )
   })
 
-  test('without modifier omits the modifier field', () => {
-    expect(fieldNames(render())).not.toContain('Modifier')
-  })
-
-  test('amplify options select the d20 die labels', () => {
-    const embed = render([
-      { name: 'amplify_hope', value: true },
-      { name: 'amplify_fear', value: false }
-    ])
-    expect(fieldNames(embed)).toContain('Hope Die (d20)')
-    expect(fieldNames(embed)).toContain('Fear Die (d12)')
+  test('a modifier appears only when non-zero', () => {
+    expect(textOf(render())).not.toContain('**Modifier**')
+    expect(textOf(render([{ name: 'modifier', value: 2 }]))).toContain('**Modifier** +2')
   })
 
   test('error path: a failing roll propagates', () => {
-    // The dispatcher renders the "Error" embed — see dispatch.test.ts.
     mockRoll.mockImplementationOnce(() => {
       throw new Error('Test error')
     })

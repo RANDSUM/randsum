@@ -93,7 +93,7 @@ function resolveDisplayName(payload: InteractionPayload): string {
  * rows and a container is rejected. It composes with `Ephemeral` as a normal
  * bit flag — 32768 | 64 — so the `hidden` option keeps working unchanged.
  */
-export function viewResponse(view: RollView, hidden: boolean): unknown {
+function viewResponse(view: RollView, hidden: boolean): unknown {
   return {
     type: InteractionResponseType.ChannelMessageWithSource,
     data: {
