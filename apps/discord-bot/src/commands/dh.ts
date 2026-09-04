@@ -47,15 +47,16 @@ function buildDhView(context: CommandContext): RollView {
   const accent = isCritical ? DAGGERHEART.critical : withHope ? DAGGERHEART.hope : DAGGERHEART.fear
 
   // The total is the number the table is waiting for, so every headline
-  // carries it — "Rolled 19 with Hope", not "Rolled with Hope" with the 19
-  // buried in the facts below.
+  // leads with it — "19 with Hope", not "Rolled with Hope" with the 19 buried
+  // in the facts below. No "Rolled": the glyph and the container already say
+  // this is a roll, and the number reads faster without a verb in front of it.
   const headline = ((): string => {
     // A critical succeeds regardless of Difficulty, so it never shows a DC
     // comparison — "Critical Success!  ·  6 vs DC 14" would read as a failure.
     if (isCritical) return `${GLYPH.critical} Critical Success!  ·  ${result.total}`
     const duality = withHope ? 'with Hope' : 'with Fear'
     if (difficulty === null) {
-      return `${withHope ? GLYPH.success : GLYPH.mixed} Rolled ${result.total} ${duality}`
+      return `${withHope ? GLYPH.success : GLYPH.mixed} ${result.total} ${duality}`
     }
     const succeeded = result.total >= difficulty
     const glyph = succeeded ? GLYPH.success : GLYPH.failure
