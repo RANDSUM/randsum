@@ -112,9 +112,25 @@ describe('dhCommand', () => {
     expect(textOf(render())).toContain('## ◆ Rolled 19 with Hope')
 
     mockRoll.mockImplementationOnce(() => ({ ...withHope(), result: 'critical_hope', total: 24 }))
-    expect(textOf(render([{ name: 'difficulty', value: 14 }]))).toContain(
-      '## ✸ Critical Success!  ·  24 vs DC 14'
-    )
+    expect(textOf(render())).toContain('## ✸ Critical Success!  ·  24')
+  })
+
+  test('a critical never shows a DC comparison, because it always succeeds', () => {
+    // Matching 3/3 with no modifier is a critical at total 6. Against DC 14
+    // "6 vs DC 14" would read as a failure beaten by fiat.
+    mockRoll.mockImplementationOnce(() => ({
+      ...withHope(),
+      result: 'critical_hope',
+      total: 6,
+      details: {
+        ...withHope().details,
+        hope: { roll: 3, amplified: false },
+        fear: { roll: 3, amplified: false }
+      }
+    }))
+    const text = textOf(render([{ name: 'difficulty', value: 14 }]))
+    expect(text).toContain('## ✸ Critical Success!  ·  6')
+    expect(text).not.toContain('vs DC')
   })
 
   test('amplified dice are labelled from the engine, not the raw options', () => {
