@@ -5,7 +5,7 @@
     "@biomejs/biome": "2.5.3",
     "@changesets/changelog-github": "0.7.0",
     "@changesets/cli": "2.31.0",
-    "@size-limit/preset-small-lib": "12.1.0",
+    "@size-limit/preset-small-lib": "13.0.3",
     "@types/bun": "catalog:",
     "bunup": "0.16.32",
     "dependency-cruiser": "18.0.0",
