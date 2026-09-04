@@ -46,7 +46,7 @@ describe('dhCommand', () => {
     // "Critical Hope!" is not a Daggerheart term, and the consequence — you
     // gain a Hope, the GM gains a Fear — was stated nowhere in the old embed.
     const view = render()
-    expect(textOf(view)).toContain('Rolled with Hope')
+    expect(textOf(view)).toContain('Rolled 15 with Hope')
     expect(textOf(view)).toContain('You gain a Hope.')
     expect(accentsOf(view)[0]).toBe(DAGGERHEART.hope)
   })
@@ -58,7 +58,7 @@ describe('dhCommand', () => {
       details: { ...withHope().details, hope: { roll: 4, amplified: false } }
     }))
     const view = render()
-    expect(textOf(view)).toContain('Rolled with Fear')
+    expect(textOf(view)).toContain('Rolled 15 with Fear')
     expect(textOf(view)).toContain('The GM gains a Fear.')
     expect(accentsOf(view)[0]).toBe(DAGGERHEART.fear)
   })
@@ -70,7 +70,7 @@ describe('dhCommand', () => {
       total: 20
     }))
     const view = render()
-    expect(textOf(view)).toContain('## ✸ Critical Success!')
+    expect(textOf(view)).toContain('## ✸ Critical Success!  ·  20')
     expect(textOf(view)).toContain('clear a Stress')
     expect(accentsOf(view)[0]).toBe(DAGGERHEART.critical)
   })
@@ -103,6 +103,34 @@ describe('dhCommand', () => {
 
   test('without a difficulty it falls back to the duality axis alone', () => {
     expect(textOf(render())).not.toContain('vs DC')
+  })
+
+  test('the headline carries the total, with or without a difficulty', () => {
+    // "Rolled 19 with Hope" — the number the table is waiting for belongs in
+    // the headline, not buried in the facts below it.
+    mockRoll.mockImplementationOnce(() => ({ ...withHope(), total: 19 }))
+    expect(textOf(render())).toContain('## ◆ Rolled 19 with Hope')
+
+    mockRoll.mockImplementationOnce(() => ({ ...withHope(), result: 'critical_hope', total: 24 }))
+    expect(textOf(render())).toContain('## ✸ Critical Success!  ·  24')
+  })
+
+  test('a critical never shows a DC comparison, because it always succeeds', () => {
+    // Matching 3/3 with no modifier is a critical at total 6. Against DC 14
+    // "6 vs DC 14" would read as a failure beaten by fiat.
+    mockRoll.mockImplementationOnce(() => ({
+      ...withHope(),
+      result: 'critical_hope',
+      total: 6,
+      details: {
+        ...withHope().details,
+        hope: { roll: 3, amplified: false },
+        fear: { roll: 3, amplified: false }
+      }
+    }))
+    const text = textOf(render([{ name: 'difficulty', value: 14 }]))
+    expect(text).toContain('## ✸ Critical Success!  ·  6')
+    expect(text).not.toContain('vs DC')
   })
 
   test('amplified dice are labelled from the engine, not the raw options', () => {
