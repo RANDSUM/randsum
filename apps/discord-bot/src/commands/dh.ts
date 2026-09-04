@@ -48,12 +48,18 @@ function buildDhView(context: CommandContext): RollView {
 
   const succeeded = difficulty !== null ? result.total >= difficulty : null
 
+  // The total is the number the table is waiting for, so every headline
+  // carries it — "Rolled 19 with Hope", not "Rolled with Hope" with the 19
+  // buried in the facts below.
   const headline = ((): string => {
-    if (isCritical) return `${GLYPH.critical} Critical Success!`
+    const versus = difficulty === null ? '' : ` vs DC ${difficulty}`
+    if (isCritical) return `${GLYPH.critical} Critical Success!  ·  ${result.total}${versus}`
     const duality = withHope ? 'with Hope' : 'with Fear'
-    if (succeeded === null) return `${withHope ? GLYPH.success : GLYPH.mixed} Rolled ${duality}`
+    if (succeeded === null) {
+      return `${withHope ? GLYPH.success : GLYPH.mixed} Rolled ${result.total} ${duality}`
+    }
     const glyph = succeeded ? GLYPH.success : GLYPH.failure
-    return `${glyph} ${succeeded ? 'Success' : 'Failure'} ${duality}  ·  ${result.total} vs DC ${difficulty}`
+    return `${glyph} ${succeeded ? 'Success' : 'Failure'} ${duality}  ·  ${result.total}${versus}`
   })()
 
   const consequence = ((): string => {
