@@ -42,7 +42,7 @@ beforeEach(() => {
 })
 
 describe('dhCommand', () => {
-  test("uses the game's own vocabulary, and states the consequence", () => {
+  test("leads with the total in the game's own vocabulary, and states the consequence", () => {
     // "Critical Hope!" is not a Daggerheart term, and the consequence — you
     // gain a Hope, the GM gains a Fear — was stated nowhere in the old embed.
     const view = render()

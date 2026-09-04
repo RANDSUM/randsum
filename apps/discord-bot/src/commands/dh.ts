@@ -21,9 +21,10 @@ import type { Command, RollView } from '../types.js'
  * Hope/Fear axis alone.
  *
  * The old copy was also not the game's. "Critical Hope!" is not a Daggerheart
- * term; the game says Critical Success, Rolled with Hope, Rolled with Fear. And
- * the consequence — you gain a Hope, the GM gains a Fear, a crit also clears a
- * Stress — was stated nowhere.
+ * term; the game's outcomes are Critical Success, with Hope, and with Fear, and
+ * the headline leads with the total ("17 with Fear"). And the consequence — you
+ * gain a Hope, the GM gains a Fear, a crit also clears a Stress — was stated
+ * nowhere.
  */
 function buildDhView(context: CommandContext): RollView {
   const modifier = context.options.getInteger('modifier') ?? 0
