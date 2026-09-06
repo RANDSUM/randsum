@@ -42,11 +42,11 @@ beforeEach(() => {
 })
 
 describe('dhCommand', () => {
-  test("uses the game's own vocabulary, and states the consequence", () => {
+  test("leads with the total in the game's own vocabulary, and states the consequence", () => {
     // "Critical Hope!" is not a Daggerheart term, and the consequence — you
     // gain a Hope, the GM gains a Fear — was stated nowhere in the old embed.
     const view = render()
-    expect(textOf(view)).toContain('Rolled 15 with Hope')
+    expect(textOf(view)).toContain('## ◆ 15 with Hope')
     expect(textOf(view)).toContain('You gain a Hope.')
     expect(accentsOf(view)[0]).toBe(DAGGERHEART.hope)
   })
@@ -58,7 +58,7 @@ describe('dhCommand', () => {
       details: { ...withHope().details, hope: { roll: 4, amplified: false } }
     }))
     const view = render()
-    expect(textOf(view)).toContain('Rolled 15 with Fear')
+    expect(textOf(view)).toContain('## ◈ 15 with Fear')
     expect(textOf(view)).toContain('The GM gains a Fear.')
     expect(accentsOf(view)[0]).toBe(DAGGERHEART.fear)
   })
@@ -106,10 +106,11 @@ describe('dhCommand', () => {
   })
 
   test('the headline carries the total, with or without a difficulty', () => {
-    // "Rolled 19 with Hope" — the number the table is waiting for belongs in
+    // "19 with Hope" — the number the table is waiting for belongs in
     // the headline, not buried in the facts below it.
     mockRoll.mockImplementationOnce(() => ({ ...withHope(), total: 19 }))
-    expect(textOf(render())).toContain('## ◆ Rolled 19 with Hope')
+    expect(textOf(render())).toContain('## ◆ 19 with Hope')
+    expect(textOf(render())).not.toContain('Rolled')
 
     mockRoll.mockImplementationOnce(() => ({ ...withHope(), result: 'critical_hope', total: 24 }))
     expect(textOf(render())).toContain('## ✸ Critical Success!  ·  24')
