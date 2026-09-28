@@ -80,7 +80,7 @@ const AGGREGATOR = 'ci-gate'
 const EXCLUDED = new Map<string, string>([
   [
     'sca',
-    'report-only OSV pass (`continue-on-error: true`); the `audit` job is the blocking advisory gate'
+    'report-only OSV pass (`continue-on-error: true`); `dependency-review` is the blocking advisory gate'
   ]
 ])
 

@@ -48,14 +48,11 @@ pre-push:
       run: bun run test 2>&1 | tail -5
       priority: 2
     audit:
-      # Dependency advisory gate. Also runs in CI (ci.yml `audit` job) so it cannot
-      # be bypassed with --no-verify. The --ignore list MUST match the CI job and
-      # osv-scanner.toml; that file carries the per-advisory justification.
-      # Currently:
-      #   GHSA-5p4m-2wfm-xmqj  js-yaml     — patched release breaks `astro build`
-      #   GHSA-5p2g-fcmc-qvqq  image-size  — no fixed version published
-      #   GHSA-w3rx-r6r6-pgpr  image-size  — no fixed version published
-      run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr > /dev/null 2>&1
+      # Whole-tree dependency advisory check, the same one security.yml runs on
+      # main. In CI, PRs are gated by ci.yml's `dependency-review`, which cannot
+      # be bypassed with --no-verify. Any --ignore list MUST match security.yml
+      # and osv-scanner.toml; that file carries the per-advisory justification.
+      run: bun audit --audit-level=high > /dev/null 2>&1
       priority: 2
     sca:
       # Local mirror of the CI `sca` job (OSV-Scanner against bun.lock, honouring

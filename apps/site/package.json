@@ -22,7 +22,7 @@
     "@randsum/dice-ui": "workspace:~",
     "@randsum/roller": "workspace:~",
     "@stackblitz/sdk": "~1.11.0",
-    "astro": "7.2.2",
+    "astro": "7.2.8",
     "astro-expressive-code": "0.44.0",
     "react": "catalog:",
     "react-dom": "catalog:"

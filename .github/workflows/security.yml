@@ -1,9 +1,13 @@
 name: Security Audit
 permissions:
   contents: read
-# Schedule-only: pushes to main are already covered by the ci.yml `audit` job.
-# This weekly run catches newly-published advisories against unchanged code.
+# The whole-tree advisory scan. It gates nothing: PRs are gated by ci.yml's
+# `dependency-review`, which reviews only what a PR changes. This run reports
+# the tree main actually holds — on every push, and weekly to catch advisories
+# newly published against unchanged code.
 on:
+  push:
+    branches: [main]
   schedule:
     - cron: '0 8 * * 1'
 
@@ -16,17 +20,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - uses: ./.github/actions/bun-setup
 
-      # The --ignore list MUST match ci.yml's `audit` job and lefthook.yml; the
-      # per-advisory justification lives in osv-scanner.toml. It matters most
-      # here: this job exists to catch NEWLY-published advisories against
-      # unchanged code, so carrying the known-baseline suppressions is what
-      # keeps a red run meaningful. Without them it fails every Monday on the
-      # same four findings and stops distinguishing new from known.
-      #
-      #   GHSA-5p4m-2wfm-xmqj  js-yaml. Patched 3.15.1/4.3.1 unusable (4.3.1's
-      #                        ESM exports map breaks `astro build`; Bun cannot
-      #                        split the two majors). Build/release tooling only.
-      #   GHSA-5p2g-fcmc-qvqq  image-size. No fixed version published.
-      #   GHSA-w3rx-r6r6-pgpr  image-size. No fixed version published.
+      # A suppression (`--ignore=GHSA-…`) is justified in osv-scanner.toml
+      # first, then mirrored here and in lefthook.yml's pre-push audit.
       - name: Security audit
-        run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr
+        run: bun audit --audit-level=high
