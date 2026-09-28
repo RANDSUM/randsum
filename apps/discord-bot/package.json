@@ -20,7 +20,7 @@
     "@randsum/games": "workspace:~",
     "@randsum/roller": "workspace:~",
     "discord-api-types": "0.38.49",
-    "discord.js": "^14.26.4"
+    "discord.js": "^14.27.0"
   },
   "keywords": [
     "discord",
