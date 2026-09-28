@@ -1,0 +1,8 @@
+# Every action here is pinned to a commit SHA. The exception is alxjrvs's own
+# shared Dependabot auto-merge workflow, which callers track at @main by design.
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        "alxjrvs/*": ref-pin
+        "*": hash-pin
