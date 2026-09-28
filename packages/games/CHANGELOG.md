@@ -1,5 +1,21 @@
 # @randsum/games
 
+## 4.1.0
+
+### Minor Changes
+
+- [#1239](https://github.com/RANDSUM/randsum/pull/1239) [`78a8671`](https://github.com/RANDSUM/randsum/commit/78a8671c935700df31e3acec1549456790675a2e) Thanks [@alxjrvs](https://github.com/alxjrvs)! - Raise the Blades in the Dark pool ceiling from 6 to 10.
+
+  A Blades action roll routinely exceeds six dice at the table: an action rating
+  of 3 plus two assists, a push, and a Devil's bargain is a legal ten-dice pool.
+  The spec capped `rating` at 6, so those rolls threw a validation error instead
+  of rolling.
+
+  The zero-dice description also said "desperate", which named the wrong thing —
+  Desperate is a _position_ in Blades, and you can roll zero dice from any
+  position. It now describes what the branch actually does: roll two, take the
+  worst.
+
 ## 4.0.0
 
 ### Major Changes
