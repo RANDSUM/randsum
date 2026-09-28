@@ -302,42 +302,33 @@ jobs:
       - uses: ./.github/actions/bun-setup
       - run: bun run arch:check
 
-  audit:
-    # Dependency advisory gate relocated from local-only pre-push into CI
-    # (audit X8b / security F1, infrastructure F5). Cannot be bypassed with
-    # --no-verify. Advisories are fixed via `overrides` in the root package.json
-    # wherever a patched release is usable, so --ignore is reserved for the ones
-    # where it is not.
-    #
-    # Four suppressions, all dev/build-time only and none in a published
-    # package. Full justification and re-evaluation criteria live in
-    # osv-scanner.toml — keep the two lists in sync.
-    #
-    #   GHSA-5p4m-2wfm-xmqj  js-yaml. A fix exists but cannot be adopted: 4.3.1
-    #                        adds an ESM exports map in a patch release that
-    #                        breaks `astro build`, and Bun cannot split the 3.x
-    #                        and 4.x majors (no nested overrides) while
-    #                        read-yaml-file@1 still needs the removed safeLoad.
-    #   GHSA-5p2g-fcmc-qvqq  image-size. No fixed version published.
-    #   GHSA-w3rx-r6r6-pgpr  image-size. No fixed version published.
-    name: audit
+  dependency-review:
+    # The blocking advisory gate, scoped to the dependencies this PR changes: an
+    # advisory published against code already on main cannot block an unrelated
+    # PR, nor the PR that fixes it. The whole-tree `bun audit` runs in
+    # security.yml (weekly and on every push to main) and in lefthook pre-push;
+    # `high` matches its threshold. GitHub's dependency graph reads this repo's
+    # package.json manifests, not bun.lock, so this sees direct dependencies;
+    # transitives are the whole-tree audit's job.
+    name: dependency-review
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/bun-setup
-      - run: bun audit --audit-level=high --ignore=GHSA-5p4m-2wfm-xmqj --ignore=GHSA-5p2g-fcmc-qvqq --ignore=GHSA-w3rx-r6r6-pgpr
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
 
   sca:
     # SCA + license surfacing (audit X8a / security R2, F1, F2). Suppresses the
     # known dev/build-time advisories via osv-scanner.toml and surfaces LGPL/MPL
-    # transitives. Report-only: `bun audit` above is the blocking advisory gate,
-    # while this job deliberately reports what that gate does not cover —
-    # anything below `high`. `continue-on-error: true` plus its absence from the
-    # `CI Success` needs list is what keeps those findings informative rather
-    # than blocking. It is currently green (the two Medium and one Low it used
-    # to report — @hono/node-server, astro — both had published
-    # fixes and were bumped), so a new finding here is genuinely new. See
-    # osv-scanner.toml for the per-advisory reasoning.
+    # transitives. Report-only: `dependency-review` above is the blocking
+    # advisory gate, while this job deliberately reports what that gate does not
+    # cover — the whole tree, below `high`. `continue-on-error: true` plus its
+    # absence from the `CI Success` needs list is what keeps those findings
+    # informative rather than blocking. It is currently green (the two Medium
+    # and one Low it used to report — @hono/node-server, astro — both had
+    # published fixes and were bumped), so a new finding here is genuinely new.
+    # See osv-scanner.toml for the per-advisory reasoning.
     name: sca
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -378,7 +369,7 @@ jobs:
       - publish-dry-run
       - knip
       - arch
-      - audit
+      - dependency-review
     runs-on: ubuntu-latest
     env:
       RESULTS: ${{ join(needs.*.result, ' ') }}
