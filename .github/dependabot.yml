@@ -5,7 +5,9 @@
 
 version: 2
 updates:
-  - package-ecosystem: 'npm' # See documentation for possible values
+  # 'bun', not 'npm': the npm updater cannot write bun.lock, so its PRs failed
+  # `bun install --frozen-lockfile`, and it now refuses to run at all.
+  - package-ecosystem: 'bun'
     directory: '/' # Location of package manifests
     schedule:
       interval: 'weekly'
