@@ -1,14 +1,29 @@
-# Deploy every Cloudflare surface on merge to main.
+# Deploy every Cloudflare surface once CI is green on main.
 #
 # Netlify deployed itself from its own git integration, which is why this repo
 # had no deploy job for years. Cloudflare has no equivalent — Workers Builds
 # exists, but its monorepo handling has a known flakiness report for workspace
 # dependency resolution and nothing authoritative for Bun, and this repo has
 # cross-package build ordering (roller -> rdn) that CI already sequences
-# correctly. So deployment lives here, where the build is already known-good.
+# correctly. So deployment lives here, after the build is known-good.
 #
-# Path-filtered per surface rather than deploying everything on every merge,
-# which is the same economy the netlify.toml `ignore` predicates were buying.
+# "Known-good" is enforced, not assumed. The trigger is `workflow_run` on CI, as
+# publish.yml does it, and nothing deploys unless that CI run concluded
+# `success`. Every job checks out the commit CI tested (`workflow_run.head_sha`),
+# not whatever main has moved on to since. Under the old `push` trigger the
+# deploy ran beside CI, so a red main still shipped both sites and the only bot
+# host.
+#
+# SECURITY — workflow_run runs in the privileged base-repo context and holds the
+# Cloudflare and Discord secrets. `branches: [main]` matches the triggering
+# run's head BRANCH NAME, which a fork PR can also call `main`, so `plan` also
+# requires the CI run to come from a push to this repository. Only commits that
+# are on main get checked out, and nothing the CI run uploaded is downloaded.
+#
+# `plan` keeps the economy the old `paths:` filter bought. It diffs the commit
+# against the previous green CI commit on main and deploys only when something a
+# surface ships from changed. As before, a relevant change deploys all three:
+# redeploying an unchanged surface is a no-op version upload.
 #
 # Every job FAILS RED when CLOUDFLARE_API_TOKEN is absent. There is no second
 # host behind any of these: a skipped site deploy would leave randsum.dev
@@ -20,29 +35,22 @@
 # locked version through the app's own `deploy` script, never a floating
 # `bunx wrangler@4`.
 #
-# `workflow_dispatch` is the manual escape hatch, and it exists because the push
-# trigger is not guaranteed to fire. On 2026-09-01 the merge of #1235 produced
+# `workflow_dispatch` is the manual escape hatch, and it exists because a push
+# event is not guaranteed to fire. On 2026-09-01 the merge of #1235 produced
 # ZERO workflow runs — not this one, not CI, not CodeQL. `actions/runs?head_sha=`
-# returned `total_count: 0` twenty minutes later. GitHub dropped the push event;
-# nothing in this file was wrong, and the same workflow had run correctly for the
-# merge forty minutes earlier.
-#
-# That left main undeployed with no way to fix it from the Actions UI: you cannot
-# re-run a run that never existed, and the only other route was to push another
-# commit to main purely to trigger a deploy. Hence a trigger that does not depend
-# on an event GitHub might not deliver.
+# returned `total_count: 0` twenty minutes later. GitHub dropped the push event,
+# and with no CI run there is no `workflow_run` either. A manual run deploys main
+# as it stands, without the CI gate, so check main is green before dispatching.
 name: Deploy (Cloudflare)
 
 on:
-  push:
+  # zizmor: ignore[dangerous-triggers] — workflow_run is used deliberately and
+  # safely here per the security note above: push-to-main commits only, and no
+  # PR-controlled input or artifacts consumed.
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
-    paths:
-      - 'apps/rdn/**'
-      - 'apps/site/**'
-      - 'apps/discord-bot/**'
-      - 'packages/**'
-      - 'bun.lock'
-      - '.github/workflows/deploy-cloudflare.yml'
   workflow_dispatch:
     inputs:
       surface:
@@ -61,14 +69,93 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  plan:
+    name: plan
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read # gh run list, to find the previous green CI commit
+    outputs:
+      sha: ${{ steps.select.outputs.sha }}
+      rdn: ${{ steps.select.outputs.rdn }}
+      site: ${{ steps.select.outputs.site }}
+      bot: ${{ steps.select.outputs.bot }}
+      commands: ${{ steps.select.outputs.commands }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Select surfaces
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          SURFACE: ${{ inputs.surface }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          echo "sha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+
+          # A manual run deploys what it is asked to. A manual bot deploy always
+          # rewrites the command registry: that is how drift gets repaired.
+          if [ "$EVENT" = workflow_dispatch ]; then
+            for s in rdn site bot; do
+              if [ "$SURFACE" = all ] || [ "$SURFACE" = "$s" ]; then v=true; else v=false; fi
+              echo "$s=$v" >> "$GITHUB_OUTPUT"
+            done
+            if [ "$SURFACE" = all ] || [ "$SURFACE" = bot ]; then v=true; else v=false; fi
+            echo "commands=$v" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # The green CI push on main just before this one. Diffing from it
+          # rather than from HEAD^ covers commits whose own CI run was cancelled
+          # by a newer push. ($i is a jq variable, hence the single quotes.)
+          # shellcheck disable=SC2016
+          base=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml --branch main \
+            --event push --status success --limit 20 --json headSha \
+            --jq '[.[].headSha] | index(env.HEAD_SHA) as $i | if $i == null then empty else .[$i + 1] // empty end')
+
+          if [ -n "$base" ] && git cat-file -e "$base^{commit}" 2>/dev/null; then
+            changed=$(git diff --name-only "$base" "$HEAD_SHA")
+          else
+            echo "::notice::No earlier green CI commit to diff against; deploying everything."
+            changed=ALL
+          fi
+
+          deploy=false
+          commands=false
+          if [ "$changed" = ALL ] || grep -qE '^(apps/(rdn|site|discord-bot)/|packages/|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
+            deploy=true
+          fi
+          if [ "$changed" = ALL ] || grep -qE '^apps/discord-bot/src/(commands/|deploy-commands\.ts$)' <<< "$changed"; then
+            commands=true
+          fi
+          {
+            echo "rdn=$deploy"
+            echo "site=$deploy"
+            echo "bot=$deploy"
+            echo "commands=$commands"
+          } >> "$GITHUB_OUTPUT"
+
   rdn:
     name: notation.randsum.dev
-    # A push deploys every surface, exactly as before — `inputs.surface` is empty
-    # for a push, so the first clause carries it. Only a manual run can narrow.
-    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'rdn'
+    needs: plan
+    if: needs.plan.outputs.rdn == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
+          persist-credentials: false
       - uses: ./.github/actions/bun-setup
 
       # rdn imports @randsum/roller via a workspace subpath export; `rdn...`
@@ -88,12 +175,14 @@ jobs:
 
   site:
     name: randsum.dev
-    # A push deploys every surface, exactly as before — `inputs.surface` is empty
-    # for a push, so the first clause carries it. Only a manual run can narrow.
-    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'site'
+    needs: plan
+    if: needs.plan.outputs.site == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
+          persist-credentials: false
       - uses: ./.github/actions/bun-setup
 
       # The site imports roller through a workspace subpath export; `site...`
@@ -118,12 +207,14 @@ jobs:
 
   bot:
     name: bot.randsum.dev
-    # A push deploys every surface, exactly as before — `inputs.surface` is empty
-    # for a push, so the first clause carries it. Only a manual run can narrow.
-    if: github.event_name == 'push' || inputs.surface == 'all' || inputs.surface == 'bot'
+    needs: plan
+    if: needs.plan.outputs.bot == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
+          persist-credentials: false
       - uses: ./.github/actions/bun-setup
 
       # The game packages must be built first: the Worker imports them through
@@ -142,3 +233,22 @@ jobs:
             exit 1
           fi
           bun run --filter @randsum/discord-bot deploy
+
+      # The Worker reads Discord's command registry and never writes it, so a
+      # command change needs this write too. #1191 renamed /su without one and
+      # every invocation timed out for a week while the bot was healthy.
+      # deploy-commands is one bulk-overwrite PUT of the whole barrel: idempotent,
+      # and global because DISCORD_GUILD_ID is not set. It runs after the Worker
+      # deploy, so Discord never offers a command the live Worker cannot answer.
+      - name: Register slash commands
+        if: needs.plan.outputs.commands == 'true'
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          # The application id, not a secret: it is in every "Add to Discord" link.
+          DISCORD_CLIENT_ID: '1290434147159904276'
+        run: |
+          if [ -z "$DISCORD_TOKEN" ]; then
+            echo "::error::DISCORD_TOKEN is not set — the Worker deployed, but the command registry was not written."
+            exit 1
+          fi
+          bun run --filter @randsum/discord-bot deploy-commands

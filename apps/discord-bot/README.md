@@ -11,6 +11,7 @@ Powered by `@randsum/roller` — **[RDN v0.9.0 Level 4 (Full) Conformant](https:
 - **Blades in the Dark** (`/blades`) - Roll dice pools for Blades in the Dark
 - **Daggerheart** (`/dh`) - Roll Hope and Fear dice with modifiers and advantage
 - **D&D 5e** (`/fifth`) - Roll d20 checks with critical hit/miss display
+- **Fate Core** (`/fate`) - Roll 4dF + skill against the Fate ladder
 - **Root RPG** (`/root`) - Roll 2d6 for Root RPG with strong/weak hit mechanics
 - **Salvage Union** (`/salvageunion`) - Points to the [SURef bot](https://salvageunion.io/discord), which handles Salvage Union rolls and lookups
 - **Powered by the Apocalypse** (`/pbta`) - Roll 2d6 PbtA moves
@@ -74,16 +75,15 @@ Generate an invite link with these permissions:
 
 ### Slash Commands
 
-Slash commands must be registered explicitly. **Deploying does not do it** — the Worker reads
-the registry, it never writes it.
+The Worker reads Discord's command registry and never writes it. The deploy job writes it, with
+one idempotent bulk-overwrite PUT, whenever a merge changes `src/commands/**`.
 
 ```bash
 bun run deploy-commands
 ```
 
-Run this whenever you add, rename, or remove a command. Set `DISCORD_GUILD_ID` in `.env` for
-instant per-guild registration while developing; leave it unset for global registration
-(~1 hour propagation).
+Run it yourself only while developing: set `DISCORD_GUILD_ID` in `.env` for instant per-guild
+registration. Unset, it registers globally, as the deploy job does.
 
 ### Run the Bot
 
@@ -101,6 +101,7 @@ no long-lived process to start.
 - `/blades dice:3` - Roll Blades in the Dark
 - `/dh modifier:2 advantage:Advantage` - Roll Daggerheart with options
 - `/fifth` - Roll a D&D 5e d20 check (with critical hit/miss display)
+- `/fate skill:2` - Roll Fate Core 4dF + skill against the ladder
 - `/root modifier:1` - Roll Root RPG (-4 to +4 modifier)
 - `/salvageunion` - Point to the SURef bot for Salvage Union
 - `/pbta modifier:1` - Roll a Powered by the Apocalypse 2d6 move
@@ -139,9 +140,10 @@ src/
 
 1. Create a new file in `src/commands/` (e.g., `mycommand.ts`)
 2. Export a `Command` object literal with `data` (SlashCommandBuilder) and a `buildView(context)`
-   renderer
+   renderer that returns Components V2 containers — usually via `rollContainer()` in `src/commands/lib/`
 3. Add the import and entry to `src/commands/index.ts` — the command barrel is the single source of truth (both `src/worker/index.ts` and `src/deploy-commands.ts` import from it)
-4. Deploy, then run `bun run deploy-commands` — registration is a separate, explicit step (see [Slash Commands](#slash-commands))
+4. List it on the public pages: `apps/site/src/pages/discord.astro`, `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and this README (`__tests__/public-copy.test.ts` checks)
+5. Merge — the deploy job registers it (see [Slash Commands](#slash-commands))
 
 ### Testing
 
@@ -160,7 +162,7 @@ bun run typecheck
 ## Deployment
 
 The bot deploys to **Cloudflare Workers** from [`wrangler.jsonc`](./wrangler.jsonc), via
-`.github/workflows/deploy-cloudflare.yml` on merge to `main`. Discord POSTs interactions to
+`.github/workflows/deploy-cloudflare.yml` once CI is green on `main`. Discord POSTs interactions to
 `https://bot.randsum.dev/`.
 
 ```bash
@@ -177,8 +179,8 @@ bun run --filter @randsum/discord-bot deploy
 > **There is no fallback transport.** The discord.js gateway bot and its Render host were both
 > removed on 2026-09-01. A skipped or broken deploy is a user-visible outage.
 
-> **Registering commands is a separate step.** Deploying the Worker does not update Discord's
-> command list — run `bun run deploy-commands`.
+> **The deploy job also registers commands** when `src/commands/**` changed, after the Worker
+> deploy. A by-hand `deploy` does not — run `bun run deploy-commands` after it.
 
 Full triage, rollback, and DR procedures: [`apps/DEPLOY.md`](../DEPLOY.md).
 
