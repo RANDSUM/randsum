@@ -321,9 +321,21 @@ the spec (v0.9.0, section "Document Information") and every conformance file's
 | spec | `http.host eq "notation.randsum.dev"` | 301 to `concat("https://randsum.dev/spec", http.request.uri.path)` |
 
 Order matters: the conformance rule first, so `/conformance/v0.9.0.json` keeps
-its path. Preserve the query string on both. The `notation` DNS record must stay
-proxied (orange cloud) for the rule to see the request. Once the rule is live,
-detach the custom domain from the `randsum-rdn` Worker and delete that Worker.
+its path. Preserve the query string on both.
+
+A redirect rule only sees requests for a hostname that has a **proxied** DNS
+record. Today that record is the read-only one the `randsum-rdn` Workers Custom
+Domain created, and detaching the domain deletes it. So cut over in this order:
+
+1. Create both redirect rules above (they do nothing yet: the Worker's custom
+   domain still answers).
+2. Detach the `notation.randsum.dev` custom domain from the `randsum-rdn`
+   Worker. This removes its DNS record.
+3. Immediately add a proxied (orange cloud) placeholder record:
+   `AAAA notation 100::` (or `A notation 192.0.2.0`). It never receives
+   traffic; it exists so Cloudflare's edge, and the rules, see the request.
+4. Run the two checks below; both must print a 301 with the shown `location`.
+5. Only then delete the `randsum-rdn` Worker.
 
 ```bash
 curl -sI https://notation.randsum.dev/v/0.9.0/ | grep -i -E '^(HTTP|location)'                 # 301 → https://randsum.dev/spec/v/0.9.0/
@@ -384,11 +396,13 @@ reversible — rolling back does not delete newer versions.
 - The site is fully reproducible from source; loss of Cloudflare state is
   recoverable by re-running the deploy commands above. The
   `notation.randsum.dev` redirect is the exception: it lives only in the zone,
-  so recreate it from the table above.
+  so recreate both rules from the table above **and** the proxied placeholder
+  record (`AAAA notation 100::`) — without the record the rules never fire.
 - The non-git state is **DNS and the zone**: `randsum.dev` is on Cloudflare
   nameservers with the registrar still at Hover. Keep the registrar credentials
   and the Cloudflare account documented in the password vault. The zone holds
-  only three proxied records, all pointing at Workers custom domains.
+  only three proxied records: two Workers custom domains and the `notation`
+  redirect placeholder.
 - **A trailing-slash redirect returns 307, not 301**, because Workers Static
   Assets hardcodes it and `html_handling` cannot change it. This is not a
   regression to chase: pages emit `<link rel="canonical">` and the sitemap uses
