@@ -26,6 +26,8 @@ apps/rdn/
     pages/
       index.astro        # Renders the latest spec version inline
       404.astro
+      llms.txt.ts        # Static endpoint: LLM index pointing at the latest version
+      llms-full.txt.ts   # Static endpoint: the latest spec's Markdown body, verbatim
       v/
         [version].astro  # Dynamic route (getStaticPaths) — spec by version ID
     layouts/
@@ -51,8 +53,6 @@ apps/rdn/
   conformance-gen.ts     # Emits public/conformance/<version>.json from vectors.ts
   public/
     conformance/v0.9.0.json
-    llms.txt
-    llms-full.txt
   __tests__/
     conformance.test.ts  # bun:test
   astro.config.ts

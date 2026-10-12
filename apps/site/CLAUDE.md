@@ -80,8 +80,9 @@ Interactive / shared components:
 
 ## Build Pipeline
 
-- `src/integrations/copy-markdown-to-dist.ts` — custom Astro integration that
-  copies raw markdown into `dist/` (so source docs are fetchable post-build).
+- `src/integrations/curated-llms-txt.ts` — prepends the repo-root `llms.txt` to
+  the page list `starlight-page-actions` writes to `dist/llms.txt`. Edit the
+  root file; there is no `public/` copy. It must stay after `starlight()`.
 
 ## Package Data
 

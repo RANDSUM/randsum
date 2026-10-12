@@ -9,6 +9,7 @@ import starlightPageActions from 'starlight-page-actions'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
+import { curatedLlmsTxt } from './src/integrations/curated-llms-txt'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
@@ -232,6 +233,9 @@ export default defineConfig({
       ],
       customCss: ['./src/styles/custom.css']
     }),
+    // Must stay after starlight(): it rewrites the llms.txt that
+    // starlight-page-actions generates in the same build:done phase.
+    curatedLlmsTxt(),
     react()
   ],
   prefetch: false,

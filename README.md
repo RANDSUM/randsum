@@ -14,7 +14,7 @@
 
 </div>
 
-**[RDN v0.9.0 Level 4 (Full) Conformant](https://notation.randsum.dev)** — implements the complete RANDSUM Dice Notation Specification
+**[RDN v0.9.0 Level 3 (Extended) Conformant](https://notation.randsum.dev)** — Level 4 (Full) is partial: conformance vector 39 (`!s{}`) is a known gap
 
 Built on **[the Butter Stack](https://alxjrvs.github.io/butter/)** — Bun · Unified workspace · TypeScript · TanStack · Edge-deployed · React.
 
