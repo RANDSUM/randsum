@@ -69,7 +69,9 @@ imported only by `SpecLayout`, since its resets are global to the page.
   `conformance:check` (pre-push) fails on any diff.
 - The spec moved here from `notation.randsum.dev`, which now only 301s:
   `/conformance/*` keeps its path, everything else maps to `/spec/*`. The
-  redirect is a Cloudflare rule, not code (`apps/DEPLOY.md`).
+  redirect is `worker/notation-redirect.ts`, deployed from
+  `wrangler.notation.jsonc` to the old `randsum-rdn` Worker, which keeps the
+  hostname's Custom Domain (`apps/DEPLOY.md`).
 
 ## Content Structure
 

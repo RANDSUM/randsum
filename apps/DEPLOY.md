@@ -11,7 +11,7 @@ to file incident RCAs.
 | Surface            | App                                             | Host                | Trigger                  | URL                   |
 | ------------------ | ----------------------------------------------- | ------------------- | ------------------------ | --------------------- |
 | Docs site + spec   | `apps/site`                                     | **Cloudflare**      | green CI on `main`       | randsum.dev           |
-| Old spec host      | none (Cloudflare redirect rule)                 | **Cloudflare**      | dashboard                | notation.randsum.dev  |
+| Old spec host      | `apps/site` (`wrangler.notation.jsonc`, 301 only) | **Cloudflare**      | green CI on `main`       | notation.randsum.dev  |
 | Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | green CI on `main`       | bot.randsum.dev       |
 | npm packages       | `packages/roller`, `packages/games`, `packages/mcp` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
@@ -305,37 +305,35 @@ bun run --filter '@randsum/roller' build
 bun run --filter '@randsum/games' build
 bun run site:build
 bun run --filter @randsum/site deploy
+bun run --filter @randsum/site deploy:notation   # notation.randsum.dev 301s
 ```
 
 ### notation.randsum.dev — redirect only
 
-The spec moved into `apps/site` at `/spec`. `notation.randsum.dev` is not
-built or deployed from this repo any more; it must answer with a 301, because
-the spec (v0.9.0, section "Document Information") and every conformance file's
-`$id` name it. This is a Cloudflare **Single Redirect** rule on the
-`randsum.dev` zone, not code, and it runs before any Worker:
+The spec moved into `apps/site` at `/spec`. `notation.randsum.dev` must keep
+answering with a 301, because the spec (v0.9.0, section "Document
+Information") and every conformance file's `$id` name it. The redirect is code:
+`apps/site/worker/notation-redirect.ts`, deployed by the site job from
+`apps/site/wrangler.notation.jsonc` right after the site itself.
 
-| Rule | When | Then |
-| --- | --- | --- |
-| conformance | `http.host eq "notation.randsum.dev" and starts_with(http.request.uri.path, "/conformance/")` | 301 to `concat("https://randsum.dev", http.request.uri.path)` |
-| spec | `http.host eq "notation.randsum.dev"` | 301 to `concat("https://randsum.dev/spec", http.request.uri.path)` |
+| Path on notation.randsum.dev | 301 to |
+| --- | --- |
+| `/conformance/*` | `https://randsum.dev/conformance/*` (the `$id` path is kept) |
+| `/robots.txt`, `/favicon.ico`, `/sitemap-index.xml`, `/sitemap-0.xml` | the same file on `https://randsum.dev` |
+| anything else | `https://randsum.dev/spec<path>` |
 
-Order matters: the conformance rule first, so `/conformance/v0.9.0.json` keeps
-its path. Preserve the query string on both.
+The query string is kept on every redirect, and `apps/site/__tests__/notation-redirect.test.ts`
+pins the table.
 
-A redirect rule only sees requests for a hostname that has a **proxied** DNS
-record. Today that record is the read-only one the `randsum-rdn` Workers Custom
-Domain created, and detaching the domain deletes it. So cut over in this order:
+The config deploys to the **existing `randsum-rdn` Worker**, the one that
+served the old rdn site. Its `notation.randsum.dev` Custom Domain lives on that
+Worker rather than in any config file, so a new script under the same name
+keeps the hostname and its DNS record. There is no detach, no placeholder
+record and no window where the hostname stops resolving. The first deploy after
+the merge is the whole cutover. Do not delete the `randsum-rdn` Worker and do
+not detach its custom domain: that is what keeps the redirect reachable.
 
-1. Create both redirect rules above (they do nothing yet: the Worker's custom
-   domain still answers).
-2. Detach the `notation.randsum.dev` custom domain from the `randsum-rdn`
-   Worker. This removes its DNS record.
-3. Immediately add a proxied (orange cloud) placeholder record:
-   `AAAA notation 100::` (or `A notation 192.0.2.0`). It never receives
-   traffic; it exists so Cloudflare's edge, and the rules, see the request.
-4. Run the two checks below; both must print a 301 with the shown `location`.
-5. Only then delete the `randsum-rdn` Worker.
+After that first deploy, both of these must print a 301 with the shown `location`:
 
 ```bash
 curl -sI https://notation.randsum.dev/v/0.9.0/ | grep -i -E '^(HTTP|location)'                 # 301 → https://randsum.dev/spec/v/0.9.0/
@@ -394,15 +392,15 @@ reversible — rolling back does not delete newer versions.
 ### DR notes
 
 - The site is fully reproducible from source; loss of Cloudflare state is
-  recoverable by re-running the deploy commands above. The
-  `notation.randsum.dev` redirect is the exception: it lives only in the zone,
-  so recreate both rules from the table above **and** the proxied placeholder
-  record (`AAAA notation 100::`) — without the record the rules never fire.
+  recoverable by re-running the deploy commands above. That includes the
+  `notation.randsum.dev` redirect (`bun run --filter @randsum/site
+  deploy:notation`); if the `randsum-rdn` Worker itself is
+  lost, re-add `notation.randsum.dev` as its Custom Domain after deploying.
 - The non-git state is **DNS and the zone**: `randsum.dev` is on Cloudflare
   nameservers with the registrar still at Hover. Keep the registrar credentials
   and the Cloudflare account documented in the password vault. The zone holds
-  only three proxied records: two Workers custom domains and the `notation`
-  redirect placeholder.
+  only three proxied records, all Workers custom domains: randsum.dev,
+  bot.randsum.dev and notation.randsum.dev (the redirect Worker).
 - **A trailing-slash redirect returns 307, not 301**, because Workers Static
   Assets hardcodes it and `html_handling` cannot change it. This is not a
   regression to chase: pages emit `<link rel="canonical">` and the sitemap uses

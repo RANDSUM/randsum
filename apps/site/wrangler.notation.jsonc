@@ -1,0 +1,19 @@
+{
+  // Cloudflare Worker for notation.randsum.dev: a redirect, nothing else.
+  //
+  // The spec now lives at randsum.dev/spec (apps/site/src/pages/spec). The old
+  // host keeps answering with a 301 from worker/notation-redirect.ts, so the
+  // redirect is versioned here rather than living only in the zone.
+  //
+  // `name` is deliberately the Worker that served the old rdn site. Its
+  // notation.randsum.dev Custom Domain lives on the Worker, not in this file,
+  // so deploying this script under that name keeps the hostname and its DNS
+  // record: there is no detach, no placeholder record and no gap.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "randsum-rdn",
+  "main": "./worker/notation-redirect.ts",
+  "compatibility_date": "2026-07-13",
+  "observability": {
+    "enabled": true
+  }
+}

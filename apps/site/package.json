@@ -31,6 +31,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "wrangler deploy -c wrangler.jsonc",
+    "deploy:notation": "wrangler deploy -c wrangler.notation.jsonc",
     "astro": "astro",
     "test": "bun test",
     "typecheck": "astro check",
