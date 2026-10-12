@@ -19,7 +19,7 @@ void mock.module('@randsum/games/blades', () => ({
 const { bladesCommand } = await import('../../src/commands/blades.js')
 
 function render(dice: number): RollView {
-  return bladesCommand.buildView!(makeContext([{ name: 'dice', value: dice }]))
+  return bladesCommand.buildView(makeContext([{ name: 'dice', value: dice }]))
 }
 
 beforeEach(() => {

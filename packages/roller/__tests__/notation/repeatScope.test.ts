@@ -34,6 +34,11 @@ describe('repeat operator (xN) scope', () => {
       expect(roll('2d6+1d8x2').rolls).toHaveLength(4)
     })
 
+    test('surrounding whitespace does not drop a trailing repeat', () => {
+      expect(notationToOptions('4d6x3 ')).toHaveLength(3)
+      expect(roll(' 4d6x3 ').rolls).toHaveLength(3)
+    })
+
     test('nested trailing repeats compose', () => {
       // `2d6x2x3` => 2d6 repeated 2 then 3 => 6 pools.
       expect(roll('2d6x2x3').rolls).toHaveLength(6)

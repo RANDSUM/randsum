@@ -34,7 +34,7 @@ function notation(value: string): DiceNotation
 
 ### `notationToOptions(notation)`
 
-Parse a notation string into structured options. Accepts any string (validate first with `isDiceNotation` for safety). Returns an array (one entry per roll group).
+Parse a notation string into structured options. Throws `NotationParseError` (with `context.position`) on invalid notation, so check with `isDiceNotation` first to branch instead. Returns an array (one entry per roll group).
 
 <CodeExample code={`import { notationToOptions, isDiceNotation } from '@randsum/roller'
 

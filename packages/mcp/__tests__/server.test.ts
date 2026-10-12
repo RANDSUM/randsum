@@ -73,3 +73,47 @@ describe('roll_game schema', () => {
     expect(result.structuredContent).toMatchObject({ game: 'blades' })
   })
 })
+
+describe('output schemas', () => {
+  test('every tool advertises an output schema', async () => {
+    const client = await connect()
+    const { tools } = await client.listTools()
+
+    expect(tools.map(t => [t.name, t.outputSchema?.type])).toEqual([
+      ['roll', 'object'],
+      ['validate', 'object'],
+      ['roll_game', 'object']
+    ])
+  })
+
+  // The client checks structured content against the advertised output schema
+  // and throws on a mismatch, so a successful call proves the two agree.
+  test('structured content matches each output schema', async () => {
+    const client = await connect()
+    const rolled = await client.callTool({
+      name: 'roll',
+      arguments: { notation: '4d6L+2', seed: 7 }
+    })
+    const valid = await client.callTool({ name: 'validate', arguments: { notation: '4d6L' } })
+    const invalid = await client.callTool({ name: 'validate', arguments: { notation: '4x6' } })
+    const game = await client.callTool({
+      name: 'roll_game',
+      arguments: { game: 'fifth', params: { modifier: 3 } }
+    })
+
+    expect(rolled.structuredContent).toMatchObject({ notation: '4d6L+2' })
+    expect(valid.structuredContent).toMatchObject({ valid: true })
+    expect(invalid.structuredContent).toMatchObject({ valid: false })
+    expect(game.structuredContent).toMatchObject({ game: 'fifth' })
+  })
+
+  test('a RandsumError reports its code', async () => {
+    const client = await connect()
+    const result = await client.callTool({ name: 'roll', arguments: { notation: '1d6L' } })
+    const content = result.content as readonly { readonly type: string; readonly text: string }[]
+
+    expect(result.isError).toBe(true)
+    expect(result.structuredContent).toBeUndefined()
+    expect(JSON.parse(content[1]?.text ?? '{}')).toEqual({ code: 'MODIFIER_ERROR' })
+  })
+})

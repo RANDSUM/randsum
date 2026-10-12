@@ -3,7 +3,7 @@ import { salvageUnionCommand } from '../../src/commands/salvageunion.js'
 import { makeContext } from './lib/context.js'
 import { textOf } from '../lib/view.js'
 
-const view = salvageUnionCommand.buildView!(makeContext([]))
+const view = salvageUnionCommand.buildView(makeContext([]))
 
 /** Link buttons carry a `url` and no `custom_id`, so they need no round trip. */
 function linkButtons(): { label: string | undefined; url: string | undefined }[] {

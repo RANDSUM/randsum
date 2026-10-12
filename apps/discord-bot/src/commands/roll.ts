@@ -5,7 +5,6 @@ import { SlashCommandBuilder } from '../utils/builders.js'
 import { BRAND } from '../utils/palette.js'
 import {
   TEXT_DISPLAY_LIMIT,
-  createGameCommand,
   defaultErrorMessage,
   encodeReroll,
   measureContainer,
@@ -191,7 +190,7 @@ function describeRollError(error: unknown, context: CommandContext): string {
   return `${trimmed}\n\nDid you mean \`${suggestion}\`?`
 }
 
-export const rollCommand: Command = createGameCommand({
+export const rollCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('roll')
     .setDescription('Test your luck with a roll of the dice')
@@ -209,4 +208,4 @@ export const rollCommand: Command = createGameCommand({
     ),
   buildView: buildRollView,
   describeError: describeRollError
-})
+}

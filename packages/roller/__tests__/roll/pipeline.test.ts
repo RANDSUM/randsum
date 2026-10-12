@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, mock, spyOn, test } from 'bun:te
 
 import * as RandomUtils from '../../src/lib/random'
 import { roll } from '../../src/roll'
-import { RollPipeline, executeRollPipeline } from '../../src/roll/pipeline'
+import { executeRollPipeline } from '../../src/roll/pipeline'
 import { createRollParams } from '../support/fixtures'
 
 describe(executeRollPipeline, () => {
@@ -453,18 +453,18 @@ describe('invalid input throws', () => {
   })
 })
 
-describe('RollPipeline build() exposes pipeline state', () => {
-  test('build() returns initialRolls and rolls after full pipeline', () => {
+describe('executeRollPipeline exposes pipeline state', () => {
+  test('returns initialRolls and rolls after full pipeline', () => {
     const params = createRollParams({ sides: 6, quantity: 4 })
     spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
 
-    const result = new RollPipeline(params).execute()
+    const result = executeRollPipeline(params)
 
     expect(result.initialRolls).toEqual([1, 2, 3, 4])
     expect(result.rolls).toEqual([1, 2, 3, 4])
   })
 
-  test('build() returns modified rolls after modifiers applied', () => {
+  test('returns modified rolls after modifiers applied', () => {
     const params = createRollParams({
       sides: 6,
       quantity: 4,
@@ -472,12 +472,12 @@ describe('RollPipeline build() exposes pipeline state', () => {
     })
     spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
 
-    const result = new RollPipeline(params).execute()
+    const result = executeRollPipeline(params)
 
     expect(result.rolls).toEqual([2, 3, 4])
   })
 
-  test('build() returns modifier logs', () => {
+  test('returns modifier logs', () => {
     const params = createRollParams({
       sides: 6,
       quantity: 4,
@@ -485,7 +485,7 @@ describe('RollPipeline build() exposes pipeline state', () => {
     })
     spyOn(RandomUtils, 'coreSpreadRolls').mockReturnValueOnce([1, 2, 3, 4])
 
-    const result = new RollPipeline(params).execute()
+    const result = executeRollPipeline(params)
 
     expect(result.modifierLogs.length).toBe(1)
     expect(result.modifierLogs[0]?.modifier).toBe('plus')

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { NotationParseError } from '../../src/errors'
 import { notationToOptions } from '../../src/notation/parse/notationToOptions'
 
 describe('notationToOptions', () => {
@@ -31,11 +32,18 @@ describe('notationToOptions', () => {
       expect(result?.sides).toBe(100)
     })
 
-    test('parses zero values', () => {
-      const [result] = notationToOptions('0d0')
-
-      expect(result?.quantity).toBe(0)
-      expect(result?.sides).toBe(0)
+    test('throws a positioned NotationParseError on invalid notation', () => {
+      expect(() => notationToOptions('0d0')).toThrow(NotationParseError)
+      const error = ((): unknown => {
+        try {
+          notationToOptions('2d6+0d0')
+        } catch (e) {
+          return e
+        }
+        return undefined
+      })()
+      expect(error).toBeInstanceOf(NotationParseError)
+      expect((error as NotationParseError).context?.position).toBe(3)
     })
   })
 
@@ -463,6 +471,37 @@ describe('notationToOptions', () => {
       expect(result?.modifiers?.drop?.lowest).toBe(1)
       expect(result?.modifiers?.drop?.highest).toBe(1)
       expect(result?.modifiers?.plus).toBe(3)
+    })
+  })
+
+  describe('repeated and overlapping tokens', () => {
+    test('4d6!L! keeps the explode when its tokens are split by another modifier', () => {
+      const [result] = notationToOptions('4d6!L!')
+
+      expect(result?.modifiers).toEqual({ explode: true, drop: { lowest: 1 } })
+    })
+
+    test('4d6!V{1=2}! keeps the explode around a replace', () => {
+      const [result] = notationToOptions('4d6!V{1=2}!')
+
+      expect(result?.modifiers).toEqual({ explode: true, replace: [{ from: 1, to: 2 }] })
+    })
+
+    test('keep-middle and drop-lowest combine in either order', () => {
+      const [kmFirst] = notationToOptions('5d6KmL')
+      const [lFirst] = notationToOptions('5d6LKm')
+
+      expect(kmFirst?.modifiers).toEqual({ drop: { lowest: 2, highest: 1 } })
+      expect(lFirst?.modifiers).toEqual(kmFirst?.modifiers)
+    })
+
+    test('keep-highest and keep-middle both apply', () => {
+      const [result] = notationToOptions('6d6KKm')
+
+      expect(result?.modifiers).toEqual({
+        keep: { highest: 1 },
+        drop: { lowest: 1, highest: 1 }
+      })
     })
   })
 

@@ -148,7 +148,7 @@ describe('validateNotation', () => {
         expect(result.options[0]?.modifiers?.drop?.lowest).toBe(1)
         expect(result.options[0]?.modifiers?.reroll?.exact).toContain(1)
         expect(result.options[0]?.modifiers?.plus).toBe(3)
-        expect(result.notation[0]).toBe('4d6LR{1}+3')
+        expect(result.notation[0]).toBe('4d6R{1}L+3')
         expect(result.description[0]).toContain('Roll 4 6-sided dice')
         expect(result.description[0]).toContain('Drop lowest')
         expect(result.description[0]).toContain('Reroll 1')

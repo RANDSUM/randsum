@@ -1,11 +1,25 @@
 import { describe, expect, test } from 'bun:test'
 import { RANDSUM_MODIFIERS } from '../../src/modifiers/definitions'
 import { MODIFIER_DOCS } from '../../src/docs/modifierDocs'
-import { MODIFIER_NOTATION_DOCS } from '../../src/docs/modifierDocData'
+import { MODIFIER_DOCS_BY_NAME, MODIFIER_NOTATION_DOCS } from '../../src/docs/modifierDocData'
+import { MODIFIER_SCHEMAS } from '../../src/notation/definitions'
 
 describe('modifier doc sync', () => {
   test('RANDSUM_MODIFIERS registers exactly 19 modifiers', () => {
     expect(RANDSUM_MODIFIERS.length).toBe(19)
+  })
+
+  test('RANDSUM_MODIFIERS follows MODIFIER_SCHEMAS, sorted by priority', () => {
+    expect(RANDSUM_MODIFIERS.map(mod => mod.name)).toEqual(MODIFIER_SCHEMAS.map(s => s.name))
+    const priorities = MODIFIER_SCHEMAS.map(s => s.priority)
+    expect(priorities).toEqual([...priorities].sort((a, b) => a - b))
+  })
+
+  test('the docs list modifiers in MODIFIER_SCHEMAS order, with matching categories', () => {
+    expect(Object.keys(MODIFIER_DOCS_BY_NAME)).toEqual(MODIFIER_SCHEMAS.map(s => s.name))
+    for (const schema of MODIFIER_SCHEMAS) {
+      expect(MODIFIER_DOCS_BY_NAME[schema.name]?.[0]?.category).toBe(schema.category)
+    }
   })
 
   test('every modifier name is unique', () => {

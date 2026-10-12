@@ -5,6 +5,17 @@ import { modifiersToNotation } from './modifiersToStrings'
 import { optionsToSidesFaces } from './optionsToSidesFaces'
 
 /**
+ * Render options as notation without re-validating it. Internal: only for
+ * options the parser produced from notation it already accepted.
+ */
+export function formatNotation<T = string>(options: RollOptions<T>): DiceNotation {
+  const { modifiers, quantity = 1, arithmetic } = options
+  const { sides } = optionsToSidesFaces(options)
+  const arithmeticPrefix = arithmetic === 'subtract' ? '-' : ''
+  return `${arithmeticPrefix}${quantity}d${sides}${modifiersToNotation(modifiers)}` as DiceNotation
+}
+
+/**
  * Converts roll options to RANDSUM dice notation string.
  *
  * @template T - Type for custom dice faces
@@ -13,12 +24,7 @@ import { optionsToSidesFaces } from './optionsToSidesFaces'
  * @throws NotationParseError if generated notation is invalid
  */
 export function optionsToNotation<T = string>(options: RollOptions<T>): DiceNotation {
-  const { modifiers, quantity = 1, arithmetic } = options
-  const { sides } = optionsToSidesFaces(options)
-  const arithmeticPrefix = arithmetic === 'subtract' ? '-' : ''
-  const modifierSuffix = modifiersToNotation(modifiers)
-  const proposed = `${arithmeticPrefix}${quantity}d${sides}${modifierSuffix}`
-
+  const proposed = formatNotation(options)
   if (!isDiceNotation(proposed)) {
     throw new NotationParseError(proposed, 'Generated notation is invalid', undefined, {
       value: options

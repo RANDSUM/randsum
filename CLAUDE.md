@@ -111,7 +111,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-The `RANDSUM_MODIFIERS` array in `packages/roller/src/modifiers/definitions.ts` (re-exported from `src/modifiers/index.ts`) is the single source of truth for which modifiers exist and their execution order. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior).
+`MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts`, sorted by each schema's `priority`, is the single source of truth for which modifiers exist and their execution order; `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`) maps it to behaviors. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior).
 
 See https://notation.randsum.dev for the formal specification including faceted classification, conformance levels, and execution pipeline contracts.
 

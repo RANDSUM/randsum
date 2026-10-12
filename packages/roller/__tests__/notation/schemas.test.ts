@@ -1,43 +1,27 @@
 import { describe, expect, test } from 'bun:test'
-import { coreNotationPattern } from '../../src/notation/coreNotationPattern'
 import { defineNotationSchema } from '../../src/notation/schema'
-import {
-  capSchema,
-  compoundSchema,
-  countSuccessesSchema,
-  dropSchema,
-  explodeSchema,
-  keepSchema,
-  minusSchema,
-  multiplySchema,
-  multiplyTotalSchema,
-  penetrateSchema,
-  plusSchema,
-  replaceSchema,
-  rerollSchema,
-  uniqueSchema
-} from '../../src/notation/definitions'
-
-describe('coreNotationPattern', () => {
-  test('matches basic notation', () => {
-    expect(coreNotationPattern.test('2d6')).toBe(true)
-  })
-
-  test('matches with sign prefix', () => {
-    expect(coreNotationPattern.test('+1d20')).toBe(true)
-    expect(coreNotationPattern.test('-1d6')).toBe(true)
-  })
-
-  test('does not match zero sides', () => {
-    expect(coreNotationPattern.test('1d0')).toBe(false)
-  })
-})
+import { capSchema } from '../../src/notation/definitions/cap'
+import { compoundSchema } from '../../src/notation/definitions/compound'
+import { countSuccessesSchema } from '../../src/notation/definitions/countSuccesses'
+import { dropSchema } from '../../src/notation/definitions/drop'
+import { explodeSchema } from '../../src/notation/definitions/explode'
+import { keepSchema } from '../../src/notation/definitions/keep'
+import { minusSchema } from '../../src/notation/definitions/minus'
+import { multiplySchema } from '../../src/notation/definitions/multiply'
+import { multiplyTotalSchema } from '../../src/notation/definitions/multiplyTotal'
+import { penetrateSchema } from '../../src/notation/definitions/penetrate'
+import { plusSchema } from '../../src/notation/definitions/plus'
+import { replaceSchema } from '../../src/notation/definitions/replace'
+import { rerollSchema } from '../../src/notation/definitions/reroll'
+import { uniqueSchema } from '../../src/notation/definitions/unique'
 
 describe('defineNotationSchema', () => {
   test('returns the schema unchanged', () => {
     const schema = defineNotationSchema({
       name: 'plus',
       priority: 90,
+      tokenKey: '+',
+      category: 'Scale',
       pattern: /\+(\d+)/,
       parse: () => ({}),
       toNotation: () => undefined,

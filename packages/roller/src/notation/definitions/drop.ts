@@ -9,6 +9,8 @@ const dropConstraintsPattern = /[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d
 export const dropSchema: NotationSchema<DropOptions> = defineNotationSchema<DropOptions>({
   name: 'drop',
   priority: 65,
+  tokenKey: 'drop',
+  category: 'Filter',
 
   pattern:
     /([Hh](\d+)?|(?<![Kk])[Ll](\d+)?|[Dd]\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?\d+)*)\})/,

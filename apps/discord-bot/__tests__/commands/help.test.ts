@@ -5,7 +5,7 @@ import { makeContext } from './lib/context.js'
 import { accentsOf, textOf } from '../lib/view.js'
 import { BRAND } from '../../src/utils/palette.js'
 
-const view = helpCommand.buildView!(makeContext([]))
+const view = helpCommand.buildView(makeContext([]))
 const text = textOf(view)
 
 describe('helpCommand', () => {

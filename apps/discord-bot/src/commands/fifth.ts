@@ -2,7 +2,6 @@ import { inputs, roll } from '@randsum/games/fifth'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { FIFTH, GLYPH } from '../utils/palette.js'
 import {
-  createGameCommand,
   encodeReroll,
   formatSignedModifier,
   getInitialRolls,
@@ -106,7 +105,7 @@ function buildFifthView(context: CommandContext): RollView {
   ]
 }
 
-export const fifthCommand: Command = createGameCommand({
+export const fifthCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('fifth')
     .setDescription('Roll dice for D&D 5th Edition (1d20 + modifier)')
@@ -137,4 +136,4 @@ export const fifthCommand: Command = createGameCommand({
         .setRequired(false)
     ),
   buildView: buildFifthView
-})
+}

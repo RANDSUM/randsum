@@ -10,23 +10,23 @@ import {
 } from '../../src/notation/constants'
 import { isDiceNotation } from '../../src/notation/isDiceNotation'
 import { tokenize } from '../../src/notation/tokenize'
-import { parseSpecialPoolSegment } from '../../src/notation/parse/parseSpecialPool'
+import { notationToOptions } from '../../src/notation/parse/notationToOptions'
 
 /**
  * Cross-check that the shared special-die marker fragments in constants.ts
  * stay in sync with every consumer that composes them (isDiceNotation,
- * tokenize, parseSpecialPool). Each marker is exercised through all three
+ * tokenize, notationToOptions). Each marker is exercised through all three
  * code paths so a future edit to a fragment that breaks one consumer fails
  * loudly here.
  */
 const CASES = [
-  { marker: DIE_MARKER_PERCENTILE, notation: '2d%', tokenKey: 'd%' },
-  { marker: DIE_MARKER_FATE, notation: '4dF', tokenKey: 'dF' },
-  { marker: DIE_MARKER_FATE, notation: 'dF.2', tokenKey: 'dF' },
-  { marker: DIE_MARKER_CUSTOM_FACES, notation: 'd{a,b,c}', tokenKey: 'd{...}' },
-  { marker: DIE_MARKER_DRAW, notation: '3DD6', tokenKey: 'DDN' },
-  { marker: DIE_MARKER_GEOMETRIC, notation: 'g6', tokenKey: 'gN' },
-  { marker: DIE_MARKER_ZERO_BIAS, notation: '2z8', tokenKey: 'zN' }
+  { marker: DIE_MARKER_PERCENTILE, notation: '2d%', tokenKey: 'd%', dieType: 'percentile' },
+  { marker: DIE_MARKER_FATE, notation: '4dF', tokenKey: 'dF', dieType: 'fate' },
+  { marker: DIE_MARKER_FATE, notation: 'dF.2', tokenKey: 'dF', dieType: 'fate' },
+  { marker: DIE_MARKER_CUSTOM_FACES, notation: 'd{a,b,c}', tokenKey: 'd{...}', dieType: 'custom' },
+  { marker: DIE_MARKER_DRAW, notation: '3DD6', tokenKey: 'DDN', dieType: 'draw' },
+  { marker: DIE_MARKER_GEOMETRIC, notation: 'g6', tokenKey: 'gN', dieType: 'geometric' },
+  { marker: DIE_MARKER_ZERO_BIAS, notation: '2z8', tokenKey: 'zN', dieType: 'zeroBias' }
 ] as const
 
 describe('die-type marker cross-check', () => {
@@ -39,12 +39,11 @@ describe('die-type marker cross-check', () => {
     }
   })
 
-  for (const { notation, tokenKey } of CASES) {
+  for (const { notation, tokenKey, dieType } of CASES) {
     test(`"${notation}" is recognized consistently across consumers`, () => {
       expect(isDiceNotation(notation)).toBe(true)
 
-      const parsed = parseSpecialPoolSegment(notation)
-      expect(parsed).not.toBeNull()
+      expect(notationToOptions(notation)[0]?.dieType).toBe(dieType)
 
       const tokens = tokenize(notation)
       expect(tokens[0]?.key).toBe(tokenKey)

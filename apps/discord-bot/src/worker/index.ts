@@ -15,6 +15,7 @@
  */
 import { commands as commandList } from '../commands/index.js'
 import type { Command } from '../types.js'
+import type { APIInteraction } from '../utils/builders.js'
 import { dispatchInteraction, fallbackErrorResponse } from './dispatch.js'
 import { verifyDiscordRequest } from './verify.js'
 
@@ -25,6 +26,17 @@ export interface Env {
 const commands: ReadonlyMap<string, Command> = new Map(
   commandList.map(command => [command.data.name, command])
 )
+
+/**
+ * An object with a numeric `type`, which is all the dispatcher needs to route
+ * it. The signature check already proved Discord sent it, so this guards the
+ * shape, not the source.
+ */
+function isInteraction(value: unknown): value is APIInteraction {
+  return (
+    typeof value === 'object' && value !== null && 'type' in value && typeof value.type === 'number'
+  )
+}
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -57,9 +69,7 @@ export default {
     if (!verified) return new Response('Bad request signature', { status: 401 })
 
     const payload: unknown = JSON.parse(rawBody)
-    if (typeof payload !== 'object' || payload === null) {
-      return new Response('Malformed payload', { status: 400 })
-    }
+    if (!isInteraction(payload)) return new Response('Malformed payload', { status: 400 })
 
     // Belt and braces around a pure function. `dispatchInteraction` catches
     // renderer throws and turns them into an error response — but the error
@@ -73,7 +83,7 @@ export default {
     // costs a wrong-looking message rather than a dead endpoint.
     const response = ((): unknown => {
       try {
-        return dispatchInteraction(payload as never, commands)
+        return dispatchInteraction(payload, commands)
       } catch {
         return fallbackErrorResponse()
       }

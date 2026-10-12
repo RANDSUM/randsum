@@ -29,7 +29,7 @@ void mock.module('@randsum/games/pbta', () => ({
 const { pbtaCommand } = await import('../../src/commands/pbta.js')
 
 function render(options: { name: string; value: unknown }[]): RollView {
-  return pbtaCommand.buildView!(makeContext(options))
+  return pbtaCommand.buildView(makeContext(options))
 }
 
 beforeEach(() => {

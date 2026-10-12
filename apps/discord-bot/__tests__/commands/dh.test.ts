@@ -38,7 +38,7 @@ void mock.module('@randsum/games/daggerheart', () => ({
 const { dhCommand } = await import('../../src/commands/dh.js')
 
 function render(options: { name: string; value: unknown }[] = []): RollView {
-  return dhCommand.buildView!(makeContext(options))
+  return dhCommand.buildView(makeContext(options))
 }
 
 beforeEach(() => {

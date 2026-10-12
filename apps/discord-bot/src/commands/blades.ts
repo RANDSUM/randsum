@@ -2,7 +2,6 @@ import { inputs, roll } from '@randsum/games/blades'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { BLADES, GLYPH } from '../utils/palette.js'
 import {
-  createGameCommand,
   encodeReroll,
   getInitialRolls,
   getKeptRolls,
@@ -76,7 +75,7 @@ function buildBladesView(context: CommandContext): RollView {
   ]
 }
 
-export const bladesCommand: Command = createGameCommand({
+export const bladesCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('blades')
     .setDescription('Roll dice for Blades in the Dark')
@@ -93,4 +92,4 @@ export const bladesCommand: Command = createGameCommand({
         .setRequired(false)
     ),
   buildView: buildBladesView
-})
+}

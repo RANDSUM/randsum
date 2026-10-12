@@ -6,9 +6,9 @@ export const TTRPG_STANDARD_DIE_SET: readonly number[] = Object.freeze([4, 6, 8,
 
 /**
  * Canonical raw regex fragments for each special die-type marker — the die-type segment WITHOUT
- * a quantity prefix, sign, anchors, or capture groups. Consumers (isDiceNotation, tokenize,
- * parseSpecialPool) compose these with their own prefixes/anchors/capture groups so the die-type
- * shapes live in exactly one place. Kept in sync with consumers by
+ * a quantity prefix, sign, anchors, or capture groups. The lexer's POOL_SPECS compose these with
+ * a quantity prefix, so the die-type shapes live in exactly one place. Kept in sync with the
+ * parse, options and tokenize views by
  * __tests__/notation/dieMarkers.crosscheck.test.ts.
  */
 export const DIE_MARKER_PERCENTILE = '[Dd]%'

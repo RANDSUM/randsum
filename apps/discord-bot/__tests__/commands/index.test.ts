@@ -58,10 +58,8 @@ describe('commands barrel', () => {
 
   test('each command has data and a renderer', () => {
     // `buildView` replaced `buildEmbed`, which replaced `execute`, as the thing
-    // every command must have. It is optional on the interface so the
-    // dispatcher can answer "not available on this deployment" rather than
-    // guess — but a command that ships without one is unreachable in
-    // production, so the barrel is where that is checked.
+    // every command must have. The Command type requires it; this checks the
+    // assembled barrel at runtime as well.
     for (const command of commands) {
       expect(command).toHaveProperty('data')
       expect(command.data).toBeDefined()

@@ -26,7 +26,7 @@ Architecture Decision Records for RANDSUM. Each ADR captures a single decision, 
 | #                                                   | Title                                                          | Status   |
 | --------------------------------------------------- | -------------------------------------------------------------- | -------- |
 | [006](./ADR-006-notation-scope-boundary.md)         | Notation scope boundary — single roll expressions only         | Accepted |
-| [007](./ADR-007-modifier-co-location.md)            | Modifier co-location into `src/modifiers/`                     | Accepted |
+| [007](./ADR-007-modifier-co-location.md)            | Modifier co-location into `src/modifiers/`                     | Accepted (amended) |
 | [014](./ADR-014-modifier-category-taxonomy.md)      | Modifier category taxonomy and pipeline model                  | Accepted |
 
 ### Publishing and Build

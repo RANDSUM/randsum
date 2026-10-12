@@ -9,9 +9,22 @@
 import { describe, expect, test } from 'bun:test'
 import { commands as commandList } from '../../src/commands/index.js'
 import { encodeReroll } from '../../src/commands/lib/index.js'
-import { ContainerBuilder, TextDisplayBuilder } from '../../src/utils/builders.js'
-import { dispatchInteraction, InteractionResponseType } from '../../src/worker/dispatch.js'
+import {
+  ContainerBuilder,
+  InteractionResponseType,
+  TextDisplayBuilder
+} from '../../src/utils/builders.js'
+import type { APIInteraction } from '../../src/utils/builders.js'
+import { dispatchInteraction } from '../../src/worker/dispatch.js'
 import type { Command, RollView } from '../../src/types.js'
+
+/**
+ * A payload carrying only the fields the dispatcher reads. A real interaction
+ * also has an id, token, application id and so on, which nothing here uses.
+ */
+function interaction(fields: object): APIInteraction {
+  return fields as APIInteraction
+}
 
 const commands: ReadonlyMap<string, Command> = new Map(
   commandList.map(command => [command.data.name, command])
@@ -29,11 +42,11 @@ interface Rendered {
 
 function invoke(name: string, options: { name: string; value: unknown }[] = []): Rendered {
   return dispatchInteraction(
-    {
+    interaction({
       type: 2,
       data: { name, options },
       member: { user: { global_name: 'Tester', username: 'tester' } }
-    },
+    }),
     commands
   ) as Rendered
 }
@@ -59,7 +72,7 @@ function characterCountOf(components: readonly unknown[]): number {
 
 describe('dispatchInteraction', () => {
   test('answers a PING with a PONG', () => {
-    const response = dispatchInteraction({ type: 1 }, commands) as Rendered
+    const response = dispatchInteraction(interaction({ type: 1 }), commands) as Rendered
     expect(response.type).toBe(InteractionResponseType.Pong)
   })
 
@@ -74,7 +87,7 @@ describe('dispatchInteraction', () => {
     expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
   })
 
-  test('renders every factory-backed command', () => {
+  test('renders every game command', () => {
     // Guards the seam wholesale: if any command's renderer reaches for
     // something only a gateway can supply, it fails here rather than in prod.
     const cases: [string, { name: string; value: unknown }[]][] = [
@@ -149,11 +162,11 @@ describe('dispatchInteraction', () => {
     if (customId === undefined) throw new Error('encodeReroll could not encode the test id')
 
     const response = dispatchInteraction(
-      {
+      interaction({
         type: 3,
         data: { custom_id: customId },
         member: { user: { global_name: 'Tester', username: 'tester' } }
-      },
+      }),
       commands
     ) as Rendered
 
@@ -208,21 +221,12 @@ describe('dispatchInteraction', () => {
     expect(payload).toContain('notation-category')
   })
 
-  test('every command has a Worker renderer', () => {
-    // The parity gate. A new command added without a renderer would answer "not
-    // available on this deployment" in production, which is the kind of gap
-    // that only surfaces when someone tries the command.
-    for (const command of commandList) {
-      expect(command.buildView).toBeDefined()
-    }
-  })
-
   test('a category selection re-renders in place', () => {
     // The gateway keeps a collector open on a socket; a Worker gets an
     // independent POST. This works because a select menu sends its chosen
     // value back — the selection carries its own state.
     const response = dispatchInteraction(
-      { type: 3, data: { custom_id: 'notation-category', values: ['Arithmetic'] } },
+      interaction({ type: 3, data: { custom_id: 'notation-category', values: ['Arithmetic'] } }),
       commands
     ) as Rendered
 
@@ -239,7 +243,10 @@ describe('dispatchInteraction', () => {
   test('an unrecognised category falls back rather than rendering empty', () => {
     // A stale menu from an old message must not produce a blank reference page.
     const response = dispatchInteraction(
-      { type: 3, data: { custom_id: 'notation-category', values: ['NoSuchCategory'] } },
+      interaction({
+        type: 3,
+        data: { custom_id: 'notation-category', values: ['NoSuchCategory'] }
+      }),
       commands
     ) as Rendered
 
@@ -249,16 +256,16 @@ describe('dispatchInteraction', () => {
 
   test('returns undefined for interaction types it does not handle', () => {
     // Lets the caller choose the HTTP status rather than inventing one here.
-    expect(dispatchInteraction({ type: 5 }, commands)).toBeUndefined()
+    expect(dispatchInteraction(interaction({ type: 5 }), commands)).toBeUndefined()
   })
 
   test('falls back sensibly when the user has no global_name', () => {
     const response = dispatchInteraction(
-      {
+      interaction({
         type: 2,
         data: { name: 'root', options: [{ name: 'stat', value: 1 }] },
         member: { user: { username: 'legacyuser' } }
-      },
+      }),
       commands
     ) as Rendered
     expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
@@ -275,7 +282,7 @@ describe('dispatchInteraction', () => {
 
     function invokeView(options: { name: string; value: unknown }[] = []): Rendered {
       return dispatchInteraction(
-        { type: 2, data: { name: 'probe', options } },
+        interaction({ type: 2, data: { name: 'probe', options } }),
         new Map([['probe', viewCommand]])
       ) as Rendered
     }
@@ -296,14 +303,6 @@ describe('dispatchInteraction', () => {
 
     test('hidden composes with the V2 flag rather than replacing it', () => {
       expect(invokeView([{ name: 'hidden', value: true }]).data?.flags).toBe(32768 | 64)
-    })
-
-    test('a command with no renderer still reports itself unavailable', () => {
-      const response = dispatchInteraction(
-        { type: 2, data: { name: 'probe' } },
-        new Map([['probe', { data: commandList[0]!.data }]])
-      ) as Rendered
-      expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
     })
   })
 
@@ -336,7 +335,7 @@ describe('dispatchInteraction', () => {
   describe('reroll buttons', () => {
     test('a reroll re-runs the command from its encoded state', () => {
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'r:roll:notation=4d6L' } },
+        interaction({ type: 3, data: { custom_id: 'r:roll:notation=4d6L' } }),
         commands
       ) as Rendered
       expect(response.data?.components?.[0]).toMatchObject({ type: 17 })
@@ -347,7 +346,7 @@ describe('dispatchInteraction', () => {
       // result, since a stateless Worker cannot tell who is clicking without
       // spending ~19 of the 100 custom_id characters on a user id.
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'r:roll:notation=1d20' } },
+        interaction({ type: 3, data: { custom_id: 'r:roll:notation=1d20' } }),
         commands
       ) as Rendered
       expect(response.type).toBe(InteractionResponseType.ChannelMessageWithSource)
@@ -356,7 +355,7 @@ describe('dispatchInteraction', () => {
 
     test('a reroll of a hidden roll stays hidden', () => {
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'r:blades:dice=3&hidden=true' } },
+        interaction({ type: 3, data: { custom_id: 'r:blades:dice=3&hidden=true' } }),
         commands
       ) as Rendered
       expect(response.data?.flags).toBe(32768 | 64)
@@ -364,7 +363,7 @@ describe('dispatchInteraction', () => {
 
     test('a reroll of a public roll stays public', () => {
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'r:blades:dice=3' } },
+        interaction({ type: 3, data: { custom_id: 'r:blades:dice=3' } }),
         commands
       ) as Rendered
       expect(response.data?.flags).toBe(32768)
@@ -374,7 +373,7 @@ describe('dispatchInteraction', () => {
       // Buttons outlive deployments: nothing expires them, so a months-old
       // message can still be clicked.
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'r:noSuchCommand:x=1' } },
+        interaction({ type: 3, data: { custom_id: 'r:noSuchCommand:x=1' } }),
         commands
       ) as Rendered
       expect(JSON.stringify(response.data?.components)).toContain('no longer available')
@@ -382,19 +381,21 @@ describe('dispatchInteraction', () => {
 
     test('a roll that throws on reroll renders the error, not a crash', () => {
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'r:blades:dice=99' } },
+        interaction({ type: 3, data: { custom_id: 'r:blades:dice=99' } }),
         commands
       ) as Rendered
       expect(JSON.stringify(response.data?.components)).toContain('Something went wrong')
     })
 
     test('a malformed reroll id is left to the caller, as before', () => {
-      expect(dispatchInteraction({ type: 3, data: { custom_id: 'r:' } }, commands)).toBeUndefined()
+      expect(
+        dispatchInteraction(interaction({ type: 3, data: { custom_id: 'r:' } }), commands)
+      ).toBeUndefined()
     })
 
     test('the notation selector still works alongside reroll ids', () => {
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } },
+        interaction({ type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } }),
         commands
       ) as Rendered
       expect(response.type).toBe(InteractionResponseType.UpdateMessage)
@@ -422,7 +423,7 @@ describe('dispatchInteraction', () => {
 
     test('a reroll response suppresses mentions', () => {
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'r:roll:notation=1d20' } },
+        interaction({ type: 3, data: { custom_id: 'r:roll:notation=1d20' } }),
         commands
       ) as Rendered
       expect(response.data?.allowed_mentions).toEqual({ parse: [] })
@@ -430,7 +431,7 @@ describe('dispatchInteraction', () => {
 
     test('a component update suppresses mentions', () => {
       const response = dispatchInteraction(
-        { type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } },
+        interaction({ type: 3, data: { custom_id: 'notation-category', values: ['Filter'] } }),
         commands
       ) as Rendered
       expect(response.data?.allowed_mentions).toEqual({ parse: [] })

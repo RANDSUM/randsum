@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { applyModifier } from '../../../src/modifiers/registry'
 import { RANDSUM_MODIFIERS } from '../../../src/modifiers'
-import { parseModifiers } from '../../../src/notation/parse/parseModifiers'
+import { modifiersOf } from '../../support/modifiersOf'
 import { ModifierError } from '../../../src/errors'
 import type { ModifierContext } from '../../../src/modifiers/schema'
 import type { ModifierOptions } from '../../../src/types'
@@ -54,12 +54,12 @@ describe('applyModifier error cases', () => {
   })
 })
 
-describe('parseModifiers - stateful regex safety', () => {
+describe('modifiersOf - stateful regex safety', () => {
   test('returns identical results on repeated calls with same notation', () => {
     const notation = '4d6L+3'
-    const result1 = parseModifiers(notation)
-    const result2 = parseModifiers(notation)
-    const result3 = parseModifiers(notation)
+    const result1 = modifiersOf(notation)
+    const result2 = modifiersOf(notation)
+    const result3 = modifiersOf(notation)
     expect(result1).toEqual(result2)
     expect(result2).toEqual(result3)
   })
@@ -68,8 +68,8 @@ describe('parseModifiers - stateful regex safety', () => {
     const a = '2d6R{<2}'
     const b = '4d6L'
     Array.from({ length: 20 }).forEach(() => {
-      const resultA = parseModifiers(a)
-      const resultB = parseModifiers(b)
+      const resultA = modifiersOf(a)
+      const resultB = modifiersOf(b)
       expect(resultA.reroll).toBeDefined()
       expect(resultA.drop).toBeUndefined()
       expect(resultB.drop).toBeDefined()

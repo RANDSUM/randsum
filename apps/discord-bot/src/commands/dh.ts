@@ -2,7 +2,6 @@ import { inputs, roll } from '@randsum/games/daggerheart'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { DAGGERHEART, GLYPH } from '../utils/palette.js'
 import {
-  createGameCommand,
   encodeReroll,
   formatSignedModifier,
   rollContainer,
@@ -122,7 +121,7 @@ function buildDhView(context: CommandContext): RollView {
   ]
 }
 
-export const dhCommand: Command = createGameCommand({
+export const dhCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('dh')
     .setDescription('Roll dice for Daggerheart')
@@ -165,4 +164,4 @@ export const dhCommand: Command = createGameCommand({
         .setRequired(false)
     ),
   buildView: buildDhView
-})
+}

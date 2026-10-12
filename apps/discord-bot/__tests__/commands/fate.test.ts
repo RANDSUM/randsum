@@ -21,7 +21,7 @@ void mock.module('@randsum/games/fate', () => ({
 const { fateCommand } = await import('../../src/commands/fate.js')
 
 function render(options: { name: string; value: unknown }[] = []): RollView {
-  return fateCommand.buildView!(makeContext(options))
+  return fateCommand.buildView(makeContext(options))
 }
 
 beforeEach(() => {

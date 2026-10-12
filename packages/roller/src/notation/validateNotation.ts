@@ -1,9 +1,9 @@
 import { parseNotation } from './lexer/parse'
-import { notationToOptions } from './parse/notationToOptions'
+import { parsedToOptions } from './parse/notationToOptions'
 import type { DiceNotation } from './types'
 import type { InvalidValidationResult, ValidValidationResult, ValidationResult } from './types'
 import { optionsToDescription } from './transformers/optionsToDescription'
-import { optionsToNotation } from './transformers/optionsToNotation'
+import { formatNotation } from './transformers/optionsToNotation'
 
 /**
  * Validates dice notation and returns parsed information.
@@ -31,12 +31,12 @@ export function validateNotation(notation: string): ValidationResult {
     return result
   }
 
-  const options = notationToOptions(notation)
+  const options = parsedToOptions(notation, parsed)
   const result: ValidValidationResult = {
     valid: true,
     argument: notation as DiceNotation,
     options,
-    notation: options.map(o => optionsToNotation(o)),
+    notation: options.map(o => formatNotation(o)),
     description: options.map(o => optionsToDescription(o)),
     error: null
   }

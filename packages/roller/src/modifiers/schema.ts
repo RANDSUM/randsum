@@ -142,13 +142,13 @@ export interface ModifierBehavior<TOptions = unknown> {
    * Apply this modifier to roll values.
    * Returns new rolls array (should not mutate input).
    */
-  apply: (rolls: number[], options: TOptions, ctx: ModifierContext) => ModifierApplyResult
+  apply(rolls: number[], options: TOptions, ctx: ModifierContext): ModifierApplyResult
 
   /**
    * Validate options against roll context.
    * Throws ModifierError if invalid.
    */
-  validate?: (options: TOptions, rollContext: ModifierValidationContext) => void
+  validate?(options: TOptions, rollContext: ModifierValidationContext): void
 
   /**
    * Whether this modifier requires the rollOne function.

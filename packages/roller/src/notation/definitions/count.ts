@@ -8,6 +8,8 @@ export const countPattern: RegExp = /#\{((?:>=|<=|>|<|=)?\d+(?:,(?:>=|<=|>|<|=)?
 export const countSchema: NotationSchema<CountOptions> = defineNotationSchema<CountOptions>({
   name: 'count',
   priority: 80,
+  tokenKey: '#{..}',
+  category: 'Reinterpret',
 
   pattern: countPattern,
 

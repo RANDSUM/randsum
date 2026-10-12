@@ -2,7 +2,6 @@ import { inputs, roll } from '@randsum/games/root-rpg'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { GLYPH, ROOT } from '../utils/palette.js'
 import {
-  createGameCommand,
   encodeReroll,
   formatSignedModifier,
   getInitialRolls,
@@ -91,7 +90,7 @@ function buildRootView(context: CommandContext): RollView {
   ]
 }
 
-export const rootCommand: Command = createGameCommand({
+export const rootCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('root')
     .setDescription('Roll dice for Root RPG')
@@ -121,4 +120,4 @@ export const rootCommand: Command = createGameCommand({
         .setRequired(false)
     ),
   buildView: buildRootView
-})
+}

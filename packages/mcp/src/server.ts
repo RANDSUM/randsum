@@ -3,6 +3,7 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 import { AVAILABLE_GAMES } from '@randsum/games'
 import type { GameShortcode } from '@randsum/games'
 import type { InputDeclaration } from '@randsum/games/schema'
+import { RandsumError } from '@randsum/roller/errors'
 import { z } from 'zod'
 import { version as VERSION } from '../package.json'
 import { GAME_INPUTS, isRequiredInput, rollGame } from './tools/rollGame'
@@ -12,6 +13,9 @@ import { validateNotationInput } from './tools/validate'
 /**
  * Wraps a plain handler result (or thrown error) in the MCP CallToolResult
  * envelope: JSON text content plus structured content, and `isError` on throw.
+ * A thrown RandsumError also reports its `code`, and the `position` in the
+ * notation when it has one, as a second text block. Errors carry no structured
+ * content, because clients check structured content against the output schema.
  */
 function toResult(produce: () => Record<string, unknown>): CallToolResult {
   try {
@@ -22,11 +26,60 @@ function toResult(produce: () => Record<string, unknown>): CallToolResult {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
+    const details =
+      error instanceof RandsumError
+        ? [
+            {
+              type: 'text' as const,
+              text: JSON.stringify({
+                code: error.code,
+                ...(error.context?.position !== undefined
+                  ? { position: error.context.position }
+                  : {})
+              })
+            }
+          ]
+        : []
     return {
-      content: [{ type: 'text', text: message }],
+      content: [{ type: 'text', text: message }, ...details],
       isError: true
     }
   }
+}
+
+/** Output of the `roll` tool (RollToolResult). */
+const rollOutput = {
+  notation: z.string().describe('The notation that was rolled'),
+  total: z.number().describe('Combined total across every pool'),
+  pools: z
+    .array(
+      z.object({
+        notation: z.string(),
+        rolls: z.array(z.number()).describe('Die values after modifiers'),
+        total: z.number(),
+        description: z.string()
+      })
+    )
+    .describe('One entry per dice pool'),
+  description: z.string().describe('Human-readable description of the roll')
+}
+
+/** Output of the `validate` tool (ValidateToolResult). */
+const validateOutput = {
+  notation: z.string(),
+  valid: z.boolean(),
+  description: z.string().optional().describe('Human-readable description when valid'),
+  suggestion: z.string().optional().describe('Suggested fix when invalid'),
+  error: z.string().optional().describe('Why the notation is invalid')
+}
+
+/** Output of the `roll_game` tool (RollGameToolResult). */
+const rollGameOutput = {
+  game: z.enum(AVAILABLE_GAMES),
+  total: z.number(),
+  result: z.unknown().describe("The game's interpreted outcome"),
+  details: z.unknown().describe('Game-specific extra detail, when the game provides it'),
+  rolls: z.array(z.number()).describe('Every die value rolled')
 }
 
 /** One spec input declaration as a Zod field: type, bounds, enum, description. */
@@ -102,7 +155,8 @@ export function createServer(): McpServer {
           .int()
           .optional()
           .describe('Optional integer seed for a deterministic, reproducible roll')
-      }
+      },
+      outputSchema: rollOutput
     },
     input => toResult(() => ({ ...rollNotation(input) }))
   )
@@ -115,7 +169,8 @@ export function createServer(): McpServer {
         'Validate RANDSUM dice notation. Returns whether it is valid, a human-readable description, and a suggested fix when invalid.',
       inputSchema: {
         notation: z.string().describe('RANDSUM dice notation to validate, e.g. "4d6L" or "2d20+5"')
-      }
+      },
+      outputSchema: validateOutput
     },
     input => toResult(() => ({ ...validateNotationInput(input) }))
   )
@@ -126,7 +181,8 @@ export function createServer(): McpServer {
       title: 'Roll for a game system',
       description:
         'Roll for a specific tabletop game system (blades, daggerheart, fate, fifth, pbta, root-rpg, salvageunion), interpreting the dice per that game. Pass game-specific inputs in `params`.',
-      inputSchema: rollGameInput
+      inputSchema: rollGameInput,
+      outputSchema: rollGameOutput
     },
     ({ game, params }) => toResult(() => ({ ...rollGame(game, params) }))
   )

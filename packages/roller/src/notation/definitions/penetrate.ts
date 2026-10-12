@@ -13,6 +13,8 @@ export const penetrateSchema: NotationSchema<boolean | number | ComparisonOption
   defineNotationSchema<boolean | number | ComparisonOptions>({
     name: 'penetrate',
     priority: 52,
+    tokenKey: '!p',
+    category: 'Accumulate',
 
     pattern: penetratePattern,
 

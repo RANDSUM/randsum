@@ -31,17 +31,15 @@ export interface Command {
    * Components V2 is the only output shape, so a command builds containers and
    * the dispatcher wraps them.
    *
-   * Still optional, and the dispatcher still checks: a command added without
-   * one must say "not available on this deployment" rather than have the
-   * dispatcher guess. Every command in the barrel has one, and
-   * `__tests__/worker/dispatch.test.ts` holds that line.
+   * Required: a command without a renderer cannot be reached, so it is a type
+   * error rather than a runtime "not available on this deployment" answer.
    *
    * `buildComponents` went with `buildEmbed`. It existed because an embed and
    * its action row were separate fields on the response; under Components V2
    * they are the same tree, and `/notation` — its only user — nests its select
    * menu inside its container.
    */
-  buildView?: (context: CommandContext) => RollView
+  buildView: (context: CommandContext) => RollView
   /**
    * Bespoke error text for the dispatcher's catch blocks.
    *
