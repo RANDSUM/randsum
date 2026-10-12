@@ -24,7 +24,6 @@ describe('Rosetta Stone — notation examples', () => {
     describe(doc.title, () => {
       for (const example of doc.examples) {
         if (!isFullNotation(example.notation)) {
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
           test.skip(`fragment "${example.notation}" — not a standalone notation`, () => {})
           continue
         }

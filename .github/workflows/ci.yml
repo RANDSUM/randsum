@@ -276,13 +276,12 @@ jobs:
           fail-on-scopes: runtime, development
 
   sca:
-    # SCA + license surfacing (audit X8a / security R2, F1, F2). Suppresses the
-    # known dev/build-time advisories via osv-scanner.toml and surfaces LGPL/MPL
-    # transitives. Report-only: `dependency-review` above is the blocking
-    # advisory gate, while this job deliberately reports what that gate does not
+    # SCA (audit X8a / security R2, F1, F2). Report-only: `dependency-review`
+    # above is the blocking advisory gate, while this job deliberately reports what that gate does not
     # cover — the whole tree, below `high`. `continue-on-error: true` plus its
     # absence from the `CI Success` needs list is what keeps those findings
-    # informative rather than blocking. See osv-scanner.toml for the per-advisory reasoning.
+    # informative rather than blocking. There are no suppressions; if one is
+    # ever needed, justify it in the PR that adds it.
     name: sca
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -296,7 +295,6 @@ jobs:
         uses: google/osv-scanner-action/osv-scanner-action@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0
         with:
           scan-args: |-
-            --config=osv-scanner.toml
             --recursive
             ./
 

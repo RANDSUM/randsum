@@ -88,10 +88,6 @@ packages/*/lib/
 .moon/cache
 .moon/docker
 
-# TypeDoc generated documentation
-/docs/api/
-packages/site/public/api/
-
 # Claude local settings
 .claude/*.local.json
 

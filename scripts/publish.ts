@@ -190,7 +190,6 @@ console.log()
 
 const failed: string[] = []
 
-/* eslint-disable no-await-in-loop, no-console -- CLI script: sequential I/O by design, console output intentional */
 for (const { name, version, dir } of packages) {
   console.log(`--- ${name} ---`)
   try {
@@ -232,7 +231,6 @@ for (const { name, version, dir } of packages) {
   }
   console.log()
 }
-/* eslint-enable no-await-in-loop, no-console */
 
 if (!packDirArg) {
   rmSync(packDir, { recursive: true, force: true })
