@@ -318,10 +318,8 @@ path — trace the import graph from `src/tokenize.ts`.
 bun run test                          # tests (bun:test), writes coverage/lcov.info
 bun run build                         # bunup — ESM + DTS
 bun run typecheck                     # tsc --noEmit
-bun run lint                          # biome
-bun run format / format:check         # biome
 bun run size                          # size-limit
-bun run check                         # build + typecheck + format:check + lint + test
+bun run check                         # build + typecheck + test
 ```
 
 Filter from the repo root: `bun run --filter @randsum/roller <script>`.

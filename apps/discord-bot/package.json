@@ -41,10 +41,7 @@
     "dev": "bunx wrangler@4 dev -c wrangler.jsonc",
     "deploy-commands": "bun run src/deploy-commands.ts",
     "test": "bun test --isolate",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
     "typecheck": "tsc --noEmit",
-    "check": "bun run typecheck && bun run format:check && bun run lint && bun run test"
+    "check": "bun run typecheck && bun run test"
   }
 }

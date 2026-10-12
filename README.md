@@ -104,8 +104,8 @@ Bun's workspace features handle tasks across all packages with automatic depende
 - `bun run build` - Build all packages in dependency order (roller first, then others)
 - `bun run test` - Run all tests
 - `bun run lint` - Run Biome lint across the monorepo
-- `bun run typecheck` - Run TypeScript checks for all packages
-- `bun run check:all` - Run all package-level checks (build, typecheck, lint, format, test)
+- `bun run typecheck` - Run TypeScript checks for all packages and scripts/
+- `bun run check` - Run `biome ci .` and the scripts/ typecheck, then every package check (build, typecheck, test)
 - `bun run fix:all` - Run Biome with auto-fix and format code
 - `bun run format` - Format code using Biome
 

@@ -95,5 +95,5 @@ bun run dev        # Dev server (localhost:4321)
 bun run build      # Production build
 bun run preview    # Preview production build
 bun run typecheck  # astro check
-bun run check      # build + typecheck + format:check + lint + test
+bun run check      # build + typecheck + test
 ```

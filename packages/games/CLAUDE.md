@@ -120,7 +120,7 @@ bun run --filter @randsum/games build        # Build all entries (bunup)
 bun run --filter @randsum/games test         # Test (needs a prior build); writes coverage/lcov.info
 bun run --filter @randsum/games typecheck    # TypeScript check
 bun run --filter @randsum/games size         # Bundle size check
-bun run --filter @randsum/games check        # Full check (build + typecheck + format + lint + test)
+bun run --filter @randsum/games check        # Full check (build + typecheck + test)
 ```
 
 ## Key Constraints

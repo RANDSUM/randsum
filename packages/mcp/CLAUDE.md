@@ -32,9 +32,7 @@ bun run dev                    # Run the server from source over stdio
 bun run build                  # bunup → dist/index.js (ESM), then chmod +x
 bun run test                   # bun test (calls tool handlers directly)
 bun run typecheck              # tsc --noEmit
-bun run lint                   # ESLint
-bun run format                 # Biome
-bun run check                  # build + typecheck + format:check + lint + test
+bun run check                  # build + typecheck + test
 ```
 
 Smoke-test the live server by piping a JSON-RPC `initialize` message to `bun src/index.ts`.

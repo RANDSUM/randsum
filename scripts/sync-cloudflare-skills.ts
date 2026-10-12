@@ -58,7 +58,7 @@ const WANTED: Readonly<Record<string, string>> = {
  */
 
 async function run(command: readonly string[], cwd: string): Promise<void> {
-  const proc = Bun.spawn(command, { cwd, stdout: 'pipe', stderr: 'pipe' })
+  const proc = Bun.spawn([...command], { cwd, stdout: 'pipe', stderr: 'pipe' })
   const code = await proc.exited
   if (code !== 0) {
     throw new Error(

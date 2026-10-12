@@ -52,12 +52,9 @@
     "build": "bunup && chmod +x dist/index.js",
     "dev": "bun run src/index.ts",
     "test": "bun test",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
     "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
     "typecheck": "tsc --noEmit",
-    "check": "bun run build && bun run typecheck && bun run format:check && bun run lint && bun run test"
+    "check": "bun run build && bun run typecheck && bun run test"
   },
   "engines": {
     "bun": ">=1.3.10",

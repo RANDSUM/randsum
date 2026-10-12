@@ -37,15 +37,13 @@ jobs:
         id: filter
         with:
           filters: |
-            # Root config every package builds, lints or installs against. A PR
+            # Root config every package builds or installs against. A PR
             # touching only these (a catalog or lockfile bump) fans out to every
             # package leg instead of producing an empty matrix.
             shared:
               - 'bun.lock'
               - 'package.json'
               - 'tsconfig*.json'
-              - 'biome.json'
-              - 'biome-plugins/**'
               - 'bunfig.toml'
               - '.github/actions/**'
             roller:
@@ -165,31 +163,45 @@ jobs:
           PKG: ${{ matrix.pkg }}
         run: bun run --filter "@randsum/$PKG" size
 
-  ci-aggregator:
-    # Guard against a job silently opting out of the gate. `ci-gate`'s `needs:`
-    # list is hand-maintained, and a job missing from it still runs, still goes
-    # red, and still cannot fail the only required status check — the gate stops
-    # gating with no symptom. This job diffs the two lists mechanically, and is
-    # itself in that `needs:` list so it cannot be bypassed.
-    name: ci-aggregator
+  repo:
+    # Repo-wide gates that each finish in about a second, folded into one job so
+    # they share one checkout and one dependency install. Every step after setup
+    # runs even if an earlier one failed, so one push reports every red gate.
+    #
+    # - workspace-scripts: a package silently dropping a standard script.
+    #   `bun run --filter '*' <script>` skips packages that lack it.
+    # - ci-aggregator: a job missing from `ci-gate`'s hand-maintained `needs:`
+    #   still runs and goes red, but cannot fail the only required check.
+    # - biome: one `biome ci .` lints and format-checks every package plus
+    #   scripts/, biome-plugins/ and root configs, emitting file/line
+    #   annotations. No package can opt out of it by omitting a script.
+    # - typecheck:scripts: scripts/ (publish.ts and these guards) is not a
+    #   workspace, so no package's typecheck reaches it.
+    # - knip and arch: unused code, cycles and package boundaries.
+    name: repo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/bun-setup
-      - run: bun run check:ci-aggregator
-
-  workspace-scripts:
-    # Guard against a package silently opting out of the standard script set.
-    # `bun run --filter '*' <script>` skips packages that lack the target script,
-    # which is how dice-ui escaped linting for months (audit Wave 3). This job
-    # feeds the CI Success gate so the escape hatch cannot be bypassed with
-    # --no-verify.
-    name: workspace-scripts
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/bun-setup
-      - run: bun run check:workspace-scripts
+      - id: setup
+        uses: ./.github/actions/bun-setup
+      - name: workspace-scripts
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: bun run check:workspace-scripts
+      - name: ci-aggregator
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: bun run check:ci-aggregator
+      - name: biome
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: bunx biome ci .
+      - name: typecheck scripts/
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: bun run typecheck:scripts
+      - name: knip
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: bun run knip
+      - name: arch
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: bun run arch:check
 
   skill:
     name: claude-doctor
@@ -258,25 +270,6 @@ jobs:
             echo "::endgroup::"
           done
 
-  knip:
-    name: knip
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/bun-setup
-      - run: bun run knip
-
-  arch:
-    # Architecture invariants (audit X7b / architecture R2+R3): no circular deps,
-    # no game-to-game import, no @randsum/*/src or /dist reach-in. Also runs in
-    # lefthook pre-push; this CI copy cannot be bypassed with --no-verify.
-    name: arch
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/bun-setup
-      - run: bun run arch:check
-
   dependency-review:
     # The blocking advisory gate, scoped to the dependencies this PR changes: an
     # advisory published against code already on main cannot block an unrelated
@@ -327,8 +320,8 @@ jobs:
     # `package` is the consolidated matrix job: its single `result` aggregates
     # every leg (roller, games, mcp, discord-bot, site, rdn, dice-ui) — if
     # any leg fails, the aggregate is `failure`, so listing it once still covers
-    # all seven packages. `workspace-scripts` guards against a package silently
-    # dropping a standard script; `ci-aggregator` guards this very list.
+    # all seven packages. `repo` runs the repo-wide gates, including the
+    # `ci-aggregator` step that guards this very list.
     #
     # `changes` is listed even though nothing here reads its outputs: a failure in
     # it leaves its four dependents `skipped` rather than `failure`, and the loop
@@ -337,12 +330,9 @@ jobs:
     needs:
       - changes
       - package
-      - workspace-scripts
-      - ci-aggregator
+      - repo
       - skill
       - publish-dry-run
-      - knip
-      - arch
       - dependency-review
     runs-on: ubuntu-latest
     env:
