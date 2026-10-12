@@ -1,13 +1,13 @@
 ---
 title: RANDSUM Discord Dice Bot — D&D, Blades, PbtA & More
-description: Add a dice rolling bot to your Discord server. Supports RANDSUM notation, D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG with rich embeds.
+description: Add a dice rolling bot to your Discord server. Supports RANDSUM notation, D&D 5e, Blades in the Dark, Daggerheart, Fate Core, PbtA, and Root RPG with full roll breakdowns.
 ---
 
 import CodeExample from '../../../components/live-repl/CodeExample.astro'
 
 See the [Discord Bot landing page](/discord) for screenshots and quick setup.
 
-The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. Built with [discord.js](https://discord.js.org) and Bun, it provides detailed roll breakdowns and full support for all RANDSUM game packages.
+The **RANDSUM Discord Bot** is a Discord application for rolling dice in chat. It runs as a Cloudflare Worker that answers Discord's slash commands, and provides detailed roll breakdowns and full support for all RANDSUM game packages.
 
 ## Add to your server
 
@@ -29,7 +29,7 @@ The core dice rolling command. Supports the full RANDSUM dice notation with deta
 
 ### `/blades`
 
-Roll Blades in the Dark action rolls. Takes the number of dice in your pool and returns the outcome (critical, success, partial, or failure) with color-coded embeds.
+Roll Blades in the Dark action rolls. Takes the number of dice in your pool and returns the outcome (critical, success, partial, or failure), color-coded by outcome.
 
 <CodeExample lang="bash" code={`/blades dice:3
 /blades dice:2
@@ -52,6 +52,14 @@ Roll Daggerheart mechanics with hope and fear dice. Supports modifiers, advantag
 /dh modifier:3 rolling_with:Disadvantage
 /dh amplify_hope:true amplify_fear:false
 /dh modifier:2`} />
+
+### `/fate`
+
+Roll Fate Core: four Fate dice (`4dF`) plus a skill rating, read off the Fate ladder from Terrible to Legendary. Add an opposition to resolve the shifts into a Fate outcome.
+
+<CodeExample lang="bash" code={`/fate skill:3
+/fate skill:2 opposition:3
+/fate   # Mediocre (+0) skill`} />
 
 ### `/root`
 
@@ -93,6 +101,7 @@ The following game packages have dedicated slash commands:
 - **@randsum/games/fifth** -- `/fifth` for D&D 5th Edition rolls
 - **@randsum/games/blades** -- `/blades` for Blades in the Dark action rolls
 - **@randsum/games/daggerheart** -- `/dh` for Daggerheart hope and fear dice
+- **@randsum/games/fate** -- `/fate` for Fate Core rolls against the ladder
 - **@randsum/games/pbta** -- `/pbta` for Powered by the Apocalypse moves
 - **@randsum/games/root-rpg** -- `/root` for Root RPG mechanics
 
@@ -103,15 +112,13 @@ Salvage Union is served by the [SURef bot](https://salvageunion.io/discord) inst
 - **Detailed breakdowns** -- Shows individual die results, modifiers, and step-by-step calculations
 - **Full notation support** -- All RANDSUM dice notation features (drop, reroll, explode, etc.)
 - **Game-specific commands** -- Dedicated commands for each supported RPG system
-- **Color-coded embeds** -- Results are visually distinct by outcome type
+- **Color-coded results** -- Results are visually distinct by outcome type
 
 ## Example Results
 
 See what RANDSUM bot results look like in practice.
 
 ![/roll notation:10d20 — rolled a 100](/discord-ss-roll-10d20.png)
-
-![/dh modifier:3 — Daggerheart Critical Hope](/discord-ss-dh-critical.png)
 
 ![/roll notation:2d12+1 result](/discord-ss-roll-2d12.png)
 

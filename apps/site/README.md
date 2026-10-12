@@ -4,7 +4,7 @@ RANDSUM documentation and marketing site, built with **Astro + Starlight**.
 
 **Live: [randsum.dev](https://randsum.dev)**
 
-> **Private app.** Not published to npm. Deployed to Cloudflare Workers on push to `main`.
+> **Private app.** Not published to npm. Deployed to Cloudflare Workers once CI is green on `main`.
 
 ## Development
 
@@ -40,7 +40,7 @@ The home page (`src/pages/index.astro`) is a custom landing page composed from
 
 ## Deployment
 
-Deployed automatically to Cloudflare Workers on push to `main` (via
+Deployed automatically to Cloudflare Workers once CI is green on `main` (via
 `@astrojs/cloudflare`, from `.github/workflows/deploy-cloudflare.yml`).
 
 ## More

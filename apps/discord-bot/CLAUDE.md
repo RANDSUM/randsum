@@ -61,8 +61,8 @@ that erase at compile time. That is what keeps discord.js out of the Worker bund
 
 ```bash
 bun run dev              # wrangler dev — run the Worker locally
-bun run deploy           # wrangler deploy — CI runs this on merge to main
-bun run deploy-commands  # Write the slash command registry (see below — now required)
+bun run deploy           # wrangler deploy — CI runs this once CI is green on main
+bun run deploy-commands  # Write the slash command registry — the deploy job runs it (see below)
 bun run typecheck        # tsc --noEmit
 bun run check            # typecheck + test (lint/format: `bun run lint` at the root)
 ```
@@ -105,8 +105,8 @@ there.
 
 ## Deployment
 
-`.github/workflows/deploy-cloudflare.yml` deploys `apps/discord-bot/wrangler.jsonc` on merge to
-`main`. Operational detail — triage, rollback, DR — lives in `apps/DEPLOY.md`.
+`.github/workflows/deploy-cloudflare.yml` deploys `apps/discord-bot/wrangler.jsonc` once CI is
+green on `main`. Operational detail — triage, rollback, DR — lives in `apps/DEPLOY.md`.
 
 - `bot.randsum.dev` is declared in `routes` as a `custom_domain`, so a deploy cannot detach the
   hostname Discord calls. Discord stores an absolute URL and never rediscovers it.
@@ -119,31 +119,10 @@ there.
 Only `@randsum/roller` and `@randsum/games` are built first; the Worker imports them through
 workspace subpath exports.
 
-## Command Registration — MANUAL, and the easiest thing to forget
+## Command Registration
 
-Registration is **no longer automatic.** The gateway process called `syncCommands()` on every
-boot, reconciling the barrel against Discord's registry and writing only on a difference. That
-process is gone and nothing in the Worker path replaces it.
-
-**Adding, renaming, or removing a command requires an explicit write:**
-
-```bash
-cd apps/discord-bot
-bun run deploy-commands   # needs DISCORD_TOKEN + DISCORD_CLIENT_ID
-```
-
-This has already caused one outage. #1191 renamed `/su` to `/salvageunion` without a registration
-write, leaving Discord advertising a command the code no longer had; every invocation silently
-timed out for a week while the bot was healthy. The startup sync was built to make that
-impossible, and dropping the gateway gave the failure mode back — so treat the step as part of
-shipping a command change, not an afterthought.
-
-Nothing detects the drift for you. The Worker answers an unregistered command's name with
-"Unknown command", but only if Discord ever sends it — which it will not, because Discord will
-not offer a command it does not know about.
-
-Commands are registered against the *application*, not against a transport, so the existing
-global registrations were untouched by the Cloudflare cutover and by dropping Render.
+The bot deploy job runs `deploy-commands` (one idempotent bulk-overwrite PUT) after the Worker
+deploy whenever `src/commands/**` or `deploy-commands.ts` changed, and on every manual bot deploy.
 
 ## Slash Command Structure
 
@@ -194,8 +173,11 @@ also frees that name for SURef in servers running both bots.
 1. Create `src/commands/<name>.ts` exporting a `Command` object
 2. Add the import and entry to `src/commands/index.ts` — the barrel is the only file that needs
    to change, and both the Worker and `deploy-commands.ts` read from it
-3. **Run `bun run deploy-commands`.** Deploying is not enough. Global commands take up to an hour
-   to propagate; set `DISCORD_GUILD_ID` for instant per-guild registration while developing.
+3. List it on the public pages — `apps/site/src/pages/discord.astro`,
+   `apps/site/src/content/docs/tools/discord-bot.mdx`, `LISTING.md` and `README.md`.
+   `__tests__/public-copy.test.ts` fails until every page names it.
+4. Merging registers it globally. While developing, run `bun run deploy-commands` with
+   `DISCORD_GUILD_ID` set for instant per-guild registration.
 
 ## Testing
 
@@ -225,4 +207,3 @@ transport around it is replaceable.
 - Private, never published to npm.
 - Requires a Discord application with slash command permissions.
 - One transport, no fallback: a broken or skipped Worker deploy is a user-visible outage.
-- Command registration is manual (see above).

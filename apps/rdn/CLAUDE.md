@@ -111,8 +111,8 @@ keeping the published JSON in sync with the source.
 - Private app, never published to npm.
 - **Deployed to Cloudflare Workers (`wrangler.jsonc`).** Netlify served this
   site until 2026-08-18 and has been removed entirely.
-  Cloudflare deploys from `.github/workflows/deploy-cloudflare.yml` on merge to
-  `main`, not from Workers Builds: rdn imports roller through a workspace
+  Cloudflare deploys from `.github/workflows/deploy-cloudflare.yml` once CI is
+  green on `main`, not from Workers Builds: rdn imports roller through a workspace
   subpath export that has to be built first, and CI already sequences that.
   No Astro adapter is involved — the site is `output: 'static'`, so Cloudflare
   serves `dist/` directly through an assets binding with no Worker script.

@@ -10,9 +10,9 @@ to file incident RCAs.
 
 | Surface            | App                                             | Host                | Trigger                  | URL                   |
 | ------------------ | ----------------------------------------------- | ------------------- | ------------------------ | --------------------- |
-| Docs site          | `apps/site`                                     | **Cloudflare**      | push to `main`           | randsum.dev           |
-| Notation spec site | `apps/rdn`                                      | **Cloudflare**      | push to `main`           | notation.randsum.dev  |
-| Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | push to `main`           | bot.randsum.dev       |
+| Docs site          | `apps/site`                                     | **Cloudflare**      | green CI on `main`       | randsum.dev           |
+| Notation spec site | `apps/rdn`                                      | **Cloudflare**      | green CI on `main`       | notation.randsum.dev  |
+| Discord bot        | `apps/discord-bot`                              | **Cloudflare**      | green CI on `main`       | bot.randsum.dev       |
 | npm packages       | `packages/roller`, `packages/games`, `packages/mcp` | npm registry        | changesets on merge      | npmjs.com/org/randsum |
 
 **Everything migrated to Cloudflare on 2026-08-18** — both sites and the Discord
@@ -235,8 +235,8 @@ config change. That is the deliberate trade: the fallback had no host, no
 traffic, and no test that it still worked, and a rollback nobody has exercised
 is a claim rather than a plan.
 
-**What this costs, concretely: slash-command registration is now manual.** The
-gateway process reconciled the registry on every boot. Nothing replaces it — see
+**What this cost, concretely: slash-command registration.** The gateway process
+reconciled the registry on every boot. The deploy job now writes it instead — see
 the bot's section below.
 
 Alerting did not survive either, and this is the part most likely to surprise
@@ -266,7 +266,7 @@ Sentry needs no decommissioning: it was never enabled in production.
 ## Cloudflare (apps/site → randsum.dev, apps/rdn → notation.randsum.dev)
 
 Both Astro sites are separate Workers, each with a custom domain, deployed from
-`.github/workflows/deploy-cloudflare.yml` on merge to `main`.
+`.github/workflows/deploy-cloudflare.yml` once CI is green on `main`.
 
 - **site** — needs a Worker, not just assets: `src/pages/api/roll.ts` sets
   `prerender = false`, so one route is server-rendered and everything else ships
@@ -275,15 +275,29 @@ Both Astro sites are separate Workers, each with a custom domain, deployed from
   `apps/site/dist/server/wrangler.json`, not the hand-written
   `apps/site/wrangler.jsonc` (that one is build input).
 - **rdn** — `output: 'static'`, no adapter. Deploy `apps/rdn/wrangler.jsonc`.
-- The path filter is on the **workflow**, not per job: a merge touching any of
-  `apps/{rdn,site,discord-bot}/**`, `packages/**` or `bun.lock` runs all three
-  deploy jobs. Redeploying an unchanged surface is a no-op version upload, so
-  this costs CI minutes rather than correctness. A manual run can narrow to one
-  surface — see below.
+- The trigger is `workflow_run` on CI: nothing deploys unless CI concluded
+  `success` for a push to `main`, and the jobs check out the commit CI tested.
+  The `plan` job diffs that commit against the commit the last successful
+  CI-triggered deploy shipped, so a deploy the concurrency group cancelled has
+  its changes carried by the next one; a change to any of `apps/{rdn,site,discord-bot}/**`, `packages/**` or `bun.lock`
+  runs all three deploy jobs. Each run records its commit in its run name
+  (`Deploy <sha>`), and `plan` reads it back from there. If the commit is
+  *older* than the last deployed one — a CI re-run on an earlier `main` commit —
+  `plan` deploys nothing and says so in a notice, rather than roll every surface
+  and the command registry back. That refused run still concludes success under
+  its older title, so `plan` does not take the newest successful run as the last
+  deploy: it reads the last 50 successful runs and picks the newest commit by
+  ancestry, skipping any recorded commit that a later one descends from. Re-running
+  several old CI runs in turn therefore never walks the base backwards. Only when
+  there is no earlier deploy in that window, or it is on an unrelated history,
+  does `plan` deploy everything. To roll back on
+  purpose, use the rollback commands below. Redeploying an unchanged surface is a no-op version
+  upload, so this costs CI minutes rather than correctness. A manual run can
+  narrow to one surface — see below.
 
 ### Deploy
 
-Merge to `main` — CI deploys automatically. To deploy by hand:
+Merge to `main` — the deploy runs once CI is green. To deploy by hand:
 
 ```bash
 bun run --filter '@randsum/roller' build
@@ -295,16 +309,18 @@ bun run --filter @randsum/roller --filter @randsum/rdn build
 bun run --filter @randsum/rdn deploy
 ```
 
-### Deploying when the push trigger does not fire
+### Deploying when no deploy ran
 
 **A merge to `main` is not a guarantee that anything deployed.** On 2026-09-01
 the merge of #1235 produced ZERO workflow runs — not the deploy, not CI, not
 CodeQL. `actions/runs?head_sha=<sha>` returned `total_count: 0` twenty minutes
 later. GitHub dropped the push event; the workflow was correct and had run
-normally for the merge forty minutes before.
+normally for the merge forty minutes before. With no CI run there is no
+`workflow_run` either, and a red CI run deploys nothing by design.
 
 There is no re-run for a run that never existed, so `workflow_dispatch` is the
-way out:
+way out. A manual run deploys main as it stands, without the CI gate, so check
+main is green first:
 
 ```bash
 gh workflow run deploy-cloudflare.yml --ref main                    # all surfaces
@@ -314,7 +330,7 @@ gh workflow run deploy-cloudflare.yml --ref main -f surface=rdn     # notation.r
 ```
 
 Or use the **Run workflow** button on the workflow's Actions page. It shares the
-`deploy-cloudflare` concurrency group with the push-triggered runs, so a manual
+`deploy-cloudflare` concurrency group with the CI-triggered runs, so a manual
 run queues behind an in-flight deploy rather than racing it.
 
 **Confirm a merge actually deployed** — a green PR says nothing about the push
@@ -324,7 +340,8 @@ that followed it:
 gh api "repos/RANDSUM/randsum/actions/runs?head_sha=$(git rev-parse origin/main)" --jq '.total_count'
 ```
 
-`0` means no workflow ran for that commit at all. Dispatch manually.
+`0` means no workflow ran for that commit at all. Dispatch manually. A CI run with
+no deploy run after it means CI was red, or `plan` found nothing to deploy.
 
 ### Rollback — roll back to a previous version
 
@@ -362,7 +379,7 @@ reversible — rolling back does not delete newer versions.
 ## Cloudflare Worker — the Discord bot (apps/discord-bot → bot.randsum.dev)
 
 The bot is `apps/discord-bot/wrangler.jsonc`, deployed by
-`.github/workflows/deploy-cloudflare.yml` on merge to `main`. Discord POSTs each
+`.github/workflows/deploy-cloudflare.yml` once CI is green on `main`. Discord POSTs each
 interaction to `https://bot.randsum.dev/`, set as the application's Interactions
 Endpoint URL.
 
@@ -373,7 +390,9 @@ deploy here is a user-visible outage with nothing behind it, which is the main
 thing that changed about operating this service.
 
 - The Worker needs **no `DISCORD_TOKEN`**. HTTP interactions are authenticated by
-  request signature, so the most sensitive credential is simply not deployed.
+  request signature, so the most sensitive credential is simply not deployed. The
+  token lives only in the `DISCORD_TOKEN` repository secret, for command
+  registration.
   `DISCORD_PUBLIC_KEY` is a committed `var`, not a secret — the reasoning is in
   `wrangler.jsonc`, and it verifies signatures rather than producing them.
 - `bot.randsum.dev` is declared in `routes` as a `custom_domain`, so a deploy
@@ -390,6 +409,7 @@ Merge to `main`. To deploy by hand:
 ```bash
 bun run --filter '@randsum/roller' --filter '@randsum/games' build
 bun run --filter @randsum/discord-bot deploy
+bun run --filter @randsum/discord-bot deploy-commands   # if a command changed
 ```
 
 ### Triage — "the bot is down"
@@ -422,24 +442,22 @@ did not come along.
 If the endpoint is healthy but a command misbehaves, it is a registry problem,
 not a transport one — see the next section.
 
-### Slash command registration is now a manual step
+### Slash command registration
 
-The gateway process reconciled the command registry on every boot. Nothing in
-the Worker path does, so **adding, renaming, or removing a command requires an
-explicit write**:
+The gateway process reconciled the command registry on every boot; the Worker
+never writes it. The bot deploy job does instead: after the Worker deploy it runs
+`deploy-commands`, one idempotent bulk-overwrite PUT of the whole barrel, whenever
+`src/commands/**` or `deploy-commands.ts` changed since the last successful
+deploy, and on every manual bot deploy.
+It fails red if the `DISCORD_TOKEN` secret is missing.
 
-```bash
-cd apps/discord-bot
-bun run deploy-commands   # needs DISCORD_TOKEN + DISCORD_CLIENT_ID in the environment
-```
+That closes the gap behind #1191, which renamed `/su` to `/salvageunion` without a
+registration write: every invocation timed out for a week while the bot was
+healthy. A stale registry is invisible from the endpoint probe above, so if one is
+suspected, repair it with `gh workflow run deploy-cloudflare.yml --ref main -f surface=bot`.
 
-This is the one operational regression from dropping the gateway, and it has bitten
-before: #1191 renamed `/su` to `/salvageunion` without a registration write, and
-every invocation timed out for a week while the bot was healthy. A stale registry
-is invisible from the endpoint probe above.
-
-(Set `DISCORD_GUILD_ID` for instant per-guild registration while developing; leave
-it unset for global registration, ~1h propagation.)
+(Run `bun run deploy-commands` locally with `DISCORD_GUILD_ID` set for instant
+per-guild registration while developing.)
 
 ### Rollback
 
@@ -457,11 +475,11 @@ A rolled-back command *schema* does not roll back the registry: re-run
 
 ### Token rotation (`DISCORD_TOKEN`)
 
-The Worker does not hold this token, so rotation is no longer a deploy concern —
-it only affects whoever runs `deploy-commands`.
+The Worker does not hold this token; only command registration uses it.
 
 1. Discord Developer Portal → application → **Bot** → **Reset Token**.
-2. Use the new value in the environment you run `deploy-commands` from.
+2. `gh secret set DISCORD_TOKEN --repo RANDSUM/randsum`, and use the new value
+   wherever you run `deploy-commands` locally.
 
 Resetting revokes the old token immediately. `DISCORD_CLIENT_ID` is the
 application ID, not a secret.
