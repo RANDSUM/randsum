@@ -40,7 +40,7 @@ bun run --filter @randsum/games build    # Build one package
 bun test packages/roller/__tests__/roll/roll.test.ts
 
 # Other
-bun run --filter @randsum/roller size    # Bundle size checks (size-limit; per-package, no root script)
+bun run --filter @randsum/roller size    # Bundle size checks (size-limit; `bun run size` runs every package)
 bun run bench                            # Performance benchmarks (mitata)
 bun run site:dev                         # Astro dev server (localhost:4321)
 bun run help                             # Quick command reference
@@ -79,7 +79,7 @@ All publishable packages produce ESM only:
 - `dist/index.d.ts` (TypeScript declarations)
 - Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`. The game subpaths in `@randsum/games` are code-generated, so each compiles to `dist/<game>.generated.js` / `dist/<game>.generated.d.ts` (e.g. `./fifth` → `dist/fifth.generated.js`); the `schema` subpath is `dist/schema.js`.
 - No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
-- Bundle size limits enforced per package: the figures live only in each package's `size-limit` block in `package.json`
+- Bundle size limits enforced per package: the figures live only in each package's `size-limit` block in `package.json` (games: `.size-limit.ts`)
 
 CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
 
@@ -159,7 +159,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 - `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
 - `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
 
-**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. Run `bun run size` for all of them, or one: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package.
+**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json` (games derives its entries in `.size-limit.ts`). Run `bun run size` for all of them, or one: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package.
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 

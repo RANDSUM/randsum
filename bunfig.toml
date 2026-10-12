@@ -1,20 +1,3 @@
 [install]
 # Use isolated linker for better dependency isolation and security
 linker = 'isolated'
-
-[test]
-# Default test timeout (30 seconds)
-timeout = 30000
-
-# Coverage is opt-in: each package's `test` script passes its own lcov flags
-# (this file is not read when bun test runs from a package directory).
-# Exclude build output and test utilities when it does run from the root.
-coveragePathIgnorePatterns = ["**/dist/**", "**/node_modules/**", "**/test-utils/**"]
-
-# Run integration tests concurrently for faster execution (Bun 1.3+)
-# Tests in these files will run in parallel within the file
-concurrentTestGlob = "**/integration*.test.ts"
-
-[run]
-# Silence experimental warnings
-silent = false

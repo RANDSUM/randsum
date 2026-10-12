@@ -132,12 +132,7 @@ bun install`} />
       }
     }`} />
 
-    Also add a size-limit entry in the same file:
-
-    <CodeExample code={`{
-      "path": "dist/<shortcode>.generated.js",
-      "limit": "15 KB"
-    }`} />
+    No size-limit entry is needed: `packages/games/.size-limit.ts` gives every generated game a budget.
 
 5. **Write tests** — Create two test files in `packages/games/__tests__/`. See test templates below the steps.
 
@@ -151,7 +146,7 @@ bun install`} />
     - The `.randsum.json` spec
     - The generated `.ts` file
     - Both test files
-    - The `package.json` changes (export + size-limit)
+    - The `package.json` export
 
     In the PR description, link to the game's SRD or rules reference so reviewers can verify the outcome tables.
 

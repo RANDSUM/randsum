@@ -20,10 +20,19 @@
  * It also asserts that every apps/<app>/wrangler.jsonc declares the same
  * `compatibility_date`, so the three Workers share one runtime baseline and no
  * config comment can claim a match that is not there.
+ *
+ * Config parity it also holds:
+ * - every published package declares the same `engines` block, and private
+ *   workspaces declare none (the root manifest owns the dev toolchain floor);
+ * - every LICENSE under packages/ or apps/ is byte-identical to the root LICENSE,
+ *   and every published package ships one;
+ * - apps/site and apps/rdn pin identical astro, @astrojs/check,
+ *   @astrojs/sitemap and typescript specs (a guard rather than a named catalog:
+ *   no Dependabot run has ever bumped a catalog entry).
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { dirname, join, relative } from 'node:path'
 
 // Scripts every workspace package MUST declare. Kept in sync with the per-package
 // `check` chain (typecheck + test). Lint and format are not here: one root
@@ -50,7 +59,11 @@ const ROOT = join(import.meta.dir, '..')
 
 interface PackageManifest {
   readonly name?: string
+  readonly private?: boolean
   readonly scripts?: Record<string, string>
+  readonly engines?: Record<string, string>
+  readonly dependencies?: Record<string, string>
+  readonly devDependencies?: Record<string, string>
 }
 
 const findManifests = (): readonly { readonly dir: string; readonly manifest: PackageManifest }[] =>
@@ -73,9 +86,10 @@ const findManifests = (): readonly { readonly dir: string; readonly manifest: Pa
       }))
   })
 
+const manifests = findManifests()
 const problems: string[] = []
 
-for (const { dir, manifest } of findManifests()) {
+for (const { dir, manifest } of manifests) {
   const name = manifest.name ?? dir
   const scripts = manifest.scripts ?? {}
   const required = [...REQUIRED_SCRIPTS, ...(BUILD_EXEMPT.has(name) ? [] : ['build'])]
@@ -113,6 +127,70 @@ const compatProblem =
       "\n\nSet them to one date, no newer than the pinned wrangler's workerd supports."
     : undefined
 
+// Config parity: engines, LICENSE, and the hand-copied Astro pins.
+const parityProblems: string[] = []
+const rel = (path: string): string => relative(ROOT, path)
+
+const published = manifests.filter(({ manifest }) => manifest.private !== true)
+const enginesSpecs = new Set(
+  published.map(({ manifest }) => JSON.stringify(manifest.engines ?? null))
+)
+if (enginesSpecs.size > 1 || enginesSpecs.has('null')) {
+  parityProblems.push(
+    'Every published package must declare the same engines block:\n' +
+      published
+        .map(({ dir, manifest }) => `  ${rel(dir)}: ${JSON.stringify(manifest.engines ?? null)}`)
+        .join('\n')
+  )
+}
+const privateWithEngines = manifests.filter(
+  ({ manifest }) => manifest.private === true && manifest.engines !== undefined
+)
+if (privateWithEngines.length > 0) {
+  parityProblems.push(
+    'Private workspaces must not declare engines (the root manifest owns the toolchain floor):\n' +
+      privateWithEngines.map(({ dir }) => `  ${rel(dir)}`).join('\n')
+  )
+}
+
+const rootLicense = readFileSync(join(ROOT, 'LICENSE'))
+const licenseProblems = manifests.flatMap(({ dir, manifest }) => {
+  const license = join(dirname(dir), 'LICENSE')
+  if (!existsSync(license)) {
+    return manifest.private === true ? [] : [`  ${rel(license)}: missing`]
+  }
+  return readFileSync(license).equals(rootLicense)
+    ? []
+    : [`  ${rel(license)}: differs from LICENSE`]
+})
+if (licenseProblems.length > 0) {
+  parityProblems.push(
+    'Every workspace LICENSE must be byte-identical to the root LICENSE (copy it over):\n' +
+      licenseProblems.join('\n')
+  )
+}
+
+const ASTRO_PINNED = ['astro', '@astrojs/check', '@astrojs/sitemap', 'typescript'] as const
+const ASTRO_APPS = ['apps/site', 'apps/rdn'] as const
+const specsOf = (app: string): Record<string, string> => {
+  const found = manifests.find(({ dir }) => rel(dir) === `${app}/package.json`)
+  return { ...found?.manifest.dependencies, ...found?.manifest.devDependencies }
+}
+const astroDrift = ASTRO_PINNED.filter(
+  dep => new Set(ASTRO_APPS.map(app => specsOf(app)[dep])).size > 1
+)
+if (astroDrift.length > 0) {
+  parityProblems.push(
+    `${ASTRO_APPS.join(' and ')} must pin identical specs for ${ASTRO_PINNED.join(', ')}:\n` +
+      astroDrift
+        .map(
+          dep =>
+            `  ${dep}: ${ASTRO_APPS.map(app => `${app} ${specsOf(app)[dep] ?? 'missing'}`).join(', ')}`
+        )
+        .join('\n')
+  )
+}
+
 if (problems.length > 0) {
   console.error(
     'Workspace script guard failed. Every package must declare the standard set\n' +
@@ -129,6 +207,11 @@ if (compatProblem !== undefined) {
   process.exit(1)
 }
 
+if (parityProblems.length > 0) {
+  console.error(`Workspace script guard failed. Config parity:\n\n${parityProblems.join('\n\n')}`)
+  process.exit(1)
+}
+
 console.log(
-  'Workspace script guard passed: all packages declare the standard set, and all Workers share one compatibility_date.'
+  'Workspace script guard passed: all packages declare the standard set, all Workers share one compatibility_date, and engines, LICENSE and Astro pins are in parity.'
 )

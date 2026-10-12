@@ -98,9 +98,8 @@ Read [`docs/randsum-json-schema.md`](./docs/randsum-json-schema.md) first — it
 1. Create `<shortcode>.randsum.json` at the package root
 2. Run `bun run --filter @randsum/games gen` to generate `src/<shortcode>.generated.ts` and refresh `src/availableGames.generated.ts` (which drives the `AVAILABLE_GAMES` public export)
 3. Add a subpath export in `package.json` under `"exports"` (follow existing pattern). The `exports` field is hand-maintained — bunup's `exports: true` auto-writer is intentionally disabled because its common-prefix inference breaks when entries are added. `__tests__/exports-sync.test.ts` guards against drift.
-4. Add a size-limit entry in `package.json` (15 KB; only salvageunion is higher, at 33 KB)
-5. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
-6. Run `bun run --filter @randsum/games check` to verify everything passes
+4. Write `__tests__/<shortcode>.test.ts` and `__tests__/<shortcode>.property.test.ts`
+5. Run `bun run --filter @randsum/games check` to verify everything passes
 
 To change the codegen pipeline itself (new resolve strategy, new pool shape, new condition type), see `docs/codegen-extension.md`.
 
@@ -128,7 +127,7 @@ bun run --filter @randsum/games check        # Full check (build + typecheck + t
 - All game logic lives in the `.randsum.json` spec. Never hand-write game logic in generated `.ts` files.
 - Generated files are checked in but must not be manually edited. Always regenerate via codegen.
 - Games depend only on `@randsum/roller`. Games never depend on each other.
-- Bundle size limit: 15 KB per game (33 KB for salvageunion due to baked-in tables).
+- Bundle size budgets come from `.size-limit.ts`, which derives one entry per `src/*.generated.ts`, so a new game needs no entry.
 - Remote data (e.g., Salvage Union tables) is read from the checked-in `__fixtures__/` snapshot at codegen time and baked into generated code. Codegen is hermetic (no network) unless `--refresh-remote` is passed; zero runtime network calls either way.
 
 For the formal modifier taxonomy and classification system, see https://notation.randsum.dev.
