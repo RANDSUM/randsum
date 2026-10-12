@@ -277,8 +277,9 @@ Both Astro sites are separate Workers, each with a custom domain, deployed from
 - **rdn** — `output: 'static'`, no adapter. Deploy `apps/rdn/wrangler.jsonc`.
 - The trigger is `workflow_run` on CI: nothing deploys unless CI concluded
   `success` for a push to `main`, and the jobs check out the commit CI tested.
-  The `plan` job diffs that commit against the previous green CI commit; a
-  change to any of `apps/{rdn,site,discord-bot}/**`, `packages/**` or `bun.lock`
+  The `plan` job diffs that commit against the commit the last successful
+  CI-triggered deploy shipped, so a deploy the concurrency group cancelled has
+  its changes carried by the next one; a change to any of `apps/{rdn,site,discord-bot}/**`, `packages/**` or `bun.lock`
   runs all three deploy jobs. Redeploying an unchanged surface is a no-op version
   upload, so this costs CI minutes rather than correctness. A manual run can
   narrow to one surface — see below.
@@ -435,7 +436,8 @@ not a transport one — see the next section.
 The gateway process reconciled the command registry on every boot; the Worker
 never writes it. The bot deploy job does instead: after the Worker deploy it runs
 `deploy-commands`, one idempotent bulk-overwrite PUT of the whole barrel, whenever
-`src/commands/**` or `deploy-commands.ts` changed, and on every manual bot deploy.
+`src/commands/**` or `deploy-commands.ts` changed since the last successful
+deploy, and on every manual bot deploy.
 It fails red if the `DISCORD_TOKEN` secret is missing.
 
 That closes the gap behind #1191, which renamed `/su` to `/salvageunion` without a

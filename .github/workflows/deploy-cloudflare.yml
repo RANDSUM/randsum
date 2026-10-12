@@ -21,9 +21,13 @@
 # are on main get checked out, and nothing the CI run uploaded is downloaded.
 #
 # `plan` keeps the economy the old `paths:` filter bought. It diffs the commit
-# against the previous green CI commit on main and deploys only when something a
-# surface ships from changed. As before, a relevant change deploys all three:
-# redeploying an unchanged surface is a no-op version upload.
+# against the one the last successful CI-triggered run of THIS workflow
+# deployed, and deploys only when something a surface ships from changed. As
+# before, a relevant change deploys all three: redeploying an unchanged surface
+# is a no-op version upload. Diffing from the last deploy, not the last green CI
+# commit, is what makes a cancelled deploy safe: the concurrency group drops a
+# pending run when a newer one queues, and the newer run still carries the
+# dropped run's changes, slash-command changes included.
 #
 # Every job FAILS RED when CLOUDFLARE_API_TOKEN is absent. There is no second
 # host behind any of these: a skipped site deploy would leave randsum.dev
@@ -79,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: read # gh run list, to find the previous green CI commit
+      actions: read # gh run list, to find the last deployed commit
     outputs:
       sha: ${{ steps.select.outputs.sha }}
       rdn: ${{ steps.select.outputs.rdn }}
@@ -116,18 +120,21 @@ jobs:
             exit 0
           fi
 
-          # The green CI push on main just before this one. Diffing from it
-          # rather than from HEAD^ covers commits whose own CI run was cancelled
-          # by a newer push. ($i is a jq variable, hence the single quotes.)
-          # shellcheck disable=SC2016
-          base=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml --branch main \
-            --event push --status success --limit 20 --json headSha \
-            --jq '[.[].headSha] | index(env.HEAD_SHA) as $i | if $i == null then empty else .[$i + 1] // empty end')
+          # The commit the last successful CI-triggered run of this workflow
+          # deployed (a workflow_run run records the CI head sha as its own).
+          # Diffing from it, rather than from HEAD^ or the previous green CI
+          # commit, carries forward every change whose deploy was cancelled or
+          # failed. Manual runs are left out: one may have deployed a single
+          # surface. A run that deployed nothing still counts, since nothing a
+          # surface ships from had changed up to its commit.
+          base=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy-cloudflare.yml \
+            --branch main --event workflow_run --status success --limit 1 \
+            --json headSha --jq '.[0].headSha // empty')
 
-          if [ -n "$base" ] && git cat-file -e "$base^{commit}" 2>/dev/null; then
+          if [ -n "$base" ] && git merge-base --is-ancestor "$base" "$HEAD_SHA" 2>/dev/null; then
             changed=$(git diff --name-only "$base" "$HEAD_SHA")
           else
-            echo "::notice::No earlier green CI commit to diff against; deploying everything."
+            echo "::notice::No earlier successful deploy to diff against; deploying everything."
             changed=ALL
           fi
 

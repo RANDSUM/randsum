@@ -3,7 +3,7 @@
 ## Overview
 
 Starlight-powered documentation site with a custom marketing landing page.
-Private app, deploys to Cloudflare Workers on push to `main` via
+Private app, deploys to Cloudflare Workers once CI is green on `main` via
 `.github/workflows/deploy-cloudflare.yml`. Lives at `randsum.dev`.
 
 ## Tech Stack
