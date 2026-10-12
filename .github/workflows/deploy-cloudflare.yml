@@ -29,6 +29,14 @@
 # pending run when a newer one queues, and the newer run still carries the
 # dropped run's changes, slash-command changes included.
 #
+# The deployed commit is recorded explicitly, in the run name below, and read
+# back from `displayTitle`. A run's own `headSha` is not that commit: for a
+# workflow_run event it is the default branch's tip when the run was created.
+# When the commit is a strict ancestor of the last deployed one (a CI re-run on
+# an older main commit), `plan` deploys nothing rather than ship the older code
+# and command set over a newer deploy. Only an unrelated history (or no earlier
+# deploy) deploys everything.
+#
 # Every job FAILS RED when CLOUDFLARE_API_TOKEN is absent. There is no second
 # host behind any of these: a skipped site deploy would leave randsum.dev
 # serving stale content, and Discord posts interactions to bot.randsum.dev with
@@ -46,6 +54,8 @@
 # and with no CI run there is no `workflow_run` either. A manual run deploys main
 # as it stands, without the CI gate, so check main is green before dispatching.
 name: Deploy (Cloudflare)
+# `plan` parses the deployed commit back out of this title; keep the format.
+run-name: Deploy ${{ github.event.workflow_run.head_sha || github.sha }}
 
 on:
   # zizmor: ignore[dangerous-triggers] — workflow_run is used deliberately and
@@ -121,20 +131,37 @@ jobs:
           fi
 
           # The commit the last successful CI-triggered run of this workflow
-          # deployed (a workflow_run run records the CI head sha as its own).
+          # deployed, parsed from its run name ("Deploy <sha>", set by
+          # `run-name` above). The run's own headSha is not that commit: a
+          # workflow_run run records the default branch's tip at creation.
           # Diffing from it, rather than from HEAD^ or the previous green CI
           # commit, carries forward every change whose deploy was cancelled or
           # failed. Manual runs are left out: one may have deployed a single
           # surface. A run that deployed nothing still counts, since nothing a
           # surface ships from had changed up to its commit.
-          base=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy-cloudflare.yml \
+          title=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy-cloudflare.yml \
             --branch main --event workflow_run --status success --limit 1 \
-            --json headSha --jq '.[0].headSha // empty')
+            --json displayTitle --jq '.[0].displayTitle // empty')
+          base=""
+          if [[ "$title" =~ ^Deploy\ ([0-9a-f]{40})$ ]]; then
+            base="${BASH_REMATCH[1]}"
+          fi
 
           if [ -n "$base" ] && git merge-base --is-ancestor "$base" "$HEAD_SHA" 2>/dev/null; then
             changed=$(git diff --name-only "$base" "$HEAD_SHA")
+          elif [ -n "$base" ] && git merge-base --is-ancestor "$HEAD_SHA" "$base" 2>/dev/null; then
+            # A CI re-run on a main commit older than the last deploy. Shipping
+            # it would roll every surface, and the command registry, back.
+            echo "::notice::$HEAD_SHA is older than the last deployed commit $base; deploying nothing."
+            {
+              echo "rdn=false"
+              echo "site=false"
+              echo "bot=false"
+              echo "commands=false"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
           else
-            echo "::notice::No earlier successful deploy to diff against; deploying everything."
+            echo "::notice::No earlier successful deploy on this history to diff against; deploying everything."
             changed=ALL
           fi
 
@@ -143,6 +170,9 @@ jobs:
           if [ "$changed" = ALL ] || grep -qE '^(apps/(rdn|site|discord-bot)/|packages/|bun\.lock$|\.github/workflows/deploy-cloudflare\.yml$)' <<< "$changed"; then
             deploy=true
           fi
+          # Only the command sources trigger registration. A command schema that
+          # starts deriving from packages/ (choices generated from a game spec,
+          # say) would change without matching this; widen it if that happens.
           if [ "$changed" = ALL ] || grep -qE '^apps/discord-bot/src/(commands/|deploy-commands\.ts$)' <<< "$changed"; then
             commands=true
           fi

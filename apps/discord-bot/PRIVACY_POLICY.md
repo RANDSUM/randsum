@@ -1,30 +1,34 @@
-# Privacy Policy for RANDSUM.dev
+# Privacy Policy for the RANDSUM Discord bot
 
-This Privacy Policy governs the collection, use, and sharing of personal information by RANDSUM.dev, a Discord bot developed by Alex Jarvis. By using RANDSUM.dev, you agree to the terms of this Privacy Policy.
+This Privacy Policy describes what information the RANDSUM Discord bot (served from bot.randsum.dev and developed by Alex Jarvis) handles, and how. By using the bot, you agree to the terms of this Privacy Policy.
 
-Information We Collect
+Information We Process
 
-We collect information that you provide to us through your use of the bot, such as your Discord user ID and username, server and channel information, and message content. We may also collect usage data, such as the frequency and duration of your use of the bot.
+The bot only receives the slash-command interactions you send it. Discord delivers each interaction to the bot over HTTPS. An interaction payload contains the command and the options you typed (for example a dice notation string), your Discord user ID and username, and the IDs of the server and channel where you used the command. The bot never receives the content of ordinary chat messages: it does not connect to the Discord gateway and has no message-content access.
 
 How We Use Your Information
 
-We use your information to operate and improve RANDSUM.dev, including to provide support and respond to your requests. We may also use your information to develop new features or services, to conduct research and analytics, and to comply with legal obligations.
+The bot uses an interaction payload only to compute the roll and send the reply, in memory, while it handles that one request. It does not write interaction payloads to a database or any other storage.
+
+Logs
+
+The bot runs as a Cloudflare Worker with Workers Observability enabled. Cloudflare records request logs for each invocation (such as the time, request path, response status, and errors), which we use to keep the bot running and to debug failures. These logs are kept for Cloudflare's standard Workers Logs retention period and are then deleted.
 
 Sharing Your Information
 
-We do not sell or share your personal information with third parties. However, we may disclose your information in response to legal process or a request from a law enforcement agency or regulatory authority.
+We do not sell or share your information with third parties. Interactions pass through Discord and Cloudflare, which process them under their own privacy policies. We may disclose information in response to legal process or a request from a law enforcement agency or regulatory authority.
 
 Data Retention
 
-We retain your information for as long as necessary to provide RANDSUM.dev’s services or as required by law. We will delete your information upon your request or when it is no longer needed.
+Interaction payloads are not retained after the reply is sent. Request logs are retained only as described under Logs.
 
 Data Security
 
-We take reasonable measures to protect your information from unauthorized access, alteration, or destruction. However, no security measure is perfect, and we cannot guarantee the security of your information.
+We take reasonable measures to protect your information from unauthorized access, alteration, or destruction. Every interaction is verified against Discord's signature before it is processed. However, no security measure is perfect, and we cannot guarantee the security of your information.
 
 Changes to this Policy
 
-We may update this Privacy Policy from time to time, and we will post the updated policy on our website. Your continued use of RANDSUM.dev after we make changes to this policy indicates your acceptance of the revised policy.
+We may update this Privacy Policy from time to time, and we will post the updated policy in the bot's source repository (github.com/RANDSUM/randsum). Your continued use of the bot after we make changes to this policy indicates your acceptance of the revised policy.
 
 Contact Us
 
@@ -32,4 +36,4 @@ If you have any questions or concerns about this Privacy Policy, please contact 
 
 Effective Date
 
-This Privacy Policy is effective as of 2024-01-01.
+This Privacy Policy is effective as of 2026-10-12.
