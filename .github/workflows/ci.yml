@@ -236,20 +236,9 @@ jobs:
         # mcp bundles roller and games (noExternal in its bunup config) but lists
         # them only as devDependencies, and changesets never bumps a dependent
         # for a devDependency. Without this, a roller or games release ships
-        # while the published mcp keeps the old copy bundled inside it.
-        run: |
-          set -euo pipefail
-          status=0
-          for f in .changeset/*.md; do
-            if [ "$(basename "$f")" = README.md ]; then continue; fi
-            front=$(awk '/^---$/ { n++; next } n == 1' "$f")
-            if grep -Eq "^[\"']?@randsum/(roller|games)[\"']?:" <<< "$front" \
-              && ! grep -Eq "^[\"']?@randsum/mcp[\"']?:" <<< "$front"; then
-              echo "::error file=$f::bumps @randsum/roller or @randsum/games without bumping @randsum/mcp"
-              status=1
-            fi
-          done
-          exit "$status"
+        # while the published mcp keeps the old copy bundled inside it. The rule
+        # lives in scripts/check-changesets.ts so the root `check` chain runs it too.
+        run: bun run check:changesets
       - run: bun run build
       - name: Dry-run publish
         # --pack-dir keeps the tarballs publish.ts packed, so the lint step below

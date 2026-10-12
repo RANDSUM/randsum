@@ -88,7 +88,7 @@ CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates E
 Releases are **automated via [changesets](https://github.com/changesets/changesets) + npm OIDC Trusted Publishing** — you do not run a publish command by hand in the normal flow.
 
 1. Add a changeset with your change: `bun run changeset` (writes a markdown file under `.changeset/`).
-2. On merge to `main`, the `Release` workflow (`.github/workflows/publish.yml`) runs after CI succeeds. The `changesets/action` either opens/updates a `chore: version packages` PR (applying `bun changeset version` to bump versions and roll per-package `CHANGELOG.md` entries) or, when that version PR is merged, publishes the changed packages.
+2. On merge to `main`, the `Release` workflow (`.github/workflows/publish.yml`) runs after CI succeeds. With changesets pending, its `version` job opens or updates a `chore: version packages` PR (applying `bun changeset version` to bump versions and roll per-package `CHANGELOG.md` entries) using a GitHub App token, because a PR pushed with `GITHUB_TOKEN` never gets CI. Once that PR is merged, its `publish` job, the only one holding the npm OIDC id-token, publishes the changed packages and pushes a `name@version` tag and GitHub release for each.
 3. Publishing itself runs `bun scripts/publish.ts`, which packs each package with `bun pm pack` (resolving `workspace:~` to a real semver range at pack time) and then publishes the resulting tarball with `npm publish`. In CI, auth is npm Trusted Publishing (OIDC — no `NPM_TOKEN`) and `--provenance` is added to attest the build.
 
 **`workspace:~` warning:** never run a bare `npm publish` from a package directory — `npm` ships the literal `workspace:~` string, which is unresolvable for consumers. The pack step in `scripts/publish.ts` (`bun pm pack`) is what resolves it, so publishing always goes through that script, never `npm publish` on the raw source tree.
@@ -97,7 +97,7 @@ Releases are **automated via [changesets](https://github.com/changesets/changese
 
 ## Versioning
 
-`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/site` and `@randsum/discord-bot` are in the changesets `ignore` list (private, not versioned this way).
+`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. `@randsum/site` and `@randsum/discord-bot` are in the changesets `ignore` list (private, not versioned this way).
 
 ## Key Patterns
 
