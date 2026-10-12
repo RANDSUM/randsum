@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets'
 import HeroHeader from '../components/HeroHeader.astro'
 import VersionBanner from '../components/VersionBanner.astro'
 import SkipLink from '../components/SkipLink.astro'
@@ -61,10 +62,24 @@ const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
       content="The formal specification for RANDSUM Dice Notation — a human-readable syntax for dice rolls in tabletop RPGs. Defines modifiers, execution pipeline, conformance levels, and special dice types."
     />
     <meta name="twitter:image" content="https://randsum.dev/og-image.svg" />
+    <Font cssVariable="--font-inter" preload />
+    <Font cssVariable="--font-jetbrains-mono" />
     <script is:inline>
-      // Apply saved theme before render to prevent flash
-      const saved = localStorage.getItem('rdn-theme')
-      if (saved === 'light') document.documentElement.classList.add('light')
+      // Apply the theme before render to prevent a flash: a saved choice wins,
+      // otherwise follow the OS. data-theme matches the site's theme contract.
+      const saved = (() => {
+        try {
+          return localStorage.getItem('rdn-theme')
+        } catch {
+          return null
+        }
+      })()
+      document.documentElement.dataset.theme =
+        saved === 'light' || saved === 'dark'
+          ? saved
+          : matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark'
     </script>
   </head>
   <body>
@@ -109,8 +124,10 @@ const pageTitle = isLatest ? `${title}` : `${title} — ${version}`
       const toggle = document.querySelector('[data-theme-toggle]')
       if (toggle) {
         toggle.addEventListener('click', () => {
-          const isLight = document.documentElement.classList.toggle('light')
-          localStorage.setItem('rdn-theme', isLight ? 'light' : 'dark')
+          const root = document.documentElement
+          const next = root.dataset.theme === 'light' ? 'dark' : 'light'
+          root.dataset.theme = next
+          localStorage.setItem('rdn-theme', next)
         })
       }
     </script>

@@ -38,7 +38,7 @@
 
 /* Unknown token fallback — no doc entry */
 .du-token--unknown {
-  color: var(--dui-color-error, #f97583);
+  color: var(--dui-color-error);
 }
 
 /* ===== Per-category token colors — dark mode ===== */
@@ -164,99 +164,17 @@
 
 /* Repeat: muted */
 .du-token--repeat {
-  color: var(--dui-color-text-muted, #a1a1aa);
+  color: var(--dui-color-text-muted);
 }
 
 /* Label: dim */
 .du-token--label {
-  color: var(--dui-color-text-dim, #71717a);
+  color: var(--dui-color-text-dim);
 }
 
 /* ===== Light mode overrides ===== */
-@media (prefers-color-scheme: light) {
-  .du-token--unknown {
-    color: var(--dui-color-error, #c0394a);
-  }
-
-  .du-token--core {
-    color: #2563eb;
-  }
-
-  .du-token--percentile,
-  .du-token--fate,
-  .du-token--geometric,
-  .du-token--draw,
-  .du-token--zeroBias,
-  .du-token--customFaces {
-    color: #1e40af;
-  }
-
-  .du-token--dropHighest {
-    color: #802090;
-  }
-  .du-token--dropLowest {
-    color: #b028a8;
-  }
-  .du-token--dropCondition {
-    color: #9020a0;
-  }
-
-  .du-token--keepHighest {
-    color: #c2620a;
-  }
-  .du-token--keepLowest {
-    color: #9e4e20;
-  }
-
-  .du-token--explode {
-    color: #9a7c1a;
-  }
-  .du-token--compound {
-    color: #c05818;
-  }
-  .du-token--penetrate {
-    color: #5a8018;
-  }
-
-  .du-token--reroll {
-    color: #7c4dab;
-  }
-
-  .du-token--cap {
-    color: #0082a5;
-  }
-
-  .du-token--replace {
-    color: #4a8020;
-  }
-
-  .du-token--unique {
-    color: #1a7a72;
-  }
-
-  .du-token--countSuccesses,
-  .du-token--countFailures,
-  .du-token--count {
-    color: #3a60c8;
-  }
-
-  .du-token--plus {
-    color: #3a7d20;
-  }
-  .du-token--minus {
-    color: #2a6018;
-  }
-
-  .du-token--multiply {
-    color: #8a6a00;
-  }
-  .du-token--multiplyTotal {
-    color: #7a5800;
-  }
-}
-
 [data-theme='light'] .du-token--unknown {
-  color: var(--dui-color-error, #c0394a);
+  color: var(--dui-color-error);
 }
 [data-theme='light'] .du-token--core {
   color: #2563eb;

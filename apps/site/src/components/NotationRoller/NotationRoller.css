@@ -29,7 +29,7 @@
   padding: 0;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--dui-radius, 5px);
+  border-radius: var(--dui-radius-sm);
   color: #52525b;
   cursor: pointer;
   transition:
@@ -49,16 +49,6 @@
   pointer-events: none;
 }
 
-@media (prefers-color-scheme: light) {
-  .nr-code-action-btn {
-    border-color: rgba(0, 0, 0, 0.1);
-    color: #9ca3af;
-  }
-  .nr-code-action-btn:hover {
-    border-color: rgba(147, 51, 234, 0.4);
-    color: #9333ea;
-  }
-}
 [data-theme='light'] .nr-code-action-btn {
   border-color: rgba(0, 0, 0, 0.1);
   color: #9ca3af;

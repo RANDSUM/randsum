@@ -6,6 +6,12 @@ export default defineConfig({
   output: 'static',
   site: 'https://notation.randsum.dev',
   integrations: [sitemap()],
+  markdown: {
+    shikiConfig: {
+      themes: { light: 'github-light', dark: 'github-dark' },
+      defaultColor: false
+    }
+  },
   fonts: [
     {
       name: 'Inter',
