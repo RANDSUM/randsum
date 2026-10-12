@@ -9,7 +9,7 @@
  * to every repo on the machine including ones with no Cloudflare in them.
  * Project scope is the right default.
  *
- * Deliberately a SUBSET. Cloudflare publishes thirteen; four match what this
+ * Deliberately a SUBSET. Cloudflare publishes thirteen; three match what this
  * repo actually runs. A skill list is context every session pays for whether or
  * not it gets used, so one earns its place by use, not by existing.
  *
@@ -18,14 +18,22 @@
  * exhaust the unauthenticated 60/hour limit halfway through — which fails after
  * having already written some skills, leaving `.claude/skills` half-updated.
  *
- * Run `bun run skills:sync` to refresh, and read the diff: this pulls
- * third-party prose that steers an agent straight into the repo.
+ * Only the WANTED directories are replaced. `.claude/skills` is shared with
+ * first-party skills, and an earlier version that replaced the whole directory
+ * deleted four of them (#1225) without anyone noticing.
+ *
+ * The tarball is pinned to an upstream commit, so a sync is reproducible and its
+ * diff has a known base. To refresh, set COMMIT to a newer cloudflare/skills
+ * SHA, run `bun run skills:sync`, and read the diff: this pulls third-party
+ * prose that steers an agent straight into the repo.
  */
 import { mkdir, rename, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
 const REPO = 'cloudflare/skills'
-const TARBALL = `https://codeload.github.com/${REPO}/tar.gz/refs/heads/main`
+/** cloudflare/skills main on 2026-08-07, the tree vendored in #1225. */
+const COMMIT = 'f96bff754e428838818017f75817f0f9428acd48'
+const TARBALL = `https://codeload.github.com/${REPO}/tar.gz/${COMMIT}`
 const ROOT = join(import.meta.dir, '..')
 const DEST = join(ROOT, '.claude', 'skills')
 
@@ -92,19 +100,16 @@ async function main(): Promise<void> {
       staging
     )
 
-    // Replace rather than merge, so a skill dropped upstream or removed from
-    // WANTED actually disappears instead of lingering as stale guidance.
-    await rm(DEST, { recursive: true, force: true })
-    await mkdir(join(ROOT, '.claude'), { recursive: true })
-    await rename(join(staging, 'skills'), DEST).catch(async () => {
-      // tar lays the entries out directly when only one path matches.
-      await mkdir(DEST, { recursive: true })
-      for (const name of Object.keys(WANTED)) {
-        await rename(join(staging, name), join(DEST, name))
-      }
-    })
+    // Replace each wanted skill rather than merge, so a file dropped upstream
+    // actually disappears. Touch nothing else in DEST: first-party skills live
+    // there too. A skill removed from WANTED is deleted by hand.
+    await mkdir(DEST, { recursive: true })
+    for (const name of Object.keys(WANTED)) {
+      await rm(join(DEST, name), { recursive: true, force: true })
+      await rename(join(staging, name), join(DEST, name))
+    }
 
-    console.log(`Synced ${Object.keys(WANTED).length} Cloudflare skills from ${REPO}:`)
+    console.log(`Synced ${Object.keys(WANTED).length} Cloudflare skills from ${REPO}@${COMMIT}:`)
     for (const [name, why] of Object.entries(WANTED)) {
       console.log(`  ${name.padEnd(24)} — ${why}`)
     }

@@ -201,7 +201,7 @@ pays for whether or not it is used, so each entry earns its place by use.
 and every one rejected.
 
 ```bash
-bun run skills:sync   # refresh from github.com/cloudflare/skills
+bun run skills:sync   # re-vendor at the pinned COMMIT; bump it to refresh
 ```
 
 Read the diff when you do. This pulls third-party prose that steers an agent
