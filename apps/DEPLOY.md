@@ -33,8 +33,8 @@ route on the apex.
 > `.github/workflows/deploy-cloudflare.yml`. There are no other deploy configs —
 > Netlify and Render were both removed.
 >
-> The `randsum.io` playground is a **legacy app deployed outside this monorepo** — it is not
-> built or deployed by any config here and is out of scope for this runbook.
+> `randsum.io` serves a frozen build of the deleted Expo app (#1121). Nothing here builds it
+> and nothing links to it; it should 301 to randsum.dev via a Cloudflare redirect rule.
 
 ---
 
@@ -191,11 +191,11 @@ projects" instruction would plausibly have left the other two behind forever.
 | `randsum-site` | randsum.dev | dev | superseded; Cloudflare had been serving it and was verified |
 | `rdn-spec` | notation.randsum.dev | dev | same |
 | `randsum-playground` | playground.randsum.dev | pro | 404'd on its own URL; DNS already retired |
-| `randsumweb` | randsum.io | pro | last deployed 2024; `randsum.io` resolves to a Cloudflare anycast IP with no Netlify headers, so the project was already bypassed |
+| `randsumweb` | randsum.io | pro | `randsum.io` resolves to a Cloudflare anycast IP with no Netlify headers, so the project was already bypassed |
 
 Each hostname was re-checked immediately after its project was deleted.
-`randsum.io` still returns 200 and is unaffected — it serves from Cloudflare
-with DNS at Hover, and nothing in this repo builds it.
+`randsum.io` still returns 200 and is unaffected — it serves a frozen
+`randsum-expo` build from Cloudflare, and nothing in this repo builds it.
 
 **The Netlify DNS zone was NOT deleted.** It is the only remaining
 nameserver-level rollback: while it exists, reverting the whole migration is one

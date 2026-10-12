@@ -131,7 +131,6 @@ Bun automatically handles inter-package dependencies through workspace linking, 
 
 - [RANDSUM Dice Notation (RDN) Specification](https://notation.randsum.dev) - Formal spec for dice notation syntax
 - [Documentation](https://randsum.dev)
-- [Playground](https://randsum.io) - external legacy app, deployed outside this monorepo
 - [Sophie's Dice Notation](https://sophiehoulden.com/dice/documentation/notation.html) - a great dice notation guide that helped me along the way
 - [\_why's poignant guide to ruby](https://poignant.guide/) - \_why not?
 

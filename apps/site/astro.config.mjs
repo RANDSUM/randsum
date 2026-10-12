@@ -63,7 +63,9 @@ export default defineConfig({
     '/docs/errors/': { status: 301, destination: '/roller/modifiers/' },
     // Old getting-started URLs → new locations
     '/getting-started/notation/': { status: 301, destination: '/roller/getting-started/' },
-    '/getting-started/game-packages/': { status: 301, destination: '/games/introduction/' }
+    '/getting-started/game-packages/': { status: 301, destination: '/games/introduction/' },
+    // Retired @randsum/cli docs → its successor
+    '/tools/cli/': { status: 301, destination: '/tools/mcp/' }
   },
   fonts: [
     {
@@ -220,7 +222,6 @@ export default defineConfig({
             link: '/tools/discord-bot/',
             icon: 'setting',
             items: [
-              { label: 'Playground', link: 'https://randsum.io' },
               { label: 'MCP Server', slug: 'tools/mcp' },
               { label: 'Discord Bot', slug: 'tools/discord-bot' },
               { label: 'Claude Plugin', slug: 'tools/claude-code-plugin' },

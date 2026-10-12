@@ -43,7 +43,7 @@ Smoke-test the live server by piping a JSON-RPC `initialize` message to `bun src
 - `@modelcontextprotocol/sdk` (exact-pinned) and `zod` (its required peer, exact-pinned) are
   **regular runtime dependencies** — external, NOT bundled.
 - `@randsum/roller` and `@randsum/games` are **dev dependencies** (`workspace:~`), bundled into
-  `dist/index.js` via bunup `noExternal: [/^@randsum\//]` (same pattern as `apps/cli`). This keeps
+  `dist/index.js` via bunup `noExternal: [/^@randsum\//]`. This keeps
   the published surface to just the SDK + zod.
 
 ## Publishing
