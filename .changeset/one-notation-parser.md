@@ -1,5 +1,6 @@
 ---
 '@randsum/roller': minor
+'@randsum/mcp': patch
 ---
 
 The lexer is now the only notation parser. The old regex parser that still

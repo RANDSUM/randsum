@@ -1,5 +1,6 @@
 ---
 '@randsum/roller': minor
+'@randsum/mcp': patch
 ---
 
 Notation and descriptions built from options now list modifiers in the order
