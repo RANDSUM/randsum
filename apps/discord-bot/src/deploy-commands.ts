@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-import { REST, Routes } from './utils/discord.js'
+import { RouteBases, Routes } from 'discord-api-types/v10'
 import { config } from './utils/config.js'
 import { commands as commandList } from './commands/index.js'
 
 const commands = commandList.map(c => c.data.toJSON())
 
-const rest = new REST().setToken(config.token)
-
+// One bulk-overwrite PUT replaces the whole registry. That is the only REST call
+// this app makes, so it is a plain fetch rather than a REST client library.
 async function deployCommands(): Promise<void> {
   try {
     console.warn(`Started refreshing ${commands.length} application (/) commands.`)
@@ -18,12 +18,25 @@ async function deployCommands(): Promise<void> {
       console.warn('Deploying globally')
     }
 
-    const data: unknown = config.guildId
-      ? await rest.put(Routes.applicationGuildCommands(config.clientId, config.guildId), {
-          body: commands
-        })
-      : await rest.put(Routes.applicationCommands(config.clientId), { body: commands })
+    const route = config.guildId
+      ? Routes.applicationGuildCommands(config.clientId, config.guildId)
+      : Routes.applicationCommands(config.clientId)
 
+    const response = await fetch(`${RouteBases.api}${route}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bot ${config.token}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'DiscordBot (https://github.com/RANDSUM/randsum, 1.0)'
+      },
+      body: JSON.stringify(commands)
+    })
+
+    if (!response.ok) {
+      throw new Error(`Discord API ${response.status}: ${await response.text()}`)
+    }
+
+    const data: unknown = await response.json()
     const commandCount = Array.isArray(data) ? data.length : 0
     console.warn(`Successfully reloaded ${commandCount} application (/) commands.`)
   } catch (error) {

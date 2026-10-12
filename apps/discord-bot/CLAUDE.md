@@ -46,16 +46,14 @@ apps/discord-bot/
     utils/
       builders.ts        # PORTABLE Discord primitives — safe on workerd. Commands import here.
       palette.ts         # Accent colours and outcome glyphs — the visual vocabulary
-      discord.ts         # discord.js REST barrel — deploy-commands only, never the Worker
       config.ts          # Reads env vars; throws on missing required vars (deploy-commands only)
       constants.ts       # Footer attribution
 ```
 
-The `builders.ts` / `discord.ts` split is load-bearing and outlived the gateway. Command files
-import builders and enums from `builders.ts`, which re-exports `@discordjs/builders` and
-`discord-api-types` — ordinary portable packages that run on workerd. `discord.ts` is the real
-discord.js, reachable only from `deploy-commands.ts` (a Node script) and from type-only imports
-that erase at compile time. That is what keeps discord.js out of the Worker bundle.
+Command files import builders and enums from `builders.ts`, which re-exports `@discordjs/builders`
+and `discord-api-types` — ordinary portable packages that run on workerd. discord.js itself is not
+a dependency: `deploy-commands.ts` writes the registry with one `fetch` PUT, building the URL from
+`RouteBases` and `Routes` in `discord-api-types/v10`.
 
 ## Commands
 
@@ -181,7 +179,7 @@ also frees that name for SURef in servers running both bots.
 
 ## Testing
 
-Tests use real discord.js builders (not mocks). Only game packages (`@randsum/games/*`) and
+Tests use real `@discordjs/builders` builders (not mocks). Only game packages (`@randsum/games/*`) and
 roller subpaths (`@randsum/roller/*`) are mocked.
 
 Assert against a view through the helpers in `__tests__/lib/view.ts` — `textOf`, `linesOf`,

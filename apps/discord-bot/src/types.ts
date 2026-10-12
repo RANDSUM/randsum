@@ -1,10 +1,8 @@
-import type { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from 'discord.js'
-// Deliberately the portable builders, not discord.js's. discord.js does not
-// re-export @discordjs/builders verbatim — it subclasses some of them — so the
-// two are distinct types, and a command returning one cannot satisfy a
-// signature demanding the other. Since command renderers must run on workerd,
-// the portable ones win.
-import type { ContainerBuilder } from './utils/builders.js'
+import type {
+  ContainerBuilder,
+  SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder
+} from '@discordjs/builders'
 import type { CommandContext } from './commands/lib/context.js'
 
 /**
