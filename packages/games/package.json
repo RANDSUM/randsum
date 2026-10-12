@@ -112,9 +112,7 @@
   },
   "devDependencies": {
     "ajv": "8.20.0",
-    "bunup": "0.16.32",
-    "fast-check": "catalog:",
-    "typescript": "catalog:"
+    "fast-check": "catalog:"
   },
   "scripts": {
     "prepublishOnly": "bun ../../scripts/ensure-bun-publish.ts && bun run build",
@@ -125,56 +123,5 @@
     "typecheck": "tsc --noEmit",
     "size": "size-limit",
     "check": "bun run build && bun run typecheck && bun run test"
-  },
-  "size-limit": [
-    {
-      "path": "dist/blades.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
-    },
-    {
-      "path": "dist/fifth.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
-    },
-    {
-      "path": "dist/daggerheart.generated.js",
-      "limit": "16 KB",
-      "ignore": [
-        "node:module"
-      ]
-    },
-    {
-      "path": "dist/fate.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
-    },
-    {
-      "path": "dist/pbta.generated.js",
-      "limit": "16 KB",
-      "ignore": [
-        "node:module"
-      ]
-    },
-    {
-      "path": "dist/root-rpg.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
-    },
-    {
-      "path": "dist/salvageunion.generated.js",
-      "limit": "33 KB",
-      "ignore": [
-        "node:module"
-      ]
-    }
-  ]
+  }
 }

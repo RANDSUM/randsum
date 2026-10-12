@@ -100,9 +100,7 @@
       },
       "devDependencies": {
         "ajv": "8.20.0",
-        "bunup": "0.16.32",
         "fast-check": "catalog:",
-        "typescript": "catalog:",
       },
     },
     "packages/mcp": {

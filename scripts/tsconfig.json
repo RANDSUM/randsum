@@ -1,10 +1,4 @@
 {
   "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "types": ["bun"],
-    "lib": ["ESNext"],
-    "noEmit": true,
-    "composite": false
-  },
   "include": ["**/*.ts"]
 }

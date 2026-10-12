@@ -40,7 +40,7 @@ bun run --filter @randsum/games build    # Build one package
 bun test packages/roller/__tests__/roll/roll.test.ts
 
 # Other
-bun run --filter @randsum/roller size    # Bundle size checks (size-limit; per-package, no root script)
+bun run --filter @randsum/roller size    # Bundle size checks (size-limit; `bun run size` runs every package)
 bun run bench                            # Performance benchmarks (mitata)
 bun run site:dev                         # Astro dev server (localhost:4321)
 bun run help                             # Quick command reference
@@ -79,7 +79,7 @@ All publishable packages produce ESM only:
 - `dist/index.d.ts` (TypeScript declarations)
 - Subpath exports follow the same pattern: `dist/<subpath>.js`, `dist/<subpath>.d.ts`. The game subpaths in `@randsum/games` are code-generated, so each compiles to `dist/<game>.generated.js` / `dist/<game>.generated.d.ts` (e.g. `./fifth` → `dist/fifth.generated.js`); the `schema` subpath is `dist/schema.js`.
 - No `.cjs`, `.d.cts`, or `dist/cjs/` variants are produced
-- Bundle size limits enforced (per-package `size-limit`): roller main `dist/index.js` 16KB (notation included; `docs` subpath 20KB, `tokenize` 6.75KB, `trace` 5KB), game packages 15KB (daggerheart and pbta 16KB), salvageunion 33KB
+- Bundle size limits enforced per package: the figures live only in each package's `size-limit` block in `package.json` (games: `.size-limit.ts`)
 
 CJS consumers must use a bundler (esbuild, rollup, webpack 5+) that translates ESM to CJS. Direct `require()` of an `@randsum/*` package without a bundler is not supported.
 
@@ -97,7 +97,7 @@ Releases are **automated via [changesets](https://github.com/changesets/changese
 
 ## Versioning
 
-`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. `@randsum/site` and `@randsum/discord-bot` are in the changesets `ignore` list (private, not versioned this way).
+`@randsum/roller` and `@randsum/games` are **linked** in `.changeset/config.json`, so changesets bumps them together to a shared version whenever any of them changes. `updateInternalDependencies` is set to `minor`, so a bump to a dependency updates dependents' internal `workspace:~` ranges. In practice: a minor or major bump to core ripples across the linked ecosystem automatically; patch bumps stay local to the changed package. `@randsum/mcp` bundles roller and games as devDependencies, which never trigger a release, so `bun run check:changesets` fails when a pending changeset releases roller or games without also releasing mcp. Every `private: true` workspace (site, rdn, discord-bot, dice-ui) is skipped by `privatePackages: { version: false, tag: false }`, so a new private package needs no config entry.
 
 ## Key Patterns
 
@@ -159,7 +159,7 @@ Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps
 - `exactOptionalPropertyTypes` — optional properties cannot be assigned `undefined` explicitly unless the type includes `| undefined`
 - `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, requires narrowing
 
-**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json`. There is no root `size` script — check per-package: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package (limit: 15KB; daggerheart and pbta 16KB; salvageunion 33KB).
+**Bundle size failures**: Each publishable package defines `size-limit` in its own `package.json` (games derives its entries in `.size-limit.ts`). Run `bun run size` for all of them, or one: `bun run --filter @randsum/roller size`. Common cause: accidentally importing a heavy dependency into a game package.
 
 **Codegen issues**: Game packages are generated from `.randsum.json` specs. Generated files live at `packages/games/src/*.generated.ts`. Regenerate with `bun run --filter @randsum/games gen`. Verify generated output matches specs: `bun run --filter @randsum/games gen:check`.
 
