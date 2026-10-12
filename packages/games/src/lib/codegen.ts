@@ -96,7 +96,7 @@ async function buildCodeString(
 
   const { needsFinite, needsRange } = needsValidationImports(nspec)
   const validationImports: string[] = []
-  if (needsFinite) validationImports.push('validateFinite')
+  if (needsFinite) validationImports.push('validateFinite', 'validateInteger')
   if (needsRange) validationImports.push('validateRange')
   const hasRemote = remoteData !== undefined
   const parts: string[] = [

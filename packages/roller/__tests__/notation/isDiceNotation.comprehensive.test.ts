@@ -312,11 +312,25 @@ describe('isDiceNotation — comprehensive', () => {
       ['3z10L'],
       ['g6+3'],
       ['3DD6H'],
-      ['z6!'],
+      ['z6!{>4}'],
       ['2g6+5'],
-      ['DD6K']
+      ['DD6K'],
+      ['4dF+1'],
+      ['d%+5']
     ])('isDiceNotation("%s") returns true', notation => {
       expect(isDiceNotation(notation)).toBe(true)
+    })
+
+    // Their faces are not 1..N, so "explode on the maximum face" is undefined.
+    test.each([
+      ['z6!'],
+      ['4dF!'],
+      ['4dF!!'],
+      ['2d{a,b}!p'],
+      ['dF!i'],
+      ['5d{1,2,3}W']
+    ])('isDiceNotation("%s") returns false (max-face trigger on a non-1..N die)', notation => {
+      expect(isDiceNotation(notation)).toBe(false)
     })
   })
 

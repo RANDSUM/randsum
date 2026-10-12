@@ -273,15 +273,19 @@ export function generateValidationLines(
     const guard = isOptionalField ? `${accessor} !== undefined && ` : ''
 
     if (decl.type === 'integer') {
+      // One guarded block per field: finite, then integer (a fraction such as 7.5
+      // would otherwise reach the roller as a fractional modifier or quantity),
+      // then range.
       const label = quoteString(decl.description ?? `${specName} ${fieldName}`)
-      lines.push(
-        `${indent}if (${guard}typeof ${accessor} === 'number') validateFinite(${accessor}, ${label})`
-      )
+      lines.push(`${indent}if (${guard}typeof ${accessor} === 'number') {`)
+      lines.push(`${indent}  validateFinite(${accessor}, ${label})`)
+      lines.push(`${indent}  validateInteger(${accessor}, ${label})`)
       if (decl.minimum !== undefined && decl.maximum !== undefined) {
         lines.push(
-          `${indent}if (${guard}typeof ${accessor} === 'number') validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, ${label})`
+          `${indent}  validateRange(${accessor}, ${decl.minimum}, ${decl.maximum}, ${label})`
         )
       }
+      lines.push(`${indent}}`)
     }
 
     if (decl.type === 'string' && decl.enum !== undefined && decl.enum.length > 0) {

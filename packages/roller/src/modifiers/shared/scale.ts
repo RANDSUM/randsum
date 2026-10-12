@@ -1,3 +1,4 @@
+import { ModifierError } from '../../errors'
 import type { ModifierApplyResult, ModifierBehavior } from '../schema'
 
 /**
@@ -19,5 +20,21 @@ export function createScaleBehavior(
       rolls,
       transformTotal: (total: number) => op(total, options)
     })
+  }
+}
+
+/**
+ * Validator for the divisor-taking Scale modifiers (integerDivide, modulo).
+ * Notation cannot spell a zero divisor, but an options object can, and dividing
+ * by zero would otherwise return a NaN total.
+ */
+export function rejectZeroDivisor(name: string): (options: number) => void {
+  return options => {
+    if (options === 0) {
+      throw new ModifierError(name, 'Cannot divide by zero', {
+        path: `modifiers.${name}`,
+        value: options
+      })
+    }
   }
 }

@@ -14,6 +14,14 @@ export interface ModifierContext {
 }
 
 /**
+ * What a modifier's `validate` sees: the pool's size, plus its numeric faces
+ * when they are not [1..sides] (dF, zN and numeric d{...} dice).
+ */
+export interface ModifierValidationContext extends RequiredNumericRollParameters {
+  faces?: readonly number[]
+}
+
+/**
  * Context with required rollOne function.
  * Use this type when a modifier has `requiresRollFn: true`.
  */
@@ -140,7 +148,7 @@ export interface ModifierBehavior<TOptions = unknown> {
    * Validate options against roll context.
    * Throws ModifierError if invalid.
    */
-  validate?: (options: TOptions, rollContext: RequiredNumericRollParameters) => void
+  validate?: (options: TOptions, rollContext: ModifierValidationContext) => void
 
   /**
    * Whether this modifier requires the rollOne function.

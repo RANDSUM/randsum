@@ -1,4 +1,4 @@
-import type { ParsedNotationOptions } from '../types'
+import type { ModifierOptions, ParsedNotationOptions } from '../types'
 import { coreNotationPattern } from '../coreNotationPattern'
 import { TTRPG_STANDARD_DIE_SET } from '../constants'
 import { parseModifiers } from './parseModifiers'
@@ -94,17 +94,22 @@ export function singleNotationToOptions(notationString: string): ParsedNotationO
     return core
   }
 
-  const modifiers = parseModifiers(modifiersString)
-
-  // Resolve !i and !r sugar into explodeSequence
-  if (inflationPattern.test(modifiersString)) {
-    modifiers.explodeSequence = resolveInflation(core.sides)
-  } else if (reductivePattern.test(modifiersString)) {
-    modifiers.explodeSequence = resolveReductive(core.sides)
-  }
-
   return {
     ...core,
-    modifiers
+    modifiers: modifiersFromText(modifiersString, core.sides)
   }
+}
+
+/**
+ * Parse a pool's modifier suffix, resolving the `!i` / `!r` sugar against the
+ * pool's sides. Shared by standard pools and special dice carrying modifiers.
+ */
+export function modifiersFromText(modifiersString: string, sides: number): ModifierOptions {
+  const modifiers = parseModifiers(modifiersString)
+  if (inflationPattern.test(modifiersString)) {
+    modifiers.explodeSequence = resolveInflation(sides)
+  } else if (reductivePattern.test(modifiersString)) {
+    modifiers.explodeSequence = resolveReductive(sides)
+  }
+  return modifiers
 }

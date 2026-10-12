@@ -311,7 +311,7 @@ describe(parseArguments, () => {
         })
       })
       describe('with a max modifier', () => {
-        const argument = `${coreTestString}R{5,20,<6,>2}3`
+        const argument = `${coreTestString}R{5,4,<6,>2}3`
 
         test('returns a RollParameter matching the notation', () => {
           const [params] = parseArguments(argument, 1)
@@ -321,16 +321,16 @@ describe(parseArguments, () => {
             ...coreDicePools,
             modifiers: {
               reroll: {
-                exact: [5, 20],
+                exact: [5, 4],
                 lessThan: 6,
                 greaterThan: 2,
                 max: 3
               }
             },
-            notation: '4d6R{5,20,>2,<6}3',
+            notation: '4d6R{5,4,>2,<6}3',
             description: [
               'Roll 4 6-sided dice',
-              'Reroll 5 and 20, greater than 2 and less than 6 (up to 3 times)'
+              'Reroll 5 and 4, greater than 2 and less than 6 (up to 3 times)'
             ]
           })
         })

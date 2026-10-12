@@ -137,6 +137,25 @@ export function parseNotation(input: string): ParseResult {
   )
   if (badPool) return invalid(`Invalid die "${badPool.text}"`, badPool.start + trimOffset)
 
+  // Unbraced `!` / `!!` / `!p`, `!s` and W fire on the maximum face, which dF, zN
+  // and d{...} dice do not define. A braced `!{>0}` names its own trigger.
+  const maxFace = tokens.find(
+    (t, i) =>
+      (t.key === '!s' || t.key === 'W' || (/^!!?p?$/.test(t.key) && !t.text.includes('{'))) &&
+      ['fate', 'zeroBias', 'custom'].includes(
+        tokens
+          .slice(0, i)
+          .reverse()
+          .find(u => u.role === 'pool')?.poolKind ?? ''
+      )
+  )
+  if (maxFace) {
+    return invalid(
+      `"${maxFace.text}" needs a condition on dF, zN and d{...}`,
+      maxFace.start + trimOffset
+    )
+  }
+
   // Group tokens into pools: each pool token owns the following modifier /
   // annotation tokens until the next pool token. Any trailing `xN` run (the only
   // position `xN` is now accepted) is ignored here and applied by

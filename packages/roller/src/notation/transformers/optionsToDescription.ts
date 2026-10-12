@@ -55,16 +55,15 @@ export function optionsToDescription<T = string>(
   const { modifiers, quantity = 1, arithmetic } = options
   const { sides, faces = [] } = optionsToSidesFaces(options)
 
-  // Special dice reject modifiers (a special die carrying a modifier never reaches
-  // here — it degrades to a plain pool upstream), so their description is the lone
-  // special-die core line, exactly as `roll()` renders it.
+  // A special die is described by its own core line plus its modifiers, exactly
+  // as `roll()` renders it.
+  const modifierDescription = modifiersToDescription(modifiers)
   const specialCore = specialCoreDescription(quantity, sides, options)
-  if (specialCore !== null) return [specialCore]
+  if (specialCore !== null) return [specialCore, ...modifierDescription]
 
   const descriptor = quantity === 1 ? 'die' : 'dice'
   const coreDescription = `Roll ${quantity} ${sides}-sided ${descriptor}`
   const customCoreDescription = `Roll ${quantity} Dice with the following sides: ${faces.join(', ')}`
-  const modifierDescription = modifiersToDescription(modifiers)
   const arithmeticDescription = arithmetic === 'subtract' ? 'and Subtract the result' : ''
 
   return [
