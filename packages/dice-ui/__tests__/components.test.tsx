@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { roll } from '@randsum/roller/roll'
+import { tokenize } from '@randsum/roller/tokenize'
 import { TokenOverlayInput } from '../src/TokenOverlayInput'
 import { NotationRoller } from '../src/NotationRoller'
 import { DieBadge, RollSteps } from '../src/RollSteps'
@@ -23,13 +24,8 @@ describe('TokenOverlayInput', () => {
   })
 
   test('renders a colored overlay span per token', () => {
-    const tokens = [
-      { key: 'xDN', text: '2d6', category: 'Core', description: 'Roll' },
-      { key: '+', text: '+3', category: 'Scale', description: 'Add' }
-    ]
     render(
-      // tokens are structurally compatible with the Token shape the component reads
-      <TokenOverlayInput tokens={tokens as never} hoveredTokenIdx={null}>
+      <TokenOverlayInput tokens={tokenize('2d6+3')} hoveredTokenIdx={null}>
         <input aria-label="notation" />
       </TokenOverlayInput>
     )
@@ -39,18 +35,26 @@ describe('TokenOverlayInput', () => {
   })
 
   test('marks the hovered token active and dims the rest', () => {
-    const tokens = [
-      { key: 'xDN', text: '2d6', category: 'Core', description: 'Roll' },
-      { key: '+', text: '+3', category: 'Scale', description: 'Add' }
-    ]
     render(
-      <TokenOverlayInput tokens={tokens as never} hoveredTokenIdx={0}>
+      <TokenOverlayInput tokens={tokenize('2d6+3')} hoveredTokenIdx={0}>
         <input aria-label="notation" />
       </TokenOverlayInput>
     )
     const spans = document.querySelectorAll('.du-token')
     expect(spans[0]?.className).toContain('du-token--active')
     expect(spans[1]?.className).toContain('du-token--dim')
+  })
+
+  test('never marks a token of valid notation unknown', () => {
+    for (const notation of ['4d6L', '2d20H', '4d6D{<2}', '3d6!s{1,6}', '2d6+3[fire]', '4d6Lx6']) {
+      render(
+        <TokenOverlayInput tokens={tokenize(notation)} hoveredTokenIdx={null}>
+          <input aria-label={notation} />
+        </TokenOverlayInput>
+      )
+      expect(document.querySelectorAll('.du-token--unknown')).toHaveLength(0)
+      cleanup()
+    }
   })
 })
 

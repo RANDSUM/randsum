@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets'
 import Default from '@astrojs/starlight/components/Head.astro'
 const { entry } = Astro.props
 const title = entry?.data.title ?? 'RANDSUM — TypeScript Dice Rolling Library'
@@ -7,6 +8,8 @@ const description =
 ---
 
 <Default {...Astro.props}><slot /></Default>
+<Font cssVariable="--font-inter" preload />
+<Font cssVariable="--font-jetbrains-mono" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta name="twitter:title" content={title} />

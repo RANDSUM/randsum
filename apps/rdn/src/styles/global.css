@@ -20,6 +20,8 @@ html {
 
 /* === Custom Properties (Dark mode default) === */
 :root {
+  color-scheme: dark;
+
   /* Accent */
   --accent: #06b6d4;
   --accent-light: #22d3ee;
@@ -45,7 +47,9 @@ html {
 }
 
 /* === Light Mode === */
-:root.light {
+:root[data-theme='light'] {
+  color-scheme: light;
+
   --accent: #0891b2;
   --accent-light: #06b6d4;
   --accent-dark: #0e7490;
@@ -62,7 +66,7 @@ html {
   --text-dim: #a1a1aa;
 }
 
-:root.light .version-banner-link {
+:root[data-theme='light'] .version-banner-link {
   color: #a16207; /* was #eab308 — 1.84:1 light; now ~4.8:1 (amber-700, WCAG AA) */
 }
 
@@ -268,7 +272,7 @@ body {
 }
 
 .spec-hero-title {
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 700;
   color: var(--text-primary);
@@ -291,7 +295,7 @@ body {
 .spec-hero-package a {
   color: var(--accent);
   text-decoration: none;
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-family: var(--font-jetbrains-mono), monospace;
 }
 
 .spec-hero-package a:hover {
@@ -355,24 +359,24 @@ body {
 }
 
 /* Light mode: show moon icon, hide sun */
-:root.light .theme-icon--moon {
+:root[data-theme='light'] .theme-icon--moon {
   display: block;
 }
-:root.light .theme-icon--sun {
+:root[data-theme='light'] .theme-icon--sun {
   display: none;
 }
 
 /* Light mode overrides for specific elements */
-:root.light .spec-hero {
+:root[data-theme='light'] .spec-hero {
   background: linear-gradient(180deg, rgba(8, 145, 178, 0.06), transparent);
 }
 
-:root.light .spec-content-body thead th {
+:root[data-theme='light'] .spec-content-body thead th {
   background: var(--accent);
   color: #fff;
 }
 
-:root.light .version-banner {
+:root[data-theme='light'] .version-banner {
   background: rgba(234, 179, 8, 0.06);
 }
 
@@ -763,7 +767,7 @@ body.mobile-menu-open {
 
 /* --- Headings --- */
 .spec-content-body h2 {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -781,7 +785,7 @@ body.mobile-menu-open {
 }
 
 .spec-content-body h3 {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -790,7 +794,7 @@ body.mobile-menu-open {
 }
 
 .spec-content-body h4 {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -852,7 +856,7 @@ body.mobile-menu-open {
 .spec-content-body thead th {
   background: var(--accent);
   color: #fff;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 13px;
   font-weight: 600;
   text-align: left;
@@ -894,7 +898,7 @@ body.mobile-menu-open {
 
 /* --- Inline Code --- */
 .spec-content-body code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 13px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -911,6 +915,15 @@ body.mobile-menu-open {
   margin-bottom: 1.5rem;
   overflow-x: auto;
   line-height: 1.5;
+}
+
+/* Shiki emits both themes as variables (defaultColor: false); pick by data-theme. */
+.spec-content-body pre span {
+  color: var(--shiki-dark);
+}
+
+:root[data-theme='light'] .spec-content-body pre span {
+  color: var(--shiki-light);
 }
 
 .spec-content-body pre code {

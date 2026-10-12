@@ -1,4 +1,6 @@
 // dice-ui public exports
+// The token sheet loads once here so every component's var(--dui-*) resolves.
+import './tokens.css'
 export type { RollResult } from './types'
 export { NotationRoller } from './NotationRoller'
 export type { NotationRollerProps } from './NotationRoller'

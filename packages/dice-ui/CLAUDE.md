@@ -51,7 +51,7 @@ packages/dice-ui/
     RollResultPanel.tsx       # RollResultPanel + RollResultDisplay
     NotationRoller.tsx        # Full roller: input + roll button + result
     NotationRoller.css
-    tokens.css                # CSS custom-property tokens (colors, spacing)
+    tokens.css                # CSS custom-property tokens; imported once by index.ts
 ```
 
 ## Component Notes
@@ -78,4 +78,6 @@ bun run check          # typecheck + test
 - No build script — consumed as TypeScript source, not a built artifact.
 - Private, never published to npm.
 - CSS files are imported alongside their component file (e.g. `import './NotationRoller.css'`).
+- Light mode keys on `[data-theme='light']` alone, the attribute `useTheme` reads; there are no
+  `prefers-color-scheme` rules, so an explicit dark choice on a light OS stays dark.
 - Props interfaces use `readonly` fields (strict mode convention).

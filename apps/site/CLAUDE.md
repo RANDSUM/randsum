@@ -18,7 +18,8 @@ Private app, deploys to Cloudflare Workers once CI is green on `main` via
 - **`astro-expressive-code`** — code block rendering
 - **`@randsum/roller` + `@randsum/dice-ui`** — workspace-linked, power the live
   playground / notation components
-- Fonts (Inter, JetBrains Mono) via Astro's Google font provider
+- Fonts (Inter, JetBrains Mono) via Astro's Google font provider, loaded by the
+  `<Font />` tags in `Head.astro`
 
 > **`typescript` is pinned to `6.0.3` here, deliberately — do NOT move it to `catalog:`.**
 > The rest of the workspace is on TypeScript 7.0.2 via the root `catalog`; this app and

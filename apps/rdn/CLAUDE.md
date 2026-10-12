@@ -117,4 +117,8 @@ keeping the published JSON in sync with the source.
   No Astro adapter is involved — the site is `output: 'static'`, so Cloudflare
   serves `dist/` directly through an assets binding with no Worker script.
 - Fonts: Inter (body) and JetBrains Mono (code/headings), via Astro's Google
-  font provider (`astro.config.ts`).
+  font provider (`astro.config.ts`). `SpecLayout.astro` must render `<Font />` for
+  each, or no `@font-face` ships; reference them as `var(--font-*)`, since the
+  emitted family names are hashed.
+- Theme: `data-theme` on `<html>`, from the saved `rdn-theme` choice or else the
+  OS preference. Shiki emits both GitHub themes as variables (`defaultColor: false`).
