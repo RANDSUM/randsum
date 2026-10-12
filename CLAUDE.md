@@ -136,6 +136,8 @@ roll("5d10F{3}") // Count failures <= 3
 
 ## Git Hooks (Lefthook)
 
+`bun install` installs the hooks through the root `prepare` script, except where `$CI` is set: CI runners never install them, so a CI `git push` (the Release workflow's changesets push) does not run the pre-push hook.
+
 **pre-commit**: `bun install --frozen-lockfile` first (nothing else runs if it fails), then in parallel: Biome (`check --write`: lint + format, covering `.astro`), typecheck, and codegen check (`gen:check`)
 **pre-push**: build first (nothing else runs if it fails), then in parallel: codegen check, conformance check (`@randsum/rdn conformance:check`), tests, and knip
 
