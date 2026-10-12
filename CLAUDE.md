@@ -147,6 +147,8 @@ A failing hook step prints its output and its own fix (`fail_text` in `lefthook.
 
 Per-package `CLAUDE.md` files exist in each `packages/*/` and `apps/*/` directory for detailed guidance on each component.
 
+Review changes with the built-in `/code-review`.
+
 ## Debugging & Troubleshooting
 
 **Test failures**: Isolate with `bun test packages/roller/__tests__/roll/roll.test.ts`. Use `--bail` to stop on the first failure: `bun test --bail`. Filter by package: `bun run --filter @randsum/roller test`.

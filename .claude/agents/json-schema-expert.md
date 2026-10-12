@@ -17,16 +17,16 @@ Game specs use a four-stage pipeline declared in JSON:
 Dice → Modify → Resolve → Outcome
 ```
 
-- **`dice`** (required) — pool definition(s); single `DiceConfig` or array for multi-pool rolls
+- **`dice`** — pool definition(s); single `DiceConfig` or array for multi-pool rolls. A roll definition needs exactly one of `dice` or `dicePools` (`oneOf`)
 - **`modify`** (optional) — array of `ModifyOperation` applied to individual dice
-- **`resolve`** (required) — `"sum"`, `{ countMatching }`, or `{ tableLookup }`
+- **`resolve`** (required) — one of the forms in `$defs.ResolveOperation`; read the meta-schema for the current list
 - **`outcome`** (optional) — `{ ranges }`, `{ degreeOfSuccess }`, `{ tableLookup }`, or a `$ref`
 - **`postResolveModifiers`** (optional) — applied to the resolved total (not individual dice)
 - **`when`** (optional) — conditional overrides evaluated before the pipeline; first match wins
 
 Top-level named sections: `pools`, `tables`, `outcomes` — all referenceable via `{ "$ref": "#/section/name" }`.
 
-Named rolls: `roll` (required, default export) + any `roll[A-Z][a-zA-Z]*` keys (exported by name).
+Rolls: the root has exactly one of `roll` (a single roll definition) or `rolls` (a map of named roll definitions whose keys match `^[a-zA-Z][a-zA-Z0-9_]*$`), enforced by `oneOf [{ required: [roll] }, { required: [rolls] }]`.
 
 ## Key Schema Constraints to Know
 
@@ -41,16 +41,17 @@ Named rolls: `roll` (required, default export) + any `roll[A-Z][a-zA-Z]*` keys (
 - `pool` defaults to `"preModify"` — important for criticals (use pre-modify pool for Blades, Daggerheart)
 
 ### `IntegerOrInput`
-- `oneOf`: literal integer OR `{ "$input": "paramName" }`
+- `oneOf`: literal integer, `{ "$input": "paramName" }`, or `{ "$input": "flag", "ifTrue": N, "ifFalse": M }` for a boolean input
 - `$input` binds to a declared input key in the same `RollDefinition.inputs`
 
 ### `PipelineOverride` (inside `when`)
 - `minProperties: 1` — must override at least one stage
 - Unspecified stages fall through to the roll definition's defaults
 
-### Root-level `additionalProperties: false` with `patternProperties`
-- Extra roll keys must match `^roll[A-Z][a-zA-Z]*$`
-- Keys like `rollfortune` (lowercase) will fail validation
+### Root-level `additionalProperties: false`
+- The root allows only its declared `properties`; there is no `patternProperties`
+- Extra roll definitions go inside `rolls`, never as extra root keys
+- `rolls` keys must match `^[a-zA-Z][a-zA-Z0-9_]*$` (`propertyNames`)
 
 ### `ModifyOperation` vs `PostResolveModifyOperation`
 - `ModifyOperation.add` — adds to each die individually (before resolve)
@@ -70,7 +71,7 @@ Key keywords used in this schema:
 | `allOf` | All subschemas must validate |
 | `if/then/not` | Conditional validation |
 | `additionalProperties: false` | No extra keys beyond declared `properties` |
-| `patternProperties` | Allow keys matching a regex pattern |
+| `propertyNames` | Constrain the keys of an object (used on `rolls`) |
 | `minProperties` | Require at least N properties |
 | `const` | Value must equal exactly this |
 | `enum` | Value must be one of these |
@@ -80,7 +81,7 @@ Key keywords used in this schema:
 
 `/packages/games/randsum.json` — this IS the JSON Schema (draft-2019-09) that validates all `.randsum.json` files.
 
-The TypeScript types that mirror it live in `/packages/games/src/types.ts`.
+The TypeScript types that mirror it live in `/packages/games/src/lib/types.ts`.
 
 When the meta-schema and TypeScript types diverge, the meta-schema is the source of truth for the spec format.
 
@@ -90,7 +91,7 @@ When the meta-schema and TypeScript types diverge, the meta-schema is the source
 2. **`poolCondition`-only range missing threshold** — must have `atLeast` or `atLeastRatio`
 3. **`postResolveModifiers` vs `modify`** — use `postResolveModifiers` for stat bonuses added to totals
 4. **`when` override not overriding enough** — unspecified stages use defaults; explicitly override `outcome` when the result interpretation changes for a `when` branch
-5. **`additionalProperties` violation** — extra keys at root level must match `^roll[A-Z][a-zA-Z]*$`
+5. **`additionalProperties` violation** — an extra root key is rejected; put additional roll definitions under `rolls`, and never set both `roll` and `rolls`
 6. **Multi-pool `dice` array missing `key`** — each `DiceConfig` in an array needs a `key` field
 
 ## Workflow
