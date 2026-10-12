@@ -92,7 +92,7 @@ body:has(.landing) .content-panel:has(#_top) {
   height: 1.6rem;
   padding: 0 0.6rem;
   background: transparent;
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
   border-radius: 999px;
   color: var(--sl-color-gray-3);
   font-size: 0.7rem;
@@ -106,14 +106,14 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .hero-chip:hover {
-  border-color: rgba(168, 85, 247, 0.5);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 50%, transparent);
   color: var(--sl-color-gray-1);
 }
 
 .hero-chip--active {
-  border-color: #a855f7;
+  border-color: var(--sl-color-accent);
   color: var(--sl-color-accent-high);
-  background: rgba(168, 85, 247, 0.12);
+  background: color-mix(in srgb, var(--sl-color-accent) 12%, transparent);
 }
 
 .clickable-tagline {
@@ -138,7 +138,7 @@ body:has(.landing) .content-panel:has(#_top) {
 
 .tagline-dice {
   display: inline-block;
-  background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
+  background: var(--rs-brand-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -146,13 +146,8 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .tagline-exceptions {
-  color: #f87171;
-  -webkit-text-fill-color: #f87171;
-}
-
-:root[data-theme='light'] .tagline-exceptions {
-  color: #dc2626;
-  -webkit-text-fill-color: #dc2626;
+  color: var(--rs-error);
+  -webkit-text-fill-color: var(--rs-error);
 }
 
 .hero-subtitle {
@@ -186,8 +181,8 @@ body:has(.landing) .content-panel:has(#_top) {
   align-items: center;
   gap: 0.4rem;
   height: 1.75rem;
-  background: rgba(168, 85, 247, 0.08);
-  border: 1px solid rgba(168, 85, 247, 0.15);
+  background: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 15%, transparent);
   border-radius: var(--radius, 5px);
   padding: 0 0.5rem;
   margin: 0;
@@ -196,8 +191,8 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .install-cmd:hover {
-  border-color: rgba(168, 85, 247, 0.4);
-  background: rgba(168, 85, 247, 0.08);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
 }
 
 .install-cmd code {
@@ -242,12 +237,12 @@ body:has(.landing) .content-panel:has(#_top) {
 
 .btn-primary {
   background: var(--sl-color-accent);
-  color: #fafafa;
+  color: var(--rs-on-accent);
 }
 
 .btn-primary:hover {
   filter: brightness(1.1);
-  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
 }
 
 .btn-secondary {
@@ -301,9 +296,9 @@ body:has(.landing) .content-panel:has(#_top) {
   min-height: 180px;
   margin-top: 0;
   padding: 1.25rem 1.5rem;
-  border: 1px solid rgba(168, 85, 247, 0.18);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, transparent);
   border-radius: var(--radius, 5px);
-  background: rgba(168, 85, 247, 0.04);
+  background: color-mix(in srgb, var(--sl-color-accent) 4%, transparent);
   text-decoration: none;
   color: inherit;
   transition:
@@ -312,11 +307,12 @@ body:has(.landing) .content-panel:has(#_top) {
     transform 0.15s ease,
     opacity 0.25s ease,
     border-radius 0.15s ease;
-  border-top: 3px solid var(--card-accent, rgba(168, 85, 247, 0.3));
+  border-top: 3px solid
+    var(--card-accent, color-mix(in srgb, var(--sl-color-accent) 30%, transparent));
 }
 
 .pkg-card:hover {
-  border-color: rgba(168, 85, 247, 0.3);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
   border-top-color: var(--card-accent, var(--sl-color-accent));
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15),
@@ -332,7 +328,7 @@ body:has(.landing) .content-panel:has(#_top) {
   gap: 0.5rem;
   margin: -1.25rem -1.5rem 0.75rem;
   padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+  border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 15%, transparent);
   z-index: 0;
 }
 
@@ -364,7 +360,7 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .pkg-card:hover .pkg-card-name {
-  color: var(--card-hover-text, #fff);
+  color: var(--card-hover-text, var(--rs-on-accent));
 }
 
 .pkg-card-badge {
@@ -381,7 +377,7 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .pkg-card:hover .pkg-card-version {
-  color: var(--card-hover-text, #fff);
+  color: var(--card-hover-text, var(--rs-on-accent));
   opacity: 0.7;
 }
 
@@ -415,7 +411,7 @@ body:has(.landing) .content-panel:has(#_top) {
 .pkg-card--feature {
   min-height: auto;
   align-self: start;
-  border-top: 1px solid rgba(168, 85, 247, 0.18);
+  border-top: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, transparent);
 }
 
 .pkg-card--feature .pkg-card-header {
@@ -506,20 +502,15 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .pitch-accent {
-  background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
+  background: var(--rs-brand-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .pitch-highlight {
-  color: #34d399;
-  -webkit-text-fill-color: #34d399;
-}
-
-:root[data-theme='light'] .pitch-highlight {
-  color: #059669;
-  -webkit-text-fill-color: #059669;
+  color: var(--rs-success);
+  -webkit-text-fill-color: var(--rs-success);
 }
 
 .pitch-color-cycle {
@@ -535,87 +526,42 @@ body:has(.landing) .content-panel:has(#_top) {
 @keyframes syntax-color-cycle {
   0%,
   100% {
-    color: #60a5fa;
-  } /* core blue */
-  11% {
-    color: #f060d0;
-  } /* drop fuchsia */
-  22% {
-    color: #ffab70;
-  } /* keep orange */
-  33% {
-    color: #e5c07b;
-  } /* explode gold */
-  44% {
-    color: #c792ea;
-  } /* reroll purple */
-  55% {
-    color: #89ddff;
-  } /* cap cyan */
-  66% {
-    color: #80cbc4;
-  } /* unique teal */
-  77% {
-    color: #98c379;
-  } /* plus green */
-  88% {
-    color: #82aaff;
-  } /* count blue-violet */
-}
-
-:root[data-theme='light'] .pitch-color-char {
-  animation-name: syntax-color-cycle-light;
-}
-
-@keyframes syntax-color-cycle-light {
-  0%,
-  100% {
-    color: #2563eb;
+    color: var(--rs-syntax-core);
   }
   11% {
-    color: #b028a8;
+    color: var(--rs-syntax-drop);
   }
   22% {
-    color: #c2620a;
+    color: var(--rs-syntax-keep);
   }
   33% {
-    color: #9a7c1a;
+    color: var(--rs-syntax-explode);
   }
   44% {
-    color: #7c4dab;
+    color: var(--rs-syntax-reroll);
   }
   55% {
-    color: #0082a5;
+    color: var(--rs-syntax-cap);
   }
   66% {
-    color: #1a7a72;
+    color: var(--rs-syntax-unique);
   }
   77% {
-    color: #3a7d20;
+    color: var(--rs-syntax-plus);
   }
   88% {
-    color: #3a60c8;
+    color: var(--rs-syntax-count);
   }
 }
 
 .pitch-warn {
-  color: #fbbf24;
-  -webkit-text-fill-color: #fbbf24;
-}
-
-:root[data-theme='light'] .pitch-warn {
-  color: #d97706;
-  -webkit-text-fill-color: #d97706;
+  color: var(--rs-warn);
+  -webkit-text-fill-color: var(--rs-warn);
 }
 
 .pitch-purple {
-  color: #a855f7;
-  -webkit-text-fill-color: #a855f7;
-}
-
-:root[data-theme='light'] .pitch-purple {
-  color: #9333ea;
-  -webkit-text-fill-color: #9333ea;
+  color: var(--sl-color-accent);
+  -webkit-text-fill-color: var(--sl-color-accent);
 }
 
 .pitch-game-cycle {
@@ -646,13 +592,8 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .pitch-sky {
-  color: #38bdf8;
-  -webkit-text-fill-color: #38bdf8;
-}
-
-:root[data-theme='light'] .pitch-sky {
-  color: #0284c7;
-  -webkit-text-fill-color: #0284c7;
+  color: var(--rs-info);
+  -webkit-text-fill-color: var(--rs-info);
 }
 
 .pitch-body {
@@ -671,24 +612,20 @@ body:has(.landing) .content-panel:has(#_top) {
 .pitch-body code {
   font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
   font-size: 0.85rem;
-  background: rgba(168, 85, 247, 0.08);
+  background: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
   padding: 0.1rem 0.3rem;
   border-radius: 3px;
   color: var(--sl-color-accent-high);
 }
 
 .pitch-highlight-inline {
-  color: #34d399;
+  color: var(--rs-success);
   font-weight: 700;
-}
-
-:root[data-theme='light'] .pitch-highlight-inline {
-  color: #059669;
 }
 
 .code-example {
   width: 100%;
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 25%, transparent);
   border-radius: var(--radius, 5px);
   overflow: hidden;
 }
@@ -715,12 +652,8 @@ body:has(.landing) .content-panel:has(#_top) {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: rgba(24, 24, 27, 0.6);
-  border-bottom: 1px solid rgba(168, 85, 247, 0.15);
-}
-
-:root[data-theme='light'] .code-example-chrome {
-  background: rgba(244, 244, 245, 0.8);
+  background: color-mix(in srgb, var(--sl-color-black) 70%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 15%, transparent);
 }
 
 .code-chrome-dots {
@@ -735,13 +668,13 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .code-chrome-dot--red {
-  background: #ef4444;
+  background: var(--rs-error);
 }
 .code-chrome-dot--yellow {
-  background: #eab308;
+  background: var(--rs-warn);
 }
 .code-chrome-dot--green {
-  background: #22c55e;
+  background: var(--rs-success);
 }
 
 .code-chrome-filename {
@@ -772,7 +705,7 @@ body:has(.landing) .content-panel:has(#_top) {
 
 .code-example-stackblitz:hover {
   color: var(--sl-color-accent-high);
-  background: rgba(168, 85, 247, 0.12);
+  background: color-mix(in srgb, var(--sl-color-accent) 12%, transparent);
 }
 
 /* ===== Game Schema Section ===== */
@@ -836,7 +769,7 @@ body:has(.landing) .content-panel:has(#_top) {
   flex: 1;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 25%, transparent);
   border-radius: var(--radius, 5px);
   overflow: hidden;
   min-height: 0;
@@ -849,24 +782,16 @@ body:has(.landing) .content-panel:has(#_top) {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: rgba(24, 24, 27, 0.6);
-  border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+  background: color-mix(in srgb, var(--sl-color-black) 70%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 15%, transparent);
   flex-shrink: 0;
-}
-
-:root[data-theme='light'] .game-schema-chrome {
-  background: rgba(244, 244, 245, 0.8);
 }
 
 .game-schema-code {
   flex: 1;
   overflow: hidden;
   max-height: 22rem;
-  background: var(--sl-color-gray-6, #18181b);
-}
-
-:root[data-theme='light'] .game-schema-code {
-  background: #fafafa;
+  background: var(--rs-code-bg);
 }
 
 .game-schema-code pre {
@@ -926,7 +851,7 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .integration-terminal {
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 25%, transparent);
   border-radius: var(--radius, 5px);
   overflow: hidden;
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
@@ -934,13 +859,9 @@ body:has(.landing) .content-panel:has(#_top) {
 }
 
 .integration-terminal-body {
-  background: var(--sl-color-gray-6, #18181b);
+  background: var(--rs-code-bg);
   overflow: hidden;
   max-height: 10rem;
-}
-
-:root[data-theme='light'] .integration-terminal-body {
-  background: #fafafa;
 }
 
 .integration-terminal-body pre {
@@ -992,30 +913,30 @@ body:has(.landing) .content-panel:has(#_top) {
 
 /* ===== Light mode softening ===== */
 :root[data-theme='light'] .pkg-card {
-  border-color: rgba(124, 58, 237, 0.12);
-  background: rgba(124, 58, 237, 0.03);
-  border-top-color: var(--card-accent, rgba(124, 58, 237, 0.2));
+  border-color: color-mix(in srgb, var(--sl-color-accent) 12%, transparent);
+  background: color-mix(in srgb, var(--sl-color-accent) 3%, transparent);
+  border-top-color: var(--card-accent, color-mix(in srgb, var(--sl-color-accent) 20%, transparent));
 }
 
 :root[data-theme='light'] .pkg-card:hover {
-  border-color: rgba(124, 58, 237, 0.2);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 20%, transparent);
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.06),
-    0 0 0 1px rgba(124, 58, 237, 0.15);
+    0 0 0 1px color-mix(in srgb, var(--sl-color-accent) 15%, transparent);
 }
 
 :root[data-theme='light'] .pkg-card-header {
-  border-bottom-color: rgba(124, 58, 237, 0.08);
+  border-bottom-color: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
 }
 
 :root[data-theme='light'] .install-cmd {
-  background: rgba(124, 58, 237, 0.04);
-  border-color: rgba(124, 58, 237, 0.1);
+  background: color-mix(in srgb, var(--sl-color-accent) 4%, transparent);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 10%, transparent);
 }
 
 :root[data-theme='light'] .install-cmd:hover {
-  border-color: rgba(124, 58, 237, 0.2);
-  background: rgba(124, 58, 237, 0.06);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--sl-color-accent) 6%, transparent);
 }
 
 /* ===== Footer ===== */

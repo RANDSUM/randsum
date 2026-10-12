@@ -1,0 +1,14 @@
+// Only theme colours. apps/site/src/styles/theme.css is the one file that may
+// spell a colour; every other stylesheet uses var(--token), and a tint is
+// color-mix(in srgb, var(--token) N%, transparent). biome.json applies this to
+// **/*.css minus the theme file.
+//
+// Biome does not lint Astro <style> blocks unless HTML full support is on,
+// which also turns the JS plugins loose on <script> blocks. Each app's
+// __tests__/theme.test.ts covers those blocks instead.
+language css
+
+`$c` as $node where {
+  $node <: r"#[0-9a-fA-F]{3,8}",
+  register_diagnostic(span=$node, message="Raw hex colour. Add a token to apps/site/src/styles/theme.css and use var() here (repo policy: only theme colours).")
+}

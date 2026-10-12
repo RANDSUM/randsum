@@ -5,12 +5,12 @@
 }
 
 .du-pool-heading {
-  font-family: var(--dui-font-mono);
+  font-family: var(--rs-font-mono);
   font-size: 0.875rem;
-  color: var(--dui-color-text-muted);
+  color: var(--rs-gray-2);
   margin: 0;
   padding-bottom: var(--dui-space-xs);
-  border-bottom: 1px solid var(--dui-color-border);
+  border-bottom: 1px solid var(--rs-gray-4);
 }
 
 .du-step-row {
@@ -19,7 +19,7 @@
   justify-content: space-between;
   gap: var(--dui-space-sm);
   padding: var(--dui-space-xs) var(--dui-space-sm);
-  font-family: var(--dui-font-mono);
+  font-family: var(--rs-font-mono);
 }
 
 .du-step-row--final {
@@ -28,24 +28,24 @@
 }
 
 .du-step-label {
-  color: var(--dui-color-text-muted);
+  color: var(--rs-gray-2);
   flex-shrink: 0;
 }
 
 .du-step-arithmetic {
-  font-family: var(--dui-font-mono);
-  color: var(--dui-color-text);
+  font-family: var(--rs-font-mono);
+  color: var(--rs-fg);
   font-weight: 600;
 }
 
 .du-step-final-math {
-  font-family: var(--dui-font-mono);
-  color: var(--dui-color-text);
+  font-family: var(--rs-font-mono);
+  color: var(--rs-fg);
 }
 
 .du-step-divider {
   border: none;
-  border-top: 1px solid var(--dui-color-border);
+  border-top: 1px solid var(--rs-gray-4);
   margin: var(--dui-space-xs) 0;
 }
 
@@ -63,19 +63,19 @@
   min-width: 1.5em;
   padding: 0.125rem 0.25rem;
   border-radius: var(--dui-radius-sm);
-  font-family: var(--dui-font-mono);
+  font-family: var(--rs-font-mono);
   font-weight: 500;
   background: transparent;
-  color: var(--dui-color-text);
+  color: var(--rs-fg);
 }
 
 .du-die-badge--removed {
-  color: var(--dui-color-removed);
+  color: var(--rs-error);
   opacity: 0.85; /* was 0.7 — improves readability of struck-through removed values */
 }
 
 .du-die-badge--added {
-  color: var(--dui-color-text);
+  color: var(--rs-fg);
 }
 
 /* ===== Replacement pairs (from → to) ===== */
@@ -86,6 +86,6 @@
 }
 
 .du-replacement-arrow {
-  color: var(--dui-color-text-muted);
+  color: var(--rs-gray-2);
   font-size: 0.75em;
 }

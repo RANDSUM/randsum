@@ -122,3 +122,6 @@ keeping the published JSON in sync with the source.
   emitted family names are hashed.
 - Theme: `data-theme` on `<html>`, from the saved `rdn-theme` choice or else the
   OS preference. Shiki emits both GitHub themes as variables (`defaultColor: false`).
+- Colours: `global.css` `@import`s the site's `apps/site/src/styles/theme.css`
+  and aliases `--bg`, `--surface`, `--text-*` and the cyan `--accent` to it.
+  Never write hex here; add a token to the theme file (see `apps/site/CLAUDE.md`).

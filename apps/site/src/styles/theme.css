@@ -1,0 +1,183 @@
+/*
+ * The RANDSUM theme: the only file that may spell a colour.
+ *
+ * randsum.dev loads it first through Starlight's customCss, and custom.css maps
+ * Starlight's --sl-color-* onto it. The dice UI in components/dice-ui/ reads it
+ * directly. notation.randsum.dev (apps/rdn) @imports it by relative path and
+ * aliases its own --bg/--surface/--text-* names to it.
+ *
+ * Every mode-dependent colour is written once as light-dark(light, dark). The
+ * arm is picked by the element's color-scheme, which both sites set from
+ * <html data-theme>. Tints are color-mix(in srgb, var(--token) N%, transparent)
+ * at the use site, never a hand-computed rgba().
+ *
+ * biome-plugins/no-raw-color.grit fails any other stylesheet that writes hex,
+ * and each app's theme test does the same for Astro <style> blocks. Add a token
+ * here, then use var() there.
+ */
+:root {
+  /* Neutrals, on Starlight's scale: --rs-fg is the strongest text and the
+     steps fade toward --rs-bg, the page background. */
+  --rs-fg: light-dark(#18181b, #fafafa);
+  --rs-gray-1: light-dark(#27272a, #e4e4e7);
+  --rs-gray-2: light-dark(#3f3f46, #a1a1aa);
+  --rs-gray-3: #71717a;
+  --rs-gray-4: light-dark(#a1a1aa, #52525b);
+  --rs-gray-5: light-dark(#e4e4e7, #2e2e35);
+  --rs-gray-6: light-dark(#ebebed, #222228);
+  /* Starlight reads gray-7 in light mode only (nav background). */
+  --rs-gray-7: light-dark(#f0f0f2, #222228);
+  --rs-bg: light-dark(#f4f4f6, #1a1a1f);
+  --rs-code-bg: light-dark(#fafafa, #222228);
+
+  /* Text on a filled background */
+  --rs-on-accent: #fff;
+  --rs-ink: #18181b;
+
+  /* Accent: purple */
+  --rs-accent: light-dark(#7c3aed, #a855f7);
+  --rs-accent-low: light-dark(#f5f0ff, #2e1065);
+  --rs-accent-high: light-dark(#5b21b6, #d8b4fe);
+  --rs-brand-gradient: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
+
+  /* Spec-site accent (notation.randsum.dev): cyan */
+  --rs-cyan: light-dark(#0891b2, #06b6d4);
+  --rs-cyan-high: light-dark(#06b6d4, #22d3ee);
+
+  /* Semantic: AA (4.5:1) as text on --rs-bg in both modes */
+  --rs-error: light-dark(#b91c1c, #f87171);
+  --rs-warn: light-dark(#854d0e, #eab308);
+  --rs-success: light-dark(#047857, #34d399);
+  --rs-info: light-dark(#0369a1, #38bdf8);
+
+  /* Third-party brands */
+  --rs-discord: #5865f2;
+  --rs-claude: #e07a2f;
+
+  /* Games: one colour per game id, for every page that names a game */
+  --game-blades: light-dark(#475569, #64748b);
+  --game-daggerheart: light-dark(#a16207, #eab308);
+  --game-fate: light-dark(#0284c7, #0ea5e9);
+  --game-fifth: light-dark(#dc2626, #ef4444);
+  --game-pbta: light-dark(#4b5563, #6b7280);
+  --game-root-rpg: light-dark(#059669, #10b981);
+  --game-salvageunion: light-dark(#5a7f8f, #7a9baa);
+
+  /* Notation syntax: the landing page's colour cycle */
+  --rs-syntax-core: light-dark(#2563eb, #60a5fa);
+  --rs-syntax-drop: light-dark(#b028a8, #f060d0);
+  --rs-syntax-keep: light-dark(#c2620a, #ffab70);
+  --rs-syntax-explode: light-dark(#9a7c1a, #e5c07b);
+  --rs-syntax-reroll: light-dark(#7c4dab, #c792ea);
+  --rs-syntax-cap: light-dark(#0082a5, #89ddff);
+  --rs-syntax-unique: light-dark(#1a7a72, #80cbc4);
+  --rs-syntax-plus: light-dark(#3a7d20, #98c379);
+  --rs-syntax-count: light-dark(#3a60c8, #82aaff);
+
+  /* Fonts: the family names behind --font-* are hashed by Astro's font API */
+  --rs-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --rs-font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+/*
+ * The landing page animates through the game and syntax colours. An animation
+ * keeps the keyframe values it resolved, and a theme toggle changes only
+ * color-scheme, not the token text, so an unregistered token would hold the old
+ * mode's colour until a reload. Registered as <color>, each token resolves its
+ * light-dark() into a real colour, and the toggle then refreshes the frames.
+ */
+@property --game-blades {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --game-daggerheart {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --game-fate {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --game-fifth {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --game-pbta {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --game-root-rpg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --game-salvageunion {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-core {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-drop {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-keep {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-explode {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-reroll {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-cap {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-unique {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-plus {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --rs-syntax-count {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
