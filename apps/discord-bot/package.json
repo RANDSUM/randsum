@@ -38,10 +38,14 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "bunx wrangler@4 dev -c wrangler.jsonc",
+    "dev": "wrangler dev -c wrangler.jsonc",
+    "deploy": "wrangler deploy -c wrangler.jsonc",
     "deploy-commands": "bun run src/deploy-commands.ts",
     "test": "bun test --isolate",
     "typecheck": "tsc --noEmit",
     "check": "bun run typecheck && bun run test"
+  },
+  "devDependencies": {
+    "wrangler": "catalog:"
   }
 }

@@ -165,7 +165,7 @@ The bot deploys to **Cloudflare Workers** from [`wrangler.jsonc`](./wrangler.jso
 
 ```bash
 bun run --filter '@randsum/roller' --filter '@randsum/games' build
-bunx wrangler@4 deploy -c apps/discord-bot/wrangler.jsonc
+bun run --filter @randsum/discord-bot deploy
 ```
 
 - `bot.randsum.dev` is a `custom_domain` route, so a deploy cannot detach the hostname Discord

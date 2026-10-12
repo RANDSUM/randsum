@@ -27,6 +27,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "wrangler deploy -c wrangler.jsonc",
     "astro": "astro",
     "typecheck": "astro check",
     "check": "bun run build && bun run typecheck && bun run test",
@@ -38,6 +39,7 @@
     "@astrojs/check": "0.9.9",
     "@astrojs/sitemap": "3.7.3",
     "@randsum/roller": "workspace:~",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "wrangler": "catalog:"
   }
 }

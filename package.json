@@ -23,6 +23,7 @@
     "@types/bun": "1.4.0",
     "mitata": "1.0.34",
     "typescript": "7.0.2",
+    "wrangler": "4.123.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "@types/react": "^19.2.17",

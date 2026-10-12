@@ -61,6 +61,7 @@ that erase at compile time. That is what keeps discord.js out of the Worker bund
 
 ```bash
 bun run dev              # wrangler dev — run the Worker locally
+bun run deploy           # wrangler deploy — CI runs this on merge to main
 bun run deploy-commands  # Write the slash command registry (see below — now required)
 bun run typecheck        # tsc --noEmit
 bun run check            # typecheck + test (lint/format: `bun run lint` at the root)

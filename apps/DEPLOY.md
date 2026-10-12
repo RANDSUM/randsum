@@ -84,16 +84,9 @@ ever used). Then:
 gh secret set CLOUDFLARE_API_TOKEN --repo RANDSUM/randsum
 ```
 
-Until this exists the deploy workflow **skips with a notice rather than failing**,
-so main stays green either way. Adding it switches deploys on with no code
-change — which is exactly how it played out.
-
-**Beware how the skip path reads in the logs.** A skipped run reports
-`success`, identically to a real deploy, because the guard exits 0 on purpose.
-The distinguishing signal is a `##[notice]` line; the echoed script source of
-the un-taken branch also contains the words "skipping deploy", so grepping the
-raw log for that string finds it either way. Check for new **version IDs**
-instead — that is the only unambiguous proof a deploy happened.
+Without it every deploy job **fails red** with an `::error::` line: there is no
+second host, so a missing or renamed secret must not read as green. New
+**version IDs** in the deploy log are the proof a deploy happened.
 
 ```bash
 gh run list --repo RANDSUM/randsum --workflow deploy-cloudflare.yml --limit 1
@@ -290,17 +283,16 @@ Both Astro sites are separate Workers, each with a custom domain, deployed from
 
 ### Deploy
 
-Merge to `main` — CI deploys automatically. To deploy by hand (or if the token
-is ever removed and CI starts skipping):
+Merge to `main` — CI deploys automatically. To deploy by hand:
 
 ```bash
 bun run --filter '@randsum/roller' build
 bun run --filter '@randsum/games' build
 DEPLOY_TARGET=cloudflare bun run site:build
-wrangler deploy -c apps/site/dist/server/wrangler.json
+bun run --filter @randsum/site deploy
 
 bun run --filter @randsum/roller --filter @randsum/rdn build
-wrangler deploy -c apps/rdn/wrangler.jsonc
+bun run --filter @randsum/rdn deploy
 ```
 
 ### Deploying when the push trigger does not fire
@@ -339,8 +331,8 @@ gh api "repos/RANDSUM/randsum/actions/runs?head_sha=$(git rev-parse origin/main)
 Workers keeps every uploaded version, so rollback needs no rebuild:
 
 ```bash
-wrangler deployments list --name randsum-site
-wrangler rollback --name randsum-site [<version-id>]
+bun run --cwd apps/site wrangler deployments list --name randsum-site
+bun run --cwd apps/site wrangler rollback --name randsum-site [<version-id>]
 ```
 
 Same shape for `randsum-rdn` and `randsum-discord-bot`. This is atomic and
@@ -397,7 +389,7 @@ Merge to `main`. To deploy by hand:
 
 ```bash
 bun run --filter '@randsum/roller' --filter '@randsum/games' build
-bunx wrangler@4 deploy -c apps/discord-bot/wrangler.jsonc
+bun run --filter @randsum/discord-bot deploy
 ```
 
 ### Triage — "the bot is down"
@@ -419,7 +411,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' -X POST https://bot.randsum.dev/ \
 | timeout / `5xx` | Worker exception. Read the logs. |
 
 ```bash
-bunx wrangler@4 tail --name randsum-discord-bot          # live
+bun run --cwd apps/discord-bot wrangler tail --name randsum-discord-bot   # live
 ```
 
 Observability is enabled in `wrangler.jsonc`, so Workers Logs in the dashboard
@@ -452,8 +444,8 @@ it unset for global registration, ~1h propagation.)
 ### Rollback
 
 ```bash
-bunx wrangler@4 deployments list --name randsum-discord-bot
-bunx wrangler@4 rollback --name randsum-discord-bot [<version-id>]
+bun run --cwd apps/discord-bot wrangler deployments list --name randsum-discord-bot
+bun run --cwd apps/discord-bot wrangler rollback --name randsum-discord-bot [<version-id>]
 ```
 
 Atomic, no rebuild, and newer versions are not deleted. As with the sites,
