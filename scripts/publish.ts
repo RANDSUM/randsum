@@ -7,6 +7,7 @@
  *   bun run publish                  # publish all non-private workspace packages
  *   bun run publish -- --dry-run     # simulate without publishing
  *   bun run publish -- --otp=123456  # provide 2FA OTP (local only)
+ *   bun scripts/publish.ts --dry-run --pack-dir=DIR  # keep the tarballs in DIR (CI lints them)
  *
  * Uses `bun pm pack` to resolve workspace: protocols, then `npm publish`
  * on the tarball. In CI, auth is handled by npm Trusted Publishing (OIDC) —
@@ -17,9 +18,10 @@
  * Publishes workspace packages in dependency order, skips private ones.
  */
 
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { $ } from 'bun'
-import { unlinkSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 
 const ROOT = join(import.meta.dir, '..')
 
@@ -99,7 +101,7 @@ async function assertNoWorkspaceProtocol(tgzPath: string, name: string): Promise
  * or run prepublishOnly, so we flip the field only for the pack and restore it immediately after —
  * the tarball ships the already-built healthy dist with a tree-shakeable manifest. See ADR-018.
  */
-async function packRollerWithSideEffectsFalse(dir: string): Promise<string> {
+async function packRollerWithSideEffectsFalse(dir: string, destination: string): Promise<string> {
   const pkgPath = join(dir, 'package.json')
   const original = await Bun.file(pkgPath).text()
   const patched = original.replace(/"sideEffects":\s*true/, '"sideEffects": false')
@@ -110,14 +112,33 @@ async function packRollerWithSideEffectsFalse(dir: string): Promise<string> {
   }
   try {
     await Bun.write(pkgPath, patched)
-    return await $`bun pm pack`.cwd(dir).text()
+    return await pack(dir, destination)
   } finally {
     await Bun.write(pkgPath, original)
   }
 }
 
-const extraArgs = process.argv.slice(2)
-const dryRun = extraArgs.includes('--dry-run')
+/** Pack `dir` into `destination` and return the tarball path `bun pm pack` reports. */
+async function pack(dir: string, destination: string): Promise<string> {
+  const tgzPath = (await $`bun pm pack --destination ${destination} --quiet`.cwd(dir).text()).trim()
+  if (!tgzPath.endsWith('.tgz')) {
+    throw new Error(`bun pm pack did not report a .tgz path (got: ${tgzPath})`)
+  }
+  return tgzPath
+}
+
+const PACK_DIR_FLAG = '--pack-dir='
+const args = process.argv.slice(2)
+const dryRun = args.includes('--dry-run')
+const packDirArg = args.find(arg => arg.startsWith(PACK_DIR_FLAG))
+// Everything except our own flag is forwarded to `npm publish` (--dry-run, --otp=...).
+const extraArgs = args.filter(arg => !arg.startsWith(PACK_DIR_FLAG))
+// --pack-dir keeps the tarballs for later inspection; otherwise they go to a temp dir
+// that is removed once every package has been tried, whether or not it published.
+const packDir = packDirArg
+  ? resolve(packDirArg.slice(PACK_DIR_FLAG.length))
+  : mkdtempSync(join(tmpdir(), 'randsum-publish-'))
+mkdirSync(packDir, { recursive: true })
 
 const packages = await getPublishablePackages()
 
@@ -133,20 +154,11 @@ const failed: string[] = []
 for (const { name, dir } of packages) {
   console.log(`--- ${name} ---`)
   try {
-    const packOutput =
+    const tgzPath =
       name === '@randsum/roller'
-        ? await packRollerWithSideEffectsFalse(dir)
-        : await $`bun pm pack`.cwd(dir).text()
-    const tgzMatch = packOutput.match(/^Total files:.*$/m)
-    const tgzFile = (await Array.fromAsync(new Bun.Glob('*.tgz').scan(dir)))[0]
-    if (!tgzFile) {
-      throw new Error('bun pm pack did not produce a .tgz file')
-    }
-    const tgzPath = join(dir, tgzFile)
-
-    if (tgzMatch) {
-      console.log(tgzMatch[0])
-    }
+        ? await packRollerWithSideEffectsFalse(dir, packDir)
+        : await pack(dir, packDir)
+    console.log(`  packed ${tgzPath}`)
 
     // Refuse to publish a tarball that still carries an unresolved workspace: protocol —
     // it would be uninstallable via npm. See assertNoWorkspaceProtocol for the incident.
@@ -165,15 +177,13 @@ for (const { name, dir } of packages) {
     const output = result.stderr.toString()
 
     if (result.exitCode === 0) {
-      console.log(`  published ${name}`)
+      console.log(`  ${dryRun ? 'would publish' : 'published'} ${name}`)
     } else if (output.includes('You cannot publish over the previously published')) {
       console.log(`  skipped ${name} (version already published)`)
     } else {
       console.error(output)
       failed.push(name)
     }
-
-    unlinkSync(tgzPath)
   } catch (e) {
     console.error(String(e))
     failed.push(name)
@@ -182,9 +192,13 @@ for (const { name, dir } of packages) {
 }
 /* eslint-enable no-await-in-loop, no-console */
 
+if (!packDirArg) {
+  rmSync(packDir, { recursive: true, force: true })
+}
+
 if (failed.length > 0) {
   console.error(`Failed to publish: ${failed.join(', ')}`)
   process.exit(1)
 }
 
-console.log('All packages published successfully.')
+console.log(dryRun ? 'Dry run complete.' : 'All packages published successfully.')

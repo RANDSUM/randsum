@@ -109,7 +109,7 @@ To change the codegen pipeline itself (new resolve strategy, new pool shape, new
 - **Unit tests** (`<shortcode>.test.ts`): Test each input combination, verify result types, check dice pool sizes, validate edge cases (e.g., zero-dice desperate rolls)
 - **Property tests** (`<shortcode>.property.test.ts`): Use `fast-check` with `fc.property()` to verify invariants across random inputs (result always valid, pool size matches input, totals within bounds)
 - Import from subpath: `import { roll } from '@randsum/games/<shortcode>'`
-- Build must run before tests: `bun run --filter @randsum/games test` handles this
+- Build must run before tests (the dist smoke tests import `dist/`): `check` builds first; a bare `test` does not
 
 ## Commands
 
@@ -117,7 +117,7 @@ To change the codegen pipeline itself (new resolve strategy, new pool shape, new
 bun run --filter @randsum/games gen          # Run codegen
 bun run --filter @randsum/games gen:check    # Check codegen freshness
 bun run --filter @randsum/games build        # Build all entries (bunup)
-bun run --filter @randsum/games test         # Build + test
+bun run --filter @randsum/games test         # Test (needs a prior build); writes coverage/lcov.info
 bun run --filter @randsum/games typecheck    # TypeScript check
 bun run --filter @randsum/games size         # Bundle size check
 bun run --filter @randsum/games check        # Full check (build + typecheck + format + lint + test)

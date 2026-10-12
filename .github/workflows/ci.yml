@@ -153,17 +153,14 @@ jobs:
         if: matrix.pkg == 'games'
         run: bun run --filter '@randsum/games' gen:check
       - name: Check
+        # The coverage packages' `test` scripts write coverage/lcov.info, so the
+        # suite runs once here and the upload below reads its output.
         env:
           PKG: ${{ matrix.pkg }}
         run: bun run --filter "@randsum/$PKG" check
-      - name: Generate coverage
-        if: matrix.coverage
-        env:
-          PKG: ${{ matrix.pkg }}
-        run: bun run --filter "@randsum/$PKG" test:coverage
       - name: Upload coverage to Codecov
         if: matrix.coverage && hashFiles(format('packages/{0}/coverage/lcov.info', matrix.pkg)) != ''
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v5
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           files: ./packages/${{ matrix.pkg }}/coverage/lcov.info
           flags: ${{ matrix.coverage }}
@@ -231,27 +228,40 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/bun-setup
-      - run: bun run build
-      - name: Configure npm auth
-        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Dry-run publish
-        run: bun scripts/publish.ts --dry-run
-      - name: Lint packaged tarballs (publint + attw)
-        # Pack each publishable package and validate the tarball's manifest and
-        # type-resolution profile. Pinned via bunx so no root deps are added.
-        # These are ESM-only packages, so attw runs with --profile esm-only to
-        # not fail on the expected missing-CJS resolutions.
+      - name: Require an @randsum/mcp bump alongside roller or games
+        # mcp bundles roller and games (noExternal in its bunup config) but lists
+        # them only as devDependencies, and changesets never bumps a dependent
+        # for a devDependency. Without this, a roller or games release ships
+        # while the published mcp keeps the old copy bundled inside it.
         run: |
           set -euo pipefail
-          for dir in packages/roller packages/games packages/mcp; do
-            echo "::group::$dir"
-            ( cd "$dir" && bun pm pack )
-            tgz=$(ls "$dir"/*.tgz)
+          status=0
+          for f in .changeset/*.md; do
+            if [ "$(basename "$f")" = README.md ]; then continue; fi
+            front=$(awk '/^---$/ { n++; next } n == 1' "$f")
+            if grep -Eq "^[\"']?@randsum/(roller|games)[\"']?:" <<< "$front" \
+              && ! grep -Eq "^[\"']?@randsum/mcp[\"']?:" <<< "$front"; then
+              echo "::error file=$f::bumps @randsum/roller or @randsum/games without bumping @randsum/mcp"
+              status=1
+            fi
+          done
+          exit "$status"
+      - run: bun run build
+      - name: Dry-run publish
+        # --pack-dir keeps the tarballs publish.ts packed, so the lint step below
+        # checks the exact files that would ship (roller's included, with its
+        # pack-time sideEffects flip) instead of packing a second time.
+        run: bun scripts/publish.ts --dry-run --pack-dir="$RUNNER_TEMP/tarballs"
+      - name: Lint packaged tarballs (publint + attw)
+        # Validate each tarball's manifest and type-resolution profile. Pinned via
+        # bunx so no root deps are added. These are ESM-only packages, so attw runs
+        # with --profile esm-only to not fail on the expected missing-CJS resolutions.
+        run: |
+          set -euo pipefail
+          for tgz in "$RUNNER_TEMP"/tarballs/*.tgz; do
+            echo "::group::$(basename "$tgz")"
             bunx publint@0.3.21 "$tgz"
             bunx @arethetypeswrong/cli@0.18.4 --profile esm-only "$tgz"
-            rm -f "$dir"/*.tgz
             echo "::endgroup::"
           done
 

@@ -6,13 +6,9 @@ linker = 'isolated'
 # Default test timeout (30 seconds)
 timeout = 30000
 
-# Enable coverage collection
-coverage = true
-# Coverage reporters
-coverageReporter = ["text", "lcov"]
-# Coverage output directory
-coverageDir = "./coverage"
-# Exclude build output and test utilities from coverage
+# Coverage is opt-in: each package's `test` script passes its own lcov flags
+# (this file is not read when bun test runs from a package directory).
+# Exclude build output and test utilities when it does run from the root.
 coveragePathIgnorePatterns = ["**/dist/**", "**/node_modules/**", "**/test-utils/**"]
 
 # Run integration tests concurrently for faster execution (Bun 1.3+)

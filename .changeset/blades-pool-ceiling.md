@@ -1,5 +1,6 @@
 ---
 '@randsum/games': minor
+'@randsum/mcp': patch
 ---
 
 Raise the Blades in the Dark pool ceiling from 6 to 10.

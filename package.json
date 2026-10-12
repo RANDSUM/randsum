@@ -80,7 +80,7 @@
     "rdn:dev": "bun run --filter @randsum/rdn dev",
     "changeset": "bunx changeset",
     "version-packages": "bunx changeset version",
-    "publish": "bun run build && bun run check && bun scripts/publish.ts"
+    "publish": "bun run build && bun scripts/publish.ts"
   },
   "type": "module",
   "workspaces": [

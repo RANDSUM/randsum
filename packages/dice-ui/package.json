@@ -35,8 +35,7 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "test": "bun test __tests__",
-    "test:coverage": "bun test __tests__ --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
+    "test": "bun test __tests__ --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
     "check": "bun run typecheck && bun run format:check && bun run lint && bun run test"
   }
 }
