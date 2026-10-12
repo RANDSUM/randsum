@@ -324,14 +324,25 @@ jobs:
       - dependency-review
     runs-on: ubuntu-latest
     env:
-      RESULTS: ${{ join(needs.*.result, ' ') }}
+      NEEDS: ${{ toJSON(needs) }}
     steps:
+      # Name each failed job in the log, as an annotation and in the step
+      # summary, so whoever reads this one required check (often an agent on
+      # `gh pr checks --required`) sees which job broke without opening the
+      # other nine.
       - name: Check results
         run: |
-          for result in $RESULTS; do
-            if [ "$result" = "failure" ] || [ "$result" = "cancelled" ]; then
-              echo "One or more checks failed or were cancelled"
-              exit 1
-            fi
-          done
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
+          {
+            echo '| Job | Result |'
+            echo '| --- | --- |'
+            jq -r 'to_entries[] | "| \(.key) | \(.value.result) |"' <<< "$NEEDS"
+          } >> "$GITHUB_STEP_SUMMARY"
+          failed=$(jq -r 'to_entries[] | select(.value.result == "failure" or .value.result == "cancelled") | "\(.key) \(.value.result)"' <<< "$NEEDS")
+          if [ -n "$failed" ]; then
+            while read -r job result; do
+              echo "::error title=CI Success::$job $result"
+            done <<< "$failed"
+            exit 1
+          fi
           echo "All checks passed (or were skipped)"

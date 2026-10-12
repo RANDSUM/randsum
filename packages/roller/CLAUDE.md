@@ -236,7 +236,7 @@ directory boundaries plus ESM tree-shaking:
   path imports. Attaching a `docs` array back onto a `notation/definitions`
   schema re-bloats `dist/tokenize.js` by ~3.5 KB (the whole doc dataset).
 
-The `size-limit` gate on `dist/tokenize.js` (6.75 KB) is the enforcement check.
+The `size-limit` gate on `dist/tokenize.js` is the enforcement check.
 Verify after any modifier change:
 
 ```bash
@@ -312,15 +312,10 @@ src/
 
 ## Bundle size limits
 
-`size-limit` in `package.json` enforces:
-
-| File                  | Limit    |
-| --------------------- | -------- |
-| `dist/index.js`       | 13.25 KB |
-| `dist/index.d.ts`     | 10 KB    |
-| `dist/tokenize.js`    | 6.75 KB  |
-| `dist/docs/index.js`  | 5.25 KB  |
-| `dist/trace/index.js` | 1.1 KB   |
+The `size-limit` block in `package.json` is the only copy of the budgets: one
+per JS entry (`dist/index.js`, `tokenize`, `docs`, `trace`, `random`). There is
+no `.d.ts` entry: size-limit runs files through esbuild, which strips types, so
+a declaration file always measures a few bytes and the gate could never fail.
 
 These budgets were tightened after schema unification removed the duplicated
 modifier schemas (the main bundle previously shipped both copies) and moved docs

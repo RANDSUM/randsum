@@ -129,52 +129,31 @@
   "size-limit": [
     {
       "path": "dist/blades.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
+      "limit": "15 KB"
     },
     {
       "path": "dist/fifth.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
+      "limit": "15 KB"
     },
     {
       "path": "dist/daggerheart.generated.js",
-      "limit": "16 KB",
-      "ignore": [
-        "node:module"
-      ]
+      "limit": "15 KB"
     },
     {
       "path": "dist/fate.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
+      "limit": "15 KB"
     },
     {
       "path": "dist/pbta.generated.js",
-      "limit": "16 KB",
-      "ignore": [
-        "node:module"
-      ]
+      "limit": "15 KB"
     },
     {
       "path": "dist/root-rpg.generated.js",
-      "limit": "15 KB",
-      "ignore": [
-        "node:module"
-      ]
+      "limit": "15 KB"
     },
     {
       "path": "dist/salvageunion.generated.js",
-      "limit": "33 KB",
-      "ignore": [
-        "node:module"
-      ]
+      "limit": "33 KB"
     }
   ]
 }

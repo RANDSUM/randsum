@@ -11,7 +11,7 @@
  * ---------------
  * Branch protection on `main` requires exactly one context: "CI Success". That job
  * (`ci-gate` in .github/workflows/ci.yml) is `if: always()` and decides pass/fail
- * by reading `join(needs.*.result)` — so its verdict covers precisely the jobs in
+ * by reading `toJSON(needs)` — so its verdict covers precisely the jobs in
  * its hand-maintained `needs:` array, and NOTHING else. A job missing from that
  * list still runs, still goes red, and still cannot fail the merge: it is
  * invisible to the only check anyone requires.
