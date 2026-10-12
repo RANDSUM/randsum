@@ -45,7 +45,7 @@ pre-push:
       run: bun run --filter @randsum/rdn conformance:check > /dev/null 2>&1
       priority: 2
     test:
-      run: bun run test 2>&1 | tail -5
+      run: bun run test
       priority: 2
     knip:
       run: bun run knip > /dev/null 2>&1
