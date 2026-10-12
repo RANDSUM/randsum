@@ -72,5 +72,15 @@ export function roll(input?: {
   return { total, result: total, rolls: r.rolls, details }
 }
 
+export const inputs = {
+  modifier: { type: 'integer', minimum: -30, maximum: 30, default: 0, description: '5E modifier' },
+  rollingWith: { type: 'string', enum: ['Advantage', 'Disadvantage'], optional: true },
+  crit: {
+    type: 'boolean',
+    optional: true,
+    description: 'When true, check for natural 1 and natural 20'
+  }
+} as const
+
 export { SchemaError }
 export type { GameRollResult, RollRecord, SchemaErrorCode }

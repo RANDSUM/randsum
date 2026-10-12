@@ -1,43 +1,62 @@
-import { roll as rollBlades } from '@randsum/games/blades'
-import { roll as rollDaggerheart } from '@randsum/games/daggerheart'
-import { roll as rollFate } from '@randsum/games/fate'
-import { roll as rollFifth } from '@randsum/games/fifth'
-import { roll as rollPbta } from '@randsum/games/pbta'
-import { roll as rollRootRpg } from '@randsum/games/root-rpg'
-import { roll as rollSalvageunion } from '@randsum/games/salvageunion'
+import { inputs as bladesInputs, roll as rollBlades } from '@randsum/games/blades'
+import { inputs as daggerheartInputs, roll as rollDaggerheart } from '@randsum/games/daggerheart'
+import { inputs as fateInputs, roll as rollFate } from '@randsum/games/fate'
+import { inputs as fifthInputs, roll as rollFifth } from '@randsum/games/fifth'
+import { inputs as pbtaInputs, roll as rollPbta } from '@randsum/games/pbta'
+import { inputs as rootRpgInputs, roll as rollRootRpg } from '@randsum/games/root-rpg'
+import { inputs as salvageunionInputs, roll as rollSalvageunion } from '@randsum/games/salvageunion'
 import type { GameShortcode } from '@randsum/games'
+import type { InputDeclaration } from '@randsum/games/schema'
 import type { RollRecord } from '@randsum/roller'
 
-/** Advantage/disadvantage flag shared by several game systems. */
-export type RollingWith = 'Advantage' | 'Disadvantage'
+/** One game's input declarations, keyed by input name. */
+export type GameInputs = Readonly<Record<string, InputDeclaration>>
 
 /**
- * Flexible, flattened inputs for `roll_game`. Only the fields relevant to the
- * chosen game are read; a required field missing for its game throws.
+ * Each game's input declarations, exactly as its `.randsum.json` spec states
+ * them. The `roll_game` schema and the required-field check both read these,
+ * so a range or enum changes in the spec and nowhere else.
  */
-export interface GameParams {
-  /** Blades in the Dark: action rating. */
-  readonly rating?: number | undefined
-  /** Daggerheart / Fate / D&D 5e: flat modifier. */
-  readonly modifier?: number | undefined
-  /** Daggerheart: amplify the Hope die. */
-  readonly amplifyHope?: boolean | undefined
-  /** Daggerheart: amplify the Fear die. */
-  readonly amplifyFear?: boolean | undefined
-  /** Daggerheart / 5e / PbtA / Root: advantage or disadvantage. */
-  readonly rollingWith?: RollingWith | undefined
-  /** D&D 5e: roll critical (double dice). */
-  readonly crit?: boolean | undefined
-  /** Powered by the Apocalypse: stat value (required for pbta). */
-  readonly stat?: number | undefined
-  /** Powered by the Apocalypse: forward bonus. */
-  readonly forward?: number | undefined
-  /** Powered by the Apocalypse: ongoing bonus. */
-  readonly ongoing?: number | undefined
-  /** Root RPG: bonus applied to the roll (required for root-rpg). */
-  readonly bonus?: number | undefined
-  /** Salvage Union: name of the table to roll on (required for salvageunion). */
-  readonly tableName?: string | undefined
+export const GAME_INPUTS: Readonly<Record<GameShortcode, GameInputs>> = {
+  blades: bladesInputs,
+  daggerheart: daggerheartInputs,
+  fate: fateInputs,
+  fifth: fifthInputs,
+  pbta: pbtaInputs,
+  'root-rpg': rootRpgInputs,
+  salvageunion: salvageunionInputs
+}
+
+/** An input is required when the spec gives it neither a default nor `optional`. */
+export function isRequiredInput(decl: InputDeclaration): boolean {
+  return decl.default === undefined && decl.optional !== true
+}
+
+/**
+ * Flexible inputs for `roll_game`, keyed by the chosen game's input names. Only
+ * the fields that game declares are read; a required field missing throws.
+ */
+export type GameParams = Readonly<Record<string, unknown>>
+
+/**
+ * Picks the inputs `game` declares out of `params`, throwing when a required
+ * one is missing. Types, ranges and enums are checked by the `roll_game`
+ * schema in `server.ts`, and ranges again by the game's own `roll()`.
+ */
+function gameInput(game: GameShortcode, params: GameParams): Readonly<Record<string, unknown>> {
+  const declared = Object.entries(GAME_INPUTS[game])
+  const missing = declared.find(
+    ([name, decl]) => isRequiredInput(decl) && params[name] === undefined
+  )
+  if (missing !== undefined) {
+    throw new Error(`roll_game: "${game}" requires params.${missing[0]}`)
+  }
+  return Object.fromEntries(
+    declared.flatMap(([name]) => {
+      const value = params[name]
+      return value === undefined ? [] : [[name, value]]
+    })
+  )
 }
 
 /** Structured result returned by the `roll_game` tool handler. */
@@ -70,71 +89,26 @@ function normalize(
 /**
  * Rolls for a specific game system, mapping the flexible `params` object onto
  * the chosen game's typed `roll()` input. Throws when a required field for the
- * chosen game is missing.
+ * chosen game is missing. `input` holds only spec-declared keys with defined
+ * values, which is the shape each `roll()` input type describes.
  */
 export function rollGame(game: GameShortcode, params: GameParams): RollGameToolResult {
+  const input = gameInput(game, params)
   switch (game) {
     case 'blades':
-      return normalize(
-        game,
-        rollBlades({ ...(params.rating !== undefined && { rating: params.rating }) })
-      )
+      return normalize(game, rollBlades(input as Parameters<typeof rollBlades>[0]))
     case 'daggerheart':
-      return normalize(
-        game,
-        rollDaggerheart({
-          ...(params.modifier !== undefined && { modifier: params.modifier }),
-          ...(params.amplifyHope !== undefined && { amplifyHope: params.amplifyHope }),
-          ...(params.amplifyFear !== undefined && { amplifyFear: params.amplifyFear }),
-          ...(params.rollingWith !== undefined && { rollingWith: params.rollingWith })
-        })
-      )
+      return normalize(game, rollDaggerheart(input as Parameters<typeof rollDaggerheart>[0]))
     case 'fate':
-      return normalize(
-        game,
-        rollFate({ ...(params.modifier !== undefined && { modifier: params.modifier }) })
-      )
+      return normalize(game, rollFate(input as Parameters<typeof rollFate>[0]))
     case 'fifth':
-      return normalize(
-        game,
-        rollFifth({
-          ...(params.modifier !== undefined && { modifier: params.modifier }),
-          ...(params.rollingWith !== undefined && { rollingWith: params.rollingWith }),
-          ...(params.crit !== undefined && { crit: params.crit })
-        })
-      )
-    case 'pbta': {
-      if (params.stat === undefined) {
-        throw new Error('roll_game: "pbta" requires params.stat')
-      }
-      return normalize(
-        game,
-        rollPbta({
-          stat: params.stat,
-          ...(params.forward !== undefined && { forward: params.forward }),
-          ...(params.ongoing !== undefined && { ongoing: params.ongoing }),
-          ...(params.rollingWith !== undefined && { rollingWith: params.rollingWith })
-        })
-      )
-    }
-    case 'root-rpg': {
-      if (params.bonus === undefined) {
-        throw new Error('roll_game: "root-rpg" requires params.bonus')
-      }
-      return normalize(
-        game,
-        rollRootRpg({
-          bonus: params.bonus,
-          ...(params.rollingWith !== undefined && { rollingWith: params.rollingWith })
-        })
-      )
-    }
-    case 'salvageunion': {
-      if (params.tableName === undefined) {
-        throw new Error('roll_game: "salvageunion" requires params.tableName')
-      }
-      return normalize(game, rollSalvageunion({ tableName: params.tableName }))
-    }
+      return normalize(game, rollFifth(input as Parameters<typeof rollFifth>[0]))
+    case 'pbta':
+      return normalize(game, rollPbta(input as Parameters<typeof rollPbta>[0]))
+    case 'root-rpg':
+      return normalize(game, rollRootRpg(input as Parameters<typeof rollRootRpg>[0]))
+    case 'salvageunion':
+      return normalize(game, rollSalvageunion(input as Parameters<typeof rollSalvageunion>[0]))
     default: {
       const exhaustive: never = game
       throw new Error(`roll_game: unknown game "${String(exhaustive)}"`)

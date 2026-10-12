@@ -45,4 +45,6 @@ export {
   SeparatorSpacingSize
 } from 'discord-api-types/v10'
 
+export type { SlashCommandIntegerOption, SlashCommandStringOption } from '@discordjs/builders'
+
 export type { APIContainerComponent } from 'discord-api-types/v10'

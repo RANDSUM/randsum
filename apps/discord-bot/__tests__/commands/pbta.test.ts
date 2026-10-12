@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import { specInputs } from './lib/specInputs.js'
 import { makeContext } from './lib/context.js'
 import { accentsOf, textOf } from '../lib/view.js'
 import { PBTA } from '../../src/utils/palette.js'
@@ -20,7 +21,10 @@ const strongHit = (): PbtaResult => ({
 
 const mockRoll = mock(strongHit)
 
-void mock.module('@randsum/games/pbta', () => ({ roll: mockRoll }))
+void mock.module('@randsum/games/pbta', () => ({
+  roll: mockRoll,
+  inputs: specInputs('pbta')
+}))
 
 const { pbtaCommand } = await import('../../src/commands/pbta.js')
 

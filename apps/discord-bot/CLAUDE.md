@@ -42,7 +42,7 @@ apps/discord-bot/
       roll.ts            # /roll — generic notation roller
       root.ts            # /root — Root RPG
       salvageunion.ts    # /salvageunion — pointer to the SURef bot (rolls nothing)
-      lib/               # Shared scaffolding (context, view renderer, reroll codec, factory)
+      lib/               # Shared scaffolding (context, view renderer, reroll codec, factory, spec input bounds)
     utils/
       builders.ts        # PORTABLE Discord primitives — safe on workerd. Commands import here.
       palette.ts         # Accent colours and outcome glyphs — the visual vocabulary

@@ -1,9 +1,11 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 import { AVAILABLE_GAMES } from '@randsum/games'
+import type { GameShortcode } from '@randsum/games'
+import type { InputDeclaration } from '@randsum/games/schema'
 import { z } from 'zod'
 import { version as VERSION } from '../package.json'
-import { rollGame } from './tools/rollGame'
+import { GAME_INPUTS, isRequiredInput, rollGame } from './tools/rollGame'
 import { rollNotation } from './tools/roll'
 import { validateNotationInput } from './tools/validate'
 
@@ -27,25 +29,58 @@ function toResult(produce: () => Record<string, unknown>): CallToolResult {
   }
 }
 
-const rollingWith = z.enum(['Advantage', 'Disadvantage'])
+/** One spec input declaration as a Zod field: type, bounds, enum, description. */
+function inputField(decl: InputDeclaration): z.ZodType {
+  const base = (() => {
+    if (decl.type === 'boolean') return z.boolean()
+    if (decl.type === 'string') return decl.enum ? z.enum(decl.enum.map(String)) : z.string()
+    const int = z.number().int()
+    const atLeast = decl.minimum === undefined ? int : int.min(decl.minimum)
+    return decl.maximum === undefined ? atLeast : atLeast.max(decl.maximum)
+  })()
+  const described = decl.description === undefined ? base : base.describe(decl.description)
+  return isRequiredInput(decl) ? described : described.optional()
+}
 
-const gameParamsSchema = z
+/**
+ * Each game's `params` schema, built from the inputs its spec declares. Loose,
+ * so a key another game uses is ignored rather than rejected, as before.
+ */
+const GAME_PARAMS = Object.fromEntries(
+  AVAILABLE_GAMES.map(game => [
+    game,
+    z
+      .looseObject(
+        Object.fromEntries(
+          Object.entries(GAME_INPUTS[game]).map(([name, decl]) => [name, inputField(decl)])
+        )
+      )
+      .describe(`params when game is "${game}"`)
+  ])
+) as Record<GameShortcode, z.ZodObject>
+
+/**
+ * `roll_game` input. `params` is advertised as one object schema per game; the
+ * refinement then checks it against the chosen game's schema, so the bounds
+ * and required fields that apply are the ones for `game`. A top-level
+ * discriminated union would be tighter, but the MCP SDK lists any non-object
+ * input schema as an empty object, hiding every field from clients.
+ */
+const rollGameInput = z
   .object({
-    rating: z.number().int().optional().describe('Blades in the Dark: action rating (0-4)'),
-    modifier: z.number().optional().describe('Daggerheart / Fate / D&D 5e: flat modifier'),
-    amplifyHope: z.boolean().optional().describe('Daggerheart: amplify the Hope die'),
-    amplifyFear: z.boolean().optional().describe('Daggerheart: amplify the Fear die'),
-    rollingWith: rollingWith
-      .optional()
-      .describe('Daggerheart / 5e / PbtA / Root: advantage or disadvantage'),
-    crit: z.boolean().optional().describe('D&D 5e: roll critical (double dice)'),
-    stat: z.number().optional().describe('Powered by the Apocalypse: stat value (required)'),
-    forward: z.number().optional().describe('Powered by the Apocalypse: forward bonus'),
-    ongoing: z.number().optional().describe('Powered by the Apocalypse: ongoing bonus'),
-    bonus: z.number().optional().describe('Root RPG: bonus applied to the roll (required)'),
-    tableName: z.string().optional().describe('Salvage Union: name of the table to roll on')
+    game: z.enum(AVAILABLE_GAMES).describe('Which game system to roll for'),
+    params: z
+      .union(AVAILABLE_GAMES.map(game => GAME_PARAMS[game]))
+      .default({})
+      .describe("Game-specific inputs; only the chosen game's fields are used")
   })
-  .default({})
+  .superRefine(({ game, params }, ctx) => {
+    const parsed = GAME_PARAMS[game].safeParse(params)
+    if (parsed.success) return
+    for (const issue of parsed.error.issues) {
+      ctx.addIssue({ code: 'custom', path: ['params', ...issue.path], message: issue.message })
+    }
+  })
 
 /**
  * Builds the RANDSUM MCP server with the `roll`, `validate`, and `roll_game`
@@ -91,12 +126,7 @@ export function createServer(): McpServer {
       title: 'Roll for a game system',
       description:
         'Roll for a specific tabletop game system (blades, daggerheart, fate, fifth, pbta, root-rpg, salvageunion), interpreting the dice per that game. Pass game-specific inputs in `params`.',
-      inputSchema: {
-        game: z.enum(AVAILABLE_GAMES).describe('Which game system to roll for'),
-        params: gameParamsSchema.describe(
-          'Game-specific inputs; only the fields relevant to the chosen game are used'
-        )
-      }
+      inputSchema: rollGameInput
     },
     ({ game, params }) => toResult(() => ({ ...rollGame(game, params) }))
   )

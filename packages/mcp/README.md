@@ -48,6 +48,9 @@ of `blades`, `daggerheart`, `fate`, `fifth`, `pbta`, `root-rpg`,
 | `salvageunion` | `tableName` (required)                                  |
 
 `rollingWith` is `"Advantage"` or `"Disadvantage"`.
+Each game's ranges, enums and required fields come from its spec (the
+`inputs` export of `@randsum/games/<game>`), and `params` is checked against
+the chosen game before it rolls.
 
 ```json
 { "game": "fifth", "params": { "modifier": 3, "rollingWith": "Advantage" } }

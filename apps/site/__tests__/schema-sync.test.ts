@@ -5,9 +5,8 @@ import { fileURLToPath } from 'node:url'
 
 // The games meta-schema is authored once at packages/games/randsum.json and
 // hosted at its declared `$id` (https://randsum.dev/schemas/v1/randsum.json).
-// The checked-in public/ copy (served by `astro dev`) must never drift from the
-// source of truth. Production also gets a fresh copy at build time via the
-// copy-schema-to-dist integration, but this test guards the dev/public copy.
+// The checked-in public/ copy is what both `astro dev` and the production build
+// serve, so it must never drift from the source of truth.
 const testDir = path.dirname(fileURLToPath(import.meta.url))
 const sourcePath = path.resolve(testDir, '../../../packages/games/randsum.json')
 const hostedPath = path.resolve(testDir, '../public/schemas/v1/randsum.json')

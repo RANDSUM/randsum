@@ -89,7 +89,7 @@ Build output: `dist/<shortcode>.generated.js` + `.d.ts` per game. With `--check`
 
 Remote fixtures are refreshed only on demand: `bun run --filter @randsum/games gen -- --refresh-remote` refetches from the source URL and rewrites the `__fixtures__/<shortcode>-tables.json` snapshot. Plain `gen` and `gen:check` are offline and deterministic — running `gen` twice in a row leaves the tree clean.
 
-Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate`. Each exports a typed `roll()` function, a game-specific result type (e.g. `BladesRollResult`), the `SchemaError` value, and re-exports the types `GameRollResult`, `RollRecord`, `SchemaErrorCode`. The salvageunion module additionally exports the `ROLL_TABLE_ENTRIES` and `VALID_TABLE_NAMES` values.
+Generated files import from `@randsum/roller/roll` and `@randsum/roller/validate`. Each exports a typed `roll()` function, a game-specific result type (e.g. `BladesRollResult`), the `SchemaError` value, an `inputs` const holding the spec's `roll.inputs` declarations verbatim (the bot and MCP read ranges and enums from it), and re-exports the types `GameRollResult`, `RollRecord`, `SchemaErrorCode`. The salvageunion module additionally exports the `ROLL_TABLE_ENTRIES` and `VALID_TABLE_NAMES` values.
 
 ## Adding a New Game
 

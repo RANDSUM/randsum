@@ -1,4 +1,5 @@
 import { describe, expect, mock, test } from 'bun:test'
+import { specInputs } from './lib/specInputs.js'
 
 void mock.module('@randsum/roller', () => ({
   roll: () => ({ total: 1, result: ['1'], rolls: [] }),
@@ -22,12 +23,30 @@ void mock.module('@randsum/roller/validate', () => ({
   validateRange: () => true
 }))
 
-void mock.module('@randsum/games/blades', () => ({ roll: () => ({ total: 1 }) }))
-void mock.module('@randsum/games/daggerheart', () => ({ roll: () => ({ total: 1 }) }))
-void mock.module('@randsum/games/fate', () => ({ roll: () => ({ total: 1 }) }))
-void mock.module('@randsum/games/fifth', () => ({ roll: () => ({ total: 1 }) }))
-void mock.module('@randsum/games/pbta', () => ({ roll: () => ({ total: 1 }) }))
-void mock.module('@randsum/games/root-rpg', () => ({ roll: () => ({ total: 1 }) }))
+void mock.module('@randsum/games/blades', () => ({
+  roll: () => ({ total: 1 }),
+  inputs: specInputs('blades')
+}))
+void mock.module('@randsum/games/daggerheart', () => ({
+  roll: () => ({ total: 1 }),
+  inputs: specInputs('daggerheart')
+}))
+void mock.module('@randsum/games/fate', () => ({
+  roll: () => ({ total: 1 }),
+  inputs: specInputs('fate')
+}))
+void mock.module('@randsum/games/fifth', () => ({
+  roll: () => ({ total: 1 }),
+  inputs: specInputs('fifth')
+}))
+void mock.module('@randsum/games/pbta', () => ({
+  roll: () => ({ total: 1 }),
+  inputs: specInputs('pbta')
+}))
+void mock.module('@randsum/games/root-rpg', () => ({
+  roll: () => ({ total: 1 }),
+  inputs: specInputs('root-rpg')
+}))
 
 const { commands } = await import('../../src/commands/index.js')
 

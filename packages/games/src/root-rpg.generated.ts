@@ -58,5 +58,10 @@ export function roll(input: {
   throw new SchemaError(`No table entry matches total ${total}`, 'NO_TABLE_MATCH')
 }
 
+export const inputs = {
+  bonus: { type: 'integer', minimum: -3, maximum: 5 },
+  rollingWith: { type: 'string', enum: ['Advantage', 'Disadvantage'], optional: true }
+} as const
+
 export { SchemaError }
 export type { GameRollResult, RollRecord, SchemaErrorCode }

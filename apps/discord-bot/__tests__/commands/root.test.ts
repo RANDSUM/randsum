@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test'
+import { specInputs } from './lib/specInputs.js'
 import { makeContext } from './lib/context.js'
 import { accentsOf, textOf } from '../lib/view.js'
 import { ROOT } from '../../src/utils/palette.js'
@@ -12,7 +13,10 @@ const strongHit = (): { result: string; total: number; rolls: unknown[] } => ({
 
 const mockRoll = mock(strongHit)
 
-void mock.module('@randsum/games/root-rpg', () => ({ roll: mockRoll }))
+void mock.module('@randsum/games/root-rpg', () => ({
+  roll: mockRoll,
+  inputs: specInputs('root-rpg')
+}))
 
 const { rootCommand } = await import('../../src/commands/root.js')
 

@@ -1,4 +1,4 @@
-import { roll } from '@randsum/games/pbta'
+import { inputs, roll } from '@randsum/games/pbta'
 import { SlashCommandBuilder } from '../utils/builders.js'
 import { GLYPH, PBTA } from '../utils/palette.js'
 import {
@@ -8,10 +8,16 @@ import {
   getInitialRolls,
   getKeptRolls,
   markKeptRolls,
-  rollContainer
+  rollContainer,
+  specRange,
+  withSpecChoices,
+  withSpecRange
 } from './lib/index.js'
 import type { CommandContext, ViewFact } from './lib/index.js'
 import type { Command, RollView } from '../types.js'
+
+/** Spec values stay `Advantage`/`Disadvantage`; Discord shows what they do. */
+const ROLLING_WITH_LABELS = { Advantage: 'Best 2 of 3', Disadvantage: 'Worst 2 of 3' } as const
 
 /**
  * The band leads, its name follows.
@@ -103,38 +109,28 @@ export const pbtaCommand: Command = createGameCommand({
     .setName('pbta')
     .setDescription('Roll dice for Powered by the Apocalypse games')
     .addIntegerOption(option =>
-      option
+      withSpecRange(option, inputs.stat)
         .setName('stat')
-        .setDescription('The stat modifier for this move (-3 to 5)')
+        .setDescription(`The stat modifier for this move (${specRange(inputs.stat)})`)
         .setRequired(true)
-        .setMinValue(-3)
-        .setMaxValue(5)
     )
     .addIntegerOption(option =>
-      option
+      withSpecRange(option, inputs.forward)
         .setName('forward')
-        .setDescription('Bonus taken forward (-5 to 5)')
+        .setDescription(`Bonus taken forward (${specRange(inputs.forward)})`)
         .setRequired(false)
-        .setMinValue(-5)
-        .setMaxValue(5)
     )
     .addIntegerOption(option =>
-      option
+      withSpecRange(option, inputs.ongoing)
         .setName('ongoing')
-        .setDescription('Ongoing bonus (-5 to 5)')
+        .setDescription(`Ongoing bonus (${specRange(inputs.ongoing)})`)
         .setRequired(false)
-        .setMinValue(-5)
-        .setMaxValue(5)
     )
     .addStringOption(option =>
-      option
+      withSpecChoices(option, inputs.rollingWith, ROLLING_WITH_LABELS)
         .setName('rolling_with')
         .setDescription('Roll 3d6 and keep the best or worst two')
         .setRequired(false)
-        .addChoices(
-          { name: 'Best 2 of 3', value: 'Advantage' },
-          { name: 'Worst 2 of 3', value: 'Disadvantage' }
-        )
     )
     .addBooleanOption(option =>
       option
