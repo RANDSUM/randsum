@@ -46,7 +46,6 @@ async function main(): Promise<void> {
   const stale: string[] = []
   const shortcodes: string[] = []
 
-  /* eslint-disable no-await-in-loop, no-console -- CLI script: sequential I/O by design, console output intentional */
   for (const specFile of specFiles) {
     const absPath = join(packageDir, specFile)
     const raw: unknown = JSON.parse(readFileSync(absPath, 'utf-8'))
@@ -133,7 +132,6 @@ async function main(): Promise<void> {
     writeFileSync(availableGamesPath, formattedAvailable, 'utf-8')
     console.log(`  codegen: AVAILABLE_GAMES → src/availableGames.generated.ts`)
   }
-  /* eslint-enable no-await-in-loop, no-console */
 
   if (checkMode && stale.length > 0) {
     console.error(

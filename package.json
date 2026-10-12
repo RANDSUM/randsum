@@ -52,7 +52,6 @@
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
     "knip": "knip --exclude catalog --no-config-hints",
-    "docs:api": "bunx --package typescript@6.0.3 --package typedoc@0.28.19 typedoc",
     "fix:all": "biome check --write .",
     "site:build": "bun --filter @randsum/site build",
     "site:dev": "bun run --filter @randsum/site dev",

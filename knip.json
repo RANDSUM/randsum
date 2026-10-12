@@ -2,9 +2,9 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["scripts/*.ts"],
+      "entry": [],
       "project": ["scripts/*.ts"],
-      "ignoreDependencies": ["mitata", "typedoc"]
+      "ignoreDependencies": ["mitata"]
     },
     "packages/roller": {
       "entry": [
