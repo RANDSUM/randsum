@@ -7,8 +7,7 @@
 // This mirrors the former ESLint `no-restricted-imports` override
 // (group `**/modifiers` | `**/modifiers/*`, importNamePattern `Modifier$`). It
 // is wired via a scoped `overrides` entry in biome.json so it only runs against
-// the tokenize-reachable subtree — dependency-cruiser cannot express an
-// import-*name*-level ban, which is why this GritQL plugin exists.
+// the tokenize-reachable subtree.
 //
 // Implementation note: matched on the whole `JsImport` CST node with an anchored
 // text regex (GritQL regex `<:` is a full-node match). The braces-snippet form

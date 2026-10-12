@@ -49,10 +49,27 @@
         "useConst": "error",
         "useImportType": "error",
         "useExportType": "error",
-        "useReadonlyClassProperties": "error"
+        "useReadonlyClassProperties": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": [
+                  "@randsum/*/src",
+                  "@randsum/*/src/**",
+                  "@randsum/*/dist",
+                  "@randsum/*/dist/**"
+                ],
+                "message": "Import a published entry point (e.g. @randsum/roller/roll), never a package's src/ or dist/."
+              }
+            ]
+          }
+        }
       },
       "suspicious": {
         "noExplicitAny": "error",
+        "noImportCycles": "error",
         "noVar": "error",
         "noDebugger": "error",
         "noConsole": { "level": "warn", "options": { "allow": ["warn", "error"] } },

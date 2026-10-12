@@ -175,9 +175,11 @@ jobs:
     # - biome: one `biome ci .` lints and format-checks every package plus
     #   scripts/, biome-plugins/ and root configs, emitting file/line
     #   annotations. No package can opt out of it by omitting a script.
+    #   Its noImportCycles and noRestrictedImports rules hold the import
+    #   cycle and src/dist reach-in invariants.
     # - typecheck:scripts: scripts/ (publish.ts and these guards) is not a
     #   workspace, so no package's typecheck reaches it.
-    # - knip and arch: unused code, cycles and package boundaries.
+    # - knip: unused files, exports and dependencies.
     name: repo
     runs-on: ubuntu-latest
     steps:
@@ -199,9 +201,6 @@ jobs:
       - name: knip
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: bun run knip
-      - name: arch
-        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
-        run: bun run arch:check
 
   skill:
     name: claude-doctor
