@@ -47,20 +47,6 @@ pre-push:
     test:
       run: bun run test 2>&1 | tail -5
       priority: 2
-    audit:
-      # Whole-tree dependency advisory check, the same one security.yml runs on
-      # main. In CI, PRs are gated by ci.yml's `dependency-review`, which cannot
-      # be bypassed with --no-verify. Any --ignore list MUST match security.yml
-      # and osv-scanner.toml; that file carries the per-advisory justification.
-      run: bun audit --audit-level=high > /dev/null 2>&1
-      priority: 2
-    sca:
-      # Local mirror of the CI `sca` job (OSV-Scanner against bun.lock, honouring
-      # osv-scanner.toml ignores). Uses a local osv-scanner binary or the CI Docker
-      # image if available; soft-skips with an install hint otherwise. Surfaces SCA
-      # findings before push — CI's `sca` job remains the source of truth.
-      run: bash scripts/sca-scan.sh
-      priority: 2
     knip:
       run: bun run knip > /dev/null 2>&1
       priority: 2
