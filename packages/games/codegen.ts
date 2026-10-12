@@ -82,7 +82,7 @@ async function main(): Promise<void> {
       const fixturePath = fixturePathFor(spec.shortcode)
       if (!existsSync(fixturePath)) {
         console.error(
-          `FAIL  missing fixture ${fixturePath}. Run \`bun run codegen --refresh-remote\` to generate it.`
+          `FAIL  missing fixture ${fixturePath}. Run \`bun run --filter @randsum/games gen -- --refresh-remote\` to generate it.`
         )
         process.exit(1)
       }
@@ -137,7 +137,7 @@ async function main(): Promise<void> {
 
   if (checkMode && stale.length > 0) {
     console.error(
-      `\n${stale.length} generated file(s) are out of date. Run \`bun run codegen\` to update.`
+      `\n${stale.length} generated file(s) are out of date. Run \`bun run --filter @randsum/games gen\` and commit the regenerated src/*.generated.ts.`
     )
     process.exit(1)
   }

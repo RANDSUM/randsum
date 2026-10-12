@@ -22,7 +22,7 @@
 
 ## Checklist
 
-- [ ] `bun run check:all` passes locally
+- [ ] `bun run check` passes locally
 - [ ] Tests cover the change (unit, property, or stress as appropriate)
 - [ ] Bundle size limits respected (run `bun run size` if a publishable package changed)
 - [ ] Public API changes are reflected in the matching README / `apps/site` MDX

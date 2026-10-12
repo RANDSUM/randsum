@@ -43,7 +43,7 @@ bun test packages/roller/__tests__/roll/roll.test.ts
 bun run --filter @randsum/roller size    # Bundle size checks (size-limit; `bun run size` runs every package)
 bun run bench                            # Performance benchmarks (mitata)
 bun run site:dev                         # Astro dev server (localhost:4321)
-bun run help                             # Quick command reference
+bun run                                  # List every root script
 ```
 
 ## TypeScript Conventions
@@ -111,7 +111,7 @@ Game packages are generated from `.randsum.json` specs via the codegen pipeline 
 
 ### Modifier Registry
 
-`MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts`, sorted by each schema's `priority`, is the single source of truth for which modifiers exist and their execution order; `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`) maps it to behaviors. Each modifier is a single co-located file in `packages/roller/src/modifiers/` that exports both a `*Schema` (notation pattern, parse/format logic) and a `*Modifier` (full definition with dice pool behavior).
+`MODIFIER_SCHEMAS` in `packages/roller/src/notation/definitions/index.ts`, sorted by each schema's `priority`, is the single source of truth for which modifiers exist and their execution order; `RANDSUM_MODIFIERS` (`src/modifiers/definitions.ts`) maps it to behaviors. Each modifier is split in two: its `<mod>Schema` (notation pattern, parse/format logic) lives in `packages/roller/src/notation/definitions/<mod>.ts` and its `<mod>Modifier` (dice pool behavior) in `packages/roller/src/modifiers/<mod>.ts`. See `packages/roller/CLAUDE.md`.
 
 See https://randsum.dev/spec/ for the formal specification including faceted classification, conformance levels, and execution pipeline contracts.
 
@@ -145,7 +145,7 @@ A failing hook step prints its output and its own fix (`fail_text` in `lefthook.
 
 ## Development Guidelines
 
-Per-package `CLAUDE.md` files exist in each `packages/*/`, `games/*/`, and `apps/*/` directory for detailed guidance on each component.
+Per-package `CLAUDE.md` files exist in each `packages/*/` and `apps/*/` directory for detailed guidance on each component.
 
 ## Debugging & Troubleshooting
 
