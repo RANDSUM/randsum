@@ -280,12 +280,17 @@ Both Astro sites are separate Workers, each with a custom domain, deployed from
   The `plan` job diffs that commit against the commit the last successful
   CI-triggered deploy shipped, so a deploy the concurrency group cancelled has
   its changes carried by the next one; a change to any of `apps/{rdn,site,discord-bot}/**`, `packages/**` or `bun.lock`
-  runs all three deploy jobs. Each run records the commit it deployed in its run
-  name (`Deploy <sha>`), and `plan` reads it back from there. If the commit is
+  runs all three deploy jobs. Each run records its commit in its run name
+  (`Deploy <sha>`), and `plan` reads it back from there. If the commit is
   *older* than the last deployed one — a CI re-run on an earlier `main` commit —
   `plan` deploys nothing and says so in a notice, rather than roll every surface
-  and the command registry back. Only when there is no earlier deploy, or it is
-  on an unrelated history, does `plan` deploy everything. To roll back on
+  and the command registry back. That refused run still concludes success under
+  its older title, so `plan` does not take the newest successful run as the last
+  deploy: it reads the last 50 successful runs and picks the newest commit by
+  ancestry, skipping any recorded commit that a later one descends from. Re-running
+  several old CI runs in turn therefore never walks the base backwards. Only when
+  there is no earlier deploy in that window, or it is on an unrelated history,
+  does `plan` deploy everything. To roll back on
   purpose, use the rollback commands below. Redeploying an unchanged surface is a no-op version
   upload, so this costs CI minutes rather than correctness. A manual run can
   narrow to one surface — see below.

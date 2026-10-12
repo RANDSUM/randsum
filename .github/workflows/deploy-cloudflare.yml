@@ -29,13 +29,19 @@
 # pending run when a newer one queues, and the newer run still carries the
 # dropped run's changes, slash-command changes included.
 #
-# The deployed commit is recorded explicitly, in the run name below, and read
-# back from `displayTitle`. A run's own `headSha` is not that commit: for a
+# Each run records its commit explicitly, in the run name below, and `plan` reads
+# it back from `displayTitle`. A run's own `headSha` is not that commit: for a
 # workflow_run event it is the default branch's tip when the run was created.
-# When the commit is a strict ancestor of the last deployed one (a CI re-run on
-# an older main commit), `plan` deploys nothing rather than ship the older code
-# and command set over a newer deploy. Only an unrelated history (or no earlier
-# deploy) deploys everything.
+# The base is NOT simply the newest successful run's commit. A run refused for
+# being older (below) also concludes success under its older title, so `plan`
+# reads the last 50 successful runs and takes the newest commit by ancestry,
+# skipping any recorded commit that a later recorded commit descends from. A
+# refused run's commit is always an ancestor of the deploy that refused it, so it
+# never becomes a base, however many old CI runs are re-run in turn.
+# When the commit is a strict ancestor of that base (a CI re-run on an older main
+# commit), `plan` deploys nothing rather than ship the older code and command set
+# over a newer deploy. Only an unrelated history (or no earlier deploy in that
+# window) deploys everything.
 #
 # Every job FAILS RED when CLOUDFLARE_API_TOKEN is absent. There is no second
 # host behind any of these: a skipped site deploy would leave randsum.dev
@@ -130,28 +136,48 @@ jobs:
             exit 0
           fi
 
-          # The commit the last successful CI-triggered run of this workflow
-          # deployed, parsed from its run name ("Deploy <sha>", set by
+          # The newest commit a successful CI-triggered run of this workflow
+          # recorded, parsed from its run name ("Deploy <sha>", set by
           # `run-name` above). The run's own headSha is not that commit: a
           # workflow_run run records the default branch's tip at creation.
           # Diffing from it, rather than from HEAD^ or the previous green CI
           # commit, carries forward every change whose deploy was cancelled or
           # failed. Manual runs are left out: one may have deployed a single
-          # surface. A run that deployed nothing still counts, since nothing a
-          # surface ships from had changed up to its commit.
-          title=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy-cloudflare.yml \
-            --branch main --event workflow_run --status success --limit 1 \
-            --json displayTitle --jq '.[0].displayTitle // empty')
+          # surface. A run that deployed nothing because nothing had changed
+          # still counts, since nothing a surface ships from had changed up to
+          # its commit.
+          #
+          # "Newest" is by ancestry, not by run order. A run refused below for
+          # being older than the last deploy also concludes success, titled with
+          # its older commit, so the most recent successful run is not always the
+          # last deploy. Walk the last 50, newest run first, and move the base
+          # forward only to a commit that descends from it. A refused commit is
+          # an ancestor of the deploy that refused it, so it is never chosen. A
+          # commit missing from this clone (rewritten history) is skipped. The
+          # list is captured first so a failed `gh` call fails the job instead
+          # of reading as "no earlier deploy".
+          titles=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy-cloudflare.yml \
+            --branch main --event workflow_run --status success --limit 50 \
+            --json displayTitle --jq '.[].displayTitle')
           base=""
-          if [[ "$title" =~ ^Deploy\ ([0-9a-f]{40})$ ]]; then
-            base="${BASH_REMATCH[1]}"
-          fi
+          while IFS= read -r title; do
+            [[ "$title" =~ ^Deploy\ ([0-9a-f]{40})$ ]] || continue
+            candidate="${BASH_REMATCH[1]}"
+            git cat-file -e "${candidate}^{commit}" 2>/dev/null || continue
+            if [ -z "$base" ]; then
+              base="$candidate"
+            elif [ "$candidate" != "$base" ] && git merge-base --is-ancestor "$base" "$candidate"; then
+              base="$candidate"
+            fi
+          done <<< "$titles"
 
           if [ -n "$base" ] && git merge-base --is-ancestor "$base" "$HEAD_SHA" 2>/dev/null; then
             changed=$(git diff --name-only "$base" "$HEAD_SHA")
           elif [ -n "$base" ] && git merge-base --is-ancestor "$HEAD_SHA" "$base" 2>/dev/null; then
             # A CI re-run on a main commit older than the last deploy. Shipping
-            # it would roll every surface, and the command registry, back.
+            # it would roll every surface, and the command registry, back. This
+            # run still concludes success under its older title; the ancestry
+            # walk above is what keeps that title from becoming the next base.
             echo "::notice::$HEAD_SHA is older than the last deployed commit $base; deploying nothing."
             {
               echo "rdn=false"
