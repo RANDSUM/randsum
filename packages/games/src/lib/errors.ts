@@ -9,12 +9,9 @@ export type SchemaErrorCode =
   | 'INVALID_SPEC'
   | 'EXTERNAL_REF_FAILED'
 
-export class SchemaError extends RandsumError {
-  public override readonly code: SchemaErrorCode
-
+export class SchemaError extends RandsumError<SchemaErrorCode> {
   constructor(message: string, code: SchemaErrorCode) {
     super(message, code)
     this.name = 'SchemaError'
-    this.code = code
   }
 }
