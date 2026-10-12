@@ -6,6 +6,20 @@
 import { describe, expect, test } from 'bun:test'
 
 describe('@randsum/games (dist)', () => {
+  test('root dist entry exports AVAILABLE_GAMES and SchemaError', async () => {
+    const mod = await import('../../games/dist/index.js')
+    expect(mod.AVAILABLE_GAMES).toContain('blades')
+    expect(mod.AVAILABLE_GAMES).toHaveLength(7)
+    expect(typeof mod.SchemaError).toBe('function')
+  })
+
+  test('schema dist entry exports the codegen toolkit', async () => {
+    const mod = await import('../../games/dist/schema.js')
+    expect(typeof mod.validateSpec).toBe('function')
+    expect(typeof mod.generateCode).toBe('function')
+    expect(typeof mod.SchemaError).toBe('function')
+  })
+
   test('blades dist entry exports roll', async () => {
     const mod = await import('../../games/dist/blades.generated.js')
     expect(typeof mod.roll).toBe('function')

@@ -18,7 +18,7 @@ Three tools, each backed by a pure, directly-testable handler:
 - `src/server.ts` — `createServer()`: registers the three tools; owns the Zod input schemas
 - `src/tools/roll.ts` — `rollNotation()` pure handler
 - `src/tools/validate.ts` — `validateNotationInput()` pure handler
-- `src/tools/rollGame.ts` — `rollGame()` pure handler + local `AVAILABLE_GAMES`
+- `src/tools/rollGame.ts` — `rollGame()` pure handler
 - `src/rng.ts` — `createSeededRandom()` LCG for deterministic seeded rolls
 
 Zod schemas live in `server.ts` (not the tool files): `isolatedDeclarations` forbids exporting a
@@ -44,10 +44,6 @@ Smoke-test the live server by piping a JSON-RPC `initialize` message to `bun src
 - `@randsum/roller` and `@randsum/games` are **dev dependencies** (`workspace:~`), bundled into
   `dist/index.js` via bunup `noExternal: [/^@randsum\//]` (same pattern as `apps/cli`). This keeps
   the published surface to just the SDK + zod.
-- `AVAILABLE_GAMES` is duplicated locally in `rollGame.ts` rather than imported from
-  `@randsum/games` at runtime: the games built barrel (`dist/index.js`) currently has a bunup
-  code-splitting bug that drops the chunk imports backing that export. The per-game subpaths are
-  self-contained and unaffected. Correctness is still compile-time enforced (see the comment there).
 
 ## Publishing
 

@@ -8,30 +8,6 @@ import { roll as rollSalvageunion } from '@randsum/games/salvageunion'
 import type { GameShortcode } from '@randsum/games'
 import type { RollRecord } from '@randsum/roller'
 
-/**
- * The set of game systems this server can roll for.
- *
- * This mirrors `AVAILABLE_GAMES` from `@randsum/games`, but is declared locally
- * rather than imported at runtime: the games package's built barrel
- * (`dist/index.js`) currently has a bunup code-splitting bug that drops the
- * chunk imports backing that export, so a runtime
- * `import { AVAILABLE_GAMES } from '@randsum/games'` throws. The per-game
- * subpaths imported above are self-contained and unaffected. Correctness is
- * still enforced at compile time: `server.ts` feeds this list to `z.enum` and
- * passes the parsed `game` to `rollGame(game: GameShortcode, …)`, so a wrong
- * entry fails typecheck there, and the exhaustive `switch` below (its `never`
- * default) fails typecheck if `@randsum/games` ever adds a game this omits.
- */
-export const AVAILABLE_GAMES = [
-  'blades',
-  'daggerheart',
-  'fate',
-  'fifth',
-  'pbta',
-  'root-rpg',
-  'salvageunion'
-] as const
-
 /** Advantage/disadvantage flag shared by several game systems. */
 export type RollingWith = 'Advantage' | 'Disadvantage'
 

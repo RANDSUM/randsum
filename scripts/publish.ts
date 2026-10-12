@@ -93,21 +93,35 @@ async function assertNoWorkspaceProtocol(tgzPath: string, name: string): Promise
 }
 
 /**
- * Pack @randsum/roller with `sideEffects: false` injected into the published manifest.
+ * Packages whose in-repo package.json keeps `sideEffects: true` and whose published manifest
+ * ships `sideEffects: false`.
  *
- * The in-repo package.json keeps `sideEffects: true` because bunup's self-DCE breaks roller's
- * dist when it builds with `false`. But consumers installing the published package should be able to tree-shake the
- * narrow surfaces (e.g. `isDiceNotation`) out of the engine. `bun pm pack` does NOT rebuild dist
- * or run prepublishOnly, so we flip the field only for the pack and restore it immediately after —
- * the tarball ships the already-built healthy dist with a tree-shakeable manifest. See ADR-018.
+ * The in-repo `true` is required because bunup's self-DCE breaks the dist when it builds with
+ * `false`: it strips exported consts from shared chunks, leaving entries that re-export undeclared
+ * bindings (games 4.0.0 shipped a root `dist/index.js` that threw on import this way). Consumers
+ * installing the published package should still be able to tree-shake narrow surfaces, so the
+ * field is flipped only for the pack. See ADR-018.
  */
-async function packRollerWithSideEffectsFalse(dir: string, destination: string): Promise<string> {
+const FLIP_SIDE_EFFECTS: ReadonlySet<string> = new Set(['@randsum/roller', '@randsum/games'])
+
+/**
+ * Pack a package with `sideEffects: false` injected into the published manifest.
+ *
+ * `bun pm pack` does NOT rebuild dist or run prepublishOnly, so we flip the field only for the
+ * pack and restore it immediately after — the tarball ships the already-built healthy dist with a
+ * tree-shakeable manifest.
+ */
+async function packWithSideEffectsFalse(
+  dir: string,
+  name: string,
+  destination: string
+): Promise<string> {
   const pkgPath = join(dir, 'package.json')
   const original = await Bun.file(pkgPath).text()
   const patched = original.replace(/"sideEffects":\s*true/, '"sideEffects": false')
   if (patched === original) {
     throw new Error(
-      'Expected roller package.json to contain `"sideEffects": true` to flip for publish'
+      `Expected ${name} package.json to contain "sideEffects": true to flip for publish`
     )
   }
   try {
@@ -154,10 +168,9 @@ const failed: string[] = []
 for (const { name, dir } of packages) {
   console.log(`--- ${name} ---`)
   try {
-    const tgzPath =
-      name === '@randsum/roller'
-        ? await packRollerWithSideEffectsFalse(dir, packDir)
-        : await pack(dir, packDir)
+    const tgzPath = FLIP_SIDE_EFFECTS.has(name)
+      ? await packWithSideEffectsFalse(dir, name, packDir)
+      : await pack(dir, packDir)
     console.log(`  packed ${tgzPath}`)
 
     // Refuse to publish a tarball that still carries an unresolved workspace: protocol —

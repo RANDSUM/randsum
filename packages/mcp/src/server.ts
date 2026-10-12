@@ -1,8 +1,9 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
+import { AVAILABLE_GAMES } from '@randsum/games'
 import { z } from 'zod'
 import { version as VERSION } from '../package.json'
-import { AVAILABLE_GAMES, rollGame } from './tools/rollGame'
+import { rollGame } from './tools/rollGame'
 import { rollNotation } from './tools/roll'
 import { validateNotationInput } from './tools/validate'
 

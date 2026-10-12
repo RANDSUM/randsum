@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
-import { AVAILABLE_GAMES, rollGame } from '../src/tools/rollGame'
+import { AVAILABLE_GAMES } from '@randsum/games'
+import { rollGame } from '../src/tools/rollGame'
 
 describe('rollGame', () => {
   test('exposes the full game list', () => {

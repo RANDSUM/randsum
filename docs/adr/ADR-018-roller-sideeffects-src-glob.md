@@ -4,7 +4,8 @@
 
 Accepted (amended 2026-06-21). An earlier revision of this ADR specified an array-form
 `["./src/**/*"]` glob; the implemented approach is a publish-time manifest flip (see
-Decision). Re-verified against bunup `0.16.32`.
+Decision). Re-verified against bunup `0.16.32`. Amended 2026-10-11 to extend the flip to
+`@randsum/games` (see Amendment).
 
 ## Context
 
@@ -36,7 +37,7 @@ unworkable:
 Keep **`"sideEffects": true`** in the in-repo `packages/roller/package.json`, and flip it to
 **`"sideEffects": false`** only in the published tarball manifest at pack time.
 
-`scripts/publish.ts` (`packRollerWithSideEffectsFalse`) rewrites `"sideEffects": true` →
+`scripts/publish.ts` (`packWithSideEffectsFalse`) rewrites `"sideEffects": true` →
 `"sideEffects": false` in the manifest immediately before `bun pm pack`, then restores it.
 `bun pm pack` does not rebuild `dist/` or run lifecycle hooks, so the tarball ships the
 already-built healthy `dist/**/*` alongside a tree-shakeable manifest. The script asserts the
@@ -61,7 +62,7 @@ Net effect:
 
 - The published manifest's `sideEffects` differs from the in-repo one. Anyone reasoning about
   roller's tree-shaking must read `scripts/publish.ts`, not just `package.json` — hence this ADR.
-- The release path depends on the flip step. The assertion in `packRollerWithSideEffectsFalse`
+- The release path depends on the flip step. The assertion in `packWithSideEffectsFalse`
   guards against the field silently changing shape (to `false` or an array), which would skip
   the flip and ship a non-tree-shakeable (or, if set to `false` in-repo, a broken) package.
 
@@ -94,9 +95,23 @@ Net effect:
   `packages/roller/package.json`'s `sideEffects` away from `true` without updating
   `scripts/publish.ts` to match.
 
+## Amendment (2026-10-11): `@randsum/games`
+
+`@randsum/games` kept `"sideEffects": false` in-repo (commit `c4b54b3b`) and hit the same
+self-DCE bug: its root `dist/index.js` built to
+`import "./shared/chunk-….js"; export { m as AVAILABLE_GAMES, o as SchemaError }`, re-exporting
+bindings it never declared. `import '@randsum/games'` threw at load, and 4.0.0 shipped that way.
+The game subpaths and `./schema` were unaffected because they declare their own exports.
+
+games now follows the roller decision: `"sideEffects": true` in-repo, flipped to `false` at
+pack time. `scripts/publish.ts` lists both packages in `FLIP_SIDE_EFFECTS`.
+`packages/games/__tests__/dist.smoke.test.ts` imports `dist/index.js` and `dist/schema.js`, so the
+regression fails a test. Disabling `splitting` was not chosen, for the reason under
+Alternatives Considered.
+
 ## References
 
-- `scripts/publish.ts` — `packRollerWithSideEffectsFalse` (the pack-time manifest flip).
+- `scripts/publish.ts` — `packWithSideEffectsFalse` (the pack-time manifest flip).
 - Commit `b8c81fde` — diagnosis of the bunup self-DCE failure mode.
 - Commit `c4b54b3b` — games sideEffects opt-in; roller deferral note.
 - bunup docs: https://bunup.dev/docs/guide/options (splitting, minify, ignoreDCEAnnotations).
