@@ -9,7 +9,7 @@
  * to every repo on the machine including ones with no Cloudflare in them.
  * Project scope is the right default.
  *
- * Deliberately a SUBSET. Cloudflare publishes thirteen; three match what this
+ * Deliberately a SUBSET. Cloudflare publishes thirteen; two match what this
  * repo actually runs. A skill list is context every session pays for whether or
  * not it gets used, so one earns its place by use, not by existing.
  *
@@ -44,8 +44,7 @@ const DEST = join(ROOT, '.claude', 'skills')
 const WANTED: Readonly<Record<string, string>> = {
   'workers-best-practices': 'The site and the bot Worker run on Workers',
   wrangler:
-    'Deploys run `wrangler deploy`; three wrangler configs are checked in (site, bot, notation.randsum.dev redirect)',
-  'web-perf': 'randsum.dev is a public docs site'
+    'Deploys run `wrangler deploy`; three wrangler configs are checked in (site, bot, notation.randsum.dev redirect)'
 }
 
 /**
@@ -53,7 +52,7 @@ const WANTED: Readonly<Record<string, string>> = {
  * to re-derive the decision:
  *
  * - `cloudflare` — the whole-platform reference. Measured at **1.9 MB across
- *   ~285 files**, against 68 KB for all three above combined, and it documents
+ *   ~285 files**, against 56 KB for the two above combined, and it documents
  *   Queues, D1, R2, AI and Zero Trust, none of which this repo uses. Checking it
  *   in would multiply the vendored payload by thirty for guidance about
  *   products we do not run.
@@ -61,6 +60,9 @@ const WANTED: Readonly<Record<string, string>> = {
  *   see apps/DEPLOY.md on why a gateway-in-a-DO is not viable here.
  * - `agents-sdk`, `cloudflare-one*`, `sandbox-*`, `turnstile-spin`,
  *   `cloudflare-email-service` — no corresponding surface in this repo.
+ * - `web-perf` — needs the chrome-devtools MCP server, which is not
+ *   configured; its first step is to STOP without it. Re-add it alongside a
+ *   pinned chrome-devtools server when a perf audit actually runs.
  *
  * Add one when something here needs it. `bun run skills:sync` picks up whatever
  * is listed above.
