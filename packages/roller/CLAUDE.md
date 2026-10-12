@@ -41,9 +41,12 @@ The four surfaces are views of that one pass:
 - `tokenize` = the positioned `scan` stream with descriptions attached (no
   hand-rolled pattern table).
 - `roll()`'s `parseArguments` consumes the same parser — no private die-type
-  regexes, no multi-pool splitter. Special dice are built from `dieType`; a
-  special die carrying modifiers still throws (roller rejects modifiers on
-  special dice).
+  regexes, no multi-pool splitter. Special dice are built from `dieType` and
+  carry their modifiers (`4dF+1`, `d%+5`, `3DD6L`). Max-face explosions (`!`,
+  `!!`, `!p`, `!s`, `W`) without a condition are a parse error on `dF`, `zN`
+  and `d{...}`, whose faces are not 1..N.
+- Modifiers are validated in `parseArguments.optionsToParams`, so notation and
+  options objects share one check (`1d6L` throws like its options form).
 
 Oversized input (> 1000 chars) fails consistently (throws) across every surface.
 The lexer is linear, so it is inherently ReDoS-free, and — by dropping the old

@@ -524,9 +524,9 @@ export const keepDocs: readonly NotationDoc[] = [
     description:
       'Keep N dice closest to the middle of the pool by dropping equal numbers from both ends. Sugar for Drop lowest + Drop highest.',
     displayBase: 'KM',
-    forms: [{ notation: 'KM(n)', note: 'Keep middle n (default: pool - 2)' }],
+    forms: [{ notation: 'KM(n)', note: 'Drop n from each end (default: 1)' }],
     examples: [
-      { description: 'Keep 3 middle dice', notation: '5d6KM3' },
+      { description: 'Keep the middle 3 of 7 dice', notation: '7d6KM2' },
       {
         description: 'Keep middle 2',
         notation: '4d6KM',

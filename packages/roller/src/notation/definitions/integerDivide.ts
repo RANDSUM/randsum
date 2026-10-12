@@ -1,6 +1,7 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
-const integerDividePattern = /\/\/(\d+)/
+// The divisor is a positive integer (RDN ABNF), so `//0` is not notation.
+const integerDividePattern = /\/\/([1-9]\d*)/
 
 export const integerDivideSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'integerDivide',

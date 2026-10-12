@@ -3,8 +3,13 @@ import { notationToOptions } from '../notation/parse/notationToOptions'
 import { optionsToDescription } from '../notation/transformers/optionsToDescription'
 import { optionsToNotation } from '../notation/transformers/optionsToNotation'
 import { optionsToSidesFaces } from '../notation/transformers/optionsToSidesFaces'
+import {
+  modifiersToDescription,
+  modifiersToNotation
+} from '../notation/transformers/modifiersToStrings'
 import type { ParsedNotationOptions } from '../notation/types'
 import { validateRollOptions } from '../lib/optionsValidation'
+import { validateModifiers } from '../modifiers/registry'
 import { validateMaxQuantity, validateMaxSides } from '../lib/utils/validation'
 import { ValidationError } from '../errors'
 import type { DiceNotation } from '../types'
@@ -24,11 +29,9 @@ function keyFor(position: number, index: number): string {
 /**
  * Build RollParams for a special die directly from its parsed options. The
  * die-type semantics come from the lexer (via `notationToOptions`) — there are no
- * private die-type regexes here anymore. Returns null for standard/percentile
- * pools (handled by the generic path). Special dice carrying modifiers are never
- * emitted as special options (they degrade to a `0d0` pool upstream), so this
- * only ever sees modifier-free special dice — matching roller's rule that special
- * dice reject modifiers.
+ * private die-type regexes here. Returns null for standard/percentile pools
+ * (handled by the generic path). Modifiers bound to the die are carried through
+ * and rendered after the special core, exactly as for a standard pool.
  */
 function specialOptionsToParams<T>(
   options: ParsedNotationOptions,
@@ -36,54 +39,58 @@ function specialOptionsToParams<T>(
   key: string
 ): RollParams<T> | null {
   const { dieType, quantity, arithmetic, sides } = options
+  if (dieType === undefined || dieType === 'standard' || dieType === 'percentile') return null
   const arg = argument as DiceNotation
   const q = quantity
   const qPrefix = q > 1 ? String(q) : ''
+  const modifiers = options.modifiers ?? {}
+  const suffix = modifiersToNotation(modifiers)
+  const modifierDescription = modifiersToDescription(modifiers)
 
   switch (dieType) {
     case 'fate': {
       const faces = options.fateVariant === 2 ? FATE_EXTENDED_FACES : FATE_STANDARD_FACES
-      const suffix = options.fateVariant === 2 ? '.2' : ''
-      const notation = `${q}dF${suffix}` as DiceNotation
+      const variant = options.fateVariant === 2 ? '.2' : ''
+      const notation = `${q}dF${variant}${suffix}` as DiceNotation
       return {
         quantity: q,
         sides: faces.length,
         numericFaces: faces,
         arithmetic,
-        modifiers: {},
+        modifiers,
         key,
         argument: arg,
         notation,
-        description: [`Roll ${q}dF${suffix}`]
+        description: [`Roll ${q}dF${variant}`, ...modifierDescription]
       }
     }
     case 'zeroBias': {
       const faces = Array.from({ length: sides }, (_, i) => i)
-      const notation = `${qPrefix}z${sides}` as DiceNotation
+      const notation = `${qPrefix}z${sides}${suffix}` as DiceNotation
       return {
         quantity: q,
         sides,
         numericFaces: faces,
         arithmetic,
-        modifiers: {},
+        modifiers,
         key,
         argument: arg,
         notation,
-        description: [`Roll ${q}z${sides}`]
+        description: [`Roll ${q}z${sides}`, ...modifierDescription]
       }
     }
     case 'custom': {
       const rawFaces = options.customFaces ?? []
       const facesStr = rawFaces.join(',')
-      const notation = `${qPrefix}d{${facesStr}}` as DiceNotation
-      const description = [`Roll ${q}d{${facesStr}}`]
+      const notation = `${qPrefix}d{${facesStr}}${suffix}` as DiceNotation
+      const description = [`Roll ${q}d{${facesStr}}`, ...modifierDescription]
       if (isAllNumeric(rawFaces)) {
         return {
           quantity: q,
           sides: rawFaces.length,
           numericFaces: rawFaces.map(Number),
           arithmetic,
-          modifiers: {},
+          modifiers,
           key,
           argument: arg,
           notation,
@@ -95,7 +102,7 @@ function specialOptionsToParams<T>(
         sides: rawFaces.length,
         faces: rawFaces.map(f => f as T),
         arithmetic,
-        modifiers: {},
+        modifiers,
         key,
         argument: arg,
         notation,
@@ -103,31 +110,31 @@ function specialOptionsToParams<T>(
       }
     }
     case 'draw': {
-      const notation = `${qPrefix}DD${sides}` as DiceNotation
+      const notation = `${qPrefix}DD${sides}${suffix}` as DiceNotation
       return {
         quantity: q,
         sides,
         draw: true,
         arithmetic,
-        modifiers: {},
+        modifiers,
         key,
         argument: arg,
         notation,
-        description: [`Draw ${q} from d${sides}`]
+        description: [`Draw ${q} from d${sides}`, ...modifierDescription]
       }
     }
     case 'geometric': {
-      const notation = `${qPrefix}g${sides}` as DiceNotation
+      const notation = `${qPrefix}g${sides}${suffix}` as DiceNotation
       return {
         quantity: q,
         sides,
         geometric: true,
         arithmetic,
-        modifiers: {},
+        modifiers,
         key,
         argument: arg,
         notation,
-        description: [`Roll g${sides} (geometric: roll d${sides} until 1)`]
+        description: [`Roll g${sides} (geometric: roll d${sides} until 1)`, ...modifierDescription]
       }
     }
     default:
@@ -139,6 +146,10 @@ function specialOptionsToParams<T>(
  * Map a single options object (from notation parsing or a caller-supplied options
  * argument) to fully-resolved RollParams. Standard and percentile pools use the
  * generic transformers; special dice are built by `specialOptionsToParams`.
+ *
+ * Modifiers are validated here, against the resolved pool, so the notation and
+ * options entry paths share one check (`1d6L` fails exactly like
+ * `{ sides: 6, quantity: 1, modifiers: { drop: { lowest: 1 } } }`).
  */
 function optionsToParams<T>(
   options: RollOptions<T> | ParsedNotationOptions,
@@ -149,9 +160,23 @@ function optionsToParams<T>(
   const suppliedKey = 'key' in options ? options.key : undefined
   const key = suppliedKey ?? keyFor(position, index)
 
-  const special = specialOptionsToParams<T>(options as ParsedNotationOptions, argument, key)
-  if (special) return special
+  validateModifiers(options.modifiers ?? {}, {
+    sides: optionsToSidesFaces(options).sides,
+    quantity: options.quantity ?? 1
+  })
 
+  return (
+    specialOptionsToParams<T>(options as ParsedNotationOptions, argument, key) ??
+    genericOptionsToParams<T>(options, argument, key, index)
+  )
+}
+
+function genericOptionsToParams<T>(
+  options: RollOptions<T> | ParsedNotationOptions,
+  argument: RollArgument<T>,
+  key: string,
+  index: number
+): RollParams<T> {
   const {
     quantity = 1,
     arithmetic = 'add',

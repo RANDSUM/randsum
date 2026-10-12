@@ -5,15 +5,13 @@ import {
   validateMaxSides
 } from './utils/validation'
 import type { RollOptions } from '../types'
-import { validateModifiers } from '../modifiers/registry'
 import { ValidationError } from '../errors'
 
 /**
  * Validates roll options for correctness.
  *
- * Ensures that sides, quantity, and modifiers are all valid before rolling.
- * This provides runtime validation for the options API (complementary to
- * isDiceNotation validation for the notation string API).
+ * Ensures that sides and quantity are valid before rolling. Modifiers are
+ * validated later, in `parseArguments`, for options and notation alike.
  *
  * @param options - Roll options to validate
  * @throws Error if options are invalid
@@ -43,11 +41,5 @@ export function validateRollOptions<T>(options: RollOptions<T>): void {
     validateGreaterThan(options.quantity, 0, 'quantity')
     validateInteger(options.quantity, 'quantity')
     validateMaxQuantity(options.quantity)
-  }
-
-  if (options.modifiers) {
-    const sides = typeof options.sides === 'number' ? options.sides : options.sides.length
-    const quantity = options.quantity ?? 1
-    validateModifiers(options.modifiers, { sides, quantity })
   }
 }

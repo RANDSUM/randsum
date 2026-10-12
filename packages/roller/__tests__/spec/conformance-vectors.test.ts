@@ -7,7 +7,7 @@ import type { DiceNotation } from '../../src/notation/types'
 /**
  * Conformance Vector Test Suite
  *
- * Runs the 48 conformance vectors from the RANDSUM Dice Notation spec against roll().
+ * Runs the conformance vectors from the RANDSUM Dice Notation spec against roll().
  * Each non-error, non-indeterminate vector uses createQueueRandom to produce
  * deterministic results that should match expectedPool and expectedTotal.
  *
@@ -93,7 +93,7 @@ describe('Conformance Vectors', () => {
 
     // Draw die — skip: Fisher-Yates shuffle in drawWithoutReplacement cannot be seeded
     // via createQueueRandom's simple (v-1)/sides mapping
-    if (/^\d*DD\d+$/i.test(vector.notation)) {
+    if (/^\d*DD\d+/i.test(vector.notation)) {
       test.skip(`${name} (draw die — Fisher-Yates shuffle incompatible with createQueueRandom)`, () => {
         // drawWithoutReplacement uses Fisher-Yates which consumes rng() differently
       })
@@ -107,7 +107,7 @@ describe('Conformance Vectors', () => {
 
       // Determine die sides and build the queue
       const { sides, queueRolls } = ((): { sides: number; queueRolls: number[] } => {
-        if (/^(\d+)?dF\.2$/i.test(notation)) {
+        if (/^(\d+)?dF\.2/i.test(notation)) {
           // dF.2 — extended Fudge die, faces [-2,-1,0,1,2]
           return {
             sides: FATE_2_FACES.length,
@@ -116,7 +116,7 @@ describe('Conformance Vectors', () => {
             )
           }
         }
-        if (/^(\d+)?dF(\.1)?$/i.test(notation)) {
+        if (/^(\d+)?dF(\.1)?(?!\.)/i.test(notation)) {
           // dF — Fate Core die, faces [-1,0,1]
           return {
             sides: FATE_FACES.length,
@@ -135,7 +135,7 @@ describe('Conformance Vectors', () => {
             queueRolls: (vector.seedRolls as number[]).map(v => faceValueToQueueIndex(v, zbFaces))
           }
         }
-        if (/^d%$/i.test(notation)) {
+        if (/^d%/i.test(notation)) {
           // d% — percentile die, 1d100
           return { sides: 100, queueRolls: vector.seedRolls as number[] }
         }

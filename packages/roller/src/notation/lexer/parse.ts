@@ -35,6 +35,22 @@ export interface ParseResult {
 
 const COUNT_FAMILY_KEYS = new Set(['#{..}', 'S{..}', 'F{..}'])
 
+/**
+ * Modifiers that fire on "the maximum face", compared against a sequential
+ * [1..N] face set: bare explode / compound / penetrate, the explode sequence
+ * (`!s{}`, `!i`, `!r`) and the wild die. A conditional explode (`!{>0}`) names
+ * its own trigger and is fine on any die.
+ */
+const MAX_FACE_KEYS = new Set(['!', '!!', '!p', '!s', 'W'])
+const ALWAYS_MAX_FACE_KEYS = new Set(['!s', 'W'])
+/** Die types whose faces are not [1..N], so "the maximum face" is undefined. */
+const NON_SEQUENTIAL_KINDS = new Set<PoolKind>(['fate', 'zeroBias', 'custom'])
+
+function firesOnMaxFace(token: LexToken): boolean {
+  if (token.role !== 'modifier' || !MAX_FACE_KEYS.has(token.key)) return false
+  return ALWAYS_MAX_FACE_KEYS.has(token.key) || !token.text.includes('{')
+}
+
 const LEADING_QUANTITY = /^\d+/
 const STANDARD_BODY = /^\d*[Dd]([1-9]\d*)$/
 
@@ -136,6 +152,22 @@ export function parseNotation(input: string): ParseResult {
       !poolMagnitudeValid(t.poolKind ?? 'standard', t.text.replace(/^[+-]/, ''))
   )
   if (badPool) return invalid(`Invalid die "${badPool.text}"`, badPool.start + trimOffset)
+
+  // A max-face explosion has no meaning on dF, zN or d{...} (see MAX_FACE_KEYS).
+  const maxFaceOnNonSequential = tokens.find((t, i) => {
+    if (!firesOnMaxFace(t)) return false
+    const owner = tokens
+      .slice(0, i)
+      .reverse()
+      .find(u => u.role === 'pool')
+    return NON_SEQUENTIAL_KINDS.has(owner?.poolKind ?? 'standard')
+  })
+  if (maxFaceOnNonSequential) {
+    return invalid(
+      `"${maxFaceOnNonSequential.text}" triggers on the maximum face, which dF, zN and d{...} dice do not define`,
+      maxFaceOnNonSequential.start + trimOffset
+    )
+  }
 
   // Group tokens into pools: each pool token owns the following modifier /
   // annotation tokens until the next pool token. Any trailing `xN` run (the only

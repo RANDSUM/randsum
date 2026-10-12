@@ -3,7 +3,7 @@ import { MAX_NOTATION_LENGTH, parseNotation } from '../lexer/parse'
 import type { PoolNode } from '../lexer/parse'
 import type { ParsedDieType, ParsedNotationOptions } from '../types'
 import { parseSpecialPoolSegment } from './parseSpecialPool'
-import { singleNotationToOptions } from './singleNotationToOptions'
+import { modifiersFromText, singleNotationToOptions } from './singleNotationToOptions'
 
 /**
  * Upper bound for a single repeat operator (`xN`).
@@ -36,14 +36,13 @@ function segmentString(node: PoolNode): string {
 }
 
 /**
- * Build options for a special die pool WITHOUT losing its face semantics.
- * (Historically this data was dropped and every special die parsed as a plain
- * numeric pool — the core bug this rewrite fixes.)
+ * Build options for a special die pool WITHOUT losing its face semantics. Any
+ * modifiers bound to the pool are parsed against its sides and carried along, so
+ * `4dF+1`, `d%+5` and `3DD6L` roll like any other pool (RDN: die-core *modifier).
  */
-function specialPoolToOptions(node: PoolNode): ParsedNotationOptions {
+function specialPoolToOptions(node: PoolNode): ParsedNotationOptions | null {
   const special = parseSpecialPoolSegment(node.text)
-  // A valid special pool node always parses; fall back defensively if not.
-  if (special === null) return singleNotationToOptions(segmentString(node))
+  if (special === null) return null
 
   const dieType: ParsedDieType = special.kind
   const options: ParsedNotationOptions = {
@@ -55,31 +54,17 @@ function specialPoolToOptions(node: PoolNode): ParsedNotationOptions {
   if (special.fateVariant !== undefined) options.fateVariant = special.fateVariant
   if (special.customFaces !== undefined) options.customFaces = special.customFaces
   if (node.label !== undefined) options.label = node.label
+  if (node.hasModifiers) options.modifiers = modifiersFromText(node.modifiersText, special.sides)
   return options
 }
 
 function poolToOptions(node: PoolNode): ParsedNotationOptions {
-  // Percentile is a plain d100 pool (numeric sides), matching roll().
-  if (node.kind === 'percentile' && !node.hasModifiers) {
-    const special = parseSpecialPoolSegment(node.text)
-    if (special !== null) {
-      const options: ParsedNotationOptions = {
-        quantity: special.quantity,
-        arithmetic: special.arithmetic,
-        sides: 100,
-        dieType: 'percentile'
-      }
-      if (node.label !== undefined) options.label = node.label
-      return options
-    }
+  if (node.kind !== 'standard') {
+    const special = specialPoolToOptions(node)
+    if (special !== null) return special
   }
-  // Special dice without modifiers keep their die-type semantics.
-  if (node.kind !== 'standard' && node.kind !== 'percentile' && !node.hasModifiers) {
-    return specialPoolToOptions(node)
-  }
-  // Standard pools (and special dice carrying modifiers, which roller rejects at
-  // roll time) go through the lenient single-pool parser, preserving behavior.
-  // The sign was stripped by segmentString, so re-apply arithmetic from the node.
+  // Standard pools go through the single-pool parser. The sign was stripped by
+  // segmentString, so re-apply arithmetic from the node.
   const options = singleNotationToOptions(segmentString(node))
   if (node.sign === '-') options.arithmetic = 'subtract'
   return options

@@ -114,6 +114,16 @@ describe('#10: validation codegen', () => {
     expect(code).toContain("validateRange(input?.bonus, -20, 20, 'Root RPG bonus')")
   })
 
+  test('emits validateInteger call', async () => {
+    const code = await generateCode(VALIDATED_SPEC)
+    expect(code).toContain("validateInteger(input?.bonus, 'Root RPG bonus')")
+  })
+
+  test('runtime throws on a fraction', async () => {
+    const loaded = await compileSpec(VALIDATED_SPEC)
+    expect(() => loaded['roll']!({ bonus: 1.5 })).toThrow('Root RPG bonus must be an integer')
+  })
+
   test('runtime throws on NaN', async () => {
     const loaded = await compileSpec(VALIDATED_SPEC)
     expect(() => loaded['roll']!({ bonus: NaN })).toThrow('Root RPG bonus must be a finite number')

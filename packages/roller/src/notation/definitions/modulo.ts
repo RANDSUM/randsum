@@ -1,6 +1,7 @@
 import { type NotationSchema, defineNotationSchema } from '../schema'
 
-const moduloPattern = /%(\d+)/
+// The divisor is a positive integer (RDN ABNF), so `%0` is not notation.
+const moduloPattern = /%([1-9]\d*)/
 
 export const moduloSchema: NotationSchema<number> = defineNotationSchema<number>({
   name: 'modulo',

@@ -9,13 +9,13 @@
     ],
     "level3_extended": [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 31,
-      34, 35, 36, 37, 40, 41, 43, 44, 45
+      34, 35, 36, 37, 40, 41, 43, 44, 45, 49, 50
     ],
     "level4_full": [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 31,
-      32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45
+      32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45, 49, 50, 51
     ],
-    "errorCases": [28, 29, 30, 46, 47, 48]
+    "errorCases": [28, 29, 30, 46, 47, 48, 52, 53, 54]
   },
   "vectors": [
     {
@@ -496,6 +496,63 @@
       "conformanceLevel": 1,
       "expectedError": true,
       "errorDescription": "Whitespace between tokens is not permitted"
+    },
+    {
+      "id": 49,
+      "notation": "4dF+1",
+      "category": "extended_coverage",
+      "seedRolls": [-1, 0, 1, 1],
+      "expectedPool": [-1, 0, 1, 1],
+      "expectedTotal": 2,
+      "section": "4.5.2",
+      "conformanceLevel": 3
+    },
+    {
+      "id": 50,
+      "notation": "d%+5",
+      "category": "extended_coverage",
+      "seedRolls": [73],
+      "expectedPool": [73],
+      "expectedTotal": 78,
+      "section": "4.5.1",
+      "conformanceLevel": 3
+    },
+    {
+      "id": 51,
+      "notation": "3DD6L",
+      "category": "extended_coverage",
+      "seedRolls": [4, 1, 6],
+      "expectedPool": [4, 6],
+      "expectedTotal": 10,
+      "section": "4.4",
+      "conformanceLevel": 4
+    },
+    {
+      "id": 52,
+      "notation": "2d6//0",
+      "category": "error_cases",
+      "section": "6.6.5",
+      "conformanceLevel": 3,
+      "expectedError": true,
+      "errorDescription": "The Integer Divide divisor must be a positive integer"
+    },
+    {
+      "id": 53,
+      "notation": "2d6%0",
+      "category": "error_cases",
+      "section": "6.6.6",
+      "conformanceLevel": 3,
+      "expectedError": true,
+      "errorDescription": "The Modulo divisor must be a positive integer"
+    },
+    {
+      "id": 54,
+      "notation": "4dF!",
+      "category": "error_cases",
+      "section": "4.6",
+      "conformanceLevel": 3,
+      "expectedError": true,
+      "errorDescription": "A max-face explosion needs a condition on a die without faces 1..N"
     }
   ]
 }

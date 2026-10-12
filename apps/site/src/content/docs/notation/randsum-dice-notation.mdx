@@ -77,9 +77,9 @@ A percentile die rolls 1-100. Used in Call of Cthulhu, Warhammer Fantasy, and an
 
 <NotationRoller defaultNotation="d%" client:only="react" />
 
-`d%` maps internally to `{ quantity: 1, sides: 100 }`. It does not support a quantity prefix. To roll multiple percentile dice, pass multiple arguments: `roll('d%', 'd%')`.
+`d%` maps internally to `{ quantity: 1, sides: 100 }`. A quantity prefix rolls several: `2d%` is `2d100`.
 
-`d%` does not support inline notation modifiers -- use the options object form for modified percentile rolls.
+`d%` takes modifiers like any other die: `d%+5`, `2d%L`.
 
 ### Fate/Fudge dice
 
@@ -96,7 +96,7 @@ Fate dice (also called Fudge dice) produce results of -1, 0, or +1 per die. The 
 <NotationRoller defaultNotation="4dF" client:only="react" />
 <NotationRoller defaultNotation="dF.2" client:only="react" />
 
-Internally, `dF` uses the replace modifier to map die faces to negative and zero values. `dF` does not support inline notation modifiers -- use the options object form for modified Fate rolls.
+Internally, `dF` uses the replace modifier to map die faces to negative and zero values. `dF` takes modifiers like any other die, so `4dF+1` is a Fate Core roll with a +1 skill. An explosion that triggers on the maximum face (`!`, `!!`, `!p`, `!s`, `W`) needs a condition on `dF`, `zN` and `d{...}` dice, as in `4dF!{>0}`.
 
 ### Zero-bias dice
 
