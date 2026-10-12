@@ -1,5 +1,6 @@
 ---
 '@randsum/games': patch
+'@randsum/mcp': patch
 ---
 
 Fix the root entry so `import { AVAILABLE_GAMES, SchemaError } from '@randsum/games'` loads.
