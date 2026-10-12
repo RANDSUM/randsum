@@ -29,7 +29,8 @@ route on the apex.
 > (GHSA-jmr9-qjv8-65gv), which was suppressed only because it was unreachable
 > any other way.
 
-> Config sources: `apps/site/wrangler.jsonc` and
+> Config sources: `apps/site/wrangler.jsonc`, `apps/site/wrangler.notation.jsonc`
+> (the `notation.randsum.dev` 301s, deployed to the `randsum-rdn` Worker) and
 > `apps/discord-bot/wrangler.jsonc`. Deployment runs from
 > `.github/workflows/deploy-cloudflare.yml`. There are no other deploy configs —
 > Netlify and Render were both removed.

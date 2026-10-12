@@ -181,7 +181,7 @@ guidance.
 | Skill | Why it is here |
 | --- | --- |
 | `workers-best-practices` | The site and the Discord bot Worker run on Workers |
-| `wrangler` | Deploys run `wrangler deploy`; two `wrangler.jsonc` files are checked in |
+| `wrangler` | Deploys run `wrangler deploy`; three configs are checked in: the site, the bot, and the `notation.randsum.dev` redirect (`apps/site/wrangler.notation.jsonc`) |
 | `web-perf` | randsum.dev is a public docs site |
 
 **Project scope on purpose.** `wrangler --install-skills` writes to the *global*

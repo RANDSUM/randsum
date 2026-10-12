@@ -35,7 +35,8 @@ const DEST = join(ROOT, '.claude', 'skills')
  */
 const WANTED: Readonly<Record<string, string>> = {
   'workers-best-practices': 'The site and the bot Worker run on Workers',
-  wrangler: 'Deploys run `wrangler deploy`; two wrangler configs are checked in',
+  wrangler:
+    'Deploys run `wrangler deploy`; three wrangler configs are checked in (site, bot, notation.randsum.dev redirect)',
   'web-perf': 'randsum.dev is a public docs site'
 }
 

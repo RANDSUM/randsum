@@ -18,7 +18,7 @@
  * CI job feeding the CI Success gate, so a newly-added package that forgets a
  * standard script fails the build instead of quietly opting out.
  *
- * It also asserts that every apps/<app>/wrangler.jsonc declares the same
+ * It also asserts that every apps/<app>/wrangler*.jsonc declares the same
  * `compatibility_date`, so the three Workers share one runtime baseline and no
  * config comment can claim a match that is not there.
  *
@@ -97,21 +97,21 @@ for (const { dir, manifest } of manifests) {
   }
 }
 
-// One compatibility_date across every apps/<app>/wrangler.jsonc. A targeted
+// One compatibility_date across every apps/<app>/wrangler*.jsonc (the site also
+// ships wrangler.notation.jsonc, the notation.randsum.dev redirect). A targeted
 // regex rather than a JSONC parse: the files carry comments, and only this one
 // key matters here.
 const COMPAT_DATE = /^\s*"compatibility_date"\s*:\s*"([^"]+)"/m
 
 const appsDir = join(ROOT, 'apps')
+const WRANGLER_CONFIG = /^wrangler(\.[a-z-]+)?\.jsonc$/
 const compatDates = readdirSync(appsDir)
-  .map(entry => join(appsDir, entry, 'wrangler.jsonc'))
-  .filter(path => {
-    try {
-      return statSync(path).isFile()
-    } catch {
-      return false
-    }
-  })
+  .filter(entry => statSync(join(appsDir, entry)).isDirectory())
+  .flatMap(entry =>
+    readdirSync(join(appsDir, entry))
+      .filter(file => WRANGLER_CONFIG.test(file))
+      .map(file => join(appsDir, entry, file))
+  )
   .map(path => ({
     path: path.slice(ROOT.length + 1),
     date: COMPAT_DATE.exec(readFileSync(path, 'utf8'))?.[1]
@@ -120,7 +120,7 @@ const compatDates = readdirSync(appsDir)
 const distinctDates = new Set(compatDates.map(({ date }) => date))
 const compatProblem =
   distinctDates.size > 1 || distinctDates.has(undefined)
-    ? 'Every apps/<app>/wrangler.jsonc must declare the same compatibility_date:\n\n' +
+    ? 'Every apps/<app>/wrangler*.jsonc must declare the same compatibility_date:\n\n' +
       compatDates.map(({ path, date }) => `  ${path}: ${date ?? 'missing'}`).join('\n') +
       "\n\nSet them to one date, no newer than the pinned wrangler's workerd supports."
     : undefined
