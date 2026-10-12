@@ -186,7 +186,7 @@ Define pools, modifiers, resolution strategy, and outcome ranges. Use `when` for
 - **Meta-schema**: `packages/games/randsum.json` (or `https://randsum.dev/schemas/v1/randsum.json`)
 - **Run codegen**: `bun run --filter @randsum/games gen`
 - **Run tests**: `bun run --filter @randsum/games test`
-- **Check bundle size**: each game should be under 8 KB (except table-heavy games)
+- **Check bundle size**: `bun run --filter @randsum/games size`; add the game's entry to `size-limit` in `packages/games/package.json`
 
 ## Examples
 

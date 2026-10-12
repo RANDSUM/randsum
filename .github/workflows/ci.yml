@@ -202,6 +202,17 @@ jobs:
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: bun run knip
 
+  doc-claims:
+    # Guard against agent-facing prose naming what the code lacks: a script, a
+    # path, an @randsum export, notation the engine rejects, or a copied bundle
+    # limit. Unfiltered, because a code change can strand a doc it never touches.
+    name: doc-claims
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/bun-setup
+      - run: bun run check:doc-claims
+
   skill:
     name: claude-doctor
     needs: changes
@@ -315,6 +326,7 @@ jobs:
       - changes
       - package
       - repo
+      - doc-claims
       - skill
       - publish-dry-run
       - dependency-review
