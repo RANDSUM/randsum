@@ -23,7 +23,8 @@ route on the apex.
 
 > **Netlify has been removed from the repo entirely** — the adapter, both
 > `netlify.toml` files, and the `@astrojs/netlify` dependency. Nothing here
-> targets it, and the Astro build has exactly one adapter again. Removing it
+> targets it, and neither Astro build uses an adapter now: both sites are
+> `output: 'static'`, and `/api/roll` is a hand-written Worker. Removing Netlify
 > also dropped ~390 transitive packages and closed the `extract-zip` advisory
 > (GHSA-jmr9-qjv8-65gv), which was suppressed only because it was unreachable
 > any other way.
