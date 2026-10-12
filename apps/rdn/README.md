@@ -17,7 +17,7 @@ bun run --filter @randsum/rdn dev               # Astro dev server (localhost:43
 bun run --filter @randsum/rdn build             # Production build → apps/rdn/dist
 bun run --filter @randsum/rdn conformance:gen   # Regenerate conformance vectors
 bun run --filter @randsum/rdn conformance:check # Verify vectors match roller output
-bun run --filter @randsum/rdn check             # build + typecheck + format + lint + test
+bun run --filter @randsum/rdn check             # build + typecheck + test
 ```
 
 ## More

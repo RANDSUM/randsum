@@ -63,9 +63,7 @@ that erase at compile time. That is what keeps discord.js out of the Worker bund
 bun run dev              # wrangler dev — run the Worker locally
 bun run deploy-commands  # Write the slash command registry (see below — now required)
 bun run typecheck        # tsc --noEmit
-bun run lint             # Biome lint
-bun run format           # Biome format
-bun run check            # typecheck + format:check + lint + test
+bun run check            # typecheck + test (lint/format: `bun run lint` at the root)
 ```
 
 There is no `build` or `start`. Both existed only to bundle and run the Node gateway process.

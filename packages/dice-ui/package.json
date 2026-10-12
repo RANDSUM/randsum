@@ -32,10 +32,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
     "test": "bun test __tests__ --coverage --coverage-reporter=lcov --coverage-dir=./coverage",
-    "check": "bun run typecheck && bun run format:check && bun run lint && bun run test"
+    "check": "bun run typecheck && bun run test"
   }
 }

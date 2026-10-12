@@ -10,6 +10,6 @@
 #
 # 24 is the active LTS and matches what CI resolves to: `.github/actions/bun-setup`
 # only invokes actions/setup-node when a job passes an explicit version, so the
-# arch job runs on the runner's built-in node rather than anything pinned here.
+# repo job's arch step runs on the runner's built-in node rather than anything pinned here.
 [tools]
 node = "24"

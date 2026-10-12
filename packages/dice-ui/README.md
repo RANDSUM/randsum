@@ -32,10 +32,8 @@ re-exported from the barrel.
 
 ```bash
 bun run --filter @randsum/dice-ui typecheck      # tsc --noEmit
-bun run --filter @randsum/dice-ui lint           # eslint
-bun run --filter @randsum/dice-ui format:check   # biome format .
 bun run --filter @randsum/dice-ui test           # bun test __tests__
-bun run --filter @randsum/dice-ui check          # typecheck + format:check + lint + test
+bun run --filter @randsum/dice-ui check          # typecheck + test
 ```
 
 ## More

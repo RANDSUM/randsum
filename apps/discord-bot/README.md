@@ -151,9 +151,9 @@ bun run test
 
 ### Linting and Formatting
 
+Biome runs once from the repo root (`bun run lint`, `bun run format`).
+
 ```bash
-bun run lint
-bun run format
 bun run typecheck
 ```
 

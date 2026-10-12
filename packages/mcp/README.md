@@ -85,7 +85,7 @@ Any MCP client that can spawn a stdio server works — point it at the
 bun run dev     # run the server from source over stdio
 bun run build   # bundle to dist/ (ESM, @randsum/* inlined, SDK external)
 bun run test    # unit tests for each tool handler
-bun run check   # build + typecheck + format + lint + test
+bun run check   # build + typecheck + test
 ```
 
 To smoke-test the server manually, pipe a JSON-RPC `initialize` message in:

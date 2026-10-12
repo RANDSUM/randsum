@@ -10,7 +10,8 @@
  * do not declare the target script — which is how packages/dice-ui escaped
  * linting for months (audit Wave 3). The root aggregate scripts rely on that
  * skip-tolerance for optional scripts (e.g. `size`), so a package that simply
- * omits `lint`/`test`/`typecheck` would drop out of every gate unnoticed.
+ * omits `test`/`typecheck` would drop out of every gate unnoticed. (Linting has
+ * since moved to one root `biome ci .`, which reaches dice-ui by construction.)
  *
  * Wiring: this guard runs at the head of the root `check` chain and as its own
  * CI job feeding the CI Success gate, so a newly-added package that forgets a
@@ -21,11 +22,12 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 // Scripts every workspace package MUST declare. Kept in sync with the per-package
-// `check` chain (typecheck + format:check + lint + test) plus format for the
-// writing counterpart. `size` is intentionally NOT here — it stays per-package
-// optional (only publishable packages define size-limit budgets), and the root
-// `size` script is skip-tolerant by design.
-const REQUIRED_SCRIPTS = ['test', 'lint', 'format', 'format:check', 'typecheck', 'check'] as const
+// `check` chain (typecheck + test). Lint and format are not here: one root
+// `biome ci .` covers every package plus scripts/ and root configs, so no package
+// can drop out of it. `size` is intentionally NOT here either — it stays
+// per-package optional (only publishable packages define size-limit budgets),
+// and the root `size` script is skip-tolerant by design.
+const REQUIRED_SCRIPTS = ['test', 'typecheck', 'check'] as const
 
 // `build` is required for every package EXCEPT source-only packages that ship
 // their `src` directly (no bundling step). New entries here are a deliberate,

@@ -23,11 +23,11 @@ Game packages never depend on each other — only on `@randsum/roller`.
 bun install                              # Install all dependencies
 bun run build                            # Build all packages (bunup: ESM + DTS, no CJS)
 bun run test                             # Run all tests (bun:test, recursive)
-bun run lint                             # Biome lint all packages
-bun run format                           # Biome format all packages
-bun run typecheck                        # TypeScript strict check
+bun run lint                             # Biome lint the whole repo
+bun run format                           # Biome format the whole repo
+bun run typecheck                        # TypeScript strict check (packages + scripts/)
 bun run knip                             # Find unused files, deps, and exports
-bun run check:all                        # Per-package check chain (build, typecheck, format:check, lint, test)
+bun run check                            # Repo gates (biome ci, scripts/ typecheck) + per-package check (build, typecheck, test)
 bun run fix:all                          # Auto-fix lint + format issues
 
 # Single package
