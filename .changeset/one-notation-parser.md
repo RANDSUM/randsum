@@ -18,7 +18,8 @@ notation string once instead of three times.
   notation.
 - The repeat-depth error now quotes the whole notation, not the inner segment
   where the limit was hit.
-- Modifiers written more than once, or split by another modifier, all apply.
-  `4d6!L!` explodes and drops the lowest. `5d6KmL` and `5d6LKm` both drop the
-  two lowest and the highest, where keep-middle used to overwrite the drop.
-  `6d6KKm` keeps the highest and the middle, where keep-middle used to win.
+- Keep-middle now adds to an `L`/`H` drop instead of overwriting it: `5d6KmL`
+  and `5d6LKm` both drop the two lowest and the highest. `6d6KKm` keeps both
+  the highest and the middle, where keep-middle used to win. Other repeated
+  modifiers are unchanged: `V`, `C`, `U`, `!{..}`, `*`, `//` and `%` still keep
+  only their first occurrence (`4d6V{1=6}V{2=5}` replaces only 1s).

@@ -40,8 +40,10 @@ The four surfaces are views of that one pass:
   token is parsed by the schema whose pattern matched it; tokens of one schema
   are parsed together, space-separated so `!` and `!` never fuse into `!!`, and a
   keep-middle `drop` is summed with an `L`/`H` drop rather than overwriting it.
-  `modifierCombination.property.test.ts` checks that no token's contribution is
-  lost and that order does not matter across schemas. Special-die semantics
+  `modifierCombination.property.test.ts` checks that no token's modifier key is
+  lost and that order does not matter across schemas; it compares keys, not
+  values. Schemas that read only their first match (`V`, `C`, `U`, `!{..}`, `*`,
+  `//`, `%`) keep only the first occurrence of a repeated token. Special-die semantics
   survive via the additive `dieType` / `fateVariant` / `customFaces` fields, and
   multi-pool splitting and the trailing `xN` run come from the AST.
 - `tokenize` = the positioned `scan` stream with descriptions attached (no
