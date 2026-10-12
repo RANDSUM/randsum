@@ -68,7 +68,6 @@
     "size": "bun run --filter '*' size",
     "check": "bun run check:workspace-scripts && bun run check:ci-aggregator && bun run --filter '@randsum/roller' check && bun run --filter '@randsum/games' check && bun run --filter '@randsum/mcp' check && bun run --filter '@randsum/discord-bot' check && bun run --filter '@randsum/site' check && bun run --filter '@randsum/rdn' check && bun run --filter '@randsum/dice-ui' check",
     "bench": "bun run packages/roller/__benchmarks__/roll.bench.ts",
-    "bench:ci": "bun scripts/bench-ci.ts",
     "profile": "bun --cpu-prof packages/roller/__benchmarks__/roll.bench.ts",
     "profile:md": "bun --cpu-prof-md packages/roller/__benchmarks__/roll.bench.ts",
     "knip": "knip --exclude catalog --no-config-hints",

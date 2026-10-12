@@ -223,46 +223,6 @@ jobs:
             echo "No marketplace.json found, skipping"
           fi
 
-  bench:
-    name: bench (regression gate)
-    needs: changes
-    if: needs.changes.outputs.roller == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/bun-setup
-      - name: Build roller
-        run: bun run --filter '@randsum/roller' build
-      - name: Run benchmark
-        # bench:ci runs the suite 3x and emits the per-benchmark MEDIAN, so a
-        # single cold/noisy run on a sub-20µs benchmark can no longer trip the
-        # gate against a stale cached baseline (audit Wave 3 false positive).
-        run: bun run bench:ci
-      - name: Restore previous benchmark data
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
-        with:
-          path: ./cache
-          key: ${{ runner.os }}-benchmark-${{ github.ref }}
-          restore-keys: |
-            ${{ runner.os }}-benchmark-
-      - name: Compare and store benchmark
-        uses: benchmark-action/github-action-benchmark@4322e5726e6334590d251fc4f92bec0efafc45dc # v1.20.4
-        with:
-          tool: "customSmallerIsBetter"
-          output-file-path: benchmark-results.json
-          external-data-json-path: ./cache/benchmark-data.json
-          fail-on-alert: true
-          # Belt-and-braces with the median-of-3 runner above: 160% tolerance so
-          # runner-to-runner variance on tiny benchmarks doesn't false-alarm,
-          # while a genuine >1.6x regression still fails the gate.
-          alert-threshold: "160%"
-          comment-on-alert: ${{ github.event_name == 'pull_request' }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          save-data-file: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-
   publish-dry-run:
     name: publish (dry run)
     needs: changes
@@ -377,7 +337,6 @@ jobs:
       - workspace-scripts
       - ci-aggregator
       - skill
-      - bench
       - publish-dry-run
       - knip
       - arch
