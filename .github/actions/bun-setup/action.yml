@@ -16,10 +16,10 @@ runs:
       id: bun-version
       shell: bash
       run: echo "version=$(cat .bun-version)" >> "$GITHUB_OUTPUT"
-    - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
+    - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2.2.0
       with:
         bun-version: ${{ steps.bun-version.outputs.version }}
-    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f  # v6
+    - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f  # v6.3.0
       if: ${{ inputs.node-version != '' }}
       with:
         node-version: ${{ inputs.node-version }}
