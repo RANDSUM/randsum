@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { sortSchema } from '../../src/notation/definitions/sort'
-import { parseModifiers } from '../../src/notation/parse/parseModifiers'
+import { modifiersOf } from '../support/modifiersOf'
 import { isDiceNotation } from '../../src/notation/isDiceNotation'
 import {
   modifiersToDescription,
@@ -59,23 +59,23 @@ describe('Sort Notation Schema', () => {
   })
 })
 
-describe('Sort in parseModifiers', () => {
+describe('Sort in notationToOptions', () => {
   test('parses sort ascending from notation', () => {
-    expect(parseModifiers('4d6sa')).toEqual({ sort: 'asc' })
+    expect(modifiersOf('4d6sa')).toEqual({ sort: 'asc' })
   })
 
   test('parses sort descending from notation', () => {
-    expect(parseModifiers('4d6sd')).toEqual({ sort: 'desc' })
+    expect(modifiersOf('4d6sd')).toEqual({ sort: 'desc' })
   })
 
   test('does not conflict with S{7} (count successes desugars to count)', () => {
-    const result = parseModifiers('4d6S{7}')
+    const result = modifiersOf('4d6S{7}')
     expect(result.count).toEqual({ greaterThanOrEqual: 7 })
     expect(result.sort).toBeUndefined()
   })
 
   test('combines with other modifiers', () => {
-    const result = parseModifiers('4d6Lsa')
+    const result = modifiersOf('4d6Lsa')
     expect(result.drop).toEqual({ lowest: 1 })
     expect(result.sort).toBe('asc')
   })

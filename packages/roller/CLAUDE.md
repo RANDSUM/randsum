@@ -12,15 +12,15 @@ this package** (under `src/notation/` and `src/modifiers/`). There is no separat
 `@randsum/notation` package — it was merged in (ADR-005). Any reference to it is
 stale.
 
-## Notation lexer (single pass)
+## Notation lexer (the only parser)
 
 All notation processing runs through **one cursor-based lexer** in
 `src/notation/lexer/`. Every public surface is a thin view over it — there is no
-separate regex system per surface:
+separate regex system per surface, and no second parser builds options:
 
 - **`specs.ts`** — the single token inventory. `POOL_SPECS` (die-type heads) and
-  `MODIFIER_SPECS` (category + sticky matcher per modifier). The modifier matchers
-  are compiled from the `notation/definitions/<mod>Schema` patterns in RDN
+  `MODIFIER_SPECS` (category + schema + sticky matcher per modifier). The modifier
+  matchers are compiled from the `notation/definitions/<mod>Schema` patterns in RDN
   specificity order, so the schemas stay the semantic source of truth.
 - **`scan.ts`** — `scan(input)` is a pure lexical left-to-right pass producing
   positioned `LexToken`s (pool / modifier / annotation / repeat / unknown). No
@@ -35,13 +35,16 @@ The four surfaces are views of that one pass:
 - `isDiceNotation` = `parseNotation(...).valid`; `notation()` throws with the real
   `ErrorContext.position`.
 - `validateNotation` = parse + describe, with `error.position` populated.
-- `notationToOptions` = AST → `ParsedNotationOptions[]`. Special-die semantics
+- `notationToOptions` = AST → `ParsedNotationOptions[]` (`parse/poolToOptions.ts`),
+  and throws a positioned `NotationParseError` on invalid input. Each modifier
+  token is parsed by the schema whose pattern matched it. Special-die semantics
   survive via the additive `dieType` / `fateVariant` / `customFaces` fields, and
-  multi-pool splitting comes from the AST (no separate splitter).
+  multi-pool splitting and the trailing `xN` run come from the AST.
 - `tokenize` = the positioned `scan` stream with descriptions attached (no
   hand-rolled pattern table).
-- `roll()`'s `parseArguments` consumes the same parser — no private die-type
-  regexes, no multi-pool splitter. Special dice are built from `dieType` and
+- `roll()`'s `parseArguments` parses each string once and hands that
+  `ParseResult` to `parsedToOptions`; the notation it renders back is not
+  re-validated (`formatNotation`). Special dice are built from `dieType` and
   carry their modifiers (`4dF+1`, `d%+5`, `3DD6L`). Max-face explosions (`!`,
   `!!`, `!p`, `!s`, `W`) without a condition are a parse error on `dF`, `zN`
   and `d{...}`, whose faces are not 1..N.
@@ -144,9 +147,9 @@ All native to this package (`src/notation/`). Public barrel surface:
 - **Tokenization:** `tokenize`
 
 Comparison helpers (`parseComparisonNotation`, `hasConditions`,
-`formatComparisonNotation`, `formatComparisonDescription`), `listOfNotations`,
-`optionsToSidesFaces`, `TTRPG_STANDARD_DIE_SET`, `coreNotationPattern`, and
-`formatHumanList` are **internal** — used within `src/`, not re-exported from the
+`formatComparisonNotation`, `formatComparisonDescription`),
+`optionsToSidesFaces`, `TTRPG_STANDARD_DIE_SET`, and `formatHumanList` are
+**internal** — used within `src/`, not re-exported from the
 barrel.
 
 ## Modifier system
@@ -171,7 +174,7 @@ files to keep the tokenize path free of roll-engine code:
   `src/notation/definitions/<mod>.ts` — the canonical, behavior-free source of
   regex pattern, `parse`, `toNotation`, and `toDescription`. This is the only
   copy; the parse/validate/tokenize path imports it directly (via
-  `src/notation/parse/parseModifiers.ts` and
+  `MODIFIER_SPECS` in `src/notation/lexer/specs.ts` and
   `src/notation/transformers/modifiersToStrings.ts`).
 - **`<mod>Modifier`** (`ModifierDefinition`) lives in `src/modifiers/<mod>.ts` —
   it **imports** `<mod>Schema` from `notation/definitions`, spreads it, and
@@ -287,7 +290,7 @@ src/
   notation/         # native notation parsing/validation/tokenization
     comparison/     # {<3,>18} condition syntax
     definitions/    # schema-only, tokenize-safe sources
-    parse/          # notationToOptions, listOfNotations
+    parse/          # notationToOptions, poolToOptions (AST -> options)
     transformers/   # options <-> notation/description
     schema.ts       # NotationSchema type + defineNotationSchema
     tokenize.ts, validateNotation.ts, isDiceNotation.ts, suggestions.ts, ...

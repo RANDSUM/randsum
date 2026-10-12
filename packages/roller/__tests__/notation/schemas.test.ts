@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { coreNotationPattern } from '../../src/notation/coreNotationPattern'
 import { defineNotationSchema } from '../../src/notation/schema'
 import {
   capSchema,
@@ -17,21 +16,6 @@ import {
   rerollSchema,
   uniqueSchema
 } from '../../src/notation/definitions'
-
-describe('coreNotationPattern', () => {
-  test('matches basic notation', () => {
-    expect(coreNotationPattern.test('2d6')).toBe(true)
-  })
-
-  test('matches with sign prefix', () => {
-    expect(coreNotationPattern.test('+1d20')).toBe(true)
-    expect(coreNotationPattern.test('-1d6')).toBe(true)
-  })
-
-  test('does not match zero sides', () => {
-    expect(coreNotationPattern.test('1d0')).toBe(false)
-  })
-})
 
 describe('defineNotationSchema', () => {
   test('returns the schema unchanged', () => {

@@ -10,16 +10,19 @@ export interface PoolNode {
   readonly kind: PoolKind
   /** Arithmetic combination with the preceding pool ('' for the first pool). */
   readonly sign: '+' | '-' | ''
-  /** Pool head text including any leading sign (e.g. '+2d6', 'dF', '3DD6'). */
-  readonly text: string
-  /** Pool head text without the leading sign. */
+  /** Pool head text without the leading sign (e.g. '2d6', 'dF', '3DD6'). */
   readonly body: string
-  /** Concatenated text of the modifier tokens bound to this pool. */
-  readonly modifiersText: string
-  /** True when at least one modifier token binds to this pool. */
-  readonly hasModifiers: boolean
+  /** The modifier tokens bound to this pool, in source order. */
+  readonly modifiers: readonly LexToken[]
   /** Annotation label content (without the surrounding brackets), if present. */
   readonly label?: string
+}
+
+/** A trailing `xN` repeat operator. */
+interface RepeatNode {
+  readonly count: number
+  /** Offset of the `x` in the caller's (untrimmed) string. */
+  readonly position: number
 }
 
 export interface ParseError {
@@ -30,6 +33,8 @@ export interface ParseError {
 export interface ParseResult {
   readonly valid: boolean
   readonly pools: readonly PoolNode[]
+  /** The trailing repeat run, left to right. */
+  readonly repeats: readonly RepeatNode[]
   readonly error?: ParseError
 }
 
@@ -53,19 +58,16 @@ function poolMagnitudeValid(kind: PoolKind, body: string): boolean {
 }
 
 function invalid(message: string, position: number): ParseResult {
-  return { valid: false, pools: [], error: { message, position } }
+  return { valid: false, pools: [], repeats: [], error: { message, position } }
 }
 
 function buildPool(head: LexToken, bound: readonly LexToken[]): PoolNode {
-  const modifierTokens = bound.filter(t => t.role === 'modifier')
   const label = bound.find(t => t.role === 'annotation')?.text.slice(1, -1)
   return {
     kind: head.poolKind ?? 'standard',
     sign: head.sign ?? '',
-    text: head.text,
     body: head.text.replace(/^[+-]/, ''),
-    modifiersText: modifierTokens.map(t => t.text).join(''),
-    hasModifiers: modifierTokens.length > 0,
+    modifiers: bound.filter(t => t.role === 'modifier'),
     ...(label !== undefined ? { label } : {})
   }
 }
@@ -157,15 +159,18 @@ export function parseNotation(input: string): ParseResult {
   }
 
   // Group tokens into pools: each pool token owns the following modifier /
-  // annotation tokens until the next pool token. Any trailing `xN` run (the only
-  // position `xN` is now accepted) is ignored here and applied by
-  // notationToOptions, which strips a whole-string-trailing repeat before parsing.
+  // annotation tokens until the next pool token. The trailing `xN` run (the only
+  // position `xN` is accepted) is returned separately; notationToOptions applies
+  // it to the whole expression.
   const pools = tokens.flatMap((tok, i) => {
     if (tok.role !== 'pool') return []
     const nextOffset = tokens.slice(i + 1).findIndex(t => t.role === 'pool')
     const end = nextOffset === -1 ? tokens.length : i + 1 + nextOffset
     return [buildPool(tok, tokens.slice(i + 1, end))]
   })
+  const repeats = tokens
+    .filter(t => t.role === 'repeat')
+    .map(t => ({ count: Number(t.text.slice(1)), position: t.start + trimOffset }))
 
-  return { valid: true, pools }
+  return { valid: true, pools, repeats }
 }

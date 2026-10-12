@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test'
+import { NotationParseError } from '../../src/errors'
 import { notationToOptions } from '../../src/notation/parse/notationToOptions'
 
 describe('notationToOptions', () => {
@@ -31,11 +32,18 @@ describe('notationToOptions', () => {
       expect(result?.sides).toBe(100)
     })
 
-    test('parses zero values', () => {
-      const [result] = notationToOptions('0d0')
-
-      expect(result?.quantity).toBe(0)
-      expect(result?.sides).toBe(0)
+    test('throws a positioned NotationParseError on invalid notation', () => {
+      expect(() => notationToOptions('0d0')).toThrow(NotationParseError)
+      const error = ((): unknown => {
+        try {
+          notationToOptions('2d6+0d0')
+        } catch (e) {
+          return e
+        }
+        return undefined
+      })()
+      expect(error).toBeInstanceOf(NotationParseError)
+      expect((error as NotationParseError).context?.position).toBe(3)
     })
   })
 

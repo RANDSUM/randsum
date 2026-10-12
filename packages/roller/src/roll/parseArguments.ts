@@ -1,7 +1,7 @@
 import { parseNotation } from '../notation/lexer/parse'
-import { notationToOptions } from '../notation/parse/notationToOptions'
+import { parsedToOptions } from '../notation/parse/notationToOptions'
 import { optionsToDescription } from '../notation/transformers/optionsToDescription'
-import { optionsToNotation } from '../notation/transformers/optionsToNotation'
+import { formatNotation, optionsToNotation } from '../notation/transformers/optionsToNotation'
 import { optionsToSidesFaces } from '../notation/transformers/optionsToSidesFaces'
 import {
   modifiersToDescription,
@@ -28,7 +28,7 @@ function keyFor(position: number, index: number): string {
 
 /**
  * Build RollParams for a special die directly from its parsed options. The
- * die-type semantics come from the lexer (via `notationToOptions`) — there are no
+ * die-type semantics come from the lexer (via `parsedToOptions`) — there are no
  * private die-type regexes here. Returns null for standard/percentile pools
  * (handled by the generic path). Modifiers bound to the die are carried through
  * and rendered after the special core, exactly as for a standard pool.
@@ -213,7 +213,11 @@ function genericOptionsToParams<T>(
     arithmetic,
     argument,
     ...(label !== undefined ? { label } : {}),
-    notation: optionsToNotation(renderOptions),
+    // Notation the parser already accepted renders without a second parse.
+    notation:
+      typeof argument === 'string'
+        ? formatNotation(renderOptions)
+        : optionsToNotation(renderOptions),
     description: optionsToDescription(renderOptions)
   }
 }
@@ -234,11 +238,10 @@ function nonStringOptions<T>(argument: Exclude<RollArgument<T>, string>): RollOp
 /**
  * Convert a roll argument to fully resolved roll parameters.
  *
- * Notation strings flow through the single cursor parser: `parseNotation` decides
- * validity (throwing on anything it rejects, including oversized input), then
- * `notationToOptions` yields one options object per pool — carrying special-die
- * semantics — which are mapped to RollParams here. There is no separate multi-pool
- * splitter or per-die-type regex table anymore.
+ * A notation string is parsed once: `parseNotation` decides validity (throwing on
+ * anything it rejects, including oversized input), and `parsedToOptions` turns
+ * that same parse into one options object per pool — carrying special-die
+ * semantics — which are mapped to RollParams here.
  *
  * @param argument - The roll argument (notation, number, or options)
  * @param position - Position in multi-roll expressions (for key naming)
@@ -246,13 +249,14 @@ function nonStringOptions<T>(argument: Exclude<RollArgument<T>, string>): RollOp
  */
 export function parseArguments<T>(argument: RollArgument<T>, position: number): RollParams<T>[] {
   if (typeof argument === 'string') {
-    if (!parseNotation(argument).valid) {
+    const parsed = parseNotation(argument)
+    if (!parsed.valid) {
       throw new ValidationError(`"${argument}" is not valid dice notation`, {
         notation: argument,
         value: argument
       })
     }
-    const allOptions = notationToOptions(argument)
+    const allOptions = parsedToOptions(argument, parsed)
     for (const options of allOptions) {
       validateMaxQuantity(options.quantity)
       validateMaxSides(options.sides)

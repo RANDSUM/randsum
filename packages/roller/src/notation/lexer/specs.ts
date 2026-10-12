@@ -9,7 +9,9 @@
 // parseArguments) is a view over that one pass.
 //
 // The modifier specs REUSE the notation/definitions schema patterns — the schemas
-// remain the semantic source for parse/toNotation/toDescription. This table only
+// remain the semantic source for parse/toNotation/toDescription, and each spec
+// carries its schema so a token's text is parsed by the schema that matched it
+// (poolToOptions). This table only
 // adds the faceted category + a stable token key + the disambiguation ordering
 // (mirrors the RDN §modifier specificity list), which the schemas do not carry.
 
@@ -42,6 +44,7 @@ import { rerollSchema } from '../definitions/reroll'
 import { sortSchema } from '../definitions/sort'
 import { uniqueSchema } from '../definitions/unique'
 import { wildDieSchema } from '../definitions/wildDie'
+import type { NotationSchema } from '../schema'
 
 export type ModifierCategory =
   | 'Core'
@@ -69,9 +72,14 @@ export type PoolKind =
   | 'geometric'
   | 'zeroBias'
 
+/** The schema fields the lexer and the options builder read. */
+type ModifierSchema = Pick<NotationSchema, 'pattern' | 'parse'>
+
 interface ModifierSpec {
   readonly key: string
   readonly category: ModifierCategory
+  /** The schema whose `parse` turns this token's text into modifier options. */
+  readonly schema: ModifierSchema
   /** Sticky regex compiled from the schema source; matched at the cursor on the full string. */
   readonly matcher: RegExp
 }
@@ -82,36 +90,45 @@ function sticky(pattern: RegExp): RegExp {
   return new RegExp(pattern.source, `${flags.includes('i') ? flags : `${flags}i`}y`)
 }
 
-// Margin-of-success (`ms{N}`) is syntactic sugar de-sugared to `-N` in parseModifiers;
-// here it needs its own token so the lexer recognizes and positions it.
+function spec(
+  key: string,
+  category: ModifierCategory,
+  schema: ModifierSchema,
+  matcher: RegExp = sticky(schema.pattern)
+): ModifierSpec {
+  return { key, category, schema, matcher }
+}
+
+// Margin-of-success (`ms{N}`) is syntactic sugar for `-N`. It needs its own token
+// so the lexer recognizes and positions it; poolToOptions parses it as a minus.
 const marginOfSuccessSource = String.raw`[Mm][Ss]\{\d+\}`
 
 // Ordered by RDN modifier specificity (== schema priority ascending), so the first
 // matcher that hits at a cursor is authoritative — identical resolution to the
 // priority-sorted alternation isDiceNotation previously stripped with.
 export const MODIFIER_SPECS: readonly ModifierSpec[] = [
-  { key: 'C{..}', category: 'Clamp', matcher: sticky(capSchema.pattern) },
-  { key: 'V{..}', category: 'Map', matcher: sticky(replaceSchema.pattern) },
-  { key: 'R{..}', category: 'Substitute', matcher: sticky(rerollSchema.pattern) },
-  { key: '!', category: 'Generate', matcher: sticky(explodeSchema.pattern) },
-  { key: '!!', category: 'Accumulate', matcher: sticky(compoundSchema.pattern) },
-  { key: '!p', category: 'Accumulate', matcher: sticky(penetrateSchema.pattern) },
-  { key: '!s', category: 'Generate', matcher: sticky(explodeSequenceSchema.pattern) },
-  { key: 'W', category: 'Dispatch', matcher: sticky(wildDieSchema.pattern) },
-  { key: 'U', category: 'Substitute', matcher: sticky(uniqueSchema.pattern) },
-  { key: 'drop', category: 'Filter', matcher: sticky(dropSchema.pattern) },
-  { key: 'K', category: 'Filter', matcher: sticky(keepSchema.pattern) },
-  { key: '#{..}', category: 'Reinterpret', matcher: sticky(countSchema.pattern) },
-  { key: 'S{..}', category: 'Reinterpret', matcher: sticky(countSuccessesSchema.pattern) },
-  { key: 'F{..}', category: 'Reinterpret', matcher: sticky(countFailuresSchema.pattern) },
-  { key: 'ms{..}', category: 'Scale', matcher: new RegExp(marginOfSuccessSource, 'iy') },
-  { key: '*', category: 'Scale', matcher: sticky(multiplySchema.pattern) },
-  { key: '+', category: 'Scale', matcher: sticky(plusSchema.pattern) },
-  { key: '-', category: 'Scale', matcher: sticky(minusSchema.pattern) },
-  { key: '//', category: 'Scale', matcher: sticky(integerDivideSchema.pattern) },
-  { key: '%', category: 'Scale', matcher: sticky(moduloSchema.pattern) },
-  { key: 'sort', category: 'Order', matcher: sticky(sortSchema.pattern) },
-  { key: '**', category: 'Scale', matcher: sticky(multiplyTotalSchema.pattern) }
+  spec('C{..}', 'Clamp', capSchema),
+  spec('V{..}', 'Map', replaceSchema),
+  spec('R{..}', 'Substitute', rerollSchema),
+  spec('!', 'Generate', explodeSchema),
+  spec('!!', 'Accumulate', compoundSchema),
+  spec('!p', 'Accumulate', penetrateSchema),
+  spec('!s', 'Generate', explodeSequenceSchema),
+  spec('W', 'Dispatch', wildDieSchema),
+  spec('U', 'Substitute', uniqueSchema),
+  spec('drop', 'Filter', dropSchema),
+  spec('K', 'Filter', keepSchema),
+  spec('#{..}', 'Reinterpret', countSchema),
+  spec('S{..}', 'Reinterpret', countSuccessesSchema),
+  spec('F{..}', 'Reinterpret', countFailuresSchema),
+  spec('ms{..}', 'Scale', minusSchema, new RegExp(marginOfSuccessSource, 'iy')),
+  spec('*', 'Scale', multiplySchema),
+  spec('+', 'Scale', plusSchema),
+  spec('-', 'Scale', minusSchema),
+  spec('//', 'Scale', integerDivideSchema),
+  spec('%', 'Scale', moduloSchema),
+  spec('sort', 'Order', sortSchema),
+  spec('**', 'Scale', multiplyTotalSchema)
 ]
 
 interface PoolSpec {

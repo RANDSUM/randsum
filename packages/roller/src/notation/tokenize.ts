@@ -1,7 +1,7 @@
 import { parseNotation } from './lexer/parse'
 import type { PoolKind, TokenCategory } from './lexer/specs'
 import { scan } from './lexer/scan'
-import { singleNotationToOptions } from './parse/singleNotationToOptions'
+import { poolToOptions } from './parse/poolToOptions'
 import { optionsToDescription } from './transformers/optionsToDescription'
 
 export type { ModifierCategory, TokenCategory } from './lexer/specs'
@@ -19,12 +19,14 @@ export interface Token {
  * Describe a single-pool notation string, returning its description lines (or
  * null if the string does not parse). Token descriptions are always a lone
  * standard pool (`describeCoreToken` strips the sign; `describeModifierToken`
- * prefixes `1d6`), so this uses the single-pool parser directly and avoids
+ * prefixes `1d6`), so this describes the first parsed pool directly and avoids
  * pulling notationToOptions / optionsToNotation into the tokenize bundle.
  */
 function describeParsed(text: string): string[] | null {
-  if (!parseNotation(text).valid) return null
-  return optionsToDescription(singleNotationToOptions(text))
+  const parsed = parseNotation(text)
+  const pool = parsed.pools[0]
+  if (!parsed.valid || pool === undefined) return null
+  return optionsToDescription(poolToOptions(pool))
 }
 
 function describeCoreToken(text: string): string {
