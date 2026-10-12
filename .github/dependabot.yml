@@ -16,11 +16,13 @@ updates:
     cooldown:
       default-days: 7
 
-  # Keep GitHub Actions up to date. Because workflows pin actions to commit
-  # SHAs (see .github/workflows/*.yml), Dependabot will open PRs that bump
-  # the SHA and update the trailing `# <tag>` comment.
+  # Keep GitHub Actions up to date. Actions are pinned to commit SHAs, and
+  # Dependabot bumps the SHA. It rewrites the trailing version comment only when
+  # that comment names the exact version being replaced, so pins carry the full
+  # version (`# v6.1.0`, not `# v6`). '/' covers .github/workflows; the second
+  # entry covers the composite actions under .github/actions.
   - package-ecosystem: 'github-actions'
-    directory: '/'
+    directories: ['/', '/.github/actions/*']
     schedule:
       interval: 'weekly'
     cooldown:
