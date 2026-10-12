@@ -35,22 +35,6 @@ export interface ParseResult {
 
 const COUNT_FAMILY_KEYS = new Set(['#{..}', 'S{..}', 'F{..}'])
 
-/**
- * Modifiers that fire on "the maximum face", compared against a sequential
- * [1..N] face set: bare explode / compound / penetrate, the explode sequence
- * (`!s{}`, `!i`, `!r`) and the wild die. A conditional explode (`!{>0}`) names
- * its own trigger and is fine on any die.
- */
-const MAX_FACE_KEYS = new Set(['!', '!!', '!p', '!s', 'W'])
-const ALWAYS_MAX_FACE_KEYS = new Set(['!s', 'W'])
-/** Die types whose faces are not [1..N], so "the maximum face" is undefined. */
-const NON_SEQUENTIAL_KINDS = new Set<PoolKind>(['fate', 'zeroBias', 'custom'])
-
-function firesOnMaxFace(token: LexToken): boolean {
-  if (token.role !== 'modifier' || !MAX_FACE_KEYS.has(token.key)) return false
-  return ALWAYS_MAX_FACE_KEYS.has(token.key) || !token.text.includes('{')
-}
-
 const LEADING_QUANTITY = /^\d+/
 const STANDARD_BODY = /^\d*[Dd]([1-9]\d*)$/
 
@@ -153,19 +137,22 @@ export function parseNotation(input: string): ParseResult {
   )
   if (badPool) return invalid(`Invalid die "${badPool.text}"`, badPool.start + trimOffset)
 
-  // A max-face explosion has no meaning on dF, zN or d{...} (see MAX_FACE_KEYS).
-  const maxFaceOnNonSequential = tokens.find((t, i) => {
-    if (!firesOnMaxFace(t)) return false
-    const owner = tokens
-      .slice(0, i)
-      .reverse()
-      .find(u => u.role === 'pool')
-    return NON_SEQUENTIAL_KINDS.has(owner?.poolKind ?? 'standard')
-  })
-  if (maxFaceOnNonSequential) {
+  // Unbraced `!` / `!!` / `!p`, `!s` and W fire on the maximum face, which dF, zN
+  // and d{...} dice do not define. A braced `!{>0}` names its own trigger.
+  const maxFace = tokens.find(
+    (t, i) =>
+      (t.key === '!s' || t.key === 'W' || (/^!!?p?$/.test(t.key) && !t.text.includes('{'))) &&
+      ['fate', 'zeroBias', 'custom'].includes(
+        tokens
+          .slice(0, i)
+          .reverse()
+          .find(u => u.role === 'pool')?.poolKind ?? ''
+      )
+  )
+  if (maxFace) {
     return invalid(
-      `"${maxFaceOnNonSequential.text}" triggers on the maximum face, which dF, zN and d{...} dice do not define`,
-      maxFaceOnNonSequential.start + trimOffset
+      `"${maxFace.text}" needs a condition on dF, zN and d{...}`,
+      maxFace.start + trimOffset
     )
   }
 
