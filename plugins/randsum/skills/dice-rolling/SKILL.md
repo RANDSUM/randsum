@@ -94,7 +94,7 @@ Conditions use comparison operators: `>N` (greater than), `<N` (less than), `>=N
 | `3d6!` | Explode: new die on max result |
 | `3d6!!` | Compound: add to same die on max |
 | `3d6!p` | Penetrate: explode minus 1 each time |
-| `3d6!5` | Explode up to 5 times per die |
+| `3d6!!5` | Compound up to 5 times per die |
 
 ### Dice Pools
 

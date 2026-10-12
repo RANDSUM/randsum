@@ -120,9 +120,8 @@ export const toolPackages: PackageInfo[] = [
     displayName: 'Claude Plugin',
     description:
       'Claude Code plugin with skills for dice rolling, probability analysis, and game spec authoring.',
-    npmPackage: 'skills/dice-rolling/SKILL.md',
-    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/skills',
-    version: '1.0.0',
+    npmPackage: 'plugins/randsum/skills/dice-rolling/SKILL.md',
+    sourceUrl: 'https://github.com/RANDSUM/randsum/tree/main/plugins/randsum',
     category: 'tool',
     color: 'var(--rs-claude)'
   },

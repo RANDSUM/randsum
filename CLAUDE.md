@@ -15,6 +15,8 @@ Bun workspace monorepo for a dice rolling ecosystem targeting tabletop RPGs. All
 
 **UI**: the web-only React dice components (notation input with token overlay, roll step visualizer, combined roller) live in `apps/site/src/components/dice-ui/`, not in a package; `apps/site` is their only consumer.
 
+**Claude Code plugin**: `plugins/randsum/` — the `randsum` plugin the root `.claude-plugin/marketplace.json` publishes: three skills plus its own `.mcp.json`, which starts only `@randsum/mcp`. The root `.mcp.json` holds the maintainers' ops servers and never ships. Its skills do not load in this repo's sessions; use `claude --plugin-dir plugins/randsum`.
+
 Game packages never depend on each other — only on `@randsum/roller`.
 
 Boundaries are enforced by tools, not review. Bun's isolated linker (`bunfig.toml`) lets a package import only what its own `package.json` declares, which holds the package DAG. Biome's `noImportCycles` rejects import cycles, and its `noRestrictedImports` rejects reach-ins to `@randsum/*/src` or `@randsum/*/dist`. Games are subpaths of one package, so the linker cannot keep them apart: a `biome.json` override bans `@randsum/games/<game>` imports (except `/schema`) in the hand-written `packages/games/src/**`, and `packages/games/__tests__/generated-imports.test.ts` holds each `*.generated.ts` entry to `@randsum/roller*`, `./types` and `./lib/**`. Biome excludes `*.generated.ts`, so `noImportCycles` does not see edges through them.
@@ -199,7 +201,7 @@ pays for whether or not it is used, so each entry earns its place by use.
 and every one rejected.
 
 ```bash
-bun run skills:sync   # refresh from github.com/cloudflare/skills
+bun run skills:sync   # re-vendor at the pinned COMMIT; bump it to refresh
 ```
 
 Read the diff when you do. This pulls third-party prose that steers an agent

@@ -68,10 +68,13 @@ jobs:
               - 'apps/site/**'
               # The site build prepends the repo-root llms.txt to dist/llms.txt.
               - 'llms.txt'
+              - 'plugins/**'
               - '.github/workflows/ci.yml'
             skill:
-              - 'skills/**'
+              - 'plugins/**'
               - '.claude-plugin/**'
+              - '.claude/**'
+              - '.mcp.json'
               - '.github/workflows/ci.yml'
             discord-bot:
               - 'apps/discord-bot/**'
@@ -206,20 +209,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/bun-setup
-      - name: Verify skills
-        run: npx skills-ref validate skills/dice-rolling/SKILL.md
       - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
+        run: npm install -g @anthropic-ai/claude-code@2.1.284
+      - name: Verify project agent config
+        run: claude plugin validate --strict .claude
+      # Plugin and marketplace stay non-strict on purpose. plugin.json has no
+      # `version`, so installers track the marketplace commit instead of a pin
+      # nobody bumps; `--strict` turns the resulting 'No version specified'
+      # warning into exit 1 for both. Errors still fail the step.
       - name: Verify plugin
-        run: claude plugin validate .claude-plugin/plugin.json
+        run: claude plugin validate plugins/randsum
       - name: Verify marketplace
-        run: |
-          if [ -f .claude-plugin/marketplace.json ]; then
-            claude plugin validate .claude-plugin/marketplace.json
-          else
-            echo "No marketplace.json found, skipping"
-          fi
+        run: claude plugin validate .claude-plugin/marketplace.json
 
   publish-dry-run:
     name: publish (dry run)

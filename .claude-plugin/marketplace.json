@@ -11,9 +11,8 @@
   "plugins": [
     {
       "name": "randsum",
-      "source": "./",
+      "source": "./plugins/randsum",
       "description": "RDN-conformant dice notation skills for Claude Code — roll dice, analyze probability, and create game specs for tabletop RPGs",
-      "version": "1.0.0",
       "author": {
         "name": "RANDSUM",
         "url": "https://randsum.dev"
